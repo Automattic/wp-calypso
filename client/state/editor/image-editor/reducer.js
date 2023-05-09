@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	IMAGE_EDITOR_CROP,
 	IMAGE_EDITOR_COMPUTED_CROP,

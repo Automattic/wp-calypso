@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import getMediaQueryManager from './get-media-query-manager';
 import { sortItemsByDate } from 'calypso/lib/media/utils/sort-items-by-date';
+import getMediaQueryManager from './get-media-query-manager';
 
 import 'calypso/state/media/init';
 
@@ -10,7 +7,7 @@ import 'calypso/state/media/init';
  * Returns media for a specified site ID and query.
  *
  *
- * @param {object}  query  Query object
+ * @param {Object}  query  Query object
  * @returns {?Array}         Media
  */
 

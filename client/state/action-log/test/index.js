@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { queryToPredicate } from '..';
 
 describe( 'consoleDispatcher', () => {

@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
-import React, { PureComponent } from 'react';
-
-/**
- * Internal dependencies
- */
+import { PureComponent } from 'react';
 import Search from 'calypso/components/search';
 import SearchCard from 'calypso/components/search-card';
 

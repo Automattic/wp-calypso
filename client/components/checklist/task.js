@@ -1,18 +1,9 @@
-/**
- * External dependencies
- */
+import { Button, CompactCard, ScreenReaderText, Gridicon, Spinner } from '@automattic/components';
 import classNames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
-import PropTypes from 'prop-types';
-import React, { Fragment, PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Button, CompactCard, ScreenReaderText } from '@automattic/components';
+import PropTypes from 'prop-types';
+import { Fragment, PureComponent } from 'react';
 import Notice from 'calypso/components/notice';
-import Spinner from 'calypso/components/spinner';
 
 class Task extends PureComponent {
 	static propTypes = {
@@ -111,12 +102,12 @@ class Task extends PureComponent {
 			return (
 				<div>
 					<div className="checklist__task-warning-background" />
-					<Gridicon icon={ 'notice-outline' } size={ 24 } />
+					<Gridicon icon="notice-outline" size={ 24 } />
 				</div>
 			);
 		}
 
-		return <Gridicon icon={ 'checkmark' } size={ 18 } />;
+		return <Gridicon icon="checkmark" size={ 18 } />;
 	}
 
 	render() {

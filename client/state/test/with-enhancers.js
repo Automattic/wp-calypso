@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { withEnhancers } from 'calypso/state/utils';
 
 describe( '#withEnhancers', () => {

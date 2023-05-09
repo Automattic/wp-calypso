@@ -1,38 +1,33 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { Gridicon } from '@automattic/components';
+import { Icon, moreHorizontalMobile, tag, file, chevronDown } from '@wordpress/icons';
 import classNames from 'classnames';
 import debugFactory from 'debug';
-import Gridicon from 'calypso/components/gridicon';
-import page from 'page';
-import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import Emojify from 'calypso/components/emojify';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import Follow from './action-follow';
-import Page from './action-page';
-import Spam from './action-spam';
-import OpenLink from './action-link';
+import { get } from 'lodash';
+import page from 'page';
+import { Component } from 'react';
 import titlecase from 'to-title-case';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { flagUrl } from 'calypso/lib/flags';
-import { recordTrack } from 'calypso/reader/stats';
 import { decodeEntities } from 'calypso/lib/formatting';
+import { recordTrack } from 'calypso/reader/stats';
+import Follow from './action-follow';
+import OpenLink from './action-link';
+import Page from './action-page';
+import Promote from './action-promote';
+import Spam from './action-spam';
 
 const debug = debugFactory( 'calypso:stats:list-item' );
 
-class StatsListItem extends React.Component {
+class StatsListItem extends Component {
 	static displayName = 'StatsListItem';
 
 	state = {
 		active: this.props.active,
 		actionMenuOpen: false,
 		disabled: false,
+		promoteWidgetOpen: false,
 	};
 
 	addMenuListener = () => {
@@ -86,6 +81,10 @@ class StatsListItem extends React.Component {
 			return;
 		}
 
+		if ( this.state.promoteWidgetOpen ) {
+			return;
+		}
+
 		debug( 'props', this.props );
 		if ( ! this.state.disabled ) {
 			if ( this.props.children ) {
@@ -131,6 +130,12 @@ class StatsListItem extends React.Component {
 		const actionClassSet = classNames( 'module-content-list-item-actions', {
 			collapsed: actionMenu && ! this.state.disabled,
 		} );
+
+		const onTogglePromoteWidget = ( visible ) => {
+			this.setState( {
+				promoteWidgetOpen: visible,
+			} );
+		};
 
 		// If we have more than a default action build out actions ul
 		if ( data.actions ) {
@@ -179,6 +184,17 @@ class StatsListItem extends React.Component {
 				}
 			}, this );
 
+			if ( this.props.moduleName === 'posts' && data.public ) {
+				actionItems.push(
+					<Promote
+						postId={ data.id }
+						key={ 'promote-post-' + data.id }
+						moduleName={ moduleName }
+						onToggleVisibility={ onTogglePromoteWidget }
+					/>
+				);
+			}
+
 			if ( actionItems.length > 0 ) {
 				actionList = <ul className={ actionClassSet }>{ actionItems }</ul>;
 			}
@@ -198,7 +214,6 @@ class StatsListItem extends React.Component {
 		const wrapperClassSet = classNames( {
 			'module-content-list-item-label-section': labelData.length > 1,
 		} );
-
 		const label = labelData.map( function ( labelItem, i ) {
 			const iconClassSetOptions = { avatar: true };
 			let icon;
@@ -206,7 +221,17 @@ class StatsListItem extends React.Component {
 			let itemLabel;
 
 			if ( labelItem.labelIcon ) {
-				gridiconSpan = <Gridicon icon={ labelItem.labelIcon } />;
+				switch ( labelItem.labelIcon ) {
+					case 'tag':
+						gridiconSpan = <Icon className="stats-icon" icon={ tag } size={ 22 } />;
+						break;
+					case 'folder':
+						gridiconSpan = <Icon className="stats-icon" icon={ file } size={ 22 } />;
+						break;
+					default:
+						// fallback to an old icon
+						gridiconSpan = <Gridicon icon={ labelItem.labelIcon } />;
+				}
 			}
 
 			if ( labelItem.icon ) {
@@ -241,11 +266,7 @@ class StatsListItem extends React.Component {
 				if ( this.isFollowersModule && siteId ) {
 					onClickHandler = ( event ) => {
 						const modifierPressed =
-							event.button > 0 ||
-							event.metaKey ||
-							event.controlKey ||
-							event.shiftKey ||
-							event.altKey;
+							event.button > 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
 						recordTrack( 'calypso_reader_stats_module_site_stream_link_click', {
 							site_id: siteId,
 							module_name: this.props.moduleName,
@@ -263,11 +284,11 @@ class StatsListItem extends React.Component {
 
 				itemLabel = (
 					<a onClick={ onClickHandler } href={ href } title={ labelItem.linkTitle }>
-						<Emojify>{ decodeEntities( labelText ) }</Emojify>
+						{ decodeEntities( labelText ) }
 					</a>
 				);
 			} else {
-				itemLabel = <Emojify>{ decodeEntities( labelText ) }</Emojify>;
+				itemLabel = decodeEntities( labelText );
 			}
 
 			return (
@@ -317,7 +338,9 @@ class StatsListItem extends React.Component {
 			show: data.actionMenu && ! this.state.disabled,
 		};
 		const actions = this.buildActions();
-		const toggleGridicon = <Gridicon icon="chevron-down" />;
+		const toggleGridicon = (
+			<Icon className="stats-icon chevron-down" icon={ chevronDown } size={ 24 } />
+		);
 		const toggleIcon = this.props.children ? toggleGridicon : null;
 		let mobileActionToggle;
 
@@ -342,7 +365,7 @@ class StatsListItem extends React.Component {
 						context: 'Label for hidden menu in a list on the Stats page.',
 					} ) }
 				>
-					<Gridicon icon="ellipsis" />
+					<Icon className="stats-icon" icon={ moreHorizontalMobile } size={ 22 } />
 				</button>
 			);
 			rightClassOptions[ 'is-expanded' ] = this.state.actionMenuOpen;

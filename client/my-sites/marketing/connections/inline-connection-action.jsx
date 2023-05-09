@@ -1,22 +1,14 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import requestExternalAccess from '@automattic/request-external-access';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
-import ServiceAction from './service-action';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { requestKeyringConnections } from 'calypso/state/sharing/keyring/actions';
 import {
 	getKeyringConnections,
 	isKeyringConnectionsFetching,
 } from 'calypso/state/sharing/keyring/selectors';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import requestExternalAccess from '@automattic/request-external-access';
+import ServiceAction from './service-action';
 
 export const getNamedConnectedService = ( state, name ) =>
 	getKeyringConnections( state ).filter( ( item ) => item.service === name );
@@ -95,6 +87,7 @@ class InlineConnectButton extends Component {
 		this.props.recordGoogleEvent( 'Sharing', eventName, id );
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.isFetching === true ) {
 			this.setState( { isConnecting: false, isRefreshing: false } );

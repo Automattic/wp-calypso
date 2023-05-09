@@ -1,16 +1,10 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
+import config, { isCalypsoLive } from '@automattic/calypso-config';
 import { includes, isEmpty } from 'lodash';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
-import config, { isCalypsoLive } from '@automattic/calypso-config';
+import PropTypes from 'prop-types';
 import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
-import { addQueryArgs, externalRedirect, untrailingslashit } from 'calypso/lib/route';
+import { navigate } from 'calypso/lib/navigate';
+import { addQueryArgs, untrailingslashit } from 'calypso/lib/route';
 import { urlToSlug } from 'calypso/lib/url';
 import {
 	JPC_PATH_PLANS,
@@ -119,8 +113,8 @@ export function getRoleFromScope( scope ) {
  * Parse an authorization query
  *
  * @property {Function} parser Lazy-instatiated parser
- * @param  {object}     query  Authorization query
- * @returns {?object}           Query after transformation. Null if invalid or errored during transform.
+ * @param  {Object}     query  Authorization query
+ * @returns {?Object}           Query after transformation. Null if invalid or errored during transform.
  */
 export function parseAuthorizationQuery( query ) {
 	if ( ! parseAuthorizationQuery.parser ) {
@@ -143,7 +137,7 @@ export function parseAuthorizationQuery( query ) {
  * @param  {string}     type Redirect type
  * @param  {string}     url Site url
  * @param  {?string}    product Product slug
- * @param  {?object}    queryArgs Query parameters
+ * @param  {?Object}    queryArgs Query parameters
  * @returns {string}        Redirect url
  */
 export function redirect( type, url, product = null, queryArgs = {} ) {
@@ -162,7 +156,7 @@ export function redirect( type, url, product = null, queryArgs = {} ) {
 
 	if ( type === 'remote_auth' ) {
 		urlRedirect = addCalypsoEnvQueryArg( url + REMOTE_PATH_AUTH );
-		externalRedirect( urlRedirect );
+		navigate( urlRedirect );
 	}
 
 	if ( type === 'install_instructions' ) {

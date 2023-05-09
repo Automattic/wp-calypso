@@ -1,14 +1,3 @@
-/**
- * External dependencies
- *
- */
-
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-
 function supportUserFn( { user, token, path, authorized } ) {
 	const url = window.location.toString();
 

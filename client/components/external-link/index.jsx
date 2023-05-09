@@ -1,28 +1,18 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import { ScreenReaderText, Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import classnames from 'classnames';
-import { omit } from 'lodash';
-import Gridicon from 'calypso/components/gridicon';
 import { translate } from 'i18n-calypso';
+import { omit } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 
-/**
- * Internal dependencies
- */
-import { ScreenReaderText } from '@automattic/components';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class ExternalLink extends Component {
 	static defaultProps = {
 		iconSize: 18,
 		showIconFirst: false,
+		iconComponent: null,
 	};
 
 	static propTypes = {
@@ -34,6 +24,7 @@ class ExternalLink extends Component {
 		target: PropTypes.string,
 		showIconFirst: PropTypes.bool,
 		iconClassName: PropTypes.string,
+		iconComponent: PropTypes.object,
 	};
 
 	render() {
@@ -43,7 +34,7 @@ class ExternalLink extends Component {
 		} );
 
 		const props = {
-			...omit( this.props, 'icon', 'iconSize', 'showIconFirst', 'iconClassName' ),
+			...omit( this.props, 'icon', 'iconSize', 'showIconFirst', 'iconClassName', 'iconComponent' ),
 			className: classes,
 			rel: 'external',
 		};
@@ -60,7 +51,7 @@ class ExternalLink extends Component {
 			props.href = localizeUrl( props.href );
 		}
 
-		const iconComponent = (
+		const iconComponent = this.props.iconComponent || (
 			<Gridicon
 				className={ this.props.iconClassName }
 				icon="external"

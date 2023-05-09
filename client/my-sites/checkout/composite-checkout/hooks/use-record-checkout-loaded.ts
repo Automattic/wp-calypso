@@ -1,49 +1,44 @@
-/**
- * External dependencies
- */
-import { useRef } from 'react';
 import debugFactory from 'debug';
-import type { ResponseCart } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
-import type { StoredCard } from '../types/stored-cards';
+import { useRef } from 'react';
+import { useDispatch } from 'react-redux';
 import { hasRenewalItem } from 'calypso/lib/cart-values/cart-items';
-import { ReactStandardAction } from '../types/analytics';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import type { ResponseCart } from '@automattic/shopping-cart';
+import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-record-checkout-loaded' );
 
 export default function useRecordCheckoutLoaded( {
-	recordEvent,
 	isLoading,
-	isApplePayAvailable,
 	responseCart,
 	storedCards,
 	productAliasFromUrl,
 	checkoutFlow,
+	isGiftPurchase,
 }: {
-	recordEvent: ( action: ReactStandardAction ) => void;
 	isLoading: boolean;
-	isApplePayAvailable: boolean;
 	responseCart: ResponseCart;
-	storedCards: StoredCard[];
+	storedCards: StoredPaymentMethod[];
 	productAliasFromUrl: string | undefined | null;
 	checkoutFlow: string;
+	isGiftPurchase?: boolean;
 } ): void {
+	const reduxDispatch = useDispatch();
 	const hasRecordedCheckoutLoad = useRef( false );
 	if ( ! isLoading && ! hasRecordedCheckoutLoad.current ) {
 		debug( 'composite checkout has loaded' );
-		recordEvent( {
-			type: 'CHECKOUT_LOADED',
-			payload: {
+		reduxDispatch(
+			recordTracksEvent( 'calypso_checkout_page_view', {
 				saved_cards: storedCards.length,
-				apple_pay_available: isApplePayAvailable,
-				product_slug: productAliasFromUrl,
 				is_renewal: hasRenewalItem( responseCart ),
+				is_gift_purchase: isGiftPurchase,
+				product_slug: productAliasFromUrl,
+				is_composite: true,
 				checkout_flow: checkoutFlow,
-			},
-		} );
+			} )
+		);
+		reduxDispatch( recordTracksEvent( 'calypso_checkout_composite_loaded', {} ) );
+
 		hasRecordedCheckoutLoad.current = true;
 	}
 }

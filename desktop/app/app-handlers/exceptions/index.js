@@ -1,16 +1,9 @@
-/**
- * External Dependencies
- */
 const { app, dialog } = require( 'electron' );
-
-/**
- * Internal dependencies
- */
 const crashTracker = require( '../../lib/crash-tracker' );
-const system = require( '../../lib/system' );
 const log = require( '../../lib/logger' )( 'desktop:exceptions', {
 	handleExceptions: true,
 } );
+const system = require( '../../lib/system' );
 
 /**
  * Module variables

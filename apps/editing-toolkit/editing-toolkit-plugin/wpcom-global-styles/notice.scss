@@ -1,0 +1,23 @@
+.wpcom-global-styles-notice {
+	margin: 0 0 0 0;
+
+	.notice-margin {
+		margin: 16px 0 0;
+	}
+
+	.components-notice__content {
+		margin-right: 0;
+	}
+
+	a {
+		display: inline;
+	}
+
+	.components-button.is-link {
+		color: var(--color-link);
+
+		&:hover {
+			color: var(--color-link-light);
+		}
+	}
+}

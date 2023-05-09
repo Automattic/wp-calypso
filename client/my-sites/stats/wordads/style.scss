@@ -1,5 +1,16 @@
-@include breakpoint-deprecated( '>480px' ) {
+@include breakpoint-deprecated( ">480px" ) {
 	.wordads .stats-tabs .stats-tab {
 		width: 33.33%;
 	}
+
+	.earnings_history td:hover,
+	.earnings_history tbody tr:hover td,
+	.earnings_history tbody tr:hover th:first-child {
+		background: var(--color-primary-0);
+	}
+
+	.earnings_history tbody tr:nth-child(odd) {
+		background-color: var(--studio-gray-0);
+	}
 }
+

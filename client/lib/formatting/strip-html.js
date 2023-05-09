@@ -1,6 +1,3 @@
-/**
- * External Dependencies
- */
 import stripTags from 'striptags';
 
 /**

@@ -1,36 +1,29 @@
-/**
- * External dependencies
- */
-import React, { Fragment } from 'react';
-import { connect, useDispatch } from 'react-redux';
-import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
+import { localize } from 'i18n-calypso';
+import { Fragment } from 'react';
+import { connect, useDispatch } from 'react-redux';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
-import isEligibleForFreeToPaidUpsell from 'calypso/state/selectors/is-eligible-for-free-to-paid-upsell';
-import getSites from 'calypso/state/selectors/get-sites';
+import { clickUpgradeNudge } from 'calypso/state/marketing/actions';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getPrimarySiteSlug from 'calypso/state/selectors/get-primary-site-slug';
-import { clickUpgradeNudge } from 'calypso/state/marketing/actions';
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import getSites from 'calypso/state/selectors/get-sites';
+import isEligibleForFreeToPaidUpsell from 'calypso/state/selectors/is-eligible-for-free-to-paid-upsell';
 
 const debug = debugFactory( 'calypso:reader:sidebar-nudges' );
 
 function renderFreeToPaidPlanNudge( { siteId, siteSlug, translate }, dispatch ) {
 	return (
 		<UpsellNudge
-			event={ 'free-to-paid-sidebar-reader' }
+			event="free-to-paid-sidebar-reader"
 			forceHref={ true }
 			callToAction={ translate( 'Upgrade' ) }
 			compact
 			href={ '/plans/' + siteSlug }
 			title={ translate( 'Free domain with an annual plan' ) }
 			onClick={ () => dispatch( clickUpgradeNudge( siteId ) ) }
-			tracksClickName={ 'calypso_upgrade_nudge_cta_click' }
-			tracksImpressionName={ 'calypso_upgrade_nudge_impression' }
+			tracksClickName="calypso_upgrade_nudge_cta_click"
+			tracksImpressionName="calypso_upgrade_nudge_impression"
 		/>
 	);
 }

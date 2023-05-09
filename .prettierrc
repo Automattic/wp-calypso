@@ -4,5 +4,5 @@ printWidth: 100
 singleQuote: true
 bracketSpacing: true
 parenSpacing: true
-jsxBracketSameLine: false
+bracketSameLine: false
 semi: true

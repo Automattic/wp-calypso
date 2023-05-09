@@ -1,20 +1,27 @@
 /**
  * @jest-environment jsdom
  */
-
-/**
- * External dependencies
- */
+import { screen } from '@testing-library/react';
 import deepFreeze from 'deep-freeze';
-import React from 'react';
-import { shallow } from 'enzyme';
-
-/**
- * Internal dependencies
- */
-import LocaleSuggestions from 'calypso/components/locale-suggestions';
+import loginReducer from 'calypso/state/login/reducer';
+import siteConnectionReducer from 'calypso/state/site-connection/reducer';
+import uiReducer from 'calypso/state/ui/reducer';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { JetpackSignup } from '../signup.js';
-import FormattedHeader from 'calypso/components/formatted-header';
+
+jest.mock( 'calypso/components/data/document-head', () => () => 'DocumentHead' );
+jest.mock( 'calypso/components/social-buttons/google', () => () => 'GoogleSocialButton' );
+jest.mock( 'calypso/components/social-buttons/apple', () => () => 'AppleLoginButton' );
+
+const render = ( el, options ) =>
+	renderWithProvider( el, {
+		reducers: {
+			login: loginReducer,
+			siteConnection: siteConnectionReducer,
+			ui: uiReducer,
+		},
+		...options,
+	} );
 
 const noop = () => {};
 const CLIENT_ID = 98765;
@@ -54,14 +61,25 @@ const DEFAULT_PROPS = deepFreeze( {
 } );
 
 describe( 'JetpackSignup', () => {
-	test( 'should render', () => {
-		const wrapper = shallow( <JetpackSignup { ...DEFAULT_PROPS } /> );
+	let originalScrollTo;
 
-		expect( wrapper ).toMatchSnapshot();
+	beforeAll( () => {
+		originalScrollTo = window.scrollTo;
+		window.scrollTo = () => null;
+	} );
+
+	afterAll( () => {
+		window.scrollTo = originalScrollTo;
+	} );
+
+	test( 'should render', () => {
+		const { container } = render( <JetpackSignup { ...DEFAULT_PROPS } /> );
+
+		expect( container ).toMatchSnapshot();
 	} );
 
 	test( 'should render with locale suggestions', () => {
-		const wrapper = shallow(
+		const { container } = render(
 			<JetpackSignup
 				{ ...DEFAULT_PROPS }
 				authorizationData={ {
@@ -73,8 +91,7 @@ describe( 'JetpackSignup', () => {
 			/>
 		);
 
-		expect( wrapper ).toMatchSnapshot();
-		expect( wrapper.find( LocaleSuggestions ) ).toHaveLength( 1 );
+		expect( container ).toMatchSnapshot();
 	} );
 
 	test( 'should render WC Payments specific sub header copy', () => {
@@ -88,14 +105,12 @@ describe( 'JetpackSignup', () => {
 			},
 		};
 
-		// Notice we have \xa0. This is needed when we compare translated text.
-		// Please refer to https://stackoverflow.com/questions/54242039/intl-numberformat-space-character-does-not-match
 		const expectedText =
-			'Enter your email address to get started. Your account will enable you to start using the features and benefits offered by WooCommerce\xa0Payments';
-		const wrapper = shallow( <JetpackSignup { ...props } /> )
-			.find( FormattedHeader )
-			.render();
+			'Enter your email address to get started. Your account will enable you to start using the features and benefits offered by WooCommerce Payments';
 
-		expect( wrapper.find( '.formatted-header__subtitle' ).text() ).toEqual( expectedText );
+		render( <JetpackSignup { ...props } /> );
+
+		expect( screen.getByText( expectedText ) ).toBeVisible();
+		expect( screen.getByText( expectedText ) ).toHaveClass( 'formatted-header__subtitle' );
 	} );
 } );

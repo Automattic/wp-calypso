@@ -1,24 +1,19 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import EducationalContent from '../educational-content';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-export const EDUCATION_EARN = 'home-education-earn';
-
-/**
- * Image dependencies
- */
 import earnCardPrompt from 'calypso/assets/images/customer-home/illustration--secondary-earn.svg';
+import VideoModal from 'calypso/components/videos-ui/video-modal';
+import { COURSE_SLUGS } from 'calypso/data/courses';
+import { useRouteModal } from 'calypso/lib/route-modal';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import EducationalContent from '../educational-content';
+export const EDUCATION_EARN = 'home-education-earn';
 
 const EducationEarn = ( { siteSlug } ) => {
 	const translate = useTranslate();
+	const { isModalOpen, openModal, closeModal } = useRouteModal(
+		'coursePaymentsModal',
+		COURSE_SLUGS.PAYMENTS_FEATURES
+	);
 
 	return (
 		<EducationalContent
@@ -33,8 +28,27 @@ const EducationEarn = ( { siteSlug } ) => {
 					text: translate( 'Start making money' ),
 				},
 			] }
+			modalLinks={ [
+				{
+					calypsoLink: true,
+					url: `/earn/${ siteSlug }`,
+					ModalComponent: VideoModal,
+					modalComponentProps: {
+						isVisible: isModalOpen,
+						onClose: ( event ) => {
+							event.preventDefault();
+							closeModal();
+						},
+						courseSlug: COURSE_SLUGS.PAYMENTS_FEATURES,
+					},
+					onClick: openModal,
+					text: translate( 'Learn more' ),
+				},
+			] }
 			illustration={ earnCardPrompt }
 			cardName={ EDUCATION_EARN }
+			width="201"
+			height="114"
 		/>
 	);
 };

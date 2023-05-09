@@ -1,22 +1,12 @@
-/**
- * External dependencies
- */
-import { debounce } from 'lodash';
-
-/**
- * WordPress dependencies
- */
-import { useState } from '@wordpress/element';
 import {
 	__unstableInserterMenuExtension,
 	__experimentalInserterMenuExtension,
 } from '@wordpress/block-editor';
+import { useState } from '@wordpress/element';
 import { registerPlugin } from '@wordpress/plugins';
-
-/**
- * Internal dependencies
- */
+import { debounce } from 'lodash';
 import ContextualTip from './contextual-tips/contextual-tip';
+
 import './contextual-tips/style.scss';
 
 // InserterMenuExtension has been made unstable in this PR: https://github.com/WordPress/gutenberg/pull/31417 / Gutenberg v10.7.0-rc.1.

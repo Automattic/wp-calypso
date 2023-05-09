@@ -1,41 +1,33 @@
-/**
- * External dependencies
- */
-import React, { ErrorInfo } from 'react';
-import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
-import styled from '../lib/styled';
-
-const debug = debugFactory( 'composite-checkout:checkout-error-boundary' );
+import styled from '@emotion/styled';
+import { Component } from 'react';
+import type { ReactNode } from 'react';
 
 const ErrorContainer = styled.div`
 	margin: 2em;
 	text-align: center;
 `;
 
-export default class CheckoutErrorBoundary extends React.Component< CheckoutErrorBoundaryProps > {
+export default class CheckoutErrorBoundary extends Component< CheckoutErrorBoundaryProps > {
 	constructor( props: CheckoutErrorBoundaryProps ) {
 		super( props );
 	}
 
-	public state = { hasError: false, currentError: null };
+	public state = { hasError: false };
 
-	static getDerivedStateFromError( error: string ) {
-		return { currentError: error, hasError: true };
+	static getDerivedStateFromError(): { hasError: true } {
+		return { hasError: true };
 	}
 
-	componentDidCatch( error: Error, errorInfo: ErrorInfo ) {
+	componentDidCatch( error: Error ): void {
 		if ( this.props.onError ) {
-			const errorMessage = `${ error.message }; Stack: ${ error.stack }; Component Stack: ${ errorInfo.componentStack }`;
-			debug( 'reporting the error', errorMessage );
-			this.props.onError( errorMessage );
+			const errorContext =
+				typeof this.props.errorMessage === 'string' ? this.props.errorMessage : error.message;
+			const errorWithCause = new Error( errorContext, { cause: error } );
+			this.props.onError( errorWithCause );
 		}
 	}
 
-	render() {
+	render(): ReactNode {
 		if ( this.state.hasError ) {
 			return <ErrorFallback errorMessage={ this.props.errorMessage } />;
 		}
@@ -44,10 +36,11 @@ export default class CheckoutErrorBoundary extends React.Component< CheckoutErro
 }
 
 interface CheckoutErrorBoundaryProps {
-	errorMessage: React.ReactNode;
-	onError?: ( message: string ) => void | undefined;
+	errorMessage: ReactNode;
+	onError?: ( error: Error ) => void;
+	children?: ReactNode;
 }
 
-function ErrorFallback( { errorMessage }: { errorMessage: React.ReactNode } ) {
+function ErrorFallback( { errorMessage }: { errorMessage: ReactNode } ) {
 	return <ErrorContainer>{ errorMessage }</ErrorContainer>;
 }

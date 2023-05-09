@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import store from 'store';
-
-/**
- * Internal dependencies
- */
 import { clearStorage } from 'calypso/lib/browser-storage';
 
 /**
@@ -22,4 +15,16 @@ export function getStoredUserId() {
 
 export function setStoredUserId( userId ) {
 	return store.set( 'wpcom_user_id', userId );
+}
+
+const disablePersistenceCallbacks = [];
+
+export function disablePersistence() {
+	for ( const callback of disablePersistenceCallbacks ) {
+		callback();
+	}
+}
+
+export function onDisablePersistence( callback ) {
+	disablePersistenceCallbacks.push( callback );
 }

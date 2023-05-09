@@ -1,11 +1,8 @@
-/**
- * Internal dependencies
- */
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { USER_PROFILE_LINKS_REQUEST } from 'calypso/state/action-types';
-import { receiveUserProfileLinks } from 'calypso/state/profile-links/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { receiveUserProfileLinks } from 'calypso/state/profile-links/actions';
 
 import 'calypso/state/profile-links/init';
 
@@ -14,8 +11,8 @@ const noop = () => {};
 /**
  * Dispatches a request to fetch profile links of the current user
  *
- * @param   {object} action Redux action
- * @returns {object} Dispatched http action
+ * @param   {Object} action Redux action
+ * @returns {Object} Dispatched http action
  */
 export const requestUserProfileLinks = ( action ) =>
 	http(
@@ -30,10 +27,10 @@ export const requestUserProfileLinks = ( action ) =>
 /**
  * Dispatches a user profile links receive action when the request succeeded.
  *
- * @param   {object} action             Redux action
+ * @param   {Object} action             Redux action
  * @param   {Array}  data               Response from the endpoint
- * @param   {object} data.profile_links Profile links
- * @returns {object} Dispatched user profile links receive action
+ * @param   {Object} data.profile_links Profile links
+ * @returns {Object} Dispatched user profile links receive action
  */
 export const handleRequestSuccess = ( action, { profile_links } ) =>
 	receiveUserProfileLinks( profile_links );

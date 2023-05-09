@@ -1,38 +1,25 @@
-/**
- * External dependencies
- */
-import React, { ReactElement, FunctionComponent } from 'react';
+import { Button } from '@automattic/components';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import { Button } from '@automattic/components';
-
-/**
- * Internal dependencies
- */
-import { addQueryArgs } from '@wordpress/url';
-import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import JetpackScanSVG from 'calypso/assets/images/illustrations/jetpack-scan.svg';
+import VaultPressLogo from 'calypso/assets/images/jetpack/vaultpress-logo.svg';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import JetpackDisconnectedWPCOM from 'calypso/components/jetpack/jetpack-disconnected-wpcom';
+import SecurityIcon from 'calypso/components/jetpack/security-icon';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { preventWidows } from 'calypso/lib/formatting';
-import SecurityIcon from 'calypso/components/jetpack/security-icon';
-
-/**
- * Asset dependencies
- */
-import JetpackScanSVG from 'calypso/assets/images/illustrations/jetpack-scan.svg';
-import VaultPressLogo from 'calypso/assets/images/jetpack/vaultpress-logo.svg';
+import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import './style.scss';
 
-const ScanMultisiteBody: FunctionComponent = () => {
+const ScanMultisiteBody = () => {
 	const translate = useTranslate();
 	return (
 		<PromoCard
@@ -51,7 +38,7 @@ const ScanMultisiteBody: FunctionComponent = () => {
 	);
 };
 
-const ScanVPActiveBody: FunctionComponent = () => {
+const ScanVPActiveBody = () => {
 	const onUpgradeClick = useTrackCallback( undefined, 'calypso_jetpack_scan_vaultpress_click' );
 	const translate = useTranslate();
 	return (
@@ -72,7 +59,6 @@ const ScanVPActiveBody: FunctionComponent = () => {
 					className="scan__wpcom-cta"
 					href="https://dashboard.vaultpress.com"
 					onClick={ onUpgradeClick }
-					selfTarget={ true }
 					primary
 				>
 					{ translate( 'Visit Dashboard' ) }
@@ -82,7 +68,7 @@ const ScanVPActiveBody: FunctionComponent = () => {
 	);
 };
 
-const ScanUpsellBody: FunctionComponent = () => {
+const ScanUpsellBody = () => {
 	const onUpgradeClick = useTrackCallback( undefined, 'calypso_jetpack_scan_upsell' );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const siteId = useSelector( getSelectedSiteId );
@@ -90,6 +76,12 @@ const ScanUpsellBody: FunctionComponent = () => {
 		( state ) => siteId && canCurrentUser( state, siteId, 'manage_options' )
 	);
 	const translate = useTranslate();
+	const postCheckoutUrl = window.location.pathname + window.location.search;
+
+	const nonAdminNoticeText = translate(
+		'Only site administrators can upgrade to access security scanning.'
+	);
+	const buttonText = translate( 'Get Jetpack Scan' );
 
 	return (
 		<PromoCard
@@ -105,20 +97,16 @@ const ScanUpsellBody: FunctionComponent = () => {
 			</p>
 
 			{ ! isAdmin && (
-				<Notice
-					status="is-warning"
-					text={ translate( 'Only site administrators can upgrade to access daily scanning.' ) }
-					showDismiss={ false }
-				/>
+				<Notice status="is-warning" text={ nonAdminNoticeText } showDismiss={ false } />
 			) }
 
 			{ isAdmin && (
 				<PromoCardCTA
 					cta={ {
-						text: translate( 'Get daily scanning' ),
+						text: buttonText,
 						action: {
 							url: addQueryArgs( `/checkout/${ siteSlug }/jetpack_scan`, {
-								redirect_to: window.location.href,
+								redirect_to: postCheckoutUrl,
 							} ),
 							onClick: onUpgradeClick,
 							selfTarget: true,
@@ -130,7 +118,7 @@ const ScanUpsellBody: FunctionComponent = () => {
 	);
 };
 
-export default function WPCOMScanUpsellPage( { reason }: { reason?: string } ): ReactElement {
+export default function WPCOMScanUpsellPage( { reason }: { reason?: string } ) {
 	const translate = useTranslate();
 	let body;
 	switch ( reason ) {
@@ -149,7 +137,6 @@ export default function WPCOMScanUpsellPage( { reason }: { reason?: string } ): 
 	return (
 		<Main className="scan scan__wpcom-upsell">
 			<DocumentHead title="Scanner" />
-			<SidebarNavigation />
 			<PageViewTracker path="/scan/:site" title="Scanner" />
 
 			<FormattedHeader

@@ -1,19 +1,11 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { getSite } from 'calypso/state/sites/selectors';
 import { Card } from '@automattic/components';
-import Header from './header';
+import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import SettingsForm from 'calypso/me/notification-settings/settings-form';
+import { getSite } from 'calypso/state/sites/selectors';
+import Header from './header';
 
 class BlogSettings extends Component {
 	static propTypes = {
@@ -27,7 +19,20 @@ class BlogSettings extends Component {
 		onSaveToAll: PropTypes.func.isRequired,
 	};
 
-	state = { isExpanded: false };
+	// Does the URL contain the anchor #site-domain ?
+	checkForSiteAnchor = () => {
+		const domain = this.props.site?.domain ?? '';
+		if ( domain.length === 0 ) {
+			return false;
+		}
+		const hash = window.location.hash.substr( 1 );
+		if ( hash.indexOf( domain ) > -1 ) {
+			return true;
+		}
+		return false;
+	};
+
+	state = { isExpanded: this.checkForSiteAnchor() };
 
 	onToggle = () => {
 		const isExpanded = ! this.state.isExpanded;
@@ -61,6 +66,8 @@ class BlogSettings extends Component {
 			'achievement',
 			'mentions',
 			'scheduled_publicize',
+			'blogging_prompt',
+			'draft_post_prompt',
 		];
 
 		if ( site.options.woocommerce_is_active ) {

@@ -3,13 +3,10 @@
  *
  */
 
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
+import { stringify } from 'qs';
 
 const debug = debugFactory( 'jsonp' );
-import { stringify } from 'qs';
 
 /**
  * Module exports.
@@ -30,8 +27,8 @@ function noop() {}
  * JSONP handler
  *
  * @param {string} url
- * @param {object} query params
- * @param {Function} optional callback
+ * @param {Object} query params
+ * @param {Function} fn optional callback
  */
 function jsonp( url, query, fn ) {
 	const prefix = '__jp';
@@ -51,6 +48,9 @@ function jsonp( url, query, fn ) {
 			}
 		}, timeout );
 	}
+
+	// create script
+	const script = document.createElement( 'script' );
 
 	function cleanup() {
 		if ( script.parentNode ) {
@@ -79,12 +79,10 @@ function jsonp( url, query, fn ) {
 
 	// add qs component
 	url += '=' + enc( id ) + '?' + stringify( query );
-
 	debug( 'jsonp req "%s"', url );
-
-	// create script
-	const script = document.createElement( 'script' );
 	script.src = url;
+
+	// add the script
 	target.parentNode.insertBefore( script, target );
 
 	return cancel;

@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import { mapValues } from 'lodash';
-
-/**
- * Internal Dependencies
- */
 import { decodeEntities } from 'calypso/lib/formatting';
 
 function filterObjectProperties( object ) {

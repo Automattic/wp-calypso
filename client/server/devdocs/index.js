@@ -1,21 +1,14 @@
-/**
- * External dependencies
- */
-import express from 'express';
 import fs from 'fs';
 import fspath from 'path';
-import marked from 'marked';
-import lunr from 'lunr';
+import config from '@automattic/calypso-config';
+import express from 'express';
 import { escapeRegExp, find, escape as escapeHTML, once } from 'lodash';
+import lunr from 'lunr';
+import { marked } from 'marked';
 import Prism from 'prismjs';
 import 'prismjs/components/prism-jsx';
 import 'prismjs/components/prism-json';
 import 'prismjs/components/prism-scss';
-
-/**
- * Internal dependencies
- */
-import config from '@automattic/calypso-config';
 import searchSelectors from './selectors';
 
 const loadSearchIndex = once( async () => {
@@ -50,7 +43,7 @@ marked.setOptions( {
  * We store the documents and index in memory for speed,
  * and also because lunr.js is designed to be memory resident
  *
- * @param {object} query The search query for lunr
+ * @param {Object} query The search query for lunr
  * @returns {Array} The results from the query
  */
 async function queryDocs( query ) {
@@ -99,8 +92,8 @@ async function listDocs( filePaths ) {
  * any term(s) featured in a whitespace-delimited search query.
  * We look for up to 3 matches in a document and concatenate them.
  *
- * @param {object} doc The document to extract the snippet from
- * @param {object} query The query to be searched for
+ * @param {Object} doc The document to extract the snippet from
+ * @param {Object} query The query to be searched for
  * @returns {string} A snippet from the document
  */
 function makeSnippet( doc, query ) {
@@ -137,7 +130,7 @@ function makeSnippet( doc, query ) {
 /**
  * Generate a standardized snippet
  *
- * @param {object} doc The document from which to generate the snippet
+ * @param {Object} doc The document from which to generate the snippet
  * @returns {string} The snippet
  */
 function defaultSnippet( doc ) {
@@ -228,7 +221,7 @@ export default function devdocs() {
 				return;
 			}
 
-			response.send( 'html' === format ? marked( doc.content ) : doc.content );
+			response.send( 'html' === format ? marked.parse( doc.content ) : doc.content );
 		} catch ( error ) {
 			console.error( error );
 			response.status( 400 ).json( { message: 'Internal server error: no document index' } );

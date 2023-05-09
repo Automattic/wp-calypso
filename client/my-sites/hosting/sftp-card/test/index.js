@@ -2,19 +2,30 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
-import { shallow, mount } from 'enzyme';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { render, screen } from '@testing-library/react';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
 import { SftpCard } from '..';
+
+jest.mock( '@automattic/components/src/spinner', () => ( {
+	__esModule: true,
+	Spinner: () => <div data-testid="spinner" />,
+} ) );
 
 const translate = ( x ) => x;
 const requestSftpUsers = ( x ) => x;
+const removePasswordFromState = ( x ) => x;
+
+const store = createStore( ( state ) => state, {
+	ui: { selectedSiteId: 1 },
+	currentUser: { id: 1 },
+} );
+
+const props = {
+	translate,
+	requestSftpUsers,
+	removePasswordFromState,
+};
 
 describe( 'SftpCard', () => {
 	beforeAll( () => {
@@ -35,86 +46,140 @@ describe( 'SftpCard', () => {
 	} );
 
 	describe( 'Sftp Questions', () => {
-		it( 'should display sftp questions if no sftp username', () => {
-			const wrapper = shallow( <SftpCard translate={ translate } /> );
-
-			expect( wrapper.find( '.sftp-card__questions' ) ).toHaveLength( 1 );
-		} );
-		it( 'should not display sftp questions if sftp username is set', () => {
-			const wrapper = shallow( <SftpCard translate={ translate } username="testuser" /> );
-
-			expect( wrapper.find( '.sftp-card__questions' ) ).toHaveLength( 0 );
-		} );
-		it( 'should not display sftp questions if loading', () => {
-			// need to use a mount rather than shallow for tests that require useEffects to run
-			const wrapper = mount(
-				<SftpCard translate={ translate } requestSftpUsers={ requestSftpUsers } />
+		it( 'should display sftp questions if no sftp username', async () => {
+			render(
+				<Provider store={ store }>
+					<SftpCard { ...props } username={ null } />
+				</Provider>
 			);
 
-			expect( wrapper.find( '.sftp-card__questions' ) ).toHaveLength( 0 );
+			expect( screen.getByText( 'What is SFTP?' ) ).toBeVisible();
+			expect( screen.getByText( 'What is SSH?' ) ).toBeVisible();
+		} );
+
+		it( 'should not display sftp questions if sftp username is set', () => {
+			render(
+				<Provider store={ store }>
+					<SftpCard { ...props } username="testuser" />
+				</Provider>
+			);
+
+			expect( screen.queryByText( 'What is SFTP?' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'What is SSH?' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'should not display sftp questions if loading', () => {
+			render(
+				<Provider store={ store }>
+					<SftpCard { ...props } />
+				</Provider>
+			);
+
+			expect( screen.queryByText( 'What is SFTP?' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'What is SSH?' ) ).not.toBeInTheDocument();
 		} );
 	} );
 
 	describe( 'Loading', () => {
 		it( 'should display spinner if username not set and not disabled', () => {
-			const wrapper = mount(
-				<SftpCard translate={ translate } requestSftpUsers={ requestSftpUsers } />
+			render(
+				<Provider store={ store }>
+					<SftpCard { ...props } />
+				</Provider>
 			);
 
-			expect( wrapper.find( 'Spinner' ) ).toHaveLength( 1 );
+			expect( screen.getByTestId( 'spinner' ) ).toBeVisible();
 		} );
+
 		it( 'should not display spinner if disabled', () => {
-			const wrapper = mount(
-				<SftpCard translate={ translate } requestSftpUsers={ requestSftpUsers } disabled={ true } />
+			render(
+				<Provider store={ store }>
+					<SftpCard { ...props } disabled={ true } />
+				</Provider>
 			);
 
-			expect( wrapper.find( 'Spinner' ) ).toHaveLength( 0 );
+			expect( screen.queryByTestId( 'spinner' ) ).not.toBeInTheDocument();
 		} );
 	} );
 
 	describe( 'Create SFTP credentials', () => {
+		const btnName = 'Create credentials';
 		it( 'should display create SFTP credentials if username not set', () => {
-			const wrapper = shallow( <SftpCard translate={ translate } /> );
+			render(
+				<Provider store={ store }>
+					<SftpCard { ...props } username={ null } />
+				</Provider>
+			);
 
-			expect( wrapper.find( '.sftp-card__create-credentials-button' ) ).toHaveLength( 1 );
+			expect( screen.getByRole( 'button', { name: btnName } ) ).toBeVisible();
 		} );
-		it( 'should not display create SFTP credentials if username set', () => {
-			const wrapper = shallow( <SftpCard translate={ translate } username="testuser" /> );
 
-			expect( wrapper.find( '.sftp-card__create-credentials-button' ) ).toHaveLength( 0 );
+		it( 'should not display create SFTP credentials if username set', () => {
+			render(
+				<Provider store={ store }>
+					<SftpCard { ...props } username="testuser" />
+				</Provider>
+			);
+
+			expect( screen.queryByRole( 'button', { name: btnName } ) ).not.toBeInTheDocument();
 		} );
 	} );
 
 	describe( 'User info fields', () => {
 		it( 'should display user info fields if username set', () => {
-			const wrapper = shallow( <SftpCard translate={ translate } username="testuser" /> );
+			render(
+				<Provider store={ store }>
+					<SftpCard { ...props } username="testuser" />
+				</Provider>
+			);
 
-			expect( wrapper.find( '.sftp-card__info-field' ) ).toHaveLength( 1 );
+			expect( screen.getByLabelText( 'URL' ) ).toHaveValue( 'sftp.wp.com' );
+			expect( screen.getByLabelText( 'Port' ) ).toHaveValue( '22' );
+			expect( screen.getByLabelText( 'Username' ) ).toHaveValue( 'testuser' );
 		} );
-		it( 'should not display user info fields if username not set', () => {
-			const wrapper = shallow( <SftpCard translate={ translate } /> );
 
-			expect( wrapper.find( '.sftp-card__info-field' ) ).toHaveLength( 0 );
+		it( 'should not display user info fields if username not set', () => {
+			render(
+				<Provider store={ store }>
+					<SftpCard { ...props } />
+				</Provider>
+			);
+
+			expect( screen.queryByLabelText( 'URL' ) ).not.toBeInTheDocument();
+			expect( screen.queryByLabelText( 'Port' ) ).not.toBeInTheDocument();
+			expect( screen.queryByLabelText( 'Username' ) ).not.toBeInTheDocument();
 		} );
 	} );
 
 	describe( 'Password', () => {
 		it( 'should display password field if password set', () => {
-			const wrapper = shallow(
-				<SftpCard translate={ translate } username="testuser" password="secret" />
+			render(
+				<Provider store={ store }>
+					<SftpCard { ...props } username="testuser" password="secret" />
+				</Provider>
 			);
 
-			expect( wrapper.find( '.sftp-card__password-field' ) ).toHaveLength( 1 );
+			expect( screen.getByLabelText( 'Password' ) ).toBeVisible();
 		} );
+
 		it( 'should not display password field if password not set', () => {
-			const wrapper = shallow( <SftpCard translate={ translate } username="testuser" /> );
+			render(
+				<Provider store={ store }>
+					<SftpCard { ...props } username="testuser" />
+				</Provider>
+			);
 
-			expect( wrapper.find( '.sftp-card__password-field' ) ).toHaveLength( 0 );
+			expect( screen.queryByLabelText( 'Password' ) ).not.toBeInTheDocument();
 		} );
-		it( 'should display password reset button if password not set', () => {
-			const wrapper = shallow( <SftpCard translate={ translate } username="testuser" /> );
 
-			expect( wrapper.find( '.sftp-card__password-reset-button' ) ).toHaveLength( 1 );
+		it( 'should display password reset button if password not set', () => {
+			render(
+				<Provider store={ store }>
+					<SftpCard { ...props } username="testuser" />
+				</Provider>
+			);
+
+			expect( screen.getByRole( 'button', { name: 'Reset password' } ) ).toBeVisible();
 		} );
 	} );
 } );

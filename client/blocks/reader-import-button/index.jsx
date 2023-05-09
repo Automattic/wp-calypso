@@ -1,27 +1,17 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import wpcom from 'calypso/lib/wp';
 import FilePicker from 'calypso/components/file-picker';
+import wpcom from 'calypso/lib/wp';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};
 
-class ReaderImportButton extends React.Component {
+class ReaderImportButton extends Component {
 	static propTypes = {
 		borderless: PropTypes.bool,
 		onProgress: PropTypes.func,
@@ -49,7 +39,19 @@ class ReaderImportButton extends React.Component {
 		}
 
 		this.fileName = file.name;
-		const req = wpcom.undocumented().importReaderFeed( file, this.onImport );
+		const req = wpcom.req.post(
+			{
+				path: '/read/following/mine/import',
+				formData: [ [ 'import', file ] ],
+			},
+			// XXX: kind strange, wpcom.js, that `apiVersion` must be in `query`
+			// *and* pass a `body` of null for this to work properly…
+			{
+				apiVersion: '1.2',
+			},
+			null,
+			this.onImport
+		);
 		req.upload.onprogress = this.onImportProgress;
 
 		this.setState( {

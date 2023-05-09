@@ -1,42 +1,42 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { localize, LocalizeProps } from 'i18n-calypso';
-import { map } from 'lodash';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import ExternalLink from 'calypso/components/external-link';
+import { Card } from '@automattic/components';
+import { localize, LocalizeProps, translate } from 'i18n-calypso';
+import { Fragment } from 'react';
 import ActionPanelLink from 'calypso/components/action-panel/link';
+import Badge from 'calypso/components/badge';
+import ExternalLink from 'calypso/components/external-link';
+import type { DomainNames, EligibilityWarning } from 'calypso/state/automated-transfer/selectors';
 
 interface ExternalProps {
 	context: string | null;
-	warnings: import('state/automated-transfer/selectors').EligibilityWarning[];
+	warnings: EligibilityWarning[];
+	showContact?: boolean;
 }
 
 type Props = ExternalProps & LocalizeProps;
 
-export const WarningList = ( { context, translate, warnings }: Props ) => (
+export const WarningList = ( { context, translate, warnings, showContact = true }: Props ) => (
 	<div>
-		<div className="eligibility-warnings__warning">
-			<Gridicon icon="notice-outline" size={ 24 } />
-			<div className="eligibility-warnings__message">
-				<span className="eligibility-warnings__message-description">
-					{ getWarningDescription( context, warnings.length, translate ) }
-				</span>
+		{ getWarningDescription( context, warnings.length, translate ) && (
+			<div className="eligibility-warnings__warning">
+				<div className="eligibility-warnings__message">
+					<span className="eligibility-warnings__message-description">
+						{ getWarningDescription( context, warnings.length, translate ) }
+					</span>
+				</div>
 			</div>
-		</div>
+		) }
 
-		{ map( warnings, ( { name, description, supportUrl }, index ) => (
+		{ warnings.map( ( { name, description, supportUrl, domainNames }, index ) => (
 			<div className="eligibility-warnings__warning" key={ index }>
 				<div className="eligibility-warnings__message">
-					<span className="eligibility-warnings__message-title">{ name }</span>
-					:&nbsp;
+					{ context !== 'plugin-details' && (
+						<Fragment>
+							<span className="eligibility-warnings__message-title">{ name }</span>:&nbsp;
+						</Fragment>
+					) }
 					<span className="eligibility-warnings__message-description">
-						{ description }{ ' ' }
+						<span>{ description } </span>
+						{ domainNames && displayDomainNames( domainNames ) }
 						{ supportUrl && (
 							<ExternalLink href={ supportUrl } target="_blank" rel="noopener noreferrer">
 								{ translate( 'Learn more.' ) }
@@ -47,21 +47,36 @@ export const WarningList = ( { context, translate, warnings }: Props ) => (
 			</div>
 		) ) }
 
-		<div className="eligibility-warnings__warning">
-			<div className="eligibility-warnings__message">
-				<span className="eligibility-warnings__message-title">{ translate( 'Questions?' ) }</span>
-				:&nbsp;
-				<span className="eligibility-warnings__message-description">
-					{ translate( '{{a}}Contact support{{/a}} for help.', {
-						components: {
-							a: <ActionPanelLink href="/help/contact" />,
-						},
-					} ) }
-				</span>
+		{ showContact && (
+			<div className="eligibility-warnings__warning">
+				<div className="eligibility-warnings__message">
+					<span className="eligibility-warnings__message-description">
+						{ translate( '{{a}}Contact support{{/a}} for help and questions.', {
+							components: {
+								a: <ActionPanelLink href="/help/contact" />,
+							},
+						} ) }
+					</span>
+				</div>
 			</div>
-		</div>
+		) }
 	</div>
 );
+
+function displayDomainNames( domainNames: DomainNames ) {
+	return (
+		<div className="eligibility-warnings__domain-names">
+			<Card compact>
+				<span>{ domainNames.current }</span>
+				<Badge type="info">{ translate( 'current' ) }</Badge>
+			</Card>
+			<Card compact>
+				<span>{ domainNames.new }</span>
+				<Badge type="success">{ translate( 'new' ) }</Badge>
+			</Card>
+		</div>
+	);
+}
 
 function getWarningDescription(
 	context: string | null,
@@ -77,15 +92,9 @@ function getWarningDescription(
 		}
 	);
 	switch ( context ) {
+		case 'plugin-details':
 		case 'plugins':
-			return translate(
-				'By installing a plugin the following change will be made to the site:',
-				'By installing a plugin the following changes will be made to the site:',
-				{
-					count: warningCount,
-					args: warningCount,
-				}
-			);
+			return '';
 
 		case 'themes':
 			return translate(

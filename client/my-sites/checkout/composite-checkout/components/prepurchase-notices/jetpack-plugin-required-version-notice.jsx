@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { useTranslate } from 'i18n-calypso';
-import { preventWidows } from 'calypso/lib/formatting';
 import { getJetpackProductDisplayName } from '@automattic/calypso-products';
-import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
-import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
+import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
+import { preventWidows } from 'calypso/lib/formatting';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
+import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import PrePurchaseNotice from './prepurchase-notice';
 
 const getMessage = ( translate, product, siteVersion, minVersion ) => {
@@ -26,7 +18,7 @@ const getMessage = ( translate, product, siteVersion, minVersion ) => {
 					minVersion: minVersion,
 				},
 				components: {
-					productName: displayName,
+					productName: <>{ displayName }</>,
 					strong: <strong />,
 				},
 			}
@@ -41,7 +33,7 @@ const getMessage = ( translate, product, siteVersion, minVersion ) => {
 				siteVersion: siteVersion,
 			},
 			components: {
-				productName: displayName,
+				productName: <>{ displayName }</>,
 				strong: <strong />,
 			},
 		}

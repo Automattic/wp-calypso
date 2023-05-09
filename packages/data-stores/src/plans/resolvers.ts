@@ -1,13 +1,15 @@
-/**
- * External dependencies
- */
-import { stringify } from 'qs';
 import formatCurrency from '@automattic/format-currency';
-
-/**
- * Internal dependencies
- */
+import { stringify } from 'qs';
+import { fetchAndParse, wpcomRequest } from '../wpcom-request-controls';
 import { setFeatures, setFeaturesByType, setPlanProducts, setPlans } from './actions';
+import {
+	TIMELESS_PLAN_FREE,
+	TIMELESS_PLAN_PREMIUM,
+	plansProductSlugs,
+	monthlySlugs,
+	annualSlugs,
+	FEATURE_IDS_THAT_REQUIRE_ANNUALLY_BILLED_PLAN,
+} from './constants';
 import type {
 	PricedAPIPlan,
 	APIPlanDetail,
@@ -19,15 +21,6 @@ import type {
 	PlanSlug,
 	DetailsAPIFeature,
 } from './types';
-import {
-	TIMELESS_PLAN_FREE,
-	TIMELESS_PLAN_PREMIUM,
-	plansProductSlugs,
-	monthlySlugs,
-	annualSlugs,
-	FEATURE_IDS_THAT_REQUIRE_ANNUALLY_BILLED_PLAN,
-} from './constants';
-import { fetchAndParse, wpcomRequest } from '../wpcom-request-controls';
 
 const MONTHLY_PLAN_BILLING_PERIOD = 31;
 
@@ -69,7 +62,7 @@ function calculateDiscounts( planProducts: PlanProduct[] ) {
 		if ( annualPlan && monthlyPlan ) {
 			const annualCostIfPaidMonthly = monthlyPlan.rawPrice * 12;
 			const annualCostIfPaidAnnually = annualPlan.rawPrice;
-			const discount = Math.round(
+			const discount = Math.floor(
 				100 * ( 1 - annualCostIfPaidAnnually / annualCostIfPaidMonthly )
 			);
 			annualPlan.annualDiscount = discount;

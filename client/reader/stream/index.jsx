@@ -1,19 +1,34 @@
-/**
- * External dependencies
- */
-import ReactDom from 'react-dom';
-import PropTypes from 'prop-types';
-import React from 'react';
 import classnames from 'classnames';
-import { findLast, times } from 'lodash';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { findLast, times } from 'lodash';
+import PropTypes from 'prop-types';
+import { createRef, Component, Fragment } from 'react';
+import * as React from 'react';
+import ReactDom from 'react-dom';
+import { connect } from 'react-redux';
+import InfiniteList from 'calypso/components/infinite-list';
+import ListEnd from 'calypso/components/list-end';
+import SectionNav from 'calypso/components/section-nav';
+import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import { Interval, EVERY_MINUTE } from 'calypso/lib/interval';
+import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
+import scrollTo from 'calypso/lib/scroll-to';
+import withDimensions from 'calypso/lib/with-dimensions';
 import ReaderMain from 'calypso/reader/components/reader-main';
-import EmptyContent from './empty';
+import { shouldShowLikes } from 'calypso/reader/like-helper';
+import { keysAreEqual, keyToString } from 'calypso/reader/post-key';
+import ReaderSearchSidebar from 'calypso/reader/stream/reader-search-sidebar';
+import ReaderTagSidebar from 'calypso/reader/stream/reader-tag-sidebar';
+import UpdateNotice from 'calypso/reader/update-notice';
+import { showSelectedPost, getStreamType } from 'calypso/reader/utils';
+import XPostHelper from 'calypso/reader/xpost-helper';
+import { PER_FETCH, INITIAL_FETCH } from 'calypso/state/data-layer/wpcom/read/streams';
+import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
+import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
+import { getReaderOrganizations } from 'calypso/state/reader/organizations/selectors';
+import { getPostByKey } from 'calypso/state/reader/posts/selectors';
+import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
 import {
 	requestPage,
 	selectItem,
@@ -26,42 +41,36 @@ import {
 	getTransformedStreamItems,
 	shouldRequestRecs,
 } from 'calypso/state/reader/streams/selectors';
-
-import { shouldShowLikes } from 'calypso/reader/like-helper';
-import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
-import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
-import ListEnd from 'calypso/components/list-end';
-import InfiniteList from 'calypso/components/infinite-list';
-import MobileBackToSidebar from 'calypso/components/mobile-back-to-sidebar';
-import PostPlaceholder from './post-placeholder';
-import UpdateNotice from 'calypso/reader/update-notice';
-import KeyboardShortcuts from 'calypso/lib/keyboard-shortcuts';
-import scrollTo from 'calypso/lib/scroll-to';
-import XPostHelper from 'calypso/reader/xpost-helper';
-import PostLifecycle from './post-lifecycle';
-import { showSelectedPost, getStreamType } from 'calypso/reader/utils';
-import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
-import { keysAreEqual, keyToString, keyForPost } from 'calypso/reader/post-key';
-import { resetCardExpansions } from 'calypso/state/reader-ui/card-expansions/actions';
-import { reduxGetState } from 'calypso/lib/redux-bridge';
-import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { viewStream } from 'calypso/state/reader-ui/actions';
-import { Interval, EVERY_MINUTE } from 'calypso/lib/interval';
-import { PER_FETCH, INITIAL_FETCH } from 'calypso/state/data-layer/wpcom/read/streams';
-import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
-
-/**
- * Style dependencies
- */
+import { resetCardExpansions } from 'calypso/state/reader-ui/card-expansions/actions';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
+import EmptyContent from './empty';
+import PostLifecycle from './post-lifecycle';
+import PostPlaceholder from './post-placeholder';
+import ReaderListFollowedSites from './reader-list-followed-sites';
 import './style.scss';
 
+const WIDE_DISPLAY_CUTOFF = 900;
 const GUESSED_POST_HEIGHT = 600;
 const HEADER_OFFSET_TOP = 46;
 const noop = () => {};
 const pagesByKey = new Map();
+const inputTags = [ 'INPUT', 'SELECT', 'TEXTAREA' ];
+const excludesSidebar = [
+	'a8c',
+	'conversations',
+	'conversations-a8c',
+	'feed',
+	'likes',
+	'search',
+	'list',
+	'p2',
+];
 
-class ReaderStream extends React.Component {
+class ReaderStream extends Component {
 	static propTypes = {
+		translate: PropTypes.func,
 		trackScrollPage: PropTypes.func.isRequired,
 		suppressSiteNameLink: PropTypes.bool,
 		showPostHeader: PropTypes.bool,
@@ -71,11 +80,9 @@ class ReaderStream extends React.Component {
 		className: PropTypes.string,
 		showDefaultEmptyContentIfMissing: PropTypes.bool,
 		showPrimaryFollowButtonOnCards: PropTypes.bool,
-		showMobileBackToSidebar: PropTypes.bool,
 		placeholderFactory: PropTypes.func,
 		followSource: PropTypes.string,
 		isDiscoverStream: PropTypes.bool,
-		shouldCombineCards: PropTypes.bool,
 		useCompactCards: PropTypes.bool,
 		isMain: PropTypes.bool,
 		intro: PropTypes.object,
@@ -90,17 +97,26 @@ class ReaderStream extends React.Component {
 		onUpdatesShown: noop,
 		className: '',
 		showDefaultEmptyContentIfMissing: true,
-		showPrimaryFollowButtonOnCards: true,
-		showMobileBackToSidebar: true,
+		showPrimaryFollowButtonOnCards: false,
 		isDiscoverStream: false,
-		shouldCombineCards: true,
 		isMain: true,
 		useCompactCards: false,
 		intro: null,
 		forcePlaceholders: false,
 	};
 
-	listRef = React.createRef();
+	state = {
+		selectedTab: 'posts',
+	};
+
+	handlePostsSelected = () => {
+		this.setState( { selectedTab: 'posts' } );
+	};
+	handleSitesSelected = () => {
+		this.setState( { selectedTab: 'sites' } );
+	};
+
+	listRef = createRef();
 
 	componentDidUpdate( { selectedPostKey, streamKey } ) {
 		if ( streamKey !== this.props.streamKey ) {
@@ -111,6 +127,7 @@ class ReaderStream extends React.Component {
 
 		if ( ! keysAreEqual( selectedPostKey, this.props.selectedPostKey ) ) {
 			this.scrollToSelectedPost( true );
+			this.focusSelectedPost( this.props.selectedPostKey );
 		}
 
 		if ( this.props.shouldRequestRecs ) {
@@ -121,6 +138,21 @@ class ReaderStream extends React.Component {
 		}
 	}
 
+	focusSelectedPost = ( selectedPostKey ) => {
+		const postRefKey = this.getPostRef( selectedPostKey );
+		const ref = this.listRef.current && this.listRef.current.refs[ postRefKey ];
+		const node = ReactDom.findDOMNode( ref );
+
+		// if the post is found, focus the first anchor tag within it.
+		if ( node ) {
+			const firstLink = node.querySelector( 'a' );
+
+			if ( firstLink ) {
+				firstLink.focus();
+			}
+		}
+	};
+
 	_popstate = () => {
 		if ( this.props.selectedPostKey && window.history.scrollRestoration !== 'manual' ) {
 			this.scrollToSelectedPost( false );
@@ -128,8 +160,8 @@ class ReaderStream extends React.Component {
 	};
 
 	scrollToSelectedPost( animate ) {
-		const HEADER_OFFSET = -80; // a fixed position header means we can't just scroll the element into view.
-		const selectedNode = ReactDom.findDOMNode( this ).querySelector( '.is-selected' );
+		const HEADER_OFFSET = -32; // a fixed position header means we can't just scroll the element into view.
+		const selectedNode = ReactDom.findDOMNode( this ).querySelector( '.card.is-selected' );
 		if ( selectedNode ) {
 			const documentElement = document.documentElement;
 			selectedNode.focus();
@@ -155,74 +187,116 @@ class ReaderStream extends React.Component {
 		this.props.viewStream( streamKey, window.location.pathname );
 		this.fetchNextPage( {} );
 
-		KeyboardShortcuts.on( 'move-selection-down', this.selectNextItem );
-		KeyboardShortcuts.on( 'move-selection-up', this.selectPrevItem );
-		KeyboardShortcuts.on( 'open-selection', this.handleOpenSelection );
-		KeyboardShortcuts.on( 'open-selection-new-tab', this.handleOpenSelectionNewTab );
-		KeyboardShortcuts.on( 'like-selection', this.toggleLikeOnSelectedPost );
-		KeyboardShortcuts.on( 'go-to-top', this.goToTop );
 		window.addEventListener( 'popstate', this._popstate );
 		if ( 'scrollRestoration' in window.history ) {
 			window.history.scrollRestoration = 'manual';
 		}
+
+		if ( this.props.selectedPostKey ) {
+			setTimeout( () => {
+				this.focusSelectedPost( this.props.selectedPostKey );
+			}, 100 );
+		}
+
+		document.addEventListener( 'keydown', this.handleKeydown, true );
 	}
 
 	componentWillUnmount() {
-		KeyboardShortcuts.off( 'move-selection-down', this.selectNextItem );
-		KeyboardShortcuts.off( 'move-selection-up', this.selectPrevItem );
-		KeyboardShortcuts.off( 'open-selection', this.handleOpenSelection );
-		KeyboardShortcuts.off( 'open-selection-new-tab', this.handleOpenSelectionNewTab );
-		KeyboardShortcuts.off( 'like-selection', this.toggleLikeOnSelectedPost );
-		KeyboardShortcuts.off( 'go-to-top', this.goToTop );
 		window.removeEventListener( 'popstate', this._popstate );
 		if ( 'scrollRestoration' in window.history ) {
 			window.history.scrollRestoration = 'auto';
 		}
+
+		document.removeEventListener( 'keydown', this.handleKeydown, true );
 	}
 
+	handleKeydown = ( event ) => {
+		if ( this.props.notificationsOpen ) {
+			return;
+		}
+
+		const tagName = ( event.target || event.srcElement ).tagName;
+		if ( inputTags.includes( tagName ) || event.target.isContentEditable ) {
+			return;
+		}
+
+		switch ( event.keyCode ) {
+			// Move selection down - j
+			case 74: {
+				return this.selectNextItem();
+			}
+
+			// Move selection up - k
+			case 75: {
+				return this.selectPrevItem();
+			}
+
+			// Open selection - Enter
+			case 13: {
+				return this.handleOpenSelection();
+			}
+
+			// Open selection in a new tab - v
+			case 86: {
+				return this.handleOpenSelectionNewTab();
+			}
+
+			// Like selection - l
+			case 76: {
+				return this.toggleLikeOnSelectedPost();
+			}
+
+			// Go to top - .
+			case 190: {
+				return this.goToTop();
+			}
+		}
+	};
+
 	handleOpenSelectionNewTab = () => {
-		window.open( this.props.selectedPostKey.url, '_blank', 'noreferrer,noopener' );
+		const { selectedPostKey } = this.props;
+		if ( selectedPostKey ) {
+			window.open( selectedPostKey.url, '_blank', 'noreferrer,noopener' );
+		}
 	};
 
 	handleOpenSelection = () => {
-		showSelectedPost( {
+		this.props.showSelectedPost( {
 			store: this.props.streamKey,
 			postKey: this.props.selectedPostKey,
 		} );
 	};
 
 	toggleLikeOnSelectedPost = () => {
-		const { selectedPost: post } = this.props;
+		const { selectedPost } = this.props;
 
 		// only toggle a like on a x-post if we have the appropriate metadata,
 		// and original post is full screen
-		const xPostMetadata = XPostHelper.getXPostMetadata( post );
-		if ( xPostMetadata.postURL ) {
+		const xPostMetadata = XPostHelper.getXPostMetadata( selectedPost );
+		if ( xPostMetadata?.postURL ) {
 			return;
 		}
 
-		if ( shouldShowLikes( post ) ) {
-			this.toggleLikeAction( post.site_ID, post.ID );
+		if ( shouldShowLikes( selectedPost ) ) {
+			this.toggleLikeAction();
 		}
 	};
 
-	toggleLikeAction( siteId, postId ) {
-		const liked = isLikedPost( reduxGetState(), siteId, postId );
-		if ( liked === null ) {
+	toggleLikeAction() {
+		const { likedPost, selectedPost } = this.props;
+		if ( likedPost === null ) {
 			// unknown... ignore for now
 			return;
 		}
 
-		const toggler = liked ? this.props.unlikePost : this.props.likePost;
-		toggler( siteId, postId, { source: 'reader' } );
+		const toggler = likedPost ? this.props.unlikePost : this.props.likePost;
+		toggler( selectedPost.site_ID, selectedPost.ID, { source: 'reader' } );
 	}
 
 	goToTop = () => {
 		const { streamKey, updateCount } = this.props;
 		if ( updateCount > 0 ) {
 			this.props.showUpdates( { streamKey } );
-		} else {
-			this.props.selectFirstItem( { streamKey } );
 		}
 	};
 
@@ -271,18 +345,6 @@ class ReaderStream extends React.Component {
 				}
 			}
 
-			const candidateItem = items[ index ];
-			// is this a combo card?
-			if ( candidateItem.isCombination ) {
-				// pick the first item
-				const postKey = {
-					postId: candidateItem.postIds[ 0 ],
-					feedId: candidateItem.feedId,
-					blogId: candidateItem.blogId,
-				};
-				this.props.selectItem( { streamKey, postKey } );
-			}
-
 			// find the index of the post / gap in the items array.
 			// Start the search from the index in the items array, which has to be equal to or larger than
 			// the index in the items array.
@@ -320,10 +382,10 @@ class ReaderStream extends React.Component {
 	fetchNextPage = ( options, props = this.props ) => {
 		const { streamKey, stream, startDate } = props;
 		if ( options.triggeredByScroll ) {
-			const page = pagesByKey.get( streamKey ) || 0;
-			pagesByKey.set( streamKey, page + 1 );
+			const pageId = pagesByKey.get( streamKey ) || 0;
+			pagesByKey.set( streamKey, pageId + 1 );
 
-			props.trackScrollPage( page );
+			props.trackScrollPage( pageId );
 		}
 		const pageHandle = stream.pageHandle || { before: startDate };
 		props.requestPage( { streamKey, pageHandle } );
@@ -359,19 +421,19 @@ class ReaderStream extends React.Component {
 	};
 
 	renderPost = ( postKey, index ) => {
-		const { selectedPostKey, streamKey } = this.props;
+		const { selectedPostKey, streamKey, primarySiteId } = this.props;
 		const isSelected = !! ( selectedPostKey && keysAreEqual( selectedPostKey, postKey ) );
 
 		const itemKey = this.getPostRef( postKey );
 		const showPost = ( args ) =>
-			showSelectedPost( {
+			this.props.showSelectedPost( {
 				...args,
-				postKey: postKey.isCombination ? keyForPost( args ) : postKey,
+				postKey: postKey,
 				streamKey,
 			} );
 
 		return (
-			<React.Fragment key={ itemKey }>
+			<Fragment key={ itemKey }>
 				<PostLifecycle
 					ref={ itemKey /* The ref is stored into `InfiniteList`'s `this.ref` map */ }
 					isSelected={ isSelected }
@@ -383,23 +445,24 @@ class ReaderStream extends React.Component {
 					showPrimaryFollowButtonOnCards={ this.props.showPrimaryFollowButtonOnCards }
 					isDiscoverStream={ this.props.isDiscoverStream }
 					showSiteName={ this.props.showSiteNameOnCards }
-					selectedPostKey={ postKey.isCombination ? selectedPostKey : undefined }
+					selectedPostKey={ undefined }
 					followSource={ this.props.followSource }
 					blockedSites={ this.props.blockedSites }
 					streamKey={ streamKey }
 					recsStreamKey={ this.props.recsStreamKey }
 					index={ index }
 					compact={ this.props.useCompactCards }
+					siteId={ primarySiteId }
 				/>
 				{ index === 0 && <PerformanceTrackerStop /> }
-			</React.Fragment>
+			</Fragment>
 		);
 	};
 
 	render() {
-		const { forcePlaceholders, lastPage, streamKey } = this.props;
+		const { translate, forcePlaceholders, lastPage, streamKey, tag } = this.props;
+		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 		let { items, isRequesting } = this.props;
-
 		const hasNoPosts = items.length === 0 && ! isRequesting;
 		let body;
 		let showingStream;
@@ -410,6 +473,13 @@ class ReaderStream extends React.Component {
 			isRequesting = true;
 		}
 
+		const path = window.location.pathname;
+		const isTagPage = path.startsWith( '/tag/' );
+		const isSearchPage = path.startsWith( '/read/search' );
+		const streamType = getStreamType( streamKey );
+
+		let baseClassnames = classnames( 'following', this.props.className );
+
 		// @TODO: has error of invalid tag?
 		if ( hasNoPosts ) {
 			body = this.props.emptyContent;
@@ -419,7 +489,7 @@ class ReaderStream extends React.Component {
 			showingStream = false;
 		} else {
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
-			body = (
+			const bodyContent = (
 				<InfiniteList
 					ref={ this.listRef }
 					className="reader__content"
@@ -433,21 +503,70 @@ class ReaderStream extends React.Component {
 					renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
 				/>
 			);
+
+			let sidebarContent = null;
+			let tabTitle = translate( 'Sites' );
+
+			if ( isTagPage ) {
+				sidebarContent = <ReaderTagSidebar tag={ tag } />;
+				tabTitle = translate( 'Related' );
+			} else if ( isSearchPage ) {
+				sidebarContent = <ReaderSearchSidebar items={ items } />;
+			} else {
+				sidebarContent = <ReaderListFollowedSites path={ path } />;
+			}
+
+			if ( excludesSidebar.includes( streamType ) ) {
+				body = bodyContent;
+			} else if ( wideDisplay ) {
+				body = (
+					<div className="stream__two-column">
+						{ bodyContent }
+						<div className="stream__right-column">{ sidebarContent }</div>
+					</div>
+				);
+				baseClassnames = classnames( 'reader-two-column', baseClassnames );
+			} else {
+				body = (
+					<>
+						<div className="stream__header">
+							<SectionNav selectedText={ this.state.selectedTab }>
+								<NavTabs label={ translate( 'Status' ) }>
+									<NavItem
+										key="posts"
+										selected={ this.state.selectedTab === 'posts' }
+										onClick={ this.handlePostsSelected }
+									>
+										{ translate( 'Posts' ) }
+									</NavItem>
+									<NavItem
+										key="sites"
+										selected={ this.state.selectedTab === 'sites' }
+										onClick={ this.handleSitesSelected }
+									>
+										{ tabTitle }
+									</NavItem>
+								</NavTabs>
+							</SectionNav>
+						</div>
+						{ this.state.selectedTab === 'posts' && bodyContent }
+						{ this.state.selectedTab === 'sites' && (
+							<div className="stream__two-column">
+								<div className="stream__right-column">{ sidebarContent }</div>
+							</div>
+						) }
+					</>
+				);
+			}
 			showingStream = true;
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		}
-		const streamType = getStreamType( streamKey );
 		const shouldPoll = streamType !== 'search' && streamType !== 'custom_recs_posts_with_images';
 
 		const TopLevel = this.props.isMain ? ReaderMain : 'div';
 		return (
-			<TopLevel className={ classnames( 'following', this.props.className ) }>
+			<TopLevel className={ baseClassnames }>
 				{ shouldPoll && <Interval onTick={ this.poll } period={ EVERY_MINUTE } /> }
-				{ this.props.isMain && this.props.showMobileBackToSidebar && (
-					<MobileBackToSidebar>
-						<h1>{ this.props.translate( 'Streams' ) }</h1>
-					</MobileBackToSidebar>
-				) }
 
 				<UpdateNotice streamKey={ streamKey } onClick={ this.showUpdates } />
 				{ this.props.children }
@@ -460,23 +579,29 @@ class ReaderStream extends React.Component {
 }
 
 export default connect(
-	( state, { streamKey, recsStreamKey, shouldCombineCards = true } ) => {
+	( state, { streamKey, recsStreamKey } ) => {
 		const stream = getStream( state, streamKey );
+		const selectedPost = getPostByKey( state, stream.selected );
+		const streamKeySuffix = streamKey?.substring( streamKey?.indexOf( ':' ) + 1 );
 
 		return {
 			blockedSites: getBlockedSites( state ),
 			items: getTransformedStreamItems( state, {
 				streamKey,
 				recsStreamKey,
-				shouldCombine: shouldCombineCards,
 			} ),
+			notificationsOpen: isNotificationsOpen( state ),
 			stream,
 			recsStream: getStream( state, recsStreamKey ),
 			selectedPostKey: stream.selected,
-			selectedPost: getPostByKey( state, stream.selected ),
+			selectedPost,
 			lastPage: stream.lastPage,
 			isRequesting: stream.isRequesting,
 			shouldRequestRecs: shouldRequestRecs( state, streamKey, recsStreamKey ),
+			likedPost: selectedPost && isLikedPost( state, selectedPost.site_ID, selectedPost.ID ),
+			organizations: getReaderOrganizations( state ),
+			primarySiteId: getPrimarySiteId( state ),
+			tag: streamKeySuffix,
 		};
 	},
 	{
@@ -487,7 +612,8 @@ export default connect(
 		selectItem,
 		selectNextItem,
 		selectPrevItem,
+		showSelectedPost,
 		showUpdates,
 		viewStream,
 	}
-)( localize( ReaderStream ) );
+)( localize( withDimensions( ReaderStream ) ) );

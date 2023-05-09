@@ -1,21 +1,50 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/**
- * External dependencies
- */
-import React, { Component, Fragment } from 'react';
-import { connect } from 'react-redux';
-import { map, partial, pickBy, flowRight } from 'lodash';
-/* eslint-disable no-restricted-imports */
-import url from 'url';
-import { localize, LocalizeProps } from 'i18n-calypso';
-import type { RequestCart } from '@automattic/shopping-cart';
-import page from 'page';
 
-/**
- * Internal dependencies
- */
+/* eslint-disable no-restricted-imports */
+import config from '@automattic/calypso-config';
+import { getQueryArg } from '@wordpress/url';
+import { localize, LocalizeProps } from 'i18n-calypso';
+import { map, pickBy, flowRight } from 'lodash';
+import page from 'page';
+import { Component, Fragment } from 'react';
+import * as React from 'react';
+import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import DomainUpsellCallout from 'calypso/components/domains/domain-upsell-callout';
+import { BlockEditorSettings } from 'calypso/data/block-editor/use-block-editor-settings-query';
+import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
+import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import memoizeLast from 'calypso/lib/memoize-last';
+import { navigate } from 'calypso/lib/navigate';
+import {
+	withStopPerformanceTrackingProp,
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+	// @ts-ignore - PerformanceTrackProps is defined calypso/lib/performance-tracking/index.web.js
+	PerformanceTrackProps,
+} from 'calypso/lib/performance-tracking';
+import { protectForm, ProtectedFormProps } from 'calypso/lib/protect-form';
+import { addQueryArgs } from 'calypso/lib/route';
+import wpcom from 'calypso/lib/wp';
+import EditorDocumentHead from 'calypso/post-editor/editor-document-head';
+import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
+import { setEditorIframeLoaded, startEditingPost } from 'calypso/state/editor/actions';
+import { getEditorPostId } from 'calypso/state/editor/selectors';
+import { selectMediaItems } from 'calypso/state/media/actions';
+import { fetchMediaItem, getMediaItem } from 'calypso/state/media/thunks';
+import { editPost, trashPost } from 'calypso/state/posts/actions';
+import { openPostRevisionsDialog } from 'calypso/state/posts/revisions/actions';
+import { clearLastNonEditorRoute, setRoute } from 'calypso/state/route/actions';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import getEditorCloseConfig from 'calypso/state/selectors/get-editor-close-config';
+import getPostTypeTrashUrl from 'calypso/state/selectors/get-post-type-trash-url';
+import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
+import getSiteUrl from 'calypso/state/selectors/get-site-url';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
+import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
+import shouldDisplayAppBanner from 'calypso/state/selectors/should-display-app-banner';
+import { updateSiteFrontPage } from 'calypso/state/sites/actions';
 import {
 	getCustomizerUrl,
 	getSiteOption,
@@ -24,64 +53,33 @@ import {
 	isJetpackSite,
 	getSite,
 } from 'calypso/state/sites/selectors';
-import { addQueryArgs } from 'calypso/lib/route';
-import { getEnabledFilters, getDisabledDataSources, mediaCalypsoToGutenberg } from './media-utils';
-import { clearLastNonEditorRoute, setRoute } from 'calypso/state/route/actions';
-import { updateSiteFrontPage } from 'calypso/state/sites/actions';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import getPostTypeTrashUrl from 'calypso/state/selectors/get-post-type-trash-url';
-import getEditorUrl from 'calypso/state/selectors/get-editor-url';
-import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
-import getEditorCloseConfig from 'calypso/state/selectors/get-editor-close-config';
-import wpcom from 'calypso/lib/wp';
-import { openPostRevisionsDialog } from 'calypso/state/posts/revisions/actions';
-import { setEditorIframeLoaded, startEditingPost } from 'calypso/state/editor/actions';
-import { Placeholder } from './placeholder';
-import WebPreview from 'calypso/components/web-preview';
-import { editPost, trashPost } from 'calypso/state/posts/actions';
-import { getEditorPostId } from 'calypso/state/editor/selectors';
-import { protectForm, ProtectedFormProps } from 'calypso/lib/protect-form';
-import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import getSiteUrl from 'calypso/state/selectors/get-site-url';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import config from '@automattic/calypso-config';
-import EditorDocumentHead from 'calypso/post-editor/editor-document-head';
-import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
-import {
-	withStopPerformanceTrackingProp,
-	PerformanceTrackProps,
-} from 'calypso/lib/performance-tracking';
-import { selectMediaItems } from 'calypso/state/media/actions';
-import { fetchMediaItem, getMediaItem } from 'calypso/state/media/thunks';
-import { navigate } from 'calypso/lib/navigate';
-import Iframe from './iframe';
-
-/**
- * Types
- */
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import isAppBannerDismissed from 'calypso/state/ui/selectors/app-banner-is-dismissed';
 import * as T from 'calypso/types';
-
-/**
- * Style dependencies
- */
+import Iframe from './iframe';
+import { getEnabledFilters, getDisabledDataSources, mediaCalypsoToGutenberg } from './media-utils';
+import { Placeholder } from './placeholder';
+import type { RequestCart } from '@automattic/shopping-cart';
 import './style.scss';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface Props {
 	duplicatePostId: T.PostId;
+	creatingNewHomepage?: boolean;
 	postId: T.PostId;
 	postType: T.PostType;
 	editorType: 'site' | 'post'; // Note: a page or other CPT is a type of post.
-	pressThis: any;
+	pressThisData: any;
 	anchorFmData: {
 		anchor_podcast: string | undefined;
 		anchor_episode: string | undefined;
 		spotify_url: string | undefined;
 	};
 	siteAdminUrl: T.URL | null;
-	fseParentPageId: T.PostId;
 	parentPostId: T.PostId;
 	stripeConnectSuccess: 'gutenberg' | null;
+	showDraftPostModal: boolean;
+	blockEditorSettings: BlockEditorSettings;
 }
 
 interface CheckoutModalOptions extends RequestCart {
@@ -92,16 +90,12 @@ interface CheckoutModalOptions extends RequestCart {
 interface State {
 	allowedTypes?: any;
 	classicBlockEditorId?: any;
-	editedPost?: any;
-	gallery?: any;
 	isIframeLoaded: boolean;
 	currentIFrameUrl: string;
 	isMediaModalVisible: boolean;
 	isCheckoutModalVisible: boolean;
-	isPreviewVisible: boolean;
 	multiple?: any;
 	postUrl?: T.URL;
-	previewUrl: T.URL;
 	checkoutModalOptions?: CheckoutModalOptions;
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */
@@ -119,20 +113,19 @@ enum EditorActions {
 	GetCheckoutModalStatus = 'getCheckoutModalStatus',
 	OpenRevisions = 'openRevisions',
 	PostStatusChange = 'postStatusChange',
-	PreviewPost = 'previewPost',
+	OpenLinkInParentFrame = 'openLinkInParentFrame',
 	ViewPost = 'viewPost',
 	SetDraftId = 'draftIdSet',
 	TrashPost = 'trashPost',
 	OpenCustomizer = 'openCustomizer',
-	GetTemplateEditorUrl = 'getTemplateEditorUrl',
-	OpenTemplatePart = 'openTemplatePart',
 	GetCloseButtonUrl = 'getCloseButtonUrl',
-	LogError = 'logError',
 	GetGutenboardingStatus = 'getGutenboardingStatus',
 	ToggleInlineHelpButton = 'toggleInlineHelpButton',
 	GetNavSidebarLabels = 'getNavSidebarLabels',
 	GetCalypsoUrlInfo = 'getCalypsoUrlInfo',
 	TrackPerformance = 'trackPerformance',
+	GetIsAppBannerVisible = 'getIsAppBannerVisible',
+	NavigateToHome = 'navigateToHome',
 }
 
 type ComponentProps = Props &
@@ -146,8 +139,6 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		isMediaModalVisible: false,
 		isCheckoutModalVisible: false,
 		isIframeLoaded: false,
-		isPreviewVisible: false,
-		previewUrl: 'about:blank',
 		currentIFrameUrl: '',
 		checkoutModalOptions: undefined,
 	};
@@ -158,6 +149,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 	mediaCancelPort: MessagePort | null = null;
 	revisionsPort: MessagePort | null = null;
 	checkoutPort: MessagePort | null = null;
+	appBannerPort: MessagePort | null = null;
 
 	componentDidMount() {
 		window.addEventListener( 'message', this.onMessage, false );
@@ -181,6 +173,10 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		// not already triggered in componentDidMount
 		if ( ! this.editorRedirectTimer && ! shouldLoadIframe && this.props.shouldLoadIframe ) {
 			this.setEditorRedirectTimer( 25000 );
+		}
+
+		if ( this.props.appBannerDismissed ) {
+			this.handleAppBannerDismiss();
 		}
 	}
 
@@ -272,13 +268,10 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 				transferredPortObject,
 			] );
 
-			// Check if we're generating a post via Press This
-			this.pressThis();
-
 			// Notify external listeners that the iframe has loaded
 			this.props.setEditorIframeLoaded( true, this.iframePort );
 
-			window.performance?.mark( 'iframe_loaded' );
+			window.performance?.mark?.( 'iframe_loaded' );
 			this.setState( { isIframeLoaded: true, currentIFrameUrl: this.props.iframeUrl } );
 
 			return;
@@ -315,7 +308,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 
 		if ( EditorActions.OpenMediaModal === action && ports && ports[ 0 ] ) {
 			const { siteId } = this.props;
-			const { allowedTypes, gallery, multiple, value } = payload;
+			const { allowedTypes, multiple, value } = payload;
 
 			// set imperatively on the instance because this is not
 			// the kind of assignment which causes re-renders and we
@@ -343,7 +336,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 				this.props.selectMediaItems( siteId, [] );
 			}
 
-			this.setState( { isMediaModalVisible: true, allowedTypes, gallery, multiple } );
+			this.setState( { isMediaModalVisible: true, allowedTypes, multiple } );
 		}
 
 		if ( EditorActions.OpenCheckoutModal === action ) {
@@ -386,9 +379,16 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		}
 
 		if ( EditorActions.CloseEditor === action || EditorActions.GoToAllPosts === action ) {
-			const { unsavedChanges = false } = payload;
+			let unsavedChanges = false;
+			let destinationUrl = this.props.closeUrl;
+			if ( payload?.unsavedChanges ) {
+				unsavedChanges = payload.unsavedChanges;
+			}
+			if ( payload?.destinationUrl ) {
+				destinationUrl = payload.destinationUrl;
+			}
 			this.props.setEditorIframeLoaded( false );
-			this.navigate( this.props.closeUrl, unsavedChanges );
+			this.navigate( destinationUrl, unsavedChanges );
 		}
 
 		if ( EditorActions.OpenRevisions === action ) {
@@ -402,12 +402,12 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 			this.props.openPostRevisionsDialog();
 		}
 
-		if ( EditorActions.PreviewPost === action ) {
+		if ( EditorActions.ViewPost === action ) {
 			const { postUrl } = payload;
-			this.openPreviewModal( postUrl, ports[ 0 ] );
+			window.open( postUrl, '_top' );
 		}
 
-		if ( EditorActions.ViewPost === action ) {
+		if ( EditorActions.OpenLinkInParentFrame === action ) {
 			const { postUrl } = payload;
 			window.open( postUrl, '_top' );
 		}
@@ -415,12 +415,6 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		if ( EditorActions.OpenCustomizer === action ) {
 			const { autofocus = null, unsavedChanges = false } = payload;
 			this.openCustomizer( autofocus, unsavedChanges );
-		}
-
-		if ( EditorActions.OpenTemplatePart === action ) {
-			const { templatePartId, unsavedChanges } = payload;
-			const templatePartUrl = this.getTemplateEditorUrl( templatePartId );
-			this.navigate( templatePartUrl, unsavedChanges );
 		}
 
 		if ( EditorActions.GetCloseButtonUrl === action ) {
@@ -442,7 +436,9 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		}
 
 		if ( EditorActions.ToggleInlineHelpButton === action ) {
-			const inlineHelp = window.top.document.querySelector( '#wpcom > .layout > .inline-help' );
+			const inlineHelp: HTMLElement | null | undefined = window?.top?.document.querySelector(
+				'#wpcom > .layout > .inline-help'
+			);
 
 			if ( inlineHelp ) {
 				inlineHelp.hidden = payload.hidden;
@@ -475,16 +471,6 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 			} );
 		}
 
-		// Pipes errors in the iFrame context to the Calypso error handler if it exists:
-		if ( EditorActions.LogError === action ) {
-			const { error } = payload;
-			if ( Array.isArray( error ) && error.length > 4 && window.onerror ) {
-				const errorObject = error[ 4 ];
-				error[ 4 ] = errorObject && JSON.parse( errorObject );
-				window.onerror( ...error );
-			}
-		}
-
 		if ( EditorActions.PostStatusChange === action ) {
 			const { status } = payload;
 			this.handlePostStatusChange( status );
@@ -498,6 +484,23 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 				} );
 			}
 		}
+
+		if ( EditorActions.GetIsAppBannerVisible === action ) {
+			const isAppBannerVisible = this.props.shouldDisplayAppBanner;
+			ports[ 0 ].postMessage( {
+				isAppBannerVisible,
+				hasAppBannerBeenDismissed: false,
+			} );
+
+			// If App Banner is not visible, we won't need to notify the Welcome Tour after its dismission
+			if ( isAppBannerVisible ) {
+				this.appBannerPort = ports[ 0 ];
+			}
+		}
+
+		if ( EditorActions.NavigateToHome === action ) {
+			page( `/home/${ this.props.siteSlug }` );
+		}
 	};
 
 	handlePostStatusChange = ( status: string ) => {
@@ -507,7 +510,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 			this.setFrontPage();
 		}
 
-		if ( isSiteWPForTeams && editedPostId && siteUrl && 'publish' === status ) {
+		if ( isSiteWPForTeams && editedPostId && siteUrl && 'publish' === status && top ) {
 			top.location.href = addQueryArgs( { p: editedPostId }, siteUrl );
 		}
 	};
@@ -593,55 +596,6 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		this.setState( { isCheckoutModalVisible: false } );
 	};
 
-	pressThis = () => {
-		const { pressThis } = this.props;
-
-		if ( ! ( pressThis && this.iframePort ) ) {
-			return;
-		}
-
-		this.iframePort.postMessage( {
-			action: 'pressThis',
-			payload: pressThis,
-		} );
-	};
-
-	openPreviewModal = ( postUrl: string, previewPort: MessagePort ) => {
-		this.setState( {
-			isPreviewVisible: true,
-			previewUrl: 'about:blank',
-			postUrl,
-		} );
-
-		previewPort.onmessage = ( message: MessageEvent ) => {
-			previewPort.close();
-
-			const { frameNonce, unmappedSiteUrl } = this.props;
-			const { previewUrl, editedPost } = message.data;
-			const parsedPreviewUrl = url.parse( previewUrl, true );
-
-			if ( frameNonce ) {
-				parsedPreviewUrl.query[ 'frame-nonce' ] = frameNonce;
-			}
-
-			parsedPreviewUrl.query.iframe = 'true';
-			delete parsedPreviewUrl.search;
-
-			const { host: unmappedSiteUrlHost } = url.parse( unmappedSiteUrl );
-			if ( unmappedSiteUrlHost ) {
-				parsedPreviewUrl.host = unmappedSiteUrlHost;
-				parsedPreviewUrl.hostname = unmappedSiteUrlHost;
-			}
-
-			this.setState( {
-				previewUrl: url.format( parsedPreviewUrl ),
-				editedPost,
-			} );
-		};
-	};
-
-	closePreviewModal = () => this.setState( { isPreviewVisible: false } );
-
 	/* eslint-disable @typescript-eslint/ban-types */
 	openCustomizer = ( autofocus: object, unsavedChanges: boolean ) => {
 		let { customizerUrl } = this.props;
@@ -657,17 +611,6 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		this.navigate( customizerUrl, unsavedChanges );
 	};
 
-	getTemplateEditorUrl = ( templateId: T.PostId ) => {
-		const { getTemplateEditorUrl, editedPostId } = this.props;
-
-		let templateEditorUrl = getTemplateEditorUrl( templateId );
-		if ( editedPostId ) {
-			templateEditorUrl = addQueryArgs( { fse_parent_post: editedPostId }, templateEditorUrl );
-		}
-
-		return templateEditorUrl;
-	};
-
 	navigate = ( navUrl: string, unsavedChanges: boolean ) => {
 		const { markChanged, markSaved } = this.props;
 		unsavedChanges ? markChanged() : markSaved();
@@ -681,8 +624,12 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 
 	getStatsProps = () => {
 		const { postId, postType } = this.props;
-		return postId ? { post_type: postType, post_id: postId } : { post_type: postType };
+		return this.getStatsPropertiesForProps( postId, postType );
 	};
+
+	getStatsPropertiesForProps = memoizeLast( ( postId, postType ) =>
+		postId ? { post_type: postType, post_id: postId } : { post_type: postType }
+	);
 
 	getStatsTitle = () => {
 		const { postId, postType } = this.props;
@@ -705,6 +652,9 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 			: `Block Editor > ${ postTypeText } > New`;
 	};
 
+	// IMPORTANT NOTE: This will not be called for redirect payment methods like
+	// PayPal. They will redirect directly to the post-checkout page decided by
+	// `getThankYouUrl`.
 	handleCheckoutSuccess = () => {
 		if ( this.checkoutPort ) {
 			this.checkoutPort.postMessage( 'checkout complete' );
@@ -721,8 +671,20 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		}
 	};
 
+	handleAppBannerDismiss = () => {
+		if ( this.appBannerPort ) {
+			this.appBannerPort.postMessage( {
+				isAppBannerVisible: false,
+				hasAppBannerBeenDismissed: true,
+			} );
+
+			this.appBannerPort.close();
+			this.appBannerPort = null;
+		}
+	};
+
 	render() {
-		const { iframeUrl, shouldLoadIframe } = this.props;
+		const { iframeUrl, shouldLoadIframe, isNew7DUser, currentUserCountryCode } = this.props;
 		const {
 			classicBlockEditorId,
 			isMediaModalVisible,
@@ -730,10 +692,6 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 			allowedTypes,
 			multiple,
 			isIframeLoaded,
-			isPreviewVisible,
-			previewUrl,
-			postUrl,
-			editedPost,
 			currentIFrameUrl,
 			checkoutModalOptions,
 		} = this.state;
@@ -741,6 +699,14 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		const isUsingClassicBlock = !! classicBlockEditorId;
 		const isCheckoutOverlayEnabled = config.isEnabled( 'post-editor/checkout-overlay' );
 		const { redirectTo, isFocusedLaunch, ...cartData } = checkoutModalOptions || {};
+
+		if ( ! isNew7DUser && 'IN' === currentUserCountryCode ) {
+			addHotJarScript();
+
+			if ( window && window.hj ) {
+				window.hj( 'trigger', 'in_survey_1' );
+			}
+		}
 
 		return (
 			<Fragment>
@@ -753,6 +719,9 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<div className="main main-column calypsoify is-iframe" role="main">
 					{ ! isIframeLoaded && <Placeholder /> }
+					{ isIframeLoaded && this.props.editorType !== 'site' && (
+						<DomainUpsellCallout trackEvent="site_editor_domain_upsell_callout" />
+					) }
 					{ ( shouldLoadIframe || isIframeLoaded ) && (
 						<Iframe
 							className={ isIframeLoaded ? 'is-loaded' : '' }
@@ -772,6 +741,9 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 							// This styling hides the iframe until it loads or
 							// the redirect is executed.
 							style={ isIframeLoaded ? undefined : { opacity: 0 } }
+							// Allow clipboard access for the iframe origin.
+							// This will still require users' permissions.
+							allow="clipboard-read; clipboard-write"
 						/>
 					) }
 				</div>
@@ -805,14 +777,6 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 					placeholder={ null }
 					loadRevision={ this.loadRevision }
 				/>
-				<WebPreview
-					externalUrl={ postUrl }
-					onClose={ this.closePreviewModal }
-					overridePost={ editedPost }
-					previewUrl={ previewUrl }
-					showEditHeaderLink={ true }
-					showPreview={ isPreviewVisible }
-				/>
 			</Fragment>
 		);
 	}
@@ -824,12 +788,14 @@ const mapStateToProps = (
 		postId,
 		postType,
 		duplicatePostId,
-		fseParentPageId,
 		parentPostId,
 		creatingNewHomepage,
 		editorType = 'post',
 		stripeConnectSuccess,
 		anchorFmData,
+		showDraftPostModal,
+		pressThisData,
+		blockEditorSettings,
 	}: Props
 ) => {
 	const siteId = getSelectedSiteId( state );
@@ -843,7 +809,6 @@ const mapStateToProps = (
 		action: postId && 'edit', // If postId is set, open edit view.
 		post_type: postType !== 'post' && postType, // Use postType if it's different than post.
 		calypsoify: 1,
-		fse_parent_post: fseParentPageId != null && fseParentPageId,
 		parent_post: parentPostId != null && parentPostId,
 		'block-editor': 1,
 		'frame-nonce': getSiteOption( state, siteId, siteOption ) || '',
@@ -853,6 +818,12 @@ const mapStateToProps = (
 		'new-homepage': creatingNewHomepage,
 		...( !! stripeConnectSuccess && { stripe_connect_success: stripeConnectSuccess } ),
 		...anchorFmData,
+		openSidebar: getQueryArg( window.location.href, 'openSidebar' ),
+		showDraftPostModal,
+		...pressThisData,
+		answer_prompt: getQueryArg( window.location.href, 'answer_prompt' ),
+		assembler: getQueryArg( window.location.href, 'assembler' ), // Customize the first slide of Welcome Tour in the site editor
+		canvas: getQueryArg( window.location.href, 'canvas' ), // Site editor can initially load with or without nav sidebar (Gutenberg v15.0.0)
 	} );
 
 	// needed for loading the editor in SU sessions
@@ -861,55 +832,72 @@ const mapStateToProps = (
 	}
 
 	// Pass through to iframed editor if user is in editor deprecation group.
-	if ( 'classic' === getSelectedEditor( state, siteId ) ) {
+	if ( 'classic' === getSelectedEditor( state, siteId ?? 0 ) ) {
 		queryArgs[ 'in-editor-deprecation-group' ] = 1;
+	}
+
+	// Add new Site Editor params introduced in https://github.com/WordPress/gutenberg/pull/38817.
+	if ( 'site' === editorType && blockEditorSettings?.home_template?.postType ) {
+		const templateType = getQueryArg( window.location.href, 'templateType' );
+		const templateId = getQueryArg( window.location.href, 'templateId' );
+		if ( templateType && templateId ) {
+			queryArgs.postType = templateType;
+			queryArgs.postId = templateId;
+		} else if ( blockEditorSettings?.home_template?.postType ) {
+			queryArgs.postType = blockEditorSettings.home_template.postType;
+			queryArgs.postId = blockEditorSettings.home_template.postId;
+		}
+	}
+
+	const noticePattern = /[&?]notice=([\w_-]+)/;
+	const match = noticePattern.exec( document.location.search );
+	const notice = match && match[ 1 ];
+
+	if ( notice ) {
+		queryArgs.notice = notice;
 	}
 
 	const siteAdminUrl =
 		editorType === 'site'
-			? getSiteAdminUrl( state, siteId, 'admin.php?page=gutenberg-edit-site' )
+			? getSiteAdminUrl( state, siteId, 'site-editor.php' )
 			: getSiteAdminUrl( state, siteId, postId ? 'post.php' : 'post-new.php' );
 
-	const iframeUrl = addQueryArgs( queryArgs, siteAdminUrl );
+	const iframeUrl = addQueryArgs( queryArgs, siteAdminUrl ?? '' );
 
 	// Prevents the iframe from loading using a cached frame nonce.
-	const shouldLoadIframe = ! isRequestingSite( state, siteId );
+	const shouldLoadIframe = ! isRequestingSite( state, siteId ?? 0 );
 
-	const { url: closeUrl, label: closeLabel } = getEditorCloseConfig(
-		state,
-		siteId,
-		postType,
-		fseParentPageId
-	);
+	const { url: closeUrl, label: closeLabel } = getEditorCloseConfig( state, siteId, postType );
+
+	// 'shouldDisplayAppBanner' does not check if we're in Blogger Flow, because it is a selector reading from the Redux state, and
+	// the Blogger Flow information is not in the Redux state, but in the session storage value wpcom_signup_complete_show_draft_post_modal.
+	// So instead we get that information from 'showDraftPostModal'
+	const displayAppBanner = shouldDisplayAppBanner( state ) && ! showDraftPostModal;
 
 	return {
 		closeUrl,
 		closeLabel,
 		currentRoute,
+		currentUserCountryCode: getCurrentUserCountryCode( state ),
 		editedPostId: getEditorPostId( state ),
 		frameNonce: getSiteOption( state, siteId, 'frame_nonce' ) || '',
 		iframeUrl,
-		isSiteWPForTeams: isSiteWPForTeams( state, siteId ),
+		isSiteWPForTeams: isSiteWPForTeams( state, siteId ?? 0 ),
 		postTypeTrashUrl,
 		shouldLoadIframe,
 		siteAdminUrl,
 		siteId,
 		siteSlug,
-		siteUrl: getSiteUrl( state, siteId ),
+		siteUrl: getSiteUrl( state, siteId ?? 0 ),
 		customizerUrl: getCustomizerUrl( state, siteId ),
-		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-		getTemplateEditorUrl: partial(
-			getEditorUrl,
-			state,
-			siteId,
-			partial.placeholder,
-			'wp_template_part'
-		),
 		unmappedSiteUrl: getSiteOption( state, siteId, 'unmapped_url' ),
 		siteCreationFlow: getSiteOption( state, siteId, 'site_creation_flow' ),
 		isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
-		site: getSite( state, siteId ),
+		site: getSite( state, siteId ?? 0 ),
 		parentPostId,
+		shouldDisplayAppBanner: displayAppBanner,
+		appBannerDismissed: isAppBannerDismissed( state ),
+		isNew7DUser: isUserRegistrationDaysWithinRange( state, null, 0, 7 ),
 	};
 };
 
@@ -931,6 +919,7 @@ type ConnectedProps = ReturnType< typeof mapStateToProps > & typeof mapDispatchT
 
 export default flowRight(
 	withStopPerformanceTrackingProp,
+	withBlockEditorSettings,
 	connect( mapStateToProps, mapDispatchToProps ),
 	localize,
 	protectForm

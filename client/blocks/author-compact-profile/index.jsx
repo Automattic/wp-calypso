@@ -1,30 +1,18 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
-import { numberFormat, localize } from 'i18n-calypso';
-import { has } from 'lodash';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import ReaderAvatar from 'calypso/blocks/reader-avatar';
+import { numberFormat, localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
+import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
+import { areEqualIgnoringWhitespaceAndCase } from 'calypso/lib/string';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { getStreamUrl } from 'calypso/reader/route';
-import { areEqualIgnoringWhitespaceAndCase } from 'calypso/lib/string';
 import AuthorCompactProfilePlaceholder from './placeholder';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class AuthorCompactProfile extends React.Component {
+class AuthorCompactProfile extends Component {
 	static propTypes = {
 		author: PropTypes.object,
 		siteName: PropTypes.string,
@@ -56,13 +44,13 @@ class AuthorCompactProfile extends React.Component {
 			return <AuthorCompactProfilePlaceholder />;
 		}
 
-		const hasAuthorName = has( author, 'name' );
+		const hasAuthorName = author.hasOwnProperty( 'name' );
 		const hasMatchingAuthorAndSiteNames =
 			hasAuthorName && areEqualIgnoringWhitespaceAndCase( siteName, author.name );
 		const classes = classnames( {
 			'author-compact-profile': true,
 			'has-author-link': ! hasMatchingAuthorAndSiteNames,
-			'has-author-icon': siteIcon || feedIcon || ( author && author.has_avatar ),
+			'has-author-icon': siteIcon || feedIcon || author.has_avatar,
 		} );
 		const streamUrl = getStreamUrl( feedId, siteId );
 

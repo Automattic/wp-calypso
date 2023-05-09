@@ -1,14 +1,16 @@
-# Overview
+<div style="width: 45%; float:left" align="left"><p></p> </div>
+<div style="width: 5%; float:left" align="center"><a href="./../README.md">Top</a></div>
+<div style="width: 45%; float:right"align="right"><a href="./setup.md">Setup --></a> </div>
 
-## Table of contents
+<br><br>
+
+# Overview
 
 <!-- TOC -->
 
 - [Overview](#overview)
-  - [Table of contents](#table-of-contents)
   - [What is this?](#what-is-this)
   - [Our Goals](#our-goals)
-  - [Technology](#technology)
   - [What is tested?](#what-is-tested)
 
 <!-- /TOC -->
@@ -25,19 +27,11 @@ To accelerate development by being a force for continuous improvement, and help 
 
 <sup>(taken from Quality Squad internal memo)</sup>
 
-## Technology
-
-These e2e tests use the same technology as the `wp-calypso` GitHub repository, notably JavaScript on Node. User interaction is simulated using the [selenium-webdriver](https://www.selenium.dev/projects/) library, althought there is an active project under way to migrate to using Playwright.
-
 ## What is tested?
 
-At the high level, each test file (or `spec`) fall under one of the following flows:
+These end-to-end test focus on several key areas:
 
-| Flow                 | Directory             |
-| -------------------- | --------------------- |
-| Calypso              | `specs/specs-calypso` |
-| Internationalization | `specs/specs-i18n`    |
-| Jetpack              | `specs/specs-jetpack` |
-| WordPress.com        | `specs/specs-wpcom`   |
-
-Core code for Jetpack, WooCommerce and Gutenberg are hosted in other repositories and they have separate e2e testing infrastructure. Tests here are meant to test interactions between their respective components and Calypso.
+- Calypso features.
+- interaction between Calypso and Gutenberg editor.
+- internationalization and localization.
+- Gutenberg blocks added by WordPress.com.

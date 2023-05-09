@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import type { ReactNode } from 'react';
 
 export type NoticeId = string;
@@ -65,9 +62,7 @@ export type NoticeActionCreatorWithStatus = (
 ) => NoticeAction;
 
 // Notice removal action creator function
-export type NoticeRemovalActionCreator = (
-	noticeId: NoticeId
-) => {
+export type NoticeRemovalActionCreator = ( noticeId: NoticeId ) => {
 	noticeId: NoticeId;
 	type: NoticeRemovalActionType;
 };

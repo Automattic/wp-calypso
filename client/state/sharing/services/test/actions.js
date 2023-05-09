@@ -1,13 +1,3 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-import sinon from 'sinon';
-
-/**
- * Internal dependencies
- */
-import { requestKeyringServices } from '../actions';
 import {
 	KEYRING_SERVICES_RECEIVE,
 	KEYRING_SERVICES_REQUEST,
@@ -15,11 +5,14 @@ import {
 	KEYRING_SERVICES_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import { requestKeyringServices } from '../actions';
 
 describe( 'actions', () => {
 	let spy;
-	useSandbox( ( sandbox ) => ( spy = sandbox.spy() ) );
+
+	beforeEach( () => {
+		spy = jest.fn();
+	} );
 	const getState = () => ( { ui: { selectedSiteId: '2916284' } } );
 
 	describe( 'requestKeyringServices()', () => {
@@ -39,14 +32,14 @@ describe( 'actions', () => {
 			test( 'should dispatch fetch action when thunk triggered', () => {
 				requestKeyringServices()( spy, getState );
 
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					type: KEYRING_SERVICES_REQUEST,
 				} );
 			} );
 
 			test( 'should dispatch keyring services receive action when request completes', () => {
 				return requestKeyringServices()( spy, getState ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
+					expect( spy ).toBeCalledWith( {
 						type: KEYRING_SERVICES_RECEIVE,
 						services: {
 							facebook: { ID: 'facebook' },
@@ -58,7 +51,7 @@ describe( 'actions', () => {
 
 			test( 'should dispatch keyring services request success action when request completes', () => {
 				return requestKeyringServices()( spy, getState ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
+					expect( spy ).toBeCalledWith( {
 						type: KEYRING_SERVICES_REQUEST_SUCCESS,
 					} );
 				} );
@@ -79,16 +72,16 @@ describe( 'actions', () => {
 			test( 'should dispatch fetch action when thunk triggered', () => {
 				requestKeyringServices()( spy, getState );
 
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					type: KEYRING_SERVICES_REQUEST,
 				} );
 			} );
 
 			test( 'should dispatch keyring services request fail action when request fails', () => {
 				return requestKeyringServices()( spy, getState ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
+					expect( spy ).toBeCalledWith( {
 						type: KEYRING_SERVICES_REQUEST_FAILURE,
-						error: sinon.match( { message: 'A server error occurred' } ),
+						error: expect.objectContaining( { message: 'A server error occurred' } ),
 					} );
 				} );
 			} );

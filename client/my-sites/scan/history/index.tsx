@@ -1,29 +1,19 @@
-/**
- * External dependencies
- */
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import ThreatHistoryList from 'calypso/components/jetpack/threat-history-list';
 import Main from 'calypso/components/main';
+import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import ScanNavigation from '../navigation';
+import type { FilterValue } from 'calypso/components/jetpack/threat-history-list/threat-status-filter';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 interface Props {
-	filter: string;
+	filter: FilterValue;
 }
 
 export default function ScanHistoryPage( { filter }: Props ) {
@@ -37,13 +27,13 @@ export default function ScanHistoryPage( { filter }: Props ) {
 			} ) }
 		>
 			<DocumentHead title={ translate( 'Scan' ) } />
-			<SidebarNavigation />
+			{ isJetpackPlatform && <SidebarNavigation /> }
 			<PageViewTracker path="/scan/history/:site" title="Scan History" />
 			{ ! isJetpackPlatform && (
-				<FormattedHeader headerText={ 'Jetpack Scan' } align="left" brandFont />
+				<FormattedHeader headerText="Jetpack Scan" align="left" brandFont />
 			) }
 
-			<ScanNavigation section={ 'history' } />
+			<ScanNavigation section="history" />
 			<section className="history__body">
 				<p className="history__description">
 					{ translate(

@@ -1,19 +1,13 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Card, Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { localize } from 'i18n-calypso';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import { resendIcannVerification } from 'calypso/lib/domains';
 import { TRANSFER_DOMAIN_REGISTRATION } from 'calypso/lib/url/support';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
-class IcannVerification extends React.Component {
+class IcannVerification extends Component {
 	state = {
 		submitting: false,
 	};
@@ -51,7 +45,7 @@ class IcannVerification extends React.Component {
 								components: {
 									learnMoreLink: (
 										<a
-											href={ TRANSFER_DOMAIN_REGISTRATION }
+											href={ localizeUrl( TRANSFER_DOMAIN_REGISTRATION ) }
 											target="_blank"
 											rel="noopener noreferrer"
 										/>

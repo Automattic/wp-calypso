@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-
-import React, { PureComponent } from 'react';
-import ReactDom from 'react-dom';
-import { filter, forEach } from 'lodash';
-
-/**
- * Internal Dependencies
- */
 import { loadScript } from '@automattic/load-script';
-import { loadjQueryDependentScriptDesktopWrapper } from 'calypso/lib/load-jquery-dependent-script-desktop-wrapper';
 import debugFactory from 'debug';
+import { filter, forEach } from 'lodash';
+import { Children, PureComponent } from 'react';
+import ReactDom from 'react-dom';
+import { loadjQueryDependentScriptDesktopWrapper } from 'calypso/lib/load-jquery-dependent-script-desktop-wrapper';
 
 const noop = () => {};
 const debug = debugFactory( 'calypso:components:embed-container' );
@@ -29,10 +21,10 @@ const embedsToLookFor = {
 const cacheBustQuery = `?v=${ Math.floor( new Date().getTime() / ( 1000 * 60 * 60 * 24 * 10 ) ) }`; // A new query every 10 days
 
 const SLIDESHOW_URLS = {
-	CSS: `https://s0.wp.com/wp-content/mu-plugins/shortcodes/css/slideshow-shortcode.css${ cacheBustQuery }`,
-	CYCLE_JS: `https://s0.wp.com/wp-content/mu-plugins/shortcodes/js/jquery.cycle.min.js${ cacheBustQuery }`,
-	JS: `https://s0.wp.com/wp-content/mu-plugins/shortcodes/js/slideshow-shortcode.js${ cacheBustQuery }`,
-	SPINNER: `https://s0.wp.com/wp-content/mu-plugins/shortcodes/img/slideshow-loader.gif${ cacheBustQuery }`,
+	CSS: `https://s0.wp.com/wp-content/mu-plugins/jetpack-plugin/production/modules/shortcodes/css/slideshow-shortcode.css${ cacheBustQuery }`,
+	CYCLE_JS: `https://s0.wp.com/wp-content/mu-plugins/jetpack-plugin/production/modules/shortcodes/js/jquery.cycle.min.js${ cacheBustQuery }`,
+	JS: `https://s0.wp.com/wp-content/mu-plugins/jetpack-plugin/production/modules/shortcodes/js/slideshow-shortcode.js${ cacheBustQuery }`,
+	SPINNER: `https://s0.wp.com/wp-content/mu-plugins/jetpack-plugin/production/modules/shortcodes/img/slideshow-loader.gif${ cacheBustQuery }`,
 };
 
 function processEmbeds( domNode ) {
@@ -164,11 +156,10 @@ function createSlideshow() {
 	} );
 }
 
-let slideshowCSSPresent = document.head.querySelector( `link[href="${ SLIDESHOW_URLS.CSS }"]` );
-
 function embedSlideshow( domNode ) {
 	debug( 'processing slideshow for', domNode );
 
+	let slideshowCSSPresent = document.head.querySelector( `link[href="${ SLIDESHOW_URLS.CSS }"]` );
 	// set global variable required by JetpackSlideshow
 	window.jetpackSlideshowSettings = {
 		spinner: SLIDESHOW_URLS.SPINNER,
@@ -226,6 +217,6 @@ export default class EmbedContainer extends PureComponent {
 	}
 
 	render() {
-		return React.Children.only( this.props.children );
+		return Children.only( this.props.children );
 	}
 }

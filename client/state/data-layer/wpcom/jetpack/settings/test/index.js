@@ -1,7 +1,10 @@
-/**
- * Internal dependencies
- */
+import { JETPACK_SETTINGS_SAVE, JETPACK_SETTINGS_UPDATE } from 'calypso/state/action-types';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import {
+	saveJetpackSettingsSuccess,
+	updateJetpackSettings,
+} from 'calypso/state/jetpack/settings/actions';
+import { normalizeSettings } from 'calypso/state/jetpack/settings/utils';
 import {
 	MAX_WOOCOMMERCE_INSTALL_RETRIES,
 	requestJetpackSettings,
@@ -12,16 +15,8 @@ import {
 	retryOrAnnounceSaveFailure,
 	fromApi,
 } from '../';
-import { JETPACK_SETTINGS_SAVE, JETPACK_SETTINGS_UPDATE } from 'calypso/state/action-types';
-import { normalizeSettings } from 'calypso/state/jetpack/settings/utils';
-import {
-	saveJetpackSettingsSuccess,
-	updateJetpackSettings,
-} from 'calypso/state/jetpack/settings/actions';
 
 describe( 'requestJetpackSettings()', () => {
-	const token = 'abcd1234';
-	const userEmail = 'example@yourgroovydomain.com';
 	const siteId = 12345678;
 
 	const action = {
@@ -40,39 +35,10 @@ describe( 'requestJetpackSettings()', () => {
 					path: '/jetpack-blogs/' + siteId + '/rest-api/',
 					query: {
 						path: '/jetpack/v4/settings/',
-						query: undefined,
 						json: true,
 					},
 				},
 				action
-			)
-		);
-	} );
-
-	test( 'should dispatch an action for GET HTTP request with a query including onboarding credentials', () => {
-		const query = {
-			onboarding: {
-				token,
-				jpUser: userEmail,
-			},
-		};
-		const actionWithAuth = { ...action, query };
-
-		const result = requestJetpackSettings( actionWithAuth );
-
-		expect( result ).toEqual(
-			http(
-				{
-					apiVersion: '1.1',
-					method: 'GET',
-					path: '/jetpack-blogs/' + siteId + '/rest-api/',
-					query: {
-						path: '/jetpack/v4/settings/',
-						query: JSON.stringify( query ),
-						json: true,
-					},
-				},
-				actionWithAuth
 			)
 		);
 	} );

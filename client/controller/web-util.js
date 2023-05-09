@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import ReactDom from 'react-dom';
 
 export function render( context ) {

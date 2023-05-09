@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { trashNote as trashNoteAction } from '../actions';
 import { recordTracksEvent } from '../../../helpers/stats';
+import { trashNote as trashNoteAction } from '../actions';
 import bumpStat from '../utils/bump-stat';
 
 const trashNote = ( note, restClient ) => ( dispatch ) => {

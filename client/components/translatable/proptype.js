@@ -15,7 +15,7 @@ function translatableStringChecker( props, propName, componentName ) {
 		// Translator Jumpstart after #21591
 		if (
 			'object' === typeof value &&
-			'function' === typeof value.type &&
+			[ 'object', 'function' ].includes( typeof value.type ) &&
 			( 'Translatable' === value.type.name ||
 				// Accept HOC wrappings (e.g. `localize( Translatable )`)
 				String( value.type.displayName ).match( /\(Translatable\)/ ) )

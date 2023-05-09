@@ -1,16 +1,12 @@
-/**
- * Internal dependencies
- */
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { ACTIVE_PROMOTIONS_REQUEST } from 'calypso/state/action-types';
 import {
 	activePromotionsReceiveAction,
 	activePromotionsRequestFailureAction,
 	activePromotionsRequestSuccessAction,
 } from 'calypso/state/active-promotions/actions';
-
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 
 /**
  * @module state/data-layer/wpcom/active-promotions
@@ -19,8 +15,8 @@ import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 /**
  * Dispatches a request to fetch all available active promotions
  *
- * @param {object} action Redux action
- * @returns {object} original action
+ * @param {Object} action Redux action
+ * @returns {Object} original action
  */
 export const requestActivePromotions = ( action ) =>
 	http(
@@ -35,9 +31,10 @@ export const requestActivePromotions = ( action ) =>
 /**
  * Dispatches returned WordPress.com active promotions data
  *
- * @param {object} action Redux action
- * @param {Array} active_promotions raw data from active promotions API
- * @returns {Array<object>} Redux actions
+ * @param {Object} action Redux action
+ * @param {Object} obj
+ * @param {Array} obj.active_promotions raw data from active promotions API
+ * @returns {Array<Object>} Redux actions
  */
 export const receiveActivePromotions = ( action, { active_promotions } ) => [
 	activePromotionsRequestSuccessAction(),
@@ -47,9 +44,9 @@ export const receiveActivePromotions = ( action, { active_promotions } ) => [
 /**
  * Dispatches returned error from active promotions request
  *
- * @param {object} action Redux action
- * @param {object} rawError raw error from HTTP request
- * @returns {object} Redux action
+ * @param {Object} action Redux action
+ * @param {Object} rawError raw error from HTTP request
+ * @returns {Object} Redux action
  */
 export const receiveError = ( action, rawError ) =>
 	activePromotionsRequestFailureAction( rawError instanceof Error ? rawError.message : rawError );

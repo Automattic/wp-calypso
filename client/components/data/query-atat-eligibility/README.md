@@ -8,7 +8,6 @@ Render the component, passing a `siteId`. It does not accept any children nor do
 You can use it adjacent to other sibling components which make use of the fetched data made available through the global application state.
 
 ```js
-import React from 'react';
 import { connect } from 'react-redux';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 

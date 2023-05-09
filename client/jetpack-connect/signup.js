@@ -6,55 +6,48 @@
  * and redirection.
  */
 
-/**
- * External dependencies
- */
-import debugFactory from 'debug';
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { flowRight, get, includes } from 'lodash';
-import { localize } from 'i18n-calypso';
+import { isEnabled } from '@automattic/calypso-config';
+import { Gridicon } from '@automattic/components';
 import { Button, Card } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
-import AuthFormHeader from './auth-form-header';
-import HelpButton from './help-button';
+import debugFactory from 'debug';
+import { localize } from 'i18n-calypso';
+import { flowRight, get, includes } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
+import LoginBlock from 'calypso/blocks/login';
+import SignupForm from 'calypso/blocks/signup-form';
+import FormattedHeader from 'calypso/components/formatted-header';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
-import MainWrapper from './main-wrapper';
-import SignupForm from 'calypso/blocks/signup-form';
-import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
-import { addQueryArgs } from 'calypso/lib/route';
-import { authQueryPropTypes } from './utils';
-import {
-	errorNotice as errorNoticeAction,
-	warningNotice as warningNoticeAction,
-} from 'calypso/state/notices/actions';
-import { isEnabled } from '@automattic/calypso-config';
+import { decodeEntities } from 'calypso/lib/formatting';
 import { login, lostPassword } from 'calypso/lib/paths';
+import { addQueryArgs } from 'calypso/lib/route';
+import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import { sendEmailLogin as sendEmailLoginAction } from 'calypso/state/auth/actions';
 import {
 	createAccount as createAccountAction,
 	createSocialAccount as createSocialAccountAction,
 } from 'calypso/state/jetpack-connect/actions';
-import LoginBlock from 'calypso/blocks/login';
-import Gridicon from 'calypso/components/gridicon';
-import { decodeEntities } from 'calypso/lib/formatting';
+import { resetAuthAccountType as resetAuthAccountTypeAction } from 'calypso/state/login/actions';
 import {
 	getRequestError,
 	getLastCheckedUsernameOrEmail,
 	getAuthAccountType,
 	getRedirectToOriginal,
 } from 'calypso/state/login/selectors';
-import { resetAuthAccountType as resetAuthAccountTypeAction } from 'calypso/state/login/actions';
-import FormattedHeader from 'calypso/components/formatted-header';
+import {
+	errorNotice as errorNoticeAction,
+	warningNotice as warningNoticeAction,
+} from 'calypso/state/notices/actions';
+import AuthFormHeader from './auth-form-header';
+import HelpButton from './help-button';
+import MainWrapper from './main-wrapper';
+import { authQueryPropTypes } from './utils';
 import wooDnaConfig from './woo-dna-config';
-import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
 
 const debug = debugFactory( 'calypso:jetpack-connect:authorize-form' );
 const noop = () => {};
@@ -78,16 +71,14 @@ export class JetpackSignup extends Component {
 		wooDnaFormType: 'login',
 	};
 
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		const { from, clientId } = this.props.authQuery;
+
 		this.props.recordTracksEvent( 'calypso_jpc_authorize_form_view', {
 			from,
 			site: clientId,
 		} );
-	}
 
-	componentDidMount() {
-		const { from, clientId } = this.props.authQuery;
 		this.props.recordTracksEvent( 'calypso_jpc_signup_view', {
 			from,
 			site: clientId,
@@ -177,7 +168,6 @@ export class JetpackSignup extends Component {
 	 * Handle Social service authentication flow result (OAuth2 or OpenID Connect)
 	 *
 	 * @see client/signup/steps/user/index.jsx
-	 *
 	 * @param {string} service      The name of the social service
 	 * @param {string} access_token An OAuth2 acccess token
 	 * @param {string} id_token     (Optional) a JWT id_token which contains the signed user info
@@ -195,7 +185,7 @@ export class JetpackSignup extends Component {
 	/**
 	 * Handle user creation result
 	 *
-	 * @param {object} _             …
+	 * @param {Object} _             …
 	 * @param {string} _.username    Username
 	 * @param {string} _.bearerToken Bearer token
 	 */
@@ -210,7 +200,7 @@ export class JetpackSignup extends Component {
 	/**
 	 * Handle error on user creation
 	 *
-	 * @param {?object} error Error result
+	 * @param {?Object} error Error result
 	 */
 	handleUserCreationError = ( error ) => {
 		const { errorNotice, translate, warningNotice } = this.props;
@@ -344,12 +334,8 @@ export class JetpackSignup extends Component {
 
 	renderWooDna() {
 		const { authQuery, isFullLoginFormVisible, locale, translate, usernameOrEmail } = this.props;
-		const {
-			isCreatingAccount,
-			signUpUsernameOrEmail,
-			loginSocialConnect,
-			loginTwoFactorAuthType,
-		} = this.state;
+		const { isCreatingAccount, signUpUsernameOrEmail, loginSocialConnect, loginTwoFactorAuthType } =
+			this.state;
 		let header;
 		let subHeader;
 		let content;

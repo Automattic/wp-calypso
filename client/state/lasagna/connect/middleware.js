@@ -1,9 +1,6 @@
-/**
- * Internal dependencies
- */
 import { SECTION_SET } from 'calypso/state/action-types';
-import { socketConnect, socketDisconnect } from '../socket';
 import { lasagna } from '../middleware';
+import { socketConnect, socketDisconnect } from '../socket';
 
 // gating madness, both necessary to prevent SECTION_SET race conditions
 let socketConnected = false;

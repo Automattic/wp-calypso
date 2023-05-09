@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { ROUTE_SET } from 'calypso/state/action-types';
 
 const initialState = {
@@ -10,13 +7,12 @@ const initialState = {
 };
 
 export const pathReducer = ( state = initialState, action ) => {
-	const { path, type } = action;
-	switch ( type ) {
+	switch ( action.type ) {
 		case ROUTE_SET:
 			return {
-				initial: state.initial === '' ? path : state.initial,
-				current: path,
-				previous: state.current === '' ? '' : state.current,
+				initial: state.initial === '' ? action.path : state.initial,
+				current: action.path,
+				previous: state.current,
 			};
 	}
 	return state;

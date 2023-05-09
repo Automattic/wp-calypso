@@ -5,7 +5,7 @@
 
 @mixin dropdown-menu {
 	display: none;
-	background: var( --color-surface );
+	background: var(--color-surface);
 	float: none;
 	line-height: 46px;
 	min-width: 220px;
@@ -15,12 +15,12 @@
 	width: auto;
 	z-index: 1;
 	box-sizing: border-box;
-	box-shadow: 0 0 2px rgba( 0, 0, 0, 0.15 ), 0 3px 8px rgba( 0, 0, 0, 0.1 );
+	box-shadow: 0 0 2px rgba(0, 0, 0, 0.15), 0 3px 8px rgba(0, 0, 0, 0.1);
 
 	&::after {
 		border: 6px solid transparent;
-		border-bottom-color: var( --color-border-inverted );
-		content: ' ';
+		border-bottom-color: var(--color-border-inverted);
+		content: " ";
 		height: 0;
 		position: absolute;
 		top: -12px;
@@ -34,8 +34,8 @@
 
 		a,
 		a.selected {
-			border-bottom: 1px solid rgba( 0, 0, 0, 0.1 );
-			color: var( --color-primary );
+			border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+			color: var(--color-primary);
 			display: block;
 			float: none;
 			height: auto;
@@ -44,15 +44,15 @@
 			text-align: left;
 
 			&:hover {
-				border-bottom: 1px solid rgba( 0, 0, 0, 0.1 );
+				border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 				background: none; // Remove inherited background color
-				color: var( --color-link-dark );
+				color: var(--color-link-dark);
 				box-shadow: none; // Remove inherited box shadow
 			}
 		}
 
 		a.selected {
-			color: var( --color-text );
+			color: var(--color-text);
 		}
 
 		&:last-child a {

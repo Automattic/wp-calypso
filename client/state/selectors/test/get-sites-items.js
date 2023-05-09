@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
 
 describe( 'getSitesItems()', () => {
@@ -15,7 +7,7 @@ describe( 'getSitesItems()', () => {
 				items: { 13434: { ID: 13434 } },
 			},
 		};
-		expect( getSitesItems( state ) ).to.eql( { 13434: { ID: 13434 } } );
+		expect( getSitesItems( state ) ).toEqual( { 13434: { ID: 13434 } } );
 	} );
 
 	test( 'should return empty object if site items are empty', () => {
@@ -24,7 +16,7 @@ describe( 'getSitesItems()', () => {
 				items: {},
 			},
 		};
-		expect( getSitesItems( state ) ).to.eql( {} );
+		expect( getSitesItems( state ) ).toEqual( {} );
 	} );
 
 	test( 'should return empty object if site items are null (not loaded)', () => {
@@ -33,6 +25,6 @@ describe( 'getSitesItems()', () => {
 				items: null,
 			},
 		};
-		expect( getSitesItems( state ) ).to.eql( {} );
+		expect( getSitesItems( state ) ).toEqual( {} );
 	} );
 } );

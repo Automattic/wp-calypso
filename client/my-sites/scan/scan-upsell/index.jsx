@@ -1,27 +1,27 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { PRODUCT_JETPACK_SCAN } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import VaultPressLogo from 'calypso/assets/images/jetpack/vaultpress-logo.svg';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryIntroOffers from 'calypso/components/data/query-intro-offers';
+import QueryJetpackSaleCoupon from 'calypso/components/data/query-jetpack-sale-coupon';
+import QueryProductsList from 'calypso/components/data/query-products-list';
+import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import JetpackDisconnected from 'calypso/components/jetpack/jetpack-disconnected';
 import SecurityIcon from 'calypso/components/jetpack/security-icon';
-import Main from 'calypso/components/main';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import Upsell from 'calypso/components/jetpack/upsell';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import UpsellProductCard from 'calypso/components/jetpack/upsell-product-card';
+import Main from 'calypso/components/main';
+import SidebarNavigation from 'calypso/components/sidebar-navigation';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { getPurchaseURLCallback } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
-/**
- * Style dependencies
- */
-import VaultPressLogo from 'calypso/assets/images/jetpack/vaultpress-logo.svg';
 import './style.scss';
 
 function ScanMultisiteBody() {
@@ -64,24 +64,34 @@ function ScanVPActiveBody() {
 }
 
 function ScanUpsellBody() {
-	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+	const siteId = useSelector( getSelectedSiteId ) || -1;
+	const selectedSiteSlug = useSelector( getSelectedSiteSlug ) || '';
+	const currencyCode = useSelector( getCurrentUserCurrencyCode );
+	const createCheckoutURL = getPurchaseURLCallback( selectedSiteSlug, {
+		// For the Scan upsell in Jetpack Cloud, we want to redirect back here to the Scan page after checkout.
+		redirect_to: window.location.href,
+	} );
 	const dispatch = useDispatch();
-	const translate = useTranslate();
+
+	const onClick = useCallback(
+		() => dispatch( recordTracksEvent( 'calypso_jetpack_scan_upsell_click' ) ),
+		[ dispatch ]
+	);
+
 	return (
-		<Upsell
-			headerText={ translate( 'Your site does not have scan' ) }
-			bodyText={ translate(
-				'Automatic scanning and one-click fixes keep your site one step ahead of security threats.'
-			) }
-			buttonLink={ `https://wordpress.com/checkout/jetpack_scan/${ selectedSiteSlug }` }
-			onClick={ () => dispatch( recordTracksEvent( 'calypso_jetpack_scan_upsell_click' ) ) }
-			openButtonLinkOnNewTab={ false }
-			iconComponent={
-				<div className="scan-upsell__icon">
-					<SecurityIcon icon="info" />
-				</div>
-			}
-		/>
+		<>
+			<QueryJetpackSaleCoupon />
+			<QueryProductsList type="jetpack" />
+			{ siteId && <QueryIntroOffers siteId={ siteId } /> }
+			{ siteId && <QuerySiteProducts siteId={ siteId } /> }
+			<UpsellProductCard
+				productSlug={ PRODUCT_JETPACK_SCAN }
+				siteId={ siteId }
+				currencyCode={ currencyCode }
+				getButtonURL={ createCheckoutURL }
+				onCtaButtonClick={ onClick }
+			/>
+		</>
 	);
 }
 
@@ -99,9 +109,9 @@ function renderUpsell( reason ) {
 
 export default function ScanUpsellPage( { reason } ) {
 	return (
-		<Main className="scan-upsell">
+		<Main className="scan-upsell" wideLayout>
 			<DocumentHead title="Scan" />
-			<SidebarNavigation />
+			{ isJetpackCloud() && <SidebarNavigation /> }
 			<PageViewTracker path="/scan/:site" title="Scanner Upsell" />
 			<div className="scan-upsell__content">{ renderUpsell( reason ) }</div>
 		</Main>

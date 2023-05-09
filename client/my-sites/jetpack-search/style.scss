@@ -1,9 +1,25 @@
-.jetpack-search__placeholder {
-	.action-panel__title, .jetpack-search__content-body-text, .promo-card__cta-button, .upsell__header-text, .upsell__body-text {
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.jetpack-search .formatted-header.is-left-align {
+	margin-top: 20px;
+
+	@include breakpoint-deprecated( ">660px" ) {
+		margin-top: 4px;
+		margin-bottom: 18px;
+	}
+}
+
+.is-placeholder {
+	.jetpack-search__header,
+	.jetpack-search__content p,
+	.jetpack-search__button,
+	.upsell__header-text,
+	.upsell__body-text {
 		@include placeholder( --color-neutral-10 );
 	}
 
-	.promo-card__cta-button {
+	.jetpack-search__button {
 		border: 0;
 
 		&:hover {
@@ -16,13 +32,53 @@
 	.jetpack-search__disconnected {
 		padding-top: 40px;
 	}
+}
 
-	.jetpack-search__logo {
-		padding-top: 40px; // to match Backup and Scan
+.jetpack-search__logo {
+	text-align: center;
+
+	@include breakpoint-deprecated( ">660px" ) {
+		text-align: left;
+	}
+
+	img {
+		display: block;
+		height: 48px;
+		width: auto;
 	}
 }
 
-.jetpack-search__logo img {
-	height: 72px;
-	width: auto;
+.jetpack-search__header {
+	font-size: $font-title-small;
+	margin: 16px 0;
+
+	@include breakpoint-deprecated( ">660px" ) {
+		font-size: $font-title-medium;
+		margin: 20px 0 24px;
+	}
+}
+
+.jetpack-search__content {
+	flex: 1 0 auto;
+
+	p {
+		font-size: $font-body;
+		margin-bottom: 16px;
+		line-height: 24px;
+
+		@include breakpoint-deprecated( ">660px" ) {
+			margin-bottom: 24px;
+		}
+	}
+}
+
+.jetpack-search__button {
+	margin-top: 16px;
+	width: 100%;
+	text-align: center;
+
+	@include breakpoint-deprecated( ">660px" ) {
+		width: auto;
+		text-align: left;
+	}
 }

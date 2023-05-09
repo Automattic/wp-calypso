@@ -18,6 +18,4 @@ export const CONCIERGE_WPCOM_SESSION_PRODUCT_ID = 2;
 
 // /me/purchases page banner content type
 export const CONCIERGE_HAS_UPCOMING_APPOINTMENT = 'has-upcoming-appointment';
-export const CONCIERGE_HAS_AVAILABLE_INCLUDED_SESSION = 'has-available-included-session';
-export const CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION = 'has-available-purchased-session';
-export const CONCIERGE_SUGGEST_PURCHASE_CONCIERGE = 'suggest-purchase-concierge';
+export const CONCIERGE_HAS_AVAILABLE_SESSION = 'has-available-session';

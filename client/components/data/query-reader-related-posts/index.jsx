@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
+import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
-import { shouldFetchRelated } from 'calypso/state/reader/related-posts/selectors';
 import { requestRelatedPosts } from 'calypso/state/reader/related-posts/actions';
+import { shouldFetchRelated } from 'calypso/state/reader/related-posts/selectors';
 import { SCOPE_ALL, SCOPE_SAME, SCOPE_OTHER } from 'calypso/state/reader/related-posts/utils';
 
 const request = ( siteId, postId, scope ) => ( dispatch, getState ) => {

@@ -1,17 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import { Dialog } from '@automattic/components';
-
-/**
- * Style dependencies
- */
+import classNames from 'classnames';
 import './dialog.scss';
 
 export default ( { additionalClassNames, ...props } ) => (

@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 
 describe( 'isPrivateSite()', () => {
@@ -27,7 +19,7 @@ describe( 'isPrivateSite()', () => {
 			2916285
 		);
 
-		expect( isPrivate ).to.be.null;
+		expect( isPrivate ).toBeNull();
 	} );
 
 	test( 'should prefer site state', () => {
@@ -52,7 +44,7 @@ describe( 'isPrivateSite()', () => {
 			2916284
 		);
 
-		expect( isPrivate ).to.be.true;
+		expect( isPrivate ).toBe( true );
 	} );
 
 	test( 'should fall back to settings state', () => {
@@ -72,7 +64,7 @@ describe( 'isPrivateSite()', () => {
 			2916284
 		);
 
-		expect( isPrivate ).to.be.false;
+		expect( isPrivate ).toBe( false );
 	} );
 
 	test( 'should return false for public sites', () => {
@@ -97,7 +89,7 @@ describe( 'isPrivateSite()', () => {
 			2916284
 		);
 
-		expect( isPrivate ).to.be.false;
+		expect( isPrivate ).toBe( false );
 	} );
 
 	test( 'should return true for private sites', () => {
@@ -122,6 +114,6 @@ describe( 'isPrivateSite()', () => {
 			2916284
 		);
 
-		expect( isPrivate ).to.be.true;
+		expect( isPrivate ).toBe( true );
 	} );
 } );

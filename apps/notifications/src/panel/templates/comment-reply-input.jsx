@@ -1,24 +1,15 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-import actions from '../state/actions';
-
-/**
- * Internal dependencies
- */
-import Spinner from './spinner';
-import Suggestions from '../suggestions';
+import { createRef, Component } from 'react';
+import { connect } from 'react-redux';
 import repliesCache from '../comment-replies-cache';
-import { wpcom } from '../rest-client/wpcom';
-import { bumpStat } from '../rest-client/bump-stat';
-import { formatString, validURL } from './functions';
-import getKeyboardShortcutsEnabled from '../state/selectors/get-keyboard-shortcuts-enabled';
 import { modifierKeyIsActive } from '../helpers/input';
-
+import { bumpStat } from '../rest-client/bump-stat';
+import { wpcom } from '../rest-client/wpcom';
+import actions from '../state/actions';
+import getKeyboardShortcutsEnabled from '../state/selectors/get-keyboard-shortcuts-enabled';
+import Suggestions from '../suggestions';
+import { formatString, validURL } from './functions';
+import Spinner from './spinner';
 const debug = require( 'debug' )( 'notifications:reply' );
 const { recordTracksEvent } = require( '../helpers/stats' );
 
@@ -27,8 +18,8 @@ function stopEvent( event ) {
 	event.preventDefault();
 }
 
-class CommentReplyInput extends React.Component {
-	replyInput = React.createRef();
+class CommentReplyInput extends Component {
+	replyInput = createRef();
 
 	constructor( props ) {
 		super( props );
@@ -155,7 +146,9 @@ class CommentReplyInput extends React.Component {
 			event.preventDefault();
 		}
 
-		if ( '' === this.state.value ) return;
+		if ( '' === this.state.value ) {
+			return;
+		}
 
 		this.props.global.toggleNavigation( false );
 

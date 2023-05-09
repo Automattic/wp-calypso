@@ -1,37 +1,26 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { wpcomJetpackLicensing } from 'calypso/lib/wp';
 import {
 	JETPACK_PARTNER_PORTAL_PARTNER_ACTIVE_PARTNER_KEY_UPDATE,
+	JETPACK_PARTNER_PORTAL_OAUTH_TOKEN_SET,
 	JETPACK_PARTNER_PORTAL_PARTNER_REQUEST,
 	JETPACK_PARTNER_PORTAL_PARTNER_RECEIVE_ERROR,
 	JETPACK_PARTNER_PORTAL_PARTNER_RECEIVE,
 } from 'calypso/state/action-types';
-import { ReduxDispatch } from 'calypso/state/redux-store';
-import {
-	APIError,
-	Partner,
-	PartnerPortalStore,
-	PartnerPortalThunkAction,
-} from 'calypso/state/partner-portal/types';
+import { setUserJetpackPartnerType } from 'calypso/state/current-user/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
 import {
 	getActivePartnerKey,
 	getActivePartnerKeyId,
 	isFetchingPartner,
 } from 'calypso/state/partner-portal/partner/selectors';
-import { wpcomJetpackLicensing } from 'calypso/lib/wp';
-import { errorNotice } from 'calypso/state/notices/actions';
+import { APIError, Partner, PartnerPortalThunkAction } from 'calypso/state/partner-portal/types';
 
 // Required for modular state.
 import 'calypso/state/partner-portal/init';
 
 export function setActivePartnerKey( partnerKeyId: number ): PartnerPortalThunkAction {
-	return ( dispatch: ReduxDispatch, getState: () => PartnerPortalStore ) => {
+	return ( dispatch, getState ) => {
 		if ( ! partnerKeyId || isFetchingPartner( getState() ) ) {
 			return;
 		}
@@ -40,19 +29,22 @@ export function setActivePartnerKey( partnerKeyId: number ): PartnerPortalThunkA
 
 		const key = getActivePartnerKey( getState() );
 		wpcomJetpackLicensing.loadToken( key ? key.oAuth2Token : '' );
+		dispatch( { type: JETPACK_PARTNER_PORTAL_OAUTH_TOKEN_SET } );
 	};
 }
 
-export function fetchPartner( dispatch: ReduxDispatch, getState: () => PartnerPortalStore ): void {
-	if ( isFetchingPartner( getState() ) ) {
-		return;
-	}
+export function fetchPartner(): PartnerPortalThunkAction {
+	return ( dispatch, getState ) => {
+		if ( isFetchingPartner( getState() ) ) {
+			return;
+		}
 
-	dispatch( { type: JETPACK_PARTNER_PORTAL_PARTNER_REQUEST } );
+		dispatch( { type: JETPACK_PARTNER_PORTAL_PARTNER_REQUEST } );
+	};
 }
 
 export function receivePartner( partner: Partner ): PartnerPortalThunkAction {
-	return ( dispatch: ReduxDispatch, getState: () => PartnerPortalStore ): void => {
+	return ( dispatch, getState ) => {
 		dispatch( {
 			type: JETPACK_PARTNER_PORTAL_PARTNER_RECEIVE,
 			partner,
@@ -75,11 +67,15 @@ export function receivePartner( partner: Partner ): PartnerPortalThunkAction {
 		if ( newKeyId ) {
 			dispatch( setActivePartnerKey( newKeyId ) );
 		}
+
+		// Set the correct partner type as it's used across the UI for conditional
+		// displaying various components.
+		dispatch( setUserJetpackPartnerType( partner?.partner_type ) );
 	};
 }
 
 export function receivePartnerError( error: APIError ): PartnerPortalThunkAction {
-	return ( dispatch: ReduxDispatch ): void => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: JETPACK_PARTNER_PORTAL_PARTNER_RECEIVE_ERROR,
 			error: {

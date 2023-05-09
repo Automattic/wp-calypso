@@ -1,27 +1,15 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { get, includes } from 'lodash';
+import { Dialog, Button, Spinner } from '@automattic/components';
 import { localize } from 'i18n-calypso';
+import { get, includes } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { Dialog, Button } from '@automattic/components';
-import Spinner from 'calypso/components/spinner';
-import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import {
 	verifyEmail,
 	resetVerifyEmailState,
 } from 'calypso/state/current-user/email-verification/actions';
+import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};
@@ -96,9 +84,10 @@ class VerifyEmailDialog extends Component {
 
 		return (
 			<Dialog
-				isVisible={ true }
-				buttons={ this.getDialogButtons() }
 				additionalClassNames="email-verification-dialog__confirmation-dialog is-narrow"
+				buttons={ this.getDialogButtons() }
+				isVisible={ true }
+				label="Email Verification Dialog"
 			>
 				<h1 className="email-verification-dialog__confirmation-dialog-heading is-variable-height">
 					{ strings.confirmHeading }

@@ -1,10 +1,7 @@
-/**
- * Internal dependencies
- */
-import { requestSiteBlock, receiveSiteBlock, fromApi, receiveSiteBlockError } from '../';
 import { bypassDataLayer } from 'calypso/state/data-layer/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { blockSite, unblockSite } from 'calypso/state/reader/site-blocks/actions';
+import { requestSiteBlock, receiveSiteBlock, fromApi, receiveSiteBlockError } from '../';
 
 describe( 'site-blocks', () => {
 	describe( 'requestSiteBlock', () => {

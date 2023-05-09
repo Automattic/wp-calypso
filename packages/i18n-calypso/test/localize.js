@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { Component } from 'react';
 import ShallowRenderer from 'react-test-renderer/shallow';
-
-/**
- * Internal dependencies
- */
 import i18n, { localize } from '../src';
 
 describe( 'localize()', () => {
 	it( 'should be named using the variable name of the composed component', () => {
-		class MyComponent extends React.Component {
+		class MyComponent extends Component {
 			render() {
 				return null;
 			}

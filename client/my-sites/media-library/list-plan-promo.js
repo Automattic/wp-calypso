@@ -1,23 +1,16 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
+import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
 import page from 'page';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import EmptyContent from 'calypso/components/empty-content';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
-
-/**
- * Internal dependencies
- */
-import EmptyContent from 'calypso/components/empty-content';
-import { Button } from '@automattic/components';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-class MediaLibraryListPlanPromo extends React.Component {
+class MediaLibraryListPlanPromo extends Component {
 	static displayName = 'MediaLibraryListPlanPromo';
 
 	static propTypes = {
@@ -103,7 +96,7 @@ class MediaLibraryListPlanPromo extends React.Component {
 
 	render() {
 		const action = (
-			<Button className="button is-primary" onClick={ this.viewPlansPage }>
+			<Button className="list-plan-promo__button button is-primary" onClick={ this.viewPlansPage }>
 				{ this.props.translate( 'See Plans' ) }
 			</Button>
 		);
@@ -113,7 +106,7 @@ class MediaLibraryListPlanPromo extends React.Component {
 				title={ this.getTitle() }
 				line={ this.getSummary() }
 				action={ this.props.children || action }
-				illustration={ '' }
+				illustration=""
 			/>
 		);
 	}

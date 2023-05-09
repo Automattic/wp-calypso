@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { key } from 'calypso/state/reader/conversations/utils';
 
 import 'calypso/state/reader/init';

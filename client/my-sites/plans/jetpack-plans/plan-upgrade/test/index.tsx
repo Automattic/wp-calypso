@@ -1,26 +1,14 @@
 /** @jest-environment jsdom */
-
-/**
- * External dependencies
- */
-import * as React from 'react';
-import { render, screen } from 'calypso/test-helpers/config/testing-library';
-
-/**
- * Internal dependencies
- */
-import { TERM_MONTHLY } from '@automattic/calypso-products';
-import productsList from 'calypso/state/products-list/reducer';
-import { reducer as purchases } from 'calypso/state/purchases/reducer';
-
-jest.mock( 'calypso/state/current-user/selectors', () => ( {
-	getCurrentUserCurrencyCode: jest.fn( () => 'USD' ),
-} ) );
-
 jest.mock( 'calypso/state/ui/selectors', () => ( {
 	getSelectedSiteId: jest.fn( () => 100 ),
 } ) );
 
+import { TERM_MONTHLY } from '@automattic/calypso-products';
+import { screen } from '@testing-library/react';
+import * as currentUserSelectors from 'calypso/state/currency-code/selectors';
+import productsList from 'calypso/state/products-list/reducer';
+import { reducer as purchases } from 'calypso/state/purchases/reducer';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import PlanUpgradeSection from '../index';
 
 const initialState = {
@@ -37,8 +25,11 @@ const initialState = {
 };
 
 describe( '<PlanUpgradeSection />', () => {
+	beforeAll( () => {
+		jest.spyOn( currentUserSelectors, 'getCurrentUserCurrencyCode' ).mockReturnValue( 'USD' );
+	} );
 	it( 'renders one legacy product card and one new plan product card', () => {
-		render(
+		renderWithProvider(
 			<PlanUpgradeSection
 				planRecommendation={ [ 'jetpack_personal', [ 'jetpack_scan' ] ] }
 				duration={ TERM_MONTHLY }
@@ -62,7 +53,7 @@ describe( '<PlanUpgradeSection />', () => {
 	} );
 
 	it( 'renders one legacy product card and two new plan product cards', () => {
-		render(
+		renderWithProvider(
 			<PlanUpgradeSection
 				planRecommendation={ [
 					'jetpack_premium',
@@ -76,7 +67,8 @@ describe( '<PlanUpgradeSection />', () => {
 		);
 
 		const sectionHeader = screen.getByRole( 'heading', { level: 2 } );
-		expect( sectionHeader.outerHTML ).toContain( 'Anti-spam &amp; Backup' );
+		expect( sectionHeader.outerHTML ).toContain( 'Anti-spam' );
+		expect( sectionHeader.outerHTML ).toContain( 'Backup' );
 
 		const productHeaders = screen.getAllByRole( 'heading', { level: 3 } );
 

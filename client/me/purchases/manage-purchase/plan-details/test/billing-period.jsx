@@ -1,20 +1,15 @@
 /**
- * External dependencies
+ * @jest-environment jsdom
  */
-import { shallow } from 'enzyme';
-import React from 'react';
-import moment from 'moment';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { PlanBillingPeriod } from '../billing-period';
+import moment from 'moment';
 import page from 'page';
+import { PlanBillingPeriod } from '../billing-period';
 
 const props = {
 	purchase: {
-		// Including only the properties that are used by this component
+		// Including the properties that are used by this component
 		id: 123,
 		siteId: 123,
 		productName: 'Jetpack Personal',
@@ -44,27 +39,24 @@ jest.mock( 'page', () => jest.fn() );
 describe( 'PlanBillingPeriod', () => {
 	describe( 'a monthly plan', () => {
 		it( 'should display the current period', () => {
-			const wrapper = shallow( <PlanBillingPeriod { ...props } /> );
-			expect( wrapper.find( 'FormSettingExplanation' ).shallow().text() ).toContain(
-				'Billed monthly'
-			);
+			render( <PlanBillingPeriod { ...props } /> );
+			expect( screen.getByText( /billed monthly/i ) ).toBeInTheDocument();
 		} );
 
 		it( 'should upgrade to a yearly plan when the button is clicked', () => {
-			const wrapper = shallow( <PlanBillingPeriod { ...props } /> );
-			wrapper.find( 'ForwardRef(Button)' ).simulate( 'click' );
+			render( <PlanBillingPeriod { ...props } /> );
+			const btn = screen.getByRole( 'button', { name: /upgrade/i } );
+			fireEvent.click( btn );
 			expect( page ).toHaveBeenCalledWith( '/checkout/site.com/jetpack_premium' );
 		} );
 
-		describe( 'a disconnected site', () => {
-			test( 'should display a message instead of the upgrade button', () => {
-				const site = null;
-				const wrapper = shallow( <PlanBillingPeriod { ...props } site={ site } /> );
-				expect( wrapper.find( 'ForwardRef(Button)' ) ).toHaveLength( 0 );
-				expect( wrapper.find( 'FormSettingExplanation' ).last().shallow().text() ).toContain(
-					'To manage your plan, please reconnect your site.'
-				);
-			} );
+		it( 'should display a message instead of the upgrade button for a disconnected site', () => {
+			render( <PlanBillingPeriod { ...props } site={ null } /> );
+
+			expect( screen.queryAllByRole( 'button', { name: /upgrade/i } ) ).toHaveLength( 0 );
+			expect( screen.getByText( /to manage your plan/i ) ).toHaveTextContent(
+				'To manage your plan, please reconnect your site'
+			);
 		} );
 	} );
 
@@ -80,10 +72,8 @@ describe( 'PlanBillingPeriod', () => {
 		};
 
 		it( 'should display the current period', () => {
-			const wrapper = shallow( <PlanBillingPeriod { ...annualPlanProps } /> );
-			expect( wrapper.find( 'FormSettingExplanation' ).shallow().text() ).toEqual(
-				'Billed yearly'
-			);
+			render( <PlanBillingPeriod { ...annualPlanProps } /> );
+			expect( screen.getByText( /billed yearly/i ) ).toBeInTheDocument();
 		} );
 
 		describe( 'when credit card is expiring', () => {
@@ -100,28 +90,26 @@ describe( 'PlanBillingPeriod', () => {
 						},
 					},
 				};
-				const wrapper = shallow(
-					<PlanBillingPeriod { ...annualPlanProps } purchase={ purchase } />
-				);
-				expect( wrapper.find( 'FormSettingExplanation' ).shallow().text() ).toEqual(
+				render( <PlanBillingPeriod { ...annualPlanProps } purchase={ purchase } /> );
+				expect( screen.getByText( /billed yearly/i ) ).toHaveTextContent(
 					'Billed yearly, credit card expiring soon'
 				);
 			} );
 		} );
+
 		describe( 'when plan is renewing', () => {
 			it( 'should display a warning to the user', () => {
 				const purchase = {
 					...annualPlanProps.purchase,
 					renewDate: moment( '2020-01-01' ).format(),
 				};
-				const wrapper = shallow(
-					<PlanBillingPeriod { ...annualPlanProps } purchase={ purchase } />
-				);
-				expect( wrapper.find( 'FormSettingExplanation' ).shallow().text() ).toEqual(
+				render( <PlanBillingPeriod { ...annualPlanProps } purchase={ purchase } /> );
+				expect( screen.getByText( /billed yearly/i ) ).toHaveTextContent(
 					'Billed yearly, renews on January 1, 2020'
 				);
 			} );
 		} );
+
 		describe( 'when plan is expiring', () => {
 			it( 'should display a warning to the user', () => {
 				const purchase = {
@@ -129,14 +117,13 @@ describe( 'PlanBillingPeriod', () => {
 					expiryDate: moment( '2020-01-01' ).format(),
 					expiryStatus: 'expiring',
 				};
-				const wrapper = shallow(
-					<PlanBillingPeriod { ...annualPlanProps } purchase={ purchase } />
-				);
-				expect( wrapper.find( 'FormSettingExplanation' ).shallow().text() ).toEqual(
+				render( <PlanBillingPeriod { ...annualPlanProps } purchase={ purchase } /> );
+				expect( screen.getByText( /billed yearly/i ) ).toHaveTextContent(
 					'Billed yearly, expires on January 1, 2020'
 				);
 			} );
 		} );
+
 		describe( 'when plan is expired', () => {
 			it( 'should display a warning to the user', () => {
 				const purchase = {
@@ -144,10 +131,8 @@ describe( 'PlanBillingPeriod', () => {
 					expiryDate: moment().subtract( 1, 'month' ).format(),
 					expiryStatus: 'expired',
 				};
-				const wrapper = shallow(
-					<PlanBillingPeriod { ...annualPlanProps } purchase={ purchase } />
-				);
-				expect( wrapper.find( 'FormSettingExplanation' ).shallow().text() ).toEqual(
+				render( <PlanBillingPeriod { ...annualPlanProps } purchase={ purchase } /> );
+				expect( screen.getByText( /billed yearly/i ) ).toHaveTextContent(
 					'Billed yearly, expired a month ago'
 				);
 			} );

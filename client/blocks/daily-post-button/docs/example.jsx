@@ -1,12 +1,3 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import DailyPostButton from 'calypso/blocks/daily-post-button';
 const DailyPostButtonExample = () => {
 	return (

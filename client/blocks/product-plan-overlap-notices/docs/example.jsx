@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-
-/**
- * Internal dependencies
- */
-import SitesDropdown from 'calypso/components/sites-dropdown';
 import { JETPACK_PRODUCTS_LIST, JETPACK_PLANS } from '@automattic/calypso-products';
+import { Component } from 'react';
+import SitesDropdown from 'calypso/components/sites-dropdown';
 import ProductPlanOverlapNotices from '../';
 
 class ProductPlanOverlapNoticesExample extends Component {

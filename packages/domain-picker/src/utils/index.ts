@@ -1,4 +1,10 @@
-// eslint-disable-next-line wpcalypso/import-docblock
+import {
+	NEWSLETTER_FLOW,
+	LINK_IN_BIO_FLOW,
+	LINK_IN_BIO_TLD_FLOW,
+	ECOMMERCE_FLOW,
+	WOOEXPRESS_FLOW,
+} from '@automattic/onboarding';
 import type { DomainSuggestions } from '@automattic/data-stores';
 
 export function mockDomainSuggestion(
@@ -23,45 +29,49 @@ export function mockDomainSuggestion(
 }
 
 /**
- * The domain search API will return an error for certain queries. This helper
- * pre-emptively guesses whether a given string will return an error result.
- * Useful for deciding whether a string is a good default domain query.
- *
- * @param domainQuery string to check
- */
-export function isGoodDefaultDomainQuery( domainQuery: string ): boolean {
-	if ( typeof domainQuery.normalize === 'undefined' ) {
-		// If the browser doesn't support String.prototype.normalize then
-		// play it safe and assume this isn't a safe domain query.
-		return false;
-	}
-
-	return !! domainQuery
-		.normalize( 'NFD' ) // Encode diacritics in a consistent way so we can remove them
-		.replace( /[\u0300-\u036f]/g, '' )
-		.match( /[a-z0-9-.\s]/i );
-}
-
-/**
  * Get the suggestions vendor
  *
- * @param {object} [options={}] Options to determine the suggestion vendor
+ * @param {Object} [options={}] Options to determine the suggestion vendor
  * @param {boolean} [options.isSignup=false] Flag to indicate that we're in a signup context
  * @param {boolean} [options.isDomainOnly=false] Flag to indicate that we're in a domain-only context
  * @param {boolean} [options.isPremium=false] Flag to show premium domains.
- *
  * @returns {string} Vendor string to pass as part of the domain suggestions query.
  */
 interface DomainSuggestionsVendorOptions {
 	isSignup?: boolean;
 	isDomainOnly?: boolean;
 	isPremium?: boolean;
+	flowName?:
+		| typeof NEWSLETTER_FLOW
+		| typeof LINK_IN_BIO_FLOW
+		| typeof LINK_IN_BIO_TLD_FLOW
+		| typeof ECOMMERCE_FLOW
+		| typeof WOOEXPRESS_FLOW;
 }
-type DomainSuggestionsVendor = 'variation2_front' | 'variation4_front' | 'variation8_front';
+type DomainSuggestionsVendor =
+	| 'variation2_front'
+	| 'variation4_front'
+	| 'variation8_front'
+	| 'link-in-bio'
+	| 'link-in-bio-tld'
+	| 'newsletter'
+	| 'ecommerce';
 
 export function getDomainSuggestionsVendor(
 	options: DomainSuggestionsVendorOptions = {}
 ): DomainSuggestionsVendor {
+	if ( options.flowName === LINK_IN_BIO_FLOW ) {
+		return 'link-in-bio';
+	}
+	if ( options.flowName === LINK_IN_BIO_TLD_FLOW ) {
+		return 'link-in-bio-tld';
+	}
+	if ( options.flowName === NEWSLETTER_FLOW ) {
+		return 'newsletter';
+	}
+	if ( options.flowName === ECOMMERCE_FLOW || options.flowName === WOOEXPRESS_FLOW ) {
+		return 'ecommerce';
+	}
 	if ( options.isSignup && ! options.isDomainOnly ) {
 		return 'variation4_front';
 	}

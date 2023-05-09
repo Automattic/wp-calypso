@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { isKeyringConnectionsFetching } from 'calypso/state/sharing/keyring/selectors';
 import { requestKeyringConnections } from 'calypso/state/sharing/keyring/actions';
+import { isKeyringConnectionsFetching } from 'calypso/state/sharing/keyring/selectors';
 
 class QueryKeyringConnections extends Component {
 	static propTypes = {
@@ -23,7 +15,7 @@ class QueryKeyringConnections extends Component {
 		forceRefresh: false,
 	};
 
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		if ( ! this.props.isRequesting ) {
 			this.props.requestKeyringConnections( this.props.forceRefresh );
 		}

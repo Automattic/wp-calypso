@@ -1,34 +1,21 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
+import { Card, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	getSiteFrontPageType,
 	getSitePostsPage,
 	getSiteFrontPage,
 } from 'calypso/state/sites/selectors';
-import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};
 
-class BlogPostsPage extends React.Component {
+class BlogPostsPage extends Component {
 	static propTypes = {
 		site: PropTypes.object,
 		recordCalloutClick: PropTypes.func,
@@ -58,12 +45,6 @@ class BlogPostsPage extends React.Component {
 	};
 
 	render() {
-		const { isFullSiteEditing } = this.props;
-
-		if ( isFullSiteEditing ) {
-			return null;
-		}
-
 		const isCurrentlySetAsHomepage = this.props.frontPageType === 'posts';
 
 		if ( ! isCurrentlySetAsHomepage ) {
@@ -104,6 +85,5 @@ export default connect( ( state, props ) => {
 		isFrontPage: getSiteFrontPageType( state, props.site.ID ) === 'posts',
 		postsPage: getSitePostsPage( state, props.site.ID ),
 		frontPage: getSiteFrontPage( state, props.site.ID ),
-		isFullSiteEditing: isSiteUsingFullSiteEditing( state, props.site.ID ),
 	};
 }, mapDispatchToProps )( localize( BlogPostsPage ) );

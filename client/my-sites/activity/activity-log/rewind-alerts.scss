@@ -2,7 +2,7 @@
 	padding-bottom: 4px;
 	font-size: $font-body-small;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		font-size: $font-body-small;
 	}
 }
@@ -10,9 +10,9 @@
 .activity-log__threats-heading {
 	margin-bottom: 16px;
 	font-weight: 600;
-	color: var( --color-error );
+	color: var(--color-error);
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		margin-bottom: 24px;
 	}
 }

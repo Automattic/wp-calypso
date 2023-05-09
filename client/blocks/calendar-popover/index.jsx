@@ -1,23 +1,13 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { Popover } from '@automattic/components';
 import { pick } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import PostSchedule from 'calypso/components/post-schedule';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
-import Popover from 'calypso/components/popover';
-import PostSchedule from 'calypso/components/post-schedule';
+import { getSite } from 'calypso/state/sites/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};
@@ -112,6 +102,7 @@ class CalendarPopover extends Component {
 }
 
 export default connect( ( state, { siteId } ) => ( {
+	site: getSite( state, siteId ),
 	gmtOffset: getSiteGmtOffset( state, siteId ),
 	timezoneValue: getSiteTimezoneValue( state, siteId ),
 } ) )( CalendarPopover );

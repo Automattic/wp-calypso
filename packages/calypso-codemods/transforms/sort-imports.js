@@ -5,12 +5,8 @@
  * It is smart enough to retain whether or not a docblock should keep a prettier/formatter pragma
  */
 
-/**
- * External dependencies
- */
 const fs = require( 'fs' );
 const path = require( 'path' );
-const _ = require( 'lodash' );
 const nodeJsDeps = require( 'repl' )._builtinLibs;
 
 function findPkgJson( target ) {
@@ -100,7 +96,10 @@ const addNewlineBeforeDocBlock = ( str ) => str.replace( /(import.*\n)(\/\*\*)/,
  * @param {Array} importNodes the import nodes to sort
  * @returns {Array} the sorted set of import nodes
  */
-const sortImports = ( importNodes ) => _.sortBy( importNodes, ( node ) => node.source.value );
+const sortImports = ( importNodes ) =>
+	[ ...importNodes ].sort( ( nodeA, nodeB ) =>
+		nodeA.source.value.localeCompare( nodeB.source.value )
+	);
 
 module.exports = function ( file, api ) {
 	const j = api.jscodeshift;
@@ -115,7 +114,8 @@ module.exports = function ( file, api ) {
 		externalDependenciesSet.has( importNode.source.value.split( '/' )[ 0 ] );
 
 	// if there are no deps at all, then return early.
-	if ( _.isEmpty( declarations.nodes() ) ) {
+	const nodes = declarations.nodes();
+	if ( ! nodes || nodes.length === 0 ) {
 		return file.source;
 	}
 

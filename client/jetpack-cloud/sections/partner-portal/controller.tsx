@@ -1,61 +1,55 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import page from 'page';
-import type PageJS from 'page';
-
-/**
- * Internal dependencies
- */
-import { addQueryArgs } from 'calypso/lib/route';
+import LicenseSelectPartnerKey from 'calypso/jetpack-cloud/sections/partner-portal/license-select-partner-key';
+import AssignLicense from 'calypso/jetpack-cloud/sections/partner-portal/primary/assign-license';
+import BillingDashboard from 'calypso/jetpack-cloud/sections/partner-portal/primary/billing-dashboard';
+import CompanyDetailsDashboard from 'calypso/jetpack-cloud/sections/partner-portal/primary/company-details-dashboard';
+import InvoicesDashboard from 'calypso/jetpack-cloud/sections/partner-portal/primary/invoices-dashboard';
+import IssueLicense from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license';
+import LandingPage from 'calypso/jetpack-cloud/sections/partner-portal/primary/landing-page';
+import Licenses from 'calypso/jetpack-cloud/sections/partner-portal/primary/licenses';
+import PartnerAccess from 'calypso/jetpack-cloud/sections/partner-portal/primary/partner-access';
+import PaymentMethodAdd from 'calypso/jetpack-cloud/sections/partner-portal/primary/payment-method-add';
+import PaymentMethodList from 'calypso/jetpack-cloud/sections/partner-portal/primary/payment-method-list';
+import Prices from 'calypso/jetpack-cloud/sections/partner-portal/primary/prices';
+import TermsOfServiceConsent from 'calypso/jetpack-cloud/sections/partner-portal/primary/terms-of-service-consent';
+import PartnerPortalSidebar from 'calypso/jetpack-cloud/sections/partner-portal/sidebar';
 import {
-	getCurrentPartner,
-	hasActivePartnerKey,
-} from 'calypso/state/partner-portal/partner/selectors';
+	LicenseFilter,
+	LicenseSortDirection,
+	LicenseSortField,
+} from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import {
 	publicToInternalLicenseFilter,
 	publicToInternalLicenseSortField,
 	valueToEnum,
 	ensurePartnerPortalReturnUrl,
 } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
-import Header from './header';
-import JetpackComFooter from 'calypso/jetpack-cloud/sections/pricing/jpcom-footer';
-import PartnerPortalSidebar from 'calypso/jetpack-cloud/sections/partner-portal/sidebar';
-import PartnerAccess from 'calypso/jetpack-cloud/sections/partner-portal/primary/partner-access';
-import TermsOfServiceConsent from 'calypso/jetpack-cloud/sections/partner-portal/primary/terms-of-service-consent';
-import SelectPartnerKey from 'calypso/jetpack-cloud/sections/partner-portal/primary/select-partner-key';
-import BillingDashboard from 'calypso/jetpack-cloud/sections/partner-portal/primary/billing-dashboard';
-import Licenses from 'calypso/jetpack-cloud/sections/partner-portal/primary/licenses';
-import PaymentMethodList from 'calypso/jetpack-cloud/sections/partner-portal/primary/payment-method-list';
-import PaymentMethodAdd from 'calypso/jetpack-cloud/sections/partner-portal/primary/payment-method-add';
-import IssueLicense from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license';
-import LandingPage from 'calypso/jetpack-cloud/sections/partner-portal/primary/landing-page';
+import { addQueryArgs } from 'calypso/lib/route';
 import {
-	LicenseFilter,
-	LicenseSortDirection,
-	LicenseSortField,
-} from 'calypso/jetpack-cloud/sections/partner-portal/types';
+	getCurrentPartner,
+	hasActivePartnerKey,
+	doesPartnerRequireAPaymentMethod,
+} from 'calypso/state/partner-portal/partner/selectors';
 import { ToSConsent } from 'calypso/state/partner-portal/types';
+import getSites from 'calypso/state/selectors/get-sites';
+import Header from './header';
+import type PageJS from 'page';
 
 export function partnerContext( context: PageJS.Context, next: () => void ): void {
 	context.header = <Header />;
 	context.primary = <PartnerAccess />;
-	context.footer = <JetpackComFooter />;
 	next();
 }
 
 export function termsOfServiceContext( context: PageJS.Context, next: () => void ): void {
 	context.header = <Header />;
 	context.primary = <TermsOfServiceConsent />;
-	context.footer = <JetpackComFooter />;
 	next();
 }
 
 export function partnerKeyContext( context: PageJS.Context, next: () => void ): void {
 	context.header = <Header />;
-	context.primary = <SelectPartnerKey />;
-	context.footer = <JetpackComFooter />;
+	context.primary = <LicenseSelectPartnerKey />;
 	next();
 }
 
@@ -63,7 +57,6 @@ export function billingDashboardContext( context: PageJS.Context, next: () => vo
 	context.header = <Header />;
 	context.secondary = <PartnerPortalSidebar path={ context.path } />;
 	context.primary = <BillingDashboard />;
-	context.footer = <JetpackComFooter />;
 	next();
 }
 
@@ -89,15 +82,33 @@ export function licensesContext( context: PageJS.Context, next: () => void ): vo
 			sortField={ sortField }
 		/>
 	);
-	context.footer = <JetpackComFooter />;
 	next();
 }
 
 export function issueLicenseContext( context: PageJS.Context, next: () => void ): void {
+	const { site_id: siteId, product_slug: suggestedProduct } = context.query;
+	const state = context.store.getState();
+	const sites = getSites( state );
+	const selectedSite = siteId ? sites.find( ( site ) => site?.ID === parseInt( siteId ) ) : null;
 	context.header = <Header />;
 	context.secondary = <PartnerPortalSidebar path={ context.path } />;
-	context.primary = <IssueLicense />;
-	context.footer = <JetpackComFooter />;
+	context.primary = (
+		<IssueLicense selectedSite={ selectedSite } suggestedProduct={ suggestedProduct } />
+	);
+	next();
+}
+
+export function assignLicenseContext( context: PageJS.Context, next: () => void ): void {
+	const { page, search } = context.query;
+	const state = context.store.getState();
+	const sites = getSites( state );
+	const currentPage = parseInt( page ) || 1;
+
+	context.header = <Header />;
+	context.secondary = <PartnerPortalSidebar path={ context.path } />;
+	context.primary = (
+		<AssignLicense sites={ sites } currentPage={ currentPage } search={ search || '' } />
+	);
 	next();
 }
 
@@ -105,22 +116,44 @@ export function paymentMethodListContext( context: PageJS.Context, next: () => v
 	context.header = <Header />;
 	context.secondary = <PartnerPortalSidebar path={ context.path } />;
 	context.primary = <PaymentMethodList />;
-	context.footer = <JetpackComFooter />;
 	next();
 }
 
 export function paymentMethodAddContext( context: PageJS.Context, next: () => void ): void {
 	context.header = <Header />;
 	context.secondary = <PartnerPortalSidebar path={ context.path } />;
-	context.primary = <PaymentMethodAdd />;
-	context.footer = <JetpackComFooter />;
+	const { site_id: siteId } = context.query;
+	const state = context.store.getState();
+	const sites = getSites( state );
+	const selectedSite = siteId ? sites?.find( ( site ) => site?.ID === parseInt( siteId ) ) : null;
+	context.primary = <PaymentMethodAdd selectedSite={ selectedSite } />;
+	next();
+}
+
+export function invoicesDashboardContext( context: PageJS.Context, next: () => void ): void {
+	context.header = <Header />;
+	context.secondary = <PartnerPortalSidebar path={ context.path } />;
+	context.primary = <InvoicesDashboard />;
+	next();
+}
+
+export function companyDetailsDashboardContext( context: PageJS.Context, next: () => void ): void {
+	context.header = <Header />;
+	context.secondary = <PartnerPortalSidebar path={ context.path } />;
+	context.primary = <CompanyDetailsDashboard />;
+	next();
+}
+
+export function pricesContext( context: PageJS.Context, next: () => void ): void {
+	context.header = <Header />;
+	context.secondary = <PartnerPortalSidebar path={ context.path } />;
+	context.primary = <Prices />;
 	next();
 }
 
 export function landingPageContext( context: PageJS.Context, next: () => void ): void {
 	context.header = <Header />;
 	context.primary = <LandingPage />;
-	context.footer = <JetpackComFooter />;
 	next();
 }
 
@@ -210,4 +243,32 @@ export function requireSelectedPartnerKeyContext(
 			'/partner-portal/partner-key'
 		)
 	);
+}
+
+/**
+ * Require the user to have a valid payment method registered.
+ *
+ * @param {PageJS.Context} context PageJS context.
+ * @param {() => void} next Next context callback.
+ */
+export function requireValidPaymentMethod( context: PageJS.Context, next: () => void ) {
+	const state = context.store.getState();
+	const paymentMethodRequired = doesPartnerRequireAPaymentMethod( state );
+	const { pathname, search } = window.location;
+
+	if ( paymentMethodRequired ) {
+		const returnUrl = ensurePartnerPortalReturnUrl( pathname + search );
+
+		page.redirect(
+			addQueryArgs(
+				{
+					return: returnUrl,
+				},
+				'/partner-portal/payment-methods/add'
+			)
+		);
+		return;
+	}
+
+	next();
 }

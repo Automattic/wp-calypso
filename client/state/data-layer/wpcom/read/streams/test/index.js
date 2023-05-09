@@ -1,18 +1,11 @@
-/**
- * External Dependencies
- */
 import deepfreeze from 'deep-freeze';
-
-/**
- * Internal Dependencies
- */
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { requestPage, handlePage, INITIAL_FETCH, PER_FETCH, QUERY_META } from '../';
 import {
 	requestPage as requestPageAction,
 	receivePage,
 	receiveUpdates,
 } from 'calypso/state/reader/streams/actions';
+import { requestPage, handlePage, INITIAL_FETCH, PER_FETCH, QUERY_META } from '../';
 
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: jest.fn(),
@@ -101,7 +94,7 @@ describe( 'streams', () => {
 						method: 'GET',
 						path: '/read/conversations',
 						apiVersion: '1.2',
-						query,
+						query: { ...query, comments_per_post: 20 },
 					},
 				},
 				{
@@ -110,7 +103,7 @@ describe( 'streams', () => {
 						method: 'GET',
 						path: '/read/conversations',
 						apiVersion: '1.2',
-						query: { ...query, index: 'a8c' },
+						query: { ...query, comments_per_post: 20, index: 'a8c' },
 					},
 				},
 				{

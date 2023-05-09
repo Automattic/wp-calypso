@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { isFetchingPreferences } from 'calypso/state/preferences/selectors';
 import { fetchPreferences } from 'calypso/state/preferences/actions';
+import { isFetchingPreferences } from 'calypso/state/preferences/selectors';
 
 const request = () => ( dispatch, getState ) => {
 	if ( ! isFetchingPreferences( getState() ) ) {

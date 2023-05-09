@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import { forEach } from 'lodash';
-
-/**
- * Internal Dependencies
- */
 
 const thingsToRemove = [
 	'.sharedaddy', // share daddy

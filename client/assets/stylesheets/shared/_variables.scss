@@ -6,6 +6,10 @@
 	// Masterbar
 	--masterbar-height: 46px;
 
+	@media only screen and ( min-width: 782px ) {
+		--masterbar-height: 32px;
+	}
+
 	// Sidebar size limits
 	--sidebar-width-max: 272px;
 	--sidebar-width-min: 228px;

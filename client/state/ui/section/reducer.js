@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { SECTION_SET } from 'calypso/state/action-types';
 
 //TODO: do we really want to mix strings and booleans?

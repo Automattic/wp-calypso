@@ -2,9 +2,6 @@
  * @jest-environment jsdom
  */
 
-/**
- * Internal dependencies
- */
 import { withoutHttp, urlToSlug, urlToDomainAndPath } from '../http-utils';
 
 describe( 'withoutHttp', () => {

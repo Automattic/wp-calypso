@@ -1,6 +1,6 @@
 # Dependency management
 
-This project uses [yarn v1](https://classic.yarnpkg.com/lang/en/) to manage its dependencies. It uses `yarn workspaces` functionallity and [lerna](https://github.com/lerna/lerna) to manage the monorepo.
+This project uses [yarn v3](https://yarnpkg.com/) to manage its dependencies. It uses workspaces[https://yarnpkg.com/features/workspaces] functionality to manage the monorepo.
 
 ## Working with sub-packages
 
@@ -77,27 +77,27 @@ yarn remove -w lodash
 Run
 
 ```
-yarn upgrade <package>
+yarn up <package>
 
 # Example
-# yarn upgrade sinon
+# yarn up react-query
 ```
 
-Note that this won't change the required range of `sinon` (i.e. it won't modify `package.json`). Instead, it will try to update `sinon` and any of its dependencies to the highest version that satisfies the specified range.
-For example, if we declare a dependency on `sinon@^7.5.0` it may update sinon to `7.5.1`, but never to `8.0.0`.
+Note that this won't change the required range of `react-query` (i.e. it won't modify `package.json`). Instead, it will try to update `react-query` and any of its dependencies to the highest version that satisfies the specified range.
+For example, if we declare a dependency on `react-query@^2.24.0` it may update react-query to `2.24.1`, but never to `3.0.0`.
 
 ### Update a dependency to a new range
 
 Run
 
 ```
-yarn upgrade <package>@^<semver-range>
+yarn up <package>@^<semver-range>
 
 # Example
-# yarn upgrade sinon@^9.0.0
+# yarn up react-query@^3.0.0
 ```
 
-As before, it will update `sinon` and all its dependencies. But in this case, it _will_ change the required range (i.e. it will modify `package.json`)
+As before, it will update `react-query` and all its dependencies. But in this case, it _will_ change the required range (i.e. it will modify `package.json`)
 
 ### List oudated dependencies
 
@@ -114,10 +114,10 @@ Note that the output includes which sub-package has the dependency. It is possib
 Run
 
 ```
-npx yarn-deduplicate --list
+yarn dedupe --check
 ```
 
-It is recommended to run this command after adding a new dependency and fix potential duplications with `npx yarn-deduplicate --package <duplicated-package>`
+It is recommended to run this command after adding a new dependency and fix potential duplications with `yarn dedupe`
 
 ## Differences with `npm`
 

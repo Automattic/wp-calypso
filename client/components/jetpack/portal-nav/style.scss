@@ -1,6 +1,8 @@
-.portal-nav {
+// Making sure the styles below overwrite the .section-nav rules by increasing the selector
+// specificity with .section-nav, since we can't rely on the order stylesheets are loaded.
+.portal-nav.section-nav {
 	flex: 1 1 180px;
-	max-width: 280px;
+	max-width: 400px;
 	margin: 0;
 	margin-right: auto;
 	background: none;
@@ -12,7 +14,7 @@
 
 	.section-nav-tabs {
 		// Using a deprecated breakpoint in order to match the usage in the section component we are overriding.
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( ">480px" ) {
 			&.is-dropdown {
 				margin: 0;
 			}
@@ -21,5 +23,9 @@
 
 	.section-nav-tab__link {
 		padding: 14px 16px 11px;
+
+		&:hover {
+			background-color: var(--studio-gray-0);
+		}
 	}
 }

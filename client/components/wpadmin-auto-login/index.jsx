@@ -1,10 +1,6 @@
-/**
- * External dependencies
- */
-
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import { get } from 'lodash';
 
 /**
  * Try to preload image pixel via going through wp-admin login.

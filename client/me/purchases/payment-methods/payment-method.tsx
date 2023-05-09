@@ -1,31 +1,41 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent, ComponentProps } from 'react';
-
-/**
- * Internal dependencies
- */
-import PaymentMethodDetails from './payment-method-details';
 import { CompactCard } from '@automattic/components';
+import classNames from 'classnames';
+import { isCreditCard } from 'calypso/lib/checkout/payment-methods';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import PaymentMethodBackupToggle from 'calypso/me/purchases/payment-methods/payment-method-backup-toggle';
+import PaymentMethodDelete from 'calypso/me/purchases/payment-methods/payment-method-delete';
+import { TaxInfoArea } from 'calypso/my-sites/checkout/composite-checkout/components/payment-method-tax-info';
+import PaymentMethodDetails from './payment-method-details';
+import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
 
-/**
- * Style dependencies
- */
 import 'calypso/me/purchases/payment-methods/style.scss';
 
-interface Props {
-	card: ComponentProps< typeof PaymentMethodDetails >;
-}
-
-const PaymentMethod: FunctionComponent< Props > = ( { card, children } ) => {
+export default function PaymentMethod( { paymentMethod }: { paymentMethod: StoredPaymentMethod } ) {
 	return (
-		<CompactCard className="payment-method__wrapper">
+		<CompactCard
+			className={ classNames( 'payment-method__wrapper', {
+				'payment-method__wrapper--jetpack-cloud': isJetpackCloud(),
+			} ) }
+		>
 			<div className="payment-method">
-				{ card ? <PaymentMethodDetails { ...card } /> : children }
+				<PaymentMethodDetails
+					lastDigits={ 'card_last_4' in paymentMethod ? paymentMethod.card_last_4 : undefined }
+					email={ paymentMethod.email }
+					cardType={ 'card_type' in paymentMethod ? paymentMethod.card_type : undefined }
+					paymentPartner={ paymentMethod.payment_partner }
+					name={ paymentMethod.name }
+					expiry={ paymentMethod.expiry }
+					isExpired={ paymentMethod.is_expired }
+				/>
+				{ isCreditCard( paymentMethod ) && <PaymentMethodBackupToggle card={ paymentMethod } /> }
+				<TaxInfoArea
+					last4={ 'card_last_4' in paymentMethod ? paymentMethod.card_last_4 : undefined }
+					brand={ 'card_type' in paymentMethod ? paymentMethod.card_type : undefined }
+					storedDetailsId={ paymentMethod.stored_details_id }
+					paymentPartnerProcessorId={ paymentMethod.payment_partner }
+				/>
+				<PaymentMethodDelete card={ paymentMethod } />
 			</div>
 		</CompactCard>
 	);
-};
-
-export default PaymentMethod;
+}

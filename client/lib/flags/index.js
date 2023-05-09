@@ -33,6 +33,7 @@ export function flagUrl( countryCode ) {
 				</g>
 			</svg>`;
 
-		return 'data:image/svg+xml;utf8,' + svg;
+		// Ensure that we URI-encode the SVG content
+		return 'data:image/svg+xml;utf8,' + encodeURIComponent( svg );
 	}
 }

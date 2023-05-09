@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import getPosterUploadProgress from 'calypso/state/selectors/get-poster-upload-progress';
 
 describe( 'getPosterUploadProgress()', () => {
@@ -19,6 +11,6 @@ describe( 'getPosterUploadProgress()', () => {
 			},
 		} );
 
-		expect( uploadProgress ).to.eql( percentage );
+		expect( uploadProgress ).toEqual( percentage );
 	} );
 } );

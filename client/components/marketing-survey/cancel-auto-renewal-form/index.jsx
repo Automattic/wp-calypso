@@ -1,34 +1,24 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { shuffle } from 'lodash';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { isDomainRegistration, isPlan } from '@automattic/calypso-products';
 import { Dialog } from '@automattic/components';
-import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import { localize } from 'i18n-calypso';
+import { shuffle } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
-import { submitSurvey } from 'calypso/lib/purchases/actions';
-import { isDomainRegistration, isPlan } from '@automattic/calypso-products';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import enrichedSurveyData from 'calypso/components/marketing-survey/cancel-purchase-form/enriched-survey-data';
 import PrecancellationChatButton from 'calypso/components/marketing-survey/cancel-purchase-form/precancellation-chat-button';
+import { submitSurvey } from 'calypso/lib/purchases/actions';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class CancelAutoRenewalForm extends Component {
 	static propTypes = {
 		purchase: PropTypes.object.isRequired,
-		selectedSite: PropTypes.object.isRequired,
+		selectedSiteId: PropTypes.number.isRequired,
 		isVisible: PropTypes.bool,
 		onClose: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
@@ -82,16 +72,16 @@ class CancelAutoRenewalForm extends Component {
 	}
 
 	onSubmit = () => {
-		const { purchase, selectedSite } = this.props;
+		const { purchase, selectedSiteId } = this.props;
 		const { response } = this.state;
 
 		const surveyData = {
 			response,
 		};
 
-		submitSurvey(
+		this.props.submitSurvey(
 			'calypso-cancel-auto-renewal',
-			selectedSite.ID,
+			selectedSiteId,
 			enrichedSurveyData( surveyData, purchase )
 		);
 
@@ -178,4 +168,4 @@ class CancelAutoRenewalForm extends Component {
 	}
 }
 
-export default connect()( localize( CancelAutoRenewalForm ) );
+export default connect( null, { submitSurvey } )( localize( CancelAutoRenewalForm ) );

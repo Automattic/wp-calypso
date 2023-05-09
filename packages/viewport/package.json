@@ -1,31 +1,35 @@
 {
 	"name": "@automattic/viewport",
-	"version": "1.0.0",
-	"description": "Vanilla helpers for tracking viewport changes",
+	"version": "1.1.0",
+	"description": "Vanilla helpers for tracking viewport changes.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
-	"calypso:src": "src/index.js",
+	"calypso:src": "src/index.ts",
+	"types": "dist/types/index.d.ts",
 	"sideEffects": false,
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
 		"directory": "packages/viewport"
 	},
+	"files": [
+		"dist",
+		"src"
+	],
 	"author": "Automattic Inc.",
 	"license": "GPL-2.0-or-later",
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/viewport#readme",
 	"scripts": {
-		"clean": "npx rimraf dist",
-		"build": "transpile",
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
 		"prepack": "yarn run clean && yarn run build"
 	},
 	"publishConfig": {
 		"access": "public"
 	},
 	"devDependencies": {
-		"regenerator-runtime": "^0.13.4"
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"typescript": "^4.7.4"
 	}
 }

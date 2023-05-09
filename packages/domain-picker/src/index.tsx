@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 export { default } from './components';
 export type { Props } from './components';
 
@@ -12,10 +9,6 @@ export {
 
 export type { SUGGESTION_ITEM_TYPE } from './components/domain-suggestion-item';
 
-export {
-	mockDomainSuggestion,
-	isGoodDefaultDomainQuery,
-	getDomainSuggestionsVendor,
-} from './utils';
+export { mockDomainSuggestion, getDomainSuggestionsVendor } from './utils';
 export { useDomainSuggestions } from './hooks';
 export { DOMAIN_QUERY_MINIMUM_LENGTH } from './constants';

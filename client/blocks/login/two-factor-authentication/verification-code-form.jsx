@@ -1,34 +1,22 @@
-/**
- * External dependencies
- */
-
-import { connect } from 'react-redux';
+import { Card, FormInputValidation } from '@automattic/components';
+import { localize } from 'i18n-calypso';
 import { defer } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormVerificationCodeInput from 'calypso/components/forms/form-verification-code-input';
-import { localize } from 'i18n-calypso';
-import { getTwoFactorAuthRequestError } from 'calypso/state/login/selectors';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	formUpdate,
 	loginUserWithTwoFactorVerificationCode,
 	sendSmsCode,
 } from 'calypso/state/login/actions';
+import { getTwoFactorAuthRequestError } from 'calypso/state/login/selectors';
 import TwoFactorActions from './two-factor-actions';
 
-/**
- * Style dependencies
- */
 import './verification-code-form.scss';
 
 class VerificationCodeForm extends Component {
@@ -66,13 +54,6 @@ class VerificationCodeForm extends Component {
 			defer( () => this.input.focus() );
 		}
 	}
-
-	UNSAFE_componentWillReceiveProps = ( nextProps ) => {
-		// Resets the verification code input field when switching pages
-		if ( this.props.twoFactorAuthType !== nextProps.twoFactorAuthType ) {
-			this.setState( { twoStepCode: '' } );
-		}
-	};
 
 	onChangeField = ( event ) => {
 		const { name, value = '' } = event.target;

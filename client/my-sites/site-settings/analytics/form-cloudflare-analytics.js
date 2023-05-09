@@ -1,38 +1,28 @@
-/**
- * External dependencies
- */
-import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
-import { flowRight, partialRight, pick } from 'lodash';
-import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
-import { hasSiteAnalyticsFeature } from '../utils';
-import wrapSettingsForm from '../wrap-settings-form';
-import { CompactCard } from '@automattic/components';
-import { getPlugins } from 'calypso/state/plugins/installed/selectors';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
-import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormTextValidation from 'calypso/components/forms/form-input-validation';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import cloudflareIllustration from 'calypso/assets/images/illustrations/cloudflare-logo-small.svg';
 import {
 	findFirstSimilarPlanKey,
 	TYPE_PREMIUM,
 	FEATURE_CLOUDFLARE_ANALYTICS,
+	FEATURE_GOOGLE_ANALYTICS,
 } from '@automattic/calypso-products';
+import { CompactCard, FormInputValidation as FormTextValidation } from '@automattic/components';
+import { ToggleControl } from '@wordpress/components';
+import { pick } from 'lodash';
+import { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
+import cloudflareIllustration from 'calypso/assets/images/illustrations/cloudflare-logo-small.svg';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getPlugins } from 'calypso/state/plugins/installed/selectors';
+import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import wrapSettingsForm from '../wrap-settings-form';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const validateTrackingId = ( code ) =>
@@ -55,9 +45,8 @@ export function CloudflareAnalyticsSettings( {
 } ) {
 	const [ isCodeValid, setIsCodeValid ] = useState( true );
 	const [ isCloudflareEnabled, setIsCloudflareEnabled ] = useState( false );
-	const [ loggedCloudflareAnalyticsModified, setLoggedCloudflareAnalyticsModified ] = useState(
-		false
-	);
+	const [ loggedCloudflareAnalyticsModified, setLoggedCloudflareAnalyticsModified ] =
+		useState( false );
 	const isSubmitButtonDisabled =
 		isRequestingSettings || isSavingSettings || ! isCodeValid || ! enableForm;
 
@@ -139,7 +128,7 @@ export function CloudflareAnalyticsSettings( {
 				description={ translate(
 					'Choose an additional analytics tool to connect and get unique insights about your site traffic.'
 				) }
-				event={ 'jetpack_cloudflare_analytics_settings' }
+				event="jetpack_cloudflare_analytics_settings"
 				tracksClickProperties={ { plan: site.plan.product_slug } }
 				feature={ FEATURE_CLOUDFLARE_ANALYTICS }
 				plan={ plan }
@@ -222,7 +211,7 @@ export function CloudflareAnalyticsSettings( {
 							<ToggleControl
 								checked={ isCloudflareEnabled }
 								disabled={ isRequestingSettings || isSavingSettings || ! enableForm }
-								onChange={ () => handleFormToggle( ! isCloudflareEnabled ) }
+								onChange={ handleFormToggle }
 								label={ translate( 'Add Cloudflare' ) }
 							/>
 						</div>
@@ -244,7 +233,7 @@ export function CloudflareAnalyticsSettings( {
 const mapStateToProps = ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
-	const isAnalyticsEligible = hasSiteAnalyticsFeature( site );
+	const isAnalyticsEligible = siteHasFeature( state, siteId, FEATURE_GOOGLE_ANALYTICS );
 	const siteIsJetpack = isJetpackSite( state, siteId );
 	const sitePlugins = site ? getPlugins( state, [ site.ID ] ) : [];
 	const path = getCurrentRouteParameterized( state, siteId );
@@ -266,9 +255,8 @@ const mapDispatchToProps = {
 
 const connectComponent = connect( mapStateToProps, mapDispatchToProps );
 
-const getFormSettings = partialRight( pick, [ 'jetpack_cloudflare_analytics' ] );
+const getFormSettings = ( settings ) => pick( settings, [ 'jetpack_cloudflare_analytics' ] );
 
-export default flowRight(
-	connectComponent,
-	wrapSettingsForm( getFormSettings )
-)( CloudflareAnalyticsSettings );
+export default connectComponent(
+	wrapSettingsForm( getFormSettings )( CloudflareAnalyticsSettings )
+);

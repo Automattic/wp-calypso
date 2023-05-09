@@ -1,22 +1,16 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { isMonthly, getYearlyPlanByMonthly } from '@automattic/calypso-products';
+import { Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import { Button } from '@automattic/components';
-
-/**
- * Internal Dependencies
- */
+import PropTypes from 'prop-types';
+import { Fragment, Component } from 'react';
+import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { isMonthly, getYearlyPlanByMonthly } from '@automattic/calypso-products';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
 	isExpired,
 	isExpiring,
@@ -25,6 +19,7 @@ import {
 } from 'calypso/lib/purchases';
 import { JETPACK_SUPPORT } from 'calypso/lib/url/support';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { isTemporarySitePurchase } from '../../utils';
 
 export class PlanBillingPeriod extends Component {
 	static propTypes = {
@@ -41,7 +36,13 @@ export class PlanBillingPeriod extends Component {
 			current_plan: purchase.productSlug,
 			upgrading_to: yearlyPlanSlug,
 		} );
-		page( '/checkout/' + purchase.domain + '/' + yearlyPlanSlug );
+		page(
+			( isJetpackCloud() ? 'https://wordpress.com' : '' ) +
+				'/checkout/' +
+				purchase.domain +
+				'/' +
+				yearlyPlanSlug
+		);
 	};
 
 	renderYearlyBillingInformation() {
@@ -95,17 +96,19 @@ export class PlanBillingPeriod extends Component {
 			return;
 		}
 
+		const isTemporarySite = isTemporarySitePurchase( purchase );
+
 		return (
-			<React.Fragment>
+			<Fragment>
 				<FormSettingExplanation>
 					{ translate( 'Billed monthly' ) }
-					{ site && isProductOwner && (
+					{ site && isProductOwner && ! purchase.isLocked && (
 						<Button onClick={ this.handleMonthlyToYearlyButtonClick } primary compact>
 							{ translate( 'Upgrade to yearly billing' ) }
 						</Button>
 					) }
 				</FormSettingExplanation>
-				{ ! site && (
+				{ ! site && ! isTemporarySite && ! purchase.isLocked && (
 					<FormSettingExplanation>
 						{ translate(
 							'To manage your plan, please {{supportPageLink}}reconnect{{/supportPageLink}} your site.',
@@ -114,7 +117,8 @@ export class PlanBillingPeriod extends Component {
 									supportPageLink: (
 										<a
 											href={
-												JETPACK_SUPPORT + 'reconnecting-reinstalling-jetpack/#reconnecting-jetpack'
+												localizeUrl( JETPACK_SUPPORT ) +
+												'reconnecting-reinstalling-jetpack/#reconnecting-jetpack'
 											}
 										/>
 									),
@@ -123,7 +127,7 @@ export class PlanBillingPeriod extends Component {
 						) }
 					</FormSettingExplanation>
 				) }
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 

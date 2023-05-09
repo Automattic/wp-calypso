@@ -4,6 +4,7 @@
 
 - Drop dependency on `url` npm package.
 - Breaking change: support for URL / URLSearchParams APIs is now required.
+- Consolidate onto `i0.wp.com` for HTTPS URLs
 
 ## 3.0.0 / 2019-01-08
 

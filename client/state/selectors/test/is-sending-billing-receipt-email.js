@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import isSendingBillingReceiptEmail from 'calypso/state/selectors/is-sending-billing-receipt-email';
 
 describe( 'isSendingBillingReceiptEmail()', () => {
@@ -18,7 +10,7 @@ describe( 'isSendingBillingReceiptEmail()', () => {
 			},
 		};
 		const output = isSendingBillingReceiptEmail( stateIn, 12345678 );
-		expect( output ).to.be.true;
+		expect( output ).toBe( true );
 	} );
 
 	test( 'should return false if the receipt email is not being sent for that receiptId', () => {
@@ -30,7 +22,7 @@ describe( 'isSendingBillingReceiptEmail()', () => {
 			},
 		};
 		const output = isSendingBillingReceiptEmail( stateIn, 12345678 );
-		expect( output ).to.be.false;
+		expect( output ).toBe( false );
 	} );
 
 	test( 'should return null if receipt email for that receiptId is not known yet', () => {
@@ -42,6 +34,6 @@ describe( 'isSendingBillingReceiptEmail()', () => {
 			},
 		};
 		const output = isSendingBillingReceiptEmail( stateIn, 12345678 );
-		expect( output ).to.be.null;
+		expect( output ).toBeNull();
 	} );
 } );

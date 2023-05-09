@@ -1,31 +1,22 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import reducer, { items } from '../reducer';
 import { POST_TYPES_RECEIVE } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import reducer, { items } from '../reducer';
 
 describe( 'reducer', () => {
-	useSandbox( ( sandbox ) => {
-		sandbox.stub( console, 'warn' );
-	} );
+	jest.spyOn( console, 'warn' ).mockImplementation();
 
 	test( 'should include expected keys in return value', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [ 'items', 'taxonomies' ] );
+		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual(
+			expect.arrayContaining( [ 'items', 'taxonomies' ] )
+		);
 	} );
 
 	describe( '#items()', () => {
 		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should index post types by site ID, post type name pairing', () => {
@@ -38,7 +29,7 @@ describe( 'reducer', () => {
 				],
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					post: { name: 'post', label: 'Posts' },
 					page: { name: 'page', label: 'Pages' },
@@ -61,7 +52,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					post: { name: 'post', label: 'Posts' },
 					page: { name: 'page', label: 'Pages' },
@@ -87,7 +78,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					post: { name: 'post', label: 'Posts' },
 				},
@@ -104,7 +95,7 @@ describe( 'reducer', () => {
 				} )
 			);
 
-			expect( state.root() ).to.eql( {
+			expect( state.root() ).toEqual( {
 				2916284: {
 					post: { name: 'post', label: 'Posts' },
 				},
@@ -121,7 +112,7 @@ describe( 'reducer', () => {
 				} )
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					post: { name: 'post', label: 'Posts' },
 				},
@@ -136,7 +127,7 @@ describe( 'reducer', () => {
 				} )
 			);
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 	} );
 } );

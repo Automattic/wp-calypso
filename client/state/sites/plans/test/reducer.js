@@ -1,35 +1,24 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import { plans } from '../reducer';
 import {
 	SITE_PLANS_FETCH,
 	SITE_PLANS_FETCH_COMPLETED,
 	SITE_PLANS_FETCH_FAILED,
-	SITE_PLANS_TRIAL_CANCEL,
-	SITE_PLANS_TRIAL_CANCEL_FAILED,
-	SITE_PLANS_TRIAL_CANCEL_COMPLETED,
 	SITE_PLANS_REMOVE,
 } from 'calypso/state/action-types';
+import { plans } from '../reducer';
 
 describe( 'reducer', () => {
 	describe( '#plans()', () => {
 		test( 'should return an empty state when original state is undefined and action is empty', () => {
 			const state = plans( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should return an empty state when original state and action are empty', () => {
 			const original = Object.freeze( {} );
 			const state = plans( original, {} );
 
-			expect( state ).to.eql( original );
+			expect( state ).toEqual( original );
 		} );
 
 		test( 'should return an empty state when original state is undefined and action is unknown', () => {
@@ -38,7 +27,7 @@ describe( 'reducer', () => {
 				siteId: 11111111,
 			} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should return the original state when action is unknown', () => {
@@ -55,7 +44,7 @@ describe( 'reducer', () => {
 				siteId: 11111111,
 			} );
 
-			expect( state ).to.eql( original );
+			expect( state ).toEqual( original );
 		} );
 
 		test( 'should return the initial state with requesting enabled when fetching is triggered', () => {
@@ -64,7 +53,7 @@ describe( 'reducer', () => {
 				siteId: 11111111,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				11111111: {
 					data: null,
 					error: null,
@@ -89,7 +78,7 @@ describe( 'reducer', () => {
 				error: 'Unable to fetch site plans',
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				11111111: {
 					data: [],
 					error: 'Unable to fetch site plans',
@@ -106,7 +95,7 @@ describe( 'reducer', () => {
 				plans: [],
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				11111111: {
 					data: [],
 					error: null,
@@ -130,7 +119,7 @@ describe( 'reducer', () => {
 				siteId: 55555555,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				11111111: {
 					data: [],
 					error: null,
@@ -160,78 +149,12 @@ describe( 'reducer', () => {
 				siteId: 11111111,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				11111111: {
 					data: null,
 					error: null,
 					hasLoadedFromServer: false,
 					isRequesting: true,
-				},
-			} );
-		} );
-
-		test( 'should return the original state with updating enabled when trial cancelation is triggered', () => {
-			const original = Object.freeze( {
-				11111111: {
-					data: [],
-					error: null,
-					hasLoadedFromServer: false,
-					isRequesting: false,
-				},
-			} );
-			const state = plans( original, {
-				type: SITE_PLANS_TRIAL_CANCEL,
-				siteId: 11111111,
-			} );
-
-			expect( state ).to.eql( {
-				11111111: {
-					data: [],
-					error: null,
-					hasLoadedFromServer: false,
-					isRequesting: true,
-				},
-			} );
-		} );
-
-		test( 'should return the original state with an error and requesting disabled when trial cancelation failed', () => {
-			const original = Object.freeze( {
-				11111111: {
-					data: [],
-					error: null,
-					hasLoadedFromServer: true,
-					isRequesting: true,
-				},
-			} );
-			const state = plans( original, {
-				type: SITE_PLANS_TRIAL_CANCEL_FAILED,
-				siteId: 11111111,
-				error: 'Unable to cancel plan trial',
-			} );
-
-			expect( state ).to.eql( {
-				11111111: {
-					data: [],
-					error: 'Unable to cancel plan trial',
-					hasLoadedFromServer: true,
-					isRequesting: false,
-				},
-			} );
-		} );
-
-		test( 'should return a list of plans with loaded from server enabled and requesting disabled when trial cancelation completed', () => {
-			const state = plans( undefined, {
-				type: SITE_PLANS_TRIAL_CANCEL_COMPLETED,
-				siteId: 11111111,
-				plans: [],
-			} );
-
-			expect( state ).to.eql( {
-				11111111: {
-					data: [],
-					error: null,
-					hasLoadedFromServer: true,
-					isRequesting: false,
 				},
 			} );
 		} );
@@ -242,7 +165,7 @@ describe( 'reducer', () => {
 				siteId: 11111111,
 			} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should return the original state when removal is triggered for an unknown site', () => {
@@ -259,7 +182,7 @@ describe( 'reducer', () => {
 				siteId: 22222222,
 			} );
 
-			expect( state ).to.eql( original );
+			expect( state ).toEqual( original );
 		} );
 
 		test( 'should remove plans for a given site when removal is triggered', () => {
@@ -282,7 +205,7 @@ describe( 'reducer', () => {
 				siteId: 11111111,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				22222222: {
 					data: [],
 					error: null,

@@ -4,7 +4,7 @@
 	align-items: center;
 	max-width: 720px;
 
-	@include breakpoint-deprecated( '>800px' ) {
+	@include breakpoint-deprecated( ">800px" ) {
 		font-size: $font-body;
 		padding: 20px 0;
 		width: 720px;
@@ -13,7 +13,7 @@
 	&__title {
 		font-size: $font-title-medium;
 
-		@include breakpoint-deprecated( '<660px' ) {
+		@include breakpoint-deprecated( "<660px" ) {
 			text-align: center;
 		}
 	}
@@ -23,7 +23,7 @@
 	}
 
 	.progress-bar {
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			max-width: 80%;
 		}
 	}
@@ -32,7 +32,7 @@
 		padding-right: 80px;
 		padding-left: 80px;
 
-		@include breakpoint-deprecated( '<660px' ) {
+		@include breakpoint-deprecated( "<660px" ) {
 			text-align: center;
 			width: 100%;
 		}
@@ -52,7 +52,7 @@
 	max-width: 220px;
 	margin-right: 32px;
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		display: none;
 	}
 }

@@ -2,16 +2,16 @@
 	margin-bottom: 4px;
 	font-size: $font-body-small;
 	line-height: 18px;
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 
 	&.is-warning {
-		color: var( --color-error );
+		color: var(--color-error);
 	}
 }
 
 .account__close-section-desc {
 	margin-bottom: 0;
 	font-size: $font-body-small;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	font-style: italic;
 }

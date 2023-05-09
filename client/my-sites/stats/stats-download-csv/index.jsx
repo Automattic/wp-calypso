@@ -1,27 +1,18 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { Button, Gridicon } from '@automattic/components';
 import { saveAs } from 'browser-filesaver';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
-import { Button } from '@automattic/components';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	getSiteStatsCSVData,
 	isRequestingSiteStatsForQuery,
 } from 'calypso/state/stats/lists/selectors';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
 
 class StatsDownloadCsv extends Component {
 	static propTypes = {
@@ -52,7 +43,13 @@ class StatsDownloadCsv extends Component {
 
 		const csvData = data
 			.map( ( row ) => {
-				return row.join( ',' );
+				if ( Array.isArray( row ) ) {
+					return row.join( ',' );
+				}
+
+				return Object.values( row )
+					.map( ( value ) => `"${ value.toString().replace( /"/g, '""' ) }"` )
+					.join( ',' );
 			} )
 			.join( '\n' );
 
@@ -78,7 +75,7 @@ class StatsDownloadCsv extends Component {
 				disabled={ disabled }
 				borderless={ borderless }
 			>
-				{ siteId && statType && (
+				{ siteId && statType && query && (
 					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 				) }
 				<Gridicon icon="cloud-download" />{ ' ' }
@@ -92,9 +89,14 @@ class StatsDownloadCsv extends Component {
 
 const connectComponent = connect(
 	( state, ownProps ) => {
-		const { statType, query } = ownProps;
 		const siteId = getSelectedSiteId( state );
 		const siteSlug = getSiteSlug( state, siteId );
+
+		if ( ownProps.data ) {
+			return { data: ownProps.data, siteSlug, siteId, isLoading: false };
+		}
+
+		const { statType, query } = ownProps;
 		const data = getSiteStatsCSVData( state, siteId, statType, query );
 		const isLoading = isRequestingSiteStatsForQuery( state, siteId, statType, query );
 

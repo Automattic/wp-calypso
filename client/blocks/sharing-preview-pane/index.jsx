@@ -1,34 +1,24 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get, find, map } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { getPostImage, getExcerptForPost, getSummaryForPost } from './utils';
-import FacebookSharePreview from 'calypso/components/share/facebook-share-preview';
-import LinkedinSharePreview from 'calypso/components/share/linkedin-share-preview';
-import TwitterSharePreview from 'calypso/components/share/twitter-share-preview';
-import TumblrSharePreview from 'calypso/components/share/tumblr-share-preview';
-import VerticalMenu from 'calypso/components/vertical-menu';
-import { SocialItem } from 'calypso/components/vertical-menu/items';
-import { getSitePost } from 'calypso/state/posts/selectors';
-import { getSeoTitle, getSite, getSiteSlug } from 'calypso/state/sites/selectors';
-import { getSiteUserConnections } from 'calypso/state/sharing/publicize/selectors';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import FacebookSharePreview from 'calypso/components/share/facebook-share-preview';
+import LinkedinSharePreview from 'calypso/components/share/linkedin-share-preview';
+import TumblrSharePreview from 'calypso/components/share/tumblr-share-preview';
+import TwitterSharePreview from 'calypso/components/share/twitter-share-preview';
+import VerticalMenu from 'calypso/components/vertical-menu';
+import { SocialItem } from 'calypso/components/vertical-menu/items';
+import { decodeEntities } from 'calypso/lib/formatting';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getSitePost } from 'calypso/state/posts/selectors';
 import getSiteIconUrl from 'calypso/state/selectors/get-site-icon-url';
+import { getSiteUserConnections } from 'calypso/state/sharing/publicize/selectors';
+import { getSeoTitle, getSite, getSiteSlug } from 'calypso/state/sites/selectors';
+import { getPostImage, getExcerptForPost, getSummaryForPost } from './utils';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const serviceNames = {
@@ -71,16 +61,8 @@ class SharingPreviewPane extends PureComponent {
 	};
 
 	renderPreview() {
-		const {
-			post,
-			site,
-			message,
-			connections,
-			translate,
-			seoTitle,
-			siteSlug,
-			siteIcon,
-		} = this.props;
+		const { post, site, message, connections, translate, seoTitle, siteSlug, siteIcon } =
+			this.props;
 		const { selectedService } = this.state;
 		const connection = find( connections, { service: selectedService } );
 		if ( ! connection ) {
@@ -130,9 +112,25 @@ class SharingPreviewPane extends PureComponent {
 
 		switch ( selectedService ) {
 			case 'facebook':
-				return <FacebookSharePreview { ...previewProps } />;
+				return (
+					<FacebookSharePreview
+						{ ...previewProps }
+						articleExcerpt={ post.excerpt }
+						articleContent={ post.content }
+						customImage={
+							post.metadata?.find( ( meta ) => meta.key === '_wpas_options' )?.value
+								?.attached_media?.[ 0 ]?.url
+						}
+					/>
+				);
 			case 'tumblr':
-				return <TumblrSharePreview { ...previewProps } />;
+				return (
+					<TumblrSharePreview
+						{ ...previewProps }
+						articleContent={ post.content }
+						externalProfileURL={ connection.external_profile_URL }
+					/>
+				);
 			case 'linkedin':
 				return <LinkedinSharePreview { ...previewProps } />;
 			case 'twitter':
@@ -177,7 +175,7 @@ const mapStateToProps = ( state, ownProps ) => {
 	const { siteId, postId } = ownProps;
 	const site = getSite( state, siteId );
 	const post = getSitePost( state, siteId, postId );
-	const seoTitle = getSeoTitle( state, 'posts', { site, post } );
+	const seoTitle = decodeEntities( getSeoTitle( state, 'posts', { site, post } ) );
 	const currentUserId = getCurrentUserId( state );
 	const connections = getSiteUserConnections( state, siteId, currentUserId );
 	const siteSlug = getSiteSlug( state, siteId );

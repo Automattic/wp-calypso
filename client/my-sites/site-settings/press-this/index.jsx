@@ -1,24 +1,15 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { Card, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
-import Gridicon from 'calypso/components/gridicon';
-import PressThisLink from './link';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLegend from 'calypso/components/forms/form-legend';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import PressThisLink from './link';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class PressThis extends Component {
@@ -38,38 +29,44 @@ class PressThis extends Component {
 
 		return (
 			<div className="press-this">
-				<Card className="site-settings">
-					<p>
+				<Card className="press-this__card site-settings">
+					<FormLegend>{ translate( 'Press This' ) }</FormLegend>
+					<FormSettingExplanation>
 						{ translate(
-							'Press This is a bookmarklet: a little app that runs in your browser and lets you grab bits of the web.'
+							'{{strong}}Press This{{/strong}} allows you to copy text, images, and video from any web page and add them to a new post on your site, along with an automatic citation.',
+							{ components: { strong: <strong /> } }
 						) }
-					</p>
-					<p>
-						{ translate(
-							'Use Press This to clip text, images and videos from any web page. ' +
-								'Then edit and add more straight from Press This before you save or publish it in a post on your site.'
+					</FormSettingExplanation>
+
+					<FormFieldset>
+						<FormLegend>{ translate( 'How to use Press This' ) }</FormLegend>
+						<ul>
+							<li>
+								{ translate(
+									'Drag and drop the "Press This" button below to your bookmarks bar, or right-click the button to copy the link, then add the link to your favorites.'
+								) }
+							</li>
+							<li>
+								{ translate( "Highlight the text or item you'd like to copy into a new post." ) }
+							</li>
+							<li>{ translate( 'Click on the "Press This" bookmarklet / favorite.' ) }</li>
+						</ul>
+
+						{ site && (
+							<p className="press-this__link-container">
+								<PressThisLink
+									site={ site }
+									onClick={ this.recordEvent( 'Clicked Press This Button' ) }
+									onDragStart={ this.recordEvent( 'Dragged Press This Button' ) }
+								>
+									<Gridicon icon="create" />
+									<span>
+										{ translate( 'Press This', { context: 'name of browser bookmarklet tool' } ) }
+									</span>
+								</PressThisLink>
+							</p>
 						) }
-					</p>
-					<p>
-						{ translate(
-							'Drag-and-drop the following link to your bookmarks bar or right click it and add it to your favorites ' +
-								'for a posting shortcut.'
-						) }
-					</p>
-					{ site && (
-						<p className="press-this__link-container">
-							<PressThisLink
-								site={ site }
-								onClick={ this.recordEvent( 'Clicked Press This Button' ) }
-								onDragStart={ this.recordEvent( 'Dragged Press This Button' ) }
-							>
-								<Gridicon icon="create" />
-								<span>
-									{ translate( 'Press This', { context: 'name of browser bookmarklet tool' } ) }
-								</span>
-							</PressThisLink>
-						</p>
-					) }
+					</FormFieldset>
 				</Card>
 			</div>
 		);

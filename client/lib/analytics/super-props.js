@@ -1,14 +1,8 @@
-/**
- * External dependencies
- */
 import config from '@automattic/calypso-config';
-
-/**
- * Internal dependencies
- */
 import { shouldReportOmitBlogId } from 'calypso/lib/analytics/utils';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 const getSuperProps = ( reduxStore ) => ( eventProperties ) => {
 	const state = reduxStore.getState();
@@ -21,7 +15,9 @@ const getSuperProps = ( reduxStore ) => ( eventProperties ) => {
 		client: config( 'client_slug' ),
 	};
 
-	const omitSelectedSite = shouldReportOmitBlogId( eventProperties.path );
+	const path = eventProperties.path ?? getCurrentRoute( state );
+
+	const omitSelectedSite = ! eventProperties.force_site_id && shouldReportOmitBlogId( path );
 	const selectedSite = omitSelectedSite ? null : getSelectedSite( state );
 
 	if ( selectedSite ) {

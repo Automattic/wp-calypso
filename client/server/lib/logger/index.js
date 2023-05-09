@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import bunyan from 'bunyan';
 
 let logger;
@@ -24,6 +21,8 @@ const createLogger = () => {
 };
 
 export const getLogger = () => {
-	if ( ! logger ) createLogger();
+	if ( ! logger ) {
+		createLogger();
+	}
 	return logger;
 };

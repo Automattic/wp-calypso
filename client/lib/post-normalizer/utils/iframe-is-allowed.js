@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
-import { some } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { getUrlParts } from '@automattic/calypso-url';
+import { some } from 'lodash';
 
 /**
  * Determines if an iframe is from a source we trust. We allow these to be the featured media and also give
  * them a freer sandbox
  *
- * @param  {object} iframe the iframe to check
+ * @param  {Object} iframe the iframe to check
  * @returns {boolean} true if allowed
  */
 export function iframeIsAllowed( iframe ) {

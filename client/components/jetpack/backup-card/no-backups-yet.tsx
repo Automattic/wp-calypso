@@ -1,25 +1,16 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent } from 'react';
-import { useSelector } from 'react-redux';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import { Button, Card } from '@automattic/components';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { FunctionComponent } from 'react';
+import { useSelector } from 'react-redux';
+import cloudPendingIcon from 'calypso/components/jetpack/daily-backup-status/status-card/icons/cloud-pending-gray-30.svg';
+import JetpackLogo from 'calypso/components/jetpack-logo';
 import getRawSite from 'calypso/state/selectors/get-raw-site';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
-import JetpackLogo from 'calypso/components/jetpack-logo';
-/**
- * Style dependencies
- */
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+
 import './style.scss';
-import cloudPendingIcon from 'calypso/components/jetpack/daily-backup-status/status-card/icons/cloud-pending-gray-30.svg';
 
 type Props = { isFeatured: boolean };
 interface rawSite {
@@ -59,7 +50,7 @@ const NoBackupsYet: FunctionComponent< Props > = ( { isFeatured } ) => {
 					<li>
 						<Button
 							className="backup-card__support-button"
-							href={ siteUrl }
+							href={ siteUrl ?? '' }
 							target="_blank"
 							rel="noopener noreferrer"
 							primary
@@ -70,7 +61,7 @@ const NoBackupsYet: FunctionComponent< Props > = ( { isFeatured } ) => {
 					<li>
 						<Button
 							className="backup-card__support-button"
-							href={ adminUrl }
+							href={ adminUrl ?? '' }
 							target="_blank"
 							rel="noopener noreferrer"
 						>

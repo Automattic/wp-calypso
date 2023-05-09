@@ -1,20 +1,11 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { translate } from 'i18n-calypso';
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import { translate } from 'i18n-calypso';
 import Badge from 'calypso/components/badge';
-import Gridicon from 'calypso/components/gridicon';
 
 const CurrentTaskItem = ( { currentTask, skipTask, startTask, useAccordionLayout } ) => {
 	return (
-		<div className="site-setup-list__task task">
+		<div className="site-setup-list__task task" role="tabpanel">
 			<div className="site-setup-list__task-text task__text">
 				{ currentTask.isCompleted && ! currentTask.hideLabel && (
 					<Badge type="info" className="site-setup-list__task-badge task__badge">
@@ -31,7 +22,12 @@ const CurrentTaskItem = ( { currentTask, skipTask, startTask, useAccordionLayout
 					</div>
 				) }
 				{ ! useAccordionLayout && (
-					<h2 className="site-setup-list__task-title task__title">{ currentTask.title }</h2>
+					<>
+						{ currentTask.icon }
+						<h3 className="site-setup-list__task-title task__title">
+							{ currentTask.subtitle || currentTask.title }
+						</h3>
+					</>
 				) }
 				<p className="site-setup-list__task-description task__description">
 					{ currentTask.description }
@@ -42,6 +38,7 @@ const CurrentTaskItem = ( { currentTask, skipTask, startTask, useAccordionLayout
 						<Button
 							className={ classnames( 'site-setup-list__task-action', 'task__action', {
 								'is-link': currentTask.actionIsLink,
+								'is-jetpack-branded': currentTask.jetpackBranding,
 							} ) }
 							primary={ ! currentTask.actionIsLink }
 							onClick={ () => startTask() }
@@ -50,6 +47,15 @@ const CurrentTaskItem = ( { currentTask, skipTask, startTask, useAccordionLayout
 								( currentTask.isCompleted && currentTask.actionDisableOnComplete )
 							}
 						>
+							{ currentTask.isCompleted &&
+								( currentTask.isDisabled || currentTask.actionDisableOnComplete ) && (
+									<Gridicon
+										aria-label={ translate( 'Task complete' ) }
+										className="site-setup-list__complete-icon"
+										icon="checkmark"
+										size={ 18 }
+									/>
+								) }
 							{ currentTask.actionText }
 						</Button>
 					) }

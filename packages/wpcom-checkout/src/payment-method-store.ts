@@ -1,11 +1,9 @@
-/**
- * External dependencies
- */
-import { registerStore } from '@automattic/composite-checkout';
+import { register } from '@wordpress/data';
 
 export interface StoreStateValue {
 	value: string;
 	isTouched: boolean;
+	errors?: string[];
 }
 
 type AddStateArg< F, S > = F extends ( ...args: infer P ) => infer R
@@ -36,6 +34,6 @@ export type StoreActions< N extends string > = Record<
 	( payload: string ) => StoreAction
 >;
 
-export interface PaymentMethodStore< N extends string > extends ReturnType< typeof registerStore > {
+export interface PaymentMethodStore< N extends string > extends ReturnType< typeof register > {
 	getState: () => StoreState< N >;
 }

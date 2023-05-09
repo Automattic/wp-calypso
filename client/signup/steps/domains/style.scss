@@ -1,13 +1,32 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .domains__step-section-wrapper {
 	margin: 0 auto;
-	max-width: 720px;
+	width: 100%;
 }
 
 .is-section-signup .domains__step-content {
 	margin-bottom: 50px;
+
+	& .use-my-domain__page-heading {
+		padding-left: 24px;
+		padding-right: 24px;
+		text-align: center;
+	}
+
+	& .use-my-domain,
+	& .connect-domain-step,
+	& .domain-transfer-or-connect__content {
+		background: transparent;
+		box-shadow: none;
+
+		@include break-mobile {
+			padding-left: 0;
+			padding-right: 0;
+		}
+	}
 
 	&.domains__step-content-domain-step {
 		margin-bottom: 20px;
@@ -25,7 +44,7 @@
 	.search-component.is-open.has-focus {
 		border: none;
 		border-radius: 2px;
-		box-shadow: 0 0 0 3px var( --color-accent-light );
+		box-shadow: 0 0 0 3px var(--color-accent-light);
 	}
 
 	.search-filters__dropdown-filters {
@@ -33,10 +52,10 @@
 	}
 
 	.search-filters__dropdown-filters.search-filters__dropdown-filters--is-open {
-		box-shadow: 0 0 0 3px var( --color-accent-light );
+		box-shadow: 0 0 0 3px var(--color-accent-light);
 	}
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		.register-domain-step__search-card,
 		.search-component.is-open.has-focus {
 			border-radius: 0;
@@ -56,23 +75,22 @@ body.is-section-signup.is-white-signup {
 
 		.search-component.is-open {
 			border: 1px solid #a7aaad;
-			border-radius: 4px; /* stylelint-disable-line */
+			border-radius: 4px;
 			height: 48px;
 		}
 
 		.search-component.is-open.has-focus {
 			border-color: #646970;
-			background: var( --color-surface );
+			background: var(--color-surface);
 			box-shadow: none;
 
 			.search-component__input {
-				background: var( --color-surface );
+				background: var(--color-surface);
 			}
 		}
 
 		.domains__domain-side-content-container {
 			flex-direction: column;
-			width: 100vw;
 			margin-top: 40px;
 			display: none;
 
@@ -84,7 +102,7 @@ body.is-section-signup.is-white-signup {
 			}
 
 			@include break-wide {
-				width: 20vw;
+				width: 350px;
 			}
 		}
 
@@ -103,19 +121,33 @@ body.is-section-signup.is-white-signup {
 			@include break-large {
 				display: none;
 			}
+		}
 
+		.domains__free-domain .reskin-side-explainer__subtitle-2 {
+			display: none;
 
+			@include break-small {
+				display: block;
+			}
 		}
 
 		.domains__domain-side-content {
 			border-bottom: 1px solid;
-			border-bottom-color: var( --studio-gray-5 );
+			border-bottom-color: var(--studio-gray-5);
 			padding: 20px 0;
-			margin: 0 20px;
+			margin: 0;
+
+			@include break-small {
+				margin: 0 20px;
+			}
 
 			@include break-large {
-				margin: 0 0 0 80px;
+				margin: 0 20px 0 40px;
 				padding: 40px 0;
+			}
+
+			@include break-wide {
+				margin: 0 0 0 80px;
 			}
 		}
 
@@ -128,25 +160,26 @@ body.is-section-signup.is-white-signup {
 		}
 
 		.register-domain-step {
-			width: 100vw;
-
-			@include break-large {
-				width: 62vw;
-			}
-
-			@include break-wide {
-				width: 48vw;
-			}
+			flex: 1;
 		}
 
 		.register-domain-step__search-card {
-			background: var( --color-surface );
+			background: var(--color-surface);
 			box-shadow: none;
-			border-radius: 4px; /* stylelint-disable-line */
-			margin: 20px 20px 0;
+			border-radius: 4px;
+			margin: 20px 0 0;
+			border: 1px solid #a7aaad;
+
+			@include break-small {
+				margin: 20px 20px 0;
+			}
+
+			.search-component.is-open {
+				border: none;
+			}
 
 			@include break-large {
-				margin: 20px 0 0 20px;
+				margin: 0;
 			}
 
 			@include break-wide {
@@ -154,21 +187,21 @@ body.is-section-signup.is-white-signup {
 			}
 		}
 		.search-component__input {
-			border-radius: 4px; /* stylelint-disable-line */
+			border-radius: 4px;
 
 			&::placeholder {
-				color: var( --color-neutral-50 );
+				color: var(--color-neutral-50);
 			}
 		}
 		.search-component.is-open .search-component__input-fade.ltr::before {
 			display: none;
 		}
 		.search-component__open-icon {
-			transform: scaleX( -1 );
+			transform: scaleX(-1);
 		}
 
-		.search-component__icon-navigation.components-button:focus:not( :disabled ) {
-			box-shadow: 0 0 0 1px var( --color-neutral-60 );
+		.search-component__icon-navigation.components-button:focus:not(:disabled) {
+			box-shadow: 0 0 0 1px var(--color-primary);
 		}
 
 		.search-component__icon-search {
@@ -178,6 +211,10 @@ body.is-section-signup.is-white-signup {
 
 		.search-component .search-component__icon-navigation {
 			padding: 0 7px;
+		}
+
+		.use-my-domain__page-heading {
+			text-align: left;
 		}
 	}
 
@@ -195,7 +232,7 @@ body.is-section-signup.is-white-signup {
 			}
 
 			.search-filters__dropdown-filters-button-text {
-				color: var( --color-neutral-60 );
+				color: var(--color-neutral-60);
 			}
 		}
 	}
@@ -210,4 +247,71 @@ body.is-section-signup.is-white-signup {
 			display: none;
 		}
 	}
+	.signup__step.is-domain-only,
+	.signup__step.is-domains,
+	.signup__step.is-mailbox-domain {
+		padding: 0 20px;
+	}
 }
+
+// blue signup flow-specific styles
+body.is-section-signup:not(.is-white-signup) {
+
+	.domains__step-content {
+
+		a {
+			text-decoration: underline;
+			color: var(--color-text-inverted);
+		}
+
+		.domain-transfer-or-connect {
+
+			&__content {
+
+				.option-content {
+
+					&__illustration,
+					&__main,
+					&__action,
+					&__header,
+					&__top-text,
+					&__pricing-text {
+						color: var(--color-text-inverted);
+					}
+
+					&__benefits-item-text,
+					&__pricing-cost {
+						filter: brightness(0.9);
+					}
+
+					&__benefits-item .gridicon {
+						fill: var(--studio-green-20);
+					}
+
+					& + .option-content {
+						border-color: var(--studio-gray-40);
+					}
+
+				}
+
+			}
+
+			&__support-link {
+				color: var(--color-text-inverted);
+				filter: brightness(0.9);
+			}
+
+		}
+
+		.use-my-domain {
+
+			.form-input-validation.is-error {
+				color: var(--color-error-30);
+			}
+
+		}
+
+	}
+
+}
+

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import 'calypso/state/application/init';
 
 export function isOffline( state ) {

@@ -1,36 +1,24 @@
-/**
- * External dependencies
- */
-
-import debugFactory from 'debug';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import AccountPassword from 'calypso/me/account-password';
-import { Card } from '@automattic/components';
 import config from '@automattic/calypso-config';
+import { Card } from '@automattic/components';
+import debugFactory from 'debug';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
-import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import AccountPassword from 'calypso/me/account-password';
 import ReauthRequired from 'calypso/me/reauth-required';
 import SecuritySectionNav from 'calypso/me/security-section-nav';
-import twoStepAuthorization from 'calypso/lib/two-step-authorization';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import FormattedHeader from 'calypso/components/formatted-header';
 
 const debug = debugFactory( 'calypso:me:security:password' );
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class Security extends React.Component {
+class Security extends Component {
 	static displayName = 'Security';
 
 	static propTypes = {
@@ -53,7 +41,6 @@ class Security extends React.Component {
 			<Main wideLayout className="security">
 				<PageViewTracker path={ path } title="Me > Password" />
 				<DocumentHead title={ translate( 'Password' ) } />
-				<MeSidebarNavigation />
 
 				<FormattedHeader brandFont headerText={ translate( 'Security' ) } align="left" />
 

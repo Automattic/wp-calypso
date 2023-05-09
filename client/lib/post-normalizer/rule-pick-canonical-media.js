@@ -1,17 +1,11 @@
-/**
- * External dependencies
- */
+import { safeImageUrl } from '@automattic/calypso-url';
 import { find, get } from 'lodash';
+import { isUrlLikelyAnImage } from './utils';
 
 /**
- * Internal dependencies
- */
-import { isUrlLikelyAnImage } from './utils';
-import safeImageUrl from 'calypso/lib/safe-image-url';
-
-/** Returns true if an image is large enough to be a featured asset
+ * Returns true if an image is large enough to be a featured asset
  *
- * @param {object} image - image must have a width and height property
+ * @param {Object} image - image must have a width and height property
  * @returns {boolean} true if large enough, false if image undefined or too small
  */
 function isImageLargeEnoughForFeature( image ) {

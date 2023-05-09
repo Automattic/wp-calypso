@@ -2,11 +2,8 @@
  * @jest-environment jsdom
  */
 
-/**
- * Internal dependencies
- */
-import { getAvailabilityNotice } from '../availability-messages';
 import { domainAvailability } from 'calypso/lib/domains/constants';
+import { getAvailabilityNotice } from '../availability-messages';
 
 jest.mock( 'i18n-calypso', () => ( {
 	translate: jest.fn( () => 'default' ),

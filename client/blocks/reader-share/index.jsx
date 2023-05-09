@@ -1,31 +1,24 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
-import { defer } from 'lodash';
 import config from '@automattic/calypso-config';
+import { Button } from '@automattic/components';
 import classnames from 'classnames';
-import PropTypes from 'prop-types';
+import { localize, translate } from 'i18n-calypso';
+import { defer } from 'lodash';
 import page from 'page';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { createRef, Component } from 'react';
+import { connect } from 'react-redux';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import PopoverMenuItemClipboard from 'calypso/components/popover-menu/item-clipboard';
+import SiteSelector from 'calypso/components/site-selector';
+import ReaderFacebookIcon from 'calypso/reader/components/icons/facebook-icon';
+import ReaderShareIcon from 'calypso/reader/components/icons/share-icon';
+import ReaderTwitterIcon from 'calypso/reader/components/icons/twitter-icon';
 import ReaderPopoverMenu from 'calypso/reader/components/reader-popover/menu';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
-import Gridicon from 'calypso/components/gridicon';
-import SocialLogo from 'calypso/components/social-logo';
 import * as stats from 'calypso/reader/stats';
 import { preloadEditor } from 'calypso/sections-preloaders';
-import SiteSelector from 'calypso/components/site-selector';
+import { infoNotice } from 'calypso/state/notices/actions';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
-import { Button } from '@automattic/components';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 /**
@@ -56,6 +49,7 @@ const actionMap = {
 
 		window.open( facebookUrl, 'facebook', 'width=626,height=436,resizeable,scrollbars' );
 	},
+	copy_link() {},
 };
 
 function buildQuerystringForPost( post ) {
@@ -77,14 +71,14 @@ function buildQuerystringForPost( post ) {
 	return params.toString();
 }
 
-class ReaderShare extends React.Component {
+class ReaderShare extends Component {
 	static propTypes = {
 		iconSize: PropTypes.number,
 	};
 
 	static defaultProps = {
 		position: 'bottom',
-		iconSize: 24,
+		iconSize: 20,
 	};
 
 	state = {
@@ -94,7 +88,7 @@ class ReaderShare extends React.Component {
 	constructor( props ) {
 		super( props );
 		this.mounted = false;
-		this.shareButton = React.createRef();
+		this.shareButton = createRef();
 	}
 
 	componentDidMount() {
@@ -162,7 +156,7 @@ class ReaderShare extends React.Component {
 	};
 
 	render() {
-		const { translate } = this.props;
+		const { onCopyLinkClick } = this.props;
 		const buttonClasses = classnames( {
 			'reader-share__button': true,
 			'ignore-click': true,
@@ -184,10 +178,9 @@ class ReaderShare extends React.Component {
 					onTouchStart={ preloadEditor }
 					ref={ this.shareButton }
 				>
-					<Gridicon aria-hidden="true" icon="share" />
-					<span className="reader-share__button-label">
-						{ translate( 'Share', { comment: 'Share the post' } ) }
-					</span>
+					{ ReaderShareIcon( {
+						iconSize: this.props.iconSize,
+					} ) }
 				</Button>
 				{ this.state.showingMenu && (
 					<ReaderPopoverMenu
@@ -205,7 +198,7 @@ class ReaderShare extends React.Component {
 							title={ translate( 'Share on Facebook' ) }
 							focusOnHover={ false }
 						>
-							<SocialLogo icon="facebook" />
+							<ReaderFacebookIcon iconSize={ 20 } />
 							<span>Facebook</span>
 						</PopoverMenuItem>
 						<PopoverMenuItem
@@ -214,9 +207,17 @@ class ReaderShare extends React.Component {
 							title={ translate( 'Share on Twitter' ) }
 							focusOnHover={ false }
 						>
-							<SocialLogo icon="twitter" />
+							<ReaderTwitterIcon iconSize={ 20 } />
 							<span>Twitter</span>
 						</PopoverMenuItem>
+						<PopoverMenuItemClipboard
+							action="copy_link"
+							text={ this.props.post.URL }
+							onCopy={ onCopyLinkClick }
+							icon="link"
+						>
+							{ translate( 'Copy link' ) }
+						</PopoverMenuItemClipboard>
 						{ this.props.hasSites && (
 							<SiteSelector
 								className="reader-share__site-selector"
@@ -231,6 +232,23 @@ class ReaderShare extends React.Component {
 	}
 }
 
-export default connect( ( state ) => ( {
-	hasSites: !! getPrimarySiteId( state ),
-} ) )( localize( ReaderShare ) );
+const mapStateToProps = ( state ) => {
+	return {
+		hasSites: !! getPrimarySiteId( state ),
+	};
+};
+
+const mapDispatchToProps = { infoNotice };
+
+const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
+	const onCopyLinkClick = () => {
+		dispatchProps.infoNotice( translate( 'Link copied to clipboard.' ), { duration: 3000 } );
+	};
+	return Object.assign( {}, ownProps, stateProps, dispatchProps, { onCopyLinkClick } );
+};
+
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps,
+	mergeProps
+)( localize( ReaderShare ) );

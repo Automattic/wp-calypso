@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
 import { localize, LocalizeProps } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import * as React from 'react';
+import { connect } from 'react-redux';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 interface Props extends LocalizeProps {
@@ -59,6 +52,6 @@ const PodcastingPrivateSiteMessage: React.FC< Props > = function PodcastingPriva
 
 export default connect( ( state ) => {
 	return {
-		siteSlug: getSelectedSiteSlug( state ),
+		siteSlug: getSelectedSiteSlug( state ) ?? '',
 	};
 } )( localize( PodcastingPrivateSiteMessage ) );

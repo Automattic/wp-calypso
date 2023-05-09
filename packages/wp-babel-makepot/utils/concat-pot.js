@@ -1,10 +1,7 @@
-/**
- * External dependencies
- */
 const fs = require( 'fs' );
-const glob = require( 'glob' );
 const path = require( 'path' );
 const { po } = require( 'gettext-parser' );
+const glob = require( 'glob' );
 const merge = require( 'lodash.mergewith' );
 
 const mergeDeep = ( left, right, key ) => {
@@ -33,7 +30,7 @@ const mergeDeep = ( left, right, key ) => {
 /**
  * Filter translations from POT data object by reference lines.
  *
- * @param   {object} potData POT data object
+ * @param   {Object} potData POT data object
  * @param   {string} linesFilterFile File path to JSON file with files and line numbers.
  * @returns {void}
  */

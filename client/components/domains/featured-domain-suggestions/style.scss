@@ -1,9 +1,10 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .featured-domain-suggestions {
 	display: flex;
 	flex-direction: column;
+	flex-wrap: wrap;
 
 	&.featured-domain-suggestions--has-match-reasons .featured-domain-suggestion {
 		.domain-registration-suggestion__match-reasons {
@@ -11,20 +12,14 @@
 		}
 	}
 
-	&.featured-domain-suggestions__is-domain-management .featured-domain-suggestion {
-		.domain-suggestion__action {
-			font-size: $font-body;
-		}
-	}
-
 	.is-section-signup & {
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( ">480px" ) {
 			flex-direction: row;
 		}
 	}
 
 	.is-section-domains & {
-		@include breakpoint-deprecated( '>800px' ) {
+		@include breakpoint-deprecated( ">800px" ) {
 			flex-direction: row;
 		}
 	}
@@ -41,18 +36,22 @@
 	margin-top: 0;
 	width: 100%;
 
+	@include break-mobile {
+		flex-direction: row;
+		/* using .is-compact to increase specificity */
+		&.is-compact {
+			padding: 15px 20px;
+		}
+	}
+
 	.button.domain-suggestion__action {
 		flex-grow: 0;
-		margin-left: 0;
-		margin-top: 1em;
 		text-align: center;
-		padding: 0.5em 3em;
 		transition: all 0.1s linear;
-		width: 100%;
 
 		.is-placeholder & {
 			animation: loading-fade 1.6s ease-in-out infinite;
-			background-color: var( --color-neutral-0 );
+			background-color: var(--color-neutral-0);
 			border: none;
 			border-radius: 0;
 			color: transparent;
@@ -65,13 +64,13 @@
 		display: flex;
 		flex-basis: auto;
 		flex-direction: column;
-		justify-content: flex-start;
+		justify-content: center;
 		flex-grow: 1;
 		margin-top: 0;
 	}
 
 	.domain-registration-suggestion__title,
-	.domain-registration-suggestion__progress-bar,
+	.domain-registration-suggestion__badges,
 	.domain-product-price,
 	.domain-registration-suggestion__match-reasons {
 		flex: 0 0 auto;
@@ -79,19 +78,31 @@
 		width: 100%;
 	}
 
-    .domain-registration-suggestion__title-wrapper .domain-registration-suggestion__title {
-        width: auto;
-    }
-
-    .domain-registration-suggestion__title {
+	.domain-registration-suggestion__title {
 		font-size: $font-title-small;
 		font-weight: 400;
 		line-height: 1.2;
 		margin-bottom: 0.25em;
+		width: auto;
 
-		@include breakpoint-deprecated( '>480px' ) {
-			font-size: $font-title-medium;
-			margin-bottom: 0.125em;
+		@include break-mobile {
+			margin-bottom: 0;
+		}
+
+		.domain-registration-suggestion__domain-title {
+			font-size: $font-title-small;
+
+			@include break-mobile {
+				font-size: $font-title-medium;
+			}
+
+			.domain-registration-suggestion__domain-title-name {
+				color: var(--studio-gray-90);
+			}
+
+			.domain-registration-suggestion__domain-title-tld {
+				font-weight: normal;
+			}
 		}
 	}
 
@@ -101,23 +112,21 @@
 		justify-content: flex-start;
 
 		body.is-section-signup.is-white-signup & {
+			align-items: flex-start;
 			margin-top: 12px;
-		}
-
-		&.is-free-domain,
-		&.is-sale-domain {
-			small {
-				font-size: 0.9em;
-			}
 		}
 	}
 
-	.domain-registration-suggestion__progress-bar {
+	.domain-registration-suggestion__badges {
+		align-self: flex-start;
 		align-items: center;
 		display: flex;
 		font-size: $font-body-extra-small;
-		margin-top: 10px;
 		order: 2;
+
+		@include break-mobile {
+			align-self: center;
+		}
 
 		.progress-bar {
 			width: 25%;
@@ -126,67 +135,32 @@
 	}
 
 	.domain-registration-suggestion__match-reasons {
+		margin-top: 8px;
 		order: 3;
 	}
 
 	.domain-registration-suggestion__match-reason {
-		color: var( --color-text-subtle );
-		font-size: $font-body-extra-small;
+		color: var(--color-text-subtle);
+		font-size: $font-body-small;
 		padding: 0.125em 0;
 		display: flex;
 		align-items: center;
 
 		.gridicon {
-			color: var( --color-success );
+			color: var(--color-success);
 			margin-right: 0.25em;
 		}
 	}
 
 	&.is-unavailable {
-		.domain-registration-suggestion__progress-bar,
+		.domain-registration-suggestion__badges,
 		.domain-registration-suggestion__match-reasons {
 			display: none;
 		}
 	}
 }
 
-body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion.card {
-	border: none;
-	border-radius: 4px; /* stylelint-disable-line */
-	margin: 0;
-	align-items: center;
-	background: #fdfdfd;
-	border-bottom: 1px solid rgba( 220, 220, 222, 0.64 );
-
-	@include break-mobile {
-		margin-bottom: 12px;
-		box-sizing: border-box;
-		border: 1px solid #e2e4e7;
-		background: var( --color-surface );
-	}
-
-	.button.domain-suggestion__action {
-		margin-top: 0;
-		font-weight: 500; /* stylelint-disable-line */
-		padding: 0.57em 1.17em;
-		border-radius: 4px; /* stylelint-disable-line */
-		box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 );
-		font-size: 0.875rem;
-
-		@include break-mobile {
-			padding: 0.65em 2.8em;
-		}
-	}
-
-	.domain-registration-suggestion__domain-title {
-		font-size: 1.375rem; /* stylelint-disable-line */
-		line-height: 30px;
-
-		@include break-mobile {
-			font-size: 1.625rem; /* stylelint-disable-line */
-		}
-	}
-
+.featured-domain-suggestion.card {
 	.domain-registration-suggestion__title-wrapper {
 		flex-wrap: nowrap;
 		flex-direction: column-reverse;
@@ -195,11 +169,78 @@ body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion
 			flex-direction: row;
 		}
 	}
+}
+
+body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion.card {
+	border: none;
+	border-radius: 0;
+	margin: 0;
+	align-items: center;
+	background: #fff;
+	border-bottom: 1px solid rgba(220, 220, 222, 0.64);
+	padding: 16px 20px;
+
+	@include break-mobile {
+		border-radius: 4px;
+		margin-bottom: 12px;
+		box-sizing: border-box;
+		border: 1px solid #e2e4e7;
+		background: var(--color-surface);
+		padding: 16px 24px;
+	}
+
+	.domain-suggestion__action-container {
+		width: 100%;
+
+		@include break-mobile {
+			width: auto;
+		}
+	}
+
+	.button.domain-suggestion__action {
+		font-weight: 500;
+		padding: 0.57em 1.17em;
+		border-radius: 4px;
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+		font-size: 0.875rem;
+		height: auto;
+
+		@include break-mobile {
+			margin-top: 0;
+			padding: 0.65em 2.8em;
+		}
+
+		&:focus {
+			border-color: var(--color-primary);
+			box-shadow: 0 0 0 2px var(--color-primary-light);
+		}
+	}
+
+	.domain-registration-suggestion__domain-title {
+		font-size: 1.375rem; /* stylelint-disable-line scales/font-sizes */
+		line-height: 30px;
+
+		@include break-mobile {
+			font-size: 1.625rem; /* stylelint-disable-line scales/font-sizes */
+		}
+	}
+
+	.domain-registration-suggestion__title-wrapper {
+		flex-wrap: nowrap;
+		flex-direction: column-reverse;
+		margin-bottom: initial;
+
+		@include break-wide {
+			flex-direction: row;
+		}
+	}
 
 	.domain-registration-suggestion__title {
 		font-size: $font-title-medium;
 		padding-right: 0;
 		margin-bottom: 0;
+		flex: 0 1 auto;
+		align-self: baseline;
 	}
 
 	&.domain-suggestion.is-clickable:hover {
@@ -209,17 +250,26 @@ body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion
 	}
 
 	&.featured-domain-suggestion--is-placeholder {
-		margin-bottom: 12px;
-		margin-top: 40px;
-		border-radius: 4px; /* stylelint-disable-line */
+		margin-bottom: 1px;
+		margin-top: 0;
+		border-radius: 0;
+		border-bottom: none;
+
+		@include break-mobile {
+			margin-bottom: 12px;
+			border-radius: 4px;
+			border: none;
+		}
 	}
 }
 
 body.is-section-signup.is-white-signup .featured-domain-suggestions {
 	margin: 0;
+	border-top: 1px solid rgba(220, 220, 222, 0.64);
 
 	@include break-mobile {
 		margin: 0 20px;
+		border-top: none;
 	}
 
 	@include break-large {
@@ -227,34 +277,26 @@ body.is-section-signup.is-white-signup .featured-domain-suggestions {
 	}
 }
 
-@include breakpoint-deprecated( '<660px' ) {
-	.featured-domain-suggestions {
-		flex-flow: wrap;
-	}
-}
-
-@include breakpoint-deprecated( '>660px' ) {
+@include breakpoint-deprecated( ">660px" ) {
 	.domain-registration-suggestion__title {
 		.featured-domain-suggestions--title-in-18em & {
-			font-size: 1.8em;
+			font-size: 1.8em; /* stylelint-disable-line declaration-property-unit-allowed-list */
 		}
 		.featured-domain-suggestions--title-in-16em & {
-			font-size: 1.6em;
+			font-size: 1.6em; /* stylelint-disable-line declaration-property-unit-allowed-list */
 		}
 		.featured-domain-suggestions--title-in-14em & {
 			font-size: $font-title-small;
 		}
 		.featured-domain-suggestions--title-in-12em & {
-			font-size: 1.2em;
+			font-size: 1.2em; /* stylelint-disable-line declaration-property-unit-allowed-list */
 		}
 		.featured-domain-suggestions--title-in-10em & {
-			font-size: 1em;
+			font-size: 1em; /* stylelint-disable-line declaration-property-unit-allowed-list */
 		}
 	}
 
 	.featured-domain-suggestions--title-causes-overflow {
-		flex-wrap: wrap;
-
 		.featured-domain-suggestion {
 			margin-top: 0;
 		}

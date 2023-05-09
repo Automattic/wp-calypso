@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { SITE_LAUNCH } from 'calypso/state/action-types';
-import { receiveSite } from 'calypso/state/sites/actions';
-import { updateSiteSettings } from 'calypso/state/site-settings/actions';
-import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
-import { requestSiteChecklist } from 'calypso/state/checklist/actions';
 import { requestEligibility } from 'calypso/state/automated-transfer/actions';
+import { requestSiteChecklist } from 'calypso/state/checklist/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
+import { updateSiteSettings } from 'calypso/state/site-settings/actions';
+import { receiveSite } from 'calypso/state/sites/actions';
 
 const handleLaunchSiteRequest = dispatchRequest( {
 	fetch: ( action ) => [

@@ -1,7 +1,7 @@
 .use-your-domain-step__content {
 	display: flex;
 
-	@include breakpoint-deprecated( '<800px' ) {
+	@include breakpoint-deprecated( "<800px" ) {
 		flex-flow: wrap;
 	}
 
@@ -40,7 +40,7 @@
 		margin: 1em 0;
 		max-height: 150px;
 
-		@include breakpoint-deprecated( '<660px' ) {
+		@include breakpoint-deprecated( "<660px" ) {
 			display: none;
 		}
 	}
@@ -68,13 +68,13 @@
 	}
 
 	.use-your-domain-step__option-reason {
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 		padding: 0.25em 0;
 		display: flex;
 		align-items: baseline;
 
 		.gridicon {
-			color: var( --color-primary );
+			color: var(--color-primary);
 			margin-right: 0.5em;
 			flex-shrink: 0;
 			position: relative;
@@ -96,17 +96,17 @@
 .use-your-domain-step__footer {
 	margin-top: 1em;
 	text-align: center;
-	color: var( --color-text );
+	color: var(--color-text);
 
 	body.is-section-signup & {
-		color: var( --color-text-inverted );
+		color: var(--color-text-inverted);
 
 		a {
-			color: var( --color-text-inverted );
+			color: var(--color-text-inverted);
 			text-decoration: underline;
 
 			&:hover {
-				color: var( --color-neutral-0 );
+				color: var(--color-neutral-0);
 			}
 		}
 	}

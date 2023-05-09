@@ -1,21 +1,19 @@
-/**
- * External dependencies
- */
-import React, { useRef, useEffect, useState } from 'react';
 import { throttle } from 'lodash';
+import { useRef, useEffect, useState } from 'react';
+import * as React from 'react';
 
-type NullableDOMRect = ClientRect | DOMRect | null;
+export type NullableDOMRect = ClientRect | DOMRect | null;
 type NullableElement = Element | null;
 
 export const THROTTLE_RATE = 200;
 
-function rectIsEqual( prevRect: NullableDOMRect, nextRect: NullableDOMRect ) {
+export function rectIsEqual( prevRect: NullableDOMRect, nextRect: NullableDOMRect ) {
 	if ( prevRect === null ) {
 		return nextRect === null;
 	}
 
 	if ( nextRect === null ) {
-		return prevRect === null;
+		return false;
 	}
 
 	return (
@@ -28,7 +26,7 @@ function rectIsEqual( prevRect: NullableDOMRect, nextRect: NullableDOMRect ) {
 	);
 }
 
-function rectIsZero( rect: NullableDOMRect ) {
+export function rectIsZero( rect: NullableDOMRect ) {
 	if ( rect === null ) {
 		return null;
 	}
@@ -49,7 +47,6 @@ function rectIsZero( rect: NullableDOMRect ) {
  * Uses throttling on the events, to avoid making changes too often.
  *
  * @param callback The function to call back on changes. Takes a single parameter: `boundingClientRect`.
- *
  * @returns The ref to be set on the consumer component.
  */
 export function useWindowResizeCallback(

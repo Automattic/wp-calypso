@@ -187,11 +187,11 @@ function isSupportedCurrency( currency ) {
 /**
  * Converts a cost into USD
  *
- * @note Don't rely on this for precise conversions, it's meant to be an estimate for ad tracking purposes
+ * Don't rely on this for precise conversions, it's meant to be an estimate for ad tracking purposes
  *
  * @param {number} cost - The cost of the cart or product
  * @param {string} currency - The currency such as `USD`, `JPY`, etc
- * @returns {string} Or null if the currency is not supported
+ * @returns {number|null} Or null if the currency is not supported
  */
 export default function costToUSD( cost, currency ) {
 	if ( ! isSupportedCurrency( currency ) ) {

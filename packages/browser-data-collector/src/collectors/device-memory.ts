@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getMemory } from '../api/device-memory';
 
 export const collector: Collector = ( report ) => {

@@ -4,11 +4,25 @@ This module includes functionality for interacting with analytics packages.
 
 Turn on debugging in the JavaScript developer console to view calls being made with the analytics module:
 
-`localStorage.setItem('debug', 'calypso:analytics:*');`
+```
+localStorage.setItem('debug', 'calypso:analytics*');
+```
 
-You can limit to only calls made to Google Analytics, Tracks, or MC by replacing the `*` with an appropriate suffix. `ga` for Google Analytics, `tracks` for Tracks, `mc` for MC, and `ad-tracking` for Ad Tracking.
+You can limit to only calls made to Google Analytics, Tracks, or MC by replacing `calypso:analytics*` with:
 
-`localStorage.setItem('debug', 'calypso:analytics:tracks'); // only show debug for tracks`
+- `calypso:analytics` for Tracks
+- `calypso:analytics:ga` for Google Analytics
+- `calypso:analytics:mc` for MC
+
+For example:
+
+```
+localStorage.setItem('debug', 'calypso:analytics'); // only show debug for Tracks
+```
+
+```
+localStorage.setItem('debug', 'calypso:analytics:ga'); // only show debug for Google Analytics
+```
 
 ## Which analytics tool should I use?
 
@@ -42,3 +56,17 @@ addToQueue( moduleName, trigger, arg1, arg2, ... );
   Available modules are configured in the `modules` constant in `queue.js`.
 - `trigger` This can be any exported function in the chosen module.
 - `arg1, arg2, ...` Optional. These are the arguments ultimately passed to the `trigger` function.
+
+## Tracker Buckets
+
+Tracker Buckets (`./tracker-buckets.ts`) is a simple mechanism that allows to categorize new tracker into one of three available categories: `essential`, `advertising`, and `analytics`.
+
+After adding the tracker to `allAdTrackers` array, and assiging it a category in `AdTrackersBuckets` object - you may wrap the functionality of the given tracker with a check against the current user tracking preferences, that is based on Automattic-wide used cookie `sensitive_pixel_options`.
+
+The code is fully typed in Typescript, so to ensure implementing new tracker is straightforward.
+
+There are three checking functions:
+
+- `mayWeTrackGeneral` - that checks if we can track user in general
+- `mayWeTrackByBucket` (runs `mayWeTrackGeneral` underneath) - that checks if user has given consent to track with a specific bucket
+- `mayWeTrackByTracker` (runs `mayWeTrackByBucket` underneath) - that checks if we can track user with a specific tracker (based on the bucket consent)

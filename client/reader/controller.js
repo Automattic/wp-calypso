@@ -1,14 +1,21 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import page from 'page';
+import config from '@automattic/calypso-config';
 import i18n from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import page from 'page';
+import { createElement } from 'react';
+import AsyncLoad from 'calypso/components/async-load';
 import { sectionify } from 'calypso/lib/route';
+import wpcom from 'calypso/lib/wp';
+import FeedError from 'calypso/reader/feed-error';
+import StreamComponent from 'calypso/reader/following/main';
+import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
+import { getPrettyFeedUrl, getPrettySiteUrl } from 'calypso/reader/route';
+import { recordTrack } from 'calypso/reader/stats';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getLastPath } from 'calypso/state/reader-ui/selectors';
+import { toggleReaderSidebarFollowing } from 'calypso/state/reader-ui/sidebar/actions';
+import { isFollowingOpen } from 'calypso/state/reader-ui/sidebar/selectors';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
+import { getSection } from 'calypso/state/ui/selectors';
 import {
 	trackPageLoad,
 	trackUpdatesLoaded,
@@ -16,19 +23,6 @@ import {
 	setPageTitle,
 	getStartDate,
 } from './controller-helper';
-import FeedError from 'calypso/reader/feed-error';
-import StreamComponent from 'calypso/reader/following/main';
-import { getPrettyFeedUrl, getPrettySiteUrl } from 'calypso/reader/route';
-import { recordTrack } from 'calypso/reader/stats';
-import { requestFeedDiscovery } from 'calypso/state/data-getters';
-import { waitForHttpData } from 'calypso/state/data-layer/http-data';
-import AsyncLoad from 'calypso/components/async-load';
-import { isFollowingOpen } from 'calypso/state/reader-ui/sidebar/selectors';
-import { toggleReaderSidebarFollowing } from 'calypso/state/reader-ui/sidebar/actions';
-import { getLastPath } from 'calypso/state/reader-ui/selectors';
-import { getSection } from 'calypso/state/ui/selectors';
-import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
-import { getReaderTeams } from 'calypso/state/teams/selectors';
 
 const analyticsPageTitle = 'Reader';
 let lastRoute = null;
@@ -38,7 +32,7 @@ function userHasHistory( context ) {
 }
 
 function renderFeedError( context, next ) {
-	context.primary = React.createElement( FeedError );
+	context.primary = createElement( FeedError );
 	next();
 }
 
@@ -104,9 +98,12 @@ export function incompleteUrlRedirects( context, next ) {
 }
 
 export function sidebar( context, next ) {
-	context.secondary = (
-		<AsyncLoad require="calypso/reader/sidebar" path={ context.path } placeholder={ null } />
-	);
+	const state = context.store.getState();
+	if ( isUserLoggedIn( state ) ) {
+		context.secondary = (
+			<AsyncLoad require="calypso/reader/sidebar" path={ context.path } placeholder={ null } />
+		);
+	}
 
 	next();
 }
@@ -145,7 +142,7 @@ export function following( context, next ) {
 	setPageTitle( context, i18n.translate( 'Following' ) );
 
 	// warn: don't async load this only. we need it to keep feed-post-store in the reader bundle
-	context.primary = React.createElement( StreamComponent, {
+	context.primary = createElement( StreamComponent, {
 		key: 'following',
 		listName: i18n.translate( 'Followed Sites' ),
 		streamKey: 'following',
@@ -166,9 +163,15 @@ export function following( context, next ) {
 
 export function feedDiscovery( context, next ) {
 	if ( ! context.params.feed_id.match( /^\d+$/ ) ) {
-		waitForHttpData( () => ( { feedId: requestFeedDiscovery( context.params.feed_id ) } ) )
-			.then( ( { feedId } ) => {
-				page.redirect( `/read/feeds/${ feedId.data }` );
+		const url = context.params.feed_id;
+		context.queryClient
+			.fetchQuery(
+				[ 'feed-discovery', url ],
+				() => wpcom.req.get( '/read/feed', { url } ).then( ( res ) => res.feeds[ 0 ].feed_ID ),
+				{ meta: { persist: false } }
+			)
+			.then( ( feedId ) => {
+				page.redirect( `/read/feeds/${ feedId }` );
 			} )
 			.catch( () => {
 				renderFeedError( context, next );
@@ -319,4 +322,39 @@ export function readFollowingP2( context, next ) {
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 	next();
+}
+
+export async function blogDiscoveryByFeedId( context, next ) {
+	const { blog, feed_id } = context.params;
+
+	// If we have already had blog or we don't have feed_id, call `next()` immediately
+	if ( blog || ! feed_id ) {
+		next();
+		return;
+	}
+
+	// Query the site by feed_id and inject to the context params so that calypso can get correct site
+	// after redirecting the user to log-in page
+	context.queryClient
+		.fetchQuery(
+			[ '/read/feed/', feed_id ],
+			() => wpcom.req.get( `/read/feed/${ feed_id }` ).then( ( res ) => res.blog_ID ),
+			{ meta: { persist: false } }
+		)
+		.then( ( blog_id ) => {
+			context.params.blog_id = blog_id;
+			next();
+		} )
+		.catch( () => {
+			renderFeedError( context, next );
+		} );
+}
+
+export async function sitesSubscriptionManager( context, next ) {
+	if ( config.isEnabled( 'reader/subscription-management' ) ) {
+		context.primary = <AsyncLoad require="calypso/reader/subscriptions" />;
+		return next();
+	}
+
+	return context.redirect( '/read' );
 }

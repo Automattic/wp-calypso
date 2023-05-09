@@ -1,33 +1,24 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
-import { debounce, isEqual, find, isEmpty } from 'lodash';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { preventWidows } from 'calypso/lib/formatting';
 import config from '@automattic/calypso-config';
+import { Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { localize } from 'i18n-calypso';
+import { debounce, isEqual } from 'lodash';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
+import { connect } from 'react-redux';
+import InlineHelpCompactResults from 'calypso/blocks/inline-help/inline-help-compact-results';
+import FormButton from 'calypso/components/forms/form-button';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
-import SegmentedControl from 'calypso/components/segmented-control';
-import SelectDropdown from 'calypso/components/select-dropdown';
-import FormTextarea from 'calypso/components/forms/form-textarea';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormButton from 'calypso/components/forms/form-button';
-import SitesDropdown from 'calypso/components/sites-dropdown';
-import InlineHelpCompactResults from 'calypso/blocks/inline-help/inline-help-compact-results';
+import FormTextarea from 'calypso/components/forms/form-textarea';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import { selectSiteId } from 'calypso/state/help/actions';
-import { getHelpSelectedSite, getHelpSelectedSiteId } from 'calypso/state/help/selectors';
-import wpcomLib from 'calypso/lib/wp';
+import SitesDropdown from 'calypso/components/sites-dropdown';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { preventWidows } from 'calypso/lib/formatting';
+import { resemblesUrl } from 'calypso/lib/url';
+import wpcom from 'calypso/lib/wp';
 import HelpResults from 'calypso/me/help/help-results';
 import {
 	bumpStat,
@@ -38,23 +29,12 @@ import {
 	getCurrentUserLocale,
 	getCurrentUserSiteCount,
 } from 'calypso/state/current-user/selectors';
+import { selectSiteId } from 'calypso/state/help/actions';
+import { getHelpSelectedSite, getHelpSelectedSiteId } from 'calypso/state/help/selectors';
 import { requestSite } from 'calypso/state/sites/actions';
-import isShowingQandAInlineHelpContactForm from 'calypso/state/selectors/is-showing-q-and-a-inline-help-contact-form';
-import { showQandAOnInlineHelpContactForm } from 'calypso/state/inline-help/actions';
-import { getNpsSurveyFeedback } from 'calypso/state/nps-survey/selectors';
-import { resemblesUrl } from 'calypso/lib/url';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { generateSubjectFromMessage } from './utils';
 
-/**
- * Style dependencies
- */
 import './style.scss';
-
-/**
- * Module variables
- */
-const wpcom = wpcomLib.undocumented();
 
 const trackSibylClick = ( event, helpLink ) =>
 	composeAnalytics(
@@ -87,15 +67,13 @@ const trackSupportWithoutSibylSuggestions = ( query ) =>
 		recordTracksEventAction( 'calypso_sibyl_support_without_suggestions_showing', { query } )
 	);
 
-export class HelpContactForm extends React.PureComponent {
+export class HelpContactForm extends PureComponent {
 	static propTypes = {
 		additionalSupportOption: PropTypes.object,
 		formDescription: PropTypes.node,
 		buttonLabel: PropTypes.string.isRequired,
 		onSubmit: PropTypes.func.isRequired,
 		showAlternativeSiteOptionsField: PropTypes.bool,
-		showHowCanWeHelpField: PropTypes.bool,
-		showHowYouFeelField: PropTypes.bool,
 		showSubjectField: PropTypes.bool,
 		showSiteField: PropTypes.bool,
 		showHelpLanguagePrompt: PropTypes.bool,
@@ -109,14 +87,12 @@ export class HelpContactForm extends React.PureComponent {
 			value: PropTypes.any,
 			requestChange: PropTypes.func.isRequired,
 		} ),
-		npsSurveyFeedback: PropTypes.string,
+		variationSlug: PropTypes.string,
 	};
 
 	static defaultProps = {
 		formDescription: '',
 		showAlternativeSiteOptionsField: false,
-		showHowCanWeHelpField: false,
-		showHowYouFeelField: false,
 		showSubjectField: false,
 		showSiteField: false,
 		showHelpLanguagePrompt: false,
@@ -126,19 +102,14 @@ export class HelpContactForm extends React.PureComponent {
 			value: null,
 			requestChange: () => {},
 		},
-		showingQandAStep: false,
-		showQandAOnInlineHelpContactForm: () => {},
-		npsSurveyFeedback: '',
 	};
 
 	/**
 	 * Set up our initial state
 	 *
-	 * @returns {object} An object representing our initial state
+	 * @returns {Object} An object representing our initial state
 	 */
 	state = this.props.valueLink.value || {
-		howCanWeHelp: 'gettingStarted',
-		howYouFeel: 'unspecified',
 		message: '',
 		subject: '',
 		sibylClicked: false,
@@ -146,25 +117,11 @@ export class HelpContactForm extends React.PureComponent {
 		userDeclaresUnableToSeeSite: this.props.siteCount === 0,
 		userDeclaredUrl: '',
 		userRequestsHidingUrl: false,
+		showingQandAStep: false,
 		qanda: [],
 	};
 
-	UNSAFE_componentWillMount() {
-		const { npsSurveyFeedback, translate } = this.props;
-
-		if ( npsSurveyFeedback ) {
-			this.state.message =
-				'\n' +
-				translate( 'The comment below is copied from your survey response:' ) +
-				`\n--------------------\n${ npsSurveyFeedback }`;
-		}
-	}
-
-	componentDidMount() {
-		this.debouncedQandA = debounce( this.doQandASearch, 500 );
-		this.requestSite = debounce( this.doRequestSite, 500 );
-	}
-
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.valueLink.value || isEqual( nextProps.valueLink.value, this.state ) ) {
 			return;
@@ -184,34 +141,46 @@ export class HelpContactForm extends React.PureComponent {
 		this.props.valueLink.requestChange( this.state );
 	}
 
-	trackClickStats = ( selectionName, selectedOption ) => {
-		const tracksEvent = {
-			howCanWeHelp: 'calypso_help_how_can_we_help_click',
-			howYouFeel: 'calypso_help_how_you_feel_click',
-		}[ selectionName ];
+	trackSubmit = () => {
+		const { compact, currentUserLocale, variationSlug } = this.props;
 
-		if ( tracksEvent ) {
-			recordTracksEvent( tracksEvent, { selected_option: selectedOption } );
-		}
+		recordTracksEvent( 'calypso_contact_form_submit', {
+			compact,
+			locale: currentUserLocale,
+			support_variation: variationSlug,
+		} );
 	};
 
-	getSibylQuery = () => ( this.state.subject + ' ' + this.state.message ).trim();
+	getSibylQuery = () => this.state.message.trim();
 
 	doRequestSite = () => {
 		if ( resemblesUrl( this.state.userDeclaredUrl ) ) {
 			// The API would reject something like "https://wp.com/slug".
 			// It'd need to either be "http(s)://wp.com" or "wp.com".
 			const url = this.state.userDeclaredUrl;
-			const query = url.includes( '://' )
+			const queryUrl = url.includes( '://' )
 				? new URL( this.state.userDeclaredUrl ).hostname
 				: new URL( 'http://' + this.state.userDeclaredUrl ).hostname;
 
-			this.props
-				.requestSite( query )
-				.then( ( siteData ) => this.setState( { siteData, errorData: null } ) )
-				.catch( ( error ) => this.setState( { errorData: error.error, siteData: null } ) );
+			const request = ( q ) =>
+				this.props
+					.requestSite( q )
+					.then( ( siteData ) =>
+						this.setState( { siteData, errorData: null, hasRetriedRequest: false } )
+					)
+					.catch( ( error ) => {
+						if ( url.includes( 'www.' ) && ! this.state.hasRetriedRequest ) {
+							this.setState( { hasRetriedRequest: true } );
+							return request( q.replace( 'www.', '' ) );
+						}
+						this.setState( { errorData: error.error, siteData: null, hasRetriedRequest: false } );
+					} );
+
+			return request( queryUrl );
 		}
 	};
+
+	requestSite = debounce( this.doRequestSite, 500 );
 
 	doQandASearch = () => {
 		const query = this.getSibylQuery();
@@ -228,23 +197,33 @@ export class HelpContactForm extends React.PureComponent {
 			newIDs.sort();
 			return existingIDs.toString() === newIDs.toString();
 		};
-		const site = this.props.helpSite.jetpack
-			? config( 'jetpack_support_blog' )
-			: config( 'wpcom_support_blog' );
 
-		wpcom
-			.getQandA( query, site )
-			.then( ( qanda ) =>
+		const site =
+			! this.props.helpSite.jetpack || this.props.helpSite.is_wpcom_atomic
+				? config( 'wpcom_support_blog' )
+				: config( 'jetpack_support_blog' );
+
+		wpcom.req
+			.get( '/help/qanda', { query, site } )
+			.then( ( qanda ) => {
+				const sameQuestionsReturned = areSameQuestions( this.state.qanda, qanda );
+				if ( ! sameQuestionsReturned ) {
+					recordTracksEvent( 'calypso_sibyl_display_results', {
+						results_count: qanda?.length,
+					} );
+				}
 				this.setState( {
 					qanda: Array.isArray( qanda ) ? qanda : [],
 					// only keep sibylClicked true if the user is seeing the same set of questions
 					// we don't want to track "questions -> question click -> different questions -> support click",
 					// so we need to set sibylClicked to false here if the questions have changed
-					sibylClicked: this.state.sibylClicked && areSameQuestions( this.state.qanda, qanda ),
-				} )
-			)
+					sibylClicked: this.state.sibylClicked && sameQuestionsReturned,
+				} );
+			} )
 			.catch( () => this.setState( { qanda: [], sibylClicked: false } ) );
 	};
+
+	debouncedQandA = debounce( this.doQandASearch, 500 );
 
 	trackSibylClick = ( event, helpLink ) => {
 		if ( ! this.state.sibylClicked ) {
@@ -255,63 +234,11 @@ export class HelpContactForm extends React.PureComponent {
 	};
 
 	/**
-	 * Render both a SegmentedControl and SelectDropdown component.
-	 *
-	 * The SegmentedControl is used for desktop and the SelectDropdown is used for mobile.
-	 * CSS will control which one is displayed to the user.
-	 *
-	 * @param  {string} selectionName    The name that will be used to store the value of a selected option appearing in selectionOptions.
-	 * @param  {object} selectionOptions An array of objects consisting of a value and a label. It can also have a property called subtext
-	 *                                   value is used when setting state, label is used for display in the selection component, and subtext
-	 *                                   is used for the second line of text displayed in the SegmentedControl
-	 * @returns {object}                  A JSX object containing both the SegmentedControl and the SelectDropdown.
-	 */
-	renderFormSelection = ( selectionName, selectionOptions ) => {
-		const { translate } = this.props;
-		const options = selectionOptions.map( ( option ) => ( {
-			label: option.label,
-			subtext: option.subtext ? (
-				<span className="help-contact-form__selection-subtext">{ option.subtext }</span>
-			) : null,
-			props: {
-				key: option.value,
-				selected: option.value === this.state[ selectionName ],
-				value: option.value,
-				title: option.label,
-				onClick: () => {
-					this.setState( { [ selectionName ]: option.value } );
-					this.trackClickStats( selectionName, option.value );
-				},
-			},
-		} ) );
-		const selectedItem = find( options, 'props.selected' );
-
-		return (
-			<div className="help-contact-form__selection">
-				<SegmentedControl primary>
-					{ options.map( ( option ) => (
-						<SegmentedControl.Item { ...option.props }>
-							{ option.label }
-							{ option.subtext }
-						</SegmentedControl.Item>
-					) ) }
-				</SegmentedControl>
-				<SelectDropdown
-					selectedText={ selectedItem ? selectedItem.label : translate( 'Select an option' ) }
-				>
-					{ options.map( ( option ) => (
-						<SelectDropdown.Item { ...option.props }>{ option.label }</SelectDropdown.Item>
-					) ) }
-				</SelectDropdown>
-			</div>
-		);
-	};
-
-	/**
 	 * For the forums: check if we're dealing with a WP.com site.
 	 */
 	analyseSiteData = () => {
 		const { userDeclaredUrl, userDeclaresUnableToSeeSite, errorData, siteData } = this.state;
+		const { helpSite } = this.props;
 
 		// "Unauthorized" means it's still a WP.com site - just a private one.
 		const isWpComConnectedSite =
@@ -319,6 +246,11 @@ export class HelpContactForm extends React.PureComponent {
 				siteData &&
 				siteData.ID &&
 				( ! siteData.jetpack || siteData.is_wpcom_atomic ) ) ||
+			( helpSite &&
+				! userDeclaresUnableToSeeSite &&
+				helpSite &&
+				helpSite.ID &&
+				( ! helpSite.jetpack || helpSite.is_wpcom_atomic ) ) ||
 			( userDeclaredUrl && errorData && errorData === 'unauthorized' );
 
 		// Returns true for self-hosted sites, irrespective of Jetpack connection status, and non-WordPress sites.
@@ -327,10 +259,12 @@ export class HelpContactForm extends React.PureComponent {
 			( userDeclaredUrl &&
 				errorData &&
 				( errorData === 'unknown_blog' || errorData === 'jetpack_error' ) ) ||
-			( this.props.helpSite && this.props.helpSite.jetpack && ! userDeclaresUnableToSeeSite );
+			( helpSite && helpSite.jetpack && ! userDeclaresUnableToSeeSite );
 
 		if ( isWpComConnectedSite ) {
-			return 'isWpComConnectedSite';
+			return userDeclaredUrl
+				? 'isWpComConnectedSiteNotLinkedToAccount'
+				: 'isWpComConnectedSiteLinkedToAccount';
 		}
 
 		if ( isNonWpComHostedSite ) {
@@ -369,9 +303,8 @@ export class HelpContactForm extends React.PureComponent {
 	 */
 	submitForm = () => {
 		const {
-			howCanWeHelp,
-			howYouFeel,
 			message,
+			siteCount,
 			userDeclaresUnableToSeeSite,
 			userDeclaredUrl,
 			userDeclaresNoSite,
@@ -392,7 +325,7 @@ export class HelpContactForm extends React.PureComponent {
 			this.setState( { sibylClicked: false } );
 		}
 
-		if ( isEmpty( this.state.qanda ) ) {
+		if ( this.state.qanda.length === 0 ) {
 			this.props.trackSupportWithoutSibylSuggestions( this.getSibylQuery() );
 		} else {
 			this.props.trackSupportWithSibylSuggestions(
@@ -403,17 +336,27 @@ export class HelpContactForm extends React.PureComponent {
 
 		const analyseSiteData = this.analyseSiteData();
 
+		this.trackSubmit();
+
 		this.props.onSubmit( {
-			howCanWeHelp,
-			howYouFeel,
 			message,
 			subject,
 			site: this.props.helpSite,
 			helpSiteIsJetpack: analyseSiteData === 'isNonWpComHostedSiteWithJetpack',
 			helpSiteIsNotWpCom: analyseSiteData && analyseSiteData.startsWith( 'isNonWpComHosted' ),
+			helpSiteIsWpCom: analyseSiteData && analyseSiteData.startsWith( 'isWpComConnectedSite' ),
 			userDeclaredUrl: userDeclaresUnableToSeeSite && userDeclaredUrl,
 			userDeclaresNoSite,
 			userRequestsHidingUrl,
+		} );
+
+		this.setState( {
+			message: '',
+			subject: '',
+			userDeclaresNoSite: false,
+			userDeclaresUnableToSeeSite: siteCount === 0,
+			userDeclaredUrl: '',
+			userRequestsHidingUrl: false,
 		} );
 	};
 
@@ -421,7 +364,7 @@ export class HelpContactForm extends React.PureComponent {
 	 * Submit additional support option
 	 */
 	submitAdditionalForm = () => {
-		const { howCanWeHelp, howYouFeel, message } = this.state;
+		const { message } = this.state;
 		const { currentUserLocale } = this.props;
 		const subject = generateSubjectFromMessage( message );
 
@@ -429,9 +372,9 @@ export class HelpContactForm extends React.PureComponent {
 			locale: currentUserLocale,
 		} );
 
+		this.trackSubmit();
+
 		this.props.additionalSupportOption.onSubmit( {
-			howCanWeHelp,
-			howYouFeel,
 			message,
 			subject,
 			site: this.props.helpSite,
@@ -441,7 +384,7 @@ export class HelpContactForm extends React.PureComponent {
 	/**
 	 * Render the contact form
 	 *
-	 * @returns {object} ReactJS JSX object
+	 * @returns {Object} ReactJS JSX object
 	 */
 	render() {
 		const {
@@ -450,43 +393,15 @@ export class HelpContactForm extends React.PureComponent {
 			buttonLabel,
 			siteCount,
 			showAlternativeSiteOptionsField,
-			showHowCanWeHelpField,
-			showHowYouFeelField,
 			showSubjectField,
 			showSiteField,
 			showQASuggestions,
 			showHelpLanguagePrompt,
 			showHidingUrlOption,
+			showChatStagingNotice,
 			translate,
-			showingQandAStep,
 		} = this.props;
-		const hasQASuggestions = ! isEmpty( this.state.qanda );
-
-		const howCanWeHelpOptions = [
-			{
-				value: 'gettingStarted',
-				label: translate( 'Get started' ),
-				subtext: translate( 'Can you show me how to…' ),
-			},
-			{
-				value: 'somethingBroken',
-				label: translate( "Report something isn't working" ),
-				subtext: translate( 'Can you check this out…' ),
-			},
-			{
-				value: 'suggestion',
-				label: translate( 'Make a suggestion' ),
-				subtext: translate( 'I think it would be cool if…' ),
-			},
-		];
-		const howYouFeelOptions = [
-			{ value: 'unspecified', label: translate( "I'd rather not" ) },
-			{ value: 'happy', label: translate( 'Happy' ) },
-			{ value: 'confused', label: translate( 'Confused' ) },
-			{ value: 'discouraged', label: translate( 'Discouraged' ) },
-			{ value: 'upset', label: translate( 'Upset' ) },
-			{ value: 'panicked', label: translate( 'Panicked' ) },
-		];
+		const hasQASuggestions = this.state.qanda.length > 0;
 
 		const analyseSiteData = this.analyseSiteData();
 		const siteData = this.state.userDeclaredUrl && this.state.siteData;
@@ -503,7 +418,10 @@ export class HelpContactForm extends React.PureComponent {
 		let actionLink;
 		let actionMessage;
 
-		if ( analyseSiteData === 'isWpComConnectedSite' ) {
+		if (
+			showAlternativeSiteOptionsField &&
+			analyseSiteData === 'isWpComConnectedSiteNotLinkedToAccount'
+		) {
 			// The site is linked to WordPress.com but not appearing for the user, so they've probably lost access to the account which owns it.
 			noticeMessage = translate(
 				"%(siteName)s is linked to another WordPress.com account. If you're trying to access it, please follow our Account Recovery procedure.",
@@ -517,33 +435,38 @@ export class HelpContactForm extends React.PureComponent {
 			actionMessage = translate( 'Learn more' );
 		}
 
-		if (
-			analyseSiteData &&
-			analyseSiteData.startsWith( 'isNonWpComHosted' ) &&
-			this.state.errorData !== 'jetpack_error'
-		) {
-			noticeMessage = translate(
-				'%(siteName)s may be a copy of WordPress with a different hosting service. ' +
-					"{{helpLink}}Here's the best way to find help with that{{/helpLink}}. " +
-					"If you're not sure though, please share your question with a link, and we'll point you in the right direction!",
-				{
-					components: {
-						helpLink: (
-							<a
-								href={ localizeUrl(
-									'https://wordpress.com/support/help-support-options/#where-should-i-go-for-support'
-								) }
-							/>
-						),
-					},
-					args: {
-						siteName,
-					},
-				}
-			);
+		const helpSiteIsNotWpCom = analyseSiteData && analyseSiteData.startsWith( 'isNonWpComHosted' );
+		if ( helpSiteIsNotWpCom ) {
+			if ( ! showAlternativeSiteOptionsField ) {
+				noticeMessage = translate(
+					'The site you’ve selected is a self-hosted WordPress site. ' +
+						'If you need help with an Automattic product like Jetpack, VaultPress or Akismet, please fill out the contact form below. ' +
+						'If you have a general question about your site, please contact your web host instead, as they’ll be best equipped to assist you.'
+				);
+			} else if ( this.state.errorData !== 'jetpack_error' ) {
+				noticeMessage = translate(
+					'%(siteName)s may be a copy of WordPress with a different hosting service. ' +
+						"{{helpLink}}Here's the best way to find help with that{{/helpLink}}. " +
+						"If you're not sure though, please share your question with a link, and we'll point you in the right direction!",
+					{
+						components: {
+							helpLink: (
+								<a
+									href={ localizeUrl(
+										'https://wordpress.com/support/help-support-options/#where-should-i-go-for-support'
+									) }
+								/>
+							),
+						},
+						args: {
+							siteName,
+						},
+					}
+				);
+			}
 		}
 
-		if ( showingQandAStep && hasQASuggestions ) {
+		if ( this.state.showingQandAStep && hasQASuggestions ) {
 			return (
 				<div className="help-contact-form">
 					<h2 className="help-contact-form__title">
@@ -565,18 +488,17 @@ export class HelpContactForm extends React.PureComponent {
 			<div className="help-contact-form">
 				{ formDescription && <p>{ formDescription }</p> }
 
-				{ showHowCanWeHelpField && (
-					<div>
-						<FormLabel>{ translate( "You're reaching out to…" ) }</FormLabel>
-						{ this.renderFormSelection( 'howCanWeHelp', howCanWeHelpOptions ) }
-					</div>
-				) }
-
-				{ showHowYouFeelField && (
-					<div>
-						<FormLabel>{ translate( 'Mind sharing how you feel?' ) }</FormLabel>
-						{ this.renderFormSelection( 'howYouFeel', howYouFeelOptions ) }
-					</div>
+				{ showChatStagingNotice && (
+					<Notice
+						className="help-contact-form__site-notice"
+						status="is-warning"
+						showDismiss={ false }
+						text="Targeting HappyChat staging"
+					>
+						<NoticeAction href="https://wp.me/PCYsg-Q7X" external>
+							Learn More
+						</NoticeAction>
+					</Notice>
 				) }
 
 				{ showSiteField && (
@@ -636,24 +558,24 @@ export class HelpContactForm extends React.PureComponent {
 										/>
 									</div>
 								) }
-
-								{ noticeMessage && (
-									<Notice
-										className="help-contact-form__site-notice"
-										status="is-warning"
-										showDismiss={ false }
-										text={ noticeMessage }
-									>
-										{ actionMessage && (
-											<NoticeAction href={ actionLink } external>
-												{ actionMessage }
-											</NoticeAction>
-										) }
-									</Notice>
-								) }
 							</div>
 						) }
 					</div>
+				) }
+
+				{ noticeMessage && (
+					<Notice
+						className="help-contact-form__site-notice"
+						status="is-warning"
+						showDismiss={ false }
+						text={ noticeMessage }
+					>
+						{ actionMessage && (
+							<NoticeAction href={ actionLink } external>
+								{ actionMessage }
+							</NoticeAction>
+						) }
+					</Notice>
 				) }
 
 				{ showSubjectField && (
@@ -712,7 +634,7 @@ export class HelpContactForm extends React.PureComponent {
 				) }
 
 				{ ! showQASuggestions && hasQASuggestions && (
-					<FormButton type="button" onClick={ this.props.showQandAOnInlineHelpContactForm }>
+					<FormButton type="button" onClick={ () => this.setState( { showingQandAStep: true } ) }>
 						{ translate( 'Continue' ) }
 					</FormButton>
 				) }
@@ -747,8 +669,6 @@ const mapStateToProps = ( state ) => ( {
 	siteCount: getCurrentUserSiteCount( state ),
 	helpSite: getHelpSelectedSite( state ),
 	helpSiteId: getHelpSelectedSiteId( state ),
-	showingQandAStep: isShowingQandAInlineHelpContactForm( state ),
-	npsSurveyFeedback: getNpsSurveyFeedback( state ),
 } );
 
 const mapDispatchToProps = {
@@ -760,7 +680,6 @@ const mapDispatchToProps = {
 	trackSupportAfterSibylClick,
 	trackSupportWithSibylSuggestions,
 	trackSupportWithoutSibylSuggestions,
-	showQandAOnInlineHelpContactForm,
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( HelpContactForm ) );

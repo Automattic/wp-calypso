@@ -1,23 +1,13 @@
-/**
- * External dependencies
- */
-import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
-import { get } from 'lodash';
-import { useTranslate } from 'i18n-calypso';
 import { Button } from '@automattic/components';
-
-/**
- * Internal dependencies
- */
+import { useTranslate } from 'i18n-calypso';
+import { get } from 'lodash';
+import { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
+import Gravatar from 'calypso/components/gravatar';
 import wpcom from 'calypso/lib/wp';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getCurrentQueryArguments } from 'calypso/state/selectors/get-current-query-arguments';
-import Gravatar from 'calypso/components/gravatar';
 
-/**
- * Style dependencies
- */
 import './continue-as-user.scss';
 
 // Validate redirect URL using the REST endpoint.
@@ -41,12 +31,23 @@ async function validateUrl( redirectUrl ) {
 	}
 }
 
-function ContinueAsUser( { currentUser, redirectUrlFromQuery, onChangeAccount } ) {
+function ContinueAsUser( {
+	currentUser,
+	redirectUrlFromQuery,
+	onChangeAccount,
+	redirectPath,
+	isSignUpFlow,
+	isWooOAuth2Client,
+} ) {
 	const translate = useTranslate();
 	const [ validatedRedirectUrl, setValidatedRedirectUrl ] = useState( null );
+	const [ isLoading, setIsLoading ] = useState( true );
 
 	useEffect( () => {
-		validateUrl( redirectUrlFromQuery ).then( setValidatedRedirectUrl );
+		validateUrl( redirectUrlFromQuery ).then( ( maybeValidatedUrl ) => {
+			setValidatedRedirectUrl( maybeValidatedUrl );
+			setIsLoading( false );
+		} );
 	}, [ redirectUrlFromQuery ] );
 
 	const userName = currentUser.display_name || currentUser.username;
@@ -56,37 +57,81 @@ function ContinueAsUser( { currentUser, redirectUrlFromQuery, onChangeAccount } 
 	// like that, but it is better than the alternative, and in practice it should happen quicker than
 	// the user can notice.
 
+	const translationComponents = {
+		br: <br />,
+		link: (
+			<button
+				type="button"
+				id="loginAsAnotherUser"
+				className="continue-as-user__change-user-link"
+				onClick={ onChangeAccount }
+			/>
+		),
+	};
+
+	const notYouText = isSignUpFlow
+		? translate( 'Not you?{{br/}} Sign out or log in with {{link}}another account{{/link}}', {
+				components: translationComponents,
+				args: { userName },
+				comment: 'Link to continue login as different user',
+		  } )
+		: translate( 'Not you?{{br/}}Log in with {{link}}another account{{/link}}', {
+				components: translationComponents,
+				args: { userName },
+				comment: 'Link to continue login as different user',
+		  } );
+
+	const gravatarLink = (
+		<a
+			style={ { pointerEvents: isLoading ? 'none' : 'auto' } }
+			href={ validatedRedirectUrl || redirectPath || '/' }
+			className="continue-as-user__gravatar-link"
+		>
+			<Gravatar
+				user={ currentUser }
+				className="continue-as-user__gravatar"
+				imgSize={ 400 }
+				size={ 110 }
+			/>
+			<div className="continue-as-user__username">{ userName }</div>
+			<div className="continue-as-user__email">{ currentUser.email }</div>
+		</a>
+	);
+
+	if ( isWooOAuth2Client ) {
+		return (
+			<div className="continue-as-user">
+				<div className="continue-as-user__user-info">
+					{ gravatarLink }
+					<div className="continue-as-user__not-you">
+						<button
+							type="button"
+							id="loginAsAnotherUser"
+							className="continue-as-user__change-user-link"
+							onClick={ onChangeAccount }
+						>
+							{ translate( 'Log in with a different WordPress.com account' ) }
+						</button>
+					</div>
+					<Button busy={ isLoading } primary href={ validatedRedirectUrl || redirectPath || '/' }>
+						{ `${ translate( 'Continue as', {
+							context: 'Continue as an existing WordPress.com user',
+						} ) } ${ userName }` }
+					</Button>
+				</div>
+			</div>
+		);
+	}
+
 	return (
 		<div className="continue-as-user">
-			<a href={ validatedRedirectUrl || '/' } className="continue-as-user__gravatar-link">
-				<Gravatar
-					user={ currentUser }
-					className="continue-as-user__gravatar"
-					imgSize={ 400 }
-					size={ 110 }
-				/>
-				<div>{ userName }</div>
-			</a>
-			<Button primary href={ validatedRedirectUrl || '/' }>
-				{ translate( 'Continue' ) }
-			</Button>
-			<p>
-				{ translate( 'Not you?{{br/}}Log in with {{link}}another account{{/link}}', {
-					components: {
-						br: <br />,
-						link: (
-							<button
-								type="button"
-								id="loginAsAnotherUser"
-								className="continue-as-user__change-user-link"
-								onClick={ onChangeAccount }
-							/>
-						),
-					},
-					args: { userName },
-					comment: 'Link to continue login as different user',
-				} ) }
-			</p>
+			<div className="continue-as-user__user-info">
+				{ gravatarLink }
+				<Button busy={ isLoading } primary href={ validatedRedirectUrl || redirectPath || '/' }>
+					{ translate( 'Continue' ) }
+				</Button>
+			</div>
+			<div className="continue-as-user__not-you">{ notYouText }</div>
 		</div>
 	);
 }

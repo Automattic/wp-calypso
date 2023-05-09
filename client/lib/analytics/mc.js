@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import debug from 'debug';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
+import debug from 'debug';
 
 const mcDebug = debug( 'calypso:analytics:mc' );
 

@@ -1,24 +1,17 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-/**
- * External dependencies
- */
-import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
 
-/**
- * Internal dependencies
- */
-import { Button, Card } from '@automattic/components';
+import { Button, Card, Gridicon } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import FollowButton from 'calypso/blocks/follow-button/button';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
-import Gridicon from 'calypso/components/gridicon';
-import { Item, Feed, FeedError, List } from './types';
-import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
+import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import { addReaderListFeed, deleteReaderListFeed } from 'calypso/state/reader/lists/actions';
 import { getMatchingItem } from 'calypso/state/reader/lists/selectors';
 import ItemRemoveDialog from './item-remove-dialog';
+import { Item, Feed, FeedError, List } from './types';
 
 function isFeedError( feed: Feed | FeedError ): feed is FeedError {
 	return 'errors' in feed;
@@ -66,14 +59,13 @@ function renderFeedError( err: FeedError ) {
 	);
 }
 
-/* eslint-disable wpcalypso/jsx-classname-namespace */
 export default function FeedItem( props: {
 	hideIfInList?: boolean;
 	isFollowed?: boolean;
 	item: Item;
 	list: List;
 	owner: string;
-} ): React.ReactElement | null {
+} ) {
 	const { list, owner, item } = props;
 	const feed = useSelector( ( state ) => {
 		let feed = props.item.meta?.data?.feed;
@@ -90,7 +82,7 @@ export default function FeedItem( props: {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
-	const [ showDeleteConfirmation, setShowDeleteConfirmation ] = React.useState( false );
+	const [ showDeleteConfirmation, setShowDeleteConfirmation ] = useState( false );
 	const addItem = () => dispatch( addReaderListFeed( list.ID, owner, list.slug, item.feed_ID ) );
 	const deleteItem = ( shouldDelete: boolean ) => {
 		setShowDeleteConfirmation( false );

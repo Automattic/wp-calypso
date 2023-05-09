@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import { Icon, external } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 
 class StatsActionLink extends PureComponent {
@@ -45,7 +38,7 @@ class StatsActionLink extends PureComponent {
 						context: 'Stats ARIA label: View content in new window action',
 					} ) }
 				>
-					<Gridicon icon="external" size={ 18 } />
+					<Icon className="stats-icon" icon={ external } size={ 18 } />
 					<span className="stats-list__item-action-label module-content-list-item-action-label module-content-list-item-action-label-view">
 						{ translate( 'View', { context: 'Stats: List item action to view content' } ) }
 					</span>

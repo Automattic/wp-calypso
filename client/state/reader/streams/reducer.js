@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import { findIndex, last, takeRightWhile, takeWhile, filter, uniqWith } from 'lodash';
+import { findIndex, last, filter } from 'lodash';
 import moment from 'moment';
-
-/**
- * Internal dependencies
- */
-import { keyedReducer, combineReducers } from 'calypso/state/utils';
+import { keysAreEqual } from 'calypso/reader/post-key';
 import {
 	READER_STREAMS_PAGE_REQUEST,
 	READER_STREAMS_PAGE_RECEIVE,
@@ -18,8 +11,21 @@ import {
 	READER_STREAMS_SHOW_UPDATES,
 	READER_DISMISS_POST,
 } from 'calypso/state/reader/action-types';
-import { keysAreEqual } from 'calypso/reader/post-key';
+import { keyedReducer, combineReducers } from 'calypso/state/utils';
 import { combineXPosts } from './utils';
+
+const takeWhile = ( array, predicate ) => {
+	const [ x, ...xs ] = array;
+
+	if ( array.length > 0 && predicate( x ) ) {
+		return [ x, ...takeWhile( xs, predicate ) ];
+	}
+	return [];
+};
+
+const takeRightWhile = ( array, predicate ) => {
+	return takeWhile( [ ...array ].reverse(), predicate );
+};
 
 /*
  * Contains a list of post-keys representing the items of a stream.
@@ -60,7 +66,11 @@ export const items = ( state = [], action ) => {
 				return combineXPosts( [ ...beforeGap, ...streamItems, ...nextGap, ...afterGap ] );
 			}
 
-			newState = uniqWith( [ ...state, ...streamItems ], keysAreEqual );
+			// add the `streamItems` to state, but only ones that aren't already there
+			newState = streamItems.reduce( ( accuState, streamItem ) => {
+				const isNew = ! accuState.some( ( accuItem ) => keysAreEqual( accuItem, streamItem ) );
+				return isNew ? [ ...accuState, streamItem ] : accuState;
+			}, state );
 
 			// Find any x-posts
 			newXPosts = filter( streamItems, ( postKey ) => postKey.xPostMetadata );

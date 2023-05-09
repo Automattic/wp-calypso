@@ -1,14 +1,12 @@
-/**
- * External dependencies
- */
 import page from 'page';
-
-/**
- * Internal dependencies
- */
+import { notFound, makeLayout, render as clientRender } from 'calypso/controller';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import wpcomAtomicTransfer from 'calypso/lib/jetpack/wpcom-atomic-transfer';
+import wrapInSiteOffsetProvider from 'calypso/lib/wrap-in-site-offset';
 import {
 	backupDownload,
 	backupRestore,
+	backupClone,
 	backups,
 	showJetpackIsDisconnected,
 	showNotAuthorizedForNonAdmins,
@@ -16,15 +14,16 @@ import {
 	showUnavailableForVaultPressSites,
 	showUnavailableForMultisites,
 } from 'calypso/my-sites/backup/controller';
-import { backupMainPath, backupRestorePath, backupDownloadPath } from './paths';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
-import { notFound, makeLayout, render as clientRender } from 'calypso/controller';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import WPCOMUpsellPage from 'calypso/my-sites/backup/wpcom-backup-upsell';
+import {
+	navigation,
+	siteSelection,
+	sites,
+	stagingSiteNotSupportedRedirect,
+} from 'calypso/my-sites/controller';
 import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
-import wpcomUpsellController from 'calypso/lib/jetpack/wpcom-upsell-controller';
-import WPCOMUpsellPage from 'calypso/my-sites/backup/wpcom-upsell';
-import wrapInSiteOffsetProvider from 'calypso/lib/wrap-in-site-offset';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { backupMainPath, backupRestorePath, backupDownloadPath, backupClonePath } from './paths';
 
 const notFoundIfNotEnabled = ( context, next ) => {
 	const state = context.store.getState();
@@ -43,10 +42,11 @@ export default function () {
 	page(
 		backupDownloadPath( ':site', ':rewindId' ),
 		siteSelection,
+		stagingSiteNotSupportedRedirect,
 		navigation,
 		backupDownload,
 		wrapInSiteOffsetProvider,
-		wpcomUpsellController( WPCOMUpsellPage ),
+		wpcomAtomicTransfer( WPCOMUpsellPage ),
 		showUnavailableForVaultPressSites,
 		showJetpackIsDisconnected,
 		showUnavailableForMultisites,
@@ -60,10 +60,29 @@ export default function () {
 	page(
 		backupRestorePath( ':site', ':rewindId' ),
 		siteSelection,
+		stagingSiteNotSupportedRedirect,
 		navigation,
 		backupRestore,
 		wrapInSiteOffsetProvider,
-		wpcomUpsellController( WPCOMUpsellPage ),
+		wpcomAtomicTransfer( WPCOMUpsellPage ),
+		showUnavailableForVaultPressSites,
+		showJetpackIsDisconnected,
+		showUnavailableForMultisites,
+		showNotAuthorizedForNonAdmins,
+		notFoundIfNotEnabled,
+		makeLayout,
+		clientRender
+	);
+
+	/* handles /backup/:site/clone, see `backupClonePath` */
+	page(
+		backupClonePath( ':site' ),
+		siteSelection,
+		stagingSiteNotSupportedRedirect,
+		navigation,
+		backupClone,
+		wrapInSiteOffsetProvider,
+		wpcomAtomicTransfer( WPCOMUpsellPage ),
 		showUnavailableForVaultPressSites,
 		showJetpackIsDisconnected,
 		showUnavailableForMultisites,
@@ -77,11 +96,12 @@ export default function () {
 	page(
 		backupMainPath( ':site' ),
 		siteSelection,
+		stagingSiteNotSupportedRedirect,
 		navigation,
 		backups,
 		wrapInSiteOffsetProvider,
 		showUpsellIfNoBackup,
-		wpcomUpsellController( WPCOMUpsellPage ),
+		wpcomAtomicTransfer( WPCOMUpsellPage ),
 		showUnavailableForVaultPressSites,
 		showJetpackIsDisconnected,
 		showUnavailableForMultisites,

@@ -1,30 +1,27 @@
-/**
- * External dependencies
- */
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ThemeProvider } from 'emotion-theming';
-import debugFactory from 'debug';
+import { ThemeProvider } from '@emotion/react';
 import { useI18n } from '@wordpress/react-i18n';
-import { DataRegistry } from '@wordpress/data';
-
-/**
- * Internal dependencies
- */
+import debugFactory from 'debug';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import CheckoutContext from '../lib/checkout-context';
-import CheckoutErrorBoundary from './checkout-error-boundary';
-import { LineItemsProvider } from '../lib/line-items';
-import { defaultRegistry, RegistryProvider } from '../lib/registry';
 import { useFormStatusManager } from '../lib/form-status';
-import { useTransactionStatusManager } from '../lib/transaction-status';
+import { LineItemsProvider } from '../lib/line-items';
 import defaultTheme from '../lib/theme';
+import { useTransactionStatusManager } from '../lib/transaction-status';
 import {
 	validateArg,
 	validateLineItems,
 	validatePaymentMethods,
 	validateTotal,
 } from '../lib/validation';
+import { LineItem, CheckoutProviderProps, FormStatus, TransactionStatus } from '../types';
+import CheckoutErrorBoundary from './checkout-error-boundary';
 import TransactionStatusHandler from './transaction-status-handler';
-import { LineItem, CheckoutProviderProps, FormStatus, PaymentMethod } from '../types';
+import type { CheckoutContextInterface } from '../lib/checkout-context';
+import type {
+	PaymentEventCallback,
+	PaymentErrorCallback,
+	PaymentProcessorResponseData,
+} from '../types';
 
 const debug = debugFactory( 'composite-checkout:checkout-provider' );
 
@@ -39,148 +36,133 @@ export function CheckoutProvider( {
 	total = emptyTotal,
 	items = [],
 	onPaymentComplete,
-	showErrorMessage,
-	showInfoMessage,
-	showSuccessMessage,
+	onPaymentRedirect,
+	onPaymentError,
+	onPageLoadError,
+	onStepChanged,
+	onPaymentMethodChanged,
 	redirectToUrl,
 	theme,
 	paymentMethods,
 	paymentProcessors,
-	registry,
-	onEvent,
 	isLoading,
 	isValidating,
+	selectFirstAvailablePaymentMethod,
 	initiallySelectedPaymentMethodId = null,
 	children,
-}: CheckoutProviderProps ): JSX.Element {
+}: CheckoutProviderProps ) {
 	const propsToValidate = {
 		total,
 		items,
-		onPaymentComplete,
-		showErrorMessage,
-		showInfoMessage,
-		showSuccessMessage,
 		redirectToUrl,
 		theme,
 		paymentMethods,
 		paymentProcessors,
-		registry,
-		onEvent,
 		isLoading,
 		isValidating,
 		children,
 		initiallySelectedPaymentMethodId,
 	};
+	const [ disabledPaymentMethodIds, setDisabledPaymentMethodIds ] = useState< string[] >( [] );
+
+	const availablePaymentMethodIds = paymentMethods
+		.filter( ( method ) => ! disabledPaymentMethodIds.includes( method.id ) )
+		.map( ( method ) => method.id );
+
+	if (
+		selectFirstAvailablePaymentMethod &&
+		! initiallySelectedPaymentMethodId &&
+		availablePaymentMethodIds.length > 0
+	) {
+		initiallySelectedPaymentMethodId = availablePaymentMethodIds[ 0 ];
+	}
+
 	const [ paymentMethodId, setPaymentMethodId ] = useState< string | null >(
 		initiallySelectedPaymentMethodId
 	);
-	const [ prevPaymentMethods, setPrevPaymentMethods ] = useState< PaymentMethod[] >( [] );
-	useEffect( () => {
-		const paymentMethodIds = paymentMethods.map( ( x ) => x?.id );
-		const prevPaymentMethodIds = prevPaymentMethods.map( ( x ) => x?.id );
-		const paymentMethodsChanged =
-			paymentMethodIds.some( ( x ) => ! prevPaymentMethodIds.includes( x ) ) ||
-			prevPaymentMethodIds.some( ( x ) => ! paymentMethodIds.includes( x ) );
-		if ( paymentMethodsChanged ) {
-			debug(
-				'paymentMethods changed; setting payment method to initial selection ',
-				initiallySelectedPaymentMethodId,
-				'from',
-				paymentMethods
-			);
-			setPrevPaymentMethods( paymentMethods );
-			setPaymentMethodId( initiallySelectedPaymentMethodId );
-		}
-	}, [ paymentMethods, prevPaymentMethods, initiallySelectedPaymentMethodId ] );
+
+	useResetSelectedPaymentMethodWhenListChanges(
+		availablePaymentMethodIds,
+		initiallySelectedPaymentMethodId,
+		setPaymentMethodId
+	);
 
 	const [ formStatus, setFormStatus ] = useFormStatusManager(
 		Boolean( isLoading ),
 		Boolean( isValidating )
 	);
 	const transactionStatusManager = useTransactionStatusManager();
-	const { transactionLastResponse } = transactionStatusManager;
-	const didCallOnPaymentComplete = useRef( false );
-	useEffect( () => {
-		if ( formStatus === FormStatus.COMPLETE && ! didCallOnPaymentComplete.current ) {
-			debug( "form status is complete so I'm calling onPaymentComplete" );
-			didCallOnPaymentComplete.current = true;
-			onPaymentComplete( { paymentMethodId, transactionLastResponse } );
-		}
-	}, [ formStatus, onPaymentComplete, transactionLastResponse, paymentMethodId ] );
+	const { transactionLastResponse, transactionStatus, transactionError } = transactionStatusManager;
 
-	// Create the registry automatically if it's not a prop
-	const registryRef = useRef< DataRegistry | undefined >( registry );
-	registryRef.current = registryRef.current || defaultRegistry;
+	useCallEventCallbacks( {
+		onPaymentComplete,
+		onPaymentRedirect,
+		onPaymentError,
+		formStatus,
+		transactionError,
+		transactionStatus,
+		paymentMethodId,
+		transactionLastResponse,
+	} );
 
-	const value = useMemo(
+	const value: CheckoutContextInterface = useMemo(
 		() => ( {
 			allPaymentMethods: paymentMethods,
+			disabledPaymentMethodIds,
+			setDisabledPaymentMethodIds,
 			paymentMethodId,
 			setPaymentMethodId,
-			showErrorMessage,
-			showInfoMessage,
-			showSuccessMessage,
-			onEvent: onEvent || noop,
 			formStatus,
 			setFormStatus,
 			transactionStatusManager,
 			paymentProcessors,
+			onPageLoadError,
+			onStepChanged,
+			onPaymentMethodChanged,
 		} ),
 		[
 			formStatus,
-			onEvent,
 			paymentMethodId,
 			paymentMethods,
+			disabledPaymentMethodIds,
 			setFormStatus,
-			showErrorMessage,
-			showInfoMessage,
-			showSuccessMessage,
 			transactionStatusManager,
 			paymentProcessors,
+			onPageLoadError,
+			onStepChanged,
+			onPaymentMethodChanged,
 		]
 	);
 
 	const { __ } = useI18n();
 	const errorMessage = __( 'Sorry, there was an error loading this page.' );
-	const onError = useCallback(
-		( error ) => onEvent?.( { type: 'PAGE_LOAD_ERROR', payload: error } ),
-		[ onEvent ]
+	const onLoadError = useCallback(
+		( error: Error ) => {
+			onPageLoadError?.( 'page_load', error );
+		},
+		[ onPageLoadError ]
 	);
 	return (
-		<CheckoutErrorBoundary errorMessage={ errorMessage } onError={ onError }>
+		<CheckoutErrorBoundary errorMessage={ errorMessage } onError={ onLoadError }>
 			<CheckoutProviderPropValidator propsToValidate={ propsToValidate } />
 			<ThemeProvider theme={ theme || defaultTheme }>
-				<RegistryProvider value={ registryRef.current }>
-					<LineItemsProvider items={ items } total={ total }>
-						<CheckoutContext.Provider value={ value }>
-							<TransactionStatusHandler redirectToUrl={ redirectToUrl } />
-							{ children }
-						</CheckoutContext.Provider>
-					</LineItemsProvider>
-				</RegistryProvider>
+				<LineItemsProvider items={ items } total={ total }>
+					<CheckoutContext.Provider value={ value }>
+						<TransactionStatusHandler redirectToUrl={ redirectToUrl } />
+						{ children }
+					</CheckoutContext.Provider>
+				</LineItemsProvider>
 			</ThemeProvider>
 		</CheckoutErrorBoundary>
 	);
 }
-
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-function noop(): void {}
 
 function CheckoutProviderPropValidator( {
 	propsToValidate,
 }: {
 	propsToValidate: CheckoutProviderProps;
 } ) {
-	const {
-		total,
-		items,
-		onPaymentComplete,
-		showErrorMessage,
-		showInfoMessage,
-		showSuccessMessage,
-		paymentMethods,
-		paymentProcessors,
-	} = propsToValidate;
+	const { total, items, paymentMethods, paymentProcessors } = propsToValidate;
 	useEffect( () => {
 		debug( 'propsToValidate', propsToValidate );
 
@@ -191,20 +173,92 @@ function CheckoutProviderPropValidator( {
 		validateArg( paymentProcessors, 'CheckoutProvider missing required prop: paymentProcessors' );
 		validateArg( paymentMethods, 'CheckoutProvider missing required prop: paymentMethods' );
 		validatePaymentMethods( paymentMethods );
-		validateArg( onPaymentComplete, 'CheckoutProvider missing required prop: onPaymentComplete' );
-		validateArg( showErrorMessage, 'CheckoutProvider missing required prop: showErrorMessage' );
-		validateArg( showInfoMessage, 'CheckoutProvider missing required prop: showInfoMessage' );
-		validateArg( showSuccessMessage, 'CheckoutProvider missing required prop: showSuccessMessage' );
-	}, [
-		items,
-		onPaymentComplete,
-		paymentMethods,
-		paymentProcessors,
-		propsToValidate,
-		showErrorMessage,
-		showInfoMessage,
-		showSuccessMessage,
-		total,
-	] );
+	}, [ items, paymentMethods, paymentProcessors, propsToValidate, total ] );
 	return null;
+}
+
+function useCallEventCallbacks( {
+	onPaymentComplete,
+	onPaymentRedirect,
+	onPaymentError,
+	formStatus,
+	transactionError,
+	transactionStatus,
+	paymentMethodId,
+	transactionLastResponse,
+}: {
+	onPaymentComplete?: PaymentEventCallback;
+	onPaymentRedirect?: PaymentEventCallback;
+	onPaymentError?: PaymentErrorCallback;
+	formStatus: FormStatus;
+	transactionError: string | null;
+	transactionStatus: TransactionStatus;
+	paymentMethodId: string | null;
+	transactionLastResponse: PaymentProcessorResponseData;
+} ): void {
+	// Store the callbacks as refs so we do not call them more than once if they
+	// are anonymous functions. This way they are only called when the
+	// transactionStatus/formStatus changes, which is what we really want.
+	const paymentCompleteRef = useRef( onPaymentComplete );
+	paymentCompleteRef.current = onPaymentComplete;
+	const paymentRedirectRef = useRef( onPaymentRedirect );
+	paymentRedirectRef.current = onPaymentRedirect;
+	const paymentErrorRef = useRef( onPaymentError );
+	paymentErrorRef.current = onPaymentError;
+
+	const prevFormStatus = useRef< FormStatus >();
+	const prevTransactionStatus = useRef< TransactionStatus >();
+
+	useEffect( () => {
+		if (
+			paymentCompleteRef.current &&
+			formStatus === FormStatus.COMPLETE &&
+			formStatus !== prevFormStatus.current
+		) {
+			debug( "form status changed to complete so I'm calling onPaymentComplete" );
+			paymentCompleteRef.current( { paymentMethodId, transactionLastResponse } );
+		}
+		prevFormStatus.current = formStatus;
+	}, [ formStatus, transactionLastResponse, paymentMethodId ] );
+
+	useEffect( () => {
+		if (
+			paymentRedirectRef.current &&
+			transactionStatus === TransactionStatus.REDIRECTING &&
+			transactionStatus !== prevTransactionStatus.current
+		) {
+			debug( "transaction status changed to redirecting so I'm calling onPaymentRedirect" );
+			paymentRedirectRef.current( { paymentMethodId, transactionLastResponse } );
+		}
+		if (
+			paymentErrorRef.current &&
+			transactionStatus === TransactionStatus.ERROR &&
+			transactionStatus !== prevTransactionStatus.current
+		) {
+			debug( "transaction status changed to error so I'm calling onPaymentError" );
+			paymentErrorRef.current( { paymentMethodId, transactionError } );
+		}
+		prevTransactionStatus.current = transactionStatus;
+	}, [ transactionStatus, paymentMethodId, transactionLastResponse, transactionError ] );
+}
+
+function useResetSelectedPaymentMethodWhenListChanges(
+	availablePaymentMethodIds: string[],
+	initiallySelectedPaymentMethodId: string | null,
+	setPaymentMethodId: ( id: string | null ) => void
+) {
+	const hashKey = availablePaymentMethodIds.join( '-_-' );
+	const previousKey = useRef< string >();
+
+	useEffect( () => {
+		if ( previousKey.current !== hashKey ) {
+			debug(
+				'paymentMethods changed; setting payment method to initial selection ',
+				initiallySelectedPaymentMethodId
+			);
+
+			previousKey.current = hashKey;
+			setPaymentMethodId( initiallySelectedPaymentMethodId );
+		}
+	}, [ hashKey, setPaymentMethodId, initiallySelectedPaymentMethodId ] );
 }

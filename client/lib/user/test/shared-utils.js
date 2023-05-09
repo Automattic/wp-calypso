@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import config from '@automattic/calypso-config';
-
-/**
- * Internal dependencies
- */
 import { getLogoutUrl } from 'calypso/lib/user/shared-utils';
 
 jest.mock( '@automattic/calypso-config', () => {

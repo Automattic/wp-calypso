@@ -1,16 +1,7 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import { connect } from 'react-redux';
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import SiteIcon from '../';
+import { connect } from 'react-redux';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import SiteIcon from '../';
 
 /**
  * Site ID of en.blog.wordpress.com, to be used as fallback for SiteIcon if

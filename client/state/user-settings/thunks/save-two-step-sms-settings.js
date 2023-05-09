@@ -1,15 +1,12 @@
-/**
- * Internal dependencies
- */
+import wp from 'calypso/lib/wp';
+import { USER_SETTINGS_SAVE } from 'calypso/state/action-types';
 import { fromApi } from 'calypso/state/data-layer/wpcom/me/settings';
 import {
 	saveUserSettingsFailure,
 	saveUserSettingsSuccess,
 } from 'calypso/state/user-settings/actions';
-import { USER_SETTINGS_SAVE } from 'calypso/state/action-types';
-import wp from 'calypso/lib/wp';
 
-const wpcom = wp.undocumented();
+import 'calypso/state/user-settings/init';
 
 /**
  * Redux thunk which exclusively updates `countryCode` and `phoneNumber` settings
@@ -30,7 +27,7 @@ const saveTwoStepSMSSettings = ( countryCode, phoneNumber ) => async ( dispatch 
 	};
 
 	try {
-		const response = await wpcom.me().settings().update( settings );
+		const response = await wp.me().settings().update( settings );
 		dispatch( saveUserSettingsSuccess( fromApi( response ) ) );
 	} catch ( err ) {
 		dispatch( saveUserSettingsFailure( settings, err ) );

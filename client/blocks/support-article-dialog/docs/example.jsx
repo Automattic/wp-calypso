@@ -1,15 +1,10 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { compose } from '@wordpress/compose';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import { withRouteModal } from 'calypso/lib/route-modal';
 import { openSupportArticleDialog } from 'calypso/state/inline-support-article/actions';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 const postId = 143180;
 const postUrl = localizeUrl(
@@ -19,6 +14,7 @@ const postUrl = localizeUrl(
 class SupportArticleDialogExample extends Component {
 	handleClick = () => {
 		this.props.openSupportArticleDialog( { postId, postUrl } );
+		this.props.routeModalData.openModal( postId );
 	};
 
 	render() {
@@ -30,9 +26,12 @@ class SupportArticleDialogExample extends Component {
 	}
 }
 
-const ConnectedExample = connect( null, {
-	openSupportArticleDialog,
-} )( SupportArticleDialogExample );
+const ConnectedExample = compose(
+	connect( null, {
+		openSupportArticleDialog,
+	} ),
+	withRouteModal( 'support-article' )
+)( SupportArticleDialogExample );
 
 ConnectedExample.displayName = 'SupportArticleDialog';
 

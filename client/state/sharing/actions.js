@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { CONNECTIONS_SET_EXPANDED_SERVICE } from 'calypso/state/action-types';
 
 import 'calypso/state/sharing/init';

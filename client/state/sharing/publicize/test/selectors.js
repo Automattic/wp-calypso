@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import {
 	getBrokenSiteUserConnectionsForService,
 	getConnectionsBySiteId,
@@ -13,7 +5,6 @@ import {
 	getSiteUserConnectionsForService,
 	getRemovableConnections,
 	hasFetchedConnections,
-	isFetchingConnection,
 	isFetchingConnections,
 } from '../selectors';
 
@@ -49,7 +40,7 @@ describe( 'getBrokenSiteUserConnectionsForService()', () => {
 			'twitter'
 		);
 
-		expect( connections ).to.be.empty;
+		expect( Object.keys( connections ) ).toHaveLength( 0 );
 	} );
 
 	test( 'should return empty array if no connections for service', () => {
@@ -60,13 +51,13 @@ describe( 'getBrokenSiteUserConnectionsForService()', () => {
 			'facebook'
 		);
 
-		expect( connections ).to.be.empty;
+		expect( Object.keys( connections ) ).toHaveLength( 0 );
 	} );
 
 	test( 'should return empty array if all connections ok', () => {
 		const connections = getBrokenSiteUserConnectionsForService( state, 2916284, 26957695, 'path' );
 
-		expect( connections ).to.be.empty;
+		expect( Object.keys( connections ) ).toHaveLength( 0 );
 	} );
 
 	test( 'should return connection if any connections broken', () => {
@@ -77,7 +68,7 @@ describe( 'getBrokenSiteUserConnectionsForService()', () => {
 			'twitter'
 		);
 
-		expect( connections ).to.eql( [
+		expect( connections ).toEqual( [
 			{
 				ID: 2,
 				site_ID: 2916284,
@@ -102,7 +93,7 @@ describe( '#getConnectionsBySiteId()', () => {
 			2916284
 		);
 
-		expect( connections ).to.eql( [] );
+		expect( connections ).toEqual( [] );
 	} );
 
 	test( 'should return an array of connection objects received for the site', () => {
@@ -120,7 +111,7 @@ describe( '#getConnectionsBySiteId()', () => {
 			2916284
 		);
 
-		expect( connections ).to.eql( [
+		expect( connections ).toEqual( [
 			{ ID: 1, site_ID: 2916284 },
 			{ ID: 2, site_ID: 2916284 },
 		] );
@@ -141,7 +132,7 @@ describe( '#getSiteUserConnections()', () => {
 			26957695
 		);
 
-		expect( connections ).to.eql( [] );
+		expect( connections ).toEqual( [] );
 	} );
 
 	test( 'should return an array of connection objects received for the site available to a user', () => {
@@ -161,7 +152,7 @@ describe( '#getSiteUserConnections()', () => {
 			26957695
 		);
 
-		expect( connections ).to.eql( [
+		expect( connections ).toEqual( [
 			{ ID: 1, site_ID: 2916284, shared: true },
 			{ ID: 2, site_ID: 2916284, keyring_connection_user_ID: 26957695 },
 		] );
@@ -183,7 +174,7 @@ describe( '#getSiteUserConnectionsForService()', () => {
 			26957695
 		);
 
-		expect( connections ).to.eql( [] );
+		expect( connections ).toEqual( [] );
 	} );
 
 	test( 'should return an array of connection objects received for the site that are available to the current user', () => {
@@ -217,7 +208,7 @@ describe( '#getSiteUserConnectionsForService()', () => {
 			'twitter'
 		);
 
-		expect( connections ).to.eql( [
+		expect( connections ).toEqual( [
 			{ ID: 1, site_ID: 2916284, shared: true, service: 'twitter' },
 			{ ID: 2, site_ID: 2916284, keyring_connection_user_ID: 26957695, service: 'twitter' },
 		] );
@@ -275,13 +266,13 @@ describe( '#getRemovableConnections()', () => {
 	test( 'should return an empty array for a site which has not yet been fetched', () => {
 		const connections = getRemovableConnections( state, 'path' );
 
-		expect( connections ).to.eql( [] );
+		expect( connections ).toEqual( [] );
 	} );
 
 	test( 'should return an array of connection objects that are removable by the current user', () => {
 		const connections = getRemovableConnections( state, 'twitter' );
 
-		expect( connections ).to.eql( [
+		expect( connections ).toEqual( [
 			{ ID: 1, site_ID: 2916284, shared: true, service: 'twitter', user_ID: 0 },
 			{
 				ID: 2,
@@ -297,7 +288,7 @@ describe( '#getRemovableConnections()', () => {
 		state.currentUser.capabilities[ 2916284 ].edit_others_posts = false;
 		const connections = getRemovableConnections( state, 'twitter' );
 
-		expect( connections ).to.eql( [
+		expect( connections ).toEqual( [
 			{
 				ID: 2,
 				site_ID: 2916284,
@@ -322,7 +313,7 @@ describe( '#hasFetchedConnections()', () => {
 			2916284
 		);
 
-		expect( hasFetched ).to.be.false;
+		expect( hasFetched ).toBe( false );
 	} );
 
 	test( 'should return true if connections have completed fetching for a site', () => {
@@ -339,75 +330,7 @@ describe( '#hasFetchedConnections()', () => {
 			2916284
 		);
 
-		expect( hasFetched ).to.be.true;
-	} );
-} );
-
-describe( 'isFetchingConnection()', () => {
-	test( 'should return false if fetch has never been triggered for a connection', () => {
-		const isFetching = isFetchingConnection(
-			{
-				sharing: {
-					publicize: {
-						fetchingConnection: {},
-					},
-				},
-			},
-			2916284
-		);
-
-		expect( isFetching ).to.be.false;
-	} );
-
-	test( 'should return true if connection is currently fetching', () => {
-		const isFetching = isFetchingConnection(
-			{
-				sharing: {
-					publicize: {
-						fetchingConnection: {
-							2916284: true,
-						},
-					},
-				},
-			},
-			2916284
-		);
-
-		expect( isFetching ).to.be.true;
-	} );
-
-	test( 'should return false if connection is not currently being fetched', () => {
-		const isFetching = isFetchingConnection(
-			{
-				sharing: {
-					publicize: {
-						fetchingConnection: {
-							2916284: false,
-						},
-					},
-				},
-			},
-			2916284
-		);
-
-		expect( isFetching ).to.be.false;
-	} );
-
-	test( 'should return false if connections are fetching, but not the given connection', () => {
-		const isFetching = isFetchingConnection(
-			{
-				sharing: {
-					publicize: {
-						fetchingConnection: {
-							77203074: true,
-						},
-					},
-				},
-			},
-			2916284
-		);
-
-		expect( isFetching ).to.be.false;
+		expect( hasFetched ).toBe( true );
 	} );
 } );
 
@@ -424,7 +347,7 @@ describe( '#isFetchingConnections()', () => {
 			2916284
 		);
 
-		expect( isFetching ).to.be.false;
+		expect( isFetching ).toBe( false );
 	} );
 
 	test( 'should return true if connections are currently fetching for a site', () => {
@@ -441,7 +364,7 @@ describe( '#isFetchingConnections()', () => {
 			2916284
 		);
 
-		expect( isFetching ).to.be.true;
+		expect( isFetching ).toBe( true );
 	} );
 
 	test( 'should return false if connections are not currently fetching for a site', () => {
@@ -458,7 +381,7 @@ describe( '#isFetchingConnections()', () => {
 			2916284
 		);
 
-		expect( isFetching ).to.be.false;
+		expect( isFetching ).toBe( false );
 	} );
 
 	test( 'should return false if connections are fetching, but not for the given site', () => {
@@ -475,6 +398,6 @@ describe( '#isFetchingConnections()', () => {
 			2916284
 		);
 
-		expect( isFetching ).to.be.false;
+		expect( isFetching ).toBe( false );
 	} );
 } );

@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-
-import React, { PureComponent } from 'react';
-
-/**
- * Internal dependencies
- */
-import Timezone from 'calypso/components/timezone';
 import { Card } from '@automattic/components';
+import { PureComponent } from 'react';
+import Timezone from 'calypso/components/timezone';
 
 export default class TimezoneExample extends PureComponent {
 	static displayName = 'TimezoneExample';

@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
-import { useMutation, useQueryClient } from 'react-query';
-
-/**
- * Internal dependencies
- */
 import wp from 'calypso/lib/wp';
 
 function useRemoveViewer() {
@@ -24,9 +17,10 @@ function useRemoveViewer() {
 	);
 
 	const { mutate } = mutation;
-	const removeViewer = useCallback( ( siteId, viewerId ) => mutate( { siteId, viewerId } ), [
-		mutate,
-	] );
+	const removeViewer = useCallback(
+		( siteId, viewerId ) => mutate( { siteId, viewerId } ),
+		[ mutate ]
+	);
 
 	return { removeViewer, ...mutation };
 }

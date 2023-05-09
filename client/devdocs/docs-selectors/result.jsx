@@ -1,16 +1,7 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
-import { filter, findLast } from 'lodash';
-import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
+import classnames from 'classnames';
+import { filter, findLast } from 'lodash';
+import PropTypes from 'prop-types';
 import DocsSelectorsParamType from './param-type';
 
 export default function DocsSelectorsResult( { url, name, description, tags, expanded } ) {

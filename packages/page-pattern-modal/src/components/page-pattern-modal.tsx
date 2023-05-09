@@ -1,38 +1,30 @@
-/**
- * External dependencies
- */
+import { parse as parseBlocks } from '@wordpress/blocks';
+import { Button, MenuItem, Modal, NavigableMenu, VisuallyHidden } from '@wordpress/components';
+import { withInstanceId } from '@wordpress/compose';
+import { Component } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
 import { memoize } from 'lodash';
-import { __ } from '@wordpress/i18n';
-import { Button, MenuItem, Modal, NavigableMenu, VisuallyHidden } from '@wordpress/components';
-import { Component } from '@wordpress/element';
-import { BlockInstance, parse as parseBlocks } from '@wordpress/blocks';
-import { withInstanceId } from '@wordpress/compose';
-
-/**
- * Internal dependencies
- */
-import PatternSelectorControl from './pattern-selector-control';
-import { trackDismiss, trackSelection, trackView } from '../utils/tracking';
-import replacePlaceholders from '../utils/replace-placeholders';
-import mapBlocksRecursively from '../utils/map-blocks-recursively';
 import containsMissingBlock from '../utils/contains-missing-block';
 import { sortGroupNames } from '../utils/group-utils';
-import type { PatternCategory, PatternDefinition } from '../pattern-definition';
+import mapBlocksRecursively from '../utils/map-blocks-recursively';
+import replacePlaceholders from '../utils/replace-placeholders';
+import { trackDismiss, trackSelection, trackView } from '../utils/tracking';
+import PatternSelectorControl from './pattern-selector-control';
+import type { PatternCategory, PatternDefinition, FormattedPattern } from '../pattern-definition';
+import type { KeyboardEvent, MouseEvent, FocusEvent } from 'react';
 
 interface PagePatternModalProps {
 	areTipsEnabled?: boolean;
 	hideWelcomeGuide: () => void;
 	insertPattern: ( title: string | null, blocks: unknown[] ) => void;
-	instanceId: number;
+	instanceId: string | number;
 	isOpen: boolean;
 	isWelcomeGuideActive?: boolean;
-	locale?: string;
 	savePatternChoice: ( name: string ) => void;
 	onClose: () => void;
 	siteInformation?: Record< string, string >;
 	patterns: PatternDefinition[];
-	theme?: string;
 	title?: string;
 	description?: string;
 }
@@ -40,6 +32,8 @@ interface PagePatternModalProps {
 interface PagePatternModalState {
 	selectedCategory: string | null;
 }
+
+type CloseModalEvent = KeyboardEvent | MouseEvent | FocusEvent;
 
 class PagePatternModal extends Component< PagePatternModalProps, PagePatternModalState > {
 	constructor( props: PagePatternModalProps ) {
@@ -50,32 +44,46 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 	}
 
 	// Parse patterns blocks and memoize them.
-	getBlocksByPatternSlugs = memoize( ( patterns: PatternDefinition[] ) => {
-		const blocksByPatternSlugs = patterns.reduce( ( prev, { name, html } ) => {
-			prev[ name ] = html
-				? parseBlocks( replacePlaceholders( html, this.props.siteInformation ) )
-				: [];
-			return prev;
-		}, {} as Record< string, BlockInstance[] > );
+	getFormattedPatternsByPatternSlugs = memoize( ( patterns: PatternDefinition[] ) => {
+		const blocksByPatternSlugs = patterns.reduce(
+			( prev, { name, description = '', html, pattern_meta } ) => {
+				// The default value is from https://github.com/Automattic/wp-calypso/blob/d22976d8250fb4479d5677f5434742878fbd0ef3/apps/editing-toolkit/editing-toolkit-plugin/block-patterns/class-block-patterns-from-api.php#L115
+				const viewportWidth = pattern_meta?.viewport_width
+					? Number( pattern_meta.viewport_width )
+					: 1280;
+
+				prev[ name ] = {
+					name,
+					// Keep showing the description as before instead of the title
+					title: description,
+					blocks: html
+						? parseBlocks( replacePlaceholders( html, this.props.siteInformation ) )
+						: [],
+					viewportWidth: Math.max( viewportWidth, 320 ),
+				};
+				return prev;
+			},
+			{} as Record< string, FormattedPattern >
+		);
 
 		// Remove patterns that include a missing block
 		return this.filterPatternsWithMissingBlocks( blocksByPatternSlugs );
 	} );
 
-	filterPatternsWithMissingBlocks( patterns: Record< string, BlockInstance[] > ) {
-		return Object.entries( patterns ).reduce( ( acc, [ name, patternBlocks ] ) => {
+	filterPatternsWithMissingBlocks( patterns: Record< string, FormattedPattern > ) {
+		return Object.entries( patterns ).reduce( ( acc, [ name, pattern ] ) => {
 			// Does the pattern contain any missing blocks?
-			const patternHasMissingBlocks = containsMissingBlock( patternBlocks );
+			const patternHasMissingBlocks = containsMissingBlock( pattern.blocks );
 
 			// Only retain the pattern in the collection if:
 			// 1. It does not contain any missing blocks
 			// 2. There are no blocks at all (likely the "blank" pattern placeholder)
-			if ( ! patternHasMissingBlocks || ! patternBlocks.length ) {
-				acc[ name ] = patternBlocks;
+			if ( ! patternHasMissingBlocks || ! pattern.blocks.length ) {
+				acc[ name ] = pattern;
 			}
 
 			return acc;
-		}, {} as Record< string, BlockInstance[] > );
+		}, {} as Record< string, FormattedPattern > );
 	}
 
 	getBlocksForSelection = ( selectedPattern: string ) => {
@@ -160,13 +168,29 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 		this.setState( { selectedCategory } );
 	};
 
-	closeModal = () => {
+	closeModal = ( event: CloseModalEvent ) => {
+		// As of Gutenberg 13.1, the editor will auto-focus on the title block
+		// automatically. See: https://github.com/WordPress/gutenberg/pull/40195.
+		// This ends up triggering a `blur` event on the Modal that causes it
+		// to close just after the editor loads. To circumvent this, we check if
+		// the event is a `blur`, and if that's the case, we return before the
+		// function is able to close the modal. Originally, you can't click outside
+		// the modal to close it, meaning it doesn't respond to the `blur` event
+		// anyways, so it's safe to use this simpler approach instead of trying to
+		// check what element triggered the `blur` (which doesn't work when the
+		// theme is block-based, as the title block DOM element is not directly
+		// accessible as it's inside the `editor-canvas` iframe).
+		if ( event.type === 'blur' ) {
+			event.stopPropagation();
+			return;
+		}
+
 		trackDismiss();
 		this.props.onClose();
 	};
 
 	getBlocksByPatternSlug( name: string ) {
-		return this.getBlocksByPatternSlugs( this.props.patterns )?.[ name ] ?? [];
+		return this.getFormattedPatternsByPatternSlugs( this.props.patterns )?.[ name ]?.blocks ?? [];
 	}
 
 	getPatternGroups = () => {
@@ -244,12 +268,10 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 			return null;
 		}
 
-		const groupTitle = this.getPatternGroups()?.[ selectedCategory ]?.title;
-
-		return this.renderPatternsList( patterns, groupTitle );
+		return this.renderPatternsList( patterns );
 	};
 
-	renderPatternsList = ( patternsList: PatternDefinition[], groupTitle?: string ) => {
+	renderPatternsList = ( patternsList: PatternDefinition[] ) => {
 		if ( ! patternsList.length ) {
 			return null;
 		}
@@ -259,9 +281,11 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 		// filtered patterns from `getBlocksByPatternSlugs()` and filter this
 		// list to match. This ensures that the list of pattern thumbnails is
 		// filtered so that it does not include patterns that have missing Blocks.
-		const blocksByPatternSlug = this.getBlocksByPatternSlugs( this.props.patterns );
+		const formattedPatternsByPatternSlug = this.getFormattedPatternsByPatternSlugs(
+			this.props.patterns
+		);
 
-		const patternsWithoutMissingBlocks = Object.keys( blocksByPatternSlug );
+		const patternsWithoutMissingBlocks = Object.keys( formattedPatternsByPatternSlug );
 
 		const filterOutPatternsWithMissingBlocks = (
 			patternsToFilter: PatternDefinition[],
@@ -282,12 +306,10 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 		return (
 			<PatternSelectorControl
 				label={ __( 'Layout', __i18n_text_domain__ ) }
-				legendLabel={ groupTitle }
-				patterns={ filteredPatternsList }
+				patterns={ filteredPatternsList.map(
+					( pattern ) => formattedPatternsByPatternSlug[ pattern.name ]
+				) }
 				onPatternSelect={ this.setPattern }
-				theme={ this.props.theme }
-				locale={ this.props.locale }
-				siteInformation={ this.props.siteInformation }
 			/>
 		);
 	};
@@ -304,6 +326,11 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 			<Modal
 				title="" // We're providing the title with the `aria.labelledby` prop
 				className="page-pattern-modal"
+				// @ts-expect-error `onRequestClose`'s type is () => void but ideally but
+				// in reality, it might receive an event object that might be one of multiple
+				// types (see the `CloseModalEvent` type above for more info). We ignore the
+				// error for now until the type is updated in DefinitelyTyped.
+				// DT PR: https://github.com/DefinitelyTyped/DefinitelyTyped/pull/60127.
 				onRequestClose={ this.closeModal }
 				aria={ {
 					labelledby: `page-pattern-modal__heading-${ instanceId }`,

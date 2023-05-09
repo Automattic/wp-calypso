@@ -1,30 +1,21 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { get } from 'lodash';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { get } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import SiteIcon from 'calypso/blocks/site-icon';
+import QueryReaderSite from 'calypso/components/data/query-reader-site';
+import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
+import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
+import { getSiteUrl, getSourceFollowUrl, getSourceData } from 'calypso/reader/discover/helper';
 import FollowButton from 'calypso/reader/follow-button';
+import { getSite } from 'calypso/state/reader/sites/selectors';
 import { getLinkProps } from './helper';
 import { recordFollowToggle, recordSiteClick } from './stats';
-import { getSiteUrl, getSourceFollowUrl, getSourceData } from 'calypso/reader/discover/helper';
-import SiteIcon from 'calypso/blocks/site-icon';
-import { getSite } from 'calypso/state/reader/sites/selectors';
-import QueryReaderSite from 'calypso/components/data/query-reader-site';
-
-/**
- * Style dependencies
- */
 import './site-attribution.scss';
 
-class DiscoverSiteAttribution extends React.Component {
+class DiscoverSiteAttribution extends Component {
 	static propTypes = {
 		post: PropTypes.object.isRequired,
 	};
@@ -77,6 +68,8 @@ class DiscoverSiteAttribution extends React.Component {
 						siteUrl={ followUrl }
 						iconSize={ 20 }
 						onFollowToggle={ this.onFollowToggle }
+						followIcon={ ReaderFollowFeedIcon( { iconSize: 20 } ) }
+						followingIcon={ ReaderFollowingFeedIcon( { iconSize: 20 } ) }
 					/>
 				) }
 			</div>

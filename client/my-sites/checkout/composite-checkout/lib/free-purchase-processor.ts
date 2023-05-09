@@ -1,22 +1,18 @@
-/**
- * External dependencies
- */
-import debugFactory from 'debug';
 import { makeSuccessResponse, makeErrorResponse } from '@automattic/composite-checkout';
-import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
-import type { TransactionRequest } from '@automattic/wpcom-checkout';
-import type { ResponseCart } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
+import { doesPurchaseHaveFullCredits } from '@automattic/wpcom-checkout';
+import debugFactory from 'debug';
+import { recordTransactionBeginAnalytics } from './analytics';
 import getDomainDetails from './get-domain-details';
+import getPostalCode from './get-postal-code';
 import submitWpcomTransaction from './submit-wpcom-transaction';
 import {
 	createTransactionEndpointRequestPayload,
 	createTransactionEndpointCartFromResponseCart,
 } from './translate-cart';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
+import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
+import type { ResponseCart } from '@automattic/shopping-cart';
+import type { TransactionRequest } from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:composite-checkout:free-purchase-processor' );
 
@@ -29,25 +25,37 @@ export default async function freePurchaseProcessor(
 	transactionOptions: PaymentProcessorOptions
 ): Promise< PaymentProcessorResponse > {
 	const {
-		siteId,
 		responseCart,
 		includeDomainDetails,
 		includeGSuiteDetails,
 		contactDetails,
+		reduxDispatch,
 	} = transactionOptions;
+
+	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId: 'free-purchase' } ) );
+
+	const taxData = doesPurchaseHaveFullCredits( responseCart )
+		? {
+				country: contactDetails?.countryCode?.value ?? '',
+				postalCode: getPostalCode( contactDetails ),
+				subdivisionCode: contactDetails?.state?.value,
+		  }
+		: {
+				// This data is intentionally empty so we do not charge taxes for free
+				// purchases that are not using credits.
+				country: '',
+				postalCode: '',
+		  };
 
 	const formattedTransactionData = prepareFreePurchaseTransaction(
 		{
 			name: '',
 			couponId: responseCart.coupon,
-			siteId: siteId ? String( siteId ) : '',
 			domainDetails: getDomainDetails( contactDetails, {
 				includeDomainDetails,
 				includeGSuiteDetails,
 			} ),
-			// this data is intentionally empty so we do not charge taxes
-			country: '',
-			postalCode: '',
+			...taxData,
 		},
 		transactionOptions
 	);
@@ -65,9 +73,11 @@ function prepareFreePurchaseTransaction(
 	const formattedTransactionData = createTransactionEndpointRequestPayload( {
 		...transactionData,
 		cart: createTransactionEndpointCartFromResponseCart( {
-			siteId: transactionOptions.siteId ? String( transactionOptions.siteId ) : undefined,
+			siteId: transactionOptions.siteId,
 			contactDetails: transactionData.domainDetails ?? null,
-			responseCart: removeTaxInformationFromCart( transactionOptions.responseCart ),
+			responseCart: doesPurchaseHaveFullCredits( transactionOptions.responseCart )
+				? transactionOptions.responseCart
+				: removeTaxInformationFromCart( transactionOptions.responseCart ),
 		} ),
 		paymentMethodType: 'WPCOM_Billing_WPCOM',
 	} );

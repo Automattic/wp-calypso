@@ -1,20 +1,9 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
+import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import HeaderCakeBack from './back';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default class HeaderCake extends Component {
@@ -28,6 +17,7 @@ export default class HeaderCake extends Component {
 			actionHref,
 			actionOnClick,
 			alwaysShowActionText,
+			alwaysShowBackText,
 		} = this.props;
 		const classes = classNames( 'header-cake', this.props.className, {
 			'is-compact': this.props.isCompact,
@@ -35,7 +25,12 @@ export default class HeaderCake extends Component {
 
 		return (
 			<Card className={ classes }>
-				<HeaderCakeBack text={ backText } href={ backHref } onClick={ this.props.onClick } />
+				<HeaderCakeBack
+					text={ backText }
+					href={ backHref }
+					onClick={ this.props.onClick }
+					alwaysShowActionText={ alwaysShowBackText }
+				/>
 
 				<div className="header-cake__title" role="presentation" onClick={ this.props.onTitleClick }>
 					{ this.props.children }
@@ -69,9 +64,11 @@ HeaderCake.propTypes = {
 	actionIcon: PropTypes.string,
 	actionOnClick: PropTypes.func,
 	alwaysShowActionText: PropTypes.bool,
+	alwaysShowBackText: PropTypes.bool,
 };
 
 HeaderCake.defaultProps = {
 	isCompact: false,
 	alwaysShowActionText: false,
+	alwaysShowBackText: false,
 };

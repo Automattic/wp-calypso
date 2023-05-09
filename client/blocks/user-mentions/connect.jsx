@@ -1,22 +1,19 @@
-/**
- * External dependencies
- */
-import React, { Fragment } from 'react';
+import PropTypes from 'prop-types';
+import { PureComponent, Fragment } from 'react';
 import { connect } from 'react-redux';
 import QueryUsersSuggestions from 'calypso/components/data/query-users-suggestions';
 import { getUserSuggestions } from 'calypso/state/user-suggestions/selectors';
-import PropTypes from 'prop-types';
 
 /**
  * connectUserMentions is a higher-order component that connects the child component to user suggestions from the API.
  *
  * example: connectUserMentions( Component )
  *
- * @param {object} WrappedComponent - React component to wrap
- * @returns {object} the enhanced component
+ * @param {Object} WrappedComponent - React component to wrap
+ * @returns {Object} the enhanced component
  */
 const connectUserMentions = ( WrappedComponent ) => {
-	class connectUserMentionsFetcher extends React.PureComponent {
+	class connectUserMentionsFetcher extends PureComponent {
 		static propTypes = {
 			siteId: PropTypes.number,
 		};
@@ -24,7 +21,7 @@ const connectUserMentions = ( WrappedComponent ) => {
 		render() {
 			return (
 				<Fragment>
-					{ !! this.props.siteId && <QueryUsersSuggestions siteId={ this.props.siteId } /> }
+					<QueryUsersSuggestions siteId={ this.props.siteId } />
 					<WrappedComponent { ...this.props } />
 				</Fragment>
 			);

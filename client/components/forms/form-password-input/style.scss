@@ -4,6 +4,10 @@
 	.form-text-input {
 		/*!rtl:ignore*/
 		padding-right: 32px;
+
+		&::-ms-reveal {
+			display: none;
+		}
 	}
 
 	.form-password-input__toggle {
@@ -14,16 +18,15 @@
 		display: block;
 		cursor: pointer;
 		position: absolute;
-		/*!rtl:ignore*/
 		right: 8px;
 		top: 8px;
 		user-select: none;
 
 		.gridicon {
-			fill: var( --color-neutral-20 );
+			fill: var(--color-neutral-20);
 
 			&:hover {
-				fill: var( --color-neutral-40 );
+				fill: var(--color-neutral-40);
 			}
 		}
 	}

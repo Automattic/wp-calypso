@@ -1,33 +1,5 @@
-/**
- * External dependencies
- */
-import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
-
-// Enable/disable ad-tracking
-// These should not be put in the json config as they must not differ across environments
-export const isGoogleAnalyticsEnabled = true;
-export const isGoogleAnalyticsEnhancedEcommerceEnabled = true;
-export const isFloodlightEnabled = true;
-export const isFacebookEnabled = true;
-export const isBingEnabled = true;
-export const isGeminiEnabled = false;
-export const isWpcomGoogleAdsGtagEnabled = true;
-export const isQuantcastEnabled = false;
-export const isExperianEnabled = true;
-export const isOutbrainEnabled = true;
-export const isPinterestEnabled = true;
-export const isIconMediaEnabled = false;
-export const isTwitterEnabled = true;
-export const isLinkedinEnabled = false;
-export const isCriteoEnabled = false;
-export const isPandoraEnabled = false;
-export const isQuoraEnabled = false;
-export const isAdRollEnabled = false;
+import debugFactory from 'debug';
 
 /**
  * Module variables
@@ -36,6 +8,7 @@ export const debug = debugFactory( 'calypso:analytics:ad-tracking' );
 
 export const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevents.js';
 export const GOOGLE_GTAG_SCRIPT_URL = 'https://www.googletagmanager.com/gtag/js?id=';
+export const GOOGLE_GTM_SCRIPT_URL = 'https://www.googletagmanager.com/gtm.js?id=';
 export const BING_TRACKING_SCRIPT_URL = 'https://bat.bing.com/bat.js';
 export const CRITEO_TRACKING_SCRIPT_URL = 'https://static.criteo.net/js/ld/ld.js';
 export const YAHOO_GEMINI_CONVERSION_PIXEL_URL =
@@ -71,14 +44,15 @@ export const TRACKING_IDS = {
 	dcmFloodlightAdvertiserId: '6355556',
 	facebookInit: '823166884443641',
 	facebookJetpackInit: '919484458159593',
+	facebookAkismetInit: '485349158311379',
 	fullStory: '120RG4',
-	linkedInPartnerId: '195308',
+	fullStoryJetpack: '181XXV',
 	outbrainAdvId: '00f0f5287433c2851cc0cb917c7ff0465e',
 	pinterestInit: '2613194105266',
 	quantcast: 'p-3Ma3jHaQMB_bS',
 	quoraPixelId: '420845cb70e444938cf0728887a74ca1',
 	twitterPixelId: 'nvzbs',
-	wpcomGoogleAnalyticsGtag: config( 'google_analytics_key' ),
+	wpcomGoogleAnalyticsGtag: config( 'google_analytics_key' ), // google_analytics_key is only used in wpcom env
 	wpcomFloodlightGtag: 'DC-6355556',
 	wpcomGoogleAdsGtag: 'AW-946162814',
 	wpcomGoogleAdsGtagSignupStart: 'AW-946162814/baDICKzQiq4BEP6YlcMD', // "WordPress.com Signup Start"
@@ -86,6 +60,17 @@ export const TRACKING_IDS = {
 	wpcomGoogleAdsGtagSignup: 'AW-946162814/5-NnCKy3xZQBEP6YlcMD', // "All Calypso Signups (WordPress.com)"
 	wpcomGoogleAdsGtagAddToCart: 'AW-946162814/MF4yCNi_kZYBEP6YlcMD', // "WordPress.com AddToCart"
 	wpcomGoogleAdsGtagPurchase: 'AW-946162814/taG8CPW8spQBEP6YlcMD', // "WordPress.com Purchase Gtag"
+	wpcomGoogleGA4Gtag: 'G-1H4VG5F5JF',
+	jetpackGoogleAnalyticsGtag: 'UA-52447-43', // Jetpack Gtag (Analytics) for use in Jetpack x WordPress.com Flows
+	jetpackGoogleGA4Gtag: 'G-YELRMVV4YG',
+	jetpackGoogleAdsGtagPurchase: 'AW-946162814/kIF1CL3ApfsBEP6YlcMD',
+	akismetGoogleGA4Gtag: 'G-V8X5PZE9F8',
+	akismetGoogleTagManagerId: 'GTM-NLFBXG5',
+	akismetGoogleAnalyticsGtag: 'UA-19309600-2', // Akismet Gtag (Analytics) for use in Akismet x WordPress.com Flows
+	akismetGoogleAdsGtagPurchase: 'AW-10778599042/U-01CImL14MDEIK90ZMo', // "Akismet.com Purchase Gtag"
+	jetpackLinkedinId: '4537722',
+	jetpackTwitterPixelId: 'odlje',
+	wooGoogleTagManagerId: 'GTM-W64W8Q',
 };
 // This name is something we created to store a session id for DCM Floodlight session tracking
 export const DCM_FLOODLIGHT_SESSION_COOKIE_NAME = 'dcmsid';
@@ -93,3 +78,4 @@ export const DCM_FLOODLIGHT_SESSION_LENGTH_IN_SECONDS = 1800;
 
 export const GA_PRODUCT_BRAND_WPCOM = 'WordPress.com';
 export const GA_PRODUCT_BRAND_JETPACK = 'Jetpack';
+export const GA_PRODUCT_BRAND_AKISMET = 'Akismet';

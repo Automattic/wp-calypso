@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { omit, reduce } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import {
 	READER_SITE_BLOCK,
 	READER_SITE_BLOCKS_RECEIVE,

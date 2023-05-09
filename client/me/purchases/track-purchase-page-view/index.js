@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal Dependencies
- */
-import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 
 export class TrackPurchasePageView extends Component {
 	static propTypes = {

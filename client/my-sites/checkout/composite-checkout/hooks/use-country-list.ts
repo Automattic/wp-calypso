@@ -1,43 +1,45 @@
-/**
- * External dependencies
- */
-import { useEffect, useState } from 'react';
 import debugFactory from 'debug';
+import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import getCountries from 'calypso/state/selectors/get-countries';
 import { fetchPaymentCountries } from 'calypso/state/countries/actions';
-import type { CountryListItem } from '../types/country-list-item';
+import getCountries from 'calypso/state/selectors/get-countries';
+import type { CountryListItem, CountryListItemWithVat } from '@automattic/wpcom-checkout';
+import type { IAppState } from 'calypso/state/types';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-country-list' );
 
-export default function useCountryList(
-	overrideCountryList: CountryListItem[]
-): CountryListItem[] {
-	// Should we fetch the country list from global state?
-	const shouldFetchList = overrideCountryList?.length <= 0;
+const emptyList: CountryListItem[] = [];
 
-	const [ countriesList, setCountriesList ] = useState( overrideCountryList );
+export const isVatSupported = ( country: CountryListItem ): country is CountryListItemWithVat =>
+	country.vat_supported;
+
+export default function useCountryList(
+	overrideCountryList?: CountryListItem[]
+): CountryListItem[] {
+	const shouldFetch = ! overrideCountryList;
+	const [ countriesList, setCountriesList ] = useState( overrideCountryList ?? [] );
 
 	const reduxDispatch = useDispatch();
-	const globalCountryList = useSelector( ( state ) => getCountries( state, 'payments' ) ) || [];
+	const globalCountryList =
+		useSelector( ( state: IAppState ) => getCountries( state, 'payments' ) ) || emptyList;
 
 	// Has the global list been populated?
 	const isListFetched = globalCountryList.length > 0;
 
 	useEffect( () => {
-		if ( shouldFetchList ) {
+		if ( shouldFetch ) {
 			if ( isListFetched ) {
+				debug( 'countries list is empty; filling with retrieved data' );
 				setCountriesList( globalCountryList );
 			} else {
 				debug( 'countries list is empty; dispatching request for data' );
 				reduxDispatch( fetchPaymentCountries() );
 			}
+			return;
 		}
-	}, [ shouldFetchList, isListFetched, globalCountryList, reduxDispatch ] );
 
-	return countriesList;
+		debug( 'not fetching countries list because override is set' );
+	}, [ isListFetched, globalCountryList, reduxDispatch, shouldFetch ] );
+
+	return overrideCountryList ?? countriesList;
 }

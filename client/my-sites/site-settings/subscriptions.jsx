@@ -1,24 +1,17 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
+import { isEnabled } from '@automattic/calypso-config';
 import { CompactCard } from '@automattic/components';
-import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import { ToggleControl } from '@wordpress/components';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import SupportInfo from 'calypso/components/support-info';
+import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors/is-jetpack-module-unavailable-in-development-mode';
 import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
-import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
-import SupportInfo from 'calypso/components/support-info';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const Subscriptions = ( {
 	fields,
@@ -31,6 +24,10 @@ const Subscriptions = ( {
 	subscriptionsModuleActive,
 	translate,
 } ) => {
+	const viewFollowersSubscribersLink = ! isEnabled( 'user-management-revamp' )
+		? `/people/email-followers/${ selectedSiteSlug }`
+		: `/people/subscribers/${ selectedSiteSlug }`;
+
 	return (
 		<div>
 			<QueryJetpackConnection siteId={ selectedSiteId } />
@@ -82,7 +79,7 @@ const Subscriptions = ( {
 				</FormFieldset>
 			</CompactCard>
 
-			<CompactCard href={ '/people/email-followers/' + selectedSiteSlug }>
+			<CompactCard href={ viewFollowersSubscribersLink }>
 				{ translate( 'View your email followers' ) }
 			</CompactCard>
 

@@ -1,46 +1,30 @@
-/**
- * External dependencies
- */
-import React, { Fragment } from 'react';
+import { createRef, Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { reduxGetState } from 'calypso/lib/redux-bridge';
 import LikeButtonContainer from 'calypso/blocks/like-button';
 import PostLikesPopover from 'calypso/blocks/post-likes/popover';
-import { markPostSeen } from 'calypso/state/reader/posts/actions';
-import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
-import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import QueryPostLikes from 'calypso/components/data/query-post-likes';
+import ReaderLikeIcon from 'calypso/reader/components/icons/like-icon';
+import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
 import { getPostLikeCount } from 'calypso/state/posts/selectors/get-post-like-count';
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
-
-/**
- * Style dependencies
- */
+import { markPostSeen } from 'calypso/state/reader/posts/actions';
+import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import './style.scss';
 
-class ReaderLikeButton extends React.Component {
+class ReaderLikeButton extends Component {
 	state = {
 		showLikesPopover: false,
 	};
 
 	hidePopoverTimeout = null;
-	likeButtonRef = React.createRef();
+	likeButtonRef = createRef();
 
 	componentWillUnmount() {
 		clearTimeout( this.hidePopoverTimeout );
 	}
 
 	recordLikeToggle = ( liked ) => {
-		const post =
-			this.props.post ||
-			getPostByKey( reduxGetState(), {
-				blogId: this.props.siteId,
-				postId: this.props.postId,
-			} );
+		const post = this.props.post || this.props.postByKey;
 
 		recordAction( liked ? 'liked_post' : 'unliked_post' );
 		recordGaEvent( liked ? 'Clicked Like Post' : 'Clicked Unlike Post' );
@@ -66,9 +50,14 @@ class ReaderLikeButton extends React.Component {
 	};
 
 	render() {
-		const { siteId, postId, likeCount, iLike } = this.props;
+		const { siteId, postId, likeCount, iLike, iconSize } = this.props;
 		const { showLikesPopover } = this.state;
 		const hasEnoughLikes = ( likeCount > 0 && ! iLike ) || ( likeCount > 1 && iLike );
+
+		const likeIcon = ReaderLikeIcon( {
+			liked: iLike,
+			iconSize: iconSize,
+		} );
 
 		return (
 			<Fragment>
@@ -80,6 +69,7 @@ class ReaderLikeButton extends React.Component {
 					onMouseLeave={ this.hideLikesPopover }
 					onLikeToggle={ this.recordLikeToggle }
 					likeSource="reader"
+					icon={ likeIcon }
 				/>
 				{ showLikesPopover && siteId && postId && hasEnoughLikes && (
 					<PostLikesPopover
@@ -100,6 +90,10 @@ class ReaderLikeButton extends React.Component {
 export default connect(
 	( state, { siteId, postId } ) => {
 		return {
+			postByKey: getPostByKey( state, {
+				blogId: siteId,
+				postId,
+			} ),
 			likeCount: getPostLikeCount( state, siteId, postId ),
 			iLike: isLikedPost( state, siteId, postId ),
 		};

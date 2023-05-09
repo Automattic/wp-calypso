@@ -1,26 +1,19 @@
-/**
- * External dependencies
- */
 import path from 'path';
 import chalk from 'chalk';
-import express from 'express';
 import cookieParser from 'cookie-parser';
+import express from 'express';
 import userAgent from 'express-useragent';
-
-/**
- * Internal dependencies
- */
-import analytics from 'calypso/server/lib/analytics';
-import config from 'calypso/server/config';
 import api from 'calypso/server/api';
+import config from 'calypso/server/config';
+import analytics from 'calypso/server/lib/analytics';
+import loggerMiddleware from 'calypso/server/middleware/logger';
 import pages from 'calypso/server/pages';
 import pwa from 'calypso/server/pwa';
-import loggerMiddleware from 'calypso/server/middleware/logger';
 
 /**
  * Returns the server HTTP request handler "app".
  *
- * @returns {object} The express app
+ * @returns {Object} The express app
  */
 export default function setup() {
 	const app = express();
@@ -31,6 +24,10 @@ export default function setup() {
 	app.use( cookieParser() );
 	app.use( userAgent.express() );
 	app.use( loggerMiddleware() );
+
+	if ( process.env.USE_SERVER_PROFILER === 'true' ) {
+		app.use( require( 'calypso/server/middleware/profiler' )() );
+	}
 
 	if ( 'development' === process.env.NODE_ENV ) {
 		require( 'calypso/server/bundler' )( app );

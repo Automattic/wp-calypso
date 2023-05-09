@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import getTimezonesLabel from 'calypso/state/selectors/get-timezones-label';
 
 describe( 'getTimezonesLabel()', () => {
@@ -20,7 +12,7 @@ describe( 'getTimezonesLabel()', () => {
 
 		const label = getTimezonesLabel( state );
 
-		expect( label ).to.eql( null );
+		expect( label ).toBeNull();
 	} );
 
 	test( "should return null if `key` isn't defined", () => {
@@ -37,7 +29,7 @@ describe( 'getTimezonesLabel()', () => {
 		};
 
 		const label = getTimezonesLabel( state );
-		expect( label ).to.eql( null );
+		expect( label ).toBeNull();
 	} );
 
 	test( 'should return the label of the given key', () => {
@@ -54,6 +46,6 @@ describe( 'getTimezonesLabel()', () => {
 		};
 
 		const label = getTimezonesLabel( state, 'America/Boa_Vista' );
-		expect( label ).to.eql( 'Boa Vista' );
+		expect( label ).toEqual( 'Boa Vista' );
 	} );
 } );

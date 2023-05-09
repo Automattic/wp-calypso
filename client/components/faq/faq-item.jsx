@@ -1,9 +1,4 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
-import React from 'react';
 
 const FAQItem = ( { question, answer } ) => {
 	return (

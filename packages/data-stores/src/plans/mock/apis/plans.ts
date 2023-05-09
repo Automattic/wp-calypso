@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import * as MockData from '../';
 import type {
 	PricedAPIPlanFree,
@@ -136,6 +133,7 @@ export const API_PLAN_PRICE_FREE: MockPricedAPIPlanFree = {
 	price: '€0',
 	formatted_price: '€0',
 	raw_price: 0,
+	raw_price_integer: 0,
 	tagline: 'Perfect for anyone creating a basic blog or site',
 	currency_code: 'EUR',
 	features_highlight: [
@@ -167,39 +165,14 @@ export const API_PLAN_PRICE_PREMIUM_ANNUALLY: MockPricedAPIPlanPaidAnnually = {
 	icon: 'https://s0.wordpress.com/i/store/plan-premium.png',
 	icon_active: 'https://s0.wordpress.com/i/store/plan-premium-active.png',
 	bundle_product_ids: [
-		9,
-		12,
-		45,
-		15,
-		5,
-		49,
-		50,
-		6,
-		46,
-		54,
-		56,
-		57,
-		58,
-		59,
-		60,
-		62,
-		63,
-		64,
-		65,
-		66,
-		67,
-		68,
-		72,
-		73,
-		74,
-		76,
-		75,
-		16,
+		9, 12, 45, 15, 5, 49, 50, 6, 46, 54, 56, 57, 58, 59, 60, 62, 63, 64, 65, 66, 67, 68, 72, 73, 74,
+		76, 75, 16,
 	],
 	bill_period_label: 'per year',
 	price: '€96',
 	formatted_price: '€96',
 	raw_price: 96,
+	raw_price_integer: 9600,
 	tagline: 'Perfect for bloggers, creatives, and other professionals',
 	currency_code: 'EUR',
 	features_highlight: [
@@ -243,6 +216,7 @@ export const API_PLAN_PRICE_PREMIUM_MONTHLY: MockPricedAPIPlanPaidMonthly = {
 	price: '€14',
 	formatted_price: '€14',
 	raw_price: 14,
+	raw_price_integer: 1400,
 	tagline: null,
 	currency_code: 'EUR',
 };

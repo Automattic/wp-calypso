@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { requestConciergeInitial } from 'calypso/state/concierge/actions';
 
 class QueryConciergeInitial extends Component {

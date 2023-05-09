@@ -8,7 +8,7 @@
 	& > span:last-of-type {
 		width: 50%;
 
-		@include breakpoint-deprecated( '<480px' ) {
+		@include breakpoint-deprecated( "<480px" ) {
 			width: 65%;
 		}
 	}
@@ -20,7 +20,7 @@
 		align-items: center;
 		width: 100%;
 
-		@include breakpoint-deprecated( '<480px' ) {
+		@include breakpoint-deprecated( "<480px" ) {
 			font-size: $font-body-extra-small;
 		}
 	}
@@ -29,8 +29,8 @@
 .importer__source-author {
 	width: 45%;
 	padding-top: 0.5em;
-	display: inline-block;
-	color: var( --color-neutral-70 );
+	display: flex;
+	color: var(--color-neutral-70);
 	text-align: left;
 	text-overflow: ellipsis;
 	overflow: hidden;
@@ -38,16 +38,20 @@
 	font-size: $font-body-small;
 	font-weight: 600;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	.importer__icon {
+		margin: 0 8px;
+	}
+
+	@include breakpoint-deprecated( "<480px" ) {
 		width: 35%;
 	}
 }
 
 .importer__mapping-relation {
 	float: left;
-	color: var( --color-neutral-20 );
+	color: var(--color-neutral-20);
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		display: none;
 	}
 }

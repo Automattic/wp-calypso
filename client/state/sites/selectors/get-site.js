@@ -1,9 +1,6 @@
-/**
- * Internal dependencies
- */
 import getRawSite from 'calypso/state/selectors/get-raw-site';
-import getSiteBySlug from './get-site-by-slug';
 import getJetpackComputedAttributes from './get-jetpack-computed-attributes';
+import getSiteBySlug from './get-site-by-slug';
 import getSiteComputedAttributes from './get-site-computed-attributes';
 
 /**
@@ -14,11 +11,14 @@ let getSiteCache = new WeakMap();
 /**
  * Returns a normalized site object by its ID or site slug.
  *
- * @param  {object}  state  Global state tree
- * @param  {number|string}  siteIdOrSlug Site ID or site slug
- * @returns {?object}        Site object
+ * @param  {Object}  state  Global state tree
+ * @param  {number|string|undefined}  siteIdOrSlug Site ID or site slug
+ * @returns {import('@automattic/data-stores').SiteDetails|null|undefined}        Site object
  */
 export default function getSite( state, siteIdOrSlug ) {
+	if ( ! siteIdOrSlug ) {
+		return null;
+	}
 	const rawSite = getRawSite( state, siteIdOrSlug ) || getSiteBySlug( state, siteIdOrSlug );
 	if ( ! rawSite ) {
 		return null;

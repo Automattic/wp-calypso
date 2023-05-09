@@ -1,22 +1,16 @@
-/**
- * External dependencies
- */
-import page from 'page';
-
-/**
- * Internal dependencies
- */
-import { navigation, siteSelection } from 'calypso/my-sites/controller';
 import config from '@automattic/calypso-config';
+import page from 'page';
+import { makeLayout, render as clientRender } from 'calypso/controller';
+import { navigation, siteSelection } from 'calypso/my-sites/controller';
 import {
 	renderDomainsPage,
-	renderMarketplacePlugin,
 	renderMarketplaceTestPage,
 	renderMarketplaceThankYou,
-	renderPluginsSetupStatusPage,
+	renderPluginsInstallPage,
+	renderThemesInstallPage,
 	redirectToHome,
+	renderMarketplaceSignupSuccess,
 } from './controller';
-import { makeLayout, render as clientRender } from 'calypso/controller';
 
 export default function () {
 	if ( config.isEnabled( 'marketplace-test' ) ) {
@@ -30,31 +24,40 @@ export default function () {
 		);
 	}
 
-	if ( config.isEnabled( 'marketplace-yoast' ) ) {
+	if ( config.isEnabled( 'marketplace-domain-bundle' ) ) {
 		page( '/marketplace/domain/:site?', renderDomainsPage, makeLayout, clientRender );
-		page(
-			'/marketplace/product/setup/:site?',
-			siteSelection,
-			renderPluginsSetupStatusPage,
-			makeLayout,
-			clientRender
-		);
-		page(
-			'/marketplace/product/details/:plugin/:site?',
-			navigation,
-			siteSelection,
-			renderMarketplacePlugin,
-			makeLayout,
-			clientRender
-		);
-		page(
-			'/marketplace/thank-you/:site?',
-			siteSelection,
-			renderMarketplaceThankYou,
-			makeLayout,
-			clientRender
-		);
 	}
+
+	page(
+		'/marketplace/plugin/:productSlug?/install/:site?',
+		siteSelection,
+		renderPluginsInstallPage,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/marketplace/theme/:themeSlug?/install/:site?',
+		siteSelection,
+		renderThemesInstallPage,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/marketplace/thank-you/:site?',
+		siteSelection,
+		renderMarketplaceThankYou,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/marketplace/submission-success',
+		renderMarketplaceSignupSuccess,
+		makeLayout,
+		clientRender
+	);
 
 	page( '/marketplace/*', redirectToHome );
 }

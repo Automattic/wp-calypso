@@ -1,35 +1,21 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { ProgressBar } from '@automattic/components';
+import { localize, getLocaleSlug } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import Rating from 'calypso/components/rating';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const ratingTiers = [ 5, 4, 3, 2, 1 ];
 
-class PluginRatings extends React.Component {
+class PluginRatings extends Component {
 	static propTypes = {
 		rating: PropTypes.number,
-		ratings: PropTypes.oneOfType( [ PropTypes.object, PropTypes.array ] ),
-		downloaded: PropTypes.number,
-		slug: PropTypes.string,
-		numRatings: PropTypes.number,
-	};
-
-	static defaultProps = {
-		barWidth: 88,
+		ratings: PropTypes?.oneOfType( [ PropTypes.object, PropTypes.array ] ),
+		downloaded: PropTypes?.number,
+		slug: PropTypes?.string,
+		numRatings: PropTypes?.number,
 	};
 
 	buildReviewUrl( ratingTier ) {
@@ -104,34 +90,54 @@ class PluginRatings extends React.Component {
 	}
 
 	render() {
-		const { placeholder, ratings, rating, numRatings } = this.props;
+		const {
+			placeholder,
+			ratings,
+			rating,
+			numRatings,
+			inlineNumRatings,
+			downloaded,
+			hideRatingNumber,
+		} = this.props;
 
 		if ( placeholder ) {
 			return this.renderPlaceholder();
 		}
 
-		if ( ! ratings ) {
+		if ( ! rating ) {
 			return null;
 		}
 
-		const tierViews = ratingTiers.map( this.renderRatingTier );
+		const tierViews = ratings && ratingTiers.map( this.renderRatingTier );
 		return (
 			<div className="plugin-ratings">
 				<div className="plugin-ratings__rating-stars">
 					<Rating rating={ rating } />
-				</div>
-				<div className="plugin-ratings__rating-text">
-					{ this.props.translate(
-						'Based on %(ratingsNumber)s rating',
-						'Based on %(ratingsNumber)s ratings',
-						{
-							count: numRatings,
-							args: { ratingsNumber: numRatings },
-						}
+					{ inlineNumRatings && numRatings && (
+						<span className="plugin-ratings__num-ratings">
+							(
+							{ Number.isInteger( numRatings )
+								? numRatings.toLocaleString( getLocaleSlug() )
+								: null }
+							)
+						</span>
 					) }
+					{ ! hideRatingNumber && <span className="plugin-ratings__number">{ rating / 20 }</span> }
 				</div>
-				<div className="plugin-ratings__rating-tiers">{ tierViews }</div>
-				{ this.renderDownloaded() }
+				{ ! inlineNumRatings && numRatings && (
+					<div className="plugin-ratings__rating-text">
+						{ this.props.translate(
+							'Based on %(ratingsNumber)s rating',
+							'Based on %(ratingsNumber)s ratings',
+							{
+								count: numRatings,
+								args: { ratingsNumber: numRatings },
+							}
+						) }
+					</div>
+				) }
+				{ tierViews && <div className="plugin-ratings__rating-tiers">{ tierViews }</div> }
+				{ downloaded && this.renderDownloaded() }
 			</div>
 		);
 	}

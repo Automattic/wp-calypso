@@ -9,11 +9,11 @@
 	max-width: 220px;
 	margin: 8px 0 0 16px;
 
-	@include breakpoint-deprecated( '<960px' ) {
+	@include breakpoint-deprecated( "<960px" ) {
 		max-width: 100px;
 	}
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		display: none;
 	}
 }

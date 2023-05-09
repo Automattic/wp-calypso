@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
 import {
 	PRODUCTS_LIST_RECEIVE,
@@ -20,6 +17,19 @@ export const items = withSchemaValidation( productsListSchema, ( state = {}, act
 	return state;
 } );
 
+// Stores the type of the last received products list
+export const type = withSchemaValidation(
+	{ type: [ 'string', 'null' ] },
+	( state = null, action ) => {
+		switch ( action.type ) {
+			case PRODUCTS_LIST_RECEIVE:
+				return action.productsListType;
+		}
+
+		return state;
+	}
+);
+
 // Tracks product list fetching state
 export const isFetching = ( state = false, action ) => {
 	switch ( action.type ) {
@@ -37,6 +47,7 @@ export const isFetching = ( state = false, action ) => {
 const combinedReducer = combineReducers( {
 	isFetching,
 	items,
+	type,
 } );
 
 export default withStorageKey( 'productsList', combinedReducer );

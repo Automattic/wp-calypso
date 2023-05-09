@@ -1,51 +1,60 @@
-/**
- * External dependencies
- */
+import { WPCOM_FEATURES_REAL_TIME_BACKUPS } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
-import React, { useCallback, useEffect, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
-import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
+import { useCallback, useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
+import QueryRewindPolicies from 'calypso/components/data/query-rewind-policies';
+import BackupWarnings from 'calypso/components/jetpack/backup-warnings/backup-warnings';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { Interval, EVERY_SECOND } from 'calypso/lib/interval';
 import {
 	isSuccessfulDailyBackup,
 	isSuccessfulRealtimeBackup,
+	getBackupErrorCode,
 } from 'calypso/lib/jetpack/backup-utils';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { getInProgressBackupForSite, siteHasRealtimeBackups } from 'calypso/state/rewind/selectors';
+import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
+import {
+	getInProgressBackupForSite,
+	getRewindStorageUsageLevel,
+} from 'calypso/state/rewind/selectors';
+import { StorageUsageLevels } from 'calypso/state/rewind/storage/types';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
-import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
 import BackupFailed from './status-card/backup-failed';
-import BackupJustCompleted from './status-card/backup-just-completed';
 import BackupInProgress from './status-card/backup-in-progress';
+import BackupJustCompleted from './status-card/backup-just-completed';
 import BackupScheduled from './status-card/backup-scheduled';
 import BackupSuccessful from './status-card/backup-successful';
 import NoBackupsOnSelectedDate from './status-card/no-backups-on-selected-date';
 import NoBackupsYet from './status-card/no-backups-yet';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-const DailyBackupStatus = ( { selectedDate, lastBackupDate, backup, deltas } ) => {
+const DailyBackupStatus = ( {
+	selectedDate,
+	lastBackupAttempt,
+	lastBackupAttemptOnDate,
+	lastBackupDate,
+	backup,
+	deltas,
+} ) => {
 	const siteId = useSelector( getSelectedSiteId );
+	const usageLevel = useSelector( ( state ) => getRewindStorageUsageLevel( state, siteId ) );
 
 	const moment = useLocalizedMoment();
 	const today = useDateWithOffset( moment() );
 
 	const dispatch = useDispatch();
-	const refreshBackupProgress = useCallback( () => dispatch( requestRewindBackups( siteId ) ), [
-		dispatch,
-		siteId,
-	] );
+	const refreshBackupProgress = useCallback(
+		() => dispatch( requestRewindBackups( siteId ) ),
+		[ dispatch, siteId ]
+	);
 
-	const hasRealtimeBackups = useSelector( ( state ) => siteHasRealtimeBackups( state, siteId ) );
+	const hasRealtimeBackups = useSelector( ( state ) =>
+		siteHasFeature( state, siteId, WPCOM_FEATURES_REAL_TIME_BACKUPS )
+	);
 	const backupCurrentlyInProgress = useSelector( ( state ) =>
 		getInProgressBackupForSite( state, siteId )
 	);
@@ -101,15 +110,22 @@ const DailyBackupStatus = ( { selectedDate, lastBackupDate, backup, deltas } ) =
 
 	if ( backup ) {
 		const isSuccessful = hasRealtimeBackups ? isSuccessfulRealtimeBackup : isSuccessfulDailyBackup;
-
 		return isSuccessful( backup ) ? (
-			<BackupSuccessful backup={ backup } deltas={ deltas } selectedDate={ selectedDate } />
+			<BackupSuccessful
+				backup={ backup }
+				deltas={ deltas }
+				selectedDate={ selectedDate }
+				lastBackupAttemptOnDate={ lastBackupAttemptOnDate }
+			/>
 		) : (
 			<BackupFailed backup={ backup } />
 		);
 	}
-
 	if ( lastBackupDate ) {
+		// if the storage is full, don't show backup is schdeuled or delayed message to the user.
+		if ( StorageUsageLevels.Full === usageLevel ) {
+			return null;
+		}
 		const selectedToday = selectedDate.isSame( today, 'day' );
 		return selectedToday ? (
 			<BackupScheduled lastBackupDate={ lastBackupDate } />
@@ -118,12 +134,17 @@ const DailyBackupStatus = ( { selectedDate, lastBackupDate, backup, deltas } ) =
 		);
 	}
 
+	if ( getBackupErrorCode( lastBackupAttempt ) === 'NOT_ACCESSIBLE' ) {
+		return <BackupFailed backup={ lastBackupAttempt } />;
+	}
+
 	return <NoBackupsYet />;
 };
 
 DailyBackupStatus.propTypes = {
 	selectedDate: PropTypes.object.isRequired, // Moment object
 	lastBackupDate: PropTypes.object, // Moment object
+	lastBackupAttemptOnDate: PropTypes.object, // Moment object
 	backup: PropTypes.object,
 	deltas: PropTypes.object,
 };
@@ -134,10 +155,14 @@ const Wrapper = ( props ) => {
 	// Fetch the status of the most recent backups
 	// to see if there's a backup currently in progress
 	return (
-		<Card className="daily-backup-status">
-			<QueryRewindBackups siteId={ siteId } />
-			<DailyBackupStatus { ...props } />
-		</Card>
+		<>
+			<Card className="daily-backup-status">
+				<QueryRewindPolicies siteId={ siteId } />
+				<QueryRewindBackups siteId={ siteId } />
+				<DailyBackupStatus { ...props } />
+			</Card>
+			<BackupWarnings lastBackupAttemptOnDate={ props.lastBackupAttemptOnDate } />
+		</>
 	);
 };
 

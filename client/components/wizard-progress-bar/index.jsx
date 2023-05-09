@@ -1,18 +1,8 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Button, CompactCard, ProgressBar } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

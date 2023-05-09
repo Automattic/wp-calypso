@@ -1,9 +1,5 @@
 .flow-progress-indicator {
-	color: var( --color-text-inverted );
+	color: var(--color-text-inverted);
 	font-size: $font-body-small;
 	font-weight: 600;
-}
-
-.flow-progress-indicator__rebrand-cities {
-	display: none;
 }

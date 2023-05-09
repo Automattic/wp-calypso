@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { doesSelectedSiteHaveMediaFiles } from '../does-selected-site-have-media-files';
 import MediaQueryManager from 'calypso/lib/query-manager/media/index.js';
+import { doesSelectedSiteHaveMediaFiles } from '../does-selected-site-have-media-files';
 
 describe( 'doesSelectedSiteHaveMediaFiles', () => {
 	test( '1 + 1 = 2', () => {

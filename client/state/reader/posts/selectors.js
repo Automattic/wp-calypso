@@ -1,22 +1,14 @@
-/**
- * External dependencies
- */
-import { keyBy, some, get } from 'lodash';
-
-/**
- * Internal depedencies
- */
 import treeSelect from '@automattic/tree-select';
+import { keyBy, some, get } from 'lodash';
 import { keyToString, keyForPost } from 'calypso/reader/post-key';
-
 import 'calypso/state/reader/init';
 
 /**
  * Returns a single post.
  *
- * @param  {object}  state  Global state tree
+ * @param  {Object}  state  Global state tree
  * @param  {string}  postGlobalId Post global ID
- * @returns {object} Post
+ * @returns {Object} Post
  */
 export function getPostById( state, postGlobalId ) {
 	return state.reader.posts.items[ postGlobalId ];

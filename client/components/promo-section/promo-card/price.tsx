@@ -1,17 +1,21 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent } from 'react';
 import classnames from 'classnames';
-import { useTranslate, TranslateResult } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
+import { FunctionComponent } from 'react';
+import type { TranslateResult } from 'i18n-calypso';
+import type { ReactElement } from 'react';
 
 export interface Props {
 	/** Should be of the format: <span>$price</span> /interval, e.g. <span>$1</span> /year */
 	formattedPrice?: string | TranslateResult;
-	discount?: string | TranslateResult;
+	discount?: string | TranslateResult | null;
+	additionalPriceInformation?: string | TranslateResult | ReactElement;
 }
 
-const PromoCardPrice: FunctionComponent< Props > = ( { formattedPrice, discount } ) => {
+const PromoCardPrice: FunctionComponent< Props > = ( {
+	formattedPrice,
+	discount,
+	additionalPriceInformation = null,
+} ) => {
 	const translate = useTranslate();
 
 	if ( ! formattedPrice ) {
@@ -28,6 +32,7 @@ const PromoCardPrice: FunctionComponent< Props > = ( { formattedPrice, discount 
 		<div className="promo-card__price">
 			<span className={ costClassNames }>{ formattedPrice }</span>
 			{ discountSpan }
+			{ additionalPriceInformation }
 		</div>
 	);
 };

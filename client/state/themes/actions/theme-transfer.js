@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
 import { delay } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import {
 	THEME_TRANSFER_INITIATE_FAILURE,
 	THEME_TRANSFER_INITIATE_PROGRESS,
@@ -15,9 +9,40 @@ import {
 	THEME_TRANSFER_STATUS_FAILURE,
 	THEME_TRANSFER_STATUS_RECEIVE,
 } from 'calypso/state/themes/action-types';
-import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 
 import 'calypso/state/themes/init';
+
+function initiateTransfer( siteId, plugin, theme, geoAffinity, onProgress ) {
+	return new Promise( ( resolve, rejectPromise ) => {
+		const resolver = ( error, data ) => {
+			error ? rejectPromise( error ) : resolve( data );
+		};
+
+		const post = {
+			path: `/sites/${ siteId }/automated-transfers/initiate`,
+		};
+		post.body = {};
+		if ( plugin ) {
+			post.body = {
+				...post.body,
+				plugin,
+			};
+		}
+		if ( theme ) {
+			post.formData = [ [ 'theme', theme ] ];
+		}
+
+		if ( geoAffinity ) {
+			post.body = {
+				...post.body,
+				geo_affinity: geoAffinity,
+			};
+		}
+
+		const req = wpcom.req.post( post, resolver );
+		req && ( req.upload.onprogress = onProgress );
+	} );
+}
 
 /**
  * Start an Automated Transfer with an uploaded theme.
@@ -25,10 +50,10 @@ import 'calypso/state/themes/init';
  * @param {number} siteId -- the site to transfer
  * @param {window.File} file -- theme zip to upload
  * @param {string} plugin -- plugin slug
- *
+ * @param {string} geoAffinity -- geographic affinity for the new site
  * @returns {Promise} for testing purposes only
  */
-export function initiateThemeTransfer( siteId, file, plugin ) {
+export function initiateThemeTransfer( siteId, file, plugin, geoAffinity = '' ) {
 	let context = plugin ? 'plugins' : 'themes';
 	if ( ! plugin && ! file ) {
 		context = 'hosting';
@@ -46,16 +71,14 @@ export function initiateThemeTransfer( siteId, file, plugin ) {
 				themeInitiateRequest
 			)
 		);
-		return wpcom
-			.undocumented()
-			.initiateTransfer( siteId, plugin, file, ( event ) => {
-				dispatch( {
-					type: THEME_TRANSFER_INITIATE_PROGRESS,
-					siteId,
-					loaded: event.loaded,
-					total: event.total,
-				} );
-			} )
+		return initiateTransfer( siteId, plugin, file, geoAffinity, ( event ) => {
+			dispatch( {
+				type: THEME_TRANSFER_INITIATE_PROGRESS,
+				siteId,
+				loaded: event.loaded,
+				total: event.total,
+			} );
+		} )
 			.then( ( { transfer_id } ) => {
 				if ( ! transfer_id ) {
 					return dispatch(
@@ -131,7 +154,6 @@ function transferInitiateFailure( siteId, error, plugin, context ) {
  * @param {string} context -- from which the transfer was initiated
  * @param {number} [interval] -- time between poll attempts
  * @param {number} [timeout] -- time to wait for 'complete' status before bailing
- *
  * @returns {Promise} for testing purposes only
  */
 export function pollThemeTransferStatus(
@@ -149,9 +171,8 @@ export function pollThemeTransferStatus(
 				dispatch( transferStatusFailure( siteId, transferId, 'client timeout' ) );
 				return resolve();
 			}
-			return wpcom
-				.undocumented()
-				.transferStatus( siteId, transferId )
+			return wpcom.req
+				.get( `/sites/${ siteId }/automated-transfers/status/${ transferId }` )
 				.then( ( { status, message, uploaded_theme_slug } ) => {
 					dispatch( transferStatus( siteId, transferId, status, message, uploaded_theme_slug ) );
 					if ( status === 'complete' ) {

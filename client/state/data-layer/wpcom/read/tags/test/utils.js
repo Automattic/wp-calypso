@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
 import { fromApi } from 'calypso/state/data-layer/wpcom/read/tags/utils';
 
 const successfulFollowedTagsResponse = deepFreeze( {

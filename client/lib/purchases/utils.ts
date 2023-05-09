@@ -1,11 +1,5 @@
-/**
- * Internal dependencies
- */
-
-/**
- * Type dependencies
- */
-import { useTranslate } from 'i18n-calypso';
+import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
+import { hasAmountAvailableToRefund, isRefundable } from 'calypso/lib/purchases';
 import type { Purchase } from './types';
 
 /**
@@ -22,67 +16,23 @@ export function getPurchaseByProductSlug(
 	return purchases.find( ( purchase ) => purchase.productSlug === slug );
 }
 
-export function getIntroductoryOfferIntervalDisplay(
-	translate: ReturnType< typeof useTranslate >,
-	intervalUnit: string,
-	intervalCount: number,
-	isFreeTrial: boolean
-): string {
-	let text = String( translate( 'Discount for first period' ) );
-	if ( isFreeTrial ) {
-		if ( intervalUnit === 'month' ) {
-			if ( intervalCount === 1 ) {
-				text = String( translate( 'First month free' ) );
-			} else {
-				text = String(
-					translate( 'First %(numberOfMonths)d months free', {
-						args: {
-							numberOfMonths: intervalCount,
-						},
-					} )
-				);
-			}
-		}
-		if ( intervalUnit === 'year' ) {
-			if ( intervalCount === 1 ) {
-				text = String( translate( 'First year free' ) );
-			} else {
-				text = String(
-					translate( 'First %(numberOfYears)d years free', {
-						args: {
-							numberOfYears: intervalCount,
-						},
-					} )
-				);
-			}
-		}
-	} else {
-		if ( intervalUnit === 'month' ) {
-			if ( intervalCount === 1 ) {
-				text = String( translate( 'Discount for first month' ) );
-			} else {
-				text = String(
-					translate( 'Discount for first %(numberOfMonths)d months', {
-						args: {
-							numberOfMonths: intervalCount,
-						},
-					} )
-				);
-			}
-		}
-		if ( intervalUnit === 'year' ) {
-			if ( intervalCount === 1 ) {
-				text = String( translate( 'Discount for first year' ) );
-			} else {
-				text = String(
-					translate( 'Discount for first %(numberOfYears)d years', {
-						args: {
-							numberOfYears: intervalCount,
-						},
-					} )
-				);
-			}
-		}
+/**
+ * Returns the purchase cancellation flow.
+ *
+ * @param {Purchase} purchase The purchase object
+ */
+export function getPurchaseCancellationFlowType( purchase: Purchase ): string {
+	const isPlanRefundable = isRefundable( purchase );
+	const isPlanAutoRenewing = purchase?.isAutoRenewEnabled ?? false;
+
+	if ( isPlanRefundable && hasAmountAvailableToRefund( purchase ) ) {
+		// If the subscription is refundable the subscription should be removed immediately.
+		return CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND;
+	} else if ( ! isPlanRefundable && isPlanAutoRenewing ) {
+		// If the subscription is not refundable and auto-renew is on turn off auto-renew.
+		return CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
 	}
-	return text;
+
+	// If the subscription is not refundable and auto-renew is off subscription should be removed immediately.
+	return CANCEL_FLOW_TYPE.REMOVE;
 }

@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import PropTypes from 'prop-types';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function WordPressLogo( { className = 'wordpress-logo', size = 72 } ) {

@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import superagent from 'superagent';
-import debugFactory from 'debug';
 import crypto from 'crypto';
-
-/**
- * Internal dependencies
- */
-import { filterUserObject } from 'calypso/lib/user/shared-utils';
 import config from '@automattic/calypso-config';
+import debugFactory from 'debug';
+import superagent from 'superagent';
+import { filterUserObject } from 'calypso/lib/user/shared-utils';
 
 const debug = debugFactory( 'calypso:bootstrap' );
 const AUTH_COOKIE_NAME = 'wordpress_logged_in';
@@ -29,8 +22,8 @@ const getSupportSessionApiKey = () => config( 'wpcom_calypso_support_session_res
 /**
  * Requests the current user for user bootstrap.
  *
- * @param {object} request An Express request.
- * @returns {Promise<object>} A promise for a user object.
+ * @param {Object} request An Express request.
+ * @returns {Promise<Object>} A promise for a user object.
  */
 export default async function getBootstrappedUser( request ) {
 	const authCookieValue = request.cookies[ AUTH_COOKIE_NAME ];
@@ -67,7 +60,7 @@ export default async function getBootstrappedUser( request ) {
 		const supportSessionApiKey = getSupportSessionApiKey();
 		if ( typeof supportSessionApiKey !== 'string' ) {
 			throw new Error(
-				'Unable to boostrap user because of invalid SUPPORT SESSION API key in secrets.json'
+				'Unable to bootstrap user because of invalid SUPPORT SESSION API key in secrets.json'
 			);
 		}
 
@@ -81,7 +74,7 @@ export default async function getBootstrappedUser( request ) {
 		const apiKey = getApiKey();
 
 		if ( typeof apiKey !== 'string' ) {
-			throw new Error( 'Unable to boostrap user because of invalid API key in secrets.json' );
+			throw new Error( 'Unable to bootstrap user because of invalid API key in secrets.json' );
 		}
 
 		const hmac = crypto.createHmac( 'md5', apiKey );

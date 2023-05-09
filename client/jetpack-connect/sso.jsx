@@ -1,41 +1,33 @@
-/**
- * External dependencies
- */
-import debugModule from 'debug';
-import Gridicon from 'calypso/components/gridicon';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { flowRight, get, map } from 'lodash';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { addQueryArgs } from 'calypso/lib/route';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { Button, Card, CompactCard, Dialog } from '@automattic/components';
 import config from '@automattic/calypso-config';
+import { Button, Card, CompactCard, Dialog, Gridicon } from '@automattic/components';
+import debugModule from 'debug';
+import { localize } from 'i18n-calypso';
+import { flowRight, get, map } from 'lodash';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import Site from 'calypso/blocks/site';
+import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Gravatar from 'calypso/components/gravatar';
-import HelpButton from './help-button';
-import JetpackConnectHappychatButton from './happychat-button';
 import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import Main from 'calypso/components/main';
-import MainWrapper from './main-wrapper';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import Site from 'calypso/blocks/site';
-import SitePlaceholder from 'calypso/blocks/site/placeholder';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { decodeEntities } from 'calypso/lib/formatting';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { getSSO } from 'calypso/state/jetpack-connect/selectors';
 import { login } from 'calypso/lib/paths';
-import { persistSsoApproved } from './persistence-utils';
+import { addQueryArgs } from 'calypso/lib/route';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { validateSSONonce, authorizeSSO } from 'calypso/state/jetpack-connect/actions';
+import { getSSO } from 'calypso/state/jetpack-connect/selectors';
+import JetpackConnectHappychatButton from './happychat-button';
+import HelpButton from './help-button';
+import MainWrapper from './main-wrapper';
+import { persistSsoApproved } from './persistence-utils';
 
 /*
  * Module variables
@@ -47,21 +39,21 @@ class JetpackSsoForm extends Component {
 		showTermsDialog: false,
 	};
 
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		this.maybeValidateSSO();
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		this.maybeValidateSSO( nextProps );
+	componentDidUpdate( prevProps ) {
+		this.maybeValidateSSO();
 
-		if ( nextProps.ssoUrl && ! this.props.ssoUrl ) {
+		if ( this.props.ssoUrl && ! prevProps.ssoUrl ) {
 			// After receiving the SSO URL, which will log the user in on remote site,
 			// we redirect user to remote site to be logged in.
 			//
 			// Note: We add `calypso_env` so that when we are redirected back to Calypso,
 			// we land in the same development environment.
 			const configEnv = config( 'env_id' ) || process.env.NODE_ENV;
-			const redirect = addQueryArgs( { calypso_env: configEnv }, nextProps.ssoUrl );
+			const redirect = addQueryArgs( { calypso_env: configEnv }, this.props.ssoUrl );
 			debug( 'Redirecting to: ' + redirect );
 			window.location.href = redirect;
 		}
@@ -137,8 +129,8 @@ class JetpackSsoForm extends Component {
 		return login( { redirectTo: window.location.href } );
 	}
 
-	maybeValidateSSO( props = this.props ) {
-		const { ssoNonce, siteId, nonceValid, isAuthorizing, isValidating } = props;
+	maybeValidateSSO() {
+		const { ssoNonce, siteId, nonceValid, isAuthorizing, isValidating } = this.props;
 
 		if (
 			ssoNonce &&
@@ -417,7 +409,7 @@ class JetpackSsoForm extends Component {
 						noticeText={ translate( 'You must verify your email to sign in with WordPress.com.' ) }
 						noticeStatus="is-info"
 					>
-						<Card>
+						<Card className="jetpack-connect__logged-in-card">
 							{ currentUser.email_verified && this.maybeRenderErrorNotice() }
 							<div className="jetpack-connect__sso-user-profile">
 								<Gravatar user={ currentUser } size={ 120 } imgSize={ 400 } />

@@ -1,43 +1,60 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { localize } from 'i18n-calypso';
+import config from '@automattic/calypso-config';
+import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
+import i18n, { getLocaleSlug, localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
-
-/**
- * Internal Dependencies
- */
+import { Fragment, useCallback } from 'react';
+import DocumentHead from 'calypso/components/data/document-head';
+import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
+import FormattedHeader from 'calypso/components/formatted-header';
+import HeaderCake from 'calypso/components/header-cake';
+import Main from 'calypso/components/main';
+import { makeLayout, render as clientRender } from 'calypso/controller';
+import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { logToLogstash } from 'calypso/lib/logstash';
 import AddNewPaymentMethod from 'calypso/me/purchases/add-new-payment-method';
 import ChangePaymentMethod from 'calypso/me/purchases/manage-purchase/change-payment-method';
-import CancelPurchase from './cancel-purchase';
-import ConfirmCancelDomain from './confirm-cancel-domain';
-import Main from 'calypso/components/main';
-import ManagePurchase from './manage-purchase';
-import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
-import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
-import PurchasesList from './purchases-list';
-import DocumentHead from 'calypso/components/data/document-head';
-import titles from './titles';
-import { makeLayout, render as clientRender } from 'calypso/controller';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import HeaderCake from 'calypso/components/header-cake';
-import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import {
 	managePurchase as managePurchaseUrl,
 	purchasesRoot,
 	vatDetails as vatDetailsPath,
 	billingHistory,
 } from 'calypso/me/purchases/paths';
-import FormattedHeader from 'calypso/components/formatted-header';
+import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
+import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import { getVatVendorInfo } from './billing-history/vat-vendor-details';
+import CancelPurchase from './cancel-purchase';
+import ConfirmCancelDomain from './confirm-cancel-domain';
+import ManagePurchase from './manage-purchase';
+import PurchasesList from './purchases-list';
+import titles from './titles';
 import VatInfoPage from './vat-info';
+import useVatDetails from './vat-info/use-vat-details';
+
+function useLogPurchasesError( message ) {
+	return useCallback(
+		( error ) => {
+			logToLogstash( {
+				feature: 'calypso_client',
+				message,
+				severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+				extra: {
+					env: config( 'env_id' ),
+					type: 'account_level_purchases',
+					message: error.message + '; Stack: ' + error.stack,
+				},
+			} );
+		},
+		[ message ]
+	);
+}
 
 const PurchasesWrapper = ( { title = null, children } ) => {
 	return (
-		<React.Fragment>
+		<Fragment>
 			<DocumentHead title={ title } />
 			{ children }
-		</React.Fragment>
+		</Fragment>
 	);
 };
 const noop = () => {};
@@ -128,13 +145,34 @@ export function vatDetails( context, next ) {
 		const goToBillingHistory = () => page( billingHistory );
 		const classes = 'vat-details';
 
+		const translate = useTranslate();
+		const { data: geoData } = useGeoLocationQuery();
+		const { vatDetails: vatDetailsFromServer } = useVatDetails();
+		const vendorInfo = getVatVendorInfo(
+			vatDetailsFromServer.country ?? geoData?.country_short ?? 'GB',
+			'now',
+			translate
+		);
+		const genericTaxName =
+			/* translators: This is a generic name for taxes to use when we do not know the user's country. */
+			translate( 'tax (VAT/GST/CT)' );
+		const fallbackTaxName =
+			getLocaleSlug()?.startsWith( 'en' ) || i18n.hasTranslation( 'tax (VAT/GST/CT)' )
+				? genericTaxName
+				: translate( 'VAT', { textOnly: true } );
+		/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+		const title = translate( 'Add %s details', {
+			textOnly: true,
+			args: [ vendorInfo?.taxName ?? fallbackTaxName ],
+		} );
+
 		return (
-			<PurchasesWrapper title={ titles.vatDetails }>
+			<PurchasesWrapper title={ title }>
 				<Main wideLayout className={ classes }>
 					<PageViewTracker path={ vatDetailsPath } title="Purchases > VAT Details" />
 
 					<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
-					<HeaderCake onClick={ goToBillingHistory }>{ titles.vatDetails }</HeaderCake>
+					<HeaderCake onClick={ goToBillingHistory }>{ title }</HeaderCake>
 
 					<VatInfoPage siteSlug={ context.params.site } />
 				</Main>
@@ -183,22 +221,30 @@ export function changePaymentMethod( context, next ) {
 		return noSites( context, '/me/purchases/:site/:purchaseId/payment-method/change/:cardId' );
 	}
 
-	const ChangePaymentMethodWrapper = localize( () => {
+	const ChangePaymentMethodWrapper = () => {
+		const translate = useTranslate();
+		const logPurchasesError = useLogPurchasesError(
+			'account level purchases change payment method load error'
+		);
 		return (
 			<PurchasesWrapper title={ titles.changePaymentMethod }>
 				<Main wideLayout className="purchases__edit-payment-method">
 					<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
-					<ChangePaymentMethod
-						purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-						siteSlug={ context.params.site }
-						getManagePurchaseUrlFor={ managePurchaseUrl }
-						purchaseListUrl={ purchasesRoot }
-						isFullWidth={ true }
-					/>
+					<CheckoutErrorBoundary
+						errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
+						onError={ logPurchasesError }
+					>
+						<ChangePaymentMethod
+							purchaseId={ parseInt( context.params.purchaseId, 10 ) }
+							siteSlug={ context.params.site }
+							getManagePurchaseUrlFor={ managePurchaseUrl }
+							purchaseListUrl={ purchasesRoot }
+						/>
+					</CheckoutErrorBoundary>
 				</Main>
 			</PurchasesWrapper>
 		);
-	} );
+	};
 
 	context.primary = <ChangePaymentMethodWrapper />;
 	next();

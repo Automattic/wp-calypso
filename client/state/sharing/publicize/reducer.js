@@ -1,18 +1,8 @@
-/**
- * External dependencies
- */
 import { keyBy, omit, omitBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import {
 	PUBLICIZE_CONNECTION_CREATE,
 	PUBLICIZE_CONNECTION_DELETE,
 	PUBLICIZE_CONNECTION_RECEIVE,
-	PUBLICIZE_CONNECTION_REQUEST,
-	PUBLICIZE_CONNECTION_REQUEST_FAILURE,
-	PUBLICIZE_CONNECTION_REQUEST_SUCCESS,
 	PUBLICIZE_CONNECTION_UPDATE,
 	PUBLICIZE_CONNECTIONS_REQUEST,
 	PUBLICIZE_CONNECTIONS_RECEIVE,
@@ -23,8 +13,8 @@ import {
 	PUBLICIZE_SHARE_DISMISS,
 } from 'calypso/state/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
-import { connectionsSchema } from './schema';
 import sharePostActions from './publicize-actions/reducer';
+import { connectionsSchema } from './schema';
 
 export const sharePostStatus = ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -56,7 +46,7 @@ export const sharePostStatus = ( state = {}, action ) => {
 			};
 		}
 		case PUBLICIZE_SHARE_FAILURE: {
-			const { siteId, postId, error } = action;
+			const { siteId, postId } = action;
 
 			return {
 				...state,
@@ -65,7 +55,7 @@ export const sharePostStatus = ( state = {}, action ) => {
 					[ postId ]: {
 						requesting: false,
 						success: false,
-						error,
+						error: true,
 					},
 				},
 			};
@@ -86,45 +76,14 @@ export const sharePostStatus = ( state = {}, action ) => {
 	return state;
 };
 
-export const fetchingConnection = ( state = {}, action ) => {
-	switch ( action.type ) {
-		case PUBLICIZE_CONNECTION_REQUEST: {
-			const { connectionId } = action;
-
-			return {
-				...state,
-				[ connectionId ]: true,
-			};
-		}
-		case PUBLICIZE_CONNECTION_REQUEST_SUCCESS: {
-			const { connectionId } = action;
-
-			return {
-				...state,
-				[ connectionId ]: false,
-			};
-		}
-		case PUBLICIZE_CONNECTION_REQUEST_FAILURE: {
-			const { connectionId } = action;
-
-			return {
-				...state,
-				[ connectionId ]: false,
-			};
-		}
-	}
-
-	return state;
-};
-
 /**
  * Track the current status for fetching connections. Maps site ID to the
  * fetching status for that site. Assigns `true` for currently fetching,
  * `false` for done or failed fetching, or `undefined` if no fetch attempt
  * has been made for the site.
  *
- * @param {object} state Redux state
- * @param {object} action Redux action
+ * @param {Object} state Redux state
+ * @param {Object} action Redux action
  */
 export const fetchingConnections = ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -204,7 +163,6 @@ export const connections = withSchemaValidation( connectionsSchema, ( state = {}
 } );
 
 export default combineReducers( {
-	fetchingConnection,
 	fetchingConnections,
 	fetchedConnections,
 	connections,

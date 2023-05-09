@@ -1,17 +1,10 @@
-/**
- * External Dependencies
- */
 const { app } = require( 'electron' );
-
-/**
- * Internal dependencies
- */
-const platform = require( '../../lib/platform' );
 const Config = require( '../../lib/config' );
+const log = require( '../../lib/logger' )( 'desktop:updater' );
+const platform = require( '../../lib/platform' );
 const settings = require( '../../lib/settings' );
 const AutoUpdater = require( './auto-updater' );
 const ManualUpdater = require( './manual-updater' );
-const log = require( '../../lib/logger' )( 'desktop:updater' );
 
 let updater = false;
 

@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
+import { some, get } from 'lodash';
 import moment from 'moment';
-import { some, includes, get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import PaginatedQueryManager from '../paginated';
-import PostQueryKey from './key';
 import { DEFAULT_POST_QUERY } from './constants';
+import PostQueryKey from './key';
 
 /**
  * PostQueryManager manages posts which can be queried and change over time
@@ -21,8 +14,8 @@ export default class PostQueryManager extends PaginatedQueryManager {
 	/**
 	 * Returns true if the post matches the given query, or false otherwise.
 	 *
-	 * @param  {object}  query Query object
-	 * @param  {object}  post  Item to consider
+	 * @param  {Object}  query Query object
+	 * @param  {Object}  post  Item to consider
 	 * @returns {boolean}       Whether post matches query
 	 */
 	static matches( query, post ) {
@@ -36,8 +29,8 @@ export default class PostQueryManager extends PaginatedQueryManager {
 
 					const search = value.toLowerCase();
 					return (
-						( post.title && includes( post.title.toLowerCase(), search ) ) ||
-						( post.content && includes( post.content.toLowerCase(), search ) )
+						( post.title && post.title.toLowerCase().includes( search ) ) ||
+						( post.content && post.content.toLowerCase().includes( search ) )
 					);
 				}
 
@@ -54,7 +47,7 @@ export default class PostQueryManager extends PaginatedQueryManager {
 				case 'term':
 					return Object.entries( value ).every( ( [ taxonomy, slugs ] ) => {
 						slugs = slugs.split( ',' );
-						return some( post.terms[ taxonomy ], ( { slug } ) => includes( slugs, slug ) );
+						return some( post.terms[ taxonomy ], ( { slug } ) => slugs.includes( slug ) );
 					} );
 
 				case 'tag':
@@ -81,7 +74,7 @@ export default class PostQueryManager extends PaginatedQueryManager {
 
 				case 'exclude':
 					if ( Array.isArray( value ) ) {
-						return ! includes( value, post.ID );
+						return ! value.includes( post.ID );
 					}
 
 					return value !== post.ID;
@@ -117,9 +110,9 @@ export default class PostQueryManager extends PaginatedQueryManager {
 	 * A sort comparison function that defines the sort order of posts under
 	 * consideration of the specified query.
 	 *
-	 * @param  {object} query Query object
-	 * @param  {object} postA First post
-	 * @param  {object} postB Second post
+	 * @param  {Object} query Query object
+	 * @param  {Object} postA First post
+	 * @param  {Object} postB Second post
 	 * @returns {number}       0 if equal, less than 0 if postA is first,
 	 *                        greater than 0 if postB is first.
 	 */

@@ -1,22 +1,16 @@
-/**
- * External dependencies
- */
 import { makeRedirectResponse, makeErrorResponse } from '@automattic/composite-checkout';
+import { addUrlToPendingPageRedirect } from '../lib/pending-page';
+import prepareRedirectTransaction from '../lib/prepare-redirect-transaction';
+import { recordTransactionBeginAnalytics } from './analytics';
+import getDomainDetails from './get-domain-details';
+import getPostalCode from './get-postal-code';
+import submitWpcomTransaction from './submit-wpcom-transaction';
+import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import type {
 	WPCOMTransactionEndpointResponse,
 	CheckoutPaymentMethodSlug,
 } from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
-import getPostalCode from './get-postal-code';
-import getDomainDetails from './get-domain-details';
-import { recordTransactionBeginAnalytics } from './analytics';
-import submitWpcomTransaction from './submit-wpcom-transaction';
-import prepareRedirectTransaction from '../lib/prepare-redirect-transaction';
-import type { PaymentProcessorOptions } from '../types/payment-processors';
 
 type RedirectTransactionRequest = {
 	name: string | undefined;
@@ -31,7 +25,6 @@ export default async function genericRedirectProcessor(
 	const {
 		getThankYouUrl,
 		siteSlug,
-		siteId,
 		includeDomainDetails,
 		includeGSuiteDetails,
 		reduxDispatch,
@@ -46,21 +39,19 @@ export default async function genericRedirectProcessor(
 	// until a webhook is received that confirms the payment, at which point the
 	// pending page will redirect to the thank-you page as returned by
 	// getThankYouUrl.
-	const { origin = 'https://wordpress.com', pathname = '/', search = '' } =
-		typeof window !== 'undefined' ? window.location : {};
+	const {
+		origin = 'https://wordpress.com',
+		pathname = '/',
+		search = '',
+	} = typeof window !== 'undefined' ? window.location : {};
 	const thankYouUrl = getThankYouUrl() || 'https://wordpress.com';
-	const successUrlPath = `/checkout/thank-you/${ siteSlug || 'no-site' }/pending`;
-	const successUrlBase = `${ origin }${ successUrlPath }`;
-
-	const successUrlObject = new URL( successUrlBase );
-	successUrlObject.searchParams.set( 'redirectTo', thankYouUrl );
-	const successUrl = successUrlObject.href;
+	const successUrl = addUrlToPendingPageRedirect( thankYouUrl, {
+		siteSlug,
+		urlType: 'absolute',
+	} );
 	const cancelUrl = `${ origin }${ pathname }${ search }`;
 
-	recordTransactionBeginAnalytics( {
-		paymentMethodId,
-		reduxDispatch,
-	} );
+	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId } ) );
 
 	const formattedTransactionData = prepareRedirectTransaction(
 		paymentMethodId,
@@ -73,7 +64,6 @@ export default async function genericRedirectProcessor(
 			country: contactDetails?.countryCode?.value ?? '',
 			postalCode: getPostalCode( contactDetails ),
 			subdivisionCode: contactDetails?.state?.value,
-			siteId: siteId ? String( siteId ) : '',
 			domainDetails: getDomainDetails( contactDetails, {
 				includeDomainDetails,
 				includeGSuiteDetails,

@@ -2,9 +2,6 @@
  * @jest-environment jsdom
  */
 
-/**
- * Internal dependencies
- */
 import memoizeLast, { once } from '../';
 
 describe( 'memoizeLast', () => {

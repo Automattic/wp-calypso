@@ -1,23 +1,12 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import StepWrapper from 'calypso/signup/step-wrapper';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import TileGrid from 'calypso/components/tile-grid';
 import Tile from 'calypso/components/tile-grid/tile';
+import StepWrapper from 'calypso/signup/step-wrapper';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class CloneJetpackStep extends Component {
@@ -46,23 +35,23 @@ class CloneJetpackStep extends Component {
 			<TileGrid>
 				<Tile
 					className="clone-jetpack__keep"
-					buttonLabel={ 'Keep plan where it is' }
+					buttonLabel="Keep plan where it is"
 					description={ translate( 'Your plan would remain on %(originSiteName)s.', {
 						args: { originSiteName },
 					} ) }
-					image={ '/calypso/images/illustrations/jetpack-connection.svg' }
+					image="/calypso/images/illustrations/jetpack-connection.svg"
 					onClick={ this.selectNew }
 				/>
 				<Tile
 					className="clone-jetpack__migrate"
-					buttonLabel={ 'Migrate Jetpack plan' }
+					buttonLabel="Migrate Jetpack plan"
 					description={ translate(
 						'Your Jetpack plan would be migrated to the destination site, %(destinationSiteName)s.',
 						{
 							args: { destinationSiteName },
 						}
 					) }
-					image={ '/calypso/images/illustrations/jetpack-connection-migration.svg' }
+					image="/calypso/images/illustrations/jetpack-connection-migration.svg"
 					onClick={ this.selectMigrate }
 				/>
 			</TileGrid>

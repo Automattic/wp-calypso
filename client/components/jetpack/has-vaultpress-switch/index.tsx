@@ -1,18 +1,12 @@
-/**
- * External dependencies
- */
-import React, { ReactElement, useCallback } from 'react';
+import { ReactElement, useCallback } from 'react';
+import * as React from 'react';
 import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
+import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import RenderSwitch from 'calypso/components/jetpack/render-switch';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
-import QueryRewindState from 'calypso/components/data/query-rewind-state';
-import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
-import RenderSwitch from 'calypso/components/jetpack/render-switch';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
 const productStateImpliesVaultPress = ( productState?: { state?: string; reason?: string } ) => {
 	if ( ! productState ) {
@@ -31,7 +25,7 @@ const productStateImpliesVaultPress = ( productState?: { state?: string; reason?
 	return productState.reason && vaultPressReasons.includes( productState.reason );
 };
 
-const isInitialized = ( productState: { state?: string } | null ) =>
+const isInitialized = ( productState: { state?: string } | null | undefined ) =>
 	productState && productState.state !== 'uninitialized';
 
 const HasVaultPressSwitch: React.FC< Props > = ( {
@@ -41,7 +35,7 @@ const HasVaultPressSwitch: React.FC< Props > = ( {
 } ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const rewindState = useSelector( ( state ) => getRewindState( state, siteId ) );
-	const scanState = useSelector( ( state ) => getSiteScanState( state, siteId ) );
+	const scanState = useSelector( ( state ) => getSiteScanState( state, siteId ?? 0 ) );
 
 	const hasVaultPress = useCallback(
 		() => [ rewindState, scanState ].some( productStateImpliesVaultPress ),
@@ -63,7 +57,7 @@ const HasVaultPressSwitch: React.FC< Props > = ( {
 			queryComponent={
 				<>
 					<QueryRewindState siteId={ siteId } />
-					<QueryJetpackScan siteId={ siteId } />
+					<QueryJetpackScan siteId={ siteId ?? 0 } />
 				</>
 			}
 			loadingComponent={ loadingComponent }

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { SIGNUP_STEPS_SITE_TITLE_SET } from 'calypso/state/action-types';
 
 import 'calypso/state/signup/init';

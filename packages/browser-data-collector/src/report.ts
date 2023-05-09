@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	deviceMemory,
 	performanceTiming,
@@ -11,8 +8,6 @@ import {
 	pageVisibilityStart,
 	pageVisibilityStop,
 	blockingResources,
-	performanceMarks,
-	performanceMeasures,
 } from './collectors';
 
 export class ReportImpl implements Report {
@@ -23,13 +18,13 @@ export class ReportImpl implements Report {
 	startCollectors!: Collector[];
 	stopCollectors!: Collector[];
 
-	static async fromNow( id: string, collectors: Collector[] = [] ) {
+	static async fromNow( id: string, collectors: Collector[] = [] ): Promise< Report > {
 		const report = new ReportImpl( id, false );
 		await report.start( collectors );
 		return report;
 	}
 
-	static async fromPageStart( id: string, collectors: Collector[] = [] ) {
+	static async fromPageStart( id: string, collectors: Collector[] = [] ): Promise< ReportImpl > {
 		const report = new ReportImpl( id, true );
 		await report.start( collectors );
 		return report;
@@ -43,8 +38,6 @@ export class ReportImpl implements Report {
 			environment,
 			pageVisibilityStop,
 			networkInformation,
-			performanceMarks,
-			performanceMeasures,
 		];
 
 		if ( isInitial ) {
@@ -76,7 +69,7 @@ export class ReportImpl implements Report {
 		return this;
 	}
 
-	async stop( collectors: Collector[] = [] ) {
+	async stop( collectors: Collector[] = [] ): Promise< ReportPayload > {
 		this.end = Date.now();
 		await this.runCollectors( [ ...this.stopCollectors, ...collectors ] );
 

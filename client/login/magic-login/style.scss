@@ -1,6 +1,6 @@
-@import '@automattic/onboarding/styles/mixins';
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@automattic/onboarding/styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 @media ( max-height: 450px ) {
 	.magic-login__handle-link,
@@ -11,18 +11,44 @@
 			max-height: 180px;
 		}
 		.empty-content__title {
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 90%;
 		}
 		.empty-content__line {
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 60%;
 			margin-bottom: 20px;
 		}
 	}
 }
 
+.is-white-login .magic-login__handle-link,
+.is-white-login .magic-login__link-expired {
+	.empty-content__title {
+		font-family: $brand-serif;
+		font-size: rem(42px);
+		line-height: 1.2;
+		margin-bottom: 15px;
+	}
+
+	.empty-content__line {
+		font-weight: normal;
+		font-size: $font-body;
+	}
+
+	.button.is-primary:not([disabled]) {
+		background-color: #007cba;
+		border-color: #007cba;
+	}
+
+	.empty-content__action {
+		margin: 0 10px;
+	}
+}
+
 .magic-login__handle-link.jetpack {
-	img {
-		margin: 80px 0;
+	.jetpack-logo {
+		margin: 35px 0;
 	}
 }
 
@@ -39,12 +65,12 @@
 
 	.logged-out-form {
 		border-radius: 0;
-		box-shadow: 0 0 0 1px var( --color-border-subtle );
+		box-shadow: 0 0 0 1px var(--color-border-subtle);
 		margin: 0 auto;
 		max-width: 400px;
 		padding: 16px;
 
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( ">480px" ) {
 			padding: 24px;
 		}
 
@@ -61,7 +87,7 @@
 	text-align: center;
 
 	body.is-section-signup & {
-		color: var( --color-text-inverted );
+		color: var(--color-text-inverted);
 	}
 }
 
@@ -85,8 +111,9 @@
 .magic-login__footer {
 	a {
 		border-bottom: 1px solid #c8d7e1;
-		color: var( --color-neutral-50 );
+		color: var(--color-neutral-50);
 		display: block;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		line-height: 4em;
 		font-size: $font-body-small;
 		font-weight: 600;
@@ -95,14 +122,14 @@
 		text-decoration: none;
 
 		&:hover {
-			color: var( --color-primary );
+			color: var(--color-primary);
 		}
 		&:last-of-type {
 			border-bottom: none;
 		}
 
 		body.is-section-signup & {
-			color: var( --color-text-inverted );
+			color: var(--color-text-inverted);
 		}
 	}
 	.gridicon {
@@ -120,7 +147,7 @@
 	height: 240px;
 }
 
-.magic-login.is-gutenboarding-login {
+.magic-login.is-white-login {
 	.magic-login__form-header {
 		@include onboarding-heading-text-mobile;
 
@@ -130,10 +157,11 @@
 	}
 
 	.card {
+		background: transparent;
 		box-shadow: none;
 	}
 
-	.magic-login__form-action .button.is-primary:not( [disabled] ) {
+	.magic-login__form-action .button.is-primary:not([disabled]) {
 		// Match primary button color in Gutenboarding and
 		// change border color to remove 3D effect
 		background-color: #007cba;

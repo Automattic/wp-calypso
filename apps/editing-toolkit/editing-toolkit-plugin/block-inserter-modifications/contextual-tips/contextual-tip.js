@@ -1,18 +1,7 @@
-/**
- * External dependencies
- */
-import { get, filter, deburr, lowerCase, includes } from 'lodash';
-
-/**
- * WordPress dependencies
- */
 import { Tip } from '@wordpress/components';
-import { withSelect } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
-
-/**
- * Internal dependencies
- */
+import { withSelect } from '@wordpress/data';
+import { get, filter, deburr, lowerCase, includes } from 'lodash';
 import tipsList from './list';
 
 function ContextualTip( { searchTerm, random = false, canUserCreate } ) {

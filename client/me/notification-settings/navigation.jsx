@@ -1,19 +1,10 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
 import SectionNav from 'calypso/components/section-nav';
-import NavTabs from 'calypso/components/section-nav/tabs';
 import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
 
-class NotificationSettingsNavigation extends React.Component {
+class NotificationSettingsNavigation extends Component {
 	static displayName = 'NotificationSettingsNavigation';
 
 	render() {

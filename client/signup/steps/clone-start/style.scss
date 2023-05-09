@@ -14,19 +14,19 @@
 	margin: 8px auto 32px;
 
 	.clone-start__destination {
-		& [fill='#00BE28'],
-		& [fill='#004F84'] {
-			fill: var( --color-neutral-10 );
+		& [fill="#00BE28"],
+		& [fill="#004F84"] {
+			fill: var(--color-neutral-10);
 		}
-		& [fill='#00A6DB'],
-		& [fill='#74DCFC'] {
-			fill: var( --color-neutral-0 );
+		& [fill="#00A6DB"],
+		& [fill="#74DCFC"] {
+			fill: var(--color-neutral-0);
 		}
 	}
 }
 
 .clone-start__description {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	font-size: $font-body-small;
 }
 

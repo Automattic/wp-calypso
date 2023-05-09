@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Spinner } from '@automattic/components';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import Spinner from 'calypso/components/spinner';
-import MediaImage from 'calypso/my-sites/media-library/media-image';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { url, isItemBeingUploaded } from 'calypso/lib/media/utils';
+import MediaImage from 'calypso/my-sites/media-library/media-image';
 
 const noop = () => {};
 
@@ -27,12 +19,6 @@ export default class EditorMediaModalDetailPreviewImage extends Component {
 	};
 
 	state = { loading: true };
-
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.item.URL !== nextProps.item.URL ) {
-			this.setState( { loading: true } );
-		}
-	}
 
 	onImagePreloaderLoad = () => {
 		this.setState( { loading: false } );

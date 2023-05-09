@@ -1,35 +1,22 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
+import { Card, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
-import { login } from 'calypso/lib/paths';
-import { Card } from '@automattic/components';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import RedirectWhenLoggedIn from 'calypso/components/redirect-when-logged-in';
-import { hideMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
-import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import { preventWidows } from 'calypso/lib/formatting/prevent-widows';
+import { login } from 'calypso/lib/paths';
 import {
 	recordPageViewWithClientId as recordPageView,
 	enhanceWithSiteType,
 } from 'calypso/state/analytics/actions';
-import { withEnhancers } from 'calypso/state/utils';
+import { hideMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
-import Gridicon from 'calypso/components/gridicon';
+import { withEnhancers } from 'calypso/state/utils';
 
-/**
- * Image dependencies
- */
-import checkEmailImage from 'calypso/assets/images/illustrations/check-email.svg';
-
-class EmailedLoginLinkSuccessfully extends React.Component {
+class EmailedLoginLinkSuccessfully extends Component {
 	static propTypes = {
 		hideMagicLoginRequestForm: PropTypes.func.isRequired,
 		locale: PropTypes.string.isRequired,
@@ -45,7 +32,13 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 
 		this.props.hideMagicLoginRequestForm();
 
-		page( login( { isJetpack: this.props.isJetpackLogin, locale: this.props.locale } ) );
+		page(
+			login( {
+				isJetpack: this.props.isJetpackLogin,
+				isWhiteLogin: this.props.isWhiteLogin,
+				locale: this.props.locale,
+			} )
+		);
 	};
 
 	render() {
@@ -73,21 +66,20 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 				<h1 className="magic-login__form-header">{ translate( 'Check your email!' ) }</h1>
 
 				<Card className="magic-login__form">
-					<img alt="" src={ checkEmailImage } className="magic-login__check-email-image" />
-					<p>{ line }</p>
+					<p>{ preventWidows( line ) }</p>
 				</Card>
 
 				<div className="magic-login__footer">
 					<a
 						href={ login( {
 							isJetpack: this.props.isJetpackLogin,
-							isGutenboarding: this.props.isGutenboardingLogin,
+							isWhiteLogin: this.props.isWhiteLogin,
 							locale: this.props.locale,
 						} ) }
 						onClick={ this.onClickBackLink }
 					>
 						<Gridicon icon="arrow-left" size={ 18 } />
-						{ translate( 'Back' ) }
+						{ translate( 'Back to login' ) }
 					</a>
 				</div>
 			</div>
@@ -98,7 +90,7 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 const mapState = ( state ) => ( {
 	locale: getCurrentLocaleSlug( state ),
 	isJetpackLogin: getCurrentRoute( state ) === '/log-in/jetpack/link',
-	isGutenboardingLogin: getCurrentRoute( state )?.startsWith( '/log-in/gutenboarding/link' ),
+	isWhiteLogin: getCurrentRoute( state )?.startsWith( '/log-in/new/link' ),
 } );
 
 const mapDispatch = {

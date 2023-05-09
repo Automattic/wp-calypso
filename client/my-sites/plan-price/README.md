@@ -1,14 +1,42 @@
 # PlanPrice Component
 
-PlanPrice component is a React component used to display plan's price with a currency and a discount, if any.
-It can be used anywhere where a plan's price is required.
+The PlanPrice component is a React component used to display a plan's price with a currency and a discount, if any. It can be used anywhere where a plan's price is required.
 
 If you want to emphasize that a plan's price is discounted, use two `<PlanPrice>` components as below and wrap them in a
 flexbox container.
 
-If you pass an array of two numbers in the `rawPrice` prop, a range of prices will be displayed.
-
 ## Usage
+
+PlanPrice can take a `productDisplayPrice` or a `rawPrice` prop.
+
+A `productDisplayPrice` can be retrieved from the `/purchases` or `/plans` REST endpoints and are stored in Redux; for example:
+
+```jsx
+function MyComponent( { purchaseId } ) {
+	const { productDisplayPrice } = useSelector( ( state ) => getByPurchaseId( state, purchaseId ) );
+	return <PlanPrice productDisplayPrice={ productDisplayPrice } />;
+}
+```
+
+```jsx
+<PlanPrice
+	productDisplayPrice={ purchase.productDisplayPrice }
+	taxText={ purchase.taxText }
+	isOnSale={ !! purchase.saleAmount }
+/>;
+```
+
+```jsx
+<PlanPrice
+	productDisplayPrice={ purchase.productDisplayPrice }
+	rawPrice={ getRenewalPrice( purchase ) }
+	currencyCode={ purchase.currencyCode }
+	taxText={ purchase.taxText }
+	isOnSale={ !! purchase.saleAmount }
+/>;
+```
+
+If you pass an array of two numbers in the `rawPrice` prop, a range of prices will be displayed.
 
 ```jsx
 import PlanPrice from 'calypso/my-sites/plan-price';
@@ -32,14 +60,3 @@ export default class extends React.Component {
 	}
 }
 ```
-
-## Props
-
-| Prop         | Type           | Description                                             |
-| ------------ | -------------- | ------------------------------------------------------- |
-| rawPrice     | number / array | Price or price range of the plan                        |
-| original     | bool           | Is the price discounted and this is the original one?   |
-| discounted   | bool           | Is the price discounted and this is the discounted one? |
-| isOnSale     | bool           | Is the product this price is for on sale?               |
-| currencyCode | string         | Currency of the price                                   |
-| className    | string         | If you need to add additional classes                   |

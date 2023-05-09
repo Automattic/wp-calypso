@@ -1,39 +1,20 @@
-/**
- * External dependencies
- */
-const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
 const WebpackRTLPlugin = require( '@automattic/webpack-rtl-plugin' );
-
-/**
- * Internal dependencies
- */
+const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
 const MiniCSSWithRTLPlugin = require( './mini-css-with-rtl' );
 
 /**
  * Return a webpack loader object containing our styling (Sass -> CSS) stack.
  *
- * @param  {object}    _                              Options
+ * @param  {Object}    _                              Options
  * @param  {string[]}  _.includePaths                 Sass files lookup paths
  * @param  {string}    _.prelude                      String to prepend to each Sass file
- * @param  {object}    _.postCssOptions               PostCSS options
- * @param  {object}    _.cacheDirectory               Directory used to store the cache
- *
- * @returns {object}                                  webpack loader object
+ * @param  {Object}    _.postCssOptions               PostCSS options
+ * @returns {Object}                                  webpack loader object
  */
-module.exports.loader = ( { includePaths, prelude, postCssOptions, cacheDirectory } ) => ( {
+module.exports.loader = ( { includePaths, prelude, postCssOptions } ) => ( {
 	test: /\.(sc|sa|c)ss$/,
 	use: [
 		MiniCssExtractPlugin.loader,
-		...( cacheDirectory
-			? [
-					{
-						loader: require.resolve( 'cache-loader' ),
-						options: {
-							cacheDirectory: cacheDirectory,
-						},
-					},
-			  ]
-			: [] ),
 		{
 			loader: require.resolve( 'css-loader' ),
 			options: {
@@ -42,7 +23,9 @@ module.exports.loader = ( { includePaths, prelude, postCssOptions, cacheDirector
 				// typically use `/` to indicate the start of the base URL,
 				// but starting with css-loader v4, it started trying to handle
 				// absolute paths itself.
-				url: ( path ) => ! path.startsWith( '/' ),
+				url: {
+					filter: ( path ) => ! path.startsWith( '/' ),
+				},
 			},
 		},
 		{
@@ -57,6 +40,7 @@ module.exports.loader = ( { includePaths, prelude, postCssOptions, cacheDirector
 				additionalData: prelude,
 				sassOptions: {
 					includePaths,
+					quietDeps: true,
 				},
 			},
 		},
@@ -66,14 +50,12 @@ module.exports.loader = ( { includePaths, prelude, postCssOptions, cacheDirector
 /**
  * Return an array of styling relevant webpack plugin objects.
  *
- * @param  {object}   _                Options
+ * @param  {Object}   _                Options
  * @param  {string}   _.chunkFilename  filename pattern to use for CSS files
  * @param  {string}   _.filename       filename pattern to use for CSS chunk files
- * @param  {boolean}  _.minify         whether to minify CSS
- *
- * @returns {object[]}                 styling relevant webpack plugin objects
+ * @returns {Object[]}                 styling relevant webpack plugin objects
  */
-module.exports.plugins = ( { chunkFilename, filename, minify } ) => [
+module.exports.plugins = ( { chunkFilename, filename } ) => [
 	new MiniCssExtractPlugin( {
 		chunkFilename,
 		filename,
@@ -83,7 +65,5 @@ module.exports.plugins = ( { chunkFilename, filename, minify } ) => [
 		},
 	} ),
 	new MiniCSSWithRTLPlugin(),
-	new WebpackRTLPlugin( {
-		minify,
-	} ),
+	new WebpackRTLPlugin(),
 ];

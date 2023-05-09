@@ -1,32 +1,24 @@
 /**
  * Component which handle remote credentials for installing Jetpack
  */
+import { Button, Card, FormInputValidation, Gridicon, Spinner } from '@automattic/components';
 import classnames from 'classnames';
-import React, { Component, Fragment } from 'react';
-import page from 'page';
-import { connect } from 'react-redux';
-import { flowRight, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
-/**
- * External dependencies
- */
-import { Button, Card } from '@automattic/components';
-import FormButton from 'calypso/components/forms/form-button';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
-import FormLabel from 'calypso/components/forms/form-label';
-import FormTextInput from 'calypso/components/forms/form-text-input';
+import { flowRight } from 'lodash';
+import page from 'page';
+import { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
+import FormButton from 'calypso/components/forms/form-button';
+import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
-import Gridicon from 'calypso/components/gridicon';
-import HelpButton from './help-button';
-import JetpackConnectNotices from './jetpack-connect-notices';
-import JetpackRemoteInstallNotices from './jetpack-remote-install-notices';
-import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
-import MainWrapper from './main-wrapper';
-import Spinner from 'calypso/components/spinner';
-import { addCalypsoEnvQueryArg } from './utils';
+import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
+import WordPressLogo from 'calypso/components/wordpress-logo';
 import { addQueryArgs } from 'calypso/lib/route';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getConnectingSite } from 'calypso/state/jetpack-connect/selectors';
 import {
 	jetpackRemoteInstall,
 	jetpackRemoteInstallUpdateError,
@@ -34,9 +26,7 @@ import {
 import getJetpackRemoteInstallErrorCode from 'calypso/state/selectors/get-jetpack-remote-install-error-code';
 import getJetpackRemoteInstallErrorMessage from 'calypso/state/selectors/get-jetpack-remote-install-error-message';
 import isJetpackRemoteInstallComplete from 'calypso/state/selectors/is-jetpack-remote-install-complete';
-import { getConnectingSite } from 'calypso/state/jetpack-connect/selectors';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { REMOTE_PATH_AUTH } from './constants';
+import isRemoteInstallingJetpack from 'calypso/state/selectors/is-remote-installing-jetpack';
 import {
 	ACTIVATION_FAILURE,
 	ACTIVATION_RESPONSE_ERROR,
@@ -45,23 +35,27 @@ import {
 	INVALID_PERMISSIONS,
 	UNKNOWN_REMOTE_INSTALL_ERROR,
 } from './connection-notice-types';
-import WordPressLogo from 'calypso/components/wordpress-logo';
+import { REMOTE_PATH_AUTH } from './constants';
+import HelpButton from './help-button';
+import JetpackConnectNotices from './jetpack-connect-notices';
+import JetpackRemoteInstallNotices from './jetpack-remote-install-notices';
+import MainWrapper from './main-wrapper';
+import { addCalypsoEnvQueryArg } from './utils';
 
 export class OrgCredentialsForm extends Component {
 	state = {
 		username: '',
 		password: '',
-		isSubmitting: false,
+		isUnloading: false,
 	};
 
 	handleSubmit = ( event ) => {
 		const { siteToConnect } = this.props;
 		event.preventDefault();
 
-		if ( this.state.isSubmitting ) {
+		if ( this.props.isRemoteInstalling ) {
 			return;
 		}
-		this.setState( { isSubmitting: true } );
 
 		this.props.recordTracksEvent( 'calypso_jpc_remoteinstall_submit', {
 			url: siteToConnect,
@@ -69,15 +63,7 @@ export class OrgCredentialsForm extends Component {
 		this.props.jetpackRemoteInstall( siteToConnect, this.state.username, this.state.password );
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		const { installError } = nextProps;
-
-		if ( installError ) {
-			this.setState( { isSubmitting: false } );
-		}
-	}
-
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		const { siteToConnect } = this.props;
 
 		if ( ! siteToConnect ) {
@@ -87,6 +73,12 @@ export class OrgCredentialsForm extends Component {
 		this.props.recordTracksEvent( 'calypso_jpc_remoteinstall_view', {
 			url: siteToConnect,
 		} );
+
+		window.addEventListener( 'beforeunload', this.beforeUnloadHandler );
+	}
+
+	componentWillUnmount() {
+		window.removeEventListener( 'beforeunload', this.beforeUnloadHandler );
 	}
 
 	componentDidUpdate() {
@@ -174,8 +166,7 @@ export class OrgCredentialsForm extends Component {
 	}
 
 	isInvalidCreds() {
-		const { installError } = this.props;
-		return includes( [ INVALID_CREDENTIALS ], this.getError( installError ) );
+		return this.getError( this.props.installError ) === INVALID_CREDENTIALS;
 	}
 
 	isInvalidUsername() {
@@ -187,8 +178,8 @@ export class OrgCredentialsForm extends Component {
 	}
 
 	formFields() {
-		const { translate } = this.props;
-		const { isSubmitting, password, username } = this.state;
+		const { translate, isRemoteInstalling } = this.props;
+		const { password, username } = this.state;
 
 		const userClassName = classnames( 'jetpack-connect__credentials-form-input', {
 			'is-error': this.isInvalidUsername(),
@@ -215,7 +206,7 @@ export class OrgCredentialsForm extends Component {
 						autoCapitalize="off"
 						autoCorrect="off"
 						className={ userClassName }
-						disabled={ isSubmitting }
+						disabled={ isRemoteInstalling }
 						id="username"
 						name="username"
 						onChange={ this.getChangeHandler( 'username' ) }
@@ -234,7 +225,7 @@ export class OrgCredentialsForm extends Component {
 						<Gridicon size={ 24 } icon="lock" />
 						<FormPasswordInput
 							className={ passwordClassName }
-							disabled={ isSubmitting }
+							disabled={ isRemoteInstalling }
 							id="password"
 							name="password"
 							onChange={ this.getChangeHandler( 'password' ) }
@@ -259,14 +250,13 @@ export class OrgCredentialsForm extends Component {
 	}
 
 	renderButtonLabel() {
-		const { isResponseCompleted, translate } = this.props;
-		const { isSubmitting } = this.state;
+		const { isResponseCompleted, translate, isRemoteInstalling } = this.props;
 
 		if ( isResponseCompleted ) {
 			return translate( 'Jetpack installed' );
 		}
 
-		if ( ! isSubmitting ) {
+		if ( ! isRemoteInstalling ) {
 			return translate( 'Install Jetpack' );
 		}
 
@@ -274,14 +264,16 @@ export class OrgCredentialsForm extends Component {
 	}
 
 	formFooter() {
-		const { isSubmitting } = this.state;
-
+		const { isRemoteInstalling } = this.props;
+		const { username, password, isUnloading } = this.state;
 		return (
 			<div className="jetpack-connect__creds-form-footer">
-				{ isSubmitting && <Spinner className="jetpack-connect__creds-form-spinner" /> }
+				{ ( isRemoteInstalling || isUnloading ) && (
+					<Spinner className="jetpack-connect__creds-form-spinner" />
+				) }
 				<FormButton
 					className="jetpack-connect__credentials-submit"
-					disabled={ ! this.state.username || ! this.state.password || isSubmitting }
+					disabled={ ! username || ! password || isRemoteInstalling || isUnloading }
 				>
 					{ this.renderButtonLabel() }
 				</FormButton>
@@ -296,6 +288,12 @@ export class OrgCredentialsForm extends Component {
 			return;
 		}
 		page.redirect( '/jetpack/connect' );
+	};
+
+	beforeUnloadHandler = () => {
+		this.setState( {
+			isUnloading: true,
+		} );
 	};
 
 	footerLink() {
@@ -381,6 +379,7 @@ const connectComponent = connect(
 		return {
 			installError: getJetpackRemoteInstallErrorCode( state, siteToConnect ),
 			installErrorMessage: getJetpackRemoteInstallErrorMessage( state, siteToConnect ),
+			isRemoteInstalling: isRemoteInstallingJetpack( state, siteToConnect ),
 			isResponseCompleted: isJetpackRemoteInstallComplete( state, siteToConnect ),
 			siteToConnect,
 		};

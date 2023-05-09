@@ -1,31 +1,27 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import page from 'page';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import Main from 'calypso/components/main';
-import HeaderCake from 'calypso/components/header-cake';
+import { isEnabled } from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
-import PeopleProfile from 'calypso/my-sites/people/people-profile';
+import { localize } from 'i18n-calypso';
+import page from 'page';
+import { useEffect } from 'react';
+import { connect } from 'react-redux';
+import FormattedHeader from 'calypso/components/formatted-header';
+import HeaderCake from 'calypso/components/header-cake';
+import Main from 'calypso/components/main';
+import useUserQuery from 'calypso/data/users/use-user-query';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useProtectForm } from 'calypso/lib/protect-form';
 import DeleteUser from 'calypso/my-sites/people/delete-user';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { isJetpackSiteMultiSite, isJetpackSite } from 'calypso/state/sites/selectors';
-import EditUserForm from './edit-user-form';
+import PeopleProfile from 'calypso/my-sites/people/people-profile';
 import { recordGoogleEvent as recordGoogleEventAction } from 'calypso/state/analytics/actions';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
-import useUserQuery from 'calypso/data/users/use-user-query';
+import { isJetpackSiteMultiSite, isJetpackSite } from 'calypso/state/sites/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
+import EditUserForm from './edit-user-form';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export const EditTeamMemberForm = ( {
@@ -36,31 +32,47 @@ export const EditTeamMemberForm = ( {
 	previousRoute,
 	siteSlug,
 	recordGoogleEvent,
+	translate,
 } ) => {
 	const goBack = () => {
 		recordGoogleEvent( 'People', 'Clicked Back Button on User Edit' );
+
+		const teamRoute = isEnabled( 'user-management-revamp' ) ? 'team-members' : 'team';
+
 		if ( previousRoute ) {
 			page.back( previousRoute );
 			return;
 		}
 		if ( siteSlug ) {
-			page( '/people/team/' + siteSlug );
+			page( `/people/${ teamRoute }/${ siteSlug }` );
 			return;
 		}
-		page( '/people/team' );
+		page( `/people/${ teamRoute }` );
 	};
 
 	const { markChanged, markSaved } = useProtectForm();
 	const { data: user, error, isLoading } = useUserQuery( siteId, userLogin, { retry: false } );
 
-	React.useEffect( () => {
+	useEffect( () => {
 		! isLoading && error && page.redirect( `/people/team/${ siteSlug }` );
 	}, [ error, isLoading, siteSlug ] );
 
 	return (
 		<Main className="edit-team-member-form">
 			<PageViewTracker path="people/edit/:site/:user" title="People > View Team Member" />
-			<HeaderCake onClick={ goBack } isCompact />
+			{ isEnabled( 'user-management-revamp' ) && (
+				<FormattedHeader
+					brandFont
+					className="people__page-heading"
+					headerText={ translate( 'Users' ) }
+					subHeaderText={ translate( 'People who have subscribed to your site and team members.' ) }
+					align="left"
+					hasScreenOptions
+				/>
+			) }
+			<HeaderCake onClick={ goBack } isCompact>
+				{ translate( 'User Details' ) }
+			</HeaderCake>
 			<Card className="edit-team-member-form__user-profile">
 				<PeopleProfile siteId={ siteId } user={ user } />
 				{ user && (
@@ -68,6 +80,8 @@ export const EditTeamMemberForm = ( {
 						user={ user }
 						disabled={ false } // @TODO added when added mutation to remove user
 						siteId={ siteId }
+						autoSave={ isEnabled( 'user-management-revamp' ) }
+						roleSelectControlType={ isEnabled( 'user-management-revamp' ) ? 'select' : 'radio' }
 						isJetpack={ isJetpack }
 						markChanged={ markChanged }
 						markSaved={ markSaved }
@@ -90,14 +104,20 @@ export const EditTeamMemberForm = ( {
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
+		const site = getSelectedSite( state );
+
+		const isJetpack = isJetpackSite( state, siteId );
+		const isMultisite = isJetpack
+			? isJetpackSiteMultiSite( state, siteId )
+			: site && site.is_multisite;
 
 		return {
 			siteId,
 			siteSlug: getSelectedSiteSlug( state ),
-			isJetpack: isJetpackSite( state, siteId ),
-			isMultisite: isJetpackSiteMultiSite( state, siteId ),
+			isJetpack,
+			isMultisite,
 			previousRoute: getPreviousRoute( state ),
 		};
 	},
 	{ recordGoogleEvent: recordGoogleEventAction }
-)( EditTeamMemberForm );
+)( localize( EditTeamMemberForm ) );

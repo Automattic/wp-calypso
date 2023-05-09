@@ -1,19 +1,11 @@
-/**
- * External Dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
-import { READER_UNSUBSCRIBE_TO_NEW_POST_EMAIL } from 'calypso/state/reader/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { bypassDataLayer } from 'calypso/state/data-layer/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { subscribeToNewPostEmail } from 'calypso/state/reader/follows/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { bypassDataLayer } from 'calypso/state/data-layer/utils';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { READER_UNSUBSCRIBE_TO_NEW_POST_EMAIL } from 'calypso/state/reader/action-types';
+import { subscribeToNewPostEmail } from 'calypso/state/reader/follows/actions';
 
 export function requestPostEmailUnsubscription( action ) {
 	return http( {

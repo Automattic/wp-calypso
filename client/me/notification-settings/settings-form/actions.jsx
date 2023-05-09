@@ -1,22 +1,11 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
 import FormButton from 'calypso/components/forms/form-button';
 
-/**
- * Style dependencies
- */
 import './actions.scss';
 
-class NotificationSettingsFormActions extends React.PureComponent {
+class NotificationSettingsFormActions extends PureComponent {
 	static propTypes = {
 		onSave: PropTypes.func.isRequired,
 		onSaveToAll: PropTypes.func,

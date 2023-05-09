@@ -1,34 +1,30 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
-
-/**
- * Style Dependencies
- */
+import { localizeUrl } from '@automattic/i18n-utils';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import illustrationEmptyResults from 'calypso/assets/images/illustrations/illustration-empty-results.svg';
 import './style.scss';
 
 class EmptyContent extends Component {
 	static propTypes = {
-		title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ),
+		title: PropTypes.node,
 		illustration: PropTypes.string,
 		illustrationWidth: PropTypes.number,
-		line: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ),
-		action: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
+		illustrationHeight: PropTypes.number,
+		line: PropTypes.node,
+		action: PropTypes.node,
 		actionURL: PropTypes.string,
 		actionCallback: PropTypes.func,
 		actionTarget: PropTypes.string,
 		actionHoverCallback: PropTypes.func,
-		secondaryAction: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
+		actionDisabled: PropTypes.bool,
+		actionRef: PropTypes.oneOfType( [
+			PropTypes.func,
+			PropTypes.shape( { current: PropTypes.any } ),
+		] ),
+		secondaryAction: PropTypes.node,
 		secondaryActionURL: PropTypes.string,
 		secondaryActionCallback: PropTypes.func,
 		secondaryActionTarget: PropTypes.string,
@@ -37,8 +33,7 @@ class EmptyContent extends Component {
 	};
 
 	static defaultProps = {
-		title: "You haven't created any content yet.",
-		illustration: '/calypso/images/illustrations/illustration-empty-results.svg',
+		illustration: illustrationEmptyResults,
 		isCompact: false,
 	};
 
@@ -55,6 +50,8 @@ class EmptyContent extends Component {
 					onClick={ this.props.actionCallback }
 					href={ localizeUrl( this.props.actionURL ) }
 					target={ this.props.actionTarget }
+					disabled={ this.props.actionDisabled }
+					ref={ this.props.actionRef }
 					onMouseEnter={ this.props.actionHoverCallback }
 					onTouchStart={ this.props.actionHoverCallback }
 				>
@@ -86,11 +83,16 @@ class EmptyContent extends Component {
 	render() {
 		const action = this.props.action && this.primaryAction();
 		const secondaryAction = this.props.secondaryAction && this.secondaryAction();
+		const title =
+			this.props.title !== undefined
+				? this.props.title
+				: this.props.translate( "You haven't created any content yet." );
 		const illustration = this.props.illustration && (
 			<img
 				src={ this.props.illustration }
 				alt=""
 				width={ this.props.illustrationWidth }
+				height={ this.props.illustrationHeight }
 				className="empty-content__illustration"
 			/>
 		);
@@ -99,11 +101,11 @@ class EmptyContent extends Component {
 			<div
 				className={ classNames( 'empty-content', this.props.className, {
 					'is-compact': this.props.isCompact,
-					'has-title-only': this.props.title && ! this.props.line,
+					'has-title-only': title && ! this.props.line,
 				} ) }
 			>
 				{ illustration }
-				{ this.props.title ? <h2 className="empty-content__title">{ this.props.title }</h2> : null }
+				{ title ? <h2 className="empty-content__title">{ title }</h2> : null }
 				{ this.props.line ? <h3 className="empty-content__line">{ this.props.line }</h3> : null }
 				{ action }
 				{ secondaryAction }
@@ -113,4 +115,4 @@ class EmptyContent extends Component {
 	}
 }
 
-export default EmptyContent;
+export default localize( EmptyContent );

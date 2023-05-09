@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { createRef, Component, forwardRef } from 'react';
 import { resemblesUrl } from 'calypso/lib/url';
 
 /**
@@ -15,11 +8,11 @@ import { resemblesUrl } from 'calypso/lib/url';
  * in an <a> element with the href set to the URL in the clipboard.
  *
  * @example withPasteToLink( Component )
- * @param {object} WrappedComponent - React component to wrap
- * @returns {object} Enhanced component
+ * @param {Object} WrappedComponent - React component to wrap
+ * @returns {Object} Enhanced component
  */
 export default ( WrappedComponent ) => {
-	class WithPasteToLink extends React.Component {
+	class WithPasteToLink extends Component {
 		static displayName = `withPasteToLink( ${
 			WrappedComponent.displayName || WrappedComponent.name
 		} )`;
@@ -30,7 +23,7 @@ export default ( WrappedComponent ) => {
 
 			this.textareaRef = this.props.forwardedRef;
 			if ( ! this.textareaRef ) {
-				this.textareaRef = React.createRef();
+				this.textareaRef = createRef();
 			}
 		}
 
@@ -88,7 +81,7 @@ export default ( WrappedComponent ) => {
 		}
 	}
 
-	return React.forwardRef( ( props, ref ) => {
+	return forwardRef( ( props, ref ) => {
 		return <WithPasteToLink { ...props } forwardedRef={ ref } />;
 	} );
 };

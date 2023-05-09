@@ -1,22 +1,14 @@
-/**
- * External dependencies
- */
-import ReactDOM from 'react-dom';
-import React from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import { localize } from 'i18n-calypso';
+import { Component } from 'react';
+import ReactDOM from 'react-dom';
+import { connect } from 'react-redux';
 import actions from '../state/actions';
 import getFilterName from '../state/selectors/get-filter-name';
 import getIsLoading from '../state/selectors/get-is-loading';
 import getIsNoteHidden from '../state/selectors/get-is-note-hidden';
 import getIsPanelOpen from '../state/selectors/get-is-panel-open';
 import getSelectedNoteId from '../state/selectors/get-selected-note-id';
-
 import EmptyMessage from './empty-message';
 import FilterBar from './filter-bar';
 import Filters from './filters';
@@ -31,7 +23,7 @@ const DAY_MILLISECONDS = 24 * 60 * 60 * 1000;
 // from $wpnc__title-bar-height in boot/sizes.scss
 const TITLE_OFFSET = 38;
 
-export class NoteList extends React.Component {
+export class NoteList extends Component {
 	static defaultProps = {
 		scrollTimeout: 200,
 	};
@@ -46,6 +38,7 @@ export class NoteList extends React.Component {
 
 	noteElements = {};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		this.props.global.updateStatusBar = this.updateStatusBar;
 		this.props.global.resetStatusBar = this.resetStatusBar;
@@ -65,10 +58,11 @@ export class NoteList extends React.Component {
 		ReactDOM.findDOMNode( this.scrollableContainer ).removeEventListener( 'scroll', this.onScroll );
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.isPanelOpen && ! nextProps.isPanelOpen ) {
 			// scroll to top, from toggling frame
-			this.setState( { lastSelectedIndex: 0, scrollY: 0 } );
+			this.setState( { scrollY: 0 } );
 		}
 	}
 

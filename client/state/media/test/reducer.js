@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import reducer, { errors, queries, selectedItems, transientItems, fetching } from '../reducer';
+import { ValidationErrors as MediaValidationErrors } from 'calypso/lib/media/constants';
 import MediaQueryManager from 'calypso/lib/query-manager/media';
 import {
 	MEDIA_DELETE,
@@ -30,17 +22,19 @@ import {
 	selectMediaItems,
 	successMediaItemRequest,
 } from '../actions';
-import { ValidationErrors as MediaValidationErrors } from 'calypso/lib/media/constants';
+import reducer, { errors, queries, selectedItems, transientItems, fetching } from '../reducer';
 
 describe( 'reducer', () => {
 	test( 'should include expected keys in return value', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'errors',
-			'queries',
-			'selectedItems',
-			'transientItems',
-			'fetching',
-		] );
+		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual(
+			expect.arrayContaining( [
+				'errors',
+				'queries',
+				'selectedItems',
+				'transientItems',
+				'fetching',
+			] )
+		);
 	} );
 
 	describe( 'errors()', () => {
@@ -52,13 +46,13 @@ describe( 'reducer', () => {
 		test( 'should default to an empty object', () => {
 			const state = errors( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should store errors per site on media upload failure', () => {
 			const state = errors( {}, setMediaItemErrors( siteId, mediaItem.ID, [ 'some-error' ] ) );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				[ siteId ]: {
 					[ mediaItem.ID ]: [ 'some-error' ],
 				},
@@ -69,7 +63,7 @@ describe( 'reducer', () => {
 			const error = { error: 'http_404' };
 			const state = errors( {}, failMediaRequest( siteId, {}, error ) );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				[ siteId ]: {
 					0: [ MediaValidationErrors.UPLOAD_VIA_URL_404 ],
 				},
@@ -83,7 +77,7 @@ describe( 'reducer', () => {
 			};
 			const state = errors( {}, failMediaRequest( siteId, {}, error ) );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				[ siteId ]: {
 					0: [ MediaValidationErrors.NOT_ENOUGH_SPACE ],
 				},
@@ -97,7 +91,7 @@ describe( 'reducer', () => {
 			};
 			const state = errors( {}, failMediaRequest( siteId, {}, error ) );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				[ siteId ]: {
 					0: [ MediaValidationErrors.EXCEEDS_PLAN_STORAGE_LIMIT ],
 				},
@@ -111,7 +105,7 @@ describe( 'reducer', () => {
 			};
 			const state = errors( {}, failMediaRequest( siteId, {}, error ) );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				[ siteId ]: {
 					0: [ MediaValidationErrors.SERVER_ERROR ],
 				},
@@ -122,7 +116,7 @@ describe( 'reducer', () => {
 			const error = { error: 'keyring_token_error' };
 			const state = errors( {}, failMediaRequest( siteId, {}, error ) );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				[ siteId ]: {
 					0: [ MediaValidationErrors.SERVICE_AUTH_FAILED ],
 				},
@@ -133,7 +127,7 @@ describe( 'reducer', () => {
 			const error = { error: 'servicefail' };
 			const state = errors( {}, failMediaRequest( siteId, {}, error ) );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				[ siteId ]: {
 					0: [ MediaValidationErrors.SERVICE_FAILED ],
 				},
@@ -144,7 +138,7 @@ describe( 'reducer', () => {
 			const error = { error: 'service_unavailable' };
 			const state = errors( {}, failMediaRequest( siteId, {}, error ) );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				[ siteId ]: {
 					0: [ MediaValidationErrors.SERVICE_UNAVAILABLE ],
 				},
@@ -155,7 +149,7 @@ describe( 'reducer', () => {
 			const error = { error: 'something' };
 			const state = errors( {}, failMediaRequest( siteId, {}, error ) );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				[ siteId ]: {
 					0: [ MediaValidationErrors.SERVER_ERROR ],
 				},
@@ -166,7 +160,7 @@ describe( 'reducer', () => {
 			const error = { error: 'http_404' };
 			const state = errors( {}, failMediaItemRequest( siteId, mediaItem.ID, error ) );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				[ siteId ]: {
 					[ mediaItem.ID ]: [ MediaValidationErrors.UPLOAD_VIA_URL_404 ],
 				},
@@ -180,7 +174,7 @@ describe( 'reducer', () => {
 			};
 			const state = errors( {}, failMediaItemRequest( siteId, mediaItem.ID, error ) );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				[ siteId ]: {
 					[ mediaItem.ID ]: [ MediaValidationErrors.NOT_ENOUGH_SPACE ],
 				},
@@ -194,7 +188,7 @@ describe( 'reducer', () => {
 			};
 			const state = errors( {}, failMediaItemRequest( siteId, mediaItem.ID, error ) );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				[ siteId ]: {
 					[ mediaItem.ID ]: [ MediaValidationErrors.EXCEEDS_PLAN_STORAGE_LIMIT ],
 				},
@@ -208,7 +202,7 @@ describe( 'reducer', () => {
 			};
 			const state = errors( {}, failMediaItemRequest( siteId, mediaItem.ID, error ) );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				[ siteId ]: {
 					[ mediaItem.ID ]: [ MediaValidationErrors.EXCEEDS_MAX_UPLOAD_SIZE ],
 				},
@@ -222,7 +216,7 @@ describe( 'reducer', () => {
 			};
 			const state = errors( {}, failMediaItemRequest( siteId, mediaItem.ID, error ) );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				[ siteId ]: {
 					[ mediaItem.ID ]: [ MediaValidationErrors.SERVER_ERROR ],
 				},
@@ -233,7 +227,7 @@ describe( 'reducer', () => {
 			const error = { error: 'keyring_token_error' };
 			const state = errors( {}, failMediaItemRequest( siteId, mediaItem.ID, error ) );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				[ siteId ]: {
 					[ mediaItem.ID ]: [ MediaValidationErrors.SERVICE_AUTH_FAILED ],
 				},
@@ -244,7 +238,7 @@ describe( 'reducer', () => {
 			const error = { error: 'servicefail' };
 			const state = errors( {}, failMediaItemRequest( siteId, mediaItem.ID, error ) );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				[ siteId ]: {
 					[ mediaItem.ID ]: [ MediaValidationErrors.SERVICE_FAILED ],
 				},
@@ -255,7 +249,7 @@ describe( 'reducer', () => {
 			const error = { error: 'something' };
 			const state = errors( {}, failMediaItemRequest( siteId, mediaItem.ID, error ) );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				[ siteId ]: {
 					[ mediaItem.ID ]: [ MediaValidationErrors.SERVER_ERROR ],
 				},
@@ -275,7 +269,7 @@ describe( 'reducer', () => {
 				clearMediaErrors( siteId, MediaValidationErrors.SERVICE_FAILED )
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				[ siteId ]: {
 					[ mediaItem.ID ]: [ MediaValidationErrors.SERVER_ERROR ],
 				},
@@ -297,7 +291,7 @@ describe( 'reducer', () => {
 				clearMediaItemErrors( siteId, mediaItem.ID )
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				[ siteId ]: {
 					[ otherMediaId ]: [ MediaValidationErrors.SERVICE_FAILED ],
 				},
@@ -323,7 +317,7 @@ describe( 'reducer', () => {
 				changeMediaSource( siteId )
 			);
 
-			expect( state ).to.eql( otherSiteState );
+			expect( state ).toEqual( otherSiteState );
 		} );
 	} );
 
@@ -362,32 +356,32 @@ describe( 'reducer', () => {
 		test( 'should default to an empty object', () => {
 			const state = queries( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should track media receive', () => {
 			const state = queries( deepFreeze( {} ), action1 );
 
-			expect( state ).to.have.keys( '2916284' );
-			expect( state[ 2916284 ] ).to.be.an.instanceof( MediaQueryManager );
-			expect( state[ 2916284 ].getItems( query1 ) ).to.eql( items );
+			expect( Object.keys( state ) ).toContain( '2916284' );
+			expect( state[ 2916284 ] ).toBeInstanceOf( MediaQueryManager );
+			expect( state[ 2916284 ].getItems( query1 ) ).toEqual( items );
 		} );
 
 		test( 'should accumulate query requests', () => {
 			const previousState = deepFreeze( queries( deepFreeze( {} ), action1 ) );
 			const state = queries( previousState, action2 );
 
-			expect( state ).to.have.keys( [ '2916284' ] );
-			expect( state[ 2916284 ] ).to.be.an.instanceof( MediaQueryManager );
-			expect( state[ 2916284 ].getItems( query1 ) ).to.have.length( 1 );
-			expect( state[ 2916284 ].getItems( query2 ) ).to.have.length( 1 );
+			expect( Object.keys( state ) ).toEqual( expect.arrayContaining( [ '2916284' ] ) );
+			expect( state[ 2916284 ] ).toBeInstanceOf( MediaQueryManager );
+			expect( state[ 2916284 ].getItems( query1 ) ).toHaveLength( 1 );
+			expect( state[ 2916284 ].getItems( query2 ) ).toHaveLength( 1 );
 		} );
 
 		test( 'should return the same state if successful request has no changes', () => {
 			const previousState = deepFreeze( queries( deepFreeze( {} ), action1 ) );
 			const state = queries( previousState, action1 );
 
-			expect( state ).to.equal( previousState );
+			expect( state ).toEqual( previousState );
 		} );
 
 		test( 'should track posts even if not associated with a query', () => {
@@ -397,9 +391,9 @@ describe( 'reducer', () => {
 				media: items,
 			} );
 
-			expect( state ).to.have.keys( [ '2916284' ] );
-			expect( state[ 2916284 ] ).to.be.an.instanceof( MediaQueryManager );
-			expect( state[ 2916284 ].getItems() ).to.eql( items );
+			expect( Object.keys( state ) ).toEqual( expect.arrayContaining( [ '2916284' ] ) );
+			expect( state[ 2916284 ] ).toBeInstanceOf( MediaQueryManager );
+			expect( state[ 2916284 ].getItems() ).toEqual( items );
 		} );
 
 		test( 'should update received posts', () => {
@@ -414,7 +408,7 @@ describe( 'reducer', () => {
 				media: [ updatedItem ],
 			} );
 
-			expect( state[ 2916284 ].getItem( 42 ) ).to.eql( updatedItem );
+			expect( state[ 2916284 ].getItem( 42 ) ).toEqual( updatedItem );
 		} );
 
 		test( 'should remove item when post delete action success dispatched', () => {
@@ -425,8 +419,8 @@ describe( 'reducer', () => {
 				mediaIds: [ 42 ],
 			} );
 
-			expect( state[ 2916284 ].getItem( 42 ) ).to.be.undefined;
-			expect( state[ 2916284 ].getItems() ).to.be.empty;
+			expect( state[ 2916284 ].getItem( 42 ) ).toBeUndefined();
+			expect( state[ 2916284 ].getItems() ).toHaveLength( 0 );
 		} );
 	} );
 
@@ -445,7 +439,7 @@ describe( 'reducer', () => {
 		test( 'should default to an empty object', () => {
 			const state = selectedItems( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should reset selected items when media source is changed', () => {
@@ -455,7 +449,7 @@ describe( 'reducer', () => {
 			};
 			const result = selectedItems( deepFreeze( state ), changeMediaSource( siteId ) );
 
-			expect( result ).to.deep.eql( {
+			expect( result ).toEqual( {
 				[ siteId ]: [],
 				[ anotherSiteId ]: [ 1, 2, 3 ],
 			} );
@@ -471,7 +465,7 @@ describe( 'reducer', () => {
 				selectMediaItems( siteId, [ mediaItem ] )
 			);
 
-			expect( result ).to.deep.eql( {
+			expect( result ).toEqual( {
 				[ siteId ]: [ mediaItem.ID ],
 				[ anotherSiteId ]: [ 1, 2, 3 ],
 			} );
@@ -483,7 +477,7 @@ describe( 'reducer', () => {
 			};
 			const result = selectedItems( deepFreeze( state ), createMediaItem( site, mediaItem ) );
 
-			expect( result ).to.deep.eql( {
+			expect( result ).toEqual( {
 				[ site.ID ]: [ 1, 2, mediaItem.ID ],
 			} );
 		} );
@@ -494,7 +488,7 @@ describe( 'reducer', () => {
 			};
 			const result = selectedItems( deepFreeze( state ), receiveMedia( siteId, [ mediaItem ] ) );
 
-			expect( result ).to.deep.eql( {
+			expect( result ).toEqual( {
 				[ site.ID ]: [ 1, 2, mediaItem.ID ],
 			} );
 		} );
@@ -505,7 +499,7 @@ describe( 'reducer', () => {
 			};
 			const result = selectedItems( deepFreeze( state ), receiveMedia( siteId, [ mediaItem ] ) );
 
-			expect( result ).to.deep.eql( {
+			expect( result ).toEqual( {
 				[ site.ID ]: [ mediaItem.ID ],
 			} );
 		} );
@@ -519,7 +513,7 @@ describe( 'reducer', () => {
 				successMediaItemRequest( siteId, transientMediaId )
 			);
 
-			expect( result ).to.deep.eql( {
+			expect( result ).toEqual( {
 				[ site.ID ]: [ 1, 2 ],
 			} );
 		} );
@@ -530,7 +524,7 @@ describe( 'reducer', () => {
 			};
 			const result = selectedItems( deepFreeze( state ), deleteMedia( siteId, [ 1, 2 ] ) );
 
-			expect( result ).to.deep.eql( {
+			expect( result ).toEqual( {
 				[ site.ID ]: [ mediaId ],
 			} );
 		} );
@@ -562,7 +556,7 @@ describe( 'reducer', () => {
 			test( 'should clear the transient items and id mappings for the site', () => {
 				const result = transientItems( {}, action );
 
-				expect( result ).to.eql( {
+				expect( result ).toEqual( {
 					[ siteId ]: {
 						transientItems: {},
 						transientIdsToServerIds: {},
@@ -580,7 +574,7 @@ describe( 'reducer', () => {
 					action
 				);
 
-				expect( result ).to.deep.eql( {
+				expect( result ).toEqual( {
 					[ siteId ]: {
 						transientItems: {},
 						transientIdsToServerIds: {},
@@ -596,7 +590,7 @@ describe( 'reducer', () => {
 			test( 'should add the transient item to the map of transient items for the site', () => {
 				const result = transientItems( baseState, action );
 
-				expect( result ).to.deep.eql( {
+				expect( result ).toEqual( {
 					[ action.site.ID ]: {
 						transientItems: {
 							[ transientMediaItem.ID ]: transientMediaItem,
@@ -621,7 +615,7 @@ describe( 'reducer', () => {
 					action
 				);
 
-				expect( result ).to.deep.eql( {
+				expect( result ).toEqual( {
 					[ action.site.ID ]: {
 						transientItems: {
 							[ anotherTransientMediaItem.ID ]: anotherTransientMediaItem,
@@ -643,7 +637,7 @@ describe( 'reducer', () => {
 					action
 				);
 
-				expect( result ).to.deep.eql( {
+				expect( result ).toEqual( {
 					[ action.site.ID ]: {
 						transientItems: {
 							[ action.transientMedia.ID ]: action.transientMedia,
@@ -659,7 +653,7 @@ describe( 'reducer', () => {
 				const action = receiveMedia( siteId, serverMediaItem );
 				const result = transientItems( {}, action );
 
-				expect( result ).to.deep.eql( {} );
+				expect( result ).toEqual( {} );
 			} );
 
 			test( 'should remove the transient item and create a mapping of transient id -> server id', () => {
@@ -673,7 +667,7 @@ describe( 'reducer', () => {
 					action
 				);
 
-				expect( result ).to.deep.eql( {
+				expect( result ).toEqual( {
 					[ siteId ]: {
 						transientItems: {},
 						transientIdsToServerIds: { [ justSavedMediaItem.transientId ]: justSavedMediaItem.ID },
@@ -704,7 +698,7 @@ describe( 'reducer', () => {
 
 				const result = transientItems( state, action );
 
-				expect( result ).to.deep.eql( {
+				expect( result ).toEqual( {
 					[ anotherSiteId ]: anotherSiteState,
 					[ siteId ]: {
 						transientItems: {
@@ -733,7 +727,7 @@ describe( 'reducer', () => {
 
 				const result = transientItems( state, action );
 
-				expect( result ).to.deep.eql( {
+				expect( result ).toEqual( {
 					[ siteId ]: {
 						transientItems: {},
 						transientIdsToServerIds: {},
@@ -752,7 +746,7 @@ describe( 'reducer', () => {
 
 				const result = transientItems( state, action );
 
-				expect( result ).to.deep.eql( {
+				expect( result ).toEqual( {
 					[ siteId ]: {
 						transientItems: {
 							'a-different-media-123': transientMediaItem,
@@ -788,7 +782,7 @@ describe( 'reducer', () => {
 		test( 'should default to an empty object', () => {
 			const state = fetching( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should track media request', () => {
@@ -797,7 +791,7 @@ describe( 'reducer', () => {
 				siteId: 2916284,
 			} );
 
-			expect( state ).to.deep.eql( state3 );
+			expect( state ).toEqual( state3 );
 		} );
 
 		test( 'should track media request success', () => {
@@ -806,7 +800,7 @@ describe( 'reducer', () => {
 				siteId: 2916284,
 			} );
 
-			expect( state ).to.deep.eql( state2 );
+			expect( state ).toEqual( state2 );
 		} );
 
 		test( 'should track media request failures', () => {
@@ -815,7 +809,7 @@ describe( 'reducer', () => {
 				siteId: 2916284,
 			} );
 
-			expect( state ).to.deep.eql( state2 );
+			expect( state ).toEqual( state2 );
 		} );
 
 		test( 'should set the next page handle', () => {
@@ -825,7 +819,7 @@ describe( 'reducer', () => {
 				setNextPageHandle( 2916284, { next_page: nextPage } )
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					...state[ 2916284 ],
 					nextPageHandle: nextPage,

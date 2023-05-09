@@ -1,13 +1,10 @@
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
-import { combineReducers, keyedReducer, withSchemaValidation } from 'calypso/state/utils';
 import {
 	EMAIL_ACCOUNTS_REQUEST,
 	EMAIL_ACCOUNTS_REQUEST_FAILURE,
 	EMAIL_ACCOUNTS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
+import { combineReducers, keyedReducer, withSchemaValidation } from 'calypso/state/utils';
 import emailAccountsSchema from './schema';
 
 export const emailAccountsReducer = withSchemaValidation(

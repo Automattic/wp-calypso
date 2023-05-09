@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { geocode, reverseGeocode } from '../';
 
 jest.mock( '@automattic/load-script', () => require( './mocks/load-script' ).default );
@@ -34,9 +31,7 @@ describe( 'geocoding', () => {
 
 			test( 'should call to the Google Maps API', async () => {
 				await expect( reverseGeocode( TEST_LATITUDE, TEST_LONGITUDE ) ).resolves.toEqual( [
-					1,
-					2,
-					3,
+					1, 2, 3,
 				] );
 			} );
 		} );

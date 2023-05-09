@@ -1,22 +1,13 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import classnames from 'classnames';
-import { createInterpolateElement } from '@wordpress/element';
 import { Button } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { Icon, check, close } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import classnames from 'classnames';
+import * as React from 'react';
 import type { DomainSuggestions, Plans } from '@automattic/data-stores';
 
-/**
- * Internal dependencies
- */
 import '../types-patch';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 interface FeatureListItemContentWrapperProps {
@@ -34,10 +25,9 @@ const CrossIcon: React.FunctionComponent< FeatureListIconProps > = ( { className
 	<Icon className={ className } icon={ close } size={ 18 } />
 );
 
-const DefaultFeatureListItemContentWrapper: React.FunctionComponent< FeatureListItemContentWrapperProps > = ( {
-	children,
-	className,
-} ) => <span className={ className }>{ children }</span>;
+const DefaultFeatureListItemContentWrapper: React.FunctionComponent<
+	FeatureListItemContentWrapperProps
+> = ( { children, className } ) => <span className={ className }>{ children }</span>;
 
 const FeatureAnnualDiscountNudge: React.FunctionComponent< {
 	billingPeriod: Plans.PlanBillingPeriod;
@@ -164,11 +154,11 @@ const PlansFeatureListItem: React.FunctionComponent< FeatureListItemProps > = (
 			) }
 		>
 			<ItemWrapper className="plans-feature-list__item-content-wrapper">
-				<BulletIcon className="plans-feature-list__item-bullet-icon" />
+				{ requiresAnnuallyBilledPlan && (
+					<FeatureAnnualDiscountNudge billingPeriod={ billingPeriod } __={ __ } />
+				) }
 				<span className="plans-feature-list__item-text">
-					{ requiresAnnuallyBilledPlan && (
-						<FeatureAnnualDiscountNudge billingPeriod={ billingPeriod } __={ __ } />
-					) }
+					<BulletIcon className="plans-feature-list__item-bullet-icon" />
 					<span className="plans-feature-list__item-description">{ textNode }</span>
 				</span>
 			</ItemWrapper>

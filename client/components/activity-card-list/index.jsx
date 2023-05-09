@@ -1,32 +1,28 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
+import { withMobileBreakpoint } from '@automattic/viewport-react';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { isActivityBackup } from 'calypso/lib/jetpack/backup-utils';
-import { updateFilter } from 'calypso/state/activity-log/actions';
-import { withApplySiteOffset } from 'calypso/components/site-offset';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { withMobileBreakpoint } from '@automattic/viewport-react';
+import { Component, createRef } from 'react';
+import { connect } from 'react-redux';
 import ActivityCard from 'calypso/components/activity-card';
-import Filterbar from 'calypso/my-sites/activity/filterbar';
-import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
-import Pagination from 'calypso/components/pagination';
+import QueryJetpackCredentialsStatus from 'calypso/components/data/query-jetpack-credentials-status';
 import QueryRewindCapabilities from 'calypso/components/data/query-rewind-capabilities';
+import QueryRewindPolicies from 'calypso/components/data/query-rewind-policies';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import Pagination from 'calypso/components/pagination';
+import { withApplySiteOffset } from 'calypso/components/site-offset';
+import { isActivityBackup } from 'calypso/lib/jetpack/backup-utils';
+import Filterbar from 'calypso/my-sites/activity/filterbar';
+import { updateFilter } from 'calypso/state/activity-log/actions';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import getActivityLogVisibleDays from 'calypso/state/rewind/selectors/get-activity-log-visible-days';
+import getRewindPoliciesRequestStatus from 'calypso/state/rewind/selectors/get-rewind-policies-request-status';
+import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import VisibleDaysLimitUpsell from './visible-days-limit-upsell';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class ActivityCardList extends Component {
@@ -36,12 +32,78 @@ class ActivityCardList extends Component {
 		showDateSeparators: PropTypes.bool,
 		showFilter: PropTypes.bool,
 		showPagination: PropTypes.bool,
+		availableActions: PropTypes.array,
+		onClickClone: PropTypes.func,
 	};
 
 	static defaultProps = {
 		showDateSeparators: true,
 		showFilter: true,
 		showPagination: true,
+		availableActions: [ 'rewind', 'download' ],
+	};
+
+	state = {
+		initialFilterBarY: 0,
+		masterBarHeight: 0,
+		scrollTicking: false,
+	};
+
+	filterBarRef = null;
+
+	constructor( props ) {
+		super( props );
+
+		this.onScroll = this.onScroll.bind( this );
+		this.filterBarRef = createRef();
+	}
+
+	componentDidMount() {
+		if ( this.props.isBreakpointActive ) {
+			// Filter bar is only sticky on mobile
+			window.addEventListener( 'scroll', this.onScroll );
+		}
+	}
+
+	componentWillUnmount() {
+		window.removeEventListener( 'scroll', this.onScroll );
+	}
+
+	onScroll = () => {
+		const y = window.scrollY;
+
+		if ( ! this.state.scrollTicking ) {
+			// It's best practice to throttle scroll event for performance
+			window.requestAnimationFrame( () => {
+				this.stickFilterBar( y );
+				this.setState( { scrollTicking: false } );
+			} );
+
+			this.setState( { scrollTicking: true } );
+		}
+	};
+
+	stickFilterBar = ( scrollY ) => {
+		const { initialFilterBarY, masterBarHeight } = this.state;
+		const filterBar = this.filterBarRef.current;
+
+		if ( ! filterBar ) {
+			return;
+		}
+
+		if ( ! initialFilterBarY ) {
+			this.setState( { initialFilterBarY: filterBar.getBoundingClientRect().top } );
+		}
+
+		if ( ! masterBarHeight ) {
+			const masterBar = document.querySelector( '.masterbar' );
+
+			this.setState( { masterBarHeight: masterBar ? masterBar.clientHeight : 0 } );
+		}
+
+		if ( initialFilterBarY && masterBarHeight ) {
+			filterBar.classList.toggle( 'is-sticky', scrollY + masterBarHeight >= initialFilterBarY );
+		}
 	};
 
 	changePage = ( pageNumber ) => {
@@ -56,7 +118,8 @@ class ActivityCardList extends Component {
 		let logsAdded = 0;
 
 		for ( const log of logs ) {
-			const activityDateMoment = applySiteOffset( moment( log.activityDate ) );
+			const activityDateMoment = ( applySiteOffset ?? moment )( log.activityDate );
+
 			if ( logsAdded >= pageSize ) {
 				if ( lastDate && lastDate.isSame( activityDateMoment, 'day' ) ) {
 					logsByDate[ logsByDate.length - 1 ].hasMore = true;
@@ -76,17 +139,18 @@ class ActivityCardList extends Component {
 		return logsByDate;
 	}
 
-	renderLogs( actualPage ) {
+	renderLogs( pageLogs ) {
 		const {
 			applySiteOffset,
-			logs,
-			pageSize,
+			moment,
 			showDateSeparators,
 			translate,
 			userLocale,
+			availableActions,
+			onClickClone,
 		} = this.props;
 
-		const today = applySiteOffset ? applySiteOffset() : null;
+		const today = ( applySiteOffset ?? moment )();
 
 		const getPrimaryCardClassName = ( hasMore, dateLogsLength ) =>
 			hasMore && dateLogsLength === 1
@@ -100,37 +164,38 @@ class ActivityCardList extends Component {
 
 		const dateFormat = userLocale === 'en' ? 'MMM Do' : 'LL';
 
-		return this.splitLogsByDate( logs.slice( ( actualPage - 1 ) * pageSize ) ).map(
-			( { date, logs: dateLogs, hasMore }, index ) => (
-				<div key={ `activity-card-list__date-group-${ index }` }>
-					{ showDateSeparators && (
-						<div className="activity-card-list__date-group-date">
-							{ date &&
-								( today?.isSame( date, 'day' )
-									? translate( 'Today' )
-									: date.format( dateFormat ) ) }
-						</div>
-					) }
-					<div className="activity-card-list__date-group-content">
-						{ dateLogs.map( ( activity ) => (
-							<ActivityCard
-								activity={ activity }
-								className={
-									isActivityBackup( activity )
-										? getPrimaryCardClassName( hasMore, dateLogs.length )
-										: getSecondaryCardClassName( hasMore )
-								}
-								key={ activity.activityId }
-							/>
-						) ) }
+		return pageLogs.map( ( { date, logs: dateLogs, hasMore }, index ) => (
+			<div key={ `activity-card-list__date-group-${ index }` }>
+				{ showDateSeparators && (
+					<div className="activity-card-list__date-group-date">
+						{ date &&
+							( today?.isSame( date, 'day' ) ? translate( 'Today' ) : date.format( dateFormat ) ) }
 					</div>
+				) }
+				<div className="activity-card-list__date-group-content">
+					{ dateLogs.map( ( activity ) => (
+						<ActivityCard
+							activity={ activity }
+							className={
+								isActivityBackup( activity )
+									? getPrimaryCardClassName( hasMore, dateLogs.length )
+									: getSecondaryCardClassName( hasMore )
+							}
+							key={ activity.activityId }
+							availableActions={ availableActions }
+							onClickClone={ onClickClone }
+						/>
+					) ) }
 				</div>
-			)
-		);
+			</div>
+		) );
 	}
 
 	renderData() {
 		const {
+			applySiteOffset,
+			moment,
+			visibleDays,
 			filter,
 			isBreakpointActive: isMobile,
 			logs,
@@ -139,50 +204,68 @@ class ActivityCardList extends Component {
 			showPagination,
 			siteId,
 		} = this.props;
-		const { page: requestedPage } = filter;
 
-		const actualPage = Math.max(
-			1,
-			Math.min( requestedPage, Math.ceil( logs.length / pageSize ) )
-		);
+		const visibleLimitCutoffDate = Number.isFinite( visibleDays )
+			? ( applySiteOffset ?? moment )().subtract( visibleDays, 'days' )
+			: undefined;
+		const visibleLogs = visibleLimitCutoffDate
+			? logs.filter( ( log ) =>
+					( applySiteOffset ?? moment )( log.activityDate ).isSameOrAfter(
+						visibleLimitCutoffDate,
+						'day'
+					)
+			  )
+			: logs;
+
+		const { page: requestedPage } = filter;
+		const pageCount = Math.ceil( visibleLogs.length / pageSize );
+		const actualPage = Math.max( 1, Math.min( requestedPage, pageCount ) );
+
+		const pageLogs = this.splitLogsByDate( visibleLogs.slice( ( actualPage - 1 ) * pageSize ) );
+		const showLimitUpsell = visibleLogs.length < logs.length && actualPage >= pageCount;
 
 		return (
 			<div className="activity-card-list">
 				{ showFilter && (
-					<Filterbar
-						{ ...{
-							siteId,
-							filter,
-							isLoading: false,
-							isVisible: true,
-						} }
-					/>
+					<div className="activity-card-list__filterbar-ctn" ref={ this.filterBarRef }>
+						<Filterbar
+							{ ...{
+								siteId,
+								filter,
+								isLoading: false,
+								isVisible: true,
+							} }
+						/>
+					</div>
 				) }
 				{ showPagination && (
 					<Pagination
 						compact={ isMobile }
 						className="activity-card-list__pagination-top"
 						key="activity-card-list__pagination-top"
-						nextLabel={ 'Older' }
+						nextLabel="Older"
 						page={ actualPage }
 						pageClick={ this.changePage }
 						perPage={ pageSize }
-						prevLabel={ 'Newer' }
-						total={ logs.length }
+						prevLabel="Newer"
+						total={ visibleLogs.length }
 					/>
 				) }
-				{ this.renderLogs( actualPage ) }
+				{ this.renderLogs( pageLogs ) }
+				{ showLimitUpsell && (
+					<VisibleDaysLimitUpsell cardClassName="activity-card-list__primary-card-with-more" />
+				) }
 				{ showPagination && (
 					<Pagination
 						compact={ isMobile }
 						className="activity-card-list__pagination-bottom"
 						key="activity-card-list__pagination-bottom"
-						nextLabel={ 'Older' }
+						nextLabel="Older"
 						page={ actualPage }
 						pageClick={ this.changePage }
 						perPage={ pageSize }
-						prevLabel={ 'Newer' }
-						total={ logs.length }
+						prevLabel="Newer"
+						total={ visibleLogs.length }
 					/>
 				) }
 			</div>
@@ -242,14 +325,22 @@ class ActivityCardList extends Component {
 	}
 
 	render() {
-		const { applySiteOffset, siteId, logs } = this.props;
+		const { requestingRewindPolicies, rewindPoliciesRequestError, siteId, logs, isAtomic } =
+			this.props;
+
+		if ( rewindPoliciesRequestError ) {
+			return this.renderLoading();
+		}
 
 		return (
 			<>
+				<QueryRewindPolicies siteId={ siteId } />
 				<QueryRewindCapabilities siteId={ siteId } />
 				<QueryRewindState siteId={ siteId } />
-				{ ! logs && this.renderLoading() }
-				{ logs && applySiteOffset && this.renderData() }
+				{ ! isAtomic && <QueryJetpackCredentialsStatus siteId={ siteId } role="main" /> }
+
+				{ ( ! logs || requestingRewindPolicies ) && this.renderLoading() }
+				{ logs && this.renderData() }
 			</>
 		);
 	}
@@ -258,20 +349,30 @@ class ActivityCardList extends Component {
 const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSelectedSiteSlug( state );
+
 	const filter = getActivityLogFilter( state, siteId );
 	const userLocale = getCurrentUserLocale( state );
+	const visibleDays = getActivityLogVisibleDays( state, siteId );
+
+	const rewindPoliciesRequestStatus = getRewindPoliciesRequestStatus( state, siteId );
+
+	const isAtomic = isSiteAutomatedTransfer( state, siteId );
 
 	return {
 		filter,
+		requestingRewindPolicies: rewindPoliciesRequestStatus === 'pending',
+		rewindPoliciesRequestError: rewindPoliciesRequestStatus === 'failure',
+		visibleDays,
 		siteId,
 		siteSlug,
 		userLocale,
+		isAtomic,
 	};
 };
 
-const mapDispatchToProps = ( dispatch ) => ( {
-	selectPage: ( siteId, pageNumber ) => dispatch( updateFilter( siteId, { page: pageNumber } ) ),
-} );
+const mapDispatchToProps = {
+	selectPage: ( siteId, pageNumber ) => updateFilter( siteId, { page: pageNumber } ),
+};
 
 /** @type {typeof ActivityCardList} */
 const connectedComponent = connect(

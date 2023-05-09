@@ -1,29 +1,13 @@
-/**
- * External dependencies
- */
-import { get, isEqual, reduce } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import {
 	CURRENT_USER_RECEIVE,
+	CURRENT_USER_SET_EMAIL_VERIFIED,
+	CURRENT_USER_SET_JETPACK_PARTNER_TYPE,
 	SITE_RECEIVE,
-	SITE_PLANS_FETCH_COMPLETED,
 	SITES_RECEIVE,
-	PLANS_RECEIVE,
-	PRODUCTS_LIST_RECEIVE,
 } from 'calypso/state/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
-import {
-	capabilitiesSchema,
-	currencyCodeSchema,
-	flagsSchema,
-	idSchema,
-	lasagnaSchema,
-} from './schema';
-import gravatarStatus from './gravatar-status/reducer';
 import emailVerification from './email-verification/reducer';
+import { capabilitiesSchema, flagsSchema, idSchema, lasagnaSchema } from './schema';
 
 /**
  * Tracks the current user ID.
@@ -34,9 +18,9 @@ import emailVerification from './email-verification/reducer';
  *
  * This is likely caused by a server-side error or stored state corruption/auth token expiry.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export const id = withSchemaValidation( idSchema, ( state = null, action ) => {
 	switch ( action.type ) {
@@ -51,6 +35,20 @@ export const user = ( state = null, action ) => {
 	switch ( action.type ) {
 		case CURRENT_USER_RECEIVE:
 			return action.user;
+		case CURRENT_USER_SET_EMAIL_VERIFIED:
+			return {
+				...state,
+				email_verified: action.verified,
+			};
+		case CURRENT_USER_SET_JETPACK_PARTNER_TYPE:
+			return {
+				...state,
+				jetpack_partner_types: [
+					...( state.jetpack_partner_types || [] ),
+					action.jetpack_partner_type,
+				],
+				has_jetpack_partner_access: true,
+			};
 	}
 
 	return state;
@@ -59,66 +57,58 @@ export const user = ( state = null, action ) => {
 export const flags = withSchemaValidation( flagsSchema, ( state = [], action ) => {
 	switch ( action.type ) {
 		case CURRENT_USER_RECEIVE:
-			return get( action.user, 'meta.data.flags.active_flags', [] );
+			return action.user.meta?.data?.flags?.active_flags ?? [];
 	}
 
 	return state;
 } );
 
 /**
- * Tracks the currency code of the current user
+ * Compare if two sets of capabilities are equal.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * Capability sets are simple objects with boolean flags,
+ * so comparison is as simple as comparing objects at the first level.
  *
+ * @param  {Object} capA First set of capabilities
+ * @param  {Object} capB Second set of capabilities
+ * @returns {boolean} True if capability sets are the same, false otherwise.
  */
-export const currencyCode = withSchemaValidation( currencyCodeSchema, ( state = null, action ) => {
-	switch ( action.type ) {
-		case PRODUCTS_LIST_RECEIVE: {
-			return Object.values( action.productsList )[ 0 ]?.currency_code ?? state;
-		}
-		case PLANS_RECEIVE: {
-			return get( action.plans, [ 0, 'currency_code' ], state );
-		}
-		case SITE_PLANS_FETCH_COMPLETED: {
-			return get( action.plans, [ 0, 'currencyCode' ], state );
-		}
+function areCapabilitiesEqual( capA, capB ) {
+	if ( ! capA || ! capB ) {
+		return false;
 	}
 
-	return state;
-} );
+	const keysA = Object.keys( capA );
+	const keysB = Object.keys( capB );
+	return keysA.length === keysB.length && keysA.every( ( key ) => capB[ key ] === capA[ key ] );
+}
 
 /**
  * Returns the updated capabilities state after an action has been dispatched.
  * The state maps site ID keys to an object of current user capabilities for
  * that site.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export const capabilities = withSchemaValidation( capabilitiesSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
 		case SITE_RECEIVE:
 		case SITES_RECEIVE: {
 			const sites = action.site ? [ action.site ] : action.sites;
-			return reduce(
-				sites,
-				( memo, site ) => {
-					if ( ! site.capabilities || isEqual( site.capabilities, memo[ site.ID ] ) ) {
-						return memo;
-					}
-
-					if ( memo === state ) {
-						memo = { ...state };
-					}
-
-					memo[ site.ID ] = site.capabilities;
+			return sites.reduce( ( memo, site ) => {
+				if ( ! site.capabilities || areCapabilitiesEqual( site.capabilities, memo[ site.ID ] ) ) {
 					return memo;
-				},
-				state
-			);
+				}
+
+				if ( memo === state ) {
+					memo = { ...state };
+				}
+
+				memo[ site.ID ] = site.capabilities;
+				return memo;
+			}, state );
 		}
 	}
 
@@ -137,10 +127,8 @@ export const lasagnaJwt = withSchemaValidation( lasagnaSchema, ( state = null, a
 export default combineReducers( {
 	id,
 	user,
-	currencyCode,
 	capabilities,
 	flags,
-	gravatarStatus,
 	emailVerification,
 	lasagnaJwt,
 } );

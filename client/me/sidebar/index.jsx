@@ -1,37 +1,29 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import config from '@automattic/calypso-config';
-import ProfileGravatar from 'calypso/me/profile-gravatar';
-import { purchasesRoot } from 'calypso/me/purchases/paths';
+import { Button, Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { localize } from 'i18n-calypso';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import Sidebar from 'calypso/layout/sidebar';
+import CollapseSidebar from 'calypso/layout/sidebar/collapse-sidebar';
 import SidebarFooter from 'calypso/layout/sidebar/footer';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
 import SidebarRegion from 'calypso/layout/sidebar/region';
+import { clearStore, disablePersistence } from 'calypso/lib/user/store';
+import ProfileGravatar from 'calypso/me/profile-gravatar';
+import { purchasesRoot } from 'calypso/me/purchases/paths';
+import { itemLinkMatches } from 'calypso/my-sites/sidebar/utils';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { logoutUser } from 'calypso/state/logout/actions';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
-import { itemLinkMatches } from 'calypso/my-sites/sidebar-unified/utils';
-import { clearStore } from 'calypso/lib/user/store';
-import { redirectToLogout } from 'calypso/state/current-user/actions';
 
-/**
- * Style dependencies
- */
 import './style.scss';
-import 'calypso/my-sites/sidebar-unified/style.scss'; // nav-unification overrides. Should be removed once launched.
+import 'calypso/my-sites/sidebar/style.scss'; // Copy styles from the My Sites sidebar.
 
-class MeSidebar extends React.Component {
+class MeSidebar extends Component {
 	onNavigate = () => {
 		this.props.setNextLayoutFocus( 'content' );
 		window.scrollTo( 0, 0 );
@@ -40,17 +32,20 @@ class MeSidebar extends React.Component {
 	onSignOut = async () => {
 		const { currentUser } = this.props;
 
-		// If user is using en locale, redirect to app promo page on sign out
-		const isEnLocale = currentUser && currentUser.localeSlug === 'en';
+		// If user is using a supported locale, redirect to app promo page on sign out
+		const isSupportedLocale =
+			config( 'english_locales' ).includes( currentUser?.localeSlug ) ||
+			config( 'magnificent_non_en_locales' ).includes( currentUser?.localeSlug );
 
 		let redirectTo = null;
 
-		if ( isEnLocale && ! config.isEnabled( 'desktop' ) ) {
-			redirectTo = '/?apppromo';
+		if ( isSupportedLocale && ! config.isEnabled( 'desktop' ) ) {
+			redirectTo = localizeUrl( 'https://wordpress.com/?apppromo' );
 		}
 
 		try {
 			const { redirect_to } = await this.props.logoutUser( redirectTo );
+			disablePersistence();
 			await clearStore();
 			window.location.href = redirect_to || '/';
 		} catch {
@@ -78,14 +73,15 @@ class MeSidebar extends React.Component {
 							onClick={ this.onSignOut }
 							title={ translate( 'Log out of WordPress.com' ) }
 						>
-							{ translate( 'Log out' ) }
+							<span className="sidebar__me-signout-text">{ translate( 'Log out' ) }</span>
+							<Gridicon icon="popout" size={ 16 } />
 						</Button>
 					</div>
 
 					<SidebarMenu>
 						<SidebarItem
 							selected={ itemLinkMatches( '', path ) }
-							link={ '/me' }
+							link="/me"
 							label={ translate( 'My Profile' ) }
 							materialIcon="person"
 							onNavigate={ this.onNavigate }
@@ -93,7 +89,7 @@ class MeSidebar extends React.Component {
 
 						<SidebarItem
 							selected={ itemLinkMatches( '/account', path ) }
-							link={ '/me/account' }
+							link="/me/account"
 							label={ translate( 'Account Settings' ) }
 							materialIcon="settings"
 							onNavigate={ this.onNavigate }
@@ -111,7 +107,7 @@ class MeSidebar extends React.Component {
 
 						<SidebarItem
 							selected={ itemLinkMatches( '/security', path ) }
-							link={ '/me/security' }
+							link="/me/security"
 							label={ translate( 'Security' ) }
 							materialIcon="lock"
 							onNavigate={ this.onNavigate }
@@ -120,7 +116,7 @@ class MeSidebar extends React.Component {
 
 						<SidebarItem
 							selected={ itemLinkMatches( '/privacy', path ) }
-							link={ '/me/privacy' }
+							link="/me/privacy"
 							label={ translate( 'Privacy' ) }
 							materialIcon="visibility"
 							onNavigate={ this.onNavigate }
@@ -128,14 +124,14 @@ class MeSidebar extends React.Component {
 						/>
 
 						<SidebarItem
-							link={ 'https://dashboard.wordpress.com/wp-admin/index.php?page=my-blogs' }
+							link="https://dashboard.wordpress.com/wp-admin/index.php?page=my-blogs"
 							label={ translate( 'Manage Blogs' ) }
 							materialIcon="apps"
 						/>
 
 						<SidebarItem
 							selected={ itemLinkMatches( '/notifications', path ) }
-							link={ '/me/notifications' }
+							link="/me/notifications"
 							label={ translate( 'Notification Settings' ) }
 							materialIcon="notifications"
 							onNavigate={ this.onNavigate }
@@ -144,7 +140,7 @@ class MeSidebar extends React.Component {
 
 						<SidebarItem
 							selected={ itemLinkMatches( '/site-blocks', path ) }
-							link={ '/me/site-blocks' }
+							link="/me/site-blocks"
 							label={ translate( 'Blocked Sites' ) }
 							materialIcon="block"
 							onNavigate={ this.onNavigate }
@@ -153,13 +149,14 @@ class MeSidebar extends React.Component {
 
 						<SidebarItem
 							selected={ itemLinkMatches( '/get-apps', path ) }
-							link={ '/me/get-apps' }
-							label={ translate( 'Get Apps' ) }
-							icon="my-sites"
+							link="/me/get-apps"
+							label={ translate( 'Apps' ) }
+							icon="plans"
 							onNavigate={ this.onNavigate }
 						/>
 					</SidebarMenu>
 				</SidebarRegion>
+				<CollapseSidebar title={ translate( 'Collapse menu' ) } icon="dashicons-admin-collapse" />
 				<SidebarFooter />
 			</Sidebar>
 		);

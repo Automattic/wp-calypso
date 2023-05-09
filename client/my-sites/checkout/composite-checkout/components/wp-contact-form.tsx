@@ -1,23 +1,10 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { FormStatus, useFormStatus, useIsStepActive } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
-import {
-	FormStatus,
-	useSelect,
-	useFormStatus,
-	useIsStepActive,
-} from '@automattic/composite-checkout';
-import type { ContactDetailsType, ManagedContactDetails } from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
-import useSkipToLastStepIfFormComplete from '../hooks/use-skip-to-last-step-if-form-complete';
-import useIsCachedContactFormValid from '../hooks/use-is-cached-contact-form-valid';
+import { useSelect } from '@wordpress/data';
+import useCachedDomainContactDetails from '../hooks/use-cached-domain-contact-details';
+import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import ContactDetailsContainer from './contact-details-container';
-import type { CountryListItem } from '../types/country-list-item';
+import type { CountryListItem, ContactDetailsType } from '@automattic/wpcom-checkout';
 
 const BillingFormFields = styled.div`
 	margin-bottom: 16px;
@@ -39,24 +26,21 @@ export default function WPContactForm( {
 	countriesList,
 	shouldShowContactDetailsValidationErrors,
 	contactDetailsType,
-	contactValidationCallback,
 	isLoggedOutCart,
+	setShouldShowContactDetailsValidationErrors,
 }: {
 	countriesList: CountryListItem[];
 	shouldShowContactDetailsValidationErrors: boolean;
 	contactDetailsType: Exclude< ContactDetailsType, 'none' >;
-	contactValidationCallback: () => Promise< boolean >;
 	isLoggedOutCart: boolean;
-} ): JSX.Element {
-	const contactInfo: ManagedContactDetails = useSelect( ( select ) =>
-		select( 'wpcom' ).getContactInfo()
-	);
+	setShouldShowContactDetailsValidationErrors: ( allowed: boolean ) => void;
+} ) {
+	const contactInfo = useSelect( ( select ) => select( CHECKOUT_STORE ).getContactInfo(), [] );
 	const { formStatus } = useFormStatus();
 	const isStepActive = useIsStepActive();
 	const isDisabled = ! isStepActive || formStatus !== FormStatus.READY;
-	const isCachedContactFormValid = useIsCachedContactFormValid( contactValidationCallback );
 
-	useSkipToLastStepIfFormComplete( isCachedContactFormValid );
+	useCachedDomainContactDetails( setShouldShowContactDetailsValidationErrors, countriesList );
 
 	return (
 		<BillingFormFields>

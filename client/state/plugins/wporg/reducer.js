@@ -1,13 +1,10 @@
-/**
- * Internal dependencies
- */
 import {
 	PLUGINS_WPORG_LIST_RECEIVE,
 	PLUGINS_WPORG_LIST_REQUEST,
 	PLUGINS_WPORG_PLUGIN_RECEIVE,
 	PLUGINS_WPORG_PLUGIN_REQUEST,
 } from 'calypso/state/action-types';
-import { combineReducers } from 'calypso/state/utils';
+import { combineReducers, withPersistence } from 'calypso/state/utils';
 
 function updatePluginState( state = {}, pluginSlug, attributes ) {
 	return Object.assign( {}, state, {
@@ -50,7 +47,7 @@ export function fetchingLists( state = {}, action ) {
 	return state;
 }
 
-export function items( state = {}, action ) {
+function itemsReducer( state = {}, action ) {
 	const { type, pluginSlug } = action;
 	switch ( type ) {
 		case PLUGINS_WPORG_PLUGIN_RECEIVE:
@@ -64,58 +61,31 @@ export function items( state = {}, action ) {
 			return updatePluginState(
 				state,
 				pluginSlug,
-				Object.assign( { fetched: false, wporg: false } )
+				Object.assign( { fetched: false, wporg: false, error: action.error } )
 			);
 		default:
 			return state;
 	}
 }
 
-export function lists( state = {}, action ) {
-	const { category, data, page, searchTerm, type } = action;
-	switch ( type ) {
-		case PLUGINS_WPORG_LIST_RECEIVE:
-			if ( ! data ) {
-				return state;
-			}
+export const items = withPersistence( itemsReducer );
 
-			// We only need lists by category and search terms.
-			if ( category ) {
-				// If this is the first page, reset before appending the data.
-				const prevCategoryState = page > 1 ? state.category?.[ category ] ?? [] : [];
-				return {
-					...state,
-					category: {
-						...state.category,
-						[ category ]: [ ...prevCategoryState, ...data ],
-					},
-				};
-			} else if ( searchTerm ) {
-				return {
-					...state,
-					search: {
-						...state.search,
-						[ searchTerm ]: data,
-					},
-				};
-			}
-		default:
-			return state;
-	}
-}
+// export const items = itemsReducer;
 
 export function listsPagination( state = {}, action ) {
+	const { category, pagination } = action;
 	switch ( action.type ) {
 		case PLUGINS_WPORG_LIST_RECEIVE:
-			// The API supports pagination only for categories right now
-			if ( action.pagination && action.category ) {
-				return {
-					...state,
-					category: {
-						...state.category,
-						[ action.category ]: action.pagination,
-					},
-				};
+			if ( pagination ) {
+				if ( category ) {
+					return {
+						...state,
+						category: {
+							...state.category,
+							[ category ]: pagination,
+						},
+					};
+				}
 			}
 	}
 	return state;
@@ -125,6 +95,5 @@ export default combineReducers( {
 	fetchingItems,
 	fetchingLists,
 	items,
-	lists,
 	listsPagination,
 } );

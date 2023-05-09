@@ -19,7 +19,7 @@ Feel free to share your unique context to help us understand your perspective. Y
 
 If you’d like to contribute code, first, you will need to run Calypso locally. Here is the short version:
 
-1. Make sure you have `git`, `node`, and `npm` installed.
+1. Make sure you have [`git`](https://git-scm.com/), [`node`](https://nodejs.org/), and [`yarn`](https://classic.yarnpkg.com/en/docs/install) installed.
 2. Clone this repository locally.
 3. Add `127.0.0.1 calypso.localhost` to your local hosts file.
 4. Execute `yarn` and then `yarn start` from the root directory of the repository.

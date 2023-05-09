@@ -1,13 +1,10 @@
-/**
- * External dependencies
- */
 const webpack = require( 'webpack' );
 
 /**
  * Transform webpack output.filename and output.chunkFilename to CSS variants
  *
- * @param {(string|undefined)} name filename, chunkFilename or undefined
- * @returns {(string|undefined)}     Transformed name or undefined
+ * @param {string|undefined} name filename, chunkFilename or undefined
+ * @returns {string|undefined}     Transformed name or undefined
  */
 function cssNameFromFilename( name ) {
 	if ( name ) {
@@ -57,11 +54,11 @@ function IncrementalProgressPlugin() {
 			} else if ( lastUnshownBuildingMessage ) {
 				// The last 'building' message should always be shown, no matter the timing.
 				// We do that on the first non-'building' message.
-				console.log( lastUnshownBuildingMessage ); // eslint-disable-line no-console
+				console.log( lastUnshownBuildingMessage );
 				lastUnshownBuildingMessage = null;
 			}
 
-			console.log( message ); // eslint-disable-line no-console
+			console.log( message );
 		};
 	}
 	return new webpack.ProgressPlugin( createProgressHandler() );

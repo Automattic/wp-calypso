@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { REWIND_BACKUPS_REQUEST, REWIND_BACKUPS_SET } from 'calypso/state/action-types';
 
 import 'calypso/state/data-layer/wpcom/sites/rewind/backups';

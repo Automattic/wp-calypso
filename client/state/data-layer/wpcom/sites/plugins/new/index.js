@@ -1,26 +1,17 @@
-/**
- * External dependencies
- */
-
 import { translate } from 'i18n-calypso';
 import { find, includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { PLUGIN_INSTALL_REQUEST_SUCCESS, PLUGIN_UPLOAD } from 'calypso/state/action-types';
 import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
+import { PLUGIN_INSTALL_REQUEST_SUCCESS, PLUGIN_UPLOAD } from 'calypso/state/action-types';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { errorNotice } from 'calypso/state/notices/actions';
 import {
 	completePluginUpload,
 	pluginUploadError,
 	updatePluginUploadProgress,
 } from 'calypso/state/plugins/upload/actions';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { errorNotice } from 'calypso/state/notices/actions';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export const uploadPlugin = ( action ) => {
 	const { siteId, file } = action;
@@ -45,6 +36,7 @@ const showErrorNotice = ( error ) => {
 		'too large': translate( 'The plugin zip file must be smaller than 10MB.' ),
 		incompatible: translate( 'The uploaded file is not a compatible plugin.' ),
 		unsupported_mime_type: translate( 'The uploaded file is not a valid zip.' ),
+		plugin_malicious: translate( 'The uploaded file is identified as malicious.' ),
 	};
 	const errorString = `${ error.error }${ error.message }`.toLowerCase();
 	const knownError = find( knownErrors, ( v, key ) => includes( errorString, key ) );
@@ -64,26 +56,28 @@ const showErrorNotice = ( error ) => {
 	return errorNotice( translate( 'Problem installing the plugin.' ) );
 };
 
-export const uploadComplete = ( { siteId }, data ) => ( dispatch ) => {
-	const { slug: pluginId } = data;
+export const uploadComplete =
+	( { siteId }, data ) =>
+	( dispatch ) => {
+		const { slug: pluginId } = data;
 
-	dispatch(
-		recordTracksEvent( 'calypso_plugin_upload_complete', {
-			plugin_id: pluginId,
-		} )
-	);
+		dispatch(
+			recordTracksEvent( 'calypso_plugin_upload_complete', {
+				plugin_id: pluginId,
+			} )
+		);
 
-	dispatch( completePluginUpload( siteId, pluginId ) );
+		dispatch( completePluginUpload( siteId, pluginId ) );
 
-	// Notifying installed plugins that this plugin was successfully installed
-	dispatch( {
-		type: PLUGIN_INSTALL_REQUEST_SUCCESS,
-		action: INSTALL_PLUGIN,
-		siteId,
-		pluginId: data.id,
-		data,
-	} );
-};
+		// Notifying installed plugins that this plugin was successfully installed
+		dispatch( {
+			type: PLUGIN_INSTALL_REQUEST_SUCCESS,
+			action: INSTALL_PLUGIN,
+			siteId,
+			pluginId: data.id,
+			data,
+		} );
+	};
 
 export const receiveError = ( { siteId }, error ) => [
 	recordTracksEvent( 'calypso_plugin_upload_error', {

@@ -1,4 +1,6 @@
 export { canCurrentUserAddEmail } from './can-current-user-add-email';
+export { canCurrentUserCreateSiteFromDomainOnly } from './can-current-user-create-site-from-domain-only';
+export { isDomainAndEmailSubscriptionsOwnedByDifferentUsers } from './is-domain-and-email-subscriptions-owned-by-different-users';
 export { canRedirect } from './can-redirect';
 export { checkAuthCode } from './check-auth-code';
 export { checkDomainAvailability } from './check-domain-availability';
@@ -21,6 +23,7 @@ export { getUnformattedDomainSalePrice } from './get-unformatted-domain-sale-pri
 export { isDomainUpdateable } from './is-domain-updateable';
 export { isDomainInGracePeriod } from './is-domain-in-grace-period';
 export { isHstsRequired } from './is-hsts-required';
+export { isDotGayNoticeRequired } from './is-dot-gay-notice-required';
 export { isSubdomain } from './is-subdomain';
 export {
 	getMappedDomains,
@@ -28,9 +31,7 @@ export {
 	isMappedDomain,
 	isMappedDomainWithWpcomNameservers,
 } from './mapped-domains';
-export { getRegisteredDomains, isRegisteredDomain } from './registered-domains';
-export { requestGdprConsentManagementLink } from './request-gdpr-consent-management-link';
+export { getRegisteredDomains, isFreeUrlDomain, isRegisteredDomain } from './registered-domains';
 export { resendIcannVerification } from './resend-icann-verification';
 export { resolveDomainStatus } from './resolve-domain-status';
 export { startInboundTransfer } from './start-inbound-transfer';
-export { TRUENAME_TLDS, TRUENAME_COUPONS } from './truename-promo';

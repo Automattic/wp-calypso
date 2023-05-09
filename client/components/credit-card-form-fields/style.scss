@@ -11,7 +11,7 @@
 
 	.credit-card-form-fields__field,
 	.credit-card-form-fields__cvv-wrapper {
-		flex-basis: calc( 100% - 15px );
+		flex-basis: calc(100% - 15px);
 		flex-grow: 1;
 		flex-shrink: 1;
 		margin-left: 15px;
@@ -22,7 +22,7 @@
 
 		.credit-card-form-fields__element,
 		.form-text-input {
-			width: calc( 100% - 70px );
+			width: calc(100% - 70px);
 		}
 
 		.credit-card-form-fields__cvv-illustration {
@@ -45,14 +45,14 @@
 	.credit-card-form-fields__cvv-wrapper .cvv {
 		margin-left: 0;
 	}
-	
+
 	.credit-card-form-fields__cvv-wrapper,
 	.expiration-date,
 	.country,
 	.postal-code {
-		flex-basis: calc( 50% - 15px );
+		flex-basis: calc(50% - 15px);
 	}
-	
+
 }
 
 .credit-card-form-fields {
@@ -94,7 +94,7 @@
 // Specific for Stripe Elements while we use it in parallel to existing cc fields
 .credit-card-form-fields__element {
 	padding: 9px 14px;
-	border: 1px solid var( --color-neutral-10 );
+	border: 1px solid var(--color-neutral-10);
 	font-size: $font-body;
 	line-height: 1.5;
 	margin-top: 5px;
@@ -103,15 +103,15 @@
 	border-radius: 2px;
 
 	&.has-focus {
-		box-shadow: 0 0 0 2px var( --color-primary-10 );
-		border-color: var( --color-primary );
+		box-shadow: 0 0 0 2px var(--color-primary-10);
+		border-color: var(--color-primary);
 
 		&.is-error {
-			box-shadow: 0 0 0 2px var( --color-error-10 );
+			box-shadow: 0 0 0 2px var(--color-error-10);
 		}
 	}
 
 	&.is-error {
-		border-color: var( --color-error );
+		border-color: var(--color-error);
 	}
 }

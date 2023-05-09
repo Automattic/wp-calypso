@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent } from 'react';
 import classNames from 'classnames';
+import { FunctionComponent } from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 interface Props {

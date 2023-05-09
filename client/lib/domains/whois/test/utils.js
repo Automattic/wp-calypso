@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import { findRegistrantWhois, findPrivacyServiceWhois } from '../utils';
 import { whoisType } from '../constants';
+import { findRegistrantWhois, findPrivacyServiceWhois } from '../utils';
 
 describe( 'utils', () => {
 	const whoisData = [
@@ -23,19 +15,19 @@ describe( 'utils', () => {
 
 	describe( 'findRegistrantWhois', () => {
 		test( 'should return undefined when not registrant object found', () => {
-			expect( findRegistrantWhois( [] ) ).to.be.undefined;
+			expect( findRegistrantWhois( [] ) ).toBeUndefined();
 		} );
 		test( 'should return registrant object from Whois data', () => {
-			expect( findRegistrantWhois( whoisData ) ).to.be.eql( whoisData[ 0 ] );
+			expect( findRegistrantWhois( whoisData ) ).toEqual( whoisData[ 0 ] );
 		} );
 	} );
 
 	describe( 'findPrivacyServiceWhois', () => {
 		test( 'should return undefined when not registrant object found', () => {
-			expect( findPrivacyServiceWhois( [] ) ).to.be.undefined;
+			expect( findPrivacyServiceWhois( [] ) ).toBeUndefined();
 		} );
 		test( 'should return privacy service object from Whois data', () => {
-			expect( findPrivacyServiceWhois( whoisData ) ).to.be.eql( whoisData[ 1 ] );
+			expect( findPrivacyServiceWhois( whoisData ) ).toEqual( whoisData[ 1 ] );
 		} );
 	} );
 } );

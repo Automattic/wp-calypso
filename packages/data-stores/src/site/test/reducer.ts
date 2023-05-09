@@ -6,18 +6,16 @@
  * @jest-environment jsdom
  */
 
-/**
- * Internal dependencies
- */
-import { sites, launchStatus } from '../reducer';
+import { createActions } from '../actions';
+import { sites, siteTheme, launchStatus, siteSetupErrors } from '../reducer';
 import {
+	CurrentTheme,
 	SiteLaunchError,
 	SiteLaunchState,
 	SiteLaunchStatus,
 	SiteDetails,
 	SiteError,
 } from '../types';
-import { createActions } from '../actions';
 
 describe( 'Site', () => {
 	const siteDetailsResponse: SiteDetails = {
@@ -126,6 +124,70 @@ describe( 'Site', () => {
 			};
 
 			expect( launchStatus( originalState, action ) ).toEqual( expected );
+		} );
+	} );
+
+	describe( 'Site Setup Errors', () => {
+		type ClientCredentials = { client_id: string; client_secret: string };
+
+		let siteId: number;
+		let client_id: string;
+		let client_secret: string;
+		let mockedClientCredentials: ClientCredentials;
+		let originalState: { [ key: number ]: SiteLaunchState };
+
+		beforeEach( () => {
+			siteId = 12345;
+			client_id = 'magic_client_id';
+			client_secret = 'magic_client_secret';
+			mockedClientCredentials = { client_id, client_secret };
+			originalState = {};
+		} );
+
+		it( 'should default to the initial state when an unknown action is dispatched', () => {
+			const state = siteSetupErrors( undefined, { type: 'TEST_ACTION' } );
+			expect( state ).toStrictEqual( {} );
+		} );
+
+		it( 'should set a site setup error when a SET_SITE_SETUP_ERROR action is dispatched', () => {
+			const { setSiteSetupError } = createActions( mockedClientCredentials );
+
+			const error = 'test_error';
+			const message = 'This is a test error';
+
+			const action = setSiteSetupError( error, message );
+			const expected = {
+				error,
+				message,
+			};
+
+			expect( siteSetupErrors( originalState, action ) ).toEqual( expected );
+		} );
+
+		it( 'should clear a site setup error when a CLEAR_SITE_SETUP_ERROR action is dispatched', () => {
+			const { clearSiteSetupError } = createActions( mockedClientCredentials );
+
+			const action = clearSiteSetupError( siteId );
+			const expected = {};
+
+			expect( siteSetupErrors( originalState, action ) ).toEqual( expected );
+		} );
+	} );
+} );
+
+describe( 'Site Theme', () => {
+	const siteThemeResponse: CurrentTheme = {
+		id: 'tazza',
+	};
+
+	it( 'returns site data keyed by id', () => {
+		const state = siteTheme( undefined, {
+			type: 'RECEIVE_SITE_THEME',
+			siteId: 12345,
+			theme: siteThemeResponse,
+		} );
+		expect( state ).toEqual( {
+			12345: siteThemeResponse,
 		} );
 	} );
 } );

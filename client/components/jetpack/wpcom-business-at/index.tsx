@@ -1,35 +1,11 @@
-/**
- * External dependencies
- */
-import React, { ReactElement, useState, useCallback, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { CompactCard, Dialog } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-import { Dialog } from '@automattic/components';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
-import DocumentHead from 'calypso/components/data/document-head';
-import Main from 'calypso/components/main';
-import FormattedHeader from 'calypso/components/formatted-header';
-import SpinnerButton from 'calypso/components/spinner-button';
-import PromoCard from 'calypso/components/promo-section/promo-card';
-import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
-import {
-	getAutomatedTransferStatus,
-	isEligibleForAutomatedTransfer,
-	getEligibility,
-	EligibilityData,
-} from 'calypso/state/automated-transfer/selectors';
-import { initiateThemeTransfer } from 'calypso/state/themes/actions';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { transferStates } from 'calypso/state/automated-transfer/constants';
-import QueryAutomatedTransferEligibility from 'calypso/components/data/query-atat-eligibility';
+import { useState, useCallback, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import JetpackBackupSVG from 'calypso/assets/images/illustrations/jetpack-backup.svg';
 import {
 	hasBlockingHold as hasBlockingHoldFunc,
 	getBlockingMessages,
@@ -37,51 +13,62 @@ import {
 	default as HoldList,
 } from 'calypso/blocks/eligibility-warnings/hold-list';
 import WarningList from 'calypso/blocks/eligibility-warnings/warning-list';
+import DocumentHead from 'calypso/components/data/document-head';
+import QueryAutomatedTransferEligibility from 'calypso/components/data/query-atat-eligibility';
+import FormattedHeader from 'calypso/components/formatted-header';
+import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
+import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import PromoCard from 'calypso/components/promo-section/promo-card';
+import SpinnerButton from 'calypso/components/spinner-button';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
+import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
+import { transferStates } from 'calypso/state/automated-transfer/constants';
+import {
+	getAutomatedTransferStatus,
+	isEligibleForAutomatedTransfer,
+	getEligibility,
+	EligibilityData,
+} from 'calypso/state/automated-transfer/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
 import { requestSite } from 'calypso/state/sites/actions';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
-import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
+import { initiateThemeTransfer } from 'calypso/state/themes/actions';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 import 'calypso/blocks/eligibility-warnings/style.scss';
-
-/**
- * Asset dependencies
- */
-import JetpackBackupSVG from 'calypso/assets/images/illustrations/jetpack-backup.svg';
 
 interface BlockingHoldNoticeProps {
 	siteId: number;
 }
 
+// This gets the values of the object transferStates.
+export type TransferStatus = ( typeof transferStates )[ keyof typeof transferStates ];
+
 interface TransferFailureNoticeProps {
-	// This gets the values of the object transferStates.
-	transferStatus: typeof transferStates[ keyof typeof transferStates ];
+	transferStatus: TransferStatus | null;
 }
 
 const content = {
-	documentHeadTitle: 'Activate Jetpack Backup now',
-	header: translate( 'Jetpack Backup' ),
+	documentHeadTitle: 'Activate Jetpack VaultPress Backup now',
+	header: String( translate( 'Jetpack VaultPress Backup' ) ),
 	primaryPromo: {
-		title: translate( 'Get time travel for your site with Jetpack Backup' ),
+		title: translate( 'Get time travel for your site with Jetpack VaultPress Backup' ),
 		image: { path: JetpackBackupSVG },
 		content: translate(
-			'Backup gives you granular control over your site, with the ability to restore it to any previous state, and export it at any time.'
+			'VaultPress Backup gives you granular control over your site, with the ability to restore it to any previous state, and export it at any time.'
 		),
 		promoCTA: {
-			text: translate( 'Activate Jetpack Backup now' ),
-			loadingText: translate( 'Activating Jetpack Backup' ),
+			text: translate( 'Activate Jetpack VaultPress Backup now' ),
+			loadingText: translate( 'Activating Jetpack VaultPress Backup' ),
 		},
 	},
 };
 
-function BlockingHoldNotice( { siteId }: BlockingHoldNoticeProps ): ReactElement | null {
+function BlockingHoldNotice( { siteId }: BlockingHoldNoticeProps ) {
 	const { eligibilityHolds: holds } = useSelector( ( state ) => getEligibility( state, siteId ) );
 	if ( ! holds ) {
 		return null;
@@ -89,9 +76,11 @@ function BlockingHoldNotice( { siteId }: BlockingHoldNoticeProps ): ReactElement
 
 	// Get messages and override for the Jetpack product name.
 	const blockingMessages = getBlockingMessages( translate );
-	blockingMessages.BLOCKED_ATOMIC_TRANSFER.message = translate(
-		'This site is currently not eligible for %s. Please contact our support team for help.',
-		{ args: [ content.header ] }
+	blockingMessages.BLOCKED_ATOMIC_TRANSFER.message = String(
+		translate(
+			'This site is currently not eligible for %s. Please contact our support team for help.',
+			{ args: [ content.header ] }
+		)
 	);
 
 	return (
@@ -103,9 +92,7 @@ function BlockingHoldNotice( { siteId }: BlockingHoldNoticeProps ): ReactElement
 	);
 }
 
-function TransferFailureNotice( {
-	transferStatus,
-}: TransferFailureNoticeProps ): ReactElement | null {
+function TransferFailureNotice( { transferStatus }: TransferFailureNoticeProps ) {
 	if ( transferStatus !== transferStates.FAILURE && transferStatus !== transferStates.ERROR ) {
 		return null;
 	}
@@ -127,16 +114,15 @@ function TransferFailureNotice( {
 	);
 }
 
-export default function WPCOMBusinessAT(): ReactElement {
+export default function WPCOMBusinessAT() {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const siteSlug = useSelector( getSelectedSiteSlug ) as string;
 
 	// Gets the site eligibility data.
 	const isEligible = useSelector( ( state ) => isEligibleForAutomatedTransfer( state, siteId ) );
-	const {
-		eligibilityHolds: holds,
-		eligibilityWarnings: warnings,
-	}: EligibilityData = useSelector( ( state ) => getEligibility( state, siteId ) );
+	const { eligibilityHolds: holds, eligibilityWarnings: warnings }: EligibilityData = useSelector(
+		( state ) => getEligibility( state, siteId )
+	);
 
 	const automatedTransferStatus = useSelector( ( state ) =>
 		getAutomatedTransferStatus( state, siteId )
@@ -217,8 +203,7 @@ export default function WPCOMBusinessAT(): ReactElement {
 		<Main className="wpcom-business-at">
 			<QueryAutomatedTransferEligibility siteId={ siteId } />
 			<DocumentHead title={ content.documentHeadTitle } />
-			<SidebarNavigation />
-			<PageViewTracker path={ `/backup/:site` } title="Business Plan Automated Transfer" />
+			<PageViewTracker path="/backup/:site" title="Business Plan Automated Transfer" />
 
 			<FormattedHeader
 				id="wpcom-business-at-header"
@@ -228,7 +213,7 @@ export default function WPCOMBusinessAT(): ReactElement {
 				brandFont
 			/>
 			<BlockingHoldNotice siteId={ siteId } />
-			<TransferFailureNotice transferStatus={ automatedTransferStatus } />
+			<TransferFailureNotice transferStatus={ automatedTransferStatus as TransferStatus } />
 			<PromoCard
 				title={ content.primaryPromo.title }
 				image={ content.primaryPromo.image }
@@ -263,14 +248,23 @@ export default function WPCOMBusinessAT(): ReactElement {
 						isPrimary: true,
 					},
 				] }
-				className={ classNames( 'wpcom-business-at__dialog', 'eligibility-warnings', {
-					'eligibility-warnings--with-indent': warnings?.length,
-				} ) }
+				className={ classNames(
+					'wpcom-business-at__dialog',
+					'eligibility-warnings',
+					'eligibility-warnings--without-title',
+					{
+						'eligibility-warnings--with-indent': warnings?.length,
+					}
+				) }
 			>
 				{ !! holds?.length && (
-					<HoldList holds={ holds } context={ 'backup' } isPlaceholder={ false } />
+					<HoldList holds={ holds } context="backup" isPlaceholder={ false } />
 				) }
-				{ !! warnings?.length && <WarningList warnings={ warnings } context={ 'backup' } /> }
+				{ !! warnings?.length && (
+					<CompactCard className="eligibility-warnings__warnings-card">
+						<WarningList warnings={ warnings } context="backup" />
+					</CompactCard>
+				) }
 			</Dialog>
 		</Main>
 	);

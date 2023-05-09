@@ -1,52 +1,44 @@
-/**
- * External dependencies
- */
-import classNames from 'classnames';
-import PropTypes from 'prop-types';
-import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
+import { Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import LoginBlock from 'calypso/blocks/login';
 import AutomatticLogo from 'calypso/components/automattic-logo';
 import DocumentHead from 'calypso/components/data/document-head';
-import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
-import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
-import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
-import TranslatorInvite from 'calypso/components/translator-invite';
-import LoginBlock from 'calypso/blocks/login';
-import { isCrowdsignalOAuth2Client } from 'calypso/lib/oauth2-clients';
-import LoginLinks from './login-links';
 import Main from 'calypso/components/main';
-import PrivateSite from './private-site';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
-import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import TranslatorInvite from 'calypso/components/translator-invite';
+import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import {
 	recordPageViewWithClientId as recordPageView,
 	recordTracksEventWithClientId as recordTracksEvent,
 	enhanceWithSiteType,
 } from 'calypso/state/analytics/actions';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { isPartnerSignupQuery } from 'calypso/state/login/utils';
+import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import { withEnhancers } from 'calypso/state/utils';
+import LoginLinks from './login-links';
+import PrivateSite from './private-site';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-export class Login extends React.Component {
+export class Login extends Component {
 	static propTypes = {
 		clientId: PropTypes.string,
 		isLoggedIn: PropTypes.bool.isRequired,
 		isLoginView: PropTypes.bool,
 		isJetpack: PropTypes.bool.isRequired,
-		isGutenboarding: PropTypes.bool.isRequired,
+		isWhiteLogin: PropTypes.bool.isRequired,
+		isPartnerSignup: PropTypes.bool.isRequired,
 		locale: PropTypes.string.isRequired,
 		oauth2Client: PropTypes.object,
 		path: PropTypes.string.isRequired,
@@ -57,9 +49,11 @@ export class Login extends React.Component {
 		socialServiceResponse: PropTypes.object,
 		translate: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string,
+		action: PropTypes.string,
+		isGravatar: PropTypes.bool,
 	};
 
-	static defaultProps = { isJetpack: false, isGutenboarding: false, isLoginView: true };
+	static defaultProps = { isJetpack: false, isWhiteLogin: false, isLoginView: true };
 
 	state = {
 		usernameOrEmail: '',
@@ -72,21 +66,21 @@ export class Login extends React.Component {
 	}
 
 	componentDidMount() {
-		this.recordPageView( this.props );
+		this.recordPageView();
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.twoFactorAuthType !== nextProps.twoFactorAuthType ) {
-			this.recordPageView( nextProps );
+	componentDidUpdate( prevProps ) {
+		if ( this.props.twoFactorAuthType !== prevProps.twoFactorAuthType ) {
+			this.recordPageView();
 		}
 
-		if ( this.props.socialConnect !== nextProps.socialConnect ) {
-			this.recordPageView( nextProps );
+		if ( this.props.socialConnect !== prevProps.socialConnect ) {
+			this.recordPageView();
 		}
 	}
 
-	recordPageView( props ) {
-		const { socialConnect, twoFactorAuthType } = props;
+	recordPageView() {
+		const { socialConnect, twoFactorAuthType } = this.props;
 
 		let url = '/log-in';
 		let title = 'Login';
@@ -114,6 +108,29 @@ export class Login extends React.Component {
 		this.setState( { usernameOrEmail } );
 	}
 
+	renderP2Logo() {
+		return (
+			<div className="wp-login__p2-logo">
+				<img src="/calypso/images/p2/logo.png" width="67" height="32" alt="P2 logo" />
+			</div>
+		);
+	}
+
+	renderP2PoweredBy() {
+		return (
+			<div className="wp-login__p2-powered-by">
+				<img
+					src="/calypso/images/p2/w-logo.png"
+					className="wp-login__p2-powered-by-logo"
+					alt="WP.com logo"
+				/>
+				<span className="wp-login__p2-powered-by-text">
+					{ this.props.translate( 'Powered by WordPress.com' ) }
+				</span>
+			</div>
+		);
+	}
+
 	renderI18nSuggestions() {
 		const { locale, path, isLoginView } = this.props;
 
@@ -125,10 +142,10 @@ export class Login extends React.Component {
 	}
 
 	renderFooter() {
-		const { isJetpack, isGutenboarding, translate } = this.props;
+		const { isJetpack, isWhiteLogin, isP2Login, translate } = this.props;
 		const isOauthLogin = !! this.props.oauth2Client;
 
-		if ( isJetpack || isGutenboarding ) {
+		if ( isJetpack || isWhiteLogin || isP2Login ) {
 			return null;
 		}
 
@@ -205,7 +222,9 @@ export class Login extends React.Component {
 			domain,
 			isLoggedIn,
 			isJetpack,
-			isGutenboarding,
+			isWhiteLogin,
+			isP2Login,
+			isGravatar,
 			oauth2Client,
 			privateSite,
 			socialConnect,
@@ -217,6 +236,7 @@ export class Login extends React.Component {
 			isLoginView,
 			path,
 			signupUrl,
+			action,
 		} = this.props;
 
 		if ( privateSite && isLoggedIn ) {
@@ -226,7 +246,11 @@ export class Login extends React.Component {
 		const isJetpackMagicLinkSignUpFlow =
 			isJetpack && config.isEnabled( 'jetpack/magic-link-signup' );
 
-		const shouldRenderFooter = ! socialConnect && ! isJetpackMagicLinkSignUpFlow;
+		const shouldRenderFooter =
+			! socialConnect &&
+			! isJetpackMagicLinkSignUpFlow &&
+			// We don't want to render the footer for woo oauth2 flows but render it if it's partner signup
+			! ( isWooOAuth2Client( this.props.oauth2Client ) && ! this.props.isPartnerSignup );
 
 		const footer = (
 			<>
@@ -235,9 +259,12 @@ export class Login extends React.Component {
 						locale={ locale }
 						privateSite={ privateSite }
 						twoFactorAuthType={ twoFactorAuthType }
-						isGutenboarding={ isGutenboarding }
+						isWhiteLogin={ isWhiteLogin }
+						isP2Login={ isP2Login }
+						isGravatar={ isGravatar }
 						signupUrl={ signupUrl }
 						usernameOrEmail={ this.state.usernameOrEmail }
+						oauth2ClientId={ this.props.oauth2Client?.id }
 					/>
 				) }
 				{ isLoginView && <TranslatorInvite path={ path } /> }
@@ -246,12 +273,15 @@ export class Login extends React.Component {
 
 		return (
 			<LoginBlock
+				action={ action }
 				twoFactorAuthType={ twoFactorAuthType }
 				socialConnect={ socialConnect }
 				privateSite={ privateSite }
 				clientId={ clientId }
 				isJetpack={ isJetpack }
-				isGutenboarding={ isGutenboarding }
+				isWhiteLogin={ isWhiteLogin }
+				isP2Login={ isP2Login }
+				isGravatar={ isGravatar }
 				oauth2Client={ oauth2Client }
 				socialService={ socialService }
 				socialServiceResponse={ socialServiceResponse }
@@ -260,6 +290,7 @@ export class Login extends React.Component {
 				footer={ footer }
 				locale={ locale }
 				handleUsernameChange={ this.handleUsernameChange.bind( this ) }
+				signupUrl={ signupUrl }
 			/>
 		);
 	}
@@ -269,6 +300,7 @@ export class Login extends React.Component {
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
 		return (
 			<div>
+				{ this.props.isP2Login && this.renderP2Logo() }
 				<Main className="wp-login__main">
 					{ this.renderI18nSuggestions() }
 
@@ -282,6 +314,7 @@ export class Login extends React.Component {
 				</Main>
 
 				{ this.renderFooter() }
+				{ this.props.isP2Login && this.renderP2PoweredBy() }
 			</div>
 		);
 	}
@@ -296,6 +329,7 @@ export default connect(
 		emailQueryParam:
 			getCurrentQueryArguments( state ).email_address ||
 			getInitialQueryArguments( state ).email_address,
+		isPartnerSignup: isPartnerSignupQuery( getCurrentQueryArguments( state ) ),
 	} ),
 	{
 		recordPageView: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),

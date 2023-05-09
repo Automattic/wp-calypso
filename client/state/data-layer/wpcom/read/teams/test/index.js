@@ -1,9 +1,6 @@
-/**
- * Internal dependencies
- */
-import { handleTeamsRequest, teamRequestFailure, teamRequestReceived } from '../';
-import { TEAMS_RECEIVE } from 'calypso/state/teams/action-types';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { TEAMS_RECEIVE } from 'calypso/state/teams/action-types';
+import { handleTeamsRequest, teamRequestFailure, teamRequestReceived } from '../';
 
 const action = { type: 'DUMMY_ACTION' };
 

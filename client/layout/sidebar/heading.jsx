@@ -1,9 +1,3 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
 const SidebarHeading = ( { children, onClick, ...props } ) => {
 	const tabIndex = onClick ? 0 : -1;
 
@@ -19,18 +13,21 @@ const SidebarHeading = ( { children, onClick, ...props } ) => {
 		};
 	}
 
-	/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
+	// Exclude invalid HTML attributes
+	const { navigationLabel, url, ...linkAttrs } = props;
+
 	return (
 		<li>
-			<h2
+			{ /* eslint-disable jsx-a11y/no-static-element-interactions */ }
+			<a
 				tabIndex={ tabIndex }
 				className="sidebar__heading"
 				onKeyDown={ onKeyDown }
 				onClick={ onClick }
-				{ ...props }
+				{ ...linkAttrs }
 			>
 				{ children }
-			</h2>
+			</a>
 		</li>
 	);
 };

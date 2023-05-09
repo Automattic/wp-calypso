@@ -1,18 +1,11 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-/**
- * External dependencies
- */
-import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
 
-/**
- * Internal dependencies
- */
-import { Button, Card } from '@automattic/components';
+import { Button, Card, Gridicon } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import FollowButton from 'calypso/blocks/follow-button/button';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
-import Gridicon from 'calypso/components/gridicon';
 import { addReaderListSite, deleteReaderListSite } from 'calypso/state/reader/lists/actions';
 import { getMatchingItem } from 'calypso/state/reader/lists/selectors';
 import ItemRemoveDialog from './item-remove-dialog';
@@ -74,9 +67,9 @@ export default function SiteItem( props: {
 	item: Item;
 	list: List;
 	owner: string;
-} ): React.ReactElement | null {
+} ) {
 	const { item, list, owner } = props;
-	const site = props.item.meta?.data?.site as Site | SiteError;
+	const site = props.item.meta?.data?.site as Site | SiteError | undefined;
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -84,7 +77,7 @@ export default function SiteItem( props: {
 		getMatchingItem( state, { siteId: props.item.site_ID, listId: props.list.ID } )
 	);
 
-	const [ showDeleteConfirmation, setShowDeleteConfirmation ] = React.useState( false );
+	const [ showDeleteConfirmation, setShowDeleteConfirmation ] = useState( false );
 	const addItem = () => dispatch( addReaderListSite( list.ID, owner, list.slug, item.site_ID ) );
 	const deleteItem = ( shouldDelete: boolean ) => {
 		setShowDeleteConfirmation( false );
@@ -122,12 +115,14 @@ export default function SiteItem( props: {
 				</Button>
 			) }
 
-			<ItemRemoveDialog
-				onClose={ deleteItem }
-				title={ <SiteTitle site={ site } /> }
-				type="site"
-				visibility={ showDeleteConfirmation }
-			/>
+			{ ! isSiteError( site ) && (
+				<ItemRemoveDialog
+					onClose={ deleteItem }
+					title={ <SiteTitle site={ site } /> }
+					type="site"
+					visibility={ showDeleteConfirmation }
+				/>
+			) }
 		</Card>
 	);
 }

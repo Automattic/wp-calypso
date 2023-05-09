@@ -1,12 +1,4 @@
-/**
- * External Dependencies
- */
-import React from 'react';
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 
 export default function DefaultTemplate( {
@@ -30,12 +22,12 @@ export default function DefaultTemplate( {
 				disableHref
 				dismissPreferenceName={ featureClass }
 				dismissTemporary={ true }
-				onDismiss={ onDismiss }
+				onDismissClick={ onDismiss }
 				onClick={ onClick }
 				event={ get( tracks, [ 'click', 'name' ] ) || `jitm_nudge_click_${ id }` }
 				href={ CTA.link }
 				horizontal
-				target={ '_blank' }
+				target="_blank"
 				showIcon={ true }
 				forceDisplay
 			/>

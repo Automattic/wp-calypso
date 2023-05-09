@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { mergeHandlers } from '../utils';
 
 describe( '#mergeHandlers', () => {
@@ -16,13 +8,13 @@ describe( '#mergeHandlers', () => {
 	const second = { [ action ]: [ triple ] };
 
 	test( 'should pass through a single handler', () => {
-		expect( mergeHandlers( first ) ).to.equal( first );
+		expect( mergeHandlers( first ) ).toEqual( first );
 	} );
 
 	test( 'should combine lists of handlers for different action types', () => {
 		const merged = mergeHandlers( { INCREMENT: [ inc ] }, { TRIPLE: [ triple ] } );
 
-		expect( merged ).to.eql( {
+		expect( merged ).toEqual( {
 			INCREMENT: [ inc ],
 			TRIPLE: [ triple ],
 		} );
@@ -31,6 +23,6 @@ describe( '#mergeHandlers', () => {
 	test( 'should combine lists of handlers for the same action type', () => {
 		const merged = mergeHandlers( first, second );
 
-		expect( merged[ action ] ).to.eql( [ inc, triple ] );
+		expect( merged[ action ] ).toEqual( [ inc, triple ] );
 	} );
 } );

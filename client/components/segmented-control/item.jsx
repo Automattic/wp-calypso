@@ -1,12 +1,16 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { Link } from 'react-router-dom';
 
-class SegmentedControlItem extends React.Component {
+const ConditionalLink = ( { active, ...props } ) => {
+	if ( active ) {
+		return <Link to={ props.href } { ...props } />;
+	}
+	return <a { ...props }></a>;
+};
+
+class SegmentedControlItem extends Component {
 	static propTypes = {
 		children: PropTypes.node.isRequired,
 		path: PropTypes.string,
@@ -15,10 +19,12 @@ class SegmentedControlItem extends React.Component {
 		value: PropTypes.string,
 		onClick: PropTypes.func,
 		index: PropTypes.number,
+		isPlansInsideStepper: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		selected: false,
+		isPlansInsideStepper: false,
 	};
 
 	handleKeyEvent = ( event ) => {
@@ -42,8 +48,9 @@ class SegmentedControlItem extends React.Component {
 		} );
 
 		return (
-			<li className={ itemClassName }>
-				<a
+			<li className={ itemClassName } role="none">
+				<ConditionalLink
+					active={ this.props.isPlansInsideStepper }
 					href={ this.props.path }
 					className={ linkClassName }
 					onClick={ this.props.onClick }
@@ -55,7 +62,7 @@ class SegmentedControlItem extends React.Component {
 					onKeyDown={ this.handleKeyEvent }
 				>
 					<span className="segmented-control__text">{ this.props.children }</span>
-				</a>
+				</ConditionalLink>
 			</li>
 		);
 	}

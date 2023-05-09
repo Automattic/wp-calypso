@@ -1,34 +1,28 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
+import { isPostKeyLike } from 'calypso/reader/post-key';
 import { fetchPost } from 'calypso/state/reader/posts/actions';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
-import { isPostKeyLike } from 'calypso/reader/post-key';
 
 class QueryReaderPost extends Component {
 	static propTypes = {
 		postKey: PropTypes.object.isRequired,
+		isHelpCenter: PropTypes.bool,
 	};
 
 	componentDidMount() {
 		this.maybeFetch();
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		this.maybeFetch( nextProps );
+	componentDidUpdate() {
+		this.maybeFetch();
 	}
 
-	maybeFetch = ( props = this.props ) => {
-		if ( isPostKeyLike( props.postKey ) && ( ! props.post || props.post._state === 'minimal' ) ) {
-			this.props.fetchPost( props.postKey );
+	maybeFetch = () => {
+		const { post, postKey, isHelpCenter } = this.props;
+		if ( isPostKeyLike( postKey ) && ( ! post || post._state === 'minimal' ) ) {
+			this.props.fetchPost( postKey, isHelpCenter );
 		}
 	};
 
@@ -40,6 +34,7 @@ class QueryReaderPost extends Component {
 export default connect(
 	( state, ownProps ) => ( {
 		post: getPostByKey( state, ownProps.postKey ),
+		isHelpCenter: ownProps.isHelpCenter,
 	} ),
 	{ fetchPost }
 )( QueryReaderPost );

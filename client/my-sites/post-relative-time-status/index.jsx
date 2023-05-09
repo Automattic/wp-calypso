@@ -1,33 +1,25 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class PostRelativeTime extends React.PureComponent {
+class PostRelativeTime extends PureComponent {
 	static propTypes = {
 		showPublishedStatus: PropTypes.bool.isRequired,
 		post: PropTypes.object.isRequired,
 		link: PropTypes.string,
 		target: PropTypes.string,
 		gridiconSize: PropTypes.number,
+		showGridIcon: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		link: null,
 		target: null,
+		showGridIcon: true,
 	};
 
 	/**
@@ -93,7 +85,9 @@ class PostRelativeTime extends React.PureComponent {
 			<span className="post-relative-time-status__time">
 				{ time && (
 					<>
-						<Gridicon icon="time" size={ this.props.gridiconSize || 18 } />
+						{ this.props.showGridIcon && (
+							<Gridicon icon="time" size={ this.props.gridiconSize || 18 } />
+						) }
 						<time className="post-relative-time-status__time-text" dateTime={ time }>
 							{ this.getDisplayedTimeForLabel() }
 						</time>
@@ -191,6 +185,34 @@ class PostRelativeTime extends React.PureComponent {
 	}
 
 	/**
+	 * Get Newsletter status label
+	 *
+	 * @param {string} status Newsletter tatus
+	 */
+	getNewsletterStatus( status ) {
+		if ( ! status ) {
+			return;
+		}
+
+		let statusText;
+		let extraStatusClassName;
+
+		if ( status === 'everybody' ) {
+			extraStatusClassName = 'is-newsletter-everybody';
+			statusText = this.props.translate( 'Everybody' );
+		} else if ( status === 'subscribers' ) {
+			extraStatusClassName = 'is-newsletter-subscribers';
+			statusText = this.props.translate( 'Subscribers' );
+		} else if ( status === 'paid_subscribers' ) {
+			extraStatusClassName = 'is-newsletter-paid-subcribers';
+			statusText = this.props.translate( 'Paid Subscribers' );
+		}
+
+		const statusIcon = 'mail';
+		return this.getLabel( statusText, extraStatusClassName, statusIcon );
+	}
+
+	/**
 	 * Get "private" label
 	 */
 	getPrivateLabel() {
@@ -234,13 +256,19 @@ class PostRelativeTime extends React.PureComponent {
 	render() {
 		const { showPublishedStatus, post } = this.props;
 		const timeText = this.getTimeText();
+
+		const newletterStatus = post?.metadata?.find(
+			( { key } ) => key === '_jetpack_newsletter_access'
+		)?.value;
+
 		let innerText = (
-			<span>
+			<>
 				{ showPublishedStatus ? this.getStatus() : timeText }
+				{ this.getNewsletterStatus( newletterStatus ) }
 				{ post.status === 'pending' && this.getPendingLabel() }
 				{ post.status === 'private' && this.getPrivateLabel() }
 				{ post.sticky && this.getStickyLabel() }
-			</span>
+			</>
 		);
 
 		if ( this.props.link ) {

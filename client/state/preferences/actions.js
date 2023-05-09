@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
 import {
 	PREFERENCES_SET,
@@ -8,9 +5,8 @@ import {
 	PREFERENCES_FETCH,
 	PREFERENCES_FETCH_SUCCESS,
 	PREFERENCES_FETCH_FAILURE,
-	PREFERENCES_SAVE,
-	PREFERENCES_SAVE_FAILURE,
 	PREFERENCES_SAVE_SUCCESS,
+	PREFERENCES_SAVE_FAILURE,
 } from 'calypso/state/action-types';
 import { USER_SETTING_KEY } from './constants';
 
@@ -20,8 +16,8 @@ import 'calypso/state/preferences/init';
  * Returns an action object signalling the remote preferences have been
  * received.
  *
- * @param  {object} values Preference values
- * @returns {object}        Action object
+ * @param  {Object} values Preference values
+ * @returns {Object}        Action object
  */
 export function receivePreferences( values ) {
 	return {
@@ -60,8 +56,8 @@ export function fetchPreferences() {
  * on the setting endpoint.
  *
  * @param   {string|number}               key User preference key
- * @param   {string|number|object}      value User preference value
- * @returns {object}                        Action object
+ * @param   {string | number | Object | boolean | null}      value User preference value
+ * @returns {Object}                        Action object
  */
 export const setPreference = ( key, value ) => ( {
 	type: PREFERENCES_SET,
@@ -73,16 +69,11 @@ export const setPreference = ( key, value ) => ( {
  * Returns an action thunk that stores a preference and saves it to API.
  *
  * @param   {string|number}               key User preference key
- * @param   {string|number|object}      value User preference value
- * @returns { Function }                      Action thunk
+ * @param   {string | number | Object | null | boolean}      value User preference value
+ * @returns {(dispatch: import('calypso/state/types').CalypsoDispatch) => Promise} Action thunk
  */
 export const savePreference = ( key, value ) => ( dispatch ) => {
 	dispatch( setPreference( key, value ) );
-	dispatch( {
-		type: PREFERENCES_SAVE,
-		key,
-		value,
-	} );
 
 	const payload = {
 		[ USER_SETTING_KEY ]: {
@@ -100,7 +91,7 @@ export const savePreference = ( key, value ) => ( dispatch ) => {
 				value,
 			} );
 		} )
-		.catch( ( error ) => {
+		.catch( ( __, error ) => {
 			dispatch( {
 				type: PREFERENCES_SAVE_FAILURE,
 				error,

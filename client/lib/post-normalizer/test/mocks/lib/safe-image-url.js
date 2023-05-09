@@ -2,9 +2,7 @@
  * A stub that makes safe-image-url deterministic
  *
  */
-/**
- * Internal dependencies
- */
+
 import { getUrlParts, getUrlFromParts } from '@automattic/calypso-url';
 
 let returnValue;

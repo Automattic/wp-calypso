@@ -1,39 +1,20 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
+import * as chrono from 'chrono-node';
 import { localize } from 'i18n-calypso';
-import React from 'react';
-import chrono from 'chrono-node';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-/**
- * Supported languages
- */
-const supportedLanguages = [ 'en', 'jp' ];
-
-class InputChrono extends React.Component {
-	static displayName = 'InputChrono';
-
+class InputChrono extends Component {
 	static propTypes = {
 		value: PropTypes.string,
-		lang: PropTypes.string,
 		onSet: PropTypes.func,
 		placeholder: PropTypes.string,
 	};
 
 	static defaultProps = {
 		value: '',
-		lang: '',
 		placeholder: '',
 		onSet: () => {},
 	};
@@ -44,6 +25,7 @@ class InputChrono extends React.Component {
 
 	focused = false;
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! this.focused && this.props.value !== nextProps.value ) {
 			this.setState( { value: nextProps.value } );
@@ -72,7 +54,7 @@ class InputChrono extends React.Component {
 	};
 
 	setDateText = ( event ) => {
-		const date = chrono.parseDate( event.target.value );
+		const date = chrono[ this.props.locale ].parseDate( event.target.value );
 
 		if ( date ) {
 			this.setState( { value: this.props.moment( date ).calendar() } );
@@ -81,13 +63,13 @@ class InputChrono extends React.Component {
 	};
 
 	isLangSupported = ( lang ) => {
-		return supportedLanguages.indexOf( lang ) >= 0;
+		return !! chrono[ lang ]; // is there an export like `chrono.de` or `chrono.ja`?
 	};
 
 	render() {
 		return (
 			<div className="input-chrono">
-				{ this.isLangSupported( this.props.lang ) ? (
+				{ this.isLangSupported( this.props.locale ) ? (
 					<input
 						className="input-chrono__input"
 						value={ this.state.value }

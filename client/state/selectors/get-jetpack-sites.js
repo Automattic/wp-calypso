@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-
 import { createSelector } from '@automattic/state-utils';
 import getSites from 'calypso/state/selectors/get-sites';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -9,7 +5,7 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 /**
  * Get all Jetpack sites
  *
- * @param {object} state  Global state tree
+ * @param {Object} state  Global state tree
  * @returns {Array}        Array of Jetpack Sites objects
  */
 export default createSelector(

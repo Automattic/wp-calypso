@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { intersection, isEmpty, keys } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import flows from '../flows';
 import steps from '../steps';
 

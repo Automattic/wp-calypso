@@ -1,12 +1,27 @@
-/**
- * Internal dependencies
- */
+import { addLocaleToPath } from '@automattic/i18n-utils';
 import { addQueryArgs } from 'calypso/lib/url';
-import { addLocaleToPath } from 'calypso/lib/i18n-utils';
 
+/**
+ * @param {{
+	isJetpack?: boolean;
+	locale?: string;
+	redirectTo?: string;
+	twoFactorAuthType?: string;
+	socialConnect?: boolean;
+	emailAddress?: string;
+	socialService?: string;
+	oauth2ClientId?: string | number;
+	wccomFrom?: string;
+	site?: string;
+	useMagicLink?: boolean;
+	from?: string;
+	allowSiteConnection?: boolean;
+	signupUrl?: string;
+ }} args The arguments
+ * @returns {string}
+ */
 export function login( {
 	isJetpack = undefined,
-	isGutenboarding = undefined,
 	locale = undefined,
 	redirectTo = undefined,
 	twoFactorAuthType = undefined,
@@ -19,6 +34,11 @@ export function login( {
 	useMagicLink = undefined,
 	from = undefined,
 	allowSiteConnection = undefined,
+	signupUrl = undefined,
+	useQRCode = undefined,
+	isPartnerSignup = undefined,
+	action = undefined,
+	lostpasswordFlow = undefined,
 } = {} ) {
 	let url = '/log-in';
 
@@ -26,18 +46,18 @@ export function login( {
 		url += '/' + socialService + '/callback';
 	} else if ( twoFactorAuthType && isJetpack ) {
 		url += '/jetpack/' + twoFactorAuthType;
-	} else if ( twoFactorAuthType && isGutenboarding ) {
-		url += '/new/' + twoFactorAuthType;
 	} else if ( twoFactorAuthType ) {
 		url += '/' + twoFactorAuthType;
 	} else if ( socialConnect ) {
 		url += '/social-connect';
 	} else if ( isJetpack ) {
 		url += '/jetpack';
-	} else if ( isGutenboarding ) {
-		url += '/new';
 	} else if ( useMagicLink ) {
 		url += '/link';
+	} else if ( useQRCode ) {
+		url += '/qr';
+	} else if ( action ) {
+		url += '/' + action;
 	}
 
 	if ( locale && locale !== 'en' ) {
@@ -49,7 +69,9 @@ export function login( {
 	}
 
 	if ( redirectTo ) {
-		url = addQueryArgs( { redirect_to: redirectTo }, url );
+		url = redirectTo.includes( 'jetpack-sso' )
+			? redirectTo
+			: addQueryArgs( { redirect_to: redirectTo }, url );
 	}
 
 	if ( emailAddress ) {
@@ -68,8 +90,20 @@ export function login( {
 		url = addQueryArgs( { from }, url );
 	}
 
+	if ( signupUrl ) {
+		url = addQueryArgs( { signup_url: signupUrl }, url );
+	}
+
 	if ( allowSiteConnection ) {
 		url = addQueryArgs( { allow_site_connection: '1' }, url );
+	}
+
+	if ( isPartnerSignup ) {
+		url = addQueryArgs( { is_partner_signup: true }, url );
+	}
+
+	if ( lostpasswordFlow ) {
+		url = addQueryArgs( { lostpassword_flow: true }, url );
 	}
 
 	return url;

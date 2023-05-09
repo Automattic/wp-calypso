@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-
 import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { accountRecoverySettingsFetch } from 'calypso/state/account-recovery/settings/actions';
 import { isFetchingAccountRecoverySettings } from 'calypso/state/account-recovery/selectors';
+import { accountRecoverySettingsFetch } from 'calypso/state/account-recovery/settings/actions';
 
 class QueryAccountRecoverySettings extends Component {
 	componentDidMount() {

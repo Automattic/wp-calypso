@@ -1,33 +1,36 @@
-/**
- * External Dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { intervals } from './constants';
+import PropTypes from 'prop-types';
 import SegmentedControl from 'calypso/components/segmented-control';
+import { intervals } from './constants';
 
-/**
- * Style dependencies
- */
 import './intervals.scss';
 
 const Intervals = ( props ) => {
-	const { selected, pathTemplate, className, standalone } = props;
+	const {
+		selected,
+		pathTemplate,
+		className,
+		standalone,
+		compact = true,
+		intervalValues = intervals,
+		onChange,
+	} = props;
 	const classes = classnames( 'stats-navigation__intervals', className, {
 		'is-standalone': standalone,
 	} );
+
 	return (
-		<SegmentedControl compact primary className={ classes }>
-			{ intervals.map( ( i ) => {
-				const path = pathTemplate.replace( /{{ interval }}/g, i.value );
+		<SegmentedControl primary className={ classes } compact={ compact }>
+			{ intervalValues.map( ( i ) => {
+				const path = pathTemplate?.replace( /{{ interval }}/g, i.value );
 				return (
-					<SegmentedControl.Item key={ i.value } path={ path } selected={ i.value === selected }>
+					<SegmentedControl.Item
+						key={ i.value }
+						path={ path }
+						selected={ i.value === selected }
+						onClick={ () => onChange && onChange( i.value ) }
+					>
 						{ i.label }
 					</SegmentedControl.Item>
 				);
@@ -38,9 +41,11 @@ const Intervals = ( props ) => {
 
 Intervals.propTypes = {
 	className: PropTypes.string,
-	pathTemplate: PropTypes.string.isRequired,
+	pathTemplate: PropTypes.string,
 	selected: PropTypes.string.isRequired,
 	standalone: PropTypes.bool,
+	intervalValues: PropTypes.array,
+	onChange: PropTypes.func,
 };
 
 Intervals.defaultProps = {

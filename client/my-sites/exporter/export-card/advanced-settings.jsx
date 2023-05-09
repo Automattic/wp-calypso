@@ -1,19 +1,11 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import PostTypeOptions from './post-type-options';
 import SpinnerButton from 'calypso/components/spinner-button';
 import { isDateRangeValid as isExportDateRangeValid } from 'calypso/state/exporter/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import PostTypeOptions from './post-type-options';
 
 /**
  * Displays additional options for customising an export
@@ -22,7 +14,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
  * exported. Posts and Pages can also be filtered by Authors, Statuses,
  * and Date.
  */
-class AdvancedSettings extends React.Component {
+class AdvancedSettings extends Component {
 	static displayName = 'AdvancedSettings';
 
 	static propTypes = {

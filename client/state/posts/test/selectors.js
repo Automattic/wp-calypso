@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
+import PostQueryManager from 'calypso/lib/query-manager/post';
+import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
 import {
 	getPost,
 	getNormalizedPost,
@@ -25,8 +19,6 @@ import {
 	getPostPreviewUrl,
 	getSitePostsByTerm,
 } from '../selectors';
-import PostQueryManager from 'calypso/lib/query-manager/post';
-import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
 
 describe( 'selectors', () => {
 	beforeEach( () => {
@@ -51,7 +43,7 @@ describe( 'selectors', () => {
 				'3d097cb7c5473c169bba0eb8e3c6cb64'
 			);
 
-			expect( post ).to.be.null;
+			expect( post ).toBeNull();
 		} );
 
 		test( 'should return null if there is no manager associated with the path site', () => {
@@ -67,7 +59,7 @@ describe( 'selectors', () => {
 				'3d097cb7c5473c169bba0eb8e3c6cb64'
 			);
 
-			expect( post ).to.be.null;
+			expect( post ).toBeNull();
 		} );
 
 		test( 'should return the object for the post global ID', () => {
@@ -93,7 +85,7 @@ describe( 'selectors', () => {
 				'3d097cb7c5473c169bba0eb8e3c6cb64'
 			);
 
-			expect( post ).to.equal( postObject );
+			expect( post ).toEqual( postObject );
 		} );
 	} );
 
@@ -109,7 +101,7 @@ describe( 'selectors', () => {
 				'3d097cb7c5473c169bba0eb8e3c6cb64'
 			);
 
-			expect( normalizedPost ).to.be.null;
+			expect( normalizedPost ).toBeNull();
 		} );
 
 		test( 'should return a normalized copy of the post', () => {
@@ -144,8 +136,8 @@ describe( 'selectors', () => {
 				'3d097cb7c5473c169bba0eb8e3c6cb64'
 			);
 
-			expect( normalizedPost ).to.not.equal( postObject );
-			expect( normalizedPost ).to.eql( {
+			expect( normalizedPost ).not.toEqual( postObject );
+			expect( normalizedPost ).toEqual( {
 				...postObject,
 				title: 'Ribs & Chicken',
 				author: {
@@ -199,9 +191,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( getSitePosts( state, 2916284 ) ).to.have.members(
-				Object.values( postObjects[ 2916284 ] )
-			);
+			expect( getSitePosts( state, 2916284 ) ).toEqual( Object.values( postObjects[ 2916284 ] ) );
 		} );
 	} );
 
@@ -217,7 +207,7 @@ describe( 'selectors', () => {
 				413
 			);
 
-			expect( post ).to.be.null;
+			expect( post ).toBeNull();
 		} );
 
 		test( 'should return the object for the post site ID, post ID pair', () => {
@@ -241,7 +231,7 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( post ).to.equal( postObject );
+			expect( post ).toEqual( postObject );
 		} );
 	} );
 
@@ -257,7 +247,7 @@ describe( 'selectors', () => {
 				{ search: 'Ribs' }
 			);
 
-			expect( sitePosts ).to.be.null;
+			expect( sitePosts ).toBeNull();
 		} );
 
 		test( 'should return null if the query is not tracked to the query manager', () => {
@@ -276,7 +266,7 @@ describe( 'selectors', () => {
 				{ search: 'Ribs' }
 			);
 
-			expect( sitePosts ).to.be.null;
+			expect( sitePosts ).toBeNull();
 		} );
 
 		test( 'should return an array of normalized known queried posts', () => {
@@ -306,7 +296,7 @@ describe( 'selectors', () => {
 				{ search: 'Ribs' }
 			);
 
-			expect( sitePosts ).to.eql( [
+			expect( sitePosts ).toEqual( [
 				{
 					ID: 841,
 					site_ID: 2916284,
@@ -344,7 +334,7 @@ describe( 'selectors', () => {
 				{ search: 'Sweet', number: 1, page: 2 }
 			);
 
-			expect( sitePosts ).to.be.null;
+			expect( sitePosts ).toBeNull();
 		} );
 	} );
 
@@ -360,7 +350,7 @@ describe( 'selectors', () => {
 				{ search: 'Hello' }
 			);
 
-			expect( isRequesting ).to.be.false;
+			expect( isRequesting ).toBe( false );
 		} );
 
 		test( 'should return false if the site has not been queried for the specific query', () => {
@@ -376,7 +366,7 @@ describe( 'selectors', () => {
 				{ search: 'Hello' }
 			);
 
-			expect( isRequesting ).to.be.false;
+			expect( isRequesting ).toBe( false );
 		} );
 
 		test( 'should return true if the site has been queried for the specific query', () => {
@@ -392,7 +382,7 @@ describe( 'selectors', () => {
 				{ search: 'Hello' }
 			);
 
-			expect( isRequesting ).to.be.true;
+			expect( isRequesting ).toBe( true );
 		} );
 
 		test( 'should return false if the site has previously, but is not currently, querying for the specified query', () => {
@@ -408,7 +398,7 @@ describe( 'selectors', () => {
 				{ search: 'Hello' }
 			);
 
-			expect( isRequesting ).to.be.false;
+			expect( isRequesting ).toBe( false );
 		} );
 	} );
 
@@ -424,7 +414,7 @@ describe( 'selectors', () => {
 				{ search: 'Hello' }
 			);
 
-			expect( found ).to.be.null;
+			expect( found ).toBeNull();
 		} );
 
 		test( 'should return the found items for a site query', () => {
@@ -455,7 +445,7 @@ describe( 'selectors', () => {
 				{ search: 'Hello' }
 			);
 
-			expect( found ).to.equal( 1 );
+			expect( found ).toEqual( 1 );
 		} );
 
 		test( 'should return zero if in-fact there are zero items', () => {
@@ -479,7 +469,7 @@ describe( 'selectors', () => {
 				{ search: 'Hello' }
 			);
 
-			expect( found ).to.equal( 0 );
+			expect( found ).toEqual( 0 );
 		} );
 	} );
 
@@ -495,7 +485,7 @@ describe( 'selectors', () => {
 				{ search: 'Hello' }
 			);
 
-			expect( lastPage ).to.be.null;
+			expect( lastPage ).toBeNull();
 		} );
 
 		test( 'should return the last page value for a site query', () => {
@@ -526,7 +516,7 @@ describe( 'selectors', () => {
 				{ search: 'Hello' }
 			);
 
-			expect( lastPage ).to.equal( 1 );
+			expect( lastPage ).toEqual( 1 );
 		} );
 
 		test( 'should return the last page value for a site query, even if including page param', () => {
@@ -557,7 +547,7 @@ describe( 'selectors', () => {
 				{ search: 'Hello', page: 3, number: 1 }
 			);
 
-			expect( lastPage ).to.equal( 4 );
+			expect( lastPage ).toEqual( 4 );
 		} );
 
 		test( 'should return 1 if there are no found posts', () => {
@@ -581,7 +571,7 @@ describe( 'selectors', () => {
 				{ search: 'Hello' }
 			);
 
-			expect( lastPage ).to.equal( 1 );
+			expect( lastPage ).toEqual( 1 );
 		} );
 	} );
 
@@ -597,7 +587,7 @@ describe( 'selectors', () => {
 				{ search: 'Hello' }
 			);
 
-			expect( isLastPage ).to.be.null;
+			expect( isLastPage ).toBeNull();
 		} );
 
 		test( 'should return false if the query explicit value is not the last page', () => {
@@ -628,7 +618,7 @@ describe( 'selectors', () => {
 				{ search: 'Hello', page: 3, number: 1 }
 			);
 
-			expect( isLastPage ).to.be.false;
+			expect( isLastPage ).toBe( false );
 		} );
 
 		test( 'should return true if the query explicit value is the last page', () => {
@@ -659,7 +649,7 @@ describe( 'selectors', () => {
 				{ search: 'Hello', page: 4, number: 1 }
 			);
 
-			expect( isLastPage ).to.be.true;
+			expect( isLastPage ).toBe( true );
 		} );
 
 		test( 'should return true if the query implicit value is the last page', () => {
@@ -690,7 +680,7 @@ describe( 'selectors', () => {
 				{ search: 'Hello', number: 1 }
 			);
 
-			expect( isLastPage ).to.be.true;
+			expect( isLastPage ).toBe( true );
 		} );
 	} );
 
@@ -707,7 +697,7 @@ describe( 'selectors', () => {
 				{ search: '', number: 1 }
 			);
 
-			expect( sitePosts ).to.be.null;
+			expect( sitePosts ).toBeNull();
 		} );
 
 		test( 'should return null if the query manager has not received items for query', () => {
@@ -727,7 +717,7 @@ describe( 'selectors', () => {
 				{ search: '', number: 1 }
 			);
 
-			expect( sitePosts ).to.be.null;
+			expect( sitePosts ).toBeNull();
 		} );
 
 		test( 'should return a concatenated array of all site posts ignoring page', () => {
@@ -777,7 +767,7 @@ describe( 'selectors', () => {
 				{ search: '', number: 1 }
 			);
 
-			expect( sitePosts ).to.eql( [
+			expect( sitePosts ).toEqual( [
 				{
 					ID: 841,
 					site_ID: 2916284,
@@ -829,7 +819,7 @@ describe( 'selectors', () => {
 				{ search: 'Sweet', number: 1 }
 			);
 
-			expect( sitePosts ).to.eql( [
+			expect( sitePosts ).toEqual( [
 				{
 					ID: 1204,
 					site_ID: 2916284,
@@ -852,7 +842,7 @@ describe( 'selectors', () => {
 				{ search: 'hel' }
 			);
 
-			expect( isRequesting ).to.be.false;
+			expect( isRequesting ).toBe( false );
 		} );
 
 		test( 'should return true requesting for query at exact page', () => {
@@ -868,7 +858,7 @@ describe( 'selectors', () => {
 				{ search: 'hel', page: 4 }
 			);
 
-			expect( isRequesting ).to.be.true;
+			expect( isRequesting ).toBe( true );
 		} );
 
 		test( 'should return true requesting for query without page specified', () => {
@@ -884,7 +874,7 @@ describe( 'selectors', () => {
 				{ search: 'hel' }
 			);
 
-			expect( isRequesting ).to.be.true;
+			expect( isRequesting ).toBe( true );
 		} );
 
 		it( 'should return true for all-sites query', () => {
@@ -900,7 +890,7 @@ describe( 'selectors', () => {
 				{ status: 'publish,private', author: null }
 			);
 
-			expect( isRequesting ).to.be.true;
+			expect( isRequesting ).toBe( true );
 		} );
 
 		it( 'should return false for single site when requesting all sites', () => {
@@ -916,7 +906,7 @@ describe( 'selectors', () => {
 				{ status: 'publish,private', author: null }
 			);
 
-			expect( isRequesting ).to.be.false;
+			expect( isRequesting ).toBe( false );
 		} );
 	} );
 
@@ -950,7 +940,7 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( editedPost ).to.equal( postObject );
+			expect( editedPost ).toEqual( postObject );
 		} );
 
 		test( 'should return revisions for a new draft', () => {
@@ -970,7 +960,7 @@ describe( 'selectors', () => {
 				null
 			);
 
-			expect( editedPost ).to.eql( { title: 'Ribs &amp; Chicken' } );
+			expect( editedPost ).toEqual( { title: 'Ribs &amp; Chicken' } );
 		} );
 
 		test( 'should return revisions for a draft if the original is unknown', () => {
@@ -990,7 +980,7 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( editedPost ).to.eql( { title: 'Hello World!' } );
+			expect( editedPost ).toEqual( { title: 'Hello World!' } );
 		} );
 
 		test( 'should return revisions merged with the original post', () => {
@@ -1022,7 +1012,7 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( editedPost ).to.eql( { ...postObject, title: 'Hello World!' } );
+			expect( editedPost ).toEqual( { ...postObject, title: 'Hello World!' } );
 		} );
 
 		test( 'should return revisions merged with original post nested properties', () => {
@@ -1062,7 +1052,7 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( editedPost ).to.eql( {
+			expect( editedPost ).toEqual( {
 				...postObject,
 				discussion: {
 					comments_open: true,
@@ -1119,7 +1109,7 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( editedPost ).to.eql( {
+			expect( editedPost ).toEqual( {
 				ID: 841,
 				site_ID: 2916284,
 				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
@@ -1176,7 +1166,7 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( editedPost ).to.eql( {
+			expect( editedPost ).toEqual( {
 				ID: 841,
 				site_ID: 2916284,
 				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
@@ -1223,7 +1213,7 @@ describe( 'selectors', () => {
 			const editedPost2 = getEditedPost( state, 2916284, 841 );
 
 			// check for exact (===) equality
-			expect( editedPost1 ).to.equal( editedPost2 );
+			expect( editedPost1 ).toEqual( editedPost2 );
 		} );
 
 		test( 'should return updated post object if the original post changes', () => {
@@ -1288,9 +1278,9 @@ describe( 'selectors', () => {
 			const editedPost2 = getEditedPost( state2, 2916284, 841 );
 
 			// check that the values are different
-			expect( editedPost1 ).to.not.equal( editedPost2 );
-			expect( editedPost1.status ).to.equal( 'draft' );
-			expect( editedPost2.status ).to.equal( 'trash' );
+			expect( editedPost1 ).not.toEqual( editedPost2 );
+			expect( editedPost1.status ).toEqual( 'draft' );
+			expect( editedPost2.status ).toEqual( 'trash' );
 		} );
 
 		test( 'should return updated post object if the post edits change', () => {
@@ -1347,9 +1337,9 @@ describe( 'selectors', () => {
 			const editedPost2 = getEditedPost( state2, 2916284, 841 );
 
 			// check that the values are different
-			expect( editedPost1 ).to.not.equal( editedPost2 );
-			expect( editedPost1.title ).to.equal( 'Hello World' );
-			expect( editedPost2.title ).to.equal( 'Hello World!' );
+			expect( editedPost1 ).not.toEqual( editedPost2 );
+			expect( editedPost1.title ).toEqual( 'Hello World' );
+			expect( editedPost2.title ).toEqual( 'Hello World!' );
 		} );
 	} );
 
@@ -1366,7 +1356,7 @@ describe( 'selectors', () => {
 				2916284
 			);
 
-			expect( postEdits ).to.be.null;
+			expect( postEdits ).toBeNull();
 		} );
 
 		test( 'should return null if no edits exist for an existing post', () => {
@@ -1382,7 +1372,7 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( postEdits ).to.be.null;
+			expect( postEdits ).toBeNull();
 		} );
 
 		test( 'should return the edited attributes for a new post', () => {
@@ -1401,7 +1391,7 @@ describe( 'selectors', () => {
 				2916284
 			);
 
-			expect( postEdits ).to.eql( {
+			expect( postEdits ).toEqual( {
 				title: 'Hello World!',
 			} );
 		} );
@@ -1423,7 +1413,7 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( postEdits ).to.eql( {
+			expect( postEdits ).toEqual( {
 				title: 'Hello World!',
 			} );
 		} );
@@ -1444,7 +1434,7 @@ describe( 'selectors', () => {
 				'title'
 			);
 
-			expect( editedPostValue ).to.be.undefined;
+			expect( editedPostValue ).toBeUndefined();
 		} );
 
 		test( 'should return the assigned post value', () => {
@@ -1477,7 +1467,7 @@ describe( 'selectors', () => {
 				'title'
 			);
 
-			expect( editedPostValue ).to.equal( 'Hello World!' );
+			expect( editedPostValue ).toEqual( 'Hello World!' );
 		} );
 
 		test( 'should return the assigned nested post value', () => {
@@ -1518,7 +1508,7 @@ describe( 'selectors', () => {
 				'discussion.pings_open'
 			);
 
-			expect( editedPostValue ).to.be.true;
+			expect( editedPostValue ).toBe( true );
 		} );
 	} );
 
@@ -1538,7 +1528,7 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( previewUrl ).to.be.null;
+			expect( previewUrl ).toBeNull();
 		} );
 
 		test( 'should return null if the post has no URL', () => {
@@ -1566,7 +1556,7 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( previewUrl ).to.be.null;
+			expect( previewUrl ).toBeNull();
 		} );
 
 		test( 'should return null if the post is trashed', () => {
@@ -1596,7 +1586,7 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( previewUrl ).to.be.null;
+			expect( previewUrl ).toBeNull();
 		} );
 
 		test( 'should prefer the post preview URL if available', () => {
@@ -1627,7 +1617,7 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( previewUrl ).to.equal( 'https://example.com/preview-url' );
+			expect( previewUrl ).toEqual( 'https://example.com/preview-url' );
 		} );
 
 		test( 'should use post URL if preview URL not available', () => {
@@ -1657,7 +1647,7 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( previewUrl ).to.equal( 'https://example.com/post-url' );
+			expect( previewUrl ).toEqual( 'https://example.com/post-url' );
 		} );
 
 		test( 'should change http to https if mapped domain', () => {
@@ -1699,7 +1689,7 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( previewUrl ).to.equal( 'https://example.wordpress.com/post-url' );
+			expect( previewUrl ).toEqual( 'https://example.wordpress.com/post-url' );
 		} );
 
 		test( 'should append preview query argument to non-published posts', () => {
@@ -1729,7 +1719,7 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( previewUrl ).to.equal( 'https://example.com/post-url?other_arg=1&preview=true' );
+			expect( previewUrl ).toEqual( 'https://example.com/post-url?other_arg=1&preview=true' );
 		} );
 	} );
 
@@ -1764,9 +1754,9 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( getSitePostsByTerm( state, 2916284, 'category', 10 ) ).to.have.members( [
-				postObjects[ 2916284 ][ '3d097cb7c5473c169bba0eb8e3c6cb64' ],
-			] );
+			expect( getSitePostsByTerm( state, 2916284, 'category', 10 ) ).toEqual(
+				expect.arrayContaining( [ postObjects[ 2916284 ][ '3d097cb7c5473c169bba0eb8e3c6cb64' ] ] )
+			);
 		} );
 	} );
 } );

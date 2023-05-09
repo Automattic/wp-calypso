@@ -1,6 +1,4 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
 import page from 'page';
 
 /**
@@ -26,13 +24,14 @@ export function redirectTo( url ) {
 
 /**
  * Get the Import Section URL depending on if the site is Jetpack or WordPress.com Simple site.
+ * If the unified importer is enabled always return the Calypso page.
  *
  * @param siteSlug The Site Slug
  * @param isJetpack If the site is a Jetpack site
  * @returns {string} The URL that points to the import section
  */
 export function getImportSectionLocation( siteSlug, isJetpack = false ) {
-	return isJetpack
+	return isJetpack && ! config.isEnabled( 'importer/unified' )
 		? `https://${ siteSlug }/wp-admin/import.php`
 		: `/import/${ siteSlug }/?engine=wordpress`;
 }

@@ -1,20 +1,8 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { localizeUrl } from 'calypso/lib/i18n-utils';
-import EducationalContent from '../educational-content';
-import { EDUCATION_FREE_PHOTO_LIBRARY } from 'calypso/my-sites/customer-home/cards/constants';
-
-/**
- * Image dependencies
- */
 import freePhotoLibraryVideoPrompt from 'calypso/assets/images/customer-home/illustration--secondary-free-photo-library.svg';
+import { EDUCATION_FREE_PHOTO_LIBRARY } from 'calypso/my-sites/customer-home/cards/constants';
+import EducationalContent from '../educational-content';
 
 const FreePhotoLibrary = () => {
 	const translate = useTranslate();
@@ -34,6 +22,8 @@ const FreePhotoLibrary = () => {
 			] }
 			illustration={ freePhotoLibraryVideoPrompt }
 			cardName={ EDUCATION_FREE_PHOTO_LIBRARY }
+			height="115"
+			width="200"
 		/>
 	);
 };

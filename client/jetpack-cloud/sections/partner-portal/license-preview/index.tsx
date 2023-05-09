@@ -1,32 +1,21 @@
-/**
- * External dependencies
- */
-import React, { ReactElement, useCallback, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { getUrlParts } from '@automattic/calypso-url';
+import { Button, Gridicon } from '@automattic/components';
 import { getQueryArg, removeQueryArgs } from '@wordpress/url';
-import { useTranslate } from 'i18n-calypso';
 import classnames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getUrlParts } from '@automattic/calypso-url';
-import { infoNotice } from 'calypso/state/notices/actions';
-import { getLicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
-import { LicenseState, LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
-import { Button } from '@automattic/components';
-import ClipboardButton from 'calypso/components/forms/clipboard-button';
-import Gridicon from 'calypso/components/gridicon';
+import { useCallback, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import FormattedDate from 'calypso/components/formatted-date';
-import LicenseListItem from 'calypso/jetpack-cloud/sections/partner-portal/license-list-item';
 import LicenseDetails from 'calypso/jetpack-cloud/sections/partner-portal/license-details';
-
-/**
- * Style dependencies
- */
+import LicenseListItem from 'calypso/jetpack-cloud/sections/partner-portal/license-list-item';
+import { LicenseState, LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import { getLicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
+import { addQueryArgs } from 'calypso/lib/url';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { infoNotice, errorNotice } from 'calypso/state/notices/actions';
+import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
 import './style.scss';
 
 interface Props {
@@ -51,17 +40,22 @@ export default function LicensePreview( {
 	attachedAt,
 	revokedAt,
 	filter,
-}: Props ): ReactElement {
+}: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const isHighlighted = getQueryArg( window.location.href, 'highlight' ) === licenseKey;
 	const [ isOpen, setOpen ] = useState( isHighlighted );
+	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
 	const licenseState = getLicenseState( attachedAt, revokedAt );
 	const domain = siteUrl ? getUrlParts( siteUrl ).hostname || siteUrl : '';
 	const showDomain =
 		domain && [ LicenseState.Attached, LicenseState.Revoked ].indexOf( licenseState ) !== -1;
-	const justIssued =
-		moment.utc( issuedAt, 'YYYY-MM-DD HH:mm:ss' ) > moment.utc().subtract( 1, 'minute' );
+
+	const oneMinuteAgo = moment.utc().subtract( 1, 'minute' );
+
+	const justIssued = moment.utc( issuedAt, 'YYYY-MM-DD HH:mm:ss' ) > oneMinuteAgo;
+
+	const justAssigned = moment.utc( attachedAt, 'YYYY-MM-DD HH:mm:ss' ) > oneMinuteAgo;
 
 	const open = useCallback( () => {
 		setOpen( ! isOpen );
@@ -72,6 +66,33 @@ export default function LicensePreview( {
 		dispatch( infoNotice( translate( 'License copied!' ), { duration: 2000 } ) );
 		dispatch( recordTracksEvent( 'calypso_partner_portal_license_list_copy_license_click' ) );
 	}, [ dispatch, translate ] );
+
+	const assign = useCallback( () => {
+		const redirectUrl = addQueryArgs( { key: licenseKey }, '/partner-portal/assign-license' );
+		if ( paymentMethodRequired ) {
+			const noticeLinkHref = addQueryArgs(
+				{
+					return: redirectUrl,
+				},
+				'/partner-portal/payment-methods/add'
+			);
+			const errorMessage = translate(
+				'A primary payment method is required.{{br/}} ' +
+					'{{a}}Try adding a new payment method{{/a}} or contact support.',
+				{
+					components: {
+						a: <a href={ noticeLinkHref } />,
+						br: <br />,
+					},
+				}
+			);
+
+			dispatch( errorNotice( errorMessage ) );
+			return;
+		}
+
+		page.redirect( redirectUrl );
+	}, [ paymentMethodRequired, translate, dispatch, errorNotice, licenseKey ] );
 
 	useEffect( () => {
 		if ( isHighlighted ) {
@@ -113,10 +134,17 @@ export default function LicensePreview( {
 							</span>
 						) }
 
-						{ justIssued && (
+						{ justIssued && ! justAssigned && (
 							<span className="license-preview__tag license-preview__tag--is-just-issued">
 								<Gridicon icon="checkmark-circle" size={ 18 } />
 								{ translate( 'Just issued' ) }
+							</span>
+						) }
+
+						{ justAssigned && (
+							<span className="license-preview__tag license-preview__tag--is-assigned">
+								<Gridicon icon="checkmark-circle" size={ 18 } />
+								{ translate( 'Successfully assigned' ) }
 							</span>
 						) }
 					</h3>
@@ -161,14 +189,9 @@ export default function LicensePreview( {
 
 				<div>
 					{ licenseState === LicenseState.Detached && (
-						<ClipboardButton
-							text={ licenseKey }
-							className="license-preview__copy-license-key"
-							compact
-							onCopy={ onCopyLicense }
-						>
-							{ translate( 'Copy License' ) }
-						</ClipboardButton>
+						<Button compact onClick={ assign }>
+							{ translate( 'Assign License' ) }
+						</Button>
 					) }
 				</div>
 
@@ -196,7 +219,7 @@ export default function LicensePreview( {
 	);
 }
 
-export function LicensePreviewPlaceholder(): ReactElement {
+export function LicensePreviewPlaceholder() {
 	const translate = useTranslate();
 
 	return (

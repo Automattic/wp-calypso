@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import Gridicon from 'calypso/components/gridicon';
+import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import AutomatticLogo from 'calypso/components/automattic-logo';
-import { Button } from '@automattic/components';
 import FormButton from 'calypso/components/forms/form-button';
 import LoggedOutForm from 'calypso/components/logged-out-form';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
@@ -19,9 +11,6 @@ import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import SocialSignupForm from './social';
 
-/**
- * Style dependencies
- */
 import './crowdsignal.scss';
 
 class CrowdsignalSignupForm extends Component {

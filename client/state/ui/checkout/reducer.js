@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { SECTION_SET } from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 
 export const upgradeIntent = withSchemaValidation( { type: 'string' }, ( state = '', action ) => {
 	if ( action.type !== SECTION_SET ) {
@@ -14,7 +11,11 @@ export const upgradeIntent = withSchemaValidation( { type: 'string' }, ( state =
 		return state;
 	}
 
-	if ( [ 'checkout', 'checkout-thank-you', 'plans' ].includes( action.section.name ) ) {
+	if (
+		[ 'checkout', 'checkout-pending', 'checkout-thank-you', 'plans' ].includes(
+			action.section.name
+		)
+	) {
 		// Leave the intent alone for sections that should not clear it
 		return state;
 	}

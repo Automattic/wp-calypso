@@ -1,7 +1,4 @@
-/**
- * External dependencies
- */
-import { filter, includes, mapValues } from 'lodash';
+import { filter, mapValues } from 'lodash';
 
 function validateAllFields( fieldValues, domainName ) {
 	return mapValues( fieldValues, ( value, fieldName ) => {
@@ -25,7 +22,7 @@ function validateField( { name, value, type, domainName } ) {
 		case 'data':
 			return isValidData( value, type );
 		case 'protocol':
-			return includes( [ 'tcp', 'udp', 'tls' ], value );
+			return [ '_tcp', '_udp', '_tls' ].includes( value );
 		case 'weight':
 		case 'aux':
 		case 'port': {
@@ -86,11 +83,6 @@ function getNormalizedData( record, selectedDomainName ) {
 	if ( record.target ) {
 		normalizedRecord.target = getFieldWithDot( record.target );
 	}
-	// The leading '_' in SRV's service field is a convention
-	// The record itself should not contain it
-	if ( record.service ) {
-		normalizedRecord.service = record.service.replace( /^_+/, '' );
-	}
 
 	return normalizedRecord;
 }
@@ -117,11 +109,11 @@ function isRootDomain( name, domainName ) {
 		'@.' + domainName,
 		'@.' + domainName + '.',
 	];
-	return ! name || includes( rootDomainVariations, name );
+	return ! name || rootDomainVariations.includes( name );
 }
 
 function canBeRootDomain( type ) {
-	return includes( [ 'A', 'MX', 'SRV', 'TXT' ], type );
+	return [ 'A', 'AAAA', 'MX', 'SRV', 'TXT' ].includes( type );
 }
 
 function getFieldWithDot( field ) {

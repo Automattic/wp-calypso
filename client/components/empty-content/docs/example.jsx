@@ -1,12 +1,3 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import EmptyContent from 'calypso/components/empty-content';
 
 const EmptyContentExample = ( props ) => {
@@ -32,7 +23,7 @@ EmptyContentExample.defaultProps = {
 							Secondary action
 						</a>
 					}
-					illustration={ '/calypso/images/illustrations/illustration-empty-results.svg' }
+					illustration="/calypso/images/illustrations/illustration-empty-results.svg"
 					illustrationWidth={ 400 }
 				/>
 			</div>

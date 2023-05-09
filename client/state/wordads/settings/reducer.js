@@ -1,8 +1,3 @@
-/**
- * Internal dependencies
- */
-import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
-import { items as itemsSchema } from './schema';
 import {
 	WORDADS_SETTINGS_RECEIVE,
 	WORDADS_SETTINGS_SAVE,
@@ -10,14 +5,16 @@ import {
 	WORDADS_SETTINGS_SAVE_SUCCESS,
 	WORDADS_SETTINGS_UPDATE,
 } from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
+import { items as itemsSchema } from './schema';
 
 /**
  * Returns the updated items state after an action has been dispatched. The
  * state maps site ID to the WordAds settings object.
  *
- * @param  {object}  state  Current state
- * @param  {object}  action Action payload
- * @returns {object}        Updated state
+ * @param  {Object}  state  Current state
+ * @param  {Object}  action Action payload
+ * @returns {Object}        Updated state
  */
 export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -49,9 +46,9 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
  * Returns the updated request state after an action has been dispatched. The
  * state maps site ID to a boolean, indicating whether settings are being saved for that site.
  *
- * @param  {object}  state  Current state
- * @param  {object}  action Action payload
- * @returns {object}        Updated state
+ * @param  {Object}  state  Current state
+ * @param  {Object}  action Action payload
+ * @returns {Object}        Updated state
  */
 export const requests = ( state = {}, action ) => {
 	switch ( action.type ) {

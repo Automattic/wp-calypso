@@ -1,0 +1,127 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "calypso/my-sites/stats/modernized-layout-styles.scss";
+
+$break-large-stats-countries: 1280px;
+
+// Countries
+.stats__email-detail {
+	&.main {
+		max-width: $stats-sections-max-width;
+	}
+
+	.main-container {
+		padding: 32px 0;
+	}
+
+	.no-data {
+		text-align: center;
+	}
+
+	.section-nav {
+		box-shadow: inset 0 -1px 0 #0000000d;
+		margin-bottom: 16px;
+	}
+
+	> div > h1 {
+		// stylelint-disable-next-line
+		font-size: 32px;
+		font-weight: 400;
+		line-height: 40px;
+		// stylelint-disable-next-line
+		font-family: Recoleta, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Neue", sans-serif;
+		margin-bottom: 16px;
+	}
+
+	.stats__module-list {
+		align-items: stretch;
+		display: grid;
+		grid-template-columns: repeat(12, 1fr);
+		grid-template-rows: repeat(3, min-content);
+		gap: 32px 24px;
+		grid-template-areas:
+			"country country country country country country country country country country country country"
+			"devices devices devices devices devices devices clients clients clients clients clients clients"
+			"links links links links links links empty empty empty empty empty empty";
+
+		@media ( max-width: $break-large ) {
+			grid-template-columns: repeat(8, 1fr);
+			grid-template-rows: repeat(3, min-content);
+			grid-template-areas:
+				"country country country country country country country country"
+				"devices devices devices devices clients clients clients clients"
+				"links links links links empty empty empty empty";
+		}
+
+		// Mobile
+		@media ( max-width: $break-medium ) {
+			grid-template-columns: repeat(4, 1fr);
+			grid-template-rows: repeat(4, min-content);
+			gap: 0;
+			grid-template-areas:
+				"country country country country"
+				"devices devices devices devices"
+				"clients clients clients clients"
+				"links links links links";
+		}
+	}
+
+	.list-countries {
+		grid-area: country;
+		display: grid;
+		gap: 0 24px;
+		grid-template-columns: 7fr 5fr;
+		grid-template-areas:
+			"map list"
+			"more more";
+
+		@media ( max-width: $break-large-stats-countries ) {
+			grid-template-columns: 100%;
+			grid-template-areas:
+				"map"
+				"list"
+				"more";
+		}
+
+		.stats-card--hero {
+			grid-area: map;
+			padding-bottom: 0;
+		}
+		.stats-card--header-and-body {
+			grid-area: list;
+		}
+		.stats-card--footer {
+			grid-area: more;
+		}
+	}
+
+	.list-devices {
+		grid-area: devices;
+	}
+
+	.list-clients {
+		grid-area: clients;
+	}
+
+	.list-links {
+		grid-area: links;
+	}
+
+	.stats__module-wrapper--countries {
+		.module-content-text {
+			grid-column: map-start / list-end;
+			margin-bottom: 24px;
+		}
+		.stats-geochart {
+			grid-area: map;
+		}
+		.stats__list-wrapper {
+			grid-area: list;
+		}
+		.stats-module__expand {
+			grid-area: more;
+		}
+		.module-content-list:last-child {
+			padding-bottom: 0;
+		}
+	}
+}

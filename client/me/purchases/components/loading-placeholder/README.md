@@ -3,10 +3,8 @@
 ## Usage
 
 ```js
-import React from 'react';
-import { localize } from 'i18n-calypso';
-
 import { Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
 import LoadingPlaceholder from 'calypso/me/purchases/components/loading-placeholder';
 
 const MyComponentLoadingPlaceholder = ( { translate } ) => (

@@ -1,10 +1,10 @@
 .importer__mapping-header {
-	border-bottom: 1px solid var( --color-border );
+	border-bottom: 1px solid var(--color-border);
 	margin-bottom: 0;
 	padding-bottom: 0.5em;
 
 	font-size: $font-body-extra-small;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 
 	@include clear-fix;
 }

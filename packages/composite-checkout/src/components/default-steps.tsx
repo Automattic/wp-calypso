@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import CheckoutOrderSummaryStep, {
 	CheckoutOrderSummaryStepTitle,
 	CheckoutOrderSummary,
 } from './checkout-order-summary';
-import CheckoutReviewOrder, { CheckoutReviewOrderTitle } from './checkout-review-order';
 import CheckoutPaymentMethods, { CheckoutPaymentMethodsTitle } from './checkout-payment-methods';
+import CheckoutReviewOrder, { CheckoutReviewOrderTitle } from './checkout-review-order';
 import type { CheckoutStepProps, OrderSummaryData } from '../types';
 
 export function getDefaultOrderSummary(): OrderSummaryData {
@@ -34,9 +26,9 @@ export function getDefaultOrderSummaryStep(): CheckoutStepProps {
 
 export function getDefaultPaymentMethodStep(): CheckoutStepProps {
 	return {
-		stepId: 'payment-method',
+		stepId: 'payment-method-step',
 		isCompleteCallback: () => true,
-		className: 'checkout__payment-methods-step',
+		className: 'checkout__payment-method-step',
 		titleContent: <CheckoutPaymentMethodsTitle />,
 		activeStepContent: <CheckoutPaymentMethods isComplete={ false } />,
 		completeStepContent: <CheckoutPaymentMethods summary isComplete={ true } />,
@@ -45,7 +37,7 @@ export function getDefaultPaymentMethodStep(): CheckoutStepProps {
 
 export function getDefaultOrderReviewStep(): CheckoutStepProps {
 	return {
-		stepId: 'order-review',
+		stepId: 'order-review-step',
 		isCompleteCallback: () => true,
 		className: 'checkout__review-order-step',
 		titleContent: <CheckoutReviewOrderTitle />,

@@ -1,43 +1,33 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Fragment, useEffect, useRef } from 'react';
-import { connect } from 'react-redux';
-import { times } from 'lodash';
+import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { times } from 'lodash';
+import PropTypes from 'prop-types';
+import { Fragment, useEffect, useRef } from 'react';
+import { connect } from 'react-redux';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import SectionHeader from 'calypso/components/section-header';
+import { activateModule } from 'calypso/state/jetpack/modules/actions';
+import isFetchingJetpackModules from 'calypso/state/selectors/is-fetching-jetpack-modules';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import { getExpandedService } from 'calypso/state/sharing/selectors';
+import { requestKeyringServices } from 'calypso/state/sharing/services/actions';
 import {
 	getEligibleKeyringServices,
 	isKeyringServicesFetching,
 } from 'calypso/state/sharing/services/selectors';
-import { getExpandedService } from 'calypso/state/sharing/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import Notice from 'calypso/components/notice';
-import SectionHeader from 'calypso/components/section-header';
-import Service from './service';
-import * as Components from './services';
-import ServicePlaceholder from './service-placeholder';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import NoticeAction from 'calypso/components/notice/notice-action';
-import { activateModule } from 'calypso/state/jetpack/modules/actions';
-import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
-import isFetchingJetpackModules from 'calypso/state/selectors/is-fetching-jetpack-modules';
-import { requestKeyringServices } from 'calypso/state/sharing/services/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import Service from './service';
+import ServicePlaceholder from './service-placeholder';
+import * as Components from './services';
 
-/**
- * Style dependencies
- */
 import './services-group.scss';
 
 /**
  * Module constants
  */
-const NUMBER_OF_PLACEHOLDERS = 4;
+const NUMBER_OF_PLACEHOLDERS = config.isEnabled( 'mastodon' ) ? 5 : 4;
 
 const serviceWarningLevelToNoticeStatus = ( level ) => {
 	switch ( level ) {
@@ -61,6 +51,7 @@ const SharingServicesGroup = ( {
 	isPublicizeActive,
 	fetchServices,
 	activatePublicize,
+	numberOfPlaceholders = NUMBER_OF_PLACEHOLDERS,
 } ) => {
 	useEffect( () => {
 		if ( expandedService && ! isFetching ) {
@@ -105,14 +96,16 @@ const SharingServicesGroup = ( {
 			<SectionHeader label={ title } />
 			<ul className="sharing-services-group__services">
 				{ showPlaceholder &&
-					times( NUMBER_OF_PLACEHOLDERS, ( index ) => (
+					times( numberOfPlaceholders, ( index ) => (
 						<ServicePlaceholder key={ 'service-placeholder-' + index } />
 					) ) }
 				{ showPublicizeNotice && (
 					<Notice
 						status="is-warning"
 						showDismiss={ false }
-						text={ translate( 'Publicize posts requires the Publicize connections to be enabled' ) }
+						text={ translate(
+							'Connect to your social media accounts to enable sharing posts with Jetpack Social.'
+						) }
 					>
 						<NoticeAction onClick={ activatePublicize }>{ translate( 'Enable' ) }</NoticeAction>
 					</Notice>
@@ -150,7 +143,7 @@ const SharingServicesGroup = ( {
 SharingServicesGroup.propTypes = {
 	isFetching: PropTypes.bool,
 	services: PropTypes.array,
-	title: PropTypes.string.isRequired,
+	title: PropTypes.node.isRequired,
 	type: PropTypes.string.isRequired,
 	expandedService: PropTypes.string,
 };
@@ -169,7 +162,7 @@ const mapStateToProps = ( state, { type } ) => {
 		services: getEligibleKeyringServices( state, siteId, type ),
 		expandedService: getExpandedService( state ),
 		isJetpack: isJetpackSite( state, siteId ),
-		isPublicizeActive: isJetpackModuleActive( state, siteId, 'publicize' ),
+		isPublicizeActive: isJetpackModuleActive( state, siteId, 'publicize', true ),
 	};
 };
 

@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
 import freeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
 import { receiveFeedSearch } from '../actions';
 import { items } from '../reducer';
 
@@ -34,7 +26,7 @@ describe( 'reducer', () => {
 	describe( '#items()', () => {
 		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should add query results to an empty object', () => {
@@ -42,7 +34,7 @@ describe( 'reducer', () => {
 			const action = receiveFeedSearch( queryKey, feeds );
 			const nextState = items( prevState, action );
 
-			expect( nextState ).to.eql( {
+			expect( nextState ).toEqual( {
 				[ queryKey ]: feeds,
 			} );
 		} );
@@ -53,7 +45,7 @@ describe( 'reducer', () => {
 			};
 			const action = receiveFeedSearch( queryKey, feeds );
 			const nextState = items( prevState, action );
-			expect( nextState ).to.eql( {
+			expect( nextState ).toEqual( {
 				...prevState,
 				[ queryKey ]: feeds,
 			} );

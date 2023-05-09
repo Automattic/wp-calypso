@@ -1,48 +1,39 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 
-/**
- * External dependencies
- */
-
+import { Card, Button, CompactCard, Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { createHigherOrderComponent } from '@wordpress/compose';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { Card, Button, CompactCard } from '@automattic/components';
-import Gridicon from 'calypso/components/gridicon';
-import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import AuthorSelector from 'calypso/blocks/author-selector';
+import FormButton from 'calypso/components/forms/form-button';
+import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
-import FormButton from 'calypso/components/forms/form-button';
-import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
-import User from 'calypso/components/user';
-import AuthorSelector from 'calypso/blocks/author-selector';
-import accept from 'calypso/lib/accept';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import Gravatar from 'calypso/components/gravatar';
-import { localize } from 'i18n-calypso';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import User from 'calypso/components/user';
+import useExternalContributorsQuery from 'calypso/data/external-contributors/use-external-contributors';
+import useRemoveExternalContributorMutation from 'calypso/data/external-contributors/use-remove-external-contributor-mutation';
+import accept from 'calypso/lib/accept';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import {
-	requestExternalContributors,
-	requestExternalContributorsRemoval,
-} from 'calypso/state/data-getters';
-import { httpData } from 'calypso/state/data-layer/http-data';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { getSite } from 'calypso/state/sites/selectors';
 import withDeleteUser from './with-delete-user';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class DeleteUser extends React.Component {
+class DeleteUser extends Component {
 	static displayName = 'DeleteUser';
 
 	static propTypes = {
 		isMultisite: PropTypes.bool,
+		isAtomic: PropTypes.bool,
 		isJetpack: PropTypes.bool,
 		siteId: PropTypes.number,
 		user: PropTypes.object,
@@ -50,7 +41,6 @@ class DeleteUser extends React.Component {
 	};
 
 	state = {
-		showDialog: false,
 		radioOption: false,
 		reassignUser: false,
 		authorSelectorToggled: false,
@@ -163,7 +153,7 @@ class DeleteUser extends React.Component {
 						'Clicked Confirm Remove User on Edit User Network Site'
 					);
 					if ( 'external' === contributorType ) {
-						requestExternalContributorsRemoval(
+						this.props.removeExternalContributor(
 							siteId,
 							user.linked_user_ID ? user.linked_user_ID : user.ID
 						);
@@ -198,7 +188,7 @@ class DeleteUser extends React.Component {
 		}
 
 		if ( 'external' === contributorType ) {
-			requestExternalContributorsRemoval(
+			this.props.removeExternalContributor(
 				siteId,
 				user.linked_user_ID ? user.linked_user_ID : user.ID
 			);
@@ -234,6 +224,7 @@ class DeleteUser extends React.Component {
 
 	renderSingleSite = () => {
 		const { translate } = this.props;
+
 		return (
 			<Card className="delete-user__single-site">
 				<form onSubmit={ this.deleteUser }>
@@ -303,7 +294,13 @@ class DeleteUser extends React.Component {
 	renderMultisite = () => {
 		return (
 			<CompactCard className="delete-user__multisite">
-				<Button borderless className="delete-user__remove-user" onClick={ this.removeUser }>
+				<Button
+					primary
+					borderless
+					className="delete-user__remove-user"
+					onClick={ this.removeUser }
+					disabled={ 'pending' === this.props.contributorType }
+				>
 					<Gridicon icon="trash" />
 					<span>{ this.getRemoveText() }</span>
 				</Button>
@@ -312,39 +309,89 @@ class DeleteUser extends React.Component {
 	};
 
 	render() {
+		const { translate, isAtomic, isJetpack, isMultisite, siteOwner, user, currentUser } =
+			this.props;
+
 		// A user should not be able to remove themself.
-		if ( ! this.props.isJetpack && this.props.user.ID === this.props.currentUser.ID ) {
+		if ( ! isJetpack && user.ID === currentUser.ID ) {
 			return null;
 		}
-		if ( this.props.isJetpack && this.props.user.linked_user_ID === this.props.currentUser.ID ) {
+		if ( isJetpack && user.linked_user_ID === currentUser.ID ) {
 			return null;
 		}
 
-		return this.props.isMultisite ? this.renderMultisite() : this.renderSingleSite();
+		// A user should not be able to remove the Atomic or non-Jetpack site owner.
+		if (
+			( ! isJetpack && user.ID === siteOwner ) ||
+			( isAtomic && user.linked_user_ID === siteOwner )
+		) {
+			return (
+				<Card className="delete-user__single-site">
+					<FormSectionHeading>{ this.getDeleteText() }</FormSectionHeading>
+					<p className="delete-user__explanation">
+						{ translate(
+							'You cannot delete the site owner. Please transfer ownership of this site to a different account before deleting this user. {{supportLink}}Learn more.{{/supportLink}}',
+							{
+								components: {
+									supportLink: (
+										<InlineSupportLink
+											supportPostId={ 102743 }
+											supportLink={ localizeUrl(
+												'https://wordpress.com/support/transferring-a-site-to-another-wordpress-com-account/'
+											) }
+										/>
+									),
+								},
+							}
+						) }
+					</p>
+				</Card>
+			);
+		}
+
+		return isMultisite ? this.renderMultisite() : this.renderSingleSite();
 	}
 }
 
 const getContributorType = ( externalContributors, userId ) => {
-	if ( externalContributors.data ) {
-		return externalContributors.data.includes( userId ) ? 'external' : 'standard';
+	if ( externalContributors ) {
+		return externalContributors.includes( userId ) ? 'external' : 'standard';
 	}
 	return 'pending';
 };
 
+const withExternalContributor = createHigherOrderComponent(
+	( Wrapped ) => ( props ) => {
+		const { siteId, user } = props;
+		const { data: externalContributors } = useExternalContributorsQuery( siteId );
+		const { removeExternalContributor } = useRemoveExternalContributorMutation();
+		const contributorType = getContributorType(
+			externalContributors,
+			user?.linked_user_ID ?? user?.ID
+		);
+
+		return (
+			<Wrapped
+				{ ...props }
+				contributorType={ contributorType }
+				removeExternalContributor={ removeExternalContributor }
+			/>
+		);
+	},
+	'WithExternalContributor'
+);
+
 export default localize(
 	connect(
-		( state, { siteId, user } ) => {
-			const userId = user && user.ID;
-			const linkedUserId = user && user.linked_user_ID;
-			const externalContributors = siteId ? requestExternalContributors( siteId ) : httpData.empty;
+		( state, { siteId } ) => {
+			const site = getSite( state, siteId );
+
 			return {
+				siteOwner: site?.site_owner,
 				currentUser: getCurrentUser( state ),
-				contributorType: getContributorType(
-					externalContributors,
-					undefined !== linkedUserId ? linkedUserId : userId
-				),
+				isAtomic: isSiteAutomatedTransfer( state, siteId ),
 			};
 		},
 		{ recordGoogleEvent }
-	)( withDeleteUser( DeleteUser ) )
+	)( withDeleteUser( withExternalContributor( DeleteUser ) ) )
 );

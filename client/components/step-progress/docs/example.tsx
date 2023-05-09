@@ -1,18 +1,12 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent, useState } from 'react';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
+import { FunctionComponent, useState } from 'react';
 import StepProgress from 'calypso/components/step-progress';
+import type { ClickHandler } from '../index';
 
 const StepProgressExample: FunctionComponent = () => {
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 
-	const steps = [
+	const steps: ( ClickHandler | string )[] = [
 		{
 			message: 'You got this!',
 			onClick: () => setCurrentStep( 0 ),
@@ -35,13 +29,13 @@ const StepProgressExample: FunctionComponent = () => {
 				<StepProgress steps={ steps } currentStep={ currentStep } />
 			</div>
 
-			<div style={ { 'margin-top': '30px' } }>
+			<div style={ { marginTop: '30px' } }>
 				<Button
 					disabled={ currentStep <= 0 }
 					onClick={ () => setCurrentStep( currentStep - 1 ) }
-					style={ { 'margin-right': '10px' } }
+					style={ { marginRight: '10px' } }
 				>
-					{ 'Previous Step' }
+					Previous Step
 				</Button>
 				<Button
 					primary

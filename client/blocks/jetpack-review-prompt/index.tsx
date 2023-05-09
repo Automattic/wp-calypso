@@ -1,26 +1,14 @@
-/**
- * External dependencies
- */
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { useSelector, useDispatch } from 'react-redux';
+import { Button, Card, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent, useCallback, useEffect } from 'react';
-
-/**
- * Internal dependencies
- */
-import { Button, Card } from '@automattic/components';
+import { FunctionComponent, useCallback, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import QueryPreferences from 'calypso/components/data/query-preferences';
+import { preventWidows } from 'calypso/lib/formatting';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { dismiss } from 'calypso/state/jetpack-review-prompt/actions';
 import { getIsDismissed, getValidFromDate } from 'calypso/state/jetpack-review-prompt/selectors';
 import { hasReceivedRemotePreferences as getHasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
-import { preventWidows } from 'calypso/lib/formatting';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import Gridicon from 'calypso/components/gridicon';
-import QueryPreferences from 'calypso/components/data/query-preferences';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 interface Props {
@@ -31,7 +19,6 @@ interface Props {
 const JetpackReviewPrompt: FunctionComponent< Props > = ( { align = 'center', type } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const moment = useLocalizedMoment();
 
 	// dismiss count is stored in a preference, make sure we have that before rendering
 	const hasReceivedRemotePreferences = useSelector( ( state ) =>
@@ -87,15 +74,6 @@ const JetpackReviewPrompt: FunctionComponent< Props > = ( { align = 'center', ty
 			default:
 				return (
 					<p>
-						{ translate( 'Scan fixed all threats {{strong}}%s{{/strong}}. Your site looks great!', {
-							args: [ moment.utc( validFrom ).fromNow() ],
-							components: {
-								strong: <strong />,
-							},
-						} ) }
-
-						<br />
-
 						{ preventWidows(
 							translate(
 								'Are you happy with Jetpack Scan? Leave us a review and help spread the word.'

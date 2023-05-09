@@ -9,9 +9,6 @@ export const remoteValuesSchema = {
 		},
 	},
 	properties: {
-		mediaModalGalleryInstructionsDismissed: {
-			type: 'boolean',
-		},
 		'guided-tours-history': {
 			type: 'array',
 			items: {
@@ -35,10 +32,6 @@ export const remoteValuesSchema = {
 			type: 'number',
 			minimum: 0,
 			maximum: 1,
-		},
-		editorConfirmationDisabledSites: {
-			type: 'array',
-			items: { type: 'number' },
 		},
 		colorScheme: {
 			type: 'string',
@@ -79,13 +72,25 @@ export const remoteValuesSchema = {
 		'jetpack-review-prompt': {
 			type: 'object',
 			properties: {
-				scan: {
+				scan: { $ref: '#/definitions/dismissiblePrompt' },
+				restore: { $ref: '#/definitions/dismissiblePrompt' },
+			},
+		},
+		homeQuickLinksToggleStatus: {
+			type: 'string',
+			enum: [ 'collapsed', 'expanded' ],
+		},
+		'persistent-counter': {
+			type: 'object',
+			properties: {
+				// counter-name (possibly suffixed with siteId)
+				'^[a-z0-9-]+$': {
 					type: 'object',
 					properties: {
-						'/[0-9]+/': { $ref: '#/definitions/dismissiblePrompt' },
+						count: { type: 'number', minimum: 0 },
+						lastCountDate: { type: [ 'number', 'null' ] },
 					},
 				},
-				restore: { $ref: '#/definitions/dismissiblePrompt' },
 			},
 		},
 	},

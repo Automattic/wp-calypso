@@ -1,13 +1,8 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
+import styled from '@emotion/styled';
 
-/**
- * Internal dependencies
- */
-import styled from '../lib/styled';
+const CheckIconSvg = styled.svg`
+	fill: #fff;
+`;
 
 export function CheckIcon( { className, id }: { className?: string; id: string } ) {
 	return (
@@ -36,15 +31,6 @@ export function CheckIcon( { className, id }: { className?: string; id: string }
 		</CheckIconSvg>
 	);
 }
-
-CheckIcon.propTypes = {
-	className: PropTypes.string,
-	id: PropTypes.string,
-};
-
-const CheckIconSvg = styled.svg`
-	fill: #fff;
-`;
 
 export function ErrorIcon( { className }: { className?: string } ) {
 	return (

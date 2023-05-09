@@ -1,18 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import styled from '@emotion/styled';
+import type { HTMLAttributes, PropsWithChildren } from 'react';
 
-/**
- * Internal dependencies
- */
-import styled from '../lib/styled';
-
-export default function ErrorMessage( { children }: { children?: React.ReactNode } ) {
-	return <Error>{ children }</Error>;
-}
-
-const Error = styled.div< React.HTMLAttributes< HTMLDivElement > >`
+const Error = styled.div< HTMLAttributes< HTMLDivElement > >`
 	display: block;
 	padding: 24px 16px;
 	border-left: 3px solid ${ ( props ) => props.theme.colors.error };
@@ -25,3 +14,8 @@ const Error = styled.div< React.HTMLAttributes< HTMLDivElement > >`
 		border-left: 0 none;
 	}
 `;
+
+// eslint-disable-next-line @typescript-eslint/ban-types
+export default function ErrorMessage( { children }: PropsWithChildren< {} > ) {
+	return <Error>{ children }</Error>;
+}

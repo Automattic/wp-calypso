@@ -1,24 +1,25 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
+import PropTypes from 'prop-types';
+import { createElement, Component } from 'react';
 
 const noop = () => {};
 
-class ConversationFollowButton extends React.Component {
+class ConversationFollowButton extends Component {
 	static propTypes = {
 		isFollowing: PropTypes.bool.isRequired,
 		onFollowToggle: PropTypes.func,
 		tagName: PropTypes.oneOfType( [ PropTypes.string, PropTypes.func ] ),
+		followIcon: PropTypes.object,
+		followingIcon: PropTypes.object,
 	};
 
 	static defaultProps = {
 		isFollowing: false,
 		onFollowToggle: noop,
 		tagName: 'button',
+		followIcon: null,
+		followingIcon: null,
 	};
 
 	toggleFollow = ( event ) => {
@@ -46,10 +47,10 @@ class ConversationFollowButton extends React.Component {
 			buttonClasses.push( 'is-following' );
 		}
 
-		const followingIcon = (
+		const followingIcon = this.props.followingIcon || (
 			<Gridicon key="following" icon="reader-following-conversation" size={ iconSize } />
 		);
-		const followIcon = (
+		const followIcon = this.props.followIcon || (
 			<Gridicon key="follow" icon="reader-follow-conversation" size={ iconSize } />
 		);
 		const followLabelElement = (
@@ -58,7 +59,7 @@ class ConversationFollowButton extends React.Component {
 			</span>
 		);
 
-		return React.createElement(
+		return createElement(
 			this.props.tagName,
 			{
 				onClick: this.toggleFollow,

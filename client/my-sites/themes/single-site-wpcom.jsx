@@ -1,100 +1,106 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
+import { isEnabled } from '@automattic/calypso-config';
+import {
+	FEATURE_UPLOAD_THEMES,
+	PLAN_FREE,
+	PLAN_PERSONAL,
+	PLAN_PREMIUM,
+	PLAN_BUSINESS,
+	WPCOM_FEATURES_PREMIUM_THEMES,
+} from '@automattic/calypso-products';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
+import i18n from 'i18n-calypso';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import Main from 'calypso/components/main';
-import CurrentTheme from 'calypso/my-sites/themes/current-theme';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
-import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
-import { connectOptions } from './theme-options';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import { FEATURE_UNLIMITED_PREMIUM_THEMES, PLAN_PREMIUM } from '@automattic/calypso-products';
-import { hasFeature, isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
-import QuerySitePlans from 'calypso/components/data/query-site-plans';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import ThemeShowcase from './theme-showcase';
-import ThemesHeader from './themes-header';
-import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import QueryActiveTheme from 'calypso/components/data/query-active-theme';
+import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
+import Main from 'calypso/components/main';
+import { useRequestSiteChecklistTaskUpdate } from 'calypso/data/site-checklist';
+import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
+import { getCurrentPlan, isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getActiveTheme } from 'calypso/state/themes/selectors';
+import { connectOptions } from './theme-options';
+import ThemeShowcase from './theme-showcase';
 
 const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
-	const {
-		hasUnlimitedPremiumThemes,
-		requestingSitePlans,
-		siteId,
-		isVip,
-		siteSlug,
-		translate,
-		isJetpack,
-	} = props;
+	const { currentPlan, currentThemeId, isVip, requestingSitePlans, siteId, siteSlug, translate } =
+		props;
 
-	const displayUpsellBanner = ! requestingSitePlans && ! hasUnlimitedPremiumThemes && ! isVip;
-	const bannerLocationBelowSearch = ! isJetpack;
-
+	const displayUpsellBanner = ! requestingSitePlans && currentPlan && ! isVip;
 	const upsellUrl = `/plans/${ siteSlug }`;
+	const isEnglishLocale = useIsEnglishLocale();
 	let upsellBanner = null;
 	if ( displayUpsellBanner ) {
-		if ( bannerLocationBelowSearch ) {
-			upsellBanner = (
-				<UpsellNudge
-					plan={ PLAN_PREMIUM }
-					customerType="business"
-					className="themes__showcase-banner"
-					title={ translate( 'Unlock ALL premium themes with our Premium and Business plans!' ) }
-					event="themes_plans_free_personal"
-					forceHref={ true }
-					showIcon={ true }
-				/>
-			);
+		if ( isEnabled( 'themes/premium' ) ) {
+			if ( [ PLAN_PERSONAL, PLAN_FREE ].includes( currentPlan.productSlug ) ) {
+				const bannerTitle =
+					isEnglishLocale ||
+					i18n.hasTranslation( 'Unlock premium themes with our Premium and Business plans!' )
+						? translate( 'Unlock premium themes with our Premium and Business plans!' )
+						: translate( 'Unlock ALL premium themes with our Premium and Business plans!' );
+				upsellBanner = (
+					<UpsellNudge
+						className="themes__showcase-banner"
+						event="calypso_themes_list_premium_themes"
+						feature={ WPCOM_FEATURES_PREMIUM_THEMES }
+						plan={ PLAN_PREMIUM }
+						title={ bannerTitle }
+						callToAction={ translate( 'Upgrade now' ) }
+						showIcon={ true }
+					/>
+				);
+			}
+
+			if ( currentPlan.productSlug === PLAN_PREMIUM ) {
+				upsellBanner = (
+					<UpsellNudge
+						className="themes__showcase-banner"
+						event="calypso_themes_list_install_themes"
+						feature={ FEATURE_UPLOAD_THEMES }
+						plan={ PLAN_BUSINESS }
+						title={ translate( 'Upload your own themes with our Business and eCommerce plans!' ) }
+						callToAction={ translate( 'Upgrade now' ) }
+						showIcon={ true }
+					/>
+				);
+			}
 		} else {
 			upsellBanner = (
 				<UpsellNudge
-					plan={ PLAN_PREMIUM }
-					title={ translate(
-						'Access all our premium themes with our Premium and Business plans!'
-					) }
-					description={ translate(
-						'Get advanced customization, more storage space, and video support along with all your new themes.'
-					) }
-					event="themes_plans_free_personal"
+					className="themes__showcase-banner"
+					event="calypso_themes_list_install_themes"
+					feature={ FEATURE_UPLOAD_THEMES }
+					plan={ PLAN_BUSINESS }
+					title={ translate( 'Upload your own themes with our Business and eCommerce plans!' ) }
+					callToAction={ translate( 'Upgrade now' ) }
 					showIcon={ true }
 				/>
 			);
 		}
 	}
+
+	useRequestSiteChecklistTaskUpdate( siteId, CHECKLIST_KNOWN_TASKS.THEMES_BROWSED );
+
 	return (
 		<Main fullWidthLayout className="themes">
-			<SidebarNavigation />
-			<ThemesHeader />
-			<CurrentTheme siteId={ siteId } />
-			{ bannerLocationBelowSearch ? null : upsellBanner }
+			<QueryActiveTheme siteId={ siteId } />
+			{ currentThemeId && <QueryCanonicalTheme themeId={ currentThemeId } siteId={ siteId } /> }
 
 			<ThemeShowcase
 				{ ...props }
 				upsellUrl={ upsellUrl }
-				upsellBanner={ bannerLocationBelowSearch ? upsellBanner : null }
+				upsellBanner={ upsellBanner }
 				siteId={ siteId }
-			>
-				{ siteId && <QuerySitePlans siteId={ siteId } /> }
-				{ siteId && <QuerySitePurchases siteId={ siteId } /> }
-				<ThanksModal source={ 'list' } />
-				<AutoLoadingHomepageModal source={ 'list' } />
-			</ThemeShowcase>
+			/>
 		</Main>
 	);
 } );
 
 export default connect( ( state, { siteId } ) => ( {
-	isJetpack: isJetpackSite( state, siteId ),
 	isVip: isVipSite( state, siteId ),
 	siteSlug: getSiteSlug( state, siteId ),
-	hasUnlimitedPremiumThemes: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
 	requestingSitePlans: isRequestingSitePlans( state, siteId ),
+	currentPlan: getCurrentPlan( state, siteId ),
+	currentThemeId: getActiveTheme( state, siteId ),
 } ) )( ConnectedSingleSiteWpcom );

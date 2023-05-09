@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { getPostLikes } from 'calypso/state/posts/selectors/get-post-likes';
 
 describe( 'getPostLikes()', () => {
@@ -22,7 +14,7 @@ describe( 'getPostLikes()', () => {
 			50
 		);
 
-		expect( postLikes ).to.be.null;
+		expect( postLikes ).toBeNull();
 	} );
 
 	test( 'should return null if the post has never been fetched', () => {
@@ -43,7 +35,7 @@ describe( 'getPostLikes()', () => {
 			50
 		);
 
-		expect( postLikes ).to.be.null;
+		expect( postLikes ).toBeNull();
 	} );
 
 	test( 'should return the post likes', () => {
@@ -64,6 +56,6 @@ describe( 'getPostLikes()', () => {
 			50
 		);
 
-		expect( postLikes ).to.eql( likes );
+		expect( postLikes ).toEqual( likes );
 	} );
 } );

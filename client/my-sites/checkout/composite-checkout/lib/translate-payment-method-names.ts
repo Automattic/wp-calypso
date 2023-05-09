@@ -1,7 +1,4 @@
-/**
- * External dependencies
- */
-import { snakeCase } from 'lodash';
+import { camelToSnakeCase } from '@automattic/js-utils';
 import type { CheckoutPaymentMethodSlug, WPCOMPaymentMethod } from '@automattic/wpcom-checkout';
 
 /**
@@ -18,8 +15,6 @@ export function translateWpcomPaymentMethodToCheckoutPaymentMethod(
 			return 'free-purchase';
 		case 'WPCOM_Billing_Ebanx':
 			return 'ebanx';
-		case 'WPCOM_Billing_Ebanx_Redirect_Brazil_Tef':
-			return 'brazil-tef';
 		case 'WPCOM_Billing_PayPal_Direct':
 			return 'paypal-direct';
 		case 'WPCOM_Billing_PayPal_Express':
@@ -46,11 +41,12 @@ export function translateWpcomPaymentMethodToCheckoutPaymentMethod(
 			return 'wechat';
 		case 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking':
 			return 'netbanking';
-		case 'WPCOM_Billing_Dlocal_Redirect_Indonesia_Wallet':
-			return 'id_wallet';
 		case 'WPCOM_Billing_Web_Payment':
 			return 'web-pay';
+		case 'WPCOM_Billing_MoneyPress_Stored':
+			return 'existingCard';
 	}
+	throw new Error( `Unknown payment method '${ paymentMethod }'` );
 }
 
 export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
@@ -58,21 +54,20 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 ): WPCOMPaymentMethod | null {
 	// existing cards have unique paymentMethodIds
 	if ( paymentMethod.startsWith( 'existingCard' ) ) {
-		paymentMethod = 'card';
+		paymentMethod = 'existingCard';
 	}
 	switch ( paymentMethod ) {
+		case 'existingCard':
+			return 'WPCOM_Billing_MoneyPress_Stored';
 		case 'ebanx':
 			return 'WPCOM_Billing_Ebanx';
-		case 'brazil-tef':
-			return 'WPCOM_Billing_Ebanx_Redirect_Brazil_Tef';
 		case 'netbanking':
 			return 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking';
-		case 'id_wallet':
-			return 'WPCOM_Billing_Dlocal_Redirect_Indonesia_Wallet';
 		case 'paypal-direct':
 			return 'WPCOM_Billing_PayPal_Direct';
 		case 'paypal':
 			return 'WPCOM_Billing_PayPal_Express';
+		case 'stripe':
 		case 'card':
 			return 'WPCOM_Billing_Stripe_Payment_Method';
 		case 'alipay':
@@ -96,8 +91,6 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 		case 'apple-pay':
 		case 'google-pay':
 			return 'WPCOM_Billing_Web_Payment';
-		case 'full-credits':
-			return 'WPCOM_Billing_WPCOM';
 		case 'free-purchase':
 			return 'WPCOM_Billing_WPCOM';
 	}
@@ -107,10 +100,9 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethod | null {
 	switch ( slug ) {
 		case 'WPCOM_Billing_WPCOM':
+		case 'WPCOM_Billing_MoneyPress_Stored':
 		case 'WPCOM_Billing_Ebanx':
-		case 'WPCOM_Billing_Ebanx_Redirect_Brazil_Tef':
 		case 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking':
-		case 'WPCOM_Billing_Dlocal_Redirect_Indonesia_Wallet':
 		case 'WPCOM_Billing_PayPal_Direct':
 		case 'WPCOM_Billing_PayPal_Express':
 		case 'WPCOM_Billing_Stripe_Payment_Method':
@@ -129,18 +121,21 @@ export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethod 
 	return null;
 }
 
+/**
+ * Return the passed CheckoutPaymentMethodSlug if valid
+ */
 export function readCheckoutPaymentMethodSlug( slug: string ): CheckoutPaymentMethodSlug | null {
-	if ( slug.startsWith( 'existingCard-' ) ) {
-		slug = 'card';
+	if ( slug.startsWith( 'existingCard' ) ) {
+		slug = 'existingCard';
 	}
 	switch ( slug ) {
 		case 'ebanx':
-		case 'brazil-tef':
 		case 'netbanking':
-		case 'id_wallet':
 		case 'paypal-direct':
 		case 'paypal':
 		case 'card':
+		case 'stripe':
+		case 'existingCard':
 		case 'alipay':
 		case 'bancontact':
 		case 'eps':
@@ -151,7 +146,6 @@ export function readCheckoutPaymentMethodSlug( slug: string ): CheckoutPaymentMe
 		case 'stripe-three-d-secure':
 		case 'wechat':
 		case 'web-pay':
-		case 'full-credits':
 		case 'free-purchase':
 			return slug;
 		case 'apple-pay':
@@ -176,7 +170,7 @@ export function translateCheckoutPaymentMethodToTracksPaymentMethod(
 		case 'google-pay':
 			return 'web_payment';
 	}
-	return snakeCase( paymentMethodSlug );
+	return camelToSnakeCase( paymentMethodSlug );
 }
 
 export function isRedirectPaymentMethod( slug: CheckoutPaymentMethodSlug ): boolean {
@@ -189,7 +183,6 @@ export function isRedirectPaymentMethod( slug: CheckoutPaymentMethodSlug ): bool
 		'netbanking',
 		'paypal',
 		'p24',
-		'brazil-tef',
 		'wechat',
 		'sofort',
 	];

@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { set } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { ANALYTICS_EVENT_RECORD } from 'calypso/state/action-types';
 import { getCurrentOAuth2ClientId } from 'calypso/state/oauth2-clients/ui/selectors';
 import { withEnhancers } from 'calypso/state/utils';

@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { filter, last } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { getSiteKeyringsForService } from 'calypso/state/site-keyrings/selectors';
 import { getKeyringConnectionsByName } from 'calypso/state/sharing/keyring/selectors';
+import { getSiteKeyringsForService } from 'calypso/state/site-keyrings/selectors';
 
 function isConnected( keyringConnection, externalUser, siteKeyring ) {
 	return (
@@ -23,9 +16,9 @@ function isConnected( keyringConnection, externalUser, siteKeyring ) {
  * The format of the `connections` returned matches the one returned by
  * `getSiteUserConnectionsForService` used for Publicize services.
  *
- * @param  {object} state  Global state tree
- * @param  {object} siteId The site ID
- * @returns {object}        List of GMB connections for this site
+ * @param  {Object} state  Global state tree
+ * @param  {Object} siteId The site ID
+ * @returns {Object}        List of GMB connections for this site
  */
 export default function getSiteUserConnectionsForGoogleMyBusiness( state, siteId ) {
 	// Google My Business can only have one location connected at a time

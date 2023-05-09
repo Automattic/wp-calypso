@@ -1,26 +1,16 @@
-/**
- * External dependencies
- */
-
-import Gridicon from 'calypso/components/gridicon';
-import React from 'react';
+import { Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
+import JetpackLogo from 'calypso/components/jetpack-logo';
 import {
 	isCrowdsignalOAuth2Client,
 	isWooOAuth2Client,
 	isJetpackCloudOAuth2Client,
+	isGravatarOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 import CrowdsignalOauthMasterbar from './crowdsignal';
-import JetpackLogo from 'calypso/components/jetpack-logo';
-
-/**
- * Style dependencies
- */
+import GravatarOauthMasterbar from './gravatar';
+import WooOauthMasterbar from './woo';
 import './oauth-client.scss';
 
 const DefaultOauthClientMasterbar = ( { oauth2Client } ) => (
@@ -69,6 +59,14 @@ const DefaultOauthClientMasterbar = ( { oauth2Client } ) => (
 const OauthClientMasterbar = ( { oauth2Client } ) => {
 	if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
 		return <CrowdsignalOauthMasterbar oauth2Client={ oauth2Client } />;
+	}
+
+	if ( isGravatarOAuth2Client( oauth2Client ) ) {
+		return <GravatarOauthMasterbar iconUrl={ oauth2Client.icon } iconAlt={ oauth2Client.title } />;
+	}
+
+	if ( isWooOAuth2Client( oauth2Client ) ) {
+		return <WooOauthMasterbar />;
 	}
 
 	return <DefaultOauthClientMasterbar oauth2Client={ oauth2Client } />;

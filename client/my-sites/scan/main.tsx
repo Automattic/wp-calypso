@@ -1,52 +1,41 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { Button, Card, ProgressBar } from '@automattic/components';
-import { translate } from 'i18n-calypso';
-import { flowRight as compose } from 'lodash';
+import { isEnabled } from '@automattic/calypso-config';
+import { Button, ProgressBar, Gridicon, Card } from '@automattic/components';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import { translate } from 'i18n-calypso';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
+import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
 import FormattedHeader from 'calypso/components/formatted-header';
-import SecurityIcon from 'calypso/components/jetpack/security-icon';
 import ScanPlaceholder from 'calypso/components/jetpack/scan-placeholder';
 import ScanThreats from 'calypso/components/jetpack/scan-threats';
-import { Scan, Site } from 'calypso/my-sites/scan/types';
-import Gridicon from 'calypso/components/gridicon';
-import Main from 'calypso/components/main';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
-import getSiteScanProgress from 'calypso/state/selectors/get-site-scan-progress';
-import getSiteScanIsInitial from 'calypso/state/selectors/get-site-scan-is-initial';
-import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
-import getSettingsUrl from 'calypso/state/selectors/get-settings-url';
-import isRequestingJetpackScan from 'calypso/state/selectors/is-requesting-jetpack-scan';
+import SecurityIcon from 'calypso/components/jetpack/security-icon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import Main from 'calypso/components/main';
+import SidebarNavigation from 'calypso/components/sidebar-navigation';
+import { withApplySiteOffset, applySiteOffsetType } from 'calypso/components/site-offset';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { triggerScanRun } from 'calypso/lib/jetpack/trigger-scan-run';
-import { withApplySiteOffset, applySiteOffsetType } from 'calypso/components/site-offset';
+import { Scan, Site } from 'calypso/my-sites/scan/types';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions';
+import { incrementCounter } from 'calypso/state/persistent-counter/actions';
+import { getCount } from 'calypso/state/persistent-counter/selectors';
+import getSettingsUrl from 'calypso/state/selectors/get-settings-url';
+import getSiteScanIsInitial from 'calypso/state/selectors/get-site-scan-is-initial';
+import getSiteScanProgress from 'calypso/state/selectors/get-site-scan-progress';
+import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
+import isRequestingJetpackScan from 'calypso/state/selectors/is-requesting-jetpack-scan';
+import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ScanNavigation from './navigation';
-import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
-import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
-
-/**
- * Type dependencies
- */
+import type { TranslateResult } from 'i18n-calypso';
 import type { utc } from 'moment';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 interface Props {
@@ -57,23 +46,44 @@ interface Props {
 	scanState?: Scan;
 	scanProgress?: number;
 	isInitialScan?: boolean;
-	isRequestingScan: boolean;
+	isRequestingScan?: boolean;
+	scanPageVisitCount?: number;
 	timezone: string | null;
 	gmtOffset: number | null;
 	moment: {
 		utc: typeof utc;
 	};
-	applySiteOffset: applySiteOffsetType;
-	dispatchRecordTracksEvent: ( arg0: string, arg1: Record< string, unknown > ) => null;
-	dispatchScanRun: ( arg0: number ) => null;
+	applySiteOffset: applySiteOffsetType | null;
+	dispatchRecordTracksEvent: typeof recordTracksEvent;
+	dispatchScanRun: ( arg0: number ) => void;
+	dispatchIncrementCounter: ( arg0: string, arg1: boolean, arg2: boolean ) => void;
+	dispatchSetReviewPromptValid: ( arg0: 'restore' | 'scan', arg1: number | null ) => void;
+
 	isAdmin: boolean;
-	siteSettingsUrl: string;
+	siteSettingsUrl?: string | null;
 }
 
+const SCAN_VISIT_COUNTER_NAME = 'scan-page-visit';
+
 class ScanPage extends Component< Props > {
-	state = {
-		showJetpackReviewPrompt: false,
-	};
+	componentDidMount() {
+		const { scanState, dispatchIncrementCounter } = this.props;
+		if ( scanState?.state && scanState?.state !== 'unavailable' ) {
+			// Counting visits to the scan page for the Jetpack (Scan) Review Prompt.
+			// Review Prompt should appear after 3 visits (not including same day visits)
+			dispatchIncrementCounter( SCAN_VISIT_COUNTER_NAME, false, false );
+		}
+	}
+
+	componentDidUpdate( prevProps: Props ) {
+		if ( prevProps.scanPageVisitCount !== this.props.scanPageVisitCount ) {
+			// After 3 Scan page visits, trigger the Jetpack Review Prompt.
+			if ( this.props.scanPageVisitCount === 3 ) {
+				this.props.dispatchSetReviewPromptValid( 'scan', Date.now() );
+			}
+		}
+	}
+
 	renderProvisioning() {
 		return (
 			<>
@@ -90,7 +100,7 @@ class ScanPage extends Component< Props > {
 		);
 	}
 
-	renderHeader( text: i18nCalypso.TranslateResult ) {
+	renderHeader( text: TranslateResult ) {
 		return <h1 className="scan__header">{ text }</h1>;
 	}
 
@@ -171,24 +181,34 @@ class ScanPage extends Component< Props > {
 
 		return (
 			<>
-				<SecurityIcon icon="in-progress" />
-				{ this.renderHeader( heading ) }
-				<ProgressBar value={ scanProgress } total={ 100 } color="#069E08" />
-				{ isInitialScan && (
+				<Card>
+					<SecurityIcon icon="in-progress" />
+					{ this.renderHeader( heading ) }
+					{ isInitialScan && (
+						<p className="scan__initial-scan-message">
+							{ translate(
+								'Welcome to Jetpack Scan. We are starting your first scan now. ' +
+									'Scan results will be ready soon.'
+							) }
+						</p>
+					) }
+					<p className="scan__progress-bar-percent">{ scanProgress }%</p>
+					<ProgressBar value={ scanProgress } total={ 100 } color="#069E08" />
 					<p>
 						{ translate(
-							'Welcome to Jetpack Scan, we are taking a first look at your site now ' +
-								'and the results will be with you soon.'
+							'{{strong}}Did you know{{/strong}} {{br/}}' +
+								'We will send you an email if security threats are found. In the meantime feel ' +
+								'free to continue to use your site as normal, you can check back on ' +
+								'progress at any time.',
+							{
+								components: {
+									strong: <strong />,
+									br: <br />,
+								},
+							}
 						) }
 					</p>
-				) }
-				<p>
-					{ translate(
-						'We will send you an email if security threats are found. In the meantime feel ' +
-							'free to continue to use your site as normal, you can check back on ' +
-							'progress at any time.'
-					) }
-				</p>
+				</Card>
 			</>
 		);
 	}
@@ -231,7 +251,12 @@ class ScanPage extends Component< Props > {
 		// because it disrupts the fluidity of the progress bar
 
 		if ( scanState?.state === 'provisioning' ) {
-			return this.renderProvisioning();
+			return (
+				<>
+					{ ' ' }
+					<Card> { this.renderProvisioning() } </Card>{ ' ' }
+				</>
+			);
 		}
 
 		if ( scanState?.state === 'scanning' ) {
@@ -247,7 +272,12 @@ class ScanPage extends Component< Props > {
 		// We should have a scanState by now, since we're not requesting an update;
 		// if we don't, that's an error condition and we should display that
 		if ( ! scanState ) {
-			return this.renderScanError();
+			return (
+				<>
+					{ ' ' }
+					<Card> { this.renderScanError() } </Card>{ ' ' }
+				</>
+			);
 		}
 
 		const { threats, mostRecent } = scanState;
@@ -261,10 +291,20 @@ class ScanPage extends Component< Props > {
 		}
 
 		if ( errorFound ) {
-			return this.renderScanError();
+			return (
+				<>
+					{ ' ' }
+					<Card> { this.renderScanError() } </Card>{ ' ' }
+				</>
+			);
 		}
 
-		return this.renderScanOkay();
+		return (
+			<>
+				{ ' ' }
+				<Card> { this.renderScanOkay() } </Card>{ ' ' }
+			</>
+		);
 	}
 
 	renderJetpackReviewPrompt() {
@@ -287,30 +327,33 @@ class ScanPage extends Component< Props > {
 	render() {
 		const { siteId, siteSettingsUrl } = this.props;
 		const isJetpackPlatform = isJetpackCloud();
+		let mainClass = 'scan';
 
 		if ( ! siteId ) {
 			return;
 		}
 
+		if ( isEnabled( 'jetpack/more-informative-scan' ) ) {
+			mainClass = 'scan-new';
+		}
+
 		return (
 			<Main
-				className={ classNames( 'scan', {
+				className={ classNames( mainClass, {
 					is_jetpackcom: isJetpackPlatform,
 				} ) }
 			>
 				<DocumentHead title="Scan" />
-				<SidebarNavigation />
+				{ isJetpackPlatform && <SidebarNavigation /> }
 				<PageViewTracker path="/scan/:site" title="Scanner" />
 				<TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } />
 				{ ! isJetpackPlatform && (
-					<FormattedHeader headerText={ 'Jetpack Scan' } align="left" brandFont />
+					<FormattedHeader headerText="Jetpack Scan" align="left" brandFont />
 				) }
 
 				<QueryJetpackScan siteId={ siteId } />
-				<ScanNavigation section={ 'scanner' } />
-				<Card>
-					<div className="scan__content">{ this.renderScanState() }</div>
-				</Card>
+				<ScanNavigation section="scanner" />
+				<div className="scan__content">{ this.renderScanState() }</div>
 				{ this.renderJetpackReviewPrompt() }
 			</Main>
 		);
@@ -331,8 +374,9 @@ export default connect(
 		const siteSettingsUrl = getSettingsUrl( state, siteId, 'general' );
 		const scanState = ( getSiteScanState( state, siteId ) as Scan ) ?? undefined;
 		const scanProgress = getSiteScanProgress( state, siteId ) ?? undefined;
-		const isRequestingScan = isRequestingJetpackScan( state, siteId );
+		const isRequestingScan = !! isRequestingJetpackScan( state, siteId );
 		const isInitialScan = getSiteScanIsInitial( state, siteId );
+		const scanPageVisitCount = getCount( state, SCAN_VISIT_COUNTER_NAME, false );
 
 		return {
 			site,
@@ -343,10 +387,13 @@ export default connect(
 			isInitialScan,
 			siteSettingsUrl,
 			isRequestingScan,
+			scanPageVisitCount,
 		};
 	},
 	{
 		dispatchRecordTracksEvent: recordTracksEvent,
 		dispatchScanRun: triggerScanRun,
+		dispatchIncrementCounter: incrementCounter,
+		dispatchSetReviewPromptValid: setValidFrom,
 	}
-)( compose( withLocalizedMoment, withApplySiteOffset )( ScanPage ) );
+)( withLocalizedMoment( withApplySiteOffset( ScanPage ) ) );

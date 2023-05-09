@@ -1,19 +1,11 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
-import { isEqual, omit } from 'lodash';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import generateEmbedFrameMarkup from 'calypso/lib/embed-frame-markup';
+import { omit } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import ResizableIframe from 'calypso/components/resizable-iframe';
+import generateEmbedFrameMarkup from 'calypso/lib/embed-frame-markup';
 
-export default class ShortcodeFrame extends React.Component {
+export default class ShortcodeFrame extends Component {
 	static propTypes = {
 		body: PropTypes.string,
 		scripts: PropTypes.object,
@@ -28,35 +20,15 @@ export default class ShortcodeFrame extends React.Component {
 		allowSameOrigin: false,
 	};
 
-	state = {
-		html: '',
-	};
-
-	componentDidMount() {
-		this.updateHtmlState( this.props );
+	shouldComponentUpdate( nextProps ) {
+		return generateEmbedFrameMarkup( this.props ) !== generateEmbedFrameMarkup( nextProps );
 	}
-
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( ! isEqual( this.props, nextProps ) ) {
-			this.updateHtmlState( nextProps );
-		}
-	}
-
-	shouldComponentUpdate( nextProps, nextState ) {
-		return nextState.html !== this.state.html;
-	}
-
-	updateHtmlState = ( props ) => {
-		this.setState( {
-			html: generateEmbedFrameMarkup( props ),
-		} );
-	};
 
 	onFrameLoad = ( event ) => {
 		// Transmit message to assign frame markup
 		event.target.contentWindow.postMessage(
 			JSON.stringify( {
-				content: this.state.html,
+				content: generateEmbedFrameMarkup( this.props ),
 			} ),
 			'*'
 		);
@@ -67,7 +39,7 @@ export default class ShortcodeFrame extends React.Component {
 	render() {
 		const classes = classNames( 'shortcode-frame', this.props.className );
 
-		if ( ! this.state.html ) {
+		if ( ! generateEmbedFrameMarkup( this.props ) ) {
 			return null;
 		}
 

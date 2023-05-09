@@ -1,10 +1,7 @@
-/**
- * External Dependencies
- */
-import React from 'react';
+import { Fragment } from 'react';
 
 const PlaceHolders = () => (
-	<React.Fragment>
+	<Fragment>
 		<div>
 			<p className="support-article-dialog__placeholder-text" />
 			<p className="support-article-dialog__placeholder-text" />
@@ -21,7 +18,7 @@ const PlaceHolders = () => (
 			<p className="support-article-dialog__placeholder-text" />
 			<p className="support-article-dialog__placeholder-text" />
 		</div>
-	</React.Fragment>
+	</Fragment>
 );
 
 export default PlaceHolders;

@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { createSelector } from '@automattic/state-utils';
+import { get } from 'lodash';
 import { getPostRevisions } from 'calypso/state/posts/selectors/get-post-revisions';
 import { getPostRevisionsDiff } from 'calypso/state/posts/selectors/get-post-revisions-diff';
 

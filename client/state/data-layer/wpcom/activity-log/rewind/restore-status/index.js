@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { errorNotice } from 'calypso/state/notices/actions';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { REWIND_RESTORE_PROGRESS_REQUEST } from 'calypso/state/action-types';
 import { updateRewindRestoreProgress } from 'calypso/state/activity-log/actions';
-
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { errorNotice } from 'calypso/state/notices/actions';
 
 /** @type {number} how many ms between polls for same data */
 const POLL_INTERVAL = 1500;
@@ -30,8 +22,8 @@ const ERROR_NOTICE_ID = 'AL_REW_RESTORESTATUS_ERR';
  * replaced by the `freshness` system in the data layer
  * when it arrives. For now, it's statefully ugly.
  *
- * @param  {object} action Redux action
- * @returns {object}        Redux action
+ * @param  {Object} action Redux action
+ * @returns {Object | undefined} Redux action
  */
 const fetchProgress = ( action ) => {
 	const { restoreId, siteId } = action;

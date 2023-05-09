@@ -1,21 +1,13 @@
-/**
- * External dependencies
- */
 import debugModule from 'debug';
-
-/**
- * Internal dependencies
- */
 import Batch from './lib/batch';
 import Domain from './lib/domain';
 import Domains from './lib/domains';
-import Marketing from './lib/marketing';
 import Me from './lib/me';
-import Pinghub from './lib/util/pinghub';
 import Plans from './lib/plans';
-import Request from './lib/util/request';
 import Site from './lib/site';
 import Users from './lib/users';
+import Pinghub from './lib/util/pinghub';
+import Request from './lib/util/request';
 import sendRequest from './lib/util/send-request';
 
 /**
@@ -34,7 +26,7 @@ const DEFAULT_ASYNC_TIMEOUT = 30000;
  *
  * @param {string} [token] - OAuth API access token
  * @param {Function} [reqHandler] - function Request Handler
- * @returns {WPCOM} wpcom instance
+ * @returns {WPCOM|undefined} wpcom instance
  */
 export default function WPCOM( token, reqHandler ) {
 	if ( ! ( this instanceof WPCOM ) ) {
@@ -70,12 +62,22 @@ export default function WPCOM( token, reqHandler ) {
 }
 
 /**
- * Return `Marketing` object instance
+ * Add a token to this instance of WPCOM.
+ * When loaded, the token is applied to the param object of each subsequent request.
  *
- * @returns {Marketing} Marketing instance
+ * @param {string} [token] - oauth token
  */
-WPCOM.prototype.marketing = function () {
-	return new Marketing( this );
+WPCOM.prototype.loadToken = function ( token ) {
+	this.token = token;
+};
+
+/**
+ * Returns a boolean representing whether or not the token has been loaded.
+ *
+ * @returns {boolean} oauth token
+ */
+WPCOM.prototype.isTokenLoaded = function () {
+	return this.token !== undefined;
 };
 
 /**
@@ -146,7 +148,7 @@ WPCOM.prototype.batch = function () {
 /**
  * List Freshly Pressed Posts
  *
- * @param {object} [query] - query object
+ * @param {Object} [query] - query object
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
@@ -176,7 +178,6 @@ WPCOM.prototype.sendRequest = function ( params, query, body, fn ) {
 WPCOM.Batch = Batch;
 WPCOM.Domain = Domain;
 WPCOM.Domains = Domains;
-WPCOM.Marketing = Marketing;
 WPCOM.Me = Me;
 WPCOM.Pinghub = Pinghub;
 WPCOM.Plans = Plans;

@@ -1,19 +1,11 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { CONCIERGE_INITIAL_REQUEST } from 'calypso/state/action-types';
+import { updateConciergeInitial } from 'calypso/state/concierge/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { updateConciergeInitial } from 'calypso/state/concierge/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { CONCIERGE_INITIAL_REQUEST } from 'calypso/state/action-types';
 import fromApi from './from-api';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export const fetchConciergeInitial = ( action ) =>
 	http(
@@ -31,10 +23,15 @@ export const fetchConciergeInitial = ( action ) =>
 export const storeFetchedConciergeInitial = ( action, initial ) =>
 	updateConciergeInitial( initial );
 
-export const conciergeInitialFetchError = () =>
-	errorNotice( translate( "We couldn't load our Concierge schedule. Please try again later." ) );
+export const conciergeInitialFetchError = ( errorMessage ) =>
+	errorMessage
+		? errorNotice( errorMessage )
+		: errorNotice( translate( 'Something went wrong with Quick Start. Please try again later.' ) );
 
-export const showConciergeInitialFetchError = () => conciergeInitialFetchError();
+export const showConciergeInitialFetchError = ( action ) => {
+	const errorMessage = action?.meta?.dataLayer?.error?.message;
+	return conciergeInitialFetchError( errorMessage );
+};
 
 registerHandlers( 'state/data-layer/wpcom/concierge/schedules/initial/index.js', {
 	[ CONCIERGE_INITIAL_REQUEST ]: [

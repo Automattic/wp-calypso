@@ -1,23 +1,16 @@
-/**
- * External dependencies
- */
-import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
-import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
-import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
+import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
-export default function useGetDisplayDate() {
+export default function useGetDisplayDate( selectedSiteId = null ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 
-	const siteId = useSelector( getSelectedSiteId );
+	const siteId = useSelector( ( state ) => selectedSiteId ?? getSelectedSiteId( state ) );
 	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ) );
 	const gmtOffset = useSelector( ( state ) => getSiteGmtOffset( state, siteId ) );
 
@@ -42,7 +35,7 @@ export default function useGetDisplayDate() {
 
 		if ( withLatest ) {
 			return isToday
-				? translate( 'Latest: Today %s', {
+				? translate( 'Latest: Today, %s', {
 						args: [ formattedDateTime ],
 						comment: '',
 				  } )
@@ -53,7 +46,7 @@ export default function useGetDisplayDate() {
 		}
 
 		return isToday
-			? translate( 'Today %s', {
+			? translate( 'Today, %s', {
 					args: [ formattedDateTime ],
 					comment: '',
 			  } )

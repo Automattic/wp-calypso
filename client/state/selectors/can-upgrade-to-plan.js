@@ -1,12 +1,3 @@
-/**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import {
 	PLAN_FREE,
 	PLAN_JETPACK_FREE,
@@ -15,14 +6,17 @@ import {
 	isWpComEcommercePlan,
 	isFreePlan,
 } from '@automattic/calypso-products';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { get } from 'lodash';
+import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 
 /**
  * Whether a given site can be upgraded to a specific plan.
  *
- * @param  {object}   state      Global state tree
+ * @param  {Object}   state      Global state tree
  * @param  {number}   siteId     The site we're interested in upgrading
  * @param  {string}   planKey    The plan we want to upgrade to
  * @returns {boolean}             True if the site can be upgraded
@@ -34,6 +28,7 @@ export default function ( state, siteId, planKey ) {
 			? PLAN_JETPACK_FREE
 			: PLAN_FREE;
 	const plan = getCurrentPlan( state, siteId );
+	const purchase = plan?.id ? getByPurchaseId( state, plan.id ) : null;
 
 	// TODO: seems like expired isn't being set.
 	// This information isn't currently available from the sites/%s/plans endpoint.
@@ -44,7 +39,7 @@ export default function ( state, siteId, planKey ) {
 	// Exception for upgrading Atomic v1 sites to eCommerce
 	const isAtomicV1 =
 		isSiteAutomatedTransfer( state, siteId ) && ! isSiteWpcomAtomic( state, siteId );
-	if ( isWpComEcommercePlan( planKey ) && isAtomicV1 ) {
+	if ( ( isWpComEcommercePlan( planKey ) && isAtomicV1 ) || purchase?.isLocked ) {
 		return false;
 	}
 

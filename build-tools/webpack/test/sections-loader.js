@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import loader from '../sections-loader';
 const addModuleImportToSections = loader.addModuleImportToSections;
 

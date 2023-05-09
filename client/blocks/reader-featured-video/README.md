@@ -5,7 +5,7 @@ Displays a featured video for a Reader post card.
 ## Example
 
 ```html
-<ReaderFeaturedVideo thumbnailUrl={ thumbnail } videoEmbed={ post.canonical_media } />
+<ReaderFeaturedVideo thumbnailUrl="{" thumbnail } videoEmbed="{" post.canonical_media } />
 ```
 
 ## Props

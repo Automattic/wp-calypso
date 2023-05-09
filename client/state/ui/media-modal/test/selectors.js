@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { ModalViews } from '../constants';
 import { getMediaModalView } from '../selectors';
 
@@ -20,7 +12,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( view ).to.equal( ModalViews.DETAIL );
+			expect( view ).toEqual( ModalViews.DETAIL );
 		} );
 	} );
 } );

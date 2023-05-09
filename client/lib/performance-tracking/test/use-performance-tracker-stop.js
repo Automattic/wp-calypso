@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
 import { useLayoutEffect } from 'react';
 import { useSelector, useStore } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { getSectionName } from 'calypso/state/ui/selectors';
-import { usePerformanceTrackerStop } from '../use-performance-tracker-stop';
 import { stopPerformanceTracking } from '../lib';
+import { usePerformanceTrackerStop } from '../use-performance-tracker-stop';
 
 jest.mock( 'react', () => ( {
 	useLayoutEffect: jest.fn(),

@@ -13,7 +13,7 @@
 	}
 }
 
-@include breakpoint-deprecated( '>960px' ) {
+@include breakpoint-deprecated( ">960px" ) {
 	.rewind-credentials-form__server-address,
 	.rewind-credentials-form__username,
 	.rewind-credentials-form__password {
@@ -44,11 +44,11 @@
 	margin-top: -8px;
 
 	.gridicon {
-		transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 ), color 0.2s ease-in;
+		transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s ease-in;
 	}
 
 	&.is-expanded .gridicon {
-		transform: rotate( 180deg );
+		transform: rotate(180deg);
 	}
 }
 

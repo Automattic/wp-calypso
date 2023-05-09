@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-
-import React, { PureComponent } from 'react';
-
-/**
- * Internal dependencies
- */
-import languages from '@automattic/languages';
-import LanguagePicker from 'calypso/components/language-picker';
 import { Card, Button } from '@automattic/components';
+import languages from '@automattic/languages';
+import { PureComponent } from 'react';
+import LanguagePicker from 'calypso/components/language-picker';
 
 class LanguagePickerExample extends PureComponent {
 	static displayName = 'LanguagePickerExample';

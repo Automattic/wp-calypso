@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import SpinnerButton from 'calypso/components/spinner-button';
 import FoldableCard from 'calypso/components/foldable-card';
+import SpinnerButton from 'calypso/components/spinner-button';
 import { Interval, EVERY_SECOND } from 'calypso/lib/interval';
-import AdvancedSettings from './advanced-settings';
 import { withAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	advancedSettingsFetch,
@@ -25,16 +17,11 @@ import {
 	getSelectedPostType,
 	isExporting,
 } from 'calypso/state/exporter/selectors';
+import AdvancedSettings from './advanced-settings';
 
 class ExportCard extends Component {
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		this.props.advancedSettingsFetch( this.props.siteId );
-	}
-
-	UNSAFE_componentWillReceiveProps( newProps ) {
-		if ( newProps.siteId !== this.props.siteId ) {
-			this.props.advancedSettingsFetch( newProps.siteId );
-		}
 	}
 
 	render() {

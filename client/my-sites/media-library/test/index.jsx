@@ -1,21 +1,14 @@
 /**
  * @jest-environment jsdom
  */
-
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-import { mount } from 'enzyme';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import MediaLibrary from '..';
+import { render } from '@testing-library/react';
 import { requestKeyringConnections as requestStub } from 'calypso/state/sharing/keyring/actions';
+import MediaLibrary from '..';
 
 jest.mock( 'calypso/components/data/query-preferences', () =>
+	require( 'calypso/components/empty-component' )
+);
+jest.mock( 'calypso/components/data/query-site-features', () =>
 	require( 'calypso/components/empty-component' )
 );
 jest.mock( 'calypso/my-sites/media-library/content', () =>
@@ -28,7 +21,7 @@ jest.mock( 'calypso/my-sites/media-library/filter-bar', () =>
 	require( 'calypso/components/empty-component' )
 );
 jest.mock( 'calypso/state/sharing/keyring/actions', () => ( {
-	requestKeyringConnections: require( 'sinon' ).stub(),
+	requestKeyringConnections: jest.fn(),
 } ) );
 jest.mock( 'calypso/state/sharing/keyring/selectors', () => ( {
 	getKeyringConnections: () => null,
@@ -49,43 +42,52 @@ describe( 'MediaLibrary', () => {
 		subscribe: () => false,
 	};
 
-	beforeEach( () => {
-		requestStub.resetHistory();
-	} );
+	const site = {
+		ID: 123,
+	};
 
-	const getItem = ( source ) => mount( <MediaLibrary store={ store } source={ source } /> );
+	const props = {
+		site,
+		store,
+	};
+
+	const getItem = ( source ) => render( <MediaLibrary { ...props } source={ source } /> );
 
 	describe( 'keyring request', () => {
+		afterEach( () => {
+			requestStub.mockReset();
+		} );
+
 		test( 'is issued when component mounted and viewing an external source', () => {
 			getItem( 'google_photos' );
 
-			expect( requestStub.callCount ).to.equal( 1 );
+			expect( requestStub ).toHaveBeenCalledTimes( 1 );
 		} );
 
 		test( 'is not issued when component mounted and viewing wordpress', () => {
 			getItem( '' );
 
-			expect( requestStub.callCount ).to.equal( 0 );
+			expect( requestStub ).toHaveBeenCalledTimes( 0 );
 		} );
 
 		test( 'is issued when component source changes and now viewing an external source', () => {
-			const library = getItem( '' );
+			const { rerender } = getItem( '' );
 
-			library.setProps( { source: 'google_photos' } );
-			expect( requestStub.callCount ).to.equal( 1 );
+			rerender( <MediaLibrary { ...props } source="google_photos" /> );
+			expect( requestStub ).toHaveBeenCalledTimes( 1 );
 		} );
 
 		test( 'is not issued when component source changes and not viewing an external source', () => {
-			const library = getItem( '' );
+			const { rerender } = getItem( '' );
 
-			library.setProps( { source: '' } );
-			expect( requestStub.callCount ).to.equal( 0 );
+			rerender( <MediaLibrary { ...props } source="" /> );
+			expect( requestStub ).toHaveBeenCalledTimes( 0 );
 		} );
 
 		test( 'is not issued when the external source does not need user connection', () => {
 			getItem( 'pexels' );
 
-			expect( requestStub.callCount ).to.equal( 0 );
+			expect( requestStub ).toHaveBeenCalledTimes( 0 );
 		} );
 	} );
 } );

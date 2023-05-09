@@ -1,37 +1,30 @@
-/**
- * External dependencies
- *
- */
-import PropTypes from 'prop-types';
-import React, { Component, createElement } from 'react';
-import { connect } from 'react-redux';
-import { camelCase, deburr } from 'lodash';
-import { localize } from 'i18n-calypso';
+import {
+	tryToGuessPostalCodeFormat,
+	getCountryPostalCodeSupport,
+	getCountryTaxRequirements,
+} from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
-import { getCountryStates } from 'calypso/state/country-states/selectors';
-import { CountrySelect, Input, HiddenInput } from 'calypso/my-sites/domains/components/form';
+import { localize } from 'i18n-calypso';
+import { camelCase, deburr } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component, createElement } from 'react';
+import { connect } from 'react-redux';
+import QueryDomainCountries from 'calypso/components/data/query-countries/domains';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormPhoneMediaInput from 'calypso/components/forms/form-phone-media-input';
 import { countries } from 'calypso/components/phone-input/data';
 import { toIcannFormat } from 'calypso/components/phone-input/phone-number';
-import RegionAddressFieldsets from './custom-form-fieldsets/region-address-fieldsets';
+import { CountrySelect, Input, HiddenInput } from 'calypso/my-sites/domains/components/form';
+import { getCountryStates } from 'calypso/state/country-states/selectors';
 import getCountries from 'calypso/state/selectors/get-countries';
-import QueryDomainCountries from 'calypso/components/data/query-countries/domains';
 import {
 	CONTACT_DETAILS_FORM_FIELDS,
 	CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES,
 	CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES,
 } from './custom-form-fieldsets/constants';
+import RegionAddressFieldsets from './custom-form-fieldsets/region-address-fieldsets';
 import { getPostCodeLabelText } from './custom-form-fieldsets/utils';
-import { tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const debug = debugFactory( 'calypso:managed-contact-details-form-fields' );
@@ -42,15 +35,13 @@ export class ManagedContactDetailsFormFields extends Component {
 	static propTypes = {
 		eventFormName: PropTypes.string,
 		contactDetails: PropTypes.shape(
-			Object.assign(
-				{},
-				...CONTACT_DETAILS_FORM_FIELDS.map( ( field ) => ( { [ field ]: PropTypes.string } ) )
+			Object.fromEntries(
+				CONTACT_DETAILS_FORM_FIELDS.map( ( field ) => [ field, PropTypes.string ] )
 			)
 		).isRequired,
 		contactDetailsErrors: PropTypes.shape(
-			Object.assign(
-				{},
-				...CONTACT_DETAILS_FORM_FIELDS.map( ( field ) => ( { [ field ]: PropTypes.string } ) )
+			Object.fromEntries(
+				CONTACT_DETAILS_FORM_FIELDS.map( ( field ) => [ field, PropTypes.node ] )
 			)
 		),
 		countriesList: PropTypes.array.isRequired,
@@ -61,13 +52,13 @@ export class ManagedContactDetailsFormFields extends Component {
 		needsAlternateEmailForGSuite: PropTypes.bool,
 		hasCountryStates: PropTypes.bool,
 		translate: PropTypes.func,
+		emailOnly: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		eventFormName: 'Domain contact details form',
-		contactDetails: Object.assign(
-			{},
-			...CONTACT_DETAILS_FORM_FIELDS.map( ( field ) => ( { [ field ]: '' } ) )
+		contactDetails: Object.fromEntries(
+			CONTACT_DETAILS_FORM_FIELDS.map( ( field ) => [ field, '' ] )
 		),
 		getIsFieldDisabled: () => {},
 		onContactDetailsChange: () => {},
@@ -76,6 +67,7 @@ export class ManagedContactDetailsFormFields extends Component {
 		hasCountryStates: false,
 		translate: ( x ) => x,
 		userCountryCode: 'US',
+		emailOnly: false,
 	};
 
 	constructor( props ) {
@@ -119,7 +111,7 @@ export class ManagedContactDetailsFormFields extends Component {
 		this.updateParentState( form, phoneCountryCode );
 	};
 
-	handlePhoneChange = ( { value, countryCode } ) => {
+	handlePhoneChange = ( { phoneNumber, countryCode } ) => {
 		let form = getFormFromContactDetails(
 			this.props.contactDetails,
 			this.props.contactDetailsErrors
@@ -131,7 +123,7 @@ export class ManagedContactDetailsFormFields extends Component {
 			this.setState( { phoneCountryCode } );
 		}
 
-		form = updateFormWithContactChange( form, 'phone', value );
+		form = updateFormWithContactChange( form, 'phone', phoneNumber );
 		this.updateParentState( form, phoneCountryCode );
 		return;
 	};
@@ -144,6 +136,12 @@ export class ManagedContactDetailsFormFields extends Component {
 		);
 		const camelName = camelCase( name );
 
+		const basicValue = form[ camelName ]?.value ?? '';
+		let value = basicValue;
+		if ( name === 'phone' ) {
+			value = { phoneNumber: basicValue, countryCode: this.state.phoneCountryCode };
+		}
+
 		return {
 			labelClass: 'contact-details-form-fields__label',
 			additionalClasses: 'contact-details-form-fields__field',
@@ -152,7 +150,7 @@ export class ManagedContactDetailsFormFields extends Component {
 			errorMessage: customErrorMessage || getFirstError( form[ camelName ] ),
 			onChange: this.handleFieldChangeEvent,
 			onBlur: this.handleBlur( name ),
-			value: form[ camelName ]?.value ?? '',
+			value,
 			name,
 			eventFormName,
 		};
@@ -187,6 +185,30 @@ export class ManagedContactDetailsFormFields extends Component {
 		this.handleFieldChange( name, sanitizedValue );
 	};
 
+	createEmailField( description ) {
+		const { translate } = this.props;
+
+		return this.createField(
+			'email',
+			Input,
+			{
+				label: translate( 'Email' ),
+				description,
+			},
+			{
+				customErrorMessage: this.props.contactDetailsErrors?.email,
+			}
+		);
+	}
+
+	renderContactDetailsEmail() {
+		return (
+			<div className="contact-details-form-fields__contact-details">
+				{ this.createEmailField() }
+			</div>
+		);
+	}
+
 	renderContactDetailsEmailPhone() {
 		const { translate, isLoggedOutCart } = this.props;
 
@@ -194,18 +216,8 @@ export class ManagedContactDetailsFormFields extends Component {
 			return (
 				<>
 					<div className="contact-details-form-fields__row">
-						{ this.createField(
-							'email',
-							Input,
-							{
-								label: translate( 'Email' ),
-								description: translate(
-									"You'll use this email address to access your account later"
-								),
-							},
-							{
-								customErrorMessage: this.props.contactDetailsErrors?.email,
-							}
+						{ this.createEmailField(
+							translate( "You'll use this email address to access your account later" )
 						) }
 					</div>
 
@@ -228,7 +240,6 @@ export class ManagedContactDetailsFormFields extends Component {
 								label: translate( 'Phone' ),
 								onChange: this.handlePhoneChange,
 								countriesList: this.props.countriesList,
-								countryCode: this.state.phoneCountryCode,
 								enableStickyCountry: false,
 							},
 							{
@@ -243,16 +254,7 @@ export class ManagedContactDetailsFormFields extends Component {
 		return (
 			<>
 				<div className="contact-details-form-fields__row">
-					{ this.createField(
-						'email',
-						Input,
-						{
-							label: translate( 'Email' ),
-						},
-						{
-							customErrorMessage: this.props.contactDetailsErrors?.email,
-						}
-					) }
+					{ this.createEmailField() }
 
 					{ this.createField(
 						'phone',
@@ -261,7 +263,6 @@ export class ManagedContactDetailsFormFields extends Component {
 							label: translate( 'Phone' ),
 							onChange: this.handlePhoneChange,
 							countriesList: this.props.countriesList,
-							countryCode: this.state.phoneCountryCode,
 							enableStickyCountry: false,
 						},
 						{
@@ -287,13 +288,41 @@ export class ManagedContactDetailsFormFields extends Component {
 		);
 	}
 
+	getCountryPostalCodeSupport = ( countryCode ) =>
+		this.props.countriesList?.length && countryCode
+			? getCountryPostalCodeSupport( this.props.countriesList, countryCode )
+			: false;
+
 	renderContactDetailsFields() {
-		const { translate, hasCountryStates } = this.props;
+		const { translate, hasCountryStates, countriesList } = this.props;
 		const form = getFormFromContactDetails(
 			this.props.contactDetails,
 			this.props.contactDetailsErrors
 		);
 		const countryCode = form.countryCode?.value ?? '';
+		const arePostalCodesSupported = this.getCountryPostalCodeSupport( countryCode );
+		const taxRequirements =
+			countriesList.length && countryCode
+				? getCountryTaxRequirements( countriesList, countryCode )
+				: {};
+		const isOrganizationFieldRequired =
+			taxRequirements.organization ||
+			[
+				'CCO',
+				'GOV',
+				'EDU',
+				'ASS',
+				'HOP',
+				'PRT',
+				'TDM',
+				'TRD',
+				'PLT',
+				'LAM',
+				'TRS',
+				'INB',
+				'OMK',
+				'MAJ',
+			].includes( form.extra?.value?.ca?.legalType );
 
 		return (
 			<div className="contact-details-form-fields__contact-details">
@@ -304,6 +333,7 @@ export class ManagedContactDetailsFormFields extends Component {
 						{
 							label: translate( 'Organization' ),
 							text: translate( '+ Add organization name' ),
+							toggled: form.organization?.value || isOrganizationFieldRequired,
 						},
 						{
 							customErrorMessage: this.props.contactDetailsErrors?.organization,
@@ -315,6 +345,7 @@ export class ManagedContactDetailsFormFields extends Component {
 
 				{ countryCode && (
 					<RegionAddressFieldsets
+						arePostalCodesSupported={ arePostalCodesSupported }
 						getFieldProps={ this.getFieldProps }
 						countryCode={ countryCode }
 						hasCountryStates={ hasCountryStates }
@@ -327,20 +358,19 @@ export class ManagedContactDetailsFormFields extends Component {
 	}
 
 	renderAlternateEmailFieldForGSuite() {
-		const customErrorMessage = this.props.contactDetailsErrors?.alternateEmail;
 		return (
 			<div className="contact-details-form-fields__row">
 				<Input
 					label={ this.props.translate( 'Alternate email address' ) }
-					{ ...this.getFieldProps( 'alternate-email', {
-						customErrorMessage,
+					{ ...this.getFieldProps( 'email', {
+						customErrorMessage: this.props.contactDetailsErrors?.email,
 					} ) }
 				/>
 			</div>
 		);
 	}
 
-	render() {
+	renderFullForm() {
 		const { translate, contactDetailsErrors } = this.props;
 		const form = getFormFromContactDetails(
 			this.props.contactDetails,
@@ -349,7 +379,7 @@ export class ManagedContactDetailsFormFields extends Component {
 		debug( 'rendering with form', form );
 
 		return (
-			<FormFieldset className="contact-details-form-fields">
+			<>
 				<div className="contact-details-form-fields__row">
 					{ this.createField(
 						'first-name',
@@ -390,7 +420,17 @@ export class ManagedContactDetailsFormFields extends Component {
 				{ this.props.children && (
 					<div className="contact-details-form-fields__extra-fields">{ this.props.children }</div>
 				) }
+			</>
+		);
+	}
 
+	render() {
+		const { emailOnly } = this.props;
+
+		return (
+			<FormFieldset className="contact-details-form-fields">
+				{ emailOnly && this.renderContactDetailsEmail() }
+				{ ! emailOnly && this.renderFullForm() }
 				<QueryDomainCountries />
 			</FormFieldset>
 		);

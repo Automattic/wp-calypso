@@ -1,25 +1,13 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
+import { useState } from 'react';
 import '@testing-library/jest-dom/extend-expect';
-
-/**
- * Internal dependencies
- */
 import {
 	CheckoutProvider,
 	FormStatus,
 	TransactionStatus,
-	useSelect,
-	useDispatch,
-	useRegisterStore,
 	useFormStatus,
 	useTransactionStatus,
 } from '../src/public-api';
-
-const noop = () => {};
 
 const CustomFormWithFormStatus = () => {
 	const { formStatus, setFormComplete, setFormLoading, setFormSubmitting } = useFormStatus();
@@ -119,15 +107,14 @@ describe( 'CheckoutProvider', () => {
 
 	describe( 'with formStatus directly', () => {
 		beforeEach( () => {
-			MyCheckout = ( { onPaymentComplete, isLoading } ) => (
+			MyCheckout = ( { onPaymentComplete, isLoading, onPaymentError, onPaymentRedirect } ) => (
 				<CheckoutProvider
 					items={ items }
 					total={ total }
 					isLoading={ isLoading || null }
-					onPaymentComplete={ onPaymentComplete || noop }
-					showErrorMessage={ noop }
-					showInfoMessage={ noop }
-					showSuccessMessage={ noop }
+					onPaymentComplete={ onPaymentComplete }
+					onPaymentError={ onPaymentError }
+					onPaymentRedirect={ onPaymentRedirect }
 					paymentMethods={ [ mockMethod ] }
 					paymentProcessors={ {} }
 					initiallySelectedPaymentMethodId={ mockMethod.id }
@@ -154,25 +141,22 @@ describe( 'CheckoutProvider', () => {
 
 		it( 'sets form status to submitting when setFormSubmitting is called', () => {
 			const { getByText, queryByText } = render( <MyCheckout /> );
-			const button = getByText( 'Submit' );
 			expect( queryByText( 'Submitting' ) ).not.toBeInTheDocument();
-			fireEvent.click( button );
+			fireEvent.click( getByText( 'Submit' ) );
 			expect( getByText( 'Submitting' ) ).toBeInTheDocument();
 		} );
 
 		it( 'sets form status to complete when setFormComplete is called', () => {
 			const { getByText, queryByText } = render( <MyCheckout /> );
-			const button = getByText( 'Complete' );
 			expect( queryByText( 'Form Complete' ) ).not.toBeInTheDocument();
-			fireEvent.click( button );
+			fireEvent.click( getByText( 'Complete' ) );
 			expect( getByText( 'Form Complete' ) ).toBeInTheDocument();
 		} );
 
 		it( 'sets form status to loading when setFormLoading is called', () => {
 			const { getByText, queryByText } = render( <MyCheckout /> );
-			const button = getByText( 'Load' );
 			expect( queryByText( 'Loading' ) ).not.toBeInTheDocument();
-			fireEvent.click( button );
+			fireEvent.click( getByText( 'Load' ) );
 			expect( getByText( 'Loading' ) ).toBeInTheDocument();
 		} );
 
@@ -186,24 +170,32 @@ describe( 'CheckoutProvider', () => {
 		it( 'calls onPaymentComplete when form status is complete', () => {
 			const onPaymentComplete = jest.fn();
 			const { getByText } = render( <MyCheckout onPaymentComplete={ onPaymentComplete } /> );
-			const button = getByText( 'Complete' );
-			fireEvent.click( button );
+			fireEvent.click( getByText( 'Complete' ) );
 			expect( getByText( 'Form Complete' ) ).toBeInTheDocument();
 			expect( onPaymentComplete ).toBeCalled();
+		} );
+
+		it( 'does not call onPaymentComplete twice when form status is complete even if callback changes', () => {
+			const onPaymentComplete = jest.fn();
+			const { getByText, rerender } = render(
+				<MyCheckout onPaymentComplete={ () => onPaymentComplete() } />
+			);
+			fireEvent.click( getByText( 'Complete' ) );
+			rerender( <MyCheckout onPaymentComplete={ () => onPaymentComplete() } /> );
+			expect( onPaymentComplete.mock.calls.length ).toBe( 1 );
 		} );
 	} );
 
 	describe( 'with transactionStatus directly', () => {
 		beforeEach( () => {
-			MyCheckout = ( { onPaymentComplete, isLoading } ) => (
+			MyCheckout = ( { onPaymentComplete, isLoading, onPaymentError, onPaymentRedirect } ) => (
 				<CheckoutProvider
 					items={ items }
 					total={ total }
 					isLoading={ isLoading || null }
-					onPaymentComplete={ onPaymentComplete || noop }
-					showErrorMessage={ noop }
-					showInfoMessage={ noop }
-					showSuccessMessage={ noop }
+					onPaymentComplete={ onPaymentComplete }
+					onPaymentError={ onPaymentError }
+					onPaymentRedirect={ onPaymentRedirect }
 					paymentMethods={ [ mockMethod ] }
 					paymentProcessors={ {} }
 					initiallySelectedPaymentMethodId={ mockMethod.id }
@@ -230,29 +222,26 @@ describe( 'CheckoutProvider', () => {
 
 		it( 'sets form status to submitting when setTransactionPending is called', () => {
 			const { getByText, queryByText } = render( <MyCheckout /> );
-			const button = getByText( 'Submit' );
 			expect( queryByText( 'Submitting' ) ).not.toBeInTheDocument();
-			fireEvent.click( button );
+			fireEvent.click( getByText( 'Submit' ) );
 			expect( getByText( 'Submitting' ) ).toBeInTheDocument();
 		} );
 
 		it( 'sets form status to complete when setTransactionComplete is called', () => {
 			const { getByText, queryByText } = render( <MyCheckout /> );
-			const button = getByText( 'Complete' );
 			expect( queryByText( 'Form Complete' ) ).not.toBeInTheDocument();
-			fireEvent.click( button );
+			fireEvent.click( getByText( 'Complete' ) );
 			expect( getByText( 'Form Complete' ) ).toBeInTheDocument();
 		} );
 
 		it( 'sets form status to ready when setTransactionError is called', () => {
 			const { getByText, queryByText } = render( <MyCheckout /> );
-			const button = getByText( 'Cause Error' );
 			expect( queryByText( 'Showing Error' ) ).not.toBeInTheDocument();
-			fireEvent.click( button );
+			fireEvent.click( getByText( 'Cause Error' ) );
 			expect( getByText( 'Showing Error' ) ).toBeInTheDocument();
 		} );
 
-		it( 'does not call onPaymentComplete when form status is not complete', () => {
+		it( 'does not call onPaymentComplete when form loads', () => {
 			const onPaymentComplete = jest.fn();
 			const { getByText } = render( <MyCheckout onPaymentComplete={ onPaymentComplete } /> );
 			expect( getByText( 'Submit' ) ).not.toBeDisabled();
@@ -262,10 +251,75 @@ describe( 'CheckoutProvider', () => {
 		it( 'calls onPaymentComplete when form status is complete', () => {
 			const onPaymentComplete = jest.fn();
 			const { getByText } = render( <MyCheckout onPaymentComplete={ onPaymentComplete } /> );
-			const button = getByText( 'Complete' );
-			fireEvent.click( button );
+			fireEvent.click( getByText( 'Complete' ) );
 			expect( getByText( 'Form Complete' ) ).toBeInTheDocument();
 			expect( onPaymentComplete ).toBeCalled();
+		} );
+
+		it( 'does not call onPaymentRedirect when form loads', () => {
+			const onPaymentRedirect = jest.fn();
+			const { getByText } = render( <MyCheckout onPaymentRedirect={ onPaymentRedirect } /> );
+			expect( getByText( 'Submit' ) ).not.toBeDisabled();
+			expect( onPaymentRedirect ).not.toBeCalled();
+		} );
+
+		it( 'does not call onPaymentRedirect when transaction status is complete', () => {
+			const onPaymentRedirect = jest.fn();
+			const { getByText } = render( <MyCheckout onPaymentRedirect={ onPaymentRedirect } /> );
+			fireEvent.click( getByText( 'Complete' ) );
+			expect( getByText( 'Form Complete' ) ).toBeInTheDocument();
+			expect( onPaymentRedirect ).not.toBeCalled();
+		} );
+
+		it( 'does not call onPaymentRedirect twice when transaction status is redirecting even if callback changes', () => {
+			const onPaymentRedirect = jest.fn();
+			const { getByText, rerender } = render(
+				<MyCheckout onPaymentRedirect={ () => onPaymentRedirect() } />
+			);
+			fireEvent.click( getByText( 'Redirect' ) );
+			rerender( <MyCheckout onPaymentRedirect={ () => onPaymentRedirect() } /> );
+			expect( onPaymentRedirect.mock.calls.length ).toBe( 1 );
+		} );
+
+		it( 'calls onPaymentRedirect when transaction status is redirecting', () => {
+			const onPaymentRedirect = jest.fn();
+			const { getByText } = render( <MyCheckout onPaymentRedirect={ onPaymentRedirect } /> );
+			fireEvent.click( getByText( 'Redirect' ) );
+			expect( getByText( 'Redirecting' ) ).toBeInTheDocument();
+			expect( onPaymentRedirect ).toBeCalled();
+		} );
+
+		it( 'does not call onPaymentError when form loads', () => {
+			const onPaymentError = jest.fn();
+			const { getByText } = render( <MyCheckout onPaymentError={ onPaymentError } /> );
+			expect( getByText( 'Submit' ) ).not.toBeDisabled();
+			expect( onPaymentError ).not.toBeCalled();
+		} );
+
+		it( 'does not call onPaymentError when transaction status is complete', () => {
+			const onPaymentError = jest.fn();
+			const { getByText } = render( <MyCheckout onPaymentError={ onPaymentError } /> );
+			fireEvent.click( getByText( 'Complete' ) );
+			expect( getByText( 'Form Complete' ) ).toBeInTheDocument();
+			expect( onPaymentError ).not.toBeCalled();
+		} );
+
+		it( 'calls onPaymentError when transaction status is error', () => {
+			const onPaymentError = jest.fn();
+			const { getByText } = render( <MyCheckout onPaymentError={ onPaymentError } /> );
+			fireEvent.click( getByText( 'Cause Error' ) );
+			expect( getByText( 'Showing Error' ) ).toBeInTheDocument();
+			expect( onPaymentError ).toBeCalled();
+		} );
+
+		it( 'does not call onPaymentError twice when transaction status is error even if callback changes', () => {
+			const onPaymentError = jest.fn();
+			const { getByText, rerender } = render(
+				<MyCheckout onPaymentError={ () => onPaymentError() } />
+			);
+			fireEvent.click( getByText( 'Cause Error' ) );
+			rerender( <MyCheckout onPaymentError={ () => onPaymentError() } /> );
+			expect( onPaymentError.mock.calls.length ).toBe( 1 );
 		} );
 	} );
 } );
@@ -282,27 +336,7 @@ function createMockMethod() {
 }
 
 function MockPaymentForm( { summary } ) {
-	useRegisterStore( 'mock', {
-		reducer( state = {}, action ) {
-			switch ( action.type ) {
-				case 'CARDHOLDER_NAME_SET':
-					return { ...state, cardholderName: action.payload };
-			}
-			return state;
-		},
-		actions: {
-			changeCardholderName( payload ) {
-				return { type: 'CARDHOLDER_NAME_SET', payload };
-			},
-		},
-		selectors: {
-			getCardholderName( state ) {
-				return state.cardholderName || '';
-			},
-		},
-	} );
-	const cardholderName = useSelect( ( select ) => select( 'mock' ).getCardholderName() );
-	const { changeCardholderName } = useDispatch( 'mock' );
+	const [ cardholderName, changeCardholderName ] = useState( '' );
 	return (
 		<div data-testid="mock-payment-form">
 			<label>

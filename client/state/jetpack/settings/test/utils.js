@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { normalizeSettings, sanitizeSettings, filterSettingsByActiveModules } from '../utils';
 
 describe( 'utils', () => {
@@ -15,7 +7,7 @@ describe( 'utils', () => {
 				some_random_setting: 'example',
 			};
 
-			expect( normalizeSettings( settings ) ).to.eql( {
+			expect( normalizeSettings( settings ) ).toEqual( {
 				some_random_setting: 'example',
 			} );
 		} );
@@ -25,7 +17,7 @@ describe( 'utils', () => {
 				carousel_background_color: '',
 			};
 
-			expect( normalizeSettings( settings ) ).to.eql( {
+			expect( normalizeSettings( settings ) ).toEqual( {
 				carousel_background_color: 'black',
 			} );
 		} );
@@ -35,7 +27,7 @@ describe( 'utils', () => {
 				normalizeSettings( {
 					jetpack_protect_global_whitelist: null,
 				} )
-			).to.eql( {
+			).toEqual( {
 				jetpack_protect_global_whitelist: '',
 			} );
 		} );
@@ -47,7 +39,7 @@ describe( 'utils', () => {
 						local: [],
 					},
 				} )
-			).to.eql( {
+			).toEqual( {
 				jetpack_protect_global_whitelist: '',
 			} );
 		} );
@@ -59,7 +51,7 @@ describe( 'utils', () => {
 				},
 			};
 
-			expect( normalizeSettings( settings ) ).to.eql( {
+			expect( normalizeSettings( settings ) ).toEqual( {
 				jetpack_protect_global_whitelist: '123.123.123.123',
 			} );
 		} );
@@ -71,7 +63,7 @@ describe( 'utils', () => {
 				},
 			};
 
-			expect( normalizeSettings( settings ) ).to.eql( {
+			expect( normalizeSettings( settings ) ).toEqual( {
 				jetpack_protect_global_whitelist: '123.123.123.123\n213.123.213.123',
 			} );
 		} );
@@ -82,7 +74,7 @@ describe( 'utils', () => {
 				infinite_scroll: true,
 			};
 
-			expect( normalizeSettings( settings ) ).to.eql( {
+			expect( normalizeSettings( settings ) ).toEqual( {
 				some_setting: 'example',
 			} );
 		} );
@@ -93,7 +85,7 @@ describe( 'utils', () => {
 				'infinite-scroll': false,
 			};
 
-			expect( normalizeSettings( settings ) ).to.eql( {
+			expect( normalizeSettings( settings ) ).toEqual( {
 				infinite_scroll: 'default',
 				'infinite-scroll': false,
 			} );
@@ -105,7 +97,7 @@ describe( 'utils', () => {
 				'infinite-scroll': true,
 			};
 
-			expect( normalizeSettings( settings ) ).to.eql( {
+			expect( normalizeSettings( settings ) ).toEqual( {
 				infinite_scroll: 'scroll',
 				'infinite-scroll': true,
 			} );
@@ -117,7 +109,7 @@ describe( 'utils', () => {
 				'infinite-scroll': true,
 			};
 
-			expect( normalizeSettings( settings ) ).to.eql( {
+			expect( normalizeSettings( settings ) ).toEqual( {
 				infinite_scroll: 'button',
 				'infinite-scroll': true,
 			} );
@@ -133,7 +125,7 @@ describe( 'utils', () => {
 				'custom-content-types': true,
 			};
 
-			expect( normalizeSettings( settings ) ).to.eql( {
+			expect( normalizeSettings( settings ) ).toEqual( {
 				some_other_setting: 123,
 			} );
 		} );
@@ -145,7 +137,7 @@ describe( 'utils', () => {
 				some_random_setting: 'example',
 			};
 
-			expect( sanitizeSettings( settings ) ).to.eql( {
+			expect( sanitizeSettings( settings ) ).toEqual( {
 				some_random_setting: 'example',
 			} );
 		} );
@@ -156,7 +148,7 @@ describe( 'utils', () => {
 				post_by_email_address: 'some-email@example.com',
 			};
 
-			expect( sanitizeSettings( settings ) ).to.eql( {
+			expect( sanitizeSettings( settings ) ).toEqual( {
 				some_other_setting: 123,
 			} );
 		} );
@@ -167,7 +159,7 @@ describe( 'utils', () => {
 				post_by_email_address: 'regenerate',
 			};
 
-			expect( sanitizeSettings( settings ) ).to.eql( {
+			expect( sanitizeSettings( settings ) ).toEqual( {
 				some_other_setting: 123,
 				post_by_email_address: 'regenerate',
 			} );
@@ -179,7 +171,7 @@ describe( 'utils', () => {
 				akismet: true,
 			};
 
-			expect( sanitizeSettings( settings ) ).to.eql( {
+			expect( sanitizeSettings( settings ) ).toEqual( {
 				some_other_setting: 123,
 			} );
 		} );
@@ -190,7 +182,7 @@ describe( 'utils', () => {
 				'infinite-scroll': true,
 			};
 
-			expect( sanitizeSettings( settings ) ).to.eql( {
+			expect( sanitizeSettings( settings ) ).toEqual( {
 				some_other_setting: 123,
 			} );
 		} );
@@ -201,7 +193,7 @@ describe( 'utils', () => {
 				'infinite-scroll': true,
 			};
 
-			expect( sanitizeSettings( settings ) ).to.eql( {
+			expect( sanitizeSettings( settings ) ).toEqual( {
 				'infinite-scroll': false,
 			} );
 		} );
@@ -212,7 +204,7 @@ describe( 'utils', () => {
 				'infinite-scroll': false,
 			};
 
-			expect( sanitizeSettings( settings ) ).to.eql( {
+			expect( sanitizeSettings( settings ) ).toEqual( {
 				infinite_scroll: true,
 				'infinite-scroll': true,
 			} );
@@ -224,7 +216,7 @@ describe( 'utils', () => {
 				'infinite-scroll': false,
 			};
 
-			expect( sanitizeSettings( settings ) ).to.eql( {
+			expect( sanitizeSettings( settings ) ).toEqual( {
 				infinite_scroll: false,
 				'infinite-scroll': true,
 			} );
@@ -240,7 +232,7 @@ describe( 'utils', () => {
 				'custom-content-types': true,
 			};
 
-			expect( sanitizeSettings( settings ) ).to.eql( {
+			expect( sanitizeSettings( settings ) ).toEqual( {
 				some_other_setting: 123,
 			} );
 		} );
@@ -279,7 +271,7 @@ describe( 'utils', () => {
 				roles: true,
 			};
 
-			expect( filterSettingsByActiveModules( settings ) ).to.eql( {
+			expect( filterSettingsByActiveModules( settings ) ).toEqual( {
 				example_setting: true,
 				wp_mobile_excerpt: true,
 				wp_mobile_featured_images: true,
@@ -335,7 +327,7 @@ describe( 'utils', () => {
 				roles: true,
 			};
 
-			expect( filterSettingsByActiveModules( settings ) ).to.eql( {
+			expect( filterSettingsByActiveModules( settings ) ).toEqual( {
 				example_setting: true,
 			} );
 		} );
@@ -364,7 +356,7 @@ describe( 'utils', () => {
 				roles: true,
 			};
 
-			expect( filterSettingsByActiveModules( settings ) ).to.eql( {
+			expect( filterSettingsByActiveModules( settings ) ).toEqual( {
 				example_setting: true,
 			} );
 		} );

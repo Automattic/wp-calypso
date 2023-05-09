@@ -1,15 +1,12 @@
-/**
- * Internal dependencies
- */
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import isCurrentPlanPaid from './is-current-plan-paid';
 
 /**
  * Returns true if current user can purchase upgrades for this site
  *
- * @param  {object}   state  Global state tree
+ * @param  {Object}   state  Global state tree
  * @param  {number}   siteId Site ID
  * @returns {?boolean}        Whether site is previewable
  */

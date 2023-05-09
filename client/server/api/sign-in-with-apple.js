@@ -1,13 +1,7 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
 import bodyParser from 'body-parser';
 import qs from 'qs';
-
-/**
- * Internal dependencies
- */
-import config from '@automattic/calypso-config';
+import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import wpcom from 'calypso/lib/wp';
 
 function loginEndpointData() {
@@ -42,11 +36,13 @@ function loginWithApple( request, response, next ) {
 	// However Apple sends the user data only once,
 	// so let's query our sign-up endpoint with the `signup_flow_name=no-signup` to make sure the user data is saved
 	if ( userEmail ) {
-		wpcom
-			.undocumented()
-			.usersSocialNew( {
+		wpcom.req
+			.post( '/users/social/new', {
 				...loginEndpointData(),
 				...request.user_openid_data,
+				locale: getLocaleSlug(),
+				client_id: config( 'wpcom_signup_id' ),
+				client_secret: config( 'wpcom_signup_key' ),
 			} )
 			.catch( () => {
 				// ignore errors
@@ -62,20 +58,20 @@ function redirectToCalypso( request, response, next ) {
 		return next();
 	}
 
-	const originalUrlPath = request.originalUrl.split( '#' )[ 0 ];
+	const state = JSON.parse( request.body.state );
+	const originalUrlPath = state.originalUrlPath ?? request.originalUrl.split( '#' )[ 0 ];
 	const hashString = qs.stringify( {
 		...request.user_openid_data,
 		client_id: config( 'apple_oauth_client_id' ),
-		state: request.body.state,
+		state: state.oauth2State,
 	} );
-
-	response.redirect( originalUrlPath + '#' + hashString );
+	response.redirect( originalUrlPath + '?' + state.queryString + '#' + hashString );
 }
 
 export default function ( app ) {
 	return app.post(
 		[ '/log-in/apple/callback', '/start/user', '/me/security/social-login' ],
-		bodyParser.urlencoded(),
+		bodyParser.urlencoded( { extended: true } ),
 		loginWithApple,
 		redirectToCalypso
 	);

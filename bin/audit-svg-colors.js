@@ -11,44 +11,61 @@
  * $ node ./bin/audit-svg-colors.js
  */
 
-/**
- * External dependencies
- */
-
 const { execSync } = require( 'child_process' );
-const path = require( 'path' );
 const { readFileSync } = require( 'fs' );
-
-const _ = require( 'lodash' );
-const chroma = require( 'chroma-js' );
+const path = require( 'path' );
 const PALETTE = require( '@automattic/color-studio' );
+const chroma = require( 'chroma-js' );
+
+/**
+ * Native Sort - replacement of _.sortBy Lodash function
+ *
+ * @returns Sorted array.
+ */
+const compareByName = ( objA, objB ) => {
+	if ( objA.to.name > objB.to.name ) {
+		return 1;
+	} else if ( objB.to.name > objA.to.name ) {
+		return -1;
+	}
+	return 0;
+};
 
 /**
  * Palette color subsets
  */
 
+/**
+ * pickBy function is a replacement for the Lodash _.pickby
+ *
+ */
+const pickBy = ( palette, fn ) =>
+	Object.keys( palette ?? {} )
+		.filter( ( key ) => fn( palette[ key ], key ) )
+		.reduce( ( acc, key ) => ( ( acc[ key ] = palette[ key ] ), acc ), {} );
+
 // The subset of palette colors allowed in illustrations
-const PALETTE_ILLUSTRATION_COLORS = _.pickBy( PALETTE.colors, ( colorValue, colorName ) => {
+const PALETTE_ILLUSTRATION_COLORS = pickBy( PALETTE.colors, ( colorValue, colorName ) => {
 	// Avoid using pure black
 	if ( colorValue === '#000' ) {
 		return;
 	}
 	// Avoid specific colors for illustration use
-	return ! _.startsWith( colorName, 'Simplenote Blue' );
+	return ! colorName.startsWith( 'Simplenote Blue' );
 } );
 
 // The subset of palette colors used in app-related images is slightly wider
 // than what we allow for in illustration use (the above)
-const PALETTE_APP_COLORS = _.pickBy( PALETTE.colors, ( colorValue, colorName ) => {
+const PALETTE_APP_COLORS = pickBy( PALETTE.colors, ( colorValue, colorName ) => {
 	// Avoid using pure black
 	if ( colorValue === '#000' ) {
 		return;
 	}
 	// Don’t use brand colors for any WordPress.com app images
 	return ! (
-		_.startsWith( colorName, 'Simplenote Blue' ) ||
-		_.startsWith( colorName, 'WooCommerce Purple' ) ||
-		_.startsWith( colorName, 'WordPress Blue' )
+		colorName.startsWith( 'Simplenote Blue' ) ||
+		colorName.startsWith( 'WooCommerce Purple' ) ||
+		colorName.startsWith( 'WordPress Blue' )
 	);
 } );
 
@@ -71,12 +88,11 @@ const SVG_IGNORE_PATHS = [
 	/images\/email-providers\/google-workspace/,
 
 	// Illustrations that contain logos
-	/images\/customer-home\/illustration--task-podcasting.svg/,
 	/images\/customer-home\/illustration--task-connect-social-accounts.svg/,
 
 	// Credit card and payment gateway logos (the disabled versions are allowed)
 	/upgrades\/cc-(?:amex|diners|discover|jcb|mastercard|unionpay|visa)\.svg$/,
-	/upgrades\/(?:alipay|bancontact|brazil-tef|emergent-paywall|eps|giropay|ideal|netbanking|ovo|p24|paypal|paytm|sofort|tef|wechat)/,
+	/upgrades\/(?:alipay|bancontact|emergent-paywall|eps|giropay|ideal|netbanking|p24|paypal|paytm|sofort|tef|wechat)/,
 
 	// Color scheme thumbnails that rely on .org colors
 	/color-scheme-thumbnail-(?:blue|classic-dark|coffee|ectoplasm|light|modern|ocean|sunrise)\.svg$/,
@@ -110,8 +126,10 @@ const SVG_APP_PATHS = [
 ];
 
 // The regular expressions used to identify color values
-const SVG_VALUE_EXPRESSION = /(?:fill|flood-color|lighting-color|stop-color|stroke)="([a-z0-9#]*?)"/gi;
-const SVG_STYLE_EXPRESSION = /(?:fill|flood-color|lighting-color|stop-color|stroke):\s*([a-z0-9#]*?)\s*[;}]/gi;
+const SVG_VALUE_EXPRESSION =
+	/(?:fill|flood-color|lighting-color|stop-color|stroke)="([a-z0-9#]*?)"/gi;
+const SVG_STYLE_EXPRESSION =
+	/(?:fill|flood-color|lighting-color|stop-color|stroke):\s*([a-z0-9#]*?)\s*[;}]/gi;
 
 // The specific color values to ignore, including other variations of white
 // primarily to decrease the amount of noise in the output
@@ -165,23 +183,27 @@ SVG_FILES_TO_PROCESS.forEach( ( imagePath ) => {
 		return;
 	}
 
+	// There are SVG files where stroke value is 'null'.
+	// Added the filter before map() to ensure 'null' strings are filtered out.
 	REPLACEMENT_RULES.push( {
 		file: imagePath,
 		preset: targetPreset,
-		rules: colorValuesToReplace.map( ( value ) => {
-			const replacementValue = findClosestColor( value, targetValues );
-			const replacementName = findPaletteColorName( replacementValue );
+		rules: colorValuesToReplace
+			.filter( ( val ) => val !== 'null' )
+			.map( ( value ) => {
+				const replacementValue = findClosestColor( value, targetValues );
+				const replacementName = findPaletteColorName( replacementValue );
 
-			return {
-				from: {
-					value,
-				},
-				to: {
-					value: replacementValue,
-					name: replacementName,
-				},
-			};
-		} ),
+				return {
+					from: {
+						value,
+					},
+					to: {
+						value: replacementValue,
+						name: replacementName,
+					},
+				};
+			} ),
 	} );
 } );
 
@@ -257,16 +279,10 @@ function findClosestColor( value, targetValues ) {
 }
 
 function findPaletteColorName( value ) {
-	let name;
-
 	// Iterating from right to make sure color name aliases aren’t caught
-	_.forInRight( PALETTE.colors, ( paletteValue, paletteColorName ) => {
-		if ( paletteValue === value ) {
-			name = paletteColorName;
-			return false;
-		}
+	const name = Object.keys( PALETTE.colors ?? {} ).findLast( ( paletteColorName ) => {
+		return PALETTE.colors[ paletteColorName ] === value;
 	} );
-
 	return name;
 }
 
@@ -293,12 +309,15 @@ function printReplacementRules( replacementObjects ) {
 }
 
 function formatReplacementRules( rules ) {
-	return _.sortBy( rules, 'to.name' ).map( ( rule ) => {
-		const valueFrom = rule.from.value.padEnd( 7 );
-		const valueTo = rule.to.value.padEnd( 7 );
+	if ( rules && rules.length ) {
+		return [ ...rules ].sort( compareByName ).map( ( rule ) => {
+			const valueFrom = rule.from.value.padEnd( 7 );
+			const valueTo = rule.to.value.padEnd( 7 );
 
-		return `${ valueFrom } → ${ valueTo } (${ rule.to.name })`;
-	} );
+			return `${ valueFrom } → ${ valueTo } (${ rule.to.name })`;
+		} );
+	}
+	return [];
 }
 
 function getReplacementPrefixSuffix( replacementObject ) {

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getAccountClosureSites from 'calypso/state/selectors/get-account-closure-sites';
 import { userState } from './fixtures/user-state';
 

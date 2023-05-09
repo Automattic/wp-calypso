@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import MeProfileLinks from './me.settings.profile-links';
 import MeSettingsPassword from './me.settings.password';
+import MeProfileLinks from './me.settings.profile-links';
 
 /**
  * `MeSettings` constructor.
@@ -10,7 +7,7 @@ import MeSettingsPassword from './me.settings.password';
  * Use a `WPCOM#Me` instance to create a new `MeSettings` instance.
  *
  * @param {WPCOM} wpcom - wpcom instance
- * @returns {null} null
+ * @returns {MeSettings|undefined}
  */
 export default function MeSettings( wpcom ) {
 	if ( ! ( this instanceof MeSettings ) ) {
@@ -23,7 +20,7 @@ export default function MeSettings( wpcom ) {
 /**
  * Get settings for the current user.
  *
- * *Example:*
+ * Example:
  *    // Get settings for the current user
  *    wpcom
  *    .me()
@@ -32,7 +29,7 @@ export default function MeSettings( wpcom ) {
  *      // user settings data object
  *    } );
  *
- * @param {object} [query] - query object parameter
+ * @param {Object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
@@ -43,8 +40,8 @@ MeSettings.prototype.get = function ( query, fn ) {
 /**
  * Update settings of the current user
  *
- * @param {object} [query] - query object parameter
- * @param {object} body - body object parameter
+ * @param {Object} [query] - query object parameter
+ * @param {Object} body - body object parameter
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
@@ -55,7 +52,7 @@ MeSettings.prototype.update = function ( query, body, fn ) {
 /**
  * Return `MeProfileLinks` instance
  *
- * *Example:*
+ * Example:
  *    // Create a MeProfileLinks instance
  *    var profile_links = wpcom.me().settings().profileLinks();
  *

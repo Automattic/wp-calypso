@@ -1,29 +1,23 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import classNames from 'classnames';
-import { throttle, map } from 'lodash';
-import { connect } from 'react-redux';
-import { loadScript } from '@automattic/load-script';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import config from '@automattic/calypso-config';
-import StatsModulePlaceholder from '../stats-module/placeholder';
+import { loadScript } from '@automattic/load-script';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { throttle, map } from 'lodash';
+import PropTypes from 'prop-types';
+import { createRef, Component } from 'react';
+import { connect } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
+import { getEmailStatsNormalizedData } from 'calypso/state/stats/emails/selectors';
+import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import StatsModulePlaceholder from '../stats-module/placeholder';
 
-/**
- * Style dependencies
- */
 import './style.scss';
+
+// TODO: Replace with something that better handles responsive design.
+// E.g., https://github.com/themustafaomar/jsvectormap
 
 class StatsGeochart extends Component {
 	static propTypes = {
@@ -31,11 +25,20 @@ class StatsGeochart extends Component {
 		statType: PropTypes.string,
 		query: PropTypes.object,
 		data: PropTypes.array,
+		kind: PropTypes.string,
+		postId: PropTypes.number,
 	};
 
-	visualizationsLoaded = false;
+	static defaultProps = {
+		kind: 'site',
+	};
+
+	state = {
+		visualizationsLoaded: false,
+	};
+
 	visualization = null;
-	chartRef = React.createRef();
+	chartRef = createRef();
 
 	componentDidMount() {
 		if ( ! window.google || ! window.google.charts ) {
@@ -51,7 +54,7 @@ class StatsGeochart extends Component {
 	}
 
 	componentDidUpdate() {
-		if ( this.visualizationsLoaded ) {
+		if ( this.state.visualizationsLoaded ) {
 			this.drawData();
 		}
 	}
@@ -77,7 +80,7 @@ class StatsGeochart extends Component {
 
 	drawRegionsMap = () => {
 		if ( this.chartRef.current ) {
-			this.visualizationsLoaded = true;
+			this.setState( { visualizationsLoaded: true } );
 			this.visualization = new window.google.visualization.GeoChart( this.chartRef.current );
 			window.google.visualization.events.addListener(
 				this.visualization,
@@ -90,14 +93,13 @@ class StatsGeochart extends Component {
 	};
 
 	resize = () => {
-		if ( this.visualizationsLoaded ) {
+		if ( this.state.visualizationsLoaded ) {
 			this.drawData();
 		}
 	};
 
 	drawData = () => {
 		const { currentUserCountryCode, data, translate } = this.props;
-
 		if ( ! data || ! data.length ) {
 			return;
 		}
@@ -116,8 +118,6 @@ class StatsGeochart extends Component {
 		chartData.addColumn( 'string', translate( 'Country' ).toString() );
 		chartData.addColumn( 'number', translate( 'Views' ).toString() );
 		chartData.addRows( mapData );
-		const node = this.chartRef.current;
-		const width = node.clientWidth;
 
 		// Note that using raw hex values here is an exception due to
 		// IE11 and other older browser not supporting CSS custom props.
@@ -130,8 +130,6 @@ class StatsGeochart extends Component {
 			getComputedStyle( document.body ).getPropertyValue( '--color-accent' ).trim() || '#d52c82';
 
 		const options = {
-			width: 100 + '%',
-			height: width <= 480 ? '238' : '480',
 			keepAspectRatio: true,
 			enableRegionInteractivity: true,
 			region: 'world',
@@ -145,7 +143,7 @@ class StatsGeochart extends Component {
 			options.region = regions[ 0 ];
 		}
 
-		this.visualization.draw( chartData, options );
+		this.visualization?.draw( chartData, options );
 	};
 
 	loadVisualizations = () => {
@@ -167,32 +165,50 @@ class StatsGeochart extends Component {
 	};
 
 	render() {
-		const { siteId, statType, query, data } = this.props;
-		const isLoading = ! data;
+		const { siteId, statType, query, data, kind } = this.props;
+		const isLoading = ! data || ! this.state.visualizationsLoaded;
 		const classes = classNames( 'stats-geochart', {
 			'is-loading': isLoading,
 			'has-no-data': data && ! data.length,
 		} );
 
 		return (
-			<div>
+			<>
+				{ siteId && kind === 'site' && (
+					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
+				) }
+
 				<div ref={ this.chartRef } className={ classes } />
-				{ siteId && <QuerySiteStats statType={ statType } siteId={ siteId } query={ query } /> }
-				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
-				<StatsModulePlaceholder className="is-block" isLoading={ isLoading } />
-			</div>
+				<StatsModulePlaceholder
+					className={ classNames( classes, 'is-block' ) }
+					isLoading={ isLoading }
+				/>
+			</>
 		);
 	}
 }
 
 export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
-	const statType = 'statsCountryViews';
-	const { query } = ownProps;
+	const statType = ownProps.statType ?? 'statsCountryViews';
+	const { postId, query, kind } = ownProps;
+
+	const data =
+		kind === 'email'
+			? getEmailStatsNormalizedData(
+					state,
+					siteId,
+					postId,
+					query.period,
+					statType,
+					query.date,
+					'countries'
+			  )
+			: getSiteStatsNormalizedData( state, siteId, statType, query );
 
 	return {
 		currentUserCountryCode: getCurrentUserCountryCode( state ),
-		data: getSiteStatsNormalizedData( state, siteId, statType, query ),
+		data,
 		siteId,
 		statType,
 	};

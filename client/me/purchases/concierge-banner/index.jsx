@@ -1,38 +1,31 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
-import classnames from 'classnames';
-import PropTypes from 'prop-types';
-
-/**
- * Internal Dependencies
- */
 import { Card } from '@automattic/components';
-import ActionCard from 'calypso/components/action-card';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import { Banner } from 'calypso/components/banner';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import conciergeImage from 'calypso/assets/images/illustrations/jetpack-concierge.svg';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
+	CONCIERGE_HAS_AVAILABLE_SESSION,
 	CONCIERGE_HAS_UPCOMING_APPOINTMENT,
-	CONCIERGE_HAS_AVAILABLE_INCLUDED_SESSION,
-	CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION,
-	CONCIERGE_SUGGEST_PURCHASE_CONCIERGE,
 } from 'calypso/me/concierge/constants';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class ConciergeBanner extends Component {
 	static propTypes = {
 		bannerType: PropTypes.oneOf( [
 			CONCIERGE_HAS_UPCOMING_APPOINTMENT,
-			CONCIERGE_HAS_AVAILABLE_INCLUDED_SESSION,
-			CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION,
-			CONCIERGE_SUGGEST_PURCHASE_CONCIERGE,
+			CONCIERGE_HAS_AVAILABLE_SESSION,
 		] ).isRequired,
+		availableSessions: PropTypes.array.isRequired,
+		showPlaceholder: PropTypes.bool,
+		nextAppointmentSiteId: PropTypes.number,
+		siteId: PropTypes.number,
 	};
 
 	placeholder() {
@@ -55,114 +48,100 @@ class ConciergeBanner extends Component {
 	getBannerContent() {
 		const { bannerType, translate } = this.props;
 
-		let headerText;
-		let mainText;
+		let title;
+		let description;
 		let buttonText;
-		let buttonHref;
-		let illustrationUrl;
+		let event;
 
 		switch ( bannerType ) {
 			case CONCIERGE_HAS_UPCOMING_APPOINTMENT:
-				headerText = translate( 'Your appointment is coming up!' );
-				mainText = translate(
-					'Get ready with your questions for your upcoming Quick Start session appointment.',
+				title = translate( 'Your Quick Start session is coming up soon' );
+				description = translate(
+					'Your {{supportLink}}Quick Start support session{{/supportLink}} is approaching. Get ready for your one-to-one with our Happiness Engineer.',
 					{
-						comment:
-							'Quick Start Session is a one-on-one video session between the user and our support staff.',
+						components: {
+							supportLink: (
+								<a
+									target="_blank"
+									rel="noreferrer"
+									href="https://wordpress.com/discover-wordpress/2019/03/21/getting-the-most-out-of-our-business-concierge-service/"
+								/>
+							),
+						},
 					}
 				);
 				buttonText = translate( 'Session dashboard' );
-				buttonHref = '/me/concierge';
-				illustrationUrl = conciergeImage;
+				event = 'view-concierge-dashboard';
 				break;
-
-			case CONCIERGE_HAS_AVAILABLE_INCLUDED_SESSION:
-				headerText = translate( 'Looking for Expert Help?' );
-				mainText = translate(
-					'Get %(durationInMinutes)d minutes dedicated to the success of your site. Schedule your free 1-1 Quick Start Session with a Happiness Engineer!',
+			case CONCIERGE_HAS_AVAILABLE_SESSION:
+				title = translate( 'You still have a Quick Start session available' );
+				description = translate(
+					`Schedule your {{supportLink}}Quick Start support session{{/supportLink}} and get one-on-one guidance from our expert Happiness Engineers to kickstart your site.`,
 					{
-						comment:
-							'Quick Start Session is a one-on-one video session between the user and our support staff.',
-						args: { durationInMinutes: 30 },
+						components: {
+							supportLink: (
+								<a
+									target="_blank"
+									rel="noreferrer"
+									href="https://wordpress.com/discover-wordpress/2019/03/21/getting-the-most-out-of-our-business-concierge-service/"
+								/>
+							),
+						},
 					}
 				);
-				buttonText = translate( 'Schedule now' );
-				buttonHref = '/me/concierge';
-				illustrationUrl = conciergeImage;
-				break;
-
-			case CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION:
-				headerText = translate( 'Our experts are waiting to help you' );
-				mainText = translate( 'Schedule your 1-1 Quick Start Session with a Happiness Engineer!', {
-					comment:
-						'Quick Start Session is a one-on-one video session between the user and our support staff.',
-				} );
-				buttonText = translate( 'Schedule now' );
-				buttonHref = '/me/concierge';
-				illustrationUrl = conciergeImage;
-				break;
-
-			case CONCIERGE_SUGGEST_PURCHASE_CONCIERGE:
-				headerText = translate( 'Need an expert by your side?' );
-				mainText = translate(
-					'We offer one-on-one Quick Start sessions dedicated to your site’s success. Click the button to learn how we can help you during these %(durationInMinutes)d minute calls.',
-					{
-						comment:
-							'Quick Start Session is a one-on-one video session between the user and our support staff.',
-						args: { durationInMinutes: 30 },
-					}
-				);
-				buttonText = translate( 'Learn more' );
-				buttonHref = '/checkout/offer-quickstart-session';
-				illustrationUrl = '/calypso/images/illustrations/illustration-start.svg';
+				buttonText = translate( 'Schedule a date' );
+				event = 'schedule-concierge-session';
 				break;
 		}
 
-		return { headerText, mainText, buttonText, buttonHref, illustrationUrl };
+		return { title, description, buttonText, event };
 	}
 
 	render() {
-		const { bannerType, showPlaceholder } = this.props;
+		const { bannerType, quickStartSiteSlug, referrer, showPlaceholder } = this.props;
 
 		if ( showPlaceholder ) {
 			return this.placeholder();
 		}
 
-		const {
-			headerText,
-			mainText,
-			buttonText,
-			buttonHref,
-			illustrationUrl,
-		} = this.getBannerContent();
-
-		const className = classnames( 'concierge-banner', {
-			'purchase-concierge': CONCIERGE_SUGGEST_PURCHASE_CONCIERGE === bannerType,
-		} );
+		const { buttonText, description, title, event } = this.getBannerContent();
 
 		return (
 			<>
 				<TrackComponentView eventName="calypso_purchases_concierge_banner_view" />
-				<ActionCard
-					headerText={ headerText }
-					mainText={ mainText }
-					buttonText={ buttonText }
-					buttonIcon={ null }
-					buttonPrimary={ true }
-					buttonHref={ buttonHref }
-					buttonTarget={ null }
-					buttonOnClick={ () => {
-						this.props.recordTracksEvent( 'calypso_purchases_concierge_banner_click', {
-							referer: '/me/purchases',
-						} );
+				<Banner
+					className="concierge-banner"
+					showIcon={ false }
+					primaryButton={ false }
+					callToAction={ buttonText }
+					description={ description }
+					dismissPreferenceName={ `quick-start-banner-${ bannerType }` }
+					href={ `/me/quickstart/${ quickStartSiteSlug }` }
+					title={ title }
+					tracksClickName="calypso_purchases_concierge_banner_click"
+					recordTracksEvent={ recordTracksEvent }
+					event={ event }
+					tracksClickProperties={ {
+						referrer,
 					} }
-					compact={ false }
-					illustration={ illustrationUrl }
-					classNames={ className }
 				/>
 			</>
 		);
 	}
 }
 
-export default localize( ConciergeBanner );
+const mapStateToProps = ( state, { nextAppointmentSiteId, siteId, availableSessions } ) => {
+	// if no appointment and not on a site then use the first site with a session available
+	// e.g. when viewing at /me/purchases
+	const quickStartSiteId = nextAppointmentSiteId || siteId || availableSessions[ 0 ];
+
+	const referrer =
+		siteId > 0 ? getCurrentRouteParameterized( state, siteId ) : getCurrentRoute( state );
+
+	return {
+		quickStartSiteSlug: getSiteSlug( state, quickStartSiteId ),
+		referrer,
+	};
+};
+
+export default connect( mapStateToProps )( localize( ConciergeBanner ) );

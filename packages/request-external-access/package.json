@@ -6,6 +6,7 @@
 	"module": "dist/esm/index.js",
 	"calypso:src": "src/index.js",
 	"sideEffects": false,
+	"types": "dist/types",
 	"keywords": [
 		"wordpress",
 		"access",
@@ -22,19 +23,20 @@
 	"publishConfig": {
 		"access": "public"
 	},
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"files": [
 		"dist",
 		"src"
 	],
 	"scripts": {
-		"clean": "npx rimraf dist",
+		"clean": "rm -rf dist",
 		"build": "transpile",
 		"prepack": "yarn run clean && yarn run build"
 	},
 	"dependencies": {
-		"@automattic/popup-monitor": "^1.0.0"
+		"@automattic/popup-monitor": "workspace:^"
+	},
+	"devDependencies": {
+		"@automattic/calypso-typescript-config": "workspace:^"
 	}
 }

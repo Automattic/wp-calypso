@@ -1,12 +1,9 @@
-/**
- * Internal Dependencies
- */
-import { fetch, onSuccess } from '../';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
 	requestRecentPostViews,
 	receiveRecentPostViews,
 } from 'calypso/state/stats/recent-post-views/actions';
+import { fetch, onSuccess } from '../';
 
 describe( 'fetch', () => {
 	it( 'should dispatch an http request', () => {

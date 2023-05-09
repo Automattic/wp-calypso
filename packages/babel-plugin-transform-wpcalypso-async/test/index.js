@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 const babel = require( '@babel/core' );
 
 describe( 'babel-plugin-transform-wpcalypso-async', () => {

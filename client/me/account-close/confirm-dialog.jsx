@@ -1,32 +1,21 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-import page from 'page';
-
-/**
- * Internal dependencies
- */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Dialog, Button } from '@automattic/components';
-import Gridicon from 'calypso/components/gridicon';
-import FormTextInput from 'calypso/components/forms/form-text-input';
+import { Dialog, Button, Gridicon } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import page from 'page';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { onboardingUrl } from 'calypso/lib/paths';
 import { closeAccount } from 'calypso/state/account/actions';
-import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
-/**
- * Style dependencies
- */
 import './confirm-dialog.scss';
 
 const noop = () => {};
 
-class AccountCloseConfirmDialog extends React.Component {
+class AccountCloseConfirmDialog extends Component {
 	state = {
 		displayAlternativeOptions: true,
 		inputValue: '',
@@ -72,14 +61,14 @@ class AccountCloseConfirmDialog extends React.Component {
 	};
 
 	render() {
-		const { currentUsername, isVisible, onboardingUrl, translate } = this.props;
+		const { currentUsername, isVisible, translate } = this.props;
 		const isDeleteButtonDisabled = currentUsername && this.state.inputValue !== currentUsername;
 
 		const alternativeOptions = [
 			{
 				englishText: 'Start a new site',
 				text: translate( 'Start a new site' ),
-				href: onboardingUrl + '?ref=me-account-close',
+				href: onboardingUrl() + '?ref=me-account-close',
 				supportLink:
 					'https://wordpress.com/support/create-a-blog/#adding-a-new-site-or-blog-to-an-existing-account',
 				supportPostId: 3991,
@@ -95,7 +84,7 @@ class AccountCloseConfirmDialog extends React.Component {
 				englishText: 'Change your username',
 				text: translate( 'Change your username' ),
 				href: '/me/account',
-				supportLink: 'https://wordpress.com/support/change-your-username',
+				supportLink: 'https://wordpress.com/support/change-your-username/',
 				supportPostId: 2116,
 			},
 			{
@@ -165,6 +154,7 @@ class AccountCloseConfirmDialog extends React.Component {
 							value={ this.state.inputValue }
 							aria-required="true"
 							id="confirmAccountCloseInput"
+							spellCheck={ false }
 						/>
 					</>
 				) }
@@ -219,7 +209,6 @@ export default connect(
 
 		return {
 			currentUsername: user && user.username,
-			onboardingUrl: getOnboardingUrl( state ),
 		};
 	},
 	{

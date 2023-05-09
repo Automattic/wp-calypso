@@ -1,19 +1,9 @@
-/**
- * External dependencies
- */
-import { find } from 'lodash';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
-import { getSite } from 'calypso/state/sites/selectors';
+import { find } from 'lodash';
 import { createSitePlanObject } from 'calypso/state/sites/plans/assembler';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
+import { getSite } from 'calypso/state/sites/selectors';
 
-/**
- * Module dependencies
- */
 const debug = debugFactory( 'calypso:state:sites:plans:selectors' );
 
 export function getCurrentPlan( state, siteId ) {

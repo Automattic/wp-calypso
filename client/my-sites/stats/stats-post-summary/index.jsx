@@ -1,26 +1,31 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-import { flatten, flowRight, get, range } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import SummaryChart from '../stats-summary';
-import SectionNav from 'calypso/components/section-nav';
-import SegmentedControl from 'calypso/components/segmented-control';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import SegmentedControl from 'calypso/components/segmented-control';
 import { getPostStats, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
+import DatePicker from '../stats-date-picker';
+import StatsPeriodHeader from '../stats-period-header';
+import StatsPeriodNavigation from '../stats-period-navigation';
+import SummaryChart from '../stats-summary';
 
-/**
- * Style dependencies
- */
 import './style.scss';
+
+function* statsByMonth( stats, moment ) {
+	for ( const year of Object.keys( stats.years ) ) {
+		for ( let month = 1; month <= 12; month++ ) {
+			const firstDayOfMonth = moment( `1/${ month }/${ year }`, 'DD/MM/YYYY' );
+			yield {
+				period: firstDayOfMonth.format( 'MMM YYYY' ),
+				periodLabel: firstDayOfMonth.format( 'MMMM YYYY' ),
+				value: stats.years[ year ]?.months[ month ] ?? 0,
+			};
+		}
+	}
+}
 
 class StatsPostSummary extends Component {
 	static propTypes = {
@@ -30,13 +35,14 @@ class StatsPostSummary extends Component {
 	};
 
 	state = {
+		selectedRecord: null,
 		period: 'day',
 	};
 
 	selectPeriod( period ) {
 		return () =>
 			this.setState( {
-				selectedRecord: undefined,
+				selectedRecord: null,
 				period,
 			} );
 	}
@@ -58,12 +64,13 @@ class StatsPostSummary extends Component {
 				}
 
 				return stats.data
-					.slice( Math.max( stats.data.length - 10, 1 ) )
+					.slice( Math.max( stats.data.length - 10, 0 ) )
 					.map( ( [ date, value ] ) => {
 						const momentDate = moment( date );
 						return {
 							period: momentDate.format( 'MMM D' ),
 							periodLabel: momentDate.format( 'LL' ),
+							startDate: date,
 							value,
 						};
 					} );
@@ -84,18 +91,7 @@ class StatsPostSummary extends Component {
 					return [];
 				}
 
-				const months = flatten(
-					Object.keys( stats.years ).map( ( year ) => {
-						return range( 1, 13 ).map( ( month ) => {
-							const firstDayOfMonth = moment( `1/${ month }/${ year }`, 'DD/MM/YYYY' );
-							return {
-								period: firstDayOfMonth.format( 'MMM YYYY' ),
-								periodLabel: firstDayOfMonth.format( 'MMMM YYYY' ),
-								value: get( stats.years, [ year, 'months', month ], 0 ),
-							};
-						} );
-					} )
-				);
+				const months = [ ...statsByMonth( stats, moment ) ];
 				const firstNotEmpty = months.findIndex( ( item ) => item.value !== 0 );
 				const reverseLastNotEmpty = [ ...months ]
 					.reverse()
@@ -117,6 +113,7 @@ class StatsPostSummary extends Component {
 					return {
 						period: firstDay.format( 'MMM D' ),
 						periodLabel: firstDay.format( 'L' ) + ' - ' + firstDay.add( 6, 'days' ).format( 'L' ),
+						startDate: moment( week.days[ 0 ].day ).format( 'YYYY/MM/DD' ),
 						value: week.total,
 					};
 				} );
@@ -139,11 +136,19 @@ class StatsPostSummary extends Component {
 			selectedRecord = chartData[ chartData.length - 1 ];
 		}
 
+		const summaryWrapperClass = classNames( 'stats-post-summary', 'is-chart-tabs', {
+			'is-period-year': this.state.period === 'year',
+		} );
+
 		return (
-			<div className="stats-post-summary">
+			<div className={ summaryWrapperClass }>
 				<QueryPostStats siteId={ siteId } postId={ postId } />
-				<SectionNav>
-					<SegmentedControl compact>
+
+				<StatsPeriodHeader>
+					<StatsPeriodNavigation showArrows={ false }>
+						<DatePicker period={ this.state.period } date={ selectedRecord?.startDate } isShort />
+					</StatsPeriodNavigation>
+					<SegmentedControl primary>
 						{ periods.map( ( { id, label } ) => (
 							<SegmentedControl.Item
 								key={ id }
@@ -154,30 +159,27 @@ class StatsPostSummary extends Component {
 							</SegmentedControl.Item>
 						) ) }
 					</SegmentedControl>
-				</SectionNav>
+				</StatsPeriodHeader>
 
 				<SummaryChart
 					isLoading={ isRequesting && ! chartData.length }
 					data={ chartData }
-					selected={ selectedRecord }
 					activeKey="period"
 					dataKey="value"
 					labelKey="periodLabel"
-					labelClass="visible"
+					chartType="views"
 					sectionClass="is-views"
-					tabLabel={ translate( 'Views' ) }
+					selected={ selectedRecord }
 					onClick={ this.selectRecord }
+					tabLabel={ translate( 'Views' ) }
+					type="post"
 				/>
 			</div>
 		);
 	}
 }
 
-const connectComponent = connect( ( state, { siteId, postId } ) => {
-	return {
-		stats: getPostStats( state, siteId, postId ),
-		isRequesting: isRequestingPostStats( state, siteId, postId ),
-	};
-} );
-
-export default flowRight( connectComponent, localize, withLocalizedMoment )( StatsPostSummary );
+export default connect( ( state, { siteId, postId } ) => ( {
+	stats: getPostStats( state, siteId, postId ),
+	isRequesting: isRequestingPostStats( state, siteId, postId ),
+} ) )( localize( withLocalizedMoment( StatsPostSummary ) ) );

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	EMAIL_ACCOUNTS_REQUEST,
 	EMAIL_ACCOUNTS_REQUEST_SUCCESS,

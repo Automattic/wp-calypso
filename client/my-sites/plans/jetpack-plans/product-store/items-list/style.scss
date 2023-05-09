@@ -1,0 +1,50 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.jetpack-product-store__all-items--grid {
+	display: grid;
+	column-gap: 80px;
+	row-gap: 32px;
+
+	margin: 0;
+
+	list-style-type: none;
+
+	@include break-medium {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+.jetpack-product-store__all-items {
+	margin-top: 48px;
+	margin-bottom: 0;
+
+
+	/*
+	* on small screens, if the product is already owned,
+	* set flex-direction to column to avoid cluttered UI
+	* due to long "Manage subscription" button
+	*/
+	.simple-item-card__header:has(.item-price__is-owned) {
+		@media only screen and (max-width: $break-mobile), only screen and (min-width: $break-medium) and (max-width: $break-large) {
+			flex-direction: column;
+			gap: 1rem;
+		}
+	}
+}
+
+.jetpack-product-store__all-items--header {
+	margin-top: rem(32px);
+	margin-bottom: rem(24px);
+	font-size: $font-title-small;
+	font-weight: 700;
+
+	@include break-medium {
+		margin-top: rem(48px);
+		margin-bottom: rem(48px);
+		font-size: $font-title-medium;
+		line-height: rem(29px);
+		font-weight: 600;
+	}
+}
+

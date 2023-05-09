@@ -1,19 +1,32 @@
-/**
- * External dependencies
- */
-import debugModule from 'debug';
-import React from 'react';
-import page from 'page';
-import { isEmpty } from 'lodash';
-
-/**
- * Internal Dependencies
- */
 import config from '@automattic/calypso-config';
-import { sectionify } from 'calypso/lib/route';
+import { isEmpty } from 'lodash';
+import page from 'page';
+import { createElement } from 'react';
+import store from 'store';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
-import SignupComponent from './main';
+import { login } from 'calypso/lib/paths';
+import { sectionify } from 'calypso/lib/route';
+import flows from 'calypso/signup/config/flows';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { updateDependencies } from 'calypso/state/signup/actions';
+import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
+import { setCurrentFlowName, setPreviousFlowName } from 'calypso/state/signup/flow/actions';
+import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
+import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
+import { setSiteType } from 'calypso/state/signup/steps/site-type/actions';
+import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
+import { requestSite } from 'calypso/state/sites/actions';
+import { getSiteId } from 'calypso/state/sites/selectors';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getStepComponent } from './config/step-components';
+import SignupComponent from './main';
+import {
+	retrieveSignupDestination,
+	clearSignupDestinationCookie,
+	getSignupCompleteFlowName,
+	wasSignupCheckoutPageUnloaded,
+} from './storageUtils';
 import {
 	getStepUrl,
 	canResumeFlow,
@@ -23,29 +36,8 @@ import {
 	getValidPath,
 	getFlowPageTitle,
 	shouldForceLogin,
+	isReskinnedFlow,
 } from './utils';
-import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
-import store from 'store';
-import { setCurrentFlowName, setPreviousFlowName } from 'calypso/state/signup/flow/actions';
-import { setSelectedSiteId } from 'calypso/state/ui/actions';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
-import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
-import {
-	getSiteVerticalId,
-	getSiteVerticalIsUserInput,
-} from 'calypso/state/signup/steps/site-vertical/selectors';
-import { setSiteVertical } from 'calypso/state/signup/steps/site-vertical/actions';
-import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
-import { setSiteType } from 'calypso/state/signup/steps/site-type/actions';
-import { login } from 'calypso/lib/paths';
-import { getDotBlogVerticalId } from './config/dotblog-verticals';
-import { getSiteId } from 'calypso/state/sites/selectors';
-import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
-import { requestSite } from 'calypso/state/sites/actions';
-import { loadExperimentAssignment } from 'calypso/lib/explat';
-
-const debug = debugModule( 'calypso:signup' );
 
 /**
  * Constants
@@ -66,19 +58,12 @@ const removeWhiteBackground = function () {
 	document.body.classList.remove( 'is-white-signup' );
 };
 
-// eslint-disable-next-line no-unused-vars -- Used for a planned experiment rerun, see newUsersWithFreePlan below.
-const gutenbergRedirect = function ( flowName, locale ) {
-	const url = new URL( window.location );
-	let path = '/new';
-	if ( [ 'free', 'personal', 'premium', 'business', 'ecommerce' ].includes( flowName ) ) {
-		path += `/${ flowName }`;
-	}
-	if ( locale ) {
-		path += `/${ locale }`;
+export const addVideoPressSignupClassName = () => {
+	if ( ! document ) {
+		return;
 	}
 
-	url.pathname = path;
-	window.location.replace( url.toString() );
+	document.body.classList.add( 'is-videopress-signup' );
 };
 
 export const addP2SignupClassName = () => {
@@ -101,14 +86,7 @@ export default {
 	redirectTests( context, next ) {
 		const isLoggedIn = isUserLoggedIn( context.store.getState() );
 		const currentFlowName = getFlowName( context.params, isLoggedIn );
-		if ( context.pathname.indexOf( 'new-launch' ) >= 0 ) {
-			// For 'new-launch' flow, 'is-white-signup' class name is being removed in client/signup/main.jsx
-			// Don't remove it here to prevent the flash of blue while the component is mounted
-			next();
-		} else if (
-			config( 'reskinned_flows' ).includes( currentFlowName ) &&
-			config.isEnabled( 'signup/reskin' )
-		) {
+		if ( isReskinnedFlow( currentFlowName ) ) {
 			next();
 		} else if (
 			context.pathname.indexOf( 'domain' ) >= 0 ||
@@ -124,62 +102,16 @@ export default {
 			removeWhiteBackground();
 			next();
 		} else if ( context.pathname.includes( 'p2' ) ) {
-			// We still want to keep the original styling for the new user creation step
-			// so people know they are creating an account at WP.com.
-			if ( context.pathname.includes( 'user' ) ) {
-				removeP2SignupClassName();
-			} else {
-				addP2SignupClassName();
-			}
-
+			addP2SignupClassName();
 			removeWhiteBackground();
-
+			next();
+		} else if ( context.pathname.includes( 'videopress' ) ) {
+			addVideoPressSignupClassName();
+			removeWhiteBackground();
 			next();
 		} else {
 			next();
 			return;
-
-			// Code for the newUsersWithFreePlan experiment, previously implemented in calypso-abtest.
-			// Planned to be rerun see pbxNRc-xd-p2#comment-1949
-			// Commented out for eslint, to rerun next() has to be placed below this.
-			// const localeFromParams = context.params.lang;
-			// const flowName = getFlowName( context.params, isLoggedIn );
-			// if (
-			// 	flowName === 'free' &&
-			//  	// Checking for treatment variation previously happened here:
-			// 	false
-			// ) {
-			// 	gutenbergRedirect( flowName, localeFromParams );
-			// 	return;
-			// }
-
-			// Code for the variantUserless experiment, previously implemented in calypso-abtest.
-			// Planned to be rerun, see pbmo2S-Bv-p2#comment-1382
-			// Commented out for eslint, to rerun next() has to be placed below this.
-			// if (
-			// 	! isLoggedIn &&
-			// 	-1 === context.pathname.indexOf( 'free' ) &&
-			// 	-1 === context.pathname.indexOf( 'personal' ) &&
-			// 	-1 === context.pathname.indexOf( 'premium' ) &&
-			// 	-1 === context.pathname.indexOf( 'business' ) &&
-			// 	-1 === context.pathname.indexOf( 'ecommerce' ) &&
-			// 	-1 === context.pathname.indexOf( 'with-theme' ) &&
-			// 	// Checking for treatment variation previously happened here:
-			// 	false
-			// ) {
-			// 	removeWhiteBackground();
-			// 	const stepName = getStepName( context.params );
-			// 	const stepSectionName = getStepSectionName( context.params );
-			// 	const urlWithLocale = getStepUrl(
-			// 		'onboarding-registrationless',
-			// 		stepName,
-			// 		stepSectionName,
-			// 		localeFromParams
-			// 	);
-			// 	window.location = urlWithLocale;
-			// } else {
-			// 	next();
-			// }
 		}
 	},
 	redirectWithoutLocaleIfLoggedIn( context, next ) {
@@ -299,6 +231,20 @@ export default {
 		const flowName = getFlowName( context.params, userLoggedIn );
 		const stepName = getStepName( context.params );
 		const stepSectionName = getStepSectionName( context.params );
+		const { providesDependenciesInQuery, excludeFromManageSiteFlows } = flows.getFlow(
+			flowName,
+			userLoggedIn
+		);
+
+		// Update initialContext to help woocommerce-install support site switching.
+		if ( 'woocommerce-install' === flowName ) {
+			if ( context?.query?.back_to ) {
+				// forces back_to update
+				context.store.dispatch( updateDependencies( { back_to: context.query.back_to } ) );
+			}
+
+			initialContext = context;
+		}
 
 		const { query } = initialContext;
 
@@ -312,61 +258,105 @@ export default {
 		context.store.dispatch( setLayoutFocus( 'content' ) );
 		context.store.dispatch( setCurrentFlowName( flowName ) );
 
-		if ( ! [ 'launch-site', 'new-launch' ].includes( flowName ) ) {
+		const searchParams = new URLSearchParams( window.location.search );
+		const isAddNewSiteFlow = searchParams.has( 'ref' );
+
+		if ( isAddNewSiteFlow ) {
+			clearSignupDestinationCookie();
+		}
+
+		// Checks if the user entered the signup flow via browser back from checkout page,
+		// and if they did, we'll show a modified domain step to prevent creating duplicate sites,
+		// check pau2Xa-1Io-p2#comment-6759.
+		const signupDestinationCookieExists = retrieveSignupDestination();
+		const isReEnteringFlow = getSignupCompleteFlowName() === flowName;
+		const isReEnteringSignupViaBrowserBack =
+			wasSignupCheckoutPageUnloaded() && signupDestinationCookieExists && isReEnteringFlow;
+		const isManageSiteFlow =
+			! excludeFromManageSiteFlows && ! isAddNewSiteFlow && isReEnteringSignupViaBrowserBack;
+
+		// If the flow has siteId or siteSlug as query dependencies, we should not clear selected site id
+		if (
+			! providesDependenciesInQuery?.includes( 'siteId' ) &&
+			! providesDependenciesInQuery?.includes( 'siteSlug' ) &&
+			! isManageSiteFlow
+		) {
 			context.store.dispatch( setSelectedSiteId( null ) );
 		}
 
-		let actualFlowName = flowName;
-		if ( flowName === 'onboarding' || flowName === 'with-design-picker' ) {
-			const experimentAssignment = await loadExperimentAssignment(
-				'design_picker_after_onboarding'
-			);
-			debug(
-				`design_picker_after_onboarding experiment variation: ${ experimentAssignment?.variationName }`
-			);
-			if ( 'treatment' === experimentAssignment?.variationName ) {
-				actualFlowName = 'with-design-picker';
-			}
+		// Set referral parameter in signup dependency store so we can retrieve it in getSignupDestination().
+		const refParameter = query && query.ref;
+		// Set theme parameter in signup depencency store so we can retrieve it in getChecklistThemeDestination().
+		const themeParameter = query && query.theme;
+		const themeType = query && query.theme_type;
+		const styleVariation = query && query.style_variation;
+
+		const additionalDependencies = {
+			...( refParameter && { refParameter } ),
+			...( themeParameter && { themeParameter } ),
+			...( themeType && { themeType } ),
+			...( styleVariation && { styleVariation } ),
+		};
+		if ( ! isEmpty( additionalDependencies ) ) {
+			context.store.dispatch( updateDependencies( additionalDependencies ) );
 		}
 
-		context.primary = React.createElement( SignupComponent, {
+		context.primary = createElement( SignupComponent, {
 			store: context.store,
 			path: context.path,
 			initialContext,
 			locale: context.params.lang,
-			flowName: actualFlowName,
+			flowName,
 			queryObject: query,
-			refParameter: query && query.ref,
+			refParameter,
 			stepName,
 			stepSectionName,
 			stepComponent,
-			pageTitle: getFlowPageTitle( actualFlowName, userLoggedIn ),
+			pageTitle: getFlowPageTitle( flowName, userLoggedIn ),
+			isManageSiteFlow,
 		} );
 
 		next();
 	},
-	setSelectedSiteForSignup( { store: signupStore, query }, next ) {
-		const { getState, dispatch } = signupStore;
+	setSelectedSiteForSignup( context, next ) {
+		const { getState, dispatch } = context.store;
+		const userLoggedIn = isUserLoggedIn( getState() );
+		const flowName = getFlowName( context.params, userLoggedIn );
 		const signupDependencies = getSignupDependencyStore( getState() );
+		let siteIdOrSlug;
 
-		const siteSlug = signupDependencies?.siteSlug || query?.siteSlug;
-		if ( ! siteSlug ) {
+		if ( 'woocommerce-install' === flowName ) {
+			// forces query precedence on woocommerce-install
+			siteIdOrSlug = context.query?.siteSlug || signupDependencies?.siteSlug;
+		} else {
+			siteIdOrSlug =
+				signupDependencies?.siteSlug ||
+				context.query?.siteSlug ||
+				signupDependencies?.siteId ||
+				context.query?.siteId;
+		}
+
+		if ( ! siteIdOrSlug ) {
 			next();
 			return;
 		}
-		const siteId = getSiteId( getState(), siteSlug );
+
+		const siteId = getSiteId( getState(), siteIdOrSlug );
 		if ( siteId ) {
 			dispatch( setSelectedSiteId( siteId ) );
 			next();
 		} else {
-			// Fetch the site by siteSlug and then try to select again
-			dispatch( requestSite( siteSlug ) )
-				.catch( () => null )
+			// Fetch the site by siteIdOrSlug and then try to select again
+			dispatch( requestSite( siteIdOrSlug ) )
+				.catch( () => {
+					next();
+					return null;
+				} )
 				.then( () => {
-					let freshSiteId = getSiteId( getState(), siteSlug );
+					let freshSiteId = getSiteId( getState(), siteIdOrSlug );
 
 					if ( ! freshSiteId ) {
-						const wpcomStagingFragment = siteSlug.replace(
+						const wpcomStagingFragment = siteIdOrSlug.replace(
 							/\.wordpress\.com$/,
 							'.wpcomstaging.com'
 						);
@@ -375,29 +365,18 @@ export default {
 
 					if ( freshSiteId ) {
 						dispatch( setSelectedSiteId( freshSiteId ) );
-						next();
 					}
+
+					next();
 				} );
-			next();
 		}
 	},
 	importSiteInfoFromQuery( { store: signupStore, query }, next ) {
 		const state = signupStore.getState();
-		const verticalId = getSiteVerticalId( state );
-		const verticalIsUserInput = getSiteVerticalIsUserInput( state );
 		const siteType = getSiteType( state );
 
 		if ( ! siteType && query.site_type ) {
 			signupStore.dispatch( setSiteType( query.site_type ) );
-		}
-
-		if ( ( ! verticalId || ! verticalIsUserInput ) && query.vertical ) {
-			signupStore.dispatch(
-				setSiteVertical( {
-					id: getDotBlogVerticalId( query.vertical ) || query.vertical,
-					isUserInput: false,
-				} )
-			);
 		}
 
 		next();

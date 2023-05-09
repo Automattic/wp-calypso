@@ -1,46 +1,29 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import reducer, { id, capabilities, currencyCode } from '../reducer';
+import { CURRENT_USER_RECEIVE, SITE_RECEIVE, SITES_RECEIVE } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
-import {
-	CURRENT_USER_RECEIVE,
-	PLANS_RECEIVE,
-	SITE_RECEIVE,
-	SITE_PLANS_FETCH_COMPLETED,
-	SITES_RECEIVE,
-} from 'calypso/state/action-types';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import reducer, { id, capabilities } from '../reducer';
 
 describe( 'reducer', () => {
-	useSandbox( ( sandbox ) => {
-		sandbox.stub( console, 'warn' );
-	} );
+	jest.spyOn( console, 'warn' ).mockImplementation();
 
 	test( 'should include expected keys in return value', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'id',
-			'user',
-			'currencyCode',
-			'capabilities',
-			'flags',
-			'gravatarStatus',
-			'emailVerification',
-			'lasagnaJwt',
-		] );
+		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual(
+			expect.arrayContaining( [
+				'id',
+				'user',
+				'capabilities',
+				'flags',
+				'emailVerification',
+				'lasagnaJwt',
+			] )
+		);
 	} );
 
 	describe( '#id()', () => {
 		test( 'should default to null', () => {
 			const state = id( undefined, {} );
 
-			expect( state ).to.be.null;
+			expect( state ).toBeNull();
 		} );
 
 		test( 'should set the current user ID', () => {
@@ -49,118 +32,34 @@ describe( 'reducer', () => {
 				user: { ID: 73705554 },
 			} );
 
-			expect( state ).to.equal( 73705554 );
+			expect( state ).toEqual( 73705554 );
 		} );
 
 		test( 'should validate ID is positive', () => {
 			const state = deserialize( id, -1 );
-			expect( state ).to.equal( null );
+			expect( state ).toBeNull();
 		} );
 
 		test( 'should validate ID is a number', () => {
 			const state = deserialize( id, 'foobar' );
-			expect( state ).to.equal( null );
+			expect( state ).toBeNull();
 		} );
 
 		test( 'returns valid ID', () => {
 			const state = deserialize( id, 73705554 );
-			expect( state ).to.equal( 73705554 );
+			expect( state ).toEqual( 73705554 );
 		} );
 
 		test( 'will SERIALIZE current user', () => {
 			const state = serialize( id, 73705554 );
-			expect( state ).to.equal( 73705554 );
-		} );
-	} );
-
-	describe( '#currencyCode()', () => {
-		test( 'should default to null', () => {
-			const state = currencyCode( undefined, {} );
-			expect( state ).to.equal( null );
-		} );
-		test( 'should set currency code when plans are received', () => {
-			const state = currencyCode( undefined, {
-				type: PLANS_RECEIVE,
-				plans: [
-					{
-						product_id: 1001,
-						currency_code: 'USD',
-					},
-				],
-			} );
-			expect( state ).to.equal( 'USD' );
-		} );
-		test( 'should return current state when we have empty plans', () => {
-			const state = currencyCode( 'USD', {
-				type: PLANS_RECEIVE,
-				plans: [],
-			} );
-			expect( state ).to.equal( 'USD' );
-		} );
-		test( 'should update current state when we receive new plans', () => {
-			const state = currencyCode( 'USD', {
-				type: PLANS_RECEIVE,
-				plans: [
-					{
-						product_id: 1001,
-						currency_code: 'EUR',
-					},
-				],
-			} );
-			expect( state ).to.equal( 'EUR' );
-		} );
-		test( 'should return current state when we have empty site plans', () => {
-			const state = currencyCode( 'USD', {
-				type: SITE_PLANS_FETCH_COMPLETED,
-				plans: [],
-			} );
-			expect( state ).to.equal( 'USD' );
-		} );
-		test( 'should set currency code when site plans are received', () => {
-			const state = currencyCode( undefined, {
-				type: SITE_PLANS_FETCH_COMPLETED,
-				plans: [
-					{
-						productName: 'Free',
-						currencyCode: 'USD',
-					},
-				],
-			} );
-			expect( state ).to.equal( 'USD' );
-		} );
-		test( 'should update currency code when site plans are received', () => {
-			const state = currencyCode( 'USD', {
-				type: SITE_PLANS_FETCH_COMPLETED,
-				plans: [
-					{
-						productName: 'Free',
-						currencyCode: 'CAD',
-					},
-				],
-			} );
-			expect( state ).to.equal( 'CAD' );
-		} );
-		test( 'should persist state', () => {
-			const original = 'JPY';
-			const state = serialize( currencyCode, original );
-			expect( state ).to.equal( original );
-		} );
-		test( 'should restore valid persisted state', () => {
-			const original = 'JPY';
-			const state = deserialize( currencyCode, original );
-			expect( state ).to.equal( original );
-		} );
-		test( 'should ignore invalid persisted state', () => {
-			const original = 1234;
-			const state = deserialize( currencyCode, original );
-			expect( state ).to.equal( null );
+			expect( state ).toEqual( 73705554 );
 		} );
 	} );
 
 	describe( 'capabilities()', () => {
 		test( 'should default to an empty object', () => {
 			const state = capabilities( undefined, {} );
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should track capabilities by single received site', () => {
@@ -174,7 +73,7 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					manage_options: false,
 				},
@@ -197,7 +96,7 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					manage_options: false,
 				},
@@ -215,7 +114,7 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should track capabilities by multiple received sites', () => {
@@ -231,7 +130,7 @@ describe( 'reducer', () => {
 				],
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					manage_options: false,
 				},
@@ -248,7 +147,7 @@ describe( 'reducer', () => {
 				],
 			} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should return same state if received sites result in same capabilities', () => {
@@ -269,7 +168,7 @@ describe( 'reducer', () => {
 				],
 			} );
 
-			expect( state ).to.equal( original );
+			expect( state ).toEqual( original );
 		} );
 
 		test( 'should persist state', () => {
@@ -280,7 +179,7 @@ describe( 'reducer', () => {
 			} );
 			const state = serialize( capabilities, original );
 
-			expect( state ).to.equal( original );
+			expect( state ).toEqual( original );
 		} );
 
 		test( 'should restore valid persisted state', () => {
@@ -291,7 +190,7 @@ describe( 'reducer', () => {
 			} );
 			const state = deserialize( capabilities, original );
 
-			expect( state ).to.equal( original );
+			expect( state ).toEqual( original );
 		} );
 
 		test( 'should not restore invalid persisted state', () => {
@@ -302,7 +201,7 @@ describe( 'reducer', () => {
 			} );
 			const state = deserialize( capabilities, original );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 	} );
 } );

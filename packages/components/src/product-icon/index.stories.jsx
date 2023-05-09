@@ -1,11 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
 import './index.stories.scss';
-import ProductIcon from '.';
 import { iconToProductSlugMap } from './config';
+import ProductIcon from '.';
 
 const supportedSlugs = Object.values( iconToProductSlugMap ).flat();
 

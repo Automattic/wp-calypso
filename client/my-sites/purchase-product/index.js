@@ -1,17 +1,7 @@
-/**
- * External dependencies
- */
 import page from 'page';
-
-/**
- * Internal dependencies
- */
-import * as controller from './controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
+import * as controller from './controller';
 
-/**
- * Style dependencies
- */
 import '../../jetpack-connect/style.scss';
 
 export default function () {

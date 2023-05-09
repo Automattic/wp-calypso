@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	JETPACK_SETTINGS_REQUEST,
 	JETPACK_SETTINGS_SAVE,
@@ -11,10 +8,9 @@ import {
 import 'calypso/state/data-layer/wpcom/jetpack/settings';
 import 'calypso/state/jetpack/init';
 
-export const requestJetpackSettings = ( siteId, query ) => ( {
+export const requestJetpackSettings = ( siteId ) => ( {
 	type: JETPACK_SETTINGS_REQUEST,
 	siteId,
-	query,
 	meta: {
 		dataLayer: {
 			trackRequest: true,
@@ -49,7 +45,7 @@ export const updateJetpackSettings = ( siteId, settings ) => ( {
  * Regenerate the target email of Post by Email.
  *
  * @param  {number}     siteId  ID of the site.
- * @returns {object}          Action object to regenerate the email when dispatched.
+ * @returns {Object}          Action object to regenerate the email when dispatched.
  */
 export const regeneratePostByEmail = ( siteId ) =>
 	saveJetpackSettings( siteId, { post_by_email_address: 'regenerate' } );

@@ -1,16 +1,7 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import actions from '../state/actions';
-
-/**
- * Internal dependencies
- */
 import Gridicon from './gridicons';
 
 const routeBack = ( global, unselectNote ) => ( event ) => {

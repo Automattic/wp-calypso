@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { useEffect, useRef } from 'react';
-
-/**
- * Internal dependencies
- */
 import type { TimeoutMS } from 'calypso/types';
 
 /**

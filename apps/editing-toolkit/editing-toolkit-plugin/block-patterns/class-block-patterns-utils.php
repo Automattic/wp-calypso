@@ -82,8 +82,8 @@ class Block_Patterns_Utils {
 	 * @return string locale slug
 	 */
 	public function get_block_patterns_locale() {
-		// Make sure to get blog locale, not user locale.
-		$language = function_exists( 'get_blog_lang_code' ) ? get_blog_lang_code() : get_locale();
+		// Block patterns display in the user locale.
+		$language = get_user_locale();
 		return \A8C\FSE\Common\get_iso_639_locale( $language );
 	}
 
@@ -114,5 +114,31 @@ class Block_Patterns_Utils {
 		}
 
 		return $block_types;
+	}
+
+	/**
+	 * Return pattern post types based on the pattern's blockTypes.
+	 *
+	 * @param array $pattern A pattern array such as is passed to `register_block_pattern`.
+	 *
+	 * @return array $postTypes An array of post type names such as is passed to `register_block_pattern`.
+	 */
+	public function get_pattern_post_types_from_pattern( $pattern ) {
+		$post_types = array_key_exists( 'postTypes', $pattern ) ? $pattern['postTypes'] : array();
+		if ( $post_types ) {
+			// If some postTypes are explicitly set then respect the pattern author's intent.
+			return $post_types;
+		}
+
+		$block_types       = array_key_exists( 'blockTypes', $pattern ) ? $pattern['blockTypes'] : array();
+		$block_types_count = count( $block_types );
+		// If all of a patterns blockTypes are template-parts then limit the postTypes to just
+		// the template related types and to pages - this is to avoid the pattern appearing in
+		// the inserter for posts and other post types. Pages are included because it's not unusual
+		// to use a blank template and add a specific header and footer to a page.
+		if ( $block_types_count && count( array_filter( $block_types, fn( $block_type) => preg_match( '#core/template-part/#', $block_type ) ) ) === $block_types_count ) {
+			$post_types = array( 'wp_template', 'wp_template_part', 'page' );
+		}
+		return $post_types;
 	}
 }

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getDismissedSites } from 'calypso/state/reader/site-dismissals/selectors';
 
 describe( 'getDismissedSites()', () => {

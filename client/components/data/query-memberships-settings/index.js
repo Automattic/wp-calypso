@@ -1,20 +1,17 @@
-/**
- * External dependencies
- */
-
-import { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { requestSettings } from 'calypso/state/memberships/settings/actions';
 
 class QueryMembershipsSettings extends Component {
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
 		requestEarnings: PropTypes.func,
+		source: PropTypes.string,
+	};
+
+	static defaultProps = {
+		source: 'calypso',
 	};
 
 	request() {
@@ -26,7 +23,7 @@ class QueryMembershipsSettings extends Component {
 			return;
 		}
 
-		this.props.requestSettings( this.props.siteId );
+		this.props.requestSettings( this.props.siteId, this.props.source );
 	}
 
 	componentDidMount() {

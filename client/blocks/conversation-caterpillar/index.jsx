@@ -1,32 +1,22 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { map, get, last, uniqBy, size, filter, compact } from 'lodash';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { recordAction, recordGaEvent } from 'calypso/reader/stats';
-import { getPostCommentsTree, getDateSortedPostComments } from 'calypso/state/comments/selectors';
-import { expandComments } from 'calypso/state/comments/actions';
-import { POST_COMMENT_DISPLAY_TYPES } from 'calypso/state/comments/constants';
+import { map, get, last, uniqBy, size, filter, compact } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import { isAncestor } from 'calypso/blocks/comments/utils';
 import GravatarCaterpillar from 'calypso/components/gravatar-caterpillar';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
+import { expandComments } from 'calypso/state/comments/actions';
+import { POST_COMMENT_DISPLAY_TYPES } from 'calypso/state/comments/constants';
+import { getPostCommentsTree, getDateSortedPostComments } from 'calypso/state/comments/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const MAX_GRAVATARS_TO_DISPLAY = 10;
 const NUMBER_TO_EXPAND = 10;
 
-class ConversationCaterpillarComponent extends React.Component {
+class ConversationCaterpillarComponent extends Component {
 	static propTypes = {
 		blogId: PropTypes.number.isRequired,
 		postId: PropTypes.number.isRequired,

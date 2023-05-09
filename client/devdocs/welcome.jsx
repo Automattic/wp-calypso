@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
+import { PureComponent } from 'react';
 
-export default class extends React.PureComponent {
+export default class extends PureComponent {
 	static displayName = 'DevWelcome';
 
 	render() {
@@ -17,6 +9,7 @@ export default class extends React.PureComponent {
 			<Card className="devdocs__welcome">
 				<h1 className="devdocs__welcome-title">Welcome to WP Calypso!</h1>
 				<img
+					alt=""
 					className="devdocs__welcome-illustration"
 					src="/calypso/images/illustrations/illustration-nosites.svg"
 				/>

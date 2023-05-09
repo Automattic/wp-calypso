@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-import { reject } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
-import { combineReducers } from 'calypso/state/utils';
+import { reject } from 'lodash';
 import {
 	USER_PROFILE_LINKS_ADD_DUPLICATE,
 	USER_PROFILE_LINKS_ADD_FAILURE,
@@ -18,6 +10,7 @@ import {
 	USER_PROFILE_LINKS_RECEIVE,
 	USER_PROFILE_LINKS_RESET_ERRORS,
 } from 'calypso/state/action-types';
+import { combineReducers } from 'calypso/state/utils';
 
 export const items = ( state = null, action ) => {
 	switch ( action.type ) {

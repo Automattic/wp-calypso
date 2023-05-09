@@ -1,39 +1,33 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
-import { debounce } from 'lodash';
+import { Card, Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
+import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
-import MediaLibraryScale from './scale';
-import { Card, Button } from '@automattic/components';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import StickyPanel from 'calypso/components/sticky-panel';
-import { addExternalMedia, fetchNextMediaPage } from 'calypso/state/media/thunks';
+import { withAddExternalMedia } from 'calypso/data/media/with-add-external-media';
 import { changeMediaSource } from 'calypso/state/media/actions';
+import { fetchNextMediaPage } from 'calypso/state/media/thunks';
 import isFetchingNextPage from 'calypso/state/selectors/is-fetching-next-page';
+import MediaLibraryScale from './scale';
 
 const DEBOUNCE_TIME = 250;
 
-class MediaLibraryExternalHeader extends React.Component {
+class MediaLibraryExternalHeader extends Component {
 	static propTypes = {
-		onMediaScaleChange: PropTypes.func,
-		site: PropTypes.object.isRequired,
-		visible: PropTypes.bool.isRequired,
+		addExternalMedia: PropTypes.func,
 		canCopy: PropTypes.bool,
-		postId: PropTypes.number,
-		selectedItems: PropTypes.array,
-		onSourceChange: PropTypes.func,
-		sticky: PropTypes.bool,
 		hasAttribution: PropTypes.bool,
 		hasRefreshButton: PropTypes.bool,
 		isFetchingNextPage: PropTypes.bool,
 		mediaScale: PropTypes.number,
+		onMediaScaleChange: PropTypes.func,
+		onSourceChange: PropTypes.func,
+		postId: PropTypes.number,
+		selectedItems: PropTypes.array,
+		site: PropTypes.object.isRequired,
+		sticky: PropTypes.bool,
+		visible: PropTypes.bool.isRequired,
 	};
 
 	constructor( props ) {
@@ -159,7 +153,6 @@ const mapStateToProps = ( state, { site } ) => ( {
 } );
 
 export default connect( mapStateToProps, {
-	addExternalMedia,
 	changeMediaSource,
 	fetchNextMediaPage,
-} )( localize( MediaLibraryExternalHeader ) );
+} )( localize( withAddExternalMedia( MediaLibraryExternalHeader ) ) );

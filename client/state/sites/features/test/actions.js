@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { fetchSiteFeaturesCompleted } from '../actions';
 import { SITE_FEATURES_FETCH_COMPLETED } from 'calypso/state/action-types';
+import { fetchSiteFeaturesCompleted } from '../actions';
 
 describe( 'actions', () => {
 	describe( '#fetchSiteFeaturesCompleted()', () => {

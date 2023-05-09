@@ -1,18 +1,13 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
+import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
 import FollowButton from 'calypso/reader/follow-button';
-import { recordFollowToggle } from './stats';
 import { DISCOVER_POST } from 'calypso/reader/follow-sources';
+import { recordFollowToggle } from './stats';
 
-class DiscoverFollowButton extends React.Component {
+class DiscoverFollowButton extends Component {
 	static propTypes = {
 		siteName: PropTypes.string.isRequired,
 		followUrl: PropTypes.string.isRequired,
@@ -48,6 +43,8 @@ class DiscoverFollowButton extends React.Component {
 				followLabel={ followLabel }
 				followingLabel={ followingLabel }
 				followSource={ DISCOVER_POST }
+				followIcon={ ReaderFollowFeedIcon( { iconSize: 20 } ) }
+				followingIcon={ ReaderFollowingFeedIcon( { iconSize: 20 } ) }
 			/>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */

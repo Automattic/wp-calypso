@@ -1,33 +1,24 @@
-/**
- * External dependencies
- */
-import React, { Component, Fragment } from 'react';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import { connect } from 'react-redux';
+import config from '@automattic/calypso-config';
+import { Popover } from '@automattic/components';
 import { loadScript } from '@automattic/load-script';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { cloneElement, Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import GoogleIcon from 'calypso/components/social-icons/google';
-import Popover from 'calypso/components/popover';
 import { preventWidows } from 'calypso/lib/formatting';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isFormDisabled } from 'calypso/state/login/selectors';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { getErrorFromHTTPError, postLoginRequest } from 'calypso/state/login/utils';
+import { errorNotice } from 'calypso/state/notices/actions';
+import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 
-let auth2InitDone = false;
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};
 
-class GoogleLoginButton extends Component {
+class GoogleSocialButton extends Component {
 	static propTypes = {
 		clientId: PropTypes.string.isRequired,
 		fetchBasicProfile: PropTypes.bool,
@@ -37,12 +28,13 @@ class GoogleLoginButton extends Component {
 		redirectUri: PropTypes.string,
 		responseHandler: PropTypes.func.isRequired,
 		scope: PropTypes.string,
+		startingPoint: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
 		uxMode: PropTypes.string,
 	};
 
 	static defaultProps = {
-		scope: 'https://www.googleapis.com/auth/userinfo.profile',
+		scope: 'openid profile email',
 		fetchBasicProfile: true,
 		onClick: noop,
 	};
@@ -51,13 +43,12 @@ class GoogleLoginButton extends Component {
 		error: '',
 		showError: false,
 		errorRef: null,
+		eventTimeStamp: null,
 		isDisabled: true,
 	};
 
 	constructor( props ) {
 		super( props );
-
-		this.initialized = null;
 
 		this.handleClick = this.handleClick.bind( this );
 		this.showError = this.showError.bind( this );
@@ -65,91 +56,102 @@ class GoogleLoginButton extends Component {
 	}
 
 	componentDidMount() {
-		this.initialize();
-	}
-
-	async loadDependency() {
-		if ( ! window.gapi ) {
-			await loadScript( 'https://apis.google.com/js/platform.js' );
+		if ( this.props.authCodeFromRedirect ) {
+			this.handleAuthorizationCode( {
+				auth_code: this.props.authCodeFromRedirect,
+				redirect_uri: this.props.redirectUri,
+			} );
 		}
 
-		return window.gapi;
+		this.initializeGoogleSignIn();
 	}
 
-	async initializeAuth2( gapi ) {
-		if ( auth2InitDone ) {
-			return;
-		}
+	async initializeGoogleSignIn() {
+		const googleSignIn = await this.loadGoogleIdentityServicesAPI();
 
-		await gapi.auth2.init( {
-			fetch_basic_profile: this.props.fetchBasicProfile,
+		this.client = googleSignIn.initCodeClient( {
 			client_id: this.props.clientId,
 			scope: this.props.scope,
 			ux_mode: this.props.uxMode,
 			redirect_uri: this.props.redirectUri,
-		} );
-		auth2InitDone = true;
-	}
-
-	initialize() {
-		if ( this.initialized ) {
-			return this.initialized;
-		}
-
-		this.setState( { error: '' } );
-
-		const { translate } = this.props;
-
-		this.initialized = this.loadDependency()
-			.then( ( gapi ) =>
-				new Promise( ( resolve ) => gapi.load( 'auth2', resolve ) ).then( () => gapi )
-			)
-			.then( ( gapi ) =>
-				this.initializeAuth2( gapi ).then( () => {
-					this.setState( { isDisabled: false } );
-
-					const googleAuth = gapi.auth2.getAuthInstance();
-					const currentUser = googleAuth.currentUser.get();
-
-					// handle social authentication response from a redirect-based oauth2 flow
-					if ( currentUser && this.props.uxMode === 'redirect' ) {
-						this.props.responseHandler( currentUser, false );
-					}
-
-					return gapi; // don't try to return googleAuth here, it's a thenable but not a valid promise
-				} )
-			)
-			.catch( ( error ) => {
-				this.initialized = null;
-
-				if ( 'idpiframe_initialization_failed' === error.error ) {
-					// This error is caused by 3rd party cookies being blocked.
-					this.setState( {
-						error: translate(
-							'Please enable "third-party cookies" to connect your Google account. To learn how to do this, {{learnMoreLink}}click here{{/learnMoreLink}}.',
-							{
-								components: {
-									learnMoreLink: (
-										<a
-											target="_blank"
-											rel="noreferrer"
-											href={ localizeUrl( 'https://wordpress.com/support/third-party-cookies/' ) }
-										/>
-									),
-								},
-							}
-						),
+			callback: ( response ) => {
+				if ( response.error ) {
+					this.props.recordTracksEvent( 'calypso_social_button_failure', {
+						social_account_type: 'google',
+						starting_point: this.props.startingPoint,
+						error_code: response.error,
 					} );
+
+					return;
 				}
 
-				return Promise.reject( error );
-			} );
+				this.handleAuthorizationCode( { auth_code: response.code } );
+			},
+		} );
 
-		return this.initialized;
+		this.setState( { isDisabled: false } );
+	}
+
+	async loadGoogleIdentityServicesAPI() {
+		if ( ! window.google?.accounts?.oauth2 ) {
+			await loadScript( 'https://accounts.google.com/gsi/client' );
+		}
+
+		return window.google.accounts.oauth2;
+	}
+
+	async handleAuthorizationCode( { auth_code, redirect_uri } ) {
+		let response;
+
+		try {
+			response = await postLoginRequest( 'exchange-social-auth-code', {
+				service: 'google',
+				auth_code,
+				redirect_uri,
+				client_id: config( 'wpcom_signup_id' ),
+				client_secret: config( 'wpcom_signup_key' ),
+			} );
+		} catch ( httpError ) {
+			const { code: error_code } = getErrorFromHTTPError( httpError );
+
+			if ( error_code ) {
+				this.props.recordTracksEvent( 'calypso_social_button_auth_code_exchange_failure', {
+					social_account_type: 'google',
+					starting_point: this.props.startingPoint,
+					error_code,
+				} );
+			}
+
+			this.props.showErrorNotice(
+				this.props.translate(
+					'Something went wrong when trying to connect with Google. Please try again.'
+				)
+			);
+
+			return;
+		}
+
+		this.props.recordTracksEvent( 'calypso_social_button_auth_code_exchange_success', {
+			social_account_type: 'google',
+			starting_point: this.props.startingPoint,
+		} );
+
+		const { access_token, id_token } = response.body.data;
+
+		this.props.responseHandler( { access_token, id_token } );
 	}
 
 	handleClick( event ) {
 		event.preventDefault();
+		event.stopPropagation();
+
+		if ( this.state.error && this.state.eventTimeStamp !== event.timeStamp ) {
+			this.setState( {
+				showError: ! this.state.showError,
+				errorRef: event.currentTarget,
+				eventTimeStamp: event.timeStamp,
+			} );
+		}
 
 		if ( this.state.isDisabled ) {
 			return;
@@ -158,27 +160,10 @@ class GoogleLoginButton extends Component {
 		this.props.onClick( event );
 
 		if ( this.state.error ) {
-			this.setState( {
-				showError: ! this.state.showError,
-				errorRef: event.currentTarget,
-			} );
-
 			return;
 		}
 
-		const { responseHandler } = this.props;
-
-		// Options are documented here:
-		// https://developers.google.com/api-client-library/javascript/reference/referencedocs#gapiauth2signinoptions
-		window.gapi.auth2
-			.getAuthInstance()
-			.signIn( { prompt: 'select_account' } )
-			.then( responseHandler, ( error ) => {
-				this.props.recordTracksEvent( 'calypso_login_social_button_failure', {
-					social_account_type: 'google',
-					error_code: error.error,
-				} );
-			} );
+		this.client.requestCode();
 	}
 
 	showError( event ) {
@@ -186,9 +171,12 @@ class GoogleLoginButton extends Component {
 			return;
 		}
 
+		event.stopPropagation();
+
 		this.setState( {
 			showError: true,
 			errorRef: event.currentTarget,
+			eventTimeStamp: event.timeStamp,
 		} );
 	}
 
@@ -214,7 +202,7 @@ class GoogleLoginButton extends Component {
 				onBlur: this.hideError,
 			};
 
-			customButton = React.cloneElement( children, childProps );
+			customButton = cloneElement( children, childProps );
 		}
 
 		return (
@@ -224,10 +212,9 @@ class GoogleLoginButton extends Component {
 				) : (
 					<button
 						className={ classNames( 'social-buttons__button button', { disabled: isDisabled } ) }
-						onMouseOver={ this.showError }
-						onFocus={ this.showError }
-						onBlur={ this.hideError }
 						onClick={ this.handleClick }
+						onMouseEnter={ this.showError }
+						onMouseLeave={ this.hideError }
 					>
 						<GoogleIcon
 							isDisabled={ isDisabled }
@@ -262,8 +249,10 @@ class GoogleLoginButton extends Component {
 export default connect(
 	( state ) => ( {
 		isFormDisabled: isFormDisabled( state ),
+		authCodeFromRedirect: getInitialQueryArguments( state ).code,
 	} ),
 	{
 		recordTracksEvent,
+		showErrorNotice: errorNotice,
 	}
-)( localize( GoogleLoginButton ) );
+)( localize( GoogleSocialButton ) );

@@ -23,16 +23,9 @@
  *   from `my-sites/controller`.
  */
 
-/**
- * External dependencies
- */
-const _ = require( 'lodash' );
 const fs = require( 'fs' );
 const repl = require( 'repl' );
-
-/**
- * Internal dependencies
- */
+const _ = require( 'lodash' );
 const config = require( './config' );
 
 export default function transformer( file, api ) {
@@ -54,7 +47,7 @@ export default function transformer( file, api ) {
 	/**
 	 * Is an import external
 	 *
-	 * @param  {object}  importNode Node object
+	 * @param  {Object}  importNode Node object
 	 * @returns {boolean}            True if import is external
 	 */
 	const isExternal = ( importNode ) =>
@@ -64,8 +57,7 @@ export default function transformer( file, api ) {
 	 * Removes the extra newlines between two import statements
 	 * caused by `insertAfter()`:
 	 *
-	 * @link https://github.com/benjamn/recast/issues/371
-	 *
+	 * @see {@link https://github.com/benjamn/recast/issues/371}
 	 * @param  {string} str String
 	 * @returns {string}     Cleaned string
 	 */
@@ -90,7 +82,7 @@ export default function transformer( file, api ) {
 	/**
 	 * Removes imports maintaining any comments above them
 	 *
-	 * @param {object} collection Collection containing at least one node. Comments are preserved only from first node.
+	 * @param {Object} collection Collection containing at least one node. Comments are preserved only from first node.
 	 */
 	function removeImport( collection ) {
 		const node = collection.nodes()[ 0 ];
@@ -138,8 +130,7 @@ export default function transformer( file, api ) {
 	 *      page.redirect('/bar');
 	 *   }
 	 * }
-	 *
-	 * @param  {object}  node AST Node
+	 * @param  {Object}  node AST Node
 	 * @returns {boolean}      True if any `page.redirect()` exist inside the function node, otherwise False
 	 */
 	function isRedirectMiddleware( node ) {
@@ -162,8 +153,8 @@ export default function transformer( file, api ) {
 	/**
 	 * Ensure `context` is among params
 	 *
-	 * @param {object} path Path object that wraps a single node
-	 * @returns {object} Single node object
+	 * @param {Object} path Path object that wraps a single node
+	 * @returns {Object} Single node object
 	 */
 	function ensureContextMiddleware( path ) {
 		// `context` param is already in
@@ -179,8 +170,8 @@ export default function transformer( file, api ) {
 	/**
 	 * Ensure `next` is among params and `next()` is in the block's body
 	 *
-	 * @param {object} path Path object that wraps a single node
-	 * @returns {object} Single node object
+	 * @param {Object} path Path object that wraps a single node
+	 * @returns {Object} Single node object
 	 */
 	function ensureNextMiddleware( path ) {
 		// `next` param is already in
@@ -228,9 +219,8 @@ export default function transformer( file, api ) {
 	 * ```
 	 * context.primary = <Example />;
 	 * ```
-	 *
-	 * @param {object} path Path object that wraps a single node
-	 * @returns {object} Single node object
+	 * @param {Object} path Path object that wraps a single node
+	 * @returns {Object} Single node object
 	 */
 	function transformRenderWithReduxStore( path ) {
 		const expressionCallee = {
@@ -256,9 +246,8 @@ export default function transformer( file, api ) {
 	 * ```
 	 * context.primary = <Example />;
 	 * ```
-	 *
-	 * @param {object} path Path object that wraps a single node
-	 * @returns {object} Single node object
+	 * @param {Object} path Path object that wraps a single node
+	 * @returns {Object} Single node object
 	 */
 	function transformReactDomRender( path ) {
 		const expressionCallee = {
@@ -292,10 +281,9 @@ export default function transformer( file, api ) {
 	 * ```
 	 * context.primary = <Example />;
 	 * ```
-	 *
-	 * @param {object} path Path object that wraps a single node
-	 * @param {object} expressionCallee `callee` parameter for finding `CallExpression` nodes.
-	 * @returns {object} Single node object
+	 * @param {Object} path Path object that wraps a single node
+	 * @param {Object} expressionCallee `callee` parameter for finding `CallExpression` nodes.
+	 * @returns {Object} Single node object
 	 */
 	function transformToContextLayout( path, expressionCallee ) {
 		if ( path.value.params.length !== 2 ) {

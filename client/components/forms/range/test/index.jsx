@@ -4,18 +4,9 @@
 
 /* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["TestUtils.*"] }] */
 
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-import Gridicon from 'calypso/components/gridicon';
-import React from 'react';
-import TestUtils from 'react-dom/test-utils';
+import { Gridicon } from '@automattic/components';
 import ReactDom from 'react-dom';
-
-/**
- * Internal dependencies
- */
+import TestUtils from 'react-dom/test-utils';
 import FormRange from '../';
 
 describe( 'index', () => {
@@ -36,8 +27,8 @@ describe( 'index', () => {
 		);
 		const content = TestUtils.scryRenderedDOMComponentsWithClass( range, 'range__content' );
 
-		expect( content ).to.have.length( 1 );
-		expect( content[ 0 ].getAttribute( 'class' ) ).to.contain( 'is-min' );
+		expect( content ).toHaveLength( 1 );
+		expect( content[ 0 ].getAttribute( 'class' ) ).toEqual( expect.stringContaining( 'is-min' ) );
 	} );
 
 	test( 'should render ending content if passed a `maxContent` prop', () => {
@@ -53,8 +44,8 @@ describe( 'index', () => {
 		);
 		const content = TestUtils.scryRenderedDOMComponentsWithClass( range, 'range__content' );
 
-		expect( content ).to.have.length( 1 );
-		expect( content[ 0 ].getAttribute( 'class' ) ).to.contain( 'is-max' );
+		expect( content ).toHaveLength( 1 );
+		expect( content[ 0 ].getAttribute( 'class' ) ).toEqual( expect.stringContaining( 'is-max' ) );
 	} );
 
 	test( 'should render a value label if passed a truthy `showValueLabel` prop', () => {
@@ -63,6 +54,6 @@ describe( 'index', () => {
 		);
 		const label = TestUtils.findRenderedDOMComponentWithClass( range, 'range__label' );
 
-		expect( label.textContent ).to.equal( '8' );
+		expect( label.textContent ).toEqual( '8' );
 	} );
 } );

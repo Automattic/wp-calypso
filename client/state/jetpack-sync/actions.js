@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import debugModule from 'debug';
 import { pick } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
 import {
 	JETPACK_SYNC_START_REQUEST,
@@ -32,9 +25,8 @@ export function getSyncStatus( siteId ) {
 			siteId,
 		} );
 
-		return wpcom
-			.undocumented()
-			.getJetpackSyncStatus( siteId )
+		return wpcom.req
+			.get( `/sites/${ siteId }/sync/status` )
 			.then( ( data ) => {
 				dispatch( {
 					type: JETPACK_SYNC_STATUS_SUCCESS,
@@ -60,9 +52,8 @@ export function scheduleJetpackFullysync( siteId ) {
 			siteId,
 		} );
 
-		return wpcom
-			.undocumented()
-			.scheduleJetpackFullysync( siteId )
+		return wpcom.req
+			.post( `/sites/${ siteId }/sync` )
 			.then( ( data ) => {
 				dispatch( {
 					type: JETPACK_SYNC_START_SUCCESS,

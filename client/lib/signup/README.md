@@ -28,7 +28,7 @@ const object = {
 	stepName: 'theme-selection', // required
 	apiRequestFunction: function ( callback ) {
 		// optional
-		wpcom.undocumented().someRequest( function ( errors, response ) {
+		wpcom.req.post( '/some-endpoint', function ( errors, response ) {
 			callback( errors, { userId: response.userId } );
 		} );
 	},
@@ -47,8 +47,8 @@ If `errors` has a non-zero length, it will be attached to the step and the step'
 Actions which provide a `providedDependencies` object will have this information added to the dependency store.
 
 ```js
-import SignupDependencyStore from 'calypso/lib/signup/dependency-store';
 import SignupActions from 'calypso/lib/signup/actions';
+import SignupDependencyStore from 'calypso/lib/signup/dependency-store';
 
 SignupActions.completeSignupStep( { stepName: 'example' }, [], { userId: 1337 } );
 

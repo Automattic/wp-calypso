@@ -7,7 +7,6 @@
 Render the component, passing `countryCode`. It does not accept any children, nor does it render any elements to the page. You can use it adjacent to other sibling components which make use of the fetched data made available through the global application state.
 
 ```jsx
-import React from 'react';
 import QueryCountryStates from 'calypso/components/data/query-country-states';
 
 export default function MyStatesList( { countryStates } ) {

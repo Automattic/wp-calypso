@@ -1,29 +1,27 @@
-/**
- * External dependencies
- */
+import { useDispatch } from '@wordpress/data';
+import debugFactory from 'debug';
 import { useRef, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { defaultRegistry } from '@automattic/composite-checkout';
-import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
 import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
+import { CHECKOUT_STORE } from '../lib/wpcom-store';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-detected-country-code' );
-const { dispatch } = defaultRegistry;
 
-export default function useDetectedCountryCode() {
+export default function useDetectedCountryCode(): void {
 	const detectedCountryCode = useSelector( getCurrentUserCountryCode );
 	const refHaveUsedDetectedCountryCode = useRef( false );
+	const { loadCountryCodeFromGeoIP } = useDispatch( CHECKOUT_STORE ) ?? {};
 
 	useEffect( () => {
 		// Dispatch exactly once
-		if ( detectedCountryCode && ! refHaveUsedDetectedCountryCode.current ) {
+		if (
+			detectedCountryCode &&
+			! refHaveUsedDetectedCountryCode.current &&
+			loadCountryCodeFromGeoIP
+		) {
 			debug( 'using detected country code "' + detectedCountryCode + '"' );
-			dispatch( 'wpcom' ).loadCountryCodeFromGeoIP( detectedCountryCode );
+			loadCountryCodeFromGeoIP( detectedCountryCode );
 			refHaveUsedDetectedCountryCode.current = true;
 		}
-	}, [ detectedCountryCode ] );
+	}, [ detectedCountryCode, loadCountryCodeFromGeoIP ] );
 }

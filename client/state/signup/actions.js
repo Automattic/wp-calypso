@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	SIGNUP_DEPENDENCY_STORE_UPDATE,
 	SIGNUP_DEPENDENCY_STORE_REMOVE_SITE_SLUG,

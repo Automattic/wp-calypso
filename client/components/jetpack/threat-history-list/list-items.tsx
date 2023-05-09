@@ -1,14 +1,9 @@
-/**
- * External dependencies
- */
-import React, { useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import { useMobileBreakpoint } from '@automattic/viewport-react';
+import classNames from 'classnames';
+import { useState, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import ThreatDialog from 'calypso/components/jetpack/threat-dialog';
+import ThreatItem, { ThreatItemPlaceholder } from 'calypso/components/jetpack/threat-item';
 import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
 import { useThreats } from 'calypso/lib/jetpack/use-threats';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -17,8 +12,7 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import ThreatItem, { ThreatItemPlaceholder } from 'calypso/components/jetpack/threat-item';
-import ThreatDialog from 'calypso/components/jetpack/threat-dialog';
+import type { Threat } from 'calypso/components/jetpack/threat-item/types';
 
 const trackOpenThreatDialog = ( siteId: number, threatSignature: string ) =>
 	recordTracksEvent( 'calypso_jetpack_scan_fixthreat_dialogopen', {
@@ -26,19 +20,21 @@ const trackOpenThreatDialog = ( siteId: number, threatSignature: string ) =>
 		threat_signature: threatSignature,
 	} );
 
-const ListItems = ( { items } ) => {
+const ListItems = ( { items }: { items: Threat[] } ) => {
 	const dispatch = useDispatch();
 
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const siteName = useSelector( ( state ) => getSelectedSite( state )?.name );
 
-	const { selectedThreat, setSelectedThreat, updateThreat, updatingThreats } = useThreats( siteId );
-	const [ showThreatDialog, setShowThreatDialog ] = React.useState( false );
+	const { selectedThreat, setSelectedThreat, updateThreat, updatingThreats } = useThreats(
+		siteId ?? 0
+	);
+	const [ showThreatDialog, setShowThreatDialog ] = useState( false );
 
 	const openDialog = useCallback(
 		( threat ) => {
-			dispatch( trackOpenThreatDialog( siteId, threat.signature ) );
+			dispatch( trackOpenThreatDialog( siteId ?? 0, threat.signature ) );
 			setSelectedThreat( threat );
 			setShowThreatDialog( true );
 		},
@@ -69,9 +65,9 @@ const ListItems = ( { items } ) => {
 					showDialog={ showThreatDialog }
 					onCloseDialog={ closeDialog }
 					onConfirmation={ fixThreat }
-					siteName={ siteName }
+					siteName={ siteName ?? '' }
 					threat={ selectedThreat }
-					action={ 'fix' }
+					action="fix"
 				/>
 			) }
 		</>
@@ -80,7 +76,7 @@ const ListItems = ( { items } ) => {
 
 export default ListItems;
 
-export const ListItemsPlaceholder = ( { count, perPage } ) => {
+export const ListItemsPlaceholder = ( { count, perPage }: { count: number; perPage: number } ) => {
 	const showPagination = count > perPage;
 	const itemsToShow = Math.min( count, perPage );
 

@@ -1,14 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-/**
- * External dependencies
- */
-import { isMobile } from '@automattic/viewport';
 
-/**
- * Internal dependencies
- */
+import { isMobile } from '@automattic/viewport';
 import canDisplayCommunityTranslator from '../can-display-community-translator';
 
 jest.mock( '@automattic/viewport', () => ( {

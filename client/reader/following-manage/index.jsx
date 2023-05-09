@@ -1,55 +1,45 @@
-/**
- * External dependencies
- */
-import React, { Component, Fragment } from 'react';
-import { connect } from 'react-redux';
-import { trim, debounce, random, take, reject, includes } from 'lodash';
+import { CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
+import { trim, debounce, random, reject, includes } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { stringify } from 'qs';
-
-/**
- * Internal dependencies
- */
-import { CompactCard } from '@automattic/components';
+import { Component, Fragment } from 'react';
+import * as React from 'react';
+import { connect } from 'react-redux';
+import RecommendedSites from 'calypso/blocks/reader-recommended-sites';
 import DocumentHead from 'calypso/components/data/document-head';
-import SearchInput from 'calypso/components/search';
+import QueryReaderFeedsSearch from 'calypso/components/data/query-reader-feeds-search';
+import QueryReaderRecommendedSites from 'calypso/components/data/query-reader-recommended-sites';
 import HeaderCake from 'calypso/components/header-cake';
+import SearchInput from 'calypso/components/search';
+import { resemblesUrl, addQueryArgs } from 'calypso/lib/url';
 import ReaderMain from 'calypso/reader/components/reader-main';
-import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
-import { getDismissedSites } from 'calypso/state/reader/site-dismissals/selectors';
+import { READER_FOLLOWING_MANAGE_RECOMMENDATION } from 'calypso/reader/follow-sources';
+import SearchFollowButton from 'calypso/reader/search-stream/search-follow-button';
+import { recordAction } from 'calypso/reader/stats';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { SORT_BY_RELEVANCE } from 'calypso/state/reader/feed-searches/actions';
 import {
 	getReaderFeedsCountForQuery,
 	getReaderFeedsForQuery,
 } from 'calypso/state/reader/feed-searches/selectors';
+import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import {
 	getReaderAliasedFollowFeedUrl,
 	getReaderFollowsCount,
+	isReaderFollowsLoading,
 } from 'calypso/state/reader/follows/selectors';
 import {
 	getReaderRecommendedSites,
 	getReaderRecommendedSitesPagingOffset,
 } from 'calypso/state/reader/recommended-sites/selectors';
-import QueryReaderFeedsSearch from 'calypso/components/data/query-reader-feeds-search';
-import QueryReaderRecommendedSites from 'calypso/components/data/query-reader-recommended-sites';
-import RecommendedSites from 'calypso/blocks/reader-recommended-sites';
-import FollowingManageSubscriptions from './subscriptions';
-import FollowingManageSearchFeedsResults from './feed-search-results';
+import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
+import { getDismissedSites } from 'calypso/state/reader/site-dismissals/selectors';
 import FollowingManageEmptyContent from './empty';
-import FollowButton from 'calypso/reader/follow-button';
-import {
-	READER_FOLLOWING_MANAGE_URL_INPUT,
-	READER_FOLLOWING_MANAGE_RECOMMENDATION,
-} from 'calypso/reader/follow-sources';
-import { resemblesUrl, withoutHttp, addSchemeIfMissing, addQueryArgs } from 'calypso/lib/url';
-import { recordAction } from 'calypso/reader/stats';
-import { SORT_BY_RELEVANCE } from 'calypso/state/reader/feed-searches/actions';
-import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-
-/**
- * Style dependencies
- */
+import FollowingManageSearchFeedsResults from './feed-search-results';
+import FollowingManageSubscriptions from './subscriptions';
+import FollowingManageSubscriptionsPlaceholder from './subscriptions-placeholder';
 import './style.scss';
 
 const PAGE_SIZE = 4;
@@ -59,7 +49,7 @@ class FollowingManage extends Component {
 	static propTypes = {
 		sitesQuery: PropTypes.string,
 		subsQuery: PropTypes.string,
-		subsSortOrder: PropTypes.oneOf( [ 'date-followed', 'alpha' ] ),
+		subsSortOrder: PropTypes.oneOf( [ 'date-followed', 'alpha', 'date-updated' ] ),
 		translate: PropTypes.func,
 		showMoreResults: PropTypes.bool,
 	};
@@ -97,7 +87,6 @@ class FollowingManage extends Component {
 
 	handleSearchClosed = () => {
 		this.scrollToTop();
-		this.setState( { showMoreResults: false } );
 		this.props.recordReaderTracksEvent( 'calypso_reader_following_manage_search_closed' );
 		recordAction( 'manage_feed_search_closed' );
 	};
@@ -193,12 +182,12 @@ class FollowingManage extends Component {
 			blockedSites,
 			dismissedSites,
 			followsCount,
-			readerAliasedFollowFeedUrl,
+			isFollowsLoading,
+			feed,
 		} = this.props;
 		const searchPlaceholderText = translate( 'Search or enter URL to follow…' );
 		const hasFollows = followsCount > 0;
 		const showExistingSubscriptions = hasFollows && ! showMoreResults;
-		const sitesQueryWithoutProtocol = withoutHttp( sitesQuery );
 		const showFollowByUrl = this.shouldShowFollowByUrl();
 		const isFollowByUrlWithNoSearchResults = showFollowByUrl && searchResultsCount === 0;
 
@@ -211,12 +200,12 @@ class FollowingManage extends Component {
 		return (
 			<Fragment>
 				<div className="following-manage__header">
-					<HeaderCake backHref={ '/read' }>
+					<HeaderCake backHref="/read">
 						<h1>{ translate( 'Manage Followed Sites' ) }</h1>
 					</HeaderCake>
 				</div>
 				<ReaderMain className="following-manage">
-					<DocumentHead title={ 'Manage Following' } />
+					<DocumentHead title="Manage Following" />
 					{ ! searchResults && sitesQuery && (
 						<QueryReaderFeedsSearch query={ sitesQuery } excludeFollowed={ true } />
 					) }
@@ -244,26 +233,11 @@ class FollowingManage extends Component {
 							/>
 						</CompactCard>
 
-						{ showFollowByUrl && (
-							<div className="following-manage__url-follow">
-								<FollowButton
-									followLabel={ translate( 'Follow %s', {
-										args: sitesQueryWithoutProtocol,
-										comment: '%s is the name of the site being followed. For example: "Discover"',
-									} ) }
-									followingLabel={ translate( 'Following %s', {
-										args: sitesQueryWithoutProtocol,
-										comment: '%s is the name of the site being followed. For example: "Discover"',
-									} ) }
-									siteUrl={ addSchemeIfMissing( readerAliasedFollowFeedUrl, 'http' ) }
-									followSource={ READER_FOLLOWING_MANAGE_URL_INPUT }
-								/>
-							</div>
-						) }
+						<SearchFollowButton query={ sitesQuery } feed={ feed ?? null } />
 					</div>
 					{ ! sitesQuery && (
 						<RecommendedSites
-							sites={ take( filteredRecommendedSites, 2 ) }
+							sites={ filteredRecommendedSites.slice( 0, 2 ) }
 							followSource={ READER_FOLLOWING_MANAGE_RECOMMENDATION }
 						/>
 					) }
@@ -285,7 +259,8 @@ class FollowingManage extends Component {
 							windowScrollerRef={ this.handleWindowScrollerMounted }
 						/>
 					) }
-					{ ! hasFollows && <FollowingManageEmptyContent /> }
+					{ ! hasFollows && isFollowsLoading && <FollowingManageSubscriptionsPlaceholder /> }
+					{ ! hasFollows && ! isFollowsLoading && <FollowingManageEmptyContent /> }
 				</ReaderMain>
 			</Fragment>
 		);
@@ -294,26 +269,41 @@ class FollowingManage extends Component {
 }
 
 export default connect(
-	( state, { sitesQuery } ) => ( {
-		searchResults: getReaderFeedsForQuery( state, {
+	( state, { sitesQuery } ) => {
+		const searchResults = getReaderFeedsForQuery( state, {
 			query: sitesQuery,
 			excludeFollowed: true,
 			sort: SORT_BY_RELEVANCE,
-		} ),
-		searchResultsCount: getReaderFeedsCountForQuery( state, {
-			query: sitesQuery,
-			excludeFollowed: true,
-			sort: SORT_BY_RELEVANCE,
-		} ),
-		recommendedSites: getReaderRecommendedSites( state, recommendationsSeed ),
-		recommendedSitesPagingOffset: getReaderRecommendedSitesPagingOffset(
-			state,
-			recommendationsSeed
-		),
-		blockedSites: getBlockedSites( state ),
-		dismissedSites: getDismissedSites( state ),
-		readerAliasedFollowFeedUrl: sitesQuery && getReaderAliasedFollowFeedUrl( state, sitesQuery ),
-		followsCount: getReaderFollowsCount( state ),
-	} ),
+		} );
+
+		let feed = null;
+		// Check if searchResults has one item and if it has a feed_ID
+		if ( searchResults && searchResults.length === 1 ) {
+			feed = searchResults[ 0 ];
+			if ( feed.feed_ID.length > 0 ) {
+				// If it has a feed_id, get the feed object from the state
+				feed = getFeed( state, feed.feed_ID );
+			}
+		}
+		return {
+			searchResults: searchResults,
+			searchResultsCount: getReaderFeedsCountForQuery( state, {
+				query: sitesQuery,
+				excludeFollowed: true,
+				sort: SORT_BY_RELEVANCE,
+			} ),
+			recommendedSites: getReaderRecommendedSites( state, recommendationsSeed ),
+			recommendedSitesPagingOffset: getReaderRecommendedSitesPagingOffset(
+				state,
+				recommendationsSeed
+			),
+			blockedSites: getBlockedSites( state ),
+			dismissedSites: getDismissedSites( state ),
+			readerAliasedFollowFeedUrl: sitesQuery && getReaderAliasedFollowFeedUrl( state, sitesQuery ),
+			followsCount: getReaderFollowsCount( state ),
+			isFollowsLoading: isReaderFollowsLoading( state ),
+			feed: feed,
+		};
+	},
 	{ recordReaderTracksEvent }
 )( localize( FollowingManage ) );

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import ThemeQueryManager from '../';
 
 describe( 'ThemeQueryManager', () => {

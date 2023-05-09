@@ -10,7 +10,7 @@
 	// Mimic a card
 	.form-fieldset {
 		border-radius: 2px;
-		background: var( --color-surface );
+		background: var(--color-surface);
 		@include elevation ( 2dp );
 	}
 
@@ -32,7 +32,7 @@
 
 		// On smaller screens the buttons get bigger,
 		// so this input needs to get bigger, too.
-		@include breakpoint-deprecated( '<660px' ) {
+		@include breakpoint-deprecated( "<660px" ) {
 			padding-top: 15px;
 			padding-bottom: 15px;
 			padding-right: 100px;
@@ -43,7 +43,7 @@
 		}
 
 		&:focus {
-			box-shadow: 0 0 0 3px var( --color-accent-light );
+			box-shadow: 0 0 0 3px var(--color-accent-light);
 		}
 	}
 
@@ -61,14 +61,14 @@
 
 	.gridicon {
 		margin-bottom: -3px;
-		color: var( --color-text-inverted );
+		color: var(--color-text-inverted);
 	}
 }
 
 .site-title__field-control {
 	margin: 0 auto 20px;
-	filter: blur( 0 );
-	transform: translateZ( 0 ) translateX( 0 );
+	filter: blur(0);
+	transform: translateZ(0) translateX(0);
 	transition: 500ms ease-in-out opacity, 500ms ease-in-out filter, 500ms ease-in-out transform;
 
 	&:last-child {
@@ -97,7 +97,7 @@
 /* We need specificity here to overwrite client/signup/style.scss */
 body.is-section-signup {
 	.site-title__wrapper .site-title__field-control button.button {
-		@include breakpoint-deprecated( '<660px' ) {
+		@include breakpoint-deprecated( "<660px" ) {
 			padding: 12px;
 		}
 	}

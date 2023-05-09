@@ -1,24 +1,13 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
-import { connect } from 'react-redux';
-import { startsWith } from 'lodash';
-import { translate } from 'i18n-calypso';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import { translate } from 'i18n-calypso';
+import { startsWith } from 'lodash';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
+import { connect } from 'react-redux';
+import TranslatableString from 'calypso/components/translatable/proptype';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import TranslatableString from 'calypso/components/translatable/proptype';
 
-/**
- * Style dependencies
- */
 import './apps-badge.scss';
 
 // the locale slugs for each stores' image paths follow different rules
@@ -28,9 +17,10 @@ const APP_STORE_BADGE_URLS = {
 		defaultSrc: '/calypso/images/me/get-apps-ios-store.svg',
 		src: 'https://linkmaker.itunes.apple.com/assets/shared/badges/{localeSlug}/appstore-lrg.svg',
 		tracksEvent: 'calypso_app_download_ios_click',
-		getStoreLink: ( utm_source ) =>
-			`https://apps.apple.com/app/apple-store/id335703880?pt=299112&ct=${ utm_source }&mt=8`,
-		getTitleText: () => translate( 'Download the WordPress iOS mobile app.' ),
+		getStoreLink: ( utm_source ) => {
+			return `https://apps.apple.com/app/apple-store/id1565481562?pt=299112&ct=${ utm_source }&mt=8`;
+		},
+		getTitleText: () => translate( 'Download the Jetpack iOS mobile app.' ),
 		getAltText: () => translate( 'Apple App Store download badge' ),
 		getLocaleSlug: function () {
 			const localeSlug = getLocaleSlug();
@@ -40,16 +30,16 @@ const APP_STORE_BADGE_URLS = {
 	},
 	android: {
 		defaultSrc: '/calypso/images/me/get-apps-google-play.png',
-		src:
-			'https://play.google.com/intl/en_us/badges/images/generic/{localeSlug}_badge_web_generic.png',
+		src: 'https://play.google.com/intl/en_us/badges/images/generic/{localeSlug}_badge_web_generic.png',
 		tracksEvent: 'calypso_app_download_android_click',
 		getStoreLink: (
 			utm_source,
 			utm_medium = 'web',
 			utm_campaign = 'mobile-download-promo-pages'
-		) =>
-			`https://play.google.com/store/apps/details?id=org.wordpress.android&referrer=utm_source%3D%${ utm_source }%26utm_medium%3D${ utm_medium }%26utm_campaign%3D${ utm_campaign }`,
-		getTitleText: () => translate( 'Download the WordPress Android mobile app.' ),
+		) => {
+			return `https://play.google.com/store/apps/details?id=com.jetpack.android&referrer=utm_source%3D%${ utm_source }%26utm_medium%3D${ utm_medium }%26utm_campaign%3D${ utm_campaign }`;
+		},
+		getTitleText: () => translate( 'Download the Jetpack Android mobile app.' ),
 		getAltText: () => translate( 'Google Play Store download badge' ),
 		getLocaleSlug,
 	},
@@ -80,7 +70,6 @@ export class AppsBadge extends PureComponent {
 		const shouldLoadExternalImage = ! startsWith( localeSlug, 'en' );
 
 		this.state = {
-			shouldLoadExternalImage,
 			imageSrc: shouldLoadExternalImage
 				? APP_STORE_BADGE_URLS[ props.storeName ].src.replace( '{localeSlug}', localeSlug )
 				: APP_STORE_BADGE_URLS[ props.storeName ].defaultSrc,
@@ -113,20 +102,15 @@ export class AppsBadge extends PureComponent {
 	};
 
 	onLinkClick = () => {
-		const { storeName } = this.props;
-		this.props.recordTracksEvent( APP_STORE_BADGE_URLS[ storeName ].tracksEvent );
+		const { storeName, utm_source } = this.props;
+		this.props.recordTracksEvent( APP_STORE_BADGE_URLS[ storeName ].tracksEvent, {
+			utm_source_string: utm_source,
+		} );
 	};
 
 	render() {
-		const {
-			altText,
-			titleText,
-			storeLink,
-			storeName,
-			utm_source,
-			utm_medium,
-			utm_campaign,
-		} = this.props;
+		const { altText, titleText, storeLink, storeName, utm_source, utm_medium, utm_campaign } =
+			this.props;
 		const { imageSrc, hasExternalImageLoaded } = this.state;
 
 		const figureClassNames = classNames( 'get-apps__app-badge', {

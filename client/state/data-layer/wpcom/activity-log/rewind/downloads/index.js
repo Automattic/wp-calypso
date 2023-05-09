@@ -1,22 +1,13 @@
-/**
- * External dependencies
- */
-
 import { pick } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { REWIND_BACKUP } from 'calypso/state/action-types';
 import {
 	rewindBackupUpdateError,
 	updateRewindBackupProgress,
 	getRewindBackupProgress,
 } from 'calypso/state/activity-log/actions';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 
 const createBackup = ( action ) =>
 	http(

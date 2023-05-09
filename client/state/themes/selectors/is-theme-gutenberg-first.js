@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { intersection } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { getTheme } from 'calypso/state/themes/selectors/get-theme';
 import { getThemeTaxonomySlugs } from 'calypso/state/themes/utils';
 
@@ -17,7 +10,7 @@ import 'calypso/state/themes/init';
  * Examples include Template First Themes, which can be determined by the feature
  * global-styles or auto-loading-homepage.
  *
- * @param {object} state   Global state tree
+ * @param {Object} state   Global state tree
  * @param {string} themeId An identifier for the theme - like
  *                         `independent-publisher-2` or `maywood`.
  * @returns {boolean} True if the theme should be edited with gutenberg.

@@ -6,7 +6,7 @@
 	margin-bottom: 10px;
 	max-width: 200px;
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		max-width: 300px;
 	}
 }

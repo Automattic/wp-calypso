@@ -1,20 +1,14 @@
-/**
- * External dependencies
- */
-import React from 'react';
+/* eslint-disable jsx-a11y/anchor-is-valid */
+import { Icon, chartBar } from '@wordpress/icons';
+import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import Gridicon from 'calypso/components/gridicon';
 
 const debug = debugFactory( 'calypso:stats:action-page' );
 
-class StatsActionPage extends React.Component {
+class StatsActionPage extends Component {
 	static displayName = 'StatsActionPage';
 
 	clickHandler = ( event ) => {
@@ -45,7 +39,7 @@ class StatsActionPage extends React.Component {
 						context: 'Stats ARIA label: View content in a new window',
 					} ) }
 				>
-					<Gridicon icon="stats" size={ 18 } />
+					<Icon className="stats-icon" icon={ chartBar } size={ 18 } />
 					<span className="module-content-list-item-action-label">
 						{ this.props.translate( 'View', {
 							context: 'Stats: List item action to view content',

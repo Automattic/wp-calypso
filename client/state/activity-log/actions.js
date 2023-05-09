@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import page from 'page';
-
-/**
- * Internal dependencies
- */
+import { addQueryArgs } from 'calypso/lib/url';
 import {
 	ACTIVITY_LOG_FILTER_SET,
 	ACTIVITY_LOG_FILTER_UPDATE,
@@ -23,20 +17,22 @@ import {
 	REWIND_RESTORE_PROGRESS_REQUEST,
 	REWIND_RESTORE_REQUEST,
 	REWIND_RESTORE_UPDATE_PROGRESS,
+	REWIND_STAGING_CLONE,
 	REWIND_BACKUP,
 	REWIND_BACKUP_REQUEST,
 	REWIND_BACKUP_DISMISS,
 	REWIND_BACKUP_PROGRESS_REQUEST,
+	REWIND_BACKUP_SITE,
 	REWIND_BACKUP_UPDATE_ERROR,
 	REWIND_BACKUP_UPDATE_PROGRESS,
 	REWIND_BACKUP_DISMISS_PROGRESS,
 } from 'calypso/state/action-types';
-import { addQueryArgs } from 'calypso/lib/url';
-import { filterStateToQuery } from './utils';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
+import { filterStateToQuery } from './utils';
 
 import 'calypso/state/data-layer/wpcom/activity-log/activate';
 import 'calypso/state/data-layer/wpcom/activity-log/deactivate';
+import 'calypso/state/data-layer/wpcom/activity-log/rewind/backup';
 import 'calypso/state/data-layer/wpcom/activity-log/rewind/downloads';
 import 'calypso/state/data-layer/wpcom/activity-log/rewind/restore-status';
 import 'calypso/state/data-layer/wpcom/activity-log/rewind/to';
@@ -50,7 +46,7 @@ import 'calypso/state/activity-log/init';
  *
  * @param  {string|number} siteId      Site ID
  * @param  {boolean}          isVpMigrate Whether this is a VaultPress migration.
- * @returns {object}        Action object
+ * @returns {Object}        Action object
  */
 export function activateRewind( siteId, isVpMigrate ) {
 	return {
@@ -78,9 +74,9 @@ export function rewindActivateFailure( siteId ) {
  * Share a rewind/activity-log event via email.
  *
  * @param {string|number} siteId Site ID
- * @param {number} rewindId Activity ID
+ * @param {string|number} rewindId Activity ID
  * @param {string} email Email address to send to
- * @returns {object} action object
+ * @returns {Object} action object
  */
 export function rewindShareRequest( siteId, rewindId, email ) {
 	return {
@@ -95,7 +91,7 @@ export function rewindShareRequest( siteId, rewindId, email ) {
  * Turn the 'rewind' feature off for a site.
  *
  * @param {string|number} siteId site ID
- * @returns {object} action object
+ * @returns {Object} action object
  */
 export function deactivateRewind( siteId ) {
 	return {
@@ -123,7 +119,7 @@ export function rewindDeactivateFailure( siteId ) {
  *
  * @param  {string|number} siteId Site ID
  * @param  {number}        activityId Activity ID
- * @returns {object}        action object
+ * @returns {Object}        action object
  */
 export function rewindRequestRestore( siteId, activityId ) {
 	return {
@@ -137,7 +133,7 @@ export function rewindRequestRestore( siteId, activityId ) {
  * Dismiss a restore request.
  *
  * @param  {string|number} siteId Site ID
- * @returns {object}        action object
+ * @returns {Object}        action object
  */
 export function rewindRequestDismiss( siteId ) {
 	return {
@@ -151,8 +147,8 @@ export function rewindRequestDismiss( siteId ) {
  *
  * @param {string|number} siteId the site ID
  * @param {string|number} timestamp Unix timestamp to restore site to
- * @param {object} args Additional request params, such as `types`
- * @returns {object} action object
+ * @param {Object} args Additional request params, such as `types`
+ * @returns {Object} action object
  */
 export function rewindRestore( siteId, timestamp, args ) {
 	return {
@@ -169,6 +165,16 @@ export function rewindClone( siteId, timestamp, payload ) {
 		siteId,
 		timestamp,
 		payload,
+	};
+}
+
+export function rewindStagingClone( sourceBlogId, timestamp, payload, stagingBlogId ) {
+	return {
+		type: REWIND_STAGING_CLONE,
+		sourceBlogId,
+		timestamp,
+		payload,
+		stagingBlogId,
 	};
 }
 
@@ -203,7 +209,7 @@ export function updateRewindRestoreProgress( siteId, timestamp, restoreId, progr
  *
  * @param  {string|number} siteId Site ID
  * @param  {number}        rewindId Rewind ID
- * @returns {object}        action object
+ * @returns {Object}        action object
  */
 export function rewindRequestBackup( siteId, rewindId ) {
 	return {
@@ -217,7 +223,7 @@ export function rewindRequestBackup( siteId, rewindId ) {
  * Dismiss a backup request.
  *
  * @param  {string|number} siteId Site ID
- * @returns {object}        action object
+ * @returns {Object}        action object
  */
 export function rewindBackupDismiss( siteId ) {
 	return {
@@ -231,8 +237,8 @@ export function rewindBackupDismiss( siteId ) {
  *
  * @param  {string|number} siteId   The site ID
  * @param  {string|number} rewindId Id of activity up to the one the backup will be created.
- * @param  {object}        args     Additional request params, such as `types`
- * @returns {object}                 Action object
+ * @param  {Object}        args     Additional request params, such as `types`
+ * @returns {Object}                 Action object
  */
 export function rewindBackup( siteId, rewindId, args ) {
 	return {
@@ -247,7 +253,7 @@ export function rewindBackup( siteId, rewindId, args ) {
  * Check progress of backup creation for the a given download id.
  *
  * @param  {string|number} siteId The site ID
- * @returns {object}               Action object
+ * @returns {Object}               Action object
  */
 export function getRewindBackupProgress( siteId ) {
 	return {
@@ -267,7 +273,7 @@ export function getRewindBackupProgress( siteId ) {
  * @param  {string|number} siteId     The site ID
  * @param  {?number}        downloadId Id of the backup being created.
  * @param  {?number}        progress   Number from 0 to 100 that indicates the progress of the backup creation.
- * @returns {object}                   Action object
+ * @returns {Object}                   Action object
  */
 export function updateRewindBackupProgress( siteId, downloadId, progress ) {
 	return {
@@ -283,8 +289,8 @@ export function updateRewindBackupProgress( siteId, downloadId, progress ) {
  *
  * @param  {string|number} siteId     The site ID
  * @param  {number}        downloadId Id of the backup being created.
- * @param  {object}        error      Info about downloadable backup and error.
- * @returns {object}                   Action object
+ * @param  {Object}        error      Info about downloadable backup and error.
+ * @returns {Object}                   Action object
  */
 export function rewindBackupUpdateError( siteId, downloadId, error ) {
 	return {
@@ -300,13 +306,26 @@ export function rewindBackupUpdateError( siteId, downloadId, error ) {
  *
  * @param  {string|number} siteId     The site ID
  * @param  {number}        downloadId Id of the backup being dismissed.
- * @returns {object}                   Action object
+ * @returns {Object}                   Action object
  */
 export function dismissRewindBackupProgress( siteId, downloadId ) {
 	return {
 		type: REWIND_BACKUP_DISMISS_PROGRESS,
 		siteId,
 		downloadId,
+	};
+}
+
+/**
+ * Enqueue a new backup of a site
+ *
+ * @param  {string|number} siteId   The site ID
+ * @returns {Object}                 Action object
+ */
+export function rewindBackupSite( siteId ) {
+	return {
+		type: REWIND_BACKUP_SITE,
+		siteId,
 	};
 }
 
@@ -320,16 +339,20 @@ function navigateToFilter( filter ) {
 	page( addQueryArgs( filterStateToQuery( filter ), pathname + hash ) );
 }
 
-export const setFilter = ( siteId, filter, skipUrlUpdate = false ) => ( dispatch, getState ) => {
-	dispatch( { type: ACTIVITY_LOG_FILTER_SET, siteId, filter } );
-	if ( ! skipUrlUpdate ) {
-		navigateToFilter( getActivityLogFilter( getState(), siteId ) );
-	}
-};
+export const setFilter =
+	( siteId, filter, skipUrlUpdate = false ) =>
+	( dispatch, getState ) => {
+		dispatch( { type: ACTIVITY_LOG_FILTER_SET, siteId, filter } );
+		if ( ! skipUrlUpdate ) {
+			navigateToFilter( getActivityLogFilter( getState(), siteId ) );
+		}
+	};
 
-export const updateFilter = ( siteId, filter, skipUrlUpdate = false ) => ( dispatch, getState ) => {
-	dispatch( { type: ACTIVITY_LOG_FILTER_UPDATE, siteId, filter } );
-	if ( ! skipUrlUpdate ) {
-		navigateToFilter( getActivityLogFilter( getState(), siteId ) );
-	}
-};
+export const updateFilter =
+	( siteId, filter, skipUrlUpdate = false ) =>
+	( dispatch, getState ) => {
+		dispatch( { type: ACTIVITY_LOG_FILTER_UPDATE, siteId, filter } );
+		if ( ! skipUrlUpdate ) {
+			navigateToFilter( getActivityLogFilter( getState(), siteId ) );
+		}
+	};

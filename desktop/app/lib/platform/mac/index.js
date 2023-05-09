@@ -1,14 +1,7 @@
-/**
- * External Dependencies
- */
 const { app, Menu } = require( 'electron' );
-
-/**
- * Internal dependencies
- */
 const appQuit = require( '../../../lib/app-quit' );
-const menuSetter = require( '../../../lib/menu-setter' );
 const log = require( '../../../lib/logger' )( 'platform:mac' );
+const menuSetter = require( '../../../lib/menu-setter' );
 
 let window;
 let dockMenu;

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 
@@ -9,7 +6,7 @@ import { getSiteSlug } from 'calypso/state/sites/selectors';
  * replaced by :siteid. Note that other parameters such as :domain are not currently
  * supported.
  *
- * @param  {object}  state  Global state tree
+ * @param  {Object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @returns {?string}        The current route with site parameters
  */

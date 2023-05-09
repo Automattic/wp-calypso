@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { createElement } from 'react';
 import ReactDOMServer from 'react-dom/server';
-
-/**
- * Internal dependencies
- */
 import Gridicon from '../templates/gridicons';
 import noticon2gridicon from '../utils/noticon2gridicon';
 
@@ -16,10 +9,10 @@ import noticon2gridicon from '../utils/noticon2gridicon';
  *
  * @param {string} new_sub_text Plaintext on which ranges act
  * @param {Array} new_sub_range Position/applicable ranges array
- * @param {object} range_info The origin range data for this render
+ * @param {Object} range_info The origin range data for this render
  * @param {Array} range_data All range data
- * @param {object} options Options for rendering range
- * @returns {object} Computed DOM nodes for all levels at or below passed range
+ * @param {Object} options Options for rendering range
+ * @returns {Object} Computed DOM nodes for all levels at or below passed range
  */
 function render_range( new_sub_text, new_sub_range, range_info, range_data, options ) {
 	// Its time to build the outer shell of the range we're recursing into.
@@ -116,7 +109,7 @@ function render_range( new_sub_text, new_sub_range, range_info, range_data, opti
 			// Gridicons have special text, and are thus not recursed into
 			new_container = document.createElement( 'span' );
 			new_container.innerHTML = ReactDOMServer.renderToStaticMarkup(
-				React.createElement( Gridicon, {
+				createElement( Gridicon, {
 					icon: noticon2gridicon( range_info.value ),
 					size: 18,
 				} )
@@ -145,12 +138,15 @@ function render_range( new_sub_text, new_sub_range, range_info, range_data, opti
 					new_container.setAttribute( 'rel', 'noopener noreferrer' );
 				}
 
-				if ( 'post' === range_info.type ) {
+				if ( 'post' === range_info_type ) {
 					new_container.setAttribute( 'data-post-id', range_info.id );
 					new_container.setAttribute( 'data-site-id', range_info.site_id );
 					new_container.setAttribute( 'data-link-type', 'post' );
 					new_container.setAttribute( 'target', '_self' );
-				} else if ( 'tracks' === range_info.type && range_info.context ) {
+				} else if (
+					( 'tracks' === range_info_type || 'button' === range_info_type ) &&
+					range_info.context
+				) {
 					new_container.setAttribute( 'data-link-type', 'tracks' );
 					new_container.setAttribute( 'data-tracks-event', range_info.context );
 				}
@@ -179,8 +175,8 @@ function render_range( new_sub_text, new_sub_range, range_info, range_data, opti
  * @param {string} sub_text  Plain-text upon which ranges act
  * @param {Array} sub_ranges Position/applicable ranges array
  * @param {Array} range_data All range data
- * @param {object} container Destination DOM fragment for output
- * @param {object} options Options for building chunks
+ * @param {Object} container Destination DOM fragment for output
+ * @param {Object} options Options for building chunks
  */
 function build_chunks( sub_text, sub_ranges, range_data, container, options ) {
 	let text_start = null;
@@ -330,7 +326,10 @@ function recurse_convert( text, ranges, options ) {
 
 export function convert( blob, options ) {
 	let ranges = new Array();
-	options = options || {};
+	//options can be an integer, not sure why... something something recursion
+	if ( typeof options !== 'object' ) {
+		options = {};
+	}
 	options.links = 'undefined' === typeof options.links ? true : options.links;
 	ranges = ranges.concat( blob.ranges || [] );
 	ranges = ranges.concat( blob.media || [] );

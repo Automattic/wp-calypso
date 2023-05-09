@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { isEmpty, map, partialRight } from 'lodash';
+import { isEmpty, map } from 'lodash';
+import PropTypes from 'prop-types';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const addLinesToOperations = ( operations ) => {
@@ -35,10 +28,10 @@ const renderOperation = ( operation, operationIndex, splitLines ) => {
 	);
 };
 
-const renderSplitLineOperations = partialRight( renderOperation, true );
-
 const TextDiff = ( { operations, splitLines } ) =>
-	map( operations, splitLines ? renderSplitLineOperations : renderOperation );
+	map( operations, ( operation, operationIndex ) =>
+		renderOperation( operation, operationIndex, splitLines )
+	);
 
 TextDiff.propTypes = {
 	operations: PropTypes.arrayOf(

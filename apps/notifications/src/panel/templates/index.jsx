@@ -1,28 +1,20 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import BackButton from './button-back';
-import NavButton from './nav-button';
-import NoteList from './note-list';
-import AppError from './error';
-import FilterBarController from './filter-bar-controller';
-import Note from './note';
-import { interceptLinks } from '../utils/link-interceptor';
-
+import { modifierKeyIsActive } from '../helpers/input';
 import actions from '../state/actions';
 import getAllNotes from '../state/selectors/get-all-notes';
 import getIsNoteHidden from '../state/selectors/get-is-note-hidden';
 import getIsPanelOpen from '../state/selectors/get-is-panel-open';
-import getSelectedNoteId from '../state/selectors/get-selected-note-id';
 import getKeyboardShortcutsEnabled from '../state/selectors/get-keyboard-shortcuts-enabled';
-import { modifierKeyIsActive } from '../helpers/input';
+import getSelectedNoteId from '../state/selectors/get-selected-note-id';
+import { interceptLinks } from '../utils/link-interceptor';
+import BackButton from './button-back';
+import AppError from './error';
+import FilterBarController from './filter-bar-controller';
+import NavButton from './nav-button';
+import Note from './note';
+import NoteList from './note-list';
 
 const KEY_ENTER = 13;
 const KEY_ESC = 27;
@@ -40,7 +32,7 @@ const KEY_N = 78;
 const KEY_U = 85;
 
 /**
- * @typedef {object} Notification
+ * @typedef {Object} Notification
  * @property {!number} id notification id
  */
 
@@ -70,7 +62,7 @@ export const findNextNoteId = ( noteId, notes ) => {
 	return notes[ nextIndex ].id;
 };
 
-class Layout extends React.Component {
+class Layout extends Component {
 	state = {
 		lastSelectedIndex: 0,
 		navigationEnabled: true,
@@ -79,6 +71,7 @@ class Layout extends React.Component {
 		selectedNote: null,
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		this.filterController = FilterBarController( this.refreshNotesToDisplay );
 		this.props.global.client = this.props.client;
@@ -104,6 +97,7 @@ class Layout extends React.Component {
 		}
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.selectedNoteId ) {
 			this.setState( {
@@ -122,13 +116,13 @@ class Layout extends React.Component {
 
 		const index = nextProps.notes.findIndex( ( n ) => n.id === nextProps.selectedNoteId );
 		this.setState( {
-			index: index >= 0 ? index : null,
 			lastSelectedIndex: index === null ? 0 : index,
 			selectedNote: nextProps.selectedNoteId,
 			navigationEnabled: true,
 		} );
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillUpdate( nextProps ) {
 		const { selectedNoteId: nextNote } = nextProps;
 		const { selectedNoteId: prevNote } = this.props;
@@ -424,8 +418,6 @@ class Layout extends React.Component {
 		) {
 			this.props.unselectNote();
 		}
-
-		this.setState( { notes } );
 	};
 
 	storeNoteList = ( ref ) => {
@@ -445,6 +437,11 @@ class Layout extends React.Component {
 		const filteredNotes = this.filterController.getFilteredNotes( this.props.notes );
 
 		return (
+			// Note: this onClick is used to intercept events from children elements.
+			// As a result, it's not really meant to be treated as a clickable
+			// element itself. There may be better ways to handle this, but
+			// let's disable eslint here for now to avoid refactoring older code.
+			// eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
 			<div onClick={ interceptLinks }>
 				{ this.props.error && <AppError error={ this.props.error } /> }
 
@@ -518,6 +515,11 @@ class Layout extends React.Component {
 }
 
 const mapStateToProps = ( state ) => ( {
+	/**
+	 * @todo Fixing this rule requires a larger refactor that isn't worth the time right now.
+	 * @see https://github.com/Automattic/wp-calypso/issues/14024
+	 */
+	// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
 	isNoteHidden: ( noteId ) => getIsNoteHidden( state, noteId ),
 	isPanelOpen: getIsPanelOpen( state ),
 	notes: getAllNotes( state ),

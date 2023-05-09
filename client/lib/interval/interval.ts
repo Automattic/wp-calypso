@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { FunctionComponent } from 'react';
-
-/**
- * Internal dependencies
- */
 import { TimeoutMS } from 'calypso/types';
 import { useInterval } from './use-interval';
 

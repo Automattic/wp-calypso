@@ -1,13 +1,11 @@
-/**
- * Internal Dependencies
- */
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { isEnabled } from '@automattic/calypso-config';
+import { addQueryArgs } from 'calypso/lib/url';
 import { ADMIN_MENU_REQUEST } from 'calypso/state/action-types';
 import { receiveAdminMenu } from 'calypso/state/admin-menu/actions';
-import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
-import { addQueryArgs } from 'calypso/lib/url';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { getSiteAdminUrl, getSiteSlug } from 'calypso/state/sites/selectors';
 
 export const requestFetchAdminMenu = ( action ) =>
 	http(
@@ -26,10 +24,11 @@ const sanitizeUrl = ( url, wpAdminUrl ) => {
 		url?.replace( /^https?:\/\//, '' )
 	);
 
-	if ( isSafeWpAdminUrl ) {
+	// Gives WP Admin Customizer a chance to return to where we started from.
+	if ( isSafeWpAdminUrl && url.includes( 'wp-admin/customize.php' ) ) {
 		url = addQueryArgs(
 			{
-				return: document.location.href, // Gives WP Admin a chance to return to where we started from.
+				return: document.location.href,
 			},
 			url
 		);
@@ -42,7 +41,7 @@ const sanitizeUrl = ( url, wpAdminUrl ) => {
 	return '';
 };
 
-const sanitizeMenuItem = ( menuItem, wpAdminUrl ) => {
+const sanitizeMenuItem = ( menuItem, siteSlug, wpAdminUrl ) => {
 	if ( ! menuItem ) {
 		return menuItem;
 	}
@@ -50,8 +49,13 @@ const sanitizeMenuItem = ( menuItem, wpAdminUrl ) => {
 	let sanitizedChildren;
 	if ( Array.isArray( menuItem.children ) ) {
 		sanitizedChildren = menuItem.children.map( ( subMenuItem ) =>
-			sanitizeMenuItem( subMenuItem, wpAdminUrl )
+			sanitizeMenuItem( subMenuItem, siteSlug, wpAdminUrl )
 		);
+	}
+
+	// Enable the import page if the feature option is on.
+	if ( menuItem.slug === 'import-php' && isEnabled( 'importer/unified' ) ) {
+		menuItem.url = `/import/${ siteSlug }`;
 	}
 
 	return {
@@ -61,20 +65,25 @@ const sanitizeMenuItem = ( menuItem, wpAdminUrl ) => {
 	};
 };
 
-export const handleSuccess = ( { siteId }, menuData ) => ( dispatch, getState ) => {
-	if ( ! Array.isArray( menuData ) ) {
-		return dispatch( receiveAdminMenu( siteId, menuData ) );
-	}
+export const handleSuccess =
+	( { siteId }, menuData ) =>
+	( dispatch, getState ) => {
+		if ( ! Array.isArray( menuData ) ) {
+			return dispatch( receiveAdminMenu( siteId, menuData ) );
+		}
 
-	// Sanitize menu data.
-	const wpAdminUrl = getSiteAdminUrl( getState(), siteId );
-	return dispatch(
-		receiveAdminMenu(
-			siteId,
-			menuData.map( ( menuItem ) => sanitizeMenuItem( menuItem, wpAdminUrl ) )
-		)
-	);
-};
+		// Sanitize menu data.
+		const state = getState();
+		const wpAdminUrl = getSiteAdminUrl( state, siteId );
+		const siteSlug = getSiteSlug( state, siteId );
+
+		return dispatch(
+			receiveAdminMenu(
+				siteId,
+				menuData.map( ( menuItem ) => sanitizeMenuItem( menuItem, siteSlug, wpAdminUrl ) )
+			)
+		);
+	};
 
 export const handleError = () => {
 	return null;

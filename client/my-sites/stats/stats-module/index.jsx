@@ -1,41 +1,25 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import ErrorPanel from '../stats-error';
-import StatsModuleExpand from './expand';
-import StatsModuleAvailabilityWarning from './availability-warning';
-import StatsList from '../stats-list';
-import StatsListLegend from '../stats-list/legend';
-import DatePicker from '../stats-date-picker';
-import DownloadCsv from '../stats-download-csv';
-import { Card } from '@automattic/components';
-import StatsModulePlaceholder from './placeholder';
-import SectionHeader from 'calypso/components/section-header';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import AllTimeNav from './all-time-nav';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
 } from 'calypso/state/stats/lists/selectors';
-import { FEATURE_GOOGLE_ANALYTICS, PLAN_PREMIUM } from '@automattic/calypso-products';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import Geochart from '../geochart';
+import DatePicker from '../stats-date-picker';
+import DownloadCsv from '../stats-download-csv';
+import ErrorPanel from '../stats-error';
+import StatsListCard from '../stats-list/stats-list-card';
+import StatsModulePlaceholder from './placeholder';
 
-/**
- * Style dependencies
- */
 import './style.scss';
+import '../stats-list/style.scss'; // TODO: limit included CSS and remove this import.
 
 class StatsModule extends Component {
 	static propTypes = {
@@ -50,6 +34,10 @@ class StatsModule extends Component {
 		statType: PropTypes.string,
 		showSummaryLink: PropTypes.bool,
 		translate: PropTypes.func,
+		metricLabel: PropTypes.string,
+		mainItemLabel: PropTypes.string,
+		additionalColumns: PropTypes.object,
+		listItemClassName: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -61,12 +49,14 @@ class StatsModule extends Component {
 		loaded: false,
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( ! nextProps.requesting && this.props.requesting ) {
+	componentDidUpdate( prevProps ) {
+		if ( ! this.props.requesting && prevProps.requesting ) {
+			// eslint-disable-next-line react/no-did-update-set-state
 			this.setState( { loaded: true } );
 		}
 
-		if ( nextProps.query !== this.props.query && this.state.loaded ) {
+		if ( this.props.query !== prevProps.query && this.state.loaded ) {
+			// eslint-disable-next-line react/no-did-update-set-state
 			this.setState( { loaded: false } );
 		}
 	}
@@ -115,6 +105,10 @@ class StatsModule extends Component {
 			'statsSearchTerms',
 			'statsClicks',
 			'statsReferrers',
+			// statsEmailsOpen and statsEmailsClick are not used. statsEmailsSummary and statsEmailsSummaryByOpens are used at the moment,
+			// besides this, email page uses separate summary component: <StatsEmailSummary />
+			'statsEmailsOpen',
+			'statsEmailsClick',
 		];
 		return summary && includes( summarizedTypes, statType );
 	}
@@ -127,15 +121,16 @@ class StatsModule extends Component {
 			path,
 			data,
 			moduleStrings,
-			requesting,
 			statType,
 			query,
 			period,
 			translate,
 			useShortLabel,
+			metricLabel,
+			additionalColumns,
+			mainItemLabel,
+			listItemClassName,
 		} = this.props;
-
-		const noData = data && this.state.loaded && ! data.length;
 
 		// Only show loading indicators when nothing is in state tree, and request in-flight
 		const isLoading = ! this.state.loaded && ! ( data && data.length );
@@ -143,73 +138,51 @@ class StatsModule extends Component {
 		// TODO: Support error state in redux store
 		const hasError = false;
 
-		const cardClasses = classNames(
-			'stats-module',
-			{
-				'is-loading': isLoading,
-				'has-no-data': noData,
-				'is-showing-error': noData,
-			},
-			className
-		);
-
-		const summaryLink = this.getHref();
-		const displaySummaryLink = data && data.length >= 10;
+		const displaySummaryLink = data && ! this.props.hideSummaryLink;
 		const isAllTime = this.isAllTimeList();
-		const headerClass = classNames( 'stats-module__header', {
-			'is-refreshing': requesting && ! isLoading,
+		const footerClass = classNames( 'stats-module__footer-actions', {
+			'stats-module__footer-actions--summary': summary,
 		} );
 
 		return (
-			<div>
+			<>
 				{ siteId && statType && (
 					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 				) }
-				{ ! isAllTime && (
-					<SectionHeader
-						className={ headerClass }
-						label={ this.getModuleLabel() }
-						href={ ! summary ? summaryLink : null }
-					>
-						{ summary && (
-							<DownloadCsv statType={ statType } query={ query } path={ path } period={ period } />
-						) }
-					</SectionHeader>
-				) }
-				<Card compact className={ cardClasses }>
-					{ statType === 'statsFileDownloads' && (
-						<StatsModuleAvailabilityWarning
-							statType={ statType }
-							startOfPeriod={ period && period.startOf }
-						/>
-					) }
-					{ isAllTime && <AllTimeNav path={ path } query={ query } period={ period } /> }
-					{ noData && <ErrorPanel message={ moduleStrings.empty } /> }
-					{ hasError && <ErrorPanel /> }
-					{ this.props.children }
-					<StatsListLegend value={ moduleStrings.value } label={ moduleStrings.item } />
-					<StatsModulePlaceholder isLoading={ isLoading } />
-					<StatsList moduleName={ path } data={ data } useShortLabel={ useShortLabel } />
-					{ this.props.showSummaryLink && displaySummaryLink && (
-						<StatsModuleExpand href={ summaryLink } />
-					) }
-					{ summary && 'countryviews' === path && (
-						<UpsellNudge
-							title={ translate( 'Add Google Analytics' ) }
-							description={ translate(
-								'Upgrade to a Premium Plan for Google Analytics integration.'
-							) }
-							event="googleAnalytics-stats-countries"
-							feature={ FEATURE_GOOGLE_ANALYTICS }
-							plan={ PLAN_PREMIUM }
-							tracksImpressionName="calypso_upgrade_nudge_impression"
-							tracksClickName="calypso_upgrade_nudge_cta_click"
-							showIcon={ true }
-						/>
-					) }
-				</Card>
+				<StatsListCard
+					className={ className }
+					moduleType={ path }
+					data={ data }
+					useShortLabel={ useShortLabel }
+					title={ this.props.moduleStrings?.title }
+					emptyMessage={ moduleStrings.empty }
+					metricLabel={ metricLabel }
+					showMore={
+						displaySummaryLink && ! summary
+							? {
+									url: this.getHref(),
+									label:
+										data.length >= 10
+											? translate( 'View all', {
+													context: 'Stats: Button link to show more detailed stats information',
+											  } )
+											: translate( 'View details', {
+													context: 'Stats: Button label to see the detailed content of a panel',
+											  } ),
+							  }
+							: undefined
+					}
+					error={ hasError && <ErrorPanel /> }
+					loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
+					heroElement={ path === 'countryviews' && <Geochart query={ query } /> }
+					additionalColumns={ additionalColumns }
+					splitHeader={ !! additionalColumns }
+					mainItemLabel={ mainItemLabel }
+					showLeftIcon={ path === 'authors' }
+					listItemClassName={ listItemClassName }
+				/>
 				{ isAllTime && (
-					<div className="stats-module__footer-actions">
+					<div className={ footerClass }>
 						<DownloadCsv
 							statType={ statType }
 							query={ query }
@@ -219,7 +192,7 @@ class StatsModule extends Component {
 						/>
 					</div>
 				) }
-			</div>
+			</>
 		);
 	}
 }

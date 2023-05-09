@@ -1,23 +1,16 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
+import { FixableThreat, Threat } from 'calypso/components/jetpack/threat-item/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { fixAllThreats, fixThreat, ignoreThreat } from 'calypso/state/jetpack-scan/threats/actions';
-import { FixableThreat, Threat } from 'calypso/components/jetpack/threat-item/types';
 import getSiteScanUpdatingThreats from 'calypso/state/selectors/get-site-scan-updating-threats';
 
 export const useThreats = ( siteId: number ) => {
-	const [ selectedThreat, setSelectedThreat ] = React.useState< Threat >();
+	const [ selectedThreat, setSelectedThreat ] = useState< Threat >();
 	const updatingThreats = useSelector( ( state ) => getSiteScanUpdatingThreats( state, siteId ) );
 	const dispatch = useDispatch();
 
-	const updateThreat = React.useCallback(
+	const updateThreat = useCallback(
 		( action: 'fix' | 'ignore' ) => {
 			if ( typeof selectedThreat !== 'undefined' ) {
 				const eventName =
@@ -37,7 +30,7 @@ export const useThreats = ( siteId: number ) => {
 		[ dispatch, selectedThreat, siteId ]
 	);
 
-	const fixThreats = React.useCallback(
+	const fixThreats = useCallback(
 		( fixableThreats: FixableThreat[] ) => {
 			dispatch(
 				recordTracksEvent( `calypso_jetpack_scan_allthreats_fix`, {

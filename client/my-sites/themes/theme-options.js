@@ -1,86 +1,164 @@
-/**
- * External dependencies
- */
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { has, mapValues, pickBy, flowRight as compose } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import config from '@automattic/calypso-config';
+import { mapValues, pickBy, flowRight as compose } from 'lodash';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
+import { isJetpackSite, isJetpackSiteMultiSite, getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	activate as activateAction,
 	tryAndCustomize as tryAndCustomizeAction,
 	confirmDelete,
 	showThemePreview as themePreview,
+	addExternalManagedThemeToCart,
 } from 'calypso/state/themes/actions';
 import {
 	getJetpackUpgradeUrlIfPremiumTheme,
 	getTheme,
+	getThemeDemoUrl,
 	getThemeDetailsUrl,
-	getThemeHelpUrl,
 	getThemePurchaseUrl,
 	getThemeSignupUrl,
-	getThemeSupportUrl,
 	isPremiumThemeAvailable,
 	isThemeActive,
-	isThemeGutenbergFirst,
 	isThemePremium,
+	doesThemeBundleSoftwareSet,
+	shouldShowTryAndCustomize,
+	isExternallyManagedTheme,
+	isSiteEligibleForManagedExternalThemes,
+	isWpcomTheme,
 } from 'calypso/state/themes/selectors';
-
-import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
-import { isJetpackSite, isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { isMarketplaceThemeSubscribed } from 'calypso/state/themes/selectors/is-marketplace-theme-subscribed';
 
 const identity = ( theme ) => theme;
 
-function getAllThemeOptions( { translate } ) {
-	const purchase = config.isEnabled( 'upgrades/checkout' )
-		? {
-				label: translate( 'Purchase', {
-					context: 'verb',
-				} ),
-				extendedLabel: translate( 'Purchase this design' ),
-				header: translate( 'Purchase on:', {
-					context: 'verb',
-					comment: 'label for selecting a site for which to purchase a theme',
-				} ),
-				getUrl: getThemePurchaseUrl,
-				hideForTheme: ( state, themeId, siteId ) =>
-					isJetpackSite( state, siteId ) || // No individual theme purchase on a JP site
-					! getCurrentUser( state ) || // Not logged in
-					! isThemePremium( state, themeId ) || // Not a premium theme
-					isPremiumThemeAvailable( state, themeId, siteId ) || // Already purchased individually, or thru a plan
-					isThemeActive( state, themeId, siteId ), // Already active
-		  }
-		: {};
+function getAllThemeOptions( { translate, isFSEActive } ) {
+	const purchase = {
+		label: translate( 'Purchase', {
+			context: 'verb',
+		} ),
+		extendedLabel: translate( 'Purchase this design' ),
+		header: translate( 'Purchase on:', {
+			context: 'verb',
+			comment: 'label for selecting a site for which to purchase a theme',
+		} ),
+		getUrl: getThemePurchaseUrl,
+		hideForTheme: ( state, themeId, siteId ) =>
+			( isJetpackSite( state, siteId ) && ! isSiteWpcomAtomic( state, siteId ) ) || // No individual theme purchase on a JP site
+			! isUserLoggedIn( state ) || // Not logged in
+			! isThemePremium( state, themeId ) || // Not a premium theme
+			isPremiumThemeAvailable( state, themeId, siteId ) || // Already purchased individually, or thru a plan
+			doesThemeBundleSoftwareSet( state, themeId ) || // Premium themes with bundled Software Sets cannot be purchased
+			isExternallyManagedTheme( state, themeId ) || // Third-party themes cannot be purchased
+			isThemeActive( state, themeId, siteId ), // Already active
+	};
 
-	const upgradePlan = config.isEnabled( 'upgrades/checkout' )
-		? {
-				label: translate( 'Upgrade to activate', {
-					comment: 'label prompting user to upgrade the Jetpack plan to activate a certain theme',
-				} ),
-				extendedLabel: translate( 'Upgrade to activate', {
-					comment: 'label prompting user to upgrade the Jetpack plan to activate a certain theme',
-				} ),
-				header: translate( 'Upgrade on:', {
-					context: 'verb',
-					comment: 'label for selecting a site for which to upgrade a plan',
-				} ),
-				getUrl: ( state, themeId, siteId ) =>
-					getJetpackUpgradeUrlIfPremiumTheme( state, themeId, siteId ),
-				hideForTheme: ( state, themeId, siteId ) =>
-					! isJetpackSite( state, siteId ) ||
-					! getCurrentUser( state ) ||
-					! isThemePremium( state, themeId ) ||
-					isThemeActive( state, themeId, siteId ) ||
-					isPremiumThemeAvailable( state, themeId, siteId ),
-		  }
-		: {};
+	const subscribe = {
+		label: translate( 'Subscribe', {
+			context: 'verb',
+		} ),
+		extendedLabel: translate( 'Subscribe to this design' ),
+		header: translate( 'Subscribe on:', {
+			context: 'verb',
+			comment: 'label for selecting a site for which to purchase a theme',
+		} ),
+		action: addExternalManagedThemeToCart,
+		hideForTheme: ( state, themeId, siteId ) =>
+			isSiteWpcomStaging( state, siteId ) || // No individual theme purchase on a staging site
+			( isJetpackSite( state, siteId ) && ! isSiteWpcomAtomic( state, siteId ) ) || // No individual theme purchase on a JP site
+			! isUserLoggedIn( state ) || // Not logged in
+			isMarketplaceThemeSubscribed( state, themeId, siteId ) || // Already purchased individually, or thru a plan
+			doesThemeBundleSoftwareSet( state, themeId ) || // Premium themes with bundled Software Sets cannot be purchased ||
+			! isExternallyManagedTheme( state, themeId ) || // We're currently only subscribing to third-party themes
+			( isExternallyManagedTheme( state, themeId ) &&
+				! isSiteEligibleForManagedExternalThemes( state, siteId ) ) || // User must have appropriate plan to subscribe
+			isThemeActive( state, themeId, siteId ), // Already active
+	};
+
+	// Jetpack-specific plan upgrade
+	const upgradePlan = {
+		label: translate( 'Upgrade to activate', {
+			comment: 'label prompting user to upgrade the Jetpack plan to activate a certain theme',
+		} ),
+		extendedLabel: translate( 'Upgrade to activate', {
+			comment: 'label prompting user to upgrade the Jetpack plan to activate a certain theme',
+		} ),
+		header: translate( 'Upgrade on:', {
+			context: 'verb',
+			comment: 'label for selecting a site for which to upgrade a plan',
+		} ),
+		getUrl: ( state, themeId, siteId ) =>
+			getJetpackUpgradeUrlIfPremiumTheme( state, themeId, siteId ),
+		hideForTheme: ( state, themeId, siteId ) =>
+			! isJetpackSite( state, siteId ) ||
+			isSiteWpcomAtomic( state, siteId ) ||
+			! isUserLoggedIn( state ) ||
+			! isThemePremium( state, themeId ) ||
+			isExternallyManagedTheme( state, themeId ) ||
+			isThemeActive( state, themeId, siteId ) ||
+			isPremiumThemeAvailable( state, themeId, siteId ),
+	};
+
+	// WPCOM-specific plan upgrade for premium themes with bundled software sets
+	const upgradePlanForBundledThemes = {
+		label: translate( 'Upgrade to activate', {
+			comment: 'label prompting user to upgrade the WordPress.com plan to activate a certain theme',
+		} ),
+		extendedLabel: translate( 'Upgrade to activate', {
+			comment: 'label prompting user to upgrade the WordPress.com plan to activate a certain theme',
+		} ),
+		header: translate( 'Upgrade on:', {
+			context: 'verb',
+			comment: 'label for selecting a site for which to upgrade a plan',
+		} ),
+		getUrl: ( state, themeId, siteId ) => {
+			const { origin = 'https://wordpress.com' } =
+				typeof window !== 'undefined' ? window.location : {};
+			const slug = getSiteSlug( state, siteId );
+			const redirectTo = encodeURIComponent(
+				`${ origin }/setup/site-setup/designSetup?siteSlug=${ slug }&theme=${ themeId }`
+			);
+
+			return `/checkout/${ slug }/business?redirect_to=${ redirectTo }`;
+		},
+		hideForTheme: ( state, themeId, siteId ) =>
+			isJetpackSite( state, siteId ) ||
+			isSiteWpcomAtomic( state, siteId ) ||
+			! isUserLoggedIn( state ) ||
+			! isThemePremium( state, themeId ) ||
+			! doesThemeBundleSoftwareSet( state, themeId ) ||
+			isExternallyManagedTheme( state, themeId ) ||
+			isThemeActive( state, themeId, siteId ) ||
+			isPremiumThemeAvailable( state, themeId, siteId ),
+	};
+
+	const upgradePlanForExternallyManagedThemes = {
+		label: translate( 'Upgrade to subscribe', {
+			comment: 'label prompting user to upgrade the WordPress.com plan to activate a certain theme',
+		} ),
+		extendedLabel: translate( 'Upgrade to subscribe', {
+			comment: 'label prompting user to upgrade the WordPress.com plan to activate a certain theme',
+		} ),
+		header: translate( 'Upgrade on:', {
+			context: 'verb',
+			comment: 'label for selecting a site for which to upgrade a plan',
+		} ),
+		action: addExternalManagedThemeToCart,
+		hideForTheme: ( state, themeId, siteId ) =>
+			isJetpackSite( state, siteId ) ||
+			isSiteWpcomAtomic( state, siteId ) ||
+			! isUserLoggedIn( state ) ||
+			! isExternallyManagedTheme( state, themeId ) ||
+			( isExternallyManagedTheme( state, themeId ) &&
+				isSiteEligibleForManagedExternalThemes( state, siteId ) ) ||
+			isThemeActive( state, themeId, siteId ) ||
+			isPremiumThemeAvailable( state, themeId, siteId ),
+	};
 
 	const activate = {
 		label: translate( 'Activate' ),
@@ -90,9 +168,12 @@ function getAllThemeOptions( { translate } ) {
 		} ),
 		action: activateAction,
 		hideForTheme: ( state, themeId, siteId ) =>
-			! getCurrentUser( state ) ||
+			! isUserLoggedIn( state ) ||
 			isJetpackSiteMultiSite( state, siteId ) ||
+			( isExternallyManagedTheme( state, themeId ) &&
+				! isMarketplaceThemeSubscribed( state, themeId, siteId ) ) ||
 			isThemeActive( state, themeId, siteId ) ||
+			( ! isWpcomTheme( state, themeId ) && ! isSiteWpcomAtomic( state, siteId ) ) ||
 			( isThemePremium( state, themeId ) && ! isPremiumThemeAvailable( state, themeId, siteId ) ),
 	};
 
@@ -107,17 +188,26 @@ function getAllThemeOptions( { translate } ) {
 	};
 
 	const customize = {
-		label: translate( 'Customize' ),
-		extendedLabel: translate( 'Customize this design' ),
-		header: translate( 'Customize on:', {
-			comment: 'label in the dialog for selecting a site for which to customize a theme',
-		} ),
 		icon: 'customize',
-		getUrl: getCustomizeUrl,
+		getUrl: ( state, themeId, siteId ) => getCustomizeUrl( state, themeId, siteId, isFSEActive ),
 		hideForTheme: ( state, themeId, siteId ) =>
 			! canCurrentUser( state, siteId, 'edit_theme_options' ) ||
 			! isThemeActive( state, themeId, siteId ),
 	};
+
+	if ( isFSEActive ) {
+		customize.label = translate( 'Edit', { comment: "label for button to edit a theme's design" } );
+		customize.extendedLabel = translate( 'Edit this design' );
+		customize.header = translate( 'Edit design on:', {
+			comment: "label in the dialog for selecting a site for which to edit a theme's design",
+		} );
+	} else {
+		customize.label = translate( 'Customize' );
+		customize.extendedLabel = translate( 'Customize this design' );
+		customize.header = translate( 'Customize on:', {
+			comment: 'label in the dialog for selecting a site for which to customize a theme',
+		} );
+	}
 
 	const tryandcustomize = {
 		label: translate( 'Try & Customize' ),
@@ -127,15 +217,7 @@ function getAllThemeOptions( { translate } ) {
 		} ),
 		action: tryAndCustomizeAction,
 		hideForTheme: ( state, themeId, siteId ) =>
-			! getCurrentUser( state ) ||
-			( siteId &&
-				( ! canCurrentUser( state, siteId, 'edit_theme_options' ) ||
-					( isJetpackSite( state, siteId ) && isJetpackSiteMultiSite( state, siteId ) ) ) ) ||
-			isThemeActive( state, themeId, siteId ) ||
-			( isThemePremium( state, themeId ) &&
-				isJetpackSite( state, siteId ) &&
-				! isPremiumThemeAvailable( state, themeId, siteId ) ) ||
-			isThemeGutenbergFirst( state, themeId ),
+			! shouldShowTryAndCustomize( state, themeId, siteId ),
 	};
 
 	const preview = {
@@ -143,6 +225,11 @@ function getAllThemeOptions( { translate } ) {
 			comment: 'label for previewing the theme demo website',
 		} ),
 		action: themePreview,
+		hideForTheme: ( state, themeId, siteId ) => {
+			const demoUrl = getThemeDemoUrl( state, themeId, siteId );
+
+			return ! demoUrl;
+		},
 	};
 
 	const signupLabel = translate( 'Pick this design', {
@@ -153,7 +240,7 @@ function getAllThemeOptions( { translate } ) {
 		label: signupLabel,
 		extendedLabel: signupLabel,
 		getUrl: getThemeSignupUrl,
-		hideForTheme: ( state ) => getCurrentUser( state ),
+		hideForTheme: ( state ) => isUserLoggedIn( state ),
 	};
 
 	const separator = {
@@ -168,38 +255,27 @@ function getAllThemeOptions( { translate } ) {
 		getUrl: getThemeDetailsUrl,
 	};
 
-	const support = {
-		label: translate( 'Setup' ),
-		icon: 'help',
-		getUrl: getThemeSupportUrl,
-		hideForTheme: ( state, themeId ) => ! isThemePremium( state, themeId ),
-	};
-
-	const help = {
-		label: translate( 'Support' ),
-		getUrl: getThemeHelpUrl,
-	};
-
 	return {
 		customize,
 		preview,
 		purchase,
+		subscribe,
 		upgradePlan,
+		upgradePlanForBundledThemes,
+		upgradePlanForExternallyManagedThemes,
 		activate,
 		tryandcustomize,
 		deleteTheme,
 		signup,
 		separator,
 		info,
-		support,
-		help,
 	};
 }
 
 const connectOptionsHoc = connect(
 	( state, props ) => {
 		const { siteId, origin = siteId, locale } = props;
-		const isLoggedOut = ! getCurrentUser( state );
+		const isLoggedOut = ! isUserLoggedIn( state );
 		let mapGetUrl = identity;
 		let mapHideForTheme = identity;
 
@@ -214,9 +290,9 @@ const connectOptionsHoc = connect(
 			mapHideForTheme = ( hideForTheme ) => ( t, s ) => hideForTheme( state, t, s, origin );
 		}
 
-		return mapValues( getAllThemeOptions( props ), ( option ) =>
+		return mapValues( getAllThemeOptions( props ), ( option, key ) =>
 			Object.assign(
-				{},
+				{ key },
 				option,
 				option.getUrl ? { getUrl: mapGetUrl( option.getUrl ) } : {},
 				option.hideForTheme ? { hideForTheme: mapHideForTheme( option.hideForTheme ) } : {}
@@ -244,7 +320,7 @@ const connectOptionsHoc = connect(
 	( options, actions, ownProps ) => {
 		const { defaultOption, secondaryOption, getScreenshotOption } = ownProps;
 		options = mapValues( options, ( option, name ) => {
-			if ( has( option, 'action' ) ) {
+			if ( option.hasOwnProperty( 'action' ) ) {
 				return { ...option, action: actions[ name ] };
 			}
 			return option;
@@ -260,4 +336,4 @@ const connectOptionsHoc = connect(
 	}
 );
 
-export const connectOptions = compose( localize, connectOptionsHoc );
+export const connectOptions = compose( localize, withIsFSEActive, connectOptionsHoc );

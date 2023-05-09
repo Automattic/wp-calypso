@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import deterministicStringify from 'fast-json-stable-stringify';
 import formatCurrency from '@automattic/format-currency';
-
-/**
- * Internal dependencies
- */
+import deterministicStringify from 'fast-json-stable-stringify';
 import type { DomainSuggestionQuery, DomainSuggestionSelectorOptions } from './types';
 
 /**
@@ -14,9 +7,8 @@ import type { DomainSuggestionQuery, DomainSuggestionSelectorOptions } from './t
  *
  * @see client/state/domains/suggestions/utils.js
  */
-export const stringifyDomainQueryObject: (
-	q: DomainSuggestionQuery
-) => string = deterministicStringify;
+export const stringifyDomainQueryObject: ( q: DomainSuggestionQuery ) => string =
+	deterministicStringify;
 
 /**
  * Formats the domain suggestion price according to 'format-currency' package rules
@@ -39,7 +31,6 @@ export function getFormattedPrice( price: number, currencyCode: string ): string
  *
  * @see client/state/domains/suggestions/utils.js
  * @see client/components/data/query-domains-suggestions/index.jsx
- *
  * @param search       Domain search string
  * @param queryOptions Optional paramaters for the query
  * @returns Normalized query object

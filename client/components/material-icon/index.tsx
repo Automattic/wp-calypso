@@ -1,12 +1,9 @@
-/**
- * External dependencies
- */
-import classnames from 'classnames';
-import React from 'react';
 import spritePath from '@automattic/material-design-icons/svg-sprite/material-icons.svg';
+import classnames from 'classnames';
+import * as React from 'react';
 import { Assign } from 'utility-types';
 
-interface Props {
+export interface Props {
 	icon: string;
 	style?: string;
 	size?: number;

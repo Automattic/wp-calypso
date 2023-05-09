@@ -1,33 +1,26 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { flowRight, pick } from 'lodash';
-import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
-import SupportInfo from 'calypso/components/support-info';
-import CommentDisplaySettings from './comment-display-settings';
+import { ToggleControl } from '@wordpress/components';
+import { flowRight, pick } from 'lodash';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import FormTextarea from 'calypso/components/forms/form-textarea';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
+import FormTextarea from 'calypso/components/forms/form-textarea';
+import SupportInfo from 'calypso/components/support-info';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import CommentDisplaySettings from './comment-display-settings';
+import JetpackModuleToggle from './jetpack-module-toggle';
 import Subscriptions from './subscriptions';
 import wrapSettingsForm from './wrap-settings-form';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import JetpackModuleToggle from './jetpack-module-toggle';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 
 class SiteSettingsFormDiscussion extends Component {
 	handleCommentOrder = () => {
@@ -43,13 +36,8 @@ class SiteSettingsFormDiscussion extends Component {
 	};
 
 	defaultArticleSettings() {
-		const {
-			fields,
-			handleAutosavingToggle,
-			isRequestingSettings,
-			isSavingSettings,
-			translate,
-		} = this.props;
+		const { fields, handleAutosavingToggle, isRequestingSettings, isSavingSettings, translate } =
+			this.props;
 		return (
 			<FormFieldset>
 				<ToggleControl
@@ -257,13 +245,8 @@ class SiteSettingsFormDiscussion extends Component {
 	}
 
 	renderInputThreadDepth() {
-		const {
-			eventTracker,
-			fields,
-			isRequestingSettings,
-			isSavingSettings,
-			onChangeField,
-		} = this.props;
+		const { eventTracker, fields, isRequestingSettings, isSavingSettings, onChangeField } =
+			this.props;
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<FormSelect
@@ -340,13 +323,8 @@ class SiteSettingsFormDiscussion extends Component {
 	}
 
 	emailMeSettings() {
-		const {
-			fields,
-			handleAutosavingToggle,
-			isRequestingSettings,
-			isSavingSettings,
-			translate,
-		} = this.props;
+		const { fields, handleAutosavingToggle, isRequestingSettings, isSavingSettings, translate } =
+			this.props;
 		return (
 			<FormFieldset>
 				<FormLegend>{ translate( 'E-mail me whenever' ) }</FormLegend>
@@ -419,13 +397,8 @@ class SiteSettingsFormDiscussion extends Component {
 	}
 
 	emailMeFollows() {
-		const {
-			fields,
-			handleAutosavingToggle,
-			isRequestingSettings,
-			isSavingSettings,
-			translate,
-		} = this.props;
+		const { fields, handleAutosavingToggle, isRequestingSettings, isSavingSettings, translate } =
+			this.props;
 
 		return (
 			<ToggleControl
@@ -438,13 +411,8 @@ class SiteSettingsFormDiscussion extends Component {
 	}
 
 	beforeCommentSettings() {
-		const {
-			fields,
-			handleAutosavingToggle,
-			isRequestingSettings,
-			isSavingSettings,
-			translate,
-		} = this.props;
+		const { fields, handleAutosavingToggle, isRequestingSettings, isSavingSettings, translate } =
+			this.props;
 		return (
 			<FormFieldset>
 				<FormLegend>{ translate( 'Before a comment appears' ) }</FormLegend>
@@ -650,7 +618,7 @@ const connectComponent = connect( ( state ) => {
 	};
 } );
 
-const getFormSettings = ( settings ) => {
+export const getFormSettings = ( settings ) => {
 	return pick( settings, [
 		'default_pingback_flag',
 		'default_ping_status',

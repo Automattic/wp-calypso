@@ -1,17 +1,14 @@
-/**
- * Internal dependencies
- */
+import { JETPACK_REMOTE_INSTALL, JETPACK_REMOTE_INSTALL_FAILURE } from 'calypso/state/action-types';
+import {
+	jetpackRemoteInstallComplete,
+	jetpackRemoteInstallUpdateError,
+} from 'calypso/state/jetpack-remote-install/actions';
 import {
 	handleError,
 	handleSuccess,
 	installJetpackPlugin,
 	JETPACK_REMOTE_INSTALL_RETRIES,
 } from '../';
-import {
-	jetpackRemoteInstallComplete,
-	jetpackRemoteInstallUpdateError,
-} from 'calypso/state/jetpack-remote-install/actions';
-import { JETPACK_REMOTE_INSTALL, JETPACK_REMOTE_INSTALL_FAILURE } from 'calypso/state/action-types';
 
 const url = 'https://yourgroovydomain.com';
 const user = 'blah123';

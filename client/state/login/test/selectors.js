@@ -1,22 +1,13 @@
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
+import reducer from '../reducer';
 import {
 	getRequestError,
 	getTwoFactorAuthNonce,
 	getTwoFactorAuthRequestError,
-	getTwoFactorPushPollInProgress,
-	getTwoFactorPushPollSuccess,
 	getTwoFactorPushToken,
 	getTwoFactorSupportedAuthTypes,
 	getTwoFactorUserId,
 	isRequesting,
-	isRequestingTwoFactorAuth,
 	isTwoFactorAuthTypeSupported,
 	isTwoFactorEnabled,
 	isFormDisabled,
@@ -26,7 +17,6 @@ import {
 	getSocialAccountLinkEmail,
 	getSocialAccountLinkService,
 } from '../selectors';
-import reducer from '../reducer';
 
 // Initialize empty state from a missing previous state and a no-op.
 const EMPTY_STATE = {
@@ -89,32 +79,6 @@ describe( 'selectors', () => {
 			);
 
 			expect( nonce ).toBe( 'abcdef123456' );
-		} );
-	} );
-
-	describe( 'isRequestingTwoFactorAuth', () => {
-		test( 'should return false by default', () => {
-			expect( isRequestingTwoFactorAuth( EMPTY_STATE ) ).toBe( false );
-		} );
-
-		test( 'should return true if the request is in progress', () => {
-			expect(
-				isRequestingTwoFactorAuth( {
-					login: {
-						isRequestingTwoFactorAuth: true,
-					},
-				} )
-			).toBe( true );
-		} );
-
-		test( 'should return false if the request is not in progress', () => {
-			expect(
-				isRequestingTwoFactorAuth( {
-					login: {
-						isRequestingTwoFactorAuth: false,
-					},
-				} )
-			).toBe( false );
 		} );
 	} );
 
@@ -269,44 +233,6 @@ describe( 'selectors', () => {
 					},
 				} )
 			).toBe( token );
-		} );
-	} );
-
-	describe( 'getTwoFactorPushPollInProgress()', () => {
-		test( 'should return false by default', () => {
-			expect( getTwoFactorPushPollInProgress( EMPTY_STATE ) ).toBe( false );
-		} );
-
-		test( 'should return polling progresss status', () => {
-			const inProgress = true;
-			expect(
-				getTwoFactorPushPollInProgress( {
-					login: {
-						twoFactorAuthPushPoll: {
-							inProgress,
-						},
-					},
-				} )
-			).toBe( inProgress );
-		} );
-	} );
-
-	describe( 'getTwoFactorPushPollSuccess()', () => {
-		test( 'should return false by default', () => {
-			expect( getTwoFactorPushPollSuccess( EMPTY_STATE ) ).toBe( false );
-		} );
-
-		test( 'should return push polling success status', () => {
-			const success = true;
-			expect(
-				getTwoFactorPushPollSuccess( {
-					login: {
-						twoFactorAuthPushPoll: {
-							success,
-						},
-					},
-				} )
-			).toBe( success );
 		} );
 	} );
 

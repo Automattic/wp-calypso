@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { isMonthly, getPlan, getBillingMonthsForTerm } from '@automattic/calypso-products';
+import { localizeUrl, translationExists } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
 import {
 	hasDomainRegistration,
 	hasPlan,
@@ -15,27 +8,50 @@ import {
 	isNextDomainFree,
 	hasP2PlusPlan,
 } from 'calypso/lib/cart-values/cart-items';
-import { isMonthly, getPlan, getBillingMonthsForTerm } from '@automattic/calypso-products';
 import { REGISTER_DOMAIN } from 'calypso/lib/url/support';
-import { translationExists } from 'calypso/lib/i18n-utils';
+import CheckoutTermsItem from 'calypso/my-sites/checkout/composite-checkout/components/checkout-terms-item';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-function hasBiennialPlan( cart ) {
+function getBillingMonthsForPlan( cart ) {
 	const plans = cart.products
 		.map( ( { product_slug } ) => getPlan( product_slug ) )
 		.filter( Boolean );
 	const plan = plans?.[ 0 ];
 
 	try {
-		return getBillingMonthsForTerm( plan?.term ) === 24;
+		return getBillingMonthsForTerm( plan?.term );
 	} catch ( e ) {
-		return false;
+		return 0;
 	}
+}
+
+function hasBiennialPlan( cart ) {
+	return getBillingMonthsForPlan( cart ) === 24;
+}
+
+function hasTriennialPlan( cart ) {
+	return getBillingMonthsForPlan( cart ) === 36;
 }
 
 function hasMonthlyPlan( cart ) {
 	return cart.products.some( ( { product_slug } ) => isMonthly( product_slug ) );
+}
+
+function getCopyForBillingTerm( cart ) {
+	if ( hasBiennialPlan( cart ) ) {
+		return translate(
+			'Purchasing a two-year subscription to a WordPress.com plan gives you two years of access to your plan’s features and one year of a custom domain name.'
+		);
+	}
+	if ( hasTriennialPlan( cart ) ) {
+		return translate(
+			'Purchasing a three-year subscription to a WordPress.com plan gives you three years of access to your plan’s features and one year of a custom domain name.'
+		);
+	}
+	return translate(
+		'Purchasing a one-year subscription to a WordPress.com plan gives you one year of access to your plan’s features and one year of a custom domain name.'
+	);
 }
 
 export default function BundledDomainNotice( { cart } ) {
@@ -65,15 +81,9 @@ export default function BundledDomainNotice( { cart } ) {
 	}
 
 	const domainRegistrationLink = (
-		<a href={ REGISTER_DOMAIN } target="_blank" rel="noopener noreferrer" />
+		<a href={ localizeUrl( REGISTER_DOMAIN ) } target="_blank" rel="noopener noreferrer" />
 	);
 
-	const oneYearCopy = translate(
-		'Purchasing a one-year subscription to a WordPress.com plan gives you one year of access to your plan’s features and one year of a custom domain name.'
-	);
-	const twoYearCopy = translate(
-		'Purchasing a two-year subscription to a WordPress.com plan gives you two years of access to your plan’s features and one year of a custom domain name.'
-	);
 	const afterFirstYear = translate(
 		'After the first year, you’ll continue to have access to your WordPress.com plan features but will need to renew the domain name.',
 		{
@@ -92,13 +102,9 @@ export default function BundledDomainNotice( { cart } ) {
 	);
 
 	return (
-		<div className="checkout__bundled-domain-notice">
-			<Gridicon icon="info-outline" size={ 18 } />
-			<p>
-				{ hasBiennialPlan( cart ) ? twoYearCopy : oneYearCopy }{ ' ' }
-				{ hasDomainRegistration( cart ) ? null : registrationLink }{ ' ' }
-				{ hasBiennialPlan( cart ) ? afterFirstYear : null }
-			</p>
-		</div>
+		<CheckoutTermsItem>
+			{ getCopyForBillingTerm( cart ) } { hasDomainRegistration( cart ) ? null : registrationLink }{ ' ' }
+			{ hasBiennialPlan( cart ) ? afterFirstYear : null }
+		</CheckoutTermsItem>
 	);
 }

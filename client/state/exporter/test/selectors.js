@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { States } from '../constants.js';
 import { isExporting, isDateRangeValid } from '../selectors';
 
@@ -21,7 +13,7 @@ describe( 'selectors', () => {
 				100658273
 			);
 
-			expect( exporting ).to.eql( false );
+			expect( exporting ).toEqual( false );
 		} );
 
 		test( "should return false if an export hasn't started yet", () => {
@@ -36,7 +28,7 @@ describe( 'selectors', () => {
 				100658273
 			);
 
-			expect( exporting ).to.eql( false );
+			expect( exporting ).toEqual( false );
 		} );
 
 		test( 'should return true if an export is in progress', () => {
@@ -51,7 +43,7 @@ describe( 'selectors', () => {
 				100658273
 			);
 
-			expect( exporting ).to.eql( true );
+			expect( exporting ).toEqual( true );
 		} );
 
 		test( 'should return invalid date if start date is after end date', () => {
@@ -67,8 +59,8 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( isDateRangeValid( state, 100658273, 'post' ) ).to.equal( false );
-			expect( isDateRangeValid( state, 100658273, 'page' ) ).to.equal( true );
+			expect( isDateRangeValid( state, 100658273, 'post' ) ).toEqual( false );
+			expect( isDateRangeValid( state, 100658273, 'page' ) ).toEqual( true );
 		} );
 
 		test( 'should return valid date if end date is after start date', () => {
@@ -84,8 +76,8 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( isDateRangeValid( state, 100658273, 'post' ) ).to.equal( true );
-			expect( isDateRangeValid( state, 100658273, 'page' ) ).to.equal( true );
+			expect( isDateRangeValid( state, 100658273, 'post' ) ).toEqual( true );
+			expect( isDateRangeValid( state, 100658273, 'page' ) ).toEqual( true );
 		} );
 
 		test( 'should return valid date if end date is the same as start date', () => {
@@ -101,8 +93,8 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( isDateRangeValid( state, 100658273, 'post' ) ).to.equal( true );
-			expect( isDateRangeValid( state, 100658273, 'page' ) ).to.equal( true );
+			expect( isDateRangeValid( state, 100658273, 'post' ) ).toEqual( true );
+			expect( isDateRangeValid( state, 100658273, 'page' ) ).toEqual( true );
 		} );
 	} );
 } );

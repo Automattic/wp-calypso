@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getAtomicHostingSftpUsers } from 'calypso/state/selectors/get-atomic-hosting-sftp-users';
 
 describe( 'getAtomicHostingSftpUsers()', () => {

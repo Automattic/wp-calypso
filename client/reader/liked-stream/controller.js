@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { createElement } from 'react';
 import { sectionify } from 'calypso/lib/route';
 import {
 	trackPageLoad,
@@ -25,7 +18,7 @@ const exported = {
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
-		context.primary = React.createElement( LikedPostsStream, {
+		context.primary = createElement( LikedPostsStream, {
 			key: 'liked',
 			streamKey,
 			trackScrollPage: trackScrollPage.bind(

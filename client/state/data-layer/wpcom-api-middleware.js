@@ -1,14 +1,7 @@
-/**
- * Internal dependencies
- */
-import { bypassDataLayer } from './utils';
 import { getHandlers, registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { bypassDataLayer } from './utils';
 import wpcomHttpHandlers from './wpcom-http';
-import httpData from './http-data';
-import httpHandlers from 'calypso/state/http';
 
-registerHandlers( 'declarative resource loader', httpData );
-registerHandlers( 'raw HTTP request loader', httpHandlers );
 registerHandlers( 'WordPress API request loader', wpcomHttpHandlers );
 
 const shouldNext = ( action ) => {
@@ -50,7 +43,6 @@ const shouldNext = ( action ) => {
  *
  * The optimizations reduce function-calling and object
  * property lookup where possible.
- *
  * @param {Function} handlersFor returns list of handlers for given action type
  * @returns {Function} middleware handler
  */
@@ -59,7 +51,7 @@ export const middleware = ( handlersFor ) => ( store ) => ( next ) => {
 	 * Middleware handler
 	 *
 	 * @function
-	 * @param {object} action Redux action
+	 * @param {Object} action Redux action
 	 * @returns {undefined} please do not use
 	 */
 	return ( action ) => {

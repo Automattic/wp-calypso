@@ -1,11 +1,9 @@
 {
 	"name": "calypso-codemods",
 	"version": "0.1.6",
-	"description": "jscodeshift transforms used to upgrade calypso code",
+	"description": "JScodeshift transforms used to upgrade calypso code.",
 	"main": "./api.js",
-	"bin": {
-		"calypso-codemods": "./index.js"
-	},
+	"bin": "./index.js",
 	"scripts": {
 		"test": "jest"
 	},
@@ -16,16 +14,18 @@
 	},
 	"author": "Automattic Inc.",
 	"license": "GPL-2.0-or-later",
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/calypso-codemods#readme",
 	"dependencies": {
-		"@babel/core": "^7.14.0",
-		"@babel/preset-env": "^7.14.1",
 		"5to6-codemod": "^1.8.0",
-		"jscodeshift": "^0.9.0",
+		"@babel/core": "^7.17.5",
+		"@babel/preset-env": "^7.16.11",
+		"jscodeshift": "^0.13.0",
 		"lodash": "^4.17.21",
 		"react-codemod": "^5.0.5"
+	},
+	"devDependencies": {
+		"@automattic/calypso-eslint-overrides": "workspace:^",
+		"@automattic/calypso-typescript-config": "workspace:^"
 	}
 }

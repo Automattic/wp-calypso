@@ -1,0 +1,32 @@
+.email-forwarding__add-new {
+	margin-bottom: 28px;
+
+	.email-forwarding__add-new .email-forwarding__form-content {
+		border-top: none;
+		padding-top: 0;
+	}
+}
+
+.email-forwards-add__placeholder {
+	overflow: hidden;
+
+	> * {
+		@include placeholder();
+	}
+
+	button {
+		float: right;
+		margin-top: 1em;
+		min-width: 80px;
+	}
+
+	p {
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+		line-height: 2.5em;
+		margin-top: 1.5em;
+	}
+
+	p + p {
+		margin-top: 3em;
+	}
+}

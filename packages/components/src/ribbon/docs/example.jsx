@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import Ribbon from '../index';
+import { PureComponent } from 'react';
 import Card from '../../card';
+import Ribbon from '../index';
 
-export default class extends React.PureComponent {
+export default class extends PureComponent {
 	static displayName = 'Ribbon';
 
 	render() {

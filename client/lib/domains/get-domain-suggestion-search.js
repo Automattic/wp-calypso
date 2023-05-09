@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { getFixedDomainSearch } from './get-fixed-domain-search';
 
 /*

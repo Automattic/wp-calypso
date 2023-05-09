@@ -1,19 +1,11 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import { schedulingSharePostActionStatus, updateDataForPost } from '../reducer';
 import {
 	PUBLICIZE_SHARE_DISMISS,
 	PUBLICIZE_SHARE_ACTION_SCHEDULE,
 	PUBLICIZE_SHARE_ACTION_SCHEDULE_SUCCESS,
 	PUBLICIZE_SHARE_ACTION_SCHEDULE_FAILURE,
 } from 'calypso/state/action-types';
+import { schedulingSharePostActionStatus, updateDataForPost } from '../reducer';
 
 describe( 'reducer', () => {
 	describe( 'updateDataForPost()', () => {
@@ -32,17 +24,17 @@ describe( 'reducer', () => {
 
 		test( 'should only change deeply nested value with proper siteId, postId and actionId', () => {
 			const state = updateDataForPost( 'newValue', nestedStateTree, 1, 2, 3 );
-			expect( state[ 1 ][ 2 ][ 3 ] ).to.equal( 'newValue' );
-			expect( state[ 1 ][ 2 ][ 4 ] ).to.equal( 'valueNotToChange' );
-			expect( state[ 1 ][ 5 ] ).to.equal( 'valueNotToChange' );
-			expect( state[ 99 ].test ).to.equal( 'valueNotToChange' );
+			expect( state[ 1 ][ 2 ][ 3 ] ).toEqual( 'newValue' );
+			expect( state[ 1 ][ 2 ][ 4 ] ).toEqual( 'valueNotToChange' );
+			expect( state[ 1 ][ 5 ] ).toEqual( 'valueNotToChange' );
+			expect( state[ 99 ].test ).toEqual( 'valueNotToChange' );
 		} );
 
 		test( 'should only change deeply nested value with proper siteId, postId when without actionId', () => {
 			const state = updateDataForPost( 'newValue', nestedStateTree, 1, 2 );
-			expect( state[ 1 ][ 2 ] ).to.equal( 'newValue' );
-			expect( state[ 1 ][ 5 ] ).to.equal( 'valueNotToChange' );
-			expect( state[ 99 ].test ).to.equal( 'valueNotToChange' );
+			expect( state[ 1 ][ 2 ] ).toEqual( 'newValue' );
+			expect( state[ 1 ][ 5 ] ).toEqual( 'valueNotToChange' );
+			expect( state[ 99 ].test ).toEqual( 'valueNotToChange' );
 		} );
 	} );
 
@@ -54,7 +46,7 @@ describe( 'reducer', () => {
 				postId: 5,
 			} );
 
-			expect( state[ 2916284 ][ 5 ].status ).to.equal( 'requesting' );
+			expect( state[ 2916284 ][ 5 ].status ).toEqual( 'requesting' );
 		} );
 
 		test( 'should change to `failure` after requesting an action scheduling failed', () => {
@@ -64,7 +56,7 @@ describe( 'reducer', () => {
 				postId: 5,
 			} );
 
-			expect( state[ 2916284 ][ 5 ].status ).to.equal( 'failure' );
+			expect( state[ 2916284 ][ 5 ].status ).toEqual( 'failure' );
 		} );
 
 		test( 'should change to `success` and pass share date after request success', () => {
@@ -75,8 +67,8 @@ describe( 'reducer', () => {
 				share_date: 3,
 			} );
 
-			expect( state[ 2916284 ][ 5 ].status ).to.equal( 'success' );
-			expect( state[ 2916284 ][ 5 ].shareDate ).to.equal( 3 );
+			expect( state[ 2916284 ][ 5 ].status ).toEqual( 'success' );
+			expect( state[ 2916284 ][ 5 ].shareDate ).toEqual( 3 );
 		} );
 
 		test( 'should not be defined after dismissing a notice', () => {
@@ -93,7 +85,7 @@ describe( 'reducer', () => {
 				postId: 5,
 			} );
 
-			expect( state[ 2916284 ][ 5 ] ).to.be.undefined;
+			expect( state[ 2916284 ][ 5 ] ).toBeUndefined();
 		} );
 	} );
 } );

@@ -1,15 +1,12 @@
-/**
- * Internal dependencies
- */
 import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
-import { requestRewindState } from 'calypso/state/rewind/state/actions';
 import { REWIND_STATE_REQUEST, REWIND_STATE_UPDATE } from 'calypso/state/action-types';
-import { rewindStatus } from './schema';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { requestRewindState } from 'calypso/state/rewind/state/actions';
 import { transformApi } from './api-transformer';
+import { rewindStatus } from './schema';
 
 const getType = ( o ) => ( o && o.constructor && o.constructor.name ) || typeof o;
 

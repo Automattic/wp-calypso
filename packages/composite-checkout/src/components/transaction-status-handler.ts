@@ -1,16 +1,6 @@
-/**
- * External dependencies
- */
-import { useCallback, useEffect } from 'react';
-import debugFactory from 'debug';
 import { useI18n } from '@wordpress/react-i18n';
-
-/**
- * Internal dependencies
- */
-import { usePaymentMethodId } from '../lib/payment-methods';
-import useMessages from './use-messages';
-import useEvents from './use-events';
+import debugFactory from 'debug';
+import { useCallback, useEffect } from 'react';
 import { useFormStatus } from '../lib/form-status';
 import { useTransactionStatus } from '../lib/transaction-status';
 import { TransactionStatus } from '../types';
@@ -27,9 +17,8 @@ export default function TransactionStatusHandler( {
 	return null;
 }
 
-export function useTransactionStatusHandler( redirectToUrl: ( url: string ) => void ): void {
+function useTransactionStatusHandler( redirectToUrl: ( url: string ) => void ): void {
 	const { __ } = useI18n();
-	const { showErrorMessage, showInfoMessage } = useMessages();
 	const { setFormReady, setFormComplete, setFormSubmitting } = useFormStatus();
 	const {
 		previousTransactionStatus,
@@ -39,14 +28,10 @@ export function useTransactionStatusHandler( redirectToUrl: ( url: string ) => v
 		resetTransaction,
 		setTransactionError,
 	} = useTransactionStatus();
-	const onEvent = useEvents();
-	const [ paymentMethodId ] = usePaymentMethodId();
 
-	const genericErrorMessage = __( 'An error occurred during the transaction' );
 	const redirectErrormessage = __(
 		'An error occurred while redirecting to the payment partner. Please try again or contact support.'
 	);
-	const redirectInfoMessage = __( 'Redirecting to payment partner…' );
 	useEffect( () => {
 		if ( transactionStatus === previousTransactionStatus ) {
 			return;
@@ -57,12 +42,7 @@ export function useTransactionStatusHandler( redirectToUrl: ( url: string ) => v
 			setFormSubmitting();
 		}
 		if ( transactionStatus === TransactionStatus.ERROR ) {
-			debug( 'showing error', transactionError );
-			showErrorMessage( transactionError || genericErrorMessage );
-			onEvent( {
-				type: 'TRANSACTION_ERROR',
-				payload: { message: transactionError || '', paymentMethodId },
-			} );
+			debug( 'an error occurred', transactionError );
 			resetTransaction();
 		}
 		if ( transactionStatus === TransactionStatus.COMPLETE ) {
@@ -76,7 +56,6 @@ export function useTransactionStatusHandler( redirectToUrl: ( url: string ) => v
 				return;
 			}
 			debug( 'redirecting to', transactionRedirectUrl );
-			showInfoMessage( redirectInfoMessage );
 			redirectToUrl( transactionRedirectUrl );
 		}
 		if ( transactionStatus === TransactionStatus.NOT_STARTED ) {

@@ -1,12 +1,10 @@
-/**
- * External dependencies
- */
-import React, { Fragment } from 'react';
-
-/**
- * Internal dependencies
- */
-import meta from './meta';
+import { Fragment } from 'react';
+import {
+	AddNewButton,
+	EditButton,
+	EditImageButton,
+	DoneButton,
+} from 'calypso/layout/guided-tours/button-labels';
 import {
 	makeTour,
 	Tour,
@@ -17,12 +15,7 @@ import {
 	Continue,
 } from 'calypso/layout/guided-tours/config-elements';
 import { doesSelectedSiteHaveMediaFiles } from 'calypso/state/guided-tours/contexts';
-import {
-	AddNewButton,
-	EditButton,
-	EditImageButton,
-	DoneButton,
-} from 'calypso/layout/guided-tours/button-labels';
+import meta from './meta';
 
 export const MediaBasicsTour = makeTour(
 	<Tour { ...meta }>

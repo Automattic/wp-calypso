@@ -1,17 +1,8 @@
-/**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { SITE_CHECKLIST_REQUEST, SITE_CHECKLIST_TASK_UPDATE } from 'calypso/state/action-types';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { receiveSiteChecklist } from 'calypso/state/checklist/actions';
-
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 
 const noop = () => {};
 
@@ -20,6 +11,8 @@ export const CHECKLIST_KNOWN_TASKS = {
 	EMAIL_VERIFIED: 'email_verified',
 	BLOGNAME_SET: 'blogname_set',
 	MOBILE_APP_INSTALLED: 'mobile_app_installed',
+	WOOCOMMERCE_SETUP: 'woocommerce_setup',
+	SENSEI_SETUP: 'sensei_setup',
 	SITE_LAUNCHED: 'site_launched',
 	FRONT_PAGE_UPDATED: 'front_page_updated',
 	SITE_MENU_UPDATED: 'site_menu_updated',
@@ -32,6 +25,11 @@ export const CHECKLIST_KNOWN_TASKS = {
 	JETPACK_LAZY_IMAGES: 'jetpack_lazy_images',
 	JETPACK_VIDEO_HOSTING: 'jetpack_video_hosting',
 	JETPACK_SEARCH: 'jetpack_search',
+	PROFESSIONAL_EMAIL_MAILBOX_CREATED: 'professional_email_mailbox_created',
+	BLOG_PREVIEWED: 'blog_previewed',
+	THEMES_BROWSED: 'themes_browsed',
+	FIRST_POST_PUBLISHED: 'first_post_published',
+	POST_SHARING_ENABLED: 'post_sharing_enabled',
 };
 
 // Transform the response to a data / schema calypso understands, eg filter out unknown tasks
@@ -39,7 +37,7 @@ const fromApi = ( payload ) => {
 	// The checklist API requests use the http_envelope query param, however on
 	// desktop the envelope is not being unpacked for some reason. This conversion
 	// ensures the payload has been unpacked.
-	const data = get( payload, 'body', payload );
+	const data = payload?.body ?? payload;
 
 	if ( ! data ) {
 		throw new TypeError( `Missing 'body' property on API response` );
@@ -60,7 +58,6 @@ const fromApi = ( payload ) => {
 		designType: data.designType,
 		phase2: data.phase2,
 		segment: data.segment,
-		verticals: data.verticals,
 		tasks: data.tasks.filter( ( task ) =>
 			Object.values( CHECKLIST_KNOWN_TASKS ).includes( task.id )
 		),
@@ -72,7 +69,7 @@ export const fetchChecklist = ( action ) =>
 		{
 			path: `/sites/${ action.siteId }/checklist`,
 			method: 'GET',
-			apiNamespace: 'rest/v1.2',
+			apiVersion: '1.2',
 			query: {
 				http_envelope: 1,
 				with_domain_verification: action.isSiteEligibleForFSE ? 1 : 0,
@@ -97,7 +94,7 @@ export const updateChecklistTask = ( action ) =>
 		{
 			path: `/sites/${ action.siteId }/checklist`,
 			method: 'POST',
-			apiNamespace: 'rest/v1.1',
+			apiVersion: '1.1',
 			query: {
 				http_envelope: 1,
 			},

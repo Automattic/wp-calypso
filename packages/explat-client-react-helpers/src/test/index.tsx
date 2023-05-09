@@ -2,23 +2,11 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
-import React from 'react';
-import { renderHook, act as actReactHooks } from '@testing-library/react-hooks';
-import { render, act as actReact, waitFor } from '@testing-library/react';
-
-/**
- * WordPress dependencies
- */
-import type { ExPlatClient, ExperimentAssignment } from '@automattic/explat-client';
 import { validExperimentAssignment } from '@automattic/explat-client/src/internal/test-common';
-
-/**
- * Internal dependencies
- */
+import { render, act as actReact, waitFor } from '@testing-library/react';
+import { renderHook, act as actReactHooks } from '@testing-library/react-hooks';
 import createExPlatClientReactHelpers from '../index';
+import type { ExPlatClient, ExperimentAssignment } from '@automattic/explat-client';
 
 const createMockExPlatClient = ( isDevelopmentMode = false ): ExPlatClient => ( {
 	loadExperimentAssignment: jest.fn(),
@@ -41,8 +29,8 @@ const createControllablePromise = function < T >() {
 	} );
 
 	return {
-		resolve: ( resOuter as unknown ) as ( T ) => void,
-		reject: ( rejOuter as unknown ) as ( ...x: unknown[] ) => void,
+		resolve: resOuter as unknown as ( T ) => void,
+		reject: rejOuter as unknown as ( ...x: unknown[] ) => void,
 		promise,
 	};
 };
@@ -53,9 +41,11 @@ describe( 'useExperiment', () => {
 		const { useExperiment } = createExPlatClientReactHelpers( exPlatClient );
 
 		const controllablePromise1 = createControllablePromise< ExperimentAssignment >();
-		( exPlatClient.loadExperimentAssignment as jest.MockedFunction<
-			typeof exPlatClient.loadExperimentAssignment
-		> ).mockImplementationOnce( () => controllablePromise1.promise );
+		(
+			exPlatClient.loadExperimentAssignment as jest.MockedFunction<
+				typeof exPlatClient.loadExperimentAssignment
+			>
+		 ).mockImplementationOnce( () => controllablePromise1.promise );
 
 		const { result, rerender, waitForNextUpdate } = renderHook( () =>
 			useExperiment( 'experiment_a' )
@@ -76,9 +66,11 @@ describe( 'useExperiment', () => {
 		const { useExperiment } = createExPlatClientReactHelpers( exPlatClient );
 
 		const controllablePromise1 = createControllablePromise< ExperimentAssignment >();
-		( exPlatClient.loadExperimentAssignment as jest.MockedFunction<
-			typeof exPlatClient.loadExperimentAssignment
-		> ).mockImplementationOnce( () => controllablePromise1.promise );
+		(
+			exPlatClient.loadExperimentAssignment as jest.MockedFunction<
+				typeof exPlatClient.loadExperimentAssignment
+			>
+		 ).mockImplementationOnce( () => controllablePromise1.promise );
 
 		let isEligible = false;
 		const { result, rerender, waitForNextUpdate } = renderHook( () =>
@@ -112,9 +104,11 @@ describe( 'Experiment', () => {
 		const { Experiment } = createExPlatClientReactHelpers( exPlatClient );
 
 		const controllablePromise1 = createControllablePromise< ExperimentAssignment >();
-		( exPlatClient.loadExperimentAssignment as jest.MockedFunction<
-			typeof exPlatClient.loadExperimentAssignment
-		> ).mockImplementationOnce( () => controllablePromise1.promise );
+		(
+			exPlatClient.loadExperimentAssignment as jest.MockedFunction<
+				typeof exPlatClient.loadExperimentAssignment
+			>
+		 ).mockImplementationOnce( () => controllablePromise1.promise );
 
 		const { container, rerender } = render(
 			<Experiment
@@ -152,9 +146,11 @@ describe( 'Experiment', () => {
 		const { Experiment } = createExPlatClientReactHelpers( exPlatClient );
 
 		const controllablePromise1 = createControllablePromise< ExperimentAssignment >();
-		( exPlatClient.loadExperimentAssignment as jest.MockedFunction<
-			typeof exPlatClient.loadExperimentAssignment
-		> ).mockImplementationOnce( () => controllablePromise1.promise );
+		(
+			exPlatClient.loadExperimentAssignment as jest.MockedFunction<
+				typeof exPlatClient.loadExperimentAssignment
+			>
+		 ).mockImplementationOnce( () => controllablePromise1.promise );
 
 		const { container, rerender } = render(
 			<Experiment
@@ -187,9 +183,11 @@ describe( 'ProvideExperimentData', () => {
 		const { ProvideExperimentData } = createExPlatClientReactHelpers( exPlatClient );
 
 		const controllablePromise1 = createControllablePromise< ExperimentAssignment >();
-		( exPlatClient.loadExperimentAssignment as jest.MockedFunction<
-			typeof exPlatClient.loadExperimentAssignment
-		> ).mockImplementationOnce( () => controllablePromise1.promise );
+		(
+			exPlatClient.loadExperimentAssignment as jest.MockedFunction<
+				typeof exPlatClient.loadExperimentAssignment
+			>
+		 ).mockImplementationOnce( () => controllablePromise1.promise );
 
 		const capture = jest.fn();
 		render(

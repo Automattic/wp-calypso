@@ -1,0 +1,15 @@
+.design-picker-design-title__container {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	.premium-badge {
+		font-family: $sans;
+		background: var(--studio-black);
+		padding: 0 10px 0 9px;
+		margin-left: 10px;
+	}
+	.woocommerce-bundled-badge {
+		font-family: $sans;
+		margin-left: 10px;
+	}
+}

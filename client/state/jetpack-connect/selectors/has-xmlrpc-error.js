@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { get, includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { getAuthorizationData } from 'calypso/state/jetpack-connect/selectors/get-authorization-data';
 
 import 'calypso/state/jetpack-connect/init';
@@ -16,7 +9,7 @@ import 'calypso/state/jetpack-connect/init';
  * XMLRPC errors can be identified by the presence of an error message, the presence of an
  * authorization code, and if the error message contains the string 'error'.
  *
- * @param  {object}  state Global state tree
+ * @param  {Object}  state Global state tree
  * @returns {boolean}       True if there's an xmlrpc error otherwise false
  */
 export const hasXmlrpcError = function ( state ) {

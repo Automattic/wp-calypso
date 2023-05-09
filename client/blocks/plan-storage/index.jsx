@@ -1,109 +1,126 @@
-/**
- * External dependencies
- */
-import classNames from 'classnames';
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import QueryMediaStorage from 'calypso/components/data/query-media-storage';
-import { getMediaStorage } from 'calypso/state/sites/media-storage/selectors';
-import { getSitePlanSlug, getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import {
 	FEATURE_UNLIMITED_STORAGE,
 	planHasFeature,
 	isBusinessPlan,
 	isEcommercePlan,
+	PLAN_FREE,
+	PLAN_WPCOM_PRO,
+	PLAN_WPCOM_FLEXIBLE,
+	PLAN_WPCOM_STARTER,
+	isProPlan,
 } from '@automattic/calypso-products';
+import classNames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
+import useMediaStorageQuery from 'calypso/data/media-storage/use-media-storage-query';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import hasWpcomStagingSite from 'calypso/state/selectors/has-wpcom-staging-site';
+import isLegacySiteWithHigherLimits from 'calypso/state/selectors/is-legacy-site-with-higher-limits';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
+import { getSitePlanSlug, getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import PlanStorageBar from './bar';
 import Tooltip from './tooltip';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-export class PlanStorage extends Component {
-	static propTypes = {
-		className: PropTypes.string,
-		mediaStorage: PropTypes.object,
-		siteId: PropTypes.number,
-		sitePlanSlug: PropTypes.string,
-		siteSlug: PropTypes.string,
-	};
+export function PlanStorage( { children, className, siteId } ) {
+	const jetpackSite = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+	const atomicSite = useSelector( ( state ) => isAtomicSite( state, siteId ) );
+	const isStagingSite = useSelector( ( state ) => isSiteWpcomStaging( state, siteId ) );
+	const hasStagingSite = useSelector( ( state ) => hasWpcomStagingSite( state, siteId ) );
+	const sitePlanSlug = useSelector( ( state ) => getSitePlanSlug( state, siteId ) );
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
+	const canUserUpgrade = useSelector( ( state ) =>
+		canCurrentUser( state, siteId, 'manage_options' )
+	);
+	const canViewBar = useSelector( ( state ) => canCurrentUser( state, siteId, 'publish_posts' ) );
+	const translate = useTranslate();
+	const { data: mediaStorage } = useMediaStorageQuery( siteId );
+	const legacySiteWithHigherLimits = useSelector( ( state ) =>
+		isLegacySiteWithHigherLimits( state, siteId )
+	);
 
-	render() {
-		const {
-			canUserUpgrade,
-			canViewBar,
-			className,
-			jetpackSite,
-			atomicSite,
-			siteId,
-			sitePlanSlug,
-			siteSlug,
-			translate,
-		} = this.props;
+	if ( ( jetpackSite && ! atomicSite ) || ! canViewBar || ! sitePlanSlug ) {
+		return null;
+	}
 
-		if ( ( jetpackSite && ! atomicSite ) || ! canViewBar || ! sitePlanSlug ) {
-			return null;
+	if ( planHasFeature( sitePlanSlug, FEATURE_UNLIMITED_STORAGE ) ) {
+		return null;
+	}
+
+	if ( mediaStorage ) {
+		// Only override the storage for non-legacy sites that are on a free
+		// plan. Even if the site is on a free plan, it could have a space
+		// upgrade product on top of that, so also check that it is using the
+		// default free space before overriding it (that is somewhat fragile,
+		// but this code is expected to be temporary anyway).
+		if (
+			( sitePlanSlug === PLAN_FREE || sitePlanSlug === PLAN_WPCOM_FLEXIBLE ) &&
+			! legacySiteWithHigherLimits &&
+			mediaStorage.max_storage_bytes === 3072 * 1024 * 1024
+		) {
+			mediaStorage.max_storage_bytes = 1024 * 1024 * 1024;
 		}
 
-		if ( planHasFeature( sitePlanSlug, FEATURE_UNLIMITED_STORAGE ) ) {
-			return null;
+		if ( sitePlanSlug === PLAN_WPCOM_PRO ) {
+			mediaStorage.max_storage_bytes = 50 * 1024 * 1024 * 1024;
 		}
 
-		const planHasTopStorageSpace =
-			isBusinessPlan( sitePlanSlug ) || isEcommercePlan( sitePlanSlug );
-
-		const displayUpgradeLink = canUserUpgrade && ! planHasTopStorageSpace;
-
-		const planStorageComponents = (
-			<>
-				<QueryMediaStorage siteId={ siteId } />
-				<PlanStorageBar
-					sitePlanSlug={ sitePlanSlug }
-					mediaStorage={ this.props.mediaStorage }
-					displayUpgradeLink={ displayUpgradeLink }
-				>
-					{ this.props.children }
-				</PlanStorageBar>
-			</>
-		);
-
-		if ( displayUpgradeLink ) {
-			return (
-				<Tooltip
-					title={ translate( 'Upgrade your plan to increase your storage space.' ) }
-					className="plan-storage__tooltip"
-				>
-					<a className={ classNames( className, 'plan-storage' ) } href={ `/plans/${ siteSlug }` }>
-						{ planStorageComponents }
-					</a>
-				</Tooltip>
-			);
+		if ( sitePlanSlug === PLAN_WPCOM_STARTER ) {
+			mediaStorage.max_storage_bytes = 6 * 1024 * 1024 * 1024;
 		}
+	}
+
+	const planHasTopStorageSpace =
+		isBusinessPlan( sitePlanSlug ) || isEcommercePlan( sitePlanSlug ) || isProPlan( sitePlanSlug );
+
+	const displayUpgradeLink = canUserUpgrade && ! planHasTopStorageSpace && ! isStagingSite;
+	const isSharedQuota = isStagingSite || hasStagingSite;
+
+	const planStorageComponents = (
+		<>
+			<PlanStorageBar
+				sitePlanSlug={ sitePlanSlug }
+				mediaStorage={ mediaStorage }
+				displayUpgradeLink={ displayUpgradeLink }
+			>
+				{ children }
+			</PlanStorageBar>
+		</>
+	);
+
+	if ( displayUpgradeLink ) {
 		return (
-			<div className={ classNames( className, 'plan-storage' ) }>{ planStorageComponents }</div>
+			<Tooltip
+				title={ translate( 'Upgrade your plan to increase your storage space.' ) }
+				className="plan-storage__tooltip"
+			>
+				<a className={ classNames( className, 'plan-storage' ) } href={ `/plans/${ siteSlug }` }>
+					{ planStorageComponents }
+				</a>
+			</Tooltip>
 		);
 	}
+	if ( isSharedQuota ) {
+		return (
+			<Tooltip
+				title={ translate( 'Storage quota is shared between production and staging.' ) }
+				className="plan-storage__tooltip"
+			>
+				<div className={ classNames( className, 'plan-storage plan-storage__shared_quota' ) }>
+					{ planStorageComponents }
+				</div>
+			</Tooltip>
+		);
+	}
+	return <div className={ classNames( className, 'plan-storage' ) }>{ planStorageComponents }</div>;
 }
 
-export default connect( ( state, ownProps ) => {
-	const { siteId } = ownProps;
-	return {
-		mediaStorage: getMediaStorage( state, siteId ),
-		jetpackSite: isJetpackSite( state, siteId ),
-		atomicSite: isAtomicSite( state, siteId ),
-		sitePlanSlug: getSitePlanSlug( state, siteId ),
-		siteSlug: getSiteSlug( state, siteId ),
-		canUserUpgrade: canCurrentUser( state, siteId, 'manage_options' ),
-		canViewBar: canCurrentUser( state, siteId, 'publish_posts' ),
-	};
-} )( localize( PlanStorage ) );
+PlanStorage.propTypes = {
+	className: PropTypes.string,
+	siteId: PropTypes.number,
+};
+
+export default PlanStorage;

@@ -1,25 +1,17 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import Latex from './latex';
-import Shortcodes from './shortcodes';
 import { CompactCard } from '@automattic/components';
+import PropTypes from 'prop-types';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import DateTimeFormat from '../date-time-format';
 import DefaultPostFormat from './default-post-format';
-import PublishConfirmation from './publish-confirmation';
+import Latex from './latex';
 import Markdown from './markdown';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import PublishConfirmation from './publish-confirmation';
+import Shortcodes from './shortcodes';
 
 const Composing = ( {
+	translate,
+	isAtomic,
+	siteIsJetpack,
 	eventTracker,
 	fields,
 	handleSelect,
@@ -27,11 +19,17 @@ const Composing = ( {
 	isRequestingSettings,
 	isSavingSettings,
 	onChangeField,
-	setFieldValue,
-	siteIsJetpack,
 	updateFields,
+	handleSubmitForm,
 } ) => (
 	<>
+		<SettingsSectionHeader
+			disabled={ isRequestingSettings || isSavingSettings }
+			isSaving={ isSavingSettings }
+			onButtonClick={ handleSubmitForm }
+			showButton
+			title={ translate( 'Composing' ) }
+		/>
 		<CompactCard className="composing__card site-settings">
 			<PublishConfirmation />
 			<DefaultPostFormat
@@ -47,24 +45,22 @@ const Composing = ( {
 			fields={ fields }
 			isRequestingSettings={ isRequestingSettings }
 			isSavingSettings={ isSavingSettings }
+			isAtomic={ isAtomic }
+			siteIsJetpack={ siteIsJetpack }
 			handleToggle={ handleToggle }
 		/>
 
 		{ siteIsJetpack && (
 			<>
 				<Latex
-					fields={ fields }
-					handleToggle={ handleToggle }
 					isRequestingSettings={ isRequestingSettings }
 					isSavingSettings={ isSavingSettings }
-					setFieldValue={ setFieldValue }
+					isAtomic={ isAtomic }
 				/>
 				<Shortcodes
-					fields={ fields }
-					handleToggle={ handleToggle }
 					isRequestingSettings={ isRequestingSettings }
 					isSavingSettings={ isSavingSettings }
-					setFieldValue={ setFieldValue }
+					isAtomic={ isAtomic }
 				/>
 			</>
 		) }
@@ -86,17 +82,18 @@ Composing.defaultProps = {
 };
 
 Composing.propTypes = {
+	isAtomic: PropTypes.bool,
+	siteIsJetpack: PropTypes.bool,
 	eventTracker: PropTypes.func.isRequired,
+	translate: PropTypes.func.isRequired,
+	handleSubmitForm: PropTypes.func.isRequired,
 	fields: PropTypes.object,
 	handleSelect: PropTypes.func.isRequired,
 	handleToggle: PropTypes.func.isRequired,
 	isRequestingSettings: PropTypes.bool,
 	isSavingSettings: PropTypes.bool,
 	onChangeField: PropTypes.func.isRequired,
-	setFieldValue: PropTypes.func.isRequired,
 	updateFields: PropTypes.func.isRequired,
 };
 
-export default connect( ( state ) => ( {
-	siteIsJetpack: isJetpackSite( state, getSelectedSiteId( state ) ),
-} ) )( Composing );
+export default Composing;

@@ -1,115 +1,7 @@
-/**
- * External dependencies
- */
-import React, { LabelHTMLAttributes, InputHTMLAttributes, HTMLAttributes } from 'react';
-import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
-import styled from '../lib/styled';
+import styled from '@emotion/styled';
+import { LabelHTMLAttributes, InputHTMLAttributes, HTMLAttributes } from 'react';
+import * as React from 'react';
 import Button from './button';
-
-export default function Field( {
-	type,
-	id,
-	className,
-	isError,
-	onChange,
-	label,
-	value,
-	icon,
-	iconAction,
-	isIconVisible,
-	placeholder,
-	tabIndex,
-	description,
-	errorMessage,
-	autoComplete,
-	disabled,
-}: FieldProps ) {
-	const fieldOnChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
-		if ( onChange ) {
-			onChange( event.target.value );
-		}
-
-		return null;
-	};
-
-	const onBlurField = () => {
-		return null;
-	};
-
-	return (
-		<div className={ className }>
-			{ label && (
-				<Label htmlFor={ id } disabled={ disabled }>
-					{ label }
-				</Label>
-			) }
-
-			<InputWrapper>
-				<Input
-					id={ id }
-					icon={ icon }
-					value={ value }
-					type={ type }
-					onChange={ fieldOnChange }
-					onBlur={ onBlurField }
-					placeholder={ placeholder }
-					tabIndex={ tabIndex }
-					isError={ isError }
-					autoComplete={ autoComplete }
-					disabled={ disabled }
-				/>
-				<RenderedIcon icon={ icon } iconAction={ iconAction } isIconVisible={ isIconVisible } />
-			</InputWrapper>
-			<RenderedDescription
-				isError={ isError }
-				description={ description }
-				errorMessage={ errorMessage }
-			/>
-		</div>
-	);
-}
-
-Field.propTypes = {
-	type: PropTypes.string,
-	id: PropTypes.string.isRequired,
-	className: PropTypes.string,
-	isError: PropTypes.bool,
-	onChange: PropTypes.func,
-	label: PropTypes.string,
-	value: PropTypes.string,
-	icon: PropTypes.node,
-	iconAction: PropTypes.func,
-	isIconVisible: PropTypes.bool,
-	placeholder: PropTypes.string,
-	tabIndex: PropTypes.number,
-	description: PropTypes.string,
-	errorMessage: PropTypes.string,
-	autoComplete: PropTypes.string,
-	disabled: PropTypes.bool,
-};
-
-interface FieldProps {
-	type?: string;
-	id: string;
-	className?: string;
-	isError?: boolean;
-	onChange?: ( value: string ) => void;
-	label?: string;
-	value?: string;
-	icon?: React.ReactNode;
-	iconAction?: () => void;
-	isIconVisible?: boolean;
-	placeholder?: string;
-	tabIndex?: number;
-	description?: string;
-	errorMessage?: string;
-	autoComplete?: string;
-	disabled?: boolean;
-}
 
 const Label = styled.label< { disabled?: boolean } & LabelHTMLAttributes< HTMLLabelElement > >`
 	display: block;
@@ -178,6 +70,88 @@ const Input = styled.input<
 const InputWrapper = styled.div`
 	position: relative;
 `;
+
+export default function Field( {
+	type,
+	id,
+	className,
+	isError,
+	onChange,
+	label,
+	value,
+	icon,
+	iconAction,
+	isIconVisible,
+	placeholder,
+	tabIndex,
+	description,
+	errorMessage,
+	autoComplete,
+	disabled,
+}: FieldProps ) {
+	const fieldOnChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
+		if ( onChange ) {
+			onChange( event.target.value );
+		}
+
+		return null;
+	};
+
+	const onBlurField = () => {
+		return null;
+	};
+
+	return (
+		<div className={ className }>
+			{ label && (
+				<Label htmlFor={ id } disabled={ disabled }>
+					{ label }
+				</Label>
+			) }
+
+			<InputWrapper>
+				<Input
+					id={ id }
+					icon={ icon }
+					value={ value }
+					type={ type }
+					onChange={ fieldOnChange }
+					onBlur={ onBlurField }
+					placeholder={ placeholder }
+					tabIndex={ tabIndex }
+					isError={ isError }
+					autoComplete={ autoComplete }
+					disabled={ disabled }
+				/>
+				<RenderedIcon icon={ icon } iconAction={ iconAction } isIconVisible={ isIconVisible } />
+			</InputWrapper>
+			<RenderedDescription
+				isError={ isError }
+				description={ description }
+				errorMessage={ errorMessage }
+			/>
+		</div>
+	);
+}
+
+interface FieldProps {
+	type?: string;
+	id: string;
+	className?: string;
+	isError?: boolean;
+	onChange?: ( value: string ) => void;
+	label?: string;
+	value?: string;
+	icon?: React.ReactNode;
+	iconAction?: () => void;
+	isIconVisible?: boolean;
+	placeholder?: string;
+	tabIndex?: number;
+	description?: string;
+	errorMessage?: string;
+	autoComplete?: string;
+	disabled?: boolean;
+}
 
 const FieldIcon = styled.div`
 	position: absolute;

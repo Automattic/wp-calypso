@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getJetpackConnectionOwner from 'calypso/state/selectors/get-jetpack-connection-owner';
 import { dataItems } from './fixtures/jetpack-connection';
 

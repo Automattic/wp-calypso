@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getLocaleSuggestions from 'calypso/state/selectors/get-locale-suggestions';
 
 describe( 'getLocaleSuggestions()', () => {

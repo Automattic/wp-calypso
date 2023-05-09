@@ -1,15 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { CompactCard, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { CompactCard } from '@automattic/components';
 import MaterialIcon from 'calypso/components/material-icon';
-import Gridicon from 'calypso/components/gridicon';
 
 const ActionBox = ( {
 	href,
@@ -41,9 +32,11 @@ const ActionBox = ( {
 				'quick-links__action-box__hide-link-indicator': hideLinkIndicator,
 			} ) }
 		>
-			<div className="quick-links__action-box-image">{ getIcon() }</div>
+			<div className="quick-links__action-box-image" aria-hidden="true">
+				{ getIcon() }
+			</div>
 			<div className="quick-links__action-box-text">
-				<h6 className="quick-links__action-box-label">{ label }</h6>
+				<span className="quick-links__action-box-label">{ label }</span>
 			</div>
 		</CompactCard>
 	);

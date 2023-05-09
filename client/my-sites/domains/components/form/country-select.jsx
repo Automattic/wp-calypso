@@ -1,21 +1,13 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import { localize, translate } from 'i18n-calypso';
+import { FormInputValidation } from '@automattic/components';
 import classNames from 'classnames';
+import { localize, translate } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { PureComponent } from 'react';
 import FormLabel from 'calypso/components/forms/form-label';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormSelect from 'calypso/components/forms/form-select';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 
-class CountrySelect extends React.PureComponent {
+class CountrySelect extends PureComponent {
 	recordCountrySelectClick = () => {
 		if ( this.props.eventFormName ) {
 			gaRecordEvent( 'Upgrades', `Clicked ${ this.props.eventFormName } Country Select` );

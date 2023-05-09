@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { pick } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { clients, initialClientsData } from '../reducer';
 import { OAUTH2_CLIENT_DATA_RECEIVE } from 'calypso/state/action-types';
+import { clients, initialClientsData } from '../reducer';
 
 describe( 'clients reducer', () => {
 	// Uses default data but reduces the size of this data set for tests
@@ -53,8 +46,7 @@ describe( 'clients reducer', () => {
 				id: 2665,
 				title: 'IntenseDebate',
 				url: 'https://intensedebate.com/',
-				icon:
-					'https://i0.wp.com/developer.files.wordpress.com/2013/04/idwp-feature-adminpanel.png?w=100',
+				icon: 'https://i0.wp.com/developer.files.wordpress.com/2013/04/idwp-feature-adminpanel.png?w=100',
 			},
 		} );
 
@@ -75,8 +67,7 @@ describe( 'clients reducer', () => {
 				id: 2665,
 				title: 'IntenseDebate',
 				url: 'https://intensedebate.com/',
-				icon:
-					'https://i0.wp.com/developer.files.wordpress.com/2013/04/idwp-feature-adminpanel.png?w=100',
+				icon: 'https://i0.wp.com/developer.files.wordpress.com/2013/04/idwp-feature-adminpanel.png?w=100',
 			},
 		} );
 	} );

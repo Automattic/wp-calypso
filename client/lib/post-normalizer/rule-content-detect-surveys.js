@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import { forEach } from 'lodash';
 import i18n from 'i18n-calypso';
+import { forEach } from 'lodash';
 
 export default function detectSurveys( post, dom ) {
 	if ( ! dom ) {

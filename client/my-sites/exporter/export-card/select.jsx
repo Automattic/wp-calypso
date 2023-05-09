@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import { get } from 'lodash';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import FormSelect from 'calypso/components/forms/form-select';
-import { getPostTypeFieldOptions, getPostTypeFieldValue } from 'calypso/state/exporter/selectors';
-import { setPostTypeFieldValue } from 'calypso/state/exporter/actions';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import FormSelect from 'calypso/components/forms/form-select';
+import { setPostTypeFieldValue } from 'calypso/state/exporter/actions';
+import { getPostTypeFieldOptions, getPostTypeFieldValue } from 'calypso/state/exporter/selectors';
 
 class Select extends Component {
 	constructor( props ) {

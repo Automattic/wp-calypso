@@ -1,31 +1,20 @@
-/**
- * External dependencies
- */
-import React, { useEffect } from 'react';
-import { CompactCard } from '@automattic/components';
 import {
 	findFirstSimilarPlanKey,
 	FEATURE_GOOGLE_ANALYTICS,
 	TYPE_PREMIUM,
 } from '@automattic/calypso-products';
+import { CompactCard, FormInputValidation as FormTextValidation } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
-import ExternalLink from 'calypso/components/external-link';
+import { useEffect } from 'react';
+import googleIllustration from 'calypso/assets/images/illustrations/google-analytics-logo.svg';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormTextValidation from 'calypso/components/forms/form-input-validation';
-import googleIllustration from 'calypso/assets/images/illustrations/google-analytics-logo.svg';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const GoogleAnalyticsSimpleForm = ( {
@@ -48,7 +37,7 @@ const GoogleAnalyticsSimpleForm = ( {
 	site,
 	translate,
 } ) => {
-	const analyticsSupportUrl = 'https://wordpress.com/support/google-analytics/';
+	const analyticsSupportUrl = localizeUrl( 'https://wordpress.com/support/google-analytics/' );
 	const nudgeTitle = translate(
 		'Connect your site to Google Analytics in seconds with the Premium plan'
 	);
@@ -82,7 +71,7 @@ const GoogleAnalyticsSimpleForm = ( {
 				description={ translate(
 					"Add your unique Measurement ID to monitor your site's performance in Google Analytics."
 				) }
-				event={ 'google_analytics_settings' }
+				event="google_analytics_settings"
 				feature={ FEATURE_GOOGLE_ANALYTICS }
 				plan={ plan }
 				showIcon={ true }
@@ -90,7 +79,11 @@ const GoogleAnalyticsSimpleForm = ( {
 			/>
 		);
 		return (
-			<form id="analytics" onSubmit={ handleSubmitForm }>
+			<form
+				aria-label="Google Analytics Site Settings"
+				id="analytics"
+				onSubmit={ handleSubmitForm }
+			>
 				<SettingsSectionHeader
 					disabled={ isSubmitButtonDisabled }
 					isSaving={ isSavingSettings }
@@ -148,19 +141,14 @@ const GoogleAnalyticsSimpleForm = ( {
 										text={ translate( 'Invalid Google Analytics Measurement ID.' ) }
 									/>
 								) }
-								<ExternalLink
-									icon
-									href="https://support.google.com/analytics/answer/1032385?hl=en"
-									target="_blank"
-									rel="noopener noreferrer"
-								>
+								<InlineSupportLink supportContext="google-analytics-measurement-id">
 									{ translate( 'Where can I find my Measurement ID?' ) }
-								</ExternalLink>
+								</InlineSupportLink>
 							</FormFieldset>
 							<p>
 								{ translate(
 									'Google Analytics is a free service that complements our {{a}}built-in stats{{/a}} ' +
-										'with different insights into your traffic. WordPress.com stats and Google Analytics ' +
+										'with different insights into your traffic. Jetpack Stats and Google Analytics ' +
 										'use different methods to identify and track activity on your site, so they will ' +
 										'normally show slightly different totals for your visits, views, etc.',
 									{
@@ -176,11 +164,7 @@ const GoogleAnalyticsSimpleForm = ( {
 									{
 										components: {
 											a: (
-												<a
-													href={ localizeUrl( analyticsSupportUrl ) }
-													target="_blank"
-													rel="noopener noreferrer"
-												/>
+												<a href={ analyticsSupportUrl } target="_blank" rel="noopener noreferrer" />
 											),
 										},
 									}
@@ -197,7 +181,7 @@ const GoogleAnalyticsSimpleForm = ( {
 							<ToggleControl
 								checked={ displayForm }
 								disabled={ isRequestingSettings || isSavingSettings }
-								onChange={ () => handleFormToggle( ! displayForm ) }
+								onChange={ handleFormToggle }
 								label={ translate( 'Add Google' ) }
 							/>
 						</div>

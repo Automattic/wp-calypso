@@ -1,25 +1,19 @@
 /**
  * @jest-environment jsdom
  */
-/**
- * External dependencies
- */
-import { translate } from 'i18n-calypso';
 
-/**
- * Internal dependencies
- */
-import * as handlers from 'calypso/state/partner-portal/licenses/handlers';
-import {
-	WPCOM_HTTP_REQUEST,
-	JETPACK_PARTNER_PORTAL_LICENSES_RECEIVE,
-	JETPACK_PARTNER_PORTAL_LICENSE_COUNTS_RECEIVE,
-} from 'calypso/state/action-types';
+import { translate } from 'i18n-calypso';
 import {
 	LicenseFilter,
 	LicenseSortDirection,
 	LicenseSortField,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import {
+	WPCOM_HTTP_REQUEST,
+	JETPACK_PARTNER_PORTAL_LICENSES_RECEIVE,
+	JETPACK_PARTNER_PORTAL_LICENSE_COUNTS_RECEIVE,
+} from 'calypso/state/action-types';
+import * as handlers from 'calypso/state/partner-portal/licenses/handlers';
 
 jest.mock( 'uuid', () => ( {
 	v4: () => 'noticeid',

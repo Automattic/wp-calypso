@@ -1,18 +1,7 @@
-import { getStepModuleName } from 'calypso/signup/config/step-components';
-/**
- * External dependencies
- */
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import 'calypso/state/signup/init';
-
-/**
- * Internal dependencies
- */
+import { getStepModuleName } from 'calypso/signup/config/step-components';
 import { ProgressState } from './schema';
+import 'calypso/state/signup/init';
 
 const initialState: ProgressState = {};
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -23,7 +12,7 @@ export function getSignupProgress( state: any ): ProgressState {
 /**
  * Returns true if a plans step exists and is skipped in the current signup progress
  *
- * @param   {object}  state The current client state
+ * @param   {Object}  state The current client state
  * @returns  {boolean} denoting whether the plans step existed AND it was skipped
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

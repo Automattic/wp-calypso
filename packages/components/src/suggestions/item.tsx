@@ -1,10 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import type { ForwardRefRenderFunction, FocusEvent, MouseEvent } from 'react';
 import classNames from 'classnames';
 import { escapeRegExp } from 'lodash';
+import { useEffect, memo, forwardRef } from 'react';
+import type { ForwardRefRenderFunction, FocusEvent, MouseEvent } from 'react';
 
 function escapeRegExpWithSpace( str: string ) {
 	return escapeRegExp( str ).replace( /\s/g, '\\s' );
@@ -45,7 +42,7 @@ const Item: ForwardRefRenderFunction< HTMLButtonElement, Props > = (
 	{ label, hasHighlight = false, query = '', onMount, onMouseDown, onMouseOver },
 	forwardedRef
 ) => {
-	React.useEffect( () => {
+	useEffect( () => {
 		onMount();
 		// Disable reason: We don't want to re-fire `onMount` if it changes, literally only fire it onMount.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -72,4 +69,4 @@ const Item: ForwardRefRenderFunction< HTMLButtonElement, Props > = (
 	);
 };
 
-export default React.memo( React.forwardRef( Item ) );
+export default memo( forwardRef( Item ) );

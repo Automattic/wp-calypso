@@ -1,23 +1,14 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import ReactDom from 'react-dom';
-import React from 'react';
+import { FormInputValidation } from '@automattic/components';
 import emailValidator from 'email-validator';
-
-/**
- * Internal dependencies
- */
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component, createRef } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import Buttons from './buttons';
 
-class SecurityAccountRecoveryRecoveryEmailEdit extends React.Component {
+class SecurityAccountRecoveryRecoveryEmailEdit extends Component {
 	static displayName = 'SecurityAccountRecoveryRecoveryEmailEdit';
 
 	static propTypes = {
@@ -31,6 +22,7 @@ class SecurityAccountRecoveryRecoveryEmailEdit extends React.Component {
 		storedEmail: null,
 	};
 
+	emailInputRef = createRef();
 	state = {
 		email: this.props.storedEmail || null,
 	};
@@ -71,7 +63,7 @@ class SecurityAccountRecoveryRecoveryEmailEdit extends React.Component {
 						isError={ this.state.isInvalid }
 						onKeyUp={ this.onKeyUp }
 						name="email"
-						ref="email"
+						ref={ this.emailInputRef }
 						value={ this.state.email }
 						onChange={ this.handleChange }
 					/>
@@ -93,7 +85,7 @@ class SecurityAccountRecoveryRecoveryEmailEdit extends React.Component {
 	}
 
 	focusInput = () => {
-		ReactDom.findDOMNode( this.refs.email ).focus();
+		this.emailInputRef.current.focus();
 	};
 
 	isSavable = () => {
@@ -121,23 +113,11 @@ class SecurityAccountRecoveryRecoveryEmailEdit extends React.Component {
 			return;
 		}
 
-		if ( this.props.primaryEmail && email === this.props.primaryEmail ) {
-			this.setState( {
-				validation: this.props.translate(
-					'You have entered your primary email address. Please enter a different email address.'
-				),
-			} );
+		const isEmailValid = this.validateEmail( email );
+		if ( ! isEmailValid ) {
 			return;
 		}
 
-		if ( ! emailValidator.validate( email ) ) {
-			this.setState( {
-				validation: this.props.translate( 'Please enter a valid email address.' ),
-			} );
-			return;
-		}
-
-		this.setState( { validation: null } );
 		this.props.onSave( email );
 	};
 
@@ -149,8 +129,37 @@ class SecurityAccountRecoveryRecoveryEmailEdit extends React.Component {
 		this.props.onDelete();
 	};
 
+	validateEmail = ( newEmail ) => {
+		const { primaryEmail, translate } = this.props;
+
+		if ( primaryEmail && newEmail === primaryEmail ) {
+			this.setState( {
+				validation: translate(
+					'You have entered your primary email address. Please enter a different email address.'
+				),
+			} );
+			return false;
+		}
+
+		if ( ! emailValidator.validate( newEmail ) ) {
+			this.setState( {
+				validation: translate( 'Please enter a valid email address.' ),
+			} );
+			return false;
+		}
+
+		this.setState( { validation: null } );
+
+		return true;
+	};
+
 	handleChange = ( e ) => {
 		const { name, value } = e.currentTarget;
+
+		if ( 'email' === name ) {
+			this.validateEmail( value );
+		}
+
 		this.setState( { [ name ]: value } );
 	};
 }

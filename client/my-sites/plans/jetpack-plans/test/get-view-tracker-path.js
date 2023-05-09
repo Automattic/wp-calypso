@@ -1,10 +1,3 @@
-/**
- * External dependencies
- */
-
-/**
- * Internal dependencies
- */
 import getViewTrackerPath from '../get-view-tracker-path';
 
 const path = '/pricing';

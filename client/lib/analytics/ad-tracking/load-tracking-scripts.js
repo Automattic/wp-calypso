@@ -1,27 +1,11 @@
-/**
- * External dependencies
- */
-import { loadScript } from '@automattic/load-script';
-
-/**
- * Internal dependencies
- */
 import { getCurrentUser } from '@automattic/calypso-analytics';
-
+import { loadScript } from '@automattic/load-script';
+import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { mayWeTrackByTracker } from '../tracker-buckets';
+import { getGaGtag } from '../utils/get-ga-gtag';
 import {
 	debug,
-	isFacebookEnabled,
-	isBingEnabled,
-	isCriteoEnabled,
-	isQuantcastEnabled,
-	isWpcomGoogleAdsGtagEnabled,
-	isFloodlightEnabled,
-	isTwitterEnabled,
-	isLinkedinEnabled,
-	isQuoraEnabled,
-	isOutbrainEnabled,
-	isPinterestEnabled,
-	isGoogleAnalyticsEnabled,
 	TRACKING_IDS,
 	FACEBOOK_TRACKING_SCRIPT_URL,
 	GOOGLE_GTAG_SCRIPT_URL,
@@ -68,49 +52,49 @@ export const loadTrackingScripts = attemptLoad( async () => {
 function getTrackingScriptsToLoad() {
 	const scripts = [];
 
-	if ( isFacebookEnabled ) {
+	if ( mayWeTrackByTracker( 'facebook' ) ) {
 		scripts.push( FACEBOOK_TRACKING_SCRIPT_URL );
 	}
 
 	// The Gtag script needs to be loaded with an ID in the URL so we search for the first available one.
 	const enabledGtags = [
-		isGoogleAnalyticsEnabled && TRACKING_IDS.wpcomGoogleAnalyticsGtag,
-		isWpcomGoogleAdsGtagEnabled && TRACKING_IDS.wpcomGoogleAdsGtag,
-		isFloodlightEnabled && TRACKING_IDS.wpcomFloodlightGtag,
+		mayWeTrackByTracker( 'ga' ) && getGaGtag(),
+		mayWeTrackByTracker( 'googleAds' ) && TRACKING_IDS.wpcomGoogleAdsGtag,
+		mayWeTrackByTracker( 'floodlight' ) && TRACKING_IDS.wpcomFloodlightGtag,
 	].filter( ( id ) => false !== id );
 	if ( enabledGtags.length > 0 ) {
 		scripts.push( GOOGLE_GTAG_SCRIPT_URL + enabledGtags[ 0 ] );
 	}
 
-	if ( isBingEnabled ) {
+	if ( mayWeTrackByTracker( 'bing' ) ) {
 		scripts.push( BING_TRACKING_SCRIPT_URL );
 	}
 
-	if ( isCriteoEnabled ) {
+	if ( mayWeTrackByTracker( 'criteo' ) ) {
 		scripts.push( CRITEO_TRACKING_SCRIPT_URL );
 	}
 
-	if ( isQuantcastEnabled ) {
+	if ( mayWeTrackByTracker( 'quantcast' ) ) {
 		scripts.push( quantcastAsynchronousTagURL() );
 	}
 
-	if ( isTwitterEnabled ) {
+	if ( mayWeTrackByTracker( 'twitter' ) ) {
 		scripts.push( TWITTER_TRACKING_SCRIPT_URL );
 	}
 
-	if ( isLinkedinEnabled ) {
+	if ( mayWeTrackByTracker( 'linkedin' ) ) {
 		scripts.push( LINKED_IN_SCRIPT_URL );
 	}
 
-	if ( isQuoraEnabled ) {
+	if ( mayWeTrackByTracker( 'quora' ) ) {
 		scripts.push( QUORA_SCRIPT_URL );
 	}
 
-	if ( isOutbrainEnabled ) {
+	if ( mayWeTrackByTracker( 'outbrain' ) ) {
 		scripts.push( OUTBRAIN_SCRIPT_URL );
 	}
 
-	if ( isPinterestEnabled ) {
+	if ( mayWeTrackByTracker( 'pinterest' ) ) {
 		scripts.push( PINTEREST_SCRIPT_URL );
 	}
 
@@ -119,12 +103,12 @@ function getTrackingScriptsToLoad() {
 
 function initLoadedTrackingScripts() {
 	// init Facebook
-	if ( isFacebookEnabled ) {
+	if ( mayWeTrackByTracker( 'facebook' ) ) {
 		initFacebook();
 	}
 
 	// init Bing
-	if ( isBingEnabled ) {
+	if ( mayWeTrackByTracker( 'bing' ) ) {
 		const bingConfig = {
 			ti: TRACKING_IDS.bingInit,
 			q: window.uetq,
@@ -137,17 +121,21 @@ function initLoadedTrackingScripts() {
 	}
 
 	// init Twitter
-	if ( isTwitterEnabled ) {
-		window.twq( 'init', TRACKING_IDS.twitterPixelId );
+	if ( mayWeTrackByTracker( 'twitter' ) ) {
+		if ( isJetpackCloud() || isJetpackCheckout() ) {
+			window.twq( 'config', TRACKING_IDS.jetpackTwitterPixelId );
+		} else {
+			window.twq( 'init', TRACKING_IDS.twitterPixelId );
+		}
 	}
 
 	// init Quora
-	if ( isQuoraEnabled ) {
+	if ( mayWeTrackByTracker( 'quora' ) ) {
 		window.qp( 'init', TRACKING_IDS.quoraPixelId );
 	}
 
 	// init Pinterest
-	if ( isPinterestEnabled ) {
+	if ( mayWeTrackByTracker( 'pinterest' ) ) {
 		const currentUser = getCurrentUser();
 		const params = currentUser ? { em: currentUser.hashedPii.email } : {};
 		window.pintrk( 'load', TRACKING_IDS.pinterestInit, params );
@@ -191,7 +179,6 @@ function attemptLoad( loader ) {
  * Returns the URL for Quantcast's Purchase Confirmation Tag
  *
  * @see https://www.quantcast.com/help/guides/using-the-quantcast-asynchronous-tag/
- *
  * @returns {string} The URL
  */
 function quantcastAsynchronousTagURL() {

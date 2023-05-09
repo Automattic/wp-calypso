@@ -1,42 +1,36 @@
-/**
- * External dependencies
- */
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { applySiteOffset } from 'calypso/lib/site/timezone';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
-import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
-import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
 import ActivityCard from 'calypso/components/activity-card';
-import { useActionableRewindId } from 'calypso/lib/jetpack/actionable-rewind-id';
-import ActionButtons from '../action-buttons';
-import BackupChanges from '../backup-changes';
-import useGetDisplayDate from '../use-get-display-date';
 import ExternalLink from 'calypso/components/external-link';
-import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
+import BackupWarningRetry from 'calypso/components/jetpack/backup-warnings/backup-warning-retry';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { preventWidows } from 'calypso/lib/formatting';
-
-/**
- * Style dependencies
- */
-import './style.scss';
+import { useActionableRewindId } from 'calypso/lib/jetpack/actionable-rewind-id';
+import { getBackupWarnings } from 'calypso/lib/jetpack/backup-utils';
+import { applySiteOffset } from 'calypso/lib/site/timezone';
+import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
+import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
+import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import ActionButtons from '../action-buttons';
+import useGetDisplayDate from '../use-get-display-date';
 import cloudSuccessIcon from './icons/cloud-success.svg';
+import cloudWarningIcon from './icons/cloud-warning.svg';
 
-const BackupSuccessful = ( { backup, deltas, selectedDate } ) => {
+import './style.scss';
+
+const BackupSuccessful = ( {
+	backup,
+	selectedDate,
+	lastBackupAttemptOnDate,
+	availableActions,
+	onClickClone,
+} ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const isMultiSite = useSelector( ( state ) => isJetpackSiteMultiSite( state, siteId ) );
-	const hasRealtimeBackups = useSelector( ( state ) => {
-		const capabilities = getRewindCapabilities( state, siteId );
-		return Array.isArray( capabilities ) && capabilities.includes( 'backup-realtime' );
-	} );
+	const warnings = getBackupWarnings( lastBackupAttemptOnDate );
+	const hasWarnings = Object.keys( warnings ).length !== 0;
 
 	const moment = useLocalizedMoment();
 	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ) );
@@ -52,13 +46,14 @@ const BackupSuccessful = ( { backup, deltas, selectedDate } ) => {
 	} );
 	const isToday = selectedDate.isSame( today, 'day' );
 
+	const cloudIcon = hasWarnings ? cloudWarningIcon : cloudSuccessIcon;
+
 	const meta = backup?.activityDescription?.[ 2 ]?.children?.[ 0 ] ?? '';
 
 	// We should only showing the summarized ActivityCard for Real-time sites when the latest backup is not a full backup
 	const showBackupDetails =
-		hasRealtimeBackups &&
-		( 'rewind__backup_complete_full' !== backup.activityName ||
-			'rewind__backup_only_complete_full' !== backup.activityName );
+		'rewind__backup_complete_full' !== backup.activityName ||
+		'rewind__backup_only_complete_full' !== backup.activityName;
 
 	const actionableRewindId = useActionableRewindId( backup );
 
@@ -67,7 +62,7 @@ const BackupSuccessful = ( { backup, deltas, selectedDate } ) => {
 	return (
 		<>
 			<div className="status-card__message-head">
-				<img src={ cloudSuccessIcon } alt="" role="presentation" />
+				<img src={ cloudIcon } alt="" role="presentation" />
 				<div className="status-card__hide-mobile">
 					{ isToday ? translate( 'Latest backup' ) : translate( 'Latest backup on this day' ) }
 				</div>
@@ -87,7 +82,7 @@ const BackupSuccessful = ( { backup, deltas, selectedDate } ) => {
 					<p className="status-card__multisite-warning-info">
 						{ preventWidows(
 							translate(
-								'Jetpack Backup for Multisite installations provides downloadable backups, no one-click restores. ' +
+								'Jetpack VaultPress Backup for Multisite installations provides downloadable backups, no one-click restores. ' +
 									'For more information {{ExternalLink}}visit our documentation page{{/ExternalLink}}.',
 								{
 									components: {
@@ -106,7 +101,13 @@ const BackupSuccessful = ( { backup, deltas, selectedDate } ) => {
 					</p>
 				</div>
 			) }
-			<ActionButtons rewindId={ actionableRewindId } isMultiSite={ isMultiSite } />
+			<ActionButtons
+				rewindId={ actionableRewindId }
+				isMultiSite={ isMultiSite }
+				hasWarnings={ hasWarnings }
+				availableActions={ availableActions }
+				onClickClone={ onClickClone }
+			/>
 			{ showBackupDetails && (
 				<div className="status-card__realtime-details">
 					<div className="status-card__realtime-details-card">
@@ -114,7 +115,7 @@ const BackupSuccessful = ( { backup, deltas, selectedDate } ) => {
 					</div>
 				</div>
 			) }
-			{ ! hasRealtimeBackups && <BackupChanges deltas={ deltas } /* metaDiff={ metaDiff */ /> }
+			{ hasWarnings && <BackupWarningRetry siteId={ siteId } /> }
 		</>
 	);
 };

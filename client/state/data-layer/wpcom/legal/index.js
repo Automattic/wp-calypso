@@ -1,12 +1,9 @@
-/**
- * Internal dependencies
- */
+import { LEGAL_REQUEST, TOS_ACCEPT } from 'calypso/state/action-types';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
-import { LEGAL_REQUEST, TOS_ACCEPT } from 'calypso/state/action-types';
 import { setLegalData } from 'calypso/state/legal/actions';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 const requestLegalData = ( action ) => {
 	return http(

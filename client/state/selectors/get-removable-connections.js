@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import { filter } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getKeyringConnectionsByName } from 'calypso/state/sharing/keyring/selectors';
 import { getRemovableConnections as getRemovablePublicizeConnections } from 'calypso/state/sharing/publicize/selectors';
@@ -19,7 +11,7 @@ import { getRemovableConnections as getRemovablePublicizeConnections } from 'cal
  * `edit_others_posts` capability or it's a connection to one of
  * their accounts.
  *
- * @param   {object} state   Global state tree
+ * @param   {Object} state   Global state tree
  * @param   {string} service The name of the service
  * @returns {Array}          Connections that the current user is allowed to remove
  */

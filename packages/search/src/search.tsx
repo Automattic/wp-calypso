@@ -1,11 +1,14 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-/**
- * External dependencies
- */
 
+import { Button, Spinner } from '@wordpress/components';
+import { useInstanceId } from '@wordpress/compose';
+import { close, search, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
-import React, { useEffect } from 'react';
+import { debounce } from 'lodash';
+import { useEffect } from 'react';
+import * as React from 'react';
+import { useUpdateEffect } from './utils';
 import type {
 	ReactNode,
 	Ref,
@@ -15,23 +18,7 @@ import type {
 	KeyboardEvent,
 	MouseEvent,
 } from 'react';
-import { debounce } from 'lodash';
 
-/**
- * WordPress dependencies
- */
-import { Button, Spinner } from '@wordpress/components';
-import { close, search, Icon } from '@wordpress/icons';
-import { useInstanceId } from '@wordpress/compose';
-
-/**
- * Internal dependencies
- */
-import { useUpdateEffect } from './utils';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 /**
@@ -43,22 +30,23 @@ type KeyboardOrMouseEvent =
 	| MouseEvent< HTMLButtonElement | HTMLInputElement >
 	| KeyboardEvent< HTMLButtonElement | HTMLInputElement >;
 
-const keyListener = ( methodToCall: ( e: KeyboardOrMouseEvent ) => void ) => (
-	event: KeyboardEvent< HTMLButtonElement | HTMLInputElement >
-) => {
-	switch ( event.key ) {
-		case ' ':
-		case 'Enter':
-			methodToCall( event );
-			break;
-	}
-};
+const keyListener =
+	( methodToCall: ( e: KeyboardOrMouseEvent ) => void ) =>
+	( event: KeyboardEvent< HTMLButtonElement | HTMLInputElement > ) => {
+		switch ( event.key ) {
+			case ' ':
+			case 'Enter':
+				methodToCall( event );
+				break;
+		}
+	};
 
 type Props = {
 	autoFocus?: boolean;
 	className?: string;
 	compact?: boolean;
 	children?: ReactNode;
+	childrenBeforeCloseButton?: ReactNode;
 	defaultIsOpen?: boolean;
 	defaultValue?: string;
 	delaySearch?: boolean;
@@ -88,6 +76,8 @@ type Props = {
 	recordEvent?: ( eventName: string ) => void;
 	searching?: boolean;
 	value?: string;
+	searchMode?: 'when-typing' | 'on-enter';
+	searchIcon?: ReactNode;
 };
 
 //This is fix for IE11. Does not work on Edge.
@@ -113,15 +103,17 @@ const getScrollLeft = (
 	return scrollLeft;
 };
 
-type ImperativeHandle = {
+export type ImperativeHandle = {
 	focus: () => void;
 	blur: () => void;
 	clear: () => void;
+	setKeyword: ( value: string ) => void;
 };
 
 const InnerSearch = (
 	{
 		children,
+		childrenBeforeCloseButton,
 		delaySearch = false,
 		disabled = false,
 		pinned = false,
@@ -153,6 +145,8 @@ const InnerSearch = (
 		maxLength,
 		hideClose = false,
 		isReskinned = false,
+		searchMode = 'when-typing',
+		searchIcon,
 	}: Props,
 	forwardedRef: Ref< ImperativeHandle >
 ) => {
@@ -165,6 +159,7 @@ const InnerSearch = (
 	const searchInput = React.useRef< HTMLInputElement >( null );
 	const openIcon = React.useRef< HTMLButtonElement >( null );
 	const overlay = React.useRef< HTMLDivElement >( null );
+	const firstRender = React.useRef< boolean >( true );
 
 	React.useImperativeHandle(
 		forwardedRef,
@@ -174,6 +169,9 @@ const InnerSearch = (
 			},
 			blur() {
 				searchInput.current?.blur();
+			},
+			setKeyword( value: string ) {
+				setKeyword( value );
 			},
 			clear() {
 				setKeyword( '' );
@@ -203,6 +201,10 @@ const InnerSearch = (
 	}, [] );
 
 	useUpdateEffect( () => {
+		if ( searchMode === 'on-enter' ) {
+			return;
+		}
+
 		if ( keyword ) {
 			doSearch( keyword );
 		} else {
@@ -225,10 +227,6 @@ const InnerSearch = (
 		setKeyword( '' );
 		setIsOpen( true );
 
-		searchInput.current?.focus();
-		// no need to call `onSearchOpen` as it will be called by `onFocus` once the searcbox is focused
-		// prevent outlines around the open icon after being clicked
-		openIcon.current?.blur();
 		recordEvent?.( 'Clicked Open Search' );
 	};
 
@@ -240,6 +238,10 @@ const InnerSearch = (
 		}
 
 		setKeyword( '' );
+		if ( 'on-enter' === searchMode ) {
+			onSearch?.( '' );
+			onSearchChange?.( '' );
+		}
 		setIsOpen( false );
 
 		if ( searchInput.current ) {
@@ -257,6 +259,21 @@ const InnerSearch = (
 
 		recordEvent?.( 'Clicked Close Search' );
 	};
+
+	// Focus the searchInput when isOpen flips to true, but ignore initial render
+	React.useEffect( () => {
+		// Do nothing on initial render
+		if ( firstRender.current ) {
+			firstRender.current = false;
+			return;
+		}
+		if ( isOpen ) {
+			// no need to call `onSearchOpen` as it will be called by `onFocus` once the searcbox is focused
+			// prevent outlines around the open icon after being clicked
+			searchInput.current?.focus();
+			openIcon.current?.blur();
+		}
+	}, [ isOpen ] );
 
 	const closeListener = keyListener( closeSearch );
 	const openListener = keyListener( openSearch );
@@ -331,6 +348,10 @@ const InnerSearch = (
 	};
 
 	const handleSubmit = ( event: FormEvent ) => {
+		if ( 'on-enter' === searchMode ) {
+			onSearch?.( keyword );
+			onSearchChange?.( keyword );
+		}
 		event.preventDefault();
 		event.stopPropagation();
 	};
@@ -392,6 +413,10 @@ const InnerSearch = (
 	const renderOpenIcon = () => {
 		const enableOpenIcon = pinned && ! isOpen;
 
+		if ( searchIcon ) {
+			return searchIcon;
+		}
+
 		if ( isReskinned ) {
 			return renderReskinSearchIcon();
 		}
@@ -400,7 +425,7 @@ const InnerSearch = (
 			<Button
 				className="search-component__icon-navigation"
 				ref={ openIcon }
-				onClick={ enableOpenIcon ? openSearch : focus }
+				onClick={ enableOpenIcon ? openSearch : () => searchInput.current?.focus() }
 				tabIndex={ enableOpenIcon ? 0 : undefined }
 				onKeyDown={ enableOpenIcon ? openListener : undefined }
 				aria-controls={ 'search-component-' + instanceId }
@@ -462,6 +487,7 @@ const InnerSearch = (
 				/>
 				{ renderStylingDiv() }
 			</form>
+			{ childrenBeforeCloseButton }
 			{ shouldRenderRightOpenIcon ? renderOpenIcon() : renderCloseButton() }
 			{ children }
 		</div>

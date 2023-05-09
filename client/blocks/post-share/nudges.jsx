@@ -1,43 +1,25 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
+import { findFirstSimilarPlanKey, TYPE_PREMIUM } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
-
-/**
- * Internal dependencies
- */
+import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import { findFirstSimilarPlanKey, TYPE_PREMIUM, TERM_ANNUALLY } from '@automattic/calypso-products';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
-import { getSitePlan } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import {
 	getSitePlanRawPrice,
 	getPlanDiscountedRawPrice,
 } from 'calypso/state/sites/plans/selectors';
+import { getSitePlan } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export const UpgradeToPremiumNudgePure = ( props ) => {
-	const { price, planSlug, translate, userCurrency, canUserUpgrade, isJetpack } = props;
+	const { price, planSlug, translate, userCurrency, canUserUpgrade } = props;
 
-	let featureList;
-	if ( isJetpack ) {
-		featureList = [
-			translate( 'Schedule your social messages in advance.' ),
-			translate( 'Easy monetization options' ),
-			translate( 'VideoPress support' ),
-			translate( 'Daily Malware Scanning' ),
-		];
-	} else {
-		featureList = [
-			translate( 'Schedule your social messages in advance.' ),
-			translate( 'Remove all advertising from your site.' ),
-			translate( 'Enjoy live chat support.' ),
-			translate( 'Easy monetization options' ),
-			translate( 'Unlimited premium themes.' ),
-		];
-	}
+	const featureList = [
+		translate( 'Share posts that have already been published.' ),
+		translate( 'Schedule your social messages in advance.' ),
+		translate( 'Remove all advertising from your site.' ),
+		translate( 'Enjoy live chat support.' ),
+		translate( 'Easy monetization options' ),
+	];
 
 	if ( ! canUserUpgrade ) {
 		return null;
@@ -60,16 +42,13 @@ export const UpgradeToPremiumNudgePure = ( props ) => {
 };
 
 const getDiscountedOrRegularPrice = ( state, siteId, plan ) =>
-	getPlanDiscountedRawPrice( state, siteId, plan, { isMonthly: true } ) ||
-	getSitePlanRawPrice( state, siteId, plan, { isMonthly: true } );
+	getPlanDiscountedRawPrice( state, siteId, plan, { returnMonthly: true } ) ||
+	getSitePlanRawPrice( state, siteId, plan, { returnMonthly: true } );
 
 export const UpgradeToPremiumNudge = connect( ( state, ownProps ) => {
-	const { isJetpack, siteId } = ownProps;
+	const { siteId } = ownProps;
 	const currentPlanSlug = ( getSitePlan( state, getSelectedSiteId( state ) ) || {} ).product_slug;
-	const proposedPlan = findFirstSimilarPlanKey( currentPlanSlug, {
-		type: TYPE_PREMIUM,
-		...( isJetpack ? { term: TERM_ANNUALLY } : {} ),
-	} );
+	const proposedPlan = findFirstSimilarPlanKey( currentPlanSlug, { type: TYPE_PREMIUM } );
 
 	return {
 		planSlug: proposedPlan,

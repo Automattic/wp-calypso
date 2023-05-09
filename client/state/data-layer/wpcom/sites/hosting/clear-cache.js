@@ -1,17 +1,14 @@
-/**
- * Internal dependencies
- */
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
-import { HOSTING_CLEAR_CACHE_REQUEST } from 'calypso/state/action-types';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { translate } from 'i18n-calypso';
+import { HOSTING_CLEAR_CACHE_REQUEST } from 'calypso/state/action-types';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 const updateNoticeId = 'hosting-clear-wordpress-cache';
 

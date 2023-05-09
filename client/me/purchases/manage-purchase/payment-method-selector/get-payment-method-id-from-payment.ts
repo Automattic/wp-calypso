@@ -1,6 +1,3 @@
-/**
- * Internal Dependencies
- */
 import type { PurchasePayment } from 'calypso/lib/purchases/types';
 
 // Return an ID as used in the payment method list in PaymentMethodSelector

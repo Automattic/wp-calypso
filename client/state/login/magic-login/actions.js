@@ -1,9 +1,4 @@
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
-import { AUTHENTICATE_URL } from './constants';
-import { HTTPError, stringifyBody } from '../utils';
 import {
 	LOGIN_REQUEST_SUCCESS,
 	MAGIC_LOGIN_HIDE_REQUEST_FORM,
@@ -15,6 +10,8 @@ import {
 	MAGIC_LOGIN_SHOW_LINK_EXPIRED,
 	MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE,
 } from 'calypso/state/action-types';
+import { HTTPError, stringifyBody } from '../utils';
+import { AUTHENTICATE_URL } from './constants';
 
 import 'calypso/state/login/init';
 

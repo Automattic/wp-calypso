@@ -1,21 +1,12 @@
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import middleware, {
-	sendActionLogsAndEvents,
-	sendAnalyticsLogEvent,
-	getEventMessageFromTracksData,
-} from '../middleware-calypso';
-import getSkills from 'calypso/state/happychat/selectors/get-skills';
-import { selectSiteId } from 'calypso/state/help/actions';
-import { setRoute } from 'calypso/state/route/actions';
+import {
+	ANALYTICS_EVENT_RECORD,
+	HAPPYCHAT_IO_SEND_MESSAGE_EVENT,
+	HAPPYCHAT_IO_SEND_MESSAGE_LOG,
+	HAPPYCHAT_IO_SET_CUSTOM_FIELDS,
+	SITE_SETTINGS_SAVE_SUCCESS,
+} from 'calypso/state/action-types';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import getGroups from 'calypso/state/happychat/selectors/get-groups';
 import { receiveStatus, sendPreferences } from 'calypso/state/happychat/connection/actions';
 import {
 	HAPPYCHAT_CHAT_STATUS_ABANDONED,
@@ -26,13 +17,15 @@ import {
 	HAPPYCHAT_CONNECTION_STATUS_CONNECTED,
 	HAPPYCHAT_CONNECTION_STATUS_DISCONNECTED,
 } from 'calypso/state/happychat/constants';
-import {
-	ANALYTICS_EVENT_RECORD,
-	HAPPYCHAT_IO_SEND_MESSAGE_EVENT,
-	HAPPYCHAT_IO_SEND_MESSAGE_LOG,
-	HAPPYCHAT_IO_SET_CUSTOM_FIELDS,
-	SITE_SETTINGS_SAVE_SUCCESS,
-} from 'calypso/state/action-types';
+import getGroups from 'calypso/state/happychat/selectors/get-groups';
+import getSkills from 'calypso/state/happychat/selectors/get-skills';
+import { selectSiteId } from 'calypso/state/help/actions';
+import { setRoute } from 'calypso/state/route/actions';
+import middleware, {
+	sendActionLogsAndEvents,
+	sendAnalyticsLogEvent,
+	getEventMessageFromTracksData,
+} from '../middleware-calypso';
 
 describe( 'middleware', () => {
 	let actionMiddleware;

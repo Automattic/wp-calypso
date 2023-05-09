@@ -71,7 +71,6 @@ state.sites.domains = {
 				hasZone: Boolean,
 				isPendingIcannVerification: Boolean,
 				manualTransferRequired: Boolean,
-				newRegistration: Boolean,
 				partnerDomain: Boolean,
 				pendingRegistration: Boolean,
 				pendingRegistrationTime: String,

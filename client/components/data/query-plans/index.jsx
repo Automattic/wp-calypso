@@ -1,43 +1,13 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { isRequestingPlans } from 'calypso/state/plans/selectors';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { requestPlans } from 'calypso/state/plans/actions';
 
-class QueryPlans extends Component {
-	UNSAFE_componentWillMount() {
-		if ( ! this.props.requestingPlans ) {
-			this.props.requestPlans();
-		}
-	}
+export default function QueryPlans() {
+	const dispatch = useDispatch();
 
-	render() {
-		return null;
-	}
+	useEffect( () => {
+		dispatch( requestPlans() );
+	}, [ dispatch ] );
+
+	return null;
 }
-
-QueryPlans.propTypes = {
-	requestingPlans: PropTypes.bool,
-	requestPlans: PropTypes.func,
-};
-
-QueryPlans.defaultProps = {
-	requestPlans: () => {},
-};
-
-export default connect(
-	( state ) => {
-		return {
-			requestingPlans: isRequestingPlans( state ),
-		};
-	},
-	{ requestPlans }
-)( QueryPlans );

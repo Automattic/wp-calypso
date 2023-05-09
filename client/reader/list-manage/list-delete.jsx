@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useTranslate } from 'i18n-calypso';
-import { useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { Button, Card, Dialog } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { deleteReaderList } from 'calypso/state/reader/lists/actions';
 
 function ListDelete( { list } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const [ showDeleteConfirmation, setShowDeleteConfirmation ] = React.useState( false );
+	const [ showDeleteConfirmation, setShowDeleteConfirmation ] = useState( false );
 
 	return (
 		<>

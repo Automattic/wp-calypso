@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import classNames from 'classnames';
 
-/**
- * Style dependencies
- */
 import './item.scss';
 
 function DnsRecordListItem( { disabled, type, name, content, action } ) {

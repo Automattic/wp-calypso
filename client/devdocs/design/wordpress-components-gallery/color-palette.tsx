@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React, { useState } from 'react';
-
-/**
- * WordPress dependencies
- */
 import { ColorPalette } from '@wordpress/components';
+import { useState } from 'react';
 
 const ColorPaletteExample = () => {
 	const colors: ColorPalette.Color[] = [
@@ -15,7 +8,7 @@ const ColorPaletteExample = () => {
 		{ name: 'blue', color: '#00f' },
 	];
 
-	const [ color, setColor ] = useState( colors[ 0 ] );
+	const [ color, setColor ] = useState( colors[ 0 ].color );
 
 	return (
 		<ColorPalette

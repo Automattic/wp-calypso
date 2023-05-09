@@ -1,66 +1,71 @@
 /**
  * @jest-environment jsdom
  */
-
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-import { shallow } from 'enzyme';
-import React from 'react';
-import sinon from 'sinon';
-
-/**
- * Internal dependencies
- */
+import userEvent from '@testing-library/user-event';
+import preferences from 'calypso/state/preferences/reducer';
+import ui from 'calypso/state/ui/reducer';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { SitesDropdown } from '..';
 
 const noop = () => {};
 
-describe( 'index', () => {
-	describe( 'component rendering', () => {
-		test( 'should render a dropdown component initially closed', () => {
-			const sitesDropdown = shallow( <SitesDropdown /> );
-			expect( sitesDropdown.hasClass( 'sites-dropdown' ) ).to.equal( true );
-			expect( sitesDropdown.hasClass( 'is-open' ) ).to.equal( false );
-		} );
-
-		test( 'with multiple sites, should toggle the dropdown when it is clicked', () => {
-			const toggleOpenSpy = sinon.spy( SitesDropdown.prototype, 'toggleOpen' );
-			const sitesDropdown = shallow( <SitesDropdown hasMultipleSites={ true } /> );
-
-			sitesDropdown.find( '.sites-dropdown__selected' ).simulate( 'click' );
-			sinon.assert.calledOnce( toggleOpenSpy );
-			expect( sitesDropdown.hasClass( 'has-multiple-sites' ) ).to.equal( true );
-			expect( sitesDropdown.hasClass( 'is-open' ) ).to.equal( true );
-
-			toggleOpenSpy.restore();
-		} );
-
-		test( 'with only one site, nothing should happen when it is clicked', () => {
-			const toggleOpenSpy = sinon.spy( SitesDropdown.prototype, 'toggleOpen' );
-			const sitesDropdown = shallow( <SitesDropdown hasMultipleSites={ false } /> );
-
-			sitesDropdown.find( '.sites-dropdown__selected' ).simulate( 'click' );
-			sinon.assert.calledOnce( toggleOpenSpy );
-			expect( sitesDropdown.hasClass( 'has-multiple-sites' ) ).to.equal( false );
-			expect( sitesDropdown.hasClass( 'is-open' ) ).to.equal( false );
-
-			toggleOpenSpy.restore();
-		} );
+const render = ( el, options ) =>
+	renderWithProvider( el, {
+		...options,
+		reducers: { ui, preferences },
+		initialState: { preferences: { remoteValues: {} } },
 	} );
 
-	describe( 'component state', () => {
-		test( 'should initially consider as selected the selectedOrPrimarySiteId prop', () => {
-			const sitesDropdown = shallow( <SitesDropdown selectedSiteId={ 1234567 } /> );
-			expect( sitesDropdown.instance().state.selectedSiteId ).to.be.equal( 1234567 );
+describe( 'index', () => {
+	describe( 'component rendering', () => {
+		const props = {
+			selectedSiteId: 12345678,
+			primarySiteId: 12345678,
+		};
+		test( 'should render a dropdown component initially closed', () => {
+			const { container } = render( <SitesDropdown { ...props } /> );
+
+			expect( container.firstChild ).toHaveClass( 'sites-dropdown' );
+			expect( container.firstChild ).not.toHaveClass( 'is-open' );
+		} );
+
+		test( 'with multiple sites, should toggle the dropdown when it is clicked', async () => {
+			const user = userEvent.setup();
+			const toggleOpenSpy = jest.spyOn( SitesDropdown.prototype, 'toggleOpen' );
+
+			const { container } = render( <SitesDropdown { ...props } hasMultipleSites /> );
+
+			await user.click( container.querySelector( '.sites-dropdown__selected' ) );
+
+			expect( toggleOpenSpy ).toBeCalledTimes( 1 );
+
+			expect( container.firstChild ).toHaveClass( 'has-multiple-sites' );
+			expect( container.firstChild ).toHaveClass( 'is-open' );
+
+			toggleOpenSpy.mockRestore();
+		} );
+
+		test( 'with only one site, nothing should happen when it is clicked', async () => {
+			const user = userEvent.setup();
+			const toggleOpenSpy = jest.spyOn( SitesDropdown.prototype, 'toggleOpen' );
+
+			const { container } = render( <SitesDropdown { ...props } hasMultipleSites={ false } /> );
+
+			await user.click( container.querySelector( '.sites-dropdown__selected' ) );
+
+			expect( toggleOpenSpy ).toBeCalledTimes( 1 );
+
+			expect( container.firstChild ).not.toHaveClass( 'has-multiple-sites' );
+			expect( container.firstChild ).not.toHaveClass( 'is-open' );
+
+			toggleOpenSpy.mockRestore();
 		} );
 	} );
 
 	describe( 'selectSite', () => {
 		test( 'should update the `selectedSiteSlug`, and `open` state properties', () => {
-			const setStateSpy = sinon.spy();
-			const siteSelectedSpy = sinon.spy();
+			const setStateSpy = jest.fn();
+			const siteSelectedSpy = jest.fn();
 			const fakeContext = {
 				setState: setStateSpy,
 				props: {
@@ -70,17 +75,17 @@ describe( 'index', () => {
 
 			SitesDropdown.prototype.selectSite.call( fakeContext, 12345 );
 
-			sinon.assert.calledOnce( siteSelectedSpy );
-			sinon.assert.calledWith( siteSelectedSpy, 12345 );
+			expect( siteSelectedSpy ).toBeCalledTimes( 1 );
+			expect( siteSelectedSpy ).toHaveBeenCalledWith( 12345 );
 
-			sinon.assert.calledOnce( setStateSpy );
-			sinon.assert.calledWith( setStateSpy, { open: false, selectedSiteId: 12345 } );
+			expect( setStateSpy ).toBeCalledTimes( 1 );
+			expect( setStateSpy ).toHaveBeenCalledWith( { open: false, selectedSiteId: 12345 } );
 		} );
 	} );
 
 	describe( 'onClose', () => {
 		test( 'should set `open` state property to false', () => {
-			const setStateSpy = sinon.spy();
+			const setStateSpy = jest.fn();
 			const fakeContext = {
 				setState: setStateSpy,
 				props: {
@@ -90,12 +95,12 @@ describe( 'index', () => {
 
 			SitesDropdown.prototype.onClose.call( fakeContext );
 
-			sinon.assert.calledOnce( setStateSpy );
-			sinon.assert.calledWith( setStateSpy, { open: false } );
+			expect( setStateSpy ).toBeCalledTimes( 1 );
+			expect( setStateSpy ).toHaveBeenCalledWith( { open: false } );
 		} );
 
 		test( 'should run the component `onClose` hook, when it is provided', () => {
-			const onCloseSpy = sinon.spy();
+			const onCloseSpy = jest.fn();
 			const fakeContext = {
 				setState: noop,
 				props: {
@@ -104,7 +109,7 @@ describe( 'index', () => {
 			};
 
 			SitesDropdown.prototype.onClose.call( fakeContext );
-			sinon.assert.calledOnce( onCloseSpy );
+			expect( onCloseSpy ).toBeCalledTimes( 1 );
 		} );
 	} );
 } );

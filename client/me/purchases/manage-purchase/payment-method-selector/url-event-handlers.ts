@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { useEffect, useRef } from 'react';
 
 export function useHandleRedirectChangeError( errorCallback: () => void ): void {

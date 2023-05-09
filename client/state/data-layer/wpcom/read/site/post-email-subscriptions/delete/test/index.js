@@ -1,21 +1,14 @@
-/**
- * External dependencies
- */
-
-/**
- * Internal dependencies
- */
-import {
-	requestPostEmailUnsubscription,
-	receivePostEmailUnsubscription,
-	receivePostEmailUnsubscriptionError,
-} from '../';
 import { bypassDataLayer } from 'calypso/state/data-layer/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
 	subscribeToNewPostEmail,
 	unsubscribeToNewPostEmail,
 } from 'calypso/state/reader/follows/actions';
+import {
+	requestPostEmailUnsubscription,
+	receivePostEmailUnsubscription,
+	receivePostEmailUnsubscriptionError,
+} from '../';
 
 describe( 'comment-email-subscriptions', () => {
 	describe( 'requestPostEmailUnsubscription', () => {

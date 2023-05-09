@@ -7,7 +7,6 @@ Query Canonical Theme is a React component used in managing the fetching of indi
 Render the component, passing `siteId` and `themeId`. It does not accept any children, nor does it render any elements to the page. You can use it adjacent to other sibling components which make use of the fetched data made available through the global application state.
 
 ```jsx
-import React from 'react';
 import { connect } from 'react-redux';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import Theme from 'calypso/components/theme';
@@ -16,8 +15,8 @@ import { getCanonicalTheme } from 'calypso/state/themes/selectors';
 function MyTheme( { theme } ) {
 	return (
 		<div>
-			<QueryCanonicalTheme siteId={ 3584907 } themeId={ 'twentysixteen' } />
-			<Theme theme={ theme } />} }
+			<QueryCanonicalTheme siteId={ 3584907 } themeId="twentysixteen" />
+			<Theme theme={ theme } />
 		</div>
 	);
 }

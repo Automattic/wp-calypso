@@ -1,30 +1,23 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import HeaderCake from 'calypso/components/header-cake';
 import { CompactCard } from '@automattic/components';
-import getConciergeSignupForm from 'calypso/state/selectors/get-concierge-signup-form';
-import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id';
-import getConciergeAppointmentTimespan from 'calypso/state/selectors/get-concierge-appointment-timespan';
-import { getCurrentUserId, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
+import FormattedHeader from 'calypso/components/formatted-header';
+import HeaderCake from 'calypso/components/header-cake';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { bookConciergeAppointment, requestConciergeInitial } from 'calypso/state/concierge/actions';
-import AvailableTimePicker from '../shared/available-time-picker';
+import { getCurrentUserId, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import getConciergeAppointmentTimespan from 'calypso/state/selectors/get-concierge-appointment-timespan';
+import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id';
+import getConciergeSignupForm from 'calypso/state/selectors/get-concierge-signup-form';
 import {
 	CONCIERGE_STATUS_BOOKED,
 	CONCIERGE_STATUS_BOOKING,
 	CONCIERGE_STATUS_BOOKING_ERROR,
 } from '../constants';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
-import FormattedHeader from 'calypso/components/formatted-header';
+import AvailableTimePicker from '../shared/available-time-picker';
 
 class CalendarStep extends Component {
 	static propTypes = {
@@ -46,7 +39,6 @@ class CalendarStep extends Component {
 			lastname: signupForm.lastname,
 			message: signupForm.message,
 			timezone: signupForm.timezone,
-			isRebrandCitiesSite: signupForm.isRebrandCitiesSite,
 			phoneNumber: signupForm.phoneNumber,
 		};
 
@@ -57,11 +49,11 @@ class CalendarStep extends Component {
 		this.props.recordTracksEvent( 'calypso_concierge_book_calendar_step' );
 	}
 
-	UNSAFE_componentWillUpdate( nextProps ) {
-		if ( nextProps.signupForm.status === CONCIERGE_STATUS_BOOKED ) {
-			// go to confirmation page if booking was successfull
+	componentDidUpdate() {
+		if ( this.props.signupForm.status === CONCIERGE_STATUS_BOOKED ) {
+			// go to confirmation page if booking was successful
 			this.props.onComplete();
-		} else if ( nextProps.signupForm.status === CONCIERGE_STATUS_BOOKING_ERROR ) {
+		} else if ( this.props.signupForm.status === CONCIERGE_STATUS_BOOKING_ERROR ) {
 			// request new available times
 			this.props.requestConciergeInitial( this.props.scheduleId );
 		}
@@ -87,14 +79,14 @@ class CalendarStep extends Component {
 						align="left"
 						isSecondary={ true }
 					/>
-					<div class="calendar-step__explanation">
+					<div className="calendar-step__explanation">
 						<div>
 							{ translate(
 								'Our sessions are available 24 hours a day. If you don’t see a day or time that works for you, please check back soon for more options! '
 							) }
 						</div>
 
-						<div class="calendar-step__webinars">
+						<div className="calendar-step__webinars">
 							{ translate(
 								'In the meantime, consider attending one of our expert webinars on a wide variety of topics designed to help you build and grow your site. {{u}}{{externalLink}}View webinars{{/externalLink}}{{/u}}.',
 								{

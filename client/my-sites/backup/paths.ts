@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { addQueryArgs } from 'calypso/lib/url';
 
 export const backupMainPath = ( siteName?: string | null, query = {} ) =>
@@ -20,3 +17,5 @@ export const backupRestorePath = ( siteName: string, rewindId: string ) =>
 
 export const backupDownloadPath = ( siteName: string, rewindId: string ) =>
 	backupSubSectionPath( siteName, 'download', rewindId );
+
+export const backupClonePath = ( siteName: string ) => backupSubSectionPath( siteName, 'clone' );

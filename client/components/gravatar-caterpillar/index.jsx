@@ -1,23 +1,13 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
 import { map, size, filter, uniqBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import Gravatar from 'calypso/components/gravatar';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};
 
-class GravatarCaterpillar extends React.Component {
+class GravatarCaterpillar extends Component {
 	static propTypes = {
 		onClick: PropTypes.func,
 	};

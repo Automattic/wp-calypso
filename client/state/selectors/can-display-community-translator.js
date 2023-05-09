@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
+import { canBeTranslated } from '@automattic/i18n-utils';
 import { isMobile } from '@automattic/viewport';
-
-/**
- * Internal dependencies
- */
-import { canBeTranslated } from 'calypso/lib/i18n-utils';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
 
 /**
  * Checks whether the CT can be displayed, that is, if the chosen locale and device allow it
  *
- * @param {object} state Global state tree
+ * @param {Object} state Global state tree
  * @returns {boolean} whether the CT can be displayed
  */
 export default function canDisplayCommunityTranslator( state ) {

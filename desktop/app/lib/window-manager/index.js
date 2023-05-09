@@ -1,13 +1,7 @@
-/**
- * External Dependencies
- */
+/* eslint-disable import/order */
 const electron = require( 'electron' );
 const BrowserWindow = electron.BrowserWindow;
 const app = electron.app;
-
-/*
- * Internal dependencies
- */
 const { getPath } = require( '../../lib/assets' );
 
 // HACK(sendhilp, 9/6/2016): The reason for this strange importing is there seems to be a
@@ -26,9 +20,6 @@ app.on( 'ready', () => {
 	screen = electron.screen;
 } );
 
-/**
- * Internal dependencies
- */
 const Config = require( '../../lib/config' );
 
 /**
@@ -65,9 +56,13 @@ const windows = {
 function setDimensions( config ) {
 	const full = screen.getPrimaryDisplay();
 
-	if ( config.width === 'full' ) config.width = full.bounds.width;
+	if ( config.width === 'full' ) {
+		config.width = full.bounds.width;
+	}
 
-	if ( config.height === 'full' ) config.height = full.bounds.height;
+	if ( config.height === 'full' ) {
+		config.height = full.bounds.height;
+	}
 
 	return config;
 }

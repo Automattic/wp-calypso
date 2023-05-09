@@ -1,25 +1,13 @@
-/**
- * External dependencies
- */
-import React, { ReactElement, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { Button, Dialog, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Button, Dialog } from '@automattic/components';
-import Gridicon from 'calypso/components/gridicon';
-import { errorNotice } from 'calypso/state/notices/actions';
-import { noop } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
+import { useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
+import { noop } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
 import useRefreshLicenseList from 'calypso/state/partner-portal/licenses/hooks/use-refresh-license-list';
 import useRevokeLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-revoke-license-mutation';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 interface Props {
@@ -35,7 +23,7 @@ export default function RevokeLicenseDialog( {
 	siteUrl,
 	onClose,
 	...rest
-}: Props ): ReactElement {
+}: Props ) {
 	let close = noop;
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -71,18 +59,6 @@ export default function RevokeLicenseDialog( {
 		</Button>,
 	];
 
-	buttons.unshift(
-		<a
-			href="https://github.com/Automattic/jetpack-licensing-api/tree/master/integration-docs#glossary"
-			target="_blank"
-			rel="noreferrer noopener"
-		>
-			{ translate( 'Learn more about revoking licenses' ) }
-			&nbsp;
-			<Gridicon icon="external" size={ 18 } />
-		</a>
-	);
-
 	return (
 		<Dialog
 			isVisible={ true }
@@ -94,13 +70,22 @@ export default function RevokeLicenseDialog( {
 			<h2 className="revoke-license-dialog__heading">
 				{ translate( 'Are you sure you want to revoke this license?' ) }
 			</h2>
-
 			<p>
 				{ translate(
 					'A revoked license cannot be reused, and the associated site will no longer have access to the provisioned product. You will stop being billed for this license immediately.'
 				) }
+				&nbsp;
+				<a
+					className="revoke-license-dialog__learn-more"
+					href="https://jetpack.com/support/jetpack-agency-licensing-portal-instructions/"
+					target="_blank"
+					rel="noreferrer noopener"
+				>
+					{ translate( 'Learn more about revoking licenses' ) }
+					&nbsp;
+					<Gridicon icon="external" size={ 18 } />
+				</a>
 			</p>
-
 			<ul>
 				{ siteUrl && (
 					<li>
@@ -114,7 +99,6 @@ export default function RevokeLicenseDialog( {
 					<strong>{ translate( 'License:' ) }</strong> <code>{ licenseKey }</code>
 				</li>
 			</ul>
-
 			<p className="revoke-license-dialog__warning">
 				<Gridicon icon="info-outline" size={ 18 } />
 

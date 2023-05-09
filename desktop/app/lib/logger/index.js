@@ -12,15 +12,8 @@
  * (instead of the `LOG_NAMESPACES` variable used in winston-namespace).
  */
 
-/**
- * External dependencies
- */
 const path = require( 'path' );
 const { createLogger, format, transports } = require( 'winston' );
-
-/**
- * Internal dependencies
- */
 const state = require( '../../lib/state' );
 const namespaces = require( './namespaces' );
 
@@ -31,7 +24,9 @@ const maxFiles = 3;
 const maxsize = 15000000;
 
 module.exports = ( namespace, options ) => {
-	if ( ! options || typeof options !== 'object' ) options = {};
+	if ( ! options || typeof options !== 'object' ) {
+		options = {};
+	}
 
 	const formatMessageWithMeta = ( info ) => {
 		const args = info[ Symbol.for( 'splat' ) ];
@@ -85,10 +80,14 @@ module.exports = ( namespace, options ) => {
 		warn: ( message, meta ) => logger.warn( message, meta ),
 		info: ( message, meta ) => logger.info( message, meta ),
 		debug: ( message, meta ) => {
-			if ( enabled ) logger.debug( message, meta );
+			if ( enabled ) {
+				logger.debug( message, meta );
+			}
 		}, // eslint-disable-line brace-style
 		silly: ( message, meta ) => {
-			if ( enabled ) logger.silly( message, meta );
+			if ( enabled ) {
+				logger.silly( message, meta );
+			}
 		}, // eslint-disable-line brace-style
 	};
 };

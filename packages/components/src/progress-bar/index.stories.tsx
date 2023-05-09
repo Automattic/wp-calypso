@@ -1,11 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
 import ProgressBar from '.';
 
-export default { title: 'ProgressBar' };
+export default { title: 'packages/components/ProgressBar' };
 
 export const Normal = () => <ProgressBar value={ 33 } />;
 export const Colored = () => <ProgressBar color="red" value={ 33 } />;

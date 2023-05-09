@@ -1,29 +1,19 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Fragment, PureComponent } from 'react';
+import config from '@automattic/calypso-config';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import config from '@automattic/calypso-config';
+import PropTypes from 'prop-types';
+import { Fragment, PureComponent } from 'react';
 import LanguagePickerModal from './modal';
 import { getLanguageCodeLabels } from './utils';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};
 
 export class LanguagePicker extends PureComponent {
 	static propTypes = {
+		isLoading: PropTypes.bool,
 		languages: PropTypes.array.isRequired,
 		valueKey: PropTypes.string,
 		value: PropTypes.any,
@@ -35,6 +25,7 @@ export class LanguagePicker extends PureComponent {
 	};
 
 	static defaultProps = {
+		isLoading: false,
 		languages: [],
 		valueKey: 'value',
 		onChange: noop,
@@ -54,6 +45,7 @@ export class LanguagePicker extends PureComponent {
 		};
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.value !== this.props.value || nextProps.valueKey !== this.props.valueKey ) {
 			this.setState( {
@@ -157,7 +149,7 @@ export class LanguagePicker extends PureComponent {
 
 	render() {
 		const language = this.state.selectedLanguage;
-		if ( ! language ) {
+		if ( ! language || this.props.isLoading ) {
 			return this.renderPlaceholder();
 		}
 

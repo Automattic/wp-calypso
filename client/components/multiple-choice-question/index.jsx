@@ -1,20 +1,10 @@
-/**
- * External dependencies
- */
-import React, { useState } from 'react';
 import { memoize, pick, shuffle, values } from 'lodash';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
-import MultipleChoiceAnswer from './answer';
+import { useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLegend from 'calypso/components/forms/form-legend';
+import MultipleChoiceAnswer from './answer';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const shuffleAnswers = memoize(
@@ -35,26 +25,28 @@ const MultipleChoiceQuestion = ( {
 	question,
 	selectedAnswerId,
 	selectedAnswerText,
+	shouldShuffleAnswers,
 } ) => {
 	const [ selectedAnswer, setSelectedAnswer ] = useState( selectedAnswerId );
-	const shuffledAnswers = shuffleAnswers( answers );
-
+	const shuffledAnswers = shouldShuffleAnswers ? shuffleAnswers( answers ) : answers;
 	return (
 		<FormFieldset className="multiple-choice-question">
 			<FormLegend>{ question }</FormLegend>
-			{ shuffledAnswers.map( ( answer ) => (
-				<MultipleChoiceAnswer
-					key={ answer.id }
-					answer={ answer }
-					disabled={ disabled }
-					isSelected={ selectedAnswer === answer.id }
-					onAnswerChange={ ( id, textResponse ) => {
-						onAnswerChange( id, textResponse );
-						setSelectedAnswer( id );
-					} }
-					selectedAnswerText={ selectedAnswer === answer.id ? selectedAnswerText : '' }
-				/>
-			) ) }
+			<div className="multiple-choice-question__answers">
+				{ shuffledAnswers.map( ( answer ) => (
+					<MultipleChoiceAnswer
+						key={ answer.id }
+						answer={ answer }
+						disabled={ disabled }
+						isSelected={ selectedAnswer === answer.id }
+						onAnswerChange={ ( id, textResponse ) => {
+							onAnswerChange( id, textResponse );
+							setSelectedAnswer( id );
+						} }
+						selectedAnswerText={ selectedAnswer === answer.id ? selectedAnswerText : '' }
+					/>
+				) ) }
+			</div>
 		</FormFieldset>
 	);
 };
@@ -75,12 +67,14 @@ MultipleChoiceQuestion.propTypes = {
 	question: PropTypes.string.isRequired,
 	selectedAnswerId: PropTypes.string,
 	selectedAnswerText: PropTypes.string,
+	shouldShuffleAnswers: PropTypes.bool,
 };
 
 MultipleChoiceQuestion.defaultProps = {
 	disabled: false,
 	selectedAnswerId: null,
 	selectedAnswerText: '',
+	shouldShuffleAnswers: true,
 };
 
 export default MultipleChoiceQuestion;

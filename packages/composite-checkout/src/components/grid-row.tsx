@@ -1,34 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
-import styled from '../lib/styled';
-
-export default function GridRow( { gap, columnWidths, className, children }: GridRowProps ) {
-	return (
-		<Row gap={ gap } columnWidths={ columnWidths } className={ className }>
-			{ children }
-		</Row>
-	);
-}
-
-GridRow.propTypes = {
-	gap: PropTypes.string.isRequired,
-	columnWidths: PropTypes.string.isRequired,
-	className: PropTypes.string,
-};
-
-interface GridRowProps {
-	className?: string;
-	gap: string;
-	columnWidths: string;
-	children: React.ReactNode;
-}
+import styled from '@emotion/styled';
+import type { PropsWithChildren } from 'react';
 
 const Row = styled.div< GridRowProps & React.HTMLAttributes< HTMLDivElement > >`
 	display: -ms-grid;
@@ -39,3 +10,22 @@ const Row = styled.div< GridRowProps & React.HTMLAttributes< HTMLDivElement > >`
 	grid-column-gap: ${ ( props ) => props.gap };
 	justify-items: stretch;
 `;
+
+export default function GridRow( {
+	gap,
+	columnWidths,
+	className,
+	children,
+}: PropsWithChildren< GridRowProps > ) {
+	return (
+		<Row gap={ gap } columnWidths={ columnWidths } className={ className }>
+			{ children }
+		</Row>
+	);
+}
+
+interface GridRowProps {
+	className?: string;
+	gap: string;
+	columnWidths: string;
+}

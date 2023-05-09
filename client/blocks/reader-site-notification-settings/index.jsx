@@ -1,20 +1,14 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { find, get } from 'lodash';
+import { Gridicon } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
 import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
-import ReaderPopover from 'calypso/reader/components/reader-popover';
+import { find, get } from 'lodash';
+import PropTypes from 'prop-types';
+import { createRef, Component } from 'react';
+import { connect } from 'react-redux';
+import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import SegmentedControl from 'calypso/components/segmented-control';
-import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
+import ReaderPopover from 'calypso/reader/components/reader-popover';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	subscribeToNewPostEmail,
 	updateNewPostEmailSubscription,
@@ -24,13 +18,9 @@ import {
 	subscribeToNewPostNotifications,
 	unsubscribeToNewPostNotifications,
 } from 'calypso/state/reader/follows/actions';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import QueryUserSettings from 'calypso/components/data/query-user-settings';
+import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class ReaderSiteNotificationSettings extends Component {
@@ -39,19 +29,10 @@ class ReaderSiteNotificationSettings extends Component {
 		siteId: PropTypes.number,
 	};
 
-	state = {
-		showPopover: false,
-		selected: this.props.emailDeliveryFrequency,
-	};
+	state = { showPopover: false };
 
-	iconRef = React.createRef();
-	spanRef = React.createRef();
-
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.emailDeliveryFrequency !== this.props.emailDeliveryFrequency ) {
-			this.setState( { selected: nextProps.emailDeliveryFrequency } );
-		}
-	}
+	iconRef = createRef();
+	spanRef = createRef();
 
 	togglePopoverVisibility = () => {
 		this.setState( { showPopover: ! this.state.showPopover } );
@@ -63,7 +44,6 @@ class ReaderSiteNotificationSettings extends Component {
 
 	setSelected = ( text ) => () => {
 		const { siteId } = this.props;
-		this.setState( { selected: text } );
 		this.props.updateNewPostEmailSubscription( siteId, text );
 
 		const tracksProperties = { site_id: siteId, delivery_frequency: text };
@@ -150,7 +130,7 @@ class ReaderSiteNotificationSettings extends Component {
 					isVisible={ this.state.showPopover }
 					context={ this.iconRef.current }
 					ignoreContext={ this.spanRef.current }
-					position={ 'bottom left' }
+					position="bottom left"
 					className="reader-site-notification-settings__popout"
 				>
 					<div className="reader-site-notification-settings__popout-toggle">
@@ -175,7 +155,7 @@ class ReaderSiteNotificationSettings extends Component {
 							<ToggleControl
 								onChange={ this.toggleNewPostEmail }
 								checked={ sendNewPostsByEmail }
-								id={ 'reader-site-notification-settings__email-posts' }
+								id="reader-site-notification-settings__email-posts"
 								label={ translate( 'Email me new posts' ) }
 							/>
 						) }
@@ -200,19 +180,19 @@ class ReaderSiteNotificationSettings extends Component {
 					{ ! isEmailBlocked && sendNewPostsByEmail && (
 						<SegmentedControl>
 							<SegmentedControl.Item
-								selected={ this.state.selected === 'instantly' }
+								selected={ this.props.emailDeliveryFrequency === 'instantly' }
 								onClick={ this.setSelected( 'instantly' ) }
 							>
 								{ translate( 'Instantly' ) }
 							</SegmentedControl.Item>
 							<SegmentedControl.Item
-								selected={ this.state.selected === 'daily' }
+								selected={ this.props.emailDeliveryFrequency === 'daily' }
 								onClick={ this.setSelected( 'daily' ) }
 							>
 								{ translate( 'Daily' ) }
 							</SegmentedControl.Item>
 							<SegmentedControl.Item
-								selected={ this.state.selected === 'weekly' }
+								selected={ this.props.emailDeliveryFrequency === 'weekly' }
 								onClick={ this.setSelected( 'weekly' ) }
 							>
 								{ translate( 'Weekly' ) }

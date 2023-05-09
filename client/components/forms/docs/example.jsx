@@ -1,43 +1,122 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { CURRENCIES } from '@automattic/format-currency';
-import { ToggleControl } from '@wordpress/components';
 
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
+import { Card, FormInputValidation } from '@automattic/components';
+import { ToggleControl } from '@wordpress/components';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
+import { connect } from 'react-redux';
+import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormCountrySelect from 'calypso/components/forms/form-country-select';
 import FormCurrencyInput from 'calypso/components/forms/form-currency-input';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormPhoneInput from 'calypso/components/forms/form-phone-input';
 import FormRadio from 'calypso/components/forms/form-radio';
-import FormRadiosBarExample from 'calypso/components/forms/form-radios-bar/docs/example';
 import FormRadioWithThumbnail from 'calypso/components/forms/form-radio-with-thumbnail';
+import FormRadiosBarExample from 'calypso/components/forms/form-radios-bar/docs/example';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import FormStateSelector from 'calypso/components/forms/us-state-selector';
 import FormTelInput from 'calypso/components/forms/form-tel-input';
-import FormTextarea from 'calypso/components/forms/form-textarea';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAction from 'calypso/components/forms/form-text-input-with-action';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
-import getCountries from 'calypso/state/selectors/get-countries';
+import FormTextarea from 'calypso/components/forms/form-textarea';
+import FormStateSelector from 'calypso/components/forms/us-state-selector';
 import PhoneInput from 'calypso/components/phone-input';
-import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
+import getCountries from 'calypso/state/selectors/get-countries';
+
+export const CURRENCIES = {
+	ALL: {
+		symbol: 'Lek',
+		grouping: '.',
+		decimal: ',',
+		precision: 2,
+	},
+	BDT: {
+		symbol: '৳',
+		grouping: ',',
+		decimal: '.',
+		precision: 0,
+	},
+	GIP: {
+		symbol: '£',
+		grouping: ',',
+		decimal: '.',
+		precision: 2,
+	},
+	KGS: {
+		symbol: 'сом',
+		grouping: ' ',
+		decimal: '-',
+		precision: 2,
+	},
+	MOP: {
+		symbol: 'MOP$',
+		grouping: ',',
+		decimal: '.',
+		precision: 2,
+	},
+	UZS: {
+		symbol: 'сўм',
+		grouping: ' ',
+		decimal: ',',
+		precision: 2,
+	},
+	VEB: {
+		symbol: 'Bs.',
+		grouping: ',',
+		decimal: '.',
+		precision: 2,
+	},
+	VEF: {
+		symbol: 'Bs. F.',
+		grouping: '.',
+		decimal: ',',
+		precision: 2,
+	},
+	VND: {
+		symbol: '₫',
+		grouping: '.',
+		decimal: ',',
+		precision: 1,
+	},
+	VUV: {
+		symbol: 'VT',
+		grouping: ',',
+		decimal: '.',
+		precision: 0,
+	},
+	WST: {
+		symbol: 'WS$',
+		grouping: ',',
+		decimal: '.',
+		precision: 2,
+	},
+	XAF: {
+		symbol: 'F',
+		grouping: ',',
+		decimal: '.',
+		precision: 2,
+	},
+	XCD: {
+		symbol: '$',
+		grouping: ',',
+		decimal: '.',
+		precision: 2,
+	},
+	XOF: {
+		symbol: 'F',
+		grouping: ' ',
+		decimal: ',',
+		precision: 2,
+	},
+};
 
 const currencyList = Object.entries( CURRENCIES ).map( ( [ code ] ) => ( { code } ) );
 const visualCurrencyList = Object.entries( CURRENCIES ).map( ( [ code, { symbol } ] ) => ( {
@@ -45,7 +124,7 @@ const visualCurrencyList = Object.entries( CURRENCIES ).map( ( [ code, { symbol 
 	label: `${ code } ${ symbol }`,
 } ) );
 
-class FormFields extends React.PureComponent {
+class FormFields extends PureComponent {
 	static propTypes = {
 		countriesList: PropTypes.array.isRequired,
 	};
@@ -325,8 +404,10 @@ class FormFields extends React.PureComponent {
 					<FormFieldset>
 						<FormLabel>Form Media Phone Input</FormLabel>
 						<PhoneInput
-							countryCode={ this.state.phoneInput.countryCode }
-							value={ this.state.phoneInput.value }
+							value={ {
+								phoneNumber: this.state.phoneInput.value,
+								countryCode: this.state.phoneInput.countryCode,
+							} }
 							countriesList={ this.props.countriesList }
 							onChange={ this.handlePhoneInputChange }
 						/>

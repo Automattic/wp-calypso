@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import formatCurrency from '@automattic/format-currency';
-
-/**
- * Internal dependencies
- */
 import { getUnformattedDomainSalePrice } from './get-unformatted-domain-sale-price';
 
 export function getDomainSalePrice( slug, productsList, currencyCode, stripZeros = false ) {

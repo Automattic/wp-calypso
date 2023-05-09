@@ -1,17 +1,8 @@
-/**
- * External dependencies
- */
-import i18n from 'i18n-calypso';
-import page from 'page';
-import { compact } from 'lodash';
 import debugModule from 'debug';
-
-/**
- * Internal dependencies
- */
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import i18n from 'i18n-calypso';
+import { compact } from 'lodash';
+import page from 'page';
+import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
 import {
 	JETPACK_CREDENTIALS_UPDATE,
 	JETPACK_CREDENTIALS_UPDATE_SUCCESS,
@@ -21,16 +12,19 @@ import {
 	JETPACK_CREDENTIALS_STORE,
 	REWIND_STATE_UPDATE,
 } from 'calypso/state/action-types';
-import { successNotice, errorNotice, infoNotice } from 'calypso/state/notices/actions';
-import { transformApi } from 'calypso/state/data-layer/wpcom/sites/rewind/api-transformer';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { transformApi } from 'calypso/state/data-layer/wpcom/sites/rewind/api-transformer';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { markCredentialsAsValid } from 'calypso/state/jetpack/credentials/actions';
+import { successNotice, errorNotice, infoNotice } from 'calypso/state/notices/actions';
 import getJetpackCredentialsUpdateProgress from 'calypso/state/selectors/get-jetpack-credentials-update-progress';
 import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
-import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
 
 const debug = debugModule( 'calypso:data-layer:update-credentials' );
 const navigateTo =
-	undefined !== typeof window
+	'undefined' !== typeof window
 		? ( path ) => window.open( path, '_blank' )
 		: ( path ) => page( path );
 
@@ -91,11 +85,12 @@ export const success = ( action, { rewind_state } ) =>
 		{
 			type: JETPACK_CREDENTIALS_STORE,
 			credentials: {
-				main: action.credentials,
+				[ action.credentials.role ]: action.credentials,
 			},
 			siteId: action.siteId,
 		},
-		action.shouldUseNotices &&
+		action.credentials.role === 'main' &&
+			action.shouldUseNotices &&
 			successNotice( i18n.translate( 'Your site is now connected.' ), {
 				duration: 4000,
 				...getMaybeNoticeId( action ),
@@ -116,6 +111,9 @@ export const success = ( action, { rewind_state } ) =>
 				};
 			} catch ( e ) {}
 		} )(),
+		// The idea is to mark the credentials test as valid so
+		// it doesn't need to be tested again.
+		markCredentialsAsValid( action.siteId, action.credentials.role ),
 	] );
 
 export const failure = ( action, error ) => ( dispatch, getState ) => {
@@ -191,7 +189,7 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 		case 'invalid_credentials':
 			dispatchFailure(
 				i18n.translate(
-					"We couldn't connect to your site. Please verify your credentials and give it another try."
+					"We couldn't connect to your site. Please verify that your credentials are correct and ensure that your host is not blocking the connection."
 				)
 			);
 			break;

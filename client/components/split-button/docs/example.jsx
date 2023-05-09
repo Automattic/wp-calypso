@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import { map } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import SplitButton from '../';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
-import PopoverMenuSeparator from 'calypso/components/popover/menu-separator';
 import { Card } from '@automattic/components';
+import { map } from 'lodash';
+import { PureComponent } from 'react';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import PopoverMenuSeparator from 'calypso/components/popover-menu/separator';
+import SplitButton from '../';
 
 const popoverItems = [
 	<PopoverMenuItem key="sbe-oa" icon="add">
@@ -29,7 +21,7 @@ const popoverItems = [
 	</PopoverMenuItem>,
 ];
 
-class SplitButtonExample extends React.PureComponent {
+class SplitButtonExample extends PureComponent {
 	state = {
 		compactButtons: false,
 	};
@@ -40,15 +32,16 @@ class SplitButtonExample extends React.PureComponent {
 		const compact = { compact: this.state.compactButtons };
 		return (
 			<div>
-				<a className="docs__design-toggle button" onClick={ this.toggleButtons }>
+				<button className="docs__design-toggle button" onClick={ this.toggleButtons }>
 					{ this.state.compactButtons ? 'Normal Buttons' : 'Compact Buttons' }
-				</a>
+				</button>
 				<Card>
 					{ map(
 						[
 							[
 								{ label: 'Split Button', icon: 'history' },
 								{ label: 'Split Button', primary: true },
+								{ label: 'Split Button with white separator', primary: true, whiteSeparator: true },
 								{ icon: 'globe' },
 							],
 							[

@@ -26,39 +26,41 @@ export type ConfigData = Record< string, any > & {
  * @throws {ReferenceError} when key not defined in the config (NODE_ENV=development only)
  * @returns A function that gets the value of property named by the key
  */
-const config = ( data: ConfigData ) => < T >( key: string ): T | undefined => {
-	if ( key in data ) {
-		return data[ key ] as T;
-	}
+const config =
+	( data: ConfigData ) =>
+	< T >( key: string ): T | undefined => {
+		if ( key in data ) {
+			return data[ key ] as T;
+		}
 
-	if ( 'development' === process.env.NODE_ENV ) {
-		throw new ReferenceError(
-			`Could not find config value for key '${ key }'\n` +
-				"Please make sure that if you need it then it has a default value assigned in 'config/_shared.json'"
-		);
-	}
+		if ( 'development' === process.env.NODE_ENV ) {
+			throw new ReferenceError(
+				`Could not find config value for key '${ key }'\n` +
+					"Please make sure that if you need it then it has a default value assigned in 'config/_shared.json'"
+			);
+		}
 
-	// display console error only in a browser
-	// (not in tests, for example)
-	if ( 'undefined' !== typeof window ) {
-		// eslint-disable-next-line no-console
-		console.error(
-			'%cCore Error: ' +
-				`%cCould not find config value for key %c${ key }%c. ` +
-				'Please make sure that if you need it then it has a default value assigned in ' +
-				'%cconfig/_shared.json' +
-				'%c.',
-			'color: red; font-size: 120%', // error prefix
-			'color: black;', // message
-			'color: blue;', // key name
-			'color: black;', // message
-			'color: blue;', // config file reference
-			'color: black' // message
-		);
-	}
+		// display console error only in a browser
+		// (not in tests, for example)
+		if ( 'undefined' !== typeof window ) {
+			// eslint-disable-next-line no-console
+			console.error(
+				'%cCore Error: ' +
+					`%cCould not find config value for key %c${ key }%c. ` +
+					'Please make sure that if you need it then it has a default value assigned in ' +
+					'%cconfig/_shared.json' +
+					'%c.',
+				'color: red; font-size: 120%', // error prefix
+				'color: black;', // message
+				'color: blue;', // key name
+				'color: black;', // message
+				'color: blue;', // config file reference
+				'color: black' // message
+			);
+		}
 
-	return undefined;
-};
+		return undefined;
+	};
 
 /**
  * Checks whether a specific feature is enabled.
@@ -66,8 +68,10 @@ const config = ( data: ConfigData ) => < T >( key: string ): T | undefined => {
  * @param data the json environment configuration to use for getting config values
  * @returns A function that takes a feature name and returns true when the feature is enabled.
  */
-const isEnabled = ( data: ConfigData ) => ( feature: string ): boolean =>
-	( data.features && !! data.features[ feature ] ) || false;
+const isEnabled =
+	( data: ConfigData ) =>
+	( feature: string ): boolean =>
+		( data.features && !! data.features[ feature ] ) || false;
 
 /**
  * Gets a list of all enabled features.

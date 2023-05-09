@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { createPurchasesArray } from 'calypso/lib/purchases/assembler';
 import {
 	getByPurchaseId,
@@ -10,7 +7,6 @@ import {
 	isFetchingSitePurchases,
 	isFetchingUserPurchases,
 	isUserPaid,
-	siteHasBackupProductPurchase,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -56,7 +52,16 @@ describe( 'selectors', () => {
 				purchases: {
 					data: [
 						{ ID: 1, product_name: 'domain registration', blog_id: 1337 },
-						{ ID: 2, product_name: 'premium plan', blog_id: 1337, is_rechargable: true },
+						{
+							ID: 2,
+							product_name: 'premium plan',
+							blog_id: 1337,
+							is_rechargable: true,
+							auto_renew: '1',
+							refund_integer: 9600,
+							total_refund_integer: 9600,
+							total_refund_currency: 'USD',
+						},
 					],
 					error: null,
 					isFetchingSitePurchases: false,
@@ -73,8 +78,12 @@ describe( 'selectors', () => {
 				active: false,
 				amount: NaN,
 				attachedToPurchaseId: NaN,
+				billPeriodDays: NaN,
+				billPeriodLabel: undefined,
+				blogCreatedDate: undefined,
 				canExplicitRenew: false,
 				canDisableAutoRenew: false,
+				canReenableAutoRenewal: false,
 				costToUnbundle: NaN,
 				costToUnbundleText: undefined,
 				currencyCode: undefined,
@@ -85,17 +94,24 @@ describe( 'selectors', () => {
 				error: null,
 				expiryDate: undefined,
 				expiryStatus: '',
+				iapPurchaseManagementLink: undefined,
 				includedDomain: undefined,
 				includedDomainPurchaseAmount: undefined,
 				introductoryOffer: null,
+				isAutoRenewEnabled: true,
 				isCancelable: false,
 				isDomainRegistration: false,
+				isLocked: false,
+				isInAppPurchase: false,
 				isRechargeable: true,
 				isRefundable: false,
 				isRenewable: false,
 				isRenewal: false,
 				meta: undefined,
 				mostRecentRenewDate: undefined,
+				partnerKeyId: undefined,
+				partnerName: undefined,
+				partnerSlug: undefined,
 				payment: {
 					countryCode: undefined,
 					countryName: undefined,
@@ -104,15 +120,22 @@ describe( 'selectors', () => {
 					storedDetailsId: undefined,
 				},
 				priceText: undefined,
+				productDisplayPrice: undefined,
 				productId: NaN,
 				productSlug: undefined,
 				pendingTransfer: false,
 				refundPeriodInDays: undefined,
 				totalRefundAmount: NaN,
+				totalRefundInteger: 9600,
 				totalRefundText: undefined,
+				totalRefundCurrency: 'USD',
 				refundAmount: NaN,
+				refundInteger: 9600,
+				refundOptions: undefined,
 				refundText: undefined,
+				regularPriceText: undefined,
 				renewDate: undefined,
+				saleAmount: undefined,
 				siteName: undefined,
 				subscribedDate: undefined,
 				subscriptionStatus: undefined,
@@ -190,43 +213,6 @@ describe( 'selectors', () => {
 			expect( result ).toHaveLength( 2 );
 			expect( result[ 0 ].siteId ).toBe( 1234 );
 			expect( result[ 1 ].siteId ).toBe( 1234 );
-		} );
-	} );
-
-	describe( 'siteHasBackupProductPurchase', () => {
-		test( 'should return true if a site has a Jetpack Backup purchase, false otherwise', () => {
-			const state = {
-				purchases: {
-					data: [
-						{
-							ID: '81414',
-							blog_id: '1234',
-							active: true,
-							product_slug: 'jetpack_personal',
-						},
-						{
-							ID: '82867',
-							blog_id: '1234',
-							active: true,
-							product_slug: 'something',
-						},
-						{
-							ID: '105103',
-							blog_id: '123',
-							active: true,
-							product_slug: 'jetpack_backup_daily',
-						},
-					],
-					error: null,
-					isFetchingSitePurchases: true,
-					isFetchingUserPurchases: false,
-					hasLoadedSitePurchasesFromServer: false,
-					hasLoadedUserPurchasesFromServer: false,
-				},
-			};
-
-			expect( siteHasBackupProductPurchase( state, 1234 ) ).toBe( false );
-			expect( siteHasBackupProductPurchase( state, 123 ) ).toBe( true );
 		} );
 	} );
 
@@ -320,6 +306,9 @@ describe( 'selectors', () => {
 
 		test( 'should return false because there is no purchases', () => {
 			const state = {
+				currentUser: {
+					id: targetUserId,
+				},
 				purchases: {
 					data: [],
 					error: null,
@@ -330,11 +319,14 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( isUserPaid( state, targetUserId ) ).toBe( false );
+			expect( isUserPaid( state ) ).toBe( false );
 		} );
 
 		test( 'should return true because there are purchases from the target user', () => {
 			const state = {
+				currentUser: {
+					id: targetUserId,
+				},
 				purchases: {
 					data: examplePurchases,
 					error: null,
@@ -345,11 +337,14 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( isUserPaid( state, targetUserId ) ).toBe( true );
+			expect( isUserPaid( state ) ).toBe( true );
 		} );
 
 		test( 'should return false because there are no purchases from this user', () => {
 			const state = {
+				currentUser: {
+					id: 65535,
+				},
 				purchases: {
 					data: examplePurchases,
 					error: null,
@@ -360,11 +355,14 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( isUserPaid( state, 65535 ) ).toBe( false );
+			expect( isUserPaid( state ) ).toBe( false );
 		} );
 
-		test( 'should return false because the data is not ready.', () => {
+		test( 'should return null because the data is not ready.', () => {
 			const state = {
+				currentUser: {
+					id: targetUserId,
+				},
 				purchases: {
 					data: examplePurchases,
 					error: null,
@@ -375,7 +373,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( isUserPaid( state, targetUserId ) ).toBe( false );
+			expect( isUserPaid( state ) ).toBeNull();
 		} );
 	} );
 } );

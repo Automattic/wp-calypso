@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
 import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import { userState } from './fixtures/user-state';
 
@@ -64,7 +56,7 @@ describe( 'getReaderFollows()', () => {
 
 	test( 'should not return follows with an error set and should fill in feed and site when available', () => {
 		const follows = getReaderFollows( state );
-		expect( follows ).to.eql( [
+		expect( follows ).toEqual( [
 			{
 				URL: 'http://discover.wordpress.com',
 				blog_ID: 1,

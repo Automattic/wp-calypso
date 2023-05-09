@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import isPublicizeEnabled from 'calypso/state/selectors/is-publicize-enabled';
 
 describe( 'isPublicizeEnabled()', () => {
@@ -30,7 +22,7 @@ describe( 'isPublicizeEnabled()', () => {
 			postType
 		);
 
-		expect( result ).to.be.false;
+		expect( result ).toBe( false );
 	} );
 
 	test( 'should return false for jetpack site with Publicize disabled', () => {
@@ -52,7 +44,7 @@ describe( 'isPublicizeEnabled()', () => {
 			postType
 		);
 
-		expect( result ).to.be.false;
+		expect( result ).toBe( false );
 	} );
 
 	test( 'should return true for jetpack site with Publicize enabled', () => {
@@ -74,7 +66,7 @@ describe( 'isPublicizeEnabled()', () => {
 			postType
 		);
 
-		expect( result ).to.be.true;
+		expect( result ).toBe( true );
 	} );
 
 	test( 'should return true for regular site and post type', () => {
@@ -92,6 +84,6 @@ describe( 'isPublicizeEnabled()', () => {
 			postType
 		);
 
-		expect( result ).to.be.true;
+		expect( result ).toBe( true );
 	} );
 } );

@@ -1,13 +1,6 @@
-/**
- * External Dependencies
- */
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import 'calypso/state/jetpack/init';
 import { TransportError } from 'calypso/state/data-layer/wpcom/activity-log/update-credentials/vendor';
+import 'calypso/state/jetpack/init';
 
 export interface UpdateError {
 	wpcomError?: WpcomError;

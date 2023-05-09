@@ -1,5 +1,9 @@
-.payment-method__wrapper {
-	margin-bottom: 0;
+.payment-method-list__payment-methods {
+	margin-top: 12px;
+}
+
+.payment-method-list__payment-methods > div {
+	width: 100%;
 }
 
 .payment-method-list__loader {
@@ -17,9 +21,30 @@
 
 .payment-method {
 	margin-bottom: 0;
-	display: flex;
+	display: grid;
+	grid-template-areas:
+		"payment-method-details"
+		"payment-method-billing-information"
+		"payment-method-backup"
+		"payment-method-delete";
+	grid-template-columns: 1fr;
 	align-items: center;
 	justify-content: space-between;
+	flex-wrap: wrap;
+	width: 100%;
+
+	@include breakpoint-deprecated( ">480px" ) {
+		grid-template-areas:
+			"payment-method-details payment-method-backup"
+			"payment-method-billing-information payment-method-delete";
+		grid-template-columns: 2fr 1fr;
+	}
+}
+
+.payment-method-details {
+	display: flex;
+	align-items: center;
+	grid-area: payment-method-details;
 }
 
 .payment-method-details__image {
@@ -34,11 +59,11 @@
 }
 
 .payment-method-details__number {
-	color: var( --color-neutral-80 );
+	color: var(--color-neutral-80);
 	display: block;
 	margin-right: 12px;
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		display: inline;
 	}
 }
@@ -47,7 +72,7 @@
 	margin-right: 12px;
 	display: block;
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		display: inline;
 	}
 }
@@ -56,8 +81,8 @@
 	font-size: 0.875rem;
 	display: block;
 
-	@include breakpoint-deprecated( '>960px' ) {
-		display: inline;
+	@include breakpoint-deprecated( ">960px" ) {
+		display: inline-block;
 	}
 
 	.gridicon {
@@ -66,16 +91,40 @@
 	}
 
 	&.is-expired {
-		color: var( --color-error );
+		color: var(--color-error);
 	}
 }
 
 .payment-method-details__name {
-	color: var( --color-neutral-50 );
+	color: var(--color-neutral-50);
 	display: block;
 	font-size: 0.875rem;
 }
 
+.payment-method .payment-method-tax-info {
+	font-size: 0.875rem;
+	grid-area: payment-method-billing-information;
+	margin-left: 76px;
+
+	@include breakpoint-deprecated( ">480px" ) {
+		width: auto;
+	}
+}
+
+.payment-method-delete {
+	grid-area: payment-method-delete;
+	margin-top: 12px;
+	text-align: right;
+
+	@include breakpoint-deprecated( ">480px" ) {
+		margin-top: 0;
+	}
+}
+
+.payment-method-delete__button {
+	text-decoration: underline;
+	padding: 0;
+}
 
 .payment-method-delete-dialog {
 	&.dialog {
@@ -84,5 +133,31 @@
 
 	.card-heading {
 		margin-top: 0;
+	}
+}
+
+.payment-method-backup-toggle {
+	grid-area: payment-method-backup;
+	margin-left: 76px;
+	margin-top: 6px;
+	width: 100%;
+
+	@include breakpoint-deprecated( ">480px" ) {
+		margin-left: 0;
+		margin-top: 0;
+		text-align: right;
+		width: auto;
+	}
+}
+
+.payment-method__wrapper {
+	margin-bottom: 0;
+}
+
+/* Jetpack cloud overwrites */
+
+.payment-method__wrapper--jetpack-cloud {
+	.components-checkbox-control__input[type="checkbox"]:checked {
+		background-color: var(--studio-jetpack-green-50);
 	}
 }

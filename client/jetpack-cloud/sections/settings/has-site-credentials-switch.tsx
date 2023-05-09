@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
-import React, { ReactNode, useCallback, useState, useEffect } from 'react';
+import { ReactNode, useCallback, useState, useEffect } from 'react';
+import * as React from 'react';
 import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import QuerySiteCredentials from 'calypso/components/data/query-site-credentials';
 import RenderSwitch from 'calypso/components/jetpack/render-switch';
 import getJetpackCredentials from 'calypso/state/selectors/get-jetpack-credentials';
@@ -35,11 +29,10 @@ const HasSiteCredentialsSwitch: React.FC< Props > = ( {
 	const [ isLocked, setLocked ] = useState( hasCredentials );
 	const [ currentSiteId, setCurrentSiteId ] = useState( siteId );
 
-	const loadingCondition = useCallback( () => ( ! hasLoaded || isFetching ) && ! isLocked, [
-		hasLoaded,
-		isFetching,
-		isLocked,
-	] );
+	const loadingCondition = useCallback(
+		() => ( ! hasLoaded || isFetching ) && ! isLocked,
+		[ hasLoaded, isFetching, isLocked ]
+	);
 	const renderCondition = useCallback( () => hasCredentials, [ hasCredentials ] );
 
 	useEffect( () => {

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	POST_REVISIONS_DIALOG_OPEN,
 	POST_REVISIONS_DIALOG_CLOSE,
@@ -27,7 +24,7 @@ import 'calypso/state/posts/init';
  * 						{ from: 4, to: 5 },
  * 					]
  * 					Optional. If not provided, the API will return a set of sequential diffs
- * @returns {object} action object
+ * @returns {Object} action object
  */
 export const requestPostRevisions = ( siteId, postId, postType = 'posts', comparisons = [] ) => ( {
 	type: POST_REVISIONS_REQUEST,
@@ -39,9 +36,6 @@ export const requestPostRevisions = ( siteId, postId, postType = 'posts', compar
 
 /**
  * Action creator function: POST_REVISIONS_RECEIVE
- *
- * @param {object} response diffs, postId, revisions, siteId,
- * @returns {object} action object
  */
 export const receivePostRevisions = ( { diffs, postId, revisions, siteId } ) => ( {
 	type: POST_REVISIONS_RECEIVE,

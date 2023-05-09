@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React, { useState } from 'react';
-
-/**
- * WordPress dependencies
- */
 import { CheckboxControl } from '@wordpress/components';
+import { useState } from 'react';
 
 const CheckboxControlExample = () => {
 	const [ isChecked, setChecked ] = useState( false );

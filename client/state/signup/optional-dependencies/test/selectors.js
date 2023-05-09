@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { getSuggestedUsername } from '../selectors';
 
 describe( 'selectors', () => {
 	test( 'should return string if no username suggestions', () => {
-		expect( getSuggestedUsername( { signup: undefined } ) ).to.be.eql( '' );
+		expect( getSuggestedUsername( { signup: undefined } ) ).toEqual( '' );
 	} );
 
 	test( 'should return suggestedUsername', () => {
@@ -20,6 +12,6 @@ describe( 'selectors', () => {
 					optionalDependencies: { suggestedUsername: 'testUsernameSuggestion' },
 				},
 			} )
-		).to.be.eql( 'testUsernameSuggestion' );
+		).toEqual( 'testUsernameSuggestion' );
 	} );
 } );

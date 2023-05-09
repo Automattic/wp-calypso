@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-
 import { JETPACK_CONNECT_TTL } from './constants';
 
 /**

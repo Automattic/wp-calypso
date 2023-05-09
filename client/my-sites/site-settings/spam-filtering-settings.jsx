@@ -1,37 +1,26 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
+import {
+	PRODUCT_JETPACK_ANTI_SPAM,
+	WPCOM_FEATURES_AKISMET,
+	WPCOM_FEATURES_ANTISPAM,
+	isJetpackAntiSpam,
+} from '@automattic/calypso-products';
+import { FormInputValidation, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
 import { includes, isEmpty } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import ExternalLink from 'calypso/components/external-link';
 import FoldableCard from 'calypso/components/foldable-card';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
-import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import Gridicon from 'calypso/components/gridicon';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import SupportInfo from 'calypso/components/support-info';
-import ExternalLink from 'calypso/components/external-link';
-import {
-	FEATURE_SPAM_AKISMET_PLUS,
-	FEATURE_JETPACK_ANTI_SPAM,
-	FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
-	PRODUCT_JETPACK_ANTI_SPAM,
-	isJetpackAntiSpam,
-} from '@automattic/calypso-products';
 import { isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
 import isJetpackSettingsSaveFailure from 'calypso/state/selectors/is-jetpack-settings-save-failure';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteProducts } from 'calypso/state/sites/selectors';
-import { hasFeature } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const SpamFilteringSettings = ( {
@@ -78,8 +67,8 @@ const SpamFilteringSettings = ( {
 				description={ translate(
 					'Save time, get more responses, give your visitors a better experience - all without lifting a finger.'
 				) }
-				event={ 'calypso_akismet_settings_upgrade_nudge' }
-				feature={ FEATURE_SPAM_AKISMET_PLUS }
+				event="calypso_akismet_settings_upgrade_nudge"
+				feature={ WPCOM_FEATURES_ANTISPAM }
 				showIcon={ true }
 				href={ `/checkout/${ siteSlug }/${ PRODUCT_JETPACK_ANTI_SPAM }` }
 			/>
@@ -168,10 +157,8 @@ export default connect( ( state, { dirtyFields, fields } ) => {
 	const hasAkismetKeyError =
 		isJetpackSettingsSaveFailure( state, selectedSiteId, fields ) &&
 		includes( dirtyFields, 'wordpress_api_key' );
-	const hasAkismetFeature = hasFeature( state, selectedSiteId, FEATURE_SPAM_AKISMET_PLUS );
-	const hasAntiSpamFeature =
-		hasFeature( state, selectedSiteId, FEATURE_JETPACK_ANTI_SPAM ) ||
-		hasFeature( state, selectedSiteId, FEATURE_JETPACK_ANTI_SPAM_MONTHLY );
+	const hasAkismetFeature = siteHasFeature( state, selectedSiteId, WPCOM_FEATURES_AKISMET );
+	const hasAntiSpamFeature = siteHasFeature( state, selectedSiteId, WPCOM_FEATURES_ANTISPAM );
 	const hasJetpackAntiSpamProduct =
 		getSiteProducts( state, selectedSiteId )?.filter( isJetpackAntiSpam ).length > 0;
 

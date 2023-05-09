@@ -1,63 +1,36 @@
-/**
- * External dependencies
- */
-import React, { useMemo } from 'react';
-import { useSelector } from 'react-redux';
-import { ShoppingCartProvider, useShoppingCart } from '@automattic/shopping-cart';
-import type { RequestCart, ResponseCart } from '@automattic/shopping-cart';
-
-/**
- * Internal Dependencies
- */
-import wp from 'calypso/lib/wp';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
-import getCartKey from './get-cart-key';
+import { ShoppingCartProvider } from '@automattic/shopping-cart';
+import { useMemo, PropsWithChildren } from 'react';
 import CartMessages from 'calypso/my-sites/checkout/cart/cart-messages';
+import { cartManagerClient } from './cart-manager-client';
 
-// Aliasing wpcom functions explicitly bound to wpcom is required here;
-// otherwise we get `this is not defined` errors.
-const wpcom = wp.undocumented();
-const wpcomGetCart = ( cartKey: string ) => wpcom.getCart( cartKey );
-const wpcomSetCart = ( cartKey: string, cartData: RequestCart ) =>
-	wpcom.setCart( cartKey, cartData );
-
-// A convenience wrapper around ShoppingCartProvider to set the necessary props for calypso
+// A convenience wrapper around ShoppingCartProvider to set the necessary props
+// for calypso and to display error and success messages returned from calls to
+// the cart endpoint.
+// eslint-disable-next-line @typescript-eslint/ban-types
 export default function CalypsoShoppingCartProvider( {
 	children,
-	cartKey,
-	getCart,
-}: {
-	children: React.ReactNode;
-	cartKey?: string | number | null | undefined;
-	getCart?: ( cartKey: string ) => Promise< ResponseCart >;
-} ): JSX.Element {
-	const selectedSite = useSelector( getSelectedSite );
-	const finalCartKey = cartKey === undefined ? getCartKey( { selectedSite } ) : cartKey;
-
+	shouldShowPersistentErrors,
+}: PropsWithChildren< {
+	/**
+	 * Persistent errors like "Purchases are disabled for this site" are returned
+	 * during cart fetch (regular cart errors are transient and only are returned
+	 * when changing the cart). We want to display these errors only in certain
+	 * contexts where they will make sense (like checkout), not in every place
+	 * that happens to render this component (like the plans page).
+	 */
+	shouldShowPersistentErrors?: boolean;
+} > ) {
 	const options = useMemo(
 		() => ( {
-			refetchOnWindowFocus: !! finalCartKey,
+			refetchOnWindowFocus: true,
 		} ),
-		[ finalCartKey ]
+		[]
 	);
 
-	// If cartKey is null, we pass that to ShoppingCartProvider because it is
-	// probably intentional to delay loading. If cartKey is undefined, we try to
-	// get our own.
 	return (
-		<ShoppingCartProvider
-			cartKey={ finalCartKey }
-			getCart={ getCart || wpcomGetCart }
-			setCart={ wpcomSetCart }
-			options={ options }
-		>
-			<CalypsoShoppingCartMessages />
+		<ShoppingCartProvider managerClient={ cartManagerClient } options={ options }>
+			<CartMessages shouldShowPersistentErrors={ shouldShowPersistentErrors } />
 			{ children }
 		</ShoppingCartProvider>
 	);
-}
-
-function CalypsoShoppingCartMessages() {
-	const { responseCart, isLoading } = useShoppingCart();
-	return <CartMessages cart={ responseCart } isLoadingCart={ isLoading } />;
 }

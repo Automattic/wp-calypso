@@ -1,9 +1,17 @@
 // My Plan Card
 .my-plan-card.card {
-	@include breakpoint-deprecated( '>960px' ) {
+	&::after {
+		content: none;
+	}
+
+	@include breakpoint-deprecated( ">960px" ) {
+		padding: 24px;
+
 		display: flex;
 		flex-flow: row nowrap;
+		align-items: flex-start;
 		justify-content: space-between;
+		column-gap: 56px;
 	}
 }
 
@@ -18,14 +26,14 @@
 
 	.is-placeholder &::before {
 		@include placeholder( --color-neutral-10 );
-		content: '\00a0';
+		content: "\00a0";
 		display: inline-block;
 		width: 100%;
-		height: calc( 100% - 16px );
+		height: calc(100% - 16px);
 		min-height: 70px;
 		margin-bottom: 16px;
 
-		@include breakpoint-deprecated( '>960px' ) {
+		@include breakpoint-deprecated( ">960px" ) {
 			height: 100%;
 		}
 	}
@@ -35,8 +43,7 @@
 	font-size: $font-title-small;
 	font-weight: 400;
 	line-height: 29px;
-	margin: 8px 0;
-	color: var( --color-neutral-100 );
+	color: var(--color-neutral-100);
 
 	.is-placeholder & {
 		display: none;
@@ -49,7 +56,7 @@
 	line-height: 21px;
 	margin: 0 0 24px;
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		margin-bottom: 8px;
 	}
 
@@ -62,9 +69,9 @@
 	flex: 0 0 auto;
 	width: 64px;
 	height: 64px;
-	margin: 8px 20px 16px 0;
+	margin-inline-end: 20px;
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		display: none;
 	}
 
@@ -75,7 +82,7 @@
 
 		&::before {
 			@include placeholder( --color-neutral-10 );
-			content: '\00a0';
+			content: "\00a0";
 			display: inline-block;
 			width: 64px;
 			height: 64px;
@@ -92,27 +99,27 @@
 	justify-content: space-between;
 	padding: 8px 0 0;
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		flex-flow: column nowrap;
 		justify-content: center;
 		align-items: flex-end;
-		padding: 0 0 0 24px;
+		padding: initial;
 	}
 
 	&::before {
-		content: '';
+		content: "";
 		position: absolute;
 		top: 0;
 		left: -16px;
 		right: -16px;
-		border-top: 1px solid var( --color-border-subtle );
+		border-top: 1px solid var(--color-border-subtle);
 
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( ">480px" ) {
 			left: -24px;
 			right: -24px;
 		}
 
-		@include breakpoint-deprecated( '>960px' ) {
+		@include breakpoint-deprecated( ">960px" ) {
 			content: none;
 		}
 	}
@@ -130,19 +137,19 @@
 .my-plan-card__details {
 	padding-top: 8px;
 	white-space: nowrap;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		padding-top: 0;
 	}
 
 	&.is-error {
-		color: var( --color-error );
+		color: var(--color-error);
 	}
 
 	.is-placeholder &::before {
 		@include placeholder( --color-neutral-10 );
-		content: '\00a0';
+		content: "\00a0";
 		display: inline-block;
 		width: 180px;
 		height: 18px;
@@ -159,13 +166,35 @@
 
 	.is-placeholder &::before {
 		@include placeholder( --color-neutral-10 );
-		content: '\00a0';
+		content: "\00a0";
 		display: inline-block;
 		width: 110px;
 		height: 29px;
 	}
 
 	.button ~ .button {
-		margin-left: 8px;
+		margin-inline-start: 8px;
+	}
+	.button {
+		line-height: inherit;
+	}
+	.owner-info__pop-over {
+		font-size: inherit;
+		vertical-align: inherit;
+	}
+}
+
+.my-plan-card__header .backup-storage-space.card {
+	margin: 24px 0;
+	padding: 0;
+	box-shadow: none;
+
+	.usage-warning__upsell {
+		margin-block-start: 16px;
+	}
+
+	.backup-storage-space__divider,
+	.usage-warning__storage-full {
+		display: none;
 	}
 }

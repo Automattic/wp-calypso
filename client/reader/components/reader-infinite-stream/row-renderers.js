@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import { get } from 'lodash';
-
-/**
- * Internal Dependencies
- */
 import ConnectedSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
 
 export const siteRowRenderer = ( {

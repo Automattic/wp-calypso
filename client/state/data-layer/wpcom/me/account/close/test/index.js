@@ -1,15 +1,12 @@
-/**
- * Internal dependencies
- */
+import { closeAccount } from 'calypso/state/account/actions';
+import { ACCOUNT_CLOSE_SUCCESS } from 'calypso/state/action-types';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
 	requestAccountClose,
 	receiveAccountCloseSuccess,
 	receiveAccountCloseError,
 	fromApi,
 } from '../';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { closeAccount } from 'calypso/state/account/actions';
-import { ACCOUNT_CLOSE_SUCCESS } from 'calypso/state/action-types';
 
 describe( 'account-close', () => {
 	describe( 'requestAccountClose', () => {

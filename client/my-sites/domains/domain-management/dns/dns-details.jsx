@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { PureComponent } from 'react';
 import { CUSTOM_DNS } from 'calypso/lib/url/support';
 
-class DnsDetails extends React.PureComponent {
+class DnsDetails extends PureComponent {
 	render() {
 		const { translate } = this.props;
 
@@ -22,7 +15,9 @@ class DnsDetails extends React.PureComponent {
 						'{{customDnsLink}}Learn more{{/customDnsLink}}.',
 					{
 						components: {
-							customDnsLink: <a href={ CUSTOM_DNS } target="_blank" rel="noopener noreferrer" />,
+							customDnsLink: (
+								<a href={ localizeUrl( CUSTOM_DNS ) } target="_blank" rel="noopener noreferrer" />
+							),
 						},
 					}
 				) }

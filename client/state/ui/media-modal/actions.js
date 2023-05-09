@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { MEDIA_MODAL_VIEW_SET } from 'calypso/state/action-types';
 
 import 'calypso/state/ui/init';
@@ -10,9 +7,8 @@ import 'calypso/state/ui/init';
  * view should be updated.
  *
  * @see ./constants.js (ModalViews)
- *
  * @param  {any} view Media view
- * @returns {object}          Action object
+ * @returns {Object}          Action object
  */
 export function setMediaModalView( view ) {
 	return {
@@ -26,8 +22,7 @@ export function setMediaModalView( view ) {
  * view should be reset to its initial value.
  *
  * @see ./constants.js (ModalViews)
- *
- * @returns {object}          Action object
+ * @returns {Object}          Action object
  */
 export function resetMediaModalView() {
 	return setMediaModalView( null );

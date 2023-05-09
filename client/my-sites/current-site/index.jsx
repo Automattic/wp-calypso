@@ -1,33 +1,22 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { localize, withRtl } from 'i18n-calypso';
-import PropTypes from 'prop-types';
 import { isEnabled } from '@automattic/calypso-config';
 import { Button, Card } from '@automattic/components';
-
-/**
- * Internal dependencies
- */
+import classnames from 'classnames';
+import { localize, withRtl } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import AllSites from 'calypso/blocks/all-sites';
-import AsyncLoad from 'calypso/components/async-load';
 import Site from 'calypso/blocks/site';
-import Gridicon from 'calypso/components/gridicon';
+import AsyncLoad from 'calypso/components/async-load';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import { savePreference } from 'calypso/state/preferences/actions';
+import getSelectedOrAllSites from 'calypso/state/selectors/get-selected-or-all-sites';
+import { hasAllSitesList } from 'calypso/state/sites/selectors';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import getSelectedOrAllSites from 'calypso/state/selectors/get-selected-or-all-sites';
-import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { hasAllSitesList } from 'calypso/state/sites/selectors';
-import { savePreference } from 'calypso/state/preferences/actions';
-import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
-import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class CurrentSite extends Component {
@@ -38,7 +27,6 @@ class CurrentSite extends Component {
 		translate: PropTypes.func.isRequired,
 		anySiteSelected: PropTypes.array,
 		forceAllSitesView: PropTypes.bool,
-		isNavUnificationEnabled: PropTypes.bool.isRequired,
 		isRtl: PropTypes.bool,
 	};
 
@@ -46,6 +34,7 @@ class CurrentSite extends Component {
 		event.preventDefault();
 		event.stopPropagation();
 		this.props.setLayoutFocus( 'sites' );
+		this.props.recordTracksEvent( 'calypso_switch_site_click' );
 		this.props.recordGoogleEvent( 'Sidebar', 'Clicked Switch Site' );
 	};
 
@@ -53,14 +42,22 @@ class CurrentSite extends Component {
 		const { selectedSite, translate, anySiteSelected } = this.props;
 
 		if ( ! anySiteSelected.length || ( ! selectedSite && ! this.props.hasAllSitesList ) ) {
+			const hasNoSites = this.props.hasAllSitesList && ! anySiteSelected.length;
 			/* eslint-disable wpcalypso/jsx-classname-namespace, jsx-a11y/anchor-is-valid */
 			return (
-				<Card className="current-site is-loading">
+				<Card
+					className={ classnames( 'current-site', {
+						'is-no-sites': hasNoSites,
+						'is-loading': ! this.props.hasAllSitesList,
+					} ) }
+				>
 					<div className="site">
 						<a className="site__content">
 							<div className="site-icon" />
 							<div className="site__info">
-								<span className="site__title">{ translate( 'Loading My Sites…' ) }</span>
+								<span className="site__title">
+									{ hasNoSites ? translate( 'No Sites' ) : translate( 'Loading My Sites…' ) }
+								</span>
 							</div>
 						</a>
 					</div>
@@ -77,16 +74,12 @@ class CurrentSite extends Component {
 					{ this.props.siteCount > 1 && (
 						<span className="current-site__switch-sites">
 							<Button borderless onClick={ this.switchSites }>
-								{ this.props.isNavUnificationEnabled ? (
+								<span
 									// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-									<span
-										className={ `gridicon dashicons-before dashicons-arrow-${ arrowDirection }-alt2` }
-									></span>
-								) : (
-									<Gridicon icon={ `chevron-${ arrowDirection }` } />
-								) }
+									className={ `gridicon dashicons-before dashicons-arrow-${ arrowDirection }-alt2` }
+								></span>
 								<span className="current-site__switch-sites-label">
-									{ translate( 'Switch Site' ) }
+									{ translate( 'Switch site' ) }
 								</span>
 							</Button>
 						</span>
@@ -132,10 +125,10 @@ export default connect(
 		anySiteSelected: getSelectedOrAllSites( state ),
 		siteCount: getCurrentUserSiteCount( state ),
 		hasAllSitesList: hasAllSitesList( state ),
-		isNavUnificationEnabled: isNavUnificationEnabled( state ),
 	} ),
 	{
 		recordGoogleEvent,
+		recordTracksEvent,
 		setLayoutFocus,
 		savePreference,
 	}

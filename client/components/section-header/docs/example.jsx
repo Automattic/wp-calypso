@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-
-import React, { PureComponent } from 'react';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
-import SectionHeader from 'calypso/components/section-header';
 import { translate } from 'i18n-calypso';
+import { PureComponent } from 'react';
+import SectionHeader from 'calypso/components/section-header';
 
 class SectionHeaderExample extends PureComponent {
 	static displayName = 'SectionHeader';

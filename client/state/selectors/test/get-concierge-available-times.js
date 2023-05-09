@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getConciergeAvailableTimes from 'calypso/state/selectors/get-concierge-available-times';
 
 describe( 'getConciergeAvailableTimes()', () => {

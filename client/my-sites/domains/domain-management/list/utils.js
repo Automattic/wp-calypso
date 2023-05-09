@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { type } from 'calypso/lib/domains/constants';
 import {
 	domainManagementEdit,
@@ -20,3 +17,44 @@ export const getDomainManagementPath = ( domainName, domainType, siteSlug, curre
 			return domainManagementEdit( siteSlug, domainName, currentRoute );
 	}
 };
+
+export const ListAllActions = {
+	editContactInfo: 'edit-contact-info',
+	editContactEmail: 'edit-contact-email',
+};
+
+export const filterOutWpcomDomains = ( domains ) => {
+	return domains.filter( ( domain ) => domain.type !== type.WPCOM );
+};
+
+export const getSimpleSortFunctionBy = ( column ) => ( first, second, sortOrder ) => {
+	if ( ! first.hasOwnProperty( column ) || ! second.hasOwnProperty( column ) ) {
+		return -1;
+	}
+	if ( first?.[ column ] === null && second?.[ column ] === null ) {
+		return 0;
+	}
+	if ( first?.[ column ] === null ) {
+		return -1 * sortOrder;
+	}
+	if ( second?.[ column ] === null ) {
+		return 1 * sortOrder;
+	}
+	if ( first?.[ column ] > second?.[ column ] ) {
+		return 1 * sortOrder;
+	}
+	if ( first?.[ column ] < second?.[ column ] ) {
+		return -1 * sortOrder;
+	}
+	return 0;
+};
+
+export const getReverseSimpleSortFunctionBy = ( column ) => ( first, second, sortOrder ) =>
+	getSimpleSortFunctionBy( column )( first, second, sortOrder ) * -1;
+
+export const countDomainsInOrangeStatus = ( domainStatutes ) =>
+	domainStatutes.filter( ( domainStatus ) =>
+		[ 'status-neutral-dot', 'status-alert', 'status-warning', 'status-error' ].includes(
+			domainStatus.statusClass
+		)
+	).length;

@@ -1,39 +1,22 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import { Button, RootChild, Gridicon } from '@automattic/components';
+import { isWithinBreakpoint } from '@automattic/viewport';
 import classNames from 'classnames';
 import debugFactory from 'debug';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal Dependencies
- */
-import config from '@automattic/calypso-config';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import getGlobalKeyboardShortcuts from 'calypso/lib/keyboard-shortcuts/global';
-import { Button, RootChild } from '@automattic/components';
-import { isWithinBreakpoint } from '@automattic/viewport';
-import isHappychatOpen from 'calypso/state/happychat/selectors/is-happychat-open';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import isHappychatOpen from 'calypso/state/happychat/selectors/is-happychat-open';
 import { showInlineHelpPopover, hideInlineHelpPopover } from 'calypso/state/inline-help/actions';
 import isInlineHelpPopoverVisible from 'calypso/state/inline-help/selectors/is-inline-help-popover-visible';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 /**
  * Module variables
  */
-const globalKeyBoardShortcutsEnabled = config.isEnabled( 'keyboard-shortcuts' );
-const globalKeyboardShortcuts = globalKeyBoardShortcutsEnabled
-	? getGlobalKeyboardShortcuts()
-	: null;
 const debug = debugFactory( 'calypso:inline-help' );
 
 const InlineHelpPopover = ( props ) => (
@@ -55,18 +38,6 @@ class InlineHelp extends Component {
 	};
 
 	state = {};
-
-	componentDidMount() {
-		if ( globalKeyboardShortcuts ) {
-			globalKeyboardShortcuts.showInlineHelp = this.showInlineHelp;
-		}
-	}
-
-	componentWillUnmount() {
-		if ( globalKeyboardShortcuts ) {
-			globalKeyboardShortcuts.showInlineHelp = null;
-		}
-	}
 
 	componentDidUpdate( prevProps ) {
 		if ( ! prevProps.isHappychatOpen && this.props.isHappychatOpen ) {

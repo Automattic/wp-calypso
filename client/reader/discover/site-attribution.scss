@@ -1,7 +1,7 @@
 .is-reader-page .discover-attribution {
 	align-items: flex-start;
 	display: flex;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	font-size: $font-body-small;
 	font-family: $sans;
 	margin-bottom: 8px;
@@ -19,23 +19,23 @@
 		max-height: 13px * 1.6;
 		overflow: hidden;
 		position: relative;
-		max-width: calc( 100% - 95px );
+		max-width: calc(100% - 95px);
 	}
 
 	.gravatar {
-		background: var( --color-neutral-0 );
+		background: var(--color-neutral-0);
 		position: relative;
 		margin: 1px 6px 1px 0;
 	}
 
 	.discover-attribution__author,
 	.discover-attribution__blog {
-		color: var( --color-primary );
+		color: var(--color-primary);
 		text-decoration: none;
 		text-transform: none;
 
 		&:hover {
-			color: var( --color-primary-light );
+			color: var(--color-primary-light);
 		}
 	}
 
@@ -45,21 +45,21 @@
 
 	.site-icon {
 		margin-right: 6px;
-		background: var( --color-neutral-10 );
+		background: var(--color-neutral-10);
 
 		.gridicon {
-			color: var( --color-text-inverted );
+			color: var(--color-text-inverted);
 		}
 	}
 
-	.site-icon:not( .is-blank ) {
+	.site-icon:not(.is-blank) {
 		background: inherit;
 	}
 
 	.follow-button {
 		background: transparent;
 		border: 0;
-		color: var( --color-neutral-20 );
+		color: var(--color-neutral-20);
 		float: none;
 		font-size: $font-body-small;
 		padding: 0;
@@ -67,7 +67,7 @@
 		top: -1px;
 
 		&.is-following {
-			color: var( --color-success );
+			color: var(--color-success);
 		}
 
 		&:focus {
@@ -75,7 +75,7 @@
 		}
 
 		.follow-button__label {
-			@include breakpoint-deprecated( '<660px' ) {
+			@include breakpoint-deprecated( "<660px" ) {
 				display: inline-block;
 			}
 		}

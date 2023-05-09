@@ -1,26 +1,25 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent } from 'react';
+import { PRODUCT_JETPACK_BACKUP_T1_YEARLY } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
+import { FunctionComponent, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import DocumentHead from 'calypso/components/data/document-head';
-import JetpackDisconnected from 'calypso/components/jetpack/jetpack-disconnected';
-import Main from 'calypso/components/main';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import Upsell from 'calypso/components/jetpack/upsell';
-import { UpsellComponentProps } from 'calypso/components/jetpack/upsell-switch';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-
-/**
- * Style dependencies
- */
 import VaultPressLogo from 'calypso/assets/images/jetpack/vaultpress-logo.svg';
+import DocumentHead from 'calypso/components/data/document-head';
+import QueryIntroOffers from 'calypso/components/data/query-intro-offers';
+import QueryJetpackSaleCoupon from 'calypso/components/data/query-jetpack-sale-coupon';
+import QueryProductsList from 'calypso/components/data/query-products-list';
+import QuerySiteProducts from 'calypso/components/data/query-site-products';
+import JetpackDisconnected from 'calypso/components/jetpack/jetpack-disconnected';
+import Upsell from 'calypso/components/jetpack/upsell';
+import UpsellProductCard from 'calypso/components/jetpack/upsell-product-card';
+import { UpsellComponentProps } from 'calypso/components/jetpack/upsell-switch';
+import Main from 'calypso/components/main';
+import SidebarNavigation from 'calypso/components/sidebar-navigation';
+import { getPurchaseURLCallback } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+
 import './style.scss';
 
 const BackupsUpsellIcon: FunctionComponent = () => (
@@ -44,7 +43,7 @@ const BackupsMultisiteBody: FunctionComponent = () => {
 		<Upsell
 			headerText={ translate( 'WordPress multi-sites are not supported' ) }
 			bodyText={ translate(
-				"We're sorry, Jetpack Backup is not compatible with multisite WordPress installations at this time."
+				"We're sorry, Jetpack VaultPress Backup is not compatible with multisite WordPress installations at this time."
 			) }
 			iconComponent={ <BackupsUpsellIcon /> }
 		/>
@@ -67,20 +66,34 @@ const BackupsVPActiveBody: FunctionComponent = () => {
 };
 
 const BackupsUpsellBody: FunctionComponent = () => {
-	const translate = useTranslate();
-	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+	const siteId = useSelector( getSelectedSiteId ) || -1;
+	const selectedSiteSlug = useSelector( getSelectedSiteSlug ) || '';
+	const currencyCode = useSelector( getCurrentUserCurrencyCode );
+	const createCheckoutURL = getPurchaseURLCallback( selectedSiteSlug, {
+		// For the Backup upsell in Jetpack Cloud, we want to redirect back here to the Backup page after checkout.
+		redirect_to: window.location.href,
+	} );
 	const dispatch = useDispatch();
+
+	const onClick = useCallback(
+		() => dispatch( recordTracksEvent( 'calypso_jetpack_backup_upsell_click' ) ),
+		[ dispatch ]
+	);
+
 	return (
-		<Upsell
-			headerText={ translate( 'Your site does not have backups' ) }
-			bodyText={ translate(
-				'Get peace of mind knowing your work will be saved, add backups today. Choose from real time or daily backups.'
-			) }
-			buttonLink={ `https://jetpack.com/upgrade/backup/?site=${ selectedSiteSlug }` }
-			onClick={ () => dispatch( recordTracksEvent( 'calypso_jetpack_backup_upsell_click' ) ) }
-			iconComponent={ <BackupsUpsellIcon /> }
-			openButtonLinkOnNewTab={ false }
-		/>
+		<>
+			<QueryJetpackSaleCoupon />
+			<QueryProductsList type="jetpack" />
+			{ siteId && <QueryIntroOffers siteId={ siteId } /> }
+			{ siteId && <QuerySiteProducts siteId={ siteId } /> }
+			<UpsellProductCard
+				productSlug={ PRODUCT_JETPACK_BACKUP_T1_YEARLY }
+				siteId={ siteId }
+				currencyCode={ currencyCode }
+				getButtonURL={ createCheckoutURL }
+				onCtaButtonClick={ onClick }
+			/>
+		</>
 	);
 };
 
@@ -101,8 +114,8 @@ const BackupsUpsellPage: FunctionComponent< UpsellComponentProps > = ( { reason 
 			break;
 	}
 	return (
-		<Main className="backup-upsell">
-			<DocumentHead title="Backup" />
+		<Main className="backup-upsell" wideLayout>
+			<DocumentHead title="VaultPress Backup" />
 			<SidebarNavigation />
 			<div className="backup-upsell__content">{ body }</div>
 		</Main>

@@ -1,15 +1,8 @@
-/*
- * External dependencies
- */
-const WebSocket = require( 'ws' );
 const EventEmitter = require( 'events' ).EventEmitter;
-
-/*
- * Internal dependencies
- */
+const WebSocket = require( 'ws' );
 const keychain = require( '../../../lib/keychain' );
-const { fetchNote, markReadStatus } = require( './notes' );
 const log = require( '../../../lib/logger' )( 'desktop:notifications:api' );
+const { fetchNote, markReadStatus } = require( './notes' );
 
 /*
  * Module constants

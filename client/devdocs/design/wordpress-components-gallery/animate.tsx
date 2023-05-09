@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * WordPress dependencies
- */
 import { Animate, Notice } from '@wordpress/components';
 
 const AnimateExample = () => (

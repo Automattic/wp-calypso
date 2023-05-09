@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { LanguageGroup } from './Language';
 import { I18n } from '@wordpress/i18n';
+import { LanguageGroup } from './Language';
 
 export const createLanguageGroups = ( __: I18n[ '__' ] ): LanguageGroup[] => [
 	{

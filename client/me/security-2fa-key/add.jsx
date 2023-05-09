@@ -1,24 +1,17 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
-import { errorNotice, warningNotice, successNotice } from 'calypso/state/notices/actions';
+import debugFactory from 'debug';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import { registerSecurityKey } from 'calypso/lib/webauthn';
+import { errorNotice, warningNotice, successNotice } from 'calypso/state/notices/actions';
 import Security2faKeyAddName from './name';
 import WaitForKey from './wait-for-key';
 
 const debug = debugFactory( 'calypso:me:security-2fa-key' );
 
-class Security2faKeyAdd extends React.Component {
+class Security2faKeyAdd extends Component {
 	static propTypes = {
 		onRegister: PropTypes.func.isRequired,
 		onCancel: PropTypes.func.isRequired,

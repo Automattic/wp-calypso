@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getLastNonEditorRoute from 'calypso/state/selectors/get-last-non-editor-route';
 
 describe( 'getLastNonEditorRoute()', () => {

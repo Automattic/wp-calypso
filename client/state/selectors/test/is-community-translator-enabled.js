@@ -2,11 +2,8 @@
  * @jest-environment jsdom
  */
 
-/**
- * Internal dependencies
- */
-import isCommunityTranslatorEnabled from '../is-community-translator-enabled';
 import canDisplayCommunityTranslator from 'calypso/state/selectors/can-display-community-translator';
+import isCommunityTranslatorEnabled from '../is-community-translator-enabled';
 
 jest.mock( 'calypso/state/selectors/can-display-community-translator', () => jest.fn() );
 

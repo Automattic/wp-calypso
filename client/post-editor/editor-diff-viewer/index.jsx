@@ -1,27 +1,15 @@
-/**
- * External dependencies
- */
+import { Gridicon } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
-import { debounce, filter, get, has, last, map, throttle } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import { getPostRevision } from 'calypso/state/posts/selectors/get-post-revision';
-import { getPostRevisionsDiffView } from 'calypso/state/posts/selectors/get-post-revisions-diff-view';
+import { debounce, get, last, map, throttle } from 'lodash';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import TextDiff from 'calypso/components/text-diff';
 import scrollTo from 'calypso/lib/scroll-to';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-
-/**
- * Style dependencies
- */
+import { getPostRevision } from 'calypso/state/posts/selectors/get-post-revision';
 import './style.scss';
 
 const getCenterOffset = ( node ) =>
@@ -70,15 +58,6 @@ class EditorDiffViewer extends PureComponent {
 
 	componentDidUpdate() {
 		this.tryScrollingToFirstChangeOrTop();
-	}
-
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.selectedRevisionId !== this.props.selectedRevisionId ) {
-			this.setState( { changeOffsets: [] } );
-		}
-		if ( nextProps.diffView !== this.props.diffView ) {
-			this.recomputeChanges( null );
-		}
 	}
 
 	lastScolledRevisionId = null;
@@ -172,19 +151,18 @@ class EditorDiffViewer extends PureComponent {
 	render() {
 		const { diff, diffView } = this.props;
 		const classes = classNames( 'editor-diff-viewer', {
-			'is-loading': ! has( diff, 'post_content' ) && ! has( diff, 'post_title' ),
+			'is-loading':
+				! diff.hasOwnProperty( 'post_content' ) && ! diff.hasOwnProperty( 'post_title' ),
 			'is-split': diffView === 'split',
 		} );
 
 		const bottomBoundary = this.state.scrollTop + this.state.viewportHeight;
 
 		// saving to `this` so we can access if from `scrollAbove` and `scrollBelow`
-		this.changesAboveViewport = filter(
-			this.state.changeOffsets,
+		this.changesAboveViewport = this.state.changeOffsets.filter(
 			( offset ) => offset < this.state.scrollTop
 		);
-		this.changesBelowViewport = filter(
-			this.state.changeOffsets,
+		this.changesBelowViewport = this.state.changeOffsets.filter(
 			( offset ) => offset > bottomBoundary
 		);
 
@@ -242,7 +220,6 @@ class EditorDiffViewer extends PureComponent {
 export default connect(
 	( state, { siteId, postId, selectedRevisionId } ) => ( {
 		revision: getPostRevision( state, siteId, postId, selectedRevisionId, 'display' ),
-		diffView: getPostRevisionsDiffView( state ),
 	} ),
 	{ recordTracksEvent }
 )( localize( EditorDiffViewer ) );

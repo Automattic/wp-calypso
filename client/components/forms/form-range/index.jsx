@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import PropTypes from 'prop-types';
-import { omit } from 'lodash';
 import classnames from 'classnames';
+import { omit } from 'lodash';
+import PropTypes from 'prop-types';
+import { createRef, Component } from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};
 
-export default class extends React.Component {
+export default class extends Component {
 	static displayName = 'FormRange';
 
 	static propTypes = {
@@ -25,7 +18,7 @@ export default class extends React.Component {
 		onChange: noop,
 	};
 
-	rangeRef = React.createRef();
+	rangeRef = createRef();
 
 	componentDidMount() {
 		if ( this.shouldNormalizeChange() ) {

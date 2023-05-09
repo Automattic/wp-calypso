@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
 import getUserPurchasedPremiumThemes from 'calypso/state/selectors/get-user-purchased-premium-themes';
 
 describe( 'getUserPurchasedPremiumThemes', () => {
@@ -17,6 +10,7 @@ describe( 'getUserPurchasedPremiumThemes', () => {
 			ID: 3,
 			product_name: 'premium theme',
 			product_slug: 'premium_theme',
+			product_type: 'theme',
 			blog_id: 1337,
 			user_id: targetUserId,
 		},
@@ -24,6 +18,9 @@ describe( 'getUserPurchasedPremiumThemes', () => {
 
 	test( 'should return an empty array because there are no purchases', () => {
 		const state = {
+			currentUser: {
+				id: targetUserId,
+			},
 			purchases: {
 				data: [],
 				error: null,
@@ -34,11 +31,14 @@ describe( 'getUserPurchasedPremiumThemes', () => {
 			},
 		};
 
-		expect( getUserPurchasedPremiumThemes( state, targetUserId ) ).toEqual( [] );
+		expect( getUserPurchasedPremiumThemes( state ) ).toEqual( [] );
 	} );
 
-	test( 'should return false because the data is not ready', () => {
+	test( 'should return null because the data is not ready', () => {
 		const state = {
+			currentUser: {
+				id: targetUserId,
+			},
 			purchases: {
 				data: examplePurchases,
 				error: null,
@@ -49,11 +49,14 @@ describe( 'getUserPurchasedPremiumThemes', () => {
 			},
 		};
 
-		expect( getUserPurchasedPremiumThemes( state, targetUserId ) ).toBe( false );
+		expect( getUserPurchasedPremiumThemes( state ) ).toBeNull();
 	} );
 
 	test( 'should return an array of themes because there is a theme purchase for the specified user', () => {
 		const state = {
+			currentUser: {
+				id: targetUserId,
+			},
 			purchases: {
 				data: examplePurchases,
 				error: null,
@@ -64,12 +67,13 @@ describe( 'getUserPurchasedPremiumThemes', () => {
 			},
 		};
 
-		const purchasedPremiumThemes = getUserPurchasedPremiumThemes( state, targetUserId );
+		const purchasedPremiumThemes = getUserPurchasedPremiumThemes( state );
 		expect( purchasedPremiumThemes.length ).toBe( 1 );
 		expect( purchasedPremiumThemes[ 0 ] ).toMatchObject( {
 			id: 3,
 			productName: 'premium theme',
 			productSlug: 'premium_theme',
+			productType: 'theme',
 			userId: targetUserId,
 		} );
 	} );

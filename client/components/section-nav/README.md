@@ -9,11 +9,11 @@ React component used to display a particular section's navigation bar. Or more t
 ## Example Usage
 
 ```js
-import SectionNav from 'calypso/components/section-nav';
-import NavTabs from 'calypso/components/section-nav/tabs';
-import NavSegmented from 'calypso/components/section-nav/segmented';
-import NavItem from 'calypso/components/section-nav/item';
 import Search from 'calypso/components/search';
+import SectionNav from 'calypso/components/section-nav';
+import NavItem from 'calypso/components/section-nav/item';
+import NavSegmented from 'calypso/components/section-nav/segmented';
+import NavTabs from 'calypso/components/section-nav/tabs';
 
 export default class extends React.Component {
 	// ...
@@ -168,3 +168,7 @@ Prevents the item from being selected. Default is `false`.
 `count` - _optional_ (number)
 
 Add an extra `item-count` element into nav item.
+
+`applyUpdatedStyles` - _optional_ (boolean)
+
+Applies new and updated styles for tabs. This replaces the tabs' original design by removing the border and displaying the count as a filled-in pill.

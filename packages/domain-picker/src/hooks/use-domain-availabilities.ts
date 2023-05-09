@@ -1,15 +1,11 @@
-/**
- * External dependencies
- */
 import { useSelect } from '@wordpress/data';
-
-/**
- * Internal dependencies
- */
 import { DOMAIN_SUGGESTIONS_STORE } from '../constants';
+import type { DomainSuggestionsSelect } from '@automattic/data-stores';
 
 export function useDomainAvailabilities() {
 	return useSelect( ( select ) => {
-		return select( DOMAIN_SUGGESTIONS_STORE ).getDomainAvailabilities();
+		return (
+			select( DOMAIN_SUGGESTIONS_STORE ) as DomainSuggestionsSelect
+		 ).getDomainAvailabilities();
 	}, [] );
 }

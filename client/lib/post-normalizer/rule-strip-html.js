@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { forEach } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { stripHTML } from 'calypso/lib/formatting';
 
 export default function stripHtml( post ) {

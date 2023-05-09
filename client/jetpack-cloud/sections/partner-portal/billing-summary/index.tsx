@@ -1,28 +1,16 @@
-/**
- * External dependencies
- */
-import React, { ReactElement, useCallback, useRef, useState } from 'react';
-import { numberFormat, useTranslate } from 'i18n-calypso';
-import { useDispatch } from 'react-redux';
+import { Button, Card, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
-
-/**
- * Internal dependencies
- */
-import { Button, Card } from '@automattic/components';
-import Tooltip from 'calypso/components/tooltip';
-import Gridicon from 'calypso/components/gridicon';
+import { numberFormat, useTranslate } from 'i18n-calypso';
+import { useCallback, useRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import useBillingDashboardQuery from 'calypso/state/partner-portal/licenses/hooks/use-billing-dashboard-query';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import Tooltip from 'calypso/components/tooltip';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
-
-/**
- * Style dependencies
- */
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import useBillingDashboardQuery from 'calypso/state/partner-portal/licenses/hooks/use-billing-dashboard-query';
 import './style.scss';
 
-function CostTooltip(): ReactElement {
+function CostTooltip() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const tooltip = useRef< SVGSVGElement >( null );
@@ -72,7 +60,7 @@ function CostTooltip(): ReactElement {
 	);
 }
 
-export default function BillingSummary(): ReactElement {
+export default function BillingSummary() {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const billing = useBillingDashboardQuery();

@@ -1,28 +1,15 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import adsRemovedImage from 'calypso/assets/images/illustrations/removed-ads.svg';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 
-/**
- * Image dependencies
- */
-import adsRemovedImage from 'calypso/assets/images/illustrations/removed-ads.svg';
-
-export default localize( ( { isBusinessPlan, selectedSite, translate } ) => {
+export default localize( ( { isEligiblePlan, selectedSite, translate } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
 				icon={ <img alt="" src={ adsRemovedImage } /> }
 				title={ translate( 'Advertising removed' ) }
 				description={
-					isBusinessPlan
+					isEligiblePlan
 						? translate(
 								'All WordPress.com advertising has been removed from your site so your brand can stand out without distractions.'
 						  )
@@ -31,8 +18,8 @@ export default localize( ( { isBusinessPlan, selectedSite, translate } ) => {
 									'to remove the WordPress.com footer credit.'
 						  )
 				}
-				buttonText={ ! isBusinessPlan ? translate( 'Upgrade to Business' ) : null }
-				href={ ! isBusinessPlan ? '/checkout/' + selectedSite.slug + '/business' : null }
+				buttonText={ ! isEligiblePlan ? translate( 'Upgrade to Business' ) : null }
+				href={ ! isEligiblePlan ? '/checkout/' + selectedSite.slug + '/business' : null }
 			/>
 		</div>
 	);

@@ -1,35 +1,22 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
+import styled from '@emotion/styled';
 import joinClasses from '../lib/join-classes';
 import type { LineItem } from '../types';
-import styled from '../lib/styled';
+import type { PropsWithChildren } from 'react';
 
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
 export function OrderReviewSection( {
 	children,
 	className,
-}: {
-	children?: React.ReactNode;
+}: PropsWithChildren< {
 	className?: string;
-} ): JSX.Element {
+} > ) {
 	return (
 		<OrderReviewSectionArea className={ joinClasses( [ className, 'order-review-section' ] ) }>
 			{ children }
 		</OrderReviewSectionArea>
 	);
 }
-
-OrderReviewSection.propTypes = {
-	className: PropTypes.string,
-};
 
 const OrderReviewSectionArea = styled.div`
 	margin-bottom: 16px;
@@ -52,18 +39,6 @@ interface LineItemProps {
 	item: LineItem;
 }
 
-OrderReviewLineItemUnstyled.propTypes = {
-	className: PropTypes.string,
-	total: PropTypes.bool,
-	isSummaryVisible: PropTypes.bool,
-	item: PropTypes.shape( {
-		label: PropTypes.string,
-		amount: PropTypes.shape( {
-			displayValue: PropTypes.string,
-		} ),
-	} ),
-};
-
 const OrderReviewLineItem = styled( OrderReviewLineItemUnstyled )< LineItemProps >`
 	display: flex;
 	width: 100%;
@@ -80,13 +55,7 @@ const OrderReviewLineItem = styled( OrderReviewLineItemUnstyled )< LineItemProps
 	}
 `;
 
-export function OrderReviewTotal( {
-	total,
-	className,
-}: {
-	total: LineItem;
-	className?: string;
-} ): JSX.Element {
+export function OrderReviewTotal( { total, className }: { total: LineItem; className?: string } ) {
 	return (
 		<div className={ joinClasses( [ className, 'order-review-total' ] ) }>
 			<OrderReviewLineItem total item={ total } />
@@ -98,7 +67,7 @@ export function OrderReviewLineItems( {
 	items,
 	className,
 	isSummaryVisible,
-}: OrderReviewLineItemsProps ): JSX.Element {
+}: OrderReviewLineItemsProps ) {
 	return (
 		<div className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
 			{ items.map( ( item ) => (
@@ -113,16 +82,3 @@ interface OrderReviewLineItemsProps {
 	isSummaryVisible?: boolean;
 	items: LineItem[];
 }
-
-OrderReviewLineItems.propTypes = {
-	className: PropTypes.string,
-	isSummaryVisible: PropTypes.bool,
-	items: PropTypes.arrayOf(
-		PropTypes.shape( {
-			label: PropTypes.string,
-			amount: PropTypes.shape( {
-				displayValue: PropTypes.string,
-			} ),
-		} )
-	),
-};

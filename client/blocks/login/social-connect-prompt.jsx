@@ -1,31 +1,20 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { Button, Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { capitalize } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { Button, Card } from '@automattic/components';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import AppleIcon from 'calypso/components/social-icons/apple';
+import GoogleIcon from 'calypso/components/social-icons/google';
+import SocialLogo from 'calypso/components/social-logo';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
+import { connectSocialUser } from 'calypso/state/login/actions';
 import {
 	getSocialAccountLinkAuthInfo,
 	getSocialAccountLinkService,
 	getRedirectToSanitized,
 } from 'calypso/state/login/selectors';
-import { connectSocialUser } from 'calypso/state/login/actions';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
-import SocialLogo from 'calypso/components/social-logo';
-import GoogleIcon from 'calypso/components/social-icons/google';
-import AppleIcon from 'calypso/components/social-icons/apple';
 
-/**
- * Style dependencies
- */
 import './social-connect-prompt.scss';
 
 class SocialConnectPrompt extends Component {
@@ -65,10 +54,10 @@ class SocialConnectPrompt extends Component {
 			<Card className="login__social-connect-prompt">
 				<div className="login__social-connect-prompt-logos">
 					{ this.props.linkingSocialService === 'google' && (
-						<GoogleIcon className="login__social-connect-prompt-logo" />
+						<GoogleIcon className="login__social-connect-prompt-logo is-google" />
 					) }
 					{ this.props.linkingSocialService === 'apple' && (
-						<AppleIcon className="login__social-connect-prompt-logo" />
+						<AppleIcon className="login__social-connect-prompt-logo is-apple" />
 					) }
 					<svg
 						className="login__social-connect-prompt-dots"

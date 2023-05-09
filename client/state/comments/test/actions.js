@@ -1,6 +1,4 @@
-/**
- * Internal dependencies
- */
+import { setFeatureFlag } from 'calypso/test-helpers/config';
 import {
 	COMMENTS_DELETE,
 	COMMENTS_REQUEST,
@@ -22,7 +20,6 @@ import {
 	changeCommentStatus,
 } from '../actions';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from '../constants';
-import { setFeatureFlag } from 'calypso/test-helpers/config';
 
 const SITE_ID = 91750058;
 const POST_ID = 287;

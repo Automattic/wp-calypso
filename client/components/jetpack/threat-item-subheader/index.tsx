@@ -1,29 +1,19 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useTranslate } from 'i18n-calypso';
 import classnames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
-
-/**
- * Internal dependencies
- */
+import * as React from 'react';
 import Badge from 'calypso/components/badge';
 import { Threat } from 'calypso/components/jetpack/threat-item/types';
 import {
+	getThreatPayloadSubtitle,
 	getThreatType,
 	getThreatVulnerability,
 } from 'calypso/components/jetpack/threat-item/utils';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 interface Props {
 	threat: Threat;
-	isFixable: bool;
 }
 
 const entryActionClassNames = ( threat: Threat ) => {
@@ -37,7 +27,7 @@ const formatDate = ( date: Date ) => {
 	return moment( date ).format( 'LL' );
 };
 
-const getThreatStatusMessage = ( translate, threat: Threat ) => {
+const getThreatStatusMessage = ( translate: ReturnType< typeof useTranslate >, threat: Threat ) => {
 	const { status, fixedOn } = threat;
 
 	const date = fixedOn && formatDate( fixedOn );
@@ -67,22 +57,16 @@ const getThreatStatusMessage = ( translate, threat: Threat ) => {
 	return null;
 };
 
-const getAutoFixBadge = ( translate, threat: Threat, isFixable ) => {
-	if ( isFixable && threat.status !== 'fixed' ) {
-		return (
-			<Badge className={ classnames( 'threat-item-subheader__badge', 'is-auto-fix' ) }>
-				<small>{ translate( 'Auto fix' ) }</small>
-			</Badge>
-		);
-	}
-	return null;
-};
-
 // This renders two different kind of sub-headers. One is for current threats (displayed
 // in the Scanner section), and the other for threats in the History section.
-const ThreatItemSubheader: React.FC< Props > = ( { threat, isFixable } ) => {
+const ThreatItemSubheader: React.FC< Props > = ( { threat } ) => {
 	const translate = useTranslate();
 	if ( threat.status === 'current' ) {
+		const threatPayloadSubtitle = getThreatPayloadSubtitle( threat );
+		if ( threatPayloadSubtitle ) {
+			return <>{ threatPayloadSubtitle }</>;
+		}
+
 		switch ( getThreatType( threat ) ) {
 			case 'file':
 				return (
@@ -96,16 +80,10 @@ const ThreatItemSubheader: React.FC< Props > = ( { threat, isFixable } ) => {
 								),
 							},
 						} ) }
-						{ getAutoFixBadge( translate, threat, isFixable ) }
 					</>
 				);
 			default:
-				return (
-					<>
-						{ getThreatVulnerability( threat ) }
-						{ getAutoFixBadge( translate, threat, isFixable ) }
-					</>
-				);
+				return <>{ getThreatVulnerability( threat ) }</>;
 		}
 	} else {
 		const threatStatusMessage = getThreatStatusMessage( translate, threat );

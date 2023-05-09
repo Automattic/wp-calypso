@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import menuFixture from './fixture/menu-fixture';
-import { serialize, deserialize } from 'calypso/state/utils';
 import { ADMIN_MENU_RECEIVE, ADMIN_MENU_REQUEST } from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
 import { menus as menusReducer, requesting as requestingReducer } from '../reducer';
+import menuFixture from './fixture/menu-fixture';
 
 describe( 'reducer', () => {
 	describe( 'menus reducer', () => {

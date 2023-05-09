@@ -1,22 +1,12 @@
-/**
- * External dependencies
- */
-import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
 import { Button, Card } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { useEffect } from 'react';
+import { connect } from 'react-redux';
+import ExternalLink from 'calypso/components/external-link';
 import { acceptTos, requestLegalData } from 'calypso/state/legal/actions';
 import { shouldDisplayTosUpdateBanner } from 'calypso/state/selectors/should-display-tos-update-banner';
-import ExternalLink from 'calypso/components/external-link';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const LegalUpdateBanner = ( props ) => {
@@ -39,7 +29,7 @@ const LegalUpdateBanner = ( props ) => {
 									<ExternalLink
 										icon
 										target="_blank"
-										href={ localizeUrl( 'https://wordpress.com/tos' ) }
+										href={ localizeUrl( 'https://wordpress.com/tos/' ) }
 									/>
 								),
 							},

@@ -1,20 +1,12 @@
-/**
- * External dependencies
- */
-import { createInterpolateElement, useState } from '@wordpress/element';
 import { Guide } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
+import { createInterpolateElement, useState } from '@wordpress/element';
 // Disabling lint rule while trying to make an urgent fix -- feel free to update to lib/url later!
-import url from 'url'; // eslint-disable-line no-restricted-imports
 import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
-
-/**
- * Internal dependencies
- */
+import { hasQueryArg } from '@wordpress/url';
 import { ClassicBlockImage, InserterImage, InserterIconImage } from './images';
 
-const parsedEditorUrl = url.parse( globalThis.location.href, true );
 const storageKey = `classic_block_guide_${ globalThis._currentSiteId }_is_dismissed`;
 
 const ClassicGuide = () => {
@@ -59,7 +51,7 @@ const ClassicGuide = () => {
 												'The <a>block editor</a> is now the default editor for all your sites, but you can still use the Classic block, if you prefer.'
 											),
 											{
-												a: <a href={ 'https://wordpress.com/support/wordpress-editor/' } />,
+												a: <a href="https://wordpress.com/support/wordpress-editor/" />,
 											}
 										) }
 									</p>
@@ -98,7 +90,7 @@ const ClassicGuide = () => {
 
 const guideDismissed = globalThis.localStorage.getItem( storageKey );
 
-if ( parsedEditorUrl.query[ 'in-editor-deprecation-group' ] && ! guideDismissed ) {
+if ( hasQueryArg( globalThis.location.href, 'in-editor-deprecation-group' ) && ! guideDismissed ) {
 	registerPlugin( 'wpcom-classic-block-editor-nux', {
 		render: () => <ClassicGuide />,
 	} );

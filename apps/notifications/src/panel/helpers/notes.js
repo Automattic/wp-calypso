@@ -9,7 +9,7 @@ function getActionBlock( blocks ) {
  * Returns an object specifying which actions are enabled for a note and their values
  *
  * @param note
- * @returns {object}
+ * @returns {Object}
  */
 export function getActions( note ) {
 	return getActionBlock( note.body ).actions;
@@ -41,4 +41,14 @@ export function getReferenceId( note, type ) {
  */
 export function getEditCommentLink( note ) {
 	return getActionBlock( note.body ).edit_comment_link;
+}
+
+/**
+ * Returns the new post link for the note post.
+ *
+ * @param note
+ * @returns {string}
+ */
+export function getNewPostLink( note ) {
+	return getActionBlock( note.body ).new_post_link;
 }

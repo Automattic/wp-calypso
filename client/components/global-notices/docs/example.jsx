@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import ButtonGroup from 'calypso/components/button-group';
 import { Button } from '@automattic/components';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import ButtonGroup from 'calypso/components/button-group';
 import { createNotice } from 'calypso/state/notices/actions';
 
 class GlobalNotices extends Component {

@@ -1,41 +1,30 @@
-/**
- * External dependencies
- */
+import { Button, Gridicon } from '@automattic/components';
 import { isWithinBreakpoint, isMobile, isDesktop } from '@automattic/viewport';
-import { connect } from 'react-redux';
+import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { debounce, get } from 'lodash';
-import React from 'react';
-import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getSiteOption, isSitePreviewable } from 'calypso/state/sites/selectors';
-import { addQueryArgs } from 'calypso/lib/route';
-import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
-import getEditorUrl from 'calypso/state/selectors/get-editor-url';
-import { Button } from '@automattic/components';
+import { Component } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
-import Gridicon from 'calypso/components/gridicon';
 import Main from 'calypso/components/main';
-import { showInlineHelpPopover } from 'calypso/state/inline-help/actions';
 import WebPreview from 'calypso/components/web-preview';
+import { useRequestSiteChecklistTaskUpdate } from 'calypso/data/site-checklist';
+import { addQueryArgs } from 'calypso/lib/route';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import getEditorUrl from 'calypso/state/selectors/get-editor-url';
+import { getSiteOption, isSitePreviewable } from 'calypso/state/sites/selectors';
+import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-/**
- * Internal dependencies
- */
 import './style.scss';
 
 const debug = debugFactory( 'calypso:my-sites:preview' );
 
-class PreviewMain extends React.Component {
-	static displayName = 'Preview';
-
+class PreviewMain extends Component {
 	state = {
 		previewUrl: null,
 		editUrl: null,
@@ -49,11 +38,6 @@ class PreviewMain extends React.Component {
 			: 'tablet',
 	};
 
-	UNSAFE_componentWillMount() {
-		this.updateUrl();
-		this.updateLayout();
-	}
-
 	updateLayout = () => {
 		this.setState( {
 			showingClose: isWithinBreakpoint( '<660px' ),
@@ -63,12 +47,11 @@ class PreviewMain extends React.Component {
 	debouncedUpdateLayout = debounce( this.updateLayout, 50 );
 
 	componentDidMount() {
+		this.updateUrl();
+		this.updateLayout();
+
 		if ( typeof window !== 'undefined' ) {
 			window.addEventListener( 'resize', this.debouncedUpdateLayout );
-		}
-
-		if ( this.props.help ) {
-			this.props.showInlineHelpPopover();
 		}
 	}
 
@@ -144,7 +127,12 @@ class PreviewMain extends React.Component {
 	}
 
 	updateSiteLocation = ( pathname ) => {
-		const externalUrl = this.props.site.URL + ( pathname === '/' ? '' : pathname );
+		let externalUrl;
+		try {
+			externalUrl = new URL( this.props.site.URL ).origin + ( pathname === '/' ? '' : pathname );
+		} catch ( e ) {
+			externalUrl = this.props.site.URL + ( pathname === '/' ? '' : pathname );
+		}
 		this.setState( { externalUrl } );
 		this.props.recordTracksEvent( 'calypso_view_site_page_view', {
 			full_url: externalUrl,
@@ -176,7 +164,7 @@ class PreviewMain extends React.Component {
 					title={ translate( 'Unable to show your site here' ) }
 					line={ translate( 'To view your site, click the button below' ) }
 					action={ action }
-					illustration={ '/calypso/images/illustrations/illustration-404.svg' }
+					illustration="/calypso/images/illustrations/illustration-404.svg"
 					illustrationWidth={ 350 }
 				/>
 			);
@@ -207,23 +195,34 @@ class PreviewMain extends React.Component {
 	}
 }
 
-const mapState = ( state ) => {
-	const selectedSiteId = getSelectedSiteId( state );
-	const site = getSelectedSite( state );
-	const homePagePostId = get( site, [ 'options', 'page_on_front' ] );
+const ConnectedPreviewMain = ( props ) => {
+	const dispatch = useDispatch();
+	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const stateToProps = useSelector( ( state ) => {
+		const site = getSelectedSite( state );
+		const homePagePostId = get( site, [ 'options', 'page_on_front' ] );
 
-	return {
-		isPreviewable: isSitePreviewable( state, selectedSiteId ),
-		selectedSiteNonce: getSiteOption( state, selectedSiteId, 'frame_nonce' ) || '',
-		site: site,
-		siteId: selectedSiteId,
-		canEditPages: canCurrentUser( state, selectedSiteId, 'edit_pages' ),
-		editorURL: getEditorUrl( state, selectedSiteId, homePagePostId, 'page' ),
-	};
+		return {
+			isPreviewable: isSitePreviewable( state, selectedSiteId ),
+			selectedSiteNonce: getSiteOption( state, selectedSiteId, 'frame_nonce' ) || '',
+			site: site,
+			siteId: selectedSiteId,
+			canEditPages: canCurrentUser( state, selectedSiteId, 'edit_pages' ),
+			editorURL: getEditorUrl( state, selectedSiteId, homePagePostId, 'page' ),
+		};
+	} );
+
+	const dispatchToProps = bindActionCreators(
+		{
+			recordTracksEvent,
+			setLayoutFocus,
+		},
+		dispatch
+	);
+
+	useRequestSiteChecklistTaskUpdate( selectedSiteId, CHECKLIST_KNOWN_TASKS.BLOG_PREVIEWED );
+
+	return <PreviewMain { ...props } { ...stateToProps } { ...dispatchToProps } />;
 };
 
-export default connect( mapState, {
-	recordTracksEvent,
-	setLayoutFocus,
-	showInlineHelpPopover,
-} )( localize( PreviewMain ) );
+export default localize( ConnectedPreviewMain );

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
 import {
 	USER_SUGGESTIONS_RECEIVE,
@@ -16,8 +13,8 @@ import 'calypso/state/user-suggestions/init';
  * have been received.
  *
  * @param  {number} siteId  	Site ID
- * @param  {object} suggestions User suggestions
- * @returns {object}         	Action object
+ * @param  {Object} suggestions User suggestions
+ * @returns {Object}         	Action object
  */
 export function receiveUserSuggestions( siteId, suggestions ) {
 	return {

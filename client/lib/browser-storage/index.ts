@@ -1,12 +1,7 @@
-/**
- * External dependencies
- */
-import { kebabCase } from 'lodash';
+import config from '@automattic/calypso-config';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
+import { kebabCase } from 'lodash';
+import { bumpStat } from 'calypso/lib/analytics/mc';
 import { once } from 'calypso/lib/memoize-last';
 import {
 	getStoredItem as bypassGet,
@@ -16,8 +11,6 @@ import {
 	activate as activateBypass,
 } from './bypass';
 import { StoredItems } from './types';
-import { bumpStat } from 'calypso/lib/analytics/mc';
-import config from '@automattic/calypso-config';
 
 const debug = debugFactory( 'calypso:browser-storage' );
 

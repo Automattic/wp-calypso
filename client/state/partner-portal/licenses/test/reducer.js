@@ -1,15 +1,13 @@
 /**
  * @jest-environment jsdom
  */
-/**
- * Internal dependencies
- */
-import * as reducers from 'calypso/state/partner-portal/licenses/reducer';
+
 import {
 	JETPACK_PARTNER_PORTAL_LICENSES_REQUEST,
 	JETPACK_PARTNER_PORTAL_LICENSES_RECEIVE,
 	JETPACK_PARTNER_PORTAL_LICENSE_COUNTS_RECEIVE,
 } from 'calypso/state/action-types';
+import * as reducers from 'calypso/state/partner-portal/licenses/reducer';
 
 describe( 'reducer', () => {
 	describe( '#hasFetched', () => {

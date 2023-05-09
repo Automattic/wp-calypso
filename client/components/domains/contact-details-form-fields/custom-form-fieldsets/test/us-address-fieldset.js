@@ -1,22 +1,14 @@
 /**
  * @jest-environment jsdom
  */
-
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-import { shallow } from 'enzyme';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { screen } from '@testing-library/react';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import UsAddressFieldset from '../us-address-fieldset';
 
 jest.mock( 'i18n-calypso', () => ( {
 	localize: ( x ) => x,
 	translate: ( x ) => x,
+	useTranslate: () => ( x ) => x,
 } ) );
 
 describe( 'US Address Fieldset', () => {
@@ -26,15 +18,27 @@ describe( 'US Address Fieldset', () => {
 		translate: ( string ) => string,
 	};
 
+	const propsWithoutPostalCode = {
+		...defaultProps,
+		arePostalCodesSupported: false,
+	};
+
 	test( 'should render correctly with default props', () => {
-		const wrapper = shallow( <UsAddressFieldset { ...defaultProps } /> );
-		expect( wrapper.find( '.us-address-fieldset' ) ).to.have.length( 1 );
+		const { container } = renderWithProvider( <UsAddressFieldset { ...defaultProps } /> );
+		expect( container.getElementsByClassName( 'us-address-fieldset' ) ).toHaveLength( 1 );
 	} );
 
 	test( 'should render expected input components', () => {
-		const wrapper = shallow( <UsAddressFieldset { ...defaultProps } /> );
-		expect( wrapper.find( '[name="city"]' ) ).to.have.length( 1 );
-		expect( wrapper.find( '[name="state"]' ) ).to.have.length( 1 );
-		expect( wrapper.find( '[name="postal-code"]' ) ).to.have.length( 1 );
+		renderWithProvider( <UsAddressFieldset { ...defaultProps } /> );
+		expect( screen.queryByLabelText( 'City' ) ).toBeInTheDocument();
+		expect( screen.queryByLabelText( 'State' ) ).toBeInTheDocument();
+		expect( screen.queryByLabelText( 'ZIP code' ) ).toBeInTheDocument();
+	} );
+
+	test( 'should render all expected input components but postal code', () => {
+		renderWithProvider( <UsAddressFieldset { ...propsWithoutPostalCode } /> );
+		expect( screen.queryByLabelText( 'City' ) ).toBeInTheDocument();
+		expect( screen.queryByLabelText( 'State' ) ).toBeInTheDocument();
+		expect( screen.queryByLabelText( 'Postal Code' ) ).not.toBeInTheDocument();
 	} );
 } );

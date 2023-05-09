@@ -1,70 +1,43 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:signup:wpcom-login' );
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
+import { useEffect, useRef } from 'react';
 
-export default class WpcomLoginForm extends Component {
-	form = null;
+function getFormAction( redirectTo ) {
+	const subdomainRegExp = /^https?:\/\/([a-z0-9-]+)\.wordpress\.com(?:$|\/)/;
+	const hostname = config( 'hostname' );
+	let subdomain = '';
 
-	componentDidMount() {
-		debug( 'submit form' );
-		this.form.submit();
-	}
-
-	action() {
-		const subdomainRegExp = /^https?:\/\/([a-z0-9]*).wordpress.com/;
-		let subdomain = '';
-
-		if (
-			subdomainRegExp.test( this.props.redirectTo ) &&
-			config( 'hostname' ) !== 'wpcalypso.wordpress.com' &&
-			config( 'hostname' ) !== 'horizon.wordpress.com'
-		) {
-			subdomain = this.props.redirectTo.match( subdomainRegExp )[ 1 ] + '.';
+	if (
+		subdomainRegExp.test( redirectTo ) &&
+		hostname !== 'wpcalypso.wordpress.com' &&
+		hostname !== 'horizon.wordpress.com'
+	) {
+		const subdomainMatch = redirectTo.match( subdomainRegExp );
+		if ( subdomainMatch && subdomainMatch[ 1 ] !== 'public-api' ) {
+			subdomain = subdomainMatch[ 1 ] + '.';
 		}
-
-		return `https://${ subdomain }wordpress.com/wp-login.php`;
 	}
 
-	renderExtraFields() {
-		const { extraFields } = this.props;
+	return `https://${ subdomain }wordpress.com/wp-login.php`;
+}
 
-		if ( ! extraFields ) {
-			return null;
-		}
+export default function WpcomLoginForm( { extraFields, redirectTo, authorization, pwd, log } ) {
+	const form = useRef();
 
-		return (
-			<div>
-				{ Object.keys( extraFields ).map( ( field ) => {
-					return (
-						<input key={ field } type="hidden" name={ field } value={ extraFields[ field ] } />
-					);
-				} ) }
-			</div>
-		);
-	}
+	useEffect( () => {
+		form.current.submit();
+	}, [] );
 
-	storeFormRef = ( form ) => {
-		this.form = form;
-	};
-
-	render() {
-		return (
-			<form method="post" action={ this.action() } ref={ this.storeFormRef }>
-				<input type="hidden" name="log" value={ this.props.log } />
-				<input type="hidden" name="pwd" value={ this.props.pwd } />
-				<input type="hidden" name="authorization" value={ this.props.authorization } />
-				<input type="hidden" name="redirect_to" value={ this.props.redirectTo } />
-				{ this.renderExtraFields() }
-			</form>
-		);
-	}
+	return (
+		<form method="post" action={ getFormAction( redirectTo ) } ref={ form }>
+			<input type="hidden" name="log" value={ log } />
+			<input type="hidden" name="pwd" value={ pwd } />
+			<input type="hidden" name="authorization" value={ authorization } />
+			<input type="hidden" name="redirect_to" value={ redirectTo } />
+			{ extraFields
+				? Object.entries( extraFields ).map( ( [ field, value ] ) => (
+						<input key={ field } type="hidden" name={ field } value={ value } />
+				  ) )
+				: null }
+		</form>
+	);
 }

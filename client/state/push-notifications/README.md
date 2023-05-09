@@ -20,7 +20,6 @@ A module for managing push notification state & communicating with the service w
 ### How to use
 
 ```js
-import React from 'react';
 import { connect } from 'react-redux';
 
 function mapStateToProps( state ) {
@@ -28,7 +27,6 @@ function mapStateToProps( state ) {
 		getStatus: getStatus( state ),
 		isBlocked: isBlocked( state ),
 		isEnabled: isEnabled( state ),
-		isNoticeDismissed: isNoticeDismissed( state ),
 		// etc.
 	};
 }

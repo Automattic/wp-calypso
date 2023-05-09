@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
 import { flowRight as compose, get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { getAutomatedTransfer } from 'calypso/state/automated-transfer/selectors/get-automated-transfer';
+import type { AppState } from 'calypso/types';
 
 import 'calypso/state/automated-transfer/init';
 
@@ -19,10 +13,17 @@ export { isAutomatedTransferActive } from 'calypso/state/automated-transfer/sele
 export { isAutomatedTransferFailed } from 'calypso/state/automated-transfer/selectors/is-automated-transfer-failed';
 export { default as isFetchingAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors/is-fetching-automated-transfer-status';
 
+export interface DomainNames {
+	current: string;
+	new: string;
+}
+
 export interface EligibilityWarning {
 	description: string;
 	name: string;
+	id: string;
 	supportUrl?: string;
+	domainNames?: DomainNames;
 }
 
 export interface EligibilityData {
@@ -37,7 +38,7 @@ export interface EligibilityData {
  * @param state automated transfer state sub-tree for a site
  * @returns eligibility information for site
  */
-export const getEligibilityData = ( state ): EligibilityData =>
+export const getEligibilityData = ( state: AppState ): EligibilityData =>
 	get( state, 'eligibility', { lastUpdate: 0 } );
 
 /**
@@ -52,16 +53,16 @@ export const getEligibility = compose( getEligibilityData, getAutomatedTransfer 
 /**
  * Helper to infer eligibility status from local transfer state sub-tree
  *
- * @param {object} state global app state
+ * @param {Object} state global app state
  * @returns {boolean} eligibility status for site
  */
-export const getEligibilityStatus = ( state ) =>
+export const getEligibilityStatus = ( state: AppState ): boolean =>
 	!! get( state, 'lastUpdate', 0 ) && ! get( state, 'eligibilityHolds', [] ).length;
 
 /**
  * Returns eligibility status for transfer
  *
- * @param {object} state global app state
+ * @param {Object} state global app state
  * @param {number} siteId requested site for transfer info
  * @returns {boolean} True if current site is eligible for transfer, otherwise false
  */

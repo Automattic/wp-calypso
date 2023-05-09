@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { isBlankCanvasDesign } from '../available-designs';
 
 jest.mock( '@automattic/calypso-config', () => ( {
@@ -15,7 +12,7 @@ describe( 'Design Picker blank canvas utils', () => {
 				slug: 'mock-blank-canvas-design-slug',
 				template: 'mock-blank-canvas-design-template',
 				theme: 'mock-blank-canvas-design-theme',
-				categories: [ 'featured' ],
+				categories: [ { slug: 'featured', name: 'Featured' } ],
 				is_premium: false,
 				features: [],
 			};
@@ -26,6 +23,12 @@ describe( 'Design Picker blank canvas utils', () => {
 
 			mockDesign.slug = 'blank-canva';
 			expect( isBlankCanvasDesign( mockDesign ) ).toBeFalsy();
+		} );
+		it( 'should return false when no design is provided', () => {
+			expect( isBlankCanvasDesign() ).toBeFalsy();
+		} );
+		it( 'should return false when undefined is provided', () => {
+			expect( isBlankCanvasDesign( undefined ) ).toBeFalsy();
 		} );
 	} );
 } );

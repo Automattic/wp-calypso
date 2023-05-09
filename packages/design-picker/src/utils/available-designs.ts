@@ -1,76 +1,91 @@
-/**
- * External dependencies
- */
-import { addQueryArgs } from '@wordpress/url';
 import { isEnabled } from '@automattic/calypso-config';
-
-/**
- * Internal dependencies
- */
+import { shuffle } from '@automattic/js-utils';
+import { addQueryArgs } from '@wordpress/url';
+import { DEFAULT_VIEWPORT_WIDTH, MOBILE_VIEWPORT_WIDTH } from '../constants';
 import { availableDesignsConfig } from './available-designs-config';
-import { DESIGN_IMAGE_FOLDER } from '../constants';
-import { shuffleArray } from './shuffle';
-import type { MShotsOptions } from '../components/mshots-image';
-import type { Design } from '../types';
 import type { AvailableDesigns } from './available-designs-config';
+import type { Design, DesignUrlOptions } from '../types';
+import type { MShotsOptions } from '@automattic/onboarding';
 
-function getCanUseWebP() {
-	if ( typeof window !== 'undefined' ) {
-		const elem = document.createElement( 'canvas' );
-		if ( elem.getContext?.( '2d' ) ) {
-			return elem.toDataURL( 'image/webp' ).indexOf( 'data:image/webp' ) === 0;
-		}
-	}
-	return false;
-}
-
-export const getDesignUrl = ( design: Design, locale: string ): string => {
+/** @deprecated used for Gutenboarding (/new flow) */
+export const getDesignUrl = (
+	design: Design,
+	locale: string,
+	options: DesignUrlOptions = {}
+): string => {
+	const repo = design.stylesheet ? design.stylesheet.split( '/' )[ 0 ] : 'pub';
 	const theme = encodeURIComponent( design.theme );
 	const template = encodeURIComponent( design.template );
 
-	// e.g. https://public-api.wordpress.com/rest/v1/template/demo/rockfield/rockfield?font_headings=Playfair%20Display&font_base=Fira%20Sans&site_title=Rockfield&viewport_height=700&language=en
-	return addQueryArgs(
-		`https://public-api.wordpress.com/rest/v1/template/demo/${ theme }/${ template }`,
+	// e.g. https://public-api.wordpress.com/rest/v1.1/template/demo/pub/rockfield/rockfield?font_headings=Playfair%20Display&font_base=Fira%20Sans&site_title=Rockfield&viewport_height=700&language=en
+	let url = addQueryArgs(
+		`https://public-api.wordpress.com/rest/v1.1/template/demo/${ repo }/${ theme }/${ template }`,
 		{
 			font_headings: design.fonts?.headings,
 			font_base: design.fonts?.base,
-			site_title: design.title,
 			viewport_height: 700,
 			language: locale,
 			use_screenshot_overrides: true,
+			...options,
 		}
 	);
+
+	if ( design.title ) {
+		// The design url is sometimes used in a `background-image: url()` CSS rule and unescaped
+		// parentheses in the URL break it. `addQueryArgs` and `encodeURIComponent` don't escape
+		// parentheses so we've got to do it ourselves.
+		url +=
+			'&site_title=' +
+			encodeURIComponent( design.title ).replace( /\(/g, '%28' ).replace( /\)/g, '%29' );
+	}
+
+	return url;
+};
+
+type MShotInputOptions = {
+	scrollable?: boolean;
+	highRes?: boolean;
+	isMobile?: boolean;
 };
 
 // Used for both prefetching and loading design screenshots
-export const mShotOptions = (): MShotsOptions => {
+export const getMShotOptions = ( {
+	scrollable,
+	highRes,
+	isMobile,
+}: MShotInputOptions = {} ): MShotsOptions => {
 	// Take care changing these values, as the design-picker CSS animations are written for these values (see the *__landscape and *__portrait classes)
-	if ( isEnabled( 'gutenboarding/long-previews' ) ) {
-		return { vpw: 1600, vph: 1600, w: 600, screen_height: 3600 };
-	}
-	if ( isEnabled( 'gutenboarding/landscape-preview' ) ) {
-		return { vpw: 1600, vph: 1600, w: 600, h: 600 };
-	}
-	return { vpw: 1600, vph: 3000, w: 600, h: 1124 };
+	return {
+		vpw: isMobile ? MOBILE_VIEWPORT_WIDTH : DEFAULT_VIEWPORT_WIDTH,
+		// 901 renders well with all the current designs, more details in the links below
+		// https://github.com/Automattic/wp-calypso/issues/71439#issuecomment-1367335609
+		// https://github.com/Automattic/wp-calypso/issues/71439#issuecomment-1369694397
+		vph: scrollable ? 1600 : 901,
+		// When `w` was 1200 it created a visual glitch on one thumbnail. #57261
+		w: highRes ? 1199 : 600,
+		screen_height: 3600,
+	};
 };
 
-const canUseWebP = getCanUseWebP();
-
-// Bump the version query param here to cache bust the images after running bin/generate-gutenboarding-design-thumbnails.js
-export const getDesignImageUrl = ( design: Design ): string => {
-	return `/calypso/${ DESIGN_IMAGE_FOLDER }/${ design.slug }_${ design.template }_${
-		design.theme
-	}.${ canUseWebP ? 'webp' : 'jpg' }?v=3`;
-};
+type DesignFilter = ( design: Design ) => boolean;
 
 interface AvailableDesignsOptions {
 	includeAlphaDesigns?: boolean;
-	useFseDesigns?: boolean;
+	featuredDesignsFilter?: DesignFilter;
 	randomize?: boolean;
 }
+
+export const excludeFseDesigns: DesignFilter = ( design ) => ! design.is_fse;
+export const includeFseDesigns: DesignFilter = ( design ) => !! design.is_fse;
+
+/**
+ * To prevent the accumulation of tech debt, make duplicate entries for all Universal
+ * themes, one with `is_fse: true`, the other not. This tech debt can be eliminated
+ * by using the REST API for themes rather than a hardcoded list.
+ */
 export function getAvailableDesigns( {
 	includeAlphaDesigns = isEnabled( 'gutenboarding/alpha-templates' ),
-	useFseDesigns = isEnabled( 'gutenboarding/site-editor' ),
+	featuredDesignsFilter = excludeFseDesigns,
 	randomize = false,
 }: AvailableDesignsOptions = {} ): AvailableDesigns {
 	let designs = { ...availableDesignsConfig };
@@ -85,27 +100,28 @@ export function getAvailableDesigns( {
 		};
 	}
 
-	// If we are in the FSE flow, only show FSE designs. In normal flows, remove
-	// the FSE designs.
+	// If we are opting into FSE, show only FSE designs.
 	designs = {
 		...designs,
-		featured: designs.featured.filter( ( design ) =>
-			useFseDesigns ? design.is_fse : ! design.is_fse
-		),
+		featured: designs.featured.filter( featuredDesignsFilter ),
 	};
 
 	if ( randomize ) {
-		designs.featured = shuffleArray( designs.featured );
+		designs.featured = shuffle( designs.featured );
 	}
 
-	// Force blank canvas design to always be first in the list
+	// Force designs using a "featured" term in the theme_picks taxonomy to always be first in the list.
+	// For example: Blank Canvas.
 	designs.featured = designs.featured.sort(
-		( a, b ) => Number( isBlankCanvasDesign( b ) ) - Number( isBlankCanvasDesign( a ) )
+		( a, b ) => Number( !! b.is_featured_picks ) - Number( !! a.is_featured_picks )
 	);
 
 	return designs;
 }
 
-export function isBlankCanvasDesign( design: Design ): boolean {
-	return /blank-canvas/i.test( design.slug );
+export function isBlankCanvasDesign( design?: Design ): boolean {
+	if ( ! design ) {
+		return false;
+	}
+	return /blank-canvas/i.test( design.slug ) && ! design.is_virtual;
 }

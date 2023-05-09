@@ -1,12 +1,9 @@
-/**
- * External dependencies
- */
-import { isEmpty, mapValues, omit, pickBy, without, merge, isEqual } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
+import { isEmpty, mapValues, omit, pickBy, without, merge, isEqual } from 'lodash';
+import { ValidationErrors as MediaValidationErrors } from 'calypso/lib/media/constants';
+import isTransientMediaId from 'calypso/lib/media/utils/is-transient-media-id';
+import MediaQueryManager from 'calypso/lib/query-manager/media';
+import withQueryManager from 'calypso/lib/query-manager/with-query-manager';
 import {
 	MEDIA_DELETE,
 	MEDIA_ERRORS_CLEAR,
@@ -26,12 +23,8 @@ import {
 	MEDIA_CLEAR_SITE,
 	MEDIA_ITEM_EDIT,
 } from 'calypso/state/action-types';
-import { combineReducers } from 'calypso/state/utils';
-import isTransientMediaId from 'calypso/lib/media/utils/is-transient-media-id';
-import withQueryManager from 'calypso/lib/query-manager/with-query-manager';
-import MediaQueryManager from 'calypso/lib/query-manager/media';
-import { ValidationErrors as MediaValidationErrors } from 'calypso/lib/media/constants';
 import { transformSite as transformSiteTransientItems } from 'calypso/state/media/utils/transientItems';
+import { combineReducers } from 'calypso/state/utils';
 
 const isExternalMediaError = ( message ) =>
 	message.error && ( message.error === 'servicefail' || message.error === 'keyring_token_error' );
@@ -44,9 +37,9 @@ const isMediaError = ( action ) =>
  * dispatched. The state reflects a mapping of site ID, media ID pairing to
  * an array of errors that occurred for that corresponding media item.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export const errors = ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -182,9 +175,9 @@ export const queries = ( state = {}, action ) => {
  * dispatched. The state reflects a mapping of site ID pairing to an array
  * that contains IDs of media items.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}       Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}       Updated state
  */
 export const selectedItems = ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -285,9 +278,9 @@ export const selectedItems = ( state = {}, action ) => {
  * using the transient ID to reference an already saved item to get back
  * the saved item rather than the trasient item.
  *
- * @param {object} state The previous state.
- * @param {object} action The action.
- * @returns {object} The next state.
+ * @param {Object} state The previous state.
+ * @param {Object} action The action.
+ * @returns {Object} The next state.
  */
 export const transientItems = ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -396,9 +389,9 @@ export const transientItems = ( state = {}, action ) => {
  * dispatched. The state reflects a mapping of site ID, media ID pairing to a
  * boolean reflecting whether a request for the media item is in progress.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export const fetching = ( state = {}, action ) => {
 	switch ( action.type ) {

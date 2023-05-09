@@ -1,27 +1,18 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
 import Gridicon from './gridicons';
 
-export class StatusBar extends React.Component {
+export class StatusBar extends Component {
 	static defaultProps = {
 		statusTimeout: 4000,
 	};
 
 	state = {
 		isVisible: false,
-		timeoutHandle: null,
 	};
 
 	disappear = () => {
 		this.setState( {
 			isVisible: false,
-			timeoutHandle: null,
 		} );
 
 		this.props.statusReset();
@@ -33,15 +24,20 @@ export class StatusBar extends React.Component {
 	 * in here, there is no need to have an explicit
 	 * `show()` function.
 	 */
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( '' == nextProps.statusMessage ) return;
+		if ( '' === nextProps.statusMessage ) {
+			return;
+		}
 
-		if ( nextProps.statusMessage == this.props.statusMessage ) return;
+		if ( nextProps.statusMessage === this.props.statusMessage ) {
+			return;
+		}
 
 		const component = this;
 
 		/* We only want this to appear for a bit, then disappear */
-		const timeout = window.setTimeout(
+		window.setTimeout(
 			function () {
 				component.disappear();
 			},
@@ -50,7 +46,6 @@ export class StatusBar extends React.Component {
 
 		this.setState( {
 			isVisible: true,
-			timeoutHandle: timeout,
 		} );
 	}
 
@@ -58,7 +53,7 @@ export class StatusBar extends React.Component {
 		const visibility = this.state.isVisible ? { display: 'flex' } : { display: 'none' };
 
 		const classes = [ 'wpnc__status-bar' ];
-		if ( 'undefined' != typeof this.props.statusClasses && this.props.statusClasses.length > 0 ) {
+		if ( 'undefined' !== typeof this.props.statusClasses && this.props.statusClasses.length > 0 ) {
 			classes.push.apply( classes, this.props.statusClasses );
 		}
 
@@ -66,6 +61,7 @@ export class StatusBar extends React.Component {
 			<div className={ classes.join( ' ' ) } style={ visibility }>
 				<span />
 				<span
+					// eslint-disable-next-line react/no-danger
 					dangerouslySetInnerHTML={ {
 						__html: this.props.statusMessage,
 					} }

@@ -1,26 +1,11 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import DomainsLandingHeader from '../header';
-import DomainsLandingContentCard from '../content-card';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import wp from 'calypso/lib/wp';
+import DomainsLandingContentCard from '../content-card';
+import DomainsLandingHeader from '../header';
 import { getMaintenanceMessageFromError } from '../utils';
-
-const wpcom = wp.undocumented();
-
-const VerifyConfirmationCommand = {
-	acceptTransfer: 'accept-transfer',
-	denyTransfer: 'deny-transfer',
-	verifyEmail: 'verify-email',
-};
 
 class TransferAwayConfirmationPage extends Component {
 	static propTypes = {
@@ -29,23 +14,12 @@ class TransferAwayConfirmationPage extends Component {
 		token: PropTypes.string.isRequired,
 	};
 
-	state = {
-		isLoading: false,
-		isProcessingRequest: false,
-		success: false,
-		error: false,
-	};
+	state = this.getLoadingState();
 
-	constructor( props ) {
-		super( props );
-		this.state = this.getLoadingState();
-	}
-
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		const { domain, recipientId, token } = this.props;
-		const { verifyEmail } = VerifyConfirmationCommand;
 
-		wpcom.domainsVerifyOutboundTransferConfirmation( domain, recipientId, token, verifyEmail ).then(
+		this.verifyOutboundTransferConfirmation( domain, recipientId, token, 'verify-email' ).then(
 			() => {
 				this.setState( this.getConfirmationSelectState() );
 			},
@@ -55,7 +29,15 @@ class TransferAwayConfirmationPage extends Component {
 		);
 	}
 
-	getLoadingState = () => {
+	verifyOutboundTransferConfirmation( domain, recipientId, token, command ) {
+		return wp.req.get( `/domains/${ domain }/outbound-transfer-confirmation-check`, {
+			recipient_id: recipientId,
+			token,
+			command,
+		} );
+	}
+
+	getLoadingState() {
 		const { translate } = this.props;
 		return {
 			isLoading: true,
@@ -63,43 +45,38 @@ class TransferAwayConfirmationPage extends Component {
 			message: translate( 'Loading…' ),
 			actionTitle: null,
 			actionCallback: null,
+			isProcessingRequest: false,
 		};
-	};
+	}
 
 	acceptTransfer = () => {
 		const { domain, recipientId, token } = this.props;
-		const { acceptTransfer } = VerifyConfirmationCommand;
 
 		this.setState( { isProcessingRequest: true } );
 
-		wpcom
-			.domainsVerifyOutboundTransferConfirmation( domain, recipientId, token, acceptTransfer )
-			.then(
-				() => {
-					this.setSuccessState( 'accept_transfer_success' );
-				},
-				() => {
-					this.setErrorState( { error: 'accept_transfer_failed' } );
-				}
-			);
+		this.verifyOutboundTransferConfirmation( domain, recipientId, token, 'accept-transfer' ).then(
+			() => {
+				this.setSuccessState( 'accept_transfer_success' );
+			},
+			() => {
+				this.setErrorState( { error: 'accept_transfer_failed' } );
+			}
+		);
 	};
 
 	cancelTransfer = () => {
 		const { domain, recipientId, token } = this.props;
-		const { denyTransfer } = VerifyConfirmationCommand;
 
 		this.setState( { isProcessingRequest: true } );
 
-		wpcom
-			.domainsVerifyOutboundTransferConfirmation( domain, recipientId, token, denyTransfer )
-			.then(
-				() => {
-					this.setSuccessState( 'cancel_transfer_success' );
-				},
-				() => {
-					this.setErrorState( { error: 'cancel_transfer_failed' } );
-				}
-			);
+		this.verifyOutboundTransferConfirmation( domain, recipientId, token, 'deny-transfer' ).then(
+			() => {
+				this.setSuccessState( 'cancel_transfer_success' );
+			},
+			() => {
+				this.setErrorState( { error: 'cancel_transfer_failed' } );
+			}
+		);
 	};
 
 	getConfirmationSelectState = () => {

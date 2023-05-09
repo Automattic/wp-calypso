@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { map, compact, concat } from 'lodash';
 import { decodeEntities } from 'calypso/lib/formatting';
 

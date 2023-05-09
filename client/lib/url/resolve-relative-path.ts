@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { determineUrlType, URL_TYPE } from '@automattic/calypso-url';
 
 const DUMMY_URL = 'http://__domain__.invalid/';

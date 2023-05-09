@@ -1,12 +1,7 @@
-/**
- * External dependencies
- */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
-/**
- * Style dependencies
- */
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
+
 import './style.scss';
 
 export default class StripeConnectButton extends PureComponent {

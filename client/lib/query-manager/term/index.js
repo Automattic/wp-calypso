@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-import { includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import PaginatedQueryManager from '../paginated';
-import TermQueryKey from './key';
 import { DEFAULT_TERM_QUERY } from './constants';
+import TermQueryKey from './key';
 
 /**
  * TermQueryManager manages terms which can be queried and change over time
@@ -20,8 +12,8 @@ export default class TermQueryManager extends PaginatedQueryManager {
 	/**
 	 * Returns true if the term matches the given query, or false otherwise.
 	 *
-	 * @param  {object}  query Query object
-	 * @param  {object}  term  Item to consider
+	 * @param  {Object}  query Query object
+	 * @param  {Object}  term  Item to consider
 	 * @returns {boolean}       Whether term matches query
 	 */
 	static matches( query, term ) {
@@ -31,8 +23,8 @@ export default class TermQueryManager extends PaginatedQueryManager {
 
 		const search = query.search.toLowerCase();
 		return (
-			( term.name && includes( term.name.toLowerCase(), search ) ) ||
-			( term.slug && includes( term.slug.toLowerCase(), search ) )
+			( term.name && term.name.toLowerCase().includes( search ) ) ||
+			( term.slug && term.slug.toLowerCase().includes( search ) )
 		);
 	}
 
@@ -40,9 +32,9 @@ export default class TermQueryManager extends PaginatedQueryManager {
 	 * A sort comparison function that defines the sort order of terms under
 	 * consideration of the specified query.
 	 *
-	 * @param  {object} query Query object
-	 * @param  {object} termA First term
-	 * @param  {object} termB Second term
+	 * @param  {Object} query Query object
+	 * @param  {Object} termA First term
+	 * @param  {Object} termB Second term
 	 * @returns {number}       0 if equal, less than 0 if termA is first,
 	 *                        greater than 0 if termB is first.
 	 */

@@ -1,11 +1,12 @@
-/**
- * External dependencies
- */
 import {
 	getJetpackProductDisplayName,
 	getJetpackProductTagline,
 	getJetpackProductCallToAction,
 	getJetpackProductDescription,
+	getJetpackProductShortDescription,
+	getJetpackProductFeaturedDescription,
+	getJetpackProductLightboxDescription,
+	getJetpackProductDisclaimer,
 	getJetpackProductShortName,
 	getMonthlyPlanByYearly,
 	getPlan,
@@ -24,32 +25,39 @@ import {
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
 	TERM_MONTHLY,
+	getJetpackProductWhatIsIncluded,
+	getJetpackProductBenefits,
+	getJetpackProductFAQs,
+	getJetpackProductRecommendedFor,
+	TERM_TRIENNIALLY,
 } from '@automattic/calypso-products';
-
-/**
- * Internal dependencies
- */
+import {
+	getHelpLink,
+	getSupportLink,
+} from 'calypso/my-sites/plans-features-main/components/jetpack-faq';
+import buildCardFeaturesFromItem from './build-card-features-from-item';
 import {
 	EXTERNAL_PRODUCTS_LIST,
 	EXTERNAL_PRODUCTS_SLUG_MAP,
 	ITEM_TYPE_PRODUCT,
 	ITEM_TYPE_PLAN,
 } from './constants';
-import { getForCurrentCROIteration, Iterations } from './iterations';
-import { SelectorProduct } from './types';
-import buildCardFeaturesFromItem from './build-card-features-from-item';
+import { getForCurrentCROIteration } from './iterations';
 import objectIsPlan from './object-is-plan';
+import { SelectorProduct } from './types';
 
 function slugIsJetpackProductSlug( slug: string ): slug is JetpackProductSlug {
 	return slug in JETPACK_SITE_PRODUCTS_WITH_FEATURES;
 }
 
 function slugIsJetpackPlanSlug( slug: string ): slug is JetpackPlanSlug {
-	return [ ...JETPACK_LEGACY_PLANS, ...JETPACK_RESET_PLANS ].includes( slug );
+	return (
+		[ ...JETPACK_LEGACY_PLANS, ...JETPACK_RESET_PLANS ] as ReadonlyArray< string >
+	 ).includes( slug );
 }
 
 function objectIsSelectorProduct(
-	item: Record< string, unknown > | SelectorProduct
+	item: Plan | Product | SelectorProduct | Record< string, unknown >
 ): item is SelectorProduct {
 	const requiredKeys = [
 		'productSlug',
@@ -64,17 +72,53 @@ function objectIsSelectorProduct(
 
 function slugToItem( slug: string ): Plan | Product | SelectorProduct | null | undefined {
 	if ( EXTERNAL_PRODUCTS_LIST.includes( slug ) ) {
-		return getForCurrentCROIteration( ( variation: Iterations ) =>
-			EXTERNAL_PRODUCTS_SLUG_MAP[ slug ]( variation )
-		);
-	} else if ( slugIsJetpackProductSlug( slug ) ) {
-		return JETPACK_SITE_PRODUCTS_WITH_FEATURES[ slug ];
-	} else if ( slugIsJetpackPlanSlug( slug ) ) {
+		return EXTERNAL_PRODUCTS_SLUG_MAP[ slug ]();
+	}
+
+	if ( slugIsJetpackProductSlug( slug ) ) {
+		return ( JETPACK_SITE_PRODUCTS_WITH_FEATURES as Record< string, Product > )[ slug ];
+	}
+
+	if ( slugIsJetpackPlanSlug( slug ) ) {
 		return getPlan( slug ) as Plan;
 	}
+
 	return null;
 }
 
+function getDisclaimerLink() {
+	const backupStorageFaqId = 'backup-storage-limits-faq';
+
+	const urlParams = new URLSearchParams( window.location.search );
+	const calypsoEnv = urlParams.get( 'calypso_env' );
+	// Check to see if FAQ is on the current page
+	// This is so we can anchor link to it instead of opening a new window if it is on the page already
+	const backupStorageFaq = document.getElementById( backupStorageFaqId );
+
+	if ( backupStorageFaq ) {
+		return `#${ backupStorageFaqId }`;
+	}
+
+	return calypsoEnv === 'development'
+		? `http://jetpack.cloud.localhost:3000/pricing#${ backupStorageFaqId }`
+		: `https://cloud.jetpack.com/pricing#${ backupStorageFaqId }`;
+}
+
+function getFeaturedProductDescription( item: Product ) {
+	return getJetpackProductFeaturedDescription( item ) ?? '';
+}
+
+function getFeaturedPlanDescription( item: Plan ) {
+	return getForCurrentCROIteration( item.getFeaturedDescription ) ?? '';
+}
+
+function getLightboxProductDescription( item: Product ) {
+	return getJetpackProductLightboxDescription( item ) ?? '';
+}
+
+function getLightboxPlanDescription( item: Plan ) {
+	return getForCurrentCROIteration( item.getLightboxDescription ) ?? '';
+}
 /**
  * Converts data from a product, plan, or selector product to selector product.
  *
@@ -86,7 +130,9 @@ function itemToSelectorProduct(
 ): SelectorProduct | null {
 	if ( objectIsSelectorProduct( item ) ) {
 		return item;
-	} else if ( objectIsProduct( item ) ) {
+	}
+
+	if ( objectIsProduct( item ) ) {
 		let monthlyProductSlug;
 		let yearlyProductSlug;
 		if (
@@ -101,36 +147,45 @@ function itemToSelectorProduct(
 			yearlyProductSlug = PRODUCTS_LIST[ item.product_slug as JetpackProductSlug ].type;
 		}
 
+		// We do not support TERM_BIENNIALLY or TERM_TRIENIALLY for Jetpack plans
+		if ( [ TERM_BIENNIALLY, TERM_TRIENNIALLY ].includes( item.term ) ) {
+			return null;
+		}
+
 		const iconSlug = `${ yearlyProductSlug || item.product_slug }_v2_dark`;
+		const features = buildCardFeaturesFromItem( item );
 
 		return {
 			productSlug: item.product_slug,
 			// Using the same slug for any duration helps prevent unnecessary DOM updates
 			iconSlug,
-			displayName: getJetpackProductDisplayName( item ),
+			displayName: getJetpackProductDisplayName( item ) ?? '',
 			type: ITEM_TYPE_PRODUCT,
 			shortName: getJetpackProductShortName( item ) || '',
-			tagline: getJetpackProductTagline( item ),
+			tagline: getJetpackProductTagline( item ) ?? '',
 			description: getJetpackProductDescription( item ),
+			shortDescription: getJetpackProductShortDescription( item ),
+			featuredDescription: getFeaturedProductDescription( item ),
+			lightboxDescription: getLightboxProductDescription( item ),
 			buttonLabel: getJetpackProductCallToAction( item ),
+			whatIsIncluded: getJetpackProductWhatIsIncluded( item ),
+			benefits: getJetpackProductBenefits( item ),
+			faqs: getJetpackProductFAQs( item.product_slug, getHelpLink, getSupportLink ),
+			recommendedFor: getJetpackProductRecommendedFor( item ),
 			monthlyProductSlug,
 			term: item.term,
-			hidePrice: JETPACK_SEARCH_PRODUCTS.includes( item.product_slug ),
+			categories: item.categories,
+			hidePrice: ( JETPACK_SEARCH_PRODUCTS as ReadonlyArray< string > ).includes(
+				item.product_slug
+			),
 			features: {
-				items:
-					getForCurrentCROIteration( ( variation: Iterations ) =>
-						buildCardFeaturesFromItem(
-							item,
-							{
-								withoutDescription: true,
-								withoutIcon: true,
-							},
-							variation
-						)
-					) || [],
+				items: features,
 			},
+			disclaimer: getJetpackProductDisclaimer( item.product_slug, features, getDisclaimerLink() ),
 		};
-	} else if ( objectIsPlan( item ) ) {
+	}
+
+	if ( objectIsPlan( item ) ) {
 		const productSlug = item.getStoreSlug();
 		let monthlyProductSlug;
 		let yearlyProductSlug;
@@ -139,28 +194,39 @@ function itemToSelectorProduct(
 		} else if ( item.term === TERM_MONTHLY ) {
 			yearlyProductSlug = getYearlyPlanByMonthly( productSlug );
 		}
-		const isResetPlan = JETPACK_RESET_PLANS.includes( productSlug );
+		const isResetPlan = ( JETPACK_RESET_PLANS as ReadonlyArray< string > ).includes( productSlug );
 		const iconAppend = isResetPlan ? '_v2' : '';
+		const features = buildCardFeaturesFromItem( item );
 		return {
 			productSlug,
 			// Using the same slug for any duration helps prevent unnecessary DOM updates
 			iconSlug: ( yearlyProductSlug || productSlug ) + iconAppend,
-			displayName: getForCurrentCROIteration( item.getTitle ),
+			displayName: getForCurrentCROIteration( item.getTitle ) ?? '',
 			type: ITEM_TYPE_PLAN,
-			shortName: getForCurrentCROIteration( item.getTitle ),
+			shortName: getForCurrentCROIteration( item.getTitle ) ?? '',
 			tagline: getForCurrentCROIteration( item.getTagline ) || '',
 			description: getForCurrentCROIteration( item.getDescription ),
+			featuredDescription: getFeaturedPlanDescription( item ),
+			lightboxDescription: getLightboxPlanDescription( item ),
+			productsIncluded: item.getProductsIncluded?.() || [],
+			whatIsIncluded: item.getWhatIsIncluded
+				? getForCurrentCROIteration( item.getWhatIsIncluded )
+				: [],
+			benefits: item.getBenefits ? getForCurrentCROIteration( item.getBenefits ) : [],
+			faqs: getJetpackProductFAQs( productSlug, getHelpLink, getSupportLink ),
+			recommendedFor: item.getRecommendedFor
+				? getForCurrentCROIteration( item.getRecommendedFor )
+				: [],
 			monthlyProductSlug,
-			term: item.term === TERM_BIENNIALLY ? TERM_ANNUALLY : item.term,
+			term: [ TERM_BIENNIALLY, TERM_TRIENNIALLY ].includes( item.term ) ? TERM_ANNUALLY : item.term,
 			features: {
-				items:
-					getForCurrentCROIteration( ( variation: Iterations ) =>
-						buildCardFeaturesFromItem( item, undefined, variation )
-					) || [],
+				items: buildCardFeaturesFromItem( item ),
 			},
+			disclaimer: getJetpackProductDisclaimer( item.getStoreSlug(), features, getDisclaimerLink() ),
 			legacy: ! isResetPlan,
 		};
 	}
+
 	return null;
 }
 
@@ -175,5 +241,6 @@ export default function slugToSelectorProduct( slug: string ): SelectorProduct |
 	if ( ! item ) {
 		return null;
 	}
+
 	return itemToSelectorProduct( item );
 }

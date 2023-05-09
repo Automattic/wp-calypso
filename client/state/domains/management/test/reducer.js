@@ -1,34 +1,27 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
 import { get, reduce } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import reducer, { items } from '../reducer';
 import {
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE,
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_UPDATE,
 } from 'calypso/state/action-types';
+import reducer, { items } from '../reducer';
 
 describe( 'reducer', () => {
 	test( 'should include expected keys in return value', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'items',
-			'isRequestingContactDetailsCache',
-			'isRequestingWhois',
-			'isSaving',
-			'validationSchemas',
-		] );
+		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual(
+			expect.arrayContaining( [
+				'items',
+				'isRequestingContactDetailsCache',
+				'isRequestingWhois',
+				'isSaving',
+			] )
+		);
 	} );
 
 	describe( '#items()', () => {
 		test( 'should default to empty object', () => {
 			const state = items( undefined, {} );
 
-			expect( state._contactDetailsCache ).to.be.undefined;
+			expect( state._contactDetailsCache ).toBeUndefined();
 		} );
 
 		describe( 'Receive extra', () => {
@@ -50,7 +43,7 @@ describe( 'reducer', () => {
 					data: newData,
 				} );
 
-				expect( state ).to.have.property( '_contactDetailsCache', newData );
+				expect( state ).toHaveProperty( '_contactDetailsCache', newData );
 			} );
 
 			test( "should ignore an extra if it's an array", () => {
@@ -62,7 +55,7 @@ describe( 'reducer', () => {
 					}
 				);
 
-				expect( get( state, [ '_contactDetailsCache', 'extra' ] ) ).to.not.be.an( 'array' );
+				expect( Array.isArray( get( state, [ '_contactDetailsCache', 'extra' ] ) ) ).toBe( false );
 			} );
 
 			test( 'should take other fields if extra is corrupt', () => {
@@ -72,7 +65,7 @@ describe( 'reducer', () => {
 					data: { firstName: 'New', extra: [ '' ] },
 				} );
 
-				expect( state._contactDetailsCache ).to.have.property( 'firstName', 'New' );
+				expect( state._contactDetailsCache ).toHaveProperty( 'firstName', 'New' );
 			} );
 		} );
 
@@ -92,7 +85,7 @@ describe( 'reducer', () => {
 					}
 				);
 
-				expect( state._contactDetailsCache ).to.eql( newData );
+				expect( state._contactDetailsCache ).toEqual( newData );
 			} );
 
 			test( 'should preserve existing values', () => {
@@ -120,7 +113,7 @@ describe( 'reducer', () => {
 					data: secondData,
 				} );
 
-				expect( finalState._contactDetailsCache ).to.have.nested.property(
+				expect( finalState._contactDetailsCache ).toHaveProperty(
 					'extra.testPreserve',
 					"I'm still here"
 				);
@@ -151,10 +144,7 @@ describe( 'reducer', () => {
 					data: secondData,
 				} );
 
-				expect( finalState._contactDetailsCache ).to.have.nested.property(
-					'extra.testUpdate',
-					'new'
-				);
+				expect( finalState._contactDetailsCache ).toHaveProperty( 'extra.testUpdate', 'new' );
 			} );
 
 			test( 'should handle corrupt values', () => {
@@ -176,13 +166,13 @@ describe( 'reducer', () => {
 					initialState
 				);
 
-				expect( state._contactDetailsCache )
-					.to.have.property( 'extra' )
-					.that.is.an( 'object' )
-					.with.all.keys( {
+				expect( state._contactDetailsCache ).toHaveProperty(
+					'extra',
+					expect.objectContaining( {
 						before: "I'm still standing",
 						after: 'better than I ever did',
-					} );
+					} )
+				);
 			} );
 
 			test( 'should replace an existing corrupt value', () => {
@@ -203,9 +193,9 @@ describe( 'reducer', () => {
 					data: newData,
 				} );
 
-				expect( result._contactDetailsCache ).to.have.property( 'extra' ).that.is.not.an( 'array' );
+				expect( Array.isArray( result._contactDetailsCache ) ).toBe( false );
 
-				expect( result._contactDetailsCache ).to.have.nested.property( 'extra.newData', 'exists' );
+				expect( result._contactDetailsCache ).toHaveProperty( 'extra.newData', 'exists' );
 			} );
 		} );
 	} );

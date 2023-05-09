@@ -1,6 +1,6 @@
 # Calypso Polyfills
 
-This package includes several configurations for required polyfills for Calypso, targeting three different environments: node, evergreen (newer browsers) and fallback (older browsers).
+This package includes several configurations for required polyfills for Calypso, targeting two different environments: node, and browsers.
 
 ## Features
 
@@ -16,15 +16,8 @@ In Node.js, simply require the package:
 require( '@automattic/calypso-polyfills' );
 ```
 
-In a browser, a similar naked import will include the polyfills (defaulting to the `fallback` set):
+In a browser, a similar naked import will include the polyfills:
 
 ```js
 import '@automattic/calypso-polyfills';
-```
-
-If you want to explicitly include the `evergreen` or `fallback` polyfills, you can append to the import path:
-
-```js
-import '@automattic/calypso-polyfills/browser-evergreen';
-import '@automattic/calypso-polyfills/browser-fallback';
 ```

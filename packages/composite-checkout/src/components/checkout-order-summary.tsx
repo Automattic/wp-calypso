@@ -1,14 +1,17 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-
-/**
- * Internal dependencies
- */
 import { CheckoutSummaryCard, useLineItems, useLineItemsOfType, useTotal } from '../public-api';
-import styled from '../lib/styled';
+
+const ProductList = styled.ul`
+	margin: 0;
+	padding: 0;
+`;
+
+const ProductListItem = styled.li`
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+`;
 
 export default function CheckoutOrderSummaryStep() {
 	const [ items ] = useLineItems();
@@ -22,15 +25,13 @@ export default function CheckoutOrderSummaryStep() {
 	);
 }
 
-const ProductList = styled.ul`
-	margin: 0;
-	padding: 0;
+const CheckoutSummaryStepTitle = styled.span`
+	display: flex;
+	justify-content: space-between;
 `;
 
-const ProductListItem = styled.li`
-	margin: 0;
-	padding: 0;
-	list-style-type: none;
+const CheckoutSummaryStepTotal = styled.span`
+	font-weight: ${ ( props ) => props.theme.weights.bold };
 `;
 
 export function CheckoutOrderSummaryStepTitle() {
@@ -44,12 +45,23 @@ export function CheckoutOrderSummaryStepTitle() {
 	);
 }
 
-const CheckoutSummaryStepTitle = styled.span`
+const CheckoutSummaryTitle = styled.div`
+	color: ${ ( props ) => props.theme.colors.textColor };
+	font-weight: ${ ( props ) => props.theme.weights.bold };
+	padding: 24px 20px;
+`;
+
+const CheckoutSummaryAmountWrapper = styled.div`
+	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+	padding: 24px 20px;
+`;
+
+const CheckoutSummaryLineItem = styled.div`
 	display: flex;
 	justify-content: space-between;
 `;
 
-const CheckoutSummaryStepTotal = styled.span`
+const CheckoutSummaryTotal = styled( CheckoutSummaryLineItem )`
 	font-weight: ${ ( props ) => props.theme.weights.bold };
 `;
 
@@ -76,23 +88,3 @@ export function CheckoutOrderSummary() {
 		</CheckoutSummaryCard>
 	);
 }
-
-const CheckoutSummaryTitle = styled.div`
-	color: ${ ( props ) => props.theme.colors.textColor };
-	font-weight: ${ ( props ) => props.theme.weights.bold };
-	padding: 24px 20px;
-`;
-
-const CheckoutSummaryAmountWrapper = styled.div`
-	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
-	padding: 24px 20px;
-`;
-
-const CheckoutSummaryLineItem = styled.div`
-	display: flex;
-	justify-content: space-between;
-`;
-
-const CheckoutSummaryTotal = styled( CheckoutSummaryLineItem )`
-	font-weight: ${ ( props ) => props.theme.weights.bold };
-`;

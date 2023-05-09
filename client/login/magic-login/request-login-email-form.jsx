@@ -1,41 +1,32 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
-import { defer, get } from 'lodash';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import EmailedLoginLinkSuccessfully from './emailed-login-link-successfully';
-import EmailedLoginLinkSuccessfullyJetpackConnect from './emailed-login-link-successfully-jetpack-connect';
+import PropTypes from 'prop-types';
+import { createRef, Component } from 'react';
+import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
-import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
-import getMagicLoginCurrentView from 'calypso/state/selectors/get-magic-login-current-view';
-import getMagicLoginRequestedEmailSuccessfully from 'calypso/state/selectors/get-magic-login-requested-email-successfully';
-import getMagicLoginRequestEmailError from 'calypso/state/selectors/get-magic-login-request-email-error';
-import isFetchingMagicLoginEmail from 'calypso/state/selectors/is-fetching-magic-login-email';
 import LoggedOutForm from 'calypso/components/logged-out-form';
 import Notice from 'calypso/components/notice';
-import { CHECK_YOUR_EMAIL_PAGE } from 'calypso/state/login/magic-login/constants';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
+import { sendEmailLogin } from 'calypso/state/auth/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { hideMagicLoginRequestNotice } from 'calypso/state/login/magic-login/actions';
+import { CHECK_YOUR_EMAIL_PAGE } from 'calypso/state/login/magic-login/constants';
 import {
 	getRedirectToOriginal,
 	getLastCheckedUsernameOrEmail,
 } from 'calypso/state/login/selectors';
-import { hideMagicLoginRequestNotice } from 'calypso/state/login/magic-login/actions';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
-import { sendEmailLogin } from 'calypso/state/auth/actions';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
+import getMagicLoginCurrentView from 'calypso/state/selectors/get-magic-login-current-view';
+import getMagicLoginRequestEmailError from 'calypso/state/selectors/get-magic-login-request-email-error';
+import getMagicLoginRequestedEmailSuccessfully from 'calypso/state/selectors/get-magic-login-requested-email-successfully';
+import isFetchingMagicLoginEmail from 'calypso/state/selectors/is-fetching-magic-login-email';
+import EmailedLoginLinkSuccessfully from './emailed-login-link-successfully';
+import EmailedLoginLinkSuccessfullyJetpackConnect from './emailed-login-link-successfully-jetpack-connect';
 
-class RequestLoginEmailForm extends React.Component {
+class RequestLoginEmailForm extends Component {
 	static propTypes = {
 		// mapped to state
 		currentUser: PropTypes.object,
@@ -57,9 +48,11 @@ class RequestLoginEmailForm extends React.Component {
 		usernameOrEmail: this.props.userEmail || '',
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( ! this.props.requestError && nextProps.requestError ) {
-			defer( () => this.usernameOrEmail && this.usernameOrEmail.focus() );
+	usernameOrEmailRef = createRef();
+
+	componentDidUpdate( prevProps ) {
+		if ( ! prevProps.requestError && this.props.requestError ) {
+			this.usernameOrEmailRef.current?.focus();
 		}
 	}
 
@@ -71,10 +64,6 @@ class RequestLoginEmailForm extends React.Component {
 		if ( this.props.requestError ) {
 			this.props.hideMagicLoginRequestNotice();
 		}
-	};
-
-	saveUsernameOrEmailRef = ( input ) => {
-		this.usernameOrEmail = input;
 	};
 
 	onNoticeDismiss = () => {
@@ -98,7 +87,7 @@ class RequestLoginEmailForm extends React.Component {
 	};
 
 	getUsernameOrEmailFromState() {
-		return get( this, 'state.usernameOrEmail', '' );
+		return this.state.usernameOrEmail;
 	}
 
 	render() {
@@ -134,7 +123,7 @@ class RequestLoginEmailForm extends React.Component {
 
 		return (
 			<div className="magic-login__form">
-				<h1 className="magic-login__form-header">{ translate( 'Email me a login link.' ) }</h1>
+				<h1 className="magic-login__form-header">{ translate( 'Email me a login link' ) }</h1>
 				{ requestError && (
 					<Notice
 						duration={ 10000 }
@@ -171,13 +160,13 @@ class RequestLoginEmailForm extends React.Component {
 							disabled={ isFetching || emailRequested }
 							value={ usernameOrEmail }
 							name="usernameOrEmail"
-							ref={ this.saveUsernameOrEmailRef }
+							ref={ this.usernameOrEmailRef }
 							onChange={ this.onUsernameOrEmailFieldChange }
 						/>
 
 						<div className="magic-login__form-action">
 							<FormButton primary disabled={ ! submitEnabled }>
-								{ translate( 'Request Email' ) }
+								{ translate( 'Get Link' ) }
 							</FormButton>
 						</div>
 					</FormFieldset>

@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import isConnectedSecondaryNetworkSite from 'calypso/state/selectors/is-connected-secondary-network-site';
 
 describe( 'isConnectedSecondaryNetworkSite()', () => {
@@ -15,7 +7,7 @@ describe( 'isConnectedSecondaryNetworkSite()', () => {
 				items: {},
 			},
 		};
-		expect( isConnectedSecondaryNetworkSite( state, 1 ) ).be.false;
+		expect( isConnectedSecondaryNetworkSite( state, 1 ) ).toBe( false );
 	} );
 
 	test( 'should return false if site with id equal to siteId is not found', () => {
@@ -34,7 +26,7 @@ describe( 'isConnectedSecondaryNetworkSite()', () => {
 				},
 			},
 		};
-		expect( isConnectedSecondaryNetworkSite( state, 2 ) ).be.false;
+		expect( isConnectedSecondaryNetworkSite( state, 2 ) ).toBe( false );
 	} );
 
 	test( 'should return false if some is not yet loaded and with the loaded ones no conclusion can be taken', () => {
@@ -54,7 +46,7 @@ describe( 'isConnectedSecondaryNetworkSite()', () => {
 				},
 			},
 		};
-		expect( isConnectedSecondaryNetworkSite( state, 2 ) ).be.false;
+		expect( isConnectedSecondaryNetworkSite( state, 2 ) ).toBe( false );
 	} );
 
 	test( 'should return false if site with id equal to siteId is a secondary site but the main site is not part of the state', () => {
@@ -73,7 +65,7 @@ describe( 'isConnectedSecondaryNetworkSite()', () => {
 				},
 			},
 		};
-		expect( isConnectedSecondaryNetworkSite( state, 2 ) ).be.false;
+		expect( isConnectedSecondaryNetworkSite( state, 2 ) ).toBe( false );
 	} );
 
 	test( 'should return false if site with id equal to siteId is not a secondary network site', () => {
@@ -92,7 +84,7 @@ describe( 'isConnectedSecondaryNetworkSite()', () => {
 				},
 			},
 		};
-		expect( isConnectedSecondaryNetworkSite( state, 1 ) ).be.false;
+		expect( isConnectedSecondaryNetworkSite( state, 1 ) ).toBe( false );
 	} );
 
 	test( 'should return true if site with id equal to siteId is a connected secondary network site', () => {
@@ -120,6 +112,6 @@ describe( 'isConnectedSecondaryNetworkSite()', () => {
 				},
 			},
 		};
-		expect( isConnectedSecondaryNetworkSite( state, 2 ) ).be.true;
+		expect( isConnectedSecondaryNetworkSite( state, 2 ) ).toBe( true );
 	} );
 } );

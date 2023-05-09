@@ -1,0 +1,4 @@
+{
+	"extends": "@automattic/calypso-typescript-config/js-package.json",
+	"references": [ { "path": "../components" } ]
+}

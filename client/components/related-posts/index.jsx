@@ -1,19 +1,10 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import { connect } from 'react-redux';
-import { times } from 'lodash';
 import classnames from 'classnames';
-
-/**
- * Internal Dependencies
- */
-import { relatedPostsForPost } from 'calypso/state/reader/related-posts/selectors';
-import { SCOPE_SAME, SCOPE_OTHER } from 'calypso/state/reader/related-posts/utils';
+import { times } from 'lodash';
+import { connect } from 'react-redux';
 import RelatedPost from 'calypso/blocks/reader-related-card';
 import QueryReaderRelatedPosts from 'calypso/components/data/query-reader-related-posts';
+import { relatedPostsForPost } from 'calypso/state/reader/related-posts/selectors';
+import { SCOPE_SAME, SCOPE_OTHER } from 'calypso/state/reader/related-posts/utils';
 
 const noop = () => {};
 

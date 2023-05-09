@@ -1,12 +1,13 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
+import {
+	DOMAIN_PRIVACY_ENABLE_SUCCESS,
+	DOMAIN_PRIVACY_DISABLE_SUCCESS,
+	SITE_DOMAINS_RECEIVE,
+	SITE_DOMAINS_REQUEST,
+	SITE_DOMAINS_REQUEST_SUCCESS,
+	SITE_DOMAINS_REQUEST_FAILURE,
+} from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
 import {
 	domainsRequestAction,
 	domainsRequestSuccessAction,
@@ -26,38 +27,25 @@ import {
 	DOMAIN_NOT_PRIMARY as secondDomain,
 	ERROR_MESSAGE_RESPONSE as errorMessageResponse,
 } from './fixture';
-import {
-	DOMAIN_PRIVACY_ENABLE_SUCCESS,
-	DOMAIN_PRIVACY_DISABLE_SUCCESS,
-	SITE_DOMAINS_RECEIVE,
-	SITE_DOMAINS_REQUEST,
-	SITE_DOMAINS_REQUEST_SUCCESS,
-	SITE_DOMAINS_REQUEST_FAILURE,
-} from 'calypso/state/action-types';
-import { serialize, deserialize } from 'calypso/state/utils';
-
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
-	let sandbox;
+	beforeAll( () => {
+		jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
+	} );
 
-	useSandbox( ( newSandbox ) => {
-		sandbox = newSandbox;
-		sandbox.stub( console, 'warn' );
+	afterAll( () => {
+		jest.clearAllMocks();
 	} );
 
 	test( 'should export expected reducer keys', () => {
-		expect( domainsReducer( undefined, {} ) ).to.have.keys( [
-			'items',
-			'requesting',
-			'errors',
-			'updatingPrivacy',
-		] );
+		expect( Object.keys( domainsReducer( undefined, {} ) ) ).toEqual(
+			expect.arrayContaining( [ 'items', 'requesting', 'errors', 'updatingPrivacy' ] )
+		);
 	} );
 
 	describe( '#items()', () => {
 		test( 'should default to an empty object', () => {
-			expect( itemsReducer( undefined, {} ) ).to.eql( {} );
+			expect( itemsReducer( undefined, {} ) ).toEqual( {} );
 		} );
 
 		test( 'should index items state by site ID', () => {
@@ -73,7 +61,7 @@ describe( 'reducer', () => {
 
 			deepFreeze( action );
 
-			expect( itemsReducer( newState, action ) ).to.eql( expectedState );
+			expect( itemsReducer( newState, action ) ).toEqual( expectedState );
 		} );
 
 		test( 'should override domains for same site', () => {
@@ -92,7 +80,7 @@ describe( 'reducer', () => {
 			deepFreeze( newState );
 			deepFreeze( action );
 
-			expect( itemsReducer( newState, action ) ).to.eql( expectedState );
+			expect( itemsReducer( newState, action ) ).toEqual( expectedState );
 		} );
 
 		test( 'should enable privacy for given site and domain', () => {
@@ -115,7 +103,7 @@ describe( 'reducer', () => {
 			deepFreeze( state );
 			deepFreeze( action );
 
-			expect( itemsReducer( state, action ) ).to.eql( expectedState );
+			expect( itemsReducer( state, action ) ).toEqual( expectedState );
 		} );
 
 		test( 'should disable privacy for given site and domain', () => {
@@ -138,7 +126,7 @@ describe( 'reducer', () => {
 			deepFreeze( state );
 			deepFreeze( action );
 
-			expect( itemsReducer( state, action ) ).to.eql( expectedState );
+			expect( itemsReducer( state, action ) ).toEqual( expectedState );
 		} );
 
 		test( 'should accumulate domains for different sites', () => {
@@ -158,7 +146,7 @@ describe( 'reducer', () => {
 			deepFreeze( newState );
 			deepFreeze( action );
 
-			expect( itemsReducer( newState, action ) ).to.eql( expectedState );
+			expect( itemsReducer( newState, action ) ).toEqual( expectedState );
 		} );
 
 		test( 'should persist state', () => {
@@ -166,7 +154,7 @@ describe( 'reducer', () => {
 				[ firstSiteId ]: [ firstDomain ],
 				[ secondSiteId ]: [ secondDomain ],
 			} );
-			expect( serialize( itemsReducer, state ) ).to.eql( state );
+			expect( serialize( itemsReducer, state ) ).toEqual( state );
 		} );
 
 		test( 'should load persisted state', () => {
@@ -174,20 +162,20 @@ describe( 'reducer', () => {
 				[ firstSiteId ]: [ firstDomain ],
 				[ secondSiteId ]: [ secondDomain ],
 			} );
-			expect( deserialize( itemsReducer, state ) ).to.eql( state );
+			expect( deserialize( itemsReducer, state ) ).toEqual( state );
 		} );
 
 		test( 'should not load invalid persisted state', () => {
 			const state = deepFreeze( {
 				[ 77203074 ]: [ { domain: 1234 } ],
 			} );
-			expect( deserialize( itemsReducer, state ) ).to.eql( {} );
+			expect( deserialize( itemsReducer, state ) ).toEqual( {} );
 		} );
 	} );
 
 	describe( '#requesting()', () => {
 		test( 'should default to an empty object', () => {
-			expect( requestReducer( undefined, {} ) ).to.eql( {} );
+			expect( requestReducer( undefined, {} ) ).toEqual( {} );
 		} );
 
 		test( 'should index `requesting` state by site ID', () => {
@@ -202,7 +190,7 @@ describe( 'reducer', () => {
 
 			deepFreeze( action );
 
-			expect( requestReducer( newState, action ) ).to.eql( expectedState );
+			expect( requestReducer( newState, action ) ).toEqual( expectedState );
 		} );
 
 		test( 'should update `requesting` state by site ID on SUCCESS', () => {
@@ -221,7 +209,7 @@ describe( 'reducer', () => {
 			deepFreeze( newState );
 			deepFreeze( action );
 
-			expect( requestReducer( newState, action ) ).to.eql( expectedState );
+			expect( requestReducer( newState, action ) ).toEqual( expectedState );
 		} );
 
 		test( 'should update `requesting` state by site ID on FAILURE', () => {
@@ -240,13 +228,13 @@ describe( 'reducer', () => {
 			deepFreeze( newState );
 			deepFreeze( action );
 
-			expect( requestReducer( newState, action ) ).to.eql( expectedState );
+			expect( requestReducer( newState, action ) ).toEqual( expectedState );
 		} );
 	} );
 
 	describe( '#errors()', () => {
 		test( 'should default to an empty object', () => {
-			expect( errorsReducer( undefined, {} ) ).to.eql( {} );
+			expect( errorsReducer( undefined, {} ) ).toEqual( {} );
 		} );
 
 		test( 'should clean `errors` state by site ID on REQUEST', () => {
@@ -261,7 +249,7 @@ describe( 'reducer', () => {
 			deepFreeze( newState );
 			deepFreeze( action );
 
-			expect( errorsReducer( newState, action ) ).to.eql( expectedState );
+			expect( errorsReducer( newState, action ) ).toEqual( expectedState );
 		} );
 
 		test( 'should clean `errors` state by site ID on SUCCESS', () => {
@@ -276,7 +264,7 @@ describe( 'reducer', () => {
 			deepFreeze( newState );
 			deepFreeze( action );
 
-			expect( errorsReducer( newState, action ) ).to.eql( expectedState );
+			expect( errorsReducer( newState, action ) ).toEqual( expectedState );
 		} );
 
 		test( 'should index `errors` state by site ID on FAILURE', () => {
@@ -288,7 +276,7 @@ describe( 'reducer', () => {
 
 			deepFreeze( action );
 
-			expect( errorsReducer( newState, action ) ).to.eql( expectedState );
+			expect( errorsReducer( newState, action ) ).toEqual( expectedState );
 		} );
 	} );
 } );

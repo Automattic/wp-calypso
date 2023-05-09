@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 class SharingServiceDescription extends Component {
@@ -34,9 +26,12 @@ class SharingServiceDescription extends Component {
 					);
 				}
 
-				return this.props.translate( 'Share posts to your Facebook page.', {
-					comment: 'Description for Facebook Publicize when no accounts are connected',
-				} );
+				return this.props.translate(
+					'Facebook’s massive active user base makes for a great place to share your posts and connect with your followers.',
+					{
+						comment: 'Description for Facebook Publicize when no accounts are connected',
+					}
+				);
 			},
 			twitter: function () {
 				if ( this.props.numberOfConnections > 0 ) {
@@ -50,9 +45,12 @@ class SharingServiceDescription extends Component {
 					);
 				}
 
-				return this.props.translate( 'Share posts to your Twitter feed.', {
-					comment: 'Description for Twitter Publicize when no accounts are connected',
-				} );
+				return this.props.translate(
+					'Keep your followers up to date with your news, events, and other happenings by sharing posts on your Twitter feed.',
+					{
+						comment: 'Description for Twitter Publicize when no accounts are connected',
+					}
+				);
 			},
 			google_plus: function () {
 				if ( this.props.numberOfConnections > 0 ) {
@@ -90,9 +88,12 @@ class SharingServiceDescription extends Component {
 					} );
 				}
 
-				return this.props.translate( 'Share posts to your connections.', {
-					comment: 'Description for LinkedIn Publicize when no accounts are connected',
-				} );
+				return this.props.translate(
+					'Reach a professional audience and contribute valuable content by sharing your posts with the LinkedIn community.',
+					{
+						comment: 'Description for LinkedIn Publicize when no accounts are connected',
+					}
+				);
 			},
 			tumblr: function () {
 				if ( this.props.numberOfConnections > 0 ) {
@@ -106,9 +107,12 @@ class SharingServiceDescription extends Component {
 					);
 				}
 
-				return this.props.translate( 'Share posts to your Tumblr blog.', {
-					comment: 'Description for Tumblr Publicize when no accounts are connected',
-				} );
+				return this.props.translate(
+					'Sharing posts on your Tumblr blog expands your reach to a diverse younger audience in a fun and creative community.',
+					{
+						comment: 'Description for Tumblr Publicize when no accounts are connected',
+					}
+				);
 			},
 			instagram_basic_display: function () {
 				if ( this.props.numberOfConnections > 0 ) {
@@ -132,6 +136,17 @@ class SharingServiceDescription extends Component {
 					comment: 'Description for Google Photos when no accounts are connected',
 				} );
 			},
+			google_drive: function () {
+				if ( this.props.numberOfConnections > 0 ) {
+					return this.props.translate( 'Create and access files in your Google Drive', {
+						comment: 'Description for Google Drive when one or more accounts are connected',
+					} );
+				}
+
+				return this.props.translate( 'Create and access files stored in your Google Drive', {
+					comment: 'Description for Google Drive when no accounts are connected',
+				} );
+			},
 			google_my_business: function () {
 				if ( this.props.numberOfConnections > 0 ) {
 					return this.props.translate( 'Connected to your Google My Business account.', {
@@ -141,6 +156,44 @@ class SharingServiceDescription extends Component {
 
 				return this.props.translate( 'Connect to your Google My Business account.', {
 					comment: 'Description for Google My Business when no account is connected',
+				} );
+			},
+			p2_slack: function () {
+				if ( this.props.numberOfConnections > 0 ) {
+					return this.props.translate( 'Workspace connected to Slack.', {
+						comment: 'Get slack notifications on new P2 posts.',
+					} );
+				}
+
+				return this.props.translate( 'Connect this workspace to your Slack.', {
+					comment: 'Get slack notifications on new P2 posts.',
+				} );
+			},
+			p2_github: function () {
+				if ( this.props.numberOfConnections > 0 ) {
+					return this.props.translate( 'Workspace connected to GitHub.', {
+						comment: 'Embed GitHub Issues in P2 posts.',
+					} );
+				}
+
+				return this.props.translate( 'Connect this workspace to your GitHub.', {
+					comment: 'Embed GitHub Issues in P2 posts.',
+				} );
+			},
+			mastodon: function () {
+				if ( this.props.numberOfConnections > 0 ) {
+					return this.props.translate(
+						'Sharing posts to your Mastodon feed.',
+						'Sharing posts to your Mastodon feeds.',
+						{
+							count: this.props.numberOfConnections,
+							comment: 'Description for Mastodon Publicize when one or more accounts are connected',
+						}
+					);
+				}
+
+				return this.props.translate( 'Share posts to your Mastodon feed.', {
+					comment: 'Description for Mastodon Publicize when no accounts are connected',
 				} );
 			},
 		} ),
@@ -200,9 +253,8 @@ class SharingServiceDescription extends Component {
 		} else if (
 			'function' === typeof this.props.descriptions[ this.props.service.ID.replace( /-/g, '_' ) ]
 		) {
-			description = this.props.descriptions[ this.props.service.ID.replace( /-/g, '_' ) ].call(
-				this
-			);
+			description =
+				this.props.descriptions[ this.props.service.ID.replace( /-/g, '_' ) ].call( this );
 		}
 
 		/**

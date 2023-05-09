@@ -1,18 +1,13 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import classnames from 'classnames';
-import { flowRight as compose, isEmpty, get } from 'lodash';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { flowRight as compose, isEmpty, get } from 'lodash';
+import { connect } from 'react-redux';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
-import FollowButton from 'calypso/reader/follow-button';
-import { getStreamUrl } from 'calypso/reader/route';
 import ReaderSiteNotificationSettings from 'calypso/blocks/reader-site-notification-settings';
+import ReaderSubscriptionListItemPlaceholder from 'calypso/blocks/reader-subscription-list-item/placeholder';
+import ExternalLink from 'calypso/components/external-link';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import FollowButton from 'calypso/reader/follow-button';
 import {
 	getSiteName,
 	getSiteDescription,
@@ -20,15 +15,12 @@ import {
 	getFeedUrl,
 	getSiteUrl,
 } from 'calypso/reader/get-helpers';
-import ReaderSubscriptionListItemPlaceholder from 'calypso/blocks/reader-subscription-list-item/placeholder';
-import { recordTrack, recordTrackWithRailcar } from 'calypso/reader/stats';
-import ExternalLink from 'calypso/components/external-link';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
+import { getStreamUrl } from 'calypso/reader/route';
+import { recordTrack, recordTrackWithRailcar } from 'calypso/reader/stats';
+import { getFeed } from 'calypso/state/reader/feeds/selectors';
+import { getReaderFollowForFeed } from 'calypso/state/reader/follows/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function ReaderSubscriptionListItem( {
@@ -51,7 +43,7 @@ function ReaderSubscriptionListItem( {
 	const siteExcerpt = getSiteDescription( { feed, site } );
 	const authorName = getSiteAuthorName( site );
 	const siteIcon = get( site, 'icon.img' );
-	const feedIcon = get( feed, 'image' );
+	const feedIcon = feed ? feed.site_icon ?? get( feed, 'image' ) : null;
 	const streamUrl = getStreamUrl( feedId, siteId );
 	const feedUrl = url || getFeedUrl( { feed, site } );
 	const siteUrl = getSiteUrl( { feed, site } );
@@ -96,15 +88,13 @@ function ReaderSubscriptionListItem( {
 			</div>
 			<div className="reader-subscription-list-item__byline">
 				<span className="reader-subscription-list-item__site-title">
-					{
-						<a
-							href={ streamUrl }
-							className="reader-subscription-list-item__link"
-							onClick={ recordTitleClick }
-						>
-							{ siteTitle }
-						</a>
-					}
+					<a
+						href={ streamUrl }
+						className="reader-subscription-list-item__link"
+						onClick={ recordTitleClick }
+					>
+						{ siteTitle }
+					</a>
 				</span>
 				<div className="reader-subscription-list-item__site-excerpt">{ siteExcerpt }</div>
 				{ ! isMultiAuthor && ! isEmpty( authorName ) && (
@@ -126,20 +116,42 @@ function ReaderSubscriptionListItem( {
 				) }
 				{ siteUrl && (
 					<div className="reader-subscription-list-item__site-url-timestamp">
-						<ExternalLink
-							href={ siteUrl }
-							className="reader-subscription-list-item__site-url"
-							onClick={ recordSiteUrlClick }
-							icon={ true }
-							iconSize={ 14 }
-						>
-							{ formatUrlForDisplay( siteUrl ) }
-						</ExternalLink>
-						{ showLastUpdatedDate && feed && feed.last_update && (
-							<span className="reader-subscription-list-item__timestamp">
-								{ translate( 'updated %s', { args: moment( feed.last_update ).fromNow() } ) }
-							</span>
-						) }
+						<ul>
+							<li>
+								<ExternalLink
+									href={ siteUrl }
+									className="reader-subscription-list-item__site-url"
+									onClick={ recordSiteUrlClick }
+									icon={ true }
+									iconSize={ 14 }
+								>
+									{ formatUrlForDisplay( siteUrl ) }
+								</ExternalLink>
+							</li>
+							{ showLastUpdatedDate && feed && feed.last_update && ! isNaN( feed.last_update ) && (
+								<li>
+									<span className="reader-subscription-list-item__timestamp">
+										{ translate( 'updated %s', {
+											args: moment( feed.last_update ).fromNow(),
+											context: 'date feed was last updated',
+										} ) }
+									</span>
+								</li>
+							) }
+							{ feed && feed.date_subscribed && ! isNaN( feed.date_subscribed ) && (
+								<li>
+									<span
+										className="reader-subscription-list-item__date-subscribed"
+										title={ moment( feed.date_subscribed ).format( 'll' ) }
+									>
+										{ translate( 'followed %s', {
+											args: moment( feed.date_subscribed ).format( 'MMM YYYY' ),
+											context: 'date feed was followed',
+										} ) }
+									</span>
+								</li>
+							) }
+						</ul>
 					</div>
 				) }
 			</div>
@@ -159,4 +171,33 @@ function ReaderSubscriptionListItem( {
 	);
 }
 
-export default compose( localize, withLocalizedMoment )( ReaderSubscriptionListItem );
+export default compose(
+	connect( ( state, ownProps ) => {
+		const feed = getFeed( state, ownProps.feedId );
+
+		if ( feed ) {
+			const follow = getReaderFollowForFeed( state, parseInt( ownProps.feedId ) );
+
+			if ( follow ) {
+				// Add site icon to feed object so have icon for external feeds when not set
+				if ( feed.site_icon === undefined ) {
+					feed.site_icon = follow.site_icon;
+				}
+				// Add date_subscribed timestamp to feed object when not set
+				if ( feed.date_subscribed === undefined || isNaN( feed.date_subscribed ) ) {
+					feed.date_subscribed = follow.date_subscribed;
+				}
+				// Add last_update timestamp to feed object when not set
+				if ( feed.last_update === undefined || isNaN( feed.last_update ) ) {
+					feed.last_update = follow.last_updated;
+				}
+			}
+		}
+
+		return {
+			feed,
+		};
+	} ),
+	localize,
+	withLocalizedMoment
+)( ReaderSubscriptionListItem );

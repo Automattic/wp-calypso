@@ -1,9 +1,3 @@
-/**
- * External dependencies
- */
-const fs = require( 'fs' ); // eslint-disable-line import/no-nodejs-modules
-const path = require( 'path' ); // eslint-disable-line import/no-nodejs-modules
-
 const sections = [
 	{
 		name: 'root',
@@ -13,16 +7,16 @@ const sections = [
 		enableLoggedOut: true,
 	},
 	{
-		name: 'sites',
-		paths: [ '/sites' ],
-		module: 'calypso/my-sites',
-		group: 'sites',
-	},
-	{
 		name: 'customize',
 		paths: [ '/customize' ],
 		module: 'calypso/my-sites/customize',
 		group: 'sites',
+	},
+	{
+		name: 'sites-dashboard',
+		paths: [ '/sites' ],
+		module: 'calypso/sites-dashboard',
+		group: 'sites-dashboard',
 	},
 	{
 		name: 'account',
@@ -38,7 +32,7 @@ const sections = [
 	},
 	{
 		name: 'concierge',
-		paths: [ '/me/concierge' ],
+		paths: [ '/me/concierge', '/me/quickstart' ],
 		module: 'calypso/me/concierge',
 		group: 'me',
 	},
@@ -112,9 +106,12 @@ const sections = [
 	},
 	{
 		name: 'plugins',
-		paths: [ '/plugins' ],
+		paths: [ '/plugins', `/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/plugins` ],
 		module: 'calypso/my-sites/plugins',
 		group: 'sites',
+		enableLoggedOut: true,
+		isomorphic: true,
+		title: 'Plugins',
 	},
 	{
 		name: 'marketplace',
@@ -144,6 +141,12 @@ const sections = [
 		name: 'settings-writing',
 		paths: [ '/settings/writing', '/settings/taxonomies', '/settings/podcasting' ],
 		module: 'calypso/my-sites/site-settings/settings-writing',
+		group: 'sites',
+	},
+	{
+		name: 'settings-reading',
+		paths: [ '/settings/reading' ],
+		module: 'calypso/my-sites/site-settings/settings-reading',
 		group: 'sites',
 	},
 	{
@@ -248,11 +251,18 @@ const sections = [
 		group: 'sites',
 	},
 	{
+		name: 'inbox',
+		paths: [ '/inbox' ],
+		module: 'calypso/my-sites/email',
+		group: 'sites',
+	},
+	{
 		name: 'checkout',
 		paths: [ '/checkout' ],
 		module: 'calypso/my-sites/checkout',
 		group: 'sites',
 		enableLoggedOut: true,
+		trackLoadPerformance: true,
 	},
 	{
 		name: 'plans',
@@ -286,6 +296,7 @@ const sections = [
 		paths: [ '/read' ],
 		module: 'calypso/reader',
 		group: 'reader',
+		enableLoggedOut: true,
 		trackLoadPerformance: true,
 	},
 	{
@@ -299,6 +310,7 @@ const sections = [
 		],
 		module: 'calypso/reader',
 		group: 'reader',
+		enableLoggedOut: true,
 		trackLoadPerformance: true,
 	},
 	{
@@ -306,6 +318,7 @@ const sections = [
 		paths: [ '/read/feeds/[^\\/]+/posts/[^\\/]+', '/read/blogs/[^\\/]+/posts/[^\\/]+' ],
 		module: 'calypso/reader/full-post',
 		group: 'reader',
+		enableLoggedOut: true,
 		trackLoadPerformance: true,
 	},
 	{
@@ -323,9 +336,19 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/tags', '/tag' ],
+		paths: [ '/tags' ],
+		module: 'calypso/reader/tags',
+		group: 'reader',
+		trackLoadPerformance: true,
+		enableLoggedOut: true,
+		isomorphic: true,
+	},
+	{
+		name: 'reader',
+		paths: [ '/tag' ],
 		module: 'calypso/reader/tag-stream',
 		group: 'reader',
+		enableLoggedOut: true,
 		trackLoadPerformance: true,
 	},
 	{
@@ -354,6 +377,19 @@ const sections = [
 		module: 'calypso/reader/conversations',
 		group: 'reader',
 		trackLoadPerformance: true,
+	},
+	{
+		name: 'reader',
+		paths: [ '/read/notifications' ],
+		module: 'calypso/reader/notifications',
+		group: 'reader',
+		trackLoadPerformance: true,
+	},
+	{
+		name: 'reader',
+		paths: [ '/read/subscriptions' ],
+		module: 'calypso/reader/subscriptions',
+		group: 'reader',
 	},
 	{
 		name: 'help',
@@ -397,6 +433,7 @@ const sections = [
 		module: 'calypso/gutenberg/editor',
 		group: 'gutenberg',
 		trackLoadPerformance: true,
+		enableLoggedOut: true,
 	},
 	{
 		name: 'import',
@@ -455,6 +492,18 @@ const sections = [
 		enableLoggedOut: true,
 	},
 	{
+		name: 'jetpack-cloud-agency-dashboard',
+		paths: [ '/dashboard' ],
+		module: 'calypso/jetpack-cloud/sections/agency-dashboard',
+		group: 'jetpack-cloud',
+	},
+	{
+		name: 'jetpack-cloud-plugin-management',
+		paths: [ '/plugins' ],
+		module: 'calypso/jetpack-cloud/sections/plugin-management',
+		group: 'jetpack-cloud',
+	},
+	{
 		name: 'jetpack-cloud-settings',
 		paths: [ '/settings' ],
 		module: 'calypso/jetpack-cloud/sections/settings',
@@ -469,17 +518,25 @@ const sections = [
 	},
 	{
 		name: 'jetpack-cloud-pricing',
-		paths: [ '/pricing', '/plans', '/[^\\/]+/pricing' ],
+		paths: [ '/pricing', '/[^\\/]+/pricing', '/plans', '/[^\\/]+/plans' ],
 		module: 'calypso/jetpack-cloud/sections/pricing',
 		group: 'jetpack-cloud',
 		enableLoggedOut: true,
+		isomorphic: true,
 		links: [
 			{
 				rel: 'stylesheet',
-				href:
-					'https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap',
+				href: 'https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap',
 			},
 		],
+	},
+	{
+		name: 'jetpack-cloud-features-comparison',
+		paths: [ '/features/comparison', '/[^\\/]+/features/comparison' ],
+		module: 'calypso/jetpack-cloud/sections/comparison',
+		group: 'jetpack-cloud',
+		enableLoggedOut: true,
+		isomorphic: true,
 	},
 	{
 		name: 'jetpack-search',
@@ -494,22 +551,53 @@ const sections = [
 		group: 'jetpack-cloud',
 	},
 	{
+		name: 'jetpack-cloud-agency-signup',
+		paths: [ '/agency/signup' ],
+		module: 'calypso/jetpack-cloud/sections/agency-signup',
+		group: 'jetpack-cloud',
+	},
+	{
+		name: 'jetpack-cloud-golden-token',
+		paths: [ '/golden-token' ],
+		module: 'calypso/jetpack-cloud/sections/golden-token',
+		group: 'jetpack-cloud',
+	},
+	{
+		name: 'jetpack-social',
+		paths: [ '/jetpack-social' ],
+		module: 'calypso/jetpack-cloud/sections/jetpack-social',
+		group: 'jetpack-cloud',
+	},
+	{
 		name: 'woocommerce-installation',
 		paths: [ '/woocommerce-installation' ],
 		module: 'calypso/my-sites/woocommerce',
 		group: 'woocommerce-installation',
 	},
+	{
+		name: 'woocommerce',
+		paths: [ '/store' ],
+		module: 'calypso/my-sites/store',
+		group: 'sites',
+	},
+	{
+		name: 'add-ons',
+		paths: [ '/add-ons', '/add-ons/[^\\/]+' ],
+		module: 'calypso/my-sites/add-ons',
+		group: 'sites',
+	},
+	{
+		name: 'promote-post',
+		paths: [ '/advertising', '/advertising/[^\\/]+(/[^\\/])?' ],
+		module: 'calypso/my-sites/promote-post',
+		group: 'sites',
+	},
+	{
+		name: 'site-logs',
+		paths: [ '/site-logs' ],
+		module: 'calypso/my-sites/site-logs',
+		group: 'sites',
+	},
 ];
-
-for ( const extension of require( './extensions' ) ) {
-	try {
-		const pkgPath = path.join( __dirname, 'extensions', extension, 'package.json' );
-		const pkg = JSON.parse( fs.readFileSync( pkgPath ) );
-		sections.push( {
-			...pkg.section,
-			envId: pkg.env_id,
-		} );
-	} catch {}
-}
 
 module.exports = sections;

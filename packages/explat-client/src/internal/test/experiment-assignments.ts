@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import * as ExperimentAssignments from '../experiment-assignments';
 import { validExperimentAssignment } from '../test-common';
 
@@ -32,9 +29,8 @@ describe( 'isAlive', () => {
 describe( 'createFallbackExperimentAssignment', () => {
 	it( 'creates a fallback ExperimentAssignment', () => {
 		const now = Date.now();
-		const fallbackExperimentAssignment = ExperimentAssignments.createFallbackExperimentAssignment(
-			'experiment_name'
-		);
+		const fallbackExperimentAssignment =
+			ExperimentAssignments.createFallbackExperimentAssignment( 'experiment_name' );
 
 		expect( fallbackExperimentAssignment.retrievedTimestamp ).toBeGreaterThanOrEqual( now );
 		expect( ExperimentAssignments.isAlive( fallbackExperimentAssignment ) ).toBe( true );

@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { JETPACK_USER_CONNECTION_CHANGE_OWNER } from 'calypso/state/action-types';
-import { requestJetpackUserConnectionData } from 'calypso/state/jetpack/connection/actions';
-
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { requestJetpackUserConnectionData } from 'calypso/state/jetpack/connection/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 const changeConnectionOwner = ( action ) =>
 	http(

@@ -1,19 +1,8 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import InfoPopover from 'calypso/components/info-popover';
 import { preventWidows } from 'calypso/lib/formatting';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function FormattedHeader( {
@@ -21,11 +10,14 @@ function FormattedHeader( {
 	id,
 	headerText,
 	subHeaderText,
+	tooltipText,
 	className,
 	compactOnMobile,
 	align,
+	subHeaderAlign,
 	isSecondary,
 	hasScreenOptions,
+	children,
 } ) {
 	const classes = classNames( 'formatted-header', className, {
 		'is-without-subhead': ! subHeaderText,
@@ -36,14 +28,33 @@ function FormattedHeader( {
 	} );
 
 	const headerClasses = classNames( 'formatted-header__title', { 'wp-brand-font': brandFont } );
+	const subtitleClasses = classNames( 'formatted-header__subtitle', {
+		'is-center-align': 'center' === subHeaderAlign,
+	} );
+	const tooltip = tooltipText && (
+		<InfoPopover icon="help-outline" position="right" iconSize={ 18 } showOnHover={ true }>
+			{ tooltipText }
+		</InfoPopover>
+	);
 
 	return (
 		<header id={ id } className={ classes }>
-			{ ! isSecondary && <h1 className={ headerClasses }>{ preventWidows( headerText, 2 ) }</h1> }
-			{ isSecondary && <h2 className={ headerClasses }>{ preventWidows( headerText, 2 ) }</h2> }
-			{ subHeaderText && (
-				<p className="formatted-header__subtitle">{ preventWidows( subHeaderText, 2 ) }</p>
-			) }
+			<div>
+				{ ! isSecondary && (
+					<h1 className={ headerClasses }>
+						{ preventWidows( headerText, 2 ) } { tooltip }
+					</h1>
+				) }
+				{ isSecondary && (
+					<h2 className={ headerClasses }>
+						{ preventWidows( headerText, 2 ) } { tooltip }
+					</h2>
+				) }
+				{ subHeaderText && (
+					<p className={ subtitleClasses }>{ preventWidows( subHeaderText, 2 ) }</p>
+				) }
+			</div>
+			{ children }
 		</header>
 	);
 }
@@ -52,11 +63,15 @@ FormattedHeader.propTypes = {
 	id: PropTypes.string,
 	className: PropTypes.string,
 	brandFont: PropTypes.bool,
-	headerText: PropTypes.oneOfType( [ PropTypes.node, PropTypes.string ] ).isRequired,
-	subHeaderText: PropTypes.oneOfType( [ PropTypes.node, PropTypes.string ] ),
+	headerText: PropTypes.node,
+	subHeaderText: PropTypes.node,
+	tooltipText: PropTypes.node,
 	compactOnMobile: PropTypes.bool,
 	isSecondary: PropTypes.bool,
 	align: PropTypes.oneOf( [ 'center', 'left', 'right' ] ),
+	subHeaderAlign: PropTypes.oneOf( [ 'center', null ] ),
+	hasScreenOptions: PropTypes.bool,
+	children: PropTypes.node,
 };
 
 FormattedHeader.defaultProps = {
@@ -64,9 +79,11 @@ FormattedHeader.defaultProps = {
 	className: '',
 	brandFont: false,
 	subHeaderText: '',
+	tooltipText: '',
 	compactOnMobile: false,
 	isSecondary: false,
 	align: 'center',
+	subHeaderAlign: null,
 };
 
 export default FormattedHeader;

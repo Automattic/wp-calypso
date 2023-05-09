@@ -1,29 +1,20 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import PostTypeFilter from 'calypso/my-sites/post-type-filter';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import titlecase from 'to-title-case';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
-import PostTypeList from 'calypso/my-sites/post-type-list';
-import titlecase from 'to-title-case';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
+import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { mapPostStatus } from 'calypso/lib/route';
+import PostTypeFilter from 'calypso/my-sites/post-type-filter';
+import PostTypeList from 'calypso/my-sites/post-type-list';
 import { POST_STATUSES } from 'calypso/state/posts/constants';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { mapPostStatus } from 'calypso/lib/route';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
-import config from '@automattic/calypso-config';
 
-class PostsMain extends React.Component {
+class PostsMain extends Component {
 	getAnalyticsPath() {
 		const { siteId, statusSlug, author } = this.props;
 		let analyticsPath = '/posts';
@@ -56,6 +47,8 @@ class PostsMain extends React.Component {
 	render() {
 		const { author, category, search, siteId, statusSlug, tag, translate } = this.props;
 		const status = mapPostStatus( statusSlug );
+		/* Check if All Sites Mode */
+		const isAllSites = siteId ? 1 : 0;
 		const query = {
 			author,
 			category,
@@ -80,18 +73,22 @@ class PostsMain extends React.Component {
 				<ScreenOptionsTab wpAdminPath="edit.php" />
 				<PageViewTracker path={ this.getAnalyticsPath() } title={ this.getAnalyticsTitle() } />
 				<DocumentHead title={ translate( 'Posts' ) } />
-				<SidebarNavigation />
 				<FormattedHeader
 					brandFont
 					className="posts__page-heading"
 					headerText={ translate( 'Posts' ) }
-					subHeaderText={
-						siteId
-							? translate( 'Create, edit, and manage the posts on your site.' )
-							: translate( 'Create, edit, and manage the posts on your sites.' )
-					}
+					subHeaderText={ translate(
+						'Create, edit, and manage the posts on your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						'Create, edit, and manage the posts on your sites. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						{
+							count: isAllSites,
+							components: {
+								learnMoreLink: <InlineSupportLink supportContext="posts" showIcon={ false } />,
+							},
+						}
+					) }
 					align="left"
-					hasScreenOptions={ config.isEnabled( 'nav-unification/switcher' ) }
+					hasScreenOptions
 				/>
 				<PostTypeFilter query={ query } siteId={ siteId } statusSlug={ statusSlug } />
 				<PostTypeList

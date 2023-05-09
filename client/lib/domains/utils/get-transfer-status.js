@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { transferStatus } from 'calypso/lib/domains/constants';
 
 export function getTransferStatus( domainFromApi ) {

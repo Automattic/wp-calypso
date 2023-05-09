@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import { find, get, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { find, get, includes } from 'lodash';
+import { Component } from 'react';
+import * as React from 'react';
 import SectionNav from 'calypso/components/section-nav';
-import NavTabs from 'calypso/components/section-nav/tabs';
 import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
 import PeopleSearch from 'calypso/my-sites/people/people-section-nav/people-search';
 
 class PeopleNavTabs extends React.Component {
@@ -55,7 +48,7 @@ class PeopleSectionNav extends Component {
 
 	getFilters() {
 		const siteFilter = get( this.props.site, 'slug', '' );
-		const { translate } = this.props;
+		const { translate, includeSubscriberImporter } = this.props;
 		const filters = [
 			{
 				title: translate( 'Team', { context: 'Filter label for people list' } ),
@@ -68,7 +61,9 @@ class PeopleSectionNav extends Component {
 				id: 'followers',
 			},
 			{
-				title: translate( 'Email Followers', { context: 'Filter label for people list' } ),
+				title: includeSubscriberImporter
+					? translate( 'Email Subscribers', { context: 'Filter label for people list' } )
+					: translate( 'Email Followers', { context: 'Filter label for people list' } ),
 				path: '/people/email-followers/' + siteFilter,
 				id: 'email-followers',
 			},

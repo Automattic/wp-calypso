@@ -1,33 +1,23 @@
-/**
- * External dependencies
- */
-import React, { Fragment, PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { times } from 'lodash';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
-import ConnectedAppItem from 'calypso/me/connected-application-item';
+import { localize } from 'i18n-calypso';
+import { times } from 'lodash';
+import PropTypes from 'prop-types';
+import { Fragment, PureComponent } from 'react';
+import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryConnectedApplications from 'calypso/components/data/query-connected-applications';
 import EmptyContent from 'calypso/components/empty-content';
-import getConnectedApplications from 'calypso/state/selectors/get-connected-applications';
+import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
-import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import QueryConnectedApplications from 'calypso/components/data/query-connected-applications';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import ConnectedAppItem from 'calypso/me/connected-application-item';
 import ReauthRequired from 'calypso/me/reauth-required';
 import SecuritySectionNav from 'calypso/me/security-section-nav';
-import twoStepAuthorization from 'calypso/lib/two-step-authorization';
-import FormattedHeader from 'calypso/components/formatted-header';
+import getConnectedApplications from 'calypso/state/selectors/get-connected-applications';
+import getCurrentIntlCollator from 'calypso/state/selectors/get-current-intl-collator';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class ConnectedApplications extends PureComponent {
@@ -73,7 +63,7 @@ class ConnectedApplications extends PureComponent {
 	}
 
 	renderConnectedApps() {
-		const { apps } = this.props;
+		const { apps, intlCollator } = this.props;
 
 		if ( apps === null ) {
 			return this.renderPlaceholders();
@@ -83,9 +73,14 @@ class ConnectedApplications extends PureComponent {
 			return this.renderEmptyContent();
 		}
 
-		return apps.map( ( connection ) => (
-			<ConnectedAppItem connection={ connection } key={ connection.ID } />
-		) );
+		// Sorts the list into alphabetical order then displays them.
+		return apps
+			.sort( ( a, b ) => {
+				return intlCollator.compare( a.title, b.title );
+			} )
+			.map( ( connection ) => (
+				<ConnectedAppItem connection={ connection } key={ connection.ID } />
+			) );
 	}
 
 	renderConnectedAppsList() {
@@ -118,7 +113,6 @@ class ConnectedApplications extends PureComponent {
 					title="Me > Connected Applications"
 				/>
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
-				<MeSidebarNavigation />
 
 				<FormattedHeader brandFont headerText={ translate( 'Security' ) } align="left" />
 
@@ -132,4 +126,5 @@ class ConnectedApplications extends PureComponent {
 
 export default connect( ( state ) => ( {
 	apps: getConnectedApplications( state ),
+	intlCollator: getCurrentIntlCollator( state ),
 } ) )( localize( ConnectedApplications ) );

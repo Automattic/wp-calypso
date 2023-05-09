@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getCurrentUserMarketingPriceGroup from 'calypso/state/selectors/get-current-user-marketing-price-group';
 
 describe( 'getCurrentUserMarketingPriceGroup()', () => {

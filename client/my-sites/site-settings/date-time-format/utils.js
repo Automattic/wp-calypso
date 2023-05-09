@@ -1,9 +1,5 @@
-/**
- * External dependencies
- */
-
+import { startsWith } from 'lodash';
 import moment from 'moment-timezone';
-import { has, startsWith } from 'lodash';
 
 /**
  * Adjust the current date and time to the site settings timezone.
@@ -14,9 +10,8 @@ import { has, startsWith } from 'lodash';
  *
  * @see http://momentjs.com/docs/#/manipulating/utc-offset/
  * @see http://momentjs.com/timezone/docs/#/using-timezones/parsing-in-zone/
- *
  * @param {string} timezoneString A timezone string.
- * @returns {object} The timezone-adjusted Moment.js object of the current date and time.
+ * @returns {Object} The timezone-adjusted Moment.js object of the current date and time.
  */
 export function getLocalizedDate( timezoneString ) {
 	return startsWith( timezoneString, 'UTC' )
@@ -33,8 +28,7 @@ export function getLocalizedDate( timezoneString ) {
  *
  * @see http://php.net/manual/en/function.date.php#refsect1-function.date-parameters
  * @see http://momentjs.com/docs/#/displaying/format/
- *
- * @type {object}
+ * @type {Object}
  */
 const phpToMomentMapping = {
 	d: 'DD',
@@ -88,7 +82,7 @@ const phpToMomentMapping = {
 /**
  * Convert a PHP datetime format string into a Moment.js one.
  *
- * @param {object} momentDate A Moment.js object of the current date and time.
+ * @param {Object} momentDate A Moment.js object of the current date and time.
  * @param {string} formatString A PHP datetime format string
  * @returns {string} A Moment.js datetime format string
  */
@@ -125,11 +119,12 @@ export function phpToMomentDatetimeFormat( momentDate, formatString ) {
 				case 'L':
 					// 1 or 0
 					return `[${ momentDate.isLeapYear() | 0 }]`;
-				case 'B':
+				case 'B': {
 					const utcDate = momentDate.clone().utc();
 					const swatchTime =
 						( ( utcDate.hours() + 1 ) % 24 ) + utcDate.minutes() / 60 + utcDate.seconds() / 3600;
 					return Math.floor( ( swatchTime * 1000 ) / 24 );
+				}
 				case 'I':
 					// 1 or 0
 					return `[${ momentDate.isDST() | 0 }]`;
@@ -140,7 +135,7 @@ export function phpToMomentDatetimeFormat( momentDate, formatString ) {
 			}
 
 			// Check if character is a recognized mapping token
-			if ( has( phpToMomentMapping, c ) ) {
+			if ( phpToMomentMapping.hasOwnProperty( c ) ) {
 				return phpToMomentMapping[ c ];
 			}
 

@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
-import Gridicon from 'calypso/components/gridicon';
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 
 const JetpackConnectExampleConnect = ( { url, translate, onClick } ) => {

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { find, findIndex, get, includes } from 'lodash';
 
 const replaceAtIndex = ( array, index, newItem ) =>

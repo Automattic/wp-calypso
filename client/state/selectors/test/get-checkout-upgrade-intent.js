@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getCheckoutUpgradeIntent from '../get-checkout-upgrade-intent';
 
 describe( 'getCheckoutUpgradeIntent()', () => {

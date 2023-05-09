@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import getTimezones from 'calypso/state/selectors/get-timezones';
 
 describe( 'getTimezones()', () => {
@@ -19,7 +11,7 @@ describe( 'getTimezones()', () => {
 		};
 
 		const timezones = getTimezones( state, 'Atlantic' );
-		expect( timezones ).to.eql( [] );
+		expect( timezones ).toEqual( [] );
 	} );
 
 	test( 'should return timezones array data', () => {
@@ -41,7 +33,7 @@ describe( 'getTimezones()', () => {
 		};
 
 		const timezones = getTimezones( state );
-		expect( timezones ).to.eql( [
+		expect( timezones ).toEqual( [
 			[ 'Asia', [ [ 'Asia/Aqtobe', 'Aqtobe' ] ] ],
 
 			[

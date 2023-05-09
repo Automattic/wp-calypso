@@ -1,12 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import meta from './meta';
 import {
 	ButtonRow,
 	makeTour,
@@ -15,6 +6,7 @@ import {
 	Step,
 	Tour,
 } from 'calypso/layout/guided-tours/config-elements';
+import meta from './meta';
 
 export const JetpackChecklistTour = makeTour(
 	<Tour { ...meta }>
@@ -25,7 +17,7 @@ export const JetpackChecklistTour = makeTour(
 			style={ {
 				marginTop: '-20px',
 			} }
-			target={ '.jetpack-checklist__header' }
+			target=".jetpack-checklist__header"
 		>
 			{ ( { translate } ) => (
 				<>

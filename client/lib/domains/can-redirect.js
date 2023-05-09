@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import inherits from 'inherits';
 import { includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
 
 function ValidationError( code ) {
@@ -31,13 +24,23 @@ export function canRedirect( siteId, domainName, onComplete ) {
 		return;
 	}
 
-	wpcom.undocumented().canRedirect( siteId, domainName, function ( serverError, data ) {
-		if ( serverError ) {
-			onComplete( new ValidationError( serverError.error ) );
-		} else if ( ! data.can_redirect ) {
-			onComplete( new ValidationError( 'cannot_redirect' ) );
-		} else {
-			onComplete( null );
+	wpcom.req.get(
+		{
+			path:
+				'/domains/' +
+				siteId +
+				'/' +
+				encodeURIComponent( domainName.toLowerCase() ) +
+				'/can-redirect',
+		},
+		function ( serverError, data ) {
+			if ( serverError ) {
+				onComplete( new ValidationError( serverError.error ) );
+			} else if ( ! data.can_redirect ) {
+				onComplete( new ValidationError( 'cannot_redirect' ) );
+			} else {
+				onComplete( null );
+			}
 		}
-	} );
+	);
 }

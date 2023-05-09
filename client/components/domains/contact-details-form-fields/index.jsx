@@ -1,46 +1,38 @@
-/**
- * External dependencies
- *
- */
-import PropTypes from 'prop-types';
-import React, { Component, createElement } from 'react';
-import { connect } from 'react-redux';
-import { get, deburr, kebabCase, pick, includes, isEqual, isEmpty, camelCase } from 'lodash';
+import {
+	tryToGuessPostalCodeFormat,
+	getCountryPostalCodeSupport,
+} from '@automattic/wpcom-checkout';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { errorNotice } from 'calypso/state/notices/actions';
-import { getCountryStates } from 'calypso/state/country-states/selectors';
-import { CountrySelect, Input, HiddenInput } from 'calypso/my-sites/domains/components/form';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
+import { get, deburr, kebabCase, pick, includes, isEqual, isEmpty, camelCase } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component, createElement } from 'react';
+import { connect } from 'react-redux';
+import QueryDomainCountries from 'calypso/components/data/query-countries/domains';
 import FormButton from 'calypso/components/forms/form-button';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
 import FormPhoneMediaInput from 'calypso/components/forms/form-phone-media-input';
 import { countries } from 'calypso/components/phone-input/data';
-import formState from 'calypso/lib/form-state';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
 import { toIcannFormat } from 'calypso/components/phone-input/phone-number';
-import NoticeErrorMessage from 'calypso/my-sites/checkout/checkout/notice-error-message';
-import RegionAddressFieldsets from './custom-form-fieldsets/region-address-fieldsets';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import formState from 'calypso/lib/form-state';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import NoticeErrorMessage from 'calypso/my-sites/checkout/checkout/notice-error-message';
+import { CountrySelect, Input, HiddenInput } from 'calypso/my-sites/domains/components/form';
+import { getCountryStates } from 'calypso/state/country-states/selectors';
+import { errorNotice } from 'calypso/state/notices/actions';
 import getCountries from 'calypso/state/selectors/get-countries';
-import QueryDomainCountries from 'calypso/components/data/query-countries/domains';
 import {
 	CONTACT_DETAILS_FORM_FIELDS,
 	CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES,
 	CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES,
 } from './custom-form-fieldsets/constants';
+import RegionAddressFieldsets from './custom-form-fieldsets/region-address-fieldsets';
 import { getPostCodeLabelText } from './custom-form-fieldsets/utils';
 
-/**
- * Style dependencies
- */
 import './style.scss';
-import classNames from 'classnames';
-import FormLabel from 'calypso/components/forms/form-label';
-import FormCheckbox from 'calypso/components/forms/form-checkbox';
 
 const noop = () => {};
 
@@ -136,7 +128,7 @@ export class ContactDetailsFormFields extends Component {
 		);
 	}
 
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		this.formStateController = formState.Controller( {
 			debounceWait: 500,
 			fieldNames: CONTACT_DETAILS_FORM_FIELDS,
@@ -197,11 +189,16 @@ export class ContactDetailsFormFields extends Component {
 
 	sanitize = ( fieldValues, onComplete ) => {
 		const sanitizedFieldValues = Object.assign( {}, fieldValues );
+		const fieldsToDeburr = [ 'email', 'phone', 'postalCode', 'countryCode', 'fax' ];
 
 		CONTACT_DETAILS_FORM_FIELDS.forEach( ( fieldName ) => {
 			if ( typeof fieldValues[ fieldName ] === 'string' ) {
 				// TODO: Deep
-				sanitizedFieldValues[ fieldName ] = deburr( fieldValues[ fieldName ].trim() );
+				if ( fieldsToDeburr.includes( fieldName ) ) {
+					sanitizedFieldValues[ fieldName ] = deburr( fieldValues[ fieldName ].trim() );
+				} else {
+					sanitizedFieldValues[ fieldName ] = fieldValues[ fieldName ].trim();
+				}
 				// TODO: Do this on submit. Is it too annoying?
 				if ( fieldName === 'postalCode' ) {
 					sanitizedFieldValues[ fieldName ] = tryToGuessPostalCodeFormat(
@@ -312,10 +309,10 @@ export class ContactDetailsFormFields extends Component {
 		} );
 	};
 
-	handlePhoneChange = ( { value, countryCode } ) => {
+	handlePhoneChange = ( { phoneNumber, countryCode } ) => {
 		this.formStateController.handleFieldChange( {
 			name: 'phone',
-			value,
+			value: phoneNumber,
 		} );
 
 		if ( ! countries[ countryCode ] ) {
@@ -334,6 +331,12 @@ export class ContactDetailsFormFields extends Component {
 		const { eventFormName, getIsFieldDisabled } = this.props;
 		const { form } = this.state;
 
+		const basicValue = formState.getFieldValue( form, name ) || '';
+		let value = basicValue;
+		if ( name === 'phone' ) {
+			value = { phoneNumber: basicValue, countryCode: this.state.phoneCountryCode };
+		}
+
 		return {
 			labelClass: 'contact-details-form-fields__label',
 			additionalClasses: 'contact-details-form-fields__field',
@@ -344,7 +347,7 @@ export class ContactDetailsFormFields extends Component {
 				( formState.getFieldErrorMessages( form, camelCase( name ) ) || [] ).join( '\n' ),
 			onChange: this.handleFieldChange,
 			onBlur: this.handleBlur,
-			value: formState.getFieldValue( form, name ) || '',
+			value,
 			name,
 			eventFormName,
 			...ref,
@@ -362,9 +365,15 @@ export class ContactDetailsFormFields extends Component {
 		return get( this.state.form, 'countryCode.value', '' );
 	}
 
+	getCountryPostalCodeSupport = ( countryCode ) =>
+		this.props.countriesList?.length && countryCode
+			? getCountryPostalCodeSupport( this.props.countriesList, countryCode )
+			: false;
+
 	renderContactDetailsFields() {
 		const { translate, needsFax, hasCountryStates, labelTexts } = this.props;
 		const countryCode = this.getCountryCode();
+		const arePostalCodesSupported = this.getCountryPostalCodeSupport( countryCode );
 
 		return (
 			<div className="contact-details-form-fields__contact-details">
@@ -393,7 +402,6 @@ export class ContactDetailsFormFields extends Component {
 							label: translate( 'Phone' ),
 							onChange: this.handlePhoneChange,
 							countriesList: this.props.countriesList,
-							countryCode: this.state.phoneCountryCode,
 							enableStickyCountry: false,
 						},
 						{
@@ -434,6 +442,7 @@ export class ContactDetailsFormFields extends Component {
 
 				{ countryCode && (
 					<RegionAddressFieldsets
+						arePostalCodesSupported={ arePostalCodesSupported }
 						getFieldProps={ this.getFieldProps }
 						countryCode={ countryCode }
 						hasCountryStates={ hasCountryStates }
@@ -509,9 +518,9 @@ export class ContactDetailsFormFields extends Component {
 		return (
 			<div className="contact-details-form-fields__row">
 				<Input
-					label={ this.props.translate( 'Alternate Email Address' ) }
-					{ ...this.getFieldProps( 'alternate-email', {
-						customErrorMessage: this.props.contactDetailsErrors?.alternateEmail,
+					label={ this.props.translate( 'Alternate email address' ) }
+					{ ...this.getFieldProps( 'email', {
+						customErrorMessage: this.props.contactDetailsErrors?.email,
 					} ) }
 				/>
 			</div>
@@ -519,13 +528,13 @@ export class ContactDetailsFormFields extends Component {
 	}
 
 	render() {
-		const {
-			translate,
-			onCancel,
-			disableSubmitButton,
-			labelTexts,
-			contactDetailsErrors,
-		} = this.props;
+		const { translate, onCancel, disableSubmitButton, labelTexts, contactDetailsErrors } =
+			this.props;
+
+		if ( ! this.state.form ) {
+			return null;
+		}
+
 		const countryCode = this.getCountryCode();
 
 		const isFooterVisible = !! ( this.props.onSubmit || onCancel );

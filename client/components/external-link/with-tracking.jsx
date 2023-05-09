@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import ExternalLink from './index';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import ExternalLink from './index';
 
 class ExternalLinkWithTracking extends Component {
 	handleClickEvent() {
@@ -48,6 +41,8 @@ ExternalLinkWithTracking.propTypes = {
 	target: PropTypes.string,
 	tracksEventName: PropTypes.string.isRequired,
 	tracksEventProps: PropTypes.object,
+	rel: PropTypes.string,
+	children: PropTypes.node,
 
 	// Connected props
 	recordTracksEvent: PropTypes.func.isRequired,

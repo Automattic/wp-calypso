@@ -3,10 +3,6 @@
  */
 import i18n from 'i18n-calypso';
 
-/**
- * Internal dependencies
- */
-
 export const ROLE_ADMINISTRATOR = 'administrator';
 export const ROLE_EDITOR = 'editor';
 export const ROLE_AUTHOR = 'author';

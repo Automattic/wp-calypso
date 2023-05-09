@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getBillingTransactionAppFilterValues from 'calypso/state/selectors/get-billing-transaction-app-filter-values';
 
 describe( 'getBillingTransactionAppFilterValues()', () => {

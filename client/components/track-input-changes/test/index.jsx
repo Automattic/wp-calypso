@@ -1,19 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-import React, { Component } from 'react';
-import TestUtils from 'react-dom/test-utils';
+import { Component } from 'react';
 import ReactDom from 'react-dom';
-import sinon from 'sinon';
-
-/**
- * Internal dependencies
- */
+import TestUtils from 'react-dom/test-utils';
 import TrackInputChanges from '../';
 
 /**
@@ -54,7 +44,7 @@ describe( 'TrackInputChanges#onNewValue', () => {
 
 	beforeEach( () => {
 		for ( const spy in spies ) {
-			spies[ spy ] = sinon.spy();
+			spies[ spy ] = jest.fn();
 		}
 		tree = ReactDom.render(
 			<TrackInputChanges onNewValue={ spies.onNewValue }>
@@ -70,26 +60,26 @@ describe( 'TrackInputChanges#onNewValue', () => {
 	test( 'should pass through callbacks but not trigger on a change event', () => {
 		dummyInput.triggerChange( 'abc' );
 
-		expect( spies.onNewValue ).to.have.callCount( 0 );
-		expect( spies.onChange ).to.have.callCount( 1 );
-		expect( spies.onBlur ).to.have.callCount( 0 );
+		expect( spies.onNewValue ).toHaveBeenCalledTimes( 0 );
+		expect( spies.onChange ).toHaveBeenCalledTimes( 1 );
+		expect( spies.onBlur ).toHaveBeenCalledTimes( 0 );
 	} );
 
 	test( 'should pass through callbacks but not trigger on a blur event', () => {
 		dummyInput.triggerBlur();
 
-		expect( spies.onNewValue ).to.have.callCount( 0 );
-		expect( spies.onChange ).to.have.callCount( 0 );
-		expect( spies.onBlur ).to.have.callCount( 1 );
+		expect( spies.onNewValue ).toHaveBeenCalledTimes( 0 );
+		expect( spies.onChange ).toHaveBeenCalledTimes( 0 );
+		expect( spies.onBlur ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	test( 'should pass through callbacks and trigger on a change then a blur', () => {
 		dummyInput.triggerChange( 'abc' );
 		dummyInput.triggerBlur();
 
-		expect( spies.onNewValue ).to.have.callCount( 1 );
-		expect( spies.onChange ).to.have.callCount( 1 );
-		expect( spies.onBlur ).to.have.callCount( 1 );
+		expect( spies.onNewValue ).toHaveBeenCalledTimes( 1 );
+		expect( spies.onChange ).toHaveBeenCalledTimes( 1 );
+		expect( spies.onBlur ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	test( 'should trigger once on each blur event only if value changed', () => {
@@ -102,9 +92,9 @@ describe( 'TrackInputChanges#onNewValue', () => {
 		dummyInput.triggerBlur();
 		dummyInput.triggerChange( 'abcdefg' );
 
-		expect( spies.onNewValue ).to.have.callCount( 2 );
-		expect( spies.onChange ).to.have.callCount( 5 );
-		expect( spies.onBlur ).to.have.callCount( 3 );
+		expect( spies.onNewValue ).toHaveBeenCalledTimes( 2 );
+		expect( spies.onChange ).toHaveBeenCalledTimes( 5 );
+		expect( spies.onBlur ).toHaveBeenCalledTimes( 3 );
 	} );
 
 	test( 'should throw if multiple child elements', () => {
@@ -116,6 +106,6 @@ describe( 'TrackInputChanges#onNewValue', () => {
 				</TrackInputChanges>,
 				container
 			)
-		).to.throw;
+		).toThrow();
 	} );
 } );

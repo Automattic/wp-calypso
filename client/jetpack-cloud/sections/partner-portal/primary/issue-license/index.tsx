@@ -1,19 +1,18 @@
-/**
- * External dependencies
- */
-import React, { ReactElement, useEffect } from 'react';
+import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import Main from 'calypso/components/main';
+import { useEffect } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
+import Main from 'calypso/components/main';
+import AssignLicenseStepProgress from 'calypso/jetpack-cloud/sections/partner-portal/assign-license-step-progress';
+import IssueMultipleLicensesForm from 'calypso/jetpack-cloud/sections/partner-portal/issue-multiple-licenses-form';
+import TotalCost from 'calypso/jetpack-cloud/sections/partner-portal/primary/total-cost';
 import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
-import IssueLicenseForm from 'calypso/jetpack-cloud/sections/partner-portal/issue-license-form';
+import { AssignLicenceProps } from '../../types';
 
-export default function IssueLicense(): ReactElement {
+import './styles.scss';
+
+export default function IssueLicense( { selectedSite, suggestedProduct }: AssignLicenceProps ) {
 	const translate = useTranslate();
 
 	useEffect( () => {
@@ -28,12 +27,19 @@ export default function IssueLicense(): ReactElement {
 	}, [] );
 
 	return (
-		<Main className="issue-license">
+		<Main wideLayout className="issue-license">
 			<DocumentHead title={ translate( 'Issue a new License' ) } />
 			<SidebarNavigation />
+			<div className="issue-license__step-progress">
+				<AssignLicenseStepProgress currentStep="issueLicense" selectedSite={ selectedSite } />
+				{ isEnabled( 'jetpack/partner-portal-issue-multiple-licenses' ) && <TotalCost /> }
+			</div>
 			<CardHeading size={ 36 }>{ translate( 'Issue a new License' ) }</CardHeading>
 
-			<IssueLicenseForm />
+			<IssueMultipleLicensesForm
+				selectedSite={ selectedSite }
+				suggestedProduct={ suggestedProduct }
+			/>
 		</Main>
 	);
 }

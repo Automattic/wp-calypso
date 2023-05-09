@@ -1,13 +1,13 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-
-/**
- * Internal dependencies
- */
 import UseYourDomainItem from '../use-your-domain-item';
+
+jest.mock( '@automattic/calypso-config', () => ( {
+	config: () => '',
+	__esModule: true,
+	default: function config( key: string ) {
+		return key;
+	},
+} ) );
 
 describe( '<UseYourDomainItem />', () => {
 	it( 'should render with correct messaging', () => {

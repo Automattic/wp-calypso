@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
 import localStorageBypass from '../local-storage-bypass';
 
 const debug = debugFactory( 'calypso:local-storage' );
@@ -14,7 +6,7 @@ const debug = debugFactory( 'calypso:local-storage' );
 /**
  * Overwrite window.localStorage if necessary
  *
- * @param  {object} root Object to instantiate `windows` object to test in node.js
+ * @param  {Object} root Object to instantiate `windows` object to test in node.js
  */
 export default function ( root ) {
 	root = root || window;

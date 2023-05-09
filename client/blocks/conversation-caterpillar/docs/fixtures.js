@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { keyBy, map } from 'lodash';
 
 export const comments = [

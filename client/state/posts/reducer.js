@@ -1,7 +1,5 @@
 /* eslint-disable no-case-declarations */
-/**
- * External dependencies
- */
+
 import {
 	get,
 	set,
@@ -15,13 +13,8 @@ import {
 	mapValues,
 	mapKeys,
 } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import withQueryManager from 'calypso/lib/query-manager/with-query-manager';
 import PostQueryManager from 'calypso/lib/query-manager/post';
-import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
+import withQueryManager from 'calypso/lib/query-manager/with-query-manager';
 import {
 	EDITOR_START,
 	EDITOR_STOP,
@@ -41,9 +34,12 @@ import {
 	POSTS_REQUEST_SUCCESS,
 	POSTS_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
+import { getFeaturedImageId } from 'calypso/state/posts/utils';
+import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 import counts from './counts/reducer';
 import likes from './likes/reducer';
 import revisions from './revisions/reducer';
+import { itemsSchema, queriesSchema, allSitesQueriesSchema } from './schema';
 import {
 	appendToPostEditsLog,
 	getSerializedPostsQuery,
@@ -56,15 +52,13 @@ import {
 	mergePostEdits,
 	normalizePostForState,
 } from './utils';
-import { itemsSchema, queriesSchema, allSitesQueriesSchema } from './schema';
-import { getFeaturedImageId } from 'calypso/state/posts/utils';
 
 /**
  * Tracks all known post objects, indexed by post global ID.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -110,9 +104,9 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
  * dispatched. The state reflects a mapping of site ID, post ID pairing to a
  * boolean reflecting whether a request for the post is in progress.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export function siteRequests( state = {}, action ) {
 	switch ( action.type ) {
@@ -134,9 +128,9 @@ export function siteRequests( state = {}, action ) {
  * dispatched. The state reflects a mapping of serialized query to whether a
  * network request is in-progress for that query.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export function queryRequests( state = {}, action ) {
 	switch ( action.type ) {
@@ -157,9 +151,9 @@ export function queryRequests( state = {}, action ) {
  * The state reflects a mapping by site ID of serialized query key to an array
  * of post IDs for the query, if a query response was successfully received.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 const queriesReducer = ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -263,9 +257,9 @@ function findItemKey( state, siteId, postId ) {
  * query key to an array of post global IDs for the query, if a query response
  * was successfully received.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 const allSitesQueriesReducer = (
 	state = new PostQueryManager( {}, { itemKey: 'global_ID' } ),
@@ -332,9 +326,9 @@ export const allSitesQueries = withSchemaValidation(
  * The state maps site ID, post ID pairing to an object containing revisions
  * for the post.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export function edits( state = {}, action ) {
 	switch ( action.type ) {

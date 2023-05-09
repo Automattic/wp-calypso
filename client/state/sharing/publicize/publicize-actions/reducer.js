@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { omit, get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import {
 	PUBLICIZE_SHARE_ACTIONS_SCHEDULED_REQUEST,
 	PUBLICIZE_SHARE_ACTIONS_SCHEDULED_REQUEST_SUCCESS,
@@ -16,9 +9,6 @@ import {
 	PUBLICIZE_SHARE_ACTION_DELETE,
 	PUBLICIZE_SHARE_ACTION_DELETE_SUCCESS,
 	PUBLICIZE_SHARE_ACTION_DELETE_FAILURE,
-	PUBLICIZE_SHARE_ACTION_EDIT,
-	PUBLICIZE_SHARE_ACTION_EDIT_SUCCESS,
-	PUBLICIZE_SHARE_ACTION_EDIT_FAILURE,
 	PUBLICIZE_SHARE_DISMISS,
 	PUBLICIZE_SHARE_ACTION_SCHEDULE,
 	PUBLICIZE_SHARE_ACTION_SCHEDULE_SUCCESS,
@@ -30,12 +20,12 @@ import { publicizeActionsSchema } from './schema';
 /**
  * Updates deeply nested data for the siteId/postId subtree
  *
- * @param {object} newValue - new value to assign in the subtree
- * @param {object} state previous state
+ * @param {Object} newValue - new value to assign in the subtree
+ * @param {Object} state previous state
  * @param {number} siteId siteId
  * @param {number} postId siteId
  * @param {number} actionId This parameter is optional. If passed, it will update value nested deeper in the actionId subtree
- * @returns {object} New mutated state
+ * @returns {Object} New mutated state
  */
 export function updateDataForPost( newValue, state, siteId, postId, actionId ) {
 	if ( typeof actionId !== 'undefined' ) {
@@ -68,10 +58,6 @@ export const scheduled = withSchemaValidation( publicizeActionsSchema, ( state =
 				siteId,
 				postId
 			);
-		}
-		case PUBLICIZE_SHARE_ACTION_EDIT_SUCCESS: {
-			const { siteId, postId, item } = action;
-			return updateDataForPost( item, state, siteId, postId, item.ID );
 		}
 		case PUBLICIZE_SHARE_ACTION_SCHEDULE_SUCCESS: {
 			const { siteId, postId, items } = action;
@@ -153,25 +139,6 @@ export const deletingSharePostAction = ( state = {}, action ) => {
 	return state;
 };
 
-export const editingSharePostAction = ( state = {}, action ) => {
-	switch ( action.type ) {
-		case PUBLICIZE_SHARE_ACTION_EDIT_SUCCESS: {
-			const { siteId, postId, item } = action;
-			return updateDataForPost( false, state, siteId, postId, item.ID );
-		}
-		case PUBLICIZE_SHARE_ACTION_EDIT_FAILURE: {
-			const { siteId, postId, actionId } = action;
-			return updateDataForPost( false, state, siteId, postId, actionId );
-		}
-		case PUBLICIZE_SHARE_ACTION_EDIT: {
-			const { siteId, postId, actionId } = action;
-			return updateDataForPost( true, state, siteId, postId, actionId );
-		}
-	}
-
-	return state;
-};
-
 export const schedulingSharePostActionStatus = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case PUBLICIZE_SHARE_ACTION_SCHEDULE_SUCCESS: {
@@ -206,6 +173,5 @@ export default combineReducers( {
 	fetchingSharePostActionsScheduled,
 	fetchingSharePostActionsPublished,
 	deletingSharePostAction,
-	editingSharePostAction,
 	schedulingSharePostActionStatus,
 } );

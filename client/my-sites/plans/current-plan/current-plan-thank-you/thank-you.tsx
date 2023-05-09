@@ -1,25 +1,19 @@
-/**
- * External dependencies
- */
-import React, { FC, ReactElement, useCallback, useMemo } from 'react';
-import { connect, DefaultRootState } from 'react-redux';
+import { Button } from '@automattic/components';
 import { isDesktop } from '@automattic/viewport';
 import { localize, LocalizeProps, TranslateResult } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { FC, ReactElement, useCallback, useMemo } from 'react';
+import * as React from 'react';
+import { connect, DefaultRootState } from 'react-redux';
 import { preventWidows } from 'calypso/lib/formatting';
+import { addQueryArgs } from 'calypso/lib/url';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { requestGuidedTour } from 'calypso/state/guided-tours/actions';
-import { Button } from '@automattic/components';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { addQueryArgs } from 'calypso/lib/url';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
@@ -27,7 +21,7 @@ const mapStateToProps = ( state: DefaultRootState ) => {
 	const currentUser = getCurrentUser( state );
 	const selectedSite = getSelectedSite( state );
 	const selectedSiteId = getSelectedSiteId( state );
-	const isSingleSite = !! selectedSiteId || currentUser.site_count === 1;
+	const isSingleSite = !! selectedSiteId || currentUser?.site_count === 1;
 	const siteId = selectedSiteId || ( isSingleSite && getPrimarySiteId( state ) ) || null;
 	const siteAdminUrl = getSiteAdminUrl( state, siteId );
 	return {
@@ -42,7 +36,8 @@ const mapDispatchToProps = { recordTracksEvent, requestGuidedTour };
 
 export type ThankYouCtaType = React.FC< {
 	dismissUrl: string;
-	jetpackVersion: string;
+	jetpackSearchCustomizeUrl?: string;
+	jetpackVersion?: string;
 	recordThankYouClick: ( productName: string, value?: string ) => void;
 	siteAdminUrl: string;
 	startChecklistTour: () => void;
@@ -87,7 +82,7 @@ export const ThankYouCard: FC< Props > = ( {
 
 	const dismissUrl = useMemo(
 		() =>
-			queryArgs && 'install' in queryArgs
+			queryArgs && 'install' in queryArgs && ! Array.isArray( queryArgs.install )
 				? addQueryArgs( { install: queryArgs.install }, currentRoute )
 				: currentRoute,
 		[ currentRoute, queryArgs ]
@@ -104,9 +99,10 @@ export const ThankYouCard: FC< Props > = ( {
 		[ dispatchRecordTracksEvent ]
 	);
 
-	const jetpackVersion = useMemo( () => selectedSite?.options?.jetpack_version ?? 0, [
-		selectedSite,
-	] );
+	const jetpackVersion = useMemo(
+		() => selectedSite?.options?.jetpack_version ?? 0,
+		[ selectedSite ]
+	);
 
 	if ( ! siteAdminUrl ) {
 		return null;
@@ -156,7 +152,7 @@ export const ThankYouCard: FC< Props > = ( {
 					<p className="current-plan-thank-you__followup">
 						<ThankYouCtaComponent
 							dismissUrl={ dismissUrl }
-							jetpackVersion={ jetpackVersion }
+							jetpackVersion={ String( jetpackVersion ) }
 							recordThankYouClick={ recordThankYouClick }
 							siteAdminUrl={ siteAdminUrl }
 							startChecklistTour={ startChecklistTour }

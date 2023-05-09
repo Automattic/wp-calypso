@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 
 describe( 'getPreviousRoute()', () => {
 	test( 'should return empty if the previous Route is not set', () => {
 		const stateIn = {};
 		const output = getPreviousRoute( stateIn );
-		expect( output ).to.eql( '' );
+		expect( output ).toEqual( '' );
 	} );
 
 	test( 'should return previous route if one is found', () => {
@@ -29,6 +21,6 @@ describe( 'getPreviousRoute()', () => {
 			},
 		};
 		const output = getPreviousRoute( stateIn );
-		expect( output ).to.eql( '/hello?filter=hello' );
+		expect( output ).toEqual( '/hello?filter=hello' );
 	} );
 } );

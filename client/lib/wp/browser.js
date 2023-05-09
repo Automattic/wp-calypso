@@ -1,28 +1,23 @@
-/**
- * External dependencies
- */
-import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
-import wpcomUndocumented from 'calypso/lib/wpcom-undocumented';
 import config from '@automattic/calypso-config';
-import wpcomSupport from 'calypso/lib/wp/support';
-import { injectLocalization } from './localization';
-import { injectGuestSandboxTicketHandler } from './handlers/guest-sandbox-ticket';
-import * as oauthToken from 'calypso/lib/oauth-token';
-import wpcomXhrWrapper from 'calypso/lib/wpcom-xhr-wrapper';
+import debugFactory from 'debug';
+import WPCOM from 'wpcom';
 import wpcomProxyRequest from 'wpcom-proxy-request';
+import * as oauthToken from 'calypso/lib/oauth-token';
+import wpcomSupport from 'calypso/lib/wp/support';
+import wpcomXhrWrapper, { jetpack_site_xhr_wrapper } from 'calypso/lib/wpcom-xhr-wrapper';
+import { injectGuestSandboxTicketHandler } from './handlers/guest-sandbox-ticket';
+import { injectLocalization } from './localization';
 
 const debug = debugFactory( 'calypso:wp' );
 
 let wpcom;
 
 if ( config.isEnabled( 'oauth' ) ) {
-	wpcom = wpcomUndocumented( oauthToken.getToken(), wpcomXhrWrapper );
+	wpcom = new WPCOM( oauthToken.getToken(), wpcomXhrWrapper );
+} else if ( config.isEnabled( 'is_running_in_jetpack_site' ) ) {
+	wpcom = new WPCOM( jetpack_site_xhr_wrapper );
 } else {
-	wpcom = wpcomUndocumented( wpcomProxyRequest );
+	wpcom = new WPCOM( wpcomProxyRequest );
 
 	// Upgrade to "access all users blogs" mode
 	wpcom.request(
@@ -38,17 +33,13 @@ if ( config.isEnabled( 'oauth' ) ) {
 	);
 }
 
-if ( config.isEnabled( 'support-user' ) ) {
-	wpcom = wpcomSupport( wpcom );
-}
+wpcom = wpcomSupport( wpcom );
 
 if ( 'development' === process.env.NODE_ENV ) {
 	require( './offline-library' ).makeOffline( wpcom );
 
-	// expose wpcom global var only in development
-	const wpcomPKG = require( 'wpcom/package' );
+	// expose wpcom global var in development mode
 	window.wpcom = wpcom;
-	window.wpcom.__version = wpcomPKG.version;
 }
 
 // Inject localization helpers to `wpcom` instance
@@ -64,4 +55,4 @@ export default wpcom;
 /**
  * Expose `wpcomJetpackLicensing` which uses a different auth token than wpcom.
  */
-export const wpcomJetpackLicensing = wpcomUndocumented( wpcomXhrWrapper );
+export const wpcomJetpackLicensing = new WPCOM( wpcomXhrWrapper );

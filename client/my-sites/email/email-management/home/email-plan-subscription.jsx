@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
-import classNames from 'classnames';
 import { CompactCard } from '@automattic/components';
-import React from 'react';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import RenewButton from 'calypso/my-sites/domains/domain-management/edit/card/renew-button';
-import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
+import { Component } from 'react';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
+import RenewButton from 'calypso/my-sites/domains/domain-management/edit/card/renew-button';
 
-class EmailPlanSubscription extends React.Component {
+class EmailPlanSubscription extends Component {
 	hasSubscriptionExpired() {
 		const { isLoadingPurchase, purchase } = this.props;
 
@@ -36,7 +29,7 @@ class EmailPlanSubscription extends React.Component {
 
 		return (
 			<RenewButton
-				compact={ true }
+				compact
 				purchase={ purchase }
 				primary={ this.hasSubscriptionExpired() }
 				selectedSite={ selectedSite }
@@ -85,7 +78,7 @@ class EmailPlanSubscription extends React.Component {
 		const hasSubscriptionExpired = this.hasSubscriptionExpired();
 		const translateArgs = {
 			args: {
-				expiryDate: moment.utc( purchase.expiryDate ).format( 'LL' ),
+				expiryDate: moment( purchase.expiryDate ).format( 'LL' ),
 			},
 			comment: 'Shows the expiry date of the email subscription',
 		};

@@ -1,11 +1,8 @@
-/**
- * External dependencies
- */
 import freeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
+import { NOTICE_CREATE } from 'calypso/state/action-types';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { READER_FOLLOWS_SYNC_START } from 'calypso/state/reader/action-types';
+import { receiveFollows, follow, syncComplete } from 'calypso/state/reader/follows/actions';
 import {
 	isSyncingFollows,
 	requestPage,
@@ -17,10 +14,6 @@ import {
 	updateSeenOnFollow,
 } from '../';
 import { subscriptionsFromApi } from '../utils';
-import { NOTICE_CREATE } from 'calypso/state/action-types';
-import { READER_FOLLOWS_SYNC_START } from 'calypso/state/reader/action-types';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { receiveFollows, follow, syncComplete } from 'calypso/state/reader/follows/actions';
 
 const noop = () => {};
 const successfulApiResponse = freeze( {

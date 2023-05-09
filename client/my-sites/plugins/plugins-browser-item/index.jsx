@@ -1,153 +1,362 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
-import { flowRight as compose, includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
-import { Button } from '@automattic/components';
-import Rating from 'calypso/components/rating';
+import { WPCOM_FEATURES_INSTALL_PLUGINS } from '@automattic/calypso-products';
+import { Gridicon } from '@automattic/components';
+import { useLocalizeUrl } from '@automattic/i18n-utils';
+import { Icon, info } from '@wordpress/icons';
+import classnames from 'classnames';
+import { getLocaleSlug, useTranslate } from 'i18n-calypso';
+import { useMemo, useCallback, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import Badge from 'calypso/components/badge';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSoftwareSlug } from 'calypso/lib/plugins/utils';
+import version_compare from 'calypso/lib/version-compare';
+import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
+import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
+import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
+import { PluginPrice } from 'calypso/my-sites/plugins/plugin-price';
+import { useLocalizedPlugins, siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
+import { getSitesWithPlugin, getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
+import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { getSitesWithPlugin } from 'calypso/state/plugins/installed/selectors';
-import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { PREINSTALLED_PLUGINS } from '../constants';
+import usePreinstalledPremiumPlugin from '../use-preinstalled-premium-plugin';
+import PreinstalledPremiumPluginBrowserItemPricing from './preinstalled-premium-plugin-browser-item-pricing';
+import { PluginsBrowserElementVariant } from './types';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-const PREINSTALLED_PLUGINS = [ 'Jetpack by WordPress.com', 'Akismet', 'VaultPress' ];
+const PluginsBrowserListElement = ( props ) => {
+	const {
+		isPlaceholder,
+		site,
+		plugin = {},
+		variant = PluginsBrowserElementVariant.Compact,
+		currentSites,
+	} = props;
 
-class PluginsBrowserListElement extends Component {
-	static defaultProps = {
-		iconSize: 40,
-	};
+	const translate = useTranslate();
+	const localizeUrl = useLocalizeUrl();
+	const { localizePath } = useLocalizedPlugins();
 
-	getPluginLink() {
-		if ( this.props.plugin.link ) {
-			return this.props.plugin.link;
+	const selectedSite = useSelector( getSelectedSite );
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
+	const isMarketplaceProduct = useSelector( ( state ) =>
+		isMarketplaceProductSelector( state, plugin.slug || '' )
+	);
+	const softwareSlug = getSoftwareSlug( plugin, isMarketplaceProduct );
+	const sitesWithPlugin = useSelector( ( state ) =>
+		currentSites
+			? getSitesWithPlugin( state, siteObjectsToSiteIds( currentSites ), softwareSlug )
+			: []
+	);
+
+	const { isPreinstalledPremiumPluginUpgraded } = usePreinstalledPremiumPlugin( plugin.slug );
+
+	const pluginLink = useMemo( () => {
+		if ( plugin.link ) {
+			return plugin.link;
 		}
 
-		let url = '/plugins/' + this.props.plugin.slug;
-		if ( this.props.site ) {
-			url += '/' + this.props.site;
+		let url = '/plugins/' + plugin.slug;
+		if ( site ) {
+			url += '/' + site;
 		}
 		return url;
-	}
+	}, [ plugin, site ] );
 
-	trackPluginLinkClick = () => {
+	useEffect(
+		function trackPluginItemRender() {
+			if ( plugin.railcar ) {
+				recordTracksEvent( 'calypso_marketplace_search_traintracks_render', {
+					site: site,
+					plugin: plugin.slug,
+					blog_id: selectedSite?.ID,
+					ui_algo: props.listName, // this can also be used to test different layouts eg. list/grid
+					ui_position: props.gridPosition,
+					...plugin.railcar,
+				} );
+			}
+		},
+		[ plugin.railcar ]
+	);
+
+	const trackPluginLinkClick = useCallback( () => {
 		recordTracksEvent( 'calypso_plugin_browser_item_click', {
-			site: this.props.site,
-			plugin: this.props.plugin.slug,
-			list_name: this.props.listName,
+			site: site,
+			plugin: plugin.slug,
+			list_name: props.listName,
+			list_type: props.listType,
+			grid_position: props.gridPosition,
+			blog_id: selectedSite?.ID,
 		} );
-	};
+		if ( plugin.railcar ) {
+			recordTracksEvent( 'calypso_marketplace_search_traintracks_interact', {
+				railcar: plugin.railcar.railcar,
+				action: 'product_opened',
+				blog_id: selectedSite?.ID,
+			} );
+		}
+	}, [ site, plugin, selectedSite, props.listName ] );
 
-	isWpcomPreinstalled() {
-		if ( this.props.plugin.isPreinstalled ) {
+	const isWpcomPreinstalled = useMemo( () => {
+		if ( plugin.isPreinstalled ) {
 			return true;
 		}
 
-		if ( ! this.props.site ) {
+		if ( ! site ) {
 			return false;
 		}
 
-		return ! this.props.isJetpackSite && includes( PREINSTALLED_PLUGINS, this.props.plugin.name );
+		return ! isJetpack && PREINSTALLED_PLUGINS.includes( plugin.slug );
+	}, [ isJetpack, site, plugin ] );
+
+	const isPluginInstalledOnSite = useMemo(
+		() =>
+			selectedSite?.ID &&
+			( ( sitesWithPlugin && sitesWithPlugin.length > 0 ) ||
+				isWpcomPreinstalled ||
+				isPreinstalledPremiumPluginUpgraded ),
+		[ selectedSite?.ID, sitesWithPlugin, isWpcomPreinstalled, isPreinstalledPremiumPluginUpgraded ]
+	);
+	const isUntestedVersion = useMemo( () => {
+		const wpVersion = selectedSite?.options?.software_version;
+		const pluginTestedVersion = plugin?.tested;
+
+		if ( ! selectedSite?.jetpack || ! wpVersion || ! pluginTestedVersion ) {
+			return false;
+		}
+
+		return version_compare( wpVersion, pluginTestedVersion, '>' );
+	}, [ selectedSite, plugin ] );
+
+	const jetpackNonAtomic = useSelector(
+		( state ) =>
+			isJetpackSite( state, selectedSite?.ID ) && ! isAtomicSite( state, selectedSite?.ID )
+	);
+
+	const isPluginIncompatible = useMemo( () => {
+		return ! isCompatiblePlugin( plugin.slug ) && ! jetpackNonAtomic;
+	} );
+
+	const shouldUpgrade = useSelector( ( state ) => shouldUpgradeCheck( state, selectedSite?.ID ) );
+
+	const canInstallPlugins =
+		useSelector( ( state ) =>
+			siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_INSTALL_PLUGINS )
+		) || jetpackNonAtomic;
+
+	if ( isPlaceholder ) {
+		return <Placeholder variant={ variant } />;
 	}
 
-	renderInstalledIn() {
-		const { sitesWithPlugin } = this.props;
-		if ( ( sitesWithPlugin && sitesWithPlugin.length > 0 ) || this.isWpcomPreinstalled() ) {
-			return (
-				<div className="plugins-browser-item__installed">
-					<Gridicon icon="checkmark" size={ 18 } />
-					{ this.props.translate( 'Installed' ) }
+	const classNames = classnames( 'plugins-browser-item', variant, {
+		incompatible: isPluginIncompatible,
+	} );
+
+	const onClick = ( e ) => {
+		e.preventDefault();
+		e.stopPropagation();
+		window.location.href = localizeUrl( 'https://wordpress.com/support/incompatible-plugins/' );
+	};
+
+	return (
+		<li className={ classNames }>
+			<a
+				href={ localizePath( pluginLink ) }
+				className="plugins-browser-item__link"
+				onClick={ trackPluginLinkClick }
+			>
+				<div className="plugins-browser-item__info">
+					<PluginIcon image={ plugin.icon } isPlaceholder={ isPlaceholder } />
+					<div className="plugins-browser-item__title">{ plugin.name }</div>
+					{ variant === PluginsBrowserElementVariant.Extended && (
+						<>
+							<div className="plugins-browser-item__author">
+								{ translate( 'by ' ) }
+								<span className="plugins-browser-item__author-name">{ plugin.author_name }</span>
+							</div>
+						</>
+					) }
+					<div className="plugins-browser-item__description">{ plugin.short_description }</div>
 				</div>
-			);
-		}
-		return null;
-	}
-
-	renderUpgradeButton() {
-		const { isPreinstalled, upgradeLink } = this.props.plugin;
-		if ( isPreinstalled || ! upgradeLink ) {
-			return null;
-		}
-
-		return (
-			<Button className="plugins-browser-item__upgrade-button" compact primary href={ upgradeLink }>
-				{ this.props.translate( 'Upgrade' ) }
-			</Button>
-		);
-	}
-
-	renderPlaceholder() {
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		return (
-			<li className="plugins-browser-item is-placeholder">
-				<span className="plugins-browser-item__link">
-					<div className="plugins-browser-item__info">
-						<PluginIcon size={ this.props.iconSize } isPlaceholder={ true } />
-						<div className="plugins-browser-item__title">…</div>
-						<div className="plugins-browser-item__author">…</div>
+				{ isUntestedVersion && (
+					<div className="plugins-browser-item__untested-notice">
+						<Icon size={ 20 } icon={ info } />
+						<span className="plugins-browser-item__untested-text">
+							{ translate( 'Untested with your version of WordPress' ) }
+						</span>
 					</div>
-					<Rating rating={ 0 } size={ 12 } />
-				</span>
-			</li>
-		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
-	}
-
-	render() {
-		if ( this.props.isPlaceholder ) {
-			return this.renderPlaceholder();
-		}
-		return (
-			<li className="plugins-browser-item">
-				<a
-					href={ this.getPluginLink() }
-					className="plugins-browser-item__link"
-					onClick={ this.trackPluginLinkClick }
-				>
-					<div className="plugins-browser-item__info">
-						<PluginIcon
-							size={ this.props.iconSize }
-							image={ this.props.plugin.icon }
-							isPlaceholder={ this.props.isPlaceholder }
+				) }
+				{ isPluginIncompatible && (
+					<span
+						role="link"
+						tabIndex="-1"
+						onClick={ onClick }
+						onKeyPress={ onClick }
+						className="plugins-browser-item__incompatible"
+					>
+						{ translate( 'Why is this plugin not compatible with WordPress.com?' ) }
+					</span>
+				) }
+				<div className="plugins-browser-item__footer">
+					{ variant === PluginsBrowserElementVariant.Extended && (
+						<InstalledInOrPricing
+							sitesWithPlugin={ sitesWithPlugin }
+							isWpcomPreinstalled={ isWpcomPreinstalled }
+							plugin={ plugin }
+							shouldUpgrade={ shouldUpgrade }
+							canInstallPlugins={ canInstallPlugins }
+							currentSites={ currentSites }
 						/>
-						<div className="plugins-browser-item__title">{ this.props.plugin.name }</div>
-						<div className="plugins-browser-item__author">{ this.props.plugin.author_name }</div>
-						{ this.renderInstalledIn() }
+					) }
+					{ /* Plugin activation information will be shown in this area if its installed */ }
+					{ ! isPluginInstalledOnSite && (
+						<div className="plugins-browser-item__additional-info">
+							{ !! plugin.rating && (
+								<div className="plugins-browser-item__ratings">
+									<Gridicon
+										size={ 18 }
+										icon="star"
+										className="plugins-browser-item__rating-star"
+										color="#f0b849" // alert-yellow
+									/>
+									<span className="plugins-browser-item__rating-value">
+										{ ( plugin.rating / 20 ).toFixed( 1 ) }
+									</span>
+									{ Number.isInteger( plugin.num_ratings ) && (
+										<span className="plugins-browser-item__number-of-ratings">
+											{ translate( '(%(number_of_ratings)s)', {
+												args: {
+													number_of_ratings: plugin.num_ratings.toLocaleString( getLocaleSlug() ),
+												},
+											} ) }
+										</span>
+									) }
+								</div>
+							) }
+						</div>
+					) }
+				</div>
+			</a>
+		</li>
+	);
+};
+
+function InstalledInOrPricing( {
+	sitesWithPlugin,
+	isWpcomPreinstalled,
+	plugin,
+	shouldUpgrade,
+	canInstallPlugins,
+	currentSites,
+} ) {
+	const translate = useTranslate();
+	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const isMarketplaceProduct = useSelector( ( state ) =>
+		isMarketplaceProductSelector( state, plugin.slug )
+	);
+	const softwareSlug = isMarketplaceProduct ? plugin.software_slug || plugin.org_slug : plugin.slug;
+	const isPluginActive = useSelector( ( state ) =>
+		getPluginOnSites( state, [ selectedSiteId ], softwareSlug )
+	)?.active;
+	const { isPreinstalledPremiumPlugin } = usePreinstalledPremiumPlugin( plugin.slug );
+	const active = isWpcomPreinstalled || isPluginActive;
+	const isLoggedIn = useSelector( isUserLoggedIn );
+
+	if ( isPreinstalledPremiumPlugin ) {
+		return <PreinstalledPremiumPluginBrowserItemPricing plugin={ plugin } />;
+	}
+
+	if ( ( sitesWithPlugin && sitesWithPlugin.length > 0 ) || isWpcomPreinstalled ) {
+		return (
+			<div className="plugins-browser-item__installed-and-active-container">
+				<div className="plugins-browser-item__installed ">
+					<Gridicon icon="checkmark" className="checkmark" size={ 12 } />
+					{ isWpcomPreinstalled || currentSites?.length === 1
+						? translate( 'Installed' )
+						: translate( 'Installed on %d site', 'Installed on %d sites', {
+								args: [ sitesWithPlugin.length ],
+								count: sitesWithPlugin.length,
+						  } ) }
+				</div>
+				{ selectedSiteId && (
+					<div className="plugins-browser-item__active">
+						<Badge type={ active ? 'success' : 'info' }>
+							{ active ? translate( 'Active' ) : translate( 'Inactive' ) }
+						</Badge>
 					</div>
-					<Rating rating={ this.props.plugin.rating } size={ 12 } />
-				</a>
-				{ this.renderUpgradeButton() }
-			</li>
+				) }
+			</div>
 		);
 	}
+
+	return (
+		<div className="plugins-browser-item__pricing">
+			<PluginPrice plugin={ plugin } billingPeriod={ IntervalLength.MONTHLY }>
+				{ ( { isFetching, price, period } ) => {
+					if ( plugin.isSaasProduct ) {
+						// SaaS products do not display a price
+						return (
+							<>
+								{ ! canInstallPlugins && isLoggedIn && (
+									<span className="plugins-browser-item__requires-plan-upgrade">
+										{ translate( 'Requires a plan upgrade' ) }
+									</span>
+								) }
+							</>
+						);
+					}
+					if ( isFetching ) {
+						return <div className="plugins-browser-item__pricing-placeholder">...</div>;
+					}
+					if ( price ) {
+						return (
+							<>
+								{ price + ' ' }
+								<span className="plugins-browser-item__period">{ period }</span>
+								{ shouldUpgrade && (
+									<div className="plugins-browser-item__period">
+										{ translate( 'Requires a plan upgrade' ) }
+									</div>
+								) }
+							</>
+						);
+					}
+
+					return (
+						<>
+							{ translate( 'Free' ) }
+							{ ! canInstallPlugins && isLoggedIn && (
+								<span className="plugins-browser-item__requires-plan-upgrade">
+									{ translate( 'Requires a plan upgrade' ) }
+								</span>
+							) }
+						</>
+					);
+				} }
+			</PluginPrice>
+		</div>
+	);
 }
 
-export default compose(
-	connect( ( state, { currentSites, plugin, site } ) => {
-		const selectedSiteId = getSelectedSiteId( state );
+function Placeholder( { variant } ) {
+	return (
+		<li className={ classnames( 'plugins-browser-item is-placeholder', variant ) }>
+			<span className="plugins-browser-item__link">
+				<div className="plugins-browser-item__info">
+					<PluginIcon isPlaceholder={ true } />
+					<div className="plugins-browser-item__title">…</div>
+					<div className="plugins-browser-item__author">…</div>
+					<div className="plugins-browser-item__description">…</div>
+				</div>
+			</span>
+		</li>
+	);
+}
 
-		const sitesWithPlugin =
-			site && currentSites
-				? getSitesWithPlugin( state, siteObjectsToSiteIds( currentSites ), plugin.slug )
-				: [];
-
-		return {
-			isJetpackSite: isJetpackSite( state, selectedSiteId ),
-			sitesWithPlugin,
-		};
-	} ),
-	localize
-)( PluginsBrowserListElement );
+export default PluginsBrowserListElement;

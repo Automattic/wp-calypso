@@ -1,20 +1,9 @@
-/**
- * External dependencies
- */
-
 import { omit } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import {
 	SITE_PLANS_FETCH,
 	SITE_PLANS_FETCH_COMPLETED,
 	SITE_PLANS_FETCH_FAILED,
 	SITE_PLANS_REMOVE,
-	SITE_PLANS_TRIAL_CANCEL,
-	SITE_PLANS_TRIAL_CANCEL_COMPLETED,
-	SITE_PLANS_TRIAL_CANCEL_FAILED,
 } from 'calypso/state/action-types';
 
 export const initialSiteState = {
@@ -27,10 +16,10 @@ export const initialSiteState = {
 /**
  * Returns a new state with the given attributes updated for the specified site.
  *
- * @param {object} state current state
+ * @param {Object} state current state
  * @param {number} siteId identifier of the site
- * @param {object} attributes list of attributes and their values
- * @returns {object} the new state
+ * @param {Object} attributes list of attributes and their values
+ * @returns {Object} the new state
  */
 function updateSiteState( state, siteId, attributes ) {
 	return Object.assign( {}, state, {
@@ -62,25 +51,6 @@ export function plans( state = {}, action ) {
 
 		case SITE_PLANS_REMOVE:
 			return omit( state, action.siteId );
-
-		case SITE_PLANS_TRIAL_CANCEL:
-			return updateSiteState( state, action.siteId, {
-				isRequesting: true,
-			} );
-
-		case SITE_PLANS_TRIAL_CANCEL_COMPLETED:
-			return updateSiteState( state, action.siteId, {
-				error: null,
-				hasLoadedFromServer: true,
-				isRequesting: false,
-				data: action.plans,
-			} );
-
-		case SITE_PLANS_TRIAL_CANCEL_FAILED:
-			return updateSiteState( state, action.siteId, {
-				error: action.error,
-				isRequesting: false,
-			} );
 	}
 
 	return state;

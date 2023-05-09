@@ -1,27 +1,20 @@
-/**
- * External dependencies
- */
 import { pick, set, isEqual } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import { STATS_CHART_COUNTS_REQUEST, STATS_CHART_COUNTS_RECEIVE } from 'calypso/state/action-types';
 import {
 	combineReducers,
 	keyedReducer,
 	withSchemaValidation,
 	withPersistence,
 } from 'calypso/state/utils';
-import { STATS_CHART_COUNTS_REQUEST, STATS_CHART_COUNTS_RECEIVE } from 'calypso/state/action-types';
-import { countsSchema } from './schema';
 import { QUERY_FIELDS } from './constants';
+import { countsSchema } from './schema';
 
 /**
  * Returns the updated count records state after an action has been dispatched.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 const countsReducer = ( state = [], action ) => {
 	switch ( action.type ) {
@@ -70,9 +63,9 @@ export const counts = withSchemaValidation(
 /**
  * Returns the loading state after an action has been dispatched.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 const isLoadingReducer = ( state = {}, action ) => {
 	switch ( action.type ) {

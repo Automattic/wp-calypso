@@ -7,7 +7,6 @@ interface Clearable {
  * arguments and results, and returns the latter if the former match.
  *
  * @param fn The function to be wrapped.
- *
  * @returns The wrapped function.
  */
 export default function memoizeLast< T extends ( ...args: any[] ) => any >( fn: T ): T & Clearable {
@@ -43,7 +42,6 @@ export default function memoizeLast< T extends ( ...args: any[] ) => any >( fn: 
  * the arguments have not changed will always pass.
  *
  * @param fn The function to be wrapped.
- *
  * @returns The wrapped function.
  */
 export function once< T extends () => any >( fn: T ) {

@@ -1,27 +1,69 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .upsell-nudge__placeholders {
 	display: flex;
 	flex-direction: column;
 
 	.is-placeholder {
 		animation: pulse-light 800ms ease-in-out infinite;
-		background: var( --color-neutral-10 );
+		background: var(--color-neutral-10);
 	}
 }
 
 .upsell-nudge__placeholder-row {
 	height: 40px;
 	flex: 0 0 100%;
-	margin-bottom: 15px;
+	margin-bottom: 20px;
 }
 
 .upsell-nudge__placeholder-button {
 	height: 50px;
 	width: 100%;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		width: 80px;
 		height: 40px;
 	}
+}
+
+.upsell-nudge__price-placeholder {
+	width: 33%;
+	margin: 0 auto;
+	height: 20px;
+}
+
+.upsell-nudge__hold-tight-placeholder {
+	width: 33%;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 20px;
+	height: 20px;
+}
+
+.upsell-nudge__form-placeholder {
+	width: 100%;
+	margin-top: 64px;
+	margin-right: 0;
+	@include break-medium {
+		width: 60%;
+		margin-right: 8px;
+	}
+
+}
+
+.upsell-nudge__benefits-placeholder {
+	width: 100%;
+	margin-top: 64px;
+	margin-left: 0;
+	@include break-medium {
+		width: 40%;
+		margin-left: 8px;
+	}
+}
+
+.upsell-nudge__feature-placeholder {
+	height: 20px;
 }
 
 .upsell-nudge__placeholder-button-container {
@@ -36,4 +78,12 @@
 	width: 0;
 	height: 0;
 	overflow: hidden;
+}
+
+.upsell-nudge__form-container-placeholder {
+	display: flex;
+	flex-direction: column;
+	@include break-medium {
+		flex-direction: row;
+	}
 }

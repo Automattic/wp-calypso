@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
 import i18n from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { JETPACK_SCAN_THREATS_FIX_ALL } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import {
 	updateThreat,
 	updateThreatCompleted,
 	getFixThreatsStatus,
 } from 'calypso/state/jetpack-scan/threats/actions';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { errorNotice, successNotice, infoNotice } from 'calypso/state/notices/actions';
 
 export const request = ( action ) => {

@@ -1,48 +1,58 @@
-/**
- * External dependencies
- */
-
 import { current as currentPage } from 'page';
-
-/**
- * Internal dependencies
- */
 import {
+	addAddOnsToCart,
 	addPlanToCart,
+	addWithThemePlanToCart,
 	createAccount,
 	createSite,
 	createWpForTeamsSite,
 	createSiteOrDomain,
 	createSiteWithCart,
+	setDesignOnSite,
 	setThemeOnSite,
+	setOptionsOnSite,
+	setStoreFeatures,
+	setIntentOnSite,
 	addDomainToCart,
 	launchSiteApi,
 	isPlanFulfilled,
+	isAddOnsFulfilled,
 	isDomainFulfilled,
 	isSiteTypeFulfilled,
-	isSiteTopicFulfilled,
 	maybeRemoveStepForUserlessCheckout,
+	isNewOrExistingSiteFulfilled,
+	createSiteAndAddDIFMToCart,
+	excludeStepIfEmailVerified,
+	submitWebsiteContent,
+	excludeStepIfProfileComplete,
 } from 'calypso/lib/signup/step-actions';
 import { generateSteps } from './steps-pure';
 
 export default generateSteps( {
+	addAddOnsToCart,
 	addPlanToCart,
+	addWithThemePlanToCart,
 	createAccount,
 	createSite,
 	createWpForTeamsSite,
 	createSiteOrDomain,
 	createSiteWithCart,
 	currentPage,
+	setDesignOnSite,
 	setThemeOnSite,
+	setOptionsOnSite,
+	setStoreFeatures,
+	setIntentOnSite,
 	addDomainToCart,
 	launchSiteApi,
 	isPlanFulfilled,
+	isAddOnsFulfilled,
 	isDomainFulfilled,
 	isSiteTypeFulfilled,
-	isSiteTopicFulfilled,
 	maybeRemoveStepForUserlessCheckout,
+	isNewOrExistingSiteFulfilled,
+	createSiteAndAddDIFMToCart,
+	excludeStepIfEmailVerified,
+	excludeStepIfProfileComplete,
+	submitWebsiteContent,
 } );
-
-export function isDomainStepSkippable( flowName ) {
-	return flowName === 'test-fse';
-}

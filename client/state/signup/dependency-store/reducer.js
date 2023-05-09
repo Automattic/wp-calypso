@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	SIGNUP_DEPENDENCY_STORE_UPDATE,
 	SIGNUP_DEPENDENCY_STORE_REMOVE_SITE_SLUG,
@@ -8,8 +5,8 @@ import {
 	SIGNUP_PROGRESS_COMPLETE_STEP,
 	SIGNUP_COMPLETE_RESET,
 } from 'calypso/state/action-types';
-import { dependencyStoreSchema } from './schema';
 import { withSchemaValidation } from 'calypso/state/utils';
+import { dependencyStoreSchema } from './schema';
 
 const EMPTY = {};
 
@@ -19,8 +16,8 @@ function reducer( state = EMPTY, action ) {
 			return { ...state, ...action.dependencies };
 
 		case SIGNUP_DEPENDENCY_STORE_REMOVE_SITE_SLUG: {
-			const { siteSlug, ...dependenciesWithoutSiteSlug } = state;
-			return dependenciesWithoutSiteSlug;
+			const { siteId, siteSlug, ...dependenciesWithoutSiteIdentifiers } = state;
+			return dependenciesWithoutSiteIdentifiers;
 		}
 
 		case SIGNUP_PROGRESS_SUBMIT_STEP:

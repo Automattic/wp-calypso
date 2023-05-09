@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import 'calypso/state/imports/init';
 
 export function isLoading( state ) {

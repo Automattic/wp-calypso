@@ -1,18 +1,3 @@
-/**
- * Internal dependencies
- */
-import {
-	bookConciergeAppointment,
-	cancelConciergeAppointment,
-	rescheduleConciergeAppointment,
-	requestConciergeAppointmentDetails,
-	updateConciergeAppointmentDetails,
-	requestConciergeInitial,
-	updateConciergeInitial,
-	updateConciergeBookingStatus,
-	updateConciergeSignupForm,
-} from '../actions';
-
 import {
 	CONCIERGE_APPOINTMENT_CANCEL,
 	CONCIERGE_APPOINTMENT_CREATE,
@@ -24,6 +9,17 @@ import {
 	CONCIERGE_SIGNUP_FORM_UPDATE,
 	CONCIERGE_UPDATE_BOOKING_STATUS,
 } from 'calypso/state/action-types';
+import {
+	bookConciergeAppointment,
+	cancelConciergeAppointment,
+	rescheduleConciergeAppointment,
+	requestConciergeAppointmentDetails,
+	updateConciergeAppointmentDetails,
+	requestConciergeInitial,
+	updateConciergeInitial,
+	updateConciergeBookingStatus,
+	updateConciergeSignupForm,
+} from '../actions';
 
 describe( 'state/concierge', () => {
 	describe( 'actions', () => {

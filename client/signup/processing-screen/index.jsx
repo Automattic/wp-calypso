@@ -1,18 +1,6 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Style dependencies
- */
+import { Component } from 'react';
 import './style.scss';
 
 export class SignupProcessingScreen extends Component {
@@ -64,21 +52,6 @@ export class SignupProcessingScreen extends Component {
 			comment:
 				'The second line after the breaking tag {{br/}} should fit unbroken in 384px and greater and have a max of 30 characters.',
 		} );
-	}
-
-	componentDidMount() {
-		const { flowName, localeSlug } = this.props;
-		if ( ! localeSlug ) {
-			return;
-		}
-		const locale = localeSlug.split( /[-_]/ )[ 0 ];
-		if ( flowName !== 'onboarding' || ! [ 'en', 'ja' ].includes( locale ) ) {
-			return;
-		}
-		addHotJarScript();
-		if ( window && window.hj ) {
-			window.hj( 'trigger', 'bizx_questionnaire_' + locale );
-		}
 	}
 
 	render() {

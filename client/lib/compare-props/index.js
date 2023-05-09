@@ -1,7 +1,3 @@
-/**
- * External dependencies
- */
-
 import { includes, isEqual } from 'lodash';
 
 export default ( options = {} ) => {

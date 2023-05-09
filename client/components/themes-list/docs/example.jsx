@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
 import ThemesList from 'calypso/components/themes-list';
 
 const demoThemes = [
@@ -33,7 +25,7 @@ const demoThemes = [
 	},
 ];
 
-export default class extends React.Component {
+export default class extends Component {
 	static displayName = 'ThemesListExample';
 
 	getActionLabel = ( theme ) => {

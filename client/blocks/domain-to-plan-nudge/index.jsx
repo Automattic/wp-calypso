@@ -1,32 +1,22 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
+import { getPlan, PLAN_PERSONAL, WPCOM_FEATURES_NO_ADVERTS } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
-
-/**
- * Internal dependencies
- */
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getSite } from 'calypso/state/sites/selectors';
-import { getPlan, PLAN_PERSONAL, FEATURE_NO_ADS } from '@automattic/calypso-products';
-import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import isEligibleForDomainToPaidPlanUpsell from 'calypso/state/selectors/is-eligible-for-domain-to-paid-plan-upsell';
 import {
 	getSitePlanRawPrice,
 	getPlanDiscountedRawPrice,
 	getPlanRawDiscount,
 	getPlansBySiteId,
 } from 'calypso/state/sites/plans/selectors';
-import QuerySitePlans from 'calypso/components/data/query-site-plans';
-import isEligibleForDomainToPaidPlanUpsell from 'calypso/state/selectors/is-eligible-for-domain-to-paid-plan-upsell';
+import { getSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class DomainToPlanNudge extends Component {
@@ -67,11 +57,11 @@ class DomainToPlanNudge extends Component {
 				} ) }
 				event="domain_to_personal_nudge" //actually cta_name
 				dismissPreferenceName="domain-to-plan-nudge"
-				feature={ FEATURE_NO_ADS }
+				feature={ WPCOM_FEATURES_NO_ADVERTS }
 				href={ `/checkout/${ siteId }/personal` }
 				list={ [
 					translate( 'Remove WordPress.com Ads' ),
-					translate( 'Access unlimited email support' ),
+					translate( 'Access unlimited customer support via email' ),
 					translate( 'Use with your Current Custom Domain' ),
 				] }
 				plan={ PLAN_PERSONAL }

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	canDomainAddGSuite,
 	getAnnualPrice,
@@ -9,7 +6,6 @@ import {
 	getMonthlyPrice,
 	hasGSuiteSupportedDomain,
 	hasGSuiteWithUs,
-	hasPendingGSuiteUsers,
 } from 'calypso/lib/gsuite';
 
 describe( 'index', () => {
@@ -205,6 +201,10 @@ describe( 'index', () => {
 			expect( hasGSuiteSupportedDomain( [] ) ).toEqual( false );
 		} );
 
+		test( 'returns false if passed an array with a single undefined member', () => {
+			expect( hasGSuiteSupportedDomain( [ undefined ] ) ).toEqual( false );
+		} );
+
 		test( 'returns false if passed an array with invalid domains', () => {
 			expect(
 				hasGSuiteSupportedDomain( [
@@ -231,20 +231,6 @@ describe( 'index', () => {
 						hasWpcomNameservers: true,
 					},
 				] )
-			).toEqual( true );
-		} );
-	} );
-
-	describe( '#hasPendingGSuiteUsers', () => {
-		test( 'returns false if googleAppsSubscription.pendingUsers has an empty array', () => {
-			expect( hasPendingGSuiteUsers( { googleAppsSubscription: { pendingUsers: [] } } ) ).toEqual(
-				false
-			);
-		} );
-
-		test( 'returns true if googleAppsSubscription.pendingUsers has an non-empty array', () => {
-			expect(
-				hasPendingGSuiteUsers( { googleAppsSubscription: { pendingUsers: [ 'foo' ] } } )
 			).toEqual( true );
 		} );
 	} );

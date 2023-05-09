@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { THEME_CLEAR_ACTIVATED } from 'calypso/state/themes/action-types';
 
 import 'calypso/state/themes/init';
@@ -10,7 +7,7 @@ import 'calypso/state/themes/init';
  * for site should be cleared
  *
  * @param  {number}   siteId    Site ID
- * @returns {object}        Action object
+ * @returns {Object}        Action object
  */
 export function clearActivated( siteId ) {
 	return {

@@ -1,71 +1,68 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { isEnabled } from '@automattic/calypso-config';
+import { CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { once } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { CompactCard } from '@automattic/components';
-import SectionHeader from 'calypso/components/section-header';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import JetpackPluginUpdateWarning from 'calypso/blocks/jetpack-plugin-update-warning';
 import DocumentHead from 'calypso/components/data/document-head';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
+import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
-import WordPressImporter from 'calypso/my-sites/importer/importer-wordpress';
-import MediumImporter from 'calypso/my-sites/importer/importer-medium';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import Main from 'calypso/components/main';
+import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import SectionHeader from 'calypso/components/section-header';
+import { getImporterByKey, getImporters } from 'calypso/lib/importer/importer-config';
+import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
+import memoizeLast from 'calypso/lib/memoize-last';
+import version_compare from 'calypso/lib/version-compare';
 import BloggerImporter from 'calypso/my-sites/importer/importer-blogger';
-import WixImporter from 'calypso/my-sites/importer/importer-wix';
+import MediumImporter from 'calypso/my-sites/importer/importer-medium';
 import SquarespaceImporter from 'calypso/my-sites/importer/importer-squarespace';
-import { fetchImporterState, startImport } from 'calypso/state/imports/actions';
-import { getImporters, getImporterByKey } from 'calypso/lib/importer/importer-config';
+import SubstackImporter from 'calypso/my-sites/importer/importer-substack';
+import WixImporter from 'calypso/my-sites/importer/importer-wix';
+import WordPressImporter from 'calypso/my-sites/importer/importer-wordpress';
+import JetpackImporter from 'calypso/my-sites/importer/jetpack-importer';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { cancelImport, fetchImporterState, startImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import {
 	getImporterStatusForSiteId,
 	isImporterStatusHydrated,
 } from 'calypso/state/imports/selectors';
-
-import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import { getSiteOption, getSiteTitle } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
-	getSelectedSiteSlug,
 	getSelectedSiteId,
+	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import { getSiteTitle } from 'calypso/state/sites/selectors';
-import Main from 'calypso/components/main';
-import JetpackImporter from 'calypso/my-sites/importer/jetpack-importer';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
-import EmptyContent from 'calypso/components/empty-content';
-import memoizeLast from 'calypso/lib/memoize-last';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
-
-/**
- * Style dependencies
- */
 import './section-import.scss';
-import config from '@automattic/calypso-config';
 
 /**
  * Configuration mapping import engines to associated import components.
  * The key is the engine, and the value is the component. To add new importers,
  * add it here and add its configuration to lib/importer/importer-config.
  *
- * @type {object}
+ * @type {Object}
  */
 const importerComponents = {
 	blogger: BloggerImporter,
 	medium: MediumImporter,
+	substack: SubstackImporter,
 	squarespace: SquarespaceImporter,
 	wix: WixImporter,
 	wordpress: WordPressImporter,
 };
 
 const getImporterTypeForEngine = ( engine ) => `importer-type-${ engine }`;
+
+/**
+ * The minimum version of the Jetpack plugin required to use the Jetpack Importer API.
+ */
+const JETPACK_IMPORT_MIN_PLUGIN_VERSION = '12.1';
 
 class SectionImport extends Component {
 	static propTypes = {
@@ -102,6 +99,12 @@ class SectionImport extends Component {
 		} );
 	};
 
+	cancelNonStartedImports = () => {
+		this.props.siteImports
+			.filter( ( x ) => x.importerState === appStates.READY_FOR_UPLOAD )
+			.forEach( ( x ) => this.props.cancelImport( x.site.ID, x.importerId ) );
+	};
+
 	trackImporterStateChange = memoizeLast( ( importerState, importerId ) => {
 		const stateToEventNameMap = {
 			[ appStates.READY_FOR_UPLOAD ]: 'calypso_importer_view',
@@ -135,6 +138,10 @@ class SectionImport extends Component {
 		this.handleStateChanges();
 	}
 
+	componentWillUnmount() {
+		this.cancelNonStartedImports();
+	}
+
 	/**
 	 * Renders each enabled importer at the provided `state`
 	 *
@@ -143,12 +150,10 @@ class SectionImport extends Component {
 	 */
 	renderIdleImporters( importerState ) {
 		const { site, siteTitle } = this.props;
-		let importers = getImporters();
-
-		// Filter out all importers except the WordPress ones for Atomic sites.
-		if ( site.options.is_wpcom_atomic ) {
-			importers = importers.filter( ( importer ) => importer.engine === 'wordpress' );
-		}
+		const importers = getImporters( {
+			isAtomic: site.options.is_wpcom_atomic,
+			isJetpack: site.jetpack,
+		} );
 
 		const importerElements = importers.map( ( { engine } ) => {
 			const ImporterComponent = importerComponents[ engine ];
@@ -168,6 +173,8 @@ class SectionImport extends Component {
 					site={ site }
 					siteTitle={ siteTitle }
 					importerStatus={ importerStatus }
+					isAtomic={ site.options.is_wpcom_atomic }
+					isJetpack={ site.jetpack }
 				/>
 			);
 		} );
@@ -176,11 +183,7 @@ class SectionImport extends Component {
 		return (
 			<>
 				{ importerElements }
-				<CompactCard
-					href={ site.options.admin_url + 'import.php' }
-					target="_blank"
-					rel="noopener noreferrer"
-				>
+				<CompactCard href={ site.options.admin_url + 'import.php' }>
 					{ this.props.translate( 'Choose from full list' ) }
 				</CompactCard>
 			</>
@@ -274,10 +277,9 @@ class SectionImport extends Component {
 		if ( ! canImport ) {
 			return (
 				<Main>
-					<SidebarNavigation />
 					<EmptyContent
 						title={ this.props.translate( 'You are not authorized to view this page' ) }
-						illustration={ '/calypso/images/illustrations/illustration-404.svg' }
+						illustration="/calypso/images/illustrations/illustration-404.svg"
 					/>
 				</Main>
 			);
@@ -288,21 +290,52 @@ class SectionImport extends Component {
 			options: { is_wpcom_atomic: isAtomic },
 		} = site;
 
+		// Target site Jetpack version is not compatible with the importer.
+		const jetpackVersionInCompatible = version_compare(
+			this.props.siteJetpackVersion,
+			JETPACK_IMPORT_MIN_PLUGIN_VERSION,
+			'<'
+		);
+
+		const hasUnifiedImporter = isEnabled( 'importer/unified' );
+
 		return (
 			<Main>
 				<ScreenOptionsTab wpAdminPath="import.php" />
 				<DocumentHead title={ translate( 'Import Content' ) } />
-				<SidebarNavigation />
 				<FormattedHeader
 					brandFont
 					className="importer__page-heading"
 					headerText={ translate( 'Import Content' ) }
-					subHeaderText={ translate( 'Import content from another website or platform.' ) }
+					subHeaderText={ translate(
+						'Import content from another website or platform. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						{
+							components: {
+								learnMoreLink: <InlineSupportLink supportContext="import" showIcon={ false } />,
+							},
+						}
+					) }
 					align="left"
-					hasScreenOptions={ config.isEnabled( 'nav-unification/switcher' ) }
+					hasScreenOptions
 				/>
 				<EmailVerificationGate allowUnlaunched>
-					{ isJetpack && ! isAtomic ? <JetpackImporter /> : this.renderImportersList() }
+					{ isJetpack && ! isAtomic && ! hasUnifiedImporter ? (
+						<JetpackImporter />
+					) : (
+						<>
+							{ /** Show a plugin update warning if Jetpack version does not support import endpoints */ }
+							{ isJetpack && ! isAtomic && (
+								<JetpackPluginUpdateWarning
+									siteId={ this.props.siteId }
+									minJetpackVersion={ JETPACK_IMPORT_MIN_PLUGIN_VERSION }
+									warningRequirement={ translate( 'To make sure you can import reliably' ) }
+								/>
+							) }
+							{ isJetpack && ! isAtomic && jetpackVersionInCompatible
+								? this.renderIdleImporters( appStates.DISABLED )
+								: this.renderImportersList() }
+						</>
+					) }
 				</EmailVerificationGate>
 			</Main>
 		);
@@ -320,7 +353,8 @@ export default connect(
 			siteImports: getImporterStatusForSiteId( state, siteId ),
 			canImport: canCurrentUser( state, siteId, 'manage_options' ),
 			isImporterStatusHydrated: isImporterStatusHydrated( state ),
+			siteJetpackVersion: getSiteOption( state, siteId, 'jetpack_version' ),
 		};
 	},
-	{ recordTracksEvent, startImport, fetchImporterState }
+	{ recordTracksEvent, startImport, fetchImporterState, cancelImport }
 )( localize( SectionImport ) );

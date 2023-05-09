@@ -1,25 +1,11 @@
 /**
  * @jest-environment jsdom
  */
-
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-import sinon from 'sinon';
-
-/**
- * Internal dependencies
- */
 import scrollTo from '../';
 
 describe( 'scroll-to', () => {
 	beforeAll( () => {
-		sinon.stub( window, 'scrollTo' );
-	} );
-
-	afterEach( () => {
-		window.scrollTo.resetHistory();
+		jest.spyOn( window, 'scrollTo' ).mockImplementation();
 	} );
 
 	test( 'window position x', () => {
@@ -29,8 +15,7 @@ describe( 'scroll-to', () => {
 				y: 300,
 				duration: 1,
 				onComplete: () => {
-					expect( window.scrollTo.lastCall.args[ 0 ] ).to.equal( 500 );
-					expect( window.scrollTo.lastCall.args[ 1 ] ).to.equal( 300 );
+					expect( window.scrollTo ).toHaveBeenCalledWith( 500, 300 );
 					done();
 				},
 			} );
@@ -43,8 +28,7 @@ describe( 'scroll-to', () => {
 				y: 100,
 				duration: 1,
 				onComplete: () => {
-					expect( window.scrollTo.lastCall.args[ 0 ] ).to.equal( 0 );
-					expect( window.scrollTo.lastCall.args[ 1 ] ).to.equal( 100 );
+					expect( window.scrollTo ).toHaveBeenCalledWith( 0, 100 );
 					done();
 				},
 			} );

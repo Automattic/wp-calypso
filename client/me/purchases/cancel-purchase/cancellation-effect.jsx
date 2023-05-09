@@ -1,26 +1,26 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
-/**
- * Internal Dependencies
- */
-import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
-import { getName, getSubscriptionEndDate, isRefundable } from 'calypso/lib/purchases';
 import {
 	isDomainMapping,
 	isGSuiteOrGoogleWorkspace,
 	isJetpackPlan,
 	isDotComPlan,
 	isPlan,
-	isTheme,
+	isThemePurchase,
 } from '@automattic/calypso-products';
+import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
+import { getName, getSubscriptionEndDate, isRefundable } from 'calypso/lib/purchases';
+import { isTemporarySitePurchase } from '../utils';
 
 export function cancellationEffectHeadline( purchase, translate ) {
 	const { domain } = purchase;
 	const purchaseName = getName( purchase );
+
+	if ( isTemporarySitePurchase( purchase ) ) {
+		return translate( 'Are you sure you want to cancel and remove %(purchaseName)s? ', {
+			args: {
+				purchaseName,
+			},
+		} );
+	}
 
 	if ( isRefundable( purchase ) ) {
 		return translate(
@@ -54,7 +54,7 @@ export function cancellationEffectHeadline( purchase, translate ) {
 function refundableCancellationEffectDetail( purchase, translate, overrides ) {
 	const refundText = overrides.refundText || purchase.refundText;
 
-	if ( isTheme( purchase ) ) {
+	if ( isThemePurchase( purchase ) ) {
 		return translate(
 			"Your site's appearance will revert to its previously selected theme and you will be refunded %(cost)s.",
 			{

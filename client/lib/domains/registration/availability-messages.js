@@ -1,22 +1,16 @@
 /* eslint-disable no-case-declarations */
 
-/**
- * External dependencies
- */
-import React from 'react';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
-
-/**
- * Internal dependencies
- */
 import { getTld } from 'calypso/lib/domains';
+import { domainAvailability } from 'calypso/lib/domains/constants';
 import {
 	CALYPSO_CONTACT,
 	INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS,
+	INCOMING_DOMAIN_TRANSFER_SUPPORTED_TLDS,
 	MAP_EXISTING_DOMAIN,
 } from 'calypso/lib/url/support';
-import { domainAvailability } from 'calypso/lib/domains/constants';
 import {
 	domainManagementTransferToOtherSite,
 	domainManagementTransferIn,
@@ -58,8 +52,7 @@ function getAvailabilityNotice( domain, error, errorData ) {
 			break;
 		case domainAvailability.REGISTERED_OTHER_SITE_SAME_USER:
 			message = translate(
-				'{{strong}}%(domain)s{{/strong}} is already registered on your site %(site)s. Do you want to move it to this site? ' +
-					'{{a}}Yes, move it to this site.{{/a}}',
+				'{{strong}}%(domain)s{{/strong}} is already registered on your site %(site)s. Do you want to {{a}}move it to this site{{/a}}?',
 				{
 					args: { domain, site },
 					components: {
@@ -123,12 +116,21 @@ function getAvailabilityNotice( domain, error, errorData ) {
 			);
 			break;
 		case domainAvailability.MAPPED_SAME_SITE_NOT_TRANSFERRABLE:
-			message = translate( '{{strong}}%(domain)s{{/strong}} is already connected to this site.', {
-				args: { domain },
-				components: {
-					strong: <strong />,
-				},
-			} );
+			message = translate(
+				'{{strong}}%(domain)s{{/strong}} is already connected to this site and cannot be transferred to WordPress.com. {{a}}Learn more{{/a}}.',
+				{
+					args: { domain },
+					components: {
+						strong: <strong />,
+						a: (
+							<a
+								rel="noopener noreferrer"
+								href={ localizeUrl( INCOMING_DOMAIN_TRANSFER_SUPPORTED_TLDS ) }
+							/>
+						),
+					},
+				}
+			);
 			break;
 		case domainAvailability.MAPPED_OTHER_SITE_SAME_USER:
 			message = translate(
@@ -164,7 +166,10 @@ function getAvailabilityNotice( domain, error, errorData ) {
 					components: {
 						strong: <strong />,
 						a: (
-							<a rel="noopener noreferrer" href={ INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS } />
+							<a
+								rel="noopener noreferrer"
+								href={ localizeUrl( INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS ) }
+							/>
 						),
 					},
 				}
@@ -178,7 +183,7 @@ function getAvailabilityNotice( domain, error, errorData ) {
 						args: { tld },
 						components: {
 							strong: <strong />,
-							a: <a rel="noopener noreferrer" href={ MAP_EXISTING_DOMAIN } />,
+							a: <a rel="noopener noreferrer" href={ localizeUrl( MAP_EXISTING_DOMAIN ) } />,
 						},
 					}
 				);
@@ -298,7 +303,7 @@ function getAvailabilityNotice( domain, error, errorData ) {
 		case domainAvailability.DOTBLOG_SUBDOMAIN:
 		case domainAvailability.RESTRICTED:
 			message = translate(
-				'You cannot map another WordPress.com subdomain - try creating a new site or one of the custom domains below.'
+				'This is a free WordPress.com subdomain. You can’t map it to another site.'
 			);
 			break;
 
@@ -370,6 +375,18 @@ function getAvailabilityNotice( domain, error, errorData ) {
 			);
 			break;
 
+		case domainAvailability.AVAILABLE_RESERVED:
+			message = translate(
+				'Sorry, {{strong}}%(domain)s{{/strong}} is reserved by the .%(tld)s registry and cannot be registered without permission.',
+				{
+					args: { domain, tld },
+					components: {
+						strong: <strong />,
+					},
+				}
+			);
+			break;
+
 		case domainAvailability.TRANSFERRABLE_PREMIUM:
 			message = translate(
 				"Sorry, {{strong}}%(domain)s{{/strong}} is a premium domain. We don't support transfers of premium domains on WordPress.com, but if you are the owner of this domain, you can {{a}}map it to your site{{/a}}.",
@@ -378,6 +395,54 @@ function getAvailabilityNotice( domain, error, errorData ) {
 					components: {
 						strong: <strong />,
 						a: <a rel="noopener noreferrer" href={ domainMapping( site, domain ) } />,
+					},
+				}
+			);
+			break;
+
+		case domainAvailability.RECENT_REGISTRATION_LOCK_NOT_TRANSFERRABLE:
+			message = translate(
+				"Sorry, {{strong}}%(domain)s{{/strong}} can't be transferred because it was registered less than 60 days ago.",
+				{
+					args: { domain },
+					components: {
+						strong: <strong />,
+					},
+				}
+			);
+			break;
+
+		case domainAvailability.SERVER_TRANSFER_PROHIBITED_NOT_TRANSFERRABLE:
+			message = translate(
+				"Sorry, {{strong}}%(domain)s{{/strong}} can't be transferred due to a transfer lock at the registry.",
+				{
+					args: { domain },
+					components: {
+						strong: <strong />,
+					},
+				}
+			);
+			break;
+
+		case 'blocked':
+			const supportURL = 'https://wordpress.com/error-report/?url=496@' + ( site?.slug || '' );
+			message = translate(
+				'Oops! Sorry an error has occurred. Please {{a}}click here{{/a}} to contact us so that we can fix it. Please remember that you have to provide the full, complete Blog URL, otherwise we can not fix it.',
+				{
+					components: {
+						a: <a rel="noopener noreferrer" href={ supportURL } />,
+					},
+				}
+			);
+			break;
+
+		case 'domain_availability_throttle':
+			message = translate(
+				"Unfortunately we're unable to check the status of {{strong}}%(domain)s{{/strong}} at this moment. Please log in first or try again later.",
+				{
+					args: { domain },
+					components: {
+						strong: <strong />,
 					},
 				}
 			);

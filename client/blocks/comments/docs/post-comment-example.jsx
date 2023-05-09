@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { Card } from '@automattic/components';
+import { Component } from 'react';
 import PostComment from 'calypso/blocks/comments/post-comment';
 import { POST_COMMENT_DISPLAY_TYPES } from 'calypso/state/comments/constants';
-import { Card } from '@automattic/components';
 
 const mockComment = {
 	author: {
@@ -86,7 +79,7 @@ const commentsToShow = {
 	4: excerpt,
 };
 
-export default class PostCommentExample extends React.Component {
+export default class PostCommentExample extends Component {
 	static displayName = 'PostCommentExample';
 
 	render() {

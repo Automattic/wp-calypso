@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
 import {
 	KEYRING_SERVICES_RECEIVE,
@@ -24,9 +21,12 @@ export function requestKeyringServices() {
 		} );
 
 		const siteId = getSelectedSiteId( getState() );
-		return wpcom
-			.undocumented()
-			.sitesExternalServices( siteId )
+
+		return wpcom.req
+			.get( {
+				path: `/sites/${ siteId }/external-services`,
+				apiNamespace: 'wpcom/v2',
+			} )
 			.then( ( response ) => {
 				dispatch( {
 					type: KEYRING_SERVICES_RECEIVE,

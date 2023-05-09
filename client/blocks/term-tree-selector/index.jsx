@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import TermTreeSelectorTerms from './terms';
+import { Component } from 'react';
 import TermSelectorAddTerm from './add-term';
+import TermTreeSelectorTerms from './terms';
 
-export default class TermTreeSelector extends React.Component {
+export default class TermTreeSelector extends Component {
 	static propTypes = {
 		multiple: PropTypes.bool,
 		className: PropTypes.string,
@@ -51,12 +43,6 @@ export default class TermTreeSelector extends React.Component {
 		}
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.taxonomy !== this.props.taxonomy ) {
-			this.setState( { search: '' } );
-		}
-	}
-
 	render() {
 		const {
 			taxonomy,
@@ -82,6 +68,7 @@ export default class TermTreeSelector extends React.Component {
 			<div>
 				<TermTreeSelectorTerms
 					taxonomy={ taxonomy }
+					key={ taxonomy }
 					onSearch={ this.onSearch }
 					onChange={ onChange }
 					query={ query }

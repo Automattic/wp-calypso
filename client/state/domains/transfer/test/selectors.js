@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import initialDomainState from '../initial';
 import { getDomainWapiInfoByDomainName } from '../selectors';
 

@@ -1,0 +1,31 @@
+
+.manage-site-plugins-dialog__container {
+	width: 900px;
+
+	@media screen and ( max-width: 1040px ) {
+		width: auto;
+	}
+
+	.plugin-action .components-toggle-control .components-base-control__field {
+		margin-bottom: 0;
+	}
+
+	.manage-site-plugins-dialog__finish-button {
+		float: right;
+
+		@media screen and ( max-width: 1040px ) {
+			margin-top: 16px;
+		}
+	}
+
+	.plugin-details-v2__title {
+		color: var(--studio-gray-100);
+		font-size: $font-title-small;
+		padding: 16px 0;
+	}
+}
+
+.popover,
+.global-notices {
+	z-index: z-index("root", ".popover.ellipsis-menu__menu") !important;
+}

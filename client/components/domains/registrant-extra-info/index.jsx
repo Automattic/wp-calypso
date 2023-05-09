@@ -1,23 +1,9 @@
-/**
- * Extrenal dependencies
- *
- */
-
-import React, { PureComponent } from 'react';
-import { keys, filter } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import config from '@automattic/calypso-config';
+import { PureComponent } from 'react';
+import { getTopLevelOfTld } from 'calypso/lib/domains';
 import ca from './ca-form';
 import fr from './fr-form';
 import uk from './uk-form';
-import { getTopLevelOfTld } from 'calypso/lib/domains';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const tldSpecificForms = {
@@ -28,10 +14,8 @@ const tldSpecificForms = {
 
 export const getApplicableTldsWithAdditionalDetailsForms = ( tlds ) => {
 	const topLevelTlds = tlds.map( getTopLevelOfTld );
-	return filter( keys( tldSpecificForms ), ( tldFormName ) => {
-		return (
-			config.isEnabled( `domains/cctlds/${ tldFormName }` ) && topLevelTlds.includes( tldFormName )
-		);
+	return Object.keys( tldSpecificForms ).filter( ( tldFormName ) => {
+		return topLevelTlds.includes( tldFormName );
 	} );
 };
 

@@ -1,27 +1,16 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { find, map, pickBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
-import ProfileLinksAddWordPressSite from './site';
+import { onboardingUrl } from 'calypso/lib/paths';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { addUserProfileLinks } from 'calypso/state/profile-links/actions';
 import getPublicSites from 'calypso/state/selectors/get-public-sites';
 import getSites from 'calypso/state/selectors/get-sites';
 import isSiteInProfileLinks from 'calypso/state/selectors/is-site-in-profile-links';
-import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import ProfileLinksAddWordPressSite from './site';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class ProfileLinksAddWordPress extends Component {
@@ -106,7 +95,7 @@ class ProfileLinksAddWordPress extends Component {
 
 	onCreateSite = ( event ) => {
 		event.preventDefault();
-		window.open( this.props.onboardingUrl + '?ref=me-profile-links' );
+		window.open( onboardingUrl() + '?ref=me-profile-links' );
 		this.props.onCancel();
 	};
 
@@ -218,7 +207,6 @@ export default connect(
 			publicSites,
 			publicSitesNotInProfileLinks,
 			sites: getSites( state ),
-			onboardingUrl: getOnboardingUrl( state ),
 		};
 	},
 	{

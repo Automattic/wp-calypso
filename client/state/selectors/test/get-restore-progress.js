@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import getRestoreProgress from 'calypso/state/selectors/get-restore-progress';
 
 const SITE_ID = 1234;
@@ -20,7 +12,7 @@ describe( 'getRestoreProgress()', () => {
 			},
 			SITE_ID
 		);
-		expect( result ).to.be.null;
+		expect( result ).toBeNull();
 	} );
 
 	test( 'should return existing progress for a site', () => {
@@ -39,6 +31,6 @@ describe( 'getRestoreProgress()', () => {
 			},
 			SITE_ID
 		);
-		expect( result ).to.deep.equal( progress );
+		expect( result ).toEqual( progress );
 	} );
 } );

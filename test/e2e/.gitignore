@@ -13,3 +13,12 @@
 
 # typescript output
 dist/
+
+# Playwright results
+results/
+
+# Allure results
+allure-results/
+
+# Cookie files
+cookies/

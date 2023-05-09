@@ -1,11 +1,10 @@
-/**
- * Internal dependencies
- */
 import type { Font } from './types';
 
 export const FONT_TITLES: Partial< Record< Font, string > > = {
 	'Playfair Display': 'Playfair',
 };
+
+export const SHOW_ALL_SLUG = 'CLIENT_ONLY_SHOW_ALL_SLUG';
 
 /**
  * Pairings of fontFamilies
@@ -53,5 +52,26 @@ export const ANCHORFM_FONT_PAIRINGS = [
 	},
 ] as const;
 
-// Used to store and retrieve the design thumbnails used in the design picker
-export const DESIGN_IMAGE_FOLDER = 'images/design-screenshots';
+/**
+ * mShot options
+ */
+export const DEFAULT_VIEWPORT_WIDTH = 1600;
+export const DEFAULT_VIEWPORT_HEIGHT = 1040;
+export const MOBILE_VIEWPORT_WIDTH = 599;
+
+/**
+ * Generated design picker
+ */
+export const STICKY_OFFSET_TOP = 109;
+
+/**
+ * Hard-coded design
+ */
+export const BLANK_CANVAS_DESIGN = {
+	slug: 'blank-canvas-3',
+	title: 'Blank Canvas',
+	recipe: {
+		stylesheet: 'pub/blank-canvas-3',
+	},
+	design_type: 'assembler',
+};

@@ -8,13 +8,13 @@
 	width: 100%;
 	margin-top: 32px;
 	text-align: center;
-	border-top: solid 1px var( --color-neutral-10 );
+	border-top: solid 1px var(--color-neutral-10);
 
 	.gridicon {
-		fill: var( --color-neutral-light );
+		fill: var(--color-neutral-light);
 		position: relative;
 		top: -13px;
-		background: var( --color-surface-backdrop );
+		background: var(--color-surface-backdrop);
 		padding: 0 8px;
 	}
 }

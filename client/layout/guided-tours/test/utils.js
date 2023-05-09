@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { and } from 'calypso/layout/guided-tours/utils';
 
 describe( 'Guided Tours utilities: and()', () => {

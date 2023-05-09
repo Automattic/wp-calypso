@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { EventEmitter } from 'events';
-
-/**
- * Internal dependencies
- */
 import {
 	recordTracksEvent as baseRecordTracksEvent,
 	analyticsEvents,
@@ -21,6 +14,14 @@ export function recordTracksEvent( eventName, eventProperties ) {
 	} );
 
 	baseRecordTracksEvent( eventName, eventProperties );
+}
+
+export function createRecordTracksEvent( defaultProperties ) {
+	return ( eventName, eventProperties ) =>
+		recordTracksEvent( eventName, {
+			...defaultProperties,
+			...eventProperties,
+		} );
 }
 
 export function recordTracksPageView( urlPath, params ) {

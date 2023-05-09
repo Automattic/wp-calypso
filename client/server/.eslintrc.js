@@ -7,8 +7,6 @@ const filteredRestrictedPaths = newRestrictedImports[ 1 ].paths.filter(
 
 module.exports = {
 	rules: {
-		'no-console': 0,
-		'import/no-nodejs-modules': 0,
 		'no-restricted-imports': [
 			newRestrictedImports[ 0 ],
 			{

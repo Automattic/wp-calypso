@@ -1,26 +1,6 @@
-/**
- * External dependencies
- */
 import type { LineItem } from '@automattic/composite-checkout';
-import type {
-	RequestCartProduct,
-	ResponseCartTaxData,
-	DomainContactDetails,
-} from '@automattic/shopping-cart';
-
-export type WPCOMTransactionEndpointCart = {
-	blog_id: string;
-	cart_key: string;
-	create_new_blog: boolean;
-	is_jetpack_checkout?: boolean;
-	jetpack_blog_id?: string;
-	coupon: string;
-	currency: string;
-	temporary: false;
-	extra: string[];
-	products: RequestCartProduct[];
-	tax: Omit< ResponseCartTaxData, 'display_taxes' >;
-};
+import type { DomainContactDetails, RequestCart } from '@automattic/shopping-cart';
+import type { TranslateResult } from 'i18n-calypso';
 
 type PurchaseSiteId = number;
 
@@ -56,7 +36,7 @@ export interface Purchase {
 export interface TransactionRequest {
 	country: string;
 	postalCode: string;
-	cart: WPCOMTransactionEndpointCart;
+	cart: RequestCart;
 	paymentMethodType: string;
 	name: string;
 	siteId?: string | undefined;
@@ -77,10 +57,11 @@ export interface TransactionRequest {
 	successUrl?: string | undefined;
 	cancelUrl?: string | undefined;
 	idealBank?: string | undefined;
-	tefBank?: string | undefined;
 	pan?: string | undefined;
 	gstin?: string | undefined;
 	nik?: string | undefined;
+	useForAllSubscriptions?: boolean;
+	eventSource?: string;
 }
 
 export type WPCOMTransactionEndpoint = (
@@ -90,9 +71,16 @@ export type WPCOMTransactionEndpoint = (
 // Request payload as expected by the WPCOM transactions endpoint
 // '/me/transactions/': WPCOM_JSON_API_Transactions_Endpoint
 export type WPCOMTransactionEndpointRequestPayload = {
-	cart: WPCOMTransactionEndpointCart;
+	cart: RequestCart;
 	payment: WPCOMTransactionEndpointPaymentDetails;
 	domainDetails?: DomainContactDetails;
+	tos?: ToSAcceptanceTrackingDetails;
+};
+
+export type ToSAcceptanceTrackingDetails = {
+	path: string;
+	locale: string;
+	viewport: string;
 };
 
 export type WPCOMTransactionEndpointPaymentDetails = {
@@ -116,10 +104,11 @@ export type WPCOMTransactionEndpointPaymentDetails = {
 	successUrl?: string;
 	cancelUrl?: string;
 	idealBank?: string;
-	tefBank?: string;
 	pan?: string;
 	gstin?: string;
 	nik?: string;
+	useForAllSubscriptions?: boolean;
+	eventSource?: string;
 };
 
 // The data model used in ContactDetailsFormFields and related components.
@@ -130,7 +119,6 @@ export type PossiblyCompleteDomainContactDetails = {
 	lastName: string | null;
 	organization: string | null;
 	email: string | null;
-	alternateEmail: string | null;
 	phone: string | null;
 	address1: string | null;
 	address2: string | null;
@@ -142,20 +130,19 @@ export type PossiblyCompleteDomainContactDetails = {
 };
 
 export type DomainContactDetailsErrors = {
-	firstName?: string;
-	lastName?: string;
-	organization?: string;
-	email?: string;
-	alternateEmail?: string;
-	phone?: string;
-	address1?: string;
-	address2?: string;
-	city?: string;
-	state?: string;
-	postalCode?: string;
-	countryCode?: string;
-	fax?: string;
-	vatId?: string;
+	firstName?: string | TranslateResult;
+	lastName?: string | TranslateResult;
+	organization?: string | TranslateResult;
+	email?: string | TranslateResult;
+	phone?: string | TranslateResult;
+	address1?: string | TranslateResult;
+	address2?: string | TranslateResult;
+	city?: string | TranslateResult;
+	state?: string | TranslateResult;
+	postalCode?: string | TranslateResult;
+	countryCode?: string | TranslateResult;
+	fax?: string | TranslateResult;
+	vatId?: string | TranslateResult;
 	extra?: DomainContactDetailsErrorsExtra;
 };
 
@@ -166,22 +153,22 @@ type DomainContactDetailsErrorsExtra = {
 };
 
 export type CaDomainContactExtraDetailsErrors = {
-	lang?: string;
-	legalType?: string;
-	ciraAgreementAccepted?: string;
+	lang?: string | TranslateResult;
+	legalType?: string | TranslateResult;
+	ciraAgreementAccepted?: string | TranslateResult;
 };
 
 export type UkDomainContactExtraDetailsErrors = {
-	registrantType?: { errorCode: string; errorMessage: string }[];
-	registrationNumber?: { errorCode: string; errorMessage: string }[];
-	tradingName?: { errorCode: string; errorMessage: string }[];
+	registrantType?: { errorCode: string; errorMessage: string | TranslateResult }[];
+	registrationNumber?: { errorCode: string; errorMessage: string | TranslateResult }[];
+	tradingName?: { errorCode: string; errorMessage: string | TranslateResult }[];
 };
 
 export type FrDomainContactExtraDetailsErrors = {
-	registrantType?: string[];
-	registrantVatId?: string[];
-	trademarkNumber?: string[];
-	sirenSiret?: string[];
+	registrantType?: string[] | TranslateResult[];
+	registrantVatId?: string[] | TranslateResult[];
+	trademarkNumber?: string[] | TranslateResult[];
+	sirenSiret?: string[] | TranslateResult[];
 };
 
 export type PayPalExpressEndpoint = (
@@ -191,29 +178,30 @@ export type PayPalExpressEndpoint = (
 export type PayPalExpressEndpointRequestPayload = {
 	successUrl: string;
 	cancelUrl: string;
-	cart: WPCOMTransactionEndpointCart;
+	cart: RequestCart;
 	domainDetails: DomainContactDetails | null;
 	country: string;
 	postalCode: string;
+	tos?: ToSAcceptanceTrackingDetails;
 };
 
 export type PayPalExpressEndpointResponse = unknown;
 
 export interface WPCOMCart {
-	items: LineItem[];
 	total: LineItem;
 	allowedPaymentMethods: CheckoutPaymentMethodSlug[];
 }
 
+// Payment method slugs which all map to a WPCOMPaymentMethod using
+// translateCheckoutPaymentMethodToWpcomPaymentMethod and
+// translateWpcomPaymentMethodToCheckoutPaymentMethod.
 export type CheckoutPaymentMethodSlug =
 	| 'alipay'
 	| 'web-pay'
 	| 'bancontact'
 	| 'card'
 	| 'ebanx'
-	| 'brazil-tef'
 	| 'netbanking'
-	| 'id_wallet'
 	| 'eps'
 	| 'giropay'
 	| 'ideal'
@@ -222,9 +210,13 @@ export type CheckoutPaymentMethodSlug =
 	| 'paypal-direct'
 	| 'sofort'
 	| 'free-purchase'
-	| 'full-credits'
 	| 'stripe-three-d-secure'
-	| 'wechat';
+	| 'wechat'
+	| 'existingCard'
+	| `existingCard${ string }` // specific saved cards have unique slugs
+	| 'stripe' // a synonym for 'card'
+	| 'apple-pay' // a synonym for 'web-pay'
+	| 'google-pay'; // a synonym for 'web-pay'
 
 /**
  * Payment method slugs as returned by the WPCOM backend.
@@ -233,10 +225,9 @@ export type CheckoutPaymentMethodSlug =
  */
 export type WPCOMPaymentMethod =
 	| 'WPCOM_Billing_WPCOM'
+	| 'WPCOM_Billing_MoneyPress_Stored'
 	| 'WPCOM_Billing_Ebanx'
-	| 'WPCOM_Billing_Ebanx_Redirect_Brazil_Tef'
 	| 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking'
-	| 'WPCOM_Billing_Dlocal_Redirect_Indonesia_Wallet'
 	| 'WPCOM_Billing_PayPal_Direct'
 	| 'WPCOM_Billing_PayPal_Express'
 	| 'WPCOM_Billing_Stripe_Payment_Method'
@@ -258,7 +249,6 @@ export type ManagedContactDetailsShape< T > = {
 	lastName?: T;
 	organization?: T;
 	email?: T;
-	alternateEmail?: T;
 	phone?: T;
 	phoneNumberCountry?: T;
 	address1?: T;
@@ -297,18 +287,14 @@ export type ManagedContactDetailsTldExtraFieldsShape< T > = {
  */
 export type ManagedContactDetails = ManagedContactDetailsShape< ManagedValue >;
 
-export type ManagedContactDetailsErrors = ManagedContactDetailsShape< undefined | string[] >;
+export type ManagedContactDetailsErrors = ManagedContactDetailsShape<
+	undefined | string[] | TranslateResult[]
+>;
 
 /*
  * Intermediate type used to represent update payloads
  */
 export type ManagedContactDetailsUpdate = ManagedContactDetailsShape< string >;
-
-/*
- * Different subsets of the details are mandatory depending on what is
- * in the cart. This type lets us define these subsets declaratively.
- */
-export type ManagedContactDetailsRequiredMask = ManagedContactDetailsShape< boolean >;
 
 /*
  * All child components in composite checkout are controlled -- they accept
@@ -320,16 +306,14 @@ export type ManagedContactDetailsRequiredMask = ManagedContactDetailsShape< bool
 export interface ManagedValue {
 	value: string;
 	isTouched: boolean; // Has value been edited by the user?
-	errors: string[]; // Has value passed validation?
-	isRequired: boolean; // Is this field required?
+	errors: string[] | TranslateResult[]; // Has value passed validation?
 }
 
 export type WpcomStoreState = {
-	siteId: string;
-	siteSlug: string;
 	recaptchaClientId: number;
 	transactionResult?: WPCOMTransactionEndpointResponse | undefined;
 	contactDetails: ManagedContactDetails;
+	vatDetails: VatDetails;
 };
 
 export interface FailedPurchase {
@@ -338,6 +322,13 @@ export interface FailedPurchase {
 	product_slug: string;
 	product_cost: string | number;
 	product_name: string;
+}
+
+export interface VatDetails {
+	country?: string | null;
+	id?: string | null;
+	name?: string | null;
+	address?: string | null;
 }
 
 /*
@@ -351,6 +342,10 @@ export type ManagedContactDetailsUpdaters = {
 	updatePostalCode: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
 	updateEmail: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
 	updateCountryCode: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
+	updateTaxFields: (
+		arg0: ManagedContactDetails,
+		arg1: ManagedContactDetails
+	) => ManagedContactDetails;
 	updateDomainContactFields: (
 		arg0: ManagedContactDetails,
 		arg1: DomainContactDetails
@@ -361,6 +356,7 @@ export type ManagedContactDetailsUpdaters = {
 		arg0: ManagedContactDetails,
 		arg1: ManagedContactDetailsErrors
 	) => ManagedContactDetails;
+	clearErrorMessages: ( arg0: ManagedContactDetails ) => ManagedContactDetails;
 	populateCountryCodeFromGeoIP: (
 		arg0: ManagedContactDetails,
 		arg1: string
@@ -378,7 +374,7 @@ export type ManagedContactDetailsUpdaters = {
  */
 export type SignupValidationResponse = {
 	success: boolean;
-	messages: {
+	messages?: {
 		first_name?: string[];
 		last_name?: string[];
 		email?: Record< string, string >;
@@ -392,34 +388,35 @@ export type SignupValidationResponse = {
  *
  * @see WPCOM_JSON_API_Domains_Validate_Contact_Information_Endpoint
  */
+export type ContactValidationRequestContactInformation = {
+	first_name?: string;
+	last_name?: string;
+	organization?: string;
+	email?: string;
+	phone?: string;
+	phone_number_country?: string;
+	address_1?: string;
+	address_2?: string;
+	city?: string;
+	state?: string;
+	postal_code?: string;
+	country_code?: string;
+	fax?: string;
+	vat_id?: string;
+	extra?: DomainContactValidationRequestExtraFields;
+};
+
 export type DomainContactValidationRequest = {
-	contact_information: {
-		firstName?: string;
-		lastName?: string;
-		organization?: string;
-		email?: string;
-		alternateEmail?: string;
-		phone?: string;
-		phoneNumberCountry?: string;
-		address1?: string;
-		address2?: string;
-		city?: string;
-		state?: string;
-		postalCode?: string;
-		countryCode?: string;
-		fax?: string;
-		vatId?: string;
-		extra?: DomainContactValidationRequestExtraFields;
-	};
+	contact_information: ContactValidationRequestContactInformation;
 };
 
 export type GSuiteContactValidationRequest = {
 	contact_information: {
-		firstName: string;
-		lastName: string;
-		alternateEmail: string;
-		postalCode: string;
-		countryCode: string;
+		first_name: string;
+		last_name: string;
+		email: string;
+		postal_code: string;
+		country_code: string;
 	};
 };
 
@@ -442,43 +439,79 @@ export type DomainContactValidationRequestExtraFields = {
 	};
 };
 
+export type ContactValidationResponseMessagesExtra = {
+	ca?: {
+		lang?: string[];
+		legal_type?: string[];
+		cira_agreement_accepted?: string[];
+	};
+	uk?: {
+		registrant_type?: string[];
+		registration_number?: string[];
+		trading_name?: string[];
+	};
+	fr?: {
+		registrant_type?: string[];
+		trademark_number?: string[];
+		siren_siret?: string[];
+	};
+};
+
 /**
  * Response format of the domain contact validation endpoint.
  */
-export type DomainContactValidationResponse = {
-	success: boolean;
-	messages: {
-		firstName?: string[];
-		lastName?: string[];
-		organization?: string[];
-		email?: string[];
-		alternateEmail?: string[];
-		phone?: string[];
-		phoneNumberCountry?: string[];
-		address1?: string[];
-		address2?: string[];
-		city?: string[];
-		state?: string[];
-		postalCode?: string[];
-		countryCode?: string[];
-		fax?: string[];
-		vatId?: string[];
-		extra?: {
-			ca?: {
-				lang?: string[];
-				legalType?: string[];
-				ciraAgreementAccepted?: string[];
-			};
-			uk?: {
-				registrantType?: string[];
-				registrationNumber?: string[];
-				tradingName?: string[];
-			};
-			fr?: {
-				registrantType?: string[];
-				trademarkNumber?: string[];
-				sirenSiret?: string[];
-			};
-		};
-	};
+export type ContactValidationResponseMessages = {
+	first_name?: string[];
+	last_name?: string[];
+	organization?: string[];
+	email?: string[];
+	phone?: string[];
+	phone_number_country?: string[];
+	address_1?: string[];
+	address_2?: string[];
+	city?: string[];
+	state?: string[];
+	postal_code?: string[];
+	country_code?: string[];
+	fax?: string[];
+	vat_id?: string[];
+	extra?: ContactValidationResponseMessagesExtra;
 };
+
+export type RawContactValidationResponseMessages = Record< string, string[] >;
+
+export type DomainContactValidationResponse =
+	| { success: true }
+	| {
+			success: false;
+			messages: ContactValidationResponseMessages;
+			messages_simple: string[];
+	  };
+
+export type RawDomainContactValidationResponse =
+	| { success: true }
+	| {
+			success: false;
+			messages: RawContactValidationResponseMessages;
+			messages_simple: string[];
+	  };
+
+export interface CountryListItemBase {
+	code: string;
+	name: string;
+	has_postal_codes?: boolean;
+	tax_needs_city?: boolean;
+	tax_needs_subdivision?: boolean;
+	tax_needs_organization?: boolean;
+	tax_needs_address?: boolean;
+}
+export interface CountryListItemWithoutVat extends CountryListItemBase {
+	vat_supported: false;
+}
+export interface CountryListItemWithVat extends CountryListItemBase {
+	vat_supported: true;
+	tax_country_codes: string[];
+}
+export type CountryListItem = CountryListItemWithVat | CountryListItemWithoutVat;
+
+export type SitelessCheckoutType = 'jetpack' | 'akismet' | undefined;

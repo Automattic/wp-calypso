@@ -27,7 +27,7 @@ Finally, this lib exposes a utility method for your React application:
 
 The following attributes can be set in the options object to alter the translation type. The attributes can be combined as needed for a particular case.
 
-- **options.args** [string, array, or object] arguments you would pass into sprintf to be run against the text for string substitution. [See docs](http://www.diveintojavascript.com/projects/javascript-sprintf)
+- **options.args** [string, array, or object] arguments you would pass into sprintf to be run against the text for string substitution. [See docs](https://www.npmjs.com/package/@tannin/sprintf#readme)
 - **options.components** [object] markup must be added as React components and not with string substitution. See [mixing strings and markup](#mixing-strings-and-markup).
 - **options.comment** [string] comment that will be shown to the translator for anything that may need to be explained about the translation.
 - **options.context** [string] provides the ability for the translator to provide a different translation for the same text in two locations (_dependent on context_). Usually context should only be used after a string has been discovered to require different translations. If you want to provide help on how to translate (which is highly appreciated!), please use a comment.
@@ -73,7 +73,7 @@ const translation4 = i18n.translate(
 
 ### String Substitution
 
-The `translate()` method uses sprintf interpolation for string substitution ([see docs for syntax details](http://www.diveintojavascript.com/projects/javascript-sprintf)). The `option.args` value is used to inject variable content into the string.
+The `translate()` method uses sprintf interpolation for string substitution ([see docs for syntax details](https://www.npmjs.com/package/@tannin/sprintf#readme)). The `option.args` value is used to inject variable content into the string.
 
 ```js
 // named arguments (preferred approach)
@@ -102,7 +102,7 @@ i18n.translate( 'My %s has 3 corners', {
 
 Because React tracks DOM nodes in the virtual DOM for rendering purposes, you cannot use string substitution with html markup as you might in a php scenario, because we don't render arbitrary html into the page, we are creating a virtual DOM in React.
 
-Instead we use the [interpolate-components module](https://github.com/Automattic/interpolate-components) to inject components into the string using a component token as a placeholder in the string and a components object, similar to how string substitution works. The result of the `translate()` method can then be inserted as a child into another React component. Component tokens are strings (containing letters, numbers, or underscores only) wrapped inside double-curly braces and have an opening, closing, and self-closing syntax, similar to html.
+Instead we use the [`@automattic/interpolate-components` package](../interpolate-components) to inject components into the string using a component token as a placeholder in the string and a components object, similar to how string substitution works. The result of the `translate()` method can then be inserted as a child into another React component. Component tokens are strings (containing letters, numbers, or underscores only) wrapped inside double-curly braces and have an opening, closing, and self-closing syntax, similar to html.
 
 **NOTE: Always use a JSX element for passing components. Otherwise you will need to [wrap your React classes with `createFactory`](http://facebook.github.io/react/blog/2014/10/14/introducing-react-elements.html). Any wrapped content inside opening/closing component tokens will be inserted/replaced as the children of that component in the output. Component tokens must be unique:**
 
@@ -246,7 +246,6 @@ Typically, you'd wrap your exported function with `localize`:
 
 ```jsx
 // greeting.jsx
-import React from 'react';
 import { localize } from 'i18n-calypso';
 
 function Greeting( { translate, className } ) {
@@ -260,7 +259,6 @@ When the wrapped component is rendered, the render behavior of the original comp
 
 ```jsx
 // index.jsx
-import React from 'react';
 import { render } from 'react-dom';
 import Greeting from './greeting';
 
@@ -288,7 +286,6 @@ The function can be called to return a localized value of a string, and it also 
 ### Usage
 
 ```jsx
-import React from 'react';
 import { useTranslate } from 'i18n-calypso';
 
 function Greeting( { className } ) {
@@ -316,8 +313,7 @@ Hook function that returns the `isRtl` boolean flag and automatically rerenders 
 Example:
 
 ```jsx
-import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
+import { Gridicon } from '@automattic/components';
 import { useRtl } from 'i18n-calypso';
 
 export default function Header() {
@@ -339,8 +335,7 @@ The same functionality is also exposed as a HOC that passes an `isRtl` prop to t
 Example:
 
 ```jsx
-import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
+import { Gridicon } from '@automattic/components';
 import { withRtl } from 'i18n-calypso';
 
 function Header( { isRtl } ) {
@@ -369,13 +364,19 @@ In order to reduce file-size, i18n-calypso allows the usage of hashed keys for l
 Instead of providing the full English text, like here:
 
 ```json
-{"":{"localeSlug":"de"},"Please enter a valid email address.":["","Bitte gib eine gültige E-Mail-Adresse ein."]}
+{
+	"": { "localeSlug": "de" },
+	"Please enter a valid email address.": [ "", "Bitte gib eine gültige E-Mail-Adresse ein." ]
+}
 ```
 
 just the hash is used for lookup, resulting in a shorter file.
 
 ```json
-{"":{"localeSlug":"de","key-hash":"sha1-1"},"d":["","Bitte gib eine gültige E-Mail-Adresse ein."]}
+{
+	"": { "localeSlug": "de", "key-hash": "sha1-1" },
+	"d": [ "", "Bitte gib eine gültige E-Mail-Adresse ein." ]
+}
 ```
 
 The generator of the jed file would usually try to choose the smallest hash length at which no hash collisions occur. In the above example a hash length of 1 (`d` short for `d2306dd8970ff616631a3501791297f31475e416`) is enough because there is only one string.

@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent } from 'react';
-
-/**
- * Internal dependencies
- */
+import { FunctionComponent } from 'react';
 import Form from './form';
 // import { isFeaturedProvider } from '../utils';
 

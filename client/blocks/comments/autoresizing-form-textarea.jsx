@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import React, { forwardRef } from 'react';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import { forwardRef } from 'react';
+import withUserMentions from 'calypso/blocks/user-mentions/index';
 import AutoDirection from 'calypso/components/auto-direction';
 import FormTextarea from 'calypso/components/forms/form-textarea';
-import withUserMentions from 'calypso/blocks/user-mentions/index';
 import withPasteToLink from 'calypso/lib/paste-to-link';
 
 import './autoresizing-form-textarea.scss';
@@ -24,8 +17,8 @@ const AutoresizingFormTextarea = (
 		onFocus,
 		onBlur,
 		onChange,
-		siteId,
 		enableAutoFocus,
+		...otherProps
 	},
 	forwardedRef
 ) => {
@@ -39,6 +32,7 @@ const AutoresizingFormTextarea = (
 			</pre>
 			<AutoDirection>
 				<FormTextarea
+					{ ...otherProps }
 					value={ value }
 					placeholder={ placeholder }
 					onKeyUp={ onKeyUp }
@@ -46,7 +40,6 @@ const AutoresizingFormTextarea = (
 					onFocus={ onFocus }
 					onBlur={ onBlur }
 					onChange={ onChange }
-					siteId={ siteId }
 					// eslint-disable-next-line jsx-a11y/no-autofocus
 					autoFocus={ enableAutoFocus }
 					forwardedRef={ forwardedRef }
@@ -56,4 +49,6 @@ const AutoresizingFormTextarea = (
 	);
 };
 
-export default withPasteToLink( withUserMentions( forwardRef( AutoresizingFormTextarea ) ) );
+export const ForwardedAutoresizingFormTextarea = forwardRef( AutoresizingFormTextarea );
+
+export default withPasteToLink( withUserMentions( ForwardedAutoresizingFormTextarea ) );

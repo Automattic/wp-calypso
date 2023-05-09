@@ -1,37 +1,34 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import DiscussionForm from 'calypso/my-sites/site-settings/form-discussion';
+import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
-import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mode-notice';
-import Main from 'calypso/components/main';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import FormattedHeader from 'calypso/components/formatted-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import Main from 'calypso/components/main';
+import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import DiscussionForm from 'calypso/my-sites/site-settings/form-discussion';
+import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mode-notice';
 import SiteSettingsNavigation from 'calypso/my-sites/site-settings/navigation';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
-import config from '@automattic/calypso-config';
 
 const SiteSettingsDiscussion = ( { site, translate } ) => (
 	<Main className="settings-discussion site-settings">
 		<ScreenOptionsTab wpAdminPath="options-discussion.php" />
 		<DocumentHead title={ translate( 'Discussion Settings' ) } />
 		<JetpackDevModeNotice />
-		<SidebarNavigation />
 		<FormattedHeader
 			brandFont
 			className="settings-discussion__page-heading"
 			headerText={ translate( 'Discussion Settings' ) }
-			subHeaderText={ translate( 'Control how people interact with your site through comments.' ) }
+			subHeaderText={ translate(
+				'Control how people interact with your site through comments. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+				{
+					components: {
+						learnMoreLink: <InlineSupportLink supportContext="discussion" showIcon={ false } />,
+					},
+				}
+			) }
 			align="left"
-			hasScreenOptions={ config.isEnabled( 'nav-unification/switcher' ) }
+			hasScreenOptions
 		/>
 		<SiteSettingsNavigation site={ site } section="discussion" />
 		<DiscussionForm />

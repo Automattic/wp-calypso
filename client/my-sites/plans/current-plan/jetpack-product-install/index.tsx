@@ -1,32 +1,27 @@
-/**
- * External dependencies
- */
-import React, { Component, Fragment } from 'react';
-import { connect } from 'react-redux';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize, LocalizeProps } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import getJetpackProductInstallProgress from 'calypso/state/selectors/get-jetpack-product-install-progress';
-import getJetpackProductInstallStatus from 'calypso/state/selectors/get-jetpack-product-install-status';
-import { Interval, EVERY_SECOND, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import { Interval, EVERY_SECOND, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { JETPACK_CONTACT_SUPPORT } from 'calypso/lib/url/support';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import wpcom from 'calypso/lib/wp';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	requestJetpackProductInstallStatus,
 	startJetpackProductInstall,
 } from 'calypso/state/jetpack-product-install/actions';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
-import {
-	getPluginKeys,
-	requestPluginKeys,
-} from 'calypso/state/data-getters/wpcom/jetpack-blogs/keys';
-import { SiteId, TimeoutMS } from 'calypso/types';
-import { logToLogstash } from 'calypso/state/logstash/actions';
+import getJetpackProductInstallProgress from 'calypso/state/selectors/get-jetpack-product-install-progress';
+import getJetpackProductInstallStatus from 'calypso/state/selectors/get-jetpack-product-install-status';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import type {
+	JetpackProductInstallStatus,
+	PluginStatusSlug,
+} from 'calypso/state/selectors/get-jetpack-product-install-status';
+import type { AppState, SiteId, TimeoutMS } from 'calypso/types';
 
 type PluginStateDescriptor = string;
 type PluginSlug = 'akismet' | 'vaultpress';
@@ -62,15 +57,21 @@ const MAX_RETRIES = 6;
 
 const PLUGIN_KEY_REFETCH_INTERVAL: TimeoutMS = 300;
 
-type Props = ReturnType< typeof mapStateToProps > & ConnectedDispatchProps & LocalizeProps;
+interface KeysResponse {
+	keys: Record< PluginSlug, string >;
+}
+
+type Props = ConnectedProps & ConnectedDispatchProps & LocalizeProps;
 
 interface State {
 	initiatedInstalls: Set< PluginSlug >;
+	pluginKeys: Record< PluginSlug, string > | null;
 }
 
 export class JetpackProductInstall extends Component< Props, State > {
-	state = {
+	state: State = {
 		initiatedInstalls: new Set< PluginSlug >(),
+		pluginKeys: null,
 	};
 
 	retries = 0;
@@ -87,7 +88,11 @@ export class JetpackProductInstall extends Component< Props, State > {
 
 	fetchPluginKeys = (): void => {
 		if ( this.shouldRequestKeys() ) {
-			requestPluginKeys( this.props.siteId as SiteId );
+			wpcom.req
+				.get( `/jetpack-blogs/${ this.props.siteId }/keys` )
+				.then( ( response: KeysResponse ) => {
+					this.setState( { pluginKeys: response.keys } );
+				} );
 		}
 	};
 
@@ -100,7 +105,8 @@ export class JetpackProductInstall extends Component< Props, State > {
 	 * - We already have the plugin keys.
 	 */
 	maybeStartInstall(): void {
-		const { pluginKeys, progressComplete, requestedInstalls, siteId } = this.props;
+		const { progressComplete, requestedInstalls, siteId } = this.props;
+		const { pluginKeys } = this.state;
 
 		// We need a valid siteId
 		if ( ! siteId ) {
@@ -134,7 +140,7 @@ export class JetpackProductInstall extends Component< Props, State > {
 			return;
 		}
 
-		const installerPositionalArguments: [ 'akismet', 'vaultpress' ] = [ 'akismet', 'vaultpress' ];
+		const installerPositionalArguments: PluginSlug[] = [ 'akismet', 'vaultpress' ];
 		const startJetpackProductInstallArgs = installerPositionalArguments.map( ( slug ) =>
 			// Installation hasn't been initiated for the plugin
 			! this.state.initiatedInstalls.has( slug ) &&
@@ -146,10 +152,8 @@ export class JetpackProductInstall extends Component< Props, State > {
 				: null
 		);
 
-		const [
-			akismetKeyIfRequestedAndPresent,
-			vaultpressKeyIfRequestedAndPresent,
-		] = startJetpackProductInstallArgs;
+		const [ akismetKeyIfRequestedAndPresent, vaultpressKeyIfRequestedAndPresent ] =
+			startJetpackProductInstallArgs;
 
 		// Start installation if we requested a plugin and have its key
 		if ( akismetKeyIfRequestedAndPresent || vaultpressKeyIfRequestedAndPresent ) {
@@ -185,7 +189,7 @@ export class JetpackProductInstall extends Component< Props, State > {
 		}
 
 		return PLUGINS.some( ( pluginSlug ) =>
-			pluginStates.includes( status[ pluginSlug + '_status' ] )
+			pluginStates.includes( status[ ( pluginSlug + '_status' ) as PluginStatusSlug ] )
 		);
 	}
 
@@ -260,7 +264,8 @@ export class JetpackProductInstall extends Component< Props, State > {
 	};
 
 	shouldRequestKeys(): boolean {
-		const { siteId, pluginKeys, requestedInstalls } = this.props;
+		const { siteId, requestedInstalls } = this.props;
+		const { pluginKeys } = this.state;
 
 		if ( ! siteId ) {
 			return false;
@@ -301,7 +306,7 @@ export class JetpackProductInstall extends Component< Props, State > {
 				status_vaultpress: status ? status.vaultpress_status : '(unknown)',
 			} );
 
-			this.props.logToLogstash( {
+			logToLogstash( {
 				feature: 'calypso_client',
 				message: 'Jetpack plugin installer error',
 				...( this.props.siteId && { site_id: this.props.siteId } ),
@@ -309,15 +314,15 @@ export class JetpackProductInstall extends Component< Props, State > {
 					pluginStatus: this.props.status,
 					knownPluginKeys: {
 						// Clean plugin keys for logging
-						akismet: !! ( this.props.pluginKeys && this.props.pluginKeys.akismet ),
-						vaultpress: !! ( this.props.pluginKeys && this.props.pluginKeys.vaultpress ),
+						akismet: !! this.state.pluginKeys?.akismet,
+						vaultpress: !! this.state.pluginKeys?.vaultpress,
 					},
 				},
 			} );
 		}
 
 		return (
-			<Fragment>
+			<>
 				{ progressComplete !== 100 && (
 					<Interval period={ PLUGIN_KEY_REFETCH_INTERVAL } onTick={ this.fetchPluginKeys } />
 				) }
@@ -327,53 +332,45 @@ export class JetpackProductInstall extends Component< Props, State > {
 						text={ translate( 'Oops! An error has occurred while setting up your plan.' ) }
 					>
 						<NoticeAction onClick={ this.refreshPage }>{ translate( 'Try again' ) }</NoticeAction>
-						<NoticeAction href={ JETPACK_CONTACT_SUPPORT } external>
+						<NoticeAction href={ localizeUrl( JETPACK_CONTACT_SUPPORT ) } external>
 							{ translate( 'Contact support' ) }
 						</NoticeAction>
 					</Notice>
 				) }
-
 				{ progressComplete !== 100 &&
 					( ! this.installationHasErrors() || this.shouldRefetchInstallationStatus() ) && (
 						<Interval period={ period } onTick={ this.requestInstallationStatus } />
 					) }
-			</Fragment>
+			</>
 		);
 	}
 }
 
 interface ConnectedProps {
 	siteId: SiteId | null;
-	pluginKeys: { [ key in PluginSlug ]: string } | null;
-	progressComplete: ReturnType< typeof getJetpackProductInstallProgress >;
+	progressComplete: number | null;
 	requestedInstalls: PluginSlug[];
-	status: ReturnType< typeof getJetpackProductInstallStatus >;
+	status: JetpackProductInstallStatus | null;
 }
 
-function mapStateToProps( state ): ConnectedProps {
+function mapStateToProps( state: AppState ): ConnectedProps {
 	const siteId = getSelectedSiteId( state );
 	const queryArgs = getCurrentQueryArguments( state );
 
-	const installQuery: string[] =
-		// eslint-disable-next-line no-nested-ternary
-		typeof queryArgs === 'object' && 'install' in queryArgs
-			? Array.isArray( queryArgs.install )
-				? queryArgs.install
-				: [ queryArgs.install ]
-			: [];
+	let installQuery: string[] = [];
+	if ( queryArgs?.install ) {
+		installQuery = Array.isArray( queryArgs.install ) ? queryArgs.install : [ queryArgs.install ];
+	}
 
 	const requestedInstalls: PluginSlug[] = installQuery.includes( 'all' )
 		? /* If we want 'all', clone our known plugins */ [ ...PLUGINS ]
 		: PLUGINS.filter( ( slug ) => installQuery.includes( slug ) );
 
-	const keyRequest = getPluginKeys( siteId );
-
 	return {
 		siteId,
-		pluginKeys: keyRequest.state === 'success' ? keyRequest.data : null,
-		progressComplete: getJetpackProductInstallProgress( state, siteId ),
+		progressComplete: getJetpackProductInstallProgress( state, siteId ?? 0 ),
 		requestedInstalls,
-		status: getJetpackProductInstallStatus( state, siteId ),
+		status: getJetpackProductInstallStatus( state, siteId ?? 0 ),
 	};
 }
 
@@ -381,7 +378,6 @@ const mapDispatchToProps = {
 	recordTracksEvent,
 	requestJetpackProductInstallStatus,
 	startJetpackProductInstall,
-	logToLogstash,
 };
 
 type ConnectedDispatchProps = typeof mapDispatchToProps;

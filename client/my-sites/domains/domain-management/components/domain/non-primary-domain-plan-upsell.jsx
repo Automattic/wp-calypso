@@ -1,21 +1,14 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { SETTING_PRIMARY_DOMAIN } from 'calypso/lib/url/support';
-import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isSiteOnPaidPlan from 'calypso/state/selectors/is-site-on-paid-plan';
 import { getPlansBySite } from 'calypso/state/sites/plans/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const NonPrimaryDomainPlanUpsell = ( {
 	domain,
@@ -58,7 +51,13 @@ const NonPrimaryDomainPlanUpsell = ( {
 						domain: domain.name,
 					},
 					components: {
-						a: <a href={ SETTING_PRIMARY_DOMAIN } target="_blank" rel="noopener noreferrer" />,
+						a: (
+							<a
+								href={ localizeUrl( SETTING_PRIMARY_DOMAIN ) }
+								target="_blank"
+								rel="noopener noreferrer"
+							/>
+						),
 						strong: <strong />,
 					},
 				}

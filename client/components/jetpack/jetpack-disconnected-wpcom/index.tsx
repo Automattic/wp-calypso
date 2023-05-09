@@ -1,30 +1,21 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent } from 'react';
-import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import { Button } from '@automattic/components';
-
-/**
- * Internal dependencies
- */
-import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { preventWidows } from 'calypso/lib/formatting';
-import { JETPACK_SUPPORT } from 'calypso/lib/url/support';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { useTranslate } from 'i18n-calypso';
+import { FunctionComponent } from 'react';
+import { useSelector } from 'react-redux';
+import JetpackDisconnected from 'calypso/assets/images/jetpack/disconnected.svg';
 import ExternalLink from 'calypso/components/external-link';
 import PromoCard from 'calypso/components/promo-section/promo-card';
+import { preventWidows } from 'calypso/lib/formatting';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
+import { JETPACK_SUPPORT_CONNECTION_ISSUES } from 'calypso/lib/url/support';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
-/**
- * Asset dependencies
- */
-import JetpackDisconnected from 'calypso/assets/images/jetpack/disconnected.svg';
 import './style.scss';
 
 const JetpackDisconnectedWPCOM: FunctionComponent = () => {
 	const translate = useTranslate();
-	const { name: siteName, slug: siteSlug, URL: siteUrl } = useSelector( getSelectedSite );
+	const { name: siteName, slug: siteSlug, URL: siteUrl } = useSelector( getSelectedSite ) ?? {};
 	const reconnectUrl = `/settings/disconnect-site/${ siteSlug }?type=down`;
 	const onReconnectClick = useTrackCallback( undefined, 'calypso_jetpack_backup_reconnect_click' );
 	const onSupportClick = useTrackCallback( undefined, 'calypso_jetpack_backup_support_click' );
@@ -44,7 +35,7 @@ const JetpackDisconnectedWPCOM: FunctionComponent = () => {
 			<p>
 				{ preventWidows(
 					translate(
-						'Please visit {{siteUrl/}} to ensure your site loading correctly and reconnect Jetpack if necessary.',
+						'Please visit {{siteUrl/}} to ensure your site is loading correctly and reconnect Jetpack if necessary.',
 						{
 							components: {
 								siteUrl: <ExternalLink href={ siteUrl }>{ siteUrl }</ExternalLink>,
@@ -64,7 +55,7 @@ const JetpackDisconnectedWPCOM: FunctionComponent = () => {
 				</Button>
 				<Button
 					className="jetpack-disconnected-wpcom__cta"
-					href={ JETPACK_SUPPORT }
+					href={ localizeUrl( JETPACK_SUPPORT_CONNECTION_ISSUES ) }
 					onClick={ onSupportClick }
 				>
 					{ translate( 'I need help' ) }

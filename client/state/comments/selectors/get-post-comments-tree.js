@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import treeSelect from '@automattic/tree-select';
 import { filter, groupBy, keyBy, map, mapValues, partition } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { getPostCommentItems } from 'calypso/state/comments/selectors/get-post-comment-items';
 
 import 'calypso/state/comments/init';
@@ -14,12 +7,12 @@ import 'calypso/state/comments/init';
 /**
  * Gets comment tree for a given post
  *
- * @param {object} state redux state
+ * @param {Object} state redux state
  * @param {number} siteId site identification
  * @param {number} postId site identification
  * @param {string} status String representing the comment status to show. Defaults to 'approved'.
  * @param {number} authorId - when specified we only return pending comments that match this id
- * @returns {object} comments tree, and in addition a children array
+ * @returns {Object} comments tree, and in addition a children array
  */
 export const getPostCommentsTree = treeSelect(
 	( state, siteId, postId ) => [ getPostCommentItems( state, siteId, postId ) ],

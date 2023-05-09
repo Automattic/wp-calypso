@@ -1,20 +1,31 @@
-/**
- * External dependencies
- */
+import debugFactory from 'debug';
 import { isEmpty } from 'lodash';
 import { stringify } from 'qs';
-
-/**
- * Internal dependencies
- */
-import { serverRender, setShouldServerSideRender } from 'calypso/server/render';
 import { setSectionMiddleware } from 'calypso/controller';
+import performanceMark from 'calypso/server/lib/performance-mark';
+import { serverRender, setShouldServerSideRender, markupCache } from 'calypso/server/render';
+import { createQueryClientSSR } from 'calypso/state/query-client-ssr';
 import { setRoute } from 'calypso/state/route/actions';
+
+const debug = debugFactory( 'calypso:pages' );
 
 export function serverRouter( expressApp, setUpRoute, section ) {
 	return function ( route, ...middlewares ) {
 		expressApp.get(
 			route,
+			( req, res, next ) => {
+				const markup = markupCache.get( getCacheKey( req ) );
+				if ( markup ) {
+					req.context.cachedMarkup = markup;
+				}
+				req.context.usedSSRHandler = true;
+				debug(
+					`Using SSR pipeline for path: ${
+						req.path
+					} with handler ${ route }. Cached layout: ${ !! markup }`
+				);
+				next();
+			},
 			setUpRoute,
 			combineMiddlewares(
 				setSectionMiddleware( section ),
@@ -29,6 +40,7 @@ export function serverRouter( expressApp, setUpRoute, section ) {
 			// have changed req.context to include info about the error, and serverRender
 			// will render it.
 			( err, req, res, next ) => {
+				performanceMark( req.context, 'serverRouter error handler' );
 				req.error = err;
 				res.status( err.status || 404 );
 				if ( err.status >= 500 ) {
@@ -37,6 +49,7 @@ export function serverRouter( expressApp, setUpRoute, section ) {
 					req.logger.warn( err );
 				}
 				serverRender( req, res, next );
+				performanceMark( req.context, 'post-handling serverRouter error' );
 				// Keep propagating the error to ensure regular middleware doesn't get executed.
 				// In particular, without this we'll try to render a 404 page.
 				next( err );
@@ -75,6 +88,7 @@ function getEnhancedContext( req, res ) {
 		isServerSide: true,
 		originalUrl: req.originalUrl,
 		path: req.url,
+		queryClient: createQueryClientSSR(),
 		pathname: req.path,
 		params: req.params,
 		query: req.query,
@@ -121,9 +135,21 @@ function compose( ...functions ) {
 }
 
 export function getNormalizedPath( pathname, query ) {
+	// Make sure that paths like "/themes" and "/themes/" are considered the same.
+	// Checks for longer lengths to avoid removing the "starting" slash for the
+	// base route.
+	if ( pathname.length > 1 && pathname.endsWith( '/' ) ) {
+		pathname = pathname.slice( 0, -1 );
+	}
+
 	if ( isEmpty( query ) ) {
 		return pathname;
 	}
 
 	return pathname + '?' + stringify( query, { sort: ( a, b ) => a.localeCompare( b ) } );
+}
+
+// Given an Express request object, return a cache key.
+export function getCacheKey( { path, query, context } ) {
+	return `${ getNormalizedPath( path, query ) }:gdpr=${ context.showGdprBanner }`;
 }

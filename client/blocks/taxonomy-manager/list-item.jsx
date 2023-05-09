@@ -1,34 +1,25 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import page from 'page';
-import { connect } from 'react-redux';
+import { Dialog, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
+import page from 'page';
+import PropTypes from 'prop-types';
+import { Component, createRef } from 'react';
+import { connect } from 'react-redux';
 import Count from 'calypso/components/count';
-import { Dialog } from '@automattic/components';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
-import PopoverMenuSeparator from 'calypso/components/popover/menu-separator';
+import PodcastIndicator from 'calypso/components/podcast-indicator';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import PopoverMenuSeparator from 'calypso/components/popover-menu/separator';
 import Tooltip from 'calypso/components/tooltip';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { decodeEntities } from 'calypso/lib/formatting';
+import { recordGoogleEvent, bumpStat } from 'calypso/state/analytics/actions';
+import getPodcastingCategoryId from 'calypso/state/selectors/get-podcasting-category-id';
+import { saveSiteSettings } from 'calypso/state/site-settings/actions';
 import { getSiteSettings } from 'calypso/state/site-settings/selectors';
 import { getSite } from 'calypso/state/sites/selectors';
-import { decodeEntities } from 'calypso/lib/formatting';
 import { deleteTerm } from 'calypso/state/terms/actions';
-import { saveSiteSettings } from 'calypso/state/site-settings/actions';
-import { recordGoogleEvent, bumpStat } from 'calypso/state/analytics/actions';
-import PodcastIndicator from 'calypso/components/podcast-indicator';
-import getPodcastingCategoryId from 'calypso/state/selectors/get-podcasting-category-id';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class TaxonomyManagerListItem extends Component {
 	static propTypes = {
@@ -42,7 +33,6 @@ class TaxonomyManagerListItem extends Component {
 		translate: PropTypes.func,
 		siteUrl: PropTypes.string,
 		slug: PropTypes.string,
-		isPreviewable: PropTypes.bool,
 		recordGoogleEvent: PropTypes.func,
 		bumpStat: PropTypes.func,
 	};
@@ -50,6 +40,8 @@ class TaxonomyManagerListItem extends Component {
 	static defaultProps = {
 		onClick: () => {},
 	};
+
+	countRef = createRef();
 
 	state = {
 		showDeleteDialog: false,
@@ -128,14 +120,8 @@ class TaxonomyManagerListItem extends Component {
 	};
 
 	render() {
-		const {
-			canSetAsDefault,
-			isDefault,
-			onClick,
-			term,
-			isPodcastingCategory,
-			translate,
-		} = this.props;
+		const { canSetAsDefault, isDefault, onClick, term, isPodcastingCategory, translate } =
+			this.props;
 		const name = this.getName();
 		const hasPosts = get( term, 'post_count', 0 ) > 0;
 		const className = classNames( 'taxonomy-manager__item', {
@@ -146,9 +132,21 @@ class TaxonomyManagerListItem extends Component {
 			{ action: 'delete', label: translate( 'OK' ), isPrimary: true },
 		];
 
+		const onKeyUp = ( event ) => {
+			if ( event.key === 'Enter' ) {
+				onClick();
+			}
+		};
+
 		return (
 			<div className={ className }>
-				<span className="taxonomy-manager__icon" onClick={ onClick }>
+				<span
+					className="taxonomy-manager__icon"
+					role="button"
+					tabIndex={ 0 }
+					onKeyUp={ onKeyUp }
+					onClick={ onClick }
+				>
 					<Gridicon icon={ isDefault ? 'checkmark-circle' : 'folder' } />
 				</span>
 				{ /* FIXME: jsx-a11y issues */ }
@@ -167,7 +165,7 @@ class TaxonomyManagerListItem extends Component {
 				{ typeof term.post_count !== 'undefined' && (
 					<div className="taxonomy-manager__count">
 						<Count
-							ref="count"
+							forwardRef={ this.countRef }
 							count={ term.post_count }
 							onMouseEnter={ this.showTooltip }
 							onMouseLeave={ this.hideTooltip }
@@ -175,7 +173,7 @@ class TaxonomyManagerListItem extends Component {
 					</div>
 				) }
 				<Tooltip
-					context={ this.refs && this.refs.count }
+					context={ this.countRef.current }
 					isVisible={ this.state.showTooltip }
 					position="left"
 				>
@@ -226,7 +224,6 @@ export default connect(
 		const siteSettings = getSiteSettings( state, siteId );
 		const canSetAsDefault = taxonomy === 'category';
 		const isDefault = canSetAsDefault && get( siteSettings, [ 'default_category' ] ) === term.ID;
-		const isPreviewable = get( site, 'is_previewable' );
 		const siteSlug = get( site, 'slug' );
 		const siteUrl = get( site, 'URL' );
 		const isPodcastingCategory =
@@ -235,7 +232,6 @@ export default connect(
 		return {
 			canSetAsDefault,
 			isDefault,
-			isPreviewable,
 			siteId,
 			siteSlug,
 			siteUrl,

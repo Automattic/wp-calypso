@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getThemeFilterStringFromTerm } from 'calypso/state/themes/selectors';
 import { state } from './fixtures/theme-filters';
 

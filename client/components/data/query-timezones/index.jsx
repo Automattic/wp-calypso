@@ -1,28 +1,15 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { requestTimezones } from 'calypso/state/timezones/actions';
 
-export class QueryTimezones extends Component {
-	static propTypes = {
-		requestTimezones: PropTypes.func,
-	};
+function QueryTimezones() {
+	const dispatch = useDispatch();
 
-	componentDidMount() {
-		this.props.requestTimezones();
-	}
+	useEffect( () => {
+		dispatch( requestTimezones() );
+	}, [ dispatch ] );
 
-	render() {
-		return null;
-	}
+	return null;
 }
 
-export default connect( null, { requestTimezones } )( QueryTimezones );
+export default QueryTimezones;

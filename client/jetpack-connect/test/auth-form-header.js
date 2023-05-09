@@ -1,19 +1,11 @@
 /**
  * @jest-environment jsdom
  */
-
-/**
- * External dependencies
- */
-import React from 'react';
-import { shallow } from 'enzyme';
-
-/**
- * Internal dependencies
- */
+import { render, screen } from '@testing-library/react';
 import { AuthFormHeader } from '../auth-form-header';
-import FormattedHeader from 'calypso/components/formatted-header';
 import wooDnaConfig from '../woo-dna-config';
+
+jest.mock( 'calypso/blocks/site', () => () => 'Site' );
 
 const CLIENT_ID = 98765;
 const SITE_SLUG = 'an.example.site';
@@ -41,9 +33,9 @@ const DEFAULT_PROPS = {
 
 describe( 'AuthFormHeader', () => {
 	test( 'renders as expected', () => {
-		const wrapper = shallow( <AuthFormHeader { ...DEFAULT_PROPS } /> );
+		const { container } = render( <AuthFormHeader { ...DEFAULT_PROPS } /> );
 
-		expect( wrapper ).toMatchSnapshot();
+		expect( container ).toMatchSnapshot();
 	} );
 
 	test( 'should render WC Payments specific sub header copy', () => {
@@ -61,11 +53,11 @@ describe( 'AuthFormHeader', () => {
 		// Notice we have \xa0. This is needed when we compare translated text.
 		// Please refer to https://stackoverflow.com/questions/54242039/intl-numberformat-space-character-does-not-match
 		const expectedText =
-			'Approve your connection. Your account will enable you to start using the features and benefits offered by WooCommerce\xa0Payments';
-		const wrapper = shallow( <AuthFormHeader { ...props } /> )
-			.find( FormattedHeader )
-			.render();
+			'Approve your connection. Your account will enable you to start using the features and benefits offered by WooCommerce Payments';
 
-		expect( wrapper.find( '.formatted-header__subtitle' ).text() ).toEqual( expectedText );
+		render( <AuthFormHeader { ...props } /> );
+
+		expect( screen.getByText( expectedText ) ).toBeVisible();
+		expect( screen.getByText( expectedText ) ).toHaveClass( 'formatted-header__subtitle' );
 	} );
 } );

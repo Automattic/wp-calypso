@@ -1,13 +1,4 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	getPlan,
 	GROUP_WPCOM,
@@ -18,6 +9,7 @@ import {
 	TYPE_PERSONAL,
 	TYPE_BLOGGER,
 	TYPE_FREE,
+	TYPE_STARTER,
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_BUSINESS_ONBOARDING_EXPIRE,
 	PLAN_BUSINESS_2Y_ONBOARDING_EXPIRE,
@@ -26,35 +18,37 @@ import {
 	TYPE_ALL,
 	TERM_MONTHLY,
 	getPlans,
+	TYPE_PRO,
+	WPCOM_FEATURES_WORDADS,
 } from '@automattic/calypso-products';
-import FindNewTheme from './find-new-theme';
-import UploadPlugins from './upload-plugins';
+import PropTypes from 'prop-types';
+import { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { hasDomainCredit, getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import AdvertisingRemoved from './advertising-removed';
-import CustomizeTheme from './customize-theme';
-import CustomCSS from './custom-css';
-import VideoAudioPosts from './video-audio-posts';
-import MonetizeSite from './monetize-site';
 import BusinessOnboarding from './business-onboarding';
+import CustomCSS from './custom-css';
 import CustomDomain from './custom-domain';
+import CustomizeTheme from './customize-theme';
+import FindNewTheme from './find-new-theme';
 import GoogleAnalyticsStats from './google-analytics-stats';
 import GoogleMyBusiness from './google-my-business';
 import HappinessSupportCard from './happiness-support-card';
 import JetpackPublicize from './jetpack-publicize';
 import MobileApps from './mobile-apps';
+import MonetizeSite from './monetize-site';
 import SellOnlinePaypal from './sell-online-paypal';
 import SiteActivity from './site-activity';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import { isEnabled } from '@automattic/calypso-config';
-import { isWordadsInstantActivationEligible } from 'calypso/lib/ads/utils';
-import { hasDomainCredit, getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
-import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id';
-/**
- * Style dependencies
- */
+import UploadPlugins from './upload-plugins';
+import VideoAudioPosts from './video-audio-posts';
+
 import './style.scss';
 
 const PLANS_LIST = getPlans();
@@ -71,31 +65,23 @@ export class ProductPurchaseFeaturesList extends Component {
 
 	// TODO: Define feature list.
 	getEcommerceFeatures() {
-		const {
-			isMonthlyPlan,
-			isPlaceholder,
-			plan,
-			planHasDomainCredit,
-			selectedSite,
-			showCustomizerFeature,
-		} = this.props;
+		const { isMonthlyPlan, isPlaceholder, plan, planHasDomainCredit, selectedSite } = this.props;
 		return (
 			<Fragment>
 				<HappinessSupportCard
 					isPlaceholder={ isPlaceholder }
 					showLiveChatButton
-					liveChatButtonEventName={ 'calypso_livechat_my_plan_ecommerce' }
+					liveChatButtonEventName="calypso_livechat_my_plan_ecommerce"
 				/>
 				{ ! isMonthlyPlan && (
 					<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
 				) }
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
 				<GoogleMyBusiness selectedSite={ selectedSite } />
-				<AdvertisingRemoved isBusinessPlan selectedSite={ selectedSite } />
-				{ showCustomizerFeature && <CustomizeTheme selectedSite={ selectedSite } /> }
-				{ ! showCustomizerFeature && <CustomCSS selectedSite={ selectedSite } /> }
+				<AdvertisingRemoved isEligiblePlan selectedSite={ selectedSite } />
+				<CustomizeTheme selectedSite={ selectedSite } />
 				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
-				<FindNewTheme selectedSite={ selectedSite } />
+				{ isEnabled( 'themes/premium' ) && <FindNewTheme selectedSite={ selectedSite } /> }
 				<UploadPlugins selectedSite={ selectedSite } />
 				<SiteActivity />
 				<MobileApps onClick={ this.handleMobileAppsClick } />
@@ -105,13 +91,13 @@ export class ProductPurchaseFeaturesList extends Component {
 
 	getBusinessFeatures() {
 		const {
+			canActivateWordadsInstant,
 			isPlaceholder,
 			isMonthlyPlan,
 			plan,
 			currentPlan,
 			planHasDomainCredit,
 			selectedSite,
-			showCustomizerFeature,
 			scheduleId,
 		} = this.props;
 
@@ -138,7 +124,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<HappinessSupportCard
 					isPlaceholder={ isPlaceholder }
 					showLiveChatButton
-					liveChatButtonEventName={ 'calypso_livechat_my_plan_business' }
+					liveChatButtonEventName="calypso_livechat_my_plan_business"
 				/>
 				{ ! isMonthlyPlan && (
 					<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
@@ -147,20 +133,17 @@ export class ProductPurchaseFeaturesList extends Component {
 					<BusinessOnboarding
 						isWpcomPlan
 						onClick={ this.handleBusinessOnboardingClick }
-						link={ `/me/concierge/${ selectedSite.slug }/book` }
+						link={ `/me/quickstart/${ selectedSite.slug }/book` }
 					/>
 				) }
-				{ isWordadsInstantActivationEligible( selectedSite ) && (
-					<MonetizeSite selectedSite={ selectedSite } />
-				) }
+				{ canActivateWordadsInstant && <MonetizeSite selectedSite={ selectedSite } /> }
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
 				<GoogleMyBusiness selectedSite={ selectedSite } />
-				<AdvertisingRemoved isBusinessPlan selectedSite={ selectedSite } />
-				{ showCustomizerFeature && <CustomizeTheme selectedSite={ selectedSite } /> }
-				{ ! showCustomizerFeature && <CustomCSS selectedSite={ selectedSite } /> }
+				<AdvertisingRemoved isEligiblePlan selectedSite={ selectedSite } />
+				<CustomizeTheme selectedSite={ selectedSite } />
 				<CustomCSS selectedSite={ selectedSite } />
 				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
-				<FindNewTheme selectedSite={ selectedSite } />
+				{ isEnabled( 'themes/premium' ) && <FindNewTheme selectedSite={ selectedSite } /> }
 				<UploadPlugins selectedSite={ selectedSite } />
 				<SiteActivity />
 				<MobileApps onClick={ this.handleMobileAppsClick } />
@@ -171,12 +154,12 @@ export class ProductPurchaseFeaturesList extends Component {
 
 	getPremiumFeatures() {
 		const {
+			canActivateWordadsInstant,
 			isPlaceholder,
 			isMonthlyPlan,
 			plan,
 			planHasDomainCredit,
 			selectedSite,
-			showCustomizerFeature,
 		} = this.props;
 
 		return (
@@ -186,13 +169,11 @@ export class ProductPurchaseFeaturesList extends Component {
 					<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
 				) }
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
-				<AdvertisingRemoved isBusinessPlan={ false } selectedSite={ selectedSite } />
-				{ showCustomizerFeature && <CustomizeTheme selectedSite={ selectedSite } /> }
-				{ ! showCustomizerFeature && <CustomCSS selectedSite={ selectedSite } /> }
+				<AdvertisingRemoved isEligiblePlan={ false } selectedSite={ selectedSite } />
+				<CustomizeTheme selectedSite={ selectedSite } />
 				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
-				{ isWordadsInstantActivationEligible( selectedSite ) && (
-					<MonetizeSite selectedSite={ selectedSite } />
-				) }
+				{ canActivateWordadsInstant && <MonetizeSite selectedSite={ selectedSite } /> }
+				{ isEnabled( 'themes/premium' ) && <FindNewTheme selectedSite={ selectedSite } /> }
 				<SiteActivity />
 				<MobileApps onClick={ this.handleMobileAppsClick } />
 				<SellOnlinePaypal isJetpack={ false } />
@@ -209,7 +190,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				{ ! isMonthlyPlan && (
 					<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
 				) }
-				<AdvertisingRemoved isBusinessPlan selectedSite={ selectedSite } />
+				<AdvertisingRemoved isEligiblePlan selectedSite={ selectedSite } />
 				<SiteActivity />
 				<MobileApps onClick={ this.handleMobileAppsClick } />
 			</Fragment>
@@ -227,7 +208,48 @@ export class ProductPurchaseFeaturesList extends Component {
 					hasDomainCredit={ planHasDomainCredit }
 					onlyBlogDomain={ true }
 				/>
-				<AdvertisingRemoved isBusinessPlan selectedSite={ selectedSite } />
+				<AdvertisingRemoved isEligiblePlan selectedSite={ selectedSite } />
+				<SiteActivity />
+				<MobileApps onClick={ this.handleMobileAppsClick } />
+			</Fragment>
+		);
+	}
+
+	getProFeatuers() {
+		const { canActivateWordadsInstant, isPlaceholder, selectedSite, plan, planHasDomainCredit } =
+			this.props;
+
+		return (
+			<Fragment>
+				<HappinessSupportCard
+					isPlaceholder={ isPlaceholder }
+					showLiveChatButton
+					liveChatButtonEventName="calypso_livechat_my_plan_pro"
+				/>
+				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
+				{ canActivateWordadsInstant && <MonetizeSite selectedSite={ selectedSite } /> }
+				<GoogleAnalyticsStats selectedSite={ selectedSite } />
+				<GoogleMyBusiness selectedSite={ selectedSite } />
+				<AdvertisingRemoved isEligiblePlan selectedSite={ selectedSite } />
+				<CustomizeTheme selectedSite={ selectedSite } />
+				<CustomCSS selectedSite={ selectedSite } />
+				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
+				{ isEnabled( 'themes/premium' ) && <FindNewTheme selectedSite={ selectedSite } /> }
+				<UploadPlugins selectedSite={ selectedSite } />
+				<SiteActivity />
+				<MobileApps onClick={ this.handleMobileAppsClick } />
+				<SellOnlinePaypal isJetpack={ false } />
+			</Fragment>
+		);
+	}
+
+	getStarterFeatuers() {
+		const { selectedSite, planHasDomainCredit } = this.props;
+
+		return (
+			<Fragment>
+				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
+				<GoogleAnalyticsStats selectedSite={ selectedSite } />
 				<SiteActivity />
 				<MobileApps onClick={ this.handleMobileAppsClick } />
 			</Fragment>
@@ -298,7 +320,6 @@ export class ProductPurchaseFeaturesList extends Component {
 				<SellOnlinePaypal isJetpack />
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
 				<GoogleMyBusiness selectedSite={ selectedSite } />
-				<FindNewTheme selectedSite={ selectedSite } />
 
 				{ isEnabled( 'jetpack/concierge-sessions' ) && (
 					<BusinessOnboarding
@@ -310,7 +331,7 @@ export class ProductPurchaseFeaturesList extends Component {
 					isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
 					isPlaceholder={ isPlaceholder }
 					showLiveChatButton
-					liveChatButtonEventName={ 'calypso_livechat_my_plan_jetpack_professsional' }
+					liveChatButtonEventName="calypso_livechat_my_plan_jetpack_professsional"
 				/>
 			</Fragment>
 		);
@@ -326,12 +347,11 @@ export class ProductPurchaseFeaturesList extends Component {
 				<JetpackPublicize selectedSite={ selectedSite } />
 				<SellOnlinePaypal isJetpack />
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
-				<FindNewTheme selectedSite={ selectedSite } />
 				<HappinessSupportCard
 					isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
 					isPlaceholder={ isPlaceholder }
 					showLiveChatButton
-					liveChatButtonEventName={ 'calypso_livechat_my_plan_jetpack_security' }
+					liveChatButtonEventName="calypso_livechat_my_plan_jetpack_security"
 				/>
 			</Fragment>
 		);
@@ -347,12 +367,11 @@ export class ProductPurchaseFeaturesList extends Component {
 				<JetpackPublicize selectedSite={ selectedSite } />
 				<SellOnlinePaypal isJetpack />
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
-				<FindNewTheme selectedSite={ selectedSite } />
 				<HappinessSupportCard
 					isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
 					isPlaceholder={ isPlaceholder }
 					showLiveChatButton
-					liveChatButtonEventName={ 'calypso_livechat_my_plan_jetpack_complete' }
+					liveChatButtonEventName="calypso_livechat_my_plan_jetpack_complete"
 				/>
 			</Fragment>
 		);
@@ -373,6 +392,8 @@ export class ProductPurchaseFeaturesList extends Component {
 				[ TYPE_PREMIUM ]: () => this.getPremiumFeatures(),
 				[ TYPE_PERSONAL ]: () => this.getPersonalFeatures(),
 				[ TYPE_BLOGGER ]: () => this.getBloggerFeatures(),
+				[ TYPE_PRO ]: () => this.getProFeatuers(),
+				[ TYPE_STARTER ]: () => this.getStarterFeatuers(),
 			},
 			[ GROUP_JETPACK ]: {
 				[ TYPE_BUSINESS ]: () => this.getJetpackBusinessFeatures(),
@@ -410,10 +431,12 @@ export default connect(
 		const isAutomatedTransfer = isSiteAutomatedTransfer( state, selectedSiteId );
 
 		return {
+			canActivateWordadsInstant:
+				canCurrentUser( state, selectedSiteId, 'activate_wordads' ) &&
+				siteHasFeature( state, selectedSiteId, WPCOM_FEATURES_WORDADS ),
 			isAutomatedTransfer,
 			selectedSite,
 			planHasDomainCredit: hasDomainCredit( state, selectedSiteId ),
-			showCustomizerFeature: ! isSiteUsingFullSiteEditing( state, selectedSiteId ),
 			currentPlan: getCurrentPlan( state, selectedSiteId ),
 			scheduleId: getConciergeScheduleId( state ),
 			isMonthlyPlan: TERM_MONTHLY === getPlan( ownProps.plan )?.term,

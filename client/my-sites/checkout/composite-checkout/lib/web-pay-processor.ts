@@ -1,22 +1,17 @@
-/**
- * External dependencies
- */
-import debugFactory from 'debug';
 import { makeSuccessResponse, makeErrorResponse } from '@automattic/composite-checkout';
-import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
-import type { Stripe, StripeConfiguration } from '@automattic/calypso-stripe';
-
-/**
- * Internal dependencies
- */
-import getPostalCode from './get-postal-code';
+import debugFactory from 'debug';
+import { recordTransactionBeginAnalytics } from '../lib/analytics';
 import getDomainDetails from './get-domain-details';
+import getPostalCode from './get-postal-code';
 import submitWpcomTransaction from './submit-wpcom-transaction';
 import {
 	createTransactionEndpointRequestPayload,
 	createTransactionEndpointCartFromResponseCart,
 } from './translate-cart';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
+import type { StripeConfiguration } from '@automattic/calypso-stripe';
+import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
+import type { Stripe } from '@stripe/stripe-js';
 
 const debug = debugFactory( 'calypso:composite-checkout:web-pay-processor' );
 
@@ -35,25 +30,17 @@ export default async function webPayProcessor(
 	if ( ! isValidWebPayTransactionData( submitData ) ) {
 		throw new Error( 'Required purchase data is missing' );
 	}
-	const webPaymentEventType =
-		webPaymentType === 'google-pay'
-			? 'GOOGLE_PAY_TRANSACTION_BEGIN'
-			: 'APPLE_PAY_TRANSACTION_BEGIN';
-	transactionOptions.recordEvent( { type: webPaymentEventType } );
+	transactionOptions.reduxDispatch(
+		recordTransactionBeginAnalytics( { paymentMethodId: webPaymentType } )
+	);
 
-	const {
-		includeDomainDetails,
-		includeGSuiteDetails,
-		responseCart,
-		siteId,
-		contactDetails,
-	} = transactionOptions;
+	const { includeDomainDetails, includeGSuiteDetails, responseCart, siteId, contactDetails } =
+		transactionOptions;
 
 	debug( 'formatting web-pay transaction', submitData );
 	const formattedTransactionData = createTransactionEndpointRequestPayload( {
 		...submitData,
 		name: submitData.name || '',
-		siteId: siteId ? String( siteId ) : undefined,
 		country: contactDetails?.countryCode?.value ?? '',
 		postalCode: getPostalCode( contactDetails ),
 		domainDetails: getDomainDetails( contactDetails, {
@@ -61,7 +48,7 @@ export default async function webPayProcessor(
 			includeGSuiteDetails,
 		} ),
 		cart: createTransactionEndpointCartFromResponseCart( {
-			siteId: siteId ? String( siteId ) : undefined,
+			siteId,
 			contactDetails:
 				getDomainDetails( contactDetails, { includeDomainDetails, includeGSuiteDetails } ) ?? null,
 			responseCart: responseCart,

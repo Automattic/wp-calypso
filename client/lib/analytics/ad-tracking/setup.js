@@ -1,19 +1,7 @@
-/**
- * Internal dependencies
- */
+import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { mayWeInitTracker, mayWeTrackByTracker } from '../tracker-buckets';
 import {
-	isAdRollEnabled,
-	isBingEnabled,
-	isCriteoEnabled,
-	isFacebookEnabled,
-	isFloodlightEnabled,
-	isLinkedinEnabled,
-	isOutbrainEnabled,
-	isPinterestEnabled,
-	isQuantcastEnabled,
-	isQuoraEnabled,
-	isTwitterEnabled,
-	isWpcomGoogleAdsGtagEnabled,
 	ADROLL_PAGEVIEW_PIXEL_URL_1,
 	ADROLL_PAGEVIEW_PIXEL_URL_2,
 	ADROLL_PURCHASE_PIXEL_URL_1,
@@ -21,67 +9,69 @@ import {
 	TRACKING_IDS,
 } from './constants';
 
-import { setupGtag } from './setup-gtag';
-
 if ( typeof window !== 'undefined' ) {
-	setupGtag();
+	if ( mayWeInitTracker( 'ga' ) ) {
+		setupGtag();
+	}
 
 	// Facebook
-	if ( isFacebookEnabled ) {
+	if ( mayWeInitTracker( 'facebook' ) ) {
 		setupFacebookGlobal();
 	}
 
 	// Bing
-	if ( isBingEnabled && ! window.uetq ) {
+	if ( mayWeInitTracker( 'bing' ) && ! window.uetq ) {
 		window.uetq = [];
 	}
 
 	// Criteo
-	if ( isCriteoEnabled && ! window.criteo_q ) {
+	if ( mayWeInitTracker( 'criteo' ) && ! window.criteo_q ) {
 		window.criteo_q = [];
 	}
 
 	// Quantcast
-	if ( isQuantcastEnabled && ! window._qevents ) {
+	if ( mayWeInitTracker( 'quantcast' ) && ! window._qevents ) {
 		window._qevents = [];
 	}
 
 	// Google Ads Gtag for wordpress.com
-	if ( isWpcomGoogleAdsGtagEnabled ) {
+	if ( mayWeInitTracker( 'googleAds' ) ) {
 		setupWpcomGoogleAdsGtag();
 	}
 
-	if ( isFloodlightEnabled ) {
+	if ( mayWeInitTracker( 'floodlight' ) ) {
 		setupWpcomFloodlightGtag();
 	}
 
 	// Twitter
-	if ( isTwitterEnabled ) {
+	if ( mayWeInitTracker( 'twitter' ) ) {
 		setupTwitterGlobal();
 	}
 
 	// Linkedin
-	if ( isLinkedinEnabled ) {
-		setupLinkedinGlobal();
+	if ( mayWeInitTracker( 'linkedin' ) ) {
+		setupLinkedinInsight(
+			isJetpackCloud() || isJetpackCheckout() ? TRACKING_IDS.jetpackLinkedinId : null
+		);
 	}
 
 	// Quora
-	if ( isQuoraEnabled ) {
+	if ( mayWeInitTracker( 'quora' ) ) {
 		setupQuoraGlobal();
 	}
 
 	// Outbrain
-	if ( isOutbrainEnabled ) {
+	if ( mayWeInitTracker( 'outbrain' ) ) {
 		setupOutbrainGlobal();
 	}
 
 	// Pinterest
-	if ( isPinterestEnabled ) {
+	if ( mayWeInitTracker( 'pinterest' ) ) {
 		setupPinterestGlobal();
 	}
 
 	// AdRoll
-	if ( isAdRollEnabled ) {
+	if ( mayWeInitTracker( 'adroll' ) ) {
 		setupAdRollGlobal();
 	}
 }
@@ -89,9 +79,15 @@ if ( typeof window !== 'undefined' ) {
 /**
  * Initializes Linkedin tracking.
  */
-function setupLinkedinGlobal() {
-	if ( ! window._linkedin_data_partner_id ) {
-		window._linkedin_data_partner_id = TRACKING_IDS.linkedInPartnerId;
+function setupLinkedinInsight( partnerId ) {
+	window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
+	window._linkedin_data_partner_ids.push( partnerId );
+
+	if ( ! window.lintrk ) {
+		window.lintrk = function ( a, b ) {
+			window.lintrk.q.push( [ a, b ] );
+		};
+		window.lintrk.q = [];
 	}
 }
 
@@ -201,12 +197,29 @@ function setupAdRollGlobal() {
 	}
 }
 
+function setupGtag() {
+	if ( window.dataLayer && window.gtag ) {
+		return;
+	}
+	window.dataLayer = window.dataLayer || [];
+	window.gtag = function () {
+		window.dataLayer.push( arguments );
+	};
+	window.gtag( 'js', new Date() );
+}
+
 function setupWpcomGoogleAdsGtag() {
 	setupGtag();
-	window.gtag( 'config', TRACKING_IDS.wpcomGoogleAdsGtag );
+
+	if ( mayWeTrackByTracker( 'googleAds' ) ) {
+		window.gtag( 'config', TRACKING_IDS.wpcomGoogleAdsGtag );
+	}
 }
 
 function setupWpcomFloodlightGtag() {
 	setupGtag();
-	window.gtag( 'config', TRACKING_IDS.wpcomFloodlightGtag );
+
+	if ( mayWeTrackByTracker( 'floodlight' ) ) {
+		window.gtag( 'config', TRACKING_IDS.wpcomFloodlightGtag );
+	}
 }

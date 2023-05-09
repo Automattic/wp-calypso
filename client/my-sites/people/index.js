@@ -1,21 +1,13 @@
-/**
- * External dependencies
- */
 import page from 'page';
-
-/**
- * Internal dependencies
- */
-import { navigation, siteSelection, sites, p2RedirectToHub } from 'calypso/my-sites/controller';
-import peopleController from './controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
+import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
+import peopleController from './controller';
 
 export default function () {
 	page(
 		'/people/:filter(team|followers|email-followers|viewers)',
 		siteSelection,
 		sites,
-		p2RedirectToHub,
 		makeLayout,
 		clientRender
 	);
@@ -25,19 +17,27 @@ export default function () {
 		peopleController.enforceSiteEnding,
 		siteSelection,
 		navigation,
-		p2RedirectToHub,
 		peopleController.people,
 		makeLayout,
 		clientRender
 	);
 
-	page( '/people/invites', siteSelection, sites, p2RedirectToHub, makeLayout, clientRender );
+	page(
+		'/people/:filter(viewers)/:site_id/:user_id',
+		peopleController.enforceSiteEnding,
+		siteSelection,
+		navigation,
+		peopleController.viewerTeamMember,
+		makeLayout,
+		clientRender
+	);
+
+	page( '/people/invites', siteSelection, sites, makeLayout, clientRender );
 
 	page(
 		'/people/invites/:site_id',
 		peopleController.enforceSiteEnding,
 		siteSelection,
-		p2RedirectToHub,
 		navigation,
 		peopleController.peopleInvites,
 		makeLayout,
@@ -48,9 +48,48 @@ export default function () {
 		'/people/invites/:site_id/:invite_key',
 		peopleController.enforceSiteEnding,
 		siteSelection,
-		p2RedirectToHub,
 		navigation,
 		peopleController.peopleInviteDetails,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/people/pending-invites/:site_id',
+		peopleController.enforceSiteEnding,
+		siteSelection,
+		navigation,
+		peopleController.peoplePendingInvites,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/people/:filter(subscribers)/:site_id',
+		peopleController.enforceSiteEnding,
+		siteSelection,
+		navigation,
+		peopleController.subscribers,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/people/:filter(subscribers)/:site_id/:typeId',
+		peopleController.enforceSiteEnding,
+		siteSelection,
+		navigation,
+		peopleController.subscriberDetails,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/people/add-subscribers/:site_id',
+		peopleController.enforceSiteEnding,
+		siteSelection,
+		navigation,
+		peopleController.peopleAddSubscribers,
 		makeLayout,
 		clientRender
 	);
@@ -59,7 +98,6 @@ export default function () {
 		'/people/new/:site_id',
 		peopleController.enforceSiteEnding,
 		siteSelection,
-		p2RedirectToHub,
 		navigation,
 		peopleController.invitePeople,
 		makeLayout,
@@ -70,7 +108,6 @@ export default function () {
 		'/people/new/:site_id/sent',
 		peopleController.enforceSiteEnding,
 		siteSelection,
-		p2RedirectToHub,
 		navigation,
 		peopleController.invitePeople,
 		makeLayout,
@@ -81,7 +118,6 @@ export default function () {
 		'/people/edit/:site_id/:user_login',
 		peopleController.enforceSiteEnding,
 		siteSelection,
-		p2RedirectToHub,
 		navigation,
 		peopleController.person,
 		makeLayout,

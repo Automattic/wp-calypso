@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { get, isEmpty, map, omit, omitBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
+import { get, isEmpty, map, omit, omitBy } from 'lodash';
 import {
 	IMPORTS_AUTHORS_SET_MAPPING,
 	IMPORTS_AUTHORS_START_MAPPING,
@@ -18,15 +11,17 @@ import {
 	IMPORTS_IMPORT_UNLOCK,
 	IMPORTS_START_IMPORTING,
 	IMPORTS_UPLOAD_FAILED,
+	IMPORTS_PRE_UPLOAD_FAILED,
 	IMPORTS_UPLOAD_COMPLETED,
 	IMPORTS_UPLOAD_SET_PROGRESS,
 	IMPORTS_UPLOAD_START,
 } from 'calypso/state/action-types';
 import { combineReducers, keyedReducer } from 'calypso/state/utils';
-import uploads from './uploads/reducer';
-import siteImporter from './site-importer/reducer';
-import { appStates } from './constants';
 import { fromApi } from './api';
+import { appStates } from './constants';
+import siteImporter from './site-importer/reducer';
+import uploads from './uploads/reducer';
+import urlAnalyzer from './url-analyzer/reducer';
 
 function isImporterStatusHydrated( state = false, action ) {
 	switch ( action.type ) {
@@ -50,6 +45,16 @@ function importerStatus( state = {}, action ) {
 					...state[ action.importerId ],
 					importerState: appStates.UPLOAD_FAILURE,
 					errorData: { type: 'uploadError', description: action.error },
+				},
+			};
+
+		case IMPORTS_PRE_UPLOAD_FAILED:
+			return {
+				...state,
+				[ action.importerId ]: {
+					...state[ action.importerId ],
+					importerState: appStates.UPLOAD_FAILURE,
+					errorData: { type: 'preUploadError', description: action.error, code: action.errorCode },
 				},
 			};
 
@@ -178,6 +183,7 @@ const combinedReducer = combineReducers( {
 	isImporterStatusHydrated,
 	uploads,
 	siteImporter,
+	urlAnalyzer,
 } );
 
 export default withStorageKey( 'imports', combinedReducer );

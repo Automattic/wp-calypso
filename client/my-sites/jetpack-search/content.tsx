@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent, ReactNode, Fragment } from 'react';
+import { Button, Card } from '@automattic/components';
+import classNames from 'classnames';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import JetpackUpsell from 'calypso/components/jetpack/upsell';
+import { FunctionComponent, ReactNode, Fragment } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
-import PromoCard from 'calypso/components/promo-section/promo-card';
-import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
 interface Props {
 	bodyText: TranslateResult | ReactNode;
@@ -30,45 +22,39 @@ const JetpackSearchContent: FunctionComponent< Props > = ( {
 	iconComponent,
 	onClick,
 } ) => {
-	const isCloud = isJetpackCloud();
 	const translate = useTranslate();
-
-	// Jetpack Cloud uses the Upsell component to render content
-	if ( isCloud ) {
-		return (
-			<JetpackUpsell
-				headerText={ headerText }
-				bodyText={ bodyText }
-				buttonLink={ buttonLink }
-				buttonText={ buttonText }
-				onClick={ onClick }
-				iconComponent={ iconComponent }
-			/>
-		);
-	}
 
 	return (
 		<Fragment>
-			<FormattedHeader
-				headerText={ translate( 'Jetpack Search' ) }
-				id="jetpack-search-header"
-				align="left"
-				brandFont
-			/>
-			<PromoCard title={ headerText } image={ iconComponent } isPrimary>
-				<p className="jetpack-search__content-body-text">{ bodyText }</p>
-
-				<PromoCardCTA
-					cta={ {
-						text: buttonText,
-						action: {
-							url: buttonLink,
-							onClick: onClick ? onClick : null,
-							selfTarget: true,
-						},
-					} }
+			{ ! isJetpackCloud() && (
+				<FormattedHeader
+					headerText={ translate( 'Jetpack Search' ) }
+					id="jetpack-search-header"
+					align="left"
+					brandFont
 				/>
-			</PromoCard>
+			) }
+			<Card>
+				<div className="jetpack-search__content">
+					<div className="jetpack-search__logo">{ iconComponent }</div>
+					<h2
+						className={ classNames( 'jetpack-search__header', {
+							'wp-brand-font': ! isJetpackCloud(),
+						} ) }
+					>
+						{ headerText }
+					</h2>
+					<p>{ bodyText }</p>
+					<Button
+						primary
+						className="jetpack-search__button"
+						href={ buttonLink as string }
+						onClick={ onClick || undefined }
+					>
+						{ buttonText }
+					</Button>
+				</div>
+			</Card>
 		</Fragment>
 	);
 };

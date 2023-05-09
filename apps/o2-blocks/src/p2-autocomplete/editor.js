@@ -1,13 +1,7 @@
-/**
- * External dependencies
- */
 import apiFetch from '@wordpress/api-fetch';
 import { addFilter } from '@wordpress/hooks';
 import { map, unescape } from 'lodash';
 
-/**
- * Internal dependencies
- */
 import './editor.scss';
 
 /*

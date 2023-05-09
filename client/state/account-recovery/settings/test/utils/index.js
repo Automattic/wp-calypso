@@ -1,9 +1,5 @@
 /* eslint-disable jest/no-export, jest/expect-expect */
 
-/**
- * Internal dependencies
- */
-
 import { useNock } from 'calypso/test-helpers/use-nock';
 
 export const generateSuccessAndFailedTestsForThunk = ( {

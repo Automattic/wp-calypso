@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent } from 'react';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
+import { Gridicon } from '@automattic/components';
+import type { TranslateResult } from 'i18n-calypso';
+import type { FunctionComponent } from 'react';
 
 enum RewindFlowNoticeLevel {
 	NOTICE,
@@ -17,8 +11,8 @@ enum RewindFlowNoticeLevel {
 interface Props {
 	gridicon: string;
 	link?: string;
-	message?: i18nCalypso.TranslateResult;
-	title: i18nCalypso.TranslateResult;
+	message?: TranslateResult;
+	title: TranslateResult;
 	type: RewindFlowNoticeLevel;
 }
 

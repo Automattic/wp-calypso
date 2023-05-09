@@ -1,13 +1,3 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-import sinon from 'sinon';
-
-/**
- * Internal dependencies
- */
-import { receivePostCounts, requestPostCounts } from '../actions';
 import {
 	POST_COUNTS_RECEIVE,
 	POST_COUNTS_REQUEST,
@@ -15,12 +5,13 @@ import {
 	POST_COUNTS_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
+import { receivePostCounts, requestPostCounts } from '../actions';
 
 describe( 'actions', () => {
-	const spy = sinon.spy();
+	let spy;
 
 	beforeEach( () => {
-		spy.resetHistory();
+		spy = jest.fn();
 	} );
 
 	describe( '#receivePostCounts()', () => {
@@ -31,7 +22,7 @@ describe( 'actions', () => {
 			};
 			const action = receivePostCounts( 2916284, 'post', counts );
 
-			expect( action ).to.eql( {
+			expect( action ).toEqual( {
 				type: POST_COUNTS_RECEIVE,
 				siteId: 2916284,
 				postType: 'post',
@@ -61,7 +52,7 @@ describe( 'actions', () => {
 		test( 'should dispatch request action when thunk triggered', () => {
 			requestPostCounts( 2916284, 'post' )( spy );
 
-			expect( spy ).to.have.been.calledWith( {
+			expect( spy ).toBeCalledWith( {
 				type: POST_COUNTS_REQUEST,
 				siteId: 2916284,
 				postType: 'post',
@@ -73,7 +64,7 @@ describe( 'actions', () => {
 				2916284,
 				'post'
 			)( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					type: POST_COUNTS_RECEIVE,
 					siteId: 2916284,
 					postType: 'post',
@@ -90,7 +81,7 @@ describe( 'actions', () => {
 				2916284,
 				'post'
 			)( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					type: POST_COUNTS_REQUEST_SUCCESS,
 					siteId: 2916284,
 					postType: 'post',
@@ -103,11 +94,11 @@ describe( 'actions', () => {
 				2916284,
 				'foo'
 			)( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					type: POST_COUNTS_REQUEST_FAILURE,
 					siteId: 2916284,
 					postType: 'foo',
-					error: sinon.match( { code: 'unknown_post_type' } ),
+					error: expect.objectContaining( { code: 'unknown_post_type' } ),
 				} );
 			} );
 		} );

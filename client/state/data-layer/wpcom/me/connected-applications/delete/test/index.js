@@ -1,13 +1,10 @@
-/**
- * Internal dependencies
- */
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { handleRemoveError, handleRemoveSuccess, removeConnectedApplication } from '../';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
 	deleteConnectedApplication,
 	deleteConnectedApplicationSuccess,
 } from 'calypso/state/connected-applications/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { handleRemoveError, handleRemoveSuccess, removeConnectedApplication } from '../';
 
 const appId = '12345678';
 

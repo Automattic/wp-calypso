@@ -1,28 +1,12 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
 import { forEach, get, groupBy, omit } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { mergeHandlers } from 'calypso/state/action-watchers/utils';
 import {
 	COMMENTS_CHANGE_STATUS,
 	COMMENTS_LIST_REQUEST,
 	COMMENT_REQUEST,
-	COMMENTS_TREE_SITE_ADD,
 	COMMENTS_EDIT,
 } from 'calypso/state/action-types';
-import { bypassDataLayer } from 'calypso/state/data-layer/utils';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import replies from './replies';
-import likes from './likes';
-import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
-import getRawSite from 'calypso/state/selectors/get-raw-site';
-import { getSiteComment } from 'calypso/state/comments/selectors';
+import { mergeHandlers } from 'calypso/state/action-watchers/utils';
 import {
 	changeCommentStatus,
 	editComment as editCommentAction,
@@ -31,10 +15,17 @@ import {
 	requestComment as requestCommentAction,
 	requestCommentsList,
 } from 'calypso/state/comments/actions';
+import { getSiteComment } from 'calypso/state/comments/selectors';
 import { updateCommentsQuery } from 'calypso/state/comments/ui/actions';
-import { noRetry } from 'calypso/state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
-
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { bypassDataLayer } from 'calypso/state/data-layer/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { noRetry } from 'calypso/state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
+import getRawSite from 'calypso/state/selectors/get-raw-site';
+import likes from './likes';
+import replies from './replies';
 
 const requestChangeCommentStatus = ( action ) => {
 	const { siteId, commentId, status } = action;
@@ -155,21 +146,13 @@ export const fetchCommentsList = ( action ) => {
 };
 
 export const addComments = ( { query }, { comments } ) => {
-	const { siteId, status } = query;
+	const { siteId } = query;
 	// Initialize the comments tree to let CommentList know if a tree is actually loaded and empty.
 	// This is needed as a workaround for Jetpack sites populating their comments trees
 	// via `fetchCommentsList` instead of `fetchCommentsTreeForSite`.
 	// @see https://github.com/Automattic/wp-calypso/pull/16997#discussion_r132161699
 	if ( 0 === comments.length ) {
-		return [
-			updateCommentsQuery( siteId, [], query ),
-			{
-				type: COMMENTS_TREE_SITE_ADD,
-				siteId,
-				status,
-				tree: [],
-			},
-		];
+		return updateCommentsQuery( siteId, [], query );
 	}
 
 	const actions = [ updateCommentsQuery( siteId, comments, query ) ];
@@ -189,17 +172,19 @@ export const addComments = ( { query }, { comments } ) => {
 	return actions;
 };
 
-const announceFailure = ( { query: { siteId } } ) => ( dispatch, getState ) => {
-	const site = getRawSite( getState(), siteId );
-	const error =
-		site && site.name
-			? translate( 'Failed to retrieve comments for site “%(siteName)s”', {
-					args: { siteName: site.name },
-			  } )
-			: translate( 'Failed to retrieve comments for your site' );
+const announceFailure =
+	( { query: { siteId } } ) =>
+	( dispatch, getState ) => {
+		const site = getRawSite( getState(), siteId );
+		const error =
+			site && site.name
+				? translate( 'Failed to retrieve comments for site “%(siteName)s”', {
+						args: { siteName: site.name },
+				  } )
+				: translate( 'Failed to retrieve comments for your site' );
 
-	dispatch( errorNotice( error ) );
-};
+		dispatch( errorNotice( error ) );
+	};
 
 // @see https://developer.wordpress.com/docs/api/1.1/post/sites/%24site/comments/%24comment_ID/
 export const editComment = ( action ) => ( dispatch, getState ) => {

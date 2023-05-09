@@ -1,0 +1,78 @@
+.plugin-common-card__columns {
+	display: flex;
+	flex: 1;
+}
+
+.plugin-common-card__toggle-container {
+	margin-block-start: 16px;
+
+	> div {
+		margin: 16px 0;
+	}
+}
+
+.plugin-common-card__left-content {
+	min-width: 32px;
+	max-width: 32px;
+	order: 1;
+}
+
+.plugin-common-card__main-content {
+	flex: 1;
+	order: 2;
+	position: relative;
+	padding: 0 0 0 16px;
+	width: 70%;
+}
+
+.plugin-common-card__right-content {
+	width: 20px;
+	order: 3;
+}
+
+.plugin-common-card__plugin-icon {
+	width: 32px;
+	height: 32px;
+}
+
+.plugin-common-card__all-actions {
+	color: var(--studio-gray-40);
+	margin: 0 0.1em;
+}
+
+.plugin-common-card__overlay {
+	display: block;
+	position: absolute;
+	height: 20px;
+	width: 20px;
+	background: linear-gradient(to right, rgb(255 255 255 / 80%) 30%, rgb(255 255 255 / 100%) 100%);
+	inset-block-start: 2px;
+	inset-inline-end: 0;
+}
+
+.plugin-common-card__site-data {
+	color: var(--studio-gray-60);
+	font-size: 0.75rem;
+	margin: 16px 0;
+}
+
+.plugin-common-card__installed-on {
+	margin: 8px 0;
+}
+
+.plugin-common-card__install-button {
+	.plugin-install-button__install.embed {
+		position: static;
+		width: fit-content;
+	}
+}
+
+.plugin-common-card__card.card {
+	padding: 16px;
+}
+
+.plugin-common-card__left-checkbox {
+	input[type="checkbox"] {
+		margin-top: 8px;
+	}
+}

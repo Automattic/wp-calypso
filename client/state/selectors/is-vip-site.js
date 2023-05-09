@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-
 import getRawSite from 'calypso/state/selectors/get-raw-site';
 
 /**
@@ -9,7 +5,7 @@ import getRawSite from 'calypso/state/selectors/get-raw-site';
  *
  * If the site is missing returns null.
  *
- * @param  {object}   state  Global state tree
+ * @param  {Object}   state  Global state tree
  * @param  {number}   siteId Site ID
  * @returns {?boolean}        Whether site is VIP
  */

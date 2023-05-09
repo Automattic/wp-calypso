@@ -1,31 +1,33 @@
-/**
- * External Dependencies
- */
-import React from 'react';
+import { useTranslate } from 'i18n-calypso';
 import { get } from 'lodash';
-
-/**
- * Internal Dependencies
- */
-import Stream from 'calypso/reader/stream';
-import DocumentHead from 'calypso/components/data/document-head';
-import ConversationsIntro from './intro';
 import ConversationsEmptyContent from 'calypso/blocks/conversations/empty';
-
-/**
- * Style dependencies
- */
+import DocumentHead from 'calypso/components/data/document-head';
+import Stream from 'calypso/reader/stream';
+import ConversationsIntro from './intro';
 import './stream.scss';
 
 export default function ( props ) {
 	const isInternal = get( props, 'store.id' ) === 'conversations-a8c';
 	const emptyContent = <ConversationsEmptyContent />;
 	const intro = <ConversationsIntro isInternal={ isInternal } />;
+
+	const ConversationTitle = () => {
+		const translate = useTranslate();
+		return (
+			<DocumentHead
+				title={ translate( '%s ‹ Reader', {
+					args: props.title ?? 'Conversations',
+					comment: '%s is the section name. For example: "My Likes"',
+					textOnly: true,
+				} ) }
+			/>
+		);
+	};
+
 	return (
 		<Stream
 			key="conversations"
 			streamKey={ props.streamKey }
-			shouldCombineCards={ false }
 			className="conversations__stream"
 			followSource="conversations"
 			useCompactCards={ true }
@@ -33,7 +35,7 @@ export default function ( props ) {
 			emptyContent={ emptyContent }
 			intro={ intro }
 		>
-			<DocumentHead title={ props.title } />
+			<ConversationTitle title={ props.title } />
 		</Stream>
 	);
 }

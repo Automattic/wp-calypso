@@ -1,40 +1,31 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import { flow, get, isEmpty, some, values } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-import { flow, get, isEmpty, includes, partial, some, values } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import MediaLibrary from 'calypso/my-sites/media-library';
-import { bumpStat as mcBumpStat } from 'calypso/lib/analytics/mc';
-import { recordEditorEvent, recordEditorStat } from 'calypso/state/posts/stats';
-import MediaModalGallery from './gallery';
-import * as MediaUtils from 'calypso/lib/media/utils';
-import CloseOnEscape from 'calypso/components/close-on-escape';
-import accept from 'calypso/lib/accept';
-import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
-import { getMediaModalView } from 'calypso/state/ui/media-modal/selectors';
-import { getSite } from 'calypso/state/sites/selectors';
-import { getEditorPostId } from 'calypso/state/editor/selectors';
-import { resetMediaModalView } from 'calypso/state/ui/media-modal/actions';
-import { setEditorMediaModalView } from 'calypso/state/editor/actions';
-import { ModalViews } from 'calypso/state/ui/media-modal/constants';
-import { editMedia, deleteMedia, addExternalMedia } from 'calypso/state/media/thunks';
-import { changeMediaSource, selectMediaItems, setQuery } from 'calypso/state/media/actions';
 import ImageEditor from 'calypso/blocks/image-editor';
 import VideoEditor from 'calypso/blocks/video-editor';
-import MediaModalDialog from './dialog';
-import MediaModalDetail from './detail';
+import CloseOnEscape from 'calypso/components/close-on-escape';
+import { withEditMedia } from 'calypso/data/media/use-edit-media-mutation';
+import { withAddExternalMedia } from 'calypso/data/media/with-add-external-media';
+import { withDeleteMedia } from 'calypso/data/media/with-delete-media';
+import accept from 'calypso/lib/accept';
+import { bumpStat as mcBumpStat } from 'calypso/lib/analytics/mc';
+import * as MediaUtils from 'calypso/lib/media/utils';
+import MediaLibrary from 'calypso/my-sites/media-library';
 import { withAnalytics, bumpStat, recordGoogleEvent } from 'calypso/state/analytics/actions';
-
-/**
- * Style dependencies
- */
+import { setEditorMediaModalView } from 'calypso/state/editor/actions';
+import { getEditorPostId } from 'calypso/state/editor/selectors';
+import { changeMediaSource, selectMediaItems, setQuery } from 'calypso/state/media/actions';
+import { recordEditorEvent, recordEditorStat } from 'calypso/state/posts/stats';
+import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
+import { getSite } from 'calypso/state/sites/selectors';
+import { resetMediaModalView } from 'calypso/state/ui/media-modal/actions';
+import { ModalViews } from 'calypso/state/ui/media-modal/constants';
+import { getMediaModalView } from 'calypso/state/ui/media-modal/selectors';
+import MediaModalDetail from './detail';
+import MediaModalDialog from './dialog';
+import MediaModalGallery from './gallery';
 import './index.scss';
 
 const noop = () => {};
@@ -102,6 +93,7 @@ export class EditorMediaModal extends Component {
 		this.state = this.getDefaultState( props );
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.site && this.props.visible && ! nextProps.visible ) {
 			this.props.selectMediaItems( nextProps.site.ID, [] );
@@ -127,6 +119,7 @@ export class EditorMediaModal extends Component {
 		this.statsTracking = {};
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		const { view, selectedItems, site, single } = this.props;
 		if ( ! isEmpty( selectedItems ) && ( view === ModalViews.LIST || single ) ) {
@@ -145,6 +138,7 @@ export class EditorMediaModal extends Component {
 			detailSelectedIndex: 0,
 			source: props.source ? props.source : '',
 			gallerySettings: props.initialGallerySettings,
+			updatedItems: [],
 		};
 	}
 
@@ -170,7 +164,8 @@ export class EditorMediaModal extends Component {
 	}
 
 	confirmSelection = () => {
-		const { view, selectedItems } = this.props;
+		const { view } = this.props;
+		const selectedItems = this.getSelectedItems();
 
 		if ( areMediaActionsDisabled( view, selectedItems, this.props.isParentReady ) ) {
 			return;
@@ -220,13 +215,10 @@ export class EditorMediaModal extends Component {
 			return;
 		}
 
-		let toDelete = selectedItems;
-		if ( ModalViews.DETAIL === this.props.view ) {
-			toDelete = toDelete[ this.getDetailSelectedIndex() ];
-			this.setNextAvailableDetailView();
-		}
-
-		this.props.deleteMedia( site.ID, toDelete );
+		this.props.deleteMedia(
+			site.ID,
+			selectedItems.map( ( { ID } ) => ID )
+		);
 		mcBumpStat( 'editor_media_actions', 'delete_media' );
 	};
 
@@ -387,7 +379,7 @@ export class EditorMediaModal extends Component {
 	}
 
 	getModalButtons() {
-		if ( includes( [ ModalViews.IMAGE_EDITOR, ModalViews.VIDEO_EDITOR ], this.props.view ) ) {
+		if ( [ ModalViews.IMAGE_EDITOR, ModalViews.VIDEO_EDITOR ].includes( this.props.view ) ) {
 			return;
 		}
 
@@ -424,7 +416,7 @@ export class EditorMediaModal extends Component {
 				label: this.props.translate( 'Continue' ),
 				isPrimary: true,
 				disabled: isDisabled || ! this.props.site,
-				onClick: partial( this.props.setView, ModalViews.GALLERY ),
+				onClick: () => this.props.setView( ModalViews.GALLERY ),
 			} );
 		} else {
 			buttons.push( {
@@ -440,11 +432,37 @@ export class EditorMediaModal extends Component {
 	}
 
 	shouldClose() {
-		return ! includes( [ ModalViews.IMAGE_EDITOR, ModalViews.VIDEO_EDITOR ], this.props.view );
+		return ! [ ModalViews.IMAGE_EDITOR, ModalViews.VIDEO_EDITOR ].includes( this.props.view );
 	}
 
 	updateSettings = ( gallerySettings ) => {
 		this.setState( { gallerySettings } );
+	};
+
+	updateItem = ( itemId, itemChanges ) => {
+		const { updatedItems } = this.state;
+
+		const index = updatedItems.findIndex( ( updatedItem ) => updatedItem.ID === itemId );
+
+		this.setState( {
+			updatedItems:
+				index === -1
+					? [ ...updatedItems, itemChanges ]
+					: updatedItems.map( ( updatedItem ) => {
+							return updatedItem.ID === itemId ? { ...updatedItem, ...itemChanges } : updatedItem;
+					  } ),
+		} );
+	};
+
+	getSelectedItems = () => {
+		const { selectedItems } = this.props;
+		const { updatedItems } = this.state;
+
+		// Apply updated changes over the selected items
+		return selectedItems.map( ( selectedItem ) => {
+			const index = updatedItems.findIndex( ( updatedItem ) => selectedItem.ID === updatedItem.ID );
+			return index > -1 ? { ...selectedItem, ...updatedItems[ index ] } : selectedItem;
+		} );
 	};
 
 	renderContent() {
@@ -459,6 +477,7 @@ export class EditorMediaModal extends Component {
 						selectedIndex={ this.getDetailSelectedIndex() }
 						onRestoreItem={ this.restoreOriginalMedia }
 						onSelectedIndexChange={ this.setDetailSelectedIndex }
+						onUpdateItem={ this.updateItem }
 					/>
 				);
 				break;
@@ -567,18 +586,15 @@ export default connect(
 	{
 		setView: setEditorMediaModalView,
 		resetView: resetMediaModalView,
-		deleteMedia,
 		onViewDetails: flow(
 			withAnalytics( bumpStat( 'editor_media_actions', 'edit_button_dialog' ) ),
 			withAnalytics( recordGoogleEvent( 'Media', 'Clicked Dialog Edit Button' ) ),
-			partial( setEditorMediaModalView, ModalViews.DETAIL )
+			() => setEditorMediaModalView( ModalViews.DETAIL )
 		),
 		recordEditorEvent,
 		recordEditorStat,
-		editMedia,
 		selectMediaItems,
 		setQuery,
-		addExternalMedia,
 		changeMediaSource,
 	}
-)( localize( EditorMediaModal ) );
+)( localize( withDeleteMedia( withEditMedia( withAddExternalMedia( EditorMediaModal ) ) ) ) );

@@ -1,31 +1,18 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 import { Button, Card, CompactCard } from '@automattic/components';
-import page from 'page';
+import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import page from 'page';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import HeaderCake from 'calypso/components/header-cake';
 import Notice from 'calypso/components/notice';
-import wpLib from 'calypso/lib/wp';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-
-/**
- * Style dependencies
- */
-import './section-migrate.scss';
+import wpcom from 'calypso/lib/wp';
 import SitesBlock from 'calypso/my-sites/migrate/components/sites-block';
 import { getImportSectionLocation, redirectTo } from 'calypso/my-sites/migrate/helpers';
-
-const wpcom = wpLib.undocumented();
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import './section-migrate.scss';
 
 class StepSourceSelect extends Component {
 	static propTypes = {
@@ -58,8 +45,11 @@ class StepSourceSelect extends Component {
 		const validEngines = [ 'wordpress', 'blogger', 'medium', 'wix', 'godaddy', 'squarespace' ];
 
 		this.setState( { error: null, isLoading: true }, () => {
-			wpcom
-				.isSiteImportable( this.props.url )
+			wpcom.req
+				.get(
+					{ path: '/imports/is-site-importable', apiNamespace: 'wpcom/v2' },
+					{ site_url: this.props.url }
+				)
 				.then( ( result ) => {
 					const importUrl = `/import/${ this.props.targetSiteSlug }?not-wp=1&engine=${ result.site_engine }&from-site=${ result.site_url }`;
 

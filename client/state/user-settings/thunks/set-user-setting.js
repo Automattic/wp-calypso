@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
-
 import debugFactory from 'debug';
 import { get, isEmpty } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import {
 	removeUnsavedUserSetting,
 	setUnsavedUserSetting,
 } from 'calypso/state/user-settings/actions';
 
+import 'calypso/state/user-settings/init';
 import 'calypso/state/data-layer/wpcom/me/settings';
 
 const debug = debugFactory( 'calypso:user:settings' );
@@ -22,7 +15,7 @@ const debug = debugFactory( 'calypso:user:settings' );
  * Currently the assumption is that if a settings.locale_variant slug exists, then that is the current language
  *
  * @param  {string}  languageSettingValue the newly-set language slug string.
- * @param  {object}  settings user settings object.
+ * @param  {Object}  settings user settings object.
  * @returns {boolean} if the language setting has been changed.
  */
 function hasLanguageChanged( languageSettingValue, settings = {} ) {
@@ -56,10 +49,7 @@ function castPath( path ) {
 /* FIXME: excluding these settings is a workaround which allows
 for those settings to be set if there's no default value; the API
 should provide a default value, which would make these lines obsolete */
-export const ALLOW_EMPTY_DEFAULTS = [
-	'calypso_preferences.colorScheme',
-	'calypso_preferences.linkDestination',
-];
+export const ALLOW_EMPTY_DEFAULTS = [ 'calypso_preferences.colorScheme' ];
 
 /**
  * Handles the storage and removal of changed setting that are pending

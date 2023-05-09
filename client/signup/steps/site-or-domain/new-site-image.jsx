@@ -1,9 +1,3 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
 const NewSiteImage = () => (
 	<svg
 		width="172px"

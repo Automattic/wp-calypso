@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { omit } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default class AsyncLoad extends Component {
@@ -28,6 +21,7 @@ export default class AsyncLoad extends Component {
 		this.require();
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.mounted && this.props.require !== nextProps.require ) {
 			this.setState( { component: null } );

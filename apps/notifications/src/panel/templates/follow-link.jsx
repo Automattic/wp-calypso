@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { wpcom } from '../rest-client/wpcom';
-import { bumpStat } from '../rest-client/bump-stat';
-import Gridicon from './gridicons';
+import PropTypes from 'prop-types';
+import { useState } from 'react';
 import useSafe from '../helpers/use-safe';
+import { bumpStat } from '../rest-client/bump-stat';
+import { wpcom } from '../rest-client/wpcom';
+import Gridicon from './gridicons';
 
 const followStatTypes = {
 	comment: 'note_commented_post',
@@ -24,8 +17,8 @@ const followStatTypes = {
 export const FollowLink = ( { site, noteType, isFollowing: initialIsFollowing } ) => {
 	const translate = useTranslate();
 
-	const [ isRequestRunning, setIsRequestRunning ] = React.useState( false );
-	const [ isFollowing, setIsFollowing ] = React.useState( initialIsFollowing );
+	const [ isRequestRunning, setIsRequestRunning ] = useState( false );
+	const [ isFollowing, setIsFollowing ] = useState( initialIsFollowing );
 
 	const safeSetIsFollowing = useSafe( setIsFollowing );
 	const safeSetIsRequestRunning = useSafe( setIsRequestRunning );

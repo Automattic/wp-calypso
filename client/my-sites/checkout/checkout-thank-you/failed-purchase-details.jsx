@@ -1,12 +1,3 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { localize } from 'i18n-calypso';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';

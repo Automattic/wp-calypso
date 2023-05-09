@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
+import { createSelector } from '@automattic/state-utils';
 import { last, times } from 'lodash';
 import moment from 'moment';
-
-/**
- * Internal dependencies
- */
-import { createSelector } from '@automattic/state-utils';
 import getBillingTransactionsByType from 'calypso/state/selectors/get-billing-transactions-by-type';
 
 import 'calypso/state/billing-transactions/init';
@@ -15,7 +8,7 @@ import 'calypso/state/billing-transactions/init';
 /**
  * Based on the transactions list, returns metadata for rendering the date filters with counts
  *
- * @param   {object}  state           Global state tree
+ * @param   {Object}  state           Global state tree
  * @param   {string}  transactionType Transaction type
  * @param   {string}  [siteId]        Optional site id
  * @returns {Array}                   Date filter metadata

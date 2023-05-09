@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
+import { planHasFeature, FEATURE_UNLIMITED_STORAGE } from '@automattic/calypso-products';
+import { ProgressBar } from '@automattic/components';
 import classNames from 'classnames';
 import filesize from 'filesize';
-
-/**
- * Internal dependencies
- */
-import { ProgressBar } from '@automattic/components';
-import { planHasFeature, FEATURE_UNLIMITED_STORAGE } from '@automattic/calypso-products';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 
 const ALERT_PERCENT = 80;
 const WARN_PERCENT = 60;

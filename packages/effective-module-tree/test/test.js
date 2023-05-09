@@ -76,7 +76,7 @@ describe( 'Effective tree generation', () => {
 			} );
 
 			jest.resetModules();
-			//eslint-disable-next-line no-shadow
+			// eslint-disable-next-line no-shadow
 			const { getEffectiveTreeAsTree } = require( '../index' );
 			const tree = getEffectiveTreeAsTree( '/project/root/package.json' );
 
@@ -124,7 +124,7 @@ describe( 'Effective tree generation', () => {
 				},
 			} );
 
-			//eslint-disable-next-line no-shadow
+			// eslint-disable-next-line no-shadow
 			const { getEffectiveTreeAsTree } = require( '../index' );
 			const tree = await getEffectiveTreeAsTree( '/project/root/package.json' );
 
@@ -189,7 +189,7 @@ describe( 'Effective tree generation', () => {
 				},
 			} );
 
-			//eslint-disable-next-line no-shadow
+			// eslint-disable-next-line no-shadow
 			const { getEffectiveTreeAsList } = require( '../index' );
 			const tree = await getEffectiveTreeAsList( '/project/root/package.json' );
 
@@ -209,7 +209,6 @@ describe( 'Effective tree generation', () => {
 	} );
 
 	afterEach( () => {
-		//eslint-disable-next-line no-console
 		console.warn.mockRestore();
 	} );
 } );

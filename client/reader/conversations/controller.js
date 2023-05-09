@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import { sectionify } from 'calypso/lib/route';
-import { recordTrack } from 'calypso/reader/stats';
 import AsyncLoad from 'calypso/components/async-load';
+import { sectionify } from 'calypso/lib/route';
 import { trackPageLoad, trackScrollPage } from 'calypso/reader/controller-helper';
+import { recordTrack } from 'calypso/reader/stats';
 
 export function conversations( context, next ) {
 	const basePath = sectionify( context.path );
@@ -25,8 +17,7 @@ export function conversations( context, next ) {
 	context.primary = (
 		<AsyncLoad
 			require="calypso/reader/conversations/stream"
-			key={ 'conversations' }
-			title="Conversations"
+			key="conversations"
 			streamKey={ streamKey }
 			trackScrollPage={ scrollTracker }
 		/>
@@ -55,7 +46,7 @@ export function conversationsA8c( context, next ) {
 	context.primary = (
 		<AsyncLoad
 			require="calypso/reader/conversations/stream"
-			key={ 'conversations' }
+			key="conversations"
 			title="Conversations @ Automattic"
 			streamKey={ streamKey }
 			trackScrollPage={ scrollTracker }

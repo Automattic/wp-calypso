@@ -1,20 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-/**
- * External dependencies
- */
-import { includes, omitBy, times } from 'lodash';
-import cookie from 'cookie';
 import { EventEmitter } from 'events';
 import { loadScript } from '@automattic/load-script';
-
-/**
- * Internal Dependencies
- */
-import { getCurrentUser, setCurrentUser } from './utils/current-user';
-import getDoNotTrack from './utils/do-not-track';
+import cookie from 'cookie';
 import { getPageViewParams } from './page-view-params';
+import { getCurrentUser, setCurrentUser } from './utils/current-user';
 import debug from './utils/debug';
+import getDoNotTrack from './utils/do-not-track';
 
 declare global {
 	interface Window {
@@ -30,6 +22,7 @@ declare const window: undefined | ( Window & { BUILD_TIMESTAMP?: number } );
 const TRACKS_SPECIAL_PROPS_NAMES = [ 'geo', 'message', 'request', 'geocity', 'ip' ];
 const EVENT_NAME_EXCEPTIONS = [
 	'a8c_cookie_banner_ok',
+	'a8c_ccpa_optout',
 	// WooCommerce Onboarding / Connection Flow.
 	'wcadmin_storeprofiler_create_jetpack_account',
 	'wcadmin_storeprofiler_connect_store',
@@ -39,6 +32,8 @@ const EVENT_NAME_EXCEPTIONS = [
 	// Checkout
 	'calypso_checkout_switch_to_p_24',
 	'calypso_checkout_composite_p24_submit_clicked',
+	// Launch Bar
+	'wpcom_launchbar_button_click',
 ];
 let _superProps: any; // Added to all Tracks events.
 let _loadTracksResult = Promise.resolve(); // default value for non-BOM environments.
@@ -59,7 +54,9 @@ function createRandomId( randomBytesLength = 9 ): string {
 		randomBytes = new Uint8Array( randomBytesLength );
 		window.crypto.getRandomValues( randomBytes );
 	} else {
-		randomBytes = times( randomBytesLength, () => Math.floor( Math.random() * 256 ) );
+		randomBytes = Array( randomBytesLength )
+			.fill( 0 )
+			.map( () => Math.floor( Math.random() * 256 ) );
 	}
 
 	return window.btoa( String.fromCharCode( ...randomBytes ) );
@@ -180,12 +177,12 @@ export function recordTracksEvent( eventName: string, eventProperties?: any ) {
 
 	if ( process.env.NODE_ENV !== 'production' && typeof console !== 'undefined' ) {
 		if (
-			! /^calypso(?:_[a-z]+){2,}$/.test( eventName ) &&
-			! includes( EVENT_NAME_EXCEPTIONS, eventName )
+			! /^calypso(?:_[a-z0-9]+){2,}$/.test( eventName ) &&
+			! EVENT_NAME_EXCEPTIONS.includes( eventName )
 		) {
-			//eslint-disable-next-line no-console
+			// eslint-disable-next-line no-console
 			console.error(
-				'Tracks: Event `%s` will be ignored because it does not match /^calypso(?:_[a-z]+){2,}$/ and is ' +
+				'Tracks: Event `%s` will be ignored because it does not match /^calypso(?:_[a-z0-9]+){2,}$/ and is ' +
 					'not a listed exception. Please use a compliant event name.',
 				eventName
 			);
@@ -196,12 +193,13 @@ export function recordTracksEvent( eventName: string, eventProperties?: any ) {
 				const errorMessage =
 					`Tracks: Unable to record event "${ eventName }" because nested ` +
 					`properties are not supported by Tracks. Check '${ key }' on`;
-				console.error( errorMessage, eventProperties ); //eslint-disable-line no-console
+				// eslint-disable-next-line no-console
+				console.error( errorMessage, eventProperties );
 				return;
 			}
 
 			if ( ! /^[a-z_][a-z0-9_]*$/.test( key ) ) {
-				//eslint-disable-next-line no-console
+				// eslint-disable-next-line no-console
 				console.error(
 					'Tracks: Event `%s` will be rejected because property name `%s` does not match /^[a-z_][a-z0-9_]*$/. ' +
 						'Please use a compliant property name.',
@@ -211,7 +209,7 @@ export function recordTracksEvent( eventName: string, eventProperties?: any ) {
 			}
 
 			if ( TRACKS_SPECIAL_PROPS_NAMES.indexOf( key ) !== -1 ) {
-				//eslint-disable-next-line no-console
+				// eslint-disable-next-line no-console
 				console.error(
 					"Tracks: Event property `%s` will be overwritten because it uses one of Tracks' internal prop name: %s. " +
 						'Please use another property name.',
@@ -224,7 +222,7 @@ export function recordTracksEvent( eventName: string, eventProperties?: any ) {
 
 	debug( 'Record event "%s" called with props %o', eventName, eventProperties );
 
-	if ( ! eventName.startsWith( 'calypso_' ) && ! includes( EVENT_NAME_EXCEPTIONS, eventName ) ) {
+	if ( ! eventName.startsWith( 'calypso_' ) && ! EVENT_NAME_EXCEPTIONS.includes( eventName ) ) {
 		debug( '- Event name must be prefixed by "calypso_" or added to `EVENT_NAME_EXCEPTIONS`' );
 		return;
 	}
@@ -236,7 +234,9 @@ export function recordTracksEvent( eventName: string, eventProperties?: any ) {
 
 	// Remove properties that have an undefined value
 	// This allows a caller to easily remove properties from the recorded set by setting them to undefined
-	eventProperties = omitBy( eventProperties, ( prop ) => typeof prop === 'undefined' );
+	eventProperties = Object.fromEntries(
+		Object.entries( eventProperties ).filter( ( [ , val ] ) => typeof val !== 'undefined' )
+	);
 
 	debug( 'Recording event "%s" with actual props %o', eventName, eventProperties );
 
@@ -281,4 +281,13 @@ export function recordTracksPageView( urlPath: string, params: any ) {
 export function recordTracksPageViewWithPageParams( urlPath: string, params?: any ) {
 	const pageViewParams = getPageViewParams( urlPath );
 	recordTracksPageView( urlPath, Object.assign( params || {}, pageViewParams ) );
+}
+
+export function getGenericSuperPropsGetter( config: ( key: string ) => string ) {
+	return () => ( {
+		environment: process.env.NODE_ENV,
+		environment_id: config( 'env_id' ),
+		site_id_label: 'wpcom',
+		client: config( 'client_slug' ),
+	} );
 }

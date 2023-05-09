@@ -1,21 +1,14 @@
-/**
- * External dependencies
- */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import { find, flowRight } from 'lodash';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import DisconnectJetpack from 'calypso/blocks/disconnect-jetpack';
 import DocumentHead from 'calypso/components/data/document-head';
-import enrichedSurveyData from 'calypso/components/marketing-survey/cancel-purchase-form/enriched-survey-data';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
+import enrichedSurveyData from 'calypso/components/marketing-survey/cancel-purchase-form/enriched-survey-data';
 import NavigationLink from 'calypso/components/wizard/navigation-link';
+import { submitSurvey } from 'calypso/lib/purchases/actions';
 import redirectNonJetpack from 'calypso/my-sites/site-settings/redirect-non-jetpack';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import {
@@ -23,13 +16,14 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import { submitSurvey } from 'calypso/lib/purchases/actions';
 
-class ConfirmDisconnection extends PureComponent {
+class ConfirmDisconnection extends Component {
 	static propTypes = {
 		reason: PropTypes.string,
 		type: PropTypes.string,
 		text: PropTypes.oneOfType( [ PropTypes.string, PropTypes.arrayOf( PropTypes.string ) ] ),
+		disconnectHref: PropTypes.string,
+		stayConnectedHref: PropTypes.string,
 		// Provided by HOCs
 		purchase: PropTypes.object,
 		siteId: PropTypes.number,
@@ -52,7 +46,7 @@ class ConfirmDisconnection extends PureComponent {
 
 		const surveyData = {
 			'why-cancel': {
-				response: find( this.constructor.allowedReasons, ( r ) => r === reason ),
+				response: this.constructor.allowedReasons.find( ( r ) => r === reason ),
 				text: Array.isArray( text ) ? text.join() : text,
 			},
 			source: {
@@ -60,7 +54,7 @@ class ConfirmDisconnection extends PureComponent {
 			},
 		};
 
-		submitSurvey(
+		this.props.submitSurvey(
 			'calypso-disconnect-jetpack-july2019',
 			siteId,
 			enrichedSurveyData( surveyData, purchase )
@@ -68,7 +62,7 @@ class ConfirmDisconnection extends PureComponent {
 	};
 
 	render() {
-		const { type, siteId, siteSlug, translate } = this.props;
+		const { disconnectHref, siteId, siteSlug, stayConnectedHref, translate, type } = this.props;
 
 		const backHref =
 			`/settings/disconnect-site/${ siteSlug }` +
@@ -84,12 +78,12 @@ class ConfirmDisconnection extends PureComponent {
 					) }
 				/>
 				<DisconnectJetpack
-					disconnectHref="/stats"
+					disconnectHref={ disconnectHref ?? '/stats' }
 					isBroken={ false }
 					onDisconnectClick={ this.submitSurvey }
 					showTitle={ false }
 					siteId={ siteId }
-					stayConnectedHref={ '/settings/manage-connection/' + siteSlug }
+					stayConnectedHref={ stayConnectedHref ?? '/settings/manage-connection/' + siteSlug }
 				/>
 				<div className="disconnect-site__navigation-links">
 					<NavigationLink href={ backHref } direction="back" />
@@ -99,18 +93,17 @@ class ConfirmDisconnection extends PureComponent {
 	}
 }
 
-const connectComponent = connect( ( state ) => {
-	const siteId = getSelectedSiteId( state );
-	return {
-		purchase: getCurrentPlan( state, siteId ),
-		site: getSelectedSite( state ),
-		siteId,
-		siteSlug: getSelectedSiteSlug( state ),
-	};
-} );
+const connectComponent = connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		return {
+			purchase: getCurrentPlan( state, siteId ),
+			site: getSelectedSite( state ),
+			siteId,
+			siteSlug: getSelectedSiteSlug( state ),
+		};
+	},
+	{ submitSurvey }
+);
 
-export default flowRight(
-	connectComponent,
-	localize,
-	redirectNonJetpack()
-)( ConfirmDisconnection );
+export default connectComponent( localize( redirectNonJetpack()( ConfirmDisconnection ) ) );

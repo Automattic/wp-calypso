@@ -1,30 +1,42 @@
-/**
- * External dependencies
- */
-import { useQuery, UseQueryOptions, UseQueryResult } from 'react-query';
-
-/**
- * Internal dependencies
- */
-import { APIProductFamily } from 'calypso/state/partner-portal/types';
-import wpcom from 'calypso/lib/wp';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { useTranslate } from 'i18n-calypso';
+import { useDispatch } from 'react-redux';
+import { selectAlphabeticallySortedProductOptions } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
+import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
+import { APIProductFamily, APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+import { errorNotice } from '../../../notices/actions';
 
 function queryProducts(): Promise< APIProductFamily[] > {
-	return wpcom.req
+	return wpcomJpl.req
 		.get( {
 			apiNamespace: 'wpcom/v2',
-			path: '/jetpack-licensing/product-families',
+			path: '/jetpack-licensing/partner/product-families',
 		} )
 		.then( ( data: APIProductFamily[] ) => {
-			const exclude = [ 'free', 'personal', 'premium', 'professional' ];
+			const exclude = [
+				'free',
+				'personal',
+				'premium',
+				'professional',
+				'jetpack-backup-daily',
+				'jetpack-backup-realtime',
+				'jetpack-backup-t0',
+				'jetpack-security-daily',
+				'jetpack-security-realtime',
+			];
 
 			return data
 				.map( ( family ) => {
 					return {
 						...family,
-						products: family.products.filter( ( product ) => {
-							return exclude.indexOf( product.slug ) === -1;
-						} ),
+						products: family.products
+							.filter( ( product ) => {
+								return exclude.indexOf( product.slug ) === -1;
+							} )
+							.map( ( product ) => ( {
+								...product,
+								family_slug: family.slug,
+							} ) ),
 					};
 				} )
 				.filter( ( family ) => {
@@ -33,12 +45,23 @@ function queryProducts(): Promise< APIProductFamily[] > {
 		} );
 }
 
-export default function useProductsQuery< TError = unknown, TData = unknown >(
-	options?: UseQueryOptions< APIProductFamily[], TError, TData >
-): UseQueryResult< TData, TError > {
-	return useQuery< APIProductFamily[], TError, TData >(
-		[ 'partner-portal', 'licenses', 'products' ],
-		queryProducts,
-		options
-	);
+export default function useProductsQuery(): UseQueryResult< APIProductFamilyProduct[], unknown > {
+	const translate = useTranslate();
+	const dispatch = useDispatch();
+
+	return useQuery( [ 'partner-portal', 'licenses', 'products' ], queryProducts, {
+		select: selectAlphabeticallySortedProductOptions,
+		onError: () => {
+			dispatch(
+				errorNotice(
+					translate(
+						'We were unable to retrieve your latest product details. Please try again later.'
+					),
+					{
+						id: 'partner-portal-product-families-failure',
+					}
+				)
+			);
+		},
+	} );
 }

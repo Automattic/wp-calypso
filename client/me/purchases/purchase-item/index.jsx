@@ -1,20 +1,32 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import i18nCalypso, { localize } from 'i18n-calypso';
-import page from 'page';
+import {
+	isDomainTransfer,
+	isConciergeSession,
+	PLAN_MONTHLY_PERIOD,
+	PLAN_ANNUAL_PERIOD,
+	PLAN_BIENNIAL_PERIOD,
+	PLAN_TRIENNIAL_PERIOD,
+} from '@automattic/calypso-products';
+import { CompactCard, Gridicon } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
+import { ExternalLink } from '@wordpress/components';
+import { Icon, warning as warningIcon } from '@wordpress/icons';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { CompactCard } from '@automattic/components';
+import i18n, { localize, useTranslate } from 'i18n-calypso';
+import page from 'page';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import akismetIcon from 'calypso/assets/images/icons/akismet-icon.svg';
+import payPalImage from 'calypso/assets/images/upgrades/paypal-full.svg';
+import SiteIcon from 'calypso/blocks/site-icon';
+import InfoPopover from 'calypso/components/info-popover';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { getPaymentMethodImageURL } from 'calypso/lib/checkout/payment-methods';
 import {
 	getDisplayName,
 	isExpired,
 	isExpiring,
+	isRechargeable,
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isPartnerPurchase,
@@ -26,20 +38,16 @@ import {
 	getPartnerName,
 	isWithinIntroductoryOfferPeriod,
 	isIntroductoryOfferFreeTrial,
+	hasPaymentMethod,
 } from 'calypso/lib/purchases';
-import { isDomainTransfer, isConciergeSession } from '@automattic/calypso-products';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import SiteIcon from 'calypso/blocks/site-icon';
-import { getPurchaseListUrlFor } from 'calypso/my-sites/purchases/paths';
-import { getPaymentMethodImageURL } from 'calypso/lib/checkout/payment-methods';
-import payPalImage from 'calypso/assets/images/upgrades/paypal-full.svg';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Style dependencies
- */
+import { getPurchaseListUrlFor } from 'calypso/my-sites/purchases/paths';
+import {
+	isTemporarySitePurchase,
+	isJetpackTemporarySitePurchase,
+	isAkismetTemporarySitePurchase,
+} from '../utils';
+import OwnerInfo from './owner-info';
 import 'calypso/me/purchases/style.scss';
 
 const eventProperties = ( warning ) => ( { warning, position: 'purchase-list' } );
@@ -66,7 +74,29 @@ class PurchaseItem extends Component {
 			} );
 		}
 
-		if ( isDisconnectedSite ) {
+		if ( isDisconnectedSite && ! isAkismetTemporarySitePurchase( purchase ) ) {
+			if ( isJetpackTemporarySitePurchase( purchase ) ) {
+				return (
+					<>
+						<span className="purchase-item__is-error">
+							{ translate( 'Activate your product license key' ) }
+						</span>
+						<br />
+						{ /* TODO: These anchor links are causing React console warnings,
+						"Warning: validateDOMNesting(...): <a> cannot appear as a descendant of <a>."
+						Because the <CompactCard> component that renders this also us surrounded by an anchor link.
+						See: <Card> General Guidelines: https://github.com/Automattic/wp-calypso/tree/trunk/packages/components/src/card#general-guidelines
+						TLDR: Don't display more than one primary button or action in a single card. (in which the card itself if a primary action/link in this case) */ }
+						<ExternalLink
+							className="purchase-item__link"
+							href="https://jetpack.com/support/install-jetpack-and-connect-your-new-plan/#how-can-i-activate-my-license-key-in-my-jetpack-installation"
+						>
+							{ translate( 'Learn more' ) }
+						</ExternalLink>
+					</>
+				);
+			}
+
 			if ( isJetpack ) {
 				return (
 					<span className="purchase-item__is-error">
@@ -102,11 +132,22 @@ class PurchaseItem extends Component {
 			);
 		}
 
+		if ( purchase.isInAppPurchase ) {
+			return translate(
+				'This product is an in-app purchase. You can manage it from within {{managePurchase}}the app store{{/managePurchase}}.',
+				{
+					components: {
+						managePurchase: <a href={ purchase.iapPurchaseManagementLink } />,
+					},
+				}
+			);
+		}
+
 		if ( isWithinIntroductoryOfferPeriod( purchase ) && isIntroductoryOfferFreeTrial( purchase ) ) {
 			if (
 				isRenewing( purchase ) &&
 				( locale === 'en' ||
-					i18nCalypso.hasTranslation(
+					i18n.hasTranslation(
 						'Free trial ends on {{span}}%(date)s{{/span}}, renews automatically at %(amount)s'
 					) )
 			) {
@@ -115,7 +156,10 @@ class PurchaseItem extends Component {
 					{
 						args: {
 							date: expiry.format( 'LL' ),
-							amount: purchase.priceText,
+							amount: formatCurrency( purchase.priceInteger, purchase.currencyCode, {
+								isSmallestUnit: true,
+								stripZeros: true,
+							} ),
 						},
 						components: {
 							span: <span className="purchase-item__date" />,
@@ -126,7 +170,7 @@ class PurchaseItem extends Component {
 
 			if (
 				locale === 'en' ||
-				i18nCalypso.hasTranslation( 'Free trial ends on {{span}}%(date)s{{/span}}' )
+				i18n.hasTranslation( 'Free trial ends on {{span}}%(date)s{{/span}}' )
 			) {
 				const expiryClass =
 					expiry < moment().add( 7, 'days' )
@@ -180,9 +224,73 @@ class PurchaseItem extends Component {
 				);
 			}
 
+			if ( purchase.billPeriodDays ) {
+				const translateOptions = {
+					args: {
+						amount: formatCurrency( purchase.priceInteger, purchase.currencyCode, {
+							isSmallestUnit: true,
+							stripZeros: true,
+						} ),
+						date: renewDate.format( 'LL' ),
+					},
+					components: {
+						span: <span className="purchase-item__date" />,
+					},
+				};
+				switch ( purchase.billPeriodDays ) {
+					case PLAN_MONTHLY_PERIOD:
+						if (
+							locale === 'en' ||
+							i18n.hasTranslation( 'Renews monthly at %(amount)s on {{span}}%(date)s{{/span}}' )
+						) {
+							return translate(
+								'Renews monthly at %(amount)s on {{span}}%(date)s{{/span}}',
+								translateOptions
+							);
+						}
+					case PLAN_ANNUAL_PERIOD:
+						if (
+							locale === 'en' ||
+							i18n.hasTranslation( 'Renews yearly at %(amount)s on {{span}}%(date)s{{/span}}' )
+						) {
+							return translate(
+								'Renews yearly at %(amount)s on {{span}}%(date)s{{/span}}',
+								translateOptions
+							);
+						}
+					case PLAN_BIENNIAL_PERIOD:
+						if (
+							locale === 'en' ||
+							i18n.hasTranslation(
+								'Renews every two years at %(amount)s on {{span}}%(date)s{{/span}}'
+							)
+						) {
+							return translate(
+								'Renews every two years at %(amount)s on {{span}}%(date)s{{/span}}',
+								translateOptions
+							);
+						}
+					case PLAN_TRIENNIAL_PERIOD:
+						if (
+							locale === 'en' ||
+							i18n.hasTranslation(
+								'Renews every three years at %(amount)s on {{span}}%(date)s{{/span}}'
+							)
+						) {
+							return translate(
+								'Renews every three years at %(amount)s on {{span}}%(date)s{{/span}}',
+								translateOptions
+							);
+						}
+				}
+			}
+
 			return translate( 'Renews at %(amount)s on {{span}}%(date)s{{/span}}', {
 				args: {
-					amount: purchase.priceText,
+					amount: formatCurrency( purchase.priceInteger, purchase.currencyCode, {
+						isSmallestUnit: true,
+						stripZeros: true,
+					} ),
 					date: renewDate.format( 'LL' ),
 				},
 				components: {
@@ -259,8 +367,11 @@ class PurchaseItem extends Component {
 
 	getPurchaseType() {
 		const { purchase, site, translate, slug, showSite, isDisconnectedSite } = this.props;
-		const productType = purchaseType( purchase );
+		if ( isTemporarySitePurchase( purchase ) ) {
+			return null;
+		}
 
+		const productType = purchaseType( purchase );
 		if ( showSite && site ) {
 			if ( productType ) {
 				return translate( '%(purchaseType)s for {{button}}%(site)s{{/button}}', {
@@ -325,7 +436,37 @@ class PurchaseItem extends Component {
 	}
 
 	getPaymentMethod() {
-		const { purchase } = this.props;
+		const { purchase, translate } = this.props;
+
+		if ( isIncludedWithPlan( purchase ) ) {
+			return translate( 'Included with Plan' );
+		}
+
+		if (
+			purchase.isAutoRenewEnabled &&
+			! hasPaymentMethod( purchase ) &&
+			! isPartnerPurchase( purchase )
+		) {
+			return (
+				<div className="purchase-item__no-payment-method">
+					<Icon icon={ warningIcon } />
+					<span>{ translate( 'You don’t have a payment method to renew this subscription' ) }</span>
+				</div>
+			);
+		}
+
+		if (
+			! isRechargeable( purchase ) &&
+			hasPaymentMethod( purchase ) &&
+			purchase.isAutoRenewEnabled
+		) {
+			return (
+				<div className="purchase-item__no-payment-method">
+					<Icon icon={ warningIcon } />
+					<span>{ translate( 'You don’t have a payment method to renew this subscription' ) }</span>
+				</div>
+			);
+		}
 
 		if ( isRenewing( purchase ) ) {
 			if ( purchase.payment.type === 'credit_card' ) {
@@ -356,7 +497,15 @@ class PurchaseItem extends Component {
 	}
 
 	getSiteIcon = () => {
-		const { site, isDisconnectedSite } = this.props;
+		const { site, isDisconnectedSite, purchase } = this.props;
+
+		if ( isAkismetTemporarySitePurchase( purchase ) ) {
+			return (
+				<div className="purchase-item__static-icon">
+					<img src={ akismetIcon } alt="Akismet icon" />
+				</div>
+			);
+		}
 
 		if ( isDisconnectedSite ) {
 			return (
@@ -369,8 +518,8 @@ class PurchaseItem extends Component {
 		return <SiteIcon site={ site } size={ 36 } />;
 	};
 
-	renderPurhaseItemContent = () => {
-		const { purchase, showSite } = this.props;
+	renderPurchaseItemContent = () => {
+		const { purchase, showSite, isBackupMethodAvailable } = this.props;
 
 		return (
 			<div className="purchase-item__wrapper purchases-layout__wrapper">
@@ -379,7 +528,12 @@ class PurchaseItem extends Component {
 				) }
 
 				<div className="purchase-item__information purchases-layout__information">
-					<div className="purchase-item__title">{ getDisplayName( purchase ) }</div>
+					<div className="purchase-item__title">
+						{ getDisplayName( purchase ) }
+						&nbsp;
+						<OwnerInfo purchase={ purchase } />
+					</div>
+
 					<div className="purchase-item__purchase-type">{ this.getPurchaseType() }</div>
 				</div>
 
@@ -387,6 +541,7 @@ class PurchaseItem extends Component {
 
 				<div className="purchase-item__payment-method purchases-layout__payment-method">
 					{ this.getPaymentMethod() }
+					{ isBackupMethodAvailable && isRenewing( purchase ) && <BackupPaymentMethodNotice /> }
 				</div>
 			</div>
 		);
@@ -422,8 +577,9 @@ class PurchaseItem extends Component {
 
 		if ( ! isPlaceholder && getManagePurchaseUrlFor ) {
 			// A "disconnected" Jetpack site's purchases may be managed.
-			// A "disconnected" WordPress.com site may not (the user has been removed).
-			if ( ! isDisconnectedSite || isJetpack ) {
+			// A "disconnected" WordPress.com site may *NOT* be managed (the user has been removed), unless it is a
+			// WPCOM generated temporary site, which is created during the siteless checkout flow. (currently Jetpack & Akismet can have siteless purchases).
+			if ( ! isDisconnectedSite || isJetpack || isTemporarySitePurchase( purchase ) ) {
 				onClick = () => {
 					window.scrollTo( 0, 0 );
 				};
@@ -438,10 +594,27 @@ class PurchaseItem extends Component {
 				href={ href }
 				onClick={ onClick }
 			>
-				{ this.renderPurhaseItemContent() }
+				{ this.renderPurchaseItemContent() }
 			</CompactCard>
 		);
 	}
+}
+
+function BackupPaymentMethodNotice() {
+	const translate = useTranslate();
+	const noticeText = translate(
+		'If the renewal fails, a {{link}}backup payment method{{/link}} may be used.',
+		{
+			components: {
+				link: <a href="/me/purchases/payment-methods" />,
+			},
+		}
+	);
+	return (
+		<span className="purchase-item__backup-payment-method-notice">
+			<InfoPopover position="bottom">{ noticeText }</InfoPopover>
+		</span>
+	);
 }
 
 PurchaseItem.propTypes = {
@@ -452,6 +625,7 @@ PurchaseItem.propTypes = {
 	purchase: PropTypes.object,
 	showSite: PropTypes.bool,
 	slug: PropTypes.string,
+	isBackupMethodAvailable: PropTypes.bool,
 };
 
 export default localize( withLocalizedMoment( PurchaseItem ) );

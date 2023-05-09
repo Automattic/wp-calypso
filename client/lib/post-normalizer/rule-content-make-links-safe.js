@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { forEach } from 'lodash';
 import { safeLinkRe } from './utils';
 

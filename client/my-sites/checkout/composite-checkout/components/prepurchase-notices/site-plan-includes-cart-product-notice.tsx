@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
-import { useTranslate } from 'i18n-calypso';
-import React, { ReactElement, FunctionComponent } from 'react';
-import { useSelector } from 'react-redux';
-
-/**
- * Internal Dependencies
- */
 import { getJetpackProductDisplayName } from '@automattic/calypso-products';
+import { useTranslate } from 'i18n-calypso';
+import { FunctionComponent } from 'react';
+import { useSelector } from 'react-redux';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import PrePurchaseNotice from './prepurchase-notice';
-import type { Plan } from 'calypso/state/plans/types';
 import type { Product } from '@automattic/calypso-products';
+import type { Plan } from 'calypso/state/plans/types';
 
 type Site = {
 	ID: number;
@@ -47,7 +40,7 @@ const SitePlanIncludesCartProductNotice: FunctionComponent< Props > = ( {
 				plan: plan.product_name_short,
 			},
 			components: {
-				product: getJetpackProductDisplayName( product ) as ReactElement,
+				product: <>{ getJetpackProductDisplayName( product ) }</>,
 			},
 			comment:
 				'The `plan` variable refers to the short name of the plan the customer owns already. `product` refers to the product in the cart that is already included in the plan.',

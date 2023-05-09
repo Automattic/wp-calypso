@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import getPublicSites from 'calypso/state/selectors/get-public-sites';
 import { userState } from './fixtures/user-state';
 
@@ -18,7 +10,7 @@ describe( 'getPublicSites()', () => {
 			},
 		};
 		const sites = getPublicSites( state );
-		expect( sites ).to.eql( [] );
+		expect( sites ).toEqual( [] );
 	} );
 
 	test( 'should return the public sites in state', () => {
@@ -51,7 +43,7 @@ describe( 'getPublicSites()', () => {
 			},
 		};
 		const sites = getPublicSites( state );
-		expect( sites ).to.eql( [
+		expect( sites ).toEqual( [
 			{
 				ID: 2916284,
 				is_private: false,
@@ -60,9 +52,6 @@ describe( 'getPublicSites()', () => {
 				title: 'WordPress.com Example Blog',
 				domain: 'example.com',
 				slug: 'example.com',
-				hasConflict: false,
-				is_customizable: false,
-				is_previewable: false,
 				options: {
 					unmapped_url: 'http://example.com',
 				},

@@ -1,8 +1,4 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 
 export function PlanFeaturesItem( props ) {
@@ -14,6 +10,7 @@ export function PlanFeaturesItem( props ) {
 		'plan-features-comparison__item-checkmark': props.isFeatureAvailable,
 		'plan-features-comparison__item-cross': ! props.isFeatureAvailable,
 	} );
+
 	return (
 		<div className="plan-features-comparison__item plan-features-comparison__item-available">
 			{ props.annualOnlyContent && (

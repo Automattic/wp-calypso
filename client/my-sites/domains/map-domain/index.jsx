@@ -1,39 +1,30 @@
-/**
- * External dependencies
- */
-import page from 'page';
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { withShoppingCart } from '@automattic/shopping-cart';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
-import { withShoppingCart } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
-import HeaderCake from 'calypso/components/header-cake';
+import page from 'page';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import QueryProductsList from 'calypso/components/data/query-products-list';
 import MapDomainStep from 'calypso/components/domains/map-domain-step';
-import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
-import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
-import wp from 'calypso/lib/wp';
-import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
+import TrademarkClaimsNotice from 'calypso/components/domains/trademark-claims-notice';
+import HeaderCake from 'calypso/components/header-cake';
 import Notice from 'calypso/components/notice';
+import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
+import wpcom from 'calypso/lib/wp';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
+import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
+import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
-import isSiteUpgradeable from 'calypso/state/selectors/is-site-upgradeable';
+import { successNotice } from 'calypso/state/notices/actions';
+import { getProductsList } from 'calypso/state/products-list/selectors';
 import isSiteOnPaidPlan from 'calypso/state/selectors/is-site-on-paid-plan';
+import isSiteUpgradeable from 'calypso/state/selectors/is-site-upgradeable';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import QueryProductsList from 'calypso/components/data/query-products-list';
-import { getProductsList } from 'calypso/state/products-list/selectors';
-import TrademarkClaimsNotice from 'calypso/components/domains/trademark-claims-notice';
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
-import { successNotice } from 'calypso/state/notices/actions';
-
-const wpcom = wp.undocumented();
 
 export class MapDomain extends Component {
 	static propTypes = {
@@ -74,22 +65,21 @@ export class MapDomain extends Component {
 		page( '/domains/add/' + selectedSiteSlug );
 	};
 
-	addDomainToCart = ( suggestion ) => {
+	addDomainToCart = async ( suggestion ) => {
 		const { selectedSiteSlug } = this.props;
 
-		this.props.shoppingCartManager
-			.addProductsToCart( [
-				fillInSingleCartItemAttributes(
-					domainRegistration( {
-						productSlug: suggestion.product_slug,
-						domain: suggestion.domain_name,
-					} ),
-					this.props.productsList
-				),
-			] )
-			.then( () => {
-				this.isMounted && page( '/checkout/' + selectedSiteSlug );
-			} );
+		try {
+			await this.props.shoppingCartManager.addProductsToCart( [
+				domainRegistration( {
+					productSlug: suggestion.product_slug,
+					domain: suggestion.domain_name,
+				} ),
+			] );
+		} catch {
+			// Nothing needs to be done here. CartMessages will display the error to the user.
+			return;
+		}
+		this.isMounted && page( '/checkout/' + selectedSiteSlug );
 	};
 
 	handleRegisterDomain = ( suggestion ) => {
@@ -117,8 +107,8 @@ export class MapDomain extends Component {
 		// We don't go through the usual checkout process
 		// Instead, we add the mapping directly
 		if ( selectedSite.is_vip ) {
-			wpcom
-				.addVipDomainMapping( selectedSite.ID, domain )
+			wpcom.req
+				.post( `/sites/${ selectedSite.ID }/vip-domain-mapping`, { domain } )
 				.then(
 					() => {
 						page( domainManagementList( selectedSiteSlug ) );
@@ -132,8 +122,8 @@ export class MapDomain extends Component {
 				} );
 			return;
 		} else if ( this.props.isSiteOnPaidPlan ) {
-			wpcom
-				.addDomainMapping( selectedSite.ID, domain )
+			wpcom.req
+				.post( `/sites/${ selectedSite.ID }/add-domain-mapping`, { domain } )
 				.then(
 					() => {
 						this.props.successNotice(
@@ -158,24 +148,21 @@ export class MapDomain extends Component {
 		page( '/checkout/' + selectedSiteSlug + '/domain-mapping:' + domain );
 	};
 
-	UNSAFE_componentWillMount() {
-		this.checkSiteIsUpgradeable( this.props );
-	}
-
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		this.checkSiteIsUpgradeable( nextProps );
-	}
-
 	componentDidMount() {
 		this.isMounted = true;
+		this.checkSiteIsUpgradeable();
+	}
+
+	componentDidUpdate() {
+		this.checkSiteIsUpgradeable();
 	}
 
 	componentWillUnmount() {
 		this.isMounted = false;
 	}
 
-	checkSiteIsUpgradeable( props ) {
-		if ( props.selectedSite && ! props.isSiteUpgradeable ) {
+	checkSiteIsUpgradeable() {
+		if ( this.props.selectedSite && ! this.props.isSiteUpgradeable ) {
 			page.redirect( '/domains/add/mapping' );
 		}
 	}
@@ -211,13 +198,8 @@ export class MapDomain extends Component {
 			return this.trademarkClaimsNotice();
 		}
 
-		const {
-			domainsWithPlansOnly,
-			initialQuery,
-			productsList,
-			selectedSite,
-			translate,
-		} = this.props;
+		const { domainsWithPlansOnly, initialQuery, productsList, selectedSite, translate } =
+			this.props;
 
 		const { errorMessage } = this.state;
 
@@ -260,4 +242,4 @@ export default connect(
 	{
 		successNotice,
 	}
-)( withShoppingCart( localize( MapDomain ) ) );
+)( withCartKey( withShoppingCart( localize( MapDomain ) ) ) );

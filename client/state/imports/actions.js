@@ -1,7 +1,4 @@
-/**
- * Internal dependencies
- */
-import wpLib from 'calypso/lib/wp';
+import wp from 'calypso/lib/wp';
 import {
 	IMPORTS_AUTHORS_SET_MAPPING,
 	IMPORTS_AUTHORS_START_MAPPING,
@@ -13,20 +10,16 @@ import {
 	IMPORTS_IMPORT_UNLOCK,
 	IMPORTS_START_IMPORTING,
 	IMPORTS_UPLOAD_FAILED,
+	IMPORTS_PRE_UPLOAD_FAILED,
 	IMPORTS_UPLOAD_COMPLETED,
 	IMPORTS_UPLOAD_SET_PROGRESS,
 	IMPORTS_UPLOAD_START,
 } from 'calypso/state/action-types';
+import { fromApi, toApi } from './api';
 import { appStates } from './constants';
 import { isImporterLocked } from './selectors';
-import { fromApi, toApi } from './api';
 
-/**
- * Redux dependencies
- */
 import 'calypso/state/imports/init';
-
-const wpcom = wpLib.undocumented();
 
 const ID_GENERATOR_PREFIX = 'local-generated-id-';
 
@@ -55,6 +48,39 @@ const createImportOrder = ( importerStatus ) =>
 	toApi( {
 		...importerStatus,
 		importerState: appStates.IMPORTING,
+	} );
+
+const updateImporter = ( siteId, importerStatus ) =>
+	wp.req.post( {
+		path: `/sites/${ siteId }/imports/${ importerStatus.importerId }`,
+		formData: [ [ 'importStatus', JSON.stringify( importerStatus ) ] ],
+	} );
+
+const uploadExportFile = ( siteId, params ) =>
+	new Promise( ( resolve, reject ) => {
+		const resolver = ( error, data ) => {
+			error ? reject( error ) : resolve( data );
+		};
+
+		const formData = [
+			[ 'importStatus', JSON.stringify( params.importStatus ) ],
+			[ 'import', params.file ],
+		];
+
+		if ( params.url ) {
+			formData.push( [ 'url', params.url ] );
+		}
+
+		const req = wp.req.post(
+			{
+				path: `/sites/${ siteId }/imports/new`,
+				formData,
+			},
+			resolver
+		);
+
+		req.upload.onprogress = params.onprogress;
+		req.onabort = params.onabort;
 	} );
 
 export const lockImport = ( importerId ) => ( {
@@ -88,12 +114,12 @@ export const cancelImport = ( siteId, importerId ) => async ( dispatch ) => {
 		return;
 	}
 
-	const data = await wpcom.updateImporter( siteId, createCancelOrder( siteId, importerId ) );
+	const data = await updateImporter( siteId, createCancelOrder( siteId, importerId ) );
 	dispatch( receiveImporterStatus( data ) );
 };
 
 export const fetchImporterState = ( siteId ) => async ( dispatch ) => {
-	const data = await wpcom.fetchImporterState( siteId );
+	const data = await wp.req.get( `/sites/${ siteId }/imports/` );
 	dispatch( receiveImporterStatus( data ) );
 };
 
@@ -121,7 +147,7 @@ export const resetImport = ( siteId, importerId ) => async ( dispatch ) => {
 	};
 	dispatch( resetImportAction );
 
-	const data = await wpcom.updateImporter( siteId, createExpiryOrder( siteId, importerId ) );
+	const data = await updateImporter( siteId, createExpiryOrder( siteId, importerId ) );
 	dispatch( receiveImporterStatus( data ) );
 };
 
@@ -136,7 +162,7 @@ export const clearImport = ( siteId, importerId ) => async ( dispatch ) => {
 	};
 	dispatch( resetImportAction );
 
-	const data = await wpcom.updateImporter( siteId, createClearOrder( siteId, importerId ) );
+	const data = await updateImporter( siteId, createClearOrder( siteId, importerId ) );
 	dispatch( receiveImporterStatus( data ) );
 };
 
@@ -179,7 +205,7 @@ export const startImporting = ( importerStatus ) => ( dispatch ) => {
 	};
 	dispatch( startImportingAction );
 
-	return wpcom.updateImporter( siteId, createImportOrder( importerStatus ) );
+	return updateImporter( siteId, createImportOrder( importerStatus ) );
 };
 
 export const setUploadStartState = ( importerId, filenameOrUrl ) => ( {
@@ -188,18 +214,20 @@ export const setUploadStartState = ( importerId, filenameOrUrl ) => ( {
 	importerId,
 } );
 
-export const startUpload = ( importerStatus, file ) => ( dispatch ) => {
-	const {
-		importerId,
-		site: { ID: siteId },
-	} = importerStatus;
+export const startUpload =
+	( importerStatus, file, url = undefined ) =>
+	( dispatch ) => {
+		const {
+			importerId,
+			site: { ID: siteId },
+		} = importerStatus;
 
-	dispatch( setUploadStartState( importerId, file.name ) );
+		dispatch( setUploadStartState( importerId, file.name ) );
 
-	return wpcom
-		.uploadExportFile( siteId, {
+		return uploadExportFile( siteId, {
 			importStatus: toApi( importerStatus ),
 			file,
+			url,
 			onprogress: ( event ) => {
 				dispatch(
 					setUploadProgress( importerId, {
@@ -212,16 +240,23 @@ export const startUpload = ( importerStatus, file ) => ( dispatch ) => {
 				dispatch( cancelImport( siteId, importerId ) );
 			},
 		} )
-		.then( ( data ) => {
-			dispatch( finishUpload( importerId, fromApi( data ) ) );
-		} )
-		.catch( ( error ) => {
-			const failUploadAction = {
-				type: IMPORTS_UPLOAD_FAILED,
-				importerId,
-				error: error.message,
-			};
+			.then( ( data ) => {
+				dispatch( finishUpload( importerId, fromApi( data ) ) );
+			} )
+			.catch( ( error ) => {
+				const failUploadAction = {
+					type: IMPORTS_UPLOAD_FAILED,
+					importerId,
+					error: error.message,
+				};
 
-			dispatch( failUploadAction );
-		} );
-};
+				dispatch( failUploadAction );
+			} );
+	};
+
+export const failPreUpload = ( importerId, message, code ) => ( {
+	type: IMPORTS_PRE_UPLOAD_FAILED,
+	importerId,
+	error: message,
+	errorCode: code,
+} );

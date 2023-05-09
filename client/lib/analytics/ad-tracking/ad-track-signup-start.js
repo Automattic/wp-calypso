@@ -1,12 +1,9 @@
-/**
- * Internal dependencies
- */
-import { isAdTrackingAllowed, refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
-
 import { getCurrentUser } from '@automattic/calypso-analytics';
-import { debug, isWpcomGoogleAdsGtagEnabled, isFloodlightEnabled, TRACKING_IDS } from './constants';
-import { loadTrackingScripts } from './load-tracking-scripts';
+import { refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
+import { mayWeTrackByTracker } from '../tracker-buckets';
+import { debug, TRACKING_IDS } from './constants';
 import { recordParamsInFloodlightGtag } from './floodlight';
+import { loadTrackingScripts } from './load-tracking-scripts';
 
 // Ensure setup has run.
 import './setup';
@@ -14,23 +11,18 @@ import './setup';
 export async function adTrackSignupStart( flow ) {
 	await refreshCountryCodeCookieGdpr();
 
-	if ( ! isAdTrackingAllowed() ) {
-		debug( 'adTrackSignupStart: [Skipping] ad tracking is not allowed' );
-		return;
-	}
-
 	await loadTrackingScripts();
 	const currentUser = getCurrentUser();
 
 	// Floodlight.
 
-	if ( isFloodlightEnabled ) {
+	if ( mayWeTrackByTracker( 'floodlight' ) ) {
 		debug( 'adTrackSignupStart: [Floodlight]' );
 		recordParamsInFloodlightGtag( {
 			send_to: 'DC-6355556/wordp0/pre-p0+unique',
 		} );
 	}
-	if ( isFloodlightEnabled && ! currentUser && 'onboarding' === flow ) {
+	if ( mayWeTrackByTracker( 'floodlight' ) && ! currentUser && 'onboarding' === flow ) {
 		debug( 'adTrackSignupStart: [Floodlight]' );
 		recordParamsInFloodlightGtag( {
 			send_to: 'DC-6355556/wordp0/landi00+unique',
@@ -39,7 +31,7 @@ export async function adTrackSignupStart( flow ) {
 
 	// Google Ads.
 
-	if ( isWpcomGoogleAdsGtagEnabled && ! currentUser && 'onboarding' === flow ) {
+	if ( mayWeTrackByTracker( 'googleAds' ) && ! currentUser && 'onboarding' === flow ) {
 		const params = [
 			'event',
 			'conversion',

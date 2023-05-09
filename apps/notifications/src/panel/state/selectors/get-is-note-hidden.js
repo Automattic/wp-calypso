@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getNotes from './get-notes';
 
 export const getIsNoteHidden = ( notesState, noteId ) =>

@@ -1,29 +1,16 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { CompactCard } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
-import DomainConnectAuthorizeDescription from './domain-connect-authorize-description';
-import DomainConnectAuthorizeRecords from './domain-connect-authorize-records';
-import DomainConnectAuthorizeFooter from './domain-connect-authorize-footer';
+import wpcom from 'calypso/lib/wp';
 import { actionType, noticeType } from './constants';
-import wp from 'calypso/lib/wp';
+import DomainConnectAuthorizeDescription from './domain-connect-authorize-description';
+import DomainConnectAuthorizeFooter from './domain-connect-authorize-footer';
+import DomainConnectAuthorizeRecords from './domain-connect-authorize-records';
 
-/**
- * Style dependencies
- */
 import './domain-connect-authorize.scss';
-
-const wpcom = wp.undocumented();
 
 class DomainConnectAuthorize extends Component {
 	static propTypes = {
@@ -42,8 +29,10 @@ class DomainConnectAuthorize extends Component {
 		const { providerId, serviceId, params, translate } = this.props;
 		const { domain } = params;
 
-		wpcom
-			.getDnsTemplateRecords( domain, providerId, serviceId, params )
+		wpcom.req
+			.post( `/domains/${ domain }/dns/providers/${ providerId }/services/${ serviceId }/preview`, {
+				variables: params,
+			} )
 			.then(
 				( data ) => {
 					this.setState( {
@@ -77,44 +66,48 @@ class DomainConnectAuthorize extends Component {
 
 	handleClickConfirm = () => {
 		const { providerId, serviceId, params, translate } = this.props;
-		const { domain } = params;
 
 		this.setState( {
 			action: actionType.SUBMITTING,
 			noticeType: null,
 		} );
 
-		wpcom.applyDnsTemplateSyncFlow( domain, providerId, serviceId, params ).then(
-			( result ) => {
-				let action = actionType.CLOSE;
-				let noticeMessage = translate( 'Hurray! Your new service is now all set up.' );
-				if ( result.redirect_uri ) {
-					action = actionType.REDIRECTING;
-					noticeMessage = translate(
-						"Please wait while we redirect you back to the service provider's site to finalize this update."
-					);
-					window.location.assign( result.redirect_uri );
-				}
-				this.setState( {
-					action,
-					noticeMessage,
-					noticeType: noticeType.SUCCESS,
-				} );
-			},
-			( error ) => {
-				const errorMessage =
-					error.message ||
-					translate(
-						"We weren't able to add the DNS records needed for this service. Please try again."
-					);
+		wpcom.req
+			.get(
+				`/domain-connect/authorize/v2/domainTemplates/providers/${ providerId }/services/${ serviceId }/apply/authorized`,
+				{ apiVersion: '1.3', ...params }
+			)
+			.then(
+				( result ) => {
+					let action = actionType.CLOSE;
+					let noticeMessage = translate( 'Hurray! Your new service is now all set up.' );
+					if ( result.redirect_uri ) {
+						action = actionType.REDIRECTING;
+						noticeMessage = translate(
+							"Please wait while we redirect you back to the service provider's site to finalize this update."
+						);
+						window.location.assign( result.redirect_uri );
+					}
+					this.setState( {
+						action,
+						noticeMessage,
+						noticeType: noticeType.SUCCESS,
+					} );
+				},
+				( error ) => {
+					const errorMessage =
+						error.message ||
+						translate(
+							"We weren't able to add the DNS records needed for this service. Please try again."
+						);
 
-				this.setState( {
-					action: actionType.READY_TO_SUBMIT,
-					noticeMessage: errorMessage,
-					noticeType: noticeType.ERROR,
-				} );
-			}
-		);
+					this.setState( {
+						action: actionType.READY_TO_SUBMIT,
+						noticeMessage: errorMessage,
+						noticeType: noticeType.ERROR,
+					} );
+				}
+			);
 	};
 
 	handleClickClose = () => {
@@ -150,9 +143,10 @@ class DomainConnectAuthorize extends Component {
 						} ) }
 					</h2>
 					<DomainConnectAuthorizeDescription
+						dnsTemplateError={ this.state.dnsTemplateError }
 						isPlaceholder={ ! this.state.dnsTemplateRecordsRetrieved }
 						providerId={ this.props.providerId }
-						dnsTemplateError={ this.state.dnsTemplateError }
+						serviceId={ this.props.serviceId }
 					/>
 					<DomainConnectAuthorizeRecords
 						domain={ domain }

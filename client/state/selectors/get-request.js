@@ -1,13 +1,10 @@
-/**
- * Internal dependencies
- */
 import { getRequestKey } from 'calypso/state/data-layer/wpcom-http/utils';
 
 /**
  * Returns meta information about data requests going through the data layer
  *
- * @param {object} state Redux state
- * @param {object} action data request action
+ * @param {Object} state Redux state
+ * @param {Object} action data request action
  * @returns {*} metadata about request
  */
 export default ( state, action ) => {

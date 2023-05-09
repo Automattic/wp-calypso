@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/tree-select",
-	"version": "1.0.3",
-	"description": "A selector library for Redux",
+	"version": "2.0.0",
+	"description": "A selector library for Redux.",
 	"keywords": [
 		"redux",
 		"selector"
@@ -21,9 +21,7 @@
 	"publishConfig": {
 		"access": "public"
 	},
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"files": [
 		"dist",
 		"src"
@@ -36,6 +34,10 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"tslib": "^2.2.0"
+		"tslib": "^2.3.0"
+	},
+	"devDependencies": {
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"typescript": "^4.7.4"
 	}
 }

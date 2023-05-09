@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
+import { BillingHistory, ReceiptView } from 'calypso/my-sites/purchases/billing-history';
 import {
 	Purchases,
 	PurchaseDetails,
@@ -14,7 +7,6 @@ import {
 	PurchaseCancelDomain,
 	PurchaseChangePaymentMethod,
 } from 'calypso/my-sites/purchases/main';
-import { BillingHistory, ReceiptView } from 'calypso/my-sites/purchases/billing-history';
 import {
 	PaymentMethods,
 	SiteLevelAddNewPaymentMethod,
@@ -68,7 +60,6 @@ export const purchaseCancelDomain = ( context, next ) => {
 export const purchaseChangePaymentMethod = ( context, next ) => {
 	context.primary = (
 		<PurchaseChangePaymentMethod
-			cardId={ context.params.cardId }
 			siteSlug={ context.params.site }
 			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 		/>
@@ -93,7 +84,10 @@ export const billingHistory = ( context, next ) => {
 
 export const receiptView = ( context, next ) => {
 	context.primary = (
-		<ReceiptView receiptId={ context.params.receiptId } siteSlug={ context.params.site } />
+		<ReceiptView
+			receiptId={ parseInt( context.params.receiptId, 10 ) }
+			siteSlug={ context.params.site }
+		/>
 	);
 	next();
 };

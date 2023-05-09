@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { createReduxStore } from '../';
 import { getCurrentUser, getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { createReduxStore } from '../';
 
 const noop = () => {};
 

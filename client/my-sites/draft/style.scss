@@ -4,17 +4,17 @@
 	overflow: hidden;
 	transition: background 0.05s ease-in-out;
 	text-decoration: none;
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 
 	.card__link-indicator {
 		display: none;
 	}
 
 	&:hover {
-		background: var( --color-neutral-0 );
+		background: var(--color-neutral-0);
 
 		.draft__title {
-			color: var( --color-neutral-50 );
+			color: var(--color-neutral-50);
 		}
 	}
 
@@ -25,8 +25,8 @@
 	}
 
 	&.is-selected {
-		border-left: 8px solid var( --color-primary );
-		background: var( --color-neutral-0 );
+		border-left: 8px solid var(--color-primary);
+		background: var(--color-neutral-0);
 	}
 
 	&.is-image-zoomed {
@@ -49,11 +49,11 @@
 
 .draft__time {
 	font-size: $font-body-small;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 }
 
 .draft__empty-text {
-	color: var( --color-neutral-50 );
+	color: var(--color-neutral-50);
 	font-weight: 400;
 	font-style: italic;
 }
@@ -82,7 +82,7 @@
 	}
 
 	.draft__title {
-		background: var( --color-neutral-10 );
+		background: var(--color-neutral-10);
 		color: transparent;
 		height: 16px;
 		width: 30%;

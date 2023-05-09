@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import NoticeAction from 'calypso/components/notice/notice-action';
+import { PureComponent } from 'react';
 import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
 
-class Notices extends React.PureComponent {
+class Notices extends PureComponent {
 	static displayName = 'Notice';
 
 	state = {
@@ -37,7 +29,7 @@ class Notices extends React.PureComponent {
 						showDismiss={ false }
 						isCompact={ this.state.compactNotices ? true : null }
 					>
-						<NoticeAction href="#">{ 'Update' }</NoticeAction>
+						<NoticeAction href="#">Update</NoticeAction>
 					</Notice>
 				</div>
 				<div>
@@ -56,7 +48,7 @@ class Notices extends React.PureComponent {
 						icon="heart"
 						isCompact={ this.state.compactNotices ? true : null }
 					>
-						<NoticeAction href="#">{ 'Update' }</NoticeAction>
+						<NoticeAction href="#">Update</NoticeAction>
 					</Notice>
 				</div>
 				<div>
@@ -73,7 +65,7 @@ class Notices extends React.PureComponent {
 						text="I'm an `is-error` notice."
 						isCompact={ this.state.compactNotices ? true : null }
 					>
-						<NoticeAction href="#">{ 'Update' }</NoticeAction>
+						<NoticeAction href="#">Update</NoticeAction>
 					</Notice>
 				</div>
 				<div>
@@ -83,7 +75,7 @@ class Notices extends React.PureComponent {
 						text="I'm an `is-warning` notice with custom icon and an action."
 						isCompact={ this.state.compactNotices ? true : null }
 					>
-						<NoticeAction href="#">{ 'Update' }</NoticeAction>
+						<NoticeAction href="#">Update</NoticeAction>
 					</Notice>
 				</div>
 				<div>
@@ -102,7 +94,7 @@ class Notices extends React.PureComponent {
 						text={ "I'm an `is-success` notice with an arrow link." }
 					>
 						<NoticeAction href="#" external={ true }>
-							{ 'Preview' }
+							Preview
 						</NoticeAction>
 					</Notice>
 				</div>

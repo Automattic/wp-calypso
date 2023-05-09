@@ -1,32 +1,23 @@
 /* eslint-disable react/no-string-refs */
 // TODO: remove string ref usage.
-/**
- * External dependencies
- */
+
 import debugFactory from 'debug';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { createRef, Component } from 'react';
 import ReactDom from 'react-dom';
-
-/**
- * Internal dependencies
- */
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
-import ScrollStore from './scroll-store';
-import ScrollHelper from './scroll-helper';
-import scrollTo from 'calypso/lib/scroll-to';
 import smartSetState from 'calypso/lib/react-smart-set-state';
+import scrollTo from 'calypso/lib/scroll-to';
+import ScrollHelper from './scroll-helper';
+import ScrollStore from './scroll-store';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};
 const debug = debugFactory( 'calypso:infinite-list' );
 
-export default class InfiniteList extends React.Component {
+export default class InfiniteList extends Component {
 	static propTypes = {
 		items: PropTypes.array.isRequired,
 		fetchingNextPage: PropTypes.bool.isRequired,
@@ -52,9 +43,10 @@ export default class InfiniteList extends React.Component {
 	isScrolling = false;
 	_isMounted = false;
 	smartSetState = smartSetState;
-	topPlaceholderRef = React.createRef();
-	bottomPlaceholderRef = React.createRef();
+	topPlaceholderRef = createRef();
+	bottomPlaceholderRef = createRef();
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		const url = page.current;
 		let newState;
@@ -118,6 +110,7 @@ export default class InfiniteList extends React.Component {
 		}
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( newProps ) {
 		this.scrollHelper.props = newProps;
 
@@ -316,7 +309,7 @@ export default class InfiniteList extends React.Component {
 	}
 
 	boundsForRef = ( ref ) => {
-		if ( ref in this.refs ) {
+		if ( ref in this.refs && ReactDom.findDOMNode( this.refs[ ref ] ) ) {
 			return ReactDom.findDOMNode( this.refs[ ref ] ).getBoundingClientRect();
 		}
 		return null;
@@ -334,7 +327,7 @@ export default class InfiniteList extends React.Component {
 	 * This includes any items that are partially visible in the viewport.
 	 * Instance method that is called externally (via a ref) by a parent component.
 	 *
-	 * @param {object} options - offset properties
+	 * @param {Object} options - offset properties
 	 * @param {number} options.offsetTop - in pixels, 0 if unspecified
 	 * @param {number} options.offsetBottom - in pixels, 0 if unspecified
 	 * @returns {Array} This list of indexes

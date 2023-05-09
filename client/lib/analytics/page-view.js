@@ -1,25 +1,30 @@
 // pageView is a wrapper for pageview events across Tracks and GA.
 
-/**
- * Internal dependencies
- */
-import { saveCouponQueryArgument } from 'calypso/lib/analytics/utils';
-
+import { recordTracksPageViewWithPageParams } from '@automattic/calypso-analytics';
+import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { retarget as retargetAdTrackers } from 'calypso/lib/analytics/ad-tracking';
-import { updateQueryParamsTracking } from 'calypso/lib/analytics/sem';
 import { retargetFullStory } from 'calypso/lib/analytics/fullstory';
+import { updateQueryParamsTracking } from 'calypso/lib/analytics/sem';
+import { refreshCountryCodeCookieGdpr, saveCouponQueryArgument } from 'calypso/lib/analytics/utils';
 import { gaRecordPageView } from './ga';
 import { processQueue } from './queue';
 import { referRecordPageView } from './refer';
-import { recordTracksPageViewWithPageParams } from '@automattic/calypso-analytics';
 
-export function recordPageView( urlPath, pageTitle, params = {} ) {
+export function recordPageView( urlPath, pageTitle, params = {}, options = {} ) {
 	// Add delay to avoid stale `_dl` in recorded calypso_page_view event details.
 	// `_dl` (browserdocumentlocation) is read from the current URL by external JavaScript.
 	setTimeout( () => {
+		// Add device type to Tracks page view event.
+		params.device_type = resolveDeviceTypeByViewPort();
+
 		// Tracks, Google Analytics, Refer platform.
 		recordTracksPageViewWithPageParams( urlPath, params );
-		gaRecordPageView( urlPath, pageTitle );
+		safeGoogleAnalyticsPageView(
+			urlPath,
+			pageTitle,
+			options?.useJetpackGoogleAnalytics,
+			options?.useAkismetGoogleAnalytics
+		);
 		referRecordPageView();
 
 		// Retargeting.
@@ -33,4 +38,14 @@ export function recordPageView( urlPath, pageTitle, params = {} ) {
 		// Process queue.
 		processQueue();
 	}, 0 );
+}
+
+async function safeGoogleAnalyticsPageView(
+	urlPath,
+	pageTitle,
+	useJetpackGoogleAnalytics = false,
+	useAkismetGoogleAnalytics = false
+) {
+	await refreshCountryCodeCookieGdpr();
+	gaRecordPageView( urlPath, pageTitle, useJetpackGoogleAnalytics, useAkismetGoogleAnalytics );
 }

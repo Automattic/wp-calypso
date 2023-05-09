@@ -1,8 +1,5 @@
 // This code combines the Mocha spec and junit outputs with a dynamically allocated directory for junit output
 
-/**
- * Module dependencies.
- */
 const mocha = require( 'mocha' );
 const MochaJUnitReporter = require( 'mocha-junit-reporter' );
 const Spec = mocha.reporters.Spec;
@@ -25,7 +22,7 @@ exports = module.exports = SpecJUnit;
 /**
  * Initialize a new `SpecJUnit` test reporter.
  *
- * @param {object} runner Test runner object, handled implicitly by mocha
+ * @param {Object} runner Test runner object, handled implicitly by mocha
  */
 function SpecJUnit( runner ) {
 	// 'mocha-junit-reporter' attaches itself to mocha when the object is created

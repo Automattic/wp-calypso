@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { merge, set } from 'lodash';
 
 const analyticsMocks = [
@@ -18,7 +15,7 @@ const adTrackingMocks = [
 
 const mcMocks = [ 'bumpStat', 'bumpStatWithPageView' ];
 
-const gaMocks = [ 'gaRecordEvent', 'gaRecordPageView', 'gaRecordTiming' ];
+const gaMocks = [ 'gaRecordEvent', 'gaRecordPageView' ];
 
 const pageViewMocks = [ 'recordPageView' ];
 

@@ -1,29 +1,22 @@
-/**
- * External dependencies
- */
-import { useDispatch, useSelector } from 'react-redux';
-import React from 'react';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { useDispatch, useSelector } from 'react-redux';
+import QueryScanState from 'calypso/components/data/query-jetpack-scan';
+import BackupBadge from 'calypso/components/jetpack/backup-badge';
+import ScanBadge from 'calypso/components/jetpack/scan-badge';
+import SidebarItem from 'calypso/layout/sidebar/item';
 import { backupPath, scanPath } from 'calypso/lib/jetpack/paths';
 import { itemLinkMatches } from 'calypso/my-sites/sidebar/utils';
+import { isSectionNameEnabled } from 'calypso/sections-filter';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
-import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
-import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getSiteScanProgress from 'calypso/state/selectors/get-site-scan-progress';
 import getSiteScanThreats from 'calypso/state/selectors/get-site-scan-threats';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
-import QueryScanState from 'calypso/components/data/query-jetpack-scan';
-import ScanBadge from 'calypso/components/jetpack/scan-badge';
-import SidebarItem from 'calypso/layout/sidebar/item';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { isEnabled } from '@automattic/calypso-config';
+import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
+import JetpackIcons from './jetpack-icons';
 
 export default ( { path, showIcons, tracksEventNames, expandSection } ) => {
 	const translate = useTranslate();
@@ -34,6 +27,7 @@ export default ( { path, showIcons, tracksEventNames, expandSection } ) => {
 	const isWPForTeamsSite = useSelector( ( state ) => isSiteWPForTeams( state, siteId ) );
 
 	const isWPCOM = useSelector( ( state ) => getIsSiteWPCOM( state, siteId ) );
+
 	const scanProgress = useSelector( ( state ) => getSiteScanProgress( state, siteId ) );
 	const scanThreats = useSelector( ( state ) => getSiteScanThreats( state, siteId ) );
 
@@ -43,7 +37,7 @@ export default ( { path, showIcons, tracksEventNames, expandSection } ) => {
 		setNextLayoutFocus( 'content' );
 		window.scrollTo( 0, 0 );
 	};
-	const currentPathMatches = ( url ) => itemLinkMatches( [ url ], path );
+	const currentPathMatches = ( url ) => itemLinkMatches( url, path );
 
 	const isAdmin = useSelector( ( state ) => canCurrentUser( state, siteId, 'manage_options' ) );
 
@@ -53,7 +47,7 @@ export default ( { path, showIcons, tracksEventNames, expandSection } ) => {
 			{ isAdmin && (
 				<SidebarItem
 					tipTarget="activity"
-					icon={ showIcons ? 'clipboard' : undefined }
+					customIcon={ showIcons && <JetpackIcons icon="activity-log" /> }
 					label={ translate( 'Activity Log', {
 						comment: 'Jetpack sidebar menu item',
 					} ) }
@@ -65,21 +59,21 @@ export default ( { path, showIcons, tracksEventNames, expandSection } ) => {
 			) }
 			{ isAdmin && ! isWPForTeamsSite && (
 				<SidebarItem
-					materialIcon={ showIcons ? 'backup' : undefined }
-					materialIconStyle="filled"
-					label={ translate( 'Backup', {
+					customIcon={ showIcons && <JetpackIcons icon="backup" /> }
+					label={ translate( 'VaultPress Backup', {
 						comment: 'Jetpack sidebar menu item',
 					} ) }
 					link={ backupPath( siteSlug ) }
 					onNavigate={ onNavigate( tracksEventNames.backupClicked ) }
 					selected={ currentPathMatches( backupPath( siteSlug ) ) }
 					expandSection={ expandSection }
-				/>
+				>
+					<BackupBadge siteId={ siteId } />
+				</SidebarItem>
 			) }
 			{ isAdmin && ! isWPCOM && ! isWPForTeamsSite && (
 				<SidebarItem
-					materialIcon={ showIcons ? 'security' : undefined }
-					materialIconStyle="filled"
+					customIcon={ showIcons && <JetpackIcons icon="scan" /> }
 					label={ translate( 'Scan', {
 						comment: 'Jetpack sidebar menu item',
 					} ) }
@@ -91,16 +85,27 @@ export default ( { path, showIcons, tracksEventNames, expandSection } ) => {
 					<ScanBadge progress={ scanProgress } numberOfThreatsFound={ scanThreats?.length ?? 0 } />
 				</SidebarItem>
 			) }
-			{ ( ! isJetpackCloud() || isEnabled( 'jetpack-cloud/search' ) ) && (
+			<SidebarItem
+				tipTarget="jetpack-search"
+				customIcon={ showIcons && <JetpackIcons icon="search" /> }
+				label={ translate( 'Search', {
+					comment: 'Jetpack sidebar menu item',
+				} ) }
+				link={ `/jetpack-search/${ siteSlug }` }
+				onNavigate={ onNavigate( tracksEventNames.activityClicked ) }
+				selected={ currentPathMatches( `/jetpack-search/${ siteSlug }` ) }
+				expandSection={ expandSection }
+			/>
+			{ isSectionNameEnabled( 'jetpack-social' ) && isAdmin && ! isWPForTeamsSite && (
 				<SidebarItem
-					tipTarget="jetpack-search"
-					icon={ showIcons ? 'search' : undefined }
-					label={ translate( 'Search', {
+					customIcon={ showIcons && <JetpackIcons icon="social" /> }
+					label={ translate( 'Social', {
+						context: 'Jetpack product name',
 						comment: 'Jetpack sidebar menu item',
 					} ) }
-					link={ `/jetpack-search/${ siteSlug }` }
-					onNavigate={ onNavigate( tracksEventNames.activityClicked ) }
-					selected={ currentPathMatches( `/jetpack-search/${ siteSlug }` ) }
+					link={ `/jetpack-social/${ siteSlug }` }
+					onNavigate={ onNavigate( tracksEventNames.socialClicked ) }
+					selected={ currentPathMatches( `/jetpack-social/${ siteSlug }` ) }
 					expandSection={ expandSection }
 				/>
 			) }

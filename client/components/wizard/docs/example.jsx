@@ -1,12 +1,3 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import Wizard from '../index';
 
 const First = () => <div style={ { textAlign: 'center' } }>This is the first step.</div>;

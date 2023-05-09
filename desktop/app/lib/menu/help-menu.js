@@ -1,17 +1,11 @@
-/**
- * External dependencies
- */
 const { shell } = require( 'electron' );
 const ipc = require( '../../lib/calypso-commands' );
-const zipLogs = require( '../../window-handlers/get-logs' );
-
-/**
- * Internal dependencies
- */
-const state = require( '../../lib/state' );
-const platform = require( '../../lib/platform' );
-const WindowManager = require( '../../lib/window-manager' );
+const isCalypso = require( '../../lib/is-calypso' );
 const log = require( '../../lib/logger' )( 'desktop:menu:help' );
+const platform = require( '../../lib/platform' );
+const session = require( '../../lib/session' );
+const WindowManager = require( '../../lib/window-manager' );
+const zipLogs = require( '../../window-handlers/get-logs' );
 
 const menuItems = [];
 
@@ -26,17 +20,21 @@ if ( platform.isWindows() || platform.isLinux() ) {
 	menuItems.push( { type: 'separator' } );
 }
 
-module.exports = function ( { window } ) {
+module.exports = function ( { view, window } ) {
 	return menuItems.concat( [
 		{
 			label: 'How Can We Help?',
 			click: function () {
-				// on login page - user logged out
-				if ( state.isLoggedIn() ) {
+				const defaultHelpUrl = 'https://en.support.wordpress.com/';
+				if ( session.isLoggedIn() ) {
 					window.show();
-					ipc.showHelp( window );
+					if ( isCalypso( view ) ) {
+						ipc.showHelp( view );
+					} else {
+						view.webContents.loadURL( defaultHelpUrl );
+					}
 				} else {
-					shell.openExternal( 'https://en.support.wordpress.com/' );
+					shell.openExternal( defaultHelpUrl );
 				}
 			},
 		},

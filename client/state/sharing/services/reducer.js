@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	KEYRING_SERVICES_RECEIVE,
 	KEYRING_SERVICES_REQUEST,

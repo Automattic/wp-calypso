@@ -1,18 +1,27 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { bindActionCreators } from 'redux';
-import { flowRight, isEqual, keys, omit, pick } from 'lodash';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
+import { localize } from 'i18n-calypso';
+import { flowRight, isEqual, keys, omit, pick } from 'lodash';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import QueryJetpackSettings from 'calypso/components/data/query-jetpack-settings';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import { protectForm } from 'calypso/lib/protect-form';
 import trackForm from 'calypso/lib/track-form';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { activateModule } from 'calypso/state/jetpack/modules/actions';
+import { saveJetpackSettings } from 'calypso/state/jetpack/settings/actions';
+import { removeNotice, successNotice, errorNotice } from 'calypso/state/notices/actions';
+import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import getJetpackSettings from 'calypso/state/selectors/get-jetpack-settings';
+import getRequest from 'calypso/state/selectors/get-request';
+import isJetpackSettingsSaveFailure from 'calypso/state/selectors/is-jetpack-settings-save-failure';
+import isRequestingJetpackSettings from 'calypso/state/selectors/is-requesting-jetpack-settings';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
+import isUpdatingJetpackSettings from 'calypso/state/selectors/is-updating-jetpack-settings';
+import { saveSiteSettings } from 'calypso/state/site-settings/actions';
+import { saveP2SiteSettings } from 'calypso/state/site-settings/p2/actions';
 import {
 	isRequestingSiteSettings,
 	isSavingSiteSettings,
@@ -20,22 +29,8 @@ import {
 	getSiteSettingsSaveError,
 	getSiteSettings,
 } from 'calypso/state/site-settings/selectors';
-import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
-import getJetpackSettings from 'calypso/state/selectors/get-jetpack-settings';
-import isJetpackSettingsSaveFailure from 'calypso/state/selectors/is-jetpack-settings-save-failure';
-import isRequestingJetpackSettings from 'calypso/state/selectors/is-requesting-jetpack-settings';
-import isUpdatingJetpackSettings from 'calypso/state/selectors/is-updating-jetpack-settings';
-import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { saveSiteSettings } from 'calypso/state/site-settings/actions';
-import { saveJetpackSettings } from 'calypso/state/jetpack/settings/actions';
-import { removeNotice, successNotice, errorNotice } from 'calypso/state/notices/actions';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import QuerySiteSettings from 'calypso/components/data/query-site-settings';
-import QueryJetpackSettings from 'calypso/components/data/query-jetpack-settings';
-import getRequest from 'calypso/state/selectors/get-request';
-import { activateModule } from 'calypso/state/jetpack/modules/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const debug = debugFactory( 'calypso:site-settings' );
 
@@ -45,7 +40,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 			uniqueEvents: {},
 		};
 
-		UNSAFE_componentWillMount() {
+		componentDidMount() {
 			this.props.replaceFields( getFormSettings( this.props.settings ) );
 		}
 
@@ -165,14 +160,24 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 							path,
 						} );
 						break;
+					case 'wpcom_gifting_subscription':
+						trackTracksEvent( 'calypso_settings_site_gifting', {
+							path,
+							value: fields.wpcom_gifting_subscription,
+						} );
+						break;
 				}
 			} );
+			if ( path === '/settings/reading/:site' ) {
+				trackTracksEvent( 'calypso_settings_reading_saved' );
+			}
 			this.submitForm();
 			this.props.trackEvent( 'Clicked Save Settings Button' );
 		};
 
 		submitForm = () => {
-			const { fields, jetpackFieldsToUpdate, settingsFields, siteId, siteIsJetpack } = this.props;
+			const { dirtyFields, fields, jetpackFieldsToUpdate, settingsFields, siteId, siteIsJetpack } =
+				this.props;
 			this.props.removeNotice( 'site-settings-save' );
 			debug( 'submitForm', { fields, settingsFields } );
 
@@ -180,8 +185,14 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 				this.props.saveJetpackSettings( siteId, jetpackFieldsToUpdate );
 			}
 
+			if ( typeof fields?.p2_preapproved_domains !== 'undefined' ) {
+				return this.props.saveP2SiteSettings( siteId, fields );
+			}
+
 			const siteFields = pick( fields, settingsFields.site );
-			this.props.saveSiteSettings( siteId, { ...siteFields, apiVersion: '1.4' } );
+			const modifiedFields = pick( siteFields, dirtyFields );
+
+			this.props.saveSiteSettings( siteId, modifiedFields );
 		};
 
 		handleRadio = ( event ) => {
@@ -337,6 +348,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 				path,
 				siteIsJetpack: isJetpack,
 				siteIsAtomic: isSiteAutomatedTransfer( state, siteId ),
+				siteIsP2Hub: isSiteP2Hub( state, siteId ),
 				siteSettingsSaveError,
 				settings,
 				settingsFields,
@@ -353,6 +365,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 					saveSiteSettings,
 					successNotice,
 					saveJetpackSettings,
+					saveP2SiteSettings,
 					activateModule,
 				},
 				dispatch

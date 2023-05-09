@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getReaderFollowsLastSyncTime } from 'calypso/state/reader/follows/selectors';
 
 export const MS_BETWEEN_SYNCS = 1000 * 60 * 60; // one hour

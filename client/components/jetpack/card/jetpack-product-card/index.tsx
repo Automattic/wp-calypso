@@ -1,57 +1,36 @@
-/**
- * External dependencies
- */
+import { Button } from '@automattic/components';
+import { SVG, Path } from '@wordpress/components';
 import classNames from 'classnames';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
-import React, { createElement, ReactNode, useEffect, useRef } from 'react';
-import { TERM_ANNUALLY } from '@automattic/calypso-products';
-import { Button, ProductIcon } from '@automattic/components';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
-import { useExperiment } from 'calypso/lib/explat';
+import { createElement, ReactNode, useEffect, useRef } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
-import JetpackProductCardTimeFrame from './time-frame';
-import PlanPrice from 'calypso/my-sites/plan-price';
-import JetpackProductCardFeatures, { Props as FeaturesProps } from './features';
-import InfoPopover from 'calypso/components/info-popover';
-import { INTRO_PRICING_DISCOUNT_PERCENTAGE } from 'calypso/my-sites/plans/jetpack-plans/constants';
-
-/**
- * Type dependencies
- */
-import type { Moment } from 'moment';
+import DisplayPrice from './display-price';
+import JetpackProductCardFeatures from './features';
 import type {
-	Duration,
 	ScrollCardIntoViewCallback,
+	SelectorProduct,
 } from 'calypso/my-sites/plans/jetpack-plans/types';
+import type { Moment } from 'moment';
 
-/**
- * Style dependencies
- */
 import './style.scss';
-import starIcon from './assets/star.svg';
 
 type OwnProps = {
-	iconSlug?: string;
-	productSlug: string;
-	productName: TranslateResult;
-	headingLevel?: number;
+	className?: string;
+	item: SelectorProduct;
+	// Disallow h6, so it can be used for a sub-header if needed
+	headerLevel: 1 | 2 | 3 | 4 | 5;
 	description?: ReactNode;
-	currencyCode?: string | null;
-	originalPrice: number;
+	originalPrice?: number;
 	discountedPrice?: number;
-	belowPriceText?: TranslateResult;
-	billingTerm: Duration;
+	pricesAreFetching?: boolean | null;
+	hidePrice?: boolean;
 	buttonLabel: TranslateResult;
 	buttonPrimary: boolean;
-	onButtonClick: React.MouseEventHandler;
+	onButtonClick?: React.MouseEventHandler;
 	buttonURL?: string;
+	buttonDisabled?: boolean;
 	expiryDate?: Moment;
 	isFeatured?: boolean;
-	isFree?: boolean;
 	isOwned?: boolean;
 	isIncludedInPlan?: boolean;
 	isDeprecated?: boolean;
@@ -63,240 +42,156 @@ type OwnProps = {
 	aboveButtonText?: TranslateResult | ReactNode;
 	featuredLabel?: TranslateResult;
 	hideSavingLabel?: boolean;
+	showNewLabel?: boolean;
+	showAbovePriceText?: boolean;
 	scrollCardIntoView?: ScrollCardIntoViewCallback;
+	collapseFeaturesOnMobile?: boolean;
 };
 
-export type Props = OwnProps & Partial< FeaturesProps >;
-
-const FRESHPACK_PERCENTAGE = 1 - 0.4; // 40% off
-
-const DisplayPrice = ( {
-	isDeprecated,
-	isOwned,
-	isIncludedInPlan,
-	isFree,
-	discountedPrice,
-	currencyCode,
-	originalPrice,
-	belowPriceText,
-	displayFrom,
-	expiryDate,
-	billingTerm,
-	tooltipText,
-	productName,
-	hideSavingLabel,
-} ) => {
-	const translate = useTranslate();
-	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
-		'calypso_jetpack_yearly_total_discount'
-	);
-	const withTreatmentVariation =
-		experimentAssignment?.variationName === 'treatment' && billingTerm === TERM_ANNUALLY;
-
-	if ( isDeprecated ) {
-		return (
-			<div className="jetpack-product-card__price">
-				<p className="jetpack-product-card__price-deprecated">
-					{ translate( 'The %(productName)s plan is no longer available', {
-						args: {
-							productName,
-						},
-						comment: 'productName is the name of Jetpack plan such as Personal',
-					} ) }
-				</p>
-			</div>
-		);
-	}
-
-	if ( isOwned ) {
-		return (
-			<div className="jetpack-product-card__price">
-				<p className="jetpack-product-card__you-own-this">
-					<Gridicon
-						className="jetpack-product-card__you-own-this-icon"
-						icon="checkmark-circle"
-						size={ 48 }
-					/>
-					{ translate( 'You own this product' ) }
-				</p>
-			</div>
-		);
-	}
-
-	if ( isIncludedInPlan ) {
-		return (
-			<div className="jetpack-product-card__price">
-				<p className="jetpack-product-card__you-own-this">
-					<Gridicon
-						className="jetpack-product-card__you-own-this-icon"
-						icon="checkmark-circle"
-						size={ 48 }
-					/>
-					{ translate( 'Part of your current plan' ) }
-				</p>
-			</div>
-		);
-	}
-
-	if ( isFree ) {
-		return (
-			<div className="jetpack-product-card__price">
-				<div>
-					<span className="jetpack-product-card__price-free">{ translate( 'Free' ) }</span>
-					{ belowPriceText && (
-						<span className="jetpack-product-card__billing-time-frame">{ belowPriceText }</span>
-					) }
-					<span className="jetpack-product-card__get-started">
-						{ translate( 'Get started for free' ) }
-					</span>
-				</div>
-			</div>
-		);
-	}
-
-	const couponOriginalPrice = parseFloat( ( discountedPrice ?? originalPrice ).toFixed( 2 ) );
-	const couponDiscountedPrice = parseFloat(
-		( ( discountedPrice ?? originalPrice ) * FRESHPACK_PERCENTAGE ).toFixed( 2 )
-	);
-	const discountElt = withTreatmentVariation
-		? translate( '* Save %(percent)d%% for the first year', {
-				args: {
-					percent: ( ( originalPrice - couponDiscountedPrice ) / originalPrice ) * 100,
-				},
-				comment: 'Asterisk clause describing the displayed price adjustment',
-		  } )
-		: translate( '* You Save %(percent)d%%', {
-				args: {
-					percent: INTRO_PRICING_DISCOUNT_PERCENTAGE,
-				},
-				comment: 'Asterisk clause describing the displayed price adjustment',
-		  } );
-
-	return (
-		<div className="jetpack-product-card__price">
-			{ currencyCode && originalPrice && ! isLoadingExperimentAssignment ? (
-				<>
-					{ displayFrom && <span className="jetpack-product-card__price-from">from</span> }
-					<PlanPrice
-						original
-						className="jetpack-product-card__original-price"
-						rawPrice={ ( withTreatmentVariation ? originalPrice : couponOriginalPrice ) as number }
-						currencyCode={ currencyCode }
-					/>
-					<PlanPrice
-						discounted
-						rawPrice={ couponDiscountedPrice as number }
-						currencyCode={ currencyCode }
-					/>
-					{ tooltipText && (
-						<InfoPopover position="top" className="jetpack-product-card__price-tooltip">
-							{ tooltipText }
-						</InfoPopover>
-					) }
-					<JetpackProductCardTimeFrame expiryDate={ expiryDate } billingTerm={ billingTerm } />
-					{ ! hideSavingLabel && (
-						<span className="jetpack-product-card__you-save">{ discountElt }</span>
-					) }
-				</>
-			) : (
-				<>
-					<div className="jetpack-product-card__price-placeholder" />
-					<div className="jetpack-product-card__time-frame-placeholder" />
-				</>
-			) }
-		</div>
-	);
+type HeaderLevel = 1 | 2 | 3 | 4 | 5 | 6;
+type HeaderProps = {
+	className?: string;
+	level: HeaderLevel;
 };
+const Header: React.FC< HeaderProps > = ( { level, children, ...headerProps } ) =>
+	createElement( `h${ level }`, headerProps, children );
 
-const JetpackProductCard: React.FC< Props > = ( {
-	iconSlug,
-	productSlug,
-	productName,
-	headingLevel,
+const JetpackProductCard: React.FC< OwnProps > = ( {
+	className,
+	item,
+	headerLevel,
 	description,
-	currencyCode,
 	originalPrice,
 	discountedPrice,
-	billingTerm,
+	pricesAreFetching,
+	hidePrice,
 	buttonLabel,
 	buttonPrimary,
 	onButtonClick,
 	buttonURL,
+	buttonDisabled,
 	expiryDate,
 	isFeatured,
 	isOwned,
 	isIncludedInPlan,
-	isFree,
 	isDeprecated,
 	isAligned,
-	features,
 	isDisabled,
 	disabledMessage,
 	displayFrom,
-	belowPriceText,
 	tooltipText,
 	featuredLabel,
 	hideSavingLabel,
+	showNewLabel,
+	showAbovePriceText,
 	aboveButtonText = null,
 	scrollCardIntoView,
-}: Props ) => {
-	const translate = useTranslate();
-	const parsedHeadingLevel = Number.isFinite( headingLevel )
-		? Math.min( Math.max( Math.floor( headingLevel as number ), 1 ), 6 )
-		: 2;
+	collapseFeaturesOnMobile,
+} ) => {
+	const isFree = item.isFree;
 
+	const translate = useTranslate();
 	const anchorRef = useRef< HTMLDivElement >( null );
+	const discount =
+		originalPrice !== undefined && discountedPrice !== undefined
+			? Math.floor( ( ( originalPrice - discountedPrice ) / originalPrice ) * 100 )
+			: 0;
+	const showDiscountLabel =
+		! hideSavingLabel &&
+		discount &&
+		discount > 0 &&
+		! isFree &&
+		! isDisabled &&
+		! isOwned &&
+		! isDeprecated &&
+		! isIncludedInPlan;
+
+	const discountElt = showDiscountLabel
+		? translate( '%(percent)d%% off', {
+				args: {
+					percent: discount,
+				},
+				comment: 'Should be as concise as possible.',
+		  } )
+		: null;
+
+	const starIcon = (
+		// Safari has problems rendering SVGs in retina screens when used inside an img tag, so we should use inline SVG instead.
+		// See details on this PR: https://github.com/Automattic/wp-calypso/pull/65304
+		<SVG className="jetpack-product-card__header-icon" width="16" height="16" viewBox="0 0 16 16">
+			<Path
+				d="M8 11.513 12.12 14l-1.093-4.687 3.64-3.153-4.793-.407-1.873-4.42-1.874 4.42-4.793.407 3.64 3.153L3.881 14 8 11.513Z"
+				fill="currentColor"
+			/>
+		</SVG>
+	);
 
 	useEffect( () => {
 		// The <DisplayPrice /> appearance changes the layout of the page and breaks the scroll into view behavior. Therefore, we will only scroll the element into view once the price is fully loaded.
 		if ( anchorRef && anchorRef.current && originalPrice ) {
-			scrollCardIntoView && scrollCardIntoView( anchorRef.current, productSlug );
+			scrollCardIntoView && scrollCardIntoView( anchorRef.current, item.productSlug );
 		}
-	}, [ originalPrice ] );
+	}, [ originalPrice, item.productSlug, scrollCardIntoView ] );
 
 	return (
 		<div
-			className={ classNames( 'jetpack-product-card', {
+			className={ classNames( 'jetpack-product-card', className, {
 				'is-disabled': isDisabled,
 				'is-owned': isOwned,
 				'is-deprecated': isDeprecated,
 				'is-aligned': isAligned,
 				'is-featured': isFeatured,
-				'without-icon': ! iconSlug,
 			} ) }
-			data-e2e-product-slug={ productSlug }
+			data-e2e-product-slug={ item.productSlug }
 		>
 			<div className="jetpack-product-card__scroll-anchor" ref={ anchorRef }></div>
 			{ isFeatured && (
 				<div className="jetpack-product-card__header">
-					<img className="jetpack-product-card__header-icon" src={ starIcon } alt="" />
+					{ starIcon }
 					<span>{ featuredLabel || translate( 'Recommended' ) }</span>
 				</div>
 			) }
 			<div className="jetpack-product-card__body">
-				{ iconSlug && <ProductIcon className="jetpack-product-card__icon" slug={ iconSlug } /> }
-				{ createElement(
-					`h${ parsedHeadingLevel }`,
-					{ className: 'jetpack-product-card__product-name' },
-					<>{ productName }</>
+				<header className="jetpack-product-card__heading">
+					<Header level={ headerLevel } className="jetpack-product-card__product-name">
+						{ item.displayName }
+					</Header>
+					{ showNewLabel && (
+						<span className="jetpack-product-card__new-label">{ translate( 'New' ) }</span>
+					) }
+					{ discountElt && (
+						<span className="jetpack-product-card__discount-label">{ discountElt }</span>
+					) }
+				</header>
+				{ item.subheader && (
+					<Header
+						level={ ( headerLevel + 1 ) as HeaderLevel }
+						className="jetpack-product-card__product-subheader"
+					>
+						{ item.subheader }
+					</Header>
 				) }
 
-				<DisplayPrice
-					isDeprecated={ isDeprecated }
-					isOwned={ isOwned }
-					isIncludedInPlan={ isIncludedInPlan }
-					isFree={ isFree }
-					discountedPrice={ discountedPrice }
-					currencyCode={ currencyCode }
-					originalPrice={ originalPrice }
-					displayFrom={ displayFrom }
-					belowPriceText={ belowPriceText }
-					expiryDate={ expiryDate }
-					billingTerm={ billingTerm }
-					tooltipText={ tooltipText }
-					productName={ productName }
-					hideSavingLabel={ hideSavingLabel }
-				/>
+				{ ! hidePrice && (
+					<DisplayPrice
+						isDeprecated={ isDeprecated }
+						isOwned={ isOwned }
+						isIncludedInPlan={ isIncludedInPlan }
+						isFree={ item.isFree }
+						discountedPrice={ discountedPrice }
+						currencyCode={ item.displayCurrency }
+						originalPrice={ originalPrice ?? 0 }
+						pricesAreFetching={ pricesAreFetching }
+						displayFrom={ displayFrom }
+						showAbovePriceText={ showAbovePriceText }
+						belowPriceText={ item.belowPriceText }
+						expiryDate={ expiryDate }
+						billingTerm={ item.displayTerm || item.term }
+						tooltipText={ tooltipText }
+						productName={ item.displayName }
+						hideSavingLabel={ hideSavingLabel }
+					/>
+				) }
 
 				{ aboveButtonText && (
 					<p className="jetpack-product-card__above-button">{ aboveButtonText }</p>
@@ -306,31 +201,37 @@ const JetpackProductCard: React.FC< Props > = ( {
 						{ preventWidows( disabledMessage ) }
 					</p>
 				) }
-				{ ! isDisabled &&
-					( buttonURL ? (
-						<Button
-							primary={ buttonPrimary }
-							className="jetpack-product-card__button"
-							onClick={ onButtonClick }
-							href={ buttonURL }
-							disabled={ isDeprecated }
-						>
-							{ buttonLabel }
-						</Button>
-					) : (
-						<Button
-							primary={ buttonPrimary }
-							className="jetpack-product-card__button"
-							onClick={ onButtonClick }
-							disabled={ isDeprecated }
-						>
-							{ buttonLabel }
-						</Button>
-					) ) }
+				{ buttonURL ? (
+					<Button
+						primary={ buttonPrimary }
+						className="jetpack-product-card__button"
+						onClick={ onButtonClick }
+						href={ isDisabled || buttonDisabled ? '#' : buttonURL }
+						disabled={ isDisabled || buttonDisabled || isDeprecated }
+					>
+						{ buttonLabel }
+					</Button>
+				) : (
+					<Button
+						primary={ buttonPrimary }
+						className="jetpack-product-card__button"
+						onClick={ onButtonClick }
+						disabled={ isDisabled || buttonDisabled }
+					>
+						{ buttonLabel }
+					</Button>
+				) }
 
-				<p className="jetpack-product-card__description">{ description }</p>
-				{ features && features.items.length > 0 && (
-					<JetpackProductCardFeatures features={ features } />
+				{ description && <p className="jetpack-product-card__description">{ description }</p> }
+				{ item.features && item.features.items.length > 0 && (
+					<JetpackProductCardFeatures
+						productSlug={ item.productSlug }
+						features={ item.features }
+						collapseFeaturesOnMobile={ collapseFeaturesOnMobile }
+					/>
+				) }
+				{ item.disclaimer && (
+					<span className="jetpack-product-card__disclaimer">{ item.disclaimer }</span>
 				) }
 			</div>
 		</div>

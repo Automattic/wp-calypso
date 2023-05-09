@@ -2,19 +2,23 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
-import { shallow } from 'enzyme';
-import React from 'react';
+import userSettings from 'calypso/state/user-settings/reducer';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
+import { ReaderSidebarPromo, shouldRenderAppPromoSidebar } from '../promo';
 
-/**
- * Internal dependencies
- */
-import { ReaderSidebarPromo, shouldRenderAppPromo } from '../promo';
+const initialState = {};
+
+function renderWithRedux( ui ) {
+	return renderWithProvider( ui, {
+		initialState,
+		reducers: {
+			userSettings,
+		},
+	} );
+}
 
 describe( 'ReaderSidebarPromo', () => {
-	const shouldRenderAppPromoDefaultProps = {
+	const shouldRenderAppPromoSidebarDefaultProps = {
 		isDesktopPromoDisabled: false,
 		isUserLocaleEnglish: true,
 		isViewportMobile: false,
@@ -23,25 +27,23 @@ describe( 'ReaderSidebarPromo', () => {
 		isUserDesktopAppUser: false,
 	};
 
-	test( 'should render the AppPromo when the shouldRenderAppPromo property is true', () => {
-		const adjustedProperties = { shouldRenderAppPromo: true };
-		const wrapper = shallow( <ReaderSidebarPromo { ...adjustedProperties } /> );
-		expect( wrapper.find( '.sidebar__app-promo' ) ).toHaveLength( 1 );
+	test( 'should render the AppPromoSidebar when the shouldRenderAppPromoSidebar property is true', () => {
+		const adjustedProperties = { shouldRenderAppPromoSidebar: true };
+		const { container } = renderWithRedux( <ReaderSidebarPromo { ...adjustedProperties } /> );
+		expect( container.firstChild ).toHaveClass( 'sidebar__app-promo' );
 	} );
 
-	test( 'should not render the AppPromo when the shouldRenderAppPromo property is false', () => {
-		const adjustedProperties = {
-			shouldRenderAppPromo: false,
-		};
-		const wrapper = shallow( <ReaderSidebarPromo { ...adjustedProperties } /> );
-		expect( wrapper.find( '.sidebar__app-promo' ) ).toHaveLength( 0 );
+	test( 'should not render the AppPromoSidebar when the shouldRenderAppPromoSidebar property is false', () => {
+		const adjustedProperties = { shouldRenderAppPromoSidebar: false };
+		const { container } = renderWithRedux( <ReaderSidebarPromo { ...adjustedProperties } /> );
+		expect( container ).toBeEmptyDOMElement();
 	} );
 
-	describe( 'shouldRenderAppPromo', () => {
+	describe( 'shouldRenderAppPromoSidebar', () => {
 		test( 'should not render if desktop promo is disabled', () => {
 			expect(
-				shouldRenderAppPromo( {
-					...shouldRenderAppPromoDefaultProps,
+				shouldRenderAppPromoSidebar( {
+					...shouldRenderAppPromoSidebarDefaultProps,
 					isDesktopPromoDisabled: true,
 				} )
 			).toBe( false );
@@ -49,8 +51,8 @@ describe( 'ReaderSidebarPromo', () => {
 
 		test( "should not render if user locale isn't english", () => {
 			expect(
-				shouldRenderAppPromo( {
-					...shouldRenderAppPromoDefaultProps,
+				shouldRenderAppPromoSidebar( {
+					...shouldRenderAppPromoSidebarDefaultProps,
 					isUserLocaleEnglish: false,
 				} )
 			).toBe( false );
@@ -58,8 +60,8 @@ describe( 'ReaderSidebarPromo', () => {
 
 		test( 'should not render if the viewport is mobile', () => {
 			expect(
-				shouldRenderAppPromo( {
-					...shouldRenderAppPromoDefaultProps,
+				shouldRenderAppPromoSidebar( {
+					...shouldRenderAppPromoSidebarDefaultProps,
 					isViewportMobile: true,
 				} )
 			).toBe( false );
@@ -67,8 +69,8 @@ describe( 'ReaderSidebarPromo', () => {
 
 		test( "should not render if it's ChromeOS", () => {
 			expect(
-				shouldRenderAppPromo( {
-					...shouldRenderAppPromoDefaultProps,
+				shouldRenderAppPromoSidebar( {
+					...shouldRenderAppPromoSidebarDefaultProps,
 					isUserOnChromeOs: true,
 				} )
 			).toBe( false );
@@ -76,8 +78,8 @@ describe( 'ReaderSidebarPromo', () => {
 
 		test( "should not render if desktop promo isn't configured to run", () => {
 			expect(
-				shouldRenderAppPromo( {
-					...shouldRenderAppPromoDefaultProps,
+				shouldRenderAppPromoSidebar( {
+					...shouldRenderAppPromoSidebarDefaultProps,
 					isDesktopPromoConfiguredToRun: false,
 				} )
 			).toBe( false );
@@ -85,15 +87,15 @@ describe( 'ReaderSidebarPromo', () => {
 
 		test( 'should not render if user is a desktop app user', () => {
 			expect(
-				shouldRenderAppPromo( {
-					...shouldRenderAppPromoDefaultProps,
+				shouldRenderAppPromoSidebar( {
+					...shouldRenderAppPromoSidebarDefaultProps,
 					isUserDesktopAppUser: true,
 				} )
 			).toBe( false );
 		} );
 
 		test( "should render if desktop promo wasn't disabled by the user, the locale is english, the viewport isn't mobile, it's not ChromeOS, the desktop promo is configured to run, and the user isn't a desktop app user", () => {
-			expect( shouldRenderAppPromo( shouldRenderAppPromoDefaultProps ) ).toBe( true );
+			expect( shouldRenderAppPromoSidebar( shouldRenderAppPromoSidebarDefaultProps ) ).toBe( true );
 		} );
 	} );
 } );

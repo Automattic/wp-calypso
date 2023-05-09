@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
+import { isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { isEqual } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { fetchPlugins } from 'calypso/state/plugins/installed/actions';
 import { isRequestingForSites } from 'calypso/state/plugins/installed/selectors';
 
@@ -21,17 +14,17 @@ class QueryJetpackPlugins extends Component {
 		fetchPlugins: PropTypes.func,
 	};
 
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		if ( this.props.siteIds && ! this.props.isRequestingForSites ) {
 			this.props.fetchPlugins( this.props.siteIds );
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( isEqual( nextProps.siteIds, this.props.siteIds ) ) {
+	componentDidUpdate( prevProps ) {
+		if ( isEqual( prevProps.siteIds, this.props.siteIds ) ) {
 			return;
 		}
-		this.refresh( nextProps.isRequestingForSites, nextProps.siteIds );
+		this.refresh( this.props.isRequestingForSites, this.props.siteIds );
 	}
 
 	refresh( isRequesting, siteIds ) {

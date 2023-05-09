@@ -1,45 +1,58 @@
-/**
- * External dependencies
- */
-import React, { useState, useContext } from 'react';
 import {
 	render,
 	getAllByLabelText as getAllByLabelTextInNode,
 	getByText as getByTextInNode,
 	queryByText as queryByTextInNode,
-	fireEvent,
-	act,
+	screen,
 } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { createContext, useState, useContext } from 'react';
 import '@testing-library/jest-dom/extend-expect';
-
-/**
- * Internal dependencies
- */
 import {
-	Checkout,
 	CheckoutProvider,
 	CheckoutStep,
-	CheckoutStepArea,
 	CheckoutStepBody,
-	CheckoutSteps,
-	useSelect,
-	useDispatch,
-	createRegistry,
-	useRegisterStore,
 	useIsStepComplete,
 	useTransactionStatus,
 	usePaymentProcessor,
+	CheckoutFormSubmit,
+	CheckoutStepGroup,
+	useSetStepComplete,
+	makeManualResponse,
+	useTogglePaymentMethod,
 } from '../src/public-api';
+import { PaymentProcessorResponseType } from '../src/types';
+import { DefaultCheckoutSteps } from './utils/default-checkout-steps';
 
-const noop = () => {};
-const myContext = React.createContext();
+const myContext = createContext();
 const usePaymentData = () => useContext( myContext );
+
+function TogglePaymentMethodBlock( { mockMethod } ) {
+	const togglePaymentMethod = useTogglePaymentMethod();
+
+	return (
+		<div>
+			<button onClick={ () => togglePaymentMethod( mockMethod.id, false ) }>
+				Disable Payment Method
+			</button>
+			<button onClick={ () => togglePaymentMethod( mockMethod.id, true ) }>
+				Enable Payment Method
+			</button>
+		</div>
+	);
+}
+
+const createMockMethod = createMockMethodFactory();
 
 describe( 'Checkout', () => {
 	describe( 'using the default steps', function () {
-		describe( 'using the default registry', function () {
+		describe( 'using other defaults', function () {
 			let MyCheckout;
 			const mockMethod = createMockMethod();
+			const mockMethod2 = createMockMethod( {
+				submitButton: <MockSubmitButton content="Second method" />,
+				activeContent: <div />,
+			} );
 			const { items, total } = createMockItems();
 
 			beforeEach( () => {
@@ -47,15 +60,12 @@ describe( 'Checkout', () => {
 					<CheckoutProvider
 						items={ items }
 						total={ total }
-						onPaymentComplete={ noop }
-						showErrorMessage={ noop }
-						showInfoMessage={ noop }
-						showSuccessMessage={ noop }
-						paymentMethods={ [ mockMethod ] }
+						paymentMethods={ [ mockMethod, mockMethod2 ] }
 						paymentProcessors={ getMockPaymentProcessors() }
-						initiallySelectedPaymentMethodId={ mockMethod.id }
+						selectFirstAvailablePaymentMethod
 					>
-						<Checkout />
+						<DefaultCheckoutSteps />
+						<TogglePaymentMethodBlock mockMethod={ mockMethod } />
 					</CheckoutProvider>
 				);
 			} );
@@ -79,74 +89,42 @@ describe( 'Checkout', () => {
 
 			it( 'renders the payment method label', () => {
 				const { getAllByText } = render( <MyCheckout /> );
-				expect( getAllByText( 'Mock Label' )[ 0 ] ).toBeInTheDocument();
+				expect( getAllByText( mockMethod.inactiveContent )[ 0 ] ).toBeInTheDocument();
+				expect( getAllByText( mockMethod2.inactiveContent )[ 0 ] ).toBeInTheDocument();
 			} );
 
-			it( 'renders the payment method activeContent', () => {
-				const { getByTestId } = render( <MyCheckout /> );
-				const activeComponent = getByTestId( 'mock-payment-form' );
-				expect( activeComponent ).toHaveTextContent( 'Cardholder Name' );
+			it( 'renders the payment method label as selected', async () => {
+				const { getAllByText, findByLabelText } = render( <MyCheckout /> );
+				const user = userEvent.setup();
+				await user.click( getAllByText( 'Continue' )[ 0 ] );
+				const paymentMethod = await findByLabelText( mockMethod.inactiveContent );
+				expect( paymentMethod ).toBeChecked();
 			} );
 
-			it( 'renders the review step', () => {
-				const { getAllByText } = render( <MyCheckout /> );
-				expect( getAllByText( items[ 0 ].label ) ).toHaveLength( 2 );
-				expect( getAllByText( items[ 0 ].amount.displayValue ) ).toHaveLength( 1 );
-				expect( getAllByText( items[ 1 ].label ) ).toHaveLength( 2 );
-				expect( getAllByText( items[ 1 ].amount.displayValue ) ).toHaveLength( 1 );
+			it( 'does not render the payment method label if the payment method is disabled', async () => {
+				const { queryByText, getByText, getAllByText } = render( <MyCheckout /> );
+				const user = userEvent.setup();
+				await user.click( getAllByText( 'Continue' )[ 0 ] );
+				await user.click( getByText( 'Disable Payment Method' ) );
+				expect( queryByText( mockMethod.inactiveContent ) ).not.toBeVisible();
 			} );
 
-			it( 'renders the payment method submitButton', () => {
-				const { getByText } = render( <MyCheckout /> );
-				expect( getByText( 'Pay Please' ) ).toBeTruthy();
-			} );
-		} );
-
-		describe( 'using a custom registry', function () {
-			let MyCheckout;
-			const mockMethod = createMockMethod();
-			const { items, total } = createMockItems();
-
-			beforeEach( () => {
-				const registry = createRegistry();
-				MyCheckout = () => (
-					<CheckoutProvider
-						items={ items }
-						total={ total }
-						onPaymentComplete={ noop }
-						showErrorMessage={ noop }
-						showInfoMessage={ noop }
-						showSuccessMessage={ noop }
-						paymentMethods={ [ mockMethod ] }
-						paymentProcessors={ getMockPaymentProcessors() }
-						registry={ registry }
-						initiallySelectedPaymentMethodId={ mockMethod.id }
-					>
-						<Checkout />
-					</CheckoutProvider>
-				);
+			it( 'does render the payment method label if the payment method is disabled then enabled', async () => {
+				const { getAllByText, getByText } = render( <MyCheckout /> );
+				const user = userEvent.setup();
+				await user.click( getAllByText( 'Continue' )[ 0 ] );
+				await user.click( getByText( 'Disable Payment Method' ) );
+				await user.click( getByText( 'Enable Payment Method' ) );
+				expect( getAllByText( mockMethod.inactiveContent )[ 0 ] ).toBeVisible();
 			} );
 
-			it( 'renders the line items and the total', () => {
-				const { container } = render( <MyCheckout /> );
-
-				// Product line items show the correct price
-				getAllByLabelTextInNode( container, items[ 0 ].label ).map( ( element ) =>
-					expect( element ).toHaveTextContent( items[ 0 ].amount.displayValue )
-				);
-				getAllByLabelTextInNode( container, items[ 1 ].label ).map( ( element ) =>
-					expect( element ).toHaveTextContent( items[ 1 ].amount.displayValue )
-				);
-
-				// All elements labeled 'Total' show the expected price
-				getAllByLabelTextInNode( container, total.label ).map( ( element ) =>
-					expect( element ).toHaveTextContent( total.amount.displayValue )
-				);
-			} );
-
-			it( 'renders the payment method label', () => {
-				const { getAllByText } = render( <MyCheckout /> );
-				expect( getAllByText( 'Mock Label' )[ 0 ] ).toBeInTheDocument();
+			it( 'renders the second payment method label as selected if the first is disabled', async () => {
+				const { getByText, getAllByText, findByLabelText } = render( <MyCheckout /> );
+				const user = userEvent.setup();
+				await user.click( getAllByText( 'Continue' )[ 0 ] );
+				await user.click( getByText( 'Disable Payment Method' ) );
+				const paymentMethod = await findByLabelText( mockMethod2.inactiveContent );
+				expect( paymentMethod ).toBeChecked();
 			} );
 
 			it( 'renders the payment method activeContent', () => {
@@ -179,19 +157,20 @@ describe( 'Checkout', () => {
 					<CheckoutProvider
 						items={ items }
 						total={ total }
-						onPaymentComplete={ noop }
-						showErrorMessage={ noop }
-						showInfoMessage={ noop }
-						showSuccessMessage={ noop }
 						paymentMethods={ [ mockMethod ] }
 						paymentProcessors={ getMockPaymentProcessors() }
-						initiallySelectedPaymentMethodId={ mockMethod.id }
+						selectFirstAvailablePaymentMethod
 					>
-						<Checkout />
+						<DefaultCheckoutSteps />
 					</CheckoutProvider>
 				);
 				const renderResult = render( <MyCheckout /> );
 				container = renderResult.container;
+			} );
+
+			it( 'renders steps', () => {
+				const activeSteps = container.querySelectorAll( '.checkout-step' );
+				expect( activeSteps ).toHaveLength( 2 );
 			} );
 
 			it( 'makes the review step active', () => {
@@ -201,7 +180,7 @@ describe( 'Checkout', () => {
 			} );
 
 			it( 'makes the payment method step invisible', () => {
-				const firstStep = container.querySelector( '.checkout__payment-methods-step' );
+				const firstStep = container.querySelector( '.checkout__payment-method-step' );
 				const firstStepContent = firstStep.querySelector( '.checkout-steps__step-content' );
 				expect( firstStepContent ).toHaveStyle( 'display: none' );
 			} );
@@ -224,23 +203,18 @@ describe( 'Checkout', () => {
 					<CheckoutProvider
 						items={ items }
 						total={ total }
-						onPaymentComplete={ noop }
-						showErrorMessage={ noop }
-						showInfoMessage={ noop }
-						showSuccessMessage={ noop }
 						paymentMethods={ [ mockMethod ] }
 						paymentProcessors={ getMockPaymentProcessors() }
-						initiallySelectedPaymentMethodId={ mockMethod.id }
+						selectFirstAvailablePaymentMethod
 					>
-						<Checkout />
+						<DefaultCheckoutSteps />
 					</CheckoutProvider>
 				);
 				const renderResult = render( <MyCheckout /> );
 				container = renderResult.container;
 				const firstStepContinue = renderResult.getAllByText( 'Continue' )[ 0 ];
-				await act( async () => {
-					return fireEvent.click( firstStepContinue );
-				} );
+				const user = userEvent.setup();
+				await user.click( firstStepContinue );
 			} );
 
 			it( 'makes the first step invisible', () => {
@@ -250,7 +224,7 @@ describe( 'Checkout', () => {
 			} );
 
 			it( 'makes the next step visible', () => {
-				const reviewStep = container.querySelector( '.checkout__payment-methods-step' );
+				const reviewStep = container.querySelector( '.checkout__payment-method-step' );
 				const reviewStepContent = reviewStep.querySelector( '.checkout-steps__step-content' );
 				expect( reviewStepContent ).toHaveStyle( 'display: block' );
 			} );
@@ -262,26 +236,28 @@ describe( 'Checkout', () => {
 		const mockMethod = createMockMethod();
 		const { items, total } = createMockItems();
 		const steps = createMockStepObjects();
+		let validateForm;
 
 		beforeEach( () => {
 			MyCheckout = ( props ) => {
 				const [ paymentData, setPaymentData ] = useState( {} );
+				const { stepObjectsWithStepNumber, stepObjectsWithoutStepNumber } =
+					createStepsFromStepObjects( props.steps || steps );
+				const createStepFromStepObject = createStepObjectConverter( paymentData );
 				return (
 					<myContext.Provider value={ [ paymentData, setPaymentData ] }>
 						<CheckoutProvider
 							items={ items }
 							total={ total }
-							onPaymentComplete={ noop }
-							showErrorMessage={ noop }
-							showInfoMessage={ noop }
-							showSuccessMessage={ noop }
 							paymentMethods={ [ mockMethod ] }
 							paymentProcessors={ getMockPaymentProcessors() }
-							initiallySelectedPaymentMethodId={ mockMethod.id }
+							selectFirstAvailablePaymentMethod
 						>
-							<Checkout>
-								{ createStepsFromStepObjects( props.steps || steps, paymentData ) }
-							</Checkout>
+							<CheckoutStepGroup>
+								{ stepObjectsWithoutStepNumber.map( createStepFromStepObject ) }
+								{ stepObjectsWithStepNumber.map( createStepFromStepObject ) }
+								<CheckoutFormSubmit validateForm={ validateForm } />
+							</CheckoutStepGroup>
 						</CheckoutProvider>
 					</myContext.Provider>
 				);
@@ -396,9 +372,8 @@ describe( 'Checkout', () => {
 			const firstStep = container.querySelector( '.' + steps[ 0 ].className );
 			const firstStepContent = firstStep.querySelector( '.checkout-steps__step-content' );
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
-			await act( async () => {
-				return fireEvent.click( firstStepContinue );
-			} );
+			const user = userEvent.setup();
+			await user.click( firstStepContinue );
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
 		} );
 
@@ -411,9 +386,8 @@ describe( 'Checkout', () => {
 			const firstStep = container.querySelector( '.custom-summary-step-class' );
 			const firstStepContent = firstStep.querySelector( '.checkout-steps__step-content' );
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
-			await act( async () => {
-				return fireEvent.click( firstStepContinue );
-			} );
+			const user = userEvent.setup();
+			await user.click( firstStepContinue );
 			expect( firstStepContent ).toHaveStyle( 'display: none' );
 		} );
 
@@ -427,9 +401,8 @@ describe( 'Checkout', () => {
 			);
 			const firstStepContinue = getAllByText( 'Continue' )[ 0 ];
 			expect( firstStepContinue ).not.toBeDisabled();
-			await act( async () => {
-				return fireEvent.click( firstStepContinue );
-			} );
+			const user = userEvent.setup();
+			await user.click( firstStepContinue );
 			expect( firstStepContinue ).toBeDisabled();
 		} );
 
@@ -445,10 +418,86 @@ describe( 'Checkout', () => {
 			const firstStep = container.querySelector( '.' + steps[ 1 ].className );
 			const firstStepContent = firstStep.querySelector( '.checkout-steps__step-content' );
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
-			await act( async () => {
-				return fireEvent.click( firstStepContinue );
-			} );
+			const user = userEvent.setup();
+			await user.click( firstStepContinue );
 			expect( firstStepContent ).toHaveStyle( 'display: none' );
+		} );
+
+		it( 'does change steps if useSetStepComplete is used and the step becomes complete after a Promise resolves', async () => {
+			function ManualStepCompleteButton( { stepId } ) {
+				const setStepComplete = useSetStepComplete();
+				return <button onClick={ () => setStepComplete( stepId ) }>Complete manually</button>;
+			}
+			const stepWillPass = {
+				...steps[ 1 ],
+				id: 'step-will-pass',
+				className: 'step-will-pass',
+				isCompleteCallback: () => Promise.resolve( true ),
+			};
+			const stepWithAsyncIsComplete = {
+				...steps[ 1 ],
+				isCompleteCallback: () => Promise.resolve( true ),
+				activeStepContent: (
+					<div>
+						<span>Custom Step - Summary Active</span>
+						<ManualStepCompleteButton stepId={ steps[ 1 ].id } />
+					</div>
+				),
+			};
+			const { container, getAllByText } = render(
+				<MyCheckout steps={ [ stepWillPass, stepWithAsyncIsComplete, steps[ 4 ], steps[ 2 ] ] } />
+			);
+			const manualContinue = getAllByText( 'Complete manually' )[ 0 ];
+			const firstStep = container.querySelector( '.' + stepWillPass.className );
+			const secondStep = container.querySelector( '.' + stepWithAsyncIsComplete.className );
+			const thirdStep = container.querySelector( '.' + steps[ 4 ].className );
+			const firstStepContent = firstStep.querySelector( '.checkout-steps__step-content' );
+			const secondStepContent = secondStep.querySelector( '.checkout-steps__step-content' );
+			const thirdStepContent = thirdStep.querySelector( '.checkout-steps__step-content' );
+			expect( firstStepContent ).toHaveStyle( 'display: block' );
+			expect( secondStepContent ).toHaveStyle( 'display: none' );
+			const user = userEvent.setup();
+			await user.click( manualContinue );
+			expect( firstStepContent ).toHaveStyle( 'display: none' );
+			expect( secondStepContent ).toHaveStyle( 'display: none' );
+			expect( thirdStepContent ).toHaveStyle( 'display: block' );
+		} );
+
+		it( 'does not change steps if useSetStepComplete is used and the previous step remains incomplete', async () => {
+			function ManualStepCompleteButton( { stepId } ) {
+				const setStepComplete = useSetStepComplete();
+				return <button onClick={ () => setStepComplete( stepId ) }>Complete manually</button>;
+			}
+			const stepWillFail = {
+				...steps[ 1 ],
+				id: 'step-will-fail',
+				className: 'step-will-fail',
+				isCompleteCallback: () => Promise.resolve( false ),
+			};
+			const stepWithAsyncIsComplete = {
+				...steps[ 1 ],
+				isCompleteCallback: () => Promise.resolve( true ),
+				activeStepContent: (
+					<div>
+						<span>Custom Step - Summary Active</span>
+						<ManualStepCompleteButton stepId={ steps[ 1 ].id } />
+					</div>
+				),
+			};
+			const { container, getAllByText } = render(
+				<MyCheckout steps={ [ stepWillFail, stepWithAsyncIsComplete, steps[ 4 ], steps[ 2 ] ] } />
+			);
+			const manualContinue = getAllByText( 'Complete manually' )[ 0 ];
+			const firstStep = container.querySelector( '.' + stepWillFail.className );
+			const secondStep = container.querySelector( '.' + stepWithAsyncIsComplete.className );
+			const firstStepContent = firstStep.querySelector( '.checkout-steps__step-content' );
+			const secondStepContent = secondStep.querySelector( '.checkout-steps__step-content' );
+			expect( firstStepContent ).toHaveStyle( 'display: block' );
+			expect( secondStepContent ).toHaveStyle( 'display: none' );
+			const user = userEvent.setup();
+			await user.click( manualContinue );
+			expect( firstStepContent ).toHaveStyle( 'display: block' );
+			expect( secondStepContent ).toHaveStyle( 'display: none' );
 		} );
 
 		it( 'does not change steps if the continue button is clicked and the step remains incomplete after a Promise resolves', async () => {
@@ -463,18 +512,45 @@ describe( 'Checkout', () => {
 			const firstStep = container.querySelector( '.' + steps[ 1 ].className );
 			const firstStepContent = firstStep.querySelector( '.checkout-steps__step-content' );
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
-			await act( async () => {
-				return fireEvent.click( firstStepContinue );
-			} );
+			const user = userEvent.setup();
+			await user.click( firstStepContinue );
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
 		} );
 
-		it( 'renders the continue button enabled if the step is active and complete', () => {
+		it( 'does not change steps if useSetStepComplete is used and the step remains incomplete after a Promise resolves', async () => {
+			function ManualStepCompleteButton( { stepId } ) {
+				const setStepComplete = useSetStepComplete();
+				return <button onClick={ () => setStepComplete( stepId ) }>Complete manually</button>;
+			}
+			const stepWithAsyncIsComplete = {
+				...steps[ 1 ],
+				isCompleteCallback: () => Promise.resolve( false ),
+				activeStepContent: (
+					<div>
+						<span>Custom Step - Summary Active</span>
+						<ManualStepCompleteButton stepId={ steps[ 1 ].id } />
+					</div>
+				),
+			};
+			const { container, getAllByText } = render(
+				<MyCheckout steps={ [ stepWithAsyncIsComplete, steps[ 4 ], steps[ 2 ] ] } />
+			);
+			const manualContinue = getAllByText( 'Complete manually' )[ 0 ];
+			const firstStep = container.querySelector( '.' + steps[ 1 ].className );
+			const firstStepContent = firstStep.querySelector( '.checkout-steps__step-content' );
+			expect( firstStepContent ).toHaveStyle( 'display: block' );
+			const user = userEvent.setup();
+			await user.click( manualContinue );
+			expect( firstStepContent ).toHaveStyle( 'display: block' );
+		} );
+
+		it( 'renders the continue button enabled if the step is active and complete', async () => {
 			const { container, getByLabelText } = render(
 				<MyCheckout steps={ [ steps[ 0 ], steps[ 4 ], steps[ 1 ] ] } />
 			);
 
-			fireEvent.change( getByLabelText( 'User Name' ), { target: { value: 'Lyra' } } );
+			const user = userEvent.setup();
+			await user.type( getByLabelText( 'User Name' ), 'Lyra' );
 			const step = container.querySelector( '.' + steps[ 4 ].className );
 			expect( getByTextInNode( step, 'Continue' ) ).not.toBeDisabled();
 		} );
@@ -500,9 +576,8 @@ describe( 'Checkout', () => {
 		it( 'renders the edit button for editable steps with a lower index than the active step', async () => {
 			const { container, getAllByText } = render( <MyCheckout /> );
 			const firstStepContinue = getAllByText( 'Continue' )[ 0 ];
-			await act( async () => {
-				return fireEvent.click( firstStepContinue );
-			} );
+			const user = userEvent.setup();
+			await user.click( firstStepContinue );
 			const step = container.querySelector( '.' + steps[ 1 ].className );
 			expect( getByTextInNode( step, 'Edit' ) ).toBeInTheDocument();
 		} );
@@ -512,14 +587,11 @@ describe( 'Checkout', () => {
 				<MyCheckout steps={ [ steps[ 0 ], steps[ 1 ], steps[ 2 ] ] } />
 			);
 			const firstStepContinue = getAllByText( 'Continue' )[ 0 ];
-			await act( async () => {
-				return fireEvent.click( firstStepContinue );
-			} );
+			const user = userEvent.setup();
+			await user.click( firstStepContinue );
 			expect( queryByText( 'Edit' ) ).toBeInTheDocument();
 			const submitButton = getAllByText( 'Pay Please' )[ 0 ];
-			await act( async () => {
-				return fireEvent.click( submitButton );
-			} );
+			await user.click( submitButton );
 			expect( queryByText( 'Edit' ) ).not.toBeInTheDocument();
 		} );
 
@@ -558,31 +630,120 @@ describe( 'Checkout', () => {
 			);
 			expect( getByText( 'Possibly Complete isComplete false' ) ).toBeInTheDocument();
 			const firstStepContinue = getAllByText( 'Continue' )[ 0 ];
-			await act( async () => {
-				return fireEvent.click( firstStepContinue );
-			} );
-			fireEvent.change( getByLabelText( 'User Name' ), { target: { value: 'Lyra' } } );
-			await act( async () => {
-				// isComplete does not update until we press continue
-				return fireEvent.click( firstStepContinue );
-			} );
+			const user = userEvent.setup();
+			await user.click( firstStepContinue );
+			await user.type( getByLabelText( 'User Name' ), 'Lyra' );
+			// isComplete does not update until we press continue
+			await user.click( firstStepContinue );
 			expect( getByText( 'Possibly Complete isComplete true' ) ).toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'submitting the form', function () {
+		let MyCheckout;
+		const submitButtonComponent = <MockSubmitButtonSimple />;
+		const mockMethod = createMockMethod( { submitButton: submitButtonComponent } );
+		const { items, total } = createMockItems();
+		const steps = createMockStepObjects();
+
+		beforeEach( () => {
+			MyCheckout = ( props ) => {
+				const [ paymentData, setPaymentData ] = useState( {} );
+				const { stepObjectsWithStepNumber, stepObjectsWithoutStepNumber } =
+					createStepsFromStepObjects( props.steps || steps );
+				const createStepFromStepObject = createStepObjectConverter( paymentData );
+				return (
+					<myContext.Provider value={ [ paymentData, setPaymentData ] }>
+						<CheckoutProvider
+							items={ items }
+							total={ total }
+							paymentMethods={ [ mockMethod ] }
+							paymentProcessors={ { mock: props.paymentProcessor } }
+							selectFirstAvailablePaymentMethod
+						>
+							<CheckoutStepGroup>
+								{ stepObjectsWithoutStepNumber.map( createStepFromStepObject ) }
+								{ stepObjectsWithStepNumber.map( createStepFromStepObject ) }
+								<CheckoutFormSubmit validateForm={ props.validateForm } />
+							</CheckoutStepGroup>
+						</CheckoutProvider>
+					</myContext.Provider>
+				);
+			};
+		} );
+
+		it( 'does not call the payment processor function if the validateForm callback is falsy', async () => {
+			const validateForm = jest.fn();
+			validateForm.mockResolvedValue( false );
+			const processor = jest.fn().mockResolvedValue( makeManualResponse( 'good' ) );
+			render(
+				<MyCheckout
+					steps={ [ steps[ 0 ] ] }
+					validateForm={ validateForm }
+					paymentProcessor={ processor }
+				/>
+			);
+			const submitButton = screen.getByText( 'Pay Please' );
+
+			const user = userEvent.setup();
+			await user.click( submitButton );
+
+			expect( processor ).not.toHaveBeenCalled();
+		} );
+
+		it( 'calls the payment processor function if the validateForm callback is truthy', async () => {
+			const validateForm = jest.fn();
+			validateForm.mockResolvedValue( true );
+			const processor = jest.fn().mockResolvedValue( makeManualResponse( 'good' ) );
+			render(
+				<MyCheckout
+					steps={ [ steps[ 0 ] ] }
+					validateForm={ validateForm }
+					paymentProcessor={ processor }
+				/>
+			);
+			const submitButton = screen.getByText( 'Pay Please' );
+
+			const user = userEvent.setup();
+			await user.click( submitButton );
+
+			expect( processor ).toHaveBeenCalled();
+		} );
+
+		it( 'calls the payment processor function if the validateForm callback undefined', async () => {
+			const processor = jest.fn().mockResolvedValue( makeManualResponse( 'good' ) );
+			render( <MyCheckout steps={ [ steps[ 0 ] ] } paymentProcessor={ processor } /> );
+			const submitButton = screen.getByText( 'Pay Please' );
+
+			const user = userEvent.setup();
+			await user.click( submitButton );
+
+			expect( processor ).toHaveBeenCalled();
 		} );
 	} );
 } );
 
-function createMockMethod() {
-	return {
-		id: 'mock',
-		label: <span data-testid="mock-label">Mock Label</span>,
-		activeContent: <MockPaymentForm />,
-		submitButton: <MockSubmitButton />,
-		inactiveContent: 'Mock Method',
-		getAriaLabel: () => 'Mock Method',
+function createMockMethodFactory() {
+	let mockMethodIdCounter = 0;
+	return function ( {
+		submitButton = <MockSubmitButton content="Pay Please" />,
+		activeContent = <MockPaymentForm />,
+	} = {} ) {
+		mockMethodIdCounter = mockMethodIdCounter + 1;
+		const title = `Mock Payment Method ${ mockMethodIdCounter }`;
+		return {
+			id: 'mock' + mockMethodIdCounter,
+			paymentProcessorId: 'mock',
+			label: <span data-testid="mock-label">{ title }</span>,
+			activeContent,
+			submitButton,
+			inactiveContent: title,
+			getAriaLabel: () => title,
+		};
 	};
 }
 
-function MockSubmitButton( { disabled } ) {
+function MockSubmitButton( { disabled, content } ) {
 	const { setTransactionComplete, setTransactionPending } = useTransactionStatus();
 	const process = usePaymentProcessor( 'mock' );
 	const onClick = () => {
@@ -591,33 +752,13 @@ function MockSubmitButton( { disabled } ) {
 	};
 	return (
 		<button disabled={ disabled } onClick={ onClick }>
-			Pay Please
+			{ content }
 		</button>
 	);
 }
 
 function MockPaymentForm( { summary } ) {
-	useRegisterStore( 'mock', {
-		reducer( state = {}, action ) {
-			switch ( action.type ) {
-				case 'CARDHOLDER_NAME_SET':
-					return { ...state, cardholderName: action.payload };
-			}
-			return state;
-		},
-		actions: {
-			changeCardholderName( payload ) {
-				return { type: 'CARDHOLDER_NAME_SET', payload };
-			},
-		},
-		selectors: {
-			getCardholderName( state ) {
-				return state.cardholderName || '';
-			},
-		},
-	} );
-	const cardholderName = useSelect( ( select ) => select( 'mock' ).getCardholderName() );
-	const { changeCardholderName } = useDispatch( 'mock' );
+	const [ cardholderName, changeCardholderName ] = useState( '' );
 	return (
 		<div data-testid="mock-payment-form">
 			<label>
@@ -628,6 +769,13 @@ function MockPaymentForm( { summary } ) {
 	);
 }
 
+function MockSubmitButtonSimple( { disabled, onClick } ) {
+	return (
+		<button disabled={ disabled } onClick={ onClick }>
+			Pay Please
+		</button>
+	);
+}
 function createMockItems() {
 	const items = [
 		{
@@ -652,22 +800,17 @@ function createMockItems() {
 	return { items, total };
 }
 
-function createStepsFromStepObjects( stepObjects, paymentData ) {
-	const createStepFromStepObject = createStepObjectConverter( paymentData );
+function createStepsFromStepObjects( stepObjects ) {
 	const stepObjectsWithoutStepNumber = stepObjects.filter(
 		( stepObject ) => ! stepObject.hasStepNumber
 	);
 	const stepObjectsWithStepNumber = stepObjects.filter(
 		( stepObject ) => stepObject.hasStepNumber
 	);
-	return (
-		<React.Fragment>
-			{ stepObjectsWithoutStepNumber.map( createStepFromStepObject ) }
-			<CheckoutStepArea>
-				<CheckoutSteps>{ stepObjectsWithStepNumber.map( createStepFromStepObject ) }</CheckoutSteps>
-			</CheckoutStepArea>
-		</React.Fragment>
-	);
+	return {
+		stepObjectsWithStepNumber,
+		stepObjectsWithoutStepNumber,
+	};
 }
 
 function createStepObjectConverter( paymentData ) {
@@ -689,7 +832,7 @@ function createStepObjectConverter( paymentData ) {
 		}
 		return (
 			<CheckoutStepBody
-				errorMessage={ 'error' }
+				errorMessage="error"
 				editButtonAriaLabel={ stepObject.getEditButtonAriaLabel() }
 				nextStepButtonAriaLabel={ stepObject.getNextStepButtonAriaLabel() }
 				isStepActive={ false }
@@ -806,6 +949,6 @@ function StepWithEditableField() {
 
 function getMockPaymentProcessors() {
 	return {
-		mock: async () => ( { success: true } ),
+		mock: async () => ( { success: true, type: PaymentProcessorResponseType.SUCCESS } ),
 	};
 }

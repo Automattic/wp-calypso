@@ -1,44 +1,33 @@
-/**
- * External Dependencies
- */
 import { filter, flow } from 'lodash';
-
-/**
- * Internal Dependencies
- */
-import DISPLAY_TYPES from './display-types';
-
-/**
- * Rules
- */
-import createBetterExcerpt from 'calypso/lib/post-normalizer/rule-create-better-excerpt';
+import addDiscoverProperties from 'calypso/lib/post-normalizer/rule-add-discover-properties';
+import addImageWrapperElement from 'calypso/lib/post-normalizer/rule-add-image-wrapper-element';
 import detectMedia from 'calypso/lib/post-normalizer/rule-content-detect-media';
 import detectPolls from 'calypso/lib/post-normalizer/rule-content-detect-polls';
 import detectSurveys from 'calypso/lib/post-normalizer/rule-content-detect-surveys';
-import makeEmbedsSafe from 'calypso/lib/post-normalizer/rule-content-make-embeds-safe';
-import removeStyles from 'calypso/lib/post-normalizer/rule-content-remove-styles';
-import makeImagesSafe from 'calypso/lib/post-normalizer/rule-content-make-images-safe';
 import {
 	disableAutoPlayOnMedia,
 	disableAutoPlayOnEmbeds,
 } from 'calypso/lib/post-normalizer/rule-content-disable-autoplay';
+import linkJetpackCarousels from 'calypso/lib/post-normalizer/rule-content-link-jetpack-carousels';
+import makeEmbedsSafe from 'calypso/lib/post-normalizer/rule-content-make-embeds-safe';
+import makeImagesSafe from 'calypso/lib/post-normalizer/rule-content-make-images-safe';
+import makeContentLinksSafe from 'calypso/lib/post-normalizer/rule-content-make-links-safe';
+import removeElementsBySelector from 'calypso/lib/post-normalizer/rule-content-remove-elements-by-selector';
+import removeStyles from 'calypso/lib/post-normalizer/rule-content-remove-styles';
+import createBetterExcerpt from 'calypso/lib/post-normalizer/rule-create-better-excerpt';
 import decodeEntities from 'calypso/lib/post-normalizer/rule-decode-entities';
-import pickCanonicalImage from 'calypso/lib/post-normalizer/rule-pick-canonical-image';
+import keepValidImages from 'calypso/lib/post-normalizer/rule-keep-valid-images';
+import makeLinksSafe from 'calypso/lib/post-normalizer/rule-make-links-safe';
 import makeSiteIdSafeForApi from 'calypso/lib/post-normalizer/rule-make-site-id-safe-for-api';
+import pickCanonicalImage from 'calypso/lib/post-normalizer/rule-pick-canonical-image';
+import pickCanonicalMedia from 'calypso/lib/post-normalizer/rule-pick-canonical-media';
 import pickPrimaryTag from 'calypso/lib/post-normalizer/rule-pick-primary-tag';
 import preventWidows from 'calypso/lib/post-normalizer/rule-prevent-widows';
 import safeImageProperties from 'calypso/lib/post-normalizer/rule-safe-image-properties';
 import stripHtml from 'calypso/lib/post-normalizer/rule-strip-html';
-import withContentDom from 'calypso/lib/post-normalizer/rule-with-content-dom';
-import keepValidImages from 'calypso/lib/post-normalizer/rule-keep-valid-images';
 import waitForImagesToLoad from 'calypso/lib/post-normalizer/rule-wait-for-images-to-load';
-import pickCanonicalMedia from 'calypso/lib/post-normalizer/rule-pick-canonical-media';
-import removeElementsBySelector from 'calypso/lib/post-normalizer/rule-content-remove-elements-by-selector';
-import addDiscoverProperties from 'calypso/lib/post-normalizer/rule-add-discover-properties';
-import linkJetpackCarousels from 'calypso/lib/post-normalizer/rule-content-link-jetpack-carousels';
-import makeLinksSafe from 'calypso/lib/post-normalizer/rule-make-links-safe';
-import makeContentLinksSafe from 'calypso/lib/post-normalizer/rule-content-make-links-safe';
-
+import withContentDom from 'calypso/lib/post-normalizer/rule-with-content-dom';
+import DISPLAY_TYPES from './display-types';
 import {
 	READER_CONTENT_WIDTH,
 	PHOTO_ONLY_MIN_WIDTH,
@@ -61,13 +50,33 @@ export function imageIsBigEnoughForGallery( image ) {
 	return image.width >= GALLERY_MIN_IMAGE_WIDTH && image.height >= MIN_IMAGE_HEIGHT;
 }
 
+export function imageWithCorrectRatio( image ) {
+	const imageRatio = image.height / image.width;
+	const minRatio = 1 / 3;
+	const maxRatio = 3;
+	return imageRatio >= minRatio && imageRatio <= maxRatio;
+}
+
+export function getImagesFromPostToDisplay( post, numberOfImagesToDisplay ) {
+	const images = ( post.images && [ ...post.images ] ) || [];
+
+	// Remove duplicates, small images and images that are outside ideal aspect ratio
+	return images
+		.filter(
+			( element, index ) => index === images.findIndex( ( elem ) => elem.src === element.src )
+		)
+		.filter( imageIsBigEnoughForGallery )
+		.filter( imageWithCorrectRatio )
+		.slice( 0, numberOfImagesToDisplay );
+}
+
 const hasShortContent = ( post ) => getCharacterCount( post ) <= PHOTO_ONLY_MAX_CHARACTER_COUNT;
 
 /**
  * Attempt to classify the post into a display type
  *
- * @param  {object}   post     A post to classify
- * @returns {object}            The classified post
+ * @param  {Object}   post     A post to classify
+ * @returns {Object}            The classified post
  */
 export function classifyPost( post ) {
 	const imagesForGallery = filter( post.content_images, imageIsBigEnoughForGallery );
@@ -117,6 +126,7 @@ const fastPostNormalizationRules = flow( [
 		detectPolls,
 		detectSurveys,
 		linkJetpackCarousels,
+		addImageWrapperElement,
 	] ),
 	createBetterExcerpt,
 	pickCanonicalImage,

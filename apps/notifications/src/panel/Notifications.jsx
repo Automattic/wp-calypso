@@ -1,29 +1,15 @@
-/**
- * External dependencies
- */
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import { createContext, PureComponent } from 'react';
 import { Provider } from 'react-redux';
-
-/**
- * Internal dependencies
- */
+import repliesCache from './comment-replies-cache';
+import RestClient from './rest-client';
+import { init as initAPI } from './rest-client/wpcom';
 import { init as initStore, store } from './state';
 import { mergeHandlers } from './state/action-middleware/utils';
 import { SET_IS_SHOWING } from './state/action-types';
 import actions from './state/actions';
-
-import RestClient from './rest-client';
-import repliesCache from './comment-replies-cache';
-
-import { init as initAPI } from './rest-client/wpcom';
-
 import Layout from './templates';
-import FontSmoothing from './utils/font-smoothing';
 
-/**
- * Style dependencies
- */
 import './boot/stylesheets/style.scss';
 
 let client;
@@ -38,7 +24,7 @@ repliesCache.cleanup();
  */
 export const refreshNotes = () => client && client.refreshNotes.call( client );
 
-export const RestClientContext = React.createContext( client );
+export const RestClientContext = createContext( client );
 
 export class Notifications extends PureComponent {
 	static propTypes = {
@@ -49,7 +35,6 @@ export class Notifications extends PureComponent {
 		locale: PropTypes.string,
 		receiveMessage: PropTypes.func,
 		wpcom: PropTypes.object.isRequired,
-		isStandalone: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -61,15 +46,10 @@ export class Notifications extends PureComponent {
 		receiveMessage: noop,
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
-		const {
-			customEnhancer,
-			customMiddleware,
-			isShowing,
-			isVisible,
-			receiveMessage,
-			wpcom,
-		} = this.props;
+		const { customEnhancer, customMiddleware, isShowing, isVisible, receiveMessage, wpcom } =
+			this.props;
 
 		initStore( {
 			customEnhancer,
@@ -111,6 +91,7 @@ export class Notifications extends PureComponent {
 		store.dispatch( { type: 'APP_IS_READY' } );
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( { isShowing, isVisible, wpcom } ) {
 		if ( wpcom !== this.props.wpcom ) {
 			initAPI( wpcom );
@@ -133,7 +114,6 @@ export class Notifications extends PureComponent {
 	render() {
 		return (
 			<Provider store={ store }>
-				{ this.props.isStandalone && <FontSmoothing /> }
 				<RestClientContext.Provider value={ client }>
 					<Layout
 						client={ client }

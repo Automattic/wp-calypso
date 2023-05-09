@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import getJetpackSites from 'calypso/state/selectors/get-jetpack-sites';
 import { userState } from './fixtures/user-state';
 
@@ -18,7 +10,7 @@ describe( 'getJetpackSites()', () => {
 			},
 		};
 		const sites = getJetpackSites( state );
-		expect( sites ).to.eql( [] );
+		expect( sites ).toEqual( [] );
 	} );
 
 	test( 'should return an empty array if the sites existing are not Jetpack sites', () => {
@@ -32,7 +24,7 @@ describe( 'getJetpackSites()', () => {
 			},
 		};
 		const sites = getJetpackSites( state );
-		expect( sites ).to.eql( [] );
+		expect( sites ).toEqual( [] );
 	} );
 
 	test( 'should return one Jetpack site if only one site exists and it is a Jetpack site', () => {
@@ -51,8 +43,8 @@ describe( 'getJetpackSites()', () => {
 			},
 		};
 		const sites = getJetpackSites( state );
-		expect( sites ).to.have.length( 1 );
-		expect( sites[ 0 ].ID ).to.eql( 2916289 );
+		expect( sites ).toHaveLength( 1 );
+		expect( sites[ 0 ].ID ).toEqual( 2916289 );
 	} );
 
 	test( 'should return all the sites in state if all of them are Jetpack sites', () => {
@@ -78,9 +70,9 @@ describe( 'getJetpackSites()', () => {
 			},
 		};
 		const sites = getJetpackSites( state );
-		expect( sites ).to.have.length( 2 );
-		expect( sites[ 0 ].ID ).to.eql( 2916288 );
-		expect( sites[ 1 ].ID ).to.eql( 2916289 );
+		expect( sites ).toHaveLength( 2 );
+		expect( sites[ 0 ].ID ).toEqual( 2916288 );
+		expect( sites[ 1 ].ID ).toEqual( 2916289 );
 	} );
 
 	test( 'should return only the Jetpack sites if the state contains Jetpack and non Jetpack sites', () => {
@@ -111,8 +103,8 @@ describe( 'getJetpackSites()', () => {
 			},
 		};
 		const sites = getJetpackSites( state );
-		expect( sites ).to.have.length( 2 );
-		expect( sites[ 0 ].ID ).to.eql( 2916288 );
-		expect( sites[ 1 ].ID ).to.eql( 2916289 );
+		expect( sites ).toHaveLength( 2 );
+		expect( sites[ 0 ].ID ).toEqual( 2916288 );
+		expect( sites[ 1 ].ID ).toEqual( 2916289 );
 	} );
 } );

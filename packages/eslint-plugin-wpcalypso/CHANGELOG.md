@@ -1,9 +1,29 @@
 #### Unreleased
 
-#### trunk
+#### v7.0.0 (2022-01-24)
+
+- Breaking: For JSDoc types like `{object}`, prefer capitalized variants to match
+  the WordPress coding style. (Like `{Object}`.) Violations are autofixable. You
+  can override this by setting `settings.jsdoc.preferredTypes.object` to 'object'
+  in your eslint config.
+- Breaking: Updated peer dependency `eslint-plugin-jsdoc` to v39.6.7, which includes
+  fixes to some JSDoc rules like `jsdoc/require-returns-check`. This may result
+  in more rule violations which were not previously detected.
+- Breaking: Require at least NodeJS 14, since dependencies dropped support for older versions.
+- Enhancement: The `jsdoc/check-types` rule now sets `unifyParentAndChildTypeChecks`
+  to true to enforce `preferredTypes` on unions as well (e.g. `{string | Object}`).
+
+#### v6.1.0 (2022-08-24)
+
+- Add missing optional peer dependency on `eslint-plugin-react`.
+- Mark the peer dependency on `eslint-plugin-react-hooks` as optional to match that on `eslint-plugin-react`.
+- Update `jsx-classname-namespace` rule to check only for BEM convention.
+
+#### v6.0.0 (2022-05-13)
 
 - Breaking: Migrated from `babel-eslint` to `@babel/eslint-parser`. This requires `@babel/core` to be
   installed (added as a `peerDependency` to this package) and a valid Babel configuration file to exist.
+- Breaking: Deleted `import-docblock` rule. Consumers can migrate to [@wordpress/dependency-group](https://github.com/WordPress/gutenberg/blob/trunk/packages/eslint-plugin/docs/rules/dependency-group.md), which is a more complete implementation of the same code style.
 
 #### v5.1.0 (2020-12-14)
 

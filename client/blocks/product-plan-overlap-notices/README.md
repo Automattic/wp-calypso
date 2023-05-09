@@ -7,14 +7,11 @@ Those notices will appear when there is a feature overlap between the current pl
 ## Usage
 
 ```jsx
-import React from 'react';
-import ProductPlanOverlapNotices from 'calypso/blocks/product-plan-overlap-notices';
 import { JETPACK_PRODUCTS_LIST, JETPACK_PLANS } from '@automattic/calypso-products';
+import ProductPlanOverlapNotices from 'calypso/blocks/product-plan-overlap-notices';
 
-export default class extends React.Component {
-	render() {
-		return <ProductPlanOverlapNotices plans={ JETPACK_PLANS } products={ JETPACK_PRODUCTS_LIST } />;
-	}
+export default function MyComponent() {
+	return <ProductPlanOverlapNotices plans={ JETPACK_PLANS } products={ JETPACK_PRODUCTS_LIST } />;
 }
 ```
 

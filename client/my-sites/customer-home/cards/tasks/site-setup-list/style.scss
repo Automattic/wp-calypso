@@ -1,33 +1,48 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
-@import '../../../grid-mixins.scss';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "../../../grid-mixins.scss";
 
 .site-setup-list {
-	padding: 0;
-	@include display-grid;
-	@include grid-template-columns( 12, 24px, 1fr );
+	&.card {
+		padding: 0;
+		box-shadow: none;
+		border-bottom: 1px solid var(--color-border-subtle);
 
-	@include breakpoint-deprecated( '<960px' ) {
-		display: block;
+		@include display-grid;
+		@include grid-template-columns( 12, 24px, 1fr );
+
+		@include breakpoint-deprecated( ">660px" ) {
+			border-bottom: none;
+			border-radius: 3px; /* stylelint-disable-line scales/radii */
+		}
+
+		@include breakpoint-deprecated( "<960px" ) {
+			display: block;
+		}
+	}
+
+
+	.site-setup-list__nav-item-email {
+		display: none;
 	}
 
 	.site-setup-list__nav {
-		border-left: 1px solid var( --color-border-subtle );
+		border-left: 1px solid var(--color-border-subtle);
 
 		@include grid-column( 9, 4 );
 
-		@include breakpoint-deprecated( '<1040px' ) {
+		@include breakpoint-deprecated( "<1040px" ) {
 			@include grid-column( 8, 5 );
 		}
 
-		@include breakpoint-deprecated( '<960px' ) {
+		@include breakpoint-deprecated( "<960px" ) {
 			width: 100%;
 			border-left: none;
 		}
 
 		.site-setup-list__task {
 			padding: 0 16px 16px;
-			border-bottom: 1px solid var( --color-border-subtle );
+			border-bottom: 1px solid var(--color-border-subtle);
 			transition: all 0.1s;
 
 			@include break-mobile {
@@ -50,52 +65,78 @@
 		padding: 0;
 
 		li {
-			border-bottom: 1px solid var( --color-border-subtle );
+			border-bottom: 1px solid var(--color-border-subtle);
 
 			&:last-child {
 				border-bottom: none;
 			}
 		}
+
+		.site-setup-list__nav-item-email {
+			color: var(--studio-gray-40);
+			display: block;
+			@include break-mobile {
+				font-weight: 400;
+				color: var(--studio-gray-40);
+			}
+		}
+
+		.site-setup-list__task-description-email {
+			font-weight: 600;
+			display: block;
+			padding-top: 30px;
+		}
+	}
+
+	.site-setup-list__list .nav-item.is-current .site-setup-list__nav-item-email {
+		display: none;
+		@include break-mobile {
+			display: block;
+		}
 	}
 
 	.card-heading {
 		padding: 16px;
-		border-bottom: 1px solid var( --color-border-subtle );
+		border-bottom: 1px solid var(--color-border-subtle);
 		display: flex;
 		align-items: center;
 
-		@include break-mobile {
+		@include breakpoint-deprecated( ">660px" ) {
 			padding: 16px 24px;
 		}
 	}
 
 	button.nav-item {
 		display: flex;
-		align-items: center;
+		align-items: flex-start;
 		padding: 16px;
 		transition: all 0.1s;
 		cursor: pointer;
 		width: 100%;
 		margin: 0;
-		color: var( --color-text );
+		color: var(--color-text);
 
-		@include break-mobile {
+		@include breakpoint-deprecated( ">660px" ) {
 			padding: 16px 24px;
 		}
 
 		&:hover {
-			background-color: var( --color-neutral-0 );
+			background-color: var(--color-neutral-0);
 
-			@include breakpoint-deprecated( '<960px' ) {
+			@include breakpoint-deprecated( "<960px" ) {
 				background-color: transparent;
 			}
 		}
 
+		&:focus-visible {
+			box-shadow: inset 0 0 0 2px var(--color-primary);
+		}
+
 		&.is-current {
-			background-color: var( --color-primary-0 );
+			background-color: var(--color-primary-0);
 			font-weight: 600;
 
-			@include breakpoint-deprecated( '<960px' ) {
+			@include breakpoint-deprecated( "<960px" ) {
 				border-bottom: none;
 				background-color: transparent;
 			}
@@ -108,32 +149,34 @@
 
 	.nav-item__pending {
 		display: block;
+		box-sizing: border-box;
 		width: 8px;
 		height: 8px;
-		background-color: var( --color-neutral-20 );
-		// Using percentage because we're drawing a circle in CSS
-		// stylelint-disable-next-line declaration-property-unit-allowed-list
+		border: 1px solid var(--studio-gray-10);
 		border-radius: 50%;
 		margin: 5px;
 		transition: all 0.1s;
 	}
 
 	.nav-item.is-current .nav-item__pending {
-		background-color: var( --color-neutral-80 );
+		background-color: var(--studio-gray-80);
+		border: none;
 	}
 
 	.nav-item__complete {
-		fill: var( --color-success );
+		fill: var(--color-success);
 		vertical-align: text-bottom;
 	}
 
 	.nav-item__text {
+		display: flex;
 		text-align: left;
 		line-height: 20px;
 	}
 
-	.nav-item__chevron {
+	.nav-item__end {
 		margin-left: auto;
+		display: flex;
 	}
 
 	.site-setup-list__nav-back {
@@ -146,13 +189,28 @@
 
 		@include grid-column( 1, 8 );
 
-		@include breakpoint-deprecated( '<1040px' ) {
+		@include breakpoint-deprecated( "<1040px" ) {
 			@include grid-column( 1, 7 );
 		}
 	}
 
 	.site-setup-list__task-actions {
 		margin-top: 0;
+	}
+
+	.site-setup-list__complete-icon {
+		margin-right: 8px;
+	}
+
+	.site-setup-list__task-icon {
+		width: 67px;
+		height: 35px;
+	}
+
+	.site-setup-list__task-skip {
+		&:focus-visible {
+			box-shadow: 0 0 0 2px var(--color-primary);
+		}
 	}
 
 	.spinner {
@@ -163,11 +221,53 @@
 		margin-top: -10px;
 	}
 
-	&.is-loading > *:not( .spinner ) {
+	&.is-loading > *:not(.spinner) {
 		visibility: hidden;
 	}
 }
 
 .customer-home__main .site-setup-list .card-heading {
 	margin-bottom: 0;
+}
+
+.nav-item__task-timing {
+	line-height: 18px;
+	position: relative;
+	padding-left: 26px;
+	padding-right: 8px;
+	min-width: 52px;
+	text-align: left;
+	font-weight: 400;
+
+	.gridicon {
+		top: 0;
+		position: absolute;
+		width: 24px;
+		left: 0;
+	}
+}
+
+.site-setup-list__task-timing {
+	display: none;
+	@include break-large {
+		display: block;
+	}
+}
+
+.site-setup-list__task-mobile_app_installed {
+	display: none;
+
+	@include break-medium {
+		display: block;
+	}
+}
+
+.button.is-primary.is-jetpack-branded {
+	background-color: var(--studio-jetpack-green-40);
+	border-color: var(--studio-jetpack-green-40);
+
+	&:hover,
+	&:focus {
+		background-color: var(--studio-jetpack-green-60);
+	}
 }

@@ -1,10 +1,6 @@
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
 import {
 	PREFERENCES_SET,
-	PREFERENCES_SAVE,
 	PREFERENCES_RECEIVE,
 	PREFERENCES_FETCH,
 	PREFERENCES_FETCH_SUCCESS,
@@ -21,9 +17,9 @@ import { remoteValuesSchema } from './schema';
  * remote endpoint. If a local value is set and then later saved to the remote,
  * it will be removed from state.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export const localValues = ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -49,9 +45,9 @@ export const localValues = ( state = {}, action ) => {
  * The remote values state reflects preferences which are persisted to the REST
  * API current user settings endpoint.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export const remoteValues = withSchemaValidation( remoteValuesSchema, ( state = null, action ) => {
 	switch ( action.type ) {
@@ -77,16 +73,13 @@ export const fetching = ( state = false, action ) => {
 	return state;
 };
 
-export const failed = ( state = false, action ) => {
+export const saving = ( state = false, action ) => {
 	switch ( action.type ) {
-		case PREFERENCES_SAVE:
-		case PREFERENCES_FETCH:
-		case PREFERENCES_SAVE_SUCCESS:
-		case PREFERENCES_FETCH_SUCCESS:
-			return false;
-		case PREFERENCES_SAVE_FAILURE:
-		case PREFERENCES_FETCH_FAILURE:
+		case PREFERENCES_SET:
 			return true;
+		case PREFERENCES_SAVE_SUCCESS:
+		case PREFERENCES_SAVE_FAILURE:
+			return false;
 	}
 	return state;
 };
@@ -104,7 +97,7 @@ const combinedReducer = combineReducers( {
 	localValues,
 	remoteValues,
 	fetching,
-	failed,
+	saving,
 	lastFetchedTimestamp,
 } );
 const preferencesReducer = withStorageKey( 'preferences', combinedReducer );

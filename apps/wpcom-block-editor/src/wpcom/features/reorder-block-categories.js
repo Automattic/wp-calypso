@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { getCategories, setCategories } from '@wordpress/blocks';
 import domReady from '@wordpress/dom-ready';
 

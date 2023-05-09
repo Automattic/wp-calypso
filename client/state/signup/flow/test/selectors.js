@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getCurrentFlowName } from '../selectors';
 
 describe( 'getCurrentFlowName()', () => {

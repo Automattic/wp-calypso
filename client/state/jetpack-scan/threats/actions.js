@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	JETPACK_SCAN_THREATS_GET_FIX_STATUS,
 	JETPACK_SCAN_THREATS_FIX_ALL,

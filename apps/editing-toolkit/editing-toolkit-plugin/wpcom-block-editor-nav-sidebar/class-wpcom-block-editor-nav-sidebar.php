@@ -47,7 +47,7 @@ class WPCOM_Block_Editor_Nav_Sidebar {
 
 		wp_enqueue_script(
 			'wpcom-block-editor-nav-sidebar-script',
-			plugins_url( 'dist/wpcom-block-editor-nav-sidebar.js', __FILE__ ),
+			plugins_url( 'dist/wpcom-block-editor-nav-sidebar.min.js', __FILE__ ),
 			is_array( $script_dependencies ) ? $script_dependencies : array(),
 			$version,
 			true
@@ -74,6 +74,7 @@ class WPCOM_Block_Editor_Nav_Sidebar {
 			'wpcomBlockEditorNavSidebar',
 			array(
 				'postIdsToExclude' => $post_ids_to_exclude,
+				'currentSite'      => $this->get_current_site(),
 			)
 		);
 
@@ -83,6 +84,16 @@ class WPCOM_Block_Editor_Nav_Sidebar {
 			plugins_url( $style_path, __FILE__ ),
 			array(),
 			filemtime( plugin_dir_path( __FILE__ ) . $style_path )
+		);
+	}
+
+	/**
+	 * Get current site details.
+	 */
+	public function get_current_site() {
+		return array(
+			'launchpad_screen' => get_option( 'launchpad_screen' ),
+			'site_intent'      => get_option( 'site_intent' ),
 		);
 	}
 }

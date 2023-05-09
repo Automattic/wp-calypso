@@ -1,10 +1,10 @@
-/**
- * Internal dependencies
- */
+import { PERIOD_LIST } from './constants';
+import * as selectors from './selectors';
 import type { plansProductSlugs, plansSlugs } from './constants';
+import type { SelectFromMap } from '../mapped-types';
 
-export type StorePlanSlug = typeof plansProductSlugs[ number ];
-export type PlanSlug = typeof plansSlugs[ number ];
+export type StorePlanSlug = ( typeof plansProductSlugs )[ number ];
+export type PlanSlug = ( typeof plansSlugs )[ number ];
 
 // at the moment possible plan paths are identical with plan slugs
 export type PlanPath = PlanSlug;
@@ -42,10 +42,11 @@ export interface PlanProduct {
 	annualDiscount?: number;
 	periodAgnosticSlug: PlanSlug;
 	pathSlug?: PlanPath;
-	/** Useful for two cases:
+	/**
+	 * Useful for two cases:
 	 * 1) to show how much we bill the users for annual plans ($8/mo billed $96)
 	 * 2) to show how much a monthly plan would cost in a year (billed 12$/mo costs $144/yr)
-	 *  */
+	 */
 	annualPrice: string;
 }
 
@@ -58,8 +59,22 @@ export interface PricedAPIPlan {
 	product_name: string;
 	path_slug?: PlanPath;
 	product_slug: StorePlanSlug;
-	bill_period: -1 | 31 | 365;
+	product_name_short: string;
+	product_type?: string;
+	bill_period: -1 | ( typeof PERIOD_LIST )[ number ];
+
+	/**
+	 * The product price in the currency's smallest unit.
+	 */
+	raw_price_integer: number;
+
+	/**
+	 * The product price as a float.
+	 *
+	 * @deprecated use raw_price_integer as using floats for currency is not safe.
+	 */
 	raw_price: number;
+	orig_cost?: number | null;
 	currency_code: string;
 }
 export interface PricedAPIPlanFree extends PricedAPIPlan {
@@ -69,6 +84,7 @@ export interface PricedAPIPlanFree extends PricedAPIPlan {
 	product_slug: 'free_plan';
 	bill_period: -1;
 	raw_price: 0;
+	raw_price_integer: 0;
 }
 export interface PricedAPIPlanPaidAnnually extends PricedAPIPlan {
 	path_slug: PlanPath;
@@ -121,3 +137,5 @@ export interface DetailsAPIResponse {
 	features_by_type: FeaturesByType[];
 	features: DetailsAPIFeature[];
 }
+
+export type PlansSelect = SelectFromMap< typeof selectors >;

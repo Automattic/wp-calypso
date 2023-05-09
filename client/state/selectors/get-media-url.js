@@ -1,14 +1,10 @@
-/**
- * Internal dependencies
- */
-
-import safeImageUrl from 'calypso/lib/safe-image-url';
+import { safeImageUrl } from '@automattic/calypso-url';
 import getMediaItem from 'calypso/state/selectors/get-media-item';
 
 /**
  * Returns the URL for a media item, or null if not known
  *
- * @param  {object}  state   Global state tree
+ * @param  {Object}  state   Global state tree
  * @param  {number}  siteId  Site ID
  * @param  {number}  mediaId Media ID
  * @returns {?string}         Media URL, if known

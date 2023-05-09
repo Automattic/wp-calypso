@@ -1,40 +1,27 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
-import { has } from 'lodash';
-import ReactDom from 'react-dom';
+import classnames from 'classnames';
 import closest from 'component-closest';
 import { localize } from 'i18n-calypso';
-import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import AutoDirection from 'calypso/components/auto-direction';
-import Emojify from 'calypso/components/emojify';
-import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
-import ReaderVisitLink from 'calypso/blocks/reader-visit-link';
+import PropTypes from 'prop-types';
+import { Component, Fragment } from 'react';
+import ReactDom from 'react-dom';
 import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
-import { recordPermalinkClick } from 'calypso/reader/stats';
-import TimeSince from 'calypso/components/time-since';
+import ReaderCombinedCardPostPlaceholder from 'calypso/blocks/reader-combined-card/placeholders/post';
+import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
 import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
 import ReaderFeaturedVideo from 'calypso/blocks/reader-featured-video';
-import ReaderCombinedCardPostPlaceholder from 'calypso/blocks/reader-combined-card/placeholders/post';
-import { isAuthorNameBlocked } from 'calypso/reader/lib/author-name-blocklist';
+import ReaderVisitLink from 'calypso/blocks/reader-visit-link';
+import AutoDirection from 'calypso/components/auto-direction';
 import QueryReaderPost from 'calypso/components/data/query-reader-post';
-import {
-	canBeMarkedAsSeen,
-	getDefaultSeenValue,
-	isEligibleForUnseen,
-} from 'calypso/reader/get-helpers';
+import TimeSince from 'calypso/components/time-since';
+import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
+import { isAuthorNameBlocked } from 'calypso/reader/lib/author-name-blocklist';
+import { recordPermalinkClick } from 'calypso/reader/stats';
 
-class ReaderCombinedCardPost extends React.Component {
+class ReaderCombinedCardPost extends Component {
 	static propTypes = {
 		currentRoute: PropTypes.string,
 		isWPForTeamsItem: PropTypes.bool,
-		teams: PropTypes.array,
+		hasOrganization: PropTypes.bool,
 		post: PropTypes.object,
 		streamUrl: PropTypes.string,
 		onClick: PropTypes.func,
@@ -42,7 +29,7 @@ class ReaderCombinedCardPost extends React.Component {
 	};
 
 	static defaultProps = {
-		teams: [],
+		hasOrganization: false,
 		showFeaturedAsset: true,
 	};
 
@@ -51,7 +38,7 @@ class ReaderCombinedCardPost extends React.Component {
 		const selection = window.getSelection && window.getSelection();
 
 		// if the click has modifier or was not primary, ignore it
-		if ( event.button > 0 || event.metaKey || event.controlKey || event.shiftKey || event.altKey ) {
+		if ( event.button > 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey ) {
 			if ( closest( event.target, '.reader-combined-card__post-title-link', rootNode ) ) {
 				recordPermalinkClick( 'card_title_with_modifier', this.props.post );
 			}
@@ -92,7 +79,7 @@ class ReaderCombinedCardPost extends React.Component {
 			isDiscover,
 			isSelected,
 			postKey,
-			teams,
+			hasOrganization,
 			isWPForTeamsItem,
 		} = this.props;
 		const isLoading = ! post || post._state === 'pending' || post._state === 'minimal';
@@ -106,7 +93,8 @@ class ReaderCombinedCardPost extends React.Component {
 			);
 		}
 
-		const hasAuthorName = has( post, 'author.name' ) && ! isAuthorNameBlocked( post.author.name );
+		const hasAuthorName =
+			post.author?.hasOwnProperty( 'name' ) && ! isAuthorNameBlocked( post.author.name );
 		let featuredAsset = null;
 		if ( post.canonical_media && post.canonical_media.mediaType === 'video' ) {
 			featuredAsset = (
@@ -130,9 +118,9 @@ class ReaderCombinedCardPost extends React.Component {
 			recordPermalinkClick( 'timestamp_combined_card', post );
 		};
 
-		let isSeen = getDefaultSeenValue( currentRoute );
-		if ( canBeMarkedAsSeen( { post, currentRoute } ) ) {
-			isSeen = isEligibleForUnseen( { teams, isWPForTeamsItem } ) && post.is_seen;
+		let isSeen = false;
+		if ( isEligibleForUnseen( { isWPForTeamsItem, currentRoute, hasOrganization } ) ) {
+			isSeen = post?.is_seen;
 		}
 		const classes = classnames( {
 			'reader-combined-card__post': true,
@@ -151,7 +139,7 @@ class ReaderCombinedCardPost extends React.Component {
 					<AutoDirection>
 						<h1 className="reader-combined-card__post-title">
 							<a className="reader-combined-card__post-title-link" href={ post.URL }>
-								<Emojify>{ post.title }</Emojify>
+								{ post.title }
 							</a>
 						</h1>
 					</AutoDirection>

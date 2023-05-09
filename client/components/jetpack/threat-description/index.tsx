@@ -1,25 +1,18 @@
-/**
- * External dependencies
- */
-import React, { ReactNode } from 'react';
+import { ExternalLink } from '@wordpress/components';
 import { translate, TranslateResult } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { PureComponent, ReactNode } from 'react';
+import DiffViewer from 'calypso/components/diff-viewer';
 import { ThreatStatus } from 'calypso/components/jetpack/threat-item/types';
 import MarkedLines from 'calypso/components/marked-lines';
-import DiffViewer from 'calypso/components/diff-viewer';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export interface Props {
 	children?: ReactNode;
 	status: ThreatStatus;
 	problem: string | ReactNode;
+	type?: string | ReactNode;
+	source?: string;
 	fix?: string | ReactNode;
 	context?: Record< string, unknown >;
 	diff?: string;
@@ -29,7 +22,7 @@ export interface Props {
 	isFixable: boolean;
 }
 
-class ThreatDescription extends React.PureComponent< Props > {
+class ThreatDescription extends PureComponent< Props > {
 	renderTextOrNode( content: string | TranslateResult | ReactNode ) {
 		return <>{ content }</>;
 	}
@@ -46,7 +39,7 @@ class ThreatDescription extends React.PureComponent< Props > {
 				if ( isFixable ) {
 					return translate( 'How will we fix it?' );
 				}
-				return translate( 'Resolving the threat' );
+				return translate( 'How to resolve or handle this detection?' );
 
 				break;
 
@@ -97,14 +90,24 @@ class ThreatDescription extends React.PureComponent< Props > {
 	}
 
 	render() {
-		const { children, problem, fix, diff, rows, context, filename } = this.props;
+		const { children, problem, type, source, fix, diff, rows, context, filename } = this.props;
 
 		return (
 			<div className="threat-description">
 				<p className="threat-description__section-title">
-					<strong>{ translate( 'What was the problem?' ) }</strong>
+					<strong>{ translate( 'What did Jetpack find?' ) }</strong>
 				</p>
 				{ this.renderTextOrNode( <p className="threat-description__section-text">{ problem }</p> ) }
+				{ type &&
+					this.renderTextOrNode( <p className="threat-description__section-text">{ type }</p> ) }
+				{ source &&
+					this.renderTextOrNode(
+						<p className="threat-description__section-text">
+							<ExternalLink href={ source } rel="noopener noreferrer" target="_blank">
+								{ translate( 'Learn more about this vulnerability' ) }
+							</ExternalLink>
+						</p>
+					) }
 				{ ( filename || context || diff || rows ) && (
 					<p className="threat-description__section-title">
 						<strong>{ translate( 'The technical details' ) }</strong>

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getUrlParts, getUrlFromParts } from '@automattic/calypso-url';
 
 export default function safeProtocolUrl( url ) {

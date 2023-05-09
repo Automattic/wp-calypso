@@ -1,26 +1,15 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
 import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import safeProtocolUrl from 'calypso/lib/safe-protocol-url';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { withoutHttp } from 'calypso/lib/url';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class ProfileLink extends React.Component {
+class ProfileLink extends Component {
 	static defaultProps = {
 		imageSize: 100,
 		title: '',

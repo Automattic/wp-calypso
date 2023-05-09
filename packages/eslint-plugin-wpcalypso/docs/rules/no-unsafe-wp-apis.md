@@ -16,8 +16,8 @@ See the [documentation](https://github.com/WordPress/gutenberg/blob/master/docs/
 Examples of **incorrect** code for this rule:
 
 ```js
-import { __experimentalFeature } from '@wordpress/foo';
 import { __unstableFeature } from '@wordpress/bar';
+import { __experimentalFeature } from '@wordpress/foo';
 ```
 
 Examples of **correct** code for this rule:

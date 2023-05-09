@@ -1,10 +1,8 @@
-/**
- * External dependencies
- */
-import 'a8c-fse-common-data-stores';
 import apiFetch from '@wordpress/api-fetch';
-import { apiFetch as apiFetchControls, controls } from '@wordpress/data-controls';
 import { combineReducers, registerStore } from '@wordpress/data';
+import { apiFetch as apiFetchControls, controls } from '@wordpress/data-controls';
+
+import 'a8c-fse-common-data-stores';
 
 export const DEFAULT_VARIANT = 'tour';
 export const BLANK_CANVAS_VARIANT = 'blank-canvas-tour';
@@ -63,11 +61,23 @@ const welcomeGuideVariantReducer = ( state = DEFAULT_VARIANT, action ) => {
 	}
 };
 
+const shouldShowFirstPostPublishedModalReducer = ( state = false, action ) => {
+	switch ( action.type ) {
+		case 'WPCOM_SET_SHOULD_SHOW_FIRST_POST_PUBLISHED_MODAL':
+			return action.value;
+		case 'WPCOM_WELCOME_GUIDE_RESET_STORE':
+			return false;
+		default:
+			return state;
+	}
+};
+
 const reducer = combineReducers( {
 	welcomeGuideManuallyOpened: welcomeGuideManuallyOpenedReducer,
 	showWelcomeGuide: showWelcomeGuideReducer,
 	tourRating: tourRatingReducer,
 	welcomeGuideVariant: welcomeGuideVariantReducer,
+	shouldShowFirstPostPublishedModal: shouldShowFirstPostPublishedModalReducer,
 } );
 
 const actions = {
@@ -79,12 +89,24 @@ const actions = {
 			response,
 		};
 	},
-	setShowWelcomeGuide: ( show, { openedManually } = {} ) => {
-		apiFetch( {
-			path: '/wpcom/v2/block-editor/nux',
-			method: 'POST',
-			data: { show_welcome_guide: show },
+	*fetchShouldShowFirstPostPublishedModal() {
+		const response = yield apiFetchControls( {
+			path: '/wpcom/v2/block-editor/should-show-first-post-published-modal',
 		} );
+
+		return {
+			type: 'WPCOM_SET_SHOULD_SHOW_FIRST_POST_PUBLISHED_MODAL',
+			value: response.should_show_first_post_published_modal,
+		};
+	},
+	setShowWelcomeGuide: ( show, { openedManually, onlyLocal } = {} ) => {
+		if ( ! onlyLocal ) {
+			apiFetch( {
+				path: '/wpcom/v2/block-editor/nux',
+				method: 'POST',
+				data: { show_welcome_guide: show },
+			} );
+		}
 
 		return {
 			type: 'WPCOM_WELCOME_GUIDE_SHOW_SET',
@@ -98,6 +120,9 @@ const actions = {
 	setUsedPageOrPatternsModal: () => {
 		return { type: 'WPCOM_HAS_USED_PATTERNS_MODAL' };
 	},
+	setShouldShowFirstPostPublishedModal: ( value ) => {
+		return { type: 'WPCOM_SET_SHOULD_SHOW_FIRST_POST_PUBLISHED_MODAL', value };
+	},
 	// The `resetStore` action is only used for testing to reset the
 	// store inbetween tests.
 	resetStore: () => ( {
@@ -105,12 +130,15 @@ const actions = {
 	} ),
 };
 
-const selectors = {
+export const selectors = {
 	isWelcomeGuideManuallyOpened: ( state ) => state.welcomeGuideManuallyOpened,
 	isWelcomeGuideShown: ( state ) => !! state.showWelcomeGuide,
 	isWelcomeGuideStatusLoaded: ( state ) => typeof state.showWelcomeGuide !== 'undefined',
 	getTourRating: ( state ) => state.tourRating,
-	getWelcomeGuideVariant: ( state ) => state.welcomeGuideVariant,
+	// the 'modal' variant previously used for mobile has been removed but its slug may still be persisted in local storage
+	getWelcomeGuideVariant: ( state ) =>
+		state.welcomeGuideVariant === 'modal' ? DEFAULT_VARIANT : state.welcomeGuideVariant,
+	getShouldShowFirstPostPublishedModal: ( state ) => state.shouldShowFirstPostPublishedModal,
 };
 
 export function register() {

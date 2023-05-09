@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import { last } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import { REASONS_FOR_MANUAL_RENEWAL } from '../constants';
 import {
 	wasImmediateLoginAttempted,
 	wasManualRenewalImmediateLoginAttempted,
@@ -14,7 +8,6 @@ import {
 	getImmediateLoginEmail,
 	getImmediateLoginLocale,
 } from '../selectors';
-import { REASONS_FOR_MANUAL_RENEWAL } from '../constants';
 
 describe( 'immediate-login/selectors', () => {
 	describe( 'wasImmediateLoginAttempted', () => {

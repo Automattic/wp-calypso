@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import SiteTaxonomyTerm from './site.taxonomy.term';
 
 /**
@@ -38,7 +35,7 @@ class SiteTaxonomy {
 	/**
 	 * Get a list of Terms for the Taxonomy
 	 *
-	 * @param {object} [query] - query object
+	 * @param {Object} [query] - query object
 	 * @param {Function} fn - callback function
 	 * @returns {Promise} Promise
 	 */
@@ -51,7 +48,7 @@ class SiteTaxonomy {
 	 * Return `Term` instance
 	 *
 	 * @param {string} [term] - term slug
-	 * @returns {Term} Term instance
+	 * @returns {SiteTaxonomyTerm} Term instance
 	 */
 	term( term ) {
 		return new SiteTaxonomyTerm( term, this._taxonomy, this._siteId, this.wpcom );

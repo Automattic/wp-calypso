@@ -1,16 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-
-/**
- * External dependencies
- */
-import { shallow } from 'enzyme';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { screen } from '@testing-library/react';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { TranslatorInvite } from '../';
 
 describe( 'TranslatorInvite', () => {
@@ -41,12 +33,16 @@ describe( 'TranslatorInvite', () => {
 	};
 
 	test( 'should not render when no locale information present', () => {
-		const wrapper = shallow( <TranslatorInvite { ...defaultProps } /> );
-		expect( wrapper.find( '.translator-invite__content' ) ).toHaveLength( 0 );
+		const { container } = renderWithProvider( <TranslatorInvite { ...defaultProps } /> );
+		expect( container.firstChild ).toBeEmptyDOMElement();
 	} );
 
 	test( 'should render when no locale information present', () => {
-		const wrapper = shallow( <TranslatorInvite { ...defaultProps } locale="tl" /> );
-		expect( wrapper.find( '.translator-invite__content' ) ).toHaveLength( 1 );
+		renderWithProvider( <TranslatorInvite { ...defaultProps } locale="tl" /> );
+		expect(
+			screen.getByText(
+				'Would you like to help us translate WordPress.com into {{a}}%(language)s{{/a}}?'
+			)
+		).toBeVisible();
 	} );
 } );

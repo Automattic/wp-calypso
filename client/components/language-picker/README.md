@@ -61,6 +61,8 @@ when its value changes.
 
 ### Props
 
+`isLoading` - Whether or not the language picker should display its loading context.
+
 `languages` - **required** Array with information about languages, their names, language
 slugs, popularity etc. It's exported by `config` module under the `languages` key.
 

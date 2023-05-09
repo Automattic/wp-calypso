@@ -1,39 +1,30 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
-import wp from 'calypso/lib/wp';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import QuerySites from 'calypso/components/data/query-sites';
 import EmptyContent from 'calypso/components/empty-content';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
-import { emailManagementNewTitanAccount } from 'calypso/my-sites/email/paths';
-import getSitesItems from 'calypso/state/selectors/get-sites-items';
-import { getSiteSlug, hasAllSitesList } from 'calypso/state/sites/selectors';
-import { SUPPORT_ROOT } from 'calypso/lib/url/support';
-import { addQueryArgs } from 'calypso/lib/route';
 import { login } from 'calypso/lib/paths';
+import { addQueryArgs } from 'calypso/lib/route';
+import { getTitanProductName } from 'calypso/lib/titan';
+import { SUPPORT_ROOT } from 'calypso/lib/url/support';
+import wp from 'calypso/lib/wp';
+import { emailManagementNewTitanAccount } from 'calypso/my-sites/email/paths';
+import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { getTitanProductName } from 'calypso/lib/titan';
-import QuerySites from 'calypso/components/data/query-sites';
+import getSitesItems from 'calypso/state/selectors/get-sites-items';
+import { getSiteSlug, hasAllSitesList } from 'calypso/state/sites/selectors';
 
 class TitanRedirector extends Component {
 	state = {
 		loaded: false,
 		hasError: false,
 		action: null,
-		orderId: null,
 		subscriptionId: null,
 		blogId: null,
 		domain: null,
-		error: null,
 	};
 
 	componentDidMount() {
@@ -43,39 +34,37 @@ class TitanRedirector extends Component {
 			return;
 		}
 
-		wp.undocumented()
-			.getTitanDetailsForIncomingRedirect( mode, jwt )
+		wp.req
+			.get(
+				{
+					path: `/titan/redirect-info/${ encodeURIComponent( mode ) }`,
+					apiNamespace: 'wpcom/v2',
+				},
+				{ jwt }
+			)
 			.then(
 				( data ) => {
 					this.setState( {
 						hasError: false,
 						loaded: true,
 						action: data?.action,
-						orderId: data?.order_id,
 						subscriptionId: data?.subscription_id,
 						blogId: data?.blog_id,
 						domain: data?.domain,
 					} );
 				},
-				( error ) => {
+				() => {
 					this.setState( {
 						hasError: true,
 						loaded: true,
-						error: error?.message,
 					} );
 				}
 			);
 	}
 
 	render() {
-		const {
-			translate,
-			isLoggedIn,
-			siteSlugs,
-			currentQuery,
-			currentRoute,
-			hasAllSitesLoaded,
-		} = this.props;
+		const { translate, isLoggedIn, siteSlugs, currentQuery, currentRoute, hasAllSitesLoaded } =
+			this.props;
 		const { loaded, hasError, action, domain, blogId, subscriptionId } = this.state;
 
 		if ( ! isLoggedIn ) {

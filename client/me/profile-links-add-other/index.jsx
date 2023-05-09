@@ -1,25 +1,15 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import { addUserProfileLinks } from 'calypso/state/profile-links/actions';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { addUserProfileLinks } from 'calypso/state/profile-links/actions';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class ProfileLinksAddOther extends React.Component {
+class ProfileLinksAddOther extends Component {
 	state = {
 		title: '',
 		value: '',

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import 'calypso/state/rewind/init';
 
 export default function getSiteThreats( state, siteId ) {

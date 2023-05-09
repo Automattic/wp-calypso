@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
 import { forEach, omit, size } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import {
 	READER_CONVERSATION_FOLLOW,
 	READER_CONVERSATION_MUTE,
 	READER_CONVERSATION_UPDATE_FOLLOW_STATUS,
 	READER_POSTS_RECEIVE,
 } from 'calypso/state/reader/action-types';
-import { CONVERSATION_FOLLOW_STATUS } from './follow-status';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
+import { CONVERSATION_FOLLOW_STATUS } from './follow-status';
 import { itemsSchema } from './schema';
 import { key } from './utils';
 
@@ -25,10 +18,8 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 		case READER_CONVERSATION_FOLLOW: {
 			const newState = {
 				...state,
-				[ key(
-					action.payload.siteId,
-					action.payload.postId
-				) ]: CONVERSATION_FOLLOW_STATUS.following,
+				[ key( action.payload.siteId, action.payload.postId ) ]:
+					CONVERSATION_FOLLOW_STATUS.following,
 			};
 			return newState;
 		}

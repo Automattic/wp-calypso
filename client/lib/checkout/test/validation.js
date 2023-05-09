@@ -2,14 +2,8 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import moment from 'moment';
-
-/**
- * Internal dependencies
- */
+import * as processorSpecificMethods from '../processor-specific';
 import {
 	validatePaymentDetails,
 	getCreditCardType,
@@ -17,7 +11,6 @@ import {
 	getCreditCardFieldRules,
 	mergeValidationRules,
 } from '../validation';
-import * as processorSpecificMethods from '../processor-specific';
 
 jest.mock( '../processor-specific', () => {
 	const realProcessorSpecificMethods = jest.requireActual( '../processor-specific' );

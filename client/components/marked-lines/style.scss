@@ -1,7 +1,7 @@
 
 .marked-lines {
 	padding: 0;
-	background-color: var( --color-neutral-0 );
+	background-color: var(--color-neutral-0);
 	font-family: $monospace;
 	display: flex;
 	flex-direction: row;
@@ -9,7 +9,7 @@
 }
 
 .marked-lines__marked-line {
-	background-color: rgba( var( --color-error-rgb ), 0.2 );
+	background-color: rgba(var(--color-error-rgb), 0.2);
 }
 
 .marked-lines__line-numbers {
@@ -20,11 +20,11 @@
 
 .marked-lines__line-number {
 	padding: 0 4px;
-	background-color: var( --color-neutral-10 );
-	color: var( --color-text-subtle );
+	background-color: var(--color-neutral-10);
+	color: var(--color-text-subtle);
 
 	&.marked-lines__marked-line {
-		background-color: rgba( var( --color-error-rgb ), 0.15 );
+		background-color: rgba(var(--color-error-rgb), 0.15);
 	}
 }
 
@@ -40,8 +40,8 @@
 }
 
 .marked-lines__mark {
-	background-color: var( --color-error );
-	color: var( --color-text-inverted );
+	background-color: var(--color-error);
+	color: var(--color-text-inverted);
 	border-radius: 2px;
 	padding: 2px 4px;
 }

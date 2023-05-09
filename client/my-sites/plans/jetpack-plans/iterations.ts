@@ -1,13 +1,13 @@
-/**
- * External dependencies
- */
 import { getUrlParts } from '@automattic/calypso-url';
 
 /**
  * Iterations
  */
 
-export enum Iterations {}
+// No iterations, currently
+export enum Iterations {
+	_ = '', // Needed to convince TS that this is not a numeric enum.
+}
 
 const iterationNames: string[] = Object.values( Iterations );
 
@@ -18,7 +18,7 @@ const iterationNames: string[] = Object.values( Iterations );
 /**
  * Gets the name of the current CRO iteration.
  *
- * **NOTE:** Avoid using this externally; instead, opt for either
+ * NOTE:** Avoid using this externally; instead, opt for either
  * `getForCurrentCROIteration` or `doForCurrentCROIteration`.
  *
  * @see Iterations
@@ -55,7 +55,6 @@ type IterationValueMap< T > = Partial< { [ key in Iterations ]: T } >;
  *
  * @param valueGetter {IterationValueMap|IterationValueFunction} Either a map
  * from Iterations to return values, or a function that accepts the current Iteration as an argument.
- *
  * @see getCurrentCROIterationName
  */
 export const getForCurrentCROIteration = < T >(

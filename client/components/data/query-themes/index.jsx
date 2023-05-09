@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-
+import { isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { isEqual } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { requestThemes } from 'calypso/state/themes/actions';
 import { getThemesForQuery, isRequestingThemesForQuery } from 'calypso/state/themes/selectors';
 
@@ -21,8 +13,8 @@ class QueryThemes extends Component {
 		query: PropTypes.shape( {
 			// The search string
 			search: PropTypes.string,
-			// The tier to look for -- 'free', 'premium', or '' (for all themes)
-			tier: PropTypes.oneOf( [ '', 'free', 'premium' ] ),
+			// The tier to look for -- 'free', 'premium', 'marketplace', or '' (for all themes)
+			tier: PropTypes.oneOf( [ '', 'free', 'premium', 'marketplace' ] ),
 			// Comma-separated list of filters; see my-sites/themes/theme-filters
 			filter: PropTypes.string,
 			// Which page of the results list to display

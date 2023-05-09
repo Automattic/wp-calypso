@@ -1,61 +1,17 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import { fetchingConnection, fetchingConnections, connections } from '../reducer';
 import {
 	PUBLICIZE_CONNECTION_CREATE,
 	PUBLICIZE_CONNECTION_DELETE,
 	PUBLICIZE_CONNECTION_RECEIVE,
-	PUBLICIZE_CONNECTION_REQUEST,
-	PUBLICIZE_CONNECTION_REQUEST_FAILURE,
-	PUBLICIZE_CONNECTION_REQUEST_SUCCESS,
 	PUBLICIZE_CONNECTION_UPDATE,
 	PUBLICIZE_CONNECTIONS_REQUEST,
 	PUBLICIZE_CONNECTIONS_RECEIVE,
 	PUBLICIZE_CONNECTIONS_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import { fetchingConnections, connections } from '../reducer';
 
 describe( 'reducer', () => {
-	describe( 'fetchConnection()', () => {
-		test( 'should set fetching to true for fetching action', () => {
-			const state = fetchingConnection( null, {
-				type: PUBLICIZE_CONNECTION_REQUEST,
-				connectionId: 2,
-				siteId: 2916284,
-			} );
-
-			expect( state[ 2 ] ).to.be.true;
-		} );
-
-		test( 'should set fetching to false for received action', () => {
-			const state = fetchingConnection( null, {
-				type: PUBLICIZE_CONNECTION_REQUEST_SUCCESS,
-				connectionId: 2,
-				siteId: 2916284,
-			} );
-
-			expect( state[ 2 ] ).to.be.false;
-		} );
-
-		test( 'should set fetching to false for failed action', () => {
-			const state = fetchingConnection( null, {
-				type: PUBLICIZE_CONNECTION_REQUEST_FAILURE,
-				connectionId: 2,
-				siteId: 2916284,
-			} );
-
-			expect( state[ 2 ] ).to.be.false;
-		} );
-	} );
-
 	describe( '#fetchingConnections()', () => {
 		test( 'should set fetching to true for fetching action', () => {
 			const state = fetchingConnections( null, {
@@ -63,7 +19,7 @@ describe( 'reducer', () => {
 				siteId: 2916284,
 			} );
 
-			expect( state[ 2916284 ] ).to.be.true;
+			expect( state[ 2916284 ] ).toBe( true );
 		} );
 
 		test( 'should set fetching to false for received action', () => {
@@ -72,7 +28,7 @@ describe( 'reducer', () => {
 				siteId: 2916284,
 			} );
 
-			expect( state[ 2916284 ] ).to.be.false;
+			expect( state[ 2916284 ] ).toBe( false );
 		} );
 
 		test( 'should set fetching to false for failed action', () => {
@@ -81,7 +37,7 @@ describe( 'reducer', () => {
 				siteId: 2916284,
 			} );
 
-			expect( state[ 2916284 ] ).to.be.false;
+			expect( state[ 2916284 ] ).toBe( false );
 		} );
 	} );
 
@@ -96,7 +52,7 @@ describe( 'reducer', () => {
 					},
 				} );
 
-				expect( state ).to.eql( {
+				expect( state ).toEqual( {
 					1: { ID: 1, site_ID: 2916284 },
 				} );
 			} );
@@ -115,7 +71,7 @@ describe( 'reducer', () => {
 					}
 				);
 
-				expect( state ).to.eql( {
+				expect( state ).toEqual( {
 					1: { ID: 1, site_ID: 2916284 },
 					2: { ID: 2, site_ID: 77203074 },
 				} );
@@ -135,7 +91,7 @@ describe( 'reducer', () => {
 					}
 				);
 
-				expect( state ).to.eql( {
+				expect( state ).toEqual( {
 					2: { ID: 2, site_ID: 2916284 },
 				} );
 			} );
@@ -155,7 +111,7 @@ describe( 'reducer', () => {
 					}
 				);
 
-				expect( state ).to.eql( {
+				expect( state ).toEqual( {
 					1: connection,
 				} );
 			} );
@@ -175,7 +131,7 @@ describe( 'reducer', () => {
 					}
 				);
 
-				expect( state ).to.eql( {
+				expect( state ).toEqual( {
 					1: existingConnection,
 					2: newConnection,
 				} );
@@ -193,7 +149,7 @@ describe( 'reducer', () => {
 					}
 				);
 
-				expect( state ).to.eql( {
+				expect( state ).toEqual( {
 					1: newConnection,
 				} );
 			} );
@@ -215,7 +171,7 @@ describe( 'reducer', () => {
 					}
 				);
 
-				expect( state ).to.eql( {
+				expect( state ).toEqual( {
 					1: { ID: 1, site_ID: 2916284 },
 				} );
 			} );
@@ -235,7 +191,7 @@ describe( 'reducer', () => {
 					}
 				);
 
-				expect( state ).to.eql( {
+				expect( state ).toEqual( {
 					1: existingConnection,
 					2: newConnection,
 				} );
@@ -253,7 +209,7 @@ describe( 'reducer', () => {
 					}
 				);
 
-				expect( state ).to.eql( {
+				expect( state ).toEqual( {
 					1: newConnection,
 				} );
 			} );
@@ -273,7 +229,7 @@ describe( 'reducer', () => {
 					}
 				);
 
-				expect( state ).to.eql( {
+				expect( state ).toEqual( {
 					1: existingConnection,
 					2: newConnection,
 				} );
@@ -291,14 +247,14 @@ describe( 'reducer', () => {
 					}
 				);
 
-				expect( state ).to.eql( {
+				expect( state ).toEqual( {
 					1: newConnection,
 				} );
 			} );
 		} );
 
 		describe( 'persistence', () => {
-			useSandbox( ( sandbox ) => sandbox.stub( console, 'warn' ) );
+			jest.spyOn( console, 'warn' ).mockImplementation();
 
 			test( 'should persist data', () => {
 				const state = deepFreeze( {
@@ -306,7 +262,7 @@ describe( 'reducer', () => {
 					2: { ID: 2, site_ID: 2916284 },
 				} );
 				const persistedState = serialize( connections, state );
-				expect( persistedState ).to.eql( state );
+				expect( persistedState ).toEqual( state );
 			} );
 
 			test( 'should load valid data', () => {
@@ -315,7 +271,7 @@ describe( 'reducer', () => {
 					2: { ID: 2, site_ID: 2916284 },
 				} );
 				const state = deserialize( connections, persistedState );
-				expect( state ).to.eql( persistedState );
+				expect( state ).toEqual( persistedState );
 			} );
 
 			test( 'should ignore loading data with invalid keys', () => {
@@ -324,7 +280,7 @@ describe( 'reducer', () => {
 					bar: { ID: 2, site_ID: 2916284 },
 				} );
 				const state = deserialize( connections, persistedState );
-				expect( state ).to.eql( {} );
+				expect( state ).toEqual( {} );
 			} );
 
 			test( 'should ignore loading data with invalid values', () => {
@@ -333,7 +289,7 @@ describe( 'reducer', () => {
 					2: { ID: 2, site_ID: 2916284 },
 				} );
 				const state = deserialize( connections, persistedState );
-				expect( state ).to.eql( {} );
+				expect( state ).toEqual( {} );
 			} );
 		} );
 	} );

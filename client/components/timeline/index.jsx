@@ -1,16 +1,6 @@
-/**
- * External dependencies
- */
-import React, { PureComponent } from 'react';
-
-/**
- * Internal dependencies
- */
+import { Children, PureComponent } from 'react';
 import TimelineEvent from './timeline-event.jsx';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default class Timeline extends PureComponent {
@@ -18,7 +8,7 @@ export default class Timeline extends PureComponent {
 		children: ( props, propName, componentName ) => {
 			const prop = props[ propName ];
 			return (
-				React.Children.toArray( prop ).find( ( child ) => child.type !== TimelineEvent ) &&
+				Children.toArray( prop ).find( ( child ) => child.type !== TimelineEvent ) &&
 				new Error( `${ componentName } only accepts "<TimelineItem />" elements` )
 			);
 		},

@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
 import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
-
-/*
- * Internal Dependencies
- */
-import { getSite } from 'calypso/state/reader/sites/selectors';
-import { getFeed } from 'calypso/state/reader/feeds/selectors';
-import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
+import QueryReaderSite from 'calypso/components/data/query-reader-site';
+import { getFeed } from 'calypso/state/reader/feeds/selectors';
+import { getSite } from 'calypso/state/reader/sites/selectors';
 
 /**
  * A HoC function that will take in reader identifiers siteId or feedId and
@@ -22,11 +14,11 @@ import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
  *  1. feedId --> feedId, siteId, feed, site
  *  2. blogId --> feedId, siteId, feed, site
  *
- * @param {object} Component the component to wrap
- * @returns {object} wrapped component that hands down feed/site to its child
+ * @param {Object} Component the component to wrap
+ * @returns {Object} wrapped component that hands down feed/site to its child
  */
 const connectSite = ( Component ) => {
-	class connectSiteFetcher extends React.PureComponent {
+	class connectSiteFetcher extends PureComponent {
 		static propTypes = {
 			feed: PropTypes.object,
 			site: PropTypes.object,

@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import { maxBy, values } from 'lodash';
-
-/**
- * Internal Dependencies
- */
 
 export default function pickPrimaryTag( post ) {
 	// if we hand max an invalid or empty array, it returns -Infinity

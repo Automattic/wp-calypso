@@ -1,52 +1,40 @@
-/**
- * External dependencies
- */
-import React, { Fragment } from 'react';
-import { connect } from 'react-redux';
-
-/**
- * Internal Dependencies
- */
-import HelpContact from 'calypso/me/help/help-contact';
+import { SUPPORT_FORUM } from '@automattic/help-center';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import InlineHelpForumView from 'calypso/blocks/inline-help/inline-help-forum-view';
+import QuerySupportTypes from 'calypso/blocks/inline-help/inline-help-query-support-types';
 import PlaceholderLines from 'calypso/blocks/inline-help/placeholder-lines';
-import getInlineHelpSupportVariation, {
-	SUPPORT_FORUM,
-} from 'calypso/state/selectors/get-inline-help-support-variation';
-import { getHelpSelectedSite } from 'calypso/state/help/selectors';
+import HelpContact from 'calypso/me/help/help-contact';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getInlineHelpSupportVariation from 'calypso/state/selectors/get-inline-help-support-variation';
 import isSupportVariationDetermined from 'calypso/state/selectors/is-support-variation-determined';
-import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { getSectionName } from 'calypso/state/ui/selectors';
 
-const InlineHelpContactView = ( {
-	/* eslint-disable no-shadow */
-	isSupportVariationDetermined = false,
-	/* eslint-enable no-shadow */
-	supportVariation,
-	selectedSite,
-} ) => {
-	if ( ! isSupportVariationDetermined ) {
-		return <PlaceholderLines />;
-	}
+function InlineHelpContactViewLoaded() {
+	const dispatch = useDispatch();
+	const supportVariation = useSelector( getInlineHelpSupportVariation );
+	const sectionName = useSelector( getSectionName );
+
+	useEffect( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_inlinehelp_contact_view', {
+				support_variation: supportVariation,
+				location: 'inline-help-popover',
+				section: sectionName,
+			} )
+		);
+	}, [ dispatch, supportVariation, sectionName ] );
+
+	return supportVariation === SUPPORT_FORUM ? <InlineHelpForumView /> : <HelpContact compact />;
+}
+
+export default function InlineHelpContactView() {
+	const supportVariationDetermined = useSelector( isSupportVariationDetermined );
 
 	return (
-		<Fragment>
-			<TrackComponentView
-				eventName="calypso_inlinehelp_contact_view"
-				eventProperties={ {
-					support_variation: supportVariation,
-				} }
-			/>
-			{ supportVariation === SUPPORT_FORUM ? (
-				<InlineHelpForumView />
-			) : (
-				<HelpContact compact selectedSite={ selectedSite } />
-			) }
-		</Fragment>
+		<>
+			<QuerySupportTypes />
+			{ supportVariationDetermined ? <InlineHelpContactViewLoaded /> : <PlaceholderLines /> }
+		</>
 	);
-};
-
-export default connect( ( state ) => ( {
-	supportVariation: getInlineHelpSupportVariation( state ),
-	isSupportVariationDetermined: isSupportVariationDetermined( state ),
-	selectedSite: getHelpSelectedSite( state ),
-} ) )( InlineHelpContactView );
+}

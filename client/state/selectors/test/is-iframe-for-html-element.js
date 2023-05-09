@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import isIframeForHtmlElement from '../is-iframe-for-html-element';
 
 describe( 'isIframeForHtmlElement()', () => {

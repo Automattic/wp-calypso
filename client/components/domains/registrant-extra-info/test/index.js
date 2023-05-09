@@ -1,40 +1,33 @@
 /**
- * External dependencies
+ * @jest-environment jsdom
  */
-import { expect } from 'chai';
-import { shallow } from 'enzyme';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import RegistrantExtraInfoCaForm from '../ca-form';
-import RegistrantExtraInfoFrForm from '../fr-form';
-import RegistrantExtraInfoUkForm from '../uk-form';
+import { render, screen } from '@testing-library/react';
 import RegistrantExtraInfoForm from '../index';
 
-jest.mock( 'store', () => ( { get: () => {}, set: () => {} } ) );
+jest.mock( '../ca-form', () => () => <div data-testid="ca-form"></div> );
+jest.mock( '../fr-form', () => () => <div data-testid="fr-form"></div> );
+jest.mock( '../uk-form', () => () => <div data-testid="uk-form"></div> );
 
 describe( 'Switcher Form', () => {
 	test( 'should render correct form for fr', () => {
-		const wrapper = shallow( <RegistrantExtraInfoForm tld="fr" /> );
+		render( <RegistrantExtraInfoForm tld="fr" /> );
 
-		expect( wrapper.find( RegistrantExtraInfoFrForm ) ).to.have.length( 1 );
-		expect( wrapper.find( RegistrantExtraInfoCaForm ) ).to.have.length( 0 );
+		expect( screen.getByTestId( 'fr-form' ) ).toBeVisible();
+		expect( screen.queryByTestId( 'ca-form' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'should render correct form for ca', () => {
-		const wrapper = shallow( <RegistrantExtraInfoForm tld="ca" /> );
+		render( <RegistrantExtraInfoForm tld="ca" /> );
 
-		expect( wrapper.find( RegistrantExtraInfoCaForm ) ).to.have.length( 1 );
-		expect( wrapper.find( RegistrantExtraInfoFrForm ) ).to.have.length( 0 );
+		expect( screen.getByTestId( 'ca-form' ) ).toBeVisible();
+		expect( screen.queryByTestId( 'fr-form' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'should render correct form for uk', () => {
-		const wrapper = shallow( <RegistrantExtraInfoForm tld="uk" /> );
+		render( <RegistrantExtraInfoForm tld="uk" /> );
 
-		expect( wrapper.find( RegistrantExtraInfoCaForm ) ).to.have.length( 0 );
-		expect( wrapper.find( RegistrantExtraInfoFrForm ) ).to.have.length( 0 );
-		expect( wrapper.find( RegistrantExtraInfoUkForm ) ).to.have.length( 1 );
+		expect( screen.queryByTestId( 'ca-form' ) ).not.toBeInTheDocument();
+		expect( screen.queryByTestId( 'fr-form' ) ).not.toBeInTheDocument();
+		expect( screen.getByTestId( 'uk-form' ) ).toBeVisible();
 	} );
 } );

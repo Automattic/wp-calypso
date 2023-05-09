@@ -22,9 +22,7 @@ fun BuildSteps.bashNodeScript(init: ScriptBuildStep.() -> Unit): ScriptBuildStep
 	val result = ScriptBuildStep(init)
 	result.scriptContent = """
 		#!/bin/bash
-		# Update node
-		. "${'$'}NVM_DIR/nvm.sh" --no-use
-		nvm install
+		# Set bash options.
 		set -o errexit
 		set -o nounset
 		set -o pipefail
@@ -32,6 +30,7 @@ fun BuildSteps.bashNodeScript(init: ScriptBuildStep.() -> Unit): ScriptBuildStep
 		# Existing script content set by caller:
 		${result.scriptContent}
 	""".trimIndent()
+
 	result.dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 	result.dockerPull = true
 	result.dockerImage = result.dockerImage ?: "%docker_image%"

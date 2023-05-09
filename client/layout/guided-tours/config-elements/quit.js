@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
-import { targetForSlug } from '../positioning';
+import { translate } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { contextTypes } from '../context-types';
+import { targetForSlug } from '../positioning';
 
 export default class Quit extends Component {
 	static displayName = 'Quit';
@@ -35,11 +27,8 @@ export default class Quit extends Component {
 		this.removeTargetListener();
 	}
 
-	UNSAFE_componentWillUpdate() {
-		this.removeTargetListener();
-	}
-
 	componentDidUpdate() {
+		this.removeTargetListener();
 		this.addTargetListener();
 	}
 

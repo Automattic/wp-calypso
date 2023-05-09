@@ -1,30 +1,22 @@
-/**
- * External dependencies
- */
-import { get, omit, startsWith } from 'lodash';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { errorNotice } from 'calypso/state/notices/actions';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { get, omit, startsWith } from 'lodash';
+import { trailingslashit } from 'calypso/lib/route';
 import { JETPACK_SETTINGS_REQUEST, JETPACK_SETTINGS_SAVE } from 'calypso/state/action-types';
-import getJetpackSettings from 'calypso/state/selectors/get-jetpack-settings';
-import getSiteUrl from 'calypso/state/selectors/get-site-url';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import {
+	saveJetpackSettingsSuccess,
+	updateJetpackSettings,
+} from 'calypso/state/jetpack/settings/actions';
 import {
 	filterSettingsByActiveModules,
 	normalizeSettings,
 	sanitizeSettings,
 } from 'calypso/state/jetpack/settings/utils';
-import {
-	saveJetpackSettingsSuccess,
-	updateJetpackSettings,
-} from 'calypso/state/jetpack/settings/actions';
-import { trailingslashit } from 'calypso/lib/route';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { errorNotice } from 'calypso/state/notices/actions';
+import getJetpackSettings from 'calypso/state/selectors/get-jetpack-settings';
+import getSiteUrl from 'calypso/state/selectors/get-site-url';
 
 export const MAX_WOOCOMMERCE_INSTALL_RETRIES = 2;
 
@@ -43,11 +35,11 @@ const receiveJetpackSettings = ( { siteId }, settings ) =>
 /**
  * Dispatches a request to fetch settings for a given site
  *
- * @param   {object}   action         Redux action
- * @returns {object}   Dispatched http action
+ * @param   {Object}   action         Redux action
+ * @returns {Object}   Dispatched http action
  */
 export const requestJetpackSettings = ( action ) => {
-	const { siteId, query } = action;
+	const { siteId } = action;
 
 	return http(
 		{
@@ -56,7 +48,6 @@ export const requestJetpackSettings = ( action ) => {
 			path: '/jetpack-blogs/' + siteId + '/rest-api/',
 			query: {
 				path: '/jetpack/v4/settings/',
-				query: JSON.stringify( query ),
 				json: true,
 			},
 		},
@@ -64,26 +55,28 @@ export const requestJetpackSettings = ( action ) => {
 	);
 };
 
-export const announceRequestFailure = ( { siteId } ) => ( dispatch, getState ) => {
-	const state = getState();
-	const url = getSiteUrl( state, siteId );
-	const noticeOptions = {
-		id: `jps-communication-error-${ siteId }`,
+export const announceRequestFailure =
+	( { siteId } ) =>
+	( dispatch, getState ) => {
+		const state = getState();
+		const url = getSiteUrl( state, siteId );
+		const noticeOptions = {
+			id: `jps-communication-error-${ siteId }`,
+		};
+
+		if ( url ) {
+			noticeOptions.button = translate( 'Visit site admin' );
+			noticeOptions.href = trailingslashit( url ) + 'wp-admin/admin.php?page=jetpack';
+		}
+
+		return dispatch( errorNotice( translate( 'Something went wrong.' ), noticeOptions ) );
 	};
-
-	if ( url ) {
-		noticeOptions.button = translate( 'Visit site admin' );
-		noticeOptions.href = trailingslashit( url ) + 'wp-admin/admin.php?page=jetpack';
-	}
-
-	return dispatch( errorNotice( translate( 'Something went wrong.' ), noticeOptions ) );
-};
 
 /**
  * Dispatches a request to save particular settings on a site
  *
- * @param   {object} action Redux action
- * @returns {object} Dispatched http action
+ * @param   {Object} action Redux action
+ * @returns {Object} Dispatched http action
  */
 export const saveJetpackSettings = ( action ) => ( dispatch, getState ) => {
 	const { settings, siteId } = action;

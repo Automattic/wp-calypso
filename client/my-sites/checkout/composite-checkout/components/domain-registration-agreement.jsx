@@ -1,25 +1,18 @@
-/**
- * External dependencies
- */
-import React, { Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { get, map, reduce } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import { Component, Fragment } from 'react';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import Gridicon from 'calypso/components/gridicon';
 import {
 	getDomainRegistrations,
 	getDomainTransfers,
 	hasDomainRegistration,
 	hasTransferProduct,
 } from 'calypso/lib/cart-values/cart-items';
+import CheckoutTermsItem from 'calypso/my-sites/checkout/composite-checkout/components/checkout-terms-item';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-class DomainRegistrationAgreement extends React.Component {
+class DomainRegistrationAgreement extends Component {
 	recordRegistrationAgreementClick = () => {
 		gaRecordEvent( 'Upgrades', 'Clicked Registration Agreement Link' );
 	};
@@ -135,12 +128,7 @@ class DomainRegistrationAgreement extends React.Component {
 			return null;
 		}
 
-		return (
-			<div className="checkout__domain-registration-agreement-link">
-				<Gridicon icon="info-outline" size={ 18 } />
-				{ this.renderAgreements() }
-			</div>
-		);
+		return <CheckoutTermsItem isPrewrappedChildren>{ this.renderAgreements() }</CheckoutTermsItem>;
 	}
 }
 

@@ -1,21 +1,10 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import ReaderLandingStepContent from './content';
-import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-
-/**
- * Style dependencies
- */
+import { submitSignupStep } from 'calypso/state/signup/progress/actions';
+import ReaderLandingStepContent from './content';
 import './style.scss';
 
 class ReaderLandingStep extends Component {

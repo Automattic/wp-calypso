@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { createSelector } from '@automattic/state-utils';
+import { includes } from 'lodash';
 import { getQueryManager } from 'calypso/state/posts/selectors/get-query-manager';
 import { getSerializedPostsQuery, normalizePostForDisplay } from 'calypso/state/posts/utils';
 
@@ -16,9 +9,9 @@ import 'calypso/state/posts/init';
  * Returns an array of normalized posts for the posts query, or null if no
  * posts have been received.
  *
- * @param   {object}  state  Global state tree
+ * @param   {Object}  state  Global state tree
  * @param   {?number} siteId Site ID, or `null` for all-sites queries
- * @param   {object}  query  Post query object
+ * @param   {Object}  query  Post query object
  * @returns {?Array}         Posts for the post query
  */
 export const getPostsForQuery = createSelector(

@@ -1,27 +1,18 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
-import { Button, CompactCard } from '@automattic/components';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import HeaderCake from 'calypso/components/header-cake';
-import CardHeading from 'calypso/components/card-heading';
-import ImportTypeChoice from 'calypso/my-sites/migrate/components/import-type-choice';
-import { get } from 'lodash';
-import { getImportSectionLocation, redirectTo } from 'calypso/my-sites/migrate/helpers';
-import SitesBlock from 'calypso/my-sites/migrate/components/sites-block';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { FEATURE_UPLOAD_THEMES_PLUGINS, planHasFeature } from '@automattic/calypso-products';
+import { Button, CompactCard } from '@automattic/components';
+import { Button as WpButton } from '@wordpress/components';
+import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import CardHeading from 'calypso/components/card-heading';
+import HeaderCake from 'calypso/components/header-cake';
+import ImportTypeChoice from 'calypso/my-sites/migrate/components/import-type-choice';
+import SitesBlock from 'calypso/my-sites/migrate/components/sites-block';
+import { getImportSectionLocation, redirectTo } from 'calypso/my-sites/migrate/helpers';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
-/**
- * Style dependencies
- */
 import './section-migrate.scss';
 
 class StepImportOrMigrate extends Component {
@@ -74,11 +65,18 @@ class StepImportOrMigrate extends Component {
 		return planSlug && planHasFeature( planSlug, FEATURE_UPLOAD_THEMES_PLUGINS );
 	};
 
+	installJetpack = () => {
+		this.props.recordTracksEvent( 'calypso_site_importer_install_jetpack' );
+		const { sourceSiteInfo } = this.props;
+		const sourceSiteDomain = get( sourceSiteInfo, 'site_url', '' );
+		const source = 'import';
+		window.open( `/jetpack/connect/?url=${ sourceSiteDomain }&source=${ source }`, '_blank' );
+	};
+
 	getJetpackOrUpgradeMessage = () => {
-		const { sourceSiteInfo, sourceHasJetpack, isTargetSiteAtomic, translate } = this.props;
+		const { sourceHasJetpack, isTargetSiteAtomic, translate } = this.props;
 
 		if ( ! sourceHasJetpack ) {
-			const sourceSiteDomain = get( sourceSiteInfo, 'site_url', '' );
 			return (
 				<p>
 					{ translate(
@@ -88,9 +86,7 @@ class StepImportOrMigrate extends Component {
 							' Jetpack{{/jetpackInstallLink}}.',
 						{
 							components: {
-								jetpackInstallLink: (
-									<a href={ `https://wordpress.com/jetpack/connect/?url=${ sourceSiteDomain }` } />
-								),
+								jetpackInstallLink: <WpButton isLink onClick={ this.installJetpack } />,
 							},
 						}
 					) }
@@ -108,14 +104,8 @@ class StepImportOrMigrate extends Component {
 	}
 
 	render() {
-		const {
-			targetSite,
-			targetSiteSlug,
-			sourceHasJetpack,
-			sourceSite,
-			sourceSiteInfo,
-			translate,
-		} = this.props;
+		const { targetSite, targetSiteSlug, sourceHasJetpack, sourceSite, sourceSiteInfo, translate } =
+			this.props;
 		const backHref = `/migrate/${ targetSiteSlug }`;
 
 		const everythingLabels = [];

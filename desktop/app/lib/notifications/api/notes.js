@@ -1,11 +1,4 @@
-/*
- * External dependencies
- */
 const https = require( 'https' );
-
-/*
- * Internal dependencies
- */
 const keychain = require( '../../../lib/keychain' );
 
 const promiseTimeout = function ( ms, promise ) {

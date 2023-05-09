@@ -1,4 +1,5 @@
 const path = require( 'path' );
+const { nodeConfig } = require( '@automattic/calypso-eslint-overrides' );
 
 module.exports = {
 	// Allow fetch api function usage (and similar)
@@ -11,12 +12,37 @@ module.exports = {
 			'error',
 			{ packageDir: [ __dirname, path.join( __dirname, '..' ) ] },
 		],
+		// No need to import @testing-library/jest-dom - it is already globally provided by our test setup framework.
+		'no-restricted-imports': [
+			'error',
+			{
+				patterns: [
+					{
+						group: [ '@testing-library/jest-dom*' ],
+						message:
+							'@testing-library/jest-dom is already globally provided by our test setup framework.',
+					},
+				],
+			},
+		],
+		'jest/no-mocks-import': 'off',
 	},
 	overrides: [
 		{
-			files: [ '**/test/**/*' ],
+			files: [ './webpack.*.js', './server/**/*', '**/test/**/*' ],
+			...nodeConfig,
+		},
+		{
+			files: [ './**/docs/example.jsx' ],
 			rules: {
-				'import/no-nodejs-modules': 'off',
+				// We use a log of console.log() in examples.
+				'no-console': 'off',
+			},
+		},
+		{
+			files: [ '**/*.stories.tsx' ],
+			rules: {
+				'import/no-extraneous-dependencies': 'off',
 			},
 		},
 	],

@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-
-import React, { Fragment } from 'react';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import meta from './meta';
+import { Gridicon } from '@automattic/components';
+import { Fragment } from 'react';
+import { SiteTitleButton, SiteTaglineButton } from 'calypso/layout/guided-tours/button-labels';
 import {
 	ButtonRow,
 	Continue,
@@ -18,15 +10,14 @@ import {
 	Step,
 	Tour,
 } from 'calypso/layout/guided-tours/config-elements';
-import { SiteTitleButton } from 'calypso/layout/guided-tours/button-labels';
+import meta from './meta';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 export const ChecklistSiteTitleTour = makeTour(
 	<Tour { ...meta }>
 		<Step
 			name="init"
-			target="site-title-input"
-			arrow="top-left"
+			target="site-tagline-input"
 			placement="below"
 			style={ {
 				animationDelay: '0.7s',
@@ -36,10 +27,13 @@ export const ChecklistSiteTitleTour = makeTour(
 				<Fragment>
 					<p>
 						{ translate(
-							'Update the {{siteTitleButton/}} field with a descriptive name ' +
-								'to let your visitors know which site they’re visiting.',
+							'Update the {{siteTitleButton/}} and {{siteTaglineButton/}} fields ' +
+								'to let visitors clearly identify your site.',
 							{
-								components: { siteTitleButton: <SiteTitleButton /> },
+								components: {
+									siteTitleButton: <SiteTitleButton />,
+									siteTaglineButton: <SiteTaglineButton />,
+								},
 							}
 						) }
 					</p>

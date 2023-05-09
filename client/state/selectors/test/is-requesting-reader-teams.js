@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { isRequestingReaderTeams } from 'calypso/state/teams/selectors';
 
 describe( 'isRequestingReaderTeams()', () => {
@@ -16,7 +8,7 @@ describe( 'isRequestingReaderTeams()', () => {
 			},
 		} );
 
-		expect( isRequesting ).to.be.false;
+		expect( isRequesting ).toBe( false );
 	} );
 
 	test( 'should return true if requesting teams', () => {
@@ -26,6 +18,6 @@ describe( 'isRequestingReaderTeams()', () => {
 			},
 		} );
 
-		expect( isRequesting ).to.be.true;
+		expect( isRequesting ).toBe( true );
 	} );
 } );

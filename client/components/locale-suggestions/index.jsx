@@ -1,25 +1,15 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { getLanguage, addLocaleToPath } from '@automattic/i18n-utils';
 import { getLocaleSlug } from 'i18n-calypso';
 import startsWith from 'lodash/startsWith';
-
-/**
- * Internal dependencies
- */
-import { addLocaleToPath, getLanguage } from 'calypso/lib/i18n-utils';
-import LocaleSuggestionsListItem from './list-item';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import QueryLocaleSuggestions from 'calypso/components/data/query-locale-suggestions';
 import Notice from 'calypso/components/notice';
 import getLocaleSuggestions from 'calypso/state/selectors/get-locale-suggestions';
 import { setLocale } from 'calypso/state/ui/language/actions';
+import LocaleSuggestionsListItem from './list-item';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export class LocaleSuggestions extends Component {
@@ -38,7 +28,7 @@ export class LocaleSuggestions extends Component {
 		dismissed: false,
 	};
 
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		let { locale } = this.props;
 
 		if ( ! locale && typeof navigator === 'object' && 'languages' in navigator ) {
@@ -54,9 +44,9 @@ export class LocaleSuggestions extends Component {
 		this.props.setLocale( locale );
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.locale !== nextProps.locale ) {
-			this.props.setLocale( nextProps.locale );
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.locale !== this.props.locale ) {
+			this.props.setLocale( this.props.locale );
 		}
 	}
 

@@ -1,38 +1,43 @@
-/**
- * External dependencies
- */
-import debug from 'debug';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
-
-/**
- * Internal dependencies
- */
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { identifyUser } from 'calypso/lib/analytics/identify-user';
-import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
-import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import { addToQueue } from 'calypso/lib/analytics/queue';
+import debug from 'debug';
 import {
 	adTrackSignupStart,
 	adTrackSignupComplete,
 	adTrackRegistration,
 } from 'calypso/lib/analytics/ad-tracking';
+import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { identifyUser } from 'calypso/lib/analytics/identify-user';
+import { addToQueue } from 'calypso/lib/analytics/queue';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 const signupDebug = debug( 'calypso:analytics:signup' );
 
-export function recordSignupStart( flow, ref ) {
+export function recordSignupStart( flow, ref, optionalProps ) {
 	// Tracks
-	recordTracksEvent( 'calypso_signup_start', { flow, ref } );
+	recordTracksEvent( 'calypso_signup_start', { flow, ref, ...optionalProps } );
 	// Google Analytics
 	gaRecordEvent( 'Signup', 'calypso_signup_start' );
 	// Marketing
 	adTrackSignupStart( flow );
 	// FullStory
-	recordFullStoryEvent( 'calypso_signup_start', { flow, ref } );
+	recordFullStoryEvent( 'calypso_signup_start', { flow, ref, ...optionalProps } );
 }
 
 export function recordSignupComplete(
-	{ flow, siteId, isNewUser, hasCartItems, isNew7DUserSite },
+	{
+		flow,
+		siteId,
+		isNewUser,
+		isBlankCanvas,
+		hasCartItems,
+		planProductSlug,
+		domainProductSlug,
+		isNew7DUserSite,
+		theme,
+		intent,
+		startingPoint,
+	},
 	now
 ) {
 	const isNewSite = !! siteId;
@@ -42,7 +47,19 @@ export function recordSignupComplete(
 		return addToQueue(
 			'signup',
 			'recordSignupComplete',
-			{ flow, siteId, isNewUser, hasCartItems, isNew7DUserSite },
+			{
+				flow,
+				siteId,
+				isNewUser,
+				isBlankCanvas,
+				hasCartItems,
+				planProductSlug,
+				domainProductSlug,
+				isNew7DUserSite,
+				theme,
+				intent,
+				startingPoint,
+			},
 			true
 		);
 	}
@@ -56,7 +73,13 @@ export function recordSignupComplete(
 		blog_id: siteId,
 		is_new_user: isNewUser,
 		is_new_site: isNewSite,
+		is_blank_canvas: isBlankCanvas,
 		has_cart_items: hasCartItems,
+		plan_product_slug: planProductSlug,
+		domain_product_slug: domainProductSlug,
+		theme,
+		intent,
+		starting_point: startingPoint,
 	} );
 
 	// Google Analytics
@@ -90,19 +113,31 @@ export function recordSignupComplete(
 		blog_id: siteId,
 		is_new_user: isNewUser,
 		is_new_site: isNewSite,
+		is_blank_canvas: isBlankCanvas,
 		has_cart_items: hasCartItems,
+		plan_product_slug: planProductSlug,
+		domain_product_slug: domainProductSlug,
+		theme,
+		intent,
+		starting_point: startingPoint,
 	} );
 }
 
-export function recordSignupStep( flow, step ) {
+export function recordSignupStep( flow, step, optionalProps ) {
 	const device = resolveDeviceTypeByViewPort();
+	const props = {
+		flow,
+		step,
+		device,
+		...optionalProps,
+	};
 
-	signupDebug( 'recordSignupStep:', { flow, step, device } );
+	signupDebug( 'recordSignupStep:', props );
 
 	// Tracks
-	recordTracksEvent( 'calypso_signup_step_start', { flow, step, device } );
+	recordTracksEvent( 'calypso_signup_step_start', props );
 	// FullStory
-	recordFullStoryEvent( 'calypso_signup_step_start', { flow, step, device } );
+	recordFullStoryEvent( 'calypso_signup_step_start', props );
 }
 
 export function recordSignupInvalidStep( flow, step ) {
@@ -112,8 +147,8 @@ export function recordSignupInvalidStep( flow, step ) {
 /**
  * Records registration event.
  *
- * @param {object} param {}
- * @param {object} param.userData User data
+ * @param {Object} param {}
+ * @param {Object} param.userData User data
  * @param {string} param.flow Registration flow
  * @param {string} param.type Registration type
  */
@@ -133,3 +168,51 @@ export function recordRegistration( { userData, flow, type } ) {
 	// FullStory
 	recordFullStoryEvent( 'calypso_user_registration_complete', { flow, type, device } );
 }
+
+/**
+ * Records loading of the processing screen
+ *
+ * @param {string} flow Signup flow name
+ * @param {string} previousStep The step before the processing screen
+ * @param {string} optionalProps Extra properties to record
+ */
+export function recordSignupProcessingScreen( flow, previousStep, optionalProps ) {
+	const device = resolveDeviceTypeByViewPort();
+	recordTracksEvent( 'calypso_signup_processing_screen_show', {
+		flow,
+		previous_step: previousStep,
+		device,
+		...optionalProps,
+	} );
+}
+
+/**
+ * Records plan change in signup flow
+ *
+ * @param {string} flow Signup flow name
+ * @param {string} step The step when the user changes the plan
+ * @param {string} previousPlanName The plan name before changing
+ * @param {string} previousPlanSlug The plan slug before changing
+ * @param {string} currentPlanName The plan name after changing
+ * @param {string} currentPlanSlug The plan slug after changing
+ */
+export const recordSignupPlanChange = (
+	flow,
+	step,
+	previousPlanName,
+	previousPlanSlug,
+	currentPlanName,
+	currentPlanSlug
+) => {
+	const device = resolveDeviceTypeByViewPort();
+
+	recordTracksEvent( 'calypso_signup_plan_change', {
+		flow,
+		step,
+		device,
+		previous_plan_name: previousPlanName,
+		previous_plan_slug: previousPlanSlug,
+		current_plan_name: currentPlanName,
+		current_plan_slug: currentPlanSlug,
+	} );
+};

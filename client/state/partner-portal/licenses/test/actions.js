@@ -1,21 +1,19 @@
 /**
  * @jest-environment jsdom
  */
-/**
- * Internal dependencies
- */
-import * as actions from 'calypso/state/partner-portal/licenses/actions';
+
+import {
+	LicenseState,
+	LicenseSortDirection,
+	LicenseSortField,
+} from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import {
 	JETPACK_PARTNER_PORTAL_LICENSES_REQUEST,
 	JETPACK_PARTNER_PORTAL_LICENSES_RECEIVE,
 	JETPACK_PARTNER_PORTAL_LICENSE_COUNTS_REQUEST,
 	JETPACK_PARTNER_PORTAL_LICENSE_COUNTS_RECEIVE,
 } from 'calypso/state/action-types';
-import {
-	LicenseState,
-	LicenseSortDirection,
-	LicenseSortField,
-} from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import * as actions from 'calypso/state/partner-portal/licenses/actions';
 import { LICENSES_PER_PAGE } from 'calypso/state/partner-portal/licenses/constants';
 
 jest.mock( 'calypso/state/partner-portal/partner/selectors', () => ( {

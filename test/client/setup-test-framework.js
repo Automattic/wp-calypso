@@ -1,6 +1,5 @@
-/**
- * External dependencies
- */
+import '@testing-library/jest-dom';
+
 const nock = require( 'nock' );
 
 // Disables all network requests for all tests.
@@ -19,50 +18,27 @@ afterAll( () => {
 	nock.cleanAll();
 } );
 
-// It "mocks" enzyme, so that we can delay loading of
-// the utility functions until enzyme is imported in tests.
-// Props to @gdborton for sharing this technique in his article:
-// https://medium.com/airbnb-engineering/unlocking-test-performance-migrating-from-mocha-to-jest-2796c508ec50.
-let mockEnzymeSetup = false;
+// This is used by @wordpress/components in https://github.com/WordPress/gutenberg/blob/trunk/packages/components/src/ui/utils/space.ts#L33
+// JSDOM or CSSDOM don't provide an implementation for it, so for now we have to mock it.
+global.CSS = {
+	supports: jest.fn(),
+};
 
-jest.mock( 'enzyme', () => {
-	const actualEnzyme = jest.requireActual( 'enzyme' );
-	if ( ! mockEnzymeSetup ) {
-		mockEnzymeSetup = true;
+global.fetch = jest.fn( () =>
+	Promise.resolve( {
+		json: () => Promise.resolve(),
+	} )
+);
 
-		// configure custom enzyme matchers for chai
-		const chai = jest.requireActual( 'chai' );
-		const chaiEnzyme = jest.requireActual( 'chai-enzyme' );
-		chai.use( chaiEnzyme() );
+// Don't need to mock specific functions for any tests, but mocking
+// module because it accesses the `document` global.
+jest.mock( 'wpcom-proxy-request', () => ( {
+	__esModule: true,
+} ) );
 
-		// configure custom Enzyme matchers for Jest
-		jest.requireActual( 'jest-enzyme' );
-
-		// configure enzyme 3 for React, from docs: http://airbnb.io/enzyme/docs/installation/index.html
-		const Adapter = jest.requireActual( 'enzyme-adapter-react-16' );
-		actualEnzyme.configure( { adapter: new Adapter() } );
-
-		// configure snapshot serializer for enzyme
-		const { createSerializer } = jest.requireActual( 'enzyme-to-json' );
-		expect.addSnapshotSerializer( createSerializer( { mode: 'deep' } ) );
-	}
-	return actualEnzyme;
-} );
-
-// It "mocks" sinon, so that we can delay loading of
-// the utility functions until sinon is imported in tests.
-let mockSinonSetup = false;
-
-jest.mock( 'sinon', () => {
-	const actualSinon = jest.requireActual( 'sinon' );
-	if ( ! mockSinonSetup ) {
-		mockSinonSetup = true;
-
-		// configure custom sinon matchers for chai
-		const chai = jest.requireActual( 'chai' );
-		const sinonChai = jest.requireActual( 'sinon-chai' );
-		chai.use( sinonChai );
-		actualSinon.assert.expose( chai.assert, { prefix: '' } );
-	}
-	return actualSinon;
+// TODO: structuredClone wasn't available in Jest before verson 28 so this creates
+// a version to be used for the tests. Once Jest is upgraded to 28 this should
+// be removed.
+global.structuredClone = jest.fn( ( value ) => {
+	return JSON.parse( JSON.stringify( value ) );
 } );

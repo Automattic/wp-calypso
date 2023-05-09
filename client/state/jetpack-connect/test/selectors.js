@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	getAuthAttempts,
 	getAuthorizationData,
@@ -408,7 +405,7 @@ describe( 'selectors', () => {
 				jetpackConnect: {
 					jetpackConnectAuthorize: {
 						authorizeError: {
-							error: 'site_blacklisted',
+							error: 'connection_disabled',
 						},
 					},
 				},

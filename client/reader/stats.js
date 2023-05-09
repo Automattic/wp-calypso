@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import { partial, pick } from 'lodash';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { pick } from 'lodash';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { bumpStat, bumpStatWithPageView } from 'calypso/lib/analytics/mc';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 const debug = debugFactory( 'calypso:reader:stats' );
 
@@ -105,7 +98,6 @@ function getLocation( path ) {
  *   recordTrack after changing windows and would result in a `ui_algo: single_post`
  *   regardless of the stream the post was opened. This now allows the article_opened
  *   Tracks event to correctly specify which stream the post was opened.
- *
  * @deprecated Use the recordReaderTracksEvent action instead.
  */
 export function recordTrack( eventName, eventProperties, { pathnameOverride } = {} ) {
@@ -120,7 +112,8 @@ export function recordTrack( eventName, eventProperties, { pathnameOverride } = 
 			'post_id' in eventProperties &&
 			! ( 'is_jetpack' in eventProperties )
 		) {
-			console.warn( 'consider using recordTrackForPost...', eventName, eventProperties ); //eslint-disable-line no-console
+			// eslint-disable-next-line no-console
+			console.warn( 'consider using recordTrackForPost...', eventName, eventProperties );
 		}
 	}
 
@@ -154,15 +147,13 @@ export function recordTracksRailcar( action, eventName, railcar, overrides = {} 
 	);
 }
 
-export const recordTracksRailcarRender = partial(
-	recordTracksRailcar,
-	'calypso_traintracks_render'
-);
+export function recordTracksRailcarRender( eventName, railcar, overrides ) {
+	return recordTracksRailcar( 'calypso_traintracks_render', eventName, railcar, overrides );
+}
 
-export const recordTracksRailcarInteract = partial(
-	recordTracksRailcar,
-	'calypso_traintracks_interact'
-);
+export function recordTracksRailcarInteract( eventName, railcar, overrides ) {
+	return recordTracksRailcar( 'calypso_traintracks_interact', eventName, railcar, overrides );
+}
 
 export function recordTrackForPost( eventName, post = {}, additionalProps = {}, options ) {
 	recordTrack( eventName, { ...getTracksPropertiesForPost( post ), ...additionalProps }, options );
@@ -174,7 +165,8 @@ export function recordTrackForPost( eventName, post = {}, additionalProps = {}, 
 			pick( additionalProps, [ 'ui_position', 'ui_algo' ] )
 		);
 	} else if ( process.env.NODE_ENV !== 'production' && post.railcar ) {
-		console.warn( 'Consider allowing reader track', eventName ); //eslint-disable-line no-console
+		// eslint-disable-next-line no-console
+		console.warn( 'Consider allowing reader track', eventName );
 	}
 }
 

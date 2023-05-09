@@ -1,19 +1,14 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import React from 'react';
 import classNames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 
-class StatsTabsTab extends React.Component {
+class StatsTabsTab extends Component {
 	static displayName = 'StatsTabsTab';
 
 	static propTypes = {
 		className: PropTypes.string,
-		gridicon: PropTypes.string,
+		icon: PropTypes.object,
 		href: PropTypes.string,
 		label: PropTypes.string,
 		loading: PropTypes.bool,
@@ -42,28 +37,18 @@ class StatsTabsTab extends React.Component {
 	};
 
 	render() {
-		const {
-			className,
-			compact,
-			children,
-			gridicon,
-			href,
-			label,
-			loading,
-			selected,
-			tabClick,
-			value,
-		} = this.props;
+		const { className, compact, children, icon, href, label, loading, selected, tabClick, value } =
+			this.props;
 
 		const tabClass = classNames( 'stats-tab', className, {
 			'is-selected': selected,
 			'is-loading': loading,
 			'is-low': ! value,
 			'is-compact': compact,
-			'no-icon': ! gridicon,
+			'no-icon': ! icon,
 		} );
 
-		const tabIcon = gridicon ? <Gridicon icon={ gridicon } size={ 18 } /> : null;
+		const tabIcon = icon ? icon : null;
 		const tabLabel = <span className="stats-tabs__label label">{ label }</span>;
 		const tabValue = <span className="stats-tabs__value value">{ this.ensureValue( value ) }</span>;
 		const hasClickAction = href || tabClick;

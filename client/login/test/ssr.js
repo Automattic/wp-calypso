@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { setShouldServerSideRenderLogin } from '../ssr';
 
 function getSomeCleanLoginContext( queryValues, lang = 'en' ) {

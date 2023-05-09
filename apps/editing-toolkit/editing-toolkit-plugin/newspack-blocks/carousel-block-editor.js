@@ -1,21 +1,10 @@
-/**
- * External dependencies
- */
 import { registerBlockType } from '@wordpress/blocks';
 import { addFilter } from '@wordpress/hooks';
-
-/**
- * External dependencies
- */
+import { CAROUSEL_BLOCK_NAME } from './consts';
 import { settings } from './synced-newspack-blocks/blocks/carousel/index';
 
-/**
- * Block name in the A8C\FSE context.
- */
-const blockName = 'a8c/posts-carousel';
-
 function setBlockTransformationName( name ) {
-	return name !== 'newspack-blocks/carousel' ? name : blockName;
+	return name !== 'newspack-blocks/carousel' ? name : CAROUSEL_BLOCK_NAME;
 }
 
 addFilter(
@@ -24,7 +13,7 @@ addFilter(
 	setBlockTransformationName
 );
 
-registerBlockType( blockName, {
+registerBlockType( CAROUSEL_BLOCK_NAME, {
 	...settings,
 	category: 'widgets',
 } );

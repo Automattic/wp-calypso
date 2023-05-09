@@ -1,24 +1,27 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import wrapWithClickOutside from 'react-click-outside';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import CloseOnEscape from 'calypso/components/close-on-escape';
 import SiteSelector from 'calypso/components/site-selector';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { hasTouch } from 'calypso/lib/touch-detect';
-import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
+import { hasJetpackActivePlugins, isJetpackSitePred } from 'calypso/state/sites/selectors';
 import { setNextLayoutFocus, setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
+
+/**
+ * In order to decide whether to show the site in site selector,
+ * we need to know if the site has full Jetpack plugin installed,
+ * or if we are on Jetpack Cloud and the site has a Jetpack Standalone plugin installed.
+ */
+const isJetpackSiteOrJetpackCloud = isJetpackSitePred( {
+	considerStandaloneProducts: isJetpackCloud(),
+} );
 
 const noop = () => {};
 
-class SitePicker extends React.Component {
+class SitePicker extends Component {
 	static displayName = 'SitePicker';
 
 	static propTypes = {
@@ -26,6 +29,7 @@ class SitePicker extends React.Component {
 		currentLayoutFocus: PropTypes.string,
 		setNextLayoutFocus: PropTypes.func.isRequired,
 		setLayoutFocus: PropTypes.func.isRequired,
+		showManageSitesButton: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -37,6 +41,7 @@ class SitePicker extends React.Component {
 		isRendered: this.props.currentLayoutFocus === 'sites',
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.currentLayoutFocus === 'sites' && ! this.state.isRendered ) {
 			this.setState( { isRendered: true } );
@@ -84,20 +89,31 @@ class SitePicker extends React.Component {
 		this.closePicker( null );
 	};
 
+	filterSites = ( site ) => {
+		// Filter out the sites on WPCOM that don't have full Jetpack plugin installed
+		// Such sites should work fine on Jetpack Cloud
+		return hasJetpackActivePlugins( site ) ? isJetpackSiteOrJetpackCloud( site ) : true;
+	};
+
 	render() {
 		return (
 			<div>
 				<CloseOnEscape onEscape={ this.closePicker } />
 				<SiteSelector
+					maxResults={ this.props.maxResults }
+					showHiddenSites={ this.props.showHiddenSites }
+					showManageSitesButton={ this.props.showManageSitesButton }
 					isPlaceholder={ ! this.state.isRendered }
 					indicator={ true }
 					showAddNewSite={ true }
 					showAllSites={ true }
 					allSitesPath={ this.props.allSitesPath }
 					siteBasePath={ this.props.siteBasePath }
+					/* eslint-disable-next-line jsx-a11y/no-autofocus */
 					autoFocus={ this.state.isAutoFocused }
 					onClose={ this.onClose }
 					groups={ true }
+					filter={ this.filterSites }
 				/>
 			</div>
 		);

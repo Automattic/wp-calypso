@@ -1,32 +1,50 @@
 .is-reader-page .main.search-stream {
-	max-width: 960px;
+	max-width: 905px;
 }
 
 .search-stream__intro {
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		margin-left: 16px;
 	}
 }
 
 .search-stream .search {
 	margin-bottom: 0;
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 6px;
+	.search__icon-navigation {
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 6px;
+		@include breakpoint-deprecated( "<660px" ) {
+			border-radius: 0;
+		}
+	}
+	.search__input.form-text-input[type="search"],
+	.search__close-icon {
+		/* stylelint-disable-next-line scales/radii */
+		border-bottom-right-radius: 6px;
+		/* stylelint-disable-next-line scales/radii */
+		border-top-right-radius: 6px;
+		padding: 6px 0;
+	}
+	&.is-open.has-focus {
+		box-shadow: none;
+		&:hover {
+			box-shadow: none;
+		}
+	}
 }
 
 .is-reader-page .search-stream__fixed-area {
-	background-color: var( --color-surface );
+	background-color: var(--color-surface);
 	position: fixed;
 	top: 0;
-	margin-top: var( --masterbar-height );
+	margin-top: var(--masterbar-height);
 	z-index: 20;
 	-webkit-font-smoothing: subpixel-antialiased; // Fixes fixed elements text aliasing in Safari
 
-	// Below 660px we show the MobileBackToSidebar header so no padding needed
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		padding-top: 30px;
-	}
-
-	.mobile-back-to-sidebar {
-		margin: 0;
 	}
 }
 
@@ -35,19 +53,23 @@
 }
 
 .search-stream .search-stream__input-card.card {
-	box-shadow: 0 0 0 2px var( --color-neutral-10 ), 0 1px 2px var( --color-neutral-10 );
 	margin-bottom: 0;
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 6px;
+	@include breakpoint-deprecated( "<660px" ) {
+		border-radius: 0;
+	}
 }
 
 .search-stream__input-card.card {
 	margin-bottom: 16px;
 	padding: 0;
-	z-index: z-index( 'root', '.search-stream__input-card' );
+	z-index: z-index("root", ".search-stream__input-card");
 }
 
 // Top margin for site results
 .main.search-stream {
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		perspective: none; // Fix search bar pushed up behind the masterbar in Safari
 	}
 }
@@ -57,68 +79,56 @@
 	display: flex;
 	flex-flow: row wrap;
 
-	@include breakpoint-deprecated( '<960px' ) {
+	@include breakpoint-deprecated( "<960px" ) {
 		flex-flow: column wrap;
 	}
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		flex-flow: row wrap;
 		padding: 15px 5px 15px 15px;
 	}
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		flex-flow: column wrap;
 	}
 }
 
 .is-reader-page
-	.search-stream.search-stream__with-sites
-	.search-stream__results.is-two-columns
-	.reader__content,
+.search-stream.search-stream__with-sites
+.search-stream__results.is-two-columns
+.reader__content,
 .is-reader-page
-	.search-stream.search-stream__with-sites
-	.search-stream__single-column-results.is-post-results
-	.reader__content {
+.search-stream.search-stream__with-sites
+.search-stream__single-column-results.is-post-results
+.reader__content {
 	flex-flow: inherit;
 	flex-direction: column; // So post results are stacked
 }
 
 .is-reader-page .search-stream__recommendation-list-item {
 	box-sizing: border-box;
-	border-bottom: 1px solid var( --color-neutral-10 );
+	border-bottom: 1px solid var(--color-neutral-10);
 	display: flex;
-	flex-basis: calc( 50% - 15px );
 	margin: 0 0 0 15px;
 	padding: 20px 0;
+	width: 100%;
 
-	@include breakpoint-deprecated( '<960px' ) {
+	@include breakpoint-deprecated( "<960px" ) {
 		margin: 0;
 	}
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		margin: 0 0 0 15px;
 	}
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		margin: 0 5px 0 0;
-	}
-
-	&:nth-child( 2n ) {
-		margin: 0 15px 0 0;
-
-		@include breakpoint-deprecated( '<960px' ) {
-			margin: 0;
-		}
-
-		@include breakpoint-deprecated( '<660px' ) {
-			margin: 0 5px 0 0;
-		}
 	}
 
 	.reader-related-card__post {
 		max-height: 16px * 1.6 * 11;
 
-		@include breakpoint-deprecated( '<960px' ) {
+		@include breakpoint-deprecated( "<960px" ) {
 			max-height: 16px * 1.6 * 8;
 		}
 	}
@@ -141,12 +151,6 @@
 		align-items: flex-start;
 		margin-bottom: 12px;
 
-		.reader-related-card__byline,
-		.reader-related-card__byline-author,
-		.reader-related-card__byline-site {
-			margin-top: 0;
-		}
-
 		.reader-related-card__byline-author {
 			margin-bottom: -3px;
 		}
@@ -156,8 +160,9 @@
 			margin-top: 0;
 			position: relative;
 			top: -2px;
+			left: 50px;
 
-			@include breakpoint-deprecated( '<480px' ) {
+			@include breakpoint-deprecated( "<480px" ) {
 				margin-right: 0;
 			}
 		}
@@ -171,9 +176,15 @@
 // Date and Relevance sorter
 .search-stream__sort-picker {
 	position: absolute;
-	right: 50px;
-	top: 11px;
-	z-index: z-index( 'root', '.search-stream__sort-picker' );
+	z-index: z-index("root", ".search-stream__sort-picker");
+	bottom: 15px;
+	right: 15px;
+
+	&.is-wide {
+		bottom: unset;
+		right: 50px;
+		top: 41px;
+	}
 }
 
 // Posts and Sites results
@@ -183,7 +194,7 @@
 
 // Post and Sites static headers
 .search-stream__headers {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	display: flex;
 	font-size: $font-body-small;
 	font-weight: 600;
@@ -194,7 +205,7 @@
 
 .search-stream__post-header,
 .search-stream__site-header {
-	border-bottom: 1px solid var( --color-neutral-10 );
+	border-bottom: 1px solid var(--color-neutral-10);
 	padding-bottom: 15px;
 }
 
@@ -219,13 +230,13 @@
 
 .search-stream__header .section-nav {
 	background: inherit;
-	border-bottom: 1px solid var( --color-neutral-10 );
+	border-bottom: 1px solid var(--color-neutral-10);
 	box-shadow: none;
 	height: 53px;
 	margin-bottom: 0;
 	padding-bottom: 0;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		height: 58px;
 	}
 }
@@ -241,27 +252,26 @@
 	display: flex;
 
 	.section-nav-tab.is-selected {
-		border-bottom: 2px solid var( --color-neutral-70 );
+		border-bottom: 2px solid var(--color-neutral-70);
 	}
 
 	.is-selected .section-nav-tab__link {
-		color: var( --color-neutral-70 );
+		color: var(--color-neutral-70);
 	}
 
 	.section-nav-tab__link {
 		background-color: transparent;
-		color: var( --color-primary );
+		color: var(--color-primary);
 		padding: 16px;
 
 		&:hover {
-			color: var( --color-primary );
+			color: var(--color-primary);
 		}
 	}
 
 	.section-nav-tab__text {
 		font-weight: 600;
 		font-size: $font-body-small;
-		letter-spacing: 0.04em;
 		text-transform: uppercase;
 		width: 100%;
 	}
@@ -288,8 +298,8 @@
 }
 
 .search-stream__results.is-two-columns .reader-subscription-list-item__byline {
-	min-width: 180px;
-	max-width: 180px;
+	min-width: 177px;
+	max-width: 177px;
 }
 
 .search-stream__single-column-results .reader-subscription-list-item__options {
@@ -299,7 +309,7 @@
 	min-width: 0;
 	max-width: 25px;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		align-items: flex-start;
 		min-width: 90px;
 	}
@@ -321,16 +331,16 @@
 
 .search-stream__results.is-two-columns .search-stream__post-results {
 	max-width: 660px;
-	width: calc( 100% - 300px );
+	width: calc(100% - 300px);
 
 	.reader-post-card__post {
-		@include breakpoint-deprecated( '<960px' ) {
+		@include breakpoint-deprecated( "<960px" ) {
 			flex-direction: column;
 		}
 	}
 
 	.reader-post-card.card.has-thumbnail .reader-featured-image {
-		@include breakpoint-deprecated( '<960px' ) {
+		@include breakpoint-deprecated( "<960px" ) {
 			height: 80px;
 			margin: 0 0 20px;
 			max-width: 100%;
@@ -339,12 +349,6 @@
 
 	.reader-post-card.is-photo .reader-post-card__title {
 		white-space: normal;
-	}
-
-	.reader-post-card.is-gallery .reader-post-card__gallery-item:last-child {
-		@include breakpoint-deprecated( '<960px' ) {
-			display: block;
-		}
 	}
 
 	.reader-share__button-label,
@@ -365,40 +369,65 @@
 }
 
 .card.reader-search-card.is-photo {
-	@include breakpoint-deprecated( '<660px' ) {
-		z-index: z-index( 'root', '.reader-search-card' );
+	@include breakpoint-deprecated( "<660px" ) {
+		z-index: z-index("root", ".reader-search-card");
 	}
 }
 
 .search-stream__url-follow {
-	border-bottom: 1px solid var( --color-neutral-0 );
+	border-bottom: 1px solid var(--color-neutral-0);
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	padding: 13px 0 10px;
 	position: relative;
-	z-index: z-index( 'root', '.following-manage__url-follow' );
+	z-index: z-index("root", ".following-manage__url-follow");
+
+	p {
+		color: var(--color-neutral-60);
+		font-size: $font-body-small;
+		margin: 5px 0;
+
+		.gridicon {
+			vertical-align: text-bottom;
+		}
+
+		strong {
+			padding-left: 5px;
+			color: var(--color-neutral-70);
+		}
+	}
 
 	.follow-button {
 		.gridicon {
-			fill: var( --color-primary );
+			fill: var(--color-primary);
 		}
 
 		.follow-button__label {
-			color: var( --color-primary );
+			color: var(--color-link);
+			text-decoration: underline;
 
-			@include breakpoint-deprecated( '<660px' ) {
+			@include breakpoint-deprecated( "<660px" ) {
 				display: inline;
+			}
+		}
+
+		&:hover {
+			svg.reader-follow-feed path {
+				fill: var(--color-link);
+			}
+			.follow-button__label {
+				color: var(--color-link);
 			}
 		}
 
 		&.is-following {
 			.gridicon {
-				fill: var( --color-success );
+				fill: var(--color-success);
 			}
 
 			.follow-button__label {
-				color: var( --color-success );
+				color: var(--color-success);
 			}
 		}
 	}

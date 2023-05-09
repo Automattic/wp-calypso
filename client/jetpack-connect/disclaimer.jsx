@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 class JetpackConnectDisclaimer extends PureComponent {

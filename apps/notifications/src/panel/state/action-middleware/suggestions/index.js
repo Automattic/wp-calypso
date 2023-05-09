@@ -1,10 +1,7 @@
-/**
- * Internal dependencies
- */
+import { fetchSuggestions } from '../../../rest-client/wpcom';
 import * as types from '../../action-types';
 import actions from '../../actions';
 import hasSiteSuggestions from '../../selectors/has-site-suggestions';
-import { fetchSuggestions } from '../../../rest-client/wpcom';
 
 let isFetchingSuggestions = false;
 

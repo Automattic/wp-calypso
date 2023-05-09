@@ -7,7 +7,7 @@
 	flex-basis: 100%;
 }
 
-@include breakpoint-deprecated( '>1280px' ) {
+@include breakpoint-deprecated( ">1280px" ) {
 	.layout__column--main {
 		box-sizing: border-box;
 		flex-basis: 70%;

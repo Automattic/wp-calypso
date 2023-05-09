@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	EMAIL_ACCOUNT_TYPE_TITAN_MAIL,
 	EMAIL_ACCOUNT_TYPE_TITAN_MAIL_EXTERNAL,
@@ -8,6 +5,6 @@ import {
 
 export function isTitanMailAccount( emailAccount ) {
 	return [ EMAIL_ACCOUNT_TYPE_TITAN_MAIL, EMAIL_ACCOUNT_TYPE_TITAN_MAIL_EXTERNAL ].includes(
-		emailAccount.account_type
+		emailAccount?.account_type
 	);
 }

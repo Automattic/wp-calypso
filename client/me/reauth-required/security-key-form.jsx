@@ -1,22 +1,10 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
-import FormButton from 'calypso/components/forms/form-button';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import { Card, FormInputValidation, Spinner } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import Spinner from 'calypso/components/spinner';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import FormButton from 'calypso/components/forms/form-button';
 
-/**
- * Style dependencies
- */
 import './security-key-form.scss';
 
 class SecurityKeyForm extends Component {

@@ -1,13 +1,10 @@
-/**
- * Internal dependencies
- */
-import signupDependencyStore from '../reducer';
 import {
 	SIGNUP_DEPENDENCY_STORE_UPDATE,
 	SIGNUP_PROGRESS_SUBMIT_STEP,
 	SIGNUP_PROGRESS_COMPLETE_STEP,
 	SIGNUP_COMPLETE_RESET,
 } from 'calypso/state/action-types';
+import signupDependencyStore from '../reducer';
 
 describe( 'reducer', () => {
 	test( 'should return an empty object at first', () => {

@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
-
-/**
- * Internal Dependencies
- */
-import { lasagna } from '../middleware';
 import { LASAGNA_SOCKET_CONNECTED } from 'calypso/state/action-types';
 import { getCurrentUserId, getCurrentUserLasagnaJwt } from 'calypso/state/current-user/selectors';
+import { lasagna } from '../middleware';
 
 const channelTopicPrefix = 'push:wordpress.com:user:';
 const debug = debugFactory( 'lasagna:channel' );

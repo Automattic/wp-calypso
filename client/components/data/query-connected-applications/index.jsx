@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { requestConnectedApplications } from 'calypso/state/connected-applications/actions';
 
 class QueryConnectedApplications extends Component {

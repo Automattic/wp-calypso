@@ -1,13 +1,10 @@
 #!/usr/bin/env node
 
 /**
- **** WARNING: No ES6 modules here. Not transpiled! ****
+ *WARNING: No ES6 modules here. Not transpiled! ****
  */
 /* eslint-disable import/no-nodejs-modules */
 
-/**
- * External dependencies
- */
 const fs = require( 'fs' );
 const path = require( 'path' );
 

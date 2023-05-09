@@ -1,18 +1,9 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
 import { Button } from '@automattic/composite-checkout';
-
-/**
- * Internal dependencies
- */
-import styled from './styled';
+import styled from '@emotion/styled';
+import type { ReactNode } from 'react';
 
 // Disabling this to make migrating files easier
 /* eslint-disable @typescript-eslint/no-use-before-define */
-
 export default function Field( {
 	type,
 	id,
@@ -37,19 +28,19 @@ export default function Field( {
 	className?: string;
 	inputClassName?: string;
 	isError?: boolean;
-	onChange: ( value: string ) => void;
+	onChange?: ( value: string ) => void;
 	label?: string;
 	value: string;
-	icon?: React.ReactNode;
+	icon?: ReactNode;
 	iconAction?: () => void;
 	isIconVisible?: boolean;
 	placeholder?: string;
 	tabIndex?: number;
 	description?: string;
-	errorMessage?: string;
+	errorMessage?: ReactNode;
 	autoComplete?: string;
 	disabled?: boolean;
-} ): JSX.Element {
+} ) {
 	const fieldOnChange = ( event: { target: { value: string } } ) => {
 		if ( onChange ) {
 			onChange( event.target.value );
@@ -96,26 +87,6 @@ export default function Field( {
 	);
 }
 
-Field.propTypes = {
-	type: PropTypes.string,
-	id: PropTypes.string.isRequired,
-	className: PropTypes.string,
-	inputClassName: PropTypes.string,
-	isError: PropTypes.bool,
-	onChange: PropTypes.func,
-	label: PropTypes.string,
-	value: PropTypes.string,
-	icon: PropTypes.node,
-	iconAction: PropTypes.func,
-	isIconVisible: PropTypes.bool,
-	placeholder: PropTypes.string,
-	tabIndex: PropTypes.string,
-	description: PropTypes.string,
-	errorMessage: PropTypes.string,
-	autoComplete: PropTypes.string,
-	disabled: PropTypes.bool,
-};
-
 const Label = styled.label< { disabled?: boolean } >`
 	display: block;
 	color: ${ ( props ) => props.theme.colors.textColor };
@@ -128,7 +99,7 @@ const Label = styled.label< { disabled?: boolean } >`
 	}
 `;
 
-const Input = styled.input< { isError?: boolean; icon?: React.ReactNode } >`
+const Input = styled.input< { isError?: boolean; icon?: ReactNode } >`
 	display: block;
 	width: 100%;
 	box-sizing: border-box;
@@ -222,7 +193,7 @@ function RenderedIcon( {
 	iconAction,
 	isIconVisible,
 }: {
-	icon?: React.ReactNode;
+	icon?: ReactNode;
 	iconAction?: () => void;
 	isIconVisible?: boolean;
 } ) {
@@ -252,7 +223,7 @@ function RenderedDescription( {
 }: {
 	description?: string;
 	isError?: boolean;
-	errorMessage?: string;
+	errorMessage?: ReactNode;
 } ) {
 	if ( description || isError ) {
 		return <Description isError={ isError }>{ isError ? errorMessage : description }</Description>;

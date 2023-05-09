@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import DomainEmail from './domain.email';
 import DomainDns from './domain.dns';
+import DomainEmail from './domain.email';
 
 const root = '/domains/';
 
@@ -11,7 +8,7 @@ class Domain {
 	 * `Domain` constructor.
 	 *
 	 * @param {string} id - domain identifier
-	 * @param {WPCOM} wpcom - wpcom instance
+	 * @param wpcom - wpcom instance
 	 * @returns {undefined} undefined
 	 */
 	constructor( id, wpcom ) {
@@ -25,7 +22,7 @@ class Domain {
 	/**
 	 * Get the status of the domain
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -36,7 +33,7 @@ class Domain {
 	/**
 	 * Check if the given domain is available
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -48,7 +45,7 @@ class Domain {
 	 * Check if the given domain name can be mapped to
 	 * a WordPress blog.
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -60,7 +57,7 @@ class Domain {
 	 * Check if the given domain name can be used for site redirect.
 	 *
 	 * @param {string} siteId - site id of the site to check
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -72,7 +69,7 @@ class Domain {
 	/**
 	 * Get the email forwards/configuration for a domain.
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -83,7 +80,7 @@ class Domain {
 	/**
 	 * Get a list of the nameservers for the domain
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -94,8 +91,8 @@ class Domain {
 	/**
 	 * Update the nameservers for the domain
 	 *
-	 * @param {Array} nameservers- nameservers list
-	 * @param {object} [query] - query object parameter
+	 * @param {Array} nameservers - nameservers list
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -107,7 +104,7 @@ class Domain {
 	/**
 	 * Get a list of the DNS records for the domain
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -118,7 +115,7 @@ class Domain {
 	/**
 	 * Get a list of all Google Apps accounts for the domain
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -129,7 +126,7 @@ class Domain {
 	/**
 	 * Resend the ICANN verification email for the domain
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -154,6 +151,42 @@ class Domain {
 	 */
 	dns() {
 		return new DomainDns( this._id, this.wpcom );
+	}
+
+	/**
+	 * Gets info needed to provide mapping setup instructions for a domain.
+	 *
+	 * @param {string} siteId - site id the domain will be mapped to
+	 * @param {Object} query - query object parameter
+	 * @param {Function} fn - callback function
+	 * @returns {Function} request handler
+	 */
+	mappingSetupInfo( siteId, query, fn ) {
+		return this.wpcom.req.get( root + this._id + '/mapping-setup-info/' + siteId, query, fn );
+	}
+
+	/**
+	 * Gets the mapping status for a domain.
+	 *
+	 * @param {Object} query - query object parameter
+	 * @param {Function} fn - callback function
+	 * @returns {Function} request handler
+	 */
+	mappingStatus( query, fn ) {
+		return this.wpcom.req.get( root + this._id + '/mapping-status', query, fn );
+	}
+
+	/**
+	 * Update the connection mode used to connect this domain and retrieve its mapping status.
+	 *
+	 * @param {string} mode - connection mode used to connect this domain (can be "suggested" or "advanced")
+	 * @param {Object} [query] - query object parameter
+	 * @param {Function} fn - callback function
+	 * @returns {Function} request handler
+	 */
+	updateConnectionModeAndGetMappingStatus( mode, query, fn ) {
+		const body = { mode };
+		return this.wpcom.req.post( root + this._id + '/mapping-status', query, body, fn );
 	}
 }
 

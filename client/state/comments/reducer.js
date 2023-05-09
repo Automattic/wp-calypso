@@ -1,6 +1,4 @@
-/**
- * External dependencies
- */
+import { withStorageKey } from '@automattic/state-utils';
 import {
 	filter,
 	orderBy,
@@ -9,20 +7,15 @@ import {
 	reject,
 	isEqual,
 	get,
-	zipObject,
 	includes,
 	omit,
 	startsWith,
 } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { withStorageKey } from '@automattic/state-utils';
 import {
 	COMMENT_COUNTS_UPDATE,
 	COMMENTS_CHANGE_STATUS,
 	COMMENTS_EDIT,
+	COMMENTS_EMPTY_SUCCESS,
 	COMMENTS_RECEIVE,
 	COMMENTS_DELETE,
 	COMMENTS_RECEIVE_ERROR,
@@ -31,18 +24,16 @@ import {
 	COMMENTS_LIKE,
 	COMMENTS_UPDATES_RECEIVE,
 	COMMENTS_UNLIKE,
-	COMMENTS_TREE_SITE_ADD,
 	COMMENTS_WRITE_ERROR,
 	COMMENTS_SET_ACTIVE_REPLY,
 } from 'calypso/state/action-types';
 import { READER_EXPAND_COMMENTS } from 'calypso/state/reader/action-types';
-import { combineReducers, keyedReducer } from 'calypso/state/utils';
+import { combineReducers } from 'calypso/state/utils';
 import {
 	PLACEHOLDER_STATE,
 	NUMBER_OF_COMMENTS_PER_FETCH,
 	POST_COMMENT_DISPLAY_TYPES,
 } from './constants';
-import trees from './trees/reducer';
 import ui from './ui/reducer';
 import { getStateKey, getErrorKey, commentHasLink, getCommentDate } from './utils';
 
@@ -90,19 +81,23 @@ const updateComment = ( commentId, newProperties ) => ( comment ) => {
 /**
  * Comments items reducer, stores a comments items Immutable.List per siteId, postId
  *
- * @param {object} state redux state
- * @param {object} action redux action
- * @returns {object} new redux state
+ * @param {Object} state redux state
+ * @param {Object} action redux action
+ * @returns {Object} new redux state
  */
 export function items( state = {}, action ) {
 	const { type, siteId, postId, commentId, like_count } = action;
 
 	// cannot construct stateKey without both
-	if ( ! siteId || ! postId ) {
-		return state;
+	let stateKey = null;
+	if ( siteId && postId ) {
+		stateKey = getStateKey( siteId, postId );
 	}
 
-	const stateKey = getStateKey( siteId, postId );
+	// We need a stateKey unless we're emptying comments
+	if ( ! stateKey && type !== 'COMMENTS_EMPTY_SUCCESS' ) {
+		return state;
+	}
 
 	switch ( type ) {
 		case COMMENTS_CHANGE_STATUS: {
@@ -168,6 +163,21 @@ export function items( state = {}, action ) {
 				),
 			};
 		}
+		// When we've emptied spam or trash, we don't know the post ID
+		// - just the site ID and comment ID
+		case COMMENTS_EMPTY_SUCCESS: {
+			const { commentIds } = action;
+
+			let newState = { ...state };
+			Object.entries( state ).map( ( [ key, comments ] ) => {
+				newState = {
+					...newState,
+					[ key ]: comments.filter( ( comment ) => ! commentIds.includes( comment.ID ) ),
+				};
+			} );
+
+			return newState;
+		}
 	}
 
 	return state;
@@ -176,9 +186,9 @@ export function items( state = {}, action ) {
 /**
  * Comments pending items reducer, stores new comments per siteId and postId
  *
- * @param {object} state redux state
- * @param {object} action redux action
- * @returns {object} new redux state
+ * @param {Object} state redux state
+ * @param {Object} action redux action
+ * @returns {Object} new redux state
  */
 export function pendingItems( state = {}, action ) {
 	const { type, siteId, postId } = action;
@@ -260,17 +270,18 @@ export const expansions = ( state = {}, action ) => {
 			const stateKey = getStateKey( siteId, postId );
 			const currentExpansions = state[ stateKey ] || {};
 
-			const newDisplayTypes = map( commentIds, ( id ) => {
-				if (
-					! has( currentExpansions, id ) ||
-					expansionValue( displayType ) > expansionValue( currentExpansions[ id ] )
-				) {
-					return displayType;
-				}
-				return currentExpansions[ id ];
-			} );
 			// generate object of { [ commentId ]: displayType }
-			const newVal = zipObject( commentIds, newDisplayTypes );
+			const newVal = Object.fromEntries(
+				commentIds.map( ( id ) => {
+					if (
+						! has( currentExpansions, id ) ||
+						expansionValue( displayType ) > expansionValue( currentExpansions[ id ] )
+					) {
+						return [ id, displayType ];
+					}
+					return [ id, currentExpansions[ id ] ];
+				} )
+			);
 
 			return {
 				...state,
@@ -295,9 +306,9 @@ export const expansions = ( state = {}, action ) => {
  *     }
  *  }
  *
- * @param {object} state redux state
- * @param {object} action redux action
- * @returns {object} new redux state
+ * @param {Object} state redux state
+ * @param {Object} action redux action
+ * @returns {Object} new redux state
  */
 export const fetchStatus = ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -331,9 +342,9 @@ export const fetchStatus = ( state = {}, action ) => {
 /**
  * Stores latest comments count for post we've seen from the server
  *
- * @param {object} state redux state, prev totalCommentsCount
- * @param {object} action redux action
- * @returns {object} new redux state
+ * @param {Object} state redux state, prev totalCommentsCount
+ * @param {Object} action redux action
+ * @returns {Object} new redux state
  */
 export const totalCommentsCount = ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -353,9 +364,9 @@ export const totalCommentsCount = ( state = {}, action ) => {
 /**
  * Houses errors by `siteId-commentId`
  *
- * @param {object} state redux state
- * @param {object} action redux action
- * @returns {object} new redux state
+ * @param {Object} state redux state
+ * @param {Object} action redux action
+ * @returns {Object} new redux state
  */
 export const errors = ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -390,24 +401,12 @@ export const errors = ( state = {}, action ) => {
 	return state;
 };
 
-export const treesInitializedReducer = ( state = {}, action ) => {
-	if ( action.type === COMMENTS_TREE_SITE_ADD ) {
-		return true;
-	}
-	return state;
-};
-
-export const treesInitialized = keyedReducer(
-	'siteId',
-	keyedReducer( 'status', treesInitializedReducer )
-);
-
 /**
  * Stores the active reply comment for a given siteId and postId
  *
- * @param {object} state redux state
- * @param {object} action redux action
- * @returns {object} new redux state
+ * @param {Object} state redux state
+ * @param {Object} action redux action
+ * @returns {Object} new redux state
  */
 export const activeReplies = ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -530,6 +529,26 @@ export const counts = ( state = {}, action ) => {
 			);
 			return Object.assign( {}, state, { [ siteId ]: newTotalSiteCounts } );
 		}
+		case COMMENTS_EMPTY_SUCCESS: {
+			const { siteId, status, commentIds } = action;
+
+			if ( ! siteId || ! state[ siteId ] || ! status ) {
+				return state;
+			}
+			const { site: siteCounts } = state[ siteId ];
+
+			const emptiedCommentsCount = commentIds?.length || 0;
+			const newSiteCounts = updateCount( siteCounts, status, -emptiedCommentsCount );
+
+			// Post counts can't be updated here because we don't know the post ID.
+
+			const newTotalSiteCounts = Object.assign(
+				{},
+				state[ siteId ],
+				newSiteCounts && { site: newSiteCounts }
+			);
+			return { ...state, ...{ [ siteId ]: newTotalSiteCounts } };
+		}
 	}
 
 	return state;
@@ -543,8 +562,6 @@ const combinedReducer = combineReducers( {
 	errors,
 	expansions,
 	totalCommentsCount,
-	trees,
-	treesInitialized,
 	activeReplies,
 	ui,
 } );

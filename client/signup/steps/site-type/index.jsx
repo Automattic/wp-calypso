@@ -1,24 +1,17 @@
-/**
- * External dependencies
- */
-import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
-import SiteTypeForm from './form';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
-import { submitSiteType } from 'calypso/state/signup/steps/site-type/actions';
-import { saveSignupStep } from 'calypso/state/signup/progress/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
+import { saveSignupStep } from 'calypso/state/signup/progress/actions';
+import { submitSiteType } from 'calypso/state/signup/steps/site-type/actions';
+import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
+import SiteTypeForm from './form';
 
 const siteTypeToFlowname = {
 	import: 'import-onboarding',
-	'online-store': 'ecommerce-onboarding',
+	'online-store': 'ecommerce',
 };
 
 class SiteType extends Component {
@@ -71,13 +64,8 @@ class SiteType extends Component {
 	}
 
 	render() {
-		const {
-			flowName,
-			positionInFlow,
-			stepName,
-			translate,
-			hasInitializedSitesBackUrl,
-		} = this.props;
+		const { flowName, positionInFlow, stepName, translate, hasInitializedSitesBackUrl } =
+			this.props;
 
 		const headerText = translate( 'What kind of site are you building?' );
 		const subHeaderText = translate(
@@ -96,7 +84,7 @@ class SiteType extends Component {
 				stepContent={ this.renderStepContent() }
 				allowBackFirstStep={ !! hasInitializedSitesBackUrl }
 				backUrl={ hasInitializedSitesBackUrl }
-				backLabelText={ hasInitializedSitesBackUrl ? translate( 'Back to My Sites' ) : null }
+				backLabelText={ hasInitializedSitesBackUrl ? translate( 'Back to sites' ) : null }
 			/>
 		);
 	}

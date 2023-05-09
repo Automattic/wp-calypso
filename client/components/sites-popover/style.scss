@@ -22,8 +22,8 @@
 }
 
 .sites-popover.has-header .sites-popover__header {
-	border-bottom: 1px solid var( --color-neutral-0 );
-	color: var( --color-neutral-40 );
+	border-bottom: 1px solid var(--color-neutral-0);
+	color: var(--color-neutral-40);
 	font-size: $font-body-extra-small;
 	font-weight: 600;
 	padding: 10px 10px 8px 8px;
@@ -31,9 +31,9 @@
 
 .sites-popover .site-selector.is-large .search {
 	position: absolute;
-		top: 0;
-		right: 0;
-		left: 0;
+	top: 0;
+	right: 0;
+	left: 0;
 }
 
 .sites-popover .site-selector__sites {

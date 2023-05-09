@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { get } from 'lodash';
 
 export function getUnformattedDomainPrice( slug, productsList ) {

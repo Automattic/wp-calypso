@@ -1,11 +1,17 @@
 package _self.projects
 
+import Settings
 import _self.bashNodeScript
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
+import jetbrains.buildServer.configs.kotlin.v2019_2.FailureAction
 import jetbrains.buildServer.configs.kotlin.v2019_2.ParameterDisplay
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.*
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.PullRequests
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.notifications
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.pullRequests
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 
 object DesktopApp : Project({
@@ -14,10 +20,12 @@ object DesktopApp : Project({
 	buildType(E2ETests)
 
 	params {
-		text("docker_image_desktop", "registry.a8c.com/calypso/ci-desktop:latest", label = "Docker image", description = "Docker image to use for the run", allowEmpty = true)
-		password("CALYPSO_SECRETS_ENCRYPTION_KEY", "credentialsJSON:ff451a7d-df79-4635-b6e8-cbd6ec18ddd8", description = "password for encrypting/decrypting certificates and general secrets for the wp-desktop and simplenote-electron repo", display = ParameterDisplay.HIDDEN)
-		password("E2EGUTENBERGUSER", "credentialsJSON:27ca9d7b-c6b5-4e84-94d5-ea43879d8184", display = ParameterDisplay.HIDDEN)
-		password("E2EPASSWORD", "credentialsJSON:2c4425c4-07d2-414c-9f18-b64da307bdf2", display = ParameterDisplay.HIDDEN)
+		text("docker_image_desktop", "registry.a8c.com/calypso/ci-e2e:latest", label = "Docker image", description = "Docker image to use for the run", allowEmpty = true)
+		// Note: this decrypts the secrets.json.enc file used by the Desktop app.
+		password("DESKTOP_SECRETS_ENCRYPTION_KEY", "credentialsJSON:15357c22-385b-456a-a18a-10cb42b9adc1", description = "password for encrypting/decrypting certificates and general secrets for the wp-desktop and simplenote-electron repo", display = ParameterDisplay.HIDDEN)
+		// For the root user, see the `desktopAppUser` entry in `calypso-e2e/src/secrets`.
+		password("E2EGUTENBERGUSER", "credentialsJSON:aea14d11-dc0e-41fa-9887-6a979ee66785", display = ParameterDisplay.HIDDEN)
+		password("E2EPASSWORD", "credentialsJSON:3b242d15-0954-452d-8077-249acc79e44e", display = ParameterDisplay.HIDDEN)
 	}
 })
 
@@ -26,10 +34,15 @@ object E2ETests : BuildType({
 	name = "Run e2e tests"
 	description = "Run wp-desktop e2e tests in Linux"
 
+	dependencies {
+		snapshot(BuildDockerImage) {
+			onDependencyFailure = FailureAction.FAIL_TO_START
+		}
+	}
+
 	artifactRules = """
-		desktop/release => release
-		desktop/e2e/logs => logs
-		desktop/e2e/screenshots => screenshots
+		desktop/release/wordpress.com-* => release
+		desktop/test/e2e/results => results
 	""".trimIndent()
 
 	vcs {
@@ -45,22 +58,10 @@ object E2ETests : BuildType({
 				/usr/lib/git-core/git-restore-mtime --force --commit-time --skip-missing
 
 				# Decript certs
-				openssl aes-256-cbc -md md5 -d -in desktop/resource/calypso/secrets.json.enc -out config/secrets.json -k "%CALYPSO_SECRETS_ENCRYPTION_KEY%"
+				openssl aes-256-cbc -md md5 -d -in desktop/resource/calypso/secrets.json.enc -out config/secrets.json -k "%DESKTOP_SECRETS_ENCRYPTION_KEY%"
 
 				# Install modules
 				${_self.yarn_install_cmd}
-				yarn run build-desktop:install-app-deps
-			"""
-			dockerImage = "%docker_image_desktop%"
-		}
-
-		bashNodeScript {
-			name = "Build Calypso source"
-			scriptContent = """
-				export WEBPACK_OPTIONS='--progress=profile'
-
-				# Build desktop
-				yarn run build-desktop:source
 			"""
 			dockerImage = "%docker_image_desktop%"
 		}
@@ -72,7 +73,7 @@ object E2ETests : BuildType({
 				export USE_HARD_LINKS=false
 
 				# Build app
-				yarn run build-desktop:app
+				cd desktop && yarn run build
 			"""
 			dockerImage = "%docker_image_desktop%"
 		}
@@ -80,32 +81,32 @@ object E2ETests : BuildType({
 		bashNodeScript {
 			name = "Run tests (linux)"
 			scriptContent = """
+				set -x
+
+				chmod +x ./bin/get-calypso-live-url.sh
+				URL=${'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
+				if [[ ${'$'}? -ne 0 ]]; then
+					// Command failed. URL contains stderr
+					echo ${'$'}URL
+					exit 1
+				fi
+
 				export E2EGUTENBERGUSER="%E2EGUTENBERGUSER%"
 				export E2EPASSWORD="%E2EPASSWORD%"
 				export CI=true
+				export WP_DESKTOP_BASE_URL="${'$'}URL"
 
 				# Start framebuffer
 				Xvfb ${'$'}{DISPLAY} -screen 0 1280x1024x24 &
 
+				echo "Base URL is '${'$'}WP_DESKTOP_BASE_URL'"
 				# Run tests
-				yarn run test-desktop:e2e
+				cd desktop && yarn run test:e2e --reporters=jest-teamcity --reporters=default
 			"""
 			dockerImage = "%docker_image_desktop%"
 			// See https://stackoverflow.com/a/53975412 and https://blog.jessfraz.com/post/how-to-use-new-docker-seccomp-profiles/
 			// TDLR: Chrome needs access to some kernel level operations to create a sandbox, this option unblocks them.
 			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json"
-		}
-
-		bashNodeScript {
-			name = "Clean up artifacts"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
-			scriptContent = """
-				# Delete artifacts if branch is not trunk
-				if [ "%teamcity.build.branch.is_default%" != "true" ]; then
-					rm -fr desktop/release/*
-				fi
-			"""
-			dockerImage = "%docker_image_desktop%"
 		}
 	}
 
@@ -114,11 +115,6 @@ object E2ETests : BuildType({
 	}
 
 	features {
-		feature {
-			type = "xml-report-plugin"
-			param("xmlReportParsing.reportType", "junit")
-			param("xmlReportParsing.reportDirs", "desktop/e2e/result.xml")
-		}
 		perfmon {
 		}
 		pullRequests {

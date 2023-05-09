@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
 
 describe( 'getAtomicTransfer()', () => {

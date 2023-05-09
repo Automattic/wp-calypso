@@ -1,25 +1,15 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { capitalize, includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import FoldableCard from 'calypso/components/foldable-card';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import DateFormatOption from './date-format-option';
+import { getDefaultDateFormats, getDefaultTimeFormats } from './default-formats';
 import StartOfWeekOption from './start-of-week-option';
 import TimeFormatOption from './time-format-option';
-import { getDefaultDateFormats, getDefaultTimeFormats } from './default-formats';
 import { getLocalizedDate, phpToMomentDatetimeFormat } from './utils';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export class DateTimeFormat extends Component {
@@ -45,26 +35,30 @@ export class DateTimeFormat extends Component {
 	state = {
 		customDateFormat: false,
 		customTimeFormat: false,
-		isLoadingSettings: true,
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	static getDerivedStateFromProps( props ) {
 		const {
 			fields: { date_format: dateFormat, time_format: timeFormat },
-		} = nextProps;
+			isRequestingSettings,
+			isSavingSettings,
+		} = props;
 
-		if ( ! this.state.isLoadingSettings || '' === dateFormat || '' === timeFormat ) {
+		if (
+			( ! isRequestingSettings && ! isSavingSettings ) ||
+			'' === dateFormat ||
+			'' === timeFormat
+		) {
 			return;
 		}
 
-		this.setState( {
+		return {
 			customDateFormat: ! includes( getDefaultDateFormats(), dateFormat ),
 			customTimeFormat: ! includes( getDefaultTimeFormats(), timeFormat ),
-			isLoadingSettings: false,
-		} );
+		};
 	}
 
-	setFormat = ( name, defaultFormats ) => ( event ) => {
+	setFormat = ( name, defaultFormats, event ) => {
 		const { value: format } = event.currentTarget;
 		this.props.updateFields( { [ `${ name }_format` ]: format } );
 		this.setState( {
@@ -72,9 +66,9 @@ export class DateTimeFormat extends Component {
 		} );
 	};
 
-	setDateFormat = this.setFormat( 'date', getDefaultDateFormats() );
+	setDateFormat = ( event ) => this.setFormat( 'date', getDefaultDateFormats(), event );
 
-	setTimeFormat = this.setFormat( 'time', getDefaultTimeFormats() );
+	setTimeFormat = ( event ) => this.setFormat( 'time', getDefaultTimeFormats(), event );
 
 	setCustomFormat = ( name ) => ( event ) => {
 		const { value: format } = event.currentTarget;

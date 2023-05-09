@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
 import moment from 'moment';
-import { includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import PaginatedQueryManager from '../paginated';
-import MediaQueryKey from './key';
 import { DEFAULT_MEDIA_QUERY } from './constants';
+import MediaQueryKey from './key';
 
 /**
  * MediaQueryManager manages media which can be queried and change over time
@@ -22,8 +14,8 @@ export default class MediaQueryManager extends PaginatedQueryManager {
 	 * Returns true if the media item matches the given query, or false
 	 * otherwise.
 	 *
-	 * @param  {object}  query Query object
-	 * @param  {object}  media Item to consider
+	 * @param  {Object}  query Query object
+	 * @param  {Object}  media Item to consider
 	 * @returns {boolean}       Whether media item matches query
 	 */
 	static matches( query, media ) {
@@ -34,7 +26,7 @@ export default class MediaQueryManager extends PaginatedQueryManager {
 						return true;
 					}
 
-					return media.title && includes( media.title.toLowerCase(), value.toLowerCase() );
+					return media.title && media.title.toLowerCase().includes( value.toLowerCase() );
 
 				case 'mime_type':
 					if ( ! value ) {
@@ -82,9 +74,9 @@ export default class MediaQueryManager extends PaginatedQueryManager {
 	 * A sort comparison function that defines the sort order of media items
 	 * under consideration of the specified query.
 	 *
-	 * @param  {object} query  Query object
-	 * @param  {object} mediaA First media item
-	 * @param  {object} mediaB Second media item
+	 * @param  {Object} query  Query object
+	 * @param  {Object} mediaA First media item
+	 * @param  {Object} mediaB Second media item
 	 * @returns {number}        0 if equal, less than 0 if mediaA is first,
 	 *                         greater than 0 if mediaB is first.
 	 */

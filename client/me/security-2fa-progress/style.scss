@@ -1,7 +1,7 @@
 .security-2fa-progress__container {
 	margin: 0 -16px 16px;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		margin: 0 -24px 24px;
 	}
 
@@ -10,8 +10,8 @@
 		position: relative;
 
 		&::before {
-			background-color: var( --color-neutral-10 );
-			content: ' ';
+			background-color: var(--color-neutral-10);
+			content: " ";
 			display: block;
 			height: 1px;
 			position: absolute;
@@ -27,8 +27,8 @@
 			&.is-highlighted {
 
 				&::before {
-					background-color: var( --color-primary );
-					content: ' ';
+					background-color: var(--color-primary);
+					content: " ";
 					display: block;
 					height: 2px;
 					position: absolute;
@@ -37,13 +37,13 @@
 				}
 
 				.gridicon {
-					background: var( --color-primary );
-					color: var( --color-text-inverted );
-					border-color: var( --color-primary );
+					background: var(--color-primary);
+					color: var(--color-text-inverted);
+					border-color: var(--color-primary);
 				}
 
 				label {
-					color: var( --color-primary );
+					color: var(--color-primary);
 					font-weight: 600;
 				}
 			}
@@ -51,8 +51,8 @@
 			&.is-completed {
 
 				&::before {
-					background-color: var( --color-primary );
-					content: ' ';
+					background-color: var(--color-primary);
+					content: " ";
 					display: block;
 					height: 2px;
 					position: absolute;
@@ -61,20 +61,20 @@
 				}
 
 				.gridicon {
-					background: var( --color-neutral-10 );
-					color: var( --color-neutral-light );
+					background: var(--color-neutral-10);
+					color: var(--color-neutral-light);
 				}
 
 				label {
-					color: var( --color-neutral-light );
+					color: var(--color-neutral-light);
 				}
 			}
 
 			.gridicon {
-				background: var( --color-surface );
-				border: 1px var( --color-neutral-10 ) solid;
+				background: var(--color-surface);
+				border: 1px var(--color-neutral-10) solid;
 				border-radius: 50%;
-				color: var( --color-neutral-10 );
+				color: var(--color-neutral-10);
 				display: block;
 				margin: 0 auto;
 				position: relative;
@@ -88,7 +88,7 @@
 			}
 
 			label {
-				color: var( --color-neutral-10 );
+				color: var(--color-neutral-10);
 				display: inline-block;
 				font-size: $font-body-small;
 				line-height: 1;

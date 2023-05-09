@@ -1,17 +1,11 @@
-/**
- * External dependencies
- */
 import { get } from 'lodash';
 
-/**
- * Internal dependencies
- */
 import 'calypso/state/stats/init';
 
 /**
  * Returns the number of views for a given post, or `null`.
  *
- * @param   {object}  state    Global state tree
+ * @param   {Object}  state    Global state tree
  * @param   {number}  siteId   Site ID
  * @param   {number}  postId   Post ID
  * @returns {?string}          Post views.

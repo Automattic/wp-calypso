@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import { omitBy } from 'lodash';
-import debug from 'debug';
 import { select } from '@wordpress/data';
-
-/**
- * Internal dependencies
- */
+import debug from 'debug';
+import { omitBy } from 'lodash';
 import { isE2ETest } from '../../../utils';
 import { getEditorType } from '../utils';
 
@@ -22,7 +15,7 @@ if ( typeof window !== 'undefined' ) {
 // Enable a events stack for e2e testing purposes
 // on e2e test environments only.
 // see https://github.com/Automattic/wp-calypso/pull/41329.
-const E2E_STACK_SIZE = 20;
+const E2E_STACK_SIZE = 100;
 if ( isE2ETest() ) {
 	e2ETracksDebug( 'E2E env' );
 	window._e2eEventsStack = [];
@@ -64,12 +57,13 @@ export default ( eventName, eventProperties ) => {
 				const errorMessage =
 					`Tracks: Unable to record event "${ eventName }" because nested ` +
 					`properties are not supported by Tracks. Check '${ key }' on`;
-				console.error( errorMessage, eventProperties ); //eslint-disable-line no-console
+				// eslint-disable-next-line no-console
+				console.error( errorMessage, eventProperties );
 				return;
 			}
 
 			if ( ! /^[a-z_][a-z0-9_]*$/.test( key ) ) {
-				//eslint-disable-next-line no-console
+				// eslint-disable-next-line no-console
 				console.error(
 					'Tracks: Event `%s` will be rejected because property name `%s` does not match /^[a-z_][a-z0-9_]*$/. ' +
 						'Please use a compliant property name.',

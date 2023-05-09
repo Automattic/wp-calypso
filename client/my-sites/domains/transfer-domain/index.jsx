@@ -1,23 +1,19 @@
-/**
- * External dependencies
- */
+import { withShoppingCart } from '@automattic/shopping-cart';
+import { get, isEmpty } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-import { get, isEmpty } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import TrademarkClaimsNotice from 'calypso/components/domains/trademark-claims-notice';
 import TransferDomainStep from 'calypso/components/domains/transfer-domain-step';
-import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
+import Notice from 'calypso/components/notice';
 import {
 	domainRegistration,
 	domainTransfer,
 	updatePrivacyForDomain,
 } from 'calypso/lib/cart-values/cart-items';
-import Notice from 'calypso/components/notice';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
+import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
 import isSiteUpgradeable from 'calypso/state/selectors/is-site-upgradeable';
 import {
@@ -25,11 +21,6 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import QueryProductsList from 'calypso/components/data/query-products-list';
-import { getProductsList } from 'calypso/state/products-list/selectors';
-import TrademarkClaimsNotice from 'calypso/components/domains/trademark-claims-notice';
-import { withShoppingCart } from '@automattic/shopping-cart';
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 
 export class TransferDomain extends Component {
 	static propTypes = {
@@ -39,7 +30,6 @@ export class TransferDomain extends Component {
 		cart: PropTypes.object.isRequired,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
 		isSiteUpgradeable: PropTypes.bool,
-		productsList: PropTypes.object.isRequired,
 		selectedSite: PropTypes.object,
 		selectedSiteId: PropTypes.number,
 		selectedSiteSlug: PropTypes.string,
@@ -67,22 +57,21 @@ export class TransferDomain extends Component {
 		page( '/domains/add/' + selectedSiteSlug );
 	};
 
-	addDomainToCart = ( suggestion ) => {
-		const { selectedSiteSlug, shoppingCartManager, productsList } = this.props;
+	addDomainToCart = async ( suggestion ) => {
+		const { selectedSiteSlug, shoppingCartManager } = this.props;
 
-		shoppingCartManager
-			.addProductsToCart( [
-				fillInSingleCartItemAttributes(
-					domainRegistration( {
-						productSlug: suggestion.product_slug,
-						domain: suggestion.domain_name,
-					} ),
-					productsList
-				),
-			] )
-			.then( () => {
-				page( '/checkout/' + selectedSiteSlug );
-			} );
+		try {
+			await shoppingCartManager.addProductsToCart( [
+				domainRegistration( {
+					productSlug: suggestion.product_slug,
+					domain: suggestion.domain_name,
+				} ),
+			] );
+		} catch {
+			// Nothing needs to be done here. CartMessages will display the error to the user.
+			return;
+		}
+		page( '/checkout/' + selectedSiteSlug );
 	};
 
 	handleRegisterDomain = ( suggestion ) => {
@@ -98,7 +87,7 @@ export class TransferDomain extends Component {
 		this.addDomainToCart( suggestion );
 	};
 
-	handleTransferDomain = ( domain, authCode, supportsPrivacy ) => {
+	handleTransferDomain = async ( domain, authCode, supportsPrivacy ) => {
 		const { selectedSiteSlug, shoppingCartManager } = this.props;
 
 		this.setState( { errorMessage: null } );
@@ -115,23 +104,25 @@ export class TransferDomain extends Component {
 			transfer = updatePrivacyForDomain( transfer, true );
 		}
 
-		shoppingCartManager
-			.addProductsToCart( [ fillInSingleCartItemAttributes( transfer, this.props.productsList ) ] )
-			.then( () => {
-				page( '/checkout/' + selectedSiteSlug );
-			} );
+		try {
+			await shoppingCartManager.addProductsToCart( [ transfer ] );
+		} catch {
+			// Nothing needs to be done here. CartMessages will display the error to the user.
+			return;
+		}
+		page( '/checkout/' + selectedSiteSlug );
 	};
 
-	UNSAFE_componentWillMount() {
-		this.checkSiteIsUpgradeable( this.props );
+	componentDidMount() {
+		this.checkSiteIsUpgradeable();
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		this.checkSiteIsUpgradeable( nextProps );
+	componentDidUpdate() {
+		this.checkSiteIsUpgradeable();
 	}
 
-	checkSiteIsUpgradeable( props ) {
-		if ( props.selectedSite && ! props.isSiteUpgradeable ) {
+	checkSiteIsUpgradeable() {
+		if ( this.props.selectedSite && ! this.props.isSiteUpgradeable ) {
 			page.redirect( '/domains/add/transfer' );
 		}
 	}
@@ -173,7 +164,6 @@ export class TransferDomain extends Component {
 
 		return (
 			<span>
-				<QueryProductsList />
 				{ errorMessage && <Notice status="is-error" text={ errorMessage } /> }
 
 				<TransferDomainStep
@@ -198,5 +188,4 @@ export default connect( ( state ) => ( {
 	selectedSiteSlug: getSelectedSiteSlug( state ),
 	domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
 	isSiteUpgradeable: isSiteUpgradeable( state, getSelectedSiteId( state ) ),
-	productsList: getProductsList( state ),
-} ) )( withShoppingCart( TransferDomain ) );
+} ) )( withCartKey( withShoppingCart( TransferDomain ) ) );

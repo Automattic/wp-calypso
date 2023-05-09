@@ -1,32 +1,30 @@
-/**
- * External dependencies
- *
- */
-import React from 'react';
-import classNames from 'classnames';
 import path from 'path';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
-import Head from 'calypso/components/head';
+import { isLocaleRtl } from '@automattic/i18n-utils';
+import classNames from 'classnames';
+import { Component } from 'react';
 import EnvironmentBadge, {
 	Branch,
+	AccountSettingsHelper,
 	AuthHelper,
 	DevDocsLink,
 	PreferencesHelper,
 	FeaturesHelper,
+	ReactQueryDevtoolsHelper,
 } from 'calypso/components/environment-badge';
-import { chunkCssLinks } from './utils';
+import Head from 'calypso/components/head';
 import JetpackLogo from 'calypso/components/jetpack-logo';
+import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { jsonStringifyForHtml } from 'calypso/server/sanitize';
+import { isBilmurEnabled, getBilmurUrl } from './utils/bilmur';
+import { chunkCssLinks } from './utils/chunk';
 
-class Document extends React.Component {
+class Document extends Component {
 	render() {
 		const {
 			app,
+			accountSettingsHelper,
 			authHelper,
 			chunkFiles,
 			commitSha,
@@ -34,7 +32,7 @@ class Document extends React.Component {
 			head,
 			i18nLocaleScript,
 			initialReduxState,
-			isRTL,
+			initialQueryState,
 			entrypoint,
 			manifests,
 			lang,
@@ -47,6 +45,7 @@ class Document extends React.Component {
 			env,
 			badge,
 			preferencesHelper,
+			reactQueryDevtoolsHelper,
 			branchName,
 			commitChecksum,
 			devDocs,
@@ -56,7 +55,6 @@ class Document extends React.Component {
 			isSupportSession,
 			isWCComConnect,
 			isWooDna,
-			addEvergreenCheck,
 			requestFrom,
 			useTranslationChunks,
 			target,
@@ -77,6 +75,9 @@ class Document extends React.Component {
 			( initialReduxState
 				? `var initialReduxState = ${ jsonStringifyForHtml( initialReduxState ) };\n`
 				: '' ) +
+			( initialQueryState
+				? `var initialQueryState = ${ jsonStringifyForHtml( initialQueryState ) };\n`
+				: '' ) +
 			( clientData ? `var configData = ${ jsonStringifyForHtml( clientData ) };\n` : '' ) +
 			( languageRevisions
 				? `var languageRevisions = ${ jsonStringifyForHtml( languageRevisions ) };\n`
@@ -90,7 +91,9 @@ class Document extends React.Component {
 
 		const theme = config( 'theme' );
 
-		const LoadingLogo = config.isEnabled( 'jetpack-cloud' ) ? JetpackLogo : WordPressLogo;
+		const LoadingLogo = chooseLoadingLogo( this.props, app?.isWpMobileApp );
+
+		const isRTL = isLocaleRtl( lang );
 
 		return (
 			<html
@@ -152,6 +155,8 @@ class Document extends React.Component {
 					) }
 					{ badge && (
 						<EnvironmentBadge badge={ badge } feedbackURL={ feedbackURL }>
+							{ reactQueryDevtoolsHelper && <ReactQueryDevtoolsHelper /> }
+							{ accountSettingsHelper && <AccountSettingsHelper /> }
 							{ preferencesHelper && <PreferencesHelper /> }
 							{ featuresHelper && <FeaturesHelper /> }
 							{ authHelper && <AuthHelper /> }
@@ -169,33 +174,6 @@ class Document extends React.Component {
 							__html: inlineScript,
 						} }
 					/>
-
-					{
-						// Use <script nomodule> to redirect browsers with no ES module
-						// support to the fallback build. ES module support is a convenient
-						// test to determine that a browser is modern enough to handle
-						// the evergreen bundle.
-						addEvergreenCheck && (
-							<script
-								nonce={ inlineScriptNonce }
-								noModule
-								dangerouslySetInnerHTML={ {
-									__html: `
-							(function() {
-								var url = window.location.href;
-
-								if ( url.indexOf( 'forceFallback=1' ) === -1 ) {
-									url += ( url.indexOf( '?' ) !== -1 ? '&' : '?' );
-									url += 'forceFallback=1';
-									window.location.href = url;
-								}
-							})();
-							`,
-								} }
-							/>
-						)
-					}
-
 					{ i18nLocaleScript && ! useTranslationChunks && <script src={ i18nLocaleScript } /> }
 					{ /*
 					 * inline manifest in production, but reference by url for development.
@@ -212,6 +190,17 @@ class Document extends React.Component {
 								} }
 							/>
 						) ) }
+
+					{ isBilmurEnabled() && (
+						<script
+							defer
+							id="bilmur"
+							src={ getBilmurUrl() }
+							data-provider="wordpress.com"
+							data-service="calypso"
+							data-customproperties={ `{"route_name": "${ sectionName }"}` }
+						/>
+					) }
 
 					{ entrypoint?.language?.manifest && <script src={ entrypoint.language.manifest } /> }
 
@@ -268,6 +257,17 @@ class Document extends React.Component {
 			</html>
 		);
 	}
+}
+
+function chooseLoadingLogo( { useLoadingEllipsis }, isMobileApp ) {
+	if ( useLoadingEllipsis ) {
+		return LoadingEllipsis;
+	}
+	if ( config.isEnabled( 'jetpack-cloud' ) || isMobileApp ) {
+		return JetpackLogo;
+	}
+
+	return WordPressLogo;
 }
 
 export default Document;

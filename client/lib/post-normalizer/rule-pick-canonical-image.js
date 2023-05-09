@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { find } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { thumbIsLikelyImage, isCandidateForCanonicalImage } from './utils';
 
 export default function pickCanonicalImage( post ) {

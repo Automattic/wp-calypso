@@ -1,7 +1,4 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import * as React from 'react';
 
 interface Props {
 	translate: Function;

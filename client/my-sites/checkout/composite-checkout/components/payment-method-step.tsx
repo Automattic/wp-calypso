@@ -1,21 +1,15 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import styled from '@emotion/styled';
 import {
 	getTotalLineItemFromCart,
 	getTaxBreakdownLineItemsFromCart,
 	getCreditsLineItemFromCart,
 	getSubtotalLineItemFromCart,
+	NonProductLineItem,
 } from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
+import styled from '@emotion/styled';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import CheckoutTerms from '../components/checkout-terms';
-import { NonProductLineItem, WPOrderReviewSection } from './wp-order-review-line-items';
+import { WPOrderReviewSection } from './wp-order-review-line-items';
 
 const CheckoutTermsWrapper = styled.div`
 	& > * {
@@ -38,25 +32,6 @@ const CheckoutTermsWrapper = styled.div`
 		margin-top: 32px;
 	}
 
-	svg {
-		width: 16px;
-		height: 16px;
-		position: absolute;
-		top: 0;
-		left: 0;
-
-		.rtl & {
-			left: auto;
-			right: 0;
-		}
-	}
-
-	p {
-		font-size: 12px;
-		margin: 0;
-		word-break: break-word;
-	}
-
 	a {
 		text-decoration: underline;
 	}
@@ -66,18 +41,13 @@ const CheckoutTermsWrapper = styled.div`
 	}
 `;
 
-export default function PaymentMethodStep( {
-	activeStepContent,
-}: {
-	activeStepContent: React.ReactNode;
-} ): JSX.Element {
-	const { responseCart } = useShoppingCart();
+export default function PaymentMethodStep() {
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
 	const taxLineItems = getTaxBreakdownLineItemsFromCart( responseCart );
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	return (
 		<>
-			{ activeStepContent }
-
 			<CheckoutTermsWrapper>
 				<CheckoutTerms cart={ responseCart } />
 			</CheckoutTermsWrapper>

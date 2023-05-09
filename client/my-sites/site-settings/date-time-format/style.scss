@@ -1,7 +1,7 @@
 .date-time-format,
 .date-time-format.is-expanded {
 	margin-top: -10px;
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		margin-top: -16px;
 
 		.foldable-card__content {
@@ -15,7 +15,7 @@
 	}
 
 	.date-time-format__info {
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 		font-size: $font-body-small;
 		font-style: italic;
 	}
@@ -26,7 +26,7 @@
 		margin-top: 12px;
 	}
 
-	input[type='text'].form-text-input {
+	input[type="text"].form-text-input {
 		margin: 0 12px;
 		width: 100px;
 	}

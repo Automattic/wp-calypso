@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import update from 'immutability-helper';
-
-/**
- * Internal dependencies
- */
 import {
 	DOMAINS_SITE_REDIRECT_FETCH,
 	DOMAINS_SITE_REDIRECT_FETCH_COMPLETED,

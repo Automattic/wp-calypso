@@ -1,14 +1,11 @@
 /**
- **** WARNING: No ES6 modules here. Not transpiled! ****
+ * WARNING: No ES6 modules here. Not transpiled! *
  */
-/* eslint-disable import/no-nodejs-modules */
 
-/**
- * External dependencies
- */
-const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
-const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
 const path = require( 'path' );
+const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
+const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
+const ReadableJsAssetsWebpackPlugin = require( '@wordpress/readable-js-assets-webpack-plugin' );
 const webpack = require( 'webpack' );
 
 const FSE_MODULE_PREFIX = 'a8c-fse';
@@ -26,12 +23,11 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
  *
  * @see {@link https://webpack.js.org/configuration/configuration-types/#exporting-a-function}
  * @see {@link https://webpack.js.org/api/cli/}
- *
- * @param   {object}  env                           environment options
+ * @param   {Object}  env                           environment options
  * @param   {string}  env.source                    plugin slugs, comma separated list
- * @param   {object}  argv                          options map
+ * @param   {Object}  argv                          options map
  * @param   {string}  argv.entry                    entry path
- * @returns {object}                                webpack config
+ * @returns {Object}                                webpack config
  */
 function getWebpackConfig( env = { source: '' }, argv = {} ) {
 	env.WP = true;
@@ -68,7 +64,13 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 		output: {
 			...webpackConfig.output,
 			path: outputPath,
-			filename: '[name].js', // dynamic filename
+			// Unfortunately, we can't set the name to `[name].js` for the
+			// dev env because at runtime we'd also need a way to detect
+			// if the env was dev or prod, as the file is enqueued in WP
+			// and there's no way to do that now. The simpler alternative
+			// is to generate a .min.js for dev and prod, even though the
+			// file is not really minified in the dev env.
+			filename: '[name].min.js', // dynamic filename
 			library: 'EditingToolkit',
 		},
 		optimization: {
@@ -85,6 +87,7 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 			} ),
 			new DependencyExtractionWebpackPlugin( {
 				injectPolyfill: true,
+				outputFilename: '[name].asset.php',
 				requestToExternal( request ) {
 					if ( request.startsWith( FSE_MODULE_PREFIX ) ) {
 						switch ( request ) {
@@ -98,11 +101,17 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 								throw new Error( `Received unknown module request ${ request }.` );
 						}
 					}
+					// The extraction logic will only extract a package if requestToExternal
+					// explicitly returns undefined for the given request. Null
+					// shortcuts the logic such that react-i18n will be bundled.
+					if ( request === '@wordpress/react-i18n' ) {
+						return null;
+					}
 				},
 			} ),
+			new ReadableJsAssetsWebpackPlugin(),
 		],
-		watch: isDevelopment,
-		devtool: isDevelopment ? 'inline-cheap-source-map' : false,
+		devtool: isDevelopment ? 'inline-cheap-source-map' : 'source-map',
 		stats: 'minimal',
 	};
 }

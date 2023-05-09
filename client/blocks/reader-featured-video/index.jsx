@@ -1,36 +1,22 @@
-/**
- * External Dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
-import { throttle } from 'lodash';
-import ReactDom from 'react-dom';
-import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
-
-/**
- * Internal Dependencies
- */
-import EmbedHelper from 'calypso/reader/embed-helper';
-import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
-import { getThumbnailForIframe } from 'calypso/state/reader/thumbnails/selectors';
-import QueryReaderThumbnail from 'calypso/components/data/query-reader-thumbnails';
-
-/**
- * Image dependencies
- */
+import { localize } from 'i18n-calypso';
+import { throttle } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import ReactDom from 'react-dom';
+import { connect } from 'react-redux';
 import playIconImage from 'calypso/assets/images/reader/play-icon.png';
+import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
+import QueryReaderThumbnail from 'calypso/components/data/query-reader-thumbnails';
+import EmbedHelper from 'calypso/reader/embed-helper';
+import { getThumbnailForIframe } from 'calypso/state/reader/thumbnails/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};
 const defaultSizingFunction = () => ( {} );
 
-class ReaderFeaturedVideo extends React.Component {
+class ReaderFeaturedVideo extends Component {
 	static propTypes = {
 		thumbnailUrl: PropTypes.string,
 		autoplayIframe: PropTypes.string,
@@ -41,6 +27,7 @@ class ReaderFeaturedVideo extends React.Component {
 		className: PropTypes.string,
 		href: PropTypes.string,
 		isExpanded: PropTypes.bool,
+		isTagPost: PropTypes.bool,
 		expandCard: PropTypes.func,
 	};
 
@@ -96,12 +83,13 @@ class ReaderFeaturedVideo extends React.Component {
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps() {
+	componentDidUpdate() {
 		this.throttledUpdateVideoSize();
 	}
 
 	render() {
 		const {
+			videoEmbed,
 			thumbnailUrl,
 			autoplayIframe,
 			iframe,
@@ -110,15 +98,21 @@ class ReaderFeaturedVideo extends React.Component {
 			className,
 			href,
 			isExpanded,
+			isTagPost,
 		} = this.props;
+
+		const classNames = classnames( className, 'reader-featured-video' );
 
 		if ( ! isExpanded && thumbnailUrl ) {
 			return (
 				<ReaderFeaturedImage
+					canonicalMedia={ videoEmbed }
 					imageUrl={ thumbnailUrl }
 					onClick={ this.handleThumbnailClick }
-					className={ className }
+					className={ classNames }
 					href={ href }
+					fetched={ true }
+					isTagPost={ isTagPost }
 				>
 					{ allowPlaying && (
 						<img
@@ -135,7 +129,6 @@ class ReaderFeaturedVideo extends React.Component {
 		// if we can't retrieve a thumbnail that means there was an issue
 		// with the embed and we shouldn't display it
 		const showEmbed = !! thumbnailUrl;
-		const classNames = classnames( className, 'reader-featured-video' );
 
 		/* eslint-disable react/no-danger */
 		return (

@@ -1,15 +1,7 @@
-/**
- * External Dependencies
- */
-import React from 'react';
-import page from 'page';
 import { defer } from 'lodash';
-
-/**
- * Internal Dependencies
- */
-import { trackPageLoad } from 'calypso/reader/controller-helper';
+import page from 'page';
 import AsyncLoad from 'calypso/components/async-load';
+import { trackPageLoad } from 'calypso/reader/controller-helper';
 
 const analyticsPageTitle = 'Reader';
 

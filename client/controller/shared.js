@@ -1,34 +1,44 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import config from '@automattic/calypso-config';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { setSection } from 'calypso/state/ui/actions';
 import { setLocale } from 'calypso/state/ui/language/actions';
-import { isTranslatedIncompletely } from 'calypso/lib/i18n-utils/utils';
 
 const noop = () => {};
 
 export function makeLayoutMiddleware( LayoutComponent ) {
 	return ( context, next ) => {
-		const { store, section, pathname, query, primary, secondary } = context;
+		const {
+			i18n,
+			store,
+			queryClient,
+			section,
+			pathname,
+			query,
+			primary,
+			secondary,
+			headerSection,
+			showGdprBanner,
+			cachedMarkup,
+		} = context;
+		// Markup exists in the cache; no need to do extra work which won't be used.
+		if ( cachedMarkup ) {
+			return next();
+		}
 
 		// On server, only render LoggedOutLayout when logged-out.
-		if ( ! context.isServerSide || ! getCurrentUser( context.store.getState() ) ) {
+		if ( ! ( context.isServerSide && isUserLoggedIn( context.store.getState() ) ) ) {
 			context.layout = (
 				<LayoutComponent
+					i18n={ i18n }
 					store={ store }
+					queryClient={ queryClient }
 					currentSection={ section }
 					currentRoute={ pathname }
 					currentQuery={ query }
 					primary={ primary }
 					secondary={ secondary }
+					headerSection={ headerSection }
 					redirectUri={ context.originalUrl }
+					showGdprBanner={ showGdprBanner }
 				/>
 			);
 		}
@@ -47,30 +57,29 @@ export function setSectionMiddleware( section ) {
 	};
 }
 
-export function setLocaleMiddleware( context, next ) {
-	const currentUser = getCurrentUser( context.store.getState() );
+export function setLocaleMiddleware( param = 'lang' ) {
+	return ( context, next ) => {
+		const queryLocale = context.query[ param ];
+		if ( queryLocale ) {
+			context.lang = queryLocale;
+			context.store.dispatch( setLocale( queryLocale ) );
+		}
 
-	if ( context.params.lang ) {
-		context.lang = context.params.lang;
-	} else if ( currentUser ) {
-		const shouldFallbackToDefaultLocale =
-			currentUser.use_fallback_for_incomplete_languages &&
-			isTranslatedIncompletely( currentUser.localeSlug );
+		const paramsLocale = context.params[ param ];
+		if ( paramsLocale ) {
+			context.lang = paramsLocale;
+			context.store.dispatch( setLocale( paramsLocale ) );
+		}
 
-		context.lang = shouldFallbackToDefaultLocale
-			? config( 'i18n_default_locale_slug' )
-			: currentUser.localeSlug;
-	}
-
-	context.store.dispatch( setLocale( context.lang || config( 'i18n_default_locale_slug' ) ) );
-	next();
+		next();
+	};
 }
 
 /**
  * Composes multiple handlers into one.
  *
- * @param { ...( context, next ) => void } handlers - A list of route handlers to compose
- * @returns  { ( context, next ) => void } - A new route handler that executes the handlers in succession
+ * @param { ...( context, Function ) => void } handlers - A list of route handlers to compose
+ * @returns  { ( context, Function ) => void } - A new route handler that executes the handlers in succession
  */
 export function composeHandlers( ...handlers ) {
 	return ( context, next ) => {

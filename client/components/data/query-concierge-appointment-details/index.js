@@ -1,25 +1,15 @@
-/**
- * External dependencies
- */
-import { Component } from 'react';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { requestConciergeAppointmentDetails } from 'calypso/state/concierge/actions';
 
-class QueryConciergeAppointmentDetails extends Component {
-	UNSAFE_componentWillMount() {
-		const { appointmentId, scheduleId } = this.props;
-		this.props.requestConciergeAppointmentDetails( scheduleId, appointmentId );
-	}
+function QueryConciergeAppointmentDetails( { scheduleId, appointmentId } ) {
+	const dispatch = useDispatch();
 
-	render() {
-		return null;
-	}
+	useEffect( () => {
+		dispatch( requestConciergeAppointmentDetails( scheduleId, appointmentId ) );
+	}, [ dispatch, scheduleId, appointmentId ] );
+
+	return null;
 }
 
-export default connect( ( state ) => state, { requestConciergeAppointmentDetails } )(
-	QueryConciergeAppointmentDetails
-);
+export default QueryConciergeAppointmentDetails;

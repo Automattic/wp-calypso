@@ -1,7 +1,12 @@
-/**
- * Internal dependencies
- */
-import Emitter from './emitter';
+import { EventEmitter } from 'events';
+
+function Emitter( prototype ) {
+	Object.assign( prototype, EventEmitter.prototype );
+	prototype.emitChange = function () {
+		this.emit( 'change' );
+	};
+	prototype.off = prototype.removeListener;
+}
 
 /**
  * PopupMonitor component

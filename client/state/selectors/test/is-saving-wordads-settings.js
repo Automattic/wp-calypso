@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import isSavingWordadsSettings from 'calypso/state/selectors/is-saving-wordads-settings';
 
 describe( 'isSavingWordadsSettings()', () => {

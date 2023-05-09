@@ -11,12 +11,7 @@ hr.spinner-line {
 	border: none;
 	height: 3px;
 	margin: 24px 0;
-	background-image: linear-gradient(
-		to right,
-		var( --color-neutral-20 ) 0%,
-		var( --color-neutral-10 ) 50%,
-		var( --color-neutral-20 ) 100%
-	);
+	background-image: linear-gradient(to right, var(--color-neutral-20) 0%, var(--color-neutral-10) 50%, var(--color-neutral-20) 100%);
 	background-size: 300px 100%;
 	animation: spinner-line__animation 1.2s infinite linear;
 }

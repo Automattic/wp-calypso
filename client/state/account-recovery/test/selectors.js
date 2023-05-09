@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { isFetchingAccountRecoverySettings } from '../selectors';
 
 describe( '#account-recovery selector isFetchingAccountRecoverySettings:', () => {

@@ -1,58 +1,49 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
-import page from 'page';
-import { get } from 'lodash';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import Main from 'calypso/components/main';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import HeaderCake from 'calypso/components/header-cake';
+import { isEnabled } from '@automattic/calypso-config';
 import { Card, Button } from '@automattic/components';
-import PeopleListItem from 'calypso/my-sites/people/people-list-item';
-import Gravatar from 'calypso/components/gravatar';
+import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
+import page from 'page';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import QuerySiteInvites from 'calypso/components/data/query-site-invites';
 import EmptyContent from 'calypso/components/empty-content';
+import FormattedHeader from 'calypso/components/formatted-header';
+import HeaderCake from 'calypso/components/header-cake';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import PeopleListItem from 'calypso/my-sites/people/people-list-item';
+import { deleteInvite } from 'calypso/state/invites/actions';
 import {
 	isRequestingInvitesForSite,
 	getInviteForSite,
 	isDeletingInvite,
 	didInviteDeletionSucceed,
 } from 'calypso/state/invites/selectors';
-import { deleteInvite } from 'calypso/state/invites/actions';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-export class PeopleInviteDetails extends React.PureComponent {
+export class PeopleInviteDetails extends PureComponent {
 	static propTypes = {
 		site: PropTypes.object,
 		inviteKey: PropTypes.string.isRequired,
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.deleteSuccess && ! this.props.deleteSuccess ) {
+	componentDidUpdate( prevProps ) {
+		if ( this.props.deleteSuccess && ! prevProps.deleteSuccess ) {
 			this.goBack();
 		}
 	}
 
 	goBack = () => {
 		const siteSlug = get( this.props, 'site.slug' );
-		const fallback = siteSlug ? '/people/invites/' + siteSlug : '/people/invites/';
+		const route = isEnabled( 'user-management-revamp' ) ? 'team-members' : 'invites';
+		const fallback = siteSlug ? `/people/${ route }/${ siteSlug }` : `/people/${ route }/`;
 
-		// Go back to last route with /people/invites as the fallback
+		// Go back to last route with provided route as the fallback
 		page.back( fallback );
 	};
 
@@ -64,30 +55,14 @@ export class PeopleInviteDetails extends React.PureComponent {
 		this.props.deleteInvite( site.ID, invite.key );
 	};
 
-	renderClearOrRevoke = () => {
+	renderClearOrRevoke = ( props = {} ) => {
 		const { deleting, invite, translate } = this.props;
 		const { isPending } = invite;
-		const revokeMessage = translate(
-			'Revoking an invite will no longer allow this person to become a member of ' +
-				'your site. You can always invite them again if you change your mind.'
-		);
-		const clearMessage = translate(
-			'If you no longer wish to see this record, you can clear it. ' +
-				'The person will still remain a member of this site.'
-		);
 
 		return (
-			<div className="people-invite-details__clear-revoke">
-				<div>{ isPending ? revokeMessage : clearMessage }</div>
-				<Button
-					busy={ deleting }
-					primary={ isPending }
-					scary={ isPending }
-					onClick={ this.handleDelete }
-				>
-					{ isPending ? translate( 'Revoke invite' ) : translate( 'Clear invite' ) }
-				</Button>
-			</div>
+			<Button className={ props.className || '' } busy={ deleting } onClick={ this.handleDelete }>
+				{ isPending ? translate( 'Revoke' ) : translate( 'Clear' ) }
+			</Button>
 		);
 	};
 
@@ -125,10 +100,11 @@ export class PeopleInviteDetails extends React.PureComponent {
 						site={ site }
 						type="invite-details"
 						isSelectable={ false }
+						showStatus={ true }
+						RevokeClearBtn={ this.renderClearOrRevoke }
 					/>
 					{ this.renderInviteDetails() }
 				</Card>
-				{ this.renderClearOrRevoke() }
 			</div>
 		);
 	}
@@ -140,33 +116,33 @@ export class PeopleInviteDetails extends React.PureComponent {
 		return (
 			<div className="people-invite-details__meta">
 				<div className="people-invite-details__meta-item">
-					<span className="people-invite-details__meta-item-label">
-						{ translate( 'Invited By' ) }
-					</span>
-					<Gravatar user={ invite.invitedBy } size={ 24 } />
-					{ showName && (
-						<span className="people-invite-details__meta-item-user">{ invite.invitedBy.name }</span>
-					) }
-					<span className="people-invite-details__meta-item-username">
-						{ '@' + invite.invitedBy.login }
-					</span>
+					<strong>{ translate( 'Status' ) }</strong>
+					<div>
+						{ invite.isPending && (
+							<span className="people-invite-details__meta-status-pending">
+								{ translate( 'Pending' ) }
+							</span>
+						) }
+						{ !! invite.acceptedDate && (
+							<span className="people-invite-details__meta-status-active">
+								{ translate( 'Active' ) }
+							</span>
+						) }
+					</div>
 				</div>
 				<div className="people-invite-details__meta-item">
-					<span className="people-invite-details__meta-item-label">{ translate( 'Sent' ) }</span>
-					<span className="people-invite-details__meta-item-date">
-						{ moment( invite.inviteDate ).format( 'LLL' ) }
-					</span>
-				</div>
-				{ invite.acceptedDate && (
-					<div className="people-invite-details__meta-item">
-						<span className="people-invite-details__meta-item-label">
-							{ translate( 'Accepted' ) }
-						</span>
-						<span className="people-invite-details__meta-item-date">
-							{ moment( invite.acceptedDate ).format( 'LLL' ) }
+					<strong>{ translate( 'Added By' ) }</strong>
+					<div>
+						<span>
+							{ showName && <>{ invite.invitedBy.name }</> } { '@' + invite.invitedBy.login }
 						</span>
 					</div>
-				) }
+				</div>
+
+				<div className="people-invite-details__meta-item">
+					<strong>{ translate( 'Invite date' ) }</strong>
+					<div>{ moment( invite.inviteDate ).format( 'LLL' ) }</div>
+				</div>
 			</div>
 		);
 	}
@@ -178,11 +154,10 @@ export class PeopleInviteDetails extends React.PureComponent {
 		if ( siteId && ! canViewPeople ) {
 			return (
 				<Main>
-					<PageViewTracker path="/people/invites/:site/:invite" title="People > Invite Details" />
-					<SidebarNavigation />
+					<PageViewTracker path="/people/invites/:site/:invite" title="People > User Details" />
 					<EmptyContent
 						title={ this.props.translate( 'You are not authorized to view this page' ) }
-						illustration={ '/calypso/images/illustrations/illustration-404.svg' }
+						illustration="/calypso/images/illustrations/illustration-404.svg"
 					/>
 				</Main>
 			);
@@ -190,12 +165,24 @@ export class PeopleInviteDetails extends React.PureComponent {
 
 		return (
 			<Main className="people-invite-details">
-				<PageViewTracker path="/people/invites/:site/:invite" title="People > Invite Details" />
+				<PageViewTracker path="/people/invites/:site/:invite" title="People > User Details" />
 				{ siteId && <QuerySiteInvites siteId={ siteId } /> }
-				<SidebarNavigation />
+
+				{ isEnabled( 'user-management-revamp' ) && (
+					<FormattedHeader
+						brandFont
+						className="people__page-heading"
+						headerText={ translate( 'Users' ) }
+						subHeaderText={ translate(
+							'People who have subscribed to your site and team members.'
+						) }
+						align="left"
+						hasScreenOptions
+					/>
+				) }
 
 				<HeaderCake isCompact onClick={ this.goBack }>
-					{ translate( 'Invite Details' ) }
+					{ translate( 'User Details' ) }
 				</HeaderCake>
 
 				{ this.renderInvite() }

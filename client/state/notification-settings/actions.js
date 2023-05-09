@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
 import {
 	NOTIFICATION_SETTINGS_FETCH,
@@ -26,15 +19,15 @@ import 'calypso/state/notification-settings/init';
 /**
  * Returns an action object to signal the request of the current user notification settings.
  *
- * @returns {object} action object
+ * @returns {Object} action object
  */
 export const requestNotificationSettings = () => ( { type: NOTIFICATION_SETTINGS_REQUEST } );
 
 /**
  * Returns an action object to signal the arrival of the requested notification settings.
  *
- * @param  {object} settings User Notification Settings
- * @returns {object}          action object
+ * @param  {Object} settings User Notification Settings
+ * @returns {Object}          action object
  */
 export const updateNotificationSettings = ( settings ) => ( {
 	type: NOTIFICATION_SETTINGS_UPDATE,
@@ -55,20 +48,17 @@ export const toggleWPcomEmailSetting = ( setting ) => toggle( 'wpcom', 'email', 
 export const fetchSettings = () => ( dispatch ) => {
 	dispatch( { type: NOTIFICATION_SETTINGS_FETCH } );
 
-	wpcom
-		.undocumented()
-		.me()
-		.getNotificationSettings()
+	wpcom.req
+		.get( '/me/notifications/settings/' )
 		.then( ( data ) =>
 			dispatch( {
 				type: NOTIFICATION_SETTINGS_FETCH_COMPLETE,
 				data,
 			} )
 		)
-		.catch( ( error ) =>
+		.catch( () =>
 			dispatch( {
 				type: NOTIFICATION_SETTINGS_FETCH_FAILED,
-				error,
 			} )
 		);
 };
@@ -101,31 +91,26 @@ export const showSaveErrorNotice = () =>
 		id: 'notif-settings-save',
 	} );
 
-export const saveSettings = ( source, settings, applyToAll = false ) => ( dispatch ) => {
-	dispatch( { type: NOTIFICATION_SETTINGS_SAVE } );
+export const saveSettings =
+	( source, settings, applyToAll = false ) =>
+	( dispatch ) => {
+		dispatch( { type: NOTIFICATION_SETTINGS_SAVE } );
 
-	wpcom
-		.undocumented()
-		.me()
-		.updateNotificationSettings(
-			buildSavePayload( source, settings ),
-			applyToAll,
-			( error, data ) => {
-				if ( error ) {
-					dispatch( showSaveErrorNotice() );
-					dispatch( {
-						type: NOTIFICATION_SETTINGS_SAVE_FAILED,
-						error,
-						data,
-					} );
-				} else {
-					dispatch( showSaveSuccessNotice() );
-					dispatch( {
-						type: NOTIFICATION_SETTINGS_SAVE_COMPLETE,
-						error,
-						data,
-					} );
-				}
-			}
-		);
-};
+		const query = applyToAll ? { applyToAll: true } : {};
+
+		wpcom.req
+			.post( '/me/notifications/settings/', query, buildSavePayload( source, settings ) )
+			.then( ( data ) => {
+				dispatch( showSaveSuccessNotice() );
+				dispatch( {
+					type: NOTIFICATION_SETTINGS_SAVE_COMPLETE,
+					data,
+				} );
+			} )
+			.catch( () => {
+				dispatch( showSaveErrorNotice() );
+				dispatch( {
+					type: NOTIFICATION_SETTINGS_SAVE_FAILED,
+				} );
+			} );
+	};

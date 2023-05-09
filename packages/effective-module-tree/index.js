@@ -12,6 +12,7 @@ const treeify = require( 'object-treeify' );
  *	- node_modules
  *
  * @param {string} packagePath Package path used as seed for the traversal
+ * @yields Path to `node_modules`.
  */
 const candidates = function* ( packagePath ) {
 	const parts = packagePath.split( path.sep );
@@ -29,7 +30,7 @@ const candidates = function* ( packagePath ) {
 /**
  * Recursively finds the dependency tree for a package and its dependencies
  *
- * @param {object} packageJson package.json content of the package
+ * @param {Object} packageJson package.json content of the package
  * @param {string} packagePath Location of package.json, used to decide where to look for deps
  * @param {string[]} parents List of parent dependencies already visited, used to avoid circular loops
  * @param {Map} cache Map used to cache already resolved paths of the dependency tree
@@ -76,7 +77,6 @@ const findTree = ( packageJson, packagePath, parents, cache ) => {
 			}
 
 			if ( ! dependencyJson ) {
-				// eslint-disable-next-line no-console
 				console.warn( `Can't find a candidate for ${ dependency } in ${ packagePath }` );
 				return accumulated;
 			}
@@ -99,7 +99,9 @@ const findTree = ( packageJson, packagePath, parents, cache ) => {
 	);
 
 	const result = { [ name ]: dependencies };
-	if ( treeIsCacheable ) cache.set( packagePath, result );
+	if ( treeIsCacheable ) {
+		cache.set( packagePath, result );
+	}
 	return { tree: result, isCacheable: treeIsCacheable };
 };
 

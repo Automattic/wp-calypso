@@ -1,9 +1,6 @@
 /**
  */
 
-/**
- * Internal dependencies
- */
 import { safeLinkRe } from './utils';
 
 export default function makeLinksSafe( post ) {

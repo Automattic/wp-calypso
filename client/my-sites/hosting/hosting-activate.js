@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
-import MainComponent from 'calypso/components/main';
-import HeaderCake from 'calypso/components/header-cake';
+import { connect } from 'react-redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
+import HeaderCake from 'calypso/components/header-cake';
+import MainComponent from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -19,8 +11,8 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 const HostingActivate = ( { initiateTransfer, siteId, siteSlug, translate } ) => {
 	const backUrl = `/hosting-config/${ siteSlug }`;
 
-	const transferInitiate = () => {
-		initiateTransfer( siteId, null, null );
+	const transferInitiate = ( { geo_affinity = '' } ) => {
+		initiateTransfer( siteId, null, null, geo_affinity );
 		page( backUrl );
 	};
 
@@ -30,10 +22,15 @@ const HostingActivate = ( { initiateTransfer, siteId, siteSlug, translate } ) =>
 				path="/hosting-config/activate/:site"
 				title="Hosting Configuration > Activate"
 			/>
-			<HeaderCake isCompact={ true } backHref={ backUrl }>
+			<HeaderCake isCompact={ false } backHref={ backUrl }>
 				{ translate( 'Activate Hosting Features' ) }
 			</HeaderCake>
-			<EligibilityWarnings onProceed={ transferInitiate } backUrl={ backUrl } />
+			<EligibilityWarnings
+				className="hosting__activating-warnings"
+				onProceed={ transferInitiate }
+				backUrl={ backUrl }
+				showDataCenterPicker={ true }
+			/>
 		</MainComponent>
 	);
 };

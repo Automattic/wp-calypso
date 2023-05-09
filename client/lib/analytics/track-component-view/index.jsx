@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-
 import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
@@ -30,8 +22,8 @@ class TrackComponentView extends Component {
 		bumpStat: () => {},
 	};
 
-	UNSAFE_componentWillMount() {
-		debug( 'Component will mount.' );
+	componentDidMount() {
+		debug( 'Component did mount.' );
 		const { eventName, eventProperties } = this.props;
 		if ( eventName ) {
 			debug( `Recording Tracks event "${ eventName }".` );

@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { NOTIFICATIONS_EXCEPTIONS } from './constants';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import { NOTIFICATIONS_EXCEPTIONS } from './constants';
 
-export default class extends React.PureComponent {
+export default class extends PureComponent {
 	static displayName = 'NotificationSettingsFormStreamOptions';
 
 	static propTypes = {
@@ -23,14 +15,20 @@ export default class extends React.PureComponent {
 		onToggle: PropTypes.func.isRequired,
 	};
 
+	// Assume this is a device stream if not timeline or email
+	isDeviceStream = () => {
+		return [ 'timeline', 'email' ].indexOf( this.props.stream ) === -1;
+	};
+
 	render() {
 		return (
 			<ul className="notification-settings-form-stream-options">
 				{ this.props.settingKeys.map( ( setting, index ) => {
 					const isException =
-						this.props.stream in NOTIFICATIONS_EXCEPTIONS &&
-						NOTIFICATIONS_EXCEPTIONS[ this.props.stream ].indexOf( setting ) >= 0;
-
+						( this.props.stream in NOTIFICATIONS_EXCEPTIONS &&
+							NOTIFICATIONS_EXCEPTIONS[ this.props.stream ].indexOf( setting ) >= 0 ) ||
+						( [ 'blogging_prompt', 'draft_post_prompt' ].includes( setting ) &&
+							this.isDeviceStream() );
 					return (
 						<li className="notification-settings-form-stream-options__item" key={ index }>
 							{ isException ? null : (

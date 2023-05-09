@@ -1,16 +1,7 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import { connect } from 'react-redux';
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import PlanThankYouCard from '../';
+import { connect } from 'react-redux';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import PlanThankYouCard from '../';
 
 function PlanThankYouCardExample( { primarySiteId } ) {
 	return <PlanThankYouCard siteId={ primarySiteId } />;

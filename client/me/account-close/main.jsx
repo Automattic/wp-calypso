@@ -1,43 +1,31 @@
-/**
- * External dependencies
- */
-import React, { Component, Fragment } from 'react';
-import page from 'page';
-import Gridicon from 'calypso/components/gridicon';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
+import { Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import HeaderCake from 'calypso/components/header-cake';
+import page from 'page';
+import { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import ActionPanel from 'calypso/components/action-panel';
 import ActionPanelBody from 'calypso/components/action-panel/body';
 import ActionPanelFigure from 'calypso/components/action-panel/figure';
 import ActionPanelFigureHeader from 'calypso/components/action-panel/figure-header';
 import ActionPanelFigureList from 'calypso/components/action-panel/figure-list';
 import ActionPanelFigureListItem from 'calypso/components/action-panel/figure-list-item';
-import ActionPanelLink from 'calypso/components/action-panel/link';
 import ActionPanelFooter from 'calypso/components/action-panel/footer';
-import { Button } from '@automattic/components';
-import AccountCloseConfirmDialog from './confirm-dialog';
+import ActionPanelLink from 'calypso/components/action-panel/link';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
-import getAccountClosureSites from 'calypso/state/selectors/get-account-closure-sites';
-import userHasAnyAtomicSites from 'calypso/state/selectors/user-has-any-atomic-sites';
-import isAccountClosed from 'calypso/state/selectors/is-account-closed';
-import { hasLoadedUserPurchasesFromServer } from 'calypso/state/purchases/selectors';
-import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
-import getUserPurchasedPremiumThemes from 'calypso/state/selectors/get-user-purchased-premium-themes';
 import FormattedHeader from 'calypso/components/formatted-header';
+import HeaderCake from 'calypso/components/header-cake';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
+import { hasLoadedUserPurchasesFromServer } from 'calypso/state/purchases/selectors';
+import getAccountClosureSites from 'calypso/state/selectors/get-account-closure-sites';
+import getUserPurchasedPremiumThemes from 'calypso/state/selectors/get-user-purchased-premium-themes';
+import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
+import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
+import isAccountClosed from 'calypso/state/selectors/is-account-closed';
+import userHasAnyAtomicSites from 'calypso/state/selectors/user-has-any-atomic-sites';
+import AccountCloseConfirmDialog from './confirm-dialog';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class AccountSettingsClose extends Component {
@@ -79,14 +67,8 @@ class AccountSettingsClose extends Component {
 	};
 
 	render() {
-		const {
-			translate,
-			currentUserId,
-			hasAtomicSites,
-			hasCancelablePurchases,
-			isLoading,
-			purchasedPremiumThemes,
-		} = this.props;
+		const { translate, hasAtomicSites, hasCancelablePurchases, isLoading, purchasedPremiumThemes } =
+			this.props;
 		const isDeletePossible = ! isLoading && ! hasAtomicSites && ! hasCancelablePurchases;
 		const containerClasses = classnames( 'account-close', 'main', 'is-wide-layout', {
 			'is-loading': isLoading,
@@ -95,7 +77,7 @@ class AccountSettingsClose extends Component {
 
 		return (
 			<div className={ containerClasses } role="main">
-				{ currentUserId && <QueryUserPurchases userId={ currentUserId } /> }
+				<QueryUserPurchases />
 				<FormattedHeader brandFont headerText={ translate( 'Account Settings' ) } align="left" />
 
 				<HeaderCake onClick={ this.goBack }>
@@ -153,28 +135,7 @@ class AccountSettingsClose extends Component {
 								</ActionPanelFigureList>
 							</ActionPanelFigure>
 						) }
-						{ ! isLoading && hasAtomicSites && (
-							<Fragment>
-								<p className="account-close__body-copy">
-									{ translate(
-										'Account closure cannot be undone. It will remove your account along with all your sites and all their content.'
-									) }
-								</p>
-								<p className="account-close__body-copy">
-									{ translate(
-										'You will not be able to open a new WordPress.com account using the same email address for 30 days.'
-									) }
-								</p>
-								<p className="account-close__body-copy">
-									{ translate( 'To close this account now, {{a}}contact our support team{{/a}}.', {
-										components: {
-											a: <ActionPanelLink href="/help/contact" />,
-										},
-									} ) }
-								</p>
-							</Fragment>
-						) }
-						{ ! isLoading && hasCancelablePurchases && ! hasAtomicSites && (
+						{ ! isLoading && hasCancelablePurchases && (
 							<Fragment>
 								<p className="account-close__body-copy">
 									{ translate( 'You still have active purchases on your account.' ) }
@@ -192,6 +153,23 @@ class AccountSettingsClose extends Component {
 								</p>
 							</Fragment>
 						) }
+						{ ! isLoading && hasAtomicSites && ! hasCancelablePurchases && (
+							<Fragment>
+								<p className="account-close__body-copy">
+									{ translate(
+										'We are still in the process of removing one or more of your sites. This process normally takes 15-20 minutes. Once removal is completed, you should be able to close your account from this page.'
+									) }
+								</p>
+								<p className="account-close__body-copy">
+									{ translate( 'To close this account now, {{a}}contact our support team{{/a}}.', {
+										components: {
+											a: <ActionPanelLink href="/help/contact" />,
+										},
+									} ) }
+								</p>
+							</Fragment>
+						) }
+
 						{ ( isLoading || isDeletePossible ) && (
 							<Fragment>
 								<p className="account-close__body-copy">
@@ -245,18 +223,18 @@ class AccountSettingsClose extends Component {
 					</ActionPanelBody>
 					<ActionPanelFooter>
 						{ ( isLoading || isDeletePossible ) && (
-							<Button scary onClick={ this.handleDeleteClick }>
+							<Button scary onClick={ this.handleDeleteClick } data-testid="close-account-button">
 								<Gridicon icon="trash" />
 								{ translate( 'Close account', { context: 'button label' } ) }
 							</Button>
 						) }
-						{ hasAtomicSites && (
-							<Button primary href="/help/contact">
+						{ hasAtomicSites && ! hasCancelablePurchases && (
+							<Button primary href="/help/contact" data-testid="contact-support-button">
 								{ translate( 'Contact support' ) }
 							</Button>
 						) }
-						{ hasCancelablePurchases && ! hasAtomicSites && (
-							<Button primary href="/me/purchases">
+						{ hasCancelablePurchases && (
+							<Button primary href="/me/purchases" data-testid="manage-purchases-button">
 								{ translate( 'Manage purchases', { context: 'button label' } ) }
 							</Button>
 						) }
@@ -273,23 +251,19 @@ class AccountSettingsClose extends Component {
 
 export default connect(
 	( state ) => {
-		const user = getCurrentUser( state );
-		const currentUserId = user && user.ID;
-		const purchasedPremiumThemes = getUserPurchasedPremiumThemes( state, currentUserId );
+		const purchasedPremiumThemes = getUserPurchasedPremiumThemes( state );
 		const isLoading =
 			! purchasedPremiumThemes ||
 			! hasLoadedSites( state ) ||
 			! hasLoadedUserPurchasesFromServer( state );
 
 		return {
-			currentUserId: user && user.ID,
 			isLoading,
-			hasCancelablePurchases: hasCancelableUserPurchases( state, currentUserId ),
+			hasCancelablePurchases: hasCancelableUserPurchases( state ),
 			purchasedPremiumThemes,
 			hasAtomicSites: userHasAnyAtomicSites( state ),
 			isAccountClosed: isAccountClosed( state ),
 			sitesToBeDeleted: getAccountClosureSites( state ),
-			user,
 		};
 	},
 	{

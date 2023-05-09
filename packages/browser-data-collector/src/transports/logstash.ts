@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import request from 'wpcom-proxy-request';
 
 export const send = async ( payload: Record< string, unknown > ): Promise< boolean > => {

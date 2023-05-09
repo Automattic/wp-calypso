@@ -1,116 +1,148 @@
-/**
- * External dependencies
- */
-import page from 'page';
-import React, { useCallback } from 'react';
-import { useTranslate } from 'i18n-calypso';
-import { useSelector, useDispatch, useStore } from 'react-redux';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import debugFactory from 'debug';
-import type {
-	PaymentCompleteCallback,
-	PaymentCompleteCallbackArguments,
-} from '@automattic/composite-checkout';
-import type { ResponseCart } from '@automattic/shopping-cart';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
-import type { WPCOMTransactionEndpointResponse, Purchase } from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
-import { infoNotice, successNotice } from 'calypso/state/notices/actions';
-import {
-	hasRenewalItem,
-	getRenewalItems,
-	hasPlan,
-	hasEcommercePlan,
-} from 'calypso/lib/cart-values/cart-items';
-import { clearPurchases } from 'calypso/state/purchases/actions';
-import { fetchReceiptCompleted } from 'calypso/state/receipts/actions';
-import { requestSite } from 'calypso/state/sites/actions';
-import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
-import { getDomainNameFromReceiptOrCart } from 'calypso/lib/domains/cart-utils';
-import { AUTO_RENEWAL } from 'calypso/lib/url/support';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
+import { isURL } from '@wordpress/url';
+import debugFactory from 'debug';
+import { useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { recordPurchase } from 'calypso/lib/analytics/record-purchase';
+import { hasEcommercePlan } from 'calypso/lib/cart-values/cart-items';
+import useSiteDomains from 'calypso/my-sites/checkout/composite-checkout/hooks/use-site-domains';
+import getThankYouPageUrl from 'calypso/my-sites/checkout/get-thank-you-page-url';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import {
 	retrieveSignupDestination,
 	clearSignupDestinationCookie,
 } from 'calypso/signup/storageUtils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { recordPurchase } from 'calypso/lib/analytics/record-purchase';
-import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from '../lib/translate-payment-method-names';
-import normalizeTransactionResponse from '../lib/normalize-transaction-response';
-import getThankYouPageUrl from './use-get-thank-you-url/get-thank-you-page-url';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-for-signup-destination';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { clearPurchases } from 'calypso/state/purchases/actions';
+import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import { fetchReceiptCompleted } from 'calypso/state/receipts/actions';
+import { isMonthlyToAnnualPostPurchaseExperimentUser } from 'calypso/state/selectors/is-monthly-to-annual-post-purchase-experiment-user';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import { requestSite } from 'calypso/state/sites/actions';
+import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
+import {
+	isJetpackSite,
+	getJetpackCheckoutRedirectUrl,
+	isBackupPluginActive,
+	isSearchPluginActive,
+} from 'calypso/state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { recordCompositeCheckoutErrorDuringAnalytics } from '../lib/analytics';
+import normalizeTransactionResponse from '../lib/normalize-transaction-response';
+import { absoluteRedirectThroughPending, redirectThroughPending } from '../lib/pending-page';
+import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from '../lib/translate-payment-method-names';
+import type {
+	PaymentEventCallback,
+	PaymentEventCallbackArguments,
+} from '@automattic/composite-checkout';
+import type { ResponseCart } from '@automattic/shopping-cart';
+import type {
+	WPCOMTransactionEndpointResponse,
+	SitelessCheckoutType,
+} from '@automattic/wpcom-checkout';
+import type { PostCheckoutUrlArguments } from 'calypso/my-sites/checkout/get-thank-you-page-url';
+import type { CalypsoDispatch } from 'calypso/state/types';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-on-payment-complete' );
 
+/**
+ * Generates a callback to be called after checkout is successfully complete.
+ *
+ * IMPORTANT NOTE: This will not be called for redirect payment methods like
+ * PayPal. They will redirect directly to the post-checkout page decided by
+ * `getThankYouUrl`.
+ */
 export default function useCreatePaymentCompleteCallback( {
 	createUserAndSiteBeforeTransaction,
 	productAliasFromUrl,
 	redirectTo,
 	purchaseId,
 	feature,
-	isInEditor,
+	isInModal,
 	isComingFromUpsell,
-	isFocusedLaunch,
+	disabledThankYouPage,
 	siteSlug,
-	isJetpackCheckout = false,
+	sitelessCheckoutType,
 	checkoutFlow,
 }: {
 	createUserAndSiteBeforeTransaction?: boolean;
 	productAliasFromUrl?: string | undefined;
 	redirectTo?: string | undefined;
-	purchaseId?: number | undefined;
+	purchaseId?: number | string | undefined;
 	feature?: string | undefined;
-	isInEditor?: boolean;
+	isInModal?: boolean;
 	isComingFromUpsell?: boolean;
-	isFocusedLaunch?: boolean;
+	disabledThankYouPage?: boolean;
 	siteSlug: string | undefined;
-	isJetpackCheckout: boolean;
-	checkoutFlow: string;
-} ): PaymentCompleteCallback {
-	const { responseCart } = useShoppingCart();
+	sitelessCheckoutType?: SitelessCheckoutType;
+	checkoutFlow?: string;
+} ): PaymentEventCallback {
+	const cartKey = useCartKey();
+	const { responseCart, reloadFromServer: reloadCart } = useShoppingCart( cartKey );
 	const reduxDispatch = useDispatch();
-	const translate = useTranslate();
-	const moment = useLocalizedMoment();
 	const siteId = useSelector( getSelectedSiteId );
-	const isDomainOnly =
-		useSelector( ( state ) => siteId && isDomainOnlySite( state, siteId ) ) || false;
-	const reduxStore = useStore();
 	const selectedSiteData = useSelector( getSelectedSite );
 	const adminUrl = selectedSiteData?.options?.admin_url;
-	const isEligibleForSignupDestinationResult = isEligibleForSignupDestination( responseCart );
+	const sitePlanSlug = selectedSiteData?.plan?.product_slug;
 	const isJetpackNotAtomic =
 		useSelector(
-			( state ) => siteId && isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
+			( state ) =>
+				siteId &&
+				( isJetpackSite( state, siteId ) ||
+					isBackupPluginActive( state, siteId ) ||
+					isSearchPluginActive( state, siteId ) ) &&
+				! isAtomicSite( state, siteId )
 		) || false;
+	const adminPageRedirect = useSelector( ( state ) =>
+		getJetpackCheckoutRedirectUrl( state, siteId )
+	);
+
+	const domains = useSiteDomains( siteId ?? undefined );
+	const monthlyToAnnualPostPurchaseExperimentUser = useSelector( ( state ) =>
+		isMonthlyToAnnualPostPurchaseExperimentUser( state )
+	);
+
+	const purchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
 
 	return useCallback(
-		( { paymentMethodId, transactionLastResponse }: PaymentCompleteCallbackArguments ): void => {
+		( { paymentMethodId, transactionLastResponse }: PaymentEventCallbackArguments ): void => {
 			debug( 'payment completed successfully' );
 			const transactionResult = normalizeTransactionResponse( transactionLastResponse );
-			const getThankYouPageUrlArguments = {
+
+			// In the case of a Jetpack product site-less purchase, we need to include the blog ID of the
+			// created site in the Thank You page URL.
+			// TODO: It does not seem like this would be needed for Akismet, but marking to follow up
+			let jetpackTemporarySiteId;
+			if (
+				sitelessCheckoutType === 'jetpack' &&
+				! siteSlug &&
+				[ 'no-user', 'no-site' ].includes( String( responseCart.cart_key ) )
+			) {
+				jetpackTemporarySiteId =
+					transactionResult.purchases && Object.keys( transactionResult.purchases ).pop();
+			}
+
+			const getThankYouPageUrlArguments: PostCheckoutUrlArguments = {
 				siteSlug: siteSlug || undefined,
 				adminUrl,
 				receiptId: transactionResult.receipt_id,
-				orderId: transactionResult.order_id,
 				redirectTo,
 				purchaseId,
 				feature,
 				cart: responseCart,
+				sitelessCheckoutType,
 				isJetpackNotAtomic,
 				productAliasFromUrl,
-				isEligibleForSignupDestinationResult,
 				hideNudge: isComingFromUpsell,
-				isInEditor,
-				isJetpackCheckout,
+				isInModal,
+				jetpackTemporarySiteId,
+				adminPageRedirect,
+				domains,
+				monthlyToAnnualPostPurchaseExperimentUser,
+				purchases,
 			};
+
 			debug( 'getThankYouUrl called with', getThankYouPageUrlArguments );
 			const url = getThankYouPageUrl( getThankYouPageUrlArguments );
 			debug( 'getThankYouUrl returned', url );
@@ -123,14 +155,17 @@ export default function useCreatePaymentCompleteCallback( {
 					responseCart,
 					checkoutFlow,
 					reduxDispatch,
+					sitePlanSlug,
 				} );
 			} catch ( err ) {
-				console.error( err ); // eslint-disable-line no-console
-				recordCompositeCheckoutErrorDuringAnalytics( {
-					reduxDispatch,
-					errorObject: err,
-					failureDescription: 'useCreatePaymentCompleteCallback',
-				} );
+				// eslint-disable-next-line no-console
+				console.error( err );
+				reduxDispatch(
+					recordCompositeCheckoutErrorDuringAnalytics( {
+						errorObject: err as Error,
+						failureDescription: 'useCreatePaymentCompleteCallback',
+					} )
+				);
 			}
 
 			const receiptId = transactionResult?.receipt_id;
@@ -146,17 +181,6 @@ export default function useCreatePaymentCompleteCallback( {
 				clearSignupDestinationCookie();
 			}
 
-			if ( hasRenewalItem( responseCart ) && transactionResult?.purchases ) {
-				debug( 'purchase had a renewal' );
-				displayRenewalSuccessNotice(
-					responseCart,
-					transactionResult.purchases,
-					translate,
-					moment,
-					reduxDispatch
-				);
-			}
-
 			if ( receiptId && transactionResult?.purchases ) {
 				debug( 'fetching receipt' );
 				reduxDispatch( fetchReceiptCompleted( receiptId, transactionResult ) );
@@ -164,35 +188,13 @@ export default function useCreatePaymentCompleteCallback( {
 
 			if ( siteId ) {
 				reduxDispatch( requestSite( siteId ) );
+				reduxDispatch( fetchSiteFeatures( siteId ) );
 			}
 
-			if (
-				( responseCart.create_new_blog &&
-					Object.keys( transactionResult?.purchases ?? {} ).length > 0 &&
-					Object.keys( transactionResult?.failed_purchases ?? {} ).length === 0 ) ||
-				( isDomainOnly && hasPlan( responseCart ) && ! siteId )
-			) {
-				reduxDispatch( infoNotice( translate( 'Almost done…' ) ) );
-
-				const domainName = getDomainNameFromReceiptOrCart( transactionResult, responseCart );
-
-				if ( domainName ) {
-					debug( 'purchase needs to fetch before redirect', domainName );
-					fetchSitesAndUser(
-						domainName,
-						() => {
-							performRedirect( url );
-						},
-						reduxStore
-					);
-
-					return;
-				}
-			}
-
-			// Focused Launch is showing a success dialog directly in editor instead of a thank you page.
+			// Checkout in the modal might not need thank you page.
+			// For example, Focused Launch is showing a success dialog directly in editor instead of a thank you page.
 			// See https://github.com/Automattic/wp-calypso/pull/47808#issuecomment-755196691
-			if ( isInEditor && isFocusedLaunch && ! hasEcommercePlan( responseCart ) ) {
+			if ( isInModal && disabledThankYouPage && ! hasEcommercePlan( responseCart ) ) {
 				return;
 			}
 
@@ -206,15 +208,39 @@ export default function useCreatePaymentCompleteCallback( {
 					debug( 'error while clearing localStorage cart' );
 				}
 
-				// We use window.location instead of page.redirect() so that the cookies are detected on fresh page load.
-				// Using page.redirect() will take to the log in page which we don't want.
-				window.location.href = url;
+				// We use window.location instead of page() so that the cookies are
+				// detected on fresh page load. Using page(url) will take us to the
+				// log-in page which we don't want.
+				absoluteRedirectThroughPending( url, {
+					siteSlug,
+					orderId: transactionResult.order_id,
+					receiptId: transactionResult.receipt_id,
+				} );
 				return;
 			}
 
-			performRedirect( url );
+			// We need to do a hard redirect if we're redirecting to the stepper.
+			// Since stepper is self-contained, it doesn't load properly if we do a normal history state change
+			if ( isURL( url ) || url.includes( '/setup/' ) ) {
+				absoluteRedirectThroughPending( url, {
+					siteSlug,
+					orderId: transactionResult.order_id,
+					receiptId: transactionResult.receipt_id,
+				} );
+				return;
+			}
+
+			reloadCart().catch( () => {
+				// No need to do anything here. CartMessages will report this error to the user.
+			} );
+			redirectThroughPending( url, {
+				siteSlug,
+				orderId: transactionResult.order_id,
+				receiptId: transactionResult.receipt_id,
+			} );
 		},
 		[
+			reloadCart,
 			siteSlug,
 			adminUrl,
 			redirectTo,
@@ -222,94 +248,19 @@ export default function useCreatePaymentCompleteCallback( {
 			feature,
 			isJetpackNotAtomic,
 			productAliasFromUrl,
-			isEligibleForSignupDestinationResult,
 			isComingFromUpsell,
-			isInEditor,
-			reduxStore,
-			isDomainOnly,
-			moment,
+			isInModal,
 			reduxDispatch,
 			siteId,
-			translate,
 			responseCart,
 			createUserAndSiteBeforeTransaction,
-			isFocusedLaunch,
-			isJetpackCheckout,
+			disabledThankYouPage,
+			sitelessCheckoutType,
 			checkoutFlow,
+			adminPageRedirect,
+			domains,
+			sitePlanSlug,
 		]
-	);
-}
-
-function performRedirect( url: string ): void {
-	try {
-		page( url );
-	} catch ( err ) {
-		window.location.href = url;
-	}
-}
-
-function displayRenewalSuccessNotice(
-	responseCart: ResponseCart,
-	purchases: Record< number, Purchase[] >,
-	translate: ReturnType< typeof useTranslate >,
-	moment: ReturnType< typeof useLocalizedMoment >,
-	reduxDispatch: ReturnType< typeof useDispatch >
-): void {
-	const renewalItem = getRenewalItems( responseCart )[ 0 ];
-	// group all purchases into an array
-	const purchasedProducts = Object.values( purchases ?? {} ).reduce(
-		( result: Purchase[], value: Purchase[] ) => [ ...result, ...value ],
-		[]
-	);
-	// and take the first product which matches the product id of the renewalItem
-	const product = purchasedProducts.find( ( item ) => {
-		return String( item.product_id ) === String( renewalItem.product_id );
-	} );
-
-	if ( ! product ) {
-		debug( 'no product found for renewal notice matching', renewalItem, 'in', purchasedProducts );
-		return;
-	}
-
-	if ( product.will_auto_renew ) {
-		debug( 'showing notice for product that will auto-renew' );
-		reduxDispatch(
-			successNotice(
-				translate(
-					'%(productName)s has been renewed and will now auto renew in the future. ' +
-						'{{a}}Learn more{{/a}}',
-					{
-						args: {
-							productName: renewalItem.product_name,
-						},
-						components: {
-							a: <a href={ AUTO_RENEWAL } target="_blank" rel="noopener noreferrer" />,
-						},
-					}
-				),
-				{ displayOnNextPage: true }
-			)
-		);
-		return;
-	}
-
-	debug( 'showing notice for product that will not auto-renew' );
-	reduxDispatch(
-		successNotice(
-			translate(
-				'Success! You renewed %(productName)s for %(duration)s, until %(date)s. ' +
-					'We sent your receipt to %(email)s.',
-				{
-					args: {
-						productName: renewalItem.product_name,
-						duration: moment.duration( { days: renewalItem.bill_period } ).humanize(),
-						date: moment( product.expiry ).format( 'LL' ),
-						email: product.user_email,
-					},
-				}
-			),
-			{ displayOnNextPage: true }
-		)
 	);
 }
 
@@ -320,13 +271,15 @@ function recordPaymentCompleteAnalytics( {
 	responseCart,
 	checkoutFlow,
 	reduxDispatch,
+	sitePlanSlug,
 }: {
 	paymentMethodId: string | null;
 	transactionResult: WPCOMTransactionEndpointResponse | undefined;
 	redirectUrl: string;
 	responseCart: ResponseCart;
-	checkoutFlow: string;
-	reduxDispatch: ReturnType< typeof useDispatch >;
+	checkoutFlow?: string;
+	reduxDispatch: CalypsoDispatch;
+	sitePlanSlug?: string | null;
 } ) {
 	const wpcomPaymentMethod = paymentMethodId
 		? translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId )
@@ -342,17 +295,23 @@ function recordPaymentCompleteAnalytics( {
 			device,
 		} )
 	);
-	recordPurchase( {
-		cart: {
-			total_cost: responseCart.total_cost,
-			currency: responseCart.currency,
-			is_signup: responseCart.is_signup,
-			products: responseCart.products,
-			coupon_code: responseCart.coupon,
-			total_tax: responseCart.total_tax,
-		},
-		orderId: transactionResult?.receipt_id,
-	} );
+
+	try {
+		recordPurchase( {
+			cart: responseCart,
+			orderId: transactionResult?.receipt_id,
+			sitePlanSlug,
+		} );
+	} catch ( err ) {
+		// eslint-disable-next-line no-console
+		console.error( err );
+		reduxDispatch(
+			recordCompositeCheckoutErrorDuringAnalytics( {
+				errorObject: err as Error,
+				failureDescription: 'useCreatePaymentCompleteCallback',
+			} )
+		);
+	}
 
 	return reduxDispatch(
 		recordTracksEvent( 'calypso_checkout_composite_payment_complete', {

@@ -1,38 +1,26 @@
 /**
  * @jest-environment jsdom
  */
+import { screen } from '@testing-library/react';
+import LoginForm from 'calypso/blocks/login/login-form';
+import loginReducer from 'calypso/state/login/reducer';
+import routeReducer from 'calypso/state/route/reducer';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-import { shallow } from 'enzyme';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import FormsButton from 'calypso/components/forms/form-button';
-import FormPasswordInput from 'calypso/components/forms/form-password-input';
-import FormTextInput from 'calypso/components/forms/form-text-input';
-
-const noop = () => {};
+const render = ( el, options ) =>
+	renderWithProvider( el, { ...options, reducers: { login: loginReducer, route: routeReducer } } );
 
 describe( 'LoginForm', () => {
-	let LoginForm;
+	test( 'displays a login form', async () => {
+		render( <LoginForm socialAccountLink={ { isLinking: false } } /> );
 
-	beforeAll( () => {
-		LoginForm = require( 'calypso/blocks/login/login-form' ).LoginForm;
-	} );
+		const username = screen.getByLabelText( /username/i );
+		expect( username ).toBeInTheDocument();
 
-	describe( 'component rendering', () => {
-		test( 'displays a login form', () => {
-			const wrapper = shallow(
-				<LoginForm translate={ noop } socialAccountLink={ { isLinking: false } } />
-			);
-			expect( wrapper.find( FormTextInput ).length ).to.equal( 1 );
-			expect( wrapper.find( FormPasswordInput ).length ).to.equal( 1 );
-			expect( wrapper.find( FormsButton ).length ).to.equal( 1 );
-		} );
+		const password = screen.getByLabelText( /password/i );
+		expect( password ).toBeInTheDocument();
+
+		const btn = screen.getByRole( 'button', { name: /continue$/i } );
+		expect( btn ).toBeInTheDocument();
 	} );
 } );

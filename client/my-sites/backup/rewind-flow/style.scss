@@ -4,7 +4,7 @@
 	padding-bottom: 16px;
 	padding-top: 32px;
 	.gridicon {
-		fill: var( --color-primary );
+		fill: var(--color-primary);
 	}
 	img {
 		height: 48px;
@@ -23,7 +23,7 @@
 	padding-bottom: 32px;
 
 	&.error {
-		color: var( --color-error );
+		color: var(--color-error);
 	}
 }
 
@@ -61,7 +61,7 @@ input.rewind-flow__rewind-config-editor-checkbox.form-checkbox {
 	margin-right: 5px;
 	margin-bottom: 2px;
 	&:checked::before {
-		content: url( '/calypso/images/checkbox-icons/checkmark-jetpack.svg' );
+		content: url(/calypso/images/checkbox-icons/checkmark-jetpack.svg);
 	}
 }
 
@@ -104,24 +104,28 @@ input.rewind-flow__rewind-config-editor-checkbox.form-checkbox {
 div.rewind-flow-notice__title-notice,
 a.rewind-flow-notice__title-notice,
 a.rewind-flow-notice__title-notice:visited {
-	color: var( --color-neutral-light );
-	fill: var( --color-neutral-light );
+	color: var(--color-neutral-light);
+	fill: var(--color-neutral-light);
 
 	&:hover {
-		color: var( --color-neutral );
-		fill: var( --color-neutral );
+		color: var(--color-neutral);
+		fill: var(--color-neutral);
 	}
 }
 div.rewind-flow-notice__title-warning,
 a.rewind-flow-notice__title-warning,
 a.rewind-flow-notice__title-warning:visited {
 	.gridicon {
-		fill: var( --color-error );
+		fill: var(--color-error);
 	}
 
 	&:hover {
-		fill: var( --color-error-dark );
+		fill: var(--color-error-dark);
 	}
+}
+
+.rewind-flow__btn-group {
+	margin-top: 2.5em;
 }
 
 .rewind-flow__primary-button {
@@ -129,9 +133,21 @@ a.rewind-flow-notice__title-warning:visited {
 	text-align: center;
 	width: 100%;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		text-align: auto;
 		width: auto;
+	}
+}
+
+.rewind-flow__back-button {
+	margin-bottom: 10px;
+	text-align: center;
+	width: 100%;
+
+	@include breakpoint-deprecated( ">660px" ) {
+		width: auto;
+		text-align: auto;
+		margin-right: 1rem;
 	}
 }
 
@@ -151,7 +167,7 @@ a.rewind-flow-notice__title-warning:visited {
 }
 
 .rewind-flow__progress-bar-percent {
-	color: var( --studio-gray-50 );
+	color: var(--studio-gray-50);
 }
 
 .rewind-flow__progress-bar-message {
@@ -159,7 +175,7 @@ a.rewind-flow-notice__title-warning:visited {
 }
 
 .rewind-flow__progress-bar-entry {
-	color: var( --studio-gray-50 );
+	color: var(--studio-gray-50);
 }
 
 .rewind-flow__info {
@@ -182,13 +198,13 @@ a.rewind-flow-notice__title-warning:visited {
 	font-weight: normal;
 	vertical-align: initial;
 	font-size: initial;
-	color: var( --color-link );
+	color: var(--color-link);
 
 	&:hover,
 	&:active,
 	&:focus {
 		background: initial;
-		color: var( --color-link-dark );
+		color: var(--color-link-dark);
 	}
 
 	&:hover,

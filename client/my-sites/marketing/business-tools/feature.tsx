@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React, { ReactNode, FunctionComponent } from 'react';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
+import { ReactNode, FunctionComponent } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 
 interface Props {

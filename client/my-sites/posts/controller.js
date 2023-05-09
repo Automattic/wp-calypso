@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
-
-import page from 'page';
-import React from 'react';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:my-sites:posts' );
-
-/**
- * Internal Dependencies
- */
-import areAllSitesSingleUser from 'calypso/state/selectors/are-all-sites-single-user';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { isJetpackSite, isSingleUserSite } from 'calypso/state/sites/selectors';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import page from 'page';
+import { createElement } from 'react';
 import Posts from 'calypso/my-sites/posts/main';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import areAllSitesSingleUser from 'calypso/state/selectors/are-all-sites-single-user';
+import { isJetpackSite, isSingleUserSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+
+const debug = debugFactory( 'calypso:my-sites:posts' );
 
 export default {
 	posts: function ( context, next ) {
@@ -51,7 +44,7 @@ export default {
 			return;
 		}
 
-		context.primary = React.createElement( Posts, {
+		context.primary = createElement( Posts, {
 			context,
 			author,
 			statusSlug: context.params.status,

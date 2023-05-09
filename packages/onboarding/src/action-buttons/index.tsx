@@ -1,15 +1,9 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
-import classnames from 'classnames';
 import { Button } from '@wordpress/components';
-import { useI18n } from '@wordpress/react-i18n';
 import { Icon, chevronRight, chevronLeft } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
+import classnames from 'classnames';
+import * as React from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 interface ActionButtonsProps {
@@ -26,8 +20,12 @@ const ActionButtons: React.FunctionComponent< ActionButtonsProps > = ( {
 	// if true, always stick.
 	// if false, never stick.
 	let stickyClass = '';
-	if ( sticky === true ) stickyClass = 'is-sticky';
-	if ( sticky === false ) stickyClass = 'no-sticky';
+	if ( sticky === true ) {
+		stickyClass = 'is-sticky';
+	}
+	if ( sticky === false ) {
+		stickyClass = 'no-sticky';
+	}
 
 	return (
 		<div className={ classnames( 'action-buttons', className, stickyClass ) }>{ children }</div>
@@ -65,7 +63,7 @@ export const NextButton: React.FunctionComponent< Button.ButtonProps > = ( {
 
 	return (
 		<Button
-			className={ classnames( 'action_buttons__button action-buttons__next', className ) }
+			className={ classnames( 'button action_buttons__button action-buttons__next', className ) }
 			isPrimary
 			{ ...buttonProps }
 		>

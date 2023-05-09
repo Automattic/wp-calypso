@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import reducer from '../reducer';
 
 describe( 'reducer', () => {
@@ -8,7 +5,6 @@ describe( 'reducer', () => {
 		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual( [
 			'dns',
 			'management',
-			'nameservers',
 			'siteRedirect',
 			'suggestions',
 			'transfer',

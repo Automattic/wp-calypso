@@ -1,22 +1,15 @@
-/**
- * External dependencies
- */
+import { Button, Card } from '@automattic/components';
+import { compose } from '@wordpress/compose';
+import classNames from 'classnames';
+import { localize, withRtl } from 'i18n-calypso';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
-import { get, includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { Button, Card } from '@automattic/components';
-import { getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { getPreference, isFetchingPreferences } from 'calypso/state/preferences/selectors';
-import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
+import AnimatedIcon from 'calypso/components/animated-icon';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import versionCompare from 'calypso/lib/version-compare';
 import {
 	bumpStat,
 	composeAnalytics,
@@ -24,27 +17,24 @@ import {
 	withAnalytics,
 } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
-import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { getPreference } from 'calypso/state/preferences/selectors';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
+import shouldDisplayAppBanner from 'calypso/state/selectors/should-display-app-banner';
+import { dismissAppBanner } from 'calypso/state/ui/actions';
+import { getSectionName } from 'calypso/state/ui/selectors';
 import {
-	ALLOWED_SECTIONS,
-	EDITOR,
 	GUTENBERG,
+	HOME,
 	NOTES,
 	READER,
 	STATS,
 	getAppBannerData,
 	getNewDismissTimes,
 	getCurrentSection,
-	isDismissed,
 	APP_BANNER_DISMISS_TIMES_PREFERENCE,
 } from './utils';
-import versionCompare from 'calypso/lib/version-compare';
-import { isWpMobileApp } from 'calypso/lib/mobile-app';
-import { shouldDisplayTosUpdateBanner } from 'calypso/state/selectors/should-display-tos-update-banner';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const IOS_REGEX = /iPad|iPod|iPhone/i;
@@ -54,20 +44,35 @@ const noop = () => {};
 export class AppBanner extends Component {
 	static propTypes = {
 		saveDismissTime: PropTypes.func,
+		dismissAppBanner: PropTypes.func,
 		translate: PropTypes.func,
 		recordAppBannerOpen: PropTypes.func,
 		userAgent: PropTypes.string,
 		// connected
 		currentSection: PropTypes.string,
 		dismissedUntil: PropTypes.object,
-		fetchingPreferences: PropTypes.bool,
+		isVisible: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		saveDismissTime: noop,
+		dismissAppBanner: noop,
 		recordAppBannerOpen: noop,
 		userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : '',
 	};
+
+	constructor( props ) {
+		super( props );
+
+		if (
+			typeof window !== 'undefined' &&
+			window.sessionStorage.getItem( 'wpcom_signup_complete_show_draft_post_modal' )
+		) {
+			this.state = { isDraftPostModalShown: true };
+		} else {
+			this.state = { isDraftPostModalShown: false };
+		}
+	}
 
 	stopBubblingEvents = ( event ) => {
 		event.stopPropagation();
@@ -77,27 +82,16 @@ export class AppBanner extends Component {
 		if ( ! appBanner && this.appBannerNode ) {
 			this.appBannerNode.removeEventListener( 'mousedown', this.stopBubblingEvents, false );
 			this.appBannerNode.removeEventListener( 'touchstart', this.stopBubblingEvents, false );
+			document.body.classList.remove( 'app-banner-is-visible' );
 			return;
 		}
 		if ( appBanner ) {
 			this.appBannerNode = ReactDom.findDOMNode( appBanner );
 			this.appBannerNode.addEventListener( 'mousedown', this.stopBubblingEvents, false );
 			this.appBannerNode.addEventListener( 'touchstart', this.stopBubblingEvents, false );
+			document.body.classList.add( 'app-banner-is-visible' );
 		}
 	};
-
-	isVisible() {
-		const { dismissedUntil, currentSection, isTosBannerVisible } = this.props;
-
-		// The ToS update banner is displayed in the same position as the mobile app banner. Since the ToS update
-		// has higher priority, we repress all other non-essential sticky banners if the ToS update banner needs to
-		// be displayed.
-		if ( isTosBannerVisible ) {
-			return false;
-		}
-
-		return this.isMobile() && ! isWpMobileApp() && ! isDismissed( dismissedUntil, currentSection );
-	}
 
 	isiOS() {
 		return IOS_REGEX.test( this.props.userAgent );
@@ -116,9 +110,10 @@ export class AppBanner extends Component {
 
 	dismiss = ( event ) => {
 		event.preventDefault();
-		const { currentSection, dismissedUntil } = this.props;
 
+		const { currentSection, dismissedUntil } = this.props;
 		this.props.saveDismissTime( currentSection, dismissedUntil );
+		this.props.dismissAppBanner();
 	};
 
 	openApp = () => {
@@ -129,17 +124,21 @@ export class AppBanner extends Component {
 		const { currentRoute, currentSection } = this.props;
 
 		if ( this.isAndroid() ) {
-			//TODO: update when section deep links are available.
+			const scheme = 'jetpack';
+			const packageName = 'com.jetpack.android';
+			const utmDetails = `utm_source%3Dcalypso%26utm_campaign%3Dcalypso-mobile-banner`;
+
 			switch ( currentSection ) {
-				case EDITOR:
 				case GUTENBERG:
-					return 'intent://post/#Intent;scheme=wordpress;package=org.wordpress.android;end';
+					return `intent://details?id=${ packageName }&url=${ scheme }://post&referrer=${ utmDetails }#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
+				case HOME:
+					return `intent://details?id=${ packageName }&url=${ scheme }://home&referrer=${ utmDetails }#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
 				case NOTES:
-					return 'intent://notifications/#Intent;scheme=wordpress;package=org.wordpress.android;end';
+					return `intent://details?id=${ packageName }&url=${ scheme }://notifications&referrer=${ utmDetails }#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
 				case READER:
-					return 'intent://read/#Intent;scheme=wordpress;package=org.wordpress.android;end';
+					return `intent://details?id=${ packageName }&url=${ scheme }://read&referrer=${ utmDetails }#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
 				case STATS:
-					return 'intent://stats/#Intent;scheme=wordpress;package=org.wordpress.android;end';
+					return `intent://details?id=${ packageName }&url=${ scheme }://stats&referrer=${ utmDetails }#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
 			}
 		}
 
@@ -150,62 +149,56 @@ export class AppBanner extends Component {
 		return null;
 	}
 
-	render() {
-		const { translate, currentSection, fetchingPreferences } = this.props;
-
-		if ( fetchingPreferences ) {
-			return null;
-		}
-
-		if ( ! includes( ALLOWED_SECTIONS, currentSection ) ) {
-			return null;
-		}
-
-		if ( ! this.isVisible() ) {
-			return null;
-		}
-
-		const { title, copy } = getAppBannerData( translate, currentSection );
+	getJetpackAppBanner = ( { translate, currentSection, isRtl } ) => {
+		const { title, copy, icon } = getAppBannerData( translate, currentSection, isRtl );
 
 		return (
-			<Card
-				className={ classNames( 'app-banner', 'is-compact', currentSection ) }
-				ref={ this.preventNotificationsClose }
-			>
-				<TrackComponentView
-					eventName="calypso_mobile_app_banner_impression"
-					eventProperties={ {
-						page: currentSection,
-					} }
-					statGroup="calypso_mobile_app_banner"
-					statName="impression"
-				/>
-				<div className="app-banner__circle is-top-left is-yellow" />
-				<div className="app-banner__circle is-top-right is-blue" />
-				<div className="app-banner__circle is-bottom-right is-red" />
-				<div className="app-banner__text-content">
-					<div className="app-banner__title">
-						<span> { title } </span>
+			<div className={ classNames( 'app-banner-overlay' ) } ref={ this.preventNotificationsClose }>
+				<Card
+					className={ classNames( 'app-banner', 'is-compact', currentSection ) }
+					ref={ this.preventNotificationsClose }
+				>
+					<TrackComponentView
+						eventName="calypso_mobile_app_banner_impression"
+						eventProperties={ {
+							page: currentSection,
+						} }
+						statGroup="calypso_mobile_app_banner"
+						statName="impression"
+					/>
+					<AnimatedIcon className="app-banner__icon" icon={ icon } />
+					<div className="app-banner__text-content">
+						<div className="app-banner__title">
+							<span> { title } </span>
+						</div>
+						<div className="app-banner__copy">
+							<span> { copy } </span>
+						</div>
 					</div>
-					<div className="app-banner__copy">
-						<span> { copy } </span>
+					<div className="app-banner__buttons">
+						<Button
+							primary
+							className="app-banner__open-button"
+							onClick={ this.openApp }
+							href={ this.getDeepLink() }
+						>
+							{ translate( 'Open in the Jetpack app' ) }
+						</Button>
+						<Button className="app-banner__no-thanks-button" onClick={ this.dismiss }>
+							{ translate( 'Continue in browser' ) }
+						</Button>
 					</div>
-				</div>
-				<div className="app-banner__buttons">
-					<Button
-						primary
-						className="app-banner__open-button"
-						onClick={ this.openApp }
-						href={ this.getDeepLink() }
-					>
-						{ translate( 'Open in app' ) }
-					</Button>
-					<Button className="app-banner__no-thanks-button" onClick={ this.dismiss }>
-						{ translate( 'No thanks' ) }
-					</Button>
-				</div>
-			</Card>
+				</Card>
+			</div>
 		);
+	};
+
+	render() {
+		if ( ! this.props.shouldDisplayAppBanner || this.state.isDraftPostModalShown ) {
+			return null;
+		}
+
+		return this.getJetpackAppBanner( this.props );
 	}
 }
 
@@ -215,15 +208,32 @@ export function getiOSDeepLink( currentRoute, currentSection ) {
 
 	return fragment.length > 0 ? `${ baseURI }#${ fragment }` : baseURI;
 }
+/**
+ * Returns the universal link that then gets used to send the user to the correct editor.
+ * If the app is installed otherwise they will end up on the new site creaton flow after creating an account.
+ *
+ * @param {string} currentRoute
+ * @returns string
+ */
+function getEditorPath( currentRoute ) {
+	const paths = currentRoute.split( '/' ).filter( ( path ) => path );
+
+	if ( paths[ 0 ] && paths[ 1 ] ) {
+		return '/' + paths[ 0 ] + '/' + paths[ 1 ];
+	}
+	if ( paths[ 0 ] ) {
+		return '/' + paths[ 0 ];
+	}
+	return '/post';
+}
 
 export function buildDeepLinkFragment( currentRoute, currentSection ) {
 	const hasRoute = currentRoute !== null && currentRoute !== '/';
 
 	const getFragment = () => {
 		switch ( currentSection ) {
-			case EDITOR:
 			case GUTENBERG:
-				return '/post';
+				return getEditorPath( currentRoute );
 			case NOTES:
 				return '/notifications';
 			case READER:
@@ -244,15 +254,12 @@ export function buildDeepLinkFragment( currentRoute, currentSection ) {
 const mapStateToProps = ( state ) => {
 	const sectionName = getSectionName( state );
 	const isNotesOpen = isNotificationsOpen( state );
-	const currentRoute = getCurrentRoute( state );
 
 	return {
 		dismissedUntil: getPreference( state, APP_BANNER_DISMISS_TIMES_PREFERENCE ),
-		currentSection: getCurrentSection( sectionName, isNotesOpen, currentRoute ),
-		currentRoute,
-		fetchingPreferences: isFetchingPreferences( state ),
-		siteId: getSelectedSiteId( state ),
-		isTosBannerVisible: shouldDisplayTosUpdateBanner( state ),
+		currentSection: getCurrentSection( sectionName, isNotesOpen ),
+		currentRoute: getCurrentRoute( state ),
+		shouldDisplayAppBanner: shouldDisplayAppBanner( state ),
 	};
 };
 
@@ -273,6 +280,11 @@ const mapDispatchToProps = {
 				getNewDismissTimes( sectionName, currentDimissTimes )
 			)
 		),
+	dismissAppBanner,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( AppBanner ) );
+export default compose(
+	connect( mapStateToProps, mapDispatchToProps ),
+	withRtl,
+	localize
+)( AppBanner );

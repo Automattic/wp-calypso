@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 
 const contactLink = <a href={ CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer" />;
@@ -40,6 +32,25 @@ const cancelTransferErrorMessages = {
 			'Please try again or {{contactLink}}Contact Support{{/contactLink}} if you continue to have trouble.',
 		{ components: { contactLink } }
 	),
+};
+
+export const getDomainLockError = ( isLocking ) => {
+	const options = {
+		components: {
+			a: contactLink,
+		},
+	};
+	return isLocking
+		? translate(
+				'The domain could not be locked. ' +
+					'Please try again or {{a}}Contact Support{{/a}} if you continue to have trouble.',
+				options
+		  )
+		: translate(
+				'The domain could not be unlocked. ' +
+					'Please try again or {{a}}Contact Support{{/a}} if you continue to have trouble.',
+				options
+		  );
 };
 
 export const getDomainTransferCodeError = ( errorCode ) => {

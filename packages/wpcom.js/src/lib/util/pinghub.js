@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'wpcom:pinghub' );
@@ -8,9 +5,8 @@ const debug = debugFactory( 'wpcom:pinghub' );
 /**
  * Create a `Pinghub` instance
  *
- * @param {WPCOM} wpcom - wpcom instance
- * @returns {null} null
- * @api public
+ * @param {Object} wpcom - wpcom instance
+ * @returns {Pinghub|undefined}
  */
 export default function Pinghub( wpcom ) {
 	if ( ! ( this instanceof Pinghub ) ) {
@@ -26,7 +22,6 @@ export default function Pinghub( wpcom ) {
  *
  * @param {string} path - request path
  * @param {Function} fn - callback function
- * @api public
  */
 Pinghub.prototype.connect = function ( path, fn ) {
 	debug( 'connect', path, fn );
@@ -41,18 +36,20 @@ Pinghub.prototype.connect = function ( path, fn ) {
 		debug( 'onload', path, e );
 		fn( null, e );
 	};
-	xhr.onerror = xhr.onabort = xhr.onclose = function ( e ) {
-		debug( 'onerror', path, e );
-		pinghub.remove( path );
-		fn( e, null );
-	};
+	xhr.onerror =
+		xhr.onabort =
+		xhr.onclose =
+			function ( e ) {
+				debug( 'onerror', path, e );
+				pinghub.remove( path );
+				fn( e, null );
+			};
 };
 
 /**
  * Close a websocket connection (unsubscribe)
  *
  * @param {string} path - request path
- * @api public
  */
 Pinghub.prototype.disconnect = function ( path ) {
 	debug( 'disconnect', path );
@@ -68,7 +65,6 @@ Pinghub.prototype.disconnect = function ( path ) {
  * Remove a dead connection
  *
  * @param {string} path - pinghub channel
- * @api private
  */
 Pinghub.prototype.remove = function ( path ) {
 	debug( 'remove', path );

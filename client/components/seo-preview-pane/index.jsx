@@ -1,31 +1,28 @@
-/**
- * External dependencies
- */
-import React, { PureComponent } from 'react';
-import { connect } from 'react-redux';
+import { FEATURE_SEO_PREVIEW_TOOLS } from '@automattic/calypso-products';
+import {
+	FacebookFullPreview,
+	TwitterPreview,
+	GoogleSearchPreview,
+	TYPE_WEBSITE,
+	TYPE_ARTICLE,
+} from '@automattic/social-previews';
 import { localize } from 'i18n-calypso';
 import { compact, find, get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { hasSiteSeoFeature } from './utils';
+import { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import SeoPreviewUpgradeNudge from 'calypso/components/seo/preview-upgrade-nudge';
 import ReaderPreview from 'calypso/components/seo/reader-preview';
-import { FacebookPreview, TwitterPreview, SearchPreview } from '@automattic/social-previews';
 import VerticalMenu from 'calypso/components/vertical-menu';
-import { formatExcerpt } from 'calypso/lib/post-normalizer/rule-create-better-excerpt';
-import { parseHtml } from 'calypso/lib/formatting';
 import { SocialItem } from 'calypso/components/vertical-menu/items';
+import { parseHtml } from 'calypso/lib/formatting';
+import { formatExcerpt } from 'calypso/lib/post-normalizer/rule-create-better-excerpt';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getEditorPostId } from 'calypso/state/editor/selectors';
 import { getSitePost } from 'calypso/state/posts/selectors';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSeoTitle } from 'calypso/state/sites/selectors';
 import { getSectionName, getSelectedSite } from 'calypso/state/ui/selectors';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const PREVIEW_IMAGE_WIDTH = 512;
@@ -113,39 +110,41 @@ const ReaderPost = ( site, post, frontPageMetaDescription ) => {
 };
 
 const GoogleSite = ( site, frontPageMetaDescription ) => (
-	<SearchPreview
+	<GoogleSearchPreview
 		title={ site.name }
 		url={ site.URL }
 		description={ frontPageMetaDescription || getSeoExcerptForSite( site ) }
+		siteTitle={ site.title }
 	/>
 );
 
 const GooglePost = ( site, post, frontPageMetaDescription ) => (
-	<SearchPreview
+	<GoogleSearchPreview
 		title={ get( post, 'seoTitle', '' ) }
 		url={ get( post, 'URL', '' ) }
 		description={ frontPageMetaDescription || getSeoExcerptForPost( post ) }
+		siteTitle={ site.title }
 	/>
 );
 
 const FacebookSite = ( site, frontPageMetaDescription ) => (
-	<FacebookPreview
+	<FacebookFullPreview
 		title={ site.name }
 		url={ site.URL }
-		type="website"
 		description={ frontPageMetaDescription || getSeoExcerptForSite( site ) }
 		image={ largeBlavatar( site ) }
+		type={ TYPE_WEBSITE }
 	/>
 );
 
 const FacebookPost = ( site, post, frontPageMetaDescription ) => (
-	<FacebookPreview
+	<FacebookFullPreview
 		title={ get( post, 'seoTitle', '' ) }
 		url={ get( post, 'URL', '' ) }
-		type="article"
 		description={ frontPageMetaDescription || getSeoExcerptForPost( post ) }
 		image={ getPostImage( post ) }
-		author={ get( post, 'author.name', '' ) }
+		user={ { displayName: get( post, 'author.name', '' ) } }
+		type={ TYPE_ARTICLE }
 	/>
 );
 
@@ -259,7 +258,7 @@ export class SeoPreviewPane extends PureComponent {
 const mapStateToProps = ( state, { overridePost } ) => {
 	const site = getSelectedSite( state );
 	const post = overridePost || getSitePost( state, site.ID, getEditorPostId( state ) );
-	const isEditorShowing = [ 'gutenberg-editor', 'post-editor' ].includes( getSectionName( state ) );
+	const isEditorShowing = getSectionName( state ) === 'gutenberg-editor';
 
 	return {
 		site: {
@@ -270,7 +269,7 @@ const mapStateToProps = ( state, { overridePost } ) => {
 			...post,
 			seoTitle: getSeoTitle( state, 'posts', { site, post } ),
 		},
-		showNudge: ! hasSiteSeoFeature( site ),
+		showNudge: ! siteHasFeature( state, site.ID, FEATURE_SEO_PREVIEW_TOOLS ),
 	};
 };
 

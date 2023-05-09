@@ -1,32 +1,25 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import wpcom from 'calypso/lib/wp';
-import ImageEditorCrop from './image-editor-crop';
+import PropTypes from 'prop-types';
+import { createRef, Component } from 'react';
+import { connect } from 'react-redux';
+import { getAtomicSiteMediaViaProxyRetry } from 'calypso/lib/get-atomic-site-media';
 import { mediaURLToProxyConfig, canvasToBlob } from 'calypso/lib/media/utils';
+import {
+	setImageEditorCropBounds,
+	setImageEditorImageHasLoaded,
+} from 'calypso/state/editor/image-editor/actions';
 import {
 	getImageEditorTransform,
 	getImageEditorFileInfo,
 	getImageEditorCrop,
 	isImageEditorImageLoaded,
 } from 'calypso/state/editor/image-editor/selectors';
-import {
-	setImageEditorCropBounds,
-	setImageEditorImageHasLoaded,
-} from 'calypso/state/editor/image-editor/actions';
 import getImageEditorIsGreaterThanMinimumDimensions from 'calypso/state/selectors/get-image-editor-is-greater-than-minimum-dimensions';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
+import ImageEditorCrop from './image-editor-crop';
 
 const noop = () => {};
 
@@ -50,6 +43,7 @@ export class ImageEditorCanvas extends Component {
 		onLoadError: PropTypes.func,
 		isImageLoaded: PropTypes.bool,
 		showCrop: PropTypes.bool,
+		widthLimit: PropTypes.number,
 	};
 
 	static defaultProps = {
@@ -69,6 +63,7 @@ export class ImageEditorCanvas extends Component {
 		onLoadError: noop,
 		isImageLoaded: false,
 		showCrop: true,
+		widthLimit: Infinity,
 	};
 
 	// throttle the frame rate of window.resize() to circa 30fps
@@ -76,7 +71,7 @@ export class ImageEditorCanvas extends Component {
 	requestAnimationFrameId = null;
 	lastTimestamp = null;
 	isMounted = false;
-	canvasRef = React.createRef();
+	canvasRef = createRef();
 
 	onWindowResize = () => {
 		this.requestAnimationFrameId = window.requestAnimationFrame( this.updateCanvasPosition );
@@ -86,10 +81,22 @@ export class ImageEditorCanvas extends Component {
 		this.isMounted = true;
 	}
 
-	UNSAFE_componentWillReceiveProps( newProps ) {
-		if ( this.props.src !== newProps.src ) {
-			this.getImage( newProps.src );
+	componentDidUpdate( prevProps ) {
+		if ( this.props.src !== prevProps.src || ! this.image ) {
+			this.getImage( this.props.src );
 		}
+
+		this.drawImage();
+		this.updateCanvasPosition();
+	}
+
+	componentWillUnmount() {
+		if ( typeof window !== 'undefined' && this.onWindowResize ) {
+			window.removeEventListener( 'resize', this.onWindowResize );
+			window.cancelAnimationFrame( this.requestAnimationFrameId );
+		}
+
+		this.isMounted = false;
 	}
 
 	fetchImageBlob( src ) {
@@ -98,10 +105,10 @@ export class ImageEditorCanvas extends Component {
 		const useProxy = isPrivateAtomic && filePath && isRelativeToSiteRoot;
 
 		if ( useProxy ) {
-			return wpcom.undocumented().getAtomicSiteMediaViaProxyRetry( siteSlug, filePath, { query } );
+			return getAtomicSiteMediaViaProxyRetry( siteSlug, filePath, { query } );
 		}
 
-		if ( ! src.startsWith( 'blob' ) ) {
+		if ( ! src.startsWith( 'blob' ) && ! src.startsWith( 'data' ) ) {
 			src = src + '?'; // Fix #7991 by forcing Safari to ignore cache and perform valid CORS request
 		}
 
@@ -145,25 +152,8 @@ export class ImageEditorCanvas extends Component {
 		this.props.setImageEditorImageHasLoaded( this.image.width, this.image.height );
 	};
 
-	componentWillUnmount() {
-		if ( typeof window !== 'undefined' && this.onWindowResize ) {
-			window.removeEventListener( 'resize', this.onWindowResize );
-			window.cancelAnimationFrame( this.requestAnimationFrameId );
-		}
-
-		this.isMounted = false;
-	}
-
-	componentDidUpdate( prevProps ) {
-		if ( this.props.src !== prevProps.src ) {
-			this.getImage( this.props.src );
-		}
-
-		this.drawImage();
-		this.updateCanvasPosition();
-	}
-
 	toBlob( callback ) {
+		const { widthLimit } = this.props;
 		const { leftRatio, topRatio, widthRatio, heightRatio } = this.props.crop;
 
 		const { mimeType, transform } = this.props;
@@ -188,7 +178,17 @@ export class ImageEditorCanvas extends Component {
 		const newContext = newCanvas.getContext( '2d' );
 		newContext.putImageData( imageData, 0, 0 );
 
-		canvasToBlob( newCanvas, callback, mimeType, 1 );
+		if ( Number.isFinite( widthLimit ) && widthLimit < croppedWidth ) {
+			const resizedCanvas = document.createElement( 'canvas' );
+			const scale = widthLimit / croppedWidth;
+			resizedCanvas.width = scale * croppedHeight;
+			resizedCanvas.height = scale * croppedWidth;
+			const resizedContext = resizedCanvas.getContext( '2d' );
+			resizedContext.drawImage( newCanvas, 0, 0, scale * croppedWidth, scale * croppedHeight );
+			canvasToBlob( resizedCanvas, callback, mimeType, 1 );
+		} else {
+			canvasToBlob( newCanvas, callback, mimeType, 1 );
+		}
 	}
 
 	drawImage() {

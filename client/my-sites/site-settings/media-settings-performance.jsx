@@ -1,36 +1,24 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import {
+	PRODUCT_JETPACK_VIDEOPRESS,
+	WPCOM_FEATURES_VIDEOPRESS,
+	WPCOM_FEATURES_VIDEOPRESS_UNLIMITED_STORAGE,
+} from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import filesize from 'filesize';
-import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
-import SupportInfo from 'calypso/components/support-info';
-import {
-	planHasFeature,
-	FEATURE_VIDEO_UPLOADS,
-	FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
-	FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
-} from '@automattic/calypso-products';
-import getMediaStorageLimit from 'calypso/state/selectors/get-media-storage-limit';
-import getMediaStorageUsed from 'calypso/state/selectors/get-media-storage-used';
-import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getSitePlanSlug, getSiteSlug } from 'calypso/state/sites/selectors';
-import QueryMediaStorage from 'calypso/components/data/query-media-storage';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import PlanStorageBar from 'calypso/blocks/plan-storage/bar';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import { PRODUCT_UPSELLS_BY_FEATURE } from 'calypso/my-sites/plans/jetpack-plans/constants';
+import SupportInfo from 'calypso/components/support-info';
+import withMediaStorage from 'calypso/data/media-storage/with-media-storage';
+import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { getSitePlanSlug, getSiteSlug } from 'calypso/state/sites/selectors';
 
 class MediaSettingsPerformance extends Component {
 	static propTypes = {
@@ -40,10 +28,11 @@ class MediaSettingsPerformance extends Component {
 		isSavingSettings: PropTypes.bool,
 		onChangeField: PropTypes.func.isRequired,
 		siteId: PropTypes.number.isRequired,
+		siteIsAtomic: PropTypes.bool,
 
 		// Connected props
 		isVideoPressActive: PropTypes.bool,
-		isVideoPressAvailable: PropTypes.bool,
+		hasVideoPress: PropTypes.bool,
 		mediaStorageLimit: PropTypes.number,
 		mediaStorageUsed: PropTypes.number,
 		sitePlanSlug: PropTypes.string,
@@ -51,39 +40,36 @@ class MediaSettingsPerformance extends Component {
 	};
 
 	renderVideoSettings() {
-		const {
-			isRequestingSettings,
-			isSavingSettings,
-			isVideoPressAvailable,
-			siteId,
-			translate,
-		} = this.props;
+		const { isRequestingSettings, isSavingSettings, siteIsAtomic, siteId, translate } = this.props;
 		const isRequestingOrSaving = isRequestingSettings || isSavingSettings;
 
 		return (
-			isVideoPressAvailable && (
-				<FormFieldset className="site-settings__formfieldset jetpack-video-hosting-settings">
-					<SupportInfo
-						text={ translate( 'Hosts your video files on the global WordPress.com servers.' ) }
-						link="https://jetpack.com/support/videopress/"
-					/>
-					<JetpackModuleToggle
-						siteId={ siteId }
-						moduleSlug="videopress"
-						label={ translate( 'Enable fast, ad-free video hosting' ) }
-						disabled={ isRequestingOrSaving }
-					/>
-					{ this.props.isVideoPressActive && this.renderVideoStorageIndicator() }
-				</FormFieldset>
-			)
+			<FormFieldset className="site-settings__formfieldset jetpack-video-hosting-settings">
+				<SupportInfo
+					text={ translate( 'Hosts your video files on the global WordPress.com servers.' ) }
+					link={
+						siteIsAtomic
+							? 'https://wordpress.com/support/videopress/'
+							: 'https://jetpack.com/support/videopress/'
+					}
+					privacyLink={ ! siteIsAtomic }
+				/>
+				<JetpackModuleToggle
+					siteId={ siteId }
+					moduleSlug="videopress"
+					label={ translate( 'Enable fast, ad-free video hosting' ) }
+					disabled={ isRequestingOrSaving }
+				/>
+				{ this.props.isVideoPressActive && this.renderVideoStorageIndicator() }
+			</FormFieldset>
 		);
 	}
 
 	renderVideoStorageIndicator() {
 		const {
+			hasVideoPress,
 			mediaStorageLimit,
 			mediaStorageUsed,
-			siteId,
 			sitePlanSlug,
 			siteSlug,
 			translate,
@@ -96,6 +82,7 @@ class MediaSettingsPerformance extends Component {
 
 		const renderedStorageInfo =
 			isStorageDataValid &&
+			hasVideoPress &&
 			( isStorageUnlimited ? (
 				<FormSettingExplanation className="site-settings__videopress-storage-used">
 					{ translate( '%(size)s uploaded, unlimited storage available', {
@@ -115,63 +102,54 @@ class MediaSettingsPerformance extends Component {
 				/>
 			) );
 
-		return (
-			<div className="site-settings__videopress-storage">
-				<QueryMediaStorage siteId={ siteId } />
-				{ renderedStorageInfo }
-			</div>
-		);
+		return <div className="site-settings__videopress-storage">{ renderedStorageInfo }</div>;
 	}
 
 	renderVideoUpgradeNudge() {
-		const { isVideoPressAvailable, siteSlug, translate } = this.props;
+		const { hasVideoPress, mediaStorageUsed, siteSlug, translate } = this.props;
 
+		const upsellMessage =
+			0 === mediaStorageUsed
+				? translate(
+						'1 free video available. Upgrade now to unlock more videos and 1TB of storage.'
+				  )
+				: translate(
+						'You have used your free video. Upgrade now to unlock more videos and 1TB of storage.'
+				  );
 		return (
-			! isVideoPressAvailable && (
+			! hasVideoPress && (
 				<UpsellNudge
-					title={ translate( 'Get unlimited video hosting' ) }
-					description={ translate(
-						'Tired of ads in your videos? Get high-speed video right on your site'
-					) }
-					event={ 'jetpack_video_settings' }
-					feature={ FEATURE_VIDEO_UPLOADS_JETPACK_PRO }
+					title={ upsellMessage }
+					event="jetpack_video_settings"
+					feature={ WPCOM_FEATURES_VIDEOPRESS }
 					showIcon={ true }
-					href={ `/checkout/${ siteSlug }/${ PRODUCT_UPSELLS_BY_FEATURE[ FEATURE_VIDEO_UPLOADS_JETPACK_PRO ] }` }
+					href={ `/checkout/${ siteSlug }/${ PRODUCT_JETPACK_VIDEOPRESS }` }
 				/>
 			)
 		);
 	}
 
 	render() {
-		const { isVideoPressAvailable, sitePlanSlug } = this.props;
-
-		if ( ! sitePlanSlug ) {
-			return null;
-		}
-
 		return (
 			<div className="site-settings__module-settings site-settings__media-settings">
-				{ isVideoPressAvailable && <Card>{ this.renderVideoSettings() }</Card> }
+				<Card>{ this.renderVideoSettings() }</Card>
 				{ this.renderVideoUpgradeNudge() }
 			</div>
 		);
 	}
 }
 
-export default connect( ( state ) => {
-	const selectedSiteId = getSelectedSiteId( state );
-	const sitePlanSlug = getSitePlanSlug( state, selectedSiteId );
-	const isVideoPressAvailable =
-		planHasFeature( sitePlanSlug, FEATURE_VIDEO_UPLOADS ) ||
-		planHasFeature( sitePlanSlug, FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM ) ||
-		planHasFeature( sitePlanSlug, FEATURE_VIDEO_UPLOADS_JETPACK_PRO );
-
-	return {
-		isVideoPressActive: isJetpackModuleActive( state, selectedSiteId, 'videopress' ),
-		isVideoPressAvailable,
-		mediaStorageLimit: getMediaStorageLimit( state, selectedSiteId ),
-		mediaStorageUsed: getMediaStorageUsed( state, selectedSiteId ),
-		sitePlanSlug,
-		siteSlug: getSiteSlug( state, selectedSiteId ),
-	};
-} )( localize( MediaSettingsPerformance ) );
+export default withMediaStorage(
+	connect( ( state, { mediaStorage, siteId } ) => {
+		return {
+			isVideoPressActive: isJetpackModuleActive( state, siteId, 'videopress' ),
+			hasVideoPress:
+				siteHasFeature( state, siteId, WPCOM_FEATURES_VIDEOPRESS ) ||
+				siteHasFeature( state, siteId, WPCOM_FEATURES_VIDEOPRESS_UNLIMITED_STORAGE ),
+			mediaStorageLimit: mediaStorage?.max_storage_bytes ?? null,
+			mediaStorageUsed: mediaStorage?.storage_used_bytes ?? null,
+			sitePlanSlug: getSitePlanSlug( state, siteId ),
+			siteSlug: getSiteSlug( state, siteId ),
+		};
+	} )( localize( MediaSettingsPerformance ) )
+);

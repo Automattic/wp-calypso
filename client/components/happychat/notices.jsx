@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { get } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import {
 	HAPPYCHAT_CHAT_STATUS_ABANDONED,
 	HAPPYCHAT_CHAT_STATUS_ASSIGNING,
@@ -17,13 +10,11 @@ import {
 	HAPPYCHAT_CONNECTION_STATUS_CONNECTING,
 	HAPPYCHAT_CONNECTION_STATUS_DISCONNECTED,
 	HAPPYCHAT_CONNECTION_STATUS_RECONNECTING,
+	HAPPYCHAT_CONNECTION_STATUS_CONTINUING_SESSION,
 	HAPPYCHAT_CONNECTION_STATUS_UNAUTHORIZED,
 	HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED,
 } from 'calypso/state/happychat/constants';
 
-/**
- * Style dependencies
- */
 import './notices.scss';
 
 /*
@@ -51,6 +42,8 @@ class Notices extends Component {
 				return translate( 'Waiting to connect you with a Happiness Engineer…' );
 			case HAPPYCHAT_CONNECTION_STATUS_CONNECTING:
 				return translate( 'Connecting you with a Happiness Engineer…' );
+			case HAPPYCHAT_CONNECTION_STATUS_CONTINUING_SESSION:
+				return translate( 'Reconnecting you with your Happiness Engineer…' );
 			case HAPPYCHAT_CONNECTION_STATUS_RECONNECTING:
 			case HAPPYCHAT_CONNECTION_STATUS_DISCONNECTED:
 				return translate(

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getRewindBackups from 'calypso/state/selectors/get-rewind-backups';
 
 describe( 'getRewindBackups()', () => {
@@ -15,7 +12,7 @@ describe( 'getRewindBackups()', () => {
 		const state = {
 			rewind: {
 				123: {
-					backups: [ 1, 2, 3 ],
+					backups: { backups: [ 1, 2, 3 ] },
 				},
 			},
 		};
@@ -39,7 +36,7 @@ describe( 'getRewindBackups()', () => {
 		const state = {
 			rewind: {
 				123: {
-					backups: [ 1, 2, 3 ],
+					backups: { backups: [ 1, 2, 3 ] },
 				},
 			},
 		};

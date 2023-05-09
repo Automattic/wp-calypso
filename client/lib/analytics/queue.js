@@ -1,8 +1,5 @@
 // This is a `localStorage` queue for delayed event triggers.
 
-/**
- * External dependencies
- */
 import debug from 'debug';
 
 /**

@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { localize } from 'i18n-calypso';
+import { compact, map } from 'lodash';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { compact, map } from 'lodash';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import Gravatar from 'calypso/components/gravatar';
 import NavItem from 'calypso/components/section-nav/item';
 import NavSegmented from 'calypso/components/section-nav/segmented';

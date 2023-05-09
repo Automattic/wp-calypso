@@ -1,14 +1,12 @@
 /**
- * External dependencies
+ * @jest-environment jsdom
  */
-import React from 'react';
-import { shallow } from 'enzyme';
-
-/**
- * Internal dependencies
- */
+import { render, screen } from '@testing-library/react';
 import { RegistrantExtraInfoUkForm } from '../uk-form';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
+
+jest.mock( '@automattic/components', () => ( {
+	FormInputValidation: ( { text } ) => <div data-testid="test-validation">{ text }</div>,
+} ) );
 
 const mockProps = {
 	contactDetails: {},
@@ -32,9 +30,8 @@ describe( 'uk-form', () => {
 				},
 			};
 
-			const wrapper = shallow( <RegistrantExtraInfoUkForm { ...testProps } /> );
-			const error = wrapper.find( FormInputValidation );
-			expect( error.props() ).toHaveProperty( 'text', 'Test error message.' );
+			render( <RegistrantExtraInfoUkForm { ...testProps } /> );
+			expect( screen.getByTestId( 'test-validation' ) ).toHaveTextContent( 'Test error message.' );
 		} );
 
 		test( 'should render multiple registration errors', () => {
@@ -54,52 +51,8 @@ describe( 'uk-form', () => {
 				},
 			};
 
-			const wrapper = shallow( <RegistrantExtraInfoUkForm { ...testProps } /> );
-			const error = wrapper.find( FormInputValidation );
-			expect( error ).toHaveProperty( 'length', 3 );
-		} );
-
-		test( 'Should disable submit button with validation errors', () => {
-			const testProps = {
-				...mockProps,
-				ccTldDetails: { registrantType: 'LLP' },
-				contactDetailsValidationErrors: {
-					extra: {
-						uk: {
-							registrationNumber: [ 'dotukRegistrationNumberFormat' ],
-						},
-					},
-				},
-			};
-
-			const wrapper = shallow(
-				<RegistrantExtraInfoUkForm { ...testProps }>
-					<button className="test__hush-eslint .submit-button" />
-				</RegistrantExtraInfoUkForm>
-			);
-
-			expect( wrapper.find( 'button' ).prop( 'disabled' ) ).toBe( true );
-		} );
-
-		test( 'Should not disable submit button with irrelevant validation errors', () => {
-			const testProps = {
-				...mockProps,
-				ccTldDetails: { registrantType: 'IND' },
-				contactDetailsValidationErrors: {
-					extra: {
-						uk: {
-							registrationNumber: [ 'dotukRegistrationNumberFormat' ],
-						},
-					},
-				},
-			};
-
-			const wrapper = shallow(
-				<RegistrantExtraInfoUkForm { ...testProps }>
-					<button className="test__hush-eslint .submit-button" />
-				</RegistrantExtraInfoUkForm>
-			);
-			expect( wrapper.find( 'button' ).prop( 'disabled' ) ).toBe( undefined );
+			render( <RegistrantExtraInfoUkForm { ...testProps } /> );
+			expect( screen.getAllByTestId( 'test-validation' ) ).toHaveLength( 3 );
 		} );
 	} );
 } );

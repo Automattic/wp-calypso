@@ -1,22 +1,17 @@
-/**
- * External dependencies
- */
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
-import { useMutation, useQueryClient } from 'react-query';
-
-/**
- * Internal dependencies
- */
 import wp from 'calypso/lib/wp';
 import { getCacheKey } from './use-user-query';
 
-function useUpdateUserMutation( siteId ) {
+function useUpdateUserMutation( siteId, queryOptions = {} ) {
 	const queryClient = useQueryClient();
 	const mutation = useMutation(
 		( { userId, variables } ) => wp.req.post( `/sites/${ siteId }/users/${ userId }`, variables ),
 		{
-			onSuccess( { login } ) {
-				queryClient.invalidateQueries( getCacheKey( siteId, login ) );
+			...queryOptions,
+			onSuccess( data, ...rest ) {
+				queryClient.setQueryData( getCacheKey( siteId, data.login ), data );
+				queryOptions.onSuccess?.( data, ...rest );
 			},
 		}
 	);

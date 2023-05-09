@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Sparkline should have className if provided, as well as sparkline class 1`] = `
+<div>
+  <div
+    class="d3-base sparkline test__foobar"
+  />
+</div>
+`;
+
+exports[`Sparkline should have sparkline class 1`] = `
+<div>
+  <div
+    class="d3-base sparkline"
+  />
+</div>
+`;

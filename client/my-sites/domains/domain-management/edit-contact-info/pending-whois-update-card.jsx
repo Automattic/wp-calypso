@@ -1,21 +1,9 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { useTranslate } from 'i18n-calypso';
 import Notice from 'calypso/components/notice';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 
-/**
- * Style dependencies
- */
 import './pending-whois-update-card.scss';
 
 export default function PendingWhoisUpdateCard() {

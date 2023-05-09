@@ -1,29 +1,22 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useSelector } from 'react-redux';
+import { CompactCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
+import { useSelector } from 'react-redux';
+import EmptyContent from 'calypso/components/empty-content';
+import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
+import JetpackRnaActionCard from 'calypso/components/jetpack/card/jetpack-rna-action-card';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { Purchase } from 'calypso/lib/purchases/types';
+import PurchasesListHeader from 'calypso/me/purchases/purchases-list/purchases-list-header';
 import PurchasesSite from 'calypso/me/purchases/purchases-site';
+import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-stored-payment-methods';
 import {
 	getSitePurchases,
 	hasLoadedSitePurchasesFromServer,
 	isFetchingSitePurchases,
 } from 'calypso/state/purchases/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
-import { CompactCard } from '@automattic/components';
-import EmptyContent from 'calypso/components/empty-content';
-import { Purchase } from 'calypso/lib/purchases/types';
-import PurchasesListHeader from 'calypso/me/purchases/purchases-list/purchases-list-header';
+import type { SiteDetails } from '@automattic/data-stores';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function SubscriptionsContent( {
@@ -36,11 +29,12 @@ function SubscriptionsContent( {
 	isFetchingPurchases: boolean;
 	hasLoadedPurchases: boolean;
 	selectedSiteId: number | null;
-	selectedSite: null | { ID: number; name: string; domain: string; slug: string };
+	selectedSite: undefined | null | SiteDetails;
 	purchases: Purchase[];
 } ) {
 	const getManagePurchaseUrlFor = ( siteSlug: string, purchaseId: number ) =>
 		`/purchases/subscriptions/${ siteSlug }/${ purchaseId }`;
+	const { paymentMethods: cards } = useStoredPaymentMethods( { type: 'card' } );
 
 	// If there is no selected site, show the "no sites" page
 	if ( ! selectedSiteId ) {
@@ -69,6 +63,7 @@ function SubscriptionsContent( {
 					name={ selectedSite.name }
 					slug={ selectedSite.slug }
 					purchases={ purchases }
+					cards={ cards }
 				/>
 			</div>
 		);
@@ -87,7 +82,7 @@ function SubscriptionsContent( {
 	return <NoPurchasesMessage />;
 }
 
-export default function SubscriptionsContentWrapper(): JSX.Element {
+export default function SubscriptionsContentWrapper() {
 	const isFetchingPurchases = useSelector( isFetchingSitePurchases );
 	const hasLoadedPurchases = useSelector( hasLoadedSitePurchasesFromServer );
 	const selectedSiteId = useSelector( getSelectedSiteId );
@@ -108,14 +103,23 @@ export default function SubscriptionsContentWrapper(): JSX.Element {
 function NoPurchasesMessage() {
 	const selectedSite = useSelector( getSelectedSite );
 	const translate = useTranslate();
-	return (
+	return isJetpackCloud() ? (
+		<JetpackRnaActionCard
+			headerText={ translate( 'You don’t have any active subscriptions for this site.' ) }
+			subHeaderText={ translate(
+				'Check out how Jetpack’s security, performance, and growth tools can improve your site.'
+			) }
+			ctaButtonLabel={ translate( 'Compare plans' ) }
+			ctaButtonURL={ selectedSite ? `/pricing/${ selectedSite.slug }` : '/pricing' }
+		/>
+	) : (
 		<CompactCard className="subscriptions__list">
 			<EmptyContent
 				title={ translate( 'Looking to upgrade?' ) }
 				line={ translate( 'You have made no purchases for this site.' ) }
 				action={ translate( 'Upgrade now' ) }
 				actionURL={ selectedSite ? `/plans/${ selectedSite.slug }` : '/plans' }
-				illustration={ '/calypso/images/illustrations/illustration-nosites.svg' }
+				illustration="/calypso/images/illustrations/illustration-nosites.svg"
 			/>
 		</CompactCard>
 	);

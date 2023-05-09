@@ -1,39 +1,33 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import type { ReactNode } from 'react';
-import Modal from 'react-modal';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import { useCallback } from 'react';
+import Modal from 'react-modal';
+import Gridicon from '../gridicon';
 import ButtonBar from './button-bar';
 import type { Button, BaseButton } from './button-bar';
+import type { PropsWithChildren } from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 type Props = {
 	additionalClassNames?: Parameters< typeof classnames >[ 0 ];
+	additionalOverlayClassNames?: Parameters< typeof classnames >[ 0 ];
 	baseClassName?: string;
 	buttons?: Button[];
 	className?: string;
-	children: ReactNode;
 	isBackdropVisible?: boolean;
 	isFullScreen?: boolean;
 	isVisible: boolean;
 	label?: string;
 	leaveTimeout?: number;
-	onClose: ( action?: string ) => void;
+	onClose?: ( action?: string ) => void;
 	shouldCloseOnEsc?: boolean;
+	showCloseIcon?: boolean;
+	shouldCloseOnOverlayClick?: boolean;
 };
 
 const Dialog = ( {
 	additionalClassNames,
+	additionalOverlayClassNames,
 	buttons,
 	baseClassName = 'dialog',
 	className,
@@ -45,9 +39,11 @@ const Dialog = ( {
 	leaveTimeout = 200,
 	onClose,
 	shouldCloseOnEsc,
-}: Props ): JSX.Element => {
-	const close = React.useCallback( () => onClose?.(), [ onClose ] );
-	const onButtonClick = React.useCallback(
+	showCloseIcon = false,
+	shouldCloseOnOverlayClick = true,
+}: PropsWithChildren< Props > ) => {
+	const close = useCallback( () => onClose?.(), [ onClose ] );
+	const onButtonClick = useCallback(
 		( button: BaseButton ) => {
 			if ( button.onClick ) {
 				button.onClick( () => onClose?.( button.action ) );
@@ -61,7 +57,7 @@ const Dialog = ( {
 	// Previous implementation used a `<Card />`, styling still relies on the 'card' class being present
 	const dialogClassName = classnames( baseClassName, 'card', additionalClassNames );
 
-	const backdropClassName = classnames( baseClassName + '__backdrop', {
+	const backdropClassName = classnames( baseClassName + '__backdrop', additionalOverlayClassNames, {
 		'is-full-screen': isFullScreen,
 		'is-hidden': ! isBackdropVisible,
 	} );
@@ -79,7 +75,13 @@ const Dialog = ( {
 			htmlOpenClassName="ReactModal__Html--open"
 			role="dialog"
 			shouldCloseOnEsc={ shouldCloseOnEsc }
+			shouldCloseOnOverlayClick={ shouldCloseOnOverlayClick }
 		>
+			{ showCloseIcon && (
+				<button className="dialog__action-buttons-close" onClick={ () => onClose?.( this ) }>
+					<Gridicon icon="cross" size={ 24 } />
+				</button>
+			) }
 			<div className={ contentClassName } tabIndex={ -1 }>
 				{ children }
 			</div>

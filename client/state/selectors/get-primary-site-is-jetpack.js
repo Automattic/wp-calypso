@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
-
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
 /**
  * Returns whether the current user's primary site's is Jetpack or not.
  *
- * @param  {object}  state Global state tree
+ * @param  {Object}  state Global state tree
  * @returns {?boolean}     The current user's primary site Jetpack status.
  */
 export default function getPrimarySiteIsJetpack( state ) {

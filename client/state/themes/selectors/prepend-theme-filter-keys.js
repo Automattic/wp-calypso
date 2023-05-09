@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getThemeFilterStringFromTerm } from 'calypso/state/themes/selectors/get-theme-filter-string-from-term';
 
 import 'calypso/state/themes/init';
@@ -10,7 +7,7 @@ import 'calypso/state/themes/init';
  * "taxonomy:term taxonomy:term " search-box format, with
  * a trailing space.
  *
- * @param {object} state Global state tree
+ * @param {Object} state Global state tree
  * @param {string} terms Space or + separated list of filter terms
  * @returns {string} Complete taxonomy:term filter string, or empty string if term is not valid
  */

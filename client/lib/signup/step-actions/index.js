@@ -1,70 +1,70 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
+import {
+	WPCOM_DIFM_LITE,
+	planHasFeature,
+	FEATURE_UPLOAD_THEMES_PLUGINS,
+	isEcommerce,
+} from '@automattic/calypso-products';
+import { getUrlParts } from '@automattic/calypso-url';
+import { Site } from '@automattic/data-stores';
+import { isBlankCanvasDesign } from '@automattic/design-picker';
+import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import { defer, difference, get, includes, isEmpty, pick, startsWith } from 'lodash';
-
-/**
- * Internal dependencies
- */
-
-// Libraries
-import wpcom from 'calypso/lib/wp';
-import guessTimezone from 'calypso/lib/i18n-utils/guess-timezone';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import page from 'page';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	updatePrivacyForDomain,
 	supportsPrivacyProtectionPurchase,
 	planItem as getCartItemForPlan,
+	marketplaceThemeProduct,
 } from 'calypso/lib/cart-values/cart-items';
-import { getUrlParts } from '@automattic/calypso-url';
-
-// State actions and selectors
-import { getCurrentUserName, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getLocaleSlug } from 'calypso/lib/i18n-utils';
+import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
+import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
+import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
+import wpcom from 'calypso/lib/wp';
+import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
+import { marketplaceThemeBillingProductSlug } from 'calypso/my-sites/themes/helpers';
+import flows from 'calypso/signup/config/flows';
+import steps from 'calypso/signup/config/steps';
+import {
+	getCurrentUserName,
+	isUserLoggedIn,
+	getCurrentUser,
+} from 'calypso/state/current-user/selectors';
+import {
+	buildDIFMCartExtrasObject,
+	buildDIFMWebsiteContentRequestDTO,
+} from 'calypso/state/difm/assemblers';
+import { errorNotice } from 'calypso/state/notices/actions';
+import {
+	getProductBySlug,
+	getProductsByBillingSlug,
+	getProductsList,
+} from 'calypso/state/products-list/selectors';
+import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import { getSiteTitle } from 'calypso/state/signup/steps/site-title/selectors';
-import { getSurveyVertical, getSurveySiteType } from 'calypso/state/signup/steps/survey/selectors';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
-import {
-	getSiteVerticalId,
-	getSiteVerticalName,
-} from 'calypso/state/signup/steps/site-vertical/selectors';
-import { getSiteGoals } from 'calypso/state/signup/steps/site-goals/selectors';
-import { getSiteStyle } from 'calypso/state/signup/steps/site-style/selectors';
-import { getUserExperience } from 'calypso/state/signup/steps/user-experience/selectors';
-import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
-import { getProductsList } from 'calypso/state/products-list/selectors';
-import {
-	getSelectedImportEngine,
-	getNuxUrlInputValue,
-} from 'calypso/state/importer-nux/temp-selectors';
+import { getWebsiteContent } from 'calypso/state/signup/steps/website-content/selectors';
+import { requestSite } from 'calypso/state/sites/actions';
 import { getSiteId } from 'calypso/state/sites/selectors';
-import { Site } from '@automattic/data-stores';
+import { THEMES_LOADING_CART } from 'calypso/state/themes/action-types';
+import { requestTheme } from 'calypso/state/themes/actions';
+import { isExternallyManagedTheme as getIsExternallyManagedTheme } from 'calypso/state/themes/selectors';
 const Visibility = Site.Visibility;
-
-// Current directory dependencies
-import { isValidLandingPageVertical } from 'calypso/lib/signup/verticals';
-import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
-
-import SignupCart from 'calypso/lib/signup/cart';
-
-// Others
-import flows from 'calypso/signup/config/flows';
-import steps, { isDomainStepSkippable } from 'calypso/signup/config/steps';
-import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
-import { isBlankCanvasDesign } from '@automattic/design-picker';
-
-/**
- * Constants
- */
 const debug = debugFactory( 'calypso:signup:step-actions' );
 
 export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 	const { siteId, siteSlug } = data;
 	const { cartItem, designType, siteUrl, themeSlugWithRepo } = dependencies;
+	const reduxState = reduxStore.getState();
 	const domainItem = dependencies.domainItem
-		? addPrivacyProtectionIfSupported( dependencies.domainItem, reduxStore.getState() )
+		? prepareItemForAddingToCart(
+				addPrivacyProtectionIfSupported( dependencies.domainItem, reduxState )
+		  )
 		: null;
 
 	if ( designType === 'domain' ) {
@@ -76,25 +76,34 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 			domainItem,
 		};
 
-		const domainChoiceCart = [ domainItem ];
-		SignupCart.createCart( cartKey, domainChoiceCart, ( error ) =>
-			callback( error, providedDependencies )
-		);
+		const domainChoiceCart = [ domainItem ].filter( Boolean );
+		cartManagerClient
+			.forCartKey( cartKey )
+			.actions.replaceProductsInCart( domainChoiceCart )
+			.then( () => callback( undefined, providedDependencies ) )
+			.catch( ( error ) => {
+				debug( 'product replace request had an error', error );
+				reduxStore.dispatch( errorNotice( error.message ) );
+				callback( error, providedDependencies );
+			} );
 	} else if ( designType === 'existing-site' ) {
 		const providedDependencies = {
 			siteId,
 			siteSlug,
 		};
+		const products = [ dependencies.domainItem, dependencies.privacyItem, dependencies.cartItem ]
+			.filter( Boolean )
+			.map( ( item ) => prepareItemForAddingToCart( item ) );
 
-		SignupCart.createCart(
-			siteId,
-			[ dependencies.domainItem, dependencies.privacyItem, dependencies.cartItem ].filter(
-				Boolean
-			),
-			( error ) => {
+		cartManagerClient
+			.forCartKey( siteId )
+			.actions.replaceProductsInCart( products )
+			.then( () => callback( undefined, providedDependencies ) )
+			.catch( ( error ) => {
+				debug( 'product replace request had an error', error );
+				reduxStore.dispatch( errorNotice( error.message ) );
 				callback( error, providedDependencies );
-			}
-		);
+			} );
 	} else {
 		const newSiteData = {
 			cartItem,
@@ -118,37 +127,25 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 	}
 }
 
-// We are experimenting making site topic (site vertical name) a separate step from the survey.
-// Once we've decided to fully move away from the survey form, we can just keep the site vertical name here.
-function getSiteVertical( state ) {
-	return ( getSiteVerticalName( state ) || getSurveyVertical( state ) ).trim();
-}
-
-function getNewSiteParams( {
+export const getNewSiteParams = ( {
 	dependencies,
 	flowToCheck,
 	isPurchasingDomainItem,
-	lastKnownFlow,
 	themeSlugWithRepo,
 	siteUrl,
 	state,
-} ) {
+	siteAccentColor,
+} ) => {
 	const signupDependencies = getSignupDependencyStore( state );
 	const designType = getDesignType( state ).trim();
-	const siteTitle = getSiteTitle( state ).trim();
-	const siteVerticalId = getSiteVerticalId( state );
-	const siteVerticalName = getSiteVerticalName( state );
-	const siteGoals = getSiteGoals( state ).trim();
+	const siteTitle = getSiteTitle( state ).trim() || ( signupDependencies?.siteTitle || '' ).trim();
 	const siteType = getSiteType( state ).trim();
-	const siteStyle = getSiteStyle( state ).trim();
 	const siteSegment = getSiteTypePropertyValue( 'slug', siteType, 'id' );
 	const siteTypeTheme = getSiteTypePropertyValue( 'slug', siteType, 'theme' );
 	const selectedDesign = get( signupDependencies, 'selectedDesign', false );
 
-	const shouldSkipDomainStep = ! siteUrl && isDomainStepSkippable( flowToCheck );
-	const shouldHideFreePlan = get( getSignupDependencyStore( state ), 'shouldHideFreePlan', false );
-	const useAutoGeneratedBlogName = shouldSkipDomainStep || shouldHideFreePlan;
-
+	const forceAutoGeneratedBlogName = signupDependencies?.forceAutoGeneratedBlogName;
+	const useAutoGeneratedBlogName = ! siteUrl || forceAutoGeneratedBlogName;
 	// The theme can be provided in this step's dependencies,
 	// the step object itself depending on if the theme is provided in a
 	// query (see `getThemeSlug` in `DomainsStep`),
@@ -159,57 +156,39 @@ function getNewSiteParams( {
 		get( signupDependencies, 'themeSlugWithRepo', false ) ||
 		siteTypeTheme;
 
+	const launchAsComingSoon = get( signupDependencies, 'comingSoon', 1 );
+
 	// We will use the default annotation instead of theme annotation as fallback,
 	// when segment and vertical values are not sent. Check pbAok1-p2#comment-834.
 	const shouldUseDefaultAnnotationAsFallback = true;
 
 	const newSiteParams = {
 		blog_title: siteTitle,
-		public: Visibility.PublicNotIndexed,
+		public: launchAsComingSoon ? Visibility.PublicNotIndexed : Visibility.PublicIndexed,
 		options: {
 			designType: designType || undefined,
 			theme,
 			use_theme_annotation: get( signupDependencies, 'useThemeHeadstart', false ),
 			default_annotation_as_primary_fallback: shouldUseDefaultAnnotationAsFallback,
-			siteGoals: siteGoals || undefined,
-			site_style: siteStyle || undefined,
 			site_segment: siteSegment || undefined,
-			site_vertical: siteVerticalId || undefined,
-			site_vertical_name: siteVerticalName || undefined,
 			site_information: {
 				title: siteTitle,
 			},
 			site_creation_flow: flowToCheck,
 			timezone_string: guessTimezone(),
-			wpcom_public_coming_soon: 1,
+			wpcom_public_coming_soon: launchAsComingSoon,
+			...( siteAccentColor && { site_accent_color: siteAccentColor } ),
 		},
 		validate: false,
 	};
 
 	if ( useAutoGeneratedBlogName ) {
 		newSiteParams.blog_name =
-			getCurrentUserName( state ) ||
-			get( signupDependencies, 'username' ) ||
-			siteTitle ||
-			siteType ||
-			getSiteVertical( state );
+			siteTitle || getCurrentUserName( state ) || get( signupDependencies, 'username' ) || siteType;
 		newSiteParams.find_available_url = true;
 	} else {
 		newSiteParams.blog_name = siteUrl;
 		newSiteParams.find_available_url = !! isPurchasingDomainItem;
-	}
-
-	if ( 'import' === lastKnownFlow || 'import-onboarding' === lastKnownFlow ) {
-		// If `siteTitle` wasn't inferred by the site detection api, use
-		// the `siteUrl` until an import replaces it with an actual title.
-		newSiteParams.blog_title = siteTitle || siteUrl;
-		newSiteParams.options.nux_import_engine = getSelectedImportEngine( state );
-		newSiteParams.options.nux_import_from_url = getNuxUrlInputValue( state );
-	}
-
-	// Provide the default business starter content for the FSE user testing flow.
-	if ( 'test-fse' === lastKnownFlow ) {
-		newSiteParams.options.site_segment = 1;
 	}
 
 	if ( selectedDesign ) {
@@ -226,7 +205,7 @@ function getNewSiteParams( {
 	}
 
 	return newSiteParams;
-}
+};
 
 function saveToLocalStorageAndProceed( state, domainItem, themeItem, newSiteParams, callback ) {
 	const cartItem = get( getSignupDependencyStore( state ), 'cartItem', undefined );
@@ -262,7 +241,9 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		isPurchasingItem: isPurchasingDomainItem,
 		siteUrl,
 		themeSlugWithRepo,
+		themeStyleVariation,
 		themeItem,
+		siteAccentColor,
 	} = stepData;
 
 	// flowName isn't always passed in
@@ -292,6 +273,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		themeSlugWithRepo,
 		siteUrl,
 		state,
+		siteAccentColor,
 	} );
 
 	if ( isEmpty( bearerToken ) && 'onboarding-registrationless' === flowToCheck ) {
@@ -299,52 +281,324 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		return;
 	}
 
-	wpcom.undocumented().sitesNew( newSiteParams, function ( error, response ) {
-		if ( error ) {
-			callback( error );
-			return;
+	const locale = getLocaleSlug();
+
+	// ************************************************************************
+	// ****  Experiment skeleton left in for future BBE copy change tests  ****
+	// ************************************************************************
+	// Pre Load Experiment relevant to the post site creation goal screen
+	// loadExperimentAssignment( CALYPSO_BUILTBYEXPRESS_GOAL_TEXT_EXPERIMENT_NAME );
+
+	wpcom.req.post(
+		'/sites/new',
+		{
+			...newSiteParams,
+			locale,
+			lang_id: getLanguage( locale ).value,
+			client_id: config( 'wpcom_signup_id' ),
+			client_secret: config( 'wpcom_signup_key' ),
+		},
+		function ( error, response ) {
+			if ( error ) {
+				callback( error );
+				return;
+			}
+
+			const parsedBlogURL = getUrlParts( response.blog_details.url );
+			const siteSlug = parsedBlogURL.hostname;
+			const siteId = response.blog_details.blogid;
+			const providedDependencies = {
+				siteId,
+				siteSlug,
+				domainItem,
+				themeItem,
+			};
+
+			processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, {
+				isFreeThemePreselected,
+				themeSlugWithRepo,
+				themeStyleVariation,
+			} );
 		}
-
-		const parsedBlogURL = getUrlParts( response.blog_details.url );
-
-		const siteSlug = parsedBlogURL.hostname;
-		const siteId = response.blog_details.blogid;
-		const providedDependencies = {
-			siteId,
-			siteSlug,
-			domainItem,
-			themeItem,
-		};
-		processItemCart(
-			providedDependencies,
-			newCartItems,
-			callback,
-			reduxStore,
-			siteSlug,
-			isFreeThemePreselected,
-			themeSlugWithRepo
-		);
-	} );
+	);
 }
 
-export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
+export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo, themeStyleVariation } ) {
 	if ( isEmpty( themeSlugWithRepo ) ) {
 		defer( callback );
-
 		return;
 	}
 
-	wpcom
-		.undocumented()
-		.changeTheme( siteSlug, { theme: themeSlugWithRepo.split( '/' )[ 1 ] }, function ( errors ) {
+	const theme = themeSlugWithRepo.split( '/' )[ 1 ];
+
+	wpcom.req
+		.post( `/sites/${ siteSlug }/themes/mine`, {
+			theme,
+			...( themeStyleVariation && { style_variation_slug: themeStyleVariation } ),
+		} )
+		.then( () => callback() )
+		.catch( ( error ) => callback( [ error ] ) );
+}
+
+function addDIFMLiteProductToCart( callback, dependencies, step, reduxStore ) {
+	const { selectedDesign, selectedSiteCategory, isLetUsChooseSelected, siteSlug } = dependencies;
+	if ( step.lastKnownFlow === 'do-it-for-me-store' ) {
+		dependencies.isStoreFlow = true;
+	}
+	const extra = buildDIFMCartExtrasObject( dependencies );
+	const cartItem = {
+		product_slug: WPCOM_DIFM_LITE,
+		extra,
+	};
+
+	cartItem.quantity = dependencies.selectedPageTitles.length;
+
+	const providedDependencies = {
+		selectedDesign,
+		selectedSiteCategory,
+		isLetUsChooseSelected,
+		siteSlug,
+		cartItem,
+	};
+	const newCartItems = [ cartItem ];
+	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug );
+}
+
+/**
+ * If the user chooses DIFM Lite (BBE) for a new site, then
+ * create a new site, and add the DIFM Lite (BBE) product to the cart.
+ * If the user chooses DIFM Lite (BBE) for an existing site, then
+ * just add the DIFM Lite (BBE) product to the cart.
+ */
+export function createSiteAndAddDIFMToCart( callback, dependencies, step, reduxStore ) {
+	const signupDependencies = getSignupDependencyStore( reduxStore.getState() );
+	const { newOrExistingSiteChoice } = signupDependencies;
+
+	const providedDependencies = { ...signupDependencies, ...dependencies };
+
+	if ( 'new-site' === newOrExistingSiteChoice ) {
+		let siteSlug = null;
+
+		const createSiteWithCartCallback = ( error, result ) => {
+			if ( error ) {
+				callback( error );
+				return;
+			}
+			siteSlug = result.siteSlug;
+			addDIFMLiteProductToCart( callback, { ...providedDependencies, siteSlug }, step, reduxStore );
+		};
+
+		createSiteWithCart( createSiteWithCartCallback, providedDependencies, step, reduxStore );
+	} else {
+		addDIFMLiteProductToCart( callback, providedDependencies, step, reduxStore );
+	}
+}
+
+export function submitWebsiteContent( callback, { siteSlug }, step, reduxStore ) {
+	const state = reduxStore.getState();
+	const websiteContent = getWebsiteContent( state );
+	if ( ! websiteContent ) {
+		defer( callback );
+		return;
+	}
+
+	const websiteContentRequestDTO = buildDIFMWebsiteContentRequestDTO( websiteContent );
+
+	wpcom.req
+		.post( {
+			path: `/sites/${ siteSlug }/do-it-for-me/website-content`,
+			apiNamespace: 'wpcom/v2',
+			body: websiteContentRequestDTO,
+		} )
+		.then( () => reduxStore.dispatch( requestSite( siteSlug ) ) )
+		.then( () => callback() )
+		.catch( ( error ) => {
+			reduxStore.dispatch( errorNotice( error.message ) );
+			callback( [ error ] );
+		} );
+}
+
+export function setDesignOnSite( callback, { siteSlug, selectedDesign } ) {
+	if ( ! selectedDesign ) {
+		defer( callback );
+		return;
+	}
+
+	const { theme } = selectedDesign;
+
+	wpcom.req
+		.post( `/sites/${ siteSlug }/themes/mine`, { theme, dont_change_homepage: true } )
+		.then( () =>
+			wpcom.req.post( {
+				path: `/sites/${ siteSlug }/theme-setup`,
+				apiNamespace: 'wpcom/v2',
+				body: { trim_content: true },
+			} )
+		)
+		.then( () => {
+			callback();
+		} )
+		.catch( ( errors ) => {
+			callback( [ errors ] );
+		} );
+}
+
+export function setOptionsOnSite( callback, { siteSlug, siteTitle, tagline } ) {
+	if ( ! siteTitle && ! tagline ) {
+		defer( callback );
+		return;
+	}
+
+	wpcom.req.post(
+		`/sites/${ siteSlug }/settings`,
+		{ apiVersion: '1.4' },
+		{
+			blogname: siteTitle,
+			blogdescription: tagline,
+		},
+		function ( errors ) {
 			callback( isEmpty( errors ) ? undefined : [ errors ] );
+		}
+	);
+}
+
+export function setStoreFeatures( callback, { siteSlug } ) {
+	if ( ! siteSlug ) {
+		defer( callback );
+		return;
+	}
+
+	wpcom.req
+		.post( {
+			path: `/sites/${ siteSlug }/seller_footer`,
+			apiNamespace: 'wpcom/v2',
+		} )
+		.then( () => callback() )
+		.catch( ( errors ) => {
+			callback( [ errors ] );
+		} );
+}
+
+export function setIntentOnSite( callback, { siteSlug, intent } ) {
+	if ( ! intent ) {
+		defer( callback );
+		return;
+	}
+
+	wpcom.req
+		.post( {
+			path: `/sites/${ siteSlug }/site-intent`,
+			apiNamespace: 'wpcom/v2',
+			body: { site_intent: intent },
+		} )
+		.then( () => callback() )
+		.catch( ( errors ) => {
+			callback( [ errors ] );
+		} );
+}
+export function addWithThemePlanToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
+	const { cartItem } = stepProvidedItems;
+
+	/**
+	 * If the user selected the free option, then we should abort the checkout part.
+	 */
+	if ( ! cartItem ) {
+		defer( callback );
+		return;
+	}
+
+	reduxStore.dispatch( requestTheme( dependencies.theme, 'wpcom', getLocaleSlug() ) ).then( () => {
+		const state = reduxStore.getState();
+		const themeSlug = dependencies.theme;
+		const isExternallyManagedTheme = getIsExternallyManagedTheme( state, themeSlug );
+
+		if ( isExternallyManagedTheme ) {
+			addExternalManagedThemeToCart(
+				state,
+				reduxStore.dispatch,
+				themeSlug,
+				dependencies.siteSlug,
+				cartItem
+			).then( () => {} );
+		} else {
+			addPlanToCart( callback, dependencies, stepProvidedItems, reduxStore );
+		}
+	} );
+}
+
+const setIsLoadingCart = ( isLoading ) => ( dispatch ) => {
+	dispatch( {
+		type: THEMES_LOADING_CART,
+		isLoading,
+	} );
+};
+
+/**
+ * Add a Marketplace theme and the Business/eCommerce plan.
+ *
+ * Based on client/state/themes/actions/add-external-managed-theme-to-cart.tsx.
+ *
+ * Decided to duplicate the code in order to reduce scope.
+ *
+ * @param state
+ * @param dispatch
+ * @param themeId
+ * @param siteSlug
+ * @param planCartItem
+ * @returns {Promise<void>}
+ */
+async function addExternalManagedThemeToCart( state, dispatch, themeId, siteSlug, planCartItem ) {
+	const products = getProductsByBillingSlug( state, marketplaceThemeBillingProductSlug( themeId ) );
+
+	if ( undefined === products || products.length === 0 ) {
+		// @TODO What kind of logging should we add here? For now it just bails the code.
+		return;
+	}
+
+	const planProduct = getProductBySlug( state, planCartItem.product_slug );
+
+	let preferredProduct = products.find(
+		( product ) => product.product_term === planProduct.product_term
+	);
+
+	/**
+	 * If no preferred product was found based on the product_term of the plan, default to 'year'.
+	 *
+	 * This shouldn't happen for now but it could happen in the future for 2y plans or longer term plans.
+	 */
+	if ( ! preferredProduct ) {
+		preferredProduct = products.find( ( product ) => product.product_term === 'year' );
+	}
+
+	const productSlug = preferredProduct?.product_slug ?? products[ 0 ].product_slug;
+
+	const externalManagedThemeProduct = marketplaceThemeProduct( productSlug );
+
+	/**
+	 * This holds the products that will be added to the cart. We always want to add the
+	 * theme product, but we only want to add the business plan if the site is not eligible
+	 */
+	const cartItems = [ planCartItem, externalManagedThemeProduct ];
+
+	dispatch( setIsLoadingCart( true ) );
+	const cartKey = await cartManagerClient.getCartKeyForSiteSlug( siteSlug );
+	cartManagerClient
+		.forCartKey( cartKey )
+		.actions.addProductsToCart( cartItems )
+		.then( () => {
+			page( `/checkout/${ siteSlug }` );
+		} )
+		.finally( () => {
+			dispatch( setIsLoadingCart( false ) );
 		} );
 }
 
 export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
-	const { siteSlug } = dependencies;
-	const { cartItem } = stepProvidedItems;
-	if ( isEmpty( cartItem ) ) {
+	// Note that we pull in emailItem to avoid race conditions from multiple step API functions
+	// trying to fetch and update the cart simultaneously, as both of those actions are asynchronous.
+	const { emailItem, siteSlug } = dependencies;
+	const { cartItem, lastKnownFlow } = stepProvidedItems;
+	if ( isEmpty( cartItem ) && isEmpty( emailItem ) ) {
 		// the user selected the free plan
 		defer( callback );
 
@@ -352,9 +606,33 @@ export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxS
 	}
 
 	const providedDependencies = { cartItem };
-	const newCartItems = [ cartItem ].filter( ( item ) => item );
+	const newCartItems = [ cartItem, emailItem ].filter( ( item ) => item );
 
-	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, null, null );
+	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, {
+		lastKnownFlow,
+	} );
+}
+export function addAddOnsToCart(
+	callback,
+	dependencies,
+	stepProvidedItems,
+	reduxStore,
+	siteSlug,
+	stepProvidedDependencies
+) {
+	const slug = siteSlug || dependencies.siteSlug;
+	const { cartItem } = stepProvidedItems;
+
+	const providedDependencies = stepProvidedDependencies || { cartItem };
+	if ( ! cartItem || isEmpty( cartItem ) ) {
+		// the user hans't selected any addons
+		defer( callback );
+
+		return;
+	}
+
+	const newCartItems = cartItem.filter( ( item ) => item );
+	processItemCart( providedDependencies, newCartItems, callback, reduxStore, slug );
 }
 
 export function addDomainToCart(
@@ -371,7 +649,7 @@ export function addDomainToCart(
 
 	const newCartItems = [ domainItem, googleAppsCartItem ].filter( ( item ) => item );
 
-	processItemCart( providedDependencies, newCartItems, callback, reduxStore, slug, null, null );
+	processItemCart( providedDependencies, newCartItems, callback, reduxStore, slug );
 }
 
 function processItemCart(
@@ -380,19 +658,32 @@ function processItemCart(
 	callback,
 	reduxStore,
 	siteSlug,
-	isFreeThemePreselected,
-	themeSlugWithRepo
+	{ isFreeThemePreselected, themeSlugWithRepo, themeStyleVariation, lastKnownFlow } = {}
 ) {
-	const addToCartAndProceed = () => {
-		const newCartItemsToAdd = newCartItems.map( ( item ) =>
-			addPrivacyProtectionIfSupported( item, reduxStore.getState() )
-		);
+	const addToCartAndProceed = async () => {
+		debug( 'preparing to add cart items (if any) from', newCartItems );
+		const reduxState = reduxStore.getState();
+		const newCartItemsToAdd = newCartItems
+			.map( ( item ) => addPrivacyProtectionIfSupported( item, reduxState ) )
+			.map( ( item ) => prepareItemForAddingToCart( item, lastKnownFlow ) );
 
 		if ( newCartItemsToAdd.length ) {
-			SignupCart.addToCart( siteSlug, newCartItemsToAdd, function ( cartError ) {
-				callback( cartError, providedDependencies );
-			} );
+			debug( 'adding products to cart', newCartItemsToAdd );
+			const cartKey = await cartManagerClient.getCartKeyForSiteSlug( siteSlug );
+			cartManagerClient
+				.forCartKey( cartKey )
+				.actions.addProductsToCart( newCartItemsToAdd )
+				.then( ( updatedCart ) => {
+					debug( 'product add request complete', updatedCart );
+					callback( undefined, providedDependencies );
+				} )
+				.catch( ( error ) => {
+					debug( 'product add request had an error', error );
+					reduxStore.dispatch( errorNotice( error.message ) );
+					callback( error, providedDependencies );
+				} );
 		} else {
+			debug( 'no cart items to add' );
 			callback( undefined, providedDependencies );
 		}
 	};
@@ -400,11 +691,15 @@ function processItemCart(
 	const userLoggedIn = isUserLoggedIn( reduxStore.getState() );
 
 	if ( ! userLoggedIn && isFreeThemePreselected ) {
-		setThemeOnSite( addToCartAndProceed, { siteSlug, themeSlugWithRepo } );
+		setThemeOnSite( addToCartAndProceed, { siteSlug, themeSlugWithRepo, themeStyleVariation } );
 	} else if ( userLoggedIn && isFreeThemePreselected ) {
 		fetchSitesAndUser(
 			siteSlug,
-			setThemeOnSite.bind( null, addToCartAndProceed, { siteSlug, themeSlugWithRepo } ),
+			setThemeOnSite.bind( null, addToCartAndProceed, {
+				siteSlug,
+				themeSlugWithRepo,
+				themeStyleVariation,
+			} ),
 			reduxStore
 		);
 	} else if ( userLoggedIn && siteSlug ) {
@@ -412,6 +707,17 @@ function processItemCart(
 	} else {
 		addToCartAndProceed();
 	}
+}
+
+function prepareItemForAddingToCart( item, lastKnownFlow = null ) {
+	return {
+		...item,
+		extra: {
+			...item.extra,
+			context: 'signup',
+			...( lastKnownFlow && { signup_flow: lastKnownFlow } ),
+		},
+	};
 }
 
 function addPrivacyProtectionIfSupported( item, state ) {
@@ -431,15 +737,10 @@ function addPrivacyProtectionIfSupported( item, state ) {
 export function launchSiteApi( callback, dependencies ) {
 	const { siteSlug } = dependencies;
 
-	wpcom.undocumented().launchSite( siteSlug, function ( error ) {
-		if ( error ) {
-			callback( error );
-
-			return;
-		}
-
-		callback();
-	} );
+	wpcom.req
+		.post( `/sites/${ siteSlug }/launch` )
+		.then( () => callback( null ) )
+		.catch( ( error ) => callback( error ) );
 }
 
 export function createAccount(
@@ -457,8 +758,7 @@ export function createAccount(
 		recaptchaDidntLoad,
 		recaptchaFailed,
 		recaptchaToken,
-	},
-	reduxStore
+	}
 ) {
 	const flowToCheck = flowName || lastKnownFlow;
 
@@ -473,14 +773,14 @@ export function createAccount(
 		}
 	}
 
-	const state = reduxStore.getState();
-
-	const siteVertical = getSiteVertical( state );
-	const surveySiteType = getSurveySiteType( state ).trim();
-	const userExperience = getUserExperience( state );
-
 	const SIGNUP_TYPE_SOCIAL = 'social';
 	const SIGNUP_TYPE_DEFAULT = 'default';
+
+	const params = new URLSearchParams( window.location.search );
+	const flowNameTracking =
+		null === params.get( 'variationName' )
+			? flowName
+			: `${ flowName }-${ params.get( 'variationName' ) }`;
 
 	const responseHandler = ( signupType ) => ( error, response ) => {
 		const emailInError =
@@ -501,13 +801,20 @@ export function createAccount(
 			return;
 		}
 
+		// Handling special case where users log in via social using signup form.
+		let newAccountCreated = true;
+
+		if ( signupType === SIGNUP_TYPE_SOCIAL && response && ! response.created_account ) {
+			newAccountCreated = false;
+		}
+
 		// we should either have an error with an error property, or we should have a response with a bearer_token
 		const bearerToken = {};
 		if ( response && response.bearer_token ) {
 			bearerToken.bearer_token = response.bearer_token;
 		} else {
 			// something odd happened...
-			//eslint-disable-next-line no-console
+			// eslint-disable-next-line no-console
 			console.error( 'Expected either an error or a bearer token. got %o, %o.', error, response );
 		}
 
@@ -534,12 +841,14 @@ export function createAccount(
 
 		const plans_reorder_abtest_variation = response?.plans_reorder_abtest_variation ?? '';
 
-		// Fire after a new user registers.
-		recordRegistration( {
-			userData: registrationUserData,
-			flow: flowName,
-			type: signupType,
-		} );
+		// Fire tracking events, but only after a _new_ user registers.
+		if ( newAccountCreated ) {
+			recordRegistration( {
+				userData: registrationUserData,
+				flow: flowNameTracking,
+				type: signupType,
+			} );
+		}
 
 		const providedDependencies = {
 			username,
@@ -560,29 +869,36 @@ export function createAccount(
 
 	if ( service ) {
 		// We're creating a new social account
-		wpcom.undocumented().usersSocialNew(
+		wpcom.req.post(
+			'/users/social/new',
 			{
 				service,
 				access_token,
 				id_token,
-				signup_flow_name: flowName,
+				signup_flow_name: flowNameTracking,
+				locale: getLocaleSlug(),
+				client_id: config( 'wpcom_signup_id' ),
+				client_secret: config( 'wpcom_signup_key' ),
 				...userData,
+				tos: getToSAcceptancePayload(),
 			},
 			responseHandler( SIGNUP_TYPE_SOCIAL )
 		);
 	} else {
-		wpcom.undocumented().usersNew(
+		wpcom.req.post(
+			'/users/new',
 			Object.assign(
 				{},
 				userData,
 				{
 					validate: false,
-					signup_flow_name: flowName,
-					nux_q_site_type: surveySiteType,
-					nux_q_question_primary: siteVertical,
-					nux_q_question_experience: userExperience || undefined,
+					signup_flow_name: flowNameTracking,
 					// url sent in the confirmation email
 					jetpack_redirect: queryArgs.jetpack_redirect,
+					locale: getLocaleSlug(),
+					client_id: config( 'wpcom_signup_id' ),
+					client_secret: config( 'wpcom_signup_key' ),
+					tos: getToSAcceptancePayload(),
 				},
 				oauth2Signup
 					? {
@@ -602,22 +918,38 @@ export function createAccount(
 }
 
 export function createSite( callback, dependencies, stepData, reduxStore ) {
-	const { themeSlugWithRepo } = dependencies;
-	const { site } = stepData;
+	const { site, themeSlugWithRepo } = stepData;
+	const signupDependencies = getSignupDependencyStore( reduxStore.getState() );
+	const locale = getLocaleSlug();
+
+	const theme =
+		dependencies?.themeSlugWithRepo ||
+		themeSlugWithRepo ||
+		get( signupDependencies, 'themeSlugWithRepo', false );
 
 	const data = {
 		blog_name: site,
 		blog_title: '',
 		public: Visibility.PublicNotIndexed,
 		options: {
-			theme: themeSlugWithRepo,
+			theme,
 			timezone_string: guessTimezone(),
 			wpcom_public_coming_soon: 1,
 		},
 		validate: false,
+		locale,
+		lang_id: getLanguage( locale ).value,
+		client_id: config( 'wpcom_signup_id' ),
+		client_secret: config( 'wpcom_signup_key' ),
 	};
 
-	wpcom.undocumented().sitesNew( data, function ( errors, response ) {
+	// ************************************************************************
+	// ****  Experiment skeleton left in for future BBE copy change tests  ****
+	// ************************************************************************
+	// Pre Load Experiment relevant to the post site creation goal screen
+	// loadExperimentAssignment( CALYPSO_BUILTBYEXPRESS_GOAL_TEXT_EXPERIMENT_NAME );
+
+	wpcom.req.post( '/sites/new', data, function ( errors, response ) {
 		let providedDependencies;
 		let siteSlug;
 
@@ -643,6 +975,8 @@ export function createWpForTeamsSite( callback, dependencies, stepData, reduxSto
 	// More info: https://wp.me/p9lV3a-1dM-p2
 	const themeSlugWithRepo = 'pub/p2020';
 
+	const locale = getLocaleSlug();
+
 	const data = {
 		blog_name: site,
 		blog_title: siteTitle,
@@ -652,11 +986,16 @@ export function createWpForTeamsSite( callback, dependencies, stepData, reduxSto
 			timezone_string: guessTimezone(),
 			is_wpforteams_site: true,
 			p2_initialize_as_hub: true,
+			...( stepData.campaign && { p2_signup_campaign: stepData.campaign } ),
 		},
 		validate: false,
+		locale,
+		lang_id: getLanguage( locale ).value,
+		client_id: config( 'wpcom_signup_id' ),
+		client_secret: config( 'wpcom_signup_key' ),
 	};
 
-	wpcom.undocumented().sitesNew( data, function ( errors, response ) {
+	wpcom.req.post( '/sites/new', data, function ( errors, response ) {
 		let providedDependencies;
 		let siteSlug;
 
@@ -722,6 +1061,41 @@ export function isDomainFulfilled( stepName, defaultDependencies, nextProps ) {
 	}
 }
 
+export function maybeExcludeEmailsStep( {
+	domainItem,
+	resetSignupStep,
+	siteUrl,
+	stepName,
+	submitSignupStep,
+} ) {
+	const isEmailStepExcluded = flows.excludedSteps.includes( stepName );
+
+	/* If we have a domain, make sure the step isn't excluded */
+	if ( domainItem ) {
+		if ( ! isEmailStepExcluded ) {
+			return;
+		}
+
+		resetSignupStep( stepName );
+		flows.resetExcludedStep( stepName );
+
+		return;
+	}
+
+	/* We don't have a domain, so exclude the step if it hasn't been excluded yet */
+	if ( isEmailStepExcluded ) {
+		return;
+	}
+
+	const emailItem = undefined;
+
+	submitSignupStep( { stepName, emailItem, wasSkipped: true }, { emailItem } );
+
+	recordExcludeStepEvent( stepName, siteUrl );
+
+	flows.excludeStep( stepName );
+}
+
 export function maybeRemoveStepForUserlessCheckout( stepName, defaultDependencies, nextProps ) {
 	if ( 'onboarding-registrationless' !== nextProps.flowName ) {
 		return;
@@ -754,20 +1128,95 @@ export function maybeRemoveStepForUserlessCheckout( stepName, defaultDependencie
 	}
 }
 
+export function excludeStepIfEmailVerified( stepName, defaultDependencies, nextProps ) {
+	if ( includes( flows.excludedSteps, stepName ) ) {
+		return;
+	}
+
+	/* For the P2 signup flow, if we displayed the email verification step before,
+	   we need to display it again when the user comes back to the flow
+	   after verification. */
+	if ( nextProps.flowName === 'p2' && nextProps?.progress[ stepName ]?.status === 'in-progress' ) {
+		debug( 'User email verification is in progress, do not skip this step' );
+		return;
+	}
+
+	debug( 'User email is verified: %s', nextProps?.isEmailVerified );
+	if ( ! nextProps.isEmailVerified ) {
+		return;
+	}
+
+	debug( 'Skipping P2 email confirmation step' );
+	recordTracksEvent( 'calypso_signup_p2_confirm_email_autoskip' );
+	nextProps.submitSignupStep( { stepName, wasSkipped: true } );
+	flows.excludeStep( stepName );
+}
+
+export function excludeStepIfProfileComplete( stepName, defaultDependencies, nextProps ) {
+	if ( includes( flows.excludedSteps, stepName ) ) {
+		return;
+	}
+
+	const state = nextProps?.store?.getState();
+
+	if ( ! state ) {
+		return;
+	}
+
+	const currentUser = getCurrentUser( state );
+	debug( 'Checking profile for current user', currentUser );
+	if ( currentUser?.display_name !== currentUser?.username ) {
+		debug( 'Skipping P2 complete profile step' );
+		recordTracksEvent( 'calypso_signup_p2_complete_profile_autoskip' );
+		nextProps.submitSignupStep( { stepName, wasSkipped: true } );
+		flows.excludeStep( stepName );
+	}
+}
+
+export function isAddOnsFulfilled( stepName, defaultDependencies, nextProps ) {
+	const { store, submitSignupStep } = nextProps;
+
+	const state = store.getState();
+	const cartItem = get( getSignupDependencyStore( state ), 'cartItem', null );
+	let fulfilledDependencies = [];
+
+	if ( cartItem ) {
+		submitSignupStep( { stepName, cartItem: [], wasSkipped: true }, { cartItem: [] } );
+		fulfilledDependencies = [ 'cartItem' ];
+	}
+
+	if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
+		flows.excludeStep( stepName );
+	}
+}
+
 export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
 	const { isPaidPlan, sitePlanSlug, submitSignupStep } = nextProps;
-	let fulfilledDependencies = [];
+	const fulfilledDependencies = [];
+	const dependenciesFromDefaults = {};
+
+	// Check for plan-specific default theme
+	if ( defaultDependencies && defaultDependencies.themeSlugWithRepo ) {
+		fulfilledDependencies.push( 'themeSlugWithRepo' );
+		dependenciesFromDefaults.themeSlugWithRepo = defaultDependencies.themeSlugWithRepo;
+	}
 
 	if ( isPaidPlan ) {
 		const cartItem = undefined;
-		submitSignupStep( { stepName, cartItem, wasSkipped: true }, { cartItem } );
+		submitSignupStep(
+			{ stepName, cartItem, wasSkipped: true },
+			{ cartItem, ...dependenciesFromDefaults }
+		);
 		recordExcludeStepEvent( stepName, sitePlanSlug );
-		fulfilledDependencies = [ 'cartItem' ];
+		fulfilledDependencies.push( 'cartItem' );
 	} else if ( defaultDependencies && defaultDependencies.cartItem ) {
 		const cartItem = getCartItemForPlan( defaultDependencies.cartItem );
-		submitSignupStep( { stepName, cartItem, wasSkipped: true }, { cartItem } );
+		submitSignupStep(
+			{ stepName, cartItem, wasSkipped: true },
+			{ cartItem, ...dependenciesFromDefaults }
+		);
 		recordExcludeStepEvent( stepName, defaultDependencies.cartItem );
-		fulfilledDependencies = [ 'cartItem' ];
+		fulfilledDependencies.push( 'cartItem' );
 	}
 
 	if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
@@ -805,52 +1254,99 @@ export function isSiteTypeFulfilled( stepName, defaultDependencies, nextProps ) 
 	}
 }
 
-export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps ) {
-	if ( isEmpty( nextProps.initialContext && nextProps.initialContext.query ) ) {
-		return;
-	}
-
-	const {
-		initialContext: {
-			query: { vertical },
-		},
-		flowName,
-	} = nextProps;
-
-	const flowSteps = flows.getFlow( flowName, nextProps.isLoggedIn ).steps;
-	let fulfilledDependencies = [];
-
-	if ( vertical && -1 === flowSteps.indexOf( 'survey' ) ) {
-		debug( 'From query string: vertical = %s', vertical );
-
-		nextProps.setSurvey( { vertical, otherText: '' } );
-
-		nextProps.submitSignupStep(
-			{ stepName: 'survey', wasSkipped: true },
-			{ surveySiteType: 'blog', surveyQuestion: vertical }
-		);
-
-		nextProps.submitSiteVertical( { name: vertical }, stepName );
-
-		// Track our landing page verticals
-		if ( isValidLandingPageVertical( vertical ) ) {
-			recordTracksEvent( 'calypso_signup_vertical_landing_page', {
-				vertical,
-				flow: flowName,
-			} );
+/**
+ * Skip the step if the user does not have any existing sites
+ */
+export function isNewOrExistingSiteFulfilled( stepName, defaultDependencies, nextProps ) {
+	const { existingSiteCount, submitSignupStep } = nextProps;
+	if ( ! existingSiteCount || 0 === existingSiteCount ) {
+		const stepProvidesDependency =
+			steps[ stepName ].providesDependencies.includes( 'newOrExistingSiteChoice' );
+		let dependency = undefined;
+		if ( stepProvidesDependency ) {
+			dependency = {
+				newOrExistingSiteChoice: 'new-site',
+				forceAutoGeneratedBlogName: true,
+			};
 		}
-
-		//Add to fulfilled dependencies
-		fulfilledDependencies = fulfilledDependencies.concat( [
-			'surveySiteType',
-			'surveyQuestion',
-			'siteTopic',
-		] );
-
-		recordExcludeStepEvent( stepName, vertical );
-	}
-
-	if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
+		submitSignupStep( { stepName, wasSkipped: true }, dependency );
+		recordExcludeStepEvent( stepName );
 		flows.excludeStep( stepName );
 	}
 }
+
+export const buildUpgradeFunction = ( planProps, cartItem ) => {
+	const {
+		additionalStepData,
+		flowName,
+		launchSite,
+		selectedSite,
+		stepName,
+		stepSectionName,
+		themeSlugWithRepo,
+		goToNextStep,
+		submitSignupStep,
+	} = planProps;
+
+	if ( cartItem ) {
+		planProps.recordTracksEvent( 'calypso_signup_plan_select', {
+			product_slug: cartItem.product_slug,
+			free_trial: cartItem.free_trial,
+			from_section: stepSectionName ? stepSectionName : 'default',
+		} );
+
+		// If we're inside the store signup flow and the cart item is a Business or eCommerce Plan,
+		// set a flag on it. It will trigger Automated Transfer when the product is being
+		// activated at the end of the checkout process.
+		if (
+			flowName === 'ecommerce' &&
+			planHasFeature( cartItem.product_slug, FEATURE_UPLOAD_THEMES_PLUGINS )
+		) {
+			cartItem.extra = Object.assign( cartItem.extra || {}, {
+				is_store_signup: true,
+			} );
+		}
+	} else {
+		planProps.recordTracksEvent( 'calypso_signup_free_plan_select', {
+			from_section: stepSectionName ? stepSectionName : 'default',
+		} );
+	}
+
+	const step = {
+		stepName,
+		stepSectionName,
+		cartItem,
+		...additionalStepData,
+	};
+
+	if ( selectedSite && flowName === 'site-selected' && ! cartItem ) {
+		wpcom.req.post(
+			`/domains/${ selectedSite.ID }/${ selectedSite.name }/convert-domain-only-to-site`,
+			{},
+			( error ) => {
+				if ( error ) {
+					errorNotice( error.message );
+					return;
+				}
+				submitSignupStep( step, {
+					cartItem,
+				} );
+				goToNextStep();
+			}
+		);
+		return;
+	}
+
+	const signupVals = {
+		cartItem,
+		...( themeSlugWithRepo && { themeSlugWithRepo } ),
+		...( launchSite && { comingSoon: 0 } ),
+	};
+
+	if ( cartItem && isEcommerce( cartItem ) ) {
+		signupVals.themeSlugWithRepo = 'pub/twentytwentytwo';
+	}
+
+	submitSignupStep( step, signupVals );
+	goToNextStep();
+};

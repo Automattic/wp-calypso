@@ -1,42 +1,22 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { isEmpty, partial } from 'lodash';
-import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
+import { ToggleControl } from '@wordpress/components';
+import { localize } from 'i18n-calypso';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
+import SupportInfo from 'calypso/components/support-info';
+import withSiteMonitorSettings from 'calypso/data/site-monitor/with-site-monitor-settings';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import SupportInfo from 'calypso/components/support-info';
-import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
-import QuerySiteMonitorSettings from 'calypso/components/data/query-site-monitor-settings';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { updateSiteMonitorSettings } from 'calypso/state/sites/monitor/actions';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import getSiteMonitorSettings from 'calypso/state/selectors/get-site-monitor-settings';
 import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
 import isDeactivatingJetpackModule from 'calypso/state/selectors/is-deactivating-jetpack-module';
 import isFetchingJetpackModules from 'calypso/state/selectors/is-fetching-jetpack-modules';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
-import isRequestingSiteMonitorSettings from 'calypso/state/selectors/is-requesting-site-monitor-settings';
-import isUpdatingSiteMonitorSettings from 'calypso/state/selectors/is-updating-site-monitor-settings';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class SiteSettingsFormJetpackMonitor extends Component {
-	state = {};
-
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( isEmpty( this.state ) && nextProps.monitorSettings ) {
-			this.setState( nextProps.monitorSettings );
-		}
-	}
-
 	recordEvent = ( event ) => {
 		return () => {
 			this.props.trackEvent( event );
@@ -44,30 +24,22 @@ class SiteSettingsFormJetpackMonitor extends Component {
 	};
 
 	handleToggle = ( name ) => () => {
+		const { siteMonitorSettings } = this.props;
 		this.props.trackEvent( `Toggled ${ name }` );
-		this.setState(
-			{
-				...this.state,
-				[ name ]: ! this.state[ name ],
-			},
-			this.saveSettings
-		);
-	};
-
-	saveSettings = () => {
-		const { siteId } = this.props;
-
-		this.props.updateSiteMonitorSettings( siteId, this.state );
+		this.props.updateSiteMonitorSettings( {
+			...siteMonitorSettings,
+			[ name ]: ! siteMonitorSettings[ name ],
+		} );
 	};
 
 	settingsMonitorEmailCheckbox() {
-		const { monitorActive, translate } = this.props;
+		const { monitorActive, siteMonitorSettings, translate } = this.props;
 
 		return (
 			<ToggleControl
 				disabled={ this.disableForm() || ! monitorActive }
 				onChange={ this.handleToggle( 'email_notifications' ) }
-				checked={ !! this.state.email_notifications }
+				checked={ !! siteMonitorSettings?.email_notifications }
 				label={ translate( 'Send notifications to your {{a}}WordPress.com email address{{/a}}', {
 					components: {
 						a: (
@@ -85,12 +57,12 @@ class SiteSettingsFormJetpackMonitor extends Component {
 	}
 
 	settingsMonitorWpNoteCheckbox() {
-		const { monitorActive, translate } = this.props;
+		const { monitorActive, siteMonitorSettings, translate } = this.props;
 		return (
 			<ToggleControl
 				disabled={ this.disableForm() || ! monitorActive }
 				onChange={ this.handleToggle( 'wp_note_notifications' ) }
-				checked={ !! this.state.wp_note_notifications }
+				checked={ !! siteMonitorSettings?.wp_note_notifications }
 				label={ translate( 'Send notifications via WordPress.com notification' ) }
 			/>
 		);
@@ -100,21 +72,11 @@ class SiteSettingsFormJetpackMonitor extends Component {
 		return (
 			this.props.activatingMonitor ||
 			this.props.deactivatingMonitor ||
-			this.props.updatingMonitorSettings ||
+			this.props.isUpdatingSiteMonitorSettings ||
 			this.props.fetchingJetpackModules ||
-			this.props.requestingMonitorSettings
+			this.props.isLoadingSiteMonitorSettings
 		);
 	}
-
-	handleActivationButtonClick = () => {
-		const { siteId } = this.props;
-		this.props.activateModule( siteId, 'monitor', true );
-	};
-
-	handleDeactivationButtonClick = () => {
-		const { siteId } = this.props;
-		this.props.deactivateModule( siteId, 'monitor', true );
-	};
 
 	render() {
 		const { siteId, translate } = this.props;
@@ -127,7 +89,6 @@ class SiteSettingsFormJetpackMonitor extends Component {
 		return (
 			<div className="site-settings__security-settings">
 				<QueryJetpackModules siteId={ siteId } />
-				<QuerySiteMonitorSettings siteId={ siteId } />
 
 				<SettingsSectionHeader title={ translate( 'Downtime monitoring' ) } />
 
@@ -150,8 +111,7 @@ class SiteSettingsFormJetpackMonitor extends Component {
 
 					<div className="site-settings__child-settings">
 						{ this.settingsMonitorEmailCheckbox() }
-						{ config.isEnabled( 'settings/security/monitor/wp-note' ) &&
-							this.settingsMonitorWpNoteCheckbox() }
+						{ this.settingsMonitorWpNoteCheckbox() }
 					</div>
 				</Card>
 			</div>
@@ -170,13 +130,9 @@ export default connect(
 			activatingMonitor: isActivatingJetpackModule( state, siteId, 'monitor' ),
 			deactivatingMonitor: isDeactivatingJetpackModule( state, siteId, 'monitor' ),
 			fetchingJetpackModules: isFetchingJetpackModules( state, siteId ),
-			monitorSettings: getSiteMonitorSettings( state, siteId ),
-			requestingMonitorSettings: isRequestingSiteMonitorSettings( state, siteId ),
-			updatingMonitorSettings: isUpdatingSiteMonitorSettings( state, siteId ),
 		};
 	},
 	{
-		trackEvent: partial( recordGoogleEvent, 'Site Settings' ),
-		updateSiteMonitorSettings,
+		trackEvent: ( event ) => recordGoogleEvent( 'Site Settings', event ),
 	}
-)( localize( SiteSettingsFormJetpackMonitor ) );
+)( withSiteMonitorSettings( localize( SiteSettingsFormJetpackMonitor ) ) );

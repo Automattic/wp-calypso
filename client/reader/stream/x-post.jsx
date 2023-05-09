@@ -1,30 +1,23 @@
-/**
- * External Dependencies
- */
-import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
-import ReactDom from 'react-dom';
-import classnames from 'classnames';
-import { localize } from 'i18n-calypso';
-import closest from 'component-closest';
-import { get, forEach, uniqBy } from 'lodash';
-import { connect } from 'react-redux';
-
-/**
- * Internal Dependencies
- */
-import { Card } from '@automattic/components';
-import ReaderAvatar from 'calypso/blocks/reader-avatar';
-import { getSite } from 'calypso/state/reader/sites/selectors';
-import { getFeed } from 'calypso/state/reader/feeds/selectors';
-import QueryReaderSite from 'calypso/components/data/query-reader-site';
-import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
-import Emojify from 'calypso/components/emojify';
 import { getUrlParts } from '@automattic/calypso-url';
-import { canBeMarkedAsSeen, isEligibleForUnseen } from 'calypso/reader/get-helpers';
-import { getReaderTeams } from 'calypso/state/teams/selectors';
-import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import { Card } from '@automattic/components';
+import classnames from 'classnames';
+import closest from 'component-closest';
+import { localize } from 'i18n-calypso';
+import { get, forEach, uniqBy } from 'lodash';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
+import ReactDom from 'react-dom';
+import { connect } from 'react-redux';
+import ReaderAvatar from 'calypso/blocks/reader-avatar';
+import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
+import QueryReaderSite from 'calypso/components/data/query-reader-site';
+import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
+import { getFeed } from 'calypso/state/reader/feeds/selectors';
+import { hasReaderFollowOrganization } from 'calypso/state/reader/follows/selectors';
+import { getSite } from 'calypso/state/reader/sites/selectors';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 class CrossPost extends PureComponent {
@@ -39,12 +32,13 @@ class CrossPost extends PureComponent {
 		site: PropTypes.object,
 		feed: PropTypes.object,
 		isWPForTeamsItem: PropTypes.bool,
-		teams: PropTypes.array,
+		currentRoute: PropTypes.string,
+		hasOrganization: PropTypes.bool,
 	};
 
 	handleTitleClick = ( event ) => {
 		// modified clicks should let the default action open a new tab/window
-		if ( event.button > 0 || event.metaKey || event.controlKey || event.shiftKey || event.altKey ) {
+		if ( event.button > 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey ) {
 			return;
 		}
 		event.preventDefault();
@@ -73,7 +67,7 @@ class CrossPost extends PureComponent {
 		}
 
 		// if the click has modifier, ignore it
-		if ( event.metaKey || event.controlKey || event.shiftKey || event.altKey ) {
+		if ( event.metaKey || event.ctrlKey || event.shiftKey || event.altKey ) {
 			return;
 		}
 
@@ -167,14 +161,23 @@ class CrossPost extends PureComponent {
 	};
 
 	render() {
-		const { post, postKey, site, feed, translate, teams, isWPForTeamsItem } = this.props;
+		const {
+			post,
+			postKey,
+			site,
+			feed,
+			translate,
+			currentRoute,
+			hasOrganization,
+			isWPForTeamsItem,
+		} = this.props;
 		const { blogId: siteId, feedId } = postKey;
 		const siteIcon = get( site, 'icon.img' );
 		const feedIcon = get( feed, 'image' );
 
-		let isSeen = true;
-		if ( canBeMarkedAsSeen( { post } ) ) {
-			isSeen = isEligibleForUnseen( { teams, isWPForTeamsItem } ) && !! post.is_seen;
+		let isSeen = false;
+		if ( isEligibleForUnseen( { isWPForTeamsItem, currentRoute, hasOrganization } ) ) {
+			isSeen = post?.is_seen;
 		}
 		const articleClasses = classnames( {
 			reader__card: true,
@@ -211,14 +214,14 @@ class CrossPost extends PureComponent {
 								target="_blank"
 								rel="noopener noreferrer"
 							>
-								<Emojify>{ xpostTitle }</Emojify>
+								{ xpostTitle }
 							</a>
 						</h1>
 					) }
-					{ post.author && <Emojify>{ this.getDescription( post.author.first_name ) }</Emojify> }
+					{ post.author && this.getDescription( post.author.first_name ) }
 				</div>
-				{ feedId && <QueryReaderFeed feedId={ +feedId } includeMeta={ false } /> }
-				{ siteId && <QueryReaderSite siteId={ +siteId } includeMeta={ false } /> }
+				{ feedId && <QueryReaderFeed feedId={ +feedId } /> }
+				{ siteId && <QueryReaderSite siteId={ +siteId } /> }
 			</Card>
 		);
 	}
@@ -237,8 +240,9 @@ export default connect( ( state, ownProps ) => {
 		feed = site && site.feed_ID ? getFeed( state, site.feed_ID ) : undefined;
 	}
 	return {
+		currentRoute: getCurrentRoute( state ),
 		isWPForTeamsItem: isSiteWPForTeams( state, blogId ) || isFeedWPForTeams( state, feedId ),
-		teams: getReaderTeams( state ),
+		hasOrganization: hasReaderFollowOrganization( state, feedId, blogId ),
 		feed,
 		site,
 	};

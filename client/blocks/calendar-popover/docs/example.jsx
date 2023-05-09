@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
-import React, { PureComponent } from 'react';
-import moment from 'moment';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
+import moment from 'moment';
+import { createRef, PureComponent } from 'react';
 import CalendarPopover from 'calypso/blocks/calendar-popover';
 
 const tomorrow = ( date ) => date.date( date.date() + 1 );
 
 class CalendarPopoverExample extends PureComponent {
-	buttonRef = React.createRef();
+	buttonRef = createRef();
 
 	state = { show: false, currentDate: tomorrow( moment() ) };
 

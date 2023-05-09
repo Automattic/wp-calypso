@@ -1,31 +1,20 @@
-/**
- * External dependencies
- */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
 import { flowRight as compose } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import ActivityLogBanner from './index';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { Button } from '@automattic/components';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import HappychatButton from 'calypso/components/happychat/button';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import getSiteUrl from 'calypso/state/selectors/get-site-url';
 import {
 	dismissRewindRestoreProgress,
 	dismissRewindBackupProgress,
 } from 'calypso/state/activity-log/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getSiteUrl from 'calypso/state/selectors/get-site-url';
+import ActivityLogBanner from './index';
 
-/**
- * Style dependencies
- */
 import './success-banner.scss';
 
 /**
@@ -148,19 +137,21 @@ class SuccessBanner extends PureComponent {
 			>
 				{ params.track }
 				<p>{ params.taskFinished }</p>
-				{ params.actionButton }
-				{ ! backupUrl && (
-					<Button className="activity-log-banner__success-gotit" onClick={ this.handleDismiss }>
-						{ translate( 'Thanks, got it!' ) }
-					</Button>
-				) }
-				<HappychatButton
-					className="activity-log-banner__happychat-button"
-					onClick={ params.trackHappyChat }
-				>
-					<Gridicon icon="chat" />
-					<span>{ translate( 'Get help' ) }</span>
-				</HappychatButton>
+				<div className="activity-log-banner__controls">
+					{ params.actionButton }
+					{ ! backupUrl && (
+						<Button className="activity-log-banner__success-gotit" onClick={ this.handleDismiss }>
+							{ translate( 'Thanks, got it!' ) }
+						</Button>
+					) }
+					<HappychatButton
+						className="activity-log-banner__happychat-button"
+						onClick={ params.trackHappyChat }
+					>
+						<Gridicon icon="chat" />
+						<span>{ translate( 'Get help' ) }</span>
+					</HappychatButton>
+				</div>
 			</ActivityLogBanner>
 		);
 	}

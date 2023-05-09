@@ -1,63 +1,61 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
-import page from 'page';
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { isFreePlanProduct } from '@automattic/calypso-products';
+import { Gridicon } from '@automattic/components';
+import { BackButton, ECOMMERCE_FLOW } from '@automattic/onboarding';
+import { withShoppingCart } from '@automattic/shopping-cart';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
-import { withShoppingCart } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
-import config from '@automattic/calypso-config';
-import EmptyContent from 'calypso/components/empty-content';
-import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import page from 'page';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import QueryProductsList from 'calypso/components/data/query-products-list';
+import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
-import Main from 'calypso/components/main';
+import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
+import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
-import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
-import { canDomainAddGSuite, getProductType } from 'calypso/lib/gsuite';
+import Main from 'calypso/components/main';
 import {
 	hasPlan,
 	hasDomainInCart,
-	domainMapping,
 	domainTransfer,
 	domainRegistration,
 	updatePrivacyForDomain,
 } from 'calypso/lib/cart-values/cart-items';
+import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
+import { addQueryArgs } from 'calypso/lib/url';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
+import DomainAndPlanPackageNavigation from 'calypso/my-sites/domains/components/domain-and-plan-package/navigation';
+import NewDomainsRedirectionNoticeUpsell from 'calypso/my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';
+import {
+	domainAddEmailUpsell,
+	domainMapping,
+	domainManagementList,
+} from 'calypso/my-sites/domains/paths';
+import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
+import {
+	recordAddDomainButtonClick,
+	recordRemoveDomainButtonClick,
+} from 'calypso/state/domains/actions';
+import { getProductsList } from 'calypso/state/products-list/selectors';
+import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import isSiteOnMonthlyPlan from 'calypso/state/selectors/is-site-on-monthly-plan';
 import isSiteUpgradeable from 'calypso/state/selectors/is-site-upgradeable';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import {
+	isSiteOnECommerceTrial,
+	isSiteOnWooExpress,
+	isSiteOnEcommerce,
+} from 'calypso/state/sites/plans/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import {
-	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
-	GSUITE_BASIC_SLUG,
-} from 'calypso/lib/gsuite/constants';
-import QueryProductsList from 'calypso/components/data/query-products-list';
-import QuerySiteDomains from 'calypso/components/data/query-site-domains';
-import { getProductsList } from 'calypso/state/products-list/selectors';
-import {
-	recordAddDomainButtonClick,
-	recordRemoveDomainButtonClick,
-} from 'calypso/state/domains/actions';
-import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
-import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import NewDomainsRedirectionNoticeUpsell from 'calypso/my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';
-import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 import 'calypso/my-sites/domains/style.scss';
 
@@ -71,6 +69,8 @@ class DomainSearch extends Component {
 		selectedSite: PropTypes.object,
 		selectedSiteId: PropTypes.number,
 		selectedSiteSlug: PropTypes.string,
+		domainAndPlanUpsellFlow: PropTypes.bool,
+		isDomainAndPlanPackageFlow: PropTypes.bool,
 	};
 
 	isMounted = false;
@@ -87,59 +87,71 @@ class DomainSearch extends Component {
 		} );
 	};
 
-	handleAddRemoveDomain = ( suggestion ) => {
+	handleAddRemoveDomain = ( suggestion, position ) => {
 		if ( ! hasDomainInCart( this.props.cart, suggestion.domain_name ) ) {
-			this.addDomain( suggestion );
+			this.addDomain( suggestion, position );
 		} else {
 			this.removeDomain( suggestion );
 		}
 	};
 
 	handleAddMapping = ( domain ) => {
-		this.props.shoppingCartManager
-			.addProductsToCart( [
-				fillInSingleCartItemAttributes( domainMapping( { domain } ), this.props.productsList ),
-			] )
-			.then( () => {
-				this.isMounted && page( '/checkout/' + this.props.selectedSiteSlug );
-			} );
+		const domainMappingUrl = domainMapping( this.props.selectedSiteSlug, domain );
+		this.isMounted && page( domainMappingUrl );
 	};
 
-	handleAddTransfer = ( domain ) => {
-		this.props.shoppingCartManager
-			.addProductsToCart( [
-				fillInSingleCartItemAttributes( domainTransfer( { domain } ), this.props.productsList ),
-			] )
-			.then( () => {
-				this.isMounted && page( '/checkout/' + this.props.selectedSiteSlug );
-			} );
+	handleAddTransfer = async ( domain ) => {
+		try {
+			await this.props.shoppingCartManager.addProductsToCart( [ domainTransfer( { domain } ) ] );
+		} catch {
+			// Nothing needs to be done here. CartMessages will display the error to the user.
+			return;
+		}
+		this.isMounted && page( '/checkout/' + this.props.selectedSiteSlug );
 	};
 
-	UNSAFE_componentWillMount() {
-		this.checkSiteIsUpgradeable( this.props );
+	componentDidMount() {
+		if ( this.props.isDomainAndPlanPackageFlow ) {
+			document.body.classList.add( 'is-domain-plan-package-flow' );
+		}
+		this.checkSiteIsUpgradeable();
+
+		this.isMounted = true;
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.selectedSiteId !== this.props.selectedSiteId ) {
-			this.checkSiteIsUpgradeable( nextProps );
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.selectedSiteId !== this.props.selectedSiteId ) {
+			this.checkSiteIsUpgradeable();
+		}
+		if (
+			this.props.isDomainAndPlanPackageFlow &&
+			! document.body.classList.contains( 'is-domain-plan-package-flow' )
+		) {
+			document.body.classList.add( 'is-domain-plan-package-flow' );
+		}
+		if (
+			! this.props.isDomainAndPlanPackageFlow &&
+			document.body.classList.contains( 'is-domain-plan-package-flow' )
+		) {
+			document.body.classList.remove( 'is-domain-plan-package-flow' );
 		}
 	}
 
 	componentWillUnmount() {
+		if ( document.body.classList.contains( 'is-domain-plan-package-flow' ) ) {
+			document.body.classList.remove( 'is-domain-plan-package-flow' );
+		}
+
 		this.isMounted = false;
 	}
 
-	componentDidMount() {
-		this.isMounted = true;
-	}
-
-	checkSiteIsUpgradeable( props ) {
-		if ( props.selectedSite && ! props.isSiteUpgradeable ) {
+	checkSiteIsUpgradeable() {
+		if ( this.props.selectedSite && ! this.props.isSiteUpgradeable ) {
 			page.redirect( '/domains/add' );
 		}
 	}
 
-	addDomain( suggestion ) {
+	async addDomain( suggestion, position ) {
 		const {
 			domain_name: domain,
 			product_slug: productSlug,
@@ -147,7 +159,7 @@ class DomainSearch extends Component {
 			is_premium: isPremium,
 		} = suggestion;
 
-		this.props.recordAddDomainButtonClick( domain, 'domains', isPremium );
+		this.props.recordAddDomainButtonClick( domain, 'domains', position, isPremium );
 
 		let registration = domainRegistration( {
 			domain,
@@ -159,28 +171,38 @@ class DomainSearch extends Component {
 			registration = updatePrivacyForDomain( registration, true );
 		}
 
-		this.props.shoppingCartManager
-			.addProductsToCart( [
-				fillInSingleCartItemAttributes( registration, this.props.productsList ),
-			] )
-			.then( () => {
-				if ( this.props.userCanPurchaseGSuite && canDomainAddGSuite( domain ) ) {
-					const gSuiteProductSlug = config.isEnabled( 'google-workspace-migration' )
-						? GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY
-						: GSUITE_BASIC_SLUG;
+		if ( this.props.domainAndPlanUpsellFlow ) {
+			try {
+				// If we are in the domain + annual plan upsell flow, we need to redirect
+				// to the plans page next and let it know that we are still in that flow.
+				await this.props.shoppingCartManager.addProductsToCart( [ registration ] );
+			} catch {
+				// Nothing needs to be done here. CartMessages will display the error to the user.
+				return;
+			}
+			// Monthly plans don't have free domains
+			const intervalTypePath = this.props.isSiteOnMonthlyPlan ? 'yearly/' : '';
+			const nextStepLink =
+				! this.props.isSiteOnFreePlan && ! this.props.isSiteOnMonthlyPlan
+					? `/checkout/${ this.props.selectedSiteSlug }`
+					: addQueryArgs(
+							{
+								domainAndPlanPackage: true,
+								domain: this.props.isDomainUpsell ? domain : undefined,
+							},
+							`/plans/${ intervalTypePath }${ this.props.selectedSiteSlug }`
+					  );
+			page( nextStepLink );
+			return;
+		}
 
-					page(
-						'/domains/add/' +
-							domain +
-							'/' +
-							getProductType( gSuiteProductSlug ) +
-							'/' +
-							this.props.selectedSiteSlug
-					);
-				} else {
-					page( '/checkout/' + this.props.selectedSiteSlug );
-				}
-			} );
+		try {
+			await this.props.shoppingCartManager.addProductsToCart( [ registration ] );
+		} catch {
+			// Nothing needs to be done here. CartMessages will display the error to the user.
+			return;
+		}
+		page( domainAddEmailUpsell( this.props.selectedSiteSlug, domain ) );
 	}
 
 	removeDomain( suggestion ) {
@@ -192,7 +214,9 @@ class DomainSearch extends Component {
 		);
 		if ( productToRemove ) {
 			const uuidToRemove = productToRemove.uuid;
-			this.props.shoppingCartManager.removeProductFromCart( uuidToRemove );
+			this.props.shoppingCartManager.removeProductFromCart( uuidToRemove ).catch( () => {
+				// Nothing needs to be done here. CartMessages will display the error to the user.
+			} );
 		}
 	}
 
@@ -209,7 +233,16 @@ class DomainSearch extends Component {
 	}
 
 	render() {
-		const { selectedSite, selectedSiteSlug, translate, isManagingAllDomains, cart } = this.props;
+		const {
+			selectedSite,
+			selectedSiteSlug,
+			translate,
+			isManagingAllDomains,
+			cart,
+			isDomainAndPlanPackageFlow,
+			isDomainUpsell,
+			isEcommerceSite,
+		} = this.props;
 
 		if ( ! selectedSite ) {
 			return null;
@@ -221,8 +254,17 @@ class DomainSearch extends Component {
 		const { domainRegistrationMaintenanceEndTime } = this.state;
 
 		const hasPlanInCart = hasPlan( cart );
+		const hrefForDecideLater = addQueryArgs(
+			{
+				domainAndPlanPackage: true,
+			},
+			`/plans/yearly/${ selectedSiteSlug }`
+		);
 
 		let content;
+
+		const launchpadScreen = this.props.selectedSite?.options?.launchpad_screen;
+		const siteIntent = this.props.selectedSite?.options?.site_intent;
 
 		if ( ! this.state.domainRegistrationAvailable ) {
 			let maintenanceEndTime = translate( 'shortly', {
@@ -246,25 +288,73 @@ class DomainSearch extends Component {
 				/>
 			);
 		} else {
+			const goBackButtonProps =
+				launchpadScreen === 'full'
+					? {
+							goBackText: translate( 'Next Steps' ),
+							goBackLink: `/setup/${ siteIntent }/launchpad?siteSlug=${ selectedSiteSlug }`,
+					  }
+					: {
+							goBackLink: `/home/${ selectedSiteSlug }`,
+					  };
+
 			content = (
 				<span>
 					<div className="domain-search__content">
+						{ ! isDomainAndPlanPackageFlow && (
+							<BackButton
+								className="domain-search__go-back"
+								href={ domainManagementList( selectedSiteSlug ) }
+							>
+								<Gridicon icon="arrow-left" size={ 18 } />
+								{ translate( 'Back' ) }
+							</BackButton>
+						) }
+
 						{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 						<div className="domains__header">
-							<FormattedHeader
-								brandFont
-								headerText={
-									isManagingAllDomains ? translate( 'All Domains' ) : translate( 'Site Domains' )
-								}
-								align="left"
-							/>
-							{ ! isManagingAllDomains /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ && (
-								<div className="domains__header-buttons">
-									<HeaderCart
-										selectedSite={ this.props.selectedSite }
-										currentRoute={ this.props.currentRoute }
+							{ isDomainAndPlanPackageFlow && (
+								<>
+									<DomainAndPlanPackageNavigation
+										{ ...goBackButtonProps }
+										hidePlansPage={
+											! this.props.isSiteOnFreePlan && ! this.props.isSiteOnMonthlyPlan
+										}
+										step={ 1 }
 									/>
-								</div>
+									<FormattedHeader
+										brandFont
+										headerText={ translate( 'Claim your domain' ) }
+										align="center"
+									/>
+
+									<p>
+										{ translate(
+											'Stake your claim on your corner of the web with a custom domain name that’s easy to find, share, and follow.'
+										) }
+										{ ! isDomainUpsell && (
+											<>
+												{ ' ' }
+												{ translate( 'Not sure yet?' ) }
+												<a className="domains__header-decide-later" href={ hrefForDecideLater }>
+													{ translate( 'Decide later.' ) }
+												</a>
+											</>
+										) }
+									</p>
+								</>
+							) }
+
+							{ ! isDomainAndPlanPackageFlow && (
+								<FormattedHeader
+									brandFont
+									headerText={
+										isManagingAllDomains
+											? translate( 'All Domains' )
+											: translate( 'Search for a domain' )
+									}
+									align="left"
+								/>
 							) }
 						</div>
 
@@ -272,20 +362,25 @@ class DomainSearch extends Component {
 							noticeText={ translate( 'You must verify your email to register new domains.' ) }
 							noticeStatus="is-info"
 						>
-							{ ! hasPlanInCart && <NewDomainsRedirectionNoticeUpsell /> }
+							{ ! hasPlanInCart && ! this.props.domainAndPlanUpsellFlow && (
+								<NewDomainsRedirectionNoticeUpsell />
+							) }
 							<RegisterDomainStep
 								suggestion={ this.getInitialSuggestion() }
+								domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
 								domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 								onDomainsAvailabilityChange={ this.handleDomainsAvailabilityChange }
 								onAddDomain={ this.handleAddRemoveDomain }
 								onAddMapping={ this.handleAddMapping }
 								onAddTransfer={ this.handleAddTransfer }
 								isCartPendingUpdate={ this.props.shoppingCartManager.isPendingUpdate }
-								offerUnavailableOption
+								showAlreadyOwnADomain
 								selectedSite={ selectedSite }
 								basePath={ this.props.basePath }
 								products={ this.props.productsList }
-								vendor={ getSuggestionsVendor() }
+								vendor={ getSuggestionsVendor( {
+									flowName: isEcommerceSite ? ECOMMERCE_FLOW : '',
+								} ) }
 							/>
 						</EmailVerificationGate>
 					</div>
@@ -297,7 +392,6 @@ class DomainSearch extends Component {
 			<Main className={ classes } wideLayout>
 				<QueryProductsList />
 				<QuerySiteDomains siteId={ this.props.selectedSiteId } />
-				<SidebarNavigation />
 				{ content }
 			</Main>
 		);
@@ -306,6 +400,7 @@ class DomainSearch extends Component {
 
 export default connect(
 	( state ) => {
+		const site = getSelectedSite( state );
 		const siteId = getSelectedSiteId( state );
 
 		return {
@@ -315,12 +410,22 @@ export default connect(
 			selectedSiteSlug: getSelectedSiteSlug( state ),
 			domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
 			isSiteUpgradeable: isSiteUpgradeable( state, siteId ),
+			isSiteOnMonthlyPlan: isSiteOnMonthlyPlan( state, siteId ),
 			productsList: getProductsList( state ),
 			userCanPurchaseGSuite: canUserPurchaseGSuite( state ),
+			isDomainAndPlanPackageFlow: !! getCurrentQueryArguments( state )?.domainAndPlanPackage,
+			isDomainUpsell:
+				!! getCurrentQueryArguments( state )?.domainAndPlanPackage &&
+				!! getCurrentQueryArguments( state )?.domain,
+			isSiteOnFreePlan: site && isFreePlanProduct( site.plan ),
+			isEcommerceSite:
+				isSiteOnECommerceTrial( state, siteId ) ||
+				isSiteOnWooExpress( state, siteId ) ||
+				isSiteOnEcommerce( state, siteId ),
 		};
 	},
 	{
 		recordAddDomainButtonClick,
 		recordRemoveDomainButtonClick,
 	}
-)( withShoppingCart( localize( DomainSearch ) ) );
+)( withCartKey( withShoppingCart( localize( DomainSearch ) ) ) );

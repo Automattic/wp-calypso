@@ -1,16 +1,5 @@
-/**
- * External dependencies
- */
 import { start, stop } from '@automattic/browser-data-collector';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
-import { startPerformanceTracking, stopPerformanceTracking } from '../lib';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { isJetpackSite, isSingleUserSite } from 'calypso/state/sites/selectors';
-import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import {
 	getCurrentUserCountryCode,
 	getCurrentUserSiteCount,
@@ -18,7 +7,11 @@ import {
 	isCurrentUserBootstrapped,
 	getCurrentUserLocale,
 } from 'calypso/state/current-user/selectors';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import { isJetpackSite, isSingleUserSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { collectTranslationTimings, clearTranslationTimings } from '../collectors/translations';
+import { startPerformanceTracking, stopPerformanceTracking } from '../lib';
 
 jest.mock( '@automattic/calypso-config', () => ( {
 	isEnabled: jest.fn(),

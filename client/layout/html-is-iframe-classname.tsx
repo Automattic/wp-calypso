@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import isIframeForHtmlElement from 'calypso/state/selectors/is-iframe-for-html-element';
 
 const HtmlIsIframeClassname = () => {

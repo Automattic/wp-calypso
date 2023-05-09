@@ -1,5 +1,7 @@
-// Module Content List
+@use "sass:math";
+@import "@automattic/components/src/horizontal-bar-list/stats-variables.scss";
 
+// Module Content List
 .module-content-list {
 	padding: 0;
 	margin: 0 0 0.5em;
@@ -24,27 +26,27 @@
 	line-height: 40px;
 
 	// List item height shorter on 2-column modules
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		.stats__module-list & {
 			font-size: $font-body-extra-small;
 			line-height: 28px;
 		}
 	}
 
-	border-top: 1px solid rgba( var( --color-surface-rgb ), 0 );
+	border-top: 1px solid rgba(var(--color-surface-rgb), 0);
 
 	// Increase touch targets on mobile
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		line-height: 48px;
-		border-top: 1px solid var( --color-neutral-0 );
+		border-top: 1px solid var(--color-neutral-0);
 
 		&:first-child {
-			border-top-color: rgba( var( --color-surface-rgb ), 0 );
+			border-top-color: rgba(var(--color-surface-rgb), 0);
 		}
 
 		// Darken color for sublists
 		.module-content-list-sublist & {
-			border-top-color: var( --color-neutral-0 );
+			border-top-color: var(--color-neutral-0);
 		}
 	}
 
@@ -77,7 +79,7 @@
 .stats-list__module-content-list-item-wrapper,
 .module-content-list-item-wrapper {
 	@extend %mobile-interface-element;
-	background: var( --color-surface ); // Default non-active color
+	background: var(--color-surface); // Default non-active color
 	display: block;
 	line-height: inherit;
 	clear: both; // To make sure no rows overlap no matter the circumstances
@@ -89,7 +91,7 @@
 		line-height: inherit;
 	}
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		.stats__module-list & {
 			line-height: 28px;
 
@@ -104,18 +106,18 @@
 	// Post was published within the selected period
 	// 1: Move so far out left that only half the icon is showing to reduce footprint
 	.module-content-list-item.published & {
-		box-shadow: inset 4px 0 0 var( --color-primary );
+		box-shadow: inset 4px 0 0 var(--color-primary);
 	}
 }
 
 // Module Content List Item Hover
 
-@include breakpoint-deprecated( '>480px' ) {
+@include breakpoint-deprecated( ">480px" ) {
 	.module-content-list .stats-list__module-content-list-item-wrapper:hover,
 	.module-content-list-item-link .stats-list__module-content-list-item-wrapper:hover {
 		&,
 		.module-content-list-item-right {
-			background-color: var( --color-neutral-0 );
+			background-color: var(--color-neutral-0);
 		}
 
 		.module-content-list-item-action .module-content-list-item-action-wrapper {
@@ -123,11 +125,7 @@
 		}
 
 		.module-content-list-item-right::before {
-			background-image: linear-gradient(
-				to right,
-				rgba( var( --color-neutral-0-rgb ), 0 ) 0%,
-				var( --color-neutral-0 ) 90%
-			);
+			background-image: linear-gradient(to right, rgba(var(--color-neutral-0-rgb), 0) 0%, var(--color-neutral-0) 90%);
 		}
 
 		// Display hidden actions
@@ -157,15 +155,11 @@
 .module-content-list-item .stats-list__module-content-list-item-wrapper:focus {
 	&,
 	.module-content-list-item-right {
-		background-color: var( --color-neutral-0 );
+		background-color: var(--color-neutral-0);
 	}
 
 	.module-content-list-item-right::before {
-		background-image: linear-gradient(
-			to right,
-			rgba( var( --color-neutral-0-rgb ), 0 ) 0%,
-			var( --color-neutral-0 ) 90%
-		);
+		background-image: linear-gradient(to right, rgba(var(--color-neutral-0-rgb), 0) 0%, var(--color-neutral-0) 90%);
 	}
 
 	// Display hidden actions
@@ -176,20 +170,16 @@
 
 // Highlight toggle icon if item has a sublist
 
-@include breakpoint-deprecated( '>480px' ) {
-	.module-content-list
-		> .module-content-list-item-toggle
-		> .stats-list__module-content-list-item-wrapper:hover
-		.stats-list__module-content-list-item-label::before {
-		color: var( --color-link-dark );
+@include breakpoint-deprecated( ">480px" ) {
+	.module-content-list > .module-content-list-item-toggle > .stats-list__module-content-list-item-wrapper:hover
+	.stats-list__module-content-list-item-label::before {
+		color: var(--color-link-dark);
 	}
 }
 
-.module-content-list
-	> .module-content-list-item-toggle
-	> .stats-list__module-content-list-item-wrapper:focus
-	.stats-list__module-content-list-item-label::before {
-	color: var( --color-link-dark );
+.module-content-list > .module-content-list-item-toggle > .stats-list__module-content-list-item-wrapper:focus
+.stats-list__module-content-list-item-label::before {
+	color: var(--color-link-dark);
 }
 
 // Module Content List Item Label
@@ -203,19 +193,20 @@
 	height: 40px; // 2
 
 	// List item height shorter on 2-column modules
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		.stats__module-list & {
 			height: 28px;
 		}
 	}
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		height: 48px; // ### see ^
 	}
 
 	// Icons
 	.stats-list__icon,
-	.gridicon {
+	.gridicon,
+	.stats-icon {
 		margin-right: 8px;
 	}
 
@@ -243,7 +234,7 @@
 
 		img {
 			display: block;
-			background: var( --color-surface );
+			background: var(--color-surface);
 			position: relative;
 			width: 20px;
 			height: 20px;
@@ -261,12 +252,13 @@
 		}
 	}
 
-	.gridicon {
+	.gridicon,
+	.stats-icon {
 		vertical-align: middle;
 	}
 
 	// Icons smaller on 2col
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		.stats__module-list & .stats-list__icon {
 			font-size: $font-title-small;
 			line-height: 1.3;
@@ -284,7 +276,7 @@
 	}
 
 	.avatar-user {
-		border-radius: 12px;
+		border-radius: 12px; /* stylelint-disable-line scales/radii */
 	}
 
 	.user-selectable & {
@@ -299,7 +291,7 @@
 	.module-content-list-item-label-section {
 		margin-right: 11px;
 		padding-right: 12px;
-		border-right: 1px solid var( --color-neutral-0 );
+		border-right: 1px solid var(--color-neutral-0);
 
 		&:last-child {
 			margin: 0;
@@ -314,16 +306,16 @@
 .module-content-list-item-right {
 	position: relative;
 	float: right;
-	background: var( --color-surface );
+	background: var(--color-surface);
 	margin-left: -48px; // ### keep? experimental: to force labels to go longer than they normally would to make sure the fade out shows
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		.stats__module-list & {
 			height: 28px;
 		}
 	}
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		height: 48px;
 	}
 
@@ -357,9 +349,9 @@ ul.module-content-list-item-actions {
 	&.collapsed {
 		@include dropdown-menu;
 
-		background: var( --color-neutral-0 );
+		background: var(--color-neutral-0);
 		display: none;
-		z-index: z-index( 'root', 'ul.module-content-list-item-actions.collapsed' );
+		z-index: z-index("root", "ul.module-content-list-item-actions.collapsed");
 		margin: 0;
 		top: 30px;
 		right: auto;
@@ -370,7 +362,7 @@ ul.module-content-list-item-actions {
 		}
 
 		&::after {
-			border-bottom-color: var( --color-neutral-0 );
+			border-bottom-color: var(--color-neutral-0);
 			right: 18px; // Logically this should be 24px but thanks to the borders (?) 18px is actually centered
 			left: auto;
 		}
@@ -384,20 +376,20 @@ ul.module-content-list-item-actions {
 
 		// If displayed in a sublist or otherwise expanded item, swap background color
 		.module-content-list-item-toggle.is-expanded & {
-			background-color: var( --color-surface );
+			background-color: var(--color-surface);
 
 			&::after {
-				border-bottom-color: var( --color-border-inverted );
+				border-bottom-color: var(--color-border-inverted);
 			}
 		}
 	}
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		@include dropdown-menu;
 
-		background: var( --color-neutral-0 );
+		background: var(--color-neutral-0);
 		display: none;
-		z-index: z-index( 'root', 'ul.module-content-list-item-actions' );
+		z-index: z-index("root", "ul.module-content-list-item-actions");
 		margin: 0;
 		top: 46px;
 		right: auto;
@@ -408,7 +400,7 @@ ul.module-content-list-item-actions {
 		}
 
 		&::after {
-			border-bottom-color: var( --color-neutral-0 );
+			border-bottom-color: var(--color-neutral-0);
 			right: 18px; // Logically this should be 24px but thanks to the borders (?) 18px is actually centered
 			left: auto;
 		}
@@ -421,10 +413,10 @@ ul.module-content-list-item-actions {
 
 		// If displayed in a sublist or otherwise expanded item, swap background color
 		.module-content-list-item-toggle.is-expanded & {
-			background-color: var( --color-surface );
+			background-color: var(--color-surface);
 
 			&::after {
-				border-bottom-color: var( --color-border-inverted );
+				border-bottom-color: var(--color-border-inverted);
 			}
 		}
 	}
@@ -442,17 +434,18 @@ ul.module-content-list-item-actions {
 	height: 40px;
 	line-height: inherit;
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		.stats__module-list & {
 			height: 28px;
 		}
 	}
 
-	.gridicon {
+	.gridicon,
+	.stats-icon {
 		vertical-align: middle;
 	}
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		display: inline-block;
 		height: 48px;
 	}
@@ -471,11 +464,11 @@ ul.module-content-list-item-action-submenu {
 	list-style: none;
 	margin: 0;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		@include dropdown-menu;
 
 		display: none;
-		z-index: z-index( 'root', 'ul.module-content-list-item-action-submenu' );
+		z-index: z-index("root", "ul.module-content-list-item-action-submenu");
 		margin: 0;
 		top: 32px;
 		right: -20px;
@@ -502,13 +495,13 @@ ul.module-content-list-item-action-submenu {
 	margin: 0 1em 0 0;
 
 	// So that 'View' label is moved more to the right since icon has been dropped
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		.stats__module-list & {
 			margin: 0;
 		}
 	}
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		margin-right: 0;
 	}
 
@@ -520,13 +513,19 @@ ul.module-content-list-item-action-submenu {
 		opacity: 0;
 		line-height: inherit;
 
-		@include breakpoint-deprecated( '<480px' ) {
+		@include breakpoint-deprecated( "<480px" ) {
 			min-width: 24px;
 			opacity: 1;
 			padding: 0 12px;
+			box-sizing: border-box;
 
 			&.toggle {
 				display: none;
+			}
+
+			&.is-link {
+				line-height: inherit;
+				padding: 0 12px;
 			}
 		}
 
@@ -535,7 +534,7 @@ ul.module-content-list-item-action-submenu {
 		}
 
 		// Hide 'View' label next to icon on 2-column modules
-		@include breakpoint-deprecated( '>960px' ) {
+		@media ( min-width: "783px" ) {
 			.stats__module-list & span.module-content-list-item-action-label-view {
 				display: none;
 			}
@@ -544,7 +543,11 @@ ul.module-content-list-item-action-submenu {
 
 	// Color follow action when already following
 	.module-content-list-item-action-wrapper.following .module-content-list-item-action-label {
-		color: var( --color-success );
+		color: var(--studio-white);
+
+		&:hover {
+			color: var(--studio-white);
+		}
 	}
 
 	// Display hidden label and change icon for Unfollow action
@@ -552,7 +555,6 @@ ul.module-content-list-item-action-submenu {
 	.module-content-list-item-action-wrapper.following:hover {
 		.module-content-list-item-action-label {
 			display: none;
-			color: var( --color-link-dark );
 		}
 
 		.module-content-list-item-action-label.unfollow {
@@ -561,13 +563,24 @@ ul.module-content-list-item-action-submenu {
 	}
 
 	// Optically align a bit better
-	.gridicon {
+	.gridicon,
+	.stats-icon {
 		vertical-align: middle;
 		margin-right: 4px;
 		margin-top: -2px;
 
 		&.gridicons-cross {
 			margin-right: 0;
+		}
+	}
+
+	// Promote post speaker button should look like a link
+	.stats-list__item-action-promote {
+		color: var(--color-link);
+		cursor: pointer;
+
+		&:hover {
+			color: var(--color-link-dark);
 		}
 	}
 
@@ -578,18 +591,18 @@ ul.module-content-list-item-action-submenu {
 
 	// Color spam action red
 	.module-content-list-item-action-wrapper.spam {
-		color: var( --color-error );
+		color: var(--color-error);
 
 		// Hover state
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( ">480px" ) {
 			&:hover {
-				color: var( --color-error-30 );
+				color: var(--color-error-30);
 			}
 		}
 
 		// Focus state
 		&:focus {
-			color: var( --color-error-30 );
+			color: var(--color-error-30);
 		}
 	}
 }
@@ -606,7 +619,7 @@ ul.module-content-list-legend {
 .module-content-list-legend .module-content-list-item .module-content-list-item-label {
 	@extend %placeholder;
 
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	font-weight: 600;
 
 	// Limit width when loading for placeholders to take less visual space
@@ -617,10 +630,10 @@ ul.module-content-list-legend {
 
 // Display full action labels in header to use them as legends for the list's actions
 .module-content-list-legend
-	.module-content-list-item
-	.module-content-list-item-action
-	.module-content-list-item-action-label {
-	@include breakpoint-deprecated( '<480px' ) {
+.module-content-list-item
+.module-content-list-item-action
+.module-content-list-item-action-label {
+	@include breakpoint-deprecated( "<480px" ) {
 		display: inline;
 	}
 }
@@ -634,7 +647,7 @@ ul.module-content-list-legend {
 
 	.stats-list__module-content-list-item-value,
 	.stats-list__module-content-list-item-label {
-		color: var( --color-neutral-light );
+		color: var(--color-neutral-light);
 	}
 }
 
@@ -644,7 +657,7 @@ ul.module-content-list-legend {
 .module-content-list > .module-content-list-item-large {
 	> .module-content-list-item-wrapper {
 		line-height: 48px;
-		@include breakpoint-deprecated( '>960px' ) {
+		@include breakpoint-deprecated( ">960px" ) {
 			.stats__module-list & {
 				line-height: 28px;
 			}
@@ -653,7 +666,7 @@ ul.module-content-list-legend {
 
 	> .stats-list__module-content-list-item-wrapper .stats-list__module-content-list-item-label {
 		height: 48px;
-		@include breakpoint-deprecated( '>960px' ) {
+		@include breakpoint-deprecated( ">960px" ) {
 			.stats__module-list & {
 				height: 28px;
 			}
@@ -661,20 +674,13 @@ ul.module-content-list-legend {
 	}
 
 	> .stats-list__module-content-list-item-wrapper
-		.stats-list__module-content-list-item-label
-		.avatar {
+	.stats-list__module-content-list-item-label
+	.avatar {
 		font-size: $font-title-large;
 		margin-right: 10px;
-	}
-
-	> .stats-list__module-content-list-item-wrapper
-		.stats-list__module-content-list-item-label
-		.stats-list__icon {
-		font-size: $font-title-large;
-		line-height: 32px;
 		width: 32px;
 		height: 32px;
-		@include breakpoint-deprecated( '>960px' ) {
+		@include breakpoint-deprecated( ">960px" ) {
 			.stats__module-list & {
 				width: 24px;
 				height: 24px;
@@ -682,33 +688,34 @@ ul.module-content-list-legend {
 		}
 	}
 
-	@include breakpoint-deprecated( '>960px' ) {
+	> .stats-list__module-content-list-item-wrapper
+	.stats-list__module-content-list-item-label
+	.stats-list__icon {
+		font-size: $font-title-large;
+		line-height: 32px;
+		width: 32px;
+		height: 32px;
+		@include breakpoint-deprecated( ">960px" ) {
+			.stats__module-list & {
+				width: 24px;
+				height: 24px;
+			}
+		}
+	}
+
+	@include breakpoint-deprecated( ">960px" ) {
 		.stats__module-list
-			&
-			> .stats-list__module-content-list-item-wrapper
-			.stats-list__module-content-list-item-label
-			.stats-list__icon {
+		& > .stats-list__module-content-list-item-wrapper
+		.stats-list__module-content-list-item-label
+		.stats-list__icon {
 			margin-top: -2px; // Really couldn't figure out a better way to correctly position the avatar
 		}
 	}
 
 	> .stats-list__module-content-list-item-wrapper
-		.stats-list__module-content-list-item-label
-		.avatar {
-		width: 32px;
-		height: 32px;
-		@include breakpoint-deprecated( '>960px' ) {
-			.stats__module-list & {
-				width: 24px;
-				height: 24px;
-			}
-		}
-	}
-
-	> .stats-list__module-content-list-item-wrapper
-		.stats-list__module-content-list-item-label
-		.avatar-user {
-		border-radius: 16px;
+	.stats-list__module-content-list-item-label
+	.avatar-user {
+		border-radius: 16px; /* stylelint-disable-line scales/radii */
 	}
 }
 
@@ -724,20 +731,20 @@ ul.module-content-list-legend {
 
 	// Change colors to highlight label when row is highlighted
 	.stats-list__module-content-list-item-label {
-		color: var( --color-primary );
+		color: var(--color-primary);
 	}
 
 	// Highlight main action (usually what's indicated in the label)
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		.stats-list__module-content-list-item-wrapper:hover
-			.stats-list__module-content-list-item-label {
-			color: var( --color-link-dark );
+		.stats-list__module-content-list-item-label {
+			color: var(--color-link-dark);
 		}
 	}
 
 	.stats-list__module-content-list-item-wrapper:focus .stats-list__module-content-list-item-label {
-		color: var( --color-link-dark );
+		color: var(--color-link-dark);
 	}
 }
 
@@ -749,17 +756,20 @@ ul.module-content-list-legend {
 
 	// Toggle icon
 	> .stats-list__module-content-list-item-wrapper
-		.stats-list__module-content-list-item-label
-		.gridicons-chevron-down {
+	.stats-list__module-content-list-item-label
+	.gridicons-chevron-down,
+	> .stats-list__module-content-list-item-wrapper
+	.stats-list__module-content-list-item-label
+	.chevron-down {
 		vertical-align: middle;
 		transition: 0.2s transform ease-out;
-		transform: translate3d( 0, 0, 0 );
+		transform: translate3d(0, 0, 0);
 	}
 }
 
 // Active (sublist is showing)
 .module-content-list-item-toggle.is-expanded {
-	border-top-color: var( --color-neutral-0 );
+	border-top-color: var(--color-neutral-0);
 
 	> .module-content-list {
 		display: block;
@@ -769,48 +779,43 @@ ul.module-content-list-legend {
 	&,
 	> .stats-list__module-content-list-item-wrapper,
 	> .stats-list__module-content-list-item-wrapper .module-content-list-item-right {
-		background: var( --color-neutral-0 );
+		background: var(--color-neutral-0);
 	}
 
 	> .stats-list__module-content-list-item-wrapper .stats-list__module-content-list-item-value {
-		color: var( --color-neutral-light );
+		color: var(--color-neutral-light);
 	}
 
 	> .stats-list__module-content-list-item-wrapper .module-content-list-item-right::before {
-		background-image: linear-gradient(
-			to right,
-			rgba( var( --color-neutral-0-rgb ), 0 ) 0%,
-			var( --color-neutral-0 ) 90%
-		);
+		background-image: linear-gradient(to right, rgba(var(--color-neutral-0-rgb), 0) 0%, var(--color-neutral-0) 90%);
 	}
 
 	// Rotate toggle icon
 	> .stats-list__module-content-list-item-wrapper
-		.stats-list__module-content-list-item-label
-		.gridicons-chevron-down {
-		transform: rotate( 180deg );
+	.stats-list__module-content-list-item-label
+	.gridicons-chevron-down,
+	> .stats-list__module-content-list-item-wrapper
+	.stats-list__module-content-list-item-label
+	.chevron-down {
+		transform: rotate(180deg);
 	}
 
 	// Hide the top border of an active sub-list
 	> .module-content-list-item {
-		border-top-color: rgba( var( --color-surface-rgb ), 0 );
+		border-top-color: rgba(var(--color-surface-rgb), 0);
 	}
 
 	// Hover changes
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		> .stats-list__module-content-list-item-wrapper:hover {
 			// Change background and gradient color
 			&,
 			.module-content-list-item-right {
-				background-color: var( --color-surface );
+				background-color: var(--color-surface);
 			}
 
 			span.module-content-list-item-right::before {
-				background-image: linear-gradient(
-					to right,
-					rgba( var( --color-surface-rgb ), 0 ) 0%,
-					var( --color-surface ) 90%
-				);
+				background-image: linear-gradient(to right, rgba(var(--color-surface-rgb), 0) 0%, var(--color-surface) 90%);
 			}
 		}
 	}
@@ -833,34 +838,110 @@ ul.module-content-list-legend {
 	// Change background and gradient color
 	> .stats-list__module-content-list-item-wrapper .module-content-list-item-right,
 	> .stats-list__module-content-list-item-wrapper {
-		background: var( --color-neutral-0 ); // Default non-active color
+		background: var(--color-neutral-0); // Default non-active color
 	}
 
 	.module-content-list-item-right::before {
-		background-image: linear-gradient(
-			to right,
-			rgba( var( --color-neutral-rgb ), 0 ) 0%,
-			var( --color-neutral-0 ) 90%
-		);
+		background-image: linear-gradient(to right, rgba(var(--color-neutral-rgb), 0) 0%, var(--color-neutral-0) 90%);
 	}
 
 	// Hover changes
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		&-link .stats-list__module-content-list-item-wrapper:hover,
 		&-normal .stats-list__module-content-list-item-wrapper:hover {
 			// Change background and gradient color
 			&,
 			.module-content-list-item-right {
-				background-color: var( --color-surface );
+				background-color: var(--color-surface);
 			}
 
 			span.module-content-list-item-right::before {
-				background-image: linear-gradient(
-					to right,
-					rgba( var( --color-surface-rgb ), 0 ) 0%,
-					var( --color-surface ) 90%
-				);
+				background-image: linear-gradient(to right, rgba(var(--color-surface-rgb), 0) 0%, var(--color-surface) 90%);
 			}
 		}
+	}
+}
+
+.stats-list-actions .module-content-list-item-action .module-content-list-item-action-wrapper {
+	opacity: 1;
+}
+
+.list-countryviews,
+.list-countries {
+	.stats-list__flag-icon {
+		position: relative;
+		display: inline-block;
+		background-size: contain;
+		background-position: 50%;
+		background-repeat: no-repeat;
+		width: 24px;
+		height: 18px;
+		top: 3px;
+		margin-right: 8px;
+	}
+}
+
+// Add support for ellipsis mobile menu using legacy breakpoint.
+.stats-list-actions__mobile-toggle {
+	cursor: pointer;
+	display: none;
+
+	// Ensure large enough target for touch.
+	height: $row-height;
+	width: math.div($row-height * 4, 3);
+
+	.gridicon,
+	.stats-icon {
+		fill: var(--color-text-subtle);
+		vertical-align: middle;
+		transition: fill linear 0.1s;
+	}
+}
+
+.horizontal-bar-list-item {
+	&:hover,
+	&:focus,
+	&:focus-within {
+		.stats-list-actions__mobile-toggle .gridicon,
+		.stats-list-actions__mobile-toggle .stats-icon {
+			fill: var(--color-text);
+		}
+	}
+
+	@include breakpoint-deprecated( ">480px" ) {
+		.stats-list-actions {
+			display: flex;
+			align-items: center;
+		}
+	}
+}
+
+@include breakpoint-deprecated( "<480px" ) {
+	.horizontal-bar-list-item .horizontal-bar-list-item-bar .horizontal-bar-list--hover-action {
+		display: block;
+	}
+	.stats-list-actions.stats-list-actions--expanded {
+		background: var(--color-surface);
+		display: block;
+
+		left: auto;
+		right: 0;
+		top: 100%;
+
+		.stats-list__item-action {
+			transition: background-color linear 0.1s;
+			&:hover,
+			&:focus {
+				background: var(--color-neutral-0);
+			}
+		}
+	}
+
+	.horizontal-bar-list-item .stats-list__item-action-wrapper {
+		width: 100%;
+	}
+
+	.stats-list-actions__mobile-toggle {
+		display: block;
 	}
 }

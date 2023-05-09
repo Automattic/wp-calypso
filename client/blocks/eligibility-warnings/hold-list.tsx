@@ -1,31 +1,50 @@
-/**
- * External dependencies
- */
+import { isEnabled } from '@automattic/calypso-config';
+import { Button, Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { map } from 'lodash';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
+import { useSelector } from 'react-redux';
+import ExcessiveDiskSpace from 'calypso/blocks/eligibility-warnings/excessive-disk-space';
 import CardHeading from 'calypso/components/card-heading';
-import Gridicon from 'calypso/components/gridicon';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
+import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import { isAtomicSiteWithoutBusinessPlan } from './utils';
 
 // Mapping eligibility holds to messages that will be shown to the user
-function getHoldMessages( context: string | null, translate: LocalizeProps[ 'translate' ] ) {
+function getHoldMessages(
+	context: string | null,
+	translate: LocalizeProps[ 'translate' ],
+	billingPeriod?: string,
+	isMarketplace?: boolean
+) {
 	return {
 		NO_BUSINESS_PLAN: {
-			title: translate( 'Upgrade to a Business plan' ),
+			title: ( function () {
+				if ( isMarketplace && isEnabled( 'marketplace-personal-premium' ) ) {
+					return translate( 'Upgrade to a Personal plan' );
+				}
+
+				return translate( 'Upgrade to a Business plan' );
+			} )(),
 			description: ( function () {
 				if ( context === 'themes' ) {
 					return translate(
 						"You'll also get to install custom plugins, have more storage, and access live support."
+					);
+				}
+
+				if ( isMarketplace && isEnabled( 'marketplace-personal-premium' ) ) {
+					return translate(
+						"You'll also get a free domain for one year, and access email support."
+					);
+				}
+
+				if ( billingPeriod === IntervalLength.MONTHLY ) {
+					return translate(
+						"You'll also get to install custom themes, have more storage, and access email support."
 					);
 				}
 
@@ -76,10 +95,11 @@ function getHoldMessages( context: string | null, translate: LocalizeProps[ 'tra
 			supportUrl: null,
 		},
 		EXCESSIVE_DISK_SPACE: {
-			title: translate( 'Upload not available' ),
-			description: translate(
-				'This site is not currently eligible to install themes and plugins. Please contact our support team for help.'
-			),
+			title: translate( 'Increase storage space', {
+				comment:
+					'Message displayed when a Simple site cannot be transferred to Atomic because there is not enough disk space. It appears after the heading "To continue you\'ll need to: ", inside a list with actions to perform in order to proceed with the transfer.',
+			} ),
+			description: <ExcessiveDiskSpace />,
 			supportUrl: localizeUrl( 'https://wordpress.com/help/contact' ),
 		},
 	};
@@ -91,44 +111,54 @@ function getHoldMessages( context: string | null, translate: LocalizeProps[ 'tra
  * should short-circuit any eligibility checks and just communicate the problem.
  *
  * @param {Function} translate Translate fn
- * @returns {object} Dictionary of blocking holds and their corresponding messages
+ * @returns {Object} Dictionary of blocking holds and their corresponding messages
  */
-export function getBlockingMessages( translate: LocalizeProps[ 'translate' ] ) {
+export function getBlockingMessages(
+	translate: LocalizeProps[ 'translate' ] | ( ( str: string ) => string )
+): Record< string, { message: string; status: string | null; contactUrl: string | null } > {
 	return {
 		BLOCKED_ATOMIC_TRANSFER: {
-			message: translate(
-				'This site is not currently eligible to install themes and plugins, or activate hosting access. Please contact our support team for help.'
+			message: String(
+				translate(
+					'This site is not currently eligible to install themes and plugins, or activate hosting access. Please contact our support team for help.'
+				)
 			),
 			status: 'is-error',
 			contactUrl: localizeUrl( 'https://wordpress.com/help/contact' ),
 		},
 		TRANSFER_ALREADY_EXISTS: {
-			message: translate(
-				'Installation in progress. Just a minute! Please wait until the installation is finished, then try again.'
+			message: String(
+				translate(
+					'Installation in progress. Just a minute! Please wait until the installation is finished, then try again.'
+				)
 			),
 			status: null,
 			contactUrl: null,
 		},
 		NO_JETPACK_SITES: {
-			message: translate( 'Try using a different site.' ),
+			message: String( translate( 'Try using a different site.' ) ),
 			status: 'is-error',
 			contactUrl: null,
 		},
 		NO_VIP_SITES: {
-			message: translate( 'Try using a different site.' ),
+			message: String( translate( 'Try using a different site.' ) ),
 			status: 'is-error',
 			contactUrl: null,
 		},
 		SITE_GRAYLISTED: {
-			message: translate(
-				"There's an ongoing site dispute. Contact us to review your site's standing and resolve the dispute."
+			message: String(
+				translate(
+					"There's an ongoing site dispute. Contact us to review your site's standing and resolve the dispute."
+				)
 			),
 			status: 'is-error',
 			contactUrl: localizeUrl( 'https://wordpress.com/support/suspended-blogs/' ),
 		},
 		NO_SSL_CERTIFICATE: {
-			message: translate(
-				'Certificate installation in progress. Hold tight! We are setting up a digital certificate to allow secure browsing on your site using "HTTPS".'
+			message: String(
+				translate(
+					'Certificate installation in progress. Hold tight! We are setting up a digital certificate to allow secure browsing on your site using "HTTPS".'
+				)
 			),
 			status: null,
 			contactUrl: null,
@@ -139,6 +169,7 @@ export function getBlockingMessages( translate: LocalizeProps[ 'translate' ] ) {
 interface ExternalProps {
 	context: string | null;
 	holds: string[];
+	isMarketplace?: boolean;
 	isPlaceholder: boolean;
 }
 
@@ -182,8 +213,9 @@ export const HardBlockingNotice = ( {
 	);
 };
 
-export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) => {
-	const holdMessages = getHoldMessages( context, translate );
+export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, translate }: Props ) => {
+	const billingPeriod = useSelector( getBillingInterval );
+	const holdMessages = getHoldMessages( context, translate, billingPeriod, isMarketplace );
 	const blockingMessages = getBlockingMessages( translate );
 
 	const blockingHold = holds.find( ( h ) => isHardBlockingHoldType( h, blockingMessages ) );
@@ -191,7 +223,7 @@ export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) 
 
 	return (
 		<>
-			{ ! isPlaceholder && (
+			{ ! isPlaceholder && context !== 'plugin-details' && (
 				<HardBlockingNotice
 					holds={ holds }
 					translate={ translate }
@@ -199,7 +231,7 @@ export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) 
 				/>
 			) }
 			<div
-				className={ classNames( {
+				className={ classNames( 'eligibility-warnings__hold-list', {
 					'eligibility-warnings__hold-list-dim': hasValidBlockingHold,
 				} ) }
 				data-testid="HoldList-Card"
@@ -238,7 +270,7 @@ export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) 
 										<Button
 											compact
 											disabled={ !! hasValidBlockingHold }
-											href={ holdMessages[ hold ].supportUrl }
+											href={ holdMessages[ hold ].supportUrl ?? '' }
 											rel="noopener noreferrer"
 										>
 											{ translate( 'Help' ) }
@@ -281,7 +313,7 @@ function isKnownHoldType(
  * to our support.
  *
  * @param {string} hold Specific hold we want to check
- * @param {object} blockingMessages List of all holds we consider blocking
+ * @param {Object} blockingMessages List of all holds we consider blocking
  * @returns {boolean} Is {hold} blocking or not
  */
 function isHardBlockingHoldType(
@@ -295,7 +327,7 @@ export const hasBlockingHold = ( holds: string[] ) =>
 	holds.some( ( hold ) =>
 		isHardBlockingHoldType(
 			hold,
-			getBlockingMessages( ( string ) => string )
+			getBlockingMessages( ( str: string ) => str )
 		)
 	);
 

@@ -1,3 +1,8 @@
+import { IncomingMessage } from 'http';
+import cloneDeep from 'lodash/cloneDeep';
+import mockFs from 'mock-fs';
+import sections from 'calypso/sections';
+
 jest.mock( 'browserslist-useragent', () => ( {
 	matchesUA: jest.fn(),
 } ) );
@@ -22,6 +27,7 @@ jest.mock( 'calypso/server/bundler/utils', () => ( {
 } ) );
 
 jest.mock( 'calypso/sections', () => {
+	// eslint-disable-next-line no-shadow
 	const sections = jest.requireActual( 'calypso/sections' );
 	sections
 		.filter( ( section ) => section.isomorphic )
@@ -50,6 +56,7 @@ jest.mock( 'calypso/login', () => {
 jest.mock( 'calypso/server/isomorphic-routing', () => ( {
 	serverRouter: jest.fn(),
 	getNormalizedPath: jest.fn(),
+	getCacheKey: jest.fn(),
 } ) );
 
 jest.mock( 'calypso/server/render', () => ( {
@@ -60,7 +67,7 @@ jest.mock( 'calypso/server/render', () => ( {
 	attachI18n: jest.fn(),
 } ) );
 
-jest.mock( 'calypso/server/state-cache', () => jest.fn() );
+jest.mock( 'calypso/server/state-cache', () => new Map() );
 
 jest.mock( 'calypso/server/user-bootstrap', () => jest.fn() );
 
@@ -70,6 +77,7 @@ jest.mock( 'calypso/state', () => ( {
 
 jest.mock( 'calypso/state/redux-store', () => ( {
 	setStore: jest.fn(),
+	registerReducer: jest.fn(),
 } ) );
 
 jest.mock( 'calypso/state/reducer', () => jest.fn() );
@@ -100,27 +108,6 @@ jest.mock( 'calypso/lib/i18n-utils', () => ( {
 jest.mock( 'calypso/lib/oauth2-clients', () => ( {
 	isWooOAuth2Client: jest.fn(),
 } ) );
-
-jest.mock( 'calypso/landing/gutenboarding/section', () => ( {
-	GUTENBOARDING_SECTION_DEFINITION: {
-		name: 'gutenboarding',
-		paths: [ '/new' ],
-		module: 'gutenboarding',
-		group: 'gutenboarding',
-		enableLoggedOut: true,
-	},
-} ) );
-
-/**
- * External dependencies
- */
-import mockFs from 'mock-fs';
-import cloneDeep from 'lodash/cloneDeep';
-
-/**
- * Internal dependencies
- */
-import sections from 'calypso/sections';
 
 /**
  * Builds an app for an specific environment.
@@ -202,26 +189,38 @@ const buildApp = ( environment ) => {
 			tearDown.push( () => delete defaultCookies.wordpress_logged_in );
 		},
 		withMockFilesystem() {
-			const assets = [
+			const assetsList = [
 				'/calypso/evergreen/entry-main.1.min.js',
 				'/calypso/evergreen/entry-main.2.min.js',
 				'/calypso/evergreen/entry-main.3.min.css',
 				'/calypso/evergreen/entry-main.4.min.rtl.css',
 			];
-			const assetsFallback = {
-				manifests: [ '/* webpack manifest for fallback */', '/* webpack runtime for fallback */' ],
+			const assets = {
+				manifests: [
+					'/* webpack manifest for evergreen */',
+					'/* webpack runtime for evergreen */',
+				],
 				entrypoints: {
 					'entry-main': {
-						assets: [ ...assets ],
+						assets: [ ...assetsList ],
 					},
 					'entry-domains-landing': {
 						assets: [
-							...assets.map( ( asset ) => asset.replace( 'entry-main', 'entry-domains-landing' ) ),
+							...assetsList.map( ( asset ) =>
+								asset.replace( 'entry-main', 'entry-domains-landing' )
+							),
 						],
 					},
 					'entry-gutenboarding': {
 						assets: [
-							...assets.map( ( asset ) => asset.replace( 'entry-main', 'entry-gutenboarding' ) ),
+							...assetsList.map( ( asset ) =>
+								asset.replace( 'entry-main', 'entry-gutenboarding' )
+							),
+						],
+					},
+					'entry-browsehappy': {
+						assets: [
+							...assetsList.map( ( asset ) => asset.replace( 'entry-main', 'entry-browsehappy' ) ),
 						],
 					},
 				},
@@ -229,22 +228,17 @@ const buildApp = ( environment ) => {
 					...sections.map( ( section ) => ( {
 						names: [ section.name ],
 						files: [
-							`/calypso/fallback/${ section.name }.js`,
-							`/calypso/fallback/${ section.name }.css`,
-							`/calypso/fallback/${ section.name }.rtl.css`,
+							`/calypso/evergreen/${ section.name }.js`,
+							`/calypso/evergreen/${ section.name }.css`,
+							`/calypso/evergreen/${ section.name }.rtl.css`,
 						],
 						siblings: [],
 					} ) ),
 				],
 			};
 			mockFs( {
-				'./build/assets-fallback.json': JSON.stringify( assetsFallback ),
-				'./build/assets-evergreen.json': JSON.stringify( assetsFallback ).replace(
-					/fallback/g,
-					'evergreen'
-				),
-				'./public/fallback/languages/lang-revisions.json': JSON.stringify( { en: 1234 } ),
-				'./public/evergreen/languages/lang-revisions.json': JSON.stringify( { es: 1234 } ),
+				'./build/assets.json': JSON.stringify( assets ),
+				'./public/languages/lang-revisions.json': JSON.stringify( { es: 1234 } ),
 			} );
 			tearDown.push( () => mockFs.restore() );
 		},
@@ -271,8 +265,11 @@ const buildApp = ( environment ) => {
 			tearDown.push( () => {
 				// If there was an old value, restore it. Otherwise delete
 				// the mocked value. This is required for process.env
-				if ( valueExists ) object[ name ] = oldValue;
-				else delete object[ name ];
+				if ( valueExists ) {
+					object[ name ] = oldValue;
+				} else {
+					delete object[ name ];
+				}
 			} );
 		},
 		withRenderJSX( value ) {
@@ -311,7 +308,7 @@ const buildApp = ( environment ) => {
 		},
 		run( { request = {}, response = {} } = {} ) {
 			return new Promise( ( resolve ) => {
-				const mockRequest = {
+				const mockRequest = Object.assign( new IncomingMessage(), {
 					body: {},
 					cookies: defaultCookies,
 					query: {},
@@ -331,7 +328,7 @@ const buildApp = ( environment ) => {
 						error: jest.fn(),
 					},
 					...request,
-				};
+				} );
 
 				// Using cloneDeep to capture the state of the request/response objects right now, in case
 				// an async middleware changes them _after_ the request handler has been executed
@@ -386,6 +383,7 @@ const assertDefaultContext = ( { url, entry } ) => {
 		app.withConfigEnabled( { 'use-translation-chunks': true } );
 		app.withServerRender( '' );
 		app.withMockFilesystem();
+		app.withEvergreenBrowser();
 	} );
 
 	afterEach( () => {
@@ -423,11 +421,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 		expect( request.context.sanitize ).toEqual( app.getMocks().sanitize );
 	} );
 
-	it( 'sets the RTL', async () => {
-		const { request } = await app.run();
-		expect( request.context.isRTL ).toEqual( false );
-	} );
-
 	it( 'sets requestFrom', async () => {
 		const { request } = await app.run( { request: { query: { from: 'from' } } } );
 		expect( request.context.requestFrom ).toEqual( 'from' );
@@ -449,8 +442,7 @@ const assertDefaultContext = ( { url, entry } ) => {
 		} );
 	}
 
-	it( 'sets the manifest for evergreen browsers', async () => {
-		app.withEvergreenBrowser();
+	it( 'sets the manifest', async () => {
 		const { request } = await app.run();
 		expect( request.context.manifests ).toEqual( [
 			'/* webpack manifest for evergreen */',
@@ -458,25 +450,16 @@ const assertDefaultContext = ( { url, entry } ) => {
 		] );
 	} );
 
-	it( 'sets the manifest for non-evergreen browsers', async () => {
-		app.withNonEvergreenBrowser();
+	it( 'sets the featuresHelper when config is enabled', async () => {
+		app.withConfigEnabled( { 'dev/features-helper': true } );
 		const { request } = await app.run();
-		expect( request.context.manifests ).toEqual( [
-			'/* webpack manifest for fallback */',
-			'/* webpack runtime for fallback */',
-		] );
+		expect( request.context.featuresHelper ).toEqual( true );
 	} );
 
-	it( 'sets the preferencesHelper when config is enabled', async () => {
-		app.withConfigEnabled( { 'dev/preferences-helper': true } );
+	it( 'sets the featuresHelper when config is disabled', async () => {
+		app.withConfigEnabled( { 'dev/features-helper': false } );
 		const { request } = await app.run();
-		expect( request.context.preferencesHelper ).toEqual( true );
-	} );
-
-	it( 'sets the preferencesHelper when config is disabled', async () => {
-		app.withConfigEnabled( { 'dev/preferences-helper': false } );
-		const { request } = await app.run();
-		expect( request.context.preferencesHelper ).toEqual( false );
+		expect( request.context.featuresHelper ).toEqual( false );
 	} );
 
 	it( 'sets devDocsUrl', async () => {
@@ -493,51 +476,14 @@ const assertDefaultContext = ( { url, entry } ) => {
 		expect( request.context.store ).toEqual( theStore );
 	} );
 
-	it( 'sets the evergreen for evergreen browsers check', async () => {
-		app.withEvergreenBrowser();
-		const { request } = await app.run();
-		expect( request.context.addEvergreenCheck ).toEqual( true );
-	} );
-
-	describe( 'sets the target in development mode', () => {
-		beforeEach( () => {
-			app.withMockedVariable( process.env, 'NODE_ENV', 'development' );
-		} );
-
-		it( 'uses the value from DEV_TARGET', async () => {
-			app.withMockedVariable( process.env, 'DEV_TARGET', 'fallback' );
-			const { request } = await app.run();
-			expect( request.context.target ).toEqual( 'fallback' );
-		} );
-
-		it( 'defaults to evergreen when DEV_TARGET is not set', async () => {
-			const { request } = await app.run();
-			expect( request.context.target ).toEqual( 'evergreen' );
-		} );
-	} );
-
 	describe( 'sets the target in production mode', () => {
 		beforeEach( () => {
 			app.withMockedVariable( process.env, 'NODE_ENV', 'production' );
 		} );
 
-		it( 'uses fallback if forceFallback is provided as query', async () => {
-			const { request } = await app.run( {
-				request: { query: { forceFallback: true } },
-			} );
-			expect( request.context.target ).toEqual( 'fallback' );
-		} );
-
-		it( 'serves evergreen for evergreen browsers', async () => {
-			app.withEvergreenBrowser();
+		it( 'serves evergreen for all browsers', async () => {
 			const { request } = await app.run();
 			expect( request.context.target ).toEqual( 'evergreen' );
-		} );
-
-		it( 'serves fallback if the browser is not evergreen', async () => {
-			app.withNonEvergreenBrowser();
-			const { request } = await app.run();
-			expect( request.context.target ).toEqual( 'fallback' );
 		} );
 	} );
 
@@ -587,6 +533,7 @@ const assertDefaultContext = ( { url, entry } ) => {
 		const customApp = buildApp( 'development' );
 		customApp.withServerRender( '' );
 		customApp.withMockFilesystem();
+		customApp.withEvergreenBrowser();
 		const { request } = await customApp.run();
 		expect( request.context.app.isDebug ).toEqual( true );
 	} );
@@ -595,6 +542,7 @@ const assertDefaultContext = ( { url, entry } ) => {
 		const customApp = buildApp( 'jetpack-cloud-development' );
 		customApp.withServerRender( '' );
 		customApp.withMockFilesystem();
+		customApp.withEvergreenBrowser();
 		const { request } = await customApp.run();
 		expect( request.context.app.isDebug ).toEqual( true );
 	} );
@@ -609,6 +557,7 @@ const assertDefaultContext = ( { url, entry } ) => {
 		beforeEach( () => {
 			customApp.withServerRender( '' );
 			customApp.withMockFilesystem();
+			customApp.withEvergreenBrowser();
 		} );
 
 		afterEach( () => {
@@ -650,6 +599,7 @@ const assertDefaultContext = ( { url, entry } ) => {
 		beforeEach( () => {
 			customApp.withServerRender( '' );
 			customApp.withMockFilesystem();
+			customApp.withEvergreenBrowser();
 		} );
 
 		afterEach( () => {
@@ -677,6 +627,7 @@ const assertDefaultContext = ( { url, entry } ) => {
 		beforeEach( () => {
 			customApp.withServerRender( '' );
 			customApp.withMockFilesystem();
+			customApp.withEvergreenBrowser();
 		} );
 
 		afterEach( () => {
@@ -706,6 +657,7 @@ const assertDefaultContext = ( { url, entry } ) => {
 		beforeEach( () => {
 			customApp.withServerRender( '' );
 			customApp.withMockFilesystem();
+			customApp.withEvergreenBrowser();
 			customApp.withExecCommands( {
 				'git rev-parse --abbrev-ref HEAD': 'my-branch',
 				'git rev-parse --short HEAD': 'abcd0123',
@@ -754,6 +706,7 @@ const assertDefaultContext = ( { url, entry } ) => {
 		beforeEach( () => {
 			customApp.withServerRender( '' );
 			customApp.withMockFilesystem();
+			customApp.withEvergreenBrowser();
 		} );
 
 		afterEach( () => {
@@ -783,6 +736,7 @@ const assertDefaultContext = ( { url, entry } ) => {
 		beforeEach( () => {
 			customApp.withServerRender( '' );
 			customApp.withMockFilesystem();
+			customApp.withEvergreenBrowser();
 			customApp.withExecCommands( {
 				'git rev-parse --abbrev-ref HEAD': 'my-branch',
 				'git rev-parse --short HEAD': 'abcd0123',
@@ -830,6 +784,7 @@ const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {
 		app.withConfigEnabled( { 'use-translation-chunks': true } );
 		app.withServerRender( '' );
 		app.withMockFilesystem();
+		app.withEvergreenBrowser();
 	} );
 
 	afterEach( () => {
@@ -855,14 +810,6 @@ const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {
 				js: [],
 			} );
 		} );
-		it( 'do not set chunkFiles for sections with associated entrypoints for non-evergreen browsers', async () => {
-			const { request } = await app.withNonEvergreenBrowser().run();
-			expect( request.context.chunkFiles ).toEqual( {
-				'css.ltr': [],
-				'css.rtl': [],
-				js: [],
-			} );
-		} );
 	} else {
 		it( 'sets chunkFiles for evergreen browsers', async () => {
 			const { request } = await app.withEvergreenBrowser().run();
@@ -870,14 +817,6 @@ const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {
 				'css.ltr': [ `/calypso/evergreen/${ sectionName }.css` ],
 				'css.rtl': [ `/calypso/evergreen/${ sectionName }.rtl.css` ],
 				js: [ `/calypso/evergreen/${ sectionName }.js` ],
-			} );
-		} );
-		it( 'sets chunkFiles for non-evergreen browsers', async () => {
-			const { request } = await app.withNonEvergreenBrowser().run();
-			expect( request.context.chunkFiles ).toEqual( {
-				'css.ltr': [ `/calypso/fallback/${ sectionName }.css` ],
-				'css.rtl': [ `/calypso/fallback/${ sectionName }.rtl.css` ],
-				js: [ `/calypso/fallback/${ sectionName }.js` ],
 			} );
 		} );
 	}
@@ -921,12 +860,6 @@ const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {
 			app.withEvergreenBrowser();
 			const { request } = await app.run();
 			expect( request.context.languageRevisions ).toEqual( { es: 1234 } );
-		} );
-
-		it( 'sets language revisions for non-evergreen browsers', async () => {
-			app.withNonEvergreenBrowser();
-			const { request } = await app.run();
-			expect( request.context.languageRevisions ).toEqual( { en: 1234 } );
 		} );
 
 		it( 'gets the redirect url for https requests', async () => {
@@ -995,7 +928,6 @@ const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {
 				// you are not supossed to log anything after the test is done.
 				//
 				// This timer should give time to that promise to fail within the test.
-				jest.useRealTimers();
 				setTimeout( done, 5 );
 			} ) );
 	} );
@@ -1014,12 +946,6 @@ const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {
 			app.withEvergreenBrowser();
 			const { request } = await app.run();
 			expect( request.context.languageRevisions ).toEqual( { es: 1234 } );
-		} );
-
-		it( 'sets language revisions for non-evergreen browsers', async () => {
-			app.withNonEvergreenBrowser();
-			const { request } = await app.run();
-			expect( request.context.languageRevisions ).toEqual( { en: 1234 } );
 		} );
 	} );
 
@@ -1040,6 +966,7 @@ describe( 'main app', () => {
 		app.withConfigEnabled( { 'use-translation-chunks': true } );
 		app.withServerRender( '' );
 		app.withMockFilesystem();
+		app.withEvergreenBrowser();
 	} );
 
 	afterEach( async () => {
@@ -1063,61 +990,6 @@ describe( 'main app', () => {
 		it( 'detects if it is logged in based on a cookie', async () => {
 			const { request } = await app.run( { request: { cookies: { wordpress_logged_in: true } } } );
 			expect( request.context.isLoggedIn ).toBe( true );
-		} );
-	} );
-
-	describe( 'Middleware localSubdomains', () => {
-		describe( 'sets locale info in the request context', () => {
-			it( 'rtl language', async () => {
-				const { request } = await app.run( {
-					request: {
-						hostname: 'ar.valid.hostname',
-					},
-				} );
-
-				expect( request.context.lang ).toBe( 'ar' );
-			} );
-
-			it( 'ltr language', async () => {
-				const { request } = await app.run( {
-					request: {
-						hostname: 'es.valid.hostname',
-					},
-				} );
-
-				expect( request.context.lang ).toBe( 'es' );
-			} );
-		} );
-
-		describe( 'strips language from the hostname for logged in users', () => {
-			it( 'redirects to http', async () => {
-				const { response } = await app.run( {
-					request: {
-						url: '/my-path',
-						hostname: 'es.valid.hostname',
-						cookies: {
-							wordpress_logged_in: true,
-						},
-					},
-				} );
-
-				expect( response.redirect ).toHaveBeenCalledWith( 'http://valid.hostname:3000/my-path' );
-			} );
-
-			it( 'redirects to https', async () => {
-				const { response } = await app.run( {
-					request: {
-						url: '/my-path',
-						hostname: 'es.valid.hostname',
-						get: jest.fn( ( header ) => ( header === 'X-Forwarded-Proto' ? 'https' : undefined ) ),
-						cookies: {
-							wordpress_logged_in: true,
-						},
-					},
-				} );
-
-				expect( response.redirect ).toHaveBeenCalledWith( 'https://valid.hostname:3000/my-path' );
-			} );
 		} );
 	} );
 
@@ -1164,10 +1036,12 @@ describe( 'main app', () => {
 				'https://wordpress.com/wp-login.php?redirect_to=https%3A%2F%2Fwordpress.com%2Fplans'
 			);
 		} );
-
 		it( 'redirects to public pricing page', async () => {
+			app.withConfigEnabled( {
+				'jetpack-cloud/connect': false,
+			} );
 			const { response } = await app.run( { request: { url: '/plans' } } );
-			expect( response.redirect ).toHaveBeenCalledWith( 'https://wordpress.com/pricing' );
+			expect( response.redirect ).toHaveBeenCalledWith( 'https://wordpress.com/pricing/' );
 		} );
 	} );
 
@@ -1264,11 +1138,19 @@ describe( 'main app', () => {
 		} );
 	} );
 
+	describe( `Route /home`, () => {
+		assertSection( {
+			url: '/home',
+			sectionName: 'home',
+			sectionGroup: 'sites',
+		} );
+	} );
+
 	describe( `Route /sites`, () => {
 		assertSection( {
 			url: '/sites',
-			sectionName: 'sites',
-			sectionGroup: 'sites',
+			sectionName: 'sites-dashboard',
+			sectionGroup: 'sites-dashboard',
 		} );
 	} );
 
@@ -1300,8 +1182,6 @@ describe( 'main app', () => {
 						// you are not supossed to log anything after the test is done.
 						//
 						// This timer should give time to that promise to fail within the test.
-						// done();
-						jest.useRealTimers();
 						setTimeout( done, 5 );
 					} )
 			);
@@ -1374,12 +1254,15 @@ describe( 'main app', () => {
 		} );
 	} );
 
-	describe( `Route /new`, () => {
-		assertSection( {
-			url: '/new',
-			sectionName: 'gutenboarding',
-			sectionGroup: 'gutenboarding',
-			entry: 'entry-gutenboarding',
+	describe( `Route deprecated /new`, () => {
+		it( 'redirects to start flow', async () => {
+			const { response } = await app.run( { request: { url: '/new' } } );
+			expect( response.redirect ).toHaveBeenCalledWith( 301, '/start' );
+		} );
+
+		it( 'redirects to start flow with locale', async () => {
+			const { response } = await app.run( { request: { url: '/new/fr' } } );
+			expect( response.redirect ).toHaveBeenCalledWith( 301, '/start/fr' );
 		} );
 	} );
 
@@ -1441,32 +1324,6 @@ describe( 'main app', () => {
 	describe( 'Route /browsehappy', () => {
 		beforeEach( () => {
 			app.withRenderJSX( 'content' );
-			app.withConfigEnabled( {
-				'wpcom-user-bootstrap': true,
-				'use-translation-chunks': true,
-			} );
-			app.withReduxStore( { dispatch: jest.fn() } );
-		} );
-
-		it( 'sets the dashboard url by default', async () => {
-			const { request } = await app.run( { request: { url: '/browsehappy' } } );
-			expect( request.context.dashboardUrl ).toEqual( 'https://dashboard.wordpress.com/wp-admin/' );
-		} );
-
-		it( 'sets the dashboard url when the primary blog url is from wordpress.com', async () => {
-			app.withBootstrapUser( { primary_blog_url: 'https://test.wordpress.com' } );
-			const { request } = await app.run( {
-				request: { url: '/browsehappy', cookies: { wordpress_logged_in: true } },
-			} );
-			expect( request.context.dashboardUrl ).toEqual( 'https://test.wordpress.com/wp-admin' );
-		} );
-
-		it( 'sets the dashboard url when the primary blog url is not from wordpress.com', async () => {
-			app.withBootstrapUser( { primary_blog_url: 'https://test.blog' } );
-			const { request } = await app.run( {
-				request: { url: '/browsehappy', cookies: { wordpress_logged_in: true } },
-			} );
-			expect( request.context.dashboardUrl ).toEqual( 'https://dashboard.wordpress.com/wp-admin/' );
 		} );
 
 		it( 'renders the content', async () => {
@@ -1536,6 +1393,8 @@ describe( 'main app', () => {
 		it( 'renders authorized page in development mode', async () => {
 			const customApp = buildApp( 'development' );
 			customApp.withRenderJSX( 'content' );
+			customApp.withEvergreenBrowser();
+			customApp.withMockFilesystem();
 
 			const { response } = await customApp.run( {
 				request: {

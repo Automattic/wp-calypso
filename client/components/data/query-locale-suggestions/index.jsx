@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import getLocaleSuggestions from 'calypso/state/selectors/get-locale-suggestions';
 import { requestLocaleSuggestions } from 'calypso/state/i18n/locale-suggestions/actions';
+import getLocaleSuggestions from 'calypso/state/selectors/get-locale-suggestions';
 
 class QueryLocaleSuggestions extends Component {
 	static propTypes = {

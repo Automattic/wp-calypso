@@ -1,8 +1,5 @@
 // Basic TypeScript types to make SegmentedControl work in the <PlansIntervalToggle> component
 
-/**
- * External dependencies
- */
 import * as React from 'react';
 
 interface SegmentedControlProps {

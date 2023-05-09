@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import 'calypso/state/admin-menu/init';
 
 export function getAdminMenu( state, siteId ) {

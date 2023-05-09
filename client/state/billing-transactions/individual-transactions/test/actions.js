@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-import { requestBillingTransaction, clearBillingTransactionError } from '../actions';
 import {
 	BILLING_TRANSACTION_ERROR_CLEAR,
 	BILLING_TRANSACTION_RECEIVE,
@@ -10,6 +6,7 @@ import {
 	BILLING_TRANSACTION_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
+import { requestBillingTransaction, clearBillingTransactionError } from '../actions';
 
 describe( 'actions', () => {
 	describe( '#requestBillingTransaction', () => {
@@ -20,8 +17,11 @@ describe( 'actions', () => {
 				id: '18689989',
 				service: 'Store Services',
 				amount: '$6.45',
+				amount_integer: 645,
 				tax: '$0.44',
+				tax_integer: 44,
 				subtotal: '$6.01',
+				subtotal_integer: 601,
 				icon: 'https://developer.files.wordpress.com/2018/02/wpcom-logo-420.png',
 				date: '2017-09-26T14:50:12+0000',
 				desc: '',
@@ -35,6 +35,7 @@ describe( 'actions', () => {
 				cc_name: 'name surname',
 				cc_email: '',
 				credit: '',
+				currency: 'USD',
 				items: [
 					{
 						id: '22956711',
@@ -45,8 +46,11 @@ describe( 'actions', () => {
 						tax: '$0.44',
 						subtotal: '$6.01',
 						raw_amount: 6.45,
+						amount_integer: 645,
 						raw_tax: 0.44,
+						tax_integer: 44,
 						raw_subtotal: 6.01,
+						subtotal_integer: 601,
 						currency: 'USD',
 						product: 'connect-label',
 						product_slug: 'connect-label',

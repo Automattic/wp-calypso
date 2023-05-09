@@ -78,6 +78,13 @@ class Global_Styles {
 	 */
 	private $plugin_name = 'jetpack-global-styles';
 
+	/**
+	 * The provider's root URL for retrieving font CSS.
+	 *
+	 * @var string
+	 */
+	private $root_url = 'https://fonts.googleapis.com/css';
+
 	const VERSION = '2003121439';
 
 	const SYSTEM_FONT     = '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif';
@@ -237,6 +244,7 @@ class Global_Styles {
 				array( $this, 'block_editor_settings' ),
 				PHP_INT_MAX // So it runs last and overrides any style provided by the theme.
 			);
+			add_action( 'customize_register', array( $this, 'register_customizer_option' ) );
 		}
 
 		// Setup front-end.
@@ -244,6 +252,66 @@ class Global_Styles {
 			'wp_enqueue_scripts',
 			array( $this, 'wp_enqueue_scripts' ),
 			PHP_INT_MAX // So it runs last and overrides any style provided by the theme.
+		);
+	}
+
+	/**
+	 * Register customizer modifications
+	 * Add the 'Font' section to customizer.
+	 *
+	 * @param WP_Customize_Manager $wp_customize an instance of WP_Customize_Manager.
+	 */
+	public function register_customizer_option( $wp_customize ) {
+		require_once __DIR__ . '/class-global-styles-fonts-message-control.php';
+
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_tracks_events_fonts_section_control' ) );
+
+		$wp_customize->add_section(
+			'global_styles_fonts_section',
+			array(
+				'title' => __( 'Fonts', 'full-site-editing' ),
+			)
+		);
+
+		$wp_customize->add_control(
+			new Global_Styles_Fonts_Message_Control(
+				$wp_customize,
+				'global_styles_fonts_message_control',
+				array(
+					'section'  => 'global_styles_fonts_section',
+					'settings' => array(),
+				)
+			)
+		);
+	}
+
+	/**
+	 * Enqueue script customizer_fonts which executes tracks events when clicking the block editor and support links from the 'Fonts' section.
+	 */
+	public function enqueue_tracks_events_fonts_section_control() {
+		$handle = 'tracks_events_fonts_section_control';
+		$src    = plugins_url( 'dist/customizer-fonts.min.js', __FILE__ );
+		$deps   = array();
+
+		wp_enqueue_script(
+			$handle,
+			$src,
+			$deps,
+			filemtime( plugin_dir_path( __FILE__ ) . 'dist/customizer-fonts.min.js' ),
+			true
+		);
+
+		$current_user       = wp_get_current_user();
+		$tracks_events_data = array();
+		if ( $current_user->exists() ) {
+			$tracks_events_data['user_id']    = (int) $current_user->ID;
+			$tracks_events_data['user_login'] = esc_js( $current_user->user_login );
+		}
+
+		wp_localize_script(
+			'tracks_events_fonts_section_control',
+			'tracks_events_fonts_section_control_variables',
+			$tracks_events_data
 		);
 	}
 
@@ -343,11 +411,11 @@ class Global_Styles {
 			array();
 		$version      = isset( $asset['version'] ) ?
 			$asset['version'] :
-			filemtime( plugin_dir_path( __FILE__ ) . 'dist/global-styles.js' );
+			filemtime( plugin_dir_path( __FILE__ ) . 'dist/global-styles.min.js' );
 
 		wp_enqueue_script(
 			'jetpack-global-styles-editor-script',
-			plugins_url( 'dist/global-styles.js', __FILE__ ),
+			plugins_url( 'dist/global-styles.min.js', __FILE__ ),
 			$dependencies,
 			$version,
 			true
@@ -397,6 +465,13 @@ class Global_Styles {
 	 * @return string
 	 */
 	private function get_inline_css( $only_selected_fonts = false ) {
+		/**
+		 * Filters the Google Fonts API URL.
+		 *
+		 * @param string $url The Google Fonts API URL.
+		 */
+		$root_url = esc_url( apply_filters( 'jetpack_global_styles_google_fonts_api_url', $this->root_url ) );
+
 		$result = '';
 
 		$data = $this->rest_api_data->get_data();
@@ -426,9 +501,9 @@ class Global_Styles {
 			foreach ( $font_list as $font ) {
 				// Some fonts lack italic variants,
 				// the API will return only the regular and bold CSS for those.
-				$font_list_str = $font_list_str . $font . ':regular,bold,italic,bolditalic|';
+				$font_list_str = $font_list_str . $font . ':thin,extralight,light,regular,medium,semibold,bold,italic,bolditalic,extrabold,black|';
 			}
-			$result = $result . "@import url('https://fonts.googleapis.com/css?family=" . $font_list_str . "');";
+			$result = $result . "@import url('" . $root_url . '?family=' . $font_list_str . "');";
 		}
 
 		/*

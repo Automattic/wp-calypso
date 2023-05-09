@@ -1,35 +1,28 @@
-/**
- * External dependencies
- */
-import React, { FC, useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import page from 'page';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import page from 'page';
+import { FC, useCallback, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
-import EmailedLoginLinkExpired from './emailed-login-link-expired';
+import JetpackLogo from 'calypso/components/jetpack-logo';
 import { login } from 'calypso/lib/paths';
-import { LINK_EXPIRED_PAGE } from 'calypso/state/login/magic-login/constants';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
+import { rebootAfterLogin } from 'calypso/state/login/actions';
 import {
 	fetchMagicLoginAuthenticate,
 	showMagicLoginLinkExpiredPage,
 } from 'calypso/state/login/magic-login/actions';
-import { rebootAfterLogin } from 'calypso/state/login/actions';
-import getMagicLoginCurrentView from 'calypso/state/selectors/get-magic-login-current-view';
-import getMagicLoginRequestAuthError from 'calypso/state/selectors/get-magic-login-request-auth-error';
-import getMagicLoginRequestedAuthSuccessfully from 'calypso/state/selectors/get-magic-login-requested-auth-successfully';
-import isFetchingMagicLoginAuth from 'calypso/state/selectors/is-fetching-magic-login-auth';
+import { LINK_EXPIRED_PAGE } from 'calypso/state/login/magic-login/constants';
 import {
 	getRedirectToOriginal,
 	getRedirectToSanitized,
 	getTwoFactorNotificationSent,
 	isTwoFactorEnabled,
 } from 'calypso/state/login/selectors';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
-import JetpackConnected from 'calypso/assets/images/jetpack/connected.svg';
+import getMagicLoginCurrentView from 'calypso/state/selectors/get-magic-login-current-view';
+import getMagicLoginRequestAuthError from 'calypso/state/selectors/get-magic-login-request-auth-error';
+import getMagicLoginRequestedAuthSuccessfully from 'calypso/state/selectors/get-magic-login-requested-auth-successfully';
+import isFetchingMagicLoginAuth from 'calypso/state/selectors/is-fetching-magic-login-auth';
+import EmailedLoginLinkExpired from './emailed-login-link-expired';
 
 interface Props {
 	emailAddress: string;
@@ -74,8 +67,8 @@ const HandleEmailedLinkFormJetpackConnect: FC< Props > = ( { emailAddress, token
 			page(
 				login( {
 					// If no notification is sent, the user is using the authenticator for 2FA by default
-					twoFactorAuthType: twoFactorNotificationSent.replace( 'none', 'authenticator' ),
-					redirectTo: redirectToSanitized,
+					twoFactorAuthType: twoFactorNotificationSent?.replace( 'none', 'authenticator' ),
+					redirectTo: redirectToSanitized ?? undefined,
 				} )
 			);
 		}
@@ -103,20 +96,23 @@ const HandleEmailedLinkFormJetpackConnect: FC< Props > = ( { emailAddress, token
 	dispatch( recordTracksEvent( 'calypso_login_email_link_handle_click_view' ) );
 
 	return (
-		<EmptyContent
-			className="magic-login__handle-link jetpack"
-			illustration={ JetpackConnected }
-			illustrationWidth={ 150 }
-			title={ translate( 'Welcome back!' ) }
-			line={ [
-				translate( 'Logging in as %(emailAddress)s', {
-					args: {
-						emailAddress,
-					},
-				} ),
-				'...',
-			] }
-		/>
+		<EmptyContent className="magic-login__handle-link jetpack" title={ null } illustration={ null }>
+			<JetpackLogo size={ 74 } full />
+
+			<h2 className="magic-login__title empty-content__title">
+				{ translate( 'Email confirmed!' ) }
+			</h2>
+			<h3 className="magic-login__line empty-content__line">
+				{ [
+					translate( 'Logging in as %(emailAddress)s', {
+						args: {
+							emailAddress,
+						},
+					} ),
+					'...',
+				] }
+			</h3>
+		</EmptyContent>
 	);
 };
 

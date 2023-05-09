@@ -1,24 +1,13 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import StepWrapper from 'calypso/signup/step-wrapper';
 import { Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import ActivityLogRewindToggle from 'calypso/my-sites/activity/activity-log/activity-log-rewind-toggle';
+import StepWrapper from 'calypso/signup/step-wrapper';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class RewindMigrate extends Component {
@@ -37,8 +26,9 @@ class RewindMigrate extends Component {
 	 * Before component updates, check if we have to go somewhere else.
 	 * If Rewind was activated, user clicked the Switch now button so let's go to migrate creds.
 	 *
-	 * @param {object} nextProps Props received by component for next update.
+	 * @param {Object} nextProps Props received by component for next update.
 	 */
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillUpdate( nextProps ) {
 		if ( this.props.rewindIsNowActive !== nextProps.rewindIsNowActive ) {
 			this.props.submitSignupStep( { stepName: this.props.stepName }, { rewindconfig: true } );

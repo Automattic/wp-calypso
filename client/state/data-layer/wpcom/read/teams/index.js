@@ -1,11 +1,7 @@
-/**
- * Internal dependencies
- */
-import { TEAMS_REQUEST, TEAMS_RECEIVE } from 'calypso/state/teams/action-types';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { TEAMS_REQUEST, TEAMS_RECEIVE } from 'calypso/state/teams/action-types';
 
 export const handleTeamsRequest = ( action ) =>
 	http(

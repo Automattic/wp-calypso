@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import React, { useState } from 'react';
-import Gridicon from 'calypso/components/gridicon';
+import { Gridicon } from '@automattic/components';
+import { useState } from 'react';
 
 function Favicon( props ) {
 	const { site, className, size } = props;
@@ -10,7 +7,7 @@ function Favicon( props ) {
 
 	// if loading error or missing icon show W Gridicon
 	if ( hasError || site.site_icon === null ) {
-		return <Gridicon icon="globe" size={ 18 } className={ props.className } />;
+		return <Gridicon icon="globe" size={ size } className={ props.className } />;
 	}
 
 	return (

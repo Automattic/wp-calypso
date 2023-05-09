@@ -2,6 +2,7 @@
 	// Make the font dropdown a bit more spacy.
 	.components-select-control__input {
 		line-height: 1;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 18px;
 		height: 36px;
 	}

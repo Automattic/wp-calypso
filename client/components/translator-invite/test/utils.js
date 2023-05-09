@@ -2,9 +2,6 @@
  * @jest-environment jsdom
  */
 
-/**
- * Internal dependencies
- */
 import { isDefaultLocale, getCurrentNonDefaultLocale } from '../utils';
 
 jest.mock( '@automattic/calypso-config', () => ( key ) => {

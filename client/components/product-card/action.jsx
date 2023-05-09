@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
+import PropTypes from 'prop-types';
 
 const noop = () => {};
 
@@ -26,7 +18,7 @@ const ProductCardAction = ( { intro, label, onClick, primary, href } ) => (
 );
 
 ProductCardAction.propTypes = {
-	intro: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node, PropTypes.element ] ),
+	intro: PropTypes.node,
 	label: PropTypes.string.isRequired,
 	onClick: PropTypes.func,
 	href: PropTypes.string,

@@ -1,29 +1,20 @@
-/**
- * External Dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import config from '@automattic/calypso-config';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import SubscribersCount from 'calypso/blocks/subscribers-count';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import Intervals from './intervals';
-import FollowersCount from 'calypso/blocks/followers-count';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isGoogleMyBusinessLocationConnectedSelector from 'calypso/state/selectors/is-google-my-business-location-connected';
 import isSiteStore from 'calypso/state/selectors/is-site-store';
 import { getSiteOption } from 'calypso/state/sites/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import { navItems, intervals as intervalConstants } from './constants';
-import config from '@automattic/calypso-config';
+import Intervals from './intervals';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class StatsNavigation extends Component {
@@ -35,6 +26,7 @@ class StatsNavigation extends Component {
 		selectedItem: PropTypes.oneOf( Object.keys( navItems ) ).isRequired,
 		siteId: PropTypes.number,
 		slug: PropTypes.string,
+		isLegacy: PropTypes.bool,
 	};
 
 	isValidItem = ( item ) => {
@@ -60,14 +52,19 @@ class StatsNavigation extends Component {
 	};
 
 	render() {
-		const { slug, selectedItem, interval } = this.props;
+		const { slug, selectedItem, interval, isLegacy } = this.props;
 		const { label, showIntervals, path } = navItems[ selectedItem ];
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ path }/{{ interval }}${ slugPath }`;
+
+		const wrapperClass = classNames( 'stats-navigation', {
+			'stats-navigation--modernized': ! isLegacy,
+		} );
+
 		return (
-			<div className="stats-navigation">
+			<div className={ wrapperClass }>
 				<SectionNav selectedText={ label }>
-					<NavTabs label={ 'Stats' } selectedText={ label }>
+					<NavTabs selectedText={ label }>
 						{ Object.keys( navItems )
 							.filter( this.isValidItem )
 							.map( ( item ) => {
@@ -87,10 +84,12 @@ class StatsNavigation extends Component {
 								);
 							} ) }
 					</NavTabs>
-					{ showIntervals && <Intervals selected={ interval } pathTemplate={ pathTemplate } /> }
-					<FollowersCount />
+					{ isLegacy && showIntervals && (
+						<Intervals selected={ interval } pathTemplate={ pathTemplate } />
+					) }
+					{ ! config.isEnabled( 'stats/subscribers-section' ) && <SubscribersCount /> }
 				</SectionNav>
-				{ showIntervals && (
+				{ isLegacy && showIntervals && (
 					<Intervals selected={ interval } pathTemplate={ pathTemplate } standalone />
 				) }
 			</div>

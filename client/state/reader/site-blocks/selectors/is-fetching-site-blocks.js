@@ -1,15 +1,9 @@
-/**
- * External dependencies
- */
 import { get, filter } from 'lodash';
 
-/**
- * Internal dependencies
- */
 import 'calypso/state/reader/init';
 
 /**
- * @param {object} state Global state tree
+ * @param {Object} state Global state tree
  * @returns {boolean} true if we are fetching site blocks
  */
 export default function isFetchingSiteBlocks( state ) {

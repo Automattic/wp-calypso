@@ -1,6 +1,6 @@
 .media-library__list-item-file-details {
-	left: auto #{'/*rtl:ignore*/'};
-	transform: translateY( -50% );
+	left: auto #{"/*rtl:ignore*/"};
+	transform: translateY(-50%);
 	width: 100%;
 	text-align: center;
 }
@@ -13,7 +13,7 @@
 	margin: 0 auto;
 	padding-bottom: 25%;
 	line-height: 0.5;
-	color: var( --color-neutral-40 );
+	color: var(--color-neutral-40);
 }
 
 .media-library__list-item-file-name {
@@ -22,7 +22,7 @@
 	max-width: 80%;
 	margin: 0 auto;
 	white-space: nowrap;
-	color: var( --color-neutral-60 );
+	color: var(--color-neutral-60);
 
 	&::after {
 		@include long-content-fade( $color: var( --color-neutral-10-rgb ) );
@@ -32,9 +32,9 @@
 .media-library__list-item-details-separator {
 	width: 20%;
 	margin: 3% auto;
-	background-color: var( --color-neutral-10 );
+	background-color: var(--color-neutral-10);
 }
 
 .media-library__list-item-file-extension {
-	color: var( --color-neutral-light );
+	color: var(--color-neutral-light);
 }

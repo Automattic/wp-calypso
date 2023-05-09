@@ -1,25 +1,13 @@
-/**
- * External dependencies
- */
-import { isEqual } from 'lodash';
-import React from 'react';
+import { Gridicon, ProgressBar, Spinner } from '@automattic/components';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import Spinner from 'calypso/components/spinner';
-import Gridicon from 'calypso/components/gridicon';
-import ListItemImage from './list-item-image';
-import ListItemVideo from './list-item-video';
+import { isEqual } from 'lodash';
+import * as React from 'react';
+import { getMimePrefix } from 'calypso/lib/media/utils';
 import ListItemAudio from './list-item-audio';
 import ListItemDocument from './list-item-document';
-import { getMimePrefix } from 'calypso/lib/media/utils';
-import EditorMediaModalGalleryHelp from 'calypso/post-editor/media-modal/gallery-help';
+import ListItemImage from './list-item-image';
+import ListItemVideo from './list-item-video';
 
-/**
- * Style dependencies
- */
 import './list-item.scss';
 
 // TODO: move to lib/media/utils once it gets typed.
@@ -36,27 +24,54 @@ interface Props {
 	scale: number;
 	maxImageWidth?: number;
 	thumbnailType?: string;
-	showGalleryHelp?: boolean;
 	selectedIndex?: number;
 	onToggle?: ( media: Media | undefined, shiftKey: boolean ) => void;
 	style?: React.CSSProperties;
 }
 
+interface State {
+	uploadProgress: number;
+}
+
 type DivProps = Omit< React.ComponentPropsWithoutRef< 'button' >, 'style' | 'onClick' >;
 
 export default class MediaLibraryListItem extends React.Component< Props & DivProps > {
+	state = {
+		uploadProgress: 0,
+	};
+
 	static defaultProps = {
 		maxImageWidth: 450,
 		selectedIndex: -1,
 	};
 
-	shouldComponentUpdate( nextProps: Props ) {
+	uploadEventListener = ( event: Event ) => {
+		const detail = ( event as CustomEvent ).detail;
+		if ( this.props.media && ( this.props.media as MediaObject ).file !== detail.fileName ) {
+			return;
+		}
+
+		this.setState( {
+			uploadProgress: detail.progress,
+		} );
+	};
+
+	componentDidMount() {
+		document.addEventListener( 'tus-upload-progress', this.uploadEventListener );
+	}
+
+	componentWillUnmount() {
+		document.removeEventListener( 'tus-upload-progress', this.uploadEventListener );
+	}
+
+	shouldComponentUpdate( nextProps: Props, nextState: State ) {
 		return ! (
 			nextProps.media === this.props.media &&
 			nextProps.scale === this.props.scale &&
 			nextProps.maxImageWidth === this.props.maxImageWidth &&
 			nextProps.thumbnailType === this.props.thumbnailType &&
 			nextProps.selectedIndex === this.props.selectedIndex &&
+			nextState.uploadProgress === this.state.uploadProgress &&
 			isEqual( nextProps.style, this.props.style )
 		);
 	}
@@ -93,6 +108,7 @@ export default class MediaLibraryListItem extends React.Component< Props & DivPr
 	}
 
 	render() {
+		let dataAttributes = null;
 		let title;
 		let selectedNumber;
 
@@ -101,19 +117,19 @@ export default class MediaLibraryListItem extends React.Component< Props & DivPr
 			scale,
 			maxImageWidth,
 			thumbnailType,
-			showGalleryHelp,
 			selectedIndex,
 			onToggle,
 			style,
 			...otherProps
 		} = this.props;
 
-		let dataAttributes = null;
+		const { uploadProgress } = this.state;
+		const isTransient = media && ( media as MediaObject ).transient;
 
 		const classes = classNames( 'media-library__list-item', {
 			'is-placeholder': ! media,
 			'is-selected': -1 !== selectedIndex,
-			'is-transient': media && ( media as MediaObject ).transient,
+			'is-transient': isTransient,
 			'is-small': scale <= 0.125,
 		} );
 
@@ -141,12 +157,19 @@ export default class MediaLibraryListItem extends React.Component< Props & DivPr
 				</span>
 				<figure className="media-library__list-item-figure" title={ title }>
 					{ this.renderItem() }
-					{ media && ( media as MediaObject ).transient && (
-						<div className="media-library__list-item-spinner">
-							<Spinner />
-						</div>
+					{ isTransient && (
+						<>
+							{ uploadProgress > 0 ? (
+								<div className="media-library__list-item-progress">
+									<ProgressBar value={ uploadProgress } />
+								</div>
+							) : (
+								<div className="media-library__list-item-spinner">
+									<Spinner />
+								</div>
+							) }
+						</>
 					) }
-					{ showGalleryHelp && <EditorMediaModalGalleryHelp /> }
 				</figure>
 			</button>
 		);

@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
 import { map, mapValues } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import { TIMEZONES_REQUEST } from 'calypso/state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { TIMEZONES_REQUEST } from 'calypso/state/action-types';
 import { timezonesReceive } from 'calypso/state/timezones/actions';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 const noop = () => {};
 
@@ -22,9 +14,8 @@ const noop = () => {};
  * @example
  * valueLabelToObject( [ { value: 'foo', label: 'bar' }, { value: 'biz', label: 'bat' } ] )
  * // returns { foo: 'bar', biz: 'bat' }
- *
- * @param {ValueLabelRecord[]} pairs - timezone values and display labels
- * @returns {ValueLabelMap} object whose keys are timezone values, values are timezone labels
+ * @param {Array} pairs - timezone values and display labels
+ * @returns {Object} object whose keys are timezone values, values are timezone labels
  */
 const timezonePairsToMap = ( pairs ) =>
 	Object.fromEntries( map( pairs, ( { label, value } ) => [ value, label ] ) );
@@ -32,8 +23,7 @@ const timezonePairsToMap = ( pairs ) =>
 /**
  * Normalize data gotten from the REST API making them more Calypso friendly.
  *
- * @param {object} data - REST-API response
- * @returns {object} normalized timezones data.
+ * @returns {Object} normalized timezones data.
  */
 export const fromApi = ( { manual_utc_offsets, timezones, timezones_by_continent } ) => ( {
 	rawOffsets: timezonePairsToMap( manual_utc_offsets ),

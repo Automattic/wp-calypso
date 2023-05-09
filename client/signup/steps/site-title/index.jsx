@@ -1,28 +1,17 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import StepWrapper from 'calypso/signup/step-wrapper';
 import { Button } from '@automattic/components';
-import FormTextInput from 'calypso/components/forms/form-text-input';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
+import StepWrapper from 'calypso/signup/step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { setSiteTitle } from 'calypso/state/signup/steps/site-title/actions';
 import { getSiteTitle } from 'calypso/state/signup/steps/site-title/selectors';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
-import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class SiteTitleStep extends Component {
@@ -34,7 +23,6 @@ class SiteTitleStep extends Component {
 		stepName: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 		siteTitle: PropTypes.string,
-		siteVerticalName: PropTypes.string,
 		shouldFetchVerticalData: PropTypes.bool,
 		siteType: PropTypes.string,
 	};
@@ -89,7 +77,7 @@ class SiteTitleStep extends Component {
 	};
 
 	render() {
-		const { flowName, positionInFlow, showSiteMockups, siteType, stepName } = this.props;
+		const { flowName, positionInFlow, siteType, stepName } = this.props;
 		const headerText = getSiteTypePropertyValue( 'slug', siteType, 'siteTitleLabel' );
 		const subHeaderText = getSiteTypePropertyValue( 'slug', siteType, 'siteTitleSubheader' );
 
@@ -104,7 +92,6 @@ class SiteTitleStep extends Component {
 					subHeaderText={ subHeaderText }
 					fallbackSubHeaderText={ subHeaderText }
 					stepContent={ this.renderSiteTitleStep() }
-					showSiteMockups={ showSiteMockups }
 				/>
 			</div>
 		);

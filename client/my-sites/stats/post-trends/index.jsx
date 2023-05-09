@@ -1,124 +1,25 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
-import classNames from 'classnames';
-import { throttle, values } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { values } from 'lodash';
 import moment from 'moment';
-
-/**
- * Internal dependencies
- */
-import compareProps from 'calypso/lib/compare-props';
-import Month from './month';
-import { Card } from '@automattic/components';
-import SectionHeader from 'calypso/components/section-header';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import compareProps from 'calypso/lib/compare-props';
 import { getSiteOption } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSiteStatsPostStreakData } from 'calypso/state/stats/lists/selectors';
+import StatsHeatMapLegend from '../stats-heap-map/legend';
+import Month from './month';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class PostTrends extends React.Component {
+class PostTrends extends Component {
 	static displayName = 'PostTrends';
 
 	static propTypes = {
 		siteId: PropTypes.number,
 		query: PropTypes.object,
-	};
-
-	state = {
-		canScrollLeft: false,
-		canScrollRight: false,
-	};
-
-	wrapperRef = React.createRef();
-	yearRef = React.createRef();
-
-	componentDidMount() {
-		const node = this.wrapperRef.current;
-		const yearNode = this.yearRef.current;
-		const computedStyle = window.getComputedStyle( yearNode );
-		const margin =
-			parseInt( computedStyle.getPropertyValue( 'margin-left' ), 10 ) +
-			parseInt( computedStyle.getPropertyValue( 'margin-right' ), 10 );
-
-		// Initially scroll all the way to the left
-		yearNode.style.left = 0 - yearNode.scrollWidth + node.clientWidth - margin + 'px';
-
-		// Add resize listener
-		this.resize = throttle( this.resize, 400 );
-		window.addEventListener( 'resize', this.resize );
-		this.resize();
-	}
-
-	// Remove listener
-	componentWillUnmount() {
-		window.removeEventListener( 'resize', this.resize );
-	}
-
-	resize = () => {
-		const scrollProps = {};
-		const node = this.wrapperRef.current;
-		const yearNode = this.yearRef.current;
-		const computedStyle = window.getComputedStyle( yearNode );
-		const margin =
-			parseInt( computedStyle.getPropertyValue( 'margin-left' ), 10 ) +
-			parseInt( computedStyle.getPropertyValue( 'margin-right' ), 10 );
-		const left = parseInt( yearNode.style.left, 10 );
-
-		scrollProps.canScrollLeft = left < 0;
-		scrollProps.canScrollRight = left > 0 - yearNode.scrollWidth + node.clientWidth - margin;
-
-		if ( this.state.canScrollLeft && node.clientWidth >= yearNode.scrollWidth - margin ) {
-			yearNode.style.left = '0px';
-		}
-
-		this.setState( scrollProps );
-	};
-
-	scroll = ( direction ) => {
-		const node = this.wrapperRef.current;
-		const yearNode = this.yearRef.current;
-		const computedStyle = window.getComputedStyle( yearNode );
-		const margin =
-			parseInt( computedStyle.getPropertyValue( 'margin-left' ), 10 ) +
-			parseInt( computedStyle.getPropertyValue( 'margin-right' ), 10 );
-		let left = parseInt( computedStyle.getPropertyValue( 'left' ), 10 );
-
-		if ( 1 !== direction ) {
-			direction = -1;
-		}
-
-		// scroll left 80% of the clientWidth
-		left -= Math.ceil( direction * node.clientWidth * 0.8 );
-
-		// enforce bounds
-		if ( left > 0 ) {
-			left = 0;
-		} else if ( left < 0 - yearNode.scrollWidth + node.clientWidth - margin ) {
-			left = 0 - yearNode.scrollWidth + node.clientWidth - margin;
-		}
-
-		yearNode.style.left = left + 'px';
-
-		this.resize();
-	};
-
-	scrollLeft = () => {
-		this.scroll( -1 );
-	};
-
-	scrollRight = () => {
-		this.scroll( 1 );
 	};
 
 	getMonthComponents = () => {
@@ -138,60 +39,36 @@ class PostTrends extends React.Component {
 	};
 
 	render() {
-		const { siteId, query } = this.props;
-
-		const leftClass = classNames( 'post-trends__scroll-left', {
-			'is-active': this.state.canScrollLeft,
-		} );
-
-		const rightClass = classNames( 'post-trends__scroll-right', {
-			'is-active': this.state.canScrollRight,
-		} );
+		const { siteId, query, translate } = this.props;
 
 		/* eslint-disable jsx-a11y/click-events-have-key-events, wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="post-trends">
 				{ siteId && <QuerySiteStats siteId={ siteId } statType="statsStreak" query={ query } /> }
-				<SectionHeader label={ this.props.translate( 'Posting activity' ) } />
-				<Card>
-					<div className={ leftClass } onClick={ this.scrollLeft } role="button" tabIndex="0">
-						<span className="left-arrow" />
+
+				<div className="post-trends__heading">
+					<h3 className="post-trends__title">{ translate( 'Posting activity' ) }</h3>
+				</div>
+				<div ref={ this.wrapperRef } className="post-trends__wrapper">
+					<div ref={ this.yearRef } className="post-trends__year">
+						{ this.getMonthComponents() }
 					</div>
-					<div className={ rightClass } onClick={ this.scrollRight } role="button" tabIndex="0">
-						<span className="right-arrow" />
-					</div>
-					<div ref={ this.wrapperRef } className="post-trends__wrapper">
-						<div ref={ this.yearRef } className="post-trends__year">
-							{ this.getMonthComponents() }
-						</div>
-						<div className="post-trends__key-container">
-							<span className="post-trends__key-label">
-								{ this.props.translate( 'Fewer Posts', {
-									context: 'Legend label in stats post trends visualization',
-								} ) }
-							</span>
-							<ul className="post-trends__key">
-								<li className="post-trends__key-day is-today" />
-								<li className="post-trends__key-day is-level-1" />
-								<li className="post-trends__key-day is-level-2" />
-								<li className="post-trends__key-day is-level-3" />
-								<li className="post-trends__key-day is-level-4" />
-							</ul>
-							<span className="post-trends__key-label">
-								{ this.props.translate( 'More Posts', {
-									context: 'Legend label in stats post trends visualization',
-								} ) }
-							</span>
-						</div>
-					</div>
-				</Card>
+
+					<StatsHeatMapLegend
+						labelFewer={ translate( 'Fewer Posts', {
+							context: 'Legend label in stats post trends visualization',
+						} ) }
+						labelMore={ translate( 'More Posts', {
+							context: 'Legend label in stats post trends visualization',
+						} ) }
+					/>
+				</div>
 			</div>
 		);
 	}
 }
 
-const mapStateToProps = ( state ) => {
-	const siteId = getSelectedSiteId( state );
+const mapStateToProps = ( state, { siteId } ) => {
 	const query = {
 		startDate: moment()
 			.locale( 'en' )
@@ -206,7 +83,6 @@ const mapStateToProps = ( state ) => {
 	return {
 		streakData: getSiteStatsPostStreakData( state, siteId, query ),
 		query,
-		siteId,
 	};
 };
 

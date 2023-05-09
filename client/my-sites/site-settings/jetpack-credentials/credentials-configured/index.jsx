@@ -1,26 +1,16 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { WPCOM_FEATURES_REAL_TIME_BACKUPS } from '@automattic/calypso-products';
+import { CompactCard, Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import FoldableCard from 'calypso/components/foldable-card';
-import getRewindState from 'calypso/state/selectors/get-rewind-state';
-import Gridicon from 'calypso/components/gridicon';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import FoldableCard from 'calypso/components/foldable-card';
 import RewindCredentialsForm from 'calypso/components/rewind-credentials-form';
-import siteSupportsRealtimeBackup from 'calypso/state/selectors/site-supports-realtime-backup';
-import { CompactCard, Button } from '@automattic/components';
 import { deleteCredentials } from 'calypso/state/jetpack/credentials/actions';
+import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class CredentialsConfigured extends Component {
@@ -136,7 +126,7 @@ const mapStateToProps = ( state, { siteId } ) => {
 	return {
 		canAutoconfigure: canAutoconfigure || credentials.some( ( c ) => c.type === 'managed' ), // eslint-disable-line wpcalypso/redux-no-bound-selectors
 		mainCredentials: find( credentials, { role: 'main' } ),
-		supportsRealtimeBackup: siteSupportsRealtimeBackup( state, siteId ),
+		supportsRealtimeBackup: siteHasFeature( state, siteId, WPCOM_FEATURES_REAL_TIME_BACKUPS ),
 	};
 };
 

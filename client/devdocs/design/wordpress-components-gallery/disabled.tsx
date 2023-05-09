@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * WordPress dependencies
- */
 import { Disabled, SelectControl, TextControl, TextareaControl } from '@wordpress/components';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function

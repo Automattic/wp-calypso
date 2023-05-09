@@ -1,21 +1,13 @@
-/**
- * External dependencies
- */
-import page from 'page';
-import React from 'react';
-import { connect } from 'react-redux';
+import { Card, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
-import { addSubscriber, deleteSubscriber } from './utils';
-import { Card } from '@automattic/components';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import page from 'page';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import { preventWidows } from 'calypso/lib/formatting';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { addSubscriber, deleteSubscriber } from './utils';
 
-class MainComponent extends React.Component {
+class MainComponent extends Component {
 	static displayName = 'MainComponent';
 
 	state = {
@@ -110,6 +102,8 @@ class MainComponent extends React.Component {
 			return this.props.translate( 'Newsletter' );
 		} else if ( 'promotion' === category ) {
 			return this.props.translate( 'Promotions' );
+		} else if ( 'reports' === category ) {
+			return this.props.translate( 'Reports' );
 		} else if ( 'jetpack_marketing' === category ) {
 			return this.props.translate( 'Jetpack Suggestions' );
 		} else if ( 'jetpack_research' === category ) {
@@ -120,6 +114,10 @@ class MainComponent extends React.Component {
 			return this.props.translate( 'Jetpack Newsletter' );
 		} else if ( 'jetpack_reports' === category ) {
 			return this.props.translate( 'Jetpack Reports' );
+		} else if ( 'akismet_marketing' === category ) {
+			return this.props.translate( 'Akismet Marketing' );
+		} else if ( 'woopay_marketing' === category ) {
+			return this.props.translate( 'WooPay Marketing' );
 		}
 
 		return category;
@@ -138,14 +136,16 @@ class MainComponent extends React.Component {
 				'Information on WordPress.com courses and events (online and in-person).'
 			);
 		} else if ( 'digest' === category ) {
-			return this.props.translate(
-				'Popular content from the blogs you follow, and reports on your own site and its performance.'
-			);
+			return this.props.translate( 'Popular content from the blogs you follow.' );
 		} else if ( 'news' === category ) {
 			return this.props.translate( 'WordPress.com news, announcements, and product spotlights.' );
 		} else if ( 'promotion' === category ) {
 			return this.props.translate(
 				'Sales and promotions for WordPress.com products and services.'
+			);
+		} else if ( 'reports' === category ) {
+			return this.props.translate(
+				'Complimentary reports and updates regarding site performance and traffic.'
 			);
 		} else if ( 'jetpack_marketing' === category ) {
 			return this.props.translate( 'Tips for getting the most out of Jetpack.' );
@@ -159,6 +159,12 @@ class MainComponent extends React.Component {
 			return this.props.translate( 'Jetpack news, announcements, and product spotlights.' );
 		} else if ( 'jetpack_reports' === category ) {
 			return this.props.translate( 'Jetpack security and performance reports.' );
+		} else if ( 'akismet_marketing' === category ) {
+			return this.props.translate(
+				'Relevant tips and new features to get the most out of Akismet'
+			);
+		} else if ( 'woopay_marketing' === category ) {
+			return this.props.translate( 'Tips for getting the most out of WooPay.' );
 		}
 
 		return null;

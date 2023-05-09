@@ -1,38 +1,32 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { capitalize, find } from 'lodash';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import SectionNav from 'calypso/components/section-nav';
-import NavTabs from 'calypso/components/section-nav/tabs';
-import NavItem from 'calypso/components/section-nav/item';
-import HeaderCake from 'calypso/components/header-cake';
-import Main from 'calypso/components/main';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import { capitalize, find } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
-import WordAdsEarnings from 'calypso/my-sites/stats/wordads/earnings';
+import HeaderCake from 'calypso/components/header-cake';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import Main from 'calypso/components/main';
+import SectionNav from 'calypso/components/section-nav';
+import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import AdsSettings from 'calypso/my-sites/earn/ads/form-settings';
+import WordAdsPayments from 'calypso/my-sites/earn/ads/payments';
+import WordAdsEarnings from 'calypso/my-sites/stats/wordads/earnings';
+import WordAdsHighlightsSection from 'calypso/my-sites/stats/wordads/highlights-section';
+import { canAccessWordAds } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import DocumentHead from 'calypso/components/data/document-head';
-import Home from './home';
 import AdsWrapper from './ads/wrapper';
+import Home from './home';
 import MembershipsSection from './memberships';
 import MembershipsProductsSection from './memberships/products';
 import ReferAFriendSection from './refer-a-friend';
-import { canAccessAds } from 'calypso/lib/ads/utils';
 
 class EarningsMain extends Component {
 	static propTypes = {
@@ -51,15 +45,20 @@ class EarningsMain extends Component {
 	}
 
 	getFilters() {
-		const { siteSlug, translate } = this.props;
+		const { canAccessAds, siteSlug, translate } = this.props;
 		const pathSuffix = siteSlug ? '/' + siteSlug : '';
 		const tabs = [];
 
-		if ( canAccessAds( this.props.site ) ) {
+		if ( canAccessAds ) {
 			tabs.push( {
 				title: translate( 'Earnings' ),
 				path: '/earn/ads-earnings' + pathSuffix,
 				id: 'ads-earnings',
+			} );
+			tabs.push( {
+				title: translate( 'Payments' ),
+				path: '/earn/ads-payments' + pathSuffix,
+				id: 'ads-payments',
 			} );
 			tabs.push( {
 				title: translate( 'Settings' ),
@@ -76,7 +75,14 @@ class EarningsMain extends Component {
 			case 'ads-earnings':
 				return (
 					<AdsWrapper section={ this.props.section }>
+						<WordAdsHighlightsSection siteId={ this.props.siteId } />
 						<WordAdsEarnings site={ this.props.site } />
+					</AdsWrapper>
+				);
+			case 'ads-payments':
+				return (
+					<AdsWrapper section={ this.props.section }>
+						<WordAdsPayments site={ this.props.site } />
 					</AdsWrapper>
 				);
 			case 'ads-settings':
@@ -130,6 +136,7 @@ class EarningsMain extends Component {
 			case 'payments':
 				return translate( 'Payments' );
 			case 'ads-earnings':
+			case 'ads-payments':
 			case 'ads-settings':
 				return translate( 'Ads' );
 
@@ -197,12 +204,18 @@ class EarningsMain extends Component {
 					title={ `${ adsProgramName } ${ capitalize( section ) }` }
 				/>
 				<DocumentHead title={ layoutTitles[ section ] } />
-				<SidebarNavigation />
 				<FormattedHeader
 					brandFont
 					className="earn__page-header"
 					headerText={ translate( 'Earn' ) }
-					subHeaderText={ translate( 'Explore tools to earn money with your site.' ) }
+					subHeaderText={ translate(
+						'Explore tools to earn money with your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						{
+							components: {
+								learnMoreLink: <InlineSupportLink supportContext="earn" showIcon={ false } />,
+							},
+						}
+					) }
 					align="left"
 				/>
 				{ this.getHeaderCake() }
@@ -213,8 +226,13 @@ class EarningsMain extends Component {
 	}
 }
 
-export default connect( ( state ) => ( {
-	site: getSelectedSite( state ),
-	siteId: getSelectedSiteId( state ),
-	siteSlug: getSelectedSiteSlug( state ),
-} ) )( localize( EarningsMain ) );
+export default connect( ( state ) => {
+	const siteId = getSelectedSiteId( state );
+
+	return {
+		canAccessAds: canAccessWordAds( state, siteId ),
+		site: getSelectedSite( state ),
+		siteId,
+		siteSlug: getSelectedSiteSlug( state ),
+	};
+} )( localize( EarningsMain ) );

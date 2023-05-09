@@ -1,34 +1,27 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
+import { getUrlParts } from '@automattic/calypso-url';
 import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
 import { find } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import Stream from 'calypso/reader/stream';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
-import EmptyContent from './empty';
-import TagStreamHeader from './header';
-import { recordAction, recordGaEvent } from 'calypso/reader/stats';
-import HeaderBack from 'calypso/reader/header-back';
-import { getReaderTags, getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
-import { requestFollowTag, requestUnfollowTag } from 'calypso/state/reader/tags/items/actions';
 import QueryReaderFollowedTags from 'calypso/components/data/query-reader-followed-tags';
 import QueryReaderTag from 'calypso/components/data/query-reader-tag';
+import { navigate } from 'calypso/lib/navigate';
+import { createAccountUrl } from 'calypso/lib/paths';
 import ReaderMain from 'calypso/reader/components/reader-main';
+import HeaderBack from 'calypso/reader/header-back';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
+import Stream from 'calypso/reader/stream';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-
-/**
- * Style dependencies
- */
+import { requestFollowTag, requestUnfollowTag } from 'calypso/state/reader/tags/items/actions';
+import { getReaderTags, getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
+import EmptyContent from './empty';
+import TagStreamHeader from './header';
 import './style.scss';
 
-class TagStream extends React.Component {
+class TagStream extends Component {
 	static propTypes = {
 		encodedTagSlug: PropTypes.string,
 		decodedTagSlug: PropTypes.string,
@@ -84,6 +77,12 @@ class TagStream extends React.Component {
 		const { decodedTagSlug, unfollowTag, followTag } = this.props;
 		const isFollowing = this.isSubscribed(); // this is the current state, not the new state
 		const toggleAction = isFollowing ? unfollowTag : followTag;
+
+		if ( ! this.props.isLoggedIn ) {
+			const { pathname } = getUrlParts( window.location.href );
+			return navigate( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ) );
+		}
+
 		toggleAction( decodedTagSlug );
 		recordAction( isFollowing ? 'unfollowed_topic' : 'followed_topic' );
 		recordGaEvent(
@@ -132,7 +131,7 @@ class TagStream extends React.Component {
 		return (
 			<Stream
 				{ ...this.props }
-				listName={ this.state.title }
+				listName={ title }
 				emptyContent={ emptyContent }
 				showFollowInHeader={ true }
 				forcePlaceholders={ ! tag } // if tag has not loaded yet, then make everything a placeholder
@@ -163,6 +162,7 @@ export default connect(
 	( state ) => ( {
 		followedTags: getReaderFollowedTags( state ),
 		tags: getReaderTags( state ),
+		isLoggedIn: isUserLoggedIn( state ),
 	} ),
 	{
 		followTag: requestFollowTag,

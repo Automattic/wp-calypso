@@ -1,14 +1,11 @@
 /**
- **** WARNING: No ES6 modules here. Not transpiled! ****
+ *WARNING: No ES6 modules here. Not transpiled! ****
  */
-/* eslint-disable import/no-nodejs-modules */
 
-/**
- * External dependencies
- */
-const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
-const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
 const path = require( 'path' );
+const BuildMetaPlugin = require( '@automattic/calypso-apps-builder/build-meta-webpack-plugin.cjs' );
+const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
+const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
 
 /**
  * Internal variables
@@ -24,16 +21,15 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
  *
  * @see {@link https://webpack.js.org/configuration/configuration-types/#exporting-a-function}
  * @see {@link https://webpack.js.org/api/cli/}
- *
- * @param   {object}  env                           environment options
- * @param   {object}  argv                          options map
- * @param   {object}  argv.entry                    Entry point(s)
+ * @param   {Object}  env                           environment options
+ * @param   {Object}  argv                          options map
+ * @param   {Object}  argv.entry                    Entry point(s)
  * @param   {string}  argv.outputPath               Output path
  * @param   {string}  argv.outputFilename           Output filename pattern
- * @returns {object}                                webpack config
+ * @returns {Object}                                webpack config
  */
 function getWebpackConfig(
-	env = {},
+	env = { WP: true },
 	{
 		entry = {
 			'default.editor': path.join( __dirname, 'src', 'default', 'editor' ),
@@ -54,7 +50,7 @@ function getWebpackConfig(
 
 	return {
 		...webpackConfig,
-		devtool: isDevelopment ? 'inline-cheap-source-map' : false,
+		devtool: isDevelopment ? 'inline-cheap-source-map' : 'source-map',
 		optimization: {
 			...webpackConfig.optimization,
 			// disable module concatenation so that instances of `__()` are not renamed
@@ -76,6 +72,7 @@ function getWebpackConfig(
 					}
 				},
 			} ),
+			BuildMetaPlugin( { outputPath } ),
 		],
 	};
 }

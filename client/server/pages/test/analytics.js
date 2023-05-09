@@ -1,21 +1,30 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
 import events from 'events';
-import sinon from 'sinon';
-
-/**
- * Internal dependencies
- */
-import analytics from '../../lib/analytics';
+import config from '@automattic/calypso-config';
+import superagent from 'superagent';
+import * as statsdUtils from 'calypso/lib/analytics/statsd-utils';
 import { logSectionResponse } from 'calypso/server/pages/analytics';
-import { useFakeTimers } from 'calypso/test-helpers/use-sinon';
 
 const TWO_SECONDS = 2000;
+const THREE_SECONDS = 3000;
+
 const noop = () => {};
 
+jest.mock( '@automattic/calypso-config' );
+
 describe( 'index', () => {
+	beforeAll( () => {
+		// Enable analytics tracking on the server.
+		config.mockReturnValue( true );
+	} );
+
+	beforeEach( () => {
+		jest.spyOn( superagent, 'get' ).mockReturnValue( { end: () => {} } );
+	} );
+
+	afterEach( () => {
+		superagent.get.mockClear();
+	} );
+
 	describe( 'logSectionResponse middleware', () => {
 		// Stub request, response, and next
 		let request;
@@ -29,99 +38,84 @@ describe( 'index', () => {
 			response = new events.EventEmitter();
 			response2 = new events.EventEmitter();
 			next = noop;
+			// Clear throttling
+			jest.advanceTimersByTime( TWO_SECONDS );
 		} );
 
-		describe( 'when rendering a section', () => {
-			let clock;
+		// Parses the beacons sent in the URL to boom.gif
+		const includesBeacon = ( partialBeacon ) => {
+			const statsdUrl = new URL( superagent.get.mock.calls[ 0 ][ 0 ] );
+			const { beacons } = JSON.parse( decodeURIComponent( statsdUrl.searchParams.get( 'json' ) ) );
+			return beacons.some( ( beacon ) => beacon.includes( partialBeacon ) );
+		};
 
-			useFakeTimers( ( newClock ) => ( clock = newClock ) );
+		describe( 'when rendering a section', () => {
+			jest.useFakeTimers();
 
 			beforeEach( () => {
-				sinon.stub( analytics.statsd, 'recordTiming' );
-				sinon.stub( analytics.statsd, 'recordCounting' );
 				request.context.sectionName = 'reader';
-				request.context.target = 'fallback';
-			} );
-
-			afterEach( () => {
-				analytics.statsd.recordTiming.restore();
-				analytics.statsd.recordCounting.restore();
 			} );
 
 			test( 'logs response analytics', () => {
-				// Clear throttling
-				clock.tick( TWO_SECONDS );
-
 				logSectionResponse( request, response, next );
 
-				// Move time forward and mock the "finish" event
-				clock.tick( TWO_SECONDS );
-				response.emit( 'finish' );
+				// Move time forward and mock the "close" event
+				jest.advanceTimersByTime( TWO_SECONDS );
+				response.emit( 'close' );
 
-				expect( analytics.statsd.recordTiming ).to.have.been.calledWith(
-					'reader',
-					'response-time',
-					TWO_SECONDS
-				);
-
-				expect( analytics.statsd.recordCounting ).to.have.been.calledWith(
-					'reader',
-					'target.fallback'
-				);
+				// Check the information sent to boom.gif.
+				expect( includesBeacon( `reader.response_time:${ TWO_SECONDS }` ) );
 			} );
 
-			test( 'does not log build target if not defined', () => {
-				request.context.target = undefined;
-
-				// Clear throttling
-				clock.tick( TWO_SECONDS );
-
+			test( 'logs granular analytics', () => {
+				// Make the request authenticated
+				request.context.user = { foo: 'bar' };
 				logSectionResponse( request, response, next );
 
-				// Move time forward and mock the "finish" event
-				clock.tick( TWO_SECONDS );
-				response.emit( 'finish' );
+				// Move time forward and mock the "close" event
+				jest.advanceTimersByTime( THREE_SECONDS );
+				response.emit( 'close' );
 
-				expect( analytics.statsd.recordTiming ).to.have.been.calledWith(
-					'reader',
-					'response-time',
-					TWO_SECONDS
-				);
+				// Check the information sent to boom.gif.
+				expect(
+					includesBeacon( `response_time.logged_in.ssr_pipeline_false:${ THREE_SECONDS }` )
+				).toBe( true );
 
-				expect( analytics.statsd.recordCounting ).not.to.have.been.called;
+				// Double check the loggedin/ssr flags are set correctly.
+				expect(
+					includesBeacon( `response_time.logged_out.ssr_pipeline_true:${ THREE_SECONDS }` )
+				).toBe( false );
 			} );
 
 			test( 'throttles calls to log analytics', () => {
-				// Clear throttling
-				clock.tick( TWO_SECONDS );
+				// We only want to mock this for one test, as it will prevent our
+				// superagent spy above from working.
+				const analyticsMock = jest.spyOn( statsdUtils, 'logServerEvent' );
 
 				logSectionResponse( request, response, next );
 				logSectionResponse( request2, response2, next );
 
-				response.emit( 'finish' );
-				response2.emit( 'finish' );
+				response.emit( 'close' );
+				response2.emit( 'close' );
 
-				expect( analytics.statsd.recordTiming ).to.have.been.calledOnce;
-				expect( analytics.statsd.recordCounting ).to.have.been.calledOnce;
+				expect( statsdUtils.logServerEvent ).toBeCalledTimes( 1 );
 
-				clock.tick( TWO_SECONDS );
-				response.emit( 'finish' );
-				response2.emit( 'finish' );
+				jest.advanceTimersByTime( TWO_SECONDS );
+				response.emit( 'close' );
+				response2.emit( 'close' );
 
-				expect( analytics.statsd.recordTiming ).to.have.been.calledTwice;
-				expect( analytics.statsd.recordCounting ).to.have.been.calledTwice;
+				expect( statsdUtils.logServerEvent ).toBeCalledTimes( 2 );
+				analyticsMock.mockRestore();
 			} );
 		} );
 
 		describe( 'when not rendering a section', () => {
 			beforeEach( () => {
-				sinon.stub( analytics.statsd, 'recordTiming' );
-				sinon.stub( analytics.statsd, 'recordCounting' );
+				jest.spyOn( statsdUtils, 'logServerEvent' );
 			} );
 
 			afterEach( () => {
-				analytics.statsd.recordTiming.restore();
-				analytics.statsd.recordCounting.restore();
+				statsdUtils.logServerEvent.mockReset();
 			} );
 
 			test( 'does not log response time analytics', () => {
@@ -130,8 +124,7 @@ describe( 'index', () => {
 				// Mock the "finish" event
 				response.emit( 'finish' );
 
-				expect( analytics.statsd.recordTiming ).not.to.have.been.called;
-				expect( analytics.statsd.recordCounting ).not.to.have.been.called;
+				expect( statsdUtils.logServerEvent ).not.toBeCalled();
 			} );
 		} );
 	} );

@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import localeSuggestions from '../reducer';
 import { I18N_LOCALE_SUGGESTIONS_ADD } from 'calypso/state/action-types';
+import localeSuggestions from '../reducer';
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {

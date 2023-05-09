@@ -1,38 +1,28 @@
-/**
- * External dependencies
- */
-import React, { useEffect } from 'react';
-import { find } from 'lodash';
-import { CompactCard } from '@automattic/components';
 import {
 	FEATURE_GOOGLE_ANALYTICS,
 	PLAN_JETPACK_SECURITY_DAILY,
 } from '@automattic/calypso-products';
+import { CompactCard, FormInputValidation as FormTextValidation } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
-import ExternalLink from 'calypso/components/external-link';
-import SupportInfo from 'calypso/components/support-info';
+import { find } from 'lodash';
+import { useEffect } from 'react';
+import googleIllustration from 'calypso/assets/images/illustrations/google-analytics-logo.svg';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
+import ExternalLink from 'calypso/components/external-link';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormTextValidation from 'calypso/components/forms/form-input-validation';
-import FormAnalyticsStores from '../form-analytics-stores';
-import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import googleIllustration from 'calypso/assets/images/illustrations/google-analytics-logo.svg';
-import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import SupportInfo from 'calypso/components/support-info';
 import { PRODUCT_UPSELLS_BY_FEATURE } from 'calypso/my-sites/plans/jetpack-plans/constants';
+import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import FormAnalyticsStores from '../form-analytics-stores';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const GoogleAnalyticsJetpackForm = ( {
@@ -85,7 +75,11 @@ const GoogleAnalyticsJetpackForm = ( {
 
 	const renderForm = () => {
 		return (
-			<form id="analytics" onSubmit={ handleSubmitForm }>
+			<form
+				aria-label="Google Analytics Site Settings"
+				id="analytics"
+				onSubmit={ handleSubmitForm }
+			>
 				<QueryJetpackModules siteId={ siteId } />
 
 				<SettingsSectionHeader
@@ -145,14 +139,9 @@ const GoogleAnalyticsJetpackForm = ( {
 										text={ translate( 'Invalid Google Analytics Measurement ID.' ) }
 									/>
 								) }
-								<ExternalLink
-									icon
-									href="https://support.google.com/analytics/answer/1032385?hl=en"
-									target="_blank"
-									rel="noopener noreferrer"
-								>
+								<InlineSupportLink supportContext="google-analytics-measurement-id">
 									{ translate( 'Where can I find my Measurement ID?' ) }
-								</ExternalLink>
+								</InlineSupportLink>
 							</FormFieldset>
 							<FormFieldset>
 								<ToggleControl
@@ -182,7 +171,7 @@ const GoogleAnalyticsJetpackForm = ( {
 							<p>
 								{ translate(
 									'Google Analytics is a free service that complements our {{a}}built-in stats{{/a}} ' +
-										'with different insights into your traffic. WordPress.com stats and Google Analytics ' +
+										'with different insights into your traffic. Jetpack Stats and Google Analytics ' +
 										'use different methods to identify and track activity on your site, so they will ' +
 										'normally show slightly different totals for your visits, views, etc.',
 									{
@@ -216,7 +205,7 @@ const GoogleAnalyticsJetpackForm = ( {
 						description={ translate(
 							"Monitor your site's views, clicks, and other important metrics"
 						) }
-						event={ 'google_analytics_settings' }
+						event="google_analytics_settings"
 						feature={ FEATURE_GOOGLE_ANALYTICS }
 						plan={ PLAN_JETPACK_SECURITY_DAILY }
 						href={ upsellHref }

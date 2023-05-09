@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import reducer from '../reducer';
 import { PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
+import reducer from '../reducer';
 
 const wpcomSubscription = {
 	ID: '42',
@@ -28,15 +20,13 @@ describe( 'system reducer', () => {
 		deepFreeze( previousState );
 		const newState = serialize( reducer, previousState ).root();
 
-		expect( newState.system ).to.eql( { wpcomSubscription } );
+		expect( newState.system ).toStrictEqual( { wpcomSubscription } );
 	} );
 
 	test( 'should refuse to persist particular keys', () => {
 		const previousState = {
 			system: {
 				apiReady: true,
-				authorized: true,
-				authorizationLoaded: true,
 				blocked: false,
 				wpcomSubscription: wpcomSubscription,
 			},
@@ -44,7 +34,7 @@ describe( 'system reducer', () => {
 		deepFreeze( previousState );
 		const newState = serialize( reducer, previousState ).root();
 
-		expect( newState.system ).to.eql( { wpcomSubscription } );
+		expect( newState.system ).toStrictEqual( { wpcomSubscription } );
 	} );
 
 	test( 'should restore keys', () => {
@@ -52,7 +42,7 @@ describe( 'system reducer', () => {
 		deepFreeze( previousState );
 		const newState = deserialize( reducer, previousState );
 
-		expect( newState.system ).to.eql( {
+		expect( newState.system ).toStrictEqual( {
 			wpcomSubscription,
 		} );
 	} );
@@ -62,8 +52,6 @@ describe( 'system reducer', () => {
 		const previousState = {
 			system: {
 				apiReady: true,
-				authorized: true,
-				authorizationLoaded: true,
 				blocked: false,
 				wpcomSubscription: wpcomSubscriptionId,
 			},
@@ -71,7 +59,7 @@ describe( 'system reducer', () => {
 		deepFreeze( previousState );
 		const newState = deserialize( reducer, previousState );
 
-		expect( newState.system ).to.eql( {
+		expect( newState.system ).toStrictEqual( {
 			wpcomSubscription: wpcomSubscriptionId,
 		} );
 	} );
@@ -86,7 +74,7 @@ describe( 'system reducer', () => {
 		};
 		const newState = reducer( {}, action );
 
-		expect( newState.system ).to.eql( { wpcomSubscription } );
+		expect( newState.system ).toStrictEqual( { wpcomSubscription } );
 	} );
 } );
 
@@ -95,16 +83,12 @@ describe( 'settings reducer', () => {
 		const previousState = {
 			settings: {
 				enabled: false,
-				dismissedNotice: true,
-				dismissedNoticeAt: 1466067124796,
 			},
 		};
 		deepFreeze( previousState );
 		const newState = serialize( reducer, previousState ).root();
 
-		expect( newState.settings ).to.eql( {
-			dismissedNotice: true,
-			dismissedNoticeAt: 1466067124796,
+		expect( newState.settings ).toStrictEqual( {
 			enabled: false,
 		} );
 	} );
@@ -119,7 +103,7 @@ describe( 'settings reducer', () => {
 		deepFreeze( previousState );
 		const newState = serialize( reducer, previousState ).root();
 
-		expect( newState.settings ).to.eql( {
+		expect( newState.settings ).toStrictEqual( {
 			enabled: true,
 		} );
 	} );
@@ -128,16 +112,12 @@ describe( 'settings reducer', () => {
 		const previousState = {
 			settings: {
 				enabled: false,
-				dismissedNotice: true,
-				dismissedNoticeAt: 1466067124796,
 			},
 		};
 		deepFreeze( previousState );
 		const newState = deserialize( reducer, previousState );
 
-		expect( newState.settings ).to.eql( {
-			dismissedNotice: true,
-			dismissedNoticeAt: 1466067124796,
+		expect( newState.settings ).toStrictEqual( {
 			enabled: false,
 		} );
 	} );
@@ -152,7 +132,7 @@ describe( 'settings reducer', () => {
 		deepFreeze( previousState );
 		const newState = deserialize( reducer, previousState );
 
-		expect( newState.settings ).to.eql( {
+		expect( newState.settings ).toStrictEqual( {
 			enabled: true,
 		} );
 	} );

@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import getMediaItem from 'calypso/state/selectors/get-media-item';
 
 export default function isTransientMedia( state, siteId, mediaId ) {

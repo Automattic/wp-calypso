@@ -4,8 +4,8 @@
  * faster and the Guided Tours get properly translated.
  */
 
-const config = require( './config' );
 const prettier = require( 'prettier' );
+const config = require( './config' );
 
 export default function transformer( file, api ) {
 	const j = api.jscodeshift;

@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
 import {
 	HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED,
 	HAPPYCHAT_CONNECTION_STATUS_CONNECTED,
@@ -23,7 +15,7 @@ describe( '#isHappychatAvailable', () => {
 				},
 			},
 		} );
-		expect( isHappychatAvailable( state ) ).to.be.false;
+		expect( isHappychatAvailable( state ) ).toBe( false );
 	} );
 
 	it( "should be false if Happychat isn't accepting new connections", () => {
@@ -35,7 +27,7 @@ describe( '#isHappychatAvailable', () => {
 				},
 			},
 		} );
-		expect( isHappychatAvailable( state ) ).to.be.false;
+		expect( isHappychatAvailable( state ) ).toBe( false );
 	} );
 
 	it( "should be true when there's a connection and connections are being accepted", () => {
@@ -47,6 +39,6 @@ describe( '#isHappychatAvailable', () => {
 				},
 			},
 		} );
-		expect( isHappychatAvailable( state ) ).to.be.true;
+		expect( isHappychatAvailable( state ) ).toBe( true );
 	} );
 } );

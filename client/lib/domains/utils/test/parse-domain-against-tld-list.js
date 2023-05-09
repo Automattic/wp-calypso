@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { parseDomainAgainstTldList } from '../';
 
 describe( 'parseDomainAgainstTldList', () => {

@@ -1,12 +1,9 @@
-/**
- * Internal dependencies
- */
-import reducer, { errorCodeReducer, errorMessageReducer, isComplete } from '../reducer';
 import {
 	JETPACK_REMOTE_INSTALL,
 	JETPACK_REMOTE_INSTALL_FAILURE,
 	JETPACK_REMOTE_INSTALL_SUCCESS,
 } from 'calypso/state/action-types';
+import reducer, { errorCodeReducer, errorMessageReducer, isComplete } from '../reducer';
 
 const url = 'https://yourgroovydomain.com';
 const errorCodeString = 'INVALID_CREDENTIALS';

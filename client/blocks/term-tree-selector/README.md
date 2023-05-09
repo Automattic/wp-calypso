@@ -9,7 +9,7 @@ Under the hood, it uses [`<QueryTerms />`](../../components/data/query-terms) to
 ```jsx
 import TermSelector from 'calypso/blocks/term-tree-selector';
 
-<TermTreeSelector taxonomy="category" />;
+<TermTreeSelector taxonomy="category" key="category" />;
 ```
 
 ## Props
@@ -23,6 +23,8 @@ import TermSelector from 'calypso/blocks/term-tree-selector';
 </table>
 
 The type of taxonomy to query.
+
+In order to provide consistent experience, provide the same value to a `key` prop, as shown in the example above.
 
 ### `multiple`
 

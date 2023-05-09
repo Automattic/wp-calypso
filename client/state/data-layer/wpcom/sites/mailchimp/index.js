@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	MAILCHIMP_LISTS_LIST,
 	MAILCHIMP_LISTS_RECEIVE,
@@ -8,10 +5,9 @@ import {
 	MAILCHIMP_SETTINGS_RECEIVE,
 } from 'calypso/state/action-types';
 import { mergeHandlers } from 'calypso/state/action-watchers/utils';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 const noop = () => {};
 

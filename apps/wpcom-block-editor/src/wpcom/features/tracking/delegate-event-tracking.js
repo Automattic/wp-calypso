@@ -1,20 +1,32 @@
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
-import wpcomBlockEditorCloseClick from './wpcom-block-editor-close-click';
-import wpcomBlockEditorDetailsOpen from './wpcom-block-editor-details-open';
-import wpcomBlockEditorGlobalStylesTabSelected from './wpcom-block-editor-global-styles-tab-selected';
-import wpcomInserterInlineSearchTerm from './wpcom-inserter-inline-search-term';
-import wpcomInserterTabPanelSelected from './wpcom-inserter-tab-panel-selected';
 import wpcomBlockDonationsPlanUpgrade from './wpcom-block-donations-plan-upgrade';
 import wpcomBlockDonationsStripeConnect from './wpcom-block-donations-stripe-connect';
+import wpcomBlockEditorCloseClick from './wpcom-block-editor-close-click';
+import wpcomBlockEditorDetailsOpen from './wpcom-block-editor-details-open';
+import wpcomBlockEditorGlobalStylesMenuSelected from './wpcom-block-editor-global-styles-menu-selected';
+import wpcomBlockEditorListViewSelect from './wpcom-block-editor-list-view-select';
+import wpcomBlockEditorPostPublishAddNewClick from './wpcom-block-editor-post-publish-add-new-click';
+import {
+	wpcomBlockEditorSaveClick,
+	wpcomBlockEditorSaveDraftClick,
+} from './wpcom-block-editor-save-click';
+import wpcomBlockEditorTemplatePartDetachBlocks from './wpcom-block-editor-template-part-detach-blocks';
 import wpcomBlockPremiumContentPlanUpgrade from './wpcom-block-premium-content-plan-upgrade';
 import wpcomBlockPremiumContentStripeConnect from './wpcom-block-premium-content-stripe-connect';
+import wpcomInserterInlineSearchTerm from './wpcom-inserter-inline-search-term';
+import wpcomInserterTabPanelSelected from './wpcom-inserter-tab-panel-selected';
+import {
+	wpcomSiteEditorDocumentActionsDropdownOpen,
+	wpcomSiteEditorDocumentActionsTemplateAreaClick,
+	wpcomSiteEditorDocumentActionsRevertClick,
+	wpcomSiteEditorDocumentActionsShowAllClick,
+} from './wpcom-site-editor-document-actions-dropdown-click';
+import wpcomSiteEditorExitClick from './wpcom-site-editor-exit-click';
+import {
+	wpcomTemplatePartChooseCapture,
+	wpcomTemplatePartChooseBubble,
+	wpcomTemplatePartReplaceBubble,
+} from './wpcom-template-part-choose';
 
 // Debugger.
 const debug = debugFactory( 'wpcom-block-editor:tracking' );
@@ -45,13 +57,26 @@ export const registerSubscriber = ( id, type, handler ) => {
 const EVENTS_MAPPING = [
 	wpcomBlockEditorCloseClick(),
 	wpcomBlockEditorDetailsOpen(),
-	wpcomBlockEditorGlobalStylesTabSelected(),
+	wpcomBlockEditorGlobalStylesMenuSelected(),
 	wpcomInserterInlineSearchTerm(),
 	wpcomInserterTabPanelSelected(),
 	wpcomBlockDonationsPlanUpgrade(),
 	wpcomBlockDonationsStripeConnect(),
 	wpcomBlockPremiumContentPlanUpgrade(),
 	wpcomBlockPremiumContentStripeConnect(),
+	wpcomTemplatePartChooseCapture(),
+	wpcomTemplatePartChooseBubble(),
+	wpcomTemplatePartReplaceBubble(),
+	wpcomBlockEditorListViewSelect(),
+	wpcomBlockEditorTemplatePartDetachBlocks(),
+	wpcomBlockEditorPostPublishAddNewClick(),
+	wpcomBlockEditorSaveClick(),
+	wpcomBlockEditorSaveDraftClick(),
+	wpcomSiteEditorExitClick(),
+	wpcomSiteEditorDocumentActionsDropdownOpen(),
+	wpcomSiteEditorDocumentActionsTemplateAreaClick(),
+	wpcomSiteEditorDocumentActionsRevertClick(),
+	wpcomSiteEditorDocumentActionsShowAllClick(),
 ];
 const EVENTS_MAPPING_CAPTURE = EVENTS_MAPPING.filter( ( { capture } ) => capture );
 const EVENTS_MAPPING_NON_CAPTURE = EVENTS_MAPPING.filter( ( { capture } ) => ! capture );
@@ -61,9 +86,9 @@ const EVENTS_MAPPING_NON_CAPTURE = EVENTS_MAPPING.filter( ( { capture } ) => ! c
  * the desired target element. Accounts for event
  * bubbling.
  *
- * @param  {object}          event          the DOM Event
+ * @param  {Object}          event          the DOM Event
  * @param  {string|Function} targetSelector the CSS selector for the target element
- * @returns {object}                        the target Element if found
+ * @returns {Object}                        the target Element if found
  */
 const getMatchingEventTarget = ( event, targetSelector ) => {
 	if ( typeof targetSelector === 'function' ) {
@@ -81,7 +106,7 @@ const getMatchingEventTarget = ( event, targetSelector ) => {
  * and for each match fires an appropriate handler function.
  *
  * @param  {boolean} capture Value of capture flag of the event listener.
- * @param  {object}  event   DOM event for the click event.
+ * @param  {Object}  event   DOM event for the click event.
  * @returns {void}
  */
 export default ( capture, event ) => {

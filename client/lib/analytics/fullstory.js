@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import debug from 'debug';
-
-/**
- * Internal dependencies
- */
+import { getCurrentUser } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { mayWeTrackCurrentUserGdpr, isPiiUrl } from './utils';
-import { getCurrentUser, getDoNotTrack } from '@automattic/calypso-analytics';
-import { isE2ETest } from 'calypso/lib/e2e';
+import debug from 'debug';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { TRACKING_IDS } from './ad-tracking/constants';
+import { mayWeTrackByTracker } from './tracker-buckets';
 
 const fullStoryDebug = debug( 'calypso:analytics:fullstory' );
 
@@ -45,10 +38,7 @@ function maybeAddFullStoryScript() {
 	if (
 		fullStoryScriptLoaded ||
 		! config.isEnabled( 'fullstory' ) ||
-		getDoNotTrack() ||
-		isE2ETest() ||
-		isPiiUrl() ||
-		! mayWeTrackCurrentUserGdpr()
+		! mayWeTrackByTracker( 'fullstory' )
 	) {
 		if ( ! fullStoryScriptLoaded ) {
 			fullStoryDebug( 'maybeAddFullStoryScript:', false );
@@ -62,7 +52,7 @@ function maybeAddFullStoryScript() {
 	window._fs_debug = 'development' === process.env.NODE_ENV;
 	window._fs_host = 'fullstory.com';
 	window._fs_script = 'edge.fullstory.com/s/fs.js';
-	window._fs_org = TRACKING_IDS.fullStory;
+	window._fs_org = isJetpackCloud() ? TRACKING_IDS.fullStoryJetpack : TRACKING_IDS.fullStory;
 	window._fs_namespace = 'FS';
 
 	( function ( m, n, e, t, l, o, g, y ) {
@@ -85,7 +75,9 @@ function maybeAddFullStoryScript() {
 		y.parentNode.insertBefore( o, y );
 		g.identify = function ( i, v, s ) {
 			g( l, { uid: i }, s );
-			if ( v ) g( l, v, s );
+			if ( v ) {
+				g( l, v, s );
+			}
 		};
 		g.setUserVars = function ( v, s ) {
 			g( l, v, s );
@@ -123,10 +115,11 @@ function maybeAddFullStoryScript() {
 		g._w[ y ] = m[ y ];
 		y = 'fetch';
 		g._w[ y ] = m[ y ];
-		if ( m[ y ] )
+		if ( m[ y ] ) {
 			m[ y ] = function () {
 				return g._w[ y ].apply( this, arguments );
 			};
+		}
 		g._v = '1.3.0';
 	} )( window, document, window._fs_namespace, 'script', 'user' );
 }

@@ -1,23 +1,14 @@
-/**
- * External dependencies
- */
+import path from 'path';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { isEqual } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { isEqual, partial } from 'lodash';
-import path from 'path';
-import { localize } from 'i18n-calypso';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import CloseOnEscape from 'calypso/components/close-on-escape';
+import QuerySites from 'calypso/components/data/query-sites';
 import Notice from 'calypso/components/notice';
-import ImageEditorCanvas from './image-editor-canvas';
-import ImageEditorToolbar from './image-editor-toolbar';
-import ImageEditorButtons from './image-editor-buttons';
 import { getMimeType, url } from 'calypso/lib/media/utils';
 import {
 	resetImageEditorState,
@@ -25,24 +16,23 @@ import {
 	setImageEditorFileInfo,
 	setImageEditorDefaultAspectRatio,
 } from 'calypso/state/editor/image-editor/actions';
+import { AspectRatios, AspectRatiosValues } from 'calypso/state/editor/image-editor/constants';
 import {
 	getImageEditorFileInfo,
 	isImageEditorImageLoaded,
 } from 'calypso/state/editor/image-editor/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSite } from 'calypso/state/sites/selectors';
-import QuerySites from 'calypso/components/data/query-sites';
-import { AspectRatios, AspectRatiosValues } from 'calypso/state/editor/image-editor/constants';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import ImageEditorButtons from './image-editor-buttons';
+import ImageEditorCanvas from './image-editor-canvas';
+import ImageEditorToolbar from './image-editor-toolbar';
 import { getDefaultAspectRatio } from './utils';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};
 
-class ImageEditor extends React.Component {
+class ImageEditor extends Component {
 	static propTypes = {
 		// Component props
 		media: PropTypes.object,
@@ -61,6 +51,7 @@ class ImageEditor extends React.Component {
 		setImageEditorDefaultAspectRatio: PropTypes.func,
 		translate: PropTypes.func,
 		isImageLoaded: PropTypes.bool,
+		displayOnlyIcon: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -72,6 +63,7 @@ class ImageEditor extends React.Component {
 		defaultAspectRatio: AspectRatios.FREE,
 		allowedAspectRatios: AspectRatiosValues,
 		setImageEditorDefaultAspectRatio: noop,
+		displayOnlyIcon: false,
 	};
 
 	state = {
@@ -79,23 +71,20 @@ class ImageEditor extends React.Component {
 		noticeStatus: 'is-info',
 	};
 
-	editCanvasRef = React.createRef();
+	editCanvasRef = createRef();
 
-	UNSAFE_componentWillReceiveProps( newProps ) {
-		const { media: currentMedia } = this.props;
+	componentDidUpdate( prevProps ) {
+		const { media } = this.props;
 
-		if ( newProps.media && ! isEqual( newProps.media, currentMedia ) ) {
+		if ( media && ! isEqual( prevProps.media, media ) ) {
 			this.props.resetAllImageEditorState();
-
-			this.updateFileInfo( newProps.media );
-
+			this.updateFileInfo();
 			this.setDefaultAspectRatio();
 		}
 	}
 
 	componentDidMount() {
-		this.updateFileInfo( this.props.media );
-
+		this.updateFileInfo();
 		this.setDefaultAspectRatio();
 	}
 
@@ -107,8 +96,8 @@ class ImageEditor extends React.Component {
 		);
 	};
 
-	updateFileInfo = ( media ) => {
-		const { site } = this.props;
+	updateFileInfo = () => {
+		const { site, media } = this.props;
 
 		let src;
 		let fileName = 'default';
@@ -246,7 +235,7 @@ class ImageEditor extends React.Component {
 	};
 
 	render() {
-		const { className, siteId, allowedAspectRatios } = this.props;
+		const { className, siteId, allowedAspectRatios, widthLimit, displayOnlyIcon } = this.props;
 
 		const { noticeText } = this.state;
 
@@ -259,10 +248,15 @@ class ImageEditor extends React.Component {
 
 				<figure>
 					<div className="image-editor__content">
-						<ImageEditorCanvas ref={ this.editCanvasRef } onLoadError={ this.onLoadCanvasError } />
+						<ImageEditorCanvas
+							ref={ this.editCanvasRef }
+							widthLimit={ widthLimit }
+							onLoadError={ this.onLoadCanvasError }
+						/>
 						<ImageEditorToolbar
 							onShowNotice={ this.showNotice }
 							allowedAspectRatios={ allowedAspectRatios }
+							displayOnlyIcon={ displayOnlyIcon }
 						/>
 						<ImageEditorButtons
 							onCancel={ this.props.onCancel && this.onCancel }
@@ -293,10 +287,10 @@ export default connect(
 			isImageLoaded: isImageEditorImageLoaded( state ),
 		};
 	},
-	( dispatch, ownProp ) => {
+	( dispatch, ownProps ) => {
 		const defaultAspectRatio = getDefaultAspectRatio(
-			ownProp.defaultAspectRatio,
-			ownProp.allowedAspectRatios
+			ownProps.defaultAspectRatio,
+			ownProps.allowedAspectRatios
 		);
 
 		const resetActionsAdditionalData = {
@@ -307,8 +301,8 @@ export default connect(
 			{
 				setImageEditorFileInfo,
 				setImageEditorDefaultAspectRatio,
-				resetImageEditorState: partial( resetImageEditorState, resetActionsAdditionalData ),
-				resetAllImageEditorState: partial( resetAllImageEditorState, resetActionsAdditionalData ),
+				resetImageEditorState: () => resetImageEditorState( resetActionsAdditionalData ),
+				resetAllImageEditorState: () => resetAllImageEditorState( resetActionsAdditionalData ),
 			},
 			dispatch
 		);

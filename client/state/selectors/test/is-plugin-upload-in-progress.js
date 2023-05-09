@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import isPluginUploadInProgress from 'calypso/state/selectors/is-plugin-upload-in-progress';
 
 const siteId = 77203074;
@@ -19,7 +11,7 @@ describe( 'isPluginUploadInProgress', () => {
 				},
 			},
 		};
-		expect( isPluginUploadInProgress( state, siteId ) ).to.be.false;
+		expect( isPluginUploadInProgress( state, siteId ) ).toBe( false );
 	} );
 
 	test( 'should return current value for site', () => {
@@ -32,7 +24,7 @@ describe( 'isPluginUploadInProgress', () => {
 				},
 			},
 		};
-		expect( isPluginUploadInProgress( stateFalse, siteId ) ).to.be.false;
+		expect( isPluginUploadInProgress( stateFalse, siteId ) ).toBe( false );
 
 		const stateTrue = {
 			plugins: {
@@ -43,6 +35,6 @@ describe( 'isPluginUploadInProgress', () => {
 				},
 			},
 		};
-		expect( isPluginUploadInProgress( stateTrue, siteId ) ).to.be.true;
+		expect( isPluginUploadInProgress( stateTrue, siteId ) ).toBe( true );
 	} );
 } );

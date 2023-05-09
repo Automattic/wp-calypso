@@ -1,22 +1,11 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import Badge from 'calypso/components/badge';
 import { Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import Badge from 'calypso/components/badge';
 import { getAllSiteTypes } from 'calypso/lib/signup/site-type';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class SiteTypeForm extends Component {

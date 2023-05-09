@@ -1,72 +1,56 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import AppleLoginButton from 'calypso/components/social-buttons/apple';
-import GoogleLoginButton from 'calypso/components/social-buttons/google';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
-import {
-	loginSocialUser,
-	createSocialUser,
-	createSocialUserFailed,
-} from 'calypso/state/login/actions';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import AppleLoginButton from 'calypso/components/social-buttons/apple';
+import GoogleSocialButton from 'calypso/components/social-buttons/google';
+import { login } from 'calypso/lib/paths';
+import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
+import { loginSocialUser, createSocialUserFailed } from 'calypso/state/login/actions';
 import {
 	getCreatedSocialAccountUsername,
 	getCreatedSocialAccountBearerToken,
 	getRedirectToOriginal,
-	isSocialAccountCreating,
 } from 'calypso/state/login/selectors';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
-import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
-import { InfoNotice } from 'calypso/blocks/global-notice';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
-import { login } from 'calypso/lib/paths';
+import SocialLoginToS from './social-login-tos';
 
-/**
- * Style dependencies
- */
 import './social.scss';
 
 class SocialLoginForm extends Component {
 	static propTypes = {
-		createSocialUser: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		redirectTo: PropTypes.string,
 		onSuccess: PropTypes.func.isRequired,
-		translate: PropTypes.func.isRequired,
 		loginSocialUser: PropTypes.func.isRequired,
 		uxMode: PropTypes.string.isRequired,
 		linkingSocialService: PropTypes.string,
 		socialService: PropTypes.string,
 		socialServiceResponse: PropTypes.object,
+		shouldRenderToS: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		linkingSocialService: '',
+		shouldRenderToS: false,
 	};
 
-	handleGoogleResponse = ( response, triggeredByUser = true ) => {
+	reportSocialLoginFailure = ( { service, socialInfo, error } ) => {
+		if ( error.code === 'user_exists' || error.code === 'unknown_user' ) {
+			this.props.createSocialUserFailed( socialInfo, error, 'login' );
+			return;
+		}
+
+		this.recordEvent( 'calypso_login_social_login_failure', service, {
+			error_code: error.code,
+			error_message: error.message,
+		} );
+	};
+
+	handleGoogleResponse = ( tokens, triggeredByUser = true ) => {
 		const { onSuccess, socialService } = this.props;
 		let redirectTo = this.props.redirectTo;
-
-		if ( ! response.getAuthResponse ) {
-			return;
-		}
-
-		const tokens = response.getAuthResponse();
-
-		if ( ! tokens || ! tokens.access_token || ! tokens.id_token ) {
-			return;
-		}
 
 		// ignore response if the user did not click on the google button
 		// and did not follow the redirect flow
@@ -94,14 +78,7 @@ class SocialLoginForm extends Component {
 				onSuccess();
 			},
 			( error ) => {
-				if ( error.code === 'user_exists' ) {
-					this.props.createSocialUserFailed( socialInfo, error );
-				}
-
-				this.recordEvent( 'calypso_login_social_login_failure', 'google', {
-					error_code: error.code,
-					error_message: error.message,
-				} );
+				this.reportSocialLoginFailure( { service: 'google', socialInfo, error } );
 			}
 		);
 	};
@@ -137,14 +114,7 @@ class SocialLoginForm extends Component {
 				onSuccess();
 			},
 			( error ) => {
-				if ( error.code === 'user_exists' ) {
-					this.props.createSocialUserFailed( socialInfo, error );
-				}
-
-				this.recordEvent( 'calypso_login_social_login_failure', 'apple', {
-					error_code: error.code,
-					error_message: error.message,
-				} );
+				this.reportSocialLoginFailure( { service: 'apple', socialInfo, error } );
 			}
 		);
 	};
@@ -168,60 +138,6 @@ class SocialLoginForm extends Component {
 		return `https://${ host + login( { socialService: service } ) }`;
 	};
 
-	renderSocialTos = () => {
-		const { redirectTo, translate } = this.props;
-
-		const isJetpackMagicLinkSignUpFlow =
-			redirectTo &&
-			redirectTo.includes( 'jetpack/connect' ) &&
-			config.isEnabled( 'jetpack/magic-link-signup' );
-		if ( isJetpackMagicLinkSignUpFlow ) {
-			return (
-				<>
-					<p className="login__social-tos">
-						{ translate( 'By continuing, you agree to our {{a}}Terms of Service{{/a}}.', {
-							components: {
-								a: (
-									<a
-										href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-										target="_blank"
-										rel="noopener noreferrer"
-									/>
-								),
-							},
-						} ) }
-					</p>
-					<p className="login__social-tos">
-						{ translate(
-							'If you continue with Google, Apple, or an email that isn’t registered yet,' +
-								' you are creating a new WordPress.com account.'
-						) }
-					</p>
-				</>
-			);
-		}
-		return (
-			<p className="login__social-tos">
-				{ translate(
-					"If you continue with Google or Apple and don't already have a WordPress.com account, you" +
-						' are creating an account and you agree to our' +
-						' {{a}}Terms of Service{{/a}}.',
-					{
-						components: {
-							a: (
-								<a
-									href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-									target="_blank"
-									rel="noopener noreferrer"
-								/>
-							),
-						},
-					}
-				) }
-			</p>
-		);
-	};
-
 	render() {
 		const { redirectTo, uxMode } = this.props;
 		const uxModeApple = config.isEnabled( 'sign-in-with-apple/redirect' ) ? 'redirect' : uxMode;
@@ -229,34 +145,32 @@ class SocialLoginForm extends Component {
 		return (
 			<Card className="login__social">
 				<div className="login__social-buttons">
-					<GoogleLoginButton
-						clientId={ config( 'google_oauth_client_id' ) }
-						responseHandler={ this.handleGoogleResponse }
-						uxMode={ uxMode }
-						redirectUri={ this.getRedirectUrl( 'google' ) }
-						onClick={ this.trackLoginAndRememberRedirect.bind( null, 'google' ) }
-						socialServiceResponse={
-							this.props.socialService === 'google' ? this.props.socialServiceResponse : null
-						}
-					/>
+					<div className=" login__social-buttons-container">
+						<GoogleSocialButton
+							clientId={ config( 'google_oauth_client_id' ) }
+							responseHandler={ this.handleGoogleResponse }
+							uxMode={ uxMode }
+							redirectUri={ this.getRedirectUrl( 'google' ) }
+							onClick={ this.trackLoginAndRememberRedirect.bind( null, 'google' ) }
+							socialServiceResponse={
+								this.props.socialService === 'google' ? this.props.socialServiceResponse : null
+							}
+							startingPoint="login"
+						/>
 
-					<AppleLoginButton
-						clientId={ config( 'apple_oauth_client_id' ) }
-						responseHandler={ this.handleAppleResponse }
-						uxMode={ uxModeApple }
-						redirectUri={ this.getRedirectUrl( 'apple' ) }
-						onClick={ this.trackLoginAndRememberRedirect.bind( null, 'apple' ) }
-						socialServiceResponse={
-							this.props.socialService === 'apple' ? this.props.socialServiceResponse : null
-						}
-					/>
-
-					{ this.renderSocialTos() }
+						<AppleLoginButton
+							clientId={ config( 'apple_oauth_client_id' ) }
+							responseHandler={ this.handleAppleResponse }
+							uxMode={ uxModeApple }
+							redirectUri={ this.getRedirectUrl( 'apple' ) }
+							onClick={ this.trackLoginAndRememberRedirect.bind( null, 'apple' ) }
+							socialServiceResponse={
+								this.props.socialService === 'apple' ? this.props.socialServiceResponse : null
+							}
+						/>
+					</div>
+					{ this.props.shouldRenderToS && <SocialLoginToS /> }
 				</div>
-
-				{ this.props.isSocialAccountCreating && (
-					<InfoNotice text={ this.props.translate( 'Creating your account…' ) } />
-				) }
 
 				{ this.props.bearerToken && (
 					<WpcomLoginForm
@@ -273,14 +187,12 @@ class SocialLoginForm extends Component {
 export default connect(
 	( state ) => ( {
 		redirectTo: getRedirectToOriginal( state ),
-		isSocialAccountCreating: isSocialAccountCreating( state ),
 		bearerToken: getCreatedSocialAccountBearerToken( state ),
 		username: getCreatedSocialAccountUsername( state ),
 	} ),
 	{
 		loginSocialUser,
-		createSocialUser,
 		createSocialUserFailed,
 		recordTracksEvent,
 	}
-)( localize( SocialLoginForm ) );
+)( SocialLoginForm );

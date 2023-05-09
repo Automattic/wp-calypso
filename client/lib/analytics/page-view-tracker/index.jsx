@@ -1,25 +1,18 @@
-/**
- * External dependencies
- */
-
 import debugFactory from 'debug';
-import PropTypes from 'prop-types';
-import React from 'react';
 import { get } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { getSiteFragment } from 'calypso/lib/route';
 import {
 	recordPageViewWithClientId as recordPageView,
+	enhanceWithSiteMainProduct,
 	enhanceWithSiteType,
 } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { withEnhancers } from 'calypso/state/utils';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { withEnhancers } from 'calypso/state/utils';
 
 /**
  * Module variables
@@ -27,7 +20,7 @@ import { getSiteSlug } from 'calypso/state/sites/selectors';
 const debug = debugFactory( 'calypso:analytics:PageViewTracker' );
 const noop = () => {};
 
-export class PageViewTracker extends React.Component {
+export class PageViewTracker extends Component {
 	static displayName = 'PageViewTracker';
 
 	static propTypes = {
@@ -38,6 +31,7 @@ export class PageViewTracker extends React.Component {
 		selectedSiteId: PropTypes.number,
 		title: PropTypes.string.isRequired,
 		properties: PropTypes.object,
+		options: PropTypes.object,
 	};
 
 	state = {
@@ -91,9 +85,9 @@ export class PageViewTracker extends React.Component {
 	};
 
 	recordViewWithProperties() {
-		const { path, recorder = noop, title, properties } = this.props;
+		const { path, recorder = noop, title, properties, options } = this.props;
 
-		return recorder( path, title, 'default', properties );
+		return recorder( path, title, 'default', properties, options );
 	}
 
 	render() {
@@ -120,7 +114,7 @@ const mapStateToProps = ( state ) => {
 };
 
 const mapDispatchToProps = {
-	recorder: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),
+	recorder: withEnhancers( recordPageView, [ enhanceWithSiteType, enhanceWithSiteMainProduct ] ),
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( PageViewTracker );

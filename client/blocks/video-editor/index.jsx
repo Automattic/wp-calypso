@@ -1,28 +1,17 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { get } from 'lodash';
-import { localize } from 'i18n-calypso';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import { ProgressBar } from '@automattic/components';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import DetailPreviewVideo from 'calypso/post-editor/media-modal/detail/detail-preview-video';
-import VideoEditorControls from './video-editor-controls';
 import { updatePoster } from 'calypso/state/editor/video-editor/actions';
 import getPosterUploadProgress from 'calypso/state/selectors/get-poster-upload-progress';
 import getPosterUrl from 'calypso/state/selectors/get-poster-url';
 import shouldShowVideoEditorError from 'calypso/state/selectors/should-show-video-editor-error';
+import VideoEditorControls from './video-editor-controls';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};
@@ -52,18 +41,9 @@ class VideoEditor extends Component {
 		pauseVideo: false,
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.shouldShowError && ! this.props.shouldShowError ) {
-			this.setState( {
-				error: true,
-				pauseVideo: false,
-			} );
-
-			return;
-		}
-
-		if ( this.props.posterUrl !== nextProps.posterUrl ) {
-			this.props.onUpdatePoster( this.getVideoEditorProps( nextProps.posterUrl ) );
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.posterUrl !== this.props.posterUrl ) {
+			this.props.onUpdatePoster( this.getVideoEditorProps() );
 		}
 	}
 
@@ -86,17 +66,25 @@ class VideoEditor extends Component {
 	 * Updates the poster by selecting a particular frame of the video.
 	 *
 	 * @param {number} currentTime - Time at which to capture the frame
+	 * @param {boolean} isMillisec - Whether the time is in milliseconds
 	 */
-	updatePoster = ( currentTime ) => {
+	updatePoster = ( currentTime, isMillisec ) => {
 		if ( ! this.state.isSelectingFrame ) {
 			return;
 		}
 
 		const { media } = this.props;
-		const guid = get( media, 'videopress_guid', null );
+		const guid = media?.videopress_guid;
 
 		if ( guid ) {
-			this.props.updatePoster( guid, { atTime: currentTime }, { mediaId: media.ID } );
+			this.props.updatePoster(
+				guid,
+				{
+					atTime: currentTime,
+					isMillisec,
+				},
+				{ mediaId: media.ID }
+			);
 		}
 	};
 
@@ -107,6 +95,8 @@ class VideoEditor extends Component {
 	setIsLoading = () => {
 		this.setState( { isLoading: false } );
 	};
+
+	setIsPlaying = ( isPlaying ) => this.setState( { pauseVideo: ! isPlaying } );
 
 	pauseVideo = () => {
 		this.setState( {
@@ -119,7 +109,7 @@ class VideoEditor extends Component {
 	/**
 	 * Uploads an image to use as the poster for the video.
 	 *
-	 * @param {object} file - Uploaded image
+	 * @param {Object} file - Uploaded image
 	 */
 	uploadImage = ( file ) => {
 		if ( ! file ) {
@@ -127,15 +117,15 @@ class VideoEditor extends Component {
 		}
 
 		const { media } = this.props;
-		const guid = get( media, 'videopress_guid', null );
+		const guid = media?.videopress_guid;
 
 		if ( guid ) {
 			this.props.updatePoster( guid, { file }, { mediaId: media.ID } );
 		}
 	};
 
-	getVideoEditorProps( posterUrl ) {
-		const { media } = this.props;
+	getVideoEditorProps() {
+		const { media, posterUrl } = this.props;
 		const videoProperties = { posterUrl };
 
 		if ( media && media.ID ) {
@@ -161,7 +151,7 @@ class VideoEditor extends Component {
 	}
 
 	render() {
-		const { className, media, onCancel, uploadProgress, translate } = this.props;
+		const { className, media, onCancel, uploadProgress, translate, shouldShowError } = this.props;
 		const { error, isLoading, isSelectingFrame, pauseVideo } = this.state;
 
 		const classes = classNames( 'video-editor', className );
@@ -174,13 +164,15 @@ class VideoEditor extends Component {
 							<DetailPreviewVideo
 								className="video-editor__preview"
 								isPlaying={ ! pauseVideo }
+								setIsPlaying={ this.setIsPlaying }
+								isSelectingFrame={ isSelectingFrame }
 								item={ media }
 								onPause={ this.updatePoster }
 								onScriptLoadError={ this.setError }
 								onVideoLoaded={ this.setIsLoading }
 							/>
 						</div>
-						{ uploadProgress && ! error && ! isSelectingFrame && (
+						{ uploadProgress && ! error && (
 							<ProgressBar
 								className="video-editor__progress-bar"
 								isPulsing={ true }
@@ -192,7 +184,7 @@ class VideoEditor extends Component {
 							{ translate( 'Select a frame to use as the thumbnail image or upload your own.' ) }
 						</span>
 						<VideoEditorControls
-							isPosterUpdating={ uploadProgress && ! error }
+							isPosterUpdating={ isSelectingFrame || ( uploadProgress && ! error ) }
 							isVideoLoading={ isLoading }
 							onCancel={ onCancel }
 							onSelectFrame={ this.selectFrame }
@@ -202,7 +194,7 @@ class VideoEditor extends Component {
 					</div>
 				</figure>
 
-				{ error && this.renderError() }
+				{ ( error || shouldShowError ) && this.renderError() }
 			</div>
 		);
 	}

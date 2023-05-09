@@ -1,12 +1,3 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import Theme from 'calypso/components/theme';
 
 const ThemeExample = () => {

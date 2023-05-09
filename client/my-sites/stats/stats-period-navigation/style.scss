@@ -6,25 +6,19 @@
 	padding: 0 20px;
 
 	.stats-period-navigation__children {
-		text-align: center;
 		flex-grow: 1;
 	}
 
 	.stats-section-title {
 		margin: 0;
+		font-size: $font-title-large;
+		line-height: 40px;
+		color: var(--studio-gray-100);
+		text-align: left;
 	}
 
-	.stats-period-navigation__previous,
-	.stats-period-navigation__next {
-		cursor: pointer;
-		color: var( --color-neutral-50 );
-
-		&:hover {
-			color: var( --color-accent );
-		}
-
-		&.is-disabled {
-			visibility: hidden;
-		}
+	.stats-date-picker__refresh-status {
+		font-size: $font-body-small;
+		line-height: 16px;
 	}
 }

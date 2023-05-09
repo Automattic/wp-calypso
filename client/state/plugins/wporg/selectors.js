@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import 'calypso/state/plugins/init';
 
 export function getAllPlugins( state ) {
@@ -12,8 +9,21 @@ export function getPlugin( state, pluginSlug ) {
 	return plugin ? { ...plugin } : plugin;
 }
 
+export function getPlugins( state, pluginSlugs ) {
+	return pluginSlugs.map( ( pluginSlug ) => getPlugin( state, pluginSlug ) );
+}
+
 export function isFetching( state, pluginSlug ) {
 	return state?.plugins.wporg.fetchingItems[ pluginSlug ] ?? false;
+}
+
+export function areFetching( state, pluginSlugs ) {
+	return pluginSlugs.map( ( pluginSlug ) => isFetching( state, pluginSlug ) );
+}
+
+export function hasError( state, pluginSlug ) {
+	const plugin = getPlugin( state, pluginSlug );
+	return plugin?.error ?? null;
 }
 
 export function isFetched( state, pluginSlug ) {
@@ -21,19 +31,15 @@ export function isFetched( state, pluginSlug ) {
 	return plugin ? !! plugin.fetched : false;
 }
 
-export function getPluginsListByCategory( state, category ) {
-	return state.plugins.wporg.lists.category?.[ category ] ?? [];
-}
-
-export function getPluginsListBySearchTerm( state, searchTerm ) {
-	return state.plugins.wporg.lists.search?.[ searchTerm ] ?? [];
+export function areFetched( state, pluginSlugs ) {
+	return pluginSlugs.map( ( pluginSlug ) => isFetched( state, pluginSlug ) );
 }
 
 /**
  * WP.org plugins can be filtered either by category or search term.
  * So we can either be fetching by category or by search term.
  *
- * @param {object} state      State object
+ * @param {Object} state      State object
  * @param {string} category   Plugin category
  * @param {string} searchTerm Search term
  * @returns {boolean}         Whether that plugins list is being fetched
@@ -50,9 +56,8 @@ export function isFetchingPluginsList( state, category, searchTerm ) {
 
 /**
  * Retrieve the next page for the particular plugins list.
- * Pagination is currently supported only for category queries in the API.
  *
- * @param {object} state    State object
+ * @param {Object} state    State object
  * @param {string} category Plugin category
  * @returns {?number}       Next page number, or null if there is no next page.
  */

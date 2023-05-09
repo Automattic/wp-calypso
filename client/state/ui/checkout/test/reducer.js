@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { SECTION_SET } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
 import reducer, { upgradeIntent } from '../reducer';

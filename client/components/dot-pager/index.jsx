@@ -1,24 +1,15 @@
-/**
- * External dependencies
- */
-import React, { Children, useState } from 'react';
-import { Card } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
-import { times } from 'lodash';
+import { Icon, arrowRight } from '@wordpress/icons';
 import classnames from 'classnames';
+import { useTranslate, useRtl } from 'i18n-calypso';
+import { times } from 'lodash';
+import { Children, useState, useEffect } from 'react';
+import Swipeable from '../swipeable';
 
-/**
- * Internal dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
-const Controls = ( { currentPage, numberOfPages, setCurrentPage } ) => {
+const Controls = ( { showControlLabels = false, currentPage, numberOfPages, setCurrentPage } ) => {
 	const translate = useTranslate();
+	const isRtl = useRtl();
 	if ( numberOfPages < 2 ) {
 		return null;
 	}
@@ -26,21 +17,13 @@ const Controls = ( { currentPage, numberOfPages, setCurrentPage } ) => {
 	const canGoForward = currentPage < numberOfPages - 1;
 	return (
 		<ul className="dot-pager__controls" aria-label={ translate( 'Pager controls' ) }>
-			<li key="dot-pager-prev">
-				<button
-					className="dot-pager__control-prev"
-					disabled={ ! canGoBack }
-					aria-label={ translate( 'Previous' ) }
-					onClick={ () => setCurrentPage( currentPage - 1 ) }
-				>
-					<Gridicon icon="chevron-left" size={ 18 } />
-				</button>
-			</li>
 			{ times( numberOfPages, ( page ) => (
 				<li key={ `page-${ page }` } aria-current={ page === currentPage ? 'page' : undefined }>
 					<button
 						key={ page.toString() }
-						className={ classnames( { 'dot-pager__control-current': page === currentPage } ) }
+						className={ classnames( 'dot-pager__control-choose-page', {
+							'dot-pager__control-current': page === currentPage,
+						} ) }
 						disabled={ page === currentPage }
 						aria-label={ translate( 'Page %(page)d of %(numberOfPages)d', {
 							args: { page: page + 1, numberOfPages },
@@ -49,6 +32,26 @@ const Controls = ( { currentPage, numberOfPages, setCurrentPage } ) => {
 					/>
 				</li>
 			) ) }
+			<li key="dot-pager-prev" className="dot-pager__control-gap">
+				<button
+					className="dot-pager__control-prev"
+					disabled={ ! canGoBack }
+					aria-label={ translate( 'Previous' ) }
+					onClick={ () => setCurrentPage( currentPage - 1 ) }
+				>
+					{ /* The arrowLeft icon isn't as bold as arrowRight, so using the same icon and flipping to make sure they match */ }
+					<Icon
+						icon={ arrowRight }
+						size={ 18 }
+						fill="currentColor"
+						style={
+							/* Flip the icon for languages with LTR direction. */
+							! isRtl ? { transform: 'scaleX(-1)' } : null
+						}
+					/>
+					{ showControlLabels && translate( 'Previous' ) }
+				</button>
+			</li>
 			<li key="dot-pager-next">
 				<button
 					className="dot-pager__control-next"
@@ -56,37 +59,68 @@ const Controls = ( { currentPage, numberOfPages, setCurrentPage } ) => {
 					aria-label={ translate( 'Next' ) }
 					onClick={ () => setCurrentPage( currentPage + 1 ) }
 				>
-					<Gridicon icon="chevron-right" size={ 18 } />
+					{ showControlLabels && translate( 'Next' ) }
+					<Icon
+						icon={ arrowRight }
+						size={ 18 }
+						fill="currentColor"
+						style={
+							/* Flip the icon for languages with RTL direction. */
+							isRtl ? { transform: 'scaleX(-1)' } : null
+						}
+					/>
 				</button>
 			</li>
 		</ul>
 	);
 };
 
-export const DotPager = ( { children } ) => {
+export const DotPager = ( {
+	showControlLabels = false,
+	hasDynamicHeight = false,
+	children,
+	className = '',
+	onPageSelected = null,
+	isClickEnabled = false,
+	...props
+} ) => {
+	// Filter out the empty children
+	const normalizedChildren = Children.toArray( children ).filter( Boolean );
+
 	const [ currentPage, setCurrentPage ] = useState( 0 );
+
+	const numPages = Children.count( normalizedChildren );
+
+	useEffect( () => {
+		if ( currentPage >= numPages ) {
+			setCurrentPage( numPages - 1 );
+		}
+	}, [ numPages, currentPage ] );
+
+	const handleSelectPage = ( index ) => {
+		setCurrentPage( index );
+		onPageSelected?.( index );
+	};
+
 	return (
-		<Card>
-			<div className="dot-pager__pages">
-				{ Children.map( children, ( child, index ) => (
-					<div
-						className={ classnames( 'dot-pager__page', {
-							'is-current': index === currentPage,
-							'is-prev': index < currentPage,
-							'is-next': index > currentPage,
-						} ) }
-						key={ `page-${ index }` }
-					>
-						{ child }
-					</div>
-				) ) }
-			</div>
+		<div className={ classnames( 'dot-pager', className ) } { ...props }>
 			<Controls
+				showControlLabels={ showControlLabels }
 				currentPage={ currentPage }
-				numberOfPages={ Children.count( children ) }
-				setCurrentPage={ setCurrentPage }
+				numberOfPages={ numPages }
+				setCurrentPage={ handleSelectPage }
 			/>
-		</Card>
+			<Swipeable
+				hasDynamicHeight={ hasDynamicHeight }
+				onPageSelect={ handleSelectPage }
+				currentPage={ currentPage }
+				pageClassName="dot-pager__page"
+				containerClassName="dot-pager__pages"
+				isClickEnabled={ isClickEnabled }
+			>
+				{ normalizedChildren }
+			</Swipeable>
+		</div>
 	);
 };
 

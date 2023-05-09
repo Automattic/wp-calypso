@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
 import {
 	POST_COUNTS_RECEIVE,
@@ -17,8 +14,8 @@ import 'calypso/state/posts/init';
  *
  * @param  {number} siteId   Site ID
  * @param  {string} postType Post type
- * @param  {object} counts   Mapping of post status to count
- * @returns {object}          Action object
+ * @param  {Object} counts   Mapping of post status to count
+ * @returns {Object}          Action object
  */
 export function receivePostCounts( siteId, postType, counts ) {
 	return {
@@ -45,12 +42,8 @@ export function requestPostCounts( siteId, postType ) {
 			siteId,
 		} );
 
-		return wpcom
-			.undocumented()
-			.site( siteId )
-			.postCounts( {
-				type: postType,
-			} )
+		return wpcom.req
+			.get( `/sites/${ siteId }/post-counts/${ postType }`, { apiNamespace: 'wpcom/v2' } )
 			.then( ( data ) => {
 				dispatch( receivePostCounts( siteId, postType, data.counts ) );
 				dispatch( {

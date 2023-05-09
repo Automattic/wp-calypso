@@ -1,22 +1,16 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import Main from 'calypso/components/main';
+import * as React from 'react';
 import EmptyContent from 'calypso/components/empty-content';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import Main from 'calypso/components/main';
+import SidebarNavigation from 'calypso/components/sidebar-navigation';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
 const NotAuthorizedPage: React.FC = () => {
 	const translate = useTranslate();
 
 	return (
 		<Main>
-			<SidebarNavigation />
+			{ isJetpackCloud() && <SidebarNavigation /> }
 			<EmptyContent
 				illustration="/calypso/images/illustrations/illustration-404.svg"
 				title={ translate( 'You are not authorized to view this page' ) }

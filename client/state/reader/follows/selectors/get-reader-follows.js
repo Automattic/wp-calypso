@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import { reject } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { createSelector } from '@automattic/state-utils';
-import { getSite } from 'calypso/state/reader/sites/selectors';
+import { reject } from 'lodash';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
+import { getSite } from 'calypso/state/reader/sites/selectors';
 
 import 'calypso/state/reader/init';
 

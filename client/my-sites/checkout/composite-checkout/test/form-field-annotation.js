@@ -3,22 +3,12 @@
  */
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-
-/**
- * External dependencies
- */
-import React from 'react';
+import { matchers } from '@emotion/jest';
+import { ThemeProvider } from '@emotion/react';
 import { render } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
-import { matchers } from 'jest-emotion';
-import { ThemeProvider } from 'emotion-theming';
-
-/**
- * Internal dependencies
- */
 import FormFieldAnnotation from '../components/form-field-annotation';
 
-// Add the custom matchers provided by 'jest-emotion'
+// Add the custom matchers provided by '@emotion/jest'
 expect.extend( matchers );
 
 const theme = {
@@ -49,7 +39,7 @@ describe( 'FormFieldAnnotation', () => {
 						isDisabled={ false }
 						className="test__annotation_class"
 					>
-						<span id="fieldId">{ 'child contents' }</span>
+						<span id="fieldId">child contents</span>
 					</FormFieldAnnotation>
 				</ThemeProvider>
 			);
@@ -83,7 +73,7 @@ describe( 'FormFieldAnnotation', () => {
 						isDisabled="false"
 						className="test__annotation_class"
 					>
-						<span id="fieldId">{ 'child contents' }</span>
+						<span id="fieldId">child contents</span>
 					</FormFieldAnnotation>
 				</ThemeProvider>
 			);

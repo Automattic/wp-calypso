@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
 import {
 	RECOMMENDED_THEMES_FAIL,
@@ -40,7 +37,7 @@ export function getRecommendedThemes( filter ) {
 			apiVersion: '1.2',
 		};
 		try {
-			const res = await wpcom.undocumented().themes( null, query );
+			const res = await wpcom.req.get( '/themes', query );
 			dispatch( receiveRecommendedThemes( res, filter ) );
 		} catch ( error ) {
 			dispatch( { type: RECOMMENDED_THEMES_FAIL, filter } );

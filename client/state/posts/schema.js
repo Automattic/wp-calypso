@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import queryManagerSchema from 'calypso/lib/query-manager/schema';
 
 export const itemsSchema = {

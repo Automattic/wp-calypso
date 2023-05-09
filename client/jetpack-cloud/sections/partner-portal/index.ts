@@ -1,18 +1,7 @@
-/**
- * External dependencies
- */
-import page from 'page';
 import config from '@automattic/calypso-config';
-
-/**
- * Internal dependencies
- */
+import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller/index.web';
 import * as controller from './controller';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default function () {
@@ -63,10 +52,22 @@ export default function () {
 		clientRender
 	);
 
+	// Assign a license to a site.
+	page(
+		`/partner-portal/assign-license`,
+		controller.requireAccessContext,
+		controller.requireTermsOfServiceConsentContext,
+		controller.requireSelectedPartnerKeyContext,
+		controller.requireValidPaymentMethod,
+		controller.assignLicenseContext,
+		makeLayout,
+		clientRender
+	);
+
 	// Manage payment methods.
 	if ( config.isEnabled( 'jetpack/partner-portal-payment' ) ) {
 		page(
-			`/partner-portal/payment-method`,
+			`/partner-portal/payment-methods`,
 			controller.requireAccessContext,
 			controller.requireTermsOfServiceConsentContext,
 			controller.requireSelectedPartnerKeyContext,
@@ -76,7 +77,7 @@ export default function () {
 		);
 
 		page(
-			`/partner-portal/payment-method/add`,
+			`/partner-portal/payment-methods/add`,
 			controller.requireAccessContext,
 			controller.requireTermsOfServiceConsentContext,
 			controller.requireSelectedPartnerKeyContext,
@@ -84,9 +85,40 @@ export default function () {
 			makeLayout,
 			clientRender
 		);
+
+		page(
+			`/partner-portal/invoices`,
+			controller.requireAccessContext,
+			controller.requireTermsOfServiceConsentContext,
+			controller.requireSelectedPartnerKeyContext,
+			controller.invoicesDashboardContext,
+			makeLayout,
+			clientRender
+		);
+
+		page(
+			`/partner-portal/company-details`,
+			controller.requireAccessContext,
+			controller.requireTermsOfServiceConsentContext,
+			controller.requireSelectedPartnerKeyContext,
+			controller.companyDetailsDashboardContext,
+			makeLayout,
+			clientRender
+		);
 	}
 
-	// Billing Dashboard.
+	// Pricing page
+	page(
+		`/partner-portal/prices`,
+		controller.requireAccessContext,
+		controller.requireTermsOfServiceConsentContext,
+		controller.requireSelectedPartnerKeyContext,
+		controller.pricesContext,
+		makeLayout,
+		clientRender
+	);
+
+	// Billing dashboard
 	page(
 		`/partner-portal/billing`,
 		controller.requireAccessContext,

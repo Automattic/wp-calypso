@@ -1,18 +1,26 @@
 .scan-upsell__content {
-	padding-top: 40px;
+	.jetpack-product-card__description {
+		@include breakpoint-deprecated( ">660px" ) {
+			min-height: 55px;
+		}
+	}
 
-
+	.jetpack-product-card__features-list {
+		margin-block-end: 1rem;
+	}
 }
 
 .scan-upsell__icon {
 	text-align: center;
 
 	img {
-		height: 72px;
+		height: 48px;
 		width: auto;
+		padding: 5px 0;
+		box-sizing: border-box;
 	}
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		text-align: start;
 	}
 }

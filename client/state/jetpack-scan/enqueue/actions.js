@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { JETPACK_SCAN_UPDATE, JETPACK_SCAN_ENQUEUE_REQUEST } from 'calypso/state/action-types';
 import { requestScanStatus } from 'calypso/state/jetpack-scan/actions';
 

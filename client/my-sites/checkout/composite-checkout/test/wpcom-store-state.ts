@@ -1,16 +1,9 @@
-/**
- * Internal dependencies
- */
+import { get } from 'lodash';
 import {
 	updateManagedContactDetailsShape,
 	mapManagedContactDetailsShape,
 	flattenManagedContactDetailsShape,
 } from '../types/wpcom-store-state';
-
-/**
- *  External dependencies
- */
-import { get } from 'lodash';
 import type { ManagedContactDetailsShape } from '@automattic/wpcom-checkout';
 
 describe( 'updateManagedContactDetailsShape', function () {
@@ -46,7 +39,6 @@ describe( 'updateManagedContactDetailsShape', function () {
 		'lastName',
 		'organization',
 		'email',
-		'alternateEmail',
 		'phone',
 		'phoneNumberCountry',
 		'address1',
@@ -91,7 +83,6 @@ describe( 'updateManagedContactDetailsShape', function () {
 			lastName: gen(),
 			organization: gen(),
 			email: gen(),
-			alternateEmail: gen(),
 			phone: gen(),
 			phoneNumberCountry: gen(),
 			address1: gen(),
@@ -236,7 +227,6 @@ describe( 'mapManagedContactDetailsShape', function () {
 		'lastName',
 		'organization',
 		'email',
-		'alternateEmail',
 		'phone',
 		'phoneNumberCountry',
 		'address1',
@@ -277,7 +267,6 @@ describe( 'mapManagedContactDetailsShape', function () {
 			lastName: gen(),
 			organization: gen(),
 			email: gen(),
-			alternateEmail: gen(),
 			phone: gen(),
 			phoneNumberCountry: gen(),
 			address1: gen(),
@@ -349,7 +338,6 @@ describe( 'flattenManagedContactDetailsShape', function () {
 				lastName: 'lastName',
 				organization: 'organization',
 				email: 'email',
-				alternateEmail: 'alternateEmail',
 				phone: 'phone',
 				phoneNumberCountry: 'phoneNumberCountry',
 				address1: 'address1',
@@ -362,7 +350,7 @@ describe( 'flattenManagedContactDetailsShape', function () {
 				vatId: 'vatId',
 				tldExtraFields: {},
 			} )
-		).toEqual( [ 9, 8, 12, 5, 14, 5, 18, 8, 8, 4, 5, 10, 11, 3, 5 ] );
+		).toEqual( [ 9, 8, 12, 5, 5, 18, 8, 8, 4, 5, 10, 11, 3, 5 ] );
 	} );
 
 	it( 'with ca fields', () => {
@@ -372,7 +360,6 @@ describe( 'flattenManagedContactDetailsShape', function () {
 				lastName: 'lastName',
 				organization: 'organization',
 				email: 'email',
-				alternateEmail: 'alternateEmail',
 				phone: 'phone',
 				phoneNumberCountry: 'phoneNumberCountry',
 				address1: 'address1',
@@ -391,7 +378,7 @@ describe( 'flattenManagedContactDetailsShape', function () {
 					},
 				},
 			} )
-		).toEqual( [ 9, 8, 12, 5, 14, 5, 18, 8, 8, 4, 5, 10, 11, 3, 5, 4, 9, 21 ] );
+		).toEqual( [ 9, 8, 12, 5, 5, 18, 8, 8, 4, 5, 10, 11, 3, 5, 4, 9, 21 ] );
 	} );
 
 	it( 'with uk fields', () => {
@@ -401,7 +388,6 @@ describe( 'flattenManagedContactDetailsShape', function () {
 				lastName: 'lastName',
 				organization: 'organization',
 				email: 'email',
-				alternateEmail: 'alternateEmail',
 				phone: 'phone',
 				phoneNumberCountry: 'phoneNumberCountry',
 				address1: 'address1',
@@ -420,7 +406,7 @@ describe( 'flattenManagedContactDetailsShape', function () {
 					},
 				},
 			} )
-		).toEqual( [ 9, 8, 12, 5, 14, 5, 18, 8, 8, 4, 5, 10, 11, 3, 5, 14, 18, 11 ] );
+		).toEqual( [ 9, 8, 12, 5, 5, 18, 8, 8, 4, 5, 10, 11, 3, 5, 14, 18, 11 ] );
 	} );
 
 	it( 'with fr fields', () => {
@@ -430,7 +416,6 @@ describe( 'flattenManagedContactDetailsShape', function () {
 				lastName: 'lastName',
 				organization: 'organization',
 				email: 'email',
-				alternateEmail: 'alternateEmail',
 				phone: 'phone',
 				phoneNumberCountry: 'phoneNumberCountry',
 				address1: 'address1',
@@ -449,7 +434,7 @@ describe( 'flattenManagedContactDetailsShape', function () {
 					},
 				},
 			} )
-		).toEqual( [ 9, 8, 12, 5, 14, 5, 18, 8, 8, 4, 5, 10, 11, 3, 5, 14, 15, 10 ] );
+		).toEqual( [ 9, 8, 12, 5, 5, 18, 8, 8, 4, 5, 10, 11, 3, 5, 14, 15, 10 ] );
 	} );
 
 	it( 'with all fields', () => {
@@ -459,7 +444,6 @@ describe( 'flattenManagedContactDetailsShape', function () {
 				lastName: 'lastName',
 				organization: 'organization',
 				email: 'email',
-				alternateEmail: 'alternateEmail',
 				phone: 'phone',
 				phoneNumberCountry: 'phoneNumberCountry',
 				address1: 'address1',
@@ -488,31 +472,6 @@ describe( 'flattenManagedContactDetailsShape', function () {
 					},
 				},
 			} )
-		).toEqual( [
-			9,
-			8,
-			12,
-			5,
-			14,
-			5,
-			18,
-			8,
-			8,
-			4,
-			5,
-			10,
-			11,
-			3,
-			5,
-			4,
-			9,
-			21,
-			14,
-			18,
-			11,
-			14,
-			15,
-			10,
-		] );
+		).toEqual( [ 9, 8, 12, 5, 5, 18, 8, 8, 4, 5, 10, 11, 3, 5, 4, 9, 21, 14, 18, 11, 14, 15, 10 ] );
 	} );
 } );

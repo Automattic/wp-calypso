@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
+import { translate } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { contextTypes } from '../context-types';
 
 export default class Next extends Component {

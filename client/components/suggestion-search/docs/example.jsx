@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
-import React, { useState } from 'react';
-
-/**
- * Internal dependencies
- */
+import { useState } from 'react';
 import SuggestionSearch from '../';
 
 const SuggestionSearchExample = () => {

@@ -1,0 +1,14 @@
+@import "@automattic/typography/styles/variables.scss";
+@import "@automattic/components/src/styles/typography.scss";
+
+$display-type-font: $sans;
+$display-type-weight: 400;
+$display-type-line-height: 40px;
+
+// Manual styling override mixin for Jetpack.
+@mixin stats-section-header-for-jetpack {
+	font-family: $display-type-font;
+	font-size: $font-size-header;
+	font-weight: $display-type-weight;
+	line-height: $display-type-line-height;
+}

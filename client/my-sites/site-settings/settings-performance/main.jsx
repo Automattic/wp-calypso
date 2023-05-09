@@ -1,43 +1,39 @@
-/**
- * External dependencies
- */
-
-import React, { Component, Fragment } from 'react';
-import { connect } from 'react-redux';
+import config from '@automattic/calypso-config';
+import { WPCOM_FEATURES_MANAGE_PLUGINS } from '@automattic/calypso-products';
+import { CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { flowRight, partialRight, pick } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import { pick } from 'lodash';
+import { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
+import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
+import DocumentHead from 'calypso/components/data/document-head';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
+import FormattedHeader from 'calypso/components/formatted-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import Main from 'calypso/components/main';
 import AmpJetpack from 'calypso/my-sites/site-settings/amp/jetpack';
 import AmpWpcom from 'calypso/my-sites/site-settings/amp/wpcom';
 import Cloudflare from 'calypso/my-sites/site-settings/cloudflare';
-import DocumentHead from 'calypso/components/data/document-head';
-import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mode-notice';
-import Main from 'calypso/components/main';
 import MediaSettingsPerformance from 'calypso/my-sites/site-settings/media-settings-performance';
-import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
+import SiteSettingsNavigation from 'calypso/my-sites/site-settings/navigation';
 import Search from 'calypso/my-sites/site-settings/search';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import FormattedHeader from 'calypso/components/formatted-header';
-import SiteSettingsNavigation from 'calypso/my-sites/site-settings/navigation';
 import SpeedUpYourSite from 'calypso/my-sites/site-settings/speed-up-site-settings';
 import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form';
-import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
-import config from '@automattic/calypso-config';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class SiteSettingsPerformance extends Component {
 	render() {
 		const {
 			fields,
 			handleAutosavingToggle,
+			hasManagePluginsFeature,
 			isRequestingSettings,
 			isSavingSettings,
 			onChangeField,
@@ -62,12 +58,24 @@ class SiteSettingsPerformance extends Component {
 			<Main className="settings-performance site-settings site-settings__performance-settings">
 				<DocumentHead title={ translate( 'Performance Settings' ) } />
 				<JetpackDevModeNotice />
-				<SidebarNavigation />
 				<FormattedHeader
 					brandFont
 					className="settings-performance__page-heading"
 					headerText={ translate( 'Performance Settings' ) }
-					subHeaderText={ translate( "Explore settings to improve your site's performance." ) }
+					subHeaderText={ translate(
+						"Explore settings to improve your site's performance. {{learnMoreLink}}Learn more{{/learnMoreLink}}.",
+						{
+							components: {
+								learnMoreLink: (
+									<InlineSupportLink
+										key="learnMore"
+										supportContext="performance"
+										showIcon={ false }
+									/>
+								),
+							},
+						}
+					) }
 					align="left"
 				/>
 				<SiteSettingsNavigation site={ site } section="performance" />
@@ -86,7 +94,7 @@ class SiteSettingsPerformance extends Component {
 
 				{ showCloudflare && ! siteIsJetpackNonAtomic && <Cloudflare /> }
 
-				{ siteIsJetpack && (
+				{ ( siteIsJetpackNonAtomic || ( siteIsAtomic && hasManagePluginsFeature ) ) && (
 					<Fragment>
 						<QueryJetpackModules siteId={ siteId } />
 
@@ -107,6 +115,7 @@ class SiteSettingsPerformance extends Component {
 									isRequestingSettings={ isRequestingSettings }
 									submitForm={ submitForm }
 									updateFields={ updateFields }
+									siteIsAtomic={ siteIsAtomic }
 								/>
 
 								<SettingsSectionHeader title={ translate( 'Media' ) } />
@@ -118,13 +127,14 @@ class SiteSettingsPerformance extends Component {
 									isSavingSettings={ isSavingSettings }
 									isRequestingSettings={ isRequestingSettings }
 									fields={ fields }
+									siteIsAtomic={ siteIsAtomic }
 								/>
 							</>
 						) }
 					</Fragment>
 				) }
 
-				{ siteIsJetpack ? (
+				{ siteIsJetpackNonAtomic || ( siteIsAtomic && hasManagePluginsFeature ) ? (
 					<AmpJetpack />
 				) : (
 					<AmpWpcom
@@ -135,6 +145,14 @@ class SiteSettingsPerformance extends Component {
 						isRequestingSettings={ isRequestingSettings }
 						fields={ fields }
 					/>
+				) }
+
+				{ ( ! siteIsJetpack || siteIsAtomic ) && (
+					<CompactCard>
+						<InlineSupportLink supportContext="site-speed" showIcon={ false }>
+							{ translate( 'Learn more about site speed and performance' ) }
+						</InlineSupportLink>
+					</CompactCard>
 				) }
 			</Main>
 		);
@@ -150,6 +168,7 @@ const connectComponent = connect( ( state ) => {
 	const showCloudflare = config.isEnabled( 'cloudflare' );
 
 	return {
+		hasManagePluginsFeature: siteHasFeature( state, siteId, WPCOM_FEATURES_MANAGE_PLUGINS ),
 		site,
 		siteIsJetpack,
 		siteIsAtomic,
@@ -160,19 +179,19 @@ const connectComponent = connect( ( state ) => {
 	};
 } );
 
-const getFormSettings = partialRight( pick, [
-	'amp_is_enabled',
-	'amp_is_supported',
-	'instant_search_enabled',
-	'jetpack_search_enabled',
-	'jetpack_search_supported',
-	'lazy-images',
-	'photon',
-	'photon-cdn',
-] );
+const getFormSettings = ( settings ) =>
+	pick( settings, [
+		'amp_is_enabled',
+		'amp_is_supported',
+		'amp_is_deprecated',
+		'instant_search_enabled',
+		'jetpack_search_enabled',
+		'jetpack_search_supported',
+		'lazy-images',
+		'photon',
+		'photon-cdn',
+	] );
 
-export default flowRight(
-	connectComponent,
-	localize,
-	wrapSettingsForm( getFormSettings )
-)( SiteSettingsPerformance );
+export default connectComponent(
+	localize( wrapSettingsForm( getFormSettings )( SiteSettingsPerformance ) )
+);

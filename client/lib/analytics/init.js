@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import debugModule from 'debug';
-
-/**
- * Internal dependencies
- */
 import {
 	initializeAnalytics as initializeCalypsoAnalytics,
 	getTracksAnonymousUserId,
 	getCurrentUser,
 } from '@automattic/calypso-analytics';
+import debugModule from 'debug';
 
 /**
  * Module variables

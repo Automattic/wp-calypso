@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	MEMBERSHIPS_PRODUCTS_RECEIVE,
 	MEMBERSHIPS_PRODUCTS_LIST,
@@ -11,10 +8,9 @@ import {
 	MEMBERSHIPS_SETTINGS,
 	MEMBERSHIPS_SETTINGS_RECEIVE,
 } from 'calypso/state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 const noop = () => {};
 
@@ -30,6 +26,7 @@ export const membershipProductFromApi = ( product ) => ( {
 	multiple_per_user: product.multiple_per_user,
 	subscribe_as_site_subscriber: product.subscribe_as_site_subscriber,
 	welcome_email_content: product.welcome_email_content,
+	type: product.type,
 } );
 
 export const handleMembershipProductsList = dispatchRequest( {
@@ -37,7 +34,7 @@ export const handleMembershipProductsList = dispatchRequest( {
 		http(
 			{
 				method: 'GET',
-				path: `/sites/${ action.siteId }/memberships/products`,
+				path: `/sites/${ action.siteId }/memberships/products?type=all&is_editable=true`,
 			},
 			action
 		),
@@ -94,7 +91,7 @@ export const handleMembershipGetSettings = dispatchRequest( {
 		http(
 			{
 				method: 'GET',
-				path: `/sites/${ action.siteId }/memberships/status?source=calypso`,
+				path: `/sites/${ action.siteId }/memberships/status?source=${ action.source }`,
 				apiNamespace: 'wpcom/v2',
 			},
 			action

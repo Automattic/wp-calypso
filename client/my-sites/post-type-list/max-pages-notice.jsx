@@ -1,21 +1,10 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 
-/**
- * Style dependencies
- */
 import './max-pages-notice.scss';
 
 class PostTypeListMaxPagesNotice extends Component {
@@ -24,7 +13,7 @@ class PostTypeListMaxPagesNotice extends Component {
 		totalPosts: PropTypes.number,
 	};
 
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		this.props.recordTracksEvent( 'calypso_post_type_list_max_pages_view' );
 	}
 
@@ -43,6 +32,7 @@ class PostTypeListMaxPagesNotice extends Component {
 					'Showing %(displayedPosts)d post of %(totalPosts)d.',
 					'Showing %(displayedPosts)d posts of %(totalPosts)d.',
 					{
+						count: displayedPosts,
 						args: {
 							displayedPosts,
 							totalPosts,

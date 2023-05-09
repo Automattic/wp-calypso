@@ -5,9 +5,9 @@ This component renders a two column layout and works together with the `column` 
 ## How to use
 
 ```js
+import { Card } from '@automattic/components';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
-import { Card } from '@automattic/components';
 
 function render() {
 	return (

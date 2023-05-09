@@ -1,14 +1,10 @@
-/**
- * Internal dependencies
- */
-
-import { combineReducers } from 'calypso/state/utils';
 import {
 	EMAIL_VERIFY_REQUEST,
 	EMAIL_VERIFY_REQUEST_SUCCESS,
 	EMAIL_VERIFY_REQUEST_FAILURE,
 	EMAIL_VERIFY_STATE_RESET,
 } from 'calypso/state/action-types';
+import { combineReducers } from 'calypso/state/utils';
 
 export const status = ( state = null, action ) => {
 	switch ( action.type ) {

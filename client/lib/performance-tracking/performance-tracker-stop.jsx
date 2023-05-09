@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { usePerformanceTrackerStop } from './use-performance-tracker-stop';
 
 const PerformanceTrackerStop = () => {

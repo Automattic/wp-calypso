@@ -1,27 +1,22 @@
-/**
- * External dependencies
- */
-import React, { Component, Fragment } from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import { getPlanClass } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import PlanThankYouCard from 'calypso/blocks/plan-thank-you-card';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import { getPlanClass } from '@automattic/calypso-products';
+import { isWcMobileApp } from 'calypso/lib/mobile-app';
+import wpcom from 'calypso/lib/wp';
+import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import {
 	getCurrentUserEmail,
 	isCurrentUserEmailVerified,
 } from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
-import { fetchCurrentUser } from 'calypso/state/current-user/actions';
-import wpcom from 'calypso/lib/wp';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import { getSiteWooCommerceWizardUrl } from 'calypso/state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const VERIFY_EMAIL_ERROR_NOTICE = 'ecommerce-verify-email-error';
 const RESEND_ERROR = 'RESEND_ERROR';
@@ -56,24 +51,21 @@ class AtomicStoreThankYouCard extends Component {
 
 		this.setState( { resendStatus: RESEND_PENDING } );
 
-		wpcom
-			.undocumented()
-			.me()
-			.sendVerificationEmail( ( error ) => {
-				if ( error ) {
-					this.props.errorNotice(
-						translate( "Couldn't resend verification email. Please try again." ),
-						{
-							id: VERIFY_EMAIL_ERROR_NOTICE,
-						}
-					);
+		wpcom.req.post( '/me/send-verification-email', ( error ) => {
+			if ( error ) {
+				this.props.errorNotice(
+					translate( "Couldn't resend verification email. Please try again." ),
+					{
+						id: VERIFY_EMAIL_ERROR_NOTICE,
+					}
+				);
 
-					this.setState( { resendStatus: RESEND_ERROR } );
-					return;
-				}
+				this.setState( { resendStatus: RESEND_ERROR } );
+				return;
+			}
 
-				this.setState( { resendStatus: RESEND_SUCCESS } );
-			} );
+			this.setState( { resendStatus: RESEND_SUCCESS } );
+		} );
 	};
 
 	resendButtonText = () => {
@@ -93,8 +85,12 @@ class AtomicStoreThankYouCard extends Component {
 	};
 
 	renderAction = () => {
-		const { isEmailVerified, site, translate } = this.props;
+		const { isEmailVerified, translate, siteWooCommerceWizardUrl } = this.props;
 		const { resendStatus } = this.state;
+
+		if ( isWcMobileApp() ) {
+			return <></>; // Non-empty return so that action default doesn't get applied instead.
+		}
 
 		if ( ! isEmailVerified ) {
 			return (
@@ -115,7 +111,7 @@ class AtomicStoreThankYouCard extends Component {
 			<div className="checkout-thank-you__atomic-store-action-buttons">
 				<a
 					className={ classNames( 'button', 'thank-you-card__button' ) }
-					href={ site.URL + '/wp-admin/admin.php?page=wc-admin&path=%2Fsetup-wizard' }
+					href={ siteWooCommerceWizardUrl }
 				>
 					{ translate( 'Create your store!' ) }
 				</a>
@@ -125,6 +121,10 @@ class AtomicStoreThankYouCard extends Component {
 
 	renderDescription() {
 		const { emailAddress, isEmailVerified, translate } = this.props;
+
+		if ( isWcMobileApp() ) {
+			return translate( 'One moment while we create your store.' );
+		}
 
 		if ( ! isEmailVerified ) {
 			return (
@@ -174,6 +174,7 @@ export default connect(
 		const planClass = plan && plan.productSlug ? getPlanClass( plan.productSlug ) : '';
 		const emailAddress = getCurrentUserEmail( state );
 		const isEmailVerified = isCurrentUserEmailVerified( state );
+		const siteWooCommerceWizardUrl = getSiteWooCommerceWizardUrl( state, siteId );
 
 		return {
 			siteId,
@@ -181,6 +182,7 @@ export default connect(
 			emailAddress,
 			isEmailVerified,
 			planClass,
+			siteWooCommerceWizardUrl,
 		};
 	},
 	{ errorNotice, fetchCurrentUser, removeNotice }

@@ -1,28 +1,19 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Button, Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import SectionHeader from 'calypso/components/section-header';
+import { bumpTwoStepAuthMCStat } from 'calypso/lib/two-step-authorization';
+import wp from 'calypso/lib/wp';
 import Security2faBackupCodesList from 'calypso/me/security-2fa-backup-codes-list';
 import Security2faBackupCodesPrompt from 'calypso/me/security-2fa-backup-codes-prompt';
-import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class Security2faBackupCodes extends React.Component {
+class Security2faBackupCodes extends Component {
 	constructor( props ) {
 		super( props );
 
@@ -46,20 +37,15 @@ class Security2faBackupCodes extends React.Component {
 			showPrompt: true,
 		} );
 
-		twoStepAuthorization.backupCodes( this.onRequestComplete );
-	};
+		wp.req.post( '/me/two-step/backup-codes/new', ( error, data ) => {
+			if ( ! error ) {
+				bumpTwoStepAuthMCStat( 'new-backup-codes-success' );
 
-	onRequestComplete = ( error, data ) => {
-		if ( error ) {
-			this.setState( {
-				lastError: this.props.translate( 'Unable to obtain backup codes. Please try again later.' ),
-			} );
-			return;
-		}
-
-		this.setState( {
-			backupCodes: data.codes,
-			generatingCodes: false,
+				this.setState( {
+					backupCodes: data.codes,
+					generatingCodes: false,
+				} );
+			}
 		} );
 	};
 
@@ -124,9 +110,7 @@ class Security2faBackupCodes extends React.Component {
 			<div>
 				<p>
 					{ this.props.translate(
-						'Backup codes let you access your account if your phone is ' +
-							'lost, stolen, or if you run it through the washing ' +
-							"machine and the bag of rice trick doesn't work."
+						'Backup codes let you access your account if your phone is lost or stolen, or even just accidentally run through the washing machine!'
 					) }
 				</p>
 

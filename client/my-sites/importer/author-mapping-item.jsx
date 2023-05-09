@@ -1,23 +1,13 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
-import { connect } from 'react-redux';
+import { Gridicon } from '@automattic/components';
+import { createHigherOrderComponent } from '@wordpress/compose';
+import { localize } from 'i18n-calypso';
 import { defer } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
 import AuthorSelector from 'calypso/blocks/author-selector';
 import User from 'calypso/components/user';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import useUsersQuery from 'calypso/data/users/use-users-query';
 import { decodeEntities } from 'calypso/lib/formatting';
-
-/**
- * Style dependencies
- */
 import './author-mapping-item.scss';
 
 const userShape = ( nameField ) =>
@@ -27,7 +17,7 @@ const userShape = ( nameField ) =>
 		avatar_URL: PropTypes.string.isRequired,
 	} );
 
-class ImporterAuthorMapping extends React.Component {
+class ImporterAuthorMapping extends PureComponent {
 	static displayName = 'ImporterAuthorMapping';
 
 	static propTypes = {
@@ -37,6 +27,7 @@ class ImporterAuthorMapping extends React.Component {
 		sourceAuthor: PropTypes.shape( {
 			id: PropTypes.string.isRequired,
 			name: PropTypes.string.isRequired,
+			icon: PropTypes.string,
 			// `currentUser` has `.display_name` and is used to map author on single author sites
 			// `users` endpoint returns `.name` and is used for multiple author sites
 			mappedTo: PropTypes.oneOfType( [ userShape( 'name' ), userShape( 'display_name' ) ] ),
@@ -45,9 +36,18 @@ class ImporterAuthorMapping extends React.Component {
 	};
 
 	componentDidMount() {
-		const { hasSingleAuthor, onSelect: selectAuthor } = this.props;
+		this.setAuthor();
+	}
 
-		if ( hasSingleAuthor ) {
+	componentDidUpdate( prevProps ) {
+		if ( ! prevProps.users.length && this.props.users.length ) {
+			this.setAuthor();
+		}
+	}
+
+	setAuthor = () => {
+		const { hasSingleAuthor, onSelect: selectAuthor, users } = this.props;
+		if ( hasSingleAuthor && users.length ) {
 			/**
 			 * Using `defer` here is a leftover from using Flux store in the past.
 			 *
@@ -60,9 +60,9 @@ class ImporterAuthorMapping extends React.Component {
 			 * TODO: Refactor this to not automate the UI but use proper state
 			 * TODO: A better way might be to handle this call in the backend and leave the UI out of the decision
 			 */
-			defer( () => selectAuthor( this.props.currentUser ) );
+			defer( () => selectAuthor( users[ 0 ] ) );
 		}
-	}
+	};
 
 	render() {
 		const {
@@ -70,28 +70,55 @@ class ImporterAuthorMapping extends React.Component {
 			siteId,
 			onSelect,
 			sourceAuthor: {
+				icon,
 				name,
 				mappedTo: selectedAuthor = { name: /* Don't translate yet */ 'Choose an author…' },
 			},
-			currentUser,
+			users,
 		} = this.props;
 
 		return (
 			<div className="importer__author-mapping">
-				<span className="importer__source-author">{ decodeEntities( name ) }</span>
+				<span className="importer__source-author">
+					{ icon ? (
+						<img
+							className="importer__icon"
+							alt={ name }
+							title={ name }
+							src={ icon }
+							width="26"
+							height="26"
+						/>
+					) : (
+						''
+					) }
+					<span>{ decodeEntities( name ) }</span>
+				</span>
 				<Gridicon className="importer__mapping-relation" icon="arrow-right" />
 				{ ! hasSingleAuthor ? (
 					<AuthorSelector siteId={ siteId } onSelect={ onSelect }>
 						<User user={ selectedAuthor } />
 					</AuthorSelector>
 				) : (
-					<User user={ currentUser } />
+					<User user={ users[ 0 ] } />
 				) }
 			</div>
 		);
 	}
 }
 
-export default connect( ( state ) => ( {
-	currentUser: getCurrentUser( state ),
-} ) )( ImporterAuthorMapping );
+const withUsers = createHigherOrderComponent(
+	( Component ) => ( props ) => {
+		const { siteId } = props;
+		const { data } = useUsersQuery( siteId, {
+			authors_only: 1,
+		} );
+
+		const users = data?.users ?? [];
+
+		return <Component users={ users } { ...props } />;
+	},
+	'withUsers'
+);
+
+export default localize( withUsers( ImporterAuthorMapping ) );

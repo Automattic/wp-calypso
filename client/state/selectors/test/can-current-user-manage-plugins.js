@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-user-manage-plugins';
 
 describe( 'canCurrentUserManagePlugins()', () => {
@@ -15,7 +7,7 @@ describe( 'canCurrentUserManagePlugins()', () => {
 				capabilities: {},
 			},
 		};
-		expect( canCurrentUserManagePlugins( state ) ).be.false;
+		expect( canCurrentUserManagePlugins( state ) ).toBe( false );
 	} );
 
 	test( 'should return false if one site capability exists without referring if the user can manage it or not', () => {
@@ -28,7 +20,7 @@ describe( 'canCurrentUserManagePlugins()', () => {
 				},
 			},
 		};
-		expect( canCurrentUserManagePlugins( state ) ).be.false;
+		expect( canCurrentUserManagePlugins( state ) ).toBe( false );
 	} );
 
 	test( 'should return false if several sites capabilities exists without referring if the user can manage it or not', () => {
@@ -45,7 +37,7 @@ describe( 'canCurrentUserManagePlugins()', () => {
 				},
 			},
 		};
-		expect( canCurrentUserManagePlugins( state ) ).be.false;
+		expect( canCurrentUserManagePlugins( state ) ).toBe( false );
 	} );
 
 	test( 'should return false if sites capabilities explicitly tell the user can not manage', () => {
@@ -66,7 +58,7 @@ describe( 'canCurrentUserManagePlugins()', () => {
 				},
 			},
 		};
-		expect( canCurrentUserManagePlugins( state ) ).be.false;
+		expect( canCurrentUserManagePlugins( state ) ).toBe( false );
 	} );
 
 	test( 'should return true if just one site capability exists and the user can manage it', () => {
@@ -79,7 +71,7 @@ describe( 'canCurrentUserManagePlugins()', () => {
 				},
 			},
 		};
-		expect( canCurrentUserManagePlugins( state ) ).be.true;
+		expect( canCurrentUserManagePlugins( state ) ).toBe( true );
 	} );
 
 	test( 'should return true if many sites capabilities exist and the user can manage in all of them', () => {
@@ -100,7 +92,7 @@ describe( 'canCurrentUserManagePlugins()', () => {
 				},
 			},
 		};
-		expect( canCurrentUserManagePlugins( state ) ).be.true;
+		expect( canCurrentUserManagePlugins( state ) ).toBe( true );
 	} );
 
 	test( 'should return true if many sites capabilities exist and the user can manage in just one', () => {
@@ -121,6 +113,6 @@ describe( 'canCurrentUserManagePlugins()', () => {
 				},
 			},
 		};
-		expect( canCurrentUserManagePlugins( state ) ).be.true;
+		expect( canCurrentUserManagePlugins( state ) ).toBe( true );
 	} );
 } );

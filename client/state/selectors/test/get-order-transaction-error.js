@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getOrderTransactionError from 'calypso/state/selectors/get-order-transaction-error';
 
 describe( 'getOrderTransactionError()', () => {

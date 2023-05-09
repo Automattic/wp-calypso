@@ -1,25 +1,19 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { WPCOM_FEATURES_SCAN } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import SectionNav from 'calypso/components/section-nav';
-import NavTabs from 'calypso/components/section-nav/tabs';
 import NavItem from 'calypso/components/section-nav/item';
-import { siteHasScanProductPurchase } from 'calypso/state/purchases/selectors';
-import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
-import isSiteFailedMigrationSource from 'calypso/state/selectors/is-site-failed-migration-source';
-import isRewindActive from 'calypso/state/selectors/is-rewind-active';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getSiteOption, isJetpackSite } from 'calypso/state/sites/selectors';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import NavTabs from 'calypso/components/section-nav/tabs';
 import versionCompare from 'calypso/lib/version-compare';
+import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
+import isRewindActive from 'calypso/state/selectors/is-rewind-active';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteFailedMigrationSource from 'calypso/state/selectors/is-site-failed-migration-source';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { getSiteOption, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export class SiteSettingsNavigation extends Component {
 	static propTypes = {
@@ -52,11 +46,6 @@ export class SiteSettingsNavigation extends Component {
 
 		if ( ! site ) {
 			return <SectionNav />;
-		}
-
-		if ( section === 'guidedTransfer' ) {
-			// Dont show the navigation for guided transfer since it includes its own back navigation
-			return null;
 		}
 
 		return (
@@ -134,7 +123,7 @@ export default connect( ( state ) => {
 		shouldShowJetpackSettings:
 			siteId &&
 			isJetpackSectionEnabledForSite( state, siteId ) &&
-			( siteHasScanProductPurchase( state, siteId ) ||
+			( siteHasFeature( state, siteId, WPCOM_FEATURES_SCAN ) ||
 				isRewindActive( state, siteId ) ||
 				isSiteFailedMigrationSource( state, siteId ) ),
 	};

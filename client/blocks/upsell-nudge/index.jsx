@@ -1,13 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import classnames from 'classnames';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import {
 	planMatches,
 	isBloggerPlan,
@@ -17,34 +7,42 @@ import {
 	isEcommercePlan,
 	GROUP_JETPACK,
 	GROUP_WPCOM,
-	FEATURE_NO_ADS,
+	WPCOM_FEATURES_NO_ADVERTS,
 	isFreePlanProduct,
 } from '@automattic/calypso-products';
+import classnames from 'classnames';
+import debugFactory from 'debug';
+import { connect } from 'react-redux';
 import Banner from 'calypso/components/banner';
 import { addQueryArgs } from 'calypso/lib/url';
-import { hasFeature } from 'calypso/state/sites/plans/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
-import isVipSite from 'calypso/state/selectors/is-vip-site';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { getSite, isJetpackSite } from 'calypso/state/sites/selectors';
-import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import { getSite, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
+const debug = debugFactory( 'calypso:upsell-nudge' );
+
+/**
+ * @param {any} props Props declared as `any` to prevent errors in TSX files that use this component.
+ */
 export const UpsellNudge = ( {
 	callToAction,
 	canManageSite,
 	canUserUpgrade,
 	className,
 	compact,
+	compactButton,
 	customerType,
 	description,
 	disableHref,
 	dismissPreferenceName,
+	dismissTemporary,
 	event,
 	feature,
 	forceDisplay,
@@ -57,13 +55,15 @@ export const UpsellNudge = ( {
 	isVip,
 	siteIsWPForTeams,
 	list,
+	renderListItem,
 	onClick,
 	onDismissClick,
 	plan,
-	planHasFeature,
 	price,
 	primaryButton,
+	selectedSiteHasFeature,
 	showIcon = false,
+	icon = 'star',
 	site,
 	siteSlug,
 	target,
@@ -74,6 +74,7 @@ export const UpsellNudge = ( {
 	tracksDismissProperties,
 	tracksImpressionName,
 	tracksImpressionProperties,
+	displayAsLink,
 } ) => {
 	const shouldNotDisplay =
 		isVip ||
@@ -81,9 +82,9 @@ export const UpsellNudge = ( {
 		! site ||
 		typeof site !== 'object' ||
 		typeof site.jetpack !== 'boolean' ||
-		( feature && planHasFeature ) ||
+		( feature && selectedSiteHasFeature ) ||
 		( ! feature && ! isFreePlanProduct( site.plan ) ) ||
-		( feature === FEATURE_NO_ADS && site.options.wordads ) ||
+		( feature === WPCOM_FEATURES_NO_ADVERTS && site.options.wordads ) ||
 		( ! isJetpack && site.jetpack ) ||
 		( isJetpack && ! site.jetpack );
 
@@ -115,25 +116,34 @@ export const UpsellNudge = ( {
 		{ 'is-wpcom-plan': plan && planMatches( plan, { group: GROUP_WPCOM } ) }
 	);
 
+	if ( dismissPreferenceName && forceHref && href ) {
+		debug(
+			"It's not possible to force the whole banner to be a link when it needs to link and be dismissable"
+		);
+	}
+
 	return (
 		<Banner
 			callToAction={ callToAction }
 			className={ classes }
 			compact={ compact }
+			compactButton={ compactButton }
 			description={ description }
 			disableHref={ disableHref }
 			dismissPreferenceName={ dismissPreferenceName }
+			dismissTemporary={ dismissTemporary }
 			event={ event }
 			feature={ feature }
 			forceHref={ forceHref }
 			horizontal={ horizontal }
 			href={ href }
-			icon="star"
+			icon={ icon }
 			jetpack={ isJetpack || isJetpackDevDocs } //Force show Jetpack example in Devdocs
 			isAtomic={ isAtomic }
 			list={ list }
+			renderListItem={ renderListItem }
 			onClick={ onClick }
-			onDismissClick={ onDismissClick }
+			onDismiss={ onDismissClick }
 			plan={ plan }
 			price={ price }
 			primaryButton={ primaryButton }
@@ -146,12 +156,14 @@ export const UpsellNudge = ( {
 			tracksDismissProperties={ tracksDismissProperties }
 			tracksImpressionName={ tracksImpressionName }
 			tracksImpressionProperties={ tracksImpressionProperties }
+			displayAsLink={ displayAsLink }
 		/>
 	);
 };
 
 UpsellNudge.defaultProps = {
 	primaryButton: true,
+	compactButton: true,
 };
 
 export default connect( ( state, ownProps ) => {
@@ -159,11 +171,12 @@ export default connect( ( state, ownProps ) => {
 
 	return {
 		site: getSite( state, siteId ),
-		planHasFeature: hasFeature( state, siteId, ownProps.feature ),
+		selectedSiteHasFeature: siteHasFeature( state, siteId, ownProps.feature ),
 		canManageSite: canCurrentUser( state, siteId, 'manage_options' ),
 		isJetpack: isJetpackSite( state, siteId ),
 		isAtomic: isSiteAutomatedTransfer( state, siteId ),
 		isVip: isVipSite( state, siteId ),
+		currentPlan: getCurrentPlan( state, siteId ),
 		siteSlug: ownProps.disableHref ? null : getSelectedSiteSlug( state ),
 		canUserUpgrade: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
 		siteIsWPForTeams: isSiteWPForTeams( state, getSelectedSiteId( state ) ),

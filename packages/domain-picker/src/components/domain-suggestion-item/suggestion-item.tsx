@@ -1,30 +1,16 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-/**
- * External dependencies
- */
-import * as React from 'react';
-import classnames from 'classnames';
-import { useI18n } from '@wordpress/react-i18n';
 import { recordTrainTracksInteract } from '@automattic/calypso-analytics';
 import { useLocale, useLocalizeUrl } from '@automattic/i18n-utils';
-
-/**
- * Wordpress dependencies
- */
-import { createInterpolateElement } from '@wordpress/element';
 import { Spinner, Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-
+import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
-
-/**
- * Internal dependencies
- */
+import { useI18n } from '@wordpress/react-i18n';
+import classnames from 'classnames';
+import * as React from 'react';
 import InfoTooltip from '../info-tooltip';
 import WrappingComponent from './suggestion-item-wrapper';
-// TODO: remove when all needed core types are available
-/*#__PURE__*/ import '../../types-patch';
 
 export const SUGGESTION_ITEM_TYPE_RADIO = 'radio';
 export const SUGGESTION_ITEM_TYPE_BUTTON = 'button';
@@ -40,6 +26,7 @@ interface Props {
 	isLoading?: boolean;
 	cost?: string;
 	hstsRequired?: boolean;
+	isDotGayNoticeRequired?: boolean;
 	isFree?: boolean;
 	isExistingSubdomain?: boolean;
 	isRecommended?: boolean;
@@ -58,6 +45,7 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 	cost,
 	railcarId,
 	hstsRequired = false,
+	isDotGayNoticeRequired = false,
 	isFree = false,
 	isExistingSubdomain = false,
 	isRecommended = false,
@@ -170,7 +158,7 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 				<div className="domain-picker__suggestion-item-name-inner">
 					<span
 						className={ classnames( 'domain-picker__domain-wrapper', {
-							'with-margin': ! hstsRequired,
+							'with-margin': ! ( hstsRequired || isDotGayNoticeRequired ),
 						} ) }
 					>
 						<span className="domain-picker__domain-sub-domain">{ domainName }</span>
@@ -198,10 +186,22 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 										<a
 											target="_blank"
 											rel="noreferrer"
-											href={ localizeUrl( 'https://wordpress.com/support/https-ssl' ) }
+											href={ localizeUrl( 'https://wordpress.com/support/domains/https-ssl/' ) }
 										/>
 									),
 								}
+							) }
+						</InfoTooltip>
+					) }
+					{ isDotGayNoticeRequired && (
+						<InfoTooltip
+							position={ isMobile ? 'bottom center' : 'middle right' }
+							noArrow={ false }
+							className="domain-picker__info-tooltip"
+						>
+							{ __(
+								'Any anti-LGBTQ content is prohibited and can result in registration termination. The registry will donate 20% of all registration revenue to LGBTQ non-profit organizations.',
+								__i18n_text_domain__
 							) }
 						</InfoTooltip>
 					) }

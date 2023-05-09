@@ -1,27 +1,21 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import ReaderPostCard from 'calypso/blocks/reader-post-card';
-import { getSite } from 'calypso/state/reader/sites/selectors';
-import { getFeed } from 'calypso/state/reader/feeds/selectors';
-import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
-import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
+import QueryReaderPost from 'calypso/components/data/query-reader-post';
+import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import {
 	getSourceData as getDiscoverSourceData,
 	discoverBlogId,
 } from 'calypso/reader/discover/helper';
+import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
+import { getFeed } from 'calypso/state/reader/feeds/selectors';
+import { getReaderFollowForFeed } from 'calypso/state/reader/follows/selectors';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
-import QueryReaderPost from 'calypso/components/data/query-reader-post';
+import { getSite } from 'calypso/state/reader/sites/selectors';
 
-class ReaderPostCardAdapter extends React.Component {
+class ReaderPostCardAdapter extends Component {
 	static displayName = 'ReaderPostCardAdapter';
 
 	onClick = ( postToOpen ) => {
@@ -86,11 +80,9 @@ class ReaderPostCardAdapter extends React.Component {
 				postKey={ this.props.postKey }
 				compact={ this.props.compact }
 			>
-				{ feedId && <QueryReaderFeed feedId={ feedId } includeMeta={ false } /> }
-				{ ! isExternal && siteId && <QueryReaderSite siteId={ +siteId } includeMeta={ false } /> }
-				{ isDiscover && (
-					<QueryReaderSite siteId={ discoverPostKey.blogId } includeMeta={ false } />
-				) }
+				{ feedId && <QueryReaderFeed feedId={ feedId } /> }
+				{ ! isExternal && siteId && <QueryReaderSite siteId={ +siteId } /> }
+				{ isDiscover && <QueryReaderSite siteId={ discoverPostKey.blogId } /> }
 				{ hasDiscoverSourcePost && <QueryReaderPost postKey={ discoverPostKey } /> }
 			</ReaderPostCard>
 		);
@@ -104,6 +96,13 @@ export default connect( ( state, ownProps ) => {
 	const feedId = get( post, 'feed_ID' );
 	const isDiscover = get( post, 'is_discover' );
 	const isDiscoverStream = ownProps.isDiscoverStream;
+	const feed = getFeed( state, feedId );
+
+	// Add site icon to feed object so have icon for external feeds
+	if ( feed ) {
+		const follow = getReaderFollowForFeed( state, parseInt( feedId ) );
+		feed.site_icon = follow?.site_icon;
+	}
 
 	let discoverPost = undefined;
 	let discoverSite = undefined;
@@ -118,7 +117,7 @@ export default connect( ( state, ownProps ) => {
 
 	return {
 		site: isExternal ? null : getSite( state, siteId ),
-		feed: getFeed( state, feedId ),
+		feed: feed,
 		discoverPost,
 		discoverSite,
 	};

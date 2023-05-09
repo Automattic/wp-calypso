@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { createTransientMediaId } from '../create-transient-media-id';
 
 describe( 'createTransientMediaId()', () => {

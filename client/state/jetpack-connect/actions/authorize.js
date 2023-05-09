@@ -1,23 +1,16 @@
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
 import { pick } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
-import { fetchCurrentUser } from 'calypso/state/current-user/actions';
-import { receiveSite } from 'calypso/state/sites/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { SITE_REQUEST_FIELDS, SITE_REQUEST_OPTIONS } from 'calypso/state/sites/constants';
+import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import {
 	JETPACK_CONNECT_AUTHORIZE,
 	JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
 } from 'calypso/state/jetpack-connect/action-types';
+import { receiveSite } from 'calypso/state/sites/actions';
+import { SITE_REQUEST_FIELDS, SITE_REQUEST_OPTIONS } from 'calypso/state/sites/constants';
 
 import 'calypso/state/jetpack-connect/init';
 
@@ -28,34 +21,36 @@ const debug = debugFactory( 'calypso:jetpack-connect:actions' );
 
 export function authorize( queryObject ) {
 	return ( dispatch ) => {
-		const {
-			_wp_nonce,
-			client_id,
-			from,
-			jp_version,
-			redirect_uri,
-			scope,
-			secret,
-			state,
-		} = queryObject;
+		const { _wp_nonce, client_id, from, jp_version, redirect_uri, scope, secret, state } =
+			queryObject;
 		debug( 'Trying Jetpack login.', _wp_nonce, redirect_uri, scope, state );
 		dispatch( recordTracksEvent( 'calypso_jpc_authorize', { from, site: client_id } ) );
 		dispatch( {
 			type: JETPACK_CONNECT_AUTHORIZE,
 			queryObject: queryObject,
 		} );
-		return wpcom
-			.undocumented()
-			.jetpackLogin( client_id, _wp_nonce, redirect_uri, scope, state )
+
+		return wpcom.req
+			.get( '/jetpack-blogs/' + client_id + '/jetpack-login', {
+				_wp_nonce,
+				redirect_uri,
+				scope,
+				state,
+			} )
 			.then( ( data ) => {
 				debug( 'Jetpack login complete. Trying Jetpack authorize.', data );
 				dispatch( {
 					type: JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE,
 					data,
 				} );
-				return wpcom
-					.undocumented()
-					.jetpackAuthorize( client_id, data.code, state, redirect_uri, secret, jp_version, from );
+				return wpcom.req.post( '/jetpack-blogs/' + client_id + '/authorize', {
+					code: data.code,
+					state,
+					redirect_uri,
+					secret,
+					jp_version,
+					from,
+				} );
 			} )
 			.then( ( data ) => {
 				debug( 'Jetpack authorize complete. Updating sites list.', data );

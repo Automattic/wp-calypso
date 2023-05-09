@@ -1,58 +1,97 @@
-/**
- * External dependencies
- */
-import React, { useState, useEffect } from 'react';
-import { useTranslate } from 'i18n-calypso';
-import { useDispatch } from 'react-redux';
 import { CompactCard, Button, Card } from '@automattic/components';
-
-/**
- * Internal dependencies
- */
-import Layout from 'calypso/components/layout';
-import Column from 'calypso/components/layout/column';
+import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
+import { useEffect, useState, useRef, useMemo } from 'react';
+import { useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
-import useVatDetails from './use-vat-details';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
-import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import type { VatDetails, UpdateError } from './use-vat-details';
-import { errorNotice, successNotice, removeNotice } from 'calypso/state/notices/actions';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import Layout from 'calypso/components/layout';
+import Column from 'calypso/components/layout/column';
+import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import useCountryList, {
+	isVatSupported,
+} from 'calypso/my-sites/checkout/composite-checkout/hooks/use-country-list';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { errorNotice, successNotice, removeNotice } from 'calypso/state/notices/actions';
+import { getVatVendorInfo } from '../billing-history/vat-vendor-details';
+import useVatDetails from './use-vat-details';
+import type { UpdateError, FetchError } from './use-vat-details';
+import type { CountryListItem, VatDetails } from '@automattic/wpcom-checkout';
 
 import './style.scss';
 
-export default function VatInfoPage(): JSX.Element {
+export default function VatInfoPage() {
 	const translate = useTranslate();
-	const { isLoading, fetchError } = useVatDetails();
+	const { data: geoData } = useGeoLocationQuery();
+	const { isLoading, fetchError, vatDetails } = useVatDetails();
+	const [ currentVatDetails, setCurrentVatDetails ] = useState< VatDetails >( {} );
+	const vendorInfo = getVatVendorInfo(
+		currentVatDetails.country ?? vatDetails.country ?? geoData?.country_short ?? 'GB',
+		'now',
+		translate
+	);
+
+	useRecordVatEvents( { fetchError } );
 
 	if ( fetchError ) {
 		return (
 			<div className="vat-info">
-				<CompactCard>{ translate( 'An error occurred while fetching VAT details.' ) }</CompactCard>
+				<CompactCard>
+					{
+						/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+						translate( 'An error occurred while fetching %s details.', {
+							textOnly: true,
+							args: [ vendorInfo?.taxName ?? translate( 'VAT', { textOnly: true } ) ],
+						} )
+					}
+				</CompactCard>
 			</div>
 		);
 	}
+
+	const genericTaxName =
+		/* translators: This is a generic name for taxes to use when we do not know the user's country. */
+		translate( 'tax (VAT/GST/CT)' );
+	const fallbackTaxName =
+		getLocaleSlug()?.startsWith( 'en' ) || i18n.hasTranslation( 'tax (VAT/GST/CT)' )
+			? genericTaxName
+			: translate( 'VAT', { textOnly: true } );
+	/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+	const title = translate( 'Add %s details', {
+		textOnly: true,
+		args: [ vendorInfo?.taxName ?? fallbackTaxName ],
+	} );
 
 	return (
 		<Layout className={ isLoading ? 'vat-info is-loading' : 'vat-info' }>
 			<Column type="main">
 				<CompactCard className="vat-info__form">
 					{ isLoading && <LoadingPlaceholder /> }
-					{ ! isLoading && <VatForm /> }
+					{ ! isLoading && (
+						<VatForm
+							currentVatDetails={ currentVatDetails }
+							setCurrentVatDetails={ setCurrentVatDetails }
+						/>
+					) }
 				</CompactCard>
 			</Column>
 			<Column type="sidebar">
 				<Card className="vat-info__sidebar-card">
 					<CardHeading tagName="h1" size={ 16 } isBold={ true } className="vat-info__sidebar-title">
-						{ translate( 'VAT Information' ) }
+						{ title }
 					</CardHeading>
 					<p className="vat-info__sidebar-paragraph">
 						{ translate(
-							"We currently only provide VAT invoices to users who are properly listed in the VIES (VAT Information Exchange System) or the UK VAT databases. VAT information saved on this page will be applied to all of your account's receipts."
+							/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+							"We currently only provide %(taxName)s invoices to users who are properly registered. %(taxName)s information saved on this page will be applied to all of your account's receipts.",
+							{
+								textOnly: true,
+								args: { taxName: vendorInfo?.taxName ?? translate( 'VAT', { textOnly: true } ) },
+							}
 						) }
 					</p>
 				</Card>
@@ -61,17 +100,23 @@ export default function VatInfoPage(): JSX.Element {
 	);
 }
 
-function VatForm(): JSX.Element {
+function VatForm( {
+	currentVatDetails,
+	setCurrentVatDetails,
+}: {
+	currentVatDetails: VatDetails;
+	setCurrentVatDetails: ( details: VatDetails ) => void;
+} ) {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
-	const [ currentVatDetails, setCurrentVatDetails ] = useState< VatDetails >( {} );
-	const {
-		vatDetails,
-		isUpdating,
-		isUpdateSuccessful,
-		setVatDetails,
-		updateError,
-	} = useVatDetails();
+	const { data: geoData } = useGeoLocationQuery();
+	const { vatDetails, isUpdating, isUpdateSuccessful, setVatDetails, updateError } =
+		useVatDetails();
+	const vendorInfo = getVatVendorInfo(
+		currentVatDetails.country ?? vatDetails.country ?? geoData?.country_short ?? 'GB',
+		'now',
+		translate
+	);
 
 	const saveDetails = () => {
 		reduxDispatch( recordTracksEvent( 'calypso_vat_details_update' ) );
@@ -79,7 +124,7 @@ function VatForm(): JSX.Element {
 	};
 
 	useDisplayVatNotices( { error: updateError, success: isUpdateSuccessful } );
-	useRecordVatEvents( { error: updateError, success: isUpdateSuccessful } );
+	useRecordVatEvents( { updateError, isUpdateSuccessful } );
 
 	const clickSupport = () => {
 		reduxDispatch( recordTracksEvent( 'calypso_vat_details_support_click' ) );
@@ -95,13 +140,21 @@ function VatForm(): JSX.Element {
 					name="country"
 					disabled={ isUpdating || isVatAlreadySet }
 					value={ currentVatDetails.country ?? vatDetails.country ?? '' }
-					onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
+					onChange={ ( event: React.ChangeEvent< HTMLSelectElement > ) =>
 						setCurrentVatDetails( { ...currentVatDetails, country: event.target.value } )
 					}
 				/>
 			</FormFieldset>
 			<FormFieldset className="vat-info__vat-field">
-				<FormLabel htmlFor="vat">{ translate( 'VAT Number' ) }</FormLabel>
+				<FormLabel htmlFor="vat">
+					{
+						/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+						translate( '%s ID', {
+							textOnly: true,
+							args: [ vendorInfo?.taxName ?? translate( 'VAT', { textOnly: true } ) ],
+						} )
+					}
+				</FormLabel>
 				<FormTextInput
 					name="vat"
 					disabled={ isUpdating || isVatAlreadySet }
@@ -113,8 +166,10 @@ function VatForm(): JSX.Element {
 				{ isVatAlreadySet && (
 					<FormSettingExplanation>
 						{ translate(
-							'To change your VAT number, {{contactSupportLink}}please contact support{{/contactSupportLink}}.',
+							/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+							'To change your %(taxName)s ID, {{contactSupportLink}}please contact support{{/contactSupportLink}}.',
 							{
+								args: { taxName: vendorInfo?.taxName ?? translate( 'VAT', { textOnly: true } ) },
 								components: {
 									contactSupportLink: (
 										<a
@@ -160,6 +215,17 @@ function VatForm(): JSX.Element {
 	);
 }
 
+function getUniqueCountries< C extends CountryListItem >( countries: C[] ): C[] {
+	const unique: C[] = [];
+	countries.forEach( ( country ) => {
+		if ( unique.map( ( x ) => x.code ).includes( country.code ) ) {
+			return;
+		}
+		unique.push( country );
+	} );
+	return unique;
+}
+
 function CountryCodeInput( {
 	name,
 	disabled,
@@ -169,40 +235,21 @@ function CountryCodeInput( {
 	name: string;
 	disabled?: boolean;
 	value: string;
-	onChange: ( event: React.ChangeEvent< HTMLInputElement > ) => void;
+	onChange: ( event: React.ChangeEvent< HTMLSelectElement > ) => void;
 } ) {
-	const countries = [
-		'AT',
-		'BE',
-		'BG',
-		'CY',
-		'CZ',
-		'DE',
-		'DK',
-		'EE',
-		'EL',
-		'ES',
-		'FI',
-		'FR',
-		'HR',
-		'HU',
-		'IE',
-		'IT',
-		'LT',
-		'LU',
-		'LV',
-		'MT',
-		'NL',
-		'PL',
-		'PT',
-		'RO',
-		'SE',
-		'SI',
-		'SK',
-		'UK',
-		'XI',
-	];
+	const countries = useCountryList();
+	const translate = useTranslate();
 
+	// Some historical country codes were set to 'UK', but that is not a valid
+	// country code. It should read 'GB'.
+	if ( value === 'UK' ) {
+		value = 'GB';
+	}
+
+	const vatCountries = useMemo(
+		() => getUniqueCountries( countries.filter( isVatSupported ) ),
+		[ countries ]
+	);
 	return (
 		<FormSelect
 			name={ name }
@@ -212,12 +259,15 @@ function CountryCodeInput( {
 			className="vat-info__country-select"
 		>
 			<option value="">--</option>
-			{ countries.map( ( countryCode ) => {
-				return (
-					<option key={ countryCode } value={ countryCode }>
-						{ countryCode }
-					</option>
-				);
+			{ vatCountries.map( ( country ) => {
+				return country.tax_country_codes.map( ( countryCode ) => {
+					const name = countryCode === 'XI' ? translate( 'Northern Ireland' ) : country.name;
+					return (
+						<option key={ countryCode } value={ countryCode }>
+							{ countryCode } - { name }
+						</option>
+					);
+				} );
 			} ) }
 		</FormSelect>
 	);
@@ -229,29 +279,33 @@ function useDisplayVatNotices( {
 }: {
 	error: UpdateError | null;
 	success: boolean;
-} ): void {
+} ) {
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
+	const { data: geoData } = useGeoLocationQuery();
+	const { vatDetails } = useVatDetails();
+	const vendorInfo = getVatVendorInfo(
+		vatDetails.country ?? geoData?.country_short ?? 'GB',
+		'now',
+		translate
+	);
 
 	useEffect( () => {
-		if ( error?.error === 'validation_failed' ) {
+		if ( error ) {
 			reduxDispatch( removeNotice( 'vat_info_notice' ) );
-			reduxDispatch(
-				errorNotice(
-					translate( 'Your VAT details are not valid. Please check each field and try again.' ),
-					{ id: 'vat_info_notice' }
-				)
-			);
+			reduxDispatch( errorNotice( error.message, { id: 'vat_info_notice' } ) );
 			return;
 		}
 
-		if ( error ) {
+		if ( success ) {
 			reduxDispatch( removeNotice( 'vat_info_notice' ) );
 			reduxDispatch(
-				errorNotice(
-					translate(
-						'An error occurred while updating your VAT details. Please try again or contact support.'
-					),
+				successNotice(
+					/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+					translate( 'Your %s details have been updated!', {
+						textOnly: true,
+						args: [ vendorInfo?.taxName ?? translate( 'VAT', { textOnly: true } ) ],
+					} ),
 					{
 						id: 'vat_info_notice',
 					}
@@ -259,44 +313,50 @@ function useDisplayVatNotices( {
 			);
 			return;
 		}
-
-		if ( success ) {
-			reduxDispatch( removeNotice( 'vat_info_notice' ) );
-			reduxDispatch(
-				successNotice( translate( 'Your VAT details have been updated!' ), {
-					id: 'vat_info_notice',
-				} )
-			);
-			return;
-		}
-	}, [ error, success, reduxDispatch, translate ] );
+	}, [ error, success, reduxDispatch, translate, vendorInfo?.taxName ] );
 }
 
 function useRecordVatEvents( {
-	error,
-	success,
+	updateError,
+	fetchError,
+	isUpdateSuccessful,
 }: {
-	error: UpdateError | null;
-	success: boolean;
-} ): void {
+	updateError?: UpdateError | null;
+	fetchError?: FetchError | null;
+	isUpdateSuccessful?: boolean;
+} ) {
 	const reduxDispatch = useDispatch();
+	const lastFetchError = useRef< FetchError >();
+	const lastUpdateError = useRef< UpdateError >();
 
 	useEffect( () => {
-		if ( error ) {
+		if ( fetchError && lastFetchError.current !== fetchError ) {
 			reduxDispatch(
-				recordTracksEvent( 'calypso_vat_details_validation_failure', { error: error.error } )
+				recordTracksEvent( 'calypso_vat_details_fetch_failure', {
+					error: fetchError.error,
+					message: fetchError.message,
+				} )
 			);
+			lastFetchError.current = fetchError;
 			return;
 		}
 
-		if ( success ) {
+		if ( updateError && lastUpdateError.current !== updateError ) {
+			reduxDispatch(
+				recordTracksEvent( 'calypso_vat_details_validation_failure', { error: updateError.error } )
+			);
+			lastUpdateError.current = updateError;
+			return;
+		}
+
+		if ( isUpdateSuccessful ) {
 			reduxDispatch( recordTracksEvent( 'calypso_vat_details_validation_success' ) );
 			return;
 		}
-	}, [ error, success, reduxDispatch ] );
+	}, [ fetchError, updateError, isUpdateSuccessful, reduxDispatch ] );
 }
 
-function LoadingPlaceholder(): JSX.Element {
+function LoadingPlaceholder() {
 	return (
 		<>
 			<div className="vat-info__form-placeholder"></div>

@@ -1,29 +1,23 @@
-/**
- * External dependencies
- */
-import React, { useCallback } from 'react';
-import PropTypes from 'prop-types';
-import debugFactory from 'debug';
-import { useI18n } from '@wordpress/react-i18n';
+import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
-
-/**
- * Internal dependencies
- */
-import styled from '../lib/styled';
+import { useI18n } from '@wordpress/react-i18n';
+import debugFactory from 'debug';
+import { useCallback, useContext } from 'react';
+import CheckoutContext from '../lib/checkout-context';
 import joinClasses from '../lib/join-classes';
-import RadioButton from './radio-button';
+import { useAvailablePaymentMethodIds } from '../lib/payment-methods';
 import {
 	useAllPaymentMethods,
 	usePaymentMethod,
 	usePaymentMethodId,
 	useIsStepActive,
 	useIsStepComplete,
-	useEvents,
 	useFormStatus,
 } from '../public-api';
-import CheckoutErrorBoundary from './checkout-error-boundary';
 import { FormStatus } from '../types';
+import CheckoutErrorBoundary from './checkout-error-boundary';
+import RadioButton from './radio-button';
+import type { ReactNode } from 'react';
 
 const debug = debugFactory( 'composite-checkout:checkout-payment-methods' );
 
@@ -39,19 +33,19 @@ export default function CheckoutPaymentMethods( {
 	summary?: boolean;
 	isComplete: boolean;
 	className?: string;
-} ): JSX.Element | null {
+} ) {
 	const { __ } = useI18n();
-	const onEvent = useEvents();
+	const { onPageLoadError, onPaymentMethodChanged } = useContext( CheckoutContext );
 	const onError = useCallback(
-		( error ) => onEvent( { type: 'PAYMENT_METHOD_LOAD_ERROR', payload: error } ),
-		[ onEvent ]
+		( error: Error ) => onPageLoadError?.( 'payment_method_load', error ),
+		[ onPageLoadError ]
 	);
 
 	const paymentMethod = usePaymentMethod();
 	const [ , setPaymentMethod ] = usePaymentMethodId();
 	const onClickPaymentMethod = ( newMethod: string ) => {
 		debug( 'setting payment method to', newMethod );
-		onEvent( { type: 'PAYMENT_METHOD_SELECT', payload: newMethod } );
+		onPaymentMethodChanged?.( newMethod );
 		setPaymentMethod( newMethod );
 	};
 	const paymentMethods = useAllPaymentMethods();
@@ -118,13 +112,7 @@ export default function CheckoutPaymentMethods( {
 	);
 }
 
-CheckoutPaymentMethods.propTypes = {
-	summary: PropTypes.bool,
-	isComplete: PropTypes.bool.isRequired,
-	className: PropTypes.string,
-};
-
-export function CheckoutPaymentMethodsTitle(): JSX.Element {
+export function CheckoutPaymentMethodsTitle() {
 	const { __ } = useI18n();
 	const isActive = useIsStepActive();
 	const isComplete = useIsStepComplete();
@@ -144,7 +132,8 @@ function PaymentMethod( {
 	onClick,
 	ariaLabel,
 	summary,
-}: PaymentMethodProps ): JSX.Element {
+}: PaymentMethodProps ) {
+	const availablePaymentMethodIds = useAvailablePaymentMethodIds();
 	const { formStatus } = useFormStatus();
 	if ( summary ) {
 		return <>{ inactiveContent && inactiveContent }</>;
@@ -157,6 +146,7 @@ function PaymentMethod( {
 			id={ id }
 			checked={ checked }
 			disabled={ formStatus !== FormStatus.READY }
+			hidden={ ! availablePaymentMethodIds.includes( id ) }
 			onChange={ onClick ? () => onClick( id ) : undefined }
 			ariaLabel={ ariaLabel }
 			label={ label }
@@ -166,24 +156,13 @@ function PaymentMethod( {
 	);
 }
 
-PaymentMethod.propTypes = {
-	id: PropTypes.string.isRequired,
-	onClick: PropTypes.func,
-	checked: PropTypes.bool.isRequired,
-	ariaLabel: PropTypes.string.isRequired,
-	activeContent: PropTypes.node,
-	label: PropTypes.node,
-	inactiveContent: PropTypes.node,
-	summary: PropTypes.bool,
-};
-
 interface PaymentMethodProps {
 	id: string;
 	onClick?: ( id: string ) => void;
 	checked: boolean;
 	ariaLabel: string;
-	activeContent?: React.ReactNode;
-	label?: React.ReactNode;
-	inactiveContent?: React.ReactNode;
+	activeContent?: ReactNode;
+	label?: ReactNode;
+	inactiveContent?: ReactNode;
 	summary?: boolean;
 }

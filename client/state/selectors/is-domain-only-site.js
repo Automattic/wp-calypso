@@ -1,14 +1,11 @@
-/**
- * Internal dependencies
- */
 import getRawSite from 'calypso/state/selectors/get-raw-site';
 
 /**
  * Returns true if site is a Domain-only site, false if the site is a regular site,
  * or null if the site is unknown.
  *
- * @param  {object}   state  Global state tree
- * @param  {number}   siteId Site ID
+ * @param  {Object}   state  Global state tree
+ * @param  {?number}   siteId Site ID
  * @returns {?boolean}        Whether site is a Domain-only site
  */
 export default function isDomainOnlySite( state, siteId ) {

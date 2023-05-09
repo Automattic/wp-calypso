@@ -1,46 +1,13 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { isRequestingSubscribedLists } from 'calypso/state/reader/lists/selectors';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { requestSubscribedLists } from 'calypso/state/reader/lists/actions';
 
-class QueryReaderLists extends Component {
-	UNSAFE_componentWillMount() {
-		if ( this.props.isRequestingSubscribedLists ) {
-			return;
-		}
+export default function QueryReaderLists() {
+	const dispatch = useDispatch();
 
-		this.props.requestSubscribedLists();
-	}
+	useEffect( () => {
+		dispatch( requestSubscribedLists() );
+	}, [ dispatch ] );
 
-	render() {
-		return null;
-	}
+	return null;
 }
-
-QueryReaderLists.propTypes = {
-	isRequestingSubscribedLists: PropTypes.bool,
-	requestSubscribedLists: PropTypes.func,
-};
-
-QueryReaderLists.defaultProps = {
-	requestSubscribedLists: () => {},
-};
-
-export default connect(
-	( state ) => {
-		return {
-			isRequestingSubscribedLists: isRequestingSubscribedLists( state ),
-		};
-	},
-	{
-		requestSubscribedLists,
-	}
-)( QueryReaderLists );

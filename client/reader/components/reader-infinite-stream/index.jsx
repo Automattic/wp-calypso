@@ -1,8 +1,3 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import {
 	CellMeasurer,
 	CellMeasurerCache,
@@ -10,17 +5,10 @@ import {
 	List,
 	WindowScroller,
 } from '@automattic/react-virtualized';
-
 import { debounce, get, pickBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { recordTracksRailcarRender } from 'calypso/reader/stats';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};
@@ -149,6 +137,7 @@ class ReaderInfiniteStream extends Component {
 								scrollTop={ scrollTop }
 								width={ width }
 								items={ this.props.items } // passthrough-prop unused by the component except to signal a rerender
+								aria-readonly={ false }
 							/>
 						) }
 					</WindowScroller>

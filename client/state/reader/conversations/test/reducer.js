@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import { items } from '../reducer';
 import {
 	READER_CONVERSATION_FOLLOW,
 	READER_CONVERSATION_MUTE,
@@ -14,6 +6,7 @@ import {
 	READER_POSTS_RECEIVE,
 } from 'calypso/state/reader/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
+import { items } from '../reducer';
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {

@@ -1,48 +1,40 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import { connect } from 'react-redux';
-import { isEmpty } from 'lodash';
-import page from 'page';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
-import EmptyContent from 'calypso/components/empty-content';
-import EmailedLoginLinkExpired from './emailed-login-link-expired';
 import config from '@automattic/calypso-config';
-import { login } from 'calypso/lib/paths';
+import { Button } from '@automattic/components';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { LINK_EXPIRED_PAGE } from 'calypso/state/login/magic-login/constants';
+import page from 'page';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import EmptyContent from 'calypso/components/empty-content';
+import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
+import { login } from 'calypso/lib/paths';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import {
+	wasImmediateLoginAttempted,
+	wasManualRenewalImmediateLoginAttempted,
+} from 'calypso/state/immediate-login/selectors';
+import { rebootAfterLogin } from 'calypso/state/login/actions';
 import {
 	fetchMagicLoginAuthenticate,
 	showMagicLoginLinkExpiredPage,
 } from 'calypso/state/login/magic-login/actions';
-import { rebootAfterLogin } from 'calypso/state/login/actions';
-import getMagicLoginCurrentView from 'calypso/state/selectors/get-magic-login-current-view';
-import getMagicLoginRequestAuthError from 'calypso/state/selectors/get-magic-login-request-auth-error';
-import getMagicLoginRequestedAuthSuccessfully from 'calypso/state/selectors/get-magic-login-requested-auth-successfully';
-import isFetchingMagicLoginAuth from 'calypso/state/selectors/is-fetching-magic-login-auth';
+import { LINK_EXPIRED_PAGE } from 'calypso/state/login/magic-login/constants';
 import {
 	getRedirectToOriginal,
 	getRedirectToSanitized,
 	getTwoFactorNotificationSent,
 	isTwoFactorEnabled,
 } from 'calypso/state/login/selectors';
-import {
-	wasImmediateLoginAttempted,
-	wasManualRenewalImmediateLoginAttempted,
-} from 'calypso/state/immediate-login/selectors';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
-import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
+import getMagicLoginCurrentView from 'calypso/state/selectors/get-magic-login-current-view';
+import getMagicLoginRequestAuthError from 'calypso/state/selectors/get-magic-login-request-auth-error';
+import getMagicLoginRequestedAuthSuccessfully from 'calypso/state/selectors/get-magic-login-requested-auth-successfully';
+import isFetchingMagicLoginAuth from 'calypso/state/selectors/is-fetching-magic-login-auth';
+import EmailedLoginLinkExpired from './emailed-login-link-expired';
 
-class HandleEmailedLinkForm extends React.Component {
+class HandleEmailedLinkForm extends Component {
 	static propTypes = {
 		// Passed props
 		clientId: PropTypes.string,
@@ -77,13 +69,25 @@ class HandleEmailedLinkForm extends React.Component {
 	constructor( props ) {
 		super( props );
 
-		if ( isEmpty( props.emailAddress ) || isEmpty( props.token ) ) {
+		if ( ! props.emailAddress || ! props.token ) {
 			this.props.showMagicLoginLinkExpiredPage();
 		}
 	}
 
+	componentDidMount() {
+		if (
+			this.props.clientId === config( 'wpcom_signup_id' ) &&
+			! this.props.isImmediateLoginAttempt &&
+			! wooDnaConfig( this.props.initialQuery ).isWooDnaFlow()
+		) {
+			this.handleSubmit();
+		}
+	}
+
 	handleSubmit = ( event ) => {
-		event.preventDefault();
+		if ( event ) {
+			event.preventDefault();
+		}
 
 		this.setState( {
 			hasSubmitted: true,
@@ -110,6 +114,7 @@ class HandleEmailedLinkForm extends React.Component {
 		}
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillUpdate( nextProps, nextState ) {
 		const { authError, isAuthenticated, isFetching } = nextProps;
 
@@ -128,14 +133,8 @@ class HandleEmailedLinkForm extends React.Component {
 	}
 
 	render() {
-		const {
-			currentUser,
-			emailAddress,
-			isExpired,
-			isFetching,
-			translate,
-			initialQuery,
-		} = this.props;
+		const { currentUser, emailAddress, isExpired, isFetching, translate, initialQuery } =
+			this.props;
 		const isWooDna = wooDnaConfig( initialQuery ).isWooDnaFlow();
 
 		if ( isExpired ) {
@@ -191,9 +190,9 @@ class HandleEmailedLinkForm extends React.Component {
 			);
 		}
 
-		const illustration =
-			'/calypso/images/illustrations/' +
-			( isWooDna ? 'illustration-woo-magic-link.svg' : 'illustration-nosites.svg' );
+		const illustration = isWooDna
+			? '/calypso/images/illustrations/illustration-woo-magic-link.svg'
+			: '';
 
 		this.props.recordTracksEvent( 'calypso_login_email_link_handle_click_view' );
 

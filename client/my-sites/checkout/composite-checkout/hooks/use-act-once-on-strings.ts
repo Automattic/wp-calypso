@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import { useEffect, useRef } from 'react';
 import debugFactory from 'debug';
+import { useEffect, useRef } from 'react';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-act-once-on-strings' );
 

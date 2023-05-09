@@ -1,26 +1,18 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import PropTypes from 'prop-types';
+import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
-import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import FormCountrySelect from 'calypso/components/forms/form-country-select';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTelInput from 'calypso/components/forms/form-tel-input';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormCountrySelect from 'calypso/components/forms/form-country-select';
 import phoneValidation from 'calypso/lib/phone-validation';
 
 const CLEAN_REGEX = /^0|[\s.\-()]+/g;
 const noop = () => {};
 
-export class FormPhoneInput extends React.Component {
+export class FormPhoneInput extends Component {
 	static propTypes = {
 		initialCountryCode: PropTypes.string,
 		initialPhoneNumber: PropTypes.string,
@@ -44,7 +36,7 @@ export class FormPhoneInput extends React.Component {
 		phoneNumber: this.props.initialPhoneNumber || '',
 	};
 
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		this.maybeSetCountryStateFromList();
 	}
 
@@ -55,7 +47,7 @@ export class FormPhoneInput extends React.Component {
 	render() {
 		return (
 			<div className={ classnames( this.props.className, 'form-phone-input' ) }>
-				<FormFieldset className="form-fieldset__country">
+				<FormFieldset className="form-phone-input__country">
 					<FormLabel htmlFor="country_code">
 						{ this.props.translate( 'Country code', {
 							context: 'The country code for the phone for the user.',
@@ -66,13 +58,12 @@ export class FormPhoneInput extends React.Component {
 						countriesList={ this.props.countriesList }
 						disabled={ this.props.isDisabled }
 						name="country_code"
-						ref="countryCode"
 						value={ this.state.countryCode }
 						onChange={ this.handleCountryChange }
 					/>
 				</FormFieldset>
 
-				<FormFieldset className="form-fieldset__phone-number">
+				<FormFieldset className="form-phone-input__phone-number">
 					<FormLabel htmlFor="phone_number">{ this.props.translate( 'Phone number' ) }</FormLabel>
 					<FormTelInput
 						{ ...this.props.phoneInputProps }

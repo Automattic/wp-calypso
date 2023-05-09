@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
 import classNames from 'classnames';
 import debugModule from 'debug';
 import { pick } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
 import Shortcode from 'calypso/blocks/shortcode';
-import { parse as parseShortcode } from 'calypso/lib/shortcode';
-import { generateGalleryShortcode } from 'calypso/lib/media/utils';
 import { GalleryDefaultAttrs } from 'calypso/lib/media/constants';
+import { generateGalleryShortcode } from 'calypso/lib/media/utils';
+import { parse as parseShortcode } from 'calypso/lib/shortcode';
 import { SiteId } from 'calypso/types';
 
 /**
@@ -46,16 +39,19 @@ export default class GalleryShortcode extends Component< Props > {
 			return rendered;
 		}
 
-		const filtered = {
+		const filtered: Record<
+			'scripts' | 'styles',
+			Record< string, { src: string; extra?: string } >
+		> = {
 			...rendered,
 			scripts: {
 				'tiled-gallery': {
-					src: 'https://s0.wp.com/wp-content/mu-plugins/tiled-gallery/tiled-gallery.js',
+					src: 'https://s0.wp.com/wp-content/mu-plugins/jetpack-plugin/production/modules/tiled-gallery/tiled-gallery/tiled-gallery.js',
 				},
 			},
 			styles: {
 				'tiled-gallery': {
-					src: 'https://s0.wp.com/wp-content/mu-plugins/tiled-gallery/tiled-gallery.css',
+					src: 'https://s0.wp.com/wp-content/mu-plugins/jetpack-plugin/production/modules/tiled-gallery/tiled-gallery/tiled-gallery.css',
 				},
 				'gallery-styles': {
 					src: 'https://widgets.wp.com/gallery-preview/style.css',
@@ -66,17 +62,17 @@ export default class GalleryShortcode extends Component< Props > {
 		if ( 'slideshow' === this.getAttributes().type ) {
 			filtered.scripts = {
 				'jquery-cycle': {
-					src: 'https://s0.wp.com/wp-content/mu-plugins/shortcodes/js/jquery.cycle.min.js',
+					src: 'https://s0.wp.com/wp-content/mu-plugins/jetpack-plugin/production/modules/shortcodes/js/jquery.cycle.min.js',
 				},
 				'jetpack-slideshow': {
-					src: 'https://s0.wp.com/wp-content/mu-plugins/shortcodes/js/slideshow-shortcode.js',
+					src: 'https://s0.wp.com/wp-content/mu-plugins/jetpack-plugin/production/modules/shortcodes/js/slideshow-shortcode.js',
 					extra:
-						'var jetpackSlideshowSettings = { "spinner": "https://s0.wp.com/wp-content/mu-plugins/shortcodes/img/slideshow-loader.gif" };',
+						'var jetpackSlideshowSettings = { "spinner": "https://s0.wp.com/wp-content/mu-plugins/jetpack-plugin/production/modules/shortcodes/img/slideshow-loader.gif" };',
 				},
 			};
 			filtered.styles = {
 				'jetpack-slideshow': {
-					src: 'https://s0.wp.com/wp-content/mu-plugins/shortcodes/css/slideshow-shortcode.css',
+					src: 'https://s0.wp.com/wp-content/mu-plugins/jetpack-plugin/production/modules/shortcodes/css/slideshow-shortcode.css',
 				},
 			};
 		}
@@ -88,7 +84,7 @@ export default class GalleryShortcode extends Component< Props > {
 		let attributes = pick( this.props, 'items', 'type', 'columns', 'orderBy', 'link', 'size' );
 
 		if ( this.props.children ) {
-			attributes = { ...attributes, ...parseShortcode( this.props.children ).attrs.named };
+			attributes = { ...attributes, ...parseShortcode( this.props.children )?.attrs?.named };
 		}
 
 		return attributes;
@@ -110,18 +106,8 @@ export default class GalleryShortcode extends Component< Props > {
 
 		debug( shortcode );
 
-		const {
-			siteId,
-			items,
-			type,
-			columns,
-			orderBy,
-			link,
-			size,
-			className,
-			children,
-			...restProps
-		} = this.props;
+		const { siteId, items, type, columns, orderBy, link, size, className, children, ...restProps } =
+			this.props;
 
 		const classes = classNames( 'gallery-shortcode', className );
 

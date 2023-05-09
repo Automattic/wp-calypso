@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import moment from 'moment-timezone';
 
 /**

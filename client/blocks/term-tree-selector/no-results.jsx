@@ -1,12 +1,8 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
 
-class TermTreeSelectorNoResults extends React.PureComponent {
+class TermTreeSelectorNoResults extends PureComponent {
 	static displayName = 'TermTreeSelectorNoResults';
 
 	static propTypes = {

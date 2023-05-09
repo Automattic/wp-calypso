@@ -1,20 +1,13 @@
-/**
- * External Dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { ALL_DOMAINS_REQUEST } from 'calypso/state/action-types';
-import { errorNotice } from 'calypso/state/notices/actions';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
 	getAllDomainsRequestFailure,
 	getAllDomainsRequestSuccess,
 } from 'calypso/state/all-domains/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { errorNotice } from 'calypso/state/notices/actions';
 
 export const getAllDomains = ( action ) => {
 	return http(

@@ -1,26 +1,15 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import StepWrapper from 'calypso/signup/step-wrapper';
-import { Card } from '@automattic/components';
-import SectionHeader from 'calypso/components/section-header';
 import RewindCredentialsForm from 'calypso/components/rewind-credentials-form';
-import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import SectionHeader from 'calypso/components/section-header';
+import StepWrapper from 'calypso/signup/step-wrapper';
 import getJetpackCredentialsUpdateStatus from 'calypso/state/selectors/get-jetpack-credentials-update-status';
+import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class CloneCredentialsStep extends Component {
@@ -30,10 +19,6 @@ class CloneCredentialsStep extends Component {
 		positionInFlow: PropTypes.number,
 		stepName: PropTypes.string,
 		signupDependencies: PropTypes.object,
-	};
-
-	state = {
-		gotSuccess: false,
 	};
 
 	goToNextStep = () => {
@@ -70,9 +55,8 @@ class CloneCredentialsStep extends Component {
 		);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( 'success' === nextProps.updateStatus && ! this.state.gotSuccess ) {
-			this.setState( { gotSuccess: true } );
+	componentDidUpdate( prevProps ) {
+		if ( 'success' !== prevProps.updateStatus && 'success' === this.props.updateStatus ) {
 			this.goToNextStep();
 		}
 	}

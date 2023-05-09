@@ -2,9 +2,6 @@
  * @jest-environment jsdom
  */
 
-/**
- * Internal dependencies
- */
 import resemblesUrl from '../resembles-url';
 
 describe( 'resemblesUrl()', () => {

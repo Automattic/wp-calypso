@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import moment from 'moment';
-
-/**
- * Internal dependencies
- */
 import {
 	buildExportArray,
 	getChartLabels,
@@ -15,7 +8,6 @@ import {
 	normalizers,
 	parseOrderDeltas,
 	parseOrdersChartData,
-	parseStoreStatsReferrers,
 	rangeOfPeriod,
 } from '../utils';
 
@@ -180,19 +172,31 @@ describe( 'utils', () => {
 		test( 'should parse simple object to csv', () => {
 			expect(
 				buildExportArray( {
+					actions: [
+						{
+							type: 'link',
+							data: 'https://example.com/chicken',
+						},
+					],
 					label: 'Chicken',
 					value: 10,
 				} )
-			).toEqual( [ [ '"Chicken"', 10 ] ] );
+			).toEqual( [ [ '"Chicken"', 10, 'https://example.com/chicken' ] ] );
 		} );
 
 		test( 'should escape simple object to csv', () => {
 			expect(
 				buildExportArray( {
+					actions: [
+						{
+							type: 'link',
+							data: 'https://example.com/chicken',
+						},
+					],
 					label: 'Chicken and "Ribs"',
 					value: 10,
 				} )
-			).toEqual( [ [ '"Chicken and ""Ribs""', 10 ] ] );
+			).toEqual( [ [ '"Chicken and ""Ribs""', 10, 'https://example.com/chicken' ] ] );
 		} );
 
 		test( 'should recurse child data', () => {
@@ -200,16 +204,40 @@ describe( 'utils', () => {
 				buildExportArray( {
 					label: 'BBQ',
 					value: 10,
+					actions: [
+						{
+							type: 'link',
+							data: 'https://example.com/bbq',
+						},
+					],
 					children: [
 						{
+							actions: [
+								{
+									type: 'link',
+									data: 'https://example.com/bbq/chicken',
+								},
+							],
 							label: 'Chicken',
 							value: 5,
 						},
 						{
+							actions: [
+								{
+									type: 'link',
+									data: 'https://example.com/bbq/ribs',
+								},
+							],
 							label: 'Ribs',
 							value: 2,
 							children: [
 								{
+									actions: [
+										{
+											type: 'link',
+											data: 'https://example.com/bbq/ribs/babyback',
+										},
+									],
 									label: 'Babyback',
 									value: 1,
 								},
@@ -218,10 +246,10 @@ describe( 'utils', () => {
 					],
 				} )
 			).toEqual( [
-				[ '"BBQ"', 10 ],
-				[ '"BBQ > Chicken"', 5 ],
-				[ '"BBQ > Ribs"', 2 ],
-				[ '"BBQ > Ribs > Babyback"', 1 ],
+				[ '"BBQ"', 10, 'https://example.com/bbq' ],
+				[ '"BBQ > Chicken"', 5, 'https://example.com/bbq/chicken' ],
+				[ '"BBQ > Ribs"', 2, 'https://example.com/bbq/ribs' ],
+				[ '"BBQ > Ribs > Babyback"', 1, 'https://example.com/bbq/ribs/babyback' ],
 			] );
 		} );
 	} );
@@ -544,6 +572,7 @@ describe( 'utils', () => {
 					)
 				).toEqual( [
 					{
+						id: 0,
 						label: 'Home Page / Archives',
 						value: 3939,
 						page: '/stats/post/0/en.blog.wordpress.com',
@@ -592,6 +621,7 @@ describe( 'utils', () => {
 					)
 				).toEqual( [
 					{
+						id: 777,
 						label: 'New WordPress.com for Lightroom Makes Publishing Your Photos Easy',
 						value: 774,
 						page: '/stats/post/777/en.blog.wordpress.com',
@@ -639,6 +669,7 @@ describe( 'utils', () => {
 					)
 				).toEqual( [
 					{
+						id: 0,
 						label: 'Home Page / Archives',
 						value: 3939,
 						page: '/stats/post/0/en.blog.wordpress.com',
@@ -969,7 +1000,7 @@ describe( 'utils', () => {
 				expect( normalizers.statsPublicize( { bad: [] } ) ).toEqual( [] );
 			} );
 
-			test( 'should return an a properly parsed services array', () => {
+			test( 'should return a properly parsed services array', () => {
 				expect(
 					normalizers.statsPublicize( {
 						services: [
@@ -1023,8 +1054,7 @@ describe( 'utils', () => {
 											plays: 32,
 											post_id: 111111111,
 											title: 'Press This!',
-											url:
-												'http://en.blog.wordpress.com/wp-admin/media.php?action=edit&attachment_id=111111111',
+											url: 'http://en.blog.wordpress.com/wp-admin/media.php?action=edit&attachment_id=111111111',
 										},
 									],
 								},
@@ -1043,8 +1073,7 @@ describe( 'utils', () => {
 					{
 						actions: [
 							{
-								data:
-									'http://en.blog.wordpress.com/wp-admin/media.php?action=edit&attachment_id=111111111',
+								data: 'http://en.blog.wordpress.com/wp-admin/media.php?action=edit&attachment_id=111111111',
 								type: 'link',
 							},
 						],
@@ -1061,7 +1090,7 @@ describe( 'utils', () => {
 				expect( normalizers.statsVideo() ).toBeNull();
 			} );
 
-			test( 'should return an a properly parsed data array', () => {
+			test( 'should return a properly parsed data array', () => {
 				expect(
 					normalizers.statsVideo( {
 						data: [
@@ -1076,6 +1105,10 @@ describe( 'utils', () => {
 					} )
 				).toEqual( {
 					data: [
+						{
+							period: '2016-11-12',
+							value: 1,
+						},
 						{
 							period: '2016-11-13',
 							value: 0,
@@ -1093,8 +1126,7 @@ describe( 'utils', () => {
 						{
 							label:
 								'http://www.themepremium.com/blog-with-the-speed-of-your-thought-with-the-p2-theme/',
-							link:
-								'http://www.themepremium.com/blog-with-the-speed-of-your-thought-with-the-p2-theme/',
+							link: 'http://www.themepremium.com/blog-with-the-speed-of-your-thought-with-the-p2-theme/',
 						},
 					],
 				} );
@@ -1114,7 +1146,7 @@ describe( 'utils', () => {
 				expect( normalizers.statsTopAuthors( {}, { period: 'day' } ) ).toEqual( [] );
 			} );
 
-			test( 'should return an a properly parsed data array', () => {
+			test( 'should return a properly parsed data array', () => {
 				expect(
 					normalizers.statsTopAuthors(
 						{
@@ -1202,7 +1234,7 @@ describe( 'utils', () => {
 				expect( normalizers.statsTags( { bad: [] } ) ).toEqual( [] );
 			} );
 
-			test( 'should return an a properly parsed data array', () => {
+			test( 'should return a properly parsed data array', () => {
 				expect(
 					normalizers.statsTags( {
 						date: '2014-10-01',
@@ -1296,7 +1328,7 @@ describe( 'utils', () => {
 				expect( normalizers.statsClicks( {}, { period: 'day' } ) ).toEqual( [] );
 			} );
 
-			test( 'should return an a properly parsed data array', () => {
+			test( 'should return a properly parsed data array', () => {
 				expect(
 					normalizers.statsClicks(
 						{
@@ -1305,8 +1337,7 @@ describe( 'utils', () => {
 								'2017-01-12': {
 									clicks: [
 										{
-											icon:
-												'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
+											icon: 'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
 											name: 'wordpress.com/support',
 											url: null,
 											views: 45,
@@ -1320,8 +1351,7 @@ describe( 'utils', () => {
 										},
 										{
 											children: null,
-											icon:
-												'https://secure.gravatar.com/blavatar/3dbcb399a9112e3bb46f706b01c80062?s=48',
+											icon: 'https://secure.gravatar.com/blavatar/3dbcb399a9112e3bb46f706b01c80062?s=48',
 											name: 'en.forums.wordpress.com',
 											url: 'https://en.forums.wordpress.com/',
 											views: 6,
@@ -1363,7 +1393,7 @@ describe( 'utils', () => {
 				] );
 			} );
 
-			test( 'should return an a properly parsed summary data array', () => {
+			test( 'should return a properly parsed summary data array', () => {
 				expect(
 					normalizers.statsClicks(
 						{
@@ -1371,8 +1401,7 @@ describe( 'utils', () => {
 							summary: {
 								clicks: [
 									{
-										icon:
-											'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
+										icon: 'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
 										name: 'wordpress.com/support',
 										url: null,
 										views: 50,
@@ -1386,8 +1415,7 @@ describe( 'utils', () => {
 									},
 									{
 										children: null,
-										icon:
-											'https://secure.gravatar.com/blavatar/3dbcb399a9112e3bb46f706b01c80062?s=48',
+										icon: 'https://secure.gravatar.com/blavatar/3dbcb399a9112e3bb46f706b01c80062?s=48',
 										name: 'en.forums.wordpress.com',
 										url: 'https://en.forums.wordpress.com/',
 										views: 10,
@@ -1443,7 +1471,7 @@ describe( 'utils', () => {
 				expect( normalizers.statsReferrers( {}, { period: 'day' } ) ).toEqual( [] );
 			} );
 
-			test( 'should return an a properly parsed summary data array', () => {
+			test( 'should return a properly parsed summary data array', () => {
 				expect(
 					normalizers.statsReferrers(
 						{
@@ -1454,8 +1482,7 @@ describe( 'utils', () => {
 										group: 'WordPress.com Reader',
 										name: 'WordPress.com Reader',
 										url: 'https://wordpress.com',
-										icon:
-											'https://secure.gravatar.com/blavatar/236c008da9dc0edb4b3464ecebb3fc1d?s=48',
+										icon: 'https://secure.gravatar.com/blavatar/236c008da9dc0edb4b3464ecebb3fc1d?s=48',
 										results: {
 											views: 500,
 										},
@@ -1463,8 +1490,7 @@ describe( 'utils', () => {
 									},
 									{
 										group: 'wordpress.com/support',
-										icon:
-											'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
+										icon: 'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
 										name: 'wordpress.com/support',
 										results: [
 											{ name: 'homepage', url: 'https://wordpress.com/support/', views: 200 },
@@ -1530,7 +1556,7 @@ describe( 'utils', () => {
 				] );
 			} );
 
-			test( 'should return an a properly parsed data array', () => {
+			test( 'should return a properly parsed data array', () => {
 				expect(
 					normalizers.statsReferrers(
 						{
@@ -1542,8 +1568,7 @@ describe( 'utils', () => {
 											group: 'WordPress.com Reader',
 											name: 'WordPress.com Reader',
 											url: 'https://wordpress.com',
-											icon:
-												'https://secure.gravatar.com/blavatar/236c008da9dc0edb4b3464ecebb3fc1d?s=48',
+											icon: 'https://secure.gravatar.com/blavatar/236c008da9dc0edb4b3464ecebb3fc1d?s=48',
 											results: {
 												views: 407,
 											},
@@ -1551,8 +1576,7 @@ describe( 'utils', () => {
 										},
 										{
 											group: 'wordpress.com/support',
-											icon:
-												'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
+											icon: 'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
 											name: 'wordpress.com/support',
 											results: [
 												{ name: 'homepage', url: 'https://wordpress.com/support/', views: 42 },
@@ -1624,7 +1648,7 @@ describe( 'utils', () => {
 		} );
 
 		describe( 'statsSearchTerms()', () => {
-			test( 'should return an empty array if not data is passed', () => {
+			test( 'should return an empty array if no data is passed', () => {
 				expect( normalizers.statsSearchTerms() ).toEqual( [] );
 			} );
 
@@ -1636,7 +1660,7 @@ describe( 'utils', () => {
 				expect( normalizers.statsSearchTerms( {}, { period: 'day' } ) ).toEqual( [] );
 			} );
 
-			test( 'should return an a properly parsed data array', () => {
+			test( 'should return a properly parsed data array', () => {
 				expect(
 					normalizers.statsSearchTerms(
 						{
@@ -1673,22 +1697,15 @@ describe( 'utils', () => {
 						label: 'ribs',
 						value: 10,
 					},
-					{
-						label: 'Unknown Search Terms',
-						labelIcon: 'external',
-						link: 'http://wordpress.com/support/stats/#search-engine-terms',
-						value: 221,
-					},
 				] );
 			} );
 
-			test( 'should return an a properly parsed summarized data array', () => {
+			test( 'should return a properly parsed summarized data array', () => {
 				expect(
 					normalizers.statsSearchTerms(
 						{
 							date: '2017-01-12',
 							summary: {
-								encrypted_search_terms: 400,
 								search_terms: [
 									{
 										term: 'chicken',
@@ -1719,12 +1736,6 @@ describe( 'utils', () => {
 						label: 'ribs',
 						value: 100,
 					},
-					{
-						label: 'Unknown Search Terms',
-						labelIcon: 'external',
-						link: 'http://wordpress.com/support/stats/#search-engine-terms',
-						value: 400,
-					},
 				] );
 			} );
 		} );
@@ -1738,7 +1749,7 @@ describe( 'utils', () => {
 				expect( normalizers.statsVisits( { bad: [] } ) ).toEqual( [] );
 			} );
 
-			test( 'should return an a properly parsed data array', () => {
+			test( 'should return a properly parsed data array', () => {
 				expect(
 					normalizers.statsVisits( {
 						fields: [ 'period', 'views', 'visitors' ],
@@ -1858,61 +1869,6 @@ describe( 'utils', () => {
 						labelIcon: 'external',
 					},
 				] );
-			} );
-		} );
-
-		describe( 'parseStoreStatsReferrers', () => {
-			const validData = {
-				data: [
-					{
-						date: '2018-04-10',
-						data: [
-							[ 'green', 4 ],
-							[ 'red', 8 ],
-						],
-					},
-					{
-						date: '2018-04-09',
-						data: [
-							[ 'orange', 12 ],
-							[ 'blue', 16 ],
-						],
-					},
-				],
-				fields: [ 'color', 'age' ],
-			};
-
-			test( 'should return empty array for malformed payload', () => {
-				const noPayload = parseStoreStatsReferrers( undefined );
-				const noData = parseStoreStatsReferrers( {} );
-				const dataNotArray = parseStoreStatsReferrers( { data: {} } );
-
-				expect( noPayload ).toEqual( [] );
-				expect( noData ).toEqual( [] );
-				expect( dataNotArray ).toEqual( [] );
-			} );
-
-			test( 'should an array of objects with all fields', () => {
-				const parsedData = parseStoreStatsReferrers( validData );
-
-				expect( parsedData ).toHaveLength( validData.data.length );
-
-				const { fields } = validData;
-				const firstRecord = parsedData[ 0 ];
-
-				// Make sure all fields are present
-				firstRecord.data.forEach( ( d ) => {
-					expect( d[ fields[ 0 ] ] ).toBeDefined();
-					expect( d[ fields[ 1 ] ] ).toBeDefined();
-				} );
-
-				// Make sure values are correctly lined up
-				firstRecord.data.forEach( ( d, idx ) => {
-					expect( d.color ).toBe( validData.data[ 0 ].data[ idx ][ 0 ] );
-					expect( d.age ).toBe( validData.data[ 0 ].data[ idx ][ 1 ] );
-				} );
-
-				expect( firstRecord ).toHaveProperty( 'date', '2018-04-10' );
 			} );
 		} );
 	} );

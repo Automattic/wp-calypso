@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import treeSelect from '@automattic/tree-select';
 import { keyBy, pickBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { getExpansionsForPost } from 'calypso/state/comments/selectors/get-expansions-for-post';
 import { getPostCommentItems } from 'calypso/state/comments/selectors/get-post-comment-items';
 

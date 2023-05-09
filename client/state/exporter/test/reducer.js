@@ -1,19 +1,11 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import { selectedAdvancedSettings, advancedSettings, fetchingAdvancedSettings } from '../reducer';
-import { SAMPLE_ADVANCED_SETTINGS, SAMPLE_ADVANCED_SETTINGS_EMPTY } from './data';
 import {
 	EXPORT_ADVANCED_SETTINGS_FETCH_FAIL,
 	EXPORT_ADVANCED_SETTINGS_FETCH,
 	EXPORT_ADVANCED_SETTINGS_RECEIVE,
 	EXPORT_POST_TYPE_FIELD_SET,
 } from 'calypso/state/action-types';
+import { selectedAdvancedSettings, advancedSettings, fetchingAdvancedSettings } from '../reducer';
+import { SAMPLE_ADVANCED_SETTINGS, SAMPLE_ADVANCED_SETTINGS_EMPTY } from './data';
 
 describe( 'reducer', () => {
 	describe( 'selectedAdvancedSettings', () => {
@@ -28,7 +20,7 @@ describe( 'reducer', () => {
 					value: 1,
 				}
 			);
-			expect( state ).to.deep.equal( {
+			expect( state ).toEqual( {
 				2916284: {
 					post: { category: 1 },
 					page: {},
@@ -47,7 +39,7 @@ describe( 'reducer', () => {
 					value: 95752520,
 				}
 			);
-			expect( state ).to.deep.equal( {
+			expect( state ).toEqual( {
 				2916284: {
 					post: {},
 					page: { author: 95752520 },
@@ -62,7 +54,7 @@ describe( 'reducer', () => {
 				type: EXPORT_ADVANCED_SETTINGS_FETCH,
 				siteId: 100658273,
 			} );
-			expect( state ).to.eql( { 100658273: true } );
+			expect( state ).toEqual( { 100658273: true } );
 		} );
 
 		test( 'should reset fetching status after receive', () => {
@@ -71,7 +63,7 @@ describe( 'reducer', () => {
 				siteId: 100658273,
 				advancedSettings: {},
 			} );
-			expect( state ).to.eql( { 100658273: false } );
+			expect( state ).toEqual( { 100658273: false } );
 		} );
 
 		test( 'should reset fetching status after fail', () => {
@@ -80,7 +72,7 @@ describe( 'reducer', () => {
 				siteId: 100658273,
 				advancedSettings: {},
 			} );
-			expect( state ).to.eql( { 100658273: false } );
+			expect( state ).toEqual( { 100658273: false } );
 		} );
 
 		test( 'should not replace fetching status with other site', () => {
@@ -93,7 +85,7 @@ describe( 'reducer', () => {
 					siteId: 12345,
 				}
 			);
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				100658273: true,
 				12345: true,
 			} );
@@ -108,7 +100,7 @@ describe( 'reducer', () => {
 				advancedSettings: SAMPLE_ADVANCED_SETTINGS,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				100658273: SAMPLE_ADVANCED_SETTINGS,
 			} );
 		} );
@@ -122,7 +114,7 @@ describe( 'reducer', () => {
 				advancedSettings: SAMPLE_ADVANCED_SETTINGS_EMPTY,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				100658273: SAMPLE_ADVANCED_SETTINGS_EMPTY,
 			} );
 		} );
@@ -136,7 +128,7 @@ describe( 'reducer', () => {
 				advancedSettings: SAMPLE_ADVANCED_SETTINGS_EMPTY,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				100658273: SAMPLE_ADVANCED_SETTINGS,
 				12345: SAMPLE_ADVANCED_SETTINGS_EMPTY,
 			} );

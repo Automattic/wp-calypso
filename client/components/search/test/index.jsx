@@ -1,22 +1,11 @@
 /**
  * @jest-environment jsdom
  */
-
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-import React from 'react';
+import { createElement } from 'react';
 import TestUtils from 'react-dom/test-utils';
-import sinon from 'sinon';
-
-/**
- * Internal dependencies
- */
 import searchClass from '../';
 
 jest.mock( 'calypso/lib/analytics/ga', () => ( {} ) );
-jest.mock( 'gridicons', () => require( 'calypso/components/empty-component' ) );
 
 describe( 'Search', () => {
 	describe( 'initialValue', () => {
@@ -24,14 +13,14 @@ describe( 'Search', () => {
 		let rendered;
 
 		beforeEach( () => {
-			onSearch = sinon.stub();
+			onSearch = jest.fn();
 		} );
 
 		describe( 'with initialValue', () => {
 			const initialValue = 'hello';
 
 			beforeEach( () => {
-				const searchElement = React.createElement( searchClass, {
+				const searchElement = createElement( searchClass, {
 					initialValue,
 					onSearch,
 				} );
@@ -39,20 +28,20 @@ describe( 'Search', () => {
 			} );
 
 			test( 'should set state.keyword with the initialValue after mount', () => {
-				expect( rendered.state.keyword ).to.equal( initialValue );
+				expect( rendered.state.keyword ).toEqual( initialValue );
 			} );
 		} );
 
 		describe( 'without initialValue', () => {
 			beforeEach( () => {
-				const searchElement = React.createElement( searchClass, {
+				const searchElement = createElement( searchClass, {
 					onSearch,
 				} );
 				rendered = TestUtils.renderIntoDocument( searchElement );
 			} );
 
 			test( 'should set state.keyword empty string after mount', () => {
-				expect( rendered.state.keyword ).to.equal( '' );
+				expect( rendered.state.keyword ).toEqual( '' );
 			} );
 		} );
 	} );

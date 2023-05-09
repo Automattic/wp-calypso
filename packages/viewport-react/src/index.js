@@ -1,24 +1,16 @@
-/**
- * External dependencies
- */
-import React, { forwardRef, useState, useEffect } from 'react';
-import { createHigherOrderComponent } from '@wordpress/compose';
-
-/**
- * Internal dependencies
- */
 import {
 	isWithinBreakpoint,
 	subscribeIsWithinBreakpoint,
 	MOBILE_BREAKPOINT,
 	DESKTOP_BREAKPOINT,
 } from '@automattic/viewport';
+import { createHigherOrderComponent } from '@wordpress/compose';
+import { forwardRef, useState, useEffect } from 'react';
 
 /**
  * React hook for getting the status for a breakpoint and keeping it updated.
  *
  * @param {string} breakpoint The breakpoint to consider.
- *
  * @returns {boolean} The current status for the breakpoint.
  */
 export function useBreakpoint( breakpoint ) {
@@ -71,7 +63,6 @@ export function useDesktopBreakpoint() {
  * keeping it updated.
  *
  * @param {string} breakpoint The breakpoint to consider.
- *
  * @returns {Function} A function that given a component returns the
  * wrapped component.
  */
@@ -89,8 +80,7 @@ export const withBreakpoint = ( breakpoint ) =>
  * React higher order component for getting the status for the mobile
  * breakpoint and keeping it updated.
  *
- * @param {React.Component|Function} Wrapped The component to wrap.
- *
+ * @param {import('react').Component|Function} Wrapped The component to wrap.
  * @returns {Function} The wrapped component.
  */
 export const withMobileBreakpoint = createHigherOrderComponent(
@@ -106,8 +96,7 @@ export const withMobileBreakpoint = createHigherOrderComponent(
  * React higher order component for getting the status for the desktop
  * breakpoint and keeping it updated.
  *
- * @param {React.Component|Function} Wrapped The component to wrap.
- *
+ * @param {import('react').Component|Function} Wrapped The component to wrap.
  * @returns {Function} The wrapped component.
  */
 export const withDesktopBreakpoint = createHigherOrderComponent(

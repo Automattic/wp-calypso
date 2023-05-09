@@ -2,20 +2,12 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { render } from '@testing-library/react';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import fixtures from './fixtures';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
 import resize from 'calypso/lib/resize-image-url';
 import ListItemVideo from 'calypso/my-sites/media-library/list-item-video';
-import { createStore } from 'redux';
-import { Provider } from 'react-redux';
+import fixtures from './fixtures';
 
 const WIDTH = 450;
 

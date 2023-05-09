@@ -1,18 +1,11 @@
-/**
- * External Dependencies
- */
 const { Tray, Menu, app } = require( 'electron' );
-
-/**
- * Internal dependencies
- */
-const windowsTrayMenu = require( './tray-menu' );
-const Settings = require( '../../../lib/settings' );
 const appQuit = require( '../../../lib/app-quit' );
-const platform = require( '../../../lib/platform' );
-const menuSetter = require( '../../../lib/menu-setter' );
 const assets = require( '../../../lib/assets' );
 const log = require( '../../../lib/logger' )( 'platform:windows' );
+const menuSetter = require( '../../../lib/menu-setter' );
+const platform = require( '../../../lib/platform' );
+const Settings = require( '../../../lib/settings' );
+const windowsTrayMenu = require( './tray-menu' );
 
 /**
  * Module variables
@@ -44,6 +37,8 @@ function WindowsPlatform( appWindow ) {
 			tray.destroy();
 		}
 	} );
+
+	app.on( 'second-instance', this.restore.bind( this ) );
 }
 
 WindowsPlatform.prototype.onClosed = function ( ev ) {
@@ -78,6 +73,11 @@ WindowsPlatform.prototype.showBackgroundBubble = function () {
 };
 
 WindowsPlatform.prototype.restore = function () {
+	log.info( 'Restoring app window ...' );
+	if ( window.isMinimized() ) {
+		window.restore();
+		window.focus();
+	}
 	window.show();
 };
 

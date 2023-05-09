@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { trademarkNoticeText } from './trademark-constants';
 import { Button, CompactCard } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component, Fragment } from 'react';
 import TrademarkClaim from './trademark-claim';
+import { trademarkNoticeText } from './trademark-constants';
 
-class TrademarkNotice extends React.Component {
+class TrademarkNotice extends Component {
 	static propTypes = {
 		buttonsEnabled: PropTypes.bool.isRequired,
 		onAccept: PropTypes.func.isRequired,
@@ -40,16 +33,21 @@ class TrademarkNotice extends React.Component {
 	};
 
 	renderNoticeActions = () => {
-		const { buttonsEnabled, onAccept, onReject, translate } = this.props;
+		const { buttonsEnabled, onAccept, onReject, translate, isLoading } = this.props;
 
 		return (
 			<div className="trademark-claims-notice__layout">
 				<div className="trademark-claims-notice__actions-background">
 					<CompactCard className="trademark-claims-notice__actions">
-						<Button borderless onClick={ onReject } disabled={ ! buttonsEnabled }>
+						<Button
+							busy={ isLoading }
+							borderless
+							onClick={ onReject }
+							disabled={ ! buttonsEnabled }
+						>
 							{ translate( 'Choose Another Domain' ) }
 						</Button>
-						<Button primary onClick={ onAccept } disabled={ ! buttonsEnabled }>
+						<Button busy={ isLoading } primary onClick={ onAccept } disabled={ ! buttonsEnabled }>
 							{ translate( 'Acknowledge Trademark' ) }
 						</Button>
 					</CompactCard>

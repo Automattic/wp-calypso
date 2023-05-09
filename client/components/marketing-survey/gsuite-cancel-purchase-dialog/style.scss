@@ -5,10 +5,10 @@
 // adds a small amount of space to the bottom of the features to prevent
 // it from overlapping with the "fade" at the bottom of the dialog at narrow widths
 .gsuite-cancel-purchase-dialog__features::after {
-	content: '';
+	content: "";
 	display: block;
 	height: 1em;
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		content: none;
 	}
 }

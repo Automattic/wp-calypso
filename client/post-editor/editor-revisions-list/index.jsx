@@ -1,26 +1,14 @@
-/**
- * External dependencies
- */
-import ReactDom from 'react-dom';
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
 import { get, isEmpty, last, map } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import EditorRevisionsListHeader from './header';
-import EditorRevisionsListViewButtons from './view-buttons';
-import EditorRevisionsListNavigation from './navigation';
-import EditorRevisionsListItem from './item';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
+import ReactDom from 'react-dom';
+import { connect } from 'react-redux';
 import { selectPostRevision } from 'calypso/state/posts/revisions/actions';
-import KeyboardShortcuts from 'calypso/lib/keyboard-shortcuts';
-
-/**
- * Style dependencies
- */
+import EditorRevisionsListHeader from './header';
+import EditorRevisionsListItem from './item';
+import EditorRevisionsListNavigation from './navigation';
+import EditorRevisionsListViewButtons from './view-buttons';
 import './style.scss';
 
 class EditorRevisionsList extends PureComponent {
@@ -50,17 +38,9 @@ class EditorRevisionsList extends PureComponent {
 		// Make sure that scroll position in the editor is not preserved.
 		window.scrollTo( 0, 0 );
 
-		KeyboardShortcuts.on( 'move-selection-up', this.selectNextRevision );
-		KeyboardShortcuts.on( 'move-selection-down', this.selectPreviousRevision );
-
 		if ( ! this.props.selectedRevisionId ) {
 			this.trySelectingLatestRevision();
 		}
-	}
-
-	componentWillUnmount() {
-		KeyboardShortcuts.off( 'move-selection-up', this.selectNextRevision );
-		KeyboardShortcuts.off( 'move-selection-down', this.selectPreviousRevision );
 	}
 
 	componentDidUpdate( prevProps ) {

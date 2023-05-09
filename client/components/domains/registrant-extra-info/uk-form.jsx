@@ -1,32 +1,21 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
+import { FormInputValidation } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { camelCase, difference, filter, get, includes, isEmpty, keys, map, pick } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
-import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import { camelCase, difference, get, isEmpty, keys, map, pick } from 'lodash';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import WithContactDetailsValidation, {
-	disableSubmitButton,
-} from './with-contact-details-validation';
+import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
+import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
 
 const defaultValues = {
 	registrantType: 'IND',
 };
 
-export class RegistrantExtraInfoUkForm extends React.PureComponent {
+export class RegistrantExtraInfoUkForm extends PureComponent {
 	static propTypes = {
 		contactDetails: PropTypes.object.isRequired,
 		ccTldDetails: PropTypes.object.isRequired,
@@ -67,7 +56,7 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 		) );
 	}
 
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		// Add defaults to redux state to make accepting default values work.
 		const neededRequiredDetails = difference(
 			[ 'registrantType' ],
@@ -106,14 +95,13 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 	};
 
 	isTradingNameRequired( registrantType ) {
-		return includes(
-			[ 'LTD', 'PLC', 'LLP', 'IP', 'RCHAR', 'FCORP', 'OTHER', 'FOTHER', 'STRA' ],
+		return [ 'LTD', 'PLC', 'LLP', 'IP', 'RCHAR', 'FCORP', 'OTHER', 'FOTHER', 'STRA' ].includes(
 			registrantType
 		);
 	}
 
 	isRegistrationNumberRequired( registrantType ) {
-		return includes( [ 'LTD', 'PLC', 'LLP', 'IP', 'SCH', 'RCHAR' ], registrantType );
+		return [ 'LTD', 'PLC', 'LLP', 'IP', 'SCH', 'RCHAR' ].includes( registrantType );
 	}
 
 	renderTradingNameField() {
@@ -138,7 +126,7 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 						autoCapitalize="off"
 						autoComplete="off"
 						autoCorrect="off"
-						placeholder={ '' }
+						placeholder=""
 						onChange={ this.handleChangeEvent }
 						isError={ isError }
 					/>
@@ -174,7 +162,7 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 						autoCapitalize="off"
 						autoComplete="off"
 						autoCorrect="off"
-						placeholder={ '' }
+						placeholder=""
 						onChange={ this.handleChangeEvent }
 						isError={ isError }
 					/>
@@ -201,14 +189,6 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 			...defaultValues,
 			...this.props.ccTldDetails,
 		};
-
-		const relevantExtraFields = filter( [
-			this.isTradingNameRequired( registrantType ) && 'tradingName',
-			this.isRegistrationNumberRequired( registrantType ) && 'registrationNumber',
-		] );
-		const isValid = Object.keys( this.props.contactDetailsValidationErrors?.extra?.uk ?? {} ).every(
-			( errorKey ) => ! relevantExtraFields.includes( errorKey )
-		);
 
 		return (
 			<form className="registrant-extra-info__form">
@@ -237,16 +217,10 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 
 				{ this.isRegistrationNumberRequired( registrantType ) &&
 					this.renderRegistrationNumberField() }
-				{ isValid ? this.props.children : disableSubmitButton( this.props.children ) }
 			</form>
 		);
 	}
 }
-
-export const ValidatedRegistrantExtraInfoUkForm = WithContactDetailsValidation(
-	'uk',
-	RegistrantExtraInfoUkForm
-);
 
 export default connect(
 	( state, ownProps ) => {
@@ -266,4 +240,4 @@ export default connect(
 		};
 	},
 	{ updateContactDetailsCache }
-)( localize( ValidatedRegistrantExtraInfoUkForm ) );
+)( localize( RegistrantExtraInfoUkForm ) );

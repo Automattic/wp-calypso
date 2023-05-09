@@ -7,7 +7,6 @@
 Render the component, passing `siteId` and `postIds`. It does not accept any children, nor does it render any element to the page. You can use it adjacent to other sibling components which make use of the fetched data made available through the global application state.
 
 ```jsx
-import React from 'react';
 import QueryRecentPostViews from 'calypso/components/data/query-stats-recent-post-views';
 
 export default function ViewCount( { viewCount } ) {

@@ -7,7 +7,7 @@ Resizable Iframe is a React component for rendering an `<iframe>` element which 
 The `ResizableIframe` component can be used in much the same way that you would use an `<iframe>` DOM element. Props are automatically transferred to the rendered `<iframe>`, in case you need to specify additional properties or styles.
 
 ```html
-<ResizableIframe src={ myFrameUrl } frameBorder={ 0 } />
+<ResizableIframe src="{" myFrameUrl } frameBorder="{" 0 } />
 ```
 
 ## Usage

@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { get, filter } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { combineReducers } from 'calypso/state/utils';
 import {
 	MEMBERSHIPS_SUBSCRIBERS_RECEIVE,

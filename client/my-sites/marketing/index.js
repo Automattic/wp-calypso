@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import page from 'page';
-
-/**
- * Internal dependencies
- */
+import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import {
 	connections,
@@ -18,18 +12,25 @@ import {
 	redirectSharingButtons,
 	sharingButtons,
 	traffic,
-	ultimateTrafficGuide,
 } from './controller';
-import { makeLayout, render as clientRender } from 'calypso/controller';
 
 export default function () {
+	page( '/marketing/do-it-for-me*', function redirectToDIFMLandingPage() {
+		window.location.replace( 'https://wordpress.com/built-by/' );
+	} );
+
+	page( '/marketing/ultimate-traffic-guide*', function redirectToWPCoursesPage() {
+		window.location.replace(
+			'https://wpcourses.com/course/intro-to-search-engine-optimization-seo/'
+		);
+	} );
+
 	const paths = [
 		'/marketing',
 		'/marketing/connections',
 		'/marketing/sharing-buttons',
 		'/marketing/tools',
 		'/marketing/traffic',
-		'/marketing/ultimate-traffic-guide',
 		'/sharing',
 		'/sharing/buttons',
 		'/marketing/business-tools',
@@ -89,17 +90,6 @@ export default function () {
 		siteSelection,
 		navigation,
 		marketingBusinessTools,
-		layout,
-		makeLayout,
-		clientRender
-	);
-
-	page(
-		'/marketing/ultimate-traffic-guide/:domain',
-		siteSelection,
-		sites,
-		navigation,
-		ultimateTrafficGuide,
 		layout,
 		makeLayout,
 		clientRender

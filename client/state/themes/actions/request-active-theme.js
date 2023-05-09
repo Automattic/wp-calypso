@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	ACTIVE_THEME_REQUEST_FAILURE,
 	ACTIVE_THEME_REQUEST_SUCCESS,
 	ACTIVE_THEME_REQUEST,
 } from 'calypso/state/themes/action-types';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { receiveTheme } from 'calypso/state/themes/actions/receive-theme';
 
 import 'calypso/state/themes/init';
@@ -34,9 +27,8 @@ export function requestActiveTheme( siteId ) {
 			siteId,
 		} );
 
-		return wpcom
-			.undocumented()
-			.activeTheme( siteId )
+		return wpcom.req
+			.get( `/sites/${ siteId }/themes/mine` )
 			.then( ( theme ) => {
 				debug( 'Received current theme', theme );
 				// We want to store the theme object in the appropriate Redux subtree -- either 'wpcom'

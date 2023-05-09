@@ -1,54 +1,36 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import DomainsLandingHeader from '../header';
-import DomainsLandingContentCard from '../content-card';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import wp from 'calypso/lib/wp';
-import { getMaintenanceMessageFromError } from '../utils';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
-
-const wpcom = wp.undocumented();
+import DomainsLandingContentCard from '../content-card';
+import DomainsLandingHeader from '../header';
+import { getMaintenanceMessageFromError } from '../utils';
 
 class RegistrantVerificationPage extends Component {
 	static propTypes = {
 		domain: PropTypes.string.isRequired,
 		email: PropTypes.string.isRequired,
+		reseller: PropTypes.string,
 		token: PropTypes.string.isRequired,
 	};
 
-	state = {
-		isLoading: true,
-		success: false,
-		error: false,
-	};
+	state = this.getLoadingState();
 
-	constructor( props ) {
-		super( props );
-		this.state = this.getLoadingState();
-	}
-
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		const { domain, email, token } = this.props;
-		wpcom.domainsVerifyRegistrantEmail( domain, email, token ).then(
-			( response ) => {
-				this.setState( this.getVerificationSuccessState( get( response, 'domains', [ domain ] ) ) );
-			},
-			( error ) => {
+		wp.req
+			.get( `/domains/${ domain }/verify-email`, { email, token } )
+			.then( ( response ) => {
+				this.setState( this.getVerificationSuccessState( response?.domains ?? [ domain ] ) );
+			} )
+			.catch( ( error ) => {
 				this.setErrorState( error );
-			}
-		);
+			} );
 	}
 
-	getLoadingState = () => {
+	getLoadingState() {
 		const { translate } = this.props;
 		return {
 			isLoading: true,
@@ -58,22 +40,28 @@ class RegistrantVerificationPage extends Component {
 			actionCallback: null,
 			footer: 'Loading…',
 		};
-	};
+	}
 
 	getVerificationSuccessState = ( domains ) => {
-		const { translate } = this.props;
+		const { reseller, translate } = this.props;
 
-		const verifiedDomains = domains.join( ', ' );
+		// DSAPI reseller domains shouldn't use the ?logmein=1 query parameter
+		const logMeInSuffix = reseller ? '' : '?logmein=1';
+
+		const DomainLinks = domains.map( ( domain, index ) => [
+			index > 0 && ', ',
+			<a key={ domain } href={ `https://${ domain }${ logMeInSuffix }` }>
+				{ domain }
+			</a>,
+		] );
 
 		return {
 			title: translate( 'Success!' ),
 			message: translate(
-				'Thank your for verifying your contact information for:{{br /}}{{strong}}%(domain)s{{/strong}}.',
+				'Thank your for verifying your contact information for:{{br /}}{{strong}}{{domainLinks /}}{{/strong}}.',
 				{
-					args: {
-						domain: verifiedDomains,
-					},
 					components: {
+						domainLinks: DomainLinks,
 						strong: <strong />,
 						br: <br />,
 					},
@@ -81,20 +69,36 @@ class RegistrantVerificationPage extends Component {
 			),
 			actionTitle: null,
 			actionCallback: null,
-			footer: translate(
-				'All done. You can close this window now or {{domainsManagementLink}}manage your domains{{/domainsManagementLink}}.',
-				{
-					components: {
-						domainsManagementLink: <a href={ domainManagementRoot() } />,
-					},
-				}
-			),
+			footer: this.getSuccessFooterMessage(),
 			isLoading: false,
 		};
 	};
 
+	getSuccessFooterMessage = () => {
+		const { reseller, translate } = this.props;
+
+		if ( reseller ) {
+			return translate( 'All done. You can close this window now.' );
+		}
+
+		return translate(
+			'All done. You can close this window now or {{domainsManagementLink}}manage your domains{{/domainsManagementLink}}.',
+			{
+				components: {
+					domainsManagementLink: <a href={ domainManagementRoot() } />,
+				},
+			}
+		);
+	};
+
 	getExpiredState = () => {
-		const { translate } = this.props;
+		const { reseller, translate } = this.props;
+
+		if ( reseller ) {
+			return {
+				message: translate( 'This email has expired.' ),
+			};
+		}
 
 		return {
 			message: translate(
@@ -139,7 +143,7 @@ class RegistrantVerificationPage extends Component {
 			return {
 				title: translate( 'Already verified.' ),
 				message: translate(
-					"You've already verified {{strong}}%(email)s{{/strong}} for:{{br /}}{{strong}}%(domain)s{{/strong}}.",
+					"You've already verified {{strong}}%(email)s{{/strong}} for:{{br /}}{{strong}}{{a}}%(domain)s{{/a}}{{/strong}}.",
 					{
 						args: {
 							email: email,
@@ -148,17 +152,11 @@ class RegistrantVerificationPage extends Component {
 						components: {
 							strong: <strong />,
 							br: <br />,
+							a: <a href={ `https://${ domain }?logmein=1` } />,
 						},
 					}
 				),
-				footer: translate(
-					'All done. You can close this window now or {{domainsManagementLink}}manage your domains{{/domainsManagementLink}}.',
-					{
-						components: {
-							domainsManagementLink: <a href={ domainManagementRoot() } />,
-						},
-					}
-				),
+				footer: this.getSuccessFooterMessage(),
 			};
 		}
 	};
@@ -172,13 +170,15 @@ class RegistrantVerificationPage extends Component {
 	};
 
 	getDefaultErrorState = () => {
-		const { translate } = this.props;
+		const { reseller, translate } = this.props;
+
+		// DSAPI resellers shouldn't link to the support contact form
 		const defaultErrorFooter = translate(
 			"If you're having trouble verifying your contact information, please {{a}}{{strong}}contact support{{/strong}}{{/a}}.",
 			{
 				components: {
-					a: <a href={ CALYPSO_CONTACT } />,
-					strong: <strong />,
+					a: reseller ? <span /> : <a href={ CALYPSO_CONTACT } />,
+					strong: reseller ? <span /> : <strong />,
 				},
 			}
 		);
@@ -243,10 +243,9 @@ class RegistrantVerificationPage extends Component {
 
 		this.setState( this.getLoadingState() );
 
-		wpcom.resendIcannVerification( domain, ( error ) => {
-			if ( error ) {
-				this.setErrorState( { error: 'resend_email_failed' } );
-			} else {
+		wp.req
+			.post( `/domains/${ domain }/resend-icann` )
+			.then( () => {
 				this.setState( {
 					title: translate( 'Email sent!' ),
 					message: translate( 'Check your email.' ),
@@ -255,16 +254,21 @@ class RegistrantVerificationPage extends Component {
 					footer: translate( "That's all for now. We'll see you again soon." ),
 					isLoading: false,
 				} );
-			}
-		} );
+			} )
+			.catch( () => {
+				this.setErrorState( { error: 'resend_email_failed' } );
+			} );
 	};
 
 	render() {
-		const { translate } = this.props;
+		const { reseller, translate } = this.props;
 
 		return (
 			<div className="registrant-verification">
-				<DomainsLandingHeader title={ translate( 'Domain Contact Verification' ) } />
+				<DomainsLandingHeader
+					reseller={ reseller }
+					title={ translate( 'Domain Contact Verification' ) }
+				/>
 				<DomainsLandingContentCard
 					title={ this.state.title }
 					message={ this.state.message }

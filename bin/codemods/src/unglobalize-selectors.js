@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { kebabCase } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import config from './config';
 
 export default function transformer( file, api ) {

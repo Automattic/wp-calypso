@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { transformSite } from '../transientItems';
 
 describe( 'transientItems utils', () => {

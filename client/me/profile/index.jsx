@@ -1,40 +1,34 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
-import { flowRight as compose } from 'lodash';
-import { localize } from 'i18n-calypso';
-import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
+import { ToggleControl } from '@wordpress/components';
+import classnames from 'classnames';
+import { localize, translate } from 'i18n-calypso';
+import { flowRight as compose } from 'lodash';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import EditGravatar from 'calypso/blocks/edit-gravatar';
-import withFormBase from 'calypso/me/form-base/with-form-base';
+import FormattedHeader from 'calypso/components/formatted-header';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
-import FormTextarea from 'calypso/components/forms/form-textarea';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormTextarea from 'calypso/components/forms/form-textarea';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
-import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
+import SectionHeader from 'calypso/components/section-header';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { protectForm } from 'calypso/lib/protect-form';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import DomainUpsell from 'calypso/me/domain-upsell';
+import withFormBase from 'calypso/me/form-base/with-form-base';
 import ProfileLinks from 'calypso/me/profile-links';
 import ReauthRequired from 'calypso/me/reauth-required';
-import SectionHeader from 'calypso/components/section-header';
-import twoStepAuthorization from 'calypso/lib/two-step-authorization';
-import { protectForm } from 'calypso/lib/protect-form';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import FormattedHeader from 'calypso/components/formatted-header';
+import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
+import UpdatedGravatarString from './updated-gravatar-string';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class Profile extends React.Component {
+class Profile extends Component {
 	getClickHandler( action ) {
 		return () => this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
 	}
@@ -47,17 +41,30 @@ class Profile extends React.Component {
 		this.props.setUserSetting( 'gravatar_profile_hidden', isHidden );
 	};
 
+	toggleIsDevAccount = ( isDevAccount ) => {
+		this.props.setUserSetting( 'is_dev_account', isDevAccount );
+	};
+
 	render() {
 		const gravatarProfileLink = 'https://gravatar.com/' + this.props.getSetting( 'user_login' );
 
 		return (
 			<Main className="profile">
 				<PageViewTracker path="/me" title="Me > My Profile" />
-				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 				<FormattedHeader
 					brandFont
 					headerText={ this.props.translate( 'My Profile' ) }
+					subHeaderText={ this.props.translate(
+						'Set your name, bio, and other public-facing information. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						{
+							components: {
+								learnMoreLink: (
+									<InlineSupportLink supportContext="manage-profile" showIcon={ false } />
+								),
+							},
+						}
+					) }
 					align="left"
 				/>
 
@@ -116,26 +123,33 @@ class Profile extends React.Component {
 							/>
 						</FormFieldset>
 
-						<FormFieldset>
+						<FormFieldset
+							className={ classnames( {
+								'profile__gravatar-fieldset-is-loading': this.props.isFetchingUserSettings,
+							} ) }
+						>
 							<ToggleControl
+								disabled={ this.props.isFetchingUserSettings }
 								checked={ this.props.getSetting( 'gravatar_profile_hidden' ) }
 								onChange={ this.toggleGravatarHidden }
-								label={ this.props.translate(
-									'{{spanLead}}Hide my Gravatar profile.{{/spanLead}} {{spanExtra}}This will prevent your {{profileLink}}Gravatar profile{{/profileLink}} and photo from appearing on any site. It may take some time for the changes to take effect. Gravatar profiles can be deleted at {{deleteLink}}Gravatar.com{{/deleteLink}}.{{/spanExtra}}',
+								label={ <UpdatedGravatarString gravatarProfileLink={ gravatarProfileLink } /> }
+							/>
+						</FormFieldset>
+
+						<FormFieldset
+							className={ classnames( {
+								'profile__is_dev_account-fieldset-is-loading': this.props.isFetchingUserSettings,
+							} ) }
+						>
+							<ToggleControl
+								disabled={ this.props.isFetchingUserSettings }
+								checked={ this.props.getSetting( 'is_dev_account' ) }
+								onChange={ this.toggleIsDevAccount }
+								label={ translate(
+									'{{spanLead}}I am a developer.{{/spanLead}} Make my WordPress.com experience more powerful and grant me early access to developer features.',
 									{
 										components: {
-											spanLead: <strong className="profile__link-destination-label-lead" />,
-											spanExtra: <span className="profile__link-destination-label-extra" />,
-											profileLink: (
-												<a href={ gravatarProfileLink } target="_blank" rel="noreferrer" />
-											),
-											deleteLink: (
-												<a
-													href="https://gravatar.com/account/disable/"
-													target="_blank"
-													rel="noreferrer"
-												/>
-											),
+											spanLead: <strong />,
 										},
 									}
 								) }
@@ -155,6 +169,8 @@ class Profile extends React.Component {
 					</form>
 				</Card>
 
+				<DomainUpsell context="profile" />
+
 				<ProfileLinks />
 			</Main>
 		);
@@ -162,7 +178,12 @@ class Profile extends React.Component {
 }
 
 export default compose(
-	connect( null, { recordGoogleEvent } ),
+	connect(
+		( state ) => ( {
+			isFetchingUserSettings: isFetchingUserSettings( state ),
+		} ),
+		{ recordGoogleEvent }
+	),
 	protectForm,
 	localize,
 	withFormBase

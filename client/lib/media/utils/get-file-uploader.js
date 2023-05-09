@@ -1,13 +1,7 @@
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:media' );
-
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
+
+const debug = debugFactory( 'calypso:media' );
 
 export const getFileUploader = ( file, siteId, postId ) => {
 	// Determine upload mechanism by object type

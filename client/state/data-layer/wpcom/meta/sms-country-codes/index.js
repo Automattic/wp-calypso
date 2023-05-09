@@ -1,23 +1,15 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { COUNTRIES_SMS_FETCH, COUNTRIES_SMS_UPDATED } from 'calypso/state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { COUNTRIES_SMS_FETCH, COUNTRIES_SMS_UPDATED } from 'calypso/state/action-types';
 import { errorNotice } from 'calypso/state/notices/actions';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 /**
  * Dispatches a request to fetch all available WordPress.com countries
  *
- * @param 	{object} action The action to dispatch next
- * @returns {object} dispatched http action
+ * @param 	{Object} action The action to dispatch next
+ * @returns {Object} dispatched http action
  */
 export const fetchCountriesSms = ( action ) =>
 	http(
@@ -32,9 +24,9 @@ export const fetchCountriesSms = ( action ) =>
 /**
  * Dispatches a countries updated action then the request for countries succeeded.
  *
- * @param   {object}   action   Redux action
+ * @param   {Object}   action   Redux action
  * @param   {Array}    countries  array of raw device data returned from the endpoint
- * @returns {object}            disparched user devices add action
+ * @returns {Object}            disparched user devices add action
  */
 export const updateCountriesSms = ( action, countries ) => ( {
 	type: COUNTRIES_SMS_UPDATED,
@@ -44,7 +36,7 @@ export const updateCountriesSms = ( action, countries ) => ( {
 /**
  * Dispatches a error notice action when the request for the supported countries list fails.
  *
- * @returns {object}            dispatched error notice action
+ * @returns {Object}            dispatched error notice action
  */
 export const showCountriesSmsLoadingError = () =>
 	errorNotice( translate( "We couldn't load the countries list." ) );

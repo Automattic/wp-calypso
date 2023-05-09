@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getSiteType } from '../selectors';
 
 describe( 'selectors', () => {

@@ -1,7 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import styled from '@emotion/styled';
 
 const PaymentMethodLogos = styled.span`

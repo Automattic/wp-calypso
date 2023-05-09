@@ -1,38 +1,26 @@
-/**
- * External dependencies
- */
 import { Card, ProgressBar } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { Moment } from 'moment';
-import React from 'react';
+import * as React from 'react';
 import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
+import cloudScheduleIcon from 'calypso/components/jetpack/daily-backup-status/status-card/icons/cloud-schedule.svg';
+import JetpackLogo from 'calypso/components/jetpack-logo';
 import { preventWidows } from 'calypso/lib/formatting';
 import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { backupMainPath } from 'calypso/my-sites/backup/paths';
-import JetpackLogo from 'calypso/components/jetpack-logo';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { useGetDisplayDate } from './hooks';
 
-/**
- * Style dependencies
- */
 import './style.scss';
-import cloudScheduleIcon from 'calypso/components/jetpack/daily-backup-status/status-card/icons/cloud-schedule.svg';
 
 const BackupInProgress: React.FC< Props > = ( { percent, lastBackupDate, isFeatured } ) => {
 	const translate = useTranslate();
 	const getDisplayDate = useGetDisplayDate();
 
 	const siteSlug = useSelector( getSelectedSiteSlug );
-	const siteLastBackupDate = useDateWithOffset( lastBackupDate, {
-		shouldExecute: !! lastBackupDate,
-	} );
+	const siteLastBackupDate = useDateWithOffset( lastBackupDate );
 	const lastBackupDisplayDate = lastBackupDate ? getDisplayDate( lastBackupDate ) : undefined;
 
 	return (

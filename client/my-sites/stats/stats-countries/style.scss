@@ -1,13 +1,73 @@
+@import "@wordpress/base-styles/breakpoints";
+
+$break-large-stats-countries: 1280px;
+
 // Countries
-.countryviews {
-	.module-content-list-item-label .icon img {
-		background-color: var( --color-neutral-0 );
+.stats__module-list--traffic {
+	.list-countryviews {
+		.stats-card--hero {
+			padding-bottom: 0;
+
+			.stats-geochart {
+				margin-bottom: 32px;
+
+				&.has-no-data {
+					margin-bottom: 0;
+				}
+			}
+		}
 	}
 
-	.stats-module.is-loading &,
-	.stats-module.has-no-data & {
+	@media (min-width: $break-large-stats-countries ) {
+
+		.stats__module-wrapper--countryviews .stats-module,
+		.list-countryviews {
+			display: flex;
+			flex-direction: row;
+			flex-wrap: wrap;
+		}
+
+		.list-countryviews {
+			.stats-card--hero {
+				.stats-geochart {
+					margin-bottom: 0;
+				}
+
+				.stats-geochart.stats-module__placeholder {
+					min-width: 550px;
+				}
+			}
+
+			.stats-card--header-and-body {
+				flex: 1;
+			}
+
+			.stats-card--footer {
+				flex-basis: 100%;
+			}
+		}
+	}
+
+	.stats__module-wrapper--countryviews {
+		.module-content-text {
+			grid-column: map-start / list-end;
+			margin-bottom: 24px;
+		}
+
 		.stats-geochart {
-			display: none;
+			grid-area: map;
+		}
+
+		.stats__list-wrapper {
+			grid-area: list;
+		}
+
+		.stats-module__expand {
+			grid-area: more;
+		}
+
+		.module-content-list:last-child {
+			padding-bottom: 0;
 		}
 	}
 }

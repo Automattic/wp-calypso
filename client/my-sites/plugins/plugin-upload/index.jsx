@@ -1,29 +1,26 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import { connect } from 'react-redux';
-import page from 'page';
+import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { isEmpty, flowRight } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import Main from 'calypso/components/main';
-import HeaderCake from 'calypso/components/header-cake';
-import { Card, ProgressBar } from '@automattic/components';
-import UploadDropZone from 'calypso/blocks/upload-drop-zone';
+import page from 'page';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
-import EmptyContent from 'calypso/components/empty-content';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import UploadDropZone from 'calypso/blocks/upload-drop-zone';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
-import { uploadPlugin, clearPluginUpload } from 'calypso/state/plugins/upload/actions';
+import EmptyContent from 'calypso/components/empty-content';
+import HeaderCake from 'calypso/components/header-cake';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { initiateAutomatedTransferWithPluginZip } from 'calypso/state/automated-transfer/actions';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import {
+	getEligibility,
+	isEligibleForAutomatedTransfer,
+	getAutomatedTransferStatus,
+} from 'calypso/state/automated-transfer/selectors';
+import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
+import { successNotice } from 'calypso/state/notices/actions';
+import { uploadPlugin, clearPluginUpload } from 'calypso/state/plugins/upload/actions';
 import getPluginUploadError from 'calypso/state/selectors/get-plugin-upload-error';
-import getPluginUploadProgress from 'calypso/state/selectors/get-plugin-upload-progress';
 import getUploadedPluginId from 'calypso/state/selectors/get-uploaded-plugin-id';
 import isPluginUploadComplete from 'calypso/state/selectors/is-plugin-upload-complete';
 import isPluginUploadInProgress from 'calypso/state/selectors/is-plugin-upload-in-progress';
@@ -32,15 +29,9 @@ import {
 	isJetpackSite,
 	isJetpackSiteMultiSite,
 } from 'calypso/state/sites/selectors';
-import {
-	getEligibility,
-	isEligibleForAutomatedTransfer,
-	getAutomatedTransferStatus,
-} from 'calypso/state/automated-transfer/selectors';
-import { successNotice } from 'calypso/state/notices/actions';
-import { transferStates } from 'calypso/state/automated-transfer/constants';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-class PluginUpload extends React.Component {
+class PluginUpload extends Component {
 	state = {
 		showEligibility: this.props.showEligibility,
 	};
@@ -50,6 +41,7 @@ class PluginUpload extends React.Component {
 		! inProgress && this.props.clearPluginUpload( siteId );
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.siteId !== this.props.siteId ) {
 			const { siteId, inProgress } = nextProps;
@@ -60,22 +52,10 @@ class PluginUpload extends React.Component {
 			this.setState( { showEligibility: nextProps.showEligibility } );
 		}
 
-		if ( nextProps.complete ) {
-			page( `/plugins/${ nextProps.pluginId }/${ nextProps.siteSlug }` );
-		}
+		if ( nextProps.inProgress ) {
+			this.props.productToBeInstalled( nextProps.pluginId, nextProps.siteSlug );
 
-		const { COMPLETE } = transferStates;
-
-		if (
-			this.props.automatedTransferStatus !== COMPLETE &&
-			nextProps.automatedTransferStatus === COMPLETE
-		) {
-			nextProps.successNotice(
-				nextProps.translate( "You've successfully uploaded the %(pluginId)s plugin.", {
-					args: { pluginId: nextProps.pluginId },
-				} ),
-				{ duration: 8000 }
-			);
+			page( `/marketplace/plugin/install/${ nextProps.siteSlug }` );
 		}
 	}
 
@@ -95,30 +75,7 @@ class PluginUpload extends React.Component {
 			: this.props.initiateAutomatedTransferWithPluginZip;
 
 		return (
-			<Card>
-				{ ! inProgress && ! complete && <UploadDropZone doUpload={ uploadAction } /> }
-				{ inProgress && this.renderProgressBar() }
-			</Card>
-		);
-	}
-
-	renderProgressBar() {
-		const { translate, progress, installing } = this.props;
-
-		const uploadingMessage = translate( 'Uploading your plugin' );
-		const installingMessage = translate( 'Installing your plugin' );
-
-		return (
-			<div>
-				<span className="plugin-upload__title">
-					{ installing ? installingMessage : uploadingMessage }
-				</span>
-				<ProgressBar
-					value={ progress }
-					title={ translate( 'Uploading progress' ) }
-					isPulsing={ installing }
-				/>
-			</div>
+			<Card>{ ! inProgress && ! complete && <UploadDropZone doUpload={ uploadAction } /> }</Card>
 		);
 	}
 
@@ -130,7 +87,7 @@ class PluginUpload extends React.Component {
 				title={ translate( 'Visit WP Admin to install your plugin.' ) }
 				action={ translate( 'Go to WP Admin' ) }
 				actionURL={ `${ siteAdminUrl }/plugin-install.php` }
-				illustration={ '/calypso/images/illustrations/illustration-jetpack.svg' }
+				illustration="/calypso/images/illustrations/illustration-jetpack.svg"
 			/>
 		);
 	}
@@ -160,7 +117,6 @@ class PluginUpload extends React.Component {
 const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const error = getPluginUploadError( state, siteId );
-	const progress = getPluginUploadProgress( state, siteId );
 	const isJetpack = isJetpackSite( state, siteId );
 	const isJetpackMultisite = isJetpackSiteMultiSite( state, siteId );
 	const { eligibilityHolds, eligibilityWarnings } = getEligibility( state, siteId );
@@ -180,8 +136,6 @@ const mapStateToProps = ( state ) => {
 		failed: !! error,
 		pluginId: getUploadedPluginId( state, siteId ),
 		error,
-		progress,
-		installing: progress === 100,
 		isJetpackMultisite,
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		showEligibility: ! isJetpack && ( hasEligibilityMessages || ! isEligible ),
@@ -195,6 +149,7 @@ const flowRightArgs = [
 		clearPluginUpload,
 		initiateAutomatedTransferWithPluginZip,
 		successNotice,
+		productToBeInstalled,
 	} ),
 	localize,
 ];

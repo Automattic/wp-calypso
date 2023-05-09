@@ -1,11 +1,6 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import classNames from 'classnames';
-import PropTypes from 'prop-types';
 import { AutoSizer, List } from '@automattic/react-virtualized';
-import { connect } from 'react-redux';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 import {
 	debounce,
 	difference,
@@ -17,32 +12,27 @@ import {
 	range,
 	reduce,
 } from 'lodash';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings';
+import QueryTerms from 'calypso/components/data/query-terms';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
+import PodcastIndicator from 'calypso/components/podcast-indicator';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { decodeEntities } from 'calypso/lib/formatting';
 import getPodcastingCategoryId from 'calypso/state/selectors/get-podcasting-category-id';
 import {
 	getTermsForQueryIgnoringPage,
 	getTermsLastPageForQuery,
 	isRequestingTermsForQueryIgnoringPage,
 } from 'calypso/state/terms/selectors';
-import NoResults from './no-results';
-import PodcastIndicator from 'calypso/components/podcast-indicator';
-import QuerySiteSettings from 'calypso/components/data/query-site-settings';
-import QueryTerms from 'calypso/components/data/query-terms';
-import Search from './search';
-import { decodeEntities } from 'calypso/lib/formatting';
-import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import NoResults from './no-results';
+import Search from './search';
 
-/**
- * Style dependencies
- */
 import './terms.scss';
 
 /**
@@ -82,15 +72,14 @@ class TermTreeSelectorList extends Component {
 		height: 300,
 	};
 
-	// initialState is also used to reset state when a the taxonomy prop changes
-	static initialState = {
+	state = {
 		searchTerm: '',
 		requestedPages: Object.freeze( [ 1 ] ),
 	};
 
-	state = this.constructor.initialState;
+	constructor( props ) {
+		super( props );
 
-	UNSAFE_componentWillMount() {
 		this.itemHeights = {};
 		this.hasPerformedSearch = false;
 		this.list = null;
@@ -103,18 +92,12 @@ class TermTreeSelectorList extends Component {
 		}, SEARCH_DEBOUNCE_TIME_MS );
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.taxonomy !== this.props.taxonomy ) {
-			this.setState( this.constructor.initialState );
-		}
-
-		if ( this.props.terms !== nextProps.terms ) {
-			this.getTermChildren.cache.clear();
-			this.termIds = map( nextProps.terms, 'ID' );
-		}
-	}
-
 	componentDidUpdate( prevProps ) {
+		if ( prevProps.terms !== this.props.terms ) {
+			this.getTermChildren.cache.clear();
+			this.termIds = map( this.props.terms, 'ID' );
+		}
+
 		const forceUpdate =
 			! isEqual( prevProps.selected, this.props.selected ) ||
 			( prevProps.loading && ! this.props.loading ) ||
@@ -315,14 +298,8 @@ class TermTreeSelectorList extends Component {
 		const setItemRef = ( ...args ) => this.setItemRef( item, ...args );
 		const children = this.getTermChildren( item.ID );
 
-		const {
-			multiple,
-			defaultTermId,
-			translate,
-			selected,
-			taxonomy,
-			podcastingCategoryId,
-		} = this.props;
+		const { multiple, defaultTermId, translate, selected, taxonomy, podcastingCategoryId } =
+			this.props;
 		const itemId = item.ID;
 		const isPodcastingCategory = taxonomy === 'category' && podcastingCategoryId === itemId;
 		const name = decodeEntities( item.name ) || translate( 'Untitled' );

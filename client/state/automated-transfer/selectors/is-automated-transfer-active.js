@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { flowRight as compose } from 'lodash';
-
-/**
- * Internal Dependencies
- */
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors/get-automated-transfer-status';
 
@@ -22,7 +15,7 @@ export const isActive = ( status ) => ( status ? status === transferStates.START
 /**
  * Indicates whether or not an automated transfer is active for a given site
  *
- * @param {object} state app state
+ * @param {Object} state app state
  * @param {number} siteId site of interest
  * @returns {?boolean} whether or not transfer is active, or null if not known
  */

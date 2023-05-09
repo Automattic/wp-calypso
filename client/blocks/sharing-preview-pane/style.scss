@@ -6,14 +6,13 @@
 
 .dialog.card.post-share__sharing-preview-modal {
 	margin: 0 auto;
-	max-width: 865px;
 	position: absolute;
 	top: 0;
 	right: 0;
 	bottom: 0;
 	left: 0;
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		top: 24px;
 	}
 }
@@ -27,21 +26,21 @@
 
 .post-share__sharing-preview-modal-header {
 	height: 48px;
-	background: var( --color-surface );
-	border-bottom: 1px solid var( --color-neutral-10 );
+	background: var(--color-surface);
+	border-bottom: 1px solid var(--color-neutral-10);
 	border-radius: 2px 2px 0 0;
 	display: flex;
 }
 
 .post-share__sharing-preview-modal-close {
-	border-right: 1px solid var( --color-neutral-10 );
+	border-right: 1px solid var(--color-neutral-10);
 	width: 48px;
 	height: 49px;
 	cursor: pointer;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 
 	&:hover {
-		color: var( --color-neutral-70 );
+		color: var(--color-neutral-70);
 	}
 }
 
@@ -51,13 +50,13 @@
 	flex-direction: column;
 	height: 100%;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		flex-direction: row;
 	}
 }
 
 .sharing-preview-pane__sidebar {
-	background-color: var( --color-surface );
+	background-color: var(--color-surface);
 	display: flex;
 	flex: 0 0 auto;
 	flex-direction: column;
@@ -81,7 +80,7 @@
 			display: none;
 		}
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			flex-direction: column;
 			justify-content: flex-start;
 			border-bottom: 1px solid #c8d7e1;
@@ -103,8 +102,8 @@
 		}
 	}
 
-	@include breakpoint-deprecated( '>660px' ) {
-		border-right: 1px solid var( --color-neutral-10 );
+	@include breakpoint-deprecated( ">660px" ) {
+		border-right: 1px solid var(--color-neutral-10);
 		flex: 0 0 250px;
 	}
 }
@@ -125,17 +124,17 @@
 		font-size: $font-body-extra-small;
 	}
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		margin: 40px 0 40px 20px;
 		max-width: 200px;
 	}
 }
 
 .sharing-preview-pane__preview-area {
-	background-color: #f2f6f8;
+	background-color: #f3f5f9;
 	flex: 1 1 auto;
 	overflow-y: auto;
-	padding: 10px;
+	padding: 1.5rem;
 }
 
 .sharing-preview-pane__message {

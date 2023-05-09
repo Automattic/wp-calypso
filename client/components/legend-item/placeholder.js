@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 
 const SVG_SIZE = 30;
 
@@ -30,13 +27,13 @@ class LegendItemPlaceholder extends Component {
 						/>
 					</svg>
 
-					<div className={ 'legend-item__placeholder-title-name' }>{ name }</div>
+					<div className="legend-item__placeholder-title-name">{ name }</div>
 				</div>
 
 				<div className="legend-item__placeholder-detail">
-					<div className={ 'legend-item__placeholder-detail-value' }>{ '100 (100%)' }</div>
+					<div className="legend-item__placeholder-detail-value">100 (100%)</div>
 					{ description && (
-						<div className={ 'legend-item__placeholder-detail-description' }>{ description }</div>
+						<div className="legend-item__placeholder-detail-description">{ description }</div>
 					) }
 				</div>
 			</div>

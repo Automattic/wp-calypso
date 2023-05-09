@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
-
-/**
- * Internal dependencies
- */
-import { TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY } from '../src/constants';
+import { TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY, TERM_TRIENNIALLY } from '../src/constants';
 import { calculateMonthlyPrice, getBillingMonthsForTerm, getTermDuration } from '../src/index';
 
 describe( 'calculateMonthlyPrice', () => {
@@ -35,6 +28,11 @@ describe( 'calculateMonthlyPrice', () => {
 		expect( calculateMonthlyPrice( TERM_BIENNIALLY, 130 ) ).toBe( 5.42 );
 		expect( calculateMonthlyPrice( TERM_BIENNIALLY, 131 ) ).toBe( 5.46 );
 	} );
+	test( 'should calculate proper result for triennial term', () => {
+		expect( calculateMonthlyPrice( TERM_TRIENNIALLY, 36 ) ).toBe( 1.0 );
+		expect( calculateMonthlyPrice( TERM_TRIENNIALLY, 72 ) ).toBe( 2.0 );
+		expect( calculateMonthlyPrice( TERM_TRIENNIALLY, 252 ) ).toBe( 7.0 );
+	} );
 } );
 
 describe( 'getBillingMonthsForTerm', () => {
@@ -46,6 +44,9 @@ describe( 'getBillingMonthsForTerm', () => {
 	} );
 	test( 'should 24 for biennial term', () => {
 		expect( getBillingMonthsForTerm( TERM_BIENNIALLY ) ).toBe( 24 );
+	} );
+	test( 'should 36 for triennial term', () => {
+		expect( getBillingMonthsForTerm( TERM_TRIENNIALLY ) ).toBe( 36 );
 	} );
 	test( 'should throw an error for unknown term', () => {
 		expect( () => getBillingMonthsForTerm( 'fake' ) ).toThrowError();
@@ -61,6 +62,9 @@ describe( 'getTermDuration', () => {
 	} );
 	test( 'should 730 for biennial term', () => {
 		expect( getTermDuration( TERM_BIENNIALLY ) ).toBe( 730 );
+	} );
+	test( 'should 1095 for triennial term', () => {
+		expect( getTermDuration( TERM_TRIENNIALLY ) ).toBe( 1095 );
 	} );
 	test( 'should return undefined for unknown term', () => {
 		expect( getTermDuration( 'fake' ) ).toBeUndefined();

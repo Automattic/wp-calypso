@@ -1,17 +1,8 @@
-/**
- * External dependencies
- */
 import { find, forEach, get, isEqual, merge, omitBy, pickBy, reduce } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import {
 	READER_FOLLOW,
 	READER_UNFOLLOW,
 	READER_FOLLOW_ERROR,
-	READER_RECORD_FOLLOW,
-	READER_RECORD_UNFOLLOW,
 	READER_FOLLOWS_SYNC_START,
 	READER_FOLLOWS_SYNC_COMPLETE,
 	READER_FOLLOWS_RECEIVE,
@@ -28,8 +19,8 @@ import {
 	READER_SEEN_MARK_ALL_AS_SEEN_RECEIVE,
 } from 'calypso/state/reader/action-types';
 import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
-import { prepareComparableUrl } from './utils';
 import { items as itemsSchema } from './schema';
+import { prepareComparableUrl } from './utils';
 
 function updateEmailSubscription( state, { payload, type } ) {
 	const follow = find( state, { blog_ID: +payload.blogId } );
@@ -110,20 +101,6 @@ function updateNotificationSubscription( state, { payload, type } ) {
 
 const itemsReducer = ( state = {}, action ) => {
 	switch ( action.type ) {
-		case READER_RECORD_FOLLOW: {
-			const urlKey = prepareComparableUrl( action.payload.url );
-			return {
-				...state,
-				[ urlKey ]: merge( {}, state[ urlKey ], { is_following: true } ),
-			};
-		}
-		case READER_RECORD_UNFOLLOW: {
-			const urlKey = prepareComparableUrl( action.payload.url );
-			return {
-				...state,
-				[ urlKey ]: merge( {}, state[ urlKey ], { is_following: false } ),
-			};
-		}
 		case READER_FOLLOW_ERROR: {
 			const urlKey = prepareComparableUrl( action.payload.feedUrl );
 			return {
@@ -172,7 +149,9 @@ const itemsReducer = ( state = {}, action ) => {
 
 			return Object.assign( newState, {
 				[ urlKey ]: merge(
-					{ feed_URL: actualFeedUrl },
+					{
+						feed_URL: actualFeedUrl,
+					},
 					state[ urlKey ],
 					action.payload.follow,
 					newValues
@@ -181,7 +160,14 @@ const itemsReducer = ( state = {}, action ) => {
 		}
 		case READER_UNFOLLOW: {
 			const urlKey = prepareComparableUrl( action.payload.feedUrl );
-			const currentFollow = state[ urlKey ];
+			let currentFollow = state[ urlKey ];
+			// Some posts do not have feed_URL's available, in this case the `READER_FOLLOW` action will be called
+			// with the response from the `/following/mine/new` API call, which contains a full `feed_URL`.
+			// Since we don't get the correct feed_URL from the post object, we must make a guess that
+			// it will follow the `${site_URL}/feed` pattern
+			if ( currentFollow === undefined ) {
+				currentFollow = state[ urlKey + '/feed' ];
+			}
 			if ( ! ( currentFollow && currentFollow.is_following ) ) {
 				return state;
 			}
@@ -326,8 +312,20 @@ export const lastSyncTime = ( state = null, action ) => {
 	return state;
 };
 
+export const loading = ( state = null, action ) => {
+	switch ( action.type ) {
+		case READER_FOLLOWS_SYNC_START:
+			return true;
+		case READER_FOLLOWS_SYNC_COMPLETE:
+			return false;
+	}
+
+	return state;
+};
+
 export default combineReducers( {
 	items,
 	itemsCount,
 	lastSyncTime,
+	loading,
 } );

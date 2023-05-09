@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 export default function redirectLoggedIn( context, next ) {

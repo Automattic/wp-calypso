@@ -1,8 +1,4 @@
-/**
- * Internal dependencies
- */
 import { ACCOUNT_CLOSE, ACCOUNT_CLOSE_SUCCESS } from 'calypso/state/action-types';
-
 import 'calypso/state/data-layer/wpcom/me/account/close';
 import 'calypso/state/account/init';
 

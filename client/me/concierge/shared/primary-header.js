@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import React, { Component, Fragment } from 'react';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
-import ClosureNotice from '../shared/closure-notice';
-import FormattedHeader from 'calypso/components/formatted-header';
-import ExternalLink from 'calypso/components/external-link';
 import { localize } from 'i18n-calypso';
+import { Component, Fragment } from 'react';
+import ExternalLink from 'calypso/components/external-link';
+import FormattedHeader from 'calypso/components/formatted-header';
 import { CONCIERGE_SUPPORT } from 'calypso/lib/url/support';
+import ClosureNotice from '../shared/closure-notice';
 
 class PrimaryHeader extends Component {
 	render() {
@@ -20,28 +13,16 @@ class PrimaryHeader extends Component {
 		return (
 			<Fragment>
 				<ClosureNotice
-					displayAt="2021-03-28 00:00Z"
-					closesAt="2021-04-04 00:00Z"
-					reopensAt="2021-04-05 06:00Z"
+					displayAt="2023-04-03 00:00Z"
+					closesAt="2023-04-09 00:00Z"
+					reopensAt="2023-04-10 07:00Z"
 					holidayName="Easter"
-				/>
-				<ClosureNotice
-					displayAt="2021-12-17 00:00Z"
-					closesAt="2021-12-24 00:00Z"
-					reopensAt="2021-12-26 07:00Z"
-					holidayName="Christmas"
-				/>
-				<ClosureNotice
-					displayAt="2021-12-26 07:00Z"
-					closesAt="2021-12-31 00:00Z"
-					reopensAt="2022-01-02 07:00Z"
-					holidayName="New Year's Day"
 				/>
 				<Card>
 					<img
 						className="shared__info-illustration"
 						alt="support session signup form header"
-						src={ '/calypso/images/illustrations/illustration-start.svg' }
+						src="/calypso/images/illustrations/illustration-start.svg"
 					/>
 					<FormattedHeader
 						headerText={ translate( 'WordPress.com Quick Start Session Scheduler' ) }

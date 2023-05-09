@@ -1,21 +1,15 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { wpcom } from '../rest-client/wpcom';
-import Comment from './block-comment';
-import NoteActions from './actions';
-import NotePreface from './preface';
-import Post from './block-post';
-import User from './block-user';
-import { bumpStat } from '../rest-client/bump-stat';
+import { Component } from 'react';
 import { html } from '../indices-to-html';
+import { bumpStat } from '../rest-client/bump-stat';
+import { wpcom } from '../rest-client/wpcom';
+import NoteActions from './actions';
+import Comment from './block-comment';
+import Post from './block-post';
+import PromptBlock from './block-prompt';
+import User from './block-user';
 import { p, zipWithSignature } from './functions';
+import NotePreface from './preface';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
@@ -26,7 +20,7 @@ function ReplyBlock( { block } ) {
 	return <div className="wpnc__reply">{ replyText }</div>;
 }
 
-export class NoteBody extends React.Component {
+export class NoteBody extends Component {
 	state = {
 		reply: null,
 	};
@@ -128,8 +122,13 @@ export class NoteBody extends React.Component {
 				case 'reply':
 					replyBlock = <ReplyBlock key={ blockKey } block={ block.block } />;
 					break;
+				case 'prompt':
+					body.push(
+						<PromptBlock key={ blockKey } block={ block.block } meta={ this.props.note.meta } />
+					);
+					break;
 				default:
-					body.push( p( html( block.block ) ) );
+					body.push( <div key={ blockKey }>{ p( html( block.block ) ) }</div> );
 					break;
 			}
 		}

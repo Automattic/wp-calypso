@@ -1,26 +1,15 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { Card, Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import { Card, Button } from '@automattic/components';
-import { autoConfigCredentials } from 'calypso/state/jetpack/credentials/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { autoConfigCredentials } from 'calypso/state/jetpack/credentials/actions';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
-
-/**
- * Style dependencies
- */
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import './style.scss';
 
 class CredsConfirmStep extends Component {

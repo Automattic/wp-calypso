@@ -1,26 +1,19 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { values as objectValues } from 'lodash';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import PopoverMenu from 'calypso/components/popover/menu';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
-import { AspectRatios, MinimumImageDimensions } from 'calypso/state/editor/image-editor/constants';
-import { getImageEditorAspectRatio } from 'calypso/state/editor/image-editor/selectors';
+import { localize } from 'i18n-calypso';
+import { values as objectValues } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import PopoverMenu from 'calypso/components/popover-menu';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import {
 	imageEditorRotateCounterclockwise,
 	imageEditorFlip,
 	setImageEditorAspectRatio,
 } from 'calypso/state/editor/image-editor/actions';
+import { AspectRatios, MinimumImageDimensions } from 'calypso/state/editor/image-editor/constants';
+import { getImageEditorAspectRatio } from 'calypso/state/editor/image-editor/selectors';
 import getImageEditorIsGreaterThanMinimumDimensions from 'calypso/state/selectors/get-image-editor-is-greater-than-minimum-dimensions';
 
 const noop = () => {};
@@ -34,6 +27,7 @@ export class ImageEditorToolbar extends Component {
 		allowedAspectRatios: PropTypes.array,
 		onShowNotice: PropTypes.func,
 		isAspectRatioDisabled: PropTypes.bool,
+		displayOnlyIcon: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -43,6 +37,7 @@ export class ImageEditorToolbar extends Component {
 		allowedAspectRatios: objectValues( AspectRatios ),
 		onShowNotice: noop,
 		isAspectRatioDisabled: false,
+		displayOnlyIcon: false,
 	};
 
 	constructor( props ) {
@@ -172,7 +167,7 @@ export class ImageEditorToolbar extends Component {
 			{
 				tool: 'rotate',
 				icon: 'rotate',
-				text: translate( 'Rotate' ),
+				text: this.props.displayOnlyIcon ? '' : translate( 'Rotate' ),
 				onClick: this.rotate,
 			},
 			allowedAspectRatios.length === 1
@@ -181,14 +176,14 @@ export class ImageEditorToolbar extends Component {
 						tool: 'aspect',
 						ref: this.setAspectMenuContext,
 						icon: 'crop',
-						text: translate( 'Crop' ),
+						text: this.props.displayOnlyIcon ? '' : translate( 'Crop' ),
 						onClick: this.onAspectOpen,
 						disabled: isAspectRatioDisabled,
 				  },
 			{
 				tool: 'flip-vertical',
 				icon: 'flip-vertical',
-				text: translate( 'Flip' ),
+				text: this.props.displayOnlyIcon ? '' : translate( 'Flip' ),
 				onClick: this.flip,
 			},
 		];
@@ -203,6 +198,7 @@ export class ImageEditorToolbar extends Component {
 					ref={ button.ref }
 					className={ buttonClasses }
 					onClick={ button.onClick }
+					type="button"
 				>
 					<Gridicon icon={ button.icon } />
 					<span>{ button.text }</span>

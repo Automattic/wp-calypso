@@ -1,19 +1,11 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
+import { Card, Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
-import ContactDisplay from './contact-display';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import { PUBLIC_VS_PRIVATE } from 'calypso/lib/url/support';
-import Gridicon from 'calypso/components/gridicon';
 import {
 	enableDomainPrivacy,
 	disableDomainPrivacy,
@@ -21,8 +13,9 @@ import {
 	redactDomainContactInfo,
 } from 'calypso/state/sites/domains/actions';
 import { isUpdatingDomainPrivacy } from 'calypso/state/sites/domains/selectors';
+import ContactDisplay from './contact-display';
 
-class ContactsPrivacyCard extends React.Component {
+class ContactsPrivacyCard extends Component {
 	static propTypes = {
 		privateDomain: PropTypes.bool.isRequired,
 		privacyAvailable: PropTypes.bool.isRequired,
@@ -68,7 +61,7 @@ class ContactsPrivacyCard extends React.Component {
 		}
 
 		return (
-			<React.Fragment>
+			<Fragment>
 				<div className="contacts-privacy__settings">
 					<ToggleControl
 						checked={ privateDomain }
@@ -78,7 +71,7 @@ class ContactsPrivacyCard extends React.Component {
 					/>
 				</div>
 				{ privacyProtectionNote }
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 
@@ -109,7 +102,7 @@ class ContactsPrivacyCard extends React.Component {
 		) : null;
 
 		return (
-			<React.Fragment>
+			<Fragment>
 				<div className="contacts-privacy__settings">
 					<ToggleControl
 						checked={ contactInfoDisclosed }
@@ -119,7 +112,7 @@ class ContactsPrivacyCard extends React.Component {
 					/>
 				</div>
 				{ contactVerificationNotice }
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 
@@ -140,7 +133,13 @@ class ContactsPrivacyCard extends React.Component {
 					<p className="contacts-privacy__settings-explanation">
 						{ translate( '{{a}}Learn more{{/a}} about private registration and GDPR protection.', {
 							components: {
-								a: <a href={ PUBLIC_VS_PRIVATE } target="_blank" rel="noopener noreferrer" />,
+								a: (
+									<a
+										href={ localizeUrl( PUBLIC_VS_PRIVATE ) }
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
 							},
 						} ) }
 					</p>

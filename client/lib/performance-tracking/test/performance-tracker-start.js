@@ -2,11 +2,8 @@ jest.mock( '../lib', () => ( {
 	startPerformanceTracking: jest.fn(),
 } ) );
 
-/**
- * Internal dependencies
- */
-import { performanceTrackerStart } from '../performance-tracker-start';
 import { startPerformanceTracking } from '../lib';
+import { performanceTrackerStart } from '../performance-tracker-start';
 
 describe( 'performance-tracker-start', () => {
 	afterEach( () => {

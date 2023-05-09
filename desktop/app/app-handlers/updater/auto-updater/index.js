@@ -1,19 +1,12 @@
-/**
- * External Dependencies
- */
-const semver = require( 'semver' );
 const { app } = require( 'electron' );
 const { autoUpdater } = require( 'electron-updater' );
-
-/**
- * Internal dependencies
- */
+const semver = require( 'semver' );
 const AppQuit = require( '../../../lib/app-quit' );
 const Config = require( '../../../lib/config' );
 const debugTools = require( '../../../lib/debug-tools' );
 const { bumpStat, sanitizeVersion, getPlatform } = require( '../../../lib/desktop-analytics' );
-const Updater = require( '../../../lib/updater' );
 const log = require( '../../../lib/logger' )( 'desktop:updater:auto' );
+const Updater = require( '../../../lib/updater' );
 
 const statsPlatform = getPlatform( process.platform );
 const sanitizedVersion = sanitizeVersion( app.getVersion() );

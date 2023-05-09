@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import path from 'path';
 import express from 'express';
-
-/**
- * Internal dependencies
- */
 import manifest from './manifest';
 
 export default () => {

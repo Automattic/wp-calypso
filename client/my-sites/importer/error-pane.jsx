@@ -1,21 +1,15 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import React from 'react';
-import Page from 'page';
-
-/**
- * Internal dependencies
- */
-import Notice from 'calypso/components/notice';
 import { Button } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import Page from 'page';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
+import { WPImportError } from 'calypso/blocks/importer/wordpress/types';
+import Notice from 'calypso/components/notice';
+import { addQueryArgs } from 'calypso/lib/route';
 
 const noop = () => {};
 
-class ImporterError extends React.PureComponent {
+class ImporterError extends PureComponent {
 	static displayName = 'ImporterError';
 	static defaultProps = {
 		retryImport: noop,
@@ -25,12 +19,26 @@ class ImporterError extends React.PureComponent {
 		description: PropTypes.string.isRequired,
 		type: PropTypes.string.isRequired,
 		retryImport: PropTypes.func,
+		siteSlug: PropTypes.string,
+		code: PropTypes.string,
 	};
 
 	contactSupport = ( event ) => {
 		event.preventDefault();
 		event.stopPropagation();
 		Page( '/help' );
+	};
+
+	installPlugin = ( event ) => {
+		event.preventDefault();
+		event.stopPropagation();
+		Page( '/plugins/all-in-one-wp-migration' );
+	};
+
+	everythingImport = ( event ) => {
+		event.preventDefault();
+		event.stopPropagation();
+		Page( addQueryArgs( { siteSlug: this.props.siteSlug }, '/setup/site-setup/import' ) );
 	};
 
 	getImportError = () => {
@@ -69,6 +77,29 @@ class ImporterError extends React.PureComponent {
 		);
 	};
 
+	getPreUploadError = () => {
+		const defaultError = this.props.translate(
+			'Oops! We ran into an unexpected error while uploading your file.'
+		);
+
+		if ( this.props.code === WPImportError.WPRESS_FILE_IS_NOT_SUPPORTED ) {
+			return this.props.translate(
+				'You have uploaded a .wpress file that works with the All-in-One WP Migration plugin. You can either {{ip}}install that plugin{{/ip}}, or {{ei}}try out Everything Import{{/ei}}. {{cs}}Still need help{{/cs}}?',
+				{
+					components: {
+						ip: <Button className="importer__error-pane is-link" onClick={ this.installPlugin } />,
+						ei: (
+							<Button className="importer__error-pane is-link" onClick={ this.everythingImport } />
+						),
+						cs: <Button className="importer__error-pane is-link" onClick={ this.contactSupport } />,
+					},
+				}
+			);
+		}
+
+		return defaultError;
+	};
+
 	getErrorMessage = () => {
 		let actionMessage;
 
@@ -85,6 +116,10 @@ class ImporterError extends React.PureComponent {
 				actionMessage = this.props.description
 					? this.props.description
 					: this.props.translate( 'Data you entered are not valid' );
+				break;
+
+			case 'preUploadError':
+				actionMessage = this.getPreUploadError();
 				break;
 		}
 

@@ -1,10 +1,3 @@
-/**
- * Internal dependencies
- */
-
-/**
- * Type dependencies
- */
 import { AppState } from 'calypso/types';
 import type { RestoreProgress } from 'calypso/state/data-layer/wpcom/activity-log/rewind/restore-status/type';
 

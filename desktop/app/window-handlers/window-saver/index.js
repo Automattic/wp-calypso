@@ -1,11 +1,4 @@
-/**
- * External Dependencies
- */
 const { debounce } = require( 'lodash' );
-
-/**
- * Internal dependencies
- */
 const Settings = require( '../../lib/settings' );
 
 /**

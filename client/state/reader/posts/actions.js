@@ -1,19 +1,15 @@
-/**
- * External Dependencies
- */
-import { v4 as uuid } from 'uuid';
+import apiFetch from '@wordpress/api-fetch';
 import { filter, forEach, compact, partition, get } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import { v4 as uuid } from 'uuid';
+import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
+import { bumpStat } from 'calypso/lib/analytics/mc';
+import wpcom from 'calypso/lib/wp';
+import readerContentWidth from 'calypso/reader/lib/content-width';
+import { keyForPost, keyToString } from 'calypso/reader/post-key';
+import { receiveLikes } from 'calypso/state/posts/likes/actions';
 import { READER_POSTS_RECEIVE, READER_POST_SEEN } from 'calypso/state/reader/action-types';
 import { runFastRules, runSlowRules } from './normalization-rules';
-import wpcom from 'calypso/lib/wp';
-import { keyForPost, keyToString } from 'calypso/reader/post-key';
 import { hasPostBeenSeen } from './selectors';
-import { receiveLikes } from 'calypso/state/posts/likes/actions';
-import { bumpStat } from 'calypso/lib/analytics/mc';
 
 import 'calypso/state/reader/init';
 
@@ -30,14 +26,48 @@ function trackRailcarRender( post ) {
 	tracks.recordTracksEvent( 'calypso_traintracks_render', post.railcar );
 }
 
-function fetchForKey( postKey ) {
-	if ( postKey.blogId ) {
-		return wpcom.undocumented().readSitePost( {
-			site: postKey.blogId,
-			postId: postKey.postId,
-		} );
+function fetchForKey( postKey, isHelpCenter = false ) {
+	const query = {};
+
+	const contentWidth = readerContentWidth();
+	if ( contentWidth ) {
+		query.content_width = contentWidth;
 	}
-	return wpcom.undocumented().readFeedPost( postKey );
+
+	if ( postKey.blogId ) {
+		if ( isHelpCenter ) {
+			return canAccessWpcomApis()
+				? wpcomRequest( {
+						path: `help/article/${ encodeURIComponent( postKey.blogId ) }/${ encodeURIComponent(
+							postKey.postId
+						) }`,
+						apiNamespace: 'wpcom/v2/',
+						apiVersion: '2',
+				  } )
+				: apiFetch( {
+						global: true,
+						path: `/help-center/fetch-post?post_id=${ encodeURIComponent(
+							postKey.postId
+						) }&blog_id=${ encodeURIComponent( postKey.blogId ) }`,
+				  } );
+		}
+
+		return wpcom.req.get(
+			`/read/sites/${ encodeURIComponent( postKey.blogId ) }/posts/${ encodeURIComponent(
+				postKey.postId
+			) }`,
+			query
+		);
+	}
+	const { postId, feedId, ...params } = postKey;
+	return wpcom.req.get(
+		`/read/feed/${ encodeURIComponent( feedId ) }/posts/${ encodeURIComponent( postId ) }`,
+		{
+			apiVersion: '1.2',
+			...params,
+			...query,
+		}
+	);
 }
 
 // helper that hides promise rejections so they return successfully with null instead of rejecting
@@ -49,7 +79,7 @@ const hideRejections = ( promise ) => promise.catch( () => null );
  * Returns an action object to signal that post objects have been received.
  *
  * @param  {Array}  posts Posts received
- * @returns {object} Action object
+ * @returns {Object} Action object
  */
 export const receivePosts = ( posts ) => ( dispatch ) => {
 	if ( ! posts ) {
@@ -95,25 +125,28 @@ export const receivePosts = ( posts ) => ( dispatch ) => {
 };
 
 const requestsInFlight = new Set();
-export const fetchPost = ( postKey ) => ( dispatch ) => {
-	const requestKey = keyToString( postKey );
-	if ( requestsInFlight.has( requestKey ) ) {
-		return;
-	}
-	requestsInFlight.add( requestKey );
-	function removeKey() {
-		requestsInFlight.delete( requestKey );
-	}
-	return fetchForKey( postKey )
-		.then( ( data ) => {
-			removeKey();
-			return dispatch( receivePosts( [ data ] ) );
-		} )
-		.catch( ( error ) => {
-			removeKey();
-			return dispatch( receiveErrorForPostKey( error, postKey ) );
-		} );
-};
+export const fetchPost =
+	( postKey, isHelpCenter = false ) =>
+	( dispatch ) => {
+		const requestKey = keyToString( postKey );
+		if ( requestsInFlight.has( requestKey ) ) {
+			return;
+		}
+
+		requestsInFlight.add( requestKey );
+		function removeKey() {
+			requestsInFlight.delete( requestKey );
+		}
+		return fetchForKey( postKey, isHelpCenter )
+			.then( ( data ) => {
+				removeKey();
+				return dispatch( receivePosts( [ data ] ) );
+			} )
+			.catch( ( error ) => {
+				removeKey();
+				return dispatch( receiveErrorForPostKey( error, postKey ) );
+			} );
+	};
 
 function receiveErrorForPostKey( error, postKey ) {
 	return {

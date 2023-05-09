@@ -1,9 +1,6 @@
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
-import { keyedReducer } from 'calypso/state/utils';
 import { ATOMIC_TRANSFER_SET } from 'calypso/state/action-types';
+import { keyedReducer } from 'calypso/state/utils';
 
 export const atomicTransfer = ( state = {}, action ) => {
 	switch ( action.type ) {

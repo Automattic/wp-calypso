@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
+import { CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Button, CompactCard } from '@automattic/components';
-import PrimaryHeader from './primary-header';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import Site from 'calypso/blocks/site';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import PrimaryHeader from './primary-header';
 
 class Upsell extends Component {
 	static propTypes = {
@@ -32,13 +25,7 @@ class Upsell extends Component {
 					<Site siteId={ site.ID } />
 				</CompactCard>
 				<CompactCard>
-					<p>
-						{ translate( 'You do not have any available Quick Start sessions.' ) }{ ' ' }
-						{ translate( 'Click the button to purchase a new session.' ) }
-					</p>
-					<Button href={ `/checkout/offer-quickstart-session/${ site.slug }` } primary>
-						{ translate( 'Learn More' ) }
-					</Button>
+					<span>{ translate( 'You do not have any available Quick Start sessions.' ) }</span>
 				</CompactCard>
 			</div>
 		);

@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
 import { bumpStat } from '../rest-client/bump-stat';
 
 // from $wpnc__title-bar-height in boot/sizes.scss
 const TITLE_OFFSET = 38;
 
 export class EmptyMessage extends Component {
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		if ( this.props.showing ) {
 			bumpStat( 'notes-empty-message', this.props.name + '_shown' );
 		}

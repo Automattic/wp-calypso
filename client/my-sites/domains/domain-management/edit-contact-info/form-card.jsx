@@ -1,46 +1,37 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
-import page from 'page';
-import { get, isEmpty, isEqual, includes, snakeCase } from 'lodash';
-import { connect } from 'react-redux';
+import { Dialog } from '@automattic/components';
+import { camelToSnakeCase, mapRecordKeysRecursively, snakeToCamelCase } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Card, Dialog } from '@automattic/components';
-import FormCheckbox from 'calypso/components/forms/form-checkbox';
-import FormLabel from 'calypso/components/forms/form-label';
+import { get, isEmpty, isEqual, includes, snakeCase } from 'lodash';
+import moment from 'moment';
+import page from 'page';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import ContactDetailsFormFields from 'calypso/components/domains/contact-details-form-fields';
+import { registrar as registrarNames } from 'calypso/lib/domains/constants';
+import { findRegistrantWhois } from 'calypso/lib/domains/whois/utils';
+import wp from 'calypso/lib/wp';
+import DesignatedAgentNotice from 'calypso/my-sites/domains/domain-management/components/designated-agent-notice';
+import TransferLockOptOutForm from 'calypso/my-sites/domains/domain-management/components/transfer-lock-opt-out-form';
 import {
 	domainManagementContactsPrivacy,
 	domainManagementEdit,
 } from 'calypso/my-sites/domains/paths';
-import wp from 'calypso/lib/wp';
-import { errorNotice, successNotice, infoNotice } from 'calypso/state/notices/actions';
-import { UPDATE_CONTACT_INFORMATION_EMAIL_OR_NAME_CHANGES } from 'calypso/lib/url/support';
-import { registrar as registrarNames } from 'calypso/lib/domains/constants';
-import DesignatedAgentNotice from 'calypso/my-sites/domains/domain-management/components/designated-agent-notice';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import ContactDetailsFormFields from 'calypso/components/domains/contact-details-form-fields';
 import { requestWhois, saveWhois } from 'calypso/state/domains/management/actions';
-import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import {
 	isUpdatingWhois,
 	getWhoisData,
 	getWhoisSaveError,
 	getWhoisSaveSuccess,
 } from 'calypso/state/domains/management/selectors';
-import { findRegistrantWhois } from 'calypso/lib/domains/whois/utils';
+import { errorNotice, successNotice, infoNotice } from 'calypso/state/notices/actions';
+import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import getPreviousPath from '../../../../state/selectors/get-previous-path';
-
-const wpcom = wp.undocumented();
 
 import './style.scss';
 
-class EditContactInfoFormCard extends React.Component {
+class EditContactInfoFormCard extends Component {
 	static propTypes = {
 		selectedDomain: PropTypes.object.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
@@ -52,13 +43,13 @@ class EditContactInfoFormCard extends React.Component {
 		whoisSaveError: PropTypes.object,
 		whoisSaveSuccess: PropTypes.bool,
 		showContactInfoNote: PropTypes.bool,
+		backUrl: PropTypes.string.isRequired,
 	};
 
 	constructor( props ) {
 		super( props );
 
 		this.state = {
-			notice: null,
 			formSubmitting: false,
 			transferLock: true,
 			showNonDaConfirmationDialog: false,
@@ -117,17 +108,23 @@ class EditContactInfoFormCard extends React.Component {
 	}
 
 	validate = ( fieldValues, onComplete ) => {
-		wpcom.validateDomainContactInformation(
-			fieldValues,
-			[ this.props.selectedDomain.name ],
-			( error, data ) => {
-				if ( error ) {
-					onComplete( error );
-				} else {
-					onComplete( null, data.messages || {} );
-				}
-			}
-		);
+		wp.req
+			.post(
+				'/me/domain-contact-information/validate',
+				mapRecordKeysRecursively(
+					{
+						contactInformation: fieldValues,
+						domainNames: [ this.props.selectedDomain.name ],
+					},
+					camelToSnakeCase
+				)
+			)
+			.then( ( data ) => {
+				onComplete( null, mapRecordKeysRecursively( data.messages || {}, snakeToCamelCase ) );
+			} )
+			.catch( ( error ) => {
+				onComplete( error );
+			} );
 	};
 
 	requiresConfirmation( newContactDetails ) {
@@ -149,34 +146,25 @@ class EditContactInfoFormCard extends React.Component {
 
 	renderTransferLockOptOut() {
 		const { domainRegistrationAgreementUrl, translate } = this.props;
-		return (
-			<div>
-				<FormLabel>
-					<FormCheckbox
-						name="transfer-lock-opt-out"
+		const registrationDatePlus60Days = moment
+			.utc( this.props.selectedDomain.registrationDate )
+			.add( 60, 'days' );
+		const isLocked = moment.utc().isSameOrBefore( registrationDatePlus60Days );
+
+		if ( ! isLocked ) {
+			return (
+				<>
+					<TransferLockOptOutForm
 						disabled={ this.state.formSubmitting }
 						onChange={ this.onTransferLockOptOutChange }
 					/>
-					<span>
-						{ translate( 'Opt-out of the {{link}}60-day transfer lock{{/link}}.', {
-							components: {
-								link: (
-									<a
-										href={ UPDATE_CONTACT_INFORMATION_EMAIL_OR_NAME_CHANGES }
-										target="_blank"
-										rel="noopener noreferrer"
-									/>
-								),
-							},
-						} ) }
-					</span>
-				</FormLabel>
-				<DesignatedAgentNotice
-					domainRegistrationAgreementUrl={ domainRegistrationAgreementUrl }
-					saveButtonLabel={ translate( 'Save contact info' ) }
-				/>
-			</div>
-		);
+					<DesignatedAgentNotice
+						domainRegistrationAgreementUrl={ domainRegistrationAgreementUrl }
+						saveButtonLabel={ translate( 'Save contact info' ) }
+					/>
+				</>
+			);
+		}
 	}
 
 	renderBackupEmail() {
@@ -302,8 +290,7 @@ class EditContactInfoFormCard extends React.Component {
 
 		const { email } = newContactDetails;
 		if ( updateWpcomEmail && email && this.props.currentUser.email !== email ) {
-			wpcom
-				.me()
+			wp.me()
 				.settings()
 				.update( { user_email: email } )
 				.then( ( data ) => {
@@ -436,6 +423,10 @@ class EditContactInfoFormCard extends React.Component {
 		);
 	};
 
+	handleCancelButtonClick = () => {
+		page( this.props.backUrl );
+	};
+
 	getIsFieldDisabled = ( name ) => {
 		const unmodifiableFields = get(
 			this.props,
@@ -468,7 +459,7 @@ class EditContactInfoFormCard extends React.Component {
 		const updateWpcomEmailCheckboxDisabled = this.shouldDisableUpdateWpcomEmailCheckbox();
 
 		return (
-			<Card>
+			<>
 				{ showContactInfoNote && (
 					<p className="edit-contact-info__note">
 						<em>
@@ -484,6 +475,7 @@ class EditContactInfoFormCard extends React.Component {
 						getIsFieldDisabled={ this.getIsFieldDisabled }
 						onContactDetailsChange={ this.handleContactDetailsChange }
 						onSubmit={ this.handleSubmitButtonClick }
+						onCancel={ this.handleCancelButtonClick }
 						onValidate={ this.validate }
 						labelTexts={ { submitButton: translate( 'Save contact info' ) } }
 						disableSubmitButton={ this.shouldDisableSubmitButton() }
@@ -495,7 +487,7 @@ class EditContactInfoFormCard extends React.Component {
 					</ContactDetailsFormFields>
 				</form>
 				{ this.renderDialog() }
-			</Card>
+			</>
 		);
 	}
 }

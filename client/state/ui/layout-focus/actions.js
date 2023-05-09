@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	LAYOUT_FOCUS_SET,
 	LAYOUT_NEXT_FOCUS_SET,

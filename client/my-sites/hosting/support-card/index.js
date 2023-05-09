@@ -1,15 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { Button, Card, HappinessEngineersTray } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { Button, Card } from '@automattic/components';
 import { useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import HappinessEngineersTray from 'calypso/components/happiness-engineers-tray';
 import CardHeading from 'calypso/components/card-heading';
 import {
 	composeAnalytics,
@@ -18,9 +9,6 @@ import {
 	bumpStat,
 } from 'calypso/state/analytics/actions';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function trackNavigateToContactSupport() {
@@ -44,7 +32,7 @@ export default function SupportCard() {
 					'If you need help or have any questions, our Happiness Engineers are here when you need them.'
 				) }
 			</p>
-			<Button onClick={ () => dispatch( trackNavigateToContactSupport ) } href="/help/contact">
+			<Button onClick={ () => dispatch( trackNavigateToContactSupport() ) } href="/help/contact">
 				{ translate( 'Contact us' ) }
 			</Button>
 		</Card>

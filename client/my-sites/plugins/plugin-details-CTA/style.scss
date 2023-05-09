@@ -1,0 +1,168 @@
+@use "../variables";
+
+.plugin-details-cta__container {
+	@extend %plugin-header;
+}
+
+.plugin-details-cta__modal-overlay.dialog__backdrop {
+	background-color: rgba(var(--color-neutral-100-rgb), 0.7);
+}
+
+.plugin-details-cta__dialog-content {
+	.dialog__content {
+		padding: 0;
+	}
+}
+
+.plugin-details-cta__price {
+	font-family: $brand-serif;
+	font-size: $font-title-large;
+	color: var(--studio-gray-100);
+	margin-bottom: 16px;
+	min-height: 48px;
+	display: flex;
+	align-items: baseline;
+	flex-wrap: wrap;
+
+	&.align-right {
+		text-align: right;
+	}
+}
+
+.plugin-details-cta__price-placeholder {
+	width: 100%;
+
+	@extend %placeholder;
+}
+
+.plugin-details-cta__period,
+.plugin-details-cta__notice {
+	font-family: $sans;
+	font-size: $font-body-extra-small;
+	color: var(--studio-gray-50);
+	padding-left: 8px;
+}
+
+.plugin-details-cta__uprade-required {
+	width: 100%;
+	font-size: $font-body-extra-small;
+	color: var(--studio-gray-50);
+}
+
+.plugin-details-cta__preinstalled {
+	width: 100%;
+	margin-bottom: 20px;
+}
+
+.plugin-details-cta__install {
+	margin-bottom: 20px;
+
+	.plugin-details-cta__install-button {
+		width: 100%;
+		padding: 12px 16px;
+
+		.gridicon {
+			margin: 0 0 0 5px;
+		}
+	}
+}
+
+.plugin-details-cta__t-and-c {
+	font-size: $font-body-extra-small;
+	color: var(--studio-gray-50);
+	margin-bottom: 16px;
+}
+
+.plugin-details-cta__not-available {
+	.plugin-details-cta__not-available-text {
+		color: var(--studio-gray-60);
+		margin: 16px 0;
+		font-size: $font-body-small;
+	}
+
+	.plugin-details-cta__follow-toggle label {
+		color: var(--studio-gray-80);
+	}
+}
+
+.plugin-details-cta__upgrade-required-card {
+	padding: 2em;
+	background-color: var(--color-surface);
+	display: flex;
+	flex-direction: column;
+	border: 1px solid var(--color-neutral-10);
+	border-radius: 4px;
+
+	.button {
+		margin-top: 1rem;
+		padding: 12px 0;
+	}
+}
+.plugin-details-cta__upgrade-required {
+	display: flex;
+
+	.plugin-details-cta__upgrade-required-icon {
+		color: var(--studio-orange-40);
+		padding-top: 3px;
+	}
+
+	.plugin-details-cta__upgrade-required-text {
+		color: var(--studio-gray-80);
+		font-size: $font-body-small;
+		margin-left: 16px;
+	}
+}
+
+.plugin-details-cta__container-header {
+	display: flex;
+	justify-content: space-between;
+}
+
+.plugin-details-cta__manage-plugin-menu {
+	margin-top: -12px;
+}
+
+.plugin-details-cta__manage-plugin-menu-new-purchase {
+	position: absolute;
+	right: 40px;
+	top: 40px;
+}
+
+.plugin-details-cta__installed-text {
+	color: var(--studio-gray-100);
+	font-size: $font-body;
+	height: 40px;
+
+	.plugin-details-cta__installed-text-quantity {
+		color: var(--studio-green-50);
+	}
+
+	.plugin-details-cta__installed-text-active {
+		color: var(--studio-green-60);
+	}
+
+	.plugin-details-cta__installed-text-inactive {
+		color: var(--studio-red-60);
+	}
+}
+
+.plugin-details-cta__autoupdate-text {
+	font-size: $font-body-extra-small;
+
+	.plugin-details-cta__autoupdate-text-main {
+		color: var(--studio-gray-100);
+	}
+
+	.plugin-details-cta__autoupdate-text-version {
+		color: var(--studio-gray-60);
+	}
+}
+
+.is-placeholder {
+	.plugin-details-cta__price,
+	.plugin-details-cta__install,
+	.plugin-details-cta__t-and-c {
+		@extend %placeholder;
+	}
+}
+

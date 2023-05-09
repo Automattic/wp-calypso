@@ -4,16 +4,7 @@
 
 /* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["assertPasses", "assertFails"] }] */
 
-/**
- * External dependencies
- */
-import React from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-
 import translatableString from '../proptype';
 
 function assertPasses( validator, { props }, propName = 'translatableString' ) {
@@ -33,7 +24,7 @@ describe( 'translatable proptype', () => {
 	} );
 
 	test( 'should pass with string', () =>
-		assertPasses( translatableString, <legend translatableString={ 'Los pollos hermanos' } /> ) );
+		assertPasses( translatableString, <legend translatableString="Los pollos hermanos" /> ) );
 
 	test( 'should pass with <Translatable /> component', () =>
 		assertPasses( translatableString, <legend translatableString={ <Translatable /> } /> ) );
@@ -64,7 +55,7 @@ describe( 'translatable proptype', () => {
 		);
 		assertPasses(
 			translatableString.isRequired,
-			<legend translatableString={ 'Los pollos hermanos' } />
+			<legend translatableString="Los pollos hermanos" />
 		);
 	} );
 

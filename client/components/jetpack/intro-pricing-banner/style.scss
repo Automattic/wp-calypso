@@ -1,83 +1,122 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
+
 .intro-pricing-banner {
 	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-	align-items: center;
+	justify-content: center;
 
-	margin-top: calc( 32px * 3 );
-	padding: 32px;
+	&.is-sticky {
+		position: fixed;
+		width: 100%;
+		left: 0;
+		top: var(--masterbar-height);
+		background-color: var(--color-surface);
+		box-shadow: 0 4px 4px 0 #00000014;
+		z-index: 2;
+		height: 74px;
 
-	border-width: 1px 0;
-	border-style: solid;
-	border-color: rgba( var( --studio-gray-10-rgb ), 0.6 );
+		align-items: center;
 
-	background-color: rgba( var( --studio-white-rgb ), 0.6 );
+		@include break-large {
+			height: 52px;
+		}
 
-	@include breakpoint-deprecated( '>660px' ) {
-		flex-direction: row;
-		margin-bottom: calc( 32px * 3 );
 
-		border-width: 1px;
-		border-radius: calc( 2px * 4 );
-	}
-
-	p {
-		line-height: inherit;
+		@media (max-width: $break-mobile) {
+			justify-content: flex-start;
+			padding-left: 15px;
+		}
 	}
 }
 
-.intro-pricing-banner__copy {
-	order: 2;
-	min-width: 50%;
-	max-width: 30rem;
+.intro-pricing-banner.is-loading .intro-pricing-banner__item-label {
+	@include placeholder();
+}
 
-	@include breakpoint-deprecated( '>660px' ) {
-		order: initial;
+.intro-pricing-banner.is-sticky .intro-pricing-banner__item.is-agencies {
+	display: none;
+
+	@include break-large {
+		display: flex;
+	}
+}
+
+.intro-pricing-banner:not(.is-sticky) .intro-pricing-banner__content {
+	height: 120px;
+	margin-bottom: 2rem;
+	gap: 1.25rem;
+
+	@include break-large {
+		height: 54px;
+	}
+}
+
+.intro-pricing-banner__content {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+
+	@include break-large {
+		flex-direction: row;
+		align-items: center;
+	}
+}
+
+.intro-pricing-banner__item {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	font-size: $font-body;
+
+	&:not(:last-child) {
 		margin-right: 16px;
 	}
 }
 
-.intro-pricing-banner__header {
-	margin-top: -8px;
-	margin-bottom: 8px;
-
-	text-align: center;
-	font-size: $font-title-small;
-	font-weight: 700;
-
-	@include breakpoint-deprecated( '>660px' ) {
-		text-align: initial;
-		font-size: $font-title-medium;
-	}
+.intro-pricing-banner__item-icon {
+	min-width: 2em;
+	margin-inline-end: 0.5em;
 }
 
-.intro-pricing-banner__call-to-action {
-	margin-bottom: initial;
-
-	font-size: $font-body-small;
-	color: var( --studio-gray-60 );
-
-	@include breakpoint-deprecated( '>660px' ) {
-		font-size: $font-body;
-	}
+.intro-pricing-banner__item-label.is-link {
+	color: var(--color-primary-100);
+	text-decoration: underline;
+	// This works in all major browsers except for Firefox for Android. It is also not imperative that this works
+	text-underline-offset: 3px;
 }
 
-.intro-pricing-banner__badge {
-	width: calc( 241px * 0.6 );
-	height: calc( 239px * 0.6 );
+.is-section-jetpack-connect .intro-pricing-banner.is-sticky,
+.is-group-jetpack-cloud.is-section-jetpack-cloud-pricing .intro-pricing-banner.is-sticky {
+	top: 0;
+}
 
-	margin-top: calc( -32px * 3 );
+.is-section-jetpack-connect .intro-pricing-banner.is-sticky,
+.is-group-jetpack-cloud.is-section-jetpack-cloud-pricing .intro-pricing-banner.is-sticky .header__jetpack-masterbar-cart {
+	position: absolute;
+	display: inline-flex;
 
-	// To center the alt-text until the image loads
-	line-height: 239px;
-	vertical-align: middle;
-	text-align: center;
+	@media (max-width: 660px) {
+		right: 11%;
+	}
 
-	@include breakpoint-deprecated( '>660px' ) {
-		width: 241px;
-		height: 239px;
+	@media (max-width: 960px) {
+		top: 14px;
+	}
 
-		margin-bottom: calc( -32px * 3 );
-		margin-right: -32px;
+}
+
+
+// target Calypso pricing filter bar, not jetpack cloud
+.is-group-sites.is-section-plans .intro-pricing-banner.is-sticky {
+	// At this screen size, the left sidebar is 228px;
+	@include breakpoint-deprecated( ">660px" ) {
+		width: calc(100% - 228px);
+		left: 228px;
+	}
+
+	// At this screen size, the lft sidebar is 272px;
+	@include breakpoint-deprecated( ">960px" ) {
+		width: calc(100% - 272px);
+		left: 272px;
 	}
 }

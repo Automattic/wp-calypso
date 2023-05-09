@@ -1,14 +1,41 @@
+.manage-purchase > button.card,
+.manage-purchase > a.card {
+	--icon-size: 16px;
+
+	padding-inline-start: calc(var(--icon-size) * 2.5);
+	padding-inline-end: var(--icon-size);
+
+	@include breakpoint-deprecated( ">660px" ) {
+		--icon-size: 24px;
+	}
+
+	color: var(--color-text-subtle);
+
+	.card__icon {
+		position: absolute;
+		left: var(--icon-size);
+		top: 0;
+		width: var(--icon-size);
+		height: 100%;
+		fill: currentcolor;
+	}
+
+	.card__link-indicator {
+		right: var(--icon-size);
+	}
+}
+
 .manage-purchase__info {
 	font-size: $font-body-small;
 	padding: 0;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		font-size: $font-body-small;
 		padding: 0;
 	}
 
 	&.is-expired {
-		background: var( --color-neutral-0 );
+		background: var(--color-neutral-0);
 
 		.manage-purchase__header,
 		.manage-purchase__content,
@@ -22,7 +49,7 @@
 	&.is-expired + .notice {
 		margin-top: -10px;
 
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( ">480px" ) {
 			margin-top: -16px;
 		}
 	}
@@ -42,12 +69,11 @@
 
 		.manage-purchase__plan-icon {
 			height: 56px;
-			/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
 			border-radius: 50%;
 		}
 
 		.manage-purchase__header {
-			border-bottom: 2px solid var( --color-neutral-0 );
+			border-bottom: 2px solid var(--color-neutral-0);
 		}
 
 		.manage-purchase__subtitle,
@@ -72,7 +98,7 @@
 			width: 60%;
 		}
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			.manage-purchase__description,
 			.manage-purchase__detail,
 			.manage-purchase__detail-label {
@@ -80,7 +106,7 @@
 			}
 		}
 
-		@include breakpoint-deprecated( '<660px' ) {
+		@include breakpoint-deprecated( "<660px" ) {
 			.manage-purchase__detail {
 				width: 25%;
 			}
@@ -96,29 +122,29 @@
 .manage-purchase__content {
 	padding: 16px 24px;
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		padding: 16px;
 	}
 }
 
 .manage-purchase__header {
 	overflow: auto;
-	border-bottom: 2px solid var( --color-accent );
+	border-bottom: 2px solid var(--color-accent);
 
 	.is-personal & {
-		border-bottom: 2px solid var( --color-plan-personal );
+		border-bottom: 2px solid var(--color-plan-personal);
 	}
 
 	.is-premium & {
-		border-bottom: 2px solid var( --color-plan-premium );
+		border-bottom: 2px solid var(--color-plan-premium);
 	}
 
 	.is-business & {
-		border-bottom: 2px solid var( --color-plan-business );
+		border-bottom: 2px solid var(--color-plan-business);
 	}
 
 	.is-jetpack-product & {
-		border-bottom: 2px solid var( --studio-jetpack-green-30 );
+		border-bottom: 2px solid var(--studio-jetpack-green-30);
 	}
 }
 
@@ -131,35 +157,34 @@
 	.gridicon {
 		box-sizing: border-box;
 		padding: 4px;
-		/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
 		border-radius: 50%;
-		background: var( --color-accent );
-		fill: var( --color-text-inverted );
+		background: var(--color-accent);
+		fill: var(--color-text-inverted);
 	}
 
 	.gridicons-my-sites {
 		background: unset;
-		fill: var( --color-wordpress-com );
+		fill: var(--color-wordpress-com);
 		margin-left: -3px;
 		margin-top: -3px;
 		padding: 0;
-		transform: scale( 1.1 );
+		transform: scale(1.1);
 	}
 
 	.gridicons-themes {
 		/* stylelint-disable-next-line  scales/radii */
-		border-radius: 8px;
+		border-radius: 8px; /* stylelint-disable-line scales/radii */
 	}
 }
 
 .manage-purchase__title {
-	color: var( --color-text );
+	color: var(--color-text);
 	display: block;
 	font-size: $font-title-small;
 	font-weight: 400;
 	clear: none;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		font-size: $font-title-small;
 		padding-right: 100px;
 	}
@@ -175,7 +200,7 @@
 }
 
 .manage-purchase__description {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	display: block;
 
 	.plan-features__targeted-description-heading {
@@ -194,50 +219,52 @@
 	list-style: none;
 	overflow: auto;
 	padding: 0 24px;
-	border-top: 1px solid var( --color-neutral-0 );
+	border-top: 1px solid var(--color-neutral-0);
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		flex-direction: column;
 		padding: 0 16px 16px;
 	}
 
 	li {
-		color: var( --color-neutral-60 );
+		color: var(--color-neutral-60);
 		font-size: $font-body-small;
 
-		@include breakpoint-deprecated( '<660px' ) {
+		@include breakpoint-deprecated( "<660px" ) {
 			clear: both;
 			overflow: auto;
 			margin-top: 15px;
 		}
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			box-sizing: border-box;
 			flex: 1 1 auto;
 			font-size: $font-body-small;
-			text-align: center;
-			padding: 15px 8px 12px;
+			padding: 15px 16px 12px;
+			min-height: 130px;
 
 			&:first-child {
 				padding-left: 0;
 			}
+
 			&:last-child {
 				padding-right: 0;
 			}
-			&:first-child:nth-last-child( 4 ),
-			&:first-child:nth-last-child( 4 ) ~ li {
+
+			&:first-child:nth-last-child(4),
+			&:first-child:nth-last-child(4) ~ li {
 				max-width: 25%;
 			}
 		}
 
 		+ li {
-			@include breakpoint-deprecated( '>660px' ) {
-				border-left: 1px solid var( --color-neutral-0 );
+			@include breakpoint-deprecated( ">660px" ) {
+				border-left: 1px solid var(--color-neutral-0);
 			}
 		}
 
 		> a {
-			color: var( --color-neutral-60 );
+			color: var(--color-neutral-60);
 			display: block;
 			text-decoration: none;
 		}
@@ -248,13 +275,13 @@
 	font-style: normal;
 	font-weight: 600;
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		flex-direction: row;
 		float: left;
 	}
 
-	@include breakpoint-deprecated( '>660px' ) {
-		color: var( --color-text-subtle );
+	@include breakpoint-deprecated( ">660px" ) {
+		color: var(--color-text-subtle);
 		display: block;
 		font-family: $sans;
 		font-size: $font-body-extra-small;
@@ -264,14 +291,40 @@
 }
 
 .manage-purchase__detail {
-	@include breakpoint-deprecated( '<660px' ) {
-		text-align: right;
-	}
-
 	display: block;
+	text-align: right;
+
+	@include breakpoint-deprecated( ">660px" ) {
+		text-align: left;
+	}
 
 	.components-toggle-control {
 		display: inline-block;
+
+		.components-form-toggle {
+			margin-right: initial;
+		}
+	}
+
+	.manage-purchase__payment-method {
+		display: flex;
+		justify-content: flex-end;
+		margin-bottom: 6px;
+
+		@include breakpoint-deprecated( ">660px" ) {
+			justify-content: flex-start;
+		}
+	}
+
+	.manage-purchase__no-payment-method {
+		display: flex;
+		align-items: center;
+		gap: 4px;
+
+		svg {
+			flex-shrink: 0;
+			fill: var(--color-warning-30);
+		}
 	}
 
 	.payment-logo {
@@ -283,8 +336,12 @@
 		cursor: pointer;
 	}
 
+	.manage-purchase__backup-payment-method-notice a {
+		display: inline;
+	}
+
 	&.is-expiring .manage-purchase__detail-date-span {
-		color: var( --studio-pink-50 );
+		color: var(--studio-pink-50);
 	}
 }
 
@@ -292,36 +349,47 @@
 	margin-right: 0;
 }
 
+.manage-purchase__auto-renew-toggle .components-base-control__field {
+	margin-bottom: 6px;
+}
+
 .manage-purchase__expiring-credit-card-notice.notice,
 .manage-purchase__purchase-expiring-notice.notice {
 	margin-bottom: 10px;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		margin-bottom: 16px;
 	}
 }
 
-.manage-purchase__renew-button {
-	@include breakpoint-deprecated( '<660px' ) {
-		margin-top: 16px;
-		width: 100%;
-	}
+.manage-purchase__renew-upgrade-buttons {
+	display: none;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
+		display: initial;
 		position: absolute;
 		right: 24px;
 		top: 16px;
+
+		> a,
+		> button {
+			margin-inline-end: 8px;
+
+			&:last-child {
+				margin-inline-end: initial;
+			}
+		}
 	}
 }
 
 .manage-purchase__footnotes {
-	color: var( --color-text-subtle );
-	border-top: solid 1px var( --color-neutral-0 );
+	color: var(--color-text-subtle);
+	border-top: solid 1px var(--color-neutral-0);
 	margin: 0 auto;
 	padding: 16px;
-	background: var( --color-surface );
+	background: var(--color-surface);
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		padding: 16px 24px;
 	}
 }
@@ -332,4 +400,61 @@
 
 .manage-purchase__savings-badge {
 	margin-left: 12px;
+}
+
+.manage-purchase__license-clipboard-container {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	margin-bottom: 0;
+
+	@include breakpoint-deprecated( ">480px" ) {
+		flex-wrap: nowrap;
+	}
+
+	@include breakpoint-deprecated( "<660px" ) {
+		padding: 16px;
+		box-shadow: none;
+	}
+
+	strong {
+		color: var(--color-neutral-60);
+	}
+}
+
+.manage-purchase__license-clipboard {
+	display: flex;
+	margin-top: 16px;
+
+	input.form-text-input.manage-purchase__license-clipboard-input {
+		font-size: $font-body-small;
+		margin-right: 16px;
+		background-color: var(--studio-gray-0);
+		border: none;
+
+		@include breakpoint-deprecated( ">480px" ) {
+			margin: 0 16px;
+		}
+	}
+
+	.button {
+		min-width: 70px;
+	}
+
+	@include breakpoint-deprecated( ">480px" ) {
+		margin-top: 0;
+	}
+
+	&.loading {
+		@include placeholder( --color-neutral-20 );
+		padding: 0.5rem;
+		margin: 0 16px;
+		width: 200px;
+	}
+}
+
+.manage-purchase__auto-renew-text button.is-link {
+	color: var(--color-link);
+	text-decoration: underline;
+	line-height: inherit;
 }

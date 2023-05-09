@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import fromApi from '../from-api';
 
 describe( 'fromApi()', () => {

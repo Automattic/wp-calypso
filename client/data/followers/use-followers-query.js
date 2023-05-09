@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { useInfiniteQuery } from 'react-query';
 import { uniqueBy } from '@automattic/js-utils';
-
-/**
- * Internal dependencies
- */
+import { useInfiniteQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
 const MAX_FOLLOWERS = 10; // means pages (= 1000 followers);
@@ -18,8 +11,8 @@ const defaults = {
  * Normalizes a follower object. Changes 'avatar' to 'avatar_URL' allowing a follower
  * object to be used with the Gravatar component.
  *
- * @param  {object} follower A follower ojbect
- * @returns {object}          A normalized follower object
+ * @param  {Object} follower A follower ojbect
+ * @returns {Object}          A normalized follower object
  */
 export function normalizeFollower( follower ) {
 	return {

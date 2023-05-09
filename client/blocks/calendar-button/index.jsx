@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
-import Gridicon from 'calypso/components/gridicon';
+import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { pick } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
+import PropTypes from 'prop-types';
+import { createRef, Component, Fragment } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 
 const noop = () => {};
@@ -53,7 +45,6 @@ class CalendarButton extends Component {
 	state = { showPopover: false };
 
 	setDate = ( date ) => {
-		this.setState( { date } );
 		this.props.onDateChange( date );
 	};
 
@@ -70,7 +61,7 @@ class CalendarButton extends Component {
 		this.setState( { showPopover: ! this.state.showPopover } );
 	};
 
-	buttonRef = React.createRef();
+	buttonRef = createRef();
 
 	renderCalendarPopover() {
 		if ( ! this.state.showPopover ) {

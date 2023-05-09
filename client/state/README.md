@@ -47,7 +47,7 @@ All the application information and data in Calypso should go through this data 
 
 ## Utilities
 
-`state/utils.js` contains a number of helper utilities you may find useful in implementing your state subtree:
+`state/utils.ts` contains a number of helper utilities you may find useful in implementing your state subtree:
 
 ### keyedReducer( keyName, reducer )
 

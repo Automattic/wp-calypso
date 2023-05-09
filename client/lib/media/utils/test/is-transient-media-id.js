@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import isTransientMediaId from '../is-transient-media-id';
 
 describe( 'isTransientMediaId()', () => {

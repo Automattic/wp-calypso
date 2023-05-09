@@ -1,20 +1,4 @@
-/**
- * External dependencies
- */
 import nock from 'nock';
-
-/**
- * Internal dependencies
- */
-import {
-	addTerm,
-	receiveTerm,
-	receiveTerms,
-	removeTerm,
-	requestSiteTerms,
-	updateTerm,
-	deleteTerm,
-} from '../actions';
 import PostQueryManager from 'calypso/lib/query-manager/post';
 import TermQueryManager from 'calypso/lib/query-manager/term';
 import {
@@ -26,6 +10,15 @@ import {
 	TERMS_REQUEST_SUCCESS,
 	TERMS_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
+import {
+	addTerm,
+	receiveTerm,
+	receiveTerms,
+	removeTerm,
+	requestSiteTerms,
+	updateTerm,
+	deleteTerm,
+} from '../actions';
 
 /**
  * Module Variables

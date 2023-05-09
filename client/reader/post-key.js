@@ -48,13 +48,10 @@ export function keyToString( postKey ) {
 		return null;
 	}
 
-	if ( postKey.isCombination ) {
-		const feedId = postKey.feedId ? `&feedId=${ postKey.feedId }` : '';
-		const blogId = postKey.blogId ? `&feedId=${ postKey.blogId }` : '';
-		const postIds = postKey.postIds.join( ',' );
-		return `postIds=[${ postIds }, ]${ feedId }${ blogId } `;
-	} else if ( postKey.isRecommendationBlock ) {
+	if ( postKey.isRecommendationBlock ) {
 		return `rec-${ postKey.index }`;
+	} else if ( postKey.isPromptBlock ) {
+		return `prompt-${ postKey.index }`;
 	} else if ( postKey.feedId ) {
 		return `${ postKey.postId }-${ postKey.feedId }`;
 	} else if ( postKey.blogId ) {

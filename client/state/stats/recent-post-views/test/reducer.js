@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { items } from '../reducer';
 import { STATS_RECENT_POST_VIEWS_RECEIVE } from 'calypso/state/action-types';
+import { items } from '../reducer';
 
 describe( 'reducer', () => {
 	const siteId = 15749347;

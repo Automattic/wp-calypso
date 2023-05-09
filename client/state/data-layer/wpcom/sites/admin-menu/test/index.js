@@ -2,14 +2,10 @@
  * @jest-environment jsdom
  */
 
-/**
- * Internal dependencies
- */
-
+import { addQueryArgs } from 'calypso/lib/url';
+import { requestAdminMenu, receiveAdminMenu } from 'calypso/state/admin-menu/actions';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { requestFetchAdminMenu, handleSuccess } from '../';
-import { requestAdminMenu, receiveAdminMenu } from 'calypso/state/admin-menu/actions';
-import { addQueryArgs } from 'calypso/lib/url';
 
 describe( 'requestFetchAdminMenu', () => {
 	test( 'should create the correct http request action', () => {

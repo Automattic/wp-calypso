@@ -4,9 +4,7 @@ export { adTrackSignupStart } from './ad-track-signup-start';
 export {
 	fireGoogleAnalyticsEvent,
 	fireGoogleAnalyticsPageView,
-	fireGoogleAnalyticsTiming,
 	getGoogleAnalyticsDefaultConfig,
-	isGoogleAnalyticsAllowed,
 	setupGoogleAnalyticsGtag,
 } from './google-analytics';
 export { recordAddToCart } from './record-add-to-cart';
@@ -20,3 +18,4 @@ export {
 	trackCustomFacebookConversionEvent,
 	trackCustomAdWordsRemarketingEvent,
 } from './track-custom-events';
+export { initGTMContainer, loadGTMContainer } from './gtm-container';

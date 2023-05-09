@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { isFetchingPreferences, getPreference, hasReceivedRemotePreferences } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( 'isFetchingPreferences()', () => {
 		test( 'should return preferences fetching status', () => {
 			const state = { preferences: { fetching: true } };
-			expect( isFetchingPreferences( state ) ).to.equal( true );
+			expect( isFetchingPreferences( state ) ).toEqual( true );
 		} );
 	} );
 
@@ -28,7 +20,7 @@ describe( 'selectors', () => {
 				'__unknown'
 			);
 
-			expect( preference ).to.be.null;
+			expect( preference ).toBeNull();
 		} );
 
 		test( 'should return a default value if neither local nor remote values contain key', () => {
@@ -39,10 +31,10 @@ describe( 'selectors', () => {
 						remoteValues: {},
 					},
 				},
-				'mediaModalGalleryInstructionsDismissed'
+				'colorScheme'
 			);
 
-			expect( preference ).to.be.false;
+			expect( preference ).toEqual( 'default' );
 		} );
 
 		test( 'should return the remote value if local does not contain key', () => {
@@ -58,7 +50,7 @@ describe( 'selectors', () => {
 				'foo'
 			);
 
-			expect( preference ).to.equal( 'baz' );
+			expect( preference ).toEqual( 'baz' );
 		} );
 
 		test( 'should prefer a local value over remote or default values', () => {
@@ -76,7 +68,7 @@ describe( 'selectors', () => {
 				'foo'
 			);
 
-			expect( preference ).to.equal( 'qux' );
+			expect( preference ).toEqual( 'qux' );
 		} );
 	} );
 
@@ -88,7 +80,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( hasReceived ).to.be.false;
+			expect( hasReceived ).toBe( false );
 		} );
 
 		test( 'should return false if preferences have been received', () => {
@@ -98,7 +90,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( hasReceived ).to.be.true;
+			expect( hasReceived ).toBe( true );
 		} );
 	} );
 } );

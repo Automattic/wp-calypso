@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import isJetpackSiteInStagingMode from 'calypso/state/selectors/is-jetpack-site-in-staging-mode';
 import { items as ITEMS_FIXTURE } from './fixtures/jetpack-connection';
 
@@ -20,7 +12,7 @@ describe( 'isJetpackSiteInStagingMode()', () => {
 		};
 		const siteId = 87654321;
 		const output = isJetpackSiteInStagingMode( stateIn, siteId );
-		expect( output ).to.be.true;
+		expect( output ).toBe( true );
 	} );
 
 	test( 'should return false if the site is not in staging mode', () => {
@@ -33,7 +25,7 @@ describe( 'isJetpackSiteInStagingMode()', () => {
 		};
 		const siteId = 12345678;
 		const output = isJetpackSiteInStagingMode( stateIn, siteId );
-		expect( output ).to.be.false;
+		expect( output ).toBe( false );
 	} );
 
 	test( 'should return null if the site is not known yet', () => {
@@ -46,6 +38,6 @@ describe( 'isJetpackSiteInStagingMode()', () => {
 		};
 		const siteId = 88888888;
 		const output = isJetpackSiteInStagingMode( stateIn, siteId );
-		expect( output ).to.be.null;
+		expect( output ).toBeNull();
 	} );
 } );

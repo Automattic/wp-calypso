@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
 import { concat, filter, flow, map, sortBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import { PureComponent } from 'react';
 import PaymentLogo, { POSSIBLE_TYPES } from '../index';
 
 const genVendors = flow(
@@ -21,7 +13,7 @@ const genVendors = flow(
 
 const VENDORS = genVendors( POSSIBLE_TYPES );
 
-class PaymentLogoExamples extends React.PureComponent {
+class PaymentLogoExamples extends PureComponent {
 	static displayName = 'PaymentLogo';
 
 	render() {

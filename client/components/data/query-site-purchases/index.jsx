@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import { useSelector, useDispatch } from 'react-redux';
-import { useEffect, useRef } from 'react';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
-import { isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
+import PropTypes from 'prop-types';
+import { useEffect, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { fetchSitePurchases } from 'calypso/state/purchases/actions';
+import { isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
 
 const debug = debugFactory( 'calypso:query-site-purchases' );
 
-export default function QuerySitePurchases( { siteId } ) {
+export const useQuerySitePurchases = ( siteId ) => {
 	const isRequesting = useSelector( ( state ) => isFetchingSitePurchases( state ) );
 	const reduxDispatch = useDispatch();
 	const previousSiteId = useRef();
@@ -33,7 +26,10 @@ export default function QuerySitePurchases( { siteId } ) {
 
 		reduxDispatch( fetchSitePurchases( siteId ) );
 	}, [ siteId, reduxDispatch, isRequesting ] );
+};
 
+export default function QuerySitePurchases( { siteId } ) {
+	useQuerySitePurchases( siteId );
 	return null;
 }
 

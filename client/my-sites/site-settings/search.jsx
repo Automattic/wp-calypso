@@ -1,43 +1,34 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
+import {
+	PRODUCT_JETPACK_SEARCH_MONTHLY,
+	WPCOM_FEATURES_CLASSIC_SEARCH,
+	WPCOM_FEATURES_INSTANT_SEARCH,
+} from '@automattic/calypso-products';
 import { CompactCard } from '@automattic/components';
+import { ToggleControl } from '@wordpress/components';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import Banner from 'calypso/components/banner';
+import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import SupportInfo from 'calypso/components/support-info';
-import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
+import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
+import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
+import isDeactivatingJetpackModule from 'calypso/state/selectors/is-deactivating-jetpack-module';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { isJetpackSite, getJetpackSearchCustomizeUrl } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
-import isDeactivatingJetpackModule from 'calypso/state/selectors/is-deactivating-jetpack-module';
-import { getSitePurchases, isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
-import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
-import { isJetpackSite, getCustomizerUrl } from 'calypso/state/sites/selectors';
-import {
-	isJetpackSearch,
-	isP2Plus,
-	planHasJetpackSearch,
-	FEATURE_SEARCH,
-	PRODUCT_JETPACK_SEARCH_MONTHLY,
-	PRODUCT_WPCOM_SEARCH_MONTHLY,
-	planHasJetpackClassicSearch,
-} from '@automattic/calypso-products';
 
 class Search extends Component {
 	static defaultProps = {
@@ -61,6 +52,17 @@ class Search extends Component {
 		submitForm: PropTypes.func.isRequired,
 		updateFields: PropTypes.func.isRequired,
 	};
+
+	renderLoadingPlaceholder() {
+		return (
+			<Banner
+				title=""
+				jetpack={ this.props.siteIsJetpack }
+				disableHref
+				description={ this.props.translate( 'Loading your purchases…' ) }
+			/>
+		);
+	}
 
 	renderInfoLink( link ) {
 		return (
@@ -105,17 +107,15 @@ class Search extends Component {
 	}
 
 	renderUpgradeNotice() {
-		const { siteIsJetpack, siteSlug, translate, isJetpackClassicSearchIncluded } = this.props;
+		const { siteSlug, translate, hasClassicSearch } = this.props;
 
-		const href = siteIsJetpack
-			? `/checkout/${ siteSlug }/${ PRODUCT_JETPACK_SEARCH_MONTHLY }`
-			: `/checkout/${ siteSlug }/${ PRODUCT_WPCOM_SEARCH_MONTHLY }`;
+		const href = `/checkout/${ siteSlug }/${ PRODUCT_JETPACK_SEARCH_MONTHLY }`;
 
 		return (
 			<Fragment>
 				<UpsellNudge
 					title={
-						isJetpackClassicSearchIncluded
+						hasClassicSearch
 							? translate( 'Upgrade your Jetpack Search and get the instant search experience' )
 							: translate( 'Upgrade to Jetpack Search and get the instant search experience' )
 					}
@@ -123,9 +123,9 @@ class Search extends Component {
 						'Incredibly powerful and customizable, Jetpack Search helps your visitors instantly find the right content – right when they need it.'
 					) }
 					href={ href }
-					event={ 'calypso_jetpack_search_settings_upgrade_nudge' }
-					feature={ FEATURE_SEARCH }
-					plan={ siteIsJetpack ? PRODUCT_JETPACK_SEARCH_MONTHLY : PRODUCT_WPCOM_SEARCH_MONTHLY }
+					event="calypso_jetpack_search_settings_upgrade_nudge"
+					feature={ WPCOM_FEATURES_INSTANT_SEARCH }
+					plan={ PRODUCT_JETPACK_SEARCH_MONTHLY }
 					showIcon={ true }
 				/>
 			</Fragment>
@@ -145,7 +145,7 @@ class Search extends Component {
 			isLoading,
 			trackEvent,
 			activateModule,
-			hasSearchProduct,
+			hasInstantSearch,
 		} = this.props;
 
 		/**
@@ -154,7 +154,7 @@ class Search extends Component {
 		 * @param {boolean} jetpackSearchEnabled Whether Jetpack Search is enabled
 		 */
 		const handleJetpackSearchToggle = ( jetpackSearchEnabled ) => {
-			if ( hasSearchProduct ) {
+			if ( hasInstantSearch ) {
 				trackEvent( 'Toggled instant_search_enabled' );
 				saveJetpackSettings( siteId, {
 					instant_search_enabled: jetpackSearchEnabled,
@@ -187,15 +187,15 @@ class Search extends Component {
 					disabled={ isRequestingSettings || isSavingSettings }
 					onChange={ handleJetpackSearchToggle }
 				/>
-				{ this.props.hasSearchProduct && (
+				{ this.props.hasInstantSearch && (
 					<div className="site-settings__jetpack-instant-search-toggle">
 						<ToggleControl
 							checked={
 								isSearchModuleActive &&
-								this.props.hasSearchProduct &&
+								this.props.hasInstantSearch &&
 								!! fields.instant_search_enabled
 							}
-							disabled={ ! hasSearchProduct || isRequestingSettings || isSavingSettings }
+							disabled={ ! hasInstantSearch || isRequestingSettings || isSavingSettings }
 							onChange={ handleInstantSearchToggle }
 							label={ translate( 'Enable instant search experience (recommended)' ) }
 						></ToggleControl>
@@ -219,7 +219,7 @@ class Search extends Component {
 			trackEvent,
 			activatingSearchModule,
 			isLoading,
-			hasSearchProduct,
+			hasInstantSearch,
 		} = this.props;
 
 		/**
@@ -233,7 +233,7 @@ class Search extends Component {
 			const jetpackFieldsToUpdate = {
 				jetpack_search_enabled: jetpackSearchEnabled,
 			};
-			if ( hasSearchProduct ) {
+			if ( hasInstantSearch ) {
 				trackEvent( 'Toggled jetpack_search_enabled' );
 				jetpackFieldsToUpdate.instant_search_enabled = jetpackSearchEnabled;
 			}
@@ -261,11 +261,11 @@ class Search extends Component {
 					label={ translate( 'Enable Jetpack Search' ) }
 				></ToggleControl>
 				{ /** Business plan could be simple sites too, unless user triggers certain actions  */ }
-				{ this.props.hasSearchProduct && (
+				{ this.props.hasInstantSearch && (
 					<div className="site-settings__jetpack-instant-search-toggle">
 						<ToggleControl
 							checked={ !! fields.jetpack_search_enabled && !! fields.instant_search_enabled }
-							disabled={ isRequestingSettings || isSavingSettings || ! hasSearchProduct }
+							disabled={ isRequestingSettings || isSavingSettings || ! hasInstantSearch }
 							onChange={ handleInstantSearchToggle }
 							label={ translate( 'Enable instant search experience (recommended)' ) }
 						></ToggleControl>
@@ -279,7 +279,7 @@ class Search extends Component {
 	}
 
 	renderSettingsCard() {
-		const { fields, translate, siteIsJetpack, hasSearchProduct } = this.props;
+		const { fields, translate, siteIsJetpack, hasInstantSearch } = this.props;
 
 		return (
 			<Fragment>
@@ -291,9 +291,9 @@ class Search extends Component {
 							: this.renderSearchTogglesForSimpleSites() }
 					</FormFieldset>
 				</CompactCard>
-				{ hasSearchProduct && fields.instant_search_enabled && (
+				{ hasInstantSearch && fields.instant_search_enabled && (
 					<CompactCard
-						href={ this.props.customizerUrl }
+						href={ this.props.jetpackSearchCustomizeUrl }
 						target={ siteIsJetpack ? 'external' : null }
 					>
 						{ translate( 'Customize Search' ) }
@@ -310,29 +310,30 @@ class Search extends Component {
 				{ this.props.siteId && <QuerySitePurchases siteId={ this.props.siteId } /> }
 				<SettingsSectionHeader title={ this.props.translate( 'Jetpack Search' ) }>
 					{ this.renderInfoLink(
-						this.props.hasSearchProduct
+						this.props.hasInstantSearch
 							? 'https://jetpack.com/support/search/'
 							: this.props.upgradeLink
 					) }
 				</SettingsSectionHeader>
-				{ ( this.props.hasSearchProduct || this.props.isSearchEligible ) &&
-					this.renderSettingsCard() }
-				{ ! this.props.hasSearchProduct && this.renderUpgradeNotice() }
+				{ this.props.isLoading ? (
+					this.renderLoadingPlaceholder()
+				) : (
+					<>
+						{ ( this.props.hasInstantSearch || this.props.isSearchEligible ) &&
+							this.renderSettingsCard() }
+						{ ! this.props.hasInstantSearch && this.renderUpgradeNotice() }
+					</>
+				) }
 			</div>
 		);
 	}
 }
 
-const checkForSearchProduct = ( purchase ) =>
-	purchase.active && ( isJetpackSearch( purchase ) || isP2Plus( purchase ) );
 export default connect( ( state, { isRequestingSettings } ) => {
-	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
-	const hasSearchProduct =
-		getSitePurchases( state, siteId ).find( checkForSearchProduct ) ||
-		planHasJetpackSearch( site.plan?.product_slug );
-	const isJetpackClassicSearchIncluded = planHasJetpackClassicSearch( site?.plan );
-	const isSearchEligible = isJetpackClassicSearchIncluded || !! hasSearchProduct;
+	const hasInstantSearch = siteHasFeature( state, siteId, WPCOM_FEATURES_INSTANT_SEARCH );
+	const hasClassicSearch = siteHasFeature( state, siteId, WPCOM_FEATURES_CLASSIC_SEARCH );
+	const isSearchEligible = hasClassicSearch || hasInstantSearch;
 	const upgradeLink =
 		'/checkout/' +
 		getSelectedSiteSlug( state ) +
@@ -344,10 +345,10 @@ export default connect( ( state, { isRequestingSettings } ) => {
 
 	return {
 		activatingSearchModule: activating || deactivating,
-		customizerUrl: getCustomizerUrl( state, siteId, 'jetpack_search' ),
-		hasSearchProduct,
+		hasInstantSearch,
 		isSearchEligible,
 		isLoading: isRequestingSettings || isFetchingSitePurchases( state ),
+		jetpackSearchCustomizeUrl: getJetpackSearchCustomizeUrl( state, siteId ),
 		site: getSelectedSite( state ),
 		siteId,
 		siteSlug: getSelectedSiteSlug( state ),
@@ -355,6 +356,6 @@ export default connect( ( state, { isRequestingSettings } ) => {
 		upgradeLink,
 		isSearchModuleActive:
 			( isSearchModuleActive && ! deactivating ) || ( ! isSearchModuleActive && activating ),
-		isJetpackClassicSearchIncluded,
+		hasClassicSearch,
 	};
 } )( localize( Search ) );

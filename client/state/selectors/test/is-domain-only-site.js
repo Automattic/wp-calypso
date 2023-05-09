@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 
 describe( '#isDomainOnlySite()', () => {
@@ -21,7 +13,7 @@ describe( '#isDomainOnlySite()', () => {
 			siteId
 		);
 
-		expect( result ).to.be.null;
+		expect( result ).toBeNull();
 	} );
 
 	test( 'it should return false if the site does not have the domain only option set to true', () => {
@@ -42,7 +34,7 @@ describe( '#isDomainOnlySite()', () => {
 			siteId
 		);
 
-		expect( result ).to.be.false;
+		expect( result ).toBe( false );
 	} );
 
 	test( 'it should return false if the site has the domain only option set to true', () => {
@@ -63,6 +55,6 @@ describe( '#isDomainOnlySite()', () => {
 			siteId
 		);
 
-		expect( result ).to.be.true;
+		expect( result ).toBe( true );
 	} );
 } );

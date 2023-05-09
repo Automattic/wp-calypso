@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import DnsRecordsListItem from '../dns-records/item';
 
 class DomainConnectDnsRecord extends Component {

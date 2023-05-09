@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
 import { getOffsetItem } from 'calypso/state/reader/streams/selectors';
 
 jest.mock( 'calypso/reader/stream/utils' );

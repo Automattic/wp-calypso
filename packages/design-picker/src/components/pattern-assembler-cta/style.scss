@@ -1,0 +1,69 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.pattern-assembler-cta-wrapper {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	text-align: center;
+	align-items: center;
+	padding: 16px;
+	line-height: 24px;
+	background-color: #f6f7f7;
+	color: #50575e;
+	// Put it at the end of the list, especially for the generated design category
+	order: 1;
+
+	@include break-small {
+		padding: 32px;
+	}
+
+	@include break-medium {
+		grid-column: 1 / span 3;
+		padding: 64px;
+	}
+
+	.pattern-assembler-cta__title {
+		margin-top: 32px;
+		margin-bottom: 8px;
+		font-weight: 500;
+		font-size: 1.25rem;
+		color: var(--studio-gray-100);
+	}
+
+	.pattern-assembler-cta__subtitle {
+		max-width: 600px;
+	}
+
+	.pattern-assembler-cta__button {
+		margin-top: 32px;
+		padding: 10px 0;
+		border-radius: 4px;
+		min-width: 234px;
+	}
+
+	.pattern-assembler-cta__image {
+		width: 200px;
+	}
+
+	&.is-compact {
+		margin-top: 32px;
+		padding: 32px;
+
+		.pattern-assembler-cta__title {
+			margin-top: 16px;
+		}
+
+		.pattern-assembler-cta__image {
+			width: 100px;
+		}
+
+		.pattern-assembler-cta__subtitle {
+			font-size: 0.875rem;
+		}
+
+		.pattern-assembler-cta__button {
+			margin-top: 16px;
+		}
+	}
+}

@@ -1,40 +1,14 @@
-/**
- * External Dependencies
- */
-import { EventEmitter } from 'events';
-import { URL, JSONSerializable } from '../../types';
-
-type WPCOMError = { message: string };
-type WPCOMHeaders = { [ name: string ]: string } & { status: number };
-
-type WPCOMCallback = (
-	error: WPCOMError | null,
-	result: JSONSerializable | null,
-	headers: WPCOMHeaders
-) => void;
+import { URL } from '../../types';
 
 export type UserMetaData = {
 	links: Record< 'self' | 'help' | 'site' | 'flags', URL >;
+	plans_reorder_abtest_variation?: string;
 	data?: {
 		flags: {
 			active_flags: string[];
 		};
 	};
 };
-
-export interface User extends EventEmitter {
-	initialize: () => Promise< void >;
-	clearStoreIfChanged: ( userId: number ) => void;
-	get: () => UserData;
-	fetch: () => Promise< void >;
-	handleFetchFailure: ( error: Error ) => void;
-	handleFetchSuccess: ( userdata: UserData ) => void;
-	set: ( attributes: UserData ) => boolean;
-	verificationPollerCallback: ( signal?: true ) => void;
-	checkVerification: () => void;
-	signalVerification: () => void;
-	dispatchToken: string;
-}
 
 export type UserData = { ID: number } & Partial< OptionalUserData >;
 
@@ -46,9 +20,9 @@ export type OptionalUserData = {
 	display_name: string;
 	email: string;
 	email_verified: boolean;
+	blaze_credits_enabled: boolean;
 	has_unseen_notes: boolean;
 	is_new_reader: boolean;
-	isRTL: boolean;
 	is_valid_google_apps_country: boolean;
 	localeSlug: string;
 	localeVariant: string;
@@ -62,10 +36,13 @@ export type OptionalUserData = {
 	primary_blog_url: string;
 	site_count: number;
 	jetpack_site_count?: number;
+	has_jetpack_partner_access?: boolean;
+	jetpack_partner_types?: string[];
 	social_login_connections: unknown;
 	user_ip_country_code: string;
 	user_URL: string;
 	username: string;
 	visible_site_count: number;
 	jetpack_visible_site_count?: number;
+	calypso_postpurchase_upsell_monthly_to_annual_plan?: boolean;
 };

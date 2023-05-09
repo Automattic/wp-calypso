@@ -1,41 +1,27 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { get, has } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import shouldLoadGutenframe from 'calypso/state/selectors/should-load-gutenframe';
-import {
-	getPreference,
-	isFetchingPreferences,
-	hasPreferencesRequestFailed,
-} from 'calypso/state/preferences/selectors';
-import { fetchPreferences } from 'calypso/state/preferences/actions';
+import { isEnabled } from '@automattic/calypso-config';
+import { makeLayout, render } from 'calypso/controller';
+import { addQueryArgs, getSiteFragment } from 'calypso/lib/route';
 import { EDITOR_START, POST_EDIT } from 'calypso/state/action-types';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import CalypsoifyIframe from './calypsoify-iframe';
-import getEditorUrl from 'calypso/state/selectors/get-editor-url';
-import { addQueryArgs } from 'calypso/lib/route';
-import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
+import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
+import { getAdminMenu, getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { stopEditingPost } from 'calypso/state/editor/actions';
 import { requestSelectedEditor } from 'calypso/state/selected-editor/actions';
+import getEditorUrl from 'calypso/state/selectors/get-editor-url';
+import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
+import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import shouldLoadGutenframe from 'calypso/state/selectors/should-load-gutenframe';
+import { requestSite } from 'calypso/state/sites/actions';
 import {
-	getSiteUrl,
 	getSiteOption,
 	isJetpackSite,
 	isSSOEnabled,
+	getSiteAdminUrl,
 } from 'calypso/state/sites/selectors';
-import { isEnabled } from '@automattic/calypso-config';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import CalypsoifyIframe from './calypsoify-iframe';
 import { Placeholder } from './placeholder';
-
-import { makeLayout, render } from 'calypso/controller';
-import isSiteUsingCoreSiteEditor from 'calypso/state/selectors/is-site-using-core-site-editor';
-import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
-import { requestSite } from 'calypso/state/sites/actions';
-import { stopEditingPost } from 'calypso/state/editor/actions';
 
 const noop = () => {};
 
@@ -50,7 +36,6 @@ function determinePostType( context ) {
 	return context.params.customPostType;
 }
 
-//duplicated from post-editor/controller.js. We should import it from there instead
 function getPostID( context ) {
 	if ( ! context.params.post || 'new' === context.params.post ) {
 		return null;
@@ -89,26 +74,26 @@ function waitForSiteIdAndSelectedEditor( context ) {
 	} );
 }
 
-function isDashboardAppearancePreferenceAvailable( state ) {
-	return null !== getPreference( state, 'linkDestination' );
+function isPreferredEditorViewAvailable( state ) {
+	const siteId = getSelectedSiteId( state );
+	if ( ! siteId || getIsRequestingAdminMenu( state ) ) {
+		return false;
+	}
+	return null !== getAdminMenu( state, siteId );
 }
 
-function waitForCalypsoPreferences( context ) {
+function waitForPreferredEditorView( context ) {
 	return new Promise( ( resolve ) => {
 		const unsubscribe = context.store.subscribe( () => {
 			const state = context.store.getState();
-			if (
-				! isDashboardAppearancePreferenceAvailable( state ) &&
-				! hasPreferencesRequestFailed( state )
-			) {
+			if ( ! isPreferredEditorViewAvailable( state ) ) {
 				return;
 			}
 			unsubscribe();
 			resolve();
 		} );
-		if ( ! isFetchingPreferences( context.store.getState() ) ) {
-			context.store.dispatch( fetchPreferences() );
-		}
+		// Trigger a `store.subscribe()` callback
+		context.store.dispatch( requestAdminMenu( getSelectedSiteId( context.store.getState() ) ) );
 	} );
 }
 
@@ -123,9 +108,9 @@ function waitForCalypsoPreferences( context ) {
  * tracking), so we redirect the user to the WP Admin login page in order to store the auth cookie. Users will be
  * redirected back to Calypso when they are authenticated in WP Admin.
  *
- * @param {object} context  Shared context in the route.
- * @param {Function} next   Next registered callback for the route.
- * @returns {*}             Whatever the next callback returns.
+ * @param {Object} context Shared context in the route.
+ * @param {Function} next  Next registered callback for the route.
+ * @returns {*}            Whatever the next callback returns.
  */
 export const authenticate = ( context, next ) => {
 	const state = context.store.getState();
@@ -174,8 +159,11 @@ export const authenticate = ( context, next ) => {
 		`${ origin }${ context.path }`
 	);
 
-	const siteUrl = getSiteUrl( state, siteId );
-	const wpAdminLoginUrl = addQueryArgs( { redirect_to: returnUrl }, `${ siteUrl }/wp-login.php` );
+	const siteAdminUrl = getSiteAdminUrl( state, siteId );
+	const wpAdminLoginUrl = addQueryArgs(
+		{ redirect_to: returnUrl },
+		`${ siteAdminUrl }../wp-login.php`
+	);
 
 	window.location.replace( wpAdminLoginUrl );
 };
@@ -190,8 +178,8 @@ export const redirect = async ( context, next ) => {
 	if ( ! selectedEditor ) {
 		checkPromises.push( waitForSiteIdAndSelectedEditor( context ) );
 	}
-	if ( ! isDashboardAppearancePreferenceAvailable( tmpState ) ) {
-		checkPromises.push( waitForCalypsoPreferences( context ) );
+	if ( ! isPreferredEditorViewAvailable( tmpState ) ) {
+		checkPromises.push( waitForPreferredEditorView( context ) );
 	}
 	await Promise.all( checkPromises );
 
@@ -204,18 +192,16 @@ export const redirect = async ( context, next ) => {
 		return next();
 	}
 
-	if ( ! shouldLoadGutenframe( state, siteId ) ) {
-		const postType = determinePostType( context );
+	const postType = determinePostType( context );
+	if ( ! shouldLoadGutenframe( state, siteId, postType ) ) {
 		const postId = getPostID( context );
 
-		const url =
-			postType || ! isSiteUsingCoreSiteEditor( state, siteId )
-				? getEditorUrl( state, siteId, postId, postType )
-				: getSiteEditorUrl( state, siteId );
+		const url = postType
+			? getEditorUrl( state, siteId, postId, postType )
+			: getSiteEditorUrl( state, siteId );
 		// pass along parameters, for example press-this
 		return window.location.replace( addQueryArgs( context.query, url ) );
 	}
-
 	return next();
 };
 
@@ -229,21 +215,24 @@ function getAnchorFmData( query ) {
 	return { anchor_podcast, anchor_episode, spotify_url };
 }
 
-export const post = ( context, next ) => {
-	// See post-editor/controller.js for reference.
+function getSessionStorageOneTimeValue( key ) {
+	const value = window.sessionStorage.getItem( key );
+	window.sessionStorage.removeItem( key );
+	return value;
+}
 
+export const post = ( context, next ) => {
 	const postId = getPostID( context );
 	const postType = determinePostType( context );
-	const jetpackCopy = parseInt( get( context, 'query.jetpack-copy', null ) );
+	const jetpackCopy = parseInt( context.query[ 'jetpack-copy' ] );
 
 	// Check if this value is an integer.
 	const duplicatePostId = Number.isInteger( jetpackCopy ) ? jetpackCopy : null;
 
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
-	const pressThis = getPressThisData( context.query );
+	const pressThisData = getPressThisData( context.query );
 	const anchorFmData = getAnchorFmData( context.query );
-	const fseParentPageId = parseInt( context.query.fse_parent_post, 10 ) || null;
 	const parentPostId = parseInt( context.query.parent_post, 10 ) || null;
 
 	// Set postId on state.editor.postId, so components like editor revisions can read from it.
@@ -258,28 +247,14 @@ export const post = ( context, next ) => {
 			postId={ postId }
 			postType={ postType }
 			duplicatePostId={ duplicatePostId }
-			pressThis={ pressThis }
+			pressThisData={ pressThisData }
 			anchorFmData={ anchorFmData }
-			fseParentPageId={ fseParentPageId }
 			parentPostId={ parentPostId }
-			creatingNewHomepage={ postType === 'page' && has( context, 'query.new-homepage' ) }
+			creatingNewHomepage={ postType === 'page' && context.query.hasOwnProperty( 'new-homepage' ) }
 			stripeConnectSuccess={ context.query.stripe_connect_success ?? null }
-		/>
-	);
-
-	return next();
-};
-
-export const siteEditor = ( context, next ) => {
-	const state = context.store.getState();
-	const siteId = getSelectedSiteId( state );
-
-	context.primary = (
-		<CalypsoifyIframe
-			// This key is added as a precaution due to it's oberserved necessity in the above post editor.
-			// It will force the component to remount completely when the Id changes.
-			key={ siteId }
-			editorType={ 'site' }
+			showDraftPostModal={ getSessionStorageOneTimeValue(
+				'wpcom_signup_complete_show_draft_post_modal'
+			) }
 		/>
 	);
 
@@ -294,3 +269,49 @@ export const exitPost = ( context, next ) => {
 	}
 	next();
 };
+
+/**
+ * Redirects to the un-iframed Site Editor if the config is enabled.
+ *
+ * @param {Object} context Shared context in the route.
+ * @returns {*}            Whatever the next callback returns.
+ */
+export const redirectSiteEditor = async ( context ) => {
+	const state = context.store.getState();
+	const siteId = getSelectedSiteId( state );
+	const siteEditorUrl = getSiteEditorUrl( state, siteId );
+	// Calling replace to avoid adding an entry to the browser history upon redirect.
+	return location.replace( siteEditorUrl );
+};
+/**
+ * Redirect the logged user to the permalink of the post, page, custom post type if the post is published.
+ *
+ * @param {Object} context Shared context in the route.
+ * @param {Function} next  Next registered callback for the route.
+ * @returns undefined      Whatever the next callback returns.
+ */
+export function redirectToPermalinkIfLoggedOut( context, next ) {
+	if ( isUserLoggedIn( context.store.getState() ) ) {
+		return next();
+	}
+	const siteFragment = context.params.site || getSiteFragment( context.path );
+	const CONFIGURABLE_TYPES = [ 'jetpack-portfolio', 'jetpack-testimonial' ];
+
+	// The context.path in this case could be one of the following:
+	// - /page/{site}/{id}
+	// - /post/{site}/{id}
+	// - /edit/jetpack-portfolio/{site}/{id}
+	// - /edit/jetpack-testimonial/{site}/{id}
+	const explodedPath = context.path.split( '/' );
+	if (
+		context.path &&
+		explodedPath[ 1 ] === 'edit' &&
+		! CONFIGURABLE_TYPES.includes( explodedPath[ 2 ] )
+	) {
+		return next();
+	}
+	// Redirect the logged user to the permalink of the post, page, custom post type if the post is published.
+	// else the endpoint will redirect the user to the login page.
+	window.location = `https://public-api.wordpress.com/wpcom/v2/sites/${ siteFragment }/editor/redirect?path=${ context.path }`;
+	return;
+}

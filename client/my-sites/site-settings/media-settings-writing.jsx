@@ -1,25 +1,19 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
+import { ToggleControl } from '@wordpress/components';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
-import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
-import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
-import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
 import SupportInfo from 'calypso/components/support-info';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class MediaSettingsWriting extends Component {
 	static propTypes = {
@@ -29,6 +23,7 @@ class MediaSettingsWriting extends Component {
 		isSavingSettings: PropTypes.bool,
 		onChangeField: PropTypes.func.isRequired,
 		siteId: PropTypes.number.isRequired,
+		handleSubmitForm: PropTypes.func.isRequired,
 
 		// Connected props
 		carouselActive: PropTypes.bool.isRequired,
@@ -38,6 +33,7 @@ class MediaSettingsWriting extends Component {
 
 	render() {
 		const {
+			handleSubmitForm,
 			carouselActive,
 			fields,
 			handleAutosavingToggle,
@@ -53,10 +49,17 @@ class MediaSettingsWriting extends Component {
 
 		return (
 			<div className="site-settings__module-settings site-settings__media-settings">
+				<SettingsSectionHeader
+					disabled={ isRequestingSettings || isSavingSettings }
+					isSaving={ isSavingSettings }
+					onButtonClick={ handleSubmitForm }
+					showButton
+					title={ translate( 'Media' ) }
+				/>
 				<Card>
 					<QueryJetpackConnection siteId={ selectedSiteId } />
 
-					<FormFieldset className={ 'site-settings__formfieldset' }>
+					<FormFieldset className="site-settings__formfieldset">
 						<SupportInfo
 							text={ translate( 'Gorgeous full-screen photo browsing experience.' ) }
 							link="https://jetpack.com/support/carousel/"

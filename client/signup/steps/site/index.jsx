@@ -1,31 +1,23 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
+import config from '@automattic/calypso-config';
+import { getLanguage } from '@automattic/i18n-utils';
+import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { includes, isEmpty, map } from 'lodash';
-import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
-import wpcom from 'calypso/lib/wp';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import formState from 'calypso/lib/form-state';
-import { login } from 'calypso/lib/paths';
-import ValidationFieldset from 'calypso/signup/validation-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
+import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import StepWrapper from 'calypso/signup/step-wrapper';
 import LoggedOutForm from 'calypso/components/logged-out-form';
 import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import formState from 'calypso/lib/form-state';
+import { getLocaleSlug } from 'calypso/lib/i18n-utils';
+import { login } from 'calypso/lib/paths';
+import wpcom from 'calypso/lib/wp';
+import StepWrapper from 'calypso/signup/step-wrapper';
+import ValidationFieldset from 'calypso/signup/validation-fieldset';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const debug = debugFactory( 'calypso:steps:site' );
@@ -41,25 +33,22 @@ const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 1500;
 let siteUrlsSearched = [];
 let timesValidationFailed = 0;
 
-class Site extends React.Component {
+class Site extends Component {
 	static displayName = 'Site';
 
-	state = {
-		form: null,
-		submitting: false,
-	};
+	constructor( props ) {
+		super( props );
 
-	UNSAFE_componentWillMount() {
 		let initialState;
 
-		if ( this.props.step && this.props.step.form ) {
-			initialState = this.props.step.form;
+		if ( props.step && props.step.form ) {
+			initialState = props.step.form;
 
-			if ( ! isEmpty( this.props.step.errors ) ) {
+			if ( ! isEmpty( props.step.errors ) ) {
 				initialState = formState.setFieldErrors(
 					formState.setFieldsValidating( initialState ),
 					{
-						site: this.props.step.errors[ 0 ].message,
+						site: props.step.errors[ 0 ].message,
 					},
 					true
 				);
@@ -77,7 +66,10 @@ class Site extends React.Component {
 			initialState: initialState,
 		} );
 
-		this.setState( { form: this.formStateController.getInitialState() } );
+		this.state = {
+			form: this.formStateController.getInitialState(),
+			submitting: false,
+		};
 	}
 
 	componentWillUnmount() {
@@ -99,11 +91,17 @@ class Site extends React.Component {
 	};
 
 	validate = ( fields, onComplete ) => {
-		wpcom.undocumented().sitesNew(
+		const locale = getLocaleSlug();
+		wpcom.req.post(
+			'/sites/new',
 			{
 				blog_name: fields.site,
 				blog_title: fields.site,
 				validate: true,
+				locale,
+				lang_id: getLanguage( locale ).value,
+				client_id: config( 'wpcom_signup_id' ),
+				client_secret: config( 'wpcom_signup_key' ),
 			},
 			function ( error, response ) {
 				let messages = {};
@@ -238,7 +236,7 @@ class Site extends React.Component {
 				<FormLabel htmlFor="site">{ this.props.translate( 'Choose a site address' ) }</FormLabel>
 				<FormTextInput
 					autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
-					autoCapitalize={ 'off' }
+					autoCapitalize="off"
 					className="site__site-url"
 					disabled={ fieldDisabled }
 					name="site"

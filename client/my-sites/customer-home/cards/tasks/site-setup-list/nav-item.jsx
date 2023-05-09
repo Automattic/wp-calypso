@@ -1,18 +1,18 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useDispatch } from 'react-redux';
+import { Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
+import { useDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
-const NavItem = ( { text, taskId, isCompleted, isCurrent, onClick, useAccordionLayout } ) => {
+const NavItem = ( {
+	text,
+	taskId,
+	isCompleted,
+	isCurrent,
+	onClick,
+	useAccordionLayout,
+	timing,
+} ) => {
 	const dispatch = useDispatch();
 
 	const trackExpand = () =>
@@ -32,6 +32,8 @@ const NavItem = ( { text, taskId, isCompleted, isCurrent, onClick, useAccordionL
 				trackExpand();
 				onClick();
 			} }
+			role="tab"
+			aria-selected={ isCurrent }
 			data-task={ taskId }
 		>
 			<div className="nav-item__status">
@@ -51,14 +53,25 @@ const NavItem = ( { text, taskId, isCompleted, isCurrent, onClick, useAccordionL
 				) }
 			</div>
 			<div className="nav-item__text">
-				<h6>{ text }</h6>
+				<span>{ text }</span>
 			</div>
 			{ useAccordionLayout && (
-				<Gridicon
-					className="nav-item__chevron"
-					icon={ isCurrent ? 'chevron-up' : 'chevron-down' }
-					size={ 18 }
-				/>
+				<div className="nav-item__end">
+					{ ! isCompleted && (
+						<div className="nav-item__task-timing task__timing">
+							<Gridicon icon="time" size={ 18 } />
+							{ translate( '%d min', '%d mins', {
+								count: timing,
+								args: [ timing ],
+							} ) }
+						</div>
+					) }
+					<Gridicon
+						className="nav-item__chevron"
+						icon={ isCurrent ? 'chevron-up' : 'chevron-down' }
+						size={ 18 }
+					/>
+				</div>
 			) }
 		</button>
 	);

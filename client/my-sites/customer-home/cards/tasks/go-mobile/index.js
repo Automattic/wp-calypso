@@ -1,28 +1,20 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
-import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
-import { preventWidows } from 'calypso/lib/formatting';
 import AppsBadge from 'calypso/blocks/get-apps/apps-badge';
+import { preventWidows } from 'calypso/lib/formatting';
 import {
 	TASK_GO_MOBILE_ANDROID,
 	TASK_GO_MOBILE_IOS,
 } from 'calypso/my-sites/customer-home/cards/constants';
+import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 
 const GoMobile = ( { isIos } ) => {
 	const translate = useTranslate();
 
 	const actionButton = isIos ? (
-		<AppsBadge storeName={ 'ios' } utm_source="calypso-customer-home"></AppsBadge>
+		<AppsBadge storeName="ios" utm_source="calypso-customer-home"></AppsBadge>
 	) : (
-		<AppsBadge storeName={ 'android' } utm_source={ 'calypso-customer-home' }></AppsBadge>
+		<AppsBadge storeName="android" utm_source="calypso-customer-home"></AppsBadge>
 	);
 
 	return (

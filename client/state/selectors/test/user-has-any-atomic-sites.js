@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import userHasAnyAtomicSites from 'calypso/state/selectors/user-has-any-atomic-sites';
 
 describe( 'userHasAnyAtomicSites()', () => {

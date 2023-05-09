@@ -2,18 +2,9 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-import React from 'react';
-import TestUtils from 'react-dom/test-utils';
+import { createElement } from 'react';
 import ReactDOM from 'react-dom';
-import sinon from 'sinon';
-
-/**
- * Internal dependencies
- */
+import TestUtils from 'react-dom/test-utils';
 import { UserStep as User } from '../';
 
 const noop = () => {};
@@ -36,6 +27,8 @@ jest.mock( 'calypso/signup/utils', () => ( {
 	getNextStepName: ( x ) => x,
 	getStepUrl: ( x ) => x,
 	getPreviousStepName: ( x ) => x,
+	isVideoPressFlow: () => false,
+	isP2Flow: () => false,
 } ) );
 
 describe( '#signupStep User', () => {
@@ -43,7 +36,7 @@ describe( '#signupStep User', () => {
 	let rendered;
 
 	test( 'should show community subheader text if User step is first in the flow', () => {
-		testElement = React.createElement( User, {
+		testElement = createElement( User, {
 			subHeaderText: 'first subheader message',
 			flowName: 'userAsFirstStepInFlow',
 			saveSignupStep: noop,
@@ -51,11 +44,11 @@ describe( '#signupStep User', () => {
 		} );
 		rendered = TestUtils.renderIntoDocument( testElement );
 
-		expect( rendered.state.subHeaderText ).to.equal( 'Welcome to the WordPress.com community.' );
+		expect( rendered.getSubHeaderText() ).toBe( 'Welcome to the WordPress.com community.' );
 	} );
 
 	test( 'should show provided subheader text if User step is not first in the flow', () => {
-		testElement = React.createElement( User, {
+		testElement = createElement( User, {
 			subHeaderText: 'test subheader message',
 			flowName: 'someOtherFlow',
 			saveSignupStep: noop,
@@ -63,30 +56,23 @@ describe( '#signupStep User', () => {
 		} );
 		rendered = TestUtils.renderIntoDocument( testElement );
 
-		expect( rendered.state.subHeaderText ).to.equal( 'test subheader message' );
+		expect( rendered.getSubHeaderText() ).toBe( 'test subheader message' );
 	} );
 
-	describe( '#updateComponentProps', () => {
+	describe( '#updateSubHeaderText', () => {
 		let node;
-		let spyComponentProps;
 		let component;
 
 		beforeEach( () => {
 			node = document.createElement( 'div' );
 
-			spyComponentProps = sinon.spy( User.prototype, 'UNSAFE_componentWillReceiveProps' );
-
-			const element = React.createElement( User, {
+			const element = createElement( User, {
 				subHeaderText: 'test subheader message',
 				flowName: 'someOtherFlow',
 				saveSignupStep: noop,
 				translate,
 			} );
 			component = ReactDOM.render( element, node );
-		} );
-
-		afterEach( () => {
-			User.prototype.UNSAFE_componentWillReceiveProps.restore();
 		} );
 
 		test( 'should show community subheader text when new flow has user as first step', () => {
@@ -97,12 +83,9 @@ describe( '#signupStep User', () => {
 				translate,
 			};
 
-			expect( spyComponentProps.calledOnce ).to.equal( false );
+			ReactDOM.render( createElement( User, testProps ), node );
 
-			ReactDOM.render( React.createElement( User, testProps ), node );
-
-			expect( spyComponentProps.calledOnce ).to.equal( true );
-			expect( component.state.subHeaderText ).to.equal( 'Welcome to the WordPress.com community.' );
+			expect( component.getSubHeaderText() ).toBe( 'Welcome to the WordPress.com community.' );
 		} );
 
 		test( "should show provided subheader text when new flow doesn't have user as first step", () => {
@@ -113,12 +96,9 @@ describe( '#signupStep User', () => {
 				translate,
 			};
 
-			expect( spyComponentProps.calledOnce ).to.equal( false );
+			ReactDOM.render( createElement( User, testProps ), node );
 
-			ReactDOM.render( React.createElement( User, testProps ), node );
-
-			expect( spyComponentProps.calledOnce ).to.equal( true );
-			expect( component.state.subHeaderText ).to.equal( 'My test message' );
+			expect( component.getSubHeaderText() ).toBe( 'My test message' );
 		} );
 	} );
 } );

@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { select, dispatch } from '@wordpress/data';
 import { createBlock } from '@wordpress/blocks';
-
-/**
- * Internal dependencies
- */
+import { select, dispatch } from '@wordpress/data';
 import { isEditorReadyWithBlocks } from '../../utils';
 
 /**
@@ -22,7 +15,7 @@ import { isEditorReadyWithBlocks } from '../../utils';
  * Note that we return 'true' if we don't understand how to validate the block.
  * This way, we continue auto-fixing other blocks if we can.
  *
- * @param {object} block The block to check for content.
+ * @param {Object} block The block to check for content.
  * @returns bool True if the block has content. False otherwise.
  */
 function blockHasContent( block ) {

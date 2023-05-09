@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getRawSite from '../get-raw-site';
 
 describe( '#getRawSite()', () => {

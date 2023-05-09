@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import { JETPACK_SEARCH_PRODUCTS } from '@automattic/calypso-products';
 import { numberFormat, translate, TranslateResult } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { SelectorProduct, SiteProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 
 export default function productAboveButtonText(
@@ -19,14 +12,18 @@ export default function productAboveButtonText(
 		! isOwned &&
 		! isIncludedInPlan &&
 		siteProduct &&
-		JETPACK_SEARCH_PRODUCTS.includes( product.productSlug )
+		( JETPACK_SEARCH_PRODUCTS as ReadonlyArray< string > ).includes( product.productSlug )
 	) {
-		return translate( '*estimated price based off of %(records)s records', {
-			args: {
-				records: numberFormat( siteProduct.tierUsage, 0 ),
-			},
-			comment: 'records = number of records (posts, pages, etc) in a site',
-		} );
+		return translate(
+			'*estimated price based on %(records_and_or_requests)s records and/or monthly requests',
+			{
+				args: {
+					records_and_or_requests: numberFormat( siteProduct.tierUsage, 0 ),
+				},
+				comment:
+					'records_and_or_requests = number of records (posts, pages, etc) in a site or monthly search requests (whichever is greater)',
+			}
+		);
 	}
 	return null;
 }

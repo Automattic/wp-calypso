@@ -1,4 +1,3 @@
-/* eslint-disable import/no-nodejs-modules */
 const { cpus } = require( 'os' );
 
 /**

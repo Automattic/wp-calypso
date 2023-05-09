@@ -1,19 +1,9 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent, ChangeEvent } from 'react';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { FunctionComponent, ChangeEvent } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
-import { RewindConfig } from './types';
+import type { RewindConfig } from './types';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 interface Props {
@@ -36,7 +26,7 @@ const BackupRewindConfigEditor: FunctionComponent< Props > = ( {
 	const checkboxes = [
 		{
 			name: 'themes',
-			label: translate( '{{strong}}WordPress Themes{{/strong}}', {
+			label: translate( '{{strong}}WordPress themes{{/strong}}', {
 				components: {
 					strong: <strong />,
 				},
@@ -44,15 +34,7 @@ const BackupRewindConfigEditor: FunctionComponent< Props > = ( {
 		},
 		{
 			name: 'plugins',
-			label: translate( '{{strong}}WordPress Plugins{{/strong}}', {
-				components: {
-					strong: <strong />,
-				},
-			} ),
-		},
-		{
-			name: 'uploads',
-			label: translate( '{{strong}}Media Uploads{{/strong}}', {
+			label: translate( '{{strong}}WordPress plugins{{/strong}}', {
 				components: {
 					strong: <strong />,
 				},
@@ -82,11 +64,25 @@ const BackupRewindConfigEditor: FunctionComponent< Props > = ( {
 		},
 		{
 			name: 'sqls',
-			label: translate( '{{strong}}Site database{{/strong}} (SQL)', {
+			label: translate( '{{strong}}Site database{{/strong}} (includes pages, and posts)', {
 				components: {
 					strong: <strong />,
 				},
 			} ),
+		},
+		{
+			name: 'uploads',
+			label: translate(
+				'{{strong}}Media uploads{{/strong}} (you must also select {{em}}Site database{{/em}} for restored media uploads to appear)',
+				{
+					components: {
+						strong: <strong />,
+						em: <em />,
+					},
+					comment:
+						'"Site database" is another item of the list, at the same level as "Media Uploads"',
+				}
+			),
 		},
 	];
 
@@ -100,7 +96,7 @@ const BackupRewindConfigEditor: FunctionComponent< Props > = ( {
 					required={ false }
 				>
 					<FormCheckbox
-						checked={ currentConfig[ name ] }
+						checked={ currentConfig[ name as keyof RewindConfig ] }
 						className="rewind-flow__rewind-config-editor-checkbox"
 						name={ name }
 						onChange={ onChange }

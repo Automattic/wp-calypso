@@ -1,45 +1,36 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { includes, get } from 'lodash';
-import { withShoppingCart } from '@automattic/shopping-cart';
 import { Button } from '@automattic/components';
-
-/**
- * Internal dependencies
- */
+import { localizeUrl } from '@automattic/i18n-utils';
+import { withShoppingCart } from '@automattic/shopping-cart';
+import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import DomainProductPrice from 'calypso/components/domains/domain-product-price';
+import DomainRegistrationSuggestion from 'calypso/components/domains/domain-registration-suggestion';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import Notice from 'calypso/components/notice';
 import { getDomainPriceRule } from 'calypso/lib/cart-values/cart-items';
 import { getFixedDomainSearch, getTld, checkDomainAvailability } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
-import DomainRegistrationSuggestion from 'calypso/components/domains/domain-registration-suggestion';
-import DomainProductPrice from 'calypso/components/domains/domain-product-price';
-import { getCurrentUser, currentUserHasFlag } from 'calypso/state/current-user/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { MAP_EXISTING_DOMAIN, INCOMING_DOMAIN_TRANSFER } from 'calypso/lib/url/support';
-import FormTextInput from 'calypso/components/forms/form-text-input';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
+import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
+import { getCurrentUser, currentUserHasFlag } from 'calypso/state/current-user/selectors';
 import {
 	recordAddDomainButtonClickInMapDomain,
 	recordFormSubmitInMapDomain,
 	recordInputFocusInMapDomain,
 	recordGoButtonClickInMapDomain,
 } from 'calypso/state/domains/actions';
-import Notice from 'calypso/components/notice';
-import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};
 
-class MapDomainStep extends React.Component {
+class MapDomainStep extends Component {
 	static propTypes = {
 		products: PropTypes.object,
 		cart: PropTypes.object,
@@ -109,7 +100,9 @@ class MapDomainStep extends React.Component {
 							this.props.selectedSite,
 							this.props.cart,
 							suggestion,
-							false
+							false, // isDomainOnly
+							'', // flowName
+							false // domainAndPlanUpsellFlow
 						) }
 						price={ suggestion.cost }
 						isMappingProduct={ true }
@@ -144,7 +137,13 @@ class MapDomainStep extends React.Component {
 							"We'll add your domain and help you change its settings so it points to your site. Keep your domain renewed with your current provider. (They'll remind you when it's time.) {{a}}Learn more about mapping a domain{{/a}}.",
 							{
 								components: {
-									a: <a href={ MAP_EXISTING_DOMAIN } rel="noopener noreferrer" target="_blank" />,
+									a: (
+										<a
+											href={ localizeUrl( MAP_EXISTING_DOMAIN ) }
+											rel="noopener noreferrer"
+											target="_blank"
+										/>
+									),
 								},
 							}
 						) }
@@ -156,7 +155,7 @@ class MapDomainStep extends React.Component {
 								components: {
 									a: (
 										<a
-											href={ INCOMING_DOMAIN_TRANSFER }
+											href={ localizeUrl( INCOMING_DOMAIN_TRANSFER ) }
 											rel="noopener noreferrer"
 											target="_blank"
 										/>
@@ -232,14 +231,8 @@ class MapDomainStep extends React.Component {
 			( error, result ) => {
 				const mappableStatus = get( result, 'mappable', error );
 				const status = get( result, 'status', error );
-				const {
-					AVAILABLE,
-					AVAILABILITY_CHECK_ERROR,
-					MAPPABLE,
-					MAPPED,
-					NOT_REGISTRABLE,
-					UNKNOWN,
-				} = domainAvailability;
+				const { AVAILABLE, AVAILABILITY_CHECK_ERROR, MAPPABLE, MAPPED, NOT_REGISTRABLE, UNKNOWN } =
+					domainAvailability;
 
 				if ( status === AVAILABLE ) {
 					this.setState( { suggestion: result, isPendingSubmit: false } );
@@ -247,8 +240,8 @@ class MapDomainStep extends React.Component {
 				}
 
 				if (
-					! includes( [ AVAILABILITY_CHECK_ERROR, NOT_REGISTRABLE ], status ) &&
-					includes( [ MAPPABLE, UNKNOWN ], mappableStatus )
+					! [ AVAILABILITY_CHECK_ERROR, NOT_REGISTRABLE ].includes( status ) &&
+					[ MAPPABLE, UNKNOWN ].includes( mappableStatus )
 				) {
 					this.props.onMapDomain( domain );
 					this.setState( { isPendingSubmit: false } );
@@ -287,4 +280,4 @@ export default connect(
 		recordInputFocusInMapDomain,
 		recordGoButtonClickInMapDomain,
 	}
-)( withShoppingCart( localize( MapDomainStep ) ) );
+)( withCartKey( withShoppingCart( localize( MapDomainStep ) ) ) );

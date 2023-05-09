@@ -7,6 +7,8 @@
 
 namespace A8C\FSE;
 
+use function A8C\FSE\Common\get_iso_639_locale;
+
 /**
  * Class Starter_Page_Templates
  */
@@ -21,6 +23,7 @@ class Starter_Page_Templates {
 
 	/**
 	 * Cache key for templates array.
+	 * Please access with the  ->get_templates_cache_key() getter.
 	 *
 	 * @var string
 	 */
@@ -30,22 +33,34 @@ class Starter_Page_Templates {
 	 * Starter_Page_Templates constructor.
 	 */
 	private function __construct() {
-		$this->templates_cache_key = implode(
-			'_',
-			array(
-				'starter_page_templates',
-				A8C_ETK_PLUGIN_VERSION,
-				get_option( 'site_vertical', 'default' ),
-				$this->get_verticals_locale(),
-			)
-		);
-
 		add_action( 'init', array( $this, 'register_scripts' ) );
 		add_action( 'init', array( $this, 'register_meta_field' ) );
 		add_action( 'rest_api_init', array( $this, 'register_rest_api' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_assets' ) );
 		add_action( 'delete_attachment', array( $this, 'clear_sideloaded_image_cache' ) );
 		add_action( 'switch_theme', array( $this, 'clear_templates_cache' ) );
+	}
+
+	/**
+	 * Gets the cache key for templates array, after setting it if it hasn't been set yet.
+	 *
+	 * @param string $locale The templates locale.
+	 *
+	 * @return string
+	 */
+	public function get_templates_cache_key( string $locale ) {
+		if ( empty( $this->templates_cache_key ) ) {
+			$this->templates_cache_key = implode(
+				'_',
+				array(
+					'starter_page_templates',
+					A8C_ETK_PLUGIN_VERSION,
+					get_option( 'site_vertical', 'default' ),
+				)
+			);
+		}
+
+		return $this->templates_cache_key . '_' . $locale;
 	}
 
 	/**
@@ -67,9 +82,9 @@ class Starter_Page_Templates {
 	public function register_scripts() {
 		wp_register_script(
 			'starter-page-templates',
-			plugins_url( 'dist/starter-page-templates.js', __FILE__ ),
+			plugins_url( 'dist/starter-page-templates.min.js', __FILE__ ),
 			array( 'wp-plugins', 'wp-edit-post', 'wp-element' ),
-			filemtime( plugin_dir_path( __FILE__ ) . 'dist/starter-page-templates.js' ),
+			filemtime( plugin_dir_path( __FILE__ ) . 'dist/starter-page-templates.min.js' ),
 			true
 		);
 	}
@@ -127,7 +142,8 @@ class Starter_Page_Templates {
 	 * Enqueue block editor assets.
 	 */
 	public function enqueue_assets() {
-		$screen = get_current_screen();
+		$screen      = get_current_screen();
+		$user_locale = get_iso_639_locale( get_user_locale() );
 
 		// Return early if we don't meet conditions to show templates.
 		if ( 'page' !== $screen->id ) {
@@ -135,7 +151,25 @@ class Starter_Page_Templates {
 		}
 
 		// Load templates for this site.
-		$page_templates = $this->get_page_templates();
+		$page_templates = $this->get_page_templates( $this->get_verticals_locale() );
+		if ( $user_locale !== $this->get_verticals_locale() ) {
+			// If the user locale is not the blog locale, we should show labels in the user locale.
+			$user_page_templates_indexed = array();
+			$user_page_templates         = $this->get_page_templates( $user_locale );
+			foreach ( $user_page_templates as $page_template ) {
+				if ( ! empty( $page_template['ID'] ) ) {
+					$user_page_templates_indexed[ $page_template['ID'] ] = $page_template;
+				}
+			}
+			foreach ( $page_templates as $key => $page_template ) {
+				if ( isset( $user_page_templates_indexed[ $page_template['ID'] ]['categories'] ) ) {
+					$page_templates[ $key ]['categories'] = $user_page_templates_indexed[ $page_template['ID'] ]['categories'];
+				}
+				if ( isset( $user_page_templates_indexed[ $page_template['ID'] ]['description'] ) ) {
+					$page_templates[ $key ]['description'] = $user_page_templates_indexed[ $page_template['ID'] ]['description'];
+				}
+			}
+		}
 
 		if ( empty( $page_templates ) ) {
 			$this->pass_error_to_frontend( __( 'No data received from the vertical API. Skipped showing modal window with template selection.', 'full-site-editing' ) );
@@ -173,9 +207,6 @@ class Starter_Page_Templates {
 				'templates'    => array_merge( $default_templates, $page_templates ),
 				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 				'screenAction' => isset( $_GET['new-homepage'] ) ? 'add' : $screen->action,
-				'theme'        => normalize_theme_slug( get_stylesheet() ),
-				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				'locale'       => $this->get_verticals_locale(),
 			)
 		);
 
@@ -197,11 +228,12 @@ class Starter_Page_Templates {
 	/**
 	 * Get page templates from the patterns API or return cached version if available.
 	 *
+	 * @param string $locale The templates locale.
+	 *
 	 * @return array Containing page templates or nothing if an error occurred.
 	 */
-	public function get_page_templates() {
-		$page_template_data = get_transient( $this->templates_cache_key );
-
+	public function get_page_templates( string $locale ) {
+		$page_template_data   = get_transient( $this->get_templates_cache_key( $locale ) );
 		$override_source_site = apply_filters( 'a8c_override_patterns_source_site', false );
 
 		// Load fresh data if we don't have any or vertical_id doesn't match.
@@ -214,7 +246,7 @@ class Starter_Page_Templates {
 						'tags'         => 'layout',
 						'pattern_meta' => 'is_web',
 					),
-					'https://public-api.wordpress.com/rest/v1/ptk/patterns/' . $this->get_verticals_locale()
+					'https://public-api.wordpress.com/rest/v1/ptk/patterns/' . $locale
 				)
 			);
 
@@ -234,7 +266,7 @@ class Starter_Page_Templates {
 
 			// Only save to cache if we have not overridden the source site.
 			if ( false === $override_source_site ) {
-				set_transient( $this->templates_cache_key, $page_template_data, DAY_IN_SECONDS );
+				set_transient( $this->get_templates_cache_key( $locale ), $page_template_data, DAY_IN_SECONDS );
 			}
 
 			return $page_template_data;
@@ -259,7 +291,7 @@ class Starter_Page_Templates {
 	 * Deletes cached templates data when theme switches.
 	 */
 	public function clear_templates_cache() {
-		delete_transient( $this->templates_cache_key );
+		delete_transient( $this->get_templates_cache_key( $this->get_verticals_locale() ) );
 	}
 
 	/**
@@ -268,6 +300,6 @@ class Starter_Page_Templates {
 	private function get_verticals_locale() {
 		// Make sure to get blog locale, not user locale.
 		$language = function_exists( 'get_blog_lang_code' ) ? get_blog_lang_code() : get_locale();
-		return \A8C\FSE\Common\get_iso_639_locale( $language );
+		return get_iso_639_locale( $language );
 	}
 }

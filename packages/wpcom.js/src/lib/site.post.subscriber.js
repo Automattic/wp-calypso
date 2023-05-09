@@ -30,7 +30,7 @@ class SitePostSubscriber {
 	 * Get subscriber status for the current user for the Post.
 	 *
 	 *
-	 * *Example:*
+	 * Example:
 	 *    Get subscriber status for the current user for the Post
 	 *    wpcom
 	 *    .site( 'en.blog.wordpress.com' )
@@ -40,7 +40,7 @@ class SitePostSubscriber {
 	 *      // subscription data
 	 *    } );
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Promise} Promise
 	 */
@@ -51,7 +51,7 @@ class SitePostSubscriber {
 	/**
 	 * Subscribe the current user to the post.
 	 *
-	 * *Example:*
+	 * Example:
 	 *    // Subscribe the current user to the post
 	 *    wpcom
 	 *    .site( 'en.blog.wordpress.com' )
@@ -61,7 +61,7 @@ class SitePostSubscriber {
 	 *      // current user has been subscribed to post
 	 *    } );
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Promise} Promise
 	 */
@@ -72,7 +72,7 @@ class SitePostSubscriber {
 	/**
 	 * Unsubscribe current user to the post
 	 *
-	 * *Example:*
+	 * Example:
 	 *    // Unsubscribe current user to the post
 	 *    wpcom
 	 *    .site( 'en.blog.wordpress.com' )
@@ -82,7 +82,7 @@ class SitePostSubscriber {
 	 *      // current user has been unsubscribed to post
 	 *    } );
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Promise} Promise
 	 */

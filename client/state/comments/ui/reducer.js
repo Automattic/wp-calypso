@@ -1,21 +1,13 @@
-/**
- * External dependencies
- */
-import { get, includes, map, without, has } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import { get, includes, map, without } from 'lodash';
 import {
 	COMMENTS_CHANGE_STATUS,
 	COMMENTS_DELETE,
 	COMMENTS_LIST_REQUEST,
 	COMMENTS_QUERY_UPDATE,
-	COMMENTS_TREE_SITE_REQUEST,
 } from 'calypso/state/action-types';
-import { combineReducers, keyedReducer } from 'calypso/state/utils';
 import { getFiltersKey } from 'calypso/state/comments/ui/utils';
 import { getRequestKey } from 'calypso/state/data-layer/wpcom-http/utils';
+import { combineReducers, keyedReducer } from 'calypso/state/utils';
 
 const deepUpdateComments = ( state, comments, query ) => {
 	const { page = 1, postId } = query;
@@ -74,7 +66,7 @@ export const queries = ( state = {}, action ) => {
 				COMMENTS_CHANGE_STATUS === action.type &&
 				'all' === status &&
 				includes( comments, action.commentId ) && // if the comment is not in the current view this is an undo
-				includes( [ 'approved', 'unapproved' ], action.status )
+				[ 'approved', 'unapproved' ].includes( action.status )
 			) {
 				// No-op when status changes from `approved` or `unapproved` in the All tab
 				return state;
@@ -82,7 +74,7 @@ export const queries = ( state = {}, action ) => {
 
 			if (
 				status === action.status ||
-				( status === 'all' && includes( [ 'approved', 'unapproved' ], action.status ) )
+				( status === 'all' && [ 'approved', 'unapproved' ].includes( action.status ) )
 			) {
 				//with undo, we should add this back to the list
 				const sortedList = [ action.commentId ]
@@ -106,13 +98,12 @@ export const pendingActions = function ( state = [], action ) {
 		case COMMENTS_CHANGE_STATUS:
 		case COMMENTS_DELETE: {
 			const key = getRequestKey( action );
-			if ( has( action, 'meta.dataLayer.trackRequest' ) && state.indexOf( key ) === -1 ) {
+			if ( action.meta?.dataLayer?.trackRequest && ! state.includes( key ) ) {
 				return [ ...state, key ];
 			}
 			return state;
 		}
 		case COMMENTS_LIST_REQUEST:
-		case COMMENTS_TREE_SITE_REQUEST:
 			//ignore pending requests if we're looking at a fresh view
 			return [];
 		default:

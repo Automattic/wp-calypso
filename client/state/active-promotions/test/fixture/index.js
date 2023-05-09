@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-
 import {
 	ACTIVE_PROMOTIONS_RECEIVE,
 	ACTIVE_PROMOTIONS_REQUEST,
@@ -62,7 +58,7 @@ export const ACTION_ACTIVE_PROMOTIONS_REQUEST_FAILURE = {
  * - requesting: false
  * - error: false
  *
- * @returns {object} an state instance
+ * @returns {Object} an state instance
  */
 export const getStateInstance = () => {
 	return {

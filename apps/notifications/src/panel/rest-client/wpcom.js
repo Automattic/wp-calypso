@@ -79,14 +79,3 @@ export const sendLastSeenTime = ( time ) =>
 
 export const subscribeToNoteStream = ( callback ) =>
 	wpcom().pinghub.connect( '/wpcom/me/newest-note-data', callback );
-
-export const fetchReaderTeams = ( callback ) =>
-	wpcom().req.get(
-		{
-			path: '/read/teams',
-		},
-		{
-			apiVersion: '1.2',
-		},
-		callback
-	);

@@ -1,36 +1,23 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import moment from 'moment';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import InputChrono from 'calypso/components/input-chrono';
-import DatePicker from 'calypso/components/date-picker';
+import moment from 'moment';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
+import DatePicker from 'calypso/components/date-picker';
 import EventsTooltip from 'calypso/components/date-picker/events-tooltip';
-import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-
-/**
- * Local dependencies
- */
+import InputChrono from 'calypso/components/input-chrono';
 import Clock from './clock';
 import Header from './header';
 import { convertDateToUserLocation, convertDateToGivenOffset } from './utils';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};
+const getDateToUserLocation = ( date, timezone, gmtOffset ) => {
+	return convertDateToUserLocation( date || new Date(), timezone, gmtOffset );
+};
 
-class PostSchedule extends Component {
+export default class PostSchedule extends Component {
 	static propTypes = {
 		events: PropTypes.array,
 		posts: PropTypes.array,
@@ -42,7 +29,6 @@ class PostSchedule extends Component {
 		onMonthChange: PropTypes.func,
 		onDayMouseEnter: PropTypes.func,
 		onDayMouseLeave: PropTypes.func,
-		userLocale: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -61,33 +47,19 @@ class PostSchedule extends Component {
 		showTooltip: false,
 	};
 
-	UNSAFE_componentWillMount() {
-		if ( ! this.props.selectedDay ) {
-			return this.setState( {
+	static getDerivedStateFromProps( { selectedDay, timezone, gmtOffset }, { isFutureDate } ) {
+		if ( ! selectedDay ) {
+			return {
 				localizedDate: null,
 				isFutureDate: false,
-			} );
+			};
 		}
 
-		const localizedDate = this.getDateToUserLocation( this.props.selectedDay );
-		this.setState( {
+		const localizedDate = getDateToUserLocation( selectedDay, timezone, gmtOffset );
+		return {
 			localizedDate,
-			isFutureDate: localizedDate.isAfter(),
-		} );
-	}
-
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.selectedDay === nextProps.selectedDay ) {
-			return;
-		}
-
-		if ( ! nextProps.selectedDay ) {
-			return this.setState( { localizedDate: null } );
-		}
-
-		this.setState( {
-			localizedDate: this.getDateToUserLocation( nextProps.selectedDay ),
-		} );
+			isFutureDate: isFutureDate === undefined ? localizedDate.isAfter() : isFutureDate,
+		};
 	}
 
 	getLocaleUtils() {
@@ -115,11 +87,7 @@ class PostSchedule extends Component {
 	}
 
 	getDateToUserLocation( date ) {
-		return convertDateToUserLocation(
-			date || new Date(),
-			this.props.timezone,
-			this.props.gmtOffset
-		);
+		return getDateToUserLocation( date, this.props.timezone, this.props.gmtOffset );
 	}
 
 	setCurrentMonth = ( date ) => {
@@ -200,7 +168,6 @@ class PostSchedule extends Component {
 				<InputChrono
 					value={ chronoText }
 					placeholder={ date.calendar() }
-					lang={ this.props.userLocale }
 					onSet={ this.updateDate }
 				/>
 
@@ -277,7 +244,3 @@ class PostSchedule extends Component {
 		);
 	}
 }
-
-export default connect( ( state ) => ( {
-	userLocale: getCurrentUserLocale( state ),
-} ) )( PostSchedule );

@@ -1,21 +1,13 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
 import i18n, { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import ReaderMain from 'calypso/reader/components/reader-main';
-import MobileBackToSidebar from 'calypso/components/mobile-back-to-sidebar';
 import EmptyContent from 'calypso/components/empty-content';
+import ReaderMain from 'calypso/reader/components/reader-main';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
-class FeedError extends React.Component {
+class FeedError extends Component {
 	static defaultProps = {
 		message: i18n.translate( "Sorry, we can't find that site." ),
 	};
@@ -40,14 +32,10 @@ class FeedError extends React.Component {
 
 		return (
 			<ReaderMain>
-				<MobileBackToSidebar>
-					<h1>{ this.props.sidebarTitle }</h1>
-				</MobileBackToSidebar>
-
 				<EmptyContent
 					action={ action }
 					title={ this.props.message }
-					illustration={ '/calypso/images/illustrations/illustration-404.svg' }
+					illustration="/calypso/images/illustrations/illustration-404.svg"
 					illustrationWidth={ 500 }
 				/>
 			</ReaderMain>

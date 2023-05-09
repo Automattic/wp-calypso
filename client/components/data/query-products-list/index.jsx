@@ -1,37 +1,40 @@
-/**
- * External dependencies
- */
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { isProductsListFetching } from 'calypso/state/products-list/selectors';
 import { requestProductsList } from 'calypso/state/products-list/actions';
+import { isProductsListFetching, getProductsListType } from 'calypso/state/products-list/selectors';
 
-const request = ( props ) => ( dispatch, getState ) => {
-	if ( isProductsListFetching( getState() ) ) {
-		return;
-	}
+const request =
+	( { persist, ...props } ) =>
+	( dispatch, getState ) => {
+		if (
+			isProductsListFetching( getState() ) ||
+			( persist && props.type === getProductsListType( getState() ) )
+		) {
+			return;
+		}
 
-	dispatch( requestProductsList( props ) );
-};
+		dispatch( requestProductsList( props ) );
+	};
 
-/**
- *
- * @param {object} props 		The list of component props.
- * @param {string} [props.type] The type of products to request:
- * 								  "jetpack" for Jetpack products only, or undefined for all products.
- * @returns {null} 				No visible output.
- */
-export default function QueryProductsList( { type } ) {
+export function useQueryProductsList( { type = 'all', persist } = {} ) {
 	const dispatch = useDispatch();
 
 	// Only runs on mount.
 	useEffect( () => {
-		dispatch( request( { type } ) );
-	}, [ dispatch, type ] );
+		dispatch( request( { type, persist } ) );
+	}, [ dispatch, type, persist ] );
 
 	return null;
+}
+
+/**
+ *
+ * @param {Object} props 			The list of component props.
+ * @param {string} [props.type] 	The type of products to request:
+ *									"jetpack" for Jetpack products only, or undefined for all products.
+ * @param {boolean} [props.persist] Set to true to persist the products list in the store.
+ * @returns {null} 					No visible output.
+ */
+export default function QueryProductsList( { type = 'all', persist } ) {
+	return useQueryProductsList( { type, persist } );
 }

@@ -1,35 +1,28 @@
 /**
  * @jest-environment jsdom
  */
-/**
- * External dependencies
- */
-import React from 'react';
+
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, act } from '@testing-library/react-hooks';
 import nock from 'nock';
-import { setLogger, QueryClient, QueryClientProvider } from 'react-query';
 import { useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { LICENSES_PER_PAGE } from 'calypso/state/partner-portal/licenses/constants';
+import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
 import {
 	LicenseSortDirection,
 	LicenseSortField,
 	LicenseState,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
-import useRefreshLicenseList from 'calypso/state/partner-portal/licenses/hooks/use-refresh-license-list';
-import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
-import useIssueLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-issue-license-mutation';
-import useRevokeLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-revoke-license-mutation';
-import useTOSConsentMutation from 'calypso/state/partner-portal/licenses/hooks/use-tos-consent-mutation';
-import useBillingDashboardQuery from 'calypso/state/partner-portal/licenses/hooks/use-billing-dashboard-query';
-import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
 import {
 	JETPACK_PARTNER_PORTAL_LICENSE_COUNTS_REQUEST,
 	JETPACK_PARTNER_PORTAL_LICENSES_REQUEST,
 } from 'calypso/state/action-types';
+import { LICENSES_PER_PAGE } from 'calypso/state/partner-portal/licenses/constants';
+import useBillingDashboardQuery from 'calypso/state/partner-portal/licenses/hooks/use-billing-dashboard-query';
+import useIssueLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-issue-license-mutation';
+import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
+import useRefreshLicenseList from 'calypso/state/partner-portal/licenses/hooks/use-refresh-license-list';
+import useRevokeLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-revoke-license-mutation';
+import useTOSConsentMutation from 'calypso/state/partner-portal/licenses/hooks/use-tos-consent-mutation';
 
 jest.mock( 'react-redux', () => ( {
 	useDispatch: jest.fn( () => null ),
@@ -83,45 +76,6 @@ describe( 'useProductsQuery', () => {
 		);
 		const unexpected = [
 			{
-				name: 'Jetpack Plans',
-				slug: 'jetpack-plans',
-				products: [
-					{
-						name: 'Free',
-						product_id: 0,
-						slug: 'free',
-					},
-					{
-						name: 'Personal',
-						product_id: 0,
-						slug: 'personal',
-					},
-					{
-						name: 'Premium',
-						product_id: 0,
-						slug: 'premium',
-					},
-					{
-						name: 'Professional',
-						product_id: 0,
-						slug: 'professional',
-					},
-				],
-			},
-		];
-		const expected = [
-			{
-				name: 'Jetpack Scan',
-				slug: 'jetpack-scan',
-				products: [
-					{
-						name: 'Jetpack Scan Daily',
-						product_id: 2106,
-						slug: 'jetpack-scan',
-					},
-				],
-			},
-			{
 				name: 'Jetpack Backup',
 				slug: 'jetpack-backup',
 				products: [
@@ -135,12 +89,185 @@ describe( 'useProductsQuery', () => {
 						product_id: 2102,
 						slug: 'jetpack-backup-realtime',
 					},
+					{
+						name: 'Jetpack Backup (1GB)',
+						product_id: 2120,
+						slug: 'jetpack-backup-t0',
+					},
+				],
+			},
+			{
+				name: 'Jetpack Plans',
+				slug: 'jetpack-plans',
+				products: [
+					{
+						name: 'Jetpack Personal',
+						product_id: 2005,
+						slug: 'personal',
+					},
+					{
+						name: 'Jetpack Premium',
+						product_id: 2000,
+						slug: 'premium',
+					},
+					{
+						name: 'Jetpack Professional',
+						product_id: 2001,
+						slug: 'professional',
+					},
+				],
+			},
+			{
+				name: 'Jetpack Packs',
+				slug: 'jetpack-packs',
+				products: [
+					{
+						name: 'Jetpack Security Daily',
+						product_id: 2010,
+						slug: 'jetpack-security-daily',
+					},
+					{
+						name: 'Jetpack Security Real-time',
+						product_id: 2012,
+						slug: 'jetpack-security-realtime',
+					},
+				],
+			},
+		];
+		const expected = [
+			{
+				name: 'Jetpack Scan',
+				slug: 'jetpack-scan',
+				products: [
+					{
+						family_slug: 'jetpack-scan',
+						name: 'Jetpack Scan Daily',
+						product_id: 2106,
+						slug: 'jetpack-scan',
+					},
+				],
+			},
+			{
+				name: 'Jetpack Backup',
+				slug: 'jetpack-backup',
+				products: [
+					{
+						family_slug: 'jetpack-backup',
+						name: 'Jetpack Backup (10GB)',
+						product_id: 2112,
+						slug: 'jetpack-backup-t1',
+					},
+					{
+						family_slug: 'jetpack-backup',
+						name: 'Jetpack Backup (1TB)',
+						product_id: 2114,
+						slug: 'jetpack-backup-t2',
+					},
+				],
+			},
+			{
+				name: 'Jetpack Anti Spam',
+				slug: 'jetpack-anti-spam',
+				products: [
+					{
+						family_slug: 'jetpack-anti-spam',
+						name: 'Jetpack Anti-Spam',
+						product_id: 2110,
+						slug: 'jetpack-anti-spam',
+					},
+				],
+			},
+			{
+				name: 'Jetpack Videopress',
+				slug: 'jetpack-videopress',
+				products: [
+					{
+						family_slug: 'jetpack-videopress',
+						name: 'Jetpack VideoPress',
+						product_id: 2116,
+						slug: 'jetpack-videopress',
+					},
+				],
+			},
+			{
+				name: 'Jetpack Packs',
+				slug: 'jetpack-packs',
+				products: [
+					{
+						family_slug: 'jetpack-packs',
+						name: 'Jetpack Complete',
+						product_id: 2014,
+						slug: 'jetpack-complete',
+					},
+					{
+						family_slug: 'jetpack-packs',
+						name: 'Jetpack Security (10GB)',
+						product_id: 2016,
+						slug: 'jetpack-security-t1',
+					},
+					{
+						family_slug: 'jetpack-packs',
+						name: 'Jetpack Security (1TB)',
+						product_id: 2019,
+						slug: 'jetpack-security-t2',
+					},
 				],
 			},
 		];
 
+		const expectedResults = [
+			{
+				family_slug: 'jetpack-anti-spam',
+				name: 'Jetpack Anti-Spam',
+				product_id: 2110,
+				slug: 'jetpack-anti-spam',
+			},
+			{
+				family_slug: 'jetpack-backup',
+				name: 'Jetpack Backup (10GB)',
+				product_id: 2112,
+				slug: 'jetpack-backup-t1',
+			},
+			{
+				family_slug: 'jetpack-backup',
+				name: 'Jetpack Backup (1TB)',
+				product_id: 2114,
+				slug: 'jetpack-backup-t2',
+			},
+			{
+				family_slug: 'jetpack-packs',
+				name: 'Jetpack Complete',
+				product_id: 2014,
+				slug: 'jetpack-complete',
+			},
+			{
+				family_slug: 'jetpack-scan',
+				name: 'Jetpack Scan Daily',
+				product_id: 2106,
+				slug: 'jetpack-scan',
+			},
+			{
+				family_slug: 'jetpack-packs',
+				name: 'Jetpack Security (10GB)',
+				product_id: 2016,
+				slug: 'jetpack-security-t1',
+			},
+			{
+				family_slug: 'jetpack-packs',
+				name: 'Jetpack Security (1TB)',
+				product_id: 2019,
+				slug: 'jetpack-security-t2',
+			},
+			{
+				family_slug: 'jetpack-videopress',
+				name: 'Jetpack VideoPress',
+				product_id: 2116,
+				slug: 'jetpack-videopress',
+			},
+		];
+
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/jetpack-licensing/product-families' )
+			.get( '/wpcom/v2/jetpack-licensing/partner/product-families' )
 			.reply( 200, [ ...unexpected, ...expected ] );
 
 		const { result, waitFor } = renderHook( () => useProductsQuery(), {
@@ -149,7 +276,46 @@ describe( 'useProductsQuery', () => {
 
 		await waitFor( () => result.current.isSuccess );
 
-		expect( result.current.data ).toEqual( expected );
+		expect( result.current.data ).toEqual( expectedResults );
+	} );
+
+	it( 'dispatches an error notice on failure', async () => {
+		const queryClient = new QueryClient( {
+			defaultOptions: {
+				queries: {
+					retry: false,
+				},
+			},
+		} );
+		const wrapper = ( { children } ) => (
+			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
+		);
+
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/wpcom/v2/jetpack-licensing/partner/product-families' )
+			.reply( 500, { code: 'could_not_retrieve_subscription', message: '' } );
+
+		const dispatch = jest.fn();
+		useDispatch.mockReturnValue( dispatch );
+
+		// Prevent console.error from being loud during testing because of the test 500 error.
+		const consoleError = global.console.error;
+		global.console.error = jest.fn();
+		const { result, waitFor } = renderHook( () => useProductsQuery(), {
+			wrapper,
+		} );
+
+		// Wait for the response.
+		await waitFor( () => result.current.isError );
+		expect( result.current.isError ).toBe( true );
+		global.console.error = consoleError;
+
+		// Test that the correct notification is being triggered.
+		expect( dispatch.mock.calls[ 0 ][ 0 ].type ).toBe( 'NOTICE_CREATE' );
+		expect( dispatch.mock.calls[ 0 ][ 0 ].notice.noticeId ).toBe(
+			'partner-portal-product-families-failure'
+		);
+		expect( dispatch.mock.calls[ 0 ][ 0 ].notice.status ).toBe( 'is-error' );
 	} );
 } );
 
@@ -170,13 +336,13 @@ describe( 'useIssueLicenseMutation', () => {
 			.post( '/wpcom/v2/jetpack-licensing/license', '{"product":"jetpack-scan"}' )
 			.reply( 200, stub );
 
-		const { result } = renderHook( () => useIssueLicenseMutation(), {
+		const { result, waitFor } = renderHook( () => useIssueLicenseMutation(), {
 			wrapper,
 		} );
 
 		await act( async () => result.current.mutateAsync( { product: 'jetpack-scan' } ) );
 
-		expect( result.current.data ).toEqual( stub );
+		await waitFor( () => expect( result.current.data ).toEqual( stub ) );
 	} );
 } );
 
@@ -197,13 +363,13 @@ describe( 'useRevokeLicenseMutation', () => {
 			.delete( '/wpcom/v2/jetpack-licensing/license', '{"license_key":"jetpack-scan_foobarbaz"}' )
 			.reply( 200, stub );
 
-		const { result } = renderHook( () => useRevokeLicenseMutation(), {
+		const { result, waitFor } = renderHook( () => useRevokeLicenseMutation(), {
 			wrapper,
 		} );
 
 		await act( async () => result.current.mutateAsync( { licenseKey: 'jetpack-scan_foobarbaz' } ) );
 
-		expect( result.current.data ).toEqual( stub );
+		await waitFor( () => expect( result.current.data ).toEqual( stub ) );
 	} );
 } );
 
@@ -225,31 +391,26 @@ describe( 'useTOSConsentMutation', () => {
 			.put( '/wpcom/v2/jetpack-licensing/partner', '{"tos":"consented"}' )
 			.reply( 200, stub );
 
-		const { result } = renderHook( () => useTOSConsentMutation(), {
+		const { result, waitFor } = renderHook( () => useTOSConsentMutation(), {
 			wrapper,
 		} );
 
 		await act( async () => result.current.mutateAsync() );
 
-		expect( result.current.data ).toEqual( stub );
+		await waitFor( () => expect( result.current.data ).toEqual( stub ) );
 	} );
 } );
 
 describe( 'useBillingDashboardQuery', () => {
-	beforeEach( () => {
-		// Prevent react-query from loggging an error due to the failing requests.
-		setLogger( {
+	function createQueryClient() {
+		const logger = {
 			error: jest.fn(),
-		} );
-	} );
-
-	afterEach( () => {
-		// Restore react-query logger.
-		setLogger( console );
-	} );
+		};
+		return new QueryClient( { logger } );
+	}
 
 	it( 'returns transformed request data', async () => {
-		const queryClient = new QueryClient();
+		const queryClient = createQueryClient();
 		const wrapper = ( { children } ) => (
 			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
 		);
@@ -259,6 +420,7 @@ describe( 'useBillingDashboardQuery', () => {
 				{
 					product_slug: 'foo',
 					product_name: 'Foo',
+					product_quantity: 6,
 					product_cost: 3,
 					product_total_cost: 18,
 					counts: {
@@ -278,6 +440,7 @@ describe( 'useBillingDashboardQuery', () => {
 				assigned: 200,
 				unassigned: 100,
 			},
+			price_interval: 'month',
 		};
 
 		const formattedStub = {
@@ -286,6 +449,7 @@ describe( 'useBillingDashboardQuery', () => {
 				{
 					productSlug: 'foo',
 					productName: 'Foo',
+					productQuantity: 6,
 					productCost: 3,
 					productTotalCost: 18,
 					counts: {
@@ -305,6 +469,7 @@ describe( 'useBillingDashboardQuery', () => {
 				assigned: 200,
 				unassigned: 100,
 			},
+			priceInterval: 'month',
 		};
 
 		nock( 'https://public-api.wordpress.com' )
@@ -321,7 +486,7 @@ describe( 'useBillingDashboardQuery', () => {
 	} );
 
 	it( 'dispatches notification on no invoice available', async () => {
-		const queryClient = new QueryClient();
+		const queryClient = createQueryClient();
 		const wrapper = ( { children } ) => (
 			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
 		);
@@ -352,7 +517,7 @@ describe( 'useBillingDashboardQuery', () => {
 	} );
 
 	it( 'dispatches notice on error', async () => {
-		const queryClient = new QueryClient();
+		const queryClient = createQueryClient();
 		const wrapper = ( { children } ) => (
 			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
 		);

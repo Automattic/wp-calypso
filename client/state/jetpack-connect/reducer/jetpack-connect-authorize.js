@@ -2,14 +2,6 @@
  * External dependencis
  */
 import { isEmpty } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { isStale } from '../utils';
-import { withSchemaValidation, withPersistence } from 'calypso/state/utils';
-import { JETPACK_CONNECT_AUTHORIZE_TTL } from '../constants';
-import { jetpackConnectAuthorizeSchema } from './schema';
 import { SITE_REQUEST_FAILURE } from 'calypso/state/action-types';
 import {
 	JETPACK_CONNECT_AUTHORIZE,
@@ -20,6 +12,10 @@ import {
 	JETPACK_CONNECT_QUERY_SET,
 	JETPACK_CONNECT_USER_ALREADY_CONNECTED,
 } from 'calypso/state/jetpack-connect/action-types';
+import { withSchemaValidation, withPersistence } from 'calypso/state/utils';
+import { JETPACK_CONNECT_AUTHORIZE_TTL } from '../constants';
+import { isStale } from '../utils';
+import { jetpackConnectAuthorizeSchema } from './schema';
 
 function jetpackConnectAuthorize( state = {}, action ) {
 	switch ( action.type ) {

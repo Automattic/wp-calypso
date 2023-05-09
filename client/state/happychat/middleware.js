@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import buildConnection from '@automattic/happychat-connection';
 import {
 	HAPPYCHAT_BLUR,
 	HAPPYCHAT_FOCUS,
@@ -18,11 +11,29 @@ import {
 	HAPPYCHAT_IO_SEND_PREFERENCES,
 	HAPPYCHAT_IO_SEND_TYPING,
 	HAPPYCHAT_IO_SET_CUSTOM_FIELDS,
+	HAPPYCHAT_IO_SET_CHAT_TAG,
 } from 'calypso/state/action-types';
-import { sendEvent, setChatCustomFields } from 'calypso/state/happychat/connection/actions';
-import buildConnection from 'calypso/lib/happychat/connection-async';
-import isHappychatClientConnected from 'calypso/state/happychat/selectors/is-happychat-client-connected';
+import {
+	receiveAccept,
+	receiveConnect,
+	receiveDisconnect,
+	receiveError,
+	receiveInit,
+	receiveHappychatEnv,
+	receiveLocalizedSupport,
+	receiveMessage,
+	receiveMessageOptimistic,
+	receiveMessageUpdate,
+	receiveReconnecting,
+	receiveStatus,
+	receiveToken,
+	receiveUnauthorized,
+	requestTranscript,
+	sendEvent,
+	setChatCustomFields,
+} from 'calypso/state/happychat/connection/actions';
 import isHappychatChatAssigned from 'calypso/state/happychat/selectors/is-happychat-chat-assigned';
+import isHappychatClientConnected from 'calypso/state/happychat/selectors/is-happychat-client-connected';
 
 const noop = () => {};
 const eventMessage = {
@@ -34,7 +45,23 @@ export const socketMiddleware = ( connection = null ) => {
 	// Allow a connection object to be specified for
 	// testing. If blank, use a real connection.
 	if ( connection == null ) {
-		connection = buildConnection();
+		connection = buildConnection( {
+			receiveAccept,
+			receiveConnect,
+			receiveDisconnect,
+			receiveError,
+			receiveInit,
+			receiveLocalizedSupport,
+			receiveHappychatEnv,
+			receiveMessage,
+			receiveMessageOptimistic,
+			receiveMessageUpdate,
+			receiveReconnecting,
+			receiveStatus,
+			receiveToken,
+			receiveUnauthorized,
+			requestTranscript,
+		} );
 	}
 
 	return ( store ) => ( next ) => ( action ) => {
@@ -45,20 +72,16 @@ export const socketMiddleware = ( connection = null ) => {
 				connection.init( store.dispatch, action.auth );
 				break;
 
-			case HAPPYCHAT_IO_REQUEST_TRANSCRIPT:
+			case HAPPYCHAT_IO_REQUEST_TRANSCRIPT: {
 				connection.request( action, action.timeout );
 				break;
+			}
 
 			case HAPPYCHAT_IO_SEND_MESSAGE_USERINFO:
 				// When user info is sent, pass it through in a message...
 				connection.send( action );
-				// ... and also set a few of the values in Custom Fields
-				store.dispatch(
-					setChatCustomFields( {
-						howCanWeHelp: get( action, 'payload.meta.howCanWeHelp', null ),
-						howYouFeel: get( action, 'payload.meta.howYouFeel', null ),
-					} )
-				);
+				// ... and also set a few of the values in Custom Fields (if any).
+				store.dispatch( setChatCustomFields( {} ) );
 				break;
 
 			case HAPPYCHAT_IO_SEND_MESSAGE_EVENT:
@@ -67,6 +90,7 @@ export const socketMiddleware = ( connection = null ) => {
 			case HAPPYCHAT_IO_SEND_PREFERENCES:
 			case HAPPYCHAT_IO_SEND_TYPING:
 			case HAPPYCHAT_IO_SET_CUSTOM_FIELDS:
+			case HAPPYCHAT_IO_SET_CHAT_TAG:
 				connection.send( action );
 				break;
 

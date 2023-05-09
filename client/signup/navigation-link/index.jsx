@@ -1,32 +1,22 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { Button, Gridicon } from '@automattic/components';
+import classnames from 'classnames';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import { get } from 'lodash';
-import Gridicon from 'calypso/components/gridicon';
-import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import { getStepUrl, isFirstStepInFlow } from 'calypso/signup/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
 import { getFilteredSteps } from '../utils';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export class NavigationLink extends Component {
 	static propTypes = {
+		goToPreviousStep: PropTypes.func,
 		goToNextStep: PropTypes.func,
 		direction: PropTypes.oneOf( [ 'back', 'forward' ] ),
 		flowName: PropTypes.string.isRequired,
@@ -39,11 +29,20 @@ export class NavigationLink extends Component {
 		// Allows to force a back button in the first step for example.
 		allowBackFirstStep: PropTypes.bool,
 		rel: PropTypes.string,
+		borderless: PropTypes.bool,
+		primary: PropTypes.bool,
+		backIcon: PropTypes.string,
+		forwardIcon: PropTypes.string,
+		queryParams: PropTypes.object,
+		disabledTracksOnClick: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		labelText: '',
 		allowBackFirstStep: false,
+		borderless: true,
+		backIcon: 'arrow-left',
+		forwardIcon: 'arrow-right',
 	};
 
 	getPreviousStep( flowName, signupProgress, currentStepName ) {
@@ -86,7 +85,7 @@ export class NavigationLink extends Component {
 			return this.props.backUrl;
 		}
 
-		const { flowName, signupProgress, stepName, userLoggedIn } = this.props;
+		const { flowName, signupProgress, stepName, userLoggedIn, queryParams } = this.props;
 		const previousStep = this.getPreviousStep( flowName, signupProgress, stepName );
 
 		const stepSectionName = get(
@@ -101,7 +100,8 @@ export class NavigationLink extends Component {
 			previousStep.lastKnownFlow || this.props.flowName,
 			previousStep.stepName,
 			stepSectionName,
-			locale
+			locale,
+			queryParams
 		);
 	}
 
@@ -113,18 +113,24 @@ export class NavigationLink extends Component {
 			);
 
 			this.props.goToNextStep();
+		} else if ( this.props.goToPreviousStep ) {
+			this.props.goToPreviousStep();
 		}
 
-		this.recordClick();
+		if ( ! this.props.disabledTracksOnClick ) {
+			this.recordClick();
+		}
 	};
 
 	recordClick() {
 		const tracksProps = {
 			flow: this.props.flowName,
 			step: this.props.stepName,
+			intent: this.props.intent,
 		};
 
-		if ( this.props.direction === 'back' ) {
+		// We don't need to track if we are in the sub-steps since it's not really going back a step
+		if ( this.props.direction === 'back' && ! this.props.stepSectionName ) {
 			this.props.recordTracksEvent( 'calypso_signup_previous_step_button_click', tracksProps );
 		}
 
@@ -134,7 +140,7 @@ export class NavigationLink extends Component {
 	}
 
 	render() {
-		const { translate, labelText } = this.props;
+		const { translate, labelText, borderless, primary, backIcon, forwardIcon } = this.props;
 
 		if (
 			this.props.positionInFlow === 0 &&
@@ -150,7 +156,7 @@ export class NavigationLink extends Component {
 		let text;
 
 		if ( this.props.direction === 'back' ) {
-			backGridicon = <Gridicon icon="arrow-left" size={ 18 } />;
+			backGridicon = backIcon ? <Gridicon icon={ backIcon } size={ 18 } /> : null;
 			if ( labelText ) {
 				text = labelText;
 			} else {
@@ -159,7 +165,7 @@ export class NavigationLink extends Component {
 		}
 
 		if ( this.props.direction === 'forward' ) {
-			forwardGridicon = <Gridicon icon="arrow-right" size={ 18 } />;
+			forwardGridicon = forwardIcon ? <Gridicon icon={ forwardIcon } size={ 18 } /> : null;
 			text = labelText ? labelText : translate( 'Skip for now' );
 		}
 
@@ -169,11 +175,16 @@ export class NavigationLink extends Component {
 			this.props.cssClass
 		);
 
+		const hrefUrl =
+			this.props.direction === 'forward' && this.props.forwardUrl
+				? this.props.forwardUrl
+				: this.getBackUrl();
 		return (
 			<Button
-				borderless
+				primary={ primary }
+				borderless={ borderless }
 				className={ buttonClasses }
-				href={ this.getBackUrl() }
+				href={ hrefUrl }
 				onClick={ this.handleClick }
 				rel={ this.props.rel }
 			>
@@ -186,9 +197,14 @@ export class NavigationLink extends Component {
 }
 
 export default connect(
-	( state ) => ( {
-		userLoggedIn: isUserLoggedIn( state ),
-		signupProgress: getSignupProgress( state ),
-	} ),
+	( state ) => {
+		const { intent } = getSignupDependencyStore( state );
+
+		return {
+			userLoggedIn: isUserLoggedIn( state ),
+			signupProgress: getSignupProgress( state ),
+			intent,
+		};
+	},
 	{ recordTracksEvent, submitSignupStep }
 )( localize( NavigationLink ) );

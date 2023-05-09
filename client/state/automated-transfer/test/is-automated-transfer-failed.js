@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { isFailed } from '../selectors/is-automated-transfer-failed';
 import { transferStates } from '../constants';
+import { isFailed } from '../selectors/is-automated-transfer-failed';
 
 describe( 'Automated Transfer', () => {
 	describe( 'isFailed()', () => {

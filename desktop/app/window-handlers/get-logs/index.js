@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
 const path = require( 'path' );
 const { app, dialog } = require( 'electron' );
-
-/**
- * Internal dependencies
- */
-const state = require( '../../lib/state' );
-const config = require( '../../lib/config' );
-const system = require( '../../lib/system' );
 const { zipContents } = require( '../../lib/archiver' );
+const config = require( '../../lib/config' );
 const log = require( '../../lib/logger' )( 'desktop:get-logs' );
+const state = require( '../../lib/state' );
+const system = require( '../../lib/system' );
 
 /**
  * Module variables

@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React, { useState } from 'react';
-
-/**
- * WordPress dependencies
- */
 import { Flex, FlexItem, ResizableBox } from '@wordpress/components';
+import { useState } from 'react';
 
 const ResizableBoxExample = () => {
 	const [ attributes, setAttributes ] = useState( {

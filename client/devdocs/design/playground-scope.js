@@ -1,10 +1,10 @@
-/**
- * External dependencies
- */
 export {
 	Button,
 	Card,
 	CompactCard,
+	FormInputValidation,
+	Gridicon,
+	Popover,
 	ProgressBar,
 	Ribbon,
 	ScreenReaderText,
@@ -34,7 +34,6 @@ export { default as DateRange } from 'calypso/components/date-range';
 export { default as DiffViewer } from 'calypso/components/diff-viewer';
 export { default as DropZones } from 'calypso/components/drop-zone';
 export { default as EllipsisMenu } from 'calypso/components/ellipsis-menu';
-export { default as Emojify } from 'calypso/components/emojify';
 export { default as EmptyContent } from 'calypso/components/empty-content';
 export { default as ExternalLink } from 'calypso/components/external-link';
 export { default as FAQ } from 'calypso/components/faq';
@@ -50,7 +49,6 @@ export { default as FormCheckbox } from 'calypso/components/forms/form-checkbox'
 export { default as FormCountrySelect } from 'calypso/components/forms/form-country-select';
 export { default as FormCurrencyInput } from 'calypso/components/forms/form-currency-input';
 export { default as FormFieldset } from 'calypso/components/forms/form-fieldset';
-export { default as FormInputValidation } from 'calypso/components/forms/form-input-validation';
 export { default as FormLabel } from 'calypso/components/forms/form-label';
 export { default as FormLegend } from 'calypso/components/forms/form-legend';
 export { default as FormPasswordInput } from 'calypso/components/forms/form-password-input';
@@ -70,7 +68,6 @@ export { default as FormTextInputWithAffixes } from 'calypso/components/forms/fo
 export { default as Gauge } from 'calypso/components/gauge';
 export { default as GlobalNotices } from 'calypso/components/global-notices';
 export { default as Gravatar } from 'calypso/components/gravatar';
-export { default as Gridicon } from 'calypso/components/gridicon';
 export { default as HeaderCake } from 'calypso/components/header-cake';
 export { default as HeaderButton } from 'calypso/components/header-button';
 export { default as ImagePreloader } from 'calypso/components/image-preloader';
@@ -89,7 +86,6 @@ export { default as Notices } from 'calypso/components/notice';
 export { default as Pagination } from 'calypso/components/pagination';
 export { default as PaymentLogo } from 'calypso/components/payment-logo';
 export { default as PieChart } from 'calypso/components/pie-chart';
-export { default as Popovers } from 'calypso/components/popover';
 export { default as Ranges } from 'calypso/components/forms/range';
 export { default as Rating } from 'calypso/components/rating';
 export { default as Search } from 'calypso/components/search';
@@ -103,7 +99,6 @@ export { default as SegmentedControl } from 'calypso/components/segmented-contro
 export { default as SelectDropdown } from 'calypso/components/select-dropdown';
 export { default as ShareButton } from 'calypso/components/share-button';
 export { default as SocialLogo } from 'calypso/components/social-logo';
-export { default as Spinner } from 'calypso/components/spinner';
 export { default as SpinnerButton } from 'calypso/components/spinner-button';
 export { default as SpinnerLine } from 'calypso/components/spinner-line';
 export { default as SplitButton } from 'calypso/components/split-button';
@@ -115,7 +110,6 @@ export { default as TimeSince } from 'calypso/components/time-since';
 export { default as Timezone } from 'calypso/components/timezone';
 export { default as TokenFields } from 'calypso/components/token-field';
 export { default as Tooltip } from 'calypso/components/tooltip';
-export { default as Version } from 'calypso/components/version';
 export { default as VerticalMenu } from 'calypso/components/vertical-menu';
 export { default as VerticalNav } from 'calypso/components/vertical-nav';
 export { default as VerticalNavItem } from 'calypso/components/vertical-nav/item';

@@ -1,43 +1,27 @@
-/**
- * External dependencies
- */
-import { translate } from 'i18n-calypso';
-import { getTotalLineItemFromCart, tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
-import type { LineItem } from '@automattic/composite-checkout';
+import {
+	isGoogleWorkspaceExtraLicence,
+	isGSuiteOrGoogleWorkspaceProductSlug,
+} from '@automattic/calypso-products';
+import { isValueTruthy, getTotalLineItemFromCart } from '@automattic/wpcom-checkout';
+import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
+import {
+	readWPCOMPaymentMethodClass,
+	translateWpcomPaymentMethodToCheckoutPaymentMethod,
+} from './translate-payment-method-names';
 import type {
 	ResponseCart,
 	ResponseCartProduct,
 	ResponseCartTaxData,
 	DomainContactDetails,
+	RequestCart,
+	RequestCartTaxData,
+	CartKey,
 } from '@automattic/shopping-cart';
 import type {
-	WPCOMTransactionEndpointCart,
 	WPCOMTransactionEndpointRequestPayload,
 	TransactionRequest,
 	WPCOMCart,
 } from '@automattic/wpcom-checkout';
-import {
-	isPlan,
-	isDomainTransferProduct,
-	isDomainProduct,
-	isDotComPlan,
-	isGoogleWorkspaceExtraLicence,
-	isGSuiteOrGoogleWorkspace,
-	isTitanMail,
-	isP2Plus,
-	isJetpackSearch,
-} from '@automattic/calypso-products';
-
-/**
- * Internal dependencies
- */
-import {
-	readWPCOMPaymentMethodClass,
-	translateWpcomPaymentMethodToCheckoutPaymentMethod,
-} from './translate-payment-method-names';
-import { isRenewal } from 'calypso/lib/cart-values/cart-items';
-import doesValueExist from './does-value-exist';
-import { isGSuiteOrGoogleWorkspaceProductSlug } from 'calypso/lib/gsuite';
 
 /**
  * Translate a cart object as returned by the WPCOM cart endpoint to
@@ -47,47 +31,20 @@ import { isGSuiteOrGoogleWorkspaceProductSlug } from 'calypso/lib/gsuite';
  * @returns Cart object suitable for passing to the checkout component
  */
 export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WPCOMCart {
-	const { products, allowed_payment_methods } = serverCart;
+	const { allowed_payment_methods } = serverCart;
 
 	const totalItem = getTotalLineItemFromCart( serverCart );
 
-	const alwaysEnabledPaymentMethods = [ 'full-credits', 'free-purchase' ];
+	const alwaysEnabledPaymentMethods = [ 'free-purchase' ];
 
 	const allowedPaymentMethods = [ ...allowed_payment_methods, ...alwaysEnabledPaymentMethods ]
 		.map( readWPCOMPaymentMethodClass )
-		.filter( doesValueExist )
+		.filter( isValueTruthy )
 		.map( translateWpcomPaymentMethodToCheckoutPaymentMethod );
 
 	return {
-		items: products.map( translateReponseCartProductToLineItem ),
 		total: totalItem,
 		allowedPaymentMethods,
-	};
-}
-
-// Convert a backend cart item to a checkout cart item
-function translateReponseCartProductToLineItem( serverCartItem: ResponseCartProduct ): LineItem {
-	const {
-		product_slug,
-		currency,
-		item_subtotal_display,
-		item_subtotal_integer,
-		uuid,
-	} = serverCartItem;
-
-	const label = getLabel( serverCartItem );
-
-	const type = isPlan( serverCartItem ) ? 'plan' : product_slug;
-
-	return {
-		id: uuid,
-		label,
-		type,
-		amount: {
-			currency: currency || '',
-			value: item_subtotal_integer || 0,
-			displayValue: item_subtotal_display || '',
-		},
 	};
 }
 
@@ -98,20 +55,29 @@ export function createTransactionEndpointCartFromResponseCart( {
 	contactDetails,
 	responseCart,
 }: {
-	siteId: string | undefined;
+	siteId: number | undefined;
 	contactDetails: DomainContactDetails | null;
 	responseCart: ResponseCart;
-} ): WPCOMTransactionEndpointCart {
-	if ( responseCart.products.some( ( product ) => product.extra.isJetpackCheckout ) ) {
+} ): RequestCart {
+	if (
+		responseCart.products.some( ( product ) => {
+			return product.extra.isJetpackCheckout || product.extra.isAkismetSitelessCheckout;
+		} )
+	) {
+		const isUserLess = responseCart.cart_key === 'no-user';
+
+		// At this point, cart_key will be 'no-user' | blog_id | 'no-site', in that order.
+		const cartKey = isUserLess ? responseCart.cart_key : responseCart.blog_id || 'no-site';
+
+		// A cart with the 'no-user' key, in the context of a Jetpack checkout flow, means that
+		// a WP.com account will be created before submitting the transaction (see submitWpcomTransaction).
+		// Once the WP.com account is created, the cart key is replaced with the blog ID and sent to the
+		// /transactions endpoint. If there is no blog ID, a temporary blog is created on the backend side.
 		return {
-			blog_id: responseCart.blog_id.toString(),
-			cart_key: responseCart.blog_id.toString(),
-			create_new_blog: false,
-			is_jetpack_checkout: true,
+			blog_id: responseCart.blog_id,
+			cart_key: cartKey as CartKey,
 			coupon: responseCart.coupon || '',
-			currency: responseCart.currency,
 			temporary: false,
-			extra: [],
 			products: responseCart.products.map( ( item ) =>
 				addRegistrationDataToGSuiteCartProduct( item, contactDetails )
 			),
@@ -120,16 +86,10 @@ export function createTransactionEndpointCartFromResponseCart( {
 	}
 
 	return {
-		blog_id: siteId || '0',
-		cart_key: siteId || 'no-site',
-		create_new_blog: siteId ? false : true,
-		is_jetpack_checkout: responseCart.products.some(
-			( product ) => product.extra.isJetpackCheckout
-		),
+		blog_id: siteId ? siteId : 0,
+		cart_key: ( siteId || 'no-site' ) as CartKey,
 		coupon: responseCart.coupon || '',
-		currency: responseCart.currency,
 		temporary: false,
-		extra: [],
 		products: responseCart.products.map( ( item ) =>
 			addRegistrationDataToGSuiteCartProduct( item, contactDetails )
 		),
@@ -139,15 +99,18 @@ export function createTransactionEndpointCartFromResponseCart( {
 
 function createTransactionEndpointTaxFromResponseCartTax(
 	tax: ResponseCartTaxData
-): Omit< ResponseCartTaxData, 'display_taxes' > {
-	const { country_code, postal_code } = tax.location;
-	const formattedPostalCode = postal_code
-		? tryToGuessPostalCodeFormat( postal_code.toUpperCase(), country_code )
-		: undefined;
+): RequestCartTaxData {
+	const { country_code, postal_code, subdivision_code, vat_id, organization, address, city } =
+		tax.location;
 	return {
 		location: {
-			...( country_code ? { country_code } : {} ),
-			...( formattedPostalCode ? { postal_code: formattedPostalCode } : {} ),
+			country_code,
+			postal_code,
+			subdivision_code,
+			vat_id,
+			organization,
+			address,
+			city,
 		},
 	};
 }
@@ -192,10 +155,11 @@ export function createTransactionEndpointRequestPayload( {
 	cancelUrl,
 	successUrl,
 	idealBank,
-	tefBank,
 	pan,
 	gstin,
 	nik,
+	useForAllSubscriptions,
+	eventSource,
 }: TransactionRequest ): WPCOMTransactionEndpointRequestPayload {
 	return {
 		cart,
@@ -221,77 +185,12 @@ export function createTransactionEndpointRequestPayload( {
 			successUrl,
 			cancelUrl,
 			idealBank,
-			tefBank,
 			pan,
 			gstin,
 			nik,
+			useForAllSubscriptions,
+			eventSource,
 		},
+		tos: getToSAcceptancePayload(),
 	};
-}
-
-export function getSublabel( serverCartItem: ResponseCartProduct ): string {
-	const isRenewalItem = isRenewal( serverCartItem );
-	const { meta, product_name: productName } = serverCartItem;
-
-	// Jetpack Search has its own special sublabel
-	if ( ! isRenewalItem && isJetpackSearch( serverCartItem ) ) {
-		return '';
-	}
-
-	if ( isDotComPlan( serverCartItem ) || ( ! isRenewalItem && isTitanMail( serverCartItem ) ) ) {
-		if ( isRenewalItem ) {
-			return String( translate( 'Plan Renewal' ) );
-		}
-	}
-
-	if ( isPlan( serverCartItem ) ) {
-		if ( isP2Plus( serverCartItem ) ) {
-			return String( translate( 'Monthly subscription' ) );
-		}
-
-		return isRenewalItem
-			? String( translate( 'Plan Renewal' ) )
-			: String( translate( 'Plan Subscription' ) );
-	}
-
-	if ( isGSuiteOrGoogleWorkspace( serverCartItem ) ) {
-		if ( isRenewalItem ) {
-			return String( translate( 'Productivity and Collaboration Tools Renewal' ) );
-		}
-
-		return String( translate( 'Productivity and Collaboration Tools' ) );
-	}
-
-	if (
-		meta &&
-		( isDomainProduct( serverCartItem ) || isDomainTransferProduct( serverCartItem ) )
-	) {
-		if ( ! isRenewalItem ) {
-			return productName || '';
-		}
-
-		if ( productName ) {
-			return String( translate( '%(productName)s Renewal', { args: { productName } } ) );
-		}
-	}
-
-	if ( ! isRenewalItem && serverCartItem.months_per_bill_period === 1 ) {
-		return String( translate( 'Billed monthly' ) );
-	}
-
-	if ( isRenewalItem ) {
-		return String( translate( 'Renewal' ) );
-	}
-
-	return '';
-}
-
-export function getLabel( serverCartItem: ResponseCartProduct ): string {
-	if (
-		serverCartItem.meta &&
-		( isDomainProduct( serverCartItem ) || isDomainTransferProduct( serverCartItem ) )
-	) {
-		return serverCartItem.meta;
-	}
-	return serverCartItem.product_name || '';
 }

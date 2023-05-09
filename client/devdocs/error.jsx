@@ -1,10 +1,6 @@
-/**
- * External dependencies
- */
+import { PureComponent } from 'react';
 
-import React from 'react';
-
-export default class extends React.PureComponent {
+export default class extends PureComponent {
 	static displayName = 'Error';
 
 	render() {

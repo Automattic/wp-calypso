@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { createElement } from 'react';
 import PrivacyComponent from 'calypso/me/privacy/main';
 
 export function privacy( context, next ) {
-	context.primary = React.createElement( PrivacyComponent );
+	context.primary = createElement( PrivacyComponent );
 	next();
 }

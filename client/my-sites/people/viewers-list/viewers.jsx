@@ -1,26 +1,21 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-/**
- * External dependencies
- */
-import React from 'react';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import PeopleListItem from 'calypso/my-sites/people/people-list-item';
 import { Card } from '@automattic/components';
-import PeopleListSectionHeader from 'calypso/my-sites/people/people-list-section-header';
-import InfiniteList from 'calypso/components/infinite-list';
+import { localize } from 'i18n-calypso';
+import { createRef, Component } from 'react';
+import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
-import accept from 'calypso/lib/accept';
+import InfiniteList from 'calypso/components/infinite-list';
 import ListEnd from 'calypso/components/list-end';
+import accept from 'calypso/lib/accept';
+import PeopleListItem from 'calypso/my-sites/people/people-list-item';
+import PeopleListSectionHeader from 'calypso/my-sites/people/people-list-section-header';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import isEligibleForSubscriberImporter from 'calypso/state/selectors/is-eligible-for-subscriber-importer';
+import InviteButton from '../invite-button';
 
-class Viewers extends React.Component {
-	infiniteList = React.createRef();
+class Viewers extends Component {
+	infiniteList = createRef();
 
 	renderPlaceholders = () => <PeopleListItem key="people-list-item-placeholder" />;
 
@@ -82,16 +77,30 @@ class Viewers extends React.Component {
 	getViewerRef = ( viewer ) => 'viewer-' + viewer.ID;
 
 	render() {
+		const isJetpackSite = this.props.site?.jetpack;
+		const { includeSubscriberImporter } = this.props;
+
 		let viewers;
 		let emptyContentArgs = {
-			title:
-				this.props.site && this.props.site.jetpack
-					? this.props.translate( "Oops, Jetpack sites don't support viewers." )
-					: this.props.translate( "You don't have any viewers yet." ),
+			title: isJetpackSite
+				? this.props.translate( "Oops, Jetpack sites don't support viewers." )
+				: this.props.translate( "You don't have any viewers yet." ),
 		};
 
+		if ( ! isJetpackSite ) {
+			emptyContentArgs = {
+				...emptyContentArgs,
+				action: (
+					<InviteButton
+						siteSlug={ this.props.site?.slug }
+						includeSubscriberImporter={ includeSubscriberImporter }
+					/>
+				),
+			};
+		}
+
 		if ( ! this.props.viewers.length && ! this.props.isFetching ) {
-			if ( this.props.site && ! this.props.site.jetpack && ! this.props.site.is_private ) {
+			if ( this.props.site && ! isJetpackSite && ! this.props.site.is_private ) {
 				emptyContentArgs = Object.assign( emptyContentArgs, {
 					line: this.props.translate(
 						'Only private sites can have viewers. You can make your site private by ' +
@@ -140,8 +149,14 @@ class Viewers extends React.Component {
 	}
 }
 
+const mapStateToProps = ( state ) => {
+	return {
+		includeSubscriberImporter: isEligibleForSubscriberImporter( state ),
+	};
+};
+
 const mapDispatchToProps = {
 	recordGoogleEvent,
 };
 
-export default connect( null, mapDispatchToProps )( localize( Viewers ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( Viewers ) );

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import 'calypso/state/help/init';
 
 export const isTicketSupportEligible = ( state ) => {

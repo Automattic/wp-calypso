@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getActiveReplyCommentId } from 'calypso/state/comments/selectors';
 
 describe( 'getActiveReplyCommentId()', () => {

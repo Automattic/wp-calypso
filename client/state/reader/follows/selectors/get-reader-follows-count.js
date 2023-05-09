@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import { size, filter } from 'lodash';
 
-/**
- * Internal dependencies
- */
 import 'calypso/state/reader/init';
 
 /*

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import type { ExperimentAssignment } from '../types';
 
 export function isObject( x: unknown ): x is Record< string, unknown > {

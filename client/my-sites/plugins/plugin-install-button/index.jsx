@@ -1,37 +1,63 @@
-/* eslint-disable react/no-string-refs */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS } from '@automattic/calypso-products';
+import { Button, Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
-import InfoPopover from 'calypso/components/info-popover';
+import PropTypes from 'prop-types';
+import { Component, useRef } from 'react';
+import { connect } from 'react-redux';
+import QuerySiteConnectionStatus from 'calypso/components/data/query-site-connection-status';
 import ExternalLink from 'calypso/components/external-link';
+import InfoPopover from 'calypso/components/info-popover';
+import {
+	marketplacePlanToAdd,
+	getProductSlugByPeriodVariation,
+	getSaasRedirectUrl,
+} from 'calypso/lib/plugins/utils';
 import { getSiteFileModDisableReason, isMainNetworkSite } from 'calypso/lib/site/utils';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
-import QuerySiteConnectionStatus from 'calypso/components/data/query-site-connection-status';
-import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
-import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
-import { isCompatiblePlugin } from '../plugin-compatibility';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { installPlugin } from 'calypso/state/plugins/installed/actions';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
+import { getProductsList } from 'calypso/state/products-list/selectors';
+import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { isCompatiblePlugin } from '../plugin-compatibility';
+import { getPeriodVariationValue } from '../plugin-price';
 
-/**
- * Style dependencies
- */
 import './style.scss';
+
+const PluginInstallNotice = ( { isEmbed, warningText, children } ) => {
+	const disabledInfoLabel = useRef();
+	const infoPopover = useRef();
+	const togglePopover = ( event ) => {
+		infoPopover.current._onClick( event );
+	};
+	return (
+		<div className={ classNames( { 'plugin-install-button__install': true, embed: isEmbed } ) }>
+			<span
+				onClick={ togglePopover }
+				ref={ disabledInfoLabel }
+				className="plugin-install-button__warning"
+			>
+				{ warningText }
+			</span>
+			<InfoPopover
+				position="bottom left"
+				popoverName="Plugin Action Disabled Install"
+				gaEventCategory="Plugins"
+				ref={ infoPopover }
+				ignoreContext={ disabledInfoLabel.current }
+			>
+				{ children }
+			</InfoPopover>
+		</div>
+	);
+};
 
 export class PluginInstallButton extends Component {
 	installAction = () => {
@@ -48,7 +74,7 @@ export class PluginInstallButton extends Component {
 			return;
 		}
 
-		this.props.removePluginStatuses( 'completed', 'error' );
+		this.props.removePluginStatuses( 'completed', 'error', 'up-to-date' );
 		this.props.installPlugin( siteId, plugin );
 
 		if ( isEmbed ) {
@@ -66,21 +92,6 @@ export class PluginInstallButton extends Component {
 		}
 	};
 
-	updateJetpackAction = () => {
-		const {
-			plugin,
-			siteId,
-			recordGoogleEvent: recordGAEvent,
-			recordTracksEvent: recordEvent,
-		} = this.props;
-
-		recordGAEvent( 'Plugins', 'Update jetpack', 'Plugin Name', plugin.slug );
-		recordEvent( 'calypso_plugin_update_jetpack', {
-			site: siteId,
-			plugin: plugin.slug,
-		} );
-	};
-
 	clickSupportLink = () => {
 		this.props.recordGoogleEvent(
 			'Plugins',
@@ -90,10 +101,6 @@ export class PluginInstallButton extends Component {
 
 	clickSiteManagmentLink = () => {
 		this.props.recordGoogleEvent( 'Plugins', 'Clicked How do I fix disabled plugin installs' );
-	};
-
-	togglePopover = ( event ) => {
-		this.refs.infoPopover._onClick( event );
 	};
 
 	getDisabledInfo() {
@@ -163,107 +170,55 @@ export class PluginInstallButton extends Component {
 		return null;
 	}
 
-	renderUnreachableNotice() {
-		const { translate, selectedSite, isEmbed } = this.props;
-		return (
-			<div className={ classNames( { 'plugin-install-button__install': true, embed: isEmbed } ) }>
-				<span
-					onClick={ this.togglePopover }
-					ref="disabledInfoLabel"
-					className="plugin-install-button__warning"
-				>
-					{ translate( 'Site unreachable' ) }
+	renderMarketplaceButton() {
+		const {
+			translate,
+			selectedSite,
+			siteId,
+			userId,
+			plugin,
+			billingPeriod,
+			canInstallPurchasedPlugins,
+			productsList,
+		} = this.props;
+		const variationPeriod = getPeriodVariationValue( billingPeriod );
+		const variation = plugin?.variations?.[ variationPeriod ];
+		const product_slug = getProductSlugByPeriodVariation( variation, productsList );
+
+		if ( plugin.isSaasProduct ) {
+			const saasRedirectUrl = getSaasRedirectUrl( plugin, userId, siteId );
+			return (
+				<span className="plugin-install-button__install embed">
+					<Button href={ saasRedirectUrl }>
+						{ translate( 'Get started' ) }
+						<Gridicon icon="external" size={ 18 } />
+					</Button>
 				</span>
-				<InfoPopover
-					position="bottom left"
-					popoverName={ 'Plugin Action Disabled Install' }
-					gaEventCategory="Plugins"
-					ref="infoPopover"
-					ignoreContext={ this.refs && this.refs.disabledInfoLabel }
-				>
-					<div>
-						<p>
-							{ translate( '%(site)s is unresponsive.', { args: { site: selectedSite.title } } ) }
-						</p>
-						<ExternalLink
-							key="external-link"
-							onClick={ this.clickSupportLink }
-							href={ 'http://jetpack.me/support/debug/?url=' + selectedSite.URL }
-						>
-							{ translate( 'Debug site!' ) }
-						</ExternalLink>
-					</div>
-				</InfoPopover>
-			</div>
-		);
-	}
-
-	renderIncompatiblePluginNotice() {
-		const { translate, isEmbed } = this.props;
-		return (
-			<div className={ classNames( { 'plugin-install-button__install': true, embed: isEmbed } ) }>
-				<span
-					onClick={ this.togglePopover }
-					ref="disabledInfoLabel"
-					className="plugin-install-button__warning"
-				>
-					{ translate( 'Incompatible Plugin' ) }
-				</span>
-				<InfoPopover
-					position="bottom left"
-					popoverName={ 'Plugin Action Disabled Install' }
-					gaEventCategory="Plugins"
-					ref="infoPopover"
-					ignoreContext={ this.refs && this.refs.disabledInfoLabel }
-				>
-					<div>
-						<p>{ translate( 'This plugin is not supported on WordPress.com.' ) }</p>
-						<ExternalLink
-							key="external-link"
-							href={ localizeUrl( 'https://en.support.wordpress.com/incompatible-plugins' ) }
-						>
-							{ translate( 'Learn more.' ) }
-						</ExternalLink>
-					</div>
-				</InfoPopover>
-			</div>
-		);
-	}
-
-	renderDisabledNotice() {
-		const { translate, selectedSite, isEmbed } = this.props;
-
-		if ( ! selectedSite.canUpdateFiles ) {
-			if ( this.getDisabledInfo() ) {
-				return (
-					<div
-						className={ classNames( { 'plugin-install-button__install': true, embed: isEmbed } ) }
-					>
-						<span
-							onClick={ this.togglePopover }
-							ref="disabledInfoLabel"
-							className="plugin-install-button__warning"
-						>
-							{ translate( 'Install Disabled' ) }
-						</span>
-						<InfoPopover
-							position="bottom left"
-							popoverName={ 'Plugin Action Disabled Install' }
-							gaEventCategory="Plugins"
-							ref="infoPopover"
-							ignoreContext={ this.refs && this.refs.disabledInfoLabel }
-						>
-							{ this.getDisabledInfo() }
-						</InfoPopover>
-					</div>
-				);
-			}
-			return null;
+			);
 		}
+
+		const buttonLink = canInstallPurchasedPlugins
+			? `/checkout/${ selectedSite.slug }/${ product_slug }`
+			: `/checkout/${ selectedSite.slug }/${ marketplacePlanToAdd(
+					selectedSite?.plan,
+					billingPeriod
+			  ) },${ product_slug }#step2`;
+
+		return (
+			<span className="plugin-install-button__install embed">
+				<Button href={ buttonLink }>
+					<Gridicon key="plus-icon" icon="plus-small" size={ 18 } />
+					<Gridicon icon="plugins" size={ 18 } />
+					{ canInstallPurchasedPlugins
+						? translate( 'Purchase and activate' )
+						: translate( 'Upgrade and activate' ) }
+				</Button>
+			</span>
+		);
 	}
 
 	renderButton() {
-		const { translate, isInstalling, isEmbed, disabled } = this.props;
+		const { translate, isInstalling, isEmbed, disabled, isJetpackCloud } = this.props;
 		const label = isInstalling ? translate( 'Installing…' ) : translate( 'Install' );
 
 		if ( isEmbed ) {
@@ -273,8 +228,12 @@ export class PluginInstallButton extends Component {
 						<span className="plugin-install-button__installing">{ label }</span>
 					) : (
 						<Button compact={ true } onClick={ this.installAction } disabled={ disabled }>
-							<Gridicon key="plus-icon" icon="plus-small" size={ 18 } />
-							<Gridicon icon="plugins" size={ 18 } />
+							{ ! isJetpackCloud && (
+								<>
+									<Gridicon key="plus-icon" icon="plus-small" size={ 18 } />
+									<Gridicon icon="plugins" size={ 18 } />
+								</>
+							) }
 							{ translate( 'Install' ) }
 						</Button>
 					) }
@@ -296,21 +255,58 @@ export class PluginInstallButton extends Component {
 	}
 
 	renderNoticeOrButton() {
-		const { plugin, selectedSite, siteIsConnected, siteIsWpcomAtomic } = this.props;
+		const { plugin, isEmbed, selectedSite, siteIsConnected, siteIsWpcomAtomic, translate } =
+			this.props;
 
 		if ( siteIsConnected === false ) {
-			return this.renderUnreachableNotice();
+			return (
+				<PluginInstallNotice warningText={ translate( 'Site unreachable' ) } isEmbed={ isEmbed }>
+					<div>
+						<p>
+							{ translate( '%(site)s is unresponsive.', { args: { site: selectedSite.title } } ) }
+						</p>
+						<ExternalLink
+							key="external-link"
+							onClick={ this.clickSupportLink }
+							href={ 'https://jetpack.me/support/debug/?url=' + selectedSite.URL }
+						>
+							{ translate( 'Debug site!' ) }
+						</ExternalLink>
+					</div>
+				</PluginInstallNotice>
+			);
 		}
 
 		if ( ! isCompatiblePlugin( plugin.slug ) && siteIsWpcomAtomic ) {
-			return this.renderIncompatiblePluginNotice();
+			return (
+				<PluginInstallNotice warningText={ translate( 'Incompatible Plugin' ) } isEmbed={ isEmbed }>
+					<div>
+						<p>{ translate( 'This plugin is not supported on WordPress.com.' ) }</p>
+						<ExternalLink
+							key="external-link"
+							href={ localizeUrl( 'https://en.support.wordpress.com/incompatible-plugins' ) }
+						>
+							{ translate( 'Learn more.' ) }
+						</ExternalLink>
+					</div>
+				</PluginInstallNotice>
+			);
 		}
 
 		if ( ! selectedSite.canUpdateFiles ) {
-			return this.renderDisabledNotice();
+			const disabledInfo = this.getDisabledInfo();
+			return disabledInfo ? (
+				<PluginInstallNotice warningText={ translate( 'Install Disabled' ) } isEmbed={ isEmbed }>
+					{ disabledInfo }
+				</PluginInstallNotice>
+			) : null;
 		}
 
-		return this.renderButton();
+		if ( ! plugin.isMarketplaceProduct ) {
+			return this.renderButton();
+		}
+
+		return this.renderMarketplaceButton();
 	}
 
 	render() {
@@ -330,7 +326,6 @@ PluginInstallButton.propTypes = {
 	plugin: PropTypes.object.isRequired,
 	isEmbed: PropTypes.bool,
 	isInstalling: PropTypes.bool,
-	isMock: PropTypes.bool,
 	disabled: PropTypes.bool,
 };
 
@@ -340,8 +335,15 @@ export default connect(
 
 		return {
 			siteId,
+			userId: getCurrentUserId( state ),
 			siteIsConnected: getSiteConnectionStatus( state, siteId ),
 			siteIsWpcomAtomic: isSiteWpcomAtomic( state, siteId ),
+			canInstallPurchasedPlugins: siteHasFeature(
+				state,
+				siteId,
+				WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS
+			),
+			productsList: getProductsList( state ),
 		};
 	},
 	{

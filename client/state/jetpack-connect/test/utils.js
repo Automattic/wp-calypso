@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { isStale } from '../utils';
 
 describe( 'utils', () => {

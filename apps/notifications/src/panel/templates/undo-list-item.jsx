@@ -1,27 +1,18 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import { modifierKeyIsActive } from '../helpers/input';
+import { bumpStat } from '../rest-client/bump-stat';
 import { wpcom } from '../rest-client/wpcom';
 import actions from '../state/actions';
-import getSelectedNoteId from '../state/selectors/get-selected-note-id';
-import { bumpStat } from '../rest-client/bump-stat';
 import getKeyboardShortcutsEnabled from '../state/selectors/get-keyboard-shortcuts-enabled';
-import { modifierKeyIsActive } from '../helpers/input';
-
+import getSelectedNoteId from '../state/selectors/get-selected-note-id';
 import Gridicon from './gridicons';
-
 const { recordTracksEvent } = require( '../helpers/stats' );
 
 const KEY_U = 85;
 
-export class UndoListItem extends React.Component {
+export class UndoListItem extends Component {
 	state = {
 		undoTimer: null /* handle for queued action timer */,
 		undoTimeout: 4500 /* ms until action is actually executed */,
@@ -98,7 +89,9 @@ export class UndoListItem extends React.Component {
 		const component = this;
 
 		const updateSpamStatus = function ( error, data ) {
-			if ( error ) throw error;
+			if ( error ) {
+				throw error;
+			}
 
 			if ( 'spam' !== data.status ) {
 				// TODO: Handle failure to set Spam status
@@ -106,7 +99,9 @@ export class UndoListItem extends React.Component {
 		};
 
 		comment.get( function ( error, data ) {
-			if ( error ) throw error;
+			if ( error ) {
+				throw error;
+			}
 
 			data.status = 'spam';
 			comment.update( data, updateSpamStatus );
@@ -122,7 +117,9 @@ export class UndoListItem extends React.Component {
 			.site( this.props.note.meta.ids.site )
 			.comment( this.props.note.meta.ids.comment )
 			.del( ( error ) => {
-				if ( error ) throw error;
+				if ( error ) {
+					throw error;
+				}
 			} );
 
 		this.instance && this.setState( { isVisible: false } );

@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-const sass = require( 'sass' );
 const fs = require( 'fs' );
 const resolve = require( 'enhanced-resolve' );
+const sass = require( 'sass' );
 const yargs = require( 'yargs' );
 
 // parse CLI, require --in and --out args

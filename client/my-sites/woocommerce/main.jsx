@@ -1,24 +1,13 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { translate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import RequiredPluginsInstallView from './dashboard/required-plugins-install-view';
-import WooCommerceColophon from './woocommerce-colophon';
+import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { isLoaded as arePluginsLoaded } from 'calypso/state/plugins/installed/selectors';
-import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
+import LandingPage from './landing-page';
 
 function WooCommerce() {
 	const siteId = useSelector( getSelectedSiteId );
-	const areInstalledPluginsLoadedIntoState = useSelector( ( state ) =>
-		arePluginsLoaded( state, siteId )
-	);
 
 	if ( ! siteId ) {
 		return null;
@@ -27,10 +16,10 @@ function WooCommerce() {
 	return (
 		<div className="woocommerce">
 			<Main class="main" wideLayout>
-				<QueryJetpackPlugins siteIds={ [ siteId ] } />
-				{ areInstalledPluginsLoadedIntoState && <RequiredPluginsInstallView /> }
+				<DocumentHead title={ translate( 'WooCommerce' ) } />
+				<PageViewTracker path="/woocommerce-installation/:site" title="WooCommerce Installation" />
+				<LandingPage siteId={ siteId } />
 			</Main>
-			<WooCommerceColophon />
 		</div>
 	);
 }

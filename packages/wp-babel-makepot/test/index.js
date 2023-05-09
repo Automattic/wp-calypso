@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 const fs = require( 'fs' );
-const glob = require( 'glob' );
 const path = require( 'path' );
+const glob = require( 'glob' );
 const rimraf = require( 'rimraf' );
-
-/**
- * Internal dependencies
- */
 const makePot = require( '..' );
 const concatPot = require( '../utils/concat-pot' );
 

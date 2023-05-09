@@ -1,3 +1,6 @@
+@import "../../../assets/stylesheets/shared/mixins/breakpoints";
+@import "@automattic/typography/styles/variables";
+
 .help-contact-form {
 	.form-textarea {
 		// Fix the width of our text area so that it can only be resized vertically
@@ -8,6 +11,18 @@
 		display: block;
 		margin-top: 11px;
 	}
+
+	.inline-help__results {
+		padding: 0;
+	}
+
+	.inline-help__results-item a {
+		padding-left: 0;
+
+		&:hover {
+			background: none;
+		}
+	}
 }
 
 .help-contact-form__subject,
@@ -15,7 +30,7 @@
 .help-contact-form__selection {
 	margin-bottom: 24px;
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		margin-bottom: 32px;
 	}
 }
@@ -31,7 +46,7 @@
 		display: none;
 	}
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		.segmented-control {
 			// Show the segmented control when the browser is wider than 960px
 			display: flex;
@@ -63,7 +78,7 @@
 }
 
 .help-contact-form__site-notice {
-	margin: 8px auto 0;
+	margin: 8px auto 8px;
 }
 
 .help-contact-form__site-alternatives {

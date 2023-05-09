@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 export { isValidStateWithSchema, withSchemaValidation } from './schema-utils';
 export { keyedReducer } from './keyed-reducer';
 export { withEnhancers } from './with-enhancers';

@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
-
-/**
- * Internal Dependencies
- */
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getIntervalTypeForTerm } from '@automattic/calypso-products';
-import getCurrentPlanTerm from 'calypso/state/selectors/get-current-plan-term';
+import { connect } from 'react-redux';
 import Plans from 'calypso/my-sites/plans/main';
+import getCurrentPlanTerm from 'calypso/state/selectors/get-current-plan-term';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export default connect( ( state, { intervalType } ) => {
 	// For WP.com plans page, if intervalType is not explicitly specified in the URL,

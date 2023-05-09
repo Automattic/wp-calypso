@@ -1,38 +1,29 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 import config from '@automattic/calypso-config';
+import { CompactCard, FormInputValidation } from '@automattic/components';
+import { getLanguage } from '@automattic/i18n-utils';
+import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import Notice from 'calypso/components/notice';
-import { CompactCard } from '@automattic/components';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import Site from 'calypso/blocks/site';
+import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
-import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import FormTextarea from 'calypso/components/forms/form-textarea';
-import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormPhoneInput from 'calypso/components/forms/form-phone-input';
-import IsRebrandCitiesSite from './is-rebrand-cities-site';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormTextarea from 'calypso/components/forms/form-textarea';
+import Notice from 'calypso/components/notice';
 import Timezone from 'calypso/components/timezone';
-import Site from 'calypso/blocks/site';
-import { localize } from 'i18n-calypso';
-import { updateConciergeSignupForm } from 'calypso/state/concierge/actions';
-import getConciergeSignupForm from 'calypso/state/selectors/get-concierge-signup-form';
-import getUserSettings from 'calypso/state/selectors/get-user-settings';
-import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import PrimaryHeader from '../shared/primary-header';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getLanguage } from 'calypso/lib/i18n-utils';
+import { updateConciergeSignupForm } from 'calypso/state/concierge/actions';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import getConciergeSignupForm from 'calypso/state/selectors/get-concierge-signup-form';
 import getCountries from 'calypso/state/selectors/get-countries';
-import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import getUserSettings from 'calypso/state/selectors/get-user-settings';
+import PrimaryHeader from '../shared/primary-header';
 
 class InfoStep extends Component {
 	static propTypes = {
@@ -57,10 +48,6 @@ class InfoStep extends Component {
 			[ name ]: value,
 		} );
 	}
-
-	setRebrandCitiesValue = ( value ) => {
-		this.updateSignupForm( 'isRebrandCitiesSite', value );
-	};
 
 	onChange = ( phoneNumber ) => {
 		if ( phoneNumber.phoneNumber && ! phoneNumber.isValid ) {
@@ -136,7 +123,6 @@ class InfoStep extends Component {
 
 		return (
 			<div>
-				<IsRebrandCitiesSite onChange={ this.setRebrandCitiesValue } siteId={ site.ID } />
 				<PrimaryHeader />
 				{ ! isEnglish && <Notice showDismiss={ false } text={ noticeText } /> }
 				<CompactCard className="book__info-step-site-block">

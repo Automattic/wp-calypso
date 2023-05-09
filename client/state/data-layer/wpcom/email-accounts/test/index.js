@@ -1,19 +1,10 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import { getEmailAccounts, getEmailAccountsFailure, getEmailAccountsSuccess } from '../';
 import {
 	EMAIL_ACCOUNTS_REQUEST,
 	EMAIL_ACCOUNTS_REQUEST_SUCCESS,
 	EMAIL_ACCOUNTS_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
-
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { getEmailAccounts, getEmailAccountsFailure, getEmailAccountsSuccess } from '../';
 
 const isErrorNotice = ( action ) => {
 	return action && action.notice && 'is-error' === action.notice.status;
@@ -29,7 +20,7 @@ describe( 'wpcom-api', () => {
 
 		describe( '#getEmailAccounts', () => {
 			test( 'should dispatch an HTTP request to the get email-accounts endpoint', () => {
-				expect( getEmailAccounts( action ) ).to.eql(
+				expect( getEmailAccounts( action ) ).toEqual(
 					http(
 						{
 							method: 'GET',
@@ -46,9 +37,9 @@ describe( 'wpcom-api', () => {
 
 			test( 'should dispatch a get email accounts failure action on error', () => {
 				const resultActions = getEmailAccountsFailure( action, { message } );
-				expect( resultActions ).to.have.lengthOf( 2 );
-				expect( isErrorNotice( resultActions[ 0 ] ) ).to.be.true;
-				expect( resultActions[ 1 ] ).to.eql( {
+				expect( resultActions ).toHaveLength( 2 );
+				expect( isErrorNotice( resultActions[ 0 ] ) ).toBe( true );
+				expect( resultActions[ 1 ] ).toEqual( {
 					type: EMAIL_ACCOUNTS_REQUEST_FAILURE,
 					siteId,
 					error: { message },
@@ -77,7 +68,7 @@ describe( 'wpcom-api', () => {
 						},
 					],
 				};
-				expect( getEmailAccountsSuccess( action, response ) ).to.eql( {
+				expect( getEmailAccountsSuccess( action, response ) ).toEqual( {
 					type: EMAIL_ACCOUNTS_REQUEST_SUCCESS,
 					siteId,
 					response,
@@ -86,9 +77,9 @@ describe( 'wpcom-api', () => {
 
 			test( 'should dispatch a get email accounts failure action on no response', () => {
 				const resultActions = getEmailAccountsSuccess( action, undefined );
-				expect( resultActions ).to.have.lengthOf( 2 );
-				expect( isErrorNotice( resultActions[ 0 ] ) ).to.be.true;
-				expect( resultActions[ 1 ] ).to.eql( {
+				expect( resultActions ).toHaveLength( 2 );
+				expect( isErrorNotice( resultActions[ 0 ] ) ).toBe( true );
+				expect( resultActions[ 1 ] ).toEqual( {
 					type: EMAIL_ACCOUNTS_REQUEST_FAILURE,
 					siteId,
 					error: { message: 'Failed to retrieve your email accounts. No response was received' },

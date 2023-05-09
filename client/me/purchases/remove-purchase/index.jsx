@@ -1,25 +1,5 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
-import page from 'page';
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import Gridicon from 'calypso/components/gridicon';
-import { localize } from 'i18n-calypso';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { Dialog, Button, CompactCard } from '@automattic/components';
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 import config from '@automattic/calypso-config';
-import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
-import PrecancellationChatButton from 'calypso/components/marketing-survey/cancel-purchase-form/precancellation-chat-button';
-import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
-import GSuiteCancellationPurchaseDialog from 'calypso/components/marketing-survey/gsuite-cancel-purchase-dialog';
-import { getIncludedDomain, getName, hasIncludedDomain, isRemovable } from 'calypso/lib/purchases';
-import { isDataLoading } from '../utils';
 import {
 	isDomainMapping,
 	isDomainRegistration,
@@ -28,34 +8,52 @@ import {
 	isJetpackPlan,
 	isJetpackProduct,
 	isPlan,
-	isJetpackSearch,
 	isTitanMail,
+	isAkismetProduct,
 } from '@automattic/calypso-products';
-import { purchasesRoot } from '../paths';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { getPurchasesError } from 'calypso/state/purchases/selectors';
-import { removePurchase } from 'calypso/state/purchases/actions';
+import { Button, CompactCard, Gridicon } from '@automattic/components';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import page from 'page';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import CancelJetpackForm from 'calypso/components/marketing-survey/cancel-jetpack-form';
+import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
+import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
+import PrecancellationChatButton from 'calypso/components/marketing-survey/cancel-purchase-form/precancellation-chat-button';
+import GSuiteCancellationPurchaseDialog from 'calypso/components/marketing-survey/gsuite-cancel-purchase-dialog';
+import VerticalNavItem from 'calypso/components/vertical-nav/item';
+import { getName, isRemovable } from 'calypso/lib/purchases';
+import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dialog';
+import WordAdsEligibilityWarningDialog from 'calypso/me/purchases/wordads-eligibility-warning-dialog';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
-import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { removePurchase } from 'calypso/state/purchases/actions';
+import { getPurchasesError } from 'calypso/state/purchases/selectors';
+import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import isDomainOnly from 'calypso/state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { receiveDeletedSite } from 'calypso/state/sites/actions';
 import { setAllSitesSelected } from 'calypso/state/ui/actions';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { MarketPlaceSubscriptionsDialog } from '../marketplace-subscriptions-dialog';
+import { purchasesRoot } from '../paths';
+import { PreCancellationDialog } from '../pre-cancellation-dialog';
+import {
+	isDataLoading,
+	isAkismetTemporarySitePurchase,
+	isJetpackTemporarySitePurchase,
+} from '../utils';
 import RemoveDomainDialog from './remove-domain-dialog';
-import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dialog';
-import VerticalNavItem from 'calypso/components/vertical-nav/item';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class RemovePurchase extends Component {
 	static propTypes = {
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
 		hasNonPrimaryDomainsFlag: PropTypes.bool,
+		hasSetupAds: PropTypes.bool,
 		isDomainOnlySite: PropTypes.bool,
 		hasCustomPrimaryDomain: PropTypes.bool,
 		receiveDeletedSite: PropTypes.func.isRequired,
@@ -67,6 +65,9 @@ class RemovePurchase extends Component {
 		useVerticalNavItem: PropTypes.bool,
 		onClickTracks: PropTypes.func,
 		purchaseListUrl: PropTypes.string,
+		activeSubscriptions: PropTypes.array,
+		linkIcon: PropTypes.string,
+		primaryDomain: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -77,19 +78,27 @@ class RemovePurchase extends Component {
 		isDialogVisible: false,
 		isRemoving: false,
 		isShowingNonPrimaryDomainWarning: false,
-		survey: {},
+		isShowingMarketplaceSubscriptionsDialog: false,
+		isShowingPreCancellationDialog: false,
+		isShowingWordAdsEligibilityWarningDialog: false,
 	};
 
 	closeDialog = () => {
 		this.setState( {
 			isDialogVisible: false,
 			isShowingNonPrimaryDomainWarning: false,
+			isShowingMarketplaceSubscriptionsDialog: false,
+			isShowingPreCancellationDialog: false,
+			isShowingWordAdsEligibilityWarningDialog: false,
 		} );
 	};
 
 	showRemovePlanDialog = () => {
 		this.setState( {
+			isShowingMarketplaceSubscriptionsDialog: false,
 			isShowingNonPrimaryDomainWarning: false,
+			isShowingPreCancellationDialog: false,
+			isShowingWordAdsEligibilityWarningDialog: false,
 			isDialogVisible: true,
 		} );
 	};
@@ -100,17 +109,53 @@ class RemovePurchase extends Component {
 		if ( this.props.onClickTracks ) {
 			this.props.onClickTracks( event );
 		}
-		if (
+		if ( this.shouldShowPreCancellationDialog() && ! this.state.isShowingPreCancellationDialog ) {
+			this.setState( {
+				isShowingNonPrimaryDomainWarning: false,
+				isShowingMarketplaceSubscriptionsDialog: false,
+				isShowingPreCancellationDialog: true,
+				isShowingWordAdsEligibilityWarningDialog: false,
+				isDialogVisible: false,
+			} );
+		} else if (
 			this.shouldShowNonPrimaryDomainWarning() &&
 			! this.state.isShowingNonPrimaryDomainWarning
 		) {
 			this.setState( {
 				isShowingNonPrimaryDomainWarning: true,
+				isShowingMarketplaceSubscriptionsDialog: false,
+				isShowingPreCancellationDialog: false,
+				isShowingWordAdsEligibilityWarningDialog: false,
+				isDialogVisible: false,
+			} );
+		} else if (
+			this.shouldHandleMarketplaceSubscriptions() &&
+			! this.state.isShowingMarketplaceSubscriptionsDialog
+		) {
+			this.setState( {
+				isShowingNonPrimaryDomainWarning: false,
+				isShowingMarketplaceSubscriptionsDialog: true,
+				isShowingPreCancellationDialog: false,
+				isShowingWordAdsEligibilityWarningDialog: false,
+				isDialogVisible: false,
+			} );
+		} else if (
+			this.shouldShowWordAdsEligibilityWarning() &&
+			! this.state.isShowingWordAdsEligibilityWarningDialog
+		) {
+			this.setState( {
+				isShowingNonPrimaryDomainWarning: false,
+				isShowingMarketplaceSubscriptionsDialog: false,
+				isShowingPreCancellationDialog: false,
+				isShowingWordAdsEligibilityWarningDialog: true,
 				isDialogVisible: false,
 			} );
 		} else {
 			this.setState( {
 				isShowingNonPrimaryDomainWarning: false,
+				isShowingMarketplaceSubscriptionsDialog: false,
+				isShowingPreCancellationDialog: false,
+				isShowingWordAdsEligibilityWarningDialog: false,
 				isDialogVisible: true,
 			} );
 		}
@@ -120,59 +165,72 @@ class RemovePurchase extends Component {
 		this.setState( { isDialogVisible: false } );
 	};
 
-	onSurveyChange = ( update ) => {
-		this.setState( {
-			survey: update,
-		} );
-	};
-
-	removePurchase = () => {
+	removePurchase = async () => {
 		this.setState( { isRemoving: true } );
 
-		const { isDomainOnlySite, purchase, translate } = this.props;
+		const { activeSubscriptions, purchaseListUrl, purchase } = this.props;
 
-		this.props.removePurchase( purchase.id, this.props.userId ).then( () => {
-			const productName = getName( purchase );
-			const { purchasesError, purchaseListUrl } = this.props;
+		// If the site has active Marketplace subscriptions, remove these as well
+		if ( this.shouldHandleMarketplaceSubscriptions() ) {
+			// no need to await here, as
+			// - the success/error messages are handled for each request separately
+			// - the plan removal is awaited below
+			activeSubscriptions.forEach( ( s ) => this.handlePurchaseRemoval( s ) );
+		}
 
-			if ( purchasesError ) {
-				this.setState( { isRemoving: false } );
+		await this.handlePurchaseRemoval( purchase );
 
-				this.closeDialog();
+		page( purchaseListUrl );
+	};
 
-				this.props.errorNotice( purchasesError );
-			} else {
-				if ( isDomainRegistration( purchase ) ) {
-					if ( isDomainOnlySite ) {
-						this.props.receiveDeletedSite( purchase.siteId );
-						this.props.setAllSitesSelected();
-					}
+	handlePurchaseRemoval = async ( purchase ) => {
+		const { userId, isDomainOnlySite, translate, purchasesError } = this.props;
 
-					this.props.successNotice(
-						translate( 'The domain {{domain/}} was removed from your account.', {
-							components: { domain: <em>{ productName }</em> },
-						} ),
-						{ isPersistent: true }
-					);
-				} else {
-					this.props.successNotice(
-						translate( '%(productName)s was removed from {{siteName/}}.', {
-							args: { productName },
-							components: { siteName: <em>{ purchase.domain }</em> },
-						} ),
-						{ isPersistent: true }
-					);
-				}
+		await this.props.removePurchase( purchase.id, userId );
 
-				page( purchaseListUrl );
-			}
+		const productName = getName( purchase );
+		let successMessage;
+
+		if ( purchasesError ) {
+			this.setState( { isRemoving: false } );
+			this.closeDialog();
+			this.props.errorNotice( purchasesError );
+			return;
+		}
+
+		successMessage = translate( '%(productName)s was removed from {{siteName/}}.', {
+			args: { productName },
+			components: { siteName: <em>{ purchase.domain }</em> },
 		} );
+
+		if (
+			isAkismetTemporarySitePurchase( purchase ) ||
+			isJetpackTemporarySitePurchase( purchase )
+		) {
+			successMessage = translate( '%(productName)s was removed from your account.', {
+				args: { productName },
+			} );
+		}
+
+		if ( isDomainRegistration( purchase ) ) {
+			if ( isDomainOnlySite ) {
+				this.props.receiveDeletedSite( purchase.siteId );
+				this.props.setAllSitesSelected();
+			}
+
+			successMessage = translate( 'The domain {{domain/}} was removed from your account.', {
+				components: { domain: <em>{ productName }</em> },
+			} );
+		}
+
+		this.props.successNotice( successMessage, { isPersistent: true } );
 	};
 
 	getChatButton = () => (
 		<PrecancellationChatButton
 			onClick={ this.onClickChatButton }
 			purchase={ this.props.purchase }
+			className="remove-domain-dialog__chat-button"
 		/>
 	);
 
@@ -191,8 +249,13 @@ class RemovePurchase extends Component {
 		);
 	}
 
+	shouldShowWordAdsEligibilityWarning() {
+		const { hasSetupAds, purchase } = this.props;
+		return hasSetupAds && isPlan( purchase );
+	}
+
 	renderNonPrimaryDomainWarningDialog() {
-		const { purchase, site } = this.props;
+		const { hasSetupAds, purchase, site } = this.props;
 		return (
 			<NonPrimaryDomainDialog
 				isDialogVisible={ this.state.isShowingNonPrimaryDomainWarning }
@@ -201,42 +264,72 @@ class RemovePurchase extends Component {
 				planName={ getName( purchase ) }
 				oldDomainName={ site.domain }
 				newDomainName={ site.wpcom_url }
+				hasSetupAds={ hasSetupAds }
+			/>
+		);
+	}
+
+	renderWordAdsEligibilityWarningDialog() {
+		const { purchase } = this.props;
+		return (
+			<WordAdsEligibilityWarningDialog
+				isDialogVisible={ this.state.isShowingWordAdsEligibilityWarningDialog }
+				closeDialog={ this.closeDialog }
+				removePlan={ this.showRemovePlanDialog }
+				planName={ getName( purchase ) }
+			/>
+		);
+	}
+
+	shouldShowPreCancellationDialog() {
+		const { purchase } = this.props;
+		return (
+			config.isEnabled( 'pre-cancellation-modal' ) &&
+			isPlan( purchase ) &&
+			! isJetpackPlan( purchase ) &&
+			! isGSuiteOrGoogleWorkspace( purchase )
+		);
+	}
+
+	renderPreCancellationDialog() {
+		const { site, purchase, primaryDomain, hasCustomPrimaryDomain } = this.props;
+		const customDomain = hasCustomPrimaryDomain && primaryDomain.name;
+		const primaryDomainName = customDomain ? primaryDomain.name : '';
+
+		return (
+			<PreCancellationDialog
+				isDialogVisible={ this.state.isShowingPreCancellationDialog }
+				closeDialog={ this.closeDialog }
+				removePlan={ this.showRemovePlanDialog }
+				site={ site }
+				purchase={ purchase }
+				hasDomain={ customDomain }
+				primaryDomain={ primaryDomainName }
+				wpcomURL={ site.wpcom_url }
 			/>
 		);
 	}
 
 	renderDomainDialog() {
-		let chatButton = null;
-
-		if (
-			config.isEnabled( 'upgrades/precancellation-chat' ) &&
-			this.state.surveyStep !== 'happychat_step'
-		) {
-			chatButton = this.getChatButton();
-		}
-
 		return (
 			<RemoveDomainDialog
 				isRemoving={ this.state.isRemoving }
 				isDialogVisible={ this.state.isDialogVisible }
 				removePurchase={ this.removePurchase }
 				closeDialog={ this.closeDialog }
-				chatButton={ chatButton }
+				chatButton={ this.getChatButton() }
 				purchase={ this.props.purchase }
 			/>
 		);
 	}
 
-	renderPlanDialog() {
-		const { purchase, site } = this.props;
+	renderDomainMappingDialog() {
+		const { purchase } = this.props;
 
 		return (
 			<CancelPurchaseForm
 				disableButtons={ this.state.isRemoving }
-				defaultContent={ this.renderPlanDialogText() }
-				onInputChange={ this.onSurveyChange }
 				purchase={ purchase }
-				selectedSite={ site }
 				isVisible={ this.state.isDialogVisible }
 				onClose={ this.closeDialog }
 				onClickFinalConfirm={ this.removePurchase }
@@ -245,79 +338,54 @@ class RemovePurchase extends Component {
 		);
 	}
 
-	renderPlanDialogText() {
-		const { purchase, translate } = this.props;
-		const productName = getName( purchase );
-		const includedDomainText = (
-			<p>
-				{ translate(
-					'The domain associated with this plan, {{domain/}}, will not be removed. ' +
-						'It will remain active on your site, unless also removed.',
-					{ components: { domain: <em>{ getIncludedDomain( purchase ) }</em> } }
-				) }
-			</p>
-		);
+	renderPlanDialog() {
+		const { purchase, activeSubscriptions } = this.props;
 
 		return (
-			<div>
-				<p>
-					{
-						/* translators: productName is a product name, like Jetpack.
-					 domain is something like example.wordpress.com */
-						translate( 'Are you sure you want to remove %(productName)s from {{domain/}}?', {
-							args: { productName },
-							components: { domain: <em>{ purchase.domain }</em> },
-							// ^ is the internal WPcom domain i.e. example.wordpress.com
-							// if we want to use the purchased domain we can swap with the below line
-							//{ components: { domain: <em>{ getIncludedDomain( purchase ) }</em> } }
-						} )
-					}{ ' ' }
-					{ translate(
-						'You will not be able to reuse it again without purchasing a new subscription.',
-						{ comment: "'it' refers to a product purchased by a user" }
-					) }
-				</p>
-
-				{ isPlan( purchase ) && hasIncludedDomain( purchase ) && includedDomainText }
-			</div>
+			<CancelPurchaseForm
+				disableButtons={ this.state.isRemoving }
+				purchase={ purchase }
+				linkedPurchases={ activeSubscriptions }
+				isVisible={ this.state.isDialogVisible }
+				onClose={ this.closeDialog }
+				onClickFinalConfirm={ this.removePurchase }
+				flowType={ CANCEL_FLOW_TYPE.REMOVE }
+			/>
 		);
 	}
 
-	renderAtomicDialog( purchase ) {
-		const { translate } = this.props;
-		const supportButton = this.props.isChatAvailable
-			? this.getChatButton()
-			: this.getContactUsButton();
-
-		const buttons = [
-			supportButton,
-			{
-				action: 'cancel',
-				disabled: this.state.isRemoving,
-				isPrimary: true,
-				label: translate( "I'll Keep It" ),
-			},
-		];
-		const productName = getName( purchase );
+	renderJetpackDialog() {
+		const { purchase, purchaseListUrl } = this.props;
 
 		return (
-			<Dialog
-				buttons={ buttons }
-				className="remove-purchase__dialog"
+			<CancelJetpackForm
+				disableButtons={ this.state.isRemoving }
+				purchase={ purchase }
+				purchaseListUrl={ purchaseListUrl }
 				isVisible={ this.state.isDialogVisible }
 				onClose={ this.closeDialog }
-			>
-				<FormSectionHeading />
-				<p>
-					{ translate(
-						'To cancel your %(productName)s plan, please contact our support team' +
-							' — a Happiness Engineer will take care of it.',
-						{
-							args: { productName },
-						}
-					) }
-				</p>
-			</Dialog>
+				onClickFinalConfirm={ this.removePurchase }
+				flowType={ CANCEL_FLOW_TYPE.REMOVE }
+			/>
+		);
+	}
+
+	shouldHandleMarketplaceSubscriptions() {
+		const { activeSubscriptions } = this.props;
+
+		return activeSubscriptions?.length > 0;
+	}
+
+	renderMarketplaceSubscriptionsDialog() {
+		const { purchase, activeSubscriptions } = this.props;
+		return (
+			<MarketPlaceSubscriptionsDialog
+				isDialogVisible={ this.state.isShowingMarketplaceSubscriptionsDialog }
+				closeDialog={ this.closeDialog }
+				removePlan={ this.showRemovePlanDialog }
+				planName={ getName( purchase ) }
+				activeSubscriptions={ activeSubscriptions }
+			/>
 		);
 	}
 
@@ -328,7 +396,11 @@ class RemovePurchase extends Component {
 			return this.renderDomainDialog();
 		}
 
-		if ( isDomainMapping( purchase ) || isDomainTransfer( purchase ) || isTitanMail( purchase ) ) {
+		if ( isDomainMapping( purchase ) ) {
+			return this.renderDomainMappingDialog();
+		}
+
+		if ( isDomainTransfer( purchase ) || isTitanMail( purchase ) ) {
 			return this.renderPlanDialog();
 		}
 
@@ -343,8 +415,9 @@ class RemovePurchase extends Component {
 			);
 		}
 
-		if ( this.props.isAtomicSite && ! isJetpackSearch( purchase ) ) {
-			return this.renderAtomicDialog( purchase );
+		// Jetpack Plan or Product Cancellation
+		if ( this.props.isJetpack ) {
+			return this.renderJetpackDialog();
 		}
 
 		return this.renderPlanDialog();
@@ -355,12 +428,12 @@ class RemovePurchase extends Component {
 			return null;
 		}
 
-		// If we have a disconnected site that is _not_ a Jetpack purchase, no removal allowed.
-		if ( ! this.props.site && ! this.props.isJetpack ) {
+		// If we have a disconnected site that is _not_ a Jetpack purchase _or_ an Akismet purchase, no removal allowed.
+		if ( ! this.props.site && ! this.props.isJetpack && ! this.props.isAkismet ) {
 			return null;
 		}
 
-		const { purchase, className, useVerticalNavItem, translate } = this.props;
+		const { className, purchase, translate, useVerticalNavItem } = this.props;
 		const productName = getName( purchase );
 
 		if ( ! isRemovable( purchase ) ) {
@@ -369,7 +442,6 @@ class RemovePurchase extends Component {
 
 		const defaultContent = (
 			<>
-				<Gridicon icon="trash" />
 				{
 					// translators: productName is a product name, like Jetpack
 					translate( 'Remove %(productName)s', { args: { productName } } )
@@ -379,13 +451,33 @@ class RemovePurchase extends Component {
 
 		const wrapperClassName = classNames( 'remove-purchase__card', className );
 		const Wrapper = useVerticalNavItem ? VerticalNavItem : CompactCard;
+		const getWarningDialog = () => {
+			if ( this.shouldShowPreCancellationDialog() ) {
+				return this.renderPreCancellationDialog();
+			}
+
+			if ( this.shouldShowNonPrimaryDomainWarning() ) {
+				return this.renderNonPrimaryDomainWarningDialog();
+			}
+
+			if ( this.shouldHandleMarketplaceSubscriptions() ) {
+				return this.renderMarketplaceSubscriptionsDialog();
+			}
+
+			if ( this.shouldShowWordAdsEligibilityWarning() ) {
+				return this.renderWordAdsEligibilityWarningDialog();
+			}
+
+			return null;
+		};
 
 		return (
 			<>
 				<Wrapper tagName="button" className={ wrapperClassName } onClick={ this.openDialog }>
 					{ this.props.children ? this.props.children : defaultContent }
+					<Gridicon className="card__link-indicator" icon={ this.props.linkIcon || 'trash' } />
 				</Wrapper>
-				{ this.shouldShowNonPrimaryDomainWarning() && this.renderNonPrimaryDomainWarningDialog() }
+				{ getWarningDialog() }
 				{ this.renderDialog() }
 			</>
 		);
@@ -395,13 +487,16 @@ class RemovePurchase extends Component {
 export default connect(
 	( state, { purchase } ) => {
 		const isJetpack = purchase && ( isJetpackPlan( purchase ) || isJetpackProduct( purchase ) );
+		const isAkismet = purchase && isAkismetProduct( purchase );
 		return {
 			isDomainOnlySite: purchase && isDomainOnly( state, purchase.siteId ),
 			isAtomicSite: isSiteAutomatedTransfer( state, purchase.siteId ),
 			isChatAvailable: isHappychatAvailable( state ),
 			isJetpack,
+			isAkismet,
 			purchasesError: getPurchasesError( state ),
 			userId: getCurrentUserId( state ),
+			primaryDomain: getPrimaryDomainBySiteId( state, purchase.siteId ),
 		};
 	},
 	{

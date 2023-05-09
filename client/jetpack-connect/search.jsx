@@ -1,45 +1,32 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { concat, flowRight } from 'lodash';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
-import HelpButton from './help-button';
-import LocaleSuggestions from 'calypso/components/locale-suggestions';
+import { localize } from 'i18n-calypso';
+import page from 'page';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
-import MainHeader from './main-header';
-import MainWrapper from './main-wrapper';
-import page from 'page';
-import SiteUrlInput from './site-url-input';
-import { cleanUrl } from './utils';
+import searchSites from 'calypso/components/search-sites';
+import { urlToSlug } from 'calypso/lib/url';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { checkUrl, dismissUrl } from 'calypso/state/jetpack-connect/actions';
 import { getConnectingSite, getJetpackSiteByUrl } from 'calypso/state/jetpack-connect/selectors';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
-import { persistSession, retrieveMobileRedirect } from './persistence-utils';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { urlToSlug } from 'calypso/lib/url';
-import searchSites from 'calypso/components/search-sites';
-import jetpackConnection from './jetpack-connection';
-
-import { IS_DOT_COM_GET_SEARCH, JPC_PATH_REMOTE_INSTALL } from './constants';
-import { FLOW_TYPES } from './flow-types';
 import { ALREADY_CONNECTED } from './connection-notice-types';
+import { IS_DOT_COM_GET_SEARCH } from './constants';
+import { FLOW_TYPES } from './flow-types';
+import HelpButton from './help-button';
+import jetpackConnection from './jetpack-connection';
+import MainHeader from './main-header';
+import MainWrapper from './main-wrapper';
+import { persistSession, retrieveMobileRedirect } from './persistence-utils';
+import SiteUrlInput from './site-url-input';
+import { cleanUrl } from './utils';
 
 export class SearchPurchase extends Component {
 	static propTypes = {
-		locale: PropTypes.string,
-		path: PropTypes.string,
-		type: PropTypes.oneOf( concat( FLOW_TYPES, false ) ),
+		type: PropTypes.oneOf( [ ...FLOW_TYPES, false ] ),
 		url: PropTypes.string,
 		processJpSite: PropTypes.func,
 	};
@@ -72,16 +59,11 @@ export class SearchPurchase extends Component {
 		this.setState( { candidateSites } );
 	}
 
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		if ( this.props.url ) {
 			this.checkUrl( cleanUrl( this.props.url ) );
 		}
-		if ( ! this.props.isLoggedIn ) {
-			this.goToRemoteInstall( JPC_PATH_REMOTE_INSTALL );
-		}
-	}
 
-	componentDidMount() {
 		this.props.recordTracksEvent( 'calypso_jpc_url_view', {
 			jpc_from: 'jp_lp',
 			cta_id: this.props.ctaId,
@@ -180,9 +162,7 @@ export class SearchPurchase extends Component {
 					onChange={ this.handleUrlChange }
 					onSubmit={ this.handleUrlSubmit }
 					isError={ status }
-					isFetching={
-						this.props.isCurrentUrlFetching || this.state.redirecting || this.state.waitingForSites
-					}
+					isFetching={ this.props.isCurrentUrlFetching || this.state.waitingForSites }
 					isInstall={ true }
 					isSearch={ isSearch }
 					candidateSites={ this.state.candidateSites }
@@ -191,22 +171,13 @@ export class SearchPurchase extends Component {
 		);
 	}
 
-	renderLocaleSuggestions() {
-		if ( this.props.isLoggedIn || ! this.props.locale ) {
-			return;
-		}
-
-		return <LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />;
-	}
-
 	render() {
 		const { renderFooter, status } = this.props;
 
 		return (
 			<MainWrapper>
-				{ this.renderLocaleSuggestions() }
 				<div className="jetpack-connect__site-url-entry-container">
-					<MainHeader type={ 'jetpack_search' } />
+					<MainHeader type="jetpack_search" />
 
 					{ this.renderSiteInput( status ) }
 					{ renderFooter() }
@@ -231,7 +202,6 @@ const connectComponent = connect(
 		return {
 			// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
 			getJetpackSiteByUrl: ( url ) => getJetpackSiteByUrl( state, url ),
-			isLoggedIn: !! getCurrentUserId( state ),
 			isMobileAppFlow,
 			isRequestingSites: isRequestingSites( state ),
 			jetpackConnectSite,
@@ -248,9 +218,4 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight(
-	jetpackConnection,
-	connectComponent,
-	searchSites,
-	localize
-)( SearchPurchase );
+export default jetpackConnection( connectComponent( searchSites( localize( SearchPurchase ) ) ) );

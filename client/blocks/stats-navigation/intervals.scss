@@ -3,7 +3,7 @@
 		max-width: 100%;
 		margin: 8px 9px;
 
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( ">480px" ) {
 			max-width: 400px;
 			margin: 16px auto;
 		}

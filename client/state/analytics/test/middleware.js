@@ -1,6 +1,15 @@
-/**
- * Internal dependencies
- */
+import {
+	trackCustomFacebookConversionEvent,
+	trackCustomAdWordsRemarketingEvent,
+} from 'calypso/lib/analytics/ad-tracking';
+import { gaRecordPageView, gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
+import { bumpStat as mcBumpStat } from 'calypso/lib/analytics/mc';
+import { recordPageView as pageviewRecordPageView } from 'calypso/lib/analytics/page-view';
+import {
+	setTracksOptOut as tracksSetTracksOptOut,
+	recordTracksEvent as tracksRecordTracksEvent,
+} from 'calypso/lib/analytics/tracks';
 import {
 	withAnalytics,
 	bumpStat,
@@ -14,18 +23,6 @@ import {
 	loadTrackingTool,
 } from '../actions';
 import { analyticsMiddleware } from '../middleware.js';
-import {
-	trackCustomFacebookConversionEvent,
-	trackCustomAdWordsRemarketingEvent,
-} from 'calypso/lib/analytics/ad-tracking';
-import { bumpStat as mcBumpStat } from 'calypso/lib/analytics/mc';
-import { gaRecordPageView, gaRecordEvent } from 'calypso/lib/analytics/ga';
-import { recordPageView as pageviewRecordPageView } from 'calypso/lib/analytics/page-view';
-import {
-	setTracksOptOut as tracksSetTracksOptOut,
-	recordTracksEvent as tracksRecordTracksEvent,
-} from 'calypso/lib/analytics/tracks';
-import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 
 const noop = () => {};
 
@@ -81,9 +78,14 @@ describe( 'middleware', () => {
 		test( 'should call pageView.record', () => {
 			dispatch( recordPageView( 'path', 'title', 'default', { name: 'value' } ) );
 
-			expect( pageviewRecordPageView ).toHaveBeenCalledWith( 'path', 'title', {
-				name: 'value',
-			} );
+			expect( pageviewRecordPageView ).toHaveBeenCalledWith(
+				'path',
+				'title',
+				{
+					name: 'value',
+				},
+				{}
+			);
 		} );
 
 		test( 'should call gaRecordEvent', () => {

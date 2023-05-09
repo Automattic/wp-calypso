@@ -1,4 +1,4 @@
-$section-border: solid 1px var( --color-neutral-5 );
+$section-border: solid 1px var(--color-neutral-5);
 
 .post-share .card.banner,
 .card.post-share__upgrade-nudge {
@@ -10,7 +10,7 @@ $section-border: solid 1px var( --color-neutral-5 );
 	border-top: $section-border;
 	margin: 0;
 	position: relative;
-	background-color: var( --color-surface );
+	background-color: var(--color-surface);
 
 	.notice {
 		margin-bottom: 0;
@@ -42,14 +42,14 @@ $section-border: solid 1px var( --color-neutral-5 );
 	display: flex;
 	flex-direction: column-reverse;
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		flex-direction: row;
 	}
 }
 
 .post-share__wrapper.is-placeholder {
 	padding-bottom: 24px;
-	border-bottom: 1px solid rgba( var( --color-neutral-10-rgb ), 0.5 );
+	border-bottom: 1px solid rgba(var(--color-neutral-10-rgb), 0.5);
 }
 
 .post-share__placeholder {
@@ -65,7 +65,7 @@ $section-border: solid 1px var( --color-neutral-5 );
 	}
 
 	padding: 16px;
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		padding: 16px;
 	}
 }
@@ -78,7 +78,7 @@ $section-border: solid 1px var( --color-neutral-5 );
 .post-share__form {
 	flex: 3 0 0;
 	margin: 0 16px 16px;
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		margin: 0 16px 16px;
 	}
 
@@ -131,7 +131,7 @@ $section-border: solid 1px var( --color-neutral-5 );
 	align-items: center;
 	cursor: pointer;
 	display: flex;
-	color: var( --color-neutral-10 );
+	color: var(--color-neutral-10);
 	margin-top: 16px;
 
 	&:first-of-type {
@@ -143,7 +143,7 @@ $section-border: solid 1px var( --color-neutral-5 );
 	}
 
 	&.is-active {
-		color: var( --color-neutral-70 );
+		color: var(--color-neutral-70);
 	}
 }
 
@@ -166,9 +166,9 @@ $section-border: solid 1px var( --color-neutral-5 );
 	overflow: hidden;
 
 	&::before {
-		background-color: var( --color-surface );
+		background-color: var(--color-surface);
 		border-radius: 2px;
-		content: '';
+		content: "";
 		display: block;
 		height: 22px;
 		position: absolute;
@@ -225,27 +225,27 @@ $section-border: solid 1px var( --color-neutral-5 );
 .post-share__service.is-active,
 .post-share__handle {
 	.social-logo.twitter {
-		color: var( --color-twitter );
+		color: var(--color-twitter);
 	}
 
 	.social-logo.facebook {
-		color: var( --color-facebook );
+		color: var(--color-facebook);
 	}
 
 	.social-logo.google-plus {
-		color: var( --color-google-plus );
+		color: var(--color-google-plus);
 	}
 
 	.social-logo.linkedin {
-		color: var( --color-linkedin );
+		color: var(--color-linkedin);
 	}
 
 	.social-logo.tumblr {
-		color: var( --color-tumblr );
+		color: var(--color-tumblr);
 	}
 
 	.social-logo.eventbrite {
-		color: var( --color-eventbrite );
+		color: var(--color-eventbrite);
 	}
 
 	.post-share__service-account-image::after {
@@ -288,17 +288,17 @@ $section-border: solid 1px var( --color-neutral-5 );
 	margin: 0 auto 1px;
 	padding: 16px;
 
-	background: var( --color-surface );
+	background: var(--color-surface);
 
 	border-top: $section-border;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		margin-bottom: 1px;
 		padding: 16px;
 	}
 
 	&::after {
-		content: '';
+		content: "";
 		display: none;
 	}
 }
@@ -323,7 +323,7 @@ $section-border: solid 1px var( --color-neutral-5 );
 	overflow: hidden;
 	position: relative;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		align-items: center;
 		flex-direction: row;
 
@@ -332,12 +332,12 @@ $section-border: solid 1px var( --color-neutral-5 );
 		}
 	}
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		align-items: flex-start;
 		flex-direction: column;
 	}
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		align-items: center;
 		flex-direction: row;
 	}
@@ -346,7 +346,7 @@ $section-border: solid 1px var( --color-neutral-5 );
 .post-share__footer-item .social-logo {
 	flex: 0 0 24px;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		position: relative;
 		top: 1px;
 	}
@@ -359,7 +359,7 @@ $section-border: solid 1px var( --color-neutral-5 );
 	top: -1px;
 	left: -1px;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		top: 0;
 	}
 }
@@ -378,62 +378,62 @@ $section-border: solid 1px var( --color-neutral-5 );
 }
 
 .post-share__handle {
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		margin-right: 7px;
 	}
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		margin-right: 12px;
 	}
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		margin-right: 7px;
 	}
 }
 
 .post-share__timestamp-value {
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		padding-left: 0;
 	}
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		padding-left: 4px;
 	}
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		padding-left: 0;
 	}
 }
 
 .post-share__message {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	display: none;
 	flex: 0 1 auto;
 	font-style: italic;
 	white-space: nowrap;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		display: block;
 	}
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		display: none;
 	}
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		display: block;
 	}
 }
 
 .post-share__external-url {
-	color: var( --color-neutral-10 );
+	color: var(--color-neutral-10);
 	transition: color 200ms;
 	height: 24px;
 	width: 24px;
 
 	&:hover,
 	&:focus {
-		color: var( --color-neutral-40 );
+		color: var(--color-neutral-40);
 	}
 }
 

@@ -1,20 +1,10 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class InviteFormHeader extends React.Component {
+class InviteFormHeader extends Component {
 	static displayName = 'InviteFormHeader';
 
 	clickedSiteLink = () => {
@@ -227,7 +217,7 @@ class InviteFormHeader extends React.Component {
 				break;
 			case 'subscriber':
 				explanation = this.props.translate(
-					'As a subscriber, you will be able to manage your profile on %(siteName)s.',
+					'As a viewer, you will be able to manage your profile on %(siteName)s.',
 					{
 						args: {
 							siteName: this.getSiteName(),

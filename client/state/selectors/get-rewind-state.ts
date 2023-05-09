@@ -1,7 +1,5 @@
-/**
- * Internal dependencies
- */
 import { AppState } from 'calypso/types';
+import type { RewindState } from 'calypso/state/data-layer/wpcom/sites/rewind/type';
 
 import 'calypso/state/rewind/init';
 
@@ -14,12 +12,12 @@ const uninitialized = {
  *
  * @param {AppState} state Global state tree
  * @param {?number|string} siteId the site ID
- * @returns {object} Rewind state object
+ * @returns {Object} Rewind state object
  */
 export default function getRewindState(
 	state: AppState,
 	siteId?: number | string | null
-): { state: string } {
+): RewindState {
 	if ( ! siteId ) {
 		return uninitialized;
 	}

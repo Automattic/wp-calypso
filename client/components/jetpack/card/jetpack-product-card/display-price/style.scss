@@ -1,0 +1,280 @@
+@import "@automattic/onboarding/styles/mixins";
+
+.display-price {
+	&.is-free {
+		margin-block-start: -4px;
+		padding-block-start: 24px;
+
+		@include break-medium {
+			min-height: 80px;
+		}
+
+		// Adjust leading margin so that different UI fonts
+		// still align to the price the same way
+		&.is-jetpack-cloud {
+			.display-price__above-price-text {
+				margin-inline-start: 0;
+			}
+
+			.display-price__price-free {
+				margin-inline-start: -4px;
+			}
+		}
+
+		.display-price__above-price-text {
+			display: block;
+			margin-block-start: -24px;
+			margin-inline-start: 2px;
+
+			font-size: 1rem;
+			font-weight: 700;
+		}
+
+		.display-price__price-free {
+			display: block;
+			line-height: $font-headline-medium;
+			letter-spacing: -2px;
+		}
+	}
+
+	.plan-price {
+		display: inline-flex;
+
+		// inline-flex causes *everything* to flow right-to-left in right-to-left locales,
+		// so we override currency displays by setting the direction explicitly.
+		//
+		// NOTE: We set a comment directive here to inform the RTL CSS plugin
+		// not to override our text direction rule for right-to-left locales.
+		// We add the comment using string interpolation so that the SCSS compiler
+		// adds it during compilation instead of deleting the comment completely
+		// in the name of optimization.
+		direction: ltr #{"/* rtl:ignore */"};
+
+		color: var(--studio-gray-100);
+
+		&.display-price__original-price {
+			margin-inline-end: 16px;
+		}
+
+		&.is-original {
+			color: var(--studio-gray-20);
+
+			&::before {
+				border-top: 3px solid var(--studio-pink-50);
+				border-radius: 3px; /* stylelint-disable-line scales/radii */
+				transform: initial;
+			}
+		}
+
+		&.is-discounted,
+		&.is-discounted .plan-price__currency-symbol {
+			color: inherit;
+		}
+
+		&__currency-symbol {
+			margin-top: 0.25rem;
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			line-height: 3.375rem;
+
+			color: inherit;
+
+			font-size: 1.5rem;
+		}
+
+		&__fraction {
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			line-height: 3.375rem;
+		}
+	}
+
+	&__price-placeholder {
+		@include placeholder( --color-neutral-10 );
+
+		width: 80px;
+		height: 54px;
+		margin-bottom: 16px;
+		margin-top: 24px;
+	}
+
+	&__time-frame-placeholder {
+		@include placeholder( --color-neutral-10 );
+
+		width: 80px;
+		height: 16px;
+	}
+
+	&__you-save,
+	&__get-started,
+	&__no-savings {
+		display: inline-block;
+		margin-block-start: 24px;
+		border-radius: 4px;
+		padding: 4px 8px;
+
+		font-size: $font-body-small;
+		font-weight: 700;
+	}
+
+	&__you-save {
+		background-color: var(--studio-yellow-10);
+	}
+
+	&__no-savings {
+		background-color: var(--studio-gray-5);
+		font-weight: 400;
+	}
+
+	&__get-started {
+		background-color: rgba(var(--studio-jetpack-green-10-rgb), 0.2);
+	}
+
+	&__from {
+		margin-right: 12px;
+		color: var(--studio-gray-40);
+		font-size: 0.875rem;
+		line-height: 1.2;
+		vertical-align: text-top;
+	}
+
+	&__price-tooltip {
+		margin-left: 4px;
+
+		color: var(--studio-gray-40);
+		margin-bottom: 0.875rem;
+
+		&.popover .popover__inner {
+			text-align: center;
+		}
+
+		p {
+			margin-bottom: 1rem;
+			font-size: inherit;
+
+			&:first-of-type {
+				margin-bottom: 0.5rem;
+			}
+		}
+	}
+
+	&__price-free,
+	& .plan-price__integer {
+		font-size: 3.375rem;
+		font-weight: 700;
+	}
+
+	&__deprecated {
+		font-size: 1.5rem;
+		font-weight: 700;
+	}
+
+	&__you-own-this {
+		margin-top: 40px;
+		margin-bottom: initial;
+		padding-top: 16px;
+		padding-bottom: 28px;
+		border-radius: ( 2px * 2 );
+
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+
+		color: var(--studio-gray-20);
+		background-color: var(--studio-gray-0);
+	}
+
+	&__you-own-this-icon {
+		display: block;
+
+		margin: 8px auto;
+		fill: currentColor;
+	}
+
+	&__billing-time-frame,
+	&__expiration-date {
+		display: inline-block;
+		color: var(--studio-gray-40);
+
+		font-size: 0.875rem;
+		line-height: 1.2;
+	}
+
+	&__billing-time-frame .compact {
+		display: none;
+	}
+
+	&__expiration-date {
+		color: var(--studio-pink-50);
+	}
+
+	&__standalone-card-price {
+		.plan-price {
+			margin: 0 0.2rem 0 0;
+		}
+	}
+
+	&.is-placeholder {
+		.plan-price {
+			@include placeholder( --color-neutral-10 );
+			transform: scaleY(0.6);
+		}
+		.plan-price::before {
+			border-color: transparent;
+		}
+		.display-price__billing-time-frame {
+			@include placeholder( --color-neutral-10 );
+		}
+	}
+}
+
+.jetpack-product-card__heading {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	margin: 0.75rem 0;
+}
+
+.jetpack-product-card__discount-label,
+.jetpack-product-card__new-label {
+	display: inline-block;
+
+	padding: 0.125rem 0.5rem;
+	margin: 0.25rem 0;
+
+	background-color: var(--studio-yellow-10);
+	border-radius: 4px;
+
+	font-size: $font-body-small;
+	font-weight: 700;
+
+	sup {
+		position: relative;
+		top: -0.5em;
+
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+		font-size: 0.75em;
+	}
+}
+.jetpack-product-card__new-label {
+	background-color: var(--studio-jetpack-green-10);
+}
+
+.jetpack-product-card {
+	&.is-disabled {
+		.display-price {
+			opacity: 0.4;
+		}
+	}
+}
+
+// TODO: This was originally a hotfix and needs cleanup
+.item-price .display-price {
+	&.is-jetpack-cloud:not(.is-placeholder) {
+		max-height: none;
+
+		.display-price__billing-time-frame {
+			line-height: 1.2;
+		}
+	}
+}

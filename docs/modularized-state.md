@@ -69,9 +69,6 @@ client/state/
 The `init` file should register the reducer with the global store:
 
 ```js
-/**
- * Internal dependencies
- */
 import { registerReducer } from 'calypso/state/redux-store';
 import reducer from './reducer';
 
@@ -84,9 +81,7 @@ It's generally a good idea to tell `webpack` when a file has side-effects, to pr
 
 ```json
 {
-	"sideEffects": [
-		"./init.js"
-	]
+	"sideEffects": [ "./init.js" ]
 }
 ```
 
@@ -160,7 +155,7 @@ import Thing from '../';
 describe( 'Thing', () => {
 	test( 'renders correctly', () => {
 		const store = createReduxStore();
-		setStore( store );
+		setStore( store, currentUserId );
 		// Instantiate and test component
 	} );
 } );

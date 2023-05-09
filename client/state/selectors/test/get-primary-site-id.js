@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 
 describe( 'getPrimarySiteId()', () => {

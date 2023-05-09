@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import 'calypso/state/ui/init';
 
 export default function masterbarIsVisible( state ) {

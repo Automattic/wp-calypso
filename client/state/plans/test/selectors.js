@@ -25,15 +25,7 @@ jest.mock( '@automattic/calypso-products', () => ( {
 	} ),
 } ) );
 
-/**
- * External dependencies
- */
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
 import { getPlans, isRequestingPlans, getPlan, getPlanRawPrice, getPlanSlug } from '../selectors';
 import { PLANS, getStateInstance } from './fixture';
 
@@ -42,7 +34,7 @@ describe( 'selectors', () => {
 		test( 'should return WordPress Plans array', () => {
 			const state = getStateInstance();
 			const plans = getPlans( state );
-			expect( plans ).to.eql( PLANS );
+			expect( plans ).toEqual( PLANS );
 		} );
 	} );
 
@@ -50,19 +42,19 @@ describe( 'selectors', () => {
 		test( 'should return requesting state of Plans', () => {
 			const state = getStateInstance();
 			const isRequesting = isRequestingPlans( state );
-			expect( isRequesting ).to.eql( false );
+			expect( isRequesting ).toEqual( false );
 		} );
 	} );
 
 	describe( '#getPlan()', () => {
 		test( 'should return a plan when given a product id', () => {
 			const state = getStateInstance();
-			expect( getPlan( state, 1003 ).product_id ).to.eql( 1003 );
-			expect( getPlan( state, 2002 ).product_id ).to.eql( 2002 );
+			expect( getPlan( state, 1003 ).product_id ).toEqual( 1003 );
+			expect( getPlan( state, 2002 ).product_id ).toEqual( 2002 );
 		} );
 		test( 'should return undefined when given an unknown product id', () => {
 			const state = getStateInstance();
-			expect( getPlan( state, 44 ) ).to.eql( undefined );
+			expect( getPlan( state, 44 ) ).toBeUndefined();
 		} );
 	} );
 
@@ -80,7 +72,7 @@ describe( 'selectors', () => {
 				},
 			} );
 			const price = getPlanRawPrice( state, 1003 );
-			expect( price ).to.eql( 99 );
+			expect( price ).toEqual( 99 );
 		} );
 		test( 'should return monthly price plan object', () => {
 			const state = deepFreeze( {
@@ -95,7 +87,7 @@ describe( 'selectors', () => {
 				},
 			} );
 			const price = getPlanRawPrice( state, 1003, true );
-			expect( price ).to.eql( 8.25 );
+			expect( price ).toEqual( 8.25 );
 		} );
 		test( 'should return monthly price plan object when raw price is 0', () => {
 			const state = deepFreeze( {
@@ -110,7 +102,7 @@ describe( 'selectors', () => {
 				},
 			} );
 			const price = getPlanRawPrice( state, 1003, true );
-			expect( price ).to.eql( 0 );
+			expect( price ).toEqual( 0 );
 		} );
 		test( 'should return monthly price plan object when term is biennial', () => {
 			const state = deepFreeze( {
@@ -125,7 +117,7 @@ describe( 'selectors', () => {
 				},
 			} );
 			const price = getPlanRawPrice( state, 1029, true );
-			expect( price ).to.eql( 10 );
+			expect( price ).toEqual( 10 );
 		} );
 		test( 'should return monthly price plan object when term is monthly', () => {
 			const state = deepFreeze( {
@@ -140,7 +132,7 @@ describe( 'selectors', () => {
 				},
 			} );
 			const price = getPlanRawPrice( state, 2003, true );
-			expect( price ).to.eql( 24 );
+			expect( price ).toEqual( 24 );
 		} );
 		test( 'should return null when raw price is missing', () => {
 			const state = deepFreeze( {
@@ -154,7 +146,7 @@ describe( 'selectors', () => {
 				},
 			} );
 			const price = getPlanRawPrice( state, 1003, true );
-			expect( price ).to.eql( null );
+			expect( price ).toBeNull();
 		} );
 		test( 'should return null when plan is not available', () => {
 			const state = deepFreeze( {
@@ -169,7 +161,7 @@ describe( 'selectors', () => {
 				},
 			} );
 			const price = getPlanRawPrice( state, 44, true );
-			expect( price ).to.eql( null );
+			expect( price ).toBeNull();
 		} );
 	} );
 
@@ -188,7 +180,7 @@ describe( 'selectors', () => {
 
 			const planSlug = getPlanSlug( state, 1003 );
 
-			expect( planSlug ).to.equal( 'value_bundle' );
+			expect( planSlug ).toEqual( 'value_bundle' );
 		} );
 
 		test( 'should return null if plan is missing', () => {
@@ -205,7 +197,7 @@ describe( 'selectors', () => {
 
 			const planSlug = getPlanSlug( state, 1337 );
 
-			expect( planSlug ).to.equal( null );
+			expect( planSlug ).toBeNull();
 		} );
 
 		test( "should return null if plan doesn't have product_slug", () => {
@@ -221,7 +213,7 @@ describe( 'selectors', () => {
 
 			const planSlug = getPlanSlug( state, 1003 );
 
-			expect( planSlug ).to.equal( null );
+			expect( planSlug ).toBeNull();
 		} );
 	} );
 } );

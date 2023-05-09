@@ -1,9 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 
 const ProductCardPromoNudge = ( { badgeText, text } ) => {
 	const className = classNames( 'product-card__promo-nudge', {
@@ -20,7 +16,7 @@ const ProductCardPromoNudge = ( { badgeText, text } ) => {
 
 ProductCardPromoNudge.propTypes = {
 	badgeText: PropTypes.string,
-	text: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element, PropTypes.node ] ),
+	text: PropTypes.node,
 };
 
 export default ProductCardPromoNudge;

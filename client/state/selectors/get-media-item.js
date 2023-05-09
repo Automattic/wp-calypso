@@ -1,9 +1,6 @@
-/**
- * Internal dependencies
- */
-import getTransientMediaItem from 'calypso/state/selectors/get-transient-media-item';
 import getMediaItemServerIdFromTransientId from 'calypso/state/selectors/get-media-item-server-id-from-transient-id';
 import getMediaQueryManager from 'calypso/state/selectors/get-media-query-manager';
+import getTransientMediaItem from 'calypso/state/selectors/get-transient-media-item';
 
 /**
  * Returns a media object by site ID, media ID, or null if not known.
@@ -12,7 +9,7 @@ import getMediaQueryManager from 'calypso/state/selectors/get-media-query-manage
  * returned.
  *
  * @param {number}  mediaId Media ID
- * @returns {?object}         Media object, if known
+ * @returns {?Object}         Media object, if known
  */
 
 export default function getMediaItem( state, siteId, mediaId ) {

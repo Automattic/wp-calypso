@@ -1,34 +1,24 @@
-/**
- * External dependencies
- */
-import React, { ReactElement } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { Button } from '@automattic/components';
+import { Button, Spinner } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { PartnerKey } from 'calypso/state/partner-portal/types';
+import { useSelector, useDispatch } from 'react-redux';
+import CardHeading from 'calypso/components/card-heading';
+import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetpack-partner-portal-partner';
+import Main from 'calypso/components/main';
+import { useReturnUrl } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	isFetchingPartner,
 	getCurrentPartner,
 	hasFetchedPartner,
 } from 'calypso/state/partner-portal/partner/selectors';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetpack-partner-portal-partner';
-import Main from 'calypso/components/main';
-import CardHeading from 'calypso/components/card-heading';
-import Spinner from 'calypso/components/spinner';
-import { useReturnUrl } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 
-export default function PartnerAccess(): ReactElement | null {
+export default function PartnerAccess() {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const hasFetched = useSelector( hasFetchedPartner );
 	const isFetching = useSelector( isFetchingPartner );
 	const partner = useSelector( getCurrentPartner );
-	const keys = ( partner?.keys || [] ) as PartnerKey[];
+	const keys = partner?.keys || [];
 	const hasPartner = hasFetched && ! isFetching && keys.length > 0;
 	const showError = hasFetched && ! isFetching && keys.length === 0;
 
@@ -44,7 +34,7 @@ export default function PartnerAccess(): ReactElement | null {
 		<Main className="partner-access">
 			<QueryJetpackPartnerPortalPartner />
 
-			<CardHeading size={ 36 }>{ translate( 'Partner Portal' ) }</CardHeading>
+			<CardHeading size={ 36 }>{ translate( 'Licensing' ) }</CardHeading>
 
 			{ isFetching && <Spinner /> }
 

@@ -1,21 +1,9 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
-import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
 
-/**
- * Style dependencies
- */
 import './comment-approve-action.scss';
 
 const noop = () => {};

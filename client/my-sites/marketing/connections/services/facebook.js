@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { localizeUrl } from '@automattic/i18n-utils';
 import { SharingService, connectFor } from 'calypso/my-sites/marketing/connections/service';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 export class Facebook extends SharingService {
 	static propTypes = {
@@ -27,14 +19,14 @@ export class Facebook extends SharingService {
 					this.props.translate(
 						'The Facebook connection could not be made because this account does not have access to any Pages.',
 						{
-							context: 'Sharing: Publicize connection error',
+							context: 'Sharing: Jetpack Social connection error',
 						}
 					),
 					// Append temporary message to inform of Facebook API change
 					' ',
 					this.props.translate(
-						'Facebook supports Publicize connections to Facebook Pages, but not to Facebook Profiles. ' +
-							'{{a}}Learn More about Publicize for Facebook{{/a}}',
+						'Facebook supports Jetpack Social connections to Facebook Pages, but not to Facebook Profiles. ' +
+							'{{a}}Learn More about Jetpack Social for Facebook{{/a}}',
 						{
 							components: {
 								a: (

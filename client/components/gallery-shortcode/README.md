@@ -7,21 +7,16 @@ Gallery Shortcode is a React component used in displaying galleries. It makes us
 Simply pass a site ID and an array of media items.
 
 ```jsx
-import React from 'react';
 import GalleryShortcode from 'calypso/components/gallery-shortcode';
 
-export default class extends React.Component {
-	static displayName = 'MyComponent';
-
-	render() {
-		return (
-			<GalleryShortcode
-				siteId={ 6393289 }
-				items={ [ { ID: 31860 }, { ID: 31856 } ] }
-				className="my-component"
-			/>
-		);
-	}
+export default function MyComponent() {
+	return (
+		<GalleryShortcode
+			siteId={ 6393289 }
+			items={ [ { ID: 31860 }, { ID: 31856 } ] }
+			className="my-component"
+		/>
+	);
 }
 ```
 

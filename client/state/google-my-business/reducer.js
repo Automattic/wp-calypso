@@ -1,14 +1,11 @@
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
-import { combineReducers, keyedReducer } from 'calypso/state/utils';
 import {
 	GOOGLE_MY_BUSINESS_STATS_FAILURE,
 	GOOGLE_MY_BUSINESS_STATS_RECEIVE,
 	GOOGLE_MY_BUSINESS_STATS_REQUEST,
 } from 'calypso/state/action-types';
 import { statsInterval } from 'calypso/state/google-my-business/ui/reducer';
+import { combineReducers, keyedReducer } from 'calypso/state/utils';
 
 const stats = ( state = null, action ) => {
 	switch ( action.type ) {

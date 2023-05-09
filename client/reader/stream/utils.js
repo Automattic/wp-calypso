@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { flatMap, last } from 'lodash';
+import { flatMap } from 'lodash';
 import moment from 'moment';
-
-/**
- * Internal dependencies
- */
 import { isDiscoverBlog, isDiscoverFeed } from 'calypso/reader/discover/helper';
 
 export function isDiscoverPostKey( postKey ) {
@@ -18,8 +11,8 @@ export const RECS_PER_BLOCK = 2;
 /**
  * Check if two postKeys are for the same siteId or feedId
  *
- * @param {object} postKey1 First post key
- * @param {object} postKey2 Second post key
+ * @param {Object} postKey1 First post key
+ * @param {Object} postKey2 Second post key
  * @returns {boolean} Returns true if two postKeys are for the same siteId or feedId
  */
 export function sameSite( postKey1, postKey2 ) {
@@ -49,51 +42,6 @@ export function sameXPost( postKey1, postKey2 ) {
 		postKey1.xPostMetadata.postId === postKey2.xPostMetadata.postId
 	);
 }
-
-/**
- * Takes two postKeys and combines them into a ReaderCombinedCard postKey.
- * Note: This only makes sense for postKeys from the same site
- *
- * @param {object} postKey1 must be either a ReaderCombinedCard postKey or a regular postKey
- * @param {object} postKey2 can only be a regular postKey. May not be a combinedCard postKey or a recommendations postKey
- * @returns {object} A ReaderCombinedCard postKey
- */
-export function combine( postKey1, postKey2 ) {
-	if ( ! postKey1 || ! postKey2 ) {
-		return null;
-	}
-
-	const combined = {
-		isCombination: true,
-		date:
-			postKey1.date && postKey1.date < postKey2.date // keep the earliest moment
-				? postKey1.date
-				: postKey2.date,
-		postIds: [
-			...( postKey1.postIds || [ postKey1.postId ] ),
-			...( postKey2.postIds || [ postKey2.postId ] ),
-		],
-	};
-	postKey1.blogId && ( combined.blogId = postKey1.blogId );
-	postKey1.feedId && ( combined.feedId = postKey1.feedId );
-
-	return combined;
-}
-
-export const combineCards = ( postKeys ) =>
-	postKeys.reduce( ( accumulator, postKey ) => {
-		const lastPostKey = last( accumulator );
-		if (
-			sameSite( lastPostKey, postKey ) &&
-			sameDay( lastPostKey, postKey ) &&
-			! isDiscoverPostKey( postKey )
-		) {
-			accumulator[ accumulator.length - 1 ] = combine( last( accumulator ), postKey );
-		} else {
-			accumulator.push( postKey );
-		}
-		return accumulator;
-	}, [] );
 
 export function injectRecommendations( posts, recs = [], itemsBetweenRecs ) {
 	if ( ! recs || recs.length === 0 ) {
@@ -140,4 +88,49 @@ export function getDistanceBetweenRecs( totalSubs ) {
 		Math.max( Math.floor( Math.log( totalSubs ) * Math.LOG2E * 5 - 6 ), MIN_DISTANCE_BETWEEN_RECS ),
 		MAX_DISTANCE_BETWEEN_RECS
 	);
+}
+
+const MIN_DISTANCE_BETWEEN_PROMPTS = 10;
+const MAX_DISTANCE_BETWEEN_PROMPTS = 50;
+
+export function getDistanceBetweenPrompts( totalSubs ) {
+	// the distance between recs changes based on how many subscriptions the user has.
+	// We cap it at MAX_DISTANCE_BETWEEN_PROMPTS.
+	// It grows at the natural log of the number of subs, times a multiplier, offset by a constant.
+	// This lets the distance between prompts grow quickly as you add subs early on, and slow down as you
+	// become a common user of the reader.
+	if ( totalSubs <= 0 ) {
+		// 0 means either we don't know yet, or the user actually has zero subs.
+		// if a user has zero subs, we don't show posts at all, so just treat 0 as 'unknown' and
+		// push recs to the max.
+		return MAX_DISTANCE_BETWEEN_PROMPTS;
+	}
+
+	return Math.min(
+		Math.max(
+			Math.floor( Math.log( totalSubs ) * Math.LOG2E * 7 - 3 ),
+			MIN_DISTANCE_BETWEEN_PROMPTS
+		),
+		MAX_DISTANCE_BETWEEN_PROMPTS
+	);
+}
+
+export function injectPrompts( posts, itemsBetweenPrompts ) {
+	if ( posts.length < itemsBetweenPrompts ) {
+		return posts;
+	}
+
+	let promptIndex = 0;
+
+	return flatMap( posts, ( post, index ) => {
+		if ( index && index % itemsBetweenPrompts === 0 ) {
+			const promptBlock = {
+				isPromptBlock: true,
+				index: promptIndex,
+			};
+			promptIndex++;
+			return [ promptBlock, post ];
+		}
+		return post;
+	} );
 }

@@ -1,3 +1,5 @@
+export const GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY =
+	'wp_google_workspace_business_starter_monthly';
 export const GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY =
 	'wp_google_workspace_business_starter_yearly';
 export const GSUITE_BASIC_SLUG = 'gapps';

@@ -1,20 +1,11 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
+import { ActionButtons, NEWSLETTER_FLOW } from '@automattic/onboarding';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import NavigationLink from 'calypso/signup/navigation-link';
-
-/**
- * Style dependencies
- */
+import { isReskinnedFlow } from '../utils';
 import './style.scss';
 
 class StepWrapper extends Component {
@@ -22,22 +13,32 @@ class StepWrapper extends Component {
 		shouldHideNavButtons: PropTypes.bool,
 		translate: PropTypes.func.isRequired,
 		hideFormattedHeader: PropTypes.bool,
+		headerImageUrl: PropTypes.string,
 		hideBack: PropTypes.bool,
 		hideSkip: PropTypes.bool,
+		hideNext: PropTypes.bool,
 		// Allows to force a back button in the first step for example.
 		// You should only force this when you're passing a backUrl.
 		allowBackFirstStep: PropTypes.bool,
 		skipLabelText: PropTypes.string,
 		skipHeadingText: PropTypes.string,
+		skipButtonAlign: PropTypes.oneOf( [ 'top', 'bottom' ] ),
+		nextLabelText: PropTypes.string,
 		// Displays an <hr> above the skip button and adds more white space
 		isLargeSkipLayout: PropTypes.bool,
-		isTopButtons: PropTypes.bool,
 		isExternalBackUrl: PropTypes.bool,
+		headerButton: PropTypes.node,
+		isWideLayout: PropTypes.bool,
+		isFullLayout: PropTypes.bool,
+		isHorizontalLayout: PropTypes.bool,
+		queryParams: PropTypes.object,
+		customizedActionButtons: PropTypes.element,
 	};
 
 	static defaultProps = {
 		allowBackFirstStep: false,
-		isTopButtons: false,
+		skipButtonAlign: 'bottom',
+		hideNext: true,
 	};
 
 	renderBack() {
@@ -47,6 +48,7 @@ class StepWrapper extends Component {
 		return (
 			<NavigationLink
 				direction="back"
+				goToPreviousStep={ this.props.goToPreviousStep }
 				flowName={ this.props.flowName }
 				positionInFlow={ this.props.positionInFlow }
 				stepName={ this.props.stepName }
@@ -55,29 +57,79 @@ class StepWrapper extends Component {
 				rel={ this.props.isExternalBackUrl ? 'external' : '' }
 				labelText={ this.props.backLabelText }
 				allowBackFirstStep={ this.props.allowBackFirstStep }
+				backIcon={ isReskinnedFlow( this.props.flowName ) ? 'chevron-left' : undefined }
+				queryParams={ this.props.queryParams }
 			/>
 		);
 	}
 
-	renderSkip() {
-		if ( ! this.props.shouldHideNavButtons && this.props.goToNextStep ) {
-			return (
-				<div className="step-wrapper__skip-wrapper">
-					{ this.props.skipHeadingText && (
-						<div className="step-wrapper__skip-heading">{ this.props.skipHeadingText }</div>
-					) }
-					<NavigationLink
-						direction="forward"
-						goToNextStep={ this.props.goToNextStep }
-						defaultDependencies={ this.props.defaultDependencies }
-						flowName={ this.props.flowName }
-						stepName={ this.props.stepName }
-						labelText={ this.props.skipLabelText }
-						cssClass={ this.props.skipHeadingText && 'navigation-link--has-skip-heading' }
-					/>
-				</div>
-			);
+	renderSkip( { borderless, forwardIcon } ) {
+		const {
+			shouldHideNavButtons,
+			skipHeadingText,
+			skipLabelText,
+			defaultDependencies,
+			flowName,
+			stepName,
+			goToNextStep,
+		} = this.props;
+
+		if ( shouldHideNavButtons || ! goToNextStep ) {
+			return null;
 		}
+
+		return (
+			<div className="step-wrapper__skip-wrapper">
+				{ skipHeadingText && <div className="step-wrapper__skip-heading">{ skipHeadingText }</div> }
+				<NavigationLink
+					direction="forward"
+					goToNextStep={ goToNextStep }
+					defaultDependencies={ defaultDependencies }
+					flowName={ flowName }
+					stepName={ stepName }
+					labelText={ skipLabelText }
+					cssClass={ classNames( 'step-wrapper__navigation-link', 'has-underline', {
+						'has-skip-heading': skipHeadingText,
+					} ) }
+					borderless={ borderless }
+					forwardIcon={ forwardIcon }
+				/>
+			</div>
+		);
+	}
+
+	renderNext() {
+		const {
+			shouldHideNavButtons,
+			nextLabelText,
+			defaultDependencies,
+			flowName,
+			stepName,
+			forwardUrl,
+			goToNextStep,
+			translate,
+		} = this.props;
+
+		if ( shouldHideNavButtons || ! goToNextStep ) {
+			return null;
+		}
+
+		return (
+			<NavigationLink
+				direction="forward"
+				goToNextStep={ goToNextStep }
+				forwardUrl={ forwardUrl }
+				defaultDependencies={ defaultDependencies }
+				flowName={ flowName }
+				stepName={ stepName }
+				labelText={ nextLabelText || translate( 'Continue' ) }
+				cssClass="step-wrapper__navigation-link"
+				borderless={ false }
+				primary
+				forwardIcon={ null }
+				disabledTracksOnClick
+			/>
+		);
 	}
 
 	headerText() {
@@ -86,7 +138,12 @@ class StepWrapper extends Component {
 				return this.props.headerText;
 			}
 
-			return this.props.translate( "Let's get started" );
+			const params = new URLSearchParams( window.location.search );
+			if ( params.get( 'variationName' ) === NEWSLETTER_FLOW ) {
+				return this.props.translate( 'Let’s get you signed up.' );
+			}
+
+			return this.props.translate( 'Let’s get started' );
 		}
 
 		if ( this.props.fallbackHeaderText !== undefined ) {
@@ -110,47 +167,82 @@ class StepWrapper extends Component {
 
 	render() {
 		const {
+			flowName,
 			stepContent,
 			headerButton,
+			headerContent,
 			hideFormattedHeader,
 			hideBack,
 			hideSkip,
+			hideNext,
 			isLargeSkipLayout,
 			isWideLayout,
-			isTopButtons,
+			isFullLayout,
+			skipButtonAlign,
 			align,
+			headerImageUrl,
+			isHorizontalLayout,
+			customizedActionButtons,
+			isExtraWideLayout,
 		} = this.props;
+
+		const backButton = ! hideBack && this.renderBack();
+		const skipButton =
+			! hideSkip &&
+			skipButtonAlign === 'top' &&
+			this.renderSkip( { borderless: true, forwardIcon: null } );
+		const nextButton = ! hideNext && this.renderNext();
+		const hasNavigation = backButton || skipButton || nextButton || customizedActionButtons;
 		const classes = classNames( 'step-wrapper', this.props.className, {
+			'is-horizontal-layout': isHorizontalLayout,
 			'is-wide-layout': isWideLayout,
+			'is-extra-wide-layout': isExtraWideLayout,
+			'is-full-layout': isFullLayout,
 			'is-large-skip-layout': isLargeSkipLayout,
+			'has-navigation': hasNavigation,
 		} );
 
 		return (
 			<>
 				<div className={ classes }>
-					{ ! hideBack && this.renderBack() }
-
+					<ActionButtons
+						className="step-wrapper__navigation"
+						sticky={ isReskinnedFlow( flowName ) ? null : false }
+					>
+						{ backButton }
+						{ skipButton }
+						{ nextButton }
+						{ customizedActionButtons }
+					</ActionButtons>
 					{ ! hideFormattedHeader && (
-						<FormattedHeader
-							id={ 'step-header' }
-							headerText={ this.headerText() }
-							subHeaderText={ this.subHeaderText() }
-							align={ align }
-						>
-							{ headerButton }
-						</FormattedHeader>
-					) }
+						<div className="step-wrapper__header">
+							<FormattedHeader
+								id="step-header"
+								headerText={ this.headerText() }
+								subHeaderText={ this.subHeaderText() }
+								align={ align }
+							/>
+							{ headerImageUrl && (
+								<div className="step-wrapper__header-image">
+									<img src={ headerImageUrl } alt="" />
+								</div>
+							) }
 
-					{ ! hideSkip && isTopButtons && (
-						<div className="step-wrapper__buttons is-top-buttons">{ this.renderSkip() }</div>
+							{ headerContent && (
+								<div className="step-wrapper__header-content">{ headerContent }</div>
+							) }
+							{ headerButton && (
+								<div className="step-wrapper__header-button">{ headerButton }</div>
+							) }
+						</div>
 					) }
 
 					<div className="step-wrapper__content">{ stepContent }</div>
 
-					{ ! hideSkip && ! isTopButtons && (
+					{ ! hideSkip && skipButtonAlign === 'bottom' && (
 						<div className="step-wrapper__buttons">
 							{ isLargeSkipLayout && <hr className="step-wrapper__skip-hr" /> }
-							{ this.renderSkip() }
+							{ this.renderSkip( { borderless: true } ) }
 						</div>
 					) }
 				</div>

@@ -1,21 +1,11 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
-import { keys, trim } from 'lodash';
 import classNames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import TagsList from 'calypso/blocks/reader-post-card/tags-list';
 import AutoDirection from 'calypso/components/auto-direction';
 import ExternalLink from 'calypso/components/external-link';
-import { recordPermalinkClick } from 'calypso/reader/stats';
 import TimeSince from 'calypso/components/time-since';
-import ReaderFullPostHeaderTags from './header-tags';
 import { isDiscoverPost } from 'calypso/reader/discover/helper';
+import { recordPermalinkClick } from 'calypso/reader/stats';
 import ReaderFullPostHeaderPlaceholder from './placeholders/header';
 
 const ReaderFullPostHeader = ( { post, referralPost } ) => {
@@ -28,7 +18,7 @@ const ReaderFullPostHeader = ( { post, referralPost } ) => {
 	};
 
 	const classes = { 'reader-full-post__header': true };
-	if ( ! post.title || trim( post.title ).length < 1 ) {
+	if ( ! post.title || post.title.trim().length < 1 ) {
 		classes[ 'is-missing-title' ] = true;
 	}
 
@@ -70,14 +60,8 @@ const ReaderFullPostHeader = ( { post, referralPost } ) => {
 						</a>
 					</span>
 				) : null }
-
-				{ post.tags && keys( post.tags ).length > 0 ? (
-					<div className="reader-full-post__header-tags">
-						<Gridicon icon="tag" size={ 18 } />
-						<ReaderFullPostHeaderTags tags={ post.tags } />
-					</div>
-				) : null }
 			</div>
+			<TagsList post={ post } tagsToShow={ 5 } />
 		</div>
 	);
 	/* eslint-enable react/jsx-no-target-blank */

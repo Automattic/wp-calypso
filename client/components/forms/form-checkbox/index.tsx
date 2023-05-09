@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent, InputHTMLAttributes } from 'react';
 import classnames from 'classnames';
+import { FunctionComponent, InputHTMLAttributes } from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 type CheckboxProps = InputHTMLAttributes< HTMLInputElement >;

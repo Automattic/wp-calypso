@@ -1,14 +1,12 @@
-/**
- * Internal dependencies
- */
+import moment from 'moment/moment';
 import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
-import schema from './schema.json';
-import { clearJITM, insertJITM } from 'calypso/state/jitm/actions';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { JITM_DISMISS, JITM_FETCH } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { clearJITM, insertJITM } from 'calypso/state/jitm/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import schema from './schema.json';
 
 const noop = () => {};
 
@@ -24,9 +22,9 @@ const unescapeDecimalEntities = ( str ) =>
 /**
  * Given an object from the api, prepare it to be consumed by the ui by transforming the shape of the data
  *
- * @param {object} response The response object from the jitms endpoint
- * @param {object} response.data The jitms to display from the api
- * @returns {object} The transformed data to display
+ * @param {Object} response The response object from the jitms endpoint
+ * @param {Object} response.data The jitms to display from the api
+ * @returns {Object} The transformed data to display
  */
 const transformApiRequest = ( { data: jitms } ) =>
 	jitms.map( ( jitm ) => ( {
@@ -34,6 +32,7 @@ const transformApiRequest = ( { data: jitms } ) =>
 		description: unescapeDecimalEntities( jitm.content.description || '' ),
 		classes: unescapeDecimalEntities( jitm.content.classes || '' ),
 		icon: unescapeDecimalEntities( jitm.content.icon || '' ),
+		iconPath: unescapeDecimalEntities( jitm.content.iconPath || '' ),
 		featureClass: jitm.feature_class,
 		CTA: {
 			message: unescapeDecimalEntities( jitm.CTA.message ),
@@ -44,13 +43,16 @@ const transformApiRequest = ( { data: jitms } ) =>
 		template: jitm.template,
 		id: jitm.id,
 		isDismissible: jitm.is_dismissible,
+		messageExpiration: jitm.message_expiration ? moment( jitm.message_expiration ) : null,
+		title: unescapeDecimalEntities( jitm.content.title || '' ),
+		disclaimer: jitm.content.disclaimer.map( unescapeDecimalEntities ),
 	} ) );
 
 /**
  * Processes the current state and determines if it should fire a jitm request
  *
- * @param {object} action The fetch action
- * @returns {object} The HTTP fetch action
+ * @param {Object} action The fetch action
+ * @returns {Object} The HTTP fetch action
  */
 export const doFetchJITM = ( action ) => {
 	return http(
@@ -74,8 +76,8 @@ export const doFetchJITM = ( action ) => {
  * Dismisses a jitm on the jetpack site, it returns nothing useful and will return no useful error, so we'll
  * fail and succeed silently.
  *
- * @param {object} action The dismissal action
- * @returns {object} The HTTP fetch action
+ * @param {Object} action The dismissal action
+ * @returns {Object} The HTTP fetch action
  */
 export const doDismissJITM = ( action ) =>
 	http(
@@ -98,7 +100,7 @@ export const doDismissJITM = ( action ) =>
 /**
  * Called when the http layer receives a valid jitm
  *
- * @param {object} action action object
+ * @param {Object} action action object
  * @param {number} action.siteId The site id
  * @param {string} action.messagePath The jitm message path (ex: calypso:comments:admin_notices)
  * @param {Array} jitms The jitms
@@ -112,7 +114,7 @@ export const receiveJITM = ( action, jitms ) => ( dispatch, getState ) => {
 /**
  * Called when a jitm fails for any network related reason
  *
- * @param {object} action action object
+ * @param {Object} action action object
  * @param {number} action.siteId The site id
  * @param {string} action.messagePath The jitm message path (ex: calypso:comments:admin_notices)
  * @returns {Function} a handler for the failed request

@@ -1,21 +1,14 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import FormSelect from 'calypso/components/forms/form-select';
 
 const noop = () => {};
 
-class FollowingManageSortControls extends React.Component {
+class FollowingManageSortControls extends Component {
 	static propTypes = {
 		onSortChange: PropTypes.func,
-		sortOrder: PropTypes.oneOf( [ 'date-followed', 'alpha' ] ),
+		sortOrder: PropTypes.oneOf( [ 'date-followed', 'alpha', 'date-updated' ] ),
 	};
 
 	static defaultProps = {
@@ -37,6 +30,7 @@ class FollowingManageSortControls extends React.Component {
 				value={ sortOrder }
 			>
 				<option value="date-followed">{ this.props.translate( 'Sort by date followed' ) }</option>
+				<option value="date-updated">{ this.props.translate( 'Sort by date updated' ) }</option>
 				<option value="alpha">{ this.props.translate( 'Sort by site name' ) }</option>
 			</FormSelect>
 		);

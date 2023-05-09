@@ -1,19 +1,14 @@
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
 import { getEmptyResponseCart } from './empty-carts';
-import type { TempResponseCart } from './shopping-cart-endpoint';
 import type {
+	TempResponseCart,
 	CartLocation,
 	RequestCart,
 	RequestCartProduct,
 	ResponseCart,
 	ResponseCartProduct,
+	GetCart,
+	CartKey,
 } from './types';
 
 const debug = debugFactory( 'shopping-cart:cart-functions' );
@@ -36,31 +31,38 @@ function convertResponseCartProductToRequestCartProduct(
 
 export function convertResponseCartToRequestCart( {
 	products,
-	currency,
-	locale,
 	coupon,
-	is_coupon_applied,
 	tax,
+	blog_id,
 }: TempResponseCart ): RequestCart {
 	let requestCartTax = null;
-	if ( tax.location.country_code || tax.location.postal_code || tax.location.subdivision_code ) {
+	if (
+		tax.location.country_code ||
+		tax.location.postal_code ||
+		tax.location.subdivision_code ||
+		tax.location.vat_id ||
+		tax.location.organization ||
+		tax.location.address ||
+		tax.location.city
+	) {
 		requestCartTax = {
 			location: {
 				country_code: tax.location.country_code,
 				postal_code: tax.location.postal_code,
 				subdivision_code: tax.location.subdivision_code,
+				vat_id: tax.location.vat_id,
+				organization: tax.location.organization,
+				address: tax.location.address,
+				city: tax.location.city,
 			},
 		};
 	}
 	return {
+		blog_id,
 		products: products.map( convertResponseCartProductToRequestCartProduct ),
-		currency,
-		locale,
 		coupon,
-		is_coupon_applied,
 		temporary: false,
 		tax: requestCartTax,
-		extra: '', // This property doesn't appear to be used for anything
 	};
 }
 
@@ -120,6 +122,10 @@ export function addLocationToResponseCart(
 				country_code: location.countryCode || undefined,
 				postal_code: location.postalCode || undefined,
 				subdivision_code: location.subdivisionCode || undefined,
+				vat_id: location.vatId || undefined,
+				organization: location.organization || undefined,
+				address: location.address || undefined,
+				city: location.city || undefined,
 			},
 		},
 	};
@@ -129,15 +135,44 @@ export function doesCartLocationDifferFromResponseCartLocation(
 	cart: TempResponseCart,
 	location: CartLocation
 ): boolean {
-	const { countryCode, postalCode, subdivisionCode } = location;
-	const isMissing = ( value: null | undefined | string ) => value === null || value === undefined;
-	if ( ! isMissing( countryCode ) && cart.tax.location.country_code !== countryCode ) {
+	const {
+		countryCode: newCountryCode = '',
+		postalCode: newPostalCode = '',
+		subdivisionCode: newSubdivisionCode = '',
+		vatId: newVatId = '',
+		organization: newOrganization = '',
+		address: newAddress = '',
+		city: newCity = '',
+	} = location;
+	const {
+		country_code: oldCountryCode = '',
+		postal_code: oldPostalCode = '',
+		subdivision_code: oldSubdivisionCode = '',
+		vat_id: oldVatId = '',
+		organization: oldOrganization = '',
+		address: oldAddress = '',
+		city: oldCity = '',
+	} = cart.tax?.location ?? {};
+
+	if ( location.countryCode !== undefined && newCountryCode !== oldCountryCode ) {
 		return true;
 	}
-	if ( ! isMissing( postalCode ) && cart.tax.location.postal_code !== postalCode ) {
+	if ( location.postalCode !== undefined && newPostalCode !== oldPostalCode ) {
 		return true;
 	}
-	if ( ! isMissing( subdivisionCode ) && cart.tax.location.subdivision_code !== subdivisionCode ) {
+	if ( location.subdivisionCode !== undefined && newSubdivisionCode !== oldSubdivisionCode ) {
+		return true;
+	}
+	if ( location.vatId !== undefined && newVatId !== oldVatId ) {
+		return true;
+	}
+	if ( location.organization !== undefined && newOrganization !== oldOrganization ) {
+		return true;
+	}
+	if ( location.address !== undefined && newAddress !== oldAddress ) {
+		return true;
+	}
+	if ( location.city !== undefined && newCity !== oldCity ) {
 		return true;
 	}
 	return false;
@@ -276,4 +311,16 @@ export function doesResponseCartContainProductMatching(
 			} )
 		);
 	} );
+}
+
+export async function findCartKeyFromSiteSlug(
+	slug: string,
+	getCart: GetCart
+): Promise< CartKey > {
+	try {
+		const cart = await getCart( slug as CartKey );
+		return cart.cart_key;
+	} catch {
+		return 'no-site';
+	}
 }

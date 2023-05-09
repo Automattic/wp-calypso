@@ -1,9 +1,9 @@
-/**
- * Internal dependencies
- */
+import config from '@automattic/calypso-config';
 import { HAPPYCHAT_IO_RECEIVE_MESSAGE } from 'calypso/state/action-types';
 
 const isAudioSupported = () => typeof window === 'object' && typeof window.Audio === 'function';
+
+const soundFilePath = config( 'happychat_pling_noise_path' );
 
 export const playSound = ( src ) => {
 	if ( ! isAudioSupported() ) {
@@ -21,7 +21,7 @@ export const playSoundForMessageToCustomer = ( dispatch, { message } ) => {
 		return;
 	}
 
-	playSound( '/calypso/audio/chat-pling.wav' );
+	playSound( soundFilePath );
 };
 
 /**
@@ -36,17 +36,18 @@ handlers[ HAPPYCHAT_IO_RECEIVE_MESSAGE ] = playSoundForMessageToCustomer;
  * Middleware
  */
 
-export default ( { dispatch } ) => ( next ) => {
-	if ( ! isAudioSupported() ) {
-		return next;
-	}
-
-	return ( action ) => {
-		const handler = handlers[ action.type ];
-		if ( 'function' === typeof handler ) {
-			handler( dispatch, action );
+export default ( { dispatch } ) =>
+	( next ) => {
+		if ( ! isAudioSupported() ) {
+			return next;
 		}
 
-		return next( action );
+		return ( action ) => {
+			const handler = handlers[ action.type ];
+			if ( 'function' === typeof handler ) {
+				handler( dispatch, action );
+			}
+
+			return next( action );
+		};
 	};
-};

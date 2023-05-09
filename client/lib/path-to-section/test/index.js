@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { receiveSections } from 'calypso/sections-helper';
 import sections from 'calypso/sections';
+import { receiveSections } from 'calypso/sections-helper';
 import pathToSection from '..';
 
 describe( 'pathToSection', () => {

@@ -1,18 +1,11 @@
 /* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["testPlansArrayIndependentOfOrder"] }] */
 
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { planLevelsMatch } from '../src';
 import {
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
+	PLAN_BUSINESS_3_YEARS,
 	PLAN_FREE,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
@@ -23,17 +16,19 @@ import {
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
+	PLAN_PERSONAL_3_YEARS,
 	PLAN_BLOGGER,
 	PLAN_BLOGGER_2_YEARS,
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
+	PLAN_PREMIUM_3_YEARS,
 } from '../src/constants';
 
 describe( 'planLevelsMatch', () => {
 	const testPlansArrayIndependentOfOrder = ( plansArray, result ) =>
 		plansArray.forEach( ( [ slugA, slugB ] ) => {
-			expect( planLevelsMatch( slugA, slugB ) ).to.be[ result ];
-			expect( planLevelsMatch( slugB, slugA ) ).to.be[ result ];
+			expect( planLevelsMatch( slugA, slugB ) ).toBe[ result ];
+			expect( planLevelsMatch( slugB, slugA ) ).toBe[ result ];
 		} );
 
 	test( 'should return true for identical plans', () => {
@@ -41,6 +36,7 @@ describe( 'planLevelsMatch', () => {
 			[ PLAN_BUSINESS_MONTHLY, PLAN_BUSINESS_MONTHLY ],
 			[ PLAN_BUSINESS, PLAN_BUSINESS ],
 			[ PLAN_BUSINESS_2_YEARS, PLAN_BUSINESS_2_YEARS ],
+			[ PLAN_BUSINESS_3_YEARS, PLAN_BUSINESS_3_YEARS ],
 			[ PLAN_FREE, PLAN_FREE ],
 			[ PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS ],
 			[ PLAN_JETPACK_BUSINESS_MONTHLY, PLAN_JETPACK_BUSINESS_MONTHLY ],
@@ -51,10 +47,12 @@ describe( 'planLevelsMatch', () => {
 			[ PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_PREMIUM_MONTHLY ],
 			[ PLAN_PERSONAL, PLAN_PERSONAL ],
 			[ PLAN_PERSONAL_2_YEARS, PLAN_PERSONAL_2_YEARS ],
+			[ PLAN_PERSONAL_3_YEARS, PLAN_PERSONAL_3_YEARS ],
 			[ PLAN_BLOGGER, PLAN_BLOGGER ],
 			[ PLAN_BLOGGER_2_YEARS, PLAN_BLOGGER_2_YEARS ],
 			[ PLAN_PREMIUM, PLAN_PREMIUM ],
 			[ PLAN_PREMIUM_2_YEARS, PLAN_PREMIUM_2_YEARS ],
+			[ PLAN_PREMIUM_3_YEARS, PLAN_PREMIUM_3_YEARS ],
 		];
 		testPlansArrayIndependentOfOrder( identicalPlans, 'true' );
 	} );
@@ -62,6 +60,7 @@ describe( 'planLevelsMatch', () => {
 	test( 'should return true for matching plans', () => {
 		const matchingPlans = [
 			[ PLAN_BUSINESS_MONTHLY, PLAN_BUSINESS ],
+			[ PLAN_BUSINESS_MONTHLY, PLAN_BUSINESS_3_YEARS ],
 			[ PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY ],
 			[ PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ],
 			[ PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ],
@@ -73,6 +72,7 @@ describe( 'planLevelsMatch', () => {
 		const nonMatchingPlans = [
 			[ PLAN_JETPACK_BUSINESS, PLAN_BUSINESS ],
 			[ PLAN_JETPACK_BUSINESS, PLAN_BUSINESS_2_YEARS ],
+			[ PLAN_JETPACK_BUSINESS, PLAN_BUSINESS_3_YEARS ],
 			[ PLAN_JETPACK_BUSINESS, PLAN_FREE ],
 			[ PLAN_JETPACK_BUSINESS_MONTHLY, PLAN_BUSINESS_MONTHLY ],
 			[ PLAN_JETPACK_BUSINESS, PLAN_JETPACK_PERSONAL_MONTHLY ],

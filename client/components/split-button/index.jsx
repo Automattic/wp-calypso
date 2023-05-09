@@ -1,21 +1,10 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
+import PropTypes from 'prop-types';
+import { createRef, PureComponent } from 'react';
+import PopoverMenu from 'calypso/components/popover-menu';
 
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
-import PopoverMenu from 'calypso/components/popover/menu';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};
@@ -36,6 +25,8 @@ class SplitButton extends PureComponent {
 		onClick: PropTypes.func,
 		onToggle: PropTypes.func,
 		popoverClassName: PropTypes.string,
+		href: PropTypes.string,
+		whiteSeparator: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -50,13 +41,14 @@ class SplitButton extends PureComponent {
 		compact: false,
 		primary: false,
 		scary: false,
+		whiteSeparator: false,
 	};
 
 	state = {
 		isMenuVisible: false,
 	};
 
-	popoverContext = React.createRef();
+	popoverContext = createRef();
 
 	handleMainClick = ( event ) => {
 		event.stopPropagation();
@@ -93,8 +85,12 @@ class SplitButton extends PureComponent {
 			disableMenu,
 			className,
 			popoverClassName,
+			whiteSeparator,
 		} = this.props;
 		const { isMenuVisible } = this.state;
+		const toggleClasses = classNames( 'split-button__toggle', {
+			'split-button__toggle--white-separator': whiteSeparator,
+		} );
 		const popoverClasses = classNames( 'split-button__menu', 'popover', popoverClassName );
 		const classes = classNames( 'split-button', className, {
 			'is-menu-visible': isMenuVisible,
@@ -102,15 +98,19 @@ class SplitButton extends PureComponent {
 			'has-icon-text': label && icon,
 		} );
 
+		const isEmptyOnClick = this.props.onClick === noop;
+		const onClick = isEmptyOnClick ? undefined : this.handleMainClick;
+
 		return (
 			<span className={ classes }>
 				<Button
 					compact={ compact }
 					primary={ primary }
 					scary={ scary }
-					onClick={ this.handleMainClick }
 					disabled={ disabled || disableMain }
 					className="split-button__main"
+					onClick={ onClick }
+					href={ this.props.href }
 				>
 					{ icon && <Gridicon icon={ icon } /> }
 					{ label }
@@ -123,7 +123,7 @@ class SplitButton extends PureComponent {
 					onClick={ this.handleMenuClick }
 					title={ toggleTitle || translate( 'Toggle menu' ) }
 					disabled={ disabled || disableMenu }
-					className="split-button__toggle"
+					className={ toggleClasses }
 				>
 					<Gridicon icon="chevron-down" className="split-button__toggle-icon" />
 				</Button>

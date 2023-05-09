@@ -1,6 +1,6 @@
 .threat-history-list {
 	&__no-entries {
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 		font-size: $font-body;
 	}
 
@@ -41,5 +41,19 @@
 	.segmented-control {
 		max-width: 230px;
 		margin: 0 auto;
+	}
+
+	&__threats {
+		.foldable-card {
+			margin-bottom: 0;
+		}
+
+		.foldable-card.card.is-expanded {
+			margin: 0;
+		}
+
+		.foldable-card.is-expanded .foldable-card__content {
+			padding: 0;
+		}
 	}
 }

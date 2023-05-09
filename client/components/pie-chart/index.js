@@ -1,20 +1,10 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
 import { pie as d3Pie, arc as d3Arc } from 'd3-shape';
+import { localize } from 'i18n-calypso';
 import { sortBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import DataType from './data-type';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const SVG_SIZE = 300;
@@ -97,7 +87,7 @@ class PieChart extends Component {
 				<svg
 					className="pie-chart__chart-drawing"
 					viewBox={ `0 0 ${ SVG_SIZE } ${ SVG_SIZE }` }
-					preserveAspectRatio={ 'xMidYMid meet' }
+					preserveAspectRatio="xMidYMid meet"
 				>
 					<g transform={ `translate(${ SVG_SIZE / 2 }, ${ SVG_SIZE / 2 })` }>
 						{ dataTotal > 0 ? this.renderPieChart() : this.renderEmptyChart() }

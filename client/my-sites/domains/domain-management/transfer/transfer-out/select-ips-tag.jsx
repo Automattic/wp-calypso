@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { find, isEmpty, startsWith } from 'lodash';
-import { localize } from 'i18n-calypso';
-import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
 import { Card, Dialog, Suggestions } from '@automattic/components';
-import SearchCard from 'calypso/components/search-card';
+import debugFactory from 'debug';
+import { localize } from 'i18n-calypso';
+import { find, isEmpty, startsWith } from 'lodash';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import SearchCard from 'calypso/components/search-card';
 import { saveDomainIpsTag } from 'calypso/state/domains/transfer/actions';
 import getGainingRegistrar from 'calypso/state/selectors/get-gaining-registrar';
 import getIpsTagSaveStatus from 'calypso/state/selectors/get-ips-tag-save-status';
@@ -33,7 +26,6 @@ class SelectIpsTag extends Component {
 	};
 
 	componentDidMount() {
-		// eslint-disable-next-line no-undef
 		fetch( SelectIpsTag.ipsTagListUrl )
 			.then( async ( response ) => {
 				this.receiveIpsTagList( await response.json() );
@@ -141,7 +133,7 @@ class SelectIpsTag extends Component {
 	}
 
 	renderIpsTagSelect() {
-		const { saveStatus, selectedDomainName, translate } = this.props;
+		const { redesign, saveStatus, selectedDomainName, translate } = this.props;
 
 		return (
 			<div>
@@ -167,7 +159,11 @@ class SelectIpsTag extends Component {
 					suggestions={ this.getSuggestions() }
 					suggest={ this.handleSuggestionClick }
 				/>
-				<FormButton onClick={ this.popOverDialog } disabled={ 'saving' === saveStatus }>
+				<FormButton
+					onClick={ this.popOverDialog }
+					disabled={ 'saving' === saveStatus }
+					isPrimary={ ! redesign }
+				>
 					{ translate( 'Submit' ) }
 				</FormButton>
 
@@ -219,23 +215,29 @@ class SelectIpsTag extends Component {
 	}
 
 	render() {
-		const { translate, saveStatus } = this.props;
+		const { translate, saveStatus, redesign } = this.props;
+
+		const content = (
+			<>
+				<p>
+					{ translate(
+						"{{strong}}.uk{{/strong}} domains are transferred by setting the domain's IPS tag here to the " +
+							'value provided by the new registrar and then contacting the {{em}}new registrar{{/em}} to ' +
+							'complete the transfer.',
+						{ components: { strong: <strong />, em: <em /> } }
+					) }
+				</p>
+				{ 'success' === saveStatus ? this.renderGoToGainingRegistrar() : this.renderIpsTagSelect() }
+			</>
+		);
+
+		if ( redesign ) {
+			return content;
+		}
 
 		return (
 			<div>
-				<Card>
-					<p>
-						{ translate(
-							"{{strong}}.uk{{/strong}} domains are transferred by setting the domain's IPS tag here to the " +
-								'value provided by the new registrar and then contacting the {{em}}new registrar{{/em}} to ' +
-								'complete the transfer.',
-							{ components: { strong: <strong />, em: <em /> } }
-						) }
-					</p>
-					{ 'success' === saveStatus
-						? this.renderGoToGainingRegistrar()
-						: this.renderIpsTagSelect() }
-				</Card>
+				<Card>{ content }</Card>
 			</div>
 		);
 	}

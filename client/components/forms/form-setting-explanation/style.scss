@@ -1,5 +1,5 @@
 .form-setting-explanation {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	display: block;
 	font-size: $font-body-small;
 	font-style: italic;
@@ -11,7 +11,7 @@
 	}
 
 	button.is-borderless {
-		color: var( --color-primary );
+		color: var(--color-primary);
 		font-size: inherit;
 		font-style: inherit;
 		font-weight: inherit;
@@ -20,6 +20,6 @@
 	}
 
 	button.is-borderless:hover {
-		color: var( --color-link-dark );
+		color: var(--color-link-dark);
 	}
 }

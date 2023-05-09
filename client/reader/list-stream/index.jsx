@@ -1,35 +1,24 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
-import Stream from 'calypso/reader/stream';
-import EmptyContent from './empty';
+import { localize } from 'i18n-calypso';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
-import ListMissing from './missing';
-import ListStreamHeader from './header';
+import QueryReaderList from 'calypso/components/data/query-reader-list';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
+import Stream from 'calypso/reader/stream';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { followList, unfollowList } from 'calypso/state/reader/lists/actions';
 import {
 	getListByOwnerAndSlug,
 	isSubscribedByOwnerAndSlug,
 	isMissingByOwnerAndSlug,
 } from 'calypso/state/reader/lists/selectors';
-import QueryReaderList from 'calypso/components/data/query-reader-list';
-import { recordAction, recordGaEvent } from 'calypso/reader/stats';
-import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-
-/**
- * Style dependencies
- */
+import EmptyContent from './empty';
+import ListStreamHeader from './header';
+import ListMissing from './missing';
 import './style.scss';
 
-class ListStream extends React.Component {
+class ListStream extends Component {
 	constructor( props ) {
 		super( props );
 		this.title = props.translate( 'Loading list' );

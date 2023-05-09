@@ -1,6 +1,3 @@
-/**
- * External Dependencies
- */
 const { ipcMain: ipc } = require( 'electron' );
 
 module.exports = {
@@ -16,8 +13,8 @@ module.exports = {
 	 * object and keyed by `namespace`.
 	 *
 	 * @param {string} namespace Namespace of the logger to be used or initialized.
-	 * @param {object} options Logger configuration.
-	 * @returns {object} Logger instance.
+	 * @param {Object} options Logger configuration.
+	 * @returns {Object} Logger instance.
 	 */
 	getLogger: function ( namespace, options ) {
 		let logger = this.loggers[ namespace ];

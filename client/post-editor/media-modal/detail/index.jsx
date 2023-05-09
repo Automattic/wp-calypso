@@ -1,30 +1,19 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-import { partial } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import DetailItem from './detail-item';
-import { getMimePrefix, filterItemsByMimePrefix, url } from 'calypso/lib/media/utils';
 import HeaderCake from 'calypso/components/header-cake';
-import preloadImage from '../preload-image';
-import { ModalViews } from 'calypso/state/ui/media-modal/constants';
+import { getMimePrefix, filterItemsByMimePrefix, url } from 'calypso/lib/media/utils';
 import { setEditorMediaModalView } from 'calypso/state/editor/actions';
+import { ModalViews } from 'calypso/state/ui/media-modal/constants';
+import preloadImage from '../preload-image';
+import DetailItem from './detail-item';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};
 
-class EditorMediaModalDetailBase extends React.Component {
+class EditorMediaModalDetailBase extends Component {
 	static propTypes = {
 		site: PropTypes.object,
 		items: PropTypes.array,
@@ -116,7 +105,7 @@ export const EditorMediaModalDetail = localize( EditorMediaModalDetailBase );
 // (This is also the reason why we're `localize()`ing the named export.)
 // TODO: Fix this mess, rely on Redux state everywhere.
 export default connect( null, {
-	onReturnToList: partial( setEditorMediaModalView, ModalViews.LIST ),
-	onEditImageItem: partial( setEditorMediaModalView, ModalViews.IMAGE_EDITOR ),
-	onEditVideoItem: partial( setEditorMediaModalView, ModalViews.VIDEO_EDITOR ),
+	onReturnToList: () => setEditorMediaModalView( ModalViews.LIST ),
+	onEditImageItem: () => setEditorMediaModalView( ModalViews.IMAGE_EDITOR ),
+	onEditVideoItem: () => setEditorMediaModalView( ModalViews.VIDEO_EDITOR ),
 } )( EditorMediaModalDetail );

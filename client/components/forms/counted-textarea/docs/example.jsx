@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { PureComponent } from 'react';
 import CountedTextarea from 'calypso/components/forms/counted-textarea';
 
-export default class extends React.PureComponent {
+export default class extends PureComponent {
 	static displayName = 'CountedTextareas';
 
 	state = {

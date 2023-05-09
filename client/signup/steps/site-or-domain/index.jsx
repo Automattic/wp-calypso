@@ -1,29 +1,23 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { SelectItems } from '@automattic/onboarding';
+import { globe, addCard, layout } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
-import StepWrapper from 'calypso/signup/step-wrapper';
-import { submitSignupStep } from 'calypso/state/signup/progress/actions';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import HeaderImage from 'calypso/assets/images/domains/domain.svg';
 import QueryProductsList from 'calypso/components/data/query-products-list';
-import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
+import { getUserSiteCountForPlatform } from 'calypso/components/site-selector/utils';
+import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { getDomainProductSlug } from 'calypso/lib/domains';
+import { preventWidows } from 'calypso/lib/formatting';
+import StepWrapper from 'calypso/signup/step-wrapper';
+import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
+import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import SiteOrDomainChoice from './choice';
 import DomainImage from './domain-image';
-import NewSiteImage from './new-site-image';
 import ExistingSiteImage from './existing-site-image';
-
-/**
- * Style dependencies
- */
+import NewSiteImage from './new-site-image';
 import './style.scss';
 
 class SiteOrDomain extends Component {
@@ -42,52 +36,127 @@ class SiteOrDomain extends Component {
 		return isValidDomain && domain;
 	}
 
-	getChoices() {
-		const { translate } = this.props;
+	isLeanDomainSearch() {
+		const { signupDependencies } = this.props;
+		return 'leandomainsearch' === signupDependencies?.refParameter;
+	}
 
-		const choices = [
-			{
+	getChoices() {
+		const { translate, isReskinned, isLoggedIn, siteCount } = this.props;
+
+		const domainName = this.getDomainName();
+		let buyADomainTitle = translate( 'Just buy a domain' );
+
+		if ( this.isLeanDomainSearch() && domainName ) {
+			// translators: %s is a domain name
+			buyADomainTitle = translate( 'Just buy %s', { args: [ domainName ] } );
+		}
+
+		const choices = [];
+
+		if ( isReskinned ) {
+			choices.push( {
+				key: 'domain',
+				title: buyADomainTitle,
+				description: translate( 'Show a "coming soon" notice on your domain. Add a site later.' ),
+				icon: globe,
+				value: 'domain',
+				actionText: translate( 'Get domain' ),
+			} );
+			choices.push( {
+				key: 'page',
+				title: translate( 'New site' ),
+				description: translate(
+					'Customize and launch your site.{{br/}}{{strong}}Free domain for the first year*{{/strong}}',
+					{
+						components: {
+							strong: <strong />,
+							br: <br />,
+						},
+					}
+				),
+				icon: addCard,
+				value: 'page',
+				actionText: translate( 'Start site' ),
+			} );
+			if ( isLoggedIn && siteCount > 0 ) {
+				choices.push( {
+					key: 'existing-site',
+					title: translate( 'Existing WordPress.com site' ),
+					description: translate(
+						'Use with a site you already started.{{br/}}{{strong}}Free domain for the first year*{{/strong}}',
+						{
+							components: {
+								strong: <strong />,
+								br: <br />,
+							},
+						}
+					),
+					icon: layout,
+					value: 'existing-site',
+					actionText: translate( 'Choose site' ),
+				} );
+			}
+		} else {
+			choices.push( {
 				type: 'page',
 				label: translate( 'New site' ),
 				image: <NewSiteImage />,
 				description: translate(
 					'Choose a theme, customize, and launch your site. A free domain for one year is included with all annual plans.'
 				),
-			},
-		];
-
-		if ( this.props.isLoggedIn ) {
+			} );
+			if ( isLoggedIn && siteCount > 0 ) {
+				choices.push( {
+					type: 'existing-site',
+					label: translate( 'Existing WordPress.com site' ),
+					image: <ExistingSiteImage />,
+					description: translate(
+						'Use with a site you already started. A free domain for one year is included with all annual plans.'
+					),
+				} );
+			}
 			choices.push( {
-				type: 'existing-site',
-				label: translate( 'Existing WordPress.com site' ),
-				image: <ExistingSiteImage />,
-				description: translate(
-					'Use with a site you already started. A free domain for one year is included with all plans.'
-				),
+				type: 'domain',
+				label: buyADomainTitle,
+				image: <DomainImage />,
+				description: translate( 'Show a "coming soon" notice on your domain. Add a site later.' ),
 			} );
 		}
-
-		choices.push( {
-			type: 'domain',
-			label: translate( 'Just buy a domain' ),
-			image: <DomainImage />,
-			description: translate( 'Show a "coming soon" notice on your domain. Add a site later.' ),
-		} );
 
 		return choices;
 	}
 
 	renderChoices() {
+		const { isReskinned, translate } = this.props;
+
 		return (
 			<div className="site-or-domain__choices">
-				{ this.getChoices().map( ( choice, index ) => (
-					<SiteOrDomainChoice
-						choice={ choice }
-						handleClickChoice={ this.handleClickChoice }
-						isPlaceholder={ ! this.props.productsLoaded }
-						key={ `site-or-domain-choice-${ index }` }
-					/>
-				) ) }
+				{ isReskinned ? (
+					<>
+						<div>
+							<SelectItems
+								items={ this.getChoices() }
+								onSelect={ this.handleClickChoice }
+								preventWidows={ preventWidows }
+							/>
+						</div>
+						<div className="site-or-domain__free-domain-note">
+							{ translate( '*A free domain for one year is included with all paid annual plans.' ) }
+						</div>
+					</>
+				) : (
+					<>
+						{ this.getChoices().map( ( choice, index ) => (
+							<SiteOrDomainChoice
+								choice={ choice }
+								handleClickChoice={ this.handleClickChoice }
+								isPlaceholder={ ! this.props.productsLoaded }
+								key={ `site-or-domain-choice-${ index }` }
+							/>
+						) ) }
+					</>
+				) }
 			</div>
 		);
 	}
@@ -150,20 +219,25 @@ class SiteOrDomain extends Component {
 			goToNextStep();
 		} else {
 			this.props.submitSignupStep( { stepName: 'site-picker', wasSkipped: true } );
-			goToStep( 'themes' );
+			this.props.submitSignupStep(
+				{ stepName: 'themes', wasSkipped: true },
+				{ themeSlugWithRepo: 'pub/twentysixteen' }
+			);
+			goToStep( 'plans-site-selected' );
 		}
 	};
 
 	render() {
-		const { translate, productsLoaded } = this.props;
+		const { translate, productsLoaded, isReskinned } = this.props;
+		const domainName = this.getDomainName();
 
-		if ( productsLoaded && ! this.getDomainName() ) {
+		if ( productsLoaded && ! domainName ) {
 			const headerText = translate( 'Unsupported domain.' );
 			const subHeaderText = translate(
 				'Please visit {{a}}wordpress.com/domains{{/a}} to search for a domain.',
 				{
 					components: {
-						a: <a href={ 'https://wordpress.com/domains' } />,
+						a: <a href="https://wordpress.com/domains/" />,
 					},
 				}
 			);
@@ -179,16 +253,34 @@ class SiteOrDomain extends Component {
 			);
 		}
 
+		const additionalProps = {};
+		let headerText = this.props.headerText;
+
+		if ( isReskinned ) {
+			additionalProps.isHorizontalLayout = true;
+			additionalProps.align = 'left';
+			additionalProps.headerImageUrl = HeaderImage;
+		}
+
+		if ( this.isLeanDomainSearch() ) {
+			additionalProps.className = 'lean-domain-search';
+			if ( domainName ) {
+				// translators: %s is a domain name
+				headerText = translate( 'Choose how to use %s', { args: [ domainName ] } );
+			}
+		}
+
 		return (
 			<StepWrapper
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
 				positionInFlow={ this.props.positionInFlow }
-				headerText={ this.props.headerText }
+				headerText={ headerText }
 				subHeaderText={ this.props.subHeaderText }
-				fallbackHeaderText={ this.props.headerText }
+				fallbackHeaderText={ headerText }
 				fallbackSubHeaderText={ this.props.subHeaderText }
 				stepContent={ this.renderScreen() }
+				{ ...additionalProps }
 			/>
 		);
 	}
@@ -198,11 +290,13 @@ export default connect(
 	( state ) => {
 		const productsList = getAvailableProductsList( state );
 		const productsLoaded = ! isEmpty( productsList );
+		const user = getCurrentUser( state );
 
 		return {
-			isLoggedIn: !! getCurrentUserId( state ),
+			isLoggedIn: isUserLoggedIn( state ),
 			productsList,
 			productsLoaded,
+			siteCount: getUserSiteCountForPlatform( user ),
 		};
 	},
 	{ submitSignupStep }

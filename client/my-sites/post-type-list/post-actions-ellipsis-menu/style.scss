@@ -7,7 +7,7 @@
 		display: flex;
 	}
 
-	.ellipsis-menu__toggle {
+	.ellipsis-menu__toggle.button {
 		padding: 0 16px;
 		margin-right: -16px;
 	}
@@ -20,7 +20,7 @@
 	font-weight: inherit;
 
 	&:hover {
-		color: white;
+		color: var(--color-text-inverted);
 	}
 
 	.gridicon {

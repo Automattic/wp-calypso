@@ -1,7 +1,3 @@
-/**
- * External dependencies
- */
-
 import cookie from 'cookie';
 import store from 'store';
 

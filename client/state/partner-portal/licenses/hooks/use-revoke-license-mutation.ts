@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import { useMutation, UseMutationOptions, UseMutationResult } from 'react-query';
-
-/**
- * Internal dependencies
- */
-import { APILicense } from 'calypso/state/partner-portal/types';
+import { useMutation, UseMutationOptions, UseMutationResult } from '@tanstack/react-query';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
+import { APILicense } from 'calypso/state/partner-portal/types';
 
 interface MutationRevokeLicenseVariables {
 	licenseKey: string;

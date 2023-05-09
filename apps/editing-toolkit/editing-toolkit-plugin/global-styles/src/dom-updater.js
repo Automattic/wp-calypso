@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { subscribe, select } from '@wordpress/data';
 import domReady from '@wordpress/dom-ready';
 import { isEmpty, isEqual } from 'lodash';

@@ -1,23 +1,13 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import i18n, { localize } from 'i18n-calypso';
-import debugModule from 'debug';
-import { find, isEmpty } from 'lodash';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import Translatable from './translatable';
 import languages from '@automattic/languages';
-import isCommunityTranslatorEnabled from 'calypso/state/selectors/is-community-translator-enabled';
+import debugModule from 'debug';
+import i18n, { localize } from 'i18n-calypso';
+import { find, isEmpty } from 'lodash';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
+import isCommunityTranslatorEnabled from 'calypso/state/selectors/is-community-translator-enabled';
+import Translatable from './translatable';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 /**
@@ -86,7 +76,7 @@ class CommunityTranslator extends Component {
 	 * @param {string} originalFromPage - original string
 	 * @param {string} displayedTranslationFromPage - translated string
 	 * @param  { Object } optionsFromPage - i18n.translate options
-	 * @returns {object} DOM object
+	 * @returns {Object} DOM object
 	 */
 	wrapTranslation( originalFromPage, displayedTranslationFromPage, optionsFromPage ) {
 		if ( ! this.props.isCommunityTranslatorEnabled ) {

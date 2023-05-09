@@ -19,7 +19,7 @@
 	}
 	&__subheader {
 		font-size: $font-body-small;
-		color: var( --color-neutral-50 );
+		color: var(--color-neutral-50);
 		margin-bottom: 16px;
 	}
 	&__row {
@@ -41,9 +41,9 @@
 	}
 	&__detail {
 		font-size: $font-body-small;
-		color: var( --color-neutral-50 );
+		color: var(--color-neutral-50);
 		.expired {
-			color: var( --color-error-dark );
+			color: var(--color-error-dark);
 		}
 	}
 	&__side {
@@ -54,7 +54,7 @@
 	}
 	&__renewal-settings-link a {
 		font-size: $font-body-small;
-		color: var( --color-neutral-50 );
+		color: var(--color-neutral-50);
 		text-decoration: underline;
 	}
 	&__actions {

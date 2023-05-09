@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-import reducer, { items } from '../reducer';
 import {
 	acceptDomainTransfer,
 	acceptDomainTransferCompleted,
@@ -18,6 +14,7 @@ import {
 	updateDomainTransfer,
 } from '../actions';
 import { createDomainObject } from '../assembler';
+import reducer, { items } from '../reducer';
 
 const selectedRegistrar = {
 	tag: 'UNIT-TEST-TAG',

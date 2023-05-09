@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getPostById, getPostByKey, getPostsByKeys } from '../selectors';
 
 describe( 'selectors', () => {

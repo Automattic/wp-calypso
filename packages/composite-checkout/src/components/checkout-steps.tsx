@@ -1,55 +1,46 @@
-/**
- * External dependencies
- */
-import React, {
-	Dispatch,
-	SetStateAction,
+import styled from '@emotion/styled';
+import { useI18n } from '@wordpress/react-i18n';
+import debugFactory from 'debug';
+import PropTypes from 'prop-types';
+import {
+	cloneElement,
+	Children,
 	useCallback,
 	useContext,
 	useEffect,
 	useState,
+	createContext,
+	useRef,
+	useMemo,
 } from 'react';
-import debugFactory from 'debug';
-import PropTypes from 'prop-types';
-import { useI18n } from '@wordpress/react-i18n';
-
-/**
- * Internal dependencies
- */
-import joinClasses from '../lib/join-classes';
-import CheckoutErrorBoundary from './checkout-error-boundary';
+import { getDefaultPaymentMethodStep } from '../components/default-steps';
+import CheckoutContext from '../lib/checkout-context';
 import { useFormStatus } from '../lib/form-status';
-import LoadingContent from './loading-content';
-import CheckoutSubmitButton from './checkout-submit-button';
+import joinClasses from '../lib/join-classes';
+import { usePaymentMethod } from '../lib/payment-methods';
+import { SubscriptionManager } from '../lib/subscription-manager';
+import { CheckoutStepGroupActions, FormStatus } from '../types';
 import Button from './button';
-import { CheckIcon } from './shared-icons';
+import CheckoutErrorBoundary from './checkout-error-boundary';
 import CheckoutNextStepButton from './checkout-next-step-button';
-import {
-	getDefaultOrderReviewStep,
-	getDefaultOrderSummary,
-	getDefaultOrderSummaryStep,
-	getDefaultPaymentMethodStep,
-	useEvents,
-	usePaymentMethod,
-} from '../public-api';
-import styled from '../lib/styled';
-import { Theme } from '../lib/theme';
-import { FormStatus, CheckoutStepProps } from '../types';
+import CheckoutSubmitButton from './checkout-submit-button';
+import LoadingContent from './loading-content';
+import { CheckIcon } from './shared-icons';
+import { useCustomPropertyForHeight } from './use-custom-property-for-height';
+import type { Theme } from '../lib/theme';
+import type {
+	CheckoutStepProps,
+	StepCompleteCallback,
+	SetStepComplete,
+	CheckoutStepGroupState,
+	CheckoutStepCompleteStatus,
+	CheckoutStepGroupStore,
+} from '../types';
+import type { ReactNode, HTMLAttributes, PropsWithChildren, ReactElement } from 'react';
 
-const debug = debugFactory( 'composite-checkout:checkout' );
+const debug = debugFactory( 'composite-checkout:checkout-steps' );
 
-interface StepCompleteStatus {
-	[ key: string ]: boolean;
-}
-
-interface CheckoutStepDataContext {
-	activeStepNumber: number;
-	stepCompleteStatus: StepCompleteStatus;
-	totalSteps: number;
-	setActiveStepNumber: ( stepNumber: number ) => void;
-	setStepCompleteStatus: Dispatch< SetStateAction< StepCompleteStatus > >;
-	setTotalSteps: ( totalSteps: number ) => void;
-}
+const customPropertyForSubmitButtonHeight = '--submit-button-height';
 
 interface CheckoutSingleStepDataContext {
 	stepNumber: number;
@@ -59,16 +50,142 @@ interface CheckoutSingleStepDataContext {
 	areStepsActive: boolean;
 }
 
-const CheckoutStepDataContext = React.createContext< CheckoutStepDataContext >( {
-	activeStepNumber: 0,
-	stepCompleteStatus: {},
-	totalSteps: 0,
-	setActiveStepNumber: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
-	setStepCompleteStatus: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
-	setTotalSteps: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
+const noop = () => {
+	throw new Error( 'Cannot use CheckoutStepGroupContext without a provider.' );
+};
+const noopPromise = () => () =>
+	Promise.reject( 'Cannot use CheckoutStepGroupContext without a provider.' );
+const emptyStepCompleteStatus = {};
+const CheckoutStepGroupContext = createContext< CheckoutStepGroupStore >( {
+	state: {
+		activeStepNumber: 0,
+		stepCompleteStatus: emptyStepCompleteStatus,
+		totalSteps: 0,
+		stepIdMap: {},
+		stepCompleteCallbackMap: {},
+	},
+	actions: {
+		setStepComplete: noop,
+		setActiveStepNumber: noop,
+		setStepCompleteStatus: noop,
+		setStepCompleteCallback: noop,
+		getStepCompleteCallback: noopPromise,
+		getStepNumberFromId: noop,
+		setTotalSteps: noop,
+	},
+	subscription: new SubscriptionManager(),
 } );
 
-const CheckoutSingleStepDataContext = React.createContext< CheckoutSingleStepDataContext >( {
+export function createCheckoutStepGroupStore(): CheckoutStepGroupStore {
+	const state = createCheckoutStepGroupState();
+	const subscription = new SubscriptionManager();
+	const actions = createCheckoutStepGroupActions( state, subscription.notifySubscribers );
+	return {
+		state,
+		actions,
+		subscription,
+	};
+}
+
+function createCheckoutStepGroupState(): CheckoutStepGroupState {
+	return {
+		activeStepNumber: 1,
+		totalSteps: 0,
+		stepCompleteStatus: {},
+		stepIdMap: {},
+		stepCompleteCallbackMap: {},
+	};
+}
+
+function createCheckoutStepGroupActions(
+	state: CheckoutStepGroupState,
+	onStateChange: () => void
+): CheckoutStepGroupActions {
+	const setActiveStepNumber = ( stepNumber: number ) => {
+		if ( stepNumber < 1 ) {
+			throw new Error( `Cannot set step number to '${ stepNumber }' because it is too low` );
+		}
+		if ( stepNumber > state.totalSteps && state.totalSteps === 0 ) {
+			throw new Error(
+				`Cannot set step number to '${ stepNumber }' because the total number of steps is 0`
+			);
+		}
+		if ( stepNumber > state.totalSteps ) {
+			stepNumber = state.totalSteps;
+		}
+		if ( stepNumber === state.activeStepNumber ) {
+			return;
+		}
+		state.activeStepNumber = stepNumber;
+		onStateChange();
+	};
+
+	const setTotalSteps = ( stepCount: number ) => {
+		if ( stepCount < 0 ) {
+			throw new Error( `Cannot set total steps to '${ stepCount }' because it is too low` );
+		}
+		if ( stepCount === state.totalSteps ) {
+			return;
+		}
+		state.totalSteps = stepCount;
+		onStateChange();
+	};
+
+	const setStepCompleteStatus = ( newStatus: CheckoutStepCompleteStatus ) => {
+		state.stepCompleteStatus = newStatus;
+		onStateChange();
+	};
+
+	const getStepNumberFromId = ( id: string ) => state.stepIdMap[ id ];
+
+	const setStepCompleteCallback = (
+		stepNumber: number,
+		stepId: string,
+		callback: StepCompleteCallback
+	) => {
+		state.stepIdMap[ stepId ] = stepNumber;
+		state.stepCompleteCallbackMap[ stepNumber ] = callback;
+	};
+
+	const getStepCompleteCallback = ( stepNumber: number ) => {
+		return (
+			state.stepCompleteCallbackMap[ stepNumber ] ??
+			( () => {
+				throw new Error( `No isCompleteCallback found for step '${ stepNumber }'` );
+			} )
+		);
+	};
+
+	const setStepComplete = async ( stepId: string ) => {
+		const stepNumber = getStepNumberFromId( stepId );
+		if ( ! stepNumber ) {
+			throw new Error( `Cannot find step with id '${ stepId }' when trying to set step complete.` );
+		}
+		// To try to complete a step, we must try to complete all previous steps
+		// first, ignoring steps that are already complete.
+		for ( let step = 1; step <= stepNumber; step++ ) {
+			if ( ! state.stepCompleteStatus[ step ] ) {
+				const didStepComplete = await getStepCompleteCallback( step )();
+				if ( ! didStepComplete ) {
+					return false;
+				}
+			}
+		}
+		return true;
+	};
+
+	return {
+		setActiveStepNumber,
+		setStepCompleteStatus,
+		getStepNumberFromId,
+		setStepCompleteCallback,
+		getStepCompleteCallback,
+		setTotalSteps,
+		setStepComplete,
+	};
+}
+
+const CheckoutSingleStepDataContext = createContext< CheckoutSingleStepDataContext >( {
 	stepNumber: 0,
 	nextStepNumber: null,
 	isStepActive: false,
@@ -85,6 +202,7 @@ const CheckoutWrapper = styled.div`
 export const MainContentWrapper = styled.div`
 	display: flex;
 	flex-direction: column;
+	flex-wrap: wrap;
 	width: 100%;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
@@ -124,10 +242,9 @@ const CheckoutSummary = styled.div`
 export const CheckoutSummaryArea = ( {
 	children,
 	className,
-}: {
-	children: React.ReactNode;
+}: PropsWithChildren< {
 	className?: string;
-} ): JSX.Element => {
+} > ) => {
 	return (
 		<CheckoutSummary className={ joinClasses( [ className, 'checkout__summary-area' ] ) }>
 			{ children }
@@ -149,22 +266,31 @@ export const CheckoutSummaryCard = styled.div`
 	}
 `;
 
-export const CheckoutSteps = ( {
+function isElementAStep( el: ReactNode ): boolean {
+	const childStep = el as { type?: { isCheckoutStep?: boolean } };
+	return !! childStep?.type?.isCheckoutStep;
+}
+
+function isNodeAComponent( el: ReactNode ): el is ReactElement {
+	const childStep = el as ReactElement;
+	return childStep?.props !== undefined;
+}
+
+export const CheckoutStepGroupInner = ( {
 	children,
 	areStepsActive = true,
-}: CheckoutStepsProps ): JSX.Element => {
+}: PropsWithChildren< CheckoutStepsProps > ) => {
 	let stepNumber = 0;
 	let nextStepNumber: number | null = 1;
 
-	const steps = React.Children.toArray( children ).filter( ( child ) => child );
+	const childrenArray = Children.toArray( children );
+	const steps = childrenArray.filter( isElementAStep );
 	const totalSteps = steps.length;
-	const { activeStepNumber, stepCompleteStatus, setTotalSteps } = useContext(
-		CheckoutStepDataContext
-	);
+	const { state, actions } = useContext( CheckoutStepGroupContext );
+	const { activeStepNumber, stepCompleteStatus } = state;
+	const { setTotalSteps } = actions;
 
-	useEffect( () => {
-		setTotalSteps( totalSteps );
-	}, [ totalSteps, setTotalSteps ] );
+	setTotalSteps( totalSteps );
 
 	debug(
 		'active step',
@@ -177,54 +303,76 @@ export const CheckoutSteps = ( {
 
 	return (
 		<>
-			{ steps.map( ( child ) => {
-				stepNumber = nextStepNumber || 0;
-				nextStepNumber = stepNumber === totalSteps ? null : stepNumber + 1;
-				const isStepActive = areStepsActive && activeStepNumber === stepNumber;
-				const isStepComplete = !! stepCompleteStatus[ stepNumber ];
-				return (
-					<CheckoutSingleStepDataContext.Provider
-						key={ 'checkout-step-' + stepNumber }
-						value={ {
-							stepNumber,
-							nextStepNumber,
-							isStepActive,
-							isStepComplete,
-							areStepsActive,
-						} }
-					>
-						{ child }
-					</CheckoutSingleStepDataContext.Provider>
-				);
+			{ childrenArray.map( ( child, childNumber ) => {
+				if ( ! isNodeAComponent( child ) ) {
+					return child;
+				}
+				if ( isElementAStep( child ) ) {
+					stepNumber = nextStepNumber || 0;
+					nextStepNumber = stepNumber === totalSteps ? null : stepNumber + 1;
+					const isStepActive = areStepsActive && activeStepNumber === stepNumber;
+					const isStepComplete = !! stepCompleteStatus[ stepNumber ];
+					return (
+						<CheckoutSingleStepDataContext.Provider
+							key={ 'checkout-step-' + stepNumber }
+							value={ {
+								stepNumber,
+								nextStepNumber,
+								isStepActive,
+								isStepComplete,
+								areStepsActive,
+							} }
+						>
+							{ child }
+						</CheckoutSingleStepDataContext.Provider>
+					);
+				}
+				// Provide a `key` prop
+				return cloneElement( child, { key: 'checkout-non-step-' + childNumber } );
 			} ) }
 		</>
 	);
 };
 
 interface CheckoutStepsProps {
-	children?: React.ReactNode;
 	areStepsActive?: boolean;
 }
 
-export function Checkout( {
+function CheckoutStepGroupWrapper( {
 	children,
 	className,
-}: {
-	children: React.ReactNode;
+	loadingContent,
+	store,
+}: PropsWithChildren< {
 	className?: string;
-} ): JSX.Element {
+	loadingContent?: ReactNode;
+	store: CheckoutStepGroupStore;
+} > ) {
 	const { isRTL } = useI18n();
 	const { formStatus } = useFormStatus();
-	const [ activeStepNumber, setActiveStepNumber ] = useState< number >( 1 );
-	const [ stepCompleteStatus, setStepCompleteStatus ] = useState< StepCompleteStatus >( {} );
-	const [ totalSteps, setTotalSteps ] = useState( 0 );
-	const actualActiveStepNumber =
-		activeStepNumber > totalSteps && totalSteps > 0 ? totalSteps : activeStepNumber;
+
+	const isMounted = useRef( true );
+	useEffect( () => {
+		isMounted.current = true;
+		return () => {
+			isMounted.current = false;
+		};
+	}, [] );
+	const [ contextValue, setContextValue ] = useState( store );
+	useEffect( () => {
+		return store.subscription.subscribe( () => {
+			// Force a re-render when the state changes by using setState and passing
+			// a duplicate of the store object to the React context. This way all
+			// context consumers get the modified store because its identity has
+			// changed.
+			setTimeout( () => {
+				isMounted.current && setContextValue( { ...store } );
+			}, 0 );
+		} );
+	}, [ store ] );
 
 	// Change the step if the url changes
-	useChangeStepNumberForUrl( setActiveStepNumber );
-
-	const getDefaultCheckoutSteps = () => <DefaultCheckoutSteps />;
+	useChangeStepNumberForUrl( store.actions.setActiveStepNumber );
 
 	// Note: the composite-checkout class name is also used by FullStory to avoid recording
 	// WordPress.com checkout session activity. If this class name is changed or removed, we
@@ -239,7 +387,7 @@ export function Checkout( {
 		return (
 			<CheckoutWrapper className={ classNames }>
 				<MainContentWrapper className={ joinClasses( [ className, 'checkout__content' ] ) }>
-					<LoadingContent />
+					{ loadingContent ? loadingContent : <LoadingContent /> }
 				</MainContentWrapper>
 			</CheckoutWrapper>
 		);
@@ -248,18 +396,9 @@ export function Checkout( {
 	return (
 		<CheckoutWrapper className={ classNames }>
 			<MainContentWrapper className={ joinClasses( [ className, 'checkout__content' ] ) }>
-				<CheckoutStepDataContext.Provider
-					value={ {
-						activeStepNumber: actualActiveStepNumber,
-						stepCompleteStatus,
-						totalSteps,
-						setActiveStepNumber,
-						setStepCompleteStatus,
-						setTotalSteps,
-					} }
-				>
-					{ children || getDefaultCheckoutSteps() }
-				</CheckoutStepDataContext.Provider>
+				<CheckoutStepGroupContext.Provider value={ contextValue }>
+					{ children }
+				</CheckoutStepGroupContext.Provider>
 			</MainContentWrapper>
 		</CheckoutWrapper>
 	);
@@ -267,6 +406,7 @@ export function Checkout( {
 
 export const CheckoutStep = ( {
 	activeStepContent,
+	activeStepFooter,
 	completeStepContent,
 	titleContent,
 	stepId,
@@ -278,30 +418,38 @@ export const CheckoutStep = ( {
 	nextStepButtonAriaLabel,
 	validatingButtonText,
 	validatingButtonAriaLabel,
-}: CheckoutStepProps ): JSX.Element => {
+}: CheckoutStepProps ) => {
 	const { __ } = useI18n();
-	const { setActiveStepNumber, setStepCompleteStatus, stepCompleteStatus } = useContext(
-		CheckoutStepDataContext
-	);
+	const { state, actions } = useContext( CheckoutStepGroupContext );
+	const { stepCompleteStatus } = state;
+	const {
+		setActiveStepNumber,
+		setStepCompleteStatus,
+		setStepCompleteCallback,
+		getStepCompleteCallback,
+	} = actions;
 	const { stepNumber, nextStepNumber, isStepActive, isStepComplete, areStepsActive } = useContext(
 		CheckoutSingleStepDataContext
 	);
+	const { onPageLoadError, onStepChanged } = useContext( CheckoutContext );
 	const { formStatus, setFormValidating, setFormReady } = useFormStatus();
 	const setThisStepCompleteStatus = ( newStatus: boolean ) =>
 		setStepCompleteStatus( { ...stepCompleteStatus, [ stepNumber ]: newStatus } );
 	const goToThisStep = () => setActiveStepNumber( stepNumber );
-	const onEvent = useEvents();
 	const activePaymentMethod = usePaymentMethod();
-	const finishIsCompleteCallback = ( completeResult: boolean ) => {
-		setThisStepCompleteStatus( !! completeResult );
+
+	// This is the callback called when you press "Continue" on a step.
+	const goToNextStep = async () => {
+		setFormValidating();
+		// Wrapping isCompleteCallback in Promise.resolve allows it to return a Promise or boolean.
+		const completeResult = Boolean( await Promise.resolve( isCompleteCallback() ) );
+		debug( `isCompleteCallback for step ${ stepNumber } finished with`, completeResult );
+		setThisStepCompleteStatus( completeResult );
 		if ( completeResult ) {
-			onEvent( {
-				type: 'STEP_NUMBER_CHANGED',
-				payload: {
-					stepNumber: nextStepNumber,
-					previousStepNumber: stepNumber,
-					paymentMethodId: activePaymentMethod?.id ?? '',
-				},
+			onStepChanged?.( {
+				stepNumber: nextStepNumber,
+				previousStepNumber: stepNumber,
+				paymentMethodId: activePaymentMethod?.id ?? '',
 			} );
 			if ( nextStepNumber ) {
 				saveStepNumberToUrl( nextStepNumber );
@@ -309,14 +457,9 @@ export const CheckoutStep = ( {
 			}
 		}
 		setFormReady();
+		return completeResult;
 	};
-	const goToNextStep = async () => {
-		// Wrapping this in Promise.resolve allows it to be a Promise or boolean
-		const completeResult = Promise.resolve( isCompleteCallback() );
-		setFormValidating();
-		const delayedCompleteResult = await completeResult;
-		finishIsCompleteCallback( delayedCompleteResult );
-	};
+	setStepCompleteCallback( stepNumber, stepId, goToNextStep );
 
 	const classNames = [
 		'checkout-step',
@@ -326,15 +469,8 @@ export const CheckoutStep = ( {
 	];
 
 	const onError = useCallback(
-		( error ) =>
-			onEvent( {
-				type: 'STEP_LOAD_ERROR',
-				payload: {
-					message: error,
-					stepId,
-				},
-			} ),
-		[ onEvent, stepId ]
+		( error: Error ) => onPageLoadError?.( 'step_load', error, { step_id: stepId } ),
+		[ onPageLoadError, stepId ]
 	);
 
 	return (
@@ -352,58 +488,22 @@ export const CheckoutStep = ( {
 			stepId={ stepId }
 			titleContent={ titleContent }
 			goToThisStep={ areStepsActive ? goToThisStep : undefined }
-			goToNextStep={ nextStepNumber && nextStepNumber > 0 ? goToNextStep : undefined }
-			activeStepContent={ activeStepContent }
+			goToNextStep={
+				nextStepNumber && nextStepNumber > 0 ? getStepCompleteCallback( stepNumber ) : undefined
+			}
+			activeStepContent={
+				<>
+					{ activeStepContent }
+					{ activeStepFooter }
+				</>
+			}
 			formStatus={ formStatus }
 			completeStepContent={ completeStepContent }
 			className={ joinClasses( classNames ) }
 		/>
 	);
 };
-
-function DefaultCheckoutSteps() {
-	const orderSummary = getDefaultOrderSummary();
-	const orderSummaryStep = getDefaultOrderSummaryStep();
-	const paymentMethodStep = getDefaultPaymentMethodStep();
-	const reviewOrderStep = getDefaultOrderReviewStep();
-	return (
-		<React.Fragment>
-			<CheckoutSummaryArea className={ orderSummary.className }>
-				<CheckoutSummaryCard>{ orderSummary.summaryContent }</CheckoutSummaryCard>
-			</CheckoutSummaryArea>
-			<CheckoutStepArea>
-				<CheckoutStepBody
-					activeStepContent={ orderSummaryStep.activeStepContent }
-					completeStepContent={ orderSummaryStep.completeStepContent }
-					titleContent={ orderSummaryStep.titleContent }
-					isStepActive={ false }
-					isStepComplete={ true }
-					stepNumber={ 1 }
-					stepId={ 'order-summary-step' }
-					className={ orderSummaryStep.className }
-				/>
-				<CheckoutSteps>
-					<CheckoutStep
-						stepId="review-order-step"
-						isCompleteCallback={ () => true }
-						activeStepContent={ reviewOrderStep.activeStepContent }
-						completeStepContent={ reviewOrderStep.completeStepContent }
-						titleContent={ reviewOrderStep.titleContent }
-						className={ reviewOrderStep.className }
-					/>
-					<CheckoutStep
-						stepId="payment-method-step"
-						isCompleteCallback={ () => true }
-						activeStepContent={ paymentMethodStep.activeStepContent }
-						completeStepContent={ paymentMethodStep.completeStepContent }
-						titleContent={ paymentMethodStep.titleContent }
-						className={ paymentMethodStep.className }
-					/>
-				</CheckoutSteps>
-			</CheckoutStepArea>
-		</React.Fragment>
-	);
-}
+CheckoutStep.isCheckoutStep = true;
 
 export const CheckoutStepAreaWrapper = styled.div`
 	background: ${ ( props ) => props.theme.colors.surface };
@@ -412,7 +512,7 @@ export const CheckoutStepAreaWrapper = styled.div`
 	width: 100%;
 
 	&.checkout__step-wrapper--last-step {
-		margin-bottom: 100px;
+		margin-bottom: var( ${ customPropertyForSubmitButtonHeight }, 100px );
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.smallPhoneUp } ) {
@@ -421,6 +521,7 @@ export const CheckoutStepAreaWrapper = styled.div`
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		max-width: 556px;
+		margin-bottom: 0;
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
@@ -454,6 +555,7 @@ export const SubmitButtonWrapper = styled.div`
 
 	.checkout-button {
 		width: calc( 100% - 60px );
+		margin: 0 auto;
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
@@ -468,27 +570,24 @@ export const SubmitButtonWrapper = styled.div`
 	}
 `;
 
+// Set right padding so that text doesn't overlap with inline help floating button.
+export const SubmitFooterWrapper = styled.div`
+	padding-right: 42px;
+
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		padding-right: 0;
+	}
+`;
+
 export function CheckoutStepArea( {
 	children,
 	className,
-	submitButtonHeader,
-	disableSubmitButton,
-}: {
-	children: React.ReactNode;
+}: PropsWithChildren< {
 	className?: string;
-	submitButtonHeader?: React.ReactNode;
-	disableSubmitButton?: boolean;
-} ): JSX.Element {
-	const onEvent = useEvents();
-
-	const { activeStepNumber, totalSteps } = useContext( CheckoutStepDataContext );
-	const actualActiveStepNumber =
-		activeStepNumber > totalSteps && totalSteps > 0 ? totalSteps : activeStepNumber;
-	const isThereAnotherNumberedStep = actualActiveStepNumber < totalSteps;
-	const onSubmitButtonLoadError = useCallback(
-		( error ) => onEvent( { type: 'SUBMIT_BUTTON_LOAD_ERROR', payload: error } ),
-		[ onEvent ]
-	);
+} > ) {
+	const { state } = useContext( CheckoutStepGroupContext );
+	const { activeStepNumber, totalSteps } = state;
+	const isThereAnotherNumberedStep = activeStepNumber < totalSteps;
 
 	const classNames = joinClasses( [
 		'checkout__step-wrapper',
@@ -496,22 +595,47 @@ export function CheckoutStepArea( {
 		...( ! isThereAnotherNumberedStep ? [ 'checkout__step-wrapper--last-step' ] : [] ),
 	] );
 
-	return (
-		<CheckoutStepAreaWrapper className={ classNames }>
-			{ children }
+	return <CheckoutStepAreaWrapper className={ classNames }>{ children }</CheckoutStepAreaWrapper>;
+}
 
-			<SubmitButtonWrapper className="checkout-steps__submit-button-wrapper">
-				{ submitButtonHeader ? submitButtonHeader : null }
-				<CheckoutSubmitButton
-					disabled={ isThereAnotherNumberedStep || disableSubmitButton }
-					onLoadError={ onSubmitButtonLoadError }
-				/>
-			</SubmitButtonWrapper>
-		</CheckoutStepAreaWrapper>
+export function CheckoutFormSubmit( {
+	validateForm,
+	submitButtonHeader,
+	submitButtonFooter,
+	disableSubmitButton,
+}: {
+	validateForm?: () => Promise< boolean >;
+	submitButtonHeader?: ReactNode;
+	submitButtonFooter?: ReactNode;
+	disableSubmitButton?: boolean;
+} ) {
+	const { state } = useContext( CheckoutStepGroupContext );
+	const { activeStepNumber, totalSteps } = state;
+	const isThereAnotherNumberedStep = activeStepNumber < totalSteps;
+	const { onPageLoadError } = useContext( CheckoutContext );
+	const onSubmitButtonLoadError = useCallback(
+		( error ) => onPageLoadError?.( 'submit_button_load', error ),
+		[ onPageLoadError ]
+	);
+
+	const submitWrapperRef = useCustomPropertyForHeight< HTMLDivElement >(
+		customPropertyForSubmitButtonHeight
+	);
+
+	return (
+		<SubmitButtonWrapper className="checkout-steps__submit-button-wrapper" ref={ submitWrapperRef }>
+			{ submitButtonHeader || null }
+			<CheckoutSubmitButton
+				validateForm={ validateForm }
+				disabled={ isThereAnotherNumberedStep || disableSubmitButton }
+				onLoadError={ onSubmitButtonLoadError }
+			/>
+			<SubmitFooterWrapper>{ submitButtonFooter || null }</SubmitFooterWrapper>
+		</SubmitButtonWrapper>
 	);
 }
 
-const StepWrapper = styled.div< React.HTMLAttributes< HTMLDivElement > >`
+const StepWrapper = styled.div< HTMLAttributes< HTMLDivElement > >`
 	position: relative;
 	border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	padding: 16px;
@@ -530,9 +654,7 @@ const StepWrapper = styled.div< React.HTMLAttributes< HTMLDivElement > >`
 	}
 `;
 
-const StepContentWrapper = styled.div<
-	StepContentWrapperProps & React.HTMLAttributes< HTMLDivElement >
->`
+const StepContentWrapper = styled.div< StepContentWrapperProps & HTMLAttributes< HTMLDivElement > >`
 	color: ${ ( props ) => props.theme.colors.textColor };
 	display: ${ ( props ) => ( props.isVisible ? 'block' : 'none' ) };
 	padding-left: 35px;
@@ -547,9 +669,7 @@ interface StepContentWrapperProps {
 	isVisible?: boolean;
 }
 
-const StepSummaryWrapper = styled.div<
-	StepContentWrapperProps & React.HTMLAttributes< HTMLDivElement >
->`
+const StepSummaryWrapper = styled.div< StepContentWrapperProps & HTMLAttributes< HTMLDivElement > >`
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 	font-size: 14px;
 	display: ${ ( props ) => ( props.isVisible ? 'block' : 'none' ) };
@@ -581,7 +701,7 @@ export function CheckoutStepBody( {
 	formStatus,
 	completeStepContent,
 	onError,
-}: CheckoutStepBodyProps ): JSX.Element {
+}: CheckoutStepBodyProps ) {
 	const { __ } = useI18n();
 
 	// Since both the active and inactive step content can be mounted at the same
@@ -652,7 +772,7 @@ export function CheckoutStepBody( {
 
 interface CheckoutStepBodyProps {
 	errorMessage?: string;
-	onError?: ( message: string ) => void;
+	onError?: ( error: Error ) => void;
 	editButtonAriaLabel?: string;
 	editButtonText?: string;
 	nextStepButtonText?: string;
@@ -662,12 +782,12 @@ interface CheckoutStepBodyProps {
 	className?: string;
 	stepNumber?: number;
 	stepId: string;
-	titleContent: React.ReactNode;
+	titleContent: ReactNode;
 	goToThisStep?: () => void;
 	goToNextStep?: () => void;
-	activeStepContent?: React.ReactNode;
+	activeStepContent?: ReactNode;
 	formStatus?: FormStatus;
-	completeStepContent?: React.ReactNode;
+	completeStepContent?: ReactNode;
 	validatingButtonText?: string;
 	validatingButtonAriaLabel?: string;
 }
@@ -695,33 +815,23 @@ CheckoutStepBody.propTypes = {
 };
 
 export function useIsStepActive(): boolean {
-	const { activeStepNumber } = useContext( CheckoutStepDataContext );
+	const { state } = useContext( CheckoutStepGroupContext );
 	const { stepNumber } = useContext( CheckoutSingleStepDataContext );
-	return activeStepNumber === stepNumber;
+	return state.activeStepNumber === stepNumber;
 }
 
 export function useIsStepComplete(): boolean {
-	const { stepCompleteStatus } = useContext( CheckoutStepDataContext );
+	const { state } = useContext( CheckoutStepGroupContext );
 	const { stepNumber } = useContext( CheckoutSingleStepDataContext );
-	return !! stepCompleteStatus[ stepNumber ];
+	return !! state.stepCompleteStatus[ stepNumber ];
 }
 
-export function useSetStepComplete(): ( stepNumber: number, newStatus: boolean ) => void {
-	const { setStepCompleteStatus } = useContext( CheckoutStepDataContext );
-	const setTargetStepCompleteStatus = useCallback(
-		( stepNumber: number, newStatus: boolean ) =>
-			setStepCompleteStatus(
-				( stepCompleteStatus: StepCompleteStatus ): StepCompleteStatus => ( {
-					...stepCompleteStatus,
-					[ stepNumber ]: newStatus,
-				} )
-			),
-		[ setStepCompleteStatus ]
-	);
-	return setTargetStepCompleteStatus;
+export function useSetStepComplete(): SetStepComplete {
+	const store = useContext( CheckoutStepGroupContext );
+	return store.actions.setStepComplete;
 }
 
-const StepTitle = styled.span< StepTitleProps & React.HTMLAttributes< HTMLSpanElement > >`
+const StepTitle = styled.span< StepTitleProps & HTMLAttributes< HTMLSpanElement > >`
 	color: ${ ( props ) =>
 		props.isActive ? props.theme.colors.textColorDark : props.theme.colors.textColor };
 	font-weight: ${ ( props ) =>
@@ -740,7 +850,7 @@ interface StepTitleProps {
 	fullWidth?: boolean;
 }
 
-const StepHeader = styled.h2< StepHeaderProps & React.HTMLAttributes< HTMLHeadingElement > >`
+const StepHeader = styled.h2< StepHeaderProps & HTMLAttributes< HTMLHeadingElement > >`
 	font-size: 16px;
 	display: flex;
 	width: 100%;
@@ -773,7 +883,7 @@ function CheckoutStepHeader( {
 	id: string;
 	className?: string;
 	stepNumber?: number;
-	title: React.ReactNode;
+	title: ReactNode;
 	isActive?: boolean;
 	isComplete?: boolean;
 	onEdit?: () => void;
@@ -822,7 +932,7 @@ const StepNumberOuterWrapper = styled.div`
 `;
 
 const StepNumberInnerWrapper = styled.div<
-	StepNumberInnerWrapperProps & React.HTMLAttributes< HTMLDivElement >
+	StepNumberInnerWrapperProps & HTMLAttributes< HTMLDivElement >
 >`
 	position: relative;
 	transform-origin: center center;
@@ -835,7 +945,7 @@ interface StepNumberInnerWrapperProps {
 	isComplete?: boolean;
 }
 
-const StepNumber = styled.div< StepNumberProps & React.HTMLAttributes< HTMLDivElement > >`
+const StepNumber = styled.div< StepNumberProps & HTMLAttributes< HTMLDivElement > >`
 	background: ${ getStepNumberBackgroundColor };
 	font-weight: normal;
 	width: 27px;
@@ -905,7 +1015,7 @@ function Stepper( {
 	className?: string;
 	isComplete?: boolean;
 	isActive?: boolean;
-	children?: React.ReactNode;
+	children?: ReactNode;
 } ) {
 	// Prevent showing complete stepper when active
 	const isCompleteAndInactive = isActive ? false : isComplete;
@@ -964,7 +1074,7 @@ function getStepNumberForegroundColor( {
 }
 
 function saveStepNumberToUrl( stepNumber: number ) {
-	if ( ! window.history?.pushState ) {
+	if ( ! window?.history || ! window?.location ) {
 		return;
 	}
 	const newHash = stepNumber > 1 ? `#step${ stepNumber }` : '';
@@ -975,7 +1085,31 @@ function saveStepNumberToUrl( stepNumber: number ) {
 		? window.location.href.replace( window.location.hash, newHash )
 		: window.location.href + newHash;
 	debug( 'updating url to', newUrl );
-	window.history.pushState( null, '', newUrl );
+	// We've seen this call to replaceState fail sometimes when the current URL
+	// is somehow different ("A history state object with URL
+	// 'https://wordpress.com/checkout/example.com#step2' cannot be created
+	// in a document with origin 'https://wordpress.com' and URL
+	// 'https://www.username@wordpress.com/checkout/example.com'.") so we
+	// wrap this in try/catch. It's not critical that the step number is saved to
+	// the URL.
+	try {
+		window.history.replaceState( null, '', newUrl );
+	} catch ( error ) {
+		debug( 'changing the url failed' );
+		return;
+	}
+	// Modifying history does not trigger a hashchange event which is what
+	// composite-checkout uses to change its current step, so we must fire one
+	// manually.
+	//
+	// We use try/catch because we support IE11 and that browser does not include
+	// HashChange.
+	try {
+		const event = new HashChangeEvent( 'hashchange' );
+		window.dispatchEvent( event );
+	} catch ( error ) {
+		debug( 'hashchange firing failed' );
+	}
 }
 
 function getStepNumberFromUrl() {
@@ -1009,3 +1143,34 @@ function useChangeStepNumberForUrl( setActiveStepNumber: ( stepNumber: number ) 
 		};
 	}, [ setActiveStepNumber ] );
 }
+
+export function CheckoutStepGroup( {
+	children,
+	areStepsActive,
+	stepAreaHeader,
+	store,
+	loadingContent,
+}: PropsWithChildren< {
+	areStepsActive?: boolean;
+	stepAreaHeader?: ReactNode;
+	store?: CheckoutStepGroupStore;
+	loadingContent?: ReactNode;
+} > ) {
+	const stepGroupStore = useMemo( () => store || createCheckoutStepGroupStore(), [ store ] );
+	return (
+		<CheckoutStepGroupWrapper store={ stepGroupStore } loadingContent={ loadingContent }>
+			{ stepAreaHeader }
+			<CheckoutStepArea>
+				<CheckoutStepGroupInner areStepsActive={ areStepsActive }>
+					{ children }
+				</CheckoutStepGroupInner>
+			</CheckoutStepArea>
+		</CheckoutStepGroupWrapper>
+	);
+}
+
+const paymentMethodStepProps = getDefaultPaymentMethodStep();
+export function PaymentMethodStep( props: Partial< CheckoutStepProps > ) {
+	return <CheckoutStep { ...{ ...paymentMethodStepProps, ...props } } />;
+}
+PaymentMethodStep.isCheckoutStep = true;

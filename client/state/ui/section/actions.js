@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { SECTION_SET, SECTION_LOADING_SET } from 'calypso/state/action-types';
 
 import 'calypso/state/ui/init';

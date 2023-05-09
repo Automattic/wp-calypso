@@ -1,10 +1,3 @@
-/**
- * External Dependencies
- */
-
-/**
- * Internal Dependencies
- */
 const PAGE_MARGIN_LARGE = 32 * 2;
 const PAGE_MARGIN_MEDIUM = 24 * 2;
 const PAGE_MARGIN_SMALL = 10 * 2;
@@ -13,8 +6,6 @@ const MAX_CONTENT_WIDTH = 720;
 
 /**
  * Returns the available content width in full post for the reader at the current viewport width
- *
- * @returns {[type]} [description]
  */
 export default function contentWidth() {
 	if ( typeof document === 'undefined' ) {

@@ -12,11 +12,6 @@ namespace A8C\FSE;
  */
 class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controller {
 	/**
-	 * Use 30 minutes in case the user isn't taken to the editor immediately. See pbxlJb-Ly-p2#comment-1028.
-	 */
-	const NEW_SITE_AGE_SECONDS = 30 * 60;
-
-	/**
 	 * WP_REST_WPCOM_Block_Editor_NUX_Status_Controller constructor.
 	 */
 	public function __construct() {
@@ -78,21 +73,23 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 
 		$should_open_patterns_panel = (bool) get_option( 'was_created_with_blank_canvas_design' );
 
-		if ( wp_is_mobile() ) {
-			// Designs for welcome tour on mobile are in progress, until then do not show on mobile.
-			$variant = 'modal';
-		} elseif ( $should_open_patterns_panel ) {
+		if ( $should_open_patterns_panel ) {
 			$variant = 'blank-canvas-tour';
 		} else {
 			$variant = 'tour';
 		}
 
-		if ( function_exists( 'get_blog_details' ) ) {
-			$blog_age = time() - strtotime( get_blog_details()->registered );
+		if ( defined( 'IS_ATOMIC' ) && IS_ATOMIC ) {
+			$is_p2 = false;
+		} else {
+			$blog_id = get_current_blog_id();
+			$is_p2   = \WPForTeams\is_wpforteams_site( $blog_id );
 		}
 
-		if ( isset( $blog_age ) && $blog_age < self::NEW_SITE_AGE_SECONDS ) {
-			$nux_status = 'enabled';
+		if ( $is_p2 ) {
+			// disable welcome tour for authoring P2s.
+			// see: https://github.com/Automattic/wp-calypso/issues/62973.
+			$nux_status = 'disabled';
 		} elseif ( has_filter( 'wpcom_block_editor_nux_get_status' ) ) {
 			$nux_status = apply_filters( 'wpcom_block_editor_nux_get_status', false );
 		} elseif ( ! metadata_exists( 'user', get_current_user_id(), 'wpcom_block_editor_nux_status' ) ) {

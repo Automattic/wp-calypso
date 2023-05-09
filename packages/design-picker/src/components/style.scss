@@ -1,7 +1,15 @@
-@import '@automattic/onboarding/styles/mixins';
-@import '@automattic/onboarding/styles/variables';
+@use "sass:math";
+
+@import "@automattic/onboarding/styles/mixins";
+@import "@automattic/onboarding/styles/variables";
 
 .design-picker {
+	@include break-small {
+		display: flex;
+		align-items: flex-start;
+		flex-direction: row;
+	}
+
 	.design-picker__header {
 		@include onboarding-heading-padding;
 
@@ -14,31 +22,57 @@
 		flex-grow: 1;
 	}
 
+	.design-picker__grid,
+	.design-picker__grid-minimal {
+		flex: 5;
+	}
+
 	.design-picker__grid {
-		margin: 0 -24px 30px;
+		margin: 0 -12px 30px;
 	}
 
 	.design-picker__grid-minimal {
-		margin: 0 -24px 30px;
+		margin: 0 -12px 30px;
+	}
+
+	.design-button-container {
+		width: calc(100% - 24px);
+		margin: 0 12px 24px; // only applies in IE
+
+		@include break-medium {
+			width: calc(50% - 24px);
+			margin-bottom: 40px;
+		}
 	}
 
 	.design-picker__design-option {
-		cursor: pointer;
 		font-family: inherit;
-		float: left;
+	}
+
+	.design-picker__design-option > button {
 		width: 100%;
-		margin: 24px; // only applies in IE
+		padding: 0;
+	}
 
-		@include break-mobile {
-			width: calc( 50% - 24px );
-		}
+	.design-picker__design-option-header {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		position: relative;
+		max-width: 100%;
+		height: 22px;
+		border: 1px solid rgba(0, 0, 0, 0.12);
+		border-radius: 4px 4px 0 0;
+		margin: 0 auto;
+		box-sizing: border-box;
+		transition: border-color 0.15s ease-in-out;
 
-		@include break-xlarge {
-			width: calc( 33.33% - 32px );
-		}
-
-		@include onboarding-break-gigantic {
-			width: calc( 25% - 32px );
+		svg {
+			position: absolute;
+			left: 12px;
+			top: 50%;
+			transform: translateY(-50%);
+			fill: rgba(0, 0, 0, 0.12);
 		}
 	}
 
@@ -46,26 +80,23 @@
 		.design-picker__grid {
 			display: grid;
 			grid-template-columns: 1fr;
-			row-gap: 48px;
+			row-gap: 32px;
 			margin: 0 0 30px;
 
-			@include break-mobile {
-				grid-template-columns: repeat( auto-fill, minmax( 295px, auto ) );
+			@include break-medium {
+				grid-template-columns: 1fr 1fr;
 				column-gap: 24px;
-			}
-
-			@include onboarding-break-gigantic {
-				column-gap: 32px;
+				row-gap: 28px;
 			}
 		}
 
 		.design-picker__grid-minimal {
 			display: grid;
 			grid-template-columns: 1fr;
-			row-gap: 48px;
+			row-gap: 36px;
 			margin: 0 0 30px;
 
-			@include break-mobile {
+			@include break-medium {
 				grid-template-columns: 1fr 1fr;
 				column-gap: 24px;
 			}
@@ -76,15 +107,11 @@
 			}
 		}
 
-		.design-picker__design-option {
+		.design-button-container {
 			width: auto;
 			margin: 0;
 
 			@include break-xlarge {
-				width: auto;
-			}
-
-			@include onboarding-break-gigantic {
 				width: auto;
 			}
 		}
@@ -94,9 +121,17 @@
 		display: block;
 		width: 100%;
 		height: 0;
-		border: 1px solid;
+		box-sizing: border-box;
 		position: relative;
 		overflow: hidden;
+
+		&:not(.design-picker__image-frame-no-header) {
+			border-radius: 0 0 4px 4px;
+		}
+
+		&.design-picker__image-frame-no-header {
+			border-radius: 0;
+		}
 
 		img {
 			position: absolute;
@@ -107,21 +142,44 @@
 			width: 100%;
 			height: auto;
 		}
+
+		&::after {
+			content: "";
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			border: 1px solid;
+			box-sizing: border-box;
+			background-color: transparent;
+			transition: border-color 0.15s ease-in-out, background-color 0.15s ease-in-out;
+		}
+
+		&:not(.design-picker__image-frame-no-header)::after {
+			border-top-width: 0;
+			border-radius: 0 0 4px 4px;
+		}
+
+		&.design-picker__image-frame-no-header::after {
+			border-radius: 0;
+		}
+
 	}
 
 	// The Aspect ratio trick: padding % is relative to width, so we use
 	// padding-top to set the size of the element and then reposition content
 	// over the padding
 	.design-picker__image-frame-landscape {
-		padding-top: 65%; // Aspect ratio for the picker
-	}
+		padding-top: 100%; // Aspect ratio for the picker
 
-	.design-picker__image-frame-portrait {
-		padding-top: 360px / 480px * 200%; // Aspect ratio for the picker
+		@include break-small {
+			padding-top: 65%;
+		}
 	}
 
 	.design-picker__image-frame-blank {
-		background: var( --studio-white );
+		background: var(--studio-white);
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -130,8 +188,9 @@
 	}
 
 	.design-picker__image-frame-blank-canvas__title {
-		color: var( --studio-gray-40 );
-		font-weight: 600;
+		color: var(--studio-gray-80);
+		font-weight: 500;
+		font-size: $font-title-small;
 	}
 
 	.design-picker__image-frame-inside {
@@ -147,9 +206,8 @@
 		align-items: center;
 		display: inline-flex;
 		flex-wrap: wrap; // If theme name and premium badge don't fit on one line
-		justify-content: center;
-		margin-top: 8px;
-		width: 100%;
+		margin-top: 3px;
+		flex: 1;
 
 		> * {
 			// This is to create space between Tooltip component and other elements
@@ -157,56 +215,297 @@
 		}
 	}
 
+	.design-picker__option-overlay {
+		display: flex;
+		align-items: center;
+	}
+
 	.design-picker__option-name {
 		align-items: center;
 		display: inline-flex;
-		font-size: $font-body-small;
+		font-size: $font-body;
+		font-weight: 500;
 		margin-top: -0.1em;
 	}
 
-	.design-picker__premium-container {
-		margin-left: 6px;
-		/* stylelint-disable-next-line */
-		font-size: rem( 10px ); //typography-exception
+	.design-picker__pricing-description {
+		align-items: flex-start;
+		color: #50575e;
+		display: flex;
+		flex-direction: row;
+		gap: 10px;
+		line-height: 20px;
+		justify-content: flex-start;
 
-		.components-popover__content {
-			background-color: var( --studio-gray-80 );
+		.premium-badge {
+			margin: 0;
 		}
+	}
+	.design-picker__override-premium-badge .premium-badge {
+		background: var(--studio-black);
+		padding: 0 10px 0 9px;
+	}
+
+	.design-picker__button-link.components-button.is-link {
+		text-decoration: none;
 	}
 }
 
-// dark theme styles
-.design-picker.design-picker--theme-dark {
-	.design-picker__option-name {
-		color: var( --studio-white );
-	}
-	.design-picker__design-option {
-		.design-picker__image-frame {
-			border-color: var( --studio-gray-40 );
-		}
-		&:hover,
-		&:focus {
-			.design-picker__image-frame {
-				border-color: var( --studio-white );
-			}
-		}
-	}
-}
-
-// light theme styles
 .design-picker.design-picker--theme-light {
 	.design-picker__option-name {
-		color: var( --studio-gray-40 );
+		color: var(--studio-gray-80);
 	}
+
 	.design-picker__design-option {
 		.design-picker__image-frame {
-			border-color: var( --studio-gray-5 );
+			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
 		}
+
+		.design-picker__design-option-header,
+		.design-picker__image-frame::after {
+			border-color: rgba(0, 0, 0, 0.12);
+		}
+
 		&:hover,
 		&:focus {
-			.design-picker__image-frame {
-				border-color: var( --studio-blue-20 );
+			.design-picker__design-option-header,
+			.design-picker__image-frame::after {
+				border-color: var(--studio-blue-20);
 			}
+		}
+	}
+
+	.design-button-container:hover,
+	.design-button-container:focus-within {
+		.design-picker__design-option-header,
+		.design-picker__image-frame::after {
+			border-color: #a7aaad;
+		}
+	}
+
+	.theme-card {
+		&:hover,
+		&:focus-within {
+			.theme-card__image-container {
+				border-color: #a7aaad;
+			}
+		}
+
+		.theme-card__image-container {
+			border-color: rgba(0, 0, 0, 0.12);
+		}
+	}
+
+	.design-button-container .design-picker__design-option .design-picker__image-frame:hover::after,
+	.theme-card .theme-card__image:hover::after {
+		background-color: rgba(255, 255, 255, 0.72);
+	}
+}
+
+.design-button-container {
+	position: relative;
+	display: flex;
+	font-size: $font-body-small;
+
+	.design-picker__design-option {
+		flex: 1;
+	}
+
+	.design-button-cover {
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 0;
+		bottom: 0;
+		display: none;
+		align-items: center;
+		justify-content: center;
+		z-index: 1;
+		opacity: 0;
+		transition: opacity 0.15s ease-in-out;
+
+		@include break-medium {
+			display: flex;
+		}
+	}
+
+	.design-button-cover__button-overlay {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		cursor: pointer;
+		z-index: -1;
+	}
+
+	.design-button-cover__button-groups {
+		display: flex;
+		flex-direction: column;
+
+		.design-button-cover__button:not(:first-child) {
+			margin-top: 8px;
+		}
+	}
+
+	.design-button-cover__button {
+		justify-content: center;
+		border-radius: 4px;
+		font-size: inherit;
+		font-weight: 500;
+		line-height: 20px;
+
+		&:not(.is-primary) {
+			border: 1px solid #c3c4c7;
+			background: #fff;
+		}
+	}
+
+	&:hover,
+	&:focus-within {
+		.design-button-cover {
+			opacity: 1;
+		}
+	}
+}
+
+.design-picker.design-picker__unified {
+	display: block;
+	padding-bottom: 200px;
+
+	.responsive-toolbar-group__dropdown .responsive-toolbar-group__grouped-list {
+		justify-content: flex-start;
+	}
+
+	.design-picker__grid {
+		@supports ( display: grid ) {
+			row-gap: 32px;
+
+			@include break-medium {
+				grid-template-columns: 1fr 1fr 1fr;
+				column-gap: 24px;
+			}
+		}
+	}
+
+	.unified-design-picker__title {
+		font-size: $font-title-small;
+		font-weight: 600;
+		margin-top: 40px;
+		margin-bottom: 5px;
+	}
+
+	.theme-card {
+		display: block;
+		margin: 0;
+
+		.mshots-image__loader,
+		.theme-card__image-container {
+			padding-top: 65%;
+		}
+
+		.mshots-image__loader {
+			animation: loading-fade 1.6s ease-in-out infinite;
+			background-color: var(--studio-gray-10);
+		}
+
+		.theme-card__image::after {
+			content: "";
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			box-sizing: border-box;
+			background-color: transparent;
+			transition: border-color 0.15s ease-in-out, background-color 0.15s ease-in-out;
+		}
+	}
+
+	.design-picker__design-option > button {
+		cursor: pointer;
+	}
+
+	.components-button:focus::before {
+		box-shadow: none;
+	}
+
+	.components-button:focus-visible::before {
+		box-shadow: inset 0 0 0 var(--wp-admin-border-width-focus) var(--wp-admin-theme-color);
+	}
+
+	.components-button.is-pressed:active:hover {
+		color: var(--theme-base-color);
+	}
+
+	.unified-design-picker__designs {
+		min-height: 100vh;
+	}
+}
+
+// layout with categories
+.design-picker--has-categories {
+	.responsive-toolbar-group__swipe {
+		.responsive-toolbar-group__swipe-list {
+			padding: 0 0 24px;
+
+			>div:first-of-type {
+				button {
+					padding-left: 8px;
+
+					&::before {
+						left: 0;
+					}
+				}
+			}
+
+			>div:last-of-type {
+				button {
+					padding-right: 8px;
+
+					&::before {
+						right: 0;
+					}
+				}
+			}
+		}
+	}
+
+	@supports ( display: grid ) {
+		.design-picker__grid {
+			@include break-medium {
+				grid-template-columns: 1fr;
+				column-gap: 24px;
+			}
+
+			@include break-large {
+				grid-template-columns: 1fr 1fr;
+			}
+		}
+	}
+
+	@supports not ( display: grid ) {
+		.design-button-container {
+			@include break-medium {
+				width: calc(100% - 24px);
+			}
+
+			@include break-large {
+				width: calc(50% - 24px);
+			}
+		}
+	}
+}
+
+// layout without preview
+.design-button-container--without-preview {
+	.design-picker__image-frame::after {
+		pointer-events: none;
+	}
+
+	&:hover,
+	&:focus-within {
+		.design-picker__image-frame::after {
+			// `!important` is used because there is a default `background-color` with high specificity.
+			background-color: transparent !important; // to override
 		}
 	}
 }

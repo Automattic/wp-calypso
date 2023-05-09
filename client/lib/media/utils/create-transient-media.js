@@ -1,21 +1,14 @@
-/**
- * External dependencies
- */
 import path from 'path';
-
-/**
- * Internal dependencies
- */
+import { createTransientMediaId } from 'calypso/lib/media/utils';
 import { getFileExtension } from 'calypso/lib/media/utils/get-file-extension';
 import { getMimeType } from 'calypso/lib/media/utils/get-mime-type';
-import { createTransientMediaId } from 'calypso/lib/media/utils';
 
 /**
  * Returns an object describing a transient media item which can be used in
  * optimistic rendering prior to media persistence to server.
  *
- * @param  {(string|object|window.Blob|window.File)} file URL or File object
- * @returns {object}                         Transient media object
+ * @param  {(string | Object | window.Blob | window.File)} file URL or File object
+ * @returns {Object}                         Transient media object
  */
 export function createTransientMedia( file ) {
 	const transientMedia = {

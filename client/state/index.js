@@ -1,31 +1,15 @@
-/**
- * External dependencies
- */
-import thunkMiddleware from 'redux-thunk';
+import { isEnabled } from '@automattic/calypso-config';
 import { createStore, applyMiddleware, compose } from 'redux';
 import dynamicMiddlewares from 'redux-dynamic-middlewares';
-
-/**
- * Internal dependencies
- */
-import initialReducer from './reducer';
-import { isEnabled } from '@automattic/calypso-config';
-
-/**
- * Store enhancers
- */
+import thunkMiddleware from 'redux-thunk';
+import wpcomApiMiddleware from 'calypso/state/data-layer/wpcom-api-middleware';
+import { addReducerEnhancer } from 'calypso/state/utils/add-reducer-enhancer';
 import actionLogger from './action-log';
 import consoleDispatcher from './console-dispatch';
-import { enhancer as httpDataEnhancer } from 'calypso/state/data-layer/http-data';
-import { addReducerEnhancer } from 'calypso/state/utils/add-reducer-enhancer';
+import initialReducer from './reducer';
 
 /**
- * Redux middleware
- */
-import wpcomApiMiddleware from 'calypso/state/data-layer/wpcom-api-middleware';
-
-/**
- * @typedef {object} ReduxStore
+ * @typedef {Object} ReduxStore
  * @property {!Function} dispatch dispatches actions
  * @property {!Function} getState returns the current state tree
  * @property {Function} replaceReducers replaces the state reducers
@@ -62,7 +46,6 @@ export function createReduxStore( initialState, reducer = initialReducer ) {
 	const enhancers = [
 		addReducerEnhancer,
 		isBrowser && window.app && window.app.isDebug && consoleDispatcher,
-		httpDataEnhancer,
 		applyMiddleware( ...middlewares ),
 		isBrowser && window.app && window.app.isDebug && actionLogger,
 		isBrowser && window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),

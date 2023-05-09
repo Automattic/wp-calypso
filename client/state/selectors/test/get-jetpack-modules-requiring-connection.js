@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import getJetpackModulesRequiringConnection from 'calypso/state/selectors/get-jetpack-modules-requiring-connection';
 
 describe( 'getJetpackModulesRequiringConnection()', () => {
@@ -19,7 +11,7 @@ describe( 'getJetpackModulesRequiringConnection()', () => {
 		};
 
 		const modules = getJetpackModulesRequiringConnection( stateTree, 12345678 );
-		expect( modules ).to.be.null;
+		expect( modules ).toBeNull();
 	} );
 
 	test( 'should return the modules that require connection for a known site', () => {
@@ -46,6 +38,6 @@ describe( 'getJetpackModulesRequiringConnection()', () => {
 		};
 
 		const modules = getJetpackModulesRequiringConnection( stateTree, 12345678 );
-		expect( modules ).to.eql( [ 'module-a' ] );
+		expect( modules ).toEqual( [ 'module-a' ] );
 	} );
 } );

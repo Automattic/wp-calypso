@@ -1,10 +1,7 @@
-/**
- * External dependencies
- */
+import debugFactory from 'debug';
+import ProgressEvent from 'progress-event';
 import { v4 as uuidv4 } from 'uuid';
 import WPError from 'wp-error';
-import ProgressEvent from 'progress-event';
-import debugFactory from 'debug';
 
 /**
  * debug instance
@@ -20,6 +17,8 @@ const proxyOrigin = 'https://public-api.wordpress.com';
  * "Origin" of the current HTML page.
  */
 const origin = window.location.protocol + '//' + window.location.host;
+
+let onStreamRecord = null;
 
 /**
  * Detecting support for the structured clone algorithm. IE8 and 9, and Firefox
@@ -97,7 +96,7 @@ debug( 'using "origin": %o', origin );
  * takes care of WordPress.com user authentication (via the currently
  * logged-in user's cookies).
  *
- * @param {object} originalParams - request parameters
+ * @param {Object} originalParams - request parameters
  * @param {Function} [fn] - callback response
  * @returns {window.XMLHttpRequest} XMLHttpRequest instance
  */
@@ -138,7 +137,7 @@ const makeRequest = ( originalParams, fn ) => {
 			}
 
 			called = true;
-			const body = e.response || xhr.response;
+			const body = e.response ?? xhr.response;
 			debug( 'body: ', body );
 			debug( 'headers: ', e.headers );
 			fn( null, body, e.headers );
@@ -149,7 +148,7 @@ const makeRequest = ( originalParams, fn ) => {
 			}
 
 			called = true;
-			const error = e.error || e.err || e;
+			const error = e.error ?? e.err ?? e;
 			debug( 'error: ', error );
 			debug( 'headers: ', e.headers );
 			fn( error, null, e.headers );
@@ -162,6 +161,7 @@ const makeRequest = ( originalParams, fn ) => {
 
 	if ( 'function' === typeof params.onStreamRecord ) {
 		// remove onStreamRecord param, which can’t be cloned
+		onStreamRecord = params.onStreamRecord;
 		delete params.onStreamRecord;
 
 		// FIXME @azabani implement stream mode processing
@@ -188,7 +188,7 @@ const makeRequest = ( originalParams, fn ) => {
  *
  * If no function is specified as second parameter, a promise is returned.
  *
- * @param {object} originalParams - request parameters
+ * @param {Object} originalParams - request parameters
  * @param {Function} [fn] - callback response
  * @returns {window.XMLHttpRequest|Promise} XMLHttpRequest instance or Promise
  */
@@ -217,7 +217,7 @@ export function requestAllBlogsAccess() {
 /**
  * Calls the `postMessage()` function on the <iframe>.
  *
- * @param {object} params
+ * @param {Object} params
  */
 
 function submitRequest( params ) {
@@ -266,7 +266,6 @@ function getFileValue( v ) {
  *
  * @see https://bugs.chromium.org/p/chromium/issues/detail?id=866805
  * @see https://bugs.chromium.org/p/chromium/issues/detail?id=631877
- *
  * @param {Array} formData Form data to patch
  */
 function patchFileObjects( formData ) {
@@ -359,6 +358,10 @@ function onload() {
  */
 
 function onmessage( e ) {
+	// If the iframe was never loaded, this message might be unrelated.
+	if ( ! iframe?.contentWindow ) {
+		return;
+	}
 	debug( 'onmessage' );
 
 	// Filter out messages from different origins
@@ -412,6 +415,7 @@ function onmessage( e ) {
 	let statusCode = data[ 1 ];
 	const headers = data[ 2 ];
 
+	// We don't want to delete requests while we're processing stream messages
 	if ( statusCode === 207 ) {
 		// 207 is a signal from rest-proxy. It means, "this isn't the final
 		// response to the query." The proxy supports WebSocket connections
@@ -431,13 +435,11 @@ function onmessage( e ) {
 		// add statusCode into headers object
 		headers.status = statusCode;
 
-		// FIXME @azabani remove once stream mode processing is implemented
 		if ( shouldProcessInStreamMode( headers[ 'Content-Type' ] ) ) {
-			const error = new Error(
-				'stream mode processing is not yet implemented for wpcom-proxy-request'
-			);
-			reject( xhr, error, headers );
-			return;
+			if ( statusCode === 207 ) {
+				onStreamRecord( body );
+				return;
+			}
 		}
 	}
 
@@ -463,7 +465,7 @@ function shouldProcessInStreamMode( contentType ) {
 /**
  * Handles a "progress" event being proxied back from the iframe page.
  *
- * @param {object} data
+ * @param {Object} data
  */
 
 function onprogress( data ) {
@@ -480,7 +482,7 @@ function onprogress( data ) {
  * Emits the "load" event on the `xhr`.
  *
  * @param {window.XMLHttpRequest} xhr
- * @param {object} body
+ * @param {Object} body
  */
 
 function resolve( xhr, body, headers ) {
@@ -504,8 +506,51 @@ function reject( xhr, err, headers ) {
 	xhr.dispatchEvent( e );
 }
 
+// list of valid origins for wpcom requests.
+// taken from wpcom-proxy-request (rest-proxy/provider-v2.0.js)
+const wpcomAllowedOrigins = [
+	'https://wordpress.com',
+	'https://cloud.jetpack.com',
+	'http://wpcalypso.wordpress.com', // for running docker on dev instances
+	'http://widgets.wp.com',
+	'https://widgets.wp.com',
+	'https://dev-mc.a8c.com',
+	'https://mc.a8c.com',
+	'https://dserve.a8c.com',
+	'http://calypso.localhost:3000',
+	'https://calypso.localhost:3000',
+	'http://jetpack.cloud.localhost:3000',
+	'https://jetpack.cloud.localhost:3000',
+	'http://calypso.localhost:3001',
+	'https://calypso.localhost:3001',
+	'https://calypso.live',
+	'http://127.0.0.1:41050',
+	'http://send.linguine.localhost:3000',
+];
+
+/**
+ * Shelved from rest-proxy/provider-v2.0.js.
+ * This returns true for all WPCOM origins except Atomic sites.
+ *
+ * @param urlOrigin
+ * @returns
+ */
+function isAllowedOrigin( urlOrigin ) {
+	// sites in the allow-list and some subdomains of "calypso.live" and "wordpress.com"
+	// are allowed without further check
+	return (
+		wpcomAllowedOrigins.includes( urlOrigin ) ||
+		/^https:\/\/[a-z0-9-]+\.calypso\.live$/.test( urlOrigin ) ||
+		/^https:\/\/([a-z0-9-]+\.)+wordpress\.com$/.test( urlOrigin )
+	);
+}
+
+function canAccessWpcomApis() {
+	return isAllowedOrigin( window.location.origin );
+}
+
 /**
  * Export `request` function.
  */
 export default request;
-export { reloadProxy };
+export { reloadProxy, canAccessWpcomApis };

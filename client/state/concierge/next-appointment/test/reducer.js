@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { nextAppointment } from '../reducer';
 import { CONCIERGE_INITIAL_REQUEST, CONCIERGE_INITIAL_UPDATE } from 'calypso/state/action-types';
+import { nextAppointment } from '../reducer';
 
 describe( 'concierge/nextAppointment/reducer', () => {
 	const mockAppointmentDetails = {

@@ -1,0 +1,34 @@
+@import "./variables.scss";
+
+// Find all instances of stats-section-header mixin usage and override with stats-section-header-for-jetpack.
+.highlight-cards-heading,
+.post-stats-card__count-value,
+.post-stats-card__post-title,
+.post-trends__title,
+.stats-summary-nav__header h3 {
+	@include stats-section-header-for-jetpack;
+}
+
+// Replace fonts in packages/components/src/highlight-cards/style.scss.
+$highlight-card-count-font: $font-sf-pro-display;
+$highlight-card-heading-font: $display-type-font;
+$highlight-card-tooltip-font: Inter, $display-type-font;
+.highlight-cards-heading small,
+.highlight-card-heading {
+	font-family: $highlight-card-heading-font;
+}
+.highlight-card-count-value {
+	font-family: $highlight-card-count-font;
+}
+.highlight-card-tooltip-content {
+	font-family: $highlight-card-tooltip-font;
+}
+
+// Replace fonts in client/my-sites/stats/stats-period-header/style.scss.
+.stats__period-header .period,
+// Replace fonts in client/my-sites/stats/all-time-highlights-section/style.scss.
+.stats__all-time-highlights-section .highlight-card-detail-item-content,
+// Replace fonts in packages/components/src/mobile-promo-card/style.scss.
+.promo-card__title {
+	font-family: $display-type-font;
+}

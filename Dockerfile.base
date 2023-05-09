@@ -1,139 +1,100 @@
 #### cache image
 #### This image is not pushed to any repository and it shouldn't be used as base image for any other docker build.
 #### Its main goal is to create a `/calypso/.cache` that can be copied over other images that can benefit from a warm cache.
-FROM node:14.16.1-buster as cache
+#### Note that yarn v3 cache lives in `/calypso/.yarn`
+FROM node:18.13.0-bullseye-slim as cache
 
 ARG node_memory=8192
 WORKDIR /calypso
-ENV YARN_CACHE_FOLDER=/calypso/.cache/yarn
 ENV NPM_CONFIG_CACHE=/calypso/.cache
 ENV PERSISTENT_CACHE=true
+ENV GENERATE_CACHE_IMAGE=true
 ENV PROFILE=true
 ENV SKIP_TSC=true
-ENV NVM_DIR=/calypso/.nvm
 ENV CALYPSO_ENV=production
 ENV BUILD_TRANSLATION_CHUNKS=true
 ENV NODE_OPTIONS=--max-old-space-size=$node_memory
 ENV HOME=/calypso
 
-RUN git clone --branch v0.37.0 --depth 1 https://github.com/nvm-sh/nvm.git "$NVM_DIR" \
-	&& echo ". ${NVM_DIR}/nvm.sh" >> "${HOME}/.bashrc"
-
 COPY . .
 
-# Run nvm.sh in a different dir so it doesn't try to use the version specified in /calypso/.nvmrc.
-# If not, it will fail the image generation.
-RUN cd / \
-	&& . "$NVM_DIR/nvm.sh" \
-	&& cd $HOME \
-	&& nvm install \
-	# Prime yarn cache
-	&& yarn \
-	# Prime webpack caches
-	&& NODE_ENV=production yarn build-client-both
+RUN yarn \
+	# Prime webpack caches, including sourcemaps.
+	&& NODE_ENV=production SOURCEMAP=hidden-source-map yarn build-client
 
 ENTRYPOINT [ "/bin/bash" ]
 
 #### base image
-#### This image can be used as a base image for other builds, or to uni test and build calypso.
-FROM node:14.16.1-buster as base
+#### This image can be used as a base image for other builds, or to test and build calypso.
+FROM node:18.13.0-bullseye-slim as base
 
 ARG node_memory=8192
 ARG user=calypso
 ARG UID=1003
 
 WORKDIR /calypso
-ENV YARN_CACHE_FOLDER=/calypso/.cache/yarn
 ENV NPM_CONFIG_CACHE=/calypso/.cache
-ENV NVM_DIR=/calypso/.nvm
 ENV NODE_OPTIONS=--max-old-space-size=$node_memory
 ENV HOME=/calypso
 ENV SKIP_TSC=true
-ENV CHROMEDRIVER_SKIP_DOWNLOAD=true
-ENV PUPPETEER_SKIP_DOWNLOAD=true
 ENV PLAYWRIGHT_SKIP_DOWNLOAD=true
 
 # Add user calypso with uid 1003, give it sudo permissions
 RUN apt-get update \
-	&& apt-get install -y sudo zip jq \
+	&& apt-get install -y sudo zip jq curl git \
 	&& adduser --uid $UID --disabled-password $user \
 	&& echo "$user ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/$user \
 	&& chmod 0440 /etc/sudoers.d/$user \
 	&& chown $UID /calypso \
-	&& rm -rf /var/lib/apt/lists/*
+	# Remove unnecessary packages
+	&& apt-get autoremove --purge \
+	&& apt-get autoclean \
+	&& rm -rf /var/lib/apt/lists/* \
+	# Set bash as the default shell
+	&& rm /bin/sh \
+	&& ln -s /bin/bash /bin/sh
 
-# Set bash as the default shell
-RUN rm /bin/sh && ln -s /bin/bash /bin/sh
-# Copy nvm cache so we don't need to download it again
-COPY --from=cache --chown=$UID /calypso/.nvm /calypso/.nvm
 # Copy all other caches (webpack, babel, yarn...)
 COPY --from=cache --chown=$UID /calypso/.cache /calypso/.cache
-COPY --from=cache --chown=$UID /calypso/.bashrc /calypso/.bashrc
-
-# Copy node_modules to reduce install time of future builds.
-COPY --from=cache --chown=$UID /calypso/node_modules /calypso/node_modules
-
-ENTRYPOINT [ "/bin/bash" ]
-
-#### ci-desktop image
-#### This image is used to run desktop tests.
-FROM base as ci-desktop
-
-ENV ELECTRON_BUILDER_ARGS='-c.linux.target=dir'
-ENV USE_HARD_LINKS=false
-ENV CHROMEDRIVER_SKIP_DOWNLOAD=false
-ENV PUPPETEER_SKIP_DOWNLOAD=false
-ENV PLAYWRIGHT_SKIP_DOWNLOAD=false
-# This chrome image is the latest version supported by wp-desktop's chromedriver, declared in desktop/package.json.
-ENV CHROME_VERSION="80.0.3987.163-1"
-ENV DISPLAY=:99
-
-RUN apt update \
-	&& apt-get install -y \
-		fonts-liberation \
-		git-restore-mtime \
-		gtk2-engines-pixbuf \
-		libappindicator3-1 \
-		libasound2 \
-		libatk-bridge2.0-0 \
-		libatspi2.0-0 \
-		libgtk-3-0 \
-		libgbm-dev \
-		libnspr4 \
-		libnss3 \
-		libnss3 \
-		libsecret-1-dev \
-		libx11-xcb1 \
-		libxss1 \
-		libxss1 \
-		libxtst6 \
-		xdg-utils \
-		xfonts-100dpi \
-		xfonts-75dpi \
-		xfonts-base \
-		xfonts-cyrillic \
-		xfonts-scalable \
-		xvfb
-
-RUN wget --no-verbose https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}_amd64.deb \
-	&& apt-get install -y ./google-chrome-stable_${CHROME_VERSION}_amd64.deb \
-	&& rm ./google-chrome-stable_${CHROME_VERSION}_amd64.deb
+COPY --from=cache --chown=$UID /calypso/.yarn /calypso/.yarn
 
 ENTRYPOINT [ "/bin/bash" ]
 
 #### ci-e2e image
-#### This image is used to run e2e tests. The only difference with ci-desktop is the Chrome version.
-FROM ci-desktop as ci-e2e
+#### This image is used to run E2E tests.
+FROM base as ci-e2e
 
-# test/e2e/test/mocha.env.js will install a compatible chromedriver.
-ENV DETECT_CHROMEDRIVER_VERSION=true
+ENV PLAYWRIGHT_SKIP_DOWNLOAD=false
+ENV DISPLAY=:99
 
-RUN wget --no-verbose https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
-	&& apt-get install -y ./google-chrome-stable_current_amd64.deb \
-	&& rm ./google-chrome-stable_current_amd64.deb
+RUN apt-get update \
+	&& apt-get install -y --no-install-recommends \
+		# For wp-calypso-test-results dashboard
+		awscli \
+		# Install non-Latin fonts
+		fonts-noto-cjk \
+		fonts-noto-core \
+		# Other required packages
+		git-restore-mtime \
+		libasound2 \
+		libatspi2.0-0 \
+		libdbus-glib-1-2 \
+		libgtk-3-0 \
+		libgbm1 \
+		libnspr4 \
+		libnss3 \
+		libsecret-1-0 \
+		libx11-xcb1 \
+		libxss1 \
+		libxtst6 \
+		openssl \
+		xauth \
+		xvfb \
+	&& apt-get autoremove --purge \
+	&& apt-get autoclean \
+	&& rm -rf /var/lib/apt/lists/*
 
 ENTRYPOINT [ "/bin/bash" ]
-
 
 #### ci-wpcom image
 #### This image is used to test and build WPCOM plugins in Calypso repo.
@@ -142,12 +103,19 @@ FROM base as ci-wpcom
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 COPY --from=cache --chown=$UID /calypso/composer.* /calypso/
 
-RUN apt update &&\
-	apt-get install -y apt-transport-https &&\
-	wget https://packages.sury.org/php/apt.gpg -O /etc/apt/trusted.gpg.d/php-sury.gpg &&\
-	echo "deb https://packages.sury.org/php/ buster main" > /etc/apt/sources.list.d/php-sury.list &&\
-	apt update &&\
-	apt-get install -y php7.4-cli php7.4-xml php7.4-mbstring docker-compose &&\
-	composer install
+RUN apt-get update && \
+	apt-get install -y apt-transport-https wget
+
+# libffi6 is no longer available from apt as of bullseye.
+RUN wget http://mirrors.kernel.org/ubuntu/pool/main/libf/libffi/libffi6_3.2.1-8_amd64.deb && \
+	dpkg -i libffi6_3.2.1-8_amd64.deb && \
+	wget https://packages.sury.org/php/apt.gpg -O /etc/apt/trusted.gpg.d/php-sury.gpg && \
+	echo "deb https://packages.sury.org/php/ buster main" > /etc/apt/sources.list.d/php-sury.list && \
+	apt-get update && \
+ 	apt-get upgrade -y && \
+	apt-get install -y php7.4-cli php7.4-xml php7.4-mbstring docker-compose && \
+	composer install && \
+	# Install sentry-cli.
+	wget -O - https://sentry.io/get-cli/ | bash
 
 ENTRYPOINT [ "/bin/bash" ]

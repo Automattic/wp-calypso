@@ -1,23 +1,15 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
-import { map, sortBy } from 'lodash';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { map, sortBy } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import SortableList from 'calypso/components/forms/sortable-list';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import EditorMediaModalGalleryEditItem from './edit-item';
 
 const noop = () => {};
 
-class EditorMediaModalGalleryEdit extends React.Component {
+class EditorMediaModalGalleryEdit extends Component {
 	static propTypes = {
 		site: PropTypes.object,
 		settings: PropTypes.object,

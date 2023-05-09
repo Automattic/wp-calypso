@@ -1,19 +1,11 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { PureComponent } from 'react';
 import Bar from './bar';
 import XAxis from './x-axis';
 
 const X_AXIS_LABEL_WIDTH = 42;
 
-export default class ChartBarContainer extends React.PureComponent {
+export default class ChartBarContainer extends PureComponent {
 	static propTypes = {
 		barClick: PropTypes.func,
 		data: PropTypes.array,
@@ -22,10 +14,12 @@ export default class ChartBarContainer extends React.PureComponent {
 		isTouch: PropTypes.bool,
 		width: PropTypes.number,
 		yAxisMax: PropTypes.number,
+		hideXAxis: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		isPlaceholder: false,
+		hideXAxis: false,
 	};
 
 	render() {
@@ -47,7 +41,7 @@ export default class ChartBarContainer extends React.PureComponent {
 						/>
 					) ) }
 				</div>
-				{ ! this.props.isPlaceholder && (
+				{ ! this.props.isPlaceholder && ! this.props.hideXAxis && (
 					<XAxis
 						data={ this.props.data }
 						labelWidth={ X_AXIS_LABEL_WIDTH }

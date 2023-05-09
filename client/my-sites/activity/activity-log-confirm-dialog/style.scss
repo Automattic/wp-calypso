@@ -7,20 +7,21 @@
 	.activity-log-item__card {
 		padding-bottom: 8px;
 		border-radius: 2px;
-		box-shadow: 0 0 0 1px rgba( var( --color-neutral-10 ), 0.5 ),
-			0 2px 5px var( --color-neutral-10 );
+		box-shadow:
+			0 0 0 1px rgba(var(--color-neutral-10), 0.5),
+			0 2px 5px var(--color-neutral-10);
 		white-space: normal;
 	}
 	.activity-log-item__activity-icon {
-		background: var( --color-accent );
+		background: var(--color-accent);
 	}
 }
 
 .activity-log-confirm-dialog .dialog__content {
-	color: var( --color-neutral-50 );
+	color: var(--color-neutral-50);
 
 	h1 {
-		color: var( --color-neutral-70 );
+		color: var(--color-neutral-70);
 		font-size: $font-title-medium;
 		height: 2em;
 		line-height: 32px;
@@ -49,12 +50,12 @@
 	box-sizing: border-box;
 	animation: appear 0.3s ease-in-out;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		flex-direction: row;
 	}
 
 	.gridicons-notice {
-		fill: var( --color-error );
+		fill: var(--color-error);
 		position: absolute;
 		top: 0;
 		left: 0;
@@ -64,7 +65,7 @@
 		width: 18px;
 		height: 18px;
 
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( ">480px" ) {
 			position: relative;
 			width: 24px;
 			height: 24px;
@@ -79,7 +80,7 @@
 	flex-grow: 1;
 	padding-left: 24px;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		padding-left: 4px;
 	}
 }
@@ -88,10 +89,10 @@
 	padding: 14px 24px 14px 44px;
 	text-align: left;
 	font-size: $font-body-small;
-	border-bottom: 1px solid var( --color-neutral-5 );
+	border-bottom: 1px solid var(--color-neutral-5);
 
 	&:first-of-type {
-		border-top: 1px solid var( --color-neutral-5 );
+		border-top: 1px solid var(--color-neutral-5);
 	}
 
 	.gridicon {
@@ -108,7 +109,7 @@
 	border-top: #eee 1px solid;
 	display: block;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		display: flex;
 		justify-content: space-between;
 		flex-direction: row-reverse;
@@ -117,7 +118,7 @@
 	button {
 		margin: 0 0 8px 8px;
 
-		@include breakpoint-deprecated( '<480px' ) {
+		@include breakpoint-deprecated( "<480px" ) {
 			margin: 0 8px 0 0;
 		}
 	}
@@ -125,18 +126,18 @@
 
 .activity-log-confirm-dialog__primary-actions {
 	text-align: right;
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		margin-bottom: 8px;
 		text-align: left;
 	}
 }
 
 .button.activity-log-confirm-dialog__more-info-link {
-	color: var( --color-neutral-30 );
+	color: var(--color-neutral-30);
 	padding: 8px 8px 0 0;
 	display: inline-block;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		margin-bottom: 4px;
 		font-size: $font-body-extra-small;
 	}
@@ -148,7 +149,7 @@
 		height: 18px;
 		margin-right: 6px;
 
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( ">480px" ) {
 			top: 0;
 			width: 24px;
 			height: 24px;
@@ -159,7 +160,7 @@
 
 .activity-log-confirm-dialog__dialog__action-buttons {
 	overflow: hidden;
-	border-top: 1px solid var( --color-neutral-0 );
+	border-top: 1px solid var(--color-neutral-0);
 	padding: 16px;
 	margin: 0 -24px -24px;
 	text-align: right;
@@ -177,7 +178,7 @@
 }
 
 .activity-log-confirm-dialog__secondary-actions {
-	
+
 	.external-link {
 		display: inline-block;
 		padding: 8px 8px 0 0;

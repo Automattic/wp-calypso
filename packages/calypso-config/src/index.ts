@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-import cookie from 'cookie';
-
-/**
- * Internal dependencies
- */
-
 import createConfig from '@automattic/create-calypso-config';
-import type { ConfigData } from '@automattic/create-calypso-config';
+import cookie from 'cookie';
 import desktopOverride from './desktop';
+import type { ConfigData } from '@automattic/create-calypso-config';
 
 declare global {
 	interface Window {
@@ -23,10 +15,26 @@ declare global {
  *
  * @module config/index
  */
-if ( 'undefined' === typeof window || ! window.configData ) {
-	throw new ReferenceError(
-		'No configuration was found: please see packages/calypso-config/README.md for more information'
-	);
+if ( 'undefined' === typeof window ) {
+	throw new Error( 'Trying to initialize the configuration outside of a browser context.' );
+}
+
+if ( ! window.configData ) {
+	if ( 'development' === process.env.NODE_ENV ) {
+		// eslint-disable-next-line no-console
+		console.error(
+			'%cNo configuration was found: ' +
+				'%cPlease see ' +
+				'%cpackages/calypso-config/README.md ' +
+				'%cfor more information.',
+			'color: red; font-size: 120%', // error prefix
+			'color: white;', // message
+			'color: #0267ff;', // calypso-config README.md file reference
+			'color: white' // message
+		);
+	}
+
+	window.configData = {};
 }
 
 const isDesktop = window.electron !== undefined;
@@ -80,19 +88,22 @@ if (
 		applyFlags( cookies.flags, 'cookie' );
 	}
 
-	const session = window.sessionStorage.getItem( 'flags' );
-	if ( session ) {
-		applyFlags( session, 'sessionStorage' );
+	try {
+		const session = window.sessionStorage.getItem( 'flags' );
+		if ( session ) {
+			applyFlags( session, 'sessionStorage' );
+		}
+	} catch ( e ) {
+		// in private context, accessing session storage can throw
 	}
 
 	const match =
 		document.location.search && document.location.search.match( /[?&]flags=([^&]+)(&|$)/ );
 	if ( match ) {
-		applyFlags( match[ 1 ], 'URL' );
+		applyFlags( decodeURIComponent( match[ 1 ] ), 'URL' );
 	}
 }
 const configApi = createConfig( configData );
-
 export default configApi;
 export const isEnabled = configApi.isEnabled;
 export const enabledFeatures = configApi.enabledFeatures;

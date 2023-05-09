@@ -1,16 +1,10 @@
 /**
- * /* eslint-disable no-console
- *
- */
-
-/**
  * WARNING: DO NOT USE ES2015+ OR COMMONJS. This file is served as-is and isn't
  * transpiled by Babel or bundled by Webpack.
  */
 
-/* eslint-disable */
+// eslint-disable-next-line strict
 'use strict';
-/* eslint-enable */
 
 const queuedMessages = [];
 
@@ -18,7 +12,7 @@ const queuedMessages = [];
  *  We want to make sure that if the service worker gets updated that we
  *  immediately claim it, to ensure we're not running stale versions of the worker
  *	See: https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerGlobalScope/skipWaiting
- **/
+ */
 
 self.addEventListener( 'install', function ( event ) {
 	event.waitUntil( self.skipWaiting() );
@@ -46,7 +40,8 @@ self.addEventListener( 'push', function ( event ) {
 			.then( function () {
 				if ( notification.note_opened_pixel ) {
 					fetch( notification.note_opened_pixel, { mode: 'no-cors' } ).catch( function () {
-						console.log( 'Could not load the pixel %s', notification.note_opened_pixel ); //eslint-disable-line no-console
+						// eslint-disable-next-line no-console
+						console.log( 'Could not load the pixel %s', notification.note_opened_pixel );
 					} );
 				}
 			} )
@@ -98,8 +93,7 @@ self.addEventListener( 'message', function ( event ) {
 	}
 } );
 
-/* eslint-disable */
+// eslint-disable-next-line no-unused-vars
 self.addEventListener( 'fetch', function ( event ) {
 	// this listener is required for "Add to Home Screen" support
 } );
-/* eslint-enable */

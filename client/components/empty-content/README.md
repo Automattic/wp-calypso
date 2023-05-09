@@ -45,6 +45,8 @@ function render() {
 | `actionCallback`        | `function`      | `null`                                   | `onClick` value for the primary action button.                                                                                                |
 | `actionTarget`          | `string`        | `null`                                   | If omitted, no target attribute is specified.                                                                                                 |
 | `actionHoverCallback`\* | `bool`          | `0`                                      | Indicates activity while a background action is being performed.                                                                              |
+| `actionDisabled`        | `bool`          | `null`                                   | Disables the button.                                                                                                                          |
+| `actionRef`             | `function`      | `null`                                   | Adds a ref to the button.                                                                                                                     |
 | `isCompact`             | `bool`          | `false`                                  | Shows a smaller version of the component.                                                                                                     |
 
 ### Additional props
@@ -60,7 +62,7 @@ The component also supports a secondary action. This should be used sparingly.
 
 ### Example: Sites
 
-```jsx
+```js
 <EmptyContentComponent
 	title="You don't have any WordPress sites yet."
 	line="Would you like to start one?"

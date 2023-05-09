@@ -1,56 +1,49 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import pageRouter from 'page';
-import { connect } from 'react-redux';
-import { get, includes, partial } from 'lodash';
+import config from '@automattic/calypso-config';
+import { CompactCard, Gridicon } from '@automattic/components';
 import { saveAs } from 'browser-filesaver';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { CompactCard } from '@automattic/components';
-import Gridicon from 'calypso/components/gridicon';
+import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
+import pageRouter from 'page';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import SiteIcon from 'calypso/blocks/site-icon';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
-import PopoverMenuItemClipboard from 'calypso/components/popover/menu-item-clipboard';
+import InfoPopover from 'calypso/components/info-popover';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import SiteIcon from 'calypso/blocks/site-icon';
-import { statsLinkForPage } from '../helpers';
-import { getPreviewURL, userCan } from 'calypso/state/posts/utils';
-import MenuSeparator from 'calypso/components/popover/menu-separator';
-import PageCardInfo from '../page-card-info';
-import InfoPopover from 'calypso/components/info-popover';
-import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import PopoverMenuItemClipboard from 'calypso/components/popover-menu/item-clipboard';
+import PopoverMenuSeparator from 'calypso/components/popover-menu/separator';
+import PostActionsEllipsisMenuPromote from 'calypso/my-sites/post-type-list/post-actions-ellipsis-menu/promote';
+import PostActionsEllipsisMenuQRCode from 'calypso/my-sites/post-type-list/post-actions-ellipsis-menu/qrcode';
 import { preloadEditor } from 'calypso/sections-preloaders';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getEditorDuplicatePostPath } from 'calypso/state/editor/selectors';
+import { infoNotice } from 'calypso/state/notices/actions';
+import { isFrontPage, isPostsPage } from 'calypso/state/pages/selectors';
+import { savePost, deletePost, trashPost, restorePost } from 'calypso/state/posts/actions';
+import { getPreviewURL, userCan } from 'calypso/state/posts/utils';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import getEditorUrl from 'calypso/state/selectors/get-editor-url';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import { shouldLoadGutenframe } from 'calypso/state/selectors/should-load-gutenframe/';
+import { updateSiteFrontPage } from 'calypso/state/sites/actions';
 import {
 	getSite,
 	hasStaticFrontPage,
 	isJetpackSite,
 	isSitePreviewable,
 } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { isFrontPage, isPostsPage } from 'calypso/state/pages/selectors';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { setPreviewUrl } from 'calypso/state/ui/preview/actions';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
-import { savePost, deletePost, trashPost, restorePost } from 'calypso/state/posts/actions';
-import { infoNotice } from 'calypso/state/notices/actions';
-import { shouldLoadGutenframe } from 'calypso/state/selectors/should-load-gutenframe/';
-import getEditorUrl from 'calypso/state/selectors/get-editor-url';
-import { getEditorDuplicatePostPath } from 'calypso/state/editor/selectors';
-import { updateSiteFrontPage } from 'calypso/state/sites/actions';
-import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
-import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
-import config from '@automattic/calypso-config';
+import { setPreviewUrl } from 'calypso/state/ui/preview/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { statsLinkForPage, recordEvent } from '../helpers';
+import PageCardInfo from '../page-card-info';
+import PageEllipsisMenuWrapper from './page-ellipsis-menu-wrapper';
 
-const recordEvent = partial( recordGoogleEvent, 'Pages' );
 const noop = () => {};
 
 function sleep( ms ) {
@@ -81,16 +74,20 @@ class Page extends Component {
 		setPreviewUrl: PropTypes.func.isRequired,
 		setLayoutFocus: PropTypes.func.isRequired,
 		recordEvent: PropTypes.func.isRequired,
-		recordMoreOptions: PropTypes.func.isRequired,
-		recordPageTitle: PropTypes.func.isRequired,
-		recordEditPage: PropTypes.func.isRequired,
-		recordViewPage: PropTypes.func.isRequired,
-		recordStatsPage: PropTypes.func.isRequired,
+		recordTracksEvent: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
 		onShadowStatusChange: noop,
 		showPublishedStatus: false,
+	};
+
+	recordEllipsisMenuItemClickEvent = ( item ) => {
+		this.props.recordTracksEvent( 'calypso_pages_ellipsismenu_item_click', {
+			page_type: 'real',
+			blog_id: this.props.site?.ID,
+			item,
+		} );
 	};
 
 	// Construct a link to the Site the page belongs too
@@ -102,7 +99,8 @@ class Page extends Component {
 		const { isPreviewable, page, previewURL } = this.props;
 
 		if ( page.status && page.status === 'publish' ) {
-			this.props.recordViewPage();
+			this.recordEllipsisMenuItemClickEvent( 'viewpage' );
+			this.props.recordEvent( 'Clicked View Page' );
 		}
 
 		if ( ! isPreviewable && typeof window === 'object' ) {
@@ -137,6 +135,16 @@ class Page extends Component {
 				<Gridicon icon={ isPreviewable ? 'visible' : 'external' } size={ 18 } />
 				{ this.props.translate( 'View page' ) }
 			</PopoverMenuItem>
+		);
+	}
+
+	getPromoteItem() {
+		return (
+			<PostActionsEllipsisMenuPromote
+				globalId={ this.props.page.global_ID }
+				key="promote"
+				bumpStatKey="pages-meatball-menu"
+			/>
 		);
 	}
 
@@ -206,7 +214,7 @@ class Page extends Component {
 
 		if ( this.props.wpAdminGutenberg ) {
 			return (
-				<PopoverMenuItem onClick={ this.props.recordEditPage } href={ this.props.editorUrl }>
+				<PopoverMenuItem onClick={ this.editPage } href={ this.props.editorUrl }>
 					<Gridicon icon="pencil" size={ 18 } />
 					{ this.props.translate( 'Edit' ) }
 				</PopoverMenuItem>
@@ -244,7 +252,7 @@ class Page extends Component {
 		}
 
 		return [
-			<MenuSeparator key="separator" />,
+			<PopoverMenuSeparator key="separator" />,
 			<PopoverMenuItem key="item" onClick={ this.setFrontPage }>
 				<Gridicon icon="house" size={ 18 } />
 				{ translate( 'Set as Homepage' ) }
@@ -259,11 +267,10 @@ class Page extends Component {
 		} );
 
 	getPostsPageItem() {
-		const { canManageOptions, isFullSiteEditing, page, translate } = this.props;
+		const { canManageOptions, page, translate } = this.props;
 
 		if (
 			! canManageOptions ||
-			isFullSiteEditing ||
 			! this.props.hasStaticFrontPage ||
 			'publish' !== page.status ||
 			this.props.isFrontPage
@@ -272,7 +279,7 @@ class Page extends Component {
 		}
 
 		return [
-			<MenuSeparator key="separator" />,
+			<PopoverMenuSeparator key="separator" />,
 			this.props.isPostsPage && (
 				<PopoverMenuItem key="item" onClick={ this.setPostsPage( 0 ) }>
 					<Gridicon icon="undo" size={ 18 } />
@@ -299,7 +306,7 @@ class Page extends Component {
 
 		if ( this.props.page.status !== 'trash' ) {
 			return [
-				<MenuSeparator key="separator" />,
+				<PopoverMenuSeparator key="separator" />,
 				<PopoverMenuItem key="item" className="page__trash-item" onClick={ this.updateStatusTrash }>
 					<Gridicon icon="trash" size={ 18 } />
 					{ this.props.translate( 'Trash' ) }
@@ -308,7 +315,7 @@ class Page extends Component {
 		}
 
 		return [
-			<MenuSeparator key="separator" />,
+			<PopoverMenuSeparator key="separator" />,
 			<PopoverMenuItem key="item" className="page__delete-item" onClick={ this.updateStatusDelete }>
 				<Gridicon icon="trash" size={ 18 } />
 				{ this.props.translate( 'Delete' ) }
@@ -319,7 +326,7 @@ class Page extends Component {
 	getCopyPageItem() {
 		const { copyPagesModuleDisabled, wpAdminGutenberg, page: post, duplicateUrl } = this.props;
 		if (
-			! includes( [ 'draft', 'future', 'pending', 'private', 'publish' ], post.status ) ||
+			! [ 'draft', 'future', 'pending', 'private', 'publish' ].includes( post.status ) ||
 			! userCan( 'edit_post', post ) ||
 			wpAdminGutenberg ||
 			copyPagesModuleDisabled
@@ -342,7 +349,7 @@ class Page extends Component {
 
 		return (
 			<>
-				<MenuSeparator key="separator" />
+				<PopoverMenuSeparator key="separator" />
 				<PopoverMenuItem onClick={ this.exportPage }>
 					<Gridicon icon="cloud-download" size={ 18 } />
 					{ this.props.translate( 'Export page' ) }
@@ -351,10 +358,23 @@ class Page extends Component {
 		);
 	}
 
+	getQRCodeItem() {
+		if ( ! config.isEnabled( 'post-list/qr-code-link' ) ) {
+			return null;
+		}
+		return (
+			<PostActionsEllipsisMenuQRCode
+				globalId={ this.props.page.global_ID }
+				key="qrcode"
+				onClick={ this.viewPageQrCode }
+			/>
+		);
+	}
+
 	getCopyLinkItem() {
 		const { page, translate } = this.props;
 		return (
-			<PopoverMenuItemClipboard text={ page.URL } onCopy={ this.copyPageLink } icon={ 'link' }>
+			<PopoverMenuItemClipboard text={ page.URL } onCopy={ this.copyPageLink } icon="link">
 				{ translate( 'Copy link' ) }
 			</PopoverMenuItemClipboard>
 		);
@@ -373,8 +393,9 @@ class Page extends Component {
 		);
 	}
 
-	statsPage = () => {
-		this.props.recordStatsPage();
+	viewStats = () => {
+		this.recordEllipsisMenuItemClickEvent( 'viewstats' );
+		this.props.recordEvent( 'Clicked Stats Page' );
 		pageRouter( statsLinkForPage( this.props.page, this.props.site ) );
 	};
 
@@ -384,7 +405,7 @@ class Page extends Component {
 		}
 
 		return (
-			<PopoverMenuItem onClick={ this.statsPage }>
+			<PopoverMenuItem onClick={ this.viewStats }>
 				<Gridicon icon="stats" size={ 18 } />
 				{ this.props.translate( 'Stats' ) }
 			</PopoverMenuItem>
@@ -392,8 +413,12 @@ class Page extends Component {
 	}
 
 	editPage = () => {
-		this.props.recordEditPage();
-		pageRouter( this.props.editorUrl );
+		this.recordEllipsisMenuItemClickEvent( 'editpage' );
+		this.props.recordEvent( 'Clicked Edit Page' );
+
+		if ( ! this.props.wpAdminGutenberg ) {
+			pageRouter( this.props.editorUrl );
+		}
 	};
 
 	getPageStatusInfo() {
@@ -435,7 +460,7 @@ class Page extends Component {
 
 		return (
 			<div>
-				<MenuSeparator />
+				<PopoverMenuSeparator />
 				{ status }
 				{ childPageInfo }
 				{ frontPageInfo }
@@ -444,6 +469,62 @@ class Page extends Component {
 	}
 
 	undoPostStatus = () => this.updatePostStatus( this.props.shadowStatus.undo );
+
+	createEllipsisMenu = () => {
+		const viewItem = this.getViewItem();
+		const promoteItem = this.getPromoteItem();
+		const publishItem = this.getPublishItem();
+		const editItem = this.getEditItem();
+		const frontPageItem = this.getFrontPageItem();
+		const postsPageItem = this.getPostsPageItem();
+		const restoreItem = this.getRestoreItem();
+		const sendToTrashItem = this.getSendToTrashItem();
+		const copyPageItem = this.getCopyPageItem();
+		const copyLinkItem = this.getCopyLinkItem();
+		const statsItem = this.getStatsItem();
+		const moreInfoItem = this.popoverMoreInfo();
+		const exportItem = this.getExportItem();
+		const qrCodeItem = this.getQRCodeItem();
+		const hasMenuItems =
+			viewItem ||
+			publishItem ||
+			promoteItem ||
+			editItem ||
+			statsItem ||
+			restoreItem ||
+			frontPageItem ||
+			sendToTrashItem ||
+			moreInfoItem ||
+			exportItem ||
+			qrCodeItem;
+
+		return (
+			hasMenuItems && (
+				<PageEllipsisMenuWrapper globalId={ this.props.page.global_ID }>
+					<EllipsisMenu
+						className="page__actions-toggle"
+						position="bottom left"
+						onToggle={ this.handleMenuToggle }
+					>
+						{ editItem }
+						{ publishItem }
+						{ viewItem }
+						{ promoteItem }
+						{ statsItem }
+						{ copyPageItem }
+						{ copyLinkItem }
+						{ restoreItem }
+						{ frontPageItem }
+						{ postsPageItem }
+						{ exportItem }
+						{ sendToTrashItem }
+						{ qrCodeItem }
+						{ moreInfoItem }
+					</EllipsisMenu>
+				</PageEllipsisMenuWrapper>
+			)
+		);
+	};
 
 	render() {
 		const {
@@ -458,49 +539,8 @@ class Page extends Component {
 		const title = page.title || translate( 'Untitled' );
 		const canEdit = userCan( 'edit_post', page ) && ! latestPostsPage;
 		const depthIndicator = ! this.props.hierarchical && page.parent && '— ';
-		const viewItem = this.getViewItem();
-		const publishItem = this.getPublishItem();
-		const editItem = this.getEditItem();
-		const frontPageItem = this.getFrontPageItem();
-		const postsPageItem = this.getPostsPageItem();
-		const restoreItem = this.getRestoreItem();
-		const sendToTrashItem = this.getSendToTrashItem();
-		const copyPageItem = this.getCopyPageItem();
-		const copyLinkItem = this.getCopyLinkItem();
-		const statsItem = this.getStatsItem();
-		const moreInfoItem = this.popoverMoreInfo();
-		const exportItem = this.getExportItem();
-		const hasMenuItems =
-			viewItem ||
-			publishItem ||
-			editItem ||
-			statsItem ||
-			restoreItem ||
-			frontPageItem ||
-			sendToTrashItem ||
-			moreInfoItem ||
-			exportItem;
 
-		const ellipsisMenu = hasMenuItems && (
-			<EllipsisMenu
-				className="page__actions-toggle"
-				position="bottom left"
-				onToggle={ this.handleMenuToggle }
-			>
-				{ editItem }
-				{ publishItem }
-				{ viewItem }
-				{ statsItem }
-				{ copyPageItem }
-				{ copyLinkItem }
-				{ restoreItem }
-				{ frontPageItem }
-				{ postsPageItem }
-				{ exportItem }
-				{ sendToTrashItem }
-				{ moreInfoItem }
-			</EllipsisMenu>
-		);
+		const ellipsisMenu = this.createEllipsisMenu();
 
 		const isTrashed = page.status === 'trash';
 
@@ -557,7 +597,7 @@ class Page extends Component {
 									? translate( 'Edit %(title)s', { textOnly: true, args: { title: page.title } } )
 									: translate( 'View %(title)s', { textOnly: true, args: { title: page.title } } )
 							}
-							onClick={ this.props.recordPageTitle }
+							onClick={ () => this.clickPageTitle( canEdit ) }
 							onMouseOver={ preloadEditor }
 							onFocus={ preloadEditor }
 							data-tip-target={ 'page-' + page.slug }
@@ -713,11 +753,22 @@ class Page extends Component {
 		this.props.recordEvent( 'Clicked Delete Page' );
 	};
 
+	clickPageTitle = ( canEdit ) => {
+		this.props.recordTracksEvent( 'calypso_pages_page_title_click', {
+			page_type: 'real',
+			blog_id: this.props.siteId,
+			can_edit: canEdit,
+		} );
+		this.props.recordEvent( 'Clicked Page Title' );
+	};
+
 	copyPage = () => {
+		this.recordEllipsisMenuItemClickEvent( 'copypage' );
 		this.props.recordEvent( 'Clicked Copy Page' );
 	};
 
 	exportPage = () => {
+		this.recordEllipsisMenuItemClickEvent( 'exportpage' );
 		this.props.recordEvent( 'Clicked Export Page' );
 		const { page } = this.props;
 
@@ -733,17 +784,27 @@ class Page extends Component {
 		saveAs( blob, fileName );
 	};
 
+	viewPageQrCode = () => {
+		this.recordEllipsisMenuItemClickEvent( 'qrcode' );
+	};
+
 	copyPageLink = () => {
+		this.recordEllipsisMenuItemClickEvent( 'copylink' );
+		this.props.recordEvent( 'Clicked Copy Page Link' );
+
 		this.props.infoNotice( this.props.translate( 'Link copied to clipboard.' ), {
 			duration: 3000,
 		} );
-		this.props.recordEvent( 'Clicked Copy Page Link' );
 	};
 
 	handleMenuToggle = ( isVisible ) => {
 		if ( isVisible ) {
+			this.props.recordTracksEvent( 'calypso_pages_ellipsismenu_open_click', {
+				page_type: 'real',
+				blog_id: this.props.siteId,
+			} );
 			// record a GA event when the menu is opened
-			this.props.recordMoreOptions();
+			this.props.recordEvent( 'Clicked More Options Menu' );
 			preloadEditor();
 		}
 	};
@@ -771,9 +832,8 @@ const mapState = ( state, props ) => {
 		copyPagesModuleDisabled:
 			! isJetpackModuleActive( state, pageSiteId, 'copy-post' ) &&
 			isJetpackSite( state, pageSiteId ),
-		wpAdminGutenberg: ! shouldLoadGutenframe( state, pageSiteId ),
+		wpAdminGutenberg: ! shouldLoadGutenframe( state, pageSiteId, 'page' ),
 		duplicateUrl: getEditorDuplicatePostPath( state, props.page.site_ID, props.page.ID, 'page' ),
-		isFullSiteEditing: isSiteUsingFullSiteEditing( state, pageSiteId ),
 		canManageOptions: canCurrentUser( state, pageSiteId, 'manage_options' ),
 	};
 };
@@ -786,12 +846,8 @@ const mapDispatch = {
 	restorePost,
 	setPreviewUrl,
 	setLayoutFocus,
+	recordTracksEvent,
 	recordEvent,
-	recordMoreOptions: partial( recordEvent, 'Clicked More Options Menu' ),
-	recordPageTitle: partial( recordEvent, 'Clicked Page Title' ),
-	recordEditPage: partial( recordEvent, 'Clicked Edit Page' ),
-	recordViewPage: partial( recordEvent, 'Clicked View Page' ),
-	recordStatsPage: partial( recordEvent, 'Clicked Stats Page' ),
 	updateSiteFrontPage,
 };
 

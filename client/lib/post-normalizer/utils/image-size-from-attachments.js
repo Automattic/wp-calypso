@@ -1,6 +1,3 @@
-/**
- * External Dependencies
- */
 import { find } from 'lodash';
 
 export function imageSizeFromAttachments( post, imageUrl ) {

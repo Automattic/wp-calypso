@@ -1,19 +1,9 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
-import SitePicker from 'calypso/my-sites/picker';
+import { Component } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
-import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
+import SitePicker from 'calypso/my-sites/picker';
 
-class MySitesNavigation extends React.Component {
+class MySitesNavigation extends Component {
 	static displayName = 'MySitesNavigation';
 
 	preventPickerDefault = ( event ) => {
@@ -29,12 +19,23 @@ class MySitesNavigation extends React.Component {
 		};
 
 		let asyncSidebar = null;
+		let sitePickerProps = {};
+
 		if ( config.isEnabled( 'jetpack-cloud' ) ) {
 			asyncSidebar = <AsyncLoad require="calypso/components/jetpack/sidebar" { ...asyncProps } />;
-		} else if ( this.props.isNavUnificationEnabled ) {
-			asyncSidebar = <AsyncLoad require="calypso/my-sites/sidebar-unified" { ...asyncProps } />;
+
+			sitePickerProps = {
+				showManageSitesButton: false,
+				showHiddenSites: false,
+			};
 		} else {
 			asyncSidebar = <AsyncLoad require="calypso/my-sites/sidebar" { ...asyncProps } />;
+
+			sitePickerProps = {
+				showManageSitesButton: true,
+				showHiddenSites: true,
+				maxResults: 50,
+			};
 		}
 
 		return (
@@ -43,6 +44,7 @@ class MySitesNavigation extends React.Component {
 					allSitesPath={ this.props.allSitesPath }
 					siteBasePath={ this.props.siteBasePath }
 					onClose={ this.preventPickerDefault }
+					{ ...sitePickerProps }
 				/>
 				{ asyncSidebar }
 			</div>
@@ -50,6 +52,4 @@ class MySitesNavigation extends React.Component {
 	}
 }
 
-export default connect( ( state ) => ( {
-	isNavUnificationEnabled: isNavUnificationEnabled( state ),
-} ) )( MySitesNavigation );
+export default MySitesNavigation;

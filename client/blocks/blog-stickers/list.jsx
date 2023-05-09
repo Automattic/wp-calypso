@@ -1,17 +1,13 @@
-/**
- * External dependencies
- */
+import { useTranslate } from 'i18n-calypso';
 
-import React from 'react';
-import { map } from 'lodash';
-import { localize } from 'i18n-calypso';
+const BlogStickersList = ( { stickers = [] } ) => {
+	const translate = useTranslate();
 
-const BlogStickersList = ( { stickers, translate } ) => {
 	return (
 		<div className="blog-stickers__list">
 			<h3 className="blog-stickers__list-title">{ translate( 'Blog Stickers' ) }</h3>
 			<ul className="blog-stickers__list-ul">
-				{ map( stickers, ( sticker ) => {
+				{ stickers.map( ( sticker ) => {
 					return (
 						<li className="blog-stickers__list-item" key={ sticker }>
 							{ sticker }
@@ -23,4 +19,4 @@ const BlogStickersList = ( { stickers, translate } ) => {
 	);
 };
 
-export default localize( BlogStickersList );
+export default BlogStickersList;

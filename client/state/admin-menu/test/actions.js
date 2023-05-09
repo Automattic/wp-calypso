@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { requestAdminMenu, receiveAdminMenu } from '../actions';
 import { ADMIN_MENU_REQUEST, ADMIN_MENU_RECEIVE } from 'calypso/state/action-types';
+import { requestAdminMenu, receiveAdminMenu } from '../actions';
 import menuFixture from './fixture/menu-fixture';
 
 describe( 'actions', () => {

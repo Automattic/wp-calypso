@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
+import { localizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
-import {
-	domainManagementEditContactInfo,
-	domainManagementNameServers,
-} from 'calypso/my-sites/domains/paths';
+import PropTypes from 'prop-types';
 import { TRANSFER_DOMAIN_REGISTRATION } from 'calypso/lib/url/support';
+import {
+	domainManagementEdit,
+	domainManagementEditContactInfo,
+} from 'calypso/my-sites/domains/paths';
 
 export default function TransferOutWarning( { domainName, selectedSiteSlug } ) {
 	return (
@@ -25,7 +18,7 @@ export default function TransferOutWarning( { domainName, selectedSiteSlug } ) {
 						nameserversLink: (
 							<a
 								rel="noopener noreferrer"
-								href={ domainManagementNameServers( selectedSiteSlug, domainName ) }
+								href={ domainManagementEdit( selectedSiteSlug, domainName ) }
 							/>
 						),
 						contactInformationEditLink: (
@@ -37,7 +30,11 @@ export default function TransferOutWarning( { domainName, selectedSiteSlug } ) {
 					},
 				}
 			) }{ ' ' }
-			<a href={ TRANSFER_DOMAIN_REGISTRATION } target="_blank" rel="noopener noreferrer">
+			<a
+				href={ localizeUrl( TRANSFER_DOMAIN_REGISTRATION ) }
+				target="_blank"
+				rel="noopener noreferrer"
+			>
 				{ translate( 'Learn more about domain transfers.' ) }
 			</a>
 		</p>

@@ -1,17 +1,7 @@
-/**
- * External dependencies
- */
-
-import { omit } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import {
 	SITE_PRODUCTS_FETCH,
 	SITE_PRODUCTS_FETCH_COMPLETED,
 	SITE_PRODUCTS_FETCH_FAILED,
-	SITE_PRODUCTS_REMOVE,
 } from 'calypso/state/action-types';
 
 export const initialSiteState = {
@@ -24,10 +14,10 @@ export const initialSiteState = {
 /**
  * Returns a new state with the given attributes updated for the specified site.
  *
- * @param {object} state current state
+ * @param {Object} state current state
  * @param {number} siteId identifier of the site
- * @param {object} attributes list of attributes and their values
- * @returns {object} the new state
+ * @param {Object} attributes list of attributes and their values
+ * @returns {Object} the new state
  */
 function updateSiteState( state, siteId, attributes ) {
 	return Object.assign( {}, state, {
@@ -56,9 +46,6 @@ export function products( state = {}, action ) {
 				error: action.error,
 				isRequesting: false,
 			} );
-
-		case SITE_PRODUCTS_REMOVE:
-			return omit( state, action.siteId );
 	}
 
 	return state;

@@ -1,3 +1,5 @@
+const { nodeConfig } = require( '@automattic/calypso-eslint-overrides' );
+
 module.exports = {
 	extends: [ 'plugin:@wordpress/eslint-plugin/i18n' ],
 	rules: {
@@ -11,7 +13,13 @@ module.exports = {
 
 		// FSE components render in a Gutenberg environment and should
 		// conform to those naming conventions instead of Calypso's.
-		'wpcalypso/jsx-classname-namespace': 0,
+		'wpcalypso/jsx-classname-namespace': 'off',
 	},
 	ignorePatterns: [ '**/dist/*' ],
+	overrides: [
+		{
+			files: [ './bin/**/*', './webpack.config.js' ],
+			...nodeConfig,
+		},
+	],
 };

@@ -1,0 +1,70 @@
+@import "@automattic/typography/styles/fonts";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+body .customer-home__layout .domain-upsell__card {
+	padding: 16px 16px 20px;
+	@include break-small {
+		padding: 40px 46px;
+	}
+}
+
+.domain-upsell__card {
+	h3 {
+		font-family: $brand-serif;
+		font-style: normal;
+		font-weight: 400;
+		font-size: rem(32px);
+		line-height: 40px;
+		color: var(--studio-gray-100);
+	}
+
+	p {
+		margin-top: 8px;
+	}
+
+	&-dismiss {
+		position: absolute;
+		width: 18px;
+		height: 18px;
+		top: 16px;
+		right: 16px;
+		color: var(--color-text-subtle);
+		button {
+			cursor: pointer;
+			height: 18px;
+		}
+
+	}
+
+	.domain-upsell-actions {
+		display: flex;
+		flex-direction: column;
+		justify-content: right;
+		padding: 28px 0 0;
+		gap: 16px;
+		@media (min-width: ( $break-large + 1 )) {
+			flex-direction: row-reverse;
+		}
+	}
+
+	.domain-upsell-illustration {
+		position: relative;
+
+		width: 100%;
+		padding: 0;
+
+		img {
+			width: 100%;
+		}
+
+		svg {
+			position: absolute;
+			top: 27%;
+			left: 15%;
+			height: 30%;
+			width: 70%;
+		}
+	}
+
+}

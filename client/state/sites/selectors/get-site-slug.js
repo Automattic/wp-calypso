@@ -1,17 +1,15 @@
-/**
- * Internal dependencies
- */
 import { createSelector } from '@automattic/state-utils';
 import { withoutHttp, urlToSlug } from 'calypso/lib/url';
-import getSitesItems from 'calypso/state/selectors/get-sites-items';
 import getRawSite from 'calypso/state/selectors/get-raw-site';
+import getSitesItems from 'calypso/state/selectors/get-sites-items';
 import getSiteOption from './get-site-option';
+import getSiteOptions from './get-site-options';
 import isSiteConflicting from './is-site-conflicting';
 
 /**
  * Returns the slug for a site, or null if the site is unknown.
  *
- * @param  {object}  state  Global state tree
+ * @param  {Object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @returns {?string}        Site slug
  */
@@ -28,5 +26,5 @@ export default createSelector(
 
 		return urlToSlug( site.URL );
 	},
-	[ getSitesItems ]
+	( state, siteId ) => [ getSitesItems( state ), getSiteOptions( state, siteId ) ]
 );

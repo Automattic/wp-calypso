@@ -1,21 +1,10 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
+import { Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import PropTypes from 'prop-types';
 import safeProtocolUrl from 'calypso/lib/safe-protocol-url';
-import Gridicon from 'calypso/components/gridicon';
 
-/**
- * Style dependencies
- */
 import './link-item.scss';
 
 function LoggedOutFormBackLink( props ) {

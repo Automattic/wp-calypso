@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-
-/**
- * Internal dependencies
- */
 import { Button, Card } from '@automattic/components';
+import { Component } from 'react';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';

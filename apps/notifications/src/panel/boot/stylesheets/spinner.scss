@@ -8,7 +8,7 @@
 
 	@keyframes wpnc__rotate-spinner {
 		100% {
-			transform: rotate( 360deg );
+			transform: rotate(360deg);
 		}
 	}
 
@@ -23,14 +23,14 @@
 	}
 
 	.wpnc__spinner__outer {
-		border-top-color: var( --color-primary );
+		border-top-color: var(--color-primary);
 	}
 
 	.wpnc__spinner__inner {
 		width: 100%;
 		height: 100%;
-		border-top-color: var( --color-primary );
-		border-right-color: var( --color-primary );
+		border-top-color: var(--color-primary);
+		border-right-color: var(--color-primary);
 		opacity: 0.4;
 	}
 }

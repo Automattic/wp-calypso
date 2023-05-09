@@ -1,14 +1,10 @@
-/**
- * External dependencies
- */
-import { filter, find, includes, isEmpty, pick, sortBy } from 'lodash';
+import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import steps from 'calypso/signup/config/steps-pure';
+import { filter, find, includes, isEmpty, pick, sortBy } from 'lodash';
+import { addQueryArgs } from 'calypso/lib/url';
 import flows from 'calypso/signup/config/flows';
+import { getStepModuleName } from 'calypso/signup/config/step-components';
+import steps from 'calypso/signup/config/steps-pure';
 
 const { defaultFlowName } = flows;
 
@@ -47,18 +43,18 @@ function isStepSectionName( pathFragment ) {
 	return ! isStepName( pathFragment );
 }
 
-export function getStepUrl( flowName, stepName, stepSectionName, localeSlug ) {
+export function getStepUrl( flowName, stepName, stepSectionName, localeSlug, params = {} ) {
 	const flow = flowName ? `/${ flowName }` : '';
 	const step = stepName ? `/${ stepName }` : '';
 	const section = stepSectionName ? `/${ stepSectionName }` : '';
 	const locale = localeSlug ? `/${ localeSlug }` : '';
 
-	if ( flowName === defaultFlowName ) {
-		// we don't include the default flow name in the route
-		return '/start' + step + section + locale;
-	}
-
-	return '/start' + flow + step + section + locale;
+	const url =
+		flowName === defaultFlowName
+			? // we don't include the default flow name in the route
+			  '/start' + step + section + locale
+			: '/start' + flow + step + section + locale;
+	return addQueryArgs( params, url );
 }
 
 export function getValidPath( parameters, isUserLoggedIn ) {
@@ -119,51 +115,6 @@ export function getThemeForDesignType( designType ) {
 	}
 }
 
-export function getThemeForSiteGoals( siteGoals ) {
-	const siteGoalsValue = siteGoals.split( ',' );
-
-	if ( siteGoalsValue.indexOf( 'sell' ) !== -1 ) {
-		return 'pub/radcliffe-2';
-	}
-
-	if ( siteGoalsValue.indexOf( 'promote' ) !== -1 ) {
-		return 'pub/radcliffe-2';
-	}
-
-	if ( siteGoalsValue.indexOf( 'educate' ) !== -1 ) {
-		return 'pub/twentyfifteen';
-	}
-
-	if ( siteGoalsValue.indexOf( 'showcase' ) !== -1 ) {
-		return 'pub/altofocus';
-	}
-
-	return 'pub/independent-publisher-2';
-}
-
-export function getDesignTypeForSiteGoals( siteGoals, flow ) {
-	const siteGoalsValue = siteGoals.split( ',' );
-
-	//Identify stores for the store signup flow
-	if ( siteGoals === 'sell' || flow === 'ecommerce' ) {
-		return 'store';
-	}
-
-	if ( siteGoalsValue.indexOf( 'sell' ) !== -1 ) {
-		return 'page';
-	}
-
-	if ( siteGoalsValue.indexOf( 'promote' ) !== -1 ) {
-		return 'page';
-	}
-
-	if ( siteGoalsValue.indexOf( 'showcase' ) !== -1 ) {
-		return 'portfolio';
-	}
-
-	return 'blog';
-}
-
 export function getFilteredSteps( flowName, progress, isUserLoggedIn ) {
 	const flow = flows.getFlow( flowName, isUserLoggedIn );
 
@@ -215,4 +166,44 @@ export function canResumeFlow( flowName, progress, isUserLoggedIn ) {
 export const shouldForceLogin = ( flowName, userLoggedIn ) => {
 	const flow = flows.getFlow( flowName, userLoggedIn );
 	return !! flow && flow.forceLogin;
+};
+
+export const isReskinnedFlow = ( flowName ) => {
+	return config( 'reskinned_flows' ).includes( flowName );
+};
+
+export const isP2Flow = ( flowName ) => {
+	return flowName === 'p2' || flowName === 'p2v1';
+};
+
+export const isVideoPressFlow = ( flowName ) => {
+	return flowName === 'videopress' || flowName === 'videopress-account';
+};
+
+export const isWpccFlow = ( flowName ) => {
+	return flowName === 'wpcc';
+};
+
+/**
+ * Derive if the "plans" step actually will be visible to the customer in a given flow after the domain step
+ * i.e. Check "launch-site" flow while having a purchased paid plan
+ *
+ * @param  {Object} flowSteps steps in the current flow
+ * @returns {boolean} true indicates that "plans" step will be one of the next steps in the flow
+ */
+export const isPlanSelectionAvailableLaterInFlow = ( flowSteps ) => {
+	/**
+	 * Caveat here even though "plans" step maybe available in a flow it might not be active
+	 * i.e. Check flow "domain"
+	 */
+
+	const plansIndex = flowSteps.findIndex( ( stepName ) =>
+		[ 'plans', 'plans-pm' ].includes( getStepModuleName( stepName ) )
+	);
+	const domainsIndex = flowSteps.findIndex(
+		( stepName ) => getStepModuleName( stepName ) === 'domains'
+	);
+	const isPlansStepExistsInFutureOfFlow = plansIndex > 0 && plansIndex > domainsIndex;
+
+	return isPlansStepExistsInFutureOfFlow;
 };

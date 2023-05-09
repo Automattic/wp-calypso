@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import {
 	COMMENTS_DELETE,
 	COMMENTS_RECEIVE,
@@ -15,8 +8,8 @@ import {
 import { requestCommentsList } from 'calypso/state/comments/actions';
 import { bypassDataLayer } from 'calypso/state/data-layer/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { getSitePost } from 'calypso/state/posts/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
+import { getSitePost } from 'calypso/state/posts/selectors';
 
 /**
  * Creates a placeholder comment for a given text and postId
@@ -26,7 +19,7 @@ import { errorNotice } from 'calypso/state/notices/actions';
  * @param   {string}           commentText     text of the comment
  * @param   {number}           postId          post identifier
  * @param   {number|undefined} parentCommentId parent comment identifier
- * @returns {object}                           comment placeholder
+ * @returns {Object}                           comment placeholder
  */
 export const createPlaceholderComment = ( commentText, postId, parentCommentId ) => ( {
 	ID: 'placeholder-' + new Date().getTime(),
@@ -45,7 +38,7 @@ export const createPlaceholderComment = ( commentText, postId, parentCommentId )
  * We need placeholder id to be unique in the context of siteId and postId for that specific user,
  * date milliseconds will do for that purpose.
  *
- * @param {object}   action   redux action
+ * @param {Object}   action   redux action
  * @param {string}   path     comments resource path
  * @returns {Array}	actions
  */
@@ -83,7 +76,7 @@ export const dispatchNewCommentRequest = ( action, path ) => {
  * updates the placeholder comments with server values
  *
  * @param {Function} dispatch redux dispatcher
- * @param {object}   comment  updated comment from the request response
+ * @param {Object}   comment  updated comment from the request response
  * @returns {Function} thunk
  */
 export const updatePlaceholderComment = (
@@ -120,31 +113,34 @@ export const updatePlaceholderComment = (
 /**
  * dispatches a error notice if creating a new comment request failed
  *
- * @param {object}   action   redux action
- * @param {object} rawError plain error object
+ * @param {Object}   action   redux action
+ * @param {number} action.siteId
+ * @param {number} action.postId
+ * @param {number} action.parentCommentId
+ * @param {number} action.placeholderId
+ * @param {Object} rawError plain error object
  * @returns {Function} thunk
  */
-export const handleWriteCommentFailure = (
-	{ siteId, postId, parentCommentId, placeholderId },
-	rawError
-) => ( dispatch, getState ) => {
-	// Dispatch error notice
-	const post = getSitePost( getState(), siteId, postId );
-	const postTitle = post && post.title && post.title.trim().slice( 0, 20 ).trim().concat( '…' );
-	const error = postTitle
-		? translate( 'Could not add a reply to “%(postTitle)s”', { args: { postTitle } } )
-		: translate( 'Could not add a reply to this post' );
+export const handleWriteCommentFailure =
+	( { siteId, postId, parentCommentId, placeholderId }, rawError ) =>
+	( dispatch, getState ) => {
+		// Dispatch error notice
+		const post = getSitePost( getState(), siteId, postId );
+		const postTitle = post && post.title && post.title.trim().slice( 0, 20 ).trim().concat( '…' );
+		const error = postTitle
+			? translate( 'Could not add a reply to “%(postTitle)s”', { args: { postTitle } } )
+			: translate( 'Could not add a reply to this post' );
 
-	// Dispatch an error so we can record the failed comment placeholder in state
-	dispatch( {
-		type: COMMENTS_WRITE_ERROR,
-		siteId,
-		postId,
-		commentId: placeholderId,
-		parentCommentId,
-		error,
-		errorType: rawError && rawError.error,
-	} );
+		// Dispatch an error so we can record the failed comment placeholder in state
+		dispatch( {
+			type: COMMENTS_WRITE_ERROR,
+			siteId,
+			postId,
+			commentId: placeholderId,
+			parentCommentId,
+			error,
+			errorType: rawError && rawError.error,
+		} );
 
-	dispatch( errorNotice( error, { duration: 5000 } ) );
-};
+		dispatch( errorNotice( error, { duration: 5000 } ) );
+	};

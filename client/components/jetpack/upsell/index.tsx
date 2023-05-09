@@ -1,17 +1,7 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent, ReactNode } from 'react';
-import { useTranslate, TranslateResult } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
+import { FunctionComponent, ReactNode } from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 interface Props {
@@ -49,7 +39,7 @@ const JetpackCloudUpsell: FunctionComponent< Props > = ( {
 			{ buttonLink && (
 				<Button
 					className="upsell__button"
-					href={ buttonLink }
+					href={ String( buttonLink ) }
 					onClick={ onClick }
 					primary
 					target={ openButtonLinkOnNewTab ? '_blank' : '_self' }
@@ -60,7 +50,7 @@ const JetpackCloudUpsell: FunctionComponent< Props > = ( {
 			{ secondaryButtonLink && (
 				<Button
 					className="upsell__button"
-					href={ secondaryButtonLink }
+					href={ String( secondaryButtonLink ) }
 					onClick={ secondaryOnClick }
 					target="_blank"
 				>

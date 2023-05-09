@@ -1,13 +1,8 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
 import {
 	ALREADY_CONNECTED,
 	ALREADY_CONNECTED_BY_OTHER_USER,
@@ -30,9 +25,8 @@ import {
 	USER_IS_ALREADY_CONNECTED_TO_SITE,
 	WORDPRESS_DOT_COM,
 	XMLRPC_ERROR,
+	NOT_CONNECTED_USER,
 } from './connection-notice-types';
-import Notice from 'calypso/components/notice';
-import NoticeAction from 'calypso/components/notice/notice-action';
 
 export class JetpackConnectNotices extends Component {
 	static propTypes = {
@@ -62,6 +56,7 @@ export class JetpackConnectNotices extends Component {
 			USER_IS_ALREADY_CONNECTED_TO_SITE,
 			WORDPRESS_DOT_COM,
 			XMLRPC_ERROR,
+			NOT_CONNECTED_USER,
 		] ).isRequired,
 		translate: PropTypes.func.isRequired,
 		url: PropTypes.string,
@@ -92,7 +87,7 @@ export class JetpackConnectNotices extends Component {
 					"This site can't be connected to WordPress.com because it violates our {{a}}Terms of Service{{/a}}.",
 					{
 						components: {
-							a: <a href="https://wordpress.com/tos" rel="noopener noreferrer" target="_blank" />,
+							a: <a href="https://wordpress.com/tos/" rel="noopener noreferrer" target="_blank" />,
 						},
 					}
 				);

@@ -1,12 +1,3 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import SocialLogo from '../index';
 
 const logos = [
@@ -31,6 +22,7 @@ const logos = [
 	'instagram',
 	'linkedin',
 	'mail',
+	'mastodon',
 	'medium',
 	'pinterest',
 	'pinterest-alt',

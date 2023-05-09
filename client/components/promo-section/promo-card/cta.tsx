@@ -1,21 +1,9 @@
-/**
- * External dependencies
- */
-
-import React, { FunctionComponent } from 'react';
-import { connect } from 'react-redux';
-import { partialRight } from 'lodash';
-import { useTranslate, TranslateResult } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
+import { FunctionComponent } from 'react';
 import ActionPanelCta from 'calypso/components/action-panel/cta';
-import { hasFeature } from 'calypso/state/sites/plans/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { URL } from 'calypso/types';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 type ClickCallback = () => void;
 
@@ -23,43 +11,31 @@ interface CtaAction {
 	url: URL;
 	onClick: ClickCallback;
 	selfTarget?: boolean;
+	label?: string;
 }
 
 export interface CtaButton {
 	text: string | TranslateResult;
 	action: URL | ClickCallback | CtaAction;
 	component?: JSX.Element;
-}
-
-export type Cta =
-	| CtaButton
-	| {
-			feature: string;
-			upgradeButton: CtaButton;
-			defaultButton: CtaButton;
-			activatedButton?: CtaButton;
-	  };
-
-interface ConnectedProps {
-	hasPlanFeature: boolean;
+	disabled?: boolean;
+	busy?: boolean;
 }
 
 export interface Props {
-	cta: Cta;
-	learnMoreLink?: CtaAction;
+	cta: CtaButton;
+	learnMoreLink?: CtaAction | null;
 	isPrimary?: boolean;
 }
 
-function isCtaButton( cta: Cta ): cta is CtaButton {
-	return undefined !== ( cta as CtaButton ).text;
-}
-
-function isCtaAction( action: any ): action is CtaAction {
+function isCtaAction( action: unknown ): action is CtaAction {
 	return undefined !== ( action as CtaAction ).onClick;
 }
 
 function buttonProps( button: CtaButton, isPrimary: boolean ) {
-	const actionProps = isCtaAction( button.action )
+	const actionProps: Record< string, string | boolean | ClickCallback | undefined > = isCtaAction(
+		button.action
+	)
 		? {
 				href: button.action.url,
 				onClick: button.action.onClick,
@@ -80,17 +56,13 @@ function buttonProps( button: CtaButton, isPrimary: boolean ) {
 	return {
 		className: 'promo-card__cta-button',
 		primary: isPrimary,
+		disabled: button.disabled ? true : false,
+		busy: button.busy ? true : false,
 		...actionProps,
 	};
 }
-const PromoCardCta: FunctionComponent< Props & ConnectedProps > = ( {
-	cta,
-	learnMoreLink,
-	isPrimary,
-	hasPlanFeature,
-} ) => {
-	const ctaBtnProps = partialRight( buttonProps, true === isPrimary );
-	let ctaBtn;
+const PromoCardCta: FunctionComponent< Props > = ( { cta, learnMoreLink, isPrimary } ) => {
+	const ctaBtnProps = ( button: CtaButton ) => buttonProps( button, true === isPrimary );
 	const translate = useTranslate();
 	let learnMore = null;
 
@@ -107,34 +79,16 @@ const PromoCardCta: FunctionComponent< Props & ConnectedProps > = ( {
 			  };
 	}
 
-	if ( isCtaButton( cta ) ) {
-		ctaBtn = <Button { ...ctaBtnProps( cta ) }>{ cta.text }</Button>;
-	} else {
-		ctaBtn = hasPlanFeature ? (
-			<Button { ...ctaBtnProps( cta.defaultButton ) }>{ cta.defaultButton.text }</Button>
-		) : (
-			<Button { ...ctaBtnProps( cta.upgradeButton ) }>{ cta.upgradeButton.text }</Button>
-		);
-	}
 	return (
 		<ActionPanelCta>
-			{ ctaBtn }
+			<Button { ...ctaBtnProps( cta ) }>{ cta.text }</Button>
 			{ learnMore && (
 				<Button borderless className="promo-card__cta-learn-more" { ...learnMore }>
-					{ translate( 'Learn more' ) }
+					{ learnMoreLink?.label || translate( 'Learn more' ) }
 				</Button>
 			) }
 		</ActionPanelCta>
 	);
 };
 
-export default connect< ConnectedProps, {}, Props >( ( state, { cta } ) => {
-	const selectedSiteId = getSelectedSiteId( state );
-
-	return {
-		hasPlanFeature:
-			selectedSiteId && ! isCtaButton( cta )
-				? hasFeature( state, selectedSiteId, cta.feature )
-				: false,
-	};
-} )( PromoCardCta );
+export default PromoCardCta;

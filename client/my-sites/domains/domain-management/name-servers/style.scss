@@ -1,58 +1,23 @@
-.name-servers .notice {
-	font-size: $font-body-extra-small;
-	margin-top: 10px;
-	padding-right: 15px;
-}
-
 .name-servers__dns {
 	.name-servers__toggle {
-		display: inline-block;
-		float: right;
+		.components-base-control__field {
+			justify-content: space-between;
 
-		.components-toggle-control .components-base-control__field .components-form-toggle {
-			margin-right: 0;
+			.components-toggle-control__label {
+				font-size: $font-body;
+			}
+			.components-form-toggle {
+				order: 1;
+				margin-right: 0;
+			}
 		}
 	}
-
 	.name-servers__explanation {
 		animation: appear 0.5s ease-in-out;
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 		font-size: $font-body-small;
 		font-style: italic;
 		margin-bottom: 0;
-	}
-}
-
-.name-servers__dns-templates-buttons {
-	margin-top: 20px;
-}
-
-.name-servers.is-placeholder {
-	.name-servers__dns,
-	.name-servers__dns-templates {
-		.name-servers__title {
-			@include placeholder();
-		}
-
-		.name-servers__toggle,
-		.name-servers__dns-templates-buttons {
-			display: none;
-		}
-
-		.name-servers__explanation,
-		.name-servers__explanation a {
-			@include placeholder();
-		}
-	}
-
-	.vertical-nav-item {
-		span:nth-of-type( 1 ) {
-			@include placeholder();
-		}
-
-		span:nth-of-type( 2 ) {
-			display: none;
-		}
 	}
 }
 
@@ -65,7 +30,7 @@
 	margin: 5px 0 1.5rem;
 	font-size: $font-body-small;
 	font-style: italic;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 }
 
 .name-servers__custom-nameservers-row {
@@ -79,7 +44,7 @@
 	.form-text-input {
 		padding-right: 38px;
 
-		@include breakpoint-deprecated( '<480px' ) {
+		@include breakpoint-deprecated( "<480px" ) {
 			padding-right: 35px;
 		}
 	}
@@ -89,8 +54,24 @@
 		right: 7px;
 		top: 8px;
 
-		@include breakpoint-deprecated( '<480px' ) {
+		@include breakpoint-deprecated( "<480px" ) {
 			right: 4px;
 		}
+	}
+}
+
+.name-servers__custom-nameservers-row + .custom-name-servers-notice {
+	margin-top: 8px;
+}
+
+.name-servers__custom-nameservers-form-buttons {
+	display: flex;
+	flex-wrap: wrap;
+	column-gap: 16px;
+	row-gap: 8px;
+	margin-top: 24px;
+
+	.button {
+		margin: 0;
 	}
 }

@@ -1,32 +1,27 @@
-/**
- * External dependencies
- */
-import page from 'page';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
-import * as controller from './controller';
-import { siteSelection } from 'calypso/my-sites/controller';
+import { getLanguageRouteParam } from '@automattic/i18n-utils';
+import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
-import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
-import jetpackPlans from 'calypso/my-sites/plans/jetpack-plans';
 import { OFFER_RESET_FLOW_TYPES } from 'calypso/jetpack-connect/flow-types';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { siteSelection } from 'calypso/my-sites/controller';
+import jetpackPlans from 'calypso/my-sites/plans/jetpack-plans';
+import { jetpackUpsell } from 'calypso/my-sites/plans/jetpack-plans/jetpack-upsell';
+import * as controller from './controller';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default function () {
 	const locale = getLanguageRouteParam( 'locale' );
 
+	const legacyPlans = [ 'personal', 'premium', 'pro' ].join( '|' );
+
+	page(
+		`/jetpack/connect/:type(${ legacyPlans })/:interval(yearly|monthly)?/${ locale }`,
+		controller.redirectToCloudPricingPage
+	);
+
 	const planTypeString = [
-		'personal',
-		'premium',
-		'pro',
 		'backup',
 		'scan',
 		'realtimebackup',
@@ -37,7 +32,9 @@ export default function () {
 	].join( '|' );
 
 	page(
-		`/jetpack/connect/:type(${ planTypeString })/:interval(yearly|monthly)?`,
+		`/jetpack/connect/:type(${ planTypeString })/:interval(yearly|monthly)?/${ locale }`,
+		controller.redirectToSiteLessCheckout,
+		controller.redirectWithoutLocaleIfLoggedIn,
 		controller.loginBeforeJetpackSearch,
 		controller.persistMobileAppFlow,
 		controller.setMasterbar,
@@ -80,6 +77,7 @@ export default function () {
 		clientRender
 	);
 
+	jetpackUpsell( `/jetpack/connect/store`, controller.offerResetContext );
 	jetpackPlans( `/jetpack/connect/store`, controller.offerResetContext );
 
 	page(
@@ -92,18 +90,17 @@ export default function () {
 		`/jetpack/connect/plans`,
 		controller.redirectToLoginIfLoggedOut,
 		siteSelection,
+		controller.partnerCouponRedirects,
 		controller.offerResetRedirects,
 		controller.offerResetContext
 	);
-
-	page(
-		`/jetpack/connect/:type(${ planTypeString })?/${ locale }`,
-		controller.redirectWithoutLocaleIfLoggedIn,
-		controller.persistMobileAppFlow,
-		controller.setMasterbar,
-		controller.connect,
-		makeLayout,
-		clientRender
+	jetpackUpsell(
+		`/jetpack/connect/plans`,
+		controller.redirectToLoginIfLoggedOut,
+		siteSelection,
+		controller.partnerCouponRedirects,
+		controller.offerResetRedirects,
+		controller.offerResetContext
 	);
 
 	page( '/jetpack/sso/:siteId?/:ssoNonce?', controller.sso, makeLayout, clientRender );

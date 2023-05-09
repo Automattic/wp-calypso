@@ -1,21 +1,11 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import DomainSuggestion from 'calypso/components/domains/domain-suggestion';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class DomainTransferSuggestion extends React.Component {
+class DomainTransferSuggestion extends Component {
 	static propTypes = {
 		onButtonClick: PropTypes.func.isRequired,
 	};

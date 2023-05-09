@@ -1,17 +1,8 @@
-/**
- * External dependencies
- *
- */
-
-import React from 'react';
+import { isLocaleRtl } from '@automattic/i18n-utils';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import Head from 'calypso/components/head';
-import { chunkCssLinks } from './utils';
 import { jsonStringifyForHtml } from 'calypso/server/sanitize';
+import { chunkCssLinks } from './utils';
 
 function DomainsLanding( {
 	branchName,
@@ -22,11 +13,10 @@ function DomainsLanding( {
 	entrypoint,
 	head,
 	i18nLocaleScript,
-	isRTL,
 	lang,
 	manifests,
-	addEvergreenCheck,
 } ) {
+	const isRTL = isLocaleRtl( lang );
 	return (
 		<html lang={ lang } dir={ isRTL ? 'rtl' : 'ltr' }>
 			<Head title={ head.title } branchName={ branchName } inlineScriptNonce={ inlineScriptNonce }>
@@ -67,31 +57,6 @@ function DomainsLanding( {
 						} }
 					/>
 				) }
-				{
-					// Use <script nomodule> to redirect browsers with no ES module
-					// support to the fallback build. ES module support is a convenient
-					// test to determine that a browser is modern enough to handle
-					// the evergreen bundle.
-					addEvergreenCheck && (
-						<script
-							nonce={ inlineScriptNonce }
-							noModule
-							dangerouslySetInnerHTML={ {
-								__html: `
-						(function() {
-							var url = window.location.href;
-
-							if ( url.indexOf( 'forceFallback=1' ) === -1 ) {
-								url += ( url.indexOf( '?' ) !== -1 ? '&' : '?' );
-								url += 'forceFallback=1';
-								window.location.href = url;
-							}
-						})();
-						`,
-							} }
-						/>
-					)
-				}
 				{ i18nLocaleScript && <script src={ i18nLocaleScript } /> }
 				{ /*
 				 * inline manifest in production, but reference by url for development.

@@ -1,25 +1,4 @@
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import reducer, {
-	queryRequests,
-	queryRequestErrors,
-	queries,
-	lastQuery,
-	themeRequests,
-	themeRequestErrors,
-	activeThemes,
-	activationRequests,
-	activeThemeRequests,
-	themeInstalls,
-	completedActivationRequests,
-	recommendedThemes,
-} from '../reducer';
 import ThemeQueryManager from 'calypso/lib/query-manager/theme';
 import {
 	THEME_REQUEST,
@@ -41,8 +20,24 @@ import {
 	RECOMMENDED_THEMES_FETCH,
 	RECOMMENDED_THEMES_SUCCESS,
 	RECOMMENDED_THEMES_FAIL,
+	THEMES_LOADING_CART,
 } from 'calypso/state/themes/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
+import reducer, {
+	queryRequests,
+	queryRequestErrors,
+	queries,
+	lastQuery,
+	themeRequests,
+	themeRequestErrors,
+	activeThemes,
+	activationRequests,
+	activeThemeRequests,
+	themeInstalls,
+	completedActivationRequests,
+	recommendedThemes,
+	isLoadingCart,
+} from '../reducer';
 
 const twentysixteen = {
 	id: 'twentysixteen',
@@ -89,6 +84,7 @@ describe( 'reducer', () => {
 				'themesUI',
 				'uploadTheme',
 				'recommendedThemes',
+				'isLoadingCart',
 			] )
 		);
 	} );
@@ -1000,6 +996,18 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		test( 'should preserve current state while refreshing data', () => {
+			const state = recommendedThemes(
+				{ [ filter ]: { isLoading: true, themes: [ 'a' ] } },
+				{
+					type: RECOMMENDED_THEMES_FETCH,
+					filter,
+				}
+			);
+
+			expect( state ).toEqual( { [ filter ]: { isLoading: true, themes: [ 'a' ] } } );
+		} );
+
 		test( 'should update isLoading on fetch fail', () => {
 			const state = recommendedThemes(
 				{ [ filter ]: { isLoading: true, themes: [] } },
@@ -1009,6 +1017,29 @@ describe( 'reducer', () => {
 				}
 			);
 			expect( state ).toEqual( { [ filter ]: { isLoading: false, themes: [] } } );
+		} );
+
+		test( 'should preserve current state on fetch fail', () => {
+			const state = recommendedThemes(
+				{ [ filter ]: { isLoading: true, themes: [ 'a' ] } },
+				{
+					type: RECOMMENDED_THEMES_FAIL,
+					filter,
+				}
+			);
+			expect( state ).toEqual( { [ filter ]: { isLoading: false, themes: [ 'a' ] } } );
+		} );
+	} );
+
+	describe( 'isLoadingCart', () => {
+		test( 'should be false the default value', () => {
+			const state = isLoadingCart( undefined, {} );
+			expect( state ).toBe( false );
+		} );
+
+		test( 'should be true when we define it', () => {
+			const state = isLoadingCart( undefined, { type: THEMES_LOADING_CART, isLoading: true } );
+			expect( state ).toBe( true );
 		} );
 	} );
 } );

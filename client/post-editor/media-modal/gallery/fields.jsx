@@ -1,24 +1,16 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
-import { includes, times } from 'lodash';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import EditorMediaModalFieldset from '../fieldset';
-import SelectDropdown from 'calypso/components/select-dropdown';
+import { includes, times } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import SelectDropdown from 'calypso/components/select-dropdown';
 import { GalleryColumnedTypes, GallerySizeableTypes } from 'calypso/lib/media/constants';
 import { isModuleActive } from 'calypso/lib/site/utils';
+import EditorMediaModalFieldset from '../fieldset';
 
 const noop = () => {};
 
-export class EditorMediaModalGalleryFields extends React.Component {
+export class EditorMediaModalGalleryFields extends Component {
 	static propTypes = {
 		site: PropTypes.object,
 		settings: PropTypes.object,

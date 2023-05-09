@@ -1,20 +1,14 @@
-/**
- * External dependencies
- */
+import page from 'page';
 import { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import page from 'page';
-
-/**
- * Internal dependencies
- */
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getBillingHistoryUrlFor } from '../paths';
+import type { BillingTransaction } from 'calypso/state/billing-transactions/types';
 
 export default function useRedirectToHistoryPageOnWrongSiteForTransaction(
 	siteSlug: string,
 	receiptId: number,
-	transaction: Transaction
+	transaction: BillingTransaction | undefined | null
 ): boolean {
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const reduxDispatch = useDispatch();
@@ -23,6 +17,7 @@ export default function useRedirectToHistoryPageOnWrongSiteForTransaction(
 	const doesTransactionMatchSite =
 		doesTransactionExist &&
 		selectedSiteId &&
+		'items' in transaction &&
 		transaction.items.some(
 			( receiptItem ) => String( receiptItem.site_id ) === String( selectedSiteId )
 		);
@@ -49,13 +44,4 @@ export default function useRedirectToHistoryPageOnWrongSiteForTransaction(
 	] );
 
 	return !! doesTransactionMatchSite;
-}
-
-// Ideally these should be defined elsewhere with all their properties, but
-// we'll define what we need here.
-interface Transaction {
-	items: TransactionItem[];
-}
-interface TransactionItem {
-	site_id: number | null;
 }

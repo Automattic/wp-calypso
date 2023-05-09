@@ -1,17 +1,30 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import config from '@automattic/calypso-config';
+import { localizeUrl } from '@automattic/i18n-utils';
+import requestExternalAccess from '@automattic/request-external-access';
 import classnames from 'classnames';
-import { connect } from 'react-redux';
-import { isEqual, find, some, get } from 'lodash';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import AccountDialog from './account-dialog';
+import { isEqual, find, some, get } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component, cloneElement } from 'react';
+import { connect } from 'react-redux';
+import ExternalLink from 'calypso/components/external-link';
+import FoldableCard from 'calypso/components/foldable-card';
+import Notice from 'calypso/components/notice';
+import SocialLogo from 'calypso/components/social-logo';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { successNotice, errorNotice, warningNotice } from 'calypso/state/notices/actions';
+import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import getRemovableConnections from 'calypso/state/selectors/get-removable-connections';
+import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
+import {
+	requestKeyringConnections,
+	requestP2KeyringConnections,
+} from 'calypso/state/sharing/keyring/actions';
+import {
+	getKeyringConnectionsByName,
+	getRefreshableKeyringConnections,
+} from 'calypso/state/sharing/keyring/selectors';
 import {
 	createSiteConnection,
 	deleteSiteConnection,
@@ -19,41 +32,28 @@ import {
 	fetchConnection,
 	updateSiteConnection,
 } from 'calypso/state/sharing/publicize/actions';
-import { successNotice, errorNotice, warningNotice } from 'calypso/state/notices/actions';
-import Connection from './connection';
-import FoldableCard from 'calypso/components/foldable-card';
-import Notice from 'calypso/components/notice';
-import { getAvailableExternalAccounts, isServiceExpanded } from 'calypso/state/sharing/selectors';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import {
-	getKeyringConnectionsByName,
-	getRefreshableKeyringConnections,
-} from 'calypso/state/sharing/keyring/selectors';
 import {
 	getBrokenSiteUserConnectionsForService,
 	getSiteUserConnectionsForService,
 	isFetchingConnections,
 } from 'calypso/state/sharing/publicize/selectors';
+import { getAvailableExternalAccounts, isServiceExpanded } from 'calypso/state/sharing/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
-import getRemovableConnections from 'calypso/state/selectors/get-removable-connections';
-import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { requestKeyringConnections } from 'calypso/state/sharing/keyring/actions';
+import AccountDialog from './account-dialog';
+import Connection from './connection';
+import MailchimpSettings, { renderMailchimpLogo } from './mailchimp-settings';
+import PicasaMigration from './picasa-migration';
 import ServiceAction from './service-action';
 import ServiceConnectedAccounts from './service-connected-accounts';
 import ServiceDescription from './service-description';
 import ServiceExamples from './service-examples';
 import ServiceTip from './service-tip';
-import requestExternalAccess from '@automattic/request-external-access';
-import MailchimpSettings, { renderMailchimpLogo } from './mailchimp-settings';
-import config from '@automattic/calypso-config';
-import PicasaMigration from './picasa-migration';
-import SocialLogo from 'calypso/components/social-logo';
 
 /**
  * Check if the connection is broken or requires reauth.
  *
- * @param {object} connection Publicize connection.
+ * @param {Object} connection Publicize connection.
  * @returns {boolean} True if connection is broken or requires reauthentication.
  */
 const isConnectionInvalidOrMustReauth = ( connection ) =>
@@ -79,6 +79,8 @@ export class SharingService extends Component {
 		translate: PropTypes.func,
 		updateSiteConnection: PropTypes.func,
 		warningNotice: PropTypes.func,
+		isP2HubSite: PropTypes.bool,
+		isJetpack: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -98,6 +100,8 @@ export class SharingService extends Component {
 		siteUserConnections: [],
 		updateSiteConnection: () => {},
 		warningNotice: () => {},
+		isP2HubSite: false,
+		isJetpack: false,
 	};
 
 	/**
@@ -146,7 +150,7 @@ export class SharingService extends Component {
 	/**
 	 * Establishes a new connection.
 	 *
-	 * @param {object} service             Service to connect to.
+	 * @param {Object} service             Service to connect to.
 	 * @param {number} keyringConnectionId Keyring conneciton ID.
 	 * @param {number} externalUserId      Optional. User ID for the service. Default: 0.
 	 */
@@ -173,9 +177,13 @@ export class SharingService extends Component {
 				// Attempt to create a new connection. If a Keyring connection ID
 				// is not provided, the user will need to authorize the app
 				requestExternalAccess( service.connect_URL, ( { keyring_id: newKeyringId } ) => {
-					// When the user has finished authorizing the connection
-					// (or otherwise closed the window), force a refresh
-					this.props.requestKeyringConnections();
+					if ( this.props.isP2HubSite ) {
+						this.props.requestP2KeyringConnections( this.props.siteId );
+					} else {
+						// When the user has finished authorizing the connection
+						// (or otherwise closed the window), force a refresh
+						this.props.requestKeyringConnections();
+					}
 
 					// In the case that a Keyring connection doesn't exist, wait for app
 					// authorization to occur, then display with the available connections
@@ -248,7 +256,7 @@ export class SharingService extends Component {
 	/**
 	 * Sets a connection to be site-wide or not.
 	 *
-	 * @param  {object}   connection Connection to update.
+	 * @param  {Object}   connection Connection to update.
 	 * @param  {boolean}  shared     Whether the connection can be used by other users.
 	 * @returns {Function}            Action thunk
 	 */
@@ -301,7 +309,7 @@ export class SharingService extends Component {
 	/**
 	 * Fetch connections
 	 *
-	 * @param {object} connection Connection to update.
+	 * @param {Object} connection Connection to update.
 	 * @returns {Function} Action thunk
 	 */
 	fetchConnection = ( connection ) =>
@@ -340,6 +348,7 @@ export class SharingService extends Component {
 		};
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! isEqual( this.props.siteUserConnections, nextProps.siteUserConnections ) ) {
 			this.setState( {
@@ -498,6 +507,13 @@ export class SharingService extends Component {
 		return get( this, 'props.service.ID' ) === 'mailchimp';
 	};
 
+	isMastodonService = () => {
+		if ( ! config.isEnabled( 'mastodon' ) ) {
+			return false;
+		}
+		return get( this, 'props.service.ID' ) === 'mastodon';
+	};
+
 	isPicasaMigration( status ) {
 		if ( status === 'must-disconnect' && get( this, 'props.service.ID' ) === 'google_photos' ) {
 			return true;
@@ -514,6 +530,9 @@ export class SharingService extends Component {
 			'is-open': this.state.isOpen,
 		} );
 		const accounts = this.state.isSelectingAccount ? this.props.availableExternalAccounts : [];
+		const showLinkedInNotice =
+			'linkedin' === this.props.service.ID && some( connections, { status: 'must_reauth' } );
+		const serviceStatus = this.props.service.status ?? 'ok';
 
 		const header = (
 			<div>
@@ -529,16 +548,45 @@ export class SharingService extends Component {
 						numberOfConnections={ this.getConnections().length }
 					/>
 				</div>
-				{ 'linkedin' === this.props.service.ID && some( connections, { status: 'must_reauth' } ) && (
+				{ showLinkedInNotice && (
 					<Notice isCompact status="is-error" className="sharing-service__notice">
 						{ this.props.translate(
-							'Time to reauthenticate! Some changes to LinkedIn mean that you need to re-enable Publicize ' +
+							'Time to reauthenticate! Some changes to LinkedIn mean that you need to re-enable Jetpack Social ' +
 								'by disconnecting and reconnecting your account.'
 						) }
 					</Notice>
 				) }
 			</div>
 		);
+
+		if ( 'ok' !== serviceStatus ) {
+			return (
+				<li>
+					<FoldableCard disabled header={ header } compact className={ classNames } />
+					<Notice isCompact status="is-error" className="sharing-service__unsupported">
+						{ this.props.translate(
+							'Twitter is no longer supported. {{a}}Learn more about this{{/a}}',
+							{
+								components: {
+									a: (
+										<ExternalLink
+											target="_blank"
+											icon={ true }
+											iconSize={ 14 }
+											href={ localizeUrl(
+												this.props.isJetpack
+													? 'https://jetpack.com/2023/04/29/the-end-of-twitter-auto-sharing/'
+													: 'https://wordpress.com/blog/2023/04/29/why-twitter-auto-sharing-is-coming-to-an-end/'
+											) }
+										/>
+									),
+								},
+							}
+						) }
+					</Notice>
+				</li>
+			);
+		}
 
 		const action = (
 			<ServiceAction
@@ -568,14 +616,22 @@ export class SharingService extends Component {
 					expanded={ this.shouldBeExpanded( connectionStatus ) }
 					compact
 					summary={ action }
-					expandedSummary={ action }
+					expandedSummary={
+						this.isMastodonService() ? cloneElement( action, { isExpanded: true } ) : action
+					}
 				>
 					<div
 						className={ classnames( 'sharing-service__content', {
 							'is-placeholder': this.props.isFetching,
 						} ) }
 					>
-						<ServiceExamples service={ this.props.service } />
+						<ServiceExamples
+							service={ this.props.service }
+							action={ this.performAction }
+							connectAnother={ this.connectAnother }
+							isConnecting={ this.state.isConnecting }
+							connections={ connections }
+						/>
 
 						{ this.isPicasaMigration( connectionStatus ) && <PicasaMigration /> }
 
@@ -619,7 +675,7 @@ export class SharingService extends Component {
  * @param  {Component} sharingService     A SharingService component
  * @param  {Function}  mapStateToProps    Optional. A function to pick props from the state.
  *                                        It should return a plain object, which will be merged into the component's props.
- * @param  {object}    mapDispatchToProps Optional. An object that contains additional action creators. Default: {}
+ * @param  {Object}    mapDispatchToProps Optional. An object that contains additional action creators. Default: {}
  * @returns {Component} A highter-order service component
  */
 export function connectFor( sharingService, mapStateToProps, mapDispatchToProps = {} ) {
@@ -646,6 +702,8 @@ export function connectFor( sharingService, mapStateToProps, mapDispatchToProps 
 				siteUserConnections: getSiteUserConnectionsForService( state, siteId, userId, service.ID ),
 				userId,
 				isExpanded: isServiceExpanded( state, service ),
+				isP2HubSite: isSiteP2Hub( state, siteId ),
+				isJetpack: isJetpackSite( state, siteId ),
 			};
 			return typeof mapStateToProps === 'function' ? mapStateToProps( state, props ) : props;
 		},
@@ -658,6 +716,7 @@ export function connectFor( sharingService, mapStateToProps, mapDispatchToProps 
 			fetchConnection,
 			recordGoogleEvent,
 			recordTracksEvent,
+			requestP2KeyringConnections,
 			requestKeyringConnections,
 			updateSiteConnection,
 			warningNotice,

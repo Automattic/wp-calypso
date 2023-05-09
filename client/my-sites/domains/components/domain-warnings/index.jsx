@@ -1,29 +1,21 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
+import { localizeUrl } from '@automattic/i18n-utils';
 import _debug from 'debug';
-import { intersection, map, find, get } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { intersection, map, find, get } from 'lodash';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal Dependencies
- */
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import PendingGSuiteTosNotice from './pending-gsuite-tos-notice';
-import { purchasesRoot } from 'calypso/me/purchases/paths';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { isSubdomain } from 'calypso/lib/domains';
 import {
 	type as domainTypes,
 	transferStatus,
 	gdprConsentStatus,
 } from 'calypso/lib/domains/constants';
-import { hasPendingGSuiteUsers } from 'calypso/lib/gsuite';
-import { isSubdomain } from 'calypso/lib/domains';
+import { isPendingGSuiteTOSAcceptance } from 'calypso/lib/gsuite';
 import {
 	CHANGE_NAME_SERVERS,
 	DOMAINS,
@@ -33,26 +25,23 @@ import {
 	SETTING_PRIMARY_DOMAIN,
 	MAP_DOMAIN_CHANGE_NAME_SERVERS,
 } from 'calypso/lib/url/support';
+import { purchasesRoot } from 'calypso/me/purchases/paths';
 import {
 	domainManagementEdit,
 	domainManagementList,
-	domainManagementNameServers,
 	domainManagementTransferIn,
 	domainManagementManageConsent,
 } from 'calypso/my-sites/domains/paths';
-import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import PendingGSuiteTosNotice from './pending-gsuite-tos-notice';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const debug = _debug( 'calypso:domain-warnings' );
 
 const newWindowLink = ( linkUrl ) => (
-	<a href={ linkUrl } target="_blank" rel="noopener noreferrer" />
+	<a href={ localizeUrl( linkUrl ) } target="_blank" rel="noopener noreferrer" />
 );
-const domainsLink = newWindowLink( DOMAINS );
 const pNode = <p />;
 
 const expiredDomainsCanManageWarning = 'expired-domains-can-manage';
@@ -61,7 +50,7 @@ const expiringDomainsCanManageWarning = 'expiring-domains-can-manage';
 const expiringDomainsCannotManageWarning = 'expiring-domains-cannot-manage';
 const newTransfersWrongNSWarning = 'new-transfer-wrong-ns';
 
-export class DomainWarnings extends React.PureComponent {
+export class DomainWarnings extends PureComponent {
 	static propTypes = {
 		domains: PropTypes.array,
 		allowedRules: PropTypes.array,
@@ -238,7 +227,7 @@ export class DomainWarnings extends React.PureComponent {
 			children = (
 				<span>
 					{ text }{ ' ' }
-					<a href={ learnMoreUrl } target="_blank" rel="noopener noreferrer">
+					<a href={ localizeUrl( learnMoreUrl ) } target="_blank" rel="noopener noreferrer">
 						{ translate( 'Learn more' ) }
 					</a>
 					{ offendingList }
@@ -477,7 +466,7 @@ export class DomainWarnings extends React.PureComponent {
 			);
 		} else {
 			const domain = newTransfers[ 0 ].name;
-			actionLink = domainManagementNameServers( this.props.selectedSite.slug, domain );
+			actionLink = domainManagementEdit( this.props.selectedSite.slug, domain );
 			actionText = translate( 'Update now', {
 				comment: 'Call to action link for updating the nameservers on a newly transferred domain',
 			} );
@@ -563,7 +552,7 @@ export class DomainWarnings extends React.PureComponent {
 					'We are setting up your new domains for you. They should start working immediately, ' +
 						'but may be unreliable during the first 30 minutes. ' +
 						'{{domainsLink}}Learn more{{/domainsLink}}.',
-					{ components: { domainsLink } }
+					{ components: { domainsLink: newWindowLink( DOMAINS ) } }
 				);
 			}
 		} else {
@@ -595,7 +584,7 @@ export class DomainWarnings extends React.PureComponent {
 					{
 						args: { domainName: domain.name },
 						components: {
-							domainsLink,
+							domainsLink: newWindowLink( DOMAINS ),
 							tryNowLink: newWindowLink( `http://${ domain.name }` ),
 							strong: <strong />,
 						},
@@ -631,11 +620,6 @@ export class DomainWarnings extends React.PureComponent {
 			( { registrationDate } ) =>
 				registrationDate && moment( registrationDate ).add( 2, 'days' ).isAfter()
 		);
-		if ( this.props.isSiteEligibleForFSE && this.props.siteIsUnlaunched && isWithinTwoDays ) {
-			// Customer Home nudges this on unlaunched sites.
-			// After two days let's re-display the nudge
-			return;
-		}
 
 		const severity = isWithinTwoDays ? 'is-info' : 'is-error';
 		const action = translate( 'Fix' );
@@ -821,17 +805,21 @@ export class DomainWarnings extends React.PureComponent {
 	};
 
 	pendingGSuiteTosAcceptanceDomains = () => {
-		const pendingDomains = this.getDomains().filter( hasPendingGSuiteUsers );
+		const domains = this.getDomains().filter( ( domain ) =>
+			isPendingGSuiteTOSAcceptance( domain )
+		);
+
+		if ( domains.length === 0 ) {
+			return null;
+		}
+
 		return (
-			pendingDomains.length !== 0 && (
-				<PendingGSuiteTosNotice
-					isCompact={ this.props.isCompact }
-					key="pending-gsuite-tos-notice"
-					siteSlug={ this.props.selectedSite && this.props.selectedSite.slug }
-					domains={ pendingDomains }
-					section="domain-management"
-				/>
-			)
+			<PendingGSuiteTosNotice
+				key="pending-gsuite-tos-notice"
+				siteSlug={ this.props.selectedSite && this.props.selectedSite.slug }
+				domains={ domains }
+				section="domain-management"
+			/>
 		);
 	};
 
@@ -1085,7 +1073,7 @@ export class DomainWarnings extends React.PureComponent {
 		);
 	};
 
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		if ( ! this.props.domains && ! this.props.domain ) {
 			debug( 'You need provide either "domains" or "domain" property to this component.' );
 		}

@@ -1,13 +1,6 @@
 /* eslint-disable no-shadow -- shadowing localizeUrl makes tests readable */
 
-/**
- * External dependencies
- */
 import { renderHook } from '@testing-library/react-hooks';
-
-/**
- * Internal dependencies
- */
 import { localizeUrl, useLocalizeUrl } from '../';
 
 jest.mock( '../locale-context', () => {
@@ -16,6 +9,12 @@ jest.mock( '../locale-context', () => {
 		useLocale: jest.fn( () => 'en' ),
 	} );
 } );
+
+jest.mock( '@automattic/calypso-config', () => ( {
+	// Useful because the getAvailableDesigns function uses feature flags for
+	// arguments default values
+	isEnabled: () => false,
+} ) );
 
 const { useLocale } = jest.requireMock( '../locale-context' );
 
@@ -92,11 +91,34 @@ describe( '#localizeUrl', () => {
 	} );
 
 	test( 'trailing slash variations', () => {
-		expect( localizeUrl( 'https://automattic.com/cookies/', 'de' ) ).toEqual(
+		const isLoggedIn = false;
+
+		// Add trailing slashes everywhere (default).
+		expect( localizeUrl( 'https://automattic.com/cookies/', 'de', isLoggedIn ) ).toEqual(
 			'https://automattic.com/de/cookies/'
 		);
-		expect( localizeUrl( 'https://automattic.com/cookies', 'de' ) ).toEqual(
+		expect( localizeUrl( 'https://automattic.com/cookies', 'de', isLoggedIn ) ).toEqual(
 			'https://automattic.com/de/cookies/'
+		);
+		expect( localizeUrl( 'https://automattic.com/cookies?foo=bar', 'de', isLoggedIn ) ).toEqual(
+			'https://automattic.com/de/cookies/?foo=bar'
+		);
+		expect( localizeUrl( 'https://automattic.com/cookies#baz', 'de', isLoggedIn ) ).toEqual(
+			'https://automattic.com/de/cookies/#baz'
+		);
+
+		// Preserve trailing slash variation.
+		expect( localizeUrl( 'https://automattic.com/cookies/', 'de', isLoggedIn, true ) ).toEqual(
+			'https://automattic.com/de/cookies/'
+		);
+		expect( localizeUrl( 'https://automattic.com/cookies', 'de', isLoggedIn, true ) ).toEqual(
+			'https://automattic.com/de/cookies'
+		);
+		expect(
+			localizeUrl( 'https://automattic.com/cookies?foo=bar', 'de', isLoggedIn, true )
+		).toEqual( 'https://automattic.com/de/cookies?foo=bar' );
+		expect( localizeUrl( 'https://automattic.com/cookies#baz', 'de', isLoggedIn, true ) ).toEqual(
+			'https://automattic.com/de/cookies#baz'
 		);
 	} );
 
@@ -177,6 +199,36 @@ describe( '#localizeUrl', () => {
 		);
 		expect( localizeUrl( 'https://wordpress.com/blog/2020/01/01/test/', 'pt-br' ) ).toEqual(
 			'https://wordpress.com/blog/2020/01/01/test/'
+		);
+	} );
+
+	test( 'go blog url', () => {
+		expect( localizeUrl( 'https://wordpress.com/go/', 'en' ) ).toEqual(
+			'https://wordpress.com/go/'
+		);
+		// Locales without a Go blog.
+		expect( localizeUrl( 'https://wordpress.com/go/', 'sv' ) ).toEqual(
+			'https://wordpress.com/go/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/go/', 'pl' ) ).toEqual(
+			'https://wordpress.com/go/'
+		);
+		// Locales with a Go blog.
+		expect( localizeUrl( 'https://wordpress.com/go/', 'pt-br' ) ).toEqual(
+			'https://wordpress.com/pt-br/go/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/go/', 'es' ) ).toEqual(
+			'https://wordpress.com/es/go/'
+		);
+		// Rewrite specific posts only for Spanish.
+		expect( localizeUrl( 'https://wordpress.com/go/category/a-post/', 'pt-br' ) ).toEqual(
+			'https://wordpress.com/go/category/a-post/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/go/category/a-post/', 'pl' ) ).toEqual(
+			'https://wordpress.com/go/category/a-post/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/go/category/a-post/', 'es' ) ).toEqual(
+			'https://wordpress.com/es/go/category/a-post/'
 		);
 	} );
 
@@ -352,6 +404,36 @@ describe( '#localizeUrl', () => {
 		).toEqual( 'https://wordpress.com/de/themes/free/filter/example-filter/' );
 	} );
 
+	test( 'start', () => {
+		expect( localizeUrl( 'https://wordpress.com/start/', 'en', true ) ).toEqual(
+			'https://wordpress.com/start/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/start/', 'de', true ) ).toEqual(
+			'https://wordpress.com/start/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/start/', 'pl', true ) ).toEqual(
+			'https://wordpress.com/start/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/start/', 'en', false ) ).toEqual(
+			'https://wordpress.com/start/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/start/', 'de', false ) ).toEqual(
+			'https://wordpress.com/start/de/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/start/', 'pl', false ) ).toEqual(
+			'https://wordpress.com/start/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/start/user/', 'de', true ) ).toEqual(
+			'https://wordpress.com/start/user/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/start/user/', 'de', false ) ).toEqual(
+			'https://wordpress.com/start/user/de/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/start/user/', 'pl', false ) ).toEqual(
+			'https://wordpress.com/start/user/'
+		);
+	} );
+
 	test( 'tos', () => {
 		expect( localizeUrl( 'https://wordpress.com/tos/', 'en' ) ).toEqual(
 			'https://wordpress.com/tos/'
@@ -424,6 +506,33 @@ describe( '#localizeUrl', () => {
 		// pl is not a supportSiteLocale:
 		expect( localizeUrl( 'https://wordpress.com/help/contact', 'pl', false ) ).toEqual(
 			'https://wordpress.com/support/contact/'
+		);
+	} );
+
+	test( 'apps', () => {
+		expect( localizeUrl( 'https://apps.wordpress.com', 'de' ) ).toEqual(
+			'https://apps.wordpress.com/de/'
+		);
+		expect( localizeUrl( 'https://apps.wordpress.com', 'es' ) ).toEqual(
+			'https://apps.wordpress.com/es/'
+		);
+		expect( localizeUrl( 'https://apps.wordpress.com/support/desktop/', 'de' ) ).toEqual(
+			'https://apps.wordpress.com/de/support/desktop/'
+		);
+		expect( localizeUrl( 'https://apps.wordpress.com/support/desktop/', 'es' ) ).toEqual(
+			'https://apps.wordpress.com/es/support/desktop/'
+		);
+		expect( localizeUrl( 'https://apps.wordpress.com/d/osx/?ref=getapps', 'de' ) ).toEqual(
+			'https://apps.wordpress.com/de/d/osx/?ref=getapps'
+		);
+		expect( localizeUrl( 'https://apps.wordpress.com/d/osx/?ref=getapps', 'es' ) ).toEqual(
+			'https://apps.wordpress.com/es/d/osx/?ref=getapps'
+		);
+		expect( localizeUrl( 'https://apps.wordpress.com', 'en' ) ).toEqual(
+			'https://apps.wordpress.com/'
+		);
+		expect( localizeUrl( 'https://apps.wordpress.com/support/desktop/', 'en' ) ).toEqual(
+			'https://apps.wordpress.com/support/desktop/'
 		);
 	} );
 } );

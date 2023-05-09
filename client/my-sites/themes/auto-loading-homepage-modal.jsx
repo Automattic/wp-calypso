@@ -1,23 +1,22 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
-import { Dialog } from '@automattic/components';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { Dialog, Gridicon, Spinner } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
+import { translate } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import ExternalLink from 'calypso/components/external-link';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
-import ExternalLink from 'calypso/components/external-link';
-import Gridicon from 'calypso/components/gridicon';
-import Spinner from 'calypso/components/spinner';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { preventWidows } from 'calypso/lib/formatting';
+import { getSiteDomain } from 'calypso/state/sites/selectors';
+import {
+	acceptAutoLoadingHomepageWarning,
+	hideAutoLoadingHomepageWarning,
+	activate as activateTheme,
+} from 'calypso/state/themes/actions';
 import {
 	getCanonicalTheme,
 	hasActivatedTheme,
@@ -28,18 +27,7 @@ import {
 	getPreActivateThemeId,
 } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getSiteDomain } from 'calypso/state/sites/selectors';
-import {
-	acceptAutoLoadingHomepageWarning,
-	hideAutoLoadingHomepageWarning,
-	activate as activateTheme,
-} from 'calypso/state/themes/actions';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
-import { preventWidows } from 'calypso/lib/formatting';
 
-/**
- * Style dependencies
- */
 import './auto-loading-homepage-modal.scss';
 
 class AutoLoadingHomepageModal extends Component {
@@ -101,36 +89,38 @@ class AutoLoadingHomepageModal extends Component {
 		this.setState( { homepageAction: event.currentTarget.value } );
 	};
 
-	closeModalHandler = ( action = 'dismiss' ) => () => {
-		const { installingThemeId, siteId, source } = this.props;
-		if ( 'activeTheme' === action ) {
-			this.props.acceptAutoLoadingHomepageWarning( installingThemeId );
-			const keepCurrentHomepage = this.state.homepageAction === 'keep_current_homepage';
-			recordTracksEvent( 'calypso_theme_autoloading_homepage_modal_activate_click', {
-				theme: installingThemeId,
-				keep_current_homepage: keepCurrentHomepage,
-			} );
-			return this.props.activateTheme(
-				installingThemeId,
-				siteId,
-				source,
-				false,
-				keepCurrentHomepage
-			);
-		} else if ( 'keepCurrentTheme' === action ) {
-			recordTracksEvent( 'calypso_theme_autoloading_homepage_modal_dismiss', {
-				action: 'button',
-				theme: installingThemeId,
-			} );
-			return this.props.hideAutoLoadingHomepageWarning();
-		} else if ( 'dismiss' === action ) {
-			recordTracksEvent( 'calypso_theme_autoloading_homepage_modal_dismiss', {
-				action: 'escape',
-				theme: installingThemeId,
-			} );
-			return this.props.hideAutoLoadingHomepageWarning();
-		}
-	};
+	closeModalHandler =
+		( action = 'dismiss' ) =>
+		() => {
+			const { installingThemeId, siteId, source } = this.props;
+			if ( 'activeTheme' === action ) {
+				this.props.acceptAutoLoadingHomepageWarning( installingThemeId );
+				const keepCurrentHomepage = this.state.homepageAction === 'keep_current_homepage';
+				recordTracksEvent( 'calypso_theme_autoloading_homepage_modal_activate_click', {
+					theme: installingThemeId,
+					keep_current_homepage: keepCurrentHomepage,
+				} );
+				return this.props.activateTheme(
+					installingThemeId,
+					siteId,
+					source,
+					false,
+					keepCurrentHomepage
+				);
+			} else if ( 'keepCurrentTheme' === action ) {
+				recordTracksEvent( 'calypso_theme_autoloading_homepage_modal_dismiss', {
+					action: 'button',
+					theme: installingThemeId,
+				} );
+				return this.props.hideAutoLoadingHomepageWarning();
+			} else if ( 'dismiss' === action ) {
+				recordTracksEvent( 'calypso_theme_autoloading_homepage_modal_dismiss', {
+					action: 'escape',
+					theme: installingThemeId,
+				} );
+				return this.props.hideAutoLoadingHomepageWarning();
+			}
+		};
 
 	render() {
 		const {
@@ -199,7 +189,7 @@ class AutoLoadingHomepageModal extends Component {
 					onClick={ this.closeModalHandler( 'dismiss' ) }
 				/>
 				<TrackComponentView
-					eventName={ 'calypso_theme_autoloading_homepage_modal_view' }
+					eventName="calypso_theme_autoloading_homepage_modal_view"
 					eventProperties={ { theme: themeId } }
 				/>
 				<div className="themes__theme-preview-wrapper">
@@ -310,7 +300,7 @@ export default connect(
 			theme: installingThemeId && getCanonicalTheme( state, siteId, installingThemeId ),
 			isActivating: !! isActivatingTheme( state, siteId ),
 			hasActivated: !! hasActivatedTheme( state, siteId ),
-			hasAutoLoadingHomepage: themeHasAutoLoadingHomepage( state, installingThemeId ),
+			hasAutoLoadingHomepage: themeHasAutoLoadingHomepage( state, installingThemeId, siteId ),
 			isCurrentTheme: isThemeActive( state, installingThemeId, siteId ),
 			isVisible: shouldShowHomepageWarning( state, installingThemeId ),
 		};

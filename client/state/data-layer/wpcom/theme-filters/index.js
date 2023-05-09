@@ -1,21 +1,13 @@
-/**
- * External dependencies
- */
-
 import i18n from 'i18n-calypso';
-import { omit } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { THEME_FILTERS_REQUEST, THEME_FILTERS_ADD } from 'calypso/state/themes/action-types';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { errorNotice } from 'calypso/state/notices/actions';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import isSiteEligibleForFullSiteEditing from 'calypso/state/selectors/is-site-eligible-for-full-site-editing';
-
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { errorNotice } from 'calypso/state/notices/actions';
+import {
+	THEME_FILTERS_REQUEST,
+	THEME_FILTERS_ADD,
+	THEME_FILTERS_REQUEST_FAILURE,
+} from 'calypso/state/themes/action-types';
 
 const fetchFilters = ( action ) =>
 	http(
@@ -23,16 +15,23 @@ const fetchFilters = ( action ) =>
 			method: 'GET',
 			apiVersion: '1.2',
 			path: '/theme-filters',
+			query: action.locale ? { locale: action.locale } : {},
 		},
 		action
 	);
 
 const storeFilters = ( action, data ) => {
-	const filters = action.isFse ? data : omit( data, 'feature.full-site-editing' );
-	return { type: THEME_FILTERS_ADD, filters };
+	return { type: THEME_FILTERS_ADD, filters: data };
 };
 
-const reportError = () => errorNotice( i18n.translate( 'Problem fetching theme filters.' ) );
+// Note: the request handler will dispatch multiple actions if an array is returned.
+const reportError = ( action, error ) => [
+	{
+		type: THEME_FILTERS_REQUEST_FAILURE,
+		error,
+	},
+	errorNotice( i18n.translate( 'Problem fetching theme filters.' ) ),
+];
 
 const themeFiltersHandlers = dispatchRequest( {
 	fetch: fetchFilters,
@@ -43,14 +42,7 @@ const themeFiltersHandlers = dispatchRequest( {
 registerHandlers( 'state/data-layer/wpcom/theme-filters/index.js', {
 	[ THEME_FILTERS_REQUEST ]: [
 		( store, action ) => {
-			const state = store.getState();
-			const selectedSiteId = getSelectedSiteId( state );
-			const isFse = isSiteEligibleForFullSiteEditing( state, selectedSiteId );
-
-			return themeFiltersHandlers( store, {
-				...action,
-				isFse,
-			} );
+			return themeFiltersHandlers( store, action );
 		},
 	],
 } );

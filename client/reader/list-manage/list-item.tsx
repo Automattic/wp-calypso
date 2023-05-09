@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import { Item, List } from './types';
 import FeedItem from './feed-item';
 import SiteItem from './site-item';
 import TagItem from './tag-item';
+import { Item, List } from './types';
 
 export default function ListItem( props: {
 	hideIfInList?: boolean;
@@ -17,7 +9,7 @@ export default function ListItem( props: {
 	item: Item;
 	list: List;
 	owner: string;
-} ): React.ReactElement | null {
+} ) {
 	if ( props.item.feed_ID ) {
 		return <FeedItem { ...props } />;
 	} else if ( props.item.site_ID ) {

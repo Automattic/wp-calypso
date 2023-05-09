@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { uniqBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { READER_RECOMMENDED_SITES_RECEIVE } from 'calypso/state/reader/action-types';
 import { combineReducers, keyedReducer } from 'calypso/state/utils';
 
@@ -14,7 +7,7 @@ import { combineReducers, keyedReducer } from 'calypso/state/utils';
  * Sites get stored in a flat list. Just the basics like title/feedId,blogId.
  *
  * @param  {Array} state  Current state
- * @param  {object} action Action payload
+ * @param  {Object} action Action payload
  * @returns {Array}        Updated state
  */
 export const items = keyedReducer( 'seed', ( state = [], action ) => {
@@ -31,7 +24,7 @@ export const items = keyedReducer( 'seed', ( state = [], action ) => {
  * this is for used whenrequesting the next page of site recs
  *
  * @param  {Array} state Current state
- * @param  {object} action Action payload
+ * @param  {Object} action Action payload
  * @returns {Array}        Updated state
  */
 export const pagingOffset = keyedReducer( 'seed', ( state = null, action ) => {

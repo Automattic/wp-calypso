@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import FormRadiosBar from 'calypso/components/forms/form-radios-bar';
 import {
 	radios,

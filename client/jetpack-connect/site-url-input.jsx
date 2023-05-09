@@ -1,20 +1,11 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import Gridicon from 'calypso/components/gridicon';
+import { Card, Button, Gridicon, Spinner } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Card, Button } from '@automattic/components';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import Spinner from 'calypso/components/spinner';
 import SuggestionSearch from 'calypso/components/suggestion-search';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 const noop = () => {};
 
@@ -45,12 +36,26 @@ class JetpackConnectSiteUrlInput extends Component {
 		this.focusInput = () => formInputComponent.focus();
 	};
 
+	beforeUnloadHandler = () => {
+		this.setState( {
+			isUnloading: true,
+		} );
+	};
+
 	componentDidUpdate() {
 		if ( ! this.props.isError ) {
 			return;
 		}
 
 		this.focusInput();
+	}
+
+	componentDidMount() {
+		window.addEventListener( 'beforeunload', this.beforeUnloadHandler );
+	}
+
+	componentWillUnmount() {
+		window.removeEventListener( 'beforeunload', this.beforeUnloadHandler );
 	}
 
 	handleKeyPress = ( event ) => {
@@ -88,8 +93,9 @@ class JetpackConnectSiteUrlInput extends Component {
 
 	isFormSubmitBusy() {
 		const { isFetching } = this.props;
+		const { isUnloading } = this.state ?? {};
 
-		return isFetching;
+		return isFetching || isUnloading;
 	}
 
 	renderTermsOfServiceLink() {
@@ -126,16 +132,8 @@ class JetpackConnectSiteUrlInput extends Component {
 	}
 
 	render() {
-		const {
-			candidateSites,
-			isFetching,
-			onChange,
-			onSubmit,
-			isSearch,
-			translate,
-			url,
-			autoFocus,
-		} = this.props;
+		const { candidateSites, isFetching, onChange, onSubmit, isSearch, translate, url, autoFocus } =
+			this.props;
 
 		return (
 			<div>
@@ -150,7 +148,7 @@ class JetpackConnectSiteUrlInput extends Component {
 							autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
 							onChange={ onChange }
 							disabled={ isFetching }
-							placeholder={ 'https://yourjetpack.blog' }
+							placeholder="https://yourjetpack.blog"
 							onKeyUp={ this.handleKeyPress }
 							value={ url }
 						/>
@@ -158,7 +156,7 @@ class JetpackConnectSiteUrlInput extends Component {
 					{ isSearch && (
 						<SuggestionSearch
 							id="siteSelection"
-							placeholder={ 'Type your site' }
+							placeholder="Type your site"
 							onChange={ onChange }
 							suggestions={ candidateSites }
 							value={ url }

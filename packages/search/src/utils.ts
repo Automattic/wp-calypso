@@ -1,7 +1,4 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import * as React from 'react';
 
 /**
  * A `React.useEffect` that will not run on the first render.

@@ -1,19 +1,11 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { map } from 'lodash';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import PopoverMenu from 'calypso/components/popover/menu';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
-import PopoverMenuSeparator from 'calypso/components/popover/menu-separator';
+import PropTypes from 'prop-types';
+import { createRef, Component } from 'react';
+import PopoverMenu from 'calypso/components/popover-menu';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import PopoverMenuSeparator from 'calypso/components/popover-menu/separator';
 
 /**
  * Check if a URL is located outside of Calypso.
@@ -31,7 +23,7 @@ function isOutsideCalypso( url ) {
 class ThemeMoreButton extends Component {
 	state = { showPopover: false };
 
-	moreButtonRef = React.createRef();
+	moreButtonRef = createRef();
 
 	togglePopover = () => {
 		this.setState( { showPopover: ! this.state.showPopover } );
@@ -46,10 +38,11 @@ class ThemeMoreButton extends Component {
 		}
 	};
 
-	popoverAction( action, label ) {
+	popoverAction( action, label, key ) {
 		return () => {
-			action( this.props.themeId );
+			action( this.props.themeId, 'more button' );
 			this.props.onMoreButtonClick( this.props.themeId, this.props.index, 'popup_' + label );
+			this.props.onMoreButtonItemClick?.( this.props.themeId, this.props.index, key );
 		};
 	}
 
@@ -62,7 +55,11 @@ class ThemeMoreButton extends Component {
 
 		return (
 			<span className={ classes }>
-				<button ref={ this.moreButtonRef } onClick={ this.togglePopover }>
+				<button
+					aria-label={ `More options for theme ${ this.props.themeName }` }
+					ref={ this.moreButtonRef }
+					onClick={ this.togglePopover }
+				>
 					<Gridicon icon="ellipsis" size={ 24 } />
 				</button>
 
@@ -82,7 +79,7 @@ class ThemeMoreButton extends Component {
 								return (
 									<PopoverMenuItem
 										key={ `${ option.label }-geturl` }
-										action={ this.popoverAction( option.action, option.label ) }
+										action={ this.popoverAction( option.action, option.label, option.key ) }
 										href={ url }
 										target={ isOutsideCalypso( url ) ? '_blank' : null }
 									>
@@ -94,7 +91,7 @@ class ThemeMoreButton extends Component {
 								return (
 									<PopoverMenuItem
 										key={ `${ option.label }-action` }
-										action={ this.popoverAction( option.action, option.label ) }
+										action={ this.popoverAction( option.action, option.label, option.key ) }
 									>
 										{ option.label }
 									</PopoverMenuItem>
@@ -111,12 +108,15 @@ class ThemeMoreButton extends Component {
 }
 
 ThemeMoreButton.propTypes = {
+	// Name of theme to give image context.
+	themeName: PropTypes.string,
 	themeId: PropTypes.string,
 	// Index of theme in results list
 	index: PropTypes.number,
 	// More elaborate onClick action, used for tracking.
 	// Made to not interfere with DOM onClick
 	onMoreButtonClick: PropTypes.func,
+	onMoreButtonItemClick: PropTypes.func,
 	// Options to populate the popover menu with
 	options: PropTypes.objectOf(
 		PropTypes.shape( {

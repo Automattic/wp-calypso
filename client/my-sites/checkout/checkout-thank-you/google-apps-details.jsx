@@ -1,19 +1,14 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import {
+	isGoogleWorkspaceExtraLicence,
+	isGSuiteExtraLicenseProductSlug,
+	isGSuiteOrExtraLicenseOrGoogleWorkspace,
+} from '@automattic/calypso-products';
 import i18n from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { CONTACT, GSUITE_LEARNING_CENTER } from 'calypso/lib/url/support';
-import PurchaseDetail from 'calypso/components/purchase-detail';
 import { useSelector } from 'react-redux';
+import PurchaseDetail from 'calypso/components/purchase-detail';
+import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
+import { CONTACT, GSUITE_LEARNING_CENTER } from 'calypso/lib/url/support';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
-import { isGoogleWorkspaceExtraLicence } from 'calypso/lib/purchases';
-import { isGSuiteOrExtraLicenseOrGoogleWorkspace } from '@automattic/calypso-products';
-import { getGoogleMailServiceFamily, isGSuiteExtraLicenseProductSlug } from 'calypso/lib/gsuite';
 
 const GoogleAppsDetails = ( { purchases } ) => {
 	const email = useSelector( getCurrentUserEmail );

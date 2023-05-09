@@ -1,21 +1,13 @@
-/**
- * Internal Dependencies
- */
 import config from '@automattic/calypso-config';
-
-// State Selectors
+import getHappychatConnectionStatus from 'calypso/state/happychat/selectors/get-happychat-connection-status';
+import isHappychatUserEligible from 'calypso/state/happychat/selectors/is-happychat-user-eligible';
 import {
 	isTicketSupportConfigurationReady,
 	getTicketSupportRequestError,
 } from 'calypso/state/help/ticket/selectors';
-import isHappychatUserEligible from 'calypso/state/happychat/selectors/is-happychat-user-eligible';
-import isDirectlyFailed from 'calypso/state/selectors/is-directly-failed';
-import isDirectlyReady from 'calypso/state/selectors/is-directly-ready';
-import isDirectlyUninitialized from 'calypso/state/selectors/is-directly-uninitialized';
-import getHappychatConnectionStatus from 'calypso/state/happychat/selectors/get-happychat-connection-status';
 
 /**
- * @param {object} state Global state tree
+ * @param {Object} state Global state tree
  * @returns {boolean} Have each of the required async checks been made?
  */
 export default function isSupportVariationDetermined( state ) {
@@ -28,8 +20,5 @@ export default function isSupportVariationDetermined( state ) {
 		! isHappychatUserEligible( state ) ||
 		! isHappyChatConnecting;
 
-	const directlyIsReadyOrFailed =
-		isDirectlyFailed( state ) || isDirectlyUninitialized( state ) || isDirectlyReady( state );
-
-	return ticketReadyOrError && happychatReadyOrDisabled && directlyIsReadyOrFailed;
+	return ticketReadyOrError && happychatReadyOrDisabled;
 }

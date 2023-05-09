@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-const https = require( 'https' );
 const fs = require( 'fs' );
+const https = require( 'https' );
 const path = require( 'path' );
 
 const LANGUAGES_META_URL = 'https://widgets.wp.com/languages/calypso/languages-meta.json';

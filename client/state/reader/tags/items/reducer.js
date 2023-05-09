@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { keyBy, merge, mapValues } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import {
 	READER_TAGS_RECEIVE,
 	READER_UNFOLLOW_TAG_RECEIVE,

@@ -1,36 +1,18 @@
-/**
- * External dependencies
- */
-
 import debugFactory from 'debug';
 import i18n from 'i18n-calypso';
-
-const debug = debugFactory( 'calypso:site-features:actions' );
-
-/**
- * Internal dependencies
- */
-import { createSiteFeaturesObject } from './assembler';
+import wpcom from 'calypso/lib/wp';
 import {
+	JETPACK_SITES_FEATURES_FETCH,
+	JETPACK_SITES_FEATURES_FETCH_FAILURE,
+	JETPACK_SITES_FEATURES_FETCH_SUCCESS,
+	JETPACK_SITES_FEATURES_RECEIVE,
 	SITE_FEATURES_FETCH,
 	SITE_FEATURES_FETCH_COMPLETED,
 	SITE_FEATURES_FETCH_FAILED,
-	SITE_FEATURES_REMOVE,
 } from 'calypso/state/action-types';
-import wpcom from 'calypso/lib/wp';
+import { createSiteFeaturesObject } from './assembler';
 
-/**
- * Returns an action object to be used in signalling that features for the given site have been cleared.
- *
- * @param {number} siteId identifier of the site
- * @returns {object} the corresponding action object
- */
-export function clearSiteFeatures( siteId ) {
-	return {
-		type: SITE_FEATURES_REMOVE,
-		siteId,
-	};
-}
+const debug = debugFactory( 'calypso:site-features:actions' );
 
 /**
  * Fetches features for the given site.
@@ -45,30 +27,65 @@ export function fetchSiteFeatures( siteId ) {
 			siteId,
 		} );
 
-		return new Promise( ( resolve ) => {
-			wpcom.undocumented().getSiteFeatures( siteId, ( error, data ) => {
-				if ( error ) {
-					debug( 'Fetching site features failed: ', error );
+		return wpcom.req
+			.get( `/sites/${ siteId }/features` )
+			.then( ( data ) => {
+				dispatch( fetchSiteFeaturesCompleted( siteId, data ) );
+			} )
+			.catch( ( error ) => {
+				debug( 'Fetching site features failed: ', error );
 
-					const errorMessage =
-						error.message ||
-						i18n.translate(
-							'There was a problem fetching site features. Please try again later or contact support.'
-						);
+				const errorMessage =
+					error.message ||
+					i18n.translate(
+						'There was a problem fetching site features. Please try again later or contact support.'
+					);
 
-					dispatch( {
-						type: SITE_FEATURES_FETCH_FAILED,
-						siteId,
-						error: errorMessage,
-					} );
-				} else {
-					dispatch( fetchSiteFeaturesCompleted( siteId, data ) );
+				dispatch( {
+					type: SITE_FEATURES_FETCH_FAILED,
+					siteId,
+					error: errorMessage,
+				} );
+			} );
+	};
+}
+
+export function fetchJetpackSitesFeatures() {
+	return ( dispatch ) => {
+		dispatch( {
+			type: JETPACK_SITES_FEATURES_FETCH,
+		} );
+
+		return wpcom.req
+			.get( '/me/sites/features' )
+			.then( ( data ) => {
+				const features = {};
+				for ( const siteId in data.features ) {
+					features[ siteId ] = createSiteFeaturesObject( data.features[ siteId ] );
 				}
 
-				resolve();
+				dispatch( fetchJetpackSitesFeaturesReceive( features ) );
+
+				dispatch( {
+					type: JETPACK_SITES_FEATURES_FETCH_SUCCESS,
+				} );
+			} )
+			.catch( ( error ) => {
+				const errorMessage =
+					error.message ||
+					i18n.translate(
+						'There was a problem fetching site features. Please try again later or contact support.'
+					);
+				dispatch( {
+					type: JETPACK_SITES_FEATURES_FETCH_FAILURE,
+					error: errorMessage,
+				} );
 			} );
-		} );
 	};
+}
+
+function fetchJetpackSitesFeaturesReceive( features ) {
+	return { type: JETPACK_SITES_FEATURES_RECEIVE, features };
 }
 
 /**
@@ -76,26 +93,13 @@ export function fetchSiteFeatures( siteId ) {
  * the features for a given site have been received.
  *
  * @param {number} siteId - identifier of the site
- * @param {object} features - list of features received from the API
- * @returns {object} the corresponding action object
+ * @param {Object} features - list of features received from the API
+ * @returns {Object} the corresponding action object
  */
 export function fetchSiteFeaturesCompleted( siteId, features ) {
 	return {
 		type: SITE_FEATURES_FETCH_COMPLETED,
 		siteId,
 		features: createSiteFeaturesObject( features ),
-	};
-}
-
-/**
- * Clears features and fetches them for the given site.
- *
- * @param {number} siteId identifier of the site
- * @returns {Function} the corresponding action thunk
- */
-export function refreshSiteFeatures( siteId ) {
-	return ( dispatch ) => {
-		dispatch( clearSiteFeatures( siteId ) );
-		dispatch( fetchSiteFeatures( siteId ) );
 	};
 }

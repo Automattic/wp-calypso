@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
-
-/**
- * Internal dependencies
- */
+import { PureComponent } from 'react';
 import Connection from './connection';
 
 class ConnectionsList extends PureComponent {

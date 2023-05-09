@@ -1,22 +1,16 @@
-/**
- * External dependencies
- */
+import page from 'page';
 import { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import page from 'page';
-
-/**
- * Internal dependencies
- */
-import { getBillingHistoryUrlFor } from '../paths';
-import isPastBillingTransactionError from 'calypso/state/selectors/is-past-billing-transaction-error';
 import { clearBillingTransactionError } from 'calypso/state/billing-transactions/individual-transactions/actions';
+import isPastBillingTransactionError from 'calypso/state/selectors/is-past-billing-transaction-error';
+import { getBillingHistoryUrlFor } from '../paths';
+import type { IAppState } from 'calypso/state/types';
 
 export default function useRedirectToHistoryPageOnInvalidTransaction(
 	siteSlug: string,
 	receiptId: number
 ) {
-	const transactionFetchError = useSelector( ( state ) =>
+	const transactionFetchError = useSelector( ( state: IAppState ) =>
 		isPastBillingTransactionError( state, receiptId )
 	);
 	const reduxDispatch = useDispatch();

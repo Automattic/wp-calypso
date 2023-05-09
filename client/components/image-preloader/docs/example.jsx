@@ -1,12 +1,3 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import ImagePreloader from 'calypso/components/image-preloader';
 
 const ImagePreloaderExample = () => (

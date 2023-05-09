@@ -1,23 +1,15 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import store from 'store';
-import page from 'page';
+import { getLocaleFromPath, removeLocaleFromPath } from '@automattic/i18n-utils';
 import debugModule from 'debug';
-import i18n from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
-import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
+import { useTranslate } from 'i18n-calypso';
+import page from 'page';
+import store from 'store';
+import DocumentHead from 'calypso/components/data/document-head';
+import { navigate } from 'calypso/lib/navigate';
 import InviteAccept from 'calypso/my-sites/invites/invite-accept';
 import { getRedirectAfterAccept } from 'calypso/my-sites/invites/utils';
-import { acceptInvite as acceptInviteAction } from 'calypso/state/invites/actions';
-import user from 'calypso/lib/user';
-import { getLocaleFromPath, removeLocaleFromPath } from 'calypso/lib/i18n-utils';
-import { navigate } from 'calypso/lib/navigate';
+import { setUserEmailVerified } from 'calypso/state/current-user/actions';
 import { getCurrentUserEmail, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { acceptInvite as acceptInviteAction } from 'calypso/state/invites/actions';
 
 /**
  * Module variables
@@ -33,15 +25,12 @@ export function redirectWithoutLocaleifLoggedIn( context, next ) {
 }
 
 export function acceptInvite( context, next ) {
-	// FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
-	context.store.dispatch( setTitle( i18n.translate( 'Accept Invite', { textOnly: true } ) ) );
-
 	const acceptedInvite = store.get( 'invite_accepted' );
 	if ( acceptedInvite ) {
 		debug( 'invite_accepted is set in localStorage' );
 		if ( getCurrentUserEmail( context.store.getState() ) === acceptedInvite.sentTo ) {
 			debug( 'Setting email_verified in user object' );
-			user().set( { email_verified: true } );
+			context.store.dispatch( setUserEmailVerified( true ) );
 		}
 		store.remove( 'invite_accepted' );
 
@@ -59,13 +48,24 @@ export function acceptInvite( context, next ) {
 		return;
 	}
 
-	context.primary = React.createElement( InviteAccept, {
-		siteId: context.params.site_id,
-		inviteKey: context.params.invitation_key,
-		activationKey: context.params.activation_key,
-		authKey: context.params.auth_key,
-		locale: context.params.locale,
-		path: context.path,
-	} );
+	const AcceptInviteTitle = () => {
+		const translate = useTranslate();
+
+		return <DocumentHead title={ translate( 'Accept Invite', { textOnly: true } ) } />;
+	};
+
+	context.primary = (
+		<>
+			<AcceptInviteTitle />
+			<InviteAccept
+				siteId={ context.params.site_id }
+				inviteKey={ context.params.invitation_key }
+				activationKey={ context.params.activation_key }
+				authKey={ context.params.auth_key }
+				locale={ context.params.locale }
+				path={ context.path }
+			/>
+		</>
+	);
 	next();
 }

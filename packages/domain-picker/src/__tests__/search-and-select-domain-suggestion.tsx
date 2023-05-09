@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
-import { screen, render, fireEvent } from '@testing-library/react';
 import { DataStatus } from '@automattic/data-stores/src/domain-suggestions';
-
-/**
- * Internal dependencies
- */
+import { screen, render, fireEvent } from '@testing-library/react';
 import '../__mocks__/matchMedia.mock';
 import { MOCK_DOMAIN_SUGGESTION } from '../__mocks__';
 import DomainPicker from '../components';
@@ -19,6 +11,14 @@ const mockUseDomainSuggestionsResult: ReturnType< typeof useDomainSuggestions > 
 	state: DataStatus.Success,
 	retryRequest: jest.fn(),
 };
+
+jest.mock( '@automattic/calypso-config', () => ( {
+	isEnabled: () => false,
+	__esModule: true,
+	default: function config( key: string ) {
+		return key;
+	},
+} ) );
 
 jest.mock( '../hooks/use-domain-suggestions', () => ( {
 	useDomainSuggestions: () => mockUseDomainSuggestionsResult,

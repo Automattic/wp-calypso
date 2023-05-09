@@ -1,46 +1,30 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import page from 'page';
-import { connect } from 'react-redux';
-import { filter, get, range } from 'lodash';
+import { CompactCard, Spinner } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { CompactCard } from '@automattic/components';
-import Notice from 'calypso/components/notice';
-import NoticeAction from 'calypso/components/notice/notice-action';
-import Spinner from 'calypso/components/spinner';
+import { filter, get, range } from 'lodash';
+import page from 'page';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QueryPluginKeys from 'calypso/components/data/query-plugin-keys';
+import EmptyContent from 'calypso/components/empty-content';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
-import JetpackManageErrorPage from 'calypso/my-sites/jetpack-manage-error-page';
-import PluginItem from 'calypso/my-sites/plugins/plugin-item/plugin-item';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getSiteFileModDisableReason } from 'calypso/lib/site/utils';
 import {
 	JETPACK_CONTACT_SUPPORT,
 	JETPACK_SERVICE_AKISMET,
 	JETPACK_SERVICE_VAULTPRESS,
 	JETPACK_SUPPORT,
 } from 'calypso/lib/url/support';
-import { getSiteFileModDisableReason } from 'calypso/lib/site/utils';
-
-/**
- * Style dependencies
- */
-import './style.scss';
-
-// Redux actions & selectors
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { isRequestingSites } from 'calypso/state/sites/selectors';
-import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
-import { getAllPlugins as getAllWporgPlugins } from 'calypso/state/plugins/wporg/selectors';
-import { fetchPluginData } from 'calypso/state/plugins/wporg/actions';
-import { requestSites } from 'calypso/state/sites/actions';
+import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
+import PluginItem from 'calypso/my-sites/plugins/plugin-item/plugin-item';
+import {
+	getPluginOnSite,
+	isRequesting as isRequestingInstalledPlugins,
+} from 'calypso/state/plugins/installed/selectors';
 import { installPlugin } from 'calypso/state/plugins/premium/actions';
 import {
 	getPluginsForSite,
@@ -51,17 +35,20 @@ import {
 	isRequesting,
 	hasRequested,
 } from 'calypso/state/plugins/premium/selectors';
-import {
-	getPluginOnSite,
-	isRequesting as isRequestingInstalledPlugins,
-} from 'calypso/state/plugins/installed/selectors';
+import { fetchPluginData } from 'calypso/state/plugins/wporg/actions';
+import { getAllPlugins as getAllWporgPlugins } from 'calypso/state/plugins/wporg/selectors';
+import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
+import { requestSites } from 'calypso/state/sites/actions';
+import { isRequestingSites } from 'calypso/state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import './style.scss';
 
 const helpLinks = {
 	vaultpress: JETPACK_SERVICE_VAULTPRESS,
 	akismet: JETPACK_SERVICE_AKISMET,
 };
 
-class PlansSetup extends React.Component {
+class PlansSetup extends Component {
 	static displayName = 'PlanSetup';
 	sentTracks = false;
 
@@ -184,12 +171,11 @@ class PlansSetup extends React.Component {
 			error: 'wordpresscom',
 		} );
 		return (
-			<JetpackManageErrorPage
-				siteId={ this.props.siteId }
+			<EmptyContent
 				title={ this.props.translate(
 					'Oh no! You need to select a Jetpack site to be able to setup your plan'
 				) }
-				illustration={ '/calypso/images/jetpack/jetpack-manage.svg' }
+				illustration="/calypso/images/jetpack/jetpack-manage.svg"
 			/>
 		);
 	};
@@ -219,13 +205,12 @@ class PlansSetup extends React.Component {
 		}
 
 		return (
-			<JetpackManageErrorPage
-				siteId={ this.props.siteId }
+			<EmptyContent
 				action={ translate( 'Contact Support' ) }
 				actionURL={ JETPACK_CONTACT_SUPPORT }
 				title={ translate( "Oh no! We can't install plugins on this site." ) }
 				line={ reason }
-				illustration={ '/calypso/images/jetpack/jetpack-manage.svg' }
+				illustration="/calypso/images/jetpack/jetpack-manage.svg"
 			/>
 		);
 	};
@@ -345,7 +330,7 @@ class PlansSetup extends React.Component {
 		statusProps.children = (
 			<NoticeAction
 				key="notice_action"
-				href={ helpLinks[ plugin.slug ] }
+				href={ localizeUrl( helpLinks[ plugin.slug ] ) }
 				onClick={ this.trackManualInstall }
 			>
 				{ translate( 'Manual Installation' ) }
@@ -438,7 +423,7 @@ class PlansSetup extends React.Component {
 						plugin: pluginsWithErrors[ 0 ].name,
 					},
 					components: {
-						a: <a href={ JETPACK_SUPPORT } onClick={ this.trackManualInstall } />,
+						a: <a href={ localizeUrl( JETPACK_SUPPORT ) } onClick={ this.trackManualInstall } />,
 					},
 				}
 			);
@@ -448,14 +433,17 @@ class PlansSetup extends React.Component {
 					'It may be possible to fix this by {{a}}manually installing{{/a}} the plugins.',
 				{
 					components: {
-						a: <a href={ JETPACK_SUPPORT } onClick={ this.trackManualInstall } />,
+						a: <a href={ localizeUrl( JETPACK_SUPPORT ) } onClick={ this.trackManualInstall } />,
 					},
 				}
 			);
 		}
 		return (
 			<Notice status="is-error" text={ noticeText } showDismiss={ false }>
-				<NoticeAction href={ JETPACK_CONTACT_SUPPORT } onClick={ this.trackContactSupport }>
+				<NoticeAction
+					href={ localizeUrl( JETPACK_CONTACT_SUPPORT ) }
+					onClick={ this.trackContactSupport }
+				>
 					{ translate( 'Contact Support' ) }
 				</NoticeAction>
 			</Notice>

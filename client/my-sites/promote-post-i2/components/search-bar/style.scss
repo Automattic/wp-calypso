@@ -1,0 +1,20 @@
+.promote-post-i2__search-bar-wrapper {
+	margin-bottom: 20px;
+	flex-wrap: wrap;
+	display: grid;
+	grid-template-columns: 1fr 300px;
+
+	.promote-post-i2__search-bar-dropdown {
+		&.select-dropdown {
+			height: 50px;
+		}
+
+		.select-dropdown__container {
+			width: 100%;
+		}
+
+		.select-dropdown__header {
+			height: 50px;
+		}
+	}
+}

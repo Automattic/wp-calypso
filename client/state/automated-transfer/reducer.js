@@ -1,16 +1,4 @@
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
-import eligibility from './eligibility/reducer';
-import {
-	combineReducers,
-	keyedReducer,
-	withSchemaValidation,
-	withPersistence,
-} from 'calypso/state/utils';
-import { transferStates } from './constants';
-import { automatedTransfer as schema } from './schema';
 import {
 	AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE as ELIGIBILITY_UPDATE,
 	AUTOMATED_TRANSFER_STATUS_SET as SET_STATUS,
@@ -22,6 +10,15 @@ import {
 	THEME_TRANSFER_INITIATE_FAILURE as INITIATE_FAILURE,
 	THEME_TRANSFER_STATUS_RECEIVE as TRANSFER_UPDATE,
 } from 'calypso/state/themes/action-types';
+import {
+	combineReducers,
+	keyedReducer,
+	withSchemaValidation,
+	withPersistence,
+} from 'calypso/state/utils';
+import { transferStates } from './constants';
+import eligibility from './eligibility/reducer';
+import { automatedTransfer as schema } from './schema';
 
 export const status = withPersistence( ( state = null, action ) => {
 	switch ( action.type ) {
@@ -35,6 +32,11 @@ export const status = withPersistence( ( state = null, action ) => {
 			return action.status;
 		case TRANSFER_UPDATE:
 			return 'complete' === action.status ? transferStates.COMPLETE : state;
+		case REQUEST_STATUS_FAILURE:
+			// TODO : [MARKETPLACE] rely on a tangible status from the backend instead of this message
+			return action.error === 'An invalid transfer ID was passed.'
+				? transferStates.NONE
+				: transferStates.REQUEST_FAILURE;
 	}
 
 	return state;
@@ -44,7 +46,8 @@ export const fetchingStatus = ( state = false, action ) => {
 	switch ( action.type ) {
 		case REQUEST_STATUS:
 			return true;
-
+		case SET_STATUS:
+			return false;
 		case REQUEST_STATUS_FAILURE:
 			return false;
 

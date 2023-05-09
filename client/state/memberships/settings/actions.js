@@ -1,19 +1,18 @@
-/**
- * Internal dependencies
- */
-import { errorNotice, successNotice, warningNotice } from 'calypso/state/notices/actions';
-import { MEMBERSHIPS_SETTINGS } from 'calypso/state/action-types';
 import wpcom from 'calypso/lib/wp';
+import { MEMBERSHIPS_SETTINGS } from 'calypso/state/action-types';
+import { errorNotice, successNotice, warningNotice } from 'calypso/state/notices/actions';
 
 import 'calypso/state/data-layer/wpcom/sites/memberships';
 import 'calypso/state/memberships/init';
 
-export const requestSettings = ( siteId ) => ( {
+export const requestSettings = ( siteId, source ) => ( {
 	siteId,
+	source,
 	type: MEMBERSHIPS_SETTINGS,
 } );
 
-export const requestDisconnectStripeAccount = (
+const requestDisconnectStripeAccountByUrl = (
+	url,
 	siteId,
 	connectedAccountId,
 	noticeTextOnProcessing,
@@ -27,7 +26,7 @@ export const requestDisconnectStripeAccount = (
 		);
 
 		return wpcom.req
-			.get( `/me/connected_account/stripe/${ connectedAccountId }/disconnect` )
+			.get( `/sites/${ siteId }/connected_account/stripe/${ connectedAccountId }/disconnect` )
 			.then( () => {
 				dispatch( requestSettings( siteId ) );
 				dispatch(
@@ -44,4 +43,34 @@ export const requestDisconnectStripeAccount = (
 				);
 			} );
 	};
+};
+
+export const requestDisconnectSiteStripeAccount = (
+	siteId,
+	connectedAccountId,
+	noticeTextOnProcessing,
+	noticeTextOnSuccess
+) => {
+	return requestDisconnectStripeAccountByUrl(
+		`/sites/${ siteId }/connected_account/stripe/${ connectedAccountId }/disconnect`,
+		siteId,
+		connectedAccountId,
+		noticeTextOnProcessing,
+		noticeTextOnSuccess
+	);
+};
+
+export const requestDisconnectStripeAccount = (
+	siteId,
+	connectedAccountId,
+	noticeTextOnProcessing,
+	noticeTextOnSuccess
+) => {
+	return requestDisconnectStripeAccountByUrl(
+		`/me/connected_account/stripe/${ connectedAccountId }/disconnect`,
+		siteId,
+		connectedAccountId,
+		noticeTextOnProcessing,
+		noticeTextOnSuccess
+	);
 };

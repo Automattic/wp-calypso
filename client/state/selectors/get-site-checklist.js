@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import 'calypso/state/checklist/init';
 
 /**
  * Returns the checklist for the specified site ID
  *
- * @param  {object}  state  Global state tree
+ * @typedef { import("../checklist/types").Checklist } Checklist
+ * @param  {Object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @returns {object}        Site settings
+ * @returns {Checklist|null} Site settings
  */
 export default function getSiteChecklist( state, siteId ) {
-	return get( state.checklist, [ siteId, 'items' ], null );
+	return state.checklist?.[ siteId ]?.items ?? null;
 }

@@ -1,12 +1,9 @@
-/**
- * Internal dependencies
- */
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { fetchAppointmentDetails, onSuccess, onError } from '../';
-import { errorNotice } from 'calypso/state/notices/actions';
-import { noRetry } from 'calypso/state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
-import { updateConciergeAppointmentDetails } from 'calypso/state/concierge/actions';
 import { CONCIERGE_APPOINTMENT_DETAILS_REQUEST } from 'calypso/state/action-types';
+import { updateConciergeAppointmentDetails } from 'calypso/state/concierge/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { noRetry } from 'calypso/state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { fetchAppointmentDetails, onSuccess, onError } from '../';
 
 // we are mocking uuid.v4 here, so that conciergeShiftsFetchError() will contain the expected id in the tests
 jest.mock( 'uuid', () => ( {

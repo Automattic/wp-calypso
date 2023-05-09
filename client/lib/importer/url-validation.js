@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import url from 'url';
 import { isURL } from '@wordpress/url';
 import { translate } from 'i18n-calypso';

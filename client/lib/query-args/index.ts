@@ -1,0 +1,74 @@
+import { getQueryArgs as wpGetQueryArgs } from '@wordpress/url';
+import page from 'page';
+
+function getRelativeUrlWithParameters(
+	queryArgs: object,
+	clearExistingParameters = false
+): string {
+	const url = new URL( window.location.href );
+
+	if ( clearExistingParameters ) {
+		url.searchParams.forEach( ( value, key ) => url.searchParams.delete( key ) );
+	}
+
+	for ( const [ key, value ] of Object.entries( queryArgs ) ) {
+		url.searchParams.set( key, value );
+	}
+
+	return url.pathname + url.search + url.hash;
+}
+
+/**
+ * Sets URL parameters, removing the existing ones
+ * 1. {
+ *     uri: 'https://wordpress.com/read/search',
+ *     queryArgs: '{ q: "reader is super awesome" }'
+ *    } --> '/read/search?q=reader+is+super+awesome'
+ * 2. {
+ *     uri: 'https://wordpress.com/read/search?s=seo',
+ *     queryArgs: '{ c: "category" }'
+ *    } --> '/read/search?c=category'
+ * 3. {
+ *     uri: 'https://wordpress.com/read/search?s=seo',
+ *     queryArgs: '{}'
+ *    } --> '/read/search'
+ *
+ * @param queryArgs search object
+ * Every object key will be created in the URL
+ */
+export function setQueryArgs( queryArgs: object ) {
+	const searchWithoutBaseURL = getRelativeUrlWithParameters( queryArgs, true );
+
+	page( searchWithoutBaseURL );
+}
+
+/**
+ * Adds or Updates URL parameters, maitaining the existing ones
+ * 1. {
+ *     uri: 'https://wordpress.com/read/search',
+ *     queryArgs: '{ q: "reader is super awesome" }'
+ *    } --> '/read/search?q=reader+is+super+awesome'
+ * 2. {
+ *     uri: 'https://wordpress.com/read/search',
+ *     queryArgs: '{ s: seo, c: "category" }'
+ *    } --> '/read/search?s=seo&c=category'
+ *
+ * @param queryArgs search object
+ * Every object key found in the URL will be replaced
+ */
+export function updateQueryArgs( queryArgs: object ) {
+	const searchWithoutBaseURL = getRelativeUrlWithParameters( queryArgs );
+
+	page( searchWithoutBaseURL );
+}
+
+/**
+ * Get query args from a URL
+ *
+ * @returns object Object containing query args or empty object if doesn't have any
+ * 1. { uri: 'https://wordpress.com/plugins?s=hello' } --> { s: 'hello' }
+ * 2. { uri: 'https://wordpress.com/plugins?s=seo&c=category' } --> { s: 'seo', c: 'category' }
+ */
+export function getQueryArgs() {
+	return wpGetQueryArgs( window.location.href );
+}

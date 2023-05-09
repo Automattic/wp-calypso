@@ -1,26 +1,23 @@
-/**
- * Internal dependencies
- */
-import { SiteData } from 'calypso/state/ui/selectors/site-data';
+import type { SiteDetails } from '@automattic/data-stores';
+import type { CartKey } from '@automattic/shopping-cart';
 
 export default function getCartKey( {
 	selectedSite,
 	isLoggedOutCart,
 	isNoSiteCart,
 }: {
-	selectedSite: SiteData | undefined | null;
+	selectedSite: SiteDetails | undefined | null;
 	isLoggedOutCart?: boolean;
 	isNoSiteCart?: boolean;
-} ): string | number | undefined {
+} ): CartKey | undefined {
 	if ( ! selectedSite?.slug && ( isLoggedOutCart || isNoSiteCart ) ) {
 		return 'no-user';
 	}
 	if ( ! selectedSite?.slug && ! isLoggedOutCart && ! isNoSiteCart ) {
 		return 'no-site';
 	}
-	if ( selectedSite?.slug && ( isLoggedOutCart || isNoSiteCart ) ) {
-		return selectedSite.slug;
+	if ( selectedSite?.ID ) {
+		return selectedSite.ID;
 	}
-
-	return selectedSite?.ID ?? 'no-site';
+	return 'no-site';
 }

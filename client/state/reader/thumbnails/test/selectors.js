@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import { getThumbnailForIframe, isRequestingThumbnailUrl } from '../selectors';
+import { getThumbnailForIframe } from '../selectors';
 
 describe( 'selectors', () => {
 	const embedUrl = 'embedUrl';
@@ -21,7 +13,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getThumbnailForIframe( state, embedUrl ) ).to.equal( undefined );
+			expect( getThumbnailForIframe( state, embedUrl ) ).toBeUndefined();
 		} );
 
 		test( 'should return the thumbnail if it exists for an iframe src', () => {
@@ -34,24 +26,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getThumbnailForIframe( state, embedUrl ) ).to.eql( thumbnailUrl );
-		} );
-	} );
-
-	describe( '#isRequestingThumbnailUrl()', () => {
-		test( 'should return true if requesting thumbnail for the embed', () => {
-			const state = {
-				reader: {
-					thumbnails: {
-						requesting: {
-							[ embedUrl ]: true,
-							[ embedUrl + '2' ]: false,
-						},
-					},
-				},
-			};
-			expect( isRequestingThumbnailUrl( state, embedUrl ) ).to.equal( true );
-			expect( isRequestingThumbnailUrl( state, embedUrl + '2' ) ).to.equal( false );
+			expect( getThumbnailForIframe( state, embedUrl ) ).toEqual( thumbnailUrl );
 		} );
 	} );
 } );

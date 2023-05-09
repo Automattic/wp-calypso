@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { filter, orderBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { createSelector } from '@automattic/state-utils';
+import { filter, orderBy } from 'lodash';
 
 import 'calypso/state/comments/init';
 
@@ -22,11 +15,11 @@ function filterCommentsByStatus( comments, status ) {
 /**
  * Returns list of loaded comments for a given site, filtered by status
  *
- * @param {object} state Redux state
+ * @param {Object} state Redux state
  * @param {number} siteId Site for whose comments to find
  * @param {string} [status] Status to filter comments
  * @param {string} [order=asc] Order in which to sort filtered comments
- * @returns {Array<object>} Available comments for site, filtered by status
+ * @returns {Array<Object>} Available comments for site, filtered by status
  */
 export const getSiteComments = createSelector(
 	( state, siteId, status, order = 'asc' ) => {

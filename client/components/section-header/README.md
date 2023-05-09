@@ -6,11 +6,9 @@ and optional actions buttons.
 ## Example Usage
 
 ```js
-import React from 'react';
-import { localize } from 'i18n-calypso';
-
-import SectionHeader from 'calypso/components/section-header';
 import { Button } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import SectionHeader from 'calypso/components/section-header';
 
 const MyHeader = ( { translate } ) => (
 	<SectionHeader label={ translate( 'Team' ) }>
@@ -36,8 +34,7 @@ This is the base component and acts as a wrapper for a section's (a list of card
 ### Props
 
 - `className` - _optional_ (string|object) Classes to be added to the rendered component.
-- `label` - _optional_ (string) The text to be displayed in the header.
-- `popoverText` - _optional_ (string) If entered, a support popover will appear to the right with this text.
+- `label` - _optional_ (string|ReactChild) The text to be displayed in the header.
 
 ## General guidelines
 

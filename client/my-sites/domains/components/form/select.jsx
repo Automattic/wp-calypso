@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
+import { FormInputValidation } from '@automattic/components';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
 import FormLabel from 'calypso/components/forms/form-label';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormSelect from 'calypso/components/forms/form-select';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 

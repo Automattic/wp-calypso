@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
 import { flowRight } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import SummaryChart from '../stats-summary';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import {
@@ -18,6 +10,7 @@ import {
 	isRequestingSiteStatsForQuery,
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import SummaryChart from '../stats-summary';
 
 class StatsVideoSummary extends Component {
 	static propTypes = {
@@ -44,13 +37,21 @@ class StatsVideoSummary extends Component {
 				? summaryData.data.map( ( item ) => {
 						return {
 							...item,
-							period: moment( item.period ).format( 'MMM D' ),
+							period: moment( item.period ).format( 'year' === query.period ? 'MMM' : 'MMM D' ),
 						};
 				  } )
 				: [];
 		let selectedBar = this.state.selectedBar;
 		if ( ! selectedBar && !! data.length ) {
 			selectedBar = data[ data.length - 1 ];
+		}
+
+		let tabLabel = translate( 'Views' );
+		if ( 'impressions' === query.statType ) {
+			tabLabel = translate( 'Impressions' );
+		}
+		if ( 'watch_time' === query.statType ) {
+			tabLabel = translate( 'Hours Watched' );
 		}
 
 		return (
@@ -62,19 +63,20 @@ class StatsVideoSummary extends Component {
 					activeKey="period"
 					dataKey="value"
 					labelKey="period"
-					labelClass="video"
+					chartType="video"
 					sectionClass="is-video"
 					selected={ selectedBar }
 					onClick={ this.selectBar }
-					tabLabel={ translate( 'Plays' ) }
+					tabLabel={ tabLabel }
+					type="video"
 				/>
 			</div>
 		);
 	}
 }
 
-const connectComponent = connect( ( state, { postId } ) => {
-	const query = { postId };
+const connectComponent = connect( ( state, { postId, statType, period } ) => {
+	const query = { postId, statType, period };
 	const siteId = getSelectedSiteId( state );
 
 	return {

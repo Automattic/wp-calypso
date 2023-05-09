@@ -1,25 +1,30 @@
-/**
- * External dependencies
- */
-import ReactDom from 'react-dom';
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { debounce, get, noop } from 'lodash';
+import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
+import { debounce } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
+import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import FormSelect from 'calypso/components/forms/form-select';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormTextarea from 'calypso/components/forms/form-textarea';
+import TrackInputChanges from 'calypso/components/track-input-changes';
+import { withUpdateMedia } from 'calypso/data/media/with-update-media';
+import { FormCheckbox } from 'calypso/devdocs/design/playground-scope';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { bumpStat } from 'calypso/lib/analytics/mc';
+import decodeEntities from 'calypso/lib/formatting/decode/browser';
 import { getMimePrefix, url } from 'calypso/lib/media/utils';
-import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
-import FormTextarea from 'calypso/components/forms/form-textarea';
-import FormTextInput from 'calypso/components/forms/form-text-input';
-import TrackInputChanges from 'calypso/components/track-input-changes';
+import versionCompare from 'calypso/lib/version-compare';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EditorMediaModalFieldset from '../fieldset';
-import { updateMedia } from 'calypso/state/media/thunks';
+
+const noop = () => {};
 
 class EditorMediaModalDetailFields extends Component {
 	static propTypes = {
@@ -32,21 +37,24 @@ class EditorMediaModalDetailFields extends Component {
 		onUpdate: noop,
 	};
 
-	constructor() {
-		super( ...arguments );
-		this.persistChange = debounce( this._persistChange, 1000 );
+	constructor( props ) {
+		super( props );
+
+		// Save changes to server after 1 second delay
+		this.delayedSaveChange = debounce( this.saveChange, 1000 );
+		this.state = {
+			modifiedChanges: null,
+		};
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.item && nextProps.item.ID !== this.props.item?.ID ) {
-			this.persistChange.cancel();
-			this._persistChange();
-			this.setState( { modifiedItem: null } );
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.item && prevProps.item.privacy_setting !== this.props.item?.privacy_setting ) {
+			window.postMessage( { event: 'videopress_refresh_iframe' }, '*' );
 		}
 	}
 
 	componentWillUnmount() {
-		this._persistChange();
+		this.updateChange( true );
 	}
 
 	bumpTitleStat = () => {
@@ -73,34 +81,71 @@ class EditorMediaModalDetailFields extends Component {
 		return getMimePrefix( this.props.item ) === prefix;
 	}
 
-	_persistChange() {
-		if ( ! this.props.site || ! this.state?.modifiedItem ) {
+	isVideoPress() {
+		return !! this.getItemValue( 'videopress_guid' );
+	}
+
+	updateChange( saveImmediately = false ) {
+		const siteId = this.props.site?.ID;
+		const itemId = this.props.item?.ID;
+		const modifiedChanges = this.state.modifiedChanges;
+		const hasChanges = siteId && itemId && modifiedChanges;
+
+		if ( ! hasChanges ) {
 			return;
 		}
 
-		this.props.updateMedia( this.props.site.ID, this.state.modifiedItem );
-		this.props.onUpdate( this.props.item.ID, this.state.modifiedItem );
+		// Update changes to local state immediately
+		this.props.onUpdate( itemId, modifiedChanges );
+
+		// Save changes immediately or after a delay
+		if ( saveImmediately ) {
+			this.saveChange( siteId, itemId, modifiedChanges );
+		} else {
+			this.delayedSaveChange( siteId, itemId, modifiedChanges );
+		}
 	}
 
-	setFieldValue = ( { target } ) => {
-		const modifiedItem = Object.assign(
-			{ ID: this.props.item.ID },
-			get( this.state, 'modifiedItem', {} ),
-			{ [ target.name ]: target.value }
-		);
+	saveChange( siteId, mediaId, modifiedChanges ) {
+		this.props.updateMedia( siteId, mediaId, modifiedChanges );
+	}
 
-		this.setState( { modifiedItem }, this.persistChange );
+	setFieldByName = ( name, value ) => {
+		this.setState(
+			( state ) => ( {
+				modifiedChanges: { ...state.modifiedChanges, [ name ]: value },
+			} ),
+			this.updateChange
+		);
+	};
+
+	setFieldValue = ( { target } ) => {
+		this.setFieldByName( target.name, target.value );
+	};
+
+	handleRatingChange = ( { currentTarget } ) => {
+		this.setFieldByName( 'rating', currentTarget.value );
+	};
+
+	handlePrivacySettingChange = ( { currentTarget } ) => {
+		const clippedValue = Math.max( 0, Math.min( 2, parseInt( currentTarget.value, 10 ) ) );
+		this.setFieldByName( 'privacy_setting', clippedValue );
+	};
+
+	handleDisplayEmbed = () => {
+		const inputValue = '1' === this.getItemValue( 'display_embed' ) ? '0' : '1';
+
+		this.setFieldByName( 'display_embed', inputValue );
+	};
+
+	handleAllowDownloadOption = () => {
+		const inputValue = '1' === this.getItemValue( 'allow_download' ) ? '0' : '1';
+
+		this.setFieldByName( 'allow_download', inputValue );
 	};
 
 	getItemValue( attribute ) {
-		const modifiedValue = get( this.state, [ 'modifiedItem', attribute ], null );
-		if ( modifiedValue !== null ) {
-			return modifiedValue;
-		}
-
-		if ( this.props.item ) {
-			return this.props.item[ attribute ];
-		}
+		return this.state.modifiedChanges?.[ attribute ] ?? this.props.item?.[ attribute ];
 	}
 
 	scrollToShowVisibleDropdown = ( event ) => {
@@ -129,6 +174,140 @@ class EditorMediaModalDetailFields extends Component {
 		);
 	}
 
+	renderVideoPressShortcode = () => {
+		if ( ! this.isVideoPress() ) {
+			return;
+		}
+
+		const videopressGuid = this.getItemValue( 'videopress_guid' );
+
+		return (
+			<EditorMediaModalFieldset legend={ this.props.translate( 'Shortcode' ) }>
+				<ClipboardButtonInput value={ '[wpvideo ' + videopressGuid + ']' } />
+			</EditorMediaModalFieldset>
+		);
+	};
+
+	renderRating = () => {
+		const items = [
+			{
+				label: 'G',
+				value: 'G',
+			},
+			{
+				label: 'PG-13',
+				value: 'PG-13',
+			},
+			{
+				label: 'R',
+				value: 'R-17',
+			},
+		];
+		let rating = this.getItemValue( 'rating' );
+		if ( ! rating ) {
+			return;
+		}
+
+		// X-18 was previously supported but is now removed to better comply with our TOS.
+		if ( 'X-18' === rating ) {
+			rating = 'R-17';
+		}
+
+		return (
+			<EditorMediaModalFieldset legend={ this.props.translate( 'Rating' ) }>
+				<div className={ classnames( 'form-radios-bar' ) } style={ { display: 'flex' } }>
+					{ items.map( ( item, i ) => (
+						<FormLabel key={ item.value + i } style={ { paddingRight: '15px' } }>
+							<FormRadio
+								checked={ rating === item.value }
+								onChange={ this.handleRatingChange }
+								{ ...item }
+							/>
+						</FormLabel>
+					) ) }
+				</div>
+			</EditorMediaModalFieldset>
+		);
+	};
+
+	renderPrivacySetting = () => {
+		if ( ! this.isVideoPress() ) {
+			return;
+		}
+
+		const privacySetting = this.getItemValue( 'privacy_setting' );
+		return (
+			<EditorMediaModalFieldset legend={ this.props.translate( 'Privacy' ) }>
+				<FormSelect value={ privacySetting } onChange={ this.handlePrivacySettingChange }>
+					<option key={ 2 } value={ 2 }>
+						{ this.props.translate( 'Site Default' ) }
+					</option>
+					<option key={ 0 } value={ 0 }>
+						{ this.props.translate( 'Public' ) }
+					</option>
+					<option key={ 1 } value={ 1 }>
+						{ this.props.translate( 'Private' ) }
+					</option>
+				</FormSelect>
+			</EditorMediaModalFieldset>
+		);
+	};
+
+	renderShareEmbed = () => {
+		const share = this.getItemValue( 'display_embed' );
+		if ( share === undefined ) {
+			return;
+		}
+
+		return (
+			<EditorMediaModalFieldset legend={ this.props.translate( 'Share' ) }>
+				<FormLabel>
+					<FormCheckbox
+						id="display_embed"
+						name="display_embed"
+						checked={ share === '1' }
+						onChange={ this.handleDisplayEmbed }
+					/>
+					<span>
+						{ this.props.translate(
+							'Display share menu and allow viewers to copy a link or embed this video'
+						) }
+					</span>
+				</FormLabel>
+			</EditorMediaModalFieldset>
+		);
+	};
+
+	renderAllowDownloadOption = () => {
+		if ( ! this.isVideoPress() ) {
+			return;
+		}
+
+		const allowDownloadKey = 'allow_download';
+		let allowDownload = this.getItemValue( allowDownloadKey );
+		if ( undefined === allowDownload ) {
+			allowDownload = 0;
+		}
+
+		return (
+			<EditorMediaModalFieldset legend={ this.props.translate( 'Download' ) }>
+				<FormLabel>
+					<FormCheckbox
+						id={ allowDownloadKey }
+						name={ allowDownloadKey }
+						checked={ allowDownload === '1' }
+						onChange={ this.handleAllowDownloadOption }
+					/>
+					<span>
+						{ this.props.translate(
+							'Display download option and allow viewers to download this video'
+						) }
+					</span>
+				</FormLabel>
+			</EditorMediaModalFieldset>
+		);
+	};
+
 	render() {
 		const { translate } = this.props;
 		return (
@@ -137,7 +316,7 @@ class EditorMediaModalDetailFields extends Component {
 					<TrackInputChanges onNewValue={ this.bumpTitleStat }>
 						<FormTextInput
 							name="title"
-							value={ this.getItemValue( 'title' ) }
+							value={ decodeEntities( this.getItemValue( 'title' ) ) }
 							onChange={ this.setFieldValue }
 						/>
 					</TrackInputChanges>
@@ -147,7 +326,7 @@ class EditorMediaModalDetailFields extends Component {
 					<TrackInputChanges onNewValue={ this.bumpCaptionStat }>
 						<FormTextarea
 							name="caption"
-							value={ this.getItemValue( 'caption' ) }
+							value={ decodeEntities( this.getItemValue( 'caption' ) ) }
 							onChange={ this.setFieldValue }
 						/>
 					</TrackInputChanges>
@@ -159,7 +338,7 @@ class EditorMediaModalDetailFields extends Component {
 					<TrackInputChanges onNewValue={ this.bumpDescriptionStat }>
 						<FormTextarea
 							name="description"
-							value={ this.getItemValue( 'description' ) }
+							value={ decodeEntities( this.getItemValue( 'description' ) ) }
 							onChange={ this.setFieldValue }
 						/>
 					</TrackInputChanges>
@@ -168,9 +347,27 @@ class EditorMediaModalDetailFields extends Component {
 				<EditorMediaModalFieldset className="detail__url-field" legend={ translate( 'URL' ) }>
 					<ClipboardButtonInput value={ url( this.props.item ) } />
 				</EditorMediaModalFieldset>
+
+				{ this.renderShareEmbed() }
+				{ this.renderAllowDownloadOption() }
+				{ this.renderRating() }
+				{ this.props.hasVideoPrivacyFeature && this.renderPrivacySetting() }
+				{ this.renderVideoPressShortcode() }
 			</div>
 		);
 	}
 }
 
-export default localize( connect( null, { updateMedia } )( EditorMediaModalDetailFields ) );
+export default connect( ( state ) => {
+	const siteId = getSelectedSiteId( state );
+	const isWpcom = ! isJetpackSite( state, siteId );
+	const siteJetpackVersion = getSiteOption( state, siteId, 'jetpack_version' );
+	const isJetpackPrivateVideoSupported =
+		siteJetpackVersion && versionCompare( siteJetpackVersion, '10.9', '>=' );
+	const hasVideoPrivacyFeature = isWpcom || isJetpackPrivateVideoSupported;
+
+	return {
+		siteId,
+		hasVideoPrivacyFeature,
+	};
+} )( localize( withUpdateMedia( EditorMediaModalDetailFields ) ) );

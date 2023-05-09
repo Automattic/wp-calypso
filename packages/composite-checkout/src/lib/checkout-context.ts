@@ -1,37 +1,35 @@
-/**
- * External dependencies
- */
 import { createContext } from 'react';
 import {
+	StepChangedCallback,
+	CheckoutPageErrorCallback,
 	FormStatus,
 	PaymentMethod,
 	PaymentProcessorProp,
-	ReactStandardAction,
 	TransactionStatusManager,
+	PaymentMethodChangedCallback,
 } from '../types';
 
-interface CheckoutContext {
+export interface CheckoutContextInterface {
 	allPaymentMethods: PaymentMethod[];
+	disabledPaymentMethodIds: string[];
+	setDisabledPaymentMethodIds: ( methods: string[] ) => void;
 	paymentMethodId: string | null;
 	setPaymentMethodId: ( id: string ) => void;
-	showErrorMessage: ( message: string ) => void;
-	showInfoMessage: ( message: string ) => void;
-	showSuccessMessage: ( message: string ) => void;
-	onEvent: ( action: ReactStandardAction ) => void;
 	formStatus: FormStatus;
 	setFormStatus: ( newStatus: FormStatus ) => void;
 	transactionStatusManager: TransactionStatusManager | null;
 	paymentProcessors: PaymentProcessorProp;
+	onPageLoadError?: CheckoutPageErrorCallback;
+	onStepChanged?: StepChangedCallback;
+	onPaymentMethodChanged?: PaymentMethodChangedCallback;
 }
 
-const defaultCheckoutContext: CheckoutContext = {
+const defaultCheckoutContext: CheckoutContextInterface = {
 	allPaymentMethods: [],
+	disabledPaymentMethodIds: [],
+	setDisabledPaymentMethodIds: noop,
 	paymentMethodId: null,
 	setPaymentMethodId: noop,
-	showErrorMessage: noop,
-	showInfoMessage: noop,
-	showSuccessMessage: noop,
-	onEvent: noop,
 	formStatus: FormStatus.LOADING,
 	setFormStatus: noop,
 	transactionStatusManager: null,

@@ -1,31 +1,20 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import React from 'react';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { createHigherOrderComponent } from '@wordpress/compose';
-
-/**
- * Internal dependencies
- */
-import AuthorMapping from './author-mapping-item';
-import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
+import useUsersQuery from 'calypso/data/users/use-users-query';
 import ImporterActionButton from 'calypso/my-sites/importer/importer-action-buttons/action-button';
 import ImporterCloseButton from 'calypso/my-sites/importer/importer-action-buttons/close-button';
-import useUsersQuery from 'calypso/data/users/use-users-query';
+import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
+import AuthorMapping from './author-mapping-item';
 
-/**
- * Style dependencies
- */
 import './author-mapping-pane.scss';
 
-class AuthorMappingPane extends React.PureComponent {
+class AuthorMappingPane extends PureComponent {
 	static displayName = 'AuthorMappingPane';
 
 	static propTypes = {
-		hasSingleAuthor: PropTypes.bool.isRequired,
 		onMap: PropTypes.func,
 		onStartImport: PropTypes.func,
 		siteId: PropTypes.number.isRequired,
@@ -33,6 +22,7 @@ class AuthorMappingPane extends React.PureComponent {
 			PropTypes.shape( {
 				id: PropTypes.string.isRequired,
 				name: PropTypes.string.isRequired,
+				icon: PropTypes.string,
 			} ).isRequired
 		).isRequired,
 		sourceTitle: PropTypes.string.isRequired,
@@ -121,9 +111,12 @@ class AuthorMappingPane extends React.PureComponent {
 		}
 	};
 
+	componentDidMount() {
+		recordTracksEvent( 'calypso_site_importer_map_authors_single' );
+	}
+
 	render() {
 		const {
-			hasSingleAuthor,
 			sourceAuthors,
 			sourceTitle,
 			targetTitle,
@@ -135,6 +128,8 @@ class AuthorMappingPane extends React.PureComponent {
 			site,
 			totalUsers,
 		} = this.props;
+
+		const hasSingleAuthor = totalUsers === 1;
 		const canStartImport = hasSingleAuthor || sourceAuthors.every( ( author ) => author.mappedTo );
 		const mappingDescription = this.getMappingDescription(
 			sourceAuthors.length,
@@ -175,7 +170,9 @@ class AuthorMappingPane extends React.PureComponent {
 const withTotalUsers = createHigherOrderComponent(
 	( Component ) => ( props ) => {
 		const { siteId } = props;
-		const { data } = useUsersQuery( siteId );
+		const { data } = useUsersQuery( siteId, {
+			authors_only: 1,
+		} );
 
 		const totalUsers = data?.total ?? 0;
 

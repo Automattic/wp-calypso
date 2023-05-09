@@ -116,13 +116,10 @@ Let's look at a full example:
  * it will give up and launch the failure handler)
  */
 
-/**
- * Internal dependencies
- */
-import { addSplines } from 'calypso/state/splines/actions';
-import { errorNotice } from 'calypso/state/notices/actions';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { addSplines } from 'calypso/state/splines/actions';
 
 /**
  * Transform the API response into consumble data

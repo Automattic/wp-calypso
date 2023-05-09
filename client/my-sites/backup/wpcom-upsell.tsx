@@ -1,45 +1,37 @@
-/**
- * External dependencies
- */
-import React, { ReactElement } from 'react';
+import { WPCOM_FEATURES_FULL_ACTIVITY_LOG } from '@automattic/calypso-products';
+import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
+import JetpackBackupSVG from 'calypso/assets/images/illustrations/jetpack-backup.svg';
 import DocumentHead from 'calypso/components/data/document-head';
-import Main from 'calypso/components/main';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { isFreePlan } from '@automattic/calypso-products';
 import FormattedHeader from 'calypso/components/formatted-header';
+import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
+import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
-import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
-import Gridicon from 'calypso/components/gridicon';
-import { getSitePlan } from 'calypso/state/sites/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { preventWidows } from 'calypso/lib/formatting';
+import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-/**
- * Asset dependencies
- */
-import JetpackBackupSVG from 'calypso/assets/images/illustrations/jetpack-backup.svg';
 import './style.scss';
 
 const trackEventName = 'calypso_jetpack_backup_business_upsell';
 
-export default function WPCOMUpsellPage(): ReactElement {
+export default function WPCOMUpsellPage() {
 	const onUpgradeClick = useTrackCallback( undefined, trackEventName );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const siteId = useSelector( getSelectedSiteId );
-	const isAdmin = useSelector( ( state ) => canCurrentUser( state, siteId, 'manage_options' ) );
-	const { product_slug: planSlug } = useSelector( ( state ) => getSitePlan( state, siteId ) );
+	const isAdmin = useSelector( ( state ) =>
+		canCurrentUser( state, siteId ?? 0, 'manage_options' )
+	);
+	const hasFullActivityLogFeature = useSelector( ( state ) =>
+		siteHasFeature( state, siteId, WPCOM_FEATURES_FULL_ACTIVITY_LOG )
+	);
 	const translate = useTranslate();
 	const promos: PromoSectionProps = {
 		promos: [
@@ -55,26 +47,27 @@ export default function WPCOMUpsellPage(): ReactElement {
 
 	return (
 		<Main className="backup__main backup__wpcom-upsell">
-			<DocumentHead title="Jetpack Backup" />
-			<SidebarNavigation />
-			<PageViewTracker path="/backup/:site" title="Backup" />
+			<DocumentHead title="Jetpack VaultPress Backup" />
+			<PageViewTracker path="/backup/:site" title="VaultPress Backup" />
 
 			<FormattedHeader
-				headerText={ translate( 'Jetpack Backup' ) }
+				headerText={ translate( 'Jetpack VaultPress Backup' ) }
 				id="backup-header"
 				align="left"
 				brandFont
 			/>
 
 			<PromoCard
-				title={ preventWidows( translate( 'Get time travel for your site with Jetpack Backup' ) ) }
+				title={ preventWidows(
+					translate( 'Get time travel for your site with Jetpack VaultPress Backup' )
+				) }
 				image={ { path: JetpackBackupSVG } }
 				isPrimary
 			>
 				<p>
 					{ preventWidows(
 						translate(
-							'Backup gives you granular control over your site, with the ability to restore it to any previous state, and export it at any time.'
+							'VaultPress Backup gives you granular control over your site, with the ability to restore it to any previous state, and export it at any time.'
 						)
 					) }
 				</p>
@@ -99,7 +92,7 @@ export default function WPCOMUpsellPage(): ReactElement {
 				) }
 			</PromoCard>
 
-			{ isFreePlan( planSlug ) && (
+			{ ! hasFullActivityLogFeature && (
 				<>
 					<h2 className="backup__subheader">
 						{ translate( 'Also included in the Business Plan' ) }

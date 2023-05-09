@@ -2,20 +2,16 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import moment from 'moment';
-import React from 'react';
-import TestUtils from 'react-dom/test-utils';
 import ReactDom from 'react-dom';
-
-/**
- * Internal dependencies
- */
-import { DomainWarnings } from '../';
+import TestUtils from 'react-dom/test-utils';
 import { type as domainTypes } from 'calypso/lib/domains/constants';
-import { MAP_EXISTING_DOMAIN_UPDATE_DNS, MAP_SUBDOMAIN } from 'calypso/lib/url/support';
+import {
+	MAP_DOMAIN_CHANGE_NAME_SERVERS,
+	MAP_EXISTING_DOMAIN_UPDATE_DNS,
+	MAP_SUBDOMAIN,
+} from 'calypso/lib/url/support';
+import { DomainWarnings } from '../';
 
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 
@@ -53,8 +49,8 @@ describe( 'index', () => {
 
 			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
 
-			expect( ReactDom.findDOMNode( component ).textContent ).toContain(
-				'If you are unable to access your site at {{strong}}%(domainName)s{{/strong}}'
+			expect( ReactDom.findDOMNode( component ) ).toHaveTextContent(
+				/If you are unable to access your site at \{\{strong\}\}%\(domainName\)s\{\{\/strong\}\}/
 			);
 		} );
 	} );
@@ -75,8 +71,8 @@ describe( 'index', () => {
 
 			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
 
-			expect( ReactDom.findDOMNode( component ).textContent ).toContain(
-				'We are setting up {{strong}}%(domainName)s{{/strong}} for you'
+			expect( ReactDom.findDOMNode( component ) ).toHaveTextContent(
+				/We are setting up \{\{strong\}\}%\(domainName\)s\{\{\/strong\}\} for you/
 			);
 		} );
 
@@ -103,8 +99,8 @@ describe( 'index', () => {
 
 			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
 
-			expect( ReactDom.findDOMNode( component ).textContent ).toContain(
-				'We are setting up your new domains for you'
+			expect( ReactDom.findDOMNode( component ) ).toHaveTextContent(
+				/We are setting up your new domains for you/
 			);
 		} );
 	} );
@@ -132,13 +128,7 @@ describe( 'index', () => {
 			const links = [].slice.call( domNode.querySelectorAll( 'a' ) );
 
 			expect( textContent ).toContain( 'contact your domain registrar' );
-			expect(
-				links.some(
-					( link ) =>
-						link.href ===
-						'https://wordpress.com/support/domains/map-existing-domain/#change-your-domains-name-servers'
-				)
-			).toBeTruthy();
+			expect( links.some( ( link ) => link.href === MAP_DOMAIN_CHANGE_NAME_SERVERS ) ).toBeTruthy();
 		} );
 
 		test( 'should render the correct support url for multiple misconfigured mapped domains', () => {
@@ -258,48 +248,6 @@ describe( 'index', () => {
 	} );
 
 	describe( 'verification nudge', () => {
-		test( 'should not show any verification nudge for any unverified domains younger than 2 days if site is FSE eligible', () => {
-			const props = {
-				translate,
-				domains: [
-					{
-						name: 'blog.example.com',
-						type: domainTypes.REGISTERED,
-						currentUserCanManage: true,
-						isPendingIcannVerification: true,
-						registrationDate: moment().subtract( 1, 'days' ).toISOString(),
-					},
-					{
-						name: 'mygroovysite.com',
-						type: domainTypes.REGISTERED,
-						currentUserCanManage: true,
-						isPendingIcannVerification: true,
-						registrationDate: moment().subtract( 1, 'days' ).toISOString(),
-					},
-				],
-				selectedSite: { domain: 'blog.example.com', slug: 'blog.example.com' },
-				isSiteEligibleForFSE: true,
-				siteIsUnlaunched: true,
-				moment,
-			};
-			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
-
-			const domNode = ReactDom.findDOMNode( component );
-			const textContent = domNode ? domNode.textContent : '';
-			const links = domNode ? [].slice.call( domNode.querySelectorAll( 'a' ) ) : [];
-
-			expect( textContent ).not.toContain( 'Please verify ownership of domains' );
-			expect(
-				links.some( ( link ) =>
-					link.href.endsWith( '/domains/manage/blog.example.com/edit/blog.example.com' )
-				)
-			).toBeFalsy();
-			expect(
-				links.some( ( link ) =>
-					link.href.endsWith( '/domains/manage/mygroovysite.com/edit/blog.example.com' )
-				)
-			).toBeFalsy();
-		} );
 		test( 'should show a verification nudge with weak message for any unverified domains younger than 2 days', () => {
 			const props = {
 				translate,

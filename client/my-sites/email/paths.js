@@ -1,15 +1,17 @@
-/**
- * External dependencies
- */
 import { stringify } from 'qs';
-
-/**
- * Internal dependencies
- */
 import { isUnderDomainManagementAll, domainManagementRoot } from 'calypso/my-sites/domains/paths';
 
 export const emailManagementPrefix = '/email';
 export const emailManagementAllSitesPrefix = '/email/all';
+
+/**
+ * Builds a URL query string from an object. Handles null values.
+ *
+ * @param {Object} parameters - optional path prefix
+ * @returns {string} the corresponding query string
+ */
+const buildQueryString = ( parameters = {} ) =>
+	parameters ? stringify( parameters, { addQueryPrefix: true, skipNulls: true } ) : '';
 
 function resolveRootPath( relativeTo ) {
 	if ( relativeTo === emailManagementAllSitesPrefix || relativeTo === domainManagementRoot() ) {
@@ -24,6 +26,26 @@ function resolveRootPath( relativeTo ) {
 }
 
 /**
+ * Retrieves the url of the Add New Mailboxes page for email forwarding:
+ *
+ *   https://wordpress.com/email/:domainName/forwarding/add/:siteName
+ *
+ * @param {string} siteSlug - slug of the current site
+ * @param {string} domainName - domain name to add forwarding for
+ * @param {string} relativeTo - optional path prefix
+ * @param {string} source - optional source
+ * @returns {string} the corresponding url
+ */
+export function emailManagementAddEmailForwards(
+	siteSlug,
+	domainName,
+	relativeTo = null,
+	source = null
+) {
+	return emailManagementEdit( siteSlug, domainName, 'forwarding/add', relativeTo, { source } );
+}
+
+/**
  * Retrieves the url of the Add New Mailboxes page either for G Suite or Google Workspace:
  *
  *   https://wordpress.com/email/:domainName/google-workspace/add-users/:siteName
@@ -35,16 +57,20 @@ function resolveRootPath( relativeTo ) {
  * @param {string} domainName - domain name of the account to add users to
  * @param {string} productType - type of account
  * @param {string} relativeTo - optional path prefix
+ * @param {string} source - optional source
  * @returns {string} the corresponding url
  */
 export function emailManagementAddGSuiteUsers(
 	siteName,
 	domainName,
 	productType,
-	relativeTo = null
+	relativeTo = null,
+	source = null
 ) {
 	if ( domainName ) {
-		return emailManagementEdit( siteName, domainName, productType + '/add-users', relativeTo );
+		return emailManagementEdit( siteName, domainName, productType + '/add-users', relativeTo, {
+			source,
+		} );
 	}
 
 	return '/email/' + productType + '/add-users/' + siteName;
@@ -74,10 +100,65 @@ export function emailManagementManageTitanMailboxes(
 	);
 }
 
-export function emailManagementNewTitanAccount( siteName, domainName, relativeTo = null ) {
-	return emailManagementEdit( siteName, domainName, 'titan/new', relativeTo );
+export function emailManagementNewTitanAccount(
+	siteName,
+	domainName,
+	relativeTo = null,
+	source = null
+) {
+	return emailManagementEdit( siteName, domainName, 'titan/new', relativeTo, { source } );
 }
 
+/**
+ * Retrieves the url to set up Titan mailboxes
+ *
+ *   https://wordpress.com/email/:domainName/forwarding/add/:siteName
+ *
+ * @param {string} siteName - slug of the current site
+ * @param {string} domainName - domain name to add forwarding for
+ * @param {string | null} relativeTo - optional path prefix
+ * @param {string | null} source - optional source
+ * @returns {string} the corresponding url
+ */
+export function emailManagementTitanSetUpMailbox(
+	siteName,
+	domainName,
+	relativeTo = null,
+	source = null
+) {
+	return emailManagementEdit( siteName, domainName, 'titan/set-up-mailbox', relativeTo, {
+		source,
+	} );
+}
+
+/**
+ * @param {string|undefined|null} siteName
+ * @param {string|undefined|null} domainName
+ * @param {string|null} emailAddress
+ * @param {string|null} relativeTo
+ * @returns {string}
+ */
+export function emailManagementTitanSetUpThankYou(
+	siteName,
+	domainName,
+	emailAddress = null,
+	relativeTo = null
+) {
+	return emailManagementEdit(
+		siteName,
+		domainName,
+		'titan/set-up-mailbox/thank-you',
+		relativeTo,
+		emailAddress ? { email: emailAddress } : {}
+	);
+}
+
+/**
+ * @param {string|undefined|null} siteName
+ * @param {string|undefined|null} domainName
+ * @param {string|null} [relativeTo]
+ * @param {Object.<string, string>} [urlParameters]
+ */
 export function emailManagementTitanControlPanelRedirect(
 	siteName,
 	domainName,
@@ -93,13 +174,19 @@ export function emailManagementTitanControlPanelRedirect(
 	);
 }
 
-export function emailManagement( siteName, domainName, relativeTo = null ) {
+/**
+ * @param {string|undefined|null} siteName
+ * @param {string|undefined|null} domainName
+ * @param {string|null} [relativeTo]
+ * @param {Object.<string, string>} [urlParameters]
+ */
+export function emailManagement( siteName, domainName, relativeTo = null, urlParameters = {} ) {
 	let path;
 
 	if ( domainName ) {
-		path = emailManagementEdit( siteName, domainName, 'manage', relativeTo );
+		path = emailManagementEdit( siteName, domainName, 'manage', relativeTo, urlParameters );
 	} else if ( siteName ) {
-		path = '/email/' + siteName;
+		path = '/email/' + siteName + buildQueryString( urlParameters );
 	} else {
 		path = '/email';
 	}
@@ -118,11 +205,51 @@ export function emailManagementForwarding( siteName, domainName, relativeTo = nu
  *
  * @param {string} siteName - slug of the current site
  * @param {string} domainName - domain name of the account to add users to
- * @param {string} relativeTo - optional path prefix
+ * @param {string|undefined|null} relativeTo - optional path prefix
+ * @param {string|undefined|null} source - optional source
+ * @param {string|undefined|null} emailProviderSlug - optional email provider slug whose form should be expanded on page load
+ * @param {string|undefined|null} intervalLength - optional billing interval length (monthly or annually) to show on page load
  * @returns {string} the corresponding url
  */
-export function emailManagementPurchaseNewEmailAccount( siteName, domainName, relativeTo = null ) {
-	return emailManagementEdit( siteName, domainName, 'purchase', relativeTo );
+export function emailManagementPurchaseNewEmailAccount(
+	siteName,
+	domainName,
+	relativeTo = null,
+	source = null,
+	emailProviderSlug = null,
+	intervalLength = null
+) {
+	return emailManagementEdit( siteName, domainName, 'purchase', relativeTo, {
+		interval: intervalLength,
+		provider: emailProviderSlug,
+		source,
+	} );
+}
+
+/**
+ * Retrieves the url of the Email In-Depth Comparison page:
+ *
+ *   https://wordpress.com/email/:domainName/in-depth-comparison/:siteName
+ *
+ * @param {string} siteName - slug of the current site
+ * @param {string} domainName - domain name of the account to add users to
+ * @param {string|undefined|null} relativeTo - optional path prefix
+ * @param {string|undefined|null} source - optional source
+ * @param {string|undefined|null} intervalLength - optional billing interval length (monthly or annually)
+ * @returns {string} the corresponding url
+ */
+export function emailManagementInDepthComparison(
+	siteName,
+	domainName,
+	relativeTo = null,
+	source = null,
+	intervalLength = null
+) {
+	return emailManagementEdit( siteName, domainName, 'compare', relativeTo, {
+		interval: intervalLength,
+		referrer: relativeTo,
+		source,
+	} );
 }
 
 export function emailManagementEdit(
@@ -141,10 +268,6 @@ export function emailManagementEdit(
 		domainName = encodeURIComponent( encodeURIComponent( domainName ) );
 	}
 
-	const urlParameterString = urlParameters
-		? stringify( urlParameters, { addQueryPrefix: true } )
-		: '';
-
 	return (
 		resolveRootPath( relativeTo ) +
 		'/' +
@@ -153,8 +276,23 @@ export function emailManagementEdit(
 		slug +
 		'/' +
 		siteName +
-		urlParameterString
+		buildQueryString( urlParameters )
 	);
+}
+
+/**
+ * Retrieves the url of the Inbox page:
+ *
+ *   https://wordpress.com/inbox/:siteName
+ *
+ * @param {string|null|undefined} siteName - slug of the current site
+ * @returns {string} the corresponding url
+ */
+export function emailManagementInbox( siteName = null ) {
+	if ( siteName ) {
+		return `/inbox/${ siteName }`;
+	}
+	return `/inbox`;
 }
 
 export function isUnderEmailManagementAll( path ) {

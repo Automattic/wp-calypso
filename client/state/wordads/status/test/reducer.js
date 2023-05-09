@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import { items } from '../reducer';
 import { WORDADS_STATUS_RECEIVE } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
+import { items } from '../reducer';
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {

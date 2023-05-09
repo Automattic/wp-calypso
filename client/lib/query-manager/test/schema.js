@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import queryManagerSchema, { withItemsSchema } from '../schema';
 
 describe( 'queryManagerSchema', () => {

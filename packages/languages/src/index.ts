@@ -1,9 +1,7 @@
-/**
- * Internal dependencies
- */
 import data from './languages-meta.json';
+import type { LanguageSlug } from './language-slug';
 
-type LanguageSlug = string;
+export type { LanguageSlug };
 type WPLocale = string;
 
 type BaseLanguage = {
@@ -14,12 +12,13 @@ type BaseLanguage = {
 	territories: string[];
 	value: number;
 	wpLocale: WPLocale | '';
+	isTranslatedIncompletely?: boolean;
 };
 
-type SubLanguage = BaseLanguage & { parentLangSlug: string };
+export type SubLanguage = BaseLanguage & { parentLangSlug: string };
 
 export type Language = BaseLanguage | SubLanguage;
 
-const languages: Language[] = Object.values( data );
+const languages = Object.values( data ) as Language[];
 
 export default languages;

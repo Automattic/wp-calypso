@@ -1,18 +1,12 @@
-/**
- * External dependencies
- */
 // This is required to fix the "regeneratorRuntime is not defined" error
 import '@automattic/calypso-polyfills';
 
-/**
- * Internal dependencies
- */
-import * as Timing from '../timing';
-import * as Requests from '../requests';
-import type { Config, ExperimentAssignment } from '../../types';
-import { delayedValue, ONE_DELAY, validExperimentAssignment } from '../test-common';
 import * as ExperimentAssignments from '../experiment-assignments';
 import localStorage from '../local-storage';
+import * as Requests from '../requests';
+import { delayedValue, ONE_DELAY, validExperimentAssignment } from '../test-common';
+import * as Timing from '../timing';
+import type { Config, ExperimentAssignment } from '../../types';
 
 const spiedMonotonicNow = jest.spyOn( Timing, 'monotonicNow' );
 
@@ -140,8 +134,8 @@ describe( 'fetchExperimentAssignment', () => {
 					ttl: 60,
 					variations: {
 						[ validExperimentAssignment.experimentName ]: validExperimentAssignment.variationName,
-						[ validExperimentAssignment.experimentName +
-						'_repeat' ]: validExperimentAssignment.variationName,
+						[ validExperimentAssignment.experimentName + '_repeat' ]:
+							validExperimentAssignment.variationName,
 					},
 				},
 				ONE_DELAY

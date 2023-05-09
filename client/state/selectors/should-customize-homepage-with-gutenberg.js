@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getSiteFrontPageType from 'calypso/state/sites/selectors/get-site-front-page-type';
 import { getActiveTheme, isThemeGutenbergFirst } from '../themes/selectors';
 
@@ -9,7 +6,7 @@ import { getActiveTheme, isThemeGutenbergFirst } from '../themes/selectors';
  *
  * Used to open the block editor instead of the customizer for some themes.
  *
- * @param {object} state  The global state object.
+ * @param {Object} state  The global state object.
  * @param {string} siteId The ID of the selected site.
  * @returns {boolean} True if Gutenberg should be opened.
  */

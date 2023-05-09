@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import config from '@automattic/calypso-config';
 
 const wordpress = {
@@ -25,8 +22,7 @@ const linkedin = {
 };
 
 const tumblr = {
-	url:
-		'https://www.tumblr.com/widgets/share/tool?canonicalUrl=<URL>&title=<TITLE>&caption=<DESCRIPTION>',
+	url: 'https://www.tumblr.com/widgets/share/tool?canonicalUrl=<URL>&title=<TITLE>&caption=<DESCRIPTION>',
 };
 
 const pinterest = {

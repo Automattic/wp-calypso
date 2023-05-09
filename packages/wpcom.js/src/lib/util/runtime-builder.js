@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
 
 /**
@@ -11,7 +8,7 @@ const debug = debugFactory( 'wpcom:runtime' );
 /**
  * Build a generic method
  *
- * @param {object} methodParams - method methodParams
+ * @param {Object} methodParams - method methodParams
  * @param {Function} buildPath - function called to build method path
  * @returns {string} method path
  */

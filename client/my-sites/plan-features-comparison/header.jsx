@@ -1,18 +1,12 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import classNames from 'classnames';
-import { getCurrencyObject } from '@automattic/format-currency';
-
-/**
- * Internal Dependencies
- **/
-import { localize } from 'i18n-calypso';
-import PlanPrice from 'calypso/my-sites/plan-price';
-import PlanPill from 'calypso/components/plans/plan-pill';
 import { getPlans, getPlanClass } from '@automattic/calypso-products';
+import { getCurrencyObject } from '@automattic/format-currency';
+import { NEWSLETTER_FLOW, LINK_IN_BIO_FLOW, LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import PlanPill from 'calypso/components/plans/plan-pill';
+import PlanPrice from 'calypso/my-sites/plan-price';
 
 const PLANS_LIST = getPlans();
 
@@ -21,8 +15,22 @@ export class PlanFeaturesComparisonHeader extends Component {
 		return this.renderPlansHeaderNoTabs();
 	}
 
+	getPlanPillText() {
+		const { flow, translate } = this.props;
+
+		switch ( flow ) {
+			case NEWSLETTER_FLOW:
+				return translate( 'Best for Newsletters' );
+			case LINK_IN_BIO_FLOW:
+			case LINK_IN_BIO_TLD_FLOW:
+				return translate( 'Best for Link in Bio' );
+			default:
+				return translate( 'Popular' );
+		}
+	}
+
 	renderPlansHeaderNoTabs() {
-		const { planType, popular, selectedPlan, title, translate } = this.props;
+		const { planType, popular, selectedPlan, title } = this.props;
 
 		const headerClasses = classNames(
 			'plan-features-comparison__header',
@@ -33,7 +41,7 @@ export class PlanFeaturesComparisonHeader extends Component {
 			<span>
 				<div>
 					{ popular && ! selectedPlan && (
-						<PlanPill isInSignup={ true }>{ translate( 'Popular' ) }</PlanPill>
+						<PlanPill isInSignup={ true }>{ this.getPlanPillText() }</PlanPill>
 					) }
 				</div>
 				<header className={ headerClasses }>
@@ -42,8 +50,8 @@ export class PlanFeaturesComparisonHeader extends Component {
 				<div className="plan-features-comparison__pricing">
 					{ this.renderPriceGroup() }
 					{ this.getBillingTimeframe() }
-					{ this.getAnnualDiscount() }
 				</div>
+				{ this.getAnnualDiscount() }
 			</span>
 		);
 	}
@@ -56,10 +64,11 @@ export class PlanFeaturesComparisonHeader extends Component {
 			translate,
 			annualPricePerMonth,
 			isMonthlyPlan,
+			planType,
 		} = this.props;
 
 		if ( isMonthlyPlan && annualPricePerMonth < rawPrice ) {
-			const discountRate = Math.round( ( 100 * ( rawPrice - annualPricePerMonth ) ) / rawPrice );
+			const discountRate = Math.floor( ( 100 * ( rawPrice - annualPricePerMonth ) ) / rawPrice );
 			return translate( `Save %(discountRate)s%% by paying annually`, { args: { discountRate } } );
 		}
 
@@ -67,30 +76,51 @@ export class PlanFeaturesComparisonHeader extends Component {
 			const annualPriceObj = getCurrencyObject( rawPriceAnnual, currencyCode );
 			const annualPriceText = `${ annualPriceObj.symbol }${ annualPriceObj.integer }`;
 
-			return translate( 'billed as %(price)s annually', {
-				args: { price: annualPriceText },
-			} );
+			return [
+				'personal-bundle-2y',
+				'value_bundle-2y',
+				'business-bundle-2y',
+				'ecommerce-bundle-2y',
+			].includes( planType )
+				? translate( 'billed as %(price)s biannually', {
+						args: { price: annualPriceText },
+				  } )
+				: translate( 'billed as %(price)s annually', {
+						args: { price: annualPriceText },
+				  } );
 		}
 
 		return null;
 	}
 
 	getAnnualDiscount() {
-		const { isMonthlyPlan, rawPriceForMonthlyPlan, annualPricePerMonth, translate } = this.props;
+		const { isMonthlyPlan, rawPriceForMonthlyPlan, annualPricePerMonth, translate, planType } =
+			this.props;
 
 		if ( ! isMonthlyPlan ) {
 			const isLoading = typeof rawPriceForMonthlyPlan !== 'number';
 
-			const discountRate = Math.round(
+			const discountRate = Math.floor(
 				( 100 * ( rawPriceForMonthlyPlan - annualPricePerMonth ) ) / rawPriceForMonthlyPlan
 			);
-			const annualDiscountText = translate( `You're saving %(discountRate)s%% by paying annually`, {
-				args: { discountRate },
-			} );
+
+			const annualDiscountText = [
+				'personal-bundle-2y',
+				'value_bundle-2y',
+				'business-bundle-2y',
+				'ecommerce-bundle-2y',
+			].includes( planType )
+				? translate( `You're saving %(discountRate)s%% by paying biannually`, {
+						args: { discountRate },
+				  } )
+				: translate( `You're saving %(discountRate)s%% by paying annually`, {
+						args: { discountRate },
+				  } );
 
 			return (
 				<div
-					className={ classNames( 'plan-features-comparison__header-annual-discount', {
+					className={ classNames( {
+						'plan-features-comparison__header-annual-discount': true,
 						'plan-features-comparison__header-annual-discount-is-loading': isLoading,
 					} ) }
 				>
@@ -105,7 +135,7 @@ export class PlanFeaturesComparisonHeader extends Component {
 		const perMonthDescription = this.getPerMonthDescription() || billingTimeFrame;
 
 		return (
-			<div className={ 'plan-features-comparison__header-billing-info' }>
+			<div className="plan-features-comparison__header-billing-info">
 				<span>{ perMonthDescription }</span>
 			</div>
 		);
@@ -146,7 +176,7 @@ export class PlanFeaturesComparisonHeader extends Component {
 }
 
 PlanFeaturesComparisonHeader.propTypes = {
-	billingTimeFrame: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ).isRequired,
+	billingTimeFrame: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ),
 	currencyCode: PropTypes.string,
 	discountPrice: PropTypes.number,
 	planType: PropTypes.oneOf( Object.keys( PLANS_LIST ) ).isRequired,
@@ -157,6 +187,7 @@ PlanFeaturesComparisonHeader.propTypes = {
 
 	// For Monthly Pricing test
 	annualPricePerMonth: PropTypes.number,
+	flow: PropTypes.string,
 };
 
 PlanFeaturesComparisonHeader.defaultProps = {

@@ -1,13 +1,10 @@
-/**
- * Internal Dependencies
- */
-import { combineReducers } from 'calypso/state/utils';
 import {
 	READER_RELATED_POSTS_RECEIVE,
 	READER_RELATED_POSTS_REQUEST,
 	READER_RELATED_POSTS_REQUEST_SUCCESS,
 	READER_RELATED_POSTS_REQUEST_FAILURE,
 } from 'calypso/state/reader/action-types';
+import { combineReducers } from 'calypso/state/utils';
 import { key } from './utils';
 
 function setStateForKey( state, action, val ) {

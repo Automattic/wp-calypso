@@ -1,12 +1,12 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
 import find from 'lodash/find';
-
-/**
- * Internal dependencies
- */
-import { Partner, PartnerKey, PartnerPortalStore } from 'calypso/state/partner-portal/types';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import type {
+	APIError,
+	Partner,
+	PartnerKey,
+	PartnerPortalStore,
+} from 'calypso/state/partner-portal/types';
 // Required for modular state.
 import 'calypso/state/partner-portal/init';
 
@@ -39,10 +39,44 @@ export function isFetchingPartner( state: PartnerPortalStore ): boolean {
 	return state.partnerPortal.partner.isFetching;
 }
 
-export function getCurrentPartner( state: PartnerPortalStore ): Partner | null {
-	return state.partnerPortal.partner.current;
+export function getIsPartnerOAuthTokenLoaded( state: PartnerPortalStore ): boolean {
+	return state.partnerPortal.partner.isPartnerOAuthTokenLoaded;
 }
 
-export function getPartnerRequestError( state: PartnerPortalStore ): string {
+export function getCurrentPartner( state: PartnerPortalStore ): Partner | null {
+	return state.partnerPortal?.partner.current || null;
+}
+
+export function getPartnerRequestError( state: PartnerPortalStore ): APIError | null {
 	return state.partnerPortal.partner.error;
+}
+
+export function hasJetpackPartnerAccess( state: PartnerPortalStore ): boolean {
+	const currentUser = getCurrentUser( state );
+	return currentUser?.has_jetpack_partner_access ?? false;
+}
+
+export function isAgencyUser( state: PartnerPortalStore ): boolean {
+	const currentUser = getCurrentUser( state );
+	return (
+		( currentUser?.jetpack_partner_types?.includes( 'agency' ) ||
+			currentUser?.jetpack_partner_types?.includes( 'agency_beta' ) ) ??
+		false
+	);
+}
+
+export function showAgencyDashboard( state: PartnerPortalStore ): boolean {
+	return config.isEnabled( 'jetpack/agency-dashboard' ) && isAgencyUser( state );
+}
+
+export function hasValidPaymentMethod( state: PartnerPortalStore ): boolean {
+	const partner = getCurrentPartner( state );
+	return partner?.has_valid_payment_method || false;
+}
+
+export function doesPartnerRequireAPaymentMethod( state: PartnerPortalStore ): boolean {
+	const isAgency = isAgencyUser( state );
+	const hasPaymentMethod = hasValidPaymentMethod( state );
+
+	return isAgency && ! hasPaymentMethod;
 }

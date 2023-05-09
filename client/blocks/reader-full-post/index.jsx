@@ -1,117 +1,111 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
-import { translate } from 'i18n-calypso';
-import classNames from 'classnames';
-import { get, startsWith, pickBy } from 'lodash';
 import config from '@automattic/calypso-config';
-
-/**
- * Internal dependencies
- */
-import AutoDirection from 'calypso/components/auto-direction';
-import ReaderMain from 'calypso/reader/components/reader-main';
-import EmbedContainer from 'calypso/components/embed-container';
-import PostExcerpt from 'calypso/components/post-excerpt';
-import { markPostSeen } from 'calypso/state/reader/posts/actions';
-import ReaderFullPostHeader from './header';
+import { Gridicon } from '@automattic/components';
+import classNames from 'classnames';
+import { translate } from 'i18n-calypso';
+import { get, startsWith, pickBy } from 'lodash';
+import PropTypes from 'prop-types';
+import { createRef, Component } from 'react';
+import { connect } from 'react-redux';
 import AuthorCompactProfile from 'calypso/blocks/author-compact-profile';
-import LikeButton from 'calypso/reader/like-button';
-import { isDiscoverPost, isDiscoverSitePick } from 'calypso/reader/discover/helper';
-import DiscoverSiteAttribution from 'calypso/reader/discover/site-attribution';
+import CommentButton from 'calypso/blocks/comment-button';
+import Comments from 'calypso/blocks/comments';
+import { COMMENTS_FILTER_ALL } from 'calypso/blocks/comments/comments-filters';
+import { shouldShowComments } from 'calypso/blocks/comments/helper';
 import DailyPostButton from 'calypso/blocks/daily-post-button';
 import { isDailyPostChallengeOrPrompt } from 'calypso/blocks/daily-post-button/helper';
+import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
+import WPiFrameResize from 'calypso/blocks/reader-full-post/wp-iframe-resize';
+import ReaderPostActions from 'calypso/blocks/reader-post-actions';
+import AutoDirection from 'calypso/components/auto-direction';
+import BackButton from 'calypso/components/back-button';
+import DocumentHead from 'calypso/components/data/document-head';
+import QueryPostLikes from 'calypso/components/data/query-post-likes';
+import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
+import QueryReaderPost from 'calypso/components/data/query-reader-post';
+import QueryReaderSite from 'calypso/components/data/query-reader-site';
+import EmbedContainer from 'calypso/components/embed-container';
+import ExternalLink from 'calypso/components/external-link';
+import PostExcerpt from 'calypso/components/post-excerpt';
+import {
+	RelatedPostsFromSameSite,
+	RelatedPostsFromOtherSites,
+} from 'calypso/components/related-posts';
+import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
+import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
+import scrollTo from 'calypso/lib/scroll-to';
+import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
+import ReaderMain from 'calypso/reader/components/reader-main';
+import { isDiscoverPost, isDiscoverSitePick } from 'calypso/reader/discover/helper';
+import DiscoverSiteAttribution from 'calypso/reader/discover/site-attribution';
+import { READER_FULL_POST } from 'calypso/reader/follow-sources';
+import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
+import readerContentWidth from 'calypso/reader/lib/content-width';
+import LikeButton from 'calypso/reader/like-button';
 import { shouldShowLikes } from 'calypso/reader/like-helper';
-import { shouldShowComments } from 'calypso/blocks/comments/helper';
-import CommentButton from 'calypso/blocks/comment-button';
+import PostExcerptLink from 'calypso/reader/post-excerpt-link';
+import { keyForPost } from 'calypso/reader/post-key';
+import { getStreamUrlFromPost } from 'calypso/reader/route';
 import {
 	recordAction,
 	recordGaEvent,
 	recordTrackForPost,
 	recordPermalinkClick,
 } from 'calypso/reader/stats';
-import Comments from 'calypso/blocks/comments';
-import scrollTo from 'calypso/lib/scroll-to';
-import PostExcerptLink from 'calypso/reader/post-excerpt-link';
-import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
-import KeyboardShortcuts from 'calypso/lib/keyboard-shortcuts';
-import ReaderPostActions from 'calypso/blocks/reader-post-actions';
-import {
-	RelatedPostsFromSameSite,
-	RelatedPostsFromOtherSites,
-} from 'calypso/components/related-posts';
-import { getStreamUrlFromPost } from 'calypso/reader/route';
-import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
-import FeaturedImage from 'calypso/blocks/reader-full-post/featured-image';
-import { getFeed } from 'calypso/state/reader/feeds/selectors';
-import { getSite } from 'calypso/state/reader/sites/selectors';
-import QueryReaderSite from 'calypso/components/data/query-reader-site';
-import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
-import QueryReaderPost from 'calypso/components/data/query-reader-post';
-import ExternalLink from 'calypso/components/external-link';
-import DocumentHead from 'calypso/components/data/document-head';
-import ReaderFullPostUnavailable from './unavailable';
-import BackButton from 'calypso/components/back-button';
-import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
-import ReaderFullPostContentPlaceholder from './placeholders/content';
-import { keyForPost } from 'calypso/reader/post-key';
 import { showSelectedPost } from 'calypso/reader/utils';
-import Emojify from 'calypso/components/emojify';
-import { COMMENTS_FILTER_ALL } from 'calypso/blocks/comments/comments-filters';
-import { READER_FULL_POST } from 'calypso/reader/follow-sources';
-import { getPostByKey } from 'calypso/state/reader/posts/selectors';
+import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
-import QueryPostLikes from 'calypso/components/data/query-post-likes';
-import getCurrentStream from 'calypso/state/selectors/get-reader-current-stream';
+import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import {
-	setViewingFullPostKey,
-	unsetViewingFullPostKey,
-} from 'calypso/state/reader/viewing/actions';
-import { getNextItem, getPreviousItem } from 'calypso/state/reader/streams/selectors';
+	getReaderFollowForFeed,
+	hasReaderFollowOrganization,
+} from 'calypso/state/reader/follows/selectors';
+import { markPostSeen } from 'calypso/state/reader/posts/actions';
+import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import {
 	requestMarkAsSeen,
 	requestMarkAsUnseen,
 	requestMarkAsSeenBlog,
 	requestMarkAsUnseenBlog,
 } from 'calypso/state/reader/seen-posts/actions';
-import Gridicon from 'calypso/components/gridicon';
-import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
-import { getReaderTeams } from 'calypso/state/teams/selectors';
-import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
-import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import { getSite } from 'calypso/state/reader/sites/selectors';
+import { getNextItem, getPreviousItem } from 'calypso/state/reader/streams/selectors';
+import {
+	setViewingFullPostKey,
+	unsetViewingFullPostKey,
+} from 'calypso/state/reader/viewing/actions';
+import getCurrentStream from 'calypso/state/selectors/get-reader-current-stream';
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
+import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import { disableAppBanner, enableAppBanner } from 'calypso/state/ui/actions';
+import ReaderFullPostHeader from './header';
+import ReaderFullPostContentPlaceholder from './placeholders/content';
+import ReaderFullPostUnavailable from './unavailable';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-export class FullPostView extends React.Component {
+const inputTags = [ 'INPUT', 'SELECT', 'TEXTAREA' ];
+
+export class FullPostView extends Component {
 	static propTypes = {
 		post: PropTypes.object,
 		onClose: PropTypes.func.isRequired,
 		referralPost: PropTypes.object,
 		referralStream: PropTypes.string,
 		isWPForTeamsItem: PropTypes.bool,
-		teams: PropTypes.array,
+		hasOrganization: PropTypes.bool,
 	};
 
 	hasScrolledToCommentAnchor = false;
-	commentsWrapper = React.createRef();
+	commentsWrapper = createRef();
+	postContentWrapper = createRef();
 
 	componentDidMount() {
-		KeyboardShortcuts.on( 'close-full-post', this.handleBack );
-		KeyboardShortcuts.on( 'like-selection', this.handleLike );
-		KeyboardShortcuts.on( 'move-selection-down', this.goToNextPost );
-		KeyboardShortcuts.on( 'move-selection-up', this.goToPreviousPost );
-
 		// Send page view
 		this.hasSentPageView = false;
 		this.hasLoaded = false;
 		this.attemptToSendPageView();
+		this.maybeDisableAppBanner();
 
 		this.checkForCommentAnchor();
 
@@ -119,6 +113,12 @@ export class FullPostView extends React.Component {
 		if ( this.hasCommentAnchor && ! this.hasScrolledToCommentAnchor ) {
 			this.scrollToComments();
 		}
+
+		// Adds WPiFrameResize listener for setting the corect height in embedded iFrames.
+		this.stopResize =
+			this.postContentWrapper.current && WPiFrameResize( this.postContentWrapper.current );
+
+		document.addEventListener( 'keydown', this.handleKeydown, true );
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -131,6 +131,7 @@ export class FullPostView extends React.Component {
 			this.hasSentPageView = false;
 			this.hasLoaded = false;
 			this.attemptToSendPageView();
+			this.maybeDisableAppBanner();
 		}
 
 		if ( this.props.shouldShowComments && ! prevProps.shouldShowComments ) {
@@ -143,15 +144,56 @@ export class FullPostView extends React.Component {
 		if ( this.hasCommentAnchor && ! this.hasScrolledToCommentAnchor ) {
 			this.scrollToComments();
 		}
+
+		// Check if we just finished loading the post and enable the app banner when there's no error
+		const finishedLoading = prevProps.post?._state === 'pending' && ! this.props.post?._state;
+		const isError = this.props.post?.is_error;
+		if ( finishedLoading && ! isError ) {
+			this.props.enableAppBanner();
+		}
 	}
 
 	componentWillUnmount() {
 		this.props.unsetViewingFullPostKey( keyForPost( this.props.post ) );
-		KeyboardShortcuts.off( 'close-full-post', this.handleBack );
-		KeyboardShortcuts.off( 'like-selection', this.handleLike );
-		KeyboardShortcuts.off( 'move-selection-down', this.goToNextPost );
-		KeyboardShortcuts.off( 'move-selection-up', this.goToPreviousPost );
+		// Remove WPiFrameResize listener.
+		this.stopResize?.();
+		this.props.enableAppBanner(); // reset the app banner
+
+		document.removeEventListener( 'keydown', this.handleKeydown, true );
 	}
+
+	handleKeydown = ( event ) => {
+		if ( this.props.notificationsOpen ) {
+			return;
+		}
+
+		const tagName = ( event.target || event.srcElement ).tagName;
+		if ( inputTags.includes( tagName ) || event.target.isContentEditable ) {
+			return;
+		}
+
+		switch ( event.keyCode ) {
+			// Close full post - Esc
+			case 27: {
+				return this.handleBack( event );
+			}
+
+			// Like post - l
+			case 76: {
+				return this.handleLike();
+			}
+
+			// Previous post - j
+			case 74: {
+				return this.goToPreviousPost();
+			}
+
+			// Next post - k
+			case 75: {
+				return this.goToNextPost();
+			}
+		}
+	};
 
 	handleBack = ( event ) => {
 		event.preventDefault();
@@ -261,7 +303,7 @@ export class FullPostView extends React.Component {
 	};
 
 	attemptToSendPageView = () => {
-		const { post, site, teams, isWPForTeamsItem } = this.props;
+		const { post, site, isWPForTeamsItem, hasOrganization } = this.props;
 
 		if (
 			post &&
@@ -279,7 +321,10 @@ export class FullPostView extends React.Component {
 		}
 
 		if ( ! this.hasLoaded && post && post._state !== 'pending' ) {
-			if ( isEligibleForUnseen( { teams, isWPForTeamsItem } ) && canBeMarkedAsSeen( { post } ) ) {
+			if (
+				isEligibleForUnseen( { isWPForTeamsItem, hasOrganization } ) &&
+				canBeMarkedAsSeen( { post } )
+			) {
 				this.markAsSeen();
 			}
 
@@ -295,15 +340,26 @@ export class FullPostView extends React.Component {
 		}
 	};
 
+	maybeDisableAppBanner = () => {
+		const { post, site } = this.props;
+
+		// disable the banner while the post is loading and when it failed to load
+		const isLoading = post?._state === 'pending';
+		const isError = post?.is_error || site?.is_error;
+		if ( isLoading || isError ) {
+			this.props.disableAppBanner();
+		}
+	};
+
 	goToNextPost = () => {
 		if ( this.props.nextPost ) {
-			showSelectedPost( { postKey: this.props.nextPost } );
+			this.props.showSelectedPost( { postKey: this.props.nextPost } );
 		}
 	};
 
 	goToPreviousPost = () => {
 		if ( this.props.previousPost ) {
-			showSelectedPost( { postKey: this.props.previousPost } );
+			this.props.showSelectedPost( { postKey: this.props.previousPost } );
 		}
 	};
 
@@ -379,7 +435,7 @@ export class FullPostView extends React.Component {
 			blogId,
 			feedId,
 			postId,
-			teams,
+			hasOrganization,
 			isWPForTeamsItem,
 		} = this.props;
 
@@ -413,6 +469,9 @@ export class FullPostView extends React.Component {
 		const startingCommentId = this.getCommentIdFromUrl();
 		const commentCount = get( post, 'discussion.comment_count' );
 		const postKey = { blogId, feedId, postId };
+		const contentWidth = readerContentWidth();
+
+		const feedIcon = feed ? feed.site_icon ?? get( feed, 'image' ) : null;
 
 		/*eslint-disable react/no-danger */
 		/*eslint-disable react/jsx-no-target-blank */
@@ -430,7 +489,6 @@ export class FullPostView extends React.Component {
 				) }
 				{ referral && ! referralPost && <QueryReaderPost postKey={ referral } /> }
 				{ ! post || ( isLoading && <QueryReaderPost postKey={ postKey } /> ) }
-				<QueryReaderTeams />
 				<BackButton onClick={ this.handleBack } />
 				<div className="reader-full-post__visit-site-container">
 					<ExternalLink
@@ -451,10 +509,10 @@ export class FullPostView extends React.Component {
 							<AuthorCompactProfile
 								author={ post.author }
 								siteIcon={ get( site, 'icon.img' ) }
-								feedIcon={ get( feed, 'image' ) }
+								feedIcon={ feedIcon }
 								siteName={ siteName }
 								siteUrl={ post.site_URL }
-								feedUrl={ get( feed, 'feed_URL' ) }
+								feedUrl={ get( post, 'feed_URL' ) }
 								followCount={ site && site.subscribers_count }
 								feedId={ +post.feed_ID }
 								siteId={ +post.site_ID }
@@ -468,6 +526,7 @@ export class FullPostView extends React.Component {
 									commentCount={ commentCount }
 									onClick={ this.handleCommentClick }
 									tagName="div"
+									icon={ ReaderCommentIcon( { iconSize: 20 } ) }
 								/>
 							) }
 
@@ -477,110 +536,115 @@ export class FullPostView extends React.Component {
 									postId={ +post.ID }
 									fullPost={ true }
 									tagName="div"
-									likeSource={ 'reader' }
+									likeSource="reader"
 								/>
 							) }
 
-							{ isEligibleForUnseen( { teams, isWPForTeamsItem } ) &&
+							{ isEligibleForUnseen( { isWPForTeamsItem, hasOrganization } ) &&
 								canBeMarkedAsSeen( { post } ) &&
 								this.renderMarkAsSenButton() }
 						</div>
 					</div>
-					<Emojify>
-						<article className="reader-full-post__story">
-							<ReaderFullPostHeader post={ post } referralPost={ referralPost } />
+					<article className="reader-full-post__story">
+						<ReaderFullPostHeader post={ post } referralPost={ referralPost } />
 
-							{ post.featured_image && ! isFeaturedImageInContent( post ) && (
-								<FeaturedImage src={ post.featured_image } />
-							) }
-							{ isLoading && <ReaderFullPostContentPlaceholder /> }
-							{ post.use_excerpt ? (
-								<PostExcerpt content={ post.better_excerpt ? post.better_excerpt : post.excerpt } />
-							) : (
-								<EmbedContainer>
-									<AutoDirection>
-										<div
-											className="reader-full-post__story-content"
-											dangerouslySetInnerHTML={ { __html: post.content } }
-										/>
-									</AutoDirection>
-								</EmbedContainer>
-							) }
-
-							{ post.use_excerpt && ! isDiscoverPost( post ) && (
-								<PostExcerptLink siteName={ siteName } postUrl={ post.URL } />
-							) }
-							{ isDiscoverSitePick( post ) && <DiscoverSiteAttribution post={ post } /> }
-							{ isDailyPostChallengeOrPrompt( post ) && (
-								<DailyPostButton post={ post } site={ site } />
-							) }
-
-							<ReaderPostActions
-								post={ post }
-								site={ site }
-								onCommentClick={ this.handleCommentClick }
-								fullPost={ true }
+						{ post.featured_image && ! isFeaturedImageInContent( post ) && (
+							<ReaderFeaturedImage
+								canonicalMedia={ null }
+								imageUrl={ post.featured_image }
+								href={ getStreamUrlFromPost( post ) }
+								imageWidth={ contentWidth }
+								children={ <div style={ { width: contentWidth } } /> }
 							/>
-
-							{ ! isLoading && <PerformanceTrackerStop /> }
-
-							{ showRelatedPosts && (
-								<RelatedPostsFromSameSite
-									siteId={ +post.site_ID }
-									postId={ +post.ID }
-									title={ translate( 'More in {{ siteLink /}}', {
-										components: {
-											siteLink: (
-												<a
-													href={ getStreamUrlFromPost( post ) }
-													/* eslint-disable wpcalypso/jsx-classname-namespace */
-													className="reader-related-card__link"
-													/* eslint-enable wpcalypso/jsx-classname-namespace */
-												>
-													{ siteName }
-												</a>
-											),
-										},
-									} ) }
-									/* eslint-disable wpcalypso/jsx-classname-namespace */
-									className="is-same-site"
-									/* eslint-enable wpcalypso/jsx-classname-namespace */
-									onPostClick={ this.handleRelatedPostFromSameSiteClicked }
-								/>
-							) }
-
-							<div className="reader-full-post__comments-wrapper" ref={ this.commentsWrapper }>
-								{ shouldShowComments( post ) && (
-									<Comments
-										showNestingReplyArrow={ true }
-										post={ post }
-										initialSize={ startingCommentId ? commentCount : 10 }
-										pageSize={ 25 }
-										startingCommentId={ startingCommentId }
-										commentCount={ commentCount }
-										maxDepth={ 1 }
-										commentsFilterDisplay={ COMMENTS_FILTER_ALL }
-										showConversationFollowButton={ true }
-										followSource={ READER_FULL_POST }
-										shouldPollForNewComments={ config.isEnabled( 'reader/comment-polling' ) }
-										shouldHighlightNew={ true }
+						) }
+						{ isLoading && <ReaderFullPostContentPlaceholder /> }
+						{ post.use_excerpt ? (
+							<PostExcerpt content={ post.better_excerpt ? post.better_excerpt : post.excerpt } />
+						) : (
+							<EmbedContainer>
+								<AutoDirection>
+									<div
+										ref={ this.postContentWrapper }
+										className="reader-full-post__story-content"
+										dangerouslySetInnerHTML={ { __html: post.content } }
 									/>
-								) }
-							</div>
+								</AutoDirection>
+							</EmbedContainer>
+						) }
 
-							{ showRelatedPosts && (
-								<RelatedPostsFromOtherSites
-									siteId={ +post.site_ID }
-									postId={ +post.ID }
-									title={ relatedPostsFromOtherSitesTitle }
-									/* eslint-disable wpcalypso/jsx-classname-namespace */
-									className="is-other-site"
-									/* eslint-enable wpcalypso/jsx-classname-namespace */
-									onPostClick={ this.handleRelatedPostFromOtherSiteClicked }
+						{ post.use_excerpt && ! isDiscoverPost( post ) && (
+							<PostExcerptLink siteName={ siteName } postUrl={ post.URL } />
+						) }
+						{ isDiscoverSitePick( post ) && <DiscoverSiteAttribution post={ post } /> }
+						{ isDailyPostChallengeOrPrompt( post ) && (
+							<DailyPostButton post={ post } site={ site } />
+						) }
+
+						<ReaderPostActions
+							post={ post }
+							site={ site }
+							onCommentClick={ this.handleCommentClick }
+							fullPost={ true }
+						/>
+
+						{ ! isLoading && <PerformanceTrackerStop /> }
+
+						{ showRelatedPosts && (
+							<RelatedPostsFromSameSite
+								siteId={ +post.site_ID }
+								postId={ +post.ID }
+								title={ translate( 'More in {{ siteLink /}}', {
+									components: {
+										siteLink: (
+											<a
+												href={ getStreamUrlFromPost( post ) }
+												/* eslint-disable wpcalypso/jsx-classname-namespace */
+												className="reader-related-card__link"
+												/* eslint-enable wpcalypso/jsx-classname-namespace */
+											>
+												{ siteName }
+											</a>
+										),
+									},
+								} ) }
+								/* eslint-disable wpcalypso/jsx-classname-namespace */
+								className="is-same-site"
+								/* eslint-enable wpcalypso/jsx-classname-namespace */
+								onPostClick={ this.handleRelatedPostFromSameSiteClicked }
+							/>
+						) }
+
+						<div className="reader-full-post__comments-wrapper" ref={ this.commentsWrapper }>
+							{ shouldShowComments( post ) && (
+								<Comments
+									showNestingReplyArrow={ true }
+									post={ post }
+									initialSize={ startingCommentId ? commentCount : 10 }
+									pageSize={ 25 }
+									startingCommentId={ startingCommentId }
+									commentCount={ commentCount }
+									maxDepth={ 1 }
+									commentsFilterDisplay={ COMMENTS_FILTER_ALL }
+									showConversationFollowButton={ true }
+									followSource={ READER_FULL_POST }
+									shouldPollForNewComments={ config.isEnabled( 'reader/comment-polling' ) }
+									shouldHighlightNew={ true }
 								/>
 							) }
-						</article>
-					</Emojify>
+						</div>
+
+						{ showRelatedPosts && (
+							<RelatedPostsFromOtherSites
+								siteId={ +post.site_ID }
+								postId={ +post.ID }
+								title={ relatedPostsFromOtherSitesTitle }
+								/* eslint-disable wpcalypso/jsx-classname-namespace */
+								className="is-other-site"
+								/* eslint-enable wpcalypso/jsx-classname-namespace */
+								onPostClick={ this.handleRelatedPostFromOtherSiteClicked }
+							/>
+						) }
+					</article>
 				</div>
 			</ReaderMain>
 		);
@@ -597,7 +661,8 @@ export default connect(
 
 		const props = {
 			isWPForTeamsItem: isSiteWPForTeams( state, blogId ) || isFeedWPForTeams( state, feedId ),
-			teams: getReaderTeams( state ),
+			notificationsOpen: isNotificationsOpen( state ),
+			hasOrganization: hasReaderFollowOrganization( state, feedId, blogId ),
 			post,
 			liked: isLikedPost( state, siteId, post.ID ),
 			postKey,
@@ -608,6 +673,12 @@ export default connect(
 		}
 		if ( feedId ) {
 			props.feed = getFeed( state, feedId );
+
+			// Add site icon to feed object so have icon for external feeds
+			if ( props.feed ) {
+				const follow = getReaderFollowForFeed( state, parseInt( feedId ) );
+				props.feed.site_icon = follow?.site_icon;
+			}
 		}
 		if ( ownProps.referral ) {
 			props.referralPost = getPostByKey( state, ownProps.referral );
@@ -622,6 +693,8 @@ export default connect(
 		return props;
 	},
 	{
+		disableAppBanner,
+		enableAppBanner,
 		markPostSeen,
 		setViewingFullPostKey,
 		unsetViewingFullPostKey,
@@ -631,5 +704,6 @@ export default connect(
 		requestMarkAsUnseen,
 		requestMarkAsSeenBlog,
 		requestMarkAsUnseenBlog,
+		showSelectedPost,
 	}
 )( FullPostView );

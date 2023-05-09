@@ -1,29 +1,23 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
 import { flowRight } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import DownFlow from './down-flow';
+import { connect } from 'react-redux';
 import redirectNonJetpack from 'calypso/my-sites/site-settings/redirect-non-jetpack';
-import SurveyFlow from './survey-flow';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import DownFlow from './down-flow';
+import SurveyFlow from './survey-flow';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-const DisconnectSite = ( { reason, type, site } ) => {
+const DisconnectSite = ( { backHref, reason, site, type } ) => {
 	const confirmHref = `/settings/disconnect-site/confirm/${ site.slug }`;
 
-	let backHref = '/settings/manage-connection/' + site.slug;
 	if ( reason ) {
+		// If a reason is given then this is being rendered on the confirm screen,
+		// so navigating back should always go to the disconnect-site screen.
 		backHref = '/settings/disconnect-site/' + site.slug;
+	} else {
+		// If a reason wasn't given then navigating back should go to what was given as a prop,
+		// or to /settings/manage-connection/:site by default.
+		backHref = backHref ?? '/settings/manage-connection/' + site.slug;
 	}
 
 	if ( type === 'down' ) {

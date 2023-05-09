@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { getPostRevisionsComparisons } from 'calypso/state/posts/selectors/get-post-revisions-comparisons';
 
 describe( 'getPostRevisionsComparisons', () => {
@@ -26,7 +18,7 @@ describe( 'getPostRevisionsComparisons', () => {
 				12345678,
 				10
 			)
-		).to.eql( {} );
+		).toEqual( {} );
 	} );
 
 	test( 'should return a map of revision id to its valid (sequential) comparisons for `siteId, postId`', () => {
@@ -88,7 +80,7 @@ describe( 'getPostRevisionsComparisons', () => {
 			10
 		);
 
-		expect( selection ).to.eql( {
+		expect( selection ).toEqual( {
 			13: {
 				diff: {
 					post_content: [ { op: 'add', value: 'older content' } ],

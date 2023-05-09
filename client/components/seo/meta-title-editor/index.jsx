@@ -1,19 +1,9 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import TitleFormatEditor from 'calypso/components/title-format-editor';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import TitleFormatEditor from 'calypso/components/title-format-editor';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};
@@ -33,6 +23,7 @@ const getValidTokens = ( translate ) => ( {
 	pageTitle: translate( 'Page Title' ),
 	groupTitle: translate( 'Tag or Category Name' ),
 	date: translate( 'Date' ),
+	archiveTitle: translate( 'Archive Title' ),
 } );
 
 const tokenMap = {
@@ -40,7 +31,7 @@ const tokenMap = {
 	posts: [ 'siteName', 'tagline', 'postTitle' ],
 	pages: [ 'siteName', 'tagline', 'pageTitle' ],
 	groups: [ 'siteName', 'tagline', 'groupTitle' ],
-	archives: [ 'siteName', 'tagline', 'date' ],
+	archives: [ 'siteName', 'tagline', 'date', 'archiveTitle' ],
 };
 
 const getTokensForType = ( type, translate ) => {

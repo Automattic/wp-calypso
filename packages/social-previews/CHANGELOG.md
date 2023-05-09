@@ -1,5 +1,28 @@
 # Changelog
 
+## v2.0.0-beta.0 (2023-05-04)
+
+- Converted the package to TypeScript.
+- Added LinkedIn and Tumblr previews.
+- Updated Google Search, Facebook and Twitter previews to match their latest designs.
+
+## v1.1.5 (2022-08-24)
+
+- Declare an optional peer dependency on `@babel/runtime`, for CommonJS environments. This dependency already existed previously, it just wasn't declared.
+
+## v1.1.4 (2022-05-25)
+
+- Add missing dependency on `@emotion/react`.
+
+## v1.1.3 (2022-05-16)
+
+- Remove unnecessary peer dependencies on `@wordpress/data`, `reakit-utils`, and `redux`.
+- Add missing peer dependency on `react-dom`.
+
+## v1.1.2 (2022-05-13)
+
+- Dependency updates and internal code cleanup.
+
 ## v1.1.1 (2021-04-05)
 
 - Ensure that lengthy text doesn't overflow in the Twitter preview.

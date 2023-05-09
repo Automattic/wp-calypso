@@ -1,18 +1,14 @@
+/**
+ * @jest-environment jsdom
+ */
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );
 jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'PageViewTracker' );
-jest.mock( 'calypso/blocks/upsell-nudge', () => 'UpsellNudge' );
+jest.mock( 'calypso/blocks/upsell-nudge', () => ( {
+	__esModule: true,
+	default: ( { plan } ) => <div data-testid="upsell-nudge-plan">{ plan }</div>,
+} ) );
 
-/**
- * External dependencies
- */
-import { shallow } from 'enzyme';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import { UpgradeToPremiumNudgePure } from '../nudges';
 import {
 	PLAN_FREE,
 	PLAN_BUSINESS_MONTHLY,
@@ -34,6 +30,8 @@ import {
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_2_YEARS,
 } from '@automattic/calypso-products';
+import { render, screen } from '@testing-library/react';
+import { UpgradeToPremiumNudgePure } from '../nudges';
 
 const props = {
 	translate: ( x ) => x,
@@ -42,8 +40,8 @@ const props = {
 
 describe( 'UpgradeToPremiumNudgePure basic tests', () => {
 	test( 'should not blow up', () => {
-		const comp = shallow( <UpgradeToPremiumNudgePure { ...props } /> );
-		expect( comp.find( 'UpsellNudge' ).length ).toBe( 1 );
+		render( <UpgradeToPremiumNudgePure { ...props } /> );
+		expect( screen.getByTestId( 'upsell-nudge-plan' ) ).toBeVisible();
 	} );
 
 	test( 'hide when user cannot upgrade', () => {
@@ -51,8 +49,8 @@ describe( 'UpgradeToPremiumNudgePure basic tests', () => {
 			translate: ( x ) => x,
 			canUserUpgrade: false,
 		};
-		const comp = shallow( <UpgradeToPremiumNudgePure { ...localProps } /> );
-		expect( comp.find( 'UpsellNudge' ).length ).toBe( 0 );
+		render( <UpgradeToPremiumNudgePure { ...localProps } /> );
+		expect( screen.queryByTestId( 'upsell-nudge-plan' ) ).not.toBeInTheDocument();
 	} );
 } );
 
@@ -79,10 +77,8 @@ describe( 'UpgradeToPremiumNudgePure.render()', () => {
 		PLAN_ECOMMERCE_2_YEARS,
 	].forEach( ( plan ) => {
 		test( `Should pass 2-years wp.com premium plan for 2-years plans ${ plan }`, () => {
-			const comp = shallow(
-				<UpgradeToPremiumNudgePure { ...props } isJetpack={ false } planSlug={ plan } />
-			);
-			expect( comp.find( 'UpsellNudge' ).props().plan ).toBe( plan );
+			render( <UpgradeToPremiumNudgePure { ...props } planSlug={ plan } /> );
+			expect( screen.getByTestId( 'upsell-nudge-plan' ) ).toHaveTextContent( plan );
 		} );
 	} );
 } );

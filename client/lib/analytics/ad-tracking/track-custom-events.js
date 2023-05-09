@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { debug, TRACKING_IDS } from './constants';
 
 // Ensure setup has run.
@@ -10,7 +7,7 @@ import './setup';
  * Fire custom facebook conversion tracking event.
  *
  * @param {string} name - The name of the custom event.
- * @param {object} properties - The custom event attributes.
+ * @param {Object} properties - The custom event attributes.
  * @returns {void}
  */
 export function trackCustomFacebookConversionEvent( name, properties ) {
@@ -20,7 +17,7 @@ export function trackCustomFacebookConversionEvent( name, properties ) {
 /**
  * Fire custom adwords conversation tracking event.
  *
- * @param {object} properties - The custom event attributes.
+ * @param {Object} properties - The custom event attributes.
  * @returns {void}
  */
 export function trackCustomAdWordsRemarketingEvent( properties ) {

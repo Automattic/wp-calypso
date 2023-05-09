@@ -1,16 +1,7 @@
-/**
- * External dependencies
- */
 import debugModule from 'debug';
-
-/**
- * Internal dependencies
- */
-import wpcom from 'calypso/lib/wp';
-import config from '@automattic/calypso-config';
 import { bypassPersistentStorage } from 'calypso/lib/browser-storage';
-import { supportSessionActivate } from 'calypso/state/support/actions';
 import localStorageBypass from 'calypso/lib/local-storage-bypass';
+import wpcom from 'calypso/lib/wp';
 
 /**
  * Connects the Redux store and the low-level support user functions
@@ -24,14 +15,9 @@ import localStorageBypass from 'calypso/lib/local-storage-bypass';
 const debug = debugModule( 'calypso:support-user' );
 const STORAGE_KEY = 'boot_support_user';
 const noop = () => {};
-const isEnabled = () => config.isEnabled( 'support-user' );
 
 let _setReduxStore = noop;
 const reduxStoreReady = new Promise( ( resolve ) => {
-	if ( ! isEnabled() ) {
-		return;
-	}
-
 	_setReduxStore = ( reduxStore ) => resolve( reduxStore );
 } );
 export const setSupportSessionReduxStore = _setReduxStore;
@@ -49,10 +35,6 @@ const getStorageItem = () => {
 // module clears the store on change; it could return false if called
 // after boot.
 const _isSupportUserSession = ( () => {
-	if ( ! isEnabled() ) {
-		return false;
-	}
-
 	const supportUser = getStorageItem();
 
 	return supportUser && supportUser.user && supportUser.token;
@@ -62,10 +44,6 @@ export const isSupportUserSession = () => _isSupportUserSession;
 
 // Detect the next-style support session
 export const isSupportNextSession = () => {
-	if ( ! isEnabled() ) {
-		return false;
-	}
-
 	return !! ( typeof window !== 'undefined' && window.isSupportSession );
 };
 
@@ -75,10 +53,6 @@ export const isSupportSession = () => isSupportUserSession() || isSupportNextSes
 let onBeforeUnload;
 
 const storeUserAndToken = ( user, token ) => () => {
-	if ( ! isEnabled() ) {
-		return;
-	}
-
 	if ( user && token ) {
 		window.sessionStorage.setItem( STORAGE_KEY, JSON.stringify( { user, token } ) );
 	}
@@ -88,10 +62,6 @@ const storeUserAndToken = ( user, token ) => () => {
  * Reboot normally as the main user
  */
 export const rebootNormally = () => {
-	if ( ! isEnabled() ) {
-		return;
-	}
-
 	debug( 'Rebooting Calypso normally' );
 
 	window.sessionStorage.removeItem( STORAGE_KEY );
@@ -109,10 +79,6 @@ const onTokenError = ( error ) => {
  * Inject the support user token into all following API calls
  */
 export async function supportUserBoot() {
-	if ( ! isEnabled() ) {
-		return;
-	}
-
 	const { user, token } = getStorageItem();
 	debug( 'Booting Calypso with support user', user );
 
@@ -126,9 +92,12 @@ export async function supportUserBoot() {
 	// The following keys will not be bypassed as
 	// they are safe to share across user sessions.
 	const allowedKeys = [ STORAGE_KEY, 'debug' ];
-	localStorageBypass( allowedKeys );
+	localStorageBypass( { allowedKeys } );
 
 	wpcom.setSupportUserToken( user, token, onTokenError );
+
+	// This needs to be a dynamic import in order to avoid boot race conditions.
+	const { supportSessionActivate } = await import( 'calypso/state/support/actions' );
 
 	// the boot is performed before the Redux store is created, so we need to wait for a promise
 	const reduxStore = await reduxStoreReady;
@@ -136,16 +105,15 @@ export async function supportUserBoot() {
 }
 
 export async function supportNextBoot() {
-	if ( ! isEnabled() ) {
-		return;
-	}
-
 	bypassPersistentStorage( true );
 
 	// The following keys will not be bypassed as
 	// they are safe to share across user sessions.
 	const allowedKeys = [ 'debug' ];
-	localStorageBypass( allowedKeys );
+	localStorageBypass( { allowedKeys } );
+
+	// This needs to be a dynamic import in order to avoid boot race conditions.
+	const { supportSessionActivate } = await import( 'calypso/state/support/actions' );
 
 	// the boot is performed before the Redux store is created, so we need to wait for a promise
 	const reduxStore = await reduxStoreReady;

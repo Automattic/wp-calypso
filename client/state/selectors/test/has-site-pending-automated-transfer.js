@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import hasSitePendingAutomatedTransfer from 'calypso/state/selectors/has-site-pending-automated-transfer';
 
 describe( 'hasSitePendingAutomatedTransfer()', () => {
@@ -16,7 +8,7 @@ describe( 'hasSitePendingAutomatedTransfer()', () => {
 			},
 		};
 
-		expect( hasSitePendingAutomatedTransfer( state, 12345 ) ).to.be.null;
+		expect( hasSitePendingAutomatedTransfer( state, 12345 ) ).toBeNull();
 	} );
 
 	test( 'should return false if site is an Atomic one', () => {
@@ -33,7 +25,7 @@ describe( 'hasSitePendingAutomatedTransfer()', () => {
 			},
 		};
 
-		expect( hasSitePendingAutomatedTransfer( state, 12345 ) ).to.be.false;
+		expect( hasSitePendingAutomatedTransfer( state, 12345 ) ).toBe( false );
 	} );
 
 	test( 'should return true if site has the has_pending_automated_transfer option set to true', () => {
@@ -49,7 +41,7 @@ describe( 'hasSitePendingAutomatedTransfer()', () => {
 			},
 		};
 
-		expect( hasSitePendingAutomatedTransfer( state, 12345 ) ).to.be.true;
+		expect( hasSitePendingAutomatedTransfer( state, 12345 ) ).toBe( true );
 	} );
 
 	test(
@@ -71,8 +63,8 @@ describe( 'hasSitePendingAutomatedTransfer()', () => {
 				},
 			};
 
-			expect( hasSitePendingAutomatedTransfer( state, 12345 ) ).to.be.false;
-			expect( hasSitePendingAutomatedTransfer( state, 12346 ) ).to.be.false;
+			expect( hasSitePendingAutomatedTransfer( state, 12345 ) ).toBe( false );
+			expect( hasSitePendingAutomatedTransfer( state, 12346 ) ).toBe( false );
 		}
 	);
 } );

@@ -1,13 +1,7 @@
-/**
- * External dependencies
- */
-import React, { useEffect, useState } from 'react';
-
-/**
- * Internal dependencies
- */
 import debugFactory from 'debug';
-import wpcom from 'calypso/lib/wp';
+import { useEffect, useState } from 'react';
+import { getAtomicSiteMediaViaProxyRetry } from 'calypso/lib/get-atomic-site-media';
+import type { ComponentType, FC, ReactElement, ReactNode } from 'react';
 
 const debug = debugFactory( 'calypso:my-sites:media-library:proxied-image' );
 
@@ -15,13 +9,13 @@ type RenderedComponentProps = {
 	src: string;
 	[ key: string ]: any;
 };
-export type RenderedComponent = string | React.ComponentType< RenderedComponentProps >;
+export type RenderedComponent = string | ComponentType< RenderedComponentProps >;
 
 export interface ProxiedImageProps {
 	query: string;
 	filePath: string;
 	siteSlug: string;
-	placeholder: React.ReactNode | null;
+	placeholder: ReactNode;
 	component: RenderedComponent;
 	maxSize: number | null;
 	onError?: ( err: Error ) => any;
@@ -45,7 +39,7 @@ const cacheResponse = ( requestId: string, blob: Blob, freshness = 60000 ) => {
 	}, freshness );
 };
 
-const ProxiedImage: React.FC< ProxiedImageProps > = function ProxiedImage( {
+const ProxiedImage: FC< ProxiedImageProps > = function ProxiedImage( {
 	siteSlug,
 	filePath,
 	query,
@@ -66,13 +60,8 @@ const ProxiedImage: React.FC< ProxiedImageProps > = function ProxiedImage( {
 			debug( 'set image from cache', { url } );
 		} else {
 			debug( 'requesting image from API', { requestId, imageObjectUrl } );
-			const options = { query };
-			if ( maxSize !== null ) {
-				options.maxSize = maxSize;
-			}
-			wpcom
-				.undocumented()
-				.getAtomicSiteMediaViaProxyRetry( siteSlug, filePath, options )
+			const options = { query, ...( maxSize !== null ? { maxSize } : {} ) };
+			getAtomicSiteMediaViaProxyRetry( siteSlug, filePath, options )
 				.then( ( data: Blob ) => {
 					cacheResponse( requestId, data );
 					setImageObjectUrl( URL.createObjectURL( data ) );
@@ -90,7 +79,7 @@ const ProxiedImage: React.FC< ProxiedImageProps > = function ProxiedImage( {
 	}, [ siteSlug, filePath, query ] );
 
 	if ( ! imageObjectUrl ) {
-		return placeholder as React.ReactElement;
+		return placeholder as ReactElement;
 	}
 
 	/* eslint-disable-next-line jsx-a11y/alt-text */

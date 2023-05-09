@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import 'calypso/state/notifications-panel/init';
 import { NOTIFICATIONS_FORCE_REFRESH } from 'calypso/state/action-types';
 

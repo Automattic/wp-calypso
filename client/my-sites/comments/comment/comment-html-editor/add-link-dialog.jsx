@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Dialog } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -17,6 +10,15 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 const REGEXP_EMAIL = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
 const REGEXP_URL = /^(https?|ftp):\/\/[A-Z0-9.-]+\.[A-Z]{2,4}[^ "]*$/i;
 const REGEXP_STANDALONE_URL = /^(?:[a-z]+:|#|\?|\.|\/)/;
+
+function inferUrl( selectedText ) {
+	if ( REGEXP_EMAIL.test( selectedText ) ) {
+		return 'mailto:' + selectedText;
+	} else if ( REGEXP_URL.test( selectedText ) ) {
+		return selectedText.replace( /&amp;|&#0?38;/gi, '&' );
+	}
+	return '';
+}
 
 export class AddLinkDialog extends Component {
 	static propTypes = {
@@ -29,16 +31,9 @@ export class AddLinkDialog extends Component {
 
 	state = {
 		linkNewTab: false,
-		linkText: '',
-		linkUrl: '',
+		linkUrl: inferUrl( this.props.selectedText ),
+		linkText: this.props.selectedText,
 	};
-
-	UNSAFE_componentWillReceiveProps( newProps ) {
-		this.setState( {
-			linkUrl: this.inferUrl( newProps.selectedText ),
-			linkText: newProps.selectedText,
-		} );
-	}
 
 	correctUrl() {
 		const url = this.state.linkUrl.trim();
@@ -49,15 +44,6 @@ export class AddLinkDialog extends Component {
 			return `http://${ url }`;
 		}
 		return url;
-	}
-
-	inferUrl( selectedText ) {
-		if ( REGEXP_EMAIL.test( selectedText ) ) {
-			return 'mailto:' + selectedText;
-		} else if ( REGEXP_URL.test( selectedText ) ) {
-			return selectedText.replace( /&amp;|&#0?38;/gi, '&' );
-		}
-		return '';
 	}
 
 	setLinkUrl = ( event ) => this.setState( { linkUrl: event.target.value } );

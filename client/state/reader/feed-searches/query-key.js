@@ -12,7 +12,7 @@
  * excluding followed sites, using relevance sortwould be
  *   halloween-X-relevance
  *
- * @param  {object} query The feed search action
+ * @param  {Object} query The feed search action
  * @returns {string} the key
  */
 export default function keyBy( query ) {

@@ -1,17 +1,23 @@
-/**
- * External dependencies
- */
-import { mapValues } from 'lodash';
 import emailValidator from 'email-validator';
+import { mapValues } from 'lodash';
+import { hasDuplicatedEmailForwards } from 'calypso/lib/domains/email-forwarding/has-duplicated-email-forwards';
 
-function validateAllFields( fieldValues ) {
+function validateAllFields( fieldValues, existingEmailForwards = [] ) {
 	return mapValues( fieldValues, ( value, fieldName ) => {
 		const isValid = validateField( {
 			value,
 			name: fieldName,
 		} );
 
-		return isValid ? [] : [ 'Invalid' ];
+		if ( ! isValid ) {
+			return [ 'Invalid' ];
+		}
+
+		if ( fieldName !== 'mailbox' ) {
+			return [];
+		}
+
+		return hasDuplicatedEmailForwards( value, existingEmailForwards ) ? [ 'Duplicated' ] : [];
 	} );
 }
 
@@ -28,4 +34,5 @@ function validateField( { name, value } ) {
 
 export { getEmailForwardsCount } from './get-email-forwards-count';
 export { hasEmailForwards } from './has-email-forwards';
+export { getDomainsWithEmailForwards } from './get-domains-with-email-forwards';
 export { validateAllFields };

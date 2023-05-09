@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import { omit, mapValues } from 'lodash';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { omit, mapValues } from 'lodash';
+import wpcom from 'calypso/lib/wp';
 import {
 	JETPACK_MODULE_ACTIVATE,
 	JETPACK_MODULE_ACTIVATE_FAILURE,
@@ -20,7 +13,7 @@ import {
 	JETPACK_MODULES_REQUEST_FAILURE,
 	JETPACK_MODULES_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
-import wp from 'calypso/lib/wp';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 import 'calypso/state/jetpack/init';
 
@@ -61,9 +54,11 @@ export const activateModule = ( siteId, moduleSlug, silent = false ) => {
 			silent,
 		} );
 
-		return wp
-			.undocumented()
-			.jetpackModuleActivate( siteId, moduleSlug )
+		return wpcom.req
+			.post( `/jetpack-blogs/${ siteId }/rest-api/`, {
+				path: `/jetpack/v4/module/${ moduleSlug }/active/`,
+				body: JSON.stringify( { active: true } ),
+			} )
 			.then( () => {
 				dispatch( {
 					type: JETPACK_MODULE_ACTIVATE_SUCCESS,
@@ -95,9 +90,11 @@ export const deactivateModule = ( siteId, moduleSlug, silent = false ) => {
 			silent,
 		} );
 
-		return wp
-			.undocumented()
-			.jetpackModuleDeactivate( siteId, moduleSlug )
+		return wpcom.req
+			.post( `/jetpack-blogs/${ siteId }/rest-api/`, {
+				path: `/jetpack/v4/module/${ moduleSlug }/active/`,
+				body: JSON.stringify( { active: false } ),
+			} )
 			.then( () => {
 				dispatch( {
 					type: JETPACK_MODULE_DEACTIVATE_SUCCESS,
@@ -125,8 +122,8 @@ export const deactivateModule = ( siteId, moduleSlug, silent = false ) => {
  * in a Jetpack site were received.
  *
  * @param  {number}   siteId    Site ID
- * @param  {object[]} modules Object of modules indexed by slug
- * @returns {object}             Action object
+ * @param  {Object[]} modules Object of modules indexed by slug
+ * @returns {Object}             Action object
  */
 export function receiveJetpackModules( siteId, modules ) {
 	return {
@@ -143,9 +140,10 @@ export const fetchModuleList = ( siteId ) => {
 			siteId,
 		} );
 
-		return wp
-			.undocumented()
-			.getJetpackModules( siteId )
+		return wpcom.req
+			.get( `/jetpack-blogs/${ siteId }/rest-api/`, {
+				path: '/jetpack/v4/module/all/',
+			} )
 			.then( ( { data } ) => {
 				const modules = mapValues( data, ( module ) => ( {
 					active: module.activated,

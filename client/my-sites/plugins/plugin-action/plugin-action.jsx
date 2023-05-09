@@ -1,21 +1,11 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import classNames from 'classnames';
 import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
+import classNames from 'classnames';
+import { Children, Component } from 'react';
 import InfoPopover from 'calypso/components/info-popover';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class PluginAction extends React.Component {
+class PluginAction extends Component {
 	handleAction = ( event ) => {
 		if ( ! this.props.disabledInfo ) {
 			this.props.action();
@@ -34,14 +24,18 @@ class PluginAction extends React.Component {
 		}
 
 		return (
+			/* eslint-disable jsx-a11y/click-events-have-key-events */
+			/* eslint-disable jsx-a11y/no-static-element-interactions */
 			<span
-				className="plugin-action__label"
+				className={ classNames( 'plugin-action__label', { hide: this.props.hideLabel } ) }
 				ref={ this.disabledInfoLabelRef }
 				onClick={ this.handleAction }
 			>
-				{ this.props.label }
-				{ this.renderDisabledInfo() }
+				<span className="plugin-action__label-text">{ this.props.label }</span>
+				<span className="plugin-action__label-disabled-info">{ this.renderDisabledInfo() }</span>
 			</span>
+			/* eslint-enable jsx-a11y/click-events-have-key-events */
+			/* eslint-enable jsx-a11y/no-static-element-interactions */
 		);
 	}
 
@@ -70,13 +64,17 @@ class PluginAction extends React.Component {
 
 	renderToggle() {
 		return (
-			<ToggleControl
-				onChange={ this.props.action }
-				checked={ this.props.status }
-				disabled={ this.props.inProgress || this.props.disabled || !! this.props.disabledInfo }
-				id={ this.props.htmlFor }
-				label={ this.renderLabel() }
-			/>
+			<>
+				<ToggleControl
+					onChange={ this.props.action }
+					checked={ this.props.status }
+					disabled={ this.props.inProgress || this.props.disabled || !! this.props.disabledInfo }
+					id={ this.props.htmlFor }
+					label={ this.renderLabel() }
+					aria-label={ this.props.label }
+				/>
+				{ this.props.toggleExtraContent }
+			</>
 		);
 	}
 
@@ -90,7 +88,7 @@ class PluginAction extends React.Component {
 	}
 
 	renderInner() {
-		if ( 0 < React.Children.count( this.props.children ) ) {
+		if ( 0 < Children.count( this.props.children ) ) {
 			return this.renderChildren();
 		}
 

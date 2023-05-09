@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-
-import { isEmpty, reduce, update } from 'lodash';
-import validatorFactory from 'is-my-json-valid';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
+import validatorFactory from 'is-my-json-valid';
+import { isEmpty, reduce, update } from 'lodash';
 import validationSchema from './fr-schema';
 
 const validate = validatorFactory( validationSchema, { greedy: true } );

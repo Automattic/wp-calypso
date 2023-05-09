@@ -1,22 +1,15 @@
-/**
- * External dependencies
- */
-import React, { useEffect } from 'react';
-import { connect, useDispatch } from 'react-redux';
+import { Card, Spinner } from '@automattic/components';
+import { createSelector } from '@automattic/state-utils';
+import classnames from 'classnames';
 import { numberFormat, useTranslate } from 'i18n-calypso';
-import { Card } from '@automattic/components';
-import { times } from 'lodash';
 import moment from 'moment';
-
-/**
- * Internal dependencies
- */
+import { useEffect } from 'react';
+import { connect, useDispatch } from 'react-redux';
+import IllustrationStatsIntro from 'calypso/assets/images/stats/illustration-stats-intro.svg';
 import CardHeading from 'calypso/components/card-heading';
 import Chart from 'calypso/components/chart';
-import Spinner from 'calypso/components/spinner';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { preventWidows } from 'calypso/lib/formatting';
 import { buildChartData } from 'calypso/my-sites/stats/stats-chart-tabs/utility';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
@@ -30,12 +23,9 @@ import {
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-const placeholderChartData = times( 7, () => ( {
+const placeholderChartData = Array.from( { length: 7 }, () => ( {
 	value: Math.random(),
 } ) );
 
@@ -80,6 +70,7 @@ export const StatsV2 = ( {
 				),
 				4
 		  );
+	const renderChart = ! isSiteUnlaunched && ! isLoading && views > 0;
 
 	return (
 		<div className="stats">
@@ -89,15 +80,14 @@ export const StatsV2 = ( {
 					<QuerySiteStats siteId={ siteId } statType="statsTopPosts" query={ topPostsQuery } />
 				</>
 			) }
-
-			<Card>
+			{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+			<Card className={ classnames( 'customer-home__card', { 'stats__with-chart': renderChart } ) }>
 				{ isSiteUnlaunched && (
 					<Chart data={ placeholderChartData } isPlaceholder>
 						<div>
 							{ translate( 'Launch your site to see a snapshot of traffic and insights.' ) }
 							<InlineSupportLink
-								supportPostId={ 4454 }
-								supportLink={ localizeUrl( 'https://wordpress.com/support/stats/' ) }
+								supportContext="stats"
 								showIcon={ false }
 								tracksEvent="calypso_customer_home_stats_support_page_view"
 								statsGroup="calypso_customer_home"
@@ -116,15 +106,14 @@ export const StatsV2 = ( {
 				{ ! isSiteUnlaunched && ! isLoading && views === 0 && (
 					<div className="stats__empty">
 						<div className="stats__empty-illustration">
-							<img src="/calypso/images/stats/illustration-stats-intro.svg" alt="" />
+							<img src={ IllustrationStatsIntro } alt="" />
 						</div>
 						<div className="stats__empty-text">
 							{ translate(
 								'Stats can help you optimize for the right keywords, and feature content your readers are interested in.'
 							) }
 							<InlineSupportLink
-								supportPostId={ 4454 }
-								supportLink={ localizeUrl( 'https://wordpress.com/support/stats/' ) }
+								supportContext="stats"
 								showIcon={ false }
 								tracksEvent="calypso_customer_home_stats_support_page_view"
 								statsGroup="calypso_customer_home"
@@ -135,7 +124,7 @@ export const StatsV2 = ( {
 						</div>
 					</div>
 				) }
-				{ ! isSiteUnlaunched && ! isLoading && views > 0 && (
+				{ renderChart && (
 					<>
 						<CardHeading>{ translate( 'Views' ) }</CardHeading>
 						<Chart data={ chartData } />
@@ -173,9 +162,11 @@ export const StatsV2 = ( {
 								</div>
 							) }
 						</div>
-						<a href={ `/stats/day/${ siteSlug }` } className="stats__all">
-							{ translate( 'See all stats' ) }
-						</a>
+						<div className="stats__all">
+							<a href={ `/stats/day/${ siteSlug }` } className="stats__all-link">
+								{ translate( 'See all stats' ) }
+							</a>
+						</div>
 					</>
 				) }
 			</Card>
@@ -183,82 +174,92 @@ export const StatsV2 = ( {
 	);
 };
 
-const getStatsQueries = ( state, siteId ) => {
-	const period = 'day';
-	const quantity = 7;
+const getStatsQueries = createSelector(
+	( state, siteId ) => {
+		const period = 'day';
+		const quantity = 7;
 
-	const gmtOffset = getSiteOption( state, siteId, 'gmt_offset' );
-	const date = moment()
-		.utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 )
-		.format( 'YYYY-MM-DD' );
+		const gmtOffset = getSiteOption( state, siteId, 'gmt_offset' );
+		const date = moment()
+			.utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 )
+			.format( 'YYYY-MM-DD' );
 
-	const chartQuery = {
-		chartTab: 'views',
-		date,
-		period,
-		quantity,
-		siteId,
-		statFields: [ 'views' ],
-	};
+		const chartQuery = {
+			chartTab: 'views',
+			date,
+			period,
+			quantity,
+			siteId,
+			statFields: [ 'views' ],
+		};
 
-	const insightsQuery = {};
+		const insightsQuery = {};
 
-	const topPostsQuery = {
-		date,
-		num: quantity,
-		period,
-	};
+		const topPostsQuery = {
+			date,
+			num: quantity,
+			period,
+		};
 
-	const visitsQuery = {
-		unit: period,
-		quantity: quantity,
-		stat_fields: 'views,visitors',
-	};
+		const visitsQuery = {
+			unit: period,
+			quantity: quantity,
+			stat_fields: 'views,visitors',
+		};
 
-	return {
-		chartQuery,
+		return {
+			chartQuery,
+			insightsQuery,
+			topPostsQuery,
+			visitsQuery,
+		};
+	},
+	( state, siteId ) => getSiteOption( state, siteId, 'gmt_offset' )
+);
+
+const getStatsData = createSelector(
+	( state, siteId, chartQuery, insightsQuery, topPostsQuery ) => {
+		const counts = getCountRecords( state, siteId, chartQuery.period );
+		const chartData = buildChartData(
+			[],
+			chartQuery.chartTab,
+			counts,
+			chartQuery.period,
+			chartQuery.date
+		);
+		const views = chartData.reduce(
+			( acummulatedViews, { data } ) => acummulatedViews + data.views,
+			0
+		);
+		const visitors = chartData.reduce(
+			( acummulatedVisitors, { data } ) => acummulatedVisitors + data.visitors,
+			0
+		);
+
+		const { day: mostPopularDay, time: mostPopularTime } = getMostPopularDatetime(
+			state,
+			siteId,
+			insightsQuery
+		);
+
+		const { post: topPost, page: topPage } = getTopPostAndPage( state, siteId, topPostsQuery );
+
+		return {
+			chartData,
+			mostPopularDay,
+			mostPopularTime,
+			topPost,
+			topPage,
+			views,
+			visitors,
+		};
+	},
+	( state, siteId, chartQuery, insightsQuery, topPostsQuery ) => [
+		getCountRecords( state, siteId, chartQuery.period ),
 		insightsQuery,
 		topPostsQuery,
-		visitsQuery,
-	};
-};
-
-const getStatsData = ( state, siteId, chartQuery, insightsQuery, topPostsQuery ) => {
-	const counts = getCountRecords( state, siteId, chartQuery.period );
-	const chartData = buildChartData(
-		[],
-		chartQuery.chartTab,
-		counts,
-		chartQuery.period,
-		chartQuery.date
-	);
-	const views = chartData.reduce(
-		( acummulatedViews, { data } ) => acummulatedViews + data.views,
-		0
-	);
-	const visitors = chartData.reduce(
-		( acummulatedVisitors, { data } ) => acummulatedVisitors + data.visitors,
-		0
-	);
-
-	const { day: mostPopularDay, time: mostPopularTime } = getMostPopularDatetime(
-		state,
-		siteId,
-		insightsQuery
-	);
-
-	const { post: topPost, page: topPage } = getTopPostAndPage( state, siteId, topPostsQuery );
-
-	return {
-		chartData,
-		mostPopularDay,
-		mostPopularTime,
-		topPost,
-		topPage,
-		views,
-		visitors,
-	};
-};
+	]
+);
 
 const isLoadingStats = ( state, siteId, chartQuery, insightsQuery, topPostsQuery ) =>
 	getLoadingTabs( state, siteId, chartQuery.period ).includes( chartQuery.chartTab ) ||

@@ -1,19 +1,17 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { includes } from 'lodash';
+import config from '@automattic/calypso-config';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { getSelectedSite } from 'calypso/state/ui/selectors';
-import ServiceExample from './service-example';
+import { includes } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import googleDriveExample from 'calypso/assets/images/connections/google-drive-screenshot.jpg';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import GooglePlusDeprication from './google-plus-deprecation';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import Mastodon from './mastodon';
+import ServiceExample from './service-example';
 
 /**
  * Module constants
@@ -36,24 +34,38 @@ const SERVICES_WITH_EXAMPLES = [
 	'tumblr',
 	'twitter',
 	'google_photos',
+	'google-drive',
 	'mailchimp',
+	'p2_slack',
+	'p2_github',
+	'mastodon',
 ];
 
 class SharingServiceExamples extends Component {
 	static propTypes = {
 		service: PropTypes.object.isRequired,
 		site: PropTypes.object,
+		hasJetpack: PropTypes.bool,
 		translate: PropTypes.func,
+		action: PropTypes.func.isRequired,
+		connections: PropTypes.array.isRequired,
+		connectAnother: PropTypes.func.isRequired,
+		isConnecting: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		site: Object.freeze( {} ),
+		hasJetpack: false,
 	};
 
 	getSharingButtonsLink() {
-		return this.props.site
-			? '/sharing/buttons/' + this.props.site.slug
-			: localizeUrl( 'https://wordpress.com/support/sharing/' );
+		if ( this.props.site ) {
+			return isJetpackCloud()
+				? 'https://jetpack.com/redirect/?source=calypso-marketing-sharing-buttons&site=' +
+						this.props.site.slug
+				: '/sharing/buttons/' + this.props.site.slug;
+		}
+		return localizeUrl( 'https://wordpress.com/support/sharing/' );
 	}
 
 	bandpage() {
@@ -101,17 +113,17 @@ class SharingServiceExamples extends Component {
 		];
 	}
 
-	facebook() {
+	google_drive() {
 		return [
 			{
 				image: {
-					src: '/calypso/images/sharing/connections-facebook.png',
-					alt: this.props.translate( 'Share posts to your Facebook page', {
+					src: googleDriveExample,
+					alt: this.props.translate( 'Connect to use Google sheets in Jetpack forms.', {
 						textOnly: true,
 					} ),
 				},
 				label: this.props.translate(
-					'{{strong}}Connect{{/strong}} to automatically share posts on your Facebook page.',
+					'{{strong}}Connect{{/strong}} to use Google sheets in Jetpack forms.',
 					{
 						components: {
 							strong: <strong />,
@@ -119,21 +131,53 @@ class SharingServiceExamples extends Component {
 					}
 				),
 			},
-			{
-				image: {
-					src: '/calypso/images/sharing/connections-button-facebook.png',
-					alt: this.props.translate( 'Add a sharing button', { textOnly: true } ),
-				},
-				label: this.props.translate(
-					'Add a {{link}}sharing button{{/link}} to your posts so readers can share your story with their friends.',
-					{
-						components: {
-							link: <a href={ this.getSharingButtonsLink() } />,
-						},
-					}
-				),
-			},
 		];
+	}
+
+	facebook() {
+		const label = this.props.translate(
+			'{{strong}}Connect{{/strong}} to automatically share posts on your Facebook page.',
+			{
+				components: {
+					strong: <strong />,
+				},
+			}
+		);
+		const image = {
+			src: '/calypso/images/sharing/connections-facebook.png',
+			alt: this.props.translate( 'Share posts to your Facebook page', {
+				textOnly: true,
+			} ),
+		};
+		return this.props.hasJetpack
+			? [
+					{
+						image,
+						label,
+					},
+					{
+						image: {
+							src: '/calypso/images/sharing/connections-button-facebook.png',
+							alt: this.props.translate( 'Add a sharing button', { textOnly: true } ),
+						},
+						label: this.props.translate(
+							'Add a {{link}}sharing button{{/link}} to your posts so readers can share your story with their friends.',
+							{
+								components: {
+									link: <a href={ this.getSharingButtonsLink() } />,
+								},
+							}
+						),
+					},
+			  ]
+			: [
+					{
+						label,
+					},
+					{
+						image,
+					},
+			  ];
 	}
 
 	google_my_business() {
@@ -182,16 +226,156 @@ class SharingServiceExamples extends Component {
 	}
 
 	linkedin() {
+		const label = this.props.translate(
+			'{{strong}}Connect{{/strong}} to automatically share posts with your LinkedIn connections.',
+			{
+				components: {
+					strong: <strong />,
+				},
+			}
+		);
+		const image = {
+			src: '/calypso/images/sharing/connections-linkedin.png',
+			alt: this.props.translate( 'Share posts with your LinkedIn connections', {
+				textOnly: true,
+			} ),
+		};
+		return this.props.hasJetpack
+			? [
+					{
+						image,
+						label,
+					},
+					{
+						image: {
+							src: '/calypso/images/sharing/connections-button-linkedin.png',
+							alt: this.props.translate( 'Add a sharing button', { textOnly: true } ),
+						},
+						label: this.props.translate(
+							'Add a {{link}}sharing button{{/link}} to your posts so readers can share your story with their connections.',
+							{
+								components: {
+									link: <a href={ this.getSharingButtonsLink() } />,
+								},
+							}
+						),
+					},
+			  ]
+			: [
+					{
+						label,
+					},
+					{
+						image,
+					},
+			  ];
+	}
+
+	tumblr() {
+		const label = this.props.translate(
+			'{{strong}}Connect{{/strong}} to automatically share posts to your Tumblr blog.',
+			{
+				components: {
+					strong: <strong />,
+				},
+			}
+		);
+		const image = {
+			src: '/calypso/images/sharing/connections-tumblr.png',
+			alt: this.props.translate( 'Share posts to your Tumblr blog', { textOnly: true } ),
+		};
+		return this.props.hasJetpack
+			? [
+					{
+						image,
+						label,
+					},
+					{
+						image: {
+							src: '/calypso/images/sharing/connections-button-tumblr.png',
+							alt: this.props.translate( 'Add a sharing button', { textOnly: true } ),
+						},
+						label: this.props.translate(
+							'Add a {{link}}sharing button{{/link}} to your posts so readers can share your story with their followers.',
+							{
+								components: {
+									link: <a href={ this.getSharingButtonsLink() } />,
+								},
+							}
+						),
+					},
+			  ]
+			: [
+					{
+						label,
+					},
+					{
+						image,
+					},
+			  ];
+	}
+
+	twitter() {
+		const label = this.props.translate(
+			'{{strong}}Connect{{/strong}} to automatically share posts with your Twitter followers.',
+			{
+				components: {
+					strong: <strong />,
+				},
+			}
+		);
+		const image = {
+			src: '/calypso/images/sharing/connections-twitter2.png',
+			alt: this.props.translate( 'Share posts to your Twitter followers', { textOnly: true } ),
+		};
+		return this.props.hasJetpack
+			? [
+					{
+						image,
+						label,
+					},
+					{
+						image: {
+							src: '/calypso/images/sharing/connections-twitter.png',
+							alt: this.props.translate( 'Add a Twitter Timeline Widget', { textOnly: true } ),
+						},
+						label: this.props.translate(
+							'Add a {{link}}Twitter Timeline Widget{{/link}} to display your latest tweets on your site.',
+							{
+								components: {
+									link: (
+										<a
+											href={ localizeUrl(
+												'https://wordpress.com/support/widgets/twitter-timeline-widget/'
+											) }
+										/>
+									),
+								},
+							}
+						),
+					},
+			  ]
+			: [
+					{
+						label,
+					},
+					{
+						image,
+					},
+			  ];
+	}
+
+	p2_slack() {
 		return [
 			{
 				image: {
-					src: '/calypso/images/sharing/connections-linkedin.png',
-					alt: this.props.translate( 'Share posts with your LinkedIn connections', {
+					src: '/calypso/images/sharing/slack-screenshot-1.png',
+					alt: this.props.translate( 'Get Slack notifications with every new P2 post.', {
 						textOnly: true,
 					} ),
 				},
 				label: this.props.translate(
-					'{{strong}}Connect{{/strong}} to automatically share posts with your LinkedIn connections.',
+					'Get {{strong}}Slack notifications{{/strong}} with every new P2 post.',
 					{
 						components: {
 							strong: <strong />,
@@ -201,14 +385,16 @@ class SharingServiceExamples extends Component {
 			},
 			{
 				image: {
-					src: '/calypso/images/sharing/connections-button-linkedin.png',
-					alt: this.props.translate( 'Add a sharing button', { textOnly: true } ),
+					src: '/calypso/images/sharing/slack-screenshot-2.png',
+					alt: this.props.translate( 'Preview posts and pages directly from Slack.', {
+						textOnly: true,
+					} ),
 				},
 				label: this.props.translate(
-					'Add a {{link}}sharing button{{/link}} to your posts so readers can share your story with their connections.',
+					'{{strong}}Preview posts and pages{{/strong}} directly from Slack.',
 					{
 						components: {
-							link: <a href={ this.getSharingButtonsLink() } />,
+							strong: <strong />,
 						},
 					}
 				),
@@ -216,71 +402,20 @@ class SharingServiceExamples extends Component {
 		];
 	}
 
-	tumblr() {
+	p2_github() {
 		return [
 			{
 				image: {
-					src: '/calypso/images/sharing/connections-tumblr.png',
-					alt: this.props.translate( 'Share posts to your Tumblr blog', { textOnly: true } ),
+					src: '/calypso/images/sharing/github-screenshot.png',
+					alt: this.props.translate( 'Get GitHub previews inside your P2 posts.', {
+						textOnly: true,
+					} ),
 				},
 				label: this.props.translate(
-					'{{strong}}Connect{{/strong}} to automatically share posts to your Tumblr blog.',
+					'Get {{strong}}GitHub previews{{/strong}} inside your P2 posts.',
 					{
 						components: {
 							strong: <strong />,
-						},
-					}
-				),
-			},
-			{
-				image: {
-					src: '/calypso/images/sharing/connections-button-tumblr.png',
-					alt: this.props.translate( 'Add a sharing button', { textOnly: true } ),
-				},
-				label: this.props.translate(
-					'Add a {{link}}sharing button{{/link}} to your posts so readers can share your story with their followers.',
-					{
-						components: {
-							link: <a href={ this.getSharingButtonsLink() } />,
-						},
-					}
-				),
-			},
-		];
-	}
-
-	twitter() {
-		return [
-			{
-				image: {
-					src: '/calypso/images/sharing/connections-twitter2.png',
-					alt: this.props.translate( 'Share posts to your Twitter followers', { textOnly: true } ),
-				},
-				label: this.props.translate(
-					'{{strong}}Connect{{/strong}} to automatically share posts with your Twitter followers.',
-					{
-						components: {
-							strong: <strong />,
-						},
-					}
-				),
-			},
-			{
-				image: {
-					src: '/calypso/images/sharing/connections-twitter.png',
-					alt: this.props.translate( 'Add a Twitter Timeline Widget', { textOnly: true } ),
-				},
-				label: this.props.translate(
-					'Add a {{link}}Twitter Timeline Widget{{/link}} to display your latest tweets on your site.',
-					{
-						components: {
-							link: (
-								<a
-									href={ localizeUrl(
-										'https://wordpress.com/support/widgets/twitter-timeline-widget/'
-									) }
-								/>
-							),
 						},
 					}
 				),
@@ -317,6 +452,18 @@ class SharingServiceExamples extends Component {
 			return <GooglePlusDeprication />;
 		}
 
+		if ( 'mastodon' === this.props.service.ID && config.isEnabled( 'mastodon' ) ) {
+			return (
+				<Mastodon
+					service={ this.props.service }
+					action={ this.props.action }
+					connectAnother={ this.props.connectAnother }
+					connections={ this.props.connections }
+					isConnecting={ this.props.isConnecting }
+				/>
+			);
+		}
+
 		const examples = this[ this.props.service.ID.replace( /-/g, '_' ) ]();
 
 		return (
@@ -342,4 +489,5 @@ class SharingServiceExamples extends Component {
 
 export default connect( ( state ) => ( {
 	site: getSelectedSite( state ),
+	hasJetpack: ! isJetpackCloud() || isJetpackSite( state, getSelectedSiteId( state ) ),
 } ) )( localize( SharingServiceExamples ) );

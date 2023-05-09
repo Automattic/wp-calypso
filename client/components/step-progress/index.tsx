@@ -1,15 +1,9 @@
-/**
- * External dependencies
- */
 import { TranslateResult } from 'i18n-calypso';
-import React, { FunctionComponent } from 'react';
+import { FunctionComponent } from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-interface ClickHandler {
+export interface ClickHandler {
 	onClick: () => void;
 	message: TranslateResult;
 	show?: 'always' | 'onComplete' | 'beforeComplete';

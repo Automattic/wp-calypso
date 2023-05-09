@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import PaginatedQueryKey from '../key';
 
 describe( 'PaginatedQueryKey', () => {

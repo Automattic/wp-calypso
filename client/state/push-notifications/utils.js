@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-
 import { isServiceWorkerSupported } from 'calypso/lib/service-worker';
 
 export function isUnsupportedChromeVersion() {

@@ -1,19 +1,11 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
 import Card from '..';
 import CompactCard from '../compact';
 
 Card.displayName = 'Card';
 CompactCard.displayName = 'CompactCard';
 
-class Cards extends React.Component {
+class Cards extends Component {
 	static displayName = 'Card';
 
 	state = {

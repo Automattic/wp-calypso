@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useSelector } from 'react-redux';
 import { createHigherOrderComponent } from '@wordpress/compose';
-
-/**
- * Internal dependencies
- */
-import useSiteRolesQuery from './use-site-roles-query';
+import { useSelector } from 'react-redux';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import useSiteRolesQuery from './use-site-roles-query';
 
 const withSiteRoles = createHigherOrderComponent(
 	( Wrapped ) => ( props ) => {

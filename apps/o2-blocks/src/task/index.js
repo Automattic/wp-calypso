@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import { __ } from '@wordpress/i18n';
 import { registerBlockType } from '@wordpress/blocks';
-
-/**
- * Internal dependencies
- */
+import { __ } from '@wordpress/i18n';
 import edit from './editor';
-import save from './save';
 import icon from './icon';
+import save from './save';
 
 export function registerBlock() {
 	registerBlockType( 'a8c/task', {

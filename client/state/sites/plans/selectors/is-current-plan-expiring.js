@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import moment from 'moment';
-
-/**
- * Internal dependencies
- */
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors/get-current-plan';
 
 export function isCurrentPlanExpiring( state, siteId ) {

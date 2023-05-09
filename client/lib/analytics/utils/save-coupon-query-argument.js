@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import debug from './debug';
 import MARKETING_COUPONS_KEY from './marketing-coupons-key';
 import urlParseAmpCompatible from './url-parse-amp-compatible';

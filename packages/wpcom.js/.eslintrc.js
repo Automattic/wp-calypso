@@ -1,18 +1,25 @@
+const nodeConfig = require( '@automattic/calypso-eslint-overrides/node' );
+
 module.exports = {
 	env: {
 		browser: true,
 	},
 	overrides: [
 		{
-			files: './examples/server/**/*',
-			env: {
-				node: true,
-			},
+			files: [ './examples/server/**/*', './examples/node/**/*' ],
+			...nodeConfig,
+		},
+		{
+			files: [ './examples/**/package.json' ],
 			rules: {
-				'import/no-nodejs-modules': 'off',
-				'no-console': 'off',
+				'@automattic/json/require-repository-directory': 'off',
+				'@automattic/json/require-license': 'off',
+				'@automattic/json/valid-values-name-scope': 'off',
+				'@automattic/json/description-format': 'off',
+				'@automattic/json/valid-values-author': 'off',
 			},
 		},
+
 		{
 			files: './test/**/*',
 			rules: {
@@ -25,4 +32,12 @@ module.exports = {
 			},
 		},
 	],
+	rules: {
+		'jsdoc/no-undefined-types': [
+			'error',
+			{
+				definedTypes: [ 'WPCOM' ],
+			},
+		],
+	},
 };

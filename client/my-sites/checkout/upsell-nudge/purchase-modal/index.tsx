@@ -1,42 +1,31 @@
-/**
- * External dependencies
- */
-import React, { useState, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useStripe } from '@automattic/calypso-stripe';
 import { Dialog } from '@automattic/components';
 import { CheckoutProvider } from '@automattic/composite-checkout';
-import { useStripe } from '@automattic/calypso-stripe';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import type { ResponseCart } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
-import { useSubmitTransaction } from './util';
-import { BEFORE_SUBMIT } from './constants';
-import Content from './content';
-import Placeholder from './placeholder';
+import { useState, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import useCreatePaymentCompleteCallback from 'calypso/my-sites/checkout/composite-checkout/hooks/use-create-payment-complete-callback';
 import existingCardProcessor from 'calypso/my-sites/checkout/composite-checkout/lib/existing-card-processor';
 import getContactDetailsType from 'calypso/my-sites/checkout/composite-checkout/lib/get-contact-details-type';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { BEFORE_SUBMIT } from './constants';
+import Content from './content';
+import Placeholder from './placeholder';
+import { useSubmitTransaction } from './util';
+import type { ResponseCart } from '@automattic/shopping-cart';
+import type { ManagedValue } from '@automattic/wpcom-checkout';
+import type { StoredPaymentMethodCard } from 'calypso/lib/checkout/payment-methods';
 import type { PaymentProcessorOptions } from 'calypso/my-sites/checkout/composite-checkout/types/payment-processors';
-import type { StoredCard } from 'calypso/my-sites/checkout/composite-checkout/types/stored-cards';
 
-/**
- * Style dependencies
- */
 import './style.scss';
-
-const noop = () => null;
 
 type PurchaseModalProps = {
 	cart: ResponseCart;
-	cards: StoredCard[];
+	cards: StoredPaymentMethodCard[];
 	isCartUpdating: boolean;
 	onClose: () => void;
 	siteSlug: string;
-	siteId: number;
 };
 
 export function PurchaseModal( {
@@ -45,14 +34,11 @@ export function PurchaseModal( {
 	isCartUpdating,
 	onClose,
 	siteSlug,
-	siteId,
-}: PurchaseModalProps ): JSX.Element {
+}: PurchaseModalProps ) {
 	const [ step, setStep ] = useState( BEFORE_SUBMIT );
 	const submitTransaction = useSubmitTransaction( {
-		cart,
-		siteId,
 		setStep,
-		storedCard: cards?.[ 0 ],
+		storedCard: cards[ 0 ],
 		onClose,
 	} );
 	const contentProps = {
@@ -71,36 +57,51 @@ export function PurchaseModal( {
 	);
 }
 
-export default function PurchaseModalWrapper( props: PurchaseModalProps ): JSX.Element {
+export function wrapValueInManagedValue( value: string | undefined ): ManagedValue {
+	return {
+		value: value ?? '',
+		isTouched: true,
+		errors: [],
+	};
+}
+
+export default function PurchaseModalWrapper( props: PurchaseModalProps ) {
 	const onComplete = useCreatePaymentCompleteCallback( {
 		isComingFromUpsell: true,
 		siteSlug: props.siteSlug,
 	} );
-	const { stripeConfiguration } = useStripe();
+	const { stripe, stripeConfiguration } = useStripe();
 	const reduxDispatch = useDispatch();
-	const { responseCart } = useShoppingCart();
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
 	const selectedSite = useSelector( getSelectedSite );
 
 	const contactDetailsType = getContactDetailsType( props.cart );
 	const includeDomainDetails = contactDetailsType === 'domain';
 	const includeGSuiteDetails = contactDetailsType === 'gsuite';
+	const storedCard = props.cards.length > 0 ? props.cards[ 0 ] : undefined;
 	const dataForProcessor: PaymentProcessorOptions = useMemo(
 		() => ( {
 			createUserAndSiteBeforeTransaction: false,
 			getThankYouUrl: () => '/plans',
 			includeDomainDetails,
 			includeGSuiteDetails,
-			recordEvent: noop,
 			reduxDispatch,
 			responseCart,
 			siteSlug: selectedSite?.slug ?? '',
 			siteId: selectedSite?.ID,
+			stripe,
 			stripeConfiguration,
-			contactDetails: undefined,
+			contactDetails: {
+				countryCode: wrapValueInManagedValue( storedCard?.tax_location?.country_code ),
+				postalCode: wrapValueInManagedValue( storedCard?.tax_location?.postal_code ),
+			},
 		} ),
 		[
+			storedCard,
 			includeDomainDetails,
 			includeGSuiteDetails,
+			stripe,
 			stripeConfiguration,
 			reduxDispatch,
 			selectedSite,
@@ -112,9 +113,6 @@ export default function PurchaseModalWrapper( props: PurchaseModalProps ): JSX.E
 		<CheckoutProvider
 			paymentMethods={ [] }
 			onPaymentComplete={ onComplete }
-			showErrorMessage={ noop }
-			showInfoMessage={ noop }
-			showSuccessMessage={ noop }
 			paymentProcessors={ {
 				'existing-card': ( transactionData ) =>
 					existingCardProcessor( transactionData, dataForProcessor ),

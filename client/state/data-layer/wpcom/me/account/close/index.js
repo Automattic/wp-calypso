@@ -1,22 +1,14 @@
 /**
  */
 
-/**
- * External Dependencies
- */
-import { translate } from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { translate } from 'i18n-calypso';
+import { closeAccountSuccess } from 'calypso/state/account/actions';
 import { ACCOUNT_CLOSE } from 'calypso/state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { closeAccountSuccess } from 'calypso/state/account/actions';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export function requestAccountClose( action ) {
 	return http(

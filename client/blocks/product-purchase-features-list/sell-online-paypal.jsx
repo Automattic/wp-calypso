@@ -1,20 +1,7 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import PurchaseDetail from 'calypso/components/purchase-detail';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
-
-/**
- * Image dependencies
- */
 import paymentsImage from 'calypso/assets/images/illustrations/payments.svg';
+import PurchaseDetail from 'calypso/components/purchase-detail';
 
 export default localize( ( { isJetpack, translate } ) => {
 	const supportDocLink = localizeUrl(

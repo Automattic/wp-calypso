@@ -7,8 +7,8 @@
 	}
 
 	&::before {
-		border-bottom: 1px solid var( --color-neutral-5 );
-		content: '';
+		border-bottom: 1px solid var(--color-neutral-5);
+		content: "";
 		display: block;
 		height: 1px;
 		margin-bottom: 8px;
@@ -19,10 +19,23 @@
 	}
 
 	.gridicon {
-		fill: var( --studio-green-40 );
+		fill: var(--studio-green-40);
 		margin-left: -28px;
 		margin-top: 2px;
 		position: absolute;
+	}
+}
+
+.email-provider-features__logos {
+	column-gap: 5px;
+	display: flex;
+	flex-wrap: wrap;
+	margin-left: 25px;
+	margin-top: 15px;
+	row-gap: 5px;
+
+	img {
+		width: 34px;
 	}
 }
 

@@ -1,70 +1,76 @@
-/**
- * External dependencies
- */
+import debugFactory from 'debug';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import debugFactory from 'debug';
-import type { ResponseCart } from '@automattic/shopping-cart';
-import type { WPCOMTransactionEndpointResponse } from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
+import getThankYouPageUrl from 'calypso/my-sites/checkout/get-thank-you-page-url';
+import { isMonthlyToAnnualPostPurchaseExperimentUser } from 'calypso/state/selectors/is-monthly-to-annual-post-purchase-experiment-user';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-for-signup-destination';
-import getThankYouPageUrl from './get-thank-you-page-url';
+import type { ResponseCart } from '@automattic/shopping-cart';
+import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
+import type { ResponseDomain } from 'calypso/lib/domains/types';
+import type { PostCheckoutUrlArguments } from 'calypso/my-sites/checkout/get-thank-you-page-url';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-get-thank-you-url' );
 
 export type GetThankYouUrl = () => string;
 
+/**
+ * Generate the post-checkout URL.
+ *
+ * This should be a lightweight wrapper around `getThankYouPageUrl()` that
+ * fetches some of that function's required arguments. Any actual logic related
+ * to generating the URL should remain in `getThankYouUrl()` itself as that
+ * function is covered by tests and there are places that call it directly.
+ *
+ * IMPORTANT NOTE: This will be called BEFORE checkout completes because of
+ * redirect payment methods like PayPal. They will redirect directly to the
+ * post-checkout page decided by `getThankYouUrl` and therefore must be passed
+ * the post-checkout URL before the transaction begins.
+ */
 export default function useGetThankYouUrl( {
 	siteSlug,
-	transactionResult,
 	redirectTo,
 	purchaseId,
 	feature,
 	cart,
+	sitelessCheckoutType,
 	isJetpackNotAtomic,
 	productAliasFromUrl,
 	hideNudge,
-	isInEditor,
-	isJetpackCheckout = false,
+	isInModal,
+	domains,
 }: GetThankYouUrlProps ): GetThankYouUrl {
 	const selectedSiteData = useSelector( ( state ) => getSelectedSite( state ) );
 
+	const monthlyToAnnualPostPurchaseExperimentUser = useSelector( ( state ) =>
+		isMonthlyToAnnualPostPurchaseExperimentUser( state )
+	);
+
 	const adminUrl = selectedSiteData?.options?.admin_url;
-	const isEligibleForSignupDestinationResult = isEligibleForSignupDestination( cart );
 
 	const getThankYouUrl = useCallback( () => {
-		debug( 'for getThankYouUrl, transactionResult is', transactionResult );
-		const receiptId = transactionResult?.receipt_id;
-		const orderId = transactionResult?.order_id;
-
-		const getThankYouPageUrlArguments = {
+		const getThankYouPageUrlArguments: PostCheckoutUrlArguments = {
 			siteSlug,
 			adminUrl,
-			receiptId,
-			orderId,
 			redirectTo,
 			purchaseId,
 			feature,
 			cart,
+			sitelessCheckoutType,
 			isJetpackNotAtomic,
 			productAliasFromUrl,
-			isEligibleForSignupDestinationResult,
 			hideNudge,
-			isInEditor,
-			isJetpackCheckout,
+			isInModal,
+			domains,
+			monthlyToAnnualPostPurchaseExperimentUser,
 		};
+
 		debug( 'getThankYouUrl called with', getThankYouPageUrlArguments );
 		const url = getThankYouPageUrl( getThankYouPageUrlArguments );
 		debug( 'getThankYouUrl returned', url );
+
 		return url;
 	}, [
-		isInEditor,
-		transactionResult,
-		isEligibleForSignupDestinationResult,
+		isInModal,
 		siteSlug,
 		adminUrl,
 		isJetpackNotAtomic,
@@ -74,21 +80,23 @@ export default function useGetThankYouUrl( {
 		purchaseId,
 		cart,
 		hideNudge,
-		isJetpackCheckout,
+		sitelessCheckoutType,
+		domains,
+		monthlyToAnnualPostPurchaseExperimentUser,
 	] );
 	return getThankYouUrl;
 }
 
 export interface GetThankYouUrlProps {
 	siteSlug: string | undefined;
-	transactionResult?: WPCOMTransactionEndpointResponse | undefined;
 	redirectTo?: string | undefined;
-	purchaseId?: number | undefined;
+	purchaseId?: number | string | undefined;
 	feature?: string | undefined;
 	cart: ResponseCart;
-	isJetpackNotAtomic?: boolean;
+	sitelessCheckoutType: SitelessCheckoutType;
 	productAliasFromUrl?: string | undefined;
 	hideNudge?: boolean;
-	isInEditor?: boolean;
-	isJetpackCheckout?: boolean;
+	isInModal?: boolean;
+	isJetpackNotAtomic?: boolean;
+	domains: ResponseDomain[] | undefined;
 }

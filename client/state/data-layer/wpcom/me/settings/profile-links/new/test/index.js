@@ -1,7 +1,4 @@
-/**
- * Internal dependencies
- */
-import { addUserProfileLinks, handleAddError, handleAddSuccess } from '../';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
 	addUserProfileLinks as addUserProfileLinksAction,
 	addUserProfileLinksDuplicate,
@@ -10,7 +7,7 @@ import {
 	addUserProfileLinksSuccess,
 	receiveUserProfileLinks,
 } from 'calypso/state/profile-links/actions';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { addUserProfileLinks, handleAddError, handleAddSuccess } from '../';
 
 const profileLinks = [
 	{

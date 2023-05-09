@@ -1,25 +1,18 @@
 /**
- **** WARNING: No ES6 modules here. Not transpiled! ****
+ * WARNING: No ES6 modules here. Not transpiled! *
  */
 /* eslint-disable import/no-nodejs-modules */
 
-/**
- * External dependencies
- */
 const fs = require( 'fs' );
 const path = require( 'path' );
 const process = require( 'process' );
-const webpack = require( 'webpack' );
+const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
+const webpack = require( 'webpack' );
 const FileConfig = require( './webpack/file-loader' );
 const Minify = require( './webpack/minify' );
 const SassConfig = require( './webpack/sass' );
 const TranspileConfig = require( './webpack/transpile' );
-const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
-
-/**
- * Internal dependencies
- */
 const { cssNameFromFilename, shouldTranspileDependency } = require( './webpack/util' );
 // const { workerCount } = require( './webpack.common' ); // todo: shard...
 
@@ -28,6 +21,7 @@ const { cssNameFromFilename, shouldTranspileDependency } = require( './webpack/u
  */
 const isDevelopment = process.env.NODE_ENV !== 'production';
 const cachePath = path.resolve( '.cache' );
+const shouldCheckForDuplicatePackages = ! process.env.DISABLE_DUPLICATE_PACKAGE_CHECK;
 
 /**
  * Return a webpack config object
@@ -37,16 +31,15 @@ const cachePath = path.resolve( '.cache' );
  *
  * @see {@link https://webpack.js.org/configuration/configuration-types/#exporting-a-function}
  * @see {@link https://webpack.js.org/api/cli/}
- *
- * @param  {object}  env                                 environment options
- * @param  {object}  argv                                options map
- * @param  {object}  argv.entry                          Entry point(s)
+ * @param  {Object}  env                                 environment options
+ * @param  {Object}  argv                                options map
+ * @param  {Object}  argv.entry                          Entry point(s)
  * @param  {string}  argv.'output-chunk-filename'        Output chunk filename
  * @param  {string}  argv.'output-path'                  Output path
  * @param  {string}  argv.'output-filename'              Output filename pattern
  * @param  {string}  argv.'output-library-target'        Output library target
  * @param  {string}  argv.'output-chunk-loading-global'  Output chunk loading global
- * @returns {object}                                     webpack config
+ * @returns {Object}                                     webpack config
  */
 function getWebpackConfig(
 	env = {},
@@ -67,17 +60,19 @@ function getWebpackConfig(
 	let babelConfig = path.join( process.cwd(), 'babel.config.js' );
 	let presets = [];
 	if ( ! fs.existsSync( babelConfig ) ) {
-		// Default to this package's Babel presets
 		presets = [
-			path.join( __dirname, 'babel', 'default' ),
-			env.WP && path.join( __dirname, 'babel', 'wordpress-element' ),
+			require.resolve( '@automattic/calypso-babel-config/presets/default' ),
+			env.WP && require.resolve( '@automattic/calypso-babel-config/presets/wordpress-element' ),
 		].filter( Boolean );
 		babelConfig = undefined;
 	}
 
 	// Use this package's PostCSS config. If it doesn't exist postcss will look
 	// for the config file starting in the current directory (https://github.com/webpack-contrib/postcss-loader#config-cascade)
-	const postCssConfigPath = path.join( process.cwd(), 'postcss.config.js' );
+	const consumerPostCssConfig = path.join( process.cwd(), 'postcss.config.js' );
+	const postCssConfigPath = fs.existsSync( consumerPostCssConfig )
+		? consumerPostCssConfig
+		: path.join( __dirname, 'postcss.config.js' );
 
 	const webpackConfig = {
 		bail: ! isDevelopment,
@@ -116,14 +111,13 @@ function getWebpackConfig(
 				TranspileConfig.loader( {
 					cacheDirectory: path.resolve( cachePath, 'babel' ),
 					include: shouldTranspileDependency,
-					presets: [ path.join( __dirname, 'babel', 'dependencies' ) ],
+					presets: [ require.resolve( '@automattic/calypso-babel-config/presets/dependencies' ) ],
 					workerCount,
 				} ),
 				SassConfig.loader( {
 					postCssOptions: {
-						...( fs.existsSync( postCssConfigPath ) ? { config: postCssConfigPath } : {} ),
+						config: postCssConfigPath,
 					},
-					cacheDirectory: path.resolve( cachePath, 'css-loader' ),
 				} ),
 				FileConfig.loader(),
 			],
@@ -131,6 +125,7 @@ function getWebpackConfig(
 		resolve: {
 			extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
 			mainFields: [ 'browser', 'calypso:src', 'module', 'main' ],
+			conditionNames: [ 'calypso:src', 'import', 'module', 'require' ],
 			modules: [ 'node_modules' ],
 		},
 		node: false,
@@ -142,13 +137,13 @@ function getWebpackConfig(
 				),
 				global: 'window',
 			} ),
-			new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ),
+			new webpack.IgnorePlugin( { resourceRegExp: /^\.\/locale$/, contextRegExp: /moment$/ } ),
 			...SassConfig.plugins( {
 				chunkFilename: cssChunkFilename,
 				filename: cssFilename,
 				minify: ! isDevelopment,
 			} ),
-			new DuplicatePackageCheckerPlugin(),
+			...( shouldCheckForDuplicatePackages ? [ new DuplicatePackageCheckerPlugin() ] : [] ),
 			...( env.WP ? [ new DependencyExtractionWebpackPlugin( { injectPolyfill: true } ) ] : [] ),
 		],
 	};

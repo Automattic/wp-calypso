@@ -1,44 +1,35 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
+import { Button, Gridicon } from '@automattic/components';
+import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { get, size, delay } from 'lodash';
-import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
-import {
-	commentsFetchingStatus,
-	getActiveReplyCommentId,
-	getCommentById,
-	getPostCommentsTree,
-} from 'calypso/state/comments/selectors';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import ConversationFollowButton from 'calypso/blocks/conversation-follow-button';
+import { shouldShowConversationFollowButton } from 'calypso/blocks/conversation-follow-button/helper';
+import SegmentedControl from 'calypso/components/segmented-control';
+import ReaderFollowConversationIcon from 'calypso/reader/components/icons/follow-conversation-icon';
+import ReaderFollowingConversationIcon from 'calypso/reader/components/icons/following-conversation-icon';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import {
 	requestPostComments,
 	requestComment,
 	setActiveReply,
 } from 'calypso/state/comments/actions';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from 'calypso/state/comments/constants';
-import { recordAction, recordGaEvent } from 'calypso/reader/stats';
-import PostComment from './post-comment';
-import PostCommentFormRoot from './form-root';
-import CommentCount from './comment-count';
-import SegmentedControl from 'calypso/components/segmented-control';
-import Gridicon from 'calypso/components/gridicon';
-import ConversationFollowButton from 'calypso/blocks/conversation-follow-button';
-import { shouldShowConversationFollowButton } from 'calypso/blocks/conversation-follow-button/helper';
+import {
+	commentsFetchingStatus,
+	getActiveReplyCommentId,
+	getCommentById,
+	getPostCommentsTree,
+} from 'calypso/state/comments/selectors';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import CommentCount from './comment-count';
+import PostCommentFormRoot from './form-root';
+import PostComment from './post-comment';
 
-/**
- * Style dependencies
- */
 import './post-comment-list.scss';
 
 /**
@@ -58,7 +49,7 @@ import './post-comment-list.scss';
  *
  */
 
-class PostCommentList extends React.Component {
+class PostCommentList extends Component {
 	static propTypes = {
 		post: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,
@@ -98,25 +89,30 @@ class PostCommentList extends React.Component {
 
 	state = {
 		amountOfCommentsToTake: this.props.initialSize,
-		commentsFilter: 'all',
-		activeEditCommentId: null,
+		commentText: '',
 	};
 
-	shouldFetchInitialComment = ( { startingCommentId, initialComment } ) => {
+	shouldFetchInitialComment = () => {
+		const { startingCommentId, initialComment } = this.props;
 		return !! ( startingCommentId && ! initialComment );
 	};
 
-	shouldFetchInitialPages = ( { startingCommentId, commentsTree } ) =>
-		startingCommentId &&
-		commentsTree[ startingCommentId ] &&
-		this.props.commentsTree[ startingCommentId ] &&
-		! this.alreadyLoadedInitialSet;
+	shouldFetchInitialPages = () => {
+		const { startingCommentId, commentsTree } = this.props;
 
-	shouldNormalFetchAfterPropsChange = ( nextProps ) => {
+		return (
+			startingCommentId &&
+			commentsTree[ startingCommentId ] &&
+			this.props.commentsTree[ startingCommentId ] &&
+			! this.alreadyLoadedInitialSet
+		);
+	};
+
+	shouldNormalFetchAfterPropsChange = () => {
 		// this next check essentially looks out for whether we've ever requested comments for the post
 		if (
-			nextProps.commentsFetchingStatus.haveEarlierCommentsToFetch &&
-			nextProps.commentsFetchingStatus.haveLaterCommentsToFetch
+			this.props.commentsFetchingStatus.haveEarlierCommentsToFetch &&
+			this.props.commentsFetchingStatus.haveLaterCommentsToFetch
 		) {
 			return true;
 		}
@@ -126,10 +122,10 @@ class PostCommentList extends React.Component {
 		const currentCommentsFilter = this.props.commentsFilter;
 		const currentInitialComment = this.props.initialComment;
 
-		const nextSiteId = get( nextProps, 'post.site_ID' );
-		const nextPostId = get( nextProps, 'post.ID' );
-		const nextCommentsFilter = nextProps.commentsFilter;
-		const nextInitialComment = nextProps.initialComment;
+		const nextSiteId = get( this.props, 'post.site_ID' );
+		const nextPostId = get( this.props, 'post.ID' );
+		const nextCommentsFilter = this.props.commentsFilter;
+		const nextInitialComment = this.props.initialComment;
 
 		const propsExist = nextSiteId && nextPostId && nextCommentsFilter;
 		const propChanged =
@@ -151,42 +147,44 @@ class PostCommentList extends React.Component {
 		return ( propsExist && propChanged ) || commentIdBail;
 	};
 
-	initialFetches = ( props = this.props ) => {
-		const { postId, siteId, commentsFilter: status } = props;
+	initialFetches = () => {
+		const { postId, siteId, commentsFilter: status } = this.props;
 
-		if ( this.shouldFetchInitialComment( props ) ) {
+		if ( this.shouldFetchInitialComment() ) {
 			// there is an edgecase the initialComment can change while on the same post
 			// in this case we can't just load the exact comment in question because
 			// we could create a gap in the list.
 			if ( this.props.commentsTree ) {
+				// view earlier...
 				this.viewEarlierCommentsHandler();
 			} else {
-				props.requestComment( { siteId, commentId: props.startingCommentId } );
+				this.props.requestComment( { siteId, commentId: this.props.startingCommentId } );
 			}
-		} else if ( this.shouldFetchInitialPages( props ) ) {
+		} else if ( this.shouldFetchInitialPages() ) {
 			this.viewEarlierCommentsHandler();
 			this.viewLaterCommentsHandler();
 			this.alreadyLoadedInitialSet = true;
-		} else if ( this.shouldNormalFetchAfterPropsChange( props ) ) {
-			props.requestPostComments( { siteId, postId, status } );
+		} else if ( this.shouldNormalFetchAfterPropsChange() ) {
+			this.props.requestPostComments( { siteId, postId, status } );
 		}
 	};
 
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		this.initialFetches();
 		this.scrollWhenDOMReady();
-	}
-
-	componentDidMount() {
 		this.resetActiveReplyComment();
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		this.initialFetches( nextProps );
+	componentDidUpdate( prevProps, prevState ) {
+		// If only the state is changing, do nothing. (Avoids setState loops.)
+		if ( prevState !== this.state && prevProps === this.props ) {
+			return;
+		}
+		this.initialFetches();
 		if (
-			this.props.siteId !== nextProps.siteId ||
-			this.props.postId !== nextProps.postId ||
-			this.props.startingCommentId !== nextProps.startingCommentId
+			prevProps.siteId !== this.props.siteId ||
+			prevProps.postId !== this.props.postId ||
+			prevProps.startingCommentId !== this.props.startingCommentId
 		) {
 			this.hasScrolledToComment = false;
 			this.scrollWhenDOMReady();
@@ -209,23 +207,16 @@ class PostCommentList extends React.Component {
 			return null;
 		}
 
-		// TODO Should not need to bind here
-		const onEditCommentClick = this.onEditCommentClick.bind( this, commentId );
-
 		return (
 			<PostComment
 				post={ this.props.post }
 				commentsTree={ this.props.commentsTree }
 				commentId={ commentId }
 				key={ commentId }
-				showModerationTools={ this.props.showModerationTools }
-				activeEditCommentId={ this.state.activeEditCommentId }
 				activeReplyCommentId={ this.props.activeReplyCommentId }
-				onEditCommentClick={ onEditCommentClick }
-				onEditCommentCancel={ this.onEditCommentCancel }
 				onReplyClick={ this.onReplyClick }
 				onReplyCancel={ this.onReplyCancel }
-				commentText={ this.commentText }
+				commentText={ this.state.commentText }
 				onUpdateCommentText={ this.onUpdateCommentText }
 				onCommentSubmit={ this.resetActiveReplyComment }
 				depth={ 0 }
@@ -255,12 +246,6 @@ class PostCommentList extends React.Component {
 		);
 	};
 
-	onEditCommentClick = ( commentId ) => {
-		this.setState( { activeEditCommentId: commentId } );
-	};
-
-	onEditCommentCancel = () => this.setState( { activeEditCommentId: null } );
-
 	onReplyClick = ( commentId ) => {
 		this.setActiveReplyComment( commentId );
 		recordAction( 'comment_reply_click' );
@@ -277,7 +262,7 @@ class PostCommentList extends React.Component {
 		recordGaEvent( 'Clicked Cancel Reply to Comment' );
 		this.props.recordReaderTracksEvent( 'calypso_reader_comment_reply_cancel_click', {
 			blog_id: this.props.post.site_ID,
-			comment_id: this.state.activeReplyCommentId,
+			comment_id: this.props.activeReplyCommentId,
 		} );
 		this.resetActiveReplyComment();
 	};
@@ -336,7 +321,7 @@ class PostCommentList extends React.Component {
 	 *
 	 * @param {Array<number>} commentIds The top level commentIds to take from
 	 * @param {number} numberToTake How many top level comments to take
-	 * @returns {object} that has the displayed comments + total displayed count including children
+	 * @returns {Object} that has the displayed comments + total displayed count including children
 	 */
 	getDisplayedComments = ( commentIds, numberToTake ) => {
 		if ( ! commentIds ) {
@@ -391,10 +376,8 @@ class PostCommentList extends React.Component {
 			commentCount,
 			followSource,
 		} = this.props;
-		const {
-			haveEarlierCommentsToFetch,
-			haveLaterCommentsToFetch,
-		} = this.props.commentsFetchingStatus;
+		const { haveEarlierCommentsToFetch, haveLaterCommentsToFetch } =
+			this.props.commentsFetchingStatus;
 
 		const amountOfCommentsToTake = this.props.startingCommentId
 			? Infinity
@@ -434,7 +417,23 @@ class PostCommentList extends React.Component {
 			>
 				{ ( this.props.showCommentCount || showViewMoreComments ) && (
 					<div className="comments__info-bar">
-						{ this.props.showCommentCount && <CommentCount count={ actualCommentsCount } /> }
+						<div className="comments__info-bar-title-links">
+							{ this.props.showCommentCount && <CommentCount count={ actualCommentsCount } /> }
+							<div className="comments__actions-wrapper">
+								{ showManageCommentsButton && this.renderCommentManageLink() }
+								{ showConversationFollowButton && (
+									<ConversationFollowButton
+										className="comments__conversation-follow-button"
+										siteId={ siteId }
+										postId={ postId }
+										post={ this.props.post }
+										followSource={ followSource }
+										followIcon={ ReaderFollowConversationIcon( { iconSize: 20 } ) }
+										followingIcon={ ReaderFollowingConversationIcon( { iconSize: 20 } ) }
+									/>
+								) }
+							</div>
+						</div>
 						{ showViewMoreComments && (
 							<button className="comments__view-more" onClick={ this.viewEarlierCommentsHandler }>
 								{ translate( 'Load more comments (Showing %(shown)d of %(total)d)', {
@@ -447,18 +446,6 @@ class PostCommentList extends React.Component {
 						) }
 					</div>
 				) }
-				<div className="comments__actions-wrapper">
-					{ showManageCommentsButton && this.renderCommentManageLink() }
-					{ showConversationFollowButton && (
-						<ConversationFollowButton
-							className="comments__conversation-follow-button"
-							siteId={ siteId }
-							postId={ postId }
-							post={ this.props.post }
-							followSource={ followSource }
-						/>
-					) }
-				</div>
 				{ showFilters && (
 					<SegmentedControl compact primary>
 						<SegmentedControl.Item

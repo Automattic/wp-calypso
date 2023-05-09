@@ -1,86 +1,83 @@
-/**
- * External dependencies
- */
-import page from 'page';
-import React from 'react';
-import i18n from 'i18n-calypso';
-import { get, some, startsWith } from 'lodash';
-import { removeQueryArgs } from '@wordpress/url';
-
-/**
- * Internal Dependencies
- */
-import { cloudSiteSelection } from 'calypso/jetpack-cloud/controller';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { requestSite } from 'calypso/state/sites/actions';
-import {
-	getSite,
-	getSiteId,
-	getSiteAdminUrl,
-	getSiteSlug,
-	isJetpackModuleActive,
-	isJetpackSite,
-} from 'calypso/state/sites/selectors';
-import {
-	getSelectedSite,
-	getSelectedSiteId,
-	getSelectedSiteSlug,
-} from 'calypso/state/ui/selectors';
-import { setSelectedSiteId, setAllSitesSelected } from 'calypso/state/ui/actions';
-import { savePreference } from 'calypso/state/preferences/actions';
-import { hasReceivedRemotePreferences, getPreference } from 'calypso/state/preferences/selectors';
-import NavigationComponent from 'calypso/my-sites/navigation';
-import {
-	addQueryArgs,
-	getSiteFragment,
-	sectionify,
-	externalRedirect,
-	trailingslashit,
-} from 'calypso/lib/route';
 import config from '@automattic/calypso-config';
+import { PLAN_FREE, PLAN_JETPACK_FREE } from '@automattic/calypso-products';
+import { removeQueryArgs } from '@wordpress/url';
+import i18n from 'i18n-calypso';
+import { some, startsWith } from 'lodash';
+import page from 'page';
+import { createElement } from 'react';
+import EmptyContentComponent from 'calypso/components/empty-content';
+import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
+import { makeLayout, render as clientRender, setSectionMiddleware } from 'calypso/controller';
+import { composeHandlers } from 'calypso/controller/shared';
+import { render } from 'calypso/controller/web-util';
+import { cloudSiteSelection } from 'calypso/jetpack-cloud/controller';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
-import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
-import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
-import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
-import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { navigate } from 'calypso/lib/navigate';
+import { onboardingUrl } from 'calypso/lib/paths';
+import { addQueryArgs, getSiteFragment, sectionify, trailingslashit } from 'calypso/lib/route';
+import { withoutHttp } from 'calypso/lib/url';
+import DomainOnly from 'calypso/my-sites/domains/domain-management/list/domain-only';
 import {
 	domainManagementContactsPrivacy,
 	domainManagementDns,
 	domainManagementEdit,
 	domainManagementEditContactInfo,
 	domainManagementList,
-	domainManagementNameServers,
 	domainManagementRedirectSettings,
 	domainManagementTransfer,
 	domainManagementTransferOut,
 	domainManagementTransferToOtherSite,
 	domainManagementRoot,
+	domainManagementDnsAddRecord,
+	domainManagementDnsEditRecord,
+	domainAddNew,
 } from 'calypso/my-sites/domains/paths';
 import {
 	emailManagement,
+	emailManagementAddEmailForwards,
 	emailManagementAddGSuiteUsers,
 	emailManagementForwarding,
+	emailManagementInbox,
+	emailManagementInDepthComparison,
 	emailManagementManageTitanAccount,
 	emailManagementManageTitanMailboxes,
 	emailManagementNewTitanAccount,
+	emailManagementPurchaseNewEmailAccount,
 	emailManagementTitanControlPanelRedirect,
 } from 'calypso/my-sites/email/paths';
+import DIFMLiteInProgress from 'calypso/my-sites/marketing/do-it-for-me/difm-lite-in-progress';
+import NavigationComponent from 'calypso/my-sites/navigation';
 import SitesComponent from 'calypso/my-sites/sites';
-import { successNotice, warningNotice } from 'calypso/state/notices/actions';
-import { makeLayout, render as clientRender, setSectionMiddleware } from 'calypso/controller';
-import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
-import EmptyContentComponent from 'calypso/components/empty-content';
-import DomainOnly from 'calypso/my-sites/domains/domain-management/list/domain-only';
-import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
+import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { successNotice, warningNotice, errorNotice } from 'calypso/state/notices/actions';
+import { savePreference } from 'calypso/state/preferences/actions';
+import { hasReceivedRemotePreferences, getPreference } from 'calypso/state/preferences/selectors';
 import getP2HubBlogId from 'calypso/state/selectors/get-p2-hub-blog-id';
-
+import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+import isDIFMLiteInProgress from 'calypso/state/selectors/is-difm-lite-in-progress';
+import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
+import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
+import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
+import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import wasEcommerceTrialSite from 'calypso/state/selectors/was-ecommerce-trial-site';
+import { requestSite } from 'calypso/state/sites/actions';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import {
+	getSite,
+	getSiteId,
+	getSiteOption,
+	getSitePlanSlug,
+	getSiteSlug,
+} from 'calypso/state/sites/selectors';
+import { isSupportSession } from 'calypso/state/support/selectors';
+import { setSelectedSiteId, setAllSitesSelected } from 'calypso/state/ui/actions';
+import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 /*
  * @FIXME Shorthand, but I might get rid of this.
  */
@@ -109,10 +106,17 @@ export function createNavigation( context ) {
 		basePath = sectionify( context.pathname );
 	}
 
+	let allSitesPath = basePath === '/home' ? '/sites' : basePath;
+
+	// Update allSitesPath if it is plugins page in Jetpack Cloud
+	if ( isJetpackCloud() && basePath.startsWith( '/plugins' ) ) {
+		allSitesPath = '/plugins';
+	}
+
 	return (
 		<NavigationComponent
 			path={ context.path }
-			allSitesPath={ basePath }
+			allSitesPath={ allSitesPath }
 			siteBasePath={ basePath }
 		/>
 	);
@@ -121,7 +125,7 @@ export function createNavigation( context ) {
 export function renderEmptySites( context ) {
 	setSectionMiddleware( { group: 'sites' } )( context );
 
-	context.primary = React.createElement( NoSitesMessage );
+	context.primary = createElement( NoSitesMessage );
 
 	makeLayout( context, noop );
 	clientRender( context );
@@ -132,11 +136,10 @@ export function renderNoVisibleSites( context ) {
 	const state = getState();
 	const currentUser = getCurrentUser( state );
 	const hiddenSites = currentUser && currentUser.site_count - currentUser.visible_site_count;
-	const onboardingUrl = getOnboardingUrl( state );
 
 	setSectionMiddleware( { group: 'sites' } )( context );
 
-	context.primary = React.createElement( EmptyContentComponent, {
+	context.primary = createElement( EmptyContentComponent, {
 		title: i18n.translate(
 			'You have %(hidden)d hidden WordPress site.',
 			'You have %(hidden)d hidden WordPress sites.',
@@ -157,7 +160,7 @@ export function renderNoVisibleSites( context ) {
 		action: i18n.translate( 'Change Visibility' ),
 		actionURL: '//dashboard.wordpress.com/wp-admin/index.php?page=my-blogs',
 		secondaryAction: i18n.translate( 'Create New Site' ),
-		secondaryActionURL: `${ onboardingUrl }?ref=calypso-nosites`,
+		secondaryActionURL: `${ onboardingUrl() }?ref=calypso-nosites`,
 		className: 'no-visible-sites-message',
 	} );
 
@@ -166,7 +169,21 @@ export function renderNoVisibleSites( context ) {
 }
 
 function renderSelectedSiteIsDomainOnly( reactContext, selectedSite ) {
-	reactContext.primary = <DomainOnly siteId={ selectedSite.ID } hasNotice={ false } />;
+	reactContext.primary = (
+		<>
+			<PageViewTracker path="/view/:site" title="Domain Only" />
+			<DomainOnly siteId={ selectedSite.ID } hasNotice={ false } />
+		</>
+	);
+
+	reactContext.secondary = createNavigation( reactContext );
+
+	makeLayout( reactContext, noop );
+	clientRender( reactContext );
+}
+
+function renderSelectedSiteIsDIFMLiteInProgress( reactContext, selectedSite ) {
+	reactContext.primary = <DIFMLiteInProgress siteId={ selectedSite.ID } />;
 
 	reactContext.secondary = createNavigation( reactContext );
 
@@ -178,20 +195,25 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 	const allPaths = [
 		domainManagementContactsPrivacy,
 		domainManagementDns,
+		domainManagementDnsAddRecord,
+		domainManagementDnsEditRecord,
 		domainManagementEdit,
 		domainManagementEditContactInfo,
 		domainManagementList,
-		domainManagementNameServers,
 		domainManagementRedirectSettings,
 		domainManagementTransfer,
 		domainManagementTransferOut,
 		domainManagementTransferToOtherSite,
 		emailManagement,
+		emailManagementAddEmailForwards,
 		emailManagementAddGSuiteUsers,
 		emailManagementForwarding,
+		emailManagementInbox,
+		emailManagementInDepthComparison,
 		emailManagementManageTitanAccount,
 		emailManagementManageTitanMailboxes,
 		emailManagementNewTitanAccount,
+		emailManagementPurchaseNewEmailAccount,
 		emailManagementTitanControlPanelRedirect,
 	];
 
@@ -234,13 +256,34 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 	return domainManagementPaths.indexOf( path ) > -1;
 }
 
-function onSelectedSiteAvailable( context, basePath ) {
+/**
+ * The paths allowed for domain-only sites and DIFM in-progress sites are the same
+ * with one exception - /domains/add should be allowed for DIFM in-progress sites.
+ *
+ * @param {string} path The path to be checked
+ * @param {string} slug The site slug
+ * @param {Array} domains The list of site domains
+ * @param {Object} contextParams Context parameters
+ * @returns {boolean} true if the path is allowed, false otherwise
+ */
+function isPathAllowedForDIFMInProgressSite( path, slug, domains, contextParams ) {
+	const DIFMLiteInProgressAllowedPaths = [ domainAddNew(), emailManagement( slug ) ];
+
+	const isAllowedForDomainOnlySites = domains.some( ( domain ) =>
+		isPathAllowedForDomainOnlySite( path, slug, domain, contextParams )
+	);
+
+	return (
+		isAllowedForDomainOnlySites ||
+		DIFMLiteInProgressAllowedPaths.some( ( DIFMLiteInProgressAllowedPath ) =>
+			path.startsWith( DIFMLiteInProgressAllowedPath )
+		)
+	);
+}
+
+function onSelectedSiteAvailable( context ) {
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
-
-	const isAtomicSite = isSiteAutomatedTransfer( state, selectedSite.ID );
-	const userCanManagePlugins = canCurrentUser( state, selectedSite.ID, 'activate_plugins' );
-	const calypsoify = isAtomicSite && config.isEnabled( 'calypsoify/plugins' );
 
 	// If migration is in progress, only /migrate paths should be loaded for the site
 	const isMigrationInProgress = isSiteMigrationInProgress( state, selectedSite.ID );
@@ -250,24 +293,30 @@ function onSelectedSiteAvailable( context, basePath ) {
 		return false;
 	}
 
-	if ( userCanManagePlugins && calypsoify && /^\/plugins/.test( basePath ) ) {
-		const plugin = get( context, 'params.plugin' );
-		let pluginString = '';
-		if ( plugin ) {
-			pluginString = [
-				'tab=search',
-				`s=${ plugin }`,
-				'type=term',
-				'modal-mode=true',
-				`plugin=${ plugin }`,
-			].join( '&' );
+	// If we had an eCommerce trial, and the user doesn't have an active paid plan,
+	// redirect to
+	if ( wasEcommerceTrialSite( state, selectedSite.ID ) ) {
+		// Use getSitePlanSlug() as it ignores expired plans.
+		const currentPlanSlug = getSitePlanSlug( state, selectedSite.ID );
+
+		if ( [ PLAN_FREE, PLAN_JETPACK_FREE ].includes( currentPlanSlug ) ) {
+			const permittedPathPrefixes = [
+				'/checkout/',
+				'/domains/',
+				'/email/',
+				'/export/',
+				'/plans/my-plan/trial-expired/',
+				'/purchases/',
+				'/settings/delete-site/',
+			];
+
+			if ( ! permittedPathPrefixes.some( ( prefix ) => context.pathname.startsWith( prefix ) ) ) {
+				page.redirect( `/plans/my-plan/trial-expired/${ selectedSite.slug }` );
+				return false;
+			}
+
+			context.hideLeftNavigation = true;
 		}
-
-		const pluginInstallURL = 'plugin-install.php?calypsoify=1' + `&${ pluginString }`;
-		const pluginLink = getSiteAdminUrl( state, selectedSite.ID ) + pluginInstallURL;
-
-		window.location.replace( pluginLink );
-		return false;
 	}
 
 	const primaryDomain = getPrimaryDomainBySiteId( state, selectedSite.ID );
@@ -281,6 +330,26 @@ function onSelectedSiteAvailable( context, basePath ) {
 		)
 	) {
 		renderSelectedSiteIsDomainOnly( context, selectedSite );
+		return false;
+	}
+
+	/**
+	 * For DIFM in-progress sites, render the in-progress screen for all
+	 * paths except those in the allow-list defined in `isPathAllowedForDIFMInProgressSite`.
+	 * Ignore this check if we are inside a support session.
+	 */
+	const domains = getDomainsBySiteId( state, selectedSite.ID );
+	if (
+		isDIFMLiteInProgress( state, selectedSite.ID ) &&
+		! isSupportSession( state ) &&
+		! isPathAllowedForDIFMInProgressSite(
+			context.pathname,
+			selectedSite.slug,
+			domains,
+			context.params
+		)
+	) {
+		renderSelectedSiteIsDIFMLiteInProgress( context, selectedSite );
 		return false;
 	}
 
@@ -310,8 +379,8 @@ export function updateRecentSitesPreferences( context ) {
 /**
  * Returns the site-picker react element.
  *
- * @param {object} context -- Middleware context
- * @returns {object} A site-picker React element
+ * @param {Object} context -- Middleware context
+ * @returns {Object} A site-picker React element
  */
 function createSitesComponent( context ) {
 	const contextPath = sectionify( context.path );
@@ -323,7 +392,12 @@ function createSitesComponent( context ) {
 	}
 
 	// This path sets the URL to be visited once a site is selected
-	const basePath = filteredPathName === '/sites' ? '/home' : filteredPathName;
+	let basePath = filteredPathName === '/sites' ? '/home' : filteredPathName;
+
+	// Update basePath if it is plugins page in Jetpack Cloud
+	if ( isJetpackCloud() && basePath.startsWith( '/plugins' ) ) {
+		basePath = '/plugins/manage';
+	}
 
 	recordPageView( contextPath, sitesPageTitleForAnalytics );
 
@@ -355,6 +429,18 @@ export function showMissingPrimaryError( currentUser, dispatch ) {
 		);
 		recordTracksEvent( 'calypso_mysites_single_site_jetpack_connection_error', tracksPayload );
 	} else {
+		dispatch(
+			errorNotice(
+				isJetpackCloud()
+					? i18n.translate( 'Your Primary site is not a Jetpack site.' )
+					: i18n.translate( 'Please set a Primary site.' ),
+				{
+					button: i18n.translate( 'Account Settings' ),
+					href: `https://wordpress.com/me/account`,
+				}
+			)
+		);
+
 		recordTracksEvent( 'calypso_mysites_single_site_error', tracksPayload );
 	}
 }
@@ -365,13 +451,27 @@ export function noSite( context, next ) {
 	const currentUser = getCurrentUser( getState() );
 	const hasSite = currentUser && currentUser.visible_site_count >= 1;
 	const isDomainOnlyFlow = context.query?.isDomainOnly === '1';
+	const isJetpackCheckoutFlow = context.pathname.includes( '/checkout/jetpack' );
+	const isAkismetCheckoutFlow = context.pathname.includes( '/checkout/akismet' );
+	const isGiftCheckoutFlow = context.pathname.includes( '/gift/' );
+	const isRenewal = context.pathname.includes( '/renew/' );
 
-	if ( ! isDomainOnlyFlow && hasSite ) {
+	if (
+		! isDomainOnlyFlow &&
+		! isJetpackCheckoutFlow &&
+		! isAkismetCheckoutFlow &&
+		! isGiftCheckoutFlow &&
+		// We allow renewals without a site through because we want to show these
+		// users an error message on the checkout page.
+		! isRenewal &&
+		hasSite
+	) {
 		siteSelection( context, next );
-	} else {
-		context.store.dispatch( setSelectedSiteId( null ) );
-		return next();
+		return;
 	}
+
+	context.store.dispatch( setSelectedSiteId( null ) );
+	return next();
 }
 
 /*
@@ -385,19 +485,23 @@ export function siteSelection( context, next ) {
 
 	const { getState, dispatch } = getStore( context );
 	const siteFragment = context.params.site || getSiteFragment( context.path );
-	const basePath = sectionify( context.path, siteFragment );
 	const currentUser = getCurrentUser( getState() );
 	const hasOneSite = currentUser && currentUser.visible_site_count === 1;
 
+	// Making sure non-connected users get redirected to user connection flow.
+	// Details: p9dueE-6Hf-p2
+	const isUnlinkedCheckout =
+		'1' === context.query?.unlinked && context.pathname.match( /^\/checkout\/[^/]+\/jetpack_/i );
+
 	// The user doesn't have any sites: render `NoSitesMessage`
-	if ( currentUser && currentUser.site_count === 0 ) {
+	if ( currentUser && currentUser.site_count === 0 && ! isUnlinkedCheckout ) {
 		renderEmptySites( context );
 		recordNoSitesPageView( context, siteFragment );
 		return;
 	}
 
 	// The user has all sites set as hidden: render help message with how to make them visible
-	if ( currentUser && currentUser.visible_site_count === 0 ) {
+	if ( currentUser && currentUser.visible_site_count === 0 && ! isUnlinkedCheckout ) {
 		renderNoVisibleSites( context );
 		recordNoVisibleSitesPageView( context, siteFragment );
 		return;
@@ -438,24 +542,58 @@ export function siteSelection( context, next ) {
 	}
 
 	// If the path fragment does not resemble a site, set all sites to visible
-	if ( ! siteFragment ) {
+	const typeOfSiteFragment = typeof siteFragment;
+	if (
+		! ( typeOfSiteFragment === 'string' && siteFragment.length ) &&
+		typeOfSiteFragment !== 'number'
+	) {
 		dispatch( setAllSitesSelected() );
 		return next();
 	}
 
 	const siteId = getSiteId( getState(), siteFragment );
-	if ( siteId ) {
+
+	const isUnlinkedCheckoutNotBoost =
+		isUnlinkedCheckout && ! context.pathname.includes( 'jetpack_boost' );
+
+	if ( siteId && ! isUnlinkedCheckoutNotBoost ) {
 		// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
 		// to wp-admin. In that case, don't continue handling the route.
 		dispatch( setSelectedSiteId( siteId ) );
-		if ( onSelectedSiteAvailable( context, basePath ) ) {
-			next();
-		}
+
+		const currentPlanSlug = getSitePlanSlug( getState(), siteId );
+		const shouldUpdateStateAfterUpgrade =
+			context.pathname.startsWith( '/plans/my-plan/trial-upgraded/' ) &&
+			[ PLAN_FREE, PLAN_JETPACK_FREE ].includes( currentPlanSlug );
+
+		// This will fetch the site and update the state after the plan is upgraded if the site is on the trial-upgraded flow.
+		const promise = shouldUpdateStateAfterUpgrade
+			? dispatch( requestSite( siteId ) ).catch( () => {
+					return null;
+			  } )
+			: Promise.resolve();
+		promise.then( () => {
+			if ( onSelectedSiteAvailable( context ) ) {
+				next();
+			}
+		} );
 	} else {
 		// Fetch the site by siteFragment and then try to select again
 		dispatch( requestSite( siteFragment ) )
 			.catch( () => null )
 			.then( ( site ) => {
+				// If we found a site using the fragment and the fragment matches the *.wordpress.com domain for a site with a mapped domain,
+				// redirect to the mapped domain, e.g /site-editor/example.wordpress.com -> /site-editor/example.com
+				if ( site && site.ID ) {
+					const siteSlug = getSiteSlug( getState(), site.ID );
+					const unmappedSlug = withoutHttp( getSiteOption( getState(), site.ID, 'unmapped_url' ) );
+
+					if ( unmappedSlug !== siteSlug && unmappedSlug === siteFragment ) {
+						const hash = context.hashstring ? `#${ context.hashstring }` : '';
+						return page.redirect( context.path.replace( siteFragment, siteSlug ) + hash );
+					}
+				}
+
 				let freshSiteId = getSiteId( getState(), siteFragment );
 
 				if ( ! freshSiteId ) {
@@ -466,21 +604,21 @@ export function siteSelection( context, next ) {
 					freshSiteId = getSiteId( getState(), wpcomStagingFragment );
 				}
 
-				if ( freshSiteId ) {
+				// If the user is presumably not connected to WPCOM, we ignore the site ID we found.
+				// Details: p9dueE-6Hf-p2
+				if ( freshSiteId && ! isUnlinkedCheckoutNotBoost ) {
 					// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
 					// to wp-admin. In that case, don't continue handling the route.
 					dispatch( setSelectedSiteId( freshSiteId ) );
-					if ( onSelectedSiteAvailable( context, basePath ) ) {
+					if ( onSelectedSiteAvailable( context ) ) {
 						next();
 					}
 				} else if ( shouldRedirectToJetpackAuthorize( context, site ) ) {
-					externalRedirect( getJetpackAuthorizeURL( context, site ) );
+					navigate( getJetpackAuthorizeURL( context, site ) );
 				} else {
 					// If the site has loaded but siteId is still invalid then redirect to allSitesPath.
-					const allSitesPath = addQueryArgs(
-						{ site: siteFragment },
-						sectionify( context.path, siteFragment )
-					);
+					const siteFragmentOffset = context.path.indexOf( `/${ siteFragment }` );
+					const allSitesPath = context.path.substring( 0, siteFragmentOffset );
 					page.redirect( allSitesPath );
 				}
 			} );
@@ -515,35 +653,18 @@ export function redirectToPrimary( context, primarySiteSlug ) {
 	page.redirect( redirectPath );
 }
 
-export function jetpackModuleActive( moduleId, redirect ) {
-	return function ( context, next ) {
-		const { getState } = getStore( context );
-		const siteId = getSelectedSiteId( getState() );
-		const isJetpack = isJetpackSite( getState(), siteId );
-		const isModuleActive = isJetpackModuleActive( getState(), siteId, moduleId );
-
-		if ( ! isJetpack ) {
-			return next();
-		}
-
-		if ( isModuleActive || false === redirect ) {
-			next();
-		} else {
-			page.redirect( 'string' === typeof redirect ? redirect : '/stats' );
-		}
-	};
-}
-
 export function navigation( context, next ) {
 	// Render the My Sites navigation in #secondary
-	context.secondary = createNavigation( context );
+	if ( ! context.hideLeftNavigation ) {
+		context.secondary = createNavigation( context );
+	}
 	next();
 }
 
 /**
  * Middleware that adds the site selector screen to the layout.
  *
- * @param {object} context -- Middleware context
+ * @param {Object} context -- Middleware context
  * @param {Function} next -- Call next middleware in chain
  */
 export function sites( context, next ) {
@@ -577,13 +698,32 @@ export function redirectWithoutSite( redirectPath ) {
 }
 
 /**
+ * Use this middleware to prevent navigation to pages which are not supported by staging sites.
+ *
+ * @param {Object} context -- Middleware context
+ * @param {Function} next -- Call next middleware in chain
+ */
+export function stagingSiteNotSupportedRedirect( context, next ) {
+	const store = context.store;
+	const selectedSite = getSelectedSite( store.getState() );
+
+	if ( selectedSite && isSiteWpcomStaging( store.getState(), selectedSite.ID ) ) {
+		const siteSlug = getSiteSlug( store.getState(), selectedSite.ID );
+
+		return page.redirect( `/home/${ siteSlug }` );
+	}
+
+	next();
+}
+
+/**
  * Use this middleware to prevent navigation to pages which are not supported by the P2 project but only
  * if the P2+ paid plan is disabled for the specific environment (ie development vs production).
  *
  * If you need to prevent navigation to pages for the P2 project in general,
  * see `wpForTeamsP2PlusNotSupportedRedirect`.
  *
- * @param {object} context -- Middleware context
+ * @param {Object} context -- Middleware context
  * @param {Function} next -- Call next middleware in chain
  */
 export function wpForTeamsP2PlusNotSupportedRedirect( context, next ) {
@@ -607,7 +747,7 @@ export function wpForTeamsP2PlusNotSupportedRedirect( context, next ) {
  * For P2s, only hubs can have a plan. If we are on P2 a site that is a site under
  * a hub, we redirect the hub's plans page.
  *
- * @param {object} context -- Middleware context
+ * @param {Object} context -- Middleware context
  * @param {Function} next -- Call next middleware in chain
  */
 export function p2RedirectToHubPlans( context, next ) {
@@ -631,39 +771,12 @@ export function p2RedirectToHubPlans( context, next ) {
 }
 
 /**
- * For P2s, we sometimes want to redirect to the hub of a P2 site. If we are on
- * a P2 site under a hub this will redirect to the same path on the hub.
- *
- * @param {object} context -- Middleware context
- * @param {Function} next -- Call next middleware in chain
- */
-export function p2RedirectToHub( context, next ) {
-	const store = context.store;
-	const selectedSite = getSelectedSite( store.getState() );
-
-	if (
-		selectedSite &&
-		isSiteWPForTeams( store.getState(), selectedSite.ID ) &&
-		! isSiteP2Hub( store.getState(), selectedSite.ID )
-	) {
-		const hubId = getP2HubBlogId( store.getState(), selectedSite.ID );
-		const hubSlug = getSiteSlug( store.getState(), hubId );
-		if ( hubSlug ) {
-			const selectedSiteSlug = getSelectedSiteSlug( store.getState() );
-			return page.redirect( context.path.replace( selectedSiteSlug, hubSlug ) );
-		}
-	}
-
-	next();
-}
-
-/**
  * Use this middleware to prevent navigation to pages which are not supported by the P2 project in general.
  *
  * If you need to prevent navigation to pages based on whether the P2+ paid plan is enabled or disabled,
  * see `wpForTeamsP2PlusNotSupportedRedirect`.
  *
- * @param {object} context -- Middleware context
+ * @param {Object} context -- Middleware context
  * @param {Function} next -- Call next middleware in chain
  */
 export function wpForTeamsGeneralNotSupportedRedirect( context, next ) {
@@ -682,8 +795,8 @@ export function wpForTeamsGeneralNotSupportedRedirect( context, next ) {
 /**
  * Whether we need to redirect user to the Jetpack site for authorization.
  *
- * @param {object} context -- The context object.
- * @param {object} site -- The site information.
+ * @param {Object} context -- The context object.
+ * @param {Object} site -- The site information.
  * @returns {boolean} shouldRedirect -- Whether we need to redirect user to the Jetpack site for authorization.
  */
 export function shouldRedirectToJetpackAuthorize( context, site ) {
@@ -693,8 +806,8 @@ export function shouldRedirectToJetpackAuthorize( context, site ) {
 /**
  * Get redirect URL to the Jetpack site for authorization.
  *
- * @param {object} context -- The context object.
- * @param {object} site -- The site information.
+ * @param {Object} context -- The context object.
+ * @param {Object} site -- The site information.
  * @returns {string} redirectURL -- The redirect URL.
  */
 export function getJetpackAuthorizeURL( context, site ) {
@@ -706,4 +819,17 @@ export function getJetpackAuthorizeURL( context, site ) {
 		},
 		trailingslashit( site?.URL ) + 'wp-admin/'
 	);
+}
+
+export function selectSiteIfLoggedIn( context, next ) {
+	const state = context.store.getState();
+	if ( ! isUserLoggedIn( state ) ) {
+		next();
+		return;
+	}
+
+	// Logged in: Terminate the regular handler path by not calling next()
+	// and render the site selection screen, redirecting the user if they
+	// only have one site.
+	composeHandlers( siteSelection, sites, makeLayout, render )( context );
 }

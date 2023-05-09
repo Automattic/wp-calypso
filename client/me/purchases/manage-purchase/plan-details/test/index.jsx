@@ -1,15 +1,13 @@
-/**
- * External dependencies
- */
-import { shallow } from 'enzyme';
-import React from 'react';
+/** @jest-environment jsdom */
+import { screen } from '@testing-library/react';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { renderWithProvider as render } from 'calypso/test-helpers/testing-library';
 import { PurchasePlanDetails } from '../index';
-import PlanBillingPeriod from '../billing-period';
+
+jest.mock( 'calypso/components/data/query-plugin-keys', () => () => 'query-plugin-keys' );
+jest.mock( '../billing-period', () => ( props ) => (
+	<div data-testid="billing-period">{ JSON.stringify( props ) }</div>
+) );
 
 const props = {
 	purchaseId: 123,
@@ -45,9 +43,9 @@ const props = {
 describe( 'PurchasePlanDetails', () => {
 	describe( 'a jetpack plan', () => {
 		it( 'should render the plugin data', () => {
-			const wrapper = shallow( <PurchasePlanDetails { ...props } /> );
-			expect( wrapper.find( '#plugin-vaultpress' ) ).toHaveLength( 1 );
-			expect( wrapper.find( '#plugin-akismet' ) ).toHaveLength( 1 );
+			render( <PurchasePlanDetails { ...props } /> );
+			expect( screen.queryByRole( 'textbox', { name: /backup/i } ) ).toBeVisible();
+			expect( screen.queryByRole( 'textbox', { name: /anti-spam/i } ) ).toBeVisible();
 		} );
 
 		describe( 'a partner purchase', () => {
@@ -56,18 +54,17 @@ describe( 'PurchasePlanDetails', () => {
 					...props.purchase,
 					partnerName: 'partner',
 				};
-				const wrapper = shallow( <PurchasePlanDetails { ...props } purchase={ purchase } /> );
-				const planBillingPeriod = wrapper.find( PlanBillingPeriod );
-				expect( planBillingPeriod ).toHaveLength( 0 );
+				render( <PurchasePlanDetails { ...props } purchase={ purchase } /> );
+				expect( screen.queryByTestId( 'billing-period' ) ).not.toBeInTheDocument();
 			} );
 		} );
 
 		describe( 'not a partner purchase', () => {
 			it( 'should render the PlanBillingPeriod', () => {
-				const wrapper = shallow( <PurchasePlanDetails { ...props } /> );
-				const planBillingPeriod = wrapper.find( PlanBillingPeriod );
-				expect( planBillingPeriod ).toHaveLength( 1 );
-				expect( planBillingPeriod.props() ).toMatchObject( {
+				render( <PurchasePlanDetails { ...props } /> );
+				const el = screen.queryByTestId( 'billing-period' );
+				expect( el ).toBeVisible();
+				expect( JSON.parse( el.textContent ) ).toMatchObject( {
 					site: props.site,
 					purchase: props.purchase,
 				} );
@@ -78,10 +75,10 @@ describe( 'PurchasePlanDetails', () => {
 	describe( 'is loading data', () => {
 		it( 'should render the placeholder', () => {
 			const hasLoadedSites = false;
-			const wrapper = shallow(
+			const { container } = render(
 				<PurchasePlanDetails { ...props } hasLoadedSites={ hasLoadedSites } />
 			);
-			expect( wrapper.find( '.is-placeholder' ) ).toHaveLength( 1 );
+			expect( container.firstChild ).toHaveClass( 'is-placeholder' );
 		} );
 	} );
 
@@ -91,8 +88,8 @@ describe( 'PurchasePlanDetails', () => {
 				...props.purchase,
 				productSlug: 'business-bundle',
 			};
-			const wrapper = shallow( <PurchasePlanDetails { ...props } purchase={ purchase } /> );
-			expect( wrapper.isEmptyRender() ).toEqual( true );
+			const { container } = render( <PurchasePlanDetails { ...props } purchase={ purchase } /> );
+			expect( container ).toBeEmptyDOMElement();
 		} );
 	} );
 
@@ -102,8 +99,8 @@ describe( 'PurchasePlanDetails', () => {
 				...props.purchase,
 				expiryStatus: 'expired',
 			};
-			const wrapper = shallow( <PurchasePlanDetails { ...props } purchase={ purchase } /> );
-			expect( wrapper.isEmptyRender() ).toEqual( true );
+			const { container } = render( <PurchasePlanDetails { ...props } purchase={ purchase } /> );
+			expect( container ).toBeEmptyDOMElement();
 		} );
 	} );
 } );

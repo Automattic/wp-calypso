@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import {
@@ -21,7 +14,6 @@ import 'calypso/state/themes/init';
  *
  * @param {string} themeId -- Theme to delete
  * @param {number} siteId -- Site to delete theme from
- *
  * @returns {Function} Action thunk
  */
 export function deleteTheme( themeId, siteId ) {
@@ -31,9 +23,8 @@ export function deleteTheme( themeId, siteId ) {
 			themeId,
 			siteId,
 		} );
-		return wpcom
-			.undocumented()
-			.deleteThemeFromJetpack( siteId, themeId )
+		return wpcom.req
+			.post( `/sites/${ siteId }/themes/${ themeId }/delete` )
 			.then( ( { name: themeName } ) => {
 				dispatch( {
 					type: THEME_DELETE_SUCCESS,

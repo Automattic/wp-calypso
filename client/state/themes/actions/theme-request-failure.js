@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { THEME_REQUEST_FAILURE } from 'calypso/state/themes/action-types';
 
 import 'calypso/state/themes/init';

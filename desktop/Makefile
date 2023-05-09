@@ -42,11 +42,11 @@ secrets:
 	@cd $(DESKTOP_DIR) && yarn run build:secrets
 
 # Note: cannot prepend desktop/package.json with full path: cannot be resolved on Windows.
-package: PACKAGE_ELECTRON_VERSION = $(shell cd $(DESKTOP_DIR) && node -e "console.log(require('./package.json').devDependencies.electron)")
+package: PACKAGE_ELECTRON_VERSION = $(shell cd $(DESKTOP_DIR) && node -e "console.log(require('./package.json').devDependencies.electron.replace('^',''))")
 package:
 	$(info Packaging app...)
 
-	@cd $(DESKTOP_DIR) && npx electron-builder ${ELECTRON_BUILDER_ARGS} -c.electronVersion=$(PACKAGE_ELECTRON_VERSION) build --publish never
+	@cd $(DESKTOP_DIR) && yarn electron-builder ${ELECTRON_BUILDER_ARGS} -c.electronVersion=$(PACKAGE_ELECTRON_VERSION) build --publish never
 
 e2e:
 	$(info Running end-to-end tests...)

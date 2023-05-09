@@ -1,15 +1,16 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { map, size, filter, get, partition } from 'lodash';
 import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-import { map, zipObject, size, filter, get, compact, partition } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PostCommentFormRoot from 'calypso/blocks/comments/form-root';
 import PostComment from 'calypso/blocks/comments/post-comment';
+import ConversationCaterpillar from 'calypso/blocks/conversation-caterpillar';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
+import {
+	requestPostComments,
+	requestComment,
+	setActiveReply,
+} from 'calypso/state/comments/actions';
 import { POST_COMMENT_DISPLAY_TYPES } from 'calypso/state/comments/constants';
 import {
 	commentsFetchingStatus,
@@ -20,21 +21,10 @@ import {
 	getHiddenCommentsForPost,
 	getPostCommentsTree,
 } from 'calypso/state/comments/selectors';
-import ConversationCaterpillar from 'calypso/blocks/conversation-caterpillar';
-import { recordAction, recordGaEvent } from 'calypso/reader/stats';
-import PostCommentFormRoot from 'calypso/blocks/comments/form-root';
-import {
-	requestPostComments,
-	requestComment,
-	setActiveReply,
-} from 'calypso/state/comments/actions';
 import { getErrorKey } from 'calypso/state/comments/utils';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
-/**
- * Style dependencies
- */
 import './list.scss';
 
 /**
@@ -59,7 +49,7 @@ import './list.scss';
 const FETCH_NEW_COMMENTS_THRESHOLD = 20;
 const noop = () => {};
 
-export class ConversationCommentList extends React.Component {
+export class ConversationCommentList extends Component {
 	static propTypes = {
 		post: PropTypes.object.isRequired, // required by PostComment
 		commentIds: PropTypes.array.isRequired,
@@ -71,15 +61,14 @@ export class ConversationCommentList extends React.Component {
 		enableCaterpillar: true,
 		shouldRequestComments: true,
 		setActiveReply: noop,
+		filterParents: true,
 	};
 
 	state = {
-		activeEditCommentId: null,
+		commentText: '',
 	};
 
-	onEditCommentClick = ( commentId ) => this.setState( { activeEditCommentId: commentId } );
-	onEditCommentCancel = () => this.setState( { activeEditCommentId: null } );
-	onUpdateCommentText = ( commentText ) => this.setState( { commentText: commentText } );
+	onUpdateCommentText = ( commentText ) => this.setState( { commentText } );
 
 	onReplyClick = ( commentId ) => {
 		this.setActiveReplyComment( commentId );
@@ -92,7 +81,7 @@ export class ConversationCommentList extends React.Component {
 	};
 
 	onReplyCancel = () => {
-		this.setState( { commentText: null } );
+		this.setState( { commentText: '' } );
 		recordAction( 'comment_reply_cancel_click' );
 		recordGaEvent( 'Clicked Cancel Reply to Comment' );
 		this.props.recordReaderTracksEvent( 'calypso_reader_comment_reply_cancel_click', {
@@ -122,8 +111,8 @@ export class ConversationCommentList extends React.Component {
 		this.reqMoreComments();
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		const { hiddenComments, commentsTree, siteId, commentErrors } = nextProps;
+	componentDidUpdate() {
+		const { hiddenComments, commentsTree, siteId, commentErrors } = this.props;
 
 		// if we are running low on comments to expand then fetch more
 		if ( size( hiddenComments ) < FETCH_NEW_COMMENTS_THRESHOLD ) {
@@ -140,7 +129,7 @@ export class ConversationCommentList extends React.Component {
 		inaccessible
 			.filter( ( commentId ) => ! commentErrors[ getErrorKey( siteId, commentId ) ] )
 			.forEach( ( commentId ) => {
-				nextProps.requestComment( {
+				this.props.requestComment( {
 					commentId,
 					siteId,
 				} );
@@ -170,26 +159,23 @@ export class ConversationCommentList extends React.Component {
 
 	// @todo: move all expanded comment set per commentId logic to memoized selectors
 	getCommentsToShow = () => {
-		const { commentIds, expansions, commentsTree, sortedComments } = this.props;
+		const { commentIds, expansions, commentsTree, sortedComments, filterParents } = this.props;
 
 		const minId = Math.min( ...commentIds );
 		const startingCommentIds = ( sortedComments || [] )
-			.filter( ( comment ) => {
-				return comment.ID >= minId || comment.isPlaceholder;
-			} )
+			.filter( ( comment ) => comment.ID >= minId || comment.isPlaceholder )
 			.map( ( comment ) => comment.ID );
 
-		const parentIds = compact(
-			map( startingCommentIds, ( id ) => this.getParentId( commentsTree, id ) )
-		);
-		const commentExpansions = Array( startingCommentIds.length ).fill(
-			POST_COMMENT_DISPLAY_TYPES.excerpt
-		);
-		const parentExpansions = Array( parentIds.length ).fill( POST_COMMENT_DISPLAY_TYPES.excerpt );
+		let parentIds = startingCommentIds;
+		if ( filterParents ) {
+			parentIds = parentIds.map( ( id ) => this.getParentId( commentsTree, id ) ).filter( Boolean );
+		}
 
-		const startingExpanded = zipObject(
-			startingCommentIds.concat( parentIds ),
-			commentExpansions.concat( parentExpansions )
+		const startingExpanded = Object.fromEntries(
+			[ startingCommentIds, ...parentIds ].map( ( id ) => [
+				id,
+				POST_COMMENT_DISPLAY_TYPES.excerpt,
+			] )
 		);
 
 		return { ...startingExpanded, ...expansions };
@@ -260,9 +246,6 @@ export class ConversationCommentList extends React.Component {
 								onReplyClick={ this.onReplyClick }
 								onReplyCancel={ this.onReplyCancel }
 								activeReplyCommentId={ this.props.activeReplyCommentId }
-								onEditCommentClick={ this.onEditCommentClick }
-								onEditCommentCancel={ this.onEditCommentCancel }
-								activeEditCommentId={ this.state.activeEditCommentId }
 								onUpdateCommentText={ this.onUpdateCommentText }
 								onCommentSubmit={ this.resetActiveReplyComment }
 								commentText={ this.state.commentText }

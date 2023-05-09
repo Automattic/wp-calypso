@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { THEME_BACK_PATH_SET } from 'calypso/state/themes/action-types';
 
 import 'calypso/state/themes/init';

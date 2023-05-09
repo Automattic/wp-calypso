@@ -1,100 +1,102 @@
-/**
- * External dependencies
- */
-import { useEffect, useMemo, useReducer } from 'react';
-import { useSelector } from 'react-redux';
+import { getPlanByPathSlug } from '@automattic/calypso-products';
+import { createRequestCartProduct } from '@automattic/shopping-cart';
+import { decodeProductFromUrl, isValueTruthy } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import type { RequestCartProduct } from '@automattic/shopping-cart';
-import { createRequestCartProduct } from '@automattic/shopping-cart';
-import { decodeProductFromUrl } from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import {
-	JETPACK_SEARCH_PRODUCTS,
-	PRODUCT_JETPACK_SEARCH,
-	PRODUCT_JETPACK_SEARCH_MONTHLY,
-	PRODUCT_WPCOM_SEARCH,
-	PRODUCT_WPCOM_SEARCH_MONTHLY,
-	getPlanByPathSlug,
-} from '@automattic/calypso-products';
-import { getProductsList, isProductsListFetching } from 'calypso/state/products-list/selectors';
-import useFetchProductsIfNotLoaded from './use-fetch-products-if-not-loaded';
-import doesValueExist from '../lib/does-value-exist';
-import useStripProductsFromUrl from './use-strip-products-from-url';
+import { useEffect, useMemo, useReducer } from 'react';
+import useCartKey from '../../use-cart-key';
 import getCartFromLocalStorage from '../lib/get-cart-from-local-storage';
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
+import useStripProductsFromUrl from './use-strip-products-from-url';
+import type { RequestCartProduct, RequestCartProductExtra } from '@automattic/shopping-cart';
+import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
 
-const debug = debugFactory( 'calypso:composite-checkout:use-prepare-products-for-cart' );
+const debug = debugFactory( 'calypso:use-prepare-products-for-cart' );
 
 interface PreparedProductsForCart {
+	addingRenewals: boolean;
 	productsForCart: RequestCartProduct[];
 	isLoading: boolean;
 	error: string | null;
 }
 
-const initialPreparedProductsState = {
+const initialPreparedProductsState: PreparedProductsForCart = {
+	addingRenewals: false,
 	isLoading: true,
 	productsForCart: [],
 	error: null,
 };
 
+/**
+ * Hook to collect requested products from places like the URL or localStorage
+ * and turn them into `RequestCartProduct` objects.
+ *
+ * Objects created by this hook will then be added to the cart by
+ * `useAddProductsFromUrl()`.
+ *
+ * Because this process may be async, the return value of this hook includes an
+ * `isLoading` property which should be true before using the `productsForCart`
+ * it produces.
+ */
 export default function usePrepareProductsForCart( {
 	productAliasFromUrl,
 	purchaseId: originalPurchaseId,
-	isInEditor,
-	isJetpackNotAtomic,
+	isInModal,
+	usesJetpackProducts,
 	isPrivate,
 	siteSlug,
+	sitelessCheckoutType,
 	isLoggedOutCart,
 	isNoSiteCart,
-	isJetpackCheckout,
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
+	source,
+	isGiftPurchase,
 }: {
 	productAliasFromUrl: string | null | undefined;
 	purchaseId: string | number | null | undefined;
-	isInEditor?: boolean;
-	isJetpackNotAtomic: boolean;
+	isInModal?: boolean;
+	usesJetpackProducts: boolean;
 	isPrivate: boolean;
 	siteSlug: string | undefined;
+	sitelessCheckoutType: SitelessCheckoutType;
 	isLoggedOutCart?: boolean;
 	isNoSiteCart?: boolean;
-	isJetpackCheckout?: boolean;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
+	source?: string;
+	isGiftPurchase?: boolean;
 } ): PreparedProductsForCart {
 	const [ state, dispatch ] = useReducer( preparedProductsReducer, initialPreparedProductsState );
 
-	debug(
-		'preparing products for cart from url string',
-		productAliasFromUrl,
-		'and purchase id',
-		originalPurchaseId,
-		'and isLoggedOutCart',
-		isLoggedOutCart,
-		'and isNoSiteCart',
-		isNoSiteCart,
-		'and isJetpackCheckout',
-		isJetpackCheckout,
-		'and jetpackSiteSlug',
-		jetpackSiteSlug,
-		'and jetpackPurchaseToken',
-		jetpackPurchaseToken
-	);
-
-	useFetchProductsIfNotLoaded();
+	if ( ! state.isLoading || state.error ) {
+		debug(
+			'preparing products for cart from url string',
+			productAliasFromUrl,
+			'and purchase id',
+			originalPurchaseId,
+			'and isLoggedOutCart',
+			isLoggedOutCart,
+			'and sitelessCheckoutType',
+			sitelessCheckoutType,
+			'and siteSlug',
+			siteSlug,
+			'and isNoSiteCart',
+			isNoSiteCart,
+			'and jetpackSiteSlug',
+			jetpackSiteSlug,
+			'and jetpackPurchaseToken',
+			jetpackPurchaseToken
+		);
+	}
 
 	const addHandler = chooseAddHandler( {
 		isLoading: state.isLoading,
 		originalPurchaseId,
 		productAliasFromUrl,
+		sitelessCheckoutType,
 		isLoggedOutCart,
 		isNoSiteCart,
-		isJetpackCheckout,
+		isGiftPurchase,
 	} );
 	debug( 'isLoading', state.isLoading );
 	debug( 'handler is', addHandler );
@@ -108,31 +110,44 @@ export default function usePrepareProductsForCart( {
 	useAddProductFromSlug( {
 		productAliasFromUrl,
 		dispatch,
-		isJetpackNotAtomic,
+		usesJetpackProducts,
 		isPrivate,
 		addHandler,
-		isJetpackCheckout,
+		sitelessCheckoutType,
 		jetpackSiteSlug,
 		jetpackPurchaseToken,
+		source,
 	} );
 	useAddRenewalItems( {
 		originalPurchaseId,
+		sitelessCheckoutType, // Akismet products can renew independently of a site
 		productAlias: productAliasFromUrl,
 		dispatch,
 		addHandler,
+		isGiftPurchase,
 	} );
 	useNothingToAdd( { addHandler, dispatch } );
 
 	// Do not strip products from url until the URL has been parsed
-	const areProductsRetrievedFromUrl = ! state.isLoading && ! isInEditor;
-	useStripProductsFromUrl( siteSlug, ! areProductsRetrievedFromUrl || isJetpackCheckout );
+	const areProductsRetrievedFromUrl = ! state.isLoading && ! isInModal;
+	const doNotStripProducts = Boolean(
+		! areProductsRetrievedFromUrl ||
+			sitelessCheckoutType === 'jetpack' ||
+			sitelessCheckoutType === 'akismet' ||
+			isGiftPurchase
+	);
+	useStripProductsFromUrl( siteSlug, doNotStripProducts );
 
+	if ( ! state.isLoading ) {
+		debug( 'returning loaded data', state );
+	}
 	return state;
 }
 
 type PreparedProductsAction =
 	| { type: 'PRODUCTS_ADD'; products: RequestCartProduct[] }
 	| { type: 'RENEWALS_ADD'; products: RequestCartProduct[] }
+	| { type: 'RENEWALS_ADD_ERROR'; message: string }
 	| { type: 'PRODUCTS_ADD_ERROR'; message: string };
 
 function preparedProductsReducer(
@@ -141,12 +156,20 @@ function preparedProductsReducer(
 ): PreparedProductsForCart {
 	switch ( action.type ) {
 		case 'RENEWALS_ADD':
-		// fall through
+			if ( ! state.isLoading ) {
+				return state;
+			}
+			return { ...state, productsForCart: action.products, isLoading: false, addingRenewals: true };
 		case 'PRODUCTS_ADD':
 			if ( ! state.isLoading ) {
 				return state;
 			}
 			return { ...state, productsForCart: action.products, isLoading: false };
+		case 'RENEWALS_ADD_ERROR':
+			if ( ! state.isLoading ) {
+				return state;
+			}
+			return { ...state, isLoading: false, error: action.message, addingRenewals: true };
 		case 'PRODUCTS_ADD_ERROR':
 			if ( ! state.isLoading ) {
 				return state;
@@ -163,18 +186,25 @@ function chooseAddHandler( {
 	isLoading,
 	originalPurchaseId,
 	productAliasFromUrl,
+	sitelessCheckoutType,
 	isLoggedOutCart,
 	isNoSiteCart,
-	isJetpackCheckout,
+	isGiftPurchase,
 }: {
 	isLoading: boolean;
 	originalPurchaseId: string | number | null | undefined;
 	productAliasFromUrl: string | null | undefined;
+	sitelessCheckoutType: SitelessCheckoutType;
 	isLoggedOutCart?: boolean;
 	isNoSiteCart?: boolean;
-	isJetpackCheckout?: boolean;
+	isGiftPurchase?: boolean;
 } ): AddHandler {
-	if ( isJetpackCheckout ) {
+	// Akismet products can be renewed in a "siteless" context
+	if ( sitelessCheckoutType === 'akismet' && originalPurchaseId ) {
+		return 'addRenewalItems';
+	}
+
+	if ( sitelessCheckoutType === 'jetpack' || sitelessCheckoutType === 'akismet' ) {
 		return 'addProductFromSlug';
 	}
 
@@ -182,7 +212,15 @@ function chooseAddHandler( {
 		return 'doNotAdd';
 	}
 
-	if ( isLoggedOutCart || isNoSiteCart ) {
+	/*
+	 * As Gifting purchases are actually renewals and validate the subscriptionID
+	 * and product with the server, we have to avoid using localStorage.
+	 */
+	if ( ! isGiftPurchase && isLoggedOutCart ) {
+		return 'addFromLocalStorage';
+	}
+
+	if ( isNoSiteCart ) {
 		return 'addFromLocalStorage';
 	}
 
@@ -222,25 +260,14 @@ function useAddProductsFromLocalStorage( {
 	addHandler: AddHandler;
 } ) {
 	const translate = useTranslate();
-	const products: Record<
-		string,
-		{
-			product_id: number;
-			product_slug: string;
-		}
-	> = useSelector( getProductsList );
 
 	useEffect( () => {
 		if ( addHandler !== 'addFromLocalStorage' ) {
 			return;
 		}
-		if ( Object.keys( products || {} ).length < 1 ) {
-			debug( 'waiting on products fetch' );
-			return;
-		}
 
 		const productsForCart: RequestCartProduct[] = getCartFromLocalStorage().map( ( product ) =>
-			fillInSingleCartItemAttributes( product, products )
+			createRequestCartProduct( product )
 		);
 
 		if ( productsForCart.length < 1 ) {
@@ -254,35 +281,52 @@ function useAddProductsFromLocalStorage( {
 
 		debug( 'preparing products requested in localStorage', productsForCart );
 		dispatch( { type: 'PRODUCTS_ADD', products: productsForCart } );
-	}, [ addHandler, dispatch, translate, products ] );
+	}, [ addHandler, dispatch, translate ] );
 }
 
 function useAddRenewalItems( {
 	originalPurchaseId,
+	sitelessCheckoutType,
 	productAlias,
 	dispatch,
 	addHandler,
+	isGiftPurchase,
 }: {
 	originalPurchaseId: string | number | null | undefined;
+	sitelessCheckoutType: SitelessCheckoutType;
 	productAlias: string | null | undefined;
 	dispatch: ( action: PreparedProductsAction ) => void;
 	addHandler: AddHandler;
+	isGiftPurchase?: boolean;
 } ) {
-	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
-	const isFetchingProducts = useSelector( isProductsListFetching );
-	const products = useSelector( getProductsList );
 	const translate = useTranslate();
+	const cartKey = useCartKey();
 
 	useEffect( () => {
 		if ( addHandler !== 'addRenewalItems' ) {
 			return;
 		}
-		if ( isFetchingProducts || Object.keys( products || {} ).length < 1 ) {
-			debug( 'waiting on products fetch for renewal' );
-			return;
-		}
 		const productSlugs = productAlias?.split( ',' ) ?? [];
 		const purchaseIds = originalPurchaseId ? String( originalPurchaseId ).split( ',' ) : [];
+
+		// Renewals cannot be purchased without a site.
+		const isThereASite = cartKey && typeof cartKey === 'number';
+		if ( ! isThereASite && ! isGiftPurchase && ! sitelessCheckoutType ) {
+			debug(
+				'creating renewal products failed because there is no site. products:',
+				productAlias,
+				'cartKey:',
+				cartKey
+			);
+			dispatch( {
+				type: 'RENEWALS_ADD_ERROR',
+				message: translate(
+					'This renewal is invalid. Please verify that you are logged into the correct account for the product you want to renew.',
+					{ textOnly: true }
+				),
+			} );
+			return;
+		}
 
 		const productsForCart = purchaseIds
 			.map( ( subscriptionId, currentIndex ) => {
@@ -290,32 +334,19 @@ function useAddRenewalItems( {
 				if ( ! productSlug ) {
 					return null;
 				}
-				const [ encodedSlug ] = productSlug.split( ':' );
-				const decodedSlug = decodeProductFromUrl( encodedSlug );
-				const product = products[ decodedSlug ];
-				if ( ! product ) {
-					debug( 'no renewal product found with slug', productSlug );
-					dispatch( {
-						type: 'PRODUCTS_ADD_ERROR',
-						message: String(
-							translate(
-								"I tried and failed to create a renewal product matching the identifier '%(productSlug)s'",
-								{
-									args: { productSlug },
-								}
-							)
-						),
-					} );
-					return null;
-				}
-				return createRenewalItemToAddToCart( productSlug, product.product_id, subscriptionId );
+				return createRenewalItemToAddToCart( {
+					sitelessCheckoutType,
+					productAlias: productSlug,
+					purchaseId: subscriptionId,
+					isGiftPurchase,
+				} );
 			} )
-			.filter( doesValueExist );
+			.filter( isValueTruthy );
 
 		if ( productsForCart.length < 1 ) {
 			debug( 'creating renewal products failed', productAlias );
 			dispatch( {
-				type: 'PRODUCTS_ADD_ERROR',
+				type: 'RENEWALS_ADD_ERROR',
 				message: String(
 					translate(
 						"I tried and failed to create products matching the identifier '%(productAlias)s'",
@@ -330,43 +361,38 @@ function useAddRenewalItems( {
 		debug( 'preparing renewals requested in url', productsForCart );
 		dispatch( { type: 'RENEWALS_ADD', products: productsForCart } );
 	}, [
+		cartKey,
 		addHandler,
 		translate,
-		isFetchingProducts,
-		products,
 		originalPurchaseId,
 		productAlias,
 		dispatch,
-		selectedSiteSlug,
+		isGiftPurchase,
+		sitelessCheckoutType,
 	] );
 }
 
 function useAddProductFromSlug( {
 	productAliasFromUrl,
 	dispatch,
-	isJetpackNotAtomic,
+	usesJetpackProducts,
 	isPrivate,
 	addHandler,
-	isJetpackCheckout,
+	sitelessCheckoutType,
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
+	source,
 }: {
 	productAliasFromUrl: string | undefined | null;
 	dispatch: ( action: PreparedProductsAction ) => void;
-	isJetpackNotAtomic: boolean;
+	usesJetpackProducts: boolean;
 	isPrivate: boolean;
 	addHandler: AddHandler;
-	isJetpackCheckout?: boolean;
+	sitelessCheckoutType: SitelessCheckoutType;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
+	source?: string;
 } ) {
-	const products: Record<
-		string,
-		{
-			product_id: number;
-			product_slug: string;
-		}
-	> = useSelector( getProductsList );
 	const translate = useTranslate();
 
 	// If `productAliasFromUrl` has a comma ',' in it, we will assume it's because it's
@@ -376,42 +402,30 @@ function useAddProductFromSlug( {
 		() =>
 			productAliasFromUrl
 				?.split( ',' )
-				// Special treatment for Jetpack Search products
-				.map( ( productAlias ) => getJetpackSearchForSite( productAlias, isJetpackNotAtomic ) )
 				// Get the product information if it exists, and keep a reference to
 				// its product alias which we may need to get additional information like
 				// the domain name or theme (eg: 'theme:ovation').
 				.map( ( productAlias ) => {
-					const validProduct = products[ getProductSlugFromAlias( productAlias ) ];
-					return validProduct
-						? { ...validProduct, internal_product_alias: productAlias }
-						: undefined;
-				} )
-				.filter( doesValueExist ) ?? [],
-		[ isJetpackNotAtomic, productAliasFromUrl, products ]
+					const productSlug = getProductSlugFromAlias( productAlias );
+					return { productSlug, productAlias };
+				} ) ?? [],
+		[ productAliasFromUrl ]
 	);
 
 	useEffect( () => {
 		if ( addHandler !== 'addProductFromSlug' ) {
 			return;
 		}
-		// There is a selector for isFetchingProducts, but it seems to be sometimes
-		// inaccurate (possibly before the fetch has started) so instead we just
-		// wait for there to be products.
-		if ( Object.keys( products || {} ).length < 1 ) {
-			debug( 'waiting on products fetch' );
-			return;
-		}
 
 		const cartProducts = validProducts.map( ( product ) =>
 			// Transform the product data into a RequestCartProduct
 			createItemToAddToCart( {
-				productSlug: product.product_slug,
-				productAlias: product.internal_product_alias,
-				productId: product.product_id,
-				isJetpackCheckout,
+				productSlug: product.productSlug,
+				productAlias: product.productAlias,
+				sitelessCheckoutType,
 				jetpackSiteSlug,
 				jetpackPurchaseToken,
+				source,
 			} )
 		);
 
@@ -435,7 +449,7 @@ function useAddProductFromSlug( {
 		}
 		debug(
 			'preparing products that were requested in url',
-			{ productAliasFromUrl, isJetpackNotAtomic },
+			{ productAliasFromUrl, usesJetpackProducts },
 			cartProducts
 		);
 		dispatch( { type: 'PRODUCTS_ADD', products: cartProducts } );
@@ -443,22 +457,71 @@ function useAddProductFromSlug( {
 		addHandler,
 		translate,
 		isPrivate,
-		products,
-		isJetpackNotAtomic,
+		usesJetpackProducts,
 		productAliasFromUrl,
 		validProducts,
-		isJetpackCheckout,
+		sitelessCheckoutType,
 		dispatch,
+		jetpackSiteSlug,
+		jetpackPurchaseToken,
+		source,
 	] );
+}
+
+/**
+ * Split up a product alias (typically used in a URL string) into its parts.
+ *
+ * An alias like `personal` refers to a simple Personal plan.
+ *
+ * An alias like `domain_map:example.com` refers to a domain mapping product
+ * for the domain `example.com`.
+ *
+ * An alias like `theme:ovation` refers to a Premium theme with the theme slug
+ * `ovation`.
+ *
+ * An alias like `wp_google_workspace_business_starter_yearly:example.com:-q-12`
+ * refers to a Google Workspace subscription with a quantity of 12.
+ *
+ * To add support for additional metadata in the future, follow the pattern
+ * implemented by quantity: use a string code surrounded by hyphens
+ * (`-label-DATA`). Since domain names cannot start with a hyphen we will know
+ * that the label refers to something else.
+ */
+function getProductPartsFromAlias( productAlias: string ): {
+	slug: string;
+	meta: null | string;
+	quantity: null | number;
+} {
+	const [ slug, ...productParts ] = productAlias.split( ':' );
+
+	let meta: string | null = null;
+	let quantity: number | null = null;
+
+	productParts.forEach( ( part ) => {
+		if ( /^-q-\d+$/.test( part ) ) {
+			quantity = parseInt( part.replace( /^-q-/, '' ), 10 );
+			return;
+		}
+		meta = part;
+	} );
+
+	return {
+		slug,
+		meta,
+		quantity,
+	};
 }
 
 // Transform a fake slug like 'theme:ovation' into a real slug like 'premium_theme'
 function getProductSlugFromAlias( productAlias: string ): string {
-	const [ encodedAlias ] = productAlias.split( ':' );
+	const { slug: encodedAlias } = getProductPartsFromAlias( productAlias );
 	// Some product slugs contain slashes, so we decode them
 	const decodedAlias = decodeProductFromUrl( encodedAlias );
 	if ( decodedAlias === 'domain-mapping' ) {
 		return 'domain_map';
+	}
+	if ( decodedAlias === 'no-ads' ) {
+		return 'no-adverts/no-adverts.php';
 	}
 	if ( decodedAlias === 'theme' ) {
 		return 'premium_theme';
@@ -471,12 +534,19 @@ function getProductSlugFromAlias( productAlias: string ): string {
 	return decodedAlias;
 }
 
-function createRenewalItemToAddToCart(
-	productAlias: string,
-	productId: string | number,
-	purchaseId: string | number | undefined | null
-): RequestCartProduct | null {
-	const [ slug, meta ] = productAlias.split( ':' );
+function createRenewalItemToAddToCart( {
+	productAlias,
+	purchaseId,
+	sitelessCheckoutType,
+	isGiftPurchase,
+}: {
+	productAlias: string;
+	purchaseId: string | number | undefined | null;
+	sitelessCheckoutType: SitelessCheckoutType;
+	isGiftPurchase?: boolean;
+} ): RequestCartProduct | null {
+	const { slug, meta, quantity } = getProductPartsFromAlias( productAlias );
+
 	// Some product slugs contain slashes, so we decode them
 	const productSlug = decodeProductFromUrl( slug );
 
@@ -484,97 +554,67 @@ function createRenewalItemToAddToCart(
 		return null;
 	}
 
-	const renewalItemExtra = {
+	const renewalItemExtra: RequestCartProductExtra = {
 		purchaseId: String( purchaseId ),
+		isAkismetSitelessCheckout: sitelessCheckoutType === 'akismet',
 		purchaseType: 'renewal',
+		isGiftPurchase,
 	};
+
 	return {
 		// Some meta values include slashes, so we decode them
 		meta: meta ? decodeProductFromUrl( meta ) : '',
-		quantity: null,
+		quantity,
 		volume: 1,
 		product_slug: productSlug,
-		product_id: parseInt( String( productId ), 10 ),
 		extra: renewalItemExtra,
 	};
-}
-
-/*
- * Provides an special handling for search products: Always add Jetpack Search to
- * Jetpack sites and WPCOM Search to WordPress.com sites, regardless of
- * which slug was provided. This allows e.g. code on jetpack.com to
- * redirect to a valid checkout URL for a search purchase without worrying
- * about which type of site the user has.
- */
-function getJetpackSearchForSite( productAlias: string, isJetpackNotAtomic: boolean ): string {
-	if ( productAlias && JETPACK_SEARCH_PRODUCTS.includes( productAlias ) ) {
-		if ( isJetpackNotAtomic ) {
-			productAlias = productAlias.includes( 'monthly' )
-				? PRODUCT_JETPACK_SEARCH_MONTHLY
-				: PRODUCT_JETPACK_SEARCH;
-		} else {
-			productAlias = productAlias.includes( 'monthly' )
-				? PRODUCT_WPCOM_SEARCH_MONTHLY
-				: PRODUCT_WPCOM_SEARCH;
-		}
-	}
-	return productAlias;
 }
 
 function createItemToAddToCart( {
 	productSlug,
 	productAlias,
-	productId,
-	isJetpackCheckout,
+	sitelessCheckoutType,
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
+	source,
 }: {
 	productSlug: string;
-	productId: number;
 	productAlias: string;
-	isJetpackCheckout?: boolean;
+	sitelessCheckoutType: SitelessCheckoutType;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
+	source?: string;
 } ): RequestCartProduct {
-	debug( 'creating product with', productSlug, productAlias, productId );
-	const [ , meta ] = productAlias.split( ':' );
+	// Allow setting meta (theme name or domain name) from products in the URL by
+	// using a colon between the product slug and the meta.
+	const { meta, quantity } = getProductPartsFromAlias( productAlias );
+
 	// Some meta values contain slashes, so we decode them
 	const cartMeta = meta ? decodeProductFromUrl( meta ) : '';
 
-	if ( productAlias.startsWith( 'theme:' ) ) {
-		debug( 'creating theme product' );
-		return addContextToProduct(
-			createRequestCartProduct( {
-				product_id: productId,
-				product_slug: productSlug,
-				meta: cartMeta,
-			} )
-		);
-	}
-
-	if ( productAlias.startsWith( 'domain-mapping:' ) ) {
-		debug( 'creating domain mapping product' );
-		return addContextToProduct(
-			createRequestCartProduct( {
-				product_id: productId,
-				product_slug: productSlug,
-				meta: cartMeta,
-			} )
-		);
-	}
-
-	return addContextToProduct(
-		createRequestCartProduct( {
-			product_id: productId,
-			product_slug: productSlug,
-			extra: { isJetpackCheckout, jetpackSiteSlug, jetpackPurchaseToken },
-		} )
+	debug(
+		'creating product with',
+		productSlug,
+		'from alias',
+		productAlias,
+		'with meta',
+		cartMeta,
+		'and quantity',
+		quantity
 	);
-}
 
-function addContextToProduct( product: RequestCartProduct ): RequestCartProduct {
-	return {
-		...product,
-		extra: { ...product.extra, context: 'calypstore' },
-	};
+	return createRequestCartProduct( {
+		product_slug: productSlug,
+		quantity,
+		extra: {
+			isAkismetSitelessCheckout: sitelessCheckoutType === 'akismet',
+			isJetpackCheckout: sitelessCheckoutType === 'jetpack',
+			jetpackSiteSlug,
+			jetpackPurchaseToken,
+			context: 'calypstore',
+			source: source ?? undefined,
+		},
+		...( cartMeta ? { meta: cartMeta } : {} ),
+	} );
 }

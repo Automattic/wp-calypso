@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	JETPACK_SCAN_THREAT_COUNTS_REQUEST,
 	JETPACK_SCAN_THREAT_COUNTS_REQUEST_SUCCESS,

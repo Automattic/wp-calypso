@@ -2,62 +2,53 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
+import { Button } from '@wordpress/components';
+import { Icon, trash } from '@wordpress/icons';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import accept from 'calypso/lib/accept';
-import PluginAction from 'calypso/my-sites/plugins/plugin-action/plugin-action';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
-import { getSiteFileModDisableReason, isMainNetworkSite } from 'calypso/lib/site/utils';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import accept from 'calypso/lib/accept';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { REMOVE_PLUGIN } from 'calypso/lib/plugins/constants';
-import { isPluginActionInProgress } from 'calypso/state/plugins/installed/selectors';
+import { getSiteFileModDisableReason, isMainNetworkSite } from 'calypso/lib/site/utils';
+import PluginAction from 'calypso/my-sites/plugins/plugin-action/plugin-action';
 import { removePlugin } from 'calypso/state/plugins/installed/actions';
+import { isPluginActionInProgress } from 'calypso/state/plugins/installed/selectors';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
+import { getPluginActionDailogMessage } from '../utils';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class PluginRemoveButton extends React.Component {
+class PluginRemoveButton extends Component {
 	static displayName = 'PluginRemoveButton';
 
 	removeAction = () => {
+		const { translate, plugin, site } = this.props;
+		const dialogOptions = {
+			additionalClassNames: 'plugins__confirmation-modal',
+			isScary: true,
+		};
+		const heading = translate( 'Remove %(pluginName)s', {
+			args: {
+				pluginName: plugin.name,
+			},
+		} );
 		accept(
-			this.props.translate(
-				'Are you sure you want to remove {{strong}}%(pluginName)s{{/strong}} from' +
-					' %(siteName)s? {{br /}} {{em}}This will deactivate the plugin and delete all' +
-					' associated files and data.{{/em}}',
-				{
-					components: {
-						em: <em />,
-						br: <br />,
-						strong: <strong />,
-					},
-					args: {
-						pluginName: this.props.plugin.name,
-						siteName: this.props.site.title,
-					},
-				}
-			),
+			getPluginActionDailogMessage( [ site ], [ plugin ], heading, 'deactivate and delete' ),
 			this.processRemovalConfirmation,
-			this.props.translate( 'Remove' )
+			heading,
+			null,
+			dialogOptions
 		);
 	};
 
 	processRemovalConfirmation = ( accepted ) => {
 		if ( accepted ) {
-			this.props.removePluginStatuses( 'completed', 'error' );
+			this.props.removePluginStatuses( 'completed', 'error', 'up-to-date' );
 			this.props.removePlugin( this.props.site.ID, this.props.plugin );
 
 			if ( this.props.isEmbed ) {
@@ -165,7 +156,7 @@ class PluginRemoveButton extends React.Component {
 	renderButton = () => {
 		const disabledInfo = this.getDisabledInfo();
 		const disabled = !! disabledInfo || this.props.disabled;
-		const label = disabled
+		let label = disabled
 			? this.props.translate( 'Removal Disabled', {
 					context:
 						'this goes next to an icon that displays if site is in a state where it can\'t modify has "Removal Disabled" ',
@@ -174,33 +165,54 @@ class PluginRemoveButton extends React.Component {
 					context: 'Verb. Presented to user as a label for a button.',
 			  } );
 		if ( this.props.inProgress ) {
-			return (
-				<span className="plugin-action plugin-remove-button__remove">
-					{ this.props.translate( 'Removing…' ) }
-				</span>
-			);
+			label = this.props.translate( 'Removing…' );
+			if ( ! this.props.isJetpackCloud ) {
+				return (
+					<div className="plugin-action">
+						<span className="plugin-remove-button__remove">{ label }</span>
+					</div>
+				);
+			}
 		}
 
 		const handleClick = disabled ? null : this.removeAction;
 
+		if ( this.props.menuItem ) {
+			return (
+				<PopoverMenuItem
+					onClick={ handleClick }
+					icon="trash"
+					disabled={ this.props.inProgress }
+					className={ classNames( 'plugin-remove-button__remove-button', this.props.classNames ) }
+				>
+					{ label }
+				</PopoverMenuItem>
+			);
+		}
+
 		return (
 			<PluginAction
-				label={ label }
 				htmlFor={ 'remove-plugin-' + this.props.site.ID }
 				action={ this.removeAction }
 				disabled={ disabled }
 				disabledInfo={ disabledInfo }
 				className="plugin-remove-button__remove-link"
 			>
-				<a onClick={ handleClick } className="plugin-remove-button__remove-icon">
-					<Gridicon icon="trash" size={ 18 } />
-				</a>
+				<Button onClick={ handleClick } className="plugin-remove-button__remove-button">
+					<Icon icon={ trash } className="plugin-remove-button__remove-icon" />
+					{ label }
+				</Button>
 			</PluginAction>
 		);
 	};
 
 	render() {
 		if ( ! this.props.site.jetpack ) {
+			return null;
+		}
+
+		if ( this.props.isMarketplaceProduct && this.props.productPurchase ) {
+			// Purchased Marketplace products are auto-managed.
 			return null;
 		}
 

@@ -1,26 +1,17 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
-import i18n from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
-import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
-import { emailManagement } from 'calypso/my-sites/email/paths';
-import { getThemeDetailsUrl } from 'calypso/state/themes/selectors';
 import {
 	isDomainProduct,
 	isGSuiteOrGoogleWorkspace,
 	isPlan,
 	isSiteRedirect,
-	isTheme,
+	isThemePurchase,
 	isTitanMail,
 } from '@automattic/calypso-products';
+import i18n from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
+import { emailManagement } from 'calypso/my-sites/email/paths';
+import { getThemeDetailsUrl } from 'calypso/state/themes/selectors';
 
 const ProductLink = ( { productUrl, purchase, selectedSite } ) => {
 	let url;
@@ -45,7 +36,7 @@ const ProductLink = ( { productUrl, purchase, selectedSite } ) => {
 		text = i18n.translate( 'Email Settings' );
 	}
 
-	if ( isTheme( purchase ) ) {
+	if ( isThemePurchase( purchase ) ) {
 		url = productUrl;
 		text = i18n.translate( 'Theme Details' );
 	}
@@ -67,7 +58,7 @@ ProductLink.propTypes = {
 };
 
 export default connect( ( state, { purchase } ) => {
-	if ( isTheme( purchase ) ) {
+	if ( isThemePurchase( purchase ) ) {
 		return {
 			// No <QueryTheme /> component needed, since getThemeDetailsUrl() only needs the themeId which we pass here.
 			productUrl: getThemeDetailsUrl( state, purchase.meta, purchase.siteId ),

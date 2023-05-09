@@ -1,41 +1,35 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import fs from 'fs';
+import path from 'path';
+import config from '@automattic/calypso-config';
+import { isDefaultLocale, isTranslatedIncompletely } from '@automattic/i18n-utils';
+import debugFactory from 'debug';
+import { get, pick } from 'lodash';
+import Lru from 'lru';
+import { createElement } from 'react';
 import ReactDomServer from 'react-dom/server';
 import superagent from 'superagent';
-import Lru from 'lru';
-import { get, pick } from 'lodash';
-import debugFactory from 'debug';
-import path from 'path';
-import fs from 'fs';
-
-/**
- * Internal dependencies
- */
-import config from '@automattic/calypso-config';
-import { isDefaultLocale, isLocaleRtl, isTranslatedIncompletely } from 'calypso/lib/i18n-utils';
+import { logServerEvent } from 'calypso/lib/analytics/statsd-utils';
 import {
 	getLanguageFileUrl,
 	getLanguageManifestFileUrl,
 	getTranslationChunkFileUrl,
 } from 'calypso/lib/i18n-utils/switch-locale';
+import { getCacheKey } from 'calypso/server/isomorphic-routing';
+import performanceMark from 'calypso/server/lib/performance-mark';
+import stateCache from 'calypso/server/state-cache';
 import {
 	getDocumentHeadFormattedTitle,
 	getDocumentHeadMeta,
 	getDocumentHeadLink,
 } from 'calypso/state/document-head/selectors';
+import { dehydrateQueryClient } from 'calypso/state/query-client-ssr';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentLocaleVariant from 'calypso/state/selectors/get-current-locale-variant';
-import initialReducer from 'calypso/state/reducer';
 import { serialize } from 'calypso/state/utils';
-import { logToLogstash } from 'calypso/state/logstash/actions';
-import stateCache from 'calypso/server/state-cache';
-import { getNormalizedPath } from 'calypso/server/isomorphic-routing';
 
 const debug = debugFactory( 'calypso:server-render' );
 const HOUR_IN_MS = 3600000;
-const markupCache = new Lru( {
+export const markupCache = new Lru( {
 	max: 3000,
 	maxAge: HOUR_IN_MS,
 } );
@@ -52,7 +46,7 @@ function bumpStat( group, name ) {
  * Render JSX template to a markup string.
  *
  * @param {string} view - JSX template to render (basename)
- * @param {object} props - Properties which got passed to the JSX template
+ * @param {Object} props - Properties which got passed to the JSX template
  * @returns {string} Rendered markup
  */
 export function renderJsx( view, props ) {
@@ -70,24 +64,26 @@ export function renderJsx( view, props ) {
 	to join the fun, visit: https://automattic.com/work-with-us/
 
 -->`;
-	return doctype + ReactDomServer.renderToStaticMarkup( React.createElement( component, props ) );
+	return doctype + ReactDomServer.renderToStaticMarkup( createElement( component, props ) );
 }
 
 /**
  * Render and cache supplied React element to a markup string.
  * Cache is keyed by stringified element by default.
  *
- * @param {object} element - React element to be rendered to html
- * @param {string} key - (optional) custom key
- * @param {object} req - Request object
- * @returns {string} The rendered Layout
+ * @param {Object} element - React element to be rendered to html
+ * @param {string} key - cache key
+ * @param {Object} req - Request object
+ * @returns {string|undefined} The rendered Layout
  */
-export function render( element, key = JSON.stringify( element ), req ) {
+function render( element, key, req ) {
 	try {
 		const startTime = Date.now();
 		debug( 'cache access for key', key );
 
-		let renderedLayout = markupCache.get( key );
+		// If the cached layout was stored earlier in the request, no need to get it again.
+		let renderedLayout = req.context.cachedMarkup ?? markupCache.get( key );
+		const markupFromCache = !! renderedLayout; // Store this before updating renderedLayout.
 		if ( ! renderedLayout ) {
 			bumpStat( 'calypso-ssr', 'loggedout-design-cache-miss' );
 			debug( 'cache miss for key', key );
@@ -96,24 +92,39 @@ export function render( element, key = JSON.stringify( element ), req ) {
 				config.isEnabled( 'ssr/always-log-cache-misses' )
 			) {
 				// Log 0.1% of cache misses
-				req.context.store.dispatch(
-					logToLogstash( {
-						feature: 'calypso_ssr',
-						message: 'render cache miss',
-						extra: {
-							key,
-							'existing-keys': markupCache.keys,
-							'user-agent': get( req.headers, 'user-agent', '' ),
-							path: req.context.path,
-						},
-					} )
-				);
+				req.logger.warn( {
+					feature: 'calypso_ssr',
+					message: 'render cache miss',
+					extra: {
+						key,
+						'existing-keys': markupCache.keys,
+						'user-agent': get( req.headers, 'user-agent', '' ),
+						path: req.context.path,
+					},
+				} );
 			}
 			renderedLayout = ReactDomServer.renderToString( element );
 			markupCache.set( key, renderedLayout );
 		}
 		const rtsTimeMs = Date.now() - startTime;
 		debug( 'Server render time (ms)', rtsTimeMs );
+
+		logServerEvent( req.context.sectionName, [
+			{
+				name: `ssr.markup_cache.${ markupFromCache ? 'hit' : 'miss' }`,
+				type: 'counting',
+			},
+			// Only log the render time if we didn't get it from the cache.
+			...( markupFromCache
+				? []
+				: [
+						{
+							name: 'ssr.react_render.duration',
+							type: 'timing',
+							value: rtsTimeMs,
+						},
+				  ] ),
+		] );
 
 		if ( rtsTimeMs > 100 ) {
 			// Server renders should probably never take longer than 100ms
@@ -136,8 +147,8 @@ export function render( element, key = JSON.stringify( element ), req ) {
 }
 
 const cachedLanguageManifest = {};
-const getLanguageManifest = ( langSlug, target ) => {
-	const key = `${ target }/${ langSlug }`;
+const getLanguageManifest = ( langSlug ) => {
+	const key = `${ langSlug }`;
 
 	if ( ! cachedLanguageManifest[ key ] ) {
 		const languageManifestFilepath = path.join(
@@ -146,7 +157,6 @@ const getLanguageManifest = ( langSlug, target ) => {
 			'..',
 			'..',
 			'public',
-			target,
 			'languages',
 			`${ langSlug }-language-manifest.json`
 		);
@@ -173,13 +183,12 @@ export function attachI18n( context ) {
 	if ( ! isDefaultLocale( localeSlug ) && context.useTranslationChunks ) {
 		context.entrypoint.language = {};
 
-		const languageManifest = getLanguageManifest( localeSlug, context.target );
+		const languageManifest = getLanguageManifest( localeSlug );
 
 		if ( languageManifest ) {
 			context.entrypoint.language.manifest = getLanguageManifestFileUrl( {
 				localeSlug: localeSlug,
 				fileType: 'js',
-				targetBuild: context.target,
 				hash: context?.languageRevisions?.hashes?.[ localeSlug ],
 			} );
 
@@ -192,7 +201,6 @@ export function attachI18n( context ) {
 						chunkId,
 						localeSlug: localeSlug,
 						fileType: 'js',
-						targetBuild: context.target,
 						hash: context?.languageRevisions?.[ localeSlug ],
 					} )
 				);
@@ -201,9 +209,6 @@ export function attachI18n( context ) {
 
 	if ( context.store ) {
 		context.lang = getCurrentLocaleSlug( context.store.getState() ) || localeSlug;
-
-		const isLocaleRTL = isLocaleRtl( localeSlug );
-		context.isRTL = isLocaleRTL !== null ? isLocaleRTL : context.isRTL;
 	}
 }
 
@@ -228,6 +233,7 @@ export function attachBuildTimestamp( context ) {
 }
 
 export function serverRender( req, res ) {
+	performanceMark( req.context, 'serverRender' );
 	const context = req.context;
 
 	let cacheKey = false;
@@ -235,37 +241,54 @@ export function serverRender( req, res ) {
 	attachI18n( context );
 
 	if ( shouldServerSideRender( context ) ) {
-		cacheKey = getNormalizedPath( context.pathname, context.query );
-		context.renderedLayout = render(
-			context.layout,
-			req.error ? req.error.message : cacheKey,
-			req
-		);
+		performanceMark( req.context, 'render layout', true );
+		cacheKey = getCacheKey( req );
+		debug( `SSR render with cache key ${ cacheKey }.` );
+
+		context.renderedLayout = render( context.layout, req.error?.message ?? cacheKey, req );
 	}
+
+	performanceMark( req.context, 'dehydrateQueryClient', true );
+	context.initialQueryState = dehydrateQueryClient( context.queryClient );
 
 	if ( context.store ) {
+		performanceMark( req.context, 'redux store', true );
 		attachHead( context );
 
-		const cacheableReduxSubtrees = [ 'documentHead' ];
-		const isomorphicSubtrees = context.section?.isomorphic ? [ 'themes', 'ui' ] : [];
-
-		const reduxSubtrees = [ ...cacheableReduxSubtrees, ...isomorphicSubtrees ];
+		const isomorphicSubtrees = context.section?.isomorphic ? [ 'themes', 'ui', 'plugins' ] : [];
+		const initialClientStateTrees = [ 'documentHead', ...isomorphicSubtrees ];
 
 		// Send state to client
-		context.initialReduxState = pick( context.store.getState(), reduxSubtrees );
+		context.initialReduxState = pick( context.store.getState(), initialClientStateTrees );
 
-		// And cache on the server, too.
+		/**
+		 * Cache redux state to speedup future renders. For example, some network
+		 * requests are skipped if the data is already in the store. Note that
+		 * cacheKey is only defined when SSR is enabled, which means the cache
+		 * is only set in logged-out contexts.
+		 *
+		 * Also note that we should only cache data which maps 1:1 to a route.
+		 * For example, the themes data on the logged-out "/themes" route is always
+		 * the same. And since the locale is encoded into the logged-out route
+		 * (like /es/themes), that applies to every user.
+		 */
 		if ( cacheKey ) {
-			const cacheableInitialState = pick( context.store.getState(), cacheableReduxSubtrees );
-			const serverState = serialize( initialReducer, cacheableInitialState );
-			stateCache.set( cacheKey, serverState );
+			const { documentHead, themes, plugins } = context.store.getState();
+			const serverState = serialize( context.store.getCurrentReducer(), {
+				documentHead,
+				themes,
+				plugins,
+			} );
+			stateCache.set( cacheKey, serverState.get() );
 		}
 	}
+	performanceMark( req.context, 'final render', true );
 	context.clientData = config.clientData;
 
 	attachBuildTimestamp( context );
 
 	res.send( renderJsx( 'index', context ) );
+	performanceMark( req.context, 'post-sending JSX' );
 }
 
 /**
@@ -277,7 +300,7 @@ export function serverRender( req, res ) {
  * Warning: Having context.serverSideRender=true is not sufficient for performing SSR. The app-level checks are also
  * applied before truly SSRing (@see isServerSideRenderCompatible)
  *
- * @param {object}   context  The entire request context
+ * @param {Object}   context  The entire request context
  * @param {Function} next     As all middlewares, will call next in the sequence
  */
 export function setShouldServerSideRender( context, next ) {
@@ -301,15 +324,14 @@ export function setShouldServerSideRender( context, next ) {
  * that set context.serverSideRender), think twice: the context may not be populated with all the necessary values
  * when the sections-specific middlewares are run (examples: context.layout, context.user).
  *
- * @param {object}   context The currently built context
- *
+ * @param {Object}   context The currently built context
  * @returns {boolean} True if all the app-level criteria are fulfilled.
  */
 function isServerSideRenderCompatible( context ) {
 	return Boolean(
 		context.section?.isomorphic &&
 			! context.user && // logged out only
-			context.layout
+			( context.layout || context.cachedMarkup ) // A layout was generated or we have one cached.
 	);
 }
 
@@ -318,7 +340,7 @@ function isServerSideRenderCompatible( context ) {
  *
  * Warning: the context needs to be 'ready' for these checks (needs to have all values)
  *
- * @param {object}   context The currently built context
+ * @param {Object}   context The currently built context
  * @returns {boolean} if the current page/request should return a SSR response
  */
 export function shouldServerSideRender( context ) {

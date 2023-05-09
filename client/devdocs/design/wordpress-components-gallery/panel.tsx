@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React, { ReactNode } from 'react';
-
-/**
- * WordPress dependencies
- */
 import { Panel, PanelBody, PanelRow } from '@wordpress/components';
+import { ReactNode } from 'react';
 
 function ScrollableContainer( { children }: { children: ReactNode } ) {
 	return (

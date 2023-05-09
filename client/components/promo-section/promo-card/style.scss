@@ -1,17 +1,17 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .promo-card {
 	display: flex;
 	flex-direction: column;
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		flex-direction: row;
 	}
 
 	.action-panel__figure {
 		margin-top: 3px;
 
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( ">480px" ) {
 			max-width: 24px;
 			order: 1;
 
@@ -46,7 +46,7 @@
 			margin-bottom: 8px;
 		}
 
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( ">480px" ) {
 			.action-panel__figure {
 				display: block;
 				max-width: 120px;
@@ -78,14 +78,14 @@
 			padding-right: 64px;
 		}
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			// illustration is too small to fit between 660 and 800px
 			.action-panel__figure {
 				display: none;
 			}
 		}
 
-		@include breakpoint-deprecated( '>800px' ) {
+		@include breakpoint-deprecated( ">800px" ) {
 			.action-panel__figure {
 				display: block;
 			}
@@ -98,19 +98,19 @@
 		}
 	}
 	.promo-card__title-badge {
-		background-color: var( --color-accent-60 );
-		color: var( --color-text-inverted );
+		background-color: var(--color-accent-60);
+		color: var(--color-text-inverted);
 		margin: auto 0 auto 8px;
 	}
 
 	.promo-card__price {
 		.price__cost {
 			font-size: $font-body-small;
-			color: var( --studio-gray-80 );
+			color: var(--studio-gray-80);
 
 			span {
 				font-size: $font-title-medium;
-				color: var( --studio-gray-100 );
+				color: var(--studio-gray-100);
 			}
 		}
 
@@ -119,7 +119,7 @@
 		}
 		.price__discount {
 			font-size: $font-body-small;
-			color: var( --studio-green-50 );
+			color: var(--studio-green-50);
 			margin-left: 8px;
 		}
 	}

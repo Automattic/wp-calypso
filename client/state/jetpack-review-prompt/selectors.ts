@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getPreference } from 'calypso/state/preferences/selectors';
 import {
 	emptyPreference,
@@ -10,10 +7,6 @@ import {
 	TIME_BETWEEN_PROMPTS,
 	SinglePreferenceType,
 } from './constants';
-
-/**
- * Type dependencies
- */
 import type { AppState } from 'calypso/types';
 
 const getExistingPreference = (
@@ -21,11 +14,7 @@ const getExistingPreference = (
 	type: 'scan' | 'restore'
 ): SinglePreferenceType => {
 	const pref = ( getPreference( state, PREFERENCE_NAME ) as PreferenceType ) || {};
-	if ( type === 'scan' ) {
-		return pref.hasOwnProperty( 'scan' )
-			? pref.scan[ state.ui.selectedSiteId ] ?? emptyPreference
-			: emptyPreference;
-	}
+
 	return pref[ type ] ?? emptyPreference;
 };
 

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -9,9 +6,8 @@ import 'calypso/state/ui/init';
 /**
  * Returns the URL if SitePreview currently has one.
  *
- * @param  {object}  state Global state tree
+ * @param  {Object}  state Global state tree
  * @returns {?string}  The url or null
- *
  * @see client/blocks/site-preview
  */
 export function getPreviewUrl( state ) {
@@ -21,8 +17,8 @@ export function getPreviewUrl( state ) {
 /**
  * Returns the site object for the current site set for SitePreview.
  *
- * @param  {object}  state  Global state tree
- * @returns {?object}        Selected site
+ * @param  {Object}  state  Global state tree
+ * @returns {?Object}        Selected site
  */
 export function getPreviewSite( state ) {
 	const siteId = getPreviewSiteId( state );
@@ -36,7 +32,7 @@ export function getPreviewSite( state ) {
 /**
  * Returns the site ID for SitePreview for use in "All My Sites".
  *
- * @param  {object}  state Global state tree
+ * @param  {Object}  state Global state tree
  * @returns {?number}       Selected preview site ID
  */
 export function getPreviewSiteId( state ) {

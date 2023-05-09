@@ -1,30 +1,19 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
+import { Card, Button, Dialog } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import Main from 'calypso/components/main';
+import PropTypes from 'prop-types';
+import { PureComponent, Fragment } from 'react';
+import { connect } from 'react-redux';
+import QuerySiteInvites from 'calypso/components/data/query-site-invites';
 import EmptyContent from 'calypso/components/empty-content';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import FormattedHeader from 'calypso/components/formatted-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import PeopleListItem from 'calypso/my-sites/people/people-list-item';
 import PeopleListSectionHeader from 'calypso/my-sites/people/people-list-section-header';
 import PeopleSectionNav from 'calypso/my-sites/people/people-section-nav';
-import PeopleListItem from 'calypso/my-sites/people/people-list-item';
-import { Card, Button, Dialog } from '@automattic/components';
-import QuerySiteInvites from 'calypso/components/data/query-site-invites';
-import InvitesListEnd from './invites-list-end';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
-import isPrivateSite from 'calypso/state/selectors/is-private-site';
+import { deleteInvites } from 'calypso/state/invites/actions';
 import {
 	isRequestingInvitesForSite,
 	getPendingInvitesForSite,
@@ -32,15 +21,17 @@ import {
 	getNumberOfInvitesFoundForSite,
 	isDeletingAnyInvite,
 } from 'calypso/state/invites/selectors';
-import { deleteInvites } from 'calypso/state/invites/actions';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import isEligibleForSubscriberImporter from 'calypso/state/selectors/is-eligible-for-subscriber-importer';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import InviteButton from '../invite-button';
+import InvitesListEnd from './invites-list-end';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class PeopleInvites extends React.PureComponent {
+class PeopleInvites extends PureComponent {
 	static propTypes = {
 		site: PropTypes.object,
 	};
@@ -70,17 +61,17 @@ class PeopleInvites extends React.PureComponent {
 	};
 
 	render() {
-		const { site, canViewPeople, isJetpack, isPrivate, translate } = this.props;
+		const { site, canViewPeople, isJetpack, isPrivate, translate, includeSubscriberImporter } =
+			this.props;
 		const siteId = site && site.ID;
 
 		if ( siteId && ! canViewPeople ) {
 			return (
 				<Main>
 					<PageViewTracker path="/people/invites/:site" title="People > Invites" />
-					<SidebarNavigation />
 					<EmptyContent
 						title={ this.props.translate( 'You are not authorized to view this page' ) }
-						illustration={ '/calypso/images/illustrations/illustration-404.svg' }
+						illustration="/calypso/images/illustrations/illustration-404.svg"
 					/>
 				</Main>
 			);
@@ -90,12 +81,20 @@ class PeopleInvites extends React.PureComponent {
 			<Main className="people-invites">
 				<PageViewTracker path="/people/invites/:site" title="People > Invites" />
 				{ siteId && <QuerySiteInvites siteId={ siteId } /> }
-				<SidebarNavigation />
 				<FormattedHeader
 					brandFont
 					className="people-invites__page-heading"
-					headerText={ translate( 'People' ) }
-					subHeaderText={ translate( 'View and manage the invites to your site.' ) }
+					headerText={ translate( 'Users' ) }
+					subHeaderText={ translate(
+						'View and Manage the invites to your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						{
+							components: {
+								learnMoreLink: (
+									<InlineSupportLink key="learnMore" supportContext="invites" showIcon={ false } />
+								),
+							},
+						}
+					) }
 					align="left"
 				/>
 				<PeopleSectionNav
@@ -103,6 +102,7 @@ class PeopleInvites extends React.PureComponent {
 					site={ site }
 					isJetpack={ isJetpack }
 					isPrivate={ isPrivate }
+					includeSubscriberImporter={ includeSubscriberImporter }
 				/>
 				{ this.renderInvitesList() }
 			</Main>
@@ -110,14 +110,8 @@ class PeopleInvites extends React.PureComponent {
 	}
 
 	renderInvitesList() {
-		const {
-			acceptedInvites,
-			pendingInvites,
-			totalInvitesFound,
-			requesting,
-			site,
-			translate,
-		} = this.props;
+		const { acceptedInvites, pendingInvites, totalInvitesFound, requesting, site, translate } =
+			this.props;
 
 		if ( ! site || ! site.ID ) {
 			return this.renderPlaceholder();
@@ -156,7 +150,7 @@ class PeopleInvites extends React.PureComponent {
 		);
 
 		return (
-			<React.Fragment>
+			<Fragment>
 				{ hasPendingInvites && (
 					<div className="people-invites__pending">
 						<PeopleListSectionHeader label={ pendingLabel } site={ site } />
@@ -187,7 +181,7 @@ class PeopleInvites extends React.PureComponent {
 						found={ totalInvitesFound }
 					/>
 				) }
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 
@@ -204,7 +198,7 @@ class PeopleInvites extends React.PureComponent {
 		];
 
 		return (
-			<React.Fragment>
+			<Fragment>
 				<Button busy={ deleting } compact onClick={ this.toggleClearAllConfirmation }>
 					{ translate( 'Clear all accepted' ) }
 				</Button>
@@ -212,7 +206,7 @@ class PeopleInvites extends React.PureComponent {
 					<h1>{ translate( 'Clear All Accepted' ) }</h1>
 					<p>{ translate( 'Are you sure you wish to clear all accepted invites?' ) }</p>
 				</Dialog>
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 
@@ -224,13 +218,14 @@ class PeopleInvites extends React.PureComponent {
 	}
 
 	renderInviteUsersAction( isPrimary = true ) {
-		const { site, translate } = this.props;
+		const { site, includeSubscriberImporter } = this.props;
 
 		return (
-			<Button primary={ isPrimary } href={ `/people/new/${ site.slug }` }>
-				<Gridicon icon="user-add" />
-				<span>{ translate( 'Invite', { context: 'Verb. Button to invite more users.' } ) }</span>
-			</Button>
+			<InviteButton
+				primary={ isPrimary }
+				siteSlug={ site.slug }
+				includeSubscriberImporter={ includeSubscriberImporter }
+			/>
 		);
 	}
 
@@ -275,6 +270,7 @@ export default connect(
 			totalInvitesFound: getNumberOfInvitesFoundForSite( state, siteId ),
 			deleting: isDeletingAnyInvite( state, siteId ),
 			canViewPeople: canCurrentUser( state, siteId, 'list_users' ),
+			includeSubscriberImporter: isEligibleForSubscriberImporter( state ),
 		};
 	},
 	{ deleteInvites }

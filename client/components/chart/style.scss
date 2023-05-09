@@ -1,15 +1,18 @@
+@import "@wordpress/base-styles/breakpoints";
+
+$bar-chart-border-radius: 2px;
+$year-bar-chart-border-radius: 4px;
+
 // Chart
 // Life is a statistical anomaly
 
 .chart {
 	position: relative;
 	box-sizing: border-box;
-	background-color: var( --color-surface );
-	padding: 8px 0 8px 20px;
+	padding: 0 0 0 20px;
 }
 
 // Y-axis
-
 // Y-axis markers (lines)
 
 .chart .chart__y-axis-markers {
@@ -24,18 +27,18 @@
 	top: 0;
 	width: 100%;
 	height: 1px;
-	border-top: 1px solid var( --color-neutral-0 );
+	border-top: 1px solid var(--color-neutral-0);
 }
 
 // Y-axis marker lines inside each chart__bar
 // (This is needed so that bars overlap correctly)
 .chart__bar-marker {
-	z-index: z-index( 'root', '.chart__bar-marker' );
+	z-index: z-index("root", ".chart__bar-marker");
 	position: absolute;
 	top: 0;
 	width: 100%;
 	height: 1px;
-	border-top: 1px solid rgba( var( --color-neutral-0-rgb ), 0.1 );
+	border-top: 1px solid rgba(var(--color-neutral-0-rgb), 0.1);
 }
 
 .chart__bar-marker,
@@ -52,14 +55,16 @@
 
 // Y-axis labels
 // 1: matches Y-axis padding
-$y-axis-padding: 0 20px 0 10px;
+
+$y-axis-padding: 0 20px;
+
 .chart__y-axis {
 	position: relative;
 	float: right;
 	height: 200px;
 	padding: $y-axis-padding;
 	font-size: $font-body-extra-small;
-	color: var( --color-neutral-40 );
+	color: var(--color-neutral-40);
 	margin-bottom: 30px;
 }
 
@@ -72,7 +77,7 @@ $y-axis-padding: 0 20px 0 10px;
 
 // For forcing the width of y-axis to the width of the label
 .chart__y-axis-width-fix {
-	color: rgba( var( --color-surface-rgb ), 0 );
+	color: rgba(var(--color-surface-rgb), 0);
 }
 
 // X-axis
@@ -83,7 +88,7 @@ $y-axis-padding: 0 20px 0 10px;
 	font-size: 0; // 1
 	padding: 5px 0;
 	min-height: 18px;
-	color: var( --color-neutral-60 );
+	color: var(--color-neutral-60);
 }
 
 .chart__x-axis-label {
@@ -92,13 +97,17 @@ $y-axis-padding: 0 20px 0 10px;
 	vertical-align: top;
 	font-size: $font-body-extra-small;
 	text-align: center;
+
+	font-weight: 400;
+	line-height: 24px;
+	color: var(--color-neutral-40);
 }
 
 // X-axis label indicator
 // (vertical thin grey bar)
 
 .chart__x-axis-label::before {
-	content: '';
+	content: "";
 	display: block;
 	position: absolute;
 	top: -4px;
@@ -106,11 +115,11 @@ $y-axis-padding: 0 20px 0 10px;
 	margin-left: -0.5px;
 	width: 1px;
 	height: 5px;
-	background: var( --color-neutral-60 );
+	background: var(--color-neutral-60);
 }
 
 .chart__x-axis-width-spacer {
-	color: rgba( var( --color-surface-rgb ), 0 );
+	color: rgba(var(--color-surface-rgb), 0);
 	padding: $y-axis-padding;
 	right: 0;
 
@@ -128,7 +137,6 @@ $y-axis-padding: 0 20px 0 10px;
 	height: 200px;
 	text-align: center;
 	overflow: hidden;
-	display: -ms-flex;
 	display: flex;
 }
 
@@ -145,28 +153,24 @@ $y-axis-padding: 0 20px 0 10px;
 	flex-grow: 1;
 	-ms-flex-shrink: 1;
 	flex-shrink: 1;
-	transform: scaleY( 0 );
+	transform: scaleY(0);
 	transform-origin: 0% 100%;
 	animation: growUpOnMounting 0.2s ease-in forwards; // 2
 
 	@keyframes growUpOnMounting {
 		100% {
-			transform: scaleY( 1 );
+			transform: scaleY(1);
 		}
-	}
-
-	&.is-weekend {
-		background-color: rgba( var( --color-neutral-0-rgb ), 0.5 );
 	}
 
 	&:hover {
 		cursor: pointer;
-		background-color: rgba( var( --color-neutral-0-rgb ), 0.3 );
+		background-color: rgba(var(--color-neutral-rgb), 0.1);
 	}
 
 	&.is-selected {
 		cursor: default;
-		background-color: rgba( var( --color-accent-rgb ), 0.1 );
+		background-color: rgba(var(--color-primary-rgb), 0.1);
 	}
 }
 
@@ -176,61 +180,69 @@ $y-axis-padding: 0 20px 0 10px;
 // 3: add a transition to make switching between periods nicer
 // 4: set `transform-origin` to the bottom so scalling takes the bar up ↑
 
+// Wider bars for period `Year`
+.is-period-year {
+	.chart__bar-section {
+		border-top-left-radius: $year-bar-chart-border-radius;
+		border-top-right-radius: $year-bar-chart-border-radius;
+	}
+
+	.chart__bar-section-inner {
+		border-top-left-radius: $year-bar-chart-border-radius;
+		border-top-right-radius: $year-bar-chart-border-radius;
+	}
+}
+
 .chart__bar-section {
 	display: inline-block;
-	background-color: var( --color-primary-40 );
+	background-color: var(--color-primary);
 	position: absolute;
 	right: 16%; // 1
 	bottom: 0; // 1
 	left: 16%; // 1
 	height: 100%;
-	transform: scaleY( 0 ); // 2
+	transform: scaleY(0); // 2
 	transition: transform 0.3s ease-in-out; // 3
 	transform-origin: 0% 100%; // 4
-	z-index: z-index( 'root', '.chart__bar-section' );
-
-	.chart__bar:hover &.is-bar {
-		background-color: var( --color-primary-light );
-	}
-
-	.chart__bar.is-selected &.is-bar {
-		background-color: var( --color-accent-40 );
-	}
+	z-index: z-index("root", ".chart__bar-section");
+	border-top-left-radius: $bar-chart-border-radius;
+	border-top-right-radius: $bar-chart-border-radius;
 }
 
 .chart__bar-section-inner {
-	background: var( --color-primary-dark );
+	background-color: var(--color-primary-dark);
 	position: absolute;
 	right: 23.33%;
 	bottom: 0;
 	left: 23.33%;
-
-	.chart__bar.is-selected & {
-		background-color: var( --color-accent-dark );
-	}
+	border-top-left-radius: $bar-chart-border-radius;
+	border-top-right-radius: $bar-chart-border-radius;
 }
 
 // Chart legend (wrapper)
 // 1: L/R matches padding of y-axis labels in chart
 
 .chart__legend {
-	@include clear-fix;
-	margin-bottom: -8px;
+	margin-bottom: 16px;
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+
+	@media ( max-width: $break-medium ) {
+		padding: 0 16px;
+	}
 }
 
 // Chart legend options (list)
 
-.chart__legend .chart__legend-options {
-	float: right;
-	color: var( --color-neutral );
+.chart__legend-options {
+	color: var(--color-neutral);
 	list-style-type: none;
 	margin: 0;
 	font-size: $font-body-extra-small;
-	text-transform: uppercase;
-	letter-spacing: 0.1em;
 
-	@include breakpoint-deprecated( '<480px' ) {
-		width: 100%;
+	@media ( max-width: $break-mobile ) {
+		display: none;
 	}
 }
 
@@ -241,9 +253,56 @@ $y-axis-padding: 0 20px 0 10px;
 	text-align: left;
 
 	// Expand labels to create bigger touch targets
-	@include breakpoint-deprecated( '<480px' ) {
+	@media ( max-width: $break-mobile ) {
 		width: 50%;
 		display: inline-block;
+
+		&:first-child {
+			.chart__legend-color {
+				margin-left: 2px; // 2
+			}
+		}
+	}
+
+	&:not(:first-child) {
+		margin-left: 24px;
+	}
+
+	// Chart legend color
+	// 1: Needed to overvwrite form styles in main stylesheets
+	// 2: Make leftmost legend fit snugly up against the leftmost bars
+
+	.chart__legend-color {
+		width: 20px;
+		height: 20px;
+		background: var(--color-primary);
+		display: inline-block;
+		border-radius: 4px;
+		vertical-align: top;
+		margin: 0 8px 0 0;
+
+		&.is-dark-blue {
+			background: var(--color-primary-dark);
+		}
+	}
+
+	// Chart legend checkbox
+
+	.chart__legend-checkbox {
+		margin: 0;
+		float: none;
+		vertical-align: top;
+
+		width: 20px;
+		height: 20px;
+		background-color: var(--color-surface);
+		border: 1px solid var(--color-neutral-10);
+		border-radius: 2px;
+		margin-right: 8px;
+
+		&:checked::before {
+			margin: 3px auto;
+		}
 	}
 }
 
@@ -252,13 +311,18 @@ $y-axis-padding: 0 20px 0 10px;
 
 .chart__legend-label {
 	display: inline-block;
-	padding: 12px 19px 10px 20px; // 1
+	padding: 0;
+
+	color: var(--studio-black);
+	font-size: $font-body-small;
+	font-weight: 400;
+	line-height: 18px;
+
 
 	&.form-label {
 		display: inline-block;
 		margin-bottom: 0;
 		font-weight: 400;
-		font-size: $font-body-extra-small;
 	}
 
 	&.is-selectable {
@@ -266,45 +330,13 @@ $y-axis-padding: 0 20px 0 10px;
 
 		&:focus,
 		&:hover {
-			color: var( --color-link-dark );
+			color: var(--studio-black);
 		}
 	}
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@media ( max-width: $break-mobile ) {
 		display: block;
 	}
-}
-
-// Chart legend color
-// 1: Needed to overvwrite form styles in main stylesheets
-// 2: Make leftmost legend fit snugly up against the leftmost bars
-
-.chart__legend-option .chart__legend-color {
-	width: 10px;
-	height: 10px;
-	background: var( --color-primary );
-	display: inline-block;
-	border-radius: 1px;
-	vertical-align: top;
-	margin: 3px 5px 3px 8px; // 1
-}
-
-@include breakpoint-deprecated( '<480px' ) {
-	.chart__legend-option:first-child .chart__legend-color {
-		margin-left: 2px; // 2
-	}
-}
-
-.chart__legend-color.is-dark-blue {
-	background: var( --color-primary-dark );
-}
-
-// Chart legend checkbox
-
-.chart__legend-option .chart__legend-checkbox {
-	margin: 0;
-	float: none;
-	vertical-align: top;
 }
 
 // Chart empty (message)
@@ -319,7 +351,7 @@ $y-axis-padding: 0 20px 0 10px;
 	right: 0;
 	bottom: 0;
 	left: 0;
-	z-index: z-index( 'root', '.chart__empty' );
+	z-index: z-index("root", ".chart__empty");
 	padding: 0 50px;
 }
 
@@ -346,7 +378,6 @@ $y-axis-padding: 0 20px 0 10px;
 
 				.wrapper {
 					display: block;
-					line-height: inherit;
 					line-height: 24px;
 					clear: both;
 				}
@@ -355,7 +386,7 @@ $y-axis-padding: 0 20px 0 10px;
 					text-align: right;
 					float: right;
 					min-width: 22px;
-					color: var( --color-neutral-10 );
+					color: var(--color-neutral-10);
 				}
 
 				.label {
@@ -374,6 +405,7 @@ $y-axis-padding: 0 20px 0 10px;
 		}
 	}
 
+	// @TODO Integrate styles with Stats
 	&.is-streak {
 		.popover__inner {
 			width: 160px;
@@ -402,21 +434,23 @@ $y-axis-padding: 0 20px 0 10px;
 }
 
 .chart__tooltip .module-content-list-item {
+	// @TODO Integrate styles with Stats
 	&.is-date-label {
 		font-size: $font-body-extra-small;
 		margin-bottom: 2px;
 		text-transform: uppercase;
 		font-weight: 600;
-		border-bottom: 1px solid var( --color-neutral-60 );
+		border-bottom: 1px solid var(--color-neutral-60);
 		padding-bottom: 2px;
 	}
 
+	// @TODO Integrate styles with Stats
 	&.is-published-item {
 		height: 19px;
 
 		.label {
 			text-transform: none;
-			color: var( --color-neutral-10 );
+			color: var(--color-neutral-10);
 			overflow: hidden;
 			letter-spacing: 0;
 			height: 19px;
@@ -446,7 +480,7 @@ $y-axis-padding: 0 20px 0 10px;
 		background-color: transparent;
 
 		.chart__bar-section {
-			background-color: rgba( var( --color-neutral-0-rgb ), 0.5 );
+			background-color: rgba(var(--color-neutral-0-rgb), 0.5);
 		}
 	}
 }

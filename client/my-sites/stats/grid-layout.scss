@@ -1,0 +1,272 @@
+@import "@wordpress/base-styles/breakpoints";
+
+$grid-horizontal-gutters: 24px;
+$grid-vertical-gutters: 32px;
+
+@mixin stats-desktop-grid($grid-template-areas, $grid-template-rows) {
+	align-items: stretch;
+	display: grid;
+	grid-template-columns: repeat(12, 1fr);
+	grid-template-rows: repeat($grid-template-rows, min-content);
+	gap: $grid-vertical-gutters $grid-horizontal-gutters;
+	grid-template-areas: $grid-template-areas;
+}
+
+@mixin stats-tablet-grid($grid-template-areas, $grid-template-rows) {
+	@media (max-width: $break-large ) {
+		grid-template-columns: repeat(8, 1fr);
+		grid-template-rows: repeat($grid-template-rows, min-content);
+		grid-template-areas: $grid-template-areas;
+	}
+}
+
+@mixin stats-mobile-grid($grid-template-areas, $grid-template-rows) {
+	@media (max-width: $break-medium ) {
+		grid-template-columns: repeat(4, 1fr);
+		grid-template-rows: repeat($grid-template-rows, min-content);
+		gap: 0;
+		grid-template-areas: $grid-template-areas;
+	}
+}
+
+.stats__module-list.stats__module--unified.subscribers-page {
+
+	@include stats-desktop-grid(
+		"followers followers followers followers followers followers publicize publicize publicize publicize publicize publicize"
+		"emails emails emails emails emails emails emails emails emails emails emails emails",
+		2
+	);
+
+	@include stats-tablet-grid(
+		"followers followers followers followers publicize publicize publicize publicize"
+		"emails emails emails emails emails emails emails emails",
+		2
+	);
+
+	@include stats-mobile-grid(
+		"followers followers followers followers"
+		"publicize publicize publicize publicize"
+		"emails emails emails emails",
+		3
+	);
+
+	@media (max-width: 660px) {
+		padding: 0 16px;
+	}
+
+	.stats__module-wrapper--followers,
+	.list-followers {
+		grid-area: followers;
+	}
+
+	.stats__module-wrapper--publicize,
+	.list-publicize {
+		grid-area: publicize;
+	}
+
+	.stats__module-wrapper--emails,
+	.list-emails {
+		grid-area: emails;
+	}
+}
+
+.stats__module-list--insights {
+	&.is-jetpack {
+		@include stats-desktop-grid(
+			"tags-categories tags-categories tags-categories tags-categories tags-categories tags-categories comments comments comments comments comments comments"
+			"followers followers followers followers followers followers publicize publicize publicize publicize publicize publicize"
+			"latest-post-summary latest-post-summary latest-post-summary latest-post-summary latest-post-summary latest-post-summary social-followers social-followers social-followers social-followers social-followers social-followers",
+			3
+		);
+
+		@include stats-tablet-grid(
+			"tags-categories tags-categories tags-categories tags-categories comments comments comments comments"
+			"followers followers followers followers followers followers followers followers"
+			"publicize publicize publicize publicize latest-post-summary latest-post-summary latest-post-summary latest-post-summary"
+			"social-followers social-followers social-followers social-followers social-followers social-followers social-followers social-followers",
+			4
+		);
+
+		@include stats-mobile-grid(
+			"tags-categories tags-categories tags-categories tags-categories"
+			"comments comments comments comments"
+			"followers followers followers followers"
+			"publicize publicize publicize publicize"
+			"latest-post-summary latest-post-summary latest-post-summary latest-post-summary"
+			"social-followers social-followers social-followers social-followers",
+			6
+		);
+	}
+
+	@include stats-desktop-grid(
+		"tags-categories tags-categories tags-categories tags-categories tags-categories tags-categories comments comments comments comments comments comments"
+		"shares shares shares shares followers followers followers followers publicize publicize publicize publicize"
+		"latest-post-summary latest-post-summary latest-post-summary latest-post-summary latest-post-summary latest-post-summary social-followers social-followers social-followers social-followers social-followers social-followers",
+		3
+	);
+
+	@include stats-tablet-grid(
+		"tags-categories tags-categories tags-categories tags-categories comments comments comments comments"
+		"shares shares shares shares followers followers followers followers"
+		"publicize publicize publicize publicize latest-post-summary latest-post-summary latest-post-summary latest-post-summary"
+		"social-followers social-followers social-followers social-followers social-followers social-followers social-followers social-followers",
+		4
+	);
+
+	@include stats-mobile-grid(
+		"tags-categories tags-categories tags-categories tags-categories"
+		"comments comments comments comments"
+		"shares shares shares shares"
+		"followers followers followers followers"
+		"publicize publicize publicize publicize"
+		"latest-post-summary latest-post-summary latest-post-summary latest-post-summary"
+		"social-followers social-followers social-followers social-followers",
+		7
+	);
+
+	.stats__module-wrapper--tags-categories,
+	.list-tags-categories {
+		grid-area: tags-categories;
+	}
+
+	.stats__module-wrapper--comments,
+	.list-comments {
+		grid-area: comments;
+	}
+
+	.stats__module-wrapper--shares,
+	.list-shares {
+		grid-area: shares;
+	}
+
+	.stats__module-wrapper--followers,
+	.list-followers {
+		grid-area: followers;
+	}
+
+	.stats__module-wrapper--total-followers,
+	.list-total-followers {
+		grid-area: social-followers;
+	}
+
+	.stats__module-wrapper--latest-post-summary,
+	.list-latest-post-summary {
+		grid-area: latest-post-summary;
+	}
+
+	.stats__module-wrapper--publicize,
+	.list-publicize {
+		grid-area: publicize;
+	}
+}
+
+.is-section-stats .stats__module-list--traffic {
+	@include stats-desktop-grid(
+		"posts posts posts posts posts posts posts referrers referrers referrers referrers referrers"
+		"country country country country country country country country country country country country"
+		"authors authors authors authors search search search search clicks clicks clicks clicks"
+		"videos videos videos videos videos videos downloads downloads downloads downloads downloads downloads"
+		"emails emails emails emails emails emails emails emails emails emails emails emails",
+		6
+	);
+
+	@include stats-tablet-grid(
+		"posts posts posts posts referrers referrers referrers referrers"
+		"country country country country country country country country"
+		"authors authors authors authors search search search search"
+		"clicks clicks clicks clicks videos videos videos videos"
+		"downloads downloads downloads downloads downloads downloads downloads downloads"
+		"emails emails emails emails emails emails emails emails",
+		7
+	);
+
+	@include stats-mobile-grid(
+		"posts posts posts posts"
+		"referrers referrers referrers referrers"
+		"country country country country"
+		"authors authors authors authors"
+		"search search search search"
+		"clicks clicks clicks clicks"
+		"videos videos videos videos"
+		"downloads downloads downloads downloads"
+		"emails emails emails emails",
+		10
+	);
+
+	.card.stats-module {
+		margin-bottom: 0;
+	}
+
+	.stats__module-wrapper,
+	.stats-card {
+		width: 100%;
+	}
+
+	.stats__module-wrapper {
+		display: flex;
+		flex-flow: column nowrap;
+
+		.stats-module,
+		.stats-module__header {
+			width: 100%;
+		}
+
+		.stats-module {
+			flex-grow: 1;
+		}
+	}
+
+	.stats__module-wrapper--posts,
+	.list-posts {
+		grid-area: posts;
+	}
+
+	.stats__module-wrapper--referrers,
+	.list-referrers {
+		grid-area: referrers;
+	}
+
+	.stats__module-wrapper--countryviews,
+	.list-countryviews {
+		grid-area: country;
+	}
+
+	.stats__module-wrapper--authors,
+	.list-authors {
+		grid-area: authors;
+	}
+
+	.stats__module-wrapper--searchterms,
+	.list-searchterms {
+		grid-area: search;
+	}
+
+	.stats__module-wrapper--clicks,
+	.list-clicks {
+		grid-area: clicks;
+	}
+
+	.stats__module-wrapper--videoplays,
+	.list-videoplays {
+		grid-area: videos;
+
+		// Downloads module is disabled for Jetpack sites.
+		// Expand the Videos module to take up the entire row.
+		&:last-child {
+			grid-row-start: videos;
+			grid-row-end: downloads;
+			grid-column-start: videos;
+			grid-column-end: downloads;
+		}
+	}
+
+	.stats__module-wrapper--filedownloads,
+	.list-filedownloads {
+		grid-area: downloads;
+	}
+
+	.stats__module-wrapper--emails,
+	.list-emails {
+		grid-area: emails;
+	}
+}

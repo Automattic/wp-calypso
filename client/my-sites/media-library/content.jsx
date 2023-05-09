@@ -1,51 +1,42 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
-import { groupBy, isEmpty, map, size, values } from 'lodash';
-import PropTypes from 'prop-types';
-import page from 'page';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { withMobileBreakpoint } from '@automattic/viewport-react';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { withMobileBreakpoint } from '@automattic/viewport-react';
-
-/**
- * Internal dependencies
- */
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
-import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { groupBy, isEmpty, map, size, values } from 'lodash';
+import page from 'page';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import MediaListData from 'calypso/components/data/media-list-data';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import MediaListData from 'calypso/components/data/media-list-data';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	ValidationErrors as MediaValidationErrors,
 	MEDIA_IMAGE_RESIZER,
 	MEDIA_IMAGE_THUMBNAIL,
 	SCALE_TOUCH_GRID,
 } from 'calypso/lib/media/constants';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
-import MediaLibraryHeader from './header';
-import MediaLibraryExternalHeader from './external-media-header';
-import MediaLibraryList from './list';
 import InlineConnection from 'calypso/my-sites/marketing/connections/inline-connection';
+import { pauseGuidedTour, resumeGuidedTour } from 'calypso/state/guided-tours/actions';
+import { getGuidedTourState } from 'calypso/state/guided-tours/selectors';
+import { clearMediaErrors, changeMediaSource } from 'calypso/state/media/actions';
+import { getPreference } from 'calypso/state/preferences/selectors';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
+import { deleteKeyringConnection } from 'calypso/state/sharing/keyring/actions';
 import {
 	isKeyringConnectionsFetching,
 	getKeyringConnectionsByName,
 } from 'calypso/state/sharing/keyring/selectors';
-import { pauseGuidedTour, resumeGuidedTour } from 'calypso/state/guided-tours/actions';
-import { deleteKeyringConnection } from 'calypso/state/sharing/keyring/actions';
-import { getGuidedTourState } from 'calypso/state/guided-tours/selectors';
-import { clearMediaErrors, changeMediaSource } from 'calypso/state/media/actions';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
-import { getPreference } from 'calypso/state/preferences/selectors';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import MediaLibraryExternalHeader from './external-media-header';
+import MediaLibraryHeader from './header';
+import MediaLibraryList from './list';
 
-/**
- * Style dependencies
- */
 import './content.scss';
 
 const noop = () => {};
@@ -68,7 +59,7 @@ function getMediaScalePreference( state, isMobile ) {
 	return mediaScale;
 }
 
-export class MediaLibraryContent extends React.Component {
+export class MediaLibraryContent extends Component {
 	static propTypes = {
 		site: PropTypes.object,
 		mediaValidationErrors: PropTypes.object,
@@ -76,6 +67,7 @@ export class MediaLibraryContent extends React.Component {
 		filterRequiresUpgrade: PropTypes.bool,
 		search: PropTypes.string,
 		source: PropTypes.string,
+		onSourceChange: PropTypes.func,
 		containerWidth: PropTypes.number,
 		single: PropTypes.bool,
 		scrollable: PropTypes.bool,
@@ -143,7 +135,7 @@ export class MediaLibraryContent extends React.Component {
 	}
 
 	renderErrors() {
-		const { mediaValidationErrorTypes, site, translate } = this.props;
+		const { isJetpack, mediaValidationErrorTypes, site, siteSlug, translate } = this.props;
 		return map( groupBy( mediaValidationErrorTypes ), ( occurrences, errorType ) => {
 			let message;
 			let onDismiss;
@@ -182,7 +174,7 @@ export class MediaLibraryContent extends React.Component {
 						i18nOptions
 					);
 					actionText = translate( 'See supported file types' );
-					actionLink = localizeUrl( 'https://support.wordpress.com/accepted-filetypes' );
+					actionLink = localizeUrl( 'https://wordpress.com/support/accepted-filetypes/' );
 					externalAction = true;
 					break;
 				case MediaValidationErrors.UPLOAD_VIA_URL_404:
@@ -209,8 +201,14 @@ export class MediaLibraryContent extends React.Component {
 					);
 					break;
 				case MediaValidationErrors.EXCEEDS_PLAN_STORAGE_LIMIT:
-					upgradeNudgeName = 'plan-media-storage-error';
-					upgradeNudgeFeature = 'extra-storage';
+					if ( isJetpack ) {
+						actionText = translate( 'Upgrade Plan' );
+						actionLink = `/checkout/${ siteSlug }/jetpack_videopress`;
+						externalAction = true;
+					} else {
+						upgradeNudgeName = 'plan-media-storage-error';
+						upgradeNudgeFeature = 'extra-storage';
+					}
 					message = translate(
 						'%d file could not be uploaded because you have reached your plan storage limit.',
 						'%d files could not be uploaded because you have reached your plan storage limit.',
@@ -278,6 +276,10 @@ export class MediaLibraryContent extends React.Component {
 			);
 		}
 
+		if ( source === 'openverse' ) {
+			return translate( 'We were unable to connect to Openverse. Please try again later.' );
+		}
+
 		return translate(
 			'We were unable to connect to the external service. Please try again later.'
 		);
@@ -333,14 +335,19 @@ export class MediaLibraryContent extends React.Component {
 	};
 
 	renderGooglePhotosConnect() {
-		const connectMessage = this.props.translate(
-			'To show your Google Photos library you need to connect your Google account.'
+		const { translate } = this.props;
+		const connectMessage = translate(
+			'To get started, connect your site to your Google Photos library.'
 		);
 
 		return (
 			<div className="media-library__connect-message">
 				<p>
-					<img src="/calypso/images/sharing/google-photos-connect.png" width="400" alt="" />
+					<img
+						src="/calypso/images/sharing/google-photos-logo-text.svg"
+						width="400"
+						alt={ translate( 'Google Photos' ) }
+					/>
 				</p>
 				<p>{ connectMessage }</p>
 
@@ -421,6 +428,7 @@ export class MediaLibraryContent extends React.Component {
 					thumbnailType={ this.getThumbnailType() }
 					single={ this.props.single }
 					scrollable={ this.props.scrollable }
+					onSourceChange={ this.props.onSourceChange }
 					mediaScale={ this.props.mediaScale }
 				/>
 			</MediaListData>
@@ -445,7 +453,7 @@ export class MediaLibraryContent extends React.Component {
 					selectedItems={ this.props.selectedItems }
 					sticky={ ! this.props.scrollable }
 					hasAttribution={ 'pexels' === this.props.source }
-					hasRefreshButton={ 'pexels' !== this.props.source }
+					hasRefreshButton={ 'pexels' !== this.props.source && 'openverse' !== this.props.source }
 					mediaScale={ this.props.mediaScale }
 				/>
 			);
@@ -490,6 +498,7 @@ export default withMobileBreakpoint(
 	connect(
 		( state, ownProps ) => {
 			const guidedTourState = getGuidedTourState( state );
+			const selectedSiteId = getSelectedSiteId( state );
 			const mediaValidationErrorTypes = values( ownProps.mediaValidationErrors ).map( first );
 			const shouldPauseGuidedTour =
 				! isEmpty( guidedTourState.tour ) && 0 < size( mediaValidationErrorTypes );
@@ -497,6 +506,7 @@ export default withMobileBreakpoint(
 
 			return {
 				siteSlug: ownProps.site ? getSiteSlug( state, ownProps.site.ID ) : '',
+				isJetpack: isJetpackSite( state, selectedSiteId ),
 				isRequesting: isKeyringConnectionsFetching( state ),
 				displayUploadMediaButton: canCurrentUser( state, ownProps.site.ID, 'publish_posts' ),
 				mediaValidationErrorTypes,

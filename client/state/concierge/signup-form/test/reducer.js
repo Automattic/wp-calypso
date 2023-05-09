@@ -1,6 +1,7 @@
-/**
- * Internal dependencies
- */
+import {
+	CONCIERGE_SIGNUP_FORM_UPDATE,
+	CONCIERGE_UPDATE_BOOKING_STATUS,
+} from 'calypso/state/action-types';
 import signupForm, {
 	firstname,
 	lastname,
@@ -10,25 +11,18 @@ import signupForm, {
 	countryCode,
 	phoneNumberWithoutCountryCode,
 	status,
-	isRebrandCitiesSite,
 } from '../reducer';
-import {
-	CONCIERGE_SIGNUP_FORM_UPDATE,
-	CONCIERGE_UPDATE_BOOKING_STATUS,
-} from 'calypso/state/action-types';
-import guessTimezone from 'calypso/lib/i18n-utils/guess-timezone';
 
 describe( 'concierge/signupForm/reducer', () => {
 	const mockSignupForm = {
 		firstname: 'Foo',
 		lastname: 'Bar',
-		timezone: 'UTC',
+		timezone: 'Asia/Kolkata',
 		message: 'hello',
 		phoneNumber: '+910123456789',
 		countryCode: 'IN',
 		phoneNumberWithoutCountryCode: '987654321',
 		status: 'booking',
-		isRebrandCitiesSite: true,
 	};
 	const mockStatus = 'booking';
 
@@ -64,7 +58,7 @@ describe( 'concierge/signupForm/reducer', () => {
 
 	describe( 'timezone', () => {
 		test( 'should use the default detected timezone.', () => {
-			expect( timezone( undefined, {} ) ).toEqual( guessTimezone() );
+			expect( timezone( undefined, {} ) ).toEqual( 'UTC' );
 		} );
 
 		test( 'should return the timezone of the update action', () => {
@@ -124,30 +118,17 @@ describe( 'concierge/signupForm/reducer', () => {
 		} );
 	} );
 
-	describe( 'isRebrandCitiesSite', () => {
-		test( 'should be defaulted as false', () => {
-			expect( isRebrandCitiesSite( undefined, {} ) ).toBe( false );
-		} );
-
-		test( 'should return isRebrandCitiesSite from the update action', () => {
-			expect( isRebrandCitiesSite( undefined, updateForm ) ).toEqual(
-				mockSignupForm.isRebrandCitiesSite
-			);
-		} );
-	} );
-
 	describe( 'signupForm', () => {
 		test( 'should combine all defaults as null.', () => {
 			expect( signupForm( undefined, {} ) ).toEqual( {
 				firstname: '',
 				lastname: '',
-				timezone: guessTimezone(),
+				timezone: 'UTC',
 				message: '',
 				phoneNumber: '',
 				countryCode: '',
 				phoneNumberWithoutCountryCode: '',
 				status: null,
-				isRebrandCitiesSite: false,
 			} );
 		} );
 

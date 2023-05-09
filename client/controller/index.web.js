@@ -1,31 +1,24 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { Provider as ReduxProvider } from 'react-redux';
-import page from 'page';
-import { QueryClient, QueryClientProvider } from 'react-query';
-
-/**
- * Internal Dependencies
- */
 import config from '@automattic/calypso-config';
+import { getLanguageSlugs } from '@automattic/i18n-utils';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
-import Layout from 'calypso/layout';
-import LayoutLoggedOut from 'calypso/layout/logged-out';
-import EmptyContent from 'calypso/components/empty-content';
+import page from 'page';
+import { Provider as ReduxProvider } from 'react-redux';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
+import EmptyContent from 'calypso/components/empty-content';
 import MomentProvider from 'calypso/components/localized-moment/provider';
 import { RouteProvider } from 'calypso/components/route';
-import { login } from 'calypso/lib/paths';
-import { getLanguageSlugs } from 'calypso/lib/i18n-utils';
-import { makeLayoutMiddleware } from './shared.js';
+import Layout from 'calypso/layout';
+import LayoutLoggedOut from 'calypso/layout/logged-out';
+import { login, createAccountUrl } from 'calypso/lib/paths';
+import { CalypsoReactQueryDevtools } from 'calypso/lib/react-query-devtools-helper';
+import { getSiteFragment } from 'calypso/lib/route';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
 	getImmediateLoginEmail,
 	getImmediateLoginLocale,
 } from 'calypso/state/immediate-login/selectors';
-import { getSiteFragment } from 'calypso/lib/route';
+import { makeLayoutMiddleware } from './shared.js';
 import { render, hydrate } from './web-util.js';
 
 /**
@@ -34,24 +27,28 @@ import { render, hydrate } from './web-util.js';
 export { setSectionMiddleware, setLocaleMiddleware } from './shared.js';
 export { render, hydrate } from './web-util.js';
 
-const queryClient = new QueryClient();
-
 export const ProviderWrappedLayout = ( {
 	store,
+	queryClient,
 	currentSection,
 	currentRoute,
 	currentQuery,
 	primary,
 	secondary,
+	headerSection,
 	redirectUri,
 } ) => {
 	const state = store.getState();
 	const userLoggedIn = isUserLoggedIn( state );
-
 	const layout = userLoggedIn ? (
-		<Layout primary={ primary } secondary={ secondary } />
+		<Layout primary={ primary } secondary={ secondary } headerSection={ headerSection } />
 	) : (
-		<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
+		<LayoutLoggedOut
+			primary={ primary }
+			secondary={ secondary }
+			redirectUri={ redirectUri }
+			headerSection={ headerSection }
+		/>
 	);
 
 	return (
@@ -65,6 +62,7 @@ export const ProviderWrappedLayout = ( {
 					<ReduxProvider store={ store }>
 						<MomentProvider>{ layout }</MomentProvider>
 					</ReduxProvider>
+					<CalypsoReactQueryDevtools />
 				</QueryClientProvider>
 			</RouteProvider>
 		</CalypsoI18nProvider>
@@ -109,34 +107,62 @@ export function clientRouter( route, ...middlewares ) {
 
 export function redirectLoggedOut( context, next ) {
 	const state = context.store.getState();
-	const userLoggedOut = ! isUserLoggedIn( state );
-
-	if ( userLoggedOut ) {
-		const siteFragment = context.params.site || getSiteFragment( context.path );
-
-		const loginParameters = {
-			redirectTo: context.path,
-			site: siteFragment,
-		};
-
-		// Pass along "login_email" and "login_locale" parameters from the
-		// original URL, to ensure the login form is pre-filled with the
-		// correct email address and built with the correct language (when
-		// either of those are requested).
-		const login_email = getImmediateLoginEmail( state );
-		if ( login_email ) {
-			loginParameters.emailAddress = login_email;
-		}
-		const login_locale = getImmediateLoginLocale( state );
-		if ( login_locale ) {
-			loginParameters.locale = login_locale;
-		}
-
-		// force full page reload to avoid SSR hydration issues.
-		window.location = login( loginParameters );
+	if ( isUserLoggedIn( state ) ) {
+		next();
 		return;
 	}
-	next();
+
+	const { site, blog, blog_id } = context.params;
+	const siteFragment = site || blog || blog_id || getSiteFragment( context.path );
+
+	const loginParameters = {
+		redirectTo: context.path,
+		site: siteFragment,
+	};
+
+	// Pass along "login_email" and "login_locale" parameters from the
+	// original URL, to ensure the login form is pre-filled with the
+	// correct email address and built with the correct language (when
+	// either of those are requested).
+	const login_email = getImmediateLoginEmail( state );
+	if ( login_email ) {
+		loginParameters.emailAddress = login_email;
+	}
+	const login_locale = getImmediateLoginLocale( state );
+	if ( login_locale ) {
+		loginParameters.locale = login_locale;
+	}
+
+	if (
+		'1' === context.query?.unlinked &&
+		loginParameters.redirectTo &&
+		loginParameters.redirectTo.startsWith( '/checkout/' )
+	) {
+		loginParameters.isJetpack = true;
+		loginParameters.redirectTo = 'https://wordpress.com' + loginParameters.redirectTo;
+	}
+
+	// force full page reload to avoid SSR hydration issues.
+	window.location = login( loginParameters );
+	return;
+}
+
+/**
+ * Middleware to redirect logged out users to create an account.
+ * Designed for use in situations where no site is selected, such as the reader.
+ *
+ * @param   {Object}   context Context object
+ * @param   {Function} next    Calls next middleware
+ * @returns {void}
+ */
+export function redirectLoggedOutToSignup( context, next ) {
+	const state = context.store.getState();
+	if ( isUserLoggedIn( state ) ) {
+		next();
+		return;
+	}
+
+	return page.redirect( createAccountUrl( { redirectTo: context.path, ref: 'reader-lp' } ) );
 }
 
 /**

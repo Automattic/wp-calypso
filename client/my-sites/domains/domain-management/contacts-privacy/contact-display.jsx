@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
 import { isEmpty } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { getWhoisData } from 'calypso/state/domains/management/selectors';
-import { requestWhois } from 'calypso/state/domains/management/actions';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import { findRegistrantWhois } from 'calypso/lib/domains/whois/utils';
+import { requestWhois } from 'calypso/state/domains/management/actions';
+import { getWhoisData } from 'calypso/state/domains/management/selectors';
 
-class ContactDisplay extends React.PureComponent {
+class ContactDisplay extends PureComponent {
 	static propTypes = {
 		selectedDomainName: PropTypes.string.isRequired,
 	};

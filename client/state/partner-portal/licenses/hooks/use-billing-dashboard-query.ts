@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import { useQuery, UseQueryOptions, UseQueryResult } from 'react-query';
-import { useDispatch, useSelector } from 'react-redux';
+import { useQuery, UseQueryOptions, UseQueryResult } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { useDispatch, useSelector } from 'react-redux';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
-import { getActivePartnerKeyId } from 'calypso/state/partner-portal/partner/selectors';
 import { errorNotice, plainNotice } from 'calypso/state/notices/actions';
+import { getActivePartnerKeyId } from 'calypso/state/partner-portal/partner/selectors';
 
 // API interfaces.
 interface APIBillingCounts {
@@ -28,6 +21,7 @@ interface APIBillingCosts {
 interface APIBillingProduct {
 	product_slug: string;
 	product_name: string;
+	product_quantity: number;
 	product_cost: number;
 	product_total_cost: number;
 	counts: APIBillingCounts;
@@ -38,6 +32,7 @@ interface APIBilling {
 	products: APIBillingProduct[];
 	licenses: APIBillingCounts;
 	costs: APIBillingCosts;
+	price_interval: string;
 }
 
 // Calypso interfaces.
@@ -56,6 +51,7 @@ interface BillingCosts {
 interface BillingProduct {
 	productSlug: string;
 	productName: string;
+	productQuantity: number;
 	productCost: number;
 	productTotalCost: number;
 	counts: BillingCounts;
@@ -66,6 +62,11 @@ interface Billing {
 	products: BillingProduct[];
 	licenses: BillingCounts;
 	costs: BillingCosts;
+	priceInterval: string;
+}
+
+interface BillingDashboardQueryError {
+	code?: string;
 }
 
 function queryBillingDashboard(): Promise< APIBilling > {
@@ -82,6 +83,7 @@ function selectBillingDashboard( api: APIBilling ): Billing {
 			( product ): BillingProduct => ( {
 				productSlug: product.product_slug,
 				productName: product.product_name,
+				productQuantity: product.product_quantity,
 				productCost: product.product_cost,
 				productTotalCost: product.product_total_cost,
 				counts: product.counts,
@@ -89,17 +91,18 @@ function selectBillingDashboard( api: APIBilling ): Billing {
 		),
 		licenses: api.licenses,
 		costs: api.costs,
+		priceInterval: api.price_interval,
 	};
 }
 
-export default function useBillingDashboardQuery< TError = unknown >(
-	options?: UseQueryOptions< APIBilling, TError, Billing >
-): UseQueryResult< Billing, TError > {
+export default function useBillingDashboardQuery(
+	options?: UseQueryOptions< APIBilling, BillingDashboardQueryError, Billing >
+): UseQueryResult< Billing, BillingDashboardQueryError > {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const activeKeyId = useSelector( getActivePartnerKeyId );
 
-	return useQuery< APIBilling, TError, Billing >(
+	return useQuery< APIBilling, BillingDashboardQueryError, Billing >(
 		[ 'partner-portal', 'billing-dashboard', activeKeyId ],
 		queryBillingDashboard,
 		{

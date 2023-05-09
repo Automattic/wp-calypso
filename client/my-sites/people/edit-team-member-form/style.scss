@@ -1,7 +1,10 @@
 .edit-team-member-form__form {
-	border-top: 1px solid var( --color-neutral-0 );
 	padding-top: 24px;
 	margin-top: 24px;
+
+	.form-select {
+		width: 100%;
+	}
 }
 
 .edit-team-member-form__user-profile {
@@ -11,5 +14,5 @@
 }
 
 .edit-team-member-form__explanation {
-	color: var( --color-neutral-light );
+	color: var(--color-neutral-light);
 }

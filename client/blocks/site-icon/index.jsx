@@ -1,33 +1,20 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
-import { get } from 'lodash';
+import { Gridicon, Spinner } from '@automattic/components';
 import classNames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import Image from 'calypso/components/image';
-import MediaImage from 'calypso/my-sites/media-library/media-image';
-import Spinner from 'calypso/components/spinner';
+import { get } from 'lodash';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import QuerySites from 'calypso/components/data/query-sites';
-import { getSite } from 'calypso/state/sites/selectors';
+import Image from 'calypso/components/image';
+import resizeImageUrl from 'calypso/lib/resize-image-url';
+import MediaImage from 'calypso/my-sites/media-library/media-image';
 import getSiteIconId from 'calypso/state/selectors/get-site-icon-id';
 import getSiteIconUrl from 'calypso/state/selectors/get-site-icon-url';
 import isTransientMedia from 'calypso/state/selectors/is-transient-media';
-import resizeImageUrl from 'calypso/lib/resize-image-url';
+import { getSite } from 'calypso/state/sites/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-function SiteIcon( { siteId, site, iconUrl, size, imgSize, isTransientIcon } ) {
+function SiteIcon( { siteId, site, iconUrl, size, imgSize, isTransientIcon, defaultIcon } ) {
 	const iconSrc = resizeImageUrl( iconUrl, imgSize );
 
 	const classes = classNames( 'site-icon', {
@@ -42,13 +29,15 @@ function SiteIcon( { siteId, site, iconUrl, size, imgSize, isTransientIcon } ) {
 		fontSize: size + 'px',
 	};
 
+	const icon = defaultIcon || <Gridicon icon="globe" size={ Math.round( size / 1.8 ) } />;
+
 	return (
 		<div className={ classes } style={ style }>
 			{ ! site && siteId > 0 && <QuerySites siteId={ siteId } /> }
 			{ iconSrc ? (
 				<MediaImage component={ Image } className="site-icon__img" src={ iconSrc } alt="" />
 			) : (
-				<Gridicon icon="globe" size={ Math.round( size / 1.8 ) } />
+				icon
 			) }
 			{ isTransientIcon && <Spinner /> }
 		</div>
@@ -62,6 +51,7 @@ SiteIcon.propTypes = {
 	size: PropTypes.number,
 	imgSize: PropTypes.number,
 	isTransientIcon: PropTypes.bool,
+	defaultIcon: PropTypes.element,
 };
 
 SiteIcon.defaultProps = {
@@ -69,6 +59,7 @@ SiteIcon.defaultProps = {
 	// display the site icons in different contexts.
 	imgSize: 120,
 	size: 32,
+	defaultIcon: null,
 };
 
 export default connect( ( state, { site, siteId, imgSize } ) => {

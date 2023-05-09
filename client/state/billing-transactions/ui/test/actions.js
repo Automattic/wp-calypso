@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	BILLING_TRANSACTIONS_FILTER_SET_APP,
 	BILLING_TRANSACTIONS_FILTER_SET_MONTH,

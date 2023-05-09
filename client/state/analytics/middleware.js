@@ -1,15 +1,12 @@
-/**
- * Internal dependencies
- */
-import { recordPageView } from 'calypso/lib/analytics/page-view';
-import { recordTracksEvent, setTracksOptOut } from 'calypso/lib/analytics/tracks';
-import { gaRecordEvent, gaRecordPageView } from 'calypso/lib/analytics/ga';
-import { bumpStat } from 'calypso/lib/analytics/mc';
-import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import {
 	trackCustomAdWordsRemarketingEvent,
 	trackCustomFacebookConversionEvent,
 } from 'calypso/lib/analytics/ad-tracking';
+import { gaRecordEvent, gaRecordPageView } from 'calypso/lib/analytics/ga';
+import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
+import { bumpStat } from 'calypso/lib/analytics/mc';
+import { recordPageView } from 'calypso/lib/analytics/page-view';
+import { recordTracksEvent, setTracksOptOut } from 'calypso/lib/analytics/tracks';
 import {
 	ANALYTICS_EVENT_RECORD,
 	ANALYTICS_PAGE_VIEW_RECORD,
@@ -27,7 +24,7 @@ const eventServices = {
 
 const pageViewServices = {
 	ga: ( { url, title } ) => gaRecordPageView( url, title ),
-	default: ( { url, title, ...params } ) => recordPageView( url, title, params ),
+	default: ( { url, title, options, ...params } ) => recordPageView( url, title, params, options ),
 };
 
 const loadTrackingTool = ( trackingTool ) => {

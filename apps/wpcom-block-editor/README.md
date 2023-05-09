@@ -75,6 +75,22 @@ The block editor integration provides features for the following combination of 
     <td>✅</td>
     <td>❌</td>
   </tr>
+   <tr>
+    <td rowspan="2">
+      <a href="./src/wpcom/features/fix-coblocks-fonts.js"><code>fix-coblocks-fonts</code></a>:
+      Prevents CoBlocks typography support inserting unnecessary content into saved blocks
+    </td>
+    <td>WP Admin</td>
+    <td>✅</td>
+    <td>✅</td>
+    <td>❌</td>
+  </tr>
+  <tr>
+    <td>Calypso</td>
+    <td>✅</td>
+    <td>✅</td>
+    <td>❌</td>
+  </tr>
   <tr>
     <td rowspan="2">
       <a href="./src/wpcom/features/reorder-block-categories.js"><code>reorder-block-categories</code></a>:
@@ -132,6 +148,22 @@ The block editor integration provides features for the following combination of 
     <td>❌</td>
     <td>❌</td>
     <td>❌</td>
+  </tr>
+  <tr>
+    <td>Calypso</td>
+    <td>✅</td>
+    <td>✅</td>
+    <td>✅</td>
+  </tr>
+  <tr>
+    <td rowspan="2">
+      <a href="./src/default/features/press-this.js"><code>press-this</code></a>:
+     Handles the "Press This" bookmarklet. See <a href="https://wordpress.com/support/press-this/">Press This support page</a>
+    </td>
+    <td>WP Admin</td>
+    <td>✅</td>
+    <td>✅</td>
+    <td>✅</td>
   </tr>
   <tr>
     <td>Calypso</td>

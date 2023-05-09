@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getPostRevisions } from 'calypso/state/posts/selectors/get-post-revisions';
 
 describe( 'getPostRevisions', () => {

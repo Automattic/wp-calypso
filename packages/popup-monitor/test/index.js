@@ -1,15 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import PopupMonitor from '../src';
 
 describe( 'PopupMonitor', () => {
@@ -32,7 +23,7 @@ describe( 'PopupMonitor', () => {
 		test( 'should generate a popup specification string given the desired width and height', () => {
 			const specs = popupMonitor.getScreenCenterSpecs( 650, 500 );
 
-			expect( specs ).to.equal( 'width=650,height=500,top=110,left=315' );
+			expect( specs ).toEqual( 'width=650,height=500,top=110,left=315' );
 		} );
 	} );
 } );

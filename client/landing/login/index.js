@@ -2,40 +2,27 @@
  * Global polyfills
  */
 import 'calypso/boot/polyfills';
-import { render } from 'calypso/controller/web-util';
 
-/**
- * External dependencies
- */
-import debugFactory from 'debug';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
-import createStore from './store';
-import { setupMiddlewares, configureReduxStore } from './common';
-import initLoginSection from 'calypso/login';
-import userFactory from 'calypso/lib/user';
 import { setupLocale } from 'calypso/boot/locale';
+import { render } from 'calypso/controller/web-util';
+import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
+import initLoginSection from 'calypso/login';
+import { getStateFromCache } from 'calypso/state/initial-state';
 import { setStore } from 'calypso/state/redux-store';
-
-const debug = debugFactory( 'calypso' );
+import { setupMiddlewares, configureReduxStore } from './common';
+import createStore from './store';
 
 import 'calypso/assets/stylesheets/style.scss';
 // goofy import for environment badge, which is SSR'd
 import 'calypso/components/environment-badge/style.scss';
 
-// Create Redux store
-const store = createStore();
-setStore( store );
-
 const boot = ( currentUser ) => {
-	debug( "Starting Calypso. Let's do this." );
-
+	const store = createStore();
+	setStore( store, getStateFromCache( currentUser?.ID ) );
 	configureReduxStore( currentUser, store );
 	setupMiddlewares( currentUser, store );
-	setupLocale( currentUser.get(), store );
+	setupLocale( currentUser, store );
 
 	page( '*', ( context, next ) => {
 		context.store = store;
@@ -51,7 +38,7 @@ const boot = ( currentUser ) => {
 	page.start( { decodeURLComponents: false } );
 };
 
-window.AppBoot = () => {
-	const user = userFactory();
-	user.initialize().then( () => boot( user ) );
+window.AppBoot = async () => {
+	const user = await initializeCurrentUser();
+	boot( user );
 };

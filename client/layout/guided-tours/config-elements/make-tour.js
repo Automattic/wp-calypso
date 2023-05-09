@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-
-import { Component } from 'react';
-import PropTypes from 'prop-types';
-import { isEmpty, omit } from 'lodash';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
-import { tourBranching } from '../tour-branching';
+import { isEmpty, omit } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { contextTypes } from '../context-types';
+import { tourBranching } from '../tour-branching';
 
 const debug = debugFactory( 'calypso:guided-tours' );
 

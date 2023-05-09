@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { createSelector } from '@automattic/state-utils';
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
 import getSiteSlug from './get-site-slug';
@@ -8,9 +5,9 @@ import getSiteSlug from './get-site-slug';
 /**
  * Returns a site object by its slug.
  *
- * @param  {object}  state     Global state tree
+ * @param  {Object}  state     Global state tree
  * @param  {string}  siteSlug  Site URL
- * @returns {?object}           Site object
+ * @returns {?Object}           Site object
  */
 export default createSelector(
 	( state, siteSlug ) => {

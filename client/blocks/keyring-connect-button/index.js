@@ -1,27 +1,20 @@
-/**
- * External dependencies
- */
-import React, { Component, Fragment } from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import { find, last, some } from 'lodash';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
+import requestExternalAccess from '@automattic/request-external-access';
+import { localize } from 'i18n-calypso';
+import { find, last, some } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
+import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
 import {
 	deleteStoredKeyringConnection,
 	requestKeyringConnections,
 } from 'calypso/state/sharing/keyring/actions';
-import { getKeyringServiceByName } from 'calypso/state/sharing/services/selectors';
-import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
-import requestExternalAccess from '@automattic/request-external-access';
 import {
 	getKeyringConnectionsByName,
 	isKeyringConnectionsFetching,
 } from 'calypso/state/sharing/keyring/selectors';
+import { getKeyringServiceByName } from 'calypso/state/sharing/services/selectors';
 
 const noop = () => {};
 
@@ -50,7 +43,6 @@ class KeyringConnectButton extends Component {
 	};
 
 	state = {
-		isOpen: false, // The service is visually opened
 		isConnecting: false, // A pending connection is awaiting authorization
 		isRefreshing: false, // A pending refresh is awaiting completion
 		isAwaitingConnections: false, // Waiting for Keyring Connections request to finish
@@ -127,6 +119,7 @@ class KeyringConnectButton extends Component {
 		}
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.state.isAwaitingConnections ) {
 			this.setState( {

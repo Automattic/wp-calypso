@@ -1,10 +1,6 @@
-/**
- * External dependencies
- */
-
-const chalk = require( 'chalk' );
 const fs = require( 'fs' );
 const path = require( 'path' );
+const chalk = require( 'chalk' );
 
 /** @type {string} path to configuration file directory */
 const configRoot = path.resolve( __dirname, '../config' );
@@ -37,7 +33,7 @@ const environmentKeys = fs
 	.filter( ( filename ) => ! /secrets/g.test( filename ) ) // secret tokens not part of this system
 	.map( ( filename ) => [ filename, Object.keys( parseConfig( filename ) ) ] );
 
-/** @type {object} config data in the shared config file (defaults) */
+/** @type {Object} config data in the shared config file (defaults) */
 const sharedConfig = parseConfig( '_shared.json' );
 
 /**
@@ -59,7 +55,7 @@ environmentKeys.forEach( ( [ filename, keys ] ) => {
 					'before adding overrides in the environment-specific config files.'
 			);
 
-			process.exit( 1 ); //eslint-disable-line
+			process.exit( 1 ); // eslint-disable-line
 		}
 	} );
 } );

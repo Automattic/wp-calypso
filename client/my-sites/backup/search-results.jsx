@@ -1,27 +1,20 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
+import { useSelector } from 'react-redux';
 import ActivityCardList from 'calypso/components/activity-card-list';
-import { useActivityLogs } from './hooks';
+import useRewindableActivityLogQuery from 'calypso/data/activity-log/use-rewindable-activity-log-query';
+import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-const SearchResults = () => {
+export default function SearchResults() {
 	const translate = useTranslate();
 
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
-
 	const filter = useSelector( ( state ) => getActivityLogFilter( state, siteId ) );
-	const { activityLogs } = useActivityLogs( siteId, filter );
-	const rewindableEvents = activityLogs && activityLogs.filter( ( a ) => a.activityIsRewindable );
+
+	const { data: rewindableEvents } = useRewindableActivityLogQuery( siteId, filter, {
+		select: ( data ) => data.filter( ( a ) => a.activityIsRewindable ),
+	} );
 
 	return (
 		<div className="backup__search">
@@ -34,6 +27,4 @@ const SearchResults = () => {
 			<ActivityCardList logs={ rewindableEvents } pageSize={ 10 } siteSlug={ siteSlug } />
 		</div>
 	);
-};
-
-export default SearchResults;
+}

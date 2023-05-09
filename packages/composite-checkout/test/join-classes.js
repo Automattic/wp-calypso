@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import joinClasses from '../src/lib/join-classes';
 
 describe( 'joinClasses', function () {

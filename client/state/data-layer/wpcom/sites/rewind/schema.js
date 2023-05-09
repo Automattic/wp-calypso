@@ -35,6 +35,7 @@ export const download = {
 		startedAt: { type: 'integer' },
 		downloadCount: { type: 'integer' },
 		validUntil: { type: 'integer' },
+		bytesFormatted: { type: 'string' },
 	},
 	required: [ 'downloadId', 'rewindId', 'backupPoint', 'startedAt' ],
 };
@@ -49,11 +50,12 @@ export const rewind = {
 		started_at: { type: 'string' },
 		progress: { type: 'integer' },
 		reason: { type: 'string' },
+		bytesFormatted: { type: 'string' },
 		/**
 		 * Commenting these out temporarily because API is returning a null value for current_entry,
 		 * triggering a schema validation error. Once this is corrected on the backend (soon), we
 		 * will activate these properties again.
-		 **/
+		 */
 		// message: { type: 'string' },
 		// current_entry: { type: 'string' },
 	},

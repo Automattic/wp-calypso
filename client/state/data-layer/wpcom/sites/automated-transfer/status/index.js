@@ -1,24 +1,16 @@
-/**
- * External dependencies
- */
 import { delay } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { AUTOMATED_TRANSFER_STATUS_REQUEST } from 'calypso/state/action-types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { requestSite } from 'calypso/state/sites/actions';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
 	fetchAutomatedTransferStatus,
 	setAutomatedTransferStatus,
 	automatedTransferStatusFetchingFailure,
 } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
-
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { requestSite } from 'calypso/state/sites/actions';
 
 export const requestStatus = ( action ) =>
 	http(
@@ -30,32 +22,35 @@ export const requestStatus = ( action ) =>
 		action
 	);
 
-export const receiveStatus = ( { siteId }, { status, uploaded_plugin_slug, transfer_id } ) => (
-	dispatch
-) => {
-	const pluginId = uploaded_plugin_slug;
+export const receiveStatus =
+	( { siteId }, { status, uploaded_plugin_slug, transfer_id } ) =>
+	( dispatch ) => {
+		const pluginId = uploaded_plugin_slug;
 
-	dispatch( setAutomatedTransferStatus( siteId, status, pluginId ) );
-	if ( status !== transferStates.ERROR && status !== transferStates.COMPLETE ) {
-		delay( dispatch, 3000, fetchAutomatedTransferStatus( siteId ) );
-	}
+		dispatch( setAutomatedTransferStatus( siteId, status, pluginId ) );
+		if ( status !== transferStates.ERROR && status !== transferStates.COMPLETE ) {
+			delay( dispatch, 3000, fetchAutomatedTransferStatus( siteId ) );
+		}
 
-	if ( status === transferStates.COMPLETE ) {
-		dispatch(
-			recordTracksEvent( 'calypso_automated_transfer_complete', {
-				context: 'plugin_upload',
-				transfer_id,
-				uploaded_plugin_slug,
-			} )
-		);
+		if ( status === transferStates.COMPLETE ) {
+			dispatch(
+				recordTracksEvent( 'calypso_automated_transfer_complete', {
+					context: 'plugin_upload',
+					transfer_id,
+					uploaded_plugin_slug,
+				} )
+			);
 
-		// Update the now-atomic site to ensure plugin page displays correctly.
-		dispatch( requestSite( siteId ) );
-	}
-};
+			// Update the now-atomic site to ensure plugin page displays correctly.
+			dispatch( requestSite( siteId ) );
+		}
+	};
 
-export const requestingStatusFailure = ( { siteId } ) => {
-	return automatedTransferStatusFetchingFailure( siteId );
+export const requestingStatusFailure = ( response ) => {
+	return automatedTransferStatusFetchingFailure( {
+		siteId: response.siteId,
+		error: response.meta?.dataLayer?.error?.message,
+	} );
 };
 
 registerHandlers( 'state/data-layer/wpcom/sites/automated-transfer/status/index.js', {

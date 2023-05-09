@@ -1,44 +1,32 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
-import { localize } from 'i18n-calypso';
-import { stringify } from 'qs';
-import { cloneDeep, get, startsWith } from 'lodash';
-import { connect } from 'react-redux';
+import { getUrlParts } from '@automattic/calypso-url';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
+import { localize } from 'i18n-calypso';
+import { cloneDeep, get, startsWith } from 'lodash';
 import page from 'page';
-import CustomizerLoadingPanel from 'calypso/my-sites/customize/loading-panel';
+import PropTypes from 'prop-types';
+import { stringify } from 'qs';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { requestSite } from 'calypso/state/sites/actions';
-import { themeActivated } from 'calypso/state/themes/actions';
-import { getCustomizerFocus } from './panels';
+import wpcom from 'calypso/lib/wp';
+import CustomizerLoadingPanel from 'calypso/my-sites/customize/loading-panel';
+import { trackClick } from 'calypso/my-sites/themes/helpers';
 import getMenusUrl from 'calypso/state/selectors/get-menus-url';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { requestSite } from 'calypso/state/sites/actions';
 import { getCustomizerUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import canCurrentUserUseCustomerHome from 'calypso/state/sites/selectors/can-current-user-use-customer-home';
-import wpcom from 'calypso/lib/wp';
-import { trackClick } from 'calypso/my-sites/themes/helpers';
-import { getUrlParts } from '@automattic/calypso-url';
+import { themeActivated } from 'calypso/state/themes/actions';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getCustomizerFocus } from './panels';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const debug = debugFactory( 'calypso:my-sites:customize' );
 // Used to allow timing-out the iframe loading process
 let loadingTimer;
 
-class Customize extends React.Component {
+class Customize extends Component {
 	constructor( props ) {
 		super( props );
 		this.state = {
@@ -69,18 +57,16 @@ class Customize extends React.Component {
 		prevPath: null,
 	};
 
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		this.getReturnUrl().then( ( validatedUrl ) => {
 			this.setState( {
 				returnUrl: validatedUrl,
 			} );
 		} );
-		this.redirectIfNeeded( this.props.pathname );
+		this.redirectIfNeeded();
 		this.listenToCustomizer();
 		this.waitForLoading();
-	}
 
-	componentDidMount() {
 		if ( window ) {
 			window.scrollTo( 0, 0 );
 		}
@@ -93,16 +79,16 @@ class Customize extends React.Component {
 		this.cancelWaitingTimer();
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		this.redirectIfNeeded( nextProps.pathname );
+	componentDidUpdate() {
+		this.redirectIfNeeded();
 	}
 
 	setCustomizerIframetRef = ( element ) => {
 		this.customizerIframe = element;
 	};
 
-	redirectIfNeeded = ( pathname ) => {
-		const { menusUrl, isJetpack, customizerUrl } = this.props;
+	redirectIfNeeded = () => {
+		const { menusUrl, isJetpack, customizerUrl, pathname } = this.props;
 		if ( startsWith( pathname, '/customize/menus' ) && pathname !== menusUrl ) {
 			page( menusUrl );
 		}
@@ -321,7 +307,6 @@ class Customize extends React.Component {
 		return (
 			<div className="main main-column customize customize__main-error" role="main">
 				<PageViewTracker path="/customize/:site" title="Customizer" />
-				<SidebarNavigation />
 				<EmptyContent
 					title={ error.title }
 					line={ error.line }

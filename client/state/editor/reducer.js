@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
 import {
 	EDITOR_IFRAME_LOADED,
@@ -11,15 +8,14 @@ import {
 import { combineReducers } from 'calypso/state/utils';
 import imageEditor from './image-editor/reducer';
 import videoEditor from './video-editor/reducer';
-import lastDraft from './last-draft/reducer';
 
 /**
  * Returns the updated editor post ID state after an action has been
  * dispatched.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export function postId( state = null, action ) {
 	switch ( action.type ) {
@@ -62,7 +58,6 @@ const combinedReducer = combineReducers( {
 	iframePort,
 	imageEditor,
 	videoEditor,
-	lastDraft,
 } );
 
 export default withStorageKey( 'editor', combinedReducer );

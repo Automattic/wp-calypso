@@ -2,25 +2,24 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-import { shallow } from 'enzyme';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { screen } from '@testing-library/react';
+import siteSettingsReducer from 'calypso/state/site-settings/reducer';
+import uiReducer from 'calypso/state/ui/reducer';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { EditorMediaModalDetailItem as DetailItem } from '../detail-item';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
-jest.mock( 'calypso/post-editor/media-modal/detail/detail-fields', () =>
+jest.mock( 'calypso/components/file-picker', () =>
 	require( 'calypso/components/empty-component' )
 );
-jest.mock( 'calypso/post-editor/media-modal/detail/detail-file-info', () =>
-	require( 'calypso/components/empty-component' )
-);
+
+function renderWithRedux( ui ) {
+	return renderWithProvider( ui, {
+		reducers: {
+			ui: uiReducer,
+			siteSettings: siteSettingsReducer,
+		},
+	} );
+}
 
 /**
  * Module variables
@@ -51,14 +50,10 @@ const SHARED_PROPS = {
 };
 
 describe( 'EditorMediaModalDetailItem', () => {
-	let isVideoPressEnabled;
-
-	useSandbox( ( sandbox ) => {
-		isVideoPressEnabled = sandbox.stub().returns( true );
-	} );
+	const isVideoPressEnabled = jest.fn( () => true );
 
 	test( 'should display at least one edit button for a VideoPress video on a public site', () => {
-		const tree = shallow(
+		renderWithRedux(
 			<DetailItem
 				item={ DUMMY_VIDEO_MEDIA }
 				isVideoPressEnabled={ isVideoPressEnabled }
@@ -66,13 +61,13 @@ describe( 'EditorMediaModalDetailItem', () => {
 			/>
 		);
 
-		const editButton = tree.find( '.editor-media-modal-detail__edit' );
-
-		expect( editButton ).to.have.length.at.least( 1 );
+		expect( screen.queryAllByRole( 'button', { name: /edit/i } ).length ).toBeGreaterThanOrEqual(
+			1
+		);
 	} );
 
 	test( 'should display at least one edit button for a VideoPress video on a private site', () => {
-		const tree = shallow(
+		renderWithRedux(
 			<DetailItem
 				item={ DUMMY_VIDEO_MEDIA }
 				isVideoPressEnabled={ isVideoPressEnabled }
@@ -81,26 +76,36 @@ describe( 'EditorMediaModalDetailItem', () => {
 			/>
 		);
 
-		const editButton = tree.find( '.editor-media-modal-detail__edit' );
-
-		expect( editButton ).to.have.length.at.least( 1 );
+		expect( screen.queryAllByRole( 'button', { name: /edit/i } ).length ).toBeGreaterThanOrEqual(
+			1
+		);
 	} );
 
 	test( 'should display at least one edit button for an image on a public site', () => {
-		const tree = shallow( <DetailItem item={ DUMMY_IMAGE_MEDIA } { ...SHARED_PROPS } /> );
+		renderWithRedux( <DetailItem item={ DUMMY_IMAGE_MEDIA } { ...SHARED_PROPS } /> );
 
-		const editButton = tree.find( '.editor-media-modal-detail__edit' );
-
-		expect( editButton ).to.have.length.at.least( 1 );
+		expect( screen.queryAllByRole( 'button', { name: /edit/i } ).length ).toBeGreaterThanOrEqual(
+			1
+		);
 	} );
 
 	test( 'should not display edit button for an image on a private site', () => {
-		const tree = shallow(
+		renderWithRedux(
 			<DetailItem item={ DUMMY_IMAGE_MEDIA } isSitePrivate={ true } { ...SHARED_PROPS } />
 		);
 
-		const editButton = tree.find( '.editor-media-modal-detail__edit' );
+		expect( screen.queryByRole( 'button', { name: /edit/i } ) ).not.toBeInTheDocument();
+	} );
 
-		expect( editButton ).to.have.length( 0 );
+	test( 'should not display a Privacy field for an image', () => {
+		renderWithRedux( <DetailItem item={ DUMMY_IMAGE_MEDIA } { ...SHARED_PROPS } /> );
+
+		expect( screen.queryByRole( 'group', { name: 'Privacy' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'should display a Privacy field for a video', () => {
+		renderWithRedux( <DetailItem item={ DUMMY_VIDEO_MEDIA } { ...SHARED_PROPS } /> );
+
+		expect( screen.queryByRole( 'group', { name: 'Privacy' } ) ).toBeInTheDocument();
 	} );
 } );

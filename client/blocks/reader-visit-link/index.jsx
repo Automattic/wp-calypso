@@ -1,22 +1,13 @@
-/**
- * External dependencies
- */
 import PropTypes from 'prop-types';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
 import ExternalLink from 'calypso/components/external-link';
+import ReaderExternalIcon from 'calypso/reader/components/icons/external-icon';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};
 
-class ReaderVisitLink extends React.Component {
+class ReaderVisitLink extends Component {
 	static propTypes = {
 		href: PropTypes.string,
 		iconSize: PropTypes.number,
@@ -36,8 +27,9 @@ class ReaderVisitLink extends React.Component {
 				target="_blank"
 				icon={ true }
 				showIconFirst={ true }
-				iconSize={ this.props.iconSize }
+				iconSize={ 24 }
 				iconClassName="reader-visit-link__icon"
+				iconComponent={ ReaderExternalIcon( { iconSize: 20 } ) }
 				onClick={ this.props.onClick }
 			>
 				<span className="reader-visit-link__label">{ this.props.children }</span>

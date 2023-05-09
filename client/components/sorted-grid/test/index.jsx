@@ -1,18 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-import { shallow } from 'enzyme';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import Label from '../label';
+import { render } from '@testing-library/react';
 import SortedGrid from '../';
 
 describe( 'SortedGrid', () => {
@@ -20,7 +9,7 @@ describe( 'SortedGrid', () => {
 	const getItemGroup = () => 'item-group';
 
 	test( 'should not render labels if the group label is an empty string', () => {
-		const wrapper = shallow(
+		const { container } = render(
 			<SortedGrid
 				getItemGroup={ getItemGroup }
 				getGroupLabel={ nullfunc }
@@ -38,6 +27,6 @@ describe( 'SortedGrid', () => {
 				className="test__sortedgrid"
 			/>
 		);
-		expect( wrapper.find( Label ) ).to.have.length( 0 );
+		expect( container.getElementsByClassName( 'sorted-grid__label' ) ).toHaveLength( 0 );
 	} );
 } );

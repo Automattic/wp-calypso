@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Dialog } from '@automattic/components';
-import { emailManagementForwarding } from 'calypso/my-sites/email/paths';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { emailManagement } from 'calypso/my-sites/email/paths';
 
-class DeleteEmailForwardsDialog extends React.Component {
+class DeleteEmailForwardsDialog extends Component {
 	static propTypes = {
 		onClose: PropTypes.func,
 		visible: PropTypes.bool.isRequired,
@@ -65,7 +57,7 @@ class DeleteEmailForwardsDialog extends React.Component {
 	}
 
 	getEmailForwardingPath() {
-		return emailManagementForwarding( this.props.selectedSite.slug, this.props.selectedDomainName );
+		return emailManagement( this.props.selectedSite.slug, this.props.selectedDomainName );
 	}
 }
 

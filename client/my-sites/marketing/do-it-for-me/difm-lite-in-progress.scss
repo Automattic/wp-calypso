@@ -1,0 +1,23 @@
+@import "@automattic/typography/styles/fonts";
+@import "@automattic/onboarding/styles/mixins";
+
+.difm-lite-in-progress__site-placeholder {
+	h2 {
+		@include placeholder();
+	}
+}
+
+.difm-lite-in-progress__content {
+	.empty-content__title {
+		@include onboarding-font-recoleta;
+	}
+
+	.empty-content__line {
+		color: var(--studio-gray-60);
+		font-size: 1rem;
+	}
+
+	.empty-content__action {
+		margin-inline-start: 10px;
+	}
+}

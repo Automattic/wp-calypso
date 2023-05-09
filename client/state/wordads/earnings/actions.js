@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { WORDADS_EARNINGS_REQUEST, WORDADS_EARNINGS_RECEIVE } from 'calypso/state/action-types';
 
 import 'calypso/state/data-layer/wpcom/wordads/earnings';

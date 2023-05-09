@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
 import Notice from 'calypso/components/notice';
 import SegmentedControl from 'calypso/components/segmented-control';
 import EditorMediaModalGalleryEdit from './edit';
-import EditorMediaModalGalleryPreviewShortcode from './preview-shortcode';
 import EditorMediaModalGalleryPreviewIndividual from './preview-individual';
+import EditorMediaModalGalleryPreviewShortcode from './preview-shortcode';
 
 const noop = () => {};
 

@@ -1,23 +1,11 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { isMobile } from '@automattic/viewport';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { isMobile } from '@automattic/viewport';
-
-/**
- * Internal dependencies
- */
-import QueryPublicizeConnections from 'calypso/components/data/query-publicize-connections';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
-import { TASK_CONNECT_ACCOUNTS } from 'calypso/my-sites/customer-home/cards/constants';
-
-/**
- * Image dependencies
- */
 import connectSocialAccountsIllustration from 'calypso/assets/images/customer-home/illustration--task-connect-social-accounts.svg';
+import QueryPublicizeConnections from 'calypso/components/data/query-publicize-connections';
+import { TASK_CONNECT_ACCOUNTS } from 'calypso/my-sites/customer-home/cards/constants';
+import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const ConnectAccountsTask = ( { siteSlug } ) => {
 	const translate = useTranslate();

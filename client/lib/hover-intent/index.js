@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { cloneElement, Component } from 'react';
 
 class HoverIntent extends Component {
 	constructor() {
@@ -23,7 +20,9 @@ class HoverIntent extends Component {
 		this.element.removeEventListener( 'mouseout', this.dispatchOut, false );
 	}
 	delay = ( e ) => {
-		if ( this.timer ) this.timer = clearTimeout( this.timer );
+		if ( this.timer ) {
+			this.timer = clearTimeout( this.timer );
+		}
 		this.status = 0;
 		return this.props.onMouseOut.call( this.element, e );
 	};
@@ -32,7 +31,9 @@ class HoverIntent extends Component {
 		this.y = e.clientY;
 	};
 	compare = ( e ) => {
-		if ( this.timer ) this.timer = clearTimeout( this.timer );
+		if ( this.timer ) {
+			this.timer = clearTimeout( this.timer );
+		}
 		if ( Math.abs( this.pX - this.x ) + Math.abs( this.pY - this.y ) < this.props.sensitivity ) {
 			this.status = 1;
 			return this.props.onMouseOver.call( this.element, e );
@@ -42,7 +43,9 @@ class HoverIntent extends Component {
 		this.timer = setTimeout( () => this.compare( this.element, e ), this.props.interval );
 	};
 	dispatchOver = ( e ) => {
-		if ( this.timer ) this.timer = clearTimeout( this.timer );
+		if ( this.timer ) {
+			this.timer = clearTimeout( this.timer );
+		}
 		this.element.removeEventListener( 'mousemove', this.tracker, false );
 		if ( this.status !== 1 ) {
 			this.pX = e.clientX;
@@ -52,14 +55,16 @@ class HoverIntent extends Component {
 		}
 	};
 	dispatchOut = ( e ) => {
-		if ( this.timer ) this.timer = clearTimeout( this.timer );
+		if ( this.timer ) {
+			this.timer = clearTimeout( this.timer );
+		}
 		this.element.removeEventListener( 'mousemove', this.tracker, false );
 		if ( this.status === 1 ) {
 			this.timer = setTimeout( () => this.delay( this.element, e ), this.props.timeout );
 		}
 	};
 	render() {
-		return React.cloneElement( this.props.children, {
+		return cloneElement( this.props.children, {
 			ref: ( element ) => {
 				this.element = element;
 			},

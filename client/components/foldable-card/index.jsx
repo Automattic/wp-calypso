@@ -1,21 +1,9 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Card, CompactCard, ScreenReaderText, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component, createElement } from 'react';
 
-/**
- * Internal Dependencies
- */
-import { Card, CompactCard, ScreenReaderText } from '@automattic/components';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};
@@ -24,35 +12,43 @@ class FoldableCard extends Component {
 	static displayName = 'FoldableCard';
 
 	static propTypes = {
-		actionButton: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
-		actionButtonExpanded: PropTypes.element,
+		actionButton: PropTypes.node,
+		actionButtonExpanded: PropTypes.node,
 		cardKey: PropTypes.string,
 		compact: PropTypes.bool,
 		disabled: PropTypes.bool,
-		expandedSummary: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
+		expandedSummary: PropTypes.node,
 		expanded: PropTypes.bool,
+		headerTagName: PropTypes.string,
 		icon: PropTypes.string,
 		onClick: PropTypes.func,
 		onClose: PropTypes.func,
 		onOpen: PropTypes.func,
 		screenReaderText: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
-		summary: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
+		summary: PropTypes.node,
+		hideSummary: PropTypes.bool,
 		highlight: PropTypes.string,
+		smooth: PropTypes.bool,
+		contentExpandedStyle: PropTypes.object,
+		contentCollapsedStyle: PropTypes.object,
 	};
 
 	static defaultProps = {
 		onOpen: noop,
 		onClose: noop,
 		cardKey: '',
+		headerTagName: 'span',
 		icon: 'chevron-down',
 		expanded: false,
 		screenReaderText: false,
+		smooth: false,
 	};
 
 	state = {
 		expanded: this.props.expanded,
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.expanded !== this.props.expanded ) {
 			this.setState( { expanded: nextProps.expanded } );
@@ -106,6 +102,7 @@ class FoldableCard extends Component {
 					disabled={ this.props.disabled }
 					type="button"
 					className="foldable-card__action foldable-card__expand"
+					aria-expanded={ this.state.expanded }
 					onClick={ clickAction }
 				>
 					<ScreenReaderText>{ screenReaderText }</ScreenReaderText>
@@ -116,7 +113,14 @@ class FoldableCard extends Component {
 	}
 
 	renderContent() {
-		return <div className="foldable-card__content">{ this.props.children }</div>;
+		const additionalStyle = this.state.expanded
+			? this.props.contentExpandedStyle
+			: this.props.contentCollapsedStyle;
+		return (
+			<div className="foldable-card__content" style={ additionalStyle }>
+				{ this.props.children }
+			</div>
+		);
 	}
 
 	renderHeader() {
@@ -131,14 +135,22 @@ class FoldableCard extends Component {
 			'is-clickable': !! this.props.clickableHeader,
 			'has-border': !! this.props.summary,
 		} );
+		const header = createElement(
+			this.props.headerTagName,
+			{ className: 'foldable-card__main' },
+			this.props.header,
+			this.renderActionButton()
+		);
+
 		return (
 			<div className={ headerClasses } role="presentation" onClick={ headerClickAction }>
-				<span className="foldable-card__main">{ this.props.header } </span>
-				<span className="foldable-card__secondary">
-					{ summary }
-					{ expandedSummary }
-					{ this.renderActionButton() }
-				</span>
+				{ header }
+				{ ! this.props.hideSummary && (
+					<span className="foldable-card__secondary">
+						{ summary }
+						{ expandedSummary }
+					</span>
+				) }
 			</div>
 		);
 	}
@@ -149,12 +161,13 @@ class FoldableCard extends Component {
 			'is-disabled': !! this.props.disabled,
 			'is-expanded': !! this.state.expanded,
 			'has-expanded-summary': !! this.props.expandedSummary,
+			'is-smooth': !! this.props.smooth,
 		} );
 
 		return (
 			<Container className={ itemSiteClasses } highlight={ this.props.highlight }>
 				{ this.renderHeader() }
-				{ this.state.expanded && this.renderContent() }
+				{ ( this.state.expanded || this.props.smooth ) && this.renderContent() }
 			</Container>
 		);
 	}

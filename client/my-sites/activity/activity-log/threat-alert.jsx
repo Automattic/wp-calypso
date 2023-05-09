@@ -1,34 +1,24 @@
-/**
- * External dependencies
- */
-import React, { Component, Fragment } from 'react';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-import Spinner from 'calypso/components/spinner';
-import { Interval, EVERY_TEN_SECONDS } from 'calypso/lib/interval';
+import { Button, Card, Spinner } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import ActivityIcon from '../activity-log-item/activity-icon';
-import { Button, Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import DiffViewer from 'calypso/components/diff-viewer';
 import FoldableCard from 'calypso/components/foldable-card';
-import { JETPACK_CONTACT_SUPPORT } from 'calypso/lib/url/support';
 import InfoPopover from 'calypso/components/info-popover';
 import MarkedLines from 'calypso/components/marked-lines';
-import TimeSince from 'calypso/components/time-since';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SplitButton from 'calypso/components/split-button';
+import TimeSince from 'calypso/components/time-since';
+import { Interval, EVERY_TEN_SECONDS } from 'calypso/lib/interval';
+import { JETPACK_CONTACT_SUPPORT } from 'calypso/lib/url/support';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import { fixThreatAlert, ignoreThreatAlert } from 'calypso/state/jetpack/site-alerts/actions';
 import { requestRewindState } from 'calypso/state/rewind/state/actions';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
+import ActivityIcon from '../activity-log-item/activity-icon';
 
-/**
- * Style dependencies
- */
 import './threat-alert.scss';
 
 export class ThreatAlert extends Component {
@@ -46,7 +36,7 @@ export class ThreatAlert extends Component {
 
 	handleGetHelp = () => {
 		this.props.trackGetHelp( this.props.threat.id );
-		window.open( JETPACK_CONTACT_SUPPORT, '_blank' );
+		window.open( localizeUrl( JETPACK_CONTACT_SUPPORT ), '_blank' );
 	};
 
 	refreshRewindState = () => this.props.requestRewindState( this.props.siteId );

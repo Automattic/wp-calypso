@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { createRef, useReducer } from 'react';
 import { act } from 'react-dom/test-utils';
-
-/**
- * Internal dependencies
- */
 import Search from '..';
 
 describe( 'search', () => {
@@ -17,7 +10,7 @@ describe( 'search', () => {
 		let ref;
 
 		beforeEach( () => {
-			ref = React.createRef();
+			ref = createRef();
 			render( <Search ref={ ref } /> );
 		} );
 
@@ -46,9 +39,10 @@ describe( 'search', () => {
 			expect( document.activeElement ).not.toBe( searchbox );
 		} );
 
-		it( 'should return a ref with clear', () => {
+		it( 'should return a ref with clear', async () => {
 			const searchbox = screen.getByRole( 'searchbox' );
-			userEvent.type( searchbox, 'This is a test search' );
+			const user = userEvent.setup();
+			await user.type( searchbox, 'This is a test search' );
 			expect( searchbox.value ).toBe( 'This is a test search' );
 			act( () => {
 				ref.current.clear();
@@ -58,13 +52,46 @@ describe( 'search', () => {
 		} );
 	} );
 
-	it( 'should call onSearch and onSearchChange when search changes', () => {
+	describe( '"on-enter" search mode', () => {
+		it( "shouldn't call onSearch and onSearchChange when search changes", async () => {
+			const searchString = '12345';
+			const onSearch = jest.fn();
+			const onSearchChange = jest.fn();
+			render(
+				<Search onSearch={ onSearch } searchMode="on-enter" onSearchChange={ onSearchChange } />
+			);
+			const searchbox = screen.getByRole( 'searchbox' );
+			const user = userEvent.setup();
+			await user.type( searchbox, searchString );
+			expect( onSearch ).toHaveBeenCalledTimes( 0 ); // once per character
+			expect( onSearchChange ).toHaveBeenCalledTimes( 0 );
+		} );
+
+		it( 'should call onSearch and onSearchChange when user hits enter', async () => {
+			const searchString = '12345{enter}';
+			const onSearch = jest.fn();
+			const onSearchChange = jest.fn();
+			render(
+				<Search onSearch={ onSearch } searchMode="on-enter" onSearchChange={ onSearchChange } />
+			);
+			const searchbox = screen.getByRole( 'searchbox' );
+			const user = userEvent.setup();
+			await user.type( searchbox, searchString );
+			expect( onSearch ).toHaveBeenCalledTimes( 1 ); // once per character
+			expect( onSearch ).toHaveBeenCalledWith( '12345' );
+			expect( onSearchChange ).toHaveBeenCalledTimes( 1 );
+			expect( onSearchChange ).toHaveBeenCalledWith( '12345' );
+		} );
+	} );
+
+	it( 'should call onSearch and onSearchChange when search changes', async () => {
 		const searchString = '12345';
 		const onSearch = jest.fn();
 		const onSearchChange = jest.fn();
 		render( <Search onSearch={ onSearch } onSearchChange={ onSearchChange } /> );
 		const searchbox = screen.getByRole( 'searchbox' );
-		userEvent.type( searchbox, searchString );
+		const user = userEvent.setup();
+		await user.type( searchbox, searchString );
 		expect( onSearch ).toHaveBeenCalledTimes( 5 ); // once per character
 		expect( onSearch ).toHaveBeenCalledWith( '1' );
 		expect( onSearch ).toHaveBeenCalledWith( '12' );
@@ -79,12 +106,13 @@ describe( 'search', () => {
 		expect( onSearchChange ).toHaveBeenCalledWith( '12345' );
 	} );
 
-	it( 'should call onKeyDown when typing into search', () => {
+	it( 'should call onKeyDown when typing into search', async () => {
 		const searchString = '12345';
 		const onKeyDown = jest.fn();
 		render( <Search onKeyDown={ onKeyDown } /> );
 		const searchbox = screen.getByRole( 'searchbox' );
-		userEvent.type( searchbox, searchString );
+		const user = userEvent.setup();
+		await user.type( searchbox, searchString );
 		expect( onKeyDown ).toHaveBeenCalledTimes( 5 ); // once per character
 		// it gets called with the raw event, so it's not really possible to assert what it was called with
 	} );
@@ -103,11 +131,12 @@ describe( 'search', () => {
 		expect( uniqueIds ).toHaveLength( 3 );
 	} );
 
-	it( 'should call onSearchOpen when search is focused', () => {
+	it( 'should call onSearchOpen when search is focused', async () => {
 		const onSearchOpen = jest.fn();
 		render( <Search onSearchOpen={ onSearchOpen } /> );
 		const searchbox = screen.getByRole( 'searchbox' );
-		userEvent.click( searchbox );
+		const user = userEvent.setup();
+		await user.click( searchbox );
 		expect( onSearchOpen ).toHaveBeenCalledTimes( 1 );
 	} );
 
@@ -115,14 +144,15 @@ describe( 'search', () => {
 		const onSearchOpen = jest.fn();
 		render( <Search pinned defaultIsOpen={ false } onSearchOpen={ onSearchOpen } /> );
 		const openButton = screen.getByLabelText( 'Open Search' );
-		userEvent.click( openButton );
+		const user = userEvent.setup();
+		await user.click( openButton );
 		await focusResolve();
 		const searchbox = screen.getByRole( 'searchbox' );
 		expect( onSearchOpen ).toHaveBeenCalledTimes( 1 );
 		expect( document.activeElement ).toBe( searchbox );
 	} );
 
-	it( 'should close search and call onSearchClose when clicking the close button', () => {
+	it( 'should close search and call onSearchClose when clicking the close button', async () => {
 		const onSearchClose = jest.fn();
 		render(
 			<Search
@@ -135,7 +165,8 @@ describe( 'search', () => {
 
 		const closeButton = screen.getByLabelText( 'Close Search' );
 
-		userEvent.click( closeButton );
+		const user = userEvent.setup();
+		await user.click( closeButton );
 		const searchbox = screen.queryByRole( 'searchbox' );
 		expect( searchbox ).toBeNull();
 		expect( onSearchClose ).toHaveBeenCalledTimes( 1 );
@@ -159,7 +190,7 @@ describe( 'search', () => {
 		expect( onSearchChange ).not.toHaveBeenCalled();
 	} );
 
-	it( 'should call onSearch without debouncing when reverting to empty keyword', () => {
+	it( 'should call onSearch without debouncing when reverting to empty keyword', async () => {
 		const onSearch = jest.fn();
 		render( <Search onSearch={ onSearch } defaultValue="a" delaySearch delayTimeout={ 1000 } /> );
 
@@ -167,15 +198,16 @@ describe( 'search', () => {
 		expect( onSearch ).toHaveBeenCalledWith( 'a' );
 
 		// type backspace into the search box, making its value empty
-		userEvent.type( screen.getByRole( 'searchbox' ), '{backspace}' );
+		const user = userEvent.setup();
+		await user.type( screen.getByRole( 'searchbox' ), '{backspace}' );
 
 		// check that `onSearch` has been called immediately, without debouncing
 		expect( onSearch ).toHaveBeenCalledWith( '' );
 	} );
 
-	it( 'should not call onSearch with current value when the prop changes', () => {
+	it( 'should not call onSearch with current value when the prop changes', async () => {
 		function SearchWithHistory() {
-			const [ history, push ] = React.useReducer( ( list, item ) => [ ...list, item ], [] );
+			const [ history, push ] = useReducer( ( list, item ) => [ ...list, item ], [] );
 			return (
 				<div>
 					<Search defaultValue="start" onSearch={ ( keyword ) => push( keyword ) } />
@@ -194,9 +226,16 @@ describe( 'search', () => {
 		expect( document.querySelectorAll( 'li' ) ).toHaveLength( 1 );
 
 		// type one letter into the search box
-		userEvent.type( screen.getByRole( 'searchbox' ), 's' );
+		const user = userEvent.setup();
+		await user.type( screen.getByRole( 'searchbox' ), 's' );
 
 		// check that a second item was added to history
 		expect( document.querySelectorAll( 'li' ) ).toHaveLength( 2 );
+	} );
+
+	it( 'should allow a custom search icon', () => {
+		render( <Search searchIcon="CUSTOMICON" /> );
+
+		expect( screen.getByText( 'CUSTOMICON' ) ).toBeTruthy();
 	} );
 } );

@@ -1,22 +1,15 @@
-/**
- * External dependencies
- */
 import page from 'page';
-import React from 'react';
-
-/**
- * Internal Dependencies
- */
-import DomainManagement from '.';
 import DomainManagementData from 'calypso/components/data/domain-management';
+import { isFreeUrlDomainName } from 'calypso/lib/domains/utils';
+import { decodeURIComponentIfValid } from 'calypso/lib/url';
 import {
-	domainManagementChangeSiteAddress,
 	domainManagementContactsPrivacy,
 	domainManagementDns,
+	domainManagementDnsAddRecord,
+	domainManagementDnsEditRecord,
 	domainManagementEdit,
 	domainManagementEditContactInfo,
 	domainManagementList,
-	domainManagementNameServers,
 	domainManagementRedirectSettings,
 	domainManagementSecurity,
 	domainManagementSiteRedirect,
@@ -29,9 +22,9 @@ import {
 	domainManagementDomainConnectMapping,
 	domainManagementRoot,
 } from 'calypso/my-sites/domains/paths';
-import { emailManagement, emailManagementForwarding } from 'calypso/my-sites/email/paths';
+import { emailManagement } from 'calypso/my-sites/email/paths';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { decodeURIComponentIfValid } from 'calypso/lib/url';
+import DomainManagement from '.';
 
 export default {
 	domainManagementList( pageContext, next ) {
@@ -39,7 +32,7 @@ export default {
 			<DomainManagementData
 				analyticsPath={ domainManagementList( ':site' ) }
 				analyticsTitle="Domain Management"
-				component={ DomainManagement.List }
+				component={ DomainManagement.SiteDomains }
 				context={ pageContext }
 				needsContactDetails
 				needsDomains
@@ -55,7 +48,7 @@ export default {
 			<DomainManagementData
 				analyticsPath={ domainManagementRoot() }
 				analyticsTitle="Domain Management > All Domains"
-				component={ DomainManagement.ListAll }
+				component={ DomainManagement.AllDomains }
 				context={ pageContext }
 			/>
 		);
@@ -63,17 +56,24 @@ export default {
 	},
 
 	domainManagementEdit( pageContext, next ) {
+		const selectedDomainName = decodeURIComponentIfValid( pageContext.params.domain );
+		if ( isFreeUrlDomainName( selectedDomainName ) ) {
+			const state = pageContext.store.getState();
+			const siteSlug = getSelectedSiteSlug( state );
+			page.redirect( domainManagementList( siteSlug ) );
+		}
+
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementEdit( ':site', ':domain', pageContext.canonicalPath ) }
 				analyticsTitle="Domain Management > Edit"
-				component={ DomainManagement.Edit }
+				component={ DomainManagement.Settings }
 				context={ pageContext }
 				needsContactDetails
 				needsDomains
 				needsPlans
 				needsProductsList
-				selectedDomainName={ decodeURIComponentIfValid( pageContext.params.domain ) }
+				selectedDomainName={ selectedDomainName }
 			/>
 		);
 		next();
@@ -84,7 +84,7 @@ export default {
 			<DomainManagementData
 				analyticsPath={ domainManagementSiteRedirect( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Edit"
-				component={ DomainManagement.SiteRedirect }
+				component={ DomainManagement.Settings }
 				context={ pageContext }
 				needsContactDetails
 				needsDomains
@@ -101,7 +101,7 @@ export default {
 			<DomainManagementData
 				analyticsPath={ domainManagementTransferIn( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Edit"
-				component={ DomainManagement.TransferIn }
+				component={ DomainManagement.Settings }
 				context={ pageContext }
 				needsContactDetails
 				needsDomains
@@ -149,7 +149,7 @@ export default {
 			<DomainManagementData
 				analyticsPath={ domainManagementEditContactInfo( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Contacts and Privacy > Edit Contact Info"
-				component={ DomainManagement.EditContactInfo }
+				component={ DomainManagement.EditContactInfoPage }
 				context={ pageContext }
 				needsDomains
 				selectedDomainName={ pageContext.params.domain }
@@ -162,18 +162,38 @@ export default {
 		page.redirect( emailManagement( pageContext.params.site, pageContext.params.domain ) );
 	},
 
-	domainManagementEmailForwardingRedirect( pageContext ) {
-		page.redirect(
-			emailManagementForwarding( pageContext.params.site, pageContext.params.domain )
-		);
-	},
-
 	domainManagementDns( pageContext, next ) {
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementDns( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Name Servers and DNS > DNS Records"
-				component={ DomainManagement.Dns }
+				component={ DomainManagement.DnsRecords }
+				context={ pageContext }
+				selectedDomainName={ pageContext.params.domain }
+			/>
+		);
+		next();
+	},
+
+	domainManagementDnsAddRecord( pageContext, next ) {
+		pageContext.primary = (
+			<DomainManagementData
+				analyticsPath={ domainManagementDnsAddRecord( ':site', ':domain' ) }
+				analyticsTitle="Domain Management > Name Servers and DNS > DNS Records > Add a record"
+				component={ DomainManagement.AddDnsRecord }
+				context={ pageContext }
+				selectedDomainName={ pageContext.params.domain }
+			/>
+		);
+		next();
+	},
+
+	domainManagementDnsEditRecord( pageContext, next ) {
+		pageContext.primary = (
+			<DomainManagementData
+				analyticsPath={ domainManagementDnsEditRecord( ':site', ':domain' ) }
+				analyticsTitle="Domain Management > Name Servers and DNS > DNS Records > Edit record"
+				component={ DomainManagement.AddDnsRecord }
 				context={ pageContext }
 				selectedDomainName={ pageContext.params.domain }
 			/>
@@ -190,20 +210,6 @@ export default {
 				context={ pageContext }
 				needsDomains
 				selectedDomainName={ decodeURIComponentIfValid( pageContext.params.domain ) }
-			/>
-		);
-		next();
-	},
-
-	domainManagementNameServers( pageContext, next ) {
-		pageContext.primary = (
-			<DomainManagementData
-				analyticsPath={ domainManagementNameServers( ':site', ':domain' ) }
-				analyticsTitle="Domain Management > Name Servers and DNS"
-				component={ DomainManagement.NameServers }
-				context={ pageContext }
-				needsDomains
-				selectedDomainName={ pageContext.params.domain }
 			/>
 		);
 		next();
@@ -248,7 +254,7 @@ export default {
 			<DomainManagementData
 				analyticsPath={ domainManagementTransfer( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Transfer"
-				component={ DomainManagement.Transfer }
+				component={ DomainManagement.TransferPage }
 				context={ pageContext }
 				needsDomains
 				selectedDomainName={ pageContext.params.domain }
@@ -262,7 +268,7 @@ export default {
 			<DomainManagementData
 				analyticsPath={ domainManagementTransferToOtherSite( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Transfer To Other Site"
-				component={ DomainManagement.TransferToOtherSite }
+				component={ DomainManagement.TransferDomainToOtherSite }
 				context={ pageContext }
 				needsDomains
 				selectedDomainName={ pageContext.params.domain }
@@ -276,7 +282,7 @@ export default {
 			<DomainManagementData
 				analyticsPath={ domainManagementTransferToAnotherUser( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Transfer To Other User"
-				component={ DomainManagement.TransferToOtherUser }
+				component={ DomainManagement.TransferDomainToOtherUser }
 				context={ pageContext }
 				needsDomains
 				selectedDomainName={ pageContext.params.domain }
@@ -291,20 +297,6 @@ export default {
 				analyticsPath={ domainManagementTransferOut( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Transfer To Another Registrar"
 				component={ DomainManagement.TransferOut }
-				context={ pageContext }
-				needsDomains
-				selectedDomainName={ pageContext.params.domain }
-			/>
-		);
-		next();
-	},
-
-	domainManagementChangeSiteAddress( pageContext, next ) {
-		pageContext.primary = (
-			<DomainManagementData
-				analyticsPath={ domainManagementChangeSiteAddress( ':site', ':domain' ) }
-				analyticsTitle="Domain Management > Change Site Address"
-				component={ DomainManagement.ChangeSiteAddress }
 				context={ pageContext }
 				needsDomains
 				selectedDomainName={ pageContext.params.domain }

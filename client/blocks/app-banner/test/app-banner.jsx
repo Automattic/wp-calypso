@@ -2,11 +2,8 @@
  * @jest-environment jsdom
  */
 
-/**
- * Internal dependencies
- */
 import { getiOSDeepLink, buildDeepLinkFragment } from 'calypso/blocks/app-banner';
-import { EDITOR, NOTES, READER, STATS, getCurrentSection } from 'calypso/blocks/app-banner/utils';
+import { NOTES, READER, STATS, getCurrentSection } from 'calypso/blocks/app-banner/utils';
 
 describe( 'iOS deep link fragments', () => {
 	test( 'properly encodes tricky fragments', () => {
@@ -21,7 +18,7 @@ describe( 'iOS deep link fragments', () => {
 	} );
 
 	test( 'returns a fragment for each section', () => {
-		[ STATS, READER, EDITOR, NOTES ].forEach( ( section ) =>
+		[ STATS, READER, NOTES ].forEach( ( section ) =>
 			expect( buildDeepLinkFragment( '/test', section ) ).toMatchSnapshot()
 		);
 	} );
@@ -51,7 +48,7 @@ describe( 'iOS deep links', () => {
 	} );
 
 	test( 'returns URIs for each path', () => {
-		[ STATS, READER, EDITOR, NOTES ].forEach( ( section ) =>
+		[ STATS, READER, NOTES ].forEach( ( section ) =>
 			expect( getiOSDeepLink( '/test', section ) ).toMatchSnapshot()
 		);
 	} );
@@ -73,10 +70,6 @@ describe( 'getCurrentSection', () => {
 
 	test( 'returns reader if in reader section', () => {
 		expect( getCurrentSection( READER, false, '/' ) ).toBe( READER );
-	} );
-
-	test( 'returns editor if in editor section', () => {
-		expect( getCurrentSection( EDITOR, false, '/post/123' ) ).toBe( EDITOR );
 	} );
 
 	test( 'returns null if in a disallowed section', () => {

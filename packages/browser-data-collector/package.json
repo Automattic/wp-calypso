@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/browser-data-collector",
-	"version": "0.0.1",
-	"description": "A tool to collect data from different browser APIs",
+	"version": "3.0.0",
+	"description": "A tool to collect data from different browser APIs.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",
@@ -14,17 +14,19 @@
 		"directory": "packages/browser-data-collector"
 	},
 	"types": "dist/types",
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"scripts": {
-		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"tslib": "^2.2.0",
-		"wpcom-proxy-request": "^6.0.0"
+		"tslib": "^2.3.0",
+		"wpcom-proxy-request": "workspace:^"
+	},
+	"devDependencies": {
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"typescript": "^4.7.4"
 	}
 }

@@ -1,18 +1,9 @@
-/**
- * External dependencies
- */
-
+import { Gridicon, Spinner } from '@automattic/components';
 import PropTypes from 'prop-types';
-import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal Dependencies
- */
-import Spinner from 'calypso/components/spinner';
+import { Component } from 'react';
 import { flagUrl } from 'calypso/lib/flags';
 
-export default class extends React.Component {
+export default class extends Component {
 	static displayName = 'PhoneInputCountryFlag';
 
 	static propTypes = {
@@ -26,6 +17,7 @@ export default class extends React.Component {
 
 	componentDidUpdate( oldProps ) {
 		if ( this.props.countryCode && this.props.countryCode !== oldProps.countryCode ) {
+			// eslint-disable-next-line react/no-did-update-set-state
 			this.setState( { ready: false, error: false } );
 		}
 	}

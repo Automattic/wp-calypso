@@ -1,22 +1,11 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import {
 	PUBLICIZE_CONNECTION_CREATE,
 	PUBLICIZE_CONNECTION_CREATE_FAILURE,
 	PUBLICIZE_CONNECTION_DELETE,
 	PUBLICIZE_CONNECTION_DELETE_FAILURE,
 	PUBLICIZE_CONNECTION_RECEIVE,
-	PUBLICIZE_CONNECTION_REQUEST,
-	PUBLICIZE_CONNECTION_REQUEST_FAILURE,
-	PUBLICIZE_CONNECTION_REQUEST_SUCCESS,
 	PUBLICIZE_CONNECTION_UPDATE,
 	PUBLICIZE_CONNECTION_UPDATE_FAILURE,
 	PUBLICIZE_CONNECTIONS_RECEIVE,
@@ -28,6 +17,7 @@ import {
 	PUBLICIZE_SHARE_FAILURE,
 	PUBLICIZE_SHARE_DISMISS,
 } from 'calypso/state/action-types';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 import 'calypso/state/sharing/init';
 
@@ -49,21 +39,29 @@ export function sharePost( siteId, postId, skippedConnections, message ) {
 			message,
 		} );
 
-		return new Promise( ( resolve ) => {
-			wpcom
-				.undocumented()
-				.publicizePost( siteId, postId, message, skippedConnections, ( error, data ) => {
-					// Note: successes are recorded in data.results, errors are recorded in data.errors. There could be
-					// several errors and several successes.
-					if ( error || ! data.results ) {
-						dispatch( { type: PUBLICIZE_SHARE_FAILURE, siteId, postId, error } );
-					} else {
-						dispatch( { type: PUBLICIZE_SHARE_SUCCESS, siteId, postId } );
-					}
+		const body = {
+			skipped_connections: skippedConnections ?? [],
+			message,
+		};
 
-					resolve();
-				} );
-		} );
+		wpcom.req
+			.post( {
+				path: `/sites/${ siteId }/posts/${ postId }/publicize`,
+				body,
+				apiNamespace: 'wpcom/v2',
+			} )
+			// Note: successes are recorded in data.results, errors are recorded in data.errors. There could be
+			// several errors and several successes.
+			.then( ( data ) => {
+				if ( ! data.results.length ) {
+					dispatch( { type: PUBLICIZE_SHARE_FAILURE, siteId, postId } );
+				} else {
+					dispatch( { type: PUBLICIZE_SHARE_SUCCESS, siteId, postId } );
+				}
+			} )
+			.catch( () => {
+				dispatch( { type: PUBLICIZE_SHARE_FAILURE, siteId, postId } );
+			} );
 	};
 }
 
@@ -81,9 +79,8 @@ export function fetchConnections( siteId ) {
 			siteId,
 		} );
 
-		return wpcom
-			.undocumented()
-			.siteConnections( siteId )
+		return wpcom.req
+			.get( `/sites/${ siteId }/publicize-connections` )
 			.then( ( connections ) => {
 				dispatch( receiveConnections( siteId, connections ) );
 				dispatch( {
@@ -110,38 +107,17 @@ export function fetchConnections( siteId ) {
  * @returns {Function}            Action thunk
  */
 export function fetchConnection( siteId, connectionId ) {
-	return ( dispatch ) => {
-		dispatch( {
-			type: PUBLICIZE_CONNECTION_REQUEST,
-			connectionId,
-			siteId,
-		} );
-
-		return wpcom
-			.undocumented()
-			.site( siteId )
-			.getConnection( connectionId )
+	return ( dispatch ) =>
+		wpcom.req
+			.get( `/sites/${ siteId }/publicize-connections/${ connectionId }` )
 			.then( ( connection ) => {
 				dispatch( {
 					type: PUBLICIZE_CONNECTION_RECEIVE,
 					connection,
 					siteId,
 				} );
-				dispatch( {
-					type: PUBLICIZE_CONNECTION_REQUEST_SUCCESS,
-					connectionId,
-					siteId,
-				} );
 			} )
-			.catch( ( error ) =>
-				dispatch( {
-					type: PUBLICIZE_CONNECTION_REQUEST_FAILURE,
-					connectionId,
-					error,
-					siteId,
-				} )
-			);
-	};
+			.catch( () => {} );
 }
 
 /**
@@ -154,10 +130,18 @@ export function fetchConnection( siteId, connectionId ) {
  * @returns {Function}                  Action thunk
  */
 export function createSiteConnection( siteId, keyringConnectionId, externalUserId ) {
-	return ( dispatch ) =>
-		wpcom
-			.undocumented()
-			.createConnection( keyringConnectionId, siteId, externalUserId, { shared: false } )
+	return ( dispatch ) => {
+		const body = {
+			keyring_connection_ID: keyringConnectionId,
+			shared: false,
+		};
+
+		if ( externalUserId ) {
+			body.external_user_ID = externalUserId;
+		}
+
+		return wpcom.req
+			.post( `/sites/${ siteId }/publicize-connections/new`, body )
 			.then( ( connection ) => {
 				dispatch( {
 					type: PUBLICIZE_CONNECTION_CREATE,
@@ -185,23 +169,23 @@ export function createSiteConnection( siteId, keyringConnectionId, externalUserI
 					)
 				);
 			} );
+	};
 }
 
 /**
  * Triggers a network request to update a Publicize connection for a specific site.
  *
- * @param  {object} connection         Connection to be updated.
+ * @param  {Object} connection         Connection to be updated.
  * @param  {number} connection.site_ID Site ID for which the connection is updated.
  * @param  {number} connection.ID      ID of the connection to be updated.
  * @param  {string} connection.label   Name of the connected service.
- * @param  {object} attributes         The update request body.
+ * @param  {Object} attributes         The update request body.
  * @returns {Function}                  Action thunk
  */
 export function updateSiteConnection( connection, attributes ) {
 	return ( dispatch ) =>
-		wpcom
-			.undocumented()
-			.updateConnection( connection.site_ID, connection.ID, attributes )
+		wpcom.req
+			.post( `/sites/${ connection.site_ID }/publicize-connections/${ connection.ID }`, attributes )
 			.then( ( response ) => {
 				dispatch( {
 					type: PUBLICIZE_CONNECTION_UPDATE,
@@ -239,7 +223,7 @@ export function updateSiteConnection( connection, attributes ) {
 /**
  * Triggers a network request to delete a Publicize connection for a specific site.
  *
- * @param  {object} connection         Connection to be deleted.
+ * @param  {Object} connection         Connection to be deleted.
  * @param  {number} connection.site_ID Site ID for which the connection is deleted.
  * @param  {number} connection.ID      ID of the connection to be deleted.
  * @param  {string} connection.label   Name of the service that was connected.
@@ -247,9 +231,8 @@ export function updateSiteConnection( connection, attributes ) {
  */
 export function deleteSiteConnection( connection ) {
 	return ( dispatch ) =>
-		wpcom
-			.undocumented()
-			.deleteSiteConnection( connection.site_ID, connection.ID )
+		wpcom.req
+			.post( `/sites/${ connection.site_ID }/publicize-connections/${ connection.ID }/delete` )
 			.then( () => {
 				dispatch( deleteConnection( connection ) );
 				dispatch( deleteConnectionSuccess( connection ) );
@@ -283,8 +266,8 @@ export function deleteSiteConnection( connection ) {
  * Returns an action object to be used in signalling that creating a Publicize
  * connection has failed.
  *
- * @param  {object} error Error object
- * @returns {object}       Action object
+ * @param  {Object} error Error object
+ * @returns {Object}       Action object
  */
 export function failCreateConnection( error ) {
 	return {
@@ -297,8 +280,8 @@ export function failCreateConnection( error ) {
  * Returns an action object to be used in signalling that a network request for
  * removing a Publicize connection has been received.
  *
- * @param  {object} connection Connection to be deleted.
- * @returns {object}            Action object
+ * @param  {Object} connection Connection to be deleted.
+ * @returns {Object}            Action object
  */
 export function deleteConnection( connection ) {
 	return {
@@ -310,8 +293,8 @@ export function deleteConnection( connection ) {
 /**
  * Returns an action object to be used to render a connection deletion success notice.
  *
- * @param  {object} connection Connection that was deleted.
- * @returns {object}            Action object
+ * @param  {Object} connection Connection that was deleted.
+ * @returns {Object}            Action object
  */
 function deleteConnectionSuccess( connection ) {
 	return successNotice(
@@ -328,8 +311,8 @@ function deleteConnectionSuccess( connection ) {
  * Publicize connections has been received.
  *
  * @param  {number} siteId Site ID
- * @param  {object} data   API response
- * @returns {object}        Action object
+ * @param  {Object} data   API response
+ * @returns {Object}        Action object
  */
 export function receiveConnections( siteId, data ) {
 	return {

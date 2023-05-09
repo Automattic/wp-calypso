@@ -1,23 +1,13 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
-import classNames from 'classnames';
-import i18n from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import {
 	isDomainMapping,
 	isDomainRegistration,
 	isDomainTransfer,
 	isGSuiteOrExtraLicenseOrGoogleWorkspace,
-	isGuidedTransfer,
 	isTitanMail,
 } from '@automattic/calypso-products';
+import classNames from 'classnames';
+import i18n from 'i18n-calypso';
+import PropTypes from 'prop-types';
 
 const FeaturesHeader = ( { isDataLoaded, isGenericReceipt, purchases, hasFailedPurchases } ) => {
 	const classes = classNames( 'checkout-thank-you__features-header', {
@@ -37,7 +27,6 @@ const FeaturesHeader = ( { isDataLoaded, isGenericReceipt, purchases, hasFailedP
 		purchases.some( isGSuiteOrExtraLicenseOrGoogleWorkspace ) ||
 		purchases.some( isDomainRegistration ) ||
 		purchases.some( isDomainMapping ) ||
-		purchases.some( isGuidedTransfer ) ||
 		purchases.some( isDomainTransfer ) ||
 		purchases.some( isTitanMail );
 

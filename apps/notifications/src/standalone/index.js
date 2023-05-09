@@ -1,20 +1,10 @@
-/**
- * External dependencies
- */
 import '@automattic/calypso-polyfills';
+import { createElement } from 'react';
 import ReactDOM from 'react-dom';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import Notifications, { refreshNotes } from '../panel/Notifications';
-import AuthWrapper from './auth-wrapper';
+import { createClient } from './client';
 import { receiveMessage, sendMessage } from './messaging';
 
-/**
- * Style dependencies
- */
 import '../panel/boot/stylesheets/style.scss';
 
 const localePattern = /[&?]locale=([\w_-]+)/;
@@ -73,11 +63,19 @@ const customMiddleware = {
 			window.open( href, '_blank' );
 		},
 	],
+	ANSWER_PROMPT: [
+		( st, { siteId, href } ) => {
+			sendMessage( { action: 'answerPrompt', siteId, href } );
+			window.open( href, '_blank' );
+		},
+	],
 };
 
-const render = () => {
+const render = ( wpcom ) => {
+	document.body.classList.add( 'font-smoothing-antialiased' );
+
 	ReactDOM.render(
-		React.createElement( AuthWrapper( Notifications ), {
+		createElement( Notifications, {
 			customEnhancer,
 			customMiddleware,
 			isShowing,
@@ -85,14 +83,26 @@ const render = () => {
 			locale,
 			receiveMessage: sendMessage,
 			redirectPath: '/',
-			isStandalone: true,
+			wpcom,
 		} ),
 		document.getElementsByClassName( 'wpnc__main' )[ 0 ]
 	);
 };
 
-const init = () => {
-	render();
+const setTracksUser = ( wpcom ) => {
+	wpcom
+		.me()
+		.get( { fields: 'ID,username' } )
+		.then( ( { ID, username } ) => {
+			window._tkq = window._tkq || [];
+			window._tkq.push( [ 'identifyUser', ID, username ] );
+		} )
+		.catch( () => {} );
+};
+
+const init = ( wpcom ) => {
+	setTracksUser( wpcom );
+	render( wpcom );
 
 	const refresh = () => store.dispatch( { type: 'APP_REFRESH_NOTES', isVisible } );
 	const reset = () => store.dispatch( { type: 'SELECT_NOTE', noteId: null } );
@@ -128,4 +138,4 @@ const init = () => {
 	);
 };
 
-init();
+createClient().then( init );

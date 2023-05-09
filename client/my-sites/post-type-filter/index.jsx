@@ -1,35 +1,25 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { localize, getLocaleSlug } from 'i18n-calypso';
-import { connect } from 'react-redux';
 import { compact, find, flow, reduce } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import areAllSitesSingleUser from 'calypso/state/selectors/are-all-sites-single-user';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { isJetpackSite, isSingleUserSite, getSiteSlug } from 'calypso/state/sites/selectors';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import QueryPostCounts from 'calypso/components/data/query-post-counts';
+import QueryPostTypes from 'calypso/components/data/query-post-types';
+import Search from 'calypso/components/search';
+import SectionNav from 'calypso/components/section-nav';
+import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import urlSearch from 'calypso/lib/url-search';
 import { getPostTypeLabel } from 'calypso/state/post-types/selectors';
 import {
 	getNormalizedMyPostCounts,
 	getNormalizedPostCounts,
 } from 'calypso/state/posts/counts/selectors';
-import urlSearch from 'calypso/lib/url-search';
-import QueryPostCounts from 'calypso/components/data/query-post-counts';
-import QueryPostTypes from 'calypso/components/data/query-post-types';
-import SectionNav from 'calypso/components/section-nav';
-import NavTabs from 'calypso/components/section-nav/tabs';
-import NavItem from 'calypso/components/section-nav/item';
-import Search from 'calypso/components/search';
+import areAllSitesSingleUser from 'calypso/state/selectors/are-all-sites-single-user';
+import { isJetpackSite, isSingleUserSite, getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import AuthorSegmented from './author-segmented';
 
-/**
- * Internal dependencies
- */
 import './style.scss';
 
 export class PostTypeFilter extends Component {

@@ -32,7 +32,7 @@ class SitePlugin {
 	/**
 	 * Get informtion about the plugin
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @returns {Promise} Promise
 	 */
@@ -43,8 +43,8 @@ class SitePlugin {
 	/**
 	 * Update the plugin configuration
 	 *
-	 * @param {object} [query] - query object parameter
-	 * @param {object} body - plugin body object
+	 * @param {Object} [query] - query object parameter
+	 * @param {Object} body - plugin body object
 	 * @param {Function} [fn] - callback function
 	 * @returns {Promise} Promise
 	 */
@@ -55,7 +55,7 @@ class SitePlugin {
 	/**
 	 * Update the plugin version
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @returns {Promise} Promise
 	 */
@@ -66,18 +66,21 @@ class SitePlugin {
 	/**
 	 * Install the plugin
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @returns {Promise} Promise
 	 */
 	install( query, fn ) {
-		return this.wpcom.req.put( `${ this.pluginPath }/install`, query, fn );
+		const body = {
+			slug: this._slug,
+		};
+		return this.wpcom.req.post( `${ root }/${ this._sid }/plugins/install`, query, body, fn );
 	}
 
 	/**
 	 * Delete the plugin
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @returns {Promise} Promise
 	 */
@@ -89,7 +92,7 @@ class SitePlugin {
 	 * Activate the plugin
 	 * This method is a shorthand of update()
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @returns {Promise} Promise
 	 */
@@ -101,7 +104,7 @@ class SitePlugin {
 	 * Deactivate the plugin
 	 * This method is a shorthand of update()
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @returns {Promise} Promise
 	 */
@@ -113,7 +116,7 @@ class SitePlugin {
 	 * Enable plugin autoupdate
 	 * This method is a shorthand of update()
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @returns {Promise} Promise
 	 */
@@ -125,7 +128,7 @@ class SitePlugin {
 	 * Disable plugin autoupdate
 	 * This method is a shorthand of update()
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @returns {Promise} Promise
 	 */

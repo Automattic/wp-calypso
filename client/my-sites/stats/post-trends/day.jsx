@@ -1,17 +1,11 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import React, { Fragment } from 'react';
+import { Icon, postContent } from '@wordpress/icons';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import { localize, getLocaleSlug } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { createRef, PureComponent, Fragment } from 'react';
 import Tooltip from 'calypso/components/tooltip';
 
-class PostTrendsDay extends React.PureComponent {
+class PostTrendsDay extends PureComponent {
 	static propTypes = {
 		label: PropTypes.string,
 		className: PropTypes.string,
@@ -22,8 +16,9 @@ class PostTrendsDay extends React.PureComponent {
 		postCount: 0,
 	};
 
+	localeSlug = getLocaleSlug();
 	state = { showPopover: false };
-	dayRef = React.createRef();
+	dayRef = createRef();
 
 	mouseEnter = () => {
 		this.setState( { showPopover: true } );
@@ -36,18 +31,36 @@ class PostTrendsDay extends React.PureComponent {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	buildTooltipData = () => {
 		const { label, postCount } = this.props;
-		const content = this.props.translate( '%(posts)d post', '%(posts)d posts', {
-			count: postCount,
-			args: {
-				posts: postCount,
-			},
-			comment: 'How many posts published on a certain date.',
+		const date = new Date( label );
+		const weekDay = date.toLocaleDateString( this.localeSlug, { weekday: 'long' } );
+		const formattedDate = date.toLocaleDateString( this.localeSlug, {
+			month: 'long',
+			day: 'numeric',
+			year: 'numeric',
 		} );
 
+		const postPublished = this.props.translate(
+			'%(posts)d post published',
+			'%(posts)d posts published',
+			{
+				count: postCount,
+				args: {
+					posts: postCount,
+				},
+				comment: 'How many posts published on a certain date.',
+			}
+		);
+
 		return (
-			<span>
-				<span className="post-count">{ content } </span>
-				<span className="date">{ label }</span>
+			<span className="post-trends__tooltip-content">
+				<div className="post-date">
+					{ formattedDate } ({ weekDay })
+				</div>
+
+				<div className="post-count">
+					<Icon icon={ postContent } className="post-count-icon" />
+					{ postPublished }
+				</div>
 			</span>
 		);
 	};
@@ -68,8 +81,8 @@ class PostTrendsDay extends React.PureComponent {
 				/>
 				{ postCount > 0 && (
 					<Tooltip
-						className="chart__tooltip is-streak"
-						id="popover__chart-bar"
+						className="is-streak tooltip--large"
+						id="post-trends__tooltip"
 						context={ this.dayRef.current }
 						isVisible={ this.state.showPopover }
 						position="top"

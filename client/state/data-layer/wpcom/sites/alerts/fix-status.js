@@ -1,20 +1,12 @@
-/**
- * External dependencies
- */
 import i18n from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { JETPACK_SCAN_THREATS_GET_FIX_STATUS } from 'calypso/state/action-types';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { getFixThreatsStatus } from 'calypso/state/jetpack-scan/threats/actions';
-import { requestScanStatus } from 'calypso/state/jetpack-scan/actions';
-import { requestJetpackScanHistory } from 'calypso/state/jetpack-scan/history/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions.ts';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { requestScanStatus } from 'calypso/state/jetpack-scan/actions';
+import { requestJetpackScanHistory } from 'calypso/state/jetpack-scan/history/actions';
+import { getFixThreatsStatus } from 'calypso/state/jetpack-scan/threats/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 const POLL_EVERY_MILLISECONDS = 1000;
 
@@ -61,10 +53,6 @@ export const success = ( action, fixer_state ) => {
 					duration: 4000,
 				}
 			),
-			// Make the 'jetpack-review-prompt' (calypso preference) valid, triggering a
-			// user prompt to submit a review of the Jetpack plugin on the /scan/:site page.
-			setValidFrom( 'scan', Date.now() ),
-
 			requestScanStatus( action.siteId ),
 			// Since we can fix threats from the History section, we need to update that
 			// information as well.

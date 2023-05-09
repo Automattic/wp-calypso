@@ -5,8 +5,8 @@ Button group displays multiple related actions in a row to help with the display
 ## Usage
 
 ```jsx
-import ButtonGroup from 'calypso/components/button-group';
 import { Button } from '@automattic/components';
+import ButtonGroup from 'calypso/components/button-group';
 
 function render() {
 	return (

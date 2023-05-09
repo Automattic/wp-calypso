@@ -1,125 +1,72 @@
-/**
- * External dependencies
- */
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
 import freePurchaseProcessor from '../lib/free-purchase-processor';
-import wp from 'calypso/lib/wp';
-
-jest.mock( 'calypso/lib/wp' );
+import {
+	mockTransactionsEndpoint,
+	mockTransactionsSuccessResponse,
+	processorOptions,
+	basicExpectedDomainDetails,
+	countryCode,
+	postalCode,
+	contactDetailsForDomain,
+} from './util';
 
 describe( 'freePurchaseProcessor', () => {
-	const stripeConfiguration = {
-		processor_id: 'IE',
-		js_url: 'https://stripe-js-url',
-		public_key: 'stripe-public-key',
-		setup_intent_id: null,
-	};
 	const product = getEmptyResponseCartProduct();
 	const domainProduct = {
 		...getEmptyResponseCartProduct(),
 		meta: 'example.com',
 		is_domain_registration: true,
+		currency: 'USD',
+		item_original_cost_integer: 100,
+		item_original_cost_display: '$100',
+		item_original_cost_for_quantity_one_integer: 100,
+		item_original_cost_for_quantity_one_display: '$100',
+		item_subtotal_integer: 100,
+		item_subtotal_display: '$100',
+		product_cost_integer: 100,
+		product_cost_display: '$100',
+		item_subtotal_monthly_cost_display: '$100',
+		item_subtotal_monthly_cost_integer: 100,
+		item_original_subtotal_integer: 100,
+		item_original_subtotal_display: '$100',
+		uuid: 'product002',
+		cost: 100,
 	};
 	const cart = { ...getEmptyResponseCart(), products: [ product ] };
 	const options = {
-		includeDomainDetails: false,
-		includeGSuiteDetails: false,
-		createUserAndSiteBeforeTransaction: false,
-		stripeConfiguration,
-		recordEvent: () => null,
-		reduxDispatch: () => null,
+		...processorOptions,
 		responseCart: cart,
-		getThankYouUrl: () => '',
-		siteSlug: undefined,
-		siteId: undefined,
-		contactDetails: undefined,
 	};
-
-	const countryCode = { isTouched: true, value: 'US', errors: [], isRequired: true };
-	const postalCode = { isTouched: true, value: '10001', errors: [], isRequired: true };
 
 	const basicExpectedStripeRequest = {
 		cart: {
-			blog_id: '0',
+			blog_id: 0,
 			cart_key: 'no-site',
 			coupon: '',
-			create_new_blog: true,
-			currency: 'USD',
-			extra: [],
-			is_jetpack_checkout: false,
 			products: [ product ],
 			tax: {
 				location: {},
 			},
 			temporary: false,
 		},
-		domainDetails: undefined,
 		payment: {
-			address: undefined,
-			cancelUrl: undefined,
-			city: undefined,
 			country: '',
-			countryCode: '',
-			deviceId: undefined,
-			document: undefined,
-			email: undefined,
-			gstin: undefined,
-			idealBank: undefined,
+			country_code: '',
 			name: '',
-			nik: undefined,
-			pan: undefined,
-			paymentKey: undefined,
-			paymentMethod: 'WPCOM_Billing_WPCOM',
-			paymentPartner: undefined,
-			phoneNumber: undefined,
-			postalCode: '',
-			state: undefined,
-			storedDetailsId: undefined,
-			streetNumber: undefined,
-			successUrl: undefined,
-			tefBank: undefined,
+			payment_method: 'WPCOM_Billing_WPCOM',
+			postal_code: '',
 			zip: '',
 		},
-	};
-
-	const basicExpectedDomainDetails = {
-		address1: undefined,
-		address2: undefined,
-		alternateEmail: undefined,
-		city: undefined,
-		countryCode: 'US',
-		email: undefined,
-		extra: {
-			ca: null,
-			fr: null,
-			uk: null,
+		tos: {
+			locale: 'en',
+			path: '/',
+			viewport: '0x0',
 		},
-		fax: undefined,
-		firstName: undefined,
-		lastName: undefined,
-		organization: undefined,
-		phone: undefined,
-		postalCode: '10001',
-		state: undefined,
 	};
-
-	const transactionsEndpoint = jest.fn();
-	const undocumentedFunctions = {
-		transactions: transactionsEndpoint,
-	};
-	wp.undocumented = jest.fn().mockReturnValue( undocumentedFunctions );
-
-	beforeEach( () => {
-		transactionsEndpoint.mockClear();
-		transactionsEndpoint.mockReturnValue( Promise.resolve( 'success' ) );
-	} );
 
 	it( 'sends the correct data to the endpoint with no site and one product', async () => {
-		const expected = { payload: 'success', type: 'SUCCESS' };
+		const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsSuccessResponse );
+		const expected = { payload: { success: 'true' }, type: 'SUCCESS' };
 		await expect(
 			freePurchaseProcessor( {
 				...options,
@@ -133,7 +80,13 @@ describe( 'freePurchaseProcessor', () => {
 	} );
 
 	it( 'returns an explicit error response if the transaction fails', async () => {
-		transactionsEndpoint.mockReturnValue( Promise.reject( new Error( 'test error' ) ) );
+		mockTransactionsEndpoint( () => [
+			400,
+			{
+				error: 'test_error',
+				message: 'test error',
+			},
+		] );
 		const expected = { payload: 'test error', type: 'ERROR' };
 		await expect(
 			freePurchaseProcessor( {
@@ -147,7 +100,8 @@ describe( 'freePurchaseProcessor', () => {
 	} );
 
 	it( 'sends the correct data to the endpoint with a site and one product', async () => {
-		const expected = { payload: 'success', type: 'SUCCESS' };
+		const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsSuccessResponse );
+		const expected = { payload: { success: 'true' }, type: 'SUCCESS' };
 		await expect(
 			freePurchaseProcessor( {
 				...options,
@@ -163,16 +117,16 @@ describe( 'freePurchaseProcessor', () => {
 			...basicExpectedStripeRequest,
 			cart: {
 				...basicExpectedStripeRequest.cart,
-				blog_id: '1234567',
-				cart_key: '1234567',
+				blog_id: 1234567,
+				cart_key: 1234567,
 				coupon: '',
-				create_new_blog: false,
 			},
 		} );
 	} );
 
-	it( 'sends the correct data to the endpoint with empty tax information', async () => {
-		const expected = { payload: 'success', type: 'SUCCESS' };
+	it( 'sends the correct data to the endpoint with empty tax information if the cart total is 0', async () => {
+		const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsSuccessResponse );
+		const expected = { payload: { success: 'true' }, type: 'SUCCESS' };
 		await expect(
 			freePurchaseProcessor( {
 				...options,
@@ -198,16 +152,16 @@ describe( 'freePurchaseProcessor', () => {
 			...basicExpectedStripeRequest,
 			cart: {
 				...basicExpectedStripeRequest.cart,
-				blog_id: '1234567',
-				cart_key: '1234567',
+				blog_id: 1234567,
+				cart_key: 1234567,
 				coupon: '',
-				create_new_blog: false,
 			},
 		} );
 	} );
 
-	it( 'sends the correct data to the endpoint with a site and one domain product', async () => {
-		const expected = { payload: 'success', type: 'SUCCESS' };
+	it( 'sends the correct data to the endpoint with tax information if it is a full-credits purchase', async () => {
+		const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsSuccessResponse );
+		const expected = { payload: { success: 'true' }, type: 'SUCCESS' };
 		await expect(
 			freePurchaseProcessor( {
 				...options,
@@ -217,6 +171,51 @@ describe( 'freePurchaseProcessor', () => {
 					countryCode,
 					postalCode,
 				},
+				responseCart: {
+					...options.responseCart,
+					products: [ domainProduct ],
+					credits_integer: 100,
+					sub_total_integer: 100,
+					total_tax_integer: 0,
+					tax: {
+						display_taxes: true,
+						location: {
+							postal_code: 'pr267ry',
+							country_code: 'GB',
+						},
+					},
+				},
+			} )
+		).resolves.toStrictEqual( expected );
+		expect( transactionsEndpoint ).toHaveBeenCalledWith( {
+			...basicExpectedStripeRequest,
+			cart: {
+				...basicExpectedStripeRequest.cart,
+				blog_id: 1234567,
+				cart_key: 1234567,
+				coupon: '',
+				products: [ domainProduct ],
+				tax: { location: { postal_code: 'pr267ry', country_code: 'GB' } },
+			},
+			payment: {
+				...basicExpectedStripeRequest.payment,
+				country: 'US',
+				country_code: 'US',
+				postal_code: '10001',
+				zip: '10001',
+			},
+		} );
+	} );
+
+	it( 'sends the correct data to the endpoint with a site and one domain product', async () => {
+		const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsSuccessResponse );
+		const expected = { payload: { success: 'true' }, type: 'SUCCESS' };
+		await expect(
+			freePurchaseProcessor( {
+				...options,
+				siteSlug: 'example.wordpress.com',
+				siteId: 1234567,
+				contactDetails: contactDetailsForDomain,
 				responseCart: { ...cart, products: [ domainProduct ] },
 				includeDomainDetails: true,
 			} )
@@ -225,13 +224,12 @@ describe( 'freePurchaseProcessor', () => {
 			...basicExpectedStripeRequest,
 			cart: {
 				...basicExpectedStripeRequest.cart,
-				blog_id: '1234567',
-				cart_key: '1234567',
+				blog_id: 1234567,
+				cart_key: 1234567,
 				coupon: '',
-				create_new_blog: false,
 				products: [ domainProduct ],
 			},
-			domainDetails: basicExpectedDomainDetails,
+			domain_details: basicExpectedDomainDetails,
 		} );
 	} );
 } );

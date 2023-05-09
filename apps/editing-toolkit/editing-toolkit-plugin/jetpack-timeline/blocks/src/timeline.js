@@ -2,22 +2,14 @@
 // disabled CSS class rule due to existing code already
 // that users the non-conformant classnames
 
-/**
- * External dependencies
- */
-
 import { InnerBlocks, InspectorControls } from '@wordpress/block-editor';
 import { registerBlockType, createBlock } from '@wordpress/blocks';
 import { ToggleControl, PanelBody } from '@wordpress/components';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { TimelineIcon } from './icon';
 import { BlockAppender } from './block-appender';
+import { TimelineIcon } from './icon';
 
 export function registerTimelineBlock() {
 	registerBlockType( 'jetpack/timeline', {

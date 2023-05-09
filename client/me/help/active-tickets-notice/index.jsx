@@ -1,22 +1,11 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
 import Notice from 'calypso/components/notice';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class ActiveTicketsNotice extends React.Component {
+class ActiveTicketsNotice extends Component {
 	componentDidMount() {
 		recordTracksEvent( 'calypso_help_active_requests_notice_shown', {
 			active_ticket_count: this.props.count,

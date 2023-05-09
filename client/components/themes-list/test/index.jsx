@@ -2,21 +2,22 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
-import React from 'react';
+import { screen } from '@testing-library/react';
 import deepFreeze from 'deep-freeze';
-import { shallow } from 'enzyme';
-
-/**
- * Internal dependencies
- */
-import EmptyContent from 'calypso/components/empty-content';
-import Theme from 'calypso/components/theme';
+import themes from 'calypso/state/themes/reducer';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ThemesList } from '../';
 
 const noop = () => {};
+
+jest.mock( 'calypso/components/theme', () => ( { theme } ) => (
+	<div data-testid={ `theme-${ theme.id }` } />
+) );
+
+jest.mock( 'react-redux', () => ( {
+	...jest.requireActual( 'react-redux' ),
+	useSelector: () => false,
+} ) );
 
 const defaultProps = deepFreeze( {
 	themes: [
@@ -33,31 +34,30 @@ const defaultProps = deepFreeze( {
 	],
 	lastPage: true,
 	loading: false,
+	isRequestFulfilled: true,
 	fetchNextPage: noop,
 	getButtonOptions: noop,
 	onScreenshotClick: noop,
+	upsellCardDisplayed: noop,
 	translate: ( string ) => string,
 } );
 
-describe( 'ThemesList', () => {
-	test( 'should declare propTypes', () => {
-		expect( ThemesList ).toHaveProperty( 'propTypes' );
-	} );
+const render = ( el, options ) => renderWithProvider( el, { ...options, reducers: { themes } } );
 
+describe( 'ThemesList', () => {
 	test( 'should render a div with a className of "themes-list"', () => {
-		const wrapper = shallow( <ThemesList { ...defaultProps } /> );
-		expect( wrapper ).toMatchSnapshot();
-		expect( wrapper.hasClass( 'themes-list' ) ).toBe( true );
-		expect( wrapper.find( Theme ) ).toHaveLength( defaultProps.themes.length );
+		const { container } = render( <ThemesList { ...defaultProps } /> );
+		expect( container ).toMatchSnapshot();
+		expect( container.firstChild ).toHaveClass( 'themes-list' );
 	} );
 
 	test( 'should render a <Theme /> child for each provided theme', () => {
-		const wrapper = shallow( <ThemesList { ...defaultProps } /> );
-		expect( wrapper.find( Theme ) ).toHaveLength( defaultProps.themes.length );
+		render( <ThemesList { ...defaultProps } /> );
+		expect( screen.getAllByTestId( /theme-/ ) ).toHaveLength( defaultProps.themes.length );
 	} );
 
-	test( 'should display the EmptyContent component when no themes are found', () => {
-		const wrapper = shallow( <ThemesList { ...defaultProps } themes={ [] } /> );
-		expect( wrapper.type() ).toBe( EmptyContent );
+	test( 'should display a message when no themes are found', () => {
+		render( <ThemesList { ...defaultProps } themes={ [] } /> );
+		expect( screen.getByText( /No themes match your search/i ) ).toBeInTheDocument();
 	} );
 } );

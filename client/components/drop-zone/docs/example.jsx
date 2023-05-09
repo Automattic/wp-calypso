@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { PureComponent } from 'react';
 import DropZone from 'calypso/components/drop-zone';
 
 const DropZoneExample = localize(
-	class extends React.PureComponent {
+	class extends PureComponent {
 		state = {};
 
 		onFilesDrop = ( files ) => {

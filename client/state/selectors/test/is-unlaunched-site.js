@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import isUnlaunchedSite from '../is-unlaunched-site';
 
 describe( 'isUnlaunchedSite()', () => {

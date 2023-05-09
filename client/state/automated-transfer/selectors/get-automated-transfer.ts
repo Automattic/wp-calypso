@@ -1,12 +1,8 @@
-/**
- * External dependencies
- */
-import { get } from 'lodash';
+import type { AppState } from 'calypso/types';
 
-/**
- * Internal dependencies
- */
 import 'calypso/state/automated-transfer/init';
 
-export const getAutomatedTransfer = ( state, siteId: number | null ) =>
-	get( state, [ 'automatedTransfer', siteId ], {} );
+const emptyData = {};
+
+export const getAutomatedTransfer = ( state: AppState, siteId: number | null ) =>
+	siteId ? state?.automatedTransfer?.[ siteId ] ?? emptyData : emptyData;

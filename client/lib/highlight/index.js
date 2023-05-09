@@ -1,9 +1,5 @@
-/**
- * External dependencies
- */
-
-import { compact } from 'lodash';
 import debugFactory from 'debug';
+import { compact } from 'lodash';
 const debug = debugFactory( 'calypso:highlight' );
 
 /**
@@ -42,7 +38,6 @@ function highlightNode( node, term, wrapperNode ) {
 		remainingText = node.nodeValue;
 	}
 
-	// eslint-disable-next-line no-constant-condition
 	while ( true ) {
 		pos = remainingText.toLowerCase().indexOf( term.toLowerCase() );
 		if ( ! remainingText || pos === -1 ) {

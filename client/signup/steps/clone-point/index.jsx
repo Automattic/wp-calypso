@@ -1,32 +1,20 @@
-/**
- * External dependencies
- */
-import React, { Component, Fragment } from 'react';
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { applySiteOffset } from 'calypso/lib/site/timezone';
 import { Card } from '@automattic/components';
-import ActivityLogItem from 'calypso/my-sites/activity/activity-log-item';
-import Pagination from 'calypso/components/pagination';
-import QuerySites from 'calypso/components/data/query-sites';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
-import StepWrapper from 'calypso/signup/step-wrapper';
-import Tile from 'calypso/components/tile-grid/tile';
-import TileGrid from 'calypso/components/tile-grid';
-import { requestActivityLogs } from 'calypso/state/data-getters';
-import { getSiteOption } from 'calypso/state/sites/selectors';
+import QuerySites from 'calypso/components/data/query-sites';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import Pagination from 'calypso/components/pagination';
+import TileGrid from 'calypso/components/tile-grid';
+import Tile from 'calypso/components/tile-grid/tile';
+import useRewindableActivityLogQuery from 'calypso/data/activity-log/use-rewindable-activity-log-query';
+import { applySiteOffset } from 'calypso/lib/site/timezone';
+import ActivityLogItem from 'calypso/my-sites/activity/activity-log-item';
+import StepWrapper from 'calypso/signup/step-wrapper';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
-
-/**
- * Style dependencies
- */
+import { getSiteOption } from 'calypso/state/sites/selectors';
 import './style.scss';
 
 const PAGE_SIZE = 20;
@@ -146,7 +134,7 @@ class ClonePointStep extends Component {
 					className="clone-point__current"
 					buttonLabel={ translate( 'Clone current state' ) }
 					description={ translate( 'Create a clone of your site as it is right now.' ) }
-					image={ '/calypso/images/illustrations/clone-site-origin.svg' }
+					image="/calypso/images/illustrations/clone-site-origin.svg"
 					onClick={ this.selectCurrent }
 				/>
 				<Tile
@@ -155,7 +143,7 @@ class ClonePointStep extends Component {
 					description={ translate(
 						'Browse your event history and choose an earlier state to clone from.'
 					) }
-					image={ '/calypso/images/illustrations/backup.svg' }
+					image="/calypso/images/illustrations/backup.svg"
 					onClick={ this.selectPrevious }
 				/>
 			</TileGrid>
@@ -193,17 +181,23 @@ class ClonePointStep extends Component {
 	}
 }
 
+function withActivityLog( Inner ) {
+	return ( props ) => {
+		const { siteId } = props;
+		const { data: logs } = useRewindableActivityLogQuery( siteId, {}, { enabled: !! siteId } );
+		return <Inner { ...props } logs={ logs ?? [] } />;
+	};
+}
+
 export default connect(
-	( state, ownProps ) => {
-		const siteId = get( ownProps, [ 'signupDependencies', 'originBlogId' ] );
-		const logs = siteId && requestActivityLogs( siteId, {} );
+	( state, { signupDependencies } ) => {
+		const siteId = signupDependencies?.originBlogId;
 
 		return {
 			siteId,
-			logs: ( siteId && logs.data ) || [],
 			timezone: getSiteOption( state, siteId, 'timezone' ),
 			gmtOffset: getSiteOption( state, siteId, 'gmt_offset' ),
 		};
 	},
 	{ submitSignupStep }
-)( localize( withLocalizedMoment( ClonePointStep ) ) );
+)( withActivityLog( localize( withLocalizedMoment( ClonePointStep ) ) ) );

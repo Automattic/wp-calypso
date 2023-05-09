@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { mapValues, omit } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import {
 	PLUGIN_SETUP_INSTRUCTIONS_FETCH,
 	PLUGIN_SETUP_INSTRUCTIONS_RECEIVE,

@@ -1,20 +1,12 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryPostTypes from 'calypso/components/data/query-post-types';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getEditorPostId, isEditorNewPost } from 'calypso/state/editor/selectors';
-import { getEditedPostValue } from 'calypso/state/posts/selectors';
 import { getPostType } from 'calypso/state/post-types/selectors';
+import { getEditedPostValue } from 'calypso/state/posts/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 function EditorDocumentHead( { translate, siteId, type, typeObject, newPost } ) {
 	let title;

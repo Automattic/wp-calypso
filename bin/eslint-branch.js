@@ -6,24 +6,33 @@
  * small bit of a big fail, you may get errors that weren't caused by you.
  */
 
-const path = require( 'path' );
 const child_process = require( 'child_process' );
-
-const eslintBin = path.join( '.', 'node_modules', '.bin', 'eslint' );
+const path = require( 'path' );
+const yargs = require( 'yargs' );
 
 const branchName = child_process.execSync( 'git rev-parse --abbrev-ref HEAD' ).toString().trim();
-const rev = child_process
+
+const revision = child_process
 	.execSync( 'git merge-base ' + branchName + ' trunk' )
 	.toString()
 	.trim();
+
 const files = child_process
-	.execSync( 'git diff --name-only ' + rev + '..HEAD' )
+	.execSync( 'git diff --name-only --diff-filter=d ' + revision + ' HEAD' )
 	.toString()
 	.split( '\n' )
 	.map( ( name ) => name.trim() )
 	.filter( ( name ) => /\.[jt]sx?$/.test( name ) );
 
-const lintResult = child_process.spawnSync( eslintBin, [ '--cache', ...files ], {
+const flags = [ '--cache' ];
+
+if ( yargs.argv.fix ) {
+	flags.push( '--fix' );
+}
+
+const eslintBin = path.join( '.', 'node_modules', '.bin', 'eslint' );
+
+const lintResult = child_process.spawnSync( eslintBin, [ ...flags, ...files ], {
 	shell: true,
 	stdio: 'inherit',
 } );

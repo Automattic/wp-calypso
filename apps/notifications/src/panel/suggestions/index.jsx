@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import actions from '../state/actions';
 import getSiteSuggestions from '../state/selectors/get-site-suggestions';
 import Suggestion from './suggestion';
@@ -58,8 +51,8 @@ const getSuggestionIndexBySelectedId = function ( suggestions ) {
 	return index > -1 ? index : null;
 };
 
-class Suggestions extends React.Component {
-	suggestionList = React.createRef();
+class Suggestions extends Component {
+	suggestionList = createRef();
 	suggestionNodes = {};
 	state = {};
 

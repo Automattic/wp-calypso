@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import i18n from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import accept from 'calypso/lib/accept';
 import { getSiteTitle } from 'calypso/state/sites/selectors';
 import { deleteTheme } from 'calypso/state/themes/actions/delete-theme';
@@ -19,7 +12,6 @@ import 'calypso/state/themes/init';
  *
  * @param {string} themeId -- Theme to delete
  * @param {number} siteId -- Site to delete theme from
- *
  * @returns {Function} Action thunk
  */
 export function confirmDelete( themeId, siteId ) {

@@ -1,23 +1,10 @@
-/**
- * External dependencies
- */
-import { isMobile } from '@automattic/viewport';
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { hasTouch } from 'calypso/lib/touch-detect';
-import { localize } from 'i18n-calypso';
 import { RootChild } from '@automattic/components';
-import WebPreviewContent from './content';
-
-/**
- * Style dependencies
- */
-import './style.scss';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { hasTouch } from 'calypso/lib/touch-detect';
+import WebPreviewContent from './connectedContent';
 
 const noop = () => {};
 
@@ -68,9 +55,20 @@ export class WebPreviewModal extends Component {
 		frontPageMetaDescription: PropTypes.string,
 		// A post object used to override the selected post in the SEO preview
 		overridePost: PropTypes.object,
+		// iframe's fetchpriority.
+		fetchpriority: PropTypes.string,
+		// Set height based on page content. This requires the page to post it's dimensions as message.
+		autoHeight: PropTypes.bool,
+		// Fixes the viewport width of the iframe if provided.
+		fixedViewportWidth: PropTypes.number,
+		// Prevents tabbing into the iframe.
+		disableTabbing: PropTypes.bool,
+		// Edit overlay that redirects to the Site Editor
+		enableEditOverlay: PropTypes.bool,
 	};
 
 	static defaultProps = {
+		disableTabbing: false,
 		showExternal: true,
 		showClose: true,
 		showSEO: true,
@@ -84,13 +82,12 @@ export class WebPreviewModal extends Component {
 		onEdit: noop,
 		hasSidebar: false,
 		overridePost: null,
+		autoHeight: false,
+		enableEditOverlay: false,
 	};
 
 	constructor( props ) {
 		super( props );
-
-		this._hasTouch = false;
-		this._isMobile = false;
 
 		this.state = {
 			device: props.defaultViewportDevice || 'computer',
@@ -98,12 +95,6 @@ export class WebPreviewModal extends Component {
 
 		this.keyDown = this.keyDown.bind( this );
 		this.setDeviceViewport = this.setDeviceViewport.bind( this );
-	}
-
-	UNSAFE_componentWillMount() {
-		// Cache touch and mobile detection for the entire lifecycle of the component
-		this._hasTouch = hasTouch();
-		this._isMobile = isMobile();
 	}
 
 	componentDidMount() {
@@ -146,7 +137,7 @@ export class WebPreviewModal extends Component {
 
 	render() {
 		const className = classNames( this.props.className, 'web-preview', {
-			'is-touch': this._hasTouch,
+			'is-touch': hasTouch(),
 			'is-with-sidebar': this.props.hasSidebar,
 			'is-visible': this.props.showPreview,
 			'is-computer': this.state.device === 'computer',

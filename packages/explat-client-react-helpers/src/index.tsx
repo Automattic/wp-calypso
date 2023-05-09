@@ -1,14 +1,8 @@
-/**
- * External dependencies
- */
-import React, { useState, useEffect } from 'react';
-
-/**
- * WordPress dependencies
- */
+import { useState, useEffect } from 'react';
+import * as React from 'react';
 import type { ExPlatClient, ExperimentAssignment } from '@automattic/explat-client';
 
-interface ExperimentOptions {
+export interface ExperimentOptions {
 	/**
 	 * Determines whether a participant is currenlty eligible for an assignment.
 	 * - Only loads the experimentAssignment if isEligible is true.
@@ -21,7 +15,7 @@ const defaultExperimentOptions = {
 	isEligible: true,
 };
 
-interface ExPlatClientReactHelpers {
+export interface ExPlatClientReactHelpers {
 	/**
 	 * An ExPlat useExperiment hook.
 	 *
@@ -119,7 +113,7 @@ export default function createExPlatClientReactHelpers(
 		loadingExperience: React.ReactNode;
 		name: string;
 		options?: ExperimentOptions;
-	} ): JSX.Element => {
+	} ) => {
 		const [ isLoading, experimentAssignment ] = useExperiment( experimentName, options );
 		if ( isLoading ) {
 			return <>{ loadingExperience }</>;
@@ -140,7 +134,7 @@ export default function createExPlatClientReactHelpers(
 		) => JSX.Element;
 		name: string;
 		options?: ExperimentOptions;
-	} ): JSX.Element => {
+	} ) => {
 		const [ isLoading, experimentAssignment ] = useExperiment( experimentName, options );
 		return children( isLoading, experimentAssignment );
 	};

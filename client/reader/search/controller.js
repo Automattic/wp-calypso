@@ -1,21 +1,13 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import page from 'page';
 import { stringify } from 'qs';
-
-/**
- * Internal dependencies
- */
-import { recordTrack } from 'calypso/reader/stats';
+import AsyncLoad from 'calypso/components/async-load';
 import {
 	trackPageLoad,
 	trackUpdatesLoaded,
 	trackScrollPage,
 } from 'calypso/reader/controller-helper';
-import AsyncLoad from 'calypso/components/async-load';
 import { SEARCH_TYPES } from 'calypso/reader/search-stream/search-stream-header';
+import { recordTrack } from 'calypso/reader/stats';
 
 const analyticsPageTitle = 'Reader';
 
@@ -37,13 +29,11 @@ const exported = {
 		const { sort = 'relevance', q, show = SEARCH_TYPES.POSTS } = context.query;
 		const searchSlug = q;
 
-		let streamKey;
+		let streamKey = 'custom_recs_sites_with_images';
 		let isQuerySuggestion = false;
 		if ( searchSlug ) {
 			streamKey = 'search:' + JSON.stringify( { sort, q } );
 			isQuerySuggestion = context.query.isSuggestion === '1';
-		} else {
-			streamKey = 'custom_recs_posts_with_images';
 		}
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
@@ -83,7 +73,7 @@ const exported = {
 				) }
 				onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
 				showBack={ false }
-				showPrimaryFollowButtonOnCards={ true }
+				showPrimaryFollowButtonOnCards={ false }
 				autoFocusInput={ autoFocusInput }
 				onQueryChange={ reportQueryChange }
 				onSortChange={ reportSortChange }

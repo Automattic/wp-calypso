@@ -1,17 +1,11 @@
-/**
- * External dependencies
- */
 import { get } from 'lodash';
 
-/**
- * Internal dependencies
- */
 import 'calypso/state/site-settings/init';
 
 /**
  * Returns the site's UTC offset as a number.
  *
- * @param  {object}  state - Global state tree
+ * @param  {Object}  state - Global state tree
  * @param  {number}  siteId - Site ID
  * @returns {?number} site UTC offset
  */

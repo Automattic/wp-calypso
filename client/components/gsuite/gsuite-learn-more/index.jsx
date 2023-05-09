@@ -1,19 +1,9 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { ADDING_GSUITE_TO_YOUR_SITE } from 'calypso/lib/url/support';
+import PropTypes from 'prop-types';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
+import { ADDING_GSUITE_TO_YOUR_SITE } from 'calypso/lib/url/support';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};
@@ -37,7 +27,7 @@ const GSuiteLearnMore = ( { onLearnMoreClick, productSlug } ) => {
 							a: (
 								<a
 									className="gsuite-learn-more__link"
-									href={ ADDING_GSUITE_TO_YOUR_SITE }
+									href={ localizeUrl( ADDING_GSUITE_TO_YOUR_SITE ) }
 									target="_blank"
 									rel="noopener noreferrer"
 									onClick={ onLearnMoreClick }

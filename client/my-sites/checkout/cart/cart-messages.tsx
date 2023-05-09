@@ -1,38 +1,42 @@
-/**
- * External dependencies
- */
-import React, { useCallback, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-import type { TranslateResult } from 'i18n-calypso';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { useShoppingCart } from '@automattic/shopping-cart';
 import { useDisplayCartMessages } from '@automattic/wpcom-checkout';
-import type { ResponseCart, ResponseCartMessage } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
+import { useTranslate } from 'i18n-calypso';
+import { useCallback, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { JETPACK_SUPPORT } from 'calypso/lib/url/support';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { errorNotice, successNotice, removeNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { JETPACK_SUPPORT } from 'calypso/lib/url/support';
+import type { ResponseCartMessage } from '@automattic/shopping-cart';
+import type { CalypsoDispatch } from 'calypso/state/types';
+import type { TranslateResult } from 'i18n-calypso';
 
-function CartMessage( { message }: { message: ResponseCartMessage } ): JSX.Element {
+function CartMessage( { message }: { message: ResponseCartMessage } ) {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const translate = useTranslate();
 
-	const getPrettyMessage = useMemo( () => getMessagePrettifier( translate, selectedSiteSlug ), [
-		translate,
-		selectedSiteSlug,
-	] );
+	const getPrettyMessage = useMemo(
+		() => getMessagePrettifier( translate, selectedSiteSlug ),
+		[ translate, selectedSiteSlug ]
+	);
 	return <>{ getPrettyMessage( message ) }</>;
 }
 
 export default function CartMessages( {
-	cart,
-	isLoadingCart,
+	shouldShowPersistentErrors,
 }: {
-	cart: ResponseCart;
-	isLoadingCart: boolean;
+	/**
+	 * Persistent errors like "Purchases are disabled for this site" are returned
+	 * during cart fetch (regular cart errors are transient and only are returned
+	 * when changing the cart). We want to display these errors only in certain
+	 * contexts where they will make sense (like checkout), not in every place
+	 * that happens to render this component (like the plans page).
+	 */
+	shouldShowPersistentErrors?: boolean;
 } ): null {
+	const cartKey = useCartKey();
+	const { responseCart: cart, isLoading: isLoadingCart } = useShoppingCart( cartKey );
 	const reduxDispatch = useDispatch();
 
 	const showErrorMessages = useCallback(
@@ -54,6 +58,7 @@ export default function CartMessages( {
 		isLoadingCart,
 		showErrorMessages,
 		showSuccessMessages,
+		shouldShowPersistentErrors: shouldShowPersistentErrors ?? false,
 	} );
 
 	return null;
@@ -116,7 +121,7 @@ function getInvalidMultisitePurchaseErrorMessage( {
 		<>
 			{ message }&nbsp;
 			<a
-				href={ JETPACK_SUPPORT + 'backup/#does-jetpack-backup-support-multisite' }
+				href={ localizeUrl( JETPACK_SUPPORT ) + 'backup/#does-jetpack-backup-support-multisite' }
 				target="_blank"
 				rel="noopener noreferrer"
 			>
@@ -163,7 +168,7 @@ function getNoticeIdForMessage( message: ResponseCartMessage ): string {
 
 function showMessages(
 	messages: ResponseCartMessage[],
-	reduxDispatch: ReturnType< typeof useDispatch >,
+	reduxDispatch: CalypsoDispatch,
 	messageType: 'error' | 'success'
 ): void {
 	const messageActionCreator = messageType === 'error' ? errorNotice : successNotice;

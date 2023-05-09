@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
+import config from '@automattic/calypso-config';
+import { Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { Button } from '@automattic/components';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import getRemovableConnections from 'calypso/state/selectors/get-removable-connections';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const SharingServiceAction = ( {
 	isConnecting,
@@ -26,6 +19,7 @@ const SharingServiceAction = ( {
 	translate,
 	recordTracksEvent,
 	path,
+	isExpanded,
 } ) => {
 	let warning = false;
 	let label;
@@ -46,7 +40,6 @@ const SharingServiceAction = ( {
 		label = translate( 'Reconnecting…', {
 			context: 'Sharing: Publicize reconnect pending button label',
 		} );
-		warning = true;
 	} else if ( isConnecting ) {
 		label = translate( 'Connecting…', {
 			context: 'Sharing: Publicize connect pending button label',
@@ -59,14 +52,11 @@ const SharingServiceAction = ( {
 		} else {
 			label = translate( 'Disconnect', { context: 'Sharing: Publicize disconnect button label' } );
 		}
-		if ( 'must-disconnect' === status ) {
-			warning = true;
-		}
+		warning = true;
 	} else if ( 'reconnect' === status || 'refresh-failed' === status ) {
 		label = translate( 'Reconnect', {
 			context: 'Sharing: Publicize reconnect pending button label',
 		} );
-		warning = true;
 	} else {
 		label = translate( 'Connect', { context: 'Sharing: Publicize connect pending button label' } );
 	}
@@ -78,6 +68,15 @@ const SharingServiceAction = ( {
 		return (
 			<Button compact disabled={ true }>
 				{ label }
+			</Button>
+		);
+	}
+
+	// See: https://developers.google.com/photos/library/guides/ux-guidelines
+	if ( 'google_photos' === service.ID && ! path.startsWith( '/marketing/connections/' ) ) {
+		return (
+			<Button primary onClick={ onClick } disabled={ isPending }>
+				{ translate( 'Connect to Google Photos' ) }
 			</Button>
 		);
 	}
@@ -108,9 +107,35 @@ const SharingServiceAction = ( {
 		);
 	}
 
+	if ( 'mastodon' === service.ID && config.isEnabled( 'mastodon' ) ) {
+		return (
+			<Button
+				scary={ warning }
+				compact
+				onClick={
+					[ 'connected', 'must-disconnect' ].includes( status ) && removableConnections.length >= 1
+						? onClick
+						: null
+				}
+			>
+				{ isExpanded && removableConnections.length === 0 ? (
+					<>
+						<Gridicon icon="cross-small" size={ 16 } />
+						<span>{ translate( 'Cancel' ) }</span>
+					</>
+				) : (
+					label
+				) }
+			</Button>
+		);
+	}
+
 	return (
 		<Button scary={ warning } compact onClick={ onClick } disabled={ isPending }>
-			{ label }
+			{ 'reconnect' === status || 'refresh-failed' === status || isRefreshing ? (
+				<Gridicon icon="notice-outline" size={ 16 } />
+			) : null }
+			<span>{ label }</span>
 		</Button>
 	);
 };
@@ -125,6 +150,7 @@ SharingServiceAction.propTypes = {
 	status: PropTypes.string,
 	translate: PropTypes.func,
 	recordTracksEvent: PropTypes.func,
+	isExpanded: PropTypes.bool,
 };
 
 SharingServiceAction.defaultProps = {

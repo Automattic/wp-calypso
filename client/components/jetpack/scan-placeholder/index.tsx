@@ -1,16 +1,6 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent } from 'react';
-
-/**
- * Internal dependencies
- */
+import { FunctionComponent } from 'react';
 import SecurityIcon from 'calypso/components/jetpack/security-icon';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const ScanPlaceholder: FunctionComponent = () => {

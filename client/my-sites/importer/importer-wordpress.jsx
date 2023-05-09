@@ -1,22 +1,16 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import FileImporter from './file-importer';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
 import importerConfig from 'calypso/lib/importer/importer-config';
+import FileImporter from './file-importer';
 
-class ImporterWordPress extends React.PureComponent {
+class ImporterWordPress extends PureComponent {
 	static displayName = 'ImporterWordPress';
 
 	static propTypes = {
 		siteTitle: PropTypes.string.isRequired,
+		isAtomic: PropTypes.bool,
+		isJetpack: PropTypes.bool,
 		importerStatus: PropTypes.shape( {
 			importerState: PropTypes.string.isRequired,
 			errorData: PropTypes.shape( {
@@ -30,6 +24,8 @@ class ImporterWordPress extends React.PureComponent {
 	render() {
 		const importerData = importerConfig( {
 			siteTitle: this.props.siteTitle,
+			isAtomic: this.props.isAtomic,
+			isJetpack: this.props.isJetpack,
 		} ).wordpress;
 
 		return <FileImporter importerData={ importerData } { ...this.props } />;

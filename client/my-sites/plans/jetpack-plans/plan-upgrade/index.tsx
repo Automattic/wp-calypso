@@ -1,42 +1,27 @@
-/**
- * External dependencies
- */
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import * as React from 'react';
 import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { getItemSlugByDuration } from './utils';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { INTRO_PRICING_DISCOUNT_PERCENTAGE } from '../constants';
 import ProductCard from '../product-card';
 import ProductGridSection from '../product-grid/section';
 import slugToSelectorProduct from '../slug-to-selector-product';
-import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-
-/**
- * Style dependencies
- */
-import './style.scss';
-
-/**
- * Type dependencies
- */
+import { getItemSlugByDuration } from './utils';
 import type { PlanRecommendation } from './types';
 import type { Duration, PurchaseCallback, PurchaseURLCallback, SelectorProduct } from '../types';
+import './style.scss';
+import type { ReactNode, FC } from 'react';
 
 type Props = {
 	planRecommendation: PlanRecommendation;
 	duration: Duration;
-	filterBar: React.ReactNode;
+	filterBar: ReactNode;
 	onSelectProduct: PurchaseCallback;
-	createButtonURL: PurchaseURLCallback;
+	createButtonURL?: PurchaseURLCallback;
 };
 
-const PlanUpgradeSection: React.FC< Props > = ( {
+const PlanUpgradeSection: FC< Props > = ( {
 	planRecommendation,
 	duration,
 	filterBar,
@@ -62,17 +47,20 @@ const PlanUpgradeSection: React.FC< Props > = ( {
 				components: {
 					product: (
 						<span className="plan-upgrade__product">
-							{ newItems.reduce( ( result, { displayName }, index ) => {
-								if ( result.length === 0 ) {
-									return [ displayName ];
-								}
+							{ newItems.reduce(
+								( result: ReactNode[], { displayName }: SelectorProduct, index: number ) => {
+									if ( result.length === 0 ) {
+										return [ displayName ];
+									}
 
-								if ( index === newItemCount - 1 ) {
-									return [ ...result, ' & ', displayName ];
-								}
+									if ( index === newItemCount - 1 ) {
+										return [ ...result, ' & ', displayName ];
+									}
 
-								return [ ...result, ', ', displayName ];
-							}, [] ) }
+									return [ ...result, ', ', displayName ];
+								},
+								[]
+							) }
 						</span>
 					),
 				},
@@ -106,7 +94,7 @@ const PlanUpgradeSection: React.FC< Props > = ( {
 					/>
 				</li>
 				<li className="plan-upgrade__separator">
-					<span className="plan-upgrade__arrow">{ '→' }</span>
+					<span className="plan-upgrade__arrow">→</span>
 				</li>
 				<li className="plan-upgrade__new-items">
 					<ul className="plan-upgrade__new-items-list">
@@ -117,7 +105,6 @@ const PlanUpgradeSection: React.FC< Props > = ( {
 									siteId={ siteId }
 									currencyCode={ currencyCode }
 									selectedTerm={ duration }
-									featuredPlans={ newPlans }
 									featuredLabel={ translate( 'Recommended for you' ) }
 									isAligned
 									hideSavingLabel

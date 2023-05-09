@@ -1,23 +1,15 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
+import { FormInputValidation } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
-import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 
-class MxRecord extends React.Component {
+class MxRecord extends Component {
 	static propTypes = {
 		fieldValues: PropTypes.object.isRequired,
 		onChange: PropTypes.func.isRequired,
@@ -35,10 +27,10 @@ class MxRecord extends React.Component {
 		return (
 			<div className={ classes }>
 				<FormFieldset>
-					<FormLabel>{ translate( 'Name', { context: 'Dns Record' } ) }</FormLabel>
+					<FormLabel>{ translate( 'Name (optional)', { context: 'Dns Record' } ) }</FormLabel>
 					<FormTextInputWithAffixes
 						name="name"
-						placeholder={ translate( 'Enter subdomain (optional)', {
+						placeholder={ translate( 'Enter subdomain', {
 							context:
 								'Placeholder shown when entering the optional subdomain part of a new DNS record',
 						} ) }
@@ -88,7 +80,6 @@ class MxRecord extends React.Component {
 						isError={ ! isAuxValid }
 						onChange={ onChange }
 						value={ fieldValues.aux }
-						defaultValue="10"
 					/>
 					{ ! isAuxValid && (
 						<FormInputValidation text={ translate( 'Invalid Priority' ) } isError />

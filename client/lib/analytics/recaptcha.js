@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
 import { loadScript } from '@automattic/load-script';
+import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:analytics:recaptcha' );
 
@@ -84,7 +77,6 @@ export async function recordGoogleRecaptchaAction( clientId, action ) {
  *
  * @param {string} elementId - a DOM id in which to render the reCAPTCHA client
  * @param {string} siteKey - reCAPTCHA site key
- *
  * @returns {number|null} either the reCAPTCHA clientId, or null if the function fails
  */
 export async function initGoogleRecaptcha( elementId, siteKey ) {

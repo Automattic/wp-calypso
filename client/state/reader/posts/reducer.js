@@ -1,12 +1,6 @@
 /* eslint-disable no-case-declarations */
-/**
- * External dependencies
- */
-import { keyBy, get, forEach } from 'lodash';
 
-/**
- * Internal dependencies
- */
+import { keyBy, get, forEach } from 'lodash';
 import {
 	READER_POSTS_RECEIVE,
 	READER_POST_SEEN,
@@ -19,9 +13,9 @@ import { combineReducers } from 'calypso/state/utils';
 /**
  * Tracks all known post objects, indexed by post ID.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export function items( state = {}, action ) {
 	switch ( action.type ) {

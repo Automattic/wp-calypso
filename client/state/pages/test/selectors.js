@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { isFrontPage, isPostsPage } from '../selectors';
 
 describe( 'selectors', () => {
@@ -28,7 +20,7 @@ describe( 'selectors', () => {
 				1
 			);
 
-			expect( result ).to.eql( true );
+			expect( result ).toEqual( true );
 		} );
 
 		test( 'should return false if the page is not set as the front page', () => {
@@ -49,7 +41,7 @@ describe( 'selectors', () => {
 				1
 			);
 
-			expect( result ).to.eql( false );
+			expect( result ).toEqual( false );
 		} );
 
 		test( 'should return false if a static page is not set as the front page', () => {
@@ -70,7 +62,7 @@ describe( 'selectors', () => {
 				1
 			);
 
-			expect( result ).to.eql( false );
+			expect( result ).toEqual( false );
 		} );
 
 		test( 'should return false if the site is not known', () => {
@@ -84,7 +76,7 @@ describe( 'selectors', () => {
 				1
 			);
 
-			expect( result ).to.equal( false );
+			expect( result ).toEqual( false );
 		} );
 	} );
 
@@ -106,7 +98,7 @@ describe( 'selectors', () => {
 				1
 			);
 
-			expect( result ).to.eql( true );
+			expect( result ).toEqual( true );
 		} );
 
 		test( 'should return false if the page is not set as the posts page', () => {
@@ -126,7 +118,7 @@ describe( 'selectors', () => {
 				1
 			);
 
-			expect( result ).to.eql( false );
+			expect( result ).toEqual( false );
 		} );
 
 		test( 'should return false if the site is not known', () => {
@@ -140,7 +132,7 @@ describe( 'selectors', () => {
 				1
 			);
 
-			expect( result ).to.equal( false );
+			expect( result ).toEqual( false );
 		} );
 	} );
 } );

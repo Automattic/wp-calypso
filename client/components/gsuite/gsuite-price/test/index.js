@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import renderer from 'react-test-renderer';
-
-/**
- * Internal dependencies
- */
 import GSuitePrice from '../';
 
 describe( 'GSuitePrice', () => {
@@ -23,9 +15,7 @@ describe( 'GSuitePrice', () => {
 	};
 
 	test( 'renders correctly', () => {
-		const tree = renderer
-			.create( <GSuitePrice product={ product } currencyCode={ 'EUR' } /> )
-			.toJSON();
+		const tree = renderer.create( <GSuitePrice product={ product } currencyCode="EUR" /> ).toJSON();
 
 		expect( tree ).toMatchSnapshot();
 	} );

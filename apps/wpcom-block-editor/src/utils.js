@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { select, subscribe } from '@wordpress/data';
 
 /**
@@ -21,7 +18,7 @@ export function inIframe() {
  * Sends a message object to the parent. The object is extended to include a type that
  * identifies the source as Gutenberg related.
  *
- * @param {object} message object containing the action to be performed on the parent and any require options
+ * @param {Object} message object containing the action to be performed on the parent and any require options
  */
 export function sendMessage( message ) {
 	if ( ! window || ! window.parent ) {
@@ -32,9 +29,32 @@ export function sendMessage( message ) {
 }
 
 /**
- * Indicates if the block editor has been initialized with blocks.
+ * Indicates if the block editor has been initialized.
  *
  * @returns {Promise} Promise that resolves when the editor has been initialized.
+ */
+export const isEditorReady = async () =>
+	new Promise( ( resolve ) => {
+		const unsubscribe = subscribe( () => {
+			// Calypso sends the message as soon as the iframe is loaded, so we
+			// need to be sure that the editor is initialized and the core blocks
+			// registered. There is an unstable selector for that, so we use
+			// `isCleanNewPost` otherwise which is triggered when everything is
+			// initialized if the post is new.
+			const editorIsReady = select( 'core/editor' ).__unstableIsEditorReady
+				? select( 'core/editor' ).__unstableIsEditorReady()
+				: select( 'core/editor' ).isCleanNewPost();
+			if ( editorIsReady ) {
+				unsubscribe();
+				resolve();
+			}
+		} );
+	} );
+
+/**
+ * Indicates if the block editor has been initialized with blocks.
+ *
+ * @returns {Promise} Promise that resolves when the editor has been initialized with blocks.
  */
 export const isEditorReadyWithBlocks = async () =>
 	new Promise( ( resolve ) => {
@@ -70,6 +90,5 @@ export const getPages = async () =>
 // All end-to-end tests use a custom user agent containing this string.
 const E2E_USER_AGENT = 'wp-e2e-tests';
 
-export const isE2ETest = () => {
-	return typeof navigator !== 'undefined' && navigator.userAgent.includes( E2E_USER_AGENT ); //eslint-disable-line no-undef
-};
+export const isE2ETest = () =>
+	typeof window !== 'undefined' && window.navigator.userAgent.includes( E2E_USER_AGENT );

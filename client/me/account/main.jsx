@@ -1,93 +1,72 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import TransitionGroup from 'react-transition-group/TransitionGroup';
-import CSSTransition from 'react-transition-group/CSSTransition';
-import { localize } from 'i18n-calypso';
-import debugFactory from 'debug';
-import emailValidator from 'email-validator';
-import { debounce, flowRight as compose, get, has, map, size } from 'lodash';
-import { connect } from 'react-redux';
-import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
-import LanguagePicker from 'calypso/components/language-picker';
-import SectionHeader from 'calypso/components/section-header';
-import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
-import { protectForm } from 'calypso/lib/protect-form';
 import config from '@automattic/calypso-config';
+import { Button, Card } from '@automattic/components';
+import { canBeTranslated, getLanguage, isLocaleVariant } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
-import { supportsCssCustomProperties } from 'calypso/lib/feature-detection';
-import { Card, Button } from '@automattic/components';
-import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormTextValidation from 'calypso/components/forms/form-input-validation';
+import debugFactory from 'debug';
+import { localize } from 'i18n-calypso';
+import { debounce, flowRight as compose, get, map, size } from 'lodash';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import CSSTransition from 'react-transition-group/CSSTransition';
+import TransitionGroup from 'react-transition-group/TransitionGroup';
+import ColorSchemePicker from 'calypso/blocks/color-scheme-picker';
+import QueryUserSettings from 'calypso/components/data/query-user-settings';
+import FormattedHeader from 'calypso/components/formatted-header';
+import FormButton from 'calypso/components/forms/form-button';
+import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormLegend from 'calypso/components/forms/form-legend';
-import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import FormButton from 'calypso/components/forms/form-button';
-import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
-import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormRadio from 'calypso/components/forms/form-radio';
-import { recordGoogleEvent, recordTracksEvent, bumpStat } from 'calypso/state/analytics/actions';
-import ReauthRequired from 'calypso/me/reauth-required';
-import twoStepAuthorization from 'calypso/lib/two-step-authorization';
-import Notice from 'calypso/components/notice';
-import NoticeAction from 'calypso/components/notice/notice-action';
-import Main from 'calypso/components/main';
-import SitesDropdown from 'calypso/components/sites-dropdown';
-import ColorSchemePicker from 'calypso/blocks/color-scheme-picker';
-import { successNotice, errorNotice, removeNotice } from 'calypso/state/notices/actions';
-import { getLanguage, isLocaleVariant, canBeTranslated, localizeUrl } from 'calypso/lib/i18n-utils';
-import isRequestingMissingSites from 'calypso/state/selectors/is-requesting-missing-sites';
-import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import canDisplayCommunityTranslator from 'calypso/state/selectors/can-display-community-translator';
-import { ENABLE_TRANSLATOR_KEY } from 'calypso/lib/i18n-utils/constants';
-import AccountSettingsCloseLink from './close-link';
-import { requestGeoLocation } from 'calypso/state/data-getters';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import LanguagePicker from 'calypso/components/language-picker';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import Main from 'calypso/components/main';
+import Notice from 'calypso/components/notice';
+import SectionHeader from 'calypso/components/section-header';
+import SitesDropdown from 'calypso/components/sites-dropdown';
+import { withGeoLocation } from 'calypso/data/geo/with-geolocation';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { supportsCssCustomProperties } from 'calypso/lib/feature-detection';
+import { ENABLE_TRANSLATOR_KEY } from 'calypso/lib/i18n-utils/constants';
+import { onboardingUrl } from 'calypso/lib/paths';
+import { protectForm } from 'calypso/lib/protect-form';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import { clearStore } from 'calypso/lib/user/store';
+import wpcom from 'calypso/lib/wp';
+import AccountEmailField from 'calypso/me/account/account-email-field';
+import ReauthRequired from 'calypso/me/reauth-required';
+import { bumpStat, recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	getCurrentUserDate,
 	getCurrentUserDisplayName,
 	getCurrentUserName,
 	getCurrentUserVisibleSiteCount,
 } from 'calypso/state/current-user/selectors';
-import FormattedHeader from 'calypso/components/formatted-header';
-import wpcom from 'calypso/lib/wp';
-import { saveUnsavedUserSettings } from 'calypso/state/user-settings/thunks';
+import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
+import canDisplayCommunityTranslator from 'calypso/state/selectors/can-display-community-translator';
+import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
+import getUserSettings from 'calypso/state/selectors/get-user-settings';
+import isRequestingMissingSites from 'calypso/state/selectors/is-requesting-missing-sites';
 import {
-	cancelPendingEmailChange,
 	clearUnsavedUserSettings,
 	removeUnsavedUserSetting,
 	setUserSetting,
 } from 'calypso/state/user-settings/actions';
-import getUserSettings from 'calypso/state/selectors/get-user-settings';
-import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
-import isPendingEmailChange from 'calypso/state/selectors/is-pending-email-change';
-import QueryUserSettings from 'calypso/components/data/query-user-settings';
-import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
-import InlineSupportLink from 'calypso/components/inline-support-link';
-import { clearStore } from 'calypso/lib/user/store';
-import { getPreference } from 'calypso/state/preferences/selectors';
-import { savePreference } from 'calypso/state/preferences/actions';
+import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
+import { saveUnsavedUserSettings } from 'calypso/state/user-settings/thunks';
+import AccountSettingsCloseLink from './close-link';
+import ToggleSitesAsLandingPage from './toggle-sites-as-landing-page';
+import './style.scss';
 
 export const noticeId = 'me-settings-notice';
 const noticeOptions = {
 	id: noticeId,
 };
-
-/**
- * Style dependencies
- */
-import './style.scss';
-
-const linkDestinationKey = 'linkDestination';
-const colorSchemeKey = 'colorScheme';
 
 /**
  * Debug instance
@@ -108,7 +87,7 @@ const INTERFACE_FIELDS = [
 	'calypso_preferences',
 ];
 
-class Account extends React.Component {
+class Account extends Component {
 	constructor( props ) {
 		super( props );
 
@@ -119,7 +98,6 @@ class Account extends React.Component {
 		redirect: false,
 		submittingForm: false,
 		formsSubmitting: {},
-		changingUsername: false,
 		usernameAction: 'new',
 		validationResult: false,
 	};
@@ -153,7 +131,7 @@ class Account extends React.Component {
 	}
 
 	hasUnsavedUserSetting( settingName ) {
-		return has( this.props.unsavedUserSettings, settingName );
+		return this.props.unsavedUserSettings.hasOwnProperty( settingName );
 	}
 
 	hasUnsavedUserSettings( settingNames ) {
@@ -219,7 +197,7 @@ class Account extends React.Component {
 				previous_language:
 					this.getUserOriginalSetting( 'locale_variant' ) ||
 					this.getUserOriginalSetting( 'language' ),
-				country_code: this.props.countryCode,
+				country_code: this.props.geo?.country_short,
 			} );
 			this.saveInterfaceSettings( event );
 		}
@@ -228,26 +206,11 @@ class Account extends React.Component {
 	updateColorScheme = ( colorScheme ) => {
 		this.props.recordTracksEvent( 'calypso_color_schemes_select', { color_scheme: colorScheme } );
 		this.props.recordGoogleEvent( 'Me', 'Selected Color Scheme', 'scheme', colorScheme );
-		this.props.saveColorSchemePreference( colorScheme );
 		this.props.recordTracksEvent( 'calypso_color_schemes_save', {
 			color_scheme: colorScheme,
 		} );
 		this.props.recordGoogleEvent( 'Me', 'Saved Color Scheme', 'scheme', colorScheme );
 		this.props.bumpStat( 'calypso_changed_color_scheme', colorScheme );
-	};
-
-	getEmailAddress() {
-		return this.hasPendingEmailChange()
-			? this.getUserSetting( 'new_user_email' )
-			: this.getUserSetting( 'user_email' );
-	}
-
-	updateEmailAddress = ( event ) => {
-		const { value } = event.target;
-		const emailValidationError =
-			( '' === value && 'empty' ) || ( ! emailValidator.validate( value ) && 'invalid' ) || false;
-		this.setState( { emailValidationError } );
-		this.updateUserSetting( 'user_email', value );
 	};
 
 	updateUserLoginConfirm = ( event ) => {
@@ -403,7 +366,7 @@ class Account extends React.Component {
 	 * We handle the username (user_login) change manually through an onChange handler
 	 * so that we can also run a debounced validation on the username.
 	 *
-	 * @param {object} event Event from onChange of user_login input
+	 * @param {Object} event Event from onChange of user_login input
 	 */
 	handleUsernameChange = ( event ) => {
 		this.validateUsername();
@@ -526,37 +489,6 @@ class Account extends React.Component {
 		);
 	}
 
-	hasPendingEmailChange() {
-		return this.props.isPendingEmailChange;
-	}
-
-	renderPendingEmailChange() {
-		const { translate } = this.props;
-
-		if ( ! this.hasPendingEmailChange() ) {
-			return null;
-		}
-
-		return (
-			<Notice
-				showDismiss={ false }
-				status="is-info"
-				text={ translate(
-					'There is a pending change of your email to %(email)s. Please check your inbox for a confirmation link.',
-					{
-						args: {
-							email: this.getUserSetting( 'new_user_email' ),
-						},
-					}
-				) }
-			>
-				<NoticeAction onClick={ () => this.props.cancelPendingEmailChange() }>
-					{ translate( 'Cancel' ) }
-				</NoticeAction>
-			</Notice>
-		);
-	}
-
 	renderUsernameValidation() {
 		const { translate } = this.props;
 
@@ -603,12 +535,12 @@ class Account extends React.Component {
 	}
 
 	renderPrimarySite() {
-		const { onboardingUrl, requestingMissingSites, translate, visibleSiteCount } = this.props;
+		const { requestingMissingSites, translate, visibleSiteCount } = this.props;
 
 		if ( ! visibleSiteCount ) {
 			return (
 				<Button
-					href={ onboardingUrl + '?ref=me-account-settings' }
+					href={ onboardingUrl() + '?ref=me-account-settings' }
 					onClick={ this.getClickHandler( 'Primary Site Add New WordPress Button' ) }
 				>
 					{ translate( 'Add New Site' ) }
@@ -626,31 +558,6 @@ class Account extends React.Component {
 				onSiteSelect={ this.onSiteSelect }
 			/>
 		);
-	}
-
-	renderEmailValidation() {
-		const { translate } = this.props;
-
-		if ( ! this.hasUnsavedUserSetting( 'user_email' ) ) {
-			return null;
-		}
-
-		if ( ! this.state.emailValidationError ) {
-			return null;
-		}
-		let notice;
-		switch ( this.state.emailValidationError ) {
-			case 'invalid':
-				notice = translate( '%(email)s is not a valid email address.', {
-					args: { email: this.getUserSetting( 'user_email' ) },
-				} );
-				break;
-			case 'empty':
-				notice = translate( 'Email address can not be empty.' );
-				break;
-		}
-
-		return <FormTextValidation isError={ true } text={ notice } />;
 	}
 
 	shouldDisableAccountSubmitButton() {
@@ -754,23 +661,17 @@ class Account extends React.Component {
 
 		return (
 			<div className="account__settings-form" key="settingsForm">
-				<FormFieldset>
-					<FormLabel htmlFor="user_email">{ translate( 'Email address' ) }</FormLabel>
-					<FormTextInput
-						disabled={ this.getDisabledState( ACCOUNT_FORM_NAME ) || this.hasPendingEmailChange() }
-						id="user_email"
-						name="user_email"
-						isError={ !! this.state.emailValidationError }
-						onFocus={ this.getFocusHandler( 'Email Address Field' ) }
-						value={ this.getEmailAddress() || '' }
-						onChange={ this.updateEmailAddress }
-					/>
-					{ this.renderEmailValidation() }
-					{ this.renderPendingEmailChange() }
-					<FormSettingExplanation>
-						{ translate( 'Will not be publicly displayed' ) }
-					</FormSettingExplanation>
-				</FormFieldset>
+				<AccountEmailField
+					emailInputId="user_email"
+					emailInputName="user_email"
+					emailValidationHandler={ ( isEmailValid ) =>
+						this.setState( { emailValidationError: ! isEmailValid } )
+					}
+					isEmailControlDisabled={ this.getDisabledState( ACCOUNT_FORM_NAME ) }
+					onFocus={ this.getFocusHandler( 'Email Address Field' ) }
+					unsavedUserSettings={ this.props.unsavedUserSettings }
+					userSettings={ this.props.userSettings }
+				/>
 
 				<FormFieldset>
 					<FormLabel htmlFor="primary_site_ID">{ translate( 'Primary site' ) }</FormLabel>
@@ -961,17 +862,29 @@ class Account extends React.Component {
 	};
 
 	render() {
-		const { markChanged, translate } = this.props;
+		const { isFetching, markChanged, translate } = this.props;
 		// Is a username change in progress?
 		const renderUsernameForm = this.hasUnsavedUserSetting( 'user_login' );
-
 		return (
 			<Main wideLayout className="account">
 				<QueryUserSettings />
 				<PageViewTracker path="/me/account" title="Me > Account Settings" />
-				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
-				<FormattedHeader brandFont headerText={ translate( 'Account settings' ) } align="left" />
+				<FormattedHeader
+					brandFont
+					headerText={ translate( 'Account settings' ) }
+					align="left"
+					subHeaderText={ translate(
+						'Adjust your account information and interface settings. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						{
+							components: {
+								learnMoreLink: (
+									<InlineSupportLink supportContext="account-settings" showIcon={ false } />
+								),
+							},
+						}
+					) }
+				/>
 
 				<SectionHeader label={ translate( 'Account Information' ) } />
 				<Card className="account__settings">
@@ -1019,6 +932,7 @@ class Account extends React.Component {
 							</FormLabel>
 							<LanguagePicker
 								disabled={ this.getDisabledState( INTERFACE_FORM_NAME ) }
+								isLoading={ isFetching }
 								languages={ languages }
 								onClick={ this.getClickHandler( 'Interface Language Field' ) }
 								valueKey="langSlug"
@@ -1041,37 +955,12 @@ class Account extends React.Component {
 
 						{ this.props.canDisplayCommunityTranslator && this.communityTranslator() }
 
-						{ this.props.isNavUnificationEnabled && (
-							<FormFieldset className="account__link-destination">
-								<FormLabel id="account__link_destination" htmlFor="link_destination">
-									{ translate( 'Dashboard appearance' ) }
-								</FormLabel>
-								<ToggleControl
-									checked={ this.props.linkDestination }
-									onChange={ this.props.saveLinkDestinationPreference }
-									disabled={ this.getDisabledState( INTERFACE_FORM_NAME ) }
-									label={
-										<>
-											{ translate(
-												'{{spanlead}}Show wp-admin pages if available{{/spanlead}} {{spanextra}}Replace your dashboard pages with more advanced wp-admin equivalents.{{/spanextra}}',
-												{
-													components: {
-														spanlead: <strong className="account__link-destination-label-lead" />,
-														spanextra: <span className="account__link-destination-label-extra" />,
-													},
-												}
-											) }
-											<InlineSupportLink
-												supportPostId={ 80368 }
-												supportLink={ localizeUrl(
-													'https://wordpress.com/support/account-settings/#dashboard-appearance'
-												) }
-											/>
-										</>
-									}
-								/>
-							</FormFieldset>
-						) }
+						<FormFieldset className="account__settings-admin-home">
+							<FormLabel id="account__default_landing_page">
+								{ translate( 'Admin home' ) }
+							</FormLabel>
+							<ToggleSitesAsLandingPage />
+						</FormFieldset>
 
 						{ config.isEnabled( 'me/account/color-scheme-picker' ) &&
 							supportsCssCustomProperties() && (
@@ -1080,11 +969,8 @@ class Account extends React.Component {
 										{ translate( 'Dashboard color scheme' ) }
 									</FormLabel>
 									<ColorSchemePicker
-										temporarySelection
 										disabled={ this.getDisabledState( INTERFACE_FORM_NAME ) }
-										defaultSelection={
-											this.props.isNavUnificationEnabled ? 'classic-dark' : 'classic-bright'
-										}
+										defaultSelection="classic-dark"
 										onSelection={ this.updateColorScheme }
 									/>
 								</FormFieldset>
@@ -1099,25 +985,24 @@ class Account extends React.Component {
 }
 
 export default compose(
+	localize,
+	withLocalizedMoment,
+	withGeoLocation,
+	protectForm,
 	connect(
 		( state ) => ( {
 			canDisplayCommunityTranslator: canDisplayCommunityTranslator( state ),
-			countryCode: requestGeoLocation().data,
 			currentUserDate: getCurrentUserDate( state ),
 			currentUserDisplayName: getCurrentUserDisplayName( state ),
 			currentUserName: getCurrentUserName( state ),
-			isPendingEmailChange: isPendingEmailChange( state ),
+			isFetching: isFetchingUserSettings( state ),
 			requestingMissingSites: isRequestingMissingSites( state ),
 			userSettings: getUserSettings( state ),
 			unsavedUserSettings: getUnsavedUserSettings( state ),
 			visibleSiteCount: getCurrentUserVisibleSiteCount( state ),
-			onboardingUrl: getOnboardingUrl( state ),
-			isNavUnificationEnabled: isNavUnificationEnabled( state ),
-			linkDestination: getPreference( state, linkDestinationKey ),
 		} ),
 		{
 			bumpStat,
-			cancelPendingEmailChange,
 			clearUnsavedUserSettings,
 			errorNotice,
 			removeNotice,
@@ -1127,13 +1012,6 @@ export default compose(
 			saveUnsavedUserSettings,
 			setUserSetting,
 			successNotice,
-			saveLinkDestinationPreference: ( linkDestination ) =>
-				savePreference( linkDestinationKey, linkDestination ),
-			saveColorSchemePreference: ( newColorScheme ) =>
-				savePreference( colorSchemeKey, newColorScheme ),
 		}
-	),
-	localize,
-	withLocalizedMoment,
-	protectForm
+	)
 )( Account );

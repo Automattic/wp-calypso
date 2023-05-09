@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import debugFactory from 'debug';
-import page from 'page';
 import url from 'url';
+import debugFactory from 'debug';
 import { pick } from 'lodash';
+import page from 'page';
+import * as React from 'react';
 
-/**
- * Internal dependencies
- */
 const debug = debugFactory( 'calypso:url-search' );
 
 /**
@@ -22,11 +15,10 @@ const debug = debugFactory( 'calypso:url-search' );
  *     queryKey: 'q',
  *    } --> 'wordpress.com/read/search?q=reader+is+super+awesome'
  *
- * @param {object} options the options object
+ * @param {Object} options the options object
  * @param {string} options.uri the base uri to modify and add a query to
  * @param {string} options.search the search term
  * @param {string} [options.queryKey = s] the key to place in the url.  defaults to s
- *
  * @returns {string} The built search url
  */
 export const buildSearchUrl = ( { uri, search, queryKey = 's' } ) => {

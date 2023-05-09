@@ -1,25 +1,17 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { WORDADS_SETTINGS_REQUEST, WORDADS_SETTINGS_SAVE } from 'calypso/state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { saveJetpackSettings } from 'calypso/state/jetpack/settings/actions';
+import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import getWordadsSettings from 'calypso/state/selectors/get-wordads-settings';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	saveWordadsSettingsFailure,
 	saveWordadsSettingsSuccess,
 	updateWordadsSettings,
 } from 'calypso/state/wordads/settings/actions';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { saveJetpackSettings } from 'calypso/state/jetpack/settings/actions';
 
 const noop = () => {};
 
@@ -37,8 +29,8 @@ const receiveWordadsSettings = ( { siteId }, settings ) =>
 /**
  * Dispatches a request to fetch WordAds settings for a given site
  *
- * @param   {object}   action         Redux action
- * @returns {object}   Dispatched http action
+ * @param   {Object}   action         Redux action
+ * @returns {Object}   Dispatched http action
  */
 export const requestWordadsSettings = ( action ) => {
 	const { siteId } = action;
@@ -56,8 +48,8 @@ export const requestWordadsSettings = ( action ) => {
 /**
  * Dispatches a request to save particular settings on a site
  *
- * @param   {object} action Redux action
- * @returns {object} Dispatched http action
+ * @param   {Object} action Redux action
+ * @returns {Object} Dispatched http action
  */
 export const saveWordadsSettings = ( action ) => ( dispatch, getState ) => {
 	const { settings, siteId } = action;

@@ -1,10 +1,11 @@
+const { promises: fs, constants: fsConstants } = require( 'fs' );
 const os = require( 'os' );
 const path = require( 'path' );
-const fs = require( 'fs' ).promises;
-const fsConstants = require( 'fs' ).constants;
 
 const getShellRc = () => {
-	if ( ! process.env.SHELL ) return null;
+	if ( ! process.env.SHELL ) {
+		return null;
+	}
 
 	if ( process.env.SHELL.match( /zsh/ ) ) {
 		return path.join( process.env.HOME, '.zshrc' );

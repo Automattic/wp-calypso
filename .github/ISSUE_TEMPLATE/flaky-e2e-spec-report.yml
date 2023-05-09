@@ -1,0 +1,27 @@
+name: Flaky E2E Spec Report
+description: Report an intermittently failing E2E test.
+title: "Flaky E2E: "
+labels: "[Type] Flaky E2E"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a flaky spec!
+  - type: input
+    id: spec
+    attributes:
+      label: Spec file
+      placeholder: eg. wp-likes__post.js
+  - type: input
+    id: teamcity_id
+    attributes:
+      label: TeamCity ID
+      description: Digits present at end of URL like https://teamcity.a8c.com/.../id
+      placeholder: eg. 648729
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Add relevant logs.
+    validations:
+      required: true

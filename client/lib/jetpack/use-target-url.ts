@@ -1,15 +1,9 @@
-/**
- * External dependencies
- */
 import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import isJetpackCloudEligible from 'calypso/state/selectors/is-jetpack-cloud-eligible';
 import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import type { AppState } from 'calypso/types';
 
 /**
  * Constants
@@ -37,7 +31,7 @@ export function useTargetUrl( siteId: number | null ) {
 		isJetpackCloudEligible( state, siteId as number )
 	);
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId as number ) );
-	const shouldUseJetpackPath = useSelector( ( state ) =>
+	const shouldUseJetpackPath = useSelector( ( state: AppState ) =>
 		isJetpackSectionEnabledForSite( state, siteId )
 	);
 
@@ -57,7 +51,7 @@ export function useTargetUrl( siteId: number | null ) {
 			return source;
 		}
 
-		return paths[ source ].replace( '[site]', siteSlug );
+		return paths[ source ].replace( '[site]', siteSlug ?? '' );
 	};
 
 	return sourceToUrl;

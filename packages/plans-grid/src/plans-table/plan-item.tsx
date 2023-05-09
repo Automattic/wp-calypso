@@ -1,25 +1,16 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
-import classNames from 'classnames';
+import { useLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { sprintf } from '@wordpress/i18n';
-import { useI18n } from '@wordpress/react-i18n';
-import { useLocale } from '@automattic/i18n-utils';
 import { useSelect } from '@wordpress/data';
+import { sprintf } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
-
-import type { DomainSuggestions, Plans } from '@automattic/data-stores';
-
-/**
- * Internal dependencies
- */
+import { useI18n } from '@wordpress/react-i18n';
+import classNames from 'classnames';
+import * as React from 'react';
 import PlansFeatureList from '../plans-feature-list';
 import { PLANS_STORE } from '../stores';
-
 import type { CTAVariation, PopularBadgeVariation } from './types';
+import type { DomainSuggestions, Plans, PlansSelect } from '@automattic/data-stores';
 
 // TODO: remove when all needed core types are available
 /*#__PURE__*/ import '../types-patch';
@@ -61,6 +52,8 @@ export interface Props {
 	disabledLabel?: string;
 	CTAVariation?: CTAVariation;
 	popularBadgeVariation?: PopularBadgeVariation;
+	popularBadgeText?: string;
+	CTAButtonLabel?: string;
 }
 
 // NOTE: there is some duplicate markup between this plan item (used in the
@@ -85,12 +78,15 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 	CTAVariation = 'NORMAL',
 	popularBadgeVariation = 'ON_TOP',
 	isSelected,
+	popularBadgeText,
+	CTAButtonLabel,
 } ) => {
 	const { __, hasTranslation } = useI18n();
 	const locale = useLocale();
 
-	const planProduct = useSelect( ( select ) =>
-		select( PLANS_STORE ).getPlanProduct( slug, billingPeriod )
+	const planProduct = useSelect(
+		( select ) => ( select( PLANS_STORE ) as PlansSelect ).getPlanProduct( slug, billingPeriod ),
+		[ slug, billingPeriod ]
 	);
 
 	const [ isOpenInternalState, setIsOpenInternalState ] = React.useState( false );
@@ -106,7 +102,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 
 	const isOpen = allPlansExpanded || isDesktop || isPopular || isOpenInternalState;
 
-	const normalCtaLabelFallback = __( 'Choose', __i18n_text_domain__ );
+	const normalCtaLabelFallback = CTAButtonLabel ?? __( 'Choose', __i18n_text_domain__ );
 	const fullWidthCtaLabelSelected = __( 'Current Selection', __i18n_text_domain__ );
 	// translators: %s is a WordPress.com plan name (eg: Free, Personal)
 	const fullWidthCtaLabelUnselected = __( 'Select %s', __i18n_text_domain__ );
@@ -126,6 +122,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 
 	const expandToggleLabelExpanded = __( 'Collapse all plans', __i18n_text_domain__ );
 	const expandToggleLabelCollapsed = __( 'Expand all plans', __i18n_text_domain__ );
+	const displayedPopularBadgeText = popularBadgeText ?? __( 'Popular', __i18n_text_domain__ );
 
 	return (
 		<div
@@ -136,7 +133,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 			} ) }
 		>
 			{ isPopular && popularBadgeVariation === 'ON_TOP' && (
-				<span className="plan-item__badge">{ __( 'Popular', __i18n_text_domain__ ) }</span>
+				<span className="plan-item__badge">{ displayedPopularBadgeText }</span>
 			) }
 			<div className={ classNames( 'plan-item__viewport', { 'is-popular': isPopular } ) }>
 				<div className="plan-item__details">

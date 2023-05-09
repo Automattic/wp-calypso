@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { requestSiteBlocks } from 'calypso/state/reader/site-blocks/actions';
 
 class QuerySiteBlocks extends Component {

@@ -1,44 +1,31 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import classnames from 'classnames';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 import path from 'path';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import { ALLOWED_FILE_EXTENSIONS } from './constants';
-import { AspectRatios } from 'calypso/state/editor/image-editor/constants';
-import { Dialog } from '@automattic/components';
-import FilePicker from 'calypso/components/file-picker';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import Gravatar from 'calypso/components/gravatar';
-import { isCurrentUserUploadingGravatar } from 'calypso/state/current-user/gravatar-status/selectors';
-import { resetAllImageEditorState } from 'calypso/state/editor/image-editor/actions';
-import Spinner from 'calypso/components/spinner';
-import {
-	receiveGravatarImageFailed,
-	uploadGravatar,
-} from 'calypso/state/current-user/gravatar-status/actions';
+import { Dialog, Gridicon, Spinner } from '@automattic/components';
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import ImageEditor from 'calypso/blocks/image-editor';
-import InfoPopover from 'calypso/components/info-popover';
-import ExternalLink from 'calypso/components/external-link';
-import VerifyEmailDialog from 'calypso/components/email-verification/email-verification-dialog';
 import DropZone from 'calypso/components/drop-zone';
+import VerifyEmailDialog from 'calypso/components/email-verification/email-verification-dialog';
+import ExternalLink from 'calypso/components/external-link';
+import FilePicker from 'calypso/components/file-picker';
+import Gravatar from 'calypso/components/gravatar';
+import InfoPopover from 'calypso/components/info-popover';
 import {
 	recordTracksEvent,
 	recordGoogleEvent,
 	composeAnalytics,
 } from 'calypso/state/analytics/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { resetAllImageEditorState } from 'calypso/state/editor/image-editor/actions';
+import { AspectRatios } from 'calypso/state/editor/image-editor/constants';
+import { receiveGravatarImageFailed, uploadGravatar } from 'calypso/state/gravatar-status/actions';
+import { isCurrentUserUploadingGravatar } from 'calypso/state/gravatar-status/selectors';
+import getUserSetting from 'calypso/state/selectors/get-user-setting';
+import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
+import { ALLOWED_FILE_EXTENSIONS } from './constants';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export class EditGravatar extends Component {
@@ -136,7 +123,7 @@ export class EditGravatar extends Component {
 	renderImageEditor() {
 		if ( this.state.isEditingImage ) {
 			return (
-				<Dialog additionalClassNames={ 'edit-gravatar-modal' } isVisible={ true }>
+				<Dialog additionalClassNames="edit-gravatar-modal" isVisible={ true }>
 					<ImageEditor
 						allowedAspectRatios={ [ AspectRatios.ASPECT_1X1 ] }
 						media={ { src: this.state.image } }
@@ -167,12 +154,79 @@ export class EditGravatar extends Component {
 		} );
 	};
 
+	renderEditGravatarIsLoading = () => {
+		return (
+			<div className="edit-gravatar edit_gravatar__is-loading">
+				<div className="edit-gravatar__image-container">
+					<div className="edit-gravatar__gravatar-placeholder"></div>
+				</div>
+				<div>
+					<p className="edit-gravatar__explanation edit-gravatar__explanation-placeholder"></p>
+				</div>
+			</div>
+		);
+	};
+
+	renderGravatarProfileHidden = ( { gravatarLink, translate } ) => {
+		return (
+			<div className="edit-gravatar">
+				<div className="edit-gravatar__image-container">
+					<div className="edit-gravatar__gravatar-is-hidden">
+						<div className="edit-gravatar__label-container">
+							<Gridicon
+								icon="user"
+								size={ 96 } /* eslint-disable-line wpcalypso/jsx-gridicon-size */
+							/>
+						</div>
+					</div>
+				</div>
+				<div>
+					<p className="edit-gravatar__explanation">
+						{ translate( 'Your profile photo is hidden.' ) }
+					</p>
+					<InfoPopover className="edit-gravatar__pop-over" position="left">
+						{ translate(
+							'{{p}}The avatar you use on WordPress.com comes ' +
+								'from {{ExternalLink}}Gravatar{{/ExternalLink}}, a universal avatar service ' +
+								'(it stands for "Globally Recognized Avatar," get it?).{{/p}}' +
+								'{{p}}However, your photo and Gravatar profile are hidden, preventing' +
+								' them from appearing on any site.{{/p}}',
+							{
+								components: {
+									ExternalLink: (
+										<ExternalLink
+											href={ gravatarLink }
+											target="_blank"
+											rel="noopener noreferrer"
+											icon={ true }
+										/>
+									),
+									p: <p />,
+								},
+							}
+						) }
+					</InfoPopover>
+				</div>
+			</div>
+		);
+	};
+
 	render() {
-		const { isUploading, translate, user } = this.props;
+		const { isGravatarProfileHidden, isUploading, translate, user, additionalUploadHtml } =
+			this.props;
 		const gravatarLink = `https://gravatar.com/${ user.username || '' }`;
 		// use imgSize = 400 for caching
 		// it's the popular value for large Gravatars in Calypso
 		const GRAVATAR_IMG_SIZE = 400;
+
+		if ( this.props.isFetchingUserSettings ) {
+			return this.renderEditGravatarIsLoading();
+		}
+
+		if ( isGravatarProfileHidden ) {
+			return this.renderGravatarProfileHidden( { gravatarLink, translate } );
+		}
+
 		const icon = user.email_verified ? 'cloud-upload' : 'notice';
 		const buttonText = user.email_verified
 			? translate( 'Click to change photo' )
@@ -245,6 +299,11 @@ export class EditGravatar extends Component {
 							}
 						) }
 					</InfoPopover>
+					{ additionalUploadHtml && (
+						<FilePicker accept="image/*" onPick={ this.onReceiveFile }>
+							{ additionalUploadHtml }
+						</FilePicker>
+					) }
 				</div>
 			</div>
 		);
@@ -264,6 +323,8 @@ const recordReceiveImageEvent = () => recordTracksEvent( 'calypso_edit_gravatar_
 export default connect(
 	( state ) => ( {
 		user: getCurrentUser( state ) || {},
+		isFetchingUserSettings: isFetchingUserSettings( state ),
+		isGravatarProfileHidden: getUserSetting( state, 'gravatar_profile_hidden' ),
 		isUploading: isCurrentUserUploadingGravatar( state ),
 	} ),
 	{

@@ -1,5 +1,5 @@
-const argv = require( 'yargs' ).argv;
 const _ = require( 'lodash' );
+const argv = require( 'yargs' ).argv;
 
 const [ baseName, colorName ] = argv._;
 

@@ -1,51 +1,50 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import { connect } from 'react-redux';
-import { get } from 'lodash';
-import page from 'page';
+import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import HeaderCake from 'calypso/components/header-cake';
+import { get } from 'lodash';
+import { connect } from 'react-redux';
 import TaxonomyManager from 'calypso/blocks/taxonomy-manager';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getPostTypeTaxonomy } from 'calypso/state/post-types/taxonomies/selectors';
 import DocumentHead from 'calypso/components/data/document-head';
+import FormattedHeader from 'calypso/components/formatted-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import Main from 'calypso/components/main';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
-import config from '@automattic/calypso-config';
+import { getPostTypeTaxonomy } from 'calypso/state/post-types/taxonomies/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-const Taxonomies = ( { translate, labels, postType, site, taxonomy } ) => {
-	const goBack = () => {
-		page( '/settings/writing/' + site.slug );
-	};
+const Taxonomies = ( { translate, labels, postType, taxonomy } ) => {
+	const taxonomyName = labels.name?.toLowerCase();
 
 	return (
-		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-		<div className="main main-column" role="main">
+		<Main wideLayout className={ classnames( 'taxonomies', taxonomy ) }>
 			<ScreenOptionsTab wpAdminPath={ `edit-tags.php?taxonomy=${ taxonomy }` } />
 			<DocumentHead
 				title={ translate( 'Manage %(taxonomy)s', { args: { taxonomy: labels.name } } ) }
 			/>
-			<HeaderCake
-				onClick={ goBack }
-				className={
-					config.isEnabled( 'nav-unification/switcher' ) && 'header-cake--has-screen-options'
-				}
-			>
-				<h1>{ labels.name }</h1>
-			</HeaderCake>
+			<FormattedHeader
+				brandFont
+				headerText={ labels.name }
+				subHeaderText={ translate(
+					'Create, edit, and manage the %(taxonomy)s on your site. {{learnMoreLink/}}',
+					{
+						args: { taxonomy: taxonomyName },
+						components: {
+							learnMoreLink: (
+								<InlineSupportLink
+									key={ taxonomyName }
+									supportContext={ taxonomyName }
+									showIcon={ false }
+								/>
+							),
+						},
+					}
+				) }
+				align="left"
+				hasScreenOptions
+			/>
 			<TaxonomyManager taxonomy={ taxonomy } postType={ postType } />
-		</div>
+		</Main>
 	);
 };
 

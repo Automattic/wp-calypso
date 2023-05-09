@@ -1,6 +1,3 @@
-/* eslint-disable import/no-nodejs-modules */
-/* eslint-disable no-console */
-
 // External Dependencies
 const https = require( 'https' );
 

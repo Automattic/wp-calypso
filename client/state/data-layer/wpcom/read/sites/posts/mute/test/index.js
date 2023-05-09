@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-
-/**
- * Internal dependencies
- */
-import { requestConversationMute, receiveConversationMute } from '../';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { updateConversationFollowStatus } from 'calypso/state/reader/conversations/actions';
 import { CONVERSATION_FOLLOW_STATUS } from 'calypso/state/reader/conversations/follow-status';
+import { requestConversationMute, receiveConversationMute } from '../';
 
 describe( 'conversation-mute', () => {
 	describe( 'requestConversationMute', () => {

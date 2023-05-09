@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import { useMutation, UseMutationOptions, UseMutationResult } from 'react-query';
-
-/**
- * Internal dependencies
- */
-import { APILicense } from 'calypso/state/partner-portal/types';
+import { useMutation, UseMutationOptions, UseMutationResult } from '@tanstack/react-query';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
+import { APIError, APILicense } from 'calypso/state/partner-portal/types';
 
-interface MutationIssueLicenseVariables {
+export interface MutationIssueLicenseVariables {
 	product: string;
 }
 
@@ -22,9 +15,9 @@ function mutationIssueLicense( { product }: MutationIssueLicenseVariables ): Pro
 }
 
 export default function useIssueLicenseMutation< TContext = unknown >(
-	options?: UseMutationOptions< APILicense, Error, MutationIssueLicenseVariables, TContext >
-): UseMutationResult< APILicense, Error, MutationIssueLicenseVariables, TContext > {
-	return useMutation< APILicense, Error, MutationIssueLicenseVariables, TContext >(
+	options?: UseMutationOptions< APILicense, APIError, MutationIssueLicenseVariables, TContext >
+): UseMutationResult< APILicense, APIError, MutationIssueLicenseVariables, TContext > {
+	return useMutation< APILicense, APIError, MutationIssueLicenseVariables, TContext >(
 		mutationIssueLicense,
 		options
 	);

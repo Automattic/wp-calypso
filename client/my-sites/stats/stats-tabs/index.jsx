@@ -1,24 +1,13 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
 import classNames from 'classnames';
-import { find } from 'lodash';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { find } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import StatTab from './tab';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class StatsTabs extends React.Component {
+class StatsTabs extends Component {
 	static displayName = 'StatsTabs';
 
 	static propTypes = {
@@ -31,28 +20,19 @@ class StatsTabs extends React.Component {
 	};
 
 	render() {
-		const {
-			children,
-			data,
-			activeIndex,
-			activeKey,
-			tabs,
-			switchTab,
-			selectedTab,
-			borderless,
-		} = this.props;
+		const { children, data, activeIndex, activeKey, tabs, switchTab, selectedTab, borderless } =
+			this.props;
 		let statsTabs;
 
 		if ( data && ! children ) {
 			const activeData = find( data, { [ activeKey ]: activeIndex } );
-
 			statsTabs = tabs.map( ( tab ) => {
 				const hasData =
 					activeData && activeData[ tab.attr ] >= 0 && activeData[ tab.attr ] !== null;
 
 				const tabOptions = {
 					attr: tab.attr,
-					gridicon: tab.gridicon,
+					icon: tab.icon,
 					className: tab.className,
 					label: tab.label,
 					loading: ! hasData,

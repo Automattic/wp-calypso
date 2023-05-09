@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-
-import { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { requestEarnings } from 'calypso/state/memberships/earnings/actions';
 
 class QueryMembershipsEarnings extends Component {

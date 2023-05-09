@@ -1,15 +1,6 @@
-/* eslint-disable no-console */
-/**
- * External dependencies
- */
-
-import React, { PureComponent } from 'react';
-
-/**
- * Internal dependencies
- */
-import FoldableCard from 'calypso/components/foldable-card';
 import { Button } from '@automattic/components';
+import { PureComponent } from 'react';
+import FoldableCard from 'calypso/components/foldable-card';
 
 export default class FoldableCardExample extends PureComponent {
 	static displayName = 'FoldableCardExample';
@@ -20,6 +11,39 @@ export default class FoldableCardExample extends PureComponent {
 				<div>
 					<FoldableCard header="This is a foldable card" screenReaderText="More">
 						These are its contents
+					</FoldableCard>
+				</div>
+
+				<div>
+					<FoldableCard
+						header="This is a foldable card with smooth animation"
+						screenReaderText="More"
+						smooth
+						contentExpandedStyle={ { 'max-height': '112px' } }
+					>
+						<div style={ { padding: '16px 16px 0' } }>
+							<p>These are its contents</p>
+							<p>And some more</p>
+						</div>
+					</FoldableCard>
+				</div>
+
+				<div>
+					<FoldableCard
+						header="This is a foldable card with a really long header content area that might wrap depending on the page width of the browser being used to view this page when the summary area is not hidden."
+						screenReaderText="More"
+					>
+						These are the card's contents.
+					</FoldableCard>
+				</div>
+
+				<div>
+					<FoldableCard
+						header="This is a foldable card with a really long header content area that might wrap depending on the page width of the browser being used to view this page when the summary area is hidden."
+						hideSummary
+						screenReaderText="More"
+					>
+						These are the card's contents.
 					</FoldableCard>
 				</div>
 

@@ -1,14 +1,8 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import classNames from 'classnames';
-import Gridicon from 'gridicons'; // eslint-disable-line no-restricted-imports
+import { createElement, forwardRef, memo } from 'react';
+import Gridicon from '../gridicon';
 import type { ElementType, ComponentProps, ReactNode, Ref } from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export type TagName< P = any > = ElementType< P >; // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -20,6 +14,7 @@ type OwnProps = {
 	target?: string;
 	compact?: boolean;
 	highlight?: 'error' | 'info' | 'success' | 'warning';
+	showLinkIcon?: boolean;
 };
 
 type ElementProps< P, T extends TagName > = P &
@@ -40,6 +35,7 @@ const Card = < T extends TagName = 'div' >(
 		tagName = 'div',
 		href,
 		target,
+		showLinkIcon = true,
 		...props
 	}: Props< T >,
 	forwardedRef: Ref< any > // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -58,11 +54,13 @@ const Card = < T extends TagName = 'div' >(
 
 	return href ? (
 		<a { ...props } href={ href } target={ target } className={ elementClass } ref={ forwardedRef }>
-			<Gridicon className="card__link-indicator" icon={ target ? 'external' : 'chevron-right' } />
+			{ showLinkIcon && (
+				<Gridicon className="card__link-indicator" icon={ target ? 'external' : 'chevron-right' } />
+			) }
 			{ children }
 		</a>
 	) : (
-		React.createElement(
+		createElement(
 			tagName,
 			{ ...props, className: elementClass, ref: forwardedRef },
 			displayAsLink && (
@@ -73,7 +71,7 @@ const Card = < T extends TagName = 'div' >(
 	);
 };
 
-const ForwardedRefCard = React.forwardRef( Card );
+const ForwardedRefCard = forwardRef( Card );
 ForwardedRefCard.displayName = 'Card';
 
-export default React.memo( ForwardedRefCard );
+export default memo( ForwardedRefCard );

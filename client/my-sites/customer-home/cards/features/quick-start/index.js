@@ -1,27 +1,14 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { Button, Card, HappinessEngineersTray } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { Button, Card } from '@automattic/components';
-import { connect } from 'react-redux';
-import 'moment-timezone';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
-import HappinessEngineersTray from 'calypso/components/happiness-engineers-tray';
+import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
-import { composeAnalytics, recordTracksEvent, bumpStat } from 'calypso/state/analytics/actions';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
-import getConciergeNextAppointment from 'calypso/state/selectors/get-concierge-next-appointment';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-
-/**
- * Style dependencies
- */
+import { composeAnalytics, recordTracksEvent, bumpStat } from 'calypso/state/analytics/actions';
+import getConciergeNextAppointment from 'calypso/state/selectors/get-concierge-next-appointment';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import 'moment-timezone';
 import './style.scss';
 
 const QuickStart = ( { nextSession, reschedule, siteId, siteSlug, viewDetails } ) => {
@@ -31,7 +18,7 @@ const QuickStart = ( { nextSession, reschedule, siteId, siteSlug, viewDetails } 
 	return (
 		<>
 			{ siteId && <QueryConciergeInitial siteId={ siteId } /> }
-			<Card className="quick-start next-session">
+			<Card className="quick-start next-session customer-home__card">
 				<HappinessEngineersTray />
 				<CardHeading>{ translate( 'Your scheduled Quick Start support session:' ) }</CardHeading>
 				<table>
@@ -65,7 +52,7 @@ const QuickStart = ( { nextSession, reschedule, siteId, siteSlug, viewDetails } 
 						{ translate( 'View details' ) }
 					</Button>
 					<Button
-						className={ 'quick-start__reschedule' }
+						className="quick-start__reschedule"
 						onClick={ () => reschedule( siteId, siteSlug, nextSession.id ) }
 						borderless
 						disabled={ ! nextSession }
@@ -94,7 +81,7 @@ export default connect(
 					bumpStat( 'calypso_customer_home', 'view_quick_start_session_details' )
 				)
 			);
-			page( `/me/concierge/${ siteSlug }/book` );
+			page( `/me/quickstart/${ siteSlug }/book` );
 		},
 		reschedule: ( siteId, siteSlug, sessionId ) => ( dispatch ) => {
 			dispatch(
@@ -105,7 +92,7 @@ export default connect(
 					bumpStat( 'calypso_customer_home', 'reschedule_quick_start_session' )
 				)
 			);
-			page( `/me/concierge/${ siteSlug }/${ sessionId }/cancel` );
+			page( `/me/quickstart/${ siteSlug }/${ sessionId }/cancel` );
 		},
 	}
 )( QuickStart );

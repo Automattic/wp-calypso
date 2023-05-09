@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST,
 	AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE,
@@ -24,7 +21,7 @@ import 'calypso/state/automated-transfer/init';
  *
  * @param {number} siteId The id of the site to transfer
  * @param {window.File} pluginZip The plugin to upload and install on transferred site
- * @returns {object} An action object
+ * @returns {Object} An action object
  */
 export const initiateAutomatedTransferWithPluginZip = ( siteId, pluginZip ) => ( {
 	type: AUTOMATED_TRANSFER_INITIATE_WITH_PLUGIN_ZIP,
@@ -36,7 +33,7 @@ export const initiateAutomatedTransferWithPluginZip = ( siteId, pluginZip ) => (
  * Query the automated transfer status of a given site.
  *
  * @param {number} siteId The id of the site to query.
- * @returns {object} An action object
+ * @returns {Object} An action object
  */
 export const fetchAutomatedTransferStatus = ( siteId ) => ( {
 	type: AUTOMATED_TRANSFER_STATUS_REQUEST,
@@ -51,11 +48,10 @@ export const fetchAutomatedTransferStatus = ( siteId ) => ( {
  * current status.
  *
  * @see state/automated-transfer/constants#transferStates
- *
  * @param {number} siteId The site id to which the status belongs
  * @param {string} status The new status of the automated transfer
  * @param {string} uploadedPluginId Id of any uploaded plugin
- * @returns {object} An action object
+ * @returns {Object} An action object
  */
 export const setAutomatedTransferStatus = ( siteId, status, uploadedPluginId ) => ( {
 	type: AUTOMATED_TRANSFER_STATUS_SET,
@@ -68,19 +64,22 @@ export const setAutomatedTransferStatus = ( siteId, status, uploadedPluginId ) =
  * Report a failure of fetching Automated Transfer status (for example, the status
  * endpoint returns 404).
  *
- * @param {number} siteId The site id to which the status belongs
- * @returns {object} An action object
+ * @param {Object} param failure details
+ * @param {number} param.siteId The site id to which the status belongs
+ * @param {string} param.error The error string received
+ * @returns {Object} An action object
  */
-export const automatedTransferStatusFetchingFailure = ( siteId ) => ( {
+export const automatedTransferStatusFetchingFailure = ( { siteId, error } ) => ( {
 	type: AUTOMATED_TRANSFER_STATUS_REQUEST_FAILURE,
 	siteId,
+	error,
 } );
 
 /**
  * Indicates that we need the eligibility information for a given site
  *
  * @param {number} siteId site for requested information
- * @returns {object} Redux action
+ * @returns {Object} Redux action
  */
 export const requestEligibility = ( siteId ) => ( {
 	type: AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST,
@@ -91,10 +90,13 @@ export const requestEligibility = ( siteId ) => ( {
  * Merges given eligibility information into the app state
  *
  * @see state/automated-transfer/eligibility/reducer
- *
  * @param {number} siteId Site to which the information belongs
- * @param {object} data eligibility information to be merged into existing state
- * @returns {object} Redux action
+ * @param {Object} param eligibility information to be merged into existing state
+ * @param {Object} param.eligibilityHolds The holds for eligibility
+ * @param {Object} param.eligibilityWarnings Warnings against eligibility
+ * @param {Object} param.lastUpdate last time the state was fetched
+ * @param {Object} param.status transfer status
+ * @returns {Object} Redux action
  */
 export const updateEligibility = (
 	siteId,

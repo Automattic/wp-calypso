@@ -1,22 +1,13 @@
-/**
- * External dependencies
- */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import { clone, difference, forEach, last, map, some, take } from 'lodash';
 import classNames from 'classnames';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
+import { difference } from 'lodash';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
+import isSuggestionLabel from './helpers';
 import SuggestionsList from './suggestions-list';
 import Token from './token';
 import TokenInput from './token-input';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const debug = debugFactory( 'calypso:token-field' );
@@ -42,7 +33,7 @@ class TokenField extends PureComponent {
 				return new Error( 'Value prop is expected to be an array.' );
 			}
 
-			forEach( value, ( item ) => {
+			for ( const item of value ) {
 				if ( 'object' === typeof item ) {
 					if ( ! ( 'value' in item ) ) {
 						return new Error(
@@ -50,7 +41,7 @@ class TokenField extends PureComponent {
 						);
 					}
 				}
-			} );
+			}
 		},
 	};
 
@@ -81,6 +72,7 @@ class TokenField extends PureComponent {
 
 	state = this.constructor.initialState;
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.disabled && this.state.isActive ) {
 			this.setState( {
@@ -118,6 +110,7 @@ class TokenField extends PureComponent {
 					tabIndex="-1"
 					onMouseDown={ this._onContainerTouched }
 					onTouchStart={ this._onContainerTouched }
+					role="textbox"
 				>
 					{ this._renderTokensAndInput() }
 				</div>
@@ -136,7 +129,7 @@ class TokenField extends PureComponent {
 	}
 
 	_renderTokensAndInput = () => {
-		const components = map( this.props.value, this._renderToken );
+		const components = this.props.value.map( this._renderToken );
 
 		components.splice( this._getIndexOfInput(), 0, this._renderInput() );
 
@@ -250,7 +243,7 @@ class TokenField extends PureComponent {
 		}
 
 		this.setState( {
-			incompleteTokenValue: last( items ) || '',
+			incompleteTokenValue: items[ items.length - 1 ] || '',
 			selectedSuggestionIndex: -1,
 			selectedSuggestionScroll: false,
 		} );
@@ -345,12 +338,14 @@ class TokenField extends PureComponent {
 			match = match.toLocaleLowerCase();
 
 			suggestions.forEach( ( suggestion ) => {
-				const index = suggestion.toLocaleLowerCase().indexOf( match );
-				if ( this.props.value.indexOf( suggestion ) === -1 ) {
-					if ( index === 0 ) {
-						startsWithMatch.push( suggestion );
-					} else if ( index > 0 ) {
-						containsMatch.push( suggestion );
+				if ( ! isSuggestionLabel( suggestion ) ) {
+					const index = suggestion.toLocaleLowerCase().indexOf( match );
+					if ( this.props.value.indexOf( suggestion ) === -1 ) {
+						if ( index === 0 ) {
+							startsWithMatch.push( suggestion );
+						} else if ( index > 0 ) {
+							containsMatch.push( suggestion );
+						}
 					}
 				}
 			} );
@@ -358,7 +353,7 @@ class TokenField extends PureComponent {
 			suggestions = startsWithMatch.concat( containsMatch );
 		}
 
-		return take( suggestions, this.props.maxSuggestions );
+		return suggestions.slice( 0, this.props.maxSuggestions );
 	};
 
 	_getSelectedSuggestion = () => {
@@ -371,7 +366,7 @@ class TokenField extends PureComponent {
 		let preventDefault = false;
 		const selectedSuggestion = this._getSelectedSuggestion();
 
-		if ( selectedSuggestion ) {
+		if ( selectedSuggestion && ! isSuggestionLabel( selectedSuggestion ) ) {
 			this._addNewToken( selectedSuggestion );
 			preventDefault = true;
 		} else if ( this._inputHasValidValue() ) {
@@ -498,8 +493,8 @@ class TokenField extends PureComponent {
 		debug( '_addNewTokens: tokensToAdd', tokensToAdd );
 
 		if ( tokensToAdd.length > 0 ) {
-			const newValue = clone( this.props.value );
-			newValue.splice.apply( newValue, [ this._getIndexOfInput(), 0 ].concat( tokensToAdd ) );
+			const newValue = [ ...this.props.value ];
+			newValue.splice( this._getIndexOfInput(), 0, ...tokensToAdd );
 			debug( '_addNewTokens: onChange', newValue );
 			this.props.onChange( newValue );
 		}
@@ -521,7 +516,7 @@ class TokenField extends PureComponent {
 	};
 
 	_valueContainsToken = ( token ) => {
-		return some( this.props.value, ( item ) => {
+		return this.props.value.some( ( item ) => {
 			return this._getTokenValue( token ) === this._getTokenValue( item );
 		} );
 	};

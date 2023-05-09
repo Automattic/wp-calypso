@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import Gridicon from './gridicons';
 import actions from '../state/actions';
+import Gridicon from './gridicons';
 
 export const ListHeader = ( { isFirst, title, viewSettings } ) => (
 	<li className="wpnc__time-group-wrap">

@@ -1,25 +1,23 @@
 /**
- * External dependencies
+ * @jest-environment jsdom
  */
-import { expect } from 'chai';
-import { shallow } from 'enzyme';
-import React from 'react';
-import { spy } from 'sinon';
-
-/**
- * Internal dependencies
- */
+import { render } from '@testing-library/react';
 import { Count } from '../';
 
 describe( 'Count', () => {
-	test( 'should use the correct class name', () => {
-		const count = shallow( <Count count={ 23 } numberFormat={ ( string ) => string } /> );
-		expect( count ).to.have.className( 'count' );
+	test( 'should call provided as prop numberFormat function', () => {
+		const numberFormatSpy = jest.fn();
+		render( <Count count={ 23 } numberFormat={ numberFormatSpy } /> );
+		expect( numberFormatSpy ).toHaveBeenCalledWith( 23 );
 	} );
 
-	test( 'should call provided as prop numberFormat function', () => {
-		const numberFormatSpy = spy();
-		shallow( <Count count={ 23 } numberFormat={ numberFormatSpy } /> );
-		expect( numberFormatSpy ).to.have.been.calledWith( 23 );
+	test( 'should call `formatNumberCompact` if `compact` prop is `true`', () => {
+		const { container } = render( <Count count={ 1000 } compact /> );
+		expect( container.firstChild ).toHaveTextContent( '1.0K' );
+	} );
+
+	test( 'should render with primary class', () => {
+		const { container } = render( <Count count={ 23 } primary numberFormat={ () => {} } /> );
+		expect( container.firstChild ).toHaveClass( 'is-primary' );
 	} );
 } );

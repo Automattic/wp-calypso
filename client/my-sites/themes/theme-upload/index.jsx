@@ -1,53 +1,58 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
-import { connect } from 'react-redux';
+import {
+	PLAN_BUSINESS,
+	PLAN_WPCOM_PRO,
+	FEATURE_UPLOAD_THEMES,
+	FEATURE_UPLOAD_PLUGINS,
+	PLAN_ECOMMERCE,
+} from '@automattic/calypso-products';
+import { Card, ProgressBar, Button } from '@automattic/components';
+import debugFactory from 'debug';
+import { localize } from 'i18n-calypso';
 import { includes, find, isEmpty, flowRight } from 'lodash';
 import page from 'page';
-import { localize } from 'i18n-calypso';
-import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
-import Main from 'calypso/components/main';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import PropTypes from 'prop-types';
+import { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
+import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
+import UploadDropZone from 'calypso/blocks/upload-drop-zone';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
+import QueryActiveTheme from 'calypso/components/data/query-active-theme';
+import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
+import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import EmptyContent from 'calypso/components/empty-content';
+import FeatureExample from 'calypso/components/feature-example';
 import HeaderCake from 'calypso/components/header-cake';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import FeatureExample from 'calypso/components/feature-example';
-import { Card, ProgressBar, Button } from '@automattic/components';
-import UploadDropZone from 'calypso/blocks/upload-drop-zone';
-import EmptyContent from 'calypso/components/empty-content';
-import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
+import Main from 'calypso/components/main';
+import WpAdminAutoLogin from 'calypso/components/wpadmin-auto-login';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
+import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 // Necessary for ThanksModal
-import QueryActiveTheme from 'calypso/components/data/query-active-theme';
-import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
-import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-
+import { connectOptions } from 'calypso/my-sites/themes/theme-options';
+import {
+	getEligibility,
+	isEligibleForAutomatedTransfer,
+} from 'calypso/state/automated-transfer/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { uploadTheme, clearThemeUpload, initiateThemeTransfer } from 'calypso/state/themes/actions';
-
 import {
 	isFetchingSitePurchases,
 	hasLoadedSitePurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
-import {
-	getSelectedSiteId,
-	getSelectedSite,
-	getSelectedSiteSlug,
-} from 'calypso/state/ui/selectors';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
 import {
 	getSiteAdminUrl,
 	isJetpackSite,
 	isJetpackSiteMultiSite,
 } from 'calypso/state/sites/selectors';
+import { uploadTheme, clearThemeUpload, initiateThemeTransfer } from 'calypso/state/themes/actions';
+import { getCanonicalTheme } from 'calypso/state/themes/selectors';
+import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import {
 	isUploadInProgress,
 	isUploadComplete,
@@ -58,30 +63,18 @@ import {
 	getUploadProgressLoaded,
 	isInstallInProgress,
 } from 'calypso/state/themes/upload-theme/selectors';
-import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
-import isSiteOnAtomicPlan from 'calypso/state/selectors/is-site-on-atomic-plan';
-import siteCanUploadThemesOrPlugins from 'calypso/state/sites/selectors/can-upload-themes-or-plugins';
-import { getCanonicalTheme } from 'calypso/state/themes/selectors';
-import { connectOptions } from 'calypso/my-sites/themes/theme-options';
-import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
-import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import {
-	getEligibility,
-	isEligibleForAutomatedTransfer,
-} from 'calypso/state/automated-transfer/selectors';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import WpAdminAutoLogin from 'calypso/components/wpadmin-auto-login';
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import { PLAN_BUSINESS, FEATURE_UPLOAD_THEMES } from '@automattic/calypso-products';
+	getSelectedSiteId,
+	getSelectedSite,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
+import ThemesHeader from '../themes-header';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const debug = debugFactory( 'calypso:themes:theme-upload' );
 
-class Upload extends React.Component {
+class Upload extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,
 		selectedSite: PropTypes.object,
@@ -104,17 +97,14 @@ class Upload extends React.Component {
 	};
 
 	componentDidMount() {
-		const { siteId, inProgress, noticeType } = this.props;
+		const { siteId, inProgress } = this.props;
 		! inProgress && this.props.clearThemeUpload( siteId );
-		if ( this.props.canUploadThemesOrPlugins ) {
+		if ( this.props.isAtomic && this.props.canUploadThemesOrPlugins ) {
 			this.redirectToWpAdmin();
-		}
-
-		if ( 'purchase-success' === noticeType ) {
-			this.purchaseSuccessMessage();
 		}
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.siteId !== this.props.siteId ) {
 			const { siteId, inProgress } = nextProps;
@@ -131,7 +121,7 @@ class Upload extends React.Component {
 	};
 
 	componentDidUpdate( prevProps ) {
-		if ( this.props.canUploadThemesOrPlugins ) {
+		if ( this.props.isAtomic && this.props.canUploadThemesOrPlugins ) {
 			this.redirectToWpAdmin();
 		}
 		if ( this.props.complete && ! prevProps.complete ) {
@@ -156,11 +146,6 @@ class Upload extends React.Component {
 			} ),
 			{ duration: 5000 }
 		);
-	}
-
-	purchaseSuccessMessage() {
-		const { translate } = this.props;
-		this.props.successNotice( translate( 'Your purchase has been completed!' ) );
 	}
 
 	failureMessage() {
@@ -222,15 +207,29 @@ class Upload extends React.Component {
 	};
 
 	renderUpgradeBanner() {
-		const { siteId, translate } = this.props;
-		const redirectTo = encodeURIComponent( `/themes/upload/${ siteId }?notice=purchase-success` );
+		const { siteSlug, isCommerceTrial, eligibleForProPlan, translate } = this.props;
+		const redirectTo = encodeURIComponent( `/themes/upload/${ siteSlug }` );
+
+		let upsellPlan = PLAN_BUSINESS;
+		let title = translate( 'Upgrade to the Business plan to access the theme install features' );
+		let upgradeUrl = `/checkout/${ siteSlug }/business?redirect_to=${ redirectTo }`;
+
+		if ( isCommerceTrial ) {
+			upsellPlan = PLAN_ECOMMERCE;
+			title = translate( 'Upgrade your plan to access the theme install features' );
+			upgradeUrl = `/plans/${ siteSlug }`;
+		} else if ( eligibleForProPlan ) {
+			upsellPlan = PLAN_WPCOM_PRO;
+			title = translate( 'Upgrade to the Pro plan to access the theme install features' );
+			upgradeUrl = `/checkout/${ siteSlug }/pro?redirect_to=${ redirectTo }`;
+		}
 
 		return (
 			<UpsellNudge
-				title={ translate( 'Upgrade to the Business plan to access the theme install features' ) }
+				title={ title }
 				event="calypso_theme_install_upgrade_click"
-				href={ `/checkout/${ siteId }/business?redirect_to=${ redirectTo }` }
-				plan={ PLAN_BUSINESS }
+				href={ upgradeUrl }
+				plan={ upsellPlan }
 				feature={ FEATURE_UPLOAD_THEMES }
 				showIcon={ true }
 			/>
@@ -262,12 +261,13 @@ class Upload extends React.Component {
 
 	renderUploadCard() {
 		const {
+			canUploadThemesOrPlugins,
 			complete,
 			failed,
 			inProgress,
-			isOnAtomicPlan,
 			isJetpack,
-			isAutomatedTransfer,
+			isStandaloneJetpack,
+			isAtomic,
 			selectedSite,
 			uploadedTheme,
 		} = this.props;
@@ -275,7 +275,8 @@ class Upload extends React.Component {
 		const { showEligibility } = this.state;
 
 		const uploadAction = isJetpack ? this.props.uploadTheme : this.props.initiateThemeTransfer;
-		const isDisabled = showEligibility || ( ! isOnAtomicPlan && ! isJetpack );
+		const isDisabled =
+			! isStandaloneJetpack && ( ! canUploadThemesOrPlugins || ( ! isAtomic && showEligibility ) );
 
 		const WrapperComponent = isDisabled ? FeatureExample : Fragment;
 
@@ -287,7 +288,7 @@ class Upload extends React.Component {
 					) }
 					{ inProgress && this.renderProgressBar() }
 					{ complete && ! failed && uploadedTheme && this.renderTheme() }
-					{ complete && isAutomatedTransfer && <WpAdminAutoLogin site={ selectedSite } /> }
+					{ complete && isAtomic && <WpAdminAutoLogin site={ selectedSite } /> }
 				</Card>
 			</WrapperComponent>
 		);
@@ -300,7 +301,7 @@ class Upload extends React.Component {
 				line={ this.props.translate( 'Use the WP Admin interface instead' ) }
 				action={ this.props.translate( 'Open WP Admin' ) }
 				actionURL={ this.props.siteAdminUrl }
-				illustration={ '/calypso/images/illustrations/illustration-jetpack.svg' }
+				illustration="/calypso/images/illustrations/illustration-jetpack.svg"
 			/>
 		);
 	}
@@ -308,17 +309,18 @@ class Upload extends React.Component {
 	render() {
 		const {
 			backPath,
+			canUploadThemesOrPlugins,
 			complete,
 			isFetchingPurchases,
-			isJetpack,
+			isStandaloneJetpack,
 			isMultisite,
-			isOnAtomicPlan,
 			siteId,
 			themeId,
 			translate,
 		} = this.props;
 
-		const showUpgradeBanner = ! isFetchingPurchases && ! isOnAtomicPlan && ! isJetpack;
+		const showUpgradeBanner =
+			! isFetchingPurchases && ! canUploadThemesOrPlugins && ! isStandaloneJetpack;
 		const { showEligibility } = this.state;
 
 		if ( isMultisite ) {
@@ -337,24 +339,17 @@ class Upload extends React.Component {
 				<ThanksModal source="upload" />
 				<AutoLoadingHomepageModal source="upload" />
 
-				<FormattedHeader
-					brandFont
-					headerText={ translate( 'Themes' ) }
-					subHeaderText={ translate(
+				<ThemesHeader
+					description={ translate(
 						'If you have a theme in .zip format, you may install or update it by uploading it here. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						{
 							components: {
 								learnMoreLink: (
-									<InlineSupportLink
-										supportLink="https://wordpress.com/support/themes/uploading-setting-up-custom-themes/"
-										supportPostId={ 134784 }
-										showIcon={ false }
-									/>
+									<InlineSupportLink supportContext="themes-upload" showIcon={ false } />
 								),
 							},
 						}
 					) }
-					align="left"
 				/>
 				<HeaderCake backHref={ backPath }>{ translate( 'Install theme' ) }</HeaderCake>
 
@@ -381,6 +376,9 @@ const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const themeId = getUploadedThemeId( state, siteId );
 	const isJetpack = isJetpackSite( state, siteId );
+	const isAtomic = isSiteWpcomAtomic( state, siteId );
+	const isStandaloneJetpack = isJetpack && ! isAtomic;
+
 	const { eligibilityHolds, eligibilityWarnings } = getEligibility( state, siteId );
 	// Use this selector to take advantage of eligibility card placeholders
 	// before data has loaded.
@@ -388,18 +386,23 @@ const mapStateToProps = ( state ) => {
 	const hasEligibilityMessages = ! (
 		isEmpty( eligibilityHolds ) && isEmpty( eligibilityWarnings )
 	);
-	const canUploadThemesOrPlugins = siteCanUploadThemesOrPlugins( state, siteId );
-	const isAtomic = isSiteWpcomAtomic( state, siteId );
-	const isOnAtomicPlan = isSiteOnAtomicPlan( state, siteId );
+	const eligibleForProPlan = isEligibleForProPlan( state, siteId );
+
+	const canUploadThemesOrPlugins =
+		siteHasFeature( state, siteId, FEATURE_UPLOAD_THEMES ) ||
+		siteHasFeature( state, siteId, FEATURE_UPLOAD_PLUGINS );
+
 	const showEligibility =
-		( isAtomic || ( isOnAtomicPlan && ! isJetpack ) ) &&
-		( hasEligibilityMessages || ! isEligible || ! canUploadThemesOrPlugins );
+		canUploadThemesOrPlugins && ! isAtomic && ( hasEligibilityMessages || ! isEligible );
 
 	return {
 		siteId,
 		siteSlug: getSelectedSiteSlug( state ),
 		selectedSite: getSelectedSite( state ),
+		isAtomic,
+		isCommerceTrial: isSiteOnECommerceTrial( state, siteId ),
 		isJetpack,
+		isStandaloneJetpack,
 		inProgress: isUploadInProgress( state, siteId ),
 		complete: isUploadComplete( state, siteId ),
 		failed: hasUploadFailed( state, siteId ),
@@ -412,12 +415,11 @@ const mapStateToProps = ( state ) => {
 		installing: isInstallInProgress( state, siteId ),
 		backPath: getBackPath( state ),
 		showEligibility,
-		isAutomatedTransfer: isSiteAutomatedTransfer( state, siteId ),
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		canUploadThemesOrPlugins,
-		isOnAtomicPlan,
 		isFetchingPurchases:
 			isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
+		eligibleForProPlan,
 	};
 };
 

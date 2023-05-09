@@ -1,43 +1,34 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { Button, Dialog, Gridicon, ScreenReaderText } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import { Dialog } from '@automattic/components';
-import InlineSupportLink from 'calypso/components/inline-support-link';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import PulsingDot from 'calypso/components/pulsing-dot';
-import { trackClick } from './helpers';
+import { addQueryArgs } from 'calypso/lib/route';
+import getCustomizeOrEditFrontPageUrl from 'calypso/state/selectors/get-customize-or-edit-front-page-url';
+import getSiteUrl from 'calypso/state/selectors/get-site-url';
+import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import shouldCustomizeHomepageWithGutenberg from 'calypso/state/selectors/should-customize-homepage-with-gutenberg';
+import { requestSite } from 'calypso/state/sites/actions';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import getSiteSlug from 'calypso/state/sites/selectors/get-site-slug';
+import { clearActivated } from 'calypso/state/themes/actions';
 import {
+	doesThemeBundleUsableSoftwareSet,
 	getActiveTheme,
 	getCanonicalTheme,
 	getThemeDetailsUrl,
 	getThemeForumUrl,
-	isActivatingTheme,
 	hasActivatedTheme,
-	isThemeGutenbergFirst,
+	isActivatingTheme,
+	isInstallingTheme,
 	isWpcomTheme,
 } from 'calypso/state/themes/selectors';
-import { clearActivated } from 'calypso/state/themes/actions';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
-import { requestSite } from 'calypso/state/sites/actions';
-import getCustomizeOrEditFrontPageUrl from 'calypso/state/selectors/get-customize-or-edit-front-page-url';
-import shouldCustomizeHomepageWithGutenberg from 'calypso/state/selectors/should-customize-homepage-with-gutenberg';
-import getSiteUrl from 'calypso/state/selectors/get-site-url';
-import { addQueryArgs } from 'calypso/lib/route';
-import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { themeHasAutoLoadingHomepage } from 'calypso/state/themes/selectors/theme-has-auto-loading-homepage';
-/**
- * Style dependencies
- */
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { trackClick } from './helpers';
+import { isFullSiteEditingTheme } from './is-full-site-editing-theme';
+
 import './thanks-modal.scss';
 
 class ThanksModal extends Component {
@@ -60,18 +51,55 @@ class ThanksModal extends Component {
 		isActivating: PropTypes.bool.isRequired,
 		isThemeWpcom: PropTypes.bool.isRequired,
 		siteId: PropTypes.number,
+		isFSEActive: PropTypes.bool,
+		themeId: PropTypes.string,
 	};
 
+	constructor( props ) {
+		super( props );
+		this.state = {
+			wasInstalling: false,
+			isVisible: false,
+		};
+	}
+
+	static getDerivedStateFromProps( nextProps, prevState ) {
+		if ( nextProps.isInstalling || nextProps.isActivating || nextProps.hasActivated ) {
+			return {
+				isVisible: true,
+				wasInstalling: nextProps.isInstalling,
+			};
+		} else if ( ! nextProps.isInstalling && prevState.wasInstalling ) {
+			// There is a brief moment after installing a theme before we make the request to activate it,
+			// so let's ensure the modal is still visible in the meantime.
+			return {
+				isVisible: true,
+				wasInstalling: true,
+			};
+		}
+		return {
+			isVisible: false,
+			wasInstalling: false,
+		};
+	}
+
 	componentDidUpdate( prevProps ) {
-		// re-fetch the site to ensure we have the right cusotmizer link for FSE or not
+		// When the theme has finished activating...
 		if ( prevProps.hasActivated === false && this.props.hasActivated === true ) {
+			// re-fetch the site to ensure we have the right cusotmizer link for FSE or not
 			this.props.requestSite( this.props.siteId );
+
+			// Redirect to plugin-bundle flow for themes including software (like woocommerce)
+			const { siteSlug, doesThemeBundleUsableSoftware } = this.props;
+			if ( doesThemeBundleUsableSoftware ) {
+				const dest = `/setup/plugin-bundle?siteSlug=${ siteSlug }&comingFromThemeActivation=true`;
+				window.location.replace( dest );
+			}
 		}
 	}
 
 	onCloseModal = () => {
 		this.props.clearActivated( this.props.siteId );
-		this.setState( { show: false } );
 	};
 
 	trackClick = ( eventName, verb ) => {
@@ -115,6 +143,11 @@ class ThanksModal extends Component {
 		this.onCloseModal();
 	};
 
+	goToSiteEditor = () => {
+		this.trackClick( 'thanks modal edit site' );
+		this.onCloseModal();
+	};
+
 	renderThemeInfo = () => {
 		return this.props.translate( '{{a}}Learn more about{{/a}} this theme.', {
 			components: {
@@ -155,16 +188,18 @@ class ThanksModal extends Component {
 
 	renderContent = () => {
 		const { name: themeName, author: themeAuthor } = this.props.currentTheme;
-		const { isUsingClassicEditor, isGutenbergTheme } = this.props;
-		const promptSwitchingEditors = isUsingClassicEditor && isGutenbergTheme;
 
 		return (
 			<div>
+				<Button className="thanks-modal__button-close" onClick={ this.onCloseModal } borderless>
+					<Gridicon icon="cross-small" />
+					<ScreenReaderText>{ this.props.translate( 'Close' ) }</ScreenReaderText>
+				</Button>
 				<h1>
 					{ this.props.translate( 'Thanks for choosing {{br/}} %(themeName)s', {
 						args: { themeName },
 						components: {
-							br: promptSwitchingEditors ? null : <br />,
+							br: <br />,
 						},
 					} ) }
 				</h1>
@@ -173,23 +208,10 @@ class ThanksModal extends Component {
 						args: { themeAuthor },
 					} ) }
 				</span>
-				{ promptSwitchingEditors && (
-					<p className="thanks-modal__gutenberg-prompt">
+				{ this.props.isFSEActive && (
+					<p className="themes__thanks-modal-fse-notice">
 						{ this.props.translate(
-							'This theme is intended to work with the new WordPress editor. We recommend activating that first. {{supportLink/}}.',
-							{
-								components: {
-									supportLink: (
-										<InlineSupportLink
-											supportPostId={ 167510 }
-											supportLink="https://wordpress.com/support/replacing-the-older-wordpress-com-editor-with-the-wordpress-block-editor/"
-											showIcon={ false }
-										>
-											{ this.props.translate( 'Learn more' ) }
-										</InlineSupportLink>
-									),
-								},
-							}
+							'This theme uses the Site Editor, which lets you edit every aspect of your site with blocks, making it easier than ever to create exactly what you want.'
 						) }
 					</p>
 				) }
@@ -199,29 +221,39 @@ class ThanksModal extends Component {
 
 	renderLoading = () => {
 		return (
-			<div className="themes__thanks-modal-loading">
+			<div className="themes__thanks-modal-loading" data-testid="loadingThanksModalContent">
 				<PulsingDot active={ true } />
 			</div>
 		);
 	};
 
 	getEditSiteLabel = () => {
-		const { shouldEditHomepageWithGutenberg, hasActivated } = this.props;
+		const { shouldEditHomepageWithGutenberg, hasActivated, isFSEActive } = this.props;
+
 		if ( ! hasActivated ) {
 			return this.props.translate( 'Activating theme…' );
 		}
 
-		const gutenbergContent = this.props.translate( 'Edit homepage' );
-		const customizerContent = (
-			<>
-				<Gridicon icon="external" />
-				{ this.props.translate( 'Customize site' ) }
-			</>
-		);
+		if ( isFSEActive ) {
+			return (
+				<span className="thanks-modal__button-customize">
+					{ this.props.translate( 'Customize site' ) }
+				</span>
+			);
+		}
+
+		if ( shouldEditHomepageWithGutenberg ) {
+			return (
+				<span className="thanks-modal__button-customize">
+					{ this.props.translate( 'Edit homepage' ) }
+				</span>
+			);
+		}
 
 		return (
 			<span className="thanks-modal__button-customize">
-				{ shouldEditHomepageWithGutenberg ? gutenbergContent : customizerContent }
+				<Gridicon icon="external" />
+				{ this.props.translate( 'Customize site' ) }
 			</span>
 		);
 	};
@@ -234,7 +266,12 @@ class ThanksModal extends Component {
 	);
 
 	getButtons = () => {
-		const { shouldEditHomepageWithGutenberg, hasActivated } = this.props;
+		const {
+			shouldEditHomepageWithGutenberg,
+			hasActivated,
+			isFSEActive,
+			doesThemeBundleUsableSoftware,
+		} = this.props;
 
 		const firstButton = shouldEditHomepageWithGutenberg
 			? {
@@ -254,72 +291,81 @@ class ThanksModal extends Component {
 		return [
 			{
 				...firstButton,
-				disabled: ! hasActivated,
+				disabled: ! hasActivated || doesThemeBundleUsableSoftware,
 			},
 			{
 				action: 'customizeSite',
 				label: this.getEditSiteLabel(),
 				isPrimary: true,
-				disabled: ! hasActivated,
-				onClick: this.goToCustomizer,
+				disabled: ! hasActivated || doesThemeBundleUsableSoftware,
+				onClick: isFSEActive ? this.goToSiteEditor : this.goToCustomizer,
 				href: this.props.customizeUrl,
-				target: shouldEditHomepageWithGutenberg ? null : '_blank',
+				target: shouldEditHomepageWithGutenberg || isFSEActive ? null : '_blank',
 			},
 		];
 	};
 
 	render() {
-		const { currentTheme, hasActivated, isActivating } = this.props;
+		const { currentTheme, hasActivated, doesThemeBundleUsableSoftware } = this.props;
+
+		const shouldDisplayContent = hasActivated && currentTheme && ! doesThemeBundleUsableSoftware;
 
 		return (
 			<Dialog
 				className="themes__thanks-modal"
-				isVisible={ isActivating || hasActivated }
+				isVisible={ this.state.isVisible }
 				buttons={ this.getButtons() }
 				onClose={ this.onCloseModal }
 			>
-				{ hasActivated && currentTheme ? this.renderContent() : this.renderLoading() }
+				{ shouldDisplayContent ? this.renderContent() : this.renderLoading() }
 			</Dialog>
 		);
 	}
 }
 
-export default connect(
-	( state ) => {
+const ConnectedThanksModal = connect(
+	( state, props ) => {
 		const siteId = getSelectedSiteId( state );
 		const siteUrl = getSiteUrl( state, siteId );
-		const currentThemeId = getActiveTheme( state, siteId );
+		const currentThemeId = props.themeId ?? getActiveTheme( state, siteId );
 		const currentTheme = currentThemeId && getCanonicalTheme( state, siteId, currentThemeId );
+		const isFSEActive = isFullSiteEditingTheme( currentTheme );
 
 		// Note: Gutenberg buttons will only show if the homepage is a page.
 		const shouldEditHomepageWithGutenberg = shouldCustomizeHomepageWithGutenberg( state, siteId );
 
 		const isAtomic = isSiteAtomic( state, siteId );
 		const isJetpack = isJetpackSite( state, siteId );
-		const hasAutoLoadingHomepage = themeHasAutoLoadingHomepage( state, currentThemeId );
+		const hasAutoLoadingHomepage = themeHasAutoLoadingHomepage( state, currentThemeId, siteId );
 
 		// Atomic & Jetpack do not have auto-loading-homepage behavior, so we trigger the layout picker for them.
 		const customizeUrl =
 			( isAtomic || isJetpack ) && hasAutoLoadingHomepage
 				? addQueryArgs(
 						{ 'new-homepage': true },
-						getCustomizeOrEditFrontPageUrl( state, currentThemeId, siteId )
+						getCustomizeOrEditFrontPageUrl( state, currentThemeId, siteId, isFSEActive )
 				  )
-				: getCustomizeOrEditFrontPageUrl( state, currentThemeId, siteId );
+				: getCustomizeOrEditFrontPageUrl( state, currentThemeId, siteId, isFSEActive );
 
 		return {
 			siteId,
 			siteUrl,
+			siteSlug: getSiteSlug( state, siteId ),
 			currentTheme,
+			doesThemeBundleUsableSoftware: doesThemeBundleUsableSoftwareSet(
+				state,
+				currentThemeId,
+				siteId
+			),
 			shouldEditHomepageWithGutenberg,
 			detailsUrl: getThemeDetailsUrl( state, currentThemeId, siteId ),
 			customizeUrl,
 			forumUrl: getThemeForumUrl( state, currentThemeId, siteId ),
 			isActivating: !! isActivatingTheme( state, siteId ),
+			isInstalling: isInstallingTheme( state, currentThemeId, siteId ),
 			hasActivated: !! hasActivatedTheme( state, siteId ),
-			isUsingClassicEditor: getSelectedEditor( state, siteId ) === 'classic',
-			isGutenbergTheme: isThemeGutenbergFirst( state, currentThemeId ),
 			isThemeWpcom: isWpcomTheme( state, currentThemeId ),
+			isFSEActive,
 		};
 	},
 	{
@@ -327,3 +373,5 @@ export default connect(
 		requestSite,
 	}
 )( localize( ThanksModal ) );
+
+export default ConnectedThanksModal;

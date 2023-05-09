@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
 import freeze from 'deep-freeze';
 import { find } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { requestFollowTag, receiveFollowTag, receiveError } from '../';
 import { NOTICE_CREATE } from 'calypso/state/action-types';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { fromApi } from 'calypso/state/data-layer/wpcom/read/tags/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
 	requestFollowTag as requestFollowAction,
 	receiveTags as receiveTagsAction,
 } from 'calypso/state/reader/tags/items/actions';
+import { requestFollowTag, receiveFollowTag, receiveError } from '../';
 
 const successfulFollowResponse = freeze( {
 	subscribed: true,

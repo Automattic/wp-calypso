@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getPreference } from 'calypso/state/preferences/selectors';
 
 import 'calypso/state/guided-tours/init';

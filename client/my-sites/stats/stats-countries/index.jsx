@@ -1,21 +1,10 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import statsStrings from '../stats-strings';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import Geochart from '../geochart';
 import StatsModule from '../stats-module';
+import statsStrings from '../stats-strings';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class StatCountries extends Component {
@@ -24,10 +13,11 @@ class StatCountries extends Component {
 		path: PropTypes.string,
 		period: PropTypes.object,
 		date: PropTypes.string,
+		listItemClassName: PropTypes.string,
 	};
 
 	render() {
-		const { summary, query, period } = this.props;
+		const { summary, query, period, listItemClassName } = this.props;
 		const moduleStrings = statsStrings();
 
 		return (
@@ -36,9 +26,11 @@ class StatCountries extends Component {
 				path="countryviews"
 				period={ period }
 				showSummaryLink={ ! summary }
+				hideSummaryLink={ !! summary }
 				summary={ summary }
 				moduleStrings={ moduleStrings.countries }
 				statType="statsCountryViews"
+				listItemClassName={ listItemClassName }
 			>
 				<Geochart query={ query } />
 			</StatsModule>

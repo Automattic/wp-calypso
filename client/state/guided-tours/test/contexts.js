@@ -2,15 +2,7 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
-import { expect } from 'chai';
 import moment from 'moment';
-
-/**
- * Internal dependencies
- */
 import { isUserNewerThan } from '../contexts';
 
 jest.mock( 'calypso/layout/guided-tours/config', () => {
@@ -36,11 +28,11 @@ describe( 'selectors', () => {
 		};
 
 		test( 'should return false for users registered before a week ago', () => {
-			expect( isUserNewerThan( WEEK_IN_MILLISECONDS )( oldUser ) ).to.be.false;
+			expect( isUserNewerThan( WEEK_IN_MILLISECONDS )( oldUser ) ).toBe( false );
 		} );
 
 		test( 'should return true for users registered in the last week', () => {
-			expect( isUserNewerThan( WEEK_IN_MILLISECONDS )( newUser ) ).to.be.true;
+			expect( isUserNewerThan( WEEK_IN_MILLISECONDS )( newUser ) ).toBe( true );
 		} );
 	} );
 } );

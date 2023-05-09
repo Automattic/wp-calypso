@@ -1,16 +1,13 @@
-/**
- * Internal dependencies
- */
 import { createSelector } from '@automattic/state-utils';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 
 /**
  * Returns a site specific plan
  *
- * @param  {object} state        global state
- * @param  {number} siteId       the site id
+ * @param  {Object} state        global state
+ * @param  {number|undefined} siteId       the site id
  * @param  {string} productSlug  the plan product slug
- * @returns {object} the matching plan
+ * @returns {Object} the matching plan
  */
 export const getSitePlan = createSelector(
 	( state, siteId, productSlug ) => {

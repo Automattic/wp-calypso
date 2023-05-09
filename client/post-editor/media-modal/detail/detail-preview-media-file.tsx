@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
-import React, { useState } from 'react';
 import { localize, LocalizeProps } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { useState } from 'react';
+import * as React from 'react';
 import { url } from 'calypso/lib/media/utils';
 import MediaFile from 'calypso/my-sites/media-library/media-file';
 
@@ -41,10 +35,14 @@ const EditorMediaModalDetailPreviewMediaFile: React.FC< Props & LocalizeProps > 
 		);
 	}
 
+	const mediaUrl = url( item, {} );
+	if ( ! mediaUrl ) {
+		return null;
+	}
 	return (
 		<MediaFile
 			component={ component }
-			src={ url( item, {} ) }
+			src={ mediaUrl }
 			maxSize={ 20 * 1024 * 1024 }
 			onError={ () => setPreviewUnavailable( true ) }
 			controls

@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { find } from 'lodash';
 
 import 'calypso/state/reader/init';

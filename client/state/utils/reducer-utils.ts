@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
 import { get, mapValues, reduce } from 'lodash';
 import { combineReducers as combine } from 'redux'; // eslint-disable-line no-restricted-imports
-import type { Reducer, AnyAction, Action } from 'redux';
-
-/**
- * Internal dependencies
- */
-import { serialize, deserialize } from './serialize';
-import type { SerializableReducer } from './serialize';
 import { APPLY_STORED_STATE } from 'calypso/state/action-types';
 import { SerializationResult } from 'calypso/state/serialization-result';
+import { serialize, deserialize } from './serialize';
+import type { SerializableReducer } from './serialize';
+import type { Reducer, AnyAction, Action } from 'redux';
 
 export interface CombinedReducer extends SerializableReducer {
 	storageKey?: string;
@@ -113,7 +106,6 @@ export function addReducer(
  * ```
  *
  * Persistence must be enabled explicitly with the `withPersistence` helper.
- *
  * @example
  * ```js
  * const date = withPersistence(
@@ -146,7 +138,6 @@ export function addReducer(
  * serialize( combinedReducer, { date: new Date( 6 ), height: 123 } ); // { date: 6 };
  * combinedReducer( { date: new Date( 6 ), height: 123 } ), { type: GROW } ); // { date: new Date( 7 ), height: 124 };
  * ```
- *
  * @param reducers - object containing the reducers to merge
  * @returns - Returns the combined reducer function
  */

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import 'calypso/state/ui/init';
 
 export function isSharePanelOpen( state, postGlobalId ) {

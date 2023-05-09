@@ -1,9 +1,11 @@
+const path = require( 'path' );
+const { nodeConfig } = require( '@automattic/calypso-eslint-overrides' );
 const { merge } = require( 'lodash' );
 const reactVersion = require( './client/package.json' ).dependencies.react;
-const path = require( 'path' );
 
 module.exports = {
 	root: true,
+	parser: '@typescript-eslint/parser',
 	parserOptions: {
 		babelOptions: {
 			configFile: path.join( __dirname, './babel.config.js' ),
@@ -57,35 +59,8 @@ module.exports = {
 			},
 		},
 		{
-			files: [ 'bin/**/*' ],
-			rules: {
-				'import/no-nodejs-modules': 'off',
-				'no-console': 'off',
-				'no-process-exit': 'off',
-				'valid-jsdoc': 'off',
-			},
-		},
-		{
-			plugins: [ 'mocha' ],
-			files: [ 'test/e2e/**/*', 'packages/magellan-mocha-plugin/test_support/**/*' ],
-			rules: {
-				'import/no-nodejs-modules': 'off',
-				'mocha/no-exclusive-tests': 'error',
-				'mocha/handle-done-callback': [ 'error', { ignoreSkipped: true } ],
-				'mocha/no-global-tests': 'error',
-				'mocha/no-async-describe': 'error',
-				'mocha/no-top-level-hooks': 'error',
-				'mocha/max-top-level-suites': [ 'error', { limit: 1 } ],
-				'no-console': 'off',
-				// Disable all rules from "plugin:jest/recommended", as e2e tests use mocha
-				...Object.keys( require( 'eslint-plugin-jest' ).configs.recommended.rules ).reduce(
-					( disabledRules, key ) => ( { ...disabledRules, [ key ]: 'off' } ),
-					{}
-				),
-			},
-			globals: {
-				step: false,
-			},
+			files: [ 'bin/**/*', 'test/**/*' ],
+			...nodeConfig,
 		},
 		merge(
 			// ESLint doesn't allow the `extends` field inside `overrides`, so we need to compose
@@ -96,7 +71,7 @@ module.exports = {
 			// basic recommended rules config from the TypeScript plugin
 			{ rules: require( '@typescript-eslint/eslint-plugin' ).configs.recommended.rules },
 			// disables rules that are already checked by the TypeScript compiler
-			// see https://github.com/typescript-eslint/typescript-eslint/tree/master/packages/eslint-plugin/src/configs#eslint-recommended
+			// see https://github.com/typescript-eslint/typescript-eslint/tree/main/packages/eslint-plugin/src/configs#eslint-recommended
 			{
 				rules: require( '@typescript-eslint/eslint-plugin' ).configs[ 'eslint-recommended' ]
 					.overrides[ 0 ].rules,
@@ -108,10 +83,11 @@ module.exports = {
 				files: [ '**/*.ts', '**/*.tsx' ],
 				rules: {
 					// Disable vanilla eslint rules that have a Typescript implementation
-					// See https://github.com/typescript-eslint/typescript-eslint/blob/master/packages/eslint-plugin/README.md#extension-rules
+					// See https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/eslint-plugin/README.md#extension-rules
 					'brace-style': 'off',
 					'comma-dangle': 'off',
 					'comma-spacing': 'off',
+					curly: 'error', // The base curly rule does not seem to apply to TS files.
 					'default-param-last': 'off',
 					'dot-notation': 'off',
 					'func-call-spacing': 'off',
@@ -163,8 +139,7 @@ module.exports = {
 		{
 			// This lints the codeblocks marked as `javascript`, `js`, `cjs` or `ejs`, all valid aliases
 			// See:
-			// eslint-disable-next-line inclusive-language/use-inclusive-words
-			//  * https://github.com/highlightjs/highlight.js/blob/master/SUPPORTED_LANGUAGES.md)
+			//  * https://github.com/highlightjs/highlight.js/blob/main/SUPPORTED_LANGUAGES.md)
 			//  * https://www.npmjs.com/package/eslint-plugin-md#modifying-eslint-setup-for-js-code-inside-md-files
 			files: [
 				'*.md.js',
@@ -188,14 +163,102 @@ module.exports = {
 				'no-undef': 'off',
 				'no-unused-vars': 'off',
 				'react/jsx-no-undef': 'off',
+				'react/jsx-uses-react': 'off',
 				'react/react-in-jsx-scope': 'off',
-				'wpcalypso/import-docblock': 'off',
 				'wpcalypso/jsx-classname-namespace': 'off',
 				'@typescript-eslint/no-unused-vars': 'off',
 				'jsdoc/require-param': 'off',
 				'jsdoc/check-param-names': 'off',
 				'@typescript-eslint/no-empty-function': 'off',
+				'prettier/prettier': [ 'error', { parser: 'babel' } ],
 			},
+		},
+		{
+			files: [ '*.json' ],
+			extends: [ 'plugin:@automattic/json/recommended' ],
+			rules: {
+				// JSON doesn't allow dangle comma or comments
+				'comma-dangle': 'off',
+				'json-es/no-comments': 'error',
+			},
+			overrides: [
+				{
+					// Default settings for all package.json files
+					files: [ 'package.json' ],
+					rules: {
+						'@automattic/json/prefer-property-order': 'off',
+						'@automattic/json/require-keywords': 'off',
+						'@automattic/json/require-repository-directory': 'error',
+						'@automattic/json/valid-values-author': [ 'error', [ 'Automattic Inc.' ] ],
+						'@automattic/json/valid-values-license': [ 'error', [ 'GPL-2.0-or-later' ] ],
+						'@automattic/json/valid-values-name-scope': [ 'error', [ '@automattic' ] ],
+						'@automattic/json/valid-values-publishConfig': [ 'error', [ { access: 'public' } ] ],
+					},
+				},
+				{
+					files: [ './config/*.json' ],
+					rules: {
+						'sort-keys': 'warn',
+					},
+				},
+				{
+					// These files don't have the `@automattic` prefix in the name
+					files: [
+						'./package.json',
+						'./client/package.json',
+						'./desktop/package.json',
+						'./test/e2e/package.json',
+						'./packages/calypso-codemods/package.json',
+						'./packages/wpcom-proxy-request/package.json',
+						'./packages/wpcom-xhr-request/package.json',
+						'./packages/wpcom.js/package.json',
+						'./packages/eslint-plugin-wpcalypso/package.json',
+						'./packages/i18n-calypso-cli/package.json',
+						'./packages/i18n-calypso/package.json',
+						'./packages/i18n-utils/package.json',
+						'./packages/photon/package.json',
+						'./packages/spec-junit-reporter/package.json',
+						'./packages/spec-xunit-reporter/package.json',
+					],
+					rules: {
+						'@automattic/json/valid-values-name-scope': 'off',
+					},
+				},
+				{
+					// These files don't have GPL license
+					files: [
+						'./desktop/package.json',
+						'./packages/material-design-icons/package.json',
+						'./packages/wpcom-proxy-request/package.json',
+						'./packages/wpcom-xhr-request/package.json',
+						'./packages/wpcom.js/package.json',
+					],
+					rules: {
+						'@automattic/json/valid-values-license': 'off',
+					},
+				},
+				{
+					// These files are "fake" package.json files, only there to configure webpack bundling
+					files: [ './client/**/package.json' ],
+					excludedFiles: './client/package.json',
+					rules: {
+						'@automattic/json/require-repository-directory': 'off',
+						'@automattic/json/valid-values-name-scope': 'off',
+						'@automattic/json/require-author': 'off',
+						'@automattic/json/require-description': 'off',
+						'@automattic/json/require-license': 'off',
+						'@automattic/json/require-name': 'off',
+						'@automattic/json/require-version': 'off',
+					},
+				},
+				{
+					// These files are parsed as jsonc (JSON With Comments)
+					files: [ 'tsconfig.json' ],
+					rules: {
+						'json-es/no-comments': 'off',
+					},
+				},
+			],
 		},
 	],
 	env: {
@@ -226,10 +289,16 @@ module.exports = {
 		jsdoc: {
 			mode: 'typescript',
 		},
+		'import/internal-regex': '^calypso/',
 	},
 	rules: {
 		// REST API objects include underscores
 		camelcase: 'off',
+
+		// Curly is not added by existing presets and is needed for WordPress style compatibility.
+		curly: 'error',
+
+		'no-constant-condition': [ 'error', { checkLoops: false } ],
 
 		'no-path-concat': 'error',
 
@@ -244,25 +313,20 @@ module.exports = {
 				assertFunctionNames: [
 					// Jest
 					'expect',
-
-					// Chai
-					'chai.assert',
-					'chai.assert.*',
-					'assert',
-					'assert.*',
-					'equal',
-					'ok',
-					'deepStrictEqual',
-					'chaiExpect',
-
-					// Sinon
-					'sinon.assert.*',
 				],
 			},
 		],
 
 		// Only use known tag names plus `jest-environment`.
-		'jsdoc/check-tag-names': [ 'error', { definedTags: [ 'jest-environment' ] } ],
+		'jsdoc/check-tag-names': [
+			'error',
+			{ definedTags: [ 'jest-environment', 'jsxImportSource' ] },
+		],
+
+		// Do not require param/return description, see https://github.com/Automattic/wp-calypso/issues/56330
+		'jsdoc/require-param-description': 'off',
+		'jsdoc/require-param': 'off',
+		'jsdoc/require-returns-description': 'off',
 
 		// Deprecated rule, fails in some valid cases with custom input components
 		'jsx-a11y/label-has-for': 'off',
@@ -281,7 +345,7 @@ module.exports = {
 					// Prevent naked import of gridicons module. Use 'components/gridicon' instead.
 					{
 						name: 'gridicons',
-						message: "Please use 'components/gridicon' instead.",
+						message: "Please use '@automattic/components' instead.",
 					},
 					// Prevent importing Redux's combineReducers.
 					{
@@ -331,14 +395,9 @@ module.exports = {
 		'no-unused-expressions': 'off',
 
 		'react/forbid-foreign-prop-types': 'error',
-
+		'react/jsx-curly-brace-presence': [ 'error', { props: 'never', children: 'never' } ],
 		// enforce our classname namespacing rules
-		'wpcalypso/jsx-classname-namespace': [
-			2,
-			{
-				rootFiles: [ 'index.js', 'index.jsx', 'main.js', 'main.jsx' ],
-			},
-		],
+		'wpcalypso/jsx-classname-namespace': 'error',
 
 		// Disallow importing of native node modules, with some exceptions
 		// - url because we use it all over the place to parse and build urls
@@ -382,6 +441,16 @@ module.exports = {
 		'import/namespace': 'error',
 		'import/default': 'error',
 		'import/no-duplicates': 'error',
+		'import/order': [
+			'error',
+			{
+				'newlines-between': 'never',
+				alphabetize: {
+					order: 'asc',
+				},
+				groups: [ 'builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'type' ],
+			},
+		],
 
 		'wpcalypso/no-unsafe-wp-apis': [
 			'error',
@@ -393,9 +462,24 @@ module.exports = {
 					'__unstableInserterMenuExtension',
 					'__experimentalInserterMenuExtension',
 				],
+				'@wordpress/compose': [ '__experimentalUseFocusOutside' ],
 				'@wordpress/date': [ '__experimentalGetSettings' ],
 				'@wordpress/edit-post': [ '__experimentalMainDashboardButton' ],
-				'@wordpress/components': [ '__experimentalNavigationBackButton' ],
+				'@wordpress/components': [
+					'__experimentalDivider',
+					'__experimentalHStack',
+					'__experimentalItem',
+					'__experimentalItemGroup',
+					'__experimentalNavigationBackButton',
+					'__experimentalNavigatorBackButton',
+					'__experimentalNavigatorButton',
+					'__experimentalNavigatorProvider',
+					'__experimentalNavigatorScreen',
+					'__experimentalUseNavigator',
+					'__unstableComposite',
+					'__unstableCompositeItem',
+					'__unstableUseCompositeState',
+				],
 			},
 		],
 

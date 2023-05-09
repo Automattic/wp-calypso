@@ -1,16 +1,12 @@
-/**
- * Internal dependencies
- */
-
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 
 /**
  * Return primary domain from state object and
  * the given site ID
  *
- * @param {object} state - current state object
- * @param {object} siteId - site object
- * @returns {object} primary domain
+ * @param {Object} state - current state object
+ * @param {?number} siteId - site ID
+ * @returns {import('calypso/lib/domains/types').ResponseDomain|null|undefined} primary domain
  */
 export default function getPrimaryDomainBySiteId( state, siteId ) {
 	const domains = getDomainsBySiteId( state, siteId );

@@ -6,7 +6,7 @@
 .env
 .DS_Store
 .idea
-.vscode
+.vscode/settings.json
 .nova
 *.code-workspace
 *.iml
@@ -29,9 +29,9 @@ test-results*.xml
 /client/style.json
 spec-xunit-reporter-0.0.1.tgz
 *xunit_*.xml
-lerna-debug.log
 /vendor
-yarn-error.log
+checkstyle.xml
+/apps/notifications/stats.json
 
 # added during build
 /config/secrets.json
@@ -68,7 +68,10 @@ cached-requests.json
 /apps/*/dist/
 /apps/*/types/
 /packages/*/dist/
+/build-tools/dist/
 /apps/*/.cache/
+/desktop/.cache/
+/apps/*/release-files/
 
 # webpack assets
 /assets*.json
@@ -90,9 +93,29 @@ cached-requests.json
 /desktop/e2e/logs
 /desktop/e2e/screenshots
 /desktop/e2e/result.xml
+/desktop/test/.cache/
+/desktop/test/e2e/results/
 
 # Typescript
 *.tsbuildinfo
 
 # TeamCity Kotlin compilation
 .teamcity/target
+
+# Yarn
+yarn-error.log
+.yarn/*
+desktop/.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+.pnp.*
+yarn-json-output.json
+
+# Profile results:
+/profiles/
+
+# Storybook
+storybook-static

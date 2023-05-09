@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.3
+
+- Shortened timeout
+
 ## 0.0.2
 
 - Change dangerouslyGetExperimentAssignment to log rather than throw

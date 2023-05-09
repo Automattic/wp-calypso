@@ -1,34 +1,22 @@
-/**
- * External dependencies
- */
+import { Dialog, FormInputValidation } from '@automattic/components';
 import { isMobile } from '@automattic/viewport';
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { get, find } from 'lodash';
 import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
-import { Dialog } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import TermTreeSelectorTerms from 'calypso/blocks/term-tree-selector/terms';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
-import FormTextarea from 'calypso/components/forms/form-textarea';
-import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormSectionHeading from 'calypso/components/forms/form-section-heading';
-import FormLegend from 'calypso/components/forms/form-legend';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getPostTypeTaxonomy } from 'calypso/state/post-types/taxonomies/selectors';
-import { getTerms } from 'calypso/state/terms/selectors';
-import { addTerm, updateTerm } from 'calypso/state/terms/actions';
+import FormLegend from 'calypso/components/forms/form-legend';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormTextarea from 'calypso/components/forms/form-textarea';
 import { recordGoogleEvent, bumpStat } from 'calypso/state/analytics/actions';
+import { getPostTypeTaxonomy } from 'calypso/state/post-types/taxonomies/selectors';
+import { addTerm, updateTerm } from 'calypso/state/terms/actions';
+import { getTerms } from 'calypso/state/terms/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};
@@ -158,13 +146,14 @@ class TermFormDialog extends Component {
 		this.state = this.constructor.initialState;
 	}
 
-	init( props ) {
-		if ( ! props.term ) {
-			if ( props.searchTerm && props.searchTerm.trim().length ) {
+	init() {
+		const { term, searchTerm } = this.props;
+		if ( ! term ) {
+			if ( searchTerm && searchTerm.trim().length ) {
 				this.setState(
 					{
 						...this.constructor.initialState,
-						name: props.searchTerm,
+						name: searchTerm,
 					},
 					this.isValid
 				);
@@ -175,7 +164,7 @@ class TermFormDialog extends Component {
 			return;
 		}
 
-		const { name, description, parent = false } = props.term;
+		const { name, description, parent = false } = term;
 		this.setState( {
 			...this.constructor.initialState,
 			name,
@@ -185,17 +174,15 @@ class TermFormDialog extends Component {
 		} );
 	}
 
-	UNSAFE_componentWillReceiveProps( newProps ) {
-		if (
-			this.props.term !== newProps.term ||
-			( this.props.showDialog !== newProps.showDialog && newProps.showDialog )
-		) {
-			this.init( newProps );
+	componentDidUpdate( prevProps ) {
+		const { term, showDialog } = this.props;
+		if ( term !== prevProps.term || ( showDialog !== prevProps.showDialog && showDialog ) ) {
+			this.init();
 		}
 	}
 
 	componentDidMount() {
-		this.init( this.props );
+		this.init();
 	}
 
 	getFormValues() {
@@ -221,12 +208,11 @@ class TermFormDialog extends Component {
 			errors.name = this.props.translate( 'Name required', { textOnly: true } );
 		}
 		const lowerCasedTermName = values.name.toLowerCase();
-		const matchingTerm = find( this.props.terms, ( term ) => {
-			return (
+		const matchingTerm = this.props.terms?.find(
+			( term ) =>
 				term.name.toLowerCase() === lowerCasedTermName &&
 				( ! this.props.term || term.ID !== this.props.term.ID )
-			);
-		} );
+		);
 		if ( matchingTerm ) {
 			errors.name = this.props.translate( 'Name already exists', {
 				context: 'Terms: Add term error message - duplicate term name exists',
@@ -254,13 +240,13 @@ class TermFormDialog extends Component {
 	}
 
 	renderParentSelector() {
-		const { labels, siteId, taxonomy, translate, terms } = this.props;
+		const { labels, siteId, taxonomy, translate, terms, term } = this.props;
 		const { isTopLevel, searchTerm, selectedParent } = this.state;
 		const query = {};
 		if ( searchTerm && searchTerm.length ) {
 			query.search = searchTerm;
 		}
-		const hideTermAndChildren = get( this.props.term, 'ID' );
+		const hideTermAndChildren = !! term?.ID;
 		const isError = !! this.state.errors.parent;
 
 		// if there is only one term for the site, and we are editing that term
@@ -303,6 +289,7 @@ class TermFormDialog extends Component {
 						<TermTreeSelectorTerms
 							siteId={ siteId }
 							taxonomy={ taxonomy }
+							key={ taxonomy }
 							isError={ isError }
 							onSearch={ this.onSearch }
 							onChange={ this.onParentChange }
@@ -318,14 +305,8 @@ class TermFormDialog extends Component {
 	}
 
 	render() {
-		const {
-			isHierarchical,
-			labels,
-			term,
-			translate,
-			showDescriptionInput,
-			showDialog,
-		} = this.props;
+		const { isHierarchical, labels, term, translate, showDescriptionInput, showDialog } =
+			this.props;
 		const { name, description } = this.state;
 		const isNew = ! term;
 		const submitLabel = isNew ? translate( 'Add' ) : translate( 'Update' );
@@ -391,8 +372,8 @@ export default connect(
 		const { taxonomy, postType } = ownProps;
 		const siteId = getSelectedSiteId( state );
 		const taxonomyDetails = getPostTypeTaxonomy( state, siteId, postType, taxonomy );
-		const labels = get( taxonomyDetails, 'labels', {} );
-		const isHierarchical = get( taxonomyDetails, 'hierarchical', false );
+		const labels = taxonomyDetails?.labels ?? {};
+		const isHierarchical = taxonomyDetails?.hierarchical ?? false;
 
 		return {
 			terms: getTerms( state, siteId, taxonomy ),

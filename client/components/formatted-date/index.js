@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import toCurrentLocale from './to-current-locale';
 

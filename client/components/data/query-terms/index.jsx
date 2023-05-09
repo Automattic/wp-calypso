@@ -1,75 +1,32 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
 import isShallowEqual from '@wordpress/is-shallow-equal';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { useMemoCompare } from 'calypso/lib/use-memo-compare';
 import { requestSiteTerms } from 'calypso/state/terms/actions';
 import { isRequestingTermsForQuery } from 'calypso/state/terms/selectors';
 
-class QueryTerms extends Component {
-	UNSAFE_componentWillMount() {
-		this.request( this.props );
+const request = ( siteId, taxonomy, query ) => ( dispatch, getState ) => {
+	if ( siteId && ! isRequestingTermsForQuery( getState(), siteId, taxonomy, query ) ) {
+		dispatch( requestSiteTerms( siteId, taxonomy, query ) );
 	}
+};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if (
-			this.props.siteId === nextProps.siteId &&
-			this.props.taxonomy === nextProps.taxonomy &&
-			isShallowEqual( this.props.query, nextProps.query )
-		) {
-			return;
-		}
+function QueryTerms( { siteId, taxonomy, query = {} } ) {
+	const dispatch = useDispatch();
+	const memoizedQuery = useMemoCompare( query, isShallowEqual );
 
-		this.request( nextProps );
-	}
+	useEffect( () => {
+		dispatch( request( siteId, taxonomy, memoizedQuery ) );
+	}, [ dispatch, siteId, taxonomy, memoizedQuery ] );
 
-	request( props ) {
-		if ( props.requesting || ! props.siteId ) {
-			return;
-		}
-
-		props.requestSiteTerms( props.siteId, props.taxonomy, props.query );
-	}
-
-	shouldComponentUpdate() {
-		return false;
-	}
-
-	render() {
-		return null;
-	}
+	return null;
 }
 
 QueryTerms.propTypes = {
-	siteId: PropTypes.number,
+	siteId: PropTypes.number.isRequired,
 	taxonomy: PropTypes.string.isRequired,
 	query: PropTypes.object,
-	requesting: PropTypes.bool.isRequired,
-	requestSiteTerms: PropTypes.func.isRequired,
 };
 
-QueryTerms.defaultProps = {
-	query: {},
-};
-
-export default connect(
-	( state, ownProps ) => {
-		return {
-			requesting: isRequestingTermsForQuery(
-				state,
-				ownProps.siteId,
-				ownProps.taxonomy,
-				ownProps.query
-			),
-		};
-	},
-	{
-		requestSiteTerms,
-	}
-)( QueryTerms );
+export default QueryTerms;

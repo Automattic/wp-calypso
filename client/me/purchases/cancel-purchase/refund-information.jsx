@@ -1,15 +1,12 @@
-/**
- * External dependencies
- */
-
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import React from 'react';
+import config from '@automattic/calypso-config';
+import { isDomainRegistration, isDomainMapping } from '@automattic/calypso-products';
+import { localizeUrl } from '@automattic/i18n-utils';
 import i18n from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
 import {
 	getName,
 	isRefundable,
@@ -17,15 +14,12 @@ import {
 	isOneTimePurchase,
 	maybeWithinRefundPeriod,
 } from 'calypso/lib/purchases';
-import { isDomainRegistration, isDomainMapping } from '@automattic/calypso-products';
-import { getIncludedDomainPurchase } from 'calypso/state/purchases/selectors';
 import { CALYPSO_CONTACT, UPDATE_NAMESERVERS } from 'calypso/lib/url/support';
-import FormLabel from 'calypso/components/forms/form-label';
-import FormRadio from 'calypso/components/forms/form-radio';
-import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import { getIncludedDomainPurchase } from 'calypso/state/purchases/selectors';
 
 const CancelPurchaseRefundInformation = ( {
 	purchase,
+	isJetpackPurchase,
 	includedDomainPurchase,
 	cancelBundledDomain,
 	confirmCancelBundledDomain,
@@ -189,7 +183,13 @@ const CancelPurchaseRefundInformation = ( {
 									'servers{{/a}} instead.',
 								{
 									components: {
-										a: <a href={ UPDATE_NAMESERVERS } target="_blank" rel="noopener noreferrer" />,
+										a: (
+											<a
+												href={ localizeUrl( UPDATE_NAMESERVERS ) }
+												target="_blank"
+												rel="noopener noreferrer"
+											/>
+										),
 									},
 								}
 							),
@@ -239,6 +239,21 @@ const CancelPurchaseRefundInformation = ( {
 				}
 
 				showSupportLink = false;
+			} else if ( isJetpackPurchase && config.isEnabled( 'jetpack/cancel-through-main-flow' ) ) {
+				// Refundable Jetpack subscription
+				text = [];
+				text.push(
+					i18n.translate(
+						'Because you are within the %(refundPeriodInDays)d day refund period, ' +
+							'your plan will be cancelled and removed from your site immediately and you will receive a full refund. ',
+						{
+							args: { refundPeriodInDays },
+						}
+					),
+					i18n.translate(
+						'If you want to keep the subscription until the renewal date, please cancel after the refund period has ended.'
+					)
+				);
 			} else {
 				text = i18n.translate(
 					'When you cancel your subscription within %(refundPeriodInDays)d days of purchasing, ' +
@@ -348,6 +363,7 @@ const CancelPurchaseRefundInformation = ( {
 
 CancelPurchaseRefundInformation.propTypes = {
 	purchase: PropTypes.object.isRequired,
+	isJetpackPurchase: PropTypes.bool.isRequired,
 	includedDomainPurchase: PropTypes.object,
 	cancelBundledDomain: PropTypes.bool,
 	confirmCancelBundledDomain: PropTypes.bool,

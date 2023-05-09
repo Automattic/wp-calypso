@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import DiffViewer from '../index';
 
 DiffViewer.displayName = 'DiffViewer';

@@ -1,9 +1,6 @@
-/**
- * Internal dependencies
- */
 import { createTransientMedia, validateMediaItem } from 'calypso/lib/media/utils';
-import { getTransientDate, getBaseTime } from 'calypso/state/media/utils/transient-date';
 import { createMediaItem, setMediaItemErrors } from 'calypso/state/media/actions';
+import { getTransientDate, getBaseTime } from 'calypso/state/media/utils/transient-date';
 
 /**
  * Create transient media items for all files and dispatch pre-upload
@@ -12,8 +9,8 @@ import { createMediaItem, setMediaItemErrors } from 'calypso/state/media/actions
  * items into the store together. Then we can upload serially without
  * each image popping in only when it is actually being uploaded.
  *
- * @param {object[]} files List of files to create transient items for
- * @param {object} site The site
+ * @param {Object[]} files List of files to create transient items for
+ * @param {Object} site The site
  */
 export function createTransientMediaItems( files, site ) {
 	return ( dispatch ) => {
@@ -42,7 +39,7 @@ export function createTransientMediaItems( files, site ) {
 
 			dispatch( createMediaItem( site, transientMedia ) );
 
-			return transientMedia;
+			return [ file, transientMedia ];
 		} );
 	};
 }

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
 import {
 	SITE_SETTINGS_RECEIVE,
@@ -12,8 +9,8 @@ import {
 	SITE_SETTINGS_SAVE_SUCCESS,
 	SITE_SETTINGS_UPDATE,
 } from 'calypso/state/action-types';
+import { requestSite } from 'calypso/state/sites/actions';
 import { normalizeSettings } from './utils';
-
 import 'calypso/state/site-settings/init';
 import 'calypso/state/ui/init';
 
@@ -21,8 +18,8 @@ import 'calypso/state/ui/init';
  * Returns an action object to be used in signalling that site settings have been received.
  *
  * @param  {number} siteId Site ID
- * @param  {object} settings The site settings object
- * @returns {object}        Action object
+ * @param  {Object} settings The site settings object
+ * @returns {Object}        Action object
  */
 export function receiveSiteSettings( siteId, settings ) {
 	return {
@@ -36,8 +33,8 @@ export function receiveSiteSettings( siteId, settings ) {
  * Returns an action object to be used in signalling that some site settings have been update.
  *
  * @param  {number} siteId Site ID
- * @param  {object} settings The updated site settings
- * @returns {object}        Action object
+ * @param  {Object} settings The updated site settings
+ * @returns {Object}        Action object
  */
 export function updateSiteSettings( siteId, settings ) {
 	return {
@@ -61,9 +58,8 @@ export function requestSiteSettings( siteId ) {
 			siteId,
 		} );
 
-		return wpcom
-			.undocumented()
-			.settings( siteId )
+		return wpcom.req
+			.get( `/sites/${ siteId }/settings`, { apiVersion: '1.4' } )
 			.then( ( { name, description, settings } ) => {
 				const savedSettings = {
 					...normalizeSettings( settings ),
@@ -87,23 +83,22 @@ export function requestSiteSettings( siteId ) {
 	};
 }
 
-export function saveSiteSettings( siteId, settings ) {
+export function saveSiteSettings( siteId, settings = {} ) {
 	return ( dispatch ) => {
 		dispatch( {
 			type: SITE_SETTINGS_SAVE,
 			siteId,
 		} );
 
-		return wpcom
-			.undocumented()
-			.settings( siteId, 'post', settings )
+		return wpcom.req
+			.post( '/sites/' + siteId + '/settings', { apiVersion: '1.4' }, settings )
 			.then( ( body ) => {
 				dispatch( updateSiteSettings( siteId, normalizeSettings( body.updated ) ) );
 				dispatch( {
 					type: SITE_SETTINGS_SAVE_SUCCESS,
 					siteId,
 				} );
-
+				dispatch( requestSite( siteId ) );
 				return body;
 			} )
 			.catch( ( error ) => {

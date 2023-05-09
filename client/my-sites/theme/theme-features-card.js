@@ -1,21 +1,12 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import { connect } from 'react-redux';
-import { get, isEmpty } from 'lodash';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { get, isEmpty } from 'lodash';
+import { connect } from 'react-redux';
 import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
 import SectionHeader from 'calypso/components/section-header';
-import { isValidThemeFilterTerm } from 'calypso/state/themes/selectors';
+import { isAmbiguousThemeFilterTerm } from 'calypso/state/themes/selectors';
 
-const ThemeFeaturesCard = ( { isWpcomTheme, siteSlug, features, translate } ) => {
+const ThemeFeaturesCard = ( { isWpcomTheme, siteSlug, features, translate, onClick } ) => {
 	if ( isEmpty( features ) ) {
 		return null;
 	}
@@ -27,9 +18,13 @@ const ThemeFeaturesCard = ( { isWpcomTheme, siteSlug, features, translate } ) =>
 			<Card>
 				<ul className="theme__sheet-features-list">
 					{ features.map( ( { name, slug, term } ) => (
-						<li key={ 'theme-features-item-' + slug }>
+						<li
+							key={ 'theme-features-item-' + slug }
+							role="presentation"
+							onClick={ () => onClick?.( slug ) }
+						>
 							{ ! isWpcomTheme ? (
-								<a>{ name }</a>
+								<span>{ name }</span>
 							) : (
 								<a href={ `/themes/filter/${ term }/${ siteSlug || '' }` }>{ name }</a>
 							) }
@@ -42,8 +37,9 @@ const ThemeFeaturesCard = ( { isWpcomTheme, siteSlug, features, translate } ) =>
 };
 
 export default connect( ( state, { taxonomies } ) => {
+	// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
 	const features = get( taxonomies, 'theme_feature', [] ).map( ( { name, slug } ) => {
-		const term = isValidThemeFilterTerm( state, slug ) ? slug : `feature:${ slug }`;
+		const term = isAmbiguousThemeFilterTerm( state, slug ) ? `feature:${ slug }` : slug;
 		return { name, slug, term };
 	} );
 	return { features };

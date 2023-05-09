@@ -11,20 +11,23 @@
  * config file for e2e tests.
  */
 
+const path = require( 'path' );
+const base = require( '@automattic/calypso-jest' );
 // @wordpress/scripts manually adds additional Jest config ontop of
 // @wordpress/jest-preset-default so we pull in this file to extend it
 const defaults = require( '@wordpress/scripts/config/jest-unit.config.js' );
-const path = require( 'path' );
 
 // Basically, CWD, so 'apps/editing-toolkit'.
 // Without this, it tries to use 'apps/editing-toolkit/bin'
 const pluginRoot = path.resolve( './' );
 
 const config = {
+	...base,
 	...defaults,
 	rootDir: path.normalize( '../../' ), // To detect wp-calypso root node_modules
 	testMatch: [ `${ pluginRoot }/**/?(*.)test.[jt]s?(x)` ],
 	transform: { '^.+\\.[jt]sx?$': path.join( __dirname, 'bin', 'babel-transform' ) },
+	testEnvironment: 'jsdom',
 	setupFilesAfterEnv: [
 		...( defaults.setupFilesAfterEnv || [] ), // extend if present
 		'<rootDir>/apps/editing-toolkit/bin/js-unit-setup',

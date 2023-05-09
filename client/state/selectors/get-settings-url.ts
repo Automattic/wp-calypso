@@ -1,12 +1,5 @@
-/**
- * Internal dependencies
- */
-import { getSiteSlug, getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-
-/**
- * Type dependencies
- */
+import { getSiteSlug, getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import type { AppState } from 'calypso/types';
 
 type Sections = 'general';

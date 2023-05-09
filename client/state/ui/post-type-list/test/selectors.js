@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { isSharePanelOpen } from '../selectors';
 
 describe( 'isSharePanelOpen', () => {

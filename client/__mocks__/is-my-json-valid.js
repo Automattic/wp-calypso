@@ -1,9 +1,6 @@
-/**
- * External dependencies
- */
-import jsonSchemaDraft04 from './lib/json-schema-draft-04.json';
 import imjv from 'is-my-json-valid';
 import { forEach, get, isEmpty } from 'lodash';
+import jsonSchemaDraft04 from './lib/json-schema-draft-04.json';
 
 const validateSchema = imjv( jsonSchemaDraft04, { verbose: true, greedy: true } );
 

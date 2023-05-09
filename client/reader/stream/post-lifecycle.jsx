@@ -1,30 +1,23 @@
-/**
- * External Dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
-import { connect } from 'react-redux';
 import { omit, includes } from 'lodash';
-
-/**
- * Internal Dependencies
- */
-import PostPlaceholder from './post-placeholder';
-import PostUnavailable from './post-unavailable';
-import ListGap from 'calypso/reader/list-gap';
-import CrossPost from './x-post';
-import RecommendedPosts from './recommended-posts';
-import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
+import PropTypes from 'prop-types';
+import { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import PostBlocked from 'calypso/blocks/reader-post-card/blocked';
-import Post from './post';
-import { IN_STREAM_RECOMMENDATION } from 'calypso/reader/follow-sources';
-import CombinedCard from 'calypso/blocks/reader-combined-card';
-import EmptySearchRecommendedPost from './empty-search-recommended-post';
-import { getPostByKey } from 'calypso/state/reader/posts/selectors';
+import BloggingPromptCard from 'calypso/components/blogging-prompt-card';
 import QueryReaderPost from 'calypso/components/data/query-reader-post';
 import compareProps from 'calypso/lib/compare-props';
+import { IN_STREAM_RECOMMENDATION } from 'calypso/reader/follow-sources';
+import ListGap from 'calypso/reader/list-gap';
+import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
+import { getPostByKey } from 'calypso/state/reader/posts/selectors';
+import EmptySearchRecommendedPost from './empty-search-recommended-post';
+import Post from './post';
+import PostPlaceholder from './post-placeholder';
+import PostUnavailable from './post-unavailable';
+import RecommendedPosts from './recommended-posts';
+import CrossPost from './x-post';
 
-class PostLifecycle extends React.Component {
+class PostLifecycle extends Component {
 	static propTypes = {
 		postKey: PropTypes.object.isRequired,
 		isDiscoverStream: PropTypes.bool,
@@ -33,7 +26,7 @@ class PostLifecycle extends React.Component {
 	};
 
 	render() {
-		const { post, postKey, followSource, isSelected, recsStreamKey, streamKey } = this.props;
+		const { post, postKey, isSelected, recsStreamKey, streamKey, siteId } = this.props;
 
 		if ( postKey.isRecommendationBlock ) {
 			return (
@@ -44,17 +37,19 @@ class PostLifecycle extends React.Component {
 					followSource={ IN_STREAM_RECOMMENDATION }
 				/>
 			);
-		} else if ( postKey.isCombination ) {
+		} else if ( postKey.isPromptBlock ) {
 			return (
-				<CombinedCard
-					postKey={ postKey }
-					index={ this.props.index }
-					onClick={ this.props.handleClick }
-					selectedPostKey={ this.props.selectedPostKey }
-					followSource={ followSource }
-					showFollowButton={ this.props.showPrimaryFollowButtonOnCards }
-					blockedSites={ this.props.blockedSites }
-				/>
+				<div
+					className="reader-stream__blogging-prompt"
+					key={ 'blogging-prompt-card-' + postKey.index }
+				>
+					<BloggingPromptCard
+						siteId={ siteId }
+						viewContext="reader"
+						showMenu={ false }
+						index={ postKey.index }
+					/>
+				</div>
 			);
 		} else if ( streamKey.indexOf( 'rec' ) > -1 ) {
 			return <EmptySearchRecommendedPost post={ post } site={ postKey } />;
@@ -74,7 +69,7 @@ class PostLifecycle extends React.Component {
 					<PostPlaceholder />
 				</Fragment>
 			);
-		} else if ( post._state === 'error' ) {
+		} else if ( post.is_error ) {
 			return <PostUnavailable post={ post } />;
 		} else if (
 			( ! post.is_external || post.is_jetpack ) &&

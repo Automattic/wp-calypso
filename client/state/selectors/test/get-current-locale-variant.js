@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import getCurrentLocaleVariant from 'calypso/state/selectors/get-current-locale-variant';
 
 describe( 'getCurrentLocaleVariant()', () => {
@@ -16,7 +8,7 @@ describe( 'getCurrentLocaleVariant()', () => {
 			},
 		};
 
-		expect( getCurrentLocaleVariant( state ) ).to.be.null;
+		expect( getCurrentLocaleVariant( state ) ).toBeNull();
 	} );
 
 	test( 'should return the locale variant slug stored', () => {
@@ -29,6 +21,6 @@ describe( 'getCurrentLocaleVariant()', () => {
 			},
 		};
 
-		expect( getCurrentLocaleVariant( state ) ).to.eql( localeVariant );
+		expect( getCurrentLocaleVariant( state ) ).toEqual( localeVariant );
 	} );
 } );

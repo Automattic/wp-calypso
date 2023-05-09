@@ -1,0 +1,208 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.backup-storage-space {
+	margin-top: 1rem;
+	padding: 32px 24px;
+	background: #fff;
+	box-shadow: 0 0 0 1px var(--color-neutral-5);
+
+	&__loading {
+		@include placeholder(--color-neutral-10);
+		height: 24px;
+		box-shadow: none;
+	}
+
+	&__storage-full-icon {
+		color: var(--studio-red-50);
+		margin-right: 4px;
+		vertical-align: middle;
+	}
+}
+
+.backup-storage-space__progress-bar-container {
+	display: flex;
+	flex-direction: column;
+}
+
+/**
+ * .backup-storage-space__progress-bar: wraps the storage progress bar
+ * .progress-bar: the actual progress bar, both filled and empty portions
+ * .progress-bar__progress: the filled part of the bar
+**/
+
+.backup-storage-space__progress-bar {
+	height: 24px;
+
+	.progress-bar {
+		height: 100%;
+		border-radius: 12px; /* stylelint-disable-line scales/radii */
+		background-color: var(--studio-gray-0);
+
+		.progress-bar__progress {
+			// Unless we're 100% full, the left side of the bar
+			// is rounded and the right side is flat
+			/* stylelint-disable-next-line scales/radii */
+			border-radius: 12px 0 0 12px;
+
+			// We always expect some amount of used storage,
+			// so keep a border-radius sized buffer so
+			// the left side of the bar looks correctly rounded
+			min-width: 12px;
+
+			// Only allow full width if storage is full;
+			// otherwise, leave a border-radius sized buffer,
+			// so the right side looks okay without a radius
+			max-width: calc(100% - 12px);
+		}
+
+		&.no-warning {
+			.progress-bar__progress {
+				background-color: var(--studio-gray-80);
+			}
+		}
+
+		&.yellow-warning {
+			.progress-bar__progress {
+				background-color: var(--studio-yellow-20);
+			}
+		}
+
+		&.red-warning {
+			.progress-bar__progress {
+				background-color: var(--studio-red-40);
+			}
+		}
+
+		// When the bar is full, we can show the filled portion
+		// at full width, with a rounded right side
+		&.full-warning {
+			.progress-bar__progress {
+				max-width: initial;
+				background-color: var(--studio-red-40);
+				border-radius: 12px; /* stylelint-disable-line scales/radii */
+			}
+		}
+	}
+}
+
+.backup-storage-space__divider {
+	margin: 16px -32px;
+	border-bottom: 1px solid var(--color-neutral-10);
+}
+
+.backup-storage-space__progress-heading {
+	margin-block-end: 24px;
+	white-space: nowrap;
+	line-height: 1;
+	font-weight: 600;
+	font-size: $font-title-small;
+
+	span {
+		vertical-align: middle;
+	}
+}
+
+.backup-storage-space__progress-usage-container {
+	margin-block-start: 16px;
+	white-space: nowrap;
+	display: flex;
+	font-size: $font-body-small;
+	font-weight: 400;
+	line-height: 20px;
+
+	a {
+		text-decoration: underline;
+		display: inline-flex;
+		align-items: center;
+
+		svg.gridicon {
+			margin-left: 6px;
+		}
+	}
+}
+
+.backup-storage-space__progress-storage-usage-text {
+	&.is-storage-full {
+		color: var(--studio-red-50);
+	}
+
+	.used-space__span {
+		font-weight: 700;
+	}
+}
+
+.backup-storage-space__progress-backups-saved-text {
+	margin-left: auto;
+}
+
+.storage-usage-help-tooltip {
+
+	&__tooltip.tooltip.popover {
+		&.is-right .popover__arrow {
+			border-right-color: #fff;
+		}
+
+		&.is-top-right .popover__arrow {
+			border-top-color: #fff;
+		}
+
+		&.is-bottom-right .popover__arrow {
+			border-bottom-color: #fff;
+		}
+
+		.popover__inner {
+			padding: 16px;
+			color: var(--studio-gray-70);
+			background: #fff;
+			border-radius: 2px;
+			box-shadow: 0 0 40px rgba(0, 0, 0, 0.08);
+
+			p {
+				padding-right: 24px;
+				font-size: $font-body-small;
+				color: var(--studio-gray-60);
+				margin: 0;
+			}
+
+			hr {
+				margin-bottom: 0.25rem;
+			}
+
+			a {
+				font-size: $font-body-small;
+				text-decoration: underline;
+			}
+		}
+
+		@include break-mobile() {
+			max-width: 270px;
+		}
+	}
+
+	&__toggle-tooltip {
+		vertical-align: middle;
+
+		&.button.is-borderless {
+			padding: 0;
+			height: 20px;
+
+			.gridicon {
+				top: 0;
+				color: var(--studio-gray-60);
+			}
+		}
+	}
+
+	&__close-tooltip {
+		position: absolute;
+		right: 16px;
+		top: 16px;
+		color: var(--studio-gray-40);
+
+		&.button {
+			height: 18px;
+			padding: 0;
+		}
+	}
+}

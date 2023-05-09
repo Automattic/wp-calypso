@@ -1,12 +1,15 @@
-/**
- * Internal dependencies
- */
+import sortBy from 'lodash/sortBy';
 import {
 	LicenseFilter,
 	LicenseSortField,
 	LicenseState,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
-import { APIPartner, Partner } from 'calypso/state/partner-portal/types';
+import {
+	APIPartner,
+	Partner,
+	APIProductFamily,
+	APIProductFamilyProduct,
+} from 'calypso/state/partner-portal/types';
 
 /**
  * Noop which can be reused (e.g. in equality checks).
@@ -45,7 +48,6 @@ export function getLicenseState(
  * This is a hack around TypeScript's poor support of enums as types.
  *
  * @example const enumMember = valueToEnum< SomeEnumType >( SomeEnumType, 'foo', SomeEnumType.SomeMember );
- *
  * @template T
  * @param {Record< string, * >} enumType Enum type to search in.
  * @param {*} value The enum value we are looking to get the member for.
@@ -169,4 +171,45 @@ export function formatApiPartner( partner: APIPartner ): Partner {
 			hasLicenses: key.has_licenses,
 		} ) ),
 	};
+}
+
+/**
+ * Format the string by removing Jetpack, (, ) from the product name
+ *
+ * @param product Product name
+ * @returns Product title
+ */
+export function getProductTitle( product: string ): string {
+	return product.replace( /(?:Jetpack\s|[)(])/gi, '' );
+}
+
+export function selectProductOptions( families: APIProductFamily[] ): APIProductFamilyProduct[] {
+	return families.flatMap( ( family ) => family.products );
+}
+
+export function selectAlphabeticallySortedProductOptions(
+	families: APIProductFamily[]
+): APIProductFamilyProduct[] {
+	return sortBy( selectProductOptions( families ), ( product ) => product.name );
+}
+
+export const JETPACK_BUNDLES = [ 'jetpack-complete', 'jetpack-security-t1', 'jetpack-security-t2' ];
+
+export function isJetpackBundle( product: APIProductFamilyProduct | string ) {
+	if ( typeof product === 'string' ) {
+		return JETPACK_BUNDLES.includes( product );
+	}
+	return product.family_slug === 'jetpack-packs';
+}
+
+/**
+ * Whether the licenses are assignable to WP multisite. This function uses key prefix to determine
+ * if the license is compatible with multisite.
+ *
+ * @param {Array<string>} licenseKeys
+ * @returns {boolean} indicating if the license keys are assignable to multisite
+ */
+export function areLicenseKeysAssignableToMultisite( licenseKeys: Array< string > ): boolean {
+	// If any license keys are not Jetpack Backup or Scan, they can be assigned to multisite.
+	return licenseKeys.some( ( key ) => ! /^jetpack-(backup|scan)/.test( key ) );
 }

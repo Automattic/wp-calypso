@@ -1,0 +1,187 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@automattic/typography/styles/fonts";
+
+.goals__container {
+	padding: 0 20px;
+
+	&.two-columns {
+		.step-container__header {
+			margin-bottom: 64px;
+
+			.formatted-header {
+				padding-top: 44px;
+
+				.formatted-header__subtitle,
+				.formatted-header__title {
+					@include break-mobile {
+						text-align: center;
+					}
+				}
+
+				@include break-mobile {
+					padding-top: 72px;
+				}
+			}
+		}
+
+		.select-goals__cards-hint {
+			font-weight: 400;
+			line-height: 24px;
+			color: #787c82;
+		}
+
+		.select-goals__cards-container {
+			padding-top: 16px;
+
+			@include break-small {
+				grid-template-columns: repeat(2, 1fr);
+			}
+		}
+
+		.select-goals__actions-container {
+			padding-top: 32px;
+			padding-bottom: 60px + 48px; // height of sticky footer + height of bottom whitespace
+
+			@include break-small {
+				padding-top: 48px;
+				padding-bottom: 48px;
+				justify-content: center;
+			}
+		}
+	}
+
+	.step-container__header {
+		.formatted-header {
+			text-align: left;
+		}
+	}
+
+	.select-goals__cards-container {
+		font-family: Inter, $sans;
+		display: grid;
+		gap: 16px;
+		grid-template-columns: repeat(1, 1fr);
+
+		.select-goals__goal-title {
+			margin-inline-end: 4px;
+		}
+
+		@include break-small {
+			grid-template-columns: repeat(1, 1fr);
+		}
+	}
+
+	.select-goals__actions-container {
+		padding: 32px 0 48px;
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-start;
+
+		button.is-primary {
+			width: 130px;
+			height: 44px;
+			border-radius: 4px;
+			box-shadow: 0 1px 2px rgb(0 0 0 / 5%) !important;
+		}
+
+		@include break-small {
+			// i2: justify-content: center;
+			flex-direction: row;
+		}
+	}
+
+	.select-goals__links-container {
+		padding-bottom: 60px; // height of sticky footer
+	}
+}
+
+.select-card__container {
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	padding: 17px 25px;
+	font-size: 0.875rem;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+
+	.select-card__label {
+		pointer-events: none;
+		user-select: none;
+		display: flex;
+		align-items: center;
+	}
+
+	&.selected {
+		border: 2px solid #0675c4;
+		background: #f9fbfd;
+		padding: 16px 24px;
+	}
+
+	.components-base-control__field {
+		margin-bottom: 0;
+	}
+
+	.components-checkbox-control__input[type="checkbox"] {
+		border-color: #a7aaad;
+	}
+}
+
+.goals-link {
+	&__container {
+		position: relative;
+		padding: 0 0 32px;
+
+		@include break-small {
+			display: flex;
+			align-items: flex-start;
+			justify-content: space-between;
+			padding: 0 0 25px;
+		}
+	}
+
+	&__info-wrapper {
+		@include break-mobile {
+			display: flex;
+			align-items: flex-start;
+			width: 100%;
+		}
+	}
+
+	&__info {
+		flex: 1;
+		padding-right: 6px;
+	}
+
+	&__description {
+		font-size: $font-body-small;
+		color: #646970;
+		margin-bottom: 0;
+		margin-right: 0.2rem;
+	}
+
+	&__button {
+		margin-top: 2px;
+		padding: 0;
+		min-width: 130px;
+		border: none;
+		background: none;
+		color: #101517;
+		text-decoration: underline;
+		font-weight: 500;
+		text-align: start;
+
+		@include break-small {
+			margin-top: 0;
+			text-align: end;
+		}
+
+		&:not([disabled]):hover {
+			color: var(--color-neutral-70);
+		}
+	}
+
+	&__disabled-info svg {
+		fill: var(--color-neutral-20);
+	}
+}

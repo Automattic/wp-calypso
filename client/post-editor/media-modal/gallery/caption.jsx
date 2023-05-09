@@ -1,19 +1,10 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import React from 'react';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import { updateMedia } from 'calypso/state/media/thunks';
+import { withUpdateMedia } from 'calypso/data/media/with-update-media';
 
-class EditorMediaModalGalleryCaption extends React.Component {
+class EditorMediaModalGalleryCaption extends Component {
 	static displayName = 'EditorMediaModalGalleryCaption';
 
 	static propTypes = {
@@ -53,7 +44,7 @@ class EditorMediaModalGalleryCaption extends React.Component {
 			return;
 		}
 
-		this.props.updateMedia( siteId, Object.assign( {}, item, { caption } ) );
+		this.props.updateMedia( siteId, item.ID, { caption } );
 	};
 
 	render() {
@@ -71,4 +62,4 @@ class EditorMediaModalGalleryCaption extends React.Component {
 	}
 }
 
-export default localize( connect( null, { updateMedia } )( EditorMediaModalGalleryCaption ) );
+export default localize( withUpdateMedia( EditorMediaModalGalleryCaption ) );

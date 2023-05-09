@@ -1,29 +1,20 @@
-/**
- * External dependencies
- */
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
-import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { getPlanRecommendationFromContext } from './plan-upgrade/utils';
 import {
 	JETPACK_LEGACY_PLANS_MAX_PLUGIN_VERSION,
 	PLAN_JETPACK_FREE,
 	JETPACK_PRODUCTS_LIST,
 } from '@automattic/calypso-products';
+import { translate } from 'i18n-calypso';
+import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import JetpackPluginUpdateWarning from 'calypso/blocks/jetpack-plugin-update-warning';
-import { preventWidows } from 'calypso/lib/formatting';
-import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Notice from 'calypso/components/notice';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { preventWidows } from 'calypso/lib/formatting';
+import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
-
-import IntroPricingBanner from 'calypso/components/jetpack/intro-pricing-banner';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getPlanRecommendationFromContext } from './plan-upgrade/utils';
 
 type HeaderProps = {
 	context: PageJS.Context;
@@ -38,7 +29,7 @@ type StandardHeaderProps = {
 const StandardPlansHeader = ( { shouldShowPlanRecommendation, siteId }: StandardHeaderProps ) => (
 	<>
 		<FormattedHeader headerText={ translate( 'Plans' ) } align="left" brandFont />
-		<PlansNavigation path={ '/plans' } />
+		<PlansNavigation path="/plans" />
 		{ shouldShowPlanRecommendation && siteId && (
 			<JetpackPluginUpdateWarning
 				siteId={ siteId }
@@ -47,9 +38,7 @@ const StandardPlansHeader = ( { shouldShowPlanRecommendation, siteId }: Standard
 		) }
 		{ ! shouldShowPlanRecommendation && (
 			<h2 className="jetpack-plans__pricing-header">
-				{ preventWidows(
-					translate( 'Security, performance, and marketing tools made for WordPress' )
-				) }
+				{ preventWidows( translate( 'Best-in-class products for your WordPress site' ) ) }
 			</h2>
 		) }
 	</>
@@ -65,7 +54,7 @@ const ConnectFlowPlansHeader = () => (
 				brandFont
 			/>
 		</div>
-		<PlansNavigation path={ '/plans' } />
+		<PlansNavigation path="/plans" />
 	</>
 );
 
@@ -75,10 +64,18 @@ const PlansHeader = ( { context, shouldShowPlanRecommendation }: HeaderProps ) =
 	const currentPlan =
 		useSelector( ( state ) => getSitePlan( state, siteId ) )?.product_slug || null;
 	// Site products from direct purchases
-	const purchasedProducts =
-		useSelector( ( state ) => getSiteProducts( state, siteId ) )
-			?.map( ( { productSlug } ) => productSlug )
-			.filter( ( productSlug ) => JETPACK_PRODUCTS_LIST.includes( productSlug ) ) ?? [];
+	const purchasedProducts = useSelector( ( state ) => {
+		const products = getSiteProducts( state, siteId );
+		if ( ! products ) {
+			return [];
+		}
+
+		return products
+			.map( ( { productSlug } ) => productSlug )
+			.filter( ( productSlug ) =>
+				( JETPACK_PRODUCTS_LIST as ReadonlyArray< string > ).includes( productSlug )
+			);
+	} );
 
 	// When coming from in-connect flow, the url contains 'source=jetpack-connect-plans' query param.
 	const isInConnectFlow = context.query?.source === 'jetpack-connect-plans';
@@ -113,7 +110,6 @@ export default function setJetpackHeader( context: PageJS.Context ): void {
 				context={ context }
 				shouldShowPlanRecommendation={ shouldShowPlanRecommendation }
 			/>
-			{ ! shouldShowPlanRecommendation && <IntroPricingBanner /> }
 		</>
 	);
 }

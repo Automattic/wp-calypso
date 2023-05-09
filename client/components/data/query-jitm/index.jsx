@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
-import { useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { fetchJITM } from 'calypso/state/jitm/actions';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import { fetchJITM } from 'calypso/state/jitm/actions';
 
 export default function QueryJITM( { siteId, messagePath } ) {
 	const locale = useSelector( getCurrentUserLocale );

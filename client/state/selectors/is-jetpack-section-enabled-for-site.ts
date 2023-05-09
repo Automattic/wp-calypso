@@ -1,9 +1,8 @@
-/**
- * Internal dependencies
- */
 import { isEnabled } from '@automattic/calypso-config';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import isBackupPluginActive from 'calypso/state/sites/selectors/is-backup-plugin-active';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
+import isSearchPluginActive from 'calypso/state/sites/selectors/is-search-plugin-active';
 
 const FLAG_JETPACK_SITES = 'jetpack/features-section/jetpack';
 const FLAG_ATOMIC_SITES = 'jetpack/features-section/atomic';
@@ -28,6 +27,14 @@ export default function isJetpackSectionEnabledForSite(
 	// At this point, we know we're *not* dealing with an Atomic site,
 	// so an enabled flag here will only return true for non-Atomic Jetpack sites.
 	if ( isJetpackSite( state, siteId ) ) {
+		return isEnabled( FLAG_JETPACK_SITES );
+	}
+
+	if ( isBackupPluginActive( state, siteId ) ) {
+		return isEnabled( FLAG_JETPACK_SITES );
+	}
+
+	if ( isSearchPluginActive( state, siteId ) ) {
 		return isEnabled( FLAG_JETPACK_SITES );
 	}
 

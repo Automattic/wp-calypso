@@ -1,26 +1,22 @@
-/**
- * External dependencies
- */
-import debugFactory from 'debug';
+import { confirmStripePaymentIntent } from '@automattic/calypso-stripe';
 import {
 	makeSuccessResponse,
 	makeRedirectResponse,
 	makeErrorResponse,
 } from '@automattic/composite-checkout';
-import { confirmStripePaymentIntent } from '@automattic/calypso-stripe';
-import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
-import type { TransactionRequest } from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
+import debugFactory from 'debug';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { recordTransactionBeginAnalytics } from '../lib/analytics';
+import getDomainDetails from './get-domain-details';
+import getPostalCode from './get-postal-code';
+import submitWpcomTransaction from './submit-wpcom-transaction';
 import {
 	createTransactionEndpointRequestPayload,
 	createTransactionEndpointCartFromResponseCart,
 } from './translate-cart';
-import submitWpcomTransaction from './submit-wpcom-transaction';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
-import getDomainDetails from './get-domain-details';
+import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
+import type { TransactionRequest } from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:composite-checkout:existing-card-processor' );
 
@@ -28,13 +24,7 @@ type ExistingCardTransactionRequest = Partial< Omit< TransactionRequest, 'paymen
 	Required<
 		Pick<
 			TransactionRequest,
-			| 'country'
-			| 'postalCode'
-			| 'name'
-			| 'storedDetailsId'
-			| 'siteId'
-			| 'paymentMethodToken'
-			| 'paymentPartnerProcessorId'
+			'storedDetailsId' | 'paymentMethodToken' | 'paymentPartnerProcessorId'
 		>
 	>;
 
@@ -46,47 +36,74 @@ export default async function existingCardProcessor(
 		throw new Error( 'Required purchase data is missing' );
 	}
 	const {
-		stripeConfiguration,
-		recordEvent,
+		stripe,
 		includeDomainDetails,
 		includeGSuiteDetails,
 		contactDetails,
+		reduxDispatch,
+		responseCart,
 	} = dataForProcessor;
-	if ( ! stripeConfiguration ) {
-		throw new Error( 'Stripe configuration is required' );
+	if ( ! stripe ) {
+		throw new Error( 'Stripe is required to submit an existing card payment' );
+	}
+	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId: 'existingCard' } ) );
+
+	const cartCountry = responseCart.tax.location.country_code ?? '';
+	const formCountry = contactDetails?.countryCode?.value ?? '';
+	if ( cartCountry !== formCountry ) {
+		// Changes to the contact form data should always be sent to the cart, so
+		// this should not be possible.
+		reduxDispatch(
+			recordTracksEvent( 'calypso_checkout_mismatched_tax_location', {
+				form_country: formCountry,
+				cart_country: cartCountry,
+			} )
+		);
 	}
 
+	const domainDetails = getDomainDetails( contactDetails, {
+		includeDomainDetails,
+		includeGSuiteDetails,
+	} );
 	debug( 'formatting existing card transaction', transactionData );
 	const formattedTransactionData = createTransactionEndpointRequestPayload( {
 		...transactionData,
-		domainDetails: getDomainDetails( contactDetails, {
-			includeDomainDetails,
-			includeGSuiteDetails,
-		} ),
+		name: transactionData.name ?? '',
+		country: contactDetails?.countryCode?.value ?? '',
+		postalCode: getPostalCode( contactDetails ),
+		subdivisionCode: contactDetails?.state?.value,
+		domainDetails,
 		cart: createTransactionEndpointCartFromResponseCart( {
-			siteId: dataForProcessor.siteId ? String( dataForProcessor.siteId ) : undefined,
-			contactDetails: transactionData.domainDetails ?? null,
-			responseCart: dataForProcessor.responseCart,
+			siteId: dataForProcessor.siteId,
+			contactDetails: domainDetails ?? null,
+			responseCart,
 		} ),
 		paymentMethodType: 'WPCOM_Billing_MoneyPress_Stored',
 	} );
 	debug( 'submitting existing card transaction', formattedTransactionData );
 
 	return submitWpcomTransaction( formattedTransactionData, dataForProcessor )
-		.then( ( stripeResponse ) => {
+		.then( async ( stripeResponse ) => {
 			if ( stripeResponse?.message?.payment_intent_client_secret ) {
 				debug( 'transaction requires authentication' );
 				// 3DS authentication required
-				recordEvent( { type: 'SHOW_MODAL_AUTHORIZATION' } );
-				return confirmStripePaymentIntent(
-					stripeConfiguration,
+				reduxDispatch( recordTracksEvent( 'calypso_checkout_modal_authorization', {} ) );
+				// If this fails, it will reject (throw) and we'll end up in the catch block below.
+				await confirmStripePaymentIntent(
+					stripe,
 					stripeResponse?.message?.payment_intent_client_secret
 				);
+				// We must return the original authentication response in order to have
+				// access to the order_id so that we can display a pending page while
+				// we wait for Stripe to send a webhook to complete the purchase.
 			}
 			return stripeResponse;
 		} )
 		.then( ( stripeResponse ) => {
-			if ( stripeResponse?.redirect_url ) {
+			if (
+				stripeResponse?.redirect_url &&
+				! stripeResponse?.message?.payment_intent_client_secret
+			) {
 				debug( 'transaction requires redirect' );
 				return makeRedirectResponse( stripeResponse.redirect_url );
 			}
@@ -108,17 +125,8 @@ function isValidTransactionData(
 	// Validate data required for this payment method type. Some other data may
 	// be required by the server but not required here since the server will give
 	// a better localized error message than we can provide.
-	if ( ! data.country ) {
-		throw new Error( 'Transaction requires country code and none was provided' );
-	}
-	if ( ! data.postalCode ) {
-		throw new Error( 'Transaction requires postal code and none was provided' );
-	}
 	if ( ! data.storedDetailsId ) {
 		throw new Error( 'Transaction requires saved card information and none was provided' );
-	}
-	if ( ! data.name ) {
-		throw new Error( 'Transaction requires cardholder name and none was provided' );
 	}
 	if ( ! data.paymentMethodToken ) {
 		throw new Error( 'Transaction requires a Stripe token and none was provided' );

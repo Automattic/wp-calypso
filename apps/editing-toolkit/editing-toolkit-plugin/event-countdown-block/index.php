@@ -12,7 +12,7 @@ add_action(
 		$asset_file   = __DIR__ . '/dist/event-countdown-block.asset.php';
 		$asset        = file_exists( $asset_file ) ? require $asset_file : null;
 		$dependencies = isset( $asset['dependencies'] ) ? $asset['dependencies'] : array();
-		$version      = isset( $asset['version'] ) ? $asset['version'] : filemtime( __DIR__ . '/dist/event-countdown-block.js' );
+		$version      = isset( $asset['version'] ) ? $asset['version'] : filemtime( __DIR__ . '/dist/event-countdown-block.min.js' );
 
 		$style_file = is_rtl()
 		? 'event-countdown-block.rtl.css'
@@ -28,7 +28,7 @@ add_action(
 		// Block JS.
 		wp_register_script(
 			'jetpack-event-countdown',
-			plugins_url( 'dist/event-countdown-block.js', __FILE__ ),
+			plugins_url( 'dist/event-countdown-block.min.js', __FILE__ ),
 			$dependencies,
 			$version,
 			true

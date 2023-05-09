@@ -1,15 +1,8 @@
 /**
- * External dependencies
+ * @jest-environment jsdom
  */
-import React from 'react';
-import { shallow } from 'enzyme';
-
-/**
- * Internal dependencies
- */
+import { render, screen } from '@testing-library/react';
 import { RegistrantExtraInfoCaForm } from '../ca-form';
-
-jest.mock( 'store', () => ( { get: () => {}, set: () => {} } ) );
 
 const mockProps = {
 	translate: ( string ) => string,
@@ -19,7 +12,6 @@ const mockProps = {
 };
 
 describe( 'ca-form', () => {
-	// eslint-disable-next-line jest/expect-expect
 	test( 'should render without errors when extra is empty', () => {
 		const testProps = {
 			...mockProps,
@@ -27,6 +19,10 @@ describe( 'ca-form', () => {
 			ccTldDetails: {},
 		};
 
-		shallow( <RegistrantExtraInfoCaForm { ...testProps } /> );
+		render( <RegistrantExtraInfoCaForm { ...testProps } /> );
+
+		expect(
+			screen.getByText( 'Choose the option that best describes your Canadian presence:' )
+		).toBeVisible();
 	} );
 } );

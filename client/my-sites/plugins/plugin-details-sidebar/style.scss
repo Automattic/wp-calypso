@@ -1,0 +1,44 @@
+.plugin-details-sidebar__plugin-details-title {
+	padding: 15px 0;
+	display: none;
+	color: var(--studio-gray-100);
+	font-size: $font-body-small;
+
+	@media screen and ( max-width: 1040px ) {
+		display: block;
+	}
+}
+
+.plugin-details-sidebar__plugin-details-content {
+	margin-top: 32px;
+	padding-top: 32px;
+	border-style: solid none;
+	border-width: 1px;
+	border-color: #eee;
+	border-bottom: none;
+
+	.title {
+		color: var(--studio-gray-60);
+		font-size: $font-body-extra-small;
+	}
+
+	.value {
+		color: var(--studio-gray-90);
+		font-size: $font-body-small;
+		padding-bottom: 16px;
+
+		&.plugin-details-sidebar__active-installs-value {
+			font-size: $font-body;
+		}
+	}
+
+	.card {
+		background: transparent;
+	}
+
+	@media screen and ( max-width: 1040px ) {
+		display: flex;
+		justify-content: space-between;
+		flex-wrap: wrap; // Needed for paid plugin USPs.
+	}
+}

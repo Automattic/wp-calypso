@@ -1,69 +1,57 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import {
+	FEATURE_PREMIUM_CONTENT_CONTAINER,
+	FEATURE_DONATIONS,
+	FEATURE_RECURRING_PAYMENTS,
+} from '@automattic/calypso-products';
+import { Card, Button, Dialog, Gridicon } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { saveAs } from 'browser-filesaver';
 import { localize } from 'i18n-calypso';
 import { orderBy } from 'lodash';
-import formatCurrency from '@automattic/format-currency';
-import { saveAs } from 'browser-filesaver';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import paymentsImage from 'calypso/assets/images/earn/payments-illustration.svg';
+import QueryMembershipProducts from 'calypso/components/data/query-memberships';
+import QueryMembershipsEarnings from 'calypso/components/data/query-memberships-earnings';
+import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
+import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import ExternalLink from 'calypso/components/external-link';
+import Gravatar from 'calypso/components/gravatar';
+import InfiniteScroll from 'calypso/components/infinite-scroll';
+import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import SectionHeader from 'calypso/components/section-header';
+import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
+import { userCan } from 'calypso/lib/site/utils';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getEarningsWithDefaultsForSiteId } from 'calypso/state/memberships/earnings/selectors';
+import { requestDisconnectSiteStripeAccount } from 'calypso/state/memberships/settings/actions';
+import {
+	getConnectedAccountIdForSiteId,
+	getConnectedAccountDescriptionForSiteId,
+	getConnectUrlForSiteId,
+} from 'calypso/state/memberships/settings/selectors';
+import {
+	requestSubscribers,
+	requestSubscriptionStop,
+} from 'calypso/state/memberships/subscribers/actions';
+import {
+	getTotalSubscribersForSiteId,
+	getOwnershipsForSiteId,
+} from 'calypso/state/memberships/subscribers/selectors';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { Card, Button, Dialog } from '@automattic/components';
-import InfiniteScroll from 'calypso/components/infinite-scroll';
-import QueryMembershipsEarnings from 'calypso/components/data/query-memberships-earnings';
-import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
-import { requestDisconnectStripeAccount } from 'calypso/state/memberships/settings/actions';
-import {
-	requestSubscribers,
-	requestSubscriptionStop,
-} from 'calypso/state/memberships/subscribers/actions';
-import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
-import Gravatar from 'calypso/components/gravatar';
-import isSiteOnPaidPlan from 'calypso/state/selectors/is-site-on-paid-plan';
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import {
-	FEATURE_MEMBERSHIPS,
-	PLAN_PERSONAL,
-	PLAN_JETPACK_PERSONAL,
-} from '@automattic/calypso-products';
-import Notice from 'calypso/components/notice';
-import NoticeAction from 'calypso/components/notice/notice-action';
-import SectionHeader from 'calypso/components/section-header';
-import QueryMembershipProducts from 'calypso/components/data/query-memberships';
-import Gridicon from 'calypso/components/gridicon';
-import { userCan } from 'calypso/lib/site/utils';
-import EllipsisMenu from 'calypso/components/ellipsis-menu';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
-import ExternalLink from 'calypso/components/external-link';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
-import { getEarningsWithDefaultsForSiteId } from 'calypso/state/memberships/earnings/selectors';
-import {
-	getTotalSubscribersForSiteId,
-	getOwnershipsForSiteId,
-} from 'calypso/state/memberships/subscribers/selectors';
-import {
-	getConnectedAccountIdForSiteId,
-	getConnectUrlForSiteId,
-} from 'calypso/state/memberships/settings/selectors';
+import { ADD_NEWSLETTER_PAYMENT_PLAN_HASH } from './constants';
 
-/**
- * Image dependencies
- */
-import paymentsImage from 'calypso/assets/images/earn/payments-illustration.svg';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class MembershipsSection extends Component {
@@ -135,7 +123,7 @@ class MembershipsSection extends Component {
 										br: <br />,
 										a: (
 											<ExternalLink
-												href="https://wordpress.com/support/recurring-payments-button/#related-fees"
+												href="https://wordpress.com/support/wordpress-editor/blocks/payments/#related-fees"
 												icon={ true }
 											/>
 										),
@@ -157,7 +145,7 @@ class MembershipsSection extends Component {
 
 	onCloseDisconnectStripeAccount = ( reason ) => {
 		if ( reason === 'disconnect' ) {
-			this.props.requestDisconnectStripeAccount(
+			this.props.requestDisconnectSiteStripeAccount(
 				this.props.siteId,
 				this.props.connectedAccountId,
 				this.props.translate( 'Please wait, disconnecting Stripe\u2026' ),
@@ -172,11 +160,7 @@ class MembershipsSection extends Component {
 			this.props.requestSubscriptionStop(
 				this.props.siteId,
 				this.state.cancelledSubscriber,
-				this.props.translate( 'Subscription cancelled for %(email)s', {
-					args: {
-						email: this.state.cancelledSubscriber.user.user_email,
-					},
-				} )
+				this.getIntervalDependantWording( this.state.cancelledSubscriber ).success
 			);
 		}
 		this.setState( { cancelledSubscriber: null } );
@@ -232,6 +216,7 @@ class MembershipsSection extends Component {
 	}
 
 	renderSubscriberList() {
+		const wording = this.getIntervalDependantWording( this.state.cancelledSubscriber );
 		return (
 			<div>
 				<SectionHeader label={ this.props.translate( 'Customers and Subscribers' ) } />
@@ -259,11 +244,9 @@ class MembershipsSection extends Component {
 					<Card>
 						<div className="memberships__module-content module-content">
 							<div>
-								{ orderBy(
-									Object.values( this.props.subscribers ),
-									[ 'id' ],
-									[ 'desc' ]
-								).map( ( sub ) => this.renderSubscriber( sub ) ) }
+								{ orderBy( Object.values( this.props.subscribers ), [ 'id' ], [ 'desc' ] ).map(
+									( sub ) => this.renderSubscriber( sub )
+								) }
 							</div>
 							<InfiniteScroll
 								nextPageMethod={ ( triggeredByInteraction ) =>
@@ -279,7 +262,7 @@ class MembershipsSection extends Component {
 									action: 'back',
 								},
 								{
-									label: this.props.translate( 'Cancel Subscription' ),
+									label: wording.button,
 									isPrimary: true,
 									action: 'cancel',
 								},
@@ -287,20 +270,8 @@ class MembershipsSection extends Component {
 							onClose={ this.onCloseCancelSubscription }
 						>
 							<h1>{ this.props.translate( 'Confirmation' ) }</h1>
-							<p>{ this.props.translate( 'Do you want to cancel this subscription?' ) }</p>
-							<Notice
-								text={ this.props.translate(
-									'Canceling the subscription will mean the subscriber %(email)s will no longer be charged.',
-									{
-										args: {
-											email: this.state.cancelledSubscriber
-												? this.state.cancelledSubscriber.user.user_email
-												: '',
-										},
-									}
-								) }
-								showDismiss={ false }
-							/>
+							<p>{ wording.confirmation_subheading }</p>
+							<Notice text={ wording.confirmation_info } showDismiss={ false } />
 						</Dialog>
 						<div className="memberships__module-footer">
 							<Button onClick={ this.downloadSubscriberList }>
@@ -313,6 +284,36 @@ class MembershipsSection extends Component {
 		);
 	}
 
+	getIntervalDependantWording( subscriber ) {
+		const subscriber_email = subscriber?.user.user_email ?? '';
+		const plan_name = subscriber?.plan.title ?? '';
+
+		if ( subscriber?.plan?.renew_interval === 'one-time' ) {
+			return {
+				button: this.props.translate( 'Remove payment' ),
+				confirmation_subheading: this.props.translate( 'Do you want to remove this payment?' ),
+				confirmation_info: this.props.translate(
+					'Removing this payment means that the user %(subscriber_email)s will no longer have access to any service granted by the %(plan_name)s plan. The payment will not be refunded.',
+					{ args: { subscriber_email, plan_name } }
+				),
+				success: this.props.translate( 'Payment removed for %(subscriber_email)s.', {
+					args: { subscriber_email },
+				} ),
+			};
+		}
+		return {
+			button: this.props.translate( 'Cancel payment' ),
+			confirmation_subheading: this.props.translate( 'Do you want to cancel this payment?' ),
+			confirmation_info: this.props.translate(
+				'Cancelling this payment means that the user %(subscriber_email)s will no longer have access to any service granted by the %(plan_name)s plan. Payments already made will not be refunded but any scheduled future payments will not be made.',
+				{ args: { subscriber_email, plan_name } }
+			),
+			success: this.props.translate( 'Payment cancelled for %(subscriber_email)s.', {
+				args: { subscriber_email },
+			} ),
+		};
+	}
+
 	renderManagePlans() {
 		return (
 			<div>
@@ -321,7 +322,7 @@ class MembershipsSection extends Component {
 					<QueryMembershipProducts siteId={ this.props.siteId } />
 					<div className="memberships__module-plans-content">
 						<div className="memberships__module-plans-icon">
-							<Gridicon size={ 24 } icon={ 'credit-card' } />
+							<Gridicon size={ 24 } icon="credit-card" />
 						</div>
 						<div>
 							<div className="memberships__module-plans-title">
@@ -351,10 +352,21 @@ class MembershipsSection extends Component {
 				>
 					<div className="memberships__module-plans-content">
 						<div className="memberships__module-plans-icon">
-							<Gridicon size={ 24 } icon={ 'link-break' } />
+							<Gridicon size={ 24 } icon="link-break" />
 						</div>
-						<div className="memberships__module-settings-title">
-							{ this.props.translate( 'Disconnect Stripe Account' ) }
+						<div>
+							<div className="memberships__module-settings-title">
+								{ this.props.translate( 'Disconnect Stripe Account' ) }
+							</div>
+							{ this.props.connectedAccountDescription ? (
+								<div className="memberships__module-settings-description">
+									{ this.props.translate( 'Connected to %(connectedAccountDescription)s', {
+										args: {
+											connectedAccountDescription: this.props.connectedAccountDescription,
+										},
+									} ) }
+								</div>
+							) : null }
 						</div>
 					</div>
 				</Card>
@@ -381,13 +393,7 @@ class MembershipsSection extends Component {
 					</p>
 					<Notice
 						text={ this.props.translate(
-							'Once you disconnect Payments from Stripe, new subscribers won’t be able to sign up and existing subscriptions will stop working.{{br/}}{{strong}}Disconnecting your Stripe account here will remove it from all your WordPress.com and Jetpack sites.{{/strong}}',
-							{
-								components: {
-									br: <br />,
-									strong: <strong />,
-								},
-							}
+							'Once you disconnect Payments from Stripe, new subscribers won’t be able to sign up and existing subscriptions will stop working.'
 						) }
 						showDismiss={ false }
 					/>
@@ -452,14 +458,14 @@ class MembershipsSection extends Component {
 				<PopoverMenuItem
 					target="_blank"
 					rel="noopener norefferer"
-					href={ `https://dashboard.stripe.com/test/search?query=metadata%3A${ subscriber.user.ID }` }
+					href={ `https://dashboard.stripe.com/search?query=metadata%3A${ subscriber.user.ID }` }
 				>
-					<Gridicon size={ 18 } icon={ 'external' } />
+					<Gridicon size={ 18 } icon="external" />
 					{ this.props.translate( 'See transactions in Stripe Dashboard' ) }
 				</PopoverMenuItem>
 				<PopoverMenuItem onClick={ () => this.setState( { cancelledSubscriber: subscriber } ) }>
-					<Gridicon size={ 18 } icon={ 'cross' } />
-					{ this.props.translate( 'Cancel Subscription' ) }
+					<Gridicon size={ 18 } icon="cross" />
+					{ this.getIntervalDependantWording( subscriber ).button }
 				</PopoverMenuItem>
 			</EllipsisMenu>
 		);
@@ -489,19 +495,7 @@ class MembershipsSection extends Component {
 	renderStripeConnected() {
 		return (
 			<div>
-				{ this.props.query.stripe_connect_success === 'earn' && (
-					<Notice
-						status="is-success"
-						showDismiss={ false }
-						text={ this.props.translate(
-							'Congrats! Your site is now connected to Stripe. You can now add your first payment plan.'
-						) }
-					>
-						<NoticeAction href={ `/earn/payments-plans/${ this.props.siteSlug }` } icon="create">
-							{ this.props.translate( 'Add a payment plan' ) }
-						</NoticeAction>
-					</Notice>
-				) }
+				{ this.renderNotices() }
 				{ this.renderEarnings() }
 				{ this.renderSubscriberList() }
 				{ this.renderManagePlans() }
@@ -510,7 +504,50 @@ class MembershipsSection extends Component {
 		);
 	}
 
-	renderOnboarding( cta ) {
+	renderNotices() {
+		const { siteSlug, translate } = this.props;
+		const stripe_connect_success = this.props?.query?.stripe_connect_success;
+
+		if ( stripe_connect_success === 'earn' ) {
+			return (
+				<Notice
+					status="is-success"
+					showDismiss={ false }
+					text={ translate(
+						'Congrats! Your site is now connected to Stripe. You can now add your first payment plan.'
+					) }
+				>
+					<NoticeAction href={ `/earn/payments-plans/${ siteSlug }` } icon="create">
+						{ translate( 'Add a payment plan' ) }
+					</NoticeAction>
+				</Notice>
+			);
+		}
+
+		if ( stripe_connect_success === 'earn-newsletter' ) {
+			return (
+				<Notice
+					status="is-success"
+					showDismiss={ false }
+					text={ translate(
+						'Congrats! Your site is now connected to Stripe. You can now add payments to your newsletter.'
+					) }
+				>
+					<NoticeAction
+						external
+						icon="create"
+						href={ `/earn/payments-plans/${ siteSlug }${ ADD_NEWSLETTER_PAYMENT_PLAN_HASH }` }
+					>
+						{ translate( 'Add payments' ) }
+					</NoticeAction>
+				</Notice>
+			);
+		}
+
+		return null;
+	}
+
+	renderOnboarding( cta, intro ) {
 		const { translate } = this.props;
 
 		return (
@@ -523,14 +560,14 @@ class MembershipsSection extends Component {
 						<p className="memberships__onboarding-paragraph">
 							{ preventWidows(
 								translate(
-									'WordPress.com Payments makes it easy to sell physical and digital goods, accept donations, charge for in-person services, build subscription newsletters, and more.'
+									'Our payments blocks make it easy to add a buy button for digital goods or services, collect donations via a form, or limit access for specific content to subscribers-only.'
 								)
 							) }
 						</p>
 						<p className="memberships__onboarding-paragraph">
 							{ preventWidows(
 								translate(
-									'One-time, monthly, and yearly credit and debit card payment options are supported. {{link}}Learn more about payments.{{/link}}',
+									'The Payment Button, Donations Form, and Premium Content blocks all require you to first connect your bank account details with our secure payment processor, Stripe.',
 									{
 										components: {
 											link: (
@@ -541,13 +578,16 @@ class MembershipsSection extends Component {
 								)
 							) }
 						</p>
+						{ intro ? <p className="memberships__onboarding-paragraph">{ intro }</p> : null }
 						<p className="memberships__onboarding-paragraph">{ cta }</p>
 						<p className="memberships__onboarding-paragraph memberships__onboarding-paragraph-disclaimer">
-							{ preventWidows(
-								translate(
-									'Payments are securely processed by Stripe, a payment partner for all credit and debit card payments.'
-								)
-							) }
+							<em>
+								{ preventWidows(
+									translate(
+										'All credit and debit card payments made through these blocks are securely and seamlessly processed by Stripe.'
+									)
+								) }
+							</em>
 						</p>
 					</div>
 					<div className="memberships__onboarding-column-image">
@@ -556,33 +596,31 @@ class MembershipsSection extends Component {
 				</div>
 				<div className="memberships__onboarding-benefits">
 					<div>
-						<h3>{ translate( 'Payments for anything' ) }</h3>
+						<h3>{ translate( 'No plugin required' ) }</h3>
 						{ preventWidows(
 							translate(
-								'Send paid newsletters and offer premium content, services, physical and digital goods, accept donations, and more.'
+								'No additional installs or purchases. Simply connect your banking details with our payment processor, Stripe, and insert a block to get started.'
 							)
 						) }
 					</div>
 					<div>
-						<h3>{ translate( 'Flexibile options' ) }</h3>
+						<h3>{ translate( 'One-time and recurring options' ) }</h3>
 						{ preventWidows(
 							translate(
-								'Add as many one-time, monthly, yearly, and lifetime subscription options as you need.'
+								'Accept one-time, monthly, and yearly payments from your visitors. This is perfect for a single purchase or tip — or a recurring donation, membership fee, or subscription.'
 							)
 						) }
 					</div>
 					<div>
-						<h3>{ translate( "You're in control" ) }</h3>
-						{ preventWidows(
-							translate(
-								'You choose which content requires payment. Easily manage subscribers and payment plans.'
-							)
-						) }
+						<h3>{ translate( 'No membership fees' ) }</h3>
+						{ preventWidows( translate( 'No monthly or annual fees charged.' ) ) }
 					</div>
 					<div>
-						<h3>{ translate( 'Global payments' ) }</h3>
+						<h3>{ translate( 'Join thousands of others' ) }</h3>
 						{ preventWidows(
-							translate( 'Collect payments in 135 countries to reach customers around the world.' )
+							translate(
+								'Sites that actively promoted their businesses and causes on social media, email, and other platforms have collected tens of thousands of dollars through these blocks.'
+							)
 						) }
 					</div>
 				</div>
@@ -593,7 +631,7 @@ class MembershipsSection extends Component {
 	renderConnectStripe() {
 		return (
 			<div>
-				{ this.props.query.stripe_connect_cancelled && (
+				{ this.props?.query?.stripe_connect_cancelled && (
 					<Notice
 						showDismiss={ false }
 						text={ this.props.translate(
@@ -602,32 +640,32 @@ class MembershipsSection extends Component {
 					/>
 				) }
 				{ this.renderOnboarding(
-					<Button primary={ true } href={ this.props.connectUrl }>
+					<Button
+						primary={ true }
+						href={ this.props.connectUrl }
+						onClick={ () =>
+							this.props.recordTracksEvent( 'calypso_memberships_stripe_connect_click' )
+						}
+					>
 						{ this.props.translate( 'Connect Stripe to Get Started' ) }{ ' ' }
-						<Gridicon size={ 18 } icon={ 'external' } />
-					</Button>
+						<Gridicon size={ 18 } icon="external" />
+					</Button>,
+					this.props.connectedAccountDescription
+						? this.props.translate(
+								'Previously connected to Stripe account %(connectedAccountDescription)s',
+								{
+									args: {
+										connectedAccountDescription: this.props.connectedAccountDescription,
+									},
+								}
+						  )
+						: null
 				) }
 			</div>
 		);
 	}
 
 	render() {
-		if ( ! this.props.paidPlan ) {
-			return this.renderOnboarding(
-				<UpsellNudge
-					plan={ this.props.isJetpack ? PLAN_JETPACK_PERSONAL : PLAN_PERSONAL }
-					shouldDisplay={ () => true }
-					feature={ FEATURE_MEMBERSHIPS }
-					title={ this.props.translate( 'Upgrade to the Personal plan' ) }
-					description={ this.props.translate( 'Upgrade to start selling.' ) }
-					showIcon={ true }
-					event="calypso_memberships_upsell_nudge"
-					tracksImpressionName="calypso_upgrade_nudge_impression"
-					tracksClickName="calypso_upgrade_nudge_cta_click"
-				/>
-			);
-		}
-
 		if ( ! userCan( 'manage_options', this.props.site ) ) {
 			return this.renderOnboarding(
 				<Notice
@@ -640,9 +678,15 @@ class MembershipsSection extends Component {
 
 		return (
 			<div>
-				<QueryMembershipsSettings siteId={ this.props.siteId } />
+				<QueryMembershipsSettings siteId={ this.props.siteId } source={ this.props.source } />
 				{ this.props.connectedAccountId && this.renderStripeConnected() }
 				{ this.props.connectUrl && ! this.props.connectedAccountId && this.renderConnectStripe() }
+
+				{ ! this.props.connectedAccountId && ! this.props.connectUrl && (
+					<div className="earn__payments-loading">
+						<LoadingEllipsis />
+					</div>
+				) }
 			</div>
 		);
 	}
@@ -665,14 +709,21 @@ const mapStateToProps = ( state ) => {
 		totalSubscribers: getTotalSubscribersForSiteId( state, siteId ),
 		subscribers: getOwnershipsForSiteId( state, siteId ),
 		connectedAccountId: getConnectedAccountIdForSiteId( state, siteId ),
+		connectedAccountDescription: getConnectedAccountDescriptionForSiteId( state, siteId ),
 		connectUrl: getConnectUrlForSiteId( state, siteId ),
-		paidPlan: isSiteOnPaidPlan( state, siteId ),
+		hasStripeFeature:
+			siteHasFeature( state, siteId, FEATURE_PREMIUM_CONTENT_CONTAINER ) ||
+			siteHasFeature( state, siteId, FEATURE_DONATIONS ) ||
+			siteHasFeature( state, siteId, FEATURE_RECURRING_PAYMENTS ),
 		isJetpack: isJetpackSite( state, siteId ),
+		source:
+			window.location.hash === ADD_NEWSLETTER_PAYMENT_PLAN_HASH ? 'earn-newsletter' : 'calypso',
 	};
 };
 
 export default connect( mapStateToProps, {
+	recordTracksEvent,
 	requestSubscribers,
-	requestDisconnectStripeAccount,
+	requestDisconnectSiteStripeAccount,
 	requestSubscriptionStop,
 } )( localize( withLocalizedMoment( MembershipsSection ) ) );

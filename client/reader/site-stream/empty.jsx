@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { localize } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import EmptyContent from 'calypso/components/empty-content';
 import { recordAction as statRecordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
@@ -34,7 +26,7 @@ const SiteEmptyContent = ( { translate } ) => {
 			title={ translate( 'No posts' ) }
 			line={ translate( 'This site has not posted anything yet. Try back later.' ) }
 			action={ action }
-			illustration={ '/calypso/images/illustrations/illustration-empty-results.svg' }
+			illustration="/calypso/images/illustrations/illustration-empty-results.svg"
 			illustrationWidth={ 500 }
 		/>
 	);

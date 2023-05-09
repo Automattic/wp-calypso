@@ -1,0 +1,34 @@
+name: Feature Request
+description: Suggest an idea for Calypso!
+title: "Feature Request:"
+labels: ["[Type] Feature Request"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please, be as descriptive as possible. Issues lacking detail, or for any other reason than to request a feature, may be closed without action.
+
+  - type: textarea
+    id: what
+    attributes:
+      label: What
+      description: Add a concise description of the feature being requested.
+      placeholder: eg. I would like a new dropdown at <xyz>...
+    validations:
+      required: true
+
+  - type: textarea
+    id: why
+    attributes:
+      label: Why
+      description: Add a description of the problem this feature solves.
+      placeholder: |
+        eg. This will solve my accessibility needs.
+    validations:
+      required: true
+
+  - type: textarea
+    id: how
+    attributes:
+      label: How
+      description: If applicable, add screenshots, mockup, animations and/or videos to help illustrate how the feature could be done.

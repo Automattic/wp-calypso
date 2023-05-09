@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
+import sitePostGetMethods from './runtime/site.post.get';
+import Comment from './site.comment';
 import Like from './site.post.like';
 import Reblog from './site.post.reblog';
-import Comment from './site.comment';
 import Subscriber from './site.post.subscriber';
 import runtimeBuilder from './util/runtime-builder';
-import sitePostGetMethods from './runtime/site.post.get';
 
 /**
  * Module vars
@@ -81,7 +74,7 @@ class SitePost {
 	/**
 	 * Get post
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -96,7 +89,7 @@ class SitePost {
 	/**
 	 * Get post by slug
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -107,8 +100,8 @@ class SitePost {
 	/**
 	 * Add post
 	 *
-	 * @param {object} [query] - query object parameter
-	 * @param {object} body - body object parameter
+	 * @param {Object} [query] - query object parameter
+	 * @param {Object} body - body object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -152,8 +145,8 @@ class SitePost {
 	/**
 	 * Edit post
 	 *
-	 * @param {object} [query] - query object parameter
-	 * @param {object} body - body object parameter
+	 * @param {Object} [query] - query object parameter
+	 * @param {Object} body - body object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -164,7 +157,7 @@ class SitePost {
 	/**
 	 * Delete post
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Promise} Promise
 	 */
@@ -176,7 +169,7 @@ class SitePost {
 	/**
 	 * Del post, alias of Delete
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Promise} Promise
 	 */
@@ -187,7 +180,7 @@ class SitePost {
 	/**
 	 * Restore post
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -198,7 +191,7 @@ class SitePost {
 	/**
 	 * Search within a site for related posts
 	 *
-	 * @param {object} body - body object parameter
+	 * @param {Object} body - body object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -219,7 +212,7 @@ class SitePost {
 	/**
 	 * Return recent comments
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -249,7 +242,7 @@ class SitePost {
 	/**
 	 * Return a `Subscriber` instance.
 	 *
-	 * *Example:*
+	 * Example:
 	 *    // Create a Subscriber instance of a post
 	 *    var post = wpcom.site( 'en.blog.wordpress.com' ).post( 1234 );
 	 *    var subs = post.subscriber();

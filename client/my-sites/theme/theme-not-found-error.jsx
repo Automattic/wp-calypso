@@ -1,15 +1,6 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import Main from 'calypso/components/main';
 import EmptyContentComponent from 'calypso/components/empty-content';
+import Main from 'calypso/components/main';
 
 function ThemeNotFoundError( { translate } ) {
 	const emptyContentTitle = translate( 'Looking for great WordPress designs?', {
@@ -22,7 +13,6 @@ function ThemeNotFoundError( { translate } ) {
 	return (
 		<Main>
 			<EmptyContentComponent
-				illustration="/calypso/images/illustrations/no-themes-drake.svg"
 				title={ emptyContentTitle }
 				line={ emptyContentMessage }
 				action={ translate( 'View the showcase' ) }

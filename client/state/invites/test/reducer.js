@@ -1,13 +1,4 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import { requesting, items, counts, requestingResend, deleting } from '../reducer';
 import {
 	INVITES_REQUEST,
 	INVITES_REQUEST_SUCCESS,
@@ -19,7 +10,7 @@ import {
 	INVITES_DELETE_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import { requesting, items, counts, requestingResend, deleting } from '../reducer';
 
 describe( 'reducer', () => {
 	describe( '#requesting()', () => {
@@ -31,7 +22,7 @@ describe( 'reducer', () => {
 					siteId: 12345,
 				}
 			);
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				12345: true,
 			} );
 		} );
@@ -42,7 +33,7 @@ describe( 'reducer', () => {
 				type: INVITES_REQUEST,
 				siteId: 67890,
 			} );
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				12345: false,
 				67890: true,
 			} );
@@ -100,7 +91,7 @@ describe( 'reducer', () => {
 					],
 				}
 			);
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				12345: {
 					pending: [
 						{
@@ -204,7 +195,7 @@ describe( 'reducer', () => {
 					},
 				],
 			} );
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				12345: {
 					pending: [
 						{
@@ -291,7 +282,7 @@ describe( 'reducer', () => {
 				siteId: 12345,
 				inviteIds: [ '123456asdf789' ],
 			} );
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				12345: {
 					pending: [],
 					accepted: [],
@@ -353,7 +344,7 @@ describe( 'reducer', () => {
 				siteId: 12345,
 				inviteIds: [ '123456asdf789', '9876fdas54321' ],
 			} );
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				12345: {
 					pending: [],
 					accepted: [],
@@ -412,7 +403,7 @@ describe( 'reducer', () => {
 			} );
 			const state = serialize( items, original );
 
-			expect( state ).to.eql( original );
+			expect( state ).toEqual( original );
 		} );
 
 		test( 'should load valid persisted state', () => {
@@ -458,13 +449,11 @@ describe( 'reducer', () => {
 			} );
 			const state = deserialize( items, original );
 
-			expect( state ).to.eql( original );
+			expect( state ).toEqual( original );
 		} );
 
 		describe( 'invalid state tests', () => {
-			useSandbox( ( sandbox ) => {
-				sandbox.stub( console, 'warn' );
-			} );
+			jest.spyOn( console, 'warn' ).mockImplementation();
 
 			test( 'should not load invalid persisted state (1)', () => {
 				const original = deepFreeze( {
@@ -497,7 +486,7 @@ describe( 'reducer', () => {
 				} );
 				const state = deserialize( items, original );
 
-				expect( state ).to.eql( {} );
+				expect( state ).toEqual( {} );
 			} );
 
 			test( 'should not load invalid persisted state (2)', () => {
@@ -530,7 +519,7 @@ describe( 'reducer', () => {
 				} );
 				const state = deserialize( items, original );
 
-				expect( state ).to.eql( {} );
+				expect( state ).toEqual( {} );
 			} );
 
 			test( 'should not load invalid persisted state (3)', () => {
@@ -539,7 +528,7 @@ describe( 'reducer', () => {
 				} );
 				const state = deserialize( items, original );
 
-				expect( state ).to.eql( {} );
+				expect( state ).toEqual( {} );
 			} );
 
 			test( 'should not load invalid persisted state (4)', () => {
@@ -548,7 +537,7 @@ describe( 'reducer', () => {
 				} );
 				const state = deserialize( items, original );
 
-				expect( state ).to.eql( {} );
+				expect( state ).toEqual( {} );
 			} );
 		} );
 	} );
@@ -563,7 +552,7 @@ describe( 'reducer', () => {
 					found: 678,
 				}
 			);
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				12345: 678,
 			} );
 		} );
@@ -575,7 +564,7 @@ describe( 'reducer', () => {
 				siteId: 67890,
 				found: 12,
 			} );
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				12345: 678,
 				67890: 12,
 			} );
@@ -588,7 +577,7 @@ describe( 'reducer', () => {
 				siteId: 67890,
 				inviteIds: [ '123456asdf789', '789lkjh123456' ],
 			} );
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				12345: 678,
 				67890: 10,
 			} );
@@ -605,7 +594,7 @@ describe( 'reducer', () => {
 					inviteId: '123456asdf789',
 				}
 			);
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				12345: { '123456asdf789': 'requesting' },
 			} );
 		} );
@@ -619,7 +608,7 @@ describe( 'reducer', () => {
 					inviteId: '123456asdf789',
 				}
 			);
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				12345: { '123456asdf789': 'success' },
 			} );
 		} );
@@ -633,7 +622,7 @@ describe( 'reducer', () => {
 					inviteId: '123456asdf789',
 				}
 			);
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				12345: { '123456asdf789': 'failure' },
 			} );
 		} );
@@ -645,7 +634,7 @@ describe( 'reducer', () => {
 				siteId: 12345,
 				inviteId: '123_requesting',
 			} );
-			expect( state1 ).to.eql( {
+			expect( state1 ).toEqual( {
 				12345: { '123456asdf789': 'success', '123_requesting': 'requesting' },
 			} );
 			const state2 = requestingResend( state1, {
@@ -653,7 +642,7 @@ describe( 'reducer', () => {
 				siteId: 12345,
 				inviteId: '456_success',
 			} );
-			expect( state2 ).to.eql( {
+			expect( state2 ).toEqual( {
 				12345: {
 					'123456asdf789': 'success',
 					'123_requesting': 'requesting',
@@ -665,7 +654,7 @@ describe( 'reducer', () => {
 				siteId: 12345,
 				inviteId: '789_failure',
 			} );
-			expect( state3 ).to.eql( {
+			expect( state3 ).toEqual( {
 				12345: {
 					'123456asdf789': 'success',
 					'123_requesting': 'requesting',
@@ -682,7 +671,7 @@ describe( 'reducer', () => {
 				siteId: 67890,
 				inviteId: '789lkjh123456',
 			} );
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				12345: { '123456asdf789': 'success' },
 				67890: { '789lkjh123456': 'requesting' },
 			} );
@@ -699,7 +688,7 @@ describe( 'reducer', () => {
 					inviteIds: [ '123456asdf789' ],
 				}
 			);
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				12345: { '123456asdf789': 'requesting' },
 			} );
 		} );
@@ -713,7 +702,7 @@ describe( 'reducer', () => {
 					inviteIds: [ '123456asdf789' ],
 				}
 			);
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				12345: { '123456asdf789': 'success' },
 			} );
 		} );
@@ -727,7 +716,7 @@ describe( 'reducer', () => {
 					inviteIds: [ '123456asdf789' ],
 				}
 			);
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				12345: { '123456asdf789': 'failure' },
 			} );
 		} );
@@ -741,7 +730,7 @@ describe( 'reducer', () => {
 					inviteIds: [ '123456asdf789', '789lkjh123456' ],
 				}
 			);
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				12345: { '123456asdf789': 'requesting', '789lkjh123456': 'requesting' },
 			} );
 		} );
@@ -753,7 +742,7 @@ describe( 'reducer', () => {
 				siteId: 12345,
 				inviteIds: [ '123_requesting' ],
 			} );
-			expect( state1 ).to.eql( {
+			expect( state1 ).toEqual( {
 				12345: { '123456asdf789': 'success', '123_requesting': 'requesting' },
 			} );
 			const state2 = deleting( state1, {
@@ -761,7 +750,7 @@ describe( 'reducer', () => {
 				siteId: 12345,
 				inviteIds: [ '456_success', '457_success' ],
 			} );
-			expect( state2 ).to.eql( {
+			expect( state2 ).toEqual( {
 				12345: {
 					'123456asdf789': 'success',
 					'123_requesting': 'requesting',
@@ -774,7 +763,7 @@ describe( 'reducer', () => {
 				siteId: 12345,
 				inviteIds: [ '123_requesting', '789_failure' ],
 			} );
-			expect( state3 ).to.eql( {
+			expect( state3 ).toEqual( {
 				12345: {
 					'123456asdf789': 'success',
 					'123_requesting': 'failure',
@@ -792,7 +781,7 @@ describe( 'reducer', () => {
 				siteId: 67890,
 				inviteIds: [ '789lkjh123456' ],
 			} );
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				12345: { '123456asdf789': 'success' },
 				67890: { '789lkjh123456': 'requesting' },
 			} );

@@ -6,12 +6,7 @@
  *
  *   Purpose: To display a custom icon in the sidebar when using a
  *   source other than grid icons or material icons.
- **/
-
-/**
- * External dependencies
  */
-import React from 'react';
 
 const SidebarCustomIcon = ( { icon, ...rest } ) => {
 	if ( ! icon ) {
@@ -30,11 +25,18 @@ const SidebarCustomIcon = ( { icon, ...rest } ) => {
 			<span
 				className={ 'sidebar__menu-icon dashicons' + ( isSVG ? ' sidebar__menu-icon-img' : '' ) }
 				style={ imgStyles }
+				aria-hidden={ true }
 				{ ...rest }
 			/>
 		);
 	}
 
-	return <span className={ 'sidebar__menu-icon dashicons-before ' + icon } { ...rest } />;
+	return (
+		<span
+			className={ 'sidebar__menu-icon dashicons-before ' + icon }
+			aria-hidden={ true }
+			{ ...rest }
+		/>
+	);
 };
 export default SidebarCustomIcon;

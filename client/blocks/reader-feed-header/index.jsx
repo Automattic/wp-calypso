@@ -1,43 +1,32 @@
-/**
- * External Dependencies
- */
+import { safeImageUrl } from '@automattic/calypso-url';
+import { Card, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal Dependencies
- */
-import { Card } from '@automattic/components';
+import BlogStickers from 'calypso/blocks/blog-stickers';
+import ReaderSiteNotificationSettings from 'calypso/blocks/reader-site-notification-settings';
+import SiteIcon from 'calypso/blocks/site-icon';
+import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import ReaderFollowButton from 'calypso/reader/follow-button';
-import { isAuthorNameBlocked } from 'calypso/reader/lib/author-name-blocklist';
-import HeaderBack from 'calypso/reader/header-back';
 import {
 	getSiteDescription,
 	getSiteName,
 	getSiteUrl,
 	isEligibleForUnseen,
 } from 'calypso/reader/get-helpers';
-import SiteIcon from 'calypso/blocks/site-icon';
-import BlogStickers from 'calypso/blocks/blog-stickers';
-import ReaderFeedHeaderSiteBadge from './badge';
-import ReaderSiteNotificationSettings from 'calypso/blocks/reader-site-notification-settings';
-import getUserSetting from 'calypso/state/selectors/get-user-setting';
-import { isFollowing } from 'calypso/state/reader/follows/selectors';
-import QueryUserSettings from 'calypso/components/data/query-user-settings';
-import Gridicon from 'calypso/components/gridicon';
-import { requestMarkAllAsSeen } from 'calypso/state/reader/seen-posts/actions';
+import HeaderBack from 'calypso/reader/header-back';
+import { isAuthorNameBlocked } from 'calypso/reader/lib/author-name-blocklist';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { getReaderTeams } from 'calypso/state/teams/selectors';
-import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
-import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import { hasReaderFollowOrganization, isFollowing } from 'calypso/state/reader/follows/selectors';
+import { requestMarkAllAsSeen } from 'calypso/state/reader/seen-posts/actions';
+import getUserSetting from 'calypso/state/selectors/get-user-setting';
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import ReaderFeedHeaderSiteBadge from './badge';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class FeedHeader extends Component {
@@ -47,7 +36,7 @@ class FeedHeader extends Component {
 		showBack: PropTypes.bool,
 		streamKey: PropTypes.string,
 		isWPForTeamsItem: PropTypes.bool,
-		teams: PropTypes.array,
+		hasOrganization: PropTypes.bool,
 	};
 
 	getFollowerCount = ( feed, site ) => {
@@ -80,7 +69,7 @@ class FeedHeader extends Component {
 			translate,
 			following,
 			isEmailBlocked,
-			teams,
+			hasOrganization,
 			isWPForTeamsItem,
 		} = this.props;
 		const followerCount = this.getFollowerCount( feed, site );
@@ -89,60 +78,47 @@ class FeedHeader extends Component {
 		const siteTitle = getSiteName( { feed, site } );
 		const siteUrl = getSiteUrl( { feed, site } );
 		const siteId = site && site.ID;
+		const siteIcon = site ? get( site, 'icon.img' ) : null;
 
 		const classes = classnames( 'reader-feed-header', {
 			'is-placeholder': ! site && ! feed,
 			'has-back-button': showBack,
 		} );
 
+		let feedIcon = feed ? feed.site_icon ?? get( feed, 'image' ) : null;
+		// don't show the default favicon for some sites
+		if ( feedIcon?.endsWith( 'wp.com/i/buttonw-com.png' ) ) {
+			feedIcon = null;
+		}
+
+		let fakeSite;
+
+		const safeSiteIcon = safeImageUrl( siteIcon );
+		const safeFeedIcon = safeImageUrl( feedIcon );
+
+		if ( safeSiteIcon ) {
+			fakeSite = {
+				icon: {
+					img: safeSiteIcon,
+				},
+			};
+		} else if ( safeFeedIcon ) {
+			fakeSite = {
+				icon: {
+					img: safeFeedIcon,
+				},
+			};
+		}
+
+		const siteIconElement = <SiteIcon key="site-icon" size={ 116 } site={ fakeSite } />;
+
 		return (
 			<div className={ classes }>
 				<QueryUserSettings />
-				<QueryReaderTeams />
-				<div className="reader-feed-header__back-and-follow">
-					{ showBack && <HeaderBack /> }
-					<div className="reader-feed-header__follow">
-						{ followerCount && (
-							<span className="reader-feed-header__follow-count">
-								{ ' ' }
-								{ translate( '%s follower', '%s followers', {
-									count: followerCount,
-									args: [ this.props.numberFormat( followerCount ) ],
-									comment: '%s is the number of followers. For example: "12,000,000"',
-								} ) }
-							</span>
-						) }
-						<div className="reader-feed-header__follow-and-settings">
-							{ feed && ! feed.is_error && (
-								<div className="reader-feed-header__follow-button">
-									<ReaderFollowButton siteUrl={ feed.feed_URL } iconSize={ 24 } />
-								</div>
-							) }
-
-							{ site && following && ! isEmailBlocked && (
-								<div className="reader-feed-header__email-settings">
-									<ReaderSiteNotificationSettings siteId={ siteId } />
-								</div>
-							) }
-
-							{ isEligibleForUnseen( { teams, isWPForTeamsItem } ) && feed && (
-								<button
-									onClick={ this.markAllAsSeen }
-									className="reader-feed-header__seen-button"
-									disabled={ feed.unseen_count === 0 }
-								>
-									<Gridicon icon="visible" size={ 18 } />
-									<span title={ translate( 'Mark all as seen' ) }>
-										{ translate( 'Mark all as seen' ) }
-									</span>
-								</button>
-							) }
-						</div>
-					</div>
-				</div>
+				{ showBack && <HeaderBack /> }
 				<Card className="reader-feed-header__site">
 					<a href={ siteUrl } className="reader-feed-header__site-icon">
-						<SiteIcon site={ site } size={ 96 } />
+						{ siteIconElement }
 					</a>
 					<div className="reader-feed-header__site-title">
 						{ site && (
@@ -168,6 +144,49 @@ class FeedHeader extends Component {
 						) }
 					</div>
 				</Card>
+				<div className="reader-feed-header__back-and-follow">
+					<div className="reader-feed-header__follow">
+						{ followerCount && (
+							<span className="reader-feed-header__follow-count">
+								{ ' ' }
+								{ translate( '%s follower', '%s followers', {
+									count: followerCount,
+									args: [ this.props.numberFormat( followerCount ) ],
+									comment: '%s is the number of followers. For example: "12,000,000"',
+								} ) }
+							</span>
+						) }
+						<div className="reader-feed-header__follow-and-settings">
+							{ siteUrl && (
+								<div className="reader-feed-header__follow-button">
+									<ReaderFollowButton siteUrl={ siteUrl } iconSize={ 24 } />
+								</div>
+							) }
+
+							{ site && following && ! isEmailBlocked && (
+								<div className="reader-feed-header__email-settings">
+									<ReaderSiteNotificationSettings siteId={ siteId } />
+								</div>
+							) }
+
+							{ isEligibleForUnseen( { isWPForTeamsItem, hasOrganization } ) && feed && (
+								<button
+									onClick={ this.markAllAsSeen }
+									className="reader-feed-header__seen-button"
+									disabled={ feed.unseen_count === 0 }
+								>
+									<Gridicon icon="visible" size={ 24 } />
+									<span
+										className="reader-feed-header__visibility"
+										title={ translate( 'Mark all as seen' ) }
+									>
+										{ translate( 'Mark all as seen' ) }
+									</span>
+								</button>
+							) }
+						</div>
+					</div>
+				</div>
 			</div>
 		);
 	}
@@ -178,7 +197,11 @@ export default connect(
 		isWPForTeamsItem:
 			isSiteWPForTeams( state, ownProps.site && ownProps.site.ID ) ||
 			isFeedWPForTeams( state, ownProps.feed && ownProps.feed.feed_ID ),
-		teams: getReaderTeams( state ),
+		hasOrganization: hasReaderFollowOrganization(
+			state,
+			ownProps.feed && ownProps.feed.feed_ID,
+			ownProps.site && ownProps.site.ID
+		),
 		following: ownProps.feed && isFollowing( state, { feedUrl: ownProps.feed.feed_URL } ),
 		isEmailBlocked: getUserSetting( state, 'subscription_delivery_email_blocked' ),
 	} ),

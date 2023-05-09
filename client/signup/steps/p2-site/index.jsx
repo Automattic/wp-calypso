@@ -1,30 +1,27 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { includes, isEmpty, map, deburr, get } from 'lodash';
+import config from '@automattic/calypso-config';
+import { Gridicon } from '@automattic/components';
+import { getLanguage } from '@automattic/i18n-utils';
+import { createRef } from '@wordpress/element';
+import { reusableBlock, Icon } from '@wordpress/icons';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
-import wpcom from 'calypso/lib/wp';
+import { localize } from 'i18n-calypso';
+import { includes, isEmpty, map, deburr, get, debounce } from 'lodash';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import FormButton from 'calypso/components/forms/form-button';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import formState from 'calypso/lib/form-state';
+import { getLocaleSlug } from 'calypso/lib/i18n-utils';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { login } from 'calypso/lib/paths';
-import ValidationFieldset from 'calypso/signup/validation-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
-import FormButton from 'calypso/components/forms/form-button';
-import FormTextInput from 'calypso/components/forms/form-text-input';
+import wpcom from 'calypso/lib/wp';
 import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
+import { getValueFromProgressStore } from 'calypso/signup/utils';
+import ValidationFieldset from 'calypso/signup/validation-fieldset';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
-import { logToLogstash } from 'calypso/state/logstash/actions';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const debug = debugFactory( 'calypso:steps:p2-site' );
@@ -42,10 +39,12 @@ const SITE_TAKEN_ERROR_CODES = [
 	'blog_name_exists',
 	'blog_name_reserved',
 	'blog_name_reserved_but_may_be_available',
-	'dotblog_subdomain_not_available',
 ];
 
 const WPCOM_SUBDOMAIN_SUFFIX_SUGGESTIONS = [ 'p2', 'team', 'work' ];
+
+const EMAIL_TRUCE_CAMPAIGN_REF = 'p2-email-truce';
+const EMAIL_TRUCE_CAMPAIGN_ID = 'p2-email-truce';
 
 /**
  * Module variables
@@ -53,7 +52,7 @@ const WPCOM_SUBDOMAIN_SUFFIX_SUGGESTIONS = [ 'p2', 'team', 'work' ];
 let siteUrlsSearched = [];
 let timesValidationFailed = 0;
 
-class P2Site extends React.Component {
+class P2Site extends Component {
 	static displayName = 'P2Site';
 
 	constructor( props ) {
@@ -96,14 +95,17 @@ class P2Site extends React.Component {
 		this.state = {
 			form: this.formStateController.getInitialState(),
 			submitting: false,
-			suggestedSubdomains: [],
-			lastInvalidSite: '',
+			lastSuggestionSuffixIndex: 0,
+			isFetchingDefaultSuggestion: false,
+			showCustomSiteAddressInput: false,
 		};
 	}
 
 	componentWillUnmount() {
 		this.save();
 	}
+
+	customizeSiteInput = createRef();
 
 	sanitizeSubdomain = ( domain ) => {
 		if ( ! domain ) {
@@ -122,7 +124,7 @@ class P2Site extends React.Component {
 	};
 
 	logValidationErrorToLogstash = ( error, errorMessage ) => {
-		this.props.logToLogstash( {
+		logToLogstash( {
 			feature: 'calypso_wp_for_teams',
 			message: 'P2 signup validation failed',
 			extra: {
@@ -132,6 +134,58 @@ class P2Site extends React.Component {
 			},
 		} );
 	};
+
+	fetchSuggestion = async () => {
+		const nextSuggestionSuffixIndex =
+			( this.state.lastSuggestionSuffixIndex + 1 ) % WPCOM_SUBDOMAIN_SUFFIX_SUGGESTIONS.length;
+
+		this.setState( { lastSuggestionSuffixIndex: nextSuggestionSuffixIndex } );
+		const suggestionSuffix = WPCOM_SUBDOMAIN_SUFFIX_SUGGESTIONS[ nextSuggestionSuffixIndex ];
+		const currentTitle = formState.getFieldValue( this.state.form, 'siteTitle' );
+		const suggestionQuery = `${ currentTitle }${ suggestionSuffix }`;
+
+		const suggestionObjects = await wpcom.domains().suggestions( {
+			quantity: 1,
+			query: suggestionQuery,
+			only_wordpressdotcom: true,
+		} );
+
+		const suggestion = get( suggestionObjects, '0.domain_name', null );
+
+		if ( ! formState.getFieldValue( this.state.form, 'siteTitle' ) ) {
+			this.formStateController.handleFieldChange( {
+				name: 'site',
+				value: '',
+			} );
+			return;
+		}
+
+		if ( suggestion ) {
+			const [ subdomain ] = suggestion.split( '.' );
+			this.formStateController.handleFieldChange( {
+				name: 'site',
+				value: subdomain,
+			} );
+		}
+	};
+
+	suggestDefaultSubdomain = async () => {
+		this.formStateController.handleFieldChange( {
+			name: 'site',
+			value: '',
+		} );
+		if ( this.state.isFetchingDefaultSuggestion ) {
+			return;
+		}
+		try {
+			this.setState( { isFetchingDefaultSuggestion: true } );
+			await this.fetchSuggestion();
+		} finally {
+			this.setState( { isFetchingDefaultSuggestion: false } );
+		}
+	};
+
+	debouncedSuggestDefaultSubdomain = debounce( this.suggestDefaultSubdomain, 600 );
 
 	validate = ( fields, onComplete ) => {
 		const messages = {};
@@ -151,20 +205,20 @@ class P2Site extends React.Component {
 		}
 
 		if ( ! isEmpty( fields.site ) ) {
-			wpcom.undocumented().sitesNew(
+			const locale = getLocaleSlug();
+			wpcom.req.post(
+				'/sites/new',
 				{
 					blog_name: fields.site,
 					blog_title: fields.siteTitle,
 					validate: true,
+					locale,
+					lang_id: getLanguage( locale ).value,
+					client_id: config( 'wpcom_signup_id' ),
+					client_secret: config( 'wpcom_signup_key' ),
 				},
 				( error, response ) => {
 					debug( error, response );
-
-					if ( this.state.lastInvalidSite !== fields.site ) {
-						this.setState( { suggestedSubdomains: [] } );
-					}
-
-					this.setState( { lastInvalidSite: fields.site } );
 
 					if ( error && error.message ) {
 						if ( fields.site && ! includes( siteUrlsSearched, fields.site ) ) {
@@ -192,7 +246,7 @@ class P2Site extends React.Component {
 							if ( SITE_TAKEN_ERROR_CODES.includes( error.error ) ) {
 								messages.site = {
 									[ ERROR_CODE_TAKEN_SITE ]: this.props.translate(
-										'Sorry, that site already exists! Here are some available alternatives:'
+										'Sorry, that site already exists! Please, try a different one'
 									),
 								};
 							} else {
@@ -204,29 +258,6 @@ class P2Site extends React.Component {
 							// We want to log the real error code and message. The above is formatted for the end user
 							// only.
 							this.logValidationErrorToLogstash( error.error, error.message );
-						}
-
-						if ( error.error && SITE_TAKEN_ERROR_CODES.includes( error.error ) ) {
-							WPCOM_SUBDOMAIN_SUFFIX_SUGGESTIONS.forEach( ( suffix ) => {
-								const suggestedSubdomain = `${ fields.site }${ suffix }`;
-
-								wpcom
-									.domains()
-									.suggestions( {
-										quantity: 1,
-										query: suggestedSubdomain,
-										only_wordpressdotcom: true,
-									} )
-									.then( ( suggestionObjects ) => {
-										this.setState( {
-											suggestedSubdomains: [
-												...this.state.suggestedSubdomains,
-												get( suggestionObjects, '0.domain_name', null ),
-											],
-										} );
-									} )
-									.catch( () => {} );
-							} );
 						}
 					}
 
@@ -283,12 +314,25 @@ class P2Site extends React.Component {
 
 			this.resetAnalyticsData();
 
-			this.props.submitSignupStep( {
+			const stepData = {
 				stepName: this.props.stepName,
 				form: this.state.form,
 				site,
 				siteTitle,
-			} );
+			};
+
+			const refParameter =
+				this.props.refParameter ||
+				getValueFromProgressStore( {
+					signupProgress: this.props.progress,
+					stepName: 'p2-confirm-email',
+					fieldName: 'storedRefParameter',
+				} );
+			if ( refParameter === EMAIL_TRUCE_CAMPAIGN_REF ) {
+				stepData.campaign = EMAIL_TRUCE_CAMPAIGN_ID;
+			}
+
+			this.props.submitSignupStep( stepData );
 
 			this.props.goToNextStep();
 		} );
@@ -312,8 +356,8 @@ class P2Site extends React.Component {
 			value: event.target.value,
 		} );
 
-		if ( event.target.name === 'site' ) {
-			this.setState( { suggestedSubdomains: [] } );
+		if ( event.target.name === 'site-title' && ! this.state.showCustomSiteAddressInput ) {
+			this.debouncedSuggestDefaultSubdomain();
 		}
 	};
 
@@ -361,14 +405,134 @@ class P2Site extends React.Component {
 			name: 'site',
 			value: site,
 		} );
+	};
 
-		this.setState( {
-			suggestedSubdomains: [],
-		} );
+	renderDefaultSite = () => {
+		const site = formState.getFieldValue( this.state.form, 'site' );
+		const handleMouseLeave = ( event ) => {
+			event.currentTarget.scrollLeft = 0;
+		};
+		const { isFetchingDefaultSuggestion } = this.state;
+
+		return (
+			<div className="p2-site__wordpress-domain-default-container">
+				<span
+					className="p2-site__wordpress-domain-default"
+					title={ site ? `https://${ site }.wordpress.com` : '' }
+				>
+					<span onMouseLeave={ handleMouseLeave } className="p2-site__site-wordpress-domain">
+						{ site }
+					</span>
+					<span className="p2-site__site-wordpress-suffix">
+						{ site ? '.wordpress.com' : '' }&nbsp;
+					</span>
+					<button
+						type="button"
+						disabled={ isFetchingDefaultSuggestion }
+						className="p2-site__site-wordpress-domain-refresh"
+						onClick={ this.suggestDefaultSubdomain }
+					>
+						<Icon size={ 24 } icon={ reusableBlock } />
+					</button>
+				</span>
+			</div>
+		);
+	};
+
+	showCustomSiteAddressInput = () => {
+		this.setState( { showCustomSiteAddressInput: true } );
+		setTimeout( () => {
+			this.customizeSiteInput?.current?.focus();
+		}, 0 );
+	};
+
+	hideSiteCustomizer = () => {
+		this.suggestDefaultSubdomain();
+		this.setState( { showCustomSiteAddressInput: false } );
+	};
+
+	renderSuggestedSiteAddressInput = () => {
+		const { form } = this.state;
+		const site = formState.getFieldValue( form, 'site' );
+
+		return (
+			<>
+				<FormTextInput
+					id="site-address-input"
+					autoCapitalize="off"
+					className="p2-site__site-suggested-url"
+					disabled={ true }
+					name="suggested-site"
+					value={ site ? `https://${ site }.wordpress.com` : '' }
+				/>
+				{ this.renderDefaultSite() }
+				<FormSettingExplanation className="p2-site__workspace-form-input-explanation">
+					{ this.props.translate(
+						'We suggest this URL, but you can {{a}}choose manually{{/a}} too',
+						{
+							components: {
+								a: <a href="#" onClick={ this.showCustomSiteAddressInput } />, // eslint-disable-line jsx-a11y/anchor-is-valid
+							},
+						}
+					) }
+				</FormSettingExplanation>
+			</>
+		);
+	};
+
+	renderCustomSiteAddressInput = () => {
+		const { submitting, form } = this.state;
+		const site = formState.getFieldValue( form, 'site' );
+		return (
+			<>
+				<FormTextInput
+					id="site-address-input"
+					ref={ this.customizeSiteInput }
+					autoCapitalize="off"
+					className="p2-site__site-url"
+					disabled={ submitting }
+					name="site"
+					value={ site }
+					isError={ formState.isFieldInvalid( form, 'site' ) }
+					isValid={ formState.isFieldValid( form, 'site' ) }
+					onBlur={ this.handleBlur }
+					onChange={ this.handleChangeEvent }
+				/>
+				<FormSettingExplanation className="p2-site__workspace-form-input-explanation">
+					{ this.props.translate( 'Enter an address, or {{a}}choose a suggestion{{/a}}', {
+						components: {
+							a: <a href="#" onClick={ this.hideSiteCustomizer } />, // eslint-disable-line jsx-a11y/anchor-is-valid
+						},
+					} ) }
+				</FormSettingExplanation>
+				<span className="p2-site__wordpress-domain-suffix">.wordpress.com</span>
+			</>
+		);
+	};
+
+	renderSubdomainInput = () => {
+		const { showCustomSiteAddressInput } = this.state;
+		return (
+			<ValidationFieldset
+				errorMessages={ this.getErrorMessagesWithLogin( 'site' ) }
+				className="p2-site__validation-site"
+			>
+				<FormLabel htmlFor="site-address-input">
+					{ this.props.translate( 'Workspace address' ) }
+				</FormLabel>
+				<div className="p2-site__site-url-container">
+					{ ! showCustomSiteAddressInput && this.renderSuggestedSiteAddressInput() }
+					{ showCustomSiteAddressInput && this.renderCustomSiteAddressInput() }
+				</div>
+			</ValidationFieldset>
+		);
 	};
 
 	formFields = () => {
-		const fieldDisabled = this.state.submitting;
+		const { submitting, form } = this.state;
+		const siteTitle = formState.getFieldValue( form, 'siteTitle' );
+		const site = formState.getFieldValue( form, 'site' );
+		const showSubdomainInput = !! siteTitle || !! site;
 
 		return (
 			<>
@@ -377,43 +541,27 @@ class P2Site extends React.Component {
 					className="p2-site__validation-site-title"
 				>
 					<FormLabel htmlFor="site-title-input">
-						{ this.props.translate( 'Name your team' ) }
+						{ this.props.translate( 'Workspace name' ) }
 					</FormLabel>
 					<FormTextInput
 						id="site-title-input"
 						autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
-						autoCapitalize={ 'off' }
+						autoCapitalize="off"
 						className="p2-site__site-title"
-						disabled={ fieldDisabled }
+						disabled={ submitting }
 						name="site-title"
-						value={ formState.getFieldValue( this.state.form, 'siteTitle' ) }
-						isError={ formState.isFieldInvalid( this.state.form, 'siteTitle' ) }
-						isValid={ formState.isFieldValid( this.state.form, 'siteTitle' ) }
+						value={ siteTitle }
+						isError={ formState.isFieldInvalid( form, 'siteTitle' ) }
+						isValid={ formState.isFieldValid( form, 'siteTitle' ) }
 						onBlur={ this.handleBlur }
 						onChange={ this.handleChangeEvent }
 					/>
+					<FormSettingExplanation className="p2-site__workspace-form-input-explanation">
+						{ this.props.translate( 'This is usually the name of your company or organization' ) }
+					</FormSettingExplanation>
 				</ValidationFieldset>
-				<ValidationFieldset
-					errorMessages={ this.getErrorMessagesWithLogin( 'site' ) }
-					className="p2-site__validation-site"
-				>
-					<FormLabel htmlFor="site-address-input">
-						{ this.props.translate( 'Choose an address for your P2' ) }
-					</FormLabel>
-					<FormTextInput
-						id="site-address-input"
-						autoCapitalize={ 'off' }
-						className="p2-site__site-url"
-						disabled={ fieldDisabled }
-						name="site"
-						value={ formState.getFieldValue( this.state.form, 'site' ) }
-						isError={ formState.isFieldInvalid( this.state.form, 'site' ) }
-						isValid={ formState.isFieldValid( this.state.form, 'site' ) }
-						onBlur={ this.handleBlur }
-						onChange={ this.handleChangeEvent }
-					/>
-					<span className="p2-site__wordpress-domain-suffix">.wordpress.com</span>
-				</ValidationFieldset>
+				{ showSubdomainInput && this.renderSubdomainInput() }
+				{ this.renderFormNotice() }
 			</>
 		);
 	};
@@ -423,63 +571,68 @@ class P2Site extends React.Component {
 			return this.props.translate( 'Site created - Go to next step' );
 		}
 
-		return this.props.translate( 'Continue' );
+		return this.props.translate( 'Create workspace' );
 	};
 
-	renderSubdomainSuggestions() {
-		const { suggestedSubdomains } = this.state;
-
-		if ( isEmpty( suggestedSubdomains ) ) {
-			return null;
-		}
-
+	renderFormNotice = () => {
 		return (
-			<div className="p2-site__subdomain-suggestions">
-				{ map( suggestedSubdomains, ( suggestion, index ) => {
-					return (
-						<button
-							key={ index }
-							className="p2-site__subdomain-suggestions-item"
-							onClick={ () => this.handleSubdomainSuggestionClick( suggestion ) }
-						>
-							{ suggestion }
-						</button>
-					);
-				} ) }
+			<div className="p2-site__workspace-form-notice-wrapper">
+				<hr />
+				<div className="p2-site__workspace-form-notice">
+					<div className="p2-site__workspace-form-notice-icon">
+						<Gridicon size={ 24 } icon="info-outline" />
+					</div>
+					<p>
+						{ this.props.translate(
+							"The first P2 in your workspace will be created automatically for you, so you can focus on getting started. You'll be able to customize it at any time!"
+						) }
+					</p>
+				</div>
+				<hr />
 			</div>
 		);
-	}
+	};
 
 	render() {
+		const { submitting, form } = this.state;
+		const siteTitle = formState.getFieldValue( form, 'siteTitle' );
+		const site = formState.getFieldValue( form, 'site' );
+		const submitDisabled = submitting || ! site || ! siteTitle;
 		return (
-			<P2StepWrapper
-				flowName={ this.props.flowName }
-				stepName={ this.props.stepName }
-				positionInFlow={ this.props.positionInFlow }
-				headerText={ this.props.translate(
-					'Share, discuss, review, and collaborate across time zones, without interruptions.'
-				) }
-			>
-				<form className="p2-site__form" onSubmit={ this.handleSubmit } noValidate>
-					{ this.formFields() }
-					{ this.renderSubdomainSuggestions() }
-					<div className="p2-site__form-footer">
-						<FormButton disabled={ this.state.submitting } className="p2-site__form-submit-btn">
-							{ this.buttonText() }
-						</FormButton>
-					</div>
-				</form>
+			<>
+				<P2StepWrapper
+					className="p2-site__create"
+					flowName={ this.props.flowName }
+					stepName={ this.props.stepName }
+					positionInFlow={ this.props.positionInFlow }
+					headerText={ this.props.translate( 'Create a workspace' ) }
+					subHeaderText={ this.props.translate(
+						"Your {{b}}workspace{{/b}} is where you'll create all the different P2s for teams, projects, topics, etc.",
+						{
+							components: {
+								b: <b />,
+							},
+						}
+					) }
+				>
+					<form className="p2-site__form" onSubmit={ this.handleSubmit } noValidate>
+						{ this.formFields() }
+						<div className="p2-site__form-footer">
+							<FormButton disabled={ submitDisabled } className="p2-site__form-submit-btn">
+								{ this.buttonText() }
+							</FormButton>
+						</div>
+					</form>
 
-				<div className="p2-site__learn-more">
-					<a href="https://wordpress.com/p2" className="p2-site__learn-more-link">
-						{ this.props.translate( 'Learn more about P2' ) }
-					</a>
-				</div>
-			</P2StepWrapper>
+					<div className="p2-site__learn-more">
+						<a href="https://wordpress.com/p2/" className="p2-site__learn-more-link">
+							{ this.props.translate( 'Learn more about P2' ) }
+						</a>
+					</div>
+				</P2StepWrapper>
+			</>
 		);
 	}
 }
 
-export default connect( null, { saveSignupStep, submitSignupStep, logToLogstash } )(
-	localize( P2Site )
-);
+export default connect( null, { saveSignupStep, submitSignupStep } )( localize( P2Site ) );

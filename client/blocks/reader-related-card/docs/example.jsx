@@ -1,22 +1,14 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { Card } from '@automattic/components';
+import { Component } from 'react';
 import {
 	RelatedPostsFromSameSite,
 	RelatedPostsFromOtherSites,
 } from 'calypso/components/related-posts';
-import { Card } from '@automattic/components';
 
 const LONGREADS_SITE_ID = 70135762;
 const LONGREADS_POST_ID = 65877;
 
-class RelatedPostCardExample extends React.Component {
+class RelatedPostCardExample extends Component {
 	static displayName = 'RelatedPostCard';
 
 	render() {

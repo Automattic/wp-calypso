@@ -1,12 +1,15 @@
-# Troubleshooting & Debugging
+<div style="width: 45%; float:left" align="left"><a href="./debugging.md"><-- Debugging</a> </div>
+<div style="width: 5%; float:left" align="center"><a href="./../README.md">Top</a></div>
 
-## Table of contents
+<br><br>
+
+# Troubleshooting
 
 <!-- TOC -->
 
-- [Troubleshooting & Debugging](#troubleshooting--debugging)
-  - [Table of contents](#table-of-contents)
+- [Troubleshooting](#troubleshooting)
   - [git pre-commit hook/husky](#git-pre-commit-hookhusky)
+  - [Package 'lcms2', required by 'vips', not found](#package-lcms2-required-by-vips-not-found)
 
 <!-- /TOC -->
 
@@ -20,7 +23,7 @@ error Command "install-if-no-packages" not found.
 husky > pre-commit hook failed (add --no-verify to bypass)
 ```
 
-Try the following:
+Solution:
 
 1. remove all instances of `node_module` folder (if present):
 
@@ -33,7 +36,7 @@ rm -rf node_modules
 2. return to the <repo_root> and install all dependencies from there:
 
 ```
-npm run install-if-no-packages
+yarn install
 ```
 
 Once complete, running `git commit` should no longer trigger the git pre-commit hook error.

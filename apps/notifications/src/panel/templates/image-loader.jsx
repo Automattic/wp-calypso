@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 
 /**
  * Module variables
@@ -22,38 +19,22 @@ export class ImageLoader extends Component {
 		children: PropTypes.node,
 	};
 
-	state = {
-		status: LoadStatus.PENDING,
-	};
+	constructor( props ) {
+		super( props );
 
-	UNSAFE_componentWillMount() {
-		this.createLoader();
-	}
+		this.image = new Image();
+		this.image.src = props.src;
+		this.image.onload = this.onLoadComplete;
+		this.image.onerror = this.onLoadComplete;
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.src !== this.props.src ) {
-			this.createLoader( nextProps );
-		}
+		this.state = {
+			status: LoadStatus.LOADING,
+		};
 	}
 
 	componentWillUnmount() {
 		this.destroyLoader();
 	}
-
-	createLoader = ( nextProps ) => {
-		const src = ( nextProps || this.props ).src;
-
-		this.destroyLoader();
-
-		this.image = new Image();
-		this.image.src = src;
-		this.image.onload = this.onLoadComplete;
-		this.image.onerror = this.onLoadComplete;
-
-		this.setState( {
-			status: LoadStatus.LOADING,
-		} );
-	};
 
 	destroyLoader = () => {
 		if ( ! this.image ) {

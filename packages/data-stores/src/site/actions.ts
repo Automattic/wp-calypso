@@ -1,6 +1,17 @@
-/**
- * Internal dependencies
- */
+import { isEnabled } from '@automattic/calypso-config';
+import { Design, DesignOptions } from '@automattic/design-picker/src/types';
+import { __ } from '@wordpress/i18n';
+import { SiteGoal } from '../onboard';
+import { wpcomRequest } from '../wpcom-request-controls';
+import { PLACEHOLDER_SITE_ID } from './constants';
+import {
+	SiteLaunchError,
+	AtomicTransferError,
+	LatestAtomicTransferError,
+	AtomicSoftwareStatusError,
+	AtomicSoftwareInstallError,
+	GlobalStyles,
+} from './types';
 import type {
 	CreateSiteParams,
 	NewSiteErrorResponse,
@@ -9,11 +20,19 @@ import type {
 	SiteError,
 	Cart,
 	Domain,
+	LatestAtomicTransfer,
 	SiteLaunchError as SiteLaunchErrorType,
+	AtomicTransferError as AtomicTransferErrorType,
+	LatestAtomicTransferError as LatestAtomicTransferErrorType,
+	AtomicSoftwareStatusError as AtomicSoftwareStatusErrorType,
+	AtomicSoftwareInstallError as AtomicSoftwareInstallErrorType,
+	AtomicSoftwareStatus,
+	SiteSettings,
+	ThemeSetupOptions,
+	ActiveTheme,
+	CurrentTheme,
 } from './types';
 import type { WpcomClientCredentials } from '../shared-types';
-import { wpcomRequest } from '../wpcom-request-controls';
-import { SiteLaunchError } from './types';
 
 export function createActions( clientCreds: WpcomClientCredentials ) {
 	const fetchSite = () => ( {
@@ -66,7 +85,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			yield receiveNewSite( newSite );
 			return true;
 		} catch ( err ) {
-			yield receiveNewSiteFailed( err );
+			yield receiveNewSiteFailed( err as NewSiteErrorResponse );
 			return false;
 		}
 	}
@@ -77,13 +96,25 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		response,
 	} );
 
-	const receiveSiteTitle = ( siteId: number, title: string | undefined ) => ( {
+	const receiveSiteTitle = ( siteId: number, name: string | undefined ) => ( {
 		type: 'RECEIVE_SITE_TITLE' as const,
 		siteId,
-		title,
+		name,
 	} );
 
-	const receiveSiteFailed = ( siteId: number, response: SiteError | undefined ) => ( {
+	const receiveSiteTagline = ( siteId: number, tagline: string | undefined ) => ( {
+		type: 'RECEIVE_SITE_TAGLINE' as const,
+		siteId,
+		tagline,
+	} );
+
+	const receiveSiteVerticalId = ( siteId: number, verticalId: string | undefined ) => ( {
+		type: 'RECEIVE_SITE_VERTICAL_ID' as const,
+		siteId,
+		verticalId,
+	} );
+
+	const receiveSiteFailed = ( siteId: number, response: SiteError ) => ( {
 		type: 'RECEIVE_SITE_FAILED' as const,
 		siteId,
 		response,
@@ -143,6 +174,24 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		domains,
 	} );
 
+	const receiveSiteTheme = ( siteId: number, theme: CurrentTheme ) => ( {
+		type: 'RECEIVE_SITE_THEME' as const,
+		siteId,
+		theme,
+	} );
+
+	const receiveSiteSettings = ( siteId: number, settings: SiteSettings ) => ( {
+		type: 'RECEIVE_SITE_SETTINGS' as const,
+		siteId,
+		settings,
+	} );
+
+	const updateSiteSettings = ( siteId: number, settings: SiteSettings ) => ( {
+		type: 'UPDATE_SITE_SETTINGS' as const,
+		siteId,
+		settings,
+	} );
+
 	function* setCart( siteId: number, cartData: Cart ) {
 		const success: Cart = yield wpcomRequest( {
 			path: '/me/shopping-cart/' + siteId,
@@ -153,31 +202,579 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		return success;
 	}
 
-	function* saveSiteTitle( siteId: number, title: string | undefined ) {
+	const receiveSiteGlobalStyles = ( siteId: number, globalStyles: GlobalStyles ) => ( {
+		type: 'RECEIVE_SITE_GLOBAL_STYLES' as const,
+		siteId,
+		globalStyles,
+	} );
+
+	function* getGlobalStyles( siteId: number, stylesheet: string ) {
+		const globalStyles: GlobalStyles = yield wpcomRequest( {
+			path: `/sites/${ siteId }/global-styles/themes/${ stylesheet }`,
+			apiNamespace: 'wp/v2',
+		} );
+
+		yield receiveSiteGlobalStyles( siteId, globalStyles );
+
+		return globalStyles;
+	}
+
+	function* setGlobalStyles(
+		siteIdOrSlug: number | string,
+		stylesheet: string,
+		globalStyles: GlobalStyles,
+		activatedTheme?: ActiveTheme
+	) {
+		// only update if there settings or styles to update
+		if (
+			Object.keys( globalStyles.settings ?? {} ).length ||
+			Object.keys( globalStyles.styles ?? {} ).length
+		) {
+			const globalStylesId: number =
+				activatedTheme?.global_styles_id || ( yield getGlobalStylesId( siteIdOrSlug, stylesheet ) );
+
+			const updatedGlobalStyles: GlobalStyles = yield wpcomRequest( {
+				path: `/sites/${ encodeURIComponent( siteIdOrSlug ) }/global-styles/${ globalStylesId }`,
+				apiNamespace: 'wp/v2',
+				method: 'POST',
+				body: {
+					id: globalStylesId,
+					settings: globalStyles.settings ?? {},
+					styles: globalStyles.styles ?? {},
+				},
+			} );
+
+			return updatedGlobalStyles;
+		}
+	}
+
+	function* getGlobalStylesId( siteIdOrSlug: number | string, stylesheet: string ) {
+		const theme: ActiveTheme = yield wpcomRequest( {
+			path: `/sites/${ encodeURIComponent( siteIdOrSlug ) }/themes/${ stylesheet }`,
+			method: 'GET',
+			apiNamespace: 'wp/v2',
+		} );
+
+		const globalStylesUrl = theme?._links?.[ 'wp:user-global-styles' ]?.[ 0 ]?.href;
+		if ( globalStylesUrl ) {
+			// eslint-disable-next-line no-useless-escape
+			const match = globalStylesUrl.match( /global-styles\/(?<id>[\/\w-]+)/ );
+			if ( match && match.groups ) {
+				return match.groups.id;
+			}
+		}
+
+		return null;
+	}
+
+	function* getGlobalStylesVariations( siteIdOrSlug: number | string, stylesheet: string ) {
+		const variations: GlobalStyles[] = yield wpcomRequest( {
+			path: `/sites/${ encodeURIComponent(
+				siteIdOrSlug
+			) }/global-styles/themes/${ stylesheet }/variations`,
+			method: 'GET',
+			apiNamespace: 'wp/v2',
+		} );
+
+		return variations;
+	}
+
+	function* saveSiteSettings(
+		siteId: number,
+		settings: {
+			blogname?: string;
+			blogdescription?: string;
+			launchpad_screen?: string;
+			site_vertical_id?: string;
+			woocommerce_store_address?: string;
+			woocommerce_store_address_2?: string;
+			woocommerce_store_city?: string;
+			woocommerce_store_postcode?: string;
+			woocommerce_defaut_country?: string;
+			woocommerce_onboarding_profile?: { [ key: string ]: any };
+		}
+	) {
 		try {
 			// extract this into its own function as a generic settings setter
 			yield wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteId ) }/settings`,
 				apiVersion: '1.4',
-				body: { blogname: title },
+				body: settings,
 				method: 'POST',
 			} );
-			yield receiveSiteTitle( siteId, title );
+			if ( 'blogname' in settings ) {
+				yield receiveSiteTitle( siteId, settings.blogname );
+			}
+			if ( 'blogdescription' in settings ) {
+				yield receiveSiteTagline( siteId, settings.blogdescription );
+			}
+			if ( 'site_vertical_id' in settings ) {
+				yield receiveSiteVerticalId( siteId, settings.site_vertical_id );
+			}
+			yield updateSiteSettings( siteId, settings );
 		} catch ( e ) {}
 	}
 
+	function* setIntentOnSite( siteSlug: string, intent: string ) {
+		try {
+			yield wpcomRequest( {
+				path: `/sites/${ encodeURIComponent( siteSlug ) }/site-intent`,
+				apiNamespace: 'wpcom/v2',
+				body: { site_intent: intent },
+				method: 'POST',
+			} );
+		} catch ( e ) {}
+	}
+
+	function* setStaticHomepageOnSite( siteID: number, pageId: number ) {
+		try {
+			yield wpcomRequest( {
+				path: `/sites/${ encodeURIComponent( siteID ) }/homepage`,
+				apiVersion: '1.1',
+				body: { is_page_on_front: true, page_on_front_id: pageId },
+				method: 'POST',
+			} );
+		} catch ( e ) {}
+	}
+
+	function* setGoalsOnSite( siteSlug: string, goals: SiteGoal[] ) {
+		try {
+			yield wpcomRequest( {
+				path: `/sites/${ encodeURIComponent( siteSlug ) }/site-goals`,
+				apiNamespace: 'wpcom/v2',
+				body: { site_goals: goals },
+				method: 'POST',
+			} );
+		} catch ( e ) {}
+	}
+
+	function* saveSiteTitle( siteId: number, blogname: string | undefined ) {
+		yield saveSiteSettings( siteId, { blogname } );
+	}
+
+	function* saveSiteTagline( siteId: number, blogdescription: string | undefined ) {
+		yield saveSiteSettings( siteId, { blogdescription } );
+	}
+
+	function* installTheme( siteSlugOrId: string | string, themeSlug: string ) {
+		yield wpcomRequest( {
+			path: `/sites/${ siteSlugOrId }/themes/${ themeSlug }/install`,
+			apiVersion: '1.1',
+			method: 'POST',
+		} );
+	}
+
+	function* setThemeOnSite(
+		siteSlug: string,
+		theme: string,
+		styleVariationSlug?: string,
+		keepHomepage = true
+	) {
+		const activatedTheme: ActiveTheme = yield wpcomRequest( {
+			path: `/sites/${ siteSlug }/themes/mine`,
+			apiVersion: '1.1',
+			body: {
+				theme: theme,
+				dont_change_homepage: keepHomepage,
+			},
+			method: 'POST',
+		} );
+
+		if ( styleVariationSlug ) {
+			const variations: GlobalStyles[] = yield getGlobalStylesVariations(
+				siteSlug,
+				activatedTheme.stylesheet
+			);
+			const currentVariation = variations.find(
+				( variation ) =>
+					variation.title &&
+					variation.title.split( ' ' ).join( '-' ).toLowerCase() === styleVariationSlug
+			);
+
+			if ( currentVariation ) {
+				yield setGlobalStyles(
+					siteSlug,
+					activatedTheme.stylesheet,
+					currentVariation,
+					activatedTheme
+				);
+			}
+		}
+		return activatedTheme;
+	}
+
+	function createCustomHomeTemplateContent(
+		stylesheet: string,
+		hasHeader: boolean,
+		hasFooter: boolean,
+		hasSections: boolean
+	) {
+		const content: string[] = [];
+		if ( hasHeader ) {
+			content.push(
+				`<!-- wp:template-part {"slug":"header","tagName":"header","theme":"${ stylesheet }"} /-->`
+			);
+		}
+
+		if ( hasSections ) {
+			content.push( `
+	<!-- wp:group {"tagName":"main"} -->
+		<main class="wp-block-group">
+		</main>
+	<!-- /wp:group -->` );
+		}
+
+		if ( hasFooter ) {
+			content.push(
+				`<!-- wp:template-part {"slug":"footer","tagName":"footer","theme":"${ stylesheet }","className":"site-footer-container"} /-->`
+			);
+		}
+
+		return content.join( '\n' );
+	}
+
+	function* runThemeSetupOnSite(
+		siteSlug: string,
+		selectedDesign: Design,
+		options?: DesignOptions
+	) {
+		const { recipe, verticalizable } = selectedDesign;
+
+		/*
+		 * Anchor themes are set up directly via Headstart on the server side
+		 * so exclude them from theme setup.
+		 */
+		const anchorDesigns = [ 'hannah', 'gilbert', 'riley' ];
+		if ( anchorDesigns.indexOf( selectedDesign.template ) >= 0 ) {
+			return;
+		}
+
+		const themeSetupOptions: ThemeSetupOptions = {
+			trim_content: options?.trimContent ?? true,
+		};
+
+		if ( options?.posts_source_site_id ) {
+			themeSetupOptions.posts_source_site_id = options.posts_source_site_id;
+		}
+
+		if ( verticalizable ) {
+			themeSetupOptions.vertical_id = options?.verticalId;
+		}
+
+		if ( recipe?.pattern_ids ) {
+			themeSetupOptions.pattern_ids = recipe?.pattern_ids;
+		}
+
+		if ( recipe?.header_pattern_ids ) {
+			themeSetupOptions.header_pattern_ids = recipe?.header_pattern_ids;
+		}
+
+		if ( recipe?.footer_pattern_ids ) {
+			themeSetupOptions.footer_pattern_ids = recipe?.footer_pattern_ids;
+		}
+
+		const response: { blog: string } = yield wpcomRequest( {
+			path: `/sites/${ encodeURIComponent( siteSlug ) }/theme-setup`,
+			apiNamespace: 'wpcom/v2',
+			body: themeSetupOptions,
+			method: 'POST',
+		} );
+
+		return response;
+	}
+
+	function* setDesignOnSite( siteSlug: string, selectedDesign: Design, options?: DesignOptions ) {
+		const theme = yield* setThemeOnSite(
+			siteSlug,
+			selectedDesign.recipe?.stylesheet?.split( '/' )[ 1 ] || selectedDesign.theme,
+			options?.styleVariation?.slug
+		);
+
+		yield* runThemeSetupOnSite( siteSlug, selectedDesign, options );
+		return theme;
+	}
+
+	function* createCustomTemplate(
+		siteSlug: string,
+		stylesheet: string,
+		slug: string,
+		title: string,
+		content: string
+	) {
+		const templateId = `${ stylesheet }//${ slug }`;
+		let existed = true;
+		try {
+			yield wpcomRequest( {
+				path: `/sites/${ encodeURIComponent( siteSlug ) }/templates/${ templateId }`,
+				apiNamespace: 'wp/v2',
+				method: 'GET',
+			} );
+		} catch {
+			existed = false;
+		}
+
+		const templatePath = `templates/${ existed ? templateId : '' }`;
+		yield wpcomRequest( {
+			path: `/sites/${ encodeURIComponent( siteSlug ) }/${ templatePath }`,
+			apiNamespace: 'wp/v2',
+			body: {
+				slug,
+				theme: stylesheet,
+				title,
+				content,
+				status: 'publish',
+				is_wp_suggestion: true,
+			},
+			method: 'POST',
+		} );
+	}
+
+	function* applyThemeWithPatterns(
+		siteSlug: string,
+		design: Design,
+		globalStyles: GlobalStyles | null = null,
+		sourceSiteId: number = PLACEHOLDER_SITE_ID
+	) {
+		const stylesheet = design?.recipe?.stylesheet || '';
+		const theme = stylesheet?.split( '/' )[ 1 ] || design.theme;
+
+		// We have to switch theme first. Otherwise, the unique suffix might append to
+		// the slug of newly created Home template if the current activated theme has
+		// modified Home template.
+		const activatedTheme: ActiveTheme = yield setThemeOnSite( siteSlug, theme, undefined, false );
+
+		if ( isEnabled( 'pattern-assembler/color-and-fonts' ) && globalStyles ) {
+			yield setGlobalStyles( siteSlug, stylesheet, globalStyles, activatedTheme );
+		}
+
+		const hasHeader = !! design?.recipe?.header_pattern_ids?.length;
+		const hasFooter = !! design?.recipe?.footer_pattern_ids?.length;
+		const hasSections = !! design?.recipe?.pattern_ids?.length;
+
+		yield createCustomTemplate(
+			siteSlug,
+			stylesheet,
+			'home',
+			__( 'Home' ),
+			createCustomHomeTemplateContent( stylesheet, hasHeader, hasFooter, hasSections )
+		);
+
+		yield runThemeSetupOnSite( siteSlug, design, {
+			trimContent: false,
+			posts_source_site_id: sourceSiteId,
+		} );
+
+		return activatedTheme;
+	}
+
+	const setSiteSetupError = ( error: string, message: string ) => ( {
+		type: 'SET_SITE_SETUP_ERROR',
+		error,
+		message,
+	} );
+
+	const clearSiteSetupError = ( siteId: number ) => ( {
+		type: 'CLEAR_SITE_SETUP_ERROR',
+		siteId,
+	} );
+
+	const atomicTransferStart = ( siteId: number, softwareSet: string | undefined ) => ( {
+		type: 'ATOMIC_TRANSFER_START' as const,
+		siteId,
+		softwareSet,
+	} );
+
+	const atomicTransferSuccess = ( siteId: number, softwareSet: string | undefined ) => ( {
+		type: 'ATOMIC_TRANSFER_SUCCESS' as const,
+		siteId,
+		softwareSet,
+	} );
+
+	const atomicTransferFailure = (
+		siteId: number,
+		softwareSet: string | undefined,
+		error: AtomicTransferErrorType
+	) => ( {
+		type: 'ATOMIC_TRANSFER_FAILURE' as const,
+		siteId,
+		softwareSet,
+		error,
+	} );
+
+	function* initiateAtomicTransfer( siteId: number, softwareSet: string | undefined ) {
+		yield atomicTransferStart( siteId, softwareSet );
+		try {
+			yield wpcomRequest( {
+				path: `/sites/${ encodeURIComponent( siteId ) }/atomic/transfers`,
+				apiNamespace: 'wpcom/v2',
+				method: 'POST',
+				...( softwareSet
+					? {
+							body: {
+								software_set: encodeURIComponent( softwareSet ),
+							},
+					  }
+					: {} ),
+			} );
+			yield atomicTransferSuccess( siteId, softwareSet );
+		} catch ( _ ) {
+			yield atomicTransferFailure( siteId, softwareSet, AtomicTransferError.INTERNAL );
+		}
+	}
+
+	const latestAtomicTransferStart = ( siteId: number ) => ( {
+		type: 'LATEST_ATOMIC_TRANSFER_START' as const,
+		siteId,
+	} );
+
+	const latestAtomicTransferSuccess = ( siteId: number, transfer: LatestAtomicTransfer ) => ( {
+		type: 'LATEST_ATOMIC_TRANSFER_SUCCESS' as const,
+		siteId,
+		transfer,
+	} );
+
+	const latestAtomicTransferFailure = (
+		siteId: number,
+		error: LatestAtomicTransferErrorType
+	) => ( {
+		type: 'LATEST_ATOMIC_TRANSFER_FAILURE' as const,
+		siteId,
+		error,
+	} );
+
+	function* requestLatestAtomicTransfer( siteId: number ) {
+		yield latestAtomicTransferStart( siteId );
+
+		try {
+			const transfer: LatestAtomicTransfer = yield wpcomRequest( {
+				path: `/sites/${ encodeURIComponent( siteId ) }/atomic/transfers/latest`,
+				apiNamespace: 'wpcom/v2',
+				method: 'GET',
+			} );
+			yield latestAtomicTransferSuccess( siteId, transfer );
+		} catch ( err ) {
+			yield latestAtomicTransferFailure( siteId, err as LatestAtomicTransferError );
+		}
+	}
+
+	const atomicSoftwareStatusStart = ( siteId: number, softwareSet: string ) => ( {
+		type: 'ATOMIC_SOFTWARE_STATUS_START' as const,
+		siteId,
+		softwareSet,
+	} );
+
+	const atomicSoftwareStatusSuccess = (
+		siteId: number,
+		softwareSet: string,
+		status: AtomicSoftwareStatus
+	) => ( {
+		type: 'ATOMIC_SOFTWARE_STATUS_SUCCESS' as const,
+		siteId,
+		softwareSet,
+		status,
+	} );
+
+	const atomicSoftwareStatusFailure = (
+		siteId: number,
+		softwareSet: string,
+		error: AtomicSoftwareStatusErrorType
+	) => ( {
+		type: 'ATOMIC_SOFTWARE_STATUS_FAILURE' as const,
+		siteId,
+		softwareSet,
+		error,
+	} );
+
+	function* requestAtomicSoftwareStatus( siteId: number, softwareSet: string ) {
+		yield atomicSoftwareStatusStart( siteId, softwareSet );
+		try {
+			const status: AtomicSoftwareStatus = yield wpcomRequest( {
+				path: `/sites/${ encodeURIComponent( siteId ) }/atomic/software/${ encodeURIComponent(
+					softwareSet
+				) }`,
+				apiNamespace: 'wpcom/v2',
+				method: 'GET',
+			} );
+			yield atomicSoftwareStatusSuccess( siteId, softwareSet, status );
+		} catch ( err ) {
+			yield atomicSoftwareStatusFailure( siteId, softwareSet, err as AtomicSoftwareStatusError );
+		}
+	}
+
+	const atomicSoftwareInstallStart = ( siteId: number, softwareSet: string ) => ( {
+		type: 'ATOMIC_SOFTWARE_INSTALL_START' as const,
+		siteId,
+		softwareSet,
+	} );
+
+	const atomicSoftwareInstallSuccess = ( siteId: number, softwareSet: string ) => ( {
+		type: 'ATOMIC_SOFTWARE_INSTALL_SUCCESS' as const,
+		siteId,
+		softwareSet,
+	} );
+
+	const atomicSoftwareInstallFailure = (
+		siteId: number,
+		softwareSet: string,
+		error: AtomicSoftwareInstallErrorType
+	) => ( {
+		type: 'ATOMIC_SOFTWARE_INSTALL_FAILURE' as const,
+		siteId,
+		softwareSet,
+		error,
+	} );
+
+	function* initiateSoftwareInstall( siteId: number, softwareSet: string ) {
+		yield atomicSoftwareInstallStart( siteId, softwareSet );
+		try {
+			yield wpcomRequest( {
+				path: `/sites/${ encodeURIComponent( siteId ) }/atomic/software/${ encodeURIComponent(
+					softwareSet
+				) }`,
+				apiNamespace: 'wpcom/v2',
+				method: 'POST',
+				body: {},
+			} );
+			yield atomicSoftwareInstallSuccess( siteId, softwareSet );
+		} catch ( err ) {
+			yield atomicSoftwareInstallFailure( siteId, softwareSet, err as AtomicSoftwareInstallError );
+		}
+	}
+
+	const setBundledPluginSlug = ( siteSlug: string, pluginSlug: string ) => ( {
+		type: 'SET_BUNDLED_PLUGIN_SLUG' as const,
+		siteSlug,
+		pluginSlug,
+	} );
+
 	return {
 		receiveSiteDomains,
+		receiveSiteSettings,
+		receiveSiteTheme,
 		saveSiteTitle,
+		saveSiteSettings,
+		setIntentOnSite,
+		setStaticHomepageOnSite,
+		setGoalsOnSite,
 		receiveSiteTitle,
 		fetchNewSite,
 		fetchSite,
 		receiveNewSite,
 		receiveNewSiteFailed,
 		resetNewSiteFailed,
+		installTheme,
+		setThemeOnSite,
+		runThemeSetupOnSite,
+		setDesignOnSite,
+		createCustomTemplate,
+		applyThemeWithPatterns,
 		createSite,
 		receiveSite,
 		receiveSiteFailed,
+		receiveSiteTagline,
+		receiveSiteVerticalId,
+		updateSiteSettings,
+		saveSiteTagline,
 		reset,
 		launchSite,
 		launchSiteStart,
@@ -185,6 +782,28 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		launchSiteFailure,
 		getCart,
 		setCart,
+		getGlobalStyles,
+		setGlobalStyles,
+		receiveSiteGlobalStyles,
+		setSiteSetupError,
+		clearSiteSetupError,
+		initiateAtomicTransfer,
+		atomicTransferStart,
+		atomicTransferSuccess,
+		atomicTransferFailure,
+		latestAtomicTransferStart,
+		latestAtomicTransferSuccess,
+		latestAtomicTransferFailure,
+		requestLatestAtomicTransfer,
+		atomicSoftwareStatusStart,
+		atomicSoftwareStatusSuccess,
+		atomicSoftwareStatusFailure,
+		requestAtomicSoftwareStatus,
+		initiateSoftwareInstall,
+		atomicSoftwareInstallStart,
+		atomicSoftwareInstallSuccess,
+		atomicSoftwareInstallFailure,
+		setBundledPluginSlug,
 	};
 }
 
@@ -195,16 +814,35 @@ export type Action =
 			| ActionCreators[ 'fetchNewSite' ]
 			| ActionCreators[ 'fetchSite' ]
 			| ActionCreators[ 'receiveSiteDomains' ]
+			| ActionCreators[ 'receiveSiteSettings' ]
+			| ActionCreators[ 'receiveSiteTheme' ]
 			| ActionCreators[ 'receiveNewSite' ]
 			| ActionCreators[ 'receiveSiteTitle' ]
 			| ActionCreators[ 'receiveNewSiteFailed' ]
+			| ActionCreators[ 'receiveSiteTagline' ]
+			| ActionCreators[ 'receiveSiteVerticalId' ]
 			| ActionCreators[ 'receiveSite' ]
 			| ActionCreators[ 'receiveSiteFailed' ]
+			| ActionCreators[ 'updateSiteSettings' ]
+			| ActionCreators[ 'receiveSiteGlobalStyles' ]
 			| ActionCreators[ 'reset' ]
 			| ActionCreators[ 'resetNewSiteFailed' ]
 			| ActionCreators[ 'launchSiteStart' ]
 			| ActionCreators[ 'launchSiteSuccess' ]
 			| ActionCreators[ 'launchSiteFailure' ]
+			| ActionCreators[ 'atomicTransferStart' ]
+			| ActionCreators[ 'atomicTransferSuccess' ]
+			| ActionCreators[ 'atomicTransferFailure' ]
+			| ActionCreators[ 'latestAtomicTransferStart' ]
+			| ActionCreators[ 'latestAtomicTransferSuccess' ]
+			| ActionCreators[ 'latestAtomicTransferFailure' ]
+			| ActionCreators[ 'atomicSoftwareStatusStart' ]
+			| ActionCreators[ 'atomicSoftwareStatusSuccess' ]
+			| ActionCreators[ 'atomicSoftwareStatusFailure' ]
+			| ActionCreators[ 'atomicSoftwareInstallStart' ]
+			| ActionCreators[ 'atomicSoftwareInstallSuccess' ]
+			| ActionCreators[ 'atomicSoftwareInstallFailure' ]
+			| ActionCreators[ 'setBundledPluginSlug' ]
 	  >
 	// Type added so we can dispatch actions in tests, but has no runtime cost
 	| { type: 'TEST_ACTION' };

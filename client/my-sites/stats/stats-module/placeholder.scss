@@ -6,7 +6,7 @@
 
 	// Block placeholder, primarily for SVGs and similar
 	&.is-block {
-		background: var( --color-neutral-0 );
+		background: var(--color-neutral-0);
 	}
 
 	// Spinner placeholder, to be used in Summary views, where we already have some data
@@ -15,27 +15,14 @@
 		justify-content: center;
 		align-items: center;
 		opacity: 1;
-		-webkit-animation: delay-fade-in 2s 1; // Animating in this silly way to have the graphic actually be visible once the animation is completed
 	}
 
 	&.is-chart {
-		height: 244px;
+		height: 228px;
 	}
 }
 
 // Module Placeholder
-
-@keyframes delay-fade-in {
-	0%,
-	66% {
-		opacity: 0;
-	}
-
-	100% {
-		opacity: 1;
-	}
-}
-
 .stats-module.is-loading {
 	// Hide elements
 	.module-header .site-icon,
@@ -63,7 +50,7 @@
 	.module-header-title,
 	ul.module-content-tabs li:hover .label,
 	ul.module-content-tabs li.module-tab.is-selected:hover .label {
-		color: rgba( var( --color-surface-rgb ), 0 );
+		color: rgba(var(--color-surface-rgb), 0);
 	}
 }
 

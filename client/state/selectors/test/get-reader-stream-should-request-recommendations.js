@@ -1,6 +1,3 @@
-/**
- * Internal Dependencies
- */
 import { getDistanceBetweenRecs } from 'calypso/reader/stream/utils';
 import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import { shouldRequestRecs } from 'calypso/state/reader/streams/selectors';

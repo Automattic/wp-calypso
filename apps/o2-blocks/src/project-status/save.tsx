@@ -1,17 +1,6 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent } from 'react';
-
-/**
- * WordPress dependencies
- */
-import type { BlockSaveProps } from '@wordpress/blocks';
-
-/**
- * Internal dependencies
- */
+import { FunctionComponent } from 'react';
 import type { BlockAttributes } from './types';
+import type { BlockSaveProps } from '@wordpress/blocks';
 
 const save: FunctionComponent< BlockSaveProps< BlockAttributes > > = ( { attributes } ) => {
 	const { allTasks, pendingTasks, completedTasks, estimate, team } = attributes;

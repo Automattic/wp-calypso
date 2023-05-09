@@ -1,35 +1,27 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { concat, flowRight, includes } from 'lodash';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
+import { FLOW_TYPES } from 'calypso/jetpack-connect/flow-types';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { checkUrl } from 'calypso/state/jetpack-connect/actions';
+import { getJetpackSiteByUrl } from 'calypso/state/jetpack-connect/selectors';
+import { isRequestingSites } from 'calypso/state/sites/selectors';
+import jetpackConnection from './jetpack-connection';
 import MainHeader from './main-header';
 import MainWrapper from './main-wrapper';
+import { persistSession } from './persistence-utils';
 import SiteUrlInput from './site-url-input';
 import { cleanUrl } from './utils';
-import { checkUrl } from 'calypso/state/jetpack-connect/actions';
-import { FLOW_TYPES } from 'calypso/jetpack-connect/flow-types';
-import { getJetpackSiteByUrl } from 'calypso/state/jetpack-connect/selectors';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { isRequestingSites } from 'calypso/state/sites/selectors';
-import { persistSession } from './persistence-utils';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import jetpackConnection from './jetpack-connection';
 
 export class JetpackConnectMain extends Component {
 	static propTypes = {
 		locale: PropTypes.string,
 		path: PropTypes.string,
-		type: PropTypes.oneOf( concat( FLOW_TYPES, false ) ),
+		type: PropTypes.oneOf( [ ...FLOW_TYPES, false ] ),
 		url: PropTypes.string,
 		processJpSite: PropTypes.func,
 	};
@@ -46,13 +38,11 @@ export class JetpackConnectMain extends Component {
 				waitingForSites: false,
 		  };
 
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		if ( this.props.url ) {
 			this.checkUrl( cleanUrl( this.props.url ) );
 		}
-	}
 
-	componentDidMount() {
 		let from = 'direct';
 		if ( this.props.type === 'install' ) {
 			from = 'jpdotcom';
@@ -101,7 +91,7 @@ export class JetpackConnectMain extends Component {
 	handleOnClickTos = () => this.props.recordTracksEvent( 'calypso_jpc_tos_link_click' );
 
 	isInstall() {
-		return includes( FLOW_TYPES, this.props.type );
+		return FLOW_TYPES.includes( this.props.type );
 	}
 
 	renderSiteInput( status ) {
@@ -115,9 +105,7 @@ export class JetpackConnectMain extends Component {
 					onChange={ this.handleUrlChange }
 					onSubmit={ this.handleUrlSubmit }
 					isError={ status }
-					isFetching={
-						this.props.isCurrentUrlFetching || this.state.redirecting || this.state.waitingForSites
-					}
+					isFetching={ this.props.isCurrentUrlFetching || this.state.waitingForSites }
 					isInstall={ this.isInstall() }
 				/>
 			</Card>
@@ -148,18 +136,13 @@ export class JetpackConnectMain extends Component {
 }
 
 const connectComponent = connect(
-	( state ) => {
-		return {
-			// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-			getJetpackSiteByUrl: ( url ) => getJetpackSiteByUrl( state, url ),
-			isLoggedIn: !! getCurrentUserId( state ),
-			isRequestingSites: isRequestingSites( state ),
-		};
-	},
-	{
-		checkUrl,
-		recordTracksEvent,
-	}
+	( state ) => ( {
+		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
+		getJetpackSiteByUrl: ( url ) => getJetpackSiteByUrl( state, url ),
+		isLoggedIn: isUserLoggedIn( state ),
+		isRequestingSites: isRequestingSites( state ),
+	} ),
+	{ checkUrl, recordTracksEvent }
 );
 
-export default flowRight( jetpackConnection, connectComponent, localize )( JetpackConnectMain );
+export default jetpackConnection( connectComponent( localize( JetpackConnectMain ) ) );

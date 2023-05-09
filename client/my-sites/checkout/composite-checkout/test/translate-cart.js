@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { translateResponseCartToWPCOMCart } from '../lib/translate-cart';
 
 describe( 'translateResponseCartToWPCOMCart', function () {
@@ -19,7 +16,6 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 					currency: 'BRL',
 					volume: 1,
 					free_trial: false,
-					orig_cost: null,
 					cost_before_coupon: 144,
 					extra: {
 						context: 'signup',
@@ -47,9 +43,6 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 			},
 			locale: 'US',
 			is_signup: false,
-			savings_total: 0,
-			savings_total_display: 'R$0',
-			savings_total_integer: 0,
 			coupon_savings_total: 0,
 			coupon_savings_total_display: '0',
 			coupon_savings_total_integer: 0,
@@ -90,35 +83,8 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 		it( 'has the expected total display value', function () {
 			expect( clientCart.total.amount.displayValue ).toBe( 'R$149' );
 		} );
-		it( 'has an array of items', function () {
-			expect( clientCart.items ).toBeDefined();
-		} );
-		it( 'has the expected number of line items', function () {
-			expect( clientCart.items.length ).toBe( 1 );
-		} );
 		it( 'has an array of allowed payment methods', function () {
 			expect( clientCart.allowedPaymentMethods ).toBeDefined();
-		} );
-
-		describe( 'first cart item (plan)', function () {
-			it( 'has an id', function () {
-				expect( clientCart.items[ 0 ].id ).toBeDefined();
-			} );
-			it( 'has the expected label', function () {
-				expect( clientCart.items[ 0 ].label ).toBe( 'WordPress.com Personal' );
-			} );
-			it( 'has the expected type', function () {
-				expect( clientCart.items[ 0 ].type ).toBe( 'plan' );
-			} );
-			it( 'has the expected currency', function () {
-				expect( clientCart.items[ 0 ].amount.currency ).toBe( 'BRL' );
-			} );
-			it( 'has the expected value', function () {
-				expect( clientCart.items[ 0 ].amount.value ).toBe( 14400 );
-			} );
-			it( 'has the expected display value', function () {
-				expect( clientCart.items[ 0 ].amount.displayValue ).toBe( 'R$144' );
-			} );
 		} );
 
 		describe( 'allowed payment methods', function () {
@@ -143,7 +109,6 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 					currency: 'BRL',
 					volume: 1,
 					free_trial: false,
-					orig_cost: null,
 					cost_before_coupon: 144,
 					extra: {
 						context: 'signup',
@@ -175,7 +140,6 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 					currency: 'BRL',
 					volume: 1,
 					free_trial: false,
-					orig_cost: 0,
 					cost_before_coupon: 88,
 					extra: {
 						privacy: true,
@@ -207,9 +171,6 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 			},
 			locale: 'US',
 			is_signup: false,
-			savings_total: 88,
-			savings_total_display: 'R$88',
-			savings_total_integer: 8800,
 			coupon_savings_total: 88,
 			coupon_savings_total_display: '- R$88',
 			coupon_savings_total_integer: 8800,
@@ -249,56 +210,8 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 		it( 'has the expected total display value', function () {
 			expect( clientCart.total.amount.displayValue ).toBe( 'R$149' );
 		} );
-		it( 'has a list of items', function () {
-			expect( clientCart.items ).toBeDefined();
-		} );
-		it( 'has the expected number of line items', function () {
-			expect( clientCart.items.length ).toBe( 2 );
-		} );
 		it( 'has an array of allowed payment methods', function () {
 			expect( clientCart.allowedPaymentMethods ).toBeDefined();
-		} );
-
-		describe( 'first cart item (plan)', function () {
-			it( 'has an id', function () {
-				expect( clientCart.items[ 0 ].id ).toBeDefined();
-			} );
-			it( 'has the expected label', function () {
-				expect( clientCart.items[ 0 ].label ).toBe( 'WordPress.com Personal' );
-			} );
-			it( 'has the expected type', function () {
-				expect( clientCart.items[ 0 ].type ).toBe( 'plan' );
-			} );
-			it( 'has the expected currency', function () {
-				expect( clientCart.items[ 0 ].amount.currency ).toBe( 'BRL' );
-			} );
-			it( 'has the expected value', function () {
-				expect( clientCart.items[ 0 ].amount.value ).toBe( 14400 );
-			} );
-			it( 'has the expected display value', function () {
-				expect( clientCart.items[ 0 ].amount.displayValue ).toBe( 'R$144' );
-			} );
-		} );
-
-		describe( 'second cart item (domain)', function () {
-			it( 'has an id', function () {
-				expect( clientCart.items[ 1 ].id ).toBeDefined();
-			} );
-			it( 'has the expected label (the domain name)', function () {
-				expect( clientCart.items[ 1 ].label ).toBe( 'foo.cash' );
-			} );
-			it( 'has the expected type', function () {
-				expect( clientCart.items[ 1 ].type ).toBe( 'dotcash_domain' );
-			} );
-			it( 'has the expected currency', function () {
-				expect( clientCart.items[ 1 ].amount.currency ).toBe( 'BRL' );
-			} );
-			it( 'has the expected value', function () {
-				expect( clientCart.items[ 1 ].amount.value ).toBe( 0 );
-			} );
-			it( 'has the expected display value', function () {
-				expect( clientCart.items[ 1 ].amount.displayValue ).toBe( 'R$0' );
-			} );
 		} );
 
 		describe( 'allowed payment methods', function () {
@@ -323,7 +236,6 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 					currency: 'USD',
 					volume: 1,
 					free_trial: false,
-					orig_cost: null,
 					cost_before_coupon: 144,
 					extra: {
 						context: 'signup',
@@ -355,7 +267,6 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 					currency: 'USD',
 					volume: 1,
 					free_trial: false,
-					orig_cost: 0,
 					cost_before_coupon: 88,
 					extra: {
 						privacy: true,
@@ -391,7 +302,6 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 					currency: 'USD',
 					volume: 2,
 					free_trial: false,
-					orig_cost: null,
 					cost_before_coupon: null,
 					extra: {
 						context: 'signup',
@@ -430,9 +340,6 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 			},
 			locale: 'US',
 			is_signup: false,
-			savings_total: 88,
-			savings_total_display: 'R$88',
-			savings_total_integer: 8800,
 			coupon_savings_total: 88,
 			coupon_savings_total_display: '- R$88',
 			coupon_savings_total_integer: 8800,
@@ -472,35 +379,8 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 		it( 'has the expected total display value', function () {
 			expect( clientCart.total.amount.displayValue ).toBe( '$221' );
 		} );
-		it( 'has a list of items', function () {
-			expect( clientCart.items ).toBeDefined();
-		} );
-		it( 'has the expected number of line items', function () {
-			expect( clientCart.items.length ).toBe( 3 );
-		} );
 		it( 'has an array of allowed payment methods', function () {
 			expect( clientCart.allowedPaymentMethods ).toBeDefined();
-		} );
-
-		describe( 'third cart item (GSuite)', function () {
-			it( 'has an id', function () {
-				expect( clientCart.items[ 2 ].id ).toBeDefined();
-			} );
-			it( 'has the expected label', function () {
-				expect( clientCart.items[ 2 ].label ).toBe( 'G Suite' );
-			} );
-			it( 'has the expected type', function () {
-				expect( clientCart.items[ 2 ].type ).toBe( 'gapps' );
-			} );
-			it( 'has the expected currency', function () {
-				expect( clientCart.items[ 2 ].amount.currency ).toBe( 'USD' );
-			} );
-			it( 'has the expected value', function () {
-				expect( clientCart.items[ 2 ].amount.value ).toBe( 7200 );
-			} );
-			it( 'has the expected display value', function () {
-				expect( clientCart.items[ 2 ].amount.displayValue ).toBe( '$72' );
-			} );
 		} );
 
 		describe( 'allowed payment methods', function () {
@@ -525,7 +405,6 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 					currency: 'USD',
 					volume: 1,
 					free_trial: false,
-					orig_cost: null,
 					cost_before_coupon: 144,
 					extra: {
 						context: 'signup',
@@ -556,9 +435,6 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 			},
 			locale: 'US',
 			is_signup: false,
-			savings_total: 17,
-			savings_total_display: '$17',
-			savings_total_integer: 1700,
 			coupon_savings_total: 17,
 			coupon_savings_total_display: '$17',
 			coupon_savings_total_integer: 1700,
@@ -599,35 +475,8 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 		it( 'has the expected total display value', function () {
 			expect( clientCart.total.amount.displayValue ).toBe( '$132' );
 		} );
-		it( 'has an array of items', function () {
-			expect( clientCart.items ).toBeDefined();
-		} );
-		it( 'has the expected number of line items', function () {
-			expect( clientCart.items.length ).toBe( 1 );
-		} );
 		it( 'has an array of allowed payment methods', function () {
 			expect( clientCart.allowedPaymentMethods ).toBeDefined();
-		} );
-
-		describe( 'first cart item (plan)', function () {
-			it( 'has an id', function () {
-				expect( clientCart.items[ 0 ].id ).toBeDefined();
-			} );
-			it( 'has the expected label', function () {
-				expect( clientCart.items[ 0 ].label ).toBe( 'WordPress.com Personal' );
-			} );
-			it( 'has the expected type', function () {
-				expect( clientCart.items[ 0 ].type ).toBe( 'plan' );
-			} );
-			it( 'has the expected currency', function () {
-				expect( clientCart.items[ 0 ].amount.currency ).toBe( 'USD' );
-			} );
-			it( 'has the expected value', function () {
-				expect( clientCart.items[ 0 ].amount.value ).toBe( 12700 );
-			} );
-			it( 'has the expected display value', function () {
-				expect( clientCart.items[ 0 ].amount.displayValue ).toBe( '$127' );
-			} );
 		} );
 
 		describe( 'allowed payment methods', function () {

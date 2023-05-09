@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	READER_CONVERSATION_FOLLOW,
 	READER_CONVERSATION_MUTE,

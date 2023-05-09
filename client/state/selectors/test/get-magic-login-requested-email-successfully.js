@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import getMagicLoginRequestedEmailSuccessfully from 'calypso/state/selectors/get-magic-login-requested-email-successfully';
 
 describe( 'getMagicLoginRequestedEmailSuccessfully()', () => {
 	test( 'should return false if there is no information yet', () => {
 		const requested = getMagicLoginRequestedEmailSuccessfully( undefined );
-		expect( requested ).to.be.false;
+		expect( requested ).toBe( false );
 	} );
 
 	test( 'should return true if true', () => {
@@ -22,7 +14,7 @@ describe( 'getMagicLoginRequestedEmailSuccessfully()', () => {
 				},
 			},
 		} );
-		expect( requested ).to.be.true;
+		expect( requested ).toBe( true );
 	} );
 
 	test( 'should return false if false', () => {
@@ -33,6 +25,6 @@ describe( 'getMagicLoginRequestedEmailSuccessfully()', () => {
 				},
 			},
 		} );
-		expect( requested ).to.be.false;
+		expect( requested ).toBe( false );
 	} );
 } );

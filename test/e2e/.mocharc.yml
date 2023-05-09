@@ -1,8 +1,0 @@
-bail: true
-require:
-  - 'esm'
-  - 'test/mocha.env.js'
-  - 'lib/hooks/mocha.js'
-file:
-  - 'lib/before.js'
-  - 'lib/mocha-hooks.js'

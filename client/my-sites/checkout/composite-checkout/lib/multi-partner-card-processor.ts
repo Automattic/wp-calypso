@@ -1,28 +1,24 @@
-/**
- * External dependencies
- */
+import { confirmStripePaymentIntent, createStripePaymentMethod } from '@automattic/calypso-stripe';
 import {
 	makeSuccessResponse,
 	makeRedirectResponse,
 	makeErrorResponse,
 } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
-import { confirmStripePaymentIntent, createStripePaymentMethod } from '@automattic/calypso-stripe';
-import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
-import type { Stripe, StripeConfiguration } from '@automattic/calypso-stripe';
-
-/**
- * Internal dependencies
- */
-import getPostalCode from './get-postal-code';
-import getDomainDetails from './get-domain-details';
 import { createEbanxToken } from 'calypso/lib/store-transactions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { recordTransactionBeginAnalytics } from '../lib/analytics';
+import getDomainDetails from './get-domain-details';
+import getPostalCode from './get-postal-code';
 import submitWpcomTransaction from './submit-wpcom-transaction';
 import {
 	createTransactionEndpointRequestPayload,
 	createTransactionEndpointCartFromResponseCart,
 } from './translate-cart';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
+import type { StripeConfiguration } from '@automattic/calypso-stripe';
+import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
+import type { Stripe, StripeCardNumberElement } from '@stripe/stripe-js';
 
 const debug = debugFactory( 'calypso:composite-checkout:multi-partner-card-processor' );
 
@@ -33,9 +29,12 @@ type CardTransactionRequest = {
 type StripeCardTransactionRequest = {
 	stripe: Stripe;
 	stripeConfiguration: StripeConfiguration;
+	paymentPartner: string;
 	name: string;
 	countryCode: string | undefined;
 	postalCode: string | undefined;
+	cardNumberElement: StripeCardNumberElement;
+	useForAllSubscriptions: boolean;
 };
 
 type EbanxCardTransactionRequest = {
@@ -69,11 +68,30 @@ async function stripeCardProcessor(
 	const {
 		includeDomainDetails,
 		includeGSuiteDetails,
-		recordEvent: onEvent,
 		responseCart,
 		siteId,
 		contactDetails,
+		reduxDispatch,
 	} = transactionOptions;
+	reduxDispatch(
+		recordTransactionBeginAnalytics( {
+			paymentMethodId: 'stripe',
+			useForAllSubscriptions: submitData.useForAllSubscriptions,
+		} )
+	);
+
+	const cartCountry = responseCart.tax.location.country_code ?? '';
+	const formCountry = contactDetails?.countryCode?.value ?? '';
+	if ( cartCountry !== formCountry ) {
+		// Changes to the contact form data should always be sent to the cart, so
+		// this should not be possible.
+		reduxDispatch(
+			recordTracksEvent( 'calypso_checkout_mismatched_tax_location', {
+				form_country: formCountry,
+				cart_country: cartCountry,
+			} )
+		);
+	}
 
 	let paymentMethodToken;
 	try {
@@ -87,7 +105,7 @@ async function stripeCardProcessor(
 		debug( 'transaction failed' );
 		// Errors here are "expected" errors, meaning that they (hopefully) come
 		// from stripe and not from some bug in the frontend code.
-		return makeErrorResponse( error.message );
+		return makeErrorResponse( ( error as Error ).message );
 	}
 
 	const formattedTransactionData = createTransactionEndpointRequestPayload( {
@@ -102,7 +120,7 @@ async function stripeCardProcessor(
 		} ),
 		paymentMethodToken,
 		cart: createTransactionEndpointCartFromResponseCart( {
-			siteId: siteId ? String( siteId ) : undefined,
+			siteId,
 			contactDetails:
 				getDomainDetails( contactDetails, { includeDomainDetails, includeGSuiteDetails } ) ?? null,
 			responseCart: responseCart,
@@ -112,19 +130,27 @@ async function stripeCardProcessor(
 	} );
 	debug( 'sending stripe transaction', formattedTransactionData );
 	return submitWpcomTransaction( formattedTransactionData, transactionOptions )
-		.then( ( stripeResponse ) => {
+		.then( async ( stripeResponse ) => {
 			if ( stripeResponse?.message?.payment_intent_client_secret ) {
+				debug( 'transaction requires authentication' );
 				// 3DS authentication required
-				onEvent( { type: 'SHOW_MODAL_AUTHORIZATION' } );
-				return confirmStripePaymentIntent(
-					submitData.stripeConfiguration,
+				reduxDispatch( recordTracksEvent( 'calypso_checkout_modal_authorization', {} ) );
+				// If this fails, it will reject (throw) and we'll end up in the catch block below.
+				await confirmStripePaymentIntent(
+					submitData.stripe,
 					stripeResponse?.message?.payment_intent_client_secret
 				);
+				// We must return the original authentication response in order to have
+				// access to the order_id so that we can display a pending page while
+				// we wait for Stripe to send a webhook to complete the purchase.
 			}
 			return stripeResponse;
 		} )
 		.then( ( stripeResponse ) => {
-			if ( stripeResponse?.redirect_url ) {
+			if (
+				stripeResponse?.redirect_url &&
+				! stripeResponse?.message?.payment_intent_client_secret
+			) {
 				return makeRedirectResponse( stripeResponse.redirect_url );
 			}
 			return makeSuccessResponse( stripeResponse );
@@ -148,9 +174,10 @@ async function ebanxCardProcessor(
 		includeDomainDetails,
 		includeGSuiteDetails,
 		responseCart,
-		siteId,
 		contactDetails,
+		reduxDispatch,
 	} = transactionOptions;
+	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId: 'ebanx' } ) );
 
 	let paymentMethodToken;
 	try {
@@ -166,14 +193,13 @@ async function ebanxCardProcessor(
 		debug( 'transaction failed' );
 		// Errors here are "expected" errors, meaning that they (hopefully) come
 		// from Ebanx and not from some bug in the frontend code.
-		return makeErrorResponse( error.message );
+		return makeErrorResponse( ( error as Error ).message );
 	}
 
 	const formattedTransactionData = createTransactionEndpointRequestPayload( {
 		...submitData,
 		couponId: responseCart.coupon,
 		country: submitData.countryCode,
-		siteId: siteId ? String( siteId ) : undefined,
 		deviceId: paymentMethodToken?.deviceId,
 		domainDetails: getDomainDetails( contactDetails, {
 			includeDomainDetails,
@@ -181,7 +207,7 @@ async function ebanxCardProcessor(
 		} ),
 		paymentMethodToken: paymentMethodToken.token,
 		cart: createTransactionEndpointCartFromResponseCart( {
-			siteId: transactionOptions.siteId ? String( transactionOptions.siteId ) : undefined,
+			siteId: transactionOptions.siteId,
 			contactDetails:
 				getDomainDetails( contactDetails, { includeDomainDetails, includeGSuiteDetails } ) ?? null,
 			responseCart: transactionOptions.responseCart,
@@ -236,6 +262,9 @@ function isValidStripeCardTransactionData(
 	if ( ! data?.stripeConfiguration ) {
 		throw new Error( 'Transaction requires stripeConfiguration and none was provided' );
 	}
+	if ( ! data.cardNumberElement ) {
+		throw new Error( 'Transaction requires credit card field and none was provided' );
+	}
 	return true;
 }
 
@@ -251,16 +280,18 @@ function isValidEbanxCardTransactionData(
 
 function createStripePaymentMethodToken( {
 	stripe,
+	cardNumberElement,
 	name,
 	country,
 	postalCode,
 }: {
 	stripe: Stripe;
+	cardNumberElement: StripeCardNumberElement;
 	name: string | undefined;
 	country: string | undefined;
 	postalCode: string | undefined;
 } ) {
-	return createStripePaymentMethod( stripe, {
+	return createStripePaymentMethod( stripe, cardNumberElement, {
 		name,
 		address: {
 			country,

@@ -1,7 +1,8 @@
+const cp = require( 'child_process' );
 const { promisify } = require( 'util' );
-const exec = promisify( require( 'child_process' ).exec );
-
 const { getNpmRc } = require( '../lib' );
+
+const exec = promisify( cp.exec );
 
 module.exports = {
 	title: 'npm cache',

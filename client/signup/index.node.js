@@ -1,7 +1,4 @@
-/**
- * Internal dependencies
- */
-import { getLanguage, getLanguageRouteParam } from 'calypso/lib/i18n-utils';
+import { getLanguage, getLanguageRouteParam } from '@automattic/i18n-utils';
 
 export default function ( router ) {
 	const lang = getLanguageRouteParam();
@@ -22,9 +19,6 @@ function setUpLocale( context, next ) {
 	const language = getLanguage( context.params.lang );
 	if ( language ) {
 		context.lang = context.params.lang;
-		if ( language.rtl ) {
-			context.isRTL = true;
-		}
 	}
 
 	next();

@@ -1,17 +1,21 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+import {
+	getRelativeTimeString,
+	getShortDateString,
+	getNumericDateString,
+	getISODateString,
+} from '@automattic/i18n-utils';
 import { localize, getLocaleSlug } from 'i18n-calypso';
-import moment from 'moment';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import getIsNoteApproved from '../state/selectors/get-is-note-approved';
-import { linkProps } from './functions';
 import FollowLink from './follow-link';
+import { linkProps } from './functions';
+
+const aSecond = 1000;
+const aMinute = aSecond * 60;
+const anHour = aMinute * 60;
+const aDay = anHour * 24;
 
 function getDisplayURL( url ) {
 	const parser = document.createElement( 'a' );
@@ -19,23 +23,25 @@ function getDisplayURL( url ) {
 	return ( parser.hostname + parser.pathname ).replace( /\/$/, '' );
 }
 
-export class UserBlock extends React.Component {
+export class UserBlock extends Component {
 	/**
-	 * Format a timestamp for showing how long
-	 * ago an event occurred. Specifically here
-	 * for showing when a comment was made.
+	 * Format a timestamp for showing how long ago an event occurred.
+	 * Specifically here for showing when a comment was made.
 	 *
 	 * If within the past five days, a relative time
-	 *   e.g. "23 sec", "15 min", "4 hours", "1 day"
+	 *   e.g. "23 sec. ago", "15 min. ago", "4 hrs. ago", "1 day ago"
 	 *
 	 * If older than five days, absolute date
 	 *   e.g. "30 Apr 2015"
 	 *
-	 * @param {string} timestamp - Time stamp in Date.parse()'able format
-	 * @returns {string} - Time stamp formatted for display or '' if input invalid
+	 * If anything goes wrong, ISO date
+	 *   e.g. "2020-12-20"
+	 * Localized dates are always better, but ISO dates should be broadly recognizable.
+	 *
+	 * @param {string} timestamp - Timestamp in Date.parse()'able format
+	 * @returns {string} - Timestamp formatted for display or '' if input invalid
 	 */
 	getTimeString = ( timestamp ) => {
-		const DAY_IN_SECONDS = 3600 * 24;
 		const MAX_LENGTH = 15;
 		const parsedTime = Date.parse( timestamp );
 		let timeString;
@@ -45,19 +51,30 @@ export class UserBlock extends React.Component {
 		}
 
 		const localeSlug = getLocaleSlug();
-		const momentTime = moment( timestamp ).locale( localeSlug );
 
-		if ( Date.now() - parsedTime > 1000 * DAY_IN_SECONDS * 5 ) {
-			// 30 Apr 2015
-			timeString = momentTime.format( 'll' );
+		timeString = getShortDateString( parsedTime, localeSlug );
 
-			if ( timeString.length > MAX_LENGTH ) {
-				// 2015/4/30 if 'll' is too long, e.g. "30 de abr. de 2015"
-				timeString = momentTime.format( 'l' );
+		// If the localized short date format is too long, use numeric one.
+		if ( timeString.length > MAX_LENGTH ) {
+			timeString = getNumericDateString( parsedTime, localeSlug );
+		}
+
+		// If the localized numeric date format is still too long, use ISO one.
+		if ( timeString.length > MAX_LENGTH ) {
+			timeString = getISODateString( parsedTime );
+		}
+
+		// Use relative time strings (e.g. '2 min. ago') for recent dates.
+		if ( Date.now() - parsedTime < 5 * aDay ) {
+			const relativeTimeString = getRelativeTimeString( {
+				timestamp: parsedTime,
+				locale: localeSlug,
+			} );
+
+			// Only use relative date if it makes sense and is not too long.
+			if ( relativeTimeString && relativeTimeString.length <= MAX_LENGTH ) {
+				timeString = relativeTimeString;
 			}
-		} else {
-			// simplified units, no "ago", e.g. 7 min, 4 hours, 2 days
-			timeString = momentTime.fromNow( true );
 		}
 
 		return timeString;
@@ -109,7 +126,7 @@ export class UserBlock extends React.Component {
 
 		if ( home_title ) {
 			const homeClassName =
-				timeIndicator != '' ? 'wpnc__user__meta wpnc__user__bulleted' : 'wpnc__user__meta';
+				timeIndicator !== '' ? 'wpnc__user__meta wpnc__user__bulleted' : 'wpnc__user__meta';
 			homeTemplate = (
 				<p className={ homeClassName }>
 					<span className="wpnc__user__ago">{ timeIndicator }</span>
@@ -132,7 +149,11 @@ export class UserBlock extends React.Component {
 			);
 		}
 
-		if ( this.props.block.actions && 'undefined' != this.props.block.meta.ids.site ) {
+		if (
+			this.props.block.actions &&
+			this.props.block.meta.ids.site !== undefined &&
+			this.props.block.meta.ids.site !== 'undefined'
+		) {
 			followLink = (
 				<FollowLink
 					site={ this.props.block.meta.ids.site }
@@ -145,11 +166,11 @@ export class UserBlock extends React.Component {
 		if ( home_url ) {
 			return (
 				<div className="wpnc__user">
-					<a className="wpnc__user__site" href={ home_url } target="_blank">
-						<img src={ grav.url } height={ grav.height } width={ grav.width } />
+					<a className="wpnc__user__site" href={ home_url } target="_blank" rel="noreferrer">
+						<img src={ grav.url } height={ grav.height } width={ grav.width } alt="Avatar" />
 					</a>
 					<span className="wpnc__user__username">
-						<a className="wpnc__user__home" href={ home_url } target="_blank">
+						<a className="wpnc__user__home" href={ home_url } target="_blank" rel="noreferrer">
 							{ this.props.block.text }
 						</a>
 					</span>
@@ -160,7 +181,7 @@ export class UserBlock extends React.Component {
 		}
 		return (
 			<div className="wpnc__user">
-				<img src={ grav.url } height={ grav.height } width={ grav.width } />
+				<img src={ grav.url } height={ grav.height } width={ grav.width } alt="Avatar" />
 				<span className="wpnc__user__username">{ this.props.block.text }</span>
 				{ homeTemplate }
 				{ followLink }

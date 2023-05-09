@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import { pickBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { initialSiteState } from './reducer';
 
 export function getProductsBySiteId( state, siteId ) {

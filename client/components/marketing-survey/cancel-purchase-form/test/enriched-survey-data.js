@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import enrichedSurveyData from '../enriched-survey-data';
 
 describe( 'enrichedSurveyData', () => {

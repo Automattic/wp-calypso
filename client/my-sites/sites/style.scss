@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .main.sites {
 	max-width: 320px;
 }
@@ -38,5 +41,43 @@
 	.sites.main {
 		padding-left: 0;
 		padding-right: 0;
+	}
+}
+
+.main.sites__main-empty {
+	padding: 2em !important;
+	max-width: 320px;
+
+	@include break-mobile {
+		max-width: 420px;
+	}
+
+	@include break-small {
+		max-width: 520px;
+	}
+
+	@include break-large {
+		padding: 0 !important;
+	}
+}
+
+.sites__empty-state {
+	p {
+		font-size: 1.5rem;
+		color: var(--color-text);
+		margin-block-start: 11px;
+		margin-block-end: 16px;
+		letter-spacing: 0.005em;
+		line-height: 32px;
+
+		@include break-large {
+			margin-block-start: 6px;
+		}
+	}
+	h1 {
+		font-weight: 400;
+		margin-block-end: 5px;
+		margin-block-start: 5px;
+		font-size: 2.25rem;
 	}
 }

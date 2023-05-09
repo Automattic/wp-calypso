@@ -1,29 +1,21 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { find, get, isEqual, map } from 'lodash';
-import TransitionGroup from 'react-transition-group/TransitionGroup';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import CSSTransition from 'react-transition-group/CSSTransition';
-
-/**
- * Internal dependencies
- */
-import Comment from 'calypso/my-sites/comments/comment';
-import CommentListHeader from 'calypso/my-sites/comments/comment-list/comment-list-header';
-import CommentNavigation from 'calypso/my-sites/comments/comment-navigation';
-import EmptyContent from 'calypso/components/empty-content';
-import Pagination from 'calypso/components/pagination';
+import TransitionGroup from 'react-transition-group/TransitionGroup';
 import QuerySiteCommentCounts from 'calypso/components/data/query-site-comment-counts';
 import QuerySiteCommentsList from 'calypso/components/data/query-site-comments-list';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
-import getCommentsPage from 'calypso/state/selectors/get-comments-page';
-import { getSiteCommentCounts } from 'calypso/state/comments/selectors';
+import EmptyContent from 'calypso/components/empty-content';
+import Pagination from 'calypso/components/pagination';
+import Comment from 'calypso/my-sites/comments/comment';
+import CommentListHeader from 'calypso/my-sites/comments/comment-list/comment-list-header';
+import CommentNavigation from 'calypso/my-sites/comments/comment-navigation';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSiteCommentCounts } from 'calypso/state/comments/selectors';
+import getCommentsPage from 'calypso/state/selectors/get-comments-page';
 import { COMMENTS_PER_PAGE } from '../constants';
 
 const CommentTransition = ( props ) => (
@@ -50,25 +42,19 @@ export class CommentList extends Component {
 		selectedComments: [],
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		const { siteId, status, changePage } = this.props;
+	componentDidUpdate() {
+		const { changePage } = this.props;
 		const totalPages = this.getTotalPages();
+
 		if ( ! this.isRequestedPageValid() && totalPages > 1 ) {
 			return changePage( totalPages );
-		}
-
-		if ( siteId !== nextProps.siteId || status !== nextProps.status ) {
-			this.setState( {
-				isBulkMode: false,
-				selectedComments: [],
-			} );
 		}
 	}
 
 	shouldComponentUpdate = ( nextProps, nextState ) =>
 		! isEqual( this.props, nextProps ) || ! isEqual( this.state, nextState );
 
-	changePage = ( page ) => {
+	handlePageClick = ( page ) => {
 		const { recordChangePage, changePage } = this.props;
 
 		recordChangePage( page, this.getTotalPages() );
@@ -177,6 +163,7 @@ export class CommentList extends Component {
 					commentsPage={ comments }
 					counts={ counts }
 					isBulkMode={ isBulkMode }
+					isPostView={ isPostView }
 					isSelectedAll={ this.isSelectedAll() }
 					order={ order }
 					postId={ postId }
@@ -224,7 +211,7 @@ export class CommentList extends Component {
 					<Pagination
 						key="comment-list-pagination"
 						page={ validPage }
-						pageClick={ this.changePage }
+						pageClick={ this.handlePageClick }
 						perPage={ COMMENTS_PER_PAGE }
 						total={ commentsCount }
 					/>

@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { DefaultRootState } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import getRawSite from 'calypso/state/selectors/get-raw-site';
 
 export interface SiteProduct {
@@ -30,8 +23,8 @@ interface SiteWithProducts {
 	products: RawSiteProduct[];
 }
 
-function isSiteWithProducts( site: null | Record< string, unknown > ): site is SiteWithProducts {
-	return ( site as SiteWithProducts ).products !== undefined;
+function isSiteWithProducts( site: unknown ): site is SiteWithProducts {
+	return ( site as SiteWithProducts )?.products !== undefined;
 }
 
 /**
@@ -54,7 +47,7 @@ export default function getSiteProducts(
 	}
 
 	return site.products.map( ( product ) => ( {
-		productId: parseInt( product.product_id, 10 ),
+		productId: parseInt( String( product.product_id ), 10 ),
 		productSlug: product.product_slug,
 		productName: product.product_name,
 		productNameShort: product.product_name_short || null,

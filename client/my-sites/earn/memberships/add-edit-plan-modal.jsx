@@ -1,35 +1,27 @@
-/**
- * External dependencies
- */
-import React, { useState } from 'react';
-import { connect } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
+import { Dialog, FormInputValidation } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
-import classnames from 'classnames';
 import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
+import classnames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
+import { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
 import CountedTextArea from 'calypso/components/forms/counted-textarea';
-import { Dialog } from '@automattic/components';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
-import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormCurrencyInput from 'calypso/components/forms/form-currency-input';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormSelect from 'calypso/components/forms/form-select';
-import FormCurrencyInput from 'calypso/components/forms/form-currency-input';
-import FormLabel from 'calypso/components/forms/form-label';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import Notice from 'calypso/components/notice';
+import SectionNav from 'calypso/components/section-nav';
+import SectionNavTabItem from 'calypso/components/section-nav/item';
+import SectionNavTabs from 'calypso/components/section-nav/tabs';
 import {
 	requestAddProduct,
 	requestUpdateProduct,
 } from 'calypso/state/memberships/product-list/actions';
-import Notice from 'calypso/components/notice';
-import SectionNav from 'calypso/components/section-nav';
-import SectionNavTabs from 'calypso/components/section-nav/tabs';
-import SectionNavTabItem from 'calypso/components/section-nav/item';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
  * @typedef {[string, number] CurrencyMinimum
@@ -38,7 +30,6 @@ import SectionNavTabItem from 'calypso/components/section-nav/item';
  * Stripe Currencies also supported by WordPress.com with minimum transaction amounts.
  *
  * https://stripe.com/docs/currencies#minimum-and-maximum-charge-amounts
- *
  * @type { [currency: string]: number }
  */
 const MINIMUM_CURRENCY_AMOUNT = {
@@ -118,6 +109,9 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	const [ editedMultiplePerUser, setEditedMultiplePerUser ] = useState(
 		product?.multiple_per_user ?? false
 	);
+
+	const [ editedMarkAsDonation, setEditedMarkAsDonation ] = useState( product?.type ?? null );
+
 	const [ editedPayWhatYouWant, setEditedPayWhatYouWant ] = useState(
 		product?.buyer_can_change_amount ?? false
 	);
@@ -174,11 +168,35 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	};
 	const handlePayWhatYouWant = ( newValue ) => setEditedPayWhatYouWant( newValue );
 	const handleMultiplePerUser = ( newValue ) => setEditedMultiplePerUser( newValue );
+	const handleMarkAsDonation = ( newValue ) =>
+		setEditedMarkAsDonation( true === newValue ? 'donation' : null );
 	const onNameChange = ( event ) => setEditedProductName( event.target.value );
 	const onSelectSchedule = ( event ) => setEditedSchedule( event.target.value );
 
+	// Ideally these values should be kept in sync with the Jetpack equivalents,
+	// though there's no strong technical reason to do so - nothing is going to
+	// break if they fall out of sync.
+	// https://github.com/Automattic/jetpack/blob/trunk/projects/plugins/jetpack/extensions/shared/components/product-management-controls/utils.js#L95
+	const defaultNames = {
+		'false,1 month': translate( 'Monthly Subscription' ),
+		'true,1 month': translate( 'Monthly Donation' ),
+		'false,1 year': translate( 'Yearly Subscription' ),
+		'true,1 year': translate( 'Yearly Donation' ),
+		'false,one-time': translate( 'Subscription' ),
+		'true,one-time': translate( 'Donation' ),
+	};
+
+	useEffect( () => {
+		// If the user has manually entered a name that should be left as-is, don't overwrite it
+		if ( editedProductName && ! Object.values( defaultNames ).includes( editedProductName ) ) {
+			return;
+		}
+		const name = defaultNames[ [ 'donation' === editedMarkAsDonation, editedSchedule ] ] ?? '';
+		setEditedProductName( name );
+	}, [ editedMarkAsDonation, editedSchedule ] );
+
 	const onClose = ( reason ) => {
-		if ( reason === 'submit' && ! product ) {
+		if ( reason === 'submit' && ( ! product || ! product.ID ) ) {
 			addProduct(
 				siteId,
 				{
@@ -190,10 +208,12 @@ const RecurringPaymentsPlanAddEditModal = ( {
 					multiple_per_user: editedMultiplePerUser,
 					welcome_email_content: editedCustomConfirmationMessage,
 					subscribe_as_site_subscriber: editedPostsEmail,
+					type: editedMarkAsDonation,
+					is_editable: true,
 				},
 				translate( 'Added "%s" payment plan.', { args: editedProductName } )
 			);
-		} else if ( reason === 'submit' && product ) {
+		} else if ( reason === 'submit' && product && product.ID ) {
 			updateProduct(
 				siteId,
 				{
@@ -206,6 +226,8 @@ const RecurringPaymentsPlanAddEditModal = ( {
 					multiple_per_user: editedMultiplePerUser,
 					welcome_email_content: editedCustomConfirmationMessage,
 					subscribe_as_site_subscriber: editedPostsEmail,
+					type: editedMarkAsDonation,
+					is_editable: true,
 				},
 				translate( 'Updated "%s" payment plan.', { args: editedProductName } )
 			);
@@ -220,7 +242,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		);
 		return (
 			<>
-				<p>{ product ? editProduct : noProduct }</p>
+				<p>{ product && product.ID ? editProduct : noProduct }</p>
 				<FormFieldset>
 					<FormLabel htmlFor="currency">{ translate( 'Select price' ) }</FormLabel>
 					{ product && (
@@ -297,6 +319,14 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						) }
 					/>
 				</FormFieldset>
+				<FormFieldset>
+					<ToggleControl
+						onChange={ handleMarkAsDonation }
+						checked={ 'donation' === editedMarkAsDonation }
+						label={ translate( 'Mark this plan as a donation.' ) }
+						disabled={ !! product && product.ID }
+					/>
+				</FormFieldset>
 			</>
 		);
 	};
@@ -310,11 +340,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						{ translate(
 							'Allow members of this payment plan to opt into receiving new posts via email.'
 						) }{ ' ' }
-						<InlineSupportLink
-							supportPostId={ 168381 }
-							supportLink="https://wordpress.com/support/paid-newsletters/"
-							showIcon={ false }
-						>
+						<InlineSupportLink supportContext="paid-newsletters" showIcon={ false }>
 							{ translate( 'Learn more.' ) }
 						</InlineSupportLink>
 					</p>
@@ -345,8 +371,14 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		);
 	};
 
-	const editPlan = translate( 'Edit a payment plan' );
-	const addPlan = translate( 'Add a new payment plan' );
+	const addPlan = editedPostsEmail
+		? translate( 'Add a newsletter payment plan' )
+		: translate( 'Add a payment plan' );
+
+	const editPlan = editedPostsEmail
+		? translate( 'Edit newsletter payment plan' )
+		: translate( 'Edit a payment plan' );
+
 	return (
 		<Dialog
 			isVisible={ true }
@@ -364,7 +396,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 				},
 			] }
 		>
-			<FormSectionHeading>{ product ? editPlan : addPlan }</FormSectionHeading>
+			<FormSectionHeading>{ product && product.ID ? editPlan : addPlan }</FormSectionHeading>
 			<SectionNav
 				className="memberships__dialog-nav"
 				selectedText={ getTabName( currentDialogTab ) }

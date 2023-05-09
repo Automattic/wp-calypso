@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export { default as LegendItemPlaceholder } from './placeholder';
@@ -53,7 +47,7 @@ class LegendItem extends Component {
 		}
 
 		return valueString.length > 0 ? (
-			<div className={ 'legend-item__detail-value' }>{ valueString }</div>
+			<div className="legend-item__detail-value">{ valueString }</div>
 		) : null;
 	}
 
@@ -69,7 +63,7 @@ class LegendItem extends Component {
 			>
 				<div className="legend-item__title">
 					<svg
-						className={ 'legend-item__title-sample-drawing' }
+						className="legend-item__title-sample-drawing"
 						viewBox={ `0 0 ${ SVG_SIZE } ${ SVG_SIZE }` }
 					>
 						<circle
@@ -80,14 +74,12 @@ class LegendItem extends Component {
 						/>
 					</svg>
 
-					<div className={ 'legend-item__title-name' }>{ name }</div>
+					<div className="legend-item__title-name">{ name }</div>
 				</div>
 
 				<div className="legend-item__detail">
 					{ this.renderValueAndPercent() }
-					{ description && (
-						<div className={ 'legend-item__detail-description' }>{ description }</div>
-					) }
+					{ description && <div className="legend-item__detail-description">{ description }</div> }
 				</div>
 			</div>
 		);

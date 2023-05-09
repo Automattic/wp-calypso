@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
+import TermQueryManager from 'calypso/lib/query-manager/term';
 import {
 	countFoundTermsForQuery,
 	getTerm,
@@ -16,7 +9,6 @@ import {
 	isRequestingTermsForQuery,
 	isRequestingTermsForQueryIgnoringPage,
 } from '../selectors';
-import TermQueryManager from 'calypso/lib/query-manager/term';
 
 describe( 'selectors', () => {
 	beforeEach( () => {
@@ -37,7 +29,7 @@ describe( 'selectors', () => {
 				{}
 			);
 
-			expect( requesting ).to.be.false;
+			expect( requesting ).toBe( false );
 		} );
 
 		test( 'should return false if query is not requesting', () => {
@@ -58,7 +50,7 @@ describe( 'selectors', () => {
 				{ search: 'ribs' }
 			);
 
-			expect( requesting ).to.be.false;
+			expect( requesting ).toBe( false );
 		} );
 
 		test( 'should return true if query is in progress', () => {
@@ -79,7 +71,7 @@ describe( 'selectors', () => {
 				{ search: 'ribs' }
 			);
 
-			expect( requesting ).to.be.true;
+			expect( requesting ).toBe( true );
 		} );
 	} );
 
@@ -96,7 +88,7 @@ describe( 'selectors', () => {
 				{}
 			);
 
-			expect( requesting ).to.be.false;
+			expect( requesting ).toBe( false );
 		} );
 
 		test( 'should return false if query is not requesting', () => {
@@ -130,7 +122,7 @@ describe( 'selectors', () => {
 				{ search: 'ribs', page: 1, number: 1 }
 			);
 
-			expect( requesting ).to.be.false;
+			expect( requesting ).toBe( false );
 		} );
 
 		test( 'should return true if any query is in progress', () => {
@@ -164,7 +156,7 @@ describe( 'selectors', () => {
 				{ search: 'ribs', page: 1, number: 1 }
 			);
 
-			expect( requesting ).to.be.true;
+			expect( requesting ).toBe( true );
 		} );
 	} );
 
@@ -181,7 +173,7 @@ describe( 'selectors', () => {
 				{}
 			);
 
-			expect( terms ).to.be.null;
+			expect( terms ).toBeNull();
 		} );
 
 		test( 'should return an empty array if no matches exist', () => {
@@ -207,7 +199,7 @@ describe( 'selectors', () => {
 				{ search: 'ribs' }
 			);
 
-			expect( terms ).to.eql( [] );
+			expect( terms ).toEqual( [] );
 		} );
 
 		test( 'should return matching terms', () => {
@@ -242,7 +234,7 @@ describe( 'selectors', () => {
 				{ search: 'ribs' }
 			);
 
-			expect( terms ).to.eql( [
+			expect( terms ).toEqual( [
 				{
 					ID: 111,
 					name: 'Chicken and a biscuit',
@@ -266,7 +258,7 @@ describe( 'selectors', () => {
 				{ search: 'i', page: 2, number: 1 }
 			);
 
-			expect( terms ).to.be.null;
+			expect( terms ).toBeNull();
 		} );
 
 		test( 'should return null if site is not tracking query for taxonomy', () => {
@@ -304,7 +296,7 @@ describe( 'selectors', () => {
 				{ search: 'icken', page: 2, number: 1 }
 			);
 
-			expect( terms ).to.be.null;
+			expect( terms ).toBeNull();
 		} );
 
 		test( 'should return terms ignoring page param', () => {
@@ -342,7 +334,7 @@ describe( 'selectors', () => {
 				{ search: 'i', page: 2, number: 1 }
 			);
 
-			expect( terms ).to.eql( [
+			expect( terms ).toEqual( [
 				{
 					ID: 123,
 					name: 'Chicken',
@@ -370,7 +362,7 @@ describe( 'selectors', () => {
 				{ search: 'Hello' }
 			);
 
-			expect( lastPage ).to.be.null;
+			expect( lastPage ).toBeNull();
 		} );
 
 		test( 'should return null if the terms query is not tracked', () => {
@@ -387,7 +379,7 @@ describe( 'selectors', () => {
 				{ search: 'Hello' }
 			);
 
-			expect( lastPage ).to.be.null;
+			expect( lastPage ).toBeNull();
 		} );
 
 		test( 'should return the last page value for a query', () => {
@@ -425,7 +417,7 @@ describe( 'selectors', () => {
 				{ search: 'i', number: 1 }
 			);
 
-			expect( lastPage ).to.equal( 2 );
+			expect( lastPage ).toEqual( 2 );
 		} );
 
 		test( 'should return the last page value for a terms query, even if including page param', () => {
@@ -463,7 +455,7 @@ describe( 'selectors', () => {
 				{ search: 'i', page: 2, number: 1 }
 			);
 
-			expect( lastPage ).to.equal( 2 );
+			expect( lastPage ).toEqual( 2 );
 		} );
 
 		test( 'should return 1 if there are no results for a query', () => {
@@ -490,7 +482,7 @@ describe( 'selectors', () => {
 				{ search: 'unappetizing' }
 			);
 
-			expect( lastPage ).to.equal( 1 );
+			expect( lastPage ).toEqual( 1 );
 		} );
 	} );
 
@@ -506,7 +498,7 @@ describe( 'selectors', () => {
 				'jetpack-portfolio'
 			);
 
-			expect( terms ).to.be.null;
+			expect( terms ).toBeNull();
 		} );
 
 		test( 'should return null if no terms exist for site taxonomy', () => {
@@ -532,7 +524,7 @@ describe( 'selectors', () => {
 				'jetpack-testimonials'
 			);
 
-			expect( terms ).to.be.null;
+			expect( terms ).toBeNull();
 		} );
 
 		test( 'should return array of matching terms for site taxonomy combo', () => {
@@ -562,7 +554,7 @@ describe( 'selectors', () => {
 				'jetpack-portfolio'
 			);
 
-			expect( terms ).to.eql( [
+			expect( terms ).toEqual( [
 				{
 					ID: 111,
 					name: 'Chicken and a biscuit',
@@ -588,7 +580,7 @@ describe( 'selectors', () => {
 				111
 			);
 
-			expect( term ).to.be.null;
+			expect( term ).toBeNull();
 		} );
 
 		test( 'should return term', () => {
@@ -619,7 +611,7 @@ describe( 'selectors', () => {
 				111
 			);
 
-			expect( term ).to.eql( {
+			expect( term ).toEqual( {
 				ID: 111,
 				name: 'Chicken and a biscuit',
 			} );
@@ -653,7 +645,7 @@ describe( 'selectors', () => {
 				100
 			);
 
-			expect( term ).to.be.null;
+			expect( term ).toBeNull();
 		} );
 	} );
 
@@ -670,7 +662,7 @@ describe( 'selectors', () => {
 				{}
 			);
 
-			expect( count ).to.be.null;
+			expect( count ).toBeNull();
 		} );
 
 		test( 'should return the found value of the query', () => {
@@ -706,7 +698,7 @@ describe( 'selectors', () => {
 				{ search: 'ribs' }
 			);
 
-			expect( count ).to.eql( 4 );
+			expect( count ).toEqual( 4 );
 		} );
 	} );
 } );

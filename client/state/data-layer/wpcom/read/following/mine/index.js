@@ -1,23 +1,16 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
 import { forEach } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { errorNotice } from 'calypso/state/notices/actions';
 import {
 	READER_FOLLOW,
 	READER_FOLLOWS_SYNC_START,
 	READER_FOLLOWS_SYNC_PAGE,
 } from 'calypso/state/reader/action-types';
 import { receiveFollows, syncComplete } from 'calypso/state/reader/follows/actions';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { errorNotice } from 'calypso/state/notices/actions';
 import { isValidApiResponse, subscriptionsFromApi } from './utils';
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 const ITEMS_PER_PAGE = 200;
 const MAX_ITEMS = 2000;

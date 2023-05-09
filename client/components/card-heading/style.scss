@@ -3,7 +3,7 @@
 	margin-bottom: 5px;
 	margin-top: 5px;
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		margin-bottom: 10px;
 		margin-top: 10px;
 	}

@@ -15,7 +15,7 @@ namespace A8C\FSE\Common;
  * Register data stores that may be useful for a variety of concerns
  */
 function register_data_stores() {
-	$path         = plugin_dir_path( __FILE__ ) . 'dist/data_stores.js';
+	$path         = plugin_dir_path( __FILE__ ) . 'dist/data_stores.min.js';
 	$asset_file   = plugin_dir_path( __FILE__ ) . 'dist/data-stores.asset.php';
 	$asset        = file_exists( $asset_file ) ? require $asset_file : null;
 	$dependencies = isset( $asset['dependencies'] ) ? $asset['dependencies'] : array();
@@ -23,7 +23,7 @@ function register_data_stores() {
 
 	wp_register_script(
 		'a8c-fse-common-data-stores',
-		plugins_url( 'dist/data-stores.js', __FILE__ ),
+		plugins_url( 'dist/data-stores.min.js', __FILE__ ),
 		$dependencies,
 		$version,
 		true
@@ -87,11 +87,11 @@ function needs_slider_width_workaround() {
  * @return bool True if antialiased font-smoothing rule should be applied.
  */
 function use_font_smooth_antialiased() {
-	if ( defined( 'A8C_USE_FONT_SMOOTHING_ANTIALIASED' ) && A8C_USE_FONT_SMOOTHING_ANTIALIASED ) {
-		return true;
+	if ( defined( 'A8C_USE_FONT_SMOOTHING_ANTIALIASED' ) ) {
+		return (bool) A8C_USE_FONT_SMOOTHING_ANTIALIASED;
 	}
 
-	return apply_filters( 'a8c_use_font_smoothing_antialiased', false );
+	return true;
 }
 
 /**
@@ -124,7 +124,7 @@ function admin_body_classes( $classes ) {
 		$classes .= ' slider-width-workaround';
 	}
 
-	if ( use_font_smooth_antialiased() ) {
+	if ( use_font_smooth_antialiased() && ! is_network_admin() ) {
 		// Extra space needed because the `legacy-color-*` class isn't adding
 		// a leading space and breaking this class string.
 		$classes .= ' font-smoothing-antialiased ';
@@ -147,9 +147,9 @@ function enqueue_script_and_style() {
 	$script_dependencies = $asset_file['dependencies'];
 	wp_enqueue_script(
 		'a8c-fse-common-script',
-		plugins_url( 'dist/common.js', __FILE__ ),
+		plugins_url( 'dist/common.min.js', __FILE__ ),
 		is_array( $script_dependencies ) ? $script_dependencies : array(),
-		filemtime( plugin_dir_path( __FILE__ ) . 'dist/common.js' ),
+		filemtime( plugin_dir_path( __FILE__ ) . 'dist/common.min.js' ),
 		true
 	);
 
@@ -223,3 +223,48 @@ function enqueue_hide_plugin_buttons_mobile_style() {
 	}
 }
 add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_hide_plugin_buttons_mobile_style' );
+
+/**
+ * Prevent HEIC images from being uploaded by drag and drop
+ * See: https://github.com/Automattic/wp-calypso/issues/55102
+ *
+ * Can be disabled with the `a8c_disable_heic_images` filter.
+ */
+function enqueue_disable_heic_images_script() {
+	if ( apply_filters( 'a8c_disable_heic_images', true ) ) {
+		wp_enqueue_script(
+			'a8c-disable-heic-images',
+			plugins_url( 'dist/disable-heic-images.min.js', __FILE__ ),
+			array(),
+			filemtime( plugin_dir_path( __FILE__ ) . 'dist/disable-heic-images.min.js' ),
+			true
+		);
+	}
+}
+add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_disable_heic_images_script' );
+
+/**
+ * Overrides the block editor preview button url with one that accounts for third party cookie
+ * blocking.
+ */
+function enqueue_override_preview_button_url() {
+	if ( ! function_exists( 'is_blog_atomic' ) ) {
+		return;
+	};
+
+	$blog_details = get_blog_details( get_current_blog_id() );
+
+	if ( is_blog_atomic( $blog_details ) ) {
+		return;
+	}
+
+	wp_enqueue_script(
+		'a8c_override_preview_button_url',
+		plugins_url( 'dist/override-preview-button-url.min.js', __FILE__ ),
+		array(),
+		filemtime( plugin_dir_path( __FILE__ ) . 'dist/override-preview-button-url.min.js' ),
+		true
+	);
+}
+
+add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_override_preview_button_url' );

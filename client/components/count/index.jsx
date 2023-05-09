@@ -1,28 +1,19 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { omit } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
 import formatNumberCompact from 'calypso/lib/format-number-compact';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-export const Count = ( { count, compact, numberFormat, primary, ...inheritProps } ) => {
+export const Count = ( { count, compact, numberFormat, forwardRef, primary, ...rest } ) => {
+	// Omit props passed from the `localize` higher-order component that we don't need.
+	const { translate, moment, ...inheritProps } = rest;
+
 	return (
-		// Omit props passed from the `localize` higher-order component that we don't need.
 		<span
+			ref={ forwardRef }
 			className={ classnames( 'count', { 'is-primary': primary } ) }
-			{ ...omit( inheritProps, [ 'translate', 'moment' ] ) }
+			{ ...inheritProps }
 		>
 			{ compact ? formatNumberCompact( count ) || numberFormat( count ) : numberFormat( count ) }
 		</span>
@@ -34,6 +25,7 @@ Count.propTypes = {
 	numberFormat: PropTypes.func,
 	primary: PropTypes.bool,
 	compact: PropTypes.bool,
+	refProp: PropTypes.oneOfType( [ PropTypes.func, PropTypes.shape( { current: PropTypes.any } ) ] ),
 };
 
 Count.defaultProps = {

@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { SITE_PLAN_OWNERSHIP_TRANSFER } from 'calypso/state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { refreshSitePlans } from 'calypso/state/sites/plans/actions';
-import { SITE_PLAN_OWNERSHIP_TRANSFER } from 'calypso/state/action-types';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 const noticeOptions = ( siteId ) => ( {
 	duration: 8000,
@@ -22,8 +14,8 @@ const noticeOptions = ( siteId ) => ( {
 /**
  * Dispatches a request to transfer a site's plan to another user.
  *
- * @param   {object} action Redux action
- * @returns {object} Dispatched http action
+ * @param   {Object} action Redux action
+ * @returns {Object} Dispatched http action
  */
 export const requestPlanOwnershipTransfer = ( action ) =>
 	http(
@@ -41,8 +33,9 @@ export const requestPlanOwnershipTransfer = ( action ) =>
 /**
  * Dispatches a success notice when the request succeeded.
  *
- * @param   {object} action Redux action
- * @returns {object} Success notice action
+ * @param   {Object} action Redux action
+ * @param   {number} action.siteId
+ * @returns {Object} Success notice action
  */
 export const handleTransferSuccess = ( { siteId } ) => [
 	successNotice(
@@ -55,9 +48,11 @@ export const handleTransferSuccess = ( { siteId } ) => [
 /**
  * Dispatches an error notice when the request failed.
  *
- * @param   {object} action Redux action
- * @param   {object} error  Error object
- * @returns {object} Error notice action
+ * @param   {Object} action Redux action
+ * @param   {number} action.siteId
+ * @param   {Object} error  Error object
+ * @param   {string} error.message
+ * @returns {Object} Error notice action
  */
 export const handleTransferError = ( { siteId }, { message } ) =>
 	errorNotice( message, noticeOptions( siteId ) );

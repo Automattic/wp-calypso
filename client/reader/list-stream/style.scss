@@ -1,13 +1,13 @@
 .is-group-reader .card.list-stream__header {
 	box-shadow: none;
-	border-bottom: 1px solid var( --color-neutral-10 );
+	border-bottom: 1px solid var(--color-neutral-10);
 	display: flex;
 	flex-direction: row;
 	min-height: 48px;
 	margin-top: 24px;
 	padding: 0 14px 14px;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		padding-left: 0;
 		padding-right: 0;
 		margin-top: 0;
@@ -25,11 +25,11 @@
 .list-stream__header-icon {
 	height: 48px;
 	width: 48px;
-	background: var( --color-neutral-10 );
+	background: var(--color-neutral-10);
 	text-align: center;
 
 	.gridicon {
-		fill: var( --color-text-inverted );
+		fill: var(--color-text-inverted);
 		height: 24px;
 		position: relative;
 		top: 12px;
@@ -42,20 +42,20 @@
 	display: flex;
 	flex-direction: column;
 	margin: 0 10px;
-	width: calc( 100% - 15px );
+	width: calc(100% - 15px);
 
-	@include breakpoint-deprecated( '>660px' ) {
-		width: calc( 100% - 165px );
+	@include breakpoint-deprecated( ">660px" ) {
+		width: calc(100% - 165px);
 	}
 }
 
 .list-stream__header-title {
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 	display: flex;
 	font-size: $font-body;
 
 	.gridicon {
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 		height: 14px;
 	}
 }
@@ -67,7 +67,7 @@
 
 .list-stream__header-description {
 	margin: 0;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 }
 
 .list-stream__header-title,
@@ -85,27 +85,27 @@
 	align-items: stretch;
 	display: flex;
 	margin-left: auto;
-	z-index: z-index( 'root', '.list-stream__header-follow' );
+	z-index: z-index("root", ".list-stream__header-follow");
 
 	.follow-button {
 		padding: 0;
-		z-index: z-index( '.list-stream__header-follow', '.follow-button' );
+		z-index: z-index(".list-stream__header-follow", ".follow-button");
 
 		.gridicon {
-			fill: var( --color-primary );
+			fill: var(--color-primary);
 		}
 
 		.follow-button__label {
-			color: var( --color-primary );
+			color: var(--color-primary);
 		}
 
 		&.is-following {
 			.gridicon {
-				fill: var( --color-success );
+				fill: var(--color-success);
 			}
 
 			.follow-button__label {
-				color: var( --color-success );
+				color: var(--color-success);
 			}
 		}
 	}
@@ -119,7 +119,7 @@
 	.follow-button,
 	.follow-button__label {
 		color: transparent;
-		background-color: var( --color-neutral-0 );
+		background-color: var(--color-neutral-0);
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
 
@@ -136,7 +136,7 @@
 	margin-left: auto;
 
 	.list-stream__header-action-icon .gridicon {
-		fill: var( --color-neutral-light );
+		fill: var(--color-neutral-light);
 		margin: auto;
 		position: relative;
 		bottom: 0;

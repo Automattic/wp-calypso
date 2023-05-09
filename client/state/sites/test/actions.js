@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-import { deleteSite, receiveSite, receiveSites, requestSites, requestSite } from '../actions';
 import {
 	SITE_RECEIVE,
 	SITE_REQUEST,
@@ -13,6 +9,7 @@ import {
 	SITES_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
+import { deleteSite, receiveSite, receiveSites, requestSites, requestSite } from '../actions';
 
 describe( 'actions', () => {
 	const mySitesPath =

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { READER_DISMISS_SITE, READER_DISMISS_POST } from 'calypso/state/reader/action-types';
 import { combineReducers } from 'calypso/state/utils';
 

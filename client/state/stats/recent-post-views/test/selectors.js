@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getRecentViewsForPost } from '../selectors';
 
 describe( 'selectors', () => {

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getPlan } from '@automattic/calypso-products';
 import { getSitePlan } from 'calypso/state/sites/selectors';
 
@@ -8,7 +5,7 @@ import { getSitePlan } from 'calypso/state/sites/selectors';
  * Returns term of the active plan for given siteId, e.g. value
  * of constant TERM_MONTHLY defined in @automattic/calypso-products
  *
- * @param {object} state Current state
+ * @param {Object} state Current state
  * @param {number} siteId Site ID
  * @returns {string} Human-readable interval type
  */

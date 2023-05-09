@@ -30,5 +30,4 @@ These represent the top section in the masterbar as well as other significant ar
 - `my-sites`: the site related admin functionality. Akin to wp-admin.
 - `reader`: the home of all Reader sections.
 - `me`: the sections under the `/me` route.
-- `post-editor`: the editor.
 - `signup`: the signup flows.

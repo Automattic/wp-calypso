@@ -3,12 +3,14 @@
 .yarn
 /assets/
 /build/
+dist/
 /public/
 /vendor/
 node_modules/
 !.eslintrc.js
 /client/server/devdocs/search-index.js
 /packages/calypso-codemods/tests
+/packages/webpack-rtl-plugin/test/dist*/
 /packages/wp-babel-makepot/test/examples
 /packages/wpcom.js/webapp/tests/mocha.js
 /desktop/build/
@@ -20,6 +22,9 @@ node_modules/
 
 # Built packages
 /packages/*/dist/
+packages/calypso-color-schemes/src/__color-studio
+packages/calypso-color-schemes/css
+packages/calypso-color-schemes/js
 
 #
 # Eslint won't lint json, but prettier shares this ignore
@@ -35,3 +40,4 @@ node_modules/
 /client/server/devdocs/proptypes-index.json
 /client/server/bundler/assets.json
 /cached-requests.json
+/yarn-json-output.json

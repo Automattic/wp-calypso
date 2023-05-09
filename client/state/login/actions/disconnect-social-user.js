@@ -1,18 +1,12 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import wpcom from 'calypso/lib/wp';
 import {
 	SOCIAL_DISCONNECT_ACCOUNT_REQUEST,
 	SOCIAL_DISCONNECT_ACCOUNT_REQUEST_FAILURE,
 	SOCIAL_DISCONNECT_ACCOUNT_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import { getErrorFromWPCOMError } from 'calypso/state/login/utils';
-import wpcom from 'calypso/lib/wp';
 
 import 'calypso/state/login/init';
 
@@ -30,10 +24,14 @@ export const disconnectSocialUser = ( socialService ) => ( dispatch ) => {
 		},
 	} );
 
-	return wpcom
-		.undocumented()
-		.me()
-		.socialDisconnect( socialService )
+	return wpcom.req
+		.post( '/me/social-login/disconnect', {
+			service: socialService,
+
+			// This API call is restricted to these OAuth keys
+			client_id: config( 'wpcom_signup_id' ),
+			client_secret: config( 'wpcom_signup_key' ),
+		} )
 		.then(
 			() => {
 				dispatch( {

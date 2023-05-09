@@ -1,25 +1,11 @@
-/**
- * External dependencies
- */
-import { isEqual, omit } from 'lodash';
-import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-
 import debug from 'debug';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { translate } from 'i18n-calypso';
+import { isEqual, omit } from 'lodash';
+import { MEDIA_REQUEST, MEDIA_ITEM_REQUEST } from 'calypso/state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import {
-	MEDIA_REQUEST,
-	MEDIA_ITEM_REQUEST,
-	MEDIA_ITEM_UPDATE,
-	MEDIA_ITEM_EDIT,
-	MEDIA_ITEM_DELETE,
-} from 'calypso/state/action-types';
-import {
-	deleteMedia,
 	failMediaItemRequest,
 	failMediaRequest,
 	receiveMedia,
@@ -27,34 +13,14 @@ import {
 	successMediaItemRequest,
 	successMediaRequest,
 } from 'calypso/state/media/actions';
-import { requestMediaStorage } from 'calypso/state/sites/media-storage/actions';
-import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
-import getNextPageQuery from 'calypso/state/selectors/get-next-page-query';
 import { gutenframeUpdateImageBlocks } from 'calypso/state/media/thunks';
+import { errorNotice } from 'calypso/state/notices/actions';
+import getNextPageQuery from 'calypso/state/selectors/get-next-page-query';
 
 /**
  * Module variables
  */
 const log = debug( 'calypso:middleware-media' );
-
-export function updateMedia( action ) {
-	const { siteId, item } = action;
-
-	return [
-		removeNotice( `update-media-notice-${ item.ID }` ),
-		http(
-			{
-				method: 'POST',
-				path: `/sites/${ siteId }/media/${ item.ID }`,
-				apiVersion: '1.1',
-				body: item,
-			},
-			action
-		),
-	];
-}
 
 export const updateMediaSuccess = ( { siteId }, mediaItem ) => [
 	receiveMedia( siteId, mediaItem ),
@@ -67,24 +33,6 @@ export const updateMediaError = ( { siteId, originalMediaItem } ) => [
 		id: `update-media-notice-${ originalMediaItem.ID }`,
 	} ),
 ];
-
-export const editMedia = ( action ) => {
-	const { siteId, data } = action;
-	const { ID: mediaId, ...rest } = data;
-
-	return [
-		removeNotice( `update-media-notice-${ mediaId }` ),
-		http(
-			{
-				method: 'POST',
-				path: `/sites/${ siteId }/media/${ mediaId }/edit`,
-				apiVersion: '1.1',
-				formData: Object.entries( rest ),
-			},
-			action
-		),
-	];
-};
 
 export function requestMedia( action ) {
 	log( 'Request media for site %d using query %o', action.siteId, action.query );
@@ -107,21 +55,23 @@ export function requestMedia( action ) {
 	];
 }
 
-export const requestMediaSuccess = ( { siteId, query }, data ) => ( dispatch, getState ) => {
-	if (
-		! isEqual(
-			omit( query, 'page_handle' ),
-			omit( getNextPageQuery( getState(), siteId ), 'page_handle' )
-		)
-	) {
-		dispatch( successMediaRequest( siteId, query ) );
-		return;
-	}
+export const requestMediaSuccess =
+	( { siteId, query }, data ) =>
+	( dispatch, getState ) => {
+		if (
+			! isEqual(
+				omit( query, 'page_handle' ),
+				omit( getNextPageQuery( getState(), siteId ), 'page_handle' )
+			)
+		) {
+			dispatch( successMediaRequest( siteId, query ) );
+			return;
+		}
 
-	dispatch( receiveMedia( siteId, data.media, data.found, query ) );
-	dispatch( successMediaRequest( siteId, query ) );
-	dispatch( setNextPageHandle( siteId, data.meta ) );
-};
+		dispatch( receiveMedia( siteId, data.media, data.found, query ) );
+		dispatch( successMediaRequest( siteId, query ) );
+		dispatch( setNextPageHandle( siteId, data.meta ) );
+	};
 
 export const requestMediaError = ( { siteId, query } ) => failMediaRequest( siteId, query );
 
@@ -151,34 +101,6 @@ export const receiveMediaItem = ( { mediaId, siteId }, media ) => [
 export const receiveMediaItemError = ( { mediaId, siteId } ) =>
 	failMediaItemRequest( siteId, mediaId );
 
-export const requestDeleteMedia = ( action ) => {
-	const { siteId, mediaId } = action;
-
-	return [
-		removeNotice( `delete-media-notice-${ mediaId }` ),
-		http(
-			{
-				apiVersion: '1.1',
-				method: 'POST',
-				path: `/sites/${ siteId }/media/${ mediaId }/delete`,
-			},
-			action
-		),
-	];
-};
-
-export const deleteMediaSuccess = ( { siteId }, mediaItem ) => [
-	deleteMedia( siteId, mediaItem.ID ),
-	requestMediaStorage( siteId ),
-	gutenframeUpdateImageBlocks( mediaItem, 'deleted' ),
-];
-
-export const deleteMediaError = ( { mediaId } ) => [
-	errorNotice( translate( 'We were unable to delete this media item.' ), {
-		id: `delete-media-notice-${ mediaId }`,
-	} ),
-];
-
 registerHandlers( 'state/data-layer/wpcom/sites/media/index.js', {
 	[ MEDIA_REQUEST ]: [
 		dispatchRequest( {
@@ -193,30 +115,6 @@ registerHandlers( 'state/data-layer/wpcom/sites/media/index.js', {
 			fetch: requestMediaItem,
 			onSuccess: receiveMediaItem,
 			onError: receiveMediaItemError,
-		} ),
-	],
-
-	[ MEDIA_ITEM_UPDATE ]: [
-		dispatchRequest( {
-			fetch: updateMedia,
-			onSuccess: updateMediaSuccess,
-			onError: updateMediaError,
-		} ),
-	],
-
-	[ MEDIA_ITEM_EDIT ]: [
-		dispatchRequest( {
-			fetch: editMedia,
-			onSuccess: updateMediaSuccess,
-			onError: updateMediaError,
-		} ),
-	],
-
-	[ MEDIA_ITEM_DELETE ]: [
-		dispatchRequest( {
-			fetch: requestDeleteMedia,
-			onSuccess: deleteMediaSuccess,
-			onError: deleteMediaError,
 		} ),
 	],
 } );

@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import ImageEditor from '../';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { AspectRatios } from 'calypso/state/editor/image-editor/constants';
+import ImageEditor from '../';
 
 class ImageEditorExample extends Component {
 	constructor() {
@@ -95,7 +88,7 @@ class ImageEditorExample extends Component {
 					} }
 				>
 					<h4>Changes to the image above are shown below</h4>
-					<img id="devdocs-example-image-editor-result" src={ this.state.media.URL } />
+					<img alt="" id="devdocs-example-image-editor-result" src={ this.state.media.URL } />
 				</div>
 			</div>
 		);

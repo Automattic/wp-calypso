@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import express from 'express';
-
-/**
- * Internal dependencies
- */
-import pkgJson from '../../package.json';
 import config from '@automattic/calypso-config';
+import express from 'express';
+import pkgJson from '../../package.json';
 import signInWithApple from './sign-in-with-apple';
 
 const { version } = pkgJson;

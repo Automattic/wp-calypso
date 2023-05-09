@@ -1,19 +1,3 @@
-/**
- * Internal dependencies
- */
-import {
-	addUserProfileLinks,
-	addUserProfileLinksDuplicate,
-	addUserProfileLinksError,
-	addUserProfileLinksMalformed,
-	addUserProfileLinksSuccess,
-	deleteUserProfileLink,
-	deleteUserProfileLinkError,
-	deleteUserProfileLinkSuccess,
-	receiveUserProfileLinks,
-	requestUserProfileLinks,
-	resetUserProfileLinkErrors,
-} from '../actions';
 import {
 	USER_PROFILE_LINKS_ADD,
 	USER_PROFILE_LINKS_ADD_DUPLICATE,
@@ -27,6 +11,19 @@ import {
 	USER_PROFILE_LINKS_REQUEST,
 	USER_PROFILE_LINKS_RESET_ERRORS,
 } from 'calypso/state/action-types';
+import {
+	addUserProfileLinks,
+	addUserProfileLinksDuplicate,
+	addUserProfileLinksError,
+	addUserProfileLinksMalformed,
+	addUserProfileLinksSuccess,
+	deleteUserProfileLink,
+	deleteUserProfileLinkError,
+	deleteUserProfileLinkSuccess,
+	receiveUserProfileLinks,
+	requestUserProfileLinks,
+	resetUserProfileLinkErrors,
+} from '../actions';
 
 describe( 'actions', () => {
 	const profileLinks = [

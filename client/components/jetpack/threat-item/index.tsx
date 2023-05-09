@@ -1,28 +1,21 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { translate } from 'i18n-calypso';
-import classnames from 'classnames';
 import { Button } from '@automattic/components';
+import classnames from 'classnames';
+import { translate } from 'i18n-calypso';
+import * as React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
-
-/**
- * Internal dependencies
- */
+import {
+	getThreatPayloadDescription,
+	getThreatFix,
+} from 'calypso/components/jetpack/threat-item/utils';
+import ThreatItemHeader from 'calypso/components/jetpack/threat-item-header';
+import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import LogItem from '../log-item';
 import ThreatDescription from '../threat-description';
-import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
-import ThreatItemHeader from 'calypso/components/jetpack/threat-item-header';
-import ThreatItemSubheader from 'calypso/components/jetpack/threat-item-subheader';
-import { Threat } from 'calypso/components/jetpack/threat-item/types';
-import { getThreatFix } from 'calypso/components/jetpack/threat-item/utils';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import type { Threat } from 'calypso/components/jetpack/threat-item/types';
+import type { TranslateResult } from 'i18n-calypso';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 interface Props {
 	threat: Threat;
@@ -47,7 +40,6 @@ const ThreatItem: React.FC< Props > = ( {
 	onFixThreat,
 	onIgnoreThreat,
 	isFixing,
-	contactSupportUrl,
 } ) => {
 	const dispatch = useDispatch();
 
@@ -80,7 +72,7 @@ const ThreatItem: React.FC< Props > = ( {
 		[ isFixing, onFixThreat, threat ]
 	);
 
-	const getFix = React.useCallback( (): i18nCalypso.TranslateResult | undefined => {
+	const getFix = React.useCallback( (): TranslateResult | undefined => {
 		if ( threat.status === 'fixed' ) {
 			return;
 		}
@@ -89,7 +81,7 @@ const ThreatItem: React.FC< Props > = ( {
 			return (
 				<>
 					{ ! threat.rows && (
-						<p className="threat-description__section-text">
+						<p className="threat-item threat-description__section-text">
 							{ translate(
 								'Jetpack Scan cannot automatically fix this threat. We suggest that you resolve the threat manually: ' +
 									'ensure that WordPress, your theme, and all of your plugins are up to date, and remove ' +
@@ -98,7 +90,7 @@ const ThreatItem: React.FC< Props > = ( {
 						</p>
 					) }
 					{ threat.rows && (
-						<p className="threat-description__section-text">
+						<p className="threat-item threat-description__section-text">
 							{ translate(
 								'Jetpack Scan cannot automatically fix this threat. We suggest that you resolve the threat manually: ' +
 									'ensure that WordPress, your theme, and all of your plugins are up to date, and remove or edit ' +
@@ -107,7 +99,7 @@ const ThreatItem: React.FC< Props > = ( {
 						</p>
 					) }
 					{ 'current' === threat.status && (
-						<p className="threat-description__section-text">
+						<p className="threat-item threat-description__section-text">
 							{ translate(
 								'If you need more help to resolve this threat, we recommend {{strong}}Codeable{{/strong}}, a trusted freelancer marketplace of highly vetted WordPress experts. ' +
 									'They have identified a select group of security experts to help with these projects. ' +
@@ -124,8 +116,19 @@ const ThreatItem: React.FC< Props > = ( {
 			);
 		}
 
-		return <p className="threat-description__section-text">{ getThreatFix( threat.fixable ) }</p>;
-	}, [ contactSupportUrl, threat ] );
+		return (
+			<>
+				<p className="threat-item threat-description__section-text">
+					{ translate(
+						'Jetpack Scan is able to automatically fix this threat for you. Since it will replace the affected file or directory the site’s look-and-feel or features can be compromised. We recommend that you check if your latest backup was performed successfully in case a restore is needed.'
+					) }
+				</p>
+				<p className="threat-item threat-description__section-text">
+					{ getThreatFix( threat.fixable ) }
+				</p>
+			</>
+		);
+	}, [ threat ] );
 
 	const isFixable = React.useMemo(
 		() => threat.fixable && ( threat.status === 'current' || threat.status === 'ignored' ),
@@ -163,8 +166,6 @@ const ThreatItem: React.FC< Props > = ( {
 				'is-current': threat.status === 'current',
 			} ) }
 			header={ <ThreatItemHeader threat={ threat } isStyled={ true } /> }
-			subheader={ <ThreatItemSubheader threat={ threat } isFixable={ isFixable } /> }
-			{ ...( threat.status === 'current' ? { highlight: 'error' } : {} ) }
 			clickableHeader={ true }
 			onClick={ onOpenTrackEvent }
 		>
@@ -172,6 +173,8 @@ const ThreatItem: React.FC< Props > = ( {
 				status={ threat.status }
 				fix={ getFix() }
 				problem={ threat.description }
+				type={ getThreatPayloadDescription( threat ) }
+				source={ threat.source }
 				context={ threat.context }
 				diff={ threat.diff }
 				rows={ threat.rows }

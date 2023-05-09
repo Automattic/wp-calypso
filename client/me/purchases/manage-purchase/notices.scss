@@ -3,7 +3,7 @@
 	border: none;
 	border-radius: 0;
 	padding: 0;
-	color: var( --color-text-inverted );
+	color: var(--color-text-inverted);
 	font-weight: 400;
 	font-size: inherit;
 	line-height: 1.65;
@@ -12,7 +12,7 @@
 
 	&:hover,
 	&:focus {
-		color: var( --color-link-light );
+		color: var(--color-link-light);
 		box-shadow: none;
 	}
 }

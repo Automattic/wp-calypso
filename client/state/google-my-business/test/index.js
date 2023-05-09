@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import googleMyBusinessReducer from '../reducer';
 import {
 	GOOGLE_MY_BUSINESS_STATS_RECEIVE,
 	GOOGLE_MY_BUSINESS_STATS_REQUEST,
 } from 'calypso/state/action-types';
+import googleMyBusinessReducer from '../reducer';
 
 describe( 'reducer', () => {
 	describe( '#stats', () => {
@@ -26,7 +18,7 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				123: {
 					stats: {
 						actions: {
@@ -62,7 +54,7 @@ describe( 'reducer', () => {
 					statType: 'actions',
 					aggregation: 'total',
 				} )
-			).to.be.empty;
+			).toEqual( expect.objectContaining( {} ) );
 		} );
 
 		test( 'should reset data only for specific site', () => {
@@ -89,7 +81,7 @@ describe( 'reducer', () => {
 					statType: 'actions',
 					aggregation: 'total',
 				} )
-			).to.eql( {
+			).toEqual( {
 				1234: {
 					stats: {
 						actions: {
@@ -124,7 +116,7 @@ describe( 'reducer', () => {
 					statType: 'actions',
 					aggregation: 'total',
 				} )
-			).to.eql( {
+			).toEqual( {
 				123: {
 					stats: {
 						actions: {

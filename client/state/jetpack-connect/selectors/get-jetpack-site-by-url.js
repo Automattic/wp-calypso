@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getSiteByUrl } from 'calypso/state/sites/selectors';
 
 import 'calypso/state/jetpack-connect/init';

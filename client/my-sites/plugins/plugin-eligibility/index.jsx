@@ -1,19 +1,11 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
-import MainComponent from 'calypso/components/main';
-import HeaderCake from 'calypso/components/header-cake';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
+import HeaderCake from 'calypso/components/header-cake';
+import MainComponent from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -61,9 +53,8 @@ class PluginEligibility extends Component {
 }
 
 // It was 2:45AM, I wanted to deploy, and @dmsnell made me do it... props to @dmsnell :)
-const withNavigation = ( WrappedComponent ) => ( props ) => (
-	<WrappedComponent { ...{ ...props, navigateTo: page } } />
-);
+const withNavigation = ( WrappedComponent ) => ( props ) =>
+	<WrappedComponent { ...{ ...props, navigateTo: page } } />;
 
 const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );

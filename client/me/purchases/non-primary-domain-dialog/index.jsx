@@ -1,19 +1,9 @@
-/**
- * External dependencies
- */
+import { Dialog } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
-
-/**
- * Internal dependencies
- */
-import { Dialog } from '@automattic/components';
+import { Component, Fragment } from 'react';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class NonPrimaryDomainDialog extends Component {
@@ -21,6 +11,7 @@ class NonPrimaryDomainDialog extends Component {
 		planName: PropTypes.string.isRequired,
 		oldDomainName: PropTypes.string.isRequired,
 		newDomainName: PropTypes.string.isRequired,
+		hasSetupAds: PropTypes.bool,
 	};
 
 	close = () => {
@@ -32,7 +23,7 @@ class NonPrimaryDomainDialog extends Component {
 	};
 
 	render() {
-		const { planName, oldDomainName, newDomainName, translate } = this.props;
+		const { planName, oldDomainName, newDomainName, translate, hasSetupAds } = this.props;
 		const buttons = [
 			{
 				action: 'cancel',
@@ -76,8 +67,7 @@ class NonPrimaryDomainDialog extends Component {
 						) }
 						<br />
 						{ translate(
-							'{{strong}}%(newDomain)s{{/strong}} will be the address that people see when they visit ' +
-								'your site. Would you still like to downgrade your plan?',
+							'{{strong}}%(newDomain)s{{/strong}} will be the address that people see when they visit your site.',
 							{
 								args: {
 									newDomain: newDomainName,
@@ -86,7 +76,30 @@ class NonPrimaryDomainDialog extends Component {
 									strong: <strong />,
 								},
 							}
+						) }{ ' ' }
+						{ hasSetupAds && (
+							<>
+								<br />
+								<br />
+								{ translate(
+									'You will also be ineligible for the WordAds program. Visit {{a}}our FAQ{{/a}} to learn more.',
+									{
+										components: {
+											a: (
+												<a
+													href="https://wordads.co/faq/#eligibility-for-wordads"
+													target="_blank"
+													rel="noopener noreferrer"
+												/>
+											),
+										},
+									}
+								) }
+								<br />
+								<br />
+							</>
 						) }
+						{ translate( 'Would you still like to downgrade your plan?' ) }
 					</p>
 				</Fragment>
 			</Dialog>

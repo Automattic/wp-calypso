@@ -1,17 +1,6 @@
-/**
- * External dependencies
- */
-import React, { ReactElement } from 'react';
-import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import { CompactCard } from '@automattic/components';
-
-/**
- * Style dependencies
- */
+import classnames from 'classnames';
+import type { PropsWithChildren } from 'react';
 import './style.scss';
 
 interface Props {
@@ -23,7 +12,7 @@ export default function LicenseListItem( {
 	header = false,
 	className = '',
 	children,
-}: React.PropsWithChildren< Props > ): ReactElement {
+}: PropsWithChildren< Props > ) {
 	return (
 		<CompactCard className={ className }>
 			<div

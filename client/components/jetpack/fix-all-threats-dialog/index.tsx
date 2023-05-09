@@ -1,39 +1,49 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { translate } from 'i18n-calypso';
 import { Button } from '@automattic/components';
-import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
-import ThreatItemHeader from 'calypso/components/jetpack/threat-item-header';
+import { translate } from 'i18n-calypso';
+import { useMemo, useState, useEffect } from 'react';
 import ServerCredentialsWizardDialog from 'calypso/components/jetpack/server-credentials-wizard-dialog';
-import { FixableThreat } from 'calypso/components/jetpack/threat-item/types';
-import { getThreatFix } from 'calypso/components/jetpack/threat-item/utils';
+import ThreatFixHeader from 'calypso/components/jetpack/threat-fix-header';
+import { FixableThreat, Threat } from 'calypso/components/jetpack/threat-item/types';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 interface Props {
-	onCloseDialog: Function;
-	onConfirmation: Function;
+	onCloseDialog: ( action?: string | undefined ) => void;
+	onConfirmation: ( threats: Threat[] ) => void;
 	showDialog: boolean;
 	threats: Array< FixableThreat >;
 }
 
 const FixAllThreatsDialog = ( { onConfirmation, onCloseDialog, showDialog, threats }: Props ) => {
-	const buttons = React.useMemo(
+	const [ selectedThreats, setSelectedThreats ] = useState< Threat[] >( threats );
+	const [ submit, setSubmit ] = useState( false );
+
+	const onSelectCheckbox = ( checked: boolean, threat: Threat ) => {
+		if ( checked ) {
+			setSelectedThreats( ( state ) => [ ...state, threat ] );
+		} else {
+			setSelectedThreats( ( state ) => state.filter( ( t ) => t.id !== threat.id ) );
+		}
+	};
+
+	const fixAll = () => {
+		setSubmit( true );
+	};
+
+	useEffect( () => {
+		if ( submit ) {
+			onConfirmation( selectedThreats );
+			setSubmit( false );
+			setSelectedThreats( threats );
+		}
+	}, [ submit, selectedThreats ] );
+
+	const buttons = useMemo(
 		() => [
-			<Button className="fix-all-threats-dialog__btn" onClick={ onCloseDialog }>
+			<Button className="fix-all-threats-dialog__btn" onClick={ () => onCloseDialog() }>
 				{ translate( 'Go back' ) }
 			</Button>,
-			<Button primary className="fix-all-threats-dialog__btn" onClick={ onConfirmation }>
+			<Button primary className="fix-all-threats-dialog__btn" onClick={ fixAll }>
 				{ translate( 'Fix all threats' ) }
 			</Button>,
 		],
@@ -49,47 +59,21 @@ const FixAllThreatsDialog = ( { onConfirmation, onCloseDialog, showDialog, threa
 			buttons={ buttons }
 		>
 			<div className="fix-all-threats-dialog">
-				<h3 className="fix-all-threats-dialog__subheader">
-					{ translate(
-						'Please confirm you want to fix %(numberOfThreats)d active threat',
-						'Please confirm you want to fix all %(numberOfThreats)d active threats',
-						{
-							count: threats.length,
-							args: {
-								numberOfThreats: threats.length,
-							},
-						}
-					) }
-				</h3>
 				<p className="fix-all-threats-dialog__warning-message">
-					{ translate( 'Jetpack will be fixing all the detected active threats.' ) }
+					{ translate( 'Jetpack will be fixing the selected threats and low risk items.' ) }
 				</p>
 				<div className="fix-all-threats-dialog__threats-section">
-					<Gridicon className="fix-all-threats-dialog__icon" icon="info" size={ 36 } />
-					<div className="fix-all-threats-dialog__warning-message">
-						{ translate(
-							'This is the threat Jetpack will fix:',
-							'These are the threats Jetpack will fix:',
-							{
-								count: threats.length,
-							}
-						) }
-						<ul
-							className={ classnames( 'fix-all-threats-dialog__threats', {
-								'is-long-list': threats.length > 3,
-							} ) }
-						>
-							{ threats.map( ( threat ) => (
-								<li key={ threat.id }>
-									<strong>
-										<ThreatItemHeader threat={ threat } isStyled={ false } />
-									</strong>
-									<br />
-									{ getThreatFix( threat.fixable ) }
-								</li>
-							) ) }
-						</ul>
-					</div>
+					{ threats.map( ( threat ) => (
+						<div className="fix-all-threats-dialog__card-container" key={ threat.id }>
+							<ThreatFixHeader
+								key={ threat.id }
+								threat={ threat }
+								fixAllDialog={ true }
+								onCheckFix={ onSelectCheckbox }
+								action="fix"
+							/>
+						</div>
+					) ) }
 				</div>
 			</div>
 		</ServerCredentialsWizardDialog>

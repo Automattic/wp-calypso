@@ -1,22 +1,15 @@
-/**
- * External Dependencies
- */
-import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
-import { convertToCamelCase } from 'calypso/state/data-layer/utils';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { translate } from 'i18n-calypso';
 import { EMAIL_ACCOUNTS_REQUEST } from 'calypso/state/action-types';
-import { errorNotice } from 'calypso/state/notices/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { convertToCamelCase } from 'calypso/state/data-layer/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import {
 	receiveGetEmailAccountsSuccess,
 	receiveGetEmailAccountsFailure,
 } from 'calypso/state/email-accounts/actions';
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { errorNotice } from 'calypso/state/notices/actions';
 
 export const getEmailAccounts = ( action ) => {
 	if ( config.isEnabled( 'email-accounts/enabled' ) ) {

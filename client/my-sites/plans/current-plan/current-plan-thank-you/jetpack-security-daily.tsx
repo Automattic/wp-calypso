@@ -1,16 +1,12 @@
-/**
- * External dependencies
- */
-import { localize } from 'i18n-calypso';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { localize, useTranslate } from 'i18n-calypso';
 import { preventWidows } from 'calypso/lib/formatting';
 import ThankYou from './thank-you';
 
-const JetpackSecurityDailyThankYou = ( { translate } ) => (
+const JetpackSecurityDailyThankYou = ( {
+	translate,
+}: {
+	translate: ReturnType< typeof useTranslate >;
+} ) => (
 	<ThankYou
 		illustration="/calypso/images/illustrations/security.svg"
 		showCalypsoIntro

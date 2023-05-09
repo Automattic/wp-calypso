@@ -1,33 +1,23 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import config from '@automattic/calypso-config';
+import { Button, Card } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { Button, Card } from '@automattic/components';
-import StatsTabs from '../stats-tabs';
-import StatsTab from '../stats-tabs/tab';
-import StatsModulePlaceholder from '../stats-module/placeholder';
-import Emojify from 'calypso/components/emojify';
-import SectionHeader from 'calypso/components/section-header';
-import QueryPosts from 'calypso/components/data/query-posts';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
+import QueryPosts from 'calypso/components/data/query-posts';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import SectionHeader from 'calypso/components/section-header';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isRequestingPostsForQuery, getPostsForQuery } from 'calypso/state/posts/selectors';
 import { getPostStat } from 'calypso/state/stats/posts/selectors';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import StatsModulePlaceholder from '../stats-module/placeholder';
+import StatsTabs from '../stats-tabs';
+import StatsTab from '../stats-tabs/tab';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class StatsPostPerformance extends Component {
@@ -81,7 +71,8 @@ class StatsPostPerformance extends Component {
 	};
 
 	render() {
-		const { query, post, isRequesting, translate, moment, slug, siteId } = this.props;
+		const { query, post, isRequesting, translate, moment, slug, siteId, isOdysseyStats } =
+			this.props;
 		const loading = ! siteId || isRequesting;
 		const postTime = post ? moment( post.date ) : moment();
 		const cardClass = classNames( 'stats-module', 'stats-post-performance', 'is-site-overview' );
@@ -100,7 +91,7 @@ class StatsPostPerformance extends Component {
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<div>
+			<div className="list-latest-post-summary">
 				{ siteId && <QueryPosts siteId={ siteId } query={ query } /> }
 				{ siteId && post && (
 					<QueryPostStats siteId={ siteId } postId={ post.ID } fields={ [ 'views' ] } />
@@ -119,7 +110,7 @@ class StatsPostPerformance extends Component {
 										},
 										components: {
 											href: <a href={ post.URL } target="_blank" rel="noopener noreferrer" />,
-											postTitle: <Emojify tagName="span">{ postTitle }</Emojify>,
+											postTitle: <span>{ postTitle }</span>,
 										},
 										context:
 											'Stats: Sentence showing how much time has passed since the last post, and how the stats are',
@@ -133,11 +124,13 @@ class StatsPostPerformance extends Component {
 							<p className="stats-post-performance__no-posts-message">
 								{ translate( "You haven't published any posts yet." ) }
 							</p>
-							<div className="stats-post-performance__start-post">
-								<Button primary href={ newPostUrl } onClick={ this.recordClickOnNewPostButton }>
-									{ translate( 'Start a Post' ) }
-								</Button>
-							</div>
+							{ ! isOdysseyStats && (
+								<div className="stats-post-performance__start-post">
+									<Button primary href={ newPostUrl } onClick={ this.recordClickOnNewPostButton }>
+										{ translate( 'Start a Post' ) }
+									</Button>
+								</div>
+							) }
 						</div>
 					) : null }
 					{ post ? <StatsTabs compact>{ this.buildTabs() }</StatsTabs> : null }
@@ -164,6 +157,7 @@ const connectComponent = connect(
 			query,
 			siteId,
 			viewCount,
+			isOdysseyStats: config.isEnabled( 'is_running_in_jetpack_site' ),
 		};
 	},
 	{ recordTracksEvent }

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getRawSite from 'calypso/state/selectors/get-raw-site';
 import getSiteOption from './get-site-option';
 import getSiteSlug from './get-site-slug';
@@ -8,7 +5,7 @@ import getSiteSlug from './get-site-slug';
 /**
  * Returns a site's theme showcase path.
  *
- * @param  {object}  state  Global state tree
+ * @param  {Object}  state  Global state tree
  * @param  {number}  siteId SiteId
  * @returns {?string}        Theme showcase path
  */

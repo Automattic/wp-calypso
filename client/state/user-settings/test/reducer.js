@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import reducer, { fetching, settings, unsavedSettings, updatingPassword } from '../reducer';
 import {
 	USER_SETTINGS_REQUEST,
 	USER_SETTINGS_REQUEST_FAILURE,
@@ -18,6 +10,7 @@ import {
 	USER_SETTINGS_UNSAVED_REMOVE,
 	USER_SETTINGS_UNSAVED_SET,
 } from 'calypso/state/action-types';
+import reducer, { fetching, settings, unsavedSettings, updatingPassword } from '../reducer';
 
 describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {

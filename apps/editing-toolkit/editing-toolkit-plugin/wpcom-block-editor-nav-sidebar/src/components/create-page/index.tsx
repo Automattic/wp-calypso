@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { get } from 'lodash';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button as OriginalButton } from '@wordpress/components';
 import { applyFilters } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
-import { addQueryArgs } from '@wordpress/url';
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { plus } from '@wordpress/icons';
+import { addQueryArgs } from '@wordpress/url';
+import { get } from 'lodash';
 
-/**
- * Internal dependencies
- */
 import './style.scss';
 
 const Button = ( {
@@ -26,7 +19,7 @@ interface Props {
 	postType: { slug: string };
 }
 
-export default function CreatePage( { postType }: Props ): JSX.Element {
+export default function CreatePage( { postType }: Props ) {
 	const defaultLabel = get(
 		postType,
 		[ 'labels', 'add_new_item' ],

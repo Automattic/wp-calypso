@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
 import { extendAction } from '@automattic/state-utils';
-
-/**
- * Internal dependencies
- */
-import { failureMeta, queueRequest, successMeta } from '../';
 import useNock, { nock } from 'calypso/test-helpers/use-nock';
+import { failureMeta, queueRequest, successMeta } from '../';
 
 const processInbound = ( action ) => action;
 const processOutbound = ( action, store, data, error ) => ( {
@@ -40,7 +32,7 @@ describe( '#queueRequest', () => {
 			nock( 'https://public-api.wordpress.com:443' ).get( '/rest/v1.1/me' ).reply( 200, data );
 
 			const dispatch = ( action ) => {
-				expect( action ).to.be.eql( extendAction( succeeder, successMeta( data ) ) );
+				expect( action ).toEqual( extendAction( succeeder, successMeta( data ) ) );
 				done();
 			};
 
@@ -54,7 +46,7 @@ describe( '#queueRequest', () => {
 			nock( 'https://public-api.wordpress.com:443' ).get( '/rest/v1.1/me' ).replyWithError( error );
 
 			const dispatch = ( action ) => {
-				expect( action ).to.be.eql( extendAction( failer, failureMeta( error ) ) );
+				expect( action ).toEqual( extendAction( failer, failureMeta( error ) ) );
 				done();
 			};
 

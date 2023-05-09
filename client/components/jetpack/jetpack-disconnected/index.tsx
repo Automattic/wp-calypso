@@ -1,24 +1,14 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent } from 'react';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
+import { FunctionComponent } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import JetpackDisconnectedSVG from 'calypso/assets/images/jetpack/disconnected-gray.svg';
 import ExternalLink from 'calypso/components/external-link';
 import Upsell from 'calypso/components/jetpack/upsell';
 import { preventWidows } from 'calypso/lib/formatting';
-import { JETPACK_SUPPORT } from 'calypso/lib/url/support';
+import { JETPACK_SUPPORT_CONNECTION_ISSUES } from 'calypso/lib/url/support';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-
-/**
- * Style dependencies
- */
-import JetpackDisconnectedSVG from 'calypso/assets/images/jetpack/disconnected-gray.svg';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import './style.scss';
 
 const JetpackDisconnectedIcon = () => (
@@ -30,7 +20,7 @@ const JetpackDisconnectedIcon = () => (
 const JetpackDisconnected: FunctionComponent = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const { name: siteName, slug: siteSlug, URL: siteUrl } = useSelector( getSelectedSite );
+	const { name: siteName, slug: siteSlug, URL: siteUrl } = useSelector( getSelectedSite ) ?? {};
 	const reconnectUrl = `https://wordpress.com/settings/disconnect-site/${ siteSlug }?type=down`;
 	const body = [
 		<span className="jetpack-disconnected__paragraph" key="paragraph-1">
@@ -43,7 +33,7 @@ const JetpackDisconnected: FunctionComponent = () => {
 		<span className="jetpack-disconnected__paragraph" key="paragraph-2">
 			{ preventWidows(
 				translate(
-					'Please visit {{siteUrl/}} to ensure your site loading correctly and reconnect Jetpack if necessary.',
+					'Please visit {{siteUrl/}} to ensure your site is loading correctly and reconnect Jetpack if necessary.',
 					{
 						components: {
 							siteUrl: <ExternalLink href={ siteUrl }>{ siteUrl }</ExternalLink>,
@@ -61,7 +51,7 @@ const JetpackDisconnected: FunctionComponent = () => {
 			buttonText={ translate( 'Reconnect Jetpack' ) }
 			onClick={ () => dispatch( recordTracksEvent( 'calypso_jetpack_backup_reconnect_click' ) ) }
 			iconComponent={ <JetpackDisconnectedIcon /> }
-			secondaryButtonLink={ JETPACK_SUPPORT }
+			secondaryButtonLink={ localizeUrl( JETPACK_SUPPORT_CONNECTION_ISSUES ) }
 			secondaryButtonText={ translate( 'I need help' ) }
 			secondaryOnClick={ () =>
 				dispatch( recordTracksEvent( 'calypso_jetpack_backup_support_click' ) )

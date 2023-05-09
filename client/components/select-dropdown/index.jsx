@@ -1,27 +1,15 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { filter, find, get } from 'lodash';
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import DropdownItem from './item';
-import DropdownSeparator from './separator';
-import DropdownLabel from './label';
+import { filter, find, get, noop } from 'lodash';
+import PropTypes from 'prop-types';
+import { createRef, Children, cloneElement, Component, forwardRef } from 'react';
+import { v4 as uuid } from 'uuid';
 import Count from 'calypso/components/count';
 import TranslatableString from 'calypso/components/translatable/proptype';
-
-/**
- * Style dependencies
- */
+import DropdownItem from './item';
+import DropdownLabel from './label';
+import DropdownSeparator from './separator';
 import './style.scss';
-
-const noop = () => {};
 
 class SelectDropdown extends Component {
 	static Item = DropdownItem;
@@ -29,9 +17,12 @@ class SelectDropdown extends Component {
 	static Label = DropdownLabel;
 
 	static propTypes = {
+		id: PropTypes.string,
 		selectedText: TranslatableString,
 		selectedIcon: PropTypes.element,
 		selectedCount: PropTypes.number,
+		selectedSecondaryIcon: PropTypes.element,
+		positionSelectedSecondaryIconOnRight: PropTypes.bool,
 		initialSelected: PropTypes.string,
 		className: PropTypes.string,
 		style: PropTypes.object,
@@ -46,8 +37,12 @@ class SelectDropdown extends Component {
 				label: PropTypes.oneOfType( [ TranslatableString, PropTypes.node ] ).isRequired,
 				path: PropTypes.string,
 				icon: PropTypes.element,
+				secondaryIcon: PropTypes.element,
 			} )
 		),
+		isLoading: PropTypes.bool,
+		ariaLabel: PropTypes.string,
+		showSelectedOption: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -55,24 +50,26 @@ class SelectDropdown extends Component {
 		onSelect: noop,
 		onToggle: noop,
 		style: {},
+		showSelectedOption: true,
 	};
 
-	static instances = 0;
-
-	instanceId = ++SelectDropdown.instances;
+	instanceId = uuid();
 
 	state = {
 		isOpen: false,
 		selected: this.getInitialSelectedItem(),
 	};
 
-	dropdownContainerRef = React.createRef();
-
 	itemRefs = [];
 
 	setItemRef = ( index ) => ( itemEl ) => {
 		this.itemRefs[ index ] = itemEl;
 	};
+
+	constructor( props ) {
+		super( props );
+		this.dropdownContainerRef = props.innerRef ?? createRef();
+	}
 
 	componentWillUnmount() {
 		window.removeEventListener( 'click', this.handleOutsideClick );
@@ -138,18 +135,32 @@ class SelectDropdown extends Component {
 		return get( find( options, { value: selected } ), 'icon' );
 	}
 
+	getSelectedSecondaryIcon() {
+		const { options, selectedSecondaryIcon } = this.props;
+		const { selected } = this.state;
+
+		if ( selectedSecondaryIcon ) {
+			return selectedSecondaryIcon;
+		}
+
+		return get( find( options, { value: selected } ), 'secondaryIcon' );
+	}
+
 	dropdownOptions() {
 		let refIndex = 0;
 
 		if ( this.props.children ) {
 			// add refs and focus-on-click handlers to children
-			return React.Children.map( this.props.children, ( child ) => {
-				if ( ! child || child.type !== DropdownItem ) {
+			return Children.map( this.props.children, ( child ) => {
+				if (
+					! child ||
+					! [ DropdownItem, DropdownSeparator, DropdownLabel ].includes( child.type )
+				) {
 					return null;
 				}
 
-				return React.cloneElement( child, {
-					ref: this.setItemRef( refIndex++ ),
+				return cloneElement( child, {
+					ref: child.type === DropdownItem ? this.setItemRef( refIndex++ ) : null,
 					onClick: ( event ) => {
 						this.dropdownContainerRef.current.focus();
 						if ( typeof child.props.onClick === 'function' ) {
@@ -160,28 +171,36 @@ class SelectDropdown extends Component {
 			} );
 		}
 
-		return this.props.options.map( ( item, index ) => {
-			if ( ! item ) {
-				return <DropdownSeparator key={ 'dropdown-separator-' + index } />;
-			}
+		return this.props.options
+			.filter( ( item ) => {
+				if ( this.props.showSelectedOption ) {
+					return true;
+				}
+				return item.value !== this.state.selected;
+			} )
+			.map( ( item, index ) => {
+				if ( ! item ) {
+					return <DropdownSeparator key={ 'dropdown-separator-' + index } />;
+				}
 
-			if ( item.isLabel ) {
-				return <DropdownLabel key={ 'dropdown-label-' + index }>{ item.label }</DropdownLabel>;
-			}
+				if ( item.isLabel ) {
+					return <DropdownLabel key={ 'dropdown-label-' + index }>{ item.label }</DropdownLabel>;
+				}
 
-			return (
-				<DropdownItem
-					key={ 'dropdown-item-' + item.value }
-					ref={ this.setItemRef( refIndex++ ) }
-					selected={ this.state.selected === item.value }
-					onClick={ this.onSelectItem( item ) }
-					path={ item.path }
-					icon={ item.icon }
-				>
-					{ item.label }
-				</DropdownItem>
-			);
-		} );
+				return (
+					<DropdownItem
+						key={ 'dropdown-item-' + item.value }
+						ref={ this.setItemRef( refIndex++ ) }
+						selected={ this.state.selected === item.value }
+						onClick={ this.onSelectItem( item ) }
+						path={ item.path }
+						icon={ item.icon }
+						secondaryIcon={ item.secondaryIcon }
+					>
+						{ item.label }
+					</DropdownItem>
+				);
+			} );
 	}
 
 	render() {
@@ -190,13 +209,16 @@ class SelectDropdown extends Component {
 			'is-open': this.state.isOpen && ! this.props.disabled,
 			'is-disabled': this.props.disabled,
 			'has-count': 'number' === typeof this.props.selectedCount,
+			'is-loading': this.props?.isLoading,
 		} );
 
 		const selectedText = this.getSelectedText();
 		const selectedIcon = this.getSelectedIcon();
+		const selectedSecondaryIcon = this.getSelectedSecondaryIcon();
+		const { positionSelectedSecondaryIconOnRight } = this.props;
 
 		return (
-			<div style={ this.props.style } className={ dropdownClassName }>
+			<div id={ this.props.id } style={ this.props.style } className={ dropdownClassName }>
 				<div
 					ref={ this.dropdownContainerRef }
 					className="select-dropdown__container"
@@ -212,13 +234,15 @@ class SelectDropdown extends Component {
 					onClick={ this.toggleDropdown }
 				>
 					<div id={ 'select-dropdown-' + this.instanceId } className="select-dropdown__header">
-						<span className="select-dropdown__header-text">
-							{ selectedIcon && selectedIcon.type === Gridicon ? selectedIcon : null }
+						<span className="select-dropdown__header-text" aria-label={ this.props.ariaLabel }>
+							{ ! positionSelectedSecondaryIconOnRight && selectedSecondaryIcon }
+							{ selectedIcon }
 							{ selectedText }
 						</span>
 						{ 'number' === typeof this.props.selectedCount && (
 							<Count count={ this.props.selectedCount } />
 						) }
+						{ positionSelectedSecondaryIconOnRight && selectedSecondaryIcon }
 						<Gridicon icon="chevron-down" size={ 18 } />
 					</div>
 
@@ -285,26 +309,26 @@ class SelectDropdown extends Component {
 	}
 
 	navigateItem = ( event ) => {
-		switch ( event.keyCode ) {
-			case 9: //tab
+		switch ( event.code ) {
+			case 'Tab':
 				this.navigateItemByTabKey( event );
 				break;
-			case 32: // space
-			case 13: // enter
+			case 'Space':
+			case 'Enter':
 				event.preventDefault();
 				this.activateItem();
 				break;
-			case 38: // up arrow
+			case 'ArrowUp':
 				event.preventDefault();
 				this.focusSibling( 'previous' );
 				this.openDropdown();
 				break;
-			case 40: // down arrow
+			case 'ArrowDown':
 				event.preventDefault();
 				this.focusSibling( 'next' );
 				this.openDropdown();
 				break;
-			case 27: // escape
+			case 'Escape':
 				event.preventDefault();
 				this.closeDropdown();
 				this.dropdownContainerRef.current.focus();
@@ -340,7 +364,17 @@ class SelectDropdown extends Component {
 		let focusedIndex;
 
 		if ( this.props.options.length ) {
-			items = filter( this.props.options, ( item ) => item && ! item.isLabel );
+			items = filter( this.props.options, ( item ) => {
+				if ( ! item || item.isLabel ) {
+					return false;
+				}
+
+				if ( ! this.props.showSelectedOption && item.value === this.state.selected ) {
+					return false;
+				}
+
+				return true;
+			} );
 
 			focusedIndex =
 				typeof this.focused === 'number'
@@ -374,3 +408,7 @@ class SelectDropdown extends Component {
 }
 
 export default SelectDropdown;
+
+export const SelectDropdownForwardingRef = forwardRef( ( props, ref ) => (
+	<SelectDropdown { ...props } innerRef={ ref } />
+) );

@@ -1,9 +1,6 @@
-/**
- * Internal dependencies
- */
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
-import { getSiteId } from 'calypso/state/sites/selectors';
 import { requestSites } from 'calypso/state/sites/actions';
+import { getSiteId } from 'calypso/state/sites/selectors';
 
 async function fetchSitesUntilSiteAppears( siteSlug, reduxStore ) {
 	while ( ! getSiteId( reduxStore.getState(), siteSlug ) ) {

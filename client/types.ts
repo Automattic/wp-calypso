@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import type { NonUndefined } from 'utility-types';
 
 // Web stuff
@@ -21,6 +18,71 @@ export type PlanSlug = string;
 // Post stuff
 export type PostId = number;
 export type PostType = 'page' | 'post' | string;
+
+export interface Theme {
+	author: string;
+	author_uri: string;
+	cost: ThemeCost;
+	date_launched: string;
+	date_updated: string;
+	demo_uri?: string;
+	description: string;
+	descriptionLong: string;
+	download: string;
+	download_url: string;
+	id: string;
+	launch_date: string;
+	license: string;
+	license_uri: string;
+	name: string;
+	next: string;
+	popularity_rank: string;
+	product_details?: MarketplaceThemeProductDetails[];
+	preview_url: string;
+	screenshot: string;
+	screenshots: string[];
+	stylesheet: string;
+	supportDocumentation: string;
+	tags: string[];
+	taxonomies?: {
+		theme_feature?: ThemeFeature[];
+		theme_software_set?: ThemeSoftwareSet[];
+		theme_subject?: ThemeSubject[];
+	};
+	template: string;
+	theme_uri: string;
+	trending_rank: number;
+	version: string;
+}
+
+interface MarketplaceThemeProductDetails {
+	product_id: number;
+	product_slug: string;
+}
+
+interface ThemeCost {
+	currency: string;
+	number: number;
+	display: string;
+}
+
+interface ThemeFeature {
+	name: string;
+	slug: string;
+	term_id: string;
+}
+
+interface ThemeSoftwareSet {
+	name: string;
+	slug: string;
+	term_id: string;
+}
+
+interface ThemeSubject {
+	name: string;
+	slug: string;
+	term_id: string;
+}
 
 // Comment stuff
 export type CommentId = number;
@@ -59,5 +121,6 @@ export type __TodoAny__ = any; /* eslint-disable-line @typescript-eslint/no-expl
 declare global {
 	interface Window {
 		AppBoot: () => void;
+		COMMIT_SHA: string; // Added by an inline script in <head> via SSR context + webpack.
 	}
 }

@@ -1,9 +1,6 @@
-/**
- * External dependencies
- */
-import React, { PureComponent } from 'react';
+import { Gridicon } from '@automattic/components';
 import PropTypes from 'prop-types';
-import Gridicon from 'calypso/components/gridicon';
+import { PureComponent } from 'react';
 
 export default class ActivityActorIcon extends PureComponent {
 	static propTypes = {

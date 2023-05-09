@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
 import { xor } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import {
 	READER_SIDEBAR_LISTS_TOGGLE,
 	READER_SIDEBAR_TAGS_TOGGLE,
 	READER_SIDEBAR_ORGANIZATIONS_TOGGLE,
 	READER_SIDEBAR_FOLLOWING_TOGGLE,
-} from 'calypso/state/reader/action-types';
+} from 'calypso/state/reader-ui/action-types';
 import { combineReducers, withPersistence } from 'calypso/state/utils';
 
 export const isListsOpen = withPersistence( ( state = false, action ) => {

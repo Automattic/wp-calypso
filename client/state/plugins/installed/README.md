@@ -8,8 +8,6 @@ A module for managing installed plugins on connected sites.
 
 ### `installPlugin( siteId: Number, plugin: Object )`
 
-### `installPluginOnMultisite( siteId: Number, plugin: Object )`
-
 ### `updatePlugin( siteId: Number, plugin: Object )`
 
 ### `removePlugin( siteId: Number, plugin: Object )`
@@ -28,6 +26,10 @@ A module for managing installed plugins on connected sites.
 
 ### `isRequestingForSites( state: Object, sites: Array )`
 
+### `isRequestingForAllSites( state: Object )`
+
+Returns the state of the network request for fetching all available plugins on all Jetpack sites of the current user.
+
 ### `getPlugins( state: Object, siteIds: Array, pluginFilter: Object )`
 
 Get plugins installed on a list of sites (can also be just one site, but it should still be an array). Each plugin returned also lists the sites it's installed on in a `sites` property. Can be filtered by `active`, `inactive`, `updates`.
@@ -38,9 +40,13 @@ Get plugins installed on a list of sites (can also be just one site, but it shou
 
 Get the most recent status for a plugin action (including "inProgress" for currently-running actions).
 
-### `isPluginDoingAction( state: Object, siteId: number|string, pluginId: String )`
+### `getAllPluginsIndexedByPluginSlug( state: Object )`
 
-Checks if this site/plugin is busy doing an action.
+Get an object of all installed plugins in all sites, indexed by the plugin slug.
+
+### `getAllPluginsIndexedBySiteId( state: Object )`
+
+Get an object of all installed plugins of each site, indexed by site ID.
 
 ## Reducer
 

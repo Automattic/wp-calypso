@@ -1,19 +1,11 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import DocService from './service';
-import Error from './error';
+import { Component } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import highlight from 'calypso/lib/highlight';
+import Error from './error';
+import DocService from './service';
 
-export default class extends React.Component {
+export default class extends Component {
 	static displayName = 'SingleDocument';
 
 	static propTypes = {
@@ -107,7 +99,7 @@ export default class extends React.Component {
 				</a>
 				<div
 					className="devdocs__doc-content"
-					//eslint-disable-next-line react/no-danger
+					// eslint-disable-next-line react/no-danger
 					dangerouslySetInnerHTML={ { __html: highlight( this.props.term, body ) } }
 				/>
 			</div>

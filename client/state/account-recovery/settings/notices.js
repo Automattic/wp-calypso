@@ -1,18 +1,9 @@
-/**
- * External dependencies
- */
-
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { successNotice, errorNotice } from 'calypso/state/notices/actions';
-
 import {
 	getAccountRecoveryPhone,
 	getAccountRecoveryEmail,
 } from 'calypso/state/account-recovery/settings/selectors';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 
 const getUpdateSuccessMessage = ( target, getState ) => {
 	switch ( target ) {
@@ -123,8 +114,10 @@ const getResentFailedMessage = ( target ) => {
 export const onAccountRecoverySettingsFetchFailed = () =>
 	errorNotice( translate( 'An error occurred while fetching your account recovery settings.' ) );
 
-export const onAccountRecoverySettingsUpdateSuccess = ( { target } ) => ( dispatch, getState ) =>
-	dispatch( successNotice( getUpdateSuccessMessage( target, getState ) ) );
+export const onAccountRecoverySettingsUpdateSuccess =
+	( { target } ) =>
+	( dispatch, getState ) =>
+		dispatch( successNotice( getUpdateSuccessMessage( target, getState ) ) );
 
 export const onAccountRecoverySettingsUpdateFailed = ( { target } ) =>
 	errorNotice( getUpdateErrorMessage( target ) );

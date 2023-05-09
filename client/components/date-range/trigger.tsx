@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent } from 'react';
-import Gridicon from 'calypso/components/gridicon';
+import { Button, ScreenReaderText, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { Moment } from 'moment';
-
-/**
- * Internal dependencies
- */
-import { Button, ScreenReaderText } from '@automattic/components';
 import ButtonGroup from 'calypso/components/button-group';
+import type { Moment } from 'moment';
+import type { FunctionComponent, Ref } from 'react';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};
@@ -20,7 +12,7 @@ interface Props {
 	endDate: Date | Moment | null | undefined;
 	startDateText: string;
 	endDateText: string;
-	buttonRef: Record< string, unknown >;
+	buttonRef: Ref< HTMLAnchorElement | HTMLButtonElement > | undefined;
 	onTriggerClick: () => void;
 	onClearClick: () => void;
 	triggerText: ( startDateText: string, endDateText: string ) => string;
@@ -57,6 +49,8 @@ const DateRangeTrigger: FunctionComponent< Props > = ( {
 		} );
 	}
 
+	const clearDateSelectionText = translate( 'Clear date selection' );
+
 	return (
 		<ButtonGroup className="date-range__trigger">
 			<Button
@@ -65,9 +59,12 @@ const DateRangeTrigger: FunctionComponent< Props > = ( {
 				onClick={ onTriggerClick }
 				compact={ isCompact }
 				aria-haspopup={ true }
+				aria-label={ translate( 'Select date range' ) }
 			>
 				<Gridicon className="date-range__trigger-btn-icon" icon="calendar" aria-hidden="true" />
-				<span className="date-range__trigger-btn-text">{ dateRangeText }</span>
+				<span className="date-range__trigger-btn-text" aria-label={ translate( 'Date range' ) }>
+					{ dateRangeText }
+				</span>
 				{ ! showClearBtn && <Gridicon aria-hidden="true" icon="chevron-down" /> }
 			</Button>
 			{ showClearBtn && (
@@ -76,7 +73,8 @@ const DateRangeTrigger: FunctionComponent< Props > = ( {
 					compact={ isCompact }
 					onClick={ onClearClick }
 					disabled={ ! canReset }
-					title="Clear date selection"
+					aria-label={ clearDateSelectionText }
+					title={ clearDateSelectionText }
 				>
 					<ScreenReaderText>{ translate( 'Clear date selection' ) }</ScreenReaderText>
 					<Gridicon aria-hidden="true" icon="cross" />

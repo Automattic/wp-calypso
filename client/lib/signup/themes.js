@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import { includes, sampleSize } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { themes } from 'calypso/lib/signup/themes-data';
 
 function getUnusedThemes( themeSet, themePool, quantity ) {
@@ -21,7 +13,7 @@ export function getDefaultThemes() {
 	return themes.filter( filterByDefault );
 }
 
-export default function getThemes( vertical, designType, quantity = 9 ) {
+export default function getThemes( designType, quantity = 9 ) {
 	const filterByType = ( theme ) => {
 		return Array.isArray( theme.design )
 			? includes( theme.design, designType )

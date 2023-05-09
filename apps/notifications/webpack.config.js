@@ -1,15 +1,16 @@
 /**
- **** WARNING: No ES6 modules here. Not transpiled! ****
+ *WARNING: No ES6 modules here. Not transpiled! ****
  */
-/* eslint-disable import/no-nodejs-modules */
 
-/**
- * External dependencies
- */
-const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
-const HtmlWebpackPlugin = require( 'html-webpack-plugin' );
-const path = require( 'path' );
 const spawnSync = require( 'child_process' ).spawnSync;
+const path = require( 'path' );
+const BuildMetaPlugin = require( '@automattic/calypso-apps-builder/build-meta-webpack-plugin.cjs' );
+const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
+const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
+const HtmlWebpackPlugin = require( 'html-webpack-plugin' );
+const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
+
+const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'false';
 
 /**
  * Return a webpack config object
@@ -20,13 +21,12 @@ const spawnSync = require( 'child_process' ).spawnSync;
  *
  * @see {@link https://webpack.js.org/configuration/configuration-types/#exporting-a-function}
  * @see {@link https://webpack.js.org/api/cli/}
- *
- * @param  {object}  env                           environment options
- * @param  {object}  argv                          options map
- * @param  {object}  argv.entry                    Entry point(s)
+ * @param  {Object}  env                           environment options
+ * @param  {Object}  argv                          options map
+ * @param  {Object}  argv.entry                    Entry point(s)
  * @param  {string}  argv.outputPath                Output path
  * @param  {string}  argv.outputFilename            Output filename pattern
- * @returns {object}                                webpack config
+ * @returns {Object}                                webpack config
  */
 function getWebpackConfig(
 	env = {},
@@ -52,6 +52,20 @@ function getWebpackConfig(
 
 	return {
 		...webpackConfig,
+		optimization: {
+			concatenateModules: ! shouldEmitStats,
+		},
+		devServer: {
+			host: 'calypso.localhost',
+			port: 3000,
+			static: {
+				directory: path.join( __dirname, 'dist' ),
+			},
+			client: {
+				progress: true,
+			},
+			watchFiles: [ 'dist/**/*' ],
+		},
 		plugins: [
 			...webpackConfig.plugins,
 			new HtmlWebpackPlugin( {
@@ -72,12 +86,22 @@ function getWebpackConfig(
 				isRTL: true,
 				...pageMeta,
 			} ),
-			new HtmlWebpackPlugin( {
-				filename: path.join( outputPath, 'cache-buster.txt' ),
-				templateContent: () => pageMeta.gitDescribe,
-				inject: false,
-			} ),
-		],
+			shouldEmitStats &&
+				new BundleAnalyzerPlugin( {
+					analyzerMode: 'disabled', // just write the stats.json file
+					generateStatsFile: true,
+					statsFilename: path.join( __dirname, 'stats.json' ),
+					statsOptions: {
+						source: false,
+						reasons: true,
+						optimizationBailout: false,
+						chunkOrigins: false,
+						chunkGroups: true,
+					},
+				} ),
+			new ExtensiveLodashReplacementPlugin(),
+			BuildMetaPlugin( { outputPath } ),
+		].filter( Boolean ),
 	};
 }
 

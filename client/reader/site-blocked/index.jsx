@@ -1,22 +1,14 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import ReaderMain from 'calypso/reader/components/reader-main';
-import MobileBackToSidebar from 'calypso/components/mobile-back-to-sidebar';
 import EmptyContent from 'calypso/components/empty-content';
+import ReaderMain from 'calypso/reader/components/reader-main';
 import { recordTrack as recordReaderTrack } from 'calypso/reader/stats';
 import { bumpStat, recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { unblockSite } from 'calypso/state/reader/site-blocks/actions';
 
-class SiteBlocked extends React.Component {
+class SiteBlocked extends Component {
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
 	};
@@ -43,10 +35,6 @@ class SiteBlocked extends React.Component {
 
 		return (
 			<ReaderMain>
-				<MobileBackToSidebar>
-					<h1>{ translate( 'Streams' ) }</h1>
-				</MobileBackToSidebar>
-
 				<EmptyContent
 					action={ action }
 					title={ translate( 'You have blocked this site.' ) }
@@ -57,7 +45,7 @@ class SiteBlocked extends React.Component {
 						},
 						comment: '%s is a site name - for example, "Discover"',
 					} ) }
-					illustration={ '/calypso/images/illustrations/error.svg' }
+					illustration="/calypso/images/illustrations/error.svg"
 					illustrationWidth={ 500 }
 				/>
 			</ReaderMain>

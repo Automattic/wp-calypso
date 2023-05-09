@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { useCallback, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Banner from 'calypso/components/banner';
 import { savePreference } from 'calypso/state/preferences/actions';
 import {
@@ -20,14 +13,12 @@ interface Props {
 	siteSlug: string;
 }
 
-const JetpackCredentialsBanner: React.FC< Props > = ( { siteSlug } ): React.ReactElement => {
+const JetpackCredentialsBanner = ( { siteSlug }: Props ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const preference: Preference[] = useSelector( ( state ) =>
-		getPreference( state, JETPACK_CREDENTIALS_BANNER_PREFERENCE )
-	);
+	const preference: Preference[] = useSelector( ( state ) => getPreference( state ) );
 
-	const savePreferenceType = React.useCallback(
+	const savePreferenceType = useCallback(
 		( type: PreferenceType ) => {
 			dispatch(
 				savePreference( JETPACK_CREDENTIALS_BANNER_PREFERENCE, [
@@ -42,11 +33,11 @@ const JetpackCredentialsBanner: React.FC< Props > = ( { siteSlug } ): React.Reac
 		[ dispatch, preference ]
 	);
 
-	React.useEffect( () => {
+	useEffect( () => {
 		savePreferenceType( 'view' );
 	}, [] );
 
-	const dismissBanner = React.useCallback( () => {
+	const dismissBanner = useCallback( () => {
 		savePreferenceType( 'dismiss' );
 	}, [ savePreferenceType ] );
 

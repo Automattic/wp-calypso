@@ -32,18 +32,15 @@
  *
  */
 
-/**
- * External dependencies
- */
+const { existsSync, mkdirSync, writeFileSync } = require( 'fs' );
+const { relative, sep } = require( 'path' );
 const { po } = require( 'gettext-parser' );
 const { merge, isEmpty, forEach } = require( 'lodash' );
-const { relative, sep } = require( 'path' );
-const { existsSync, mkdirSync, writeFileSync } = require( 'fs' );
 
 /**
  * Default output headers if none specified in plugin options.
  *
- * @type {object}
+ * @type {Object}
  */
 const DEFAULT_HEADERS = {
 	'content-type': 'text/plain; charset=UTF-8',
@@ -60,7 +57,7 @@ const DEFAULT_DIR = 'build/';
 /**
  * The order of arguments in translate functions.
  *
- * @type {object}
+ * @type {Object}
  */
 const DEFAULT_FUNCTIONS_ARGUMENTS_ORDER = {
 	__: [],
@@ -80,11 +77,10 @@ const REGEXP_TRANSLATOR_COMMENT = /^\s*translators:\s*([\s\S]+)/im;
 /**
  * Returns the extracted comment for a given AST traversal path if one exists.
  *
- * @param {object} path              Traversal path.
+ * @param {Object} path              Traversal path.
  * @param {number} _originalNodeLine Private: In recursion, line number of
  *                                     the original node passed.
- *
- * @returns {?string} Extracted comment.
+ * @returns {string|undefined} Extracted comment.
  */
 function getExtractedComment( path, _originalNodeLine ) {
 	const { node, parent, parentPath } = path;
@@ -138,8 +134,7 @@ function getExtractedComment( path, _originalNodeLine ) {
  * Given an argument node (or recursed node), attempts to return a string
  * represenation of that node's value.
  *
- * @param {object} node AST node.
- *
+ * @param {Object} node AST node.
  * @returns {string} String value.
  */
 function getNodeAsString( node ) {
@@ -168,7 +163,6 @@ function getNodeAsString( node ) {
  * Returns true if the specified funciton name is valid translate function name
  *
  * @param {string} name Function name to test.
- *
  * @returns {boolean} Whether function name is valid translate function name.
  */
 function isValidFunctionName( name ) {
@@ -180,7 +174,6 @@ function isValidFunctionName( name ) {
  * the translation object.
  *
  * @param {string} key Key to test.
- *
  * @returns {boolean} Whether key is valid for assignment.
  */
 function isValidTranslationKey( key ) {
@@ -192,9 +185,8 @@ function isValidTranslationKey( key ) {
 /**
  * Merge the properties of extracted string objects.
  *
- * @param   {object} source left-hand string object
- * @param   {object} target right-hand string object
- *
+ * @param   {Object} source left-hand string object
+ * @param   {Object} target right-hand string object
  * @returns {void}
  */
 function mergeStrings( source, target ) {

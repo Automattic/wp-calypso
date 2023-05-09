@@ -1,22 +1,17 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import classNames from 'classnames';
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import config from '@automattic/calypso-config';
-import { connect } from 'react-redux';
+import { Gridicon } from '@automattic/components';
+import { Icon, close } from '@wordpress/icons';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
-import wpcom from 'calypso/lib/wp';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import wpcom from 'calypso/lib/wp';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-class StatsActionFollow extends React.Component {
+class StatsActionFollow extends Component {
 	state = {
 		isFollowing: this.props.isFollowing,
 	};
@@ -100,7 +95,7 @@ class StatsActionFollow extends React.Component {
 						{ label }
 					</span>
 					<span className="module-content-list-item-action-label unfollow">
-						<Gridicon icon="cross" size={ 18 } />
+						<Icon className="stats-icon" icon={ close } size={ 18 } />
 						{ this.props.translate( 'Unfollow', {
 							context: 'Stats ARIA label: Unfollow action',
 						} ) }

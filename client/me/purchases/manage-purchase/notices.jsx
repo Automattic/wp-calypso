@@ -1,18 +1,22 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-import { isEmpty, merge, minBy } from 'lodash';
-
-/**
- * Internal Dependencies
- */
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import config from '@automattic/calypso-config';
-import { getAddNewPaymentMethodPath } from '../utils';
+import {
+	isDomainTransfer,
+	isConciergeSession,
+	isPlan,
+	isDomainRegistration,
+	isMonthly,
+	PRODUCT_AKISMET_FREE,
+} from '@automattic/calypso-products';
+import { localize } from 'i18n-calypso';
+import { isEmpty, merge, minBy } from 'lodash';
+import page from 'page';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import {
 	canExplicitRenew,
 	creditCardExpiresBeforeSubscription,
@@ -33,23 +37,11 @@ import {
 	isPaidWithCredits,
 	shouldAddPaymentSourceInsteadOfRenewingNow,
 } from 'calypso/lib/purchases';
-import {
-	isDomainTransfer,
-	isConciergeSession,
-	isPlan,
-	isDomainRegistration,
-	isMonthly,
-} from '@automattic/calypso-products';
-import Notice from 'calypso/components/notice';
-import NoticeAction from 'calypso/components/notice/notice-action';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import UpcomingRenewalsDialog from 'calypso/me/purchases/upcoming-renewals/upcoming-renewals-dialog';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getAddNewPaymentMethodPath } from '../utils';
 
-/**
- * Style dependencies
- */
 import './notices.scss';
 
 const eventProperties = ( warning ) => ( { warning, position: 'individual-purchase' } );
@@ -111,8 +103,8 @@ class PurchaseNotice extends Component {
 	/**
 	 * Returns appropriate warning text for a purchase that is expiring but where the expiration is not imminent.
 	 *
-	 * @param  {object} purchase  The purchase object
-	 * @param  {React.Component} autoRenewingUpgradesLink  An optional link component, for linking to other purchases on the site that are auto-renewing rather than expiring
+	 * @param  {Object} purchase  The purchase object
+	 * @param  {Component} autoRenewingUpgradesLink  An optional link component, for linking to other purchases on the site that are auto-renewing rather than expiring
 	 * @returns  {string}  Translated text for the warning message.
 	 */
 	getExpiringLaterText( purchase, autoRenewingUpgradesLink = null ) {
@@ -190,7 +182,7 @@ class PurchaseNotice extends Component {
 	renderRenewNoticeAction( onClick ) {
 		const { changePaymentMethodPath, purchase, translate } = this.props;
 
-		if ( ! config.isEnabled( 'upgrades/checkout' ) || ! this.props.selectedSite ) {
+		if ( ! this.props.selectedSite ) {
 			return null;
 		}
 
@@ -274,6 +266,7 @@ class PurchaseNotice extends Component {
 	};
 
 	renderPurchaseExpiringNotice() {
+		const EXCLUDED_PRODUCTS = [ 'ecommerce-trial-bundle-monthly', PRODUCT_AKISMET_FREE ];
 		const {
 			moment,
 			purchase,
@@ -297,7 +290,10 @@ class PurchaseNotice extends Component {
 		const currentPurchase = usePlanInsteadOfIncludedPurchase ? purchaseAttachedTo : purchase;
 		const includedPurchase = purchase;
 
-		if ( ! isExpiring( currentPurchase ) ) {
+		if (
+			! isExpiring( currentPurchase ) ||
+			EXCLUDED_PRODUCTS.includes( currentPurchase?.productSlug )
+		) {
 			return null;
 		}
 
@@ -825,8 +821,8 @@ class PurchaseNotice extends Component {
 	/**
 	 * Returns an object with credit card details suitable for use as translation arguments.
 	 *
-	 * @param {object} purchase - the purchase to get credit card details from
-	 * @returns {object}  Translation arguments containing information on the card type, number, and expiry
+	 * @param {Object} purchase - the purchase to get credit card details from
+	 * @returns {Object}  Translation arguments containing information on the card type, number, and expiry
 	 */
 	creditCardDetails = ( purchase ) => {
 		const { moment } = this.props;
@@ -889,13 +885,8 @@ class PurchaseNotice extends Component {
 	};
 
 	renderExpiredRenewNotice() {
-		const {
-			purchase,
-			purchaseAttachedTo,
-			selectedSite,
-			translate,
-			getManagePurchaseUrlFor,
-		} = this.props;
+		const { purchase, purchaseAttachedTo, selectedSite, translate, getManagePurchaseUrlFor } =
+			this.props;
 
 		// For purchases included with a plan (for example, a domain mapping
 		// bundled with the plan), the plan purchase is used on this page when
@@ -995,13 +986,68 @@ class PurchaseNotice extends Component {
 		);
 	}
 
+	renderInAppPurchaseNotice() {
+		const { purchase, translate } = this.props;
+
+		return (
+			<Notice
+				showDismiss={ false }
+				status="is-info"
+				text={ translate(
+					'This product is an in-app purchase. You can manage it from within {{managePurchase}}the app store{{/managePurchase}}.',
+					{
+						components: {
+							managePurchase: <a href={ purchase.iapPurchaseManagementLink } />,
+						},
+					}
+				) }
+			/>
+		);
+	}
+
+	renderECommerceTrialNotice() {
+		const { moment, purchase, selectedSite, translate } = this.props;
+		const onClick = () => {
+			return page( `/plans/${ selectedSite?.slug }` );
+		};
+		const expiry = moment( purchase.expiryDate );
+		const daysToExpiry = moment( expiry.diff( moment() ) ).format( 'D' );
+
+		return (
+			<Notice
+				showDismiss={ false }
+				status="is-info"
+				text={ translate(
+					'You have %(expiry)s days remaining on your free trial. Upgrade your plan to keep your ecommerce features.',
+					{
+						args: {
+							expiry: daysToExpiry,
+						},
+					}
+				) }
+			>
+				<NoticeAction onClick={ onClick }>{ translate( 'Upgrade Now' ) }</NoticeAction>
+			</Notice>
+		);
+	}
+
 	render() {
+		const { purchase } = this.props;
+
 		if ( this.props.isDataLoading ) {
 			return null;
 		}
 
-		if ( isDomainTransfer( this.props.purchase ) ) {
+		if ( isDomainTransfer( purchase ) ) {
 			return null;
+		}
+
+		if ( purchase.productSlug === 'ecommerce-trial-bundle-monthly' ) {
+			return this.renderECommerceTrialNotice();
+		}
+
+		if ( purchase.isLocked && purchase.isInAppPurchase ) {
+			return this.renderInAppPurchaseNotice();
 		}
 
 		if ( ! this.props.isProductOwner ) {
@@ -1022,7 +1068,7 @@ class PurchaseNotice extends Component {
 			return expiredNotice;
 		}
 
-		if ( isPartnerPurchase( this.props.purchase ) ) {
+		if ( isPartnerPurchase( purchase ) ) {
 			return null;
 		}
 

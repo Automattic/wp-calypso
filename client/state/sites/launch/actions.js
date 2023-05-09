@@ -1,11 +1,9 @@
-/**
- * Internal dependencies
- */
+import { addQueryArgs } from 'calypso/lib/url';
 import { SITE_LAUNCH } from 'calypso/state/action-types';
 import 'calypso/state/data-layer/wpcom/sites/launch';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
-import { getSiteSlug, isCurrentPlanPaid, getSiteOption } from 'calypso/state/sites/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import { getSiteSlug, isCurrentPlanPaid, getSiteOption } from 'calypso/state/sites/selectors';
 
 export const launchSite = ( siteId ) => ( {
 	type: SITE_LAUNCH,
@@ -18,30 +16,32 @@ export const launchSite = ( siteId ) => ( {
 	},
 } );
 
-export const launchSiteOrRedirectToLaunchSignupFlow = ( siteId ) => ( dispatch, getState ) => {
-	if ( ! isUnlaunchedSite( getState(), siteId ) ) {
-		return;
-	}
+/**
+ * @param {number} siteId
+ * @param {string?} source
+ */
+export const launchSiteOrRedirectToLaunchSignupFlow =
+	( siteId, source = null ) =>
+	( dispatch, getState ) => {
+		if ( ! isUnlaunchedSite( getState(), siteId ) ) {
+			return;
+		}
 
-	const isAnchorPodcast = getSiteOption( getState(), siteId, 'anchor_podcast' );
-	const isPaidWithDomain =
-		isCurrentPlanPaid( getState(), siteId ) && getDomainsBySiteId( getState(), siteId ).length > 1;
+		const isAnchorPodcast = getSiteOption( getState(), siteId, 'anchor_podcast' );
+		const isPaidWithDomain =
+			isCurrentPlanPaid( getState(), siteId ) &&
+			getDomainsBySiteId( getState(), siteId ).length > 1;
 
-	if ( isPaidWithDomain || isAnchorPodcast ) {
-		dispatch( launchSite( siteId ) );
-		return;
-	}
+		if ( isPaidWithDomain || isAnchorPodcast ) {
+			dispatch( launchSite( siteId ) );
+			return;
+		}
 
-	const siteSlug = getSiteSlug( getState(), siteId );
+		const siteSlug = getSiteSlug( getState(), siteId );
 
-	// TODO: consider using the `page` library instead of calling using `location.href` here
-
-	const isGutenboarding = [ 'gutenboarding', 'gutenboarding-site-editor' ].includes(
-		getSiteOption( getState(), siteId, 'site_creation_flow' )
-	);
-	if ( isGutenboarding ) {
-		window.location.href = `/start/new-launch?siteSlug=${ siteSlug }&source=home`;
-	} else {
-		window.location.href = `/start/launch-site?siteSlug=${ siteSlug }`;
-	}
-};
+		// TODO: consider using the `page` library instead of calling using `location.href` here
+		window.location.href = addQueryArgs(
+			{ siteSlug, source, hide_initial_query: 'yes' },
+			'/start/launch-site'
+		);
+	};

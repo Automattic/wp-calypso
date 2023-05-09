@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 jest.mock( 'page', () => jest.fn() );
 jest.mock( '../controller', () => ( {
 	features: jest.fn(),
@@ -20,38 +24,33 @@ jest.mock( 'calypso/my-sites/controller', () => ( {
 } ) );
 jest.mock( 'calypso/my-sites/plans/jetpack-plans', () => jest.fn() );
 
-/**
- * External dependencies
- */
 import page from 'page';
-
-/**
- * Internal dependencies
- */
-import {
-	features,
-	plans,
-	redirectToCheckout,
-	redirectToPlans,
-	redirectToPlansIfNotJetpack,
-} from '../controller';
-import { currentPlan } from '../current-plan/controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import {
 	navigation,
 	siteSelection,
 	sites,
 	wpForTeamsP2PlusNotSupportedRedirect,
+	stagingSiteNotSupportedRedirect,
 	p2RedirectToHubPlans,
 } from 'calypso/my-sites/controller';
 import jetpackPlans from 'calypso/my-sites/plans/jetpack-plans';
-
+import {
+	features,
+	plans,
+	redirectToCheckout,
+	redirectToPlans,
+	redirectToPlansIfNotJetpack,
+	redirectIfInvalidInterval,
+} from '../controller';
+import { currentPlan } from '../current-plan/controller';
 import router from '../index';
 
 const routes = {
 	'/plans': [
 		siteSelection,
 		wpForTeamsP2PlusNotSupportedRedirect,
+		stagingSiteNotSupportedRedirect,
 		p2RedirectToHubPlans,
 		sites,
 		makeLayout,
@@ -60,6 +59,7 @@ const routes = {
 	'/plans/compare': [
 		siteSelection,
 		wpForTeamsP2PlusNotSupportedRedirect,
+		stagingSiteNotSupportedRedirect,
 		navigation,
 		p2RedirectToHubPlans,
 		redirectToPlans,
@@ -69,6 +69,7 @@ const routes = {
 	'/plans/compare/:domain': [
 		siteSelection,
 		wpForTeamsP2PlusNotSupportedRedirect,
+		stagingSiteNotSupportedRedirect,
 		navigation,
 		p2RedirectToHubPlans,
 		redirectToPlans,
@@ -78,6 +79,7 @@ const routes = {
 	'/plans/features': [
 		siteSelection,
 		wpForTeamsP2PlusNotSupportedRedirect,
+		stagingSiteNotSupportedRedirect,
 		navigation,
 		p2RedirectToHubPlans,
 		redirectToPlans,
@@ -87,16 +89,23 @@ const routes = {
 	'/plans/features/:domain': [
 		siteSelection,
 		wpForTeamsP2PlusNotSupportedRedirect,
+		stagingSiteNotSupportedRedirect,
 		navigation,
 		p2RedirectToHubPlans,
 		redirectToPlans,
 		makeLayout,
 		clientRender,
 	],
-	'/plans/features/:feature/:domain': [ features, makeLayout, clientRender ],
+	'/plans/features/:feature/:domain': [
+		stagingSiteNotSupportedRedirect,
+		features,
+		makeLayout,
+		clientRender,
+	],
 	'/plans/my-plan': [
 		siteSelection,
 		wpForTeamsP2PlusNotSupportedRedirect,
+		stagingSiteNotSupportedRedirect,
 		sites,
 		navigation,
 		p2RedirectToHubPlans,
@@ -107,6 +116,7 @@ const routes = {
 	'/plans/my-plan/:site': [
 		siteSelection,
 		wpForTeamsP2PlusNotSupportedRedirect,
+		stagingSiteNotSupportedRedirect,
 		navigation,
 		p2RedirectToHubPlans,
 		currentPlan,
@@ -116,6 +126,7 @@ const routes = {
 	'/plans/select/:plan/:domain': [
 		siteSelection,
 		wpForTeamsP2PlusNotSupportedRedirect,
+		stagingSiteNotSupportedRedirect,
 		p2RedirectToHubPlans,
 		redirectToCheckout,
 		makeLayout,
@@ -124,6 +135,8 @@ const routes = {
 	'/plans/:intervalType?/:site': [
 		siteSelection,
 		wpForTeamsP2PlusNotSupportedRedirect,
+		stagingSiteNotSupportedRedirect,
+		redirectIfInvalidInterval,
 		p2RedirectToHubPlans,
 		navigation,
 		plans,
@@ -149,6 +162,7 @@ describe( 'Loads Jetpack plan page', () => {
 			'/plans',
 			siteSelection,
 			wpForTeamsP2PlusNotSupportedRedirect,
+			stagingSiteNotSupportedRedirect,
 			redirectToPlansIfNotJetpack,
 			navigation
 		);

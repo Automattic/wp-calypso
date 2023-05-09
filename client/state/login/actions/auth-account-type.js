@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { defer } from 'lodash';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { defer } from 'lodash';
 import {
 	LOGIN_AUTH_ACCOUNT_TYPE_REQUEST,
 	LOGIN_AUTH_ACCOUNT_TYPE_REQUESTING,
@@ -65,7 +58,7 @@ export const getAuthAccountType = ( usernameOrEmail ) => ( dispatch ) => {
 /**
  * Resets the type of authentication of the account of the current user.
  *
- * @returns {object} An action that can be dispatched
+ * @returns {Object} An action that can be dispatched
  */
 export const resetAuthAccountType = () => ( {
 	type: LOGIN_AUTH_ACCOUNT_TYPE_RESET,

@@ -1,25 +1,14 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-
-/**
- * Style dependencies
- */
 import './fieldset.scss';
 
-export default class extends React.Component {
+export default class extends Component {
 	static displayName = 'EditorMediaModalFieldset';
 
 	static propTypes = {
-		legend: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ).isRequired,
+		legend: PropTypes.node.isRequired,
 	};
 
 	render() {

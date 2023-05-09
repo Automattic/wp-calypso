@@ -1,27 +1,15 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
+import { Card, Button, FormInputValidation } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import StepWrapper from 'calypso/signup/step-wrapper';
-import { Card, Button } from '@automattic/components';
-import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormLabel from 'calypso/components/forms/form-label';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import StepWrapper from 'calypso/signup/step-wrapper';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class CloneDestinationStep extends Component {

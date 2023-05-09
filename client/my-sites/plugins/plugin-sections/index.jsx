@@ -1,40 +1,28 @@
-/**
- * External dependencies
- */
-import { filter, find } from 'lodash';
-import { localize } from 'i18n-calypso';
-import React from 'react';
-import titleCase from 'to-title-case';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
-import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import { Card } from '@automattic/components';
-import SectionNav from 'calypso/components/section-nav';
-import NavTabs from 'calypso/components/section-nav/tabs';
-import NavItem from 'calypso/components/section-nav/item';
+import { localize } from 'i18n-calypso';
+import { filter, find } from 'lodash';
+import { createRef, Component } from 'react';
+import titleCase from 'to-title-case';
 import ExternalLink from 'calypso/components/external-link';
+import SectionNav from 'calypso/components/section-nav';
+import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import safeProtocolUrl from 'calypso/lib/safe-protocol-url';
+import { PluginFeaturedVideo } from '../plugin-featured-video';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class PluginSections extends React.Component {
+class PluginSections extends Component {
 	static displayName = 'PluginSections';
 
 	constructor( props ) {
 		super( props );
-		this.descriptionContent = React.createRef();
+		this.descriptionContent = createRef();
 	}
 
 	state = {
 		selectedSection: false,
-		readMore: false,
 		descriptionHeight: 0,
 	};
 
@@ -195,7 +183,6 @@ class PluginSections extends React.Component {
 
 	setSelectedSection = ( section, event ) => {
 		this.setState( {
-			readMore: false !== this.state.readMore || this.getSelected() !== section,
 			selectedSection: section,
 		} );
 		if ( event ) {
@@ -203,78 +190,106 @@ class PluginSections extends React.Component {
 		}
 	};
 
-	toggleReadMore = () => {
-		this.setState( { readMore: ! this.state.readMore } );
-	};
-
-	renderReadMore = () => {
-		if ( this.props.isWpcom || this.state.descriptionHeight < this._COLLAPSED_DESCRIPTION_HEIGHT ) {
-			return null;
-		}
-		const button = (
-			<button className="plugin-sections__read-more-link" onClick={ this.toggleReadMore }>
-				<span className="plugin-sections__read-more-text">
-					{ this.props.translate( 'Read More' ) }
-				</span>
-				<Gridicon icon="chevron-down" size={ 18 } />
-			</button>
-		);
-		return (
-			<div className="plugin-sections__read-more">
-				{
-					// We remove the link but leave the plugin-sections__read-more container
-					// in order to minimize jump on small sections.
-					this.state.readMore ? null : button
-				}
-			</div>
-		);
-	};
-
-	render() {
-		const contentClasses = classNames( 'plugin-sections__content', {
-			trimmed: ! this.props.isWpcom && ! this.state.readMore,
-		} );
-
-		// Defensively check if this plugin has sections. If not, don't render anything.
-		if ( ! this.props.plugin || ! this.props.plugin.sections || ! this.getAvailableSections() ) {
-			return null;
-		}
+	renderSelectedSection() {
+		const contentClasses = classNames( 'plugin-sections__content' );
+		const banner = this.props.plugin?.banners?.high || this.props.plugin?.banners?.low;
+		const videoUrl = this.props.plugin?.banner_video_src;
 
 		/*eslint-disable react/no-danger*/
-		return (
-			<div className="plugin-sections">
-				<div className="plugin-sections__header">
-					<SectionNav selectedText={ this.getNavTitle( this.getSelected() ) }>
-						<NavTabs>
-							{ this.getAvailableSections().map( function ( section ) {
-								return (
-									<NavItem
-										key={ section.key }
-										onClick={ this.setSelectedSection.bind( this, section.key ) }
-										selected={ this.getSelected() === section.key }
-									>
-										{ section.title }
-									</NavItem>
-								);
-							}, this ) }
-						</NavTabs>
-					</SectionNav>
-				</div>
-				<Card>
-					{ 'faq' === this.getSelected() && this.props.isWpcom && this.getWpcomSupportContent() }
+		if (
+			! this.props.addBanner ||
+			( ! banner && ! videoUrl ) ||
+			this.getSelected() !== 'description'
+		) {
+			return (
+				<div
+					ref={ this.descriptionContent }
+					className={ contentClasses }
+					// Sanitized in client/lib/plugins/utils.ts with sanitizeHtml
+					dangerouslySetInnerHTML={ {
+						__html: this.props.plugin.sections[ this.getSelected() ],
+					} }
+				/>
+			);
+		}
+
+		if ( videoUrl ) {
+			return (
+				<div ref={ this.descriptionContent } className={ contentClasses }>
+					<div className="plugin-sections__banner">
+						<PluginFeaturedVideo
+							id="product-video-iframe"
+							src={ videoUrl }
+							productName={ this.props.plugin.name }
+						/>
+					</div>
 					<div
-						ref={ this.descriptionContent }
-						className={ contentClasses }
-						// Sanitized in client/lib/plugins/utils.js with sanitizeHtml
+						// Sanitized in client/lib/plugins/utils.ts with sanitizeHtml
 						dangerouslySetInnerHTML={ {
 							__html: this.props.plugin.sections[ this.getSelected() ],
 						} }
 					/>
-					{ this.renderReadMore() }
-				</Card>
+				</div>
+			);
+		}
+
+		return (
+			<div ref={ this.descriptionContent } className={ contentClasses }>
+				<div className="plugin-sections__banner">
+					<img
+						className="plugin-sections__banner-image"
+						alt={ this.props.plugin.name }
+						src={ banner }
+					/>
+				</div>
+
+				<div
+					// Sanitized in client/lib/plugins/utils.ts with sanitizeHtml
+					dangerouslySetInnerHTML={ {
+						__html: this.props.plugin.sections[ this.getSelected() ],
+					} }
+				/>
 			</div>
 		);
 		/*eslint-enable react/no-danger*/
+	}
+
+	render() {
+		const availableSections = this.getAvailableSections();
+		// Defensively check if this plugin has sections. If not, don't render anything.
+		if ( ! this.props.plugin || ! this.props.plugin.sections || ! availableSections ) {
+			return null;
+		}
+
+		const hasOnlyDescriptionSection =
+			availableSections.length === 1 &&
+			availableSections.find( ( section ) => section.key === 'description' );
+
+		return (
+			<div className="plugin-sections">
+				{ ! hasOnlyDescriptionSection && (
+					<div className="plugin-sections__header">
+						<SectionNav selectedText={ this.getNavTitle( this.getSelected() ) }>
+							<NavTabs>
+								{ availableSections.map( function ( section ) {
+									return (
+										<NavItem
+											key={ section.key }
+											onClick={ this.setSelectedSection.bind( this, section.key ) }
+											selected={ this.getSelected() === section.key }
+										>
+											{ section.title }
+										</NavItem>
+									);
+								}, this ) }
+							</NavTabs>
+						</SectionNav>
+					</div>
+				) }
+				{ 'faq' === this.getSelected() && this.props.isWpcom && this.getWpcomSupportContent() }
+				{ this.renderSelectedSection() }
+			</div>
+		);
 	}
 }
 

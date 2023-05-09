@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import getVisibleSites from 'calypso/state/selectors/get-visible-sites';
 import { userState } from './fixtures/user-state';
 
@@ -17,7 +9,7 @@ describe( 'getVisibleSites()', () => {
 			},
 		};
 		const sites = getVisibleSites( state );
-		expect( sites ).to.eql( [] );
+		expect( sites ).toEqual( [] );
 	} );
 
 	test( 'should return the visibles sites in state', () => {
@@ -50,7 +42,7 @@ describe( 'getVisibleSites()', () => {
 			},
 		};
 		const sites = getVisibleSites( state );
-		expect( sites ).to.eql( [
+		expect( sites ).toEqual( [
 			{
 				ID: 2916284,
 				visible: true,
@@ -59,9 +51,6 @@ describe( 'getVisibleSites()', () => {
 				title: 'WordPress.com Example Blog',
 				domain: 'example.com',
 				slug: 'example.com',
-				hasConflict: false,
-				is_customizable: false,
-				is_previewable: false,
 				options: {
 					unmapped_url: 'http://example.com',
 				},

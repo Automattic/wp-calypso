@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import wpcomProxyRequest, {
 	reloadProxy as triggerReloadProxy,
 	requestAllBlogsAccess as triggerRequestAllBlogsAccess,

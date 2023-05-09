@@ -1,12 +1,9 @@
-/**
- * Internal dependencies
- */
-import { costToUSD } from 'calypso/lib/analytics/utils';
 import { recordOrder } from 'calypso/lib/analytics/ad-tracking';
 import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
+import { costToUSD } from 'calypso/lib/analytics/utils';
 import { gaRecordEvent } from './ga';
 
-export function recordPurchase( { cart, orderId } ) {
+export function recordPurchase( { cart, orderId, sitePlanSlug } ) {
 	if ( cart.total_cost >= 0.01 ) {
 		const usdValue = costToUSD( cart.total_cost, cart.currency );
 
@@ -19,7 +16,7 @@ export function recordPurchase( { cart, orderId } ) {
 		);
 
 		// Marketing
-		recordOrder( cart, orderId );
+		recordOrder( cart, orderId, sitePlanSlug );
 
 		// FullStory
 		if ( ! cart.is_signup ) {

@@ -1,14 +1,4 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import reducer, { requesting, items } from '../reducer';
-import { receivePostTypeTaxonomies } from '../actions';
 import {
 	POST_TYPES_TAXONOMIES_RECEIVE,
 	POST_TYPES_TAXONOMIES_REQUEST,
@@ -16,22 +6,23 @@ import {
 	POST_TYPES_TAXONOMIES_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import { receivePostTypeTaxonomies } from '../actions';
+import reducer, { requesting, items } from '../reducer';
 
 describe( 'reducer', () => {
-	useSandbox( ( sandbox ) => {
-		sandbox.stub( console, 'warn' );
-	} );
+	jest.spyOn( console, 'warn' ).mockImplementation();
 
 	test( 'should include expected keys in return value', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [ 'requesting', 'items' ] );
+		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual(
+			expect.arrayContaining( [ 'requesting', 'items' ] )
+		);
 	} );
 
 	describe( '#requesting()', () => {
 		test( 'should default to an empty object', () => {
 			const state = requesting( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should track request fetching', () => {
@@ -41,7 +32,7 @@ describe( 'reducer', () => {
 				postType: 'post',
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					post: true,
 				},
@@ -60,7 +51,7 @@ describe( 'reducer', () => {
 				postType: 'page',
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					post: true,
 					page: true,
@@ -81,7 +72,7 @@ describe( 'reducer', () => {
 				postType: 'post',
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					post: true,
 					page: true,
@@ -108,7 +99,7 @@ describe( 'reducer', () => {
 				postType: 'post',
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					post: false,
 					page: true,
@@ -135,7 +126,7 @@ describe( 'reducer', () => {
 				postType: 'page',
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					post: false,
 					page: false,
@@ -151,7 +142,7 @@ describe( 'reducer', () => {
 		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should track received post items by type, keyed by name', () => {
@@ -165,7 +156,7 @@ describe( 'reducer', () => {
 				],
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					post: [
 						{ name: 'category', label: 'Categories' },
@@ -190,7 +181,7 @@ describe( 'reducer', () => {
 				taxonomies: [],
 			} );
 
-			expect( updatedState ).to.eql( {
+			expect( updatedState ).toEqual( {
 				2916284: {
 					page: [],
 				},
@@ -206,7 +197,7 @@ describe( 'reducer', () => {
 
 			const finalState = actions.reduce( items, undefined );
 
-			expect( finalState ).to.eql( {
+			expect( finalState ).toEqual( {
 				2916284: {
 					page: [ { name: 'page_tag1', label: 'Tag 1' } ],
 					post: [ { name: 'post_tag', label: 'Tag' } ],
@@ -234,7 +225,7 @@ describe( 'reducer', () => {
 			} );
 			const state = serialize( items, original );
 
-			expect( state ).to.eql( original );
+			expect( state ).toEqual( original );
 		} );
 
 		test( 'should load valid persisted state', () => {
@@ -254,7 +245,7 @@ describe( 'reducer', () => {
 			} );
 			const state = deserialize( items, original );
 
-			expect( state ).to.eql( original );
+			expect( state ).toEqual( original );
 		} );
 
 		test( 'should not load invalid persisted state', () => {
@@ -265,7 +256,7 @@ describe( 'reducer', () => {
 			} );
 			const state = deserialize( items, original );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 	} );
 } );

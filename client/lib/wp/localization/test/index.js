@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import i18n from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { addLocaleQueryParam, injectLocalization } from '../';
 
 describe( 'index', () => {
@@ -28,13 +21,19 @@ describe( 'index', () => {
 		test( 'should include the locale query parameter for a non-default locale', () => {
 			i18n.setLocale( { '': { localeSlug: 'fr' } } );
 			const params = addLocaleQueryParam( { query: 'search=foo' } );
-			expect( params ).toEqual( { query: 'search=foo&locale=fr' } );
+			expect( params ).toEqual( { query: 'locale=fr&search=foo' } );
 		} );
 
 		test( 'should include the locale query parameter for a locale variant', () => {
 			i18n.setLocale( { '': { localeSlug: 'de', localeVariant: 'de_formal' } } );
 			const params = addLocaleQueryParam( { query: 'search=foo' } );
-			expect( params ).toEqual( { query: 'search=foo&locale=de_formal' } );
+			expect( params ).toEqual( { query: 'locale=de_formal&search=foo' } );
+		} );
+
+		test( 'should prioritize the locale specified on the request', () => {
+			i18n.setLocale( { '': { localeSlug: 'fr' } } );
+			const params = addLocaleQueryParam( { query: 'locale=cs' } );
+			expect( params ).toEqual( { query: 'locale=cs' } );
 		} );
 	} );
 
@@ -56,7 +55,7 @@ describe( 'index', () => {
 			i18n.setLocale( { '': { localeSlug: 'fr' } } );
 			const wpcom = {
 				async request( params ) {
-					expect( params.query ).toBe( 'search=foo&locale=fr' );
+					expect( params.query ).toBe( 'locale=fr&search=foo' );
 				},
 			};
 

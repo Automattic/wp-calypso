@@ -1,19 +1,12 @@
-/**
- * External Dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
-import Stream from 'calypso/reader/stream';
-import EmptyContent from './empty';
-import HeaderBack from 'calypso/reader/header-back';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { RelatedPostCard } from 'calypso/blocks/reader-related-card';
 import { SEARCH_RESULTS } from 'calypso/reader/follow-sources';
+import HeaderBack from 'calypso/reader/header-back';
+import Stream from 'calypso/reader/stream';
 import PostPlaceholder from 'calypso/reader/stream/post-placeholder';
+import EmptyContent from './empty';
 
 const defaultTransform = ( item ) => item;
 
@@ -41,7 +34,6 @@ class PostResults extends Component {
 			! query || query === ''
 				? ( postKey ) => ( { ...postKey, isRecommendation: true } )
 				: defaultTransform;
-
 		return (
 			<Stream
 				{ ...this.props }
@@ -50,7 +42,6 @@ class PostResults extends Component {
 				emptyContent={ emptyContent }
 				showFollowInHeader={ true }
 				placeholderFactory={ this.placeholderFactory }
-				shouldCombineCards={ true }
 				transformStreamItems={ transformStreamItems }
 				isMain={ false }
 			>

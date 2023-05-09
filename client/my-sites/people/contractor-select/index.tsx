@@ -1,34 +1,25 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent } from 'react';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { FunctionComponent } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
-import SupportInfo from 'calypso/components/support-info';
+import InfoPopover from 'calypso/components/info-popover';
+import type { ChangeEventHandler } from 'react';
 
 interface Props {
-	key: string;
+	id: string;
 	checked: boolean;
-	onChange: ( event ) => void;
+	onChange: ChangeEventHandler< HTMLInputElement >;
 	disabled: boolean;
 }
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-const ContractorSelect: FunctionComponent< Props > = ( { key, checked, onChange, disabled } ) => {
+const ContractorSelect: FunctionComponent< Props > = ( { id, checked, onChange, disabled } ) => {
 	const translate = useTranslate();
 
 	return (
-		<FormFieldset key={ key } className="contractor-select">
+		<FormFieldset key={ id } className="contractor-select">
 			<FormLabel>
 				<FormCheckbox
 					className="contractor-select__checkbox"
@@ -38,12 +29,11 @@ const ContractorSelect: FunctionComponent< Props > = ( { key, checked, onChange,
 				/>
 				<span>
 					{ translate( 'This user is a contractor, freelancer, consultant, or agency.' ) }
-					<SupportInfo
-						position="top right"
-						text={ translate(
+					<InfoPopover position="top right" screenReaderText={ translate( 'Learn more' ) }>
+						{ translate(
 							'Use this checkbox to flag users who are not a part of your organization.'
 						) }
-					/>
+					</InfoPopover>
 				</span>
 			</FormLabel>
 		</FormFieldset>

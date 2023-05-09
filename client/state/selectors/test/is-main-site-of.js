@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import isMainSiteOf from 'calypso/state/selectors/is-main-site-of';
 
 describe( 'isMainSiteOf()', () => {
@@ -15,7 +7,7 @@ describe( 'isMainSiteOf()', () => {
 				items: {},
 			},
 		};
-		expect( isMainSiteOf( state, 1, 2 ) ).be.null;
+		expect( isMainSiteOf( state, 1, 2 ) ).toBeNull();
 	} );
 
 	test( 'should return null if no site with id equal to mainSiteId exists in state', () => {
@@ -34,7 +26,7 @@ describe( 'isMainSiteOf()', () => {
 				},
 			},
 		};
-		expect( isMainSiteOf( state, 1, 2 ) ).be.null;
+		expect( isMainSiteOf( state, 1, 2 ) ).toBeNull();
 	} );
 
 	test( 'should return null if no site with id equal to secondarySiteId exists in state', () => {
@@ -53,7 +45,7 @@ describe( 'isMainSiteOf()', () => {
 				},
 			},
 		};
-		expect( isMainSiteOf( state, 1, 2 ) ).be.null;
+		expect( isMainSiteOf( state, 1, 2 ) ).toBeNull();
 	} );
 
 	test( 'should return false if site mainSiteId is not a main site', () => {
@@ -81,7 +73,7 @@ describe( 'isMainSiteOf()', () => {
 				},
 			},
 		};
-		expect( isMainSiteOf( state, 1, 2 ) ).be.false;
+		expect( isMainSiteOf( state, 1, 2 ) ).toBe( false );
 	} );
 
 	test( 'should return false if site secondarySiteId is not a secondary site', () => {
@@ -109,7 +101,7 @@ describe( 'isMainSiteOf()', () => {
 				},
 			},
 		};
-		expect( isMainSiteOf( state, 1, 2 ) ).be.false;
+		expect( isMainSiteOf( state, 1, 2 ) ).toBe( false );
 	} );
 
 	test( 'should return false if site mainSiteId is not the main site of site secondarySiteId', () => {
@@ -137,7 +129,7 @@ describe( 'isMainSiteOf()', () => {
 				},
 			},
 		};
-		expect( isMainSiteOf( state, 1, 2 ) ).be.false;
+		expect( isMainSiteOf( state, 1, 2 ) ).toBe( false );
 	} );
 
 	test( 'should return true if site mainSiteId is the main site of site secondarySiteId', () => {
@@ -165,6 +157,6 @@ describe( 'isMainSiteOf()', () => {
 				},
 			},
 		};
-		expect( isMainSiteOf( state, 1, 2 ) ).be.true;
+		expect( isMainSiteOf( state, 1, 2 ) ).toBe( true );
 	} );
 } );

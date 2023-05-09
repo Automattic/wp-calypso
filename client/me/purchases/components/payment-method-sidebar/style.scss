@@ -8,13 +8,13 @@
 }
 
 .payment-method-sidebar__date {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 }
 
 .payment-method-sidebar__details-card {
 	margin-top: 16px;
 
-	@include breakpoint-deprecated( '>1280px' ) {
+	@include breakpoint-deprecated( ">1280px" ) {
 		margin-top: 0;
 
 	}

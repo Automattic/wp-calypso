@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import type { ExperimentAssignment } from '../types';
 import * as Timing from './timing';
+import type { ExperimentAssignment } from '../types';
 
 /**
  * Check if an ExperimentAssignment is still alive (as in the TTL).

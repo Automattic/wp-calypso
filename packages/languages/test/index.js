@@ -2,9 +2,6 @@
  * @jest-environment jsdom
  */
 
-/**
- * Internal dependencies
- */
 import languages from '../src';
 
 describe( 'languages', () => {
@@ -18,7 +15,6 @@ describe( 'languages', () => {
 					name: 'English',
 					parentLangSlug: null,
 					popular: 1,
-					revision: null,
 					territories: [ '019' ],
 					value: 1,
 					wpLocale: 'en_US',

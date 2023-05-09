@@ -1,16 +1,13 @@
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
-import { combineReducers, keyedReducer, withSchemaValidation } from 'calypso/state/utils';
 import {
 	JETPACK_MODULE_ACTIVATE_SUCCESS,
 	JETPACK_MODULE_DEACTIVATE_SUCCESS,
 	SITE_CHECKLIST_RECEIVE,
 	SITE_CHECKLIST_TASK_UPDATE,
 } from 'calypso/state/action-types';
-import { items as itemSchemas } from './schema';
 import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
+import { combineReducers, keyedReducer, withSchemaValidation } from 'calypso/state/utils';
+import { items as itemSchemas } from './schema';
 
 const setChecklistTaskCompletion = ( state, taskId, completed ) => ( {
 	...state,

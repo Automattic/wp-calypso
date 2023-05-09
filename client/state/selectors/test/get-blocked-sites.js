@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
 
 describe( 'getBlockedSites()', () => {
@@ -21,6 +13,6 @@ describe( 'getBlockedSites()', () => {
 				},
 			},
 		};
-		expect( getBlockedSites( state ) ).to.deep.equal( [ 123, 125 ] );
+		expect( getBlockedSites( state ) ).toEqual( [ 123, 125 ] );
 	} );
 } );

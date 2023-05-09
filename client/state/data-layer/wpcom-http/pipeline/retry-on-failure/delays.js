@@ -13,16 +13,12 @@
  * @module state/data-layer/wpcom-http/pipeline/retry-on-failure/delays
  */
 
-/**
- * External dependencies
- */
 import { random } from 'lodash';
 
 /**
  * Computes "decorrelated jitter" delay
  *
  * @see https://www.awsarchitectureblog.com/2015/03/backoff.html
- *
  * @param {number} baseDelay number of ms for initial delay
  * @param {number} retryCount attempt number for retry
  * @returns {number} ms delay until next attempt

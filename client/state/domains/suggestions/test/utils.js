@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { getSerializedDomainsSuggestionsQuery } from '../utils';
 
 describe( 'utils', () => {
@@ -17,7 +9,7 @@ describe( 'utils', () => {
 				vendor: 'domainsbot',
 				includeSubdomain: true,
 			};
-			expect( getSerializedDomainsSuggestionsQuery( query ) ).to.eql(
+			expect( getSerializedDomainsSuggestionsQuery( query ) ).toEqual(
 				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":true}'
 			);
 		} );
@@ -28,7 +20,7 @@ describe( 'utils', () => {
 				vendor: 'domainsbot',
 				include_wordpressdotcom: true,
 			};
-			expect( getSerializedDomainsSuggestionsQuery( query ) ).to.eql(
+			expect( getSerializedDomainsSuggestionsQuery( query ) ).toEqual(
 				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":true}'
 			);
 		} );
@@ -39,7 +31,7 @@ describe( 'utils', () => {
 				vendor: 'domainsbot',
 				includeSubdomain: false,
 			};
-			expect( getSerializedDomainsSuggestionsQuery( query ) ).to.eql(
+			expect( getSerializedDomainsSuggestionsQuery( query ) ).toEqual(
 				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}'
 			);
 		} );
@@ -49,7 +41,7 @@ describe( 'utils', () => {
 				quantity: 2,
 				vendor: 'domainsbot',
 			};
-			expect( getSerializedDomainsSuggestionsQuery( query ) ).to.eql(
+			expect( getSerializedDomainsSuggestionsQuery( query ) ).toEqual(
 				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}'
 			);
 		} );
@@ -59,7 +51,7 @@ describe( 'utils', () => {
 				vendor: 'domainsbot',
 				includeSubdomain: false,
 			};
-			expect( getSerializedDomainsSuggestionsQuery( query ) ).to.eql( null );
+			expect( getSerializedDomainsSuggestionsQuery( query ) ).toBeNull();
 		} );
 		test( 'returns null if quantity is missing', () => {
 			const query = {
@@ -67,7 +59,7 @@ describe( 'utils', () => {
 				vendor: 'domainsbot',
 				includeSubdomain: false,
 			};
-			expect( getSerializedDomainsSuggestionsQuery( query ) ).to.eql( null );
+			expect( getSerializedDomainsSuggestionsQuery( query ) ).toBeNull();
 		} );
 		test( 'returns null if vendor is missing', () => {
 			const query = {
@@ -75,7 +67,7 @@ describe( 'utils', () => {
 				quantity: 2,
 				includeSubdomain: false,
 			};
-			expect( getSerializedDomainsSuggestionsQuery( query ) ).to.eql( null );
+			expect( getSerializedDomainsSuggestionsQuery( query ) ).toBeNull();
 		} );
 	} );
 } );

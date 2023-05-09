@@ -1,27 +1,16 @@
-/**
- * External dependencies
- */
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
+import { useDispatch } from 'react-redux';
 import { requestSiteChecklist } from 'calypso/state/checklist/actions';
-import isSiteEligibleForFullSiteEditing from 'calypso/state/selectors/is-site-eligible-for-full-site-editing';
 
 export default function QuerySiteChecklist( { siteId } ) {
 	const dispatch = useDispatch();
-	const isSiteEligibleForFSE = useSelector( ( state ) =>
-		isSiteEligibleForFullSiteEditing( state, siteId )
-	);
 
 	useEffect( () => {
 		if ( siteId ) {
-			dispatch( requestSiteChecklist( siteId, isSiteEligibleForFSE ) );
+			dispatch( requestSiteChecklist( siteId ) );
 		}
-	}, [ dispatch, siteId, isSiteEligibleForFSE ] );
+	}, [ dispatch, siteId ] );
 
 	return null;
 }

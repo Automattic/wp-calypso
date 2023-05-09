@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-
 import {
 	PLANS_RECEIVE,
 	PLANS_REQUEST,
@@ -88,31 +84,7 @@ export const PLAN_1003 = {
 	multi: 0,
 	support_document: 'bundles',
 	bundle_product_ids: [
-		9,
-		12,
-		45,
-		15,
-		5,
-		6,
-		46,
-		54,
-		56,
-		57,
-		58,
-		59,
-		60,
-		61,
-		62,
-		63,
-		64,
-		65,
-		66,
-		67,
-		68,
-		72,
-		73,
-		74,
-		75,
+		9, 12, 45, 15, 5, 6, 46, 54, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 72, 73, 74, 75,
 		16,
 	],
 	bill_period_label: 'per year',
@@ -128,8 +100,7 @@ export const PLAN_1008 = {
 	product_name_short: 'Business',
 	product_slug: 'business-bundle',
 	tagline: 'Take it to the next level',
-	shortdesc:
-		'Everything included with Premium, as well as live chat support, and unlimited access to our premium themes.',
+	shortdesc: 'Everything included with Premium, as well as live chat support.',
 	description:
 		'All you need to build a great website:' +
 		'<ul><li>Chat live with a WordPress.com specialist, ' +
@@ -166,34 +137,8 @@ export const PLAN_1008 = {
 	product_type: 'bundle',
 	available: 'yes',
 	bundle_product_ids: [
-		12,
-		45,
-		15,
-		48,
-		50,
-		49,
-		5,
-		6,
-		46,
-		54,
-		56,
-		57,
-		58,
-		59,
-		60,
-		61,
-		62,
-		63,
-		64,
-		65,
-		66,
-		67,
-		68,
-		72,
-		73,
-		74,
-		75,
-		16,
+		12, 45, 15, 48, 50, 49, 5, 6, 46, 54, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 72,
+		73, 74, 75, 16,
 	],
 	bill_period_label: 'per year',
 	price: '$299',
@@ -227,31 +172,7 @@ export const PLAN_1009 = {
 	product_type: 'bundle',
 	available: 'yes',
 	bundle_product_ids: [
-		12,
-		9,
-		50,
-		5,
-		6,
-		46,
-		54,
-		56,
-		57,
-		58,
-		59,
-		60,
-		61,
-		62,
-		63,
-		64,
-		65,
-		66,
-		67,
-		68,
-		72,
-		73,
-		74,
-		75,
-		16,
+		12, 9, 50, 5, 6, 46, 54, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 72, 73, 74, 75, 16,
 	],
 	bill_period_label: 'per year',
 	price: '$71.88',
@@ -449,7 +370,7 @@ export const ACTION_PLANS_REQUEST_FAILURE = {
  * - requesting: false
  * - error: false
  *
- * @returns {object} an state instance
+ * @returns {Object} an state instance
  */
 export const getStateInstance = () => {
 	return {

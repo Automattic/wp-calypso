@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 const { Menu, MenuItem } = require( 'electron' );
 
 module.exports = function ( { view } ) {

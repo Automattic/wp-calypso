@@ -1,15 +1,9 @@
-/**
- * External dependencies
- */
+import { useShoppingCart } from '@automattic/shopping-cart';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-import { useShoppingCart } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
 import { hasStaleItem } from 'calypso/lib/cart-values/cart-items';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { infoNotice, removeNotice } from 'calypso/state/notices/actions';
 import { getNoticeLastTimeShown } from 'calypso/state/notices/selectors';
@@ -29,7 +23,8 @@ function useShowStaleCartNotice() {
 	);
 	const sectionName = useSelector( getSectionName );
 	const reduxDispatch = useDispatch();
-	const { responseCart, isPendingUpdate } = useShoppingCart();
+	const cartKey = useCartKey();
+	const { responseCart, isPendingUpdate } = useShoppingCart( cartKey );
 	const translate = useTranslate();
 
 	useEffect( () => {
@@ -57,7 +52,7 @@ function useShowStaleCartNotice() {
 				infoNotice( translate( 'Your cart is awaiting payment.' ), {
 					id: staleCartItemNoticeId,
 					button: translate( 'View your cart' ),
-					href: `/checkout/${ selectedSiteSlug }?order-review=true`, // Redirect to the order-review step
+					href: `/checkout/${ selectedSiteSlug }?order-review=true`, // Redirect to the order-review step`,
 					onClick: () => {
 						reduxDispatch( recordTracksEvent( 'calypso_cart_abandonment_notice_click' ) );
 					},

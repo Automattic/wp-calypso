@@ -1,12 +1,3 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import PlanPrice from '../';
 
 function PlanPriceExample() {
@@ -17,6 +8,9 @@ function PlanPriceExample() {
 			<br />
 			<h3>Plan with a price range</h3>
 			<PlanPrice rawPrice={ [ 99.99, 139.99 ] } />
+			<br />
+			<h3>Plan with a price of '0'</h3>
+			<PlanPrice rawPrice={ 0 } />
 			<br />
 			<h3>Plan with discounted price</h3>
 			<div style={ { display: 'flex' } }>

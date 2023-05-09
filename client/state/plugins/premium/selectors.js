@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-import { filter, find, get, includes, some } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { createSelector } from '@automattic/state-utils';
+import { filter, find, some } from 'lodash';
 
 import 'calypso/state/plugins/init';
 
@@ -30,10 +22,10 @@ export const hasRequested = function ( state, siteId ) {
  * Gets the list of plugins for a site and optionally filters to a single specific
  * plugin.
  *
- * @param {object} state The current state.
+ * @param {Object} state The current state.
  * @param {number} siteId The site ID.
  * @param {string?} forPlugin Name of a specific plugin to filter for, `false` otherwise to return the full list.
- * @returns {Array<object>} The list of plugins.
+ * @returns {Array<Object>} The list of plugins.
  */
 export const getPluginsForSite = function ( state, siteId, forPlugin = false ) {
 	const pluginList = state.plugins.premium.plugins[ siteId ];
@@ -52,13 +44,6 @@ export const getPluginsForSite = function ( state, siteId, forPlugin = false ) {
 			return forPlugin === plugin.slug;
 		}
 		return true;
-	} );
-};
-
-export const isStarted = function ( state, siteId, forPlugin = false ) {
-	const pluginList = getPluginsForSite( state, siteId, forPlugin );
-	return ! pluginList.every( ( item ) => {
-		return 'wait' === item.status;
 	} );
 };
 
@@ -81,14 +66,14 @@ export const isInstalling = function ( state, siteId, forPlugin = false ) {
 
 	// If any plugin is not done/waiting/error'd, it's in an installing state.
 	return some( pluginList, ( item ) => {
-		return ! includes( [ 'done', 'wait' ], item.status ) && item.error === null;
+		return ! [ 'done', 'wait' ].includes( item.status ) && item.error === null;
 	} );
 };
 
 export const getActivePlugin = function ( state, siteId, forPlugin = false ) {
 	const pluginList = getPluginsForSite( state, siteId, forPlugin );
 	const plugin = find( pluginList, ( item ) => {
-		return ! includes( [ 'done', 'wait' ], item.status ) && item.error === null;
+		return ! [ 'done', 'wait' ].includes( item.status ) && item.error === null;
 	} );
 	if ( typeof plugin === 'undefined' ) {
 		return false;
@@ -106,20 +91,3 @@ export const getNextPlugin = function ( state, siteId, forPlugin = false ) {
 	}
 	return plugin;
 };
-
-export const getPluginKeys = createSelector(
-	( state, siteId, forPlugin = false ) => {
-		const pluginList = getPluginsForSite( state, siteId, forPlugin );
-
-		return pluginList.reduce( ( keys, plugin ) => {
-			const key = get( plugin, 'key' );
-			const slug = get( plugin, 'slug' );
-
-			return {
-				...keys,
-				[ slug ]: key,
-			};
-		}, {} );
-	},
-	( state, siteId ) => [ state.plugins.premium.plugins[ siteId ] ]
-);

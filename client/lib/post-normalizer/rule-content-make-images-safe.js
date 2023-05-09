@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
+import { getUrlParts, getUrlFromParts, safeImageUrl } from '@automattic/calypso-url';
 import { forEach, startsWith, some, includes, filter } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import safeImageURL from 'calypso/lib/safe-image-url';
-import { maxWidthPhotonishURL } from './utils';
 import { resolveRelativePath } from 'calypso/lib/url';
-import { getUrlParts, getUrlFromParts } from '@automattic/calypso-url';
+import { maxWidthPhotonishURL } from './utils';
 
 const TRANSPARENT_GIF =
 	'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
@@ -31,14 +23,15 @@ const removeUnwantedAttributes = ( node ) => {
 	node.removeAttribute( 'srcset' );
 };
 
-/** Checks whether or not imageUrl should be removed from the dom
+/**
+ * Checks whether or not imageUrl should be removed from the dom
  *
  * @param {string} imageUrl - the url of the image
  * @returns {boolean} whether or not it should be removed from the dom
  */
 const imageShouldBeRemovedFromContent = ( imageUrl ) => {
 	if ( ! imageUrl ) {
-		return;
+		return false;
 	}
 
 	const bannedUrlParts = [
@@ -82,8 +75,8 @@ function makeImageSafe( post, image, maxWidth ) {
 	}
 
 	let safeSource = maxWidth
-		? maxWidthPhotonishURL( safeImageURL( imgSource ), maxWidth )
-		: safeImageURL( imgSource );
+		? maxWidthPhotonishURL( safeImageUrl( imgSource ), maxWidth )
+		: safeImageUrl( imgSource );
 
 	// When the image URL is not photoned, try providing protocol
 	if ( ! safeSource ) {

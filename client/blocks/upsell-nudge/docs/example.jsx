@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 
 const UpsellNudgeExample = () => (
@@ -56,7 +48,7 @@ const UpsellNudgeExample = () => (
 			callToAction="Upgrade"
 			title="Free domain with a plan! This is a dismissible nudge with a description, prices, and a list of features."
 			showIcon={ true }
-			price={ [ 48, 50 ] }
+			price={ [ 50, 48 ] }
 		/>
 		<UpsellNudge
 			forceDisplay

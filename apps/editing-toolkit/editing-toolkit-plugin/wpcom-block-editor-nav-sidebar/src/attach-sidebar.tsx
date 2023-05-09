@@ -1,17 +1,15 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { START_WRITING_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useEffect, createPortal, useState } from '@wordpress/element';
 import { __experimentalMainDashboardButton as MainDashboardButton } from '@wordpress/edit-post';
+import { useEffect, createPortal, useState } from '@wordpress/element';
 import { registerPlugin as originalRegisterPlugin, PluginSettings } from '@wordpress/plugins';
-
-/**
- * Internal dependencies
- */
+import { getQueryArg } from '@wordpress/url';
 import WpcomBlockEditorNavSidebar from './components/nav-sidebar';
 import ToggleSidebarButton from './components/toggle-sidebar-button';
+
+type CoreEditPostPlaceholder = {
+	isFeatureActive: ( ...args: unknown[] ) => boolean;
+};
 
 const registerPlugin = ( name: string, settings: Omit< PluginSettings, 'icon' > ) =>
 	originalRegisterPlugin( name, settings as PluginSettings );
@@ -37,6 +35,8 @@ if ( typeof MainDashboardButton !== 'undefined' ) {
 				// eslint-disable-next-line react-hooks/exhaustive-deps
 			}, [] );
 
+			const isStartWritingFlow =
+				getQueryArg( window.location.search, START_WRITING_FLOW ) === 'true';
 			const [ clickGuardRoot ] = useState( () => document.createElement( 'div' ) );
 			useEffect( () => {
 				document.body.appendChild( clickGuardRoot );
@@ -46,12 +46,20 @@ if ( typeof MainDashboardButton !== 'undefined' ) {
 			} );
 
 			// Uses presence of data store to detect whether this is the experimental site editor.
-			const isSiteEditor = useSelect( ( select ) => !! select( 'core/edit-site' ) );
+			const isSiteEditor = useSelect( ( select ) => !! select( 'core/edit-site' ), [] );
 
 			// Disable sidebar nav if the editor is not in fullscreen mode
-			const isFullscreenActive = useSelect( ( select ) =>
-				select( 'core/edit-post' ).isFeatureActive( 'fullscreenMode' )
+			const isFullscreenActive = useSelect(
+				( select ) =>
+					( select( 'core/edit-post' ) as CoreEditPostPlaceholder ).isFeatureActive(
+						'fullscreenMode'
+					),
+				[]
 			);
+
+			if ( isStartWritingFlow ) {
+				return <MainDashboardButton></MainDashboardButton>;
+			}
 
 			if ( isSiteEditor || ! isFullscreenActive ) {
 				return null;

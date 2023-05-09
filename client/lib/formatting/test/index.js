@@ -2,9 +2,6 @@
  * @jest-environment jsdom
  */
 
-/**
- * Internal dependencies
- */
 import { capitalPDangit, parseHtml, preventWidows } from '../index';
 
 describe( 'formatting', () => {

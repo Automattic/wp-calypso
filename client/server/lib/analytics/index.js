@@ -1,21 +1,10 @@
-/**
- * External dependencies
- */
-
 import superagent from 'superagent';
 import { v4 as uuid } from 'uuid';
-import { omit, get, has } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import config from '@automattic/calypso-config';
-import { statsdTimingUrl, statsdCountingUrl } from 'calypso/lib/analytics/statsd-utils';
 const URL = require( 'url' );
 
 function getUserFromRequest( request ) {
 	// if user has a cookie, lets use that
-	const encodedUserCookie = get( request, 'cookies.wordpress_logged_in', null );
+	const encodedUserCookie = request?.cookies?.wordpress_logged_in ?? null;
 
 	if ( encodedUserCookie ) {
 		try {
@@ -36,7 +25,7 @@ function getUserFromRequest( request ) {
 	// we'll use that, otherwise, we'll just use anonymous.
 
 	// If we have a full identity on query params - use it
-	if ( has( request, 'query._ut' ) && has( request, 'query._ui' ) ) {
+	if ( request?.query?._ut && request?.query?._ui ) {
 		return {
 			_ui: request.query._ui,
 			_ut: request.query._ut,
@@ -51,22 +40,6 @@ function getUserFromRequest( request ) {
 }
 
 const analytics = {
-	statsd: {
-		recordTiming: function ( featureSlug, eventType, duration ) {
-			if ( config( 'server_side_boom_analytics_enabled' ) ) {
-				const url = statsdTimingUrl( featureSlug, eventType, duration );
-				superagent.get( url ).end();
-			}
-		},
-
-		recordCounting: function ( featureSlug, eventType, increment = 1 ) {
-			if ( config( 'server_side_boom_analytics_enabled' ) ) {
-				const url = statsdCountingUrl( featureSlug, eventType, increment );
-				superagent.get( url ).end();
-			}
-		},
-	},
-
 	tracks: {
 		createPixel: function ( data ) {
 			data._rt = new Date().getTime();
@@ -90,7 +63,9 @@ const analytics = {
 
 			// Remove properties that have an undefined value
 			// This allows a caller to easily remove properties from the recorded set by setting them to undefined
-			eventProperties = omit( eventProperties, ( prop ) => typeof prop === 'undefined' );
+			eventProperties = Object.fromEntries(
+				Object.entries( eventProperties ).filter( ( entry ) => entry[ 1 ] !== undefined )
+			);
 
 			const date = new Date();
 			const acceptLanguageHeader = req.get( 'Accept-Language' ) || '';

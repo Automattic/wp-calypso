@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import classNames from 'classnames';
 import { some, startsWith } from 'lodash';
 

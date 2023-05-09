@@ -1,67 +1,51 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
+import { isPlan } from '@automattic/calypso-products';
+import { Card, Button, Gridicon } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { withShoppingCart } from '@automattic/shopping-cart';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
-import Gridicon from 'calypso/components/gridicon';
 import page from 'page';
+import PropTypes from 'prop-types';
 import { stringify } from 'qs';
-import formatCurrency from '@automattic/format-currency';
-
-/**
- * Internal dependencies
- */
-import { getProductsList } from 'calypso/state/products-list/selectors';
-import {
-	currentUserHasFlag,
-	getCurrentUser,
-	getCurrentUserCurrencyCode,
-} from 'calypso/state/current-user/selectors';
-import { Card, Button } from '@automattic/components';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
-import {
-	CALYPSO_CONTACT,
-	INCOMING_DOMAIN_TRANSFER,
-	MAP_EXISTING_DOMAIN,
-} from 'calypso/lib/url/support';
-import HeaderCake from 'calypso/components/header-cake';
-import { errorNotice } from 'calypso/state/notices/actions';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import migratingHostImage from 'calypso/assets/images/illustrations/migrating-host-diy.svg';
+import themesImage from 'calypso/assets/images/illustrations/themes.svg';
 import QueryProducts from 'calypso/components/data/query-products-list';
+import HeaderCake from 'calypso/components/header-cake';
+import {
+	isDomainBundledWithPlan,
+	isDomainMappingFree,
+	isNextDomainFree,
+} from 'calypso/lib/cart-values/cart-items';
 import {
 	getDomainPrice,
 	getDomainProductSlug,
 	getDomainTransferSalePrice,
 } from 'calypso/lib/domains';
 import {
-	isDomainBundledWithPlan,
-	isDomainMappingFree,
-	isNextDomainFree,
-} from 'calypso/lib/cart-values/cart-items';
-import { isPlan } from '@automattic/calypso-products';
+	CALYPSO_CONTACT,
+	INCOMING_DOMAIN_TRANSFER,
+	MAP_EXISTING_DOMAIN,
+} from 'calypso/lib/url/support';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import {
 	DOMAINS_WITH_PLANS_ONLY,
 	NON_PRIMARY_DOMAINS_TO_FREE_USERS,
 } from 'calypso/state/current-user/constants';
-import { withShoppingCart } from '@automattic/shopping-cart';
+import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { getProductsList } from 'calypso/state/products-list/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
-
-/**
- * Image dependencies
- */
-import themesImage from 'calypso/assets/images/illustrations/themes.svg';
-import migratingHostImage from 'calypso/assets/images/illustrations/migrating-host-diy.svg';
 
 const noop = () => {};
 
-class UseYourDomainStep extends React.Component {
+class UseYourDomainStep extends Component {
 	static propTypes = {
 		analyticsSection: PropTypes.string.isRequired,
 		basePath: PropTypes.string,
@@ -372,7 +356,13 @@ class UseYourDomainStep extends React.Component {
 		const buttonText = translate( 'Transfer to WordPress.com' );
 		const learnMore = translate( '{{a}}Learn more about domain transfers{{/a}}', {
 			components: {
-				a: <a href={ INCOMING_DOMAIN_TRANSFER } rel="noopener noreferrer" target="_blank" />,
+				a: (
+					<a
+						href={ localizeUrl( INCOMING_DOMAIN_TRANSFER ) }
+						rel="noopener noreferrer"
+						target="_blank"
+					/>
+				),
 			},
 		} );
 
@@ -401,7 +391,13 @@ class UseYourDomainStep extends React.Component {
 		const buttonText = translate( 'Map your domain' );
 		const learnMore = translate( '{{a}}Learn more about domain mapping{{/a}}', {
 			components: {
-				a: <a href={ MAP_EXISTING_DOMAIN } rel="noopener noreferrer" target="_blank" />,
+				a: (
+					<a
+						href={ localizeUrl( MAP_EXISTING_DOMAIN ) }
+						rel="noopener noreferrer"
+						target="_blank"
+					/>
+				),
 			},
 		} );
 
@@ -465,4 +461,4 @@ export default connect(
 		recordTransferButtonClickInUseYourDomain,
 		recordMappingButtonClickInUseYourDomain,
 	}
-)( withShoppingCart( localize( UseYourDomainStep ) ) );
+)( withCartKey( withShoppingCart( localize( UseYourDomainStep ) ) ) );

@@ -1,45 +1,32 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
-import { trim, flatMap } from 'lodash';
-import { localize } from 'i18n-calypso';
-import page from 'page';
-import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import BlankSuggestions from 'calypso/reader/components/reader-blank-suggestions';
-import SegmentedControl from 'calypso/components/segmented-control';
 import { CompactCard } from '@automattic/components';
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { trim, flatMap } from 'lodash';
+import page from 'page';
+import PropTypes from 'prop-types';
+import * as React from 'react';
+import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import SearchInput from 'calypso/components/search';
-import { recordAction } from 'calypso/reader/stats';
-import SiteResults from './site-results';
-import PostResults from './post-results';
+import SegmentedControl from 'calypso/components/segmented-control';
+import { addQueryArgs } from 'calypso/lib/url';
+import withDimensions from 'calypso/lib/with-dimensions';
+import BlankSuggestions from 'calypso/reader/components/reader-blank-suggestions';
 import ReaderMain from 'calypso/reader/components/reader-main';
-import { addQueryArgs, resemblesUrl, withoutHttp, addSchemeIfMissing } from 'calypso/lib/url';
-import SearchStreamHeader, { SEARCH_TYPES } from './search-stream-header';
+import { getSearchPlaceholderText } from 'calypso/reader/search/utils';
+import SearchFollowButton from 'calypso/reader/search-stream/search-follow-button';
+import { recordAction } from 'calypso/reader/stats';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import {
 	SORT_BY_RELEVANCE,
 	SORT_BY_LAST_UPDATED,
 } from 'calypso/state/reader/feed-searches/actions';
-import withDimensions from 'calypso/lib/with-dimensions';
-import SuggestionProvider from './suggestion-provider';
-import Suggestion from './suggestion';
 import { getReaderAliasedFollowFeedUrl } from 'calypso/state/reader/follows/selectors';
-import { SEARCH_RESULTS_URL_INPUT } from 'calypso/reader/follow-sources';
-import FollowButton from 'calypso/reader/follow-button';
-import MobileBackToSidebar from 'calypso/components/mobile-back-to-sidebar';
-import { getSearchPlaceholderText } from 'calypso/reader/search/utils';
-import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-
-/**
- * Style dependencies
- */
+import PostResults from './post-results';
+import SearchStreamHeader, { SEARCH_TYPES } from './search-stream-header';
+import SiteResults from './site-results';
+import Suggestion from './suggestion';
+import SuggestionProvider from './suggestion-provider';
 import './style.scss';
 
 const WIDE_DISPLAY_CUTOFF = 660;
@@ -49,11 +36,11 @@ const updateQueryArg = ( params ) =>
 
 const pickSort = ( sort ) => ( sort === 'date' ? SORT_BY_LAST_UPDATED : SORT_BY_RELEVANCE );
 
-const SpacerDiv = withDimensions( ( { width, height } ) => (
+const SpacerDiv = withDimensions( ( { width } ) => (
 	<div
 		style={ {
 			width: `${ width }px`,
-			height: `${ height }px`,
+			height: `60px`,
 		} }
 	/>
 ) );
@@ -64,20 +51,25 @@ class SearchStream extends React.Component {
 		streamKey: PropTypes.string,
 	};
 
-	getTitle = ( props = this.props ) => props.query || props.translate( 'Search' );
-
 	state = {
-		selected: SEARCH_TYPES.POSTS,
+		feed: null,
 	};
+
+	setSearchFeed = ( feed ) => {
+		this.setState( { feed: feed } );
+	};
+
+	getTitle = ( props = this.props ) => props.query || props.translate( 'Search' );
 
 	updateQuery = ( newValue ) => {
 		this.scrollToTop();
+		// Remove whitespace from newValue and limit to 1024 characters
 		const trimmedValue = trim( newValue ).substring( 0, 1024 );
 		if (
 			( trimmedValue !== '' && trimmedValue.length > 1 && trimmedValue !== this.props.query ) ||
 			newValue === ''
 		) {
-			updateQueryArg( { q: newValue } );
+			updateQueryArg( { q: trimmedValue } );
 		}
 	};
 
@@ -110,11 +102,13 @@ class SearchStream extends React.Component {
 	handleSearchTypeSelection = ( searchType ) => updateQueryArg( { show: searchType } );
 
 	render() {
-		const { query, translate, searchType, suggestions, readerAliasedFollowFeedUrl } = this.props;
+		const { query, translate, searchType, suggestions } = this.props;
 		const sortOrder = this.props.sort;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
-		const showFollowByUrl = resemblesUrl( query );
-		const queryWithoutProtocol = withoutHttp( query );
+		const segmentedControlClass = wideDisplay
+			? 'search-stream__sort-picker is-wide'
+			: 'search-stream__sort-picker';
+		const hidePostsAndSites = this.state.feed && this.state.feed.feed_ID?.length === 0;
 
 		let searchPlaceholderText = this.props.searchPlaceholderText;
 		if ( ! searchPlaceholderText ) {
@@ -147,6 +141,7 @@ class SearchStream extends React.Component {
 				source="search"
 				sort={ sortOrder === 'date' ? sortOrder : undefined }
 				railcar={ suggestion.railcar }
+				key={ 'suggestion-' + suggestion.text }
 			/>,
 			', ',
 		] ).slice( 0, -1 );
@@ -160,13 +155,11 @@ class SearchStream extends React.Component {
 					style={ { width: this.props.width } }
 					ref={ this.handleFixedAreaMounted }
 				>
-					<MobileBackToSidebar>
-						<h1>{ translate( 'Streams' ) }</h1>
-					</MobileBackToSidebar>
 					<CompactCard className="search-stream__input-card">
 						<SearchInput
 							onSearch={ this.updateQuery }
 							onSearchClose={ this.scrollToTop }
+							onSearchChange={ () => this.setState( { feed: null } ) }
 							autoFocus={ this.props.autoFocusInput }
 							delaySearch={ true }
 							delayTimeout={ 500 }
@@ -174,40 +167,22 @@ class SearchStream extends React.Component {
 							initialValue={ query || '' }
 							value={ query || '' }
 						/>
-						{ query && (
-							<SegmentedControl compact className="search-stream__sort-picker">
-								<SegmentedControl.Item
-									selected={ sortOrder !== 'date' }
-									onClick={ this.useRelevanceSort }
-								>
-									{ TEXT_RELEVANCE_SORT }
-								</SegmentedControl.Item>
-								<SegmentedControl.Item
-									selected={ sortOrder === 'date' }
-									onClick={ this.useDateSort }
-								>
-									{ TEXT_DATE_SORT }
-								</SegmentedControl.Item>
-							</SegmentedControl>
-						) }
 					</CompactCard>
-					{ showFollowByUrl && (
-						<div className="search-stream__url-follow">
-							<FollowButton
-								followLabel={ translate( 'Follow %s', {
-									args: queryWithoutProtocol,
-									comment: '%s is the name of the site being followed. For example: "Discover"',
-								} ) }
-								followingLabel={ translate( 'Following %s', {
-									args: queryWithoutProtocol,
-									comment: '%s is the name of the site being followed. For example: "Discover"',
-								} ) }
-								siteUrl={ addSchemeIfMissing( readerAliasedFollowFeedUrl, 'http' ) }
-								followSource={ SEARCH_RESULTS_URL_INPUT }
-							/>
-						</div>
-					) }
+					<SearchFollowButton query={ query } feed={ this.state.feed ?? null } />
 					{ query && (
+						<SegmentedControl compact className={ segmentedControlClass }>
+							<SegmentedControl.Item
+								selected={ sortOrder !== 'date' }
+								onClick={ this.useRelevanceSort }
+							>
+								{ TEXT_RELEVANCE_SORT }
+							</SegmentedControl.Item>
+							<SegmentedControl.Item selected={ sortOrder === 'date' } onClick={ this.useDateSort }>
+								{ TEXT_DATE_SORT }
+							</SegmentedControl.Item>
+						</SegmentedControl>
+					) }
+					{ ! hidePostsAndSites && query && (
 						<SearchStreamHeader
 							selected={ searchType }
 							onSelection={ this.handleSearchTypeSelection }
@@ -217,7 +192,7 @@ class SearchStream extends React.Component {
 					{ ! query && <BlankSuggestions suggestions={ suggestionList } /> }
 				</div>
 				<SpacerDiv domTarget={ this.fixedAreaRef } />
-				{ wideDisplay && (
+				{ ! hidePostsAndSites && wideDisplay && (
 					<div className={ searchStreamResultsClasses }>
 						<div className="search-stream__post-results">
 							<PostResults { ...this.props } />
@@ -228,12 +203,13 @@ class SearchStream extends React.Component {
 									query={ query }
 									sort={ pickSort( sortOrder ) }
 									showLastUpdatedDate={ false }
+									onReceiveSearchResults={ this.setSearchFeed }
 								/>
 							</div>
 						) }
 					</div>
 				) }
-				{ ! wideDisplay && (
+				{ ! hidePostsAndSites && ! wideDisplay && (
 					<div className={ singleColumnResultsClasses }>
 						{ ( ( searchType === SEARCH_TYPES.POSTS || ! query ) && (
 							<PostResults { ...this.props } />
@@ -242,6 +218,7 @@ class SearchStream extends React.Component {
 								query={ query }
 								sort={ pickSort( sortOrder ) }
 								showLastUpdatedDate={ true }
+								onReceiveSearchResults={ this.setSearchFeed }
 							/>
 						) }
 					</div>
@@ -254,11 +231,12 @@ class SearchStream extends React.Component {
 
 /* eslint-disable */
 // wrapping with Main so that we can use withWidth helper to pass down whole width of Main
-const wrapWithMain = ( Component ) => ( props ) => (
-	<ReaderMain className="search-stream search-stream__with-sites" wideLayout>
-		<Component { ...props } />
-	</ReaderMain>
-);
+const wrapWithMain = ( Component ) => ( props ) =>
+	(
+		<ReaderMain className="search-stream search-stream__with-sites" wideLayout>
+			<Component { ...props } />
+		</ReaderMain>
+	);
 /* eslint-enable */
 
 export default connect(

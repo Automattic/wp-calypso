@@ -1,14 +1,5 @@
-/**
- * External dependencies
- */
-import { includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
-import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
-import { items as itemSchemas } from './schema';
+import { includes } from 'lodash';
 import {
 	MEDIA_DELETE,
 	SITE_SETTINGS_RECEIVE,
@@ -20,14 +11,16 @@ import {
 	SITE_SETTINGS_SAVE_SUCCESS,
 	SITE_SETTINGS_UPDATE,
 } from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
+import { items as itemSchemas } from './schema';
 
 /**
  * Returns the updated requests state after an action has been dispatched. The
  * state maps site ID to whether a request is in progress.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export const requesting = ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -52,9 +45,9 @@ export const requesting = ( state = {}, action ) => {
  * Returns the save Request status after an action has been dispatched. The
  * state maps site ID to the request status
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export const saveRequests = ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -91,9 +84,9 @@ export const saveRequests = ( state = {}, action ) => {
  * Returns the updated items state after an action has been dispatched. The
  * state maps site ID to the site settings object.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export const items = withSchemaValidation( itemSchemas, ( state = {}, action ) => {
 	switch ( action.type ) {

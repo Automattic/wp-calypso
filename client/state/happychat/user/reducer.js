@@ -1,31 +1,23 @@
-/**
- * Internal dependencies
- */
-import {
-	HAPPYCHAT_IO_RECEIVE_INIT,
-	HAPPYCHAT_ELIGIBILITY_SET,
-	PRESALE_PRECANCELLATION_CHAT_AVAILABILITY_SET,
-} from 'calypso/state/action-types';
+import { HAPPYCHAT_IO_RECEIVE_INIT, HAPPYCHAT_SET_USER_CONFIG } from 'calypso/state/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import {
 	geoLocationSchema,
 	isEligibleSchema,
-	isPresalesPrecancellationEligible as isPresalesPrecancellationEligibleSchema,
+	availabilitySchema,
+	supportLevelSchema,
 } from './schema';
 
 /**
  * Tracks the current user geo location.
  *
  *
- * @param {object} action Action payload
- * @returns {object}        Updated state
+ * @param {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export const geoLocation = withSchemaValidation( geoLocationSchema, ( state = null, action ) => {
 	switch ( action.type ) {
 		case HAPPYCHAT_IO_RECEIVE_INIT: {
-			const {
-				user: { geoLocation: location },
-			} = action;
+			const location = action.user.geoLocation;
 			if ( location && location.country_long && location.city ) {
 				return location;
 			}
@@ -38,23 +30,37 @@ export const geoLocation = withSchemaValidation( geoLocationSchema, ( state = nu
 
 export const isEligible = withSchemaValidation( isEligibleSchema, ( state = null, action ) => {
 	switch ( action.type ) {
-		case HAPPYCHAT_ELIGIBILITY_SET:
-			return action.isEligible;
+		case HAPPYCHAT_SET_USER_CONFIG:
+			return action.config.isUserEligible;
 	}
 
 	return state;
 } );
 
-export const isPresalesPrecancellationEligible = withSchemaValidation(
-	isPresalesPrecancellationEligibleSchema,
-	( state = null, action ) => {
-		switch ( action.type ) {
-			case PRESALE_PRECANCELLATION_CHAT_AVAILABILITY_SET:
-				return action.availability;
-		}
-
-		return state;
+export const availability = withSchemaValidation( availabilitySchema, ( state = null, action ) => {
+	switch ( action.type ) {
+		case HAPPYCHAT_SET_USER_CONFIG:
+			return action.config.availability;
 	}
-);
 
-export default combineReducers( { geoLocation, isEligible, isPresalesPrecancellationEligible } );
+	return state;
+} );
+
+/**
+ * The level of support we're offering to this user (represents their highest paid plan).
+ */
+export const supportLevel = withSchemaValidation( supportLevelSchema, ( state = null, action ) => {
+	switch ( action.type ) {
+		case HAPPYCHAT_SET_USER_CONFIG:
+			return action.config.supportLevel;
+		default:
+			return state;
+	}
+} );
+
+export default combineReducers( {
+	geoLocation,
+	isEligible,
+	availability,
+	supportLevel,
+} );

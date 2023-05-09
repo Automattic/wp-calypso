@@ -7,7 +7,6 @@ MediaListData is a React component intended to be used as a controller-view to s
 Wrap a child component with `<MediaListData />`, passing a `siteId` and optional `filter`, `postId` and `search` values. [As a controller-view](https://facebook.github.io/flux/docs/overview.html#views-and-controller-views), MediaListData does not render any content of its own; instead, it simply renders the child component.
 
 ```jsx
-import React from 'react';
 import MediaListData from 'calypso/components/data/media-list-data';
 import MyChildComponent from './my-child-component';
 

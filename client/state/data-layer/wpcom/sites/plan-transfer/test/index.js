@@ -1,10 +1,7 @@
-/**
- * Internal dependencies
- */
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { handleTransferError, handleTransferSuccess, requestPlanOwnershipTransfer } from '../';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { transferPlanOwnership } from 'calypso/state/sites/plans/actions';
+import { handleTransferError, handleTransferSuccess, requestPlanOwnershipTransfer } from '../';
 
 const siteId = 2916284;
 

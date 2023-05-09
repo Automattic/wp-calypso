@@ -1,13 +1,4 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import reducer, { requesting, requestErrors, requestSuccess } from '../reducer';
 import {
 	WORDADS_SITE_APPROVE_REQUEST,
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
@@ -15,20 +6,19 @@ import {
 	WORDADS_SITE_APPROVE_REQUEST_FAILURE,
 	WORDADS_SITE_APPROVE_REQUEST_DISMISS_ERROR,
 } from 'calypso/state/action-types';
+import reducer, { requesting, requestErrors, requestSuccess } from '../reducer';
 
 describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'requesting',
-			'requestErrors',
-			'requestSuccess',
-		] );
+		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual(
+			expect.arrayContaining( [ 'requesting', 'requestErrors', 'requestSuccess' ] )
+		);
 	} );
 
 	describe( '#requesting()', () => {
 		test( 'should default to an empty object', () => {
 			const state = requesting( undefined, {} );
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should index requesting state by site ID', () => {
@@ -37,7 +27,7 @@ describe( 'reducer', () => {
 				type: WORDADS_SITE_APPROVE_REQUEST,
 				siteId,
 			} );
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: true,
 			} );
 		} );
@@ -50,7 +40,7 @@ describe( 'reducer', () => {
 				type: WORDADS_SITE_APPROVE_REQUEST,
 				siteId: 77203074,
 			} );
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: false,
 				77203074: true,
 			} );
@@ -66,7 +56,7 @@ describe( 'reducer', () => {
 				siteId: 2916284,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: false,
 				77203074: false,
 			} );
@@ -76,7 +66,7 @@ describe( 'reducer', () => {
 	describe( '#requestErrors()', () => {
 		test( 'should default to an empty object', () => {
 			const state = requestErrors( undefined, {} );
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should index error state by site ID', () => {
@@ -86,7 +76,7 @@ describe( 'reducer', () => {
 				error: 'something went wrong',
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: 'something went wrong',
 			} );
 		} );
@@ -100,7 +90,7 @@ describe( 'reducer', () => {
 				siteId: 2916284,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: null,
 			} );
 		} );
@@ -114,7 +104,7 @@ describe( 'reducer', () => {
 				siteId: 2916284,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: null,
 			} );
 		} );
@@ -128,7 +118,7 @@ describe( 'reducer', () => {
 				siteId: 2916284,
 				error: 'whoops',
 			} );
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: 'whoops',
 			} );
 		} );
@@ -143,7 +133,7 @@ describe( 'reducer', () => {
 				error: 'something else went wrong',
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: 'something went wrong',
 				77203074: 'something else went wrong',
 			} );
@@ -153,7 +143,7 @@ describe( 'reducer', () => {
 	describe( '#requestSuccess()', () => {
 		test( 'should default to an empty object', () => {
 			const state = requestSuccess( undefined, {} );
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should index success state by site ID', () => {
@@ -162,7 +152,7 @@ describe( 'reducer', () => {
 				siteId: 2916284,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: true,
 			} );
 		} );
@@ -176,7 +166,7 @@ describe( 'reducer', () => {
 				siteId: 2916284,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: null,
 			} );
 		} );
@@ -190,7 +180,7 @@ describe( 'reducer', () => {
 				siteId: 2916284,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: null,
 			} );
 		} );
@@ -203,7 +193,7 @@ describe( 'reducer', () => {
 				type: WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 				siteId: 2916284,
 			} );
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: true,
 			} );
 		} );
@@ -217,7 +207,7 @@ describe( 'reducer', () => {
 				siteId: 77203074,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: true,
 				77203074: true,
 			} );

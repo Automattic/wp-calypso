@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
-import React, { Component, Fragment } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Button, Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { addQueryArgs } from 'calypso/lib/route';
-import { getConnectingSite } from 'calypso/state/jetpack-connect/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getConnectingSite } from 'calypso/state/jetpack-connect/selectors';
 import {
 	ACTIVATION_FAILURE,
 	ACTIVATION_RESPONSE_ERROR,

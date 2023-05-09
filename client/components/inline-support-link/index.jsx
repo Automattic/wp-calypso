@@ -1,36 +1,25 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
+import { Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
-import QuerySupportArticleAlternates from 'calypso/components/data/query-support-article-alternates';
-import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
-import { openSupportArticleDialog } from 'calypso/state/inline-support-article/actions';
+import { withRouteModal } from 'calypso/lib/route-modal';
 import {
 	bumpStat,
 	composeAnalytics,
 	recordTracksEvent,
 	withAnalytics,
 } from 'calypso/state/analytics/actions';
-import { isDefaultLocale, localizeUrl } from 'calypso/lib/i18n-utils';
+import { openSupportArticleDialog } from 'calypso/state/inline-support-article/actions';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class InlineSupportLink extends Component {
 	state = {
-		shouldLazyLoadAlternates: false,
+		supportDataFromContext: undefined,
 	};
 
 	static propTypes = {
@@ -39,12 +28,15 @@ class InlineSupportLink extends Component {
 		supportLink: PropTypes.string,
 		showText: PropTypes.bool,
 		showIcon: PropTypes.bool,
+		supportContext: PropTypes.string,
 		iconSize: PropTypes.number,
 		tracksEvent: PropTypes.string,
 		tracksOptions: PropTypes.object,
 		statsGroup: PropTypes.string,
 		statsName: PropTypes.string,
-		localeSlug: PropTypes.string,
+		routeModalData: PropTypes.object,
+		showSupportModal: PropTypes.bool,
+		noWrap: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -53,26 +45,44 @@ class InlineSupportLink extends Component {
 		showText: true,
 		showIcon: true,
 		iconSize: 14,
+		showSupportModal: true,
+		noWrap: true,
 	};
 
-	loadAlternates = () => {
-		this.setState( { shouldLazyLoadAlternates: true } );
-	};
+	componentDidMount() {
+		if ( this.props.supportContext && ! this.props.supportPostId && ! this.props.supportLink ) {
+			// Lazy load the supportPostId and supportLink by key if not provided.
+			import( './context-links' ).then( ( module ) => {
+				const contextLinks = module.default;
+				const supportDataFromContext = contextLinks[ this.props.supportContext ];
+				if ( ! supportDataFromContext ) {
+					return;
+				}
+				this.setState( { supportDataFromContext } );
+			} );
+		}
+	}
+
+	onSupportLinkClick( event, supportPostId, url ) {
+		const { showSupportModal, openDialog } = this.props;
+
+		if ( ! showSupportModal ) {
+			return;
+		}
+
+		const openDialogReturn = openDialog( event, supportPostId, url );
+		this.props.routeModalData.openModal( supportPostId );
+		return openDialogReturn;
+	}
 
 	render() {
-		const {
-			className,
-			showText,
-			supportPostId,
-			supportLink,
-			showIcon,
-			iconSize,
-			translate,
-			openDialog,
-			children,
-			localeSlug,
-		} = this.props;
-		const { shouldLazyLoadAlternates } = this.state;
+		const { className, showText, showIcon, iconSize, translate, children, noWrap } = this.props;
+
+		let { supportPostId, supportLink } = this.props;
+		if ( this.state.supportDataFromContext ) {
+			supportPostId = this.state.supportDataFromContext.post_id;
+			supportLink = this.state.supportDataFromContext.link;
+		}
 
 		if ( ! supportPostId && ! supportLink ) {
 			return null;
@@ -98,7 +108,7 @@ class InlineSupportLink extends Component {
 			No  Text, Yes Icon = Widow not possible
 			Yes Text, Yes Icon = Widow possible
 		*/
-		if ( showText ) {
+		if ( showText && noWrap ) {
 			content = <span className="inline-support-link__nowrap">{ content }</span>;
 		}
 
@@ -106,45 +116,32 @@ class InlineSupportLink extends Component {
 			<LinkComponent
 				className={ classnames( 'inline-support-link', className ) }
 				href={ url }
-				onClick={ openDialog }
-				onMouseEnter={
-					! isDefaultLocale( localeSlug ) && ! shouldLazyLoadAlternates
-						? this.loadAlternates
-						: undefined
-				}
+				onClick={ ( event ) => this.onSupportLinkClick( event, supportPostId, url ) }
 				target="_blank"
 				rel="noopener noreferrer"
 				{ ...externalLinkProps }
 			>
-				{ shouldLazyLoadAlternates && <QuerySupportArticleAlternates postId={ supportPostId } /> }
 				{ content }
 			</LinkComponent>
 		);
 	}
 }
 
-const mapStateToProps = ( state ) => {
-	return {
-		localeSlug: getCurrentLocaleSlug( state ),
-	};
-};
-
 const mapDispatchToProps = ( dispatch, ownProps ) => {
-	const {
-		tracksEvent,
-		tracksOptions,
-		statsGroup,
-		statsName,
-		supportPostId,
-		supportLink,
-	} = ownProps;
+	const { tracksEvent, tracksOptions, statsGroup, statsName, supportContext } = ownProps;
 	return {
-		openDialog: ( event ) => {
+		openDialog: ( event, supportPostId, supportLink ) => {
 			if ( ! supportPostId ) {
 				return;
 			}
 			event.preventDefault();
 			const analyticsEvents = [
+				...[
+					recordTracksEvent( 'calypso_inlinesupportlink_click', {
+						support_context: supportContext || null,
+						support_link: supportLink,
+					} ),
+				],
 				...( tracksEvent ? [ recordTracksEvent( tracksEvent, tracksOptions ) ] : [] ),
 				...( statsGroup && statsName ? [ bumpStat( statsGroup, statsName ) ] : [] ),
 			];
@@ -166,4 +163,7 @@ const mapDispatchToProps = ( dispatch, ownProps ) => {
 	};
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( InlineSupportLink ) );
+export default connect(
+	null,
+	mapDispatchToProps
+)( localize( withRouteModal( 'support-article' )( InlineSupportLink ) ) );

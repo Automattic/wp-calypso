@@ -1,20 +1,17 @@
-/**
- * External dependencies
- */
+import {
+	isAkismetProduct,
+	isGoogleWorkspaceExtraLicence,
+	isGoogleWorkspaceProductSlug,
+	isGSuiteProductSlug,
+} from '@automattic/calypso-products';
 import { doesPurchaseHaveFullCredits } from '@automattic/wpcom-checkout';
-import type { ResponseCart } from '@automattic/shopping-cart';
-import type { ContactDetailsType } from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
 import {
 	hasDomainRegistration,
 	hasTransferProduct,
 	hasOnlyRenewalItems,
 } from 'calypso/lib/cart-values/cart-items';
-import { isGoogleWorkspaceExtraLicence } from '@automattic/calypso-products';
-import { isGoogleWorkspaceProductSlug, isGSuiteProductSlug } from 'calypso/lib/gsuite';
+import type { ResponseCart } from '@automattic/shopping-cart';
+import type { ContactDetailsType } from '@automattic/wpcom-checkout';
 
 export default function getContactDetailsType( responseCart: ResponseCart ): ContactDetailsType {
 	const hasDomainProduct =
@@ -43,8 +40,12 @@ export default function getContactDetailsType( responseCart: ResponseCart ): Con
 
 	const isPurchaseFree = responseCart.total_cost_integer === 0;
 	const isFullCredits = doesPurchaseHaveFullCredits( responseCart );
+	const isAkismetPurchase = responseCart.products.some( ( product ) => {
+		return isAkismetProduct( product );
+	} );
 
-	if ( isPurchaseFree && ! isFullCredits ) {
+	// Akismet free purchases still need contact information if logged out
+	if ( isPurchaseFree && ! isAkismetPurchase && ! isFullCredits ) {
 		return 'none';
 	}
 

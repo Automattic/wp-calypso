@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import { get, isEmpty, pick, startsWith } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
-import { combineReducers } from 'calypso/state/utils';
-import magicLogin from './magic-login/reducer';
+import { get, isEmpty, pick, startsWith } from 'lodash';
+import { login } from 'calypso/lib/paths';
+import { addQueryArgs } from 'calypso/lib/route';
 import {
 	LOGIN_AUTH_ACCOUNT_TYPE_REQUEST,
 	LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE,
@@ -22,29 +15,25 @@ import {
 	SOCIAL_LOGIN_REQUEST,
 	SOCIAL_LOGIN_REQUEST_FAILURE,
 	SOCIAL_LOGIN_REQUEST_SUCCESS,
-	SOCIAL_CREATE_ACCOUNT_REQUEST,
 	SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
-	SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS,
 	SOCIAL_CONNECT_ACCOUNT_REQUEST,
 	SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS,
 	SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE,
 	SOCIAL_DISCONNECT_ACCOUNT_REQUEST,
 	SOCIAL_DISCONNECT_ACCOUNT_REQUEST_FAILURE,
 	SOCIAL_DISCONNECT_ACCOUNT_REQUEST_SUCCESS,
+	SOCIAL_HANDOFF_CONNECT_ACCOUNT,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
-	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED,
-	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START,
-	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
 	TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
 	CURRENT_USER_RECEIVE,
 } from 'calypso/state/action-types';
-import { login } from 'calypso/lib/paths';
-import { addQueryArgs } from 'calypso/lib/route';
+import { combineReducers } from 'calypso/state/utils';
+import magicLogin from './magic-login/reducer';
 
 export const isRequesting = ( state = false, action ) => {
 	switch ( action.type ) {
@@ -83,6 +72,8 @@ export const redirectTo = combineReducers( {
 			case ROUTE_SET: {
 				const { path, query } = action;
 				if ( startsWith( path, '/log-in' ) ) {
+					return query.redirect_to || state;
+				} else if ( startsWith( path, '/start/account' ) ) {
 					return query.redirect_to || state;
 				} else if ( '/jetpack/connect/authorize' === path ) {
 					return addQueryArgs( query, path );
@@ -177,14 +168,10 @@ export const requestError = ( state = null, action ) => {
 			const { error } = action;
 			return error;
 		}
-		case SOCIAL_CREATE_ACCOUNT_REQUEST:
-			return null;
 		case SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE: {
 			const { error } = action;
 			return error;
 		}
-		case SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS:
-			return null;
 		case SOCIAL_CONNECT_ACCOUNT_REQUEST:
 			return null;
 		case SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE: {
@@ -224,10 +211,6 @@ export const requestSuccess = ( state = null, action ) => {
 			return false;
 		case LOGIN_REQUEST_SUCCESS:
 			return true;
-		case SOCIAL_CREATE_ACCOUNT_REQUEST:
-			return null;
-		case SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS:
-			return true;
 		case SOCIAL_CONNECT_ACCOUNT_REQUEST:
 			return null;
 		case SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS:
@@ -250,10 +233,6 @@ export const requestNotice = ( state = null, action ) => {
 		case TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE:
 			return null;
 		case TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS: {
-			const { notice } = action;
-			return notice;
-		}
-		case SOCIAL_CREATE_ACCOUNT_REQUEST: {
 			const { notice } = action;
 			return notice;
 		}
@@ -342,19 +321,6 @@ export const twoFactorAuth = ( state = null, action ) => {
 	return state;
 };
 
-export const isRequestingTwoFactorAuth = ( state = false, action ) => {
-	switch ( action.type ) {
-		case TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST:
-			return true;
-		case TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE:
-			return false;
-		case TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS:
-			return false;
-	}
-
-	return state;
-};
-
 export const twoFactorAuthRequestError = ( state = null, action ) => {
 	switch ( action.type ) {
 		case TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST:
@@ -374,49 +340,13 @@ export const twoFactorAuthRequestError = ( state = null, action ) => {
 	return state;
 };
 
-export const twoFactorAuthPushPoll = ( state = { inProgress: false, success: false }, action ) => {
+export const socialAccount = ( state = { createError: null }, action ) => {
 	switch ( action.type ) {
-		case TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START:
-			return {
-				...state,
-				inProgress: true,
-				success: false,
-			};
-		case TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP:
-			return { ...state, inProgress: false };
-		case TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED:
-			return {
-				...state,
-				inProgress: false,
-				success: true,
-			};
-	}
-
-	return state;
-};
-
-export const socialAccount = ( state = { isCreating: false, createError: null }, action ) => {
-	switch ( action.type ) {
-		case SOCIAL_CREATE_ACCOUNT_REQUEST:
-			return { isCreating: true };
 		case SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE: {
 			const { error } = action;
 
 			return {
-				isCreating: false,
 				createError: error,
-			};
-		}
-		case SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS: {
-			const {
-				data: { username, bearerToken },
-			} = action;
-
-			return {
-				isCreating: false,
-				username,
-				bearerToken,
-				createError: null,
 			};
 		}
 		case SOCIAL_LOGIN_REQUEST_FAILURE: {
@@ -457,10 +387,14 @@ export const socialAccountLink = ( state = { isLinking: false }, action ) => {
 	switch ( action.type ) {
 		case SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE:
 			return userExistsErrorHandler( state, action );
+		case SOCIAL_HANDOFF_CONNECT_ACCOUNT:
+			return {
+				isLinking: true,
+				email: action.email,
+				authInfo: action.authInfo,
+			};
 		case SOCIAL_LOGIN_REQUEST_FAILURE:
 			return userExistsErrorHandler( state, action );
-		case SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS:
-			return { isLinking: false };
 		case SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS:
 			return { isLinking: false };
 		case CURRENT_USER_RECEIVE:
@@ -504,7 +438,6 @@ const combinedReducer = combineReducers( {
 	authAccountType,
 	isFormDisabled,
 	isRequesting,
-	isRequestingTwoFactorAuth,
 	lastCheckedUsernameOrEmail,
 	magicLogin,
 	redirectTo,
@@ -514,7 +447,6 @@ const combinedReducer = combineReducers( {
 	socialAccount,
 	socialAccountLink,
 	twoFactorAuth,
-	twoFactorAuthPushPoll,
 	twoFactorAuthRequestError,
 } );
 

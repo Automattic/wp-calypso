@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { Interval, EVERY_SECOND } from 'calypso/lib/interval';
 import { getRewindRestoreProgress } from 'calypso/state/activity-log/actions';
 

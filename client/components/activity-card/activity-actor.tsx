@@ -1,21 +1,10 @@
-/**
- * External dependencies
- */
-import { translate } from 'i18n-calypso';
-import React, { FunctionComponent } from 'react';
-
-/**
- * Internal dependencies
- */
 import { isEnabled } from '@automattic/calypso-config';
+import { Gridicon } from '@automattic/components';
+import { translate } from 'i18n-calypso';
+import { FunctionComponent } from 'react';
 import Gravatar from 'calypso/components/gravatar';
-import Gridicon from 'calypso/components/gridicon';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import SocialLogo from 'calypso/components/social-logo';
-
-/**
- * Type dependencies
- */
 import { Activity } from 'calypso/state/activity-log/types';
 
 /**

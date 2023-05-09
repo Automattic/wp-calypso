@@ -1,24 +1,15 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
+import config from '@automattic/calypso-config';
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import QueryLanguageNames from 'calypso/components/data/query-language-names';
-import getLocalizedLanguageNames from 'calypso/state/selectors/get-localized-language-names';
-import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentNonDefaultLocale } from 'calypso/components/translator-invite/utils';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import getLocalizedLanguageNames from 'calypso/state/selectors/get-localized-language-names';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export class TranslatorInvite extends Component {
@@ -72,6 +63,12 @@ export class TranslatorInvite extends Component {
 	}
 
 	render() {
+		const { locale } = this.props;
+
+		if ( config( 'i18n_default_locale_slug' ) === locale ) {
+			return null;
+		}
+
 		return (
 			<div className="translator-invite">
 				{ this.renderNoticeLabelText() }

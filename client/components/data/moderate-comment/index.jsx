@@ -1,16 +1,8 @@
-/**
- * External dependencies
- *
- */
-import { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import {
 	bumpStat,
 	composeAnalytics,
@@ -35,17 +27,17 @@ class ModerateComment extends Component {
 		this.moderate( this.props );
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentDidUpdate( prevProps ) {
 		if (
-			this.props.siteId === nextProps.siteId &&
-			this.props.postId === nextProps.postId &&
-			this.props.commentId === nextProps.commentId &&
-			this.props.newStatus === nextProps.newStatus
+			this.props.siteId === prevProps.siteId &&
+			this.props.postId === prevProps.postId &&
+			this.props.commentId === prevProps.commentId &&
+			this.props.newStatus === prevProps.newStatus
 		) {
 			return;
 		}
 
-		this.moderate( nextProps );
+		this.moderate( this.props );
 	}
 
 	showNotice( status ) {

@@ -1,27 +1,18 @@
-/**
- * External Dependencies
- */
-import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { connect, useDispatch } from 'react-redux';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
-import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { getTopJITM } from 'calypso/state/jitm/selectors';
-import { dismissJITM, setupDevTool } from 'calypso/state/jitm/actions';
+import PropTypes from 'prop-types';
+import { useEffect } from 'react';
+import { connect, useDispatch } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import QueryJITM from 'calypso/components/data/query-jitm';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { JITM_OPEN_HELP_CENTER } from 'calypso/state/action-types';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { dismissJITM, openHelpCenterFromJITM, setupDevTool } from 'calypso/state/jitm/actions';
+import { getTopJITM } from 'calypso/state/jitm/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import 'calypso/state/data-layer/wpcom/marketing';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const debug = debugFactory( 'calypso:jitm' );
@@ -44,8 +35,24 @@ function renderTemplate( template, props ) {
 					placeholder={ null }
 				/>
 			);
+		case 'spotlight':
+			return (
+				<AsyncLoad
+					{ ...props }
+					require="calypso/blocks/jitm/templates/spotlight"
+					placeholder={ null }
+				/>
+			);
 		case 'invisible':
 			return <>{ props.trackImpression && props.trackImpression() }</>;
+		case 'modal':
+			return (
+				<AsyncLoad
+					{ ...props }
+					require="calypso/blocks/jitm/templates/modal"
+					placeholder={ null }
+				/>
+			);
 		default:
 			return (
 				<AsyncLoad
@@ -81,8 +88,17 @@ function getEventHandlers( props, dispatch ) {
 	handlers.onClick = () => {
 		tracks.click &&
 			props.recordTracksEvent( tracks.click.name, { ...tracks.click.props, ...eventProps } );
-
-		jitm.action && dispatch( jitm.action );
+		if ( jitm.action ) {
+			switch ( jitm.action.type ) {
+				// Cases for dispatching action thunks
+				case JITM_OPEN_HELP_CENTER:
+					dispatch( openHelpCenterFromJITM( jitm.action.payload ) );
+					break;
+				default:
+					// Dispatch regular actions
+					dispatch( jitm.action );
+			}
+		}
 	};
 
 	return handlers;
@@ -110,7 +126,6 @@ export function JITM( props ) {
 	}
 
 	debug( `siteId: %d, messagePath: %s, message: `, currentSite.ID, messagePath, jitm );
-
 	// 'jetpack' icon is only allowed to Jetpack sites
 	if ( jitm?.content?.icon === 'jetpack' && ! isJetpack ) {
 		jitm.content.icon = '';

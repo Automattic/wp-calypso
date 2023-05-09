@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { login } from '..';
 
 describe( 'login', () => {
@@ -39,11 +36,6 @@ describe( 'login', () => {
 	test( 'should return the login url preserving the "form" parameter', () => {
 		const url = login( { isJetpack: true, from: 'potato' } );
 		expect( url ).toBe( '/log-in/jetpack?from=potato' );
-	} );
-
-	test( 'should return the login url for Gutenboarding specific login', () => {
-		const url = login( { isGutenboarding: true } );
-		expect( url ).toBe( '/log-in/new' );
 	} );
 
 	test( 'should return the login url with WooCommerce.com handler', () => {

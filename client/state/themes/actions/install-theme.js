@@ -1,12 +1,10 @@
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
 import {
 	THEME_INSTALL,
 	THEME_INSTALL_SUCCESS,
 	THEME_INSTALL_FAILURE,
 } from 'calypso/state/themes/action-types';
+import { requestThemes } from 'calypso/state/themes/actions';
 import { receiveTheme } from 'calypso/state/themes/actions/receive-theme';
 import { getWpcomParentThemeId } from 'calypso/state/themes/selectors';
 
@@ -29,9 +27,8 @@ export function installTheme( themeId, siteId ) {
 			themeId,
 		} );
 
-		return wpcom
-			.undocumented()
-			.installThemeOnJetpack( siteId, themeId )
+		return wpcom.req
+			.post( `/sites/${ siteId }/themes/${ themeId }/install` )
 			.then( ( theme ) => {
 				dispatch( receiveTheme( theme, siteId ) );
 				dispatch( {
@@ -51,6 +48,7 @@ export function installTheme( themeId, siteId ) {
 					}
 				}
 			} )
+			.then( () => dispatch( requestThemes( siteId, {} ) ) )
 			.catch( ( error ) => {
 				dispatch( {
 					type: THEME_INSTALL_FAILURE,

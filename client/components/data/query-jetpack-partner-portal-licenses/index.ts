@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import {
 	LicenseFilter,
 	LicenseSortField,

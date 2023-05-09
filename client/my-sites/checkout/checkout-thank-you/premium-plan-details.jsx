@@ -1,28 +1,18 @@
-/**
- * External dependencies
- */
+import { isEnabled } from '@automattic/calypso-config';
+import { isPremium, isGSuiteOrExtraLicenseOrGoogleWorkspace } from '@automattic/calypso-products';
+import { useTranslate } from 'i18n-calypso';
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
-import GoogleAppsDetails from './google-apps-details';
-import { isPremium, isGSuiteOrExtraLicenseOrGoogleWorkspace } from '@automattic/calypso-products';
-import { newPost } from 'calypso/lib/paths';
-import PurchaseDetail from 'calypso/components/purchase-detail';
-
-/**
- * Image dependencies
- */
+import earnImage from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
 import analyticsImage from 'calypso/assets/images/illustrations/google-analytics.svg';
-import advertisingRemovedImage from 'calypso/assets/images/upgrades/removed-advertising.svg';
+import themeImage from 'calypso/assets/images/illustrations/themes.svg';
 import customizeThemeImage from 'calypso/assets/images/upgrades/customize-theme.svg';
 import mediaPostImage from 'calypso/assets/images/upgrades/media-post.svg';
-import earnImage from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
+import advertisingRemovedImage from 'calypso/assets/images/upgrades/removed-advertising.svg';
+import PurchaseDetail from 'calypso/components/purchase-detail';
+import { newPost } from 'calypso/lib/paths';
+import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
+import GoogleAppsDetails from './google-apps-details';
 
 const PremiumPlanDetails = ( {
 	selectedSite,
@@ -85,6 +75,18 @@ const PremiumPlanDetails = ( {
 				buttonText={ translate( 'Connect Google Analytics' ) }
 				href={ '/settings/analytics/' + selectedSite.slug }
 			/>
+
+			{ isEnabled( 'themes/premium' ) && (
+				<PurchaseDetail
+					icon={ <img alt="" src={ themeImage } /> }
+					title={ translate( 'Try a New Theme' ) }
+					description={ translate(
+						"You've now got access to every premium theme, at no extra cost. Give one a try!"
+					) }
+					buttonText={ translate( 'Browse premium themes' ) }
+					href={ '/themes/premium/' + selectedSite.slug }
+				/>
+			) }
 
 			{ ! selectedFeature && (
 				<PurchaseDetail

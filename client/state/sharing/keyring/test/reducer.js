@@ -1,13 +1,4 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import { isFetching, items } from '../reducer';
 import {
 	KEYRING_CONNECTION_DELETE,
 	KEYRING_CONNECTIONS_RECEIVE,
@@ -18,7 +9,7 @@ import {
 	PUBLICIZE_CONNECTION_DELETE,
 } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import { isFetching, items } from '../reducer';
 
 describe( 'reducers', () => {
 	describe( 'isFetching()', () => {
@@ -27,7 +18,7 @@ describe( 'reducers', () => {
 				type: KEYRING_CONNECTIONS_REQUEST,
 			} );
 
-			expect( state ).to.be.true;
+			expect( state ).toBe( true );
 		} );
 
 		test( 'should set fetching to false for received action', () => {
@@ -35,7 +26,7 @@ describe( 'reducers', () => {
 				type: KEYRING_CONNECTIONS_REQUEST_SUCCESS,
 			} );
 
-			expect( state ).to.be.false;
+			expect( state ).toBe( false );
 		} );
 
 		test( 'should set fetching to false for failed action', () => {
@@ -43,7 +34,7 @@ describe( 'reducers', () => {
 				type: KEYRING_CONNECTIONS_REQUEST_FAILURE,
 			} );
 
-			expect( state ).to.be.false;
+			expect( state ).toBe( false );
 		} );
 	} );
 
@@ -54,7 +45,7 @@ describe( 'reducers', () => {
 				connections: [ { ID: 1, sites: [ '2916284' ] } ],
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				1: { ID: 1, sites: [ '2916284' ] },
 			} );
 		} );
@@ -70,7 +61,7 @@ describe( 'reducers', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2: { ID: 2, sites: [ '77203074' ] },
 			} );
 		} );
@@ -87,7 +78,7 @@ describe( 'reducers', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				1: connection,
 			} );
 		} );
@@ -106,7 +97,7 @@ describe( 'reducers', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				1: { ID: 1, sites: [ '2916284', '77203074' ] },
 			} );
 		} );
@@ -125,7 +116,7 @@ describe( 'reducers', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				1: { ID: 1, sites: [ '2916284' ] },
 			} );
 		} );
@@ -145,13 +136,13 @@ describe( 'reducers', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				1: { ID: 1, site_ID: 2916284 },
 			} );
 		} );
 
 		describe( 'persistence', () => {
-			useSandbox( ( sandbox ) => sandbox.stub( console, 'warn' ) );
+			jest.spyOn( console, 'warn' ).mockImplementation();
 
 			test( 'should persist data', () => {
 				const state = deepFreeze( {
@@ -159,7 +150,7 @@ describe( 'reducers', () => {
 					2: { ID: 2, sites: [ '77203074' ] },
 				} );
 				const persistedState = serialize( items, state );
-				expect( persistedState ).to.eql( state );
+				expect( persistedState ).toEqual( state );
 			} );
 
 			test( 'should load valid data', () => {
@@ -168,7 +159,7 @@ describe( 'reducers', () => {
 					2: { ID: 2, sites: [ '77203074' ] },
 				} );
 				const state = deserialize( items, persistedState );
-				expect( state ).to.eql( persistedState );
+				expect( state ).toEqual( persistedState );
 			} );
 
 			test( 'should ignore loading data with invalid keys', () => {
@@ -177,7 +168,7 @@ describe( 'reducers', () => {
 					bar: { ID: 2, sites: [ '77203074' ] },
 				} );
 				const state = deserialize( items, persistedState );
-				expect( state ).to.eql( {} );
+				expect( state ).toEqual( {} );
 			} );
 
 			test( 'should ignore loading data with invalid values', () => {
@@ -186,7 +177,7 @@ describe( 'reducers', () => {
 					2: { ID: 2, sites: [ '77203074' ] },
 				} );
 				const state = deserialize( items, persistedState );
-				expect( state ).to.eql( {} );
+				expect( state ).toEqual( {} );
 			} );
 		} );
 	} );

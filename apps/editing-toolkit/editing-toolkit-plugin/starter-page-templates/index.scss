@@ -1,4 +1,4 @@
-@import '@automattic/page-pattern-modal/src/styles/page-pattern-modal';
+@import "@automattic/page-pattern-modal/src/styles/page-pattern-modal";
 
 .sidebar-modal-opener {
 	display: flex;
@@ -20,6 +20,7 @@
 .sidebar-modal-opener__warning-text {
 	max-width: 300px;
 	font-size: 1rem;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	line-height: 1.5rem;
 }
 

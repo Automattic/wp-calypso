@@ -1,15 +1,9 @@
-/**
- * Internal dependencies
- */
 import {
 	isRequestingList,
-	isRequestingSubscribedLists,
 	getSubscribedLists,
-	isUpdatedList,
 	getListByOwnerAndSlug,
 	getMatchingItem,
 	isSubscribedByOwnerAndSlug,
-	hasError,
 	isMissingByOwnerAndSlug,
 } from '../selectors';
 
@@ -32,32 +26,6 @@ describe( 'selectors', () => {
 				reader: {
 					lists: {
 						isRequestingList: true,
-					},
-				},
-			} );
-
-			expect( isRequesting ).toBeTruthy();
-		} );
-	} );
-
-	describe( '#isRequestingSubscribedLists()', () => {
-		test( 'should return false if not fetching', () => {
-			const isRequesting = isRequestingSubscribedLists( {
-				reader: {
-					lists: {
-						isRequestingLists: false,
-					},
-				},
-			} );
-
-			expect( isRequesting ).toBeFalsy();
-		} );
-
-		test( 'should return true if fetching', () => {
-			const isRequesting = isRequestingSubscribedLists( {
-				reader: {
-					lists: {
-						isRequestingLists: true,
 					},
 				},
 			} );
@@ -110,38 +78,6 @@ describe( 'selectors', () => {
 				{ ID: 456, slug: 'ants', title: 'abc' },
 				{ ID: 123, slug: 'bananas', title: 'def' },
 			] );
-		} );
-	} );
-
-	describe( '#isUpdatedList()', () => {
-		test( 'should return false if list has not been updated', () => {
-			const isUpdated = isUpdatedList(
-				{
-					reader: {
-						lists: {
-							updatedLists: [],
-						},
-					},
-				},
-				123
-			);
-
-			expect( isUpdated ).toBeFalsy();
-		} );
-
-		test( 'should return true if the list has been updated', () => {
-			const isUpdated = isUpdatedList(
-				{
-					reader: {
-						lists: {
-							updatedLists: [ 123, 456 ],
-						},
-					},
-				},
-				123
-			);
-
-			expect( isUpdated ).toBeTruthy();
 		} );
 	} );
 
@@ -297,38 +233,6 @@ describe( 'selectors', () => {
 			);
 
 			expect( isSubscribed ).toEqual( true );
-		} );
-	} );
-
-	describe( '#hasError()', () => {
-		test( 'should return false if there is no error for the list', () => {
-			const result = hasError(
-				{
-					reader: {
-						lists: {
-							errors: { 123: 400 },
-						},
-					},
-				},
-				456
-			);
-
-			expect( result ).toBeFalsy();
-		} );
-
-		test( 'should return true if the list has an error', () => {
-			const result = hasError(
-				{
-					reader: {
-						lists: {
-							errors: { 123: 400 },
-						},
-					},
-				},
-				123
-			);
-
-			expect( result ).toBeTruthy();
 		} );
 	} );
 

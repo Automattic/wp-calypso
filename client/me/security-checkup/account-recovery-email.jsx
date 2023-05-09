@@ -1,24 +1,16 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import {
 	getAccountRecoveryEmail,
 	isAccountRecoveryEmailActionInProgress,
 	isAccountRecoveryEmailValidated,
 } from 'calypso/state/account-recovery/settings/selectors';
 import { getOKIcon, getWarningIcon } from './icons.js';
-import QueryAccountRecoverySettings from 'calypso/components/data/query-account-recovery-settings';
 import SecurityCheckupNavigationItem from './navigation-item';
 
-class SecurityCheckupAccountRecoveryEmail extends React.Component {
+class SecurityCheckupAccountRecoveryEmail extends Component {
 	static propTypes = {
 		accountRecoveryEmail: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.string ] ),
 		accountRecoveryEmailActionInProgress: PropTypes.bool,
@@ -35,12 +27,7 @@ class SecurityCheckupAccountRecoveryEmail extends React.Component {
 		} = this.props;
 
 		if ( accountRecoveryEmailActionInProgress ) {
-			return (
-				<React.Fragment>
-					<QueryAccountRecoverySettings />
-					<SecurityCheckupNavigationItem isPlaceholder={ true } />
-				</React.Fragment>
-			);
+			return <SecurityCheckupNavigationItem isPlaceholder={ true } />;
 		}
 
 		let icon;
@@ -79,7 +66,7 @@ class SecurityCheckupAccountRecoveryEmail extends React.Component {
 
 		return (
 			<SecurityCheckupNavigationItem
-				path={ '/me/security/account-recovery' }
+				path="/me/security/account-recovery"
 				materialIcon={ icon }
 				text={ translate( 'Recovery Email' ) }
 				description={ description }

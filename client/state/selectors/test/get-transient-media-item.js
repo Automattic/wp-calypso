@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getTransientMediaItem from 'calypso/state/selectors/get-transient-media-item';
 
 describe( 'getTransientMediaItem()', () => {

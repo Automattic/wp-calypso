@@ -1,16 +1,13 @@
-/**
- * Internal dependencies
- */
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
-import { noRetry } from 'calypso/state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 import {
 	JETPACK_SCAN_THREAT_COUNTS_REQUEST,
 	JETPACK_SCAN_THREAT_COUNTS_REQUEST_SUCCESS,
 	JETPACK_SCAN_THREAT_COUNTS_REQUEST_FAILURE,
 	JETPACK_SCAN_THREAT_COUNTS_UPDATE,
 } from 'calypso/state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { noRetry } from 'calypso/state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 
 export const requestThreatCounts = ( action ) =>
 	http(

@@ -1,17 +1,8 @@
-/**
- * External dependencies
- */
-import React, { useCallback, useRef } from 'react';
-
-/**
- * Internal dependencies
- */
+import { useCallback, useRef } from 'react';
+import * as React from 'react';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -19,30 +10,30 @@ const noop = () => {};
 
 type OptionValue = number | string;
 
-interface Option {
-	value: OptionValue;
+interface Option< T = OptionValue > {
+	value: T;
 	label: string;
 }
 
-interface ChangeList {
-	value: OptionValue[];
+interface ChangeList< T = OptionValue > {
+	value: T[];
 }
 
-interface Props {
-	options: Option[];
-	checked?: OptionValue[];
-	defaultChecked?: OptionValue[];
-	onChange?: ( list: ChangeList ) => void;
+interface Props< T = OptionValue > {
+	options: Option< T >[];
+	checked?: T[];
+	defaultChecked?: T[];
+	onChange?: ( list: ChangeList< T > ) => void;
 	disabled?: boolean;
 	name?: string;
 }
 
 type DivProps = Omit< React.ComponentPropsWithoutRef< 'div' >, 'className' >;
 
-export default function MultiCheckbox( props: Props & DivProps ) {
+export default function MultiCheckbox< T extends string | number >( props: Props< T > & DivProps ) {
 	const {
 		checked,
-		defaultChecked = [] as OptionValue[],
+		defaultChecked = [],
 		disabled = false,
 		onChange = noop,
 		name = 'multiCheckbox',

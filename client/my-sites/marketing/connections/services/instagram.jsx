@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
 import { isEqual, map } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { deleteStoredKeyringConnection } from 'calypso/state/sharing/keyring/actions';
-import { SharingService, connectFor } from 'calypso/my-sites/marketing/connections/service';
+import PropTypes from 'prop-types';
 import SocialLogo from 'calypso/components/social-logo';
+import { SharingService, connectFor } from 'calypso/my-sites/marketing/connections/service';
+import { deleteStoredKeyringConnection } from 'calypso/state/sharing/keyring/actions';
 
 export class Instagram extends SharingService {
 	static propTypes = {
@@ -42,6 +34,7 @@ export class Instagram extends SharingService {
 		<SocialLogo icon="instagram" size={ 48 } className="sharing-service__logo" />
 	);
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( { availableExternalAccounts } ) {
 		if ( ! isEqual( this.props.availableExternalAccounts, availableExternalAccounts ) ) {
 			this.setState( {

@@ -1,22 +1,13 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import classNames from 'classnames';
-import { connect } from 'react-redux';
-import { uniqBy } from 'lodash';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import { CompactCard } from '@automattic/components';
-import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
-import PluginActivateToggle from 'calypso/my-sites/plugins/plugin-activate-toggle';
-import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { uniqBy } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import Count from 'calypso/components/count';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';
 import {
 	ACTIVATE_PLUGIN,
@@ -26,13 +17,13 @@ import {
 	REMOVE_PLUGIN,
 	UPDATE_PLUGIN,
 } from 'calypso/lib/plugins/constants';
-import { getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
+import PluginActivateToggle from 'calypso/my-sites/plugins/plugin-activate-toggle';
+import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
+import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
+import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class PluginItem extends Component {
@@ -220,16 +211,13 @@ class PluginItem extends Component {
 	}
 
 	renderActions() {
-		const {
-			activation: canToggleActivation,
-			autoupdate: canToggleAutoupdate,
-		} = this.props.allowedActions;
+		const { activation: canToggleActivation, autoupdate: canToggleAutoupdate } =
+			this.props.allowedActions;
 
 		return (
 			<div className="plugin-item__actions">
 				{ canToggleActivation && (
 					<PluginActivateToggle
-						isMock={ this.props.isMock }
 						plugin={ this.props.plugin }
 						disabled={ this.props.isSelectable }
 						site={ this.props.selectedSite }
@@ -237,11 +225,11 @@ class PluginItem extends Component {
 				) }
 				{ canToggleAutoupdate && (
 					<PluginAutoupdateToggle
-						isMock={ this.props.isMock }
 						plugin={ this.props.plugin }
 						disabled={ this.props.isSelectable }
 						site={ this.props.selectedSite }
 						wporg={ !! this.props.plugin.wporg }
+						isMarketplaceProduct={ this.props.isMarketplaceProduct }
 					/>
 				) }
 			</div>
@@ -306,6 +294,7 @@ class PluginItem extends Component {
 					<FormInputCheckbox
 						className="plugin-item__checkbox"
 						id={ plugin.slug }
+						title={ plugin.name }
 						onClick={ this.props.onClick }
 						checked={ this.props.isSelected }
 						readOnly={ true }
@@ -333,5 +322,6 @@ export default connect( ( state, { plugin, sites } ) => {
 
 	return {
 		pluginsOnSites: getPluginOnSites( state, siteIds, plugin?.slug ),
+		isMarketplaceProduct: isMarketplaceProduct( state, plugin?.slug ),
 	};
 } )( localize( withLocalizedMoment( PluginItem ) ) );

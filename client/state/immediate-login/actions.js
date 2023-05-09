@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { IMMEDIATE_LOGIN_SAVE_INFO } from 'calypso/state/action-types';
 
 import 'calypso/state/immediate-login/init';

@@ -1,46 +1,38 @@
-/**
- * External dependencies
- */
+import { mapRecordKeysRecursively, camelToSnakeCase } from '@automattic/js-utils';
+import wp from 'calypso/lib/wp';
+import { createWpcomAccountBeforeTransaction } from './create-wpcom-account-before-transaction';
+import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type {
 	WPCOMTransactionEndpointRequestPayload,
 	WPCOMTransactionEndpointResponse,
 } from '@automattic/wpcom-checkout';
 
 /**
- * Internal dependencies
+ * Submit a transaction to the WPCOM transactions endpoint.
+ *
+ * This is one of two transactions endpoint functions; also see
+ * `wpcomPayPalExpress`.
+ *
+ * Note that the payload property is (mostly) in camelCase but the actual
+ * submitted data will be converted (mostly) to snake_case.
+ *
+ * Please do not alter payload inside this function if possible to retain type
+ * safety. Instead, alter `createTransactionEndpointRequestPayload` or add a
+ * new type safe function that works similarly (see
+ * `createWpcomAccountBeforeTransaction`).
  */
-import type { PaymentProcessorOptions } from '../types/payment-processors';
-import { createAccount } from '../payment-method-helpers';
-import wp from 'calypso/lib/wp';
-
 export default async function submitWpcomTransaction(
 	payload: WPCOMTransactionEndpointRequestPayload,
 	transactionOptions: PaymentProcessorOptions
 ): Promise< WPCOMTransactionEndpointResponse > {
-	if ( transactionOptions.createUserAndSiteBeforeTransaction || payload.cart.is_jetpack_checkout ) {
-		const createAccountOptions = payload.cart.is_jetpack_checkout
-			? { signupFlowName: 'jetpack-userless-checkout' }
-			: { signupFlowName: 'onboarding-registrationless' };
+	const isUserLessCheckout =
+		payload.cart.products.some( ( product ) => {
+			return product.extra.isJetpackCheckout || product.extra.isAkismetSitelessCheckout;
+		} ) && payload.cart.cart_key === 'no-user';
 
-		return createAccount( createAccountOptions ).then( ( response ) => {
-			const siteIdFromResponse = response?.blog_details?.blogid;
-
-			// If the account is already created(as happens when we are reprocessing after a transaction error), then
-			// the create account response will not have a site ID, so we fetch from state.
-			const siteId = siteIdFromResponse || transactionOptions.siteId;
-			const newPayload = {
-				...payload,
-				cart: {
-					...payload.cart,
-					blog_id: siteId || '0',
-					cart_key: siteId || 'no-site',
-					create_new_blog: false,
-				},
-			};
-
-			return wp.undocumented().transactions( newPayload );
-		} );
+	if ( transactionOptions.createUserAndSiteBeforeTransaction || isUserLessCheckout ) {
+		payload.cart = await createWpcomAccountBeforeTransaction( payload.cart, transactionOptions );
 	}
 
-	return wp.undocumented().transactions( payload );
+	return wp.req.post( '/me/transactions', mapRecordKeysRecursively( payload, camelToSnakeCase ) );
 }

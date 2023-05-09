@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button as OriginalButton } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { STORE_KEY } from '../../constants';
+import { store } from '../../store';
 import SiteIcon from '../site-icon';
 import './style.scss';
 
@@ -22,9 +14,9 @@ const Button = ( {
 	<OriginalButton { ...rest }>{ children }</OriginalButton>
 );
 
-export default function ToggleSidebarButton(): JSX.Element {
-	const { toggleSidebar } = useDispatch( STORE_KEY );
-	const isSidebarOpen = useSelect( ( select ) => select( STORE_KEY ).isSidebarOpened() );
+export default function ToggleSidebarButton() {
+	const { toggleSidebar } = useDispatch( store );
+	const isSidebarOpen = useSelect( ( select ) => select( store ).isSidebarOpened(), [] );
 
 	const handleClick = () => {
 		recordTracksEvent( `calypso_editor_sidebar_open` );

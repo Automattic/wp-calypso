@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-import { assert } from 'chai';
-
-/**
- * Internal dependencies
- */
-import reducer from '../reducer';
 import {
 	ACCOUNT_RECOVERY_SETTINGS_FETCH,
 	ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
 	ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED,
 } from 'calypso/state/action-types';
+import reducer from '../reducer';
 
 describe( '#account-recovery/isFetchingSettings reducer :', () => {
 	test( 'should set isFetchingSettings flag.', () => {
@@ -19,7 +11,7 @@ describe( '#account-recovery/isFetchingSettings reducer :', () => {
 			type: ACCOUNT_RECOVERY_SETTINGS_FETCH,
 		} );
 
-		assert.isTrue( state.isFetchingSettings );
+		expect( state.isFetchingSettings ).toBe( true );
 	} );
 
 	test( 'should unset isFetchingSettings flag on success.', () => {
@@ -33,7 +25,7 @@ describe( '#account-recovery/isFetchingSettings reducer :', () => {
 			},
 		} );
 
-		assert.isFalse( state.isFetchingSettings );
+		expect( state.isFetchingSettings ).toBe( false );
 	} );
 
 	test( 'should unset isFetchingSettings flag on failure.', () => {
@@ -41,6 +33,6 @@ describe( '#account-recovery/isFetchingSettings reducer :', () => {
 			type: ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED,
 		} );
 
-		assert.isFalse( state.isFetchingSettings );
+		expect( state.isFetchingSettings ).toBe( false );
 	} );
 } );

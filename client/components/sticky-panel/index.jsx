@@ -1,21 +1,11 @@
-/**
- * External dependencies
- */
 import { isMobile } from '@automattic/viewport';
+import classNames from 'classnames';
 import { throttle, defer } from 'lodash';
 import PropTypes from 'prop-types';
+import { Component } from 'react';
 import ReactDom from 'react-dom';
-import React from 'react';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import afterLayoutFlush from 'calypso/lib/after-layout-flush';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const RESIZE_RATE_IN_MS = 200;
@@ -31,9 +21,12 @@ const commonDefaultProps = {
 };
 
 export function calculateOffset() {
-	// Offset to account for Masterbar
 	const headerEl = document.getElementById( 'header' );
-	return headerEl ? headerEl.getBoundingClientRect().height : 0;
+	// Offset to account for Masterbar if it is fixed position
+	if ( headerEl && getComputedStyle( headerEl ).position === 'fixed' ) {
+		return headerEl.getBoundingClientRect().height;
+	}
+	return 0;
 }
 
 export function getBlockStyle( state ) {
@@ -79,7 +72,7 @@ function isWindowTooSmall( minLimit ) {
 	return ( minLimit !== false && minLimit >= window.innerWidth ) || isMobile();
 }
 
-class StickyPanelWithIntersectionObserver extends React.Component {
+class StickyPanelWithIntersectionObserver extends Component {
 	static displayName = 'StickyPanel';
 
 	static propTypes = commonPropTypes;
@@ -144,7 +137,7 @@ class StickyPanelWithIntersectionObserver extends React.Component {
 	}
 }
 
-class StickyPanelWithScrollEvent extends React.Component {
+class StickyPanelWithScrollEvent extends Component {
 	static displayName = 'StickyPanel';
 
 	static propTypes = commonPropTypes;

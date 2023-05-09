@@ -1,25 +1,13 @@
-/**
- * External dependencies
- */
-
-import React, { FC, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { FC, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import RedirectWhenLoggedIn from 'calypso/components/redirect-when-logged-in';
+import { preventWidows } from 'calypso/lib/formatting/prevent-widows';
 import {
 	recordPageViewWithClientId as recordPageView,
 	enhanceWithSiteType,
 } from 'calypso/state/analytics/actions';
 import { withEnhancers } from 'calypso/state/utils';
-
-/**
- * Image dependencies
- */
-import checkEmailJetpackImage from 'calypso/assets/images/illustrations/check-email-jetpack.svg';
 
 interface Props {
 	emailAddress: string;
@@ -44,12 +32,6 @@ const EmailedLoginLinkSuccessfullyJetpackConnect: FC< Props > = ( { emailAddress
 
 			<h1 className="magic-login__form-header">{ translate( 'Check your email!' ) }</h1>
 
-			<img
-				alt=""
-				src={ checkEmailJetpackImage }
-				className="magic-login__check-email-image jetpack"
-			/>
-
 			<p>
 				{ emailAddress
 					? translate( 'We just emailed a link to {{strong}}%(emailAddress)s{{/strong}}.', {
@@ -62,7 +44,9 @@ const EmailedLoginLinkSuccessfullyJetpackConnect: FC< Props > = ( { emailAddress
 					  } )
 					: translate( 'We just emailed you a link.' ) }
 			</p>
-			<p>{ translate( 'Please check your inbox and click the link to log in.' ) }</p>
+			<p>
+				{ preventWidows( translate( 'Please check your inbox and click the link to log in.' ) ) }
+			</p>
 		</div>
 	);
 };

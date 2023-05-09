@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import ActionCard from '../index';
 
 ActionCard.displayName = 'ActionCard';

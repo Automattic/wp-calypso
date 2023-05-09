@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	HAPPYCHAT_OPEN,
 	HAPPYCHAT_MINIMIZING,
@@ -14,10 +11,9 @@ import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/
 /**
  * Tracks the current message the user has typed into the happychat client
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
- *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export const currentMessage = ( state = '', action ) => {
 	switch ( action.type ) {
@@ -35,9 +31,9 @@ const lostFocusAtSchema = { type: 'number' };
  * whether the user has unread messages. A numerical value is the timestamp where focus
  * was lost, and `null` means HC currently has focus.
  *
- * @param {object} state Current state
- * @param {object} action Action payload
- * @returns {object}        Updated state
+ * @param {Object} state Current state
+ * @param {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export const lostFocusAt = withSchemaValidation(
 	lostFocusAtSchema,
@@ -75,10 +71,9 @@ const isOpen = ( state = false, action ) => {
 /**
  * Tracks the state of the happychat minimizing process
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
- *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 const isMinimizing = ( state = false, action ) => {
 	switch ( action.type ) {

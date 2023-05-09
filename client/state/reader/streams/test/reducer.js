@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
 import deepfreeze from 'deep-freeze';
 import moment from 'moment';
-
-/**
- * Internal dependencies
- */
+import { dismissPost } from 'calypso/state/reader/site-dismissals/actions';
 import {
 	receivePage,
 	selectItem,
@@ -15,7 +9,6 @@ import {
 	selectPrevItem,
 	requestPage,
 } from '../actions';
-import { dismissPost } from 'calypso/state/reader/site-dismissals/actions';
 import {
 	items,
 	selected,
@@ -41,6 +34,14 @@ describe( 'streams.items reducer', () => {
 
 	it( 'should accept new items', () => {
 		const prevState = deepfreeze( [] );
+		const action = receivePage( { streamItems: [ time2PostKey, time1PostKey ] } );
+		const nextState = items( prevState, action );
+
+		expect( nextState ).toEqual( [ time2PostKey, time1PostKey ] );
+	} );
+
+	it( 'should accept new items with duplicates removed', () => {
+		const prevState = deepfreeze( [ time2PostKey ] );
 		const action = receivePage( { streamItems: [ time2PostKey, time1PostKey ] } );
 		const nextState = items( prevState, action );
 

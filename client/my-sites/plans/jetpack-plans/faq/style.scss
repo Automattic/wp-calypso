@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .jetpack-faq {
 	max-width: 750px;
@@ -12,10 +12,40 @@
 
 	font-size: 1.5rem;
 	font-weight: 700;
+	line-height: 1.5;
 	letter-spacing: -1px;
 	text-align: center;
 
 	@include break-mobile {
 		font-size: 2.25rem;
 	}
+}
+
+.jetpack-faq__list {
+	margin: 0;
+
+	list-style-type: none;
+}
+
+// Make sure FAQ's are visible below the sticky header when linked to
+.jetpack-faq__section {
+	button {
+		scroll-margin-top: 74px;
+
+		@include break-large {
+			scroll-margin-top: 52px;
+		}
+	}
+}
+
+.jetpack-faq__section button:focus-visible {
+	outline: thin dotted;
+}
+
+a.jetpack-faq__learn-more-link {
+	display: inline-block;
+	font-size: 1rem;
+	text-decoration: underline;
+	margin-top: 0.5rem;
+	color: var(--studio-gray-60);
 }

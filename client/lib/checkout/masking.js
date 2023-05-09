@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getCreditCardType } from 'calypso/lib/checkout';
 
 /**

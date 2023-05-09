@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	JETPACK_SCAN_UPDATE,
 	JETPACK_SCAN_REQUEST,

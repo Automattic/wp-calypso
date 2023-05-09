@@ -1,13 +1,10 @@
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
 import { combineReducers } from 'calypso/state/utils';
-import productList from './product-list/reducer';
-import subscriptions from './subscriptions/reducer';
 import earnings from './earnings/reducer';
-import subscribers from './subscribers/reducer';
+import productList from './product-list/reducer';
 import settings from './settings/reducer';
+import subscribers from './subscribers/reducer';
+import subscriptions from './subscriptions/reducer';
 
 const reducers = {
 	subscriptions,

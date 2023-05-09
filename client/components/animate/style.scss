@@ -1,15 +1,15 @@
 .animate__appear {
-	animation: animate__appear 600ms cubic-bezier( 0.1, 0.82, 0.25, 1 );
+	animation: animate__appear 600ms cubic-bezier(0.1, 0.82, 0.25, 1);
 	transform-origin: center center;
 }
 
 @keyframes animate__appear {
 	0%,
 	20% {
-		transform: scale( 0, 0 );
+		transform: scale(0, 0);
 	}
 	100% {
-		transform: scale( 1, 1 );
+		transform: scale(1, 1);
 	}
 }
 
@@ -21,10 +21,10 @@
 @keyframes fade-in {
 	from {
 		opacity: 0;
-		transform: scale( 0.92 );
+		transform: scale(0.92);
 	}
 	to {
 		opacity: 1;
-		transform: scale( 1 );
+		transform: scale(1);
 	}
 }

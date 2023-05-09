@@ -9,8 +9,8 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-const rule = require( '../../../lib/rules/redux-no-bound-selectors' );
 const RuleTester = require( 'eslint' ).RuleTester;
+const rule = require( '../../../lib/rules/redux-no-bound-selectors' );
 
 const REF = ' See wp-calypso#14024';
 const BIND_ERROR_MESSAGE = "Don't bind functions within `connect`." + REF;

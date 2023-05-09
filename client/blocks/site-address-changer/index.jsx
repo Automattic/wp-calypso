@@ -1,41 +1,30 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import { Dialog, FormInputValidation, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { debounce, get, isEmpty } from 'lodash';
-import Gridicon from 'calypso/components/gridicon';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
-import FormButton from 'calypso/components/forms/form-button';
-import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
-import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormSelect from 'calypso/components/forms/form-select';
-import ConfirmationDialog from './dialog';
+import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { freeSiteAddressType } from 'calypso/lib/domains/constants';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import {
-	requestSiteAddressChange,
-	requestSiteAddressAvailability,
 	clearValidationError,
+	requestSiteAddressAvailability,
+	requestSiteAddressChange,
 } from 'calypso/state/site-address-change/actions';
 import { getSiteAddressAvailabilityPending } from 'calypso/state/site-address-change/selectors/get-site-address-availability-pending';
 import { getSiteAddressValidationError } from 'calypso/state/site-address-change/selectors/get-site-address-validation-error';
 import { isRequestingSiteAddressChange } from 'calypso/state/site-address-change/selectors/is-requesting-site-address-change';
 import { isSiteAddressValidationAvailable } from 'calypso/state/site-address-change/selectors/is-site-address-validation-available';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const SUBDOMAIN_LENGTH_MINIMUM = 4;
@@ -60,7 +49,7 @@ export class SiteAddressChanger extends Component {
 	};
 
 	state = {
-		showDialog: false,
+		step: 0,
 		domainFieldValue: '',
 		newDomainSuffix: this.props.currentDomainSuffix,
 	};
@@ -73,7 +62,10 @@ export class SiteAddressChanger extends Component {
 		const { domainFieldValue, newDomainSuffix } = this.state;
 		const { currentDomain, currentDomainSuffix, siteId } = this.props;
 		const oldDomain = get( currentDomain, 'name', null );
-		const type = '.wordpress.com' === currentDomainSuffix ? 'blog' : 'dotblog';
+		const type =
+			'.wordpress.com' === currentDomainSuffix
+				? freeSiteAddressType.BLOG
+				: freeSiteAddressType.MANAGED;
 
 		this.props.requestSiteAddressChange(
 			siteId,
@@ -130,24 +122,33 @@ export class SiteAddressChanger extends Component {
 		} );
 	};
 
-	showConfirmationDialog() {
+	showConfirmationForm() {
 		this.setState( {
-			showDialog: true,
+			step: 1,
 		} );
 	}
 
-	onSubmit = ( event ) => {
-		event.preventDefault();
-
+	onSubmit = () => {
 		if ( ! this.state.validationMessage ) {
-			this.showConfirmationDialog();
+			this.showConfirmationForm();
 		}
 	};
 
-	onDialogClose = () => {
+	onConfirmationFormClose = () => {
 		this.setState( {
-			showDialog: false,
+			step: 0,
 		} );
+	};
+
+	toggleConfirmationChecked = () => {
+		this.setState( {
+			isConfirmationChecked: ! this.state.isConfirmationChecked,
+		} );
+	};
+
+	onConfirmationFormSubmit = () => {
+		this.onConfirmationFormClose();
+		this.onConfirm();
 	};
 
 	handleDomainChange( domainFieldValue ) {
@@ -199,7 +200,8 @@ export class SiteAddressChanger extends Component {
 			return;
 		}
 
-		const type = '.wordpress.com' === newDomainSuffix ? 'blog' : 'dotblog';
+		const type =
+			'.wordpress.com' === newDomainSuffix ? freeSiteAddressType.BLOG : freeSiteAddressType.MANAGED;
 
 		this.props.requestSiteAddressAvailability(
 			this.props.siteId,
@@ -224,10 +226,25 @@ export class SiteAddressChanger extends Component {
 		return currentDomainName.replace( currentDomainSuffix, '' );
 	}
 
+	/**
+	 * This is an edge case scenario where user have the site address changer opened and the user transfers
+	 * the site to atomic on other tab/window, losing sync between client and server. Client will try to
+	 * check availability against wordpress.com and will receive 404s because site is transfered to wpcomstaging.com
+	 */
+	isUnsyncedAtomicSite() {
+		const { validationError } = this.props;
+
+		return 404 === validationError?.errorStatus;
+	}
+
 	getValidationMessage() {
 		const { isAvailable, validationError, translate } = this.props;
 		const { validationMessage } = this.state;
 		const serverValidationMessage = get( validationError, 'message' );
+
+		if ( this.isUnsyncedAtomicSite() ) {
+			return translate( "This site's address cannot be changed" );
+		}
 
 		return isAvailable
 			? translate( 'Good news, that site address is available!' )
@@ -269,28 +286,63 @@ export class SiteAddressChanger extends Component {
 		} );
 	};
 
-	render() {
-		const {
-			currentDomain,
-			isAvailabilityPending,
-			isAvailable,
-			isSiteAddressChangeRequesting,
-			siteId,
-			selectedSiteSlug,
-			translate,
-		} = this.props;
+	getStepButtons = () => {
+		const { translate } = this.props;
 
-		const { domainFieldValue, newDomainSuffix } = this.state;
-		const { currentDomainSuffix } = this.props;
-		const currentDomainName = get( currentDomain, 'name', '' );
-		const currentDomainPrefix = this.getCurrentDomainPrefix();
-		const shouldShowValidationMessage = this.shouldShowValidationMessage();
-		const validationMessage = this.getValidationMessage();
-		const isBusy = isSiteAddressChangeRequesting || isAvailabilityPending;
-		const isDisabled =
-			( domainFieldValue === currentDomainPrefix && newDomainSuffix === currentDomainSuffix ) ||
-			! isAvailable;
-		const addDomainPath = '/domains/add/' + selectedSiteSlug;
+		if ( 0 === this.state.step ) {
+			const { isAvailabilityPending, isAvailable, isSiteAddressChangeRequesting } = this.props;
+
+			const { domainFieldValue, newDomainSuffix } = this.state;
+			const { currentDomainSuffix } = this.props;
+			const currentDomainPrefix = this.getCurrentDomainPrefix();
+			const isBusy = isSiteAddressChangeRequesting || isAvailabilityPending;
+
+			const isDisabled =
+				( domainFieldValue === currentDomainPrefix && newDomainSuffix === currentDomainSuffix ) ||
+				! isAvailable ||
+				this.isUnsyncedAtomicSite();
+
+			return [
+				{
+					action: 'confirm',
+					additionalClassNames: [ isBusy ? 'is-busy' : '' ],
+					isPrimary: true,
+					disabled: isDisabled,
+					label: translate( 'Change site address' ),
+					onClick: this.onSubmit,
+				},
+			];
+		} else if ( 1 === this.state.step ) {
+			return [
+				{
+					action: 'cancel',
+					onClick: this.onConfirmationFormClose,
+					isPrimary: false,
+					label: translate( 'Cancel' ),
+				},
+				{
+					action: 'confirm',
+					disabled: ! this.state.isConfirmationChecked,
+					isPrimary: true,
+					onClick: this.onConfirmationFormSubmit,
+					label: translate( 'Change site address' ),
+				},
+			];
+		}
+	};
+
+	renderNewAddressForm = () => {
+		const { currentDomain, isAvailable, siteId, selectedSiteSlug, translate, isAtomicSite } =
+			this.props;
+
+		if ( isAtomicSite ) {
+			return (
+				<div className="site-address-changer__content">
+					<Gridicon icon="info-outline" />
+					{ translate( 'wpcomstaging.com addresses cannot be changed.' ) }
+				</div>
+			);
+		}
 
 		if ( ! currentDomain.currentUserCanManage ) {
 			return (
@@ -309,63 +361,149 @@ export class SiteAddressChanger extends Component {
 			);
 		}
 
+		const { domainFieldValue } = this.state;
+		const currentDomainName = get( currentDomain, 'name', '' );
+		const currentDomainPrefix = this.getCurrentDomainPrefix();
+		const shouldShowValidationMessage = this.shouldShowValidationMessage();
+		const validationMessage = this.getValidationMessage();
+
+		const addDomainPath = '/domains/add/' + selectedSiteSlug;
+
 		return (
-			<div className="site-address-changer">
-				<ConfirmationDialog
-					isVisible={ this.state.showDialog }
-					onClose={ this.onDialogClose }
-					newDomainName={ domainFieldValue }
-					newDomainSuffix={ this.state.newDomainSuffix }
-					currentDomainName={ currentDomainPrefix }
-					currentDomainSuffix={ this.props.currentDomainSuffix }
-					onConfirm={ this.onConfirm }
-					siteId={ siteId }
+			<div className="site-address-changer__content">
+				<TrackComponentView
+					eventName="calypso_siteaddresschange_form_view"
+					eventProperties={ { blog_id: siteId } }
 				/>
-				<form onSubmit={ this.onSubmit }>
-					<TrackComponentView
-						eventName="calypso_siteaddresschange_form_view"
-						eventProperties={ { blog_id: siteId } }
+				<FormSectionHeading>
+					<strong>{ translate( 'Change your site address' ) }</strong>
+				</FormSectionHeading>
+				<div className="site-address-changer__info">
+					<p>
+						{ translate(
+							'Once you change your site address, %(currentDomainName)s will no longer be available. {{a}}Did you want to add a custom domain instead?{{/a}}',
+							{
+								args: { currentDomainName },
+								components: {
+									a: <a href={ addDomainPath } onClick={ this.handleAddDomainClick } />,
+								},
+							}
+						) }
+					</p>
+				</div>
+				<div className="site-address-changer__details">
+					<FormLabel htmlFor="site-address-changer__text-input">
+						{ translate( 'Enter your new site address' ) }
+					</FormLabel>
+					<FormTextInputWithAffixes
+						id="site-address-changer__text-input"
+						className="site-address-changer__input"
+						value={ domainFieldValue }
+						suffix={ this.renderDomainSuffix() }
+						onChange={ this.onFieldChange }
+						placeholder={ currentDomainPrefix }
+						isError={ shouldShowValidationMessage && ! isAvailable }
+						noWrap
 					/>
-					<Card className="site-address-changer__content">
-						<div className="site-address-changer__info">
-							<p>
-								{ translate(
-									'Once you change your site address, %(currentDomainName)s will no longer be available. {{a}}Did you want to add a custom domain instead?{{/a}}',
-									{
-										args: { currentDomainName },
-										components: {
-											a: <a href={ addDomainPath } onClick={ this.handleAddDomainClick } />,
-										},
-									}
-								) }
-							</p>
-						</div>
-						<FormLabel htmlFor="site-address-changer__text-input">
-							{ translate( 'Enter your new site address' ) }
-						</FormLabel>
-						<FormTextInputWithAffixes
-							id="site-address-changer__text-input"
-							className="site-address-changer__input"
-							value={ domainFieldValue }
-							suffix={ this.renderDomainSuffix() }
-							onChange={ this.onFieldChange }
-							placeholder={ currentDomainPrefix }
-							isError={ shouldShowValidationMessage && ! isAvailable }
-							noWrap
-						/>
-						<FormInputValidation
-							isHidden={ ! shouldShowValidationMessage }
-							isError={ ! isAvailable }
-							text={ validationMessage || '\u00A0' }
-						/>
-						<FormButtonsBar className="site-address-changer__form-footer">
-							<FormButton disabled={ isDisabled } busy={ isBusy } type="submit">
-								{ translate( 'Change site address' ) }
-							</FormButton>
-						</FormButtonsBar>
-					</Card>
-				</form>
+					<FormInputValidation
+						isHidden={ ! shouldShowValidationMessage }
+						isError={ ! isAvailable }
+						text={ validationMessage || '\u00A0' }
+					/>
+				</div>
 			</div>
+		);
+	};
+
+	renderConfirmationForm = () => {
+		const { currentDomainSuffix, siteId, translate } = this.props;
+		const { domainFieldValue: newDomainName, newDomainSuffix } = this.state;
+		const currentDomainPrefix = this.getCurrentDomainPrefix();
+
+		return (
+			<form className="site-address-changer__dialog">
+				<TrackComponentView
+					eventName="calypso_siteaddresschange_areyousure_view"
+					eventProperties={ {
+						blog_id: siteId,
+						new_domain: newDomainName,
+					} }
+				/>
+				<h1 className="site-address-changer__dialog-heading">
+					{ translate( 'Confirm your decision' ) }
+				</h1>
+				<div className="site-address-changer__confirmation-detail">
+					<Gridicon
+						icon="cross-circle"
+						size={ 18 }
+						className="site-address-changer__copy-deletion"
+					/>
+					<p className="site-address-changer__confirmation-detail-copy site-address-changer__copy-deletion">
+						{ translate(
+							'{{strong}}%(currentDomainPrefix)s{{/strong}}%(currentDomainSuffix)s will be removed and unavailable for use.',
+							{
+								components: {
+									strong: <strong />,
+								},
+								args: {
+									currentDomainPrefix,
+									currentDomainSuffix,
+								},
+							}
+						) }
+					</p>
+				</div>
+				<div className="site-address-changer__confirmation-detail">
+					<Gridicon
+						icon="checkmark-circle"
+						size={ 18 }
+						className="site-address-changer__copy-addition"
+					/>
+					<p className="site-address-changer__confirmation-detail-copy site-address-changer__copy-addition">
+						{ translate(
+							'{{strong}}%(newDomainName)s{{/strong}}%(newDomainSuffix)s will be your new site address.',
+							{
+								components: {
+									strong: <strong />,
+								},
+								args: {
+									newDomainName,
+									newDomainSuffix,
+								},
+							}
+						) }
+					</p>
+				</div>
+				<h2>{ translate( 'Check the box to confirm' ) }</h2>
+				<FormLabel>
+					<FormInputCheckbox
+						checked={ this.state.isConfirmationChecked }
+						onChange={ this.toggleConfirmationChecked }
+					/>
+					<span>
+						{ translate(
+							"I understand that I won't be able to undo this change to my site address."
+						) }
+					</span>
+				</FormLabel>
+			</form>
+		);
+	};
+
+	render() {
+		const { isDialogVisible, onClose } = this.props;
+
+		return (
+			<Dialog
+				buttons={ this.getStepButtons() }
+				className="site-address-changer"
+				isVisible={ isDialogVisible }
+				onClose={ onClose }
+				leaveTimeout={ 0 }
+			>
+				{ 0 === this.state.step && this.renderNewAddressForm() }
+				{ 1 === this.state.step && this.renderConfirmationForm() }
+			</Dialog>
 		);
 	}
 }
@@ -377,6 +515,7 @@ export default connect(
 		return {
 			siteId,
 			selectedSiteSlug: getSiteSlug( state, siteId ),
+			isAtomicSite: isSiteAutomatedTransfer( state, siteId ),
 			isAvailable: isSiteAddressValidationAvailable( state, siteId ),
 			isSiteAddressChangeRequesting: isRequestingSiteAddressChange( state, siteId ),
 			isAvailabilityPending: getSiteAddressAvailabilityPending( state, siteId ),

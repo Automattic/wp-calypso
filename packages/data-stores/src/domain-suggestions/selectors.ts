@@ -1,12 +1,7 @@
-/**
- * External dependencies
- */
 import { select } from '@wordpress/data';
-
-/**
- * Internal dependencies
- */
 import { STORE_KEY, DataStatus } from './constants';
+import { stringifyDomainQueryObject, normalizeDomainSuggestionQuery } from './utils';
+import type { State } from './reducer';
 import type {
 	DomainAvailability,
 	DomainAvailabilities,
@@ -15,8 +10,6 @@ import type {
 	DomainSuggestionQuery,
 	DomainSuggestionSelectorOptions,
 } from './types';
-import type { State } from './reducer';
-import { stringifyDomainQueryObject, normalizeDomainSuggestionQuery } from './utils';
 
 export const getCategories = ( state: State ): DomainCategory[] => {
 	// Sort domain categories by tier, then by title.

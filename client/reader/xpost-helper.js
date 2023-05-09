@@ -1,26 +1,18 @@
-/**
- * External dependencies
- */
-import { has } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import displayTypes from 'calypso/state/reader/posts/display-types';
 import { getUrlParts } from '@automattic/calypso-url';
+import displayTypes from 'calypso/state/reader/posts/display-types';
 
 const { X_POST } = displayTypes;
 
 export function isXPost( post ) {
-	return post && ( post.display_type & X_POST || has( post, [ 'tags', 'p2-xpost' ] ) );
+	return post && ( post.display_type & X_POST || post.tags?.hasOwnProperty( 'p2-xpost' ) );
 }
 
 const exported = {
 	/**
 	 * Examines the post metadata, and returns metadata related to cross posts.
 	 *
-	 * @param {object} post - post object
-	 * @returns {object} - urls of site and post url
+	 * @param {Object} post - post object
+	 * @returns {Object} - urls of site and post url
 	 */
 	getXPostMetadata( post ) {
 		if ( ! isXPost( post ) ) {

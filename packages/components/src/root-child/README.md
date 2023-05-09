@@ -8,20 +8,17 @@ positioning may impact the child's style.
 ## Usage
 
 ```jsx
-import React from 'react';
 import { RootChild } from '@automattic/components';
 
-export default class extends React.Component {
-	render() {
-		return (
-			<div className="my-component">
-				<span>This text will be a child of MyComponent</span>
-				<RootChild>
-					<span>This text will be a child of the root element, not of MyComponent</span>
-				</RootChild>
-			</div>
-		);
-	}
+export default function MyComponent() {
+	return (
+		<div className="my-component">
+			<span>This text will be a child of MyComponent</span>
+			<RootChild>
+				<span>This text will be a child of the root element, not of MyComponent</span>
+			</RootChild>
+		</div>
+	);
 }
 ```
 

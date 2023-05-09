@@ -1,16 +1,10 @@
-/**
- * External Dependencies
- */
 const path = require( 'path' );
-const webpack = require( 'webpack' );
-
-/**
- * Internal Dependencies
- */
-const { workerCount } = require( './webpack.common' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
 const { shouldTranspileDependency } = require( '@automattic/calypso-build/webpack/util' );
+const webpack = require( 'webpack' );
 const cacheIdentifier = require( '../build-tools/babel/babel-loader-cache-identifier' );
+const config = require( './server/config' );
+const { workerCount } = require( './webpack.common' );
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 const cacheDirectory = path.resolve( '.cache', 'babel-desktop' );
@@ -31,7 +25,13 @@ module.exports = {
 				include: path.join( __dirname, 'sections.js' ),
 				use: {
 					loader: path.join( __dirname, '../build-tools/webpack/sections-loader' ),
-					options: { useRequire: true, onlyIsomorphic: true },
+					options: {
+						useRequire: true,
+						onlyIsomorphic: true,
+						forceAll: ! isDevelopment,
+						activeSections: config( 'sections' ),
+						enableByDefault: config( 'enable_all_sections' ),
+					},
 				},
 			},
 			{
@@ -48,7 +48,7 @@ module.exports = {
 			} ),
 			TranspileConfig.loader( {
 				workerCount,
-				presets: [ require.resolve( '@automattic/calypso-build/babel/dependencies' ) ],
+				presets: [ require.resolve( '@automattic/calypso-babel-config/preset/dependencies' ) ],
 				cacheDirectory,
 				cacheIdentifier,
 				cacheCompression: false,
@@ -103,6 +103,6 @@ module.exports = {
 			/^calypso[/\\]my-sites[/\\]themes[/\\]theme-upload$/,
 			'calypso/components/empty-component'
 		), // Depends on BOM
-		new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ), // server doesn't use moment locales
+		new webpack.IgnorePlugin( { resourceRegExp: /^\.\/locale$/, contextRegExp: /moment$/ } ), // server doesn't use moment locales
 	],
 };

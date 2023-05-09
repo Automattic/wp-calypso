@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { requestRewindState } from 'calypso/state/rewind/state/actions';
 
 export class QueryRewindState extends Component {

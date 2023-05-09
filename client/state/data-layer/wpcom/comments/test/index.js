@@ -1,13 +1,3 @@
-/**
- * Internal dependencies
- */
-import {
-	fetchPostComments,
-	addComments,
-	announceFailure,
-	commentsFromApi,
-	handleDeleteSuccess,
-} from '../';
 import {
 	COMMENTS_RECEIVE,
 	COMMENTS_UPDATES_RECEIVE,
@@ -16,6 +6,13 @@ import {
 } from 'calypso/state/action-types';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from 'calypso/state/comments/constants';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import {
+	fetchPostComments,
+	addComments,
+	announceFailure,
+	commentsFromApi,
+	handleDeleteSuccess,
+} from '../';
 
 describe( 'wpcom-api', () => {
 	describe( 'post comments request', () => {

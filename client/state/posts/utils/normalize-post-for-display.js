@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import { cloneDeep, flow } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import pickCanonicalImage from 'calypso/lib/post-normalizer/rule-pick-canonical-image';
-import decodeEntities from 'calypso/lib/post-normalizer/rule-decode-entities';
-import detectMedia from 'calypso/lib/post-normalizer/rule-content-detect-media';
-import withContentDom from 'calypso/lib/post-normalizer/rule-with-content-dom';
-import stripHtml from 'calypso/lib/post-normalizer/rule-strip-html';
 import config from '@automattic/calypso-config';
+import { cloneDeep, flow } from 'lodash';
+import detectMedia from 'calypso/lib/post-normalizer/rule-content-detect-media';
+import decodeEntities from 'calypso/lib/post-normalizer/rule-decode-entities';
+import pickCanonicalImage from 'calypso/lib/post-normalizer/rule-pick-canonical-image';
+import stripHtml from 'calypso/lib/post-normalizer/rule-strip-html';
+import withContentDom from 'calypso/lib/post-normalizer/rule-with-content-dom';
 
 const normalizeDisplayFlow = flow( [
 	decodeEntities,
@@ -30,8 +23,8 @@ const normalizePostCache = new WeakMap();
  * Returns a normalized post object given its raw form. A normalized post
  * includes common transformations to prepare the post for display.
  *
- * @param  {object} post Raw post object
- * @returns {object}      Normalized post object
+ * @param  {Object} post Raw post object
+ * @returns {Object}      Normalized post object
  */
 export function normalizePostForDisplay( post ) {
 	if ( ! post ) {

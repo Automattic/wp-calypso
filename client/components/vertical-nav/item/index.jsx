@@ -1,19 +1,8 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import { CompactCard, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 
-/**
- * Internal dependencies
- */
-import { CompactCard } from '@automattic/components';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};
@@ -22,6 +11,7 @@ class VerticalNavItem extends Component {
 	static propTypes = {
 		children: PropTypes.any,
 		className: PropTypes.string,
+		disabled: PropTypes.bool,
 		external: PropTypes.bool,
 		isPlaceholder: PropTypes.bool,
 		onClick: PropTypes.func,
@@ -57,23 +47,30 @@ class VerticalNavItem extends Component {
 	};
 
 	render() {
-		const { isPlaceholder, external, onClick, path, className, children } = this.props;
+		const { children, className, disabled, external, isPlaceholder, onClick, path } = this.props;
 
 		if ( isPlaceholder ) {
 			return this.renderPlaceholder();
 		}
 
-		const compactCardClassNames = classNames( 'vertical-nav-item', className );
+		const compactCardClassNames = classNames( 'vertical-nav-item', className, { disabled } );
 
 		const linkProps = external ? { target: '_blank', rel: 'noreferrer' } : {};
 
+		const navItemCard = (
+			<CompactCard className={ compactCardClassNames }>
+				{ this.getIcon() }
+				<span>{ children }</span>
+			</CompactCard>
+		);
+
+		if ( disabled ) {
+			return navItemCard;
+		}
+
 		return (
 			<a href={ path } onClick={ onClick } { ...linkProps }>
-				<CompactCard className={ compactCardClassNames }>
-					{ this.getIcon() }
-
-					<span>{ children }</span>
-				</CompactCard>
+				{ navItemCard }
 			</a>
 		);
 	}

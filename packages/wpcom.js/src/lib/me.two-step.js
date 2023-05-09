@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import MeTwoStepSMS from './me.two-step.sms';
 
 const root = '/me/two-step/';
@@ -22,7 +19,7 @@ export default class MeTwoStep {
 	/**
 	 * Get information about current user's two factor configuration.
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */

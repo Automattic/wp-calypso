@@ -1,0 +1,81 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.themes-toolbar-group.responsive-toolbar-group__swipe,
+.themes-toolbar-group.responsive-toolbar-group__dropdown {
+	padding: 0;
+
+	.responsive-toolbar-group__full-list,
+	.responsive-toolbar-group__swipe-list,
+	.responsive-toolbar-group__grouped-list {
+		display: flex;
+		gap: 4px;
+		justify-content: flex-start;
+		padding: 0;
+
+		> div {
+			&:first-of-type {
+				margin-left: 0;
+			}
+
+			&:last-of-type {
+				margin-right: 0;
+			}
+		}
+	}
+
+	.components-toolbar {
+		background-color: transparent;
+		border: 0;
+		min-height: 28px;
+
+		.components-button {
+			color: var(--color-neutral-60);
+			height: 28px;
+			line-height: 24px;
+			padding: 4px 12px;
+
+			&::before {
+				transition: background-color 0.15s ease-in-out;
+				border-radius: 4px;
+				height: 28px;
+				left: 0;
+				right: 0;
+			}
+
+			&:focus-visible::before {
+				box-shadow: inset 0 0 0 2px var(--color-primary-light);
+			}
+
+			&:not(.is-pressed):hover::before {
+				background-color: var(--studio-gray-0);
+			}
+
+			&.is-pressed {
+				color: var(--color-text-inverted);
+
+				&::before {
+					background-color: var(--color-neutral-80);
+				}
+			}
+		}
+	}
+
+	.components-dropdown__content {
+		border-radius: 4px;
+
+		.components-menu-group > div {
+			display: flex;
+			flex-direction: column;
+			gap: 4px;
+		}
+
+		.responsive-toolbar-group__menu-item {
+			border-radius: 4px;
+
+			&.is-selected {
+				background-color: var(--color-neutral-80);
+			}
+		}
+	}
+}

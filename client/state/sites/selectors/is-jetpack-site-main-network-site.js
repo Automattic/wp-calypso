@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { withoutHttp } from 'calypso/lib/url';
 import getRawSite from 'calypso/state/selectors/get-raw-site';
 import getSiteOption from './get-site-option';
@@ -12,7 +9,7 @@ import isJetpackSite from './is-jetpack-site';
  * or if its url matches the `main_network_site` url option.
  * Returns null if the site is not known or is not a Jetpack site.
  *
- * @param {object} state Global state tree
+ * @param {Object} state Global state tree
  * @param {number} siteId Site ID
  * @returns {?boolean} true if the site is the main site
  */

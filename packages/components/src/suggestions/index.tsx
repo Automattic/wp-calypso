@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
-import { find, groupBy, isEqual, partition, property } from 'lodash';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import { find, groupBy, isEqual, partition, property } from 'lodash';
+import { Fragment, Component } from 'react';
+import ReactDOM from 'react-dom';
 import Item from './item';
 
 /**
@@ -19,7 +12,7 @@ import './style.scss';
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};
 
-type Suggestion = { label: string; category?: string };
+type Suggestion = { name: string; label: string; category?: string };
 
 type CategorizedSuggestions = {
 	category?: string;
@@ -73,7 +66,9 @@ class Suggestions extends Component< Props, State > {
 
 	getOriginalIndexFromPosition = ( index: number ): number =>
 		this.getCategories().reduce( ( foundIndex, category ) => {
-			if ( foundIndex !== -1 ) return foundIndex;
+			if ( foundIndex !== -1 ) {
+				return foundIndex;
+			}
 
 			const suggestion = find( category.suggestions, { index } );
 			return suggestion ? suggestion.originalIndex : -1;
@@ -182,7 +177,7 @@ class Suggestions extends Component< Props, State > {
 		return categories;
 	}
 
-	render(): JSX.Element | null {
+	render() {
 		const { query, className, title } = this.props;
 		const containerClass = classnames( 'suggestions', className );
 
@@ -194,7 +189,7 @@ class Suggestions extends Component< Props, State > {
 			<div className={ containerClass }>
 				{ title ? <div className="suggestions__title">{ title }</div> : null }
 				{ this.getCategories().map( ( { category, categoryKey, suggestions }, categoryIndex ) => (
-					<React.Fragment key={ categoryKey }>
+					<Fragment key={ categoryKey }>
 						{ ! categoryIndex ? null : (
 							<div className="suggestions__category-heading">{ category }</div>
 						) }
@@ -220,7 +215,7 @@ class Suggestions extends Component< Props, State > {
 								} }
 							/>
 						) ) }
-					</React.Fragment>
+					</Fragment>
 				) ) }
 			</div>
 		);

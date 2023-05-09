@@ -1,24 +1,13 @@
-/**
- * External dependencies
- */
 import '@automattic/calypso-polyfills';
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import RenderDom from 'react-dom';
 import i18n from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import RenderDom from 'react-dom';
+import Main from 'calypso/components/main';
+import InvalidActionPage from './invalid-action';
 import RegistrantVerificationPage from './registrant-verification';
 import TransferAwayConfirmationPage from './transfer-away-confirmation';
-import InvalidActionPage from './invalid-action';
-import Main from 'calypso/components/main';
 
-/**
- *
- * Style dependencies
- */
 import 'calypso/assets/stylesheets/style.scss';
 import './style.scss';
 
@@ -29,8 +18,16 @@ class DomainsLandingPage extends Component {
 	};
 
 	renderRegistrantVerificationContent() {
-		const { domain, email, token } = this.props.query;
-		return <RegistrantVerificationPage domain={ domain } email={ email } token={ token } />;
+		// The reseller parameter is optional and contains the name of the DSAPI reseller that the domain was registered with
+		const { domain, email, reseller, token } = this.props.query;
+		return (
+			<RegistrantVerificationPage
+				domain={ domain }
+				email={ email }
+				reseller={ reseller }
+				token={ token }
+			/>
+		);
 	}
 
 	renderTransferAwayConfirmation() {

@@ -16,6 +16,7 @@ Here are few resources to get up to speed with “modern” JavaScript and ES6:
 
 - [JavaScript Allongé, the "Six" Edition](https://leanpub.com/javascriptallongesix/read)
 - [Exploring ES6](http://exploringjs.com/es6/)
+- [The Modern JavaScript Tutorial](https://javascript.info/)
 - [What the heck is the event loop anyway?](https://www.youtube.com/watch?v=8aGhZQkoFbQ) – short presentation that sheds some light on how asynchronous operations are executed in JavaScript
 
 Key concepts checklist:

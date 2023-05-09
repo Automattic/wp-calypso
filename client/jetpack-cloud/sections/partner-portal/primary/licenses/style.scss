@@ -9,7 +9,7 @@
 	}
 }
 
-@include breakpoint-deprecated( '<960px' ) {
+@include breakpoint-deprecated( "<960px" ) {
 	.licenses__header {
 		flex-wrap: wrap;
 

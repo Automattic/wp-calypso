@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import {
 	InspectorControls,
 	InnerBlocks,
@@ -13,11 +10,9 @@ import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { positionLeft, positionRight } from '@wordpress/icons';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import { TimelineIcon } from './icon';
+
+const DEFAULT_BACKGROUND = '#eeeeee';
 
 function Controls( { alignment, clientId, toggleAlignment } ) {
 	const parentIsAlternating = useSelect( ( select ) => {
@@ -57,7 +52,7 @@ export function registerTimelineItemBlock() {
 		icon: TimelineIcon,
 		category: 'widgets',
 		parent: [ 'jetpack/timeline' ],
-		edit: ( { attributes, clientId, setAttributes } ) => {
+		edit: function Edit( { attributes, clientId, setAttributes } ) {
 			const style = {
 				backgroundColor: attributes.background,
 			};
@@ -87,10 +82,12 @@ export function registerTimelineItemBlock() {
 						<InspectorControls>
 							<PanelColorSettings
 								title={ __( 'Color Settings', 'full-site-editing' ) }
+								enableAlpha={ true }
 								colorSettings={ [
 									{
 										value: attributes.background,
-										onChange: ( background ) => setAttributes( { background } ),
+										onChange: ( background ) =>
+											setAttributes( { background: background || DEFAULT_BACKGROUND } ),
 										label: __( 'Background Color', 'full-site-editing' ),
 									},
 								] }
@@ -136,7 +133,7 @@ export function registerTimelineItemBlock() {
 			},
 			background: {
 				type: 'string',
-				default: '#eeeeee',
+				default: DEFAULT_BACKGROUND,
 			},
 		},
 	} );

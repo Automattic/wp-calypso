@@ -1,21 +1,13 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
-import { TASK_RENEW_EXPIRED_PLAN } from 'calypso/my-sites/customer-home/cards/constants';
+import { connect } from 'react-redux';
 import expiredIllustration from 'calypso/assets/images/customer-home/disconnected-dark.svg';
 import expiringIllustration from 'calypso/assets/images/customer-home/disconnected.svg';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { getSite } from 'calypso/state/sites/selectors';
-import { getSitePurchases } from 'calypso/state/purchases/selectors/get-site-purchases';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { TASK_RENEW_EXPIRED_PLAN } from 'calypso/my-sites/customer-home/cards/constants';
+import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
+import { getSitePurchases } from 'calypso/state/purchases/selectors/get-site-purchases';
+import { getSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const Renew = ( { card, moment, purchases, site, siteSlug } ) => {
 	const translate = useTranslate();

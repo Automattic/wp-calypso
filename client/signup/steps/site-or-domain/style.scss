@@ -1,7 +1,20 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .site-or-domain__choices {
 	display: flex;
 	flex-flow: row wrap;
-	justify-content: center;
+	justify-content: flex-start;
+	.select-items__item-description {
+		strong {
+			color: var(--studio-green-60);
+		}
+	}
+	.select-items__item-info-wrapper {
+		@include break-mobile {
+			align-items: center;
+		}
+	}
 }
 
 .site-or-domain__choice {
@@ -25,11 +38,11 @@
 	}
 
 	&:hover {
-		box-shadow: 0 0 0 1px var( --color-neutral-light ), 0 2px 4px var( --color-neutral-10 );
+		box-shadow: 0 0 0 1px var(--color-neutral-light), 0 2px 4px var(--color-neutral-10);
 	}
 
 	h2 {
-		border-top: solid 1px var( --color-neutral-0 );
+		border-top: solid 1px var(--color-neutral-0);
 		padding: 10px 15px;
 	}
 }
@@ -57,10 +70,10 @@
 
 .site-or-domain__choice-text {
 	flex-grow: 1;
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 }
 
-@include breakpoint-deprecated( '>480px' ) {
+@include breakpoint-deprecated( ">480px" ) {
 	.site-or-domain__choice-button {
 		margin-bottom: 1.5em;
 	}
@@ -76,7 +89,7 @@
 	}
 }
 
-@include breakpoint-deprecated( '<480px' ) {
+@include breakpoint-deprecated( "<480px" ) {
 	.site-or-domain__choice-text {
 		display: flex;
 		flex-direction: column-reverse;
@@ -85,4 +98,52 @@
 
 .site-or-domain__is-placeholder {
 	@include placeholder( --color-neutral-10 );
+}
+
+.site-or-domain__free-domain-note {
+	display: flex;
+	color: var(--studio-gray-50);
+	font-size: $font-body-small;
+	@include break-small {
+		padding-left: 60px;
+	}
+}
+
+body.is-white-signup {
+	.site-or-domain__choices {
+		svg.intent-screen-select-items__item-icon {
+			fill: var(--studio-gray-30);
+		}
+	}
+}
+
+.signup .lean-domain-search {
+
+	.step-wrapper__header {
+		max-width: 50%;
+	}
+
+	.step-wrapper__content {
+		max-width: 50%;
+	}
+
+	.formatted-header__title {
+		max-width: 100%;
+		word-wrap: break-word;
+	}
+
+	.select-items__item-title {
+		max-width: 300px;
+		text-overflow: ellipsis;
+		overflow: hidden;
+	}
+
+	@media (max-width: 600px) {
+		.step-wrapper__header {
+			max-width: 100%;
+		}
+		.step-wrapper__content {
+			max-width: 100%;
+		}
+	}
 }

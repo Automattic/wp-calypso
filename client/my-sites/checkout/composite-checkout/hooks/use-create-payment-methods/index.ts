@@ -1,18 +1,5 @@
-/**
- * External dependencies
- */
-import { useMemo } from 'react';
 import { isEnabled } from '@automattic/calypso-config';
-import {
-	createAlipayMethod,
-	createAlipayPaymentMethodStore,
-	createIdealMethod,
-	createIdealPaymentMethodStore,
-	createSofortMethod,
-	createSofortPaymentMethodStore,
-	createEpsMethod,
-	createEpsPaymentMethodStore,
-} from '@automattic/composite-checkout';
+import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	createApplePayMethod,
 	createGooglePayMethod,
@@ -22,85 +9,98 @@ import {
 	createGiropayPaymentMethodStore,
 	createP24Method,
 	createP24PaymentMethodStore,
-	createPayPalMethod,
+	createEpsMethod,
+	createEpsPaymentMethodStore,
+	createIdealMethod,
+	createIdealPaymentMethodStore,
+	createSofortMethod,
+	createSofortPaymentMethodStore,
+	createAlipayMethod,
+	createAlipayPaymentMethodStore,
+	isValueTruthy,
 } from '@automattic/wpcom-checkout';
-import { useShoppingCart } from '@automattic/shopping-cart';
-import type { StripeConfiguration, Stripe, StripeLoadingError } from '@automattic/calypso-stripe';
-import type { PaymentMethod } from '@automattic/composite-checkout';
-
-/**
- * Internal dependencies
- */
-import { createWeChatMethod, createWeChatPaymentMethodStore } from '../../payment-methods/wechat';
+import { useMemo } from 'react';
+import { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
+import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import {
 	createCreditCardPaymentMethodStore,
 	createCreditCardMethod,
 } from '../../payment-methods/credit-card';
-import {
-	createEbanxTefPaymentMethodStore,
-	createEbanxTefMethod,
-} from '../../payment-methods/ebanx-tef';
-import {
-	createIdWalletPaymentMethodStore,
-	createIdWalletMethod,
-} from '../../payment-methods/id-wallet';
+import { createFreePaymentMethod } from '../../payment-methods/free-purchase';
 import {
 	createNetBankingPaymentMethodStore,
 	createNetBankingMethod,
 } from '../../payment-methods/netbanking';
-import { createFullCreditsMethod } from '../../payment-methods/full-credits';
-import { createFreePaymentMethod } from '../../payment-methods/free-purchase';
-import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
+import { createPayPalMethod, createPayPalStore } from '../../payment-methods/paypal';
+import { createWeChatMethod, createWeChatPaymentMethodStore } from '../../payment-methods/wechat';
 import useCreateExistingCards from './use-create-existing-cards';
-import doesValueExist from '../../lib/does-value-exist';
-import type { StoredCard } from '../../types/stored-cards';
+import type { StripeConfiguration, StripeLoadingError } from '@automattic/calypso-stripe';
+import type { PaymentMethod } from '@automattic/composite-checkout';
+import type { CartKey } from '@automattic/shopping-cart';
+import type { Stripe } from '@stripe/stripe-js';
 
 export { useCreateExistingCards };
 
-export function useCreatePayPal( { labelText }: { labelText?: string | null } ): PaymentMethod {
-	const paypalMethod = useMemo( () => createPayPalMethod( { labelText } ), [ labelText ] );
+export function useCreatePayPal( {
+	labelText,
+	shouldShowTaxFields,
+}: {
+	labelText?: string | null;
+	shouldShowTaxFields?: boolean;
+} ): PaymentMethod {
+	const store = useMemo( () => createPayPalStore(), [] );
+	const paypalMethod = useMemo(
+		() => createPayPalMethod( { labelText, store, shouldShowTaxFields } ),
+		[ labelText, shouldShowTaxFields, store ]
+	);
 	return paypalMethod;
 }
 
 export function useCreateCreditCard( {
 	isStripeLoading,
 	stripeLoadingError,
-	stripeConfiguration,
-	stripe,
 	shouldUseEbanx,
 	shouldShowTaxFields = false,
 	activePayButtonText = undefined,
+	initialUseForAllSubscriptions,
+	allowUseForAllSubscriptions,
 }: {
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
-	stripeConfiguration: StripeConfiguration | null;
-	stripe: Stripe | null;
 	shouldUseEbanx: boolean;
 	shouldShowTaxFields?: boolean;
 	activePayButtonText?: string | undefined;
+	initialUseForAllSubscriptions?: boolean;
+	allowUseForAllSubscriptions?: boolean;
 } ): PaymentMethod | null {
 	const shouldLoadStripeMethod = ! isStripeLoading && ! stripeLoadingError;
-	const stripePaymentMethodStore = useMemo( () => createCreditCardPaymentMethodStore(), [] );
+	const stripePaymentMethodStore = useMemo(
+		() =>
+			createCreditCardPaymentMethodStore( {
+				initialUseForAllSubscriptions,
+				allowUseForAllSubscriptions,
+			} ),
+		[ initialUseForAllSubscriptions, allowUseForAllSubscriptions ]
+	);
 	const stripeMethod = useMemo(
 		() =>
 			shouldLoadStripeMethod
 				? createCreditCardMethod( {
 						store: stripePaymentMethodStore,
-						stripe,
-						stripeConfiguration,
 						shouldUseEbanx,
 						shouldShowTaxFields,
 						activePayButtonText,
+						allowUseForAllSubscriptions,
 				  } )
 				: null,
 		[
 			shouldLoadStripeMethod,
 			stripePaymentMethodStore,
-			stripe,
-			stripeConfiguration,
 			shouldUseEbanx,
 			shouldShowTaxFields,
 			activePayButtonText,
+			allowUseForAllSubscriptions,
 		]
 	);
 	return stripeMethod;
@@ -109,13 +109,9 @@ export function useCreateCreditCard( {
 function useCreateAlipay( {
 	isStripeLoading,
 	stripeLoadingError,
-	stripeConfiguration,
-	stripe,
 }: {
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
-	stripeConfiguration: StripeConfiguration | null;
-	stripe: Stripe | null;
 } ): PaymentMethod | null {
 	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
 	const paymentMethodStore = useMemo( () => createAlipayPaymentMethodStore(), [] );
@@ -124,11 +120,9 @@ function useCreateAlipay( {
 			shouldLoad
 				? createAlipayMethod( {
 						store: paymentMethodStore,
-						stripe,
-						stripeConfiguration,
 				  } )
 				: null,
-		[ shouldLoad, paymentMethodStore, stripe, stripeConfiguration ]
+		[ shouldLoad, paymentMethodStore ]
 	);
 }
 
@@ -195,14 +189,10 @@ function useCreateGiropay( {
 function useCreateWeChat( {
 	isStripeLoading,
 	stripeLoadingError,
-	stripeConfiguration,
-	stripe,
 	siteSlug,
 }: {
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
-	stripeConfiguration: StripeConfiguration | null;
-	stripe: Stripe | null;
 	siteSlug?: string | undefined;
 } ): PaymentMethod | null {
 	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
@@ -212,25 +202,19 @@ function useCreateWeChat( {
 			shouldLoad
 				? createWeChatMethod( {
 						store: paymentMethodStore,
-						stripe,
-						stripeConfiguration,
 						siteSlug,
 				  } )
 				: null,
-		[ shouldLoad, paymentMethodStore, stripe, stripeConfiguration, siteSlug ]
+		[ shouldLoad, paymentMethodStore, siteSlug ]
 	);
 }
 
 function useCreateIdeal( {
 	isStripeLoading,
 	stripeLoadingError,
-	stripeConfiguration,
-	stripe,
 }: {
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
-	stripeConfiguration: StripeConfiguration | null;
-	stripe: Stripe | null;
 } ): PaymentMethod | null {
 	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
 	const paymentMethodStore = useMemo( () => createIdealPaymentMethodStore(), [] );
@@ -239,24 +223,18 @@ function useCreateIdeal( {
 			shouldLoad
 				? createIdealMethod( {
 						store: paymentMethodStore,
-						stripe,
-						stripeConfiguration,
 				  } )
 				: null,
-		[ shouldLoad, paymentMethodStore, stripe, stripeConfiguration ]
+		[ shouldLoad, paymentMethodStore ]
 	);
 }
 
 function useCreateSofort( {
 	isStripeLoading,
 	stripeLoadingError,
-	stripeConfiguration,
-	stripe,
 }: {
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
-	stripeConfiguration: StripeConfiguration | null;
-	stripe: Stripe | null;
 } ): PaymentMethod | null {
 	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
 	const paymentMethodStore = useMemo( () => createSofortPaymentMethodStore(), [] );
@@ -265,24 +243,18 @@ function useCreateSofort( {
 			shouldLoad
 				? createSofortMethod( {
 						store: paymentMethodStore,
-						stripe,
-						stripeConfiguration,
 				  } )
 				: null,
-		[ shouldLoad, paymentMethodStore, stripe, stripeConfiguration ]
+		[ shouldLoad, paymentMethodStore ]
 	);
 }
 
 function useCreateEps( {
 	isStripeLoading,
 	stripeLoadingError,
-	stripeConfiguration,
-	stripe,
 }: {
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
-	stripeConfiguration: StripeConfiguration | null;
-	stripe: Stripe | null;
 } ): PaymentMethod | null {
 	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
 	const paymentMethodStore = useMemo( () => createEpsPaymentMethodStore(), [] );
@@ -291,11 +263,9 @@ function useCreateEps( {
 			shouldLoad
 				? createEpsMethod( {
 						store: paymentMethodStore,
-						stripe,
-						stripeConfiguration,
 				  } )
 				: null,
-		[ shouldLoad, paymentMethodStore, stripe, stripeConfiguration ]
+		[ shouldLoad, paymentMethodStore ]
 	);
 }
 
@@ -310,32 +280,6 @@ function useCreateNetbanking(): PaymentMethod {
 	);
 }
 
-function useCreateIdWallet(): PaymentMethod {
-	const paymentMethodStore = useMemo( () => createIdWalletPaymentMethodStore(), [] );
-	return useMemo(
-		() =>
-			createIdWalletMethod( {
-				store: paymentMethodStore,
-			} ),
-		[ paymentMethodStore ]
-	);
-}
-
-function useCreateEbanxTef() {
-	const paymentMethodStore = useMemo( () => createEbanxTefPaymentMethodStore(), [] );
-	return useMemo(
-		() =>
-			createEbanxTefMethod( {
-				store: paymentMethodStore,
-			} ),
-		[ paymentMethodStore ]
-	);
-}
-
-function useCreateFullCredits() {
-	return useMemo( () => createFullCreditsMethod(), [] );
-}
-
 function useCreateFree() {
 	return useMemo( createFreePaymentMethod, [] );
 }
@@ -345,25 +289,22 @@ function useCreateApplePay( {
 	stripeLoadingError,
 	stripeConfiguration,
 	stripe,
-	isApplePayAvailable,
-	isWebPayLoading,
+	cartKey,
 }: {
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
 	stripeConfiguration: StripeConfiguration | null;
 	stripe: Stripe | null;
-	isApplePayAvailable: boolean;
-	isWebPayLoading: boolean;
+	cartKey: CartKey | undefined;
 } ): PaymentMethod | null {
 	const isStripeReady = ! isStripeLoading && ! stripeLoadingError && stripe && stripeConfiguration;
-
-	const shouldCreateApplePayMethod = isStripeReady && ! isWebPayLoading && isApplePayAvailable;
+	const shouldCreateApplePayMethod = isStripeReady;
 
 	const applePayMethod = useMemo( () => {
-		return shouldCreateApplePayMethod && stripe && stripeConfiguration
-			? createApplePayMethod( stripe, stripeConfiguration )
+		return shouldCreateApplePayMethod && stripe && stripeConfiguration && cartKey
+			? createApplePayMethod( stripe, stripeConfiguration, cartKey )
 			: null;
-	}, [ shouldCreateApplePayMethod, stripe, stripeConfiguration ] );
+	}, [ shouldCreateApplePayMethod, stripe, stripeConfiguration, cartKey ] );
 
 	return applePayMethod;
 }
@@ -373,30 +314,26 @@ function useCreateGooglePay( {
 	stripeLoadingError,
 	stripeConfiguration,
 	stripe,
-	isGooglePayAvailable,
-	isWebPayLoading,
+	cartKey,
 }: {
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
 	stripeConfiguration: StripeConfiguration | null;
 	stripe: Stripe | null;
-	isGooglePayAvailable: boolean;
-	isWebPayLoading: boolean;
+	cartKey: CartKey | undefined;
 } ): PaymentMethod | null {
 	const isStripeReady =
 		! isStripeLoading &&
 		! stripeLoadingError &&
-		! isWebPayLoading &&
 		stripe &&
 		stripeConfiguration &&
-		isGooglePayAvailable &&
 		isEnabled( 'checkout/google-pay' );
 
 	return useMemo( () => {
-		return isStripeReady && stripe && stripeConfiguration
-			? createGooglePayMethod( stripe, stripeConfiguration )
+		return isStripeReady && stripe && stripeConfiguration && cartKey
+			? createGooglePayMethod( stripe, stripeConfiguration, cartKey )
 			: null;
-	}, [ stripe, stripeConfiguration, isStripeReady ] );
+	}, [ stripe, stripeConfiguration, isStripeReady, cartKey ] );
 }
 
 export default function useCreatePaymentMethods( {
@@ -404,9 +341,6 @@ export default function useCreatePaymentMethods( {
 	stripeLoadingError,
 	stripeConfiguration,
 	stripe,
-	isApplePayAvailable,
-	isGooglePayAvailable,
-	isWebPayLoading,
 	storedCards,
 	siteSlug,
 }: {
@@ -414,28 +348,22 @@ export default function useCreatePaymentMethods( {
 	stripeLoadingError: StripeLoadingError;
 	stripeConfiguration: StripeConfiguration | null;
 	stripe: Stripe | null;
-	isApplePayAvailable: boolean;
-	isGooglePayAvailable: boolean;
-	isWebPayLoading: boolean;
-	storedCards: StoredCard[];
+	storedCards: StoredPaymentMethod[];
 	siteSlug: string | undefined;
 } ): PaymentMethod[] {
-	const { responseCart } = useShoppingCart();
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
 
 	const paypalMethod = useCreatePayPal( {} );
 
 	const idealMethod = useCreateIdeal( {
 		isStripeLoading,
 		stripeLoadingError,
-		stripeConfiguration,
-		stripe,
 	} );
 
 	const alipayMethod = useCreateAlipay( {
 		isStripeLoading,
 		stripeLoadingError,
-		stripeConfiguration,
-		stripe,
 	} );
 
 	const p24Method = useCreateP24( {
@@ -456,45 +384,31 @@ export default function useCreatePaymentMethods( {
 	const epsMethod = useCreateEps( {
 		isStripeLoading,
 		stripeLoadingError,
-		stripeConfiguration,
-		stripe,
 	} );
-
-	const ebanxTefMethod = useCreateEbanxTef();
-
-	const idWalletMethod = useCreateIdWallet();
 
 	const netbankingMethod = useCreateNetbanking();
 
 	const sofortMethod = useCreateSofort( {
 		isStripeLoading,
 		stripeLoadingError,
-		stripeConfiguration,
-		stripe,
 	} );
 
 	const wechatMethod = useCreateWeChat( {
 		isStripeLoading,
 		stripeLoadingError,
-		stripeConfiguration,
-		stripe,
 		siteSlug,
 	} );
 
-	const shouldUseEbanx = Boolean(
-		responseCart?.allowed_payment_methods?.includes(
-			translateCheckoutPaymentMethodToWpcomPaymentMethod( 'ebanx' ) ?? ''
-		)
+	const shouldUseEbanx = responseCart.allowed_payment_methods.includes(
+		translateCheckoutPaymentMethodToWpcomPaymentMethod( 'ebanx' ) ?? ''
 	);
+	const allowUseForAllSubscriptions = true;
 	const stripeMethod = useCreateCreditCard( {
 		isStripeLoading,
 		stripeLoadingError,
-		stripeConfiguration,
-		stripe,
 		shouldUseEbanx,
+		allowUseForAllSubscriptions,
 	} );
-
-	const fullCreditsPaymentMethod = useCreateFullCredits();
 
 	const freePaymentMethod = useCreateFree();
 
@@ -503,8 +417,7 @@ export default function useCreatePaymentMethods( {
 		stripeLoadingError,
 		stripeConfiguration,
 		stripe,
-		isApplePayAvailable,
-		isWebPayLoading,
+		cartKey,
 	} );
 
 	const googlePayMethod = useCreateGooglePay( {
@@ -512,17 +425,17 @@ export default function useCreatePaymentMethods( {
 		stripeLoadingError,
 		stripeConfiguration,
 		stripe,
-		isGooglePayAvailable,
-		isWebPayLoading,
+		cartKey,
 	} );
 
 	const existingCardMethods = useCreateExistingCards( {
+		isStripeLoading,
+		stripeLoadingError,
 		storedCards,
 	} );
 
 	return [
 		freePaymentMethod,
-		fullCreditsPaymentMethod,
 		...existingCardMethods,
 		applePayMethod,
 		googlePayMethod,
@@ -531,13 +444,11 @@ export default function useCreatePaymentMethods( {
 		idealMethod,
 		giropayMethod,
 		sofortMethod,
-		ebanxTefMethod,
-		idWalletMethod,
 		netbankingMethod,
 		alipayMethod,
 		p24Method,
 		epsMethod,
 		wechatMethod,
 		bancontactMethod,
-	].filter( doesValueExist );
+	].filter( isValueTruthy );
 }

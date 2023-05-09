@@ -1,24 +1,16 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import HeaderCake from 'calypso/components/header-cake';
+import { connect } from 'react-redux';
 import QueryPosts from 'calypso/components/data/query-posts';
-import StickyPanel from 'calypso/components/sticky-panel';
+import HeaderCake from 'calypso/components/header-cake';
 import { convertDateToUserLocation } from 'calypso/components/post-schedule/utils';
+import StickyPanel from 'calypso/components/sticky-panel';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { gmtOffset, timezone } from 'calypso/lib/site/utils';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSiteComments } from 'calypso/state/comments/selectors';
-import hasNavigated from 'calypso/state/selectors/has-navigated';
 import { getSitePost } from 'calypso/state/posts/selectors';
+import hasNavigated from 'calypso/state/selectors/has-navigated';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,

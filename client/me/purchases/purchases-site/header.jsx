@@ -1,24 +1,13 @@
-/**
- * External dependencies
- */
-
-import { connect } from 'react-redux';
+import { CompactCard, Gridicon } from '@automattic/components';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import { CompactCard } from '@automattic/components';
-import { getSite } from 'calypso/state/sites/selectors';
-import QuerySites from 'calypso/components/data/query-sites';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import Site from 'calypso/blocks/site';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
+import QuerySites from 'calypso/components/data/query-sites';
+import { getSite } from 'calypso/state/sites/selectors';
+import { isTemporarySitePurchase } from '../utils';
 
-/**
- * Style dependencies
- */
 import './header.scss';
 
 class PurchaseSiteHeader extends Component {
@@ -26,13 +15,13 @@ class PurchaseSiteHeader extends Component {
 		isPlaceholder: PropTypes.bool,
 		siteId: PropTypes.number,
 		name: PropTypes.string,
-		domain: PropTypes.string,
+		purchase: PropTypes.object,
 	};
 
 	// Disconnected sites can't render the `Site` component, but there can be
 	// purchases from disconnected sites. Here we spoof the Site header.
 	renderFauxSite() {
-		const { name, domain } = this.props;
+		const { name, purchase } = this.props;
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
@@ -43,7 +32,7 @@ class PurchaseSiteHeader extends Component {
 					</div>
 					<div className="site__info">
 						<div className="site__title">{ name }</div>
-						<div className="site__domain">{ domain }</div>
+						<div className="site__domain">{ purchase?.domain }</div>
 					</div>
 				</div>
 			</div>
@@ -52,15 +41,21 @@ class PurchaseSiteHeader extends Component {
 	}
 
 	render() {
-		const { isPlaceholder, siteId, site, name, domain } = this.props;
+		const { purchase, isPlaceholder, siteId, site } = this.props;
 		let header;
+
+		// Both the domain and name of a Jetpack temporary site don't provide any
+		// meaningful information to the user.
+		if ( purchase && isTemporarySitePurchase( purchase ) ) {
+			return null;
+		}
 
 		if ( isPlaceholder ) {
 			header = <SitePlaceholder />;
 		} else if ( site ) {
 			header = <Site isCompact site={ site } indicator={ false } />;
 		} else {
-			header = this.renderFauxSite( name, domain );
+			header = this.renderFauxSite();
 		}
 
 		return (

@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import { items, currentPage, lastPage, inflightPages } from '../reducer';
 import {
 	READER_SITE_BLOCK,
 	READER_SITE_BLOCKS_RECEIVE,
@@ -14,6 +6,7 @@ import {
 	READER_SITE_UNBLOCK,
 	READER_SITE_REQUEST_SUCCESS,
 } from 'calypso/state/reader/action-types';
+import { items, currentPage, lastPage, inflightPages } from '../reducer';
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {

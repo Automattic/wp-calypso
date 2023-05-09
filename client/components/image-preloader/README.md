@@ -7,15 +7,12 @@ Image Preloader is a React component to display a placeholder element until the 
 ## Usage
 
 ```jsx
-import React from 'react';
 import ImagePreloader from 'calypso/components/image-preloader';
 
-export default class extends React.Component {
-	render() {
-		return (
-			<ImagePreloader placeholder={ <div>Loading...</div> } src="http://lorempixel.com/200/200" />
-		);
-	}
+export default function MyComponent() {
+	return (
+		<ImagePreloader placeholder={ <div>Loading...</div> } src="http://lorempixel.com/200/200" />
+	);
 }
 ```
 

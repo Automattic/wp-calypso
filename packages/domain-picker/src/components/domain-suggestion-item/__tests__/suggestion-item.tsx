@@ -1,23 +1,22 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
+import { MOCK_SUGGESTION_ITEM_PARTIAL_PROPS } from '../__mocks__';
+import SuggestionItem from '../suggestion-item';
 import type { RenderResult } from '@testing-library/react';
-
-/**
- * Internal dependencies
- */
 // https://jestjs.io/docs/en/manual-mocks#mocking-methods-which-are-not-implemented-in-jsdom
 import '../../../__mocks__/matchMedia.mock';
 
-import SuggestionItem from '../suggestion-item';
-import { MOCK_SUGGESTION_ITEM_PARTIAL_PROPS } from '../__mocks__';
+jest.mock( '@automattic/calypso-config', () => ( {
+	config: () => '',
+} ) );
 
 const renderComponent = ( props = {} ): RenderResult =>
 	render( <SuggestionItem { ...MOCK_SUGGESTION_ITEM_PARTIAL_PROPS } { ...props } /> );
 
 describe( 'traintracks events', () => {
+	beforeEach( () => {
+		global.ResizeObserver = require( 'resize-observer-polyfill' );
+	} );
+
 	afterEach( () => {
 		jest.clearAllMocks();
 	} );
@@ -122,6 +121,29 @@ describe( 'conditional elements', () => {
 
 		// use `queryBy` to avoid throwing an error with `getBy`
 		expect( screen.queryByTestId( 'info-tooltip' ) ).toBeFalsy();
+	} );
+
+	it.skip( 'renders info tooltip for domains that require .gay information notice', async () => {
+		render(
+			<SuggestionItem { ...MOCK_SUGGESTION_ITEM_PARTIAL_PROPS } isDotGayNoticeRequired={ true } />
+		);
+
+		expect( screen.getByTestId( 'info-tooltip' ) ).toBeInTheDocument();
+	} );
+
+	it.skip( 'clicking info tooltip icon reveals popover for .gay information notice', async () => {
+		const testRequiredProps = {
+			...MOCK_SUGGESTION_ITEM_PARTIAL_PROPS,
+			domain: 'testdomain.gay',
+			cost: '€37.00',
+			railcarId: 'id',
+			isDotGayNoticeRequired: true,
+		};
+
+		render( <SuggestionItem { ...testRequiredProps } /> );
+		fireEvent.click( screen.getByTestId( 'info-tooltip' ) );
+
+		expect( screen.queryByText( /Any anti-LGBTQ content/i ) ).toBeTruthy();
 	} );
 	/*eslint-enable*/
 

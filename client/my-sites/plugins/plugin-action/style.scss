@@ -13,13 +13,15 @@
 
 	&.is-warning {
 		.plugin-action__label {
-			color: var( --color-error );
+			color: var(--color-error);
 		}
 	}
 
 	.plugin-action__label {
-		@include breakpoint-deprecated( '<480px' ) {
-			color: var( --color-neutral-70 );
+		display: flex;
+		align-items: center;
+		@include breakpoint-deprecated( "<480px" ) {
+			color: var(--color-neutral-70);
 		}
 	}
 
@@ -42,16 +44,23 @@
 }
 
 .plugin-action__label {
-	display: flex;
 	flex-direction: row-reverse;
 	align-items: center;
-	font-size: $font-body-extra-small;
+	font-size: $font-body-small;
 	line-height: 16px;
 	margin-right: 8px;
 	cursor: pointer;
 
+	&.hide {
+		visibility: hidden;
+
+		.plugin-action__label-text {
+			display: none;
+		}
+	}
+
 	.is-disabled & {
-		color: var( --color-neutral-20 );
+		color: var(--color-neutral-20);
 		cursor: default;
 	}
 
@@ -61,7 +70,12 @@
 	}
 }
 
+.plugin-action__label-disabled-info {
+	display: flex;
+}
+
 .plugin-action__disabled-info.info-popover {
+	visibility: visible;
 	flex: none;
 	margin: 0 4px -1px;
 
@@ -74,8 +88,27 @@
 		// revert the translate(1px,1px) done by needs-offset
 		transform: none;
 	}
+
+}
+
+.plugin-action__disabled-info.info-popover__tooltip {
+	z-index: z-index("root", ".popover.info-popover__tooltip.plugin-action__disabled-info");
 }
 
 .plugin-action__disabled-info-list {
 	margin-left: 16px;
+}
+
+.plugin-activate-toggle,
+.plugin-autoupdate-toggle {
+	.components-toggle-control {
+		display: flex;
+		.components-base-control__field {
+			display: flex;
+
+			.components-form-toggle {
+				margin-right: 8px;
+			}
+		}
+	}
 }

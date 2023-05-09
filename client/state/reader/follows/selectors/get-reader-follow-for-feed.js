@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import { find } from 'lodash';
 
-/**
- * Internal dependencies
- */
 import 'calypso/state/reader/init';
 
 /*
@@ -15,4 +9,6 @@ import 'calypso/state/reader/init';
  * @param  {number} feedId  The feedId to find
  * @returns {object} the subscription
  */
-export default ( state, feedId ) => find( state.reader.follows.items, { feed_ID: feedId } );
+export default ( state, feedId ) => {
+	return find( state.reader.follows.items, { feed_ID: feedId } );
+};

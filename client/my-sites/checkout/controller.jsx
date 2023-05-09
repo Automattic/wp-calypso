@@ -1,51 +1,100 @@
-/**
- * External dependencies
- */
-import i18n from 'i18n-calypso';
-import React from 'react';
-import { get, isEmpty } from 'lodash';
-import page from 'page';
+import {
+	PLAN_BUSINESS,
+	PLAN_PERSONAL,
+	PLAN_PREMIUM,
+	isJetpackLegacyItem,
+} from '@automattic/calypso-products';
 import debugFactory from 'debug';
-import { isJetpackLegacyItem } from '@automattic/calypso-products';
-
-/**
- * Internal Dependencies
- */
-import { getDomainOrProductFromContext } from './utils';
-import {
-	COMPARE_PLANS_QUERY_PARAM,
-	LEGACY_TO_RECOMMENDED_MAP,
-} from '../plans/jetpack-plans/plan-upgrade/constants';
-import { CALYPSO_PLANS_PAGE } from 'calypso/jetpack-connect/constants';
-import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
-import { getSiteBySlug } from 'calypso/state/sites/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
-import GSuiteNudge from './gsuite-nudge';
-import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
-import CheckoutSystemDecider from './checkout-system-decider';
-import CheckoutPendingComponent from './checkout-thank-you/pending';
-import JetpackCheckoutThankYou from './checkout-thank-you/jetpack-checkout-thank-you';
-import CheckoutThankYouComponent from './checkout-thank-you';
-import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
+import { useTranslate } from 'i18n-calypso';
+import page from 'page';
+import DocumentHead from 'calypso/components/data/document-head';
 import { setSectionMiddleware } from 'calypso/controller';
+import { CALYPSO_PLANS_PAGE } from 'calypso/jetpack-connect/constants';
+import { MARKETING_COUPONS_KEY } from 'calypso/lib/analytics/utils';
+import { addQueryArgs } from 'calypso/lib/url';
+import LicensingThankYouAutoActivation from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-auto-activation';
+import LicensingThankYouAutoActivationCompleted from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-auto-activation-completed';
+import LicensingThankYouManualActivationInstructions from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-manual-activation-instructions';
+import LicensingThankYouManualActivationLicenseKey from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-manual-activation-license-key';
+import PostCheckoutUpsellExperimentRedirector from 'calypso/my-sites/checkout/post-checkout-upsell-experiment-redirector';
 import { sites } from 'calypso/my-sites/controller';
-import {
-	getCurrentUserVisibleSiteCount,
-	isUserLoggedIn,
-} from 'calypso/state/current-user/selectors';
 import {
 	retrieveSignupDestination,
 	setSignupCheckoutPageUnloaded,
 } from 'calypso/signup/storageUtils';
+import {
+	getCurrentUser,
+	getCurrentUserVisibleSiteCount,
+	isUserLoggedIn,
+} from 'calypso/state/current-user/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import {
+	COMPARE_PLANS_QUERY_PARAM,
+	LEGACY_TO_RECOMMENDED_MAP,
+} from '../plans/jetpack-plans/plan-upgrade/constants';
+import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
+import CheckoutMainWrapper from './checkout-main-wrapper';
+import CheckoutThankYouComponent from './checkout-thank-you';
+import AkismetCheckoutThankYou from './checkout-thank-you/akismet-checkout-thank-you';
+import GiftThankYou from './checkout-thank-you/gift/gift-thank-you';
+import JetpackCheckoutThankYou from './checkout-thank-you/jetpack-checkout-thank-you';
+import CheckoutPending from './checkout-thank-you/pending';
 import UpsellNudge, {
 	BUSINESS_PLAN_UPGRADE_UPSELL,
 	CONCIERGE_SUPPORT_SESSION,
 	CONCIERGE_QUICKSTART_SESSION,
+	PROFESSIONAL_EMAIL_UPSELL,
+	ANNUAL_PLAN_UPGRADE_UPSELL,
 } from './upsell-nudge';
-import { MARKETING_COUPONS_KEY } from 'calypso/lib/analytics/utils';
-import { TRUENAME_COUPONS } from 'calypso/lib/domains';
+import { getProductSlugFromContext, isContextJetpackSitelessCheckout } from './utils';
 
 const debug = debugFactory( 'calypso:checkout-controller' );
+
+export function checkoutJetpackSiteless( context, next ) {
+	sitelessCheckout( context, next, { sitelessCheckoutType: 'jetpack' } );
+}
+
+export function checkoutAkismetSiteless( context, next ) {
+	sitelessCheckout( context, next, { sitelessCheckoutType: 'akismet' } );
+}
+
+function sitelessCheckout( context, next, extraProps ) {
+	const state = context.store.getState();
+	const isLoggedOut = ! isUserLoggedIn( state );
+	const { productSlug: product, purchaseId } = context.params;
+	const isUserComingFromLoginForm = context.query?.flow === 'coming_from_login';
+
+	setSectionMiddleware( { name: 'checkout' } )( context );
+
+	// NOTE: `context.query.code` is deprecated in favor of `context.query.coupon`.
+	const couponCode = context.query.coupon || context.query.code || getRememberedCoupon();
+
+	const CheckoutSitelessDocumentTitle = () => {
+		const translate = useTranslate();
+		return <DocumentHead title={ translate( 'Checkout' ) } />;
+	};
+
+	context.primary = (
+		<>
+			<CheckoutSitelessDocumentTitle />
+
+			<CheckoutMainWrapper
+				purchaseId={ purchaseId }
+				productAliasFromUrl={ product }
+				productSourceFromUrl={ context.query.source }
+				couponCode={ couponCode }
+				isComingFromUpsell={ !! context.query.upgrade }
+				redirectTo={ context.query.redirect_to }
+				isLoggedOutCart={ isLoggedOut }
+				isNoSiteCart={ true }
+				isUserComingFromLoginForm={ isUserComingFromLoginForm }
+				{ ...extraProps }
+			/>
+		</>
+	);
+
+	next();
+}
 
 export function checkout( context, next ) {
 	const { feature, plan, purchaseId } = context.params;
@@ -60,12 +109,16 @@ export function checkout( context, next ) {
 		( isLoggedOut || ! hasSite || isDomainOnlyFlow );
 	const jetpackPurchaseToken = context.query.purchasetoken;
 	const jetpackPurchaseNonce = context.query.purchaseNonce;
-	const isUserComingFromLoginForm = context.query?.flow === 'logged-out-checkout';
-	const isJetpackCheckout =
-		context.pathname.includes( '/checkout/jetpack' ) &&
-		( isLoggedOut || isUserComingFromLoginForm ) &&
-		( !! jetpackPurchaseToken || !! jetpackPurchaseNonce );
+	const isUserComingFromLoginForm = context.query?.flow === 'coming_from_login';
+	// TODO: The only thing that we really need to check for here is whether or not the user is logged out.
+	// A siteless Jetpack purchase (logged in or out) will be handled by checkoutJetpackSiteless
+	// Additionally, the isJetpackCheckout variable would be more aptly named isJetpackSitelessCheckout
+	// isContextJetpackSitelessCheckout is really checking for whether this is a logged-out purchase, but this is uncelar at first
+	const isJetpackCheckout = isContextJetpackSitelessCheckout( context );
 	const jetpackSiteSlug = context.params.siteSlug;
+
+	const isGiftPurchase = context.pathname.includes( '/gift/' );
+	const isRenewal = context.pathname.includes( '/renew/' );
 
 	// Do not use Jetpack checkout for Jetpack Anti Spam
 	if ( 'jetpack_anti_spam' === context.params.productSlug ) {
@@ -73,21 +126,39 @@ export function checkout( context, next ) {
 		return;
 	}
 
-	if ( ! selectedSite && ! isDisallowedForSitePicker && ! isJetpackCheckout ) {
+	const shouldAllowNoSelectedSite = () => {
+		if ( isDisallowedForSitePicker ) {
+			return true;
+		}
+		if ( isJetpackCheckout ) {
+			return true;
+		}
+		if ( isGiftPurchase ) {
+			return true;
+		}
+		// We allow renewals without a site through because we want to show these
+		// users an error message on the checkout page.
+		if ( isRenewal ) {
+			return true;
+		}
+		return false;
+	};
+
+	if ( ! selectedSite && ! shouldAllowNoSelectedSite() ) {
 		sites( context, next );
 		return;
 	}
 
-	const product = isJetpackCheckout
-		? context.params.productSlug
-		: getDomainOrProductFromContext( context );
+	const product = getProductSlugFromContext( context );
 
 	if ( 'thank-you' === product ) {
 		return;
 	}
 
-	// FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
-	context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
+	const CheckoutDocumentTitle = () => {
+		const translate = useTranslate();
+		return <DocumentHead title={ translate( 'Checkout' ) } />;
+	};
 
 	setSectionMiddleware( { name: 'checkout' } )( context );
 
@@ -95,7 +166,10 @@ export function checkout( context, next ) {
 	const couponCode = context.query.coupon || context.query.code || getRememberedCoupon();
 
 	const isLoggedOutCart =
-		isJetpackCheckout || ( isLoggedOut && context.pathname.includes( '/checkout/no-site' ) );
+		isJetpackCheckout ||
+		( isLoggedOut &&
+			( context.pathname.includes( '/checkout/no-site' ) ||
+				context.pathname.includes( '/gift/' ) ) );
 	const isNoSiteCart =
 		isJetpackCheckout ||
 		( ! isLoggedOut &&
@@ -115,29 +189,38 @@ export function checkout( context, next ) {
 	}
 
 	context.primary = (
-		<CheckoutSystemDecider
-			productAliasFromUrl={ product }
-			purchaseId={ purchaseId }
-			selectedFeature={ feature }
-			couponCode={ couponCode }
-			isComingFromUpsell={ !! context.query.upgrade }
-			plan={ plan }
-			selectedSite={ selectedSite }
-			redirectTo={ context.query.redirect_to }
-			isLoggedOutCart={ isLoggedOutCart }
-			isNoSiteCart={ isNoSiteCart }
-			isJetpackCheckout={ isJetpackCheckout }
-			jetpackSiteSlug={ jetpackSiteSlug }
-			jetpackPurchaseToken={ jetpackPurchaseToken || jetpackPurchaseNonce }
-			isUserComingFromLoginForm={ isUserComingFromLoginForm }
-		/>
+		<>
+			<CheckoutDocumentTitle />
+
+			<CheckoutMainWrapper
+				productAliasFromUrl={ product }
+				productSourceFromUrl={ context.query.source }
+				purchaseId={ purchaseId }
+				selectedFeature={ feature }
+				couponCode={ couponCode }
+				isComingFromUpsell={ !! context.query.upgrade }
+				plan={ plan }
+				selectedSite={ selectedSite }
+				redirectTo={ context.query.redirect_to }
+				isLoggedOutCart={ isLoggedOutCart }
+				isNoSiteCart={ isNoSiteCart }
+				// TODO: in theory, isJetpackCheckout should always be false here if it is indicating whether this is a siteless Jetpack purchase
+				// However, in this case, it's indicating that this checkout is a logged-out site purchase for Jetpack.
+				// This is creating some mixed use cases for the sitelessCheckoutType prop
+				sitelessCheckoutType={ isJetpackCheckout ? 'jetpack' : undefined }
+				isGiftPurchase={ isGiftPurchase }
+				jetpackSiteSlug={ jetpackSiteSlug }
+				jetpackPurchaseToken={ jetpackPurchaseToken || jetpackPurchaseNonce }
+				isUserComingFromLoginForm={ isUserComingFromLoginForm }
+			/>
+		</>
 	);
 
 	next();
 }
 
 export function redirectJetpackLegacyPlans( context, next ) {
-	const product = getDomainOrProductFromContext( context );
+	const product = getProductSlugFromContext( context );
 
 	if ( isJetpackLegacyItem( product ) ) {
 		const state = context.store.getState();
@@ -157,16 +240,32 @@ export function redirectJetpackLegacyPlans( context, next ) {
 }
 
 export function checkoutPending( context, next ) {
-	const orderId = Number( context.params.orderId );
+	const orderId = Number.isInteger( Number( context.params.orderId ) )
+		? Number( context.params.orderId )
+		: ':orderId';
+
+	/**
+	 * @type {string|undefined}
+	 */
 	const siteSlug = context.params.site;
 
-	setSectionMiddleware( { name: 'checkout-thank-you' } )( context );
+	/**
+	 * @type {string|undefined}
+	 */
+	const redirectTo = context.query.redirectTo;
+
+	const receiptId = Number.isInteger( Number( context.query.receiptId ) )
+		? Number( context.query.receiptId )
+		: undefined;
+
+	setSectionMiddleware( { name: 'checkout-pending' } )( context );
 
 	context.primary = (
-		<CheckoutPendingComponent
+		<CheckoutPending
 			orderId={ orderId }
 			siteSlug={ siteSlug }
-			redirectTo={ context.query.redirectTo }
+			redirectTo={ redirectTo }
+			receiptId={ receiptId }
 		/>
 	);
 
@@ -174,59 +273,49 @@ export function checkoutPending( context, next ) {
 }
 
 export function checkoutThankYou( context, next ) {
-	const receiptId = Number( context.params.receiptId );
+	// This route requires a numeric receipt ID like
+	// `/checkout/thank-you/example.com/1234` but it also operates as a fallback
+	// if something goes wrong with the "pending" page and will respond to a URL
+	// like `/checkout/thank-you/example.com/pending`. In that case, the word
+	// `pending` is a placeholder for the receipt ID that never got properly
+	// replaced (perhaps it could not find the receipt ID, for example).
+	//
+	// In that case, we still want to display a generic thank-you page (because
+	// the transaction was probably still successful), so we set `receiptId` to
+	// `undefined`.
+	const receiptId = Number.isInteger( Number( context.params.receiptId ) )
+		? Number( context.params.receiptId )
+		: undefined;
 	const gsuiteReceiptId = Number( context.params.gsuiteReceiptId ) || 0;
 
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
-	const displayMode = get( context, 'query.d' );
+	const displayMode = context.query?.d;
 
 	setSectionMiddleware( { name: 'checkout-thank-you' } )( context );
 
-	// FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
-	context.store.dispatch( setTitle( i18n.translate( 'Thank You' ) ) );
+	const CheckoutThankYouDocumentTitle = () => {
+		const translate = useTranslate();
+		return <DocumentHead title={ translate( 'Thank You' ) } />;
+	};
 
 	context.primary = (
-		<CheckoutThankYouComponent
-			receiptId={ receiptId }
-			gsuiteReceiptId={ gsuiteReceiptId }
-			domainOnlySiteFlow={ isEmpty( context.params.site ) }
-			selectedFeature={ context.params.feature }
-			redirectTo={ context.query.redirect_to }
-			upgradeIntent={ context.query.intent }
-			siteUnlaunchedBeforeUpgrade={ context.query.site_unlaunched_before_upgrade === 'true' }
-			selectedSite={ selectedSite }
-			displayMode={ displayMode }
-		/>
-	);
+		<>
+			<CheckoutThankYouDocumentTitle />
 
-	next();
-}
-
-export function gsuiteNudge( context, next ) {
-	const { domain, site, receiptId } = context.params;
-	setSectionMiddleware( { name: 'gsuite-nudge' } )( context );
-
-	const state = context.store.getState();
-	const selectedSite =
-		getSelectedSite( state ) || getSiteBySlug( state, site ) || getSiteBySlug( state, domain );
-
-	if ( ! selectedSite ) {
-		return null;
-	}
-
-	if ( ! canUserPurchaseGSuite( context.store.getState() ) ) {
-		next();
-	}
-
-	context.primary = (
-		<CalypsoShoppingCartProvider>
-			<GSuiteNudge
-				domain={ domain }
-				receiptId={ Number( receiptId ) }
-				selectedSiteId={ selectedSite.ID }
+			<CheckoutThankYouComponent
+				displayMode={ displayMode }
+				domainOnlySiteFlow={ ! context.params.site }
+				email={ context.query.email }
+				gsuiteReceiptId={ gsuiteReceiptId }
+				receiptId={ receiptId }
+				redirectTo={ context.query.redirect_to }
+				selectedFeature={ context.params.feature }
+				selectedSite={ selectedSite }
+				siteUnlaunchedBeforeUpgrade={ context.query.site_unlaunched_before_upgrade === 'true' }
+				upgradeIntent={ context.query.intent }
 			/>
-		</CalypsoShoppingCartProvider>
+		</>
 	);
 
 	next();
@@ -248,13 +337,25 @@ export function upsellNudge( context, next ) {
 		upgradeItem = context.params.upgradeItem;
 
 		switch ( upgradeItem ) {
+			case PLAN_PERSONAL:
+			case PLAN_PREMIUM:
+			case PLAN_BUSINESS:
+				upsellType = ANNUAL_PLAN_UPGRADE_UPSELL;
+				break;
 			case 'business':
+			case 'business-2-years':
+			case 'business-3-years':
+			case 'business-monthly':
 				upsellType = BUSINESS_PLAN_UPGRADE_UPSELL;
 				break;
-
 			default:
 				upsellType = BUSINESS_PLAN_UPGRADE_UPSELL;
 		}
+	} else if ( context.path.includes( 'offer-professional-email' ) ) {
+		upsellType = PROFESSIONAL_EMAIL_UPSELL;
+		upgradeItem = context.params.domain;
+	} else {
+		upsellType = BUSINESS_PLAN_UPGRADE_UPSELL;
 	}
 
 	setSectionMiddleware( { name: upsellType } )( context );
@@ -273,6 +374,41 @@ export function upsellNudge( context, next ) {
 	next();
 }
 
+export function upsellRedirect( context, next ) {
+	const { receiptId, site /*, upsellMeta, upsellType */ } = context.params;
+
+	setSectionMiddleware( { name: 'checkout-offer-redirect' } )( context );
+
+	let upsellExperimentName;
+	let upsellExperimentAssignmentName;
+	let upsellUrl;
+
+	/*
+	 * When next we need a redirect based on A/B test, add any logic based on upsellType here
+	 * While this code block is empty, this function is effectively a no-op.
+
+	if ( PROFESSIONAL_EMAIL_OFFER === upsellType ) {
+		upsellExperimentName = 'calypso_promote_professional_email_post_checkout_2022_02';
+		upsellExperimentAssignmentName = 'treatment';
+		upsellUrl = `/checkout/offer-professional-email/${ upsellMeta }/${ receiptId }/${ site }`;
+	}
+	*/
+
+	if ( upsellExperimentName && upsellExperimentAssignmentName && upsellUrl ) {
+		context.primary = (
+			<PostCheckoutUpsellExperimentRedirector
+				receiptId={ receiptId }
+				siteSlug={ site }
+				upsellExperimentName={ upsellExperimentName }
+				upsellExperimentAssignmentName={ upsellExperimentAssignmentName }
+				upsellUrl={ upsellUrl }
+			/>
+		);
+	}
+
+	next();
+}
+
 export function redirectToSupportSession( context ) {
 	const { receiptId, site } = context.params;
 
@@ -281,6 +417,74 @@ export function redirectToSupportSession( context ) {
 		page.redirect( `/checkout/offer-support-session/${ receiptId }/${ site }` );
 	}
 	page.redirect( `/checkout/offer-support-session/${ site }` );
+}
+
+export function licensingThankYouManualActivationInstructions( context, next ) {
+	const { product } = context.params;
+	const { receiptId } = context.query;
+
+	context.primary = (
+		<LicensingThankYouManualActivationInstructions
+			productSlug={ product }
+			receiptId={ receiptId }
+		/>
+	);
+
+	next();
+}
+
+export function licensingThankYouManualActivationLicenseKey( context, next ) {
+	const { product } = context.params;
+	const { receiptId } = context.query;
+
+	context.primary = (
+		<LicensingThankYouManualActivationLicenseKey productSlug={ product } receiptId={ receiptId } />
+	);
+
+	next();
+}
+
+export function licensingThankYouAutoActivation( context, next ) {
+	const state = context.store.getState();
+	const currentUser = getCurrentUser( state );
+	const userHasJetpackSites = currentUser && currentUser.jetpack_visible_site_count >= 1;
+
+	const { product } = context.params;
+	const { receiptId, source, siteId } = context.query;
+
+	if ( ! userHasJetpackSites ) {
+		page.redirect(
+			addQueryArgs(
+				{ receiptId },
+				`/checkout/jetpack/thank-you/licensing-manual-activate/${ product }`
+			)
+		);
+	} else {
+		context.primary = (
+			<LicensingThankYouAutoActivation
+				userHasJetpackSites={ userHasJetpackSites }
+				productSlug={ context.params.product }
+				receiptId={ receiptId }
+				source={ source }
+				jetpackTemporarySiteId={ siteId }
+			/>
+		);
+	}
+
+	next();
+}
+
+export function licensingThankYouAutoActivationCompleted( context, next ) {
+	const { destinationSiteId } = context.query;
+
+	context.primary = (
+		<LicensingThankYouAutoActivationCompleted
+			productSlug={ context.params.product }
+			destinationSiteId={ destinationSiteId }
+		/>
+	);
+
+	next();
 }
 
 export function jetpackCheckoutThankYou( context, next ) {
@@ -295,6 +499,20 @@ export function jetpackCheckoutThankYou( context, next ) {
 	);
 
 	next();
+}
+
+export function akismetCheckoutThankYou( context, next ) {
+	context.primary = <AkismetCheckoutThankYou productSlug={ context.params.productSlug } />;
+
+	next();
+}
+
+export function giftThankYou( context, next ) {
+	// Overriding section name here in order to apply a top level
+	// background via .is-section-checkout-gift-thank-you
+	context.section.name = 'checkout-gift-thank-you';
+	context.primary = <GiftThankYou site={ context.params.site } />;
+	next( context );
 }
 
 function getRememberedCoupon() {
@@ -324,7 +542,6 @@ function getRememberedCoupon() {
 		'SAFE',
 		'SBDC',
 		'TXAM',
-		...TRUENAME_COUPONS,
 	];
 	const THIRTY_DAYS_MILLISECONDS = 30 * 24 * 60 * 60 * 1000;
 	const now = Date.now();

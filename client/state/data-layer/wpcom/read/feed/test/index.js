@@ -1,11 +1,13 @@
-/**
- * External dependencies
- */
 import freeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
+import { NOTICE_CREATE } from 'calypso/state/action-types';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import {
+	READER_FEED_REQUEST_SUCCESS,
+	READER_FEED_REQUEST_FAILURE,
+} from 'calypso/state/reader/action-types';
+import { requestFeedSearch, receiveFeedSearch } from 'calypso/state/reader/feed-searches/actions';
+import queryKey from 'calypso/state/reader/feed-searches/query-key';
+import { requestFeed } from 'calypso/state/reader/feeds/actions';
 import {
 	requestReadFeedSearch,
 	receiveReadFeedSearchSuccess,
@@ -15,15 +17,6 @@ import {
 	receiveReadFeedSuccess,
 	receiveReadFeedError,
 } from '../';
-import { NOTICE_CREATE } from 'calypso/state/action-types';
-import {
-	READER_FEED_REQUEST_SUCCESS,
-	READER_FEED_REQUEST_FAILURE,
-} from 'calypso/state/reader/action-types';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { requestFeed } from 'calypso/state/reader/feeds/actions';
-import { requestFeedSearch, receiveFeedSearch } from 'calypso/state/reader/feed-searches/actions';
-import queryKey from 'calypso/state/reader/feed-searches/query-key';
 
 const feeds = freeze( [ { blog_ID: 123, subscribe_URL: 'http://example.com' } ] );
 

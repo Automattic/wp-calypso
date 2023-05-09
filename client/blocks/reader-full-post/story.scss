@@ -11,23 +11,23 @@ $wp-story-background-color: #0e1112;
 	list-style: none;
 	padding: 0;
 	z-index: 1;
-	border-radius: 15px;
+	border-radius: 15px; /* stylelint-disable-line scales/radii */
 	overflow: hidden;
 	-webkit-tap-highlight-color: transparent;
-	box-shadow: 0 2px 12px rgba( 0, 0, 0, 0.25 );
-	transition: box-shadow 0.3s ease-in-out, transform 0.3s cubic-bezier( 0.18, 0.14, 0.25, 1 );
+	box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+	transition: box-shadow 0.3s ease-in-out, transform 0.3s cubic-bezier(0.18, 0.14, 0.25, 1);
 	break-inside: avoid;
 	page-break-inside: avoid;
 
 	figure {
-		transition: transform 0.3s cubic-bezier( 0.18, 0.14, 0.25, 1 );
+		transition: transform 0.3s cubic-bezier(0.18, 0.14, 0.25, 1);
 	}
 
 	&:hover {
-		box-shadow: 0 4px 12px rgba( 0, 0, 0, 0.3 );
-		transform: scale3d( 1.03, 1.03, 1 );
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+		transform: scale3d(1.03, 1.03, 1);
 		figure {
-			transform: scale3d( 1.07, 1.07, 1 );
+			transform: scale3d(1.07, 1.07, 1);
 		}
 	}
 
@@ -48,7 +48,7 @@ $wp-story-background-color: #0e1112;
 		left: 0;
 		right: 0;
 		z-index: -1;
-		border-radius: 15px;
+		border-radius: 15px; /* stylelint-disable-line scales/radii */
 		background-color: $wp-story-background-color;
 	}
 
@@ -70,7 +70,8 @@ $wp-story-background-color: #0e1112;
 		}
 	}
 
-	.wp-story-image, .wp-story-video {
+	.wp-story-image,
+	.wp-story-video {
 		display: block;
 		height: auto;
 		width: auto;
@@ -88,7 +89,8 @@ $wp-story-background-color: #0e1112;
 		}
 	}
 
-	.wp-story-meta, .wp-story-pagination {
+	.wp-story-meta,
+	.wp-story-pagination {
 		display: none;
 	}
 
@@ -113,8 +115,8 @@ $wp-story-background-color: #0e1112;
 			padding: 5px 3px;
 			display: flex;
 			align-items: center;
-			background-color: rgba( 0, 0, 0, 0.5 );
-			border-radius: 5px;
+			background-color: rgba(0, 0, 0, 0.5);
+			border-radius: 5px; /* stylelint-disable-line scales/radii */
 
 			* {
 				margin: 0 2px;
@@ -131,7 +133,7 @@ $wp-story-background-color: #0e1112;
 			background-color: transparent;
 
 			svg {
-				filter: drop-shadow( 0 0 2px rgba( 0, 0, 0, 0.6 ) );
+				filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.6));
 			}
 		}
 	}

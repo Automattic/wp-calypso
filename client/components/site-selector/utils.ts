@@ -1,16 +1,5 @@
-/**
- * External dependencies
- */
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-
-/**
- * Type dependencies
- */
 import type { UserData } from 'calypso/lib/user/user';
 
 const prependKeyForJetpackCloud = ( key: string ): string => `jetpack_${ key }`;

@@ -1,21 +1,11 @@
-/**
- * External dependencies
- */
-import React, { useEffect, useState } from 'react';
-import { useTranslate } from 'i18n-calypso';
-import formatCurrency from '@automattic/format-currency';
-
-/**
- * Internal dependencies
- */
 import { CompactCard } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
+import { useTranslate } from 'i18n-calypso';
+import { useEffect, useState } from 'react';
+import SiteIcon from 'calypso/blocks/site-icon';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { MembershipSubscription } from 'calypso/lib/purchases/types';
-import SiteIcon from 'calypso/blocks/site-icon';
 
-/**
- * Style dependencies
- */
 import 'calypso/me/purchases/style.scss';
 
 const MembershipTerms = ( { subscription }: { subscription: MembershipSubscription } ) => {
@@ -48,13 +38,15 @@ const SiteLink = ( { subscription }: { subscription: MembershipSubscription } ) 
 			onClick={ ( event ) => {
 				event.stopPropagation();
 				event.preventDefault();
-				window.location = subscription.site_url;
+				window.location.href = subscription.site_url;
 			} }
-			title={ translate( 'Visit %(siteUrl)s', {
-				args: {
-					siteUrl: subscription.site_url,
-				},
-			} ) }
+			title={ String(
+				translate( 'Visit %(siteUrl)s', {
+					args: {
+						siteUrl: subscription.site_url,
+					},
+				} )
+			) }
 		>
 			{ siteUrl }
 		</button>
@@ -89,7 +81,7 @@ const MembershipType = ( { subscription }: { subscription: MembershipSubscriptio
 
 const Icon = ( { subscription }: { subscription: MembershipSubscription } ) => {
 	const [ hasError, setErrors ] = useState( false );
-	const [ site, setSite ] = useState( null );
+	const [ site, setSite ] = useState< { icon?: { ico: string } } >();
 	const siteId = subscription.site_id;
 
 	useEffect( () => {
@@ -118,7 +110,7 @@ export default function MembershipItem( {
 	subscription,
 }: {
 	subscription: MembershipSubscription;
-} ): JSX.Element {
+} ) {
 	const translate = useTranslate();
 
 	return (

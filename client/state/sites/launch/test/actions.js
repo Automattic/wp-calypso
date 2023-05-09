@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { SITE_LAUNCH } from 'calypso/state/action-types';
 import { launchSite } from 'calypso/state/sites/launch/actions';
 

@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import { useEffect } from 'react';
 import debugFactory from 'debug';
+import { useEffect } from 'react';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-strip-products-from-url' );
 

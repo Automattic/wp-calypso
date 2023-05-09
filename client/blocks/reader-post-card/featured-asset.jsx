@@ -1,21 +1,15 @@
-/**
- * External Dependencies
- */
 import PropTypes from 'prop-types';
-import React from 'react';
-
-/**
- * Internal Dependencies
- */
 import ReaderFeaturedVideo from 'calypso/blocks/reader-featured-video';
-import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
+import ReaderFeaturedImages from 'calypso/blocks/reader-post-card/featured-images';
 
 const FeaturedAsset = ( {
+	post,
 	canonicalMedia,
 	postUrl,
 	allowVideoPlaying,
 	onVideoThumbnailClick,
 	isVideoExpanded,
+	isTagPost,
 } ) => {
 	if ( ! canonicalMedia ) {
 		return null;
@@ -29,20 +23,23 @@ const FeaturedAsset = ( {
 				allowPlaying={ allowVideoPlaying }
 				onThumbnailClick={ onVideoThumbnailClick }
 				isExpanded={ isVideoExpanded }
+				isTagPost={ isTagPost }
 			/>
 		);
 	}
 
 	return (
-		<ReaderFeaturedImage
-			imageUrl={ canonicalMedia.src }
-			href={ postUrl }
-			fetched={ canonicalMedia.fetched }
+		<ReaderFeaturedImages
+			post={ post }
+			postUrl={ postUrl }
+			canonicalMedia={ canonicalMedia }
+			isTagPost={ isTagPost }
 		/>
 	);
 };
 
 FeaturedAsset.propTypes = {
+	post: PropTypes.object,
 	canonicalMedia: PropTypes.object,
 	postUrl: PropTypes.string,
 	allowVideoPlaying: PropTypes.bool,

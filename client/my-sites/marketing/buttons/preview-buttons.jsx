@@ -1,23 +1,16 @@
-/**
- * External dependencies
- */
-
-import { filter, isEqual } from 'lodash';
-import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
-import ReactDom from 'react-dom';
-import React from 'react';
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import ButtonsPreviewButton from 'calypso/my-sites/marketing/buttons/preview-button';
+import { localize } from 'i18n-calypso';
+import { filter, isEqual } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component, createRef } from 'react';
+import { findDOMNode } from 'react-dom';
 import ResizableIframe from 'calypso/components/resizable-iframe';
-import previewWidget from './preview-widget';
 import { hasTouch } from 'calypso/lib/touch-detect';
+import ButtonsPreviewButton from 'calypso/my-sites/marketing/buttons/preview-button';
+import previewWidget from './preview-widget';
 
-class SharingButtonsPreviewButtons extends React.Component {
+class SharingButtonsPreviewButtons extends Component {
 	static displayName = 'SharingButtonsPreviewButtons';
 
 	static propTypes = {
@@ -26,7 +19,6 @@ class SharingButtonsPreviewButtons extends React.Component {
 		style: PropTypes.oneOf( [ 'icon', 'icon-text', 'text', 'official' ] ),
 		onButtonClick: PropTypes.func,
 		showMore: PropTypes.bool,
-		forceMorePreviewVisible: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -34,8 +26,10 @@ class SharingButtonsPreviewButtons extends React.Component {
 		style: 'icon',
 		onButtonClick: function () {},
 		showMore: false,
-		forceMorePreviewVisible: false,
 	};
+
+	previewIframeRef = createRef();
+	moreButtonRef = createRef();
 
 	state = {
 		morePreviewOffset: null,
@@ -52,7 +46,7 @@ class SharingButtonsPreviewButtons extends React.Component {
 		this.maybeListenForWidgetMorePreview();
 
 		if (
-			prevProps.forceMorePreviewVisible !== this.props.forceMorePreviewVisible ||
+			prevProps.showMore !== this.props.showMore ||
 			! isEqual( prevProps.buttons, this.props.buttons )
 		) {
 			// We trigger an update to the preview visibility if buttons have
@@ -78,10 +72,10 @@ class SharingButtonsPreviewButtons extends React.Component {
 		let offset;
 
 		// Ensure this only triggers in the context of an official preview
-		if ( ! this.refs.iframe ) {
+		if ( ! this.previewIframeRef.current ) {
 			return;
 		}
-		const preview = ReactDom.findDOMNode( this.refs.iframe );
+		const preview = this.previewIframeRef.current;
 
 		// Parse the JSON message data
 		let data;
@@ -111,7 +105,7 @@ class SharingButtonsPreviewButtons extends React.Component {
 	};
 
 	updateMorePreviewVisibility = () => {
-		if ( ! this.props.forceMorePreviewVisible ) {
+		if ( ! this.props.showMore ) {
 			this.hideMorePreview();
 		} else {
 			this.showMorePreview();
@@ -132,11 +126,11 @@ class SharingButtonsPreviewButtons extends React.Component {
 		if ( 'official' === this.props.style ) {
 			// To show the more preview when rendering official style buttons,
 			// we request that the frame emit a show message with the offset
-			ReactDom.findDOMNode( this.refs.iframe ).contentWindow.postMessage( 'more-show', '*' );
+			this.previewIframeRef.current.iframeRef.current.contentWindow.postMessage( 'more-show', '*' );
 		} else {
 			// For custom styles, we can calculate the offset using the
 			// position of the rendered button
-			moreButton = ReactDom.findDOMNode( this.refs.moreButton );
+			moreButton = findDOMNode( this.moreButtonRef.current );
 			offset = {
 				top: moreButton.offsetTop + moreButton.clientHeight,
 				left: moreButton.offsetLeft,
@@ -164,7 +158,7 @@ class SharingButtonsPreviewButtons extends React.Component {
 	};
 
 	hideMorePreview = () => {
-		if ( ! this.props.forceMorePreviewVisible && this.state.morePreviewVisible ) {
+		if ( ! this.props.showMore && this.state.morePreviewVisible ) {
 			this.setState( { morePreviewVisible: false } );
 		}
 	};
@@ -179,7 +173,7 @@ class SharingButtonsPreviewButtons extends React.Component {
 
 		return (
 			<ResizableIframe
-				ref="iframe"
+				ref={ this.previewIframeRef }
 				src={ previewUrl }
 				width="100%"
 				frameBorder="0"
@@ -204,7 +198,7 @@ class SharingButtonsPreviewButtons extends React.Component {
 		if ( this.props.showMore ) {
 			buttons.push(
 				<ButtonsPreviewButton
-					ref="moreButton"
+					ref={ this.moreButtonRef }
 					key="more"
 					button={ {
 						ID: 'more',
@@ -235,7 +229,7 @@ class SharingButtonsPreviewButtons extends React.Component {
 		const hiddenButtons = filter( this.props.buttons, { visibility: 'hidden' } );
 
 		return (
-			<div ref="more" className={ classes } style={ this.state.morePreviewOffset }>
+			<div className={ classes } style={ this.state.morePreviewOffset }>
 				<div className="sharing-buttons-preview-buttons__more-inner">
 					<SharingButtonsPreviewButtons
 						buttons={ hiddenButtons }

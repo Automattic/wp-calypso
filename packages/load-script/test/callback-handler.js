@@ -1,9 +1,6 @@
 /**
  */
 
-/**
- * Internal dependencies
- */
 import {
 	addScriptCallback,
 	executeCallbacks,

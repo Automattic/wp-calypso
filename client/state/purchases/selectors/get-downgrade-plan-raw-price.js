@@ -1,6 +1,3 @@
-/**
- * Internal Dependencies
- */
 import { getPlanRawPrice } from 'calypso/state/plans/selectors';
 import { getDowngradePlanFromPurchase } from './get-downgrade-plan-from-purchase';
 

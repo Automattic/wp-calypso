@@ -1,27 +1,18 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import { FormInputValidation } from '@automattic/components';
 import debugFactory from 'debug';
+import { localize } from 'i18n-calypso';
 import { defaults, get, isEmpty, map, set } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
-import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
+import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
 import validateContactDetails from './fr-validate-contact-details';
-import { disableSubmitButton } from './with-contact-details-validation';
 
 const noop = () => {};
 const identity = ( value ) => value;
@@ -56,7 +47,7 @@ function renderValidationError( message ) {
 	return <FormInputValidation isError key={ message } text={ message } />;
 }
 
-class RegistrantExtraInfoFrForm extends React.PureComponent {
+class RegistrantExtraInfoFrForm extends PureComponent {
 	static propTypes = {
 		contactDetails: PropTypes.object,
 		ccTldDetails: PropTypes.object.isRequired,
@@ -80,7 +71,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 		registrantVatId: sanitizeVat,
 	};
 
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		// We're pushing props out into the global state here because:
 		// 1) We want to use these values if the user navigates unexpectedly then returns
 		// 2) We want to use the tld specific forms to manage the tld specific
@@ -124,9 +115,8 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 	};
 
 	render() {
-		const { ccTldDetails, contactDetailsValidationErrors, translate } = this.props;
+		const { ccTldDetails, translate } = this.props;
 		const registrantType = get( ccTldDetails, 'registrantType', defaultRegistrantType );
-		const formIsValid = isEmpty( contactDetailsValidationErrors );
 
 		return (
 			<form className="registrant-extra-info__form">
@@ -159,8 +149,6 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 				</FormFieldset>
 
 				{ 'organization' === registrantType && this.renderOrganizationFields() }
-
-				{ formIsValid ? this.props.children : disableSubmitButton( this.props.children ) }
 			</form>
 		);
 	}
@@ -348,7 +336,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 						autoCapitalize="off"
 						autoComplete="off"
 						autoCorrect="off"
-						placeholder={ '' }
+						placeholder=""
 						onChange={ this.handleChangeContactEvent }
 						isError={ organizationIsError() }
 					/>

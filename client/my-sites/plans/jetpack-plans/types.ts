@@ -1,15 +1,23 @@
-/* eslint-disable wpcalypso/import-docblock */
-/**
- * Type dependencies
- */
-import type { TranslateResult } from 'i18n-calypso';
-import type { ReactNode, ReactElement } from 'react';
-import type { TERM_ANNUALLY, TERM_MONTHLY } from '@automattic/calypso-products';
-import type { Purchase } from 'calypso/lib/purchases/types';
 import type { ITEM_TYPE_PLAN, ITEM_TYPE_PRODUCT } from './constants';
 import type { PlanRecommendation } from './plan-upgrade/types';
+import type {
+	TERM_ANNUALLY,
+	TERM_MONTHLY,
+	TERM_BIENNIALLY,
+	TERM_TRIENNIALLY,
+	JetpackProductCategory,
+	JetpackTag,
+	FAQ,
+} from '@automattic/calypso-products';
+import type { Purchase } from 'calypso/lib/purchases/types';
+import type { TranslateResult } from 'i18n-calypso';
+import type { ReactNode, ReactElement } from 'react';
 
-export type Duration = typeof TERM_ANNUALLY | typeof TERM_MONTHLY;
+export type Duration =
+	| typeof TERM_ANNUALLY
+	| typeof TERM_MONTHLY
+	| typeof TERM_BIENNIALLY
+	| typeof TERM_TRIENNIALLY;
 export type DurationString = 'annual' | 'monthly';
 export type ItemType = typeof ITEM_TYPE_PLAN | typeof ITEM_TYPE_PRODUCT;
 
@@ -26,9 +34,10 @@ export type PurchaseURLCallback = (
 export type DurationChangeCallback = ( arg0: Duration ) => void;
 export type ScrollCardIntoViewCallback = ( arg0: HTMLDivElement, arg1: string ) => void;
 
-interface BasePageProps {
+export interface BasePageProps {
 	rootUrl: string;
 	urlQueryArgs: QueryArgs;
+	nav?: ReactNode;
 	header: ReactNode;
 	footer?: ReactNode;
 }
@@ -38,6 +47,8 @@ export interface SelectorPageProps extends BasePageProps {
 	siteSlug?: string;
 	planRecommendation?: PlanRecommendation;
 	highlightedProducts?: string[];
+	enableUserLicensesDialog?: boolean;
+	locale?: string;
 }
 
 export interface ProductsGridProps {
@@ -48,6 +59,7 @@ export interface ProductsGridProps {
 	onDurationChange?: DurationChangeCallback;
 	scrollCardIntoView: ScrollCardIntoViewCallback;
 	createButtonURL?: PurchaseURLCallback;
+	isLoadingUpsellPageExperiment?: boolean;
 }
 
 export type PlanGridProducts = {
@@ -57,6 +69,7 @@ export type PlanGridProducts = {
 };
 
 export interface JetpackFreeProps {
+	fullWidth?: boolean;
 	urlQueryArgs: QueryArgs;
 	siteId: number | null;
 }
@@ -80,15 +93,11 @@ export type SelectorProductFeaturesItem = {
 	description?: TranslateResult;
 	subitems?: SelectorProductFeaturesItem[];
 	isHighlighted?: boolean;
-};
-
-export type SelectorProductFeaturesSection = {
-	heading: TranslateResult;
-	list: SelectorProductFeaturesItem[];
+	isDifferentiator?: boolean;
 };
 
 export type SelectorProductFeatures = {
-	items: SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[];
+	items: SelectorProductFeaturesItem[];
 };
 
 export interface SelectorProduct extends SelectorProductCost {
@@ -101,12 +110,15 @@ export interface SelectorProduct extends SelectorProductCost {
 	monthlyProductSlug?: string;
 	displayName: TranslateResult;
 	shortName: TranslateResult;
+	subheader?: TranslateResult;
 	tagline: TranslateResult;
 	description: TranslateResult | ReactNode;
+	shortDescription?: TranslateResult | ReactNode;
 	children?: ReactNode;
 	term: Duration;
 	buttonLabel?: TranslateResult;
 	features: SelectorProductFeatures;
+	disclaimer?: TranslateResult | ReactNode;
 	infoText?: TranslateResult | ReactNode;
 	legacy?: boolean;
 	hidePrice?: boolean;
@@ -116,6 +128,15 @@ export interface SelectorProduct extends SelectorProductCost {
 	displayCurrency?: string;
 	displayFrom?: boolean;
 	belowPriceText?: TranslateResult;
+	categories?: JetpackProductCategory[];
+	featuredDescription?: TranslateResult | string;
+	lightboxDescription?: TranslateResult | string;
+	productsIncluded?: ReadonlyArray< string >;
+	whatIsIncluded?: Array< TranslateResult >;
+	benefits?: Array< TranslateResult >;
+	faqs?: Array< FAQ >;
+	recommendedFor?: Array< JetpackTag >;
+	forceNoYearlyUpgrade?: boolean;
 }
 
 export type SiteProduct = {

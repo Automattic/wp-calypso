@@ -1,7 +1,7 @@
 const fs = require( 'fs' );
-const rcopy = require( 'recursive-copy' );
-const mkdirp = require( 'mkdirp' );
 const path = require( 'path' );
+const mkdirp = require( 'mkdirp' );
+const rcopy = require( 'recursive-copy' );
 const yargs = require( 'yargs' );
 
 const args = yargs
@@ -78,6 +78,9 @@ function processPackage( pkgName, context ) {
 	// collect dependencies from various fields
 	const depFields = [ 'dependencies', 'peerDependencies', 'optionalDependencies' ];
 	const pkgDeps = depFields.flatMap( ( type ) => Object.keys( pkgJson[ type ] || {} ) );
+	const optionalPkgDeps = Object.keys( pkgJson.peerDependenciesMeta || [] ).filter(
+		( dep ) => pkgJson.peerDependenciesMeta[ dep ].optional === true
+	);
 
 	// bail out if package has no dependencies
 	if ( ! pkgDeps.length ) {
@@ -96,6 +99,9 @@ function processPackage( pkgName, context ) {
 		);
 
 		if ( foundFolderIdx === -1 ) {
+			if ( optionalPkgDeps.includes( depName ) ) {
+				continue;
+			}
 			throw new Error( 'package not found: ' + depName + ', dependency of ' + pkgFolder );
 		}
 

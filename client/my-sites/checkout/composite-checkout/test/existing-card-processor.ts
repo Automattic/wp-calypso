@@ -1,23 +1,18 @@
-/**
- * External dependencies
- */
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
 import existingCardProcessor from '../lib/existing-card-processor';
-import wp from 'calypso/lib/wp';
-
-jest.mock( 'calypso/lib/wp' );
+import {
+	mockTransactionsEndpoint,
+	mockTransactionsSuccessResponse,
+	processorOptions,
+	basicExpectedDomainDetails,
+	countryCode,
+	postalCode,
+	contactDetailsForDomain,
+} from './util';
+import type { PaymentProcessorOptions } from '../types/payment-processors';
+import type { Stripe } from '@stripe/stripe-js';
 
 describe( 'existingCardProcessor', () => {
-	const stripeConfiguration = {
-		processor_id: 'IE',
-		js_url: 'https://stripe-js-url',
-		public_key: 'stripe-public-key',
-		setup_intent_id: null,
-	};
 	const product = getEmptyResponseCartProduct();
 	const domainProduct = {
 		...getEmptyResponseCartProduct(),
@@ -25,131 +20,56 @@ describe( 'existingCardProcessor', () => {
 		is_domain_registration: true,
 	};
 	const cart = { ...getEmptyResponseCart(), products: [ product ] };
-	const options = {
-		includeDomainDetails: false,
-		includeGSuiteDetails: false,
-		createUserAndSiteBeforeTransaction: false,
-		stripeConfiguration,
-		recordEvent: () => null,
-		reduxDispatch: () => null,
+	const mockConfirmCardPayment = jest
+		.fn()
+		.mockResolvedValue( { paymentIntent: 'test-payment-intent' } );
+	const stripe = {
+		confirmCardPayment: mockConfirmCardPayment as Stripe[ 'confirmCardPayment' ],
+	} as Stripe;
+	const options: PaymentProcessorOptions = {
+		...processorOptions,
+		stripe,
 		responseCart: cart,
-		getThankYouUrl: () => '',
-		siteSlug: undefined,
-		siteId: undefined,
-		contactDetails: undefined,
 	};
-
-	const countryCode = { isTouched: true, value: 'US', errors: [], isRequired: true };
-	const postalCode = { isTouched: true, value: '10001', errors: [], isRequired: true };
 
 	const basicExpectedStripeRequest = {
 		cart: {
-			blog_id: '0',
+			blog_id: 0,
 			cart_key: 'no-site',
 			coupon: '',
-			create_new_blog: true,
-			currency: 'USD',
-			extra: [],
-			is_jetpack_checkout: false,
 			products: [ product ],
 			tax: {
 				location: {},
 			},
 			temporary: false,
 		},
-		domainDetails: undefined,
 		payment: {
-			address: undefined,
-			cancelUrl: undefined,
-			city: undefined,
 			country: 'US',
-			countryCode: 'US',
-			deviceId: undefined,
-			document: undefined,
-			email: undefined,
-			gstin: undefined,
-			idealBank: undefined,
+			country_code: 'US',
 			name: 'test name',
-			nik: undefined,
-			pan: undefined,
-			paymentKey: 'stripe-token',
-			paymentMethod: 'WPCOM_Billing_MoneyPress_Stored',
-			paymentPartner: 'IE',
-			phoneNumber: undefined,
-			postalCode: '10001',
-			state: undefined,
-			storedDetailsId: 'stored-details-id',
-			streetNumber: undefined,
-			successUrl: undefined,
-			tefBank: undefined,
+			payment_key: 'stripe-token',
+			payment_method: 'WPCOM_Billing_MoneyPress_Stored',
+			payment_partner: 'IE',
+			postal_code: '10001',
+			stored_details_id: 'stored-details-id',
 			zip: '10001',
 		},
-	};
-
-	const basicExpectedDomainDetails = {
-		address1: undefined,
-		address2: undefined,
-		alternateEmail: undefined,
-		city: undefined,
-		countryCode: 'US',
-		email: undefined,
-		extra: {
-			ca: null,
-			fr: null,
-			uk: null,
+		tos: {
+			locale: 'en',
+			path: '/',
+			viewport: '0x0',
 		},
-		fax: undefined,
-		firstName: undefined,
-		lastName: undefined,
-		organization: undefined,
-		phone: undefined,
-		postalCode: '10001',
-		state: undefined,
 	};
-
-	const transactionsEndpoint = jest.fn();
-	const undocumentedFunctions = {
-		transactions: transactionsEndpoint,
-	};
-	wp.undocumented = jest.fn().mockReturnValue( undocumentedFunctions );
-
-	beforeEach( () => {
-		transactionsEndpoint.mockClear();
-		transactionsEndpoint.mockReturnValue( Promise.resolve( 'success' ) );
-	} );
-
-	it( 'throws an error if there is no country passed', async () => {
-		const submitData = {};
-		await expect( existingCardProcessor( submitData, options ) ).rejects.toThrowError(
-			/requires country code and none was provided/
-		);
-	} );
-
-	it( 'throws an error if there is no postalCode passed', async () => {
-		const submitData = { country: 'US' };
-		await expect( existingCardProcessor( submitData, options ) ).rejects.toThrowError(
-			/requires postal code and none was provided/
-		);
-	} );
 
 	it( 'throws an error if there is no storedDetailsId passed', async () => {
-		const submitData = { country: 'US', postalCode: '10001' };
+		const submitData = {};
 		await expect( existingCardProcessor( submitData, options ) ).rejects.toThrowError(
 			/requires saved card information and none was provided/
 		);
 	} );
 
-	it( 'throws an error if there is no name passed', async () => {
-		const submitData = { country: 'US', postalCode: '10001', storedDetailsId: 'stored-details-id' };
-		await expect( existingCardProcessor( submitData, options ) ).rejects.toThrowError(
-			/requires cardholder name and none was provided/
-		);
-	} );
-
 	it( 'throws an error if there is no paymentMethodToken passed', async () => {
 		const submitData = {
-			country: 'US',
-			postalCode: '10001',
 			storedDetailsId: 'stored-details-id',
 			name: 'test name',
 		};
@@ -160,8 +80,6 @@ describe( 'existingCardProcessor', () => {
 
 	it( 'throws an error if there is no paymentPartnerProcessorId passed', async () => {
 		const submitData = {
-			country: 'US',
-			postalCode: '10001',
 			storedDetailsId: 'stored-details-id',
 			name: 'test name',
 			paymentMethodToken: 'stripe-token',
@@ -172,15 +90,14 @@ describe( 'existingCardProcessor', () => {
 	} );
 
 	it( 'sends the correct data to the endpoint with no site and one product', async () => {
+		const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsSuccessResponse );
 		const submitData = {
-			country: 'US',
-			postalCode: '10001',
 			storedDetailsId: 'stored-details-id',
 			name: 'test name',
 			paymentMethodToken: 'stripe-token',
 			paymentPartnerProcessorId: 'IE',
 		};
-		const expected = { payload: 'success', type: 'SUCCESS' };
+		const expected = { payload: { success: 'true' }, type: 'SUCCESS' };
 		await expect(
 			existingCardProcessor( submitData, {
 				...options,
@@ -193,16 +110,46 @@ describe( 'existingCardProcessor', () => {
 		expect( transactionsEndpoint ).toHaveBeenCalledWith( basicExpectedStripeRequest );
 	} );
 
-	it( 'returns an explicit error response if the transaction fails', async () => {
+	it( 'sends the correct data to the endpoint with no site and one product and no name', async () => {
+		const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsSuccessResponse );
 		const submitData = {
-			country: 'US',
-			postalCode: '10001',
+			storedDetailsId: 'stored-details-id',
+			paymentMethodToken: 'stripe-token',
+			paymentPartnerProcessorId: 'IE',
+		};
+		const expected = { payload: { success: 'true' }, type: 'SUCCESS' };
+		await expect(
+			existingCardProcessor( submitData, {
+				...options,
+				contactDetails: {
+					countryCode,
+					postalCode,
+				},
+			} )
+		).resolves.toStrictEqual( expected );
+		expect( transactionsEndpoint ).toHaveBeenCalledWith( {
+			...basicExpectedStripeRequest,
+			payment: {
+				...basicExpectedStripeRequest.payment,
+				name: '',
+			},
+		} );
+	} );
+
+	it( 'returns an explicit error response if the transaction fails', async () => {
+		mockTransactionsEndpoint( () => [
+			400,
+			{
+				error: 'test_error',
+				message: 'test error',
+			},
+		] );
+		const submitData = {
 			storedDetailsId: 'stored-details-id',
 			name: 'test name',
 			paymentMethodToken: 'stripe-token',
 			paymentPartnerProcessorId: 'IE',
 		};
-		transactionsEndpoint.mockReturnValue( Promise.reject( new Error( 'test error' ) ) );
 		const expected = { payload: 'test error', type: 'ERROR' };
 		await expect(
 			existingCardProcessor( submitData, {
@@ -216,15 +163,14 @@ describe( 'existingCardProcessor', () => {
 	} );
 
 	it( 'sends the correct data to the endpoint with a site and one product', async () => {
+		const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsSuccessResponse );
 		const submitData = {
-			country: 'US',
-			postalCode: '10001',
 			storedDetailsId: 'stored-details-id',
 			name: 'test name',
 			paymentMethodToken: 'stripe-token',
 			paymentPartnerProcessorId: 'IE',
 		};
-		const expected = { payload: 'success', type: 'SUCCESS' };
+		const expected = { payload: { success: 'true' }, type: 'SUCCESS' };
 		await expect(
 			existingCardProcessor( submitData, {
 				...options,
@@ -240,24 +186,22 @@ describe( 'existingCardProcessor', () => {
 			...basicExpectedStripeRequest,
 			cart: {
 				...basicExpectedStripeRequest.cart,
-				blog_id: '1234567',
-				cart_key: '1234567',
+				blog_id: 1234567,
+				cart_key: 1234567,
 				coupon: '',
-				create_new_blog: false,
 			},
 		} );
 	} );
 
 	it( 'sends the correct data to the endpoint with tax information', async () => {
+		const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsSuccessResponse );
 		const submitData = {
-			country: 'US',
-			postalCode: '10001',
 			storedDetailsId: 'stored-details-id',
 			name: 'test name',
 			paymentMethodToken: 'stripe-token',
 			paymentPartnerProcessorId: 'IE',
 		};
-		const expected = { payload: 'success', type: 'SUCCESS' };
+		const expected = { payload: { success: 'true' }, type: 'SUCCESS' };
 		await expect(
 			existingCardProcessor( submitData, {
 				...options,
@@ -283,34 +227,29 @@ describe( 'existingCardProcessor', () => {
 			...basicExpectedStripeRequest,
 			cart: {
 				...basicExpectedStripeRequest.cart,
-				blog_id: '1234567',
-				cart_key: '1234567',
+				blog_id: 1234567,
+				cart_key: 1234567,
 				coupon: '',
-				create_new_blog: false,
-				tax: { location: { postal_code: 'PR26 7RY', country_code: 'GB' } },
+				tax: { location: { postal_code: 'pr267ry', country_code: 'GB' } },
 			},
 		} );
 	} );
 
 	it( 'sends the correct data to the endpoint with a site and one domain product', async () => {
+		const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsSuccessResponse );
 		const submitData = {
-			country: 'US',
-			postalCode: '10001',
 			storedDetailsId: 'stored-details-id',
 			name: 'test name',
 			paymentMethodToken: 'stripe-token',
 			paymentPartnerProcessorId: 'IE',
 		};
-		const expected = { payload: 'success', type: 'SUCCESS' };
+		const expected = { payload: { success: 'true' }, type: 'SUCCESS' };
 		await expect(
 			existingCardProcessor( submitData, {
 				...options,
 				siteSlug: 'example.wordpress.com',
 				siteId: 1234567,
-				contactDetails: {
-					countryCode,
-					postalCode,
-				},
+				contactDetails: contactDetailsForDomain,
 				responseCart: { ...cart, products: [ domainProduct ] },
 				includeDomainDetails: true,
 			} )
@@ -319,13 +258,12 @@ describe( 'existingCardProcessor', () => {
 			...basicExpectedStripeRequest,
 			cart: {
 				...basicExpectedStripeRequest.cart,
-				blog_id: '1234567',
-				cart_key: '1234567',
+				blog_id: 1234567,
+				cart_key: 1234567,
 				coupon: '',
-				create_new_blog: false,
 				products: [ domainProduct ],
 			},
-			domainDetails: basicExpectedDomainDetails,
+			domain_details: basicExpectedDomainDetails,
 		} );
 	} );
 } );

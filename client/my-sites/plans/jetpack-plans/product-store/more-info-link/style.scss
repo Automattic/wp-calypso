@@ -1,0 +1,16 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.more-info-link {
+	display: inline-block;
+	color: var(--color-neutral-100) !important;
+	text-decoration: underline;
+
+	@include break-medium {
+		padding-bottom: 0;
+	}
+}
+
+.more-info-link .gridicon {
+	margin: 0 1px -3px;
+}

@@ -1,19 +1,8 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 
-/**
- * Internal Dependencies
- */
-import { localizeUrl } from 'calypso/lib/i18n-utils';
-import {
-	MANAGE_PURCHASES_AUTOMATIC_RENEWAL,
-	MANAGE_PURCHASES_FAQ_CANCELLING,
-} from 'calypso/lib/url/support';
-
-export default function TosText(): JSX.Element {
+export default function TosText() {
 	const translate = useTranslate();
 	return (
 		<>
@@ -29,18 +18,10 @@ export default function TosText(): JSX.Element {
 							/>
 						),
 						autoRenewalSupportPage: (
-							<a
-								href={ MANAGE_PURCHASES_AUTOMATIC_RENEWAL }
-								target="_blank"
-								rel="noopener noreferrer"
-							/>
+							<InlineSupportLink supportContext="autorenewal" showIcon={ false } />
 						),
 						faqCancellingSupportPage: (
-							<a
-								href={ MANAGE_PURCHASES_FAQ_CANCELLING }
-								target="_blank"
-								rel="noopener noreferrer"
-							/>
+							<InlineSupportLink supportContext="cancel_purchase" showIcon={ false } />
 						),
 					},
 				}

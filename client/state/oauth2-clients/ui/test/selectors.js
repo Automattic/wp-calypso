@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { getCurrentOAuth2Client, showOAuth2Layout } from '../selectors';
 
 describe( 'selectors', () => {
@@ -13,7 +5,7 @@ describe( 'selectors', () => {
 		test( 'should return null if there is no information yet', () => {
 			const clientData = getCurrentOAuth2Client( {} );
 
-			expect( clientData ).to.be.null;
+			expect( clientData ).toBeNull();
 		} );
 
 		test( 'should return the oauth2 client information if there is one', () => {
@@ -33,7 +25,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( clientData ).to.deep.equal( {
+			expect( clientData ).toEqual( {
 				id: 1,
 				name: 'test',
 				title: 'WordPress.com Test Client',
@@ -46,7 +38,7 @@ describe( 'selectors', () => {
 		test( 'should return false if there is no information yet', () => {
 			const showOAuth2 = showOAuth2Layout( {} );
 
-			expect( showOAuth2 ).to.be.false;
+			expect( showOAuth2 ).toBe( false );
 		} );
 
 		test( 'should return false if there is no current oauth2 client set', () => {
@@ -66,7 +58,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( showOAuth2 ).to.be.false;
+			expect( showOAuth2 ).toBe( false );
 		} );
 
 		test( 'should return true if there is a current client id set', () => {
@@ -86,7 +78,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( showOAuth2 ).to.be.true;
+			expect( showOAuth2 ).toBe( true );
 		} );
 	} );
 } );

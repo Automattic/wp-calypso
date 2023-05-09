@@ -15,7 +15,7 @@
 
 .daily-backup-status__download-button {
 	margin: 24px 0 1rem;
-	color: var( --color-accent );
+	color: var(--color-accent);
 }
 
 .daily-backup-status__credentials-warning {
@@ -29,6 +29,7 @@
 	margin-bottom: 1rem;
 	font-weight: 600;
 	font-size: $font-body-small;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	line-height: 1rem;
 }
 
@@ -44,7 +45,7 @@
 .daily-backup-status__credentials-warning-text a {
 	display: block;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		display: inline;
 	}
 }
@@ -53,8 +54,12 @@
 	margin-top: 32px;
 	font-size: $font-body;
 	font-weight: 600;
-	border-bottom: 1px solid var( --studio-gray-10 );
+	border-bottom: 1px solid var(--studio-gray-10);
 	padding-bottom: 16px;
+
+	@include breakpoint-deprecated( "<480px" ) {
+		margin-top: 40px;
+	}
 }
 
 .daily-backup-status__section-header {
@@ -80,7 +85,7 @@
 .daily-backup-status__media-title {
 	position: relative;
 	top: -1.9rem;
-	background-color: rgba( 0, 0, 0, 0.5 );
+	background-color: rgba(0, 0, 0, 0.5);
 	color: #fff;
 	font-size: $font-body-small;
 	padding-top: 0.3rem;
@@ -102,6 +107,7 @@
 	display: inline-block;
 	background: #dcdcde;
 	color: #000;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	border-radius: 1rem;
 	padding: 0.2rem 0.5rem;
 }
@@ -113,6 +119,7 @@
 	display: inline-block;
 	background: #d63638;
 	color: #fff;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	border-radius: 1rem;
 	padding: 0.2rem 0.5rem;
 }
@@ -164,7 +171,11 @@
 .daily-backup-status__daily-no-changes {
 	font-style: italic;
 	padding-top: 16px;
-	color: var( --studio-gray-40 );
+	color: var(--studio-gray-40);
+
+	@include breakpoint-deprecated( "<480px" ) {
+		margin-bottom: 8px;
+	}
 }
 
 .daily-backup-status__daily {
@@ -175,13 +186,14 @@
 	margin-top: 0;
 }
 
-@include breakpoint-deprecated( '>660px' ) {
+@include breakpoint-deprecated( ">660px" ) {
 	.daily-backup-status {
 		text-align: left;
 	}
 
 	.form-button.daily-backup-status__download-button,
-	.form-button.daily-backup-status__restore-button {
+	.form-button.daily-backup-status__restore-button,
+	.form-button.daily-backup-status__clone-button {
 		display: inline-block;
 		width: initial;
 		margin: 0;
@@ -200,7 +212,11 @@
 	margin-top: 2rem;
 	box-shadow: none;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		box-shadow: 0 0 0 1px #dcdcde;
 	}
+}
+
+.daily-backup-status:empty {
+	display: none;
 }

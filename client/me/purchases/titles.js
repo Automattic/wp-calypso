@@ -1,7 +1,3 @@
-/**
- * External dependencies
- */
-
 import i18n from 'i18n-calypso';
 
 const titles = {
@@ -13,10 +9,10 @@ const titles = {
 	addCardDetails: i18n.translate( 'Add Credit Card' ),
 	managePurchase: i18n.translate( 'Purchase Settings' ),
 	sectionTitle: i18n.translate( 'Purchases' ),
+	myPlan: i18n.translate( 'My Plan' ),
 	activeUpgrades: i18n.translate( 'Active Upgrades' ),
 	billingHistory: i18n.translate( 'Billing History' ),
 	paymentMethods: i18n.translate( 'Payment Methods' ),
-	pendingPayments: i18n.translate( 'Pending Payments' ),
 };
 
 /**
@@ -50,17 +46,14 @@ Object.defineProperties( titles, {
 	activeUpgrades: {
 		get: () => i18n.translate( 'Active Upgrades' ),
 	},
+	myPlan: {
+		get: () => i18n.translate( 'My Plan' ),
+	},
 	billingHistory: {
 		get: () => i18n.translate( 'Billing History' ),
 	},
 	paymentMethods: {
 		get: () => i18n.translate( 'Payment Methods' ),
-	},
-	vatDetails: {
-		get: () => i18n.translate( 'VAT Details' ),
-	},
-	pendingPayments: {
-		get: () => i18n.translate( 'Pending Payments' ),
 	},
 } );
 

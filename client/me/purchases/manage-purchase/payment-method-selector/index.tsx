@@ -1,33 +1,26 @@
-/**
- * External dependencies
- */
-import React, { useCallback, useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { useStripe } from '@automattic/calypso-stripe';
+import config from '@automattic/calypso-config';
+import { useStripe, useStripeSetupIntentId } from '@automattic/calypso-stripe';
+import colorStudio from '@automattic/color-studio';
+import { Card, Gridicon } from '@automattic/components';
 import {
 	CheckoutProvider,
 	CheckoutPaymentMethods,
 	CheckoutSubmitButton,
+	checkoutTheme,
 } from '@automattic/composite-checkout';
-import type { PaymentMethod } from '@automattic/composite-checkout';
-import { Card } from '@automattic/components';
+import { useElements, CardNumberElement } from '@stripe/react-stripe-js';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import type { TranslateResult } from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
+import { useCallback, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import QueryPaymentCountries from 'calypso/components/data/query-countries/payments';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';
-import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { creditCardHasAlreadyExpired } from 'calypso/lib/purchases';
-import { getStoredPaymentAgreements } from 'calypso/state/stored-cards/selectors';
-import Gridicon from 'calypso/components/gridicon';
-import {
-	useHandleRedirectChangeError,
-	useHandleRedirectChangeComplete,
-} from './url-event-handlers';
+import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-stored-payment-methods';
+import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
 import {
 	assignPayPalProcessor,
 	assignNewCardProcessor,
@@ -35,39 +28,84 @@ import {
 } from './assignment-processor-functions';
 import getPaymentMethodIdFromPayment from './get-payment-method-id-from-payment';
 import TosText from './tos-text';
+import {
+	useHandleRedirectChangeError,
+	useHandleRedirectChangeComplete,
+} from './url-event-handlers';
+import type { ReloadSetupIntentId } from '@automattic/calypso-stripe';
+import type { CheckoutPageErrorCallback, PaymentMethod } from '@automattic/composite-checkout';
 import type { Purchase } from 'calypso/lib/purchases/types';
-import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
-import FormLabel from 'calypso/components/forms/form-label';
+import type { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';
+
+const { colors } = colorStudio;
+const jetpackColors = isJetpackCloud() ? { highlight: colors[ 'Jetpack Green 50' ] } : {};
+const theme = { ...checkoutTheme, colors: { ...checkoutTheme.colors, ...jetpackColors } };
+
+function convertErrorToString( error: Error ): string {
+	if ( error.cause ) {
+		return `${ error.message }; Cause: ${ error.cause }`;
+	}
+	return error.message;
+}
+
+function useLogError( message: string ): CheckoutPageErrorCallback {
+	return useCallback(
+		( errorType, error ) => {
+			logToLogstash( {
+				feature: 'calypso_client',
+				message,
+				severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+				extra: {
+					env: config( 'env_id' ),
+					type: 'payment_method_selector',
+					message: convertErrorToString( error ),
+					errorType,
+				},
+			} );
+		},
+		[ message ]
+	);
+}
 
 export default function PaymentMethodSelector( {
 	purchase,
 	paymentMethods,
 	successCallback,
+	eventContext,
 }: {
 	purchase?: Purchase;
 	paymentMethods: PaymentMethod[];
 	successCallback: () => void;
-} ): JSX.Element {
+	eventContext?: string;
+} ) {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
 	const { isStripeLoading, stripe, stripeConfiguration, stripeLoadingError } = useStripe();
+	const {
+		reload: reloadSetupIntentId,
+		setupIntentId: stripeSetupIntentId,
+		error: setupIntentError,
+	} = useStripeSetupIntentId();
 	const currentlyAssignedPaymentMethodId = getPaymentMethodIdFromPayment( purchase?.payment );
 
-	const showErrorMessage = useCallback(
-		( error ) => {
-			const message = error?.toString ? error.toString() : error;
-			reduxDispatch( errorNotice( message, { displayOnNextPage: true } ) );
-		},
-		[ reduxDispatch ]
-	);
+	const showRedirectMessage = useCallback( () => {
+		reduxDispatch( infoNotice( translate( 'Redirecting to payment partner…' ) ) );
+	}, [ reduxDispatch, translate ] );
 
-	const showInfoMessage = useCallback(
-		( message ) => {
-			reduxDispatch( infoNotice( message ) );
+	const handleChangeError = useCallback(
+		( { transactionError }: { transactionError: string | null } ) => {
+			reduxDispatch(
+				errorNotice(
+					transactionError ||
+						translate( 'There was a problem assigning that payment method. Please try again.' )
+				)
+			);
+			// We need to regenerate the setup intent if the form was submitted.
+			reloadSetupIntentId();
 		},
-		[ reduxDispatch ]
+		[ reduxDispatch, translate, reloadSetupIntentId ]
 	);
 
 	const showSuccessMessage = useCallback(
@@ -77,51 +115,76 @@ export default function PaymentMethodSelector( {
 		[ reduxDispatch ]
 	);
 
+	const logError = useLogError( 'payment method selector page load error' );
+
 	const currentPaymentMethodNotAvailable = ! paymentMethods.some(
 		( paymentMethod ) => paymentMethod.id === currentlyAssignedPaymentMethodId
 	);
 
 	useHandleRedirectChangeError( () => {
-		showErrorMessage(
-			translate( 'There was a problem assigning that payment method. Please try again.' )
+		const message = translate(
+			'There was a problem assigning that payment method. Please try again.'
 		);
+		reduxDispatch( errorNotice( message ) );
+		// We need to regenerate the setup intent if the form was submitted.
+		reloadSetupIntentId();
 	} );
 	useHandleRedirectChangeComplete( () => {
-		onPaymentSelectComplete( { successCallback, translate, showSuccessMessage, purchase } );
+		onPaymentSelectComplete( {
+			successCallback,
+			translate,
+			showSuccessMessage,
+			purchase,
+			reloadSetupIntentId,
+		} );
 	} );
-
-	const [ useForAllSubscriptions, setUseForAllSubscriptions ] = useState< boolean >( ! purchase );
-	const assignAllSubscriptionsText = String(
-		translate( 'Assign this payment method to all of my subscriptions' )
-	);
 
 	useEffect( () => {
 		if ( stripeLoadingError ) {
-			showErrorMessage( stripeLoadingError );
+			reduxDispatch( errorNotice( stripeLoadingError.message ) );
 		}
-	}, [ stripeLoadingError, showErrorMessage ] );
+	}, [ stripeLoadingError, reduxDispatch ] );
+
+	useEffect( () => {
+		if ( setupIntentError ) {
+			reduxDispatch( errorNotice( setupIntentError.message ) );
+		}
+	}, [ setupIntentError, reduxDispatch ] );
+
+	const elements = useElements();
 
 	return (
 		<CheckoutProvider
-			onPaymentComplete={ () =>
-				onPaymentSelectComplete( { successCallback, translate, showSuccessMessage, purchase } )
-			}
-			showErrorMessage={ showErrorMessage }
-			showInfoMessage={ showInfoMessage }
-			showSuccessMessage={ showSuccessMessage }
+			onPaymentComplete={ () => {
+				onPaymentSelectComplete( {
+					successCallback,
+					translate,
+					showSuccessMessage,
+					purchase,
+					reloadSetupIntentId,
+				} );
+			} }
+			onPaymentRedirect={ showRedirectMessage }
+			onPaymentError={ handleChangeError }
+			onPageLoadError={ logError }
 			paymentMethods={ paymentMethods }
 			paymentProcessors={ {
-				paypal: () => assignPayPalProcessor( purchase, reduxDispatch ),
-				'existing-card': ( data ) => assignExistingCardProcessor( purchase, reduxDispatch, data ),
-				card: ( data ) =>
+				paypal: ( data: unknown ) => assignPayPalProcessor( purchase, reduxDispatch, data ),
+				'existing-card': ( data: unknown ) =>
+					assignExistingCardProcessor( purchase, reduxDispatch, data ),
+				'existing-card-ebanx': ( data: unknown ) =>
+					assignExistingCardProcessor( purchase, reduxDispatch, data ),
+				card: ( data: unknown ) =>
 					assignNewCardProcessor(
 						{
 							purchase,
-							useForAllSubscriptions,
 							translate,
 							stripe,
 							stripeConfiguration,
+							stripeSetupIntentId,
+							cardNumberElement: elements?.getElement( CardNumberElement ) ?? undefined,
 							reduxDispatch,
+							eventSource: eventContext,
 						},
 						data
 					),
@@ -131,8 +194,13 @@ export default function PaymentMethodSelector( {
 				currentlyAssignedPaymentMethodId,
 				paymentMethods
 			) }
+			theme={ theme }
 		>
-			<Card className="payment-method-selector__content">
+			<Card
+				className={ classNames( 'payment-method-selector__content', {
+					'is-jetpack-cloud': isJetpackCloud(),
+				} ) }
+			>
 				<QueryPaymentCountries />
 				{ currentPaymentMethodNotAvailable && purchase && (
 					<CurrentPaymentMethodNotAvailableNotice purchase={ purchase } />
@@ -145,45 +213,9 @@ export default function PaymentMethodSelector( {
 					</p>
 				</div>
 
-				{ ! purchase && (
-					<FormLabel className="payment-method-selector__all-subscriptions-checkbox-label">
-						<FormInputCheckbox
-							className="payment-method-selector__all-subscriptions-checkbox"
-							checked={ useForAllSubscriptions }
-							onChange={ () => setUseForAllSubscriptions( ( checked ) => ! checked ) }
-							aria-label={ assignAllSubscriptionsText }
-						/>
-						{ assignAllSubscriptionsText }
-						<AllSubscriptionsEffectWarning useForAllSubscriptions={ useForAllSubscriptions } />
-					</FormLabel>
-				) }
-
 				<CheckoutSubmitButton />
 			</Card>
 		</CheckoutProvider>
-	);
-}
-
-function AllSubscriptionsEffectWarning( {
-	useForAllSubscriptions,
-}: {
-	useForAllSubscriptions: boolean;
-} ) {
-	const translate = useTranslate();
-
-	if ( useForAllSubscriptions ) {
-		return (
-			<span className="payment-method-selector__all-subscriptions-effect-warning">
-				{ translate( 'This card will be used for future renewals of existing purchases.' ) }
-			</span>
-		);
-	}
-	return (
-		<span className="payment-method-selector__all-subscriptions-effect-warning">
-			{ translate(
-				'This card will not be assigned to any subscriptions. You can assign it to a subscription from the subscription page.'
-			) }
-		</span>
 	);
 }
 
@@ -208,28 +240,30 @@ function onPaymentSelectComplete( {
 	translate,
 	showSuccessMessage,
 	purchase,
+	reloadSetupIntentId,
 }: {
 	successCallback: () => void;
 	translate: ReturnType< typeof useTranslate >;
 	showSuccessMessage: ( message: string | TranslateResult ) => void;
 	purchase?: Purchase | undefined;
+	reloadSetupIntentId: ReloadSetupIntentId;
 } ) {
 	if ( purchase ) {
 		showSuccessMessage( translate( 'Your payment method has been set.' ) );
 	} else {
 		showSuccessMessage( translate( 'Your payment method has been added successfully.' ) );
 	}
+	// We need to regenerate the setup intent if the form was submitted.
+	reloadSetupIntentId();
 	successCallback();
 }
 
-function CurrentPaymentMethodNotAvailableNotice( {
-	purchase,
-}: {
-	purchase: Purchase;
-} ): JSX.Element | null {
+function CurrentPaymentMethodNotAvailableNotice( { purchase }: { purchase: Purchase } ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
-	const storedPaymentAgreements = useSelector( getStoredPaymentAgreements );
+	const { paymentMethods: storedPaymentAgreements } = useStoredPaymentMethods( {
+		type: 'agreement',
+	} );
 	const noticeProps: Record< string, boolean | string | number | TranslateResult > = {
 		showDismiss: false,
 	};

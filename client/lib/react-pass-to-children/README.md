@@ -7,10 +7,10 @@ Pass to Children is a utility method to assist in creating a React pass-through 
 The exposed method expects to receive the current react element instance, and an object of props to pass to the child in addition to the props of the instance itself.
 
 ```js
-import React from 'react';
+import { Component } from 'react';
 import passToChildren from 'calypso/lib/react-pass-to-children';
 
-export default class extends React.Component {
+export default class extends Component {
 	render() {
 		return passToChildren( this, {
 			data: [ 1, 2, 3 ],

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { requestPosts } from 'calypso/state/posts/actions/request-posts';
 
 import 'calypso/state/posts/init';

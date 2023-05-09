@@ -1,35 +1,25 @@
-/**
- * External dependencies
- */
+import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { Moment } from 'moment';
-import React from 'react';
+import * as React from 'react';
 import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { preventWidows } from 'calypso/lib/formatting';
 import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import { backupMainPath } from 'calypso/my-sites/backup/paths';
 import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
 import useGetDisplayDate from '../use-get-display-date';
-
-/**
- * Style dependencies
- */
-import './style.scss';
+import BackupTips from './backup-tips';
 import cloudScheduleIcon from './icons/cloud-schedule.svg';
+
+import './style.scss';
 
 const BackupJustCompleted: React.FC< Props > = ( { justCompletedBackupDate, lastBackupDate } ) => {
 	const translate = useTranslate();
 	const getDisplayDate = useGetDisplayDate();
 
 	const siteSlug = useSelector( getSelectedSiteSlug );
-	const siteLastBackupDate = useDateWithOffset( lastBackupDate, {
-		shouldExecute: !! lastBackupDate,
-	} );
+	const siteLastBackupDate = useDateWithOffset( lastBackupDate );
 	const justCompletedDisplayDate = getDisplayDate( justCompletedBackupDate, false );
 	const lastBackupDisplayDate = getDisplayDate( lastBackupDate, false );
 
@@ -61,6 +51,8 @@ const BackupJustCompleted: React.FC< Props > = ( { justCompletedBackupDate, last
 					} ) }
 				</div>
 			) }
+
+			{ isEnabled( 'jetpack/backup-messaging-i3' ) && <BackupTips location="COMPLETED" /> }
 		</>
 	);
 };

@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-
-/**
- * Internal dependencies
- */
-import { uploadGravatar, announceSuccess, announceFailure } from '../';
 import {
 	GRAVATAR_UPLOAD_RECEIVE,
 	GRAVATAR_UPLOAD_REQUEST_SUCCESS,
 	GRAVATAR_UPLOAD_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { uploadGravatar, announceSuccess, announceFailure } from '../';
 
 describe( '#uploadGravatar()', () => {
 	test( 'dispatches an HTTP request to the gravatar upload endpoint', () => {

@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
-
-/**
- * Internal Dependencies
- */
+import { receiveComments } from 'calypso/state/comments/actions';
 import {
 	READER_VIEWING_FULL_POST_SET,
 	READER_VIEWING_FULL_POST_UNSET,
 } from 'calypso/state/reader/action-types';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { getSite } from 'calypso/state/reader/sites/selectors';
-import { receiveComments } from 'calypso/state/comments/actions';
 import { lasagna } from '../middleware';
 
 const debug = debugFactory( 'lasagna:channel' );
@@ -64,14 +57,19 @@ const joinChannel = async ( store, joinParams ) => {
 			return;
 		}
 
-		store.dispatch(
-			receiveComments( {
-				siteId: comment.post.site_ID,
-				postId: comment.post.ID,
-				comments: [ comment ],
-				commentById: true,
-			} )
-		);
+		// If the comment's author is 0, that means it was authored by the current user.
+		// In that case do not dispatch the event as it may arrive before the pending comment has been deleted,
+		// causing a duplicate comment. See https://github.com/Automattic/wp-calypso/issues/61812
+		if ( comment.author && comment.author.ID !== 0 ) {
+			store.dispatch(
+				receiveComments( {
+					siteId: comment.post.site_ID,
+					postId: comment.post.ID,
+					comments: [ comment ],
+					commentById: true,
+				} )
+			);
+		}
 	} );
 
 	lasagna.joinChannel( topic, () => debug( topic + ' channel join ok' ) );

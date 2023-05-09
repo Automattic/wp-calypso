@@ -1,5 +1,5 @@
-const { getViewerData, readStatsFromFile } = require( 'webpack-bundle-analyzer/lib/analyzer' );
 const { writeFileSync } = require( 'fs' );
+const { getViewerData, readStatsFromFile } = require( 'webpack-bundle-analyzer/lib/analyzer' );
 
 analyzeBundle();
 

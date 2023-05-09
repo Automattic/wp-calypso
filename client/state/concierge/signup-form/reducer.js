@@ -1,12 +1,9 @@
-/**
- * Internal dependencies
- */
-import { combineReducers } from 'calypso/state/utils';
+import { guessTimezone } from '@automattic/i18n-utils';
 import {
 	CONCIERGE_SIGNUP_FORM_UPDATE,
 	CONCIERGE_UPDATE_BOOKING_STATUS,
 } from 'calypso/state/action-types';
-import guessTimezone from 'calypso/lib/i18n-utils/guess-timezone';
+import { combineReducers } from 'calypso/state/utils';
 
 export const message = ( state = '', action ) => {
 	switch ( action.type ) {
@@ -21,15 +18,6 @@ export const timezone = ( state = guessTimezone() || 'UTC', action ) => {
 	switch ( action.type ) {
 		case CONCIERGE_SIGNUP_FORM_UPDATE:
 			return action.signupForm.timezone;
-	}
-
-	return state;
-};
-
-export const isRebrandCitiesSite = ( state = false, action ) => {
-	switch ( action.type ) {
-		case CONCIERGE_SIGNUP_FORM_UPDATE:
-			return action.signupForm.isRebrandCitiesSite;
 	}
 
 	return state;
@@ -95,7 +83,6 @@ export default combineReducers( {
 	message,
 	timezone,
 	status,
-	isRebrandCitiesSite,
 	phoneNumber,
 	countryCode,
 	phoneNumberWithoutCountryCode,

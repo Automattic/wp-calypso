@@ -1,16 +1,10 @@
-/**
- * External dependencies
- */
-import classnames from 'classnames';
-import { __ } from '@wordpress/i18n';
-import { Button, Dashicon } from '@wordpress/components';
-import { Component } from '@wordpress/element';
 import { registerBlockType } from '@wordpress/blocks';
+import { Button } from '@wordpress/components';
 import { RichText } from '@wordpress/editor';
-
-/**
- * Internal dependencies
- */
+import { Component } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
+import { Icon, plus } from '@wordpress/icons';
+import classnames from 'classnames';
 import { ItemEditor } from './item';
 
 import './editor.scss';
@@ -207,7 +201,7 @@ const edit = class extends Component {
 				</ul>
 				<div class="add-new-todo-item-form">
 					<Button onClick={ this.addNewItem }>
-						<Dashicon icon="plus" /> Add new item
+						<Icon icon={ plus } /> Add new item
 					</Button>
 				</div>
 			</div>

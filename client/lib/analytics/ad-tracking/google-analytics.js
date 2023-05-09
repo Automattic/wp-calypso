@@ -1,50 +1,21 @@
-/**
- * Internal dependencies
- */
-import config from '@automattic/calypso-config';
-import { isPiiUrl, mayWeTrackCurrentUserGdpr } from 'calypso/lib/analytics/utils';
-
-import { getCurrentUser, getDoNotTrack } from '@automattic/calypso-analytics';
-import { isGoogleAnalyticsEnabled, TRACKING_IDS } from './constants';
-import { setupGtag } from './setup-gtag';
+import { getCurrentUser } from '@automattic/calypso-analytics';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { getGaGtag } from '../utils/get-ga-gtag';
+import * as GA4 from './google-analytics-4';
 
 // Ensure setup has run.
 import './setup';
 
-export function setupGoogleAnalyticsGtag( options ) {
-	setupGtag();
-	window.gtag( 'config', TRACKING_IDS.wpcomGoogleAnalyticsGtag, options );
-}
+export function setupGoogleAnalyticsGtag( params ) {
+	GA4.setup( params );
 
-/**
- * Returns whether Google Analytics is allowed.
- *
- * This function returns false if:
- *
- * 1. `isGoogleAnalyticsEnabled` is `true`
- * 2. `ad-tracking` feature is disabled
- * 3. `Do Not Track` is enabled
- * 4. the current user could be in the GDPR zone and hasn't consented to tracking
- * 5. `document.location.href` may contain personally identifiable information
- *
- * Note that getDoNotTrack() and isPiiUrl() can change at any time which is why we do not cache them.
- *
- * @returns {boolean} true if GA is allowed.
- */
-export function isGoogleAnalyticsAllowed() {
-	return (
-		isGoogleAnalyticsEnabled &&
-		config.isEnabled( 'ad-tracking' ) &&
-		! getDoNotTrack() &&
-		! isPiiUrl() &&
-		mayWeTrackCurrentUserGdpr()
-	);
+	window.gtag( 'config', getGaGtag(), params );
 }
 
 /**
  * Returns the default configuration for Google Analytics
  *
- * @returns {object} GA's default config
+ * @returns {Object} GA's default config
  */
 export function getGoogleAnalyticsDefaultConfig() {
 	const currentUser = getCurrentUser();
@@ -57,6 +28,7 @@ export function getGoogleAnalyticsDefaultConfig() {
 		custom_map: {
 			dimension3: 'client_id',
 		},
+		linker: isJetpackCloud() ? { domains: [ 'wordpress.com' ] } : { accept_incoming: true },
 	};
 }
 
@@ -65,13 +37,39 @@ export function getGoogleAnalyticsDefaultConfig() {
  *
  * @param {string} urlPath The path of the current page
  * @param {string} pageTitle The title of the current page
+ * @param {boolean} useJetpackGoogleAnalytics send the page view to Jetpack Google Analytics
+ * @param {boolean} useAkismetGoogleAnalytics send the page view to Akismet Google Analytics
  */
-export function fireGoogleAnalyticsPageView( urlPath, pageTitle ) {
-	window.gtag( 'config', TRACKING_IDS.wpcomGoogleAnalyticsGtag, {
+export function fireGoogleAnalyticsPageView(
+	urlPath,
+	pageTitle,
+	useJetpackGoogleAnalytics = false,
+	useAkismetGoogleAnalytics = false
+) {
+	const getGa4PropertyGtag = () => {
+		if ( useJetpackGoogleAnalytics ) {
+			return GA4.Ga4PropertyGtag.JETPACK;
+		}
+		if ( useAkismetGoogleAnalytics ) {
+			return GA4.Ga4PropertyGtag.AKISMET;
+		}
+		return GA4.Ga4PropertyGtag.WPCOM;
+	};
+
+	const ga4PropertyGtag = getGa4PropertyGtag();
+	GA4.firePageView( pageTitle, urlPath, ga4PropertyGtag );
+
+	const params = {
 		...getGoogleAnalyticsDefaultConfig(),
 		page_path: urlPath,
 		page_title: pageTitle,
-	} );
+	};
+
+	window.gtag(
+		'config',
+		getGaGtag( useJetpackGoogleAnalytics, useAkismetGoogleAnalytics ),
+		params
+	);
 }
 
 /**
@@ -87,22 +85,5 @@ export function fireGoogleAnalyticsEvent( category, action, label, value ) {
 		event_category: category,
 		event_label: label,
 		value: value,
-	} );
-}
-
-/**
- * Fires a generic Google Analytics timing
- *
- * @param {string} name A string to identify the variable being recorded (e.g. 'load').
- * @param {number} value The number of milliseconds in elapsed time to report to Google Analytics (e.g. 20).
- * @param {string} event_category A string for categorizing all user timing variables into logical groups (e.g. 'JS Dependencies').
- * @param {string} event_label A string that can be used to add flexibility in visualizing user timings in the reports (e.g. 'Google CDN').
- */
-export function fireGoogleAnalyticsTiming( name, value, event_category, event_label ) {
-	window.gtag( 'event', 'timing_complete', {
-		name: name,
-		value: value,
-		event_category: event_category,
-		event_label: event_label,
 	} );
 }

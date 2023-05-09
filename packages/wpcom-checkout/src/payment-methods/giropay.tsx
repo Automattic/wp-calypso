@@ -1,28 +1,13 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import debugFactory from 'debug';
+import { Button, FormStatus, useTotal, useFormStatus } from '@automattic/composite-checkout';
+import styled from '@emotion/styled';
+import { useSelect, useDispatch, registerStore } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import {
-	Button,
-	FormStatus,
-	useLineItems,
-	useFormStatus,
-	registerStore,
-	useSelect,
-	useDispatch,
-} from '@automattic/composite-checkout';
-import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
-
-/**
- * Internal dependencies
- */
-import styled from '../styled';
+import debugFactory from 'debug';
+import { Fragment } from 'react';
 import Field from '../field';
-import { SummaryLine, SummaryDetails } from '../summary-details';
 import { PaymentMethodLogos } from '../payment-method-logos';
+import { SummaryLine, SummaryDetails } from '../summary-details';
 import type {
 	PaymentMethodStore,
 	StoreSelectors,
@@ -30,20 +15,16 @@ import type {
 	StoreActions,
 	StoreState,
 } from '../payment-method-store';
+import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
+import type { AnyAction } from 'redux';
 
 const debug = debugFactory( 'wpcom-checkout:giropay-payment-method' );
 
 // Disabling this to make migration easier
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-type StoreKey = 'giropay';
 type NounsInStore = 'customerName';
 type GiropayStore = PaymentMethodStore< NounsInStore >;
-
-declare module '@wordpress/data' {
-	function select( key: StoreKey ): StoreSelectors< NounsInStore >;
-	function dispatch( key: StoreKey ): StoreActions< NounsInStore >;
-}
 
 const actions: StoreActions< NounsInStore > = {
 	changeCustomerName( payload ) {
@@ -65,7 +46,7 @@ export function createGiropayPaymentMethodStore(): GiropayStore {
 			state: StoreState< NounsInStore > = {
 				customerName: { value: '', isTouched: false },
 			},
-			action
+			action: AnyAction
 		): StoreState< NounsInStore > {
 			switch ( action.type ) {
 				case 'CUSTOMER_NAME_SET':
@@ -80,9 +61,21 @@ export function createGiropayPaymentMethodStore(): GiropayStore {
 	return store;
 }
 
+function useCustomerName() {
+	const { customerName } = useSelect( ( select ) => {
+		const store = select( 'giropay' ) as StoreSelectors< NounsInStore >;
+		return {
+			customerName: store.getCustomerName(),
+		};
+	}, [] );
+
+	return customerName;
+}
+
 export function createGiropayMethod( { store }: { store: GiropayStore } ): PaymentMethod {
 	return {
 		id: 'giropay',
+		paymentProcessorId: 'giropay',
 		label: <GiropayLabel />,
 		activeContent: <GiropayFields />,
 		inactiveContent: <GiropaySummary />,
@@ -91,10 +84,10 @@ export function createGiropayMethod( { store }: { store: GiropayStore } ): Payme
 	};
 }
 
-function GiropayFields(): JSX.Element {
+function GiropayFields() {
 	const { __ } = useI18n();
 
-	const customerName = useSelect( ( select ) => select( 'giropay' ).getCustomerName() );
+	const customerName = useCustomerName();
 	const { changeCustomerName } = useDispatch( 'giropay' );
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
@@ -153,10 +146,10 @@ function GiropayPayButton( {
 	disabled?: boolean;
 	onClick?: ProcessPayment;
 	store: GiropayStore;
-} ): JSX.Element {
-	const [ , total ] = useLineItems();
+} ) {
+	const total = useTotal();
 	const { formStatus } = useFormStatus();
-	const customerName = useSelect( ( select ) => select( 'giropay' ).getCustomerName() );
+	const customerName = useCustomerName();
 
 	// This must be typed as optional because it's injected by cloning the
 	// element in CheckoutSubmitButton, but the uncloned element does not have
@@ -173,7 +166,7 @@ function GiropayPayButton( {
 			onClick={ () => {
 				if ( isFormValid( store ) ) {
 					debug( 'submitting giropay payment' );
-					onClick( 'giropay', {
+					onClick( {
 						name: customerName.value,
 					} );
 				}
@@ -212,12 +205,12 @@ function isFormValid( store: GiropayStore ): boolean {
 
 function GiropayLabel() {
 	return (
-		<React.Fragment>
+		<Fragment>
 			<span>Giropay</span>
 			<PaymentMethodLogos className="giropay__logo payment-logos">
 				<GiropayLogo />
 			</PaymentMethodLogos>
-		</React.Fragment>
+		</Fragment>
 	);
 }
 
@@ -231,7 +224,7 @@ function GiropayLogoImg( { className }: { className?: string } ) {
 }
 
 function GiropaySummary() {
-	const customerName = useSelect( ( select ) => select( 'giropay' ).getCustomerName() );
+	const customerName = useCustomerName();
 
 	return (
 		<SummaryDetails>

@@ -1,6 +1,3 @@
-/**
- * Internal Dependencies
- */
 import { getUserPurchases } from './get-user-purchases';
 
 import 'calypso/state/purchases/init';
@@ -8,9 +5,10 @@ import 'calypso/state/purchases/init';
 /**
  * Does the user have any current purchases?
  *
- * @param   {object}  state       global state
- * @param   {number}  userId      the user id
+ * @param   {Object}  state       global state
  * @returns {boolean} if the user currently has any purchases.
  */
-export const isUserPaid = ( state, userId ) =>
-	state.purchases.hasLoadedUserPurchasesFromServer && 0 < getUserPurchases( state, userId ).length;
+export const isUserPaid = ( state ) => {
+	const purchases = getUserPurchases( state );
+	return purchases && purchases.length > 0;
+};

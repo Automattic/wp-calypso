@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { Interval, EVERY_SECOND } from 'calypso/lib/interval';
 import { getRewindBackupProgress } from 'calypso/state/activity-log/actions';
 
@@ -17,7 +10,7 @@ class QueryRewindBackupStatus extends Component {
 		siteId: PropTypes.number.isRequired,
 	};
 
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		// We want to run this only once: when the page is loaded. In such case, there is not known download Id.
 		// If there's a download Id here it means this was mounted during an action requesting progress for a
 		// specific download Id, so we will do nothing here,since it will be handled by the <Interval /> below.

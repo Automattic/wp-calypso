@@ -1,8 +1,10 @@
+import 'calypso/state/document-head/init';
+
 /**
  * Returns the document title as set by the DocumentHead component or setTitle
  * action.
  *
- * @param  {object}  state  Global state tree
+ * @param  {Object}  state  Global state tree
  * @returns {?string}        Document title
  */
 export function getDocumentHeadTitle( state ) {

@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-
 import { makeLayout } from 'calypso/controller';
 import { siteSelection, navigation, sites } from 'calypso/my-sites/controller';
 import { list } from './controller';

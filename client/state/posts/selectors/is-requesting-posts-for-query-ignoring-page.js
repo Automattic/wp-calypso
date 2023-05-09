@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { isEqual, omit, some } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { createSelector } from '@automattic/state-utils';
+import { isEqual, omit, some } from 'lodash';
 import {
 	getDeserializedPostsQueryDetails,
 	getNormalizedPostsQuery,
@@ -19,9 +12,9 @@ import 'calypso/state/posts/init';
  * Returns true if currently requesting posts for the posts query, regardless
  * of page, or false otherwise.
  *
- * @param   {object}  state  Global state tree
+ * @param   {Object}  state  Global state tree
  * @param   {?number} siteId Site ID, or `null` for all-sites queries
- * @param   {object}  query  Post query object
+ * @param   {Object}  query  Post query object
  * @returns {boolean}        Whether posts are being requested
  */
 export const isRequestingPostsForQueryIgnoringPage = createSelector(

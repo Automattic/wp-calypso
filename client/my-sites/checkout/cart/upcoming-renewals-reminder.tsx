@@ -1,34 +1,27 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent, useMemo, useCallback, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-import styled from '@emotion/styled';
-import type { RequestCartProduct } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
-import { ReduxDispatch } from 'calypso/state/redux-store';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
-import { Button } from '@automattic/components';
-import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
-import { getName, isExpired, isRenewing } from 'calypso/lib/purchases';
 import { isPlan, isDomainRegistration } from '@automattic/calypso-products';
+import { Button } from '@automattic/components';
+import styled from '@emotion/styled';
+import { useTranslate } from 'i18n-calypso';
+import { FunctionComponent, useMemo, useCallback, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import SectionHeader from 'calypso/components/section-header';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
+import { getName, isExpired, isRenewing } from 'calypso/lib/purchases';
+import UpcomingRenewalsDialog from 'calypso/me/purchases/upcoming-renewals/upcoming-renewals-dialog';
+import { PartialCart } from 'calypso/my-sites/checkout/composite-checkout/components/secondary-cart-promotions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import {
 	getRenewableSitePurchases,
 	hasLoadedUserPurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
-import UpcomingRenewalsDialog from 'calypso/me/purchases/upcoming-renewals/upcoming-renewals-dialog';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { Purchase } from 'calypso/lib/purchases/types';
-import { MockResponseCart } from 'calypso/my-sites/checkout/composite-checkout/components/secondary-cart-promotions';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import type { TranslateResult } from 'i18n-calypso';
 
 const OtherPurchasesLink = styled.button`
 	background: transparent;
@@ -55,12 +48,12 @@ interface SelectedSite {
 }
 
 interface Props {
-	cart: MockResponseCart;
-	addItemToCart: ( product: RequestCartProduct ) => void;
+	cart: PartialCart;
+	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
 }
 
 const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemToCart } ) => {
-	const reduxDispatch = useDispatch< ReduxDispatch >();
+	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) as SelectedSite );
@@ -151,7 +144,7 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 
 	return (
 		<>
-			<QueryUserPurchases userId={ userId } />
+			<QueryUserPurchases />
 			{ shouldRender && (
 				<div className="cart__upsell-wrapper">
 					<UpcomingRenewalsDialog
@@ -224,7 +217,7 @@ function getMessages( {
 
 	const purchase = renewablePurchasesNotAlreadyInCart[ 0 ];
 	const buttonLabel = translate( 'Add to Cart' );
-	let message: ReturnType< typeof translate > = '';
+	let message: TranslateResult = '';
 	const translateOptions = {
 		comment:
 			'"expiry" is relative to the present time and it is already localized, eg. "in a year", "in a month", "a week ago"',

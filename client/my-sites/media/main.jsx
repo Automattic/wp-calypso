@@ -1,42 +1,32 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import page from 'page';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import DocumentHead from 'calypso/components/data/document-head';
-import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
-import MediaLibrary from 'calypso/my-sites/media-library';
-import QueryMedia from 'calypso/components/data/query-media';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import FormattedHeader from 'calypso/components/formatted-header';
-import EditorMediaModalDialog from 'calypso/post-editor/media-modal/dialog';
-import { EditorMediaModalDetail } from 'calypso/post-editor/media-modal/detail';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import getMediaItem from 'calypso/state/selectors/get-media-item';
-import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import page from 'page';
+import PropTypes from 'prop-types';
+import { createRef, Component } from 'react';
+import { connect } from 'react-redux';
 import ImageEditor from 'calypso/blocks/image-editor';
 import VideoEditor from 'calypso/blocks/video-editor';
-import { getMimeType } from 'calypso/lib/media/utils';
+import DocumentHead from 'calypso/components/data/document-head';
+import QueryMedia from 'calypso/components/data/query-media';
+import FormattedHeader from 'calypso/components/formatted-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import Notice from 'calypso/components/notice';
+import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import { withEditMedia } from 'calypso/data/media/use-edit-media-mutation';
+import { withDeleteMedia } from 'calypso/data/media/with-delete-media';
 import accept from 'calypso/lib/accept';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { getMimeType } from 'calypso/lib/media/utils';
 import searchUrl from 'calypso/lib/search-url';
-import { editMedia, deleteMedia } from 'calypso/state/media/thunks';
+import MediaLibrary from 'calypso/my-sites/media-library';
+import { EditorMediaModalDetail } from 'calypso/post-editor/media-modal/detail';
+import EditorMediaModalDialog from 'calypso/post-editor/media-modal/dialog';
 import { selectMediaItems, changeMediaSource, clearSite } from 'calypso/state/media/actions';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
-import config from '@automattic/calypso-config';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import getMediaItem from 'calypso/state/selectors/get-media-item';
+import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class Media extends Component {
@@ -56,7 +46,7 @@ class Media extends Component {
 		source: '',
 	};
 
-	containerRef = React.createRef();
+	containerRef = createRef();
 
 	componentDidMount() {
 		/* We need to rerender the inner `<MediaLibrary>` with the `containerWidth` that's
@@ -136,8 +126,6 @@ class Media extends Component {
 
 	onImageEditorDone = ( error, blob, imageEditorProps ) => {
 		if ( error ) {
-			this.onEditImageCancel( imageEditorProps );
-
 			return;
 		}
 
@@ -302,8 +290,9 @@ class Media extends Component {
 
 		const selected =
 			selectedItems && selectedItems.length ? selectedItems : this.props.selectedItems;
+		const selectedIds = selected.map( ( { ID } ) => ID );
 
-		this.props.deleteMedia( site.ID, selected );
+		this.props.deleteMedia( site.ID, selectedIds );
 	};
 
 	getAnalyticsPath = () => {
@@ -370,17 +359,35 @@ class Media extends Component {
 				{ mediaId && site && site.ID && <QueryMedia siteId={ site.ID } mediaId={ mediaId } /> }
 				<PageViewTracker path={ this.getAnalyticsPath() } title="Media" />
 				<DocumentHead title={ translate( 'Media' ) } />
-				<SidebarNavigation />
 				<FormattedHeader
 					brandFont
 					className="media__page-heading"
 					headerText={ translate( 'Media' ) }
 					subHeaderText={ translate(
-						'Manage all the media on your site, including images, video, and more.'
+						'Manage all the media on your site, including images, video, and more. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						{
+							components: {
+								learnMoreLink: <InlineSupportLink supportContext="media" showIcon={ false } />,
+							},
+						}
 					) }
 					align="left"
-					hasScreenOptions={ config.isEnabled( 'nav-unification/switcher' ) }
+					hasScreenOptions
 				/>
+				{ this.props.selectedSite.is_private && this.props.selectedSite.is_wpcom_atomic && (
+					<Notice
+						showDismiss={ false }
+						status="is-info"
+						text={ translate(
+							'The image CDN is disabled because your site is marked Private. If image thumbnails do not display in your Media Library, you can switch to Coming Soon mode. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+							{
+								components: {
+									learnMoreLink: <InlineSupportLink supportContext="privacy" showIcon={ false } />,
+								},
+							}
+						) }
+					/>
+				) }
 				{ this.showDialog() && (
 					<EditorMediaModalDialog
 						isVisible
@@ -454,10 +461,6 @@ const mapStateToProps = ( state, { mediaId } ) => {
 	};
 };
 
-export default connect( mapStateToProps, {
-	editMedia,
-	deleteMedia,
-	selectMediaItems,
-	changeMediaSource,
-	clearSite,
-} )( localize( Media ) );
+export default connect( mapStateToProps, { selectMediaItems, changeMediaSource, clearSite } )(
+	localize( withDeleteMedia( withEditMedia( Media ) ) )
+);

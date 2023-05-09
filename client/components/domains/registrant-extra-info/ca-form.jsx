@@ -1,29 +1,17 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
+import { FormInputValidation } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { camelCase, debounce, difference, get, isEmpty, keys, map, pick } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
-import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
+import { camelCase, difference, get, isEmpty, keys, map, pick } from 'lodash';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
+import { connect } from 'react-redux';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
-import FormCheckbox from 'calypso/components/forms/form-checkbox';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
-import { Input } from 'calypso/my-sites/domains/components/form';
-import { disableSubmitButton } from './with-contact-details-validation';
-import wp from 'calypso/lib/wp';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
+import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
 
-const wpcom = wp.undocumented();
 const ciraAgreementUrl = 'https://cira.ca/agree';
 const defaultValues = {
 	lang: 'EN',
@@ -31,7 +19,7 @@ const defaultValues = {
 	ciraAgreementAccepted: false,
 };
 
-export class RegistrantExtraInfoCaForm extends React.PureComponent {
+export class RegistrantExtraInfoCaForm extends PureComponent {
 	static propTypes = {
 		contactDetails: PropTypes.object.isRequired,
 		ccTldDetails: PropTypes.object.isRequired,
@@ -83,7 +71,7 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 			OMK: translate( 'Official Mark', {
 				comment: 'Refers to a Canadian legal concept -- similar to a trademark',
 			} ),
-			MAJ: translate( 'Her Majesty the Queen' ),
+			MAJ: translate( 'His Majesty the King' ),
 		};
 		const legalTypeOptions = map( legalTypes, ( text, optionValue ) => (
 			<option value={ optionValue } key={ optionValue }>
@@ -92,10 +80,6 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		) );
 
 		this.legalTypeOptions = legalTypeOptions;
-		this.state = {
-			errorMessages: {},
-		};
-		this.validateContactDetails = debounce( this.validateContactDetails, 333 );
 	}
 
 	componentDidMount() {
@@ -125,33 +109,13 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		this.props.onContactDetailsChange?.( payload );
 	}
 
-	validateContactDetails = ( contactDetails ) => {
-		wpcom.validateDomainContactInformation(
-			contactDetails,
-			this.props.getDomainNames(),
-			( error, data ) => {
-				this.setState( {
-					errorMessages: ( data && data.messages ) || {},
-				} );
-			}
-		);
-	};
-
 	handleChangeEvent = ( event ) => {
-		const { value, name, checked, type, id } = event.target;
+		const { value, checked, type, id } = event.target;
 		const newContactDetails = {};
 
-		if ( name === 'organization' ) {
-			newContactDetails[ name ] = value;
-			this.validateContactDetails( {
-				...this.props.contactDetails,
-				[ name ]: value,
-			} );
-		} else {
-			newContactDetails.extra = {
-				ca: { [ camelCase( id ) ]: type === 'checkbox' ? checked : value },
-			};
-		}
+		newContactDetails.extra = {
+			ca: { [ camelCase( id ) ]: type === 'checkbox' ? checked : value },
+		};
 
 		this.props.updateContactDetailsCache( { ...newContactDetails } );
 
@@ -159,26 +123,6 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 			this.props.onContactDetailsChange?.( { ...newContactDetails } );
 		}
 	};
-
-	needsOrganization() {
-		return get( this.props.ccTldDetails, 'legalType' ) === 'CCO';
-	}
-
-	organizationFieldIsValid() {
-		return this.needsOrganization() ? isEmpty( this.getOrganizationErrorMessage() ) : true;
-	}
-
-	getOrganizationErrorMessage() {
-		let message =
-			this.props.contactDetailsValidationErrors?.organization ||
-			( this.state.errorMessages.organization || [] ).join( '\n' );
-		if ( this.needsOrganization() && isEmpty( this.props.contactDetails.organization ) ) {
-			message = this.props.translate(
-				'An organization name is required for Canadian corporations'
-			);
-		}
-		return message;
-	}
 
 	getCiraAgreementAcceptedErrorMessage() {
 		if ( this.props.isManaged ) {
@@ -191,37 +135,12 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		return this.props.translate( 'Required' );
 	}
 
-	renderOrganizationField() {
-		const { translate, contactDetails } = this.props;
-		const label = {
-			label: translate( 'Organization' ),
-			...( this.needsOrganization() ? {} : { labelProps: { optional: true } } ),
-		};
-
-		return (
-			<FormFieldset>
-				<Input
-					name="organization"
-					className="registrant-extra-info__organization"
-					value={ contactDetails.organization || '' }
-					isError={ ! this.organizationFieldIsValid() }
-					errorMessage={ this.getOrganizationErrorMessage() }
-					{ ...label }
-					onChange={ this.handleChangeEvent }
-				/>
-			</FormFieldset>
-		);
-	}
-
 	render() {
-		const { translate, children } = this.props;
+		const { translate } = this.props;
 		const { legalType, ciraAgreementAccepted } = {
 			...defaultValues,
 			...this.props.ccTldDetails,
 		};
-
-		const formIsValid = ciraAgreementAccepted && this.organizationFieldIsValid();
-		const validatingSubmitButton = formIsValid ? children : disableSubmitButton( children );
 
 		return (
 			<form className="registrant-extra-info__form">
@@ -266,8 +185,6 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 						) }
 					</FormLabel>
 				</FormFieldset>
-				{ this.renderOrganizationField() }
-				{ validatingSubmitButton }
 			</form>
 		);
 	}

@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
 import {
 	getNextPluginsListPage,
 	getPlugin,
@@ -42,6 +35,13 @@ const listsPagination = deepFreeze( {
 			page: 1,
 			pages: 100,
 			results: 2359,
+		},
+	},
+	search: {
+		woocommerce: {
+			page: 1,
+			pages: 50,
+			results: 1000,
 		},
 	},
 } );

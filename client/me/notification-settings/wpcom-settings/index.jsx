@@ -1,22 +1,14 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
+import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import Main from 'calypso/components/main';
-import ReauthRequired from 'calypso/me/reauth-required';
-import twoStepAuthorization from 'calypso/lib/two-step-authorization';
-import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
-import Navigation from '../navigation';
-import { Card } from '@automattic/components';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import FormattedHeader from 'calypso/components/formatted-header';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
-import ActionButtons from '../settings-form/actions';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import ReauthRequired from 'calypso/me/reauth-required';
 import {
 	fetchSettings,
 	toggleWPcomEmailSetting,
@@ -26,14 +18,11 @@ import {
 	getNotificationSettings,
 	hasUnsavedNotificationSettingsChanges,
 } from 'calypso/state/notification-settings/selectors';
-import EmailCategory from './email-category';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import hasJetpackSites from 'calypso/state/selectors/has-jetpack-sites';
-import FormattedHeader from 'calypso/components/formatted-header';
+import Navigation from '../navigation';
+import ActionButtons from '../settings-form/actions';
+import EmailCategory from './email-category';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 /**
@@ -46,6 +35,7 @@ const options = {
 	promotion: 'promotion',
 	news: 'news',
 	digest: 'digest',
+	reports: 'reports',
 	jetpack_marketing: 'jetpack_marketing',
 	jetpack_research: 'jetpack_research',
 	jetpack_promotion: 'jetpack_promotion',
@@ -53,7 +43,7 @@ const options = {
 	jetpack_reports: 'jetpack_reports',
 };
 
-class WPCOMNotifications extends React.Component {
+class WPCOMNotifications extends Component {
 	static displayName = 'WPCOMNotifications';
 
 	// TODO: Add propTypes
@@ -131,9 +121,15 @@ class WPCOMNotifications extends React.Component {
 					name={ options.digest }
 					isEnabled={ get( settings, options.digest ) }
 					title={ translate( 'Digests' ) }
+					description={ translate( 'Popular content from the blogs you follow.' ) }
+				/>
+
+				<EmailCategory
+					name={ options.reports }
+					isEnabled={ get( settings, options.reports ) }
+					title={ translate( 'Reports' ) }
 					description={ translate(
-						'Popular content from the blogs you follow, and reports on ' +
-							'your own site and its performance.'
+						'Complimentary reports and updates regarding site performance and traffic.'
 					) }
 				/>
 
@@ -200,7 +196,6 @@ class WPCOMNotifications extends React.Component {
 					path="/me/notifications/updates"
 					title="Me > Notifications > Updates from WordPress.com"
 				/>
-				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 				<FormattedHeader
 					brandFont

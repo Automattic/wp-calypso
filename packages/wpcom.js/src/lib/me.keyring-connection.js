@@ -5,7 +5,7 @@ export default class KeyringConnection {
 	 * `KeyringConnection` constructor.
 	 *
 	 * @param {string} keyId - the connection ID to take action on.
-	 * @param {object} wpcom - wpcom instance
+	 * @param {Object} wpcom - wpcom instance
 	 * @returns {null} null
 	 */
 	constructor( keyId, wpcom ) {
@@ -19,7 +19,7 @@ export default class KeyringConnection {
 	/**
 	 * Get a single Keyring connection that the current user has setup.
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -38,7 +38,7 @@ export default class KeyringConnection {
 	 * Delete the Keyring connection (and associated token) with the
 	 * provided ID. Also deletes all associated publicize connections.
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */

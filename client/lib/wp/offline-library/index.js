@@ -1,12 +1,10 @@
-/**
- * External dependencies
- */
 import stringify from 'fast-json-stable-stringify';
 import { parse } from 'qs';
 
 const readCache = () => {
 	try {
 		// load from the project root
+		// @ts-ignore
 		return require( '../../../../cached-requests.json' );
 	} catch ( e ) {
 		return {};

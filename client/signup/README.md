@@ -8,7 +8,7 @@ A Step is a React component that collects data for flows.
 
 ## Creating a new flow
 
-You can define a new flow from `/client/signup/config/flows-pure.js`, by adding a new property to the `flows` object in the `generateFlows` function.
+You can define a new flow from `/client/signup/config/flows-pure.js`, by adding a new property to the `flows` array in the `generateFlows` function.
 
 A flow is defined by two properties, `steps` and `destination`:
 
@@ -42,6 +42,7 @@ You can add a new step to Modular Signup from `/client/signup/config/steps-pure.
 - (optional) `providesDependencies` is an array that lets the signup framework know what dependencies the step is expected to provide. If the step does not provide all of these, or if it provides more than it says, an error will be thrown (unless `optionalDependencies` is used, see below).
 - (optional) `optionalDependencies` is an array that lists which of the items in `providesDependencies` are optional. If one of these values is missing when a step is submitted there'll be no error.
 - (optional) `delayApiRequestUntilComplete` is a boolean that, when true, causes the step's `apiRequestFunction` to be called only after the user has submitted every step in the signup flow. This is useful for steps that the user should be able to go back and change at any point in signup.
+- (optional) `props` is an object with some custom properties that may be specific to a certain step.
 
 You will also need to define which React component implements your step in `/client/signup/config/step-components.js`. Make sure to require the component as an internal dependency in `step-components.js`.
 
@@ -90,7 +91,7 @@ const object = {
 	stepName: 'theme-selection',
 	dependencies: [ 'siteSlug' ],
 	apiRequestFunction: function ( callback, dependencies ) {
-		wpcom.undocumented().someRequest( dependencies.siteSlug, function ( errors, response ) {
+		wpcom.req.post( '/some-endpoint', dependencies.siteSlug, function ( errors, response ) {
 			callback( errors, { userId: response.userId } );
 		} );
 	},
@@ -119,15 +120,9 @@ The steps below guide you through creating a new flow and step:
 
 3 - add a simple React component to `index.jsx`:
 
-```javascript
-import React from 'react';
-
-export default class extends React.Component {
-	static displayName = 'HelloWorld';
-
-	render() {
-		return <span>Hello world</span>;
-	}
+```jsx
+export default function HelloWorld() {
+	return <span>Hello world</span>;
 }
 ```
 
@@ -166,7 +161,7 @@ the first step of the flow at `/start/hello/hello-world`, where you should see y
 
 8 - now we need a way for users to move to the next step of the flow. Let's add a button and a form to the step's `render` method:
 
-```javascript
+```jsx
 function render() {
 	return (
 		<form onSubmit={ this.handleSubmit }>

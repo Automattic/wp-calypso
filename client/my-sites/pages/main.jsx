@@ -1,48 +1,33 @@
-/**
- * External dependencies
- */
-
-import { connect } from 'react-redux';
 import { localize, getLocaleSlug } from 'i18n-calypso';
-import PropTypes from 'prop-types';
-import React from 'react';
-import titlecase from 'to-title-case';
 import moment from 'moment';
-
-/**
- * Internal dependencies
- */
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import titlecase from 'to-title-case';
+import SitePreview from 'calypso/blocks/site-preview';
 import DocumentHead from 'calypso/components/data/document-head';
-import urlSearch from 'calypso/lib/url-search';
-import Main from 'calypso/components/main';
-import PostTypeFilter from 'calypso/my-sites/post-type-filter';
-import PageList from './page-list';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { mapPostStatus } from 'calypso/lib/route';
-import { POST_STATUSES } from 'calypso/state/posts/constants';
-import { getPostTypeLabel } from 'calypso/state/post-types/selectors';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import Main from 'calypso/components/main';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
-import config from '@automattic/calypso-config';
-
-/**
- * Style dependencies
- */
-import './style.scss';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { Experiment } from 'calypso/lib/explat';
+import { mapPostStatus } from 'calypso/lib/route';
+import urlSearch from 'calypso/lib/url-search';
+import PostTypeFilter from 'calypso/my-sites/post-type-filter';
+import { getPostTypeLabel } from 'calypso/state/post-types/selectors';
+import { POST_STATUSES } from 'calypso/state/posts/constants';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import PageList from './page-list';
 
-class PagesMain extends React.Component {
+import './style.scss';
+
+class PagesMain extends Component {
 	static displayName = 'Pages';
 
 	static propTypes = {
 		status: PropTypes.string,
 		search: PropTypes.string,
-	};
-
-	static defaultProps = {
-		perPage: 20,
 	};
 
 	getAnalyticsPath() {
@@ -77,9 +62,13 @@ class PagesMain extends React.Component {
 	render() {
 		const { siteId, search, status, translate, queryType, author } = this.props;
 		const postStatus = mapPostStatus( status );
-
+		/* Check if All Sites Mode */
+		const isAllSites = siteId ? 1 : 0;
 		const query = {
-			number: 20, // all-sites mode, i.e the /me/posts endpoint, only supports up to 20 results at a time
+			// all-sites mode, i.e the /me/posts endpoint, only supports up to 20 results at a time
+			// however, /sites/$site/posts/ endpoint used for single site supports up to 100,
+			// let's utilize that to load hierarchical view by default for most of the sites
+			number: siteId ? 50 : 20,
 			search,
 			site_visibility: ! siteId ? 'visible' : undefined,
 			author,
@@ -90,28 +79,39 @@ class PagesMain extends React.Component {
 			status: search ? POST_STATUSES.join( ',' ) : postStatus,
 			type: queryType,
 		};
+		const listKey = [ siteId, status, search ].join( '-' );
 
 		return (
 			<Main wideLayout classname="pages">
 				<ScreenOptionsTab wpAdminPath="edit.php?post_type=page" />
 				<PageViewTracker path={ this.getAnalyticsPath() } title={ this.getAnalyticsTitle() } />
 				<DocumentHead title={ translate( 'Pages' ) } />
-				<SidebarNavigation />
+				<SitePreview />
 				<FormattedHeader
 					brandFont
 					className="pages__page-heading"
 					headerText={ translate( 'Pages' ) }
-					subHeaderText={
-						siteId
-							? translate( 'Create, edit, and manage the pages on your site.' )
-							: translate( 'Create, edit, and manage the pages on your sites.' )
-					}
+					subHeaderText={ translate(
+						'Create, edit, and manage the pages on your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						'Create, edit, and manage the pages on your sites. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						{
+							count: isAllSites,
+							components: {
+								learnMoreLink: <InlineSupportLink supportContext="pages" showIcon={ false } />,
+							},
+						}
+					) }
 					align="left"
-					hasScreenOptions={ config.isEnabled( 'nav-unification/switcher' ) }
+					hasScreenOptions
 				/>
 				<PostTypeFilter query={ query } siteId={ siteId } statusSlug={ status } />
-				<PageList siteId={ siteId } status={ status } search={ search } query={ query } />
-
+				<PageList
+					key={ listKey }
+					siteId={ siteId }
+					status={ status }
+					search={ search }
+					query={ query }
+				/>
 				{ /* ExPlat's Evergreen A/A Test Experiment:
 				 *
 				 * This continually starts a new experiment every week that doesn't render anything and
@@ -124,9 +124,15 @@ class PagesMain extends React.Component {
 				 * Assumes users have a somewhat working clock but shouldn't be a problem if they don't.
 				 */ }
 				<Experiment
-					name={ `explat_test_aa_weekly_calypso_${ moment
+					name={ `explat_test_aa_weekly_calypso_${ moment.utc().format( 'GGGG' ) }_week_${ moment
 						.utc()
-						.format( 'GGGG' ) }_week_${ moment.utc().format( 'WW' ) }` }
+						.format( 'WW' ) }` }
+					defaultExperience={ null }
+					treatmentExperience={ null }
+					loadingExperience={ null }
+				/>
+				<Experiment
+					name="explat_test_aaaaa_2021_08_26_18_59"
 					defaultExperience={ null }
 					treatmentExperience={ null }
 					loadingExperience={ null }

@@ -1,11 +1,7 @@
 /* global wpcomGutenberg */
-
-/**
- * External dependencies
- */
+import { RichTextToolbarButton } from '@wordpress/block-editor';
 import { compose, ifCondition } from '@wordpress/compose';
 import { withSelect, withDispatch, select, subscribe } from '@wordpress/data';
-import { RichTextToolbarButton } from '@wordpress/editor';
 import { toggleFormat, registerFormatType, unregisterFormatType } from '@wordpress/rich-text';
 import { get } from 'lodash';
 
@@ -58,7 +54,7 @@ const RichTextJustifyButton = ( { blockId, isBlockJustified, updateBlockAttribut
 
 const ConnectedRichTextJustifyButton = compose(
 	withSelect( ( wpSelect ) => {
-		const selectedBlock = wpSelect( 'core/editor' ).getSelectedBlock();
+		const selectedBlock = wpSelect( 'core/block-editor' ).getSelectedBlock();
 		if ( ! selectedBlock ) {
 			return {};
 		}

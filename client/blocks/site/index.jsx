@@ -1,34 +1,33 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { isEnabled } from '@automattic/calypso-config';
+import { Gridicon } from '@automattic/components';
+import { layout } from '@wordpress/icons';
 import classnames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import { isEnabled } from '@automattic/calypso-config';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import SiteIndicator from 'calypso/my-sites/site-indicator';
-import { getSite, getSiteSlug, isSitePreviewable } from 'calypso/state/sites/selectors';
+import SitesStagingBadge from 'calypso/sites-dashboard/components/sites-staging-badge';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
-import isAtomicAndEditingToolkitPluginDeactivated from 'calypso/state/selectors/is-atomic-and-editing-toolkit-plugin-deactivated';
-import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
+import {
+	getSite,
+	getSiteSlug,
+	isSitePreviewable,
+	getSiteOption,
+} from 'calypso/state/sites/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};
 
-class Site extends React.Component {
+class Site extends Component {
 	static defaultProps = {
 		// onSelect callback
 		onSelect: noop,
@@ -49,6 +48,11 @@ class Site extends React.Component {
 		// if homeLink is enabled
 		showHomeIcon: true,
 		compact: false,
+
+		isP2Hub: false,
+		isSiteP2: false,
+
+		isReskinned: false,
 	};
 
 	static propTypes = {
@@ -65,6 +69,9 @@ class Site extends React.Component {
 		homeLink: PropTypes.bool,
 		showHomeIcon: PropTypes.bool,
 		compact: PropTypes.bool,
+		isP2Hub: PropTypes.bool,
+		isSiteP2: PropTypes.bool,
+		isReskinned: PropTypes.bool,
 	};
 
 	onSelect = ( event ) => {
@@ -100,8 +107,22 @@ class Site extends React.Component {
 		page( '/view/' + siteSlug );
 	};
 
+	renderSiteDomain = () => {
+		const { site, homeLink, translate } = this.props;
+		return (
+			<div className="site__domain">
+				{ isJetpackCloud() &&
+					homeLink &&
+					translate( 'View %(domain)s', {
+						args: { domain: site.domain },
+					} ) }
+				{ ( ! isJetpackCloud() || ! homeLink ) && site.domain }
+			</div>
+		);
+	};
+
 	render() {
-		const { isAtomicAndEditingToolkitDeactivated, isSiteUnlaunched, site, translate } = this.props;
+		const { isSiteUnlaunched, site, translate, isAtomicAndEditingToolkitDeactivated } = this.props;
 
 		if ( ! site ) {
 			// we could move the placeholder state here
@@ -118,9 +139,10 @@ class Site extends React.Component {
 			'is-selected': this.props.isSelected,
 			'is-highlighted': this.props.isHighlighted,
 			'is-compact': this.props.compact,
+			'is-reskinned': this.props.isReskinned,
 		} );
 
-		// We show public coming soon badge only when the site is not private and the editing toolkit is available.
+		// We show public coming soon badge only when the site is not private.
 		// Check for `! site.is_private` to ensure two Coming Soon badges don't appear while we introduce public coming soon.
 		const shouldShowPublicComingSoonSiteBadge =
 			! site.is_private && this.props.site.is_coming_soon && ! isAtomicAndEditingToolkitDeactivated;
@@ -129,8 +151,7 @@ class Site extends React.Component {
 		// isPrivateAndUnlaunched means it is an unlaunched coming soon v1 site
 		const isPrivateAndUnlaunched = site.is_private && isSiteUnlaunched;
 		const shouldShowPrivateByDefaultComingSoonBadge =
-			( this.props.site.is_coming_soon || isPrivateAndUnlaunched ) &&
-			! isAtomicAndEditingToolkitDeactivated;
+			this.props.site.is_coming_soon || isPrivateAndUnlaunched;
 
 		return (
 			<div className={ siteClass }>
@@ -157,25 +178,37 @@ class Site extends React.Component {
 							: site.domain
 					}
 				>
-					<SiteIcon site={ site } size={ this.props.compact ? 24 : 32 } />
+					<SiteIcon
+						defaultIcon={ this.props.isReskinned ? layout : null }
+						site={ site }
+						// eslint-disable-next-line no-nested-ternary
+						size={ this.props.compact ? 24 : this.props.isReskinned ? 50 : 32 }
+					/>
 					<div className="site__info">
 						<div className="site__title">{ site.title }</div>
-						<div className="site__domain">
-							{ /* eslint-disable-next-line no-nested-ternary */ }
-							{ this.props.isNavUnificationEnabled && ! isEnabled( 'jetpack-cloud' )
-								? site.domain
-								: this.props.homeLink
-								? translate( 'View %(domain)s', {
-										args: { domain: site.domain },
-								  } )
-								: site.domain }
-						</div>
+						{ ! this.props.isReskinned && this.renderSiteDomain() }
 						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
+						{ this.props.isSiteP2 && ! this.props.isP2Hub && (
+							<span className="site__badge is-p2">P2</span>
+						) }
+						{ site?.is_wpcom_staging_site && (
+							<SitesStagingBadge className="site__badge" secondary>
+								{ translate( 'Staging' ) }
+							</SitesStagingBadge>
+						) }
+						{ this.props.isP2Hub && (
+							<span className="site__badge is-p2-workspace">P2 Workspace</span>
+						) }
 						{ this.props.site.is_private && (
 							<span className="site__badge site__badge-private">
 								{ shouldShowPrivateByDefaultComingSoonBadge
 									? translate( 'Coming Soon' )
 									: translate( 'Private' ) }
+							</span>
+						) }
+						{ site.options && site.options.is_difm_lite_in_progress && (
+							<span className="site__badge site__badge-domain-only">
+								{ translate( 'Built By Express' ) }
 							</span>
 						) }
 						{ shouldShowPublicComingSoonSiteBadge && (
@@ -189,6 +222,7 @@ class Site extends React.Component {
 						{ site.options && site.options.is_domain_only && (
 							<span className="site__badge site__badge-domain-only">{ translate( 'Domain' ) }</span>
 						) }
+						{ this.props.isReskinned && this.renderSiteDomain() }
 						{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
 					</div>
 					{ this.props.homeLink && this.props.showHomeIcon && (
@@ -215,11 +249,11 @@ function mapStateToProps( state, ownProps ) {
 		isPreviewable: isSitePreviewable( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId ),
 		isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
-		isAtomicAndEditingToolkitDeactivated: isAtomicAndEditingToolkitPluginDeactivated(
-			state,
-			siteId
-		),
-		isNavUnificationEnabled: isNavUnificationEnabled( state ),
+		isSiteP2: isSiteWPForTeams( state, siteId ),
+		isP2Hub: isSiteP2Hub( state, siteId ),
+		isAtomicAndEditingToolkitDeactivated:
+			isAtomicSite( state, siteId ) &&
+			getSiteOption( state, siteId, 'editing_toolkit_is_active' ) === false,
 	};
 }
 

@@ -1,21 +1,8 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import page from 'page';
-
-/**
- * Internal Dependencies
- */
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { setBackPath } from 'calypso/state/themes/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getProps } from './controller';
-import { sites, siteSelection } from 'calypso/my-sites/controller';
-import { makeLayout, render as clientRender } from 'calypso/controller';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { composeHandlers } from 'calypso/controller/shared';
-
 import SingleSiteComponent from './single-site';
 import Upload from './theme-upload';
 
@@ -52,17 +39,4 @@ export function upload( context, next ) {
 
 	context.primary = <Upload noticeType={ noticeType } />;
 	next();
-}
-
-export function selectSiteIfLoggedIn( context, next ) {
-	const state = context.store.getState();
-	if ( ! isUserLoggedIn( state ) ) {
-		next();
-		return;
-	}
-
-	// Logged in: Terminate the regular handler path by not calling next()
-	// and render the site selection screen, redirecting the user if they
-	// only have one site.
-	composeHandlers( siteSelection, sites, makeLayout, clientRender )( context );
 }

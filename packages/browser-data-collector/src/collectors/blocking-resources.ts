@@ -1,12 +1,11 @@
-/**
- * Internal dependencies
- */
-import { getResources } from '../api/resources-timing';
 import { getDomContentLoadedEventStart, getNavigationStart } from '../api/performance-timing';
+import { getResources } from '../api/resources-timing';
 
 export const collector: Collector = ( report ) => {
 	const domContentLoaded = getDomContentLoadedEventStart() - getNavigationStart();
-	if ( domContentLoaded <= 0 ) return report;
+	if ( domContentLoaded <= 0 ) {
+		return report;
+	}
 
 	/**
 	 * Fetch resources that
@@ -30,22 +29,19 @@ export const collector: Collector = ( report ) => {
 		{ start: Infinity, end: -Infinity }
 	);
 
-	const {
-		resourcesCompressed,
-		resourcesUncompressed,
-		resourcesTransferred,
-	} = blockingResources.reduce(
-		( acc, script ) => ( {
-			resourcesCompressed: acc.resourcesCompressed + script.encodedBodySize,
-			resourcesUncompressed: acc.resourcesUncompressed + script.decodedBodySize,
-			resourcesTransferred: acc.resourcesTransferred + script.transferSize,
-		} ),
-		{
-			resourcesCompressed: 0,
-			resourcesUncompressed: 0,
-			resourcesTransferred: 0,
-		}
-	);
+	const { resourcesCompressed, resourcesUncompressed, resourcesTransferred } =
+		blockingResources.reduce(
+			( acc, script ) => ( {
+				resourcesCompressed: acc.resourcesCompressed + script.encodedBodySize,
+				resourcesUncompressed: acc.resourcesUncompressed + script.decodedBodySize,
+				resourcesTransferred: acc.resourcesTransferred + script.transferSize,
+			} ),
+			{
+				resourcesCompressed: 0,
+				resourcesUncompressed: 0,
+				resourcesTransferred: 0,
+			}
+		);
 
 	// Hit ratio from 0 to 100 (0=nothing was cached, 100=everything comes from the cache).
 	// resourcesTransferred includes the headers, but resourcesCompressed does not, so the division is a

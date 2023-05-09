@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
 import { POST_SAVE_FAILURE, POST_SAVE } from 'calypso/state/action-types';
 import { receivePost } from 'calypso/state/posts/actions/receive-post';
@@ -15,7 +12,7 @@ import 'calypso/state/posts/init';
  *
  * @param  {number}   siteId Site ID
  * @param  {number}   postId Post ID
- * @param  {object}   post   Post attributes
+ * @param  {Object}   post   Post attributes
  * @param  {boolean}  silent Whether to stop related notices from appearing
  * @returns {Function}        Action thunk
  */

@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { get, map } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { createSelector } from '@automattic/state-utils';
+import { get, map } from 'lodash';
 
 import 'calypso/state/posts/init';
 

@@ -1,11 +1,8 @@
-/* eslint-disable import/no-nodejs-modules */
-/* eslint-disable no-console */
-
 /* Used to update wp-desktop repository README prior to application deployments */
 
 // External Dependencies
-const path = require( 'path' );
 const https = require( 'https' );
+const path = require( 'path' );
 const { promisify } = require( 'util' );
 const exec = promisify( require( 'child_process' ).exec );
 
@@ -66,7 +63,7 @@ async function updateWpDesktopREADME() {
 	const content = Buffer.from(
 		`## WP-Desktop ${ VERSION }` +
 			`\n\nNote: The source code for this project is now maintained at https://github.com/Automattic/wp-calypso/tree/trunk/desktop.` +
-			` This repository is used for deployment and issue-reporting purposes only.` +
+			` This repository is used for deployment purposes only. All issues should be filed to the WP-Calypso repository, and not here.` +
 			`\n\n` +
 			changelog
 	).toString( 'base64' ); // Github API: patch needs to be base-64 encoded

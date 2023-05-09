@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import {
 	JETPACK_SYNC_START_REQUEST,
 	JETPACK_SYNC_START_SUCCESS,
@@ -14,17 +6,14 @@ import {
 	JETPACK_SYNC_STATUS_SUCCESS,
 	JETPACK_SYNC_STATUS_ERROR,
 } from 'calypso/state/action-types';
-import { getSyncStatus, scheduleJetpackFullysync } from '../actions';
 import useNock from 'calypso/test-helpers/use-nock';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import { getSyncStatus, scheduleJetpackFullysync } from '../actions';
 
 describe( 'actions', () => {
-	let sandbox;
 	let spy;
 
-	useSandbox( ( newSandbox ) => {
-		sandbox = newSandbox;
-		spy = sandbox.spy();
+	beforeEach( () => {
+		spy = jest.fn();
 	} );
 
 	describe( '#getSyncStatus()', () => {
@@ -69,7 +58,7 @@ describe( 'actions', () => {
 
 			test( 'should dispatch request action when thunk triggered', () => {
 				getSyncStatus( siteId )( spy );
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					siteId: siteId,
 					type: JETPACK_SYNC_STATUS_REQUEST,
 				} );
@@ -77,7 +66,7 @@ describe( 'actions', () => {
 
 			test( 'should dispatch success action when request completes', () => {
 				return getSyncStatus( siteId )( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
+					expect( spy ).toBeCalledWith( {
 						siteId: siteId,
 						type: JETPACK_SYNC_STATUS_SUCCESS,
 						data: data,
@@ -105,7 +94,7 @@ describe( 'actions', () => {
 
 			test( 'should dispatch receive action when request completes', () => {
 				return getSyncStatus( siteId )( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
+					expect( spy ).toBeCalledWith( {
 						error: {
 							error: 'unauthorized',
 							message: 'User cannot access this restricted blog',
@@ -136,7 +125,7 @@ describe( 'actions', () => {
 
 			test( 'should dispatch request action when thunk triggered', () => {
 				scheduleJetpackFullysync( siteId )( spy );
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					siteId: siteId,
 					type: JETPACK_SYNC_START_REQUEST,
 				} );
@@ -144,7 +133,7 @@ describe( 'actions', () => {
 
 			test( 'should dispatch success action when request completes', () => {
 				return scheduleJetpackFullysync( siteId )( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
+					expect( spy ).toBeCalledWith( {
 						siteId: siteId,
 						type: JETPACK_SYNC_START_SUCCESS,
 						data: data,
@@ -172,7 +161,7 @@ describe( 'actions', () => {
 
 			test( 'should dispatch receive action when request completes', () => {
 				return scheduleJetpackFullysync( siteId )( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
+					expect( spy ).toBeCalledWith( {
 						error: {
 							error: 'unauthorized',
 							message: 'User cannot access this restricted blog',

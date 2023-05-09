@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getParamsFromContext from '../get-params-from-context';
 
 const annualDuration = 'annual';

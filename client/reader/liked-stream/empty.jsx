@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import EmptyContent from 'calypso/components/empty-content';
-import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
-class TagEmptyContent extends React.Component {
+class TagEmptyContent extends Component {
 	shouldComponentUpdate() {
 		return false;
 	}
@@ -41,7 +34,7 @@ class TagEmptyContent extends React.Component {
 				title={ this.props.translate( 'No likes yet' ) }
 				line={ this.props.translate( 'Posts that you like will appear here.' ) }
 				action={ action }
-				illustration={ '/calypso/images/illustrations/illustration-empty-results.svg' }
+				illustration="/calypso/images/illustrations/illustration-empty-results.svg"
 				illustrationWidth={ 400 }
 			/>
 		);

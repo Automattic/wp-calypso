@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { PureComponent } from 'react';
 import PodcastIndicator from '../index';
 
-class PodcastIndicatorExample extends React.PureComponent {
+class PodcastIndicatorExample extends PureComponent {
 	static displayName = 'PodcastIndicator';
 
 	render() {

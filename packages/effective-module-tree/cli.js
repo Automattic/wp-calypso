@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-const yargs = require( 'yargs' );
 const path = require( 'path' );
+const yargs = require( 'yargs' );
 const { getEffectiveTreeAsTree, getEffectiveTreeAsList } = require( './index.js' );
 
 const args = yargs
@@ -29,5 +29,4 @@ if ( args.output === 'tree' ) {
 } else {
 	tree = getEffectiveTreeAsList( args.root );
 }
-// eslint-disable-next-line no-console
 console.log( tree );

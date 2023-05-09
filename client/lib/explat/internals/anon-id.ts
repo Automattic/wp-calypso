@@ -1,16 +1,9 @@
-/**
- * WordPress dependencies
- */
 import {
 	getCurrentUser,
 	recordTracksEvent,
 	getTracksAnonymousUserId,
 	getTracksLoadPromise,
 } from '@automattic/calypso-analytics';
-
-/**
- * Internal dependencies
- */
 import { logError } from './log-error';
 
 // SSR safety: Fail TypeScript compilation if `window` is used without an explicit undefined check

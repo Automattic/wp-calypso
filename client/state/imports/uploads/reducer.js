@@ -1,13 +1,10 @@
-/**
- * Internal dependencies
- */
-import { combineReducers } from 'calypso/state/utils';
 import {
 	IMPORTS_UPLOAD_SET_PROGRESS,
 	IMPORTS_UPLOAD_COMPLETED,
 	IMPORTS_UPLOAD_FAILED,
 	IMPORTS_UPLOAD_START,
 } from 'calypso/state/action-types';
+import { combineReducers } from 'calypso/state/utils';
 
 const inProgress = ( state = false, action ) => {
 	switch ( action.type ) {

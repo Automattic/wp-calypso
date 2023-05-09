@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
 import { JITM_SET } from 'calypso/state/action-types';
 import { combineReducers, keyedReducer } from 'calypso/state/utils';

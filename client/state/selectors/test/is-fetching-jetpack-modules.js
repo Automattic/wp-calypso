@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import isFetchingJetpackModules from 'calypso/state/selectors/is-fetching-jetpack-modules';
 import { requests as REQUESTS_FIXTURE } from './fixtures/jetpack-modules';
 
@@ -20,7 +12,7 @@ describe( 'isFetchingJetpackModules()', () => {
 		};
 		const siteId = 123456;
 		const output = isFetchingJetpackModules( stateIn, siteId );
-		expect( output ).to.be.true;
+		expect( output ).toBe( true );
 	} );
 
 	test( 'should return false if the list of modules is currently not being fetched', () => {
@@ -33,7 +25,7 @@ describe( 'isFetchingJetpackModules()', () => {
 		};
 		const siteId = 654321;
 		const output = isFetchingJetpackModules( stateIn, siteId );
-		expect( output ).to.be.false;
+		expect( output ).toBe( false );
 	} );
 
 	test( 'should return null if that site is not known', () => {
@@ -46,6 +38,6 @@ describe( 'isFetchingJetpackModules()', () => {
 		};
 		const siteId = 888888;
 		const output = isFetchingJetpackModules( stateIn, siteId );
-		expect( output ).to.be.null;
+		expect( output ).toBeNull();
 	} );
 } );

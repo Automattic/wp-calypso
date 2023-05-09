@@ -1,35 +1,26 @@
 /**
  * External dependendies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { get, isEmpty } from 'lodash';
-import { localize } from 'i18n-calypso';
+import { Button, FormInputValidation, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormSelect from 'calypso/components/forms/form-select';
-import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormLabel from 'calypso/components/forms/form-label';
-import FormTextArea from 'calypso/components/forms/form-textarea';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
-import FormPasswordInput from 'calypso/components/forms/form-password-input';
-import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import Gridicon from 'calypso/components/gridicon';
+import { localize } from 'i18n-calypso';
+import { get, isEmpty } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import QuerySiteCredentials from 'calypso/components/data/query-site-credentials';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormPasswordInput from 'calypso/components/forms/form-password-input';
+import FormSelect from 'calypso/components/forms/form-select';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormTextArea from 'calypso/components/forms/form-textarea';
 import { deleteCredentials, updateCredentials } from 'calypso/state/jetpack/credentials/actions';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
 import getJetpackCredentials from 'calypso/state/selectors/get-jetpack-credentials';
 import getJetpackCredentialsUpdateStatus from 'calypso/state/selectors/get-jetpack-credentials-update-status';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export class RewindCredentialsForm extends Component {
@@ -127,6 +118,7 @@ export class RewindCredentialsForm extends Component {
 	toggleAdvancedSettings = () =>
 		this.setState( { showAdvancedSettings: ! this.state.showAdvancedSettings } );
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { credentials, siteSlug } = nextProps;
 
@@ -148,15 +140,8 @@ export class RewindCredentialsForm extends Component {
 	}
 
 	render() {
-		const {
-			formIsSubmitting,
-			labels,
-			showNotices,
-			onCancel,
-			requirePath,
-			siteId,
-			translate,
-		} = this.props;
+		const { formIsSubmitting, labels, showNotices, onCancel, requirePath, siteId, translate } =
+			this.props;
 		const { showAdvancedSettings, formErrors } = this.state;
 
 		return (
@@ -165,7 +150,7 @@ export class RewindCredentialsForm extends Component {
 				{ showNotices && (
 					<div className="rewind-credentials-form__instructions">
 						{ translate(
-							'Your server credentials can be found with your hosting provider. Their website should explain how to get the credentials you need. {{link}}Check out our handy guide for more info{{/link}}.',
+							'Your server credentials can be found with your hosting provider. Their website should explain how to get the credentials you need. {{link}}Learn how to find and enter your credentials{{/link}}.',
 							{
 								components: {
 									link: <a href="https://jetpack.com/support/activating-jetpack-backups/" />,

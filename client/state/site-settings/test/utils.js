@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { normalizeSettings } from '../utils';
 
 describe( 'utils', () => {
@@ -29,7 +26,7 @@ describe( 'utils', () => {
 			const settings = {
 				sharing_show: [ 'page', 'index', 'post' ],
 			};
-			expect( normalizeSettings( settings ).sharing_show ).toBe( settings.sharing_show );
+			expect( normalizeSettings( settings ).sharing_show ).toEqual( settings.sharing_show );
 		} );
 
 		test( 'should convert sharing_show object to array', () => {

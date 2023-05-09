@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component, Fragment } from 'react';
 import { trademarkDecisionText } from './trademark-constants';
 
-class TrademarkClaim extends React.Component {
+class TrademarkClaim extends Component {
 	static propTypes = {
 		trademarkClaim: PropTypes.object.isRequired,
 	};

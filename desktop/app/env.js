@@ -1,6 +1,4 @@
-/**
- * External Dependencies
- */
+/* eslint-disable import/order */
 const path = require( 'path' );
 const { app } = require( 'electron' );
 const makeDir = require( 'make-dir' );

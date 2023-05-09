@@ -9,15 +9,8 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-const rule = require( '../jsx-classname-namespace' );
-const formatMessage = require( '../../../test-utils/format-message' );
-const { RuleTester } = require( 'eslint' );
-
-//------------------------------------------------------------------------------
-// Constants
-//------------------------------------------------------------------------------
-
-const EXPECTED_FOO_ERROR = formatMessage( rule.ERROR_MESSAGE, { expected: 'foo__ prefix' } );
+import { RuleTester } from 'eslint';
+import rule, { ERROR_MESSAGE } from '../jsx-classname-namespace';
 
 //------------------------------------------------------------------------------
 // Tests
@@ -32,11 +25,11 @@ new RuleTester( {
 } ).run( 'jsx-classname-namespace', rule, {
 	valid: [
 		{
-			code: 'export default function() { return <Foo className="foo" />; }',
+			code: 'export default function() { return <Foo className="quux foo" />; }',
 			filename: '/tmp/foo/index.js',
 		},
 		{
-			code: 'export default function() { return <Foo className="quux foo" />; }',
+			code: 'function child() { return <Foo className="quux foo__child" />; }',
 			filename: '/tmp/foo/index.js',
 		},
 		{
@@ -56,23 +49,19 @@ new RuleTester( {
 			filename: '/tmp/foo/index.js',
 		},
 		{
-			code:
-				'import ReactDOM from "react-dom"; ReactDOM.render( <div className="quux" />, document.body );',
+			code: 'import ReactDOM from "react-dom"; ReactDOM.render( <div className="quux" />, document.body );',
 			filename: '/tmp/foo/index.js',
 		},
 		{
-			code:
-				'import ReactDOM from "react-dom"; ReactDOM.render( <div className="quux"><div className="quux__child" /></div>, document.body );',
+			code: 'import ReactDOM from "react-dom"; ReactDOM.render( <div className="quux"><div className="quux__child" /></div>, document.body );',
 			filename: '/tmp/foo/index.js',
 		},
 		{
-			code:
-				'import { render } from "react-dom"; render( <div className="quux" />, document.body );',
+			code: 'import { render } from "react-dom"; render( <div className="quux" />, document.body );',
 			filename: '/tmp/foo/index.js',
 		},
 		{
-			code:
-				'import { render } from "react-dom"; render( <div className="quux"><div className="quux__child" /></div>, document.body );',
+			code: 'import { render } from "react-dom"; render( <div className="quux"><div className="quux__child" /></div>, document.body );',
 			filename: '/tmp/foo/index.js',
 		},
 		{
@@ -92,58 +81,56 @@ new RuleTester( {
 			filename: '/tmp/foo/foo-child.js',
 		},
 		{
-			code: 'export default function() { return <div className="foo"></div>; }',
-			filename: '/tmp/foo/bar.js',
-			options: [ { rootFiles: [ 'bar.js' ] } ],
-		},
-		{
-			code:
-				'export default class Foo { child() { return <div className="foo" />; } render() { return this.child(); } };',
+			code: 'export default function() { return <Foo className="foo-child__child-attribute" />; }',
 			filename: '/tmp/foo/index.js',
 		},
 	],
 
 	invalid: [
 		{
-			code: 'export default function() { return <Foo className="foobar" />; }',
-			filename: '/tmp/foo/index.js',
-			errors: [ { message: EXPECTED_FOO_ERROR } ],
-		},
-		{
-			code: 'export default () => <Foo className="foobar" />;',
-			filename: '/tmp/foo/index.js',
-			errors: [ { message: EXPECTED_FOO_ERROR } ],
-		},
-		{
-			code: 'export default function() { return <Foo className="quux foobar" />; }',
-			filename: '/tmp/foo/index.js',
-			errors: [ { message: EXPECTED_FOO_ERROR } ],
-		},
-		{
-			code: 'function child() { return <Foo className="foobar__child" />; }',
-			filename: '/tmp/foo/index.js',
-			errors: [ { message: EXPECTED_FOO_ERROR } ],
-		},
-		{
-			code: 'function child() { return <Foo className="quux foobar__child" />; }',
-			filename: '/tmp/foo/index.js',
-			errors: [ { message: EXPECTED_FOO_ERROR } ],
-		},
-		{
 			code: 'export default function() { return <div className="foo__" />; }',
 			filename: '/tmp/foo/index.js',
-			errors: [ { message: EXPECTED_FOO_ERROR } ],
+			errors: [ { message: ERROR_MESSAGE } ],
 		},
 		{
 			code: 'export default function() { return <Foo className="foo__child_example" />; }',
 			filename: '/tmp/foo/index.js',
-			errors: [ { message: EXPECTED_FOO_ERROR } ],
+			errors: [ { message: ERROR_MESSAGE } ],
 		},
 		{
-			code: 'export default function() { return <div className="bar"></div>; }',
-			filename: '/tmp/foo/bar.js',
-			options: [ { rootFiles: [ 'bar.js' ] } ],
-			errors: [ { message: EXPECTED_FOO_ERROR } ],
+			code: 'export default function() { return <Foo className="camelCase" />; }',
+			filename: '/tmp/foo/index.js',
+			errors: [ { message: ERROR_MESSAGE } ],
+		},
+		{
+			code: 'export default function() { return <Foo className="Sentencecase" />; }',
+			filename: '/tmp/foo/index.js',
+			errors: [ { message: ERROR_MESSAGE } ],
+		},
+		{
+			code: 'export default function() { return <Foo className="ALLCAPSCASE" />; }',
+			filename: '/tmp/foo/index.js',
+			errors: [ { message: ERROR_MESSAGE } ],
+		},
+		{
+			code: 'export default function() { return <Foo className="TitleCase" />; }',
+			filename: '/tmp/foo/index.js',
+			errors: [ { message: ERROR_MESSAGE } ],
+		},
+		{
+			code: 'export default function() { return <Foo className="snake_case" />; }',
+			filename: '/tmp/foo/index.js',
+			errors: [ { message: ERROR_MESSAGE } ],
+		},
+		{
+			code: 'export default function() { return <Foo className="SNAKE_CASE_WITH_CAPS" />; }',
+			filename: '/tmp/foo/index.js',
+			errors: [ { message: ERROR_MESSAGE } ],
+		},
+		{
+			code: 'export default function() { return <Foo className="foo__class__attribute" />; }',
+			filename: '/tmp/foo/index.js',
+			errors: [ { message: ERROR_MESSAGE } ],
 		},
 	],
 } );

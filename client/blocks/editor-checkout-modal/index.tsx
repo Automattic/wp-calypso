@@ -1,33 +1,17 @@
-/**
- * External dependencies
- */
-import React, { useMemo, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { Icon, wordpress } from '@wordpress/icons';
-import { Modal } from '@wordpress/components';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
+import { Modal } from '@wordpress/components';
+import { Icon, wordpress } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
+import * as React from 'react';
+import { useSelector } from 'react-redux';
+import { getStripeConfiguration } from 'calypso/lib/store-transactions';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import CheckoutMain from 'calypso/my-sites/checkout/composite-checkout/components/checkout-main';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { RequestCart } from '@automattic/shopping-cart';
 
-/**
- * Internal dependencies
- */
-import { fetchStripeConfiguration } from 'calypso/my-sites/checkout/composite-checkout/payment-method-helpers';
-import CompositeCheckout from 'calypso/my-sites/checkout/composite-checkout/composite-checkout';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
-import getCartKey from 'calypso/my-sites/checkout/get-cart-key';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import wp from 'calypso/lib/wp';
-import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
-
-/**
- * Style dependencies
- */
 import './style.scss';
-
-function fetchStripeConfigurationWpcom( args: Record< string, unknown > ) {
-	return fetchStripeConfiguration( args, wp );
-}
 
 function removeHashFromUrl(): void {
 	try {
@@ -40,24 +24,13 @@ function removeHashFromUrl(): void {
 }
 
 const EditorCheckoutModal: React.FunctionComponent< Props > = ( props ) => {
-	const {
-		isOpen,
-		onClose,
-		cartData,
-		redirectTo,
-		isFocusedLaunch,
-		checkoutOnSuccessCallback,
-	} = props;
+	const { isOpen, onClose, cartData, redirectTo, isFocusedLaunch, checkoutOnSuccessCallback } =
+		props;
 
 	const translate = useTranslate();
 
-	const isLoggedOutCart = ! useSelector( isUserLoggedIn );
 	const site = useSelector( getSelectedSite );
-
-	const cartKey = useMemo( () => getCartKey( { selectedSite: site, isLoggedOutCart } ), [
-		site,
-		isLoggedOutCart,
-	] );
+	const selectedSiteId = useSelector( getSelectedSiteId );
 
 	useEffect( () => {
 		return () => {
@@ -77,6 +50,9 @@ const EditorCheckoutModal: React.FunctionComponent< Props > = ( props ) => {
 			: cartData.products.map( ( product ) => product.product_slug );
 	const commaSeparatedProductSlugs = productSlugs?.join( ',' );
 
+	// IMPORTANT NOTE: This will not be called for redirect payment methods like
+	// PayPal. They will redirect directly to the post-checkout page decided by
+	// `getThankYouUrl`.
 	const handleAfterPaymentComplete = () => {
 		checkoutOnSuccessCallback?.();
 	};
@@ -90,18 +66,19 @@ const EditorCheckoutModal: React.FunctionComponent< Props > = ( props ) => {
 			shouldCloseOnClickOutside={ false }
 			icon={ <Icon icon={ wordpress } size={ 36 } /> }
 		>
-			<CalypsoShoppingCartProvider cartKey={ cartKey }>
+			<CalypsoShoppingCartProvider>
 				<StripeHookProvider
-					fetchStripeConfiguration={ fetchStripeConfigurationWpcom }
-					locale={ translate.locale }
+					fetchStripeConfiguration={ getStripeConfiguration }
+					locale={ translate.localeSlug }
 				>
-					<CompositeCheckout
+					<CheckoutMain
 						redirectTo={ redirectTo } // custom thank-you URL for payments that are processed after a redirect (eg: Paypal)
-						isInEditor
-						isFocusedLaunch={ isFocusedLaunch }
-						siteId={ site?.ID }
+						isInModal
+						disabledThankYouPage={ isFocusedLaunch }
+						siteId={ selectedSiteId ?? undefined }
 						siteSlug={ site?.slug }
 						productAliasFromUrl={ commaSeparatedProductSlugs }
+						productSourceFromUrl="editor-checkout-modal"
 						onAfterPaymentComplete={ handleAfterPaymentComplete }
 					/>
 				</StripeHookProvider>
@@ -113,6 +90,9 @@ const EditorCheckoutModal: React.FunctionComponent< Props > = ( props ) => {
 interface Props {
 	onClose: () => void;
 	isOpen: boolean;
+	// IMPORTANT NOTE: This will not be called for redirect payment methods like
+	// PayPal. They will redirect directly to the post-checkout page decided by
+	// `getThankYouUrl`.
 	checkoutOnSuccessCallback?: () => void;
 	isFocusedLaunch?: boolean;
 	cartData?: RequestCart;

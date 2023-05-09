@@ -2,9 +2,6 @@
  * @jest-environment jsdom
  */
 
-/**
- * Internal dependencies
- */
 import omitUrlParams from '../omit-url-params';
 
 describe( 'omitUrlParams()', () => {

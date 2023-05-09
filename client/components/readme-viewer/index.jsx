@@ -1,13 +1,7 @@
-/**
- * External Dependencies
- */
-import React, { Component } from 'react';
 import { Parser } from 'html-to-react';
 import PropTypes from 'prop-types';
+import { Component } from 'react';
 
-/**
- * Style Dependencies
- */
 import './style.scss';
 
 const htmlToReactParser = new Parser();

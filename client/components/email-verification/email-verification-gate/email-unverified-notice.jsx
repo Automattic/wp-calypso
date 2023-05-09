@@ -1,21 +1,12 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
+import { Spinner } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import Spinner from 'calypso/components/spinner';
 import wpcom from 'calypso/lib/wp';
 
-class EmailUnverifiedNotice extends React.Component {
+class EmailUnverifiedNotice extends Component {
 	state = {
 		pendingRequest: false,
 		emailSent: false,
@@ -48,16 +39,13 @@ class EmailUnverifiedNotice extends React.Component {
 			pendingRequest: true,
 		} );
 
-		wpcom
-			.undocumented()
-			.me()
-			.sendVerificationEmail( ( error, response ) => {
-				this.setState( {
-					emailSent: response && response.success,
-					error: error,
-					pendingRequest: false,
-				} );
+		wpcom.req.post( '/me/send-verification-email', ( error, response ) => {
+			this.setState( {
+				emailSent: response && response.success,
+				error: error,
+				pendingRequest: false,
 			} );
+		} );
 	};
 
 	renderEmailSendPending() {

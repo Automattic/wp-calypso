@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import { modules as MODULES_FIXTURE } from './fixtures/jetpack-modules';
 
@@ -20,7 +12,7 @@ describe( 'isJetpackModuleActive()', () => {
 		};
 		const siteId = 123456;
 		const output = isJetpackModuleActive( stateIn, siteId, 'module-b' );
-		expect( output ).to.be.true;
+		expect( output ).toBe( true );
 	} );
 
 	test( 'should return false if the module is currently not active', () => {
@@ -33,7 +25,7 @@ describe( 'isJetpackModuleActive()', () => {
 		};
 		const siteId = 123456;
 		const output = isJetpackModuleActive( stateIn, siteId, 'module-a' );
-		expect( output ).to.be.false;
+		expect( output ).toBe( false );
 	} );
 
 	test( 'should return null if that module is not known', () => {
@@ -46,6 +38,6 @@ describe( 'isJetpackModuleActive()', () => {
 		};
 		const siteId = 123456;
 		const output = isJetpackModuleActive( stateIn, siteId, 'module-z' );
-		expect( output ).to.be.null;
+		expect( output ).toBeNull();
 	} );
 } );

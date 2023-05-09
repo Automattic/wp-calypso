@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import * as types from '../action-types';
 
 export const addNotes = ( notes ) => ( {
@@ -43,9 +40,8 @@ export const likeNote = ( noteId, isLiked ) => ( {
  * an incorrect state and cause a flash of the approval status.
  *
  * @see approveNote
- *
  * @param {number} noteId
- * @returns {object} action object
+ * @returns {Object} action object
  */
 export const resetLocalApproval = ( noteId ) => ( {
 	type: types.RESET_LOCAL_APPROVAL,
@@ -61,9 +57,8 @@ export const resetLocalApproval = ( noteId ) => ( {
  * an incorrect state and cause a flash of the like status.
  *
  * @see likeNote
- *
  * @param {number} noteId
- * @returns {object} action object
+ * @returns {Object} action object
  */
 export const resetLocalLike = ( noteId ) => ( {
 	type: types.RESET_LOCAL_LIKE,

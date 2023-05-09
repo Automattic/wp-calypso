@@ -1,32 +1,22 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
-import { connect } from 'react-redux';
+import { Button, CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { Button, CompactCard } from '@automattic/components';
+import PropTypes from 'prop-types';
+import { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import HeaderCake from 'calypso/components/header-cake';
+import { checkDomainAvailability } from 'calypso/lib/domains';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
-import { checkDomainAvailability } from 'calypso/lib/domains';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import TrademarkNotice from './trademark-notice';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class TrademarkClaimsNotice extends React.Component {
+class TrademarkClaimsNotice extends Component {
 	static propTypes = {
 		domain: PropTypes.string,
 		isSignupStep: PropTypes.bool,
@@ -49,6 +39,7 @@ class TrademarkClaimsNotice extends React.Component {
 
 	getDefaultState() {
 		return {
+			isLoading: false,
 			hasScrolledToBottom: false,
 			showFullNotice: false,
 			trademarkClaimsNoticeInfo: this.props.trademarkClaimsNoticeInfo,
@@ -56,7 +47,7 @@ class TrademarkClaimsNotice extends React.Component {
 		};
 	}
 
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		if ( isEmpty( this.props.trademarkClaimsNoticeInfo ) && ! this.state.finishedFetching ) {
 			this.checkDomainAvailability().then( ( { trademarkClaimsNoticeInfo } ) => {
 				this.setState( {
@@ -161,13 +152,23 @@ class TrademarkClaimsNotice extends React.Component {
 	onAccept = () => {
 		const { domain } = this.props;
 		this.props.recordAcknowledgeTrademarkButtonClickInTrademarkNotice( domain );
-		this.props.onAccept();
+		this.setState(
+			{
+				isLoading: true,
+			},
+			this.props.onAccept
+		);
 	};
 
 	onReject = () => {
 		const { domain } = this.props;
 		this.props.recordChooseAnotherDomainButtonClickInTrademarkNotice( domain );
-		this.props.onReject();
+		this.setState(
+			{
+				isLoading: true,
+			},
+			this.props.onReject
+		);
 	};
 
 	renderPlaceholder = () => {
@@ -188,7 +189,8 @@ class TrademarkClaimsNotice extends React.Component {
 	};
 
 	renderTrademarkClaimsNotice = () => {
-		const { hasScrolledToBottom, showFullNotice, trademarkClaimsNoticeInfo } = this.state;
+		const { hasScrolledToBottom, isLoading, showFullNotice, trademarkClaimsNoticeInfo } =
+			this.state;
 
 		return (
 			<Fragment>
@@ -196,9 +198,10 @@ class TrademarkClaimsNotice extends React.Component {
 				{ /*{ showFullNotice ? this.renderNotice() : this.renderShowNoticeLink() }*/ }
 				{ showFullNotice ? (
 					<TrademarkNotice
-						buttonsEnabled={ hasScrolledToBottom }
+						buttonsEnabled={ ! isLoading && hasScrolledToBottom }
 						onAccept={ this.onAccept }
 						onReject={ this.onReject }
+						isLoading={ isLoading }
 						trademarkClaimsInfo={ trademarkClaimsNoticeInfo }
 					/>
 				) : (

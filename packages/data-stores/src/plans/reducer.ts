@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import type { Reducer } from 'redux';
 import { combineReducers } from '@wordpress/data';
-
-/**
- * Internal dependencies
- */
 import type { PlanAction } from './actions';
 import type { Plan, PlanFeature, FeaturesByType, PlanProduct } from './types';
+import type { Reducer } from 'redux';
 
 // create a Locale type just for code readability
 type Locale = string;

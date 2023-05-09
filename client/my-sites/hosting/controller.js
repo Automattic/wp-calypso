@@ -1,18 +1,12 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import page from 'page';
-
-/**
- * Internal Dependencies
- */
-import Hosting from './main';
-import HostingActivate from './hosting-activate';
-import canSiteViewAtomicHosting from 'calypso/state/selectors/can-site-view-atomic-hosting';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { createElement } from 'react';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { fetchSitePlans } from 'calypso/state/sites/plans/actions';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import HostingActivate from './hosting-activate';
+import Hosting from './main';
 
 function waitForState( context ) {
 	return new Promise( ( resolve ) => {
@@ -40,21 +34,22 @@ export async function handleHostingPanelRedirect( context, next ) {
 	const { store } = context;
 	await waitForState( context );
 	const state = store.getState();
+	const siteId = getSelectedSiteId( state );
 
-	if ( canSiteViewAtomicHosting( state ) ) {
-		next();
+	if ( isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId ) ) {
+		page.redirect( '/hosting-config' );
 		return;
 	}
 
-	page.redirect( '/hosting-config' );
+	next();
 }
 
 export function layout( context, next ) {
-	context.primary = React.createElement( Hosting );
+	context.primary = createElement( Hosting );
 	next();
 }
 
 export function activationLayout( context, next ) {
-	context.primary = React.createElement( HostingActivate );
+	context.primary = createElement( HostingActivate );
 	next();
 }

@@ -1,23 +1,13 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-/**
- * External dependencies
- */
-import React, { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import Followers from './followers';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import useFollowersQuery from 'calypso/data/followers/use-followers-query';
 import useRemoveFollowerMutation from 'calypso/data/followers/use-remove-follower-mutation';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
+import Followers from './followers';
 
-/**
- * Stylesheet dependencies
- */
 import './style.scss';
 
 const useErrorNotice = ( type, error, refetch ) => {
@@ -49,15 +39,8 @@ const FollowersList = ( { site, search, type = 'wpcom' } ) => {
 	const fetchOptions = { search };
 	const listKey = [ 'followers', site.ID, type, search ].join( '-' );
 
-	const {
-		data,
-		isLoading,
-		fetchNextPage,
-		isFetchingNextPage,
-		hasNextPage,
-		refetch,
-		error,
-	} = useFollowersQuery( site.ID, type, fetchOptions );
+	const { data, isLoading, fetchNextPage, isFetchingNextPage, hasNextPage, refetch, error } =
+		useFollowersQuery( site.ID, type, fetchOptions );
 	const { removeFollower } = useRemoveFollowerMutation();
 
 	useErrorNotice( type, error, refetch );
@@ -69,6 +52,7 @@ const FollowersList = ( { site, search, type = 'wpcom' } ) => {
 			isFetching={ isLoading }
 			isFetchingNextPage={ isFetchingNextPage }
 			totalFollowers={ data?.total }
+			refetch={ refetch }
 			fetchNextPage={ fetchNextPage }
 			hasNextPage={ hasNextPage }
 			removeFollower={ removeFollower }

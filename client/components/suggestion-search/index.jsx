@@ -1,21 +1,10 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
+import { Suggestions, Gridicon, Spinner } from '@automattic/components';
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import Gridicon from 'calypso/components/gridicon';
-import Spinner from 'calypso/components/spinner';
-import { Suggestions } from '@automattic/components';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};
@@ -36,6 +25,8 @@ class SuggestionSearch extends Component {
 		autoFocus: PropTypes.bool,
 		railcar: PropTypes.object,
 		'aria-label': PropTypes.string,
+		className: PropTypes.string,
+		showIcon: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -46,6 +37,7 @@ class SuggestionSearch extends Component {
 		suggestions: [],
 		value: '',
 		autoFocus: false,
+		showIcon: true,
 	};
 
 	constructor( props ) {
@@ -127,13 +119,16 @@ class SuggestionSearch extends Component {
 	};
 
 	render() {
-		const { id, placeholder, autoFocus, isSearching } = this.props;
+		const { id, placeholder, autoFocus, isSearching, className, showIcon, disabled } = this.props;
+
+		const icon = isSearching ? <Spinner /> : <Gridicon icon="search" />;
 
 		return (
-			<div className="suggestion-search">
-				{ isSearching ? <Spinner /> : <Gridicon icon="search" /> }
+			<div className={ classNames( 'suggestion-search', className ) }>
+				{ showIcon && icon }
 				<FormTextInput
 					id={ id }
+					disabled={ disabled }
 					placeholder={ placeholder }
 					value={ this.state.inputValue }
 					onChange={ this.handleSuggestionChangeEvent }

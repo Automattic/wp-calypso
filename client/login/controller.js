@@ -1,39 +1,70 @@
-/**
- * External dependencies
- */
-import page from 'page';
-import React from 'react';
-import { includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
+import { getUrlParts } from '@automattic/calypso-url';
+import page from 'page';
+import { isGravatarOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { SOCIAL_HANDOFF_CONNECT_ACCOUNT } from 'calypso/state/action-types';
+import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
+import MagicLogin from './magic-login';
 import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
 import HandleEmailedLinkFormJetpackConnect from './magic-login/handle-emailed-link-form-jetpack-connect';
-import MagicLogin from './magic-login';
+import QrCodeLoginPage from './qr-code-login-page';
 import WPLogin from './wp-login';
-import { getUrlParts } from '@automattic/calypso-url';
-import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
-import { getCurrentUser, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 
 const enhanceContextWithLogin = ( context ) => {
 	const {
-		params: { flow, isJetpack, isGutenboarding, socialService, twoFactorAuthType },
+		params: { flow, isJetpack, socialService, twoFactorAuthType, action },
 		path,
 		query,
+		isServerSide,
 	} = context;
+
+	// Process a social login handoff from /start/user.
+	if ( query?.email_address && query?.service && query?.access_token && query?.id_token ) {
+		context.store.dispatch( {
+			type: SOCIAL_HANDOFF_CONNECT_ACCOUNT,
+			email: query.email_address,
+			authInfo: {
+				service: query.service,
+				access_token: query.access_token,
+				id_token: query.id_token,
+			},
+		} );
+
+		// Remove state-related data from URL but leave 'email_address'.
+		if ( ! isServerSide ) {
+			const params = new URLSearchParams( new URL( window.location.href ).search );
+			params.delete( 'service' );
+			params.delete( 'access_token' );
+			params.delete( 'id_token' );
+			page.redirect( window.location.pathname + '?' + params.toString() );
+		}
+	}
 
 	const previousHash = context.state || {};
 	const { client_id, user_email, user_name, id_token, state } = previousHash;
 	const socialServiceResponse = client_id
 		? { client_id, user_email, user_name, id_token, state }
 		: null;
+	const isJetpackLogin = isJetpack === 'jetpack';
+	const isP2Login = query && query.from === 'p2';
+	const clientId = query?.client_id;
+	const oauth2ClientId = query?.oauth2_client_id;
+	const isGravatar = isGravatarOAuth2Client( { id: Number( clientId || oauth2ClientId ) } );
+	const isWhiteLogin =
+		( ! isJetpackLogin &&
+			! isP2Login &&
+			Boolean( clientId ) === false &&
+			Boolean( oauth2ClientId ) === false ) ||
+		isGravatar;
 
 	context.primary = (
 		<WPLogin
-			isJetpack={ isJetpack === 'jetpack' }
-			isGutenboarding={ isGutenboarding === 'new' }
+			action={ action }
+			isJetpack={ isJetpackLogin }
+			isWhiteLogin={ isWhiteLogin }
+			isP2Login={ isP2Login }
+			isGravatar={ isGravatar }
 			path={ path }
 			twoFactorAuthType={ twoFactorAuthType }
 			socialService={ socialService }
@@ -96,6 +127,13 @@ export function magicLogin( context, next ) {
 	next();
 }
 
+export function qrCodeLogin( context, next ) {
+	const { redirect_to } = context.query;
+	context.primary = <QrCodeLoginPage locale={ context.params.lang } redirectTo={ redirect_to } />;
+
+	next();
+}
+
 function getHandleEmailedLinkFormComponent( flow ) {
 	if ( flow === 'jetpack' && config.isEnabled( 'jetpack/magic-link-signup' ) ) {
 		return HandleEmailedLinkFormJetpackConnect;
@@ -118,7 +156,7 @@ export function magicLoginUse( context, next ) {
 
 	const { client_id, email, redirect_to, token } = previousQuery;
 
-	const flow = includes( redirect_to, 'jetpack/connect' ) ? 'jetpack' : null;
+	const flow = redirect_to?.includes( 'jetpack/connect' ) ? 'jetpack' : null;
 
 	const PrimaryComponent = getHandleEmailedLinkFormComponent( flow );
 
@@ -130,14 +168,21 @@ export function magicLoginUse( context, next ) {
 }
 
 export function redirectDefaultLocale( context, next ) {
+	// Do not redirect if it's server side
+	if ( context.isServerSide ) {
+		return next();
+	}
 	// Only handle simple routes
 	if ( context.pathname !== '/log-in/en' && context.pathname !== '/log-in/jetpack/en' ) {
+		if ( ! isUserLoggedIn( context.store.getState() ) && ! context.params.lang ) {
+			context.params.lang = config( 'i18n_default_locale_slug' );
+		}
 		return next();
 	}
 
 	// Do not redirect if user bootrapping is disabled
 	if (
-		! getCurrentUser( context.store.getState() ) &&
+		! isUserLoggedIn( context.store.getState() ) &&
 		! config.isEnabled( 'wpcom-user-bootstrap' )
 	) {
 		return next();
@@ -151,9 +196,9 @@ export function redirectDefaultLocale( context, next ) {
 	}
 
 	if ( context.params.isJetpack === 'jetpack' ) {
-		context.redirect( '/log-in/jetpack' );
+		page.redirect( '/log-in/jetpack' );
 	} else {
-		context.redirect( '/log-in' );
+		page.redirect( '/log-in' );
 	}
 }
 
@@ -162,8 +207,10 @@ export function redirectJetpack( context, next ) {
 	const { redirect_to } = context.query;
 
 	const isUserComingFromPricingPage =
-		includes( redirect_to, 'source=jetpack-plans' ) ||
-		includes( redirect_to, 'source=jetpack-connect-plans' );
+		redirect_to?.includes( 'source=jetpack-plans' ) ||
+		redirect_to?.includes( 'source=jetpack-connect-plans' );
+	const isUserComingFromMigrationPlugin = redirect_to?.includes( 'wpcom-migration' );
+
 	/**
 	 * Send arrivals from the jetpack connect process or jetpack's pricing page
 	 * (when site user email matches a wpcom account) to the jetpack branded login.
@@ -172,9 +219,21 @@ export function redirectJetpack( context, next ) {
 	 * because the iOS app relies on seeing a request to /log-in$ to show its
 	 * native credentials form.
 	 */
+
+	// 2023-01-23: For some reason (yet unknown), the path replacement below
+	// is happening twice. Until we determine and fix the root cause, this
+	// guard exists to stop it from happening.
+	const pathAlreadyUpdated = context.path.includes( 'log-in/jetpack' );
+	if ( pathAlreadyUpdated ) {
+		next();
+		return;
+	}
+
 	if (
-		isJetpack !== 'jetpack' &&
-		( includes( redirect_to, 'jetpack/connect' ) || isUserComingFromPricingPage )
+		( isJetpack !== 'jetpack' &&
+			redirect_to?.includes( 'jetpack/connect' ) &&
+			! isUserComingFromMigrationPlugin ) ||
+		isUserComingFromPricingPage
 	) {
 		return context.redirect( context.path.replace( 'log-in', 'log-in/jetpack' ) );
 	}

@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import PushNotificationApprovalPoller from './push-notification-approval-poller';
-import VerificationCodeForm from './verification-code-form';
 import SecurityKeyForm from './security-key-form';
+import VerificationCodeForm from './verification-code-form';
 import WaitingTwoFactorNotificationApproval from './waiting-notification-approval';
 
 export default function TwoFactorContent( {
@@ -18,6 +10,7 @@ export default function TwoFactorContent( {
 	twoFactorAuthType,
 	twoFactorNotificationSent,
 	rebootAfterLogin,
+	isWoo,
 } ) {
 	if ( twoFactorAuthType === 'webauthn' && isBrowserSupported ) {
 		return (
@@ -25,6 +18,7 @@ export default function TwoFactorContent( {
 				<SecurityKeyForm
 					onSuccess={ handleValid2FACode }
 					switchTwoFactorAuthType={ switchTwoFactorAuthType }
+					isWoo={ isWoo }
 				/>
 			</div>
 		);
@@ -40,6 +34,7 @@ export default function TwoFactorContent( {
 			<div>
 				{ poller }
 				<VerificationCodeForm
+					key={ twoFactorAuthType }
 					onSuccess={ handleValid2FACode }
 					twoFactorAuthType={ twoFactorAuthType }
 					switchTwoFactorAuthType={ switchTwoFactorAuthType }

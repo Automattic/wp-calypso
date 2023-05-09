@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { filter, size } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { getStateKey } from 'calypso/state/comments/utils';
 
 import 'calypso/state/comments/init';
@@ -13,7 +6,7 @@ import 'calypso/state/comments/init';
 /**
  * Get total number of comments in state at a given date and time
  *
- * @param {object} state redux state
+ * @param {Object} state redux state
  * @param {number} siteId site identification
  * @param {number} postId site identification
  * @param {Date} date Date to count comments for

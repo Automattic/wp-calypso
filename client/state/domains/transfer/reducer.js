@@ -1,9 +1,3 @@
-/**
- * Internal dependencies
- */
-import initialDomainState from './initial';
-import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
-import { domainTransferSchema } from './schema';
 import {
 	DOMAIN_TRANSFER_ACCEPT,
 	DOMAIN_TRANSFER_ACCEPT_COMPLETED,
@@ -15,10 +9,14 @@ import {
 	DOMAIN_TRANSFER_CODE_REQUEST_FAILED,
 	DOMAIN_TRANSFER_DECLINE_COMPLETED,
 	DOMAIN_TRANSFER_UPDATE,
+	DOMAIN_TRANSFER_UPDATE_LOCK,
 	DOMAIN_WAPI_INFO_FETCH,
 	DOMAIN_WAPI_INFO_FETCH_FAILURE,
 	DOMAIN_WAPI_INFO_FETCH_SUCCESS,
 } from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
+import initialDomainState from './initial';
+import { domainTransferSchema } from './schema';
 
 function updateDomainState( state, domain, data ) {
 	return Object.assign( {}, state, {
@@ -34,9 +32,9 @@ function updateDomainState( state, domain, data ) {
  * Returns the updated state after an action has been dispatched. The
  * state maps domain to the domain's transfer object.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export const items = withSchemaValidation( domainTransferSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -47,6 +45,13 @@ export const items = withSchemaValidation( domainTransferSchema, ( state = {}, a
 				...state,
 				[ domain ]: options,
 			};
+		}
+		case DOMAIN_TRANSFER_UPDATE_LOCK: {
+			return updateDomainState( state, action.domain, {
+				data: Object.assign( {}, state[ action.domain ].data, {
+					locked: action.lock,
+				} ),
+			} );
 		}
 		case DOMAIN_TRANSFER_CODE_REQUEST: {
 			return updateDomainState( state, action.domain, {

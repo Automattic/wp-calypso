@@ -1,9 +1,6 @@
-/**
- * Internal dependencies
- */
 import { createSelector } from '@automattic/state-utils';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import getJetpackSettings from 'calypso/state/selectors/get-jetpack-settings';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 
 import 'calypso/state/wordads/init';
 
@@ -11,9 +8,9 @@ import 'calypso/state/wordads/init';
  * Returns the WordAds settings on a certain site.
  * Returns null if the site is unknown, or settings have not been fetched yet.
  *
- * @param  {object}  state   Global state tree
+ * @param  {Object}  state   Global state tree
  * @param  {number}  siteId  The ID of the site we're querying
- * @returns {?object}        WordAds settings
+ * @returns {?Object}        WordAds settings
  */
 export const getWordadsSettings = createSelector(
 	( state, siteId ) => {
@@ -21,10 +18,6 @@ export const getWordadsSettings = createSelector(
 		if ( ! settings ) {
 			return null;
 		}
-
-		const normalizedSettings = {
-			us_checked: 'yes' === settings.us_resident,
-		};
 
 		const isJetpack = isJetpackSite( state, siteId );
 
@@ -55,7 +48,6 @@ export const getWordadsSettings = createSelector(
 
 		return {
 			...settings,
-			...normalizedSettings,
 			...jetpackSettings,
 		};
 	},

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
 import {
 	PRODUCTS_LIST_RECEIVE,
@@ -9,9 +6,10 @@ import {
 } from 'calypso/state/action-types';
 import { ensureNumericCost } from './assembler';
 
+import 'calypso/state/currency-code/init';
 import 'calypso/state/products-list/init';
 
-export function receiveProductsList( productsList ) {
+export function receiveProductsList( productsList, type = null ) {
 	// Since the request succeeded, productsList should be guaranteed non-null;
 	// thus, we don't have any safety checks before this line.
 
@@ -26,13 +24,14 @@ export function receiveProductsList( productsList ) {
 	return {
 		type: PRODUCTS_LIST_RECEIVE,
 		productsList: sanitizedProductsList,
+		productsListType: type,
 	};
 }
 
 /**
  * Requests the list of all products from the WPCOM API.
  *
- * @param   {object} [query={}] A list of request parameters.
+ * @param   {Object} [query={}] A list of request parameters.
  * @param   {string} query.type The type of products to request (e.g., "jetpack");
  * 								or undefined, for all products
  * @returns {Function} 			an Action thunk
@@ -43,7 +42,7 @@ export function requestProductsList( query = {} ) {
 
 		return wpcom.req
 			.get( '/products', query )
-			.then( ( productsList ) => dispatch( receiveProductsList( productsList ) ) )
+			.then( ( productsList ) => dispatch( receiveProductsList( productsList, query.type ) ) )
 			.catch( ( error ) =>
 				dispatch( {
 					type: PRODUCTS_LIST_REQUEST_FAILURE,

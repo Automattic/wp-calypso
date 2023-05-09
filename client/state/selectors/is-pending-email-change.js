@@ -1,13 +1,11 @@
-/**
- * External dependencies
- */
-
 import { get } from 'lodash';
+
+import 'calypso/state/user-settings/init';
 
 /**
  * Returns true if there is a pending email change, false if not.
  *
- * @param  {object} state Global state tree
+ * @param  {Object} state Global state tree
  * @returns {boolean} pending email state
  */
 export default function isPendingEmailChange( state ) {

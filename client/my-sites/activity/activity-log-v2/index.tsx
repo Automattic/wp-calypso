@@ -1,43 +1,29 @@
-/**
- * External dependencies
- */
-import { useSelector, useDispatch } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
+import { WPCOM_FEATURES_FULL_ACTIVITY_LOG } from '@automattic/calypso-products';
+import { Button } from '@automattic/components';
+import { Tooltip } from '@wordpress/components';
 import classNames from 'classnames';
-import React, { FunctionComponent, useEffect } from 'react';
-import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { isFreePlan } from '@automattic/calypso-products';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getHttpData } from 'calypso/state/data-layer/http-data';
-import { requestActivityLogs, getRequestActivityLogsId } from 'calypso/state/data-getters';
-import {
-	siteHasBackupProductPurchase,
-	siteHasScanProductPurchase,
-} from 'calypso/state/purchases/selectors';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { useTranslate } from 'i18n-calypso';
+import { useSelector, useDispatch } from 'react-redux';
+import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 import ActivityCardList from 'calypso/components/activity-card-list';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Upsell from 'calypso/components/jetpack/upsell';
-import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
-import isVipSite from 'calypso/state/selectors/is-vip-site';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import Main from 'calypso/components/main';
+import SidebarNavigation from 'calypso/components/sidebar-navigation';
+import useActivityLogQuery from 'calypso/data/activity-log/use-activity-log-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { backupClonePath } from 'calypso/my-sites/backup/paths';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
 import getSettingsUrl from 'calypso/state/selectors/get-settings-url';
-import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import type { FunctionComponent } from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const ActivityLogV2: FunctionComponent = () => {
@@ -46,26 +32,43 @@ const ActivityLogV2: FunctionComponent = () => {
 
 	const siteId = useSelector( getSelectedSiteId );
 	const filter = useSelector( ( state ) => getActivityLogFilter( state, siteId ) );
-	const logs = useSelector( () => getHttpData( getRequestActivityLogsId( siteId, filter ) ).data );
+	const { data: logs } = useActivityLogQuery( siteId, filter );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
-	const siteIsOnFreePlan = useSelector(
-		( state ) =>
-			siteId &&
-			isFreePlan( get( getCurrentPlan( state, siteId ), 'productSlug' ) ) &&
-			! isVipSite( state, siteId )
-	);
-	const siteHasBackupPurchase = useSelector(
-		( state ) => siteId && siteHasBackupProductPurchase( state, siteId )
-	);
-	const siteHasScanPurchase = useSelector(
-		( state ) => siteId && siteHasScanProductPurchase( state, siteId )
+
+	const siteHasFullActivityLog = useSelector(
+		( state ) => siteId && siteHasFeature( state, siteId, WPCOM_FEATURES_FULL_ACTIVITY_LOG )
 	);
 	const settingsUrl = useSelector( ( state ) => getSettingsUrl( state, siteId, 'general' ) );
 
-	const showUpgrade = siteIsOnFreePlan && ! siteHasBackupPurchase && ! siteHasScanPurchase;
-	const showFilter = ! showUpgrade;
-
-	const jetpackCloudHeader = showUpgrade ? (
+	const jetpackCloudHeader = siteHasFullActivityLog ? (
+		<div className="activity-log-v2__header">
+			<div className="activity-log-v2__header-left">
+				<div className="activity-log-v2__header-title">{ translate( 'Activity log' ) }</div>
+				<div className="activity-log-v2__header-text">
+					{ translate( 'This is the complete event history for your site' ) }
+				</div>
+			</div>
+			<div className="activity-log-v2__header-right">
+				{ isJetpackCloud() && selectedSiteSlug && (
+					<Tooltip
+						text={ translate(
+							'To test your site changes, migrate or keep your data safe in another site'
+						) }
+					>
+						<Button
+							className="activity-log-v2__clone-button"
+							href={ backupClonePath( selectedSiteSlug ) }
+							onClick={ () =>
+								dispatch( recordTracksEvent( 'calypso_jetpack_activity_log_copy_site' ) )
+							}
+						>
+							{ translate( 'Copy this site' ) }
+						</Button>
+					</Tooltip>
+				) }
+			</div>
+		</div>
+	) : (
 		<Upsell
 			headerText={ translate( 'Activity Log' ) }
 			bodyText={ translate(
@@ -78,21 +81,7 @@ const ActivityLogV2: FunctionComponent = () => {
 			}
 			openButtonLinkOnNewTab={ false }
 		/>
-	) : (
-		<div className="activity-log-v2__header">
-			<h2>{ translate( 'Find a backup or restore point' ) }</h2>
-			<p>
-				{ translate(
-					'This is the complete event history for your site. Filter by date range and/or activity type.'
-				) }
-			</p>
-		</div>
 	);
-
-	// when the filter changes, re-request the logs
-	useEffect( () => {
-		requestActivityLogs( siteId, filter );
-	}, [ filter, siteId ] );
 
 	return (
 		<Main
@@ -104,7 +93,7 @@ const ActivityLogV2: FunctionComponent = () => {
 			{ siteId && <QuerySitePlans siteId={ siteId } /> }
 			{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 			<DocumentHead title={ translate( 'Activity log' ) } />
-			<SidebarNavigation />
+			{ isJetpackCloud() && <SidebarNavigation /> }
 			<PageViewTracker path="/activity-log/:site" title="Activity log" />
 			{ settingsUrl && <TimeMismatchWarning siteId={ siteId } settingsUrl={ settingsUrl } /> }
 			{ isJetpackCloud() ? (
@@ -119,7 +108,7 @@ const ActivityLogV2: FunctionComponent = () => {
 				/>
 			) }
 			<div className="activity-log-v2__content">
-				<ActivityCardList logs={ logs } pageSize={ 10 } showFilter={ showFilter } />
+				<ActivityCardList logs={ logs } pageSize={ 10 } showFilter={ siteHasFullActivityLog } />
 			</div>
 		</Main>
 	);

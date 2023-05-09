@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { map } from 'lodash';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { map } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import Tooltip from 'calypso/components/tooltip';
 import { CalendarEvent } from './event';
 

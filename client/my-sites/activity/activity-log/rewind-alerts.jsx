@@ -1,20 +1,10 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
-import ThreatAlert from './threat-alert';
+import { localize } from 'i18n-calypso';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import getSiteThreats from 'calypso/state/selectors/get-site-threats';
+import ThreatAlert from './threat-alert';
 
-/**
- * Style dependencies
- */
 import './rewind-alerts.scss';
 
 export class RewindAlerts extends Component {

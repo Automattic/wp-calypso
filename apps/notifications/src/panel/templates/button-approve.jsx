@@ -1,26 +1,19 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { useContext } from 'react';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { useContext } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { setApproveStatus } from '../state/notes/thunks';
-import ActionButton from './action-button';
+import { RestClientContext } from '../Notifications';
 import { keys } from '../helpers/input';
 import { getReferenceId } from '../helpers/notes';
-import { RestClientContext } from '../Notifications';
+import { setApproveStatus as setApproveStatusAction } from '../state/notes/thunks';
+import ActionButton from './action-button';
 
 const ApproveButton = ( { isApproved, note, translate, setApproveStatus } ) => {
 	const restClient = useContext( RestClientContext );
 
 	return (
 		<ActionButton
-			icon={ 'checkmark' }
+			icon="checkmark"
 			isActive={ isApproved }
 			hotkey={ keys.KEY_A }
 			onToggle={ () =>
@@ -53,4 +46,6 @@ ApproveButton.propTypes = {
 	translate: PropTypes.func.isRequired,
 };
 
-export default connect( null, { setApproveStatus } )( localize( ApproveButton ) );
+export default connect( null, { setApproveStatus: setApproveStatusAction } )(
+	localize( ApproveButton )
+);

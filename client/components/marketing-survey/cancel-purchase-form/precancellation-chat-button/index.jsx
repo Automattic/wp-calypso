@@ -1,26 +1,25 @@
-/**
- * External Dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
-import HappychatButton from 'calypso/components/happychat/button';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { hasIncludedDomain } from 'calypso/lib/purchases';
 import { isDomainRegistration, isPlan } from '@automattic/calypso-products';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import HappychatButton from 'calypso/components/happychat/button';
+import MaterialIcon from 'calypso/components/material-icon';
+import { hasIncludedDomain } from 'calypso/lib/purchases';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import isPrecancellationChatAvailable from 'calypso/state/happychat/selectors/is-precancellation-chat-available';
 import './style.scss';
 
 class PrecancellationChatButton extends Component {
 	static propTypes = {
+		icon: PropTypes.string,
 		purchase: PropTypes.object.isRequired,
 		surveyStep: PropTypes.string,
 		onClick: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
+		atBottom: PropTypes.bool,
+		className: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -42,19 +41,29 @@ class PrecancellationChatButton extends Component {
 	};
 
 	render() {
-		const { translate } = this.props;
+		const { isAvailable, icon, translate, atBottom, className } = this.props;
+
+		if ( ! isAvailable ) {
+			return null;
+		}
 
 		return (
 			<HappychatButton
-				className="precancellation-chat-button__main-button"
+				className={ classNames( 'precancellation-chat-button__main-button', className, {
+					'at-bottom': atBottom,
+				} ) }
 				onClick={ this.handleClick }
 			>
+				{ icon && <MaterialIcon icon={ icon } /> }
 				{ translate( 'Need help? Chat with us' ) }
 			</HappychatButton>
 		);
 	}
 }
 
-export default connect( null, {
-	recordTracksEvent,
-} )( localize( PrecancellationChatButton ) );
+export default connect(
+	( state ) => ( {
+		isAvailable: isPrecancellationChatAvailable( state ),
+	} ),
+	{ recordTracksEvent }
+)( localize( PrecancellationChatButton ) );

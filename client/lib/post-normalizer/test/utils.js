@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { isFeaturedImageInContent } from '../utils';
 
 describe( 'isFeaturedImageInContent', () => {
@@ -16,7 +8,7 @@ describe( 'isFeaturedImageInContent', () => {
 			},
 			images: [ { src: 'http://example.com/image.jpg' }, { src: 'http://example.com/image.jpg' } ],
 		};
-		expect( isFeaturedImageInContent( post ) ).to.equal( 1 );
+		expect( isFeaturedImageInContent( post ) ).toEqual( 1 );
 	} );
 
 	test( 'should return false when no images', () => {
@@ -26,7 +18,7 @@ describe( 'isFeaturedImageInContent', () => {
 			},
 			images: [],
 		};
-		expect( isFeaturedImageInContent( post ) ).to.be.false;
+		expect( isFeaturedImageInContent( post ) ).toBe( false );
 	} );
 
 	test( 'should return false when image is not in content', () => {
@@ -36,7 +28,7 @@ describe( 'isFeaturedImageInContent', () => {
 			},
 			images: [ { src: 'http://example.com/image.jpg' }, { src: 'http://example.com/one.jpg' } ],
 		};
-		expect( isFeaturedImageInContent( post ) ).to.be.false;
+		expect( isFeaturedImageInContent( post ) ).toBe( false );
 	} );
 
 	test( 'should ignore hostname when comparing', () => {
@@ -46,16 +38,16 @@ describe( 'isFeaturedImageInContent', () => {
 			},
 			images: [ { src: 'http://example.com/image.jpg' }, { src: 'http://example.com/image.jpg' } ],
 		};
-		expect( isFeaturedImageInContent( post ) ).to.equal( 1 );
+		expect( isFeaturedImageInContent( post ) ).toEqual( 1 );
 	} );
 
 	test( 'should understand photon urls embed the hostname when comparing', () => {
 		const post = {
 			post_thumbnail: {
-				URL: 'http://i2.wp.com/example2.com/image.jpg',
+				URL: 'http://i0.wp.com/example2.com/image.jpg',
 			},
 			images: [ { src: 'http://example.com/image.jpg' }, { src: 'http://example.com/image.jpg' } ],
 		};
-		expect( isFeaturedImageInContent( post ) ).to.equal( 1 );
+		expect( isFeaturedImageInContent( post ) ).toEqual( 1 );
 	} );
 } );

@@ -1,28 +1,21 @@
-/**
- * External dependencies
- */
+import { isEnabled } from '@automattic/calypso-config';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import ExternalLink from 'calypso/components/external-link';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { addQueryArgs } from 'calypso/lib/url';
 import { JETPACK_CONTACT_SUPPORT, CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import { selectSiteId } from 'calypso/state/help/actions';
-import { addQueryArgs } from 'calypso/lib/url';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import getRawSite from 'calypso/state/selectors/get-raw-site';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
-
-/**
- * Style dependencies
- */
-import './style.scss';
+import BackupTips from './backup-tips';
 import cloudPendingIcon from './icons/cloud-pending.svg';
+
+import './style.scss';
 
 const NoBackupsYet = () => {
 	const translate = useTranslate();
@@ -31,10 +24,10 @@ const NoBackupsYet = () => {
 	const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 	const siteName = useSelector( ( state ) => getRawSite( state, siteId ) )?.name;
 	const dispatch = useDispatch();
-	const onSupportClick = useCallback( () => dispatch( selectSiteId( siteId ) ), [
-		dispatch,
-		siteId,
-	] );
+	const onSupportClick = useCallback(
+		() => dispatch( selectSiteId( siteId ) ),
+		[ dispatch, siteId ]
+	);
 
 	return (
 		<>
@@ -60,7 +53,10 @@ const NoBackupsYet = () => {
 								<a
 									{ ...( isJetpackCloud()
 										? {
-												href: addQueryArgs( { url: siteUrl }, JETPACK_CONTACT_SUPPORT ),
+												href: addQueryArgs(
+													{ url: siteUrl },
+													localizeUrl( JETPACK_CONTACT_SUPPORT )
+												),
 												target: '_blank',
 												rel: 'noopener noreferrer',
 										  }
@@ -82,6 +78,7 @@ const NoBackupsYet = () => {
 					<ExternalLink href={ adminUrl }>{ translate( 'Manage your website' ) }</ExternalLink>
 				</li>
 			</ul>
+			{ isEnabled( 'jetpack/backup-messaging-i3' ) && <BackupTips location="NO_BACKUPS" /> }
 		</>
 	);
 };

@@ -1,26 +1,16 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import PluginAction from 'calypso/my-sites/plugins/plugin-action/plugin-action';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import { ACTIVATE_PLUGIN, DEACTIVATE_PLUGIN } from 'calypso/lib/plugins/constants';
+import { getManageConnectionHref } from 'calypso/lib/plugins/utils';
+import PluginAction from 'calypso/my-sites/plugins/plugin-action/plugin-action';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import { togglePluginActivation } from 'calypso/state/plugins/installed/actions';
 import { isPluginActionInProgress } from 'calypso/state/plugins/installed/selectors';
+import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const activationActions = [ ACTIVATE_PLUGIN, DEACTIVATE_PLUGIN ];
@@ -28,38 +18,48 @@ const activationActions = [ ACTIVATE_PLUGIN, DEACTIVATE_PLUGIN ];
 export class PluginActivateToggle extends Component {
 	toggleActivation = () => {
 		const {
-			isMock,
 			disabled,
 			site,
 			plugin,
 			recordGoogleEvent: recordGAEvent,
 			recordTracksEvent: recordEvent,
 		} = this.props;
-		if ( isMock || disabled ) {
+		if ( disabled ) {
 			return;
 		}
 
 		this.props.togglePluginActivation( site.ID, plugin );
-		this.props.removePluginStatuses( 'completed', 'error' );
+		this.props.removePluginStatuses( 'completed', 'error', 'up-to-date' );
 
 		if ( plugin.active ) {
 			recordGAEvent( 'Plugins', 'Clicked Toggle Deactivate Plugin', 'Plugin Name', plugin.slug );
-			recordEvent( 'calypso_plugin_deactivate_click', {
+			recordEvent( 'calypso_plugin_active_toggle_click', {
 				site: site.ID,
 				plugin: plugin.slug,
+				state: 'inactive',
 			} );
 		} else {
 			recordGAEvent( 'Plugins', 'Clicked Toggle Activate Plugin', 'Plugin Name', plugin.slug );
-			recordEvent( 'calypso_plugin_activate_click', {
+			recordEvent( 'calypso_plugin_active_toggle_click', {
 				site: site.ID,
 				plugin: plugin.slug,
+				state: 'active',
 			} );
 		}
 	};
 
 	trackManageConnectionLink = () => {
-		const { recordGoogleEvent: recordGAEvent } = this.props;
+		const {
+			site,
+			plugin,
+			recordGoogleEvent: recordGAEvent,
+			recordTracksEvent: recordEvent,
+		} = this.props;
 		recordGAEvent( 'Plugins', 'Clicked Manage Jetpack Connection Link', 'Plugin Name', 'jetpack' );
+		recordEvent( 'calypso_plugin_manage_connection_click', {
+			site: site.ID,
+			plugin: plugin.slug,
+		} );
 	};
 
 	manageConnectionLink() {
@@ -84,14 +84,14 @@ export class PluginActivateToggle extends Component {
 				<a
 					className="plugin-activate-toggle__icon"
 					onClick={ this.trackManageConnectionLink }
-					href={ '/settings/manage-connection/' + site.slug }
+					href={ getManageConnectionHref( site.slug ) }
 				>
 					<Gridicon icon="cog" size={ 18 } />
 				</a>
 				<a
 					className="plugin-activate-toggle__label"
 					onClick={ this.trackManageConnectionLink }
-					href={ '/settings/manage-connection/' + site.slug }
+					href={ getManageConnectionHref( site.slug ) }
 				>
 					{ translate( 'Manage Connection', {
 						comment: 'manage Jetpack connnection settings link',
@@ -102,13 +102,15 @@ export class PluginActivateToggle extends Component {
 	}
 
 	render() {
-		const { inProgress, site, plugin, disabled, translate } = this.props;
+		const { inProgress, site, plugin, disabled, translate, hideLabel, isJetpackCloud } = this.props;
 
-		if ( ! site ) {
+		if ( ! site || ! plugin ) {
 			return null;
 		}
 
-		if ( plugin && 'jetpack' === plugin.slug ) {
+		const isJetpackPlugin = 'jetpack' === plugin.slug;
+
+		if ( ! isJetpackCloud && isJetpackPlugin ) {
 			return (
 				<PluginAction
 					className="plugin-activate-toggle"
@@ -120,13 +122,14 @@ export class PluginActivateToggle extends Component {
 		}
 		return (
 			<PluginAction
-				disabled={ disabled }
+				disabled={ disabled || isJetpackPlugin }
 				className="plugin-activate-toggle"
 				label={ translate( 'Active', { context: 'plugin status' } ) }
 				inProgress={ inProgress }
-				status={ plugin && plugin.active }
+				status={ plugin.active }
 				action={ this.toggleActivation }
 				htmlFor={ 'activate-' + plugin.slug + '-' + site.ID }
+				hideLabel={ hideLabel }
 			/>
 		);
 	}
@@ -135,18 +138,16 @@ export class PluginActivateToggle extends Component {
 PluginActivateToggle.propTypes = {
 	site: PropTypes.object.isRequired,
 	plugin: PropTypes.object.isRequired,
-	isMock: PropTypes.bool,
 	disabled: PropTypes.bool,
 };
 
 PluginActivateToggle.defaultProps = {
-	isMock: false,
 	disabled: false,
 };
 
 export default connect(
 	( state, { site, plugin } ) => ( {
-		inProgress: isPluginActionInProgress( state, site.ID, plugin.id, activationActions ),
+		inProgress: plugin && isPluginActionInProgress( state, site.ID, plugin.id, activationActions ),
 	} ),
 	{
 		recordGoogleEvent,

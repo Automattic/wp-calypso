@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { JETPACK_SCAN_HISTORY_REQUEST } from 'calypso/state/action-types';
 
 import 'calypso/state/data-layer/wpcom/sites/scan';

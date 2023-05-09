@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import PaginatedQueryKey from '../paginated/key';
 import { DEFAULT_MEDIA_QUERY } from './constants';
 
@@ -13,7 +10,7 @@ export default class MediaQueryKey extends PaginatedQueryKey {
 	 * Default query used in determining values to be omitted from stringified
 	 * or parsed query objects
 	 *
-	 * @type {?object}
+	 * @type {?Object}
 	 */
 	static DEFAULT_QUERY = DEFAULT_MEDIA_QUERY;
 

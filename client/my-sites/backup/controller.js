@@ -1,32 +1,25 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { isJetpackBackupSlug, WPCOM_FEATURES_BACKUPS } from '@automattic/calypso-products';
 import Debug from 'debug';
-import { isJetpackBackupSlug, JETPACK_BACKUP_PRODUCTS } from '@automattic/calypso-products';
-
-/**
- * Internal dependencies
- */
-import BackupRewindFlow, { RewindFlowPurpose } from './rewind-flow';
-import BackupsPage from './main';
+import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import HasVaultPressSwitch from 'calypso/components/jetpack/has-vaultpress-switch';
+import IsCurrentUserAdminSwitch from 'calypso/components/jetpack/is-current-user-admin-switch';
+import IsJetpackDisconnectedSwitch from 'calypso/components/jetpack/is-jetpack-disconnected-switch';
+import NotAuthorizedPage from 'calypso/components/jetpack/not-authorized-page';
+import { UpsellProductCardPlaceholder } from 'calypso/components/jetpack/upsell-product-card';
 import UpsellSwitch from 'calypso/components/jetpack/upsell-switch';
-import BackupUpsell from './backup-upsell';
-import WPCOMBackupUpsell from './wpcom-backup-upsell';
-import BackupPlaceholder from 'calypso/components/jetpack/backup-placeholder';
-import FormattedHeader from 'calypso/components/formatted-header';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import SidebarNavigation from 'calypso/components/sidebar-navigation';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { setFilter } from 'calypso/state/activity-log/actions';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
-import QueryRewindState from 'calypso/components/data/query-rewind-state';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import HasVaultPressSwitch from 'calypso/components/jetpack/has-vaultpress-switch';
-import IsJetpackDisconnectedSwitch from 'calypso/components/jetpack/is-jetpack-disconnected-switch';
-import IsCurrentUserAdminSwitch from 'calypso/components/jetpack/is-current-user-admin-switch';
-import NotAuthorizedPage from 'calypso/components/jetpack/not-authorized-page';
-import siteHasSubscription from 'calypso/state/selectors/site-has-subscription';
+import BackupUpsell from './backup-upsell';
+import BackupCloneFlow from './clone-flow';
+import BackupsPage from './main';
+import BackupRewindFlow, { RewindFlowPurpose } from './rewind-flow';
+import WPCOMBackupUpsell from './wpcom-backup-upsell';
+import WpcomBackupUpsellPlaceholder from './wpcom-backup-upsell-placeholder';
 
 const debug = new Debug( 'calypso:my-sites:backup:controller' );
 
@@ -34,6 +27,9 @@ export function showUpsellIfNoBackup( context, next ) {
 	debug( 'controller: showUpsellIfNoBackup', context.params );
 
 	const UpsellComponent = isJetpackCloud() ? BackupUpsell : WPCOMBackupUpsell;
+	const UpsellPlaceholder = isJetpackCloud()
+		? UpsellProductCardPlaceholder
+		: WpcomBackupUpsellPlaceholder;
 	context.primary = (
 		<>
 			<UpsellSwitch
@@ -46,11 +42,8 @@ export function showUpsellIfNoBackup( context, next ) {
 				display={ context.primary }
 				productSlugTest={ isJetpackBackupSlug }
 			>
-				<SidebarNavigation />
-				{ ! isJetpackCloud() && (
-					<FormattedHeader brandFont headerText="Jetpack Backup" align="left" />
-				) }
-				<BackupPlaceholder />
+				{ isJetpackCloud() && <SidebarNavigation /> }
+				<UpsellPlaceholder />
 			</UpsellSwitch>
 		</>
 	);
@@ -109,7 +102,7 @@ export function showUnavailableForMultisites( context, next ) {
 
 	if (
 		isJetpackSiteMultiSite( state, siteId ) &&
-		! siteHasSubscription( state, siteId, JETPACK_BACKUP_PRODUCTS )
+		! siteHasFeature( state, siteId, WPCOM_FEATURES_BACKUPS )
 	) {
 		// Only show "Multisite not supported" card if the multisite does Not already own a Backup subscription.
 		// https://href.li/?https://wp.me/pbuNQi-1jg
@@ -158,5 +151,15 @@ export function backupRestore( context, next ) {
 	context.primary = (
 		<BackupRewindFlow rewindId={ context.params.rewindId } purpose={ RewindFlowPurpose.RESTORE } />
 	);
+	next();
+}
+
+/* handles /backup/:site/clone, see `backupClonePath` */
+export function backupClone( context, next ) {
+	debug( 'controller: backupClone', context.params );
+	const state = context.store.getState();
+	const siteId = getSelectedSiteId( state );
+
+	context.primary = <BackupCloneFlow siteId={ siteId } />;
 	next();
 }

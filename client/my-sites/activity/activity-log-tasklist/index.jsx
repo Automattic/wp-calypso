@@ -1,56 +1,38 @@
 /* eslint-disable wpcalypso/i18n-mismatched-placeholders */
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { isEmpty, get, includes, find } from 'lodash';
-import page from 'page';
 
-/**
- * Internal dependencies
- */
-import ActivityLogTaskUpdate from './update';
-import WithItemsToUpdate from './to-update';
 import { Card } from '@automattic/components';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import { localize } from 'i18n-calypso';
+import page from 'page';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SplitButton from 'calypso/components/split-button';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { getSite } from 'calypso/state/sites/selectors';
-import { updatePlugin } from 'calypso/state/plugins/installed/actions';
-import { getHttpData, requestHttpData } from 'calypso/state/data-layer/http-data';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { getStatusForPlugin } from 'calypso/state/plugins/installed/selectors';
-import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { decodeEntities } from 'calypso/lib/formatting';
+import wpcom from 'calypso/lib/wp';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
+import { DEFAULT_NOTICE_DURATION } from 'calypso/state/notices/constants';
+import { updatePlugin } from 'calypso/state/plugins/installed/actions';
+import { getStatusForPlugin } from 'calypso/state/plugins/installed/selectors';
+import { PLUGIN_INSTALLATION_COMPLETED } from 'calypso/state/plugins/installed/status/constants';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import { getSite, getSiteAdminUrl, isJetpackSite } from 'calypso/state/sites/selectors';
+import WithItemsToUpdate from './to-update';
+import ActivityLogTaskUpdate from './update';
 
-/**
- * Style dependencies
- */
 import './style.scss';
-
-/**
- * Checks if the supplied core update, plugins, or themes are being updated.
- *
- * @param {Array} updatables List of plugin, theme or core update objects to check their update status.
- *
- * @returns {boolean}  True if one or more plugins or themes are updating.
- */
-const isItemUpdating = ( updatables ) =>
-	updatables.some( ( item ) => 'inProgress' === get( item, 'updateStatus.status' ) );
 
 /**
  * Checks if the plugin, theme or core update is enqueued to be updated, searching it in the list by its slug.
  *
  * @param {string} updateSlug  Plugin or theme slug, or 'wordpress' for core updates.
  * @param {Array}  updateQueue Collection of plugins or themes currently queued to be updated.
- *
  * @returns {boolean}   True if the plugin or theme is enqueued to be updated.
  */
-const isItemEnqueued = ( updateSlug, updateQueue ) => !! find( updateQueue, { slug: updateSlug } );
+const isItemEnqueued = ( updateSlug, updateQueue ) =>
+	updateQueue.some( ( item ) => item.slug === updateSlug );
 
 const union = ( ...arrays ) => [ ...new Set( [].concat( ...arrays ) ) ];
 
@@ -63,6 +45,8 @@ class ActivityLogTasklist extends Component {
 		plugins: PropTypes.arrayOf( PropTypes.object ), // Plugins updated and those with pending updates
 		themes: PropTypes.arrayOf( PropTypes.object ), // Themes to update
 		core: PropTypes.arrayOf( PropTypes.object ), // New WP core version
+		siteAdminUrl: PropTypes.string,
+		jetpackNonAtomic: PropTypes.bool,
 
 		// Connected props
 		siteName: PropTypes.string.isRequired,
@@ -72,17 +56,7 @@ class ActivityLogTasklist extends Component {
 		trackUpdate: PropTypes.func.isRequired,
 		trackDismissAll: PropTypes.func.isRequired,
 		trackDismiss: PropTypes.func.isRequired,
-
-		// WordPress core
-		coreWithUpdate: PropTypes.arrayOf( PropTypes.object ).isRequired,
-
-		// Plugins already updated + those with pending updates.
-		// This extends plugins with the plugin update status.
-		pluginWithUpdate: PropTypes.arrayOf( PropTypes.object ).isRequired,
 		goManagePlugins: PropTypes.func.isRequired,
-
-		// Themes
-		themeWithUpdate: PropTypes.arrayOf( PropTypes.object ).isRequired,
 
 		// Localize
 		translate: PropTypes.func.isRequired,
@@ -94,6 +68,7 @@ class ActivityLogTasklist extends Component {
 	state = {
 		dismissed: [],
 		queued: [],
+		itemUpdating: false,
 		expandedView: false,
 	};
 
@@ -102,30 +77,18 @@ class ActivityLogTasklist extends Component {
 	 * If it receives a string, it assumes it's a valid plugin or theme slug and adds it to the dismissed list.
 	 * When it doesn't receive a string, it adds all the plugin and theme slugs to the dismissed list.
 	 *
-	 * @param {object} item Plugin or theme to dismiss.
+	 * @param {Object} item Plugin or theme to dismiss.
 	 */
 	dismiss = ( item ) => {
 		// ToDo: this should update some record in the tasklist API
-		const {
-			pluginWithUpdate,
-			themeWithUpdate,
-			coreWithUpdate,
-			trackDismiss,
-			trackDismissAll,
-		} = this.props;
+		const { plugins, themes, core, trackDismiss, trackDismissAll } = this.props;
 		let items;
 
 		if ( 'string' === typeof item.slug ) {
 			items = [ item.slug ];
 			trackDismiss( item );
 		} else {
-			items = union(
-				pluginWithUpdate.map( ( plugin ) => plugin.slug ),
-				themeWithUpdate.map( ( theme ) => theme.slug ),
-				// Although core doesn't have a slug, we call it 'wordpress'
-				// to work with it like plugins or themes.
-				coreWithUpdate.map( ( core ) => core.slug )
-			);
+			items = union( plugins, themes, core ).map( ( it ) => it.slug );
 			trackDismissAll();
 		}
 
@@ -137,17 +100,21 @@ class ActivityLogTasklist extends Component {
 	/**
 	 * Goes to general plugin management screen.
 	 *
-	 * @returns {object} Action to redirect to plugins management.
+	 * @returns {Object} Action to redirect to plugins management.
 	 */
-	goManagePlugins = () => this.props.goManagePlugins( this.props.siteSlug );
+	goManagePlugins = () =>
+		this.props.goManagePlugins(
+			this.props.siteSlug,
+			this.props.siteAdminUrl,
+			this.props.jetpackNonAtomic
+		);
 
 	/**
 	 * Goes to single theme or plugin management screen.
 	 *
 	 * @param {string} slug Plugin or theme slug, like "hello-dolly" or "dara".
 	 * @param {string} type Indicates if it's "plugin" or "theme".
-	 *
-	 * @returns {object} Action to redirect to plugin management.
+	 * @returns {Object} Action to redirect to plugin management.
 	 */
 	goToPage = ( slug, type ) => this.props.goToPage( slug, type, this.props.siteSlug );
 
@@ -156,12 +123,7 @@ class ActivityLogTasklist extends Component {
 	 * If so, updates the next plugin.
 	 */
 	continueQueue = () => {
-		const allUpdatableItems = union(
-			this.props.coreWithUpdate,
-			this.props.pluginWithUpdate,
-			this.props.themeWithUpdate
-		);
-		if ( 0 < this.state.queued.length && ! isItemUpdating( allUpdatableItems ) ) {
+		if ( 0 < this.state.queued.length && ! this.state.itemUpdating ) {
 			this.updateItem( this.state.queued[ 0 ] );
 		}
 	};
@@ -169,7 +131,7 @@ class ActivityLogTasklist extends Component {
 	/**
 	 * Add a plugin, theme, or core update to the update queue. Insert a prop to track enqueue origin later.
 	 *
-	 * @param {object} item Plugin, theme, or core update to enqueue.
+	 * @param {Object} item Plugin, theme, or core update to enqueue.
 	 * @param {string} from Pass '_from_error' when calling from error notice. Otherwise it's empty.
 	 */
 	enqueue = ( item, from = '' ) => {
@@ -187,10 +149,11 @@ class ActivityLogTasklist extends Component {
 	 *
 	 * @returns {undefined}
 	 */
-	dequeue = () =>
+	finishUpdate = () =>
 		this.setState(
 			{
 				queued: this.state.queued.slice( 1 ),
+				itemUpdating: false,
 			},
 			this.continueQueue
 		);
@@ -202,12 +165,7 @@ class ActivityLogTasklist extends Component {
 		this.props.trackUpdateAll();
 		this.setState(
 			{
-				queued: union(
-					this.state.queued,
-					this.props.coreWithUpdate,
-					this.props.pluginWithUpdate,
-					this.props.themeWithUpdate
-				),
+				queued: union( this.state.queued, this.props.core, this.props.plugins, this.props.themes ),
 			},
 			this.continueQueue
 		);
@@ -215,7 +173,7 @@ class ActivityLogTasklist extends Component {
 	/**
 	 * Expand the list of updates to show all of them
 	 *
-	 * @param {object} event Synthetic event
+	 * @param {Object} event Synthetic event
 	 */
 	showAllUpdates = ( event ) => {
 		recordTracksEvent( 'calypso_activitylog_tasklist_expand_view' );
@@ -226,17 +184,29 @@ class ActivityLogTasklist extends Component {
 	/**
 	 * Starts the update process for a specified plugin/theme. Displays an informational notice.
 	 *
-	 * @param {object} item Plugin/theme information that includes
+	 * @param {Object} item Plugin/theme information that includes
 	 * {
 	 * 		{string} slug Plugin or theme slug, like "hello-dolly". Slug for core updates is "wordpress".
 	 * 		{string} name Plugin or theme name, like "Hello Dolly". Name for core updates is "WordPress".
 	 * }
 	 */
 	updateItem = ( item ) => {
-		const { showInfoNotice, siteName, updateSingle, translate, trackUpdate } = this.props;
+		const {
+			showInfoNotice,
+			showSuccessNotice,
+			showErrorNotice,
+			siteId,
+			siteName,
+			updateSingle,
+			translate,
+			trackUpdate,
+		} = this.props;
 
-		trackUpdate( item );
-		updateSingle( item );
+		// if the item was enqueued by `updateAll` it has no `from` field because we don't want
+		// to record a track event for each item individually.
+		if ( item.from !== undefined ) {
+			trackUpdate( item );
+		}
 
 		showInfoNotice(
 			translate( 'Updating %(item)s on %(siteName)s.', {
@@ -247,6 +217,37 @@ class ActivityLogTasklist extends Component {
 				showDismiss: false,
 			}
 		);
+
+		this.setState( { itemUpdating: true } );
+
+		updateSingle( item, siteId )
+			.then( () => {
+				showSuccessNotice(
+					translate( 'Successfully updated %(item)s on %(siteName)s.', {
+						args: { item: decodeEntities( item.name ), siteName },
+					} ),
+					{
+						id: `alitemupdate-${ item.slug }`,
+						duration: DEFAULT_NOTICE_DURATION,
+					}
+				);
+				this.dismiss( item );
+			} )
+			.catch( () => {
+				showErrorNotice(
+					translate( 'An error occurred while updating %(item)s on %(siteName)s.', {
+						args: { item: decodeEntities( item.name ), siteName },
+					} ),
+					{
+						id: `alitemupdate-${ item.slug }`,
+						button: translate( 'Try again' ),
+						onClick: () => this.enqueue( item, '_from_error' ),
+					}
+				);
+			} )
+			.finally( () => {
+				this.finishUpdate();
+			} );
 	};
 
 	componentDidMount() {
@@ -262,66 +263,6 @@ class ActivityLogTasklist extends Component {
 				() => page.replace( `/activity-log/${ this.props.siteSlug }`, null, false, false ),
 				0
 			);
-		} );
-	}
-
-	componentDidUpdate( prevProps ) {
-		const itemsWithUpdate = union(
-			this.props.coreWithUpdate,
-			this.props.pluginWithUpdate,
-			this.props.themeWithUpdate
-		);
-		if ( isEmpty( itemsWithUpdate ) ) {
-			return;
-		}
-
-		const { showErrorNotice, showSuccessNotice, siteName, translate } = this.props;
-
-		itemsWithUpdate.forEach( ( item ) => {
-			const { slug, updateStatus, type, name } = item;
-			// Finds in prevProps.pluginWithUpdate, prevProps.themeWithUpdate or prevpros.coreWithUpdate
-			const prevItemWithUpdate = find( prevProps[ `${ type }WithUpdate` ], { slug } );
-
-			if ( false === get( prevItemWithUpdate, [ 'updateStatus' ], false ) ) {
-				return;
-			}
-
-			if (
-				get( prevItemWithUpdate, [ 'updateStatus', 'status' ], false ) ===
-					get( updateStatus, 'status', false ) ||
-				isItemUpdating( [ item ] )
-			) {
-				return;
-			}
-
-			const noticeArgs = {
-				args: { item: decodeEntities( name ), siteName },
-			};
-
-			switch ( updateStatus.status ) {
-				case 'error':
-					showErrorNotice(
-						translate( 'An error occurred while updating %(item)s on %(siteName)s.', noticeArgs ),
-						{
-							id: `alitemupdate-${ slug }`,
-							button: translate( 'Try again' ),
-							onClick: () => this.enqueue( item, '_from_error' ),
-						}
-					);
-					this.dequeue();
-					break;
-				case 'completed':
-					showSuccessNotice(
-						translate( 'Successfully updated %(item)s on %(siteName)s.', noticeArgs ),
-						{
-							id: `alitemupdate-${ slug }`,
-							duration: 3000,
-						}
-					);
-					this.dismiss( item );
-					this.dequeue();
-					break;
-			}
 		} );
 	}
 
@@ -367,13 +308,11 @@ class ActivityLogTasklist extends Component {
 	}
 
 	render() {
-		const itemsToUpdate = union(
-			this.props.coreWithUpdate,
-			this.props.pluginWithUpdate,
-			this.props.themeWithUpdate
-		).filter( ( item ) => ! includes( this.state.dismissed, item.slug ) );
+		const itemsToUpdate = union( this.props.core, this.props.plugins, this.props.themes ).filter(
+			( item ) => ! this.state.dismissed.includes( item.slug )
+		);
 
-		if ( isEmpty( itemsToUpdate ) ) {
+		if ( itemsToUpdate.length === 0 ) {
 			return null;
 		}
 
@@ -383,7 +322,7 @@ class ActivityLogTasklist extends Component {
 		const showExpandedView = this.state.expandedView || numberOfUpdates <= MAX_UPDATED_TO_SHOW;
 		return (
 			<Card className="activity-log-tasklist" highlight="warning">
-				<TrackComponentView eventName={ 'calypso_activitylog_tasklist_update_impression' } />
+				<TrackComponentView eventName="calypso_activitylog_tasklist_update_impression" />
 				<div className="activity-log-tasklist__heading">
 					{
 						// Not using count method since we want a "one" string.
@@ -432,161 +371,46 @@ class ActivityLogTasklist extends Component {
 	}
 }
 
-/**
- * Normalizes the state result so it's the same than plugins.
- * This normalization allows to reuse methods for plugins, themes, and core.
- *
- * @param {string}  state            Current state of update progress.
- * @param {boolean} isUpdateComplete If update actually produced what is expected to be after a successful update.
- *                                   In themes, the 'update' prop of the theme object is nullified when an update is succesful.
- *
- * @returns {boolean|object} False is update hasn't started. One of 'inProgress', 'error', 'completed', when
- * the update is running, failed, or was successfully completed, respectively.
- */
-const getNormalizedStatus = ( state, isUpdateComplete ) => {
-	if ( 'pending' === state ) {
-		return { status: 'inProgress' };
+const updateSingle = ( item, siteId ) => ( dispatch, getState ) => {
+	switch ( item.type ) {
+		case 'core':
+			// No need to pass version as a param: if it's missing, WP will be updated to latest core version.
+			return wpcom.req.post( `/sites/${ siteId }/core/update` ).then( ( response ) => {
+				// When core is successfully updated, the response includes an array with the new version.
+				if ( response.version[ 0 ] !== item.version ) {
+					return Promise.reject( 'Core update failed' );
+				}
+			} );
+		case 'plugin':
+			return dispatch( updatePlugin( siteId, item ) ).then( () => {
+				if ( getStatusForPlugin( getState(), siteId, item.id ) !== PLUGIN_INSTALLATION_COMPLETED ) {
+					return Promise.reject( 'Plugin update failed' );
+				}
+			} );
+		case 'theme':
+			return wpcom.req
+				.post( `/sites/${ siteId }/themes`, { action: 'update', themes: item.slug } )
+				.then( ( response ) => {
+					// When a theme successfully updates, the theme 'update' property is nullified.
+					if ( response.themes[ 0 ].update !== null ) {
+						return Promise.reject( 'Theme update failed' );
+					}
+				} );
 	}
-	if ( 'failure' === state ) {
-		return { status: 'error' };
-	}
-	if ( 'success' === state ) {
-		if ( isUpdateComplete ) {
-			return { status: 'completed' };
-		}
-		return { status: 'error' };
-	}
-	return false;
 };
 
-/**
- * Converts statuses for network request for theme update into something matching the plugin update.
- *
- * @param {number} siteId  Site Id.
- * @param {string} themeId Theme slug.
- *
- * @returns {boolean|object} False is update hasn't started. One of 'inProgress', 'error', 'completed', when
- * the update is running, failed, or was successfully completed, respectively.
- */
-const getStatusForTheme = ( siteId, themeId ) => {
-	const httpData = getHttpData( `theme-update-${ siteId }-${ themeId }` );
-	// When a theme successfully updates, the theme 'update' property is nullified.
-	const isThemeUpdateComplete = null === get( httpData, 'data.themes.0.update' );
-	return getNormalizedStatus( httpData.state, isThemeUpdateComplete );
-};
-
-/**
- * Get data about the status of a core update.
- *
- * @param {number} siteId      Site Id.
- * @param {string} coreVersion Version of core that the WP installation will be updated to.
- * @returns {boolean|object}      False is update hasn't started. One of 'inProgress', 'error', 'completed', when
- * the update is running, failed, or was successfully completed, respectively.
- */
-const getStatusForCore = ( siteId, coreVersion ) => {
-	const httpData = getHttpData( `core-update-${ siteId }` );
-	// When core is successfully updated, the response includes an array with the new version.
-	const isCoreUpdateComplete = coreVersion === get( httpData, 'data.version.0' );
-	return getNormalizedStatus( httpData.state, isCoreUpdateComplete );
-};
-
-/**
- * Creates an object, keyed by plugin/theme slug, of objects containing plugin/theme information
- * {
- * 		{string}       id     Plugin/theme directory and base file name without extension
- * 		{string}       slug   Plugin/theme directory
- * 		{string}       name   Plugin/theme name
- * 		{object|false} status Current update status
- * }
- * themeUpdate: PropTypes.shape( {
-		state: PropTypes.oneOf( [ 'uninitialized', 'failure', 'success', 'pending' ] ),
-		error: PropTypes.object,
-	} )
- *
- * @param {Array}  itemList Collection of plugins/themes that will be updated.
- * @param {number} siteId   ID of the site where the plugin/theme is installed.
- * @param {object} state    App state tree.
- *
- * @returns {Array} List of plugins/themes to update with their status.
- */
-const makeUpdatableList = ( itemList, siteId, state = null ) =>
-	itemList.map( ( item ) => ( {
-		...item,
-		updateStatus:
-			'plugin' === item.type
-				? getStatusForPlugin( state, siteId, item.id )
-				: getStatusForTheme( siteId, item.slug ),
-	} ) );
-
-/**
- * Start updating the theme on the specified site.
- *
- * @param {number} siteId  Site Id.
- * @param {string} themeId Theme slug.
- *
- * @returns {*} Stored data container for request.
- */
-const updateTheme = ( siteId, themeId ) =>
-	requestHttpData(
-		`theme-update-${ siteId }-${ themeId }`,
-		http( {
-			method: 'POST',
-			path: `/sites/${ siteId }/themes`,
-			body: { action: 'update', themes: themeId },
-		} ),
-		{
-			freshness: -Infinity,
-		}
-	);
-
-/**
- * Start updating WordPress core on the specified site.
- *
- * @param {number} siteId  Site Id.
- *
- * @returns {*} Stored data container for request.
- */
-const updateCore = ( siteId ) =>
-	requestHttpData(
-		`core-update-${ siteId }`,
-		http( {
-			method: 'POST',
-			path: `/sites/${ siteId }/core/update`,
-			// No need to pass version: if it's missing, WP will be updated to latest core version.
-		} ),
-		{
-			freshness: -Infinity,
-		}
-	);
-
-const mapStateToProps = ( state, { siteId, plugins, themes, core } ) => {
+const mapStateToProps = ( state, { siteId } ) => {
 	const site = getSite( state, siteId );
 	return {
-		siteId,
 		siteSlug: site.slug,
 		siteName: site.name,
-		pluginWithUpdate: makeUpdatableList( plugins, siteId, state ),
-		themeWithUpdate: makeUpdatableList( themes, siteId ),
-		coreWithUpdate: isEmpty( core )
-			? []
-			: [
-					{
-						...core[ 0 ],
-						updateStatus: getStatusForCore( siteId, core[ 0 ].version ),
-					},
-			  ],
+		siteAdminUrl: getSiteAdminUrl( state, siteId ),
+		jetpackNonAtomic: isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ),
 	};
 };
 
-const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
-	updateSingle: ( item ) => {
-		if ( 'core' === item.type ) {
-			return updateCore( siteId );
-		}
-		return 'plugin' === item.type
-			? dispatch( updatePlugin( siteId, item ) )
-			: updateTheme( siteId, item.slug );
-	},
+const mapDispatchToProps = ( dispatch ) => ( {
+	updateSingle: ( item, siteId ) => dispatch( updateSingle( item, siteId ) ),
 	showErrorNotice: ( error, options ) => dispatch( errorNotice( error, options ) ),
 	showInfoNotice: ( info, options ) => dispatch( infoNotice( info, options ) ),
 	showSuccessNotice: ( success, options ) => dispatch( successNotice( success, options ) ),
@@ -599,9 +423,15 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 		dispatch( recordTracksEvent( 'calypso_activitylog_tasklist_dismiss_all' ) ),
 	trackDismiss: ( { type, slug } ) =>
 		dispatch( recordTracksEvent( `calypso_activitylog_tasklist_dismiss_${ type }`, { slug } ) ),
-	goManagePlugins: ( siteSlug ) => {
+	goManagePlugins: ( siteSlug, siteAdminUrl, jetpackNonAtomic ) => {
 		dispatch( recordTracksEvent( 'calypso_activitylog_tasklist_manage_plugins' ) );
-		page( `/plugins/manage/${ siteSlug }` );
+
+		// When Jetpack is self hosted show the Calypso Plugins Manage page.
+		// Else, redirect to current site WP Admin.
+		const managePluginsDestination = jetpackNonAtomic
+			? `/plugins/manage/${ siteSlug }`
+			: `${ siteAdminUrl }plugins.php`;
+		page( managePluginsDestination );
 	},
 	goToPage: ( slug, type, siteSlug ) => {
 		const tracksEvent =

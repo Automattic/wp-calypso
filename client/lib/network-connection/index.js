@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
 import debugFactory from 'debug';
 import i18n from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import config from '@automattic/calypso-config';
 import PollerPool from 'calypso/lib/data-poller';
 import Emitter from 'calypso/lib/mixins/emitter';
 import { connectionLost, connectionRestored } from 'calypso/state/application/actions';
@@ -43,7 +36,7 @@ const NetworkConnectionApp = {
 	/**
 	 * Bootstraps network connection status change handler.
 	 *
-	 * @param {object} reduxStore The Redux store.
+	 * @param {Object} reduxStore The Redux store.
 	 */
 	init: function ( reduxStore ) {
 		if ( ! this.isEnabled( 'network-connection' ) ) {

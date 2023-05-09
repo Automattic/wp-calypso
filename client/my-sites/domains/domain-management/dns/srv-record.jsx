@@ -1,23 +1,15 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
+import { FormInputValidation } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 
-class SrvRecord extends React.Component {
+class SrvRecord extends Component {
 	static propTypes = {
 		fieldValues: PropTypes.object.isRequired,
 		onChange: PropTypes.func.isRequired,
@@ -28,10 +20,10 @@ class SrvRecord extends React.Component {
 	render() {
 		const { fieldValues, isValid, onChange, selectedDomainName, show, translate } = this.props;
 		const classes = classnames( { 'is-hidden': ! show } );
-		const options = [ 'tcp', 'udp', 'tls' ].map( ( protocol ) => {
+		const options = [ '_tcp', '_udp', '_tls' ].map( ( protocol ) => {
 			return (
 				<option key={ protocol } value={ protocol }>
-					{ protocol.toUpperCase() }
+					{ protocol }
 				</option>
 			);
 		} );
@@ -46,10 +38,10 @@ class SrvRecord extends React.Component {
 		return (
 			<div className={ classes }>
 				<FormFieldset>
-					<FormLabel>{ translate( 'Name', { context: 'Dns Record' } ) }</FormLabel>
+					<FormLabel>{ translate( 'Name (optional)', { context: 'Dns Record' } ) }</FormLabel>
 					<FormTextInputWithAffixes
 						name="name"
-						placeholder={ translate( 'Enter subdomain (optional)', {
+						placeholder={ translate( 'Enter subdomain', {
 							context:
 								'Placeholder shown when entering the optional subdomain part of a new DNS record',
 						} ) }
@@ -85,13 +77,7 @@ class SrvRecord extends React.Component {
 
 				<FormFieldset>
 					<FormLabel>{ translate( 'Priority', { context: 'Dns Record' } ) }</FormLabel>
-					<FormTextInput
-						name="aux"
-						isError={ ! isAuxValid }
-						onChange={ onChange }
-						value={ aux }
-						defaultValue="10"
-					/>
+					<FormTextInput name="aux" isError={ ! isAuxValid } onChange={ onChange } value={ aux } />
 					{ ! isAuxValid && (
 						<FormInputValidation text={ translate( 'Invalid Priority' ) } isError />
 					) }
@@ -104,7 +90,6 @@ class SrvRecord extends React.Component {
 						isError={ ! isWeightValid }
 						onChange={ onChange }
 						value={ weight }
-						defaultValue="10"
 					/>
 					{ ! isWeightValid && (
 						<FormInputValidation text={ translate( 'Invalid Weight' ) } isError />

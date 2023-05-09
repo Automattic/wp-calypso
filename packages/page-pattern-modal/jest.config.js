@@ -3,4 +3,5 @@ module.exports = {
 	globals: {
 		configData: {},
 	},
+	transformIgnorePatterns: [ 'node_modules/(?!gridicons)(?!.*\\.svg)' ],
 };

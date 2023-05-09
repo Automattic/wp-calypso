@@ -1,18 +1,7 @@
-/**
- * External dependencies
- */
+import { getInitialState } from '@automattic/state-utils';
+import warn from '@wordpress/warning';
 import validator from 'is-my-json-valid';
 import { forEach, get, isEmpty, isEqual } from 'lodash';
-import { getInitialState } from '@automattic/state-utils';
-
-/**
- * WordPress dependencies
- */
-import warn from '@wordpress/warning';
-
-/**
- * Internal dependencies
- */
 import { serialize, deserialize } from './serialize';
 import { withPersistence } from './with-persistence';
 
@@ -90,10 +79,9 @@ function isValidSerializedState( schema, reducer, state ) {
  * expect( deserialize( age, -5 ) ).toBe( 0 ); // schema check failed, return initial state
  * expect( deserialize( age,  23 ) ).toBe( 23 ); // schema check passed
  * ```
- *
- * @param {object} schema JSON-schema description of state
+ * @param {Object} schema JSON-schema description of state
  * @param {Function} reducer normal reducer from ( state, action ) to new state
- * @returns {Function} wrapped reducer handling validation on `.deserialize()`
+ * @returns {import('redux').Reducer} wrapped reducer handling validation on `.deserialize()`
  */
 export const withSchemaValidation = ( schema, reducer ) => {
 	if ( process.env.NODE_ENV !== 'production' && ! schema ) {

@@ -1,16 +1,7 @@
-/**
- * External dependencies
- */
-import React, { useEffect, useState } from 'react';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Dialog } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { restoreDatabasePassword } from 'calypso/state/hosting/actions';
 import {
 	withAnalytics,
 	composeAnalytics,
@@ -18,6 +9,8 @@ import {
 	recordGoogleEvent,
 	bumpStat,
 } from 'calypso/state/analytics/actions';
+import { restoreDatabasePassword } from 'calypso/state/hosting/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const RestorePasswordDialog = ( {
 	isVisible,

@@ -1,59 +1,46 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { fetchUserPurchases } from 'calypso/state/purchases/actions';
 import {
 	hasLoadedUserPurchasesFromServer,
 	isFetchingUserPurchases,
 } from 'calypso/state/purchases/selectors';
-import { fetchUserPurchases } from 'calypso/state/purchases/actions';
 
-class QueryUserPurchases extends Component {
-	requestUserPurchases( nextProps ) {
-		const userChanged = nextProps && this.props.userId !== nextProps.userId;
-		const props = nextProps || this.props;
+const request = ( dispatch, getState ) => {
+	const state = getState();
 
-		if (
-			( ! props.isFetchingUserPurchases && ! props.hasLoadedUserPurchasesFromServer ) ||
-			userChanged
-		) {
-			this.props.fetchUserPurchases( props.userId );
-		}
+	const userId = getCurrentUserId( state );
+	const isFetching = isFetchingUserPurchases( state );
+	const hasLoaded = hasLoadedUserPurchasesFromServer( state );
+
+	if ( userId && ! isFetching && ! hasLoaded ) {
+		dispatch( fetchUserPurchases( userId ) );
 	}
-
-	UNSAFE_componentWillMount() {
-		this.requestUserPurchases();
-	}
-
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		this.requestUserPurchases( nextProps );
-	}
-
-	render() {
-		return null;
-	}
-}
-
-QueryUserPurchases.propTypes = {
-	userId: PropTypes.number.isRequired,
-	hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
-	isFetchingUserPurchases: PropTypes.bool.isRequired,
-	fetchUserPurchases: PropTypes.func.isRequired,
 };
 
-export default connect(
-	( state ) => {
-		return {
-			hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-			isFetchingUserPurchases: isFetchingUserPurchases( state ),
-		};
-	},
-	{ fetchUserPurchases }
-)( QueryUserPurchases );
+function QueryUserPurchases() {
+	const dispatch = useDispatch();
+
+	useEffect( () => {
+		dispatch( request );
+	} );
+
+	return null;
+}
+
+export const useQueryUserPurchases = ( enabled = true ) => {
+	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
+	const isRequesting = useSelector( ( state ) => state.purchases.isFetchingUserPurchases );
+	const hasLoaded = useSelector( ( state ) => state.purchases.hasLoadedUserPurchasesFromServer );
+	const reduxDispatch = useDispatch();
+
+	useEffect( () => {
+		if ( ! userId || isRequesting || hasLoaded || ! enabled ) {
+			return;
+		}
+		reduxDispatch( fetchUserPurchases( userId ) );
+	}, [ userId, isRequesting, hasLoaded, reduxDispatch, enabled ] );
+};
+
+export default QueryUserPurchases;

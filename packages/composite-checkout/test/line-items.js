@@ -1,26 +1,20 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { render } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
-
-/**
- * Internal dependencies
- */
 import { LineItemsProvider, useLineItems } from '../src/lib/line-items';
 
 // React writes to console.error when a component throws before re-throwing
 // but we don't want to see that here so we mock console.error.
-/* eslint-disable no-console */
+// eslint-disable-next-line no-console
 const original = console.error;
 
 describe( 'useLineItems', function () {
 	beforeEach( () => {
+		// eslint-disable-next-line no-console
 		console.error = jest.fn();
 	} );
 
 	afterEach( () => {
+		// eslint-disable-next-line no-console
 		console.error = original;
 	} );
 
@@ -141,4 +135,3 @@ describe( 'useLineItems', function () {
 		expect( getByTestId( 'total' ) ).toHaveTextContent( 'total' );
 	} );
 } );
-/* eslint-enable no-console */

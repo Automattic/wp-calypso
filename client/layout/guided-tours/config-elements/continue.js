@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import { Gridicon } from '@automattic/components';
 import { translate } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import { targetForSlug } from '../positioning';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { contextTypes } from '../context-types';
+import { targetForSlug } from '../positioning';
 
 export default class Continue extends Component {
 	static displayName = 'Continue';
@@ -39,15 +31,10 @@ export default class Continue extends Component {
 		this.removeTargetListener();
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps, nextContext ) {
-		nextProps.when && nextContext.isValid( nextProps.when ) && this.onContinue();
-	}
-
-	UNSAFE_componentWillUpdate() {
-		this.removeTargetListener();
-	}
-
 	componentDidUpdate() {
+		this.props.when && this.context.isValid( this.props.when ) && this.onContinue();
+
+		this.removeTargetListener();
 		this.addTargetListener();
 	}
 

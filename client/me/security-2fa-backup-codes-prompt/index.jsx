@@ -1,30 +1,21 @@
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
-
-const debug = debugFactory( 'calypso:me:security:2fa-backup-codes-prompt' );
-
-/**
- * Internal dependencies
- */
-import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { Component } from 'react';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormVerificationCodeInput from 'calypso/components/forms/form-verification-code-input';
 import Notice from 'calypso/components/notice';
-import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { bumpTwoStepAuthMCStat } from 'calypso/lib/two-step-authorization';
+import wp from 'calypso/lib/wp';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class Security2faBackupCodesPrompt extends React.Component {
+const debug = debugFactory( 'calypso:me:security:2fa-backup-codes-prompt' );
+
+class Security2faBackupCodesPrompt extends Component {
 	static displayName = 'Security2faBackupCodesPrompt';
 
 	static propTypes = {
@@ -49,28 +40,39 @@ class Security2faBackupCodesPrompt extends React.Component {
 	onVerify = ( event ) => {
 		event.preventDefault();
 		this.setState( { submittingCode: true } );
-		twoStepAuthorization.validateBackupCode( this.state.backupCodeEntry, this.onRequestComplete );
-	};
+		wp.req.post(
+			'/me/two-step/validate',
+			{
+				code: this.state.backupCodeEntry.replace( /\s/g, '' ),
+				action: 'create-backup-receipt',
+			},
+			( error, data ) => {
+				if ( data ) {
+					bumpTwoStepAuthMCStat(
+						data.success ? 'backup-code-validate-success' : 'backup-code-validate-failure'
+					);
+				}
 
-	onRequestComplete = ( error, data ) => {
-		this.setState( { submittingCode: false } );
-		if ( error ) {
-			this.setState( {
-				lastError: this.props.translate(
-					'Unable to validate codes right now. Please try again later.'
-				),
-			} );
-			return;
-		}
+				this.setState( { submittingCode: false } );
+				if ( error ) {
+					this.setState( {
+						lastError: this.props.translate(
+							'Unable to validate codes right now. Please try again later.'
+						),
+					} );
+					return;
+				}
 
-		if ( ! data.success ) {
-			this.setState( {
-				lastError: this.props.translate( 'You entered an invalid code. Please try again.' ),
-			} );
-			return;
-		}
+				if ( ! data.success ) {
+					this.setState( {
+						lastError: this.props.translate( 'You entered an invalid code. Please try again.' ),
+					} );
+					return;
+				}
 
-		this.props.onSuccess();
+				this.props.onSuccess();
+			}
+		);
 	};
 
 	onPrintAgain = ( event ) => {

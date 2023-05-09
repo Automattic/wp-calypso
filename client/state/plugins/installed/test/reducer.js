@@ -1,21 +1,11 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
 import { ACTIVATE_PLUGIN } from 'calypso/lib/plugins/constants';
-import { isRequesting, plugins } from '../reducer';
-import status from '../status/reducer';
-import { akismet, jetpack } from './fixtures/plugins';
 import {
 	PLUGINS_RECEIVE,
 	PLUGINS_REQUEST,
 	PLUGINS_REQUEST_SUCCESS,
 	PLUGINS_REQUEST_FAILURE,
+	PLUGINS_ALL_RECEIVE,
 	PLUGIN_ACTIVATE_REQUEST,
 	PLUGIN_ACTIVATE_REQUEST_SUCCESS,
 	PLUGIN_ACTIVATE_REQUEST_FAILURE,
@@ -27,6 +17,9 @@ import {
 	PLUGIN_REMOVE_REQUEST_SUCCESS,
 	PLUGIN_NOTICES_REMOVE,
 } from 'calypso/state/action-types';
+import { isRequesting, plugins } from '../reducer';
+import status from '../status/reducer';
+import { akismet, jetpack, healthCheck } from './fixtures/plugins';
 
 describe( 'reducer:', () => {
 	describe( 'isRequesting', () => {
@@ -35,7 +28,7 @@ describe( 'reducer:', () => {
 				type: PLUGINS_REQUEST,
 				siteId: 'one.site',
 			} );
-			expect( state ).to.eql( { 'one.site': true } );
+			expect( state ).toEqual( { 'one.site': true } );
 		} );
 
 		test( 'should track when fetches end successfully', () => {
@@ -43,7 +36,7 @@ describe( 'reducer:', () => {
 				type: PLUGINS_REQUEST_SUCCESS,
 				siteId: 'one.site',
 			} );
-			expect( state ).to.eql( { 'one.site': false } );
+			expect( state ).toEqual( { 'one.site': false } );
 		} );
 
 		test( 'should track when fetches end unsuccessfully', () => {
@@ -51,7 +44,7 @@ describe( 'reducer:', () => {
 				type: PLUGINS_REQUEST_FAILURE,
 				siteId: 'one.site',
 			} );
-			expect( state ).to.eql( { 'one.site': false } );
+			expect( state ).toEqual( { 'one.site': false } );
 		} );
 	} );
 
@@ -63,7 +56,28 @@ describe( 'reducer:', () => {
 				siteId: 'one.site',
 				data: [ akismet ],
 			} );
-			expect( state ).to.eql( { 'one.site': [ akismet ] } );
+			expect( state ).toEqual( { 'one.site': [ akismet ] } );
+		} );
+
+		test( 'should load the plugins with its name html decoded', () => {
+			const originalState = deepFreeze( { 'one.site': [] } );
+			const state = plugins( originalState, {
+				type: PLUGINS_RECEIVE,
+				siteId: 'one.site',
+				data: [ healthCheck ],
+			} );
+			const statePluginName = state[ 'one.site' ][ 0 ].name;
+			expect( statePluginName ).toEqual( 'Health Check & Troubleshooting' );
+		} );
+
+		test( 'should load all sites plugins with its name html decoded', () => {
+			const originalState = deepFreeze( { 'one.site': [] } );
+			const state = plugins( originalState, {
+				type: PLUGINS_ALL_RECEIVE,
+				allSitesPlugins: { 'one.site': [ healthCheck ] },
+			} );
+			const statePluginName = state[ 'one.site' ][ 0 ].name;
+			expect( statePluginName ).toEqual( 'Health Check & Troubleshooting' );
 		} );
 
 		test( 'should show an activated plugin as active', () => {
@@ -76,7 +90,7 @@ describe( 'reducer:', () => {
 				pluginId: akismet.id,
 				data: Object.assign( {}, akismet, { active: true } ),
 			} );
-			expect( state ).to.eql( { 'one.site': [ Object.assign( {}, akismet, { active: true } ) ] } );
+			expect( state ).toEqual( { 'one.site': [ Object.assign( {}, akismet, { active: true } ) ] } );
 		} );
 
 		test( 'should show a deactivated plugin as inactive', () => {
@@ -89,7 +103,9 @@ describe( 'reducer:', () => {
 				pluginId: akismet.id,
 				data: Object.assign( {}, akismet, { active: false } ),
 			} );
-			expect( state ).to.eql( { 'one.site': [ Object.assign( {}, akismet, { active: false } ) ] } );
+			expect( state ).toEqual( {
+				'one.site': [ Object.assign( {}, akismet, { active: false } ) ],
+			} );
 		} );
 
 		test( 'should show an updated plugin as up-to-date', () => {
@@ -101,7 +117,7 @@ describe( 'reducer:', () => {
 				pluginId: jetpack.id,
 				data: updatedPlugin,
 			} );
-			expect( state ).to.eql( { 'one.site': [ updatedPlugin ] } );
+			expect( state ).toEqual( { 'one.site': [ updatedPlugin ] } );
 		} );
 
 		test( 'should show a plugin with autoupdate enabled', () => {
@@ -114,7 +130,7 @@ describe( 'reducer:', () => {
 				pluginId: jetpack.id,
 				data: Object.assign( {}, akismet, { autoupdate: true } ),
 			} );
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				'one.site': [ Object.assign( {}, akismet, { autoupdate: true } ) ],
 			} );
 		} );
@@ -129,7 +145,7 @@ describe( 'reducer:', () => {
 				pluginId: jetpack.id,
 				data: Object.assign( {}, akismet, { autoupdate: false } ),
 			} );
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				'one.site': [ Object.assign( {}, akismet, { autoupdate: false } ) ],
 			} );
 		} );
@@ -142,7 +158,19 @@ describe( 'reducer:', () => {
 				pluginId: jetpack.id,
 				data: jetpack,
 			} );
-			expect( state ).to.eql( { 'one.site': [ akismet, jetpack ] } );
+			expect( state ).toEqual( { 'one.site': [ akismet, jetpack ] } );
+		} );
+
+		test( 'should load a new plugin when installed with name html decoded', () => {
+			const originalState = deepFreeze( { 'one.site': [] } );
+			const state = plugins( originalState, {
+				type: PLUGIN_INSTALL_REQUEST_SUCCESS,
+				siteId: 'one.site',
+				pluginId: healthCheck.id,
+				data: healthCheck,
+			} );
+			const statePluginName = state[ 'one.site' ][ 0 ].name;
+			expect( statePluginName ).toEqual( 'Health Check & Troubleshooting' );
 		} );
 
 		test( 'should remove an existing plugin when deleted', () => {
@@ -152,7 +180,7 @@ describe( 'reducer:', () => {
 				siteId: 'one.site',
 				pluginId: jetpack.id,
 			} );
-			expect( state ).to.eql( { 'one.site': [ akismet ] } );
+			expect( state ).toEqual( { 'one.site': [ akismet ] } );
 		} );
 	} );
 
@@ -165,7 +193,7 @@ describe( 'reducer:', () => {
 				siteId: 'one.site',
 				pluginId: akismet.id,
 			} );
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				'one.site': {
 					[ akismet.id ]: {
 						status: 'inProgress',
@@ -191,7 +219,7 @@ describe( 'reducer:', () => {
 				pluginId: akismet.id,
 				data: Object.assign( {}, akismet, { active: true } ),
 			} );
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				'one.site': {
 					[ akismet.id ]: {
 						status: 'completed',
@@ -212,7 +240,7 @@ describe( 'reducer:', () => {
 				pluginId: akismet.id,
 				error: testError,
 			} );
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				'one.site': {
 					[ akismet.id ]: {
 						status: 'error',
@@ -246,7 +274,7 @@ describe( 'reducer:', () => {
 				type: PLUGIN_NOTICES_REMOVE,
 				statuses: [ 'completed', 'error' ],
 			} );
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				'one.site': {
 					[ akismet.id ]: {
 						status: 'inProgress',

@@ -1,43 +1,30 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
 import classNames from 'classnames';
 import { includes, isEqual, some } from 'lodash';
 import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-import { FEATURE_VIDEO_UPLOADS } from '@automattic/calypso-products';
-
-/**
- * Internal dependencies
- */
-import Content from './content';
+import QueryPreferences from 'calypso/components/data/query-preferences';
+import { filterItemsByMimePrefix } from 'calypso/lib/media/utils';
+import searchUrl from 'calypso/lib/search-url';
+import { selectMediaItems } from 'calypso/state/media/actions';
 import getMediaErrors from 'calypso/state/selectors/get-media-errors';
 import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
-import MediaLibraryDropZone from './drop-zone';
-import { filterItemsByMimePrefix } from 'calypso/lib/media/utils';
-import filterToMimePrefix from './filter-to-mime-prefix';
-import FilterBar from './filter-bar';
-import QueryPreferences from 'calypso/components/data/query-preferences';
-import searchUrl from 'calypso/lib/search-url';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { requestKeyringConnections } from 'calypso/state/sharing/keyring/actions';
 import {
 	isKeyringConnectionsFetching,
 	getKeyringConnections,
 } from 'calypso/state/sharing/keyring/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import { requestKeyringConnections } from 'calypso/state/sharing/keyring/actions';
-import { selectMediaItems } from 'calypso/state/media/actions';
-import { hasSiteFeature } from 'calypso/lib/site/utils';
+import Content from './content';
+import MediaLibraryDropZone from './drop-zone';
+import FilterBar from './filter-bar';
+import filterToMimePrefix from './filter-to-mime-prefix';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 // External media sources that do not need a user to connect them should be listed here.
-const noConnectionNeeded = [ 'pexels' ];
+const noConnectionNeeded = [ 'openverse', 'pexels' ];
 
 const sourceNeedsKeyring = ( source ) => source !== '' && ! includes( noConnectionNeeded, source );
 
@@ -131,7 +118,7 @@ class MediaLibrary extends Component {
 	};
 
 	filterRequiresUpgrade() {
-		const { filter, site, source, isJetpack, isAtomic, hasVideoUploadFeature } = this.props;
+		const { filter, site, source, isJetpack, hasVideoUploadFeature } = this.props;
 		if ( source ) {
 			return false;
 		}
@@ -141,11 +128,7 @@ class MediaLibrary extends Component {
 				return ! ( ( site && site.options.upgraded_filetypes_enabled ) || isJetpack );
 
 			case 'videos':
-				return ! (
-					( site && site.options.videopress_enabled ) ||
-					( isJetpack && ! isAtomic ) ||
-					( isAtomic && hasVideoUploadFeature )
-				);
+				return ! hasVideoUploadFeature;
 		}
 
 		return false;
@@ -223,8 +206,7 @@ export default connect(
 		needsKeyring: needsKeyring( state, source ),
 		selectedItems: getMediaLibrarySelectedItems( state, site?.ID ),
 		isJetpack: isJetpackSite( state, site?.ID ),
-		isAtomic: isAtomicSite( state, site?.ID ),
-		hasVideoUploadFeature: hasSiteFeature( site, FEATURE_VIDEO_UPLOADS ),
+		hasVideoUploadFeature: siteHasFeature( state, site?.ID, 'upload-video-files' ),
 	} ),
 	{
 		requestKeyringConnections,

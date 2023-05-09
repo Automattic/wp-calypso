@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import { forEach, get, merge, pickBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import {
 	JETPACK_MODULE_ACTIVATE,
 	JETPACK_MODULE_ACTIVATE_FAILURE,
@@ -91,7 +83,7 @@ const createSettingsItemsReducer = () => {
  * concerning Jetpack modules data updates
  *
  * @param  {Array}  state  Current state
- * @param  {object} action action
+ * @param  {Object} action action
  * @returns {Array}         Updated state
  */
 export const items = ( state = {}, action ) => {
@@ -115,9 +107,9 @@ export const items = ( state = {}, action ) => {
  * `Reducer` function which handles request/response actions
  * concerning Jetpack modules-related requests
  *
- * @param {object} state - current state
- * @param {object} action - action
- * @returns {object} updated state
+ * @param {Object} state - current state
+ * @param {Object} action - action
+ * @returns {Object} updated state
  */
 export const requests = ( state = {}, action ) => {
 	switch ( action.type ) {

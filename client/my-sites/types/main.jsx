@@ -1,31 +1,21 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
-import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import Main from 'calypso/components/main';
+import { get } from 'lodash';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import QueryPostTypes from 'calypso/components/data/query-post-types';
 import FormattedHeader from 'calypso/components/formatted-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import Main from 'calypso/components/main';
+import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PostTypeFilter from 'calypso/my-sites/post-type-filter';
 import PostTypeList from 'calypso/my-sites/post-type-list';
-import PostTypeUnsupported from './post-type-unsupported';
-import PostTypeForbidden from './post-type-forbidden';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getPostType, isPostTypeSupported } from 'calypso/state/post-types/selectors';
-import QueryPostTypes from 'calypso/components/data/query-post-types';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
-import config from '@automattic/calypso-config';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import PostTypeForbidden from './post-type-forbidden';
+import PostTypeUnsupported from './post-type-unsupported';
 
 function Types( {
 	siteId,
@@ -38,10 +28,41 @@ function Types( {
 	translate,
 } ) {
 	let subHeaderText = '';
-	if ( 'Testimonials' === get( postType, 'label', '' ) ) {
-		subHeaderText = translate( 'Create and manage all the testimonials on your site.' );
-	} else if ( 'Projects' === get( postType, 'label', '' ) ) {
-		subHeaderText = translate( 'Create, edit, and manage the portfolio projects on your site.' );
+	switch ( get( postType, 'label', '' ) ) {
+		case 'Testimonials':
+			subHeaderText = translate(
+				'Create and manage all the testimonials on your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+				{
+					components: {
+						learnMoreLink: <InlineSupportLink supportContext="testimonials" showIcon={ false } />,
+					},
+				}
+			);
+			break;
+
+		case 'Projects':
+			subHeaderText = translate(
+				'Create, edit, and manage the portfolio projects on your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+				{
+					components: {
+						learnMoreLink: <InlineSupportLink supportContext="portfolios" showIcon={ false } />,
+					},
+				}
+			);
+			break;
+
+		case 'Reusable blocks':
+			subHeaderText = translate(
+				'Create, edit, and manage the reusable blocks on your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+				{
+					components: {
+						learnMoreLink: (
+							<InlineSupportLink supportContext="reusable-blocks" showIcon={ false } />
+						),
+					},
+				}
+			);
+			break;
 	}
 
 	return (
@@ -49,14 +70,13 @@ function Types( {
 			<ScreenOptionsTab wpAdminPath={ `edit.php?post_type=${ query.type }` } />
 			<DocumentHead title={ get( postType, 'label', '' ) } />
 			<PageViewTracker path={ siteId ? '/types/:site' : '/types' } title="Custom Post Type" />
-			<SidebarNavigation />
 			<FormattedHeader
 				brandFont
 				className="types__page-heading"
 				headerText={ get( postType, 'label', '' ) }
 				subHeaderText={ subHeaderText }
 				align="left"
-				hasScreenOptions={ config.isEnabled( 'nav-unification/switcher' ) }
+				hasScreenOptions
 			/>
 			{ userCanEdit &&
 				postTypeSupported && [

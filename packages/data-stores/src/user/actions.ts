@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
 import { stringify } from 'qs';
-
-/**
- * Internal dependencies
- */
+import { wpcomRequest, requestAllBlogsAccess, reloadProxy } from '../wpcom-request-controls';
 import type {
 	CurrentUser,
 	CreateAccountParams,
 	NewUserErrorResponse,
 	NewUserSuccessResponse,
 } from './types';
-import { wpcomRequest, requestAllBlogsAccess, reloadProxy } from '../wpcom-request-controls';
 import type { WpcomClientCredentials } from '../shared-types';
 
 export function createActions( clientCreds: WpcomClientCredentials ) {
@@ -73,8 +66,9 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			yield receiveNewUser( newUser );
 
 			return { ok: true } as const;
-		} catch ( newUserError ) {
-			yield receiveNewUserFailed( newUserError );
+		} catch ( error ) {
+			const newUserError: NewUserErrorResponse = error as NewUserErrorResponse;
+			yield receiveNewUserFailed( newUserError as NewUserErrorResponse );
 
 			return { ok: false, newUserError } as const;
 		}

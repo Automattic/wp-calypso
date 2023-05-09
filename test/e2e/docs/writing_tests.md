@@ -1,157 +1,351 @@
+<div style="width: 45%; float:left" align="left"><a href="./tests_ci.md"><-- Running tests on CI</a> </div>
+<div style="width: 5%; float:left" align="center"><a href="./../README.md">Top</a></div>
+<div style="width: 45%; float:right"align="right"><a href="./library_objects.md">Library Objects --></a> </div>
+
+<br><br>
+
 # Writing Tests
-
-This document will outline tips to write successful tests for both Selenium and Playwright suites.
-
-Refer to the [style guide](docs/style-guide.md) for coding style information.
-
-## Table of contents
 
 <!-- TOC -->
 
 - [Writing Tests](#writing-tests)
-  - [Table of contents](#table-of-contents)
-  - [Selector](#selector)
-  - [Component](#component)
-  - [Page](#page)
-    - [Structure](#structure)
-    - [Guidelines](#guidelines)
-  - [Flow](#flow)
-    - [Structure](#structure)
-    - [Guidelines](#guidelines)
-  - [Gutenberg Blocks](#gutenberg-blocks)
+  - [Example test spec](#example-test-spec)
+  - [Quick start](#quick-start)
+  - [Child-level describe blocks](#child-level-describe-blocks)
+  - [Test step](#test-step)
+  - [Hooks](#hooks)
+  - [Viewports](#viewports)
+  - [Block Smoke Testing](#block-smoke-testing)
+    - [Overview](#overview)
+    - [How To](#how-to)
+    - [Examples](#examples)
 
 <!-- /TOC -->
 
-## Selector
+## Example test spec
 
-Selectors form the core of any automated e2e test scripts. For a quick overview of selectors, please refer to the [MDN page on CSS selectors](https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Selectors).
+```shell
+specs/search__preview.ts
+```
 
-For modern automated e2e tests, `CSS` selectors are mainstream, although `xpath` and text selectors are also sometimes used.
+<details>
 
-Ideally, a selector satisfies all of the following:
+```typescript
+/**
+ * @group calypso-pr
+ * @group gutenberg
+ */
 
-- **unique**: one selector, one element.
-- **reliable**: the same element is selected with each iteration.
-- **brief**: selector is short and easy to read.
+import { DataHelper, TestAccount } from '@automattic/calypso-e2e';
 
-## Component
+// Define constants below the import, but above the global declaration.
+const xyz = 'someconst';
+const accountName = 'defaultUser';
 
-Components cover elements that persist across multiple pages.
+// Declare the global constant browser, representing an instance of the browser
+// launched by Playwright.
+declare const browser: Browser;
 
-Encapsulating behavior of a component in an object permits code reuse, promotes object oriented thinking and separation of duties.
+describe( DataHelper.createSuiteTitle( 'Search: Preview' ), function () {
+	// Define a persistent page object, representing an instance of Playwright's Page
+	// object which interacts with the actual DOM.
+	// This instance of the `page` will be used throughout the test spec.
+	let page: Page;
 
-On `wp-calypso`, some components are:
+	// Hook which will run before every `it` and `describe` in this spec.
+	beforeAll( async function () {
+		// Launch a new page instance.
+		page = await browser.newPage();
 
-- left sidebar
-- master bar
+		// Authentication boilerplate.
+		// `accountName` should map to an existing user in the encrypted secrets file.
+		const testAccount = new TestAccount( accountName );
+		await testAccount.authenticate( page );
+	} );
 
-## Page
+	// Note use of a child-level describe block to group a set of steps in the flow.
+	describe( 'Input a search query', function () {
+		const searchQuery = 'some valid search string';
+		// Define child-level describe scoped variable for a component to be shared
+		// across this scope. Note the use of camelCase for variable naming.
+		let someComponent: SomeComponent;
 
-Page Object Model (or _POM_ for short) is a common technique used for automated end-to-end testing.
+		// Note the short yet descriptive step name that definitively states the
+		// action performed in this step.
+		it( 'Check page title', async function () {
+			someComponent = new SomeComponent( page );
 
-Similar to a `Class` in software development, the POM groups together attributes, functions and other code on a page.
+			await someComponent.clickMyPages();
+			const resultValue = await someComponent.getTitle();
 
-Automated end-to-end tests create instances of page objects to invoke actions on the page.
+			// Use Jest's built-in `expect` when asserting in a test spec.
+			expect( resultValue ).toStrictEqual( expectedValue );
+		} );
 
-Similar to comonents, page objects encourage:
+		// Short, decisive actions in each step.
+		it( 'Enter search string', async function () {
+			await someComponent.search( searchQuery );
+			await someComponent.clickResult( 1 );
+		} );
+	} );
 
-- **Don't Repeat Yourself (DRY)**: common actions can be called from the page object.
-- **maintainability**: if a page changes, update the page object at one spot.
-- **readability**: named variables and functions are much easier to decipher than series of strings.
+	describe( 'Change preview value', function () {
+		// Use of Jest's built-in parametrization method to test slightly different
+		// variations of the input value.
+		it.each`
+			value         | expected
+			${ 'small' }  | ${ 's' }
+			${ 'medium' } | ${ 'm' }
+		`( 'Click on preview: $value', function ( { value, expected } ) {
+			const anotherComponent = new AnotherComponent( page );
 
-Developers should add a new page object under `test/e2e/lib/pages` upon completion of a feature that adds a new page not covered by existing page objects.
+			const resultValue = await anotherComponent.click( value );
+			expect( resultValue ).toStrictEqual( expected );
+		} );
+	} );
+} );
+```
 
-Take a look at some examples in the directory above for general structure and guideline in implementing a new page object.
+</details>
 
-### Structure
+## Quick start
+
+1. Create a TypeScript file with the following naming structure.
 
 ```
-external dependencies
+test/e2e/specs/<major_feature>/<major_feature>__<sub_feature>.ts
+```
 
-internal dependencies
+2. Import the boilerplate.
 
-constants
+```typescript
+import { DataHelper, TestAccount } from '@automattic/calypso-e2e';
+import { Page, Browser } from 'playwright';
+```
 
-export default class <class_name> {
-    constructor
+3. Assign test group(s). See [Feature/Test groups](./tests_ci.md#featuretest-groups)
 
-    interactions to simulate on page
+```typescript
+/**
+ * @group calypso-pr
+ * @group gutenberg
+ * ...more as required.
+ */
+```
+
+4. Define a top-level `describe` block.
+
+As per the [Style Guide](./style_guide.md#only-one-top-level-describe-block), there should only be one top-level `describe` block in a spec file.
+
+Using the `DataHelper.createSuiteTitle()` function, define a short, descriptive name for the overall suite:
+
+```typescript
+describe( DataHelper.createSuiteTitle( '<major_feature>: <sub_feature>' ), function () {
+	...
+} );
+```
+
+5. Populate test steps as necessary.
+
+This is the longest and most arduous portion of the process, where functions provided by page and component objects are called in sequence to execute some action.
+
+In some cases, this will be straightforward - all required methods would have been implemented in page objects already. In other cases, it may be required to implement new page objects from scratch.
+
+For guide on how writing page objects, components and flows please refer to the [Library Objects](library_objects.md) page.
+
+## Child-level describe blocks
+
+Do not use `DataHelper.createSuiteTitle` for child-level blocks.
+
+Unlike top-level blocks, there are no restrictions on the number of child-level `describe` blocks.
+
+> :warning: while there are no limits to the number of child blocks, exercise restraint - child blocks run sequentially, so if a file takes 8 minutes to complete the CI task will inevitably take that long!
+
+Using child-level `describe` blocks, group test cases for a feature:
+
+```typescript
+declare const browser: Browser;
+
+describe( DataHelper.createSuiteTitle( 'Feature' ), function () {
+	describe( 'Use Feature with valid string', function () {
+		// Valid string test steps
+	} );
+
+	describe( 'Use Feature with invalid string', function () {
+		// Invalid string test steps
+	} );
+
+	describe( 'Use Feature with a number', function () {
+		// Number instead of string test steps
+	} );
+} );
+```
+
+Another way to use child-level `describe` blocks is to group distinct parts of an overall flow:
+
+```typescript
+declare const browser: Browser;
+
+describe( DataHelper.createSuiteTitle( 'Feature' ), function () {
+	describe( 'Set up feature', function () {
+		// Steps to set up the feature under test
+	} );
+
+	describe( 'Test feature', function () {
+		// Interact and test the feature
+	} );
+
+	describe( 'Turn off feature', function () {
+		// Test deactivating the feature
+	} );
+} );
+```
+
+## Test step
+
+Test steps are where most of the action happens in a spec.
+
+> :warning: Refer to the [Style Guide](style_guide.md#test-steps) for do's and don'ts of writing a test step.
+
+Define a test step using the `it` keyword and give it a unique, descriptive name:
+
+```typescript
+it( 'Navigate to Media', async function () {
+	await SidebarComponent.navigate( 'Media' );
+} );
+```
+
+`Jest` enforces that test steps within a `describe` block must have unique names.
+
+For steps that carry out same actions but with a set of slightly different input data, use Jest's built-in [`each` parametrization](https://jestjs.io/docs/api#testeachtablename-fn-timeout):
+
+```typescript
+it.each( [ { target: 'Media' }, { target: 'Settings' } ] )(
+	'Navigate to $a',
+	async function ( { target } ) {
+		await SidebarComponent.navigate( target );
+	}
+);
+```
+
+## Hooks
+
+[Hooks](https://jestjs.io/docs/api) are steps run before/after each file or before/after each step in order to perform setup/teardown.
+
+Define hooks as follows:
+
+```typescript
+beforeAll( async () => {
+	logoImage = await MediaHelper.createTestImage();
+} );
+```
+
+## Viewports
+
+For the vast majority of our tests, it is expected that the tests will pass when run against both a mobile and desktop viewport.
+
+The viewports used for mobile and desktop testing are fixed and based on user data and important Calypso breakpoints. Whether the mobile or desktop viewport is used is controlled by an environment variable, `VIEWPORT_NAME`. For more information on supported environment variables, see the [Environment Variables](environment_variables.md) page.
+
+If a page requires different selectors or actions based on the viewport, those differences should be handled in the POM class methods and abstracted away from the test scripts as much as possible.
+
+Example:
+
+```typescript
+// In the POM page or component class...
+async doThing(): Promise< void > {
+	if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+		// Actions required to do thing on mobile
+	} else {
+		// Actions required to do thing on desktop
+	}
+}
+
+```
+
+## Block Smoke Testing
+
+### Overview
+
+The in-depth testing for a given Gutenberg block should be written and executed in the source repo for that block (e.g. Jetpack, Gutenberg, Newspack).
+
+However, it is often valuable to perform a very basic smoke test on blocks to ensure they function as intended in the WPCOM & Calypso environment.
+For consistency and ease of test writing and maintenance, all of this block testing is done in a shared format, where the same basic flow is iterated over all the blocks under test.
+
+With a few exceptions (like media blocks), block smoke tests should be grouped together according to the _source_ of the block. E.g. all the blocks from Newspack should be in the same spec, all of the core Gutenberg blocks
+should be in the same spec, etc. This allows for granular test execution when those sources are updated and the new versions are included in WPCOM.
+
+### How To
+
+1. Create a new class to represent the block flow in the appropriate subdirectory of [calypso-e2e/src/lib/blocks](../../../packages/calypso-e2e/src/lib/blocks).
+2. That class should implement the interface `BlockFlow` defined [here](../../../packages/calypso-e2e/src/lib/blocks/schemas.ts).
+3. By convention, any test data needed to configure or validate during the block flow should be provided to the class in the constructor.
+   - Also by convention, this is usually done in a single object typed locally with an interface called `ConfigurationData`.
+4. In the spec file, simply instantiate (with the needed test data) all the block flows you want to include in that spec, and pass that array to `createBlockTests` found in [specs/specs-playwright/shared-specs/block-testing.ts](../specs/specs-playwright/shared-specs/block-testing.ts).
+
+### Examples
+
+<details>
+<summary>Block flow class:</summary>
+
+```typescript
+import { BlockFlow, EditorContext, PublishedPostContext } from '..';
+
+interface ConfigurationData {
+	neededTestString: string;
+	neededTestNumber: number;
+	// ... type however you want, based on what test data you need!
+}
+
+const selectors = {
+	// add selectors here
+};
+
+export class ExampleBlockFlow implements BlockFlow {
+	private configurationData: ConfigurationData;
+
+	constructor( configurationData: ConfigurationData ) {
+		this.configurationData = configurationData;
+	}
+
+	blockSidebarName = 'Example';
+	blockEditorSelector = '[aria-label="Block: Example"]';
+
+	async configure( context: EditorContext ): Promise< void > {
+		// use the editor context (things like the editor Locator and Playwright Page) and the configuration data to configure the block in the editor.
+	}
+
+	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
+		// use the publsihed post context and the configuration data to do a quick validation of the block content in a published post.
+	}
 }
 ```
 
-eg. `test/e2e/lib/pages/cancel-domain-page.js`
+</details>
 
-```
-export default class CancelDomainPage extends AsyncBaseContainer {
-	constructor()
-        // instantiate the page object here, as well as selectors used to interact with objects on the DOM.
-        const confirmButtonSelector = some value
+<details>
+<summary>Spec test file:</summary>
 
-	async completeSurveyAndConfirm()
-    // cancel domain page asks user to complete a survey - this function implements that behavior.
+```typescript
+/**
+ * @group gutenberg
+ * @group example-blocks
+ */
 
-	async waitToDisappear()
-    // helper function to encapsulate waiting for the overlay to disappear once cancel is confirmed.
-```
+import { ExampleABlockFlow, ExampleBBlockFlow, BlockFlow } from '@automattic/calypso-e2e';
+import { createBlockTests } from './shared-specs/block-testing';
 
-### Guidelines
+const blockFlows: BlockFlow[] = [
+	new ExampleABlockFlow( {
+		neededString: 'a test data string needed by block Example A',
+	} ),
+	new ExampleBBlockFlow( {
+		neededObj: {
+			// an object of test data needed by block Example B
+		},
+	} ),
+];
 
-- selectors used more than once throughout the file is a good candidate to be turned into a constant.
-- strive to keep functions small and focused.
-
-## Flow
-
-Flows can be considered as encapsulating a set of user actions that begin at Point A and end at Point B. In a sense, a given e2e test script is a _flow_ as well.
-
-For the purpose of this document however, a flow typically refers to a set of actions constrained within a feature or two:
-
-- **user login**: beginning at login page and ending at the successful completion of the login process.
-- **new site onboarding**: beginning at selecting site name and ending with confirmation of site creation.
-
-### Structure
-
-Flows are larger in scope than page objects, typically executing actions across multiple (related) pages.
-
-```
-external dependencies
-
-internal dependencies
-
-constants
-
-export default class <class_name> {
-    constructor
-
-    interactions
-
-    helper functions
-}
+createBlockTests( 'Example Blocks', blockFlows );
 ```
 
-eg. `test/e2e/lib/flows/login-flow.js`
-
-```
-export default class LoginFlow {
-    constructor()
-        // instantiate selectors and any other attributes that will help legibility here.
-        const selector = selector
-
-    login(parameters)
-        // navigate to the login page
-        // select fields
-        // enter data
-        // submit and wait for confirmation
-
-    loginAndStartNewPost(parameters)
-        // leverage the login() method and perform additional tasks on top of that.
-}
-```
-
-### Guidelines
-
-- aggressively refactor such that basic actions can be extended by other functions.
-- tightly control scope so that flows do not become the e2e tests themselves.
-
-## Gutenberg Blocks
-
-It's preferable to put specific block tests into same spec file. For example, all Markdown Block tests should be added in `specs/gutenberg-markdown-block-spec.js`.
+</details>

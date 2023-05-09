@@ -1,15 +1,6 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import { useTranslate } from 'i18n-calypso';
 import 'moment-timezone'; // monkey patches the existing moment.js
-
-/**
- * Internal dependencies
- */
 import { CompactCard as Card } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 
 const DATE_FORMAT = 'LLL';

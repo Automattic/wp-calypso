@@ -1,20 +1,24 @@
 /*** THIS MUST BE THE FIRST THING EVALUATED IN THIS SCRIPT *****/
 import './public-path';
-
-/**
- * External dependencies
- */
-import { __ } from '@wordpress/i18n';
-import { Fill, MenuItem } from '@wordpress/components';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { registerPlugin } from '@wordpress/plugins';
-import { useEffect } from '@wordpress/element';
-import { useState } from 'react';
 import WhatsNewGuide from '@automattic/whats-new';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { Fill, MenuItem } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
+import { useEffect } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
+import { registerPlugin } from '@wordpress/plugins';
+import { useState } from 'react';
+import { whatsNewQueryClient } from '../../common/what-new-query-client';
 
 function WhatsNewMenuItem() {
 	const [ showGuide, setShowGuide ] = useState( false );
-	const openWhatsNew = () => setShowGuide( true );
+	const { setHasSeenWhatsNewModal } = useDispatch( 'automattic/help-center' );
+
+	const openWhatsNew = () => {
+		setHasSeenWhatsNewModal( true ).finally( () => setShowGuide( true ) );
+	};
+
 	const closeWhatsNew = () => setShowGuide( false );
 
 	// Record Tracks event if user opens What's New
@@ -37,7 +41,11 @@ function WhatsNewMenuItem() {
 export default WhatsNewMenuItem;
 
 registerPlugin( 'whats-new', {
-	render() {
-		return <WhatsNewMenuItem />;
+	render: () => {
+		return (
+			<QueryClientProvider client={ whatsNewQueryClient }>
+				<WhatsNewMenuItem />,
+			</QueryClientProvider>
+		);
 	},
 } );

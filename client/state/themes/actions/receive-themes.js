@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { filter } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { THEMES_REQUEST_SUCCESS } from 'calypso/state/themes/action-types';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { THEMES_REQUEST_SUCCESS } from 'calypso/state/themes/action-types';
 import { isThemeMatchingQuery } from 'calypso/state/themes/utils';
 
 import 'calypso/state/themes/init';
@@ -18,9 +11,9 @@ import 'calypso/state/themes/init';
  *
  * @param {Array}  themes Themes received
  * @param {number} siteId ID of site for which themes have been received
- * @param {?object} query Theme query used in the API request
+ * @param {?Object} query Theme query used in the API request
  * @param {?number} foundCount Number of themes returned by the query
- * @returns {object} Action object
+ * @returns {Object} Action object
  */
 export function receiveThemes( themes, siteId, query, foundCount ) {
 	return ( dispatch, getState ) => {

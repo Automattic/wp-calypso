@@ -1,18 +1,12 @@
 /**
- * External dependencies
+ * @jest-environment jsdom
  */
-import { expect } from 'chai';
-import { render } from 'enzyme';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { render, screen } from '@testing-library/react';
 import FollowButton from '../button';
 
 describe( 'FollowButton', () => {
 	test( 'should apply a custom follow label', () => {
-		const wrapper = render( <FollowButton followLabel="Follow Tag" /> );
-		expect( wrapper.text() ).to.contain( 'Follow Tag' );
+		render( <FollowButton followLabel="Follow Tag" /> );
+		expect( screen.getByText( 'Follow Tag' ) ).toBeVisible();
 	} );
 } );

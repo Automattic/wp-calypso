@@ -1,20 +1,16 @@
-/**
- * External dependencies
- */
-import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
+import { Gridicon } from '@automattic/components';
 import classnames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import { isExternal } from 'calypso/lib/url';
-import MaterialIcon from 'calypso/components/material-icon';
+import PropTypes from 'prop-types';
+import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import Badge from 'calypso/components/badge';
 import Count from 'calypso/components/count';
-import { preload } from 'calypso/sections-helper';
+import MaterialIcon from 'calypso/components/material-icon';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
+import { isExternal } from 'calypso/lib/url';
+import { preload } from 'calypso/sections-helper';
+import { getSidebarIsCollapsed } from 'calypso/state/ui/selectors';
 
 export default function SidebarItem( props ) {
 	const isExternalLink = isExternal( props.link );
@@ -23,7 +19,8 @@ export default function SidebarItem( props ) {
 		selected: props.selected,
 		'has-unseen': props.hasUnseen,
 	} );
-	const { materialIcon, materialIconStyle, icon, customIcon, count } = props;
+	const sidebarIsCollapsed = useSelector( getSidebarIsCollapsed );
+	const { materialIcon, materialIconStyle, icon, customIcon, count, badge } = props;
 
 	let _preloaded = false;
 
@@ -55,11 +52,11 @@ export default function SidebarItem( props ) {
 				onMouseEnter={ itemPreload }
 				{ ...linkProps }
 			>
-				{ icon && <Gridicon className={ 'sidebar__menu-icon' } icon={ icon } size={ 24 } /> }
+				{ icon && <Gridicon className="sidebar__menu-icon" icon={ icon } size={ 24 } /> }
 
 				{ materialIcon && (
 					<MaterialIcon
-						className={ 'sidebar__menu-icon' }
+						className="sidebar__menu-icon"
 						icon={ materialIcon }
 						style={ materialIconStyle }
 					/>
@@ -76,8 +73,13 @@ export default function SidebarItem( props ) {
 							: props.label
 					}
 					{ !! count && <Count count={ count } /> }
+					{ !! badge && (
+						<Badge type="warning-clear" className="sidebar__menu-link-badge">
+							{ badge }
+						</Badge>
+					) }
 				</span>
-				{ showAsExternal && <Gridicon icon="external" size={ 24 } /> }
+				{ showAsExternal && ! sidebarIsCollapsed && <Gridicon icon="external" size={ 24 } /> }
 				{ props.children }
 			</a>
 		</li>
@@ -100,4 +102,5 @@ SidebarItem.propTypes = {
 	testTarget: PropTypes.string,
 	tipTarget: PropTypes.string,
 	count: PropTypes.number,
+	badge: PropTypes.string,
 };

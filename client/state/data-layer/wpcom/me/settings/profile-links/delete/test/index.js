@@ -1,13 +1,10 @@
-/**
- * Internal dependencies
- */
-import { deleteUserProfileLink, handleDeleteError, handleDeleteSuccess } from '../';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
 	deleteUserProfileLink as deleteUserProfileLinkAction,
 	deleteUserProfileLinkError,
 	deleteUserProfileLinkSuccess,
 } from 'calypso/state/profile-links/actions';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { deleteUserProfileLink, handleDeleteError, handleDeleteSuccess } from '../';
 
 const linkSlug = 'https-wordpress-com';
 const error = {

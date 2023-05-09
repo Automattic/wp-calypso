@@ -1,36 +1,49 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
-import { dropRightWhile } from 'lodash';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
-import CustomNameserversRow from './custom-nameservers-row';
 import { CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS } from 'calypso/lib/url/support';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
+import CustomNameserversRow from './custom-nameservers-row';
+
+import './style.scss';
 
 const MIN_NAMESERVER_LENGTH = 2;
 const MAX_NAMESERVER_LENGTH = 4;
 
-class CustomNameserversForm extends React.PureComponent {
+const dropRightWhileEmpty = ( arr ) => {
+	const newArr = [];
+	let found = false;
+
+	for ( let i = arr.length - 1; i >= 0; i-- ) {
+		if ( found || arr[ i ] ) {
+			newArr.unshift( arr[ i ] );
+		}
+		if ( arr[ i ] ) {
+			found = true;
+		}
+	}
+
+	return newArr;
+};
+
+class CustomNameserversForm extends PureComponent {
 	static propTypes = {
 		nameservers: PropTypes.array,
 		onChange: PropTypes.func.isRequired,
+		onCancel: PropTypes.func,
 		onSubmit: PropTypes.func.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 		submitDisabled: PropTypes.bool.isRequired,
+		notice: PropTypes.element,
+		redesign: PropTypes.bool,
 	};
 
 	popularHostsMessage() {
@@ -40,7 +53,7 @@ class CustomNameserversForm extends React.PureComponent {
 			<div className="name-servers__custom-nameservers-form-explanation">
 				{ translate( 'Not sure what name servers to use?' ) }{ ' ' }
 				<a
-					href={ CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS }
+					href={ localizeUrl( CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS ) }
 					target="_blank"
 					rel="noopener noreferrer"
 					onClick={ this.handleLookUpClick }
@@ -56,9 +69,10 @@ class CustomNameserversForm extends React.PureComponent {
 	};
 
 	rows() {
-		// Remove the empty values from the end, and add one empty one
 		const { translate } = this.props;
-		const nameservers = dropRightWhile( this.props.nameservers, ( nameserver ) => ! nameserver );
+
+		// Remove the empty values from the end, and add one empty one
+		const nameservers = dropRightWhileEmpty( this.props.nameservers );
 
 		if ( nameservers.length < MAX_NAMESERVER_LENGTH ) {
 			nameservers.push( '' );
@@ -99,26 +113,57 @@ class CustomNameserversForm extends React.PureComponent {
 
 	handleChange = ( nameserver, index ) => {
 		const nameservers = [ ...this.props.nameservers ];
-		nameservers[ index ] = nameserver;
+		nameservers[ index ] = ( nameserver || '' ).trim();
 		this.props.onChange( nameservers );
 	};
 
 	render() {
-		const { translate } = this.props;
+		const { redesign } = this.props;
 
 		if ( ! this.props.nameservers ) {
 			return null;
 		}
 
+		if ( redesign ) {
+			return <div className="name-servers__custom-nameservers-form">{ this.renderContent() }</div>;
+		}
+
 		return (
 			<Card compact className="name-servers__custom-nameservers-form">
-				<strong>{ translate( 'Use custom name servers:' ) }</strong>
+				{ this.renderContent() }
+			</Card>
+		);
+	}
+
+	renderContent() {
+		const { notice, redesign, translate } = this.props;
+
+		const title = redesign
+			? translate( 'Enter your custom name servers' )
+			: translate( 'Use custom name servers:' );
+		const subtitle = translate( '{{link}}Look up{{/link}} the name servers for popular hosts', {
+			components: {
+				link: (
+					<a
+						href={ localizeUrl( CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS ) }
+						target="_blank"
+						rel="noopener noreferrer"
+						onClick={ this.handleLookUpClick }
+					/>
+				),
+			},
+		} );
+
+		return (
+			<>
+				<strong>{ title }</strong>
+				{ redesign && <p className="name-servers__custom-nameservers-subtitle">{ subtitle }</p> }
 
 				<form>
 					{ this.rows() }
-					{ this.popularHostsMessage() }
-
-					<div>
+					{ ! redesign && this.popularHostsMessage() }
+					{ redesign && notice }
+					<div className="name-servers__custom-nameservers-form-buttons">
 						<FormButton
 							isPrimary
 							onClick={ this.handleSubmit }
@@ -127,12 +172,18 @@ class CustomNameserversForm extends React.PureComponent {
 							{ translate( 'Save custom name servers' ) }
 						</FormButton>
 
-						<FormButton type="button" isPrimary={ false } onClick={ this.handleReset }>
-							{ translate( 'Reset to defaults' ) }
-						</FormButton>
+						{ ! redesign ? (
+							<FormButton type="button" isPrimary={ false } onClick={ this.handleReset }>
+								{ translate( 'Reset to defaults' ) }
+							</FormButton>
+						) : (
+							<FormButton type="button" isPrimary={ false } onClick={ this.handleCancel }>
+								{ translate( 'Cancel' ) }
+							</FormButton>
+						) }
 					</div>
 				</form>
-			</Card>
+			</>
 		);
 	}
 
@@ -150,6 +201,11 @@ class CustomNameserversForm extends React.PureComponent {
 		this.props.resetToDefaultsClick( this.props.selectedDomainName );
 
 		this.props.onReset();
+	};
+
+	handleCancel = ( event ) => {
+		event.preventDefault();
+		this.props.onCancel();
 	};
 }
 

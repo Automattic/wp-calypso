@@ -1,3 +1,4 @@
+/* eslint-disable inclusive-language/use-inclusive-words */
 export const items = {
 	12345678: {
 		isActive: false,

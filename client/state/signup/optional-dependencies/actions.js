@@ -1,6 +1,4 @@
-/**
- * Internal dependencies
- */
+import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import wpcom from 'calypso/lib/wp';
 import { SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET } from 'calypso/state/action-types';
 
@@ -26,9 +24,10 @@ export const fetchUsernameSuggestion = ( username ) => async ( dispatch ) => {
 	// Clear out the state variable before sending the call.
 	dispatch( setUsernameSuggestion( '' ) );
 
-	const response = await wpcom.undocumented().validateNewUser( {
+	const response = await wpcom.req.post( '/signups/validation/user', {
 		givesuggestions: 1,
 		username,
+		locale: getLocaleSlug(),
 	} );
 
 	if ( ! response ) {

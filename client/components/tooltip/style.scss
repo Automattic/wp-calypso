@@ -1,4 +1,10 @@
+$large-tooltip-box-shadow-color: rgba(0, 0, 0, 0.05);
+
 .tooltip.popover {
+
+	// always display the popover on top even inside a modal with a high z index
+	z-index: z-index("root", ".tooltip.popover");
+
 	.popover__arrow {
 		border-width: 6px;
 	}
@@ -7,9 +13,8 @@
 	&.is-bottom-left,
 	&.is-bottom {
 		.popover__arrow {
-			border-bottom-color: var( --color-neutral-60 );
+			border-bottom-color: var(--color-neutral-60);
 			top: 4px;
-			right: 10px;
 
 			&::before {
 				display: none;
@@ -18,19 +23,19 @@
 
 		&.is-error {
 			.popover__arrow {
-				border-bottom-color: var( --color-error );
+				border-bottom-color: var(--color-error);
 			}
 		}
 
 		&.is-warning {
 			.popover__arrow {
-				border-bottom-color: var( --color-warning );
+				border-bottom-color: var(--color-warning);
 			}
 		}
 
 		&.is-success {
 			.popover__arrow {
-				border-bottom-color: var( --color-success );
+				border-bottom-color: var(--color-success);
 			}
 		}
 	}
@@ -39,9 +44,8 @@
 	&.is-top-left,
 	&.is-top-right {
 		.popover__arrow {
-			border-top-color: var( --color-neutral-60 );
+			border-top-color: var(--color-neutral-60);
 			bottom: 4px;
-			right: 10px;
 
 			&::before {
 				display: none;
@@ -50,27 +54,43 @@
 
 		&.is-error {
 			.popover__arrow {
-				border-top-color: var( --color-error );
+				border-top-color: var(--color-error);
 			}
 		}
 
 		&.is-warning {
 			.popover__arrow {
-				border-top-color: var( --color-warning );
+				border-top-color: var(--color-warning);
 			}
 		}
 
 		&.is-success {
 			.popover__arrow {
-				border-top-color: var( --color-success );
+				border-top-color: var(--color-success);
 			}
+		}
+	}
+
+	&.is-bottom-right,
+	&.is-top-right {
+		.popover__arrow {
+			left: 15px #{"/*rtl:ignore*/"};
+			margin-left: -6px #{"/*rtl:ignore*/"};
+		}
+	}
+
+	&.is-bottom-left,
+	&.is-top-left {
+		.popover__arrow {
+			right: 15px #{"/*rtl:ignore*/"};
+			margin-right: -6px #{"/*rtl:ignore*/"};
 		}
 	}
 
 	&.is-top,
 	&.is-bottom {
 		.popover__arrow {
-			margin-left: -6px;
+			margin-left: -6px #{"/*rtl:ignore*/"};
 		}
 	}
 
@@ -87,19 +107,19 @@
 
 		&.is-error {
 			.popover__arrow {
-				border-right-color: var( --color-error );
+				border-right-color: var(--color-error);
 			}
 		}
 
 		&.is-warning {
 			.popover__arrow {
-				border-right-color: var( --color-warning );
+				border-right-color: var(--color-warning);
 			}
 		}
 
 		&.is-success {
 			.popover__arrow {
-				border-right-color: var( --color-success );
+				border-right-color: var(--color-success);
 			}
 		}
 	}
@@ -107,14 +127,14 @@
 	&.is-left {
 		.popover__arrow {
 			margin-right: 4px;
-			border-left-color: var( --color-neutral-60 );
+			border-left-color: var(--color-neutral-60);
 		}
 	}
 
 	&.is-right {
 		.popover__arrow {
 			margin-left: 4px;
-			border-right-color: var( --color-neutral-60 );
+			border-right-color: var(--color-neutral-60);
 		}
 	}
 
@@ -122,8 +142,8 @@
 		border: 0;
 		box-shadow: none;
 		border-radius: 2px;
-		color: var( --color-text-inverted );
-		background: var( --color-neutral-60 );
+		color: var(--color-text-inverted);
+		background: var(--color-neutral-60);
 		font-size: $font-body-extra-small;
 		padding: 6px 10px;
 		text-align: left;
@@ -131,19 +151,19 @@
 
 	&.is-error {
 		.popover__inner {
-			background: var( --color-error );
+			background: var(--color-error);
 		}
 	}
 
 	&.is-warning {
 		.popover__inner {
-			background: var( --color-warning );
+			background: var(--color-warning);
 		}
 	}
 
 	&.is-success {
 		.popover__inner {
-			background: var( --color-success );
+			background: var(--color-success);
 		}
 	}
 
@@ -157,6 +177,45 @@
 			font-weight: 400;
 			border: 0;
 			padding: 2px 0;
+		}
+	}
+
+	&.tooltip--darker {
+		&.is-bottom-right,
+		&.is-bottom-left,
+		&.is-bottom {
+			.popover__arrow {
+				border-bottom-color: var(--studio-gray-100);
+			}
+		}
+
+		&.is-top,
+		&.is-top-left,
+		&.is-top-right {
+			.popover__arrow {
+				border-top-color: var(--studio-gray-100);
+			}
+		}
+
+		.popover__inner {
+			color: var(--studio-white);
+			background: var(--studio-gray-100);
+		}
+	}
+
+	&.tooltip--large {
+		&.is-top .popover__arrow,
+		&.is-top-left .popover__arrow,
+		&.is-top-right .popover__arrow {
+			border-top-color: var(--color-neutral-100);
+			box-shadow: 0 1px 2px $large-tooltip-box-shadow-color;
+		}
+
+		.popover__inner {
+			background-color: var(--color-neutral-100);
+			box-shadow: 0 1px 2px $large-tooltip-box-shadow-color;
+			border-radius: 4px;
+			padding: 16px 24px;
 		}
 	}
 }

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	GUIDED_TOUR_UPDATE,
 	GUIDED_TOUR_PAUSE,

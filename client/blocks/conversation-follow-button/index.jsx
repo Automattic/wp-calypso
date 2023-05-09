@@ -1,22 +1,12 @@
-/*
- * External dependencies
- */
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import ConversationFollowButton from './button';
-import { isFollowingReaderConversation } from 'calypso/state/reader/conversations/selectors';
-import { followConversation, muteConversation } from 'calypso/state/reader/conversations/actions';
 import { getTracksPropertiesForPost } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { followConversation, muteConversation } from 'calypso/state/reader/conversations/actions';
+import { isFollowingReaderConversation } from 'calypso/state/reader/conversations/selectors';
+import ConversationFollowButton from './button';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};
@@ -29,10 +19,14 @@ class ConversationFollowButtonContainer extends Component {
 		tagName: PropTypes.oneOfType( [ PropTypes.string, PropTypes.func ] ),
 		post: PropTypes.object, // for stats only
 		followSource: PropTypes.string,
+		followIcon: PropTypes.object,
+		followingIcon: PropTypes.object,
 	};
 
 	static defaultProps = {
 		onFollowToggle: noop,
+		followIcon: null,
+		followingIcon: null,
 	};
 
 	handleFollowToggle = ( isRequestingFollow ) => {
@@ -67,6 +61,8 @@ class ConversationFollowButtonContainer extends Component {
 				onFollowToggle={ this.handleFollowToggle }
 				className={ this.props.className }
 				tagName={ this.props.tagName }
+				followIcon={ this.props.followIcon }
+				followingIcon={ this.props.followingIcon }
 			/>
 		);
 	}

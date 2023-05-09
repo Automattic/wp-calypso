@@ -1,25 +1,53 @@
-/**
- * External dependencies
- */
+import { translate } from 'i18n-calypso';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
+import { makeLayout, render as clientRender } from 'calypso/controller';
 import { GOOGLE_WORKSPACE_PRODUCT_TYPE, GSUITE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
-import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
+import {
+	navigation,
+	siteSelection,
+	stagingSiteNotSupportedRedirect,
+	sites,
+} from 'calypso/my-sites/controller';
 import controller from './controller';
 import * as paths from './paths';
-import { makeLayout, render as clientRender } from 'calypso/controller';
 
 function registerMultiPage( { paths: givenPaths, handlers } ) {
 	givenPaths.forEach( ( path ) => page( path, ...handlers ) );
 }
 
-const commonHandlers = [ siteSelection, navigation ];
+const commonHandlers = [ siteSelection, navigation, stagingSiteNotSupportedRedirect ];
+
+const emailInboxSiteSelectionHeader = ( context, next ) => {
+	context.getSiteSelectionHeaderText = () => {
+		return translate( 'Select a site to open {{strong}}My Inbox{{/strong}}', {
+			components: {
+				strong: <strong />,
+			},
+		} );
+	};
+
+	next();
+};
 
 export default function () {
 	page( paths.emailManagement(), siteSelection, sites, makeLayout, clientRender );
+
+	page(
+		paths.emailManagementInbox(),
+		siteSelection,
+		emailInboxSiteSelectionHeader,
+		sites,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.emailManagementInbox( ':site' ),
+		...commonHandlers,
+		controller.emailManagementInbox,
+		makeLayout,
+		clientRender
+	);
 
 	registerMultiPage( {
 		paths: [
@@ -31,6 +59,23 @@ export default function () {
 	} );
 
 	const productType = `:productType(${ GOOGLE_WORKSPACE_PRODUCT_TYPE }|${ GSUITE_PRODUCT_TYPE })`;
+
+	registerMultiPage( {
+		paths: [
+			paths.emailManagementAddEmailForwards(
+				':site',
+				':domain',
+				paths.emailManagementAllSitesPrefix
+			),
+			paths.emailManagementAddEmailForwards( ':site', ':domain' ),
+		],
+		handlers: [
+			...commonHandlers,
+			controller.emailManagementAddEmailForwards,
+			makeLayout,
+			clientRender,
+		],
+	} );
 
 	registerMultiPage( {
 		paths: [
@@ -85,6 +130,16 @@ export default function () {
 	} );
 
 	registerMultiPage( {
+		paths: [ paths.emailManagementInDepthComparison( ':site', ':domain' ) ],
+		handlers: [
+			...commonHandlers,
+			controller.emailManagementInDepthComparison,
+			makeLayout,
+			clientRender,
+		],
+	} );
+
+	registerMultiPage( {
 		paths: [
 			paths.emailManagementPurchaseNewEmailAccount(
 				':site',
@@ -120,6 +175,23 @@ export default function () {
 
 	registerMultiPage( {
 		paths: [
+			paths.emailManagementTitanSetUpMailbox(
+				':site',
+				':domain',
+				paths.emailManagementAllSitesPrefix
+			),
+			paths.emailManagementTitanSetUpMailbox( ':site', ':domain' ),
+		],
+		handlers: [
+			...commonHandlers,
+			controller.emailManagementTitanSetUpMailbox,
+			makeLayout,
+			clientRender,
+		],
+	} );
+
+	registerMultiPage( {
+		paths: [
 			paths.emailManagementTitanControlPanelRedirect(
 				':site',
 				':domain',
@@ -133,9 +205,32 @@ export default function () {
 
 	registerMultiPage( {
 		paths: [
+			paths.emailManagementTitanSetUpThankYou(
+				':site',
+				':domain',
+				null,
+				paths.emailManagementAllSitesPrefix
+			),
+			paths.emailManagementTitanSetUpThankYou( ':site', ':domain' ),
+		],
+		handlers: [
+			...commonHandlers,
+			controller.emailManagementTitanSetUpThankYou,
+			makeLayout,
+			clientRender,
+		],
+	} );
+
+	registerMultiPage( {
+		paths: [
 			paths.emailManagementForwarding( ':site', ':domain', paths.emailManagementAllSitesPrefix ),
 			paths.emailManagementForwarding( ':site', ':domain' ),
 		],
-		handlers: [ ...commonHandlers, controller.emailManagementForwarding, makeLayout, clientRender ],
+		handlers: [
+			...commonHandlers,
+			controller.emailManagementForwardingRedirect,
+			makeLayout,
+			clientRender,
+		],
 	} );
 }

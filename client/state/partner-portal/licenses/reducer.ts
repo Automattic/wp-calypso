@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
 import { AnyAction } from 'redux';
-
-/**
- * Internal dependencies
- */
+import { LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import {
 	JETPACK_PARTNER_PORTAL_LICENSES_REQUEST,
 	JETPACK_PARTNER_PORTAL_LICENSES_RECEIVE,
 	JETPACK_PARTNER_PORTAL_LICENSE_COUNTS_RECEIVE,
 } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
-import { LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 
 export const initialState = {
 	hasFetched: false,

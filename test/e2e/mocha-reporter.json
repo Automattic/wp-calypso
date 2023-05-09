@@ -1,6 +1,0 @@
-{
-	"reporterEnabled": "mocha-teamcity-reporter, @automattic/mocha-debug-reporter",
-	"automatticMochaDebugReporterReporterOptions": {
-		"file": "%TEMP_ASSET_PATH%/mocha.log"
-	}
-}

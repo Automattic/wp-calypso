@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal Classes
- */
-import styled from '../lib/styled';
+import styled from '@emotion/styled';
+import * as React from 'react';
 import joinClasses from '../lib/join-classes';
 import { Theme } from '../lib/theme';
 
@@ -17,10 +10,12 @@ const CallToAction = styled( 'button' )< CallToActionProps >`
 	border-radius: ${ ( props ) => ( props.buttonType === 'paypal' ? '50px' : '2px' ) };
 	padding: ${ ( props ) => ( props.buttonType === 'text-button' ? '0' : '10px 15px' ) };
 	border: ${ ( props ) =>
-		! props.buttonType || props.disabled ? '1px solid ' + props.theme.colors.borderColor : '0' };
+		! props.buttonType || ( props.disabled && props.buttonType !== 'text-button' )
+			? '1px solid ' + props.theme.colors.borderColor
+			: '0' };
 	background: ${ getBackgroundColor };
 	color: ${ getTextColor };
-	font-weight: theme.weights.normal;
+	font-weight: ${ ( props ) => props.theme.weights.normal };
 	text-decoration: ${ getTextDecoration };
 
 	:hover {
@@ -182,7 +177,7 @@ function getBackgroundColor( {
 	theme: Theme;
 } ) {
 	const { colors } = theme;
-	if ( disabled ) {
+	if ( disabled && buttonType !== 'text-button' ) {
 		return colors.disabledPaymentButtons;
 	}
 	switch ( buttonType ) {

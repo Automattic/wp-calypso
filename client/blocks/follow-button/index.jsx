@@ -1,17 +1,14 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { getUrlParts } from '@automattic/calypso-url';
 import { omitBy } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import FollowButton from './button';
-import { isFollowing } from 'calypso/state/reader/follows/selectors';
+import { navigate } from 'calypso/lib/navigate';
+import { createAccountUrl } from 'calypso/lib/paths';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { follow, unfollow } from 'calypso/state/reader/follows/actions';
+import { isFollowing } from 'calypso/state/reader/follows/selectors';
+import FollowButton from './button';
 
 const noop = () => {};
 
@@ -24,6 +21,8 @@ class FollowButtonContainer extends Component {
 		followingLabel: PropTypes.string,
 		feedId: PropTypes.number,
 		siteId: PropTypes.number,
+		followIcon: PropTypes.object,
+		followingIcon: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -31,6 +30,10 @@ class FollowButtonContainer extends Component {
 	};
 
 	handleFollowToggle = ( following ) => {
+		if ( ! this.props.isLoggedIn ) {
+			const { pathname } = getUrlParts( window.location.href );
+			return navigate( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ) );
+		}
 		if ( following ) {
 			const followData = omitBy(
 				{
@@ -58,6 +61,8 @@ class FollowButtonContainer extends Component {
 				followLabel={ this.props.followLabel }
 				followingLabel={ this.props.followingLabel }
 				className={ this.props.className }
+				followIcon={ this.props.followIcon }
+				followingIcon={ this.props.followingIcon }
 			/>
 		);
 	}
@@ -66,6 +71,7 @@ class FollowButtonContainer extends Component {
 export default connect(
 	( state, ownProps ) => ( {
 		following: isFollowing( state, { feedUrl: ownProps.siteUrl } ),
+		isLoggedIn: isUserLoggedIn( state ),
 	} ),
 	{
 		follow,

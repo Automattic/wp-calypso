@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { STATS_CHART_COUNTS_REQUEST, STATS_CHART_COUNTS_RECEIVE } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
 import { counts, isLoading } from '../reducer';

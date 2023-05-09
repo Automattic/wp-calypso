@@ -1,13 +1,3 @@
-/**
- * External dependencies
- */
-import { assert } from 'chai';
-
-/**
- * Internal dependencies
- */
-import reducer from '../reducer';
-import { dummyData, dummyNewPhone, dummyNewEmail } from './test-data';
 import {
 	ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
 	ACCOUNT_RECOVERY_SETTINGS_UPDATE,
@@ -21,6 +11,8 @@ import {
 	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS,
 	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_FAILED,
 } from 'calypso/state/action-types';
+import reducer from '../reducer';
+import { dummyData, dummyNewPhone, dummyNewEmail } from './test-data';
 
 describe( '#account-recovery reducer fetch:', () => {
 	const expectedState = {
@@ -42,7 +34,7 @@ describe( '#account-recovery reducer fetch:', () => {
 			settings: dummyData,
 		} );
 
-		assert.deepEqual( initState.data, expectedState );
+		expect( initState.data ).toEqual( expectedState );
 	} );
 } );
 
@@ -70,7 +62,7 @@ describe( '#account-recovery/settings reducer:', () => {
 			value: newPhoneValue,
 		} );
 
-		assert.deepEqual( state.data, {
+		expect( state.data ).toEqual( {
 			...initState.data,
 			phone: newPhoneValue,
 		} );
@@ -82,7 +74,7 @@ describe( '#account-recovery/settings reducer:', () => {
 			target: 'phone',
 		} );
 
-		assert.isNull( state.data.phone );
+		expect( state.data.phone ).toBeNull();
 	} );
 
 	test( 'ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS action with email target should update the email field', () => {
@@ -92,7 +84,7 @@ describe( '#account-recovery/settings reducer:', () => {
 			value: dummyNewEmail,
 		} );
 
-		assert.equal( state.data.email, dummyNewEmail );
+		expect( state.data.email ).toEqual( dummyNewEmail );
 	} );
 
 	test( 'ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS action with email target should wipe the email field', () => {
@@ -101,7 +93,7 @@ describe( '#account-recovery/settings reducer:', () => {
 			target: 'email',
 		} );
 
-		assert.equal( state.data.email, '' );
+		expect( state.data.email ).toEqual( '' );
 	} );
 
 	const arbitraryTargetName = 'whatever';
@@ -112,7 +104,7 @@ describe( '#account-recovery/settings reducer:', () => {
 			target: arbitraryTargetName,
 		} );
 
-		assert.isTrue( state.isUpdating[ arbitraryTargetName ] );
+		expect( state.isUpdating[ arbitraryTargetName ] ).toBe( true );
 	} );
 
 	test( 'ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS action should unset the isUpdating sub field', () => {
@@ -121,7 +113,7 @@ describe( '#account-recovery/settings reducer:', () => {
 			target: arbitraryTargetName,
 		} );
 
-		assert.isFalse( state.isUpdating[ arbitraryTargetName ] );
+		expect( state.isUpdating[ arbitraryTargetName ] ).toBe( false );
 	} );
 
 	test( 'ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS action should set the hasSentValidation sub field', () => {
@@ -130,7 +122,7 @@ describe( '#account-recovery/settings reducer:', () => {
 			target: arbitraryTargetName,
 		} );
 
-		assert.isTrue( state.hasSentValidation[ arbitraryTargetName ] );
+		expect( state.hasSentValidation[ arbitraryTargetName ] ).toBe( true );
 	} );
 
 	test( 'ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED action should unset the isUpdating sub field', () => {
@@ -139,7 +131,7 @@ describe( '#account-recovery/settings reducer:', () => {
 			target: arbitraryTargetName,
 		} );
 
-		assert.isFalse( state.isUpdating[ arbitraryTargetName ] );
+		expect( state.isUpdating[ arbitraryTargetName ] ).toBe( false );
 	} );
 
 	test( 'ACCOUNT_RECOVERY_SETTINS_DELETE action should set the isDeleting sub field', () => {
@@ -148,7 +140,7 @@ describe( '#account-recovery/settings reducer:', () => {
 			target: arbitraryTargetName,
 		} );
 
-		assert.isTrue( state.isDeleting[ arbitraryTargetName ] );
+		expect( state.isDeleting[ arbitraryTargetName ] ).toBe( true );
 	} );
 
 	test( 'ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS action should unset the isDeleting sub field', () => {
@@ -157,7 +149,7 @@ describe( '#account-recovery/settings reducer:', () => {
 			target: arbitraryTargetName,
 		} );
 
-		assert.isFalse( state.isDeleting[ arbitraryTargetName ] );
+		expect( state.isDeleting[ arbitraryTargetName ] ).toBe( false );
 	} );
 
 	test( 'ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED action should unset the isDeleting sub field', () => {
@@ -166,7 +158,7 @@ describe( '#account-recovery/settings reducer:', () => {
 			target: arbitraryTargetName,
 		} );
 
-		assert.isFalse( state.isDeleting[ arbitraryTargetName ] );
+		expect( state.isDeleting[ arbitraryTargetName ] ).toBe( false );
 	} );
 
 	test( 'ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION action should set hasSentValidation sub field', () => {
@@ -175,7 +167,7 @@ describe( '#account-recovery/settings reducer:', () => {
 			target: arbitraryTargetName,
 		} );
 
-		assert.isTrue( state.hasSentValidation[ arbitraryTargetName ] );
+		expect( state.hasSentValidation[ arbitraryTargetName ] ).toBe( true );
 	} );
 
 	test( 'ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS action should set phoneValidated as true', () => {
@@ -183,7 +175,7 @@ describe( '#account-recovery/settings reducer:', () => {
 			type: ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS,
 		} );
 
-		assert.isTrue( state.data.phoneValidated );
+		expect( state.data.phoneValidated ).toBe( true );
 	} );
 
 	test( 'ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE action should set isValidatingPhone as true', () => {
@@ -191,7 +183,7 @@ describe( '#account-recovery/settings reducer:', () => {
 			type: ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE,
 		} );
 
-		assert.isTrue( state.isValidatingPhone );
+		expect( state.isValidatingPhone ).toBe( true );
 	} );
 
 	test( 'ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS action should set isValidatingPhone as false', () => {
@@ -199,7 +191,7 @@ describe( '#account-recovery/settings reducer:', () => {
 			type: ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS,
 		} );
 
-		assert.isFalse( state.isValidatingPhone );
+		expect( state.isValidatingPhone ).toBe( false );
 	} );
 
 	test( 'ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE action should set isValidatingPhone as false', () => {
@@ -207,6 +199,6 @@ describe( '#account-recovery/settings reducer:', () => {
 			type: ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_FAILED,
 		} );
 
-		assert.isFalse( state.isValidatingPhone );
+		expect( state.isValidatingPhone ).toBe( false );
 	} );
 } );

@@ -1,9 +1,5 @@
 #!/usr/bin/env node
 
-/**
- * Module dependencies.
- */
-
 var path = require('path');
 var fs = require('fs');
 var join = path.join;

@@ -1,47 +1,41 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
 import { getSiteFragment } from 'calypso/lib/route';
-import MarketplacePluginDetails from 'calypso/my-sites/plugins/marketplace/marketplace-plugin-details';
-import MarketplaceDomainUpsell from 'calypso/my-sites/plugins/marketplace/marketplace-domain-upsell';
-import MarketplacePluginSetup from 'calypso/my-sites/plugins/marketplace/marketplace-plugin-setup-status';
-import MarketplaceStandaloneThankYou from 'calypso/my-sites/plugins/marketplace/marketplace-stand-alone-thank-you';
-import MarketplaceTest from 'calypso/my-sites/plugins/marketplace/marketplace-test';
-
-export function renderMarketplacePlugin( context, next ) {
-	const siteUrl = getSiteFragment( context.path );
-
-	const pluginSlug = decodeURIComponent( context.params.plugin );
-
-	context.primary = (
-		<MarketplacePluginDetails
-			path={ context.path }
-			marketplacePluginSlug={ pluginSlug }
-			siteUrl={ siteUrl }
-		/>
-	);
-
-	next();
-}
+import MarketplaceThankYou from 'calypso/my-sites/checkout/checkout-thank-you/marketplace/marketplace-thank-you';
+import MarketplaceDomainUpsell from 'calypso/my-sites/marketplace/pages/marketplace-domain-upsell';
+import MarketplaceProductInstall from 'calypso/my-sites/marketplace/pages/marketplace-product-install';
+import MarketplaceTest from 'calypso/my-sites/marketplace/pages/marketplace-test';
+import SignupSuccess from 'calypso/my-sites/marketplace/pages/submission-success/signup-success';
 
 export function renderDomainsPage( context, next ) {
 	context.primary = <MarketplaceDomainUpsell />;
 	next();
 }
 
-export function renderPluginsSetupStatusPage( context, next ) {
-	context.primary = <MarketplacePluginSetup />;
+export function renderPluginsInstallPage( context, next ) {
+	const { productSlug } = context.params;
+	context.primary = <MarketplaceProductInstall pluginSlug={ productSlug } />;
+	next();
+}
+
+export function renderThemesInstallPage( context, next ) {
+	const { themeSlug } = context.params;
+	context.primary = <MarketplaceProductInstall themeSlug={ themeSlug } />;
 	next();
 }
 
 export function renderMarketplaceThankYou( context, next ) {
-	context.primary = <MarketplaceStandaloneThankYou />;
+	const { plugins, themes } = context.query;
+	const pluginSlugs = plugins ? plugins.split( ',' ) : [];
+	const themeSlugs = themes ? themes.split( ',' ) : [];
+
+	context.primary = <MarketplaceThankYou pluginSlugs={ pluginSlugs } themeSlugs={ themeSlugs } />;
+	next();
+}
+
+export function renderMarketplaceSignupSuccess( context, next ) {
+	const { productSlug } = context.params;
+
+	context.primary = <SignupSuccess productSlug={ productSlug } />;
 	next();
 }
 

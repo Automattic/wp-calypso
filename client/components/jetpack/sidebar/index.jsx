@@ -1,29 +1,19 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
-import { format as formatUrl, getUrlParts, getUrlFromParts } from '@automattic/calypso-url';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-
-/**
- * Internal dependencies
- */
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import CurrentSite from 'calypso/my-sites/current-site';
-import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
-import JetpackCloudSidebarMenuItems from './menu-items/jetpack-cloud';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import Sidebar from 'calypso/layout/sidebar';
 import SidebarFooter from 'calypso/layout/sidebar/footer';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
 import SidebarRegion from 'calypso/layout/sidebar/region';
+import CurrentSite from 'calypso/my-sites/current-site';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getJetpackAdminUrl from 'calypso/state/sites/selectors/get-jetpack-admin-url';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import JetpackCloudSidebarMenuItems from './menu-items/jetpack-cloud';
+import JetpackIcons from './menu-items/jetpack-icons';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class JetpackCloudSidebar extends Component {
@@ -55,20 +45,20 @@ class JetpackCloudSidebar extends Component {
 				<SidebarFooter>
 					<SidebarMenu>
 						<SidebarItem
-							label={ translate( 'Get help', {
-								comment: 'Jetpack Cloud sidebar navigation item',
-							} ) }
-							link="https://jetpack.com/support"
-							materialIcon="help"
-							materialIconStyle="filled"
-							onNavigate={ this.onGetHelp }
-						/>
-						<SidebarItem
 							label={ translate( 'WP Admin', {
 								comment: 'Jetpack Cloud sidebar navigation item',
 							} ) }
 							link={ jetpackAdminUrl }
-							icon="my-sites"
+							customIcon={ <JetpackIcons icon="wordpress" /> }
+						/>
+						<SidebarItem
+							label={ translate( 'Get help', {
+								comment: 'Jetpack Cloud sidebar navigation item',
+							} ) }
+							link="https://jetpack.com/support"
+							className="sidebar__jetpack-cloud-item-has-border"
+							customIcon={ <JetpackIcons icon="help" /> }
+							onNavigate={ this.onGetHelp }
 						/>
 					</SidebarMenu>
 				</SidebarFooter>
@@ -76,18 +66,6 @@ class JetpackCloudSidebar extends Component {
 		);
 	}
 }
-
-const getJetpackAdminUrl = ( state, siteId ) => {
-	const siteAdminUrl = getSiteAdminUrl( state, siteId );
-	if ( null === siteAdminUrl ) {
-		return undefined;
-	}
-
-	const parts = getUrlParts( siteAdminUrl + 'admin.php' );
-	parts.searchParams.set( 'page', 'jetpack' );
-
-	return formatUrl( getUrlFromParts( parts ) );
-};
 
 export default connect(
 	( state ) => {

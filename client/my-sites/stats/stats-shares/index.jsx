@@ -1,68 +1,67 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
+import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
-import StatsTabs from '../stats-tabs';
-import StatsTab from '../stats-tabs/tab';
-import ErrorPanel from '../stats-error';
-import SectionHeader from 'calypso/components/section-header';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
-import QuerySharingButtons from 'calypso/components/data/query-sharing-buttons';
-import getSharingButtons from 'calypso/state/selectors/get-sharing-buttons';
+import { useSharingButtonsQuery } from 'calypso/my-sites/marketing/buttons/use-sharing-buttons-query';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsForQuery,
 	hasSiteStatsQueryFailed,
 } from 'calypso/state/stats/lists/selectors';
-import { useTranslate } from 'i18n-calypso';
+import ErrorPanel from '../stats-error';
+import StatsListCard from '../stats-list/stats-list-card';
+import StatsModulePlaceholder from '../stats-module/placeholder';
 
 const StatShares = ( { siteId } ) => {
 	const translate = useTranslate();
 	const isLoading = useSelector( ( state ) =>
 		isRequestingSiteStatsForQuery( state, siteId, 'stats' )
 	);
-	const shareButtons = useSelector( ( state ) => getSharingButtons( state, siteId ) );
+	const { data: shareButtons } = useSharingButtonsQuery( siteId );
 	const hasError = useSelector( ( state ) => hasSiteStatsQueryFailed( state, siteId, 'stats' ) );
 	const siteStats = useSelector( ( state ) => getSiteStatsForQuery( state, siteId, 'stats' ) );
-	const classes = [
-		'stats-module',
-		{
-			'is-loading': isLoading,
-			'is-showing-error': hasError,
-		},
-	];
+
+	const data = [];
+
+	if ( siteStats && shareButtons ) {
+		shareButtons.forEach( ( service ) => {
+			const value = siteStats.stats[ 'shares_' + service.ID ];
+
+			if ( value ) {
+				data.push( {
+					id: service.ID,
+					value,
+					label: service.name,
+				} );
+			}
+		} );
+
+		// sort descending
+		data.sort( ( a, b ) => b.value - a.value );
+	}
 
 	return (
-		<div>
+		<>
 			{ siteId && <QuerySiteStats siteId={ siteId } statType="stats" /> }
-			{ siteId && <QuerySharingButtons siteId={ siteId } /> }
-			<SectionHeader label={ translate( 'Shares' ) } />
-			<Card className={ classNames( ...classes ) }>
-				<StatsTabs borderless>
-					{ siteStats &&
-						shareButtons &&
-						shareButtons.map( ( service ) => {
-							let count;
-							if ( ( count = siteStats.stats[ 'shares_' + service.ID ] ) ) {
-								return (
-									<StatsTab label={ service.name } loading={ isLoading } value={ count } compact />
-								);
-							}
-						} ) }
-					{ ! isLoading && ! siteStats?.stats.shares && (
+			<StatsListCard
+				moduleType="shares"
+				data={ data }
+				title={ translate( 'Number of Shares' ) }
+				emptyMessage={ translate( 'No shares recorded' ) }
+				mainItemLabel=""
+				metricLabel=""
+				splitHeader
+				useShortNumber
+				// Shares don't have a summary page yet.
+				// TODO: limit to 5 items after summary page is added.
+				// showMore={ ... }
+				error={
+					( hasError || ( ! isLoading && ! siteStats?.stats?.shares ) ) && (
 						<ErrorPanel message={ translate( 'No shares recorded' ) } />
-					) }
-				</StatsTabs>
-			</Card>
-		</div>
+					)
+				}
+				loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
+			/>
+		</>
 	);
 };
 

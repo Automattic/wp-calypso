@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import isAccountClosed from 'calypso/state/selectors/is-account-closed';
 
 describe( 'isAccountClosed()', () => {

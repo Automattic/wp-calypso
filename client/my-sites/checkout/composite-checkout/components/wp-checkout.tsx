@@ -1,80 +1,96 @@
-/**
- * External dependencies
- */
-import React, { useEffect, useState, useCallback } from 'react';
-import { useDispatch as useReduxDispatch } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
 import {
-	Checkout,
+	isYearly,
+	isJetpackPurchasableItem,
+	isMonthlyProduct,
+	isBiennially,
+	isTriennially,
+} from '@automattic/calypso-products';
+import { Gridicon } from '@automattic/components';
+import {
+	MainContentWrapper,
+	SubmitButtonWrapper,
+	Button,
+	useTransactionStatus,
+	TransactionStatus,
 	CheckoutStep,
-	CheckoutStepArea,
-	CheckoutSteps,
+	CheckoutStepGroup,
 	CheckoutStepBody,
 	CheckoutSummaryArea as CheckoutSummaryAreaUnstyled,
-	getDefaultPaymentMethodStep,
-	useDispatch,
-	useEvents,
 	useFormStatus,
 	useIsStepActive,
 	useIsStepComplete,
-	usePaymentMethod,
-	useSelect,
 	useTotal,
 	CheckoutErrorBoundary,
+	CheckoutFormSubmit,
+	PaymentMethodStep,
 } from '@automattic/composite-checkout';
-import debugFactory from 'debug';
+import { isHostingFlow } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled } from '@automattic/wpcom-checkout';
-import type { RemoveProductFromCart, RequestCartProduct } from '@automattic/shopping-cart';
-import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
-import useCouponFieldState from '../hooks/use-coupon-field-state';
-import useUpdateCartLocationWhenPaymentMethodChanges from '../hooks/use-update-cart-location-when-payment-method-changes';
-import WPCheckoutOrderReview from './wp-checkout-order-review';
-import WPCheckoutOrderSummary from './wp-checkout-order-summary';
-import WPContactForm from './wp-contact-form';
-import WPContactFormSummary from './wp-contact-form-summary';
-import { isCompleteAndValid } from '../types/wpcom-store-state';
+import { useSelect, useDispatch } from '@wordpress/data';
+import debugFactory from 'debug';
+import { useTranslate } from 'i18n-calypso';
+import { useState, useCallback } from 'react';
+import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import MaterialIcon from 'calypso/components/material-icon';
-import Gridicon from 'calypso/components/gridicon';
-import SecondaryCartPromotions from './secondary-cart-promotions';
-import {
-	handleContactValidationResult,
-	isContactValidationResponseValid,
-	getDomainValidationResult,
-	getTaxValidationResult,
-	getSignupEmailValidationResult,
-	getGSuiteValidationResult,
-} from 'calypso/my-sites/checkout/composite-checkout/contact-validation';
-import { login } from 'calypso/lib/paths';
-import getContactDetailsType from '../lib/get-contact-details-type';
-import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import {
 	hasGoogleApps,
 	hasDomainRegistration,
 	hasTransferProduct,
+	hasDIFMProduct,
 } from 'calypso/lib/cart-values/cart-items';
-import { addQueryArgs } from 'calypso/lib/route';
+import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
+import { isWcMobileApp } from 'calypso/lib/mobile-app';
+import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
+import { areVatDetailsSame } from 'calypso/me/purchases/vat-info/are-vat-details-same';
+import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
+import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-valid-checkout-back-url';
+import { leaveCheckout } from 'calypso/my-sites/checkout/composite-checkout/lib/leave-checkout';
+import { prepareDomainContactValidationRequest } from 'calypso/my-sites/checkout/composite-checkout/types/wpcom-store-state';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import PaymentMethodStep from './payment-method-step';
+import { saveContactDetailsCache } from 'calypso/state/domains/management/actions';
+import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
+import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
+import useCouponFieldState from '../hooks/use-coupon-field-state';
+import { validateContactDetails } from '../lib/contact-validation';
+import getContactDetailsType from '../lib/get-contact-details-type';
+import { updateCartContactDetailsForCheckout } from '../lib/update-cart-contact-details-for-checkout';
+import { CHECKOUT_STORE } from '../lib/wpcom-store';
+import badge14Src from './assets/icons/badge-14.svg';
+import badge7Src from './assets/icons/badge-7.svg';
+import badgeGenericSrc from './assets/icons/badge-generic.svg';
+import { CheckoutCompleteRedirecting } from './checkout-complete-redirecting';
 import CheckoutHelpLink from './checkout-help-link';
-import type { CountryListItem } from '../types/country-list-item';
-import type { GetProductVariants } from '../hooks/product-variants';
-import type { OnChangeItemVariant } from '../components/item-variation-picker';
+import CheckoutNextSteps from './checkout-next-steps';
+import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
+import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
+import PaymentMethodStepContent from './payment-method-step';
+import SecondaryCartPromotions from './secondary-cart-promotions';
+import ThirdPartyDevsAccount from './third-party-plugins-developer-account';
+import WPCheckoutOrderReview from './wp-checkout-order-review';
+import WPCheckoutOrderSummary from './wp-checkout-order-summary';
+import WPContactForm from './wp-contact-form';
+import WPContactFormSummary from './wp-contact-form-summary';
+import type { OnChangeItemVariant } from './item-variation-picker';
+import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
+import type { RemoveProductFromCart, MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import type { CountryListItem } from '@automattic/wpcom-checkout';
+import type { ReactNode } from 'react';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
 
 // This will make converting to TS less noisy. The order of components can be reorganized later
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-const ContactFormTitle = (): JSX.Element => {
+const ContactFormTitle = () => {
 	const translate = useTranslate();
 	const isActive = useIsStepActive();
 	const isComplete = useIsStepComplete();
-	const { responseCart } = useShoppingCart();
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
 	const contactDetailsType = getContactDetailsType( responseCart );
 
 	if ( contactDetailsType === 'domain' ) {
@@ -125,44 +141,54 @@ const OrderReviewTitle = () => {
 	return <>{ String( translate( 'Your order' ) ) }</>;
 };
 
-const paymentMethodStep = getDefaultPaymentMethodStep();
-
 export default function WPCheckout( {
-	removeProductFromCart,
+	addItemToCart,
 	changePlanLength,
+	countriesList,
+	createUserAndSiteBeforeTransaction,
+	infoMessage,
+	isLoggedOutCart,
+	onPageLoadError,
+	removeProductFromCart,
+	showErrorMessageBriefly,
 	siteId,
 	siteUrl,
-	countriesList,
-	getItemVariants,
-	addItemToCart,
-	showErrorMessageBriefly,
-	isLoggedOutCart,
-	infoMessage,
-	createUserAndSiteBeforeTransaction,
+	isRemovingProductFromCart,
+	areThereErrors,
+	isInitialCartLoading,
+	customizedPreviousPath,
+	useVariantPickerRadioButtons,
+	loadingContent,
 }: {
-	removeProductFromCart: RemoveProductFromCart;
+	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
 	changePlanLength: OnChangeItemVariant;
+	countriesList: CountryListItem[];
+	createUserAndSiteBeforeTransaction: boolean;
+	infoMessage?: JSX.Element;
+	isLoggedOutCart: boolean;
+	onPageLoadError: CheckoutPageErrorCallback;
+	removeProductFromCart: RemoveProductFromCart;
+	showErrorMessageBriefly: ( error: string ) => void;
 	siteId: number | undefined;
 	siteUrl: string | undefined;
-	countriesList: CountryListItem[];
-	getItemVariants: GetProductVariants;
-	addItemToCart: ( item: Partial< RequestCartProduct > ) => void;
-	showErrorMessageBriefly: ( error: string ) => void;
-	isLoggedOutCart: boolean;
-	infoMessage?: JSX.Element;
-	createUserAndSiteBeforeTransaction: boolean;
-} ): JSX.Element {
+	isRemovingProductFromCart: boolean;
+	areThereErrors: boolean;
+	isInitialCartLoading: boolean;
+	customizedPreviousPath?: string;
+	// This is just for unit tests.
+	useVariantPickerRadioButtons?: boolean;
+	loadingContent: ReactNode;
+} ) {
+	const cartKey = useCartKey();
 	const {
 		responseCart,
 		applyCoupon,
 		updateLocation,
 		isPendingUpdate: isCartPendingUpdate,
-	} = useShoppingCart();
+	} = useShoppingCart( cartKey );
 	const translate = useTranslate();
 	const couponFieldStateProps = useCouponFieldState( applyCoupon );
 	const total = useTotal();
-	const activePaymentMethod = usePaymentMethod();
-	const onEvent = useEvents();
 	const reduxDispatch = useReduxDispatch();
 
 	const areThereDomainProductsInCart =
@@ -171,385 +197,316 @@ export default function WPCheckout( {
 
 	const contactDetailsType = getContactDetailsType( responseCart );
 
-	const contactInfo: ManagedContactDetails =
-		useSelect( ( sel ) => sel( 'wpcom' ).getContactInfo() ) || {};
-	const { setSiteId, touchContactFields, applyDomainContactValidationResults } = useDispatch(
-		'wpcom'
-	);
+	const contactInfo = useSelect( ( select ) => select( CHECKOUT_STORE ).getContactInfo(), [] );
 
-	const [
-		shouldShowContactDetailsValidationErrors,
-		setShouldShowContactDetailsValidationErrors,
-	] = useState( false );
+	const vatDetailsInForm = useSelect( ( select ) => select( CHECKOUT_STORE ).getVatDetails(), [] );
+	const { setVatDetails, vatDetails: vatDetailsFromServer } = useVatDetails();
 
-	const emailTakenLoginRedirectMessage = ( emailAddress: string ) => {
-		const { href, pathname } = window.location;
-		const isJetpackCheckout = pathname.includes( '/checkout/jetpack' );
+	const checkoutActions = useDispatch( CHECKOUT_STORE );
 
-		// Users with a WP.com account should return to the checkout page
-		// once they are logged in to complete the process. The flow for them is
-		// checkout -> login -> checkout.
-		const currentURLQueryParameters = Object.fromEntries( new URL( href ).searchParams.entries() );
-		const redirectTo = isJetpackCheckout
-			? addQueryArgs( { ...currentURLQueryParameters, flow: 'logged-out-checkout' }, pathname )
-			: '/checkout/no-site?cart=no-user';
-
-		const loginUrl = login( { redirectTo, emailAddress } );
-
-		reduxDispatch(
-			recordTracksEvent( 'calypso_checkout_wpcom_email_exists', {
-				email: emailAddress,
-				checkout_flow: isJetpackCheckout ? 'site_only_checkout' : 'wpcom_registrationless',
-			} )
-		);
-
-		return translate(
-			'That email address is already in use. If you have an existing account, {{a}}please log in{{/a}}.',
-			{
-				components: {
-					a: (
-						<a
-							onClick={ () =>
-								reduxDispatch(
-									recordTracksEvent( 'calypso_checkout_composite_login_click', {
-										email: emailAddress,
-										checkout_flow: isJetpackCheckout
-											? 'site_only_checkout'
-											: 'wpcom_registrationless',
-									} )
-								)
-							}
-							href={ loginUrl }
-						/>
-					),
-				},
-			}
-		);
-	};
-
-	const validateContactDetailsAndDisplayErrors = async () => {
-		debug( 'validating contact details and reporting errors' );
-		if ( isLoggedOutCart ) {
-			const email = contactInfo.email?.value ?? '';
-			const validationResult = await getSignupEmailValidationResult(
-				email,
-				emailTakenLoginRedirectMessage
-			);
-			handleContactValidationResult( {
-				recordEvent: onEvent,
-				showErrorMessage: showErrorMessageBriefly,
-				paymentMethodId: activePaymentMethod?.id ?? '',
-				validationResult,
-				applyDomainContactValidationResults,
-			} );
-			const isSignupValidationValid = isContactValidationResponseValid(
-				validationResult,
-				contactInfo
-			);
-
-			if ( ! isSignupValidationValid ) {
-				return false;
-			}
-		}
-
-		if ( contactDetailsType === 'tax' ) {
-			const validationResult = await getTaxValidationResult( contactInfo );
-			debug( 'validating contact details result', validationResult );
-			handleContactValidationResult( {
-				recordEvent: onEvent,
-				showErrorMessage: showErrorMessageBriefly,
-				paymentMethodId: activePaymentMethod?.id ?? '',
-				validationResult,
-				applyDomainContactValidationResults,
-			} );
-			return isContactValidationResponseValid( validationResult, contactInfo );
-		} else if ( contactDetailsType === 'domain' ) {
-			const validationResult = await getDomainValidationResult(
-				responseCart.products,
-				contactInfo
-			);
-			debug( 'validating contact details result', validationResult );
-			handleContactValidationResult( {
-				recordEvent: onEvent,
-				showErrorMessage: showErrorMessageBriefly,
-				paymentMethodId: activePaymentMethod?.id ?? '',
-				validationResult,
-				applyDomainContactValidationResults,
-			} );
-			return isContactValidationResponseValid( validationResult, contactInfo );
-		} else if ( contactDetailsType === 'gsuite' ) {
-			const validationResult = await getGSuiteValidationResult(
-				responseCart.products,
-				contactInfo
-			);
-			debug( 'validating contact details result', validationResult );
-			handleContactValidationResult( {
-				recordEvent: onEvent,
-				showErrorMessage: showErrorMessageBriefly,
-				paymentMethodId: activePaymentMethod?.id ?? '',
-				validationResult,
-				applyDomainContactValidationResults,
-			} );
-			return isContactValidationResponseValid( validationResult, contactInfo );
-		}
-		return isCompleteAndValid( contactInfo );
-	};
-	const validateContactDetails = async () => {
-		debug( 'validating contact details without reporting errors' );
-		if ( isLoggedOutCart ) {
-			const email = contactInfo.email?.value ?? '';
-			const validationResult = await getSignupEmailValidationResult(
-				email,
-				emailTakenLoginRedirectMessage
-			);
-			const isSignupValidationValid = isContactValidationResponseValid(
-				validationResult,
-				contactInfo
-			);
-
-			if ( ! isSignupValidationValid ) {
-				return false;
-			}
-		}
-
-		if ( contactDetailsType === 'tax' ) {
-			const validationResult = await getTaxValidationResult( contactInfo );
-			debug( 'validating contact details result', validationResult );
-			return isContactValidationResponseValid( validationResult, contactInfo );
-		} else if ( contactDetailsType === 'domain' ) {
-			const validationResult = await getDomainValidationResult(
-				responseCart.products,
-				contactInfo
-			);
-			debug( 'validating contact details result', validationResult );
-			return isContactValidationResponseValid( validationResult, contactInfo );
-		} else if ( contactDetailsType === 'gsuite' ) {
-			const validationResult = await getGSuiteValidationResult(
-				responseCart.products,
-				contactInfo
-			);
-			debug( 'validating contact details result', validationResult );
-			return isContactValidationResponseValid( validationResult, contactInfo );
-		}
-		return isCompleteAndValid( contactInfo );
-	};
+	const [ shouldShowContactDetailsValidationErrors, setShouldShowContactDetailsValidationErrors ] =
+		useState( true );
 
 	// The "Summary" view is displayed in the sidebar at desktop (wide) widths
 	// and before the first step at mobile (smaller) widths. At smaller widths it
 	// starts collapsed and can be expanded; at wider widths (as a sidebar) it is
 	// always visible. It is not a step and its visibility is managed manually.
 	const [ isSummaryVisible, setIsSummaryVisible ] = useState( false );
-
-	// The "Order review" step is not managed by Composite Checkout and is shown/hidden manually.
-	// If the page includes a 'order-review=true' query string, then start with
-	// the order review step visible.
-	const [ isOrderReviewActive, setIsOrderReviewActive ] = useState( () => {
-		try {
-			const shouldInitOrderReviewStepActive =
-				window?.location?.search.includes( 'order-review=true' ) ?? false;
-			if ( shouldInitOrderReviewStepActive ) {
-				return true;
-			}
-		} catch ( error ) {
-			// If there's a problem loading the query string, just default to false.
-			debug(
-				'Error loading query string to determine if we should see the order review step at load',
-				error
-			);
-		}
-		return false;
-	} );
-
 	const { formStatus } = useFormStatus();
 
-	// Copy siteId to the store so it can be more easily accessed during payment submission
-	useEffect( () => {
-		setSiteId( siteId );
-	}, [ siteId, setSiteId ] );
-
-	const updateCartContactDetails = useCallback( () => {
-		// Update tax location in cart
-		const nonTaxPaymentMethods = [ 'free-purchase' ];
-		if ( ! activePaymentMethod || ! contactInfo ) {
-			return;
-		}
-		if ( nonTaxPaymentMethods.includes( activePaymentMethod.id ) ) {
-			// this data is intentionally empty so we do not charge taxes
-			updateLocation( {
-				countryCode: '',
-				postalCode: '',
-				subdivisionCode: '',
-			} );
-		} else {
-			updateLocation( {
-				countryCode: contactInfo.countryCode?.value ?? '',
-				postalCode: contactInfo.postalCode?.value ?? '',
-				subdivisionCode: contactInfo.state?.value ?? '',
-			} );
-		}
-	}, [ activePaymentMethod, updateLocation, contactInfo ] );
-
-	useUpdateCartLocationWhenPaymentMethodChanges( activePaymentMethod, updateCartContactDetails );
-
 	const onReviewError = useCallback(
-		( error ) =>
-			onEvent( {
-				type: 'STEP_LOAD_ERROR',
-				payload: {
-					message: error,
-					stepId: 'review',
-				},
+		( error: Error ) =>
+			onPageLoadError( 'step_load', error, {
+				step_id: 'review',
 			} ),
-		[ onEvent ]
+		[ onPageLoadError ]
 	);
 
 	const onSummaryError = useCallback(
-		( error ) =>
-			onEvent( {
-				type: 'STEP_LOAD_ERROR',
-				payload: {
-					message: error,
-					stepId: 'summary',
-				},
+		( error: Error ) =>
+			onPageLoadError( 'step_load', error, {
+				step_id: 'summary',
 			} ),
-		[ onEvent ]
+		[ onPageLoadError ]
 	);
 
 	const validatingButtonText = isCartPendingUpdate
 		? String( translate( 'Updating cart…' ) )
 		: String( translate( 'Please wait…' ) );
 
+	const forceCheckoutBackUrl = useValidCheckoutBackUrl( siteUrl );
+	const previousPath = useSelector( getPreviousRoute );
+	const goToPreviousPage = () =>
+		leaveCheckout( {
+			siteSlug: siteUrl,
+			forceCheckoutBackUrl,
+			previousPath: customizedPreviousPath || previousPath,
+			tracksEvent: 'calypso_checkout_composite_empty_cart_clicked',
+		} );
+
+	const { transactionStatus } = useTransactionStatus();
+
+	const hasMarketplaceProduct = useSelector( ( state ) => {
+		return responseCart?.products?.some( ( p ) => isMarketplaceProduct( state, p.product_slug ) );
+	} );
+
+	const [ is3PDAccountConsentAccepted, setIs3PDAccountConsentAccepted ] = useState( false );
+	const [ isSubmitted, setIsSubmitted ] = useState( false );
+
+	const validateForm = async () => {
+		setIsSubmitted( true );
+		if ( hasMarketplaceProduct && ! is3PDAccountConsentAccepted ) {
+			return false;
+		}
+		return true;
+	};
+
+	if ( ! checkoutActions ) {
+		return null;
+	}
+
+	const {
+		touchContactFields,
+		applyDomainContactValidationResults,
+		clearDomainContactErrorMessages,
+	} = checkoutActions;
+
+	const isWcMobile = isWcMobileApp();
+
+	if ( transactionStatus === TransactionStatus.COMPLETE ) {
+		debug( 'rendering post-checkout redirecting page' );
+		return (
+			<MainContentWrapper>
+				<NonCheckoutContentWrapper>
+					<NonCheckoutContentInnerWrapper>
+						<PerformanceTrackerStop />
+						<CheckoutCompleteRedirecting />
+						<SubmitButtonWrapper>
+							<Button buttonType="primary" fullWidth isBusy disabled>
+								{ translate( 'Please wait…' ) }
+							</Button>
+						</SubmitButtonWrapper>
+					</NonCheckoutContentInnerWrapper>
+				</NonCheckoutContentWrapper>
+			</MainContentWrapper>
+		);
+	}
+
+	if (
+		shouldShowEmptyCartPage( {
+			responseCart,
+			areWeRedirecting: isRemovingProductFromCart,
+			areThereErrors,
+			isCartPendingUpdate,
+			isInitialCartLoading,
+		} )
+	) {
+		debug( 'rendering empty cart page' );
+		return (
+			<MainContentWrapper>
+				<NonCheckoutContentWrapper>
+					<NonCheckoutContentInnerWrapper>
+						<PerformanceTrackerStop />
+						<EmptyCart />
+						<SubmitButtonWrapper>
+							<Button buttonType="primary" fullWidth onClick={ goToPreviousPage }>
+								{ translate( 'Go back' ) }
+							</Button>
+						</SubmitButtonWrapper>
+					</NonCheckoutContentInnerWrapper>
+				</NonCheckoutContentWrapper>
+			</MainContentWrapper>
+		);
+	}
+
+	const isDIFMInCart = hasDIFMProduct( responseCart );
+	const hasMonthlyProduct = responseCart?.products?.some( isMonthlyProduct );
+
 	return (
-		<Checkout>
-			<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
-				<CheckoutErrorBoundary
-					errorMessage={ translate( 'Sorry, there was an error loading this information.' ) }
-					onError={ onSummaryError }
-				>
-					<CheckoutSummaryTitleLink onClick={ () => setIsSummaryVisible( ! isSummaryVisible ) }>
-						<CheckoutSummaryTitle>
-							<CheckoutSummaryTitleIcon icon="info-outline" size={ 20 } />
-							{ translate( 'Purchase Details' ) }
-							<CheckoutSummaryTitleToggle icon="keyboard_arrow_down" />
-						</CheckoutSummaryTitle>
-						<CheckoutSummaryTitlePrice className="wp-checkout__total-price">
-							{ total.amount.displayValue }
-						</CheckoutSummaryTitlePrice>
-					</CheckoutSummaryTitleLink>
-					<CheckoutSummaryBody>
-						<WPCheckoutOrderSummary
-							siteId={ siteId }
-							onChangePlanLength={ changePlanLength }
-							nextDomainIsFree={ responseCart?.next_domain_is_free }
-						/>
-						<SecondaryCartPromotions
-							responseCart={ responseCart }
-							addItemToCart={ addItemToCart }
-						/>
-						<CheckoutHelpLink />
-					</CheckoutSummaryBody>
-				</CheckoutErrorBoundary>
-			</CheckoutSummaryArea>
-			<CheckoutStepArea
-				submitButtonHeader={ <SubmitButtonHeader /> }
-				disableSubmitButton={ isOrderReviewActive }
-			>
-				{ infoMessage }
-				<CheckoutStepBody
-					onError={ onReviewError }
-					className="wp-checkout__review-order-step"
-					stepId="review-order-step"
-					isStepActive={ isOrderReviewActive }
-					isStepComplete={ true }
-					goToThisStep={ () => setIsOrderReviewActive( ! isOrderReviewActive ) }
-					goToNextStep={ () => setIsOrderReviewActive( ! isOrderReviewActive ) }
+		<CheckoutStepGroup
+			loadingContent={ loadingContent }
+			stepAreaHeader={
+				<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
+					<CheckoutErrorBoundary
+						errorMessage={ translate( 'Sorry, there was an error loading this information.' ) }
+						onError={ onSummaryError }
+					>
+						<CheckoutSummaryTitleLink onClick={ () => setIsSummaryVisible( ! isSummaryVisible ) }>
+							<CheckoutSummaryTitle>
+								<CheckoutSummaryTitleIcon icon="info-outline" size={ 20 } />
+								{ translate( 'Purchase Details' ) }
+								<CheckoutSummaryTitleToggle icon="keyboard_arrow_down" />
+							</CheckoutSummaryTitle>
+							<CheckoutSummaryTitlePrice className="wp-checkout__total-price">
+								{ total.amount.displayValue }
+							</CheckoutSummaryTitlePrice>
+						</CheckoutSummaryTitleLink>
+						<CheckoutSummaryBody className="checkout__summary-body">
+							<WPCheckoutOrderSummary
+								siteId={ siteId }
+								onChangePlanLength={ changePlanLength }
+								nextDomainIsFree={ responseCart?.next_domain_is_free }
+							/>
+							{ ! isWcMobile && ! isDIFMInCart && ! hasMonthlyProduct && (
+								<CheckoutSidebarPlanUpsell />
+							) }
+							<SecondaryCartPromotions
+								responseCart={ responseCart }
+								addItemToCart={ addItemToCart }
+								isCartPendingUpdate={ isCartPendingUpdate }
+							/>
+							<CheckoutHelpLink />
+							<CheckoutNextSteps responseCart={ responseCart } />
+						</CheckoutSummaryBody>
+					</CheckoutErrorBoundary>
+				</CheckoutSummaryArea>
+			}
+		>
+			<PerformanceTrackerStop />
+			{ infoMessage }
+			<CheckoutStepBody
+				onError={ onReviewError }
+				className="wp-checkout__review-order-step"
+				stepId="review-order-step"
+				isStepActive={ false }
+				isStepComplete={ true }
+				titleContent={ <OrderReviewTitle /> }
+				completeStepContent={
+					<WPCheckoutOrderReview
+						useVariantPickerRadioButtons={ useVariantPickerRadioButtons }
+						removeProductFromCart={ removeProductFromCart }
+						couponFieldStateProps={ couponFieldStateProps }
+						onChangePlanLength={ changePlanLength }
+						siteUrl={ siteUrl }
+						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+					/>
+				}
+				formStatus={ formStatus }
+			/>
+			{ contactDetailsType !== 'none' && (
+				<CheckoutStep
+					stepId="contact-form"
+					isCompleteCallback={ async () => {
+						// Touch the fields so they display validation errors
+						shouldShowContactDetailsValidationErrors && touchContactFields();
+						const validationResponse = await validateContactDetails(
+							contactInfo,
+							isLoggedOutCart,
+							responseCart,
+							showErrorMessageBriefly,
+							applyDomainContactValidationResults,
+							clearDomainContactErrorMessages,
+							reduxDispatch,
+							translate,
+							shouldShowContactDetailsValidationErrors
+						);
+						if ( validationResponse ) {
+							// When the contact details change, update the VAT details on the server.
+							try {
+								if (
+									vatDetailsInForm.id &&
+									! areVatDetailsSame( vatDetailsInForm, vatDetailsFromServer )
+								) {
+									await setVatDetails( vatDetailsInForm );
+								}
+							} catch ( error ) {
+								reduxDispatch( removeNotice( 'vat_info_notice' ) );
+								if ( shouldShowContactDetailsValidationErrors ) {
+									reduxDispatch(
+										errorNotice( ( error as Error ).message, { id: 'vat_info_notice' } )
+									);
+								}
+								return false;
+							}
+							reduxDispatch( removeNotice( 'vat_info_notice' ) );
+
+							// When the contact details change, update the cart's tax location to match.
+							try {
+								await updateCartContactDetailsForCheckout(
+									countriesList,
+									responseCart,
+									updateLocation,
+									contactInfo,
+									vatDetailsInForm
+								);
+							} catch {
+								// If updating the cart fails, we should not continue. No need
+								// to do anything else, though, because CartMessages will
+								// display the error.
+								return false;
+							}
+
+							// When the contact details change, update the cached contact details on
+							// the server. This can fail if validation fails but we will silently
+							// ignore failures here because the validation call will handle them better
+							// than this will.
+							reduxDispatch(
+								saveContactDetailsCache( prepareDomainContactValidationRequest( contactInfo ) )
+							);
+
+							reduxDispatch(
+								recordTracksEvent( 'calypso_checkout_composite_step_complete', {
+									step: 1,
+									step_name: 'contact-form',
+								} )
+							);
+						}
+						return validationResponse;
+					} }
 					activeStepContent={
-						<WPCheckoutOrderReview
-							removeProductFromCart={ removeProductFromCart }
-							couponFieldStateProps={ couponFieldStateProps }
-							onChangePlanLength={ changePlanLength }
-							getItemVariants={ getItemVariants }
-							siteUrl={ siteUrl }
-							createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+						<WPContactForm
+							countriesList={ countriesList }
+							shouldShowContactDetailsValidationErrors={ shouldShowContactDetailsValidationErrors }
+							contactDetailsType={ contactDetailsType }
+							isLoggedOutCart={ isLoggedOutCart }
+							setShouldShowContactDetailsValidationErrors={
+								setShouldShowContactDetailsValidationErrors
+							}
 						/>
 					}
-					titleContent={ <OrderReviewTitle /> }
 					completeStepContent={
-						<WPCheckoutOrderReview
-							isSummary
-							removeProductFromCart={ removeProductFromCart }
-							couponFieldStateProps={ couponFieldStateProps }
-							siteUrl={ siteUrl }
+						<WPContactFormSummary
+							areThereDomainProductsInCart={ areThereDomainProductsInCart }
+							isGSuiteInCart={ isGSuiteInCart }
+							isLoggedOutCart={ isLoggedOutCart }
 						/>
 					}
+					titleContent={ <ContactFormTitle /> }
 					editButtonText={ String( translate( 'Edit' ) ) }
-					editButtonAriaLabel={ String( translate( 'Edit your order' ) ) }
-					nextStepButtonText={ String( translate( 'Save order' ) ) }
-					nextStepButtonAriaLabel={ String( translate( 'Save your order' ) ) }
+					editButtonAriaLabel={ String( translate( 'Edit the contact details' ) ) }
+					nextStepButtonText={ String( translate( 'Continue' ) ) }
+					nextStepButtonAriaLabel={ String(
+						translate( 'Continue with the entered contact details' )
+					) }
 					validatingButtonText={ validatingButtonText }
 					validatingButtonAriaLabel={ validatingButtonText }
-					formStatus={ formStatus }
 				/>
-				<CheckoutSteps areStepsActive={ ! isOrderReviewActive }>
-					{ contactDetailsType !== 'none' && (
-						<CheckoutStep
-							stepId={ 'contact-form' }
-							isCompleteCallback={ () => {
-								setShouldShowContactDetailsValidationErrors( true );
-								// Touch the fields so they display validation errors
-								touchContactFields();
-								updateCartContactDetails();
-								return validateContactDetailsAndDisplayErrors();
-							} }
-							activeStepContent={
-								<WPContactForm
-									countriesList={ countriesList }
-									shouldShowContactDetailsValidationErrors={
-										shouldShowContactDetailsValidationErrors
-									}
-									contactValidationCallback={ validateContactDetails }
-									contactDetailsType={ contactDetailsType }
-									isLoggedOutCart={ isLoggedOutCart }
-								/>
-							}
-							completeStepContent={
-								<WPContactFormSummary
-									areThereDomainProductsInCart={ areThereDomainProductsInCart }
-									isGSuiteInCart={ isGSuiteInCart }
-									isLoggedOutCart={ isLoggedOutCart }
-								/>
-							}
-							titleContent={ <ContactFormTitle /> }
-							editButtonText={ String( translate( 'Edit' ) ) }
-							editButtonAriaLabel={ String( translate( 'Edit the contact details' ) ) }
-							nextStepButtonText={ String( translate( 'Continue' ) ) }
-							nextStepButtonAriaLabel={ String(
-								translate( 'Continue with the entered contact details' )
-							) }
-							validatingButtonText={ validatingButtonText }
-							validatingButtonAriaLabel={ validatingButtonText }
-						/>
-					) }
-					<CheckoutStep
-						stepId="payment-method-step"
-						activeStepContent={
-							<PaymentMethodStep activeStepContent={ paymentMethodStep.activeStepContent } />
-						}
-						completeStepContent={ paymentMethodStep.completeStepContent }
-						titleContent={ paymentMethodStep.titleContent }
-						editButtonText={ String( translate( 'Edit' ) ) }
-						editButtonAriaLabel={ String( translate( 'Edit the payment method' ) ) }
-						nextStepButtonText={ String( translate( 'Continue' ) ) }
-						nextStepButtonAriaLabel={ String(
-							translate( 'Continue with the selected payment method' )
-						) }
-						validatingButtonText={ validatingButtonText }
-						validatingButtonAriaLabel={ validatingButtonText }
-						isCompleteCallback={ () => false }
-					/>
-				</CheckoutSteps>
-			</CheckoutStepArea>
-		</Checkout>
+			) }
+			<PaymentMethodStep
+				activeStepFooter={ <PaymentMethodStepContent /> }
+				editButtonText={ String( translate( 'Edit' ) ) }
+				editButtonAriaLabel={ String( translate( 'Edit the payment method' ) ) }
+				nextStepButtonText={ String( translate( 'Continue' ) ) }
+				nextStepButtonAriaLabel={ String(
+					translate( 'Continue with the selected payment method' )
+				) }
+				validatingButtonText={ validatingButtonText }
+				validatingButtonAriaLabel={ validatingButtonText }
+				isCompleteCallback={ () => false }
+			/>
+			{ hasMarketplaceProduct && (
+				<ThirdPartyDevsAccount
+					isAccepted={ is3PDAccountConsentAccepted }
+					onChange={ setIs3PDAccountConsentAccepted }
+					isSubmitted={ isSubmitted }
+				/>
+			) }
+			<CheckoutFormSubmit
+				validateForm={ validateForm }
+				submitButtonHeader={ <SubmitButtonHeader /> }
+				submitButtonFooter={ <SubmitButtonFooter /> }
+			/>
+		</CheckoutStepGroup>
 	);
 }
 
@@ -642,6 +599,12 @@ const CheckoutSummaryBody = styled.div`
 		max-width: 328px;
 		position: fixed;
 		width: 100%;
+		overflow-y: auto;
+		height: 100vh;
+		& .card {
+			border-left: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+			border-right: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+		}
 	}
 `;
 
@@ -660,6 +623,75 @@ function SubmitButtonHeader() {
 		</SubmitButtonHeaderWrapper>
 	);
 }
+
+const SubmitButtonFooter = () => {
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
+	const translate = useTranslate();
+
+	const hasCartJetpackProductsOnly = responseCart?.products?.every( ( product ) =>
+		isJetpackPurchasableItem( product.product_slug )
+	);
+
+	const signupFlowName = getSignupCompleteFlowName();
+
+	if ( ! hasCartJetpackProductsOnly && ! isHostingFlow( signupFlowName ) ) {
+		return null;
+	}
+
+	const show7DayGuarantee = responseCart?.products?.every( isMonthlyProduct );
+	const show14DayGuarantee = responseCart?.products?.every(
+		( product ) => isYearly( product ) || isBiennially( product ) || isTriennially( product )
+	);
+	const content =
+		show7DayGuarantee || show14DayGuarantee ? (
+			translate( '%(dayCount)s day money back guarantee', {
+				args: {
+					dayCount: show7DayGuarantee ? 7 : 14,
+				},
+			} )
+		) : (
+			<>
+				{ translate( '14 day money back guarantee on yearly subscriptions' ) }
+				<br />
+				{ translate( '7 day money back guarantee on monthly subscriptions' ) }
+			</>
+		);
+	let imgSrc = badgeGenericSrc;
+
+	if ( show7DayGuarantee ) {
+		imgSrc = badge7Src;
+	} else if ( show14DayGuarantee ) {
+		imgSrc = badge14Src;
+	}
+
+	return (
+		<SubmitButtonFooterWrapper>
+			<img src={ imgSrc } alt="" />
+			<span>{ content }</span>
+		</SubmitButtonFooterWrapper>
+	);
+};
+
+const SubmitButtonFooterWrapper = styled.div< React.HTMLAttributes< HTMLDivElement > >`
+	display: flex;
+	justify-content: center;
+	align-items: flex-start;
+
+	margin-top: 1.25rem;
+
+	color: ${ ( props ) => props.theme.colors.textColor };
+
+	font-weight: 500;
+
+	img {
+		margin-right: 0.5rem;
+	}
+
+	span {
+		padding-top: 3px;
+	}
+`;
 
 const SubmitButtonHeaderWrapper = styled.div`
 	display: none;
@@ -686,5 +718,31 @@ const SubmitButtonHeaderWrapper = styled.div`
 		&:hover {
 			color: ${ ( props ) => props.theme.colors.highlightOver };
 		}
+	}
+`;
+
+const NonCheckoutContentWrapper = styled.div`
+	display: flex;
+
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
+		align-items: flex-start;
+		flex-direction: row;
+		justify-content: center;
+		width: 100%;
+	}
+`;
+
+const NonCheckoutContentInnerWrapper = styled.div`
+	background: ${ ( props ) => props.theme.colors.surface };
+	width: 100%;
+
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+		max-width: 556px;
+		margin: 0 auto;
+	}
+
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
+		margin: 0;
 	}
 `;

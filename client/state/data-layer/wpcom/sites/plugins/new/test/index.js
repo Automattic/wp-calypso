@@ -1,14 +1,11 @@
-/**
- * Internal dependencies
- */
-import { PLUGIN_INSTALL_REQUEST_SUCCESS } from 'calypso/state/action-types';
 import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
-import { updateUploadProgress, uploadComplete, uploadPlugin, receiveError } from '../';
+import { PLUGIN_INSTALL_REQUEST_SUCCESS } from 'calypso/state/action-types';
 import {
 	completePluginUpload,
 	pluginUploadError,
 	updatePluginUploadProgress,
 } from 'calypso/state/plugins/upload/actions';
+import { updateUploadProgress, uploadComplete, uploadPlugin, receiveError } from '../';
 
 const siteId = 77203074;
 const pluginId = 'hello-dolly';
@@ -30,6 +27,11 @@ const SUCCESS_RESPONSE = {
 const ERROR_RESPONSE = {
 	error: 'folder_exists',
 	message: 'folder_exists',
+};
+
+const UNKNOWN_ERROR_RESPONSE = {
+	error: 'unknown_error',
+	message: 'unknown_error',
 };
 
 describe( 'uploadPlugin', () => {
@@ -72,10 +74,16 @@ describe( 'uploadComplete', () => {
 } );
 
 describe( 'receiveError', () => {
-	test( 'should return a plugin upload error action', () => {
+	test( 'should return a plugin upload error action for a known error', () => {
 		const action = receiveError( { siteId }, ERROR_RESPONSE );
 		expect( action ).toEqual(
 			expect.arrayContaining( [ pluginUploadError( siteId, ERROR_RESPONSE ) ] )
+		);
+	} );
+	test( 'should return a plugin upload error action for an unknown error', () => {
+		const action = receiveError( { siteId }, UNKNOWN_ERROR_RESPONSE );
+		expect( action ).toEqual(
+			expect.arrayContaining( [ pluginUploadError( siteId, UNKNOWN_ERROR_RESPONSE ) ] )
 		);
 	} );
 } );

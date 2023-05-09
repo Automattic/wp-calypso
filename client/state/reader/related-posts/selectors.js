@@ -1,6 +1,3 @@
-/**
- * Internal Dependencies
- */
 import { key, SCOPE_ALL } from './utils';
 
 import 'calypso/state/reader/init';

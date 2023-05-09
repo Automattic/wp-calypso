@@ -1,34 +1,24 @@
-/**
- * External dependencies
- */
-import page from 'page';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
+import { Button } from '@automattic/components';
+import { withShoppingCart } from '@automattic/shopping-cart';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-import { withShoppingCart } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
-import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
-import { Button } from '@automattic/components';
-import { hasProduct, siteRedirect } from 'calypso/lib/cart-values/cart-items';
-import { errorNotice } from 'calypso/state/notices/actions';
-import { canRedirect } from 'calypso/lib/domains';
+import page from 'page';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import DomainProductPrice from 'calypso/components/domains/domain-product-price';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import { hasProduct, siteRedirect } from 'calypso/lib/cart-values/cart-items';
+import { canRedirect } from 'calypso/lib/domains';
 import { withoutHttp } from 'calypso/lib/url';
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
 
-/**
- * Style dependencies
- */
 import './site-redirect-step.scss';
 
-class SiteRedirectStep extends React.Component {
+class SiteRedirectStep extends Component {
 	static propTypes = {
 		products: PropTypes.object.isRequired,
 		selectedSite: PropTypes.object.isRequired,
@@ -132,14 +122,14 @@ class SiteRedirectStep extends React.Component {
 		} );
 	};
 
-	addSiteRedirectToCart = ( domain ) => {
-		this.props.shoppingCartManager
-			.addProductsToCart( [
-				fillInSingleCartItemAttributes( siteRedirect( { domain } ), this.props.products ),
-			] )
-			.then( () => {
-				this.isMounted && page( '/checkout/' + this.props.selectedSite.slug );
-			} );
+	addSiteRedirectToCart = async ( domain ) => {
+		try {
+			await this.props.shoppingCartManager.addProductsToCart( [ siteRedirect( { domain } ) ] );
+		} catch {
+			// Nothing needs to be done here. CartMessages will display the error to the user.
+			return;
+		}
+		this.isMounted && page( '/checkout/' + this.props.selectedSite.slug );
 	};
 
 	getValidationErrorMessage = ( domain, error ) => {
@@ -206,4 +196,4 @@ export default connect( null, {
 	recordInputFocus,
 	recordGoButtonClick,
 	recordFormSubmit,
-} )( withShoppingCart( localize( SiteRedirectStep ) ) );
+} )( withCartKey( withShoppingCart( localize( SiteRedirectStep ) ) ) );

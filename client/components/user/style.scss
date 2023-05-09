@@ -2,12 +2,12 @@
 	&.is-placeholder {
 		.user__name {
 			animation: pulse-light 0.8s ease-in-out infinite;
-			background: var( --color-neutral-10 );
+			background: var(--color-neutral-10);
 			display: inline-block;
 			height: 14px;
 			width: 100px;
 			position: relative;
-				top: 3px;
+			top: 3px;
 		}
 	}
 }

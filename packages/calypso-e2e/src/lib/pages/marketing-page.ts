@@ -1,47 +1,27 @@
-/**
- * Internal dependencies
- */
-import { BaseContainer } from '../base-container';
-import { toTitleCase } from '../../data-helper';
-
-/**
- * Type dependencies
- */
 import { Page } from 'playwright';
+import { clickNavTab } from '../../element-helper';
 
 const selectors = {
-	content: '#primary',
-	navtabsList: '.section-nav-tabs__list',
-
 	// Traffic tab
 	websiteMetaTextArea: '#advanced_seo_front_page_description',
 	seoPreviewButton: '.seo-settings__preview-button',
 	seoPreviewPane: '.web-preview.is-seo',
-	seoPreviewPaneCloseButton: '.web-preview .web-preview__close',
+	seoPreviewPaneCloseButton: '.web-preview__close',
 };
 
 /**
  * Page representing the Tools > Marketing page.
- *
- * @augments {BaseContainer}
  */
-export class MarketingPage extends BaseContainer {
-	/**
-	 * Constructs an instance of the MarketingPage object.
-	 *
-	 * @param {Page} page Underlying page on which the actions take place.
-	 */
-	constructor( page: Page ) {
-		super( page, selectors.content );
-	}
+export class MarketingPage {
+	private page: Page;
 
 	/**
-	 * Post-initialization steps when creating an instance of this object.
+	 * Constructs an instance of the component.
 	 *
-	 * @returns {Promise<void>} No return value.
+	 * @param {Page} page The underlying page.
 	 */
-	async _postInit(): Promise< void > {
-		await this.page.waitForSelector( selectors.navtabsList );
+	constructor( page: Page ) {
+		this.page = page;
 	}
 
 	/**
@@ -50,10 +30,8 @@ export class MarketingPage extends BaseContainer {
 	 * @param {string} name Name of the tab to click on the top of the page.
 	 * @returns {Promise<void>} No return value.
 	 */
-	async clickTabItem( name: string ): Promise< void > {
-		const sanitizedName = toTitleCase( [ name ] );
-
-		await this.page.click( `text=${ sanitizedName }` );
+	async clickTab( name: string ): Promise< void > {
+		await clickNavTab( this.page, name );
 	}
 
 	/* SEO Preview Methods */
@@ -74,7 +52,8 @@ export class MarketingPage extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async openSEOPreview(): Promise< void > {
-		await this.page.click( selectors.seoPreviewButton );
+		const locator = this.page.locator( selectors.seoPreviewButton );
+		await locator.click();
 		await this.page.waitForSelector( selectors.seoPreviewPane );
 	}
 
@@ -85,6 +64,6 @@ export class MarketingPage extends BaseContainer {
 	 */
 	async closeSEOPreview(): Promise< void > {
 		await this.page.click( selectors.seoPreviewPaneCloseButton );
-		await this.page.waitForSelector( selectors.content );
+		await this.page.waitForSelector( selectors.seoPreviewButton );
 	}
 }

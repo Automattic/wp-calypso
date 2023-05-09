@@ -50,3 +50,6 @@ function render() {
 - <strong>minTouchBarWidth</strong> — _default: 42_ The minimum bar width on touch devices
 - <strong>minBarWidth</strong> — _default: 15_ The minimum bar width on non-touch devices
 - <strong>barClick</strong> - The function to be called when a bar is clicked on the chart, it is passed the entire data object of the bar
+- <strong>minBarsToBeShown</strong> - The minimun no of bars to be shown
+- <strong>hideYAxis</strong> - _default: false_ A boolean value whether to hide the y-axis
+- <strong>hideXAxis</strong> - _default: false_ A boolean value whether to hide the x-axis

@@ -1,191 +1,144 @@
-/**
- * External dependencies
- */
-import React, { useEffect, useState } from 'react';
-import styled from '@emotion/styled';
-import { useTranslate } from 'i18n-calypso';
-import { useSelector, useDispatch } from 'react-redux';
-import formatCurrency, { CURRENCIES } from '@automattic/format-currency';
-import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
-import { requestPlans } from 'calypso/state/plans/actions';
-import { computeProductsWithPrices } from 'calypso/state/products-list/selectors';
+import config from '@automattic/calypso-config';
 import {
-	getPlan,
-	findPlansKeys,
-	GROUP_WPCOM,
-	GROUP_JETPACK,
+	getBillingMonthsForTerm,
+	getTermDuration,
+	getBillingTermForMonths,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
+	TERM_TRIENNIALLY,
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
-import { requestProductsList } from 'calypso/state/products-list/actions';
-import type { Plan } from '@automattic/calypso-products';
-import type { WPCOMProductSlug, WPCOMProductVariant } from '../components/item-variation-picker';
+import { isValueTruthy } from '@automattic/wpcom-checkout';
+import debugFactory from 'debug';
+import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
+import { logToLogstash } from 'calypso/lib/logstash';
+import { useStableCallback } from 'calypso/lib/use-stable-callback';
+import type { WPCOMProductVariant } from '../components/item-variation-picker';
+import type { ResponseCartProduct, ResponseCartProductVariant } from '@automattic/shopping-cart';
 
 const debug = debugFactory( 'calypso:composite-checkout:product-variants' );
 
-export interface AvailableProductVariant {
-	planSlug: string;
-	plan: Plan;
-	product: {
-		product_id: number;
-		currency_code: string;
-	};
-	priceFullBeforeDiscount: number;
-	priceFull: number;
-	priceFinal: number;
+export interface SitePlanData {
+	autoRenew?: boolean;
+	autoRenewDate?: string;
+	canStartTrial?: boolean;
+	currencyCode: string;
+	currentPlan?: boolean;
+	discountReason?: string | null;
+	expiry?: string;
+	expiryDate?: string;
+	formattedDiscount: string;
+	formattedOriginalPrice: string;
+	formattedPrice: string;
+	freeTrial?: boolean;
+	hasDomainCredit?: boolean;
+	id: number;
+	interval: number;
+	introductoryOfferFormattedPrice?: string;
+	introductoryOfferRawPrice?: number;
+	isDomainUpgrade?: boolean;
+	productDisplayPrice?: string;
+	productName: string;
+	productSlug: string;
+	rawDiscount: string;
+	rawPrice: number;
+	subscribedDate?: string;
+	userIsOwner?: boolean;
 }
 
-export type GetProductVariants = ( productSlug: WPCOMProductSlug ) => WPCOMProductVariant[];
+export interface SitesPlansResult {
+	data: SitePlanData[] | null;
+}
 
-const Discount = styled.span`
-	color: ${ ( props ) => props.theme.colors.discount };
-	margin-right: 8px;
+export type VariantFilterCallback = ( variant: WPCOMProductVariant ) => boolean;
 
-	.rtl & {
-		margin-right: 0;
-		margin-left: 8px;
-	}
-`;
+const fallbackFilter = () => true;
+const fallbackVariants: ResponseCartProductVariant[] = [];
 
-const DoNotPayThis = styled.span`
-	text-decoration: line-through;
-	margin-right: 8px;
-
-	.rtl & {
-		margin-right: 0;
-		margin-left: 8px;
-	}
-`;
-
-export function useProductVariants( {
-	siteId,
-	productSlug,
-}: {
-	siteId: number | undefined;
-	productSlug: string | undefined;
-} ): GetProductVariants {
+/**
+ * Return all product variants for a particular product.
+ *
+ * This will return all available variants but you probably want to filter them
+ * using the `filterCallback` argument.
+ *
+ * `filterCallback` can safely be an anonymous function without causing
+ * identity stability issues (no need to use `useMemo` or `useCallback`).
+ *
+ * `filterCallback` gets two arguments: the first is a variant and the second
+ * is the term interval of the currently active plan, if any.
+ */
+export function useGetProductVariants(
+	product: ResponseCartProduct | undefined,
+	filterCallback?: VariantFilterCallback
+): WPCOMProductVariant[] {
 	const translate = useTranslate();
-	const reduxDispatch = useDispatch();
+	const filterCallbackMemoized = useStableCallback( filterCallback ?? fallbackFilter );
 
-	const variantProductSlugs = useVariantPlanProductSlugs( productSlug );
+	const variants = product?.product_variants ?? fallbackVariants;
+	const variantProductSlugs = variants.map( ( variant ) => variant.product_slug );
+	debug( 'variantProductSlugs', variantProductSlugs );
 
-	const productsWithPrices = useSelector( ( state ) => {
-		return computeProductsWithPrices(
-			state,
-			siteId,
-			variantProductSlugs, // : WPCOMProductSlug[]
-			0, // coupon: number
-			{} // couponDiscounts: object of product ID / absolute amount pairs
-		);
-	} );
+	const filteredVariants = useMemo( () => {
+		const convertedVariants = variants
+			.sort( sortVariant )
+			.map( ( variant ): WPCOMProductVariant | undefined => {
+				try {
+					const term = getBillingTermForMonths( variant.bill_period_in_months );
+					const introductoryTerms = variant.introductory_offer_terms;
+					return {
+						variantLabel: getTermText( term, translate ),
+						productSlug: variant.product_slug,
+						productId: variant.product_id,
+						priceInteger: variant.price_integer,
+						termIntervalInMonths: getBillingMonthsForTerm( term ),
+						termIntervalInDays: getTermDuration( term ) ?? 0,
+						introductoryInterval: introductoryTerms?.interval_count,
+						introductoryTerm: introductoryTerms?.interval_unit,
+						priceBeforeDiscounts: variant.price_before_discounts_integer,
+						currency: variant.currency,
+						productBillingTermInMonths: variant.bill_period_in_months,
+					};
+				} catch ( error ) {
+					// Three-year plans are not yet fully supported, so we need to guard
+					// against fatals here and ignore them.
+					logToLogstash( {
+						feature: 'calypso_client',
+						message: 'checkout variant picker variant error',
+						severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+						extra: {
+							env: config( 'env_id' ),
+							variant: JSON.stringify( variant ),
+							message: ( error as Error ).message + '; Stack: ' + ( error as Error ).stack,
+						},
+					} );
+				}
+			} )
+			.filter( isValueTruthy );
 
-	const [ haveFetchedProducts, setHaveFetchedProducts ] = useState( false );
-	const shouldFetchProducts = ! productsWithPrices;
+		return convertedVariants.filter( ( product ) => filterCallbackMemoized( product ) );
+	}, [ translate, variants, filterCallbackMemoized ] );
 
-	useEffect( () => {
-		debug( 'deciding whether to request product variant data' );
-		if ( shouldFetchProducts && ! haveFetchedProducts ) {
-			debug( 'dispatching request for product variant data' );
-			reduxDispatch( requestPlans() );
-			reduxDispatch( requestProductsList() );
-			setHaveFetchedProducts( true );
-		}
-	}, [ shouldFetchProducts, haveFetchedProducts, reduxDispatch ] );
-
-	const getProductVariant = ( variant: AvailableProductVariant ): WPCOMProductVariant => {
-		return {
-			variantLabel: getTermText( variant.plan.term, translate ),
-			variantDetails: <VariantPrice variant={ variant } />,
-			productSlug: variant.planSlug,
-			productId: variant.product.product_id,
-		};
-	};
-
-	return ( anyProductSlug: string ) => {
-		if ( anyProductSlug !== productSlug ) {
-			return [];
-		}
-
-		return productsWithPrices.map( getProductVariant );
-	};
+	return filteredVariants;
 }
 
-function VariantPrice( { variant }: { variant: AvailableProductVariant } ) {
-	const currentPrice = variant.priceFinal || variant.priceFull;
-	const isDiscounted = currentPrice !== variant.priceFullBeforeDiscount;
-	return (
-		<React.Fragment>
-			{ isDiscounted && <VariantPriceDiscount variant={ variant } /> }
-			{ isDiscounted && (
-				<DoNotPayThis>
-					{ myFormatCurrency( variant.priceFullBeforeDiscount, variant.product.currency_code ) }
-				</DoNotPayThis>
-			) }
-			{ myFormatCurrency( currentPrice, variant.product.currency_code ) }
-		</React.Fragment>
-	);
-}
-
-function VariantPriceDiscount( { variant }: { variant: AvailableProductVariant } ) {
-	const translate = useTranslate();
-	const discountPercentage = Math.round(
-		100 - ( variant.priceFinal / variant.priceFullBeforeDiscount ) * 100
-	);
-	return (
-		<Discount>
-			{ translate( 'Save %(percent)s%%', {
-				args: {
-					percent: discountPercentage,
-				},
-			} ) }
-		</Discount>
-	);
-}
-
-function useVariantPlanProductSlugs( productSlug: string | undefined ): string[] {
-	const reduxDispatch = useDispatch();
-
-	const chosenPlan = getPlan( productSlug );
-
-	const [ haveFetchedPlans, setHaveFetchedPlans ] = useState( false );
-	const shouldFetchPlans = ! chosenPlan;
-
-	useEffect( () => {
-		// Trigger at most one HTTP request
-		debug( 'deciding whether to request plan variant data' );
-		if ( shouldFetchPlans && ! haveFetchedPlans ) {
-			debug( 'dispatching request for plan variant data' );
-			reduxDispatch( requestPlans() );
-			reduxDispatch( requestProductsList() );
-			setHaveFetchedPlans( true );
-		}
-	}, [ haveFetchedPlans, shouldFetchPlans, reduxDispatch ] );
-
-	if ( ! chosenPlan ) {
-		return [];
+function sortVariant( a: ResponseCartProductVariant, b: ResponseCartProductVariant ) {
+	if ( a.bill_period_in_months < b.bill_period_in_months ) {
+		return -1;
 	}
-
-	// Only construct variants for WP.com and Jetpack plans
-	if ( chosenPlan.group !== GROUP_WPCOM && chosenPlan.group !== GROUP_JETPACK ) {
-		return [];
+	if ( a.bill_period_in_months > b.bill_period_in_months ) {
+		return 1;
 	}
-
-	// : WPCOMProductSlug[]
-	return findPlansKeys( {
-		group: chosenPlan.group,
-		type: chosenPlan.type,
-	} );
+	return 0;
 }
 
 function getTermText( term: string, translate: ReturnType< typeof useTranslate > ): string {
 	switch ( term ) {
 		case TERM_BIENNIALLY:
 			return String( translate( 'Two years' ) );
+
+		case TERM_TRIENNIALLY:
+			return String( translate( 'Three years' ) );
 
 		case TERM_ANNUALLY:
 			return String( translate( 'One year' ) );
@@ -195,12 +148,4 @@ function getTermText( term: string, translate: ReturnType< typeof useTranslate >
 		default:
 			return '';
 	}
-}
-
-function myFormatCurrency( price: number, code: string, options = {} ) {
-	const precision = CURRENCIES[ code ].precision;
-	const EPSILON = Math.pow( 10, -precision ) - 0.000000001;
-
-	const hasCents = Math.abs( price % 1 ) >= EPSILON;
-	return formatCurrency( price, code, hasCents ? options : { ...options, precision: 0 } );
 }

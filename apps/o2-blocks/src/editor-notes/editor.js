@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { registerBlockType } from '@wordpress/blocks';
 import { RichText } from '@wordpress/editor';
 

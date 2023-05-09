@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import page from 'page';
-
-/**
- * Internal dependencies
- */
 import untrailingslashit from './untrailingslashit';
 
 const appendQueryString = ( basepath: string, querystring: string ): string =>

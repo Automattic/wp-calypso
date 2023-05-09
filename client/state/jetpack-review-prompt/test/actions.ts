@@ -1,17 +1,4 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-
-// import { getIsDismissed, getIsValid } from '../selectors';
-// import { TIME_BETWEEN_PROMPTS } from '../constants';
 import { combineDismissPreference, combineValidPreference } from '../actions';
-
-const TEST_SITE_ID = 123456789;
 
 describe( 'actions', () => {
 	describe( 'Scan Review Prompt:', () => {
@@ -22,51 +9,40 @@ describe( 'actions', () => {
 				expect(
 					combineDismissPreference(
 						{
-							ui: {
-								selectedSiteId: TEST_SITE_ID,
-							},
 							preferences: {},
 						},
 						'scan',
 						dismissDate,
 						false
-					).scan[ TEST_SITE_ID ]
-				).to.have.property( 'dismissedAt', dismissDate );
+					).scan
+				).toHaveProperty( 'dismissedAt', dismissDate );
 			} );
 
 			test( 'should set dismissCount to 1 on initial dismiss', () => {
 				expect(
 					combineDismissPreference(
 						{
-							ui: {
-								selectedSiteId: TEST_SITE_ID,
-							},
 							preferences: {},
 						},
 						'scan',
 						Date.now(),
 						false
-					).scan[ TEST_SITE_ID ]
-				).to.have.property( 'dismissCount', 1 );
+					).scan
+				).toHaveProperty( 'dismissCount', 1 );
 			} );
 
 			test( 'should increment dismissCount', () => {
 				expect(
 					combineDismissPreference(
 						{
-							ui: {
-								selectedSiteId: TEST_SITE_ID,
-							},
 							preferences: {
 								localValues: {
 									'jetpack-review-prompt': {
 										scan: {
-											[ TEST_SITE_ID ]: {
-												dismissCount: 1,
-												dismissedAt: Date.now(),
-												validFrom: null,
-												reviewed: false,
-											},
+											dismissCount: 1,
+											dismissedAt: Date.now(),
+											validFrom: null,
+											reviewed: false,
 										},
 									},
 								},
@@ -75,24 +51,21 @@ describe( 'actions', () => {
 						'scan',
 						Date.now(),
 						false
-					).scan[ TEST_SITE_ID ]
-				).to.have.property( 'dismissCount', 2 );
+					).scan
+				).toHaveProperty( 'dismissCount', 2 );
 			} );
 
 			test( 'should set reviewed', () => {
 				expect(
 					combineDismissPreference(
 						{
-							ui: {
-								selectedSiteId: TEST_SITE_ID,
-							},
 							preferences: {},
 						},
 						'scan',
 						Date.now(),
 						true
-					).scan[ TEST_SITE_ID ]
-				).to.have.property( 'reviewed', true );
+					).scan
+				).toHaveProperty( 'reviewed', true );
 			} );
 
 			describe( 'combineValidPreference()', () => {
@@ -102,15 +75,12 @@ describe( 'actions', () => {
 					expect(
 						combineValidPreference(
 							{
-								ui: {
-									selectedSiteId: TEST_SITE_ID,
-								},
 								preferences: {},
 							},
 							'scan',
 							validFrom
-						).scan[ TEST_SITE_ID ]
-					).to.have.property( 'validFrom', validFrom );
+						).scan
+					).toHaveProperty( 'validFrom', validFrom );
 				} );
 			} );
 		} );
@@ -129,7 +99,7 @@ describe( 'actions', () => {
 						dismissDate,
 						false
 					).restore
-				).to.have.property( 'dismissedAt', dismissDate );
+				).toHaveProperty( 'dismissedAt', dismissDate );
 			} );
 
 			test( 'should set dismissCount to 1 on initial dismiss', () => {
@@ -142,7 +112,7 @@ describe( 'actions', () => {
 						Date.now(),
 						false
 					).restore
-				).to.have.property( 'dismissCount', 1 );
+				).toHaveProperty( 'dismissCount', 1 );
 			} );
 
 			test( 'should increment dismissCount', () => {
@@ -166,7 +136,7 @@ describe( 'actions', () => {
 						Date.now(),
 						false
 					).restore
-				).to.have.property( 'dismissCount', 2 );
+				).toHaveProperty( 'dismissCount', 2 );
 			} );
 
 			test( 'should set reviewed', () => {
@@ -179,7 +149,7 @@ describe( 'actions', () => {
 						Date.now(),
 						true
 					).restore
-				).to.have.property( 'reviewed', true );
+				).toHaveProperty( 'reviewed', true );
 			} );
 		} );
 
@@ -195,7 +165,7 @@ describe( 'actions', () => {
 						'restore',
 						validFrom
 					).restore
-				).to.have.property( 'validFrom', validFrom );
+				).toHaveProperty( 'validFrom', validFrom );
 			} );
 		} );
 	} );

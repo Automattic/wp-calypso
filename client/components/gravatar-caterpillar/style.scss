@@ -5,7 +5,7 @@
 
 .gravatar-caterpillar__gravatar {
 	cursor: pointer;
-	border: 2px solid var( --color-border-inverted );
+	border: 2px solid var(--color-border-inverted);
 	height: 24px;
 	margin-left: -8px;
 	vertical-align: middle;
@@ -18,8 +18,8 @@
 	&.is-hidden-on-small-screens {
 		display: none;
 
-		@include breakpoint-deprecated( '>660px' ) {
-   			display: inline;
-   		}
+		@include breakpoint-deprecated( ">660px" ) {
+			display: inline;
+		}
 	}
 }

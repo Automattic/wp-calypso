@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
 import freeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import reducer from '../reducer';
 import { keyToString } from 'calypso/reader/post-key';
 import {
 	READER_EXPAND_CARD,
 	READER_RESET_CARD_EXPANSIONS,
-} from 'calypso/state/reader/action-types';
+} from 'calypso/state/reader-ui/action-types';
+import reducer from '../reducer';
 
 describe( 'reducer', () => {
 	const postKey = freeze( { postId: 'postId', blogId: 'blogId' } );
@@ -21,7 +13,7 @@ describe( 'reducer', () => {
 		const action = freeze( {} );
 		const prevState = undefined;
 		const nextState = reducer( prevState, action );
-		expect( nextState ).eql( {} );
+		expect( nextState ).toEqual( {} );
 	} );
 
 	test( 'should add a newly expanded card to state', () => {
@@ -31,7 +23,7 @@ describe( 'reducer', () => {
 		} );
 		const prevState = freeze( {} );
 		const nextState = reducer( prevState, action );
-		expect( nextState ).eql( {
+		expect( nextState ).toEqual( {
 			[ keyToString( postKey ) ]: true,
 		} );
 	} );
@@ -42,6 +34,6 @@ describe( 'reducer', () => {
 			[ keyToString( postKey ) ]: true,
 		} );
 		const nextState = reducer( prevState, action );
-		expect( nextState ).eql( {} );
+		expect( nextState ).toEqual( {} );
 	} );
 } );

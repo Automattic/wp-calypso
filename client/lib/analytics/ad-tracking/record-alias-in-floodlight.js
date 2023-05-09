@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { isAdTrackingAllowed } from 'calypso/lib/analytics/utils';
-import { debug, isFloodlightEnabled } from './constants';
+import { mayWeTrackByTracker } from '../tracker-buckets';
+import { debug } from './constants';
 import { recordParamsInFloodlightGtag } from './floodlight';
 
 // Ensure setup has run.
@@ -14,7 +11,7 @@ import './setup';
  * @returns {void}
  */
 export function recordAliasInFloodlight() {
-	if ( ! isAdTrackingAllowed() || ! isFloodlightEnabled ) {
+	if ( ! mayWeTrackByTracker( 'floodlight' ) ) {
 		return;
 	}
 

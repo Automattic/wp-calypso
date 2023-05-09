@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent } from 'react';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
+import { Gridicon } from '@automattic/components';
+import { FunctionComponent } from 'react';
 
 interface Props {
 	icon?: string;

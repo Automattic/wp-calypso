@@ -1,12 +1,6 @@
 /* eslint-disable no-case-declarations */
-/**
- * External dependencies
- */
-import { filter, some, get, includes, keyBy, map, omit, reject } from 'lodash';
 
-/**
- * Internal dependencies
- */
+import { filter, some, includes, keyBy, map, omit, reject } from 'lodash';
 import {
 	READER_LIST_CREATE,
 	READER_LIST_DELETE,
@@ -27,16 +21,14 @@ import {
 	READER_LIST_ITEM_ADD_FEED_RECEIVE,
 } from 'calypso/state/reader/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
-import { itemsSchema, subscriptionsSchema, updatedListsSchema, errorsSchema } from './schema';
-
-const union = ( ...arrays ) => [ ...new Set( [].concat( ...arrays ) ) ];
+import { itemsSchema, subscriptionsSchema } from './schema';
 
 /**
  * Tracks all known list objects, indexed by list ID.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -102,9 +94,9 @@ export const listItems = ( state = {}, action ) => {
 /**
  * Tracks which list IDs the current user is subscribed to.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export const subscribedLists = withSchemaValidation(
 	subscriptionsSchema,
@@ -142,30 +134,11 @@ export const subscribedLists = withSchemaValidation(
 );
 
 /**
- * Tracks which list IDs have been updated recently. Used to show the correct success message.
- *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
- */
-export const updatedLists = withSchemaValidation( updatedListsSchema, ( state = [], action ) => {
-	switch ( action.type ) {
-		case READER_LIST_UPDATE_SUCCESS:
-			const newListId = get( action, 'data.list.ID' );
-			if ( ! newListId ) {
-				return state;
-			}
-			return union( state, [ newListId ] );
-	}
-	return state;
-} );
-
-/**
  * Returns the updated requests state after an action has been dispatched.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export function isRequestingList( state = false, action ) {
 	switch ( action.type ) {
@@ -181,9 +154,9 @@ export function isRequestingList( state = false, action ) {
 /**
  * Records if there is a pending list creation request.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export function isCreatingList( state = false, action ) {
 	switch ( action.type ) {
@@ -199,9 +172,9 @@ export function isCreatingList( state = false, action ) {
 /**
  * Records if there is a pending list update request.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export function isUpdatingList( state = false, action ) {
 	switch ( action.type ) {
@@ -217,9 +190,9 @@ export function isUpdatingList( state = false, action ) {
 /**
  * Returns the updated requests state after an action has been dispatched.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export function isRequestingLists( state = false, action ) {
 	switch ( action.type ) {
@@ -231,32 +204,12 @@ export function isRequestingLists( state = false, action ) {
 	return state;
 }
 
-/**
- * Returns errors received when trying to update lists, keyed by list ID.
- *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
- */
-export const errors = withSchemaValidation( errorsSchema, ( state = {}, action ) => {
-	switch ( action.type ) {
-		case READER_LIST_UPDATE_FAILURE:
-			const newError = {};
-			newError[ action.list.ID ] = action.error.statusCode;
-			return Object.assign( {}, state, newError );
-	}
-
-	return state;
-} );
-
 export default combineReducers( {
 	items,
 	listItems,
 	subscribedLists,
-	updatedLists,
 	isCreatingList,
 	isRequestingList,
 	isRequestingLists,
 	isUpdatingList,
-	errors,
 } );

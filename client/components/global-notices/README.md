@@ -11,7 +11,7 @@ Notices should be added by dispatching a notice action. See [notice actions](../
 Dispatching a notice from a component might look like this:
 
 ```js
-import { successNotices } from 'calypso/state/notices/actions';
+import { successNotice } from 'calypso/state/notices/actions';
 
 function MyComponent() {
 	return <button onClick={ this.props.successNotice( 'Objective achieved!' ) }>Click me!</button>;

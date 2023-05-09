@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import { get, find, trim } from 'lodash';
 import striptags from 'striptags';
-
-/**
- * Internal dependencies
- */
-import { formatExcerpt } from 'calypso/lib/post-normalizer/rule-create-better-excerpt';
 import { parseHtml } from 'calypso/lib/formatting';
+import { formatExcerpt } from 'calypso/lib/post-normalizer/rule-create-better-excerpt';
 
 const PREVIEW_IMAGE_WIDTH = 512;
 
@@ -64,7 +57,7 @@ export const getExcerptForPost = ( post ) => {
  * Returns a summary of a post, truncated approximately at the same length as our servers
  * and Facebook truncate it.
  *
- * @param {object} post A post object.
+ * @param {Object} post A post object.
  * @param {Function} translate The i18n-calypso function.
  * @param {number} maxWords Approximation of the truncation logic performed by our servers.
  * @returns {string} Post summary

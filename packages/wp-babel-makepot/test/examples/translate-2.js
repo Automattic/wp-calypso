@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { translate as _x } from 'i18n-calypso';
 
 function test() {

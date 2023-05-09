@@ -1,26 +1,25 @@
-/**
- * External dependencies
- */
+import { Button, Gridicon } from '@automattic/components';
+import { HelpCenter } from '@automattic/data-stores';
+import { shouldShowHelpCenterToUser } from '@automattic/help-center';
 import { isMobile } from '@automattic/viewport';
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import page from 'page';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
+import { withDispatch } from '@wordpress/data';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { getHappychatAuth } from 'calypso/state/happychat/utils';
-import hasUnreadMessages from 'calypso/state/happychat/selectors/has-unread-messages';
+import { localize } from 'i18n-calypso';
+import page from 'page';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { initConnection } from 'calypso/state/happychat/connection/actions';
 import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
+import hasUnreadMessages from 'calypso/state/happychat/selectors/has-unread-messages';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 import isHappychatConnectionUninitialized from 'calypso/state/happychat/selectors/is-happychat-connection-uninitialized';
-import { initConnection } from 'calypso/state/happychat/connection/actions';
 import { openChat } from 'calypso/state/happychat/ui/actions';
-import { Button } from '@automattic/components';
+import { getHappychatAuth } from 'calypso/state/happychat/utils';
+import './button.scss';
+
+const HELP_CENTER_STORE = HelpCenter.register();
 
 const noop = () => {};
 
@@ -29,6 +28,8 @@ export class HappychatButton extends Component {
 		allowMobileRedirect: PropTypes.bool,
 		borderless: PropTypes.bool,
 		primary: PropTypes.bool,
+		floating: PropTypes.bool,
+		withOffset: PropTypes.bool,
 		getAuth: PropTypes.func,
 		initConnection: PropTypes.func,
 		isChatActive: PropTypes.bool,
@@ -37,11 +38,16 @@ export class HappychatButton extends Component {
 		onClick: PropTypes.func,
 		openChat: PropTypes.func,
 		translate: PropTypes.func,
+		openHelpCenter: PropTypes.bool,
+		userId: PropTypes.number,
 	};
 
 	static defaultProps = {
 		allowMobileRedirect: false,
 		borderless: true,
+		primary: false,
+		floating: false,
+		withOffset: false,
 		getAuth: noop,
 		initConnection: noop,
 		isChatActive: false,
@@ -49,10 +55,13 @@ export class HappychatButton extends Component {
 		isConnectionUninitialized: false,
 		onClick: noop,
 		openChat: noop,
+		openHelpCenter: false,
 	};
 
 	onClick = ( event ) => {
-		if ( this.props.allowMobileRedirect && isMobile() ) {
+		if ( this.props.openHelpCenter || shouldShowHelpCenterToUser( this.props.userId ) ) {
+			this.props.setHelpCenterVisible( true );
+		} else if ( this.props.allowMobileRedirect && isMobile() ) {
 			// For mobile clients, happychat will always use the
 			// page component instead of the sidebar.
 			page( '/me/chat' );
@@ -76,12 +85,16 @@ export class HappychatButton extends Component {
 			className,
 			primary,
 			borderless,
+			floating,
+			withOffset,
 			hasUnread,
 			isChatAvailable,
 			isChatActive,
 		} = this.props;
 		const showButton = isChatAvailable || isChatActive;
 		const classes = classnames( 'happychat__button', className, {
+			'is-floating': floating,
+			'with-offset': withOffset,
 			'has-unread': hasUnread,
 		} );
 
@@ -103,16 +116,22 @@ export class HappychatButton extends Component {
 	}
 }
 
-export default connect(
-	( state ) => ( {
-		hasUnread: hasUnreadMessages( state ),
-		getAuth: getHappychatAuth( state ),
-		isChatAvailable: isHappychatAvailable( state ),
-		isChatActive: hasActiveHappychatSession( state ),
-		isConnectionUninitialized: isHappychatConnectionUninitialized( state ),
-	} ),
-	{
-		openChat,
-		initConnection,
-	}
-)( localize( HappychatButton ) );
+export default withDispatch( ( dataStoresDispatch ) => {
+	return { dataStoresDispatch };
+} )(
+	connect(
+		( state, ownProps ) => ( {
+			hasUnread: hasUnreadMessages( state ),
+			getAuth: getHappychatAuth( state ),
+			isChatAvailable: isHappychatAvailable( state ),
+			userId: getCurrentUserId( state ),
+			isChatActive: hasActiveHappychatSession( state ),
+			isConnectionUninitialized: isHappychatConnectionUninitialized( state ),
+			setHelpCenterVisible: ownProps.dataStoresDispatch( HELP_CENTER_STORE ).setShowHelpCenter,
+		} ),
+		{
+			openChat,
+			initConnection,
+		}
+	)( localize( HappychatButton ) )
+);

@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { merge } from 'lodash';
 import type { Action, AnyAction } from 'redux';
 import type { ThunkAction, ThunkDispatch } from 'redux-thunk';
@@ -16,7 +13,6 @@ function isThunk( action: Action | AnyThunkAction ): action is AnyThunkAction {
  * will include additional data in the action (as provided) when dispatched.
  *
  * @see 'client/state/utils/with-enhancers' for a more advanced alternative
- *
  * @param action Action object or thunk
  * @param data   Additional data to include in action
  * @returns Augmented action object or thunk

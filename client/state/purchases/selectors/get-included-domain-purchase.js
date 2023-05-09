@@ -1,17 +1,6 @@
-/**
- * External dependencies
- */
+import { isDomainRegistration, isDomainMapping } from '@automattic/calypso-products';
 import { find } from 'lodash';
-
-/**
- * Internal Dependencies
- */
 import { isSubscription } from 'calypso/lib/purchases';
-import {
-	getIncludedDomainPurchaseAmount,
-	isDomainRegistration,
-	isDomainMapping,
-} from '@automattic/calypso-products';
 import { getSitePurchases } from './get-site-purchases';
 
 import 'calypso/state/purchases/init';
@@ -23,15 +12,16 @@ import 'calypso/state/purchases/init';
  * not be returned if the domain product was paid for separately (eg: if it was
  * renewed on its own).
  *
- * @param   {object} state  global state
- * @param   {object} subscriptionPurchase  subscription purchase object
- * @returns {object} domain purchase if there is one, null if none found or not a subscription object passed
+ * @param   {Object} state  global state
+ * @param   {Object} subscriptionPurchase  subscription purchase object
+ * @returns {Object} domain purchase if there is one, null if none found or not a subscription object passed
  */
 export const getIncludedDomainPurchase = ( state, subscriptionPurchase ) => {
 	if (
 		! subscriptionPurchase ||
 		! isSubscription( subscriptionPurchase ) ||
-		getIncludedDomainPurchaseAmount( subscriptionPurchase )
+		subscriptionPurchase.included_domain_purchase_amount ||
+		subscriptionPurchase.includedDomainPurchaseAmount
 	) {
 		return null;
 	}

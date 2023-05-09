@@ -1,10 +1,7 @@
-/**
- * Internal dependencies
- */
-import wpcom from 'calypso/lib/wp';
-import { translate } from 'i18n-calypso';
 import config from '@automattic/calypso-config';
 import { create, supported } from '@github/webauthn-json';
+import { translate } from 'i18n-calypso';
+import wpcom from 'calypso/lib/wp';
 
 const POST = 'POST';
 
@@ -32,7 +29,9 @@ function wpcomApiRequest( path, _data, method ) {
 
 function isBrowser() {
 	try {
-		if ( ! window ) return false;
+		if ( ! window ) {
+			return false;
+		}
 	} catch ( err ) {
 		return false;
 	}

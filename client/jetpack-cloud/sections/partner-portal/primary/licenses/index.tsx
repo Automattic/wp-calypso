@@ -1,32 +1,30 @@
-/**
- * External dependencies
- */
-import React, { ReactElement } from 'react';
-import { useDispatch } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
-import Main from 'calypso/components/main';
+import { useTranslate } from 'i18n-calypso';
+import { useDispatch, useSelector } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
-import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
+import QueryJetpackPartnerPortalLicenseCounts from 'calypso/components/data/query-jetpack-partner-portal-license-counts';
+import Main from 'calypso/components/main';
+import SiteAddLicenseNotification from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-add-license-notification';
+import SiteWelcomeBanner from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-welcome-banner';
 import LicenseList from 'calypso/jetpack-cloud/sections/partner-portal/license-list';
+import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
+import LicenseStateFilter from 'calypso/jetpack-cloud/sections/partner-portal/license-state-filter';
+import SelectPartnerKeyDropdown from 'calypso/jetpack-cloud/sections/partner-portal/select-partner-key-dropdown';
+import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
 import {
 	LicenseFilter,
 	LicenseSortDirection,
 	LicenseSortField,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
-import LicenseStateFilter from 'calypso/jetpack-cloud/sections/partner-portal/license-state-filter';
-import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
-import SelectPartnerKeyDropdown from 'calypso/jetpack-cloud/sections/partner-portal/select-partner-key-dropdown';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import {
+	getLicenseCounts,
+	hasFetchedLicenseCounts,
+} from 'calypso/state/partner-portal/licenses/selectors';
+import { showAgencyDashboard } from 'calypso/state/partner-portal/partner/selectors';
+import OnboardingWidget from '../onboarding-widget';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 interface Props {
@@ -43,9 +41,13 @@ export default function Licenses( {
 	currentPage,
 	sortDirection,
 	sortField,
-}: Props ): ReactElement {
+}: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const isAgencyUser = useSelector( showAgencyDashboard );
+	const counts = useSelector( getLicenseCounts );
+	const hasFetched = useSelector( hasFetchedLicenseCounts );
+	const allLicensesCount = counts[ 'all' ];
 
 	const context = {
 		filter,
@@ -59,11 +61,15 @@ export default function Licenses( {
 		dispatch( recordTracksEvent( 'calypso_partner_portal_license_list_issue_license_click' ) );
 	};
 
+	const showEmptyStateContent = hasFetched && allLicensesCount === 0;
+
 	return (
 		<Main wideLayout className="licenses">
+			<QueryJetpackPartnerPortalLicenseCounts />
 			<DocumentHead title={ translate( 'Licenses' ) } />
 			<SidebarNavigation />
-
+			{ isAgencyUser && <SiteWelcomeBanner bannerKey="licenses-page" /> }
+			<SiteAddLicenseNotification />
 			<div className="licenses__header">
 				<CardHeading size={ 36 }>{ translate( 'Licenses' ) }</CardHeading>
 
@@ -79,11 +85,15 @@ export default function Licenses( {
 				</Button>
 			</div>
 
-			<LicenseListContext.Provider value={ context }>
-				<LicenseStateFilter />
+			{ showEmptyStateContent ? (
+				<OnboardingWidget isLicensesPage />
+			) : (
+				<LicenseListContext.Provider value={ context }>
+					<LicenseStateFilter />
 
-				<LicenseList />
-			</LicenseListContext.Provider>
+					<LicenseList />
+				</LicenseListContext.Provider>
+			) }
 		</Main>
 	);
 }

@@ -1,29 +1,19 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import CommentButton from 'calypso/blocks/comment-button';
-import LikeButton from 'calypso/reader/like-button';
-import ShareButton from 'calypso/blocks/reader-share';
-import PostEditButton from 'calypso/blocks/post-edit-button';
-import ReaderPostOptionsMenu from 'calypso/blocks/reader-post-options-menu';
-import { shouldShowComments } from 'calypso/blocks/comments/helper';
-import { shouldShowLikes } from 'calypso/reader/like-helper';
-import { shouldShowShare } from 'calypso/blocks/reader-share/helper';
-import { userCan } from 'calypso/state/posts/utils';
-import * as stats from 'calypso/reader/stats';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import CommentButton from 'calypso/blocks/comment-button';
+import { shouldShowComments } from 'calypso/blocks/comments/helper';
+import PostEditButton from 'calypso/blocks/post-edit-button';
+import ShareButton from 'calypso/blocks/reader-share';
+import { shouldShowShare } from 'calypso/blocks/reader-share/helper';
 import ReaderVisitLink from 'calypso/blocks/reader-visit-link';
+import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
+import ReaderFollowButton from 'calypso/reader/follow-button';
+import LikeButton from 'calypso/reader/like-button';
+import { shouldShowLikes } from 'calypso/reader/like-helper';
+import * as stats from 'calypso/reader/stats';
+import { userCan } from 'calypso/state/posts/utils';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const ReaderPostActions = ( props ) => {
@@ -33,8 +23,6 @@ const ReaderPostActions = ( props ) => {
 		onCommentClick,
 		showEdit,
 		showVisit,
-		showMenu,
-		showMenuFollow,
 		iconSize,
 		className,
 		visitUrl,
@@ -78,6 +66,11 @@ const ReaderPostActions = ( props ) => {
 					/>
 				</li>
 			) }
+			{ shouldShowLikes( post ) && (
+				<li className="reader-post-actions__item">
+					<ReaderFollowButton siteUrl={ post.feed_URL || post.site_URL } iconSize={ iconSize } />
+				</li>
+			) }
 			{ shouldShowShare( post ) && (
 				<li className="reader-post-actions__item">
 					<ShareButton post={ post } position="bottom" tagName="div" iconSize={ iconSize } />
@@ -90,7 +83,7 @@ const ReaderPostActions = ( props ) => {
 						commentCount={ post.discussion.comment_count }
 						onClick={ onCommentClick }
 						tagName="button"
-						size={ iconSize }
+						icon={ ReaderCommentIcon( { iconSize: iconSize } ) }
 					/>
 				</li>
 			) }
@@ -107,16 +100,7 @@ const ReaderPostActions = ( props ) => {
 						forceCounter={ true }
 						iconSize={ iconSize }
 						showZeroCount={ false }
-						likeSource={ 'reader' }
-					/>
-				</li>
-			) }
-			{ showMenu && (
-				<li className="reader-post-actions__item">
-					<ReaderPostOptionsMenu
-						className="ignore-click"
-						showFollow={ showMenuFollow }
-						post={ post }
+						likeSource="reader"
 					/>
 				</li>
 			) }
@@ -131,8 +115,6 @@ ReaderPostActions.propTypes = {
 	onCommentClick: PropTypes.func,
 	showEdit: PropTypes.bool,
 	iconSize: PropTypes.number,
-	showMenu: PropTypes.bool,
-	showMenuFollow: PropTypes.bool,
 	visitUrl: PropTypes.string,
 	fullPost: PropTypes.bool,
 };
@@ -140,9 +122,7 @@ ReaderPostActions.propTypes = {
 ReaderPostActions.defaultProps = {
 	showEdit: true,
 	showVisit: false,
-	showMenu: false,
-	iconSize: 24,
-	showMenuFollow: true,
+	iconSize: 20,
 };
 
 export default localize( ReaderPostActions );

@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { tourBranching } from '../tour-branching';
 
 describe( 'Guided Tours Branching', () => {

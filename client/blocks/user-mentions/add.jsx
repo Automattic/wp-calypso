@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import React, { Fragment } from 'react';
+import { escapeRegExp, findIndex, get, throttle, pick } from 'lodash';
+import { createRef, Component, Fragment } from 'react';
 import getCaretCoordinates from 'textarea-caret';
-import { escapeRegExp, findIndex, get, includes, throttle, pick } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import UserMentionSuggestionList from './suggestion-list';
 
 const keys = { tab: 9, enter: 13, esc: 27, spaceBar: 32, upArrow: 38, downArrow: 40 };
@@ -18,12 +11,11 @@ const keys = { tab: 9, enter: 13, esc: 27, spaceBar: 32, upArrow: 38, downArrow:
  * Suggestions can be provided via the suggestions prop, or by the connectUserMentions higher-order component.
  *
  * @example addUserMentions( Component )
- *
- * @param {object} WrappedComponent - React component to wrap
- * @returns {object} the enhanced component
+ * @param {Object} WrappedComponent - React component to wrap
+ * @returns {Object} the enhanced component
  */
 export default ( WrappedComponent ) =>
-	class AddUserMentions extends React.Component {
+	class AddUserMentions extends Component {
 		matchingSuggestions = [];
 
 		static displayName = `withUserMentions( ${
@@ -41,7 +33,7 @@ export default ( WrappedComponent ) =>
 		constructor( props ) {
 			super( props );
 			// create a ref to store the textarea DOM element
-			this.textInput = React.createRef();
+			this.textInput = createRef();
 		}
 
 		componentDidMount() {
@@ -88,12 +80,12 @@ export default ( WrappedComponent ) =>
 			const selectedIndex = this.getSelectedSuggestionIndex();
 
 			// Cancel Enter and Tab default actions so we can define our own in keyUp
-			if ( includes( [ keys.enter, keys.tab ], event.keyCode ) ) {
+			if ( [ keys.enter, keys.tab ].includes( event.keyCode ) ) {
 				event.preventDefault();
 				return false;
 			}
 
-			if ( ! includes( [ keys.upArrow, keys.downArrow ], event.keyCode ) || -1 === selectedIndex ) {
+			if ( ! [ keys.upArrow, keys.downArrow ].includes( event.keyCode ) || -1 === selectedIndex ) {
 				return;
 			}
 
@@ -117,15 +109,15 @@ export default ( WrappedComponent ) =>
 		};
 
 		handleKeyUp = ( event ) => {
-			if ( includes( [ keys.downArrow, keys.upArrow ], event.keyCode ) ) {
+			if ( [ keys.downArrow, keys.upArrow ].includes( event.keyCode ) ) {
 				return;
 			}
 
-			if ( includes( [ keys.spaceBar, keys.esc ], event.keyCode ) ) {
+			if ( [ keys.spaceBar, keys.esc ].includes( event.keyCode ) ) {
 				return this.hidePopover();
 			}
 
-			if ( includes( [ keys.enter, keys.tab ], event.keyCode ) ) {
+			if ( [ keys.enter, keys.tab ].includes( event.keyCode ) ) {
 				if ( ! this.state.showPopover || this.matchingSuggestions.length === 0 ) {
 					return;
 				}

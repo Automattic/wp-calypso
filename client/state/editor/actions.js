@@ -1,17 +1,7 @@
-/**
- * External dependencies
- */
-import { filter } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { EDITOR_IFRAME_LOADED, EDITOR_START, EDITOR_STOP } from 'calypso/state/action-types';
-import { ModalViews } from 'calypso/state/ui/media-modal/constants';
+import { withAnalytics, bumpStat } from 'calypso/state/analytics/actions';
 import { setMediaModalView } from 'calypso/state/ui/media-modal/actions';
-import { withAnalytics, bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { savePreference } from 'calypso/state/preferences/actions';
-import { getPreference } from 'calypso/state/preferences/selectors';
+import { ModalViews } from 'calypso/state/ui/media-modal/constants';
 
 import 'calypso/state/editor/init';
 import 'calypso/state/ui/init';
@@ -64,7 +54,7 @@ export function stopEditingPost( siteId, postId ) {
  * view should be updated in the context of the post editor.
  *
  * @param  {ModalViews} view Media view
- * @returns {object}          Action object
+ * @returns {Object}          Action object
  */
 export function setEditorMediaModalView( view ) {
 	const action = setMediaModalView( view );
@@ -75,41 +65,6 @@ export function setEditorMediaModalView( view ) {
 	}
 
 	return action;
-}
-
-/**
- * Returns an action object used in signalling that the confirmation sidebar
- * preference has changed.
- *
- * @param  {number}  siteId    Site ID
- * @param  {?boolean}   isEnabled Whether or not the sidebar should be shown
- * @returns {object}            Action object
- */
-export function saveConfirmationSidebarPreference( siteId, isEnabled = true ) {
-	return ( dispatch, getState ) => {
-		const disabledSites = getPreference( getState(), 'editorConfirmationDisabledSites' );
-
-		if ( isEnabled ) {
-			dispatch(
-				savePreference(
-					'editorConfirmationDisabledSites',
-					filter( disabledSites, ( _siteId ) => siteId !== _siteId )
-				)
-			);
-		} else {
-			dispatch( savePreference( 'editorConfirmationDisabledSites', [ ...disabledSites, siteId ] ) );
-		}
-
-		dispatch(
-			recordTracksEvent(
-				isEnabled
-					? 'calypso_publish_confirmation_preference_enable'
-					: 'calypso_publish_confirmation_preference_disable'
-			)
-		);
-
-		dispatch( bumpStat( 'calypso_publish_confirmation', isEnabled ? 'enabled' : 'disabled' ) );
-	};
 }
 
 export const setEditorIframeLoaded = ( isIframeLoaded = true, iframePort = null ) => ( {

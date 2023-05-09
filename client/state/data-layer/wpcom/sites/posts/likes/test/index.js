@@ -1,13 +1,6 @@
-/**
- * External Dependencies
- */
-
-/**
- * Internal Dependencies
- */
-import { fetch, fromApi, onSuccess } from '../';
 import { POST_LIKES_REQUEST } from 'calypso/state//action-types';
 import { receiveLikes } from 'calypso/state/posts/likes/actions';
+import { fetch, fromApi, onSuccess } from '../';
 
 describe( 'fromApi', () => {
 	test( 'transforms to standard output', () => {

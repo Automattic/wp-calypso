@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getDistanceBetweenRecs, RECS_PER_BLOCK } from 'calypso/reader/stream/utils';
 import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import getReaderStream from 'calypso/state/reader/streams/selectors/get-reader-stream';

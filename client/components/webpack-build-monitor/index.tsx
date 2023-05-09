@@ -1,18 +1,8 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent, useEffect, useState } from 'react';
+import { Spinner } from '@automattic/components';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import Spinner from 'calypso/components/spinner';
+import { FunctionComponent, useEffect, useState } from 'react';
 import connectToWebpackServer, { BuildState } from './webpack-client';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function getMessage( buildState: BuildState ) {

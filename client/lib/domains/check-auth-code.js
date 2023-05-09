@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
 
 export function checkAuthCode( domainName, authCode, onComplete ) {
@@ -9,12 +6,10 @@ export function checkAuthCode( domainName, authCode, onComplete ) {
 		return;
 	}
 
-	wpcom.undocumented().checkAuthCode( domainName, authCode, function ( serverError, result ) {
-		if ( serverError ) {
-			onComplete( { error: serverError.error, message: serverError.message } );
-			return;
-		}
-
-		onComplete( null, result );
-	} );
+	wpcom.req
+		.get( `/domains/${ encodeURIComponent( domainName ) }/inbound-transfer-check-auth-code`, {
+			auth_code: authCode,
+		} )
+		.then( ( data ) => onComplete( null, data ) )
+		.catch( ( error ) => onComplete( error ) );
 }

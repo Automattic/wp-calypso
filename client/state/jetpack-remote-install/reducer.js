@@ -1,13 +1,22 @@
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
-import { combineReducers, keyedReducer } from 'calypso/state/utils';
 import {
 	JETPACK_REMOTE_INSTALL,
 	JETPACK_REMOTE_INSTALL_FAILURE,
 	JETPACK_REMOTE_INSTALL_SUCCESS,
 } from 'calypso/state/action-types';
+import { combineReducers, keyedReducer } from 'calypso/state/utils';
+
+export const isRemoteInstallingJetpack = keyedReducer( 'url', ( state = false, { type } ) => {
+	switch ( type ) {
+		case JETPACK_REMOTE_INSTALL:
+			return true;
+		case JETPACK_REMOTE_INSTALL_SUCCESS:
+		case JETPACK_REMOTE_INSTALL_FAILURE:
+			return false;
+		default:
+			return state;
+	}
+} );
 
 export const isComplete = keyedReducer( 'url', ( state = false, { type } ) => {
 	switch ( type ) {
@@ -51,6 +60,7 @@ const combinedReducer = combineReducers( {
 	errorCode: errorCodeReducer,
 	errorMessage: errorMessageReducer,
 	isComplete,
+	isRemoteInstallingJetpack,
 } );
 
 export default withStorageKey( 'jetpackRemoteInstall', combinedReducer );

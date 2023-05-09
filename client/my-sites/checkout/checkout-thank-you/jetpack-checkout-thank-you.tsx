@@ -1,23 +1,14 @@
-/**
- * External dependencies
- */
-import { useSelector } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent, useEffect } from 'react';
-
-/**
- * Internal dependencies
- */
 import { Button, Card } from '@automattic/components';
-import { getHttpData, DataState, requestHttpData } from 'calypso/state/data-layer/http-data';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import JetpackLogo from 'calypso/components/jetpack-logo';
+import { useQuery } from '@tanstack/react-query';
+import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
 import QueryProducts from 'calypso/components/data/query-products-list';
-import {
-	isProductsListFetching as getIsProductListFetching,
-	getProductName,
-} from 'calypso/state/products-list/selectors';
+import JetpackLogo from 'calypso/components/jetpack-logo';
 import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import wpcom from 'calypso/lib/wp';
+import { isProductsListFetching, getProductName } from 'calypso/state/products-list/selectors';
+import type { FunctionComponent } from 'react';
 
 interface Props {
 	site: number | string;
@@ -25,30 +16,21 @@ interface Props {
 	isUserlessCheckoutFlow: boolean;
 }
 
-const getRequestUnauthorizedSiteId = ( siteId: string | number ): string =>
-	`unauthorized-site:${ siteId }`;
+interface Site {
+	name: string;
+	URL: string;
+}
 
-const requestUnauthorizedSite = ( siteId: string | number ) =>
-	requestHttpData(
-		getRequestUnauthorizedSiteId( siteId ),
-		http(
-			{
-				apiVersion: '1.2',
-				method: 'GET',
-				path: `/sites/${ siteId }`,
-			},
-			{}
-		),
-		{
-			fromApi: () => ( data ) => {
-				return [ [ getRequestUnauthorizedSiteId( siteId ), data ] ];
-			},
-			freshness: -Infinity,
-		}
+function useSiteQuery( siteId: string | number ) {
+	return useQuery< Site >(
+		[ 'unauthorized-site', siteId ],
+		() => wpcom.req.get( { path: `/sites/${ siteId }`, apiVersion: '1.2' } ),
+		{ meta: { persist: false } }
 	);
+}
 
 const JetpackCheckoutThankYou: FunctionComponent< Props > = ( {
-	site: siteFragment,
+	site,
 	productSlug,
 	isUserlessCheckoutFlow = false,
 } ) => {
@@ -58,27 +40,23 @@ const JetpackCheckoutThankYou: FunctionComponent< Props > = ( {
 
 	const productName = useSelector( ( state ) =>
 		hasProductInfo ? getProductName( state, productSlug ) : null
-	) as string | null;
+	);
 
-	const isProductListFetching = useSelector( ( state ) =>
-		getIsProductListFetching( state )
-	) as boolean;
+	const productListFetching = useSelector( isProductsListFetching );
 
-	const {
-		state: requestState,
-		data: { name: siteName, URL: siteUrl } = { name: null, URL: null },
-		// error: requestError,
-	} = useSelector( () => getHttpData( getRequestUnauthorizedSiteId( siteFragment ) ) );
-
-	const isLoading =
-		! [ DataState.Success, DataState.Failure ].includes( requestState ) || isProductListFetching;
-
-	useEffect( () => {
-		requestUnauthorizedSite( siteFragment );
-	}, [ siteFragment ] );
+	const siteRequest = useSiteQuery( site );
+	const siteName = siteRequest.data?.name;
+	const siteUrl = siteRequest.data?.URL;
+	const isLoading = siteRequest.isLoading || productListFetching;
 
 	return (
 		<Main className="jetpack-checkout-thank-you">
+			<PageViewTracker
+				options={ { useJetpackGoogleAnalytics: true } }
+				path="/checkout/jetpack/thank-you/:site/:product"
+				properties={ { product_slug: productSlug } }
+				title="Checkout > Jetpack Thank You"
+			/>
 			<Card className="jetpack-checkout-thank-you__card">
 				<JetpackLogo full size={ 45 } />
 				{ hasProductInfo && <QueryProducts type="jetpack" /> }

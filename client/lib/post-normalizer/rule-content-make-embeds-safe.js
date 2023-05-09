@@ -1,17 +1,11 @@
-/**
- * External dependencies
- */
-import { some, forEach, startsWith } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { iframeIsAllowed } from './utils';
 import { getUrlParts } from '@automattic/calypso-url';
+import { some, forEach, startsWith } from 'lodash';
+import { iframeIsAllowed } from './utils';
 
-/** Given an iframe, is it okay to have it run without a sandbox?
+/**
+ * Given an iframe, is it okay to have it run without a sandbox?
  *
- * @param {object} iframe - the iframe to check
+ * @param {Object} iframe - the iframe to check
  * @returns {boolean} true/false if we trust the source and we know they don't work in a sandbox
  */
 function doesNotNeedSandbox( iframe ) {
@@ -49,7 +43,7 @@ export default function makeEmbedsSafe( post, dom ) {
 		} else if ( iframeIsAllowed( iframe ) ) {
 			iframe.setAttribute( 'sandbox', 'allow-same-origin allow-scripts allow-popups' );
 		} else {
-			iframe.setAttribute( 'sandbox', '' );
+			iframe.setAttribute( 'sandbox', 'allow-scripts' );
 		}
 	} );
 

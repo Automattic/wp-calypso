@@ -1,38 +1,32 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
+import { getUrlParts } from '@automattic/calypso-url';
+import { Gridicon } from '@automattic/components';
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import config from '@automattic/calypso-config';
 import ExternalLink from 'calypso/components/external-link';
-import Gridicon from 'calypso/components/gridicon';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
-import { getSignupUrl } from 'calypso/lib/login';
+import { isDomainConnectAuthorizePath } from 'calypso/lib/domains/utils';
+import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
 import {
 	isCrowdsignalOAuth2Client,
 	isJetpackCloudOAuth2Client,
 	isWooOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
-import { getUrlParts } from '@automattic/calypso-url';
+import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { resetMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
+import { isPartnerSignupQuery } from 'calypso/state/login/utils';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { login, lostPassword } from 'calypso/lib/paths';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
-import { resetMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
-import { isDomainConnectAuthorizePath } from 'calypso/lib/domains/utils';
 
-export class LoginLinks extends React.Component {
+export class LoginLinks extends Component {
 	static propTypes = {
 		isLoggedIn: PropTypes.bool.isRequired,
 		locale: PropTypes.string.isRequired,
@@ -43,14 +37,15 @@ export class LoginLinks extends React.Component {
 		resetMagicLoginRequestForm: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string,
-		isGutenboarding: PropTypes.bool.isRequired,
 		usernameOrEmail: PropTypes.string,
+		isPartnerSignup: PropTypes.bool,
+		isGravatar: PropTypes.bool,
 	};
 
 	constructor( props ) {
 		super( props );
 
-		this.loginLinkRef = React.createRef();
+		this.loginLinkRef = createRef();
 	}
 
 	componentDidMount() {
@@ -74,7 +69,7 @@ export class LoginLinks extends React.Component {
 
 		this.props.recordTracksEvent( 'calypso_login_lost_phone_link_click' );
 
-		page( login( { twoFactorAuthType: 'backup', isGutenboarding: this.props.isGutenboarding } ) );
+		page( login( { twoFactorAuthType: 'backup' } ) );
 	};
 
 	handleMagicLoginLinkClick = ( event ) => {
@@ -109,22 +104,32 @@ export class LoginLinks extends React.Component {
 		const loginParameters = {
 			locale: this.props.locale,
 			twoFactorAuthType: 'link',
+			signupUrl: this.props.query?.signup_url,
+			oauth2ClientId: this.props.oauth2ClientId,
 		};
 
 		if ( this.props.currentRoute === '/log-in/jetpack' ) {
 			loginParameters.twoFactorAuthType = 'jetpack/link';
-		} else if ( this.props.isGutenboarding ) {
-			loginParameters.twoFactorAuthType = 'new/link';
 		}
 
 		return login( loginParameters );
+	};
+
+	getLoginLinkText = () => {
+		if ( this.props.isP2Login ) {
+			return this.props.translate( 'Get a login link on your email' );
+		}
+
+		return this.props.translate( 'Email me a login link' );
 	};
 
 	renderBackLink() {
 		if (
 			isCrowdsignalOAuth2Client( this.props.oauth2Client ) ||
 			isJetpackCloudOAuth2Client( this.props.oauth2Client ) ||
-			this.props.isGutenboarding
+			this.props.isWhiteLogin ||
+			this.props.isP2Login ||
+			this.props.isPartnerSignup
 		) {
 			return null;
 		}
@@ -240,9 +245,35 @@ export class LoginLinks extends React.Component {
 				key="magic-login-link"
 				data-e2e-link="magic-login-link"
 			>
-				{ this.props.translate( 'Email me a login link' ) }
+				{ this.getLoginLinkText() }
 			</a>
 		);
+	}
+
+	renderQrCodeLoginLink() {
+		if ( this.props.twoFactorAuthType ) {
+			return null;
+		}
+		if ( this.props.isLoggedIn ) {
+			return null;
+		}
+
+		// Is not supported for any oauth 2 client.
+		if ( this.props.oauth2Client ) {
+			return null;
+		}
+
+		if ( this.props.isJetpackWooCommerceFlow ) {
+			return null;
+		}
+
+		const loginUrl = login( {
+			locale: this.props.locale,
+			twoFactorAuthType: 'qr',
+			redirectTo: this.props.query?.redirect_to,
+			signupUrl: this.props.query?.signup_url,
+		} );
+		return <a href={ loginUrl }>{ this.props.translate( 'Login via the mobile app' ) }</a>;
 	}
 
 	renderResetPasswordLink() {
@@ -252,9 +283,9 @@ export class LoginLinks extends React.Component {
 
 		let lostPasswordUrl = lostPassword( { locale: this.props.locale } );
 
-		// If we got here coming from Jetpack Cloud login page, we want to go back
+		// If we got here coming from Jetpack Cloud / Gravatar login page, we want to go back
 		// to it after we finish the process
-		if ( isJetpackCloudOAuth2Client( this.props.oauth2Client ) ) {
+		if ( isJetpackCloudOAuth2Client( this.props.oauth2Client ) || this.props.isGravatar ) {
 			const currentUrl = new URL( window.location.href );
 			currentUrl.searchParams.append( 'lostpassword_flow', true );
 			const queryArgs = {
@@ -284,7 +315,8 @@ export class LoginLinks extends React.Component {
 		// Taken from client/layout/masterbar/logged-out.jsx
 		const {
 			currentRoute,
-			isGutenboarding,
+			isP2Login,
+			isGravatar,
 			locale,
 			oauth2Client,
 			pathname,
@@ -293,17 +325,24 @@ export class LoginLinks extends React.Component {
 			usernameOrEmail,
 		} = this.props;
 
-		const signupUrl = getSignupUrl(
-			query,
-			currentRoute,
-			oauth2Client,
-			locale,
-			pathname,
-			isGutenboarding
-		);
+		if ( isGravatar ) {
+			return null;
+		}
+
+		// use '?signup_url' if explicitly passed as URL query param
+		const signupUrl = this.props.signupUrl
+			? window.location.origin + pathWithLeadingSlash( this.props.signupUrl )
+			: getSignupUrl( query, currentRoute, oauth2Client, locale, pathname );
 
 		if ( isJetpackCloudOAuth2Client( oauth2Client ) && '/log-in/authenticator' !== currentRoute ) {
 			return null;
+		}
+
+		if ( isP2Login && query?.redirect_to ) {
+			const urlParts = getUrlParts( query.redirect_to );
+			if ( urlParts.pathname.startsWith( '/accept-invite/' ) ) {
+				return null;
+			}
 		}
 
 		return (
@@ -325,11 +364,17 @@ export class LoginLinks extends React.Component {
 
 	render() {
 		return (
-			<div className="wp-login__links">
+			<div
+				className={ classnames( 'wp-login__links', {
+					'has-2fa-links': this.props.twoFactorAuthType,
+					'is-gravatar-links': this.props.isGravatar,
+				} ) }
+			>
 				{ this.renderSignUpLink() }
 				{ this.renderLostPhoneLink() }
 				{ this.renderHelpLink() }
 				{ this.renderMagicLoginLink() }
+				{ this.renderQrCodeLoginLink() }
 				{ this.renderResetPasswordLink() }
 				{ ! config.isEnabled( 'desktop' ) && this.renderBackLink() }
 			</div>
@@ -343,9 +388,9 @@ export default connect(
 		isLoggedIn: Boolean( getCurrentUserId( state ) ),
 		oauth2Client: getCurrentOAuth2Client( state ),
 		query: getCurrentQueryArguments( state ),
-		isJetpackWooCommerceFlow:
-			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
-		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
+		isJetpackWooCommerceFlow: 'woocommerce-onboarding' === getCurrentQueryArguments( state ).from,
+		wccomFrom: getCurrentQueryArguments( state )[ 'wccom-from' ],
+		isPartnerSignup: isPartnerSignupQuery( getCurrentQueryArguments( state ) ),
 	} ),
 	{
 		recordTracksEvent,

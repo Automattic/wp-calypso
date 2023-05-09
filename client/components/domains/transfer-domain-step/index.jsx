@@ -1,18 +1,28 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
+import { PLAN_PERSONAL, isPlan } from '@automattic/calypso-products';
+import { Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { withShoppingCart } from '@automattic/shopping-cart';
+import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
 import page from 'page';
+import PropTypes from 'prop-types';
 import { stringify } from 'qs';
-import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import QueryPlans from 'calypso/components/data/query-plans';
+import QueryProducts from 'calypso/components/data/query-products-list';
+import DomainRegistrationSuggestion from 'calypso/components/domains/domain-registration-suggestion';
+import TransferRestrictionMessage from 'calypso/components/domains/transfer-domain-step/transfer-restriction-message';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import HeaderCake from 'calypso/components/header-cake';
+import Notice from 'calypso/components/notice';
+import {
+	isDomainBundledWithPlan,
+	isNextDomainFree,
+	hasToUpgradeToPayForADomain,
+} from 'calypso/lib/cart-values/cart-items';
 import {
 	checkAuthCode,
 	checkDomainAvailability,
@@ -24,46 +34,29 @@ import {
 	getTld,
 	startInboundTransfer,
 } from 'calypso/lib/domains';
-import { getProductsList } from 'calypso/state/products-list/selectors';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
-import DomainRegistrationSuggestion from 'calypso/components/domains/domain-registration-suggestion';
-import { getCurrentUser, getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import Notice from 'calypso/components/notice';
+import { INCOMING_DOMAIN_TRANSFER } from 'calypso/lib/url/support';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
+import { domainManagementTransferIn } from 'calypso/my-sites/domains/paths';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
-import FormTextInput from 'calypso/components/forms/form-text-input';
-import TransferDomainPrecheck from './transfer-domain-precheck';
-import { INCOMING_DOMAIN_TRANSFER } from 'calypso/lib/url/support';
-import HeaderCake from 'calypso/components/header-cake';
-import { Button } from '@automattic/components';
-import TransferRestrictionMessage from 'calypso/components/domains/transfer-domain-step/transfer-restriction-message';
-import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
-import { domainManagementTransferIn } from 'calypso/my-sites/domains/paths';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
-import QueryProducts from 'calypso/components/data/query-products-list';
-import QueryPlans from 'calypso/components/data/query-plans';
-import { PLAN_PERSONAL, isPlan } from '@automattic/calypso-products';
-import {
-	isDomainBundledWithPlan,
-	isNextDomainFree,
-	hasToUpgradeToPayForADomain,
-} from 'calypso/lib/cart-values/cart-items';
-import { withShoppingCart } from '@automattic/shopping-cart';
+import { getProductsList } from 'calypso/state/products-list/selectors';
+import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import TransferDomainPrecheck from './transfer-domain-precheck';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};
 
-class TransferDomainStep extends React.Component {
+class TransferDomainStep extends Component {
 	static propTypes = {
 		analyticsSection: PropTypes.string.isRequired,
 		basePath: PropTypes.string,
@@ -104,6 +97,7 @@ class TransferDomainStep extends React.Component {
 		};
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		if ( this.props.initialState ) {
 			this.setState( Object.assign( {}, this.props.initialState, this.getDefaultState() ) );
@@ -287,7 +281,7 @@ class TransferDomainStep extends React.Component {
 								components: {
 									a: (
 										<a
-											href={ INCOMING_DOMAIN_TRANSFER }
+											href={ localizeUrl( INCOMING_DOMAIN_TRANSFER ) }
 											rel="noopener noreferrer"
 											target="_blank"
 										/>
@@ -304,14 +298,14 @@ class TransferDomainStep extends React.Component {
 	startPendingInboundTransfer = ( domain, authCode ) => {
 		const { selectedSite, translate } = this.props;
 
-		startInboundTransfer( selectedSite.ID, domain, authCode, ( error, result ) => {
-			if ( result ) {
+		startInboundTransfer( selectedSite.ID, domain, authCode )
+			.then( () => {
 				this.props.fetchSiteDomains( selectedSite.ID );
 				page( domainManagementTransferIn( selectedSite.slug, domain ) );
-			} else {
+			} )
+			.catch( () => {
 				this.props.errorNotice( translate( 'We were unable to start the transfer.' ) );
-			}
-		} );
+			} );
 	};
 
 	getTransferDomainPrecheck() {
@@ -361,12 +355,8 @@ class TransferDomainStep extends React.Component {
 
 	getTransferRestrictionMessage() {
 		const { domain, inboundTransferStatus } = this.state;
-		const {
-			creationDate,
-			termMaximumInYears,
-			transferEligibleDate,
-			transferRestrictionStatus,
-		} = inboundTransferStatus;
+		const { creationDate, termMaximumInYears, transferEligibleDate, transferRestrictionStatus } =
+			inboundTransferStatus;
 
 		return (
 			<TransferRestrictionMessage
@@ -451,10 +441,10 @@ class TransferDomainStep extends React.Component {
 		}
 
 		return (
-			<div className={ 'transfer-domain-step__domain-availability' }>
+			<div className="transfer-domain-step__domain-availability">
 				<DomainRegistrationSuggestion
 					cart={ this.props.cart }
-					isCartPendingUpdate={ this.props.cart.hasPendingServerUpdates }
+					isCartPendingUpdate={ this.props.shoppingCartManager.isPendingUpdate }
 					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 					key={ suggestion.domain_name }
 					onButtonClick={ this.registerSuggestedDomain }
@@ -555,8 +545,8 @@ class TransferDomainStep extends React.Component {
 
 							this.setState( {
 								notice: this.props.translate(
-									"This domain is available to be registered, but we don't support transfers for domains ending with {{strong}}.%(tld)s{{/strong}}. " +
-										'If you register it elsewhere, you can {{a}}map it{{/a}} instead.',
+									'This domain appears to be available for registration, however we do not offer registrations or accept transfers for domains ending in {{strong}}.%(tld)s{{/strong}}. ' +
+										'If you register it elsewhere, you can {{a}}connect it{{/a}} to your WordPress.com site instead.',
 									{
 										args: { tld },
 										components: {
@@ -590,6 +580,22 @@ class TransferDomainStep extends React.Component {
 							} );
 							break;
 						}
+						case domainAvailability.RECENT_REGISTRATION_LOCK_NOT_TRANSFERRABLE:
+							this.setState( {
+								notice: this.props.translate(
+									"This domain can't be transferred because it was registered less than 60 days ago."
+								),
+								noticeSeverity: 'info',
+							} );
+							break;
+						case domainAvailability.SERVER_TRANSFER_PROHIBITED_NOT_TRANSFERRABLE:
+							this.setState( {
+								notice: this.props.translate(
+									"This domain can't be transferred due to a transfer lock at the registry."
+								),
+								noticeSeverity: 'info',
+							} );
+							break;
 						case domainAvailability.UNKNOWN: {
 							const mappableStatus = get( result, 'mappable', error );
 
@@ -636,35 +642,26 @@ class TransferDomainStep extends React.Component {
 	getInboundTransferStatus = () => {
 		this.setState( { submittingWhois: true } );
 
-		return new Promise( ( resolve ) => {
-			checkInboundTransferStatus(
-				getFixedDomainSearch( this.state.searchQuery ),
-				( error, result ) => {
-					this.setState( { submittingWhois: false } );
-
-					if ( ! isEmpty( error ) ) {
-						resolve();
-						return;
-					}
-
-					const inboundTransferStatus = {
-						creationDate: result.creation_date,
-						email: result.admin_email,
-						loading: false,
-						losingRegistrar: result.registrar,
-						losingRegistrarIanaId: result.registrar_iana_id,
-						privacy: result.privacy,
-						termMaximumInYears: result.term_maximum_in_years,
-						transferEligibleDate: result.transfer_eligible_date,
-						transferRestrictionStatus: result.transfer_restriction_status,
-						unlocked: result.unlocked,
-					};
-
-					this.setState( { inboundTransferStatus } );
-					resolve( { inboundTransferStatus } );
-				}
-			);
-		} );
+		return checkInboundTransferStatus( getFixedDomainSearch( this.state.searchQuery ) )
+			.then( ( result ) => {
+				const inboundTransferStatus = {
+					creationDate: result.creation_date,
+					email: result.admin_email,
+					loading: false,
+					losingRegistrar: result.registrar,
+					losingRegistrarIanaId: result.registrar_iana_id,
+					privacy: result.privacy,
+					termMaximumInYears: result.term_maximum_in_years,
+					transferEligibleDate: result.transfer_eligible_date,
+					transferRestrictionStatus: result.transfer_restriction_status,
+					unlocked: result.unlocked,
+				};
+				this.setState( { submittingWhois: false, inboundTransferStatus } );
+				return { inboundTransferStatus };
+			} )
+			.catch( () => {
+				this.setState( { submittingWhois: false } );
+			} );
 	};
 
 	getAuthCodeStatus = ( domain, authCode ) => {
@@ -729,4 +726,4 @@ export default connect(
 		recordGoButtonClickInTransferDomain,
 		recordMapDomainButtonClick,
 	}
-)( withShoppingCart( localize( TransferDomainStep ) ) );
+)( withCartKey( withShoppingCart( localize( TransferDomainStep ) ) ) );

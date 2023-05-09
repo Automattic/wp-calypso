@@ -1,26 +1,12 @@
-/**
- * External dependencies
- */
-import React, { useState } from 'react';
-import { connect, useDispatch } from 'react-redux';
-import { Button } from '@automattic/components';
+import { Button, Spinner } from '@automattic/components';
 import { isDesktop } from '@automattic/viewport';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import Spinner from 'calypso/components/spinner';
-import { skipViewHomeLayout } from 'calypso/state/home/actions';
-import { savePreference } from 'calypso/state/preferences/actions';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getHomeLayout } from 'calypso/state/selectors/get-home-layout';
-
-/**
- * Image dependencies
- */
+import { useState } from 'react';
+import { connect, useDispatch } from 'react-redux';
 import fireworksIllustration from 'calypso/assets/images/customer-home/illustration--fireworks-v2.svg';
+import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
+import { composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const CelebrateNotice = ( {
 	actionText,
@@ -28,26 +14,20 @@ const CelebrateNotice = ( {
 	noticeId,
 	illustration = fireworksIllustration,
 	onSkip,
+	showAction = true,
 	showSkip = false,
 	skipText,
 	siteId,
 	title,
 	tracksEventExtras = {},
-	currentView,
 } ) => {
 	const [ isLoading, setIsLoading ] = useState( false );
-	const [ isVisible, setIsVisible ] = useState( true );
 	const dispatch = useDispatch();
-
-	if ( ! isVisible ) {
-		return null;
-	}
-
-	const dismissalPreferenceKey = `dismissible-card-${ noticeId }-${ siteId }`;
+	const { skipCurrentView } = useSkipCurrentViewMutation( siteId );
 
 	const showNextTask = () => {
 		setIsLoading( true );
-		dispatch( skipViewHomeLayout( siteId, currentView ) );
+		skipCurrentView();
 
 		dispatch(
 			composeAnalytics(
@@ -60,8 +40,8 @@ const CelebrateNotice = ( {
 	};
 
 	const skip = () => {
-		setIsVisible( false );
-		dispatch( savePreference( dismissalPreferenceKey, true ) );
+		setIsLoading( true );
+		skipCurrentView();
 		onSkip && onSkip();
 
 		dispatch(
@@ -81,13 +61,15 @@ const CelebrateNotice = ( {
 				<h2 className="celebrate-notice__title task__title">{ title }</h2>
 				<p className="celebrate-notice__description task__description">{ description }</p>
 				<div className="celebrate-notice__actions task__actions">
-					<Button
-						className="celebrate-notice__action task__action"
-						primary
-						onClick={ showNextTask }
-					>
-						{ actionText }
-					</Button>
+					{ showAction && (
+						<Button
+							className="celebrate-notice__action task__action"
+							primary
+							onClick={ showNextTask }
+						>
+							{ actionText }
+						</Button>
+					) }
 
 					{ showSkip && (
 						<Button className="celebrate-notice__skip task__skip is-link" onClick={ skip }>
@@ -109,7 +91,6 @@ const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	return {
 		siteId,
-		currentView: getHomeLayout( state, siteId )?.view_name,
 	};
 };
 

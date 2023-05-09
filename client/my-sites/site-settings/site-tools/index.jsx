@@ -1,34 +1,29 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import DeleteSiteWarningDialog from 'calypso/my-sites/site-settings/delete-site-warning-dialog';
-import config from '@automattic/calypso-config';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { compose } from '@wordpress/compose';
+import { addQueryArgs } from '@wordpress/url';
 import { localize } from 'i18n-calypso';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import SiteToolsLink from './link';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import isVipSite from 'calypso/state/selectors/is-vip-site';
-import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import withP2HubP2Count from 'calypso/data/p2/with-p2-hub-p2-count';
+import { withSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import DeleteSiteWarningDialog from 'calypso/my-sites/site-settings/delete-site-warning-dialog';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { errorNotice } from 'calypso/state/notices/actions';
 import {
 	hasLoadedSitePurchasesFromServer,
 	getPurchasesError,
 } from 'calypso/state/purchases/selectors';
+import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import hasCancelableSitePurchases from 'calypso/state/selectors/has-cancelable-site-purchases';
-import { errorNotice } from 'calypso/state/notices/actions';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
+import { isJetpackSite, getSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import SiteToolsLink from './link';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const trackDeleteSiteOption = ( option ) => {
@@ -40,7 +35,6 @@ const trackDeleteSiteOption = ( option ) => {
 class SiteTools extends Component {
 	state = {
 		showDialog: false,
-		showStartOverDialog: false,
 	};
 
 	componentDidUpdate( prevProps ) {
@@ -51,27 +45,26 @@ class SiteTools extends Component {
 
 	render() {
 		const {
+			shouldShowSiteCopyItem,
+			startSiteCopy,
 			translate,
 			siteSlug,
+			copySiteUrl,
 			cloneUrl,
 			showChangeAddress,
 			showClone,
 			showDeleteContent,
 			showDeleteSite,
-			showThemeSetup,
 			showManageConnection,
 			siteId,
 		} = this.props;
 
 		const changeAddressLink = `/domains/manage/${ siteSlug }`;
-		const themeSetupLink = `/settings/theme-setup/${ siteSlug }`;
 		const startOverLink = `/settings/start-over/${ siteSlug }`;
 		const deleteSiteLink = `/settings/delete-site/${ siteSlug }`;
 		const manageConnectionLink = `/settings/manage-connection/${ siteSlug }`;
 
-		const themeSetupText = translate( "Automatically make your site look like your theme's demo." );
 		const changeSiteAddress = translate( 'Change your site address' );
-		const themeSetup = translate( 'Theme setup' );
 		const startOver = translate( 'Delete your content' );
 		const startOverText = translate(
 			"Keep your site's address and current theme, but remove all posts, " +
@@ -86,13 +79,11 @@ class SiteTools extends Component {
 			'Sync your site content for a faster experience, change site owner, repair or terminate your connection.'
 		);
 
+		const copyTitle = translate( 'Copy site' );
+		const copyText = translate( 'Copy this site with all of its data to a new site.' );
+
 		const cloneTitle = translate( 'Clone', { context: 'verb' } );
 		const cloneText = translate( 'Clone your existing site and all its data to a new location.' );
-
-		let changeAddressText = translate( "Register a new domain or change your site's address." );
-		if ( ! config.isEnabled( 'upgrades/domain-search' ) ) {
-			changeAddressText = translate( 'Change your site address.' );
-		}
 
 		return (
 			<div className="site-tools">
@@ -103,19 +94,22 @@ class SiteTools extends Component {
 						href={ changeAddressLink }
 						onClick={ this.trackChangeAddress }
 						title={ changeSiteAddress }
-						description={ changeAddressText }
+						description={ translate( "Register a new domain or change your site's address." ) }
+					/>
+				) }
+				{ shouldShowSiteCopyItem && (
+					<SiteToolsLink
+						href={ copySiteUrl }
+						onClick={ () => {
+							recordTracksEvent( 'calypso_settings_copy_site_option_click' );
+							startSiteCopy();
+						} }
+						title={ copyTitle }
+						description={ copyText }
 					/>
 				) }
 				{ showClone && (
 					<SiteToolsLink href={ cloneUrl } title={ cloneTitle } description={ cloneText } />
-				) }
-				{ showThemeSetup && (
-					<SiteToolsLink
-						href={ themeSetupLink }
-						onClick={ this.trackThemeSetup }
-						title={ themeSetup }
-						description={ themeSetupText }
-					/>
 				) }
 				{ showDeleteContent && (
 					<SiteToolsLink
@@ -141,7 +135,11 @@ class SiteTools extends Component {
 						description={ manageConnectionText }
 					/>
 				) }
-				<DeleteSiteWarningDialog isVisible={ this.state.showDialog } onClose={ this.closeDialog } />
+				<DeleteSiteWarningDialog
+					isVisible={ this.state.showDialog }
+					p2HubP2Count={ this.props?.p2HubP2Count }
+					onClose={ this.closeDialog }
+				/>
 			</div>
 		);
 	}
@@ -150,18 +148,15 @@ class SiteTools extends Component {
 		trackDeleteSiteOption( 'change-address' );
 	}
 
-	trackThemeSetup() {
-		trackDeleteSiteOption( 'theme-setup' );
-	}
-
 	trackStartOver() {
 		trackDeleteSiteOption( 'start-over' );
 	}
 
 	checkForSubscriptions = ( event ) => {
 		trackDeleteSiteOption( 'delete-site' );
+		const { isAtomic, hasCancelablePurchases, p2HubP2Count } = this.props;
 
-		if ( this.props.isAtomic || ! this.props.hasCancelablePurchases ) {
+		if ( isAtomic || ( ! hasCancelablePurchases && ! p2HubP2Count ) ) {
 			return true;
 		}
 
@@ -175,34 +170,44 @@ class SiteTools extends Component {
 	};
 }
 
-export default connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
-		const siteSlug = getSelectedSiteSlug( state );
-		const isAtomic = isSiteAutomatedTransfer( state, siteId );
-		const isJetpack = isJetpackSite( state, siteId );
-		const isVip = isVipSite( state, siteId );
-		const rewindState = getRewindState( state, siteId );
-		const sitePurchasesLoaded = hasLoadedSitePurchasesFromServer( state );
+export default compose( [
+	connect(
+		( state ) => {
+			const siteId = getSelectedSiteId( state );
+			const site = getSite( state, siteId );
+			const siteSlug = getSelectedSiteSlug( state );
+			const isAtomic = isSiteAutomatedTransfer( state, siteId );
+			const isJetpack = isJetpackSite( state, siteId );
+			const isVip = isVipSite( state, siteId );
+			const isP2 = isSiteWPForTeams( state, siteId );
+			const isP2Hub = isSiteP2Hub( state, siteId );
+			const rewindState = getRewindState( state, siteId );
+			const sitePurchasesLoaded = hasLoadedSitePurchasesFromServer( state );
 
-		const cloneUrl = `/start/clone-site/${ siteSlug }`;
+			const cloneUrl = `/start/clone-site/${ siteSlug }`;
 
-		return {
-			isAtomic,
-			siteSlug,
-			purchasesError: getPurchasesError( state ),
-			cloneUrl,
-			showChangeAddress: ! isJetpack && ! isVip,
-			showClone: 'active' === rewindState.state && ! isAtomic,
-			showThemeSetup: config.isEnabled( 'settings/theme-setup' ) && ! isJetpack && ! isVip,
-			showDeleteContent: ! isJetpack && ! isVip,
-			showDeleteSite: ( ! isJetpack || isAtomic ) && ! isVip && sitePurchasesLoaded,
-			showManageConnection: isJetpack && ! isAtomic,
-			siteId,
-			hasCancelablePurchases: hasCancelableSitePurchases( state, siteId ),
-		};
-	},
-	{
-		errorNotice,
-	}
-)( localize( SiteTools ) );
+			const copySiteUrl = addQueryArgs( `/setup/copy-site`, {
+				sourceSlug: siteSlug,
+			} );
+
+			return {
+				site,
+				isAtomic,
+				copySiteUrl,
+				siteSlug,
+				purchasesError: getPurchasesError( state ),
+				cloneUrl,
+				showChangeAddress: ! isJetpack && ! isVip && ! isP2,
+				showClone: 'active' === rewindState.state && ! isAtomic,
+				showDeleteContent: ! isJetpack && ! isVip && ! isP2Hub,
+				showDeleteSite: ( ! isJetpack || isAtomic ) && ! isVip && sitePurchasesLoaded,
+				showManageConnection: isJetpack && ! isAtomic,
+				siteId,
+				hasCancelablePurchases: hasCancelableSitePurchases( state, siteId ),
+			};
+		},
+		{
+			errorNotice,
+		}
+	),
+] )( localize( withSiteCopy( withP2HubP2Count( SiteTools ) ) ) );

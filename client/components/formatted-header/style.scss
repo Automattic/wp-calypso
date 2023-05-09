@@ -1,15 +1,17 @@
+@import "@wordpress/base-styles/breakpoints";
+
 .formatted-header {
 	margin: 16px 0 24px;
 	text-align: center;
 
 	&.has-screen-options {
 		// Titles that have long text (e.g. other languages) need extra margin to accommodate screen options on small devices.
-		@include breakpoint-deprecated( '<660px' ) {
+		@include breakpoint-deprecated( "<660px" ) {
 			margin: 32px 0 24px 16px;
 		}
 	}
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		margin-bottom: 35px;
 		margin-top: 16px;
 
@@ -24,22 +26,84 @@
 
 		&.has-screen-options {
 			// Titles that have long text (e.g. other languages) need extra margin to accommodate screen options on small devices.
-			@include breakpoint-deprecated( '<660px' ) {
+			@include breakpoint-deprecated( "<660px" ) {
 				margin: 32px 16px 16px 16px;
 			}
 		}
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			margin: 0 0 16px;
 		}
 	}
 
 	&.is-left-align {
-		text-align: left;
+		text-align: start;
 	}
 
 	&.is-right-align {
-		text-align: right;
+		text-align: end;
+	}
+
+	// Compact header on small screens
+	&.is-compact-on-mobile {
+		@include breakpoint-deprecated( "<660px" ) {
+			text-align: start;
+
+			.formatted-header__title {
+				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+				font-size: 17px;
+				font-weight: 600;
+				padding: 0 24px;
+			}
+
+			.formatted-header__subtitle {
+				padding: 0 24px 12px;
+			}
+		}
+	}
+
+	// Modernize styles for Stats pages
+	&.modernized-header {
+		&.is-left-align,
+		&.is-right-align {
+			margin: 0;
+			padding-bottom: 16px;
+
+			@media ( max-width: $break-medium ) {
+				margin: 0 16px;
+			}
+
+			.formatted-header__title {
+				margin-bottom: 4px;
+				font-weight: 500;
+				font-size: $font-title-small;
+				line-height: 26px;
+				color: var(--color-neutral-100);
+			}
+
+			.formatted-header__subtitle {
+				margin: 0;
+				font-weight: 400;
+				font-size: $font-body-small;
+				line-height: 20px;
+				color: var(--color-neutral-60);
+			}
+
+			.inline-support-link {
+				color: var(--color-primary);
+			}
+		}
+	}
+
+	&.mini-carousel-block__header-text {
+		margin: 0;
+
+		.formatted-header__title {
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			font-size: 18px;
+			font-weight: 600;
+			margin-bottom: 0;
+		}
 	}
 }
 
@@ -47,9 +111,10 @@
 	font-size: $font-title-small;
 	margin-top: 24px;
 	padding: 0 10px;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	line-height: 1.2em;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		font-size: $font-title-medium;
 		padding: 0;
 		margin: 0 0 5px;
@@ -63,11 +128,11 @@
 }
 
 .formatted-header__subtitle {
-	color: var( --color-neutral-50 );
+	color: var(--color-neutral-50);
 	font-size: $font-body-small;
 	padding: 0 20px 24px;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		padding: 0;
 	}
 
@@ -75,21 +140,10 @@
 	.is-right-align & {
 		padding: 0;
 	}
-}
 
-// Compact header on small screens
-.formatted-header.is-compact-on-mobile {
-	@include breakpoint-deprecated( '<660px' ) {
-		text-align: left;
-
-		.formatted-header__title {
-			font-size: 17px;
-			font-weight: 600;
-			padding: 0 24px;
-		}
-
-		.formatted-header__subtitle {
-			padding: 0 24px 12px;
-		}
+	.tailored-flow-subtitle__cta-text {
+		text-decoration: underline;
+		cursor: pointer;
+		color: var(--studio-gray-80);
 	}
 }

@@ -1,23 +1,16 @@
-/**
- * External dependencies
- */
 import page from 'page';
-
-/**
- * Internal dependencies
- */
+import { makeLayout, render as clientRender } from 'calypso/controller';
+import { recordSiftScienceUser } from 'calypso/lib/siftscience';
 import {
 	navigation,
 	siteSelection,
 	sites,
 	wpForTeamsGeneralNotSupportedRedirect,
+	stagingSiteNotSupportedRedirect,
 } from 'calypso/my-sites/controller';
 import domainsController from './controller';
 import domainManagementController from './domain-management/controller';
-import { recordSiftScienceUser } from 'calypso/lib/siftscience';
-import config from '@automattic/calypso-config';
 import * as paths from './paths';
-import { makeLayout, render as clientRender } from 'calypso/controller';
 
 function registerMultiPage( { paths: givenPaths, handlers } ) {
 	givenPaths.forEach( ( path ) => page( path, ...handlers ) );
@@ -37,7 +30,12 @@ function getCommonHandlers( {
 	noSitePath = paths.domainManagementRoot(),
 	warnIfJetpack = true,
 } = {} ) {
-	const handlers = [ siteSelection, navigation, wpForTeamsGeneralNotSupportedRedirect ];
+	const handlers = [
+		siteSelection,
+		navigation,
+		wpForTeamsGeneralNotSupportedRedirect,
+		stagingSiteNotSupportedRedirect,
+	];
 
 	if ( noSitePath ) {
 		handlers.push( domainsController.redirectIfNoSite( noSitePath ) );
@@ -57,6 +55,11 @@ export default function () {
 	// successful site address change shows a continuous placeholder state... #23929 for details.
 	page.redirect( '/domains/manage/edit', paths.domainManagementRoot() );
 	page.redirect( '/domains/manage/edit/:site', paths.domainManagementRoot() );
+	// This redirect should remain until we implement the `/domains/manage/all/edit-contact-info` route
+	page.redirect(
+		paths.domainManagementAllEditContactInfo(),
+		paths.domainManagementRoot() + '?site=all&action=edit-contact-email'
+	);
 
 	registerMultiPage( {
 		paths: [
@@ -64,18 +67,11 @@ export default function () {
 			paths.domainManagementEmail( ':site', ':domain' ),
 			paths.domainManagementEmail( ':site' ),
 		],
-		handlers: [ domainManagementController.domainManagementEmailRedirect ],
+		handlers: [
+			stagingSiteNotSupportedRedirect,
+			domainManagementController.domainManagementEmailRedirect,
+		],
 	} );
-
-	page(
-		paths.domainManagementEmailForwarding( ':site', ':domain' ),
-		domainManagementController.domainManagementEmailForwardingRedirect
-	);
-
-	registerStandardDomainManagementPages(
-		paths.domainManagementChangeSiteAddress,
-		domainManagementController.domainManagementChangeSiteAddress
-	);
 
 	registerStandardDomainManagementPages(
 		paths.domainManagementSecurity,
@@ -113,8 +109,13 @@ export default function () {
 	);
 
 	registerStandardDomainManagementPages(
-		paths.domainManagementNameServers,
-		domainManagementController.domainManagementNameServers
+		paths.domainManagementDnsAddRecord,
+		domainManagementController.domainManagementDnsAddRecord
+	);
+
+	registerStandardDomainManagementPages(
+		paths.domainManagementDnsEditRecord,
+		domainManagementController.domainManagementDnsEditRecord
 	);
 
 	registerStandardDomainManagementPages(
@@ -168,146 +169,181 @@ export default function () {
 		domainManagementController.domainManagementTransferIn
 	);
 
-	if ( config.isEnabled( 'upgrades/domain-search' ) ) {
-		page(
-			'/domains/add',
-			siteSelection,
-			domainsController.domainsAddHeader,
-			domainsController.redirectToUseYourDomainIfVipSite(),
-			domainsController.jetpackNoDomainsWarning,
-			sites,
-			makeLayout,
-			clientRender
-		);
+	page(
+		'/domains/add',
+		stagingSiteNotSupportedRedirect,
+		siteSelection,
+		domainsController.domainsAddHeader,
+		domainsController.redirectToUseYourDomainIfVipSite(),
+		domainsController.jetpackNoDomainsWarning,
+		sites,
+		makeLayout,
+		clientRender
+	);
 
-		page(
-			'/domains/add/mapping',
-			siteSelection,
-			domainsController.domainsAddHeader,
-			domainsController.jetpackNoDomainsWarning,
-			sites,
-			makeLayout,
-			clientRender
-		);
+	page(
+		'/domains/add/mapping',
+		stagingSiteNotSupportedRedirect,
+		siteSelection,
+		domainsController.domainsAddHeader,
+		domainsController.jetpackNoDomainsWarning,
+		sites,
+		makeLayout,
+		clientRender
+	);
 
-		page(
-			'/domains/add/transfer',
-			siteSelection,
-			domainsController.domainsAddHeader,
-			domainsController.jetpackNoDomainsWarning,
-			sites,
-			makeLayout,
-			clientRender
-		);
+	page(
+		'/domains/add/transfer',
+		stagingSiteNotSupportedRedirect,
+		siteSelection,
+		domainsController.domainsAddHeader,
+		domainsController.jetpackNoDomainsWarning,
+		sites,
+		makeLayout,
+		clientRender
+	);
 
-		page(
-			'/domains/add/site-redirect',
-			siteSelection,
-			domainsController.domainsAddRedirectHeader,
-			domainsController.jetpackNoDomainsWarning,
-			sites,
-			makeLayout,
-			clientRender
-		);
+	page(
+		'/domains/add/site-redirect',
+		stagingSiteNotSupportedRedirect,
+		siteSelection,
+		domainsController.domainsAddRedirectHeader,
+		domainsController.jetpackNoDomainsWarning,
+		sites,
+		makeLayout,
+		clientRender
+	);
 
-		page(
-			'/domains/add/:domain',
-			siteSelection,
-			navigation,
-			domainsController.redirectIfNoSite( '/domains/add' ),
-			domainsController.redirectToUseYourDomainIfVipSite(),
-			domainsController.jetpackNoDomainsWarning,
-			domainsController.domainSearch,
-			makeLayout,
-			clientRender
-		);
+	page(
+		'/domains/add/:domain',
+		stagingSiteNotSupportedRedirect,
+		siteSelection,
+		navigation,
+		domainsController.redirectIfNoSite( '/domains/add' ),
+		domainsController.redirectToUseYourDomainIfVipSite(),
+		domainsController.jetpackNoDomainsWarning,
+		domainsController.domainSearch,
+		makeLayout,
+		clientRender
+	);
 
-		page(
-			'/domains/add/suggestion/:suggestion/:domain',
-			siteSelection,
-			navigation,
-			domainsController.redirectIfNoSite( '/domains/add' ),
-			domainsController.redirectToUseYourDomainIfVipSite(),
-			domainsController.jetpackNoDomainsWarning,
-			domainsController.redirectToDomainSearchSuggestion
-		);
+	page(
+		'/domains/add/:domain/email/:siteSlug',
+		stagingSiteNotSupportedRedirect,
+		siteSelection,
+		navigation,
+		domainsController.redirectIfNoSite( '/domains/add' ),
+		domainsController.jetpackNoDomainsWarning,
+		domainsController.emailUpsellForDomainRegistration,
+		makeLayout,
+		clientRender
+	);
 
-		[
-			'/domains/add/:registerDomain/google-workspace/:domain',
-			'/domains/add/:registerDomain/gsuite/:domain',
-		].forEach( ( path ) =>
-			page(
-				path,
-				...[
-					siteSelection,
-					navigation,
-					domainsController.redirectIfNoSite( '/domains/add' ),
-					domainsController.jetpackNoDomainsWarning,
-					domainsController.googleAppsWithRegistration,
-					makeLayout,
-					clientRender,
-				]
-			)
-		);
+	page(
+		'/domains/add/suggestion/:suggestion/:domain',
+		stagingSiteNotSupportedRedirect,
+		siteSelection,
+		navigation,
+		domainsController.redirectIfNoSite( '/domains/add' ),
+		domainsController.redirectToUseYourDomainIfVipSite(),
+		domainsController.jetpackNoDomainsWarning,
+		domainsController.redirectToDomainSearchSuggestion
+	);
 
-		page(
-			'/domains/add/mapping/:domain',
-			siteSelection,
-			navigation,
-			domainsController.redirectIfNoSite( '/domains/add/mapping' ),
-			domainsController.jetpackNoDomainsWarning,
-			domainsController.mapDomain,
-			makeLayout,
-			clientRender
-		);
+	page(
+		'/domains/add/mapping/:domain',
+		stagingSiteNotSupportedRedirect,
+		siteSelection,
+		navigation,
+		domainsController.redirectIfNoSite( '/domains/add/mapping' ),
+		domainsController.jetpackNoDomainsWarning,
+		domainsController.mapDomain,
+		makeLayout,
+		clientRender
+	);
 
-		page(
-			'/domains/add/site-redirect/:domain',
-			siteSelection,
-			navigation,
-			domainsController.redirectIfNoSite( '/domains/add/site-redirect' ),
-			domainsController.jetpackNoDomainsWarning,
-			domainsController.siteRedirect,
-			makeLayout,
-			clientRender
-		);
+	page(
+		paths.domainMappingSetup( ':site', ':domain' ),
+		stagingSiteNotSupportedRedirect,
+		siteSelection,
+		navigation,
+		domainsController.jetpackNoDomainsWarning,
+		domainsController.mapDomainSetup,
+		makeLayout,
+		clientRender
+	);
 
-		page(
-			paths.domainTransferIn( ':domain' ),
-			siteSelection,
-			navigation,
-			domainsController.redirectIfNoSite( '/domains/add/transfer' ),
-			domainsController.jetpackNoDomainsWarning,
-			domainsController.transferDomain,
-			makeLayout,
-			clientRender
-		);
+	page(
+		'/domains/add/site-redirect/:domain',
+		stagingSiteNotSupportedRedirect,
+		siteSelection,
+		navigation,
+		domainsController.redirectIfNoSite( '/domains/add/site-redirect' ),
+		domainsController.jetpackNoDomainsWarning,
+		domainsController.siteRedirect,
+		makeLayout,
+		clientRender
+	);
 
-		page(
-			paths.domainUseYourDomain( ':site' ),
-			siteSelection,
-			navigation,
-			domainsController.redirectIfNoSite( '/domains/add' ),
-			domainsController.jetpackNoDomainsWarning,
-			domainsController.useYourDomain,
-			makeLayout,
-			clientRender
-		);
+	page(
+		paths.domainTransferIn( ':domain' ),
+		stagingSiteNotSupportedRedirect,
+		siteSelection,
+		navigation,
+		domainsController.redirectIfNoSite( '/domains/add/transfer' ),
+		domainsController.jetpackNoDomainsWarning,
+		domainsController.transferDomain,
+		makeLayout,
+		clientRender
+	);
 
-		page(
-			paths.domainManagementTransferInPrecheck( ':site', ':domain' ),
-			siteSelection,
-			navigation,
-			domainsController.redirectIfNoSite( '/domains/manage' ),
-			domainsController.jetpackNoDomainsWarning,
-			domainsController.transferDomainPrecheck,
-			makeLayout,
-			clientRender
-		);
-	}
+	page(
+		paths.domainUseYourDomain( ':site' ),
+		stagingSiteNotSupportedRedirect,
+		siteSelection,
+		navigation,
+		domainsController.redirectIfNoSite( '/domains/add' ),
+		domainsController.jetpackNoDomainsWarning,
+		domainsController.useYourDomain,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.domainUseMyDomain( ':site' ),
+		stagingSiteNotSupportedRedirect,
+		siteSelection,
+		navigation,
+		domainsController.redirectIfNoSite( '/domains/add' ),
+		domainsController.jetpackNoDomainsWarning,
+		domainsController.useMyDomain,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.domainManagementTransferInPrecheck( ':site', ':domain' ),
+		stagingSiteNotSupportedRedirect,
+		siteSelection,
+		navigation,
+		domainsController.redirectIfNoSite( '/domains/manage' ),
+		domainsController.jetpackNoDomainsWarning,
+		domainsController.transferDomainPrecheck,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.domainManagementRoot() + '/:domain/edit',
+		stagingSiteNotSupportedRedirect,
+		domainsController.redirectDomainToSite,
+		makeLayout,
+		clientRender
+	);
 
 	page(
 		'/domains/:site',
+		stagingSiteNotSupportedRedirect,
 		siteSelection,
 		navigation,
 		domainsController.jetpackNoDomainsWarning,

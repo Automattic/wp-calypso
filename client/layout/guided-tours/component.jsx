@@ -1,41 +1,19 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { defer } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import AllTours from './all-tours';
-import QueryPreferences from 'calypso/components/data/query-preferences';
 import { RootChild } from '@automattic/components';
+import { defer } from 'lodash';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import QueryPreferences from 'calypso/components/data/query-preferences';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { nextGuidedTourStep, quitGuidedTour } from 'calypso/state/guided-tours/actions';
 import { getGuidedTourState } from 'calypso/state/guided-tours/selectors';
 import { getLastAction } from 'calypso/state/ui/action-log/selectors';
 import { getSectionName, isSectionLoading } from 'calypso/state/ui/selectors';
-import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
-import {
-	nextGuidedTourStep,
-	quitGuidedTour,
-	resetGuidedToursHistory,
-} from 'calypso/state/guided-tours/actions';
-
-/**
- * Style dependencies
- */
+import AllTours from './all-tours';
 import './style.scss';
 
 class GuidedToursComponent extends Component {
 	shouldComponentUpdate( nextProps ) {
 		return this.props.tourState !== nextProps.tourState;
-	}
-
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.requestedTour === 'reset' && this.props.requestedTour !== 'reset' ) {
-			this.props.dispatch( resetGuidedToursHistory() );
-		}
 	}
 
 	start = ( { step, tour, tourVersion: tour_version } ) => {
@@ -117,6 +95,5 @@ export default connect( ( state ) => {
 		tourState,
 		isValid: getTourWhenState( state ),
 		lastAction: getLastAction( state ),
-		requestedTour: getInitialQueryArguments( state ).tour,
 	};
 } )( GuidedToursComponent );

@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import {
 	getNormalizedTermsQuery,
 	getSerializedTermsQuery,
@@ -20,7 +12,7 @@ describe( 'utils', () => {
 				number: 100,
 			} );
 
-			expect( query ).to.eql( {
+			expect( query ).toEqual( {
 				page: 2,
 			} );
 		} );
@@ -33,7 +25,7 @@ describe( 'utils', () => {
 				page: 1,
 			} );
 
-			expect( serializedQuery ).to.equal( '{"search":"ribs"}' );
+			expect( serializedQuery ).toEqual( '{"search":"ribs"}' );
 		} );
 
 		test( 'should lowercase the result', () => {
@@ -42,7 +34,7 @@ describe( 'utils', () => {
 				page: '2',
 			} );
 
-			expect( serializedQuery ).to.equal( '{"search":"chicken","page":"2"}' );
+			expect( serializedQuery ).toEqual( '{"search":"chicken","page":"2"}' );
 		} );
 	} );
 
@@ -53,7 +45,7 @@ describe( 'utils', () => {
 				page: '2',
 			} );
 
-			expect( serializedQuery ).to.equal( '{"search":"chicken"}' );
+			expect( serializedQuery ).toEqual( '{"search":"chicken"}' );
 		} );
 	} );
 } );

@@ -1,18 +1,7 @@
-/**
- * External dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
+import { Gridicon } from '@automattic/components';
 import PropTypes from 'prop-types';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { preventWidows } from 'calypso/lib/formatting';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function EmailProviderFeature( { title } ) {
@@ -29,22 +18,32 @@ EmailProviderFeature.propTypes = {
 	title: PropTypes.string.isRequired,
 };
 
-function EmailProviderFeatures( { features } ) {
+function EmailProviderFeatures( { features, logos } ) {
 	if ( ! features ) {
 		return null;
 	}
 
 	return (
 		<div className="email-provider-features">
-			{ features.map( ( feature, index ) => (
+			{ features.filter( Boolean ).map( ( feature, index ) => (
 				<EmailProviderFeature key={ index } title={ feature } />
 			) ) }
+
+			{ logos && (
+				<div className="email-provider-features__logos">
+					{ logos.map( ( { image, imageAltText, title }, index ) => (
+						<img alt={ imageAltText } key={ index } src={ image } title={ title } />
+					) ) }
+				</div>
+			) }
 		</div>
 	);
 }
 
 EmailProviderFeatures.propTypes = {
-	features: PropTypes.arrayOf( PropTypes.string ),
+	features: PropTypes.arrayOf( PropTypes.oneOfType( [ PropTypes.node, PropTypes.string ] ) )
+		.isRequired,
+	logos: PropTypes.arrayOf( PropTypes.object ),
 };
 
 export default EmailProviderFeatures;

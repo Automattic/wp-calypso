@@ -3,7 +3,7 @@
 ## Building
 
 This section lists known problems you can encounter while building the project.
-If you have a problem when running `yarn start` - this is the proper section to look for a solution.
+If you have a problem when running `yarn` or `yarn start` - this is the proper section to look for a solution.
 
 ### EMFILE - too many open files
 

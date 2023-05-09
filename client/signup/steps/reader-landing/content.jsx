@@ -1,17 +1,6 @@
-/**
- * External dependencies
- */
-import React, { Fragment, PureComponent } from 'react';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Card, Button } from '@automattic/components';
-
-/**
- * Image dependencies
- */
+import { localize } from 'i18n-calypso';
+import { Fragment, PureComponent } from 'react';
 import conversationsImage from 'calypso/assets/images/reader/reader-conversations.png';
 import discoverImage from 'calypso/assets/images/reader/reader-discover.png';
 import mobileImage from 'calypso/assets/images/reader/reader-mobile.png';

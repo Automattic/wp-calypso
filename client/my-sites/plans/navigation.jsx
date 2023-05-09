@@ -1,37 +1,24 @@
-/**
- * External dependencies
- */
+import { PLAN_ECOMMERCE_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { isMobile } from '@automattic/viewport';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import config from '@automattic/calypso-config';
-import { sectionify } from 'calypso/lib/route';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import SectionNav from 'calypso/components/section-nav';
-import NavTabs from 'calypso/components/section-nav/tabs';
 import NavItem from 'calypso/components/section-nav/item';
-import PopoverCart from 'calypso/my-sites/checkout/cart/popover-cart';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import { sectionify } from 'calypso/lib/route';
 import isSiteOnFreePlan from 'calypso/state/selectors/is-site-on-free-plan';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getSite, isJetpackSite } from 'calypso/state/sites/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
-import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import { getSite, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-class PlansNavigation extends React.Component {
+class PlansNavigation extends Component {
 	static propTypes = {
 		isJetpack: PropTypes.bool,
 		path: PropTypes.string.isRequired,
-		shouldShowMyPlan: PropTypes.bool,
+		shouldShowNavigation: PropTypes.bool,
 		site: PropTypes.object,
-	};
-
-	state = {
-		cartVisible: false,
 	};
 
 	getSectionTitle( path ) {
@@ -42,6 +29,7 @@ class PlansNavigation extends React.Component {
 			case '/plans':
 			case '/plans/monthly':
 			case '/plans/yearly':
+			case '/plans/2yearly':
 				return 'Plans';
 
 			default:
@@ -50,83 +38,43 @@ class PlansNavigation extends React.Component {
 	}
 
 	render() {
-		const { site, shouldShowMyPlan, translate } = this.props;
+		const { site, shouldShowNavigation, translate } = this.props;
 		const path = sectionify( this.props.path );
 		const sectionTitle = this.getSectionTitle( path );
-		const hasPinnedItems = isMobile() && config.isEnabled( 'upgrades/checkout' ) && site;
+		const hasPinnedItems = Boolean( site ) && isMobile();
+		const currentPlanSlug = site?.plan?.product_slug;
+		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
+		const myPlanItemTitle = isEcommerceTrial ? translate( 'Free trial' ) : translate( 'My Plan' );
 
 		return (
-			site && (
-				<SectionNav
-					hasPinnedItems={ hasPinnedItems }
-					selectedText={ sectionTitle }
-					onMobileNavPanelOpen={ this.onMobileNavPanelOpen }
-				>
-					<NavTabs label="Section" selectedText={ sectionTitle }>
-						{ shouldShowMyPlan && (
+			site &&
+			shouldShowNavigation && (
+				<div className="navigation">
+					<SectionNav hasPinnedItems={ hasPinnedItems } selectedText={ sectionTitle }>
+						<NavTabs label="Section" selectedText={ sectionTitle }>
 							<NavItem
 								path={ `/plans/my-plan/${ site.slug }` }
 								selected={ path === '/plans/my-plan' }
 							>
-								{ translate( 'My Plan' ) }
+								{ myPlanItemTitle }
 							</NavItem>
-						) }
-						<NavItem
-							path={ `/plans/${ site.slug }` }
-							selected={
-								path === '/plans' || path === '/plans/monthly' || path === '/plans/yearly'
-							}
-						>
-							{ translate( 'Plans' ) }
-						</NavItem>
-					</NavTabs>
-					<CartToggleButton
-						site={ this.props.site }
-						toggleCartVisibility={ this.toggleCartVisibility }
-						cartVisible={ this.state.cartVisible }
-						path={ this.props.path }
-					/>
-				</SectionNav>
+							<NavItem
+								path={ `/plans/${ site.slug }` }
+								selected={
+									path === '/plans' ||
+									path === '/plans/monthly' ||
+									path === '/plans/yearly' ||
+									path === '/plans/2yearly'
+								}
+							>
+								{ translate( 'Plans' ) }
+							</NavItem>
+						</NavTabs>
+					</SectionNav>
+				</div>
 			)
 		);
 	}
-
-	toggleCartVisibility = () => {
-		this.setState( { cartVisible: ! this.state.cartVisible } );
-	};
-
-	onMobileNavPanelOpen = () => {
-		this.setState( { cartVisible: false } );
-	};
-}
-
-function CartToggleButton( {
-	site,
-	toggleCartVisibility,
-	cartVisible,
-	path,
-	closeSectionNavMobilePanel,
-} ) {
-	if ( ! config.isEnabled( 'upgrades/checkout' ) || ! site ) {
-		return null;
-	}
-
-	const onToggle = () => {
-		closeSectionNavMobilePanel();
-		toggleCartVisibility();
-	};
-
-	return (
-		<CalypsoShoppingCartProvider>
-			<PopoverCart
-				selectedSite={ site }
-				onToggle={ onToggle }
-				pinned={ isMobile() }
-				visible={ cartVisible }
-				path={ path }
-			/>
-		</CalypsoShoppingCartProvider>
-	);
 }
 
 export default connect( ( state ) => {
@@ -135,9 +83,10 @@ export default connect( ( state ) => {
 	const isJetpack = isJetpackSite( state, siteId );
 	const isOnFreePlan = isSiteOnFreePlan( state, siteId );
 	const isAtomic = isAtomicSite( state, siteId );
+
 	return {
 		isJetpack,
-		shouldShowMyPlan: ! isOnFreePlan || ( isJetpack && ! isAtomic ),
+		shouldShowNavigation: ! isOnFreePlan || ( isJetpack && ! isAtomic ),
 		site,
 	};
 } )( localize( PlansNavigation ) );

@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
 import { setValue, removeValue } from '../helpers';
 
 describe( 'setValue()', () => {

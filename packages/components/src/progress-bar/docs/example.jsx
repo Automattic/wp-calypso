@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
-import React, { PureComponent } from 'react';
-
-/**
- * Internal dependencies
- */
+import { PureComponent } from 'react';
 import ProgressBar from '..';
 
 export default class extends PureComponent {

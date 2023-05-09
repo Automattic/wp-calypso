@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import page from 'page';
 import { find } from 'lodash';
+import page from 'page';
+import PropTypes from 'prop-types';
 import { stringify } from 'qs';
-
-/**
- * Internal dependencies
- */
-import { addQueryArgs } from 'calypso/lib/url';
+import { Component } from 'react';
 import HeaderCake from 'calypso/components/header-cake';
+import { addQueryArgs } from 'calypso/lib/url';
 import DocsSelectorsResult from './result';
 
 export default class DocsSelectorsSingle extends Component {

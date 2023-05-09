@@ -1,13 +1,4 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import { requesting, items } from '../reducer';
 import {
 	POST_STATS_RECEIVE,
 	POST_STATS_REQUEST,
@@ -15,18 +6,16 @@ import {
 	POST_STATS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import { requesting, items } from '../reducer';
 
 describe( 'reducer', () => {
-	useSandbox( ( sandbox ) => {
-		sandbox.stub( console, 'warn' );
-	} );
+	jest.spyOn( console, 'warn' ).mockImplementation();
 
 	describe( '#requesting()', () => {
 		test( 'should default to an empty object', () => {
 			const state = requesting( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should set requesting value to true if request in progress', () => {
@@ -37,7 +26,7 @@ describe( 'reducer', () => {
 				fields: [ 'views', 'years' ],
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					2454: {
 						'views,years': true,
@@ -59,7 +48,7 @@ describe( 'reducer', () => {
 				fields: [ 'countComments' ],
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					2454: {
 						views: true,
@@ -82,7 +71,7 @@ describe( 'reducer', () => {
 				fields: [ 'views' ],
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					2454: { views: true },
 					2455: { views: true },
@@ -103,7 +92,7 @@ describe( 'reducer', () => {
 				fields: [ 'views' ],
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					2454: { views: true },
 				},
@@ -126,7 +115,7 @@ describe( 'reducer', () => {
 				fields: [ 'views' ],
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					2454: { views: false },
 				},
@@ -146,7 +135,7 @@ describe( 'reducer', () => {
 				fields: [ 'views' ],
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					2454: { views: false },
 				},
@@ -158,7 +147,7 @@ describe( 'reducer', () => {
 		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should index post stats by site ID, post id and stat', () => {
@@ -169,7 +158,7 @@ describe( 'reducer', () => {
 				stats: { views: 2, years: [] },
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					2454: { views: 2, years: [] },
 				},
@@ -189,7 +178,7 @@ describe( 'reducer', () => {
 				stats: { countComments: 3 },
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					2454: {
 						views: 2,
@@ -212,7 +201,7 @@ describe( 'reducer', () => {
 				stats: { views: 3 },
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					2454: { views: 2 },
 					2455: { views: 3 },
@@ -233,7 +222,7 @@ describe( 'reducer', () => {
 				stats: { views: 3 },
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					2454: { views: 2 },
 				},
@@ -256,7 +245,7 @@ describe( 'reducer', () => {
 				stats: { views: 3 },
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					2454: { views: 3 },
 				},
@@ -271,7 +260,7 @@ describe( 'reducer', () => {
 			} );
 			const state = serialize( items, previousState );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					2454: { views: 2 },
 				},
@@ -286,7 +275,7 @@ describe( 'reducer', () => {
 			} );
 			const state = deserialize( items, previousState );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					2454: { views: 2 },
 				},
@@ -299,7 +288,7 @@ describe( 'reducer', () => {
 			} );
 			const state = deserialize( items, previousInvalidState );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 	} );
 } );

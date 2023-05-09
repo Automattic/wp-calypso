@@ -1,7 +1,4 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { cloneElement } from 'react';
 import {
 	useTooltipState,
 	Tooltip as ReakitTooltip,
@@ -14,7 +11,7 @@ function Tooltip( { children, title, ...props } ) {
 	return (
 		<>
 			<TooltipReference { ...tooltipState } ref={ children.ref } { ...children.props }>
-				{ ( referenceProps ) => React.cloneElement( children, referenceProps ) }
+				{ ( referenceProps ) => cloneElement( children, referenceProps ) }
 			</TooltipReference>
 			<ReakitTooltip { ...tooltipState } { ...props }>
 				<TooltipArrow className="tooltip__arrow" { ...tooltipState } size={ 22 } />

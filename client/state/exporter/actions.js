@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
 import {
 	EXPORT_ADVANCED_SETTINGS_FETCH,
@@ -17,7 +14,6 @@ import {
 	EXPORT_MEDIA_REQUEST,
 	SET_MEDIA_EXPORT_DATA,
 } from 'calypso/state/action-types';
-
 import { prepareExportRequest } from './selectors';
 
 import 'calypso/state/data-layer/wpcom/sites/exports/media';
@@ -26,8 +22,8 @@ import 'calypso/state/exporter/init';
 /**
  * Sets the post type to export.
  *
- * @param  {object} postType   The name of the post type to use - 'posts', 'pages', 'feedback', or null for all
- * @returns {object}            Action object
+ * @param  {Object} postType   The name of the post type to use - 'posts', 'pages', 'feedback', or null for all
+ * @returns {Object}            Action object
  */
 export function setPostType( postType ) {
 	return {
@@ -72,9 +68,8 @@ export function advancedSettingsFetch( siteId ) {
 
 		const fetchFail = ( error ) => dispatch( advancedSettingsFail( siteId, error ) );
 
-		return wpcom
-			.undocumented()
-			.getExportSettings( siteId )
+		return wpcom.req
+			.get( `/sites/${ siteId }/exports/settings` )
 			.then( updateExportSettings )
 			.catch( fetchFail );
 	};
@@ -120,9 +115,8 @@ export function startExport( siteId, { exportAll = true } = {} ) {
 
 		const failure = ( error ) => dispatch( exportFailed( siteId, error ) );
 
-		return wpcom
-			.undocumented()
-			.startExport( siteId, advancedSettings )
+		return wpcom.req
+			.post( `/sites/${ siteId }/exports/start`, advancedSettings )
 			.then( success )
 			.catch( failure );
 	};
@@ -157,7 +151,7 @@ export function exportStatusFetch( siteId ) {
 			return failure( response );
 		};
 
-		return wpcom.undocumented().getExport( siteId, 0 ).then( success ).catch( failure );
+		return wpcom.req.get( `/sites/${ siteId }/exports/0` ).then( success ).catch( failure );
 	};
 }
 

@@ -1,17 +1,10 @@
-/**
- * External Dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { values } from 'lodash';
-
-/**
- * Internal Dependencies
- */
-import NavTabs from 'calypso/components/section-nav/tabs';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
 
 const noop = () => {};
 export const SEARCH_TYPES = { POSTS: 'posts', SITES: 'sites' };
@@ -48,14 +41,14 @@ class SearchStreamHeader extends Component {
 				<SectionNav>
 					<NavTabs>
 						<NavItem
-							key={ 'posts-nav' }
+							key="posts-nav"
 							selected={ selected === SEARCH_TYPES.POSTS }
 							onClick={ this.handlePostsSelected }
 						>
 							{ translate( 'Posts' ) }
 						</NavItem>
 						<NavItem
-							key={ 'sites-nav' }
+							key="sites-nav"
 							selected={ selected === SEARCH_TYPES.SITES }
 							onClick={ this.handleSitesSelected }
 						>

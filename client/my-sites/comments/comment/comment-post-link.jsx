@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import CommentLink from 'calypso/my-sites/comments/comment/comment-link';
+import { connect } from 'react-redux';
 import QueryPosts from 'calypso/components/data/query-posts';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
+import CommentLink from 'calypso/my-sites/comments/comment/comment-link';
 import { getSiteComment } from 'calypso/state/comments/selectors';
 import { getSitePost } from 'calypso/state/posts/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -29,7 +21,7 @@ const CommentPostLink = ( {
 	translate,
 } ) => (
 	<div className="comment__post-link">
-		{ ! isPostTitleLoaded && <QueryPosts siteId={ siteId } postId={ postId } /> }
+		{ ! isPostTitleLoaded && postId && <QueryPosts siteId={ siteId } postId={ postId } /> }
 
 		<Gridicon icon={ isBulkMode ? 'chevron-right' : 'posts' } size={ 18 } />
 

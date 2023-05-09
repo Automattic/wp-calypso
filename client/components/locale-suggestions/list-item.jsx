@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { getLanguage } from '@automattic/i18n-utils';
 import { getLocaleSlug } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { getLanguage } from 'calypso/lib/i18n-utils';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 
 class LocaleSuggestionsListItem extends Component {
 	static propTypes = {

@@ -1,17 +1,10 @@
+/**
+ * @jest-environment jsdom
+ */
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );
 jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'PageViewTracker' );
 
-/**
- * External dependencies
- */
-import { shallow } from 'enzyme';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import { siteHasPaidPlan, SitePickerSubmit } from '../site-picker-submit';
 import {
 	PLAN_FREE,
 	PLAN_ECOMMERCE,
@@ -33,6 +26,8 @@ import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from '@automattic/calypso-products';
+import { render } from '@testing-library/react';
+import { siteHasPaidPlan, SitePickerSubmit } from '../site-picker-submit';
 
 const noop = () => {};
 const props = {
@@ -80,10 +75,10 @@ describe( 'SitePickerSubmit', () => {
 		props.goToStep.mockReset();
 	} );
 
-	test( 'Does not blow up', () => {
+	test( 'Submits the signup step on render', () => {
 		expect( props.goToStep ).toHaveBeenCalledTimes( 0 );
-		const comp = shallow( <SitePickerSubmit { ...props } /> );
-		expect( comp.find( '*' ).length ).toBe( 0 );
+		const { container } = render( <SitePickerSubmit { ...props } /> );
+		expect( container ).toBeEmptyDOMElement();
 		expect( props.goToStep ).toHaveBeenCalledTimes( 1 );
 	} );
 
@@ -108,9 +103,7 @@ describe( 'SitePickerSubmit', () => {
 	].forEach( ( plan ) => {
 		test( `Goes to step "user" when paid plan is passed (${ plan })`, () => {
 			expect( props.goToStep ).toHaveBeenCalledTimes( 0 );
-			shallow(
-				<SitePickerSubmit { ...props } selectedSite={ { plan: { product_slug: plan } } } />
-			);
+			render( <SitePickerSubmit { ...props } selectedSite={ { plan: { product_slug: plan } } } /> );
 			expect( props.goToStep ).toHaveBeenCalledWith( 'user' );
 		} );
 	} );
@@ -118,9 +111,7 @@ describe( 'SitePickerSubmit', () => {
 	[ PLAN_FREE, PLAN_JETPACK_FREE ].forEach( ( plan ) => {
 		test( `Goes to step "plans-site-selected" when a free plan is passed (${ plan })`, () => {
 			expect( props.goToStep ).toHaveBeenCalledTimes( 0 );
-			shallow(
-				<SitePickerSubmit { ...props } selectedSite={ { plan: { product_slug: plan } } } />
-			);
+			render( <SitePickerSubmit { ...props } selectedSite={ { plan: { product_slug: plan } } } /> );
 			expect( props.goToStep ).toHaveBeenCalledWith( 'plans-site-selected' );
 		} );
 	} );

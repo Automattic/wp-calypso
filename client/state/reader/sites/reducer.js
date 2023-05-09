@@ -1,22 +1,14 @@
-/**
- * External Dependencies
- */
-import { includes, keyBy, map, omit, omitBy, reduce, trim } from 'lodash';
-
-/**
- * Internal Dependencies
- */
+import { includes, keyBy, omit, omitBy, trim } from 'lodash';
+import { decodeEntities } from 'calypso/lib/formatting';
+import { withoutHttp } from 'calypso/lib/url';
 import {
 	READER_SITE_BLOCKS_RECEIVE,
 	READER_SITE_REQUEST,
 	READER_SITE_REQUEST_SUCCESS,
 	READER_SITE_REQUEST_FAILURE,
-	READER_SITE_UPDATE,
 } from 'calypso/state/reader/action-types';
 import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 import { readerSitesSchema } from './schema';
-import { withoutHttp } from 'calypso/lib/url';
-import { decodeEntities } from 'calypso/lib/formatting';
 
 function handleRequestFailure( state, action ) {
 	// 410 means site moved - site used to be on wpcom but is no longer
@@ -74,11 +66,6 @@ function handleRequestSuccess( state, action ) {
 	};
 }
 
-function handleSiteUpdate( state, action ) {
-	const sites = map( action.payload, adaptSite );
-	return { ...state, ...keyBy( sites, 'ID' ) };
-}
-
 const itemsReducer = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case READER_SITE_BLOCKS_RECEIVE: {
@@ -98,8 +85,6 @@ const itemsReducer = ( state = {}, action ) => {
 			return handleRequestSuccess( state, action );
 		case READER_SITE_REQUEST_FAILURE:
 			return handleRequestFailure( state, action );
-		case READER_SITE_UPDATE:
-			return handleSiteUpdate( state, action );
 	}
 
 	return state;
@@ -122,7 +107,6 @@ export function queuedRequests( state = {}, action ) {
 		case READER_SITE_REQUEST_SUCCESS:
 		case READER_SITE_REQUEST_FAILURE:
 			return omit( state, action.payload.ID );
-		// we intentionally don't update state on READER_SITE_UPDATE because those can't affect inflight requests
 	}
 	return state;
 }
@@ -134,17 +118,6 @@ export const lastFetched = ( state = {}, action ) => {
 				...state,
 				[ action.payload.ID ]: Date.now(),
 			};
-		case READER_SITE_UPDATE: {
-			const updates = reduce(
-				action.payload,
-				( memo, site ) => {
-					memo[ site.ID ] = Date.now();
-					return memo;
-				},
-				{}
-			);
-			return { ...state, ...updates };
-		}
 	}
 
 	return state;

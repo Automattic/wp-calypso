@@ -1,8 +1,4 @@
-/**
- * Internal dependencies
- */
 import { withoutHttp } from 'calypso/lib/url';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import getRawSite from 'calypso/state/selectors/get-raw-site';
 import getSiteDomain from './get-site-domain';
 import getSiteOption from './get-site-option';
@@ -11,14 +7,13 @@ import getSiteSlug from './get-site-slug';
 import getSiteTitle from './get-site-title';
 import isJetpackSite from './is-jetpack-site';
 import isSiteConflicting from './is-site-conflicting';
-import isSitePreviewable from './is-site-previewable';
 
 /**
  * Returns computed properties of the site object.
  *
- * @param    {object}      state    Global state tree
+ * @param    {Object}      state    Global state tree
  * @param    {number}      siteId   Site ID
- * @returns  {?object}              Site computed properties or null
+ * @returns  {?Object}              Site computed properties or null
  */
 export default function getSiteComputedAttributes( state, siteId ) {
 	const site = getRawSite( state, siteId );
@@ -28,9 +23,6 @@ export default function getSiteComputedAttributes( state, siteId ) {
 
 	const computedAttributes = {
 		domain: getSiteDomain( state, siteId ),
-		hasConflict: isSiteConflicting( state, siteId ),
-		is_customizable: canCurrentUser( state, siteId, 'edit_theme_options' ),
-		is_previewable: !! isSitePreviewable( state, siteId ),
 		options: getSiteOptions( state, siteId ),
 		slug: getSiteSlug( state, siteId ),
 		title: getSiteTitle( state, siteId ),
@@ -43,7 +35,7 @@ export default function getSiteComputedAttributes( state, siteId ) {
 	}
 
 	// we only need to use the unmapped URL for conflicting sites
-	if ( computedAttributes.hasConflict ) {
+	if ( isSiteConflicting( state, siteId ) ) {
 		computedAttributes.URL = getSiteOption( state, siteId, 'unmapped_url' );
 	}
 

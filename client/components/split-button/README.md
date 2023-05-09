@@ -7,8 +7,8 @@ A React component for displaying a button with a labeled main action plus a seco
 Render `<SplitButton />` in a similar fashion as you would [the `<PopoverMenu />` component](../popover-menu), as it is effectively a convenience wrapper for this component with a few additional options. Specifically, you'll still need to render `<PopoverMenuItem />` as children of the `<SplitButton />`.
 
 ```jsx
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SplitButton from 'calypso/components/split-button';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
 
 export default function MyComponent( { onMenuItemClick } ) {
 	return (
@@ -51,6 +51,17 @@ Whether the button is compact or not.
 
 Whether the button is styled as a primary button.
 
+### `whiteSeparator`
+
+<table>
+	<tr><td>Type</td><td><code>PropTypes.bool</code></td></tr>
+    <tr><td>Required</td><td>No</td></tr>
+	<tr><td>Default</td><td><code>false</code></td></tr>
+</table>
+
+When the split button has the primary color, it has not any separator. This prop `whiteSeparator` will add line between the button and the toggle button.
+For non primary buttons, it could be used to hide the separator, because the line would blend with the white background.
+
 ### `scary`
 
 <table>
@@ -71,6 +82,15 @@ Whether the button has modified styling to warn users (delete, remove, etc).es
 
 Callback that will be invoked when menu button is clicked.
 Will be passed the click event.
+
+### `href`
+
+<table>
+	<tr><td>Type</td><td>string</td></tr>
+	<tr><td>Required</td><td>No</td></tr>
+</table>
+
+String used to build a link `a` instead of a `button` element.
 
 ### `onToggle`
 

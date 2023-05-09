@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import { forEach } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { createSelector } from '@automattic/state-utils';
-import 'calypso/state/reader/init';
+import { forEach } from 'lodash';
 import getOrganizationSites from 'calypso/state/reader/follows/selectors/get-reader-follows-organization';
+import 'calypso/state/reader/init';
 
 /**
  * Get sites by organization id

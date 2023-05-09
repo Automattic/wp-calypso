@@ -1,41 +1,35 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import page from 'page';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import Main from 'calypso/components/main';
-import Header from 'calypso/my-sites/domains/domain-management/components/header';
-import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { CompactCard, Button } from '@automattic/components';
-import MaterialIcon from 'calypso/components/material-icon';
-import { getSelectedDomain } from 'calypso/lib/domains';
-import RenewButton from 'calypso/my-sites/domains/domain-management/edit/card/renew-button';
+import { localizeUrl } from '@automattic/i18n-utils';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import page from 'page';
+import { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import Main from 'calypso/components/main';
+import MaterialIcon from 'calypso/components/material-icon';
+import VerticalNav from 'calypso/components/vertical-nav';
+import VerticalNavItem from 'calypso/components/vertical-nav/item';
+import { getSelectedDomain } from 'calypso/lib/domains';
+import { sslStatuses } from 'calypso/lib/domains/constants';
+import { ECOMMERCE, FORMS } from 'calypso/lib/url/support';
+import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
+import Header from 'calypso/my-sites/domains/domain-management/components/header';
+import RenewButton from 'calypso/my-sites/domains/domain-management/edit/card/renew-button';
+import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
+import { showInlineHelpPopover } from 'calypso/state/inline-help/actions';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import {
 	getByPurchaseId,
 	isFetchingSitePurchases,
 	hasLoadedSitePurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
-import { sslStatuses } from 'calypso/lib/domains/constants';
-import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
-import VerticalNavItem from 'calypso/components/vertical-nav/item';
-import VerticalNav from 'calypso/components/vertical-nav';
-import { ECOMMERCE, FORMS } from 'calypso/lib/url/support';
-import { showInlineHelpPopover } from 'calypso/state/inline-help/actions';
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 import './style.scss';
 
-class Security extends React.Component {
+class Security extends Component {
 	header() {
 		return (
 			<Header onClick={ this.back } selectedDomainName={ this.props.selectedDomainName }>
@@ -91,7 +85,7 @@ class Security extends React.Component {
 
 		if ( sslStatuses.SSL_PENDING === sslStatus ) {
 			return (
-				<React.Fragment>
+				<Fragment>
 					<p>
 						{ translate(
 							'Due to some changes to your domain, we need to generate a new SSL certificate to activate your HTTPS encryption. This process should only take a couple hours at most. If you’re running into delays please let us know so we can help you out.'
@@ -100,13 +94,13 @@ class Security extends React.Component {
 					<Button onClick={ this.props.showInlineHelpPopover }>
 						{ translate( 'Contact support' ) }
 					</Button>
-				</React.Fragment>
+				</Fragment>
 			);
 		}
 
 		if ( sslStatuses.SSL_DISABLED === sslStatus ) {
 			return (
-				<React.Fragment>
+				<Fragment>
 					<p>
 						{ translate(
 							'We have disabled HTTPS encryption because your domain has expired and is no longer active. Renew your domain to reactivate it and turn on HTTPS encryption.'
@@ -114,7 +108,7 @@ class Security extends React.Component {
 					</p>
 					{ selectedSite.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 					<RenewButton
-						primary={ true }
+						primary
 						purchase={ purchase }
 						selectedSite={ selectedSite }
 						subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
@@ -122,12 +116,12 @@ class Security extends React.Component {
 						reactivate={ ! domain.isRenewable && domain.isRedeemable }
 						tracksProps={ { source: 'security-status', domain_status: 'expired' } }
 					/>
-				</React.Fragment>
+				</Fragment>
 			);
 		}
 
 		return (
-			<React.Fragment>
+			<Fragment>
 				<p>
 					{ translate(
 						'Strong encryption is critical to ensure the privacy and security of your site. This is what you get with HTTPS encryption on WordPress.com:'
@@ -145,7 +139,7 @@ class Security extends React.Component {
 						<li key={ index }>{ feature }</li>
 					) ) }
 				</ul>
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 
@@ -159,7 +153,7 @@ class Security extends React.Component {
 		const { domain, translate } = this.props;
 		const { sslStatus } = domain;
 		return (
-			<React.Fragment>
+			<Fragment>
 				<CompactCard className="security__header">
 					<span>{ translate( 'HTTPS encryption' ) }</span>
 					{ this.getSSLStatusIcon( domain ) }
@@ -169,15 +163,23 @@ class Security extends React.Component {
 				</CompactCard>
 				{ sslStatuses.SSL_ACTIVE === sslStatus && (
 					<VerticalNav>
-						<VerticalNavItem path={ ECOMMERCE } onClick={ this.handleLearnMoreClicks } external>
+						<VerticalNavItem
+							path={ localizeUrl( ECOMMERCE ) }
+							onClick={ this.handleLearnMoreClicks }
+							external
+						>
 							{ translate( 'Learn more about selling products on WordPress.com' ) }
 						</VerticalNavItem>
-						<VerticalNavItem path={ FORMS } onClick={ this.handleLearnMoreClicks } external>
+						<VerticalNavItem
+							path={ localizeUrl( FORMS ) }
+							onClick={ this.handleLearnMoreClicks }
+							external
+						>
 							{ translate( 'Learn more about forms on WordPress.com' ) }
 						</VerticalNavItem>
 					</VerticalNav>
 				) }
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 

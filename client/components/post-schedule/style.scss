@@ -3,7 +3,7 @@
 
 	&.is-future-date {
 		.DayPicker-Day.DayPicker-Day--is-selected > .date-picker__day {
-			background-color: var( --color-primary );
+			background-color: var(--color-primary);
 		}
 	}
 }
@@ -12,7 +12,7 @@
 	height: 26px;
 	text-align: center;
 	position: absolute;
-	z-index: z-index( '.popover', '.post-schedule__header' );
+	z-index: z-index(".popover", ".post-schedule__header");
 	top: 11px;
 	font-size: $font-body;
 	font-weight: 600;
@@ -35,15 +35,15 @@
 		padding-left: 16px;
 		padding-right: 16px;
 		border: 0;
-		color: var( --color-neutral-70 );
+		color: var(--color-neutral-70);
 	}
 
 	::placeholder {
-		color: var( --color-neutral-70 );
+		color: var(--color-neutral-70);
 	}
 
 	::-moz-placeholder {
-		color: var( --color-neutral-70 );
+		color: var(--color-neutral-70);
 		opacity: 1;
 	}
 }
@@ -70,10 +70,10 @@
 	left: 0;
 	height: 16px;
 	cursor: pointer;
-	color: var( --color-neutral-20 );
+	color: var(--color-neutral-20);
 
 	&:hover {
-		color: var( --color-neutral-light );
+		color: var(--color-neutral-light);
 	}
 }
 
@@ -93,14 +93,14 @@
 
 hr.post-schedule__hr {
 	height: 1px;
-	background: var( --color-neutral-0 );
+	background: var(--color-neutral-0);
 	margin: 0 -16px;
 }
 
-input[type='text'].form-text-input.post-schedule__clock-time {
+input[type="text"].form-text-input.post-schedule__clock-time {
 	height: 28px;
 	display: inline-block;
-	border: 1px solid var( --color-neutral-0 );
+	border: 1px solid var(--color-neutral-0);
 	width: 42px;
 	text-align: center;
 	padding: 0;
@@ -127,7 +127,7 @@ input[type='text'].form-text-input.post-schedule__clock-time {
 	text-align: left;
 	margin-top: 10px;
 	padding: 10px 0 0;
-	border-top: 1px solid var( --color-neutral-5 );
+	border-top: 1px solid var(--color-neutral-5);
 }
 
 .post-schedule__timezone-info {

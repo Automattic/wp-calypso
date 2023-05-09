@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import PlanFeatures from 'calypso/my-sites/plan-features';
 import { PLAN_P2_FREE, PLAN_P2_PLUS } from '@automattic/calypso-products';
+import { localize } from 'i18n-calypso';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
-import QuerySites from 'calypso/components/data/query-sites';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import QuerySites from 'calypso/components/data/query-sites';
+import PlanFeatures from 'calypso/my-sites/plan-features';
 
 export class P2PlansMain extends Component {
 	render() {

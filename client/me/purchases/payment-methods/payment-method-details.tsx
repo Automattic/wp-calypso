@@ -1,28 +1,18 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent } from 'react';
-import { useTranslate } from 'i18n-calypso';
+import { Gridicon } from '@automattic/components';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import { useTranslate } from 'i18n-calypso';
+import { FunctionComponent } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import {
 	getPaymentMethodImageURL,
-	getPaymentMethodSummary,
+	PaymentMethodSummary,
 } from 'calypso/lib/checkout/payment-methods';
-import Gridicon from 'calypso/components/gridicon';
 
-/**
- * Style dependencies
- */
 import 'calypso/me/purchases/payment-methods/style.scss';
 
 interface Props {
 	lastDigits?: string;
-	cardType: string;
+	cardType?: string;
 	name: string;
 	expiry?: string;
 	email?: string;
@@ -32,10 +22,10 @@ interface Props {
 }
 
 const PaymentMethodDetails: FunctionComponent< Props > = ( {
-	cardType,
-	expiry,
 	lastDigits,
+	cardType,
 	name,
+	expiry,
 	email,
 	paymentPartner,
 	isExpired,
@@ -50,7 +40,7 @@ const PaymentMethodDetails: FunctionComponent< Props > = ( {
 	const type = cardType?.toLocaleLowerCase() || paymentPartner || '';
 
 	return (
-		<>
+		<div className="payment-method-details">
 			<img
 				src={ getPaymentMethodImageURL( type ) }
 				className="payment-method-details__image"
@@ -58,12 +48,7 @@ const PaymentMethodDetails: FunctionComponent< Props > = ( {
 			/>
 			<div className="payment-method-details__details">
 				<span className="payment-method-details__number">
-					{ getPaymentMethodSummary( {
-						translate,
-						type,
-						digits: lastDigits,
-						email,
-					} ) }
+					<PaymentMethodSummary type={ type } digits={ lastDigits } email={ email } />
 				</span>
 
 				{ displayExpirationDate && (
@@ -87,7 +72,7 @@ const PaymentMethodDetails: FunctionComponent< Props > = ( {
 				) }
 				<span className="payment-method-details__name">{ name }</span>
 			</div>
-		</>
+		</div>
 	);
 };
 

@@ -1,9 +1,0 @@
-.theme-setup-dialog {
-	min-height: 170px;
-	width: 400px;
-
-	@include breakpoint-deprecated( '<480px' ) {
-		box-sizing: border-box;
-		width: 100%;
-	}
-}

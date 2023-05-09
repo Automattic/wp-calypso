@@ -1,21 +1,13 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 // @todo: Convert to import from `components/gridicon`
 // which makes Calypso mysteriously crash at the moment.
 //
 // eslint-disable-next-line no-restricted-imports
-import Gridicon from 'calypso/components/gridicon';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 /**
@@ -55,10 +47,7 @@ export class Notice extends Component {
 		onDismissClick: PropTypes.func,
 		showDismiss: PropTypes.bool,
 		status: PropTypes.oneOf( [ 'is-error', 'is-info', 'is-success', 'is-warning', 'is-plain' ] ),
-		text: PropTypes.oneOfType( [
-			PropTypes.arrayOf( PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ) ),
-			PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ),
-		] ),
+		text: PropTypes.node,
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -131,7 +120,7 @@ export class Notice extends Component {
 		const iconNeedsDrop = GRIDICONS_WITH_DROP.includes( iconName );
 
 		return (
-			<div className={ classes }>
+			<div className={ classes } role="status" aria-label={ translate( 'Notice' ) }>
 				<span className="notice__icon-wrapper">
 					{ iconNeedsDrop && <span className="notice__icon-wrapper-drop" /> }
 					<Gridicon className="notice__icon" icon={ iconName } size={ 24 } />

@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-import { clone, cloneDeep } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { isAdTrackingAllowed } from 'calypso/lib/analytics/utils';
-
 import { getCurrentUser } from '@automattic/calypso-analytics';
-import { debug, isCriteoEnabled, TRACKING_IDS } from './constants';
+import { clone, cloneDeep } from 'lodash';
+import { mayWeTrackByTracker } from '../tracker-buckets';
+import { debug, TRACKING_IDS } from './constants';
 import { loadTrackingScripts } from './load-tracking-scripts';
 
 // Ensure setup has run.
@@ -19,12 +11,11 @@ import './setup';
  * Records an event in Criteo
  *
  * @param {string} eventName - The name of the 'event' property such as 'viewItem' or 'viewBasket'
- * @param {object} eventProps - Additional details about the event such as `{ item: '1' }`
- *
+ * @param {Object} eventProps - Additional details about the event such as `{ item: '1' }`
  * @returns {void}
  */
 export async function recordInCriteo( eventName, eventProps ) {
-	if ( ! isAdTrackingAllowed() || ! isCriteoEnabled ) {
+	if ( ! mayWeTrackByTracker( 'criteo' ) ) {
 		debug( 'recordInCriteo: [Skipping] ad tracking is not allowed' );
 		return;
 	}
@@ -55,7 +46,7 @@ export async function recordInCriteo( eventName, eventProps ) {
  * Records in Criteo that the visitor viewed the plans page
  */
 export function recordPlansViewInCriteo() {
-	if ( ! isAdTrackingAllowed() || ! isCriteoEnabled ) {
+	if ( ! mayWeTrackByTracker( 'criteo' ) ) {
 		return;
 	}
 
@@ -72,11 +63,11 @@ export function recordPlansViewInCriteo() {
 /**
  * Records that a user viewed the checkout page
  *
- * @param {object} cart - cart as `ResponseCart` object
+ * @param {Object} cart - cart as `ResponseCart` object
  * @returns {void}
  */
 export function recordViewCheckoutInCriteo( cart ) {
-	if ( ! isAdTrackingAllowed() || ! isCriteoEnabled ) {
+	if ( ! mayWeTrackByTracker( 'criteo' ) ) {
 		return;
 	}
 
@@ -99,7 +90,7 @@ export function recordViewCheckoutInCriteo( cart ) {
 /**
  * Converts the products in a cart to the format Criteo expects for its `items` property
  *
- * @param {object} cart - cart as `ResponseCart` object
+ * @param {Object} cart - cart as `ResponseCart` object
  * @returns {Array} - An array of items to include in the Criteo tracking call
  */
 export function cartToCriteoItems( cart ) {

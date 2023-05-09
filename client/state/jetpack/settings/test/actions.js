@@ -1,6 +1,9 @@
-/**
- * Internal dependencies
- */
+import {
+	JETPACK_SETTINGS_REQUEST,
+	JETPACK_SETTINGS_SAVE,
+	JETPACK_SETTINGS_SAVE_SUCCESS,
+	JETPACK_SETTINGS_UPDATE,
+} from 'calypso/state/action-types';
 import {
 	regeneratePostByEmail,
 	requestJetpackSettings,
@@ -8,12 +11,6 @@ import {
 	saveJetpackSettingsSuccess,
 	updateJetpackSettings,
 } from '../actions';
-import {
-	JETPACK_SETTINGS_REQUEST,
-	JETPACK_SETTINGS_SAVE,
-	JETPACK_SETTINGS_SAVE_SUCCESS,
-	JETPACK_SETTINGS_UPDATE,
-} from 'calypso/state/action-types';
 
 describe( 'actions', () => {
 	describe( 'requestJetpackSettings()', () => {

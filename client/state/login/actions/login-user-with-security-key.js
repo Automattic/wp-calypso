@@ -1,23 +1,15 @@
-/**
- * External dependencies
- */
-import { get } from 'lodash';
-import { get as webauthn_auth } from '@github/webauthn-json';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
+import { get as webauthn_auth } from '@github/webauthn-json';
+import { get } from 'lodash';
 import {
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
-import { getTwoFactorAuthNonce, getTwoFactorUserId } from 'calypso/state/login/selectors';
-import { getErrorFromHTTPError, postLoginRequest } from 'calypso/state/login/utils';
-
 import { remoteLoginUser } from 'calypso/state/login/actions/remote-login-user';
 import { updateNonce } from 'calypso/state/login/actions/update-nonce';
+import { getTwoFactorAuthNonce, getTwoFactorUserId } from 'calypso/state/login/selectors';
+import { getErrorFromHTTPError, postLoginRequest } from 'calypso/state/login/utils';
 
 import 'calypso/state/login/init';
 

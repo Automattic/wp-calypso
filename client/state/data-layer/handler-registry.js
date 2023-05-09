@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { mergeHandlers } from 'calypso/state/action-watchers/utils';
 
 /** Stores lists of handlers by action type */
@@ -13,7 +10,7 @@ const registeredNames = new Set();
  * Loads action handlers into the data layer
  *
  * @param {string} id name of handler set
- * @param {object<string, Array<Function>>} handlers set of handlers to inject
+ * @param {Object<string, Array<Function>>} handlers set of handlers to inject
  */
 export const registerHandlers = ( id, handlers ) => {
 	if ( registeredNames.has( id ) ) {

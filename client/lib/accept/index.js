@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-
+import { createElement } from 'react';
 import ReactDom from 'react-dom';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import AcceptDialog from './dialog';
 
 export default function ( message, callback, confirmButtonText, cancelButtonText, options ) {
@@ -27,7 +19,7 @@ export default function ( message, callback, confirmButtonText, cancelButtonText
 	}
 
 	ReactDom.render(
-		React.createElement( AcceptDialog, {
+		createElement( AcceptDialog, {
 			message: message,
 			onClose: onClose,
 			confirmButtonText: confirmButtonText,

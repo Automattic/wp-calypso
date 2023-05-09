@@ -9,9 +9,6 @@
  * To break the dependency cycle, we introduced `sections-helper` which does not import sections.js
  */
 
-/**
- * External dependencies
- */
 import { find } from 'lodash';
 
 let sections = null;

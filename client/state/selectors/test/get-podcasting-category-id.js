@@ -1,7 +1,3 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
 import getPodcastingCategoryId from 'calypso/state/selectors/get-podcasting-category-id';
 
 describe( 'getPodcastingCategoryId', () => {
@@ -18,7 +14,7 @@ describe( 'getPodcastingCategoryId', () => {
 				},
 				1
 			)
-		).to.be.null;
+		).toBeNull();
 	} );
 
 	test( 'returns 0 if podcasting has not been configured', () => {
@@ -38,7 +34,7 @@ describe( 'getPodcastingCategoryId', () => {
 				},
 				1
 			)
-		).to.equal( 0 );
+		).toEqual( 0 );
 	} );
 
 	test( 'returns a category ID if podcasting has been configured', () => {
@@ -58,7 +54,7 @@ describe( 'getPodcastingCategoryId', () => {
 				},
 				1
 			)
-		).to.equal( 123 );
+		).toEqual( 123 );
 	} );
 
 	test( 'returns null for private sites', () => {
@@ -82,6 +78,6 @@ describe( 'getPodcastingCategoryId', () => {
 				},
 				1
 			)
-		).to.be.null;
+		).toBeNull();
 	} );
 } );

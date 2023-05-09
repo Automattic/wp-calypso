@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { initialStateForSite } from './reducer';
 
 import 'calypso/state/domains/init';

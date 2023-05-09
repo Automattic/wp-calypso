@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import store from 'store';
 
 // Store token into local storage

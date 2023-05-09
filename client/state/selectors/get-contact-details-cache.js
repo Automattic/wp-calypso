@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import { get } from 'lodash';
 
-/**
- * Internal dependencies
- */
 import 'calypso/state/domains/init';
 
 /**
@@ -15,7 +9,7 @@ import 'calypso/state/domains/init';
 /**
  * Returns cached domain contact details if we've successfully requested them.
  *
- * @param  {object}  state       Global state tree
+ * @param  {Object}  state       Global state tree
  * @returns {null|PossiblyCompleteDomainContactDetails}              Contact details
  */
 export default function getContactDetailsCache( state ) {

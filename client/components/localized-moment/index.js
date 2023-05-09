@@ -1,14 +1,5 @@
-/**
- * External dependencies
- *
- */
-
-import React from 'react';
 import { createHigherOrderComponent } from '@wordpress/compose';
-
-/**
- * Internal dependencies
- */
+import { useContext } from 'react';
 import MomentContext from './context';
 
 export const withLocalizedMoment = createHigherOrderComponent( ( Wrapped ) => {
@@ -22,6 +13,6 @@ export const withLocalizedMoment = createHigherOrderComponent( ( Wrapped ) => {
 }, 'WithLocalizedMoment' );
 
 export const useLocalizedMoment = () => {
-	const { moment } = React.useContext( MomentContext );
+	const { moment } = useContext( MomentContext );
 	return moment;
 };

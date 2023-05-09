@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	CONCIERGE_APPOINTMENT_CANCEL,
 	CONCIERGE_APPOINTMENT_CREATE,

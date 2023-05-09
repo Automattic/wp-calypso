@@ -1,59 +1,49 @@
-/**
- * External dependencies
- */
+import { useProcessPayment, PaymentProcessorResponseType } from '@automattic/composite-checkout';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import { useProcessPayment } from '@automattic/composite-checkout';
-import type { ResponseCart } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
-import { errorNotice } from 'calypso/state/notices/actions';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { translateResponseCartToWPCOMCart } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-cart';
-import type { StoredCard } from 'calypso/my-sites/checkout/composite-checkout/types/stored-cards';
-
-export function extractStoredCardMetaValue( card: StoredCard, key: string ): string | undefined {
-	return card.meta?.find( ( meta ) => meta.meta_key === key )?.meta_value;
-}
+import { errorNotice } from 'calypso/state/notices/actions';
+import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
+import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
 
 type SetStep = ( step: string ) => void;
 type OnClose = () => void;
 type SubmitTransactionFunction = () => void;
 
 export function useSubmitTransaction( {
-	cart,
-	siteId,
 	storedCard,
 	setStep,
 	onClose,
 }: {
-	cart: ResponseCart;
-	siteId: string | number;
-	storedCard: StoredCard;
+	storedCard: StoredPaymentMethod | undefined;
 	setStep: SetStep;
 	onClose: OnClose;
 } ): SubmitTransactionFunction {
-	const callPaymentProcessor = useProcessPayment();
+	const callPaymentProcessor = useProcessPayment( 'existing-card' );
 	const reduxDispatch = useDispatch();
 
 	return useCallback( () => {
-		const wpcomCart = translateResponseCartToWPCOMCart( cart );
-		const countryCode = extractStoredCardMetaValue( storedCard, 'country_code' );
-		const postalCode = extractStoredCardMetaValue( storedCard, 'card_zip' );
+		if ( ! storedCard ) {
+			throw new Error( 'No saved card found' );
+		}
 		setStep( 'processing' );
-		callPaymentProcessor( 'existing-card', {
-			items: wpcomCart.items,
+		callPaymentProcessor( {
 			name: storedCard.name,
 			storedDetailsId: storedCard.stored_details_id,
 			paymentMethodToken: storedCard.mp_ref,
 			paymentPartnerProcessorId: storedCard.payment_partner,
-			country: countryCode,
-			postalCode,
-			siteId: siteId ? String( siteId ) : undefined,
 		} )
-			.then( () => {
+			.then( ( response: PaymentProcessorResponse ) => {
+				if ( response.type === PaymentProcessorResponseType.ERROR ) {
+					recordTracksEvent( 'calypso_oneclick_upsell_payment_error', {
+						error_code: response.payload,
+						reason: response.payload,
+					} );
+					reduxDispatch( errorNotice( response.payload ) );
+					onClose();
+					return;
+				}
+
 				recordTracksEvent( 'calypso_oneclick_upsell_payment_success', {} );
 			} )
 			.catch( ( error ) => {
@@ -64,7 +54,7 @@ export function useSubmitTransaction( {
 				reduxDispatch( errorNotice( error.message ) );
 				onClose();
 			} );
-	}, [ siteId, callPaymentProcessor, cart, storedCard, setStep, onClose, reduxDispatch ] );
+	}, [ callPaymentProcessor, storedCard, setStep, onClose, reduxDispatch ] );
 }
 
 export function formatDate( cardExpiry: string ): string {

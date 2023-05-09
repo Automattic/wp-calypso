@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { SELECTED_SITE_SET } from 'calypso/state/action-types';
 
 import 'calypso/state/ui/init';
@@ -9,8 +6,8 @@ import 'calypso/state/ui/init';
  * Returns an action object to be used in signalling that a site has been set
  * as selected.
  *
- * @param {number} siteId Site ID
- * @returns {object} Action object
+ * @param {number | null} siteId Site ID
+ * @returns {{type: string, siteId: number}} Action object
  */
 export function setSelectedSiteId( siteId ) {
 	return {
@@ -23,7 +20,7 @@ export function setSelectedSiteId( siteId ) {
  * Returns an action object to be used in signalling that all sites have been
  * set as selected.
  *
- * @returns {object} Action object
+ * @returns {Object} Action object
  */
 export function setAllSitesSelected() {
 	return {

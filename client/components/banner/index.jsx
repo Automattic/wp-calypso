@@ -1,18 +1,3 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import classNames from 'classnames';
-import { size } from 'lodash';
-import Gridicon from 'calypso/components/gridicon';
-import JetpackLogo from 'calypso/components/jetpack-logo';
-
-/**
- * Internal dependencies
- */
 import {
 	planMatches,
 	isBloggerPlan,
@@ -23,20 +8,24 @@ import {
 	GROUP_JETPACK,
 	GROUP_WPCOM,
 } from '@automattic/calypso-products';
-import { addQueryArgs } from 'calypso/lib/url';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
-import { Button, Card } from '@automattic/components';
+import { Button, Card, Gridicon } from '@automattic/components';
+import { isMobile } from '@automattic/viewport';
+import classNames from 'classnames';
+import { size } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import DismissibleCard from 'calypso/blocks/dismissible-card';
-import PlanPrice from 'calypso/my-sites/plan-price';
+import JetpackLogo from 'calypso/components/jetpack-logo';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { preventWidows } from 'calypso/lib/formatting';
+import { addQueryArgs } from 'calypso/lib/url';
+import PlanPrice from 'calypso/my-sites/plan-price';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};
@@ -45,12 +34,14 @@ export class Banner extends Component {
 	static propTypes = {
 		callToAction: PropTypes.string,
 		className: PropTypes.string,
+		compactButton: PropTypes.bool,
 		description: PropTypes.node,
 		forceHref: PropTypes.bool,
 		disableCircle: PropTypes.bool,
 		disableHref: PropTypes.bool,
 		dismissPreferenceName: PropTypes.string,
 		dismissTemporary: PropTypes.bool,
+		dismissWithoutSavingPreference: PropTypes.bool,
 		event: PropTypes.string,
 		feature: PropTypes.string,
 		horizontal: PropTypes.bool,
@@ -60,7 +51,11 @@ export class Banner extends Component {
 		jetpack: PropTypes.bool,
 		isAtomic: PropTypes.bool,
 		compact: PropTypes.bool,
-		list: PropTypes.arrayOf( PropTypes.string ),
+		list: PropTypes.oneOfType( [
+			PropTypes.arrayOf( PropTypes.string ),
+			PropTypes.arrayOf( PropTypes.object ),
+		] ),
+		renderListItem: PropTypes.func,
 		onClick: PropTypes.func,
 		onDismiss: PropTypes.func,
 		plan: PropTypes.string,
@@ -69,7 +64,7 @@ export class Banner extends Component {
 		showIcon: PropTypes.bool,
 		siteSlug: PropTypes.string,
 		target: PropTypes.string,
-		title: PropTypes.string.isRequired,
+		title: PropTypes.node.isRequired,
 		tracksImpressionName: PropTypes.string,
 		tracksClickName: PropTypes.string,
 		tracksDismissName: PropTypes.string,
@@ -78,6 +73,7 @@ export class Banner extends Component {
 		tracksDismissProperties: PropTypes.object,
 		customerType: PropTypes.string,
 		isSiteWPForTeams: PropTypes.bool,
+		displayAsLink: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -86,6 +82,7 @@ export class Banner extends Component {
 		disableHref: false,
 		dismissTemporary: false,
 		compact: false,
+		compactButton: true,
 		horizontal: false,
 		jetpack: false,
 		isAtomic: false,
@@ -125,7 +122,7 @@ export class Banner extends Component {
 		const { event, feature, compact, onClick, tracksClickName, tracksClickProperties } = this.props;
 
 		if ( event && tracksClickName ) {
-			this.props.recordTracksEvent( tracksClickName, {
+			this.props.recordTracksEvent?.( tracksClickName, {
 				cta_name: event,
 				cta_feature: feature,
 				cta_size: compact ? 'compact' : 'regular',
@@ -140,7 +137,7 @@ export class Banner extends Component {
 		const { event, feature, onDismiss, tracksDismissName, tracksDismissProperties } = this.props;
 
 		if ( event && tracksDismissName ) {
-			this.props.recordTracksEvent( tracksDismissName, {
+			this.props.recordTracksEvent?.( tracksDismissName, {
 				cta_name: event,
 				cta_feature: feature,
 				...tracksDismissProperties,
@@ -169,7 +166,7 @@ export class Banner extends Component {
 		if ( iconPath ) {
 			iconComponent = <img src={ iconPath } alt="" />;
 		} else {
-			iconComponent = <Gridicon icon={ icon || 'star' } size={ 18 } />;
+			iconComponent = <Gridicon icon={ icon || 'star' } size={ isMobile() ? 24 : 18 } />;
 		}
 
 		return (
@@ -192,8 +189,10 @@ export class Banner extends Component {
 			feature,
 			compact,
 			list,
+			renderListItem,
 			price,
 			primaryButton,
+			compactButton,
 			title,
 			target,
 			tracksImpressionName,
@@ -222,8 +221,12 @@ export class Banner extends Component {
 						<ul className="banner__list">
 							{ list.map( ( item, key ) => (
 								<li key={ key }>
-									<Gridicon icon="checkmark" size={ 18 } />
-									{ item }
+									{ renderListItem?.( item ) ?? (
+										<>
+											<Gridicon icon="checkmark" size={ 18 } />
+											{ item }
+										</>
+									) }
 								</li>
 							) ) }
 						</ul>
@@ -240,12 +243,12 @@ export class Banner extends Component {
 						) }
 						{ callToAction &&
 							( forceHref ? (
-								<Button compact primary={ primaryButton } target={ target }>
+								<Button compact={ compactButton } primary={ primaryButton } target={ target }>
 									{ preventWidows( callToAction ) }
 								</Button>
 							) : (
 								<Button
-									compact
+									compact={ compactButton }
 									href={ this.getHref() }
 									onClick={ this.handleClick }
 									primary={ primaryButton }
@@ -267,17 +270,21 @@ export class Banner extends Component {
 			compact,
 			disableHref,
 			dismissPreferenceName,
+			dismissWithoutSavingPreference,
 			dismissTemporary,
 			forceHref,
 			horizontal,
 			jetpack,
 			isAtomic,
 			plan,
+			displayAsLink,
 		} = this.props;
 
-		// No Banners for WP for Teams sites.
+		// For P2 sites, only show banners if they have the 'p2-banner' class.
 		if ( this.props.isSiteWPForTeams ) {
-			return null;
+			if ( 'string' !== typeof className || ! className.split( ' ' ).includes( 'p2-banner' ) ) {
+				return null;
+			}
 		}
 
 		const classes = classNames(
@@ -292,7 +299,7 @@ export class Banner extends Component {
 			{ 'is-jetpack-plan': plan && planMatches( plan, { group: GROUP_JETPACK } ) },
 			{ 'is-wpcom-plan': plan && planMatches( plan, { group: GROUP_WPCOM } ) },
 			{ 'is-compact': compact },
-			{ 'is-dismissible': dismissPreferenceName },
+			{ 'is-dismissible': dismissPreferenceName || dismissWithoutSavingPreference },
 			{ 'is-horizontal': horizontal },
 			{ 'is-jetpack': jetpack },
 			{ 'is-atomic': isAtomic }
@@ -317,7 +324,11 @@ export class Banner extends Component {
 				className={ classes }
 				href={ ( disableHref || callToAction ) && ! forceHref ? null : this.getHref() }
 				onClick={ callToAction && ! forceHref ? null : this.handleClick }
+				displayAsLink={ displayAsLink }
 			>
+				{ dismissWithoutSavingPreference && (
+					<Gridicon icon="cross" className="banner__close-icon" onClick={ this.handleDismiss } />
+				) }
 				{ this.getIcon() }
 				{ this.getContent() }
 			</Card>

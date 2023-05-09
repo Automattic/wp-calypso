@@ -1,26 +1,21 @@
-/**
- * Internal dependencies
- */
-import { isEligibleForGutenframe } from 'calypso/state/gutenberg-iframe-eligible/is-eligible-for-gutenframe';
-import { getSiteAdminUrl, getSiteSlug } from 'calypso/state/sites/selectors';
+import { addQueryArgs } from 'calypso/lib/route';
+import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 
 /**
  * Retrieves url for site editor.
  *
- * @param {object} state  Global state tree
- * @param {object} siteId Site ID
+ * @param {Object} state  Global state tree
+ * @param {number} siteId Site ID
  * @returns {string} Url of site editor instance for calypso or wp-admin.
  */
 export const getSiteEditorUrl = ( state, siteId ) => {
 	const siteAdminUrl = getSiteAdminUrl( state, siteId );
-
-	if ( ! isEligibleForGutenframe( state, siteId ) ) {
-		return `${ siteAdminUrl }admin.php?page=gutenberg-edit-site`;
+	const queryArgs = {};
+	// Only add the origin if it's not wordpress.com.
+	if ( typeof window !== 'undefined' && window.location.origin !== 'https://wordpress.com' ) {
+		queryArgs.calypso_origin = window.location.origin;
 	}
-
-	const siteSlug = getSiteSlug( state, siteId );
-
-	return `/site-editor/${ siteSlug }`;
+	return addQueryArgs( queryArgs, `${ siteAdminUrl }site-editor.php` );
 };
 
 export default getSiteEditorUrl;

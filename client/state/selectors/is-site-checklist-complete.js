@@ -1,16 +1,13 @@
-/**
- * Internal dependencies
- */
-import getSiteTaskList from 'calypso/state/selectors/get-site-task-list';
+import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
 import getSiteChecklist from 'calypso/state/selectors/get-site-checklist';
+import getSiteTaskList from 'calypso/state/selectors/get-site-task-list';
 import isSiteChecklistLoading from 'calypso/state/selectors/is-site-checklist-loading';
 import { getSiteFrontPage } from 'calypso/state/sites/selectors';
-import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
 
 /**
  * Checks whether the tasklist has been completed.
  *
- * @param  {object}  state  Global state tree
+ * @param  {Object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @returns {string} null if there's no data yet, false if the tasklist is incomplete, true if it's complete.
  */
@@ -37,7 +34,7 @@ export default function isSiteChecklistComplete( state, siteId ) {
 	 *	C) the mobile_app_installed task, because it shouldn't affect the site setup status.
 	 *	D) the site_menu_updated task, because it shouldn't affect the site setup status.
 	 *
-	 *		@param   {object}  task The task that we'll check to see if it's completed.
+	 *		@param   {Object}  task The task that we'll check to see if it's completed.
 	 *		@returns {boolean}      Whether the task is considered to be completed or not.
 	 */
 	const isTaskComplete = ( task ) => {

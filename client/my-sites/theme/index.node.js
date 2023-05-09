@@ -1,9 +1,7 @@
-/**
- * Internal dependencies
- */
-import { makeLayout, ssrSetupLocale, setHrefLangLinks } from 'calypso/controller';
-import { details, fetchThemeDetailsData, notFoundError } from './controller';
-import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
+import { getLanguageRouteParam } from '@automattic/i18n-utils';
+import { makeLayout, ssrSetupLocale } from 'calypso/controller';
+import { setHrefLangLinks, setLocalizedCanonicalUrl } from 'calypso/controller/localized-links';
+import { details, fetchThemeDetailsData, fetchThemeFilters, notFoundError } from './controller';
 
 export default function ( router ) {
 	const langParam = getLanguageRouteParam();
@@ -12,9 +10,11 @@ export default function ( router ) {
 	router(
 		`/${ langParam }/theme/:slug/:section(setup|support)?/:site_id?`,
 		ssrSetupLocale,
+		fetchThemeFilters,
 		fetchThemeDetailsData,
 		details,
 		setHrefLangLinks,
+		setLocalizedCanonicalUrl,
 		makeLayout,
 
 		// Error handlers

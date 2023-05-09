@@ -1,41 +1,25 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
+import {
+	FEATURE_UPLOAD_THEMES,
+	PLAN_BUSINESS,
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+} from '@automattic/calypso-products';
 import { pickBy } from 'lodash';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import Main from 'calypso/components/main';
-import CurrentTheme from 'calypso/my-sites/themes/current-theme';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
-import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
-import { isPartnerPurchase } from 'calypso/lib/purchases';
-import { connectOptions } from './theme-options';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import {
-	FEATURE_UNLIMITED_PREMIUM_THEMES,
-	PLAN_JETPACK_SECURITY_REALTIME,
-} from '@automattic/calypso-products';
-import QuerySitePlans from 'calypso/components/data/query-site-plans';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import QueryActiveTheme from 'calypso/components/data/query-active-theme';
+import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
+import Main from 'calypso/components/main';
+import { useRequestSiteChecklistTaskUpdate } from 'calypso/data/site-checklist';
+import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import { getCurrentPlan, isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
+import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
+import { getActiveTheme } from 'calypso/state/themes/selectors';
+import { addTracking } from './helpers';
+import { connectOptions } from './theme-options';
 import ThemeShowcase from './theme-showcase';
 import ThemesSelection from './themes-selection';
-import { addTracking } from './helpers';
-import {
-	getCurrentPlan,
-	hasFeature,
-	isRequestingSitePlans,
-} from 'calypso/state/sites/plans/selectors';
-import { getByPurchaseId } from 'calypso/state/purchases/selectors';
-import { getLastThemeQuery, getThemesFoundForQuery } from 'calypso/state/themes/selectors';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
-import ThemesHeader from './themes-header';
 
 const ConnectedThemesSelection = connectOptions( ( props ) => {
 	return (
@@ -54,57 +38,84 @@ const ConnectedThemesSelection = connectOptions( ( props ) => {
 const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 	const {
 		currentPlan,
+		currentThemeId,
 		emptyContent,
 		filter,
 		getScreenshotOption,
-		purchase,
+		isAtomic,
 		showWpcomThemesList,
 		search,
 		siteId,
 		vertical,
 		tier,
 		translate,
-		hasUnlimitedPremiumThemes,
 		requestingSitePlans,
-		siteSlug,
 	} = props;
 
-	const isPartnerPlan = purchase && isPartnerPurchase( purchase );
+	const isWooExpressTrial = PLAN_ECOMMERCE_TRIAL_MONTHLY === currentPlan?.productSlug;
+
+	const upsellBanner = () => {
+		if ( isWooExpressTrial ) {
+			return (
+				<UpsellNudge
+					className="themes__showcase-banner"
+					event="calypso_themes_list_install_themes"
+					feature={ FEATURE_UPLOAD_THEMES }
+					plan={ PLAN_ECOMMERCE }
+					title={ translate( 'Upgrade to a plan to upload your own themes!' ) }
+					callToAction={ translate( 'Upgrade now' ) }
+					showIcon={ true }
+				/>
+			);
+		}
+
+		return (
+			<UpsellNudge
+				className="themes__showcase-banner"
+				event="calypso_themes_list_install_themes"
+				feature={ FEATURE_UPLOAD_THEMES }
+				plan={ PLAN_BUSINESS }
+				title={ translate(
+					'Unlock ALL premium themes and upload your own themes with our Business and eCommerce plans!'
+				) }
+				callToAction={ translate( 'Upgrade now' ) }
+				showIcon={ true }
+			/>
+		);
+	};
+
+	const upsellUrl = () => {
+		if ( isWooExpressTrial ) {
+			return `/plans/${ siteId }?feature=${ FEATURE_UPLOAD_THEMES }&plan=${ PLAN_ECOMMERCE }`;
+		}
+
+		return (
+			isAtomic && `/plans/${ siteId }?feature=${ FEATURE_UPLOAD_THEMES }&plan=${ PLAN_BUSINESS }`
+		);
+	};
+
+	const displayUpsellBanner = isAtomic && ! requestingSitePlans && currentPlan;
+
+	useRequestSiteChecklistTaskUpdate( siteId, CHECKLIST_KNOWN_TASKS.THEMES_BROWSED );
 
 	return (
 		<Main fullWidthLayout className="themes">
-			<SidebarNavigation />
-			<ThemesHeader />
-			<CurrentTheme siteId={ siteId } />
-			{ ! requestingSitePlans && currentPlan && ! hasUnlimitedPremiumThemes && ! isPartnerPlan && (
-				<UpsellNudge
-					forceDisplay
-					title={ translate( 'Get unlimited premium themes' ) }
-					description={ translate(
-						'In addition to our collection of premium themes, get comprehensive WordPress' +
-							' security, real-time backups, and unlimited video hosting.'
-					) }
-					event="themes_plans_free_personal_premium"
-					showIcon={ true }
-					href={ `/checkout/${ siteSlug }/${ PLAN_JETPACK_SECURITY_REALTIME }` }
-				/>
-			) }
+			<QueryActiveTheme siteId={ siteId } />
+			{ currentThemeId && <QueryCanonicalTheme themeId={ currentThemeId } siteId={ siteId } /> }
+
 			<ThemeShowcase
 				{ ...props }
+				upsellUrl={ upsellUrl() }
 				siteId={ siteId }
-				emptyContent={ showWpcomThemesList ? <div /> : null }
+				isJetpackSite={ true }
+				upsellBanner={ displayUpsellBanner ? upsellBanner() : null }
 			>
-				{ siteId && <QuerySitePlans siteId={ siteId } /> }
-				{ siteId && <QuerySitePurchases siteId={ siteId } /> }
-				<ThanksModal source={ 'list' } />
-				<AutoLoadingHomepageModal source={ 'list' } />
 				{ showWpcomThemesList && (
 					<div>
 						<ConnectedThemesSelection
 							origin="wpcom"
-							defaultOption={ 'activate' }
-							secondaryOption={ 'tryandcustomize' }
-							noMarginBeforeHeader={ true }
+							defaultOption="activate"
+							secondaryOption="tryandcustomize"
 							search={ search }
 							tier={ tier }
 							filter={ filter }
@@ -128,6 +139,8 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 							trackScrollPage={ props.trackScrollPage }
 							source="wpcom"
 							emptyContent={ emptyContent }
+							upsellUrl={ upsellUrl }
+							forceWpOrgSearch
 						/>
 					</div>
 				) }
@@ -137,27 +150,18 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 } );
 
 export default connect( ( state, { siteId, tier } ) => {
-	const siteSlug = getSelectedSiteSlug( state );
 	const currentPlan = getCurrentPlan( state, siteId );
+	const currentThemeId = getActiveTheme( state, siteId );
 	const isMultisite = isJetpackSiteMultiSite( state, siteId );
 	const showWpcomThemesList = ! isMultisite;
-	let emptyContent = null;
-	if ( showWpcomThemesList ) {
-		const siteQuery = getLastThemeQuery( state, siteId );
-		const wpcomQuery = getLastThemeQuery( state, 'wpcom' );
-		const siteThemesCount = getThemesFoundForQuery( state, siteId, siteQuery );
-		const wpcomThemesCount = getThemesFoundForQuery( state, 'wpcom', wpcomQuery );
-		emptyContent = ! siteThemesCount && ! wpcomThemesCount ? null : <div />;
-	}
 	return {
 		currentPlan,
-		purchase: currentPlan ? getByPurchaseId( state, currentPlan.id ) : null,
+		currentThemeId,
 		tier,
 		showWpcomThemesList,
-		emptyContent,
+		emptyContent: null,
+		isAtomic: isAtomicSite( state, siteId ),
 		isMultisite,
-		hasUnlimitedPremiumThemes: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
 		requestingSitePlans: isRequestingSitePlans( state, siteId ),
-		siteSlug,
 	};
 } )( ConnectedSingleSiteJetpack );

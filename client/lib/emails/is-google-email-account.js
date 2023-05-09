@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	EMAIL_ACCOUNT_TYPE_GOOGLE_WORKSPACE,
 	EMAIL_ACCOUNT_TYPE_GSUITE,

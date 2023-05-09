@@ -1,8 +1,6 @@
-/**
- * Internal dependencies
- */
-import { JETPACK_CONTACT_SUPPORT } from 'calypso/lib/url/support';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { addQueryArgs } from 'calypso/lib/url';
+import { JETPACK_CONTACT_SUPPORT } from 'calypso/lib/url/support';
 
 /**
  * Creates a URL that refers to the Jetpack 'Contact Support' page,
@@ -22,6 +20,6 @@ export default function contactSupportUrl( siteUrl, scanState ) {
 			url: siteUrl,
 			'scan-state': scanState,
 		},
-		JETPACK_CONTACT_SUPPORT
+		localizeUrl( JETPACK_CONTACT_SUPPORT )
 	);
 }

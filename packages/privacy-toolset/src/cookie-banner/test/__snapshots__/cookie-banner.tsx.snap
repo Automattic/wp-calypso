@@ -1,0 +1,147 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CookieBanner renders in customized consent correctly (after customize button click) 1`] = `
+<div>
+  <div
+    class="cookie-banner"
+  >
+    <div
+      class="cookie-banner__options-selection"
+    >
+      <p
+        class="cookie-banner__options-lead-text"
+      >
+        customized description
+      </p>
+      <div
+        class="cookie-banner__bucket-container"
+      >
+        <span
+          class="components-form-toggle is-checked is-disabled"
+        >
+          <input
+            checked=""
+            class="components-form-toggle__input"
+            data-testid="essential-bucket-toggle"
+            disabled=""
+            type="checkbox"
+          />
+          <span
+            class="components-form-toggle__track"
+          />
+          <span
+            class="components-form-toggle__thumb"
+          />
+        </span>
+        <div
+          class="cookie-banner__option-description"
+        >
+          <strong>
+            essential name
+          </strong>
+          <p>
+            essential description
+          </p>
+        </div>
+      </div>
+      <div
+        class="cookie-banner__bucket-container"
+      >
+        <span
+          class="components-form-toggle is-checked"
+        >
+          <input
+            checked=""
+            class="components-form-toggle__input"
+            data-testid="analytics-bucket-toggle"
+            type="checkbox"
+          />
+          <span
+            class="components-form-toggle__track"
+          />
+          <span
+            class="components-form-toggle__thumb"
+          />
+        </span>
+        <div
+          class="cookie-banner__option-description"
+        >
+          <strong>
+            analytics name
+          </strong>
+          <p>
+            analytics description
+          </p>
+        </div>
+      </div>
+      <div
+        class="cookie-banner__bucket-container"
+      >
+        <span
+          class="components-form-toggle is-checked"
+        >
+          <input
+            checked=""
+            class="components-form-toggle__input"
+            data-testid="advertising-bucket-toggle"
+            type="checkbox"
+          />
+          <span
+            class="components-form-toggle__track"
+          />
+          <span
+            class="components-form-toggle__thumb"
+          />
+        </span>
+        <div
+          class="cookie-banner__option-description"
+        >
+          <strong>
+            advertising name
+          </strong>
+          <p>
+            advertising description
+          </p>
+        </div>
+      </div>
+      <button
+        class="cookie-banner__accept-selection-button"
+      >
+        acceptSelectionButton
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`CookieBanner renders in simple consent correctly 1`] = `
+<div>
+  <div
+    class="cookie-banner"
+  >
+    <div
+      class="cookie-banner__simple-options"
+    >
+      <p
+        class="cookie-banner__simple-text-description"
+      >
+        simple description
+      </p>
+      <div
+        class="cookie-banner__button-container"
+      >
+        <button
+          class="cookie-banner__customize-button"
+        >
+          customizeButton
+        </button>
+        <button
+          class="cookie-banner__accept-all-button"
+        >
+          acceptAllButton
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;

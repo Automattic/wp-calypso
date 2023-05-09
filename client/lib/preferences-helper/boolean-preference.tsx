@@ -1,18 +1,5 @@
-/**
- * External dependencies
- */
+import { FunctionComponent, ChangeEventHandler, useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import React, {
-	FunctionComponent,
-	ChangeEventHandler,
-	useCallback,
-	useEffect,
-	useState,
-} from 'react';
-
-/**
- * Internal dependencies
- */
 import { savePreference } from 'calypso/state/preferences/actions';
 
 interface Props {
@@ -49,14 +36,14 @@ const BooleanPreference: FunctionComponent< Props > = ( { name, value } ) => {
 						onClick={ savePreferenceChange }
 						disabled={ value === localValue }
 					>
-						{ 'save' }
+						save
 					</button>{ ' ' }
 					<button
 						className="preferences-helper__reset-pref-button"
 						onClick={ resetPreferenceChange }
 						disabled={ value === localValue }
 					>
-						{ 'reset' }
+						reset
 					</button>
 				</>
 			) }

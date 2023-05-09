@@ -1,21 +1,18 @@
-/**
- * Internal dependencies
- */
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { translate } from 'i18n-calypso';
 import {
 	HOSTING_PHP_VERSION_REQUEST,
 	HOSTING_PHP_VERSION_SET_REQUEST,
 	HOSTING_PHP_VERSION_SET,
 } from 'calypso/state/action-types';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { translate } from 'i18n-calypso';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 const updateNoticeId = 'hosting-php-version';
 
@@ -55,7 +52,7 @@ export const hostingPhpVersionUpdateTracking = ( version, result ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Hosting Configuration',
-			'Clicked "Update PHP Version" Button in PHP Version box',
+			'Clicked "Update PHP Version" Button in Web Server Settings box',
 			`PHP Version Update ${ result }`,
 			version
 		),

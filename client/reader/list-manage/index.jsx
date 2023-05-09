@@ -1,14 +1,19 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Button, Card } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
+import { useDispatch, useSelector } from 'react-redux';
+import ReaderExportButton from 'calypso/blocks/reader-export-button';
+import { READER_EXPORT_TYPE_LIST } from 'calypso/blocks/reader-export-button/constants';
+import QueryReaderList from 'calypso/components/data/query-reader-list';
+import QueryReaderListItems from 'calypso/components/data/query-reader-list-items';
+import EmptyContent from 'calypso/components/empty-content';
+import FormattedHeader from 'calypso/components/formatted-header';
+import Main from 'calypso/components/main';
+import SectionNav from 'calypso/components/section-nav';
+import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import { preventWidows } from 'calypso/lib/formatting';
+import Missing from 'calypso/reader/list-stream/missing';
+import { createReaderList, updateReaderList } from 'calypso/state/reader/lists/actions';
 import {
 	getListByOwnerAndSlug,
 	getListItems,
@@ -16,27 +21,10 @@ import {
 	isUpdatingList as isUpdatingListSelector,
 	isMissingByOwnerAndSlug,
 } from 'calypso/state/reader/lists/selectors';
-import FormattedHeader from 'calypso/components/formatted-header';
-import QueryReaderList from 'calypso/components/data/query-reader-list';
-import QueryReaderListItems from 'calypso/components/data/query-reader-list-items';
-import SectionNav from 'calypso/components/section-nav';
-import NavTabs from 'calypso/components/section-nav/tabs';
-import NavItem from 'calypso/components/section-nav/item';
-import Main from 'calypso/components/main';
-import { createReaderList, updateReaderList } from 'calypso/state/reader/lists/actions';
-import ReaderExportButton from 'calypso/blocks/reader-export-button';
-import { READER_EXPORT_TYPE_LIST } from 'calypso/blocks/reader-export-button/constants';
-import Missing from 'calypso/reader/list-stream/missing';
 import ItemAdder from './item-adder';
 import ListDelete from './list-delete';
 import ListForm from './list-form';
 import ListItem from './list-item';
-import EmptyContent from 'calypso/components/empty-content';
-import { preventWidows } from 'calypso/lib/formatting';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function Details( { list } ) {

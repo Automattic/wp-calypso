@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import isPrecancellationChatAvailable from '../is-precancellation-chat-available';
 
 describe( '#isPrecancellationChatAvailable()', () => {
@@ -13,24 +5,24 @@ describe( '#isPrecancellationChatAvailable()', () => {
 		const isPrecancellationAvailable = isPrecancellationChatAvailable( {
 			happychat: {
 				user: {
-					isPresalesPrecancellationEligible: {
+					availability: {
 						precancellation: false,
 					},
 				},
 			},
 		} );
-		expect( isPrecancellationAvailable ).to.equal( false );
+		expect( isPrecancellationAvailable ).toBe( false );
 	} );
 	test( 'should return true if cancellation chat is available', () => {
 		const isPrecancellationAvailable = isPrecancellationChatAvailable( {
 			happychat: {
 				user: {
-					isPresalesPrecancellationEligible: {
+					availability: {
 						precancellation: true,
 					},
 				},
 			},
 		} );
-		expect( isPrecancellationAvailable ).to.equal( true );
+		expect( isPrecancellationAvailable ).toBe( true );
 	} );
 } );

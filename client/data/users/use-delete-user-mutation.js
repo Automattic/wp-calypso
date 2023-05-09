@@ -1,22 +1,17 @@
-/**
- * External dependencies
- */
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
-import { useMutation, useQueryClient } from 'react-query';
-
-/**
- * Internal dependencies
- */
 import wp from 'calypso/lib/wp';
 
-function useDeleteUserMutation( siteId ) {
+function useDeleteUserMutation( siteId, queryOptions = {} ) {
 	const queryClient = useQueryClient();
 	const mutation = useMutation(
 		( { userId, variables } ) =>
 			wp.req.post( `/sites/${ siteId }/users/${ userId }/delete`, variables ),
 		{
-			onSuccess() {
+			...queryOptions,
+			onSuccess( ...args ) {
 				queryClient.invalidateQueries( [ 'users', siteId ] );
+				queryOptions.onSuccess?.( ...args );
 			},
 		}
 	);

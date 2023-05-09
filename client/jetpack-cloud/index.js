@@ -1,19 +1,9 @@
-/**
- * External dependencies
- */
 import Debug from 'debug';
+import { translate } from 'i18n-calypso';
 import page from 'page';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { sites, siteSelection } from 'calypso/my-sites/controller';
-import { translate } from 'i18n-calypso';
-import Landing from './sections/landing';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import getPrimarySiteIsJetpack from 'calypso/state/selectors/get-primary-site-is-jetpack';
+import { landForPrimarySite, landForSelectedSite } from './sections/landing/controller';
 
 const debug = new Debug( 'calypso:jetpack-cloud:controller' );
 
@@ -34,25 +24,8 @@ const clearPageTitle = ( context, next ) => {
 	next();
 };
 
-const redirectToPrimarySiteLanding = ( context ) => {
-	debug( 'controller: redirectToPrimarySiteLanding', context );
-	const state = context.store.getState();
-	const currentUser = getCurrentUser( state );
-	const isPrimarySiteJetpackSite = getPrimarySiteIsJetpack( state );
-
-	isPrimarySiteJetpackSite
-		? page( `/landing/${ currentUser.primarySiteSlug }` )
-		: page( `/landing` );
-};
-
-const landingController = ( context, next ) => {
-	debug( 'controller: landingController', context );
-	context.primary = <Landing />;
-	next();
-};
-
 export default function () {
-	page( '/landing/:site', siteSelection, landingController, makeLayout, clientRender );
+	page( '/landing/:site', siteSelection, landForSelectedSite, makeLayout, clientRender );
 	page(
 		'/landing',
 		siteSelection,
@@ -62,5 +35,5 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
-	page( '/', redirectToPrimarySiteLanding );
+	page( '/', landForPrimarySite, makeLayout, clientRender );
 }

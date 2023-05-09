@@ -1,32 +1,25 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import { eye } from '@automattic/components/src/icons';
+import { Icon, chartBar, trendingUp } from '@wordpress/icons';
 import classNames from 'classnames';
-import { flowRight } from 'lodash';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import compareProps from 'calypso/lib/compare-props';
+import { flowRight } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import Chart from 'calypso/components/chart';
-import Legend from 'calypso/components/chart/legend';
-import StatTabs from '../stats-tabs';
-import StatsModulePlaceholder from '../stats-module/placeholder';
-import { Card } from '@automattic/components';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import compareProps from 'calypso/lib/compare-props';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { getSiteOption } from 'calypso/state/sites/selectors';
 import {
 	getSiteStatsNormalizedData,
 	isRequestingSiteStatsForQuery,
 } from 'calypso/state/stats/lists/selectors';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { getSiteOption } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { formatDate, getQueryDate } from '../stats-chart-tabs/utility';
+import StatsEmptyState from '../stats-empty-state';
+import StatsModulePlaceholder from '../stats-module/placeholder';
+import StatTabs from '../stats-tabs';
 
 const ChartTabShape = PropTypes.shape( {
 	attr: PropTypes.string,
@@ -71,19 +64,19 @@ class WordAdsChartTabs extends Component {
 					label: this.props.translate( 'Ads Served' ),
 					value: this.props.numberFormat( item.data.impressions ),
 					className: 'is-impressions',
-					icon: 'visible',
+					icon: <Icon className="gridicon" icon={ eye } />,
 				} );
 				tooltipData.push( {
 					label: this.props.translate( 'Avg. CPM' ),
 					value: '$ ' + this.props.numberFormat( item.data.cpm, { decimals: 2 } ),
 					className: 'is-cpm',
-					icon: 'stats-alt',
+					icon: <Icon className="gridicon" icon={ chartBar } />,
 				} );
 				tooltipData.push( {
 					label: this.props.translate( 'Revenue' ),
 					value: '$ ' + this.props.numberFormat( item.data.revenue, { decimals: 2 } ),
 					className: 'is-revenue',
-					icon: 'money',
+					icon: <Icon className="gridicon" icon={ trendingUp } />,
 				} );
 				break;
 		}
@@ -125,25 +118,23 @@ class WordAdsChartTabs extends Component {
 
 	render() {
 		const { siteId, query, isDataLoading } = this.props;
-		const classes = [ 'stats-module', 'is-chart-tabs', { 'is-loading': isDataLoading } ];
+		const classes = [
+			'is-chart-tabs',
+			{
+				'is-loading': isDataLoading,
+			},
+		];
 
 		return (
-			<div>
+			<>
 				{ siteId && <QuerySiteStats statType="statsAds" siteId={ siteId } query={ query } /> }
 
-				<Card className={ classNames( ...classes ) }>
-					<Legend
-						activeCharts={ this.props.activeLegend }
-						activeTab={ this.props.activeTab }
-						tabs={ this.props.charts }
-					/>
+				<div className={ classNames( ...classes ) }>
 					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 					<StatsModulePlaceholder className="is-chart" isLoading={ isDataLoading } />
-					<Chart
-						barClick={ this.props.barClick }
-						data={ this.buildChartData() }
-						loading={ isDataLoading }
-					/>
+					<Chart barClick={ this.props.barClick } data={ this.buildChartData() } minBarWidth={ 35 }>
+						<StatsEmptyState />
+					</Chart>
 					<StatTabs
 						data={ this.props.data }
 						tabs={ this.props.charts }
@@ -151,9 +142,10 @@ class WordAdsChartTabs extends Component {
 						selectedTab={ this.props.chartTab }
 						activeIndex={ this.props.queryDate }
 						activeKey="period"
+						iconSize={ 24 }
 					/>
-				</Card>
-			</div>
+				</div>
+			</>
 		);
 	}
 }

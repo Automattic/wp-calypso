@@ -2,7 +2,7 @@
 Contributors: automattic
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.5
-Tested up to: 5.6
+Tested up to: 6.0
 Stable tag: 2.21
 Requires PHP: 5.6.20
 License: GPLv2 or later

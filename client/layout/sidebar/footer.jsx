@@ -1,9 +1,3 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
 const SidebarFooter = ( { children } ) => {
 	if ( ! children ) {
 		return null;

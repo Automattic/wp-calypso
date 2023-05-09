@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getMediaQueryManager from 'calypso/state/selectors/get-media-query-manager';
 
 describe( 'getMediaQueryManager', () => {

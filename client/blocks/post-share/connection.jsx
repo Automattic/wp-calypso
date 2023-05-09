@@ -1,24 +1,11 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { FormToggle, BaseControl } from '@wordpress/components';
 import classNames from 'classnames';
-import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
-import cssSafeUrl from 'calypso/lib/css-safe-url';
 import SocialLogo from 'calypso/components/social-logo';
+import cssSafeUrl from 'calypso/lib/css-safe-url';
 
 const PostShareConnection = ( { connection, isActive, onToggle } ) => {
-	const {
-		external_display,
-		external_profile_picture,
-		keyring_connection_ID,
-		service,
-		status,
-	} = connection;
+	const { external_display, external_profile_picture, keyring_connection_ID, service, status } =
+		connection;
 
 	const toggle = () => onToggle( keyring_connection_ID );
 
@@ -28,6 +15,8 @@ const PostShareConnection = ( { connection, isActive, onToggle } ) => {
 		'is-active': isActive,
 		'is-broken': status === 'broken',
 	} );
+
+	const id = `post-share__label-${ keyring_connection_ID }`;
 
 	const accountImageStyle = {};
 	if ( external_profile_picture ) {
@@ -47,9 +36,11 @@ const PostShareConnection = ( { connection, isActive, onToggle } ) => {
 			</div>
 
 			<div className="post-share__service-account-name">
-				<span>{ external_display }</span>
+				<label id={ id }>{ external_display }</label>
 			</div>
-			<ToggleControl checked={ isActive } />
+			<BaseControl className={ classNames( 'components-toggle-control' ) }>
+				<FormToggle checked={ isActive } aria-describedby={ id } />
+			</BaseControl>
 		</div>
 	);
 };

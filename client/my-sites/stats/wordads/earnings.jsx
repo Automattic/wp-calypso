@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
+import { Card, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import PropTypes from 'prop-types';
-import { Card } from '@automattic/components';
-import Gridicon from 'calypso/components/gridicon';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import QueryWordadsEarnings from 'calypso/components/data/query-wordads-earnings';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getWordAdsEarnings } from 'calypso/state/wordads/earnings/selectors';
-import QueryWordadsEarnings from 'calypso/components/data/query-wordads-earnings';
+import './earnings.scss';
 
 class WordAdsEarnings extends Component {
 	static propTypes = {
@@ -251,78 +244,45 @@ class WordAdsEarnings extends Component {
 		}
 
 		return (
-			<Card className={ classes }>
-				<div className="ads__module-header module-header">
-					<h1 className="ads__module-header-title module-header-title">{ header_text }</h1>
-					<ul className="ads__module-header-actions module-header-actions">
-						<li className="ads__module-header-action module-header-action toggle-info">
-							{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
-							<a
-								href="#"
-								className="ads__module-header-action-link module-header-action-link"
-								aria-label={ translate( 'Show or hide panel information' ) }
-								title={ translate( 'Show or hide panel information' ) }
-								onClick={ this.handleInfoToggle( type ) }
-							>
-								<Gridicon icon={ infoIcon } />
-							</a>
-						</li>
-					</ul>
+			<>
+				<div className="ads__table-header">
+					<h3 className="ads__table-header-title">{ header_text }</h3>
+					<button
+						className="ads__table-header-button"
+						aria-label={ translate( 'Show or hide panel information' ) }
+						title={ translate( 'Show or hide panel information' ) }
+						onClick={ this.handleInfoToggle( type ) }
+					>
+						<Gridicon icon={ infoIcon } />
+					</button>
 				</div>
-				<div className="ads__module-content module-content">
-					{ this.infoNotice() }
-					<table>
-						<thead>
-							<tr>
-								<th className="ads__earnings-history-header">{ translate( 'Period' ) }</th>
-								<th className="ads__earnings-history-header">{ translate( 'Earnings' ) }</th>
-								<th className="ads__earnings-history-header">{ translate( 'Ads Served' ) }</th>
-								<th className="ads__earnings-history-header">{ translate( 'Status' ) }</th>
-							</tr>
-						</thead>
-						<tbody>{ rows }</tbody>
-					</table>
-				</div>
-			</Card>
+				<Card className={ classes }>
+					<div className="ads__module-content module-content">
+						{ this.infoNotice() }
+						<table>
+							<thead>
+								<tr>
+									<th className="ads__earnings-history-header">{ translate( 'Period' ) }</th>
+									<th className="ads__earnings-history-header">{ translate( 'Earnings' ) }</th>
+									<th className="ads__earnings-history-header">{ translate( 'Ads Served' ) }</th>
+									<th className="ads__earnings-history-header">{ translate( 'Status' ) }</th>
+								</tr>
+							</thead>
+							<tbody>{ rows }</tbody>
+						</table>
+					</div>
+				</Card>
+			</>
 		);
 	}
 
 	render() {
 		const { siteId, earnings, translate } = this.props;
-		const infoIcon = this.state.showEarningsNotice ? 'info' : 'info-outline';
-		const classes = classNames( 'earnings_breakdown', {
-			'is-showing-info': this.state.showEarningsNotice,
-		} );
 
 		return (
-			<div>
+			<>
 				<QueryWordadsEarnings siteId={ siteId } />
 
-				<Card className={ classes }>
-					<div className="ads__module-header module-header">
-						<h1 className="ads__module-header-title module-header-title">
-							{ translate( 'Totals' ) }
-						</h1>
-						<ul className="ads__module-header-actions module-header-actions">
-							<li className="ads__module-header-action module-header-action toggle-info">
-								{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
-								<a
-									href="#"
-									className="ads__module-header-action-link module-header-action-link"
-									aria-label={ translate( 'Show or hide panel information' ) }
-									title={ translate( 'Show or hide panel information' ) }
-									onClick={ this.handleEarningsNoticeToggle }
-								>
-									<Gridicon icon={ infoIcon } />
-								</a>
-							</li>
-						</ul>
-					</div>
-					<div className="ads__module-content module-content">
-						{ this.payoutNotice() }
-						{ this.earningsBreakdown() }
-					</div>
-				</Card>
 				{ earnings && this.checkSize( earnings.wordads )
 					? this.earningsTable( earnings.wordads, translate( 'Earnings history' ), 'wordads' )
 					: null }
@@ -340,7 +300,7 @@ class WordAdsEarnings extends Component {
 							'adjustment'
 					  )
 					: null }
-			</div>
+			</>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}

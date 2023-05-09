@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import debug from './debug';
 
 // If this list catches things that are not necessarily forbidden we're ok with

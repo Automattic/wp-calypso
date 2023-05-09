@@ -9,8 +9,7 @@ This idea was pulled from WordPress core, for more background & technical detail
 ## How to use
 
 ```js
-import { Button, ScreenReaderText } from '@automattic/components';
-import Gridicon from 'calypso/components/gridicons';
+import { Button, Gridicon, ScreenReaderText } from '@automattic/components';
 
 function ScreenReaderTextExample() {
 	return (

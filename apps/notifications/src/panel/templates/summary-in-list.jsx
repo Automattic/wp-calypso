@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import Gridicon from './gridicons';
-import noticon2gridicon from '../utils/noticon2gridicon';
-import actions from '../state/actions';
-import ImagePreloader from './image-loader';
-import { html } from '../indices-to-html';
 import { recordTracksEvent } from '../helpers/stats';
+import { html } from '../indices-to-html';
+import actions from '../state/actions';
+import noticon2gridicon from '../utils/noticon2gridicon';
+import Gridicon from './gridicons';
+import ImagePreloader from './image-loader';
 
-export class SummaryInList extends React.Component {
+export class SummaryInList extends Component {
 	handleClick = ( event ) => {
 		event.stopPropagation();
 		event.preventDefault();
@@ -46,6 +39,7 @@ export class SummaryInList extends React.Component {
 				<div className="wpnc__note-icon">
 					<ImagePreloader
 						src={ this.props.note.icon }
+						key={ `image-preloader-${ this.props.note.icon }` }
 						placeholder={
 							<img src="https://www.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=128" />
 						}

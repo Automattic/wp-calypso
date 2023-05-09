@@ -1,13 +1,11 @@
-/**
- * External dependencies
- */
-
 import { get } from 'lodash';
+
+import 'calypso/state/user-settings/init';
 
 /**
  * Is two-step enabled for the current user?
  *
- * @param  {object} state Global state tree
+ * @param  {Object} state Global state tree
  * @returns {boolean} return true if two-step is enabled
  */
 export default function isTwoStepEnabled( state ) {

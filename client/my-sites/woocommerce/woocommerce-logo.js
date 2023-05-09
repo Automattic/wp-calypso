@@ -1,10 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import PropTypes from 'prop-types';
 
-const WooCommerceLogo = ( { height = 32, width = 120 } ) => {
+const WooCommerceLogo = ( { height = 24, width = 90 } ) => {
 	return (
 		<svg
 			className="woocommerce-logo"

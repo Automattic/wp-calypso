@@ -1,22 +1,14 @@
-/**
- * External dependencies
- */
-
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import {
 	HOSTING_SFTP_USERS_REQUEST,
 	HOSTING_SFTP_USER_CREATE,
 	HOSTING_SFTP_PASSWORD_RESET,
 } from 'calypso/state/action-types';
-import { errorNotice } from 'calypso/state/notices/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { updateAtomicSftpUser, setAtomicSftpUsers } from 'calypso/state/hosting/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
 
 const requestAtomicSftpUsers = ( action ) => {
 	return http(

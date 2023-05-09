@@ -1,15 +1,13 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
+import { BLANK_CANVAS_DESIGN } from '@automattic/design-picker';
+import { isSiteAssemblerFlow } from '@automattic/onboarding';
+import { isDesktop } from '@automattic/viewport';
 import { get, includes, reject } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import stepConfig from './steps';
-import { isEcommercePlan } from '@automattic/calypso-products';
-import { generateFlows } from 'calypso/signup/config/flows-pure';
+import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
+import { getQueryArgs } from 'calypso/lib/query-args';
 import { addQueryArgs } from 'calypso/lib/url';
+import { generateFlows } from 'calypso/signup/config/flows-pure';
+import stepConfig from './steps';
 
 function getCheckoutUrl( dependencies, localeSlug, flowName ) {
 	let checkoutURL = `/checkout/${ dependencies.siteSlug }`;
@@ -22,15 +20,8 @@ function getCheckoutUrl( dependencies, localeSlug, flowName ) {
 	return addQueryArgs(
 		{
 			signup: 1,
-			...( dependencies.isPreLaunch && {
-				preLaunch: 1,
-			} ),
-			...( dependencies.isPreLaunch &&
-				! isEcommercePlan( dependencies.cartItem.product_slug ) && {
-					redirect_to: `/home/${ dependencies.siteSlug }`,
-				} ),
-			...( dependencies.isGutenboardingCreate && { isGutenboardingCreate: 1 } ),
-			...( [ 'domain', 'add-domain' ].includes( flowName ) && { isDomainOnly: 1 } ),
+			ref: getQueryArgs()?.ref,
+			...( [ 'domain' ].includes( flowName ) && { isDomainOnly: 1 } ),
 		},
 		checkoutURL
 	);
@@ -62,6 +53,8 @@ function getRedirectDestination( dependencies ) {
 			new URL( dependencies.oauth2_redirect ).host === 'public-api.wordpress.com'
 		) {
 			return dependencies.oauth2_redirect;
+		} else if ( dependencies.redirect ) {
+			return dependencies.redirect;
 		}
 	} catch {
 		return '/';
@@ -70,28 +63,124 @@ function getRedirectDestination( dependencies ) {
 	return '/';
 }
 
-function getSignupDestination( dependencies ) {
-	if ( 'no-site' === dependencies.siteSlug ) {
+function getSignupDestination( { domainItem, siteId, siteSlug, refParameter } ) {
+	if ( 'no-site' === siteSlug ) {
 		return '/home';
 	}
+	let queryParam = { siteSlug };
+	if ( domainItem ) {
+		// If the user is purchasing a domain then the site's primary url might change from
+		// `siteSlug` to something else during the checkout process, which means the
+		// `/start/setup-site?siteSlug=${ siteSlug }` url would become invalid. So in this
+		// case we use the ID because we know it won't change depending on whether the user
+		// successfully completes the checkout process or not.
+		queryParam = { siteId };
+	}
 
-	return `/home/${ dependencies.siteSlug }`;
+	// Add referral param to query args
+	if ( refParameter ) {
+		queryParam.ref = refParameter;
+	}
+
+	return addQueryArgs( queryParam, '/setup' );
 }
 
 function getLaunchDestination( dependencies ) {
 	return `/home/${ dependencies.siteSlug }`;
 }
 
+function getDomainSignupFlowDestination( { domainItem, cartItem, siteId, designType, siteSlug } ) {
+	if ( domainItem && cartItem && designType !== 'existing-site' ) {
+		return addQueryArgs( { siteId }, '/start/setup-site' );
+	} else if ( designType === 'existing-site' ) {
+		return `/checkout/thank-you/${ siteSlug }`;
+	}
+
+	return getThankYouNoSiteDestination();
+}
+
+function getEmailSignupFlowDestination( { siteId, siteSlug } ) {
+	return addQueryArgs(
+		{ siteId },
+		`/checkout/thank-you/features/email-license/${ siteSlug }/:receiptId`
+	);
+}
+
 function getThankYouNoSiteDestination() {
 	return `/checkout/thank-you/no-site`;
 }
 
-function getChecklistThemeDestination( dependencies ) {
-	return `/home/${ dependencies.siteSlug }`;
+function getChecklistThemeDestination( { flowName, siteSlug, themeParameter } ) {
+	if (
+		isSiteAssemblerFlow( flowName ) &&
+		themeParameter === BLANK_CANVAS_DESIGN.slug &&
+		config.isEnabled( 'pattern-assembler/logged-out-showcase' )
+	) {
+		// Go to the site assembler flow if viewport width >= 960px as the layout doesn't support small
+		// screen for now
+		if ( isDesktop() ) {
+			return addQueryArgs(
+				{
+					theme: themeParameter,
+					siteSlug: siteSlug,
+				},
+				`/setup/with-theme-assembler`
+			);
+		}
+
+		return `/site-editor/${ siteSlug }`;
+	}
+	return `/home/${ siteSlug }`;
+}
+
+function getWithThemeDestination( { siteSlug, themeParameter, styleVariation, themeType } ) {
+	if ( 'dot-org' === themeType ) {
+		return `/marketplace/theme/${ themeParameter }/install/${ siteSlug }`;
+	}
+
+	const style = styleVariation ? `&style=${ styleVariation }` : '';
+
+	return `/setup/site-setup/designSetup?siteSlug=${ siteSlug }&theme=${ themeParameter }${ style }&hideBack=true`;
 }
 
 function getEditorDestination( dependencies ) {
 	return `/page/${ dependencies.siteSlug }/home`;
+}
+
+function getDestinationFromIntent( dependencies ) {
+	const { intent, storeType, startingPoint, siteSlug } = dependencies;
+	// If the user skips starting point, redirect them to My Home
+	if ( intent === 'write' && startingPoint !== 'skip-to-my-home' ) {
+		if ( startingPoint !== 'write' ) {
+			window.sessionStorage.setItem( 'wpcom_signup_complete_show_draft_post_modal', '1' );
+		}
+
+		return `/post/${ siteSlug }`;
+	}
+
+	if ( intent === 'sell' && storeType === 'power' ) {
+		return addQueryArgs(
+			{
+				back_to: `/start/setup-site/store-features?siteSlug=${ siteSlug }`,
+				siteSlug: siteSlug,
+			},
+			`/start/woocommerce-install`
+		);
+	}
+
+	return getChecklistThemeDestination( dependencies );
+}
+
+function getDIFMSignupDestination( { siteSlug } ) {
+	return addQueryArgs( { siteSlug }, '/start/site-content-collection' );
+}
+
+function getDIFMSiteContentCollectionDestination( { siteSlug } ) {
+	return `/home/${ siteSlug }`;
+}
+
+function getSitesDestination( { siteSlug } ) {
+	return addQueryArgs( { 'new-site': siteSlug }, '/sites' );
 }
 
 const flows = generateFlows( {
@@ -99,9 +188,15 @@ const flows = generateFlows( {
 	getRedirectDestination,
 	getSignupDestination,
 	getLaunchDestination,
-	getThankYouNoSiteDestination,
+	getDomainSignupFlowDestination,
+	getEmailSignupFlowDestination,
 	getChecklistThemeDestination,
+	getWithThemeDestination,
 	getEditorDestination,
+	getDestinationFromIntent,
+	getDIFMSignupDestination,
+	getDIFMSiteContentCollectionDestination,
+	getSitesDestination,
 } );
 
 function removeUserStepFromFlow( flow ) {
@@ -111,7 +206,7 @@ function removeUserStepFromFlow( flow ) {
 
 	return {
 		...flow,
-		steps: reject( flow.steps, ( stepName ) => stepConfig[ stepName ].providesToken ),
+		steps: flow.steps.filter( ( stepName ) => ! stepConfig[ stepName ].providesToken ),
 	};
 }
 
@@ -149,9 +244,10 @@ const Flows = {
 	 *
 	 * The returned flow is modified according to several filters.
 	 *
+	 * @typedef {import('../types').Flow} Flow
 	 * @param {string} flowName The name of the flow to return
 	 * @param {boolean} isUserLoggedIn Whether the user is logged in
-	 * @returns {object} A flow object
+	 * @returns {Flow} A flow object
 	 */
 	getFlow( flowName, isUserLoggedIn ) {
 		let flow = Flows.getFlows()[ flowName ];
@@ -162,10 +258,19 @@ const Flows = {
 		}
 
 		if ( isUserLoggedIn ) {
-			flow = removeUserStepFromFlow( flow );
+			const urlParams = new URLSearchParams( window.location.search );
+			const param = urlParams.get( 'user_completed' );
+			const isUserStepOnly = flow.steps.length === 1 && stepConfig[ flow.steps[ 0 ] ].providesToken;
+
+			// Remove the user step unless the user has just completed the step
+			// and then clicked the back button.
+			// If the user step is the only step in the whole flow, e.g. /start/account, don't remove it as well.
+			if ( ! param && ! detectHistoryNavigation.loadedViaHistory() && ! isUserStepOnly ) {
+				flow = removeUserStepFromFlow( flow );
+			}
 		}
 
-		if ( flowName === 'p2' && isUserLoggedIn ) {
+		if ( flowName === 'p2v1' && isUserLoggedIn ) {
 			flow = removeP2DetailsStepFromFlow( flow );
 		}
 
@@ -195,6 +300,10 @@ const Flows = {
 	 */
 	excludeStep( step ) {
 		step && Flows.excludedSteps.indexOf( step ) === -1 && Flows.excludedSteps.push( step );
+	},
+
+	excludeSteps( steps ) {
+		steps.forEach( ( step ) => Flows.excludeStep( step ) );
 	},
 
 	filterExcludedSteps( flow ) {

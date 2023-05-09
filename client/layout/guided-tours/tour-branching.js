@@ -1,9 +1,4 @@
-/**
- * External dependencies
- */
-
 import { Children } from 'react';
-import { flatMap } from 'lodash';
 
 /*
  * Transforms a React `Children` object into an array. The children of a `Step` are
@@ -65,7 +60,7 @@ const branching = ( element ) => {
 		return [ [ typeName.toLowerCase(), element.props.step ] ];
 	}
 
-	return flatMap( childrenToArray( element.props.children ), branching );
+	return childrenToArray( element.props.children ).flatMap( branching );
 };
 
 /*

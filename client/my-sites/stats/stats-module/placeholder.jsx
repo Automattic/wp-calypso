@@ -1,19 +1,8 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import { Spinner } from '@automattic/components';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
 
-/**
- * Internal dependencies
- */
-import Spinner from 'calypso/components/spinner';
-
-/**
- * Style dependencies
- */
 import './placeholder.scss';
 
 export default class StatsModulePlaceholder extends PureComponent {

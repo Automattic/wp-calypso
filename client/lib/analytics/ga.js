@@ -1,19 +1,11 @@
-/**
- * External dependencies
- */
 import debug from 'debug';
-
-/**
- * Internal dependencies
- */
 import {
 	getGoogleAnalyticsDefaultConfig,
 	setupGoogleAnalyticsGtag,
-	isGoogleAnalyticsAllowed,
 	fireGoogleAnalyticsPageView,
 	fireGoogleAnalyticsEvent,
-	fireGoogleAnalyticsTiming,
 } from 'calypso/lib/analytics/ad-tracking';
+import { mayWeTrackByTracker } from './tracker-buckets';
 
 const gaDebug = debug( 'calypso:analytics:ga' );
 
@@ -21,14 +13,14 @@ let initialized = false;
 
 function initialize() {
 	if ( ! initialized ) {
-		const parameters = {
+		const params = {
 			send_page_view: false,
 			...getGoogleAnalyticsDefaultConfig(),
 		};
 
-		gaDebug( 'parameters:', parameters );
+		gaDebug( 'parameters:', params );
 
-		setupGoogleAnalyticsGtag( parameters );
+		setupGoogleAnalyticsGtag( params );
 
 		initialized = true;
 	}
@@ -36,11 +28,28 @@ function initialize() {
 
 export const gaRecordPageView = makeGoogleAnalyticsTrackingFunction( function recordPageView(
 	urlPath,
-	pageTitle
+	pageTitle,
+	useJetpackGoogleAnalytics = false,
+	useAkismetGoogleAnalytics = false
 ) {
-	gaDebug( 'Recording Page View ~ [URL: ' + urlPath + '] [Title: ' + pageTitle + ']' );
+	gaDebug(
+		'Recording Page View ~ [URL: ' +
+			urlPath +
+			'] [Title: ' +
+			pageTitle +
+			'] [useJetpackGoogleAnalytics: ' +
+			useJetpackGoogleAnalytics +
+			'] [useAksiemtGoogleAnalytics: ' +
+			useAkismetGoogleAnalytics +
+			']'
+	);
 
-	fireGoogleAnalyticsPageView( urlPath, pageTitle );
+	fireGoogleAnalyticsPageView(
+		urlPath,
+		pageTitle,
+		useJetpackGoogleAnalytics,
+		useAkismetGoogleAnalytics
+	);
 } );
 
 /**
@@ -77,31 +86,19 @@ export const gaRecordEvent = makeGoogleAnalyticsTrackingFunction( function recor
 	fireGoogleAnalyticsEvent( category, action, label, value );
 } );
 
-export const gaRecordTiming = makeGoogleAnalyticsTrackingFunction( function recordTiming(
-	urlPath,
-	eventType,
-	duration,
-	triggerName
-) {
-	gaDebug( 'Recording Timing ~ [URL: ' + urlPath + '] [Duration: ' + duration + ']' );
-
-	fireGoogleAnalyticsTiming( eventType, duration, urlPath, triggerName );
-} );
-
 /**
  * Wrap Google Analytics with debugging, possible analytics supression, and initialization
  *
  * This method will display debug output if Google Analytics is suppresed, otherwise it will
  * initialize and call the Google Analytics function it is passed.
  *
- * @see isGoogleAnalyticsAllowed
- *
+ * @see mayWeTrackByTracker
  * @param  {Function} func Google Analytics tracking function
  * @returns {Function} Wrapped function
  */
 export function makeGoogleAnalyticsTrackingFunction( func ) {
 	return function ( ...args ) {
-		if ( ! isGoogleAnalyticsAllowed() ) {
+		if ( ! mayWeTrackByTracker( 'ga' ) ) {
 			gaDebug( '[Disallowed] analytics %s( %o )', func.name, args );
 			return;
 		}

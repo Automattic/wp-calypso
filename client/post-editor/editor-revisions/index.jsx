@@ -1,30 +1,20 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import QueryPostRevisionAuthors from 'calypso/components/data/query-post-revision-authors';
+import QueryPostRevisions from 'calypso/components/data/query-post-revisions';
+import EditorDiffViewer from 'calypso/post-editor/editor-diff-viewer';
+import EditorRevisionsList from 'calypso/post-editor/editor-revisions-list';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getEditorPostId } from 'calypso/state/editor/selectors';
 import { getPostRevisions } from 'calypso/state/posts/selectors/get-post-revisions';
 import { getPostRevisionsAuthorsId } from 'calypso/state/posts/selectors/get-post-revisions-authors-id';
 import { getPostRevisionsComparisons } from 'calypso/state/posts/selectors/get-post-revisions-comparisons';
+import { getPostRevisionsDiffView } from 'calypso/state/posts/selectors/get-post-revisions-diff-view';
 import { getPostRevisionsSelectedRevisionId } from 'calypso/state/posts/selectors/get-post-revisions-selected-revision-id';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import EditorDiffViewer from 'calypso/post-editor/editor-diff-viewer';
-import EditorRevisionsList from 'calypso/post-editor/editor-revisions-list';
-import QueryPostRevisions from 'calypso/components/data/query-post-revisions';
-import QueryPostRevisionAuthors from 'calypso/components/data/query-post-revision-authors';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class EditorRevisions extends Component {
@@ -36,6 +26,7 @@ class EditorRevisions extends Component {
 		const {
 			authorsIds,
 			comparisons,
+			diffView,
 			postId,
 			revisions,
 			selectedDiff,
@@ -53,9 +44,11 @@ class EditorRevisions extends Component {
 				<QueryPostRevisionAuthors siteId={ siteId } userIds={ authorsIds } />
 				<EditorDiffViewer
 					diff={ selectedDiff }
+					diffView={ diffView }
 					postId={ postId }
 					selectedRevisionId={ selectedRevisionId }
 					siteId={ siteId }
+					key={ `editor-diff-viewer-${ diffView }-${ selectedRevisionId }` }
 				/>
 				<EditorRevisionsList
 					comparisons={ comparisons }
@@ -73,6 +66,7 @@ EditorRevisions.propTypes = {
 	// connected to state
 	authorsIds: PropTypes.array.isRequired,
 	comparisons: PropTypes.object,
+	diffView: PropTypes.string,
 	postId: PropTypes.number.isRequired,
 	revisions: PropTypes.array.isRequired,
 	selectedDiff: PropTypes.object,
@@ -99,6 +93,7 @@ export default connect(
 		return {
 			authorsIds: getPostRevisionsAuthorsId( state, siteId, postId ),
 			comparisons,
+			diffView: getPostRevisionsDiffView( state ),
 			postId,
 			revisions,
 			selectedDiff,

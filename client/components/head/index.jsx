@@ -1,14 +1,5 @@
-/**
- * External dependencies
- *
- */
-import React from 'react';
-import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
+import PropTypes from 'prop-types';
 import Favicons from './favicons';
 
 const Head = ( { title = 'WordPress.com', children, branchName, inlineScriptNonce } ) => {
@@ -22,10 +13,7 @@ const Head = ( { title = 'WordPress.com', children, branchName, inlineScriptNonc
 			<meta name="format-detection" content="telephone=no" />
 			<meta name="mobile-web-app-capable" content="yes" />
 			<meta name="apple-mobile-web-app-capable" content="yes" />
-			<meta
-				name="theme-color"
-				content={ ! config( 'theme_color' ) ? '#016087' : config( 'theme_color' ) }
-			/>
+			<meta name="theme-color" content={ config( 'theme_color' ) } />
 			<meta name="referrer" content="origin" />
 
 			<link

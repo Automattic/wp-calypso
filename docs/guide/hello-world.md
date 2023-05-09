@@ -71,23 +71,22 @@ touch client/my-sites/hello-world/index.js
 Here we'll import the `page` module, the My Sites controller and our own controller, and write our main route handler:
 
 ```javascript
-/**
- * External dependencies
- */
+import { isEnabled } from '@automattic/calypso-config';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, siteSelection } from 'calypso/my-sites/controller';
 import { helloWorld } from './controller';
 
 export default () => {
-	page( '/hello-world/:site?', siteSelection, navigation, helloWorld, makeLayout, clientRender );
+	if ( isEnabled( 'hello-world' ) ) {
+		page( '/hello-world/:site?', siteSelection, navigation, helloWorld, makeLayout, clientRender );
+	} else {
+		page.redirect( '/' );
+	}
 };
 ```
 
+- First we check to make sure our hello-world feature flag is enabled. If not, we skip setting up the route and redirect to the homepage.
 - `page()` will set up the route `/hello-world` and run some functions when it's matched.
 - The `:site?` is because we want to support site specific pages for our hello-world route.
 - Each function is invoked with `context` and `next` arguments.
@@ -101,29 +100,21 @@ You can read more about ES6 modules from Axel Rauschmayer's "[_ECMAScript 6 modu
 
 ### 5. Register section
 
-Now it's time to configure our section. Open `client/sections.js` and add the following code:
+Now it's time to configure our section. Open `client/sections.js` and add the following code to the end of the `sections` array:
 
 ```javascript
-if ( config.isEnabled( 'hello-world' ) ) {
-	sections.push( {
+const sections = [
+	// ** lots of sections here **
+	// add new section:
+	{
 		name: 'hello-world',
 		paths: [ '/hello-world' ],
-		module: 'my-sites/hello-world',
-	} );
-}
+		module: 'calypso/my-sites/hello-world',
+	},
+];
 ```
 
-This checks for our feature in the current environment to figure out whether it needs to register a new section. The section is defined by a name, an array with the relevant paths, and the main module.
-
-You also need to `require` the `config` module at the top of the `client/sections.js` file (in case the `require` statement is not already there):
-
-```js
-const config = require( '@automattic/calypso-config' ).default;
-```
-
-The `sections.js` module needs to be a CommonJS module that uses `require` calls, because it's run by Node.js. ESM imports won't work there at this moment.
-
-Through the use of the `config` module, we are conditionally loading our section only in development environment. All existing sections in `client/sections.js` will load in all environments.
+We always add our section to the list, even if the feature flag is disabled. In the event that our feature flag is turned off, our route won't be registered (per the code in Step 4).
 
 ## Run the server!
 
@@ -154,23 +145,18 @@ touch client/my-sites/hello-world/main.jsx
 Start by importing React as an external dependency at the top, then import the internal "Main" UI component from `components/main`. We'll use it to set up our view tree. Finally, create and export a new React Component.
 
 ```javascript
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
 import Main from 'calypso/components/main';
 
-export default class HelloWorld extends React.Component {}
+export default class HelloWorld extends Component {}
 ```
 
 Cool. Let's make the React component render something for us. We'll do that by adding a `render()` method that uses the "Main" component and outputs some markup. Let's add the `render()` method inside of the `React.Component` extension like so:
 
 ```jsx
-export default class HelloWorld extends React.Component {
+import { Component } from 'react';
+
+export default class HelloWorld extends Component {
 	render() {
 		return (
 			<Main>
@@ -209,7 +195,9 @@ Then add some styles for our `HelloWorld` component:
 Let's update the component we wrote above to include our new styles:
 
 ```jsx
-export default class HelloWorld extends React.Component {
+import { Component } from 'react';
+
+export default class HelloWorld extends Component {
 	render() {
 		return (
 			<Main className="hello-world">
@@ -223,9 +211,6 @@ export default class HelloWorld extends React.Component {
 We need to do one more step to import the component's style file in the component's JavaScript source file. It's done by adding an import statement block to the `main.jsx` file:
 
 ```jsx
-/**
- * Style dependencies
- */
 import './style.scss';
 ```
 
@@ -237,14 +222,6 @@ Time to hook this up with our controller function. Open `/hello-world/controller
 Import React and your new component at the top of the file:
 
 ```javascript
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import HelloWorld from 'calypso/my-sites/hello-world/main';
 ```
 

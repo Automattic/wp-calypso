@@ -1,21 +1,14 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { isFreePlan } from '@automattic/calypso-products';
-import { getSite } from 'calypso/state/sites/selectors';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { getSite } from 'calypso/state/sites/selectors';
 
 export const siteHasPaidPlan = ( selectedSite ) =>
 	selectedSite && selectedSite.plan && ! isFreePlan( selectedSite.plan.product_slug );
 
-export class SitePickerSubmit extends React.Component {
+export class SitePickerSubmit extends Component {
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		const { stepSectionName, stepName, goToStep, selectedSite } = this.props;
 		const hasPaidPlan = siteHasPaidPlan( selectedSite );
