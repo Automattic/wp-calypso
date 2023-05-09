@@ -7,16 +7,19 @@ export class ConfigApi extends Function {
 	configData: ConfigData;
 	_bound: ConfigApi;
 
-	/**
-	 * Make instances callable.
-	 */
 	constructor() {
+		/**
+		 * Make instances callable.
+		 */
 		super( '...args', 'return this._bound._call(...args)' );
 		this.configData = {};
 		this._bound = this.bind( this );
 		return this._bound;
 	}
 
+	/**
+	 * Make instances callable.
+	 */
 	_call( key: string ) {
 		if ( key in this.configData ) {
 			return this.configData[ key ];
