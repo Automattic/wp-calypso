@@ -13,6 +13,10 @@ const hosting: Flow = {
 	name: HOSTING_SITE_CREATION_FLOW,
 	useSteps() {
 		return [
+			{
+				slug: 'options',
+				asyncComponent: () => import( './internals/steps-repository/site-options' ),
+			},
 			{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },
 			{
 				slug: 'siteCreationStep',
@@ -31,6 +35,8 @@ const hosting: Flow = {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug );
 
 			switch ( _currentStepSlug ) {
+				case 'options':
+					return navigate( 'plans' );
 				case 'plans':
 					return navigate( 'siteCreationStep' );
 

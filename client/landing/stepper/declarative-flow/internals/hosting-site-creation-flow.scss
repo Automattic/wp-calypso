@@ -3,3 +3,12 @@
 	margin-left: auto !important;
 	margin-right: auto !important;
 }
+
+.new-hosted-site .form-label {
+	font-weight: 600 !important;
+	color: var(--color-text) !important;
+}
+
+.new-hosted-site .form-radios-bar.is-thumbnail {
+	flex-wrap: initial;
+}

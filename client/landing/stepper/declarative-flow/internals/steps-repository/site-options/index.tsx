@@ -1,12 +1,13 @@
 /* eslint-disable no-console */
 import { Button, FormInputValidation } from '@automattic/components';
-import { StepContainer } from '@automattic/onboarding';
+import { isHostingSiteCreationFlow, StepContainer } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect } from 'react';
 import siteOptionsUrl from 'calypso/assets/images/onboarding/site-options.svg';
 import storeImageUrl from 'calypso/assets/images/onboarding/store-onboarding.svg';
+import DataCenterPicker from 'calypso/blocks/eligibility-warnings/data-center-picker';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -33,6 +34,7 @@ const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
 
 	const { goBack, goNext, submit } = navigation;
 	const [ siteTitle, setSiteTitle ] = React.useState( currentSiteTitle ?? '' );
+	const [ siteDataCenter, setSiteDataCenter ] = React.useState( '' );
 	const [ tagline, setTagline ] = React.useState( currentTagling ?? '' );
 	const [ formTouched, setFormTouched ] = React.useState( false );
 	const intent = useSelect(
@@ -41,6 +43,7 @@ const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
 	);
 	const translate = useTranslate();
 	const site = useSite();
+	const isHostingFlow = isHostingSiteCreationFlow( flow );
 	const isVideoPressFlow = 'videopress' === flow;
 
 	const { saveSiteSettings } = useDispatch( SITE_STORE );
@@ -67,7 +70,7 @@ const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
 			} );
 		}
 
-		if ( isVideoPressFlow || site ) {
+		if ( isVideoPressFlow || site || isHostingFlow ) {
 			recordTracksEvent( 'calypso_signup_site_options_submit', {
 				has_site_title: !! siteTitle,
 				has_tagline: !! tagline,
@@ -78,7 +81,7 @@ const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
 	};
 
 	const onChange = ( event: React.FormEvent< HTMLInputElement > ) => {
-		if ( isVideoPressFlow || site ) {
+		if ( isVideoPressFlow || site || isHostingFlow ) {
 			setFormTouched( true );
 
 			switch ( event.currentTarget.name ) {
@@ -98,6 +101,17 @@ const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
 			taglineLabel: translate( 'Brief description' ),
 			taglineExplanation: translate( 'Add a short description of your video site here.' ),
 			subHeaderText: translate( 'Customize some details about your new site.' ),
+		};
+	};
+
+	const getTextsForHostingFlow = () => {
+		return {
+			headerText: translate( "Let's create your site" ),
+			headerImage: undefined,
+			siteTitleLabel: translate( 'Site title' ),
+			taglineLabel: undefined,
+			taglineExplanation: undefined,
+			subHeaderText: undefined,
 		};
 	};
 
@@ -125,14 +139,20 @@ const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
 		}
 	};
 
-	const isSiteTitleRequired = isVideoPressFlow;
+	const isSiteTitleRequired = isVideoPressFlow || isHostingFlow;
 	const isTaglineRequired = isVideoPressFlow;
 	const siteTitleError = null;
 	const taglineError = null;
 
-	const textsForFlow = isVideoPressFlow
-		? getTextsForVideoPressFlow()
-		: getTextsFromIntent( intent );
+	const getTextsForFlow = () => {
+		if ( isHostingFlow ) {
+			return getTextsForHostingFlow();
+		}
+
+		return isVideoPressFlow ? getTextsForVideoPressFlow() : getTextsFromIntent( intent );
+	};
+
+	const textsForFlow = getTextsForFlow();
 
 	const {
 		headerText,
@@ -143,9 +163,10 @@ const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
 		subHeaderText,
 	} = textsForFlow;
 
-	const isFormDisabled = ! isVideoPressFlow && ! site;
+	const isFormDisabled = ! isVideoPressFlow && ! site && ! isHostingFlow;
 	const isSiteTitleEmpty = ! siteTitle || siteTitle.trim().length === 0;
-	const isFormSubmitDisabled = isFormDisabled || ( isVideoPressFlow && isSiteTitleEmpty );
+	const isFormSubmitDisabled =
+		isFormDisabled || ( ( isVideoPressFlow || isHostingFlow ) && isSiteTitleEmpty );
 
 	const stepContent = (
 		<form className="site-options__form" onSubmit={ handleSubmit }>
@@ -163,38 +184,43 @@ const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
 				/>
 				{ siteTitleError && <FormInputValidation isError text={ siteTitleError } /> }
 			</FormFieldset>
-			<FormFieldset disabled={ isFormDisabled } className="site-options__form-fieldset">
-				<FormLabel htmlFor="tagline" optional={ ! isTaglineRequired }>
-					{ taglineLabel }
-				</FormLabel>
-				{ ! isVideoPressFlow && (
-					<FormInput
-						name="tagline"
-						id="tagline"
-						value={ tagline }
-						isError={ taglineError }
-						onChange={ onChange }
-						placeholder={ null }
-					/>
-				) }
-				{ isVideoPressFlow && (
-					<FormTextarea
-						name="tagline"
-						id="tagline"
-						value={ tagline }
-						isError={ taglineError ?? undefined }
-						onChange={ onChange }
-						placeholder={ taglineExplanation }
-					/>
-				) }
-				{ taglineError && <FormInputValidation isError text={ taglineError } /> }
-				{ ! isVideoPressFlow && (
-					<FormSettingExplanation>
-						<Icon className="site-options__form-icon" icon={ tip } size={ 20 } />
-						{ taglineExplanation }
-					</FormSettingExplanation>
-				) }
-			</FormFieldset>
+			{ isHostingFlow && (
+				<DataCenterPicker onChange={ setSiteDataCenter } value={ siteDataCenter } compact />
+			) }
+			{ taglineLabel && (
+				<FormFieldset disabled={ isFormDisabled } className="site-options__form-fieldset">
+					<FormLabel htmlFor="tagline" optional={ ! isTaglineRequired }>
+						{ taglineLabel }
+					</FormLabel>
+					{ ! isVideoPressFlow && (
+						<FormInput
+							name="tagline"
+							id="tagline"
+							value={ tagline }
+							isError={ taglineError }
+							onChange={ onChange }
+							placeholder={ null }
+						/>
+					) }
+					{ isVideoPressFlow && (
+						<FormTextarea
+							name="tagline"
+							id="tagline"
+							value={ tagline }
+							isError={ taglineError ?? undefined }
+							onChange={ onChange }
+							placeholder={ taglineExplanation }
+						/>
+					) }
+					{ taglineError && <FormInputValidation isError text={ taglineError } /> }
+					{ ! isVideoPressFlow && (
+						<FormSettingExplanation>
+							<Icon className="site-options__form-icon" icon={ tip } size={ 20 } />
+							{ taglineExplanation }
+						</FormSettingExplanation>
+					) }
+				</FormFieldset>
+			) }
 			<Button
 				disabled={ isFormSubmitDisabled }
 				className="site-options__submit-button"
@@ -211,7 +237,7 @@ const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
 			<DocumentHead title={ headerText } />
 			<StepContainer
 				stepName="site-options"
-				shouldHideNavButtons={ isVideoPressFlow }
+				shouldHideNavButtons={ isVideoPressFlow || isHostingFlow }
 				className={ `is-step-${ intent }` }
 				headerImageUrl={ headerImage }
 				hideSkip={ true }

@@ -149,3 +149,37 @@
 		}
 	}
 }
+
+.new-hosted-site.options {
+	.data-center-picker {
+		color: var(--color-text);
+	}
+
+	.data-center-picker__description {
+		white-space: nowrap;
+
+		&,
+		& a {
+			font-size: $font-body-extra-small;
+			color: var(--color-text);
+		}
+
+		a {
+			text-decoration: underline;
+		}
+	}
+
+	.data-center-picker__options {
+		font-size: $font-body-small;
+
+		.form-select {
+			width: fit-content;
+			border-radius: 4px;
+			font-size: $font-body-small;
+		}
+	}
+
+	.site-options__submit-button {
+		margin-top: 24px;
+	}
+}
