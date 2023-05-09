@@ -45,10 +45,11 @@ class TagStream extends Component {
 			}
 		} );
 		asyncRequire( 'twemoji', function ( twemoji ) {
+			const title = self.props.decodedTagSlug;
 			if ( self._isMounted ) {
 				self.setState( {
 					twemoji,
-					isEmojiTitle: self.props.title && twemoji.test( self.props.title ),
+					isEmojiTitle: title && twemoji.test( title ),
 				} );
 			}
 		} );
@@ -99,13 +100,14 @@ class TagStream extends Component {
 
 	render() {
 		const emptyContent = <EmptyContent decodedTagSlug={ this.props.decodedTagSlug } />;
+		const title = this.props.decodedTagSlug;
 		const tag = find( this.props.tags, { slug: this.props.encodedTagSlug } );
 
 		let imageSearchString = this.props.encodedTagSlug;
 
 		// If the tag contains emoji, convert to text equivalent
 		if ( this.state.emojiText && this.state.isEmojiTitle ) {
-			imageSearchString = this.state.emojiText.convert( this.props.title, {
+			imageSearchString = this.state.emojiText.convert( title, {
 				delimiter: '',
 			} );
 		}
@@ -117,7 +119,7 @@ class TagStream extends Component {
 					<QueryReaderTag tag={ this.props.decodedTagSlug } />
 					{ this.props.showBack && <HeaderBack /> }
 					<TagStreamHeader
-						title={ this.props.title }
+						title={ title }
 						imageSearchString={ imageSearchString }
 						showFollow={ false }
 						showBack={ this.props.showBack }
@@ -130,7 +132,7 @@ class TagStream extends Component {
 		return (
 			<Stream
 				{ ...this.props }
-				listName={ this.props.title }
+				listName={ title }
 				emptyContent={ emptyContent }
 				showFollowInHeader={ true }
 				forcePlaceholders={ ! tag } // if tag has not loaded yet, then make everything a placeholder
@@ -139,23 +141,19 @@ class TagStream extends Component {
 				<QueryReaderTag tag={ this.props.decodedTagSlug } />
 				<DocumentHead
 					title={ this.props.translate( '%s ‹ Reader', {
-						args: this.props.title,
+						args: title,
 						comment: '%s is the section name. For example: "My Likes"',
 					} ) }
 				/>
 				{ this.props.showBack && <HeaderBack /> }
 				<TagStreamHeader
-					title={
-						this.props.isPromptTag && this.props.description
-							? this.props.description
-							: this.props.title
-					}
+					title={ title }
+					description={ this.props.description }
 					imageSearchString={ imageSearchString }
 					showFollow={ !! ( tag && tag.id ) }
 					following={ this.isSubscribed() }
 					onFollowToggle={ this.toggleFollowing }
 					showBack={ this.props.showBack }
-					hasLongTitle={ this.props.isPromptTag }
 				/>
 			</Stream>
 		);
@@ -169,9 +167,7 @@ export default connect(
 			description: tag?.description,
 			followedTags: getReaderFollowedTags( state ),
 			tags: getReaderTags( state ),
-			title: tag?.displayName || decodedTagSlug,
 			isLoggedIn: isUserLoggedIn( state ),
-			isPromptTag: new RegExp( /^dailyprompt-\d+$/ ).test( decodedTagSlug ),
 		};
 	},
 	{

@@ -6,14 +6,26 @@
 	margin-bottom: 10px;
 }
 
+.tag-stream__header-title-group {
+	display: flex;
+	flex-wrap: wrap;
+	margin-right: 6px;
+}
+
 .tag-stream__header-title {
 	font-size: 2rem;
 	text-transform: capitalize;
 	font-weight: 600;
+	margin-bottom: 4px;
 }
 
-.has-long-title .tag-stream__header-title {
-	font-size: 1.5rem;
+.has-description .tag-stream__header-title {
+	font-size: 1.25rem;
+}
+
+.tag-stream__header-description {
+	font-size: 2rem;
+	font-weight: 600;
 }
 
 // Back button in Tag streams

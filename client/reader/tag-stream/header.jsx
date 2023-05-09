@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import { localize } from 'i18n-calypso';
+import { localize, translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -17,26 +17,21 @@ class TagStreamHeader extends Component {
 	};
 
 	render() {
-		const {
-			title,
-			isPlaceholder,
-			hasLongTitle,
-			showFollow,
-			following,
-			onFollowToggle,
-			translate,
-			showBack,
-		} = this.props;
+		const { title, description, isPlaceholder, showFollow, following, onFollowToggle, showBack } =
+			this.props;
 		const classes = classnames( {
 			'tag-stream__header': true,
 			'is-placeholder': isPlaceholder,
-			'has-long-title': hasLongTitle,
+			'has-description': description,
 			'has-back-button': showBack,
 		} );
 
 		return (
 			<div className={ classes }>
-				<h1 className="tag-stream__header-title">{ title }</h1>
+				<div className="tag-stream__header-title-group">
+					<h1 className="tag-stream__header-title">{ title }</h1>
+					{ description && <h2 className="tag-stream__header-description">{ description }</h2> }
+				</div>
 				<div className="tag-stream__header-follow">
 					{ showFollow && (
 						<FollowButton
