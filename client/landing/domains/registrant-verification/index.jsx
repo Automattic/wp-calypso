@@ -19,9 +19,9 @@ class RegistrantVerificationPage extends Component {
 	state = this.getLoadingState();
 
 	componentDidMount() {
-		const { domain, email, token } = this.props;
+		const { domain, email, token, reseller } = this.props;
 		wp.req
-			.get( `/domains/${ domain }/verify-email`, { email, token } )
+			.get( `/domains/${ domain }/verify-email`, { email, token, reseller } )
 			.then( ( response ) => {
 				this.setState( this.getVerificationSuccessState( response?.domains ?? [ domain ] ) );
 			} )
