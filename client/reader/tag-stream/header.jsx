@@ -19,10 +19,16 @@ class TagStreamHeader extends Component {
 	render() {
 		const { title, description, isPlaceholder, showFollow, following, onFollowToggle, showBack } =
 			this.props;
+
+		// A bit of a hack: check for a prompt tag (which always have a description) from the slug before waiting for tag info to load,
+		// so we can set a smaller title size and prevent it from resizing as the page loads. Should be refactored if tag descriptions
+		// end up getting used for other things besides prompt tags.
+		const isPromptTag = new RegExp( /^dailyprompt-\d+$/ ).test( title );
+
 		const classes = classnames( {
 			'tag-stream__header': true,
 			'is-placeholder': isPlaceholder,
-			'has-description': description,
+			'has-description': isPromptTag || description,
 			'has-back-button': showBack,
 		} );
 
