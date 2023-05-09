@@ -454,14 +454,14 @@ export const HelpCenterContactForm = () => {
 		return isSubmitting ? formTitles.buttonSubmittingLabel : formTitles.buttonLabel;
 	};
 
-	const { isFetching: isFetchingUrls } = useJetpackSearchAIQuery(
+	const { isFetching: isFetchingUrls, data: links } = useJetpackSearchAIQuery(
 		'9619154',
 		debouncedMessage,
 		'urls'
 	);
 	const { isFetching: isFetchingResponse } = useJetpackSearchAIQuery(
 		'9619154',
-		debouncedMessage,
+		links?.urls ? debouncedMessage : '',
 		'response'
 	);
 	const isFetchingGPTResponse = isFetchingUrls || isFetchingResponse;
