@@ -1,16 +1,48 @@
-.configure-email-address__card {
+$help-text-color: #757575;
+
+.configure-email-address__card-container {
 	margin: 16px 0 0;
+}
+
+.configure-email-address__card {
+	margin: 0;
 	height: 60px;
 	display: flex;
 	align-items: center;
 	padding: 16px !important;
 }
 
+.configure-email-address__checkbox-content-container {
+	display: flex;
+	align-items: center;
+}
+
 .configure-email-address__checkbox-content {
-	display: inline-block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	flex: 1;
+	max-width: calc(100% - 30px);
+}
+
+.configure-email-address__verification-status {
+	margin-right: 42px;
+
+	.badge {
+		line-height: 14px;
+		font-size: 0.75rem;
+	}
+}
+
+.configure-email-address__edit-icon {
+	position: absolute;
+	right: 16px;
+	display: flex;
 }
 
 .configure-email-address__checkbox {
+	width: 100%;
+
 	.components-checkbox-control__input:checked {
 		background: var(--studio-gray-80);
 		border-color: var(--studio-gray-80);
@@ -18,6 +50,7 @@
 
 	.components-checkbox-control__label {
 		font-weight: 500;
+		min-width: 95%;
 	}
 
 	.components-base-control__field {
@@ -27,7 +60,14 @@
 	}
 }
 
+.handle-overflow {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
 .configure-email-address__checkbox-heading {
+	@extend .handle-overflow;
 	font-weight: 500;
 	font-size: 0.875rem;
 	line-height: 18px;
@@ -35,8 +75,38 @@
 }
 
 .configure-email-address__checkbox-sub-heading {
+	@extend .handle-overflow;
 	font-weight: 400;
 	font-size: 0.75rem;
 	line-height: 18px;
 	color: var(--studio-gray-50);
+}
+
+button.configure-email-address__button {
+	margin-block-start: 16px;
+	border-radius: 20px; /* stylelint-disable-line scales/radii */
+	color: var(--studio-gray-80) !important;
+	display: flex;
+	align-items: center;
+	width: fit-content;
+	border-color: var(--studio-gray-80);
+	padding: 4px 8px !important;
+}
+
+.configure-email-notification__help-text {
+	font-weight: 400;
+	font-size: 0.75rem;
+	line-height: 15px;
+	color: var(--studio-gray-40);
+}
+
+.configure-email-notification__form {
+	margin-block-start: 24px;
+}
+
+.configure-email-notification__resend-code-button {
+	@extend .configure-email-notification__help-text;
+	padding: 0;
+	color: var(--studio-green-50) !important;
+	text-decoration: underline;
 }
