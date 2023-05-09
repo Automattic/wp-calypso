@@ -58,13 +58,14 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 		window.location.replace( '/home' );
 	}
 
-	// This is temporary until we can use the launchpad inside the editor.
-	const newWriterFlow = 'true' === getQueryArg( window.location.search, START_WRITING_FLOW );
+	const isStartWritingFlow =
+		getQueryArg( window.location.search, START_WRITING_FLOW ) === 'true' ||
+		window.sessionStorage.getItem( 'declarative-flow' ) === START_WRITING_FLOW;
 
 	if (
 		! isLoggedIn ||
 		launchpadScreenOption === 'off' ||
-		( launchpadScreenOption === false && 'videopress' !== flow && ! newWriterFlow )
+		( launchpadScreenOption === false && 'videopress' !== flow && ! isStartWritingFlow )
 	) {
 		redirectToSiteHome( siteSlug, flow );
 	}
