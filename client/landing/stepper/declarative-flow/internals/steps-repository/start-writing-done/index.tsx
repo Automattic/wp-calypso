@@ -23,6 +23,9 @@ const StartWritingDone: Step = () => {
 		[]
 	);
 
+	// Clear the declarative flow from session storage.
+	sessionStorage.setItem( 'declarative-flow', '' );
+
 	if ( ! site ) {
 		return null;
 	}

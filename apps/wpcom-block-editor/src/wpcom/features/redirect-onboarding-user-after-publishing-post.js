@@ -6,13 +6,20 @@ const START_WRITING_FLOW = 'start-writing';
 
 export function redirectOnboardingUserAfterPublishingPost() {
 	const isStartWritingFlow = getQueryArg( window.location.search, START_WRITING_FLOW ) === 'true';
+	const isStartWritingFlowInSessionStorage =
+		sessionStorage.getItem( 'declarative-flow' ) === START_WRITING_FLOW;
 
-	if ( ! isStartWritingFlow ) {
+	if ( ! isStartWritingFlow && ! isStartWritingFlowInSessionStorage ) {
 		return false;
 	}
 
-	const siteOrigin = getQueryArg( window.location.search, 'origin' );
+	const siteOrigin =
+		getQueryArg( window.location.search, 'origin' ) || sessionStorage.getItem( 'site-origin' );
 	const siteSlug = window.location.hostname;
+
+	// Save site origin and flow in session storage to be used in editor refresh.
+	sessionStorage.setItem( 'site-origin', siteOrigin );
+	sessionStorage.setItem( 'declarative-flow', START_WRITING_FLOW );
 
 	const unsubscribeSidebar = subscribe( () => {
 		const isComplementaryAreaVisible = select( 'core/preferences' ).get(
@@ -29,9 +36,8 @@ export function redirectOnboardingUserAfterPublishingPost() {
 	const unsubscribe = subscribe( () => {
 		const isSavingPost = select( 'core/editor' ).isSavingPost();
 		const isCurrentPostPublished = select( 'core/editor' ).isCurrentPostPublished();
-		const getCurrentPostRevisionsCount = select( 'core/editor' ).getCurrentPostRevisionsCount();
 
-		if ( ! isSavingPost && isCurrentPostPublished && getCurrentPostRevisionsCount === 1 ) {
+		if ( ! isSavingPost && isCurrentPostPublished ) {
 			unsubscribe();
 
 			dispatch( 'core/edit-post' ).closePublishSidebar();

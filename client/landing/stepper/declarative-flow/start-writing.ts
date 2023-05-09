@@ -66,6 +66,9 @@ const startWriting: Flow = {
 
 			switch ( currentStep ) {
 				case 'site-creation-step':
+					// Saving in the session so even after losing start-writing parameter
+					// at the URL (once users saves a post) we still know we're at the start-writing flow.
+					sessionStorage.setItem( 'declarative-flow', START_WRITING_FLOW );
 					return navigate( 'processing' );
 				case 'processing': {
 					// If we just created a new site.
