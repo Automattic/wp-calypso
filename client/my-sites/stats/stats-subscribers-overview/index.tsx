@@ -43,33 +43,47 @@ function calculateQueryDate( daysToSubtract: number ) {
 	return date.toISOString().split( 'T' )[ 0 ];
 }
 
-// all comparisons are being compared to todays's count to show growth up to today
+// calculate the stats to display in the cards
 function SubscribersOverviewCardStats( subscribersData: SubscribersData[][] ) {
-	const subscribersNumbersArray: number[] = subscribersData.map( ( innerArray ) => {
+	const getCount = ( index: number ) => {
+		const innerArray = subscribersData[ index ];
 		if ( Array.isArray( innerArray ) && innerArray.length > 0 ) {
 			return innerArray[ 0 ].subscribers;
 		}
 		return 0;
-	} );
+	};
+
+	const getHeading = ( index: number, daysAgo: number ) => {
+		if ( index === 0 ) {
+			return translate( 'Today' );
+		}
+		return translate( '%d days ago', { args: daysAgo } );
+	};
+
 	const daysToDisplay = [ indexFirstCard, indexSecondCard, indexThirdCard, indexFourthCard ];
-	const overviewCardStats: {
-		heading: string;
-		count: number;
-		previousCount?: number;
-	}[] = [];
 
-	daysToDisplay.forEach( ( day, index ) => {
-		const count = subscribersNumbersArray[ index ] || 0;
-
-		const cardStat = {
-			heading: ( index === 0
-				? translate( 'Today' )
-				: translate( '%d days ago', { args: day } ) ) as string,
-			count: count,
-		};
-
-		overviewCardStats.push( cardStat );
-	} );
+	const overviewCardStats = [
+		// Card for Today
+		{
+			heading: getHeading( 0, daysToDisplay[ 0 ] ),
+			count: getCount( 0 ),
+		},
+		// Card for 30 days ago
+		{
+			heading: getHeading( 1, daysToDisplay[ 1 ] ),
+			count: getCount( 1 ),
+		},
+		// Card for 60 days ago
+		{
+			heading: getHeading( 2, daysToDisplay[ 2 ] ),
+			count: getCount( 2 ),
+		},
+		// Card for 90 days ago
+		{
+			heading: getHeading( 3, daysToDisplay[ 3 ] ),
+			count: getCount( 3 ),
+		},
+	];
 
 	return overviewCardStats;
 }
