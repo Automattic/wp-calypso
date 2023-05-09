@@ -906,3 +906,19 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 		}
 	}
 }
+
+body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-flow).is-gravatar {
+	.signup-form__social-buttons {
+		@include break-medium {
+			transform: translateY(40px);
+		}
+
+		@include break-large {
+			transform: translateY(30px);
+		}
+	}
+
+	.signup__step.is-user .signup-form.is-horizontal p.signup-form__social-buttons-tos {
+		font-size: 0.875rem;
+	}
+}

@@ -232,7 +232,10 @@ export class UserStep extends Component {
 		if ( isReskinned && 0 === positionInFlow ) {
 			const { queryObject } = this.props;
 
-			if ( queryObject?.variationName && isNewsletterFlow( queryObject.variationName ) ) {
+			if (
+				( queryObject?.variationName && isNewsletterFlow( queryObject.variationName ) ) ||
+				isGravatarOAuth2Client( oauth2Client )
+			) {
 				subHeaderText = translate( 'Already have a WordPress.com account? {{a}}Log in{{/a}}', {
 					components: { a: <a href={ loginUrl } rel="noopener noreferrer" /> },
 				} );
@@ -246,7 +249,7 @@ export class UserStep extends Component {
 			}
 		}
 
-		if ( this.props.userLoggedIn || isGravatarOAuth2Client( oauth2Client ) ) {
+		if ( this.props.userLoggedIn ) {
 			subHeaderText = '';
 		}
 
