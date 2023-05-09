@@ -395,7 +395,7 @@ export function getEnhancedTasks(
 						},
 					};
 					break;
-				case 'set_up_paid_newsletter':
+				case 'newsletter_plan_created':
 					taskData = {
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
