@@ -73,7 +73,7 @@
 	}
 }
 
-// Mobile view
+// Mobile view only
 @media screen and ( max-width: $break-mobile ) {
 	.section-nav.subscription-manager-tab-switcher {
 		margin-bottom: 22px;
@@ -101,7 +101,7 @@
 	}
 }
 
-// Large screen view
+// Large screen view only
 @media screen and ( min-width: $break-mobile ) {
 	.section-nav.subscription-manager-tab-switcher {
 		margin-bottom: 32px;
