@@ -196,7 +196,7 @@ export const NoSitesMessage = ( { status, statusSiteCount }: SitesContainerProps
 				<SparklingCTA
 					target="/setup/import-focused"
 					icon={ <ImportSiteIcon /> }
-					label={ __( 'Import a site' ) }
+					label={ __( 'Migrate a site' ) }
 				/>
 			</div>
 		</NoSitesLayout>
