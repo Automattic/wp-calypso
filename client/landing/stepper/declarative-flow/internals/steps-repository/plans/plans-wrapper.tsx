@@ -155,6 +155,8 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					hideFreePlan={ hideFreePlan || shouldHidePlan( TYPE_FREE ) }
 					hidePersonalPlan={ shouldHidePlan( TYPE_PERSONAL ) }
 					hidePremiumPlan={ shouldHidePlan( TYPE_PREMIUM ) }
+					hideBusinessPlan={ shouldHidePlan( TYPE_BUSINESS ) }
+					hideEcommercePlan={ shouldHidePlan( TYPE_ECOMMERCE ) }
 					hideEnterprisePlan={ shouldHidePlan( TYPE_ENTERPRISE_GRID_WPCOM ) }
 					isInSignup={ isInSignup }
 					isStepperUpgradeFlow={ true }

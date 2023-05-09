@@ -457,6 +457,7 @@ export class PlansFeaturesMain extends Component {
 			hideFreePlan,
 			hidePersonalPlan,
 			hidePremiumPlan,
+			hideBusinessPlan,
 			hideEcommercePlan,
 		} = this.props;
 
@@ -487,6 +488,10 @@ export class PlansFeaturesMain extends Component {
 
 		if ( hidePremiumPlan ) {
 			plans = plans.filter( ( planSlug ) => ! isPremiumPlan( planSlug ) );
+		}
+
+		if ( hideBusinessPlan ) {
+			plans = plans.filter( ( planSlug ) => ! isBusinessPlan( planSlug ) );
 		}
 
 		if ( hideEcommercePlan ) {
