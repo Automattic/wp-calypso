@@ -1,19 +1,37 @@
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, FunctionComponent } from 'react';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import Chart from 'calypso/components/chart';
 import Legend from 'calypso/components/chart/legend';
-import { rectIsEqual, rectIsZero } from 'calypso/lib/track-element-size';
+import { rectIsEqual, rectIsZero, NullableDOMRect } from 'calypso/lib/track-element-size';
 import { buildChartData } from 'calypso/my-sites/stats/stats-chart-tabs/utility';
 import StatsEmptyState from 'calypso/my-sites/stats/stats-empty-state';
 import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
 import nothing from '../components/nothing';
 import useVisitsQuery from '../hooks/use-visits-query';
+import { Unit } from '../typings';
 
 import './mini-chart.scss';
 
-const MiniChart = ( { siteId, quantity = 7, gmtOffset, odysseyStatsBaseUrl } ) => {
+interface MiniChartProps {
+	siteId: number;
+	quantity?: number;
+	gmtOffset: number;
+	odysseyStatsBaseUrl: string;
+}
+
+interface BarData {
+	period: string;
+	value: number;
+}
+
+const MiniChart: FunctionComponent< MiniChartProps > = ( {
+	siteId,
+	gmtOffset,
+	odysseyStatsBaseUrl,
+	quantity = 7,
+} ) => {
 	const translate = useTranslate();
 
 	const chartViews = {
@@ -30,11 +48,11 @@ const MiniChart = ( { siteId, quantity = 7, gmtOffset, odysseyStatsBaseUrl } ) =
 	const queryDate = moment()
 		.utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 )
 		.format( 'YYYY-MM-DD' );
-	const [ period, setPeriod ] = useState( 'day' );
+	const [ period, setPeriod ] = useState< Unit >( 'day' );
 
 	const { isLoading, data } = useVisitsQuery( siteId, period, quantity, queryDate );
 
-	const barClick = ( bar ) => {
+	const barClick = ( bar: { data: BarData } ) => {
 		window.location.href = `${ odysseyStatsBaseUrl }#!/stats/${ period }/${ siteId }?startDate=${ bar.data.period }`;
 	};
 
@@ -46,8 +64,8 @@ const MiniChart = ( { siteId, quantity = 7, gmtOffset, odysseyStatsBaseUrl } ) =
 		queryDate
 	);
 
-	const chartWrapperRef = useRef( null );
-	const lastRect = useRef( null );
+	const chartWrapperRef = useRef< HTMLDivElement >( null );
+	const lastRect = useRef< NullableDOMRect >( null );
 	useEffect( () => {
 		if ( ! chartWrapperRef?.current ) {
 			return;
@@ -66,7 +84,7 @@ const MiniChart = ( { siteId, quantity = 7, gmtOffset, odysseyStatsBaseUrl } ) =
 		return () => observer.disconnect();
 	} );
 
-	const isEmptyChart = ! chartData.some( ( bar ) => bar.value > 0 );
+	const isEmptyChart = ! chartData.some( ( bar: BarData ) => bar.value > 0 );
 	const placeholderChartData = Array.from( { length: 7 }, () => ( {
 		value: Math.random(),
 	} ) );
