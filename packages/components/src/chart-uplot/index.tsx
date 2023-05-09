@@ -1,8 +1,8 @@
 import { getLocaleSlug, numberFormat, useTranslate } from 'i18n-calypso';
-import throttle from 'lodash/throttle';
-import { useCallback, useMemo, useState, useRef, useEffect } from 'react';
+import { useCallback, useMemo, useState, useRef } from 'react';
 import uPlot from 'uplot';
 import UplotReact from 'uplot-react';
+import useResize from './hooks/use-resize';
 
 import './style.scss';
 
@@ -13,37 +13,6 @@ const DEFAULT_DIMENSIONS = {
 	height: 300,
 	width: 1224,
 };
-
-const THROTTLE_DURATION = 400; // in ms
-
-function useResize(
-	uplotRef: React.RefObject< uPlot >,
-	containerRef: React.RefObject< HTMLDivElement >
-) {
-	useEffect( () => {
-		if ( ! uplotRef.current || ! containerRef.current ) {
-			return;
-		}
-
-		const resizeChart = throttle( () => {
-			// Repeat the check since resize can happen much later than event registration.
-			if ( ! uplotRef.current || ! containerRef.current ) {
-				return;
-			}
-
-			// Only update width, not height.
-			uplotRef.current.setSize( {
-				height: uplotRef.current.height,
-				width: containerRef.current.clientWidth,
-			} );
-		}, THROTTLE_DURATION );
-		resizeChart();
-		window.addEventListener( 'resize', resizeChart );
-
-		// Cleanup on unmount.
-		return () => window.removeEventListener( 'resize', resizeChart );
-	}, [ uplotRef, containerRef ] );
-}
 
 interface UplotChartProps {
 	data: uPlot.AlignedData;
