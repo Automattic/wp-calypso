@@ -224,18 +224,15 @@
 		font-size: $font-body-small;
 	}
 
-	.launchpad__url-box-domain:hover > .launchpad__clipboard-button {
-		opacity: 1;
+	.launchpad__clipboard-button {
+		opacity: 0;
 		margin-top: 2px;
 		flex-shrink: 0;
 	}
 
+	.launchpad__url-box-domain:hover > .launchpad__clipboard-button,
 	.launchpad__clipboard-button:focus {
 		opacity: 1;
-	}
-
-	.launchpad__clipboard-button {
-		opacity: 0;
 	}
 }
 
