@@ -5,6 +5,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import EmptyContent from 'calypso/components/empty-content';
 import { addQueryArgs } from 'calypso/lib/url';
+import { MEDIA_QUERIES } from '../utils';
 import { CreateSiteIcon, ImportSiteIcon } from './no-sites-message-icons';
 import { SparklingCTA } from './sparkling-cta';
 
@@ -174,7 +175,16 @@ export const NoSitesMessage = ( { status, statusSiteCount }: SitesContainerProps
 			}
 			illustration=""
 		>
-			<div css={ { display: 'flex', gap: 16 } }>
+			<div
+				css={ {
+					display: 'flex',
+					gap: 32,
+					[ MEDIA_QUERIES.small ]: {
+						width: '100%',
+						flexDirection: 'column',
+					},
+				} }
+			>
 				<SparklingCTA
 					target={ addQueryArgs(
 						{ source: 'sites-dashboard', ref: 'calypso-nosites' },

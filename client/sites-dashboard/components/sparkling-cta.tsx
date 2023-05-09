@@ -2,6 +2,7 @@ import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useDebounce } from '@wordpress/compose';
 import { HTMLAttributes, ReactNode, useState } from 'react';
+import { MEDIA_QUERIES } from '../utils';
 
 const SparkleSVG = ( props: HTMLAttributes< SVGElement > ) => (
 	<svg
@@ -91,6 +92,14 @@ const Link = styled.a( {
 		border: '1px solid #A7AAAD',
 		boxShadow: '0px 3px 8px rgba(0, 0, 0, 0.12), 0px 3px 1px rgba(0, 0, 0, 0.04)',
 	},
+
+	[ MEDIA_QUERIES.small ]: {
+		width: '100%',
+		padding: '16px',
+		flexDirection: 'row',
+		justifyContent: 'flex-start',
+		gap: '32px',
+	},
 } );
 
 interface SparklingCTAProps {
@@ -117,9 +126,13 @@ export const SparklingCTA = ( { icon, target, label }: SparklingCTAProps ) => {
 			<div
 				css={ {
 					position: 'relative',
-					width: 'fit-content',
-					height: 'fit-content',
 					'> svg': { display: 'block' },
+
+					width: '192px',
+
+					[ MEDIA_QUERIES.small ]: {
+						width: '128px',
+					},
 				} }
 			>
 				{ icon }

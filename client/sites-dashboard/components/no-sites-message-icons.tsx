@@ -1,11 +1,5 @@
 export const CreateSiteIcon = () => (
-	<svg
-		width="187"
-		height="159"
-		viewBox="0 0 187 159"
-		fill="none"
-		xmlns="http://www.w3.org/2000/svg"
-	>
+	<svg viewBox="0 0 187 159" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<g filter="url(#filter0_d_104_13638)">
 			<rect x="3.5" y="2.11328" width="180" height="152.773" rx="3.02521" fill="white" />
 			<path
@@ -175,13 +169,7 @@ export const CreateSiteIcon = () => (
 );
 
 export const ImportSiteIcon = () => (
-	<svg
-		width="187"
-		height="159"
-		viewBox="0 0 187 159"
-		fill="none"
-		xmlns="http://www.w3.org/2000/svg"
-	>
+	<svg viewBox="0 0 187 159" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<g filter="url(#filter0_d_104_13673)">
 			<rect x="3.25586" y="2.11328" width="140.672" height="111.933" rx="3.02521" fill="#F6F7F7" />
 			<path
