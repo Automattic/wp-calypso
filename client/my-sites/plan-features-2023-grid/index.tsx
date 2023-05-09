@@ -497,7 +497,14 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderPlanPrice( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { isReskinned, isLargeCurrency, translate, isPlanUpgradeCreditEligible } = this.props;
+		const {
+			isReskinned,
+			isLargeCurrency,
+			translate,
+			isPlanUpgradeCreditEligible,
+			currentSitePlanSlug,
+			siteId,
+		} = this.props;
 
 		return planPropertiesObj
 			.filter( ( { isVisible } ) => isVisible )
@@ -522,6 +529,8 @@ export class PlanFeatures2023Grid extends Component<
 								planProperties={ properties }
 								is2023OnboardingPricingGrid={ true }
 								isLargeCurrency={ isLargeCurrency }
+								currentSitePlanSlug={ currentSitePlanSlug }
+								siteId={ siteId }
 							/>
 						) }
 						{ isWooExpressPlus && (
@@ -535,6 +544,7 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderBillingTimeframe( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
+		const { currentSitePlanSlug, siteId } = this.props;
 		return planPropertiesObj
 			.filter( ( { isVisible } ) => isVisible )
 			.map( ( properties ) => {
@@ -552,6 +562,8 @@ export class PlanFeatures2023Grid extends Component<
 							planName={ planName }
 							billingTimeframe={ planConstantObj.getBillingTimeFrame() }
 							billingPeriod={ billingPeriod }
+							currentSitePlanSlug={ currentSitePlanSlug }
+							siteId={ siteId }
 						/>
 					</Container>
 				);

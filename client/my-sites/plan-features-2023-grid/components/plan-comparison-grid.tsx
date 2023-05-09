@@ -375,6 +375,7 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 	planActionOverrides,
 	isPlanUpgradeCreditEligible,
 	selectedPlan,
+	siteId,
 } ) => {
 	const { planName, planConstantObj, availableForPurchase, current, ...planPropertiesObj } =
 		planProperties;
@@ -448,6 +449,8 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 				planProperties={ planProperties }
 				is2023OnboardingPricingGrid={ true }
 				isLargeCurrency={ isLargeCurrency }
+				currentSitePlanSlug={ currentSitePlanSlug }
+				siteId={ siteId }
 			/>
 			<div className="plan-comparison-grid__billing-info">
 				<PlanFeatures2023GridBillingTimeframe
@@ -455,6 +458,8 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 					isMonthlyPlan={ planPropertiesObj.isMonthlyPlan }
 					billingTimeframe={ planConstantObj.getBillingTimeFrame() }
 					billingPeriod={ planPropertiesObj.billingPeriod }
+					currentSitePlanSlug={ currentSitePlanSlug }
+					siteId={ siteId }
 				/>
 			</div>
 			<PlanFeatures2023GridActions
@@ -535,6 +540,7 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 					isLargeCurrency={ isLargeCurrency }
 					planActionOverrides={ planActionOverrides }
 					selectedPlan={ selectedPlan }
+					siteId={ siteId }
 				/>
 			) ) }
 		</PlanRow>
