@@ -23,14 +23,6 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 .design-carousel__item {
 	flex: 1;
 
-	@include break-medium {
-		width: calc((65vh - 50px) * 1.5);
-
-		@supports (min-height: 65svh) {
-			width: calc((65svh - 50px) * 1.5);
-		}
-	}
-
 	&.design-carousel__item-mobile {
 		@include break-medium {
 			display: none;
@@ -56,14 +48,21 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 	padding: 0;
 	overflow: hidden;
 	height: calc(65vh - 50px);
-	// iPhone aspect ratio
 	width: calc((65vh - 50px) * 0.48);
 	outline: none;
 
 	// needed for iOS Safari.
 	@supports (min-height: 65svh) {
 		height: calc(65svh - 50px);
-		width: calc((65svh - 50px) * 1.5);
+		width: calc((65svh - 50px) * 0.48);
+	}
+
+	@include break-medium {
+		width: calc((65vh - 50px) * 1.5);
+
+		@supports (height: 65svh) {
+			width: calc((65svh - 50px) * 1.5);
+		}
 	}
 
 	opacity: 0.5;
