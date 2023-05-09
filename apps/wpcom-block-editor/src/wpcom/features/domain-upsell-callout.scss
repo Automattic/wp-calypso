@@ -1,0 +1,43 @@
+.domain-upsell-callout {
+	font-style: normal;
+	padding: 15px;
+	line-height: normal;
+	position: absolute;
+	display: flex;
+	align-items: center;
+	left: 50%;
+	transform: translateX(-50%);
+	top: 0;
+}
+
+.domain-upsell-callout__content {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--studio-gray-60);
+}
+
+.domain-upsell-callout__content-text {
+	display: flex;
+	align-items: center;
+	border-radius: 4px;
+	padding: 6px 20px;
+	column-gap: 10px;
+	background: #f6f7f7;
+}
+
+.domain-upsell-callout__icon {
+	fill: var(--studio-gray-60);
+}
+
+.domain-upsell-callout__button {
+	white-space: nowrap;
+	text-decoration: underline;
+	color: #3858e9;
+}
+
+.domain-upsell-callout__button:hover,
+.domain-upsell-callout__dismiss-icon:hover {
+	cursor: pointer;
+}
