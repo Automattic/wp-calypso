@@ -12,7 +12,7 @@ import useSetupFormInitialValues from '../components/setup-form/hooks/use-setup-
 import type { Step } from '../../types';
 import './styles.scss';
 
-const SetupBlog: Step = ( { navigation } ) => {
+const SetupBlog: Step = ( { navigation, flow } ) => {
 	const { submit } = navigation;
 	const translate = useTranslate();
 	const site = useSite();
@@ -34,6 +34,14 @@ const SetupBlog: Step = ( { navigation } ) => {
 	const { saveSiteSettings } = useDispatch( SITE_STORE );
 
 	const { siteTitle, setComponentSiteTitle, tagline, setTagline } = useSetupFormInitialValues();
+
+	useEffect( () => {
+		// Clear site title and show placeholder for the flows below
+		const isStartWritingFlow = 'start-writing' === flow;
+		if ( isStartWritingFlow ) {
+			setComponentSiteTitle( '' );
+		}
+	}, [ flow, setComponentSiteTitle ] );
 
 	useEffect( () => {
 		setIsSubmitError( false );
