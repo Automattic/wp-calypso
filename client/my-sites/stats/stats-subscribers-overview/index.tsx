@@ -1,8 +1,11 @@
 import { CountComparisonCard } from '@automattic/components';
-import { UseQueryResult } from '@tanstack/react-query';
+import { UseQueryResult, useQueries } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
 import React from 'react';
-import useSubscribersQuery from 'calypso/my-sites/stats/hooks/use-subscribers-query';
+import {
+	querySubscribers,
+	selectSubscribers,
+} from 'calypso/my-sites/stats/hooks/use-subscribers-query';
 
 const indexFirstCard = 0; // 0 for today
 const indexSecondCard = 30; // 30 days out
@@ -25,17 +28,29 @@ interface SubscribersOverviewProps {
 	siteId: number;
 }
 
-function extractCountsAtIndexes( subscribersData: SubscribersData[], indexes: number[] ): number[] {
-	return indexes.map(
-		( index ) =>
-			( index > 0
-				? subscribersData[ index - 1 ]?.subscribers
-				: subscribersData[ index ]?.subscribers ) || 0
-	);
+// calculate the dates to query for
+const dateToday = calculateQueryDate( indexFirstCard );
+const date30DaysAgo = calculateQueryDate( indexSecondCard );
+const date60DaysAgo = calculateQueryDate( indexThirdCard );
+const date90DaysAgo = calculateQueryDate( indexFourthCard );
+
+// calculate the date to query for based on the number of days to subtract
+// todo: move to a utils file
+function calculateQueryDate( daysToSubtract: number ) {
+	const today = new Date();
+	const date = new Date( today );
+	date.setDate( date.getDate() - daysToSubtract );
+	return date.toISOString().split( 'T' )[ 0 ];
 }
 
 // all comparisons are being compared to todays's count to show growth up to today
-function SubscribersOverviewCardStats( subscribersData: number[] ) {
+function SubscribersOverviewCardStats( subscribersData: SubscribersData[][] ) {
+	const subscribersNumbersArray: number[] = subscribersData.map( ( innerArray ) => {
+		if ( Array.isArray( innerArray ) && innerArray.length > 0 ) {
+			return innerArray[ 0 ].subscribers;
+		}
+		return 0;
+	} );
 	const daysToDisplay = [ indexFirstCard, indexSecondCard, indexThirdCard, indexFourthCard ];
 	const overviewCardStats: {
 		heading: string;
@@ -44,7 +59,7 @@ function SubscribersOverviewCardStats( subscribersData: number[] ) {
 	}[] = [];
 
 	daysToDisplay.forEach( ( day, index ) => {
-		const count = subscribersData[ index ] || 0;
+		const count = subscribersNumbersArray[ index ] || 0;
 
 		const cardStat = {
 			heading: ( index === 0
@@ -59,25 +74,24 @@ function SubscribersOverviewCardStats( subscribersData: number[] ) {
 	return overviewCardStats;
 }
 
-// query for 90 days at once, then use a function to break it down.
 const SubscribersOverview: React.FC< SubscribersOverviewProps > = ( { siteId } ) => {
 	const period = 'day';
-	const quantity = indexFourthCard;
-	const date = '2023-03-01';
-	const { isLoading, isError, data } = useSubscribersQuery(
-		siteId,
-		period,
-		quantity,
-		date
-	) as UseQueryResult< SubscribersDataResult >;
+	const quantity = 1;
+	const dates: string[] = [ dateToday, date30DaysAgo, date60DaysAgo, date90DaysAgo ];
+	const subscribersQueries = useQueries( {
+		queries: dates.map( ( date ) => ( {
+			queryKey: [ 'stats', 'subscribers', siteId, period, quantity, date ],
+			queryFn: () => querySubscribers( siteId, period, quantity, date ),
+			select: selectSubscribers,
+			staleTime: 1000 * 60 * 5, // 5 minutes
+		} ) ),
+	} ) as UseQueryResult< SubscribersDataResult >[];
 
-	const subscribersData = data?.data || [];
+	const isLoading = subscribersQueries.some( ( result ) => result.isLoading );
+	const isError = subscribersQueries.some( ( result ) => result.isError );
+	const subscribersData = subscribersQueries.map( ( result ) => result.data?.data || [] );
 
-	const indexesToExtract = [ indexFirstCard, indexSecondCard, indexThirdCard, indexFourthCard ]; // get out today, 30 days, 60 days, 90 days
-	const extractedCounts = extractCountsAtIndexes( subscribersData, indexesToExtract );
-
-	// use 'extractedCounts' to get out just the dates we want from the data
-	const overviewCardStats = SubscribersOverviewCardStats( extractedCounts );
+	const overviewCardStats = SubscribersOverviewCardStats( subscribersData );
 
 	return (
 		<div className="subscribers-overview highlight-cards">
