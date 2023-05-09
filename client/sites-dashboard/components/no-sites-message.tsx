@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import EmptyContent from 'calypso/components/empty-content';
+import { addQueryArgs } from 'calypso/lib/url';
 import { CreateSiteIcon, ImportSiteIcon } from './no-sites-message-icons';
 import { SparklingCTA } from './sparkling-cta';
 
@@ -163,48 +164,31 @@ export const NoSitesMessage = ( { status, statusSiteCount }: SitesContainerProps
 		);
 	}
 
-	if ( isEnabled( 'hosting-onboarding-i2' ) ) {
-		return (
-			<NoSitesLayout
-				title={ <Title css={ { marginBlockEnd: 0 } }> { __( 'Add a site to start' ) } </Title> }
-				line={
-					<SecondaryText>
-						{ __( 'Create a brand new site or import an existing one' ) }
-					</SecondaryText>
-				}
-				illustration=""
-			>
-				<div css={ { display: 'flex', gap: 16 } }>
-					<SparklingCTA
-						target="/setup/new-hosted-site"
-						icon={ <CreateSiteIcon /> }
-						label={ __( 'Create a site' ) }
-					/>
-					<SparklingCTA
-						target="/setup/import-focused"
-						icon={ <ImportSiteIcon /> }
-						label={ __( 'Import a site' ) }
-					/>
-				</div>
-			</NoSitesLayout>
-		);
-	}
+	const newSiteURL = isEnabled( 'hosting-onboarding-i2' ) ? '/setup/new-hosted-site' : '/start';
 
 	return (
 		<NoSitesLayout
-			title={ <Title> { __( 'Create your first site' ) } </Title> }
+			title={ <Title css={ { marginBlockEnd: 0 } }> { __( 'Add a site to start' ) } </Title> }
 			line={
-				<SecondaryText>
-					{ __(
-						"It's time to get your ideas online. We'll guide you through the process of creating a site that best suits your needs."
-					) }
-				</SecondaryText>
+				<SecondaryText>{ __( 'Create a brand new site or import an existing one' ) }</SecondaryText>
 			}
-			action={ __( 'Create your first site' ) }
-			actionURL="/start?source=sites-dashboard&ref=calypso-nosites"
-			illustration="/calypso/images/illustrations/illustration-empty-sites.svg"
-			illustrationWidth={ 124 }
-			illustrationHeight={ 101 }
-		/>
+			illustration=""
+		>
+			<div css={ { display: 'flex', gap: 16 } }>
+				<SparklingCTA
+					target={ addQueryArgs(
+						{ source: 'sites-dashboard', ref: 'calypso-nosites' },
+						newSiteURL
+					) }
+					icon={ <CreateSiteIcon /> }
+					label={ __( 'Create a site' ) }
+				/>
+				<SparklingCTA
+					target="/setup/import-focused"
+					icon={ <ImportSiteIcon /> }
+					label={ __( 'Import a site' ) }
+				/>
+			</div>
+		</NoSitesLayout>
 	);
 };
