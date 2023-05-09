@@ -57,6 +57,7 @@
 		"jetpack/simplify-pricing-structure": false,
 		"jetpack-social/advanced-plan": false,
 		"jetpack/offer-complete-after-activation": false,
+		"jetpack-social/multiple-connections": false,
 		"jitms": true,
 		"lasagna": false,
 		"layout/app-banner": true,
