@@ -84,6 +84,7 @@ export const SparklingCTA = ( { icon, target, label, sparkles }: SparklingCTAPro
 			onMouseLeave={ still }
 		>
 			<div
+				aria-hidden="true"
 				css={ {
 					position: 'relative',
 					'> svg': { display: 'block' },
