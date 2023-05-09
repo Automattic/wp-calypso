@@ -179,7 +179,7 @@ const PlanLogo: React.FunctionComponent< {
 		flowName,
 		currentSitePlanSlug
 	);
-	const highlightLabel = useHighlightLabel( planName, flowName );
+	const highlightLabel = useHighlightLabel( planName, flowName, currentSitePlanSlug );
 	const headerClasses = classNames(
 		'plan-features-2023-grid__header-logo',
 		getPlanClass( planName )
@@ -211,6 +211,7 @@ const PlanLogo: React.FunctionComponent< {
 				planName={ planName }
 				additionalClassName={ popularBadgeClasses }
 				flowName={ flowName }
+				currentSitePlanSlug={ currentSitePlanSlug }
 			/>
 			<header className={ headerClasses }>
 				{ isBusinessPlan( planName ) && (

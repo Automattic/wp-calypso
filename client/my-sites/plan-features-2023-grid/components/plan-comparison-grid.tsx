@@ -348,7 +348,7 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 } ) => {
 	const { planName, planConstantObj, availableForPurchase, current, ...planPropertiesObj } =
 		planProperties;
-	const highlightLabel = useHighlightLabel( planName, flowName );
+	const highlightLabel = useHighlightLabel( planName, flowName, currentSitePlanSlug );
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix(
 		visiblePlansProperties,
 		flowName,
@@ -375,6 +375,7 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 				planName={ planName }
 				additionalClassName={ popularBadgeClasses }
 				flowName={ flowName }
+				currentSitePlanSlug={ currentSitePlanSlug }
 			/>
 			<PlanSelector>
 				{ showPlanSelect && (
@@ -515,7 +516,7 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 		flowName,
 		currentSitePlanSlug
 	);
-	const highlightLabel = useHighlightLabel( planName, flowName );
+	const highlightLabel = useHighlightLabel( planName, flowName, currentSitePlanSlug );
 	const featureSlug = feature?.getSlug();
 	const hasFeature =
 		isStorageFeature ||

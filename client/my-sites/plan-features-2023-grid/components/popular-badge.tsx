@@ -8,13 +8,14 @@ const PopularBadge: React.FunctionComponent< {
 	planName: string;
 	flowName: string;
 	additionalClassName?: string;
-} > = ( { isInSignup, planName, additionalClassName, flowName } ) => {
+	currentSitePlanSlug?: string;
+} > = ( { isInSignup, planName, additionalClassName, flowName, currentSitePlanSlug } ) => {
 	const classes = classNames(
 		'plan-features-2023-grid__popular-badge',
 		getPlanClass( planName ),
 		additionalClassName
 	);
-	const highlightLabel = useHighlightLabel( planName, flowName );
+	const highlightLabel = useHighlightLabel( planName, flowName, currentSitePlanSlug );
 
 	return (
 		<>
