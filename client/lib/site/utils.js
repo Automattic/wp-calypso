@@ -94,8 +94,8 @@ export function isMainNetworkSite( site ) {
 /**
  * Checks whether a site has a custom mapped URL.
  *
- * @param   {Object}   site Site object
- * @returns {?boolean}      Whether site has custom domain
+ * @param   {undefined|null|{domain?: string; wpcom_url?: string}}   site Site object
+ * @returns {boolean|null}      Whether site has custom domain
  */
 export function hasCustomDomain( site ) {
 	if ( ! site || ! site.domain || ! site.wpcom_url ) {
