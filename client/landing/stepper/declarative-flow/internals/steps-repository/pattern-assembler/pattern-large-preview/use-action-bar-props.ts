@@ -24,6 +24,9 @@ const useActionBarProps = ( {
 	const actionBarProps = { patternType };
 	const [ , forceUpdate ] = useReducer( ( s ) => ( s + 1 ) % Number.MAX_SAFE_INTEGER, 0 );
 
+	/**
+	 * Observe the attribute of the element to get the latest position after reordering
+	 */
 	useLayoutEffect( () => {
 		if ( ! element ) {
 			return;
