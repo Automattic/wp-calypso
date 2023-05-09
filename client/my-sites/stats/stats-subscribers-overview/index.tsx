@@ -60,27 +60,25 @@ function SubscribersOverviewCardStats( subscribersData: SubscribersData[][] ) {
 		return translate( '%d days ago', { args: daysAgo } );
 	};
 
-	const daysToDisplay = [ indexFirstCard, indexSecondCard, indexThirdCard, indexFourthCard ];
-
 	const overviewCardStats = [
 		// Card for Today
 		{
-			heading: getHeading( 0, daysToDisplay[ 0 ] ),
+			heading: getHeading( 0, indexFirstCard ),
 			count: getCount( 0 ),
 		},
 		// Card for 30 days ago
 		{
-			heading: getHeading( 1, daysToDisplay[ 1 ] ),
+			heading: getHeading( 1, indexSecondCard ),
 			count: getCount( 1 ),
 		},
 		// Card for 60 days ago
 		{
-			heading: getHeading( 2, daysToDisplay[ 2 ] ),
+			heading: getHeading( 2, indexThirdCard ),
 			count: getCount( 2 ),
 		},
 		// Card for 90 days ago
 		{
-			heading: getHeading( 3, daysToDisplay[ 3 ] ),
+			heading: getHeading( 3, indexFourthCard ),
 			count: getCount( 3 ),
 		},
 	];
