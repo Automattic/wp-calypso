@@ -1,4 +1,10 @@
-import { isYearly, isJetpackPurchasableItem, isMonthlyProduct } from '@automattic/calypso-products';
+import {
+	isYearly,
+	isJetpackPurchasableItem,
+	isMonthlyProduct,
+	isBiennially,
+	isTriennially,
+} from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import {
 	MainContentWrapper,
@@ -634,7 +640,9 @@ const SubmitButtonFooter = () => {
 	}
 
 	const show7DayGuarantee = responseCart?.products?.every( isMonthlyProduct );
-	const show14DayGuarantee = responseCart?.products?.every( isYearly );
+	const show14DayGuarantee = responseCart?.products?.every(
+		( product ) => isYearly( product ) || isBiennially( product ) || isTriennially( product )
+	);
 	const content =
 		show7DayGuarantee || show14DayGuarantee ? (
 			translate( '%(dayCount)s day money back guarantee', {
