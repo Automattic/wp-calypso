@@ -208,6 +208,12 @@ export default function UplotChart( {
 				cursor: {
 					x: false,
 					y: false,
+					points: {
+						size: ( u, seriesIdx ) => ( u.series[ seriesIdx ].points?.size || 1 ) * 2,
+						width: ( u, seriesIdx, size ) => size / 4,
+						stroke: ( u, seriesIdx ) => u.series[ seriesIdx ]?.points?.stroke( u, seriesIdx ),
+						fill: () => '#fff',
+					},
 				},
 				series: [
 					{
