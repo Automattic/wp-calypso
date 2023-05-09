@@ -315,12 +315,24 @@ const PatternAssembler = ( {
 		selectedCategory?: string | null
 	) => {
 		if ( selectedPattern ) {
-			// Inject the selected pattern category (except for the category All)
-			// or the first category because it's used in tracks and as pattern name in the list
+			// Inject the selected pattern category or the first category
+			// to be used in tracks and as selected pattern name.
 			const [ firstCategory ] = Object.keys( selectedPattern.categories );
-			selectedPattern.category = categories.find(
-				( { name } ) => name === ( selectedCategory || firstCategory )
-			);
+			selectedPattern.category = categories.find( ( { name } ) => {
+				if ( selectedCategory === CATEGORY_ALL_SLUG ) {
+					return name === firstCategory;
+				}
+				return name === ( selectedCategory || firstCategory );
+			} );
+
+			if ( selectedCategory === CATEGORY_ALL_SLUG ) {
+				// Use 'all' rather than 'featured' as slug for tracks.
+				// Use the first category label as selected pattern name.
+				selectedPattern.category = {
+					name: 'all',
+					label: selectedPattern.category?.label,
+				};
+			}
 
 			trackEventPatternSelect( {
 				patternType: type,
@@ -330,10 +342,6 @@ const PatternAssembler = ( {
 			} );
 
 			if ( 'section' === type ) {
-				if ( CATEGORY_ALL_SLUG === selectedCategory ) {
-					// The category All is used for tracks events only
-					selectedPattern.category = categories.find( ( { name } ) => name === firstCategory );
-				}
 				if ( sectionPosition !== null ) {
 					replaceSection( selectedPattern );
 				} else {
