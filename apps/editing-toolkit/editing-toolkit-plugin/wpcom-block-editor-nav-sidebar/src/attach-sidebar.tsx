@@ -37,7 +37,7 @@ if ( typeof MainDashboardButton !== 'undefined' ) {
 
 			const isStartWritingFlow =
 				getQueryArg( window.location.search, START_WRITING_FLOW ) === 'true' ||
-				sessionStorage.getItem( 'declarative-flow' ) === START_WRITING_FLOW;
+				window.sessionStorage.getItem( 'declarative-flow' ) === START_WRITING_FLOW;
 
 			const [ clickGuardRoot ] = useState( () => document.createElement( 'div' ) );
 			useEffect( () => {

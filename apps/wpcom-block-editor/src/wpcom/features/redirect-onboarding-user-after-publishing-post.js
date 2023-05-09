@@ -7,19 +7,20 @@ const START_WRITING_FLOW = 'start-writing';
 export function redirectOnboardingUserAfterPublishingPost() {
 	const isStartWritingFlow = getQueryArg( window.location.search, START_WRITING_FLOW ) === 'true';
 	const isStartWritingFlowInSessionStorage =
-		sessionStorage.getItem( 'declarative-flow' ) === START_WRITING_FLOW;
+		window.sessionStorage.getItem( 'declarative-flow' ) === START_WRITING_FLOW;
 
 	if ( ! isStartWritingFlow && ! isStartWritingFlowInSessionStorage ) {
 		return false;
 	}
 
 	const siteOrigin =
-		getQueryArg( window.location.search, 'origin' ) || sessionStorage.getItem( 'site-origin' );
+		getQueryArg( window.location.search, 'origin' ) ||
+		window.sessionStorage.getItem( 'site-origin' );
 	const siteSlug = window.location.hostname;
 
 	// Save site origin and flow in session storage to be used in editor refresh.
-	sessionStorage.setItem( 'site-origin', siteOrigin );
-	sessionStorage.setItem( 'declarative-flow', START_WRITING_FLOW );
+	window.sessionStorage.setItem( 'site-origin', siteOrigin );
+	window.sessionStorage.setItem( 'declarative-flow', START_WRITING_FLOW );
 
 	const unsubscribeSidebar = subscribe( () => {
 		const isComplementaryAreaVisible = select( 'core/preferences' ).get(

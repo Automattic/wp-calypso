@@ -51,7 +51,7 @@ function LaunchWpcomWelcomeTour() {
 	const editorType = getEditorType();
 	const isStartWritingFlow =
 		getQueryArg( window.location.search, START_WRITING_FLOW ) === 'true' ||
-		sessionStorage.getItem( 'declarative-flow' ) === START_WRITING_FLOW;
+		window.sessionStorage.getItem( 'declarative-flow' ) === START_WRITING_FLOW;
 
 	// Preload first card image (others preloaded after open state confirmed)
 	usePrefetchTourAssets( [ getTourSteps( localeSlug, false, false, null, siteIntent )[ 0 ] ] );
