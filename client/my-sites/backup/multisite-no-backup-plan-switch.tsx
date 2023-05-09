@@ -44,13 +44,19 @@ const MultisiteNoBackupPlanSwitch: FunctionComponent< Props > = ( {
 		[ hasBackupFeature, isMultiSite ]
 	);
 
+	const loadingDefaultPlaceholder = (
+		<div className="loading">
+			<div className="loading__placeholder" />
+		</div>
+	);
+
 	return (
 		<>
 			<RenderSwitch
 				loadingCondition={ loadingCondition }
 				renderCondition={ renderCondition }
 				queryComponent={ <QuerySiteFeatures siteIds={ [ siteId ] } /> }
-				loadingComponent={ loadingComponent }
+				loadingComponent={ loadingComponent ?? loadingDefaultPlaceholder }
 				trueComponent={ trueComponent }
 				falseComponent={ falseComponent }
 			/>

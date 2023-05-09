@@ -105,11 +105,7 @@ export function showUnavailableForMultisites( context, next ) {
 	);
 
 	context.primary = (
-		<MultisiteNoBackupPlanSwitch
-			trueComponent={ message }
-			falseComponent={ context.primary }
-			loadingComponent={ <p>Loading..</p> }
-		/>
+		<MultisiteNoBackupPlanSwitch trueComponent={ message } falseComponent={ context.primary } />
 	);
 
 	next();
