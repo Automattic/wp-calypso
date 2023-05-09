@@ -78,15 +78,13 @@ export const HelpCenterSearch = () => {
 				isVisible
 				placeholder={ __( 'Search for help', __i18n_text_domain__ ) }
 			/>
-			{ searchQuery && (
-				<HelpCenterSearchResults
-					onSelect={ redirectToArticle }
-					searchQuery={ searchQuery }
-					openAdminInNewTab
-					placeholderLines={ 4 }
-					location="help-center"
-				/>
-			) }
+			<HelpCenterSearchResults
+				onSelect={ redirectToArticle }
+				searchQuery={ searchQuery || 'get started' }
+				openAdminInNewTab
+				placeholderLines={ 4 }
+				location="help-center"
+			/>
 			{ ! searchQuery && <SibylArticles message="" supportSite={ undefined } /> }
 			{ ! searchQuery && <HelpCenterMoreResources /> }
 		</div>

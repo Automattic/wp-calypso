@@ -14,7 +14,8 @@ import { Icon, page as pageIcon, arrowRight } from '@wordpress/icons';
 import { debounce } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import { Fragment, useEffect, useMemo } from 'react';
+import { Fragment, useEffect, useMemo, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { useDispatch, useSelector } from 'react-redux';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
@@ -117,7 +118,12 @@ function HelpSearchResults( {
 		// "Managing Purchases" documentation link for users who have not made a purchase.
 		filterManagePurchaseLink( hasPurchases, isPurchasesSection )
 	);
-	const { data: searchData, isLoading: isSearching } = useHelpSearchQuery( searchQuery, locale );
+	const { data: searchData, isLoading: isSearching } = useHelpSearchQuery(
+		searchQuery,
+		locale,
+		{},
+		sectionName
+	);
 
 	const searchResults = searchData ?? [];
 	const hasAPIResults = searchResults.length > 0;
@@ -173,8 +179,20 @@ function HelpSearchResults( {
 		onSelect( event, result );
 	};
 
-	const renderHelpLink = ( result: SearchResult, type: string, index: number ) => {
-		const { link, title, icon } = result;
+	type HelpLinkProps = {
+		result: SearchResult;
+		type: string;
+		index: number;
+	};
+
+	const HelpLink: React.FC< HelpLinkProps > = ( props ) => {
+		const { result, type, index } = props;
+		const { link, title, icon, content } = result;
+
+		// const [ isTooltipVisible, setIsTooltipVisible ] = useState( false );
+		// const [ isHoveringTitle, setIsHoveringTitle ] = useState( false );
+		const [ isHoveringTooltip, setIsHoveringTooltip ] = useState( false );
+		const [ tooltipPosition, setTooltipPosition ] = useState( { x: 0, y: 0 } );
 
 		const external = externalLinks && type !== SUPPORT_TYPE_ADMIN_SECTION;
 
@@ -196,6 +214,35 @@ function HelpSearchResults( {
 					<div className="help-center-search-results__cell">
 						<a
 							href={ localizeUrl( link ) }
+							onMouseEnter={ ( e ) => {
+								e.preventDefault();
+
+								if ( isHoveringTooltip ) {
+									return;
+								}
+
+								setIsHoveringTooltip( true );
+
+								// compute the position of the mouse
+								// relative to the absolute-positioned container
+
+								const { width, height } = e.currentTarget.getBoundingClientRect();
+								const { clientX, clientY } = e;
+
+								// now set Tooltip Position so that it will
+								// end up under the mouse by 5px
+
+								setTooltipPosition( {
+									x: width - clientX, // + x - width + 5,
+									y: clientY - height + window.scrollY,
+								} );
+
+								// setTooltipPosition( {
+								// 	x: e.clientX + 5,
+								// 	y: e.clientY + 5 + window.scrollY,
+								// } );
+							} }
+							onMouseLeave={ () => setIsHoveringTooltip( false ) }
 							onClick={ ( event ) => {
 								if ( ! external ) {
 									event.preventDefault();
@@ -210,6 +257,26 @@ function HelpSearchResults( {
 							<LinkIcon />
 							<span>{ preventWidows( decodeEntities( title ) ) }</span>
 						</a>
+						{ content && isHoveringTooltip && (
+							<div
+								className="help-center-search-results__tooltip"
+								style={ {
+									right: tooltipPosition.x + 300, // it's 300px wide
+									top: tooltipPosition.y - 40,
+								} }
+								onMouseEnter={ ( e ) => {
+									// stop propagation to prevent the tooltip from disappearing
+									// when hovering over it
+									e.stopPropagation();
+									setIsHoveringTooltip( true );
+								} }
+								onMouseLeave={ () => setIsHoveringTooltip( false ) }
+							>
+								<div className="content">
+									<ReactMarkdown>{ content }</ReactMarkdown>
+								</div>
+							</div>
+						) }
 					</div>
 				</li>
 			</Fragment>
@@ -232,7 +299,9 @@ function HelpSearchResults( {
 					</h3>
 				) : null }
 				<ul className="help-center-search-results__list" aria-labelledby={ title ? id : undefined }>
-					{ results.map( ( result, index ) => renderHelpLink( result, type, index ) ) }
+					{ results.map( ( result, index ) => (
+						<HelpLink result={ result } type={ type } index={ index } />
+					) ) }
 				</ul>
 			</Fragment>
 		) : null;

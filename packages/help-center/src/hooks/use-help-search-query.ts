@@ -11,7 +11,8 @@ interface APIFetchOptions {
 export const useHelpSearchQuery = (
 	search: string,
 	locale = 'en',
-	queryOptions: Record< string, unknown > = {}
+	queryOptions: Record< string, unknown > = {},
+	sectionName = ''
 ) => {
 	const queryClient = useQueryClient();
 
@@ -20,13 +21,21 @@ export const useHelpSearchQuery = (
 		() =>
 			canAccessWpcomApis()
 				? wpcomRequest( {
-						path: `help/search/wpcom?query=${ search }&locale=${ locale }`,
+						path: `help/search/wpcom?query=${ encodeURIComponent(
+							search
+						) }&locale=${ encodeURIComponent( locale ) }&section=${ encodeURIComponent(
+							sectionName
+						) }`,
 						apiNamespace: 'wpcom/v2/',
 						apiVersion: '2',
 				  } )
 				: apiFetch( {
 						global: true,
-						path: `/help-center/search?query=${ search }&locale=${ locale }`,
+						path: `/help-center/search?query=${ encodeURIComponent(
+							search
+						) }&locale=${ encodeURIComponent( locale ) }&section=${ encodeURIComponent(
+							sectionName
+						) }`,
 				  } as APIFetchOptions ),
 		{
 			onSuccess: async ( data ) => {
