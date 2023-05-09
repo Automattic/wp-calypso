@@ -8,6 +8,7 @@ import {
 	TYPE_PREMIUM,
 	TYPE_BUSINESS,
 	TYPE_ECOMMERCE,
+	TYPE_ENTERPRISE_GRID_WPCOM,
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
@@ -143,12 +144,18 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			return renderLoading();
 		}
 
+		const shouldHidePlan = ( planType: string ) =>
+			planTypes && ! planTypes.find( ( plan ) => plan === planType );
+
 		return (
 			<div>
 				<PlansFeaturesMain
 					isPlansInsideStepper={ true }
 					site={ site || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
-					hideFreePlan={ hideFreePlan }
+					hideFreePlan={ hideFreePlan || shouldHidePlan( TYPE_FREE ) }
+					hidePersonalPlan={ shouldHidePlan( TYPE_PERSONAL ) }
+					hidePremiumPlan={ shouldHidePlan( TYPE_PREMIUM ) }
+					hideEnterprisePlan={ shouldHidePlan( TYPE_ENTERPRISE_GRID_WPCOM ) }
 					isInSignup={ isInSignup }
 					isStepperUpgradeFlow={ true }
 					intervalType={ getIntervalType() }
@@ -157,7 +164,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					domainName={ getDomainName() }
 					customerType={ customerType }
 					plansWithScroll={ isDesktop }
-					planTypes={ planTypes }
 					flowName={ flowName }
 					showTreatmentPlansReorderTest={ false }
 					isAllPaidPlansShown={ true }
