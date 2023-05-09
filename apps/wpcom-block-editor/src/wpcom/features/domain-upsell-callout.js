@@ -1,6 +1,13 @@
 import { getCalypsoUrl } from '@automattic/calypso-url';
-import { select, subscribe } from '@wordpress/data';
+import { dispatch, select, subscribe } from '@wordpress/data';
 import domReady from '@wordpress/dom-ready';
+import { __ } from '@wordpress/i18n';
+import { close, globe, Icon } from '@wordpress/icons';
+import { createElement } from 'react';
+import { render } from 'react-dom';
+import tracksRecordEvent from './tracking/track-record-event';
+
+import './domain-upsell-callout.scss';
 
 function whenEditorIsReady() {
 	return new Promise( ( resolve ) => {
@@ -18,86 +25,67 @@ function whenEditorIsReady() {
 	} );
 }
 
+// Check for post type and if the user has not dismissed the upsell
 function shouldShowDomainUpsell() {
 	const postType = select( 'core/editor' ).getCurrentPostType();
-	return postType === 'post' || postType === 'page';
+	const isDismissed = select( 'core/preferences' ).get(
+		'core/edit-post',
+		'domain_upsell_callout_dismiss'
+	);
+	return ! isDismissed && ( postType === 'post' || postType === 'page' );
 }
-
-function showDomainUpsell() {
-	const toolbarContainer = document.querySelector( '.edit-post-header-toolbar' );
-	const launchButton = document.createElement( 'div' );
-	const launchButtonStyle = document.createElement( 'style' );
-	const launchButtonScript = document.createElement( 'script' );
+function DomainUpsell() {
 	const siteSlug = window.location.hostname;
 	const target = getCalypsoUrl() === 'https://wordpress.com' ? '_parent' : '_self';
+	const trackEventView = 'wpcom_block_editor_domain_upsell_callout_view';
+	const trackEventClick = 'wpcom_block_editor_domain_upsell_callout_click';
+	const trackEventDismiss = 'wpcom_block_editor_domain_upsell_callout_dismiss';
+	tracksRecordEvent( trackEventView );
 
-	launchButton.className = 'domain-upsell-callout';
-	launchButton.innerHTML = `
-	<div class="domain-upsell-callout__content">
-	<div class="domain-upsell-callout__content-text">
-	<span class="domain-upsell-callout__domain-name">gdemichelisnoplan.wordpress.com</span>
-	<a class="domain-upsell-callout__button">Customize your domain</a>
-	</div>
-	</div>
-	`;
+	function handleClick() {
+		tracksRecordEvent( trackEventClick );
+		window.open(
+			`https://wordpress.com/domains/add/${ siteSlug }?domainAndPlanPackage=true`,
+			target
+		);
+	}
 
-	launchButtonStyle.innerHTML = `
-	.domain-upsell-callout {
-		font-style: normal;
-		padding: 15px;
-		line-height: normal;
-		position: absolute;
-		display: flex;
-		align-items: center;
-		left: 50%;
-		transform: translateX(-50%);
-		top: 0;
-	}
-	.domain-upsell-callout__content {
-		width: 100%;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		color: var(--studio-gray-60);
-	}
-	.domain-upsell-callout__content-text {
-		display: flex;
-		align-items: center;
-		border-radius: 24px;
-		padding: 6px 20px;
-		column-gap: 10px;
-		background: #f6f7f7;
-	}
-	.domain-upsell-callout__icon {
-		fill: var(--studio-gray-60);
-	}
-	.domain-upsell-callout__button {
-		white-space: nowrap;
-		text-decoration: underline;
-		color: #3858e9;
-	}
-	.domain-upsell-callout__button:hover,
-	.domain-upsell-callout__dismiss-icon:hover {
-		cursor: pointer;
+	const handleDismiss = () => {
+		tracksRecordEvent( trackEventDismiss );
+		document.querySelector( '.domain-upsell-callout' ).remove();
+		dispatch( 'core/preferences' ).set( 'core/edit-post', 'domain_upsell_callout_dismiss', true );
 	};
-	`;
 
-	launchButtonScript.innerHTML = `
-	(function() {
-		var launchButton = document.querySelector( '.domain-upsell-callout__button' );
-		launchButton.addEventListener( 'click', function() {
-			window.open( 'https://wordpress.com/domains/add/${ siteSlug }?domainAndPlanPackage=true', '${ target }' );
-		} );
-	})();
-	`;
-	toolbarContainer.appendChild( launchButton );
-	toolbarContainer.appendChild( launchButtonStyle );
-	toolbarContainer.appendChild( launchButtonScript );
+	return (
+		<div className="domain-upsell-callout">
+			<div className="domain-upsell-callout__content">
+				<div className="domain-upsell-callout__content-text">
+					<Icon icon={ globe } size={ 16 } />
+					<span className="domain-upsell-callout__domain-name">{ siteSlug }</span>
+					{ /* We can only use <a> here because the button somehow just disappears from the page */ }
+					{ /* eslint-disable-next-line */ }
+					<a className="domain-upsell-callout__button" role="button" onClick={ handleClick }>
+						<span className="domain-upsell-callout__button-text-desktop">
+							{ __( 'Customize your domain' ) }
+						</span>
+						<span className="domain-upsell-callout__button-text-mobile">{ __( 'Customize' ) }</span>
+					</a>
+					<Icon
+						icon={ close }
+						className="domain-upsell-callout__dismiss-icon"
+						onClick={ handleDismiss }
+						size={ 16 }
+					/>
+				</div>
+			</div>
+		</div>
+	);
 }
 
 domReady( async function () {
 	await whenEditorIsReady();
 	if ( shouldShowDomainUpsell() ) {
-		showDomainUpsell();
+		const toolbarContainer = document.querySelector( '.edit-post-header-toolbar' );
+		render( createElement( DomainUpsell ), toolbarContainer );
 	}
 } );
