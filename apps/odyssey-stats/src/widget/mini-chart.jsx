@@ -1,4 +1,4 @@
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useState, useEffect, useRef } from 'react';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
@@ -13,20 +13,20 @@ import useVisitsQuery from '../hooks/use-visits-query';
 
 import './mini-chart.scss';
 
-const CHART_VIEWS = {
-	attr: 'views',
-	legendOptions: [ 'visitors' ],
-	label: translate( 'Views', { context: 'noun' } ),
-};
-
-const CHART_VISITORS = {
-	attr: 'visitors',
-	label: translate( 'Visitors', { context: 'noun' } ),
-};
-
-const CHARTS = [ CHART_VIEWS, CHART_VISITORS ];
-
 const MiniChart = ( { siteId, quantity = 7, gmtOffset, odysseyStatsBaseUrl } ) => {
+	const translate = useTranslate();
+
+	const chartViews = {
+		attr: 'views',
+		legendOptions: [ 'visitors' ],
+		label: translate( 'Views', { context: 'noun' } ),
+	};
+	const chartVisitors = {
+		attr: 'visitors',
+		label: translate( 'Visitors', { context: 'noun' } ),
+	};
+	const charts = [ chartViews, chartVisitors ];
+
 	const queryDate = moment()
 		.utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 )
 		.format( 'YYYY-MM-DD' );
@@ -39,8 +39,8 @@ const MiniChart = ( { siteId, quantity = 7, gmtOffset, odysseyStatsBaseUrl } ) =
 	};
 
 	const chartData = buildChartData(
-		CHART_VIEWS.legendOptions,
-		CHART_VIEWS.attr,
+		chartViews.legendOptions,
+		chartViews.attr,
 		data,
 		period,
 		queryDate
@@ -66,6 +66,11 @@ const MiniChart = ( { siteId, quantity = 7, gmtOffset, odysseyStatsBaseUrl } ) =
 		return () => observer.disconnect();
 	} );
 
+	const isEmptyChart = ! chartData.some( ( bar ) => bar.value > 0 );
+	const placeholderChartData = Array.from( { length: 7 }, () => ( {
+		value: Math.random(),
+	} ) );
+
 	return (
 		<div
 			ref={ chartWrapperRef }
@@ -79,18 +84,35 @@ const MiniChart = ( { siteId, quantity = 7, gmtOffset, odysseyStatsBaseUrl } ) =
 			{ isLoading && <StatsModulePlaceholder className="is-chart" isLoading={ true } /> }
 			{ ! isLoading && (
 				<>
-					<Chart barClick={ barClick } data={ chartData } minBarWidth={ 35 }>
+					<Chart
+						barClick={ barClick }
+						data={ isEmptyChart ? placeholderChartData : chartData }
+						minBarWidth={ 35 }
+						isPlaceholder={ isEmptyChart }
+					>
 						<StatsEmptyState
+							headingText=""
 							infoText={ translate(
-								'There was no data recorded during the selected time period.'
+								'Once stats become available, this chart will show you details about your views and visitors. {{a}}Learn more about stats{{/a}}',
+								{
+									components: {
+										a: (
+											<a
+												href="https://jetpack.com/stats/"
+												target="_blank"
+												rel="noopener noreferrer"
+											></a>
+										),
+									},
+								}
 							) }
 						/>
 					</Chart>
 					<Legend
 						availableCharts={ [ 'visitors' ] }
 						activeCharts={ [ 'visitors' ] }
-						tabs={ CHARTS }
-						activeTab={ CHART_VIEWS }
+						tabs={ charts }
+						activeTab={ chartViews }
 						clickHandler={ nothing }
 					/>
 				</>

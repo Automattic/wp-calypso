@@ -176,7 +176,7 @@ export function resolveDomainStatus(
 
 		case domainTypes.REGISTERED:
 			if ( domain.aftermarketAuction ) {
-				const statusMessage = translate( 'Expired' );
+				const statusMessage = translate( 'Expired', { context: 'domain status' } );
 				return {
 					statusText: statusMessage,
 					statusClass: 'status-warning',
@@ -360,7 +360,7 @@ export function resolveDomainStatus(
 				return {
 					statusText: translate( 'Action required' ),
 					statusClass: 'status-error',
-					status: translate( 'Expired' ),
+					status: translate( 'Expired', { context: 'domain status' } ),
 					icon: 'info',
 					noticeText,
 					listStatusWeight: 1000,

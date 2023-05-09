@@ -1,9 +1,9 @@
 import { SubscriptionManager } from '@automattic/data-stores';
-import { useTranslate } from 'i18n-calypso';
-import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import Separator from 'calypso/components/popover-menu/separator';
 import SettingsPopover from '../settings-popover';
 import DeliveryFrequencyInput from './delivery-frequency-input';
+import EmailMeNewCommentsToggle from './email-me-new-comments-toggle';
+import EmailMeNewPostsToggle from './email-me-new-posts-toggle';
 import NotifyMeOfNewPostsToggle from './notify-me-of-new-posts-toggle';
 import UnsubscribeSiteButton from './unsubscribe-site-button';
 import type { SiteSubscriptionDeliveryFrequency } from '@automattic/data-stores/src/reader/types';
@@ -12,8 +12,14 @@ type SiteSettingsProps = {
 	notifyMeOfNewPosts: boolean;
 	onNotifyMeOfNewPostsChange: ( value: boolean ) => void;
 	updatingNotifyMeOfNewPosts: boolean;
+	emailMeNewPosts: boolean;
+	onEmailMeNewPostsChange: ( value: boolean ) => void;
+	updatingEmailMeNewPosts: boolean;
 	deliveryFrequency: SiteSubscriptionDeliveryFrequency;
 	onDeliveryFrequencyChange: ( value: SiteSubscriptionDeliveryFrequency ) => void;
+	emailMeNewComments: boolean;
+	onEmailMeNewCommentsChange: ( value: boolean ) => void;
+	updatingEmailMeNewComments: boolean;
 	onUnsubscribe: () => void;
 	unsubscribing: boolean;
 	updatingFrequency: boolean;
@@ -23,32 +29,50 @@ const SiteSettings = ( {
 	notifyMeOfNewPosts,
 	onNotifyMeOfNewPostsChange,
 	updatingNotifyMeOfNewPosts,
+	emailMeNewPosts,
+	onEmailMeNewPostsChange,
+	updatingEmailMeNewPosts,
 	deliveryFrequency,
 	onDeliveryFrequencyChange,
+	emailMeNewComments,
+	onEmailMeNewCommentsChange,
+	updatingEmailMeNewComments,
 	onUnsubscribe,
 	unsubscribing,
 	updatingFrequency,
 }: SiteSettingsProps ) => {
-	const translate = useTranslate();
 	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
 
 	return (
 		<SettingsPopover>
 			{ isLoggedIn && (
-				<NotifyMeOfNewPostsToggle
-					value={ notifyMeOfNewPosts }
-					onChange={ onNotifyMeOfNewPostsChange }
-					isUpdating={ updatingNotifyMeOfNewPosts }
-				/>
+				<>
+					<NotifyMeOfNewPostsToggle
+						value={ notifyMeOfNewPosts }
+						onChange={ onNotifyMeOfNewPostsChange }
+						isUpdating={ updatingNotifyMeOfNewPosts }
+					/>
+					<EmailMeNewPostsToggle
+						value={ emailMeNewPosts }
+						onChange={ onEmailMeNewPostsChange }
+						isUpdating={ updatingEmailMeNewPosts }
+					/>
+				</>
 			) }
-			<PopoverMenuItem itemComponent="div" className="settings-popover__delivery-frequency-item">
-				<p className="settings-popover__item-label">{ translate( 'Email me new posts' ) }</p>
+			{ emailMeNewPosts && (
 				<DeliveryFrequencyInput
 					value={ deliveryFrequency }
 					onChange={ onDeliveryFrequencyChange }
 					isUpdating={ updatingFrequency }
 				/>
-			</PopoverMenuItem>
+			) }
+			{ isLoggedIn && (
+				<EmailMeNewCommentsToggle
+					value={ emailMeNewComments }
+					onChange={ onEmailMeNewCommentsChange }
+					isUpdating={ updatingEmailMeNewComments }
+				/>
+			) }
 			<Separator />
 			<UnsubscribeSiteButton unsubscribing={ unsubscribing } onUnsubscribe={ onUnsubscribe } />
 		</SettingsPopover>

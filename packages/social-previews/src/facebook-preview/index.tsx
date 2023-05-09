@@ -9,7 +9,7 @@ import type { FacebookPreviewProps } from './types';
 
 import './style.scss';
 
-const FacebookPreview: React.FC< FacebookPreviewProps > = ( props ) => {
+export const FacebookPreview: React.FC< FacebookPreviewProps > = ( props ) => {
 	const { customImage } = props;
 	const isPostPreview = !! customImage;
 
@@ -19,11 +19,11 @@ const FacebookPreview: React.FC< FacebookPreviewProps > = ( props ) => {
 				<SectionHeading level={ props.headingsLevel }>
 					{
 						// translators: refers to a social post on Facebook
-						__( 'Your post', 'facebook-preview' )
+						__( 'Your post', 'social-previews' )
 					}
 				</SectionHeading>
 				<p className="social-preview__section-desc">
-					{ __( 'This is what your social post will look like on Facebook:', 'facebook-preview' ) }
+					{ __( 'This is what your social post will look like on Facebook:', 'social-previews' ) }
 				</p>
 				{ isPostPreview ? (
 					<FacebookPostPreview { ...props } />
@@ -35,17 +35,17 @@ const FacebookPreview: React.FC< FacebookPreviewProps > = ( props ) => {
 				<SectionHeading level={ props.headingsLevel }>
 					{
 						// translators: refers to a link to a Facebook post
-						__( 'Link preview', 'facebook-preview' )
+						__( 'Link preview', 'social-previews' )
 					}
 				</SectionHeading>
 				<p className="social-preview__section-desc">
 					{ __(
 						'This is what it will look like when someone shares the link to your WordPress post on Facebook.',
-						'facebook-preview'
+						'social-previews'
 					) }
 					&nbsp;
 					<ExternalLink href="https://jetpack.com/support/jetpack-social-image-generator">
-						{ __( 'Learn more about links', 'facebook-preview' ) }
+						{ __( 'Learn more about links', 'social-previews' ) }
 					</ExternalLink>
 				</p>
 				{ isPostPreview ? (
@@ -58,4 +58,8 @@ const FacebookPreview: React.FC< FacebookPreviewProps > = ( props ) => {
 	);
 };
 
-export default FacebookPreview;
+export { default as FacebookDefaultLinkPreview } from './default-link-preview';
+export { default as FacebookDefaultPostPreview } from './default-post-preview';
+export { default as FacebookFullPreview } from './full-preview';
+export { default as FacebookLinkPreview } from './link-preview';
+export { default as FacebookPostPreview } from './post-preview';

@@ -38,7 +38,7 @@ describe( 'Likes: Comment', function () {
 	let commentToBeUnliked: NewCommentResponse;
 	let restAPIClient: RestAPIClient;
 
-	beforeAll( async function () {
+	it( 'Setup the test', async function () {
 		page = await browser.newPage();
 
 		testAccount = new TestAccount( accountName );
@@ -64,21 +64,25 @@ describe( 'Likes: Comment', function () {
 			DataHelper.getRandomPhrase()
 		);
 
-		// For AT sites the API will respond with a HTTP 404
-		// unless time is given for the comment to "settle" in place.
-		// It could be argued that adding this arbitrary delay is
-		// "more representative" of users.
-		// @see: https://github.com/Automattic/wp-calypso/issues/75952
-		if ( envVariables.TEST_ON_ATOMIC ) {
-			await page.waitForTimeout( 5 * 1000 );
+		// The comment takes some time to settle. If we request the like
+		// immediately we might be getting the `unknown_comment` error. Let's do
+		// a few retries to make sure the like is getting through.
+		const likeRetryCount = 10;
+		for ( let i = 0; i <= likeRetryCount; i++ ) {
+			try {
+				await restAPIClient.commentAction(
+					'like',
+					testAccount.credentials.testSites?.primary.id as number,
+					commentToBeUnliked.ID
+				);
+				break;
+			} catch ( error ) {
+				if ( i === likeRetryCount ) {
+					throw error;
+				}
+				await page.waitForTimeout( 1000 );
+			}
 		}
-
-		// Establish proper state for the comment to be unliked.
-		await restAPIClient.commentAction(
-			'like',
-			testAccount.credentials.testSites?.primary.id as number,
-			commentToBeUnliked.ID
-		);
 
 		await testAccount.authenticate( page );
 	} );

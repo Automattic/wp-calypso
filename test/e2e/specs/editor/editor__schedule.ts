@@ -41,12 +41,12 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 	} );
 
 	it( 'Go to the new post page', async function () {
-		editorPage = new EditorPage( page, { target: features.siteType } );
+		editorPage = new EditorPage( page );
 		await editorPage.visit( 'post' );
 	} );
 
 	it( 'Enter page title', async function () {
-		editorPage = new EditorPage( page, { target: features.siteType } );
+		editorPage = new EditorPage( page );
 		await editorPage.enterTitle( postTitle );
 	} );
 

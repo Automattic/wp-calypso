@@ -511,7 +511,7 @@ export default function buildFallbackResponse( {
 					type: 'submenu-item',
 					url: `/export/${ siteDomain }`,
 				},
-				...( config.isEnabled( 'woa-logging' ) && showSiteLogs
+				...( showSiteLogs
 					? [
 							{
 								parent: 'tools.php',

@@ -23,6 +23,7 @@ import {
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
 	TERM_TRIENNIALLY,
+	getPlanPath,
 	GROUP_WPCOM,
 	PLAN_PERSONAL,
 	TITAN_MAIL_MONTHLY_SLUG,
@@ -30,12 +31,12 @@ import {
 	is2023PricingGridActivePage,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
 import { hasTranslation } from '@wordpress/i18n';
 import warn from '@wordpress/warning';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
+import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -46,6 +47,7 @@ import QuerySites from 'calypso/components/data/query-sites';
 import FormattedHeader from 'calypso/components/formatted-header';
 import HappychatConnection from 'calypso/components/happychat/connection-connected';
 import Notice from 'calypso/components/notice';
+import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
 import { getTld } from 'calypso/lib/domains';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import PlanFeatures from 'calypso/my-sites/plan-features';
@@ -69,10 +71,14 @@ import {
 	isJetpackSite,
 	isJetpackSiteMultiSite,
 } from 'calypso/state/sites/selectors';
-
+import { FreePlanPaidDomainDialog } from './components/free-plan-paid-domain-dialog';
 import './style.scss';
 
 export class PlansFeaturesMain extends Component {
+	state = {
+		isFreePlanPaidDomainDialogOpen: false,
+	};
+
 	componentDidUpdate( prevProps ) {
 		/**
 		 * Happychat does not update with the selected site right now :(
@@ -102,6 +108,47 @@ export class PlansFeaturesMain extends Component {
 		}
 	}
 
+	toggleIsFreePlanPaidDomainDialogOpen = () => {
+		this.setState( ( { isFreePlanPaidDomainDialogOpen } ) => ( {
+			isFreePlanPaidDomainDialogOpen: ! isFreePlanPaidDomainDialogOpen,
+		} ) );
+	};
+
+	onUpgradeClick = ( cartItemForPlan ) => {
+		const { domainName, onUpgradeClick, siteSlug, flowName } = this.props;
+		// The `cartItemForPlan` var is null if the free plan is selected
+		if ( cartItemForPlan == null && 'onboarding' === flowName && domainName ) {
+			this.toggleIsFreePlanPaidDomainDialogOpen();
+			return;
+		}
+		if ( onUpgradeClick ) {
+			onUpgradeClick( cartItemForPlan );
+			return;
+		}
+		const planPath = getPlanPath( cartItemForPlan?.product_slug ) || '';
+		const checkoutUrlWithArgs = `/checkout/${ siteSlug }/${ planPath }`;
+		page( checkoutUrlWithArgs );
+	};
+
+	renderFreePlanPaidDomainModal = () => {
+		const { domainName, replacePaidDomainWithFreeDomain, onUpgradeClick } = this.props;
+		return (
+			<FreePlanPaidDomainDialog
+				domainName={ domainName }
+				suggestedPlanSlug={ PLAN_PERSONAL }
+				onClose={ this.toggleIsFreePlanPaidDomainDialogOpen }
+				onFreePlanSelected={ ( freeDomainSuggestion ) => {
+					replacePaidDomainWithFreeDomain( freeDomainSuggestion );
+					onUpgradeClick( null );
+				} }
+				onPlanSelected={ () => {
+					const cartItemForPlan = getCartItemForPlan( PLAN_PERSONAL );
+					onUpgradeClick( cartItemForPlan );
+				} }
+			/>
+		);
+	};
+
 	render2023OnboardingPricingGrid( plans, visiblePlans ) {
 		const {
 			basePlansPath,
@@ -112,7 +159,6 @@ export class PlansFeaturesMain extends Component {
 			isLandingPage,
 			isLaunchPage,
 			flowName,
-			onUpgradeClick,
 			selectedFeature,
 			selectedPlan,
 			withDiscount,
@@ -134,7 +180,7 @@ export class PlansFeaturesMain extends Component {
 			isInSignup,
 			isLandingPage,
 			isLaunchPage,
-			onUpgradeClick,
+			onUpgradeClick: this.onUpgradeClick,
 			plans,
 			flowName,
 			redirectTo,
@@ -402,7 +448,6 @@ export class PlansFeaturesMain extends Component {
 	getVisiblePlansForPlanFeatures( availablePlans ) {
 		const {
 			customerType,
-			flowName,
 			selectedPlan,
 			plansWithScroll,
 			isAllPaidPlansShown,
@@ -446,14 +491,6 @@ export class PlansFeaturesMain extends Component {
 
 		if ( hideEcommercePlan ) {
 			plans = plans.filter( ( planSlug ) => ! isEcommercePlan( planSlug ) );
-		}
-
-		// TODO
-		// Remove this once we migrate them to the new pricing grid
-		if ( isNewsletterOrLinkInBioFlow( flowName ) ) {
-			plans = plans.filter(
-				( planSlug ) => ! isBusinessPlan( planSlug ) && ! isEcommercePlan( planSlug )
-			);
 		}
 
 		if ( is2023PricingGridVisible ) {
@@ -627,6 +664,7 @@ export class PlansFeaturesMain extends Component {
 						planTypeSelectorProps={ planTypeSelectorProps }
 					/>
 				) }
+				{ this.state.isFreePlanPaidDomainDialogOpen && this.renderFreePlanPaidDomainModal() }
 				{ this.renderPlansGrid( plans, visiblePlans ) }
 				{ this.mayRenderFAQ() }
 			</div>

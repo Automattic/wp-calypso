@@ -35,6 +35,8 @@ const ReaderListFollowingItem = ( props ) => {
 		return null;
 	}
 
+	const urlForDisplay = formatUrlForDisplay( site.URL );
+
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<li
@@ -52,12 +54,18 @@ const ReaderListFollowingItem = ( props ) => {
 					<Favicon site={ site } size={ 32 } />
 				</span>
 				<span className="reader-sidebar-site_sitename">
-					<span className="reader-sidebar-site_nameurl">
-						{ site.name || formatUrlForDisplay( site.URL ) }
-					</span>
-					<span className="reader-sidebar-site_updated">
-						{ site.last_updated > 0 && moment( new Date( site.last_updated ) ).fromNow() }
-					</span>
+					<span className="reader-sidebar-site_nameurl">{ site.name || urlForDisplay }</span>
+					{ site.last_updated > 0 && (
+						<span className="reader-sidebar-site_updated">
+							{ moment( new Date( site.last_updated ) ).fromNow() }
+						</span>
+					) }
+					{ site.description?.length > 0 && (
+						<span className="reader-sidebar-site_description">{ site.description }</span>
+					) }
+					{ urlForDisplay.length > 0 && (
+						<span className="reader-sidebar-site_url">{ urlForDisplay }</span>
+					) }
 				</span>
 				{ isUnseen && site.unseen_count > 0 && <Count count={ site.unseen_count } compact /> }
 			</a>

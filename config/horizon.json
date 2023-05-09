@@ -43,6 +43,7 @@
 		"happychat": false,
 		"help": true,
 		"home/layout-dev": true,
+		"hosting-onboarding-i2": false,
 		"i18n/empathy-mode": false,
 		"i18n/translation-scanner": true,
 		"importer/unified": true,
@@ -81,6 +82,7 @@
 		"me/vat-details": true,
 		"my-sites/add-ons": true,
 		"network-connection": true,
+		"newsletter/stats": true,
 		"onboarding/import-light-url-screen": true,
 		"onboarding/2023-pricing-grid": true,
 		"p2/p2-plus": true,
@@ -147,11 +149,7 @@
 		"user-management-revamp": true,
 		"woop": false,
 		"wordpress-action-search": false,
-		"wpcom-user-bootstrap": true,
-		"yolo/staging-sites-i1": true,
-		"newsletter/stats": true,
-		"woa-logging": true,
-		"woa-logging-moved": true
+		"wpcom-user-bootstrap": true
 	},
 	"siftscience_key": "a4f69f6759",
 	"oauth_client_id": "39911",

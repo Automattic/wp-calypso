@@ -37,7 +37,7 @@ describe( 'CoBlocks: Extensions: Gutter Control', function () {
 	beforeAll( async () => {
 		page = await browser.newPage();
 		testAccount = new TestAccount( accountName );
-		editorPage = new EditorPage( page, { target: features.siteType } );
+		editorPage = new EditorPage( page );
 
 		await testAccount.authenticate( page );
 	} );

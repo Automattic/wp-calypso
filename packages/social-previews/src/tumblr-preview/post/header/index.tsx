@@ -11,7 +11,7 @@ const TumblrPostHeader: React.FC< Props > = ( { user } ) => (
 		<div className="tumblr-preview__post-header-username">
 			{ user?.displayName ||
 				// translators: username of a fictional Tumblr User
-				__( 'anonymous-user', 'tumblr-preview' ) }
+				__( 'anonymous-user', 'social-previews' ) }
 		</div>
 		<TumblrPostIcon name="ellipsis" />
 	</div>

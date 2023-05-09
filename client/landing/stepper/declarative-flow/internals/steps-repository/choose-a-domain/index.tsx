@@ -17,7 +17,7 @@ import type { OnboardSelect, DomainSuggestion } from '@automattic/data-stores';
 import './style.scss';
 
 const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
-	const { setHideFreePlan, setDomainCartItem } = useDispatch( ONBOARD_STORE );
+	const { setHideFreePlan, setDomainCartItem, setDomain } = useDispatch( ONBOARD_STORE );
 	const { goNext, goBack, submit } = navigation;
 	const { __ } = useI18n();
 	const isVideoPressFlow = 'videopress' === flow;
@@ -30,7 +30,8 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 		} ),
 		[]
 	);
-	const { setDomain } = useDispatch( ONBOARD_STORE );
+	const siteSlug = getQueryArg( window.location.search, 'siteSlug' );
+
 	const getDefaultStepContent = () => <h1>Choose a domain step</h1>;
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -40,19 +41,25 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 	};
 
 	const getInitialSuggestion = function () {
-		const siteSlug = getQueryArg( window.location.search, 'siteSlug' );
-
 		const wpcomSubdomainWithRandomNumberSuffix = /^(.+?)([0-9]{5,})\.wordpress\.com$/i;
 		const [ , strippedHostname ] =
 			String( siteSlug ).match( wpcomSubdomainWithRandomNumberSuffix ) || [];
 		return strippedHostname ?? String( siteSlug ).split( '.' )[ 0 ];
 	};
 
-	const onSkip = () => {
-		onAddDomain( null );
+	const onSkip = async () => {
+		if ( isStartWritingFlow ) {
+			setDomain( null );
+			setHideFreePlan( false );
+			submit?.( { freeDomain: true } );
+		} else {
+			onAddDomain( null );
+		}
 	};
 
 	const submitWithDomain = async ( suggestion: DomainSuggestion | undefined ) => {
+		setDomain( suggestion );
+
 		if ( suggestion?.is_free ) {
 			setHideFreePlan( false );
 			setDomainCartItem( undefined );
@@ -66,7 +73,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 			setDomainCartItem( domainCartItem );
 		}
 
-		submit?.();
+		submit?.( { freeDomain: suggestion?.is_free } );
 	};
 
 	const getStartWritingFlowStepContent = () => {
@@ -79,6 +86,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 					includeWordPressDotCom={ true }
 					offerUnavailableOption={ false } // TODO
 					showAlreadyOwnADomain={ true }
+					isSignupStep={ true }
 					basePath=""
 					products={ productsList }
 					vendor={ getSuggestionsVendor( {
