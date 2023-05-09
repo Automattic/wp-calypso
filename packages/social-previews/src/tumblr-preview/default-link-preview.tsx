@@ -29,7 +29,7 @@ const TumblrDefaultLinkPreview: React.FC< TumblrPreviewProps > = ( {
 							<img
 								className="tumblr-preview__image"
 								src={ image }
-								alt={ __( 'Tumblr preview thumbnail', 'tumblr-preview' ) }
+								alt={ __( 'Tumblr preview thumbnail', 'social-previews' ) }
 							/>
 						</div>
 					) }

@@ -24,17 +24,17 @@ const TumblrFullPreview: React.FC< TumblrPreviewProps > = ( props ) => {
 				<SectionHeading level={ props.headingsLevel }>
 					{
 						// translators: refers to a link on Tumblr
-						__( 'Link preview', 'tumblr-preview' )
+						__( 'Link preview', 'social-previews' )
 					}
 				</SectionHeading>
 				<p className="social-preview__section-desc">
 					{ __(
 						'This is what it will look like when someone shares the link to your WordPress post on Tumblr.',
-						'tumblr-preview'
+						'social-previews'
 					) }
 					&nbsp;
 					<ExternalLink href="https://jetpack.com/support/jetpack-social-image-generator">
-						{ __( 'Learn more about links', 'tumblr-preview' ) }
+						{ __( 'Learn more about links', 'social-previews' ) }
 					</ExternalLink>
 				</p>
 				<TumblrDefaultLinkPreview { ...props } />
