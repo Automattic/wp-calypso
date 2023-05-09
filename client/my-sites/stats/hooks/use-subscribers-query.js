@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
-function querySubscribers( siteId, period, quantity, date ) {
+export function querySubscribers( siteId, period, quantity, date ) {
 	const query = {
 		unit: period,
 		quantity,
@@ -22,7 +22,7 @@ function querySubscribers( siteId, period, quantity, date ) {
 	);
 }
 
-function selectSubscribers( payload ) {
+export function selectSubscribers( payload ) {
 	if ( ! payload || ! payload.data ) {
 		return [];
 	}
