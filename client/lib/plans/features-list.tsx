@@ -1884,8 +1884,8 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_SITE_STAGING_SITES ]: {
 		getSlug: () => FEATURE_SITE_STAGING_SITES,
-		getTitle: () => i18n.translate( 'Free staging sites' ),
-		getDescription: () => i18n.translate( 'Test product and design changes in staging sites.' ),
+		getTitle: () => i18n.translate( 'Free staging site' ),
+		getDescription: () => i18n.translate( 'Test product and design changes in a staging site.' ),
 	},
 	[ FEATURE_WP_UPDATES ]: {
 		getSlug: () => FEATURE_WP_UPDATES,
