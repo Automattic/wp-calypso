@@ -8,6 +8,7 @@ import { useResizeObserver, useRefEffect } from '@wordpress/compose';
 import React, { useMemo, useState, useContext } from 'react';
 import { BLOCK_MAX_HEIGHT } from '../constants';
 import useParsedAssets from '../hooks/use-parsed-assets';
+import bubbleEvents from '../utils/bubble-events';
 import loadScripts from '../utils/load-scripts';
 import loadStyles from '../utils/load-styles';
 import BlockRendererContext from './block-renderer-context';
@@ -23,8 +24,7 @@ export interface BlockRendererContainerProps {
 	viewportHeight?: number;
 	maxHeight?: number;
 	minHeight?: number;
-	/** Whether to disable the pointer-events */
-	disabled?: boolean;
+	disabledPointerEvents?: boolean;
 }
 
 interface ScaledBlockRendererContainerProps extends BlockRendererContainerProps {
@@ -41,7 +41,7 @@ const ScaledBlockRendererContainer = ( {
 	containerWidth,
 	maxHeight = BLOCK_MAX_HEIGHT,
 	minHeight,
-	disabled,
+	disabledPointerEvents,
 }: ScaledBlockRendererContainerProps ) => {
 	const [ isLoaded, setIsLoaded ] = useState( false );
 	const [ contentResizeListener, contentSizes ] = useResizeObserver();
@@ -96,6 +96,9 @@ const ScaledBlockRendererContainer = ( {
 			loadStyles( bodyElement, styleAssets ),
 			loadScripts( bodyElement, scriptAssets as HTMLScriptElement[] ),
 		] ).then( () => setIsLoaded( true ) );
+
+		// Bubble the events to the owner document
+		bubbleEvents( bodyElement, [ 'click' ] );
 	}, [] );
 
 	const scale = containerWidth / viewportWidth;
@@ -121,7 +124,7 @@ const ScaledBlockRendererContainer = ( {
 					position: 'absolute',
 					width: viewportWidth,
 					height: viewportHeight || contentHeight,
-					pointerEvents: disabled ? 'none' : 'auto',
+					pointerEvents: disabledPointerEvents ? 'none' : 'auto',
 					// This is a catch-all max-height for patterns.
 					// See: https://github.com/WordPress/gutenberg/pull/38175.
 					maxHeight,
