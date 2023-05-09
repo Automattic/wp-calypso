@@ -3,11 +3,13 @@ import { isLinkInBioFlow, isNewsletterFlow } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { isPopularPlan } from '../lib/is-popular-plan';
 
-const useHighlightLabel = (
-	planName: string,
-	flowName?: string | null,
-	currentSitePlanSlug?: string
-) => {
+interface Props {
+	planName: string;
+	flowName?: string | null;
+	currentSitePlanSlug?: string;
+}
+
+const useHighlightLabel = ( { planName, flowName, currentSitePlanSlug }: Props ) => {
 	const translate = useTranslate();
 	const isCurrentPlan = currentSitePlanSlug === planName;
 

@@ -174,12 +174,12 @@ const PlanLogo: React.FunctionComponent< {
 } ) => {
 	const { planName, current } = planProperties;
 	const translate = useTranslate();
-	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix(
-		planPropertiesObj,
+	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
+		visiblePlans: planPropertiesObj,
 		flowName,
-		currentSitePlanSlug
-	);
-	const highlightLabel = useHighlightLabel( planName, flowName, currentSitePlanSlug );
+		currentSitePlanSlug,
+	} );
+	const highlightLabel = useHighlightLabel( { planName, flowName, currentSitePlanSlug } );
 	const headerClasses = classNames(
 		'plan-features-2023-grid__header-logo',
 		getPlanClass( planName )

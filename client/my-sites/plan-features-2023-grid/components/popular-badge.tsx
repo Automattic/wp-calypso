@@ -15,7 +15,7 @@ const PopularBadge: React.FunctionComponent< {
 		getPlanClass( planName ),
 		additionalClassName
 	);
-	const highlightLabel = useHighlightLabel( planName, flowName, currentSitePlanSlug );
+	const highlightLabel = useHighlightLabel( { planName, flowName, currentSitePlanSlug } );
 
 	return (
 		<>

@@ -10,11 +10,13 @@ interface HighlightAdjacencyMatrix {
 	};
 }
 
-const useHighlightIndices = (
-	visiblePlans: PlanProperties[],
-	flowName?: string | null,
-	currentSitePlanSlug?: string
-) => {
+interface Props {
+	visiblePlans: PlanProperties[];
+	flowName: string;
+	currentSitePlanSlug?: string;
+}
+
+const useHighlightIndices = ( { visiblePlans, flowName, currentSitePlanSlug }: Props ) => {
 	return visiblePlans.reduce< number[] >( ( acc, { planName }, index ) => {
 		let isHighlight = false;
 
@@ -35,12 +37,8 @@ const useHighlightIndices = (
 	}, [] );
 };
 
-const useHighlightAdjacencyMatrix = (
-	visiblePlans: PlanProperties[],
-	flowName: string,
-	currentSitePlanSlug?: string
-) => {
-	const highlightIndices = useHighlightIndices( visiblePlans, flowName, currentSitePlanSlug );
+const useHighlightAdjacencyMatrix = ( { visiblePlans, flowName, currentSitePlanSlug }: Props ) => {
+	const highlightIndices = useHighlightIndices( { visiblePlans, flowName, currentSitePlanSlug } );
 	const adjacencyMatrix: HighlightAdjacencyMatrix = {};
 
 	visiblePlans.forEach( ( { planName }, index ) => {
