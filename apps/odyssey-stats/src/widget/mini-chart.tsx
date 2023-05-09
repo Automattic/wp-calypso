@@ -109,6 +109,7 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 						isPlaceholder={ isEmptyChart }
 					>
 						<StatsEmptyState
+							headingText=""
 							infoText={ translate(
 								'Once stats become available, this chart will show you details about your views and visitors. {{a}}Learn more about stats{{/a}}',
 								{
