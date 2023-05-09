@@ -1,4 +1,3 @@
-import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useDebounce } from '@wordpress/compose';
 import { HTMLAttributes, ReactNode, useState } from 'react';
@@ -20,50 +19,18 @@ const SparkleSVG = ( props: HTMLAttributes< SVGElement > ) => (
 	</svg>
 );
 
-const fadeIn = keyframes`
-	0% {
-		opacity: 0;
-	}
-
-	100% {
-		opacity: 1;
-	}
-`;
-
-const fadeOut = keyframes`
-	0% {
-		opacity: 1;
-	}
-
-	100% {
-		opacity: 0;
-	}
-`;
-
 const Sparkle = styled( SparkleSVG )`
 	position: absolute;
 	opacity: 0;
 
-	&[data-animation='in'] {
-		opacity: 0;
-		animation: ${ fadeIn } 0.15s ease forwards;
-		animation-delay: var( --delay );
+	transition: 0.5s;
 
-		@media ( prefers-reduced-motion ) {
-			animation-duration: 0s;
-			animation-delay: 0s;
-		}
+	@media ( prefers-reduced-motion ) {
+		transition: 0;
 	}
 
-	&[data-animation='out'] {
+	&[data-animation='in'] {
 		opacity: 1;
-		animation: ${ fadeOut } 0.15s ease forwards;
-		animation-delay: 0.25s;
-
-		@media ( prefers-reduced-motion ) {
-			animation-duration: 0s;
-			animation-delay: 0s;
-		}
 	}
 `;
 
@@ -110,10 +77,10 @@ interface SparklingCTAProps {
 
 export const SparklingCTA = ( { icon, target, label }: SparklingCTAProps ) => {
 	const [ animationState, _setAnimationState ] = useState( '' );
-	const setAnimationState = useDebounce( _setAnimationState, 500 );
+	const setAnimationState = useDebounce( _setAnimationState, 250 );
 
 	const spark = () => setAnimationState( 'in' );
-	const still = () => setAnimationState( 'out' );
+	const still = () => setAnimationState( '' );
 
 	return (
 		<Link
@@ -150,7 +117,6 @@ export const SparklingCTA = ( { icon, target, label }: SparklingCTAProps ) => {
 						top: '50%',
 						left: '80%',
 						transform: 'scale(0.7)',
-						'--delay': '0.15s',
 					} }
 				/>
 				<Sparkle
@@ -158,7 +124,6 @@ export const SparklingCTA = ( { icon, target, label }: SparklingCTAProps ) => {
 					css={ {
 						top: '80%',
 						left: '5%',
-						'--delay': '0.25s',
 					} }
 				/>
 			</div>
