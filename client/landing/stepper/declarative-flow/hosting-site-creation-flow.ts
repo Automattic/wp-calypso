@@ -64,11 +64,12 @@ const hosting: Flow = {
 		return { submit };
 	},
 	useSideEffect() {
-		const { setHideFreePlan } = useDispatch( ONBOARD_STORE );
+		const { setHideFreePlan, setHidePlansFeatureComparison } = useDispatch( ONBOARD_STORE );
 
 		useEffect(
 			() => {
 				setHideFreePlan( true );
+				setHidePlansFeatureComparison( true );
 			},
 			// We only need to hide the free plan once, when the flow is mounted.
 			// eslint-disable-next-line react-hooks/exhaustive-deps
