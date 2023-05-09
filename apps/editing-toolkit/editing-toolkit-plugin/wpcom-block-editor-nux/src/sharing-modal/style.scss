@@ -1,12 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.components-modal__screen-overlay {
-	@media only screen and (max-width: 600px) {
-		top: 46px;
-
-	}
-}
 .wpcom-block-editor-post-published-sharing-modal {
 	border-radius: 4px;
 	@media only screen and (max-width: 600px) {
