@@ -122,6 +122,7 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 	opacity: 0.5;
 	display: flex;
 	box-shadow: 1px 1px 3px 0 rgb(0 0 0 / 18%);
+	justify-content: center;
 	transition: opacity 0.3s ease-in-out;
 	pointer-events: all;
 	z-index: 2;
