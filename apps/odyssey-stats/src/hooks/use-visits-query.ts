@@ -1,16 +1,24 @@
 import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import { parseChartData } from 'calypso/state/stats/lists/utils';
+import { Unit } from '../typings';
 
-function queryStatsVisits( siteId, params ) {
+interface QueryStatsVisitsParams {
+	unit: Unit;
+	quantity: number;
+	date: string;
+	stat_fields: string;
+}
+
+function queryStatsVisits( siteId: number, params: QueryStatsVisitsParams ) {
 	return wpcom.req.get( `/sites/${ siteId }/stats/visits`, params );
 }
 
 export default function useVisitsQuery(
-	siteId,
-	unit,
-	quantity,
-	date,
+	siteId: number,
+	unit: Unit,
+	quantity: number,
+	date: string,
 	fields = [ 'views', 'visitors' ]
 ) {
 	return useQuery(
