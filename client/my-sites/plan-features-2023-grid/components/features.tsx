@@ -10,6 +10,8 @@ import type { TransformedFeatureObject } from '../types';
 
 const SubdomainSuggestion = styled.div`
 	.is-domain-name {
+		position: absolute;
+		top: -15px;
 		color: var( --studio-gray-50 );
 		text-decoration: line-through;
 		max-width: 80%;
