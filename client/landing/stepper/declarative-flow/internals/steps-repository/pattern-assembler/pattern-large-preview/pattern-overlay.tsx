@@ -26,6 +26,9 @@ const useOverlayRect = ( referenceElement?: HTMLElement ) => {
 
 	referenceRef.current = referenceElement ?? null;
 
+	/**
+	 * Recompute the position when resizing or scrolling
+	 */
 	useLayoutEffect( () => {
 		if ( ! referenceRef.current || ! referenceRef.current?.ownerDocument?.defaultView ) {
 			return;
@@ -43,6 +46,10 @@ const useOverlayRect = ( referenceElement?: HTMLElement ) => {
 		};
 	}, [ referenceRef, updatePosition ] );
 
+	/**
+	 * Recompute the position when the attribute of the current reference element is changed.
+	 * For example, reordering the pattern will change the position.
+	 */
 	useLayoutEffect( () => {
 		if ( ! referenceElement ) {
 			return;
@@ -55,6 +62,9 @@ const useOverlayRect = ( referenceElement?: HTMLElement ) => {
 		};
 	}, [ referenceElement, updatePosition ] );
 
+	/**
+	 * Compute the initial position
+	 */
 	useLayoutEffect( () => {
 		updatePosition();
 	}, [ referenceElement, updatePosition ] );
