@@ -1,5 +1,7 @@
-import { Card } from '@automattic/components';
+import { Card, Button } from '@automattic/components';
 import { CheckboxControl } from '@wordpress/components';
+import { Icon, plus } from '@wordpress/icons';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 
 import './style.scss';
@@ -11,9 +13,15 @@ interface EmailItem {
 }
 interface Props {
 	defaultEmailAddresses: Array< string >;
+	toggleModal: () => void;
 }
 
-export default function ConfigureEmailNotification( { defaultEmailAddresses = [] }: Props ) {
+export default function ConfigureEmailNotification( {
+	defaultEmailAddresses = [],
+	toggleModal,
+}: Props ) {
+	const translate = useTranslate();
+
 	const [ allEmailItems, setAllEmailItems ] = useState< EmailItem[] >( [] );
 
 	useEffect( () => {
@@ -43,7 +51,7 @@ export default function ConfigureEmailNotification( { defaultEmailAddresses = []
 	);
 
 	return (
-		<>
+		<div className="configure-email-address__card-container">
 			{ allEmailItems.map( ( item ) => (
 				<Card className="configure-email-address__card" key={ item.email } compact>
 					<CheckboxControl
@@ -54,6 +62,15 @@ export default function ConfigureEmailNotification( { defaultEmailAddresses = []
 					/>
 				</Card>
 			) ) }
-		</>
+			<Button
+				compact
+				className="configure-email-address__button"
+				onClick={ toggleModal }
+				aria-label={ translate( 'Add email address' ) }
+			>
+				<Icon size={ 18 } icon={ plus } />
+				{ translate( 'Add email address' ) }
+			</Button>
+		</div>
 	);
 }

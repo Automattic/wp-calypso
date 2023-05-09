@@ -12,6 +12,7 @@ import {
 	mobileAppLink,
 } from '../../sites-overview/utils';
 import ConfigureEmailNotification from '../configure-email-notification';
+import AddNewEmailModal from '../configure-email-notification/add-new-email-modal';
 import type { MonitorSettings, Site } from '../../sites-overview/types';
 
 import './style.scss';
@@ -45,7 +46,13 @@ export default function NotificationSettings( {
 		defaultDuration
 	);
 	const [ addedEmailAddresses, setAddedEmailAddresses ] = useState< string[] | [] >( [] );
+
 	const [ validationError, setValidationError ] = useState< string >( '' );
+	const [ isAddEmailModalOpen, setIsAddEmailModalOpen ] = useState< boolean >( false );
+
+	const toggleAddEmailModal = () => {
+		setIsAddEmailModalOpen( ( isAddEmailModalOpen ) => ! isAddEmailModalOpen );
+	};
 
 	function onSave( event: React.FormEvent< HTMLFormElement > ) {
 		event.preventDefault();
@@ -104,6 +111,10 @@ export default function NotificationSettings( {
 	const isMultipleEmailEnabled = isEnabled(
 		'jetpack/pro-dashboard-monitor-multiple-email-recipients'
 	);
+
+	if ( isAddEmailModalOpen ) {
+		return <AddNewEmailModal toggleModal={ toggleAddEmailModal } />;
+	}
 
 	return (
 		<Modal
@@ -198,7 +209,10 @@ export default function NotificationSettings( {
 										{ translate( 'Receive email notifications with one or more recipients.' ) }
 									</div>
 									{ enableEmailNotification && (
-										<ConfigureEmailNotification defaultEmailAddresses={ addedEmailAddresses } />
+										<ConfigureEmailNotification
+											defaultEmailAddresses={ addedEmailAddresses }
+											toggleModal={ toggleAddEmailModal }
+										/>
 									) }
 								</>
 							) : (
