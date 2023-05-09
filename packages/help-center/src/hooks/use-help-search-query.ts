@@ -60,7 +60,7 @@ export const useHelpSearchQuery = (
 			},
 			refetchOnWindowFocus: false,
 			refetchOnMount: false,
-			enabled: !! search,
+			enabled: true,
 			...queryOptions,
 		}
 	);

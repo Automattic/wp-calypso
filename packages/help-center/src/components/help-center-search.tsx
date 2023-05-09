@@ -14,7 +14,6 @@ import { HelpCenterMoreResources } from './help-center-more-resources';
 import HelpCenterSearchResults from './help-center-search-results';
 import './help-center-search.scss';
 import './help-center-launchpad.scss';
-import { SibylArticles } from './help-center-sibyl-articles';
 import type { SiteSelect } from '@automattic/data-stores';
 
 export const HelpCenterSearch = () => {
@@ -80,12 +79,11 @@ export const HelpCenterSearch = () => {
 			/>
 			<HelpCenterSearchResults
 				onSelect={ redirectToArticle }
-				searchQuery={ searchQuery || 'get started' }
+				searchQuery={ searchQuery || '' }
 				openAdminInNewTab
 				placeholderLines={ 4 }
 				location="help-center"
 			/>
-			{ ! searchQuery && <SibylArticles message="" supportSite={ undefined } /> }
 			{ ! searchQuery && <HelpCenterMoreResources /> }
 		</div>
 	);

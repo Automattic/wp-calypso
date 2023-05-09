@@ -2465,7 +2465,7 @@ export function getContextResults( section: Section, siteIntent: string ) {
 		section = 'posts-pages';
 	}
 
-	const fallbackLinks = siteIntent === 'write' ? bloggerFallbackLinks : defaultFallbackLinks;
+	// const fallbackLinks = siteIntent === 'write' ? bloggerFallbackLinks : defaultFallbackLinks;
 	// make sure editorially to show at most one tour and one video at once
 	// `first` is a safe-guard in case that fails
 	const video = videosForSection[ section as SectionForVideos ]?.[ 0 ];

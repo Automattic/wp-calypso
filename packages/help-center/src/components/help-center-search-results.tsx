@@ -14,8 +14,7 @@ import { Icon, page as pageIcon, arrowRight } from '@wordpress/icons';
 import { debounce } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import { Fragment, useEffect, useMemo, useState } from 'react';
-import ReactMarkdown from 'react-markdown';
+import { Fragment, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
@@ -187,12 +186,7 @@ function HelpSearchResults( {
 
 	const HelpLink: React.FC< HelpLinkProps > = ( props ) => {
 		const { result, type, index } = props;
-		const { link, title, icon, content } = result;
-
-		// const [ isTooltipVisible, setIsTooltipVisible ] = useState( false );
-		// const [ isHoveringTitle, setIsHoveringTitle ] = useState( false );
-		const [ isHoveringTooltip, setIsHoveringTooltip ] = useState( false );
-		const [ tooltipPosition, setTooltipPosition ] = useState( { x: 0, y: 0 } );
+		const { link, title, icon } = result;
 
 		const external = externalLinks && type !== SUPPORT_TYPE_ADMIN_SECTION;
 
@@ -214,35 +208,6 @@ function HelpSearchResults( {
 					<div className="help-center-search-results__cell">
 						<a
 							href={ localizeUrl( link ) }
-							onMouseEnter={ ( e ) => {
-								e.preventDefault();
-
-								if ( isHoveringTooltip ) {
-									return;
-								}
-
-								setIsHoveringTooltip( true );
-
-								// compute the position of the mouse
-								// relative to the absolute-positioned container
-
-								const { width, height } = e.currentTarget.getBoundingClientRect();
-								const { clientX, clientY } = e;
-
-								// now set Tooltip Position so that it will
-								// end up under the mouse by 5px
-
-								setTooltipPosition( {
-									x: width - clientX, // + x - width + 5,
-									y: clientY - height + window.scrollY,
-								} );
-
-								// setTooltipPosition( {
-								// 	x: e.clientX + 5,
-								// 	y: e.clientY + 5 + window.scrollY,
-								// } );
-							} }
-							onMouseLeave={ () => setIsHoveringTooltip( false ) }
 							onClick={ ( event ) => {
 								if ( ! external ) {
 									event.preventDefault();
@@ -257,26 +222,6 @@ function HelpSearchResults( {
 							<LinkIcon />
 							<span>{ preventWidows( decodeEntities( title ) ) }</span>
 						</a>
-						{ content && isHoveringTooltip && (
-							<div
-								className="help-center-search-results__tooltip"
-								style={ {
-									right: tooltipPosition.x + 300, // it's 300px wide
-									top: tooltipPosition.y - 40,
-								} }
-								onMouseEnter={ ( e ) => {
-									// stop propagation to prevent the tooltip from disappearing
-									// when hovering over it
-									e.stopPropagation();
-									setIsHoveringTooltip( true );
-								} }
-								onMouseLeave={ () => setIsHoveringTooltip( false ) }
-							>
-								<div className="content">
-									<ReactMarkdown>{ content }</ReactMarkdown>
-								</div>
-							</div>
-						) }
 					</div>
 				</li>
 			</Fragment>
@@ -311,13 +256,13 @@ function HelpSearchResults( {
 		const sections = [
 			{
 				type: SUPPORT_TYPE_API_HELP,
-				title: __( 'Recommended resources', __i18n_text_domain__ ),
+				title: '',
 				results: searchResults.slice( 0, 5 ),
 				condition: ! isSearching && searchResults.length > 0,
 			},
 			{
 				type: SUPPORT_TYPE_CONTEXTUAL_HELP,
-				title: ! searchQuery.length ? __( 'Recommended resources', __i18n_text_domain__ ) : '',
+				title: '',
 				results: contextualResults.slice( 0, 6 ),
 				condition: ! isSearching && ! searchResults.length && contextualResults.length > 0,
 			},
