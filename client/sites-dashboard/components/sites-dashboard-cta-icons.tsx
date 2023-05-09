@@ -1,3 +1,22 @@
+import { CSSProperties } from 'react';
+
+export const CREATE_SITE_ICON_SPARKLES: CSSProperties[] = [
+	{
+		top: '-10%',
+		left: '22%',
+		transform: 'scale(0.5)',
+	},
+	{
+		top: '51%',
+		left: '92%',
+		transform: 'scale(0.5)',
+	},
+	{
+		top: '80%',
+		left: '5%',
+	},
+];
+
 export const CreateSiteIcon = () => (
 	<svg viewBox="0 0 187 159" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<g filter="url(#filter0_d_104_13638)">
@@ -168,7 +187,24 @@ export const CreateSiteIcon = () => (
 	</svg>
 );
 
-export const ImportSiteIcon = () => (
+export const MIGRATE_SITE_ICON_SPARKLES: CSSProperties[] = [
+	{
+		top: '-5%',
+		left: '80%',
+		transform: 'scale(0.7)',
+	},
+	{
+		top: '75%',
+		left: 0,
+		transform: 'scale(0.7)',
+	},
+	{
+		top: '85%',
+		left: '75%',
+	},
+];
+
+export const MigrateSiteIcon = () => (
 	<svg viewBox="0 0 187 159" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<g filter="url(#filter0_d_104_13673)">
 			<rect x="3.25586" y="2.11328" width="140.672" height="111.933" rx="3.02521" fill="#F6F7F7" />

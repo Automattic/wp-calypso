@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { useDebounce } from '@wordpress/compose';
-import { HTMLAttributes, ReactNode, useState } from 'react';
+import { CSSProperties, HTMLAttributes, ReactNode, useState } from 'react';
 import { MEDIA_QUERIES } from '../utils';
 
 const SparkleSVG = ( props: HTMLAttributes< SVGElement > ) => (
@@ -59,23 +59,16 @@ const Link = styled.a( {
 		border: '1px solid #A7AAAD',
 		boxShadow: '0px 3px 8px rgba(0, 0, 0, 0.12), 0px 3px 1px rgba(0, 0, 0, 0.04)',
 	},
-
-	[ MEDIA_QUERIES.small ]: {
-		width: '100%',
-		padding: '16px',
-		flexDirection: 'row',
-		justifyContent: 'flex-start',
-		gap: '32px',
-	},
 } );
 
 interface SparklingCTAProps {
 	target: string;
 	icon: ReactNode;
 	label: string;
+	sparkles: CSSProperties[];
 }
 
-export const SparklingCTA = ( { icon, target, label }: SparklingCTAProps ) => {
+export const SparklingCTA = ( { icon, target, label, sparkles }: SparklingCTAProps ) => {
 	const [ animationState, _setAnimationState ] = useState( '' );
 	const setAnimationState = useDebounce( _setAnimationState, 250 );
 
@@ -103,31 +96,10 @@ export const SparklingCTA = ( { icon, target, label }: SparklingCTAProps ) => {
 				} }
 			>
 				{ icon }
-				<Sparkle
-					data-animation={ animationState }
-					css={ {
-						top: '5%',
-						left: '30%',
-						transform: 'scale(0.7)',
-					} }
-				/>
-				<Sparkle
-					data-animation={ animationState }
-					css={ {
-						top: '50%',
-						left: '80%',
-						transform: 'scale(0.7)',
-					} }
-				/>
-				<Sparkle
-					data-animation={ animationState }
-					css={ {
-						top: '80%',
-						left: '5%',
-					} }
-				/>
+				{ sparkles.map( ( sparkle, i ) => (
+					<Sparkle key={ i } data-animation={ animationState } style={ sparkle } />
+				) ) }
 			</div>
-
 			{ label }
 		</Link>
 	);

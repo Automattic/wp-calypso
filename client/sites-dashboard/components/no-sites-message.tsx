@@ -1,13 +1,10 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import EmptyContent from 'calypso/components/empty-content';
-import { addQueryArgs } from 'calypso/lib/url';
 import { MEDIA_QUERIES } from '../utils';
-import { CreateSiteIcon, ImportSiteIcon } from './no-sites-message-icons';
-import { SparklingCTA } from './sparkling-cta';
+import { CreateSiteCTA, MigrateSiteCTA } from './sites-dashboard-ctas';
 
 const NoSitesLayout = styled( EmptyContent )`
 	display: flex;
@@ -165,8 +162,6 @@ export const NoSitesMessage = ( { status, statusSiteCount }: SitesContainerProps
 		);
 	}
 
-	const newSiteURL = isEnabled( 'hosting-onboarding-i2' ) ? '/setup/new-hosted-site' : '/start';
-
 	return (
 		<NoSitesLayout
 			title={ <Title css={ { marginBlockEnd: 0 } }> { __( 'Add a site to start' ) } </Title> }
@@ -180,24 +175,13 @@ export const NoSitesMessage = ( { status, statusSiteCount }: SitesContainerProps
 					display: 'flex',
 					gap: 32,
 					[ MEDIA_QUERIES.small ]: {
-						width: '100%',
+						gap: 16,
 						flexDirection: 'column',
 					},
 				} }
 			>
-				<SparklingCTA
-					target={ addQueryArgs(
-						{ source: 'sites-dashboard', ref: 'calypso-nosites' },
-						newSiteURL
-					) }
-					icon={ <CreateSiteIcon /> }
-					label={ __( 'Create a site' ) }
-				/>
-				<SparklingCTA
-					target="/setup/import-focused"
-					icon={ <ImportSiteIcon /> }
-					label={ __( 'Migrate a site' ) }
-				/>
+				<CreateSiteCTA />
+				<MigrateSiteCTA />
 			</div>
 		</NoSitesLayout>
 	);
