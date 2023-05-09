@@ -130,7 +130,7 @@ const AkismetModule: FunctionComponent< AkismetModuleProps > = ( { siteId, manag
 			title={ translate( 'Total blocked spam comments' ) }
 			value={ akismetData as number }
 			isError={ isAkismetError }
-			error={ akismetError?.message as string }
+			error={ akismetError instanceof Error ? akismetError.message : '' }
 			isLoading={ isAkismetLoading }
 			canManageModule={ canCurrentUser( siteId, 'manage_options' ) }
 			activateProduct={ activateProduct( 'anti-spam' ) }
@@ -170,7 +170,7 @@ const ProtectModule: FunctionComponent< ProtectModuleProps > = ( { siteId } ) =>
 			title={ translate( 'Total blocked login attempts' ) }
 			value={ protectData as number }
 			isError={ isProtectError }
-			error={ protectError?.message as string }
+			error={ protectError instanceof Error ? protectError.message : '' }
 			isLoading={ isProtectLoading }
 			canManageModule={ canCurrentUser( siteId, 'manage_options' ) }
 			activateProduct={ activateModule( 'protect' ) }
