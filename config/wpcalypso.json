@@ -75,6 +75,7 @@
 		"jetpack-social/advanced-plan": false,
 		"jetpack/offer-complete-after-activation": false,
 		"jetpack/zendesk-chat-for-logged-in-users": true,
+		"jetpack-social/multiple-connections": false,
 		"jitms": true,
 		"lasagna": true,
 		"layout/app-banner": true,
