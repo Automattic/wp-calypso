@@ -47,6 +47,7 @@ function useResize(
 
 interface UplotChartProps {
 	data: uPlot.AlignedData;
+	fillColor?: string;
 	options?: Partial< uPlot.Options >;
 	legendContainer?: React.RefObject< HTMLDivElement >;
 	solidFill?: boolean;
@@ -54,14 +55,14 @@ interface UplotChartProps {
 
 export default function UplotChart( {
 	data,
-	options: propOptions,
+	fillColor = 'rgba(48, 87, 220, 0.4)',
 	legendContainer,
+	options: propOptions,
 	solidFill = false,
 }: UplotChartProps ) {
 	const translate = useTranslate();
 	const uplot = useRef< uPlot | null >( null );
 	const uplotContainer = useRef( null );
-	const defaultFillColor = 'rgba(48, 87, 220, 0.4)';
 	const { spline } = uPlot.paths;
 
 	// TODO: Refactor this into a separate hook function file.
@@ -169,9 +170,9 @@ export default function UplotChart( {
 				grd?.addColorStop( pct, ( prevColor = s[ 1 ] ) );
 			}
 
-			return grd || defaultFillColor;
+			return grd || fillColor;
 		},
-		[ defaultFillColor ]
+		[ fillColor ]
 	);
 
 	const [ options ] = useState< uPlot.Options >(
@@ -228,7 +229,7 @@ export default function UplotChart( {
 					},
 					{
 						fill: solidFill
-							? defaultFillColor
+							? fillColor
 							: ( u, seriesIdx ) => {
 									// Find min and max values for the visible parts of all y axis' and map it to color values to draw a gradient.
 									const s = u.series[ seriesIdx ]; // data set
@@ -236,7 +237,7 @@ export default function UplotChart( {
 
 									// if values are not initialised default to a solid color
 									if ( s.min === Infinity || s.max === -Infinity ) {
-										return defaultFillColor;
+										return fillColor;
 									}
 
 									let min = Infinity;
@@ -295,15 +296,7 @@ export default function UplotChart( {
 				...defaultOptions,
 				...( typeof propOptions === 'object' ? propOptions : {} ),
 			};
-		}, [
-			defaultFillColor,
-			legendContainer,
-			propOptions,
-			scaleGradient,
-			solidFill,
-			spline,
-			translate,
-		] )
+		}, [ fillColor, legendContainer, propOptions, scaleGradient, solidFill, spline, translate ] )
 	);
 
 	useResize( uplot, uplotContainer );
