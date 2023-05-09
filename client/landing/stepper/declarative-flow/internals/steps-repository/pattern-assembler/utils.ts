@@ -21,4 +21,5 @@ export const getVariationType = (
 		? GlobalStylesVariationType.Premium
 		: GlobalStylesVariationType.Free;
 
-export const getCategoryName = ( name?: string ) => ( name === CATEGORY_ALL_SLUG ? 'all' : name );
+export const replaceCategoryAllName = ( name?: string ) =>
+	name === CATEGORY_ALL_SLUG ? 'all' : name;
