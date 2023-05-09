@@ -11,7 +11,7 @@ import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 import SocialLogo from 'calypso/components/social-logo';
-import useShouldShowFirstPostPublishedModal from '../../../dotcom-fse/lib/first-post-published-modal/use-should-show-first-post-published-modal';
+import { useShouldShowFirstPostPublishedModal } from '../../../dotcom-fse/lib/first-post-published-modal/should-show-first-post-published-modal-context';
 import useShouldShowSellerCelebrationModal from '../../../dotcom-fse/lib/seller-celebration-modal/use-should-show-seller-celebration-modal';
 import useShouldShowVideoCelebrationModal from '../../../dotcom-fse/lib/video-celebration-modal/use-should-show-video-celebration-modal';
 import postPublishedImage from './images/illo-share.svg';

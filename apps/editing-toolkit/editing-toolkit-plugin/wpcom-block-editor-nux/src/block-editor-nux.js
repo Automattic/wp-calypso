@@ -104,12 +104,12 @@ registerPlugin( 'wpcom-block-editor-nux', {
 		<HasSeenSellerCelebrationModalProvider>
 			<HasSeenVideoCelebrationModalProvider>
 				<ShouldShowFirstPostPublishedModalProvider>
-				<WelcomeTour />
-				<FirstPostPublishedModal />
-				<PostPublishedSharingModal />
-				<SellerCelebrationModal />
-				<PurchaseNotice />
-				<VideoPressCelebrationModal />
+					<WelcomeTour />
+					<FirstPostPublishedModal />
+					<PostPublishedSharingModal />
+					<SellerCelebrationModal />
+					<PurchaseNotice />
+					<VideoPressCelebrationModal />
 				</ShouldShowFirstPostPublishedModalProvider>
 			</HasSeenVideoCelebrationModalProvider>
 		</HasSeenSellerCelebrationModalProvider>
