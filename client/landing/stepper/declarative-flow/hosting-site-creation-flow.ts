@@ -10,6 +10,7 @@ import {
 import { ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import type { Flow, ProvidedDependencies } from './internals/types';
+import './internals/hosting-site-creation-flow.scss';
 
 const hosting: Flow = {
 	name: HOSTING_SITE_CREATION_FLOW,
