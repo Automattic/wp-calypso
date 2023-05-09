@@ -21,9 +21,18 @@ if ( ! function_exists( 'happy_blocks_get_asset' ) ) {
 	}
 }
 
-$js  = happy_blocks_get_asset( 'view.js' );
-$css = happy_blocks_get_asset( is_rtl() ? 'view.rtl.css' : 'view.css' );
+$header_js  = happy_blocks_get_asset( 'index.js' );
+$header_css = happy_blocks_get_asset( is_rtl() ? 'index.rtl.css' : 'index.css' );
 
-wp_enqueue_style( 'happy-blocks-search-style', $css['path'], array(), $css['version'] );
-wp_enqueue_script( 'happy-blocks-search-script', $js['path'], array(), $js['version'], true );
+wp_enqueue_style( 'happy-blocks-search-style', $header_css['path'], array(), $header_css['version'] );
+wp_enqueue_script( 'happy-blocks-search-script', $header_js['path'], array(), $header_js['version'], true );
+
+if ( ! is_user_logged_in() ) {
+	$js  = happy_blocks_get_asset( 'view.js' );
+	$css = happy_blocks_get_asset( is_rtl() ? 'view.rtl.css' : 'view.css' );
+
+	wp_enqueue_style( 'happy-blocks-search-style_logged_out', $css['path'], array(), $css['version'] );
+	wp_enqueue_script( 'happy-blocks-search-script_logged_out', $js['path'], array(), $js['version'], true );
+}
+
 
