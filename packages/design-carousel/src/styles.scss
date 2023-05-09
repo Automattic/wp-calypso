@@ -24,7 +24,7 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 	flex: 1;
 
 	@include break-medium {
-		aspect-ratio: 1.5;
+		width: calc((65svh - 50px) * 1.5);
 	}
 
 	&.design-carousel__item-mobile {
@@ -40,8 +40,6 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 		}
 	}
 
-	// iPhone aspect ratio
-	aspect-ratio: 0.48;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -54,12 +52,14 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 	padding: 0;
 	overflow: hidden;
 	height: calc(65vh - 50px);
+	// iPhone aspect ratio
+	width: calc((65svh - 50px) * 0.48);
 	outline: none;
-	max-width: 100%;
 
 	// needed for iOS Safari.
 	@supports (min-height: 65svh) {
 		height: calc(65svh - 50px);
+		width: calc((65svh - 50px) * 1.5);
 	}
 
 	opacity: 0.5;
