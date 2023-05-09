@@ -45,8 +45,8 @@ class TagStream extends Component {
 			}
 		} );
 		asyncRequire( 'twemoji', function ( twemoji ) {
-			const title = self.props.decodedTagSlug;
 			if ( self._isMounted ) {
+				const title = self.props.decodedTagSlug;
 				self.setState( {
 					twemoji,
 					isEmojiTitle: title && twemoji.test( title ),
