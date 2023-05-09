@@ -1,11 +1,26 @@
 import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
-function queryTopPosts( siteId, params ) {
+interface QueryTopPostsParams {
+	period: string;
+	num: number;
+	date: string;
+	summarize?: number;
+	max?: number;
+}
+
+function queryTopPosts( siteId: number, params: QueryTopPostsParams ) {
 	return wpcom.req.get( `/sites/${ siteId }/stats/top-posts`, params );
 }
 
-export default function useTopPostsQuery( siteId, period, num, date, summarize = 1, max = 0 ) {
+export default function useTopPostsQuery(
+	siteId: number,
+	period: string,
+	num: number,
+	date: string,
+	summarize = 1,
+	max = 0
+) {
 	return useQuery(
 		[ 'stats-widget', 'top-posts', siteId, period, num, date, summarize, max ],
 		() => queryTopPosts( siteId, { period, num, date, summarize, max } ),
