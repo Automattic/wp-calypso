@@ -391,7 +391,7 @@ export function getEnhancedTasks(
 					taskData = {
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
-							window.open( `/earn/payments/${ siteSlug }#launchpad`, '_blank' );
+							window.location.assign( `/earn/payments/${ siteSlug }#launchpad` );
 						},
 					};
 					break;
@@ -399,9 +399,8 @@ export function getEnhancedTasks(
 					taskData = {
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
-							window.open(
-								`/earn/payments-plans/${ siteSlug }?launchpad=add-product#add-newsletter-payment-plan`,
-								'_blank'
+							window.location.assign(
+								`/earn/payments-plans/${ siteSlug }?launchpad=add-product#add-newsletter-payment-plan`
 							);
 						},
 					};
