@@ -61,29 +61,16 @@ const ScreenCategoryList = ( {
 		const handleClick = ( event: Event ) => {
 			// Click outside the sidebar or action bar to close Pattern List
 			const target = event.target as HTMLElement;
-			if (
-				! (
-					target.closest( '.pattern-action-bar' ) || target.closest( '.pattern-assembler__sidebar' )
-				)
-			) {
-				handleFocusOutside();
-			}
-		};
-
-		// Clicking the large preview iframe won't trigger the click event on the current window.
-		// Instead, the current window will blur and that iframe will be focused.
-		const handleBlur = () => {
-			const target = document.activeElement;
-			if ( ! target?.closest( '.pattern-assembler__sidebar' ) ) {
+			const isActionBar = target.closest?.( '.pattern-action-bar' );
+			const isSidebar = target.closest?.( '.pattern-assembler__sidebar' );
+			if ( ! ( isActionBar || isSidebar ) ) {
 				handleFocusOutside();
 			}
 		};
 
 		window.addEventListener( 'click', handleClick );
-		window.addEventListener( 'blur', handleBlur );
 		return () => {
 			window.removeEventListener( 'click', handleClick );
-			window.removeEventListener( 'blur', handleBlur );
 		};
 	}, [ setSelectedCategory, onTogglePatternPanelList ] );
 

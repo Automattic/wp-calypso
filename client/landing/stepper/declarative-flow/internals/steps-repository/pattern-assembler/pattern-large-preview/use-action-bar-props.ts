@@ -22,19 +22,19 @@ const useActionBarProps = ( {
 	const patternType = element?.dataset.type ?? '';
 	const position = Number( element?.dataset.position ?? 0 );
 	const actionBarProps = { patternType };
-	const [ , forceRecompute ] = useReducer( ( s ) => ( s + 1 ) % Number.MAX_SAFE_INTEGER, 0 );
+	const [ , forceUpdate ] = useReducer( ( s ) => ( s + 1 ) % Number.MAX_SAFE_INTEGER, 0 );
 
 	useLayoutEffect( () => {
 		if ( ! element ) {
 			return;
 		}
-		const observer = new window.MutationObserver( forceRecompute );
+		const observer = new window.MutationObserver( forceUpdate );
 		observer.observe( element, { attributes: true } );
 
 		return () => {
 			observer.disconnect();
 		};
-	}, [ element, forceRecompute ] );
+	}, [ element, forceUpdate ] );
 
 	if ( ! element ) {
 		return null;
