@@ -1,15 +1,17 @@
 import { dispatch, select, subscribe } from '@wordpress/data';
-import domReady from '@wordpress/dom-ready';
 import { getQueryArg } from '@wordpress/url';
+import useSiteIntent from './use-site-intent';
 
 const START_WRITING_FLOW = 'start-writing';
 
-export function redirectOnboardingUserAfterPublishingPost() {
-	const isStartWritingFlow = getQueryArg( window.location.search, START_WRITING_FLOW ) === 'true';
+export function RedirectOnboardingUserAfterPublishingPost() {
+	const { intent } = useSiteIntent();
+	console.log( 'intent', intent );
 
-	if ( ! isStartWritingFlow ) {
+	if ( intent !== 'write' ) {
 		return false;
 	}
+	console.log( 'we made it' );
 
 	const siteOrigin = getQueryArg( window.location.search, 'origin' );
 	const siteSlug = window.location.hostname;
@@ -39,5 +41,3 @@ export function redirectOnboardingUserAfterPublishingPost() {
 		}
 	} );
 }
-
-domReady( redirectOnboardingUserAfterPublishingPost );
