@@ -69,6 +69,10 @@ export const isHostingFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && HOSTING_LP_FLOW === flowName );
 };
 
+export const isHostingSiteCreationFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && HOSTING_SITE_CREATION_FLOW === flowName );
+};
+
 export const isMigrationFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ MIGRATION_FLOW ].includes( flowName ) );
 };
