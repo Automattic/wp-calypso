@@ -150,7 +150,7 @@ export const SparklingCTA = ( { icon, target, label }: SparklingCTAProps ) => {
 						top: '50%',
 						left: '80%',
 						transform: 'scale(0.7)',
-						'--delay': '0.25s',
+						'--delay': '0.15s',
 					} }
 				/>
 				<Sparkle
@@ -158,7 +158,7 @@ export const SparklingCTA = ( { icon, target, label }: SparklingCTAProps ) => {
 					css={ {
 						top: '80%',
 						left: '5%',
-						'--delay': '0.35s',
+						'--delay': '0.25s',
 					} }
 				/>
 			</div>
