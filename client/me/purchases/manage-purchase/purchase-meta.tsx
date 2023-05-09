@@ -7,12 +7,11 @@ import {
 import { Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
-import { times } from 'lodash';
-import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import useAkismetKeyQuery from 'calypso/data/akismet/use-akismet-key-query';
 import useUserLicenseBySubscriptionQuery from 'calypso/data/jetpack-licensing/use-user-license-by-subscription-query';
 import {
@@ -35,6 +34,20 @@ import PurchaseMetaIntroductoryOfferDetail from './purchase-meta-introductory-of
 import PurchaseMetaOwner from './purchase-meta-owner';
 import PurchaseMetaPaymentDetails from './purchase-meta-payment-details';
 import PurchaseMetaPrice from './purchase-meta-price';
+import type { SiteDetails } from '@automattic/data-stores';
+import type {
+	GetChangePaymentMethodUrlFor,
+	GetManagePurchaseUrlFor,
+	Purchase,
+} from 'calypso/lib/purchases/types';
+
+export interface PurchaseMetaProps {
+	purchaseId: number | false;
+	hasLoadedPurchasesFromServer: boolean;
+	siteSlug: string;
+	getChangePaymentMethodUrlFor: GetChangePaymentMethodUrlFor;
+	getManagePurchaseUrlFor?: GetManagePurchaseUrlFor;
+}
 
 export default function PurchaseMeta( {
 	purchaseId = false,
@@ -42,10 +55,12 @@ export default function PurchaseMeta( {
 	siteSlug,
 	getChangePaymentMethodUrlFor,
 	getManagePurchaseUrlFor = managePurchase,
-} ) {
+}: PurchaseMetaProps ) {
 	const translate = useTranslate();
 
-	const purchase = useSelector( ( state ) => getByPurchaseId( state, purchaseId ) );
+	const purchase = useSelector( ( state ) =>
+		purchaseId ? getByPurchaseId( state, purchaseId ) : undefined
+	);
 	const site = useSelector( ( state ) => getSite( state, purchase?.siteId ) ) || null;
 
 	// TODO: if the owner is not the currently logged-in user, retrieve their info from users list
@@ -62,7 +77,7 @@ export default function PurchaseMeta( {
 	const isAkismetPurchase = isAkismetTemporarySitePurchase( purchase );
 
 	const renewalPriceHeader =
-		getLocaleSlug().startsWith( 'en' ) || i18n.hasTranslation( 'Renewal Price' )
+		getLocaleSlug()?.startsWith( 'en' ) || i18n.hasTranslation( 'Renewal Price' )
 			? translate( 'Renewal Price' )
 			: translate( 'Price' );
 
@@ -79,7 +94,7 @@ export default function PurchaseMeta( {
 				</li>
 				<PurchaseMetaExpiration
 					purchase={ purchase }
-					site={ site }
+					site={ site ?? undefined }
 					siteSlug={ siteSlug }
 					getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
 					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
@@ -90,7 +105,7 @@ export default function PurchaseMeta( {
 					purchase={ purchase }
 					getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
 					siteSlug={ siteSlug }
-					site={ site }
+					site={ site ?? undefined }
 					isAkismetPurchase={ isAkismetPurchase }
 				/>
 			</ul>
@@ -101,15 +116,13 @@ export default function PurchaseMeta( {
 	);
 }
 
-PurchaseMeta.propTypes = {
-	hasLoadedPurchasesFromServer: PropTypes.bool.isRequired,
-	purchaseId: PropTypes.oneOfType( [ PropTypes.number, PropTypes.bool ] ).isRequired,
-	siteSlug: PropTypes.string.isRequired,
-	getManagePurchaseUrlFor: PropTypes.func,
-	getChangePaymentMethodUrlFor: PropTypes.func,
-};
-
-function renderRenewsOrExpiresOnLabel( { purchase, translate } ) {
+function renderRenewsOrExpiresOnLabel( {
+	purchase,
+	translate,
+}: {
+	purchase: Purchase;
+	translate: ReturnType< typeof useTranslate >;
+} ): string | null {
 	if ( isExpiring( purchase ) ) {
 		if ( isDomainRegistration( purchase ) ) {
 			return translate( 'Domain expires on' );
@@ -163,8 +176,14 @@ function renderRenewsOrExpiresOn( {
 	siteSlug,
 	translate,
 	getManagePurchaseUrlFor,
-} ) {
-	if ( isIncludedWithPlan( purchase ) ) {
+}: {
+	moment: ReturnType< typeof useLocalizedMoment >;
+	purchase: Purchase;
+	siteSlug: string | undefined;
+	translate: ReturnType< typeof useTranslate >;
+	getManagePurchaseUrlFor: GetManagePurchaseUrlFor;
+} ): JSX.Element | null {
+	if ( isIncludedWithPlan( purchase ) && siteSlug ) {
 		const attachedPlanUrl = getManagePurchaseUrlFor( siteSlug, purchase.attachedToPurchaseId );
 
 		return (
@@ -175,22 +194,23 @@ function renderRenewsOrExpiresOn( {
 	}
 
 	if ( isExpiring( purchase ) || isExpired( purchase ) ) {
-		return moment( purchase.expiryDate ).format( 'LL' );
+		return <>{ moment( purchase.expiryDate ).format( 'LL' ) }</>;
 	}
 
 	if ( isRenewing( purchase ) ) {
-		return moment( purchase.renewDate ).format( 'LL' );
+		return <>{ moment( purchase.renewDate ).format( 'LL' ) }</>;
 	}
 
 	if ( isOneTimePurchase( purchase ) ) {
-		return translate( 'Never Expires' );
+		return <>{ translate( 'Never Expires' ) }</>;
 	}
+	return null;
 }
 
 function PurchaseMetaPlaceholder() {
 	return (
 		<ul className="manage-purchase__meta">
-			{ times( 4, ( i ) => (
+			{ Array.from( { length: 4 } ).map( ( _, i ) => (
 				<li key={ i }>
 					<em className="manage-purchase__detail-label" />
 					<span className="manage-purchase__detail" />
@@ -200,7 +220,15 @@ function PurchaseMetaPlaceholder() {
 	);
 }
 
-function RenewErrorMessage( { purchase, translate, site } ) {
+function RenewErrorMessage( {
+	purchase,
+	translate,
+	site,
+}: {
+	purchase: Purchase;
+	translate: ReturnType< typeof useTranslate >;
+	site?: SiteDetails | null;
+} ) {
 	if ( site ) {
 		return null;
 	}
@@ -273,15 +301,16 @@ function RenewErrorMessage( { purchase, translate, site } ) {
 	);
 }
 
-function PurchaseJetpackUserLicense( { purchaseId } ) {
+function PurchaseJetpackUserLicense( { purchaseId }: { purchaseId: number } ) {
 	const translate = useTranslate();
-	const { data, isError, isLoading } = useUserLicenseBySubscriptionQuery( purchaseId );
+	const { data, isError, isLoading, isInitialLoading } =
+		useUserLicenseBySubscriptionQuery( purchaseId );
 
 	if ( isError ) {
 		return null;
 	}
 
-	const { licenseKey } = data ? data : '';
+	const { licenseKey } = data ? data : { licenseKey: '' };
 	// Make sure the size of the input element can hold the entire key
 	const licenseKeyInputSize = licenseKey ? licenseKey.length + 5 : 0;
 
@@ -290,7 +319,7 @@ function PurchaseJetpackUserLicense( { purchaseId } ) {
 			label={ translate( 'License Key' ) }
 			size={ licenseKeyInputSize }
 			value={ licenseKey }
-			loading={ isLoading }
+			loading={ isLoading || isInitialLoading }
 		/>
 	);
 }
@@ -318,7 +347,17 @@ function PurchaseAkismetApiKey() {
 	);
 }
 
-function PurchaseClipboardCard( { label, value, size, loading = false } ) {
+function PurchaseClipboardCard( {
+	label,
+	value,
+	size,
+	loading = false,
+}: {
+	label: string;
+	value: string;
+	size: number;
+	loading?: boolean;
+} ) {
 	const translate = useTranslate();
 	const [ isCopied, setCopied ] = useState( false );
 

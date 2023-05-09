@@ -1,4 +1,5 @@
 import { formattedNumber } from '@automattic/components';
+import { Icon, external } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
@@ -17,7 +18,12 @@ const postAndPageLink = ( baseUrl, siteId, postId ) => {
 	return `${ baseUrl }#!/stats/post/${ postId }/${ siteId }`;
 };
 
-function ItemWrapper( { odysseyStatsBaseUrl, siteId, isItemLink, item } ) {
+const externalLink = ( item ) => {
+	// Url is for referrers and href is for top posts and pages.
+	return item.url || item.href;
+};
+
+function ItemWrapper( { odysseyStatsBaseUrl, siteId, item, isItemLink, isItemLinkExternal } ) {
 	const translate = useTranslate();
 
 	const renderedItem = (
@@ -33,7 +39,12 @@ function ItemWrapper( { odysseyStatsBaseUrl, siteId, isItemLink, item } ) {
 
 	return isItemLink ? (
 		<a
-			href={ postAndPageLink( odysseyStatsBaseUrl, siteId, item.id ) }
+			href={
+				isItemLinkExternal
+					? externalLink( item )
+					: postAndPageLink( odysseyStatsBaseUrl, siteId, item.id )
+			}
+			target={ isItemLinkExternal ? '_blank' : '_self' }
 			rel="noopener noreferrer"
 			title={ translate( 'View detailed stats for %(title)s', {
 				args: {
@@ -44,6 +55,7 @@ function ItemWrapper( { odysseyStatsBaseUrl, siteId, isItemLink, item } ) {
 			} ) }
 		>
 			{ renderedItem }
+			{ isItemLinkExternal && <Icon className="stats-icon" icon={ external } size={ 18 } /> }
 		</a>
 	) : (
 		renderedItem
@@ -59,6 +71,7 @@ function TopColumn( {
 	odysseyStatsBaseUrl,
 	siteId,
 	isItemLink = false,
+	isItemLinkExternal = false,
 	className = null,
 } ) {
 	const translate = useTranslate();
@@ -80,6 +93,7 @@ function TopColumn( {
 								odysseyStatsBaseUrl={ odysseyStatsBaseUrl }
 								siteId={ siteId }
 								isItemLink={ isItemLink }
+								isItemLinkExternal={ isItemLinkExternal }
 							/>
 						</li>
 					) ) }
@@ -166,7 +180,7 @@ export default function Highlights( { siteId, gmtOffset, odysseyStatsBaseUrl } )
 					isLoading={ isFetchingPostsAndPages }
 					odysseyStatsBaseUrl={ odysseyStatsBaseUrl }
 					siteId={ siteId }
-					isItemLink={ true }
+					isItemLink
 				/>
 				<TopColumn
 					className={ classNames( 'stats-widget-highlights__column', {
@@ -180,6 +194,8 @@ export default function Highlights( { siteId, gmtOffset, odysseyStatsBaseUrl } )
 					isLoading={ isFetchingReferrers }
 					odysseyStatsBaseUrl={ odysseyStatsBaseUrl }
 					siteId={ siteId }
+					isItemLink
+					isItemLinkExternal
 				/>
 			</div>
 		</div>

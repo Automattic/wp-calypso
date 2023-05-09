@@ -1,0 +1,10 @@
+{
+	"extends": "@automattic/calypso-typescript-config/mixed-package.json",
+	"compilerOptions": {
+		"rootDir": "../..",
+		"noEmit": true
+	},
+	"include": [ "./src/**/*", "./package.json", "../../config/production.json" ],
+	"exclude": [ "./**/node_modules/**/*", "./**/test/**/*", "./**/.stories.tsx" ],
+	"references": [ { "path": "../../packages" }, { "path": "../../client/tsconfig-reference.json" } ]
+}
