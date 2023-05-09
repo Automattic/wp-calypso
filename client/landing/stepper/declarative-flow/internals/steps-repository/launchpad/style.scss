@@ -152,17 +152,19 @@
 		.step-container__content h1,
 		.step-container__content h1.launchpad__sidebar-h1 {
 			color: var(--studio-gray-100);
-			font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+			font-family: $brand-serif;
 			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-			font-size: 28px;
+			font-size: 32px;
 			font-weight: 400;
-			line-height: 1.1;
+			line-height: 40px;
 			margin: 0 0 10px;
 			padding: 0;
 			letter-spacing: -0.32px;
 
 			@include break-large {
-				font-size: $font-headline-medium;
+				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+				font-size: 44px;
+				line-height: 52px;
 			}
 		}
 	}
@@ -179,7 +181,7 @@
 }
 
 .launchpad__sidebar-header-flow-name {
-	font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+	font-family: $brand-serif;
 	font-style: normal;
 	font-weight: 400;
 	font-size: $font-body-large;
