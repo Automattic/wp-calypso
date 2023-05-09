@@ -35,7 +35,6 @@ const date60DaysAgo = calculateQueryDate( indexThirdCard );
 const date90DaysAgo = calculateQueryDate( indexFourthCard );
 
 // calculate the date to query for based on the number of days to subtract
-// todo: move to a utils file
 function calculateQueryDate( daysToSubtract: number ) {
 	const today = new Date();
 	const date = new Date( today );
