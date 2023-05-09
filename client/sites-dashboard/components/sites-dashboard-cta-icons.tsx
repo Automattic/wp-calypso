@@ -189,8 +189,8 @@ export const CreateSiteIcon = () => (
 
 export const MIGRATE_SITE_ICON_SPARKLES: CSSProperties[] = [
 	{
-		top: '-5%',
-		left: '80%',
+		top: '-3%',
+		left: '77%',
 		transform: 'scale(0.7)',
 	},
 	{
@@ -199,148 +199,152 @@ export const MIGRATE_SITE_ICON_SPARKLES: CSSProperties[] = [
 		transform: 'scale(0.7)',
 	},
 	{
-		top: '85%',
+		top: '80%',
 		left: '75%',
 	},
 ];
 
 export const MigrateSiteIcon = () => (
-	<svg viewBox="0 0 187 159" fill="none" xmlns="http://www.w3.org/2000/svg">
-		<g filter="url(#filter0_d_104_13673)">
-			<rect x="3.25586" y="2.11328" width="140.672" height="111.933" rx="3.02521" fill="#F6F7F7" />
+	<svg viewBox="0 0 190 159" fill="none" xmlns="http://www.w3.org/2000/svg">
+		<g filter="url(#filter0_d_130_9396)">
+			<rect x="4.11328" y="6.55078" width="119" height="95" rx="3.02521" fill="white" />
 			<path
-				d="M3.25586 5.78678C3.25586 3.75796 4.90054 2.11328 6.92936 2.11328H140.255C142.283 2.11328 143.928 3.75796 143.928 5.78678V18.7519H3.25586V5.78678Z"
+				d="M4.11328 10.2243C4.11328 8.19546 5.75796 6.55078 7.78678 6.55078H119.44C121.469 6.55078 123.113 8.19546 123.113 10.2243V23.1894H4.11328V10.2243Z"
 				fill="#8C8F94"
 			/>
-			<circle cx="11.5755" cy="10.4325" r="2.26891" fill="#F6F7F7" />
-			<circle cx="19.139" cy="10.4325" r="2.26891" fill="#F6F7F7" />
-			<circle cx="26.7015" cy="10.4325" r="2.26891" fill="#F6F7F7" />
+			<circle cx="12.433" cy="14.8705" r="2.26891" fill="white" />
+			<circle cx="19.9955" cy="14.8705" r="2.26891" fill="white" />
+			<circle cx="27.5589" cy="14.8705" r="2.26891" fill="white" />
 			<rect
-				x="3.25586"
-				y="2.11328"
-				width="140.672"
-				height="111.933"
+				opacity="0.5"
+				x="12.1133"
+				y="31.1895"
+				width="30.2997"
+				height="16"
+				rx="3.02521"
+				fill="#DCDCDE"
+			/>
+			<rect
+				opacity="0.5"
+				x="12.1133"
+				y="53.2402"
+				width="30.2997"
+				height="40.3109"
+				rx="3.02521"
+				fill="#DCDCDE"
+			/>
+			<rect
+				opacity="0.5"
+				x="48.4639"
+				y="31.1895"
+				width="30.2997"
+				height="62.3613"
+				rx="3.02521"
+				fill="#DCDCDE"
+			/>
+			<rect
+				opacity="0.5"
+				x="84.8135"
+				y="31.1895"
+				width="30.2997"
+				height="44.8109"
+				rx="3.02521"
+				fill="#DCDCDE"
+			/>
+			<rect
+				opacity="0.5"
+				x="84.8135"
+				y="82.0508"
+				width="30.2997"
+				height="11.5"
+				rx="3.02521"
+				fill="#DCDCDE"
+			/>
+			<rect
+				x="4.11328"
+				y="6.55078"
+				width="119"
+				height="95"
 				rx="3.02521"
 				stroke="#8C8F94"
 				strokeWidth="1.51261"
 			/>
 		</g>
-		<g filter="url(#filter1_d_104_13673)">
-			<rect x="24.4326" y="28.0542" width="158.824" height="127.059" rx="3.02521" fill="white" />
+		<g filter="url(#filter1_d_130_9396)">
+			<rect x="50" y="48" width="136" height="105" rx="3.02521" fill="white" />
 			<path
-				d="M24.4326 31.7277C24.4326 29.6989 26.0773 28.0542 28.1061 28.0542H179.583C181.611 28.0542 183.256 29.6989 183.256 31.7277V44.6929H24.4326V31.7277Z"
+				d="M50 51.6735C50 49.6447 51.6447 48 53.6735 48H182.327C184.355 48 186 49.6447 186 51.6735V64.6387H50V51.6735Z"
 				fill="#0675C4"
 			/>
-			<circle cx="32.7523" cy="36.3734" r="2.26891" fill="white" />
-			<circle cx="40.3148" cy="36.3734" r="2.26891" fill="white" />
-			<circle cx="47.8783" cy="36.3734" r="2.26891" fill="white" />
+			<circle cx="58.3197" cy="56.3197" r="2.26891" fill="white" />
+			<circle cx="65.8822" cy="56.3197" r="2.26891" fill="white" />
+			<circle cx="73.4457" cy="56.3197" r="2.26891" fill="white" />
 			<rect
 				opacity="0.5"
-				x="39.5586"
-				y="59.8188"
-				width="27.605"
-				height="31.0893"
+				x="58"
+				y="72.6387"
+				width="35.9664"
+				height="16"
 				rx="3.02521"
 				fill="#BBE0FA"
 			/>
 			<rect
 				opacity="0.5"
-				x="39.5586"
-				y="96.9585"
-				width="27.605"
-				height="5.88867"
-				rx="2.94434"
-				fill="#BBE0FA"
-			/>
-			<rect
-				opacity="0.5"
-				x="39.5586"
-				y="108.897"
-				width="27.605"
-				height="31.0893"
+				x="58"
+				y="94.6895"
+				width="35.9664"
+				height="50.3109"
 				rx="3.02521"
 				fill="#BBE0FA"
 			/>
 			<rect
 				opacity="0.5"
-				x="73.2139"
-				y="59.8188"
-				width="27.605"
-				height="80.1681"
+				x="100.017"
+				y="72.6387"
+				width="35.9664"
+				height="72.3613"
 				rx="3.02521"
 				fill="#BBE0FA"
 			/>
 			<rect
 				opacity="0.5"
-				x="106.87"
-				y="59.8188"
-				width="27.605"
-				height="56.2899"
+				x="142.033"
+				y="72.6387"
+				width="35.9664"
+				height="54.8109"
 				rx="3.02521"
 				fill="#BBE0FA"
 			/>
 			<rect
 				opacity="0.5"
-				x="106.87"
-				y="122.159"
-				width="27.605"
-				height="5.88867"
-				rx="2.94434"
-				fill="#BBE0FA"
-			/>
-			<rect
-				opacity="0.5"
-				x="106.87"
-				y="134.098"
-				width="27.605"
-				height="5.88867"
-				rx="2.94434"
-				fill="#BBE0FA"
-			/>
-			<rect
-				opacity="0.5"
-				x="140.525"
-				y="59.8188"
-				width="27.605"
-				height="31.0893"
+				x="142.033"
+				y="133.5"
+				width="35.9664"
+				height="11.5"
 				rx="3.02521"
 				fill="#BBE0FA"
 			/>
 			<rect
-				opacity="0.5"
-				x="140.525"
-				y="96.9585"
-				width="27.605"
-				height="31.0893"
-				rx="3.02521"
-				fill="#BBE0FA"
-			/>
-			<rect
-				opacity="0.5"
-				x="140.525"
-				y="134.099"
-				width="27.605"
-				height="5.88867"
-				rx="2.94434"
-				fill="#BBE0FA"
-			/>
-			<rect
-				x="24.4326"
-				y="28.0542"
-				width="158.824"
-				height="127.059"
+				x="50"
+				y="48"
+				width="136"
+				height="105"
 				rx="3.02521"
 				stroke="#0675C4"
 				strokeWidth="1.51261"
 			/>
 		</g>
+		<path
+			d="M131.684 16.1387C131.131 16.1387 130.684 16.5865 130.684 17.1387C130.684 17.691 131.131 18.1387 131.684 18.1387L131.684 16.1387ZM143.458 41.677C143.848 42.0675 144.481 42.0675 144.872 41.677L151.236 35.313C151.627 34.9225 151.627 34.2894 151.236 33.8988C150.845 33.5083 150.212 33.5083 149.822 33.8988L144.165 39.5556L138.508 33.8987C138.118 33.5082 137.484 33.5082 137.094 33.8987C136.703 34.2893 136.703 34.9224 137.094 35.3129L143.458 41.677ZM143.165 29.6201L143.165 40.9698L145.165 40.9699L145.165 29.6201L143.165 29.6201ZM131.684 18.1387C138.025 18.1387 143.165 23.2791 143.165 29.6201L145.165 29.6201C145.165 22.1746 139.129 16.1387 131.684 16.1387L131.684 18.1387Z"
+			fill="#0675C4"
+		/>
 		<defs>
 			<filter
-				id="filter0_d_104_13673"
-				x="0.5"
-				y="0.356934"
-				width="146.185"
-				height="117.445"
+				id="filter0_d_130_9396"
+				x="0.332212"
+				y="4.28232"
+				width="126.562"
+				height="102.562"
 				filterUnits="userSpaceOnUse"
 				colorInterpolationFilters="sRGB"
 			>
@@ -351,23 +355,23 @@ export const MigrateSiteIcon = () => (
 					values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
 					result="hardAlpha"
 				/>
-				<feOffset dy="1" />
-				<feGaussianBlur stdDeviation="1" />
+				<feOffset dy="1.51261" />
+				<feGaussianBlur stdDeviation="1.51261" />
 				<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.05 0" />
-				<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_104_13673" />
+				<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_130_9396" />
 				<feBlend
 					mode="normal"
 					in="SourceGraphic"
-					in2="effect1_dropShadow_104_13673"
+					in2="effect1_dropShadow_130_9396"
 					result="shape"
 				/>
 			</filter>
 			<filter
-				id="filter1_d_104_13673"
-				x="21.6768"
-				y="26.2979"
-				width="164.336"
-				height="132.571"
+				id="filter1_d_130_9396"
+				x="46.2189"
+				y="45.7315"
+				width="143.562"
+				height="112.562"
 				filterUnits="userSpaceOnUse"
 				colorInterpolationFilters="sRGB"
 			>
@@ -378,14 +382,14 @@ export const MigrateSiteIcon = () => (
 					values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
 					result="hardAlpha"
 				/>
-				<feOffset dy="1" />
-				<feGaussianBlur stdDeviation="1" />
+				<feOffset dy="1.51261" />
+				<feGaussianBlur stdDeviation="1.51261" />
 				<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.05 0" />
-				<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_104_13673" />
+				<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_130_9396" />
 				<feBlend
 					mode="normal"
 					in="SourceGraphic"
-					in2="effect1_dropShadow_104_13673"
+					in2="effect1_dropShadow_130_9396"
 					result="shape"
 				/>
 			</filter>
