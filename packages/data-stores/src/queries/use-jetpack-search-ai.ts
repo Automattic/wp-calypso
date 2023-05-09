@@ -22,7 +22,7 @@ export type JetpackSearchAIResult = {
 export function useJetpackSearchAIQuery( siteId: number | string, query: string, stopAt: string ) {
 	return useQuery< JetpackSearchAIResult >(
 		[ 'aiQuery', query, stopAt ],
-	 () =>
+		() =>
 			canAccessWpcomApis()
 				? wpcomRequest( {
 						path: `sites/${ siteId }/jetpack-search/ai/search`,

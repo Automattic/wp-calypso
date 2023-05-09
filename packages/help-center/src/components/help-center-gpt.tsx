@@ -116,7 +116,7 @@ export function HelpCenterGPT() {
 				clearInterval( intervalId );
 			}
 		};
-	}, [ isFetchingLinks, isFetchingResponse ] );
+	}, [ isFetchingLinks, isFetchingResponse, loadingMessages ] );
 
 	useEffect( () => {
 		if ( data?.response ) {
