@@ -41,7 +41,8 @@ skipDescribeIf( envVariables.TEST_ON_ATOMIC || envVariables.VIEWPORT_NAME === 'm
 
 		it( 'Navigate to Appearance > Widgets', async function () {
 			await page.goto(
-				`https://${ testAccount.credentials.testSites?.primary.url }/wp-admin/widgets.php`
+				`https://${ testAccount.credentials.testSites?.primary.url }/wp-admin/widgets.php`,
+				{ timeout: 25 * 1000 }
 			);
 		} );
 
