@@ -15,7 +15,7 @@ type Props = {
 	loadingComponent?: ReactNode;
 };
 
-const IsMultiSiteSwitch: FunctionComponent< Props > = ( {
+const MultisiteNoBackupPlanSwitch: FunctionComponent< Props > = ( {
 	trueComponent,
 	falseComponent,
 	loadingComponent,
@@ -31,11 +31,14 @@ const IsMultiSiteSwitch: FunctionComponent< Props > = ( {
 
 	const isRequesting = useSelector( ( state ) => isRequestingSiteFeatures( state, siteId ) );
 	const siteFeatures = useSelector( ( state ) => getFeaturesBySiteId( state, siteId ) );
+
+	// We should keep loading if we don't have site features yet and we are requesting them.
 	const loadingCondition = useCallback(
 		() => isRequesting && siteFeatures === null,
 		[ isRequesting, siteFeatures ]
 	);
 
+	// The idea is to render the `trueComponent` if the site is multisite and doesn't have the backup feature.
 	const renderCondition = useCallback(
 		() => isMultiSite && ! hasBackupFeature,
 		[ hasBackupFeature, isMultiSite ]
@@ -55,4 +58,4 @@ const IsMultiSiteSwitch: FunctionComponent< Props > = ( {
 	);
 };
 
-export default IsMultiSiteSwitch;
+export default MultisiteNoBackupPlanSwitch;

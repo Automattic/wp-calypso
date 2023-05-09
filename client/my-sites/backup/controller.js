@@ -14,8 +14,8 @@ import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import BackupUpsell from './backup-upsell';
 import BackupCloneFlow from './clone-flow';
-import IsMultiSiteSwitch from './is-multisite-switch';
 import BackupsPage from './main';
+import MultisiteNoBackupPlanSwitch from './multisite-no-backup-plan-switch';
 import BackupRewindFlow, { RewindFlowPurpose } from './rewind-flow';
 import WPCOMBackupUpsell from './wpcom-backup-upsell';
 import WpcomBackupUpsellPlaceholder from './wpcom-backup-upsell-placeholder';
@@ -96,7 +96,7 @@ export function showUnavailableForVaultPressSites( context, next ) {
 export function showUnavailableForMultisites( context, next ) {
 	debug( 'controller: showUnavailableForMultisites', context.params );
 
-	// Only show "Multisite not supported" card if the multisite does Not already own a Backup subscription.
+	// Only show "Multisite not supported" card if the multisite does not already own a Backup subscription.
 	// https://href.li/?https://wp.me/pbuNQi-1jg
 	const message = isJetpackCloud() ? (
 		<BackupUpsell reason="multisite_not_supported" />
@@ -105,7 +105,7 @@ export function showUnavailableForMultisites( context, next ) {
 	);
 
 	context.primary = (
-		<IsMultiSiteSwitch
+		<MultisiteNoBackupPlanSwitch
 			trueComponent={ message }
 			falseComponent={ context.primary }
 			loadingComponent={ <p>Loading..</p> }
