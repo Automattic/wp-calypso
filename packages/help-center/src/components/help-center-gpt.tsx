@@ -11,8 +11,6 @@ import stripTags from 'striptags';
 import './help-center-article-content.scss';
 import { HELP_CENTER_STORE } from '../stores';
 
-export const SITE_STORE = 'automattic/site' as const;
-
 const GPTResponsePlaceholder = styled( LoadingPlaceholder )< { width?: string } >`
 	:not( :last-child ) {
 		margin-block-end: 0.5rem;
