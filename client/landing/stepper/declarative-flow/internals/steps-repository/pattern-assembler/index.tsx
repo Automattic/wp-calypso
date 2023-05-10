@@ -9,7 +9,7 @@ import {
 } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import classnames from 'classnames';
-import { useState, useMemo } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
 import { ActiveTheme } from 'calypso/data/themes/use-active-theme-query';
@@ -57,7 +57,8 @@ const PatternAssembler = ( {
 }: StepProps & withNotices.Props ) => {
 	const [ navigatorPath, setNavigatorPath ] = useState( NAVIGATOR_PATHS.MAIN );
 	const [ sectionPosition, setSectionPosition ] = useState< number | null >( null );
-	const [ activePatternKey, setActivePatternKey ] = useState< string >();
+	const wrapperRef = useRef< HTMLDivElement | null >( null );
+	const [ activePosition, setActivePosition ] = useState( -1 );
 	const [ isPatternPanelListOpen, setIsPatternPanelListOpen ] = useState( false );
 	const { goBack, goNext, submit } = navigation;
 	const { applyThemeWithPatterns } = useDispatch( SITE_STORE );
@@ -96,7 +97,7 @@ const PatternAssembler = ( {
 		setSections,
 		setColorVariation,
 		setFontVariation,
-		injectKey,
+		generateKey,
 		snapshotRecipe,
 	} = useRecipe( site?.ID, allPatterns, categories );
 
@@ -215,10 +216,14 @@ const PatternAssembler = ( {
 			} as DesignRecipe,
 		} as Design );
 
+	const updateActivePatternPosition = ( position: number ) => {
+		const patternPosition = header ? position + 1 : position;
+		setActivePosition( Math.max( patternPosition, 0 ) );
+	};
+
 	const updateHeader = ( pattern: Pattern | null ) => {
-		const nextHeader = pattern ? injectKey( pattern ) : pattern;
-		setHeader( nextHeader );
-		setActivePatternKey( nextHeader?.key );
+		setHeader( pattern );
+		updateActivePatternPosition( -1 );
 		if ( pattern ) {
 			if ( header ) {
 				showNotice( 'replace', pattern );
@@ -230,10 +235,14 @@ const PatternAssembler = ( {
 		}
 	};
 
+	const activateFooterPosition = ( hasFooter: boolean ) => {
+		const lastPosition = hasFooter ? sections.length : sections.length - 1;
+		updateActivePatternPosition( lastPosition );
+	};
+
 	const updateFooter = ( pattern: Pattern | null ) => {
-		const nextFooter = pattern ? injectKey( pattern ) : pattern;
-		setFooter( nextFooter );
-		setActivePatternKey( nextFooter?.key );
+		setFooter( pattern );
+		activateFooterPosition( !! pattern );
 		if ( pattern ) {
 			if ( footer ) {
 				showNotice( 'replace', pattern );
@@ -247,32 +256,35 @@ const PatternAssembler = ( {
 
 	const replaceSection = ( pattern: Pattern ) => {
 		if ( sectionPosition !== null ) {
-			const nextSection = {
-				...pattern,
-				key: sections[ sectionPosition ].key,
-			};
-
 			setSections( [
 				...sections.slice( 0, sectionPosition ),
-				nextSection,
+				{
+					...pattern,
+					key: sections[ sectionPosition ].key,
+				},
 				...sections.slice( sectionPosition + 1 ),
 			] );
-			setActivePatternKey( nextSection.key );
+			updateActivePatternPosition( sectionPosition );
 			showNotice( 'replace', pattern );
 		}
 	};
 
 	const addSection = ( pattern: Pattern ) => {
-		const nextSection = injectKey( pattern );
-		setSections( [ ...( sections as Pattern[] ), nextSection ] );
-		setActivePatternKey( nextSection.key );
+		setSections( [
+			...( sections as Pattern[] ),
+			{
+				...pattern,
+				key: generateKey( pattern ),
+			},
+		] );
+		updateActivePatternPosition( sections.length );
 		showNotice( 'add', pattern );
 	};
 
 	const deleteSection = ( position: number ) => {
 		showNotice( 'remove', sections[ position ] );
 		setSections( [ ...sections.slice( 0, position ), ...sections.slice( position + 1 ) ] );
-		setActivePatternKey( sections[ position ].key );
+		updateActivePatternPosition( position );
 	};
 
 	const moveDownSection = ( position: number ) => {
@@ -283,7 +295,7 @@ const PatternAssembler = ( {
 			section,
 			...sections.slice( position + 2 ),
 		] );
-		setActivePatternKey( section.key );
+		updateActivePatternPosition( position + 1 );
 	};
 
 	const moveUpSection = ( position: number ) => {
@@ -294,7 +306,7 @@ const PatternAssembler = ( {
 			...sections.slice( position - 1, position ),
 			...sections.slice( position + 1 ),
 		] );
-		setActivePatternKey( section.key );
+		updateActivePatternPosition( position - 1 );
 	};
 
 	const onSelect = (
@@ -478,6 +490,7 @@ const PatternAssembler = ( {
 			className={ classnames( 'pattern-assembler__wrapper', {
 				'pattern-assembler__pattern-panel-list--is-open': isPatternPanelListOpen,
 			} ) }
+			ref={ wrapperRef }
 			tabIndex={ -1 }
 		>
 			{ isEnabled( 'pattern-assembler/notices' ) && (
@@ -500,7 +513,7 @@ const PatternAssembler = ( {
 						onSelect={ onSelect }
 						onBack={ () => onPatternSelectorBack( 'header' ) }
 						onDoneClick={ () => onDoneClick( 'header' ) }
-						updateActivePatternPosition={ () => setActivePatternKey( header?.key ) }
+						updateActivePatternPosition={ () => updateActivePatternPosition( -1 ) }
 						patterns={ patternsMapByCategory[ 'header' ] || [] }
 					/>
 				</NavigatorScreen>
@@ -511,7 +524,7 @@ const PatternAssembler = ( {
 						onSelect={ onSelect }
 						onBack={ () => onPatternSelectorBack( 'footer' ) }
 						onDoneClick={ () => onDoneClick( 'footer' ) }
-						updateActivePatternPosition={ () => setActivePatternKey( footer?.key ) }
+						updateActivePatternPosition={ () => activateFooterPosition( !! footer ) }
 						patterns={ patternsMapByCategory[ 'footer' ] || [] }
 					/>
 				</NavigatorScreen>
@@ -534,6 +547,7 @@ const PatternAssembler = ( {
 						replacePatternMode={ sectionPosition !== null }
 						selectedPattern={ sectionPosition !== null ? sections[ sectionPosition ] : null }
 						onSelect={ onSelect }
+						wrapperRef={ wrapperRef }
 						onTogglePatternPanelList={ setIsPatternPanelListOpen }
 						recordTracksEvent={ recordTracksEvent }
 					/>
@@ -575,7 +589,7 @@ const PatternAssembler = ( {
 				header={ header }
 				sections={ sections }
 				footer={ footer }
-				activePatternKey={ activePatternKey }
+				activePosition={ activePosition }
 				onDeleteSection={ onDeleteSection }
 				onMoveUpSection={ onMoveUpSection }
 				onMoveDownSection={ onMoveDownSection }

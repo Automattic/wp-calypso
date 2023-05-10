@@ -29,6 +29,7 @@ interface PatternListRendererProps {
 }
 
 const PLACEHOLDER_HEIGHT = 100;
+const MIN_HEIGHT_FOR_100VH = 500;
 
 const PatternListItem = ( {
 	pattern,
@@ -79,7 +80,7 @@ const PatternListItem = ( {
 						patternId={ encodePatternId( pattern.ID ) }
 						viewportWidth={ 1060 }
 						minHeight={ PLACEHOLDER_HEIGHT }
-						disabledPointerEvents
+						minHeightFor100vh={ MIN_HEIGHT_FOR_100VH }
 					/>
 				) : (
 					<div key={ pattern.ID } style={ { height: PLACEHOLDER_HEIGHT } } />

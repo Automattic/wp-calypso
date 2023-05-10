@@ -8,23 +8,23 @@ import { useResizeObserver, useRefEffect } from '@wordpress/compose';
 import React, { useMemo, useState, useContext } from 'react';
 import { BLOCK_MAX_HEIGHT } from '../constants';
 import useParsedAssets from '../hooks/use-parsed-assets';
-import bubbleEvents from '../utils/bubble-events';
 import loadScripts from '../utils/load-scripts';
 import loadStyles from '../utils/load-styles';
 import BlockRendererContext from './block-renderer-context';
 import type { RenderedStyle } from '../types';
 import './block-renderer-container.scss';
 
-export interface BlockRendererContainerProps {
+interface BlockRendererContainerProps {
 	children: React.ReactChild;
 	styles?: RenderedStyle[];
 	scripts?: string;
 	inlineCss?: string;
 	viewportWidth?: number;
 	viewportHeight?: number;
-	maxHeight?: number;
+	maxHeight?: 'none' | number;
 	minHeight?: number;
-	disabledPointerEvents?: boolean;
+	isMinHeight100vh?: boolean;
+	minHeightFor100vh?: number;
 }
 
 interface ScaledBlockRendererContainerProps extends BlockRendererContainerProps {
@@ -41,11 +41,11 @@ const ScaledBlockRendererContainer = ( {
 	containerWidth,
 	maxHeight = BLOCK_MAX_HEIGHT,
 	minHeight,
-	disabledPointerEvents,
+	isMinHeight100vh,
+	minHeightFor100vh,
 }: ScaledBlockRendererContainerProps ) => {
 	const [ isLoaded, setIsLoaded ] = useState( false );
-	const [ contentResizeListener, contentSizes ] = useResizeObserver();
-	const contentHeight = contentSizes.height || 0;
+	const [ contentResizeListener, { height: contentHeight } ] = useResizeObserver();
 	const { settings } = useContext( BlockRendererContext );
 	const { styles, assets, duotone } = useMemo(
 		() => ( {
@@ -96,22 +96,37 @@ const ScaledBlockRendererContainer = ( {
 			loadStyles( bodyElement, styleAssets ),
 			loadScripts( bodyElement, scriptAssets as HTMLScriptElement[] ),
 		] ).then( () => setIsLoaded( true ) );
-
-		// Bubble the events to the owner document
-		bubbleEvents( bodyElement, [ 'click' ] );
 	}, [] );
 
 	const scale = containerWidth / viewportWidth;
-	const containerHeight = contentHeight * scale || minHeight;
-	const containerMaxHeight = contentHeight > maxHeight ? maxHeight * scale : undefined;
+	const heightFor100vh = Math.max(
+		contentHeight || 0,
+		viewportHeight || 0,
+		minHeightFor100vh || 0
+	);
+
+	let scaledHeight = ( contentHeight as number ) * scale || minHeight;
+	if ( isMinHeight100vh ) {
+		// Handling container height of patterns with height 100vh
+		scaledHeight = heightFor100vh * scale;
+	}
+
+	let iframeHeight = contentHeight as number;
+	if ( isMinHeight100vh ) {
+		// Handling iframe height of patterns with height 100vh
+		iframeHeight = heightFor100vh;
+	}
 
 	return (
 		<div
 			className="scaled-block-renderer"
 			style={ {
 				transform: `scale(${ scale })`,
-				height: containerHeight,
-				maxHeight: containerMaxHeight,
+				height: scaledHeight,
+				maxHeight:
+					maxHeight !== 'none' && ( contentHeight as number ) > maxHeight
+						? ( maxHeight as number ) * scale
+						: undefined,
 			} }
 		>
 			<Iframe
@@ -123,8 +138,8 @@ const ScaledBlockRendererContainer = ( {
 				style={ {
 					position: 'absolute',
 					width: viewportWidth,
-					height: viewportHeight || contentHeight,
-					pointerEvents: disabledPointerEvents ? 'none' : 'auto',
+					height: iframeHeight,
+					pointerEvents: 'none',
 					// This is a catch-all max-height for patterns.
 					// See: https://github.com/WordPress/gutenberg/pull/38175.
 					maxHeight,
