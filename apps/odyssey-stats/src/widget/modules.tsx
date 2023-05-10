@@ -5,7 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, FunctionComponent } from 'react';
 import wpcom from 'calypso/lib/wp';
 import useModuleDataQuery from '../hooks/use-module-data-query';
-import canCurrentUser from '../lib/can-current-user';
+import canCurrentUser from '../lib/selectors/can-current-user';
 
 import './modules.scss';
 
@@ -27,7 +27,7 @@ interface ProtectModuleProps {
 }
 
 interface ModulesProps extends ProtectModuleProps {
-	odysseyStatsBaseUrl: string;
+	adminBaseUrl: null | string;
 }
 
 interface AkismetModuleProps extends ProtectModuleProps {
@@ -178,17 +178,14 @@ const ProtectModule: FunctionComponent< ProtectModuleProps > = ( { siteId } ) =>
 	);
 };
 
-export default function Modules( { siteId, odysseyStatsBaseUrl }: ModulesProps ) {
+export default function Modules( { siteId, adminBaseUrl }: ModulesProps ) {
 	return (
 		<div className="stats-widget-modules">
 			<ProtectModule siteId={ siteId } />
 			<AkismetModule
 				siteId={ siteId }
 				// The URL is used to redirect the user to the Akismet Key configuration page.
-				manageUrl={
-					odysseyStatsBaseUrl &&
-					odysseyStatsBaseUrl.replaceAll( /page=stats/g, 'page=akismet-key-config' )
-				}
+				manageUrl={ adminBaseUrl + 'admin.php?page=akismet-key-config' }
 			/>
 		</div>
 	);
