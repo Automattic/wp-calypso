@@ -31,16 +31,10 @@ const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
 const extraPath = browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv;
 const cachePath = path.resolve( '.cache', extraPath );
 
-const excludedPackages = [
-	/^calypso\/components\/inline-support-link$/,
-	/^calypso\/components\/web-preview.*$/,
-	/^calypso\/blocks\/upsell-nudge.*$/,
-	/^calypso\/my-sites\/stats\/mini-carousel.*$/,
-	/^calypso\/blocks\/jetpack-backup-creds-banner.*$/,
-	/^calypso\/components\/data\/query-keyring-connections$/,
-	/^calypso\/components\/data\/query-jetpack-modules$/,
-	/^calypso\/components\/data\/query-site-keyrings$/,
-];
+// TODO: Check any unused components that we don't want to include inside the final build
+// This can happened because we are using a component that conditionally depends on another, but the
+// condition never checks. So its safe to remove from the final build
+const excludedPackages = [];
 
 const excludedPackagePlugins = excludedPackages.map(
 	// Note: apparently the word "package" is a reserved keyword here for some reason
@@ -148,17 +142,12 @@ module.exports = {
 						'lodash-es',
 						'react',
 						'react-dom',
-						'@wordpress/api-fetch',
 						'@wordpress/components',
 						'@wordpress/compose',
-						'@wordpress/element',
-						'@wordpress/html-entities',
 						'@wordpress/i18n',
 						'@wordpress/is-shallow-equal',
-						'@wordpress/polyfill',
 						'@wordpress/primitives',
 						'@wordpress/url',
-						'@wordpress/warning',
 						'moment',
 						'../moment',
 					].includes( request )
