@@ -27,7 +27,6 @@ interface Props {
 	) => void;
 	replacePatternMode: boolean;
 	selectedPattern: Pattern | null;
-	wrapperRef: React.RefObject< HTMLDivElement > | null;
 	onTogglePatternPanelList?: ( isOpen: boolean ) => void;
 	recordTracksEvent: ( name: string, eventProperties: any ) => void;
 }
@@ -39,7 +38,6 @@ const ScreenCategoryList = ( {
 	replacePatternMode,
 	onSelect,
 	selectedPattern,
-	wrapperRef,
 	onTogglePatternPanelList,
 	recordTracksEvent,
 }: Props ) => {
@@ -48,19 +46,6 @@ const ScreenCategoryList = ( {
 	const categoriesInOrder = useCategoriesOrder( categories );
 	const composite = useCompositeState( { orientation: 'vertical' } );
 
-	const handleFocusOutside = ( event: Event ) => {
-		// Click outside the sidebar or action bar to close Pattern List
-		const target = event.target as HTMLElement;
-		if (
-			! (
-				target.closest( '.pattern-action-bar' ) || target.closest( '.pattern-assembler__sidebar' )
-			)
-		) {
-			setSelectedCategory( null );
-			onTogglePatternPanelList?.( false );
-		}
-	};
-
 	const trackEventCategoryClick = ( name: string ) => {
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_CATEGORY_LIST_CATEGORY_CLICK, {
 			pattern_category: name,
@@ -68,11 +53,26 @@ const ScreenCategoryList = ( {
 	};
 
 	useEffect( () => {
-		wrapperRef?.current?.addEventListener( 'click', handleFocusOutside );
-		return () => {
-			wrapperRef?.current?.removeEventListener( 'click', handleFocusOutside );
+		const handleFocusOutside = () => {
+			setSelectedCategory( null );
+			onTogglePatternPanelList?.( false );
 		};
-	}, [] );
+
+		const handleClick = ( event: Event ) => {
+			// Click outside the sidebar or action bar to close Pattern List
+			const target = event.target as HTMLElement;
+			const isActionBar = target.closest?.( '.pattern-action-bar' );
+			const isSidebar = target.closest?.( '.pattern-assembler__sidebar' );
+			if ( ! ( isActionBar || isSidebar ) ) {
+				handleFocusOutside();
+			}
+		};
+
+		window.addEventListener( 'click', handleClick );
+		return () => {
+			window.removeEventListener( 'click', handleClick );
+		};
+	}, [ setSelectedCategory, onTogglePatternPanelList ] );
 
 	useEffect( () => {
 		// Notify the pattern panel list is going to close when umount

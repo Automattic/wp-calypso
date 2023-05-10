@@ -56,6 +56,11 @@ const useRecipe = ( siteId = 0, patterns: Pattern[], categories: Category[] ) =>
 		return `${ incrementIndexRef.current }-${ pattern.ID }`;
 	};
 
+	const injectKey = ( pattern: Pattern ) => ( {
+		...pattern,
+		key: generateKey( pattern ),
+	} );
+
 	const snapshotRecipe = useCallback( () => setSelectedDesign( selectedDesignRef.current ), [] );
 
 	/**
@@ -78,11 +83,11 @@ const useRecipe = ( siteId = 0, patterns: Pattern[], categories: Category[] ) =>
 		const selectedFooter = patternsById[ decodePatternId( footer_pattern_ids[ 0 ] ) ];
 
 		if ( selectedHeader ) {
-			setHeader( selectedHeader );
+			setHeader( injectKey( selectedHeader ) );
 		}
 
 		if ( selectedFooter ) {
-			setFooter( selectedFooter );
+			setFooter( injectKey( selectedFooter ) );
 		}
 
 		setSections(
@@ -92,11 +97,10 @@ const useRecipe = ( siteId = 0, patterns: Pattern[], categories: Category[] ) =>
 				.map( ( pattern: Pattern ) => {
 					const [ firstCategory ] = Object.keys( pattern.categories );
 					const category = categoriesByName[ firstCategory ];
-					return {
+					return injectKey( {
 						...pattern,
-						key: generateKey( pattern ),
 						category,
-					};
+					} );
 				} )
 		);
 	}, [ patterns.length, categories ] );
@@ -138,7 +142,7 @@ const useRecipe = ( siteId = 0, patterns: Pattern[], categories: Category[] ) =>
 		setSections,
 		setColorVariation,
 		setFontVariation,
-		generateKey,
+		injectKey,
 		snapshotRecipe,
 	};
 };
