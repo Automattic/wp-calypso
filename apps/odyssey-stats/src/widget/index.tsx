@@ -50,7 +50,9 @@ export function init() {
 							>
 								<JetpackLogo size={ 20 } monochrome full />
 							</a>
-							<a href={ statsBaseUrl }>{ translate( 'View all stats' ) }</a>
+							<a href={ `${ statsBaseUrl }/stats/day/${ currentSiteId }` }>
+								{ translate( 'View all stats' ) }
+							</a>
 						</div>
 					</div>
 				</div>
