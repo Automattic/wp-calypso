@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import ModalLinkIcon from 'calypso/assets/images/jetpack/jetpack-icon-modal-link.svg';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from '../../../../state/partner-portal/types';
 import { useProductDescription } from '../hooks';
@@ -118,6 +119,8 @@ export default function LicenseProductCard( props: Props ) {
 									{ translate( 'More about {{productName/}}', {
 										components: { productName: <>{ productTitle }</> },
 									} ) }
+
+									<img src={ ModalLinkIcon } alt="" />
 								</Button>
 							</div>
 
