@@ -193,11 +193,13 @@
 		border: 15px solid #f8f8f8;
 		box-shadow: 0 15px 20px rgba(0, 0, 0, 0.04), 0 13px 10px rgba(0, 0, 0, 0.03), 0 6px 6px rgba(0, 0, 0, 0.02);
 
-		background-size: cover;
+		background-size: contain;
 		background-repeat: no-repeat;
+		background-position: 50% 0;
 
 		&.green {
 			background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-green.jpg);
+			background-color: #f2ede7;
 
 			@media ( max-width: $break-huge ) {
 				background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-green-1200.jpg);
@@ -209,6 +211,7 @@
 
 		&.blue {
 			background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-blue.jpg);
+			background-color: #fcfdff;
 
 			@media ( max-width: $break-huge ) {
 				background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-blue-1200.jpg);
@@ -220,6 +223,7 @@
 
 		&.dark {
 			background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-dark.jpg);
+			background-color: #fbfbfb;
 
 			@media ( max-width: $break-huge ) {
 				background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-dark-1200.jpg);
@@ -231,6 +235,7 @@
 
 		&.gold {
 			background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-gold.jpg);
+			background-color: #ffeacb;
 
 			@media ( max-width: $break-huge ) {
 				background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-gold-1200.jpg);
@@ -241,7 +246,6 @@
 		}
 
 		@media ( max-width: $break-large ) {
-			background-size: contain;
 			height: 779px;
 		}
 	}
