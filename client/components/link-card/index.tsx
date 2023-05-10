@@ -11,6 +11,7 @@ interface LinkCardContainerProps {
 interface LinkCardProps {
 	label?: ReactChild;
 	title: ReactChild;
+	titleMarginBottom?: string;
 	cta?: ReactChild;
 	background?: string;
 	border?: string;
@@ -38,14 +39,14 @@ const LinkCardLabel = styled.div`
 	line-height: 1.25rem;
 `;
 
-const LinkCardTitle = styled.div`
+const LinkCardTitle = styled.div< { marginBottom?: string } >`
 	@media ( max-width: 1090px ) {
 		-webkit-line-clamp: 4; // trunk text to 4 lines then ellipsis
 		line-clamp: 4;
 	}
 
 	color: var( --studio-blue-50 );
-	margin-bottom: 32px;
+	margin-bottom: ${ ( props ) => props.marginBottom || '32px' };
 	font-size: var( --scss-font-title-small );
 	text-overflow: ellipsis;
 	word-wrap: break-word;
@@ -64,16 +65,27 @@ const LinkCardCta = styled.div`
 `;
 
 const LinkCard = ( props: LinkCardProps ) => {
-	const { label, title, cta, background, border, url, external, target, onClick } = props;
+	const {
+		label,
+		title,
+		titleMarginBottom,
+		cta,
+		background,
+		border,
+		url,
+		external,
+		target,
+		onClick,
+	} = props;
 
 	const Link = external ? ExternalLink : 'a';
 
 	return (
 		<Link target={ target } href={ url } onClick={ onClick } className="card-block">
 			<LinkCardContainer background={ background } border={ border }>
-				<LinkCardLabel>{ label }</LinkCardLabel>
-				<LinkCardTitle>{ title }</LinkCardTitle>
-				<LinkCardCta>{ cta }</LinkCardCta>
+				{ label && <LinkCardLabel>{ label }</LinkCardLabel> }
+				{ title && <LinkCardTitle marginBottom={ titleMarginBottom }>{ title }</LinkCardTitle> }
+				{ cta && <LinkCardCta>{ cta }</LinkCardCta> }
 			</LinkCardContainer>
 		</Link>
 	);

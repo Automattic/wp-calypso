@@ -161,6 +161,7 @@ const EducationFooter = () => {
 								{ __( 'What Are WordPress Plugins and Themes? (A Beginner’s Guide)' ) }
 							</CardText>
 						}
+						titleMarginBottom="16px"
 						cta={ <ReadMoreLink /> }
 						url={ localizeUrl(
 							'https://wordpress.com/go/website-building/what-are-wordpress-plugins-and-themes-a-beginners-guide/'
@@ -176,6 +177,7 @@ const EducationFooter = () => {
 								{ __( 'How to Choose WordPress Plugins for Your Website (7 Tips)' ) }
 							</CardText>
 						}
+						titleMarginBottom="16px"
 						cta={ <ReadMoreLink /> }
 						url={ localizeUrl(
 							'https://wordpress.com/go/customization/how-to-choose-wordpress-plugins-for-your-website-7-tips/'
@@ -191,6 +193,7 @@ const EducationFooter = () => {
 								{ __( '17 Must-Have WordPress Plugins (Useful For All Sites)' ) }
 							</CardText>
 						}
+						titleMarginBottom="16px"
 						cta={ <ReadMoreLink /> }
 						url={ localizeUrl(
 							'https://wordpress.com/go/website-building/17-must-have-wordpress-plugins-useful-for-all-sites/'
