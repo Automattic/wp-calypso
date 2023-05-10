@@ -78,8 +78,10 @@ import {
 import { FreePlanPaidDomainDialog } from './components/free-plan-paid-domain-dialog';
 import './style.scss';
 
-const OnboardingPricingGrid2023 = ( { plans, visiblePlans, ...props } ) => {
+const OnboardingPricingGrid2023 = ( props ) => {
 	const {
+		plans,
+		visiblePlans,
 		basePlansPath,
 		customerType,
 		domainName,
@@ -636,10 +638,10 @@ export class PlansFeaturesMain extends Component {
 	renderPlansGrid( plans, visiblePlans ) {
 		return this.props.is2023PricingGridVisible ? (
 			<OnboardingPricingGrid2023
+				{ ...this.props }
 				plans={ plans }
 				visiblePlans={ visiblePlans }
 				onUpgradeClick={ this.onUpgradeClick }
-				{ ...this.props }
 			/>
 		) : (
 			this.renderLegacyPricingGrid( plans, visiblePlans )
