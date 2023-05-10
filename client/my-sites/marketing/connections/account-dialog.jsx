@@ -89,9 +89,11 @@ class AccountDialog extends Component {
 	}
 
 	areAccountsConflicting( account, otherAccount ) {
+		// Accounts are conflicting, if they have the same ID and keyringConnectionId, which
+		// means they are the same account. Otherwise it's a different site for the same account.
 		return (
 			account.keyringConnectionId === otherAccount.keyringConnectionId &&
-			account.ID !== otherAccount.ID
+			account.ID === otherAccount.ID
 		);
 	}
 
