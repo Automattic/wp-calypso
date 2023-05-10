@@ -306,7 +306,10 @@ object BuildDockerImage : BuildType({
 			notifierSettings = slackNotifier {
 				connection = "PROJECT_EXT_11"
 				sendTo = "#team-calypso-bot"
-				messageFormat = simpleMessageFormat()
+				messageFormat = verboseMessageFormat {
+					addChanges = true
+					addStatusText = true
+				}
 			}
 			branchFilter = """
 				+:*
@@ -1126,7 +1129,7 @@ object QuarantinedE2ETests: E2EBuildType(
 			notifierSettings = slackNotifier {
 				connection = "PROJECT_EXT_11"
 				sendTo = "#e2eflowtesting-notif"
-				messageFormat = simpleMessageFormat()
+				messageFormat = verboseMessageFormat()
 			}
 			buildFailedToStart = true
 			buildFailed = true
