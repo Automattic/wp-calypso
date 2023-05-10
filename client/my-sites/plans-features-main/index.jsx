@@ -172,6 +172,7 @@ export class PlansFeaturesMain extends Component {
 			planTypeSelectorProps,
 			hidePlansFeatureComparison,
 			replacePaidDomainWithFreeDomain,
+			sitePlanSlug,
 		} = this.props;
 
 		const asyncProps = {
@@ -202,6 +203,7 @@ export class PlansFeaturesMain extends Component {
 			intervalType,
 			hidePlansFeatureComparison,
 			replacePaidDomainWithFreeDomain,
+			currentSitePlanSlug: sitePlanSlug,
 		};
 		const asyncPlanFeatures2023Grid = (
 			<AsyncLoad
