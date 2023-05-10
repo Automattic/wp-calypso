@@ -73,14 +73,34 @@
 	&__actions {
 		margin-top: 1rem;
 		display: flex;
+		flex-wrap: wrap;
+
+		@include break-xlarge {
+			flex-wrap: nowrap;
+		}
 
 		.button {
-			margin-right: 1rem;
+			flex: 0 0 100%;
+		}
+
+		.button:not(:last-child) {
+			margin-bottom: 0.5rem;
+		}
+
+		@include break-large {
+			.button {
+				flex: 0 0 auto;
+			}
+
+			.button:not(:last-child) {
+				margin-right: 1rem;
+				margin-bottom: 0;
+			}
 		}
 	}
 
 	&__assign-button {
-		@include break-xlarge {
+		@include break-large {
 			display: none;
 		}
 	}
