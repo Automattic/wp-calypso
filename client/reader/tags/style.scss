@@ -189,16 +189,11 @@
 		position: relative;
 	}
 	.sticky-panel {
-		top: 24px;
 		position: absolute;
 		right: -12px;
 	}
-	.sticky-panel-absolute {
-		position: absolute;
-	}
-	.sticky-panel-fixed {
-		position: fixed;
-		right: 12px;
+	.sticky-panel__content {
+		padding-top: 24px;
 	}
 }
 

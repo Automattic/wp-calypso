@@ -63,12 +63,18 @@ function renderStickyPanel( props, state ) {
 			<div className="sticky-panel__content" style={ getBlockStyle( state ) }>
 				{ props.children }
 			</div>
-			<div className="sticky-panel__spacer" style={ { height: state.spacerHeight } } />
+			<div
+				className="sticky-panel__spacer"
+				style={ { height: state.spacerHeight, width: state.blockWidth } }
+			/>
 		</div>
 	);
 }
 
 function isWindowTooSmall( minLimit ) {
+	if ( minLimit === 0 ) {
+		return false;
+	}
 	return ( minLimit !== false && minLimit >= window.innerWidth ) || isMobile();
 }
 

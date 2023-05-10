@@ -1,6 +1,6 @@
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect, createRef } from 'react';
+import { createRef } from 'react';
 import titlecase from 'to-title-case';
 import StickyPanel from 'calypso/components/sticky-panel';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -89,23 +89,7 @@ const scrollToLetter = ( letter: string ) => {
 
 export default function AlphabeticTags( { alphabeticTags }: AlphabeticTagsProps ) {
 	const translate = useTranslate();
-	const [ isSticky, setIsSticky ] = useState( false );
 	const tagsTableRef = createRef< HTMLDivElement >();
-
-	useEffect( () => {
-		const handleScroll = () => {
-			if ( ! tagsTableRef.current ) {
-				return;
-			}
-			const tableATop = tagsTableRef.current.getBoundingClientRect().top;
-			setIsSticky( tableATop < 0 );
-		};
-
-		window.addEventListener( 'scroll', handleScroll );
-		return () => {
-			window.removeEventListener( 'scroll', handleScroll );
-		};
-	}, [ tagsTableRef, setIsSticky ] );
 
 	if ( ! alphabeticTags ) {
 		return null;
@@ -124,7 +108,7 @@ export default function AlphabeticTags( { alphabeticTags }: AlphabeticTagsProps 
 	return (
 		<>
 			<div className="sticky-container">
-				<StickyPanel className={ isSticky ? 'sticky-panel-fixed' : 'sticky-panel-absolute' }>
+				<StickyPanel minLimit={ 0 }>
 					<div className="alphabetic-tags__header">
 						<h2>{ translate( 'Tags from A — Z' ) }</h2>
 						<div className="alphabetic-tags__tag-links">
