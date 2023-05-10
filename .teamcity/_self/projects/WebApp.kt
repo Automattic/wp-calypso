@@ -313,7 +313,7 @@ object BuildDockerImage : BuildType({
 				}
 			}
 			branchFilter = """
-				+:*
+				+:trunk
 			""".trimIndent()
 			buildFailedToStart = true
 			buildFailed = true
