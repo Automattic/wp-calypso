@@ -52,10 +52,10 @@ export default function LicenseDetailsActions( {
 		<div className="license-details__actions">
 			{ licenseState === LicenseState.Attached && siteUrl && (
 				<>
-					<Button external compact href={ siteUrl }>
+					<Button compact href={ siteUrl } target="_blank" rel="noopener noreferrer">
 						{ translate( 'View site' ) }
 					</Button>
-					<Button external compact href={ debugUrl }>
+					<Button compact href={ debugUrl } target="_blank" rel="noopener noreferrer">
 						{ translate( 'Debug site' ) }
 					</Button>
 				</>
