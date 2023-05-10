@@ -212,6 +212,17 @@ export default function UplotChart( {
 				cursor: {
 					x: false,
 					y: false,
+					points: {
+						size: ( u, seriesIdx ) => ( u.series[ seriesIdx ].points?.size || 1 ) * 2,
+						width: ( u, seriesIdx, size ) => size / 4,
+						stroke: ( u, seriesIdx ) => {
+							const stroke = u.series[ seriesIdx ]?.points?.stroke;
+							return typeof stroke === 'function'
+								? ( stroke( u, seriesIdx ) as CanvasRenderingContext2D[ 'strokeStyle' ] )
+								: ( stroke as CanvasRenderingContext2D[ 'strokeStyle' ] );
+						},
+						fill: () => '#fff',
+					},
 				},
 				series: [
 					{
