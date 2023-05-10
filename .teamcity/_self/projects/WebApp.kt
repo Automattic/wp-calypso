@@ -309,6 +309,7 @@ object BuildDockerImage : BuildType({
 				messageFormat = verboseMessageFormat {
 					addChanges = true
 					addStatusText = true
+					addBranch = true
 				}
 			}
 			branchFilter = """
