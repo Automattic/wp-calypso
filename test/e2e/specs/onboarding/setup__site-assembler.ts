@@ -8,13 +8,18 @@ import {
 	TestAccount,
 	SiteAssemblerFlow,
 } from '@automattic/calypso-e2e';
-import { Browser, FrameLocator, Page } from 'playwright';
+import { Browser, Page } from 'playwright';
 
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Site Assembler' ), () => {
 	const credentials = SecretsManager.secrets.testAccounts.defaultUser;
 	const siteSlug = credentials.testSites?.primary?.url as string;
+	const selectors = {
+		patternLargePreviewIframe: '.pattern-large-preview iframe',
+		wpSiteBlocksHeader: '.wp-site-blocks > [data-type="header"]',
+		wpSiteBlocksFooter: '.wp-site-blocks > [data-type="footer"]',
+	};
 
 	let page: Page;
 
@@ -26,16 +31,7 @@ describe( DataHelper.createSuiteTitle( 'Site Assembler' ), () => {
 	} );
 
 	describe( 'Create a site with the Site Assembler', function () {
-		let assembledPreviewFrameLocator: FrameLocator;
 		let startSiteFlow: SiteAssemblerFlow;
-
-		const getLargePreviewFrameLocator = () => {
-			if ( ! assembledPreviewFrameLocator ) {
-				assembledPreviewFrameLocator = page.frameLocator( '.pattern-large-preview iframe' );
-			}
-
-			return assembledPreviewFrameLocator;
-		};
 
 		beforeAll( async function () {
 			startSiteFlow = new SiteAssemblerFlow( page );
@@ -67,8 +63,9 @@ describe( DataHelper.createSuiteTitle( 'Site Assembler' ), () => {
 			await startSiteFlow.selectLayoutComponent( 1 );
 
 			expect(
-				await getLargePreviewFrameLocator()
-					.locator( '.wp-site-blocks > *[data-type="header"]' )
+				await page
+					.frameLocator( selectors.patternLargePreviewIframe )
+					.locator( selectors.wpSiteBlocksHeader )
 					.count()
 			).toBe( 1 );
 
@@ -80,8 +77,9 @@ describe( DataHelper.createSuiteTitle( 'Site Assembler' ), () => {
 			await startSiteFlow.selectLayoutComponent( 1 );
 
 			expect(
-				await getLargePreviewFrameLocator()
-					.locator( '.wp-site-blocks > *[data-type="footer"]' )
+				await page
+					.frameLocator( selectors.patternLargePreviewIframe )
+					.locator( selectors.wpSiteBlocksFooter )
 					.count()
 			).toBe( 1 );
 
