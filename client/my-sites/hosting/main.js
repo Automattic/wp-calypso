@@ -7,7 +7,7 @@ import {
 } from '@automattic/calypso-products';
 import { englishLocales } from '@automattic/i18n-utils';
 import i18n, { localize } from 'i18n-calypso';
-import { Component, Fragment } from 'react';
+import { Component, Fragment, useMemo } from 'react';
 import wrapWithClickOutside from 'react-click-outside';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -54,6 +54,125 @@ import WebServerSettingsCard from './web-server-settings-card';
 import './style.scss';
 
 const HEADING_OFFSET = 30;
+
+const CardsByEnabledFeatures = ( { availableTypes, cards } ) => {
+	const enabledCards = cards.filter(
+		( card ) => ! card.type || availableTypes.includes( card.type )
+	);
+	const disabledCards = cards.filter(
+		( card ) => card.type && ! availableTypes.includes( card.type )
+	);
+
+	return (
+		<>
+			{ enabledCards.map( ( card ) => {
+				return <Fragment key={ card.feature }>{ card.content }</Fragment>;
+			} ) }
+			<FeatureExample>
+				{ disabledCards.map( ( card ) => {
+					return <Fragment key={ card.feature }>{ card.content }</Fragment>;
+				} ) }
+			</FeatureExample>
+		</>
+	);
+};
+
+const MainCards = ( {
+	hasStagingSitesFeature,
+	isAdvancedHostingDisabled,
+	isBasicHostingDisabled,
+	isGithubIntegrationEnabled,
+	isWpcomStagingSite,
+	siteId,
+} ) => {
+	const mainCards = useMemo( () => {
+		return [
+			{
+				feature: 'sftp',
+				content: <SFTPCard disabled={ isAdvancedHostingDisabled } />,
+				type: 'advanced',
+			},
+			{
+				feature: 'phpmyadmin',
+				content: <PhpMyAdminCard disabled={ isAdvancedHostingDisabled } />,
+				type: 'advanced',
+			},
+			! isWpcomStagingSite && hasStagingSitesFeature
+				? {
+						feature: 'staging-site',
+						content: <StagingSiteCard disabled={ isAdvancedHostingDisabled } />,
+						type: 'advanced',
+				  }
+				: null,
+			isWpcomStagingSite && siteId
+				? {
+						feature: 'staging-production-site',
+						content: (
+							<StagingSiteProductionCard siteId={ siteId } disabled={ isAdvancedHostingDisabled } />
+						),
+						type: 'advanced',
+				  }
+				: null,
+			isGithubIntegrationEnabled
+				? {
+						feature: 'github',
+						content: <GitHubCard />,
+						type: 'advanced',
+				  }
+				: null,
+			{
+				feature: 'web-server-settings',
+				content: <WebServerSettingsCard disabled={ isAdvancedHostingDisabled } />,
+				type: 'advanced',
+			},
+			{
+				feature: 'restore-plan-software',
+				content: <RestorePlanSoftwareCard disabled={ isBasicHostingDisabled } />,
+				type: 'basic',
+			},
+			{
+				feature: 'cache',
+				content: <CacheCard disabled={ isBasicHostingDisabled } />,
+				type: 'basic',
+			},
+		].filter( ( card ) => card !== null );
+	}, [
+		hasStagingSitesFeature,
+		isAdvancedHostingDisabled,
+		isBasicHostingDisabled,
+		isGithubIntegrationEnabled,
+		isWpcomStagingSite,
+		siteId,
+	] );
+
+	const availableTypes = [
+		! isAdvancedHostingDisabled ? 'advanced' : null,
+		! isBasicHostingDisabled ? 'basic' : null,
+	].filter( ( type ) => type !== null );
+
+	return <CardsByEnabledFeatures cards={ mainCards } availableTypes={ availableTypes } />;
+};
+
+const SidebarCards = ( { isBasicHostingDisabled } ) => {
+	const sidebarCards = useMemo( () => {
+		return [
+			{
+				feature: 'site-backup',
+				content: <SiteBackupCard disabled={ isBasicHostingDisabled } />,
+				type: 'basic',
+			},
+			{
+				feature: 'support',
+				content: <SupportCard />,
+			},
+		];
+	}, [ isBasicHostingDisabled ] );
+
+	const availableTypes = isBasicHostingDisabled ? [] : [ 'basic' ];
+
+	return <CardsByEnabledFeatures cards={ sidebarCards } availableTypes={ availableTypes } />;
+};
+
 class Hosting extends Component {
 	state = {
 		clickOutside: false,
@@ -182,13 +301,7 @@ class Hosting extends Component {
 
 		const getContent = () => {
 			const isGithubIntegrationEnabled =
-				isEnabled( 'github-integration-i1' ) &&
-				isAutomatticTeamMember( teams ) &&
-				! isAdvancedHostingDisabled;
-			const shouldUseWrapperForAllFeatures = isBasicHostingDisabled || isTransferring;
-			const WrapperComponent = shouldUseWrapperForAllFeatures ? FeatureExample : Fragment;
-			const AdvancedFeatureWrapper =
-				isAdvancedHostingDisabled && ! shouldUseWrapperForAllFeatures ? FeatureExample : Fragment;
+				isEnabled( 'github-integration-i1' ) && isAutomatticTeamMember( teams );
 
 			return (
 				<>
@@ -198,45 +311,21 @@ class Hosting extends Component {
 							<QueryKeyringConnections />
 						</>
 					) }
-					<WrapperComponent>
-						<Layout className="hosting__layout">
-							<Column type="main" className="hosting__main-layout-col">
-								<AdvancedFeatureWrapper>
-									<SFTPCard disabled={ isAdvancedHostingDisabled } />
-								</AdvancedFeatureWrapper>
-								<AdvancedFeatureWrapper>
-									<PhpMyAdminCard disabled={ isAdvancedHostingDisabled } />
-								</AdvancedFeatureWrapper>
-								{ ! isWpcomStagingSite && hasStagingSitesFeature && (
-									<AdvancedFeatureWrapper>
-										<StagingSiteCard disabled={ isAdvancedHostingDisabled } />
-									</AdvancedFeatureWrapper>
-								) }
-								{ isWpcomStagingSite && siteId && (
-									<AdvancedFeatureWrapper>
-										<StagingSiteProductionCard
-											siteId={ siteId }
-											disabled={ isAdvancedHostingDisabled }
-										/>
-									</AdvancedFeatureWrapper>
-								) }
-								{ isGithubIntegrationEnabled && (
-									<AdvancedFeatureWrapper>
-										<GitHubCard />
-									</AdvancedFeatureWrapper>
-								) }
-								<AdvancedFeatureWrapper>
-									<WebServerSettingsCard disabled={ isAdvancedHostingDisabled } />
-								</AdvancedFeatureWrapper>
-								<RestorePlanSoftwareCard disabled={ isBasicHostingDisabled } />
-								<CacheCard disabled={ isBasicHostingDisabled } />
-							</Column>
-							<Column type="sidebar">
-								<SiteBackupCard disabled={ isAdvancedHostingDisabled } />
-								<SupportCard />
-							</Column>
-						</Layout>
-					</WrapperComponent>
+					<Layout className="hosting__layout">
+						<Column type="main" className="hosting__main-layout-col">
+							<MainCards
+								hasStagingSitesFeature={ hasStagingSitesFeature }
+								isAdvancedHostingDisabled={ isAdvancedHostingDisabled }
+								isBasicHostingDisabled={ isBasicHostingDisabled }
+								isGithubIntegrationEnabled={ isGithubIntegrationEnabled }
+								isWpcomStagingSite={ isWpcomStagingSite }
+								siteId={ siteId }
+							/>
+						</Column>
+						<Column type="sidebar">
+							<SidebarCards isBasicHostingDisabled={ isBasicHostingDisabled } />
+						</Column>
+					</Layout>
 				</>
 			);
 		};
