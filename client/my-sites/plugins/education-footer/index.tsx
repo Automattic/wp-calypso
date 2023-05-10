@@ -76,6 +76,15 @@ const MarketplaceContainer = styled.div< { isloggedIn: boolean } >`
 	}
 `;
 
+const CardText = styled.span< { color: string } >`
+	color: ${ ( { color } ) => color };
+	font-family: 'SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto',
+		'Oxygen-Sans', 'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
+	font-weight: 400;
+	font-size: 14px;
+	line-height: 20px;
+`;
+
 export const MarketplaceFooter = () => {
 	const { __ } = useI18n();
 	const isLoggedIn = useSelector( isUserLoggedIn );
@@ -147,7 +156,11 @@ const EducationFooter = () => {
 					<LinkCard
 						external
 						target="_blank"
-						title={ __( 'What Are WordPress Plugins and Themes? (A Beginner’s Guide)' ) }
+						title={
+							<CardText color="var(--studio-gray-100)">
+								{ __( 'What Are WordPress Plugins and Themes? (A Beginner’s Guide)' ) }
+							</CardText>
+						}
 						cta={ <ReadMoreLink /> }
 						url={ localizeUrl(
 							'https://wordpress.com/go/website-building/what-are-wordpress-plugins-and-themes-a-beginners-guide/'
@@ -158,7 +171,11 @@ const EducationFooter = () => {
 					<LinkCard
 						external
 						target="_blank"
-						title={ __( 'How to Choose WordPress Plugins for Your Website (7 Tips)' ) }
+						title={
+							<CardText color="var(--studio-gray-100)">
+								{ __( 'How to Choose WordPress Plugins for Your Website (7 Tips)' ) }
+							</CardText>
+						}
 						cta={ <ReadMoreLink /> }
 						url={ localizeUrl(
 							'https://wordpress.com/go/customization/how-to-choose-wordpress-plugins-for-your-website-7-tips/'
@@ -169,7 +186,11 @@ const EducationFooter = () => {
 					<LinkCard
 						external
 						target="_blank"
-						title={ __( '17 Must-Have WordPress Plugins (Useful For All Sites)' ) }
+						title={
+							<CardText color="var(--studio-gray-100)">
+								{ __( '17 Must-Have WordPress Plugins (Useful For All Sites)' ) }
+							</CardText>
+						}
 						cta={ <ReadMoreLink /> }
 						url={ localizeUrl(
 							'https://wordpress.com/go/website-building/17-must-have-wordpress-plugins-useful-for-all-sites/'
@@ -188,10 +209,10 @@ function ReadMoreLink() {
 	const { __ } = useI18n();
 
 	return (
-		<>
+		<CardText color="var(--studio-blue-50)">
 			{ __( 'Read More' ) }
 			<Gridicon icon="external" size={ 12 } />
-		</>
+		</CardText>
 	);
 }
 
