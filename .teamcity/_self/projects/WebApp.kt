@@ -309,7 +309,7 @@ object BuildDockerImage : BuildType({
 				messageFormat = simpleMessageFormat()
 			}
 			branchFilter = """
-				+:trunk
+				+:*
 			""".trimIndent()
 			buildFailedToStart = true
 			buildFailed = true
