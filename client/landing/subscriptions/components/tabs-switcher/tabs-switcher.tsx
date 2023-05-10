@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { SubscriptionManager } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
@@ -20,9 +19,6 @@ const TabsSwitcher = () => {
 	const { pathname } = useLocation();
 	const { data: counts } = SubscriptionManager.useSubscriptionsCountQuery();
 	const locale = useLocale();
-	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
-	const shouldEnableCommentsTab =
-		config.isEnabled( 'subscription-management-comments-view' ) && locale === 'en' && ! isLoggedIn;
 
 	const getFullPath = ( subpath: string ) =>
 		`/subscriptions/${ subpath }${ locale !== 'en' ? '/' + locale : '' }`;
@@ -46,13 +42,7 @@ const TabsSwitcher = () => {
 					</NavItem>
 
 					<NavItem
-						onClick={ () => {
-							shouldEnableCommentsTab
-								? navigate( commentsPath )
-								: window.location.replace(
-										`https://wordpress.com/email-subscriptions/?option=comments&locale=${ locale }`
-								  );
-						} }
+						onClick={ () => navigate( commentsPath ) }
 						count={ counts?.comments || undefined }
 						selected={ pathname.startsWith( commentsPath ) }
 					>

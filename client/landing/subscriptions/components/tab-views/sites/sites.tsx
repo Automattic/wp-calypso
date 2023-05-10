@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import { SubscriptionManager } from '@automattic/data-stores';
-import { useLocale } from '@automattic/i18n-utils';
 import SearchInput from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
@@ -34,9 +33,7 @@ const Sites = () => {
 	const sortOptions = useSortOptions( translate );
 	// todo: translate when we have agreed on the error message
 	const errorMessage = error ? 'An error occurred while fetching your subscriptions.' : '';
-	const locale = useLocale();
-	const isListControlsEnabled =
-		config.isEnabled( 'subscription-management/sites-list-controls' ) && locale === 'en';
+	const isListControlsEnabled = config.isEnabled( 'subscription-management/sites-list-controls' );
 
 	if ( ! isLoading && ! totalCount ) {
 		return <Notice type="warning">{ translate( 'You are not subscribed to any sites.' ) }</Notice>;

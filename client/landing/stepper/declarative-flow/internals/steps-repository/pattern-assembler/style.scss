@@ -212,20 +212,15 @@ $font-family: "SF Pro Text", $sans;
 			position: relative;
 			margin-bottom: 32px;
 			padding: 2px;
-			overflow-y: scroll;
-			scrollbar-width: none;
 
 			&:last-child {
 				margin-bottom: 0;
-			}
-
-			&::-webkit-scrollbar {
-				display: none;
 			}
 		}
 
 		.pattern-selector__block-list {
 			button {
+				box-shadow: 0 15px 25px rgba(0, 0, 0, 0.07);
 				display: block;
 				border: 1px solid rgba(0, 0, 0, 5%);
 				border-radius: 4px;
@@ -240,7 +235,9 @@ $font-family: "SF Pro Text", $sans;
 				}
 
 				&.pattern-selector__block-list--selected-pattern {
-					box-shadow: 0 0 0 2px var(--studio-gray);
+					box-shadow:
+						0 15px 25px rgba(0, 0, 0, 0.07),
+						0 0 0 2px var(--studio-gray);
 				}
 
 				&:focus,
