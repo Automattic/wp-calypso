@@ -7,7 +7,7 @@ const START_WRITING_FLOW = 'start-writing';
 export function RedirectOnboardingUserAfterPublishingPost() {
 	const { siteIntent: intent } = useSiteIntent();
 
-	if ( intent !== 'write' ) {
+	if ( intent !== START_WRITING_FLOW ) {
 		return false;
 	}
 
