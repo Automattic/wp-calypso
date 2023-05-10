@@ -622,9 +622,21 @@ export class PlansFeaturesMain extends Component {
 		 * we pass `visiblePlans` to its `plans` prop.
 		 */
 		const term = this.getPlanBillingPeriod( intervalType, getPlan( selectedPlan )?.term );
-		const planTypes = this.props.planTypes || this.getDefaultPlanTypes();
-		const plans = this.getPlansFromTypes( planTypes, GROUP_WPCOM, term );
-		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
+		const defaultPlanTypes = this.getDefaultPlanTypes();
+		const planTypes = this.props.planTypes || defaultPlanTypes;
+		let plans = this.getPlansFromTypes( planTypes, GROUP_WPCOM, term );
+		const filteredPlans = plans;
+
+		/*
+		 * We need to keep all the plans in the plans variable,
+		 * The filtered planTypes should be reflected in visible plans only.
+		 */
+		if ( is2023PricingGridVisible ) {
+			plans = this.getPlansFromTypes( defaultPlanTypes, GROUP_WPCOM, term );
+		}
+
+		const visiblePlans = this.getVisiblePlansForPlanFeatures( filteredPlans );
+
 		const kindOfPlanTypeSelector = this.getKindOfPlanTypeSelector( this.props );
 
 		// If advertising plans for a certain feature, ensure user has pressed "View all plans" before they can see others
