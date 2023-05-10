@@ -12,7 +12,7 @@ type Props = FacebookPreviewProps & {
 	compactDescription?: boolean;
 };
 
-const FacebookLinkPreview: React.FC< Props > = ( {
+export const FacebookLinkPreview: React.FC< Props > = ( {
 	url,
 	title,
 	description,
@@ -74,5 +74,3 @@ const FacebookLinkPreview: React.FC< Props > = ( {
 		</div>
 	);
 };
-
-export default FacebookLinkPreview;

@@ -1,17 +1,16 @@
 import { ExternalLink } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import SectionHeading from '../shared/section-heading';
-import FacebookDefaultLinkPreview from './default-link-preview';
-import FacebookDefaultPostPreview from './default-post-preview';
-import FacebookLinkPreview from './link-preview';
-import FacebookPostPreview from './post-preview';
+import { FacebookLinkPreview } from './link-preview';
+import { LinkPreviewDetails } from './link-preview-details';
+import { FacebookPostPreview } from './post-preview';
 import type { FacebookPreviewProps } from './types';
 
 import './style.scss';
 
-const FacebookFullPreview: React.FC< FacebookPreviewProps > = ( props ) => {
+export const FacebookFullPreview: React.FC< FacebookPreviewProps > = ( props ) => {
 	const { customImage } = props;
-	const isPostPreview = !! customImage;
+	const hasCustomImage = !! customImage;
 
 	return (
 		<div className="social-preview facebook-preview">
@@ -25,7 +24,7 @@ const FacebookFullPreview: React.FC< FacebookPreviewProps > = ( props ) => {
 				<p className="social-preview__section-desc">
 					{ __( 'This is what your social post will look like on Facebook:', 'social-previews' ) }
 				</p>
-				{ isPostPreview ? (
+				{ hasCustomImage ? (
 					<FacebookPostPreview { ...props } />
 				) : (
 					<FacebookLinkPreview { ...props } />
@@ -48,14 +47,12 @@ const FacebookFullPreview: React.FC< FacebookPreviewProps > = ( props ) => {
 						{ __( 'Learn more about links', 'social-previews' ) }
 					</ExternalLink>
 				</p>
-				{ isPostPreview ? (
-					<FacebookDefaultPostPreview { ...props } />
+				{ hasCustomImage ? (
+					<LinkPreviewDetails { ...props } />
 				) : (
-					<FacebookDefaultLinkPreview { ...props } />
+					<FacebookLinkPreview { ...props } compactDescription customText="" user={ undefined } />
 				) }
 			</section>
 		</div>
 	);
 };
-
-export default FacebookFullPreview;
