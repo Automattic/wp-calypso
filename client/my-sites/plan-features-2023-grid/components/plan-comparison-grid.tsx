@@ -24,9 +24,9 @@ import JetpackLogo from 'calypso/components/jetpack-logo';
 import { FeatureObject, getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import TermExperimentPlanTypeSelector from 'calypso/my-sites/plans-features-main/components/term-experiment-plan-type-selector';
-import useIsLargeCurrency from '../../plans/hooks/use-is-large-currency';
 import useHighlightAdjacencyMatrix from '../hooks/use-highlight-adjacency-matrix';
 import useHighlightLabel from '../hooks/use-highlight-label';
+import useIsLargeCurrency from '../hooks/use-is-large-currency';
 import { sortPlans } from '../lib/sort-plan-properties';
 import { plansBreakSmall } from '../media-queries';
 import { PlanProperties } from '../types';
@@ -293,6 +293,7 @@ type PlanComparisonGridProps = {
 	canUserPurchasePlan: boolean;
 	selectedSiteSlug: string | null;
 	onUpgradeClick: ( properties: PlanProperties ) => void;
+	siteId?: number | null;
 };
 
 type PlanComparisonGridHeaderProps = {
@@ -308,6 +309,7 @@ type PlanComparisonGridHeaderProps = {
 	canUserPurchasePlan: boolean;
 	selectedSiteSlug: string | null;
 	onUpgradeClick: ( properties: PlanProperties ) => void;
+	siteId?: number | null;
 };
 
 type RestructuredFeatures = {
@@ -454,12 +456,14 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 	canUserPurchasePlan,
 	selectedSiteSlug,
 	onUpgradeClick,
+	siteId,
 } ) => {
 	const allVisible = visiblePlansProperties.length === displayedPlansProperties.length;
 
-	const isLargeCurrency = useIsLargeCurrency(
-		displayedPlansProperties.map( ( properties ) => properties.planName as PlanSlug )
-	);
+	const isLargeCurrency = useIsLargeCurrency( {
+		planSlugs: displayedPlansProperties.map( ( properties ) => properties.planName as PlanSlug ),
+		siteId,
+	} );
 
 	return (
 		<PlanRow>
@@ -670,6 +674,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 	canUserPurchasePlan,
 	selectedSiteSlug,
 	onUpgradeClick,
+	siteId,
 } ) => {
 	const translate = useTranslate();
 	// Check to see if we have at least one Woo Express plan we're comparing.
@@ -888,6 +893,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 					canUserPurchasePlan={ canUserPurchasePlan }
 					selectedSiteSlug={ selectedSiteSlug }
 					onUpgradeClick={ onUpgradeClick }
+					siteId={ siteId }
 				/>
 				{ Object.values( featureGroupMap ).map( ( featureGroup: FeatureGroup ) => {
 					const features = featureGroup.get2023PricingGridSignupWpcomFeatures();
@@ -948,6 +954,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 					canUserPurchasePlan={ canUserPurchasePlan }
 					selectedSiteSlug={ selectedSiteSlug }
 					onUpgradeClick={ onUpgradeClick }
+					siteId={ siteId }
 				/>
 			</Grid>
 

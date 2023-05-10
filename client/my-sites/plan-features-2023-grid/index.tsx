@@ -65,7 +65,6 @@ import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selecto
 import isPlanAvailableForPurchase from 'calypso/state/sites/plans/selectors/is-plan-available-for-purchase';
 import { getSiteSlug, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 import CalypsoShoppingCartProvider from '../checkout/calypso-shopping-cart-provider';
-import useIsLargeCurrency from '../plans/hooks/use-is-large-currency';
 import { getManagePurchaseUrlFor } from '../purchases/paths';
 import PlanFeatures2023GridActions from './components/actions';
 import PlanFeatures2023GridBillingTimeframe from './components/billing-timeframe';
@@ -77,6 +76,7 @@ import { Plans2023Tooltip } from './components/plans-2023-tooltip';
 import PopularBadge from './components/popular-badge';
 import useHighlightAdjacencyMatrix from './hooks/use-highlight-adjacency-matrix';
 import useHighlightLabel from './hooks/use-highlight-label';
+import useIsLargeCurrency from './hooks/use-is-large-currency';
 import { PlanProperties, TransformedFeatureObject } from './types';
 import { getStorageStringFromFeature } from './util';
 import type { IAppState } from 'calypso/state/types';
@@ -109,7 +109,7 @@ type PlanFeatures2023GridProps = {
 	isReskinned: boolean;
 	onUpgradeClick: ( cartItem: MinimalRequestCartProduct | null ) => void;
 	// either you specify the plans prop or isPlaceholder prop
-	plans: Array< string >;
+	plans: PlanSlug[];
 	visiblePlans: Array< string >;
 	flowName: string;
 	domainName: string;
@@ -295,6 +295,7 @@ export class PlanFeatures2023Grid extends Component<
 			translate,
 			selectedSiteSlug,
 			hidePlansFeatureComparison,
+			siteId,
 		} = this.props;
 		return (
 			<div className="plans-wrapper">
@@ -340,6 +341,7 @@ export class PlanFeatures2023Grid extends Component<
 							canUserPurchasePlan={ canUserPurchasePlan }
 							selectedSiteSlug={ selectedSiteSlug }
 							onUpgradeClick={ this.handleUpgradeClick }
+							siteId={ siteId }
 						/>
 						<div className="plan-features-2023-grid__toggle-plan-comparison-button-container">
 							<Button onClick={ this.toggleShowPlansComparisonGrid }>
@@ -869,9 +871,10 @@ export class PlanFeatures2023Grid extends Component<
 
 const withIsLargeCurrency = ( Component: LocalizedComponent< typeof PlanFeatures2023Grid > ) => {
 	return function ( props: PlanFeatures2023GridType ) {
-		const isLargeCurrency = useIsLargeCurrency(
-			( props.planProperties || [] ).map( ( properties ) => properties.planName as PlanSlug )
-		);
+		const isLargeCurrency = useIsLargeCurrency( {
+			planSlugs: props.plans,
+			siteId: props.siteId,
+		} );
 		return <Component { ...props } isLargeCurrency={ isLargeCurrency } />;
 	};
 };
