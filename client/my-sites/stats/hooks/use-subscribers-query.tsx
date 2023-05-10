@@ -1,8 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
-// Here I'm assuming `siteId` is a number, and `period` and `date` are strings.
-// `quantity` is also assumed to be a number. Adjust these types if that's not the case.
 export function querySubscribers(
 	siteId: number,
 	period: string,
@@ -29,8 +27,6 @@ export function querySubscribers(
 	);
 }
 
-// Here I'm assuming `payload` has a `date` and `unit` that are strings, and `data` and `fields` that are arrays.
-// Adjust these types if that's not the case.
 export function selectSubscribers( payload: {
 	date: string;
 	unit: string;
