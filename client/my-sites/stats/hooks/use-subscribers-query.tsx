@@ -6,6 +6,7 @@ export function querySubscribers(
 	period: string,
 	quantity: number,
 	date?: string
+	// todo: add type
 ): Promise< any > {
 	const query: { unit: string; quantity: number; http_envelope: number; date?: string } = {
 		unit: period,
@@ -30,6 +31,7 @@ export function querySubscribers(
 export function selectSubscribers( payload: {
 	date: string;
 	unit: string;
+	// todo: add type
 	data: any[];
 	fields: string[];
 } ) {
