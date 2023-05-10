@@ -2,7 +2,7 @@ import { action } from '@storybook/addon-actions';
 import Button from '.';
 import './stories.scss';
 
-export default { title: 'Button' };
+export default { title: 'packages/components/Button' };
 
 const helloWorld = `Hello World!`;
 const handleClick = action( 'click' );
