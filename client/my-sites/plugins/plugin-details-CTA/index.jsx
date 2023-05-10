@@ -176,7 +176,6 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 	if ( selectedSite && isPreinstalledPremiumPlugin ) {
 		return (
 			<div className="plugin-details-cta__container">
-				<QuerySitePurchases siteId={ selectedSite?.ID } />
 				<PluginDetailsCTAPreinstalledPremiumPlugins
 					isPluginInstalledOnsite={ isPluginInstalledOnsiteWithSubscription }
 					plugin={ plugin }

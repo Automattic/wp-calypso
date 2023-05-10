@@ -2,25 +2,50 @@ import { ShortenedNumber } from '@automattic/components';
 import { protect, akismet } from '@automattic/components/src/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useState, FunctionComponent } from 'react';
 import wpcom from 'calypso/lib/wp';
 import useModuleDataQuery from '../hooks/use-module-data-query';
 import canCurrentUser from '../lib/can-current-user';
 
 import './modules.scss';
 
-function ModuleCard( {
+interface ModuleCardProps {
+	icon: JSX.Element;
+	title: string;
+	value: number;
+	error: string;
+	activateProduct: () => Promise< void >;
+	isLoading: boolean;
+	isError: boolean;
+	canManageModule: boolean;
+	className?: string;
+	manageUrl?: string;
+}
+
+interface ProtectModuleProps {
+	siteId: number;
+}
+
+interface ModulesProps extends ProtectModuleProps {
+	odysseyStatsBaseUrl: string;
+}
+
+interface AkismetModuleProps extends ProtectModuleProps {
+	manageUrl: string;
+}
+
+const ModuleCard: FunctionComponent< ModuleCardProps > = ( {
 	icon,
 	title,
 	value,
 	error,
 	activateProduct,
-	isLoading = true,
-	isError = false,
-	canManageModule = false,
+	manageUrl,
+	canManageModule,
+	isLoading,
+	isError,
 	className = null,
-	manageUrl = null,
-} ) {
+} ) => {
 	const translate = useTranslate();
 	const [ disabled, setDisabled ] = useState( false );
 	const onActivateProduct = () => {
@@ -76,9 +101,9 @@ function ModuleCard( {
 			) }
 		</div>
 	);
-}
+};
 
-function AkismetModule( { siteId, manageUrl } ) {
+const AkismetModule: FunctionComponent< AkismetModuleProps > = ( { siteId, manageUrl } ) => {
 	const translate = useTranslate();
 
 	const {
@@ -90,7 +115,7 @@ function AkismetModule( { siteId, manageUrl } ) {
 	} = useModuleDataQuery( 'akismet' );
 
 	// The function installs Akismet plugin if not exists.
-	const activateProduct = ( productSlug ) => () => {
+	const activateProduct = ( productSlug: string ) => () => {
 		return wpcom.req
 			.post( {
 				apiNamespace: 'my-jetpack/v1',
@@ -103,18 +128,18 @@ function AkismetModule( { siteId, manageUrl } ) {
 		<ModuleCard
 			icon={ akismet }
 			title={ translate( 'Total blocked spam comments' ) }
-			value={ akismetData }
+			value={ akismetData as number }
 			isError={ isAkismetError }
-			error={ akismetError?.message }
+			error={ akismetError instanceof Error ? akismetError.message : '' }
 			isLoading={ isAkismetLoading }
 			canManageModule={ canCurrentUser( siteId, 'manage_options' ) }
 			activateProduct={ activateProduct( 'anti-spam' ) }
 			manageUrl={ manageUrl }
 		/>
 	);
-}
+};
 
-function ProtectModule( { siteId } ) {
+const ProtectModule: FunctionComponent< ProtectModuleProps > = ( { siteId } ) => {
 	const translate = useTranslate();
 
 	const {
@@ -125,7 +150,7 @@ function ProtectModule( { siteId } ) {
 		error: protectError,
 	} = useModuleDataQuery( 'protect' );
 
-	const activateModule = ( module ) => () => {
+	const activateModule = ( module: string ) => () => {
 		return wpcom.req
 			.post(
 				{
@@ -143,17 +168,17 @@ function ProtectModule( { siteId } ) {
 		<ModuleCard
 			icon={ protect }
 			title={ translate( 'Total blocked login attempts' ) }
-			value={ protectData }
+			value={ protectData as number }
 			isError={ isProtectError }
-			error={ protectError?.message }
+			error={ protectError instanceof Error ? protectError.message : '' }
 			isLoading={ isProtectLoading }
 			canManageModule={ canCurrentUser( siteId, 'manage_options' ) }
 			activateProduct={ activateModule( 'protect' ) }
 		/>
 	);
-}
+};
 
-export default function Modules( { siteId, odysseyStatsBaseUrl } ) {
+export default function Modules( { siteId, odysseyStatsBaseUrl }: ModulesProps ) {
 	return (
 		<div className="stats-widget-modules">
 			<ProtectModule siteId={ siteId } />
