@@ -65,53 +65,51 @@ export default function LicenseProductCard( props: Props ) {
 	const { description: productDescription } = useProductDescription( product.slug );
 
 	return (
-		<>
-			<div
-				onClick={ onSelect }
-				onKeyDown={ onKeyDown }
-				role={ isMultiSelect ? 'checkbox' : 'radio' }
-				tabIndex={ tabIndex }
-				aria-checked={ isSelected }
-				aria-disabled={ isDisabled }
-				className={ classNames( {
-					'license-product-card': true,
-					selected: isSelected,
-					disabled: isDisabled,
-				} ) }
-			>
-				<div className="license-product-card__inner">
-					<div className="license-product-card__details">
-						<div className="license-product-card__main">
-							<div className="license-product-card__heading">
-								<h3 className="license-product-card__title">{ productTitle }</h3>
+		<div
+			onClick={ onSelect }
+			onKeyDown={ onKeyDown }
+			role={ isMultiSelect ? 'checkbox' : 'radio' }
+			tabIndex={ tabIndex }
+			aria-checked={ isSelected }
+			aria-disabled={ isDisabled }
+			className={ classNames( {
+				'license-product-card': true,
+				selected: isSelected,
+				disabled: isDisabled,
+			} ) }
+		>
+			<div className="license-product-card__inner">
+				<div className="license-product-card__details">
+					<div className="license-product-card__main">
+						<div className="license-product-card__heading">
+							<h3 className="license-product-card__title">{ productTitle }</h3>
 
-								<div className="license-product-card__description">{ productDescription }</div>
+							<div className="license-product-card__description">{ productDescription }</div>
 
-								<LicenseLightboxLink product={ product } />
-							</div>
-
-							<div
-								className={ classNames( 'license-product-card__select-button', {
-									'license-product-card_multi-select': isMultiSelect,
-								} ) }
-							>
-								{ isSelected && <Gridicon icon="checkmark" /> }
-							</div>
+							<LicenseLightboxLink product={ product } />
 						</div>
 
-						<div className="license-product-card__pricing">
-							<div className="license-product-card__price">
-								{ formatCurrency( product.amount, product.currency ) }
-							</div>
-							<div className="license-product-card__price-interval">
-								{ product.price_interval === 'day' && translate( '/USD per license per day' ) }
-								{ product.price_interval === 'month' && translate( '/USD per license per month' ) }
-							</div>
+						<div
+							className={ classNames( 'license-product-card__select-button', {
+								'license-product-card_multi-select': isMultiSelect,
+							} ) }
+						>
+							{ isSelected && <Gridicon icon="checkmark" /> }
+						</div>
+					</div>
+
+					<div className="license-product-card__pricing">
+						<div className="license-product-card__price">
+							{ formatCurrency( product.amount, product.currency ) }
+						</div>
+						<div className="license-product-card__price-interval">
+							{ product.price_interval === 'day' && translate( '/USD per license per day' ) }
+							{ product.price_interval === 'month' && translate( '/USD per license per month' ) }
 						</div>
 					</div>
 				</div>
 			</div>
-		</>
+		</div>
 	);
 }
 
