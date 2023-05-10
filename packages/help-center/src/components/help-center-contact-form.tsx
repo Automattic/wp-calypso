@@ -429,6 +429,21 @@ export const HelpCenterContactForm = () => {
 		}
 	};
 
+	const getHEsTraySection = () => {
+		return (
+			<section>
+				<div className="help-center-contact-form__site-picker-hes-tray">
+					{ randomTwoFaces.map( ( f ) => (
+						<img key={ f } src={ f } aria-hidden="true" alt=""></img>
+					) ) }
+					<p className="help-center-contact-form__site-picker-hes-tray-text">
+						{ formTitles.trayText }
+					</p>
+				</div>
+			</section>
+		);
+	};
+
 	const getCTALabel = () => {
 		const showingSibylOrGPTResults = showingSibylResults || showingGPTResponse;
 		if (
@@ -460,7 +475,7 @@ export const HelpCenterContactForm = () => {
 		debouncedMessage,
 		'urls'
 	);
-	const { isFetching: isFetchingResponse } = useJetpackSearchAIQuery(
+	const { isFetching: isFetchingResponse, data: gptResponse } = useJetpackSearchAIQuery(
 		'9619154',
 		links?.urls ? debouncedMessage : '',
 		'response'
@@ -491,6 +506,7 @@ export const HelpCenterContactForm = () => {
 						/>
 					) }
 				</section>
+				{ gptResponse?.response && getHEsTraySection() }
 			</div>
 		);
 	}
@@ -520,6 +536,7 @@ export const HelpCenterContactForm = () => {
 					/>
 				) }
 			</section>
+			{ [ 'CHAT', 'EMAIL' ].includes( mode ) && getHEsTraySection() }
 		</div>
 	) : (
 		<main className="help-center-contact-form">
@@ -630,18 +647,7 @@ export const HelpCenterContactForm = () => {
 					/>
 				) }
 			</section>
-			{ [ 'CHAT', 'EMAIL' ].includes( mode ) && (
-				<section>
-					<div className="help-center-contact-form__site-picker-hes-tray">
-						{ randomTwoFaces.map( ( f ) => (
-							<img key={ f } src={ f } aria-hidden="true" alt=""></img>
-						) ) }
-						<p className="help-center-contact-form__site-picker-hes-tray-text">
-							{ formTitles.trayText }
-						</p>
-					</div>
-				</section>
-			) }
+			{ [ 'CHAT', 'EMAIL' ].includes( mode ) && getHEsTraySection() }
 			<SibylArticles supportSite={ supportSite } message={ message } articleCanNavigateBack />
 		</main>
 	);
