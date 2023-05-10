@@ -211,7 +211,12 @@ export default function UplotChart( {
 					points: {
 						size: ( u, seriesIdx ) => ( u.series[ seriesIdx ].points?.size || 1 ) * 2,
 						width: ( u, seriesIdx, size ) => size / 4,
-						stroke: ( u, seriesIdx ) => u.series[ seriesIdx ]?.points?.stroke( u, seriesIdx ),
+						stroke: ( u, seriesIdx ) => {
+							const stroke = u.series[ seriesIdx ]?.points?.stroke;
+							return typeof stroke === 'function'
+								? ( stroke( u, seriesIdx ) as string | CanvasGradient | CanvasPattern )
+								: ( stroke as string | CanvasGradient | CanvasPattern );
+						},
 						fill: () => '#fff',
 					},
 				},
