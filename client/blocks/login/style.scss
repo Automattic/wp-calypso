@@ -464,3 +464,60 @@
 		}
 	}
 }
+
+.is-wpcom-migration.main {
+	--color-accent: var(--studio-blue);
+	--color-accent-light: var(--studio-blue-20);
+	--color-accent-dark: var(--studio-blue-60);
+	--color-accent-60: var(--studio-blue-60);
+	--color-primary: var(--studio-blue-40);
+	--color-primary-light: var(--studio-blue-20);
+	--color-primary-dark: var(--studio-blue-60);
+
+	max-width: 472px !important;
+	$login-border-radius: 4px;
+
+	.login {
+		.login__form {
+			border-top-left-radius: $login-border-radius;
+			border-top-right-radius: $login-border-radius;
+		}
+
+		.login__social {
+			border-bottom-left-radius: $login-border-radius;
+			border-bottom-right-radius: $login-border-radius;
+		}
+
+		.login__divider {
+			margin-top: -12px;
+		}
+
+		.login__form-header {
+			font-size: rem(44px);
+			line-height: rem(48px);
+			font-family: $brand-serif;
+		}
+
+		.login__form-terms {
+			text-align: left;
+			font-size: 0.875rem;
+			margin-bottom: 2rem;
+		}
+
+		.button.is-primary {
+			border: none !important;
+			background-color: var(--color-accent) !important;
+			box-shadow: 0 0 0 2px var(--color-accent) !important;
+
+			&:hover,
+			&:focus {
+				background-color: var(--color-accent-dark) !important;
+				box-shadow: 0 0 0 2px var(--color-accent-dark) !important;
+			}
+
+			.accessible-focus &:focus {
+				box-shadow: 0 0 0 2px var(--color-accent) !important;
+			}
+		}
+	}
+}
