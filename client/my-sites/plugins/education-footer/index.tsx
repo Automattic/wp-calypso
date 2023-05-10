@@ -146,7 +146,6 @@ const EducationFooter = () => {
 				<ThreeColumnContainer>
 					<LinkCard
 						external
-						label={ __( 'Website Building' ) }
 						title={ __( 'What Are WordPress Plugins and Themes? (A Beginner’s Guide)' ) }
 						cta={ __( 'Read More' ) }
 						url={ localizeUrl(
@@ -157,7 +156,6 @@ const EducationFooter = () => {
 					/>
 					<LinkCard
 						external
-						label={ __( 'Customization' ) }
 						title={ __( 'How to Choose WordPress Plugins for Your Website (7 Tips)' ) }
 						cta={ __( 'Read More' ) }
 						url={ localizeUrl(
@@ -168,7 +166,6 @@ const EducationFooter = () => {
 					/>
 					<LinkCard
 						external
-						label={ __( 'SEO' ) }
 						title={ __( 'Do You Need to Use SEO Plugins on Your WordPress.com Site?' ) }
 						cta={ __( 'Read More' ) }
 						url={ localizeUrl(
