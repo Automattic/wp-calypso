@@ -10,7 +10,6 @@ const useSiteIntent = () => {
 	const fetchSiteIntent = useCallback( () => {
 		apiFetch( { path: '/wpcom/v2/site-intent' } )
 			.then( ( result ) => {
-				console.log( 'result', result );
 				setSiteIntent( result.site_intent );
 				setSiteIntentFetched( true );
 			} )

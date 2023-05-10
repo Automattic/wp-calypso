@@ -5,13 +5,11 @@ import useSiteIntent from './use-site-intent';
 const START_WRITING_FLOW = 'start-writing';
 
 export function RedirectOnboardingUserAfterPublishingPost() {
-	const { intent } = useSiteIntent();
-	console.log( 'intent', intent );
+	const { siteIntent: intent } = useSiteIntent();
 
 	if ( intent !== 'write' ) {
 		return false;
 	}
-	console.log( 'we made it' );
 
 	const siteOrigin = getQueryArg( window.location.search, 'origin' );
 	const siteSlug = window.location.hostname;
