@@ -28,7 +28,6 @@ const EducationFooterContainer = styled.div`
 
 	> div:first-child {
 		padding: 0;
-		margin-bottom: 60px;
 
 		.wp-brand-font {
 			font-size: var( --scss-font-title-medium );
@@ -203,7 +202,6 @@ const EducationFooter = () => {
 					/>
 				</ThreeColumnContainer>
 			</Section>
-			<MarketplaceFooter />
 		</EducationFooterContainer>
 	);
 };
