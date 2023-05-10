@@ -7,7 +7,7 @@ type Props = {
 	children: ReactNode;
 };
 
-const LicenseProductLightboxSection: FunctionComponent< Props > = ( { title, children } ) => {
+const LicenseLightboxSection: FunctionComponent< Props > = ( { title, children } ) => {
 	const isMobileViewport = useMobileBreakpoint();
 
 	const ref = useRef< HTMLDivElement | null >( null );
@@ -19,7 +19,7 @@ const LicenseProductLightboxSection: FunctionComponent< Props > = ( { title, chi
 	}, [ setContentStyle ] );
 
 	return (
-		<div className="license-product-lightbox__section" key={ title }>
+		<div className="license-lightbox__section" key={ title }>
 			{ isMobileViewport ? (
 				<FoldableCard
 					hideSummary
@@ -32,7 +32,7 @@ const LicenseProductLightboxSection: FunctionComponent< Props > = ( { title, chi
 				</FoldableCard>
 			) : (
 				<>
-					<h3 className="license-product-lightbox__section-title">{ title }</h3>
+					<h3 className="license-lightbox__section-title">{ title }</h3>
 
 					{ children }
 				</>
@@ -41,4 +41,4 @@ const LicenseProductLightboxSection: FunctionComponent< Props > = ( { title, chi
 	);
 };
 
-export default LicenseProductLightboxSection;
+export default LicenseLightboxSection;

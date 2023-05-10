@@ -6,7 +6,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 type Props = { items?: FAQ[] };
 
-const LicenseProductLightboxFAQList: FunctionComponent< Props > = ( { items } ) => {
+const LicenseLightboxFAQList: FunctionComponent< Props > = ( { items } ) => {
 	const dispatch = useDispatch();
 
 	const onToggle = useCallback(
@@ -31,7 +31,7 @@ const LicenseProductLightboxFAQList: FunctionComponent< Props > = ( { items } ) 
 	}
 
 	return (
-		<ul className="license-product-lightbox__faq-list">
+		<ul className="license-lightbox__faq-list">
 			{ items.map( ( item ) => (
 				<li key={ item.id }>
 					<FoldableFAQ id={ item.id } question={ item.question } onToggle={ onToggle }>
@@ -43,4 +43,4 @@ const LicenseProductLightboxFAQList: FunctionComponent< Props > = ( { items } ) 
 	);
 };
 
-export default LicenseProductLightboxFAQList;
+export default LicenseLightboxFAQList;

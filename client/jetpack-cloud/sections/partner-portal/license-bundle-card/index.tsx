@@ -6,7 +6,7 @@ import { useDispatch } from 'react-redux';
 import LicenseBundleCardDescription from 'calypso/jetpack-cloud/sections/partner-portal/license-bundle-card-description';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from '../../../../state/partner-portal/types';
-import LicenseProductLightbox from '../license-product-lightbox';
+import LicenseLightbox from '../license-lightbox';
 import { getProductTitle } from '../utils';
 
 import './style.scss';
@@ -79,7 +79,7 @@ export default function LicenseBundleCard( props: Props ) {
 			</div>
 
 			{ showLightbox && (
-				<LicenseProductLightbox
+				<LicenseLightbox
 					ctaLabel={ translate( 'Select License' ) }
 					product={ product }
 					onActivate={ onSelect }

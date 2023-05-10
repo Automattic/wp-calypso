@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from '../../../../state/partner-portal/types';
 import { useProductDescription } from '../hooks';
-import LicenseProductLightbox from '../license-product-lightbox';
+import LicenseLightbox from '../license-lightbox';
 import { getProductTitle } from '../utils';
 
 import './style.scss';
@@ -144,7 +144,7 @@ export default function LicenseProductCard( props: Props ) {
 			</div>
 
 			{ showLightbox && (
-				<LicenseProductLightbox
+				<LicenseLightbox
 					ctaLabel={ isSelected ? translate( 'Unselect License' ) : translate( 'Select License' ) }
 					product={ product }
 					isCTAPrimary={ ! isSelected }

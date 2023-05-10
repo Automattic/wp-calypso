@@ -7,19 +7,17 @@ type Props = {
 	product: APIProductFamilyProduct;
 };
 
-const LicenseProductLightboxPaymentPlan: FunctionComponent< Props > = ( { product } ) => {
+const LicenseLightboxPaymentPlan: FunctionComponent< Props > = ( { product } ) => {
 	const translate = useTranslate();
 	return (
-		<div className="license-product-lightbox__payment-plan">
-			<h3 className="license-product-lightbox__payment-plan-title">
-				{ translate( 'Payment plan:' ) }
-			</h3>
+		<div className="license-lightbox__payment-plan">
+			<h3 className="license-lightbox__payment-plan-title">{ translate( 'Payment plan:' ) }</h3>
 
-			<div className="license-product-lightbox__pricing">
-				<span className="license-product-lightbox__pricing-amount">
+			<div className="license-lightbox__pricing">
+				<span className="license-lightbox__pricing-amount">
 					{ formatCurrency( product.amount, product.currency ) }
 				</span>
-				<span className="license-product-lightbox__pricing-interval">
+				<span className="license-lightbox__pricing-interval">
 					{ product.price_interval === 'day' && translate( '/USD per license per day' ) }
 					{ product.price_interval === 'month' && translate( '/USD per license per month' ) }
 				</span>
@@ -28,4 +26,4 @@ const LicenseProductLightboxPaymentPlan: FunctionComponent< Props > = ( { produc
 	);
 };
 
-export default LicenseProductLightboxPaymentPlan;
+export default LicenseLightboxPaymentPlan;
