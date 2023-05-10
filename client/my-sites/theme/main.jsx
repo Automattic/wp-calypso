@@ -1137,12 +1137,9 @@ class ThemeSheet extends Component {
 			retired,
 			styleVariations,
 			isBundledSoftwareSet,
-			isSiteBundleEligible,
 			translate,
 			isLoggedIn,
 			isExternallyManagedTheme,
-			isSiteEligibleForManagedExternalThemes,
-			isMarketplaceThemeSubscribed,
 			isThemeActivationSyncStarted,
 		} = this.props;
 
@@ -1225,11 +1222,6 @@ class ThemeSheet extends Component {
 		} );
 
 		if ( hasWpComThemeUpsellBanner ) {
-			const forceDisplay =
-				( isBundledSoftwareSet && ! isSiteBundleEligible ) ||
-				( isExternallyManagedTheme &&
-					( ! isMarketplaceThemeSubscribed || ! isSiteEligibleForManagedExternalThemes ) );
-
 			const upsellNudgePlan =
 				isExternallyManagedTheme || isBundledSoftwareSet ? PLAN_BUSINESS : PLAN_PREMIUM;
 			pageUpsellBanner = (
@@ -1245,7 +1237,7 @@ class ThemeSheet extends Component {
 					onClick={ null === onClick ? noop : onClick }
 					href={ plansUrl }
 					showIcon={ true }
-					forceDisplay={ forceDisplay }
+					forceDisplay={ true }
 					displayAsLink={ onClick !== null }
 				/>
 			);
