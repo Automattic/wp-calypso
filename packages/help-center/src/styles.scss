@@ -296,6 +296,12 @@ $head-foot-height: 50px;
 		font-size: $font-body-small;
 		color: var(--color-neutral-80);
 
+		.help-center-gpt-response__loading {
+			min-height: 10px;
+			margin-left: 5px;
+			font-style: italic;
+		}
+
 		.help-center-gpt-response__content {
 			border-left: 1px solid var(--color-neutral-5);
 			margin-left: 5px;
