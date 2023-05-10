@@ -2,23 +2,26 @@ import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import Tooltip from 'calypso/components/tooltip';
-import { convertBytesToUnitAmount, StorageUnits } from './hooks';
 
 type OwnProps = {
 	className?: string;
-	bytesAvailable: number | undefined;
+	storageUpgradeUrl: string;
+	forecastInDays: number | undefined;
+	onClickedPurchase: () => void;
 };
-const StorageHelpTooltip: React.FC< OwnProps > = ( { className, bytesAvailable } ) => {
+const StorageHelpTooltip: React.FC< OwnProps > = ( {
+	className,
+	storageUpgradeUrl,
+	forecastInDays,
+	onClickedPurchase,
+} ) => {
 	const translate = useTranslate();
-	const [ isTooltipVisible, setTooltipVisible ] = React.useState< boolean >( false );
+	const [ isTooltipVisible, setTooltipVisible ] = React.useState< boolean >( true );
 	const tooltip = React.useRef< SVGSVGElement >( null );
 
-	if ( undefined === bytesAvailable ) {
+	if ( undefined === forecastInDays ) {
 		return null;
 	}
-
-	const { unitAmount: availableUnitAmount, unit: availableUnit } =
-		convertBytesToUnitAmount( bytesAvailable );
 
 	const toggleHelpTooltip = ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ): void => {
 		setTooltipVisible( ! isTooltipVisible );
@@ -33,25 +36,27 @@ const StorageHelpTooltip: React.FC< OwnProps > = ( { className, bytesAvailable }
 		<span className={ className }>
 			<Button
 				borderless
+				compact
 				className="storage-usage-help-tooltip__toggle-tooltip"
 				onClick={ toggleHelpTooltip }
 			>
-				<Gridicon ref={ tooltip } icon="info-outline" size={ 24 } />
+				<Gridicon ref={ tooltip } icon="info-outline" size={ 18 } />
 			</Button>
 			<Tooltip
 				className="storage-usage-help-tooltip__tooltip"
 				isVisible={ isTooltipVisible }
-				position="right"
+				position="bottom"
 				context={ tooltip.current }
 				showOnMobile
 			>
+				<h3> { translate( 'Backup archive size' ) }</h3>
 				<p>
 					{ translate(
-						'We store your backups on our cloud storage. Your total storage size is %(availableUnitAmount)d%(unit)s.',
+						'Based on the current size of your site, Jetpack will save {{strong}}%(forecastInDays)d days of full backups{{/strong}}.',
 						{
+							components: { strong: <strong /> },
 							args: {
-								availableUnitAmount,
-								unit: StorageUnits.Gigabyte === availableUnit ? 'GB' : 'TB',
+								forecastInDays,
 							},
 							comment:
 								'Describes available storage amounts (e.g., We store your backups on our cloud storage. Your total storage size is 20GB)',
@@ -66,18 +71,27 @@ const StorageHelpTooltip: React.FC< OwnProps > = ( { className, bytesAvailable }
 						<Gridicon icon="cross" size={ 18 } />
 					</Button>
 				</p>
-				<hr />
-				{ translate( '{{a}}Learn more…{{/a}}', {
-					components: {
-						a: (
-							<a
-								href="https://jetpack.com/support/jetpack-vaultpress-backup-storage-and-retention/"
-								target="_blank"
-								rel="external noreferrer noopener"
-							/>
-						),
-					},
-				} ) }
+				<p>
+					{ translate(
+						'If you need more backup days, try {{a}}reducing the backup size{{/a}} or adding more storage.',
+						{
+							components: {
+								a: (
+									<a
+										href="https://jetpack.com/support/backup/jetpack-vaultpress-backup-storage-and-retention/#reduce-storage-size"
+										target="_blank"
+										rel="external noreferrer noopener"
+									/>
+								),
+							},
+						}
+					) }
+				</p>
+				<div className="storage-usage-help-tooltip__button-section">
+					<Button primary href={ storageUpgradeUrl } onClick={ onClickedPurchase }>
+						{ translate( 'Add more storage' ) }
+					</Button>
+				</div>
 			</Tooltip>
 		</span>
 	);

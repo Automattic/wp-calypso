@@ -3,7 +3,11 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
+import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
+import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import {
+	getActivityLogVisibleDays,
+	getBackupCurrentSiteSize,
 	getRewindBytesAvailable,
 	getRewindBytesUsed,
 	getRewindDaysOfBackupsSaved,
@@ -13,6 +17,7 @@ import { getSiteSlug } from 'calypso/state/sites/selectors';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import { useDaysOfBackupsSavedText, useStorageUsageText } from './hooks';
 import StorageHelpTooltip from './storage-usage-help-tooltip';
+import useUpsellInfo from './usage-warning/use-upsell-slug';
 
 const PROGRESS_BAR_CLASS_NAMES = {
 	[ StorageUsageLevels.Full ]: 'full-warning',
@@ -40,9 +45,34 @@ const UsageDisplay: React.FC< OwnProps > = ( { loading = false, usageLevel } ) =
 		getRewindDaysOfBackupsSaved( state, siteId )
 	);
 	const daysOfBackupsSavedText = useDaysOfBackupsSavedText( daysOfBackupsSaved, siteSlug );
+	// Retention period included in customer plan
+	const planRetentionPeriod = useSelector( ( state ) =>
+		getActivityLogVisibleDays( state, siteId )
+	);
+	// current site size
+	const lastBackupSize = useSelector( ( state ) =>
+		getBackupCurrentSiteSize( state, siteId )
+	) as number;
+	const { upsellSlug } = useUpsellInfo( siteId );
 	const loadingText = translate( 'Calculating…', {
 		comment: 'Loading text displayed while storage usage is being calculated',
 	} );
+
+	const forecastInDays = Math.floor( bytesAvailable / lastBackupSize );
+	const storageUpgradeUrl = buildCheckoutURL( siteSlug, upsellSlug.productSlug, {
+		// When attempting to purchase a 2nd identical storage add-on product, this
+		// 'source' flag tells the shopping cart to force "purchase" another storage add-on
+		// as opposed to renew the existing one.
+		source: 'backup-storage-purchase-not-renewal',
+	} );
+	const onClickedPurchase = React.useCallback( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_backup_storage_upsell_click', {
+				type: usageLevel,
+				bytes_used: bytesUsed,
+			} )
+		);
+	}, [ usageLevel, bytesUsed ] );
 
 	return (
 		<div
@@ -55,10 +85,6 @@ const UsageDisplay: React.FC< OwnProps > = ( { loading = false, usageLevel } ) =
 					<Gridicon className="backup-storage-space__storage-full-icon" icon="notice" size={ 24 } />
 				</span>
 				<span>{ translate( 'Cloud storage space' ) } </span>
-				<StorageHelpTooltip
-					className="backup-storage-space__help-tooltip"
-					bytesAvailable={ bytesAvailable }
-				/>
 			</div>
 			<div className="backup-storage-space__progress-bar">
 				<ProgressBar
@@ -73,7 +99,15 @@ const UsageDisplay: React.FC< OwnProps > = ( { loading = false, usageLevel } ) =
 						'is-storage-full': StorageUsageLevels.Full === usageLevel,
 					} ) }
 				>
-					{ loading ? loadingText : storageUsageText }
+					<span>{ loading ? loadingText : storageUsageText }</span>
+					{ ! loading && forecastInDays < planRetentionPeriod && (
+						<StorageHelpTooltip
+							className="backup-storage-space__help-tooltip"
+							forecastInDays={ forecastInDays }
+							storageUpgradeUrl={ storageUpgradeUrl }
+							onClickedPurchase={ onClickedPurchase }
+						/>
+					) }
 				</div>
 				<div className="backup-storage-space__progress-backups-saved-text">
 					{ ! loading && daysOfBackupsSavedText }
