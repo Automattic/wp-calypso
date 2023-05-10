@@ -8,7 +8,7 @@ import {
 	TestAccount,
 	SiteAssemblerFlow,
 } from '@automattic/calypso-e2e';
-import { Browser, Locator, Page } from 'playwright';
+import { Browser, FrameLocator, Page } from 'playwright';
 
 declare const browser: Browser;
 
@@ -26,8 +26,16 @@ describe( DataHelper.createSuiteTitle( 'Site Assembler' ), () => {
 	} );
 
 	describe( 'Create a site with the Site Assembler', function () {
-		let assembledPreviewLocator: Locator;
+		let assembledPreviewFrameLocator: FrameLocator;
 		let startSiteFlow: SiteAssemblerFlow;
+
+		const getLargePreviewFrameLocator = () => {
+			if ( ! assembledPreviewFrameLocator ) {
+				assembledPreviewFrameLocator = page.frameLocator( '.pattern-large-preview iframe' );
+			}
+
+			return assembledPreviewFrameLocator;
+		};
 
 		beforeAll( async function () {
 			startSiteFlow = new SiteAssemblerFlow( page );
@@ -52,15 +60,17 @@ describe( DataHelper.createSuiteTitle( 'Site Assembler' ), () => {
 					timeout: 30 * 1000,
 				}
 			);
-
-			assembledPreviewLocator = page.locator( '.pattern-large-preview__patterns .block-renderer' );
 		} );
 
 		it( 'Select "Header"', async function () {
 			await startSiteFlow.selectLayoutComponentType( 'Header' );
 			await startSiteFlow.selectLayoutComponent( 1 );
 
-			expect( await assembledPreviewLocator.count() ).toBe( 1 );
+			expect(
+				await getLargePreviewFrameLocator()
+					.locator( '.wp-site-blocks > *[data-type="header"]' )
+					.count()
+			).toBe( 1 );
 
 			await startSiteFlow.clickButton( 'Save' );
 		} );
@@ -69,7 +79,11 @@ describe( DataHelper.createSuiteTitle( 'Site Assembler' ), () => {
 			await startSiteFlow.selectLayoutComponentType( 'Footer' );
 			await startSiteFlow.selectLayoutComponent( 1 );
 
-			expect( await assembledPreviewLocator.count() ).toBe( 2 );
+			expect(
+				await getLargePreviewFrameLocator()
+					.locator( '.wp-site-blocks > *[data-type="footer"]' )
+					.count()
+			).toBe( 1 );
 
 			await startSiteFlow.clickButton( 'Save' );
 		} );
