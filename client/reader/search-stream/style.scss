@@ -432,3 +432,13 @@
 		}
 	}
 }
+
+.search-stream__site-results-none {
+	color: var(--color-neutral-50);
+	margin-top: 1em;
+	text-align: center;
+
+	@include breakpoint-deprecated( "<960px" ) {
+		margin-top: 2em;
+	}
+}

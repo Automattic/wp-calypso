@@ -38,7 +38,7 @@ export interface ProductListItem {
 	sale_cost?: number;
 	is_privacy_protection_product_purchase_allowed?: boolean;
 	product_term?: string;
-	billing_product_slug?: string;
+	billing_product_slug: string;
 }
 
 export function getProductsList( state: AppState ): Record< string, ProductListItem > {
