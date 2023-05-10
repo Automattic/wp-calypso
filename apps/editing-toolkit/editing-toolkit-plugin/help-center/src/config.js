@@ -39,7 +39,7 @@ window.configData = {
 	is_running_in_jetpack_site: false,
 	gutenboarding_url: '/new',
 	features: {
-		happychat: true,
+		happychat: false,
 	},
 	signup_url: '/',
 	discover_blog_id: 53424024,

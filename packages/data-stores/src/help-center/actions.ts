@@ -73,6 +73,18 @@ export const setShowHelpCenter = function* ( show: boolean ) {
 	} as const;
 };
 
+export const setShowMessagingLauncher = ( show: boolean ) =>
+	( {
+		type: 'HELP_CENTER_SET_SHOW_MESSAGING_LAUNCHER',
+		show,
+	} as const );
+
+export const setShowMessagingWidget = ( show: boolean ) =>
+	( {
+		type: 'HELP_CENTER_SET_SHOW_MESSAGING_WIDGET',
+		show,
+	} as const );
+
 export const setSubject = ( subject: string ) =>
 	( {
 		type: 'HELP_CENTER_SET_SUBJECT',
@@ -128,6 +140,8 @@ export const resetStore = () =>
 
 export type HelpCenterAction =
 	| ReturnType<
+			| typeof setShowMessagingLauncher
+			| typeof setShowMessagingWidget
 			| typeof setSite
 			| typeof setSubject
 			| typeof resetStore

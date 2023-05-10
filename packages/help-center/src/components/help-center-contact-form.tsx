@@ -185,6 +185,9 @@ export const HelpCenterContactForm = () => {
 		setUserDeclaredSite,
 		setSubject,
 		setMessage,
+		setShowHelpCenter,
+		setShowMessagingLauncher,
+		setShowMessagingWidget,
 	} = useDispatch( HELP_CENTER_STORE );
 
 	useEffect( () => {
@@ -288,7 +291,7 @@ export const HelpCenterContactForm = () => {
 			case 'CHAT':
 				if ( supportSite ) {
 					recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
-						support_variation: 'happychat',
+						support_variation: 'messaging',
 						force_site_id: true,
 						location: 'help-center',
 						section: sectionName,
@@ -301,7 +304,11 @@ export const HelpCenterContactForm = () => {
 						location: 'help-center',
 						section: sectionName,
 					} );
-					navigate( '/inline-chat' );
+
+					//navigate( '/inline-chat' );
+					setShowHelpCenter( false );
+					setShowMessagingLauncher( true );
+					setShowMessagingWidget( true );
 					break;
 				}
 				break;

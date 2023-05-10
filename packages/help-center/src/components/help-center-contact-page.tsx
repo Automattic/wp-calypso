@@ -7,7 +7,6 @@ import config from '@automattic/calypso-config';
 import { Spinner, GMClosureNotice } from '@automattic/components';
 import { useSupportAvailability, useHasActiveSupport } from '@automattic/data-stores';
 import { isDefaultLocale, getLanguage, useLocale } from '@automattic/i18n-utils';
-import { Notice } from '@wordpress/components';
 import { useEffect, useMemo } from '@wordpress/element';
 import { hasTranslation, sprintf } from '@wordpress/i18n';
 import { comment, Icon } from '@wordpress/icons';
@@ -130,16 +129,6 @@ export const HelpCenterContactPage: FC = () => {
 					reopensAt="2023-04-10 07:00Z"
 					enabled={ hasAccessToLivechat }
 				/>
-				{ renderChat.env === 'staging' && (
-					<Notice
-						status="warning"
-						actions={ [ { label: 'Learn more', url: 'https://wp.me/PCYsg-Q7X' } ] }
-						className="help-center-contact-page__staging-notice"
-						isDismissible={ false }
-					>
-						Targeting HappyChat staging
-					</Notice>
-				) }
 
 				<div className={ classnames( 'help-center-contact-page__boxes' ) }>
 					<Link to="/contact-form?mode=FORUM">
