@@ -26,8 +26,9 @@
 
 .tag-stream__header-description {
 	font-family: "Noto Serif", Georgia, "Times New Roman", Times, serif;
-	font-size: 2rem;
+	font-size: $font-headline-small;
 	font-weight: 600;
+	line-height: 48px;
 }
 
 // Back button in Tag streams
