@@ -1,11 +1,11 @@
 import { ExternalLink } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { SectionHeading } from '../shared/section-heading';
-import TumblrDefaultLinkPreview from './default-link-preview';
-import TumblrLinkPreview from './link-preview';
+import { TumblrLinkPreview } from './link-preview';
+import { TumblrPostPreview } from './post-preview';
 import { TumblrPreviewProps } from './types';
 
-const TumblrFullPreview: React.FC< TumblrPreviewProps > = ( props ) => {
+export const TumblrFullPreview: React.FC< TumblrPreviewProps > = ( props ) => {
 	return (
 		<div className="social-preview tumblr-preview">
 			<section className="social-preview__section tumblr-preview__section">
@@ -18,7 +18,7 @@ const TumblrFullPreview: React.FC< TumblrPreviewProps > = ( props ) => {
 				<p className="social-preview__section-desc">
 					{ __( 'This is what your social post will look like on Tumblr:', 'social-previews' ) }
 				</p>
-				<TumblrLinkPreview { ...props } />
+				<TumblrPostPreview { ...props } />
 			</section>
 			<section className="social-preview__section tumblr-preview__section">
 				<SectionHeading level={ props.headingsLevel }>
@@ -37,10 +37,8 @@ const TumblrFullPreview: React.FC< TumblrPreviewProps > = ( props ) => {
 						{ __( 'Learn more about links', 'social-previews' ) }
 					</ExternalLink>
 				</p>
-				<TumblrDefaultLinkPreview { ...props } />
+				<TumblrLinkPreview { ...props } />
 			</section>
 		</div>
 	);
 };
-
-export default TumblrFullPreview;
