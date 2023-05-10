@@ -270,6 +270,7 @@ import {
 	FEATURE_PAYMENT_TRANSACTION_FEES_8,
 	FEATURE_PAYMENT_TRANSACTION_FEES_4,
 	FEATURE_PAYMENT_TRANSACTION_FEES_2,
+	FEATURE_PREMIUM_STORE_THEMES,
 	isPersonalPlan,
 	isPremiumPlan,
 	isEcommercePlan,
@@ -2220,6 +2221,12 @@ export const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Site activity log' ),
 		getDescription: () =>
 			i18n.translate( 'Keep an administrative eye on activity across your site.' ),
+	},
+	[ FEATURE_PREMIUM_STORE_THEMES ]: {
+		getSlug: () => FEATURE_PREMIUM_STORE_THEMES,
+		getTitle: () => i18n.translate( 'Premium store themes' ),
+		getDescription: () =>
+			i18n.translate( 'Jumpstart your store’s design with a professionally designed theme.' ),
 	},
 	/* END: 2023 Pricing Grid Features */
 

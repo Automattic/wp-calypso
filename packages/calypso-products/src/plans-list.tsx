@@ -388,6 +388,7 @@ import {
 	FEATURE_PAYMENT_TRANSACTION_FEES_4,
 	TYPE_WOOEXPRESS_SMALL,
 	TYPE_WOOEXPRESS_MEDIUM,
+	FEATURE_PREMIUM_STORE_THEMES,
 } from './constants';
 import { is2023PricingGridEnabled } from './plans-utilities';
 import type {
@@ -915,7 +916,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		].filter( isValueTruthy ),
 	get2023PricingGridSignupWpcomFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_SELL_SHIP,
+		FEATURE_PREMIUM_STORE_THEMES,
 		FEATURE_CUSTOM_STORE,
 		FEATURE_INVENTORY,
 		FEATURE_CHECKOUT,
