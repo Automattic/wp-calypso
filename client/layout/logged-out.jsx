@@ -58,7 +58,6 @@ const LayoutLoggedOut = ( {
 	isPartnerSignup,
 	isPartnerSignupStart,
 	locale,
-	translate,
 } ) => {
 	const localizeUrl = useLocalizeUrl();
 	const isLoggedIn = useSelector( isUserLoggedIn );
@@ -200,9 +199,7 @@ const LayoutLoggedOut = ( {
 				/>
 			) }
 
-			{ isGravatar && (
-				<PoweredByWPFooter text={ translate( 'Gravatar is powered by WordPress.com' ) } />
-			) }
+			{ isGravatar && <PoweredByWPFooter siteName={ oauth2Client.title } /> }
 		</div>
 	);
 };
