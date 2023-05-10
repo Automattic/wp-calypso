@@ -163,9 +163,13 @@
 	text-decoration: underline;
 	text-align: left;
 	cursor: pointer;
-	display: flex;
-	align-items: center;
-	gap: 2px;
+	white-space: nowrap;
+}
+
+.license-product-card__more-info-link-img {
+	display: inline-block;
+	margin-bottom: -5px;
+	margin-inline-start: 2px;
 }
 
 @mixin license-product-card-block__select-button {

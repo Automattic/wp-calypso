@@ -120,7 +120,11 @@ export default function LicenseProductCard( props: Props ) {
 										components: { productName: <>{ productTitle }</> },
 									} ) }
 
-									<img src={ ModalLinkIcon } alt="" />
+									<img
+										className="license-product-card__more-info-link-img"
+										src={ ModalLinkIcon }
+										alt=""
+									/>
 								</Button>
 							</div>
 
