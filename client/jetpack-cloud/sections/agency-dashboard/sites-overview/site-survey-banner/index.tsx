@@ -80,6 +80,7 @@ export default function SiteSurveyBanner() {
 			onClick={ trackClickEvent }
 			onDismiss={ dismissBanner }
 			dismissPreferenceName={ preferenceName }
+			target="_blank"
 		/>
 	);
 }
