@@ -1130,7 +1130,7 @@ object QuarantinedE2ETests: E2EBuildType(
 			notifierSettings = slackNotifier {
 				connection = "PROJECT_EXT_11"
 				sendTo = "#e2eflowtesting-notif"
-				messageFormat = verboseMessageFormat()
+				messageFormat = simpleMessageFormat()
 			}
 			buildFailedToStart = true
 			buildFailed = true
