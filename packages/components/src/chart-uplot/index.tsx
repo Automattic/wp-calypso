@@ -214,8 +214,8 @@ export default function UplotChart( {
 						stroke: ( u, seriesIdx ) => {
 							const stroke = u.series[ seriesIdx ]?.points?.stroke;
 							return typeof stroke === 'function'
-								? ( stroke( u, seriesIdx ) as string | CanvasGradient | CanvasPattern )
-								: ( stroke as string | CanvasGradient | CanvasPattern );
+								? ( stroke( u, seriesIdx ) as CanvasRenderingContext2D[ 'strokeStyle' ] )
+								: ( stroke as CanvasRenderingContext2D[ 'strokeStyle' ] );
 						},
 						fill: () => '#fff',
 					},
