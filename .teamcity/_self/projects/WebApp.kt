@@ -305,7 +305,7 @@ object BuildDockerImage : BuildType({
 		notifications {
 			notifierSettings = slackNotifier {
 				connection = "PROJECT_EXT_11"
-				sendTo = "#team-calypso-bot"
+				sendTo = "#calypso"
 				messageFormat = verboseMessageFormat {
 					addChanges = true
 					addStatusText = true
