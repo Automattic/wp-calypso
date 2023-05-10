@@ -1,10 +1,12 @@
+import { localizeUrl } from '@automattic/i18n-utils';
+
 export const links = {
 	activity_log: 'https://jetpack.com/features/security/activity-log/',
 	ad_network: 'https://jetpack.com/features/traffic/ads/',
-	akismet_antispam: 'https://jetpack.com/upgrade/anti-spam/',
+	akismet_antispam: localizeUrl( 'https://jetpack.com/upgrade/anti-spam/' ),
 	auto_plugin_updates: 'https://jetpack.com/features/security/automatic-plugin-updates/',
-	backup: 'https://jetpack.com/upgrade/backup/',
-	boost: 'https://jetpack.com/boost/',
+	backup: localizeUrl( 'https://jetpack.com/upgrade/backup/' ),
+	boost: localizeUrl( 'https://jetpack.com/boost/' ),
 	brute_force_attack_protection:
 		'https://jetpack.com/features/security/brute-force-attack-protection/',
 	cdn: 'https://jetpack.com/features/traffic/content-delivery-network/',
@@ -21,11 +23,11 @@ export const links = {
 	payments_block: 'https://jetpack.com/support/jetpack-blocks/payments-block/',
 	priority_support: 'https://jetpack.com/features/security/expert-priority-support/',
 	related_posts: 'https://jetpack.com/features/traffic/related-posts/',
-	scan: 'https://jetpack.com/upgrade/scan/',
-	search: 'https://jetpack.com/upgrade/search/',
+	scan: localizeUrl( 'https://jetpack.com/upgrade/scan/' ),
+	search: localizeUrl( 'https://jetpack.com/upgrade/search/' ),
 	secure_authentication: 'https://jetpack.com/features/security/secure-authentication/',
 	seo: 'https://jetpack.com/features/traffic/search-engine-optimization/',
-	social: 'https://jetpack.com/social/',
+	social: localizeUrl( 'https://jetpack.com/social/' ),
 	stats: 'https://jetpack.com/features/traffic/site-stats/',
 	subscriptions: 'https://jetpack.com/features/discussion/subscriptions/',
 	themes: 'https://jetpack.com/features/design/themes/',
