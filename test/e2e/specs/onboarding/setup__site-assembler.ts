@@ -8,7 +8,7 @@ import {
 	TestAccount,
 	SiteAssemblerFlow,
 } from '@automattic/calypso-e2e';
-import { Browser, Page } from 'playwright';
+import { Browser, FrameLocator, Page } from 'playwright';
 
 declare const browser: Browser;
 
@@ -31,6 +31,7 @@ describe( DataHelper.createSuiteTitle( 'Site Assembler' ), () => {
 	} );
 
 	describe( 'Create a site with the Site Assembler', function () {
+		let assembledPreviewLocator: FrameLocator;
 		let startSiteFlow: SiteAssemblerFlow;
 
 		beforeAll( async function () {
@@ -56,18 +57,17 @@ describe( DataHelper.createSuiteTitle( 'Site Assembler' ), () => {
 					timeout: 30 * 1000,
 				}
 			);
+
+			assembledPreviewLocator = page.frameLocator( selectors.patternLargePreviewIframe );
 		} );
 
 		it( 'Select "Header"', async function () {
 			await startSiteFlow.selectLayoutComponentType( 'Header' );
 			await startSiteFlow.selectLayoutComponent( 1 );
 
-			expect(
-				await page
-					.frameLocator( selectors.patternLargePreviewIframe )
-					.locator( selectors.wpSiteBlocksHeader )
-					.count()
-			).toBe( 1 );
+			expect( await assembledPreviewLocator.locator( selectors.wpSiteBlocksHeader ).count() ).toBe(
+				1
+			);
 
 			await startSiteFlow.clickButton( 'Save' );
 		} );
@@ -76,12 +76,9 @@ describe( DataHelper.createSuiteTitle( 'Site Assembler' ), () => {
 			await startSiteFlow.selectLayoutComponentType( 'Footer' );
 			await startSiteFlow.selectLayoutComponent( 1 );
 
-			expect(
-				await page
-					.frameLocator( selectors.patternLargePreviewIframe )
-					.locator( selectors.wpSiteBlocksFooter )
-					.count()
-			).toBe( 1 );
+			expect( await assembledPreviewLocator.locator( selectors.wpSiteBlocksFooter ).count() ).toBe(
+				1
+			);
 
 			await startSiteFlow.clickButton( 'Save' );
 		} );
