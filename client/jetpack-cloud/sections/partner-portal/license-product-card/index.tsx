@@ -1,9 +1,13 @@
-import { Gridicon } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from '../../../../state/partner-portal/types';
+import { useProductDescription } from '../hooks';
+import LicenseLightbox from '../license-lightbox';
 import { getProductTitle } from '../utils';
 
 import './style.scss';
@@ -30,6 +34,8 @@ export default function LicenseProductCard( props: Props ) {
 	} = props;
 	const productTitle = getProductTitle( product.name );
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+	const [ showLightbox, setShowLightbox ] = useState( false );
 
 	const onSelect = useCallback( () => {
 		if ( isDisabled ) {
@@ -38,6 +44,25 @@ export default function LicenseProductCard( props: Props ) {
 
 		onSelectProduct?.( product );
 	}, [ onSelectProduct, product ] );
+
+	const onShowLightbox = useCallback(
+		( e: any ) => {
+			e.stopPropagation();
+
+			dispatch(
+				recordTracksEvent( 'calypso_partner_portal_issue_license_product_view', {
+					product: product.slug,
+				} )
+			);
+
+			setShowLightbox( true );
+		},
+		[ dispatch, product ]
+	);
+
+	const onHideLightbox = useCallback( () => {
+		setShowLightbox( false );
+	}, [] );
 
 	const onKeyDown = useCallback(
 		( e: any ) => {
@@ -60,42 +85,66 @@ export default function LicenseProductCard( props: Props ) {
 		}
 	}, [] );
 
+	const { description: productDescription } = useProductDescription( product.slug );
+
 	return (
-		<div
-			onClick={ onSelect }
-			onKeyDown={ onKeyDown }
-			role={ isMultiSelect ? 'checkbox' : 'radio' }
-			tabIndex={ tabIndex }
-			aria-checked={ isSelected }
-			aria-disabled={ isDisabled }
-			className={ classNames( {
-				'license-product-card': true,
-				selected: isSelected,
-				disabled: isDisabled,
-			} ) }
-		>
-			<div className="license-product-card__inner">
-				<div className="license-product-card__details">
-					<h3 className="license-product-card__title">{ productTitle }</h3>
-					<div
-						className={ classNames( 'license-product-card__select-button', {
-							'license-product-card_multi-select': isMultiSelect,
-						} ) }
-					>
-						{ isSelected && <Gridicon icon="checkmark" /> }
-					</div>
-					<div className="license-product-card__pricing">
-						<div className="license-product-card__price">
-							{ formatCurrency( product.amount, product.currency ) }
+		<>
+			<div
+				onClick={ onSelect }
+				onKeyDown={ onKeyDown }
+				role={ isMultiSelect ? 'checkbox' : 'radio' }
+				tabIndex={ tabIndex }
+				aria-checked={ isSelected }
+				aria-disabled={ isDisabled }
+				className={ classNames( {
+					'license-product-card': true,
+					selected: isSelected,
+					disabled: isDisabled,
+				} ) }
+			>
+				<div className="license-product-card__inner">
+					<div className="license-product-card__details">
+						<div className="license-product-card__main">
+							<div className="license-product-card__heading">
+								<h3 className="license-product-card__title">{ productTitle }</h3>
+
+								<div className="license-product-card__description">{ productDescription }</div>
+
+								<Button
+									className="license-product-card__more-info-link"
+									onClick={ onShowLightbox }
+									plain
+								>
+									{ translate( 'More about {{productName/}}', {
+										components: { productName: <>{ productTitle }</> },
+									} ) }
+								</Button>
+							</div>
+
+							<div
+								className={ classNames( 'license-product-card__select-button', {
+									'license-product-card_multi-select': isMultiSelect,
+								} ) }
+							>
+								{ isSelected && <Gridicon icon="checkmark" /> }
+							</div>
 						</div>
-						<div className="license-product-card__price-interval">
-							{ product.price_interval === 'day' && translate( '/USD per license per day' ) }
-							{ product.price_interval === 'month' && translate( '/USD per license per month' ) }
+
+						<div className="license-product-card__pricing">
+							<div className="license-product-card__price">
+								{ formatCurrency( product.amount, product.currency ) }
+							</div>
+							<div className="license-product-card__price-interval">
+								{ product.price_interval === 'day' && translate( '/USD per license per day' ) }
+								{ product.price_interval === 'month' && translate( '/USD per license per month' ) }
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+
+			{ showLightbox && <LicenseLightbox onClose={ onHideLightbox } /> }
+		</>
 	);
 }
 
