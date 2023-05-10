@@ -28,7 +28,7 @@ function getCheckoutUrl( dependencies, localeSlug, flowName ) {
 }
 
 function dependenciesContainCartItem( dependencies ) {
-	return dependencies.cartItem || dependencies.domainItem || dependencies.themeItem;
+	return dependencies.cartItem || dependencies.domainItem;
 }
 
 function getSiteDestination( dependencies ) {
@@ -133,14 +133,27 @@ function getChecklistThemeDestination( { flowName, siteSlug, themeParameter } ) 
 	return `/home/${ siteSlug }`;
 }
 
-function getWithThemeDestination( { siteSlug, themeParameter, styleVariation, themeType } ) {
+function getWithThemeDestination( {
+	siteSlug,
+	themeParameter,
+	styleVariation,
+	themeType,
+	cartItem,
+} ) {
+	if (
+		! cartItem &&
+		[ 'dot-org', 'premium', 'externally-managed', 'woocommerce' ].includes( themeType )
+	) {
+		return `/setup/site-setup/designSetup?siteSlug=${ siteSlug }`;
+	}
+
 	if ( 'dot-org' === themeType ) {
 		return `/marketplace/theme/${ themeParameter }/install/${ siteSlug }`;
 	}
 
 	const style = styleVariation ? `&style=${ styleVariation }` : '';
 
-	return `/setup/site-setup/designSetup?siteSlug=${ siteSlug }&theme=${ themeParameter }${ style }&hideBack=true`;
+	return `/setup/site-setup/designSetup?siteSlug=${ siteSlug }&theme=${ themeParameter }${ style }`;
 }
 
 function getEditorDestination( dependencies ) {

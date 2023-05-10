@@ -97,10 +97,7 @@ import './style.scss';
 const debug = debugModule( 'calypso:signup' );
 
 function dependenciesContainCartItem( dependencies ) {
-	return !! (
-		dependencies &&
-		( dependencies.cartItem || dependencies.domainItem || dependencies.themeItem )
-	);
+	return !! ( dependencies && ( dependencies.cartItem || dependencies.domainItem ) );
 }
 
 function addLoadingScreenClassNamesToBody() {

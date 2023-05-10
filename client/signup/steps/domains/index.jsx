@@ -16,7 +16,6 @@ import UseMyDomain from 'calypso/components/domains/use-my-domain';
 import Notice from 'calypso/components/notice';
 import {
 	domainRegistration,
-	themeItem,
 	domainMapping,
 	domainTransfer,
 } from 'calypso/lib/cart-values/cart-items';
@@ -191,11 +190,8 @@ class DomainsStep extends Component {
 		const themeSlug = this.getThemeSlug();
 		const themeStyleVariation = this.getThemeStyleVariation();
 		const themeSlugWithRepo = this.getThemeSlugWithRepo( themeSlug );
-		const theme = this.isPurchasingTheme()
-			? themeItem( themeSlug, 'signup-with-theme' )
-			: undefined;
 
-		return { themeSlug, themeSlugWithRepo, themeStyleVariation, themeItem: theme };
+		return { themeSlug, themeSlugWithRepo, themeStyleVariation };
 	};
 
 	getThemeSlugWithRepo = ( themeSlug ) => {

@@ -19,7 +19,6 @@ import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import AsyncLoad from 'calypso/components/async-load';
-import Badge from 'calypso/components/badge';
 import Banner from 'calypso/components/banner';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
@@ -932,25 +931,9 @@ class ThemeSheet extends Component {
 		);
 	};
 
-	renderPrice = () => {
-		let price = this.props.price;
-		if ( ! this.isLoaded() || this.props.isActive || this.props.isBundledSoftwareSet ) {
-			price = '';
-		} else if ( ! this.props.isPremium && ! this.props.isExternallyManagedTheme ) {
-			price = this.props.translate( 'Free' );
-		}
-
-		const className = classNames( 'theme__sheet-action-bar-cost', {
-			'theme__sheet-action-bar-cost-upgrade': ! /\d/g.test( this.props.price ),
-		} );
-
-		return price ? <span className={ className }>{ price }</span> : '';
-	};
-
 	renderButton = () => {
 		const { getUrl, key } = this.props.defaultOption;
 		const label = this.getDefaultOptionLabel();
-		const price = this.renderPrice();
 		const placeholder = <span className="theme__sheet-button-placeholder">loading......</span>;
 		const { isActive, isExternallyManagedTheme, isLoggedIn } = this.props;
 
@@ -975,11 +958,6 @@ class ThemeSheet extends Component {
 				target={ isActive ? '_blank' : null }
 			>
 				{ this.isLoaded() ? label : placeholder }
-				{ price && this.props.isWpcomTheme && (
-					<Badge type="info" className="theme__sheet-badge-beta">
-						{ price }
-					</Badge>
-				) }
 			</Button>
 		);
 	};
