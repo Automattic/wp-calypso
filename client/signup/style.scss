@@ -908,17 +908,50 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 }
 
 body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-flow).is-gravatar {
-	.signup-form__social-buttons {
+	.signup__step.is-user .signup-form.is-horizontal {
+		p.signup-form__social-buttons-tos {
+			font-size: 0.875rem;
+		}
+
+		@include break-small {
+			.signup-form__social {
+				position: relative;
+				display: flex;
+				justify-content: center;
+				width: 100%;
+				padding-bottom: 62px;
+			}
+
+			.social-buttons__button {
+				text-align: unset;
+			}
+
+			p.signup-form__social-buttons-tos {
+				position: absolute;
+				left: 0;
+				bottom: 0;
+			}
+		}
+
 		@include break-medium {
-			transform: translateY(40px);
+			.signup-form__social {
+				justify-content: start;
+				padding-bottom: 0;
+			}
+
+			.signup-form__social-buttons {
+				transform: translateY(40px);
+			}
+
+			p.signup-form__social-buttons-tos {
+				position: unset;
+			}
 		}
 
 		@include break-large {
-			transform: translateY(30px);
+			.signup-form__social-buttons {
+				transform: translateY(30px);
+			}
 		}
-	}
-
-	.signup__step.is-user .signup-form.is-horizontal p.signup-form__social-buttons-tos {
-		font-size: 0.875rem;
 	}
 }
