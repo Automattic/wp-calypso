@@ -37,10 +37,10 @@ const SetupBlog: Step = ( { navigation, flow } ) => {
 
 	useEffect( () => {
 		// Clear site title and show placeholder for the flows below
-		if ( isStartWritingFlow( flow ) ) {
+		if ( isStartWritingFlow( flow ) && siteTitle === 'Site Title' ) {
 			setComponentSiteTitle( '' );
 		}
-	}, [ flow, setComponentSiteTitle ] );
+	}, [ flow, setComponentSiteTitle, siteTitle ] );
 
 	useEffect( () => {
 		setIsSubmitError( false );
@@ -61,7 +61,6 @@ const SetupBlog: Step = ( { navigation, flow } ) => {
 					blogname: siteTitle,
 					blogdescription: tagline,
 				} );
-				setIsLoading( false );
 				submit?.();
 			}
 		} catch {
