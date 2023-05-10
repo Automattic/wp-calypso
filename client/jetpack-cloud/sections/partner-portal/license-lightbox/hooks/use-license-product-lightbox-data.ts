@@ -1,5 +1,4 @@
 import { useMemo } from 'react';
-import getProductIcon from 'calypso/my-sites/plans/jetpack-plans/product-store/utils/get-product-icon';
 import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { getProductTitle } from '../../utils';
@@ -17,13 +16,11 @@ export function useLicenseProductLightboxData(
 		const productInfo = slugToSelectorProduct( normalizedSlug );
 
 		const title = getProductTitle( product.name );
-		const icon = getProductIcon( { productSlug: normalizedSlug } );
 
 		if ( productInfo ) {
 			return {
 				title,
-				icon,
-				...productInfo,
+				product: productInfo,
 			} as ProductLightboxData;
 		}
 

@@ -1,6 +1,6 @@
 import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 
-export type ProductLightboxData = SelectorProduct & {
+export type ProductLightboxData = {
 	title: string;
-	icon?: string;
+	product: SelectorProduct;
 };

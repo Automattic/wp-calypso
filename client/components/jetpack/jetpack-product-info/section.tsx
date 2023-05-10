@@ -7,7 +7,7 @@ type Props = {
 	children: ReactNode;
 };
 
-const LicenseLightboxSection: FunctionComponent< Props > = ( { title, children } ) => {
+const JetpackProductInfoSection: FunctionComponent< Props > = ( { title, children } ) => {
 	const isMobileViewport = useMobileBreakpoint();
 
 	const ref = useRef< HTMLDivElement | null >( null );
@@ -19,7 +19,7 @@ const LicenseLightboxSection: FunctionComponent< Props > = ( { title, children }
 	}, [ setContentStyle ] );
 
 	return (
-		<div className="license-lightbox__section" key={ title }>
+		<div className="jetpack-product-info__section" key={ title }>
 			{ isMobileViewport ? (
 				<FoldableCard
 					hideSummary
@@ -32,7 +32,7 @@ const LicenseLightboxSection: FunctionComponent< Props > = ( { title, children }
 				</FoldableCard>
 			) : (
 				<>
-					<h3 className="license-lightbox__section-title">{ title }</h3>
+					<h3 className="jetpack-product-info__section-title">{ title }</h3>
 
 					{ children }
 				</>
@@ -41,4 +41,4 @@ const LicenseLightboxSection: FunctionComponent< Props > = ( { title, children }
 	);
 };
 
-export default LicenseLightboxSection;
+export default JetpackProductInfoSection;

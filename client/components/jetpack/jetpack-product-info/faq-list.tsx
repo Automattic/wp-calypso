@@ -6,7 +6,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 type Props = { items?: FAQ[] };
 
-const LicenseLightboxFAQList: FunctionComponent< Props > = ( { items } ) => {
+const JetpackProductInfoFAQList: FunctionComponent< Props > = ( { items } ) => {
 	const dispatch = useDispatch();
 
 	const onToggle = useCallback(
@@ -18,7 +18,7 @@ const LicenseLightboxFAQList: FunctionComponent< Props > = ( { items } ) => {
 
 			dispatch(
 				recordTracksEvent(
-					isExpanded ? 'calypso_partner_portal_faq_opened' : 'calypso_partner_portal_faq_closed',
+					isExpanded ? 'calypso_plans_faq_open' : 'calypso_plans_faq_closed',
 					tracksArgs
 				)
 			);
@@ -31,7 +31,7 @@ const LicenseLightboxFAQList: FunctionComponent< Props > = ( { items } ) => {
 	}
 
 	return (
-		<ul className="license-lightbox__faq-list">
+		<ul className="jetpack-product-info__faq-list">
 			{ items.map( ( item ) => (
 				<li key={ item.id }>
 					<FoldableFAQ id={ item.id } question={ item.question } onToggle={ onToggle }>
@@ -43,4 +43,4 @@ const LicenseLightboxFAQList: FunctionComponent< Props > = ( { items } ) => {
 	);
 };
 
-export default LicenseLightboxFAQList;
+export default JetpackProductInfoFAQList;

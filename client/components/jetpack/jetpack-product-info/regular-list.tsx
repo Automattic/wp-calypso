@@ -4,9 +4,9 @@ type Props = {
 	items: ReactChild[];
 };
 
-const LicenseLightboxRegularList: FunctionComponent< Props > = ( { items } ) => {
+const JetpackProductInfoRegularList: FunctionComponent< Props > = ( { items } ) => {
 	return (
-		<ul className="license-lightbox__regular-list">
+		<ul className="jetpack-product-info__regular-list">
 			{ items.map( ( item, index ) => (
 				<li key={ index }>{ item }</li>
 			) ) }
@@ -14,4 +14,4 @@ const LicenseLightboxRegularList: FunctionComponent< Props > = ( { items } ) => 
 	);
 };
 
-export default LicenseLightboxRegularList;
+export default JetpackProductInfoRegularList;
