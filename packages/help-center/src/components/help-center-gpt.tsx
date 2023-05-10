@@ -6,9 +6,10 @@ import { HelpCenterSelect, useJetpackSearchAIQuery } from '@automattic/data-stor
 import styled from '@emotion/styled';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import stripTags from 'striptags';
 import './help-center-article-content.scss';
+import useTyper from '../hooks/use-typer';
 import { HELP_CENTER_STORE } from '../stores';
 
 const GPTResponsePlaceholder = styled( LoadingPlaceholder )< { width?: string } >`
@@ -41,20 +42,6 @@ const LoadingPlaceholders: React.FC< Props > = ( { loadingMessage } ) => (
 	</>
 );
 
-const getLoadingMessageIndex = ( () => {
-	let currentIndex = 0;
-
-	return ( messagesLength: number ): number => {
-		currentIndex = currentIndex + 1;
-
-		if ( currentIndex >= messagesLength ) {
-			return messagesLength;
-		}
-
-		return currentIndex;
-	};
-} )();
-
 export function HelpCenterGPT() {
 	const { __ } = useI18n();
 
@@ -66,6 +53,24 @@ export function HelpCenterGPT() {
 		[]
 	);
 
+	const query = message ?? '';
+
+	// First fetch the links
+	const { data: links } = useJetpackSearchAIQuery( '9619154', query, 'urls' );
+
+	// Then fetch the response
+	const { data } = useJetpackSearchAIQuery( '9619154', links?.urls ? query : '', 'response' );
+
+	const allowedTags = [ 'a', 'p', 'ol', 'ul', 'li', 'br', 'b', 'strong', 'i', 'em' ];
+
+	useEffect( () => {
+		if ( data?.response ) {
+			recordTracksEvent( 'calypso_helpcenter_show_gpt_response', {
+				location: 'help-center',
+			} );
+		}
+	}, [ data ] );
+
 	const loadingMessages: string[] = [
 		__( 'Finding relevant support documentation…', __i18n_text_domain__ ),
 		__( 'Gathering all the data…', __i18n_text_domain__ ),
@@ -76,53 +81,10 @@ export function HelpCenterGPT() {
 		__( 'Really, any minute now…', __i18n_text_domain__ ),
 	];
 
-	const [ loadingMessage, setLoadingMessage ] = useState( loadingMessages[ 0 ] );
-
-	const query = message ?? '';
-
-	// First fetch the links
-	const { isFetching: isFetchingLinks, data: links } = useJetpackSearchAIQuery(
-		'9619154',
-		query,
-		'urls'
-	);
-
-	// Then fetch the response
-	const { isFetching: isFetchingResponse, data } = useJetpackSearchAIQuery(
-		'9619154',
-		links?.urls ? query : '',
-		'response'
-	);
-
-	const allowedTags = [ 'a', 'p', 'ol', 'ul', 'li', 'br', 'b', 'strong', 'i', 'em' ];
-
-	useEffect( () => {
-		let intervalId: NodeJS.Timeout | null = null;
-
-		if ( isFetchingLinks || isFetchingResponse ) {
-			intervalId = setInterval( () => {
-				setLoadingMessage( () => {
-					const nextIndex = getLoadingMessageIndex( loadingMessages.length );
-					const nextLoadingMessage = loadingMessages[ nextIndex ];
-					return nextLoadingMessage;
-				} );
-			}, 5000 );
-		}
-
-		return () => {
-			if ( intervalId ) {
-				clearInterval( intervalId );
-			}
-		};
-	}, [ isFetchingLinks, isFetchingResponse, loadingMessages ] );
-
-	useEffect( () => {
-		if ( data?.response ) {
-			recordTracksEvent( 'calypso_helpcenter_show_gpt_response', {
-				location: 'help-center',
-			} );
-		}
-	}, [ data ] );
+	const loadingMessage = useTyper( loadingMessages, true, {
+		delayBetweenCharacters: 80,
+		delayBetweenWords: 1000,
+	} );
 
 	return (
 		<div className="help-center-gpt__container">
