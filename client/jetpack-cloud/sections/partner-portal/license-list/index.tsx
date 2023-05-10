@@ -11,6 +11,7 @@ import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/li
 import LicensePreview, {
 	LicensePreviewPlaceholder,
 } from 'calypso/jetpack-cloud/sections/partner-portal/license-preview';
+import { LicenseType } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { addQueryArgs } from 'calypso/lib/route';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { LICENSES_PER_PAGE } from 'calypso/state/partner-portal/licenses/constants';
@@ -91,7 +92,11 @@ export default function LicenseList() {
 								attachedAt={ license.attachedAt }
 								revokedAt={ license.revokedAt }
 								filter={ filter }
-								licenseType={ license.ownerType }
+								licenseType={
+									license.ownerType === LicenseType.Standard
+										? LicenseType.Standard
+										: LicenseType.Partner
+								}
 							/>
 						</LicenseTransition>
 					) ) }
