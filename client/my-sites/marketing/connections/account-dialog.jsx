@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Dialog } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -91,10 +92,11 @@ class AccountDialog extends Component {
 	areAccountsConflicting( account, otherAccount ) {
 		// Accounts are conflicting, if they have the same ID and keyringConnectionId, which
 		// means they are the same account. Otherwise it's a different site for the same account.
-		return (
-			account.keyringConnectionId === otherAccount.keyringConnectionId &&
-			account.ID === otherAccount.ID
-		);
+		const isIdConflicting = isEnabled( 'jetpack-social/multiple-connections' )
+			? account.ID === otherAccount.ID
+			: account.ID !== otherAccount.ID;
+
+		return account.keyringConnectionId === otherAccount.keyringConnectionId && isIdConflicting;
 	}
 
 	isSelectedAccountConflicting() {
