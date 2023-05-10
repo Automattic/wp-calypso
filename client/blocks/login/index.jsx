@@ -408,11 +408,16 @@ class Login extends Component {
 			}
 
 			if ( isGravatar ) {
-				headerText = translate( 'Log in to %(clientTitle)s', {
+				headerText = translate( 'Welcome back to %(clientTitle)s!', {
 					args: {
 						clientTitle: oauth2Client.title,
 					},
 				} );
+				postHeader = (
+					<p className="login__header-subtitle">
+						{ translate( 'Log in to your WordPress.com account' ) }
+					</p>
+				);
 			}
 		} else if ( isJetpackWooCommerceFlow ) {
 			headerText = translate( 'Log in to your WordPress.com account' );
