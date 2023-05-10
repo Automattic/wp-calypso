@@ -17,10 +17,12 @@ jest.mock( 'calypso/state/ui/selectors', () => ( {
 
 import { PlanSlug, PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM } from '@automattic/calypso-products';
 import { getPlanPrices } from 'calypso/state/plans/selectors';
-import useIsLargeCurrency from '../hooks/use-is-large-currency';
+import useIsLargeCurrency from '../use-is-large-currency';
 
 describe( 'useIsLargeCurrency', () => {
-	const defaultProps: PlanSlug[] = [ PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM ];
+	const defaultProps = {
+		planSlugs: [ PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM ] as PlanSlug[],
+	};
 
 	beforeEach( () => {
 		jest.clearAllMocks();

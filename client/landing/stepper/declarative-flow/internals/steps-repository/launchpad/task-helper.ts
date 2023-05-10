@@ -34,7 +34,7 @@ import type { SiteDetails } from '@automattic/data-stores';
  * generated in the REST API
  */
 export function getEnhancedTasks(
-	tasks: Task[] | null,
+	tasks: Task[] | null | undefined,
 	siteSlug: string | null,
 	site: SiteDetails | null,
 	submit: NavigationControls[ 'submit' ],
@@ -513,10 +513,10 @@ export function getArrayOfFilteredTasks(
  * @returns {boolean} - True if the final task for the given site checklist is completed
  */
 export function areLaunchpadTasksCompleted(
-	checklist: LaunchpadChecklist,
+	checklist: LaunchpadChecklist | null | undefined,
 	isSiteLaunched: boolean
 ) {
-	if ( ! Array.isArray( checklist ) ) {
+	if ( ! checklist || ! Array.isArray( checklist ) ) {
 		return false;
 	}
 

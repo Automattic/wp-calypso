@@ -42,6 +42,7 @@ import { getPlanSlug } from 'calypso/state/plans/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
@@ -349,6 +350,7 @@ class Plans extends Component {
 			isDomainUpsellSuggested,
 			isFreePlan,
 			currentPlanIntervalType,
+			domainFromHomeUpsellFlow,
 		} = this.props;
 
 		if ( ! selectedSite || this.isInvalidPlanInterval() || ! currentPlan ) {
@@ -398,10 +400,17 @@ class Plans extends Component {
 				<QueryContactDetailsCache />
 				<QueryPlans />
 				<TrackComponentView eventName="calypso_plans_view" />
-				{ isDomainUpsell && <DomainUpsellDialog domain={ selectedSite.slug } /> }
+				{ ( isDomainUpsell || domainFromHomeUpsellFlow ) && (
+					<DomainUpsellDialog domain={ selectedSite.slug } />
+				) }
 				{ canAccessPlans && (
 					<div>
-						{ ! isDomainAndPlanPackageFlow && <PlansHeader subHeaderText={ subHeaderText } /> }
+						{ ! isDomainAndPlanPackageFlow && (
+							<PlansHeader
+								domainFromHomeUpsellFlow={ domainFromHomeUpsellFlow }
+								subHeaderText={ subHeaderText }
+							/>
+						) }
 						{ isDomainAndPlanPackageFlow && (
 							<>
 								<div className="plans__header">
@@ -471,6 +480,7 @@ const ConnectedPlans = connect( ( state, props ) => {
 			!! getCurrentQueryArguments( state )?.domain,
 		isDomainUpsellSuggested: getCurrentQueryArguments( state )?.domain === 'true',
 		isFreePlan: isFreePlanProduct( currentPlan ),
+		domainFromHomeUpsellFlow: getDomainFromHomeUpsellInQuery( state ),
 	};
 } )( withCartKey( withShoppingCart( localize( withTrackingTool( 'HotJar' )( Plans ) ) ) ) );
 
