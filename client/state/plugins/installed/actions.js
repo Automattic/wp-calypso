@@ -57,8 +57,8 @@ import 'calypso/state/plugins/init';
  *
  * @param {string} prop - The site property to check. One of 'active', 'autoupdate', 'update', or 'version'.
  * @param {Object} plugin - The plugin object
- * @param {number} siteId - The ID of the site if it exists
- * @returns {boolean} True if the site specific property is on the plugin, false otherwise.
+ * @param {number} siteId - The ID of the site
+ * @returns {any} The value of the prop being requested
  */
 const pluginHasTruthySiteProp = ( prop, plugin, siteId ) => {
 	if ( ! [ 'active', 'autoupdate', 'update', 'version' ].includes( prop ) ) {
@@ -66,7 +66,7 @@ const pluginHasTruthySiteProp = ( prop, plugin, siteId ) => {
 	}
 
 	return plugin.hasOwnProperty( prop )
-		? plugin?.[ prop ]
+		? plugin[ prop ]
 		: siteId && plugin.sites?.[ siteId ]?.[ prop ];
 };
 
