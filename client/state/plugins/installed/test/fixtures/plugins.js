@@ -16,24 +16,6 @@ const placeSitePropsOnSiteObject = ( pluginObject ) => {
 	};
 };
 
-const placeSitePropsOnSiteObject = ( pluginObject ) => {
-	const { active, version, autoupdate, update, ...rest } = pluginObject;
-
-	const siteObject = {};
-	[ 'active', 'version', 'autoupdate', 'update' ].forEach( ( propName ) => {
-		if ( pluginObject[ propName ] ) {
-			siteObject[ propName ] = pluginObject[ propName ];
-		}
-	} );
-
-	return {
-		sites: {
-			[ 2916284 ]: siteObject,
-		},
-		...rest,
-	};
-};
-
 export const akismet = {
 	id: 'akismet/akismet',
 	slug: 'akismet',
