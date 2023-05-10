@@ -107,7 +107,7 @@ const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
 	const getTextsForHostingFlow = () => {
 		return {
 			headerText: translate( "Let's create your site" ),
-			headerImage: undefined,
+			headerImage: siteOptionsUrl,
 			siteTitleLabel: translate( 'Site title' ),
 			taglineLabel: undefined,
 			taglineExplanation: undefined,
