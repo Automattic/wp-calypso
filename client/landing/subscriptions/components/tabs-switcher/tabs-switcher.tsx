@@ -23,8 +23,6 @@ const TabsSwitcher = () => {
 	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
 	const shouldEnableCommentsTab =
 		config.isEnabled( 'subscription-management-comments-view' ) && locale === 'en' && ! isLoggedIn;
-	const shouldEnablePendingTab =
-		config.isEnabled( 'subscription-management-pending-view' ) && locale === 'en' && ! isLoggedIn;
 
 	const getFullPath = ( subpath: string ) =>
 		`/subscriptions/${ subpath }${ locale !== 'en' ? '/' + locale : '' }`;
@@ -63,13 +61,7 @@ const TabsSwitcher = () => {
 
 					{ counts?.pending || pathname.includes( 'pending' ) ? (
 						<NavItem
-							onClick={ () => {
-								shouldEnablePendingTab
-									? navigate( pendingPath )
-									: window.location.replace(
-											`https://wordpress.com/email-subscriptions/?option=pending&locale=${ locale }`
-									  );
-							} }
+							onClick={ () => navigate( pendingPath ) }
 							count={ counts?.pending || undefined }
 							selected={ pathname.startsWith( pendingPath ) }
 						>
