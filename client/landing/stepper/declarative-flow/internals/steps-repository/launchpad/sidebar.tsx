@@ -1,5 +1,6 @@
 import { Gridicon, CircularProgressBar } from '@automattic/components';
 import { OnboardSelect, useLaunchpad } from '@automattic/data-stores';
+import { isStartWritingFlow } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useRef, useState } from '@wordpress/element';
 import { Icon, copy } from '@wordpress/icons';
@@ -59,12 +60,14 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 		data: { site_intent: siteIntentOption, checklist_statuses: checklistStatuses },
 	} = useLaunchpad( siteSlug );
 
-	const { getDomainCartItem } = useSelect(
-		( select ) => ( {
-			getDomainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem,
-		} ),
+	const selectedDomain = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDomain(),
 		[]
 	);
+
+	const showDomain =
+		! isStartWritingFlow( flow ) ||
+		( checklistStatuses?.domain_upsell_deferred === true && selectedDomain );
 
 	const {
 		data: { checklist: launchpadChecklist },
@@ -124,9 +127,9 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 	}
 
 	function getDomainName() {
-		if ( getDomainCartItem() ) {
+		if ( selectedDomain ) {
 			return (
-				<span className="launchpad__url-box-top-level-domain">{ getDomainCartItem()?.meta }</span>
+				<span className="launchpad__url-box-top-level-domain">{ selectedDomain.domain_name }</span>
 			);
 		}
 
@@ -154,42 +157,44 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 					{ showLaunchTitle && launchTitle ? launchTitle : title }
 				</h1>
 				<p className="launchpad__sidebar-description">{ subtitle }</p>
-				<div className="launchpad__url-box">
-					{ /* Google Chrome is adding an extra space after highlighted text. This extra wrapping div prevents that */ }
-					<div className="launchpad__url-box-domain">
-						<div className="launchpad__url-box-domain-text">{ getDomainName() }</div>
-						{ showClipboardButton && (
-							<>
-								<ClipboardButton
-									aria-label={ translate( 'Copy URL' ) }
-									text={ siteSlug }
-									className="launchpad__clipboard-button"
-									borderless
-									compact
-									onCopy={ () => setClipboardCopied( true ) }
-									onMouseLeave={ () => setClipboardCopied( false ) }
-									ref={ clipboardButtonEl }
-								>
-									<Icon icon={ copy } size={ 18 } />
-								</ClipboardButton>
-								<Tooltip
-									context={ clipboardButtonEl.current }
-									isVisible={ clipboardCopied }
-									position="top"
-								>
-									{ translate( 'Copied to clipboard!' ) }
-								</Tooltip>
-							</>
+				{ showDomain && (
+					<div className="launchpad__url-box">
+						{ /* Google Chrome is adding an extra space after highlighted text. This extra wrapping div prevents that */ }
+						<div className="launchpad__url-box-domain">
+							<div className="launchpad__url-box-domain-text">{ getDomainName() }</div>
+							{ showClipboardButton && (
+								<>
+									<ClipboardButton
+										aria-label={ translate( 'Copy URL' ) }
+										text={ siteSlug }
+										className="launchpad__clipboard-button"
+										borderless
+										compact
+										onCopy={ () => setClipboardCopied( true ) }
+										onMouseLeave={ () => setClipboardCopied( false ) }
+										ref={ clipboardButtonEl }
+									>
+										<Icon icon={ copy } size={ 18 } />
+									</ClipboardButton>
+									<Tooltip
+										context={ clipboardButtonEl.current }
+										isVisible={ clipboardCopied }
+										position="top"
+									>
+										{ translate( 'Copied to clipboard!' ) }
+									</Tooltip>
+								</>
+							) }
+						</div>
+						{ showDomainUpgradeBadge && (
+							<a href={ domainUpgradeBadgeUrl }>
+								<Badge className="launchpad__domain-upgrade-badge" type="info-blue">
+									{ translate( 'Customize' ) }
+								</Badge>
+							</a>
 						) }
 					</div>
-					{ showDomainUpgradeBadge && (
-						<a href={ domainUpgradeBadgeUrl }>
-							<Badge className="launchpad__domain-upgrade-badge" type="info-blue">
-								{ translate( 'Customize' ) }
-							</Badge>
-						</a>
-					) }
-				</div>
+				) }
 				{ isDomainSSLProcessing && (
 					<div className="launchpad__domain-notification">
 						<div className="launchpad__domain-notification-icon">

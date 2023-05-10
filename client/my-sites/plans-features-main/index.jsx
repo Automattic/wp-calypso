@@ -31,7 +31,6 @@ import {
 	is2023PricingGridActivePage,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { isLinkInBioFlow } from '@automattic/onboarding';
 import { hasTranslation } from '@wordpress/i18n';
 import warn from '@wordpress/warning';
 import classNames from 'classnames';
@@ -173,6 +172,7 @@ export class PlansFeaturesMain extends Component {
 			planTypeSelectorProps,
 			hidePlansFeatureComparison,
 			replacePaidDomainWithFreeDomain,
+			sitePlanSlug,
 		} = this.props;
 
 		const asyncProps = {
@@ -203,6 +203,7 @@ export class PlansFeaturesMain extends Component {
 			intervalType,
 			hidePlansFeatureComparison,
 			replacePaidDomainWithFreeDomain,
+			currentSitePlanSlug: sitePlanSlug,
 		};
 		const asyncPlanFeatures2023Grid = (
 			<AsyncLoad
@@ -449,7 +450,6 @@ export class PlansFeaturesMain extends Component {
 	getVisiblePlansForPlanFeatures( availablePlans ) {
 		const {
 			customerType,
-			flowName,
 			selectedPlan,
 			plansWithScroll,
 			isAllPaidPlansShown,
@@ -459,6 +459,7 @@ export class PlansFeaturesMain extends Component {
 			hideFreePlan,
 			hidePersonalPlan,
 			hidePremiumPlan,
+			hideBusinessPlan,
 			hideEcommercePlan,
 		} = this.props;
 
@@ -491,16 +492,12 @@ export class PlansFeaturesMain extends Component {
 			plans = plans.filter( ( planSlug ) => ! isPremiumPlan( planSlug ) );
 		}
 
-		if ( hideEcommercePlan ) {
-			plans = plans.filter( ( planSlug ) => ! isEcommercePlan( planSlug ) );
+		if ( hideBusinessPlan ) {
+			plans = plans.filter( ( planSlug ) => ! isBusinessPlan( planSlug ) );
 		}
 
-		// TODO
-		// Remove this once we migrate them to the new pricing grid
-		if ( isLinkInBioFlow( flowName ) ) {
-			plans = plans.filter(
-				( planSlug ) => ! isBusinessPlan( planSlug ) && ! isEcommercePlan( planSlug )
-			);
+		if ( hideEcommercePlan ) {
+			plans = plans.filter( ( planSlug ) => ! isEcommercePlan( planSlug ) );
 		}
 
 		if ( is2023PricingGridVisible ) {
@@ -632,9 +629,21 @@ export class PlansFeaturesMain extends Component {
 		 * we pass `visiblePlans` to its `plans` prop.
 		 */
 		const term = this.getPlanBillingPeriod( intervalType, getPlan( selectedPlan )?.term );
-		const planTypes = this.props.planTypes || this.getDefaultPlanTypes();
-		const plans = this.getPlansFromTypes( planTypes, GROUP_WPCOM, term );
-		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
+		const defaultPlanTypes = this.getDefaultPlanTypes();
+		const planTypes = this.props.planTypes || defaultPlanTypes;
+		let plans = this.getPlansFromTypes( planTypes, GROUP_WPCOM, term );
+		const filteredPlans = plans;
+
+		/*
+		 * We need to keep all the plans in the plans variable,
+		 * The filtered planTypes should be reflected in visible plans only.
+		 */
+		if ( is2023PricingGridVisible ) {
+			plans = this.getPlansFromTypes( defaultPlanTypes, GROUP_WPCOM, term );
+		}
+
+		const visiblePlans = this.getVisiblePlansForPlanFeatures( filteredPlans );
+
 		const kindOfPlanTypeSelector = this.getKindOfPlanTypeSelector( this.props );
 
 		// If advertising plans for a certain feature, ensure user has pressed "View all plans" before they can see others

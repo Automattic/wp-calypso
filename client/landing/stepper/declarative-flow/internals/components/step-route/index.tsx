@@ -1,5 +1,9 @@
 import { ProgressBar } from '@automattic/components';
-import { CONNECT_DOMAIN_FLOW, SITE_SETUP_FLOW } from '@automattic/onboarding';
+import {
+	CONNECT_DOMAIN_FLOW,
+	isHostingSiteCreationFlow,
+	SITE_SETUP_FLOW,
+} from '@automattic/onboarding';
 import classnames from 'classnames';
 import kebabCase from 'calypso/landing/stepper/utils/kebabCase';
 import SignupHeader from 'calypso/signup/signup-header';
@@ -26,7 +30,10 @@ const StepRoute = ( {
 	const renderProgressBar = () => {
 		// The progress bar is removed from the site-setup due to its fragility.
 		// See https://github.com/Automattic/wp-calypso/pull/73653
-		if ( [ SITE_SETUP_FLOW, CONNECT_DOMAIN_FLOW ].includes( flow.name ) ) {
+		if (
+			[ SITE_SETUP_FLOW, CONNECT_DOMAIN_FLOW ].includes( flow.name ) ||
+			isHostingSiteCreationFlow( flow.name )
+		) {
 			return null;
 		}
 

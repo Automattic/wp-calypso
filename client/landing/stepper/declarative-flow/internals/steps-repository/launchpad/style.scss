@@ -211,6 +211,7 @@
 		align-items: center;
 		flex-grow: 1;
 		width: 0;
+		margin-right: 6px;
 	}
 
 	.launchpad__url-box-domain-text {
@@ -218,21 +219,20 @@
 		white-space: nowrap;
 		overflow: hidden;
 		padding: 4px 0;
-		padding-right: 8px;
+		padding-right: 6px;
 		letter-spacing: -0.24px;
 		font-size: $font-body-small;
 	}
 
-	.launchpad__url-box-domain:hover > .launchpad__clipboard-button {
-		opacity: 1;
-	}
-
-	.launchpad__clipboard-button:focus {
-		opacity: 1;
-	}
-
 	.launchpad__clipboard-button {
 		opacity: 0;
+		margin-top: 2px;
+		flex-shrink: 0;
+	}
+
+	.launchpad__url-box-domain:hover > .launchpad__clipboard-button,
+	.launchpad__clipboard-button:focus {
+		opacity: 1;
 	}
 }
 

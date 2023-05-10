@@ -3,7 +3,15 @@ import { useTranslate } from 'i18n-calypso';
 
 import './style.scss';
 
-export default function StatsEmptyState( { headingText = null, infoText = null } ) {
+interface EmptyStateProps {
+	headingText?: string | React.ReactNode | null;
+	infoText?: string | React.ReactNode | null;
+}
+
+export default function StatsEmptyState( {
+	headingText = null,
+	infoText = null,
+}: EmptyStateProps ) {
 	const translate = useTranslate();
 	const defaultHeadingText = translate( 'No data in this period' );
 	const defaultInfoText = translate(

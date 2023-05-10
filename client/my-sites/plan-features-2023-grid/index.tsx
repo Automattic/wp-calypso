@@ -20,7 +20,7 @@ import {
 	PlanSlug,
 	isWooExpressPlusPlan,
 } from '@automattic/calypso-products';
-import { isHostingFlow, isNewsletterFlow } from '@automattic/onboarding';
+import { isHostingFlow, isLinkInBioFlow, isNewsletterFlow } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
@@ -61,11 +61,10 @@ import {
 	getPlanSlug,
 } from 'calypso/state/plans/selectors';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
-import { getCurrentPlan, isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
+import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
 import isPlanAvailableForPurchase from 'calypso/state/sites/plans/selectors/is-plan-available-for-purchase';
-import { getSiteSlug, isCurrentPlanPaid, isCurrentSitePlan } from 'calypso/state/sites/selectors';
+import { getSiteSlug, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 import CalypsoShoppingCartProvider from '../checkout/calypso-shopping-cart-provider';
-import useIsLargeCurrency from '../plans/hooks/use-is-large-currency';
 import { getManagePurchaseUrlFor } from '../purchases/paths';
 import PlanFeatures2023GridActions from './components/actions';
 import PlanFeatures2023GridBillingTimeframe from './components/billing-timeframe';
@@ -77,6 +76,7 @@ import { Plans2023Tooltip } from './components/plans-2023-tooltip';
 import PopularBadge from './components/popular-badge';
 import useHighlightAdjacencyMatrix from './hooks/use-highlight-adjacency-matrix';
 import useHighlightLabel from './hooks/use-highlight-label';
+import useIsLargeCurrency from './hooks/use-is-large-currency';
 import { PlanProperties, TransformedFeatureObject } from './types';
 import { getStorageStringFromFeature } from './util';
 import type { IAppState } from 'calypso/state/types';
@@ -109,14 +109,14 @@ type PlanFeatures2023GridProps = {
 	isReskinned: boolean;
 	onUpgradeClick: ( cartItem: MinimalRequestCartProduct | null ) => void;
 	// either you specify the plans prop or isPlaceholder prop
-	plans: Array< string >;
+	plans: PlanSlug[];
 	visiblePlans: Array< string >;
 	flowName: string;
 	domainName: string;
 	placeholder?: string;
 	isLandingPage?: boolean;
 	intervalType: string;
-	currentSitePlanSlug: string;
+	currentSitePlanSlug?: string;
 	hidePlansFeatureComparison: boolean;
 	hideUnavailableFeatures: boolean;
 };
@@ -162,11 +162,24 @@ const PlanLogo: React.FunctionComponent< {
 	flowName: string;
 	isMobile?: boolean;
 	isInSignup: boolean;
-} > = ( { planPropertiesObj, planProperties, planIndex, isMobile, isInSignup, flowName } ) => {
+	currentSitePlanSlug?: string;
+} > = ( {
+	planPropertiesObj,
+	planProperties,
+	planIndex,
+	isMobile,
+	isInSignup,
+	flowName,
+	currentSitePlanSlug,
+} ) => {
 	const { planName, current } = planProperties;
 	const translate = useTranslate();
-	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( planPropertiesObj, flowName );
-	const highlightLabel = useHighlightLabel( planName, flowName );
+	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
+		visiblePlans: planPropertiesObj,
+		flowName,
+		currentSitePlanSlug,
+	} );
+	const highlightLabel = useHighlightLabel( { planName, flowName, currentSitePlanSlug } );
 	const headerClasses = classNames(
 		'plan-features-2023-grid__header-logo',
 		getPlanClass( planName )
@@ -198,6 +211,7 @@ const PlanLogo: React.FunctionComponent< {
 				planName={ planName }
 				additionalClassName={ popularBadgeClasses }
 				flowName={ flowName }
+				currentSitePlanSlug={ currentSitePlanSlug }
 			/>
 			<header className={ headerClasses }>
 				{ isBusinessPlan( planName ) && (
@@ -281,6 +295,7 @@ export class PlanFeatures2023Grid extends Component<
 			translate,
 			selectedSiteSlug,
 			hidePlansFeatureComparison,
+			siteId,
 		} = this.props;
 		return (
 			<div className="plans-wrapper">
@@ -326,6 +341,7 @@ export class PlanFeatures2023Grid extends Component<
 							canUserPurchasePlan={ canUserPurchasePlan }
 							selectedSiteSlug={ selectedSiteSlug }
 							onUpgradeClick={ this.handleUpgradeClick }
+							siteId={ siteId }
 						/>
 						<div className="plan-features-2023-grid__toggle-plan-comparison-button-container">
 							<Button onClick={ this.toggleShowPlansComparisonGrid }>
@@ -537,7 +553,7 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderPlanLogos( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { isInSignup, flowName } = this.props;
+		const { isInSignup, flowName, currentSitePlanSlug } = this.props;
 
 		return planPropertiesObj
 			.filter( ( { isVisible } ) => isVisible )
@@ -551,6 +567,7 @@ export class PlanFeatures2023Grid extends Component<
 						isMobile={ options?.isMobile }
 						isInSignup={ isInSignup }
 						flowName={ flowName }
+						currentSitePlanSlug={ currentSitePlanSlug }
 					/>
 				);
 			} );
@@ -642,12 +659,12 @@ export class PlanFeatures2023Grid extends Component<
 
 				if (
 					isWooExpressMediumPlan( planName ) &&
-					! isWooExpressMediumPlan( currentSitePlanSlug )
+					! isWooExpressMediumPlan( currentSitePlanSlug || '' )
 				) {
 					buttonText = translate( 'Get Performance', { textOnly: true } );
 				} else if (
 					isWooExpressSmallPlan( planName ) &&
-					! isWooExpressSmallPlan( currentSitePlanSlug )
+					! isWooExpressSmallPlan( currentSitePlanSlug || '' )
 				) {
 					buttonText = translate( 'Get Essential', { textOnly: true } );
 				}
@@ -854,9 +871,10 @@ export class PlanFeatures2023Grid extends Component<
 
 const withIsLargeCurrency = ( Component: LocalizedComponent< typeof PlanFeatures2023Grid > ) => {
 	return function ( props: PlanFeatures2023GridType ) {
-		const isLargeCurrency = useIsLargeCurrency(
-			( props.planProperties || [] ).map( ( properties ) => properties.planName as PlanSlug )
-		);
+		const isLargeCurrency = useIsLargeCurrency( {
+			planSlugs: props.plans,
+			siteId: props.siteId,
+		} );
 		return <Component { ...props } isLargeCurrency={ isLargeCurrency } />;
 	};
 };
@@ -864,13 +882,20 @@ const withIsLargeCurrency = ( Component: LocalizedComponent< typeof PlanFeatures
 /* eslint-disable wpcalypso/redux-no-bound-selectors */
 const ConnectedPlanFeatures2023Grid = connect(
 	( state: IAppState, ownProps: PlanFeatures2023GridProps ) => {
-		const { placeholder, plans, isLandingPage, visiblePlans, isInSignup, siteId, flowName } =
-			ownProps;
+		const {
+			placeholder,
+			plans,
+			isLandingPage,
+			visiblePlans,
+			isInSignup,
+			siteId,
+			flowName,
+			currentSitePlanSlug,
+		} = ownProps;
 		const canUserPurchasePlan =
 			! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId );
 		const purchaseId = getCurrentPlanPurchaseId( state, siteId );
 		const selectedSiteSlug = getSiteSlug( state, siteId );
-		const currentSitePlan = getCurrentPlan( state, siteId );
 
 		const planProperties: PlanProperties[] = plans.map( ( plan: string ) => {
 			let isPlaceholder = false;
@@ -899,6 +924,11 @@ const ConnectedPlanFeatures2023Grid = connect(
 					planConstantObj?.getNewsletterSignupFeatures?.() ?? []
 				);
 				tagline = planConstantObj.getNewsletterTagLine?.() ?? '';
+			} else if ( isLinkInBioFlow( flowName ) ) {
+				planFeatures = getPlanFeaturesObject(
+					planConstantObj?.getLinkInBioSignupFeatures?.() ?? []
+				);
+				tagline = planConstantObj.getLinkInBioTagLine?.() ?? '';
 			} else {
 				planFeatures = getPlanFeaturesObject(
 					planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ?? []
@@ -961,7 +991,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 					planConstantObj.get2023PricingGridSignupStorageOptions() ) ||
 				[];
 			const availableForPurchase = isInSignup || isPlanAvailableForPurchase( state, siteId, plan );
-			const isCurrentPlan = isCurrentSitePlan( state, siteId, planProductId ) ?? false;
+			const isCurrentPlan = currentSitePlanSlug === plan;
 			const isVisible = visiblePlans?.indexOf( plan ) !== -1;
 
 			return {
@@ -996,7 +1026,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 				: `/plans/my-plan/${ siteId }`;
 
 		return {
-			currentSitePlanSlug: currentSitePlan?.productSlug,
+			currentSitePlanSlug,
 			planProperties,
 			canUserPurchasePlan,
 			manageHref,
