@@ -90,13 +90,15 @@ class AccountDialog extends Component {
 	}
 
 	areAccountsConflicting( account, otherAccount ) {
-		// Accounts are conflicting, if they have the same ID and keyringConnectionId, which
-		// means they are the same account. Otherwise it's a different site for the same account.
-		const isIdConflicting = isEnabled( 'jetpack-social/multiple-connections' )
-			? account.ID === otherAccount.ID
-			: account.ID !== otherAccount.ID;
+		// If we support multiple connections, accounts should never conflict.
+		if ( isEnabled( 'jetpack-social/multiple-connections' ) ) {
+			return false;
+		}
 
-		return account.keyringConnectionId === otherAccount.keyringConnectionId && isIdConflicting;
+		return (
+			account.keyringConnectionId === otherAccount.keyringConnectionId &&
+			account.ID !== otherAccount.ID
+		);
 	}
 
 	isSelectedAccountConflicting() {
