@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
@@ -146,8 +146,9 @@ const EducationFooter = () => {
 				<ThreeColumnContainer>
 					<LinkCard
 						external
+						target="_blank"
 						title={ __( 'What Are WordPress Plugins and Themes? (A Beginner’s Guide)' ) }
-						cta={ __( 'Read More' ) }
+						cta={ <ReadMoreLink /> }
 						url={ localizeUrl(
 							'https://wordpress.com/go/website-building/what-are-wordpress-plugins-and-themes-a-beginners-guide/'
 						) }
@@ -156,8 +157,9 @@ const EducationFooter = () => {
 					/>
 					<LinkCard
 						external
+						target="_blank"
 						title={ __( 'How to Choose WordPress Plugins for Your Website (7 Tips)' ) }
-						cta={ __( 'Read More' ) }
+						cta={ <ReadMoreLink /> }
 						url={ localizeUrl(
 							'https://wordpress.com/go/customization/how-to-choose-wordpress-plugins-for-your-website-7-tips/'
 						) }
@@ -166,8 +168,9 @@ const EducationFooter = () => {
 					/>
 					<LinkCard
 						external
+						target="_blank"
 						title={ __( '17 Must-Have WordPress Plugins (Useful For All Sites)' ) }
-						cta={ __( 'Read More' ) }
+						cta={ <ReadMoreLink /> }
 						url={ localizeUrl(
 							'https://wordpress.com/go/website-building/17-must-have-wordpress-plugins-useful-for-all-sites/'
 						) }
@@ -180,5 +183,16 @@ const EducationFooter = () => {
 		</EducationFooterContainer>
 	);
 };
+
+function ReadMoreLink() {
+	const { __ } = useI18n();
+
+	return (
+		<>
+			{ __( 'Read More' ) }
+			<Gridicon icon="external" size={ 12 } />
+		</>
+	);
+}
 
 export default EducationFooter;
