@@ -1,15 +1,17 @@
 import { useCallback } from 'react';
 import type uPlot from 'uplot';
 
+export type ScaleGradientFunction = (
+	u: uPlot,
+	scaleKey: string,
+	ori: number,
+	scaleStops: [ number, string ][],
+	discrete?: boolean
+) => CanvasRenderingContext2D[ 'fillStyle' ];
+
 export default function useScaleGradient( backupColor: string ) {
-	return useCallback(
-		(
-			u: uPlot,
-			scaleKey: string,
-			ori: number,
-			scaleStops: [ number, string ][],
-			discrete = false
-		): CanvasRenderingContext2D[ 'fillStyle' ] => {
+	return useCallback< ScaleGradientFunction >(
+		( u, scaleKey, ori, scaleStops, discrete = false ) => {
 			const ctx = document.createElement( 'canvas' ).getContext( '2d' );
 
 			const scale = u.scales[ scaleKey ];

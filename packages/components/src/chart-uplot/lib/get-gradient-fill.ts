@@ -1,14 +1,9 @@
+import type { ScaleGradientFunction } from '../hooks/use-scale-gradient';
 import type uPlot from 'uplot';
 
 export default function getGradientFill(
 	fillColor: string,
-	scaleGradient: (
-		u: uPlot,
-		scaleKey: string,
-		ori: number,
-		scaleStops: [ number, string ][],
-		discrete?: boolean
-	) => CanvasRenderingContext2D[ 'fillStyle' ]
+	scaleGradient: ScaleGradientFunction
 ): ( self: uPlot, seriesIdx: number ) => CanvasRenderingContext2D[ 'fillStyle' ] {
 	return ( u, seriesIdx ) => {
 		// Find min and max values for the visible parts of all y axis' and map it to color values to draw a gradient.
