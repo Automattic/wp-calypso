@@ -135,6 +135,7 @@ class NavTabs extends Component {
 			const navGroupWidth = this.navGroupRef.current.offsetWidth;
 
 			this.getTabWidths();
+
 			if ( navGroupWidth <= this.tabsWidth && ! this.state.isDropdown ) {
 				this.setState( {
 					isDropdown: true,
