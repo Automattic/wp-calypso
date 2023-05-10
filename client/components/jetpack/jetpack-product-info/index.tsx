@@ -2,6 +2,8 @@ import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 import JetpackProductInfoFAQList from './faq-list';
+import { useIncludedProductDescriptionMap } from './hooks/use-included-product-description-map';
+import JetpackProductInfoProductList from './product-list';
 import JetpackProductInfoRecommendationTags from './recommendation-tags';
 import JetpackProductInfoRegularList from './regular-list';
 import JetpackProductInfoSection from './section';
@@ -25,6 +27,8 @@ const JetpackProductInfo: FunctionComponent< JetpackProductInfoProps > = ( {
 	const translate = useTranslate();
 	const icon = getProductIcon( { productSlug } );
 
+	const descriptionMap = useIncludedProductDescriptionMap( product.productSlug );
+
 	return (
 		<div className="jetpack-product-info">
 			<div className="jetpack-product-info__header">
@@ -37,16 +41,25 @@ const JetpackProductInfo: FunctionComponent< JetpackProductInfoProps > = ( {
 
 			{ full && recommendedFor && <JetpackProductInfoRecommendationTags tags={ recommendedFor } /> }
 
-			{ whatIsIncluded?.length && (
-				<JetpackProductInfoSection title={ translate( 'Includes' ) }>
-					<JetpackProductInfoRegularList items={ whatIsIncluded } />
-				</JetpackProductInfoSection>
-			) }
+			{ product.productsIncluded ? (
+				<JetpackProductInfoProductList
+					products={ product.productsIncluded }
+					descriptionMap={ descriptionMap }
+				/>
+			) : (
+				<>
+					{ whatIsIncluded?.length && (
+						<JetpackProductInfoSection title={ translate( 'Includes' ) }>
+							<JetpackProductInfoRegularList items={ whatIsIncluded } />
+						</JetpackProductInfoSection>
+					) }
 
-			{ benefits?.length && (
-				<JetpackProductInfoSection title={ translate( 'Benefits' ) }>
-					<JetpackProductInfoRegularList items={ benefits } />
-				</JetpackProductInfoSection>
+					{ benefits?.length && (
+						<JetpackProductInfoSection title={ translate( 'Benefits' ) }>
+							<JetpackProductInfoRegularList items={ benefits } />
+						</JetpackProductInfoSection>
+					) }
+				</>
 			) }
 
 			{ faqs?.length && (
