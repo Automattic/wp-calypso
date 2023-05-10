@@ -166,10 +166,10 @@ const EducationFooter = () => {
 					/>
 					<LinkCard
 						external
-						title={ __( 'Do You Need to Use SEO Plugins on Your WordPress.com Site?' ) }
+						title={ __( '17 Must-Have WordPress Plugins (Useful For All Sites)' ) }
 						cta={ __( 'Read More' ) }
 						url={ localizeUrl(
-							'https://wordpress.com/go/tips/do-you-need-to-use-seo-plugins-on-your-wordpress-com-site/'
+							'https://wordpress.com/go/website-building/17-must-have-wordpress-plugins-useful-for-all-sites/'
 						) }
 						background="#e5f4ff"
 						onClick={ () => onClickLinkCard( 'seo' ) }
