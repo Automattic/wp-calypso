@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -29,7 +30,7 @@ const jetpackGettingStartedLink = () => {
 const jetpackGDPRLink = () => {
 	return (
 		<a
-			href="https://jetpack.com/gdpr/"
+			href={ localizeUrl( 'https://jetpack.com/gdpr/' ) }
 			target="_blank"
 			rel="noopener noreferrer"
 			onClick={ () => {
