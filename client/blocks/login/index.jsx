@@ -273,6 +273,7 @@ class Login extends Component {
 			isWoo,
 			action,
 			currentQuery,
+			isGravatar,
 		} = this.props;
 
 		let headerText = translate( 'Log in to your account' );
@@ -404,6 +405,19 @@ class Login extends Component {
 						clientTitle: oauth2Client.title,
 					},
 				} );
+			}
+
+			if ( isGravatar ) {
+				headerText = translate( 'Welcome back to %(clientTitle)s!', {
+					args: {
+						clientTitle: oauth2Client.title,
+					},
+				} );
+				postHeader = (
+					<p className="login__header-subtitle">
+						{ translate( 'Log in to your WordPress.com account' ) }
+					</p>
+				);
 			}
 		} else if ( isJetpackWooCommerceFlow ) {
 			headerText = translate( 'Log in to your WordPress.com account' );

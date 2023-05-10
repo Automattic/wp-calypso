@@ -107,6 +107,7 @@ class SignupForm extends Component {
 		translate: PropTypes.func.isRequired,
 		horizontal: PropTypes.bool,
 		shouldDisplayUserExistsError: PropTypes.bool,
+		loginUrl: PropTypes.string,
 
 		// Connected props
 		oauth2Client: PropTypes.object,
@@ -1218,6 +1219,7 @@ class SignupForm extends Component {
 							flowName={ this.props.flowName }
 							compact={ this.props.isWoo || isGravatarOAuth2Client( this.props.oauth2Client ) }
 							redirectToAfterLoginUrl={ this.props.redirectToAfterLoginUrl }
+							loginUrl={ this.props.loginUrl }
 						/>
 					</Fragment>
 				) }

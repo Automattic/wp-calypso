@@ -128,6 +128,7 @@ export interface SiteDetails {
 	single_user_site?: boolean;
 	site_owner?: number;
 	slug: string;
+	title: string;
 	visible?: boolean;
 	was_ecommerce_trial?: boolean;
 	wpcom_url?: string;

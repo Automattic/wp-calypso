@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { SubscriptionManager } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
@@ -16,81 +15,61 @@ import {
 import './styles.scss';
 
 type SubscriptionManagerTab = {
+	id: string;
 	label: string;
-	subpath: string;
-	fullPath: string;
 	count?: number;
+	onClick: () => void;
 	selected: boolean;
-	redirectURL?: string;
 	hide?: boolean;
 };
 
-const getFullPath = ( subpath: string, locale: string ) =>
-	`/subscriptions/${ subpath }${ locale !== 'en' ? '/' + locale : '' }`;
+const getPath = ( subpath: string ) => `/subscriptions/${ subpath }`;
+
+const getPathWithLocale = ( subpath: string, locale: string ) =>
+	getPath( subpath ) + ( locale !== 'en' ? '/' + locale : '' );
 
 const useTabs = (): SubscriptionManagerTab[] => {
+	const navigate = useNavigate();
 	const { pathname } = useLocation();
 	const translate = useTranslate();
 	const locale = useLocale();
 	const { data: counts } = SubscriptionManager.useSubscriptionsCountQuery();
-	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
-
-	const isCommentsViewEnabled =
-		config.isEnabled( 'subscription-management-comments-view' ) && locale === 'en' && ! isLoggedIn;
-	const isPendingViewEnabled =
-		config.isEnabled( 'subscription-management-pending-view' ) && locale === 'en' && ! isLoggedIn;
 
 	return useMemo( () => {
 		return [
 			{
+				id: 'sites',
 				label: translate( 'Sites' ),
-				subpath: 'sites',
-				fullPath: getFullPath( 'sites', locale ),
 				count: counts?.blogs || undefined,
-				selected: pathname.startsWith( getFullPath( 'sites', locale ) ),
+				onClick: () => navigate( getPathWithLocale( 'sites', locale ) ),
+				selected: pathname.startsWith( getPath( 'sites' ) ),
 			},
 			{
+				id: 'comments',
 				label: translate( 'Comments' ),
-				subpath: 'comments',
-				fullPath: getFullPath( 'comments', locale ),
 				count: counts?.comments || undefined,
-				selected: pathname.startsWith( getFullPath( 'comments', locale ) ),
-				...( isCommentsViewEnabled && {
-					redirectURL: `https://wordpress.com/email-subscriptions/?option=comments&locale=${ locale }`,
-				} ),
+				onClick: () => navigate( getPathWithLocale( 'comments', locale ) ),
+				selected: pathname.startsWith( getPath( 'comments' ) ),
 			},
 			{
+				id: 'pending',
 				label: translate( 'Pending' ),
-				subpath: 'pending',
-				fullPath: getFullPath( 'pending', locale ),
 				count: counts?.pending || undefined,
-				selected: pathname.startsWith( getFullPath( 'pending', locale ) ),
-				...( isPendingViewEnabled && {
-					redirectURL: `https://wordpress.com/email-subscriptions/pending`,
-				} ),
+				onClick: () => navigate( getPathWithLocale( 'pending', locale ) ),
+				selected: pathname.startsWith( getPath( 'pending' ) ),
 				hide: ! counts?.pending && ! pathname.includes( 'pending' ),
 			},
 			{
+				id: 'settings',
 				label: translate( 'Settings' ),
-				fullPath: getFullPath( 'settings', locale ),
-				subpath: 'settings',
-				selected: pathname.startsWith( getFullPath( 'settings', locale ) ),
+				onClick: () => navigate( getPathWithLocale( 'settings', locale ) ),
+				selected: pathname.startsWith( getPath( 'settings' ) ),
 			},
 		];
-	}, [
-		counts?.blogs,
-		counts?.comments,
-		counts?.pending,
-		isCommentsViewEnabled,
-		isPendingViewEnabled,
-		locale,
-		pathname,
-		translate,
-	] );
+	}, [ counts?.blogs, counts?.comments, counts?.pending, locale, navigate, pathname, translate ] );
 };
 
 const TabsSwitcher = () => {
-	const navigate = useNavigate();
 	const tabs = useTabs();
 	const { label: selectedText, count: selectedCount } = tabs.find( ( tab ) => tab.selected ) ?? {};
 	return (
@@ -104,12 +83,8 @@ const TabsSwitcher = () => {
 					{ tabs.map( ( tab ) =>
 						tab.hide ? null : (
 							<NavItem
-								key={ tab.subpath }
-								onClick={ () => {
-									tab.redirectURL
-										? window.location.replace( tab.redirectURL )
-										: navigate( tab.fullPath );
-								} }
+								key={ tab.id }
+								onClick={ tab.onClick }
 								count={ tab.count }
 								selected={ tab.selected }
 							>
