@@ -1,6 +1,6 @@
 import { getLocaleSlug, numberFormat, useTranslate } from 'i18n-calypso';
 import throttle from 'lodash/throttle';
-import { useMemo, useState, useRef, useEffect } from 'react';
+import { useCallback, useMemo, useState, useRef, useEffect } from 'react';
 import uPlot from 'uplot';
 import UplotReact from 'uplot-react';
 
@@ -47,6 +47,7 @@ function useResize(
 
 interface UplotChartProps {
 	data: uPlot.AlignedData;
+	fillColor?: string;
 	options?: Partial< uPlot.Options >;
 	legendContainer?: React.RefObject< HTMLDivElement >;
 	solidFill?: boolean;
@@ -54,122 +55,125 @@ interface UplotChartProps {
 
 export default function UplotChart( {
 	data,
-	options: propOptions,
+	fillColor = 'rgba(48, 87, 220, 0.4)',
 	legendContainer,
+	options: propOptions,
 	solidFill = false,
 }: UplotChartProps ) {
 	const translate = useTranslate();
 	const uplot = useRef< uPlot | null >( null );
 	const uplotContainer = useRef( null );
-	const defaultFillColor = 'rgba(48, 87, 220, 0.4)';
 	const { spline } = uPlot.paths;
 
-	const can = document.createElement( 'canvas' );
-	const ctx = can.getContext( '2d' );
+	// TODO: Refactor this into a separate hook function file.
+	const scaleGradient = useCallback(
+		(
+			u: uPlot,
+			scaleKey: string,
+			ori: number,
+			scaleStops: [ number, string ][],
+			discrete = false
+		): string | CanvasGradient => {
+			const ctx = document.createElement( 'canvas' ).getContext( '2d' );
 
-	const scaleGradient = (
-		u: uPlot,
-		scaleKey: string,
-		ori: number,
-		scaleStops: [ number, string ][],
-		discrete = false
-	): string | CanvasGradient => {
-		const scale = u.scales[ scaleKey ];
-		// we want the stop below or at the scaleMax
-		// and the stop below or at the scaleMin, else the stop above scaleMin
-		let minStopIdx;
-		let maxStopIdx;
+			const scale = u.scales[ scaleKey ];
+			// we want the stop below or at the scaleMax
+			// and the stop below or at the scaleMin, else the stop above scaleMin
+			let minStopIdx;
+			let maxStopIdx;
 
-		if ( scale.min === undefined ) {
-			scale.min = 0;
-		}
-
-		if ( scale.max === undefined ) {
-			scale.max = 0;
-		}
-
-		for ( let i = 0; i < scaleStops.length; i++ ) {
-			const stopVal = scaleStops[ i ][ 0 ];
-
-			if ( stopVal <= scale.min || minStopIdx == null ) {
-				minStopIdx = i;
+			if ( scale.min === undefined ) {
+				scale.min = 0;
 			}
 
-			maxStopIdx = i;
-
-			if ( stopVal >= scale.max ) {
-				break;
+			if ( scale.max === undefined ) {
+				scale.max = 0;
 			}
-		}
 
-		if ( minStopIdx === undefined ) {
-			minStopIdx = 0;
-		}
+			for ( let i = 0; i < scaleStops.length; i++ ) {
+				const stopVal = scaleStops[ i ][ 0 ];
 
-		if ( maxStopIdx === undefined ) {
-			maxStopIdx = 0;
-		}
+				if ( stopVal <= scale.min || minStopIdx == null ) {
+					minStopIdx = i;
+				}
 
-		if ( minStopIdx === maxStopIdx ) {
-			return scaleStops[ minStopIdx ][ 1 ];
-		}
+				maxStopIdx = i;
 
-		let minStopVal = scaleStops[ minStopIdx ][ 0 ];
-		let maxStopVal = scaleStops[ maxStopIdx ][ 0 ];
+				if ( stopVal >= scale.max ) {
+					break;
+				}
+			}
 
-		if ( minStopVal === -Infinity ) {
-			minStopVal = scale.min;
-		}
+			if ( minStopIdx === undefined ) {
+				minStopIdx = 0;
+			}
 
-		if ( maxStopVal === Infinity ) {
-			maxStopVal = scale.max;
-		}
+			if ( maxStopIdx === undefined ) {
+				maxStopIdx = 0;
+			}
 
-		const minStopPos = u.valToPos( minStopVal, scaleKey, true );
-		const maxStopPos = u.valToPos( maxStopVal, scaleKey, true );
+			if ( minStopIdx === maxStopIdx ) {
+				return scaleStops[ minStopIdx ][ 1 ];
+			}
 
-		const range = minStopPos - maxStopPos;
+			let minStopVal = scaleStops[ minStopIdx ][ 0 ];
+			let maxStopVal = scaleStops[ maxStopIdx ][ 0 ];
 
-		let x0;
-		let y0;
-		let x1;
-		let y1;
+			if ( minStopVal === -Infinity ) {
+				minStopVal = scale.min;
+			}
 
-		if ( ori === 1 ) {
-			x0 = x1 = 0;
-			y0 = minStopPos;
-			y1 = maxStopPos;
-		} else {
-			y0 = y1 = 0;
-			x0 = minStopPos;
-			x1 = maxStopPos;
-		}
+			if ( maxStopVal === Infinity ) {
+				maxStopVal = scale.max;
+			}
 
-		const grd = ctx?.createLinearGradient( x0, y0, x1, y1 );
+			const minStopPos = u.valToPos( minStopVal, scaleKey, true );
+			const maxStopPos = u.valToPos( maxStopVal, scaleKey, true );
 
-		let prevColor;
+			const range = minStopPos - maxStopPos;
 
-		for ( let i = minStopIdx || 0; i <= maxStopIdx; i++ ) {
-			const s = scaleStops[ i ];
-			let stopPos;
+			let x0;
+			let y0;
+			let x1;
+			let y1;
 
-			if ( i === minStopIdx ) {
-				stopPos = minStopPos;
+			if ( ori === 1 ) {
+				x0 = x1 = 0;
+				y0 = minStopPos;
+				y1 = maxStopPos;
 			} else {
-				stopPos = i === maxStopIdx ? maxStopPos : u.valToPos( s[ 0 ], scaleKey, true );
+				y0 = y1 = 0;
+				x0 = minStopPos;
+				x1 = maxStopPos;
 			}
 
-			const pct = ( minStopPos - stopPos ) / range; // % of max value
+			const grd = ctx?.createLinearGradient( x0, y0, x1, y1 );
 
-			if ( discrete && i > minStopIdx ) {
-				grd?.addColorStop( pct, prevColor || 'rgba(0, 0, 0, 0)' );
+			let prevColor;
+
+			for ( let i = minStopIdx || 0; i <= maxStopIdx; i++ ) {
+				const s = scaleStops[ i ];
+				let stopPos;
+
+				if ( i === minStopIdx ) {
+					stopPos = minStopPos;
+				} else {
+					stopPos = i === maxStopIdx ? maxStopPos : u.valToPos( s[ 0 ], scaleKey, true );
+				}
+
+				const pct = ( minStopPos - stopPos ) / range; // % of max value
+
+				if ( discrete && i > minStopIdx ) {
+					grd?.addColorStop( pct, prevColor || 'rgba(0, 0, 0, 0)' );
+				}
+
+				grd?.addColorStop( pct, ( prevColor = s[ 1 ] ) );
 			}
 
-			grd?.addColorStop( pct, ( prevColor = s[ 1 ] ) );
-		}
-
-		return grd || defaultFillColor;
-	};
+			return grd || fillColor;
+		},
+		[ fillColor ]
+	);
 
 	const [ options ] = useState< uPlot.Options >(
 		useMemo( () => {
@@ -225,7 +229,7 @@ export default function UplotChart( {
 					},
 					{
 						fill: solidFill
-							? defaultFillColor
+							? fillColor
 							: ( u, seriesIdx ) => {
 									// Find min and max values for the visible parts of all y axis' and map it to color values to draw a gradient.
 									const s = u.series[ seriesIdx ]; // data set
@@ -233,7 +237,7 @@ export default function UplotChart( {
 
 									// if values are not initialised default to a solid color
 									if ( s.min === Infinity || s.max === -Infinity ) {
-										return defaultFillColor;
+										return fillColor;
 									}
 
 									let min = Infinity;
@@ -292,7 +296,7 @@ export default function UplotChart( {
 				...defaultOptions,
 				...( typeof propOptions === 'object' ? propOptions : {} ),
 			};
-		}, [ legendContainer, propOptions, translate ] )
+		}, [ fillColor, legendContainer, propOptions, scaleGradient, solidFill, spline, translate ] )
 	);
 
 	useResize( uplot, uplotContainer );
