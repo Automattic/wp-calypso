@@ -21,8 +21,6 @@ const TabsSwitcher = () => {
 	const { data: counts } = SubscriptionManager.useSubscriptionsCountQuery();
 	const locale = useLocale();
 	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
-	const shouldEnableCommentsTab =
-		config.isEnabled( 'subscription-management-comments-view' ) && locale === 'en' && ! isLoggedIn;
 	const shouldEnablePendingTab =
 		config.isEnabled( 'subscription-management-pending-view' ) && locale === 'en' && ! isLoggedIn;
 
@@ -48,13 +46,7 @@ const TabsSwitcher = () => {
 					</NavItem>
 
 					<NavItem
-						onClick={ () => {
-							shouldEnableCommentsTab
-								? navigate( commentsPath )
-								: window.location.replace(
-										`https://wordpress.com/email-subscriptions/?option=comments&locale=${ locale }`
-								  );
-						} }
+						onClick={ () => navigate( commentsPath ) }
 						count={ counts?.comments || undefined }
 						selected={ pathname.startsWith( commentsPath ) }
 					>
