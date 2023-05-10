@@ -56,7 +56,7 @@ const GoogleAnalyticsJetpackForm = ( {
 		: 'https://jetpack.com/support/google-analytics/';
 	const nudgeTitle = translate( 'Connect your site to Google Analytics' );
 	const wooCommercePlugin = find( sitePlugins, { slug: 'woocommerce' } );
-	const wooCommerceActive = wooCommercePlugin ? wooCommercePlugin.active : false;
+	const wooCommerceActive = wooCommercePlugin ? wooCommercePlugin.sites[ siteId ].active : false;
 
 	useEffect( () => {
 		if ( jetpackModuleActive ) {
