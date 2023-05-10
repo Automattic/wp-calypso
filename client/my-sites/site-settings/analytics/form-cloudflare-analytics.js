@@ -16,7 +16,7 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getPlugins } from 'calypso/state/plugins/installed/selectors';
+import { getFilteredAndSortedPlugins } from 'calypso/state/plugins/installed/selectors-ts';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -235,7 +235,7 @@ const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const isAnalyticsEligible = siteHasFeature( state, siteId, FEATURE_GOOGLE_ANALYTICS );
 	const siteIsJetpack = isJetpackSite( state, siteId );
-	const sitePlugins = site ? getPlugins( state, [ site.ID ] ) : [];
+	const sitePlugins = site ? getFilteredAndSortedPlugins( state, [ site.ID ] ) : [];
 	const path = getCurrentRouteParameterized( state, siteId );
 
 	return {
