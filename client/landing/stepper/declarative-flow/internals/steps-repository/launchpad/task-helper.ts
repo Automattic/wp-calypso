@@ -388,6 +388,24 @@ export function getEnhancedTasks(
 						completed: isEmailVerified,
 					};
 					break;
+				case 'set_up_payments':
+					taskData = {
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.assign( `/earn/payments/${ siteSlug }#launchpad` );
+						},
+					};
+					break;
+				case 'newsletter_plan_created':
+					taskData = {
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.assign(
+								`/earn/payments-plans/${ siteSlug }?launchpad=add-product#add-newsletter-payment-plan`
+							);
+						},
+					};
+					break;
 			}
 			enhancedTaskList.push( { ...task, ...taskData } );
 		} );
