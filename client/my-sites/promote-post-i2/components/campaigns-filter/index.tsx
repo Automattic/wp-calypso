@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import SegmentedControl from 'calypso/components/segmented-control';
 
-export type CampaignsFilterType = 'all' | 'active' | 'in_moderation' | 'rejected';
+export type CampaignsFilterType = 'all' | 'active' | 'created' | 'rejected';
 
 interface Props {
 	campaignsFilter: CampaignsFilterType;
@@ -15,26 +15,26 @@ export default function CampaignsFilter( props: Props ) {
 	return (
 		<SegmentedControl compact primary>
 			<SegmentedControl.Item
-				selected={ campaignsFilter === 'all' }
-				onClick={ handleChangeFilter( 'all' ) }
+				selected={ campaignsFilter === 'all' || ! campaignsFilter }
+				onClick={ () => handleChangeFilter( 'all' ) }
 			>
 				{ translate( 'All' ) }
 			</SegmentedControl.Item>
 			<SegmentedControl.Item
 				selected={ campaignsFilter === 'active' }
-				onClick={ handleChangeFilter( 'active' ) }
+				onClick={ () => handleChangeFilter( 'active' ) }
 			>
 				{ translate( 'Active', { context: 'comment status' } ) }
 			</SegmentedControl.Item>
 			<SegmentedControl.Item
-				selected={ campaignsFilter === 'in_moderation' }
-				onClick={ handleChangeFilter( 'in_moderation' ) }
+				selected={ campaignsFilter === 'created' }
+				onClick={ () => handleChangeFilter( 'created' ) }
 			>
 				{ translate( 'In moderation', { context: 'comment status' } ) }
 			</SegmentedControl.Item>
 			<SegmentedControl.Item
 				selected={ campaignsFilter === 'rejected' }
-				onClick={ handleChangeFilter( 'rejected' ) }
+				onClick={ () => handleChangeFilter( 'rejected' ) }
 			>
 				{ translate( 'Rejected', { context: 'comment status' } ) }
 			</SegmentedControl.Item>

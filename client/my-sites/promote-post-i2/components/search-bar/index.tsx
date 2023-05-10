@@ -1,14 +1,24 @@
-import { sprintf } from '@wordpress/i18n';
 import { translate } from 'i18n-calypso';
 import React from 'react';
 import './style.scss';
-import Gridicon from 'calypso/../packages/components/src/gridicon';
 import Search from 'calypso/components/search';
 import SelectDropdown from 'calypso/components/select-dropdown';
-import CampaignsFilter from '../campaigns-filter';
+import CampaignsFilter, { CampaignsFilterType } from '../campaigns-filter';
+
+export type SearchOptions = {
+	search?: string;
+	filter?: {
+		status?: string;
+	};
+	order?: {
+		orderBy: string;
+		order: string;
+	};
+};
 
 interface Props {
 	mode: 'campaigns' | 'posts';
+	handleSetSearch: ( search: SearchOptions ) => void;
 }
 
 type SortOption = {
@@ -16,17 +26,21 @@ type SortOption = {
 	value: string;
 };
 
-const SORT_OPTIONS_BY_TITLE = 'by_title';
-const SORT_OPTIONS_LAST_PUBLISHED = 'last_published';
-const SORT_OPTIONS_RECENTLY_UPDATED = 'recently_updated';
-const SORT_OPTIONS_MOST_LIKED = 'most_liked';
-const SORT_OPTIONS_MOST_COMMENTED = 'most_commented';
-const SORT_OPTIONS_MOST_VIEWED = 'most_viewed';
+const SORT_OPTIONS_BY_TITLE = 'post_title';
+const SORT_OPTIONS_LAST_PUBLISHED = 'date';
+const SORT_OPTIONS_RECENTLY_UPDATED = 'modified';
+const SORT_OPTIONS_MOST_LIKED = 'like_count';
+const SORT_OPTIONS_MOST_COMMENTED = 'comment_count';
+const SORT_OPTIONS_MOST_VIEWED = 'view_count';
 
-const SORT_OPTIONS_DEFAULT = SORT_OPTIONS_RECENTLY_UPDATED;
+const SORT_OPTIONS_DEFAULT = {
+	orderBy: SORT_OPTIONS_RECENTLY_UPDATED,
+	order: 'desc',
+};
+const FILTER_OPTIONS_DEFAULT = '';
 
 export default function SearchBar( props: Props ) {
-	const { mode } = props;
+	const { mode, handleSetSearch } = props;
 
 	const sortOptions: Array< SortOption > = [
 		{
@@ -55,34 +69,51 @@ export default function SearchBar( props: Props ) {
 		},
 	];
 
-	const [ searchInput, setSearchInput ] = React.useState( '' );
+	const [ searchInput, setSearchInput ] = React.useState< string | null >( '' );
 	const [ currentSortOption, setSortOption ] = React.useState( SORT_OPTIONS_DEFAULT );
+	const [ filterOption, setFilterOption ] = React.useState< string >( 'all' );
 
-	const onSearch = () => {
-		return;
+	const onChangeFilter = ( filter: string ) => {
+		setSearchInput( null );
+		setSortOption( SORT_OPTIONS_DEFAULT );
+		setFilterOption( filter );
+		handleSetSearch( {
+			search: '',
+			filter: {
+				status: filter,
+			},
+		} );
 	};
 
-	const onClearIconClick = () => {
-		setSearchInput( '' );
+	const onChangeSearch = ( search: string ) => {
+		setSearchInput( search );
+		setFilterOption( FILTER_OPTIONS_DEFAULT );
+		handleSetSearch( {
+			search: search,
+			order: currentSortOption,
+			filter: {
+				status: FILTER_OPTIONS_DEFAULT,
+			},
+		} );
 	};
 
-	const onChangeFilter = () => {
-		setSearchInput( '' ); // TODO: Filter by status: All | Active | In Moderation | Rejected.
+	const onChangeOrderOption = ( sort: SortOption ) => {
+		const newSearch = {
+			search: '',
+			filter: {
+				status: FILTER_OPTIONS_DEFAULT,
+			},
+			order: {
+				orderBy: sort.value,
+				order: sort.value === 'post_title' ? 'ASC' : 'DESC',
+			},
+		};
+
+		setSearchInput( newSearch.search );
+		setSortOption( newSearch.order );
+		setFilterOption( newSearch.filter.status );
+		handleSetSearch( newSearch );
 	};
-
-	function getSelectedSortOption( value: string ) {
-		if ( ! value ) {
-			return null;
-		}
-
-		const index = sortOptions.findIndex( ( item ) => item.value === value );
-		if ( index > -1 ) {
-			// translators: %s is a sort option like "Last Published"
-			return sprintf( translate( 'Sort: %s' ), sortOptions[ index ].label );
-		}
-
-		return null;
-	}
 
 	return (
 		<div className="promote-post-i2__search-bar-wrapper">
@@ -91,38 +122,29 @@ export default function SearchBar( props: Props ) {
 				initialValue={ searchInput }
 				value={ searchInput }
 				placeholder={ translate( 'Search…' ) }
-				onSearch={ onSearch }
-				onSearchChange={ ( inputValue: string ) => {
-					// findTextForSuggestions( inputValue );
-					setSearchInput( inputValue );
-					// setIsApplySearch( false );
+				delaySearch={ true }
+				delayTimeout={ 1500 }
+				onSearch={ ( inputValue: string ) => {
+					if ( inputValue !== null ) {
+						onChangeSearch( inputValue );
+					}
 				} }
-			>
-				{ searchInput !== '' && (
-					<div className="search-themes-card__icon">
-						<Gridicon
-							icon="cross"
-							className="search-themes-card__icon-close"
-							tabIndex={ 0 }
-							aria-controls="search-component-search-themes"
-							aria-label={ translate( 'Clear Search' ) }
-							onClick={ onClearIconClick }
-						/>
-					</div>
-				) }
-			</Search>
+			/>
 
 			{ mode === 'posts' && (
 				<SelectDropdown
 					className="promote-post-i2__search-bar-dropdown"
-					onSelect={ ( option: SortOption ) => setSortOption( option.value ) }
+					onSelect={ onChangeOrderOption }
 					options={ sortOptions }
-					selectedText={ getSelectedSortOption( currentSortOption ) }
+					initialSelected={ currentSortOption.orderBy }
 				/>
 			) }
 
 			{ mode === 'campaigns' && (
-				<CampaignsFilter handleChangeFilter={ onChangeFilter } campaignsFilter="all" />
+				<CampaignsFilter
+					handleChangeFilter={ onChangeFilter }
+					campaignsFilter={ filterOption as CampaignsFilterType }
+				/>
 			) }
 		</div>
 	);

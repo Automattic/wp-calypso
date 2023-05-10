@@ -1,15 +1,14 @@
-import { translate } from 'i18n-calypso';
-import { useMemo } from 'react';
-import SitePlaceholder from 'calypso/blocks/site/placeholder';
+import { translate, useTranslate } from 'i18n-calypso';
 import ListEnd from 'calypso/components/list-end';
 import Notice from 'calypso/components/notice';
-import { Campaign } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
+import { useInfiniteScroll } from 'calypso/data/promote-post/use-infinite-scroll';
+import { Campaign } from 'calypso/data/promote-post/use-promote-post-campaigns-query-paged';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import './style.scss';
-import CampaignsEmpty from 'calypso/my-sites/promote-post/components/campaigns-empty';
+import { DSPMessage } from 'calypso/my-sites/promote-post-i2/main';
 import CampaignsTable from '../campaigns-table';
 import EmptyPromotionList from '../empty-promotion-list';
-import SearchBar from '../search-bar';
+import SearchBar, { SearchOptions } from '../search-bar';
 
 const noCampaignListMessage = translate(
 	'There was a problem obtaining the campaign list. Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
@@ -20,23 +19,44 @@ const noCampaignListMessage = translate(
 		comment: 'Validation error when filling out domain checkout contact details form',
 	}
 );
+const ERROR_NO_LOCAL_USER = 'no_local_user';
 
-export default function CampaignsList( {
-	isLoading,
-	isError,
-	hasLocalUser,
-	campaigns,
-}: {
+type Props = {
 	isLoading: boolean;
-	hasLocalUser: boolean;
-	isError: boolean;
-	campaigns: Campaign[];
-	expandedCampaigns: number[];
-	setExpandedCampaigns: ( campaigns: number[] ) => void;
-} ) {
-	const memoCampaigns = useMemo< Campaign[] >( () => campaigns || [], [ campaigns ] );
+	isError: DSPMessage | null;
+	isFetching: boolean;
+	fetchNextPage: () => void;
+	handleSearchOptions: ( search: SearchOptions ) => void;
+	totalCampaigns: number;
+	hasMorePages: boolean;
+	campaigns?: Campaign[];
+};
 
-	const isEmpty = ! memoCampaigns.length;
+export default function CampaignsList( props: Props ) {
+	const {
+		isLoading,
+		isError,
+		isFetching,
+		fetchNextPage,
+		handleSearchOptions,
+		totalCampaigns,
+		hasMorePages,
+		campaigns,
+	} = props;
+
+	const translate = useTranslate();
+
+	const hasLocalUser = ( isError as DSPMessage )?.errorCode !== ERROR_NO_LOCAL_USER;
+
+	const { containerRef } = useInfiniteScroll( {
+		offset: '200px',
+		shouldStop: ! hasMorePages || isLoading || isFetching,
+		async onLoadMore() {
+			await fetchNextPage();
+		},
+	} );
+
+	const isEmpty = campaigns?.length === 0;
 
 	if ( isError && hasLocalUser ) {
 		return (
@@ -46,41 +66,48 @@ export default function CampaignsList( {
 		);
 	}
 
-	if ( isLoading ) {
+	/*if ( ! isLoading ) {
 		return (
 			<div className="campaigns-list__loading-container">
 				<SitePlaceholder />
 			</div>
 		);
-	}
-
-	if ( ! memoCampaigns.length ) {
-		return <EmptyPromotionList type="campaigns" />;
-	}
+	}*/
 
 	return (
 		<>
-			<SearchBar mode="campaigns" />
+			<SearchBar
+				mode="campaigns"
+				handleSetSearch={ ( search ) => {
+					handleSearchOptions( search );
+				} }
+			/>
 
-			{ isEmpty && ! isError && <CampaignsEmpty /> }
-
-			<CampaignsTable campaigns={ memoCampaigns } />
-
-			{ ! isEmpty && ! isError && (
+			{ ! isLoading && campaigns?.length === 0 ? (
 				<>
-					{ /*{ memoCampaigns.map( function ( campaign ) {
-						return (
-							<CampaignItem
-								key={ campaign.campaign_id }
-								campaign={ campaign }
-								expanded={ expandedCampaigns.includes( campaign.campaign_id ) }
-								onClickCampaign={ ( isExpanded: boolean ) =>
-									handleClickCampaign( isExpanded, campaign )
-								}
+					{ totalCampaigns === 0 ? (
+						<EmptyPromotionList type="campaigns" />
+					) : (
+						<>{ translate( 'No campaigns match your search' ) }</>
+					) }
+				</>
+			) : (
+				<>
+					<div ref={ containerRef }>
+						{ campaigns && (
+							<CampaignsTable
+								campaigns={ campaigns }
+								isLoading={ isLoading }
+								isFetchingPageResults={ isFetching }
 							/>
-						);
-					} ) }*/ }
-					<ListEnd />
+						) }
+					</div>
+
+					{ ! isEmpty && ! isError && (
+						<>
+							<ListEnd />
+						</>
+					) }
 				</>
 			) }
 		</>
