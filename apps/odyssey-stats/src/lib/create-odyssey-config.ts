@@ -26,8 +26,10 @@ export class ConfigApi extends Function {
 		}
 
 		if ( 'development' === process.env.NODE_ENV ) {
-			// eslint-disable-next-line no-console
-			console.warn( `Could not find config value for key '${ key }'\n` );
+			throw new ReferenceError(
+				`Could not find config value for key '${ key }'\n` +
+					"Please make sure that if you need it then it has a default value assigned in 'config/_shared.json'"
+			);
 		}
 
 		return undefined;
