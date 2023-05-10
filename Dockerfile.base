@@ -4,6 +4,9 @@
 #### Note that yarn v3 cache lives in `/calypso/.yarn`
 FROM node:18.13.0-bullseye-slim as cache
 
+# Make sure shell options, like pipefail, are set for the build.
+SHELL ["/bin/bash", "-o", "pipefail"]
+
 ARG node_memory=8192
 WORKDIR /calypso
 ENV NPM_CONFIG_CACHE=/calypso/.cache
