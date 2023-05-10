@@ -2,7 +2,7 @@ import { Gridicon, ProgressBar } from '@automattic/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import {
@@ -37,8 +37,9 @@ const UsageDisplay: React.FC< OwnProps > = ( { loading = false, usageLevel } ) =
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) ) as string;
 
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
-	const bytesAvailable = useSelector( ( state ) => getRewindBytesAvailable( state, siteId ) );
+	const bytesAvailable = useSelector( ( state ) => getRewindBytesAvailable( state, siteId ) ) || 0;
 	const bytesUsed = useSelector( ( state ) => getRewindBytesUsed( state, siteId ) );
 	const storageUsageText = useStorageUsageText( bytesUsed, bytesAvailable );
 	const daysOfBackupsSaved = useSelector( ( state ) =>
@@ -46,19 +47,19 @@ const UsageDisplay: React.FC< OwnProps > = ( { loading = false, usageLevel } ) =
 	);
 	const daysOfBackupsSavedText = useDaysOfBackupsSavedText( daysOfBackupsSaved, siteSlug );
 	// Retention period included in customer plan
-	const planRetentionPeriod = useSelector( ( state ) =>
-		getActivityLogVisibleDays( state, siteId )
-	);
+	const planRetentionPeriod =
+		useSelector( ( state ) => getActivityLogVisibleDays( state, siteId ) ) || 0;
 	// current site size
-	const lastBackupSize = useSelector( ( state ) =>
-		getBackupCurrentSiteSize( state, siteId )
-	) as number;
+	const lastBackupSize = useSelector( ( state ) => getBackupCurrentSiteSize( state, siteId ) ) || 0;
 	const { upsellSlug } = useUpsellInfo( siteId );
 	const loadingText = translate( 'Calculating…', {
 		comment: 'Loading text displayed while storage usage is being calculated',
 	} );
 
-	const forecastInDays = Math.floor( bytesAvailable / lastBackupSize );
+	let forecastInDays = 0;
+	if ( bytesAvailable > 0 && lastBackupSize > 0 ) {
+		forecastInDays = Math.floor( bytesAvailable / lastBackupSize );
+	}
 	const storageUpgradeUrl = buildCheckoutURL( siteSlug, upsellSlug.productSlug, {
 		// When attempting to purchase a 2nd identical storage add-on product, this
 		// 'source' flag tells the shopping cart to force "purchase" another storage add-on
@@ -72,7 +73,7 @@ const UsageDisplay: React.FC< OwnProps > = ( { loading = false, usageLevel } ) =
 				bytes_used: bytesUsed,
 			} )
 		);
-	}, [ usageLevel, bytesUsed ] );
+	}, [ dispatch, usageLevel, bytesUsed ] );
 
 	return (
 		<div
@@ -100,7 +101,7 @@ const UsageDisplay: React.FC< OwnProps > = ( { loading = false, usageLevel } ) =
 					} ) }
 				>
 					<span>{ loading ? loadingText : storageUsageText }</span>
-					{ ! loading && forecastInDays < planRetentionPeriod && (
+					{ ! loading && forecastInDays > 0 && forecastInDays < planRetentionPeriod && (
 						<StorageHelpTooltip
 							className="backup-storage-space__help-tooltip"
 							forecastInDays={ forecastInDays }
