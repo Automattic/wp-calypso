@@ -1,6 +1,7 @@
 import {
 	PRODUCT_WPCOM_CUSTOM_DESIGN,
 	PRODUCT_WPCOM_UNLIMITED_THEMES,
+	PRODUCT_1GB_SPACE,
 } from '@automattic/calypso-products';
 import { useSelector } from 'react-redux';
 import {
@@ -9,7 +10,9 @@ import {
 	getProductName,
 } from 'calypso/state/products-list/selectors';
 import customDesignIcon from '../icons/custom-design';
+import spaceUpgradeIcon from '../icons/space-upgrade';
 import unlimitedThemesIcon from '../icons/unlimited-themes';
+import isStorageAddonAvailable from '../is-storage-addon-available';
 import useAddOnDisplayCost from './use-add-on-display-cost';
 import useAddOnFeatureSlugs from './use-add-on-feature-slugs';
 
@@ -19,8 +22,10 @@ export interface AddOnMeta {
 	icon: JSX.Element;
 	featured?: boolean; // irrelevant to "featureSlugs"
 	name: string | React.ReactChild | null;
+	quantity?: number;
 	description: string | React.ReactChild | null;
 	displayCost: string | React.ReactChild | null;
+	variations?: Partial< AddOnMeta >[];
 }
 
 // some memoization. executes far too many times
@@ -42,13 +47,37 @@ const useAddOns = (): ( AddOnMeta | null )[] => {
 			displayCost: useAddOnDisplayCost( PRODUCT_WPCOM_CUSTOM_DESIGN ),
 			featured: false,
 		},
-	] as const;
+		{
+			productSlug: PRODUCT_1GB_SPACE,
+			icon: spaceUpgradeIcon,
+			quantity: 50,
+			displayCost: useAddOnDisplayCost( PRODUCT_1GB_SPACE, 50 ),
+			description: 'Add additional high-performance SSD NvME storage space to your site.',
+			featured: false,
+			variations: [
+				{
+					name: '50GB Added Space',
+					quantity: 50,
+					displayCost: useAddOnDisplayCost( PRODUCT_1GB_SPACE, 50 ),
+				},
+				{
+					name: '100GB Added Space',
+					quantity: 100,
+					displayCost: useAddOnDisplayCost( PRODUCT_1GB_SPACE, 100 ),
+				},
+			],
+		},
+	];
+
+	if ( ! isStorageAddonAvailable() ) {
+		addOnsActive.pop();
+	}
 
 	return useSelector( ( state ): ( AddOnMeta | null )[] => {
 		return addOnsActive.map( ( addOn ) => {
 			const product = getProductBySlug( state, addOn.productSlug );
 			const name = getProductName( state, addOn.productSlug );
-			const description = getProductDescription( state, addOn.productSlug );
+			const description = addOn.description ?? getProductDescription( state, addOn.productSlug );
 
 			if ( ! product ) {
 				// will not render anything if product not fetched from API
