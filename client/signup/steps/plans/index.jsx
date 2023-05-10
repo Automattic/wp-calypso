@@ -1,4 +1,4 @@
-import { is2023PricingGridActivePage, getPlan, PLAN_FREE } from '@automattic/calypso-products';
+import { is2023PricingGridEnabled, getPlan, PLAN_FREE } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { isSiteAssemblerFlow, isTailoredSignupFlow } from '@automattic/onboarding';
 import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
@@ -419,7 +419,7 @@ export default connect(
 		isInVerticalScrollingPlansExperiment: true,
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
 		eligibleForProPlan: isEligibleForProPlan( state, getSiteBySlug( state, siteSlug )?.ID ),
-		is2023PricingGridVisible: is2023PricingGridActivePage( window ),
+		is2023PricingGridVisible: is2023PricingGridEnabled(),
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep, errorNotice }
 )( localize( PlansStep ) );

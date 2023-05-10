@@ -28,7 +28,7 @@ import {
 	PLAN_PERSONAL,
 	TITAN_MAIL_MONTHLY_SLUG,
 	PLAN_FREE,
-	is2023PricingGridActivePage,
+	is2023PricingGridEnabled,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
@@ -819,8 +819,7 @@ export default connect(
 		) {
 			customerType = 'business';
 		}
-		const is2023PricingGridVisible =
-			props.is2023PricingGridVisible ?? is2023PricingGridActivePage( window );
+		const is2023PricingGridVisible = props.is2023PricingGridVisible ?? is2023PricingGridEnabled();
 		const planTypeSelectorProps = {
 			basePlansPath: props.basePlansPath,
 			isStepperUpgradeFlow: props.isStepperUpgradeFlow,
