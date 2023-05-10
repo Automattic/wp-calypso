@@ -58,6 +58,9 @@ export default function SiteSurveyBanner() {
 
 	const trackClickEvent = () => {
 		handleTrackEvent( 'calypso_jetpack_agency_dashboard_survey_banner_click' );
+
+		// Dismiss banner but don't track "dismiss" event since we are automatically dismissing it after CTA click
+		savePreferenceType( 'dismiss' );
 	};
 
 	// Hide the banner if it has already been dismissed or if the welcome banner is showing
