@@ -431,10 +431,11 @@ export const HelpCenterContactForm = () => {
 
 	const getCTALabel = () => {
 		const showingSibylOrGPTResults = showingSibylResults || showingGPTResponse;
-
 		if (
-			( enableGPTResponse && ! showingGPTResponse ) ||
-			( ! showingSibylResults && sibylArticles && sibylArticles.length > 0 )
+			! showingGPTResponse &&
+			! showingSibylResults &&
+			sibylArticles &&
+			sibylArticles.length > 0
 		) {
 			return __( 'Continue', __i18n_text_domain__ );
 		}
