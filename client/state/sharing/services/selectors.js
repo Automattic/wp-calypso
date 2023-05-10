@@ -121,6 +121,11 @@ export function getEligibleKeyringServices( state, siteId, type ) {
 			return false;
 		}
 
+		// Enforce feature flag behaviour for Mastodon
+		if ( 'mastodon' === service.ID ) {
+			return config.isEnabled( 'mastodon' );
+		}
+
 		return true;
 	} );
 }
