@@ -1,15 +1,16 @@
 import { Button, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
-import { Card, CardBody, CardFooter, CardHeader } from '@wordpress/components';
+import { Card, CardBody, CardFooter, CardHeader, SelectControl } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { useState, useEffect } from 'react';
 import Badge from 'calypso/components/badge';
 import type { AddOnMeta } from '../hooks/use-add-ons';
 
 export interface Props {
 	actionPrimary?: {
 		text: string | React.ReactChild;
-		handler: ( productSlug: string ) => void;
+		handler: ( productSlug: string, quantity?: number ) => void;
 	};
 	actionSecondary?: {
 		text: string | React.ReactChild;
@@ -72,6 +73,10 @@ const Container = styled.div`
 		}
 	}
 
+	.add-ons-card__variation-selector {
+		margin-top: 16px;
+	}
+
 	.add-ons-card__footer {
 		display: flex;
 		margin-top: auto;
@@ -97,33 +102,72 @@ const AddOnCard = ( {
 }: Props ) => {
 	const translate = useTranslate();
 	const availabilityStatus = useAddOnAvailabilityStatus?.( addOnMeta );
+
+	const [ addOnVariation, setAddOnVariation ] = useState( 50 );
+
+	const [ addOnData, setAddOnData ] = useState( {
+		...addOnMeta,
+	} );
+
 	const onActionPrimary = () => {
-		actionPrimary?.handler( addOnMeta.productSlug );
+		actionPrimary?.handler( addOnData.productSlug, addOnData.quantity );
 	};
 	const onActionSecondary = () => {
 		actionSecondary?.handler( addOnMeta.productSlug );
 	};
+
+	const handleChangeAddonVariation = ( variation: number ) => {
+		if ( ! addOnData.variations ) {
+			return;
+		}
+		const variationData = addOnData.variations.find( ( v ) => v.quantity === Number( variation ) );
+		setAddOnVariation( variation );
+		setAddOnData( { ...addOnData, ...variationData } );
+	};
+
+	useEffect( () => {
+		if ( ! addOnData.variations ) {
+			return;
+		}
+		handleChangeAddonVariation( addOnVariation );
+	}, [] );
 
 	return (
 		<Container>
 			<Card className="add-ons-card">
 				<CardHeader isBorderless={ true } className="add-ons-card__header">
 					<div className="add-ons-card__icon">
-						<Icon icon={ addOnMeta.icon } size={ 44 } />
+						<Icon icon={ addOnData.icon } size={ 44 } />
 					</div>
 					<div className="add-ons-card__name-and-billing">
 						<div className="add-ons-card__name-tag">
-							<div className="add-ons-card__name">{ addOnMeta.name }</div>
+							<div className="add-ons-card__name">{ addOnData.name }</div>
 							{ highlightFeatured && addOnMeta.featured && (
 								<Badge key="popular" type="info-green" className="add-ons-card__featured-badge">
 									{ translate( 'Popular' ) }
 								</Badge>
 							) }
 						</div>
-						<div className="add-ons-card__billing">{ addOnMeta.displayCost }</div>
+						<div className="add-ons-card__billing">{ addOnData.displayCost }</div>
 					</div>
 				</CardHeader>
-				<CardBody className="add-ons-card__body">{ addOnMeta.description }</CardBody>
+				<CardBody className="add-ons-card__body">
+					{ addOnData.description }
+					{ addOnData.variations && (
+						<div className="add-ons-card__variation-selector">
+							<SelectControl
+								label="Storage Space"
+								options={ addOnData.variations.map( ( variation ) => {
+									return {
+										label: `${ variation.name }`,
+										value: `${ variation.quantity }`,
+									};
+								} ) }
+								onChange={ ( variation ) => handleChangeAddonVariation( Number( variation ) ) }
+							/>
+						</div>
+					) }
+				</CardBody>{ ' ' }
 				<CardFooter isBorderless={ true } className="add-ons-card__footer">
 					{ ! availabilityStatus?.available && (
 						<>
