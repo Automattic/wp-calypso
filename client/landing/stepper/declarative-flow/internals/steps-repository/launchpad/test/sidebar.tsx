@@ -35,7 +35,13 @@ jest.mock( '@automattic/data-stores', () => ( {
 		if ( siteIntentOption === 'free' ) {
 			checklist = [
 				{ id: 'foo_task', completed: false, disabled: true, title: 'Foo Task' },
-				{ id: 'domain_upsell', completed: false, disabled: false, title: 'Choose a domain' },
+				{
+					id: 'domain_upsell',
+					completed: false,
+					disabled: false,
+					title: 'Choose a domain',
+					badge_text: 'Upgrade plan',
+				},
 				{ id: 'foo_task_1', completed: true, disabled: true, title: 'Foo Task 1' },
 			];
 		}
