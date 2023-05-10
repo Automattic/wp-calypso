@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { SubscriptionManager } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
@@ -20,9 +19,6 @@ const TabsSwitcher = () => {
 	const { pathname } = useLocation();
 	const { data: counts } = SubscriptionManager.useSubscriptionsCountQuery();
 	const locale = useLocale();
-	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
-	const shouldEnablePendingTab =
-		config.isEnabled( 'subscription-management-pending-view' ) && locale === 'en' && ! isLoggedIn;
 
 	const getFullPath = ( subpath: string ) =>
 		`/subscriptions/${ subpath }${ locale !== 'en' ? '/' + locale : '' }`;
@@ -55,13 +51,7 @@ const TabsSwitcher = () => {
 
 					{ counts?.pending || pathname.includes( 'pending' ) ? (
 						<NavItem
-							onClick={ () => {
-								shouldEnablePendingTab
-									? navigate( pendingPath )
-									: window.location.replace(
-											`https://wordpress.com/email-subscriptions/?option=pending&locale=${ locale }`
-									  );
-							} }
+							onClick={ () => navigate( pendingPath ) }
 							count={ counts?.pending || undefined }
 							selected={ pathname.startsWith( pendingPath ) }
 						>
