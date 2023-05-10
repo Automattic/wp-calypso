@@ -635,7 +635,12 @@ export class PlansFeaturesMain extends Component {
 
 	renderPlansGrid( plans, visiblePlans ) {
 		return this.props.is2023PricingGridVisible ? (
-			<OnboardingPricingGrid2023 plans={ plans } visiblePlans={ visiblePlans } { ...this.props } />
+			<OnboardingPricingGrid2023
+				plans={ plans }
+				visiblePlans={ visiblePlans }
+				onUpgradeClick={ this.onUpgradeClick }
+				{ ...this.props }
+			/>
 		) : (
 			this.renderLegacyPricingGrid( plans, visiblePlans )
 		);
