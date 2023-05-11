@@ -141,8 +141,9 @@
 			box-sizing: border-box;
 			width: 100%;
 			height: auto;
-			flex: 1 1 0;
-			margin: 10px auto 0 auto;
+			aspect-ratio: 464/779;
+			overflow: visible; // Shows the box-shadow.
+			margin: 10px auto 20px auto;
 			border-bottom: 0;
 			border-radius: 36px 36px 0 0; /* stylelint-disable-line scales/radii */
 			padding: 0;
@@ -244,7 +245,8 @@
 		}
 
 		@media ( max-width: $break-large ) {
-			height: 779px;
+			height: auto;
+			aspect-ratio: 464/779;
 		}
 	}
 
