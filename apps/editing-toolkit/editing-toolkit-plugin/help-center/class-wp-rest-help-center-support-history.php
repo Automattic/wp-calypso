@@ -47,9 +47,11 @@ class WP_REST_Help_Center_Support_History extends \WP_REST_Controller {
 	 * @param \WP_REST_Request $request Request object.
 	 */
 	public function support_history_ticket( $request ) {
-		$email = $request['email'];
-
-		$params = array( 'email' => $email );
+		if ( isset( $request['email'] ) ) {
+			$params = array( 'email' => $request['email'] );
+		} else {
+			$params = array();
+		}
 
 		$body = Client::wpcom_json_api_request_as_user(
 			'/support-history/ticket?' . http_build_query( $params ),

@@ -20,16 +20,15 @@ export function useHasActiveSupport( type: 'chat' | 'ticket', email: string, sho
 		() =>
 			canAccessWpcomApis()
 				? wpcomRequest( {
-						path: `support-history/${ encodeURIComponent( type ) }/?email=${ encodeURIComponent(
-							email
-						) }`,
+						path: `support-history/${ encodeURIComponent( type ) }`,
 						apiNamespace: 'wpcom/v2/',
 						apiVersion: '2',
+						query: email ? `email=${ encodeURIComponent( email ) }` : '',
 				  } )
 				: apiFetch< Response >( {
-						path: `help-center/support-history/${ encodeURIComponent(
-							type
-						) }/?email=${ encodeURIComponent( email ) }`,
+						path:
+							`help-center/support-history/${ encodeURIComponent( type ) }/` +
+							( email ? `?email=${ encodeURIComponent( email ) }` : '' ),
 						global: true,
 				  } as APIFetchOptions ),
 		{
