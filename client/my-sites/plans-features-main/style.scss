@@ -14,10 +14,11 @@
 }
 
 .notice.plan-features-main__notice {
-	margin: 0 20px;
+	margin: 0 20px 24px;
 	width: unset;
+
 	@include plans-section-custom-mobile-breakpoint {
-		margin: 0;
+		margin: 0 0 24px;
 		width: 100%;
 	}
 }
@@ -84,16 +85,16 @@
 
 }
 
+.plans-features-main__group.is-wpcom.is-2023-pricing-grid {
+	padding-top: 19px;
+}
+
 .plans-features-main__group.is-wpcom:not(.is-2023-pricing-grid) {
 	padding-top: 26px;
 
 	@media ( min-width: 880px ) {
 		padding-top: 19px;
 	}
-}
-
-.plans-features-main__group.is-wpcom.is-2023-pricing-grid {
-	padding-top: 19px;
 }
 
 // Required additional specificity

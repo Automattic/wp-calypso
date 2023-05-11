@@ -171,12 +171,12 @@
 
 .is-2023-pricing-grid .plans-wrapper {
 	margin: 0 auto;
-	padding: 28px 0 10px;
+	padding: 0 0 10px;
 	transform: translateY(-20px);
 	overflow-x: visible;
 
 	@include plans-2023-break-small {
-		padding-top: 60px;
+		padding-top: 35px; // enough to cover `plan-features-2023-grid__popular-badge` repositioning (top: -35px)
 	}
 }
 
