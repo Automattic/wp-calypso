@@ -160,8 +160,6 @@ class Block_Patterns_From_API {
 
 		$this->update_pattern_post_types();
 
-		$this->update_query_patterns_with_blog_category();
-
 		return $results;
 	}
 
@@ -297,26 +295,6 @@ class Block_Patterns_From_API {
 				$pattern_name         = $pattern['name'];
 				unset( $pattern['name'] );
 				register_block_pattern( $pattern_name, $pattern );
-			}
-		}
-	}
-
-	/**
-	 * Ensure that all query or posts patterns use the category blog instead.
-	 */
-	private function update_query_patterns_with_blog_category() {
-		foreach ( \WP_Block_Patterns_Registry::get_instance()->get_all_registered() as $pattern ) {
-			if ( ! isset( $pattern['categories'] ) ) {
-				continue;
-			}
-			if ( in_array( 'query', $pattern['categories'], true ) || in_array( 'posts', $pattern['categories'], true ) ) {
-				foreach ( $pattern['categories'] as &$category ) {
-					if ( in_array( $category, array( 'query', 'posts' ), true ) ) {
-						$category = 'blog';
-					}
-				}
-				unregister_block_pattern( $pattern['name'] );
-				register_block_pattern( $pattern['name'], $pattern );
 			}
 		}
 	}
