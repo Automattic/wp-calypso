@@ -1,15 +1,16 @@
-import { TranslateResult, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import getProductIcon from '../product-store/utils/get-product-icon';
 import slugToSelectorProduct from '../slug-to-selector-product';
+import { ProductDescription } from '../types';
 
 type IncludedProductsProps = {
 	products: ReadonlyArray< string >;
-	descriptionMap: Record< string, TranslateResult >;
+	descriptionMap: Record< string, ProductDescription >;
 };
 
 type IncludedProductListItemProps = {
 	productSlug: string;
-	descriptionMap: Record< string, TranslateResult >;
+	descriptionMap: Record< string, ProductDescription >;
 };
 
 const IncludedProductListItem: React.FC< IncludedProductListItemProps > = ( {
@@ -18,21 +19,33 @@ const IncludedProductListItem: React.FC< IncludedProductListItemProps > = ( {
 } ) => {
 	const product = slugToSelectorProduct( productSlug );
 	return (
-		<div className="product-lightbox__included-product-list-item">
-			<div className="product-lightbox__included-product-list-item-icon">
-				<img alt="" src={ getProductIcon( { productSlug } ) } />
-			</div>
+		<>
+			<div className="product-lightbox__included-product-list-item">
+				<div className="product-lightbox__included-product-list-item-icon">
+					<img alt="" src={ getProductIcon( { productSlug } ) } />
+				</div>
 
-			<div className="product-lightbox__included-product-list-item-content">
-				<h1 className="product-lightbox__included-product-list-item-title">
-					{ product?.shortName }
-				</h1>
+				<div className="product-lightbox__included-product-list-item-content">
+					<div className="product-lightbox__included-product-list-item-header">
+						<h3 className="product-lightbox__included-product-list-item-title">
+							{ product?.shortName }
+						</h3>
+						{ descriptionMap[ productSlug ]?.calloutText && (
+							<span className="product-lightbox__included-product-list-item-callout">
+								{ descriptionMap[ productSlug ].calloutText }
+							</span>
+						) }
+					</div>
 
-				<p className="product-lightbox__included-product-list-item-description">
-					{ descriptionMap[ productSlug ] }
-				</p>
+					<p className="product-lightbox__included-product-list-item-description">
+						{ descriptionMap[ productSlug ].value }
+					</p>
+				</div>
 			</div>
-		</div>
+			<p className="product-lightbox__included-product-list-item-description--mobile">
+				{ descriptionMap[ productSlug ].value }
+			</p>
+		</>
 	);
 };
 

@@ -17,105 +17,112 @@ import {
 } from '@automattic/calypso-products';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import { ProductDescription } from '../../types';
 
-const setTranslation = ( slugs: ReadonlyArray< string >, value: TranslateResult ) =>
-	slugs.reduce( ( map, slug ) => ( { ...map, [ slug ]: value } ), {} );
+const setProductDescription = ( slugs: ReadonlyArray< string >, description: ProductDescription ) =>
+	slugs.reduce( ( map, slug ) => ( { ...map, [ slug ]: description } ), {} );
 
 export const useIncludedProductDescriptionMap = ( productSlug: string ) => {
 	const translate = useTranslate();
 
 	return useMemo( () => {
-		const INCLUDED_PRODUCT_DESCRIPTION_T0_MAP: Record< string, string > = {
-			...setTranslation(
+		const backupDescription = translate(
+			'Real-time backups as you edit. {{span}}30-day{{/span}} activity log archive. Unlimited one-click restores.',
+			{
+				components: {
+					span: <span />,
+				},
+			}
+		);
+		const backupT2Description = translate(
+			'Real-time backups as you edit. {{span}}1-year{{/span}} activity log archive. Unlimited one-click restores.',
+			{
+				components: {
+					span: <span />,
+				},
+			}
+		);
+		const scanDescription = translate(
+			'Keep your site or store ahead of security threats with automated malware scanning; including one-click fixes.'
+		);
+		const antiSpamDescription = translate(
+			'Save time manually reviewing spam. Comment and form spam protection.'
+		);
+		const videoPressDescription = translate( '1TB of ad-free video hosting.' );
+		const boostDescription = translate(
+			'Speed up your site and improve SEO with automatic critical CSS generation.'
+		);
+		const searchDescription = translate( 'Powerful, instant site search.' );
+		const socialDescription = translate(
+			'Easily share your website content on your social media channels from one place.'
+		);
+		const crmDescription = translate(
+			'Manage your sales funnel. Entrepreneur plan with 30 extensions.'
+		);
+
+		const INCLUDED_PRODUCT_DESCRIPTION_T0_MAP: Record< string, ProductDescription > = {
+			...setProductDescription(
 				[ PRODUCT_JETPACK_BACKUP_T0_YEARLY, PRODUCT_JETPACK_BACKUP_T0_MONTHLY ],
-				translate(
-					'Real-time backups as you edit. 1GB of cloud storage. {{span}}30-day{{/span}} activity log archive. Unlimited one-click restores.',
-					{
-						components: {
-							span: <span />,
-						},
-					}
-				)
+				{
+					value: backupDescription,
+					calloutText: translate( '1GB cloud storage' ),
+				}
 			),
 
-			...setTranslation(
-				JETPACK_ANTI_SPAM_PRODUCTS,
-				translate(
-					'Save time manually reviewing spam. Comment and form spam protection (1k API calls/mo).'
-				)
-			),
+			...setProductDescription( JETPACK_ANTI_SPAM_PRODUCTS, {
+				value: translate( 'Save time manually reviewing spam. Comment and form spam protection.' ),
+				calloutText: translate( '1k API calls/mo' ),
+			} ),
 		};
 
 		const INCLUDED_PRODUCT_DESCRIPTION_T1_MAP: Record< string, TranslateResult > = {
-			...setTranslation(
+			...setProductDescription(
 				[ PRODUCT_JETPACK_BACKUP_T1_YEARLY, PRODUCT_JETPACK_BACKUP_T1_MONTHLY ],
-				translate(
-					'Real-time backups as you edit. 10GB of cloud storage. {{span}}30-day{{/span}} activity log archive*. Unlimited one-click restores.',
-					{
-						components: {
-							span: <span />,
-						},
-					}
-				)
+				{
+					value: backupDescription,
+					calloutText: translate( '10GB cloud storage' ),
+				}
 			),
 
-			...setTranslation(
+			...setProductDescription(
 				[ PRODUCT_JETPACK_BACKUP_T2_YEARLY, PRODUCT_JETPACK_BACKUP_T2_MONTHLY ],
-				translate(
-					'Unlimited restores from the last 1 year, 1TB (1,000GB) of cloud storage & {{span}}1-year{{/span}} activity log archive.',
-					{
-						components: {
-							span: <span />,
-						},
-					}
-				)
+				{ value: backupT2Description, calloutText: translate( '1TB cloud storage' ) }
 			),
 
-			...setTranslation(
-				JETPACK_SCAN_PRODUCTS,
-				translate( 'Real-time malware scanning and one-click fixes.' )
-			),
+			...setProductDescription( JETPACK_SCAN_PRODUCTS, {
+				value: scanDescription,
+				calloutText: translate( 'Unlimited' ),
+			} ),
 
-			...setTranslation(
-				JETPACK_ANTI_SPAM_PRODUCTS,
-				translate(
-					'Save time manually reviewing spam. Comment and form spam protection (10k API calls/mo).'
-				)
-			),
+			...setProductDescription( JETPACK_ANTI_SPAM_PRODUCTS, {
+				value: antiSpamDescription,
+				calloutText: translate( '10k API calls/mo' ),
+			} ),
 
-			...setTranslation(
-				JETPACK_VIDEOPRESS_PRODUCTS,
-				translate( '1TB of ad-free video hosting.' )
-			),
+			...setProductDescription( JETPACK_VIDEOPRESS_PRODUCTS, { value: videoPressDescription } ),
 
-			...setTranslation(
-				JETPACK_BOOST_PRODUCTS,
-				translate( 'Speed up your site and improve SEO with automatic critical CSS generation.' )
-			),
+			...setProductDescription( JETPACK_BOOST_PRODUCTS, { value: boostDescription } ),
 
-			...setTranslation(
-				JETPACK_SEARCH_PRODUCTS,
-				translate( 'Lightning-fast search up to 100k records and 100k requests/mo.' )
-			),
+			...setProductDescription( JETPACK_SEARCH_PRODUCTS, { value: searchDescription } ),
 
-			...setTranslation(
-				JETPACK_SOCIAL_PRODUCTS,
-				translate( 'Engage your social followers. Advanced plan with unlimited shares.' )
-			),
+			...setProductDescription( JETPACK_SOCIAL_PRODUCTS, {
+				value: socialDescription,
+				calloutText: translate( 'Unlimited shares/mo' ),
+			} ),
 
-			...setTranslation(
-				JETPACK_CRM_PRODUCTS,
-				translate( 'Manage your sales funnel. Entrepreneur plan with 30 extensions.' )
-			),
+			...setProductDescription( JETPACK_CRM_PRODUCTS, {
+				value: crmDescription,
+				calloutText: translate( 'Enterpreneur plan' ),
+			} ),
 		};
 
 		const INCLUDED_PRODUCT_DESCRIPTION_T2_MAP: Record< string, string > = {
 			...INCLUDED_PRODUCT_DESCRIPTION_T1_MAP,
 
-			...setTranslation(
-				JETPACK_ANTI_SPAM_PRODUCTS,
-				translate( 'Comment and form spam protection (60k API calls/mo).' )
-			),
+			...setProductDescription( JETPACK_ANTI_SPAM_PRODUCTS, {
+				value: antiSpamDescription,
+				calloutText: translate( '60k API calls/mo' ),
+			} ),
 		};
 
 		const productMap = ( () => {
