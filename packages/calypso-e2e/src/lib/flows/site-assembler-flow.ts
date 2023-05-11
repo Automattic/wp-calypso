@@ -32,6 +32,13 @@ export class SiteAssemblerFlow {
 	 */
 	async selectLayoutComponentType( type: LayoutType ): Promise< void > {
 		await this.page.getByRole( 'button', { name: type } ).click();
+
+		// Each header element contains an iframe that loads the preview in the card.
+		// These previews are lazy-loaded and thus only load if the card is in the
+		// viewport.
+		// By waiting for the network activity to cease for the lazy-load,
+		// mis-clicks and clicks being swallowed can be prevented.
+		await this.page.waitForLoadState( 'networkidle', { timeout: 15 * 1000 } );
 	}
 
 	/**
