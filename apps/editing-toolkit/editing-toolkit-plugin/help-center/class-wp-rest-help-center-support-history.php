@@ -1,6 +1,6 @@
 <?php
 /**
- * WP_REST_Help_Center_Ticket file.
+ * WP_REST_Help_Center_Support_History file.
  *
  * @package A8C\FSE
  */
@@ -10,11 +10,11 @@ namespace A8C\FSE;
 use Automattic\Jetpack\Connection\Client;
 
 /**
- * Class WP_REST_Help_Center_Ticket.
+ * Class WP_REST_Help_Center_Support_History.
  */
 class WP_REST_Help_Center_Support_History extends \WP_REST_Controller {
 	/**
-	 * WP_REST_Help_Center_Ticket constructor.
+	 * WP_REST_Help_Center_Support_History constructor.
 	 */
 	public function __construct() {
 		$this->namespace = 'help-center';
@@ -31,7 +31,7 @@ class WP_REST_Help_Center_Support_History extends \WP_REST_Controller {
 			array(
 				'methods'             => \WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'support_history_ticket' ),
-				'permission_callback' => array( $this, 'permission_callback' ),
+				'permission_callback' => 'is_user_logged_in',
 				'args'                => array(
 					'email' => array(
 						'type' => 'string',
@@ -42,7 +42,7 @@ class WP_REST_Help_Center_Support_History extends \WP_REST_Controller {
 	}
 
 	/**
-	 * Get support history tickets through Jeptack.
+	 * Get support history tickets through Jetpack.
 	 *
 	 * @param \WP_REST_Request $request Request object.
 	 */
@@ -68,14 +68,5 @@ class WP_REST_Help_Center_Support_History extends \WP_REST_Controller {
 		$response = json_decode( wp_remote_retrieve_body( $body ) );
 
 		return rest_ensure_response( $response );
-	}
-
-	/**
-	 * Callback to determine whether the request can proceed.
-	 *
-	 * @return boolean
-	 */
-	public function permission_callback() {
-		return is_user_logged_in();
 	}
 }
