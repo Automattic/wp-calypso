@@ -38,7 +38,6 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { useSelectedSiteSelector } from 'calypso/state/sites/hooks';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import BackupDatePicker from './backup-date-picker';
-import AgenciesSurveyBanner from './banners/agencies-survey-banner';
 import BackupsMadeRealtimeBanner from './banners/backups-made-realtime-banner';
 import EnableRestoresBanner from './banners/enable-restores-banner';
 import { backupMainPath, backupClonePath } from './paths';
@@ -236,8 +235,6 @@ function BackupStatus( {
 				{ ! needCredentials && ( ! areCredentialsInvalid || isAtomic ) && hasRealtimeBackups && (
 					<BackupsMadeRealtimeBanner />
 				) }
-
-				<AgenciesSurveyBanner />
 
 				<BackupDatePicker onDateChange={ onDateChange } selectedDate={ selectedDate } />
 				<BackupStorageSpace />

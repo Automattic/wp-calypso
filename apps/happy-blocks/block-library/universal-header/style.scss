@@ -262,19 +262,20 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 }
 
 .x-nav {
-	z-index: 1000;
-	height: auto;
-	padding: 0 24px;
 	display: flex;
-	color: #fff;
-	margin-top: 22px;
+	justify-content: space-between;
+	height: 57px;
+	padding: 0 24px;
+	color: rgb(var(--lp-color-primary, 255, 255, 255));
+	overflow: hidden;
+
 }
 
 .x-nav-list {
 	display: flex;
 	align-items: center;
 	margin: 0;
-	gap: 16px;
+	gap: 24px;
 }
 
 .x-nav-list--left {
@@ -282,14 +283,12 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 }
 
 .x-nav-list--right {
-	margin-left: auto;
 	position: initial;
 	.x-nav-link--primary {
 		border: 1px solid var(--studio-gray-5);
 		background-color: transparent;
 		padding: 9px 12px 10px;
 		border-radius: 4px;
-		font-weight: 400;
 	}
 }
 
@@ -303,11 +302,12 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 
 .x-nav-link {
 	display: block;
-	font-size: 0.875rem;
-	font-weight: 500;
+	font-size: 1rem;
+	font-weight: 600;
 	line-height: 16px;
 	white-space: nowrap;
 	cursor: pointer;
+	color: #003c56;
 }
 
 .x-nav-link-chevron {
@@ -491,10 +491,6 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 	flex-wrap: wrap;
 }
 
-// .x-menu-grid--logged-in {
-// 	display: none;
-// }
-
 .x-menu-grid-item {
 	width: 50%;
 }
@@ -532,37 +528,15 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 	font-weight: 600;
 }
 
-.x-nav .x-nav-link {
-	color: var(--studio-gray-100);
-}
+// .x-nav .x-nav-link {
+// 	color: var(--studio-gray-100);
+// }
 
-.x-nav .x-nav-link.x-nav-link--logo {
-	color: #0675c4;
-}
+// .x-nav .x-nav-link.x-nav-link--logo {
+// 	color: #0675c4;
+// }
 
 button.x-link:hover {
 	background-image: none !important;
 	background-color: transparent !important;
 }
-
-// body.logged-in .x-nav {
-// 	top: 32px;
-// }
-
-// body.logged-in .login-link {
-// 	display: none;
-// }
-
-// body.logged-in .mob-signup {
-// 	display: none;
-// }
-
-// body.logged-in .x-dropdown {
-// 	top: 72px;
-// }
-
-// @media only screen and ( max-width: 782px ) {
-// 	body.logged-in .x-nav {
-// 		top: 46px;
-// 	}
-// }
