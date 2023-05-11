@@ -22,7 +22,7 @@ export class TwitterSharePreview extends PureComponent {
 				<TwitterPreviews
 					tweets={ [
 						{
-							cardType: 'summary_large_image',
+							cardType: imageUrl ? 'summary_large_image' : null,
 							description: decodeEntities( articleSummary ),
 							title: decodeEntities( seoTitle ),
 							image: imageUrl,
