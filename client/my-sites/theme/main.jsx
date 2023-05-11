@@ -1126,6 +1126,10 @@ class ThemeSheet extends Component {
 			translate,
 			isLoggedIn,
 			isPremium,
+			isThemePurchased,
+			isSiteBundleEligible,
+			isSiteEligibleForManagedExternalThemes,
+			isMarketplaceThemeSubscribed,
 			isExternallyManagedTheme,
 			isThemeActivationSyncStarted,
 		} = this.props;
@@ -1209,7 +1213,11 @@ class ThemeSheet extends Component {
 		} );
 
 		if ( hasWpComThemeUpsellBanner ) {
-			const forceDisplay = isPremium && isExternallyManagedTheme && isBundledSoftwareSet;
+			const forceDisplay =
+				( isPremium && ! isThemePurchased ) ||
+				( isBundledSoftwareSet && ! isSiteBundleEligible ) ||
+				( isExternallyManagedTheme &&
+					( ! isMarketplaceThemeSubscribed || ! isSiteEligibleForManagedExternalThemes ) );
 
 			const upsellNudgePlan =
 				isExternallyManagedTheme || isBundledSoftwareSet ? PLAN_BUSINESS : PLAN_PREMIUM;
