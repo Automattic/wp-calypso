@@ -17,21 +17,21 @@ const ACTIVE_STATUSES = [ 'New', 'Open', 'Hold' ];
 export function useHasActiveSupport( type: 'chat' | 'ticket', email: string, show = true ) {
 	return useQuery< Response | SupportSession | boolean >(
 		[ 'help-support-history', type, show ],
-		async () =>
+		() =>
 			canAccessWpcomApis()
-				? await wpcomRequest( {
+				? wpcomRequest( {
 						path: `support-history/${ encodeURIComponent( type ) }/?email=${ encodeURIComponent(
 							email
 						) }`,
 						apiNamespace: 'wpcom/v2/',
 						apiVersion: '2',
 				  } )
-				: ( ( await apiFetch( {
+				: apiFetch< Response >( {
 						path: `help-center/support-history/${ encodeURIComponent(
 							type
 						) }/?email=${ encodeURIComponent( email ) }`,
 						global: true,
-				  } as APIFetchOptions ) ) as Response ),
+				  } as APIFetchOptions ),
 		{
 			refetchOnWindowFocus: false,
 			keepPreviousData: false,
