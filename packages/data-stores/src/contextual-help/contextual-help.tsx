@@ -604,13 +604,17 @@ type SectionForPostsAndPages = 'posts' | 'pages';
 
 type Section = SectionForVideos | SectionForTours | SectionForPostsAndPages;
 
-export function getContextResults( section: Section ) {
+export function getContextResults( section: Section, siteIntent: string ) {
 	// Posts and Pages have a common help section
 	if ( section === 'posts' || section === 'pages' ) {
 		section = 'posts-pages';
 	}
 
-	// const fallbackLinks = siteIntent === 'write' ? bloggerFallbackLinks : defaultFallbackLinks;
+	if ( siteIntent ) {
+		// eslint-disable-next-line no-console
+		console.warn( 'Site intent is', siteIntent );
+	}
+
 	// make sure editorially to show at most one tour and one video at once
 	// `first` is a safe-guard in case that fails
 	const video = videosForSection[ section as SectionForVideos ]?.[ 0 ];
