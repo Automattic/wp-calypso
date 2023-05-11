@@ -107,7 +107,7 @@ import { LinkedInPreviews } from '@automattic/social-previews';
 Tumblr preview
 
 ```jsx
-import { TumblrLinkPreviews } from '@automattic/social-previews';
+import { TumblrPreviews } from '@automattic/social-previews';
 
 <TumblrPreviews
 	title="Five for the Future"
