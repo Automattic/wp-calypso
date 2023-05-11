@@ -12,22 +12,51 @@ type ProductDetailsProps = {
 	product: SelectorProduct;
 };
 
-const ProductDetails: React.FC< ProductDetailsProps > = ( { product } ) => {
+type ProductDetailsListProps = {
+	title: string;
+	detailsList: JSX.Element;
+};
+
+const ProductDetailsList: React.FC< ProductDetailsListProps > = ( { title, detailsList } ) => {
 	const isMobile = useMobileBreakpoint();
+	const [ contentStlye, setContentStyle ] = useState( {} );
+
+	const ref = useRef< HTMLDivElement | null >( null );
+
+	useLayoutEffect( () => {
+		const height = ref?.current?.scrollHeight || 250;
+		setContentStyle( { maxHeight: `${ height }px` } );
+	}, [ setContentStyle ] );
+
+	if ( isMobile ) {
+		return (
+			<FoldableCard
+				hideSummary
+				header={ title }
+				clickableHeader={ true }
+				smooth
+				contentExpandedStyle={ contentStlye }
+			>
+				<div ref={ ref }>{ detailsList }</div>
+			</FoldableCard>
+		);
+	}
+
+	return (
+		<>
+			<p>{ title }</p>
+			{ detailsList }
+		</>
+	);
+};
+
+const ProductDetails: React.FC< ProductDetailsProps > = ( { product } ) => {
 	const translate = useTranslate();
 
 	const productDetails = [
 		{ type: 'includes', title: translate( 'Includes' ), items: product.whatIsIncluded },
 		{ type: 'benefits', title: translate( 'Benefits' ), items: product.benefits },
 	];
-
-	const ref = useRef< HTMLDivElement | null >( null );
-	const [ contentStlye, setContentStyle ] = useState( {} );
-
-	useLayoutEffect( () => {
-		const height = ref?.current?.scrollHeight || 250;
-		setContentStyle( { maxHeight: `${ height }px` } );
-	}, [ setContentStyle ] );
 
 	const descriptionMap = useIncludedProductDescriptionMap( product.productSlug );
 
@@ -41,47 +70,19 @@ const ProductDetails: React.FC< ProductDetailsProps > = ( { product } ) => {
 					/>
 					<hr />
 					<div className="product-lightbox__detail-list">
-						{ isMobile ? (
-							<FoldableCard
-								hideSummary
-								header={ translate( 'Also included:' ) }
-								clickableHeader={ true }
-								smooth
-								contentExpandedStyle={ contentStlye }
-							>
-								<div ref={ ref }>
-									<DescriptionList items={ product.alsoIncluded } />
-								</div>
-							</FoldableCard>
-						) : (
-							<>
-								<p>{ translate( 'Also included:' ) }</p>
-								<DescriptionList items={ product.alsoIncluded } />
-							</>
-						) }
+						<ProductDetailsList
+							title={ translate( 'Also included:' ) }
+							detailsList={ <DescriptionList items={ product.alsoIncluded } /> }
+						/>
 					</div>
 				</>
 			) : (
 				productDetails.map( ( { type, title, items } ) => (
 					<div className="product-lightbox__detail-list" key={ type }>
-						{ isMobile ? (
-							<FoldableCard
-								hideSummary
-								header={ title }
-								clickableHeader={ true }
-								smooth
-								contentExpandedStyle={ contentStlye }
-							>
-								<div ref={ ref }>
-									<DescriptionList items={ items } />
-								</div>
-							</FoldableCard>
-						) : (
-							<>
-								<p>{ title }</p>
-								<DescriptionList items={ items } />
-							</>
-						) }
+						<ProductDetailsList
+							title={ title }
+							detailsList={ <DescriptionList items={ items } /> }
+						/>
 						<hr />
 					</div>
 				) )
@@ -90,24 +91,10 @@ const ProductDetails: React.FC< ProductDetailsProps > = ( { product } ) => {
 			{ product.faqs && !! product.faqs.length && (
 				<>
 					<div className="product-lightbox__detail-list is-faq-list" key="faqs">
-						{ isMobile ? (
-							<FoldableCard
-								hideSummary
-								header={ translate( 'FAQs' ) }
-								clickableHeader={ true }
-								smooth
-								contentExpandedStyle={ contentStlye }
-							>
-								<div ref={ ref }>
-									<FAQList items={ product.faqs } />
-								</div>
-							</FoldableCard>
-						) : (
-							<>
-								<p>{ translate( 'FAQs' ) }</p>
-								<FAQList items={ product.faqs } />
-							</>
-						) }
+						<ProductDetailsList
+							title={ translate( 'FAQs' ) }
+							detailsList={ <FAQList items={ product.faqs } /> }
+						/>
 					</div>
 				</>
 			) }
