@@ -806,7 +806,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Flexible API that works with any type of site' ),
 	];
 	const scanIncludesInfo = [
-		translate( 'Website firewall (WAF beta)' ),
+		translate( 'Website firewall (WAF)' ),
 		translate( 'Automated daily scanning' ),
 		translate( 'One-click fixes for most issues' ),
 		translate( 'Instant email threat notifications' ),
