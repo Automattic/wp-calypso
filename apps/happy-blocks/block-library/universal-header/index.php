@@ -388,14 +388,14 @@ $happy_blocks_tabs = array(
 				</div>
 			</div>
 			<hr />
-			<?php if ( $args['include_site_title'] ) : ?>
 			<div class="happy-blocks-global-header-site__title">
-				<div class="happy-blocks-global-header-site__title__wrapper">
-					<h1><?php echo esc_html( $args['site_title'] ); ?></h1>
-					<p><?php echo esc_html( $args['site_tagline'] ); ?></p>
-				</div>
-				<form role="search" method="get" action=""><label for="wp-block-search__input-1" class="screen-reader-text"><?php echo esc_html( $args['search_placeholder'] ); ?></label><div class="happy-blocks-search__inside-wrapper"><input type="search" id="wp-block-search__input-1" name="s" value="" placeholder="<?php echo esc_html( $args['search_placeholder'] ); ?>"></div></form>
+				<?php if ( $args['include_site_title'] ) : ?>
+					<div class="happy-blocks-global-header-site__title__wrapper">
+						<h1><?php echo esc_html( $args['site_title'] ); ?></h1>
+						<p><?php echo esc_html( $args['site_tagline'] ); ?></p>
+					</div>
+				<?php endif; ?>
+				<form class="<?php echo ! $args['include_site_title'] ? 'happy-blocks_inner_search' : ''; ?>"  role="search" method="get" action=""><label for="wp-block-search__input-1" class="screen-reader-text"><?php echo esc_html( $args['search_placeholder'] ); ?></label><div class="happy-blocks-search__inside-wrapper"><input type="search" id="wp-block-search__input-1" name="s" value="" placeholder="<?php echo esc_html( $args['search_placeholder'] ); ?>"></div></form>
 			</div>
-			<?php endif; ?>
 	</div>
 </div>

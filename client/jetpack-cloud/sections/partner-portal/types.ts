@@ -11,6 +11,7 @@ export enum LicenseFilter {
 	Detached = 'detached',
 	Attached = 'attached',
 	Revoked = 'revoked',
+	Standard = 'standard',
 }
 
 export enum LicenseSortField {
@@ -22,6 +23,11 @@ export enum LicenseSortField {
 export enum LicenseSortDirection {
 	Ascending = 'asc',
 	Descending = 'desc',
+}
+
+export enum LicenseType {
+	Standard = 'user',
+	Partner = 'jetpack_partner_key',
 }
 
 export interface AssignLicenceProps {

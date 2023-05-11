@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useMemo } from 'react';
+import useCategoryAll from './hooks/use-category-all';
 import useDotcomPatterns from './hooks/use-dotcom-patterns';
 import type { Pattern } from './types';
 
@@ -589,9 +590,10 @@ const useAllPatterns = ( lang: string | undefined ) => {
 	const sectionPatterns = useSectionPatterns();
 	const footerPatterns = useFooterPatterns( [] );
 	const dotcomPatterns = useDotcomPatterns( lang );
+	const patterns = useCategoryAll( dotcomPatterns );
 
 	if ( isEnabled( 'pattern-assembler/dotcompatterns' ) ) {
-		return dotcomPatterns;
+		return patterns;
 	}
 
 	return [ ...headerPatterns, ...sectionPatterns, ...footerPatterns ];

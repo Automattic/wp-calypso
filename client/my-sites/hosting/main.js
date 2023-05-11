@@ -8,7 +8,6 @@ import { localize } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
 import wrapWithClickOutside from 'react-click-outside';
 import { connect } from 'react-redux';
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
 import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
@@ -97,20 +96,17 @@ class Hosting extends Component {
 		} = this.props;
 
 		const getUpgradeBanner = () => {
-			//eCommerce Trial requires different wording because Business is not the obvious upgrade path
-			if ( isECommerceTrial ) {
-				return (
-					<UpsellNudge
-						title={ translate( 'Upgrade your plan to access all hosting features' ) }
-						event="calypso_hosting_configuration_upgrade_click"
-						href={ `/plans/${ siteSlug }?feature=${ encodeURIComponent( FEATURE_SFTP_DATABASE ) }` }
-						feature={ FEATURE_SFTP_DATABASE }
-						showIcon={ true }
-					/>
-				);
-			}
+			// The eCommerce Trial requires a different upsell path.
+			const targetPlan = ! isECommerceTrial
+				? undefined
+				: {
+						callToAction: translate( 'Upgrade your plan' ),
+						feature: FEATURE_SFTP_DATABASE,
+						href: `/plans/${ siteSlug }?feature=${ encodeURIComponent( FEATURE_SFTP_DATABASE ) }`,
+						title: translate( 'Upgrade your plan to access all hosting features' ),
+				  };
 
-			return <HostingUpsellNudge siteId={ siteId } />;
+			return <HostingUpsellNudge siteId={ siteId } targetPlan={ targetPlan } />;
 		};
 
 		const getAtomicActivationNotice = () => {

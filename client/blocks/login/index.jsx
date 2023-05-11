@@ -415,7 +415,7 @@ class Login extends Component {
 				} );
 				postHeader = (
 					<p className="login__header-subtitle">
-						{ translate( 'Log in to your WordPress.com account' ) }
+						{ translate( 'Log in with your WordPress.com account' ) }
 					</p>
 				);
 			}

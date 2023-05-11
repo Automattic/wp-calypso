@@ -232,10 +232,7 @@ export class UserStep extends Component {
 		if ( isReskinned && 0 === positionInFlow ) {
 			const { queryObject } = this.props;
 
-			if (
-				( queryObject?.variationName && isNewsletterFlow( queryObject.variationName ) ) ||
-				isGravatarOAuth2Client( oauth2Client )
-			) {
+			if ( queryObject?.variationName && isNewsletterFlow( queryObject.variationName ) ) {
 				subHeaderText = translate( 'Already have a WordPress.com account? {{a}}Log in{{/a}}', {
 					components: { a: <a href={ loginUrl } rel="noopener noreferrer" /> },
 				} );
