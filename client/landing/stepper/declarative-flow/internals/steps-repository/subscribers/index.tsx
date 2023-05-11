@@ -22,7 +22,7 @@ const Subscribers: Step = function ( { navigation } ) {
 
 	const submitButtonText = isImportValid
 		? translate( 'Add and continue' )
-		: translate( 'Continue' );
+		: translate( 'Skip for now' );
 
 	return (
 		<StepContainer
