@@ -25,7 +25,6 @@ export { SpinnerExample } from './spinner/example';
 export { GMClosureNotice } from './gm-closure-notice/gm-closure-notice';
 export { default as WordPressLogo } from './wordpress-logo';
 export { default as WordPressWordmark } from './wordpress-wordmark';
-export { default as JetpackLogo } from './jetpack-logo';
 export { default as WooCommerceWooLogo } from './woocommerce-woo-logo';
 export { ListTile } from './list-tile';
 export { LoadingPlaceholder } from './loading-placeholder';
@@ -50,3 +49,17 @@ export { default as ComponentSwapper } from './component-swapper';
 export { default as SubmenuPopover, useSubmenuPopoverProps } from './submenu-popover';
 export { default as JetpackUpsellCard } from './jetpack-upsell-card';
 export { UpsellMenuGroup } from './upsell-menu-group';
+
+// Logos
+export { JetpackLogo } from './logos/jetpack-logo';
+export { BloombergLogo } from './logos/bloomberg-logo';
+export { CloudLogo } from './logos/cloud-logo';
+export { CNNLogo } from './logos/cnn-logo';
+export { CondenastLogo } from './logos/condenast-logo';
+export { DisneyLogo } from './logos/disney-logo';
+export { FacebookLogo } from './logos/facebook-logo';
+export { SalesforceLogo } from './logos/salesforce-logo';
+export { SlackLogo } from './logos/slack-logo';
+export { TimeLogo } from './logos/time-logo';
+export { VIPLogo } from './logos/vip-logo';
+export { WooLogo } from './logos/woo-logo';

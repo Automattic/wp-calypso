@@ -95,4 +95,4 @@ const JetpackLogo: React.FunctionComponent< JetpackLogoProps > = ( {
 	);
 };
 
-export default JetpackLogo;
+export { JetpackLogo };
