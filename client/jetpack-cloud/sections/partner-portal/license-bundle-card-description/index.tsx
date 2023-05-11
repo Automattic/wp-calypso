@@ -43,6 +43,10 @@ export default function LicenseBundleCardDescription( { product }: Props ) {
 				translate( 'Akismet Anti-spam*' )
 			);
 			break;
+		case 'jetpack-starter':
+			textDescription = translate( 'Includes VaultPress Backup 1GB and Akismet Anti-spam.' );
+			features.push( translate( 'VaultPress Backup 1GB' ), translate( 'Akismet Anti-spam*' ) );
+			break;
 		case 'jetpack-anti-spam':
 			textDescription = translate( 'Automatically clear spam from your comments and forms.' );
 			break;
