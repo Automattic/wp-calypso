@@ -37,6 +37,5 @@ if ( url ) {
 		}
 
 		dispatch( 'core/editor' ).resetEditorBlocks( blocks );
-		dispatch( 'core/editor' ).editPost( { title: title } );
 	} )();
 }
