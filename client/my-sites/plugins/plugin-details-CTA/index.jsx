@@ -144,18 +144,38 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 		setDisplayManageSitePluginsModal( ! displayManageSitePluginsModal );
 	}, [ displayManageSitePluginsModal ] );
 
+	// Activation and deactivation translations.
+	const activeText = translate( '{{span}}active{{/span}}', {
+		components: {
+			span: <span className="plugin-details-cta__installed-text-active"></span>,
+		},
+	} );
+	const inactiveText = translate( '{{span}}deactivated{{/span}}', {
+		components: {
+			span: <span className="plugin-details-cta__installed-text-inactive"></span>,
+		},
+	} );
+
 	// If we cannot retrieve plugin status through jetpack ( ! isJetpack ) and plugin is preinstalled.
 	if ( ! isJetpack && PREINSTALLED_PLUGINS.includes( plugin.slug ) ) {
 		return (
 			<div className="plugin-details-cta__container">
-				<div className="plugin-details-cta__price">{ translate( 'Free' ) }</div>
+				<div className="plugin-details-cta__installed-text">
+					{ translate( 'Installed and {{activation /}}', {
+						components: {
+							activation: activeText,
+						},
+					} ) }
+				</div>
 				<span className="plugin-details-cta__preinstalled">
-					{ selectedSite && shouldUpgrade
-						? translate(
-								'%s is automatically managed for you. Upgrade your plan and get access to another 50,000 WordPress plugins to extend functionality for your site.',
-								{ args: plugin.name }
-						  )
-						: translate( '%s is automatically managed for you.', { args: plugin.name } ) }
+					<p>{ translate( '%s is automatically managed for you.', { args: plugin.name } ) }</p>
+					{ selectedSite && shouldUpgrade && (
+						<p>
+							{ translate(
+								'Upgrade your plan and get access to another 50,000 WordPress plugins to extend functionality for your site.'
+							) }
+						</p>
+					) }
 				</span>
 
 				{ selectedSite && shouldUpgrade && (
@@ -190,16 +210,6 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 
 	if ( isPluginInstalledOnsiteWithSubscription && sitePlugin ) {
 		// Check if already instlaled on the site
-		const activeText = translate( '{{span}}active{{/span}}', {
-			components: {
-				span: <span className="plugin-details-cta__installed-text-active"></span>,
-			},
-		} );
-		const inactiveText = translate( '{{span}}deactivated{{/span}}', {
-			components: {
-				span: <span className="plugin-details-cta__installed-text-inactive"></span>,
-			},
-		} );
 		const { active } = sitePlugin;
 
 		return (
