@@ -5,7 +5,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { Spinner, GMClosureNotice } from '@automattic/components';
-import { useSupportAvailability, useHasActiveSupport } from '@automattic/data-stores';
+import {
+	useSupportAvailability,
+	useHasActiveSupport,
+	SupportSession,
+} from '@automattic/data-stores';
 import { isDefaultLocale, getLanguage, useLocale } from '@automattic/i18n-utils';
 import { Notice } from '@wordpress/components';
 import { useEffect, useMemo } from '@wordpress/element';
@@ -122,7 +126,9 @@ export const HelpCenterContactPage: FC = () => {
 			<BackButton />
 			<div className="help-center-contact-page__content">
 				<h3>{ __( 'Contact our WordPress.com experts', __i18n_text_domain__ ) }</h3>
-				{ hasActiveTickets && <HelpCenterActiveTicketNotice tickets={ [ hasActiveTickets ] } /> }
+				{ hasActiveTickets && (
+					<HelpCenterActiveTicketNotice tickets={ [ hasActiveTickets as SupportSession ] } />
+				) }
 				{ /* Easter */ }
 				<GMClosureNotice
 					displayAt="2023-04-03 00:00Z"

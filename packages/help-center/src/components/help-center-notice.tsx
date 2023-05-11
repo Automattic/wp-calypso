@@ -119,7 +119,6 @@ export function HelpCenterActiveTicketNotice( {
 						} )
 					) }
 				</strong>{ ' ' }
-				&nbsp;
 				{ __(
 					`Rest assured that we got your message and we'll be in touch as soon as we can.`,
 					__i18n_text_domain__
