@@ -8,6 +8,8 @@
 
 .facebook-preview__post {
 	overflow-y: hidden;
+	max-width: clamp(#{$facebook-preview-min-width}, 100%, #{$facebook-preview-max-width});
+	margin-inline: auto;
 
 	display: flex;
 	flex-direction: column;

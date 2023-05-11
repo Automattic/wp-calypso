@@ -36,6 +36,7 @@ import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
 import PlanFeatures2023GridHeaderPrice from './header-price';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import PopularBadge from './popular-badge';
+import type { PlanActionOverrides } from '../types';
 
 function DropdownIcon() {
 	return (
@@ -294,6 +295,7 @@ type PlanComparisonGridProps = {
 	selectedSiteSlug: string | null;
 	onUpgradeClick: ( properties: PlanProperties ) => void;
 	siteId?: number | null;
+	planActionOverrides?: PlanActionOverrides;
 };
 
 type PlanComparisonGridHeaderProps = {
@@ -310,6 +312,7 @@ type PlanComparisonGridHeaderProps = {
 	selectedSiteSlug: string | null;
 	onUpgradeClick: ( properties: PlanProperties ) => void;
 	siteId?: number | null;
+	planActionOverrides?: PlanActionOverrides;
 };
 
 type RestructuredFeatures = {
@@ -347,6 +350,7 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 	selectedSiteSlug,
 	isLargeCurrency,
 	onUpgradeClick,
+	planActionOverrides,
 } ) => {
 	const { planName, planConstantObj, availableForPurchase, current, ...planPropertiesObj } =
 		planProperties;
@@ -438,6 +442,7 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 				flowName={ flowName }
 				selectedSiteSlug={ selectedSiteSlug }
 				onUpgradeClick={ () => onUpgradeClick( planProperties ) }
+				planActionOverrides={ planActionOverrides }
 			/>
 		</Cell>
 	);
@@ -457,6 +462,7 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 	selectedSiteSlug,
 	onUpgradeClick,
 	siteId,
+	planActionOverrides,
 } ) => {
 	const allVisible = visiblePlansProperties.length === displayedPlansProperties.length;
 
@@ -490,6 +496,7 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 					onUpgradeClick={ onUpgradeClick }
 					isLaunchPage={ isLaunchPage }
 					isLargeCurrency={ isLargeCurrency }
+					planActionOverrides={ planActionOverrides }
 				/>
 			) ) }
 		</PlanRow>
@@ -675,6 +682,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 	selectedSiteSlug,
 	onUpgradeClick,
 	siteId,
+	planActionOverrides,
 } ) => {
 	const translate = useTranslate();
 	// Check to see if we have at least one Woo Express plan we're comparing.
@@ -894,6 +902,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 					selectedSiteSlug={ selectedSiteSlug }
 					onUpgradeClick={ onUpgradeClick }
 					siteId={ siteId }
+					planActionOverrides={ planActionOverrides }
 				/>
 				{ Object.values( featureGroupMap ).map( ( featureGroup: FeatureGroup ) => {
 					const features = featureGroup.get2023PricingGridSignupWpcomFeatures();
@@ -955,6 +964,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 					selectedSiteSlug={ selectedSiteSlug }
 					onUpgradeClick={ onUpgradeClick }
 					siteId={ siteId }
+					planActionOverrides={ planActionOverrides }
 				/>
 			</Grid>
 

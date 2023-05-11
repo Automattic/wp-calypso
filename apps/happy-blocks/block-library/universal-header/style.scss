@@ -588,6 +588,36 @@ body.logged-in .x-dropdown {
 	}
 }
 
+// Only for categories page, tablet or bellow viewport, set the search box width to 100%.
+body.archive {
+	@media only screen and ( max-width: $breakpoint-tablet ) {
+		div.happy-blocks-search__inside-wrapper {
+			width: 100%;
+		}
+	}
+}
+
+.happy-blocks_inner_search {
+	height: 0;
+	.happy-blocks-search__inside-wrapper {
+		height: 57px;
+	}
+
+	@media only screen and ( max-width: $breakpoint-tablet ) {
+		height: 57px;
+		margin-bottom: 16px !important;
+		justify-content: flex-start !important;
+
+		div.happy-blocks-search__inside-wrapper {
+			width: var(--wp--style--global--content-size);
+		}
+	}
+	@media only screen and ( max-width: $breakpoint-mobile ) {
+		margin: 16px 0 !important;
+	}
+
+}
+
 .happy-blocks-search {
 	min-height: 399px;
 	position: relative;
@@ -728,7 +758,7 @@ body.logged-in .x-dropdown {
 	h1 {
 		font-family: $recoleta-font-family;
 		font-size: 2.75rem;
-		line-height: 40px;
+		line-height: 52px;
 		margin: 0;
 		@media ( max-width: $breakpoint-tablet ) {
 			font-size: 1.75rem;

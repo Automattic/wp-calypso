@@ -5,11 +5,7 @@ import FacebookPostActions from './post/actions';
 import FacebookPostHeader from './post/header';
 import type { FacebookPreviewProps } from './types';
 
-type Props = FacebookPreviewProps & {
-	compactDescription?: boolean;
-};
-
-const FacebookDefaultPostPreview: React.FC< Props > = ( {
+export const LinkPreviewDetails: React.FC< FacebookPreviewProps > = ( {
 	url,
 	customImage,
 	user,
@@ -40,5 +36,3 @@ const FacebookDefaultPostPreview: React.FC< Props > = ( {
 		</div>
 	);
 };
-
-export default FacebookDefaultPostPreview;
