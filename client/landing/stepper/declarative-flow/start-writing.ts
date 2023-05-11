@@ -66,12 +66,6 @@ const startWriting: Flow = {
 		const { saveSiteSettings, setIntentOnSite } = useDispatch( SITE_STORE );
 		const { setSelectedSite } = useDispatch( ONBOARD_STORE );
 
-		// Calling it here just to try and make plan_selected false work.
-		updateLaunchpadSettings( siteSlug, {
-			checklist_statuses: { plan_selected: false },
-		} );
-		console.log( 'plan_selected should be set to false' );
-
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', flowName, currentStep );
 			const returnUrl = `/setup/start-writing/start-writing-done?siteSlug=${ siteSlug }`;
@@ -82,9 +76,8 @@ const startWriting: Flow = {
 				case 'processing': {
 					// If we just created a new site.
 					if ( ! providedDependencies?.blogLaunched && providedDependencies?.siteSlug ) {
-						// This is how I thought setting plan_selected to false would work. But it doesn't seem to work.
 						await updateLaunchpadSettings( String( providedDependencies?.siteSlug ), {
-							checklist_statuses: { first_post_published: true, plan_selected: false },
+							checklist_statuses: { first_post_published: true },
 						} );
 
 						setSelectedSite( providedDependencies?.siteId );
@@ -143,7 +136,7 @@ const startWriting: Flow = {
 				case 'plans':
 					if ( siteSlug ) {
 						await updateLaunchpadSettings( siteSlug, {
-							checklist_statuses: { plan_selected: true },
+							checklist_statuses: { plan_completed: true },
 						} );
 					}
 					if ( providedDependencies?.goToCheckout ) {

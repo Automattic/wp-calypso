@@ -49,10 +49,6 @@ export function getEnhancedTasks(
 
 	const translatedPlanName = productSlug ? PLANS_LIST[ productSlug ].getTitle() : '';
 
-	// Todo: setupBlogCompleted should be updated to use a new checklistStatus instead of site_edited.
-	//  Explorers will update Jetpack definitions to make this possible, meanwhile we are using site_edited.
-	const setupBlogCompleted = checklistStatuses?.site_edited || false;
-
 	const firstPostPublishedCompleted =
 		site?.options?.launchpad_checklist_tasks_statuses?.first_post_published || false;
 
@@ -62,7 +58,7 @@ export function getEnhancedTasks(
 	);
 
 	const planCompleted =
-		Boolean( tasks?.find( ( task ) => task.id === 'plan_selected' )?.completed ) ||
+		Boolean( tasks?.find( ( task ) => task.id === 'plan_completed' )?.completed ) ||
 		! isStartWritingFlow( flow );
 
 	const videoPressUploadCompleted = Boolean(
@@ -103,15 +99,14 @@ export function getEnhancedTasks(
 				case 'setup_blog':
 					taskData = {
 						actionDispatch: () => {
-							recordTaskClickTracksEvent( flow, setupBlogCompleted, task.id );
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
 								addQueryArgs( `/setup/${ START_WRITING_FLOW }/setup-blog`, {
 									...{ siteSlug: siteSlug, 'start-writing': true },
 								} )
 							);
 						},
-						completed: setupBlogCompleted,
-						disabled: setupBlogCompleted,
+						disabled: task.completed,
 					};
 					break;
 				case 'setup_newsletter':
@@ -171,6 +166,20 @@ export function getEnhancedTasks(
 						completed: ( planCompleted ?? task.completed ) && ! shouldDisplayWarning,
 						disabled: isStartWritingFlow( flow ) && ( planCompleted || ! domainUpsellCompleted ),
 						warning: shouldDisplayWarning,
+					};
+					break;
+				case 'plan_completed':
+					taskData = {
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							const plansUrl = addQueryArgs( `/setup/${ START_WRITING_FLOW }/plans`, {
+								...{ siteSlug: siteSlug, 'start-writing': true },
+							} );
+
+							window.location.assign( plansUrl );
+						},
+						badge_text: ! task.completed ? null : translatedPlanName,
+						disabled: task.completed || ! domainUpsellCompleted,
 					};
 					break;
 				case 'subscribers_added':
