@@ -73,12 +73,14 @@ const hosting: Flow = {
 
 		return { submit };
 	},
-	useSideEffect() {
+	useSideEffect( currentStepSlug ) {
 		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
 
 		useEffect(
 			() => {
-				resetOnboardStore();
+				if ( currentStepSlug === 'options' ) {
+					resetOnboardStore();
+				}
 			},
 			// We only need to reset the store when the flow is mounted.
 			// eslint-disable-next-line react-hooks/exhaustive-deps
