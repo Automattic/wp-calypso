@@ -191,6 +191,18 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 						{ translate( 'Upgrade my plan' ) }
 					</Button>
 				) }
+				{ ! selectedSite && ! isLoggedIn && (
+					<GetStartedButton
+						onClick={ () => {
+							dispatch(
+								recordTracksEvent( 'calypso_plugin_details_get_started_click', {
+									plugin: plugin?.slug,
+									is_logged_in: isLoggedIn,
+								} )
+							);
+						} }
+					/>
+				) }
 			</div>
 		);
 	}
@@ -399,7 +411,6 @@ function PrimaryButton( {
 	isWpcomStaging,
 } ) {
 	const dispatch = useDispatch();
-	const sectionName = useSelector( getSectionName );
 
 	const isMarketplaceProduct = useSelector( ( state ) =>
 		isMarketplaceProductSelector( state, plugin.slug )
@@ -417,23 +428,7 @@ function PrimaryButton( {
 	}, [ dispatch, plugin, isLoggedIn ] );
 
 	if ( ! isLoggedIn ) {
-		const startUrl = addQueryArgs(
-			{
-				ref: sectionName + '-lp',
-			},
-			'/start/business'
-		);
-		return (
-			<Button
-				type="a"
-				className="plugin-details-cta__install-button"
-				primary
-				onClick={ onClick }
-				href={ startUrl }
-			>
-				{ translate( 'Get started' ) }
-			</Button>
-		);
+		return <GetStartedButton onClick={ onClick } />;
 	}
 	if ( plugin.isSaasProduct ) {
 		return (
@@ -455,6 +450,29 @@ function PrimaryButton( {
 			hasEligibilityMessages={ hasEligibilityMessages }
 			disabled={ incompatiblePlugin || userCantManageTheSite || isDisabledForWpcomStaging }
 		/>
+	);
+}
+
+function GetStartedButton( { onClick } ) {
+	const translate = useTranslate();
+	const sectionName = useSelector( getSectionName );
+
+	const startUrl = addQueryArgs(
+		{
+			ref: sectionName + '-lp',
+		},
+		'/start/business'
+	);
+	return (
+		<Button
+			type="a"
+			className="plugin-details-cta__install-button"
+			primary
+			onClick={ onClick }
+			href={ startUrl }
+		>
+			{ translate( 'Get started' ) }
+		</Button>
 	);
 }
 
