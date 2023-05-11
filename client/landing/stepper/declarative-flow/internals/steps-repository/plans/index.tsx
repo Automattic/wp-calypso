@@ -5,6 +5,7 @@ import {
 	START_WRITING_FLOW,
 	StepContainer,
 } from '@automattic/onboarding';
+import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useI18n } from '@wordpress/react-i18n';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import PlansWrapper from './plans-wrapper';
@@ -14,8 +15,10 @@ const plans: Step = function Plans( { navigation, flow } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
 
-	const handleSubmit = () => {
-		const providedDependencies: ProvidedDependencies = {};
+	const handleSubmit = ( plan: MinimalRequestCartProduct | null ) => {
+		const providedDependencies: ProvidedDependencies = {
+			...plan,
+		};
 
 		if ( flow === DOMAIN_UPSELL_FLOW || flow === START_WRITING_FLOW ) {
 			providedDependencies.goToCheckout = true;

@@ -1,5 +1,5 @@
 import { HOSTING_SITE_CREATION_FLOW } from '@automattic/onboarding';
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
 import {
@@ -10,6 +10,7 @@ import {
 import { ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import type { Flow, ProvidedDependencies } from './internals/types';
+import type { OnboardSelect } from '@automattic/data-stores';
 import './internals/hosting-site-creation-flow.scss';
 
 const hosting: Flow = {
@@ -32,7 +33,11 @@ const hosting: Flow = {
 		];
 	},
 	useStepNavigation( _currentStepSlug, navigate ) {
-		const { setSiteTitle } = useDispatch( ONBOARD_STORE );
+		const { setSiteTitle, setPlanCartItem, setSiteGeoAffinity } = useDispatch( ONBOARD_STORE );
+		const siteGeoAffinity = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteGeoAffinity(),
+			[]
+		);
 
 		const flowName = this.name;
 
@@ -42,9 +47,15 @@ const hosting: Flow = {
 			switch ( _currentStepSlug ) {
 				case 'options': {
 					setSiteTitle( providedDependencies.siteTitle );
+					setSiteGeoAffinity( providedDependencies.siteGeoAffinity );
 					return navigate( 'plans' );
 				}
 				case 'plans':
+					setPlanCartItem( {
+						product_slug: providedDependencies.product_slug,
+						extra: { geo_affinity: siteGeoAffinity },
+					} );
+
 					return navigate( 'siteCreationStep' );
 
 				case 'siteCreationStep':

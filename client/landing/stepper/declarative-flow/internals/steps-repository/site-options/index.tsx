@@ -40,7 +40,7 @@ const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
 
 	const { goBack, goNext, submit } = navigation;
 	const [ siteTitle, setSiteTitle ] = React.useState( currentSiteTitle ?? '' );
-	const [ siteDataCenter, setSiteDataCenter ] = React.useState( '' );
+	const [ siteGeoAffinity, setSiteGeoAffinity ] = React.useState( '' );
 	const [ tagline, setTagline ] = React.useState( currentTagling ?? '' );
 	const [ formTouched, setFormTouched ] = React.useState( false );
 	const intent = useSelect(
@@ -91,7 +91,7 @@ const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
 				has_tagline: !! tagline,
 			} );
 
-			submit?.( { siteTitle, tagline } );
+			submit?.( { siteTitle, tagline, siteGeoAffinity } );
 		}
 	};
 
@@ -214,7 +214,7 @@ const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
 				) : null }
 			</FormFieldset>
 			{ isHostingFlow && (
-				<DataCenterPicker onChange={ setSiteDataCenter } value={ siteDataCenter } compact />
+				<DataCenterPicker onChange={ setSiteGeoAffinity } value={ siteGeoAffinity } compact />
 			) }
 			{ taglineLabel && (
 				<FormFieldset disabled={ isFormDisabled } className="site-options__form-fieldset">
