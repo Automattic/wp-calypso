@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import BlogStickers from 'calypso/blocks/blog-stickers';
+import ReaderRecommendedFollowsDialog from 'calypso/blocks/reader-recommended-follows-dialog';
 import ReaderSiteNotificationSettings from 'calypso/blocks/reader-site-notification-settings';
 import SiteIcon from 'calypso/blocks/site-icon';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
@@ -39,6 +40,10 @@ class FeedHeader extends Component {
 		hasOrganization: PropTypes.bool,
 	};
 
+	state = {
+		isRecommendedFollowsModalOpen: false,
+	};
+
 	getFollowerCount = ( feed, site ) => {
 		if ( site && site.subscribers_count ) {
 			return site.subscribers_count;
@@ -61,12 +66,15 @@ class FeedHeader extends Component {
 		} );
 	};
 
-	// Create function to use with onFollowClick to open a modal with NuxModal component
+	// Create function to use with onFollowClick to open a modal with ReaderRecommendedFollowsDialogLoader component
 	// This function will be passed to ReaderFollowButton component
-	openNuxModal = ( isFollowing ) => {
+	openRecommendedFollowsModal = ( isFollowing ) => {
 		// this.props.recordReaderTracksEvent( 'calypso_reader_follow_button_clicked' );
-		// this.setState( { isNuxModalOpen: true } );
-		console.log( 'openNuxModal', isFollowing );
+		this.setState( { isRecommendedFollowsModalOpen: isFollowing } );
+	};
+
+	onCloseRecommendedFollowModal = () => {
+		this.setState( { isRecommendedFollowsModalOpen: false } );
 	};
 
 	render() {
@@ -170,7 +178,7 @@ class FeedHeader extends Component {
 									<ReaderFollowButton
 										siteUrl={ siteUrl }
 										iconSize={ 24 }
-										onFollowToggle={ this.openNuxModal }
+										onFollowToggle={ this.openRecommendedFollowsModal }
 									/>
 								</div>
 							) }
@@ -199,6 +207,9 @@ class FeedHeader extends Component {
 						</div>
 					</div>
 				</div>
+				{ this.state.isRecommendedFollowsModalOpen && (
+					<ReaderRecommendedFollowsDialog onClose={ this.onCloseRecommendedFollowModal } />
+				) }
 			</div>
 		);
 	}

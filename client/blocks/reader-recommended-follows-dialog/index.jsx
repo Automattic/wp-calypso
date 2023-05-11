@@ -1,45 +1,33 @@
 import { useTranslate } from 'i18n-calypso';
-import startLearningPrompt from 'calypso/assets/images/customer-home/illustration--secondary-start-learning.svg';
-import VideoModal from 'calypso/components/videos-ui/video-modal';
-import { COURSE_SLUGS } from 'calypso/data/courses';
-import { useRouteModal } from 'calypso/lib/route-modal';
-import { EDUCATION_BLOGGING_QUICK_START } from 'calypso/my-sites/customer-home/cards/constants';
-import ReaderRecommendedFollowsDialog from './dialog';
+import { Dialog } from '@automattic/components';
 
-const ReaderRecommendedFollowsDialogLoader = () => {
+import './style.scss';
+
+function ReaderRecommendedFollowsDialog( { onClose } ) {
 	const translate = useTranslate();
-	const { isModalOpen, openModal, closeModal } = useRouteModal(
-		'courseSlug',
-		COURSE_SLUGS.BLOGGING_QUICK_START
-	);
-
 	return (
-		<ReaderRecommendedFollowsDialog
-			title={ translate( 'Blog like an expert from day one' ) }
-			description={ translate(
-				"Learn the fundamentals from our bite-sized video course — you'll be up and running in just nine minutes."
-			) }
-			modalLinks={ [
-				{
-					ModalComponent: VideoModal,
-					modalComponentProps: {
-						isVisible: isModalOpen,
-						onClose: ( event ) => {
-							event.preventDefault();
-							closeModal();
-						},
-						courseSlug: COURSE_SLUGS.BLOGGING_QUICK_START,
-					},
-					onClick: openModal,
-					text: translate( 'Start learning' ),
-				},
-			] }
-			illustration={ startLearningPrompt }
-			cardName={ EDUCATION_BLOGGING_QUICK_START }
-			width="183"
-			height="120"
-		/>
+		<Dialog
+			additionalClassNames="reader-recommended-follows-dialog"
+			isBackdropVisible={ true }
+			isVisible={ true }
+			onClose={ onClose }
+			showCloseIcon={ true }
+		>
+			<div className="reader-recommended-follows-dialog__content">
+				<div className="reader-recommended-follows-dialog__header">
+					<h2 className="reader-recommended-follows-dialog__title">
+						{ translate( 'Recommended follows' ) }
+					</h2>
+					<p className="reader-recommended-follows-dialog__description">
+						{ translate( "While you're at it, you might as well check out these sites" ) }
+					</p>
+				</div>
+				<div className="reader-recommended-follows-dialog__body">
+					<div className="reader-recommended-follows-dialog__follow">sdf</div>
+				</div>
+			</div>
+		</Dialog>
 	);
-};
+}
 
-export default ReaderRecommendedFollowsDialogLoader;
+export default ReaderRecommendedFollowsDialog;
