@@ -66,14 +66,6 @@ export default function CampaignsList( props: Props ) {
 		);
 	}
 
-	/*if ( ! isLoading ) {
-		return (
-			<div className="campaigns-list__loading-container">
-				<SitePlaceholder />
-			</div>
-		);
-	}*/
-
 	return (
 		<>
 			<SearchBar

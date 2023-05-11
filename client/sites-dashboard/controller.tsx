@@ -6,6 +6,7 @@ import { Global, css } from '@emotion/react';
 import { removeQueryArgs } from '@wordpress/url';
 import AsyncLoad from 'calypso/components/async-load';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { removeNotice } from 'calypso/state/notices/actions';
 import { SitesDashboard } from './components/sites-dashboard';
 import { MEDIA_QUERIES } from './utils';
 import type { Context as PageJSContext } from 'page';
@@ -76,9 +77,19 @@ export function sitesDashboard( context: PageJSContext, next: () => void ) {
 						: undefined,
 					search: context.query.search,
 					status: context.query.status,
+					newSiteSlug: context.query[ 'new-site' ] || undefined,
 				} }
 			/>
 		</>
 	);
+	next();
+}
+
+export function maybeRemoveCheckoutSuccessNotice( context: PageJSContext, next: () => void ) {
+	if ( context.query[ 'new-site' ] ) {
+		// `?new-site` shows a site creation notice and we don't want to show a double notice,
+		// so hide the checkout success notice if it's there.
+		context.store.dispatch( removeNotice( 'checkout-thank-you-success' ) );
+	}
 	next();
 }

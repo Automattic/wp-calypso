@@ -68,10 +68,6 @@ const isValidYoutubeEmbed = ( node ) => {
 		return false;
 	}
 
-	if ( node.getAttribute( 'type' ) !== 'text/html' ) {
-		return false;
-	}
-
 	const link = root.document.createElement( 'a' );
 	link.href = node.getAttribute( 'src' );
 

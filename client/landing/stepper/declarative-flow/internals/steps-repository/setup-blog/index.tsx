@@ -1,4 +1,4 @@
-import { StepContainer } from '@automattic/onboarding';
+import { StepContainer, isStartWritingFlow } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
@@ -12,7 +12,7 @@ import useSetupFormInitialValues from '../components/setup-form/hooks/use-setup-
 import type { Step } from '../../types';
 import './styles.scss';
 
-const SetupBlog: Step = ( { navigation } ) => {
+const SetupBlog: Step = ( { navigation, flow } ) => {
 	const { submit } = navigation;
 	const translate = useTranslate();
 	const site = useSite();
@@ -23,6 +23,7 @@ const SetupBlog: Step = ( { navigation } ) => {
 		titleMissing: translate( `A catchy name to make your blog memorable` ),
 		taglineLabel: translate( 'Add a brief description' ),
 		taglinePlaceholder: translate( "Let people know what your blog's about" ),
+		buttonText: translate( 'Save and continue' ),
 	};
 
 	const [ invalidSiteTitle, setInvalidSiteTitle ] = useState( false );
@@ -33,6 +34,13 @@ const SetupBlog: Step = ( { navigation } ) => {
 	const { saveSiteSettings } = useDispatch( SITE_STORE );
 
 	const { siteTitle, setComponentSiteTitle, tagline, setTagline } = useSetupFormInitialValues();
+
+	useEffect( () => {
+		// Clear site title and show placeholder for the flows below
+		if ( isStartWritingFlow( flow ) && siteTitle === 'Site Title' ) {
+			setComponentSiteTitle( '' );
+		}
+	}, [ flow, setComponentSiteTitle, siteTitle ] );
 
 	useEffect( () => {
 		setIsSubmitError( false );
@@ -53,7 +61,6 @@ const SetupBlog: Step = ( { navigation } ) => {
 					blogname: siteTitle,
 					blogdescription: tagline,
 				} );
-				setIsLoading( false );
 				submit?.();
 			}
 		} catch {

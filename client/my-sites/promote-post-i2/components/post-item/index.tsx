@@ -26,6 +26,7 @@ export type BlazablePost = {
 	view_count: number;
 	URL: string; // todo
 	featured_image: string;
+	post_thumbnail: string;
 };
 
 type Props = {

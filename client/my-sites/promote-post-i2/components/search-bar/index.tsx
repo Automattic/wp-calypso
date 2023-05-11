@@ -123,7 +123,7 @@ export default function SearchBar( props: Props ) {
 				value={ searchInput }
 				placeholder={ translate( 'Search…' ) }
 				delaySearch={ true }
-				delayTimeout={ 1500 }
+				delayTimeout={ 500 }
 				onSearch={ ( inputValue: string ) => {
 					if ( inputValue !== null ) {
 						onChangeSearch( inputValue );

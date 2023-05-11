@@ -21,7 +21,7 @@ const useDeliveryFrequencyLabel = ( deliveryFrequencyValue: SiteSubscriptionDeli
 		[ translate ]
 	);
 
-	return deliveryFrequencyLabels[ deliveryFrequencyValue ];
+	return deliveryFrequencyLabels[ deliveryFrequencyValue ] || translate( 'Paused' );
 };
 
 export default function SiteRow( {
@@ -42,10 +42,26 @@ export default function SiteRow( {
 	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
 	const translate = useTranslate();
 
+	const notifyMeOfNewPosts = useMemo(
+		() => delivery_methods?.notification?.send_posts,
+		[ delivery_methods?.notification?.send_posts ]
+	);
+
+	const emailMeNewPosts = useMemo(
+		() => delivery_methods?.email?.send_posts,
+		[ delivery_methods?.email?.send_posts ]
+	);
+
 	const deliveryFrequencyValue = useMemo(
 		() => delivery_methods?.email?.post_delivery_frequency as SiteSubscriptionDeliveryFrequency,
 		[ delivery_methods?.email?.post_delivery_frequency ]
 	);
+
+	const emailMeNewComments = useMemo(
+		() => delivery_methods?.email?.send_comments,
+		[ delivery_methods?.email?.send_comments ]
+	);
+
 	const newPostDelivery = useMemo( () => {
 		const emailDelivery = delivery_methods?.email?.send_posts ? translate( 'Email' ) : null;
 		const notificationDelivery = delivery_methods?.notification?.send_posts
@@ -59,17 +75,16 @@ export default function SiteRow( {
 	);
 	const deliveryFrequencyLabel = useDeliveryFrequencyLabel( deliveryFrequencyValue );
 
-	const notifyMeOfNewPosts = useMemo(
-		() => delivery_methods?.notification?.send_posts,
-		[ delivery_methods?.notification?.send_posts ]
-	);
-
-	const { mutate: updateDeliveryFrequency, isLoading: updatingFrequency } =
-		SubscriptionManager.useSiteDeliveryFrequencyMutation();
-	const { mutate: unsubscribe, isLoading: unsubscribing } =
-		SubscriptionManager.useSiteUnsubscribeMutation();
 	const { mutate: updateNotifyMeOfNewPosts, isLoading: updatingNotifyMeOfNewPosts } =
 		SubscriptionManager.useSiteNotifyMeOfNewPostsMutation();
+	const { mutate: updateEmailMeNewPosts, isLoading: updatingEmailMeNewPosts } =
+		SubscriptionManager.useSiteEmailMeNewPostsMutation();
+	const { mutate: updateDeliveryFrequency, isLoading: updatingFrequency } =
+		SubscriptionManager.useSiteDeliveryFrequencyMutation();
+	const { mutate: updateEmailMeNewComments, isLoading: updatingEmailMeNewComments } =
+		SubscriptionManager.useSiteEmailMeNewCommentsMutation();
+	const { mutate: unsubscribe, isLoading: unsubscribing } =
+		SubscriptionManager.useSiteUnsubscribeMutation();
 
 	return (
 		<li className="row" role="row">
@@ -109,12 +124,22 @@ export default function SiteRow( {
 						updateNotifyMeOfNewPosts( { blog_id: blog_ID, send_posts } )
 					}
 					updatingNotifyMeOfNewPosts={ updatingNotifyMeOfNewPosts }
+					emailMeNewPosts={ emailMeNewPosts }
+					updatingEmailMeNewPosts={ updatingEmailMeNewPosts }
+					onEmailMeNewPostsChange={ ( send_posts ) =>
+						updateEmailMeNewPosts( { blog_id: blog_ID, send_posts } )
+					}
 					deliveryFrequency={ deliveryFrequencyValue }
 					onDeliveryFrequencyChange={ ( delivery_frequency ) =>
 						updateDeliveryFrequency( { blog_id: blog_ID, delivery_frequency } )
 					}
 					updatingFrequency={ updatingFrequency }
-					onUnsubscribe={ () => unsubscribe( { blog_id: blog_ID } ) }
+					emailMeNewComments={ emailMeNewComments }
+					onEmailMeNewCommentsChange={ ( send_comments ) =>
+						updateEmailMeNewComments( { blog_id: blog_ID, send_comments } )
+					}
+					updatingEmailMeNewComments={ updatingEmailMeNewComments }
+					onUnsubscribe={ () => unsubscribe( { blog_id: blog_ID, url: url } ) }
 					unsubscribing={ unsubscribing }
 				/>
 			</span>

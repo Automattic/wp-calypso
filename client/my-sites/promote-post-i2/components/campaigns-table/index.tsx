@@ -33,7 +33,7 @@ export default function CampaignsTable( props: Props ) {
 
 	return (
 		<div>
-			<table className="promote-post-i2__table">
+			<table className="promote-post-i2__table campaigns-list__table">
 				<thead>
 					<tr>
 						<th key="campaign">Campaign</th>

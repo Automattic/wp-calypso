@@ -278,8 +278,16 @@ export default function () {
 		clientRender
 	);
 
-	// Visiting /renew without a domain is invalid and should be redirected to /me/purchases
-	page( '/checkout/:product/renew/:purchaseId', '/me/purchases' );
+	// A renewal link without a site is not allowed, but we send the user to
+	// checkout anyway so they can see a helpful error message.
+	page(
+		'/checkout/:product/renew/:purchaseId',
+		redirectLoggedOut,
+		noSite,
+		checkout,
+		makeLayout,
+		clientRender
+	);
 
 	page(
 		'/checkout/:product/renew/:purchaseId/:domain',

@@ -356,11 +356,14 @@ export interface MembershipSubscriptionsSite {
 }
 
 export interface Owner {
-	ID: string;
-	display_name: string;
+	ID: number;
+	display_name?: string;
 }
 export type GetChangePaymentMethodUrlFor = ( siteSlug: string, purchase: Purchase ) => string;
-export type GetManagePurchaseUrlFor = ( siteSlug: string, attachedToPurchaseId: string ) => string;
+export type GetManagePurchaseUrlFor = (
+	siteSlug: string,
+	attachedToPurchaseId: string | number
+) => string;
 
 export type RenderRenewsOrExpiresOn = ( args: {
 	moment: ReturnType< typeof useLocalizedMoment >;
@@ -368,9 +371,9 @@ export type RenderRenewsOrExpiresOn = ( args: {
 	siteSlug: string | undefined;
 	translate: ReturnType< typeof useTranslate >;
 	getManagePurchaseUrlFor: GetManagePurchaseUrlFor;
-} ) => string;
+} ) => JSX.Element | null;
 
 export type RenderRenewsOrExpiresOnLabel = ( args: {
 	purchase: Purchase;
 	translate: ReturnType< typeof useTranslate >;
-} ) => string;
+} ) => string | null;

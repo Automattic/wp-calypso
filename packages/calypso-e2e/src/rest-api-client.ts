@@ -795,12 +795,12 @@ export class RestAPIClient {
 
 		// Tried to like the comment, but failed to do so
 		// and the user still has not liked the comment.
-		if ( action === 'like' && ! response.success && ! response.i_like ) {
+		if ( action === 'like' && response.like_count !== 1 ) {
 			throw new Error( `Failed to like ${ commentID } on site ${ siteID }` );
 		}
 		// Tried to unlike the comment, but failed to do so
 		// and the user still likes the comment.
-		if ( action === 'unlike' && ! response.success && response.i_like ) {
+		if ( action === 'unlike' && response.like_count !== 0 ) {
 			throw new Error( `Failed to unlike ${ commentID } on site ${ siteID }` );
 		}
 

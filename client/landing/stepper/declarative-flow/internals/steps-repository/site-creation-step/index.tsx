@@ -12,6 +12,7 @@ import {
 	isMigrationFlow,
 	isStartWritingFlow,
 	isWooExpressFlow,
+	isHostingSiteCreationFlow,
 } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -102,6 +103,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 		isLinkInBioFlow( flow ) ||
 		isMigrationFlow( flow ) ||
 		isStartWritingFlow( flow ) ||
+		isHostingSiteCreationFlow( flow ) ||
 		wooFlows.includes( flow || '' )
 	) {
 		siteVisibility = Site.Visibility.PublicNotIndexed;
@@ -119,6 +121,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 	const search = window.location.search;
 	const sourceSiteSlug = new URLSearchParams( search ).get( 'from' ) || '';
 	const { data: siteData } = useSiteQuery( sourceSiteSlug, isCopySiteFlow( flow ) );
+	const useThemeHeadstart = ! isStartWritingFlow( flow );
 
 	async function createSite() {
 		if ( isManageSiteFlow ) {
@@ -137,7 +140,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 			siteVisibility,
 			blogTitle,
 			siteAccentColor,
-			true,
+			useThemeHeadstart,
 			username,
 			domainCartItem,
 			sourceSlug

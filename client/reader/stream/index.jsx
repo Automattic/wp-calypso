@@ -18,6 +18,7 @@ import withDimensions from 'calypso/lib/with-dimensions';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { shouldShowLikes } from 'calypso/reader/like-helper';
 import { keysAreEqual, keyToString } from 'calypso/reader/post-key';
+import ReaderSearchSidebar from 'calypso/reader/stream/reader-search-sidebar';
 import ReaderTagSidebar from 'calypso/reader/stream/reader-tag-sidebar';
 import UpdateNotice from 'calypso/reader/update-notice';
 import { showSelectedPost, getStreamType } from 'calypso/reader/utils';
@@ -63,7 +64,6 @@ const excludesSidebar = [
 	'feed',
 	'likes',
 	'search',
-	'custom_recs_posts_with_images',
 	'list',
 	'p2',
 ];
@@ -475,6 +475,7 @@ class ReaderStream extends Component {
 
 		const path = window.location.pathname;
 		const isTagPage = path.startsWith( '/tag/' );
+		const isSearchPage = path.startsWith( '/read/search' );
 		const streamType = getStreamType( streamKey );
 
 		let baseClassnames = classnames( 'following', this.props.className );
@@ -503,13 +504,17 @@ class ReaderStream extends Component {
 				/>
 			);
 
-			const sidebarContent = isTagPage ? (
-				<ReaderTagSidebar tag={ tag } />
-			) : (
-				<ReaderListFollowedSites path={ path } />
-			);
+			let sidebarContent = null;
+			let tabTitle = translate( 'Sites' );
 
-			const tabTitle = isTagPage ? translate( 'Related' ) : translate( 'Sites' );
+			if ( isTagPage ) {
+				sidebarContent = <ReaderTagSidebar tag={ tag } />;
+				tabTitle = translate( 'Related' );
+			} else if ( isSearchPage ) {
+				sidebarContent = <ReaderSearchSidebar items={ items } />;
+			} else {
+				sidebarContent = <ReaderListFollowedSites path={ path } />;
+			}
 
 			if ( excludesSidebar.includes( streamType ) ) {
 				body = bodyContent;

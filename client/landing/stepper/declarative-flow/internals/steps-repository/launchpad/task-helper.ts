@@ -413,8 +413,7 @@ export function getEnhancedTasks(
 					taskData = {
 						title: translate( 'Choose a domain' ),
 						completed: domainUpsellCompleted,
-						disabled:
-							isStartWritingFlow( flow ) && ( domainUpsellCompleted || ! setupBlogCompleted ),
+						disabled: false,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, domainUpsellCompleted, task.id );
 

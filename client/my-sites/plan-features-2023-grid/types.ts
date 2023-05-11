@@ -32,4 +32,12 @@ export type PlanProperties = {
 	availableForPurchase: boolean;
 	current?: boolean;
 	showMonthlyPrice: boolean;
+	planActionOverrides?: PlanActionOverrides;
 };
+
+export interface PlanActionOverrides {
+	loggedInFreePlan?: {
+		callback: () => void;
+		text: string;
+	};
+}

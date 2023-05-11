@@ -13,7 +13,6 @@ import useCampaignsQueryPaged, {
 } from 'calypso/data/promote-post/use-promote-post-campaigns-query-paged';
 import usePostsQueryPaged from 'calypso/data/promote-post/use-promote-post-posts-query-paged';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import PostsListBanner from 'calypso/my-sites/promote-post/components/posts-list-banner';
 import CampaignsList from 'calypso/my-sites/promote-post-i2/components/campaigns-list';
 import PostsList from 'calypso/my-sites/promote-post-i2/components/posts-list';
 import PromotePostTabBar from 'calypso/my-sites/promote-post-i2/components/promoted-post-filter';
@@ -174,8 +173,6 @@ export default function PromotedPosts( { tab }: Props ) {
 				subHeaderText={ totalCampaignsUnfiltered ? subtitle : '' }
 				align="left"
 			/>
-
-			{ ! campaignIsLoadingNewContent && ! totalCampaignsUnfiltered && <PostsListBanner /> }
 
 			<PromotePostTabBar tabs={ tabs } selectedTab={ selectedTab } />
 			{ selectedTab === 'campaigns' ? (

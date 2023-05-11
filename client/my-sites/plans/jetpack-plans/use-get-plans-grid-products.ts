@@ -1,5 +1,7 @@
 import {
 	JETPACK_ANTI_SPAM_PRODUCTS,
+	PRODUCT_JETPACK_BACKUP_T0_YEARLY,
+	PRODUCT_JETPACK_BACKUP_T0_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 	PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_T2_YEARLY,
@@ -56,6 +58,9 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 
 	const backupProductsToShow: string[] = [];
 
+	const ownsBackupT0 =
+		ownedProducts.includes( PRODUCT_JETPACK_BACKUP_T0_YEARLY ) ||
+		ownedProducts.includes( PRODUCT_JETPACK_BACKUP_T0_MONTHLY );
 	const ownsBackupT1 =
 		ownedProducts.includes( PRODUCT_JETPACK_BACKUP_T1_YEARLY ) ||
 		ownedProducts.includes( PRODUCT_JETPACK_BACKUP_T1_MONTHLY );
@@ -63,9 +68,9 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 		ownedProducts.includes( PRODUCT_JETPACK_BACKUP_T2_YEARLY ) ||
 		ownedProducts.includes( PRODUCT_JETPACK_BACKUP_T2_MONTHLY );
 
-	// If neither T1 or T2 backups are owned, then show T1 backups.
+	// If neither T0 or T1 or T2 backups are owned, then show T1 backups.
 	// Otherwise the one owned will be displayed via purchasedProducts.
-	if ( ! ownsBackupT1 && ! ownsBackupT2 ) {
+	if ( ! ownsBackupT0 && ! ownsBackupT1 && ! ownsBackupT2 ) {
 		backupProductsToShow.push(
 			PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 			PRODUCT_JETPACK_BACKUP_T1_MONTHLY

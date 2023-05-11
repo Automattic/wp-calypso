@@ -1,4 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
@@ -21,7 +22,10 @@ const TrialUpgradeConfirmation = () => {
 	const hasWCPay = useSelector(
 		( state ) => siteId && isPluginActive( state, siteId, 'woocommerce-payments' )
 	) as boolean;
-	const tasks = getConfirmationTasks( { translate, hasWCPay } );
+	const tasks = useMemo(
+		() => getConfirmationTasks( { translate, hasWCPay } ),
+		[ translate, hasWCPay ]
+	);
 
 	const taskActionUrlProps = {
 		siteName: selectedSite?.name ?? '',

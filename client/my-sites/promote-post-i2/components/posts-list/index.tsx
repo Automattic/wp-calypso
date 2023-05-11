@@ -1,12 +1,12 @@
 import { translate, useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import BlazePressWidget from 'calypso/components/blazepress-widget';
+import EmptyContent from 'calypso/components/empty-content';
 import ListEnd from 'calypso/components/list-end';
 import Notice from 'calypso/components/notice';
 import { useInfiniteScroll } from 'calypso/data/promote-post/use-infinite-scroll';
 import usePromoteParams from 'calypso/data/promote-post/use-promote-params';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
-import EmptyPromotionList from 'calypso/my-sites/promote-post-i2/components/empty-promotion-list';
 import { BlazablePost } from 'calypso/my-sites/promote-post-i2/components/post-item';
 import { DSPMessage } from 'calypso/my-sites/promote-post-i2/main';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -76,21 +76,20 @@ export default function PostsList( props: Props ) {
 		);
 	}
 
-	/*if ( ! isPreviousData && isLoading ) {
-		return (
-			<div className="posts-list__loading-container">
-				<SitePlaceholder />
-			</div>
-		);
-	}*/
-
 	return (
 		<>
 			<SearchBar mode="posts" handleSetSearch={ ( search ) => handleSearchOptions( search ) } />
 			{ ! isLoading && posts?.length === 0 ? (
 				<>
 					{ totalCampaigns === 0 ? (
-						<EmptyPromotionList type="posts" />
+						<EmptyContent
+							className="promote-post-i2__empty-content"
+							title={ translate( 'You have no posts or pages.' ) }
+							line={ translate(
+								"Start by creating a post or a page and start promoting it once it's ready"
+							) }
+							illustration={ null }
+						/>
 					) : (
 						<>{ translate( 'No posts match your search' ) }</>
 					) }
@@ -106,12 +105,7 @@ export default function PostsList( props: Props ) {
 							/>
 						) }
 					</div>
-
-					{ ! isEmpty && ! isError && (
-						<>
-							<ListEnd />
-						</>
-					) }
+					{ ! isEmpty && ! isError && <ListEnd /> }
 				</>
 			) }
 
