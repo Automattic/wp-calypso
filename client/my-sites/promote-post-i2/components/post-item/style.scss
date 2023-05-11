@@ -106,6 +106,8 @@ body.is-section-promote-post-i2 {
 		border: 1px solid #eee;
 		border-radius: 4px;
 		overflow: hidden;
+		background-size: cover;
+		background-repeat: no-repeat;
 
 		&_no-image {
 			align-items: center;

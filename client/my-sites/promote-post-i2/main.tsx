@@ -1,7 +1,9 @@
 import './style.scss';
+import { Button } from '@automattic/components';
 import { useQueryClient } from '@tanstack/react-query';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
@@ -20,6 +22,7 @@ import { SearchOptions } from 'calypso/my-sites/promote-post-i2/components/searc
 import { getPagedBlazeSearchData } from 'calypso/my-sites/promote-post-i2/utils';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { BlazablePost } from './components/post-item';
+import PostsListBanner from './components/posts-list-banner';
 
 export type TabType = 'posts' | 'campaigns';
 export type TabOption = {
@@ -126,14 +129,9 @@ export default function PromotedPosts( { tab }: Props ) {
 		},
 	];
 
-	const subtitle = translate(
-		'Reach new readers and customers with WordPress Blaze. Promote a post or a page on our network of millions blogs and web sites. {{learnMoreLink}}Learn more.{{/learnMoreLink}}',
-		{
-			components: {
-				learnMoreLink: <InlineSupportLink supportContext="advertising" showIcon={ false } />,
-			},
-		}
-	);
+	useEffect( () => {
+		document.querySelector( 'body' )?.classList.add( 'is-section-promote-post-i2' );
+	}, [] );
 
 	if ( selectedSite?.is_coming_soon || selectedSite?.is_private ) {
 		return (
@@ -162,17 +160,40 @@ export default function PromotedPosts( { tab }: Props ) {
 		);
 	}
 
+	const showBanner = ! campaignsIsLoading && ( totalCampaignsUnfiltered || 0 ) < 3;
+
+	const headerSubtitle = ! showBanner && (
+		<div className="promote-post__header-subtitle">
+			{ translate(
+				'Use Blaze to grow your audience by promoting your content across Tumblr and WordPress.com.'
+			) }
+		</div>
+	);
+
 	return (
-		<Main fullWidthLayout className="promote-post-i2">
+		<Main wideLayout className="promote-post-i2">
 			<DocumentHead title={ translate( 'Advertising - Redesign page!' ) } />
 
-			<FormattedHeader
-				brandFont
-				className="advertising__page-header"
-				headerText={ `${ translate( 'Advertising' ) } - Redesign page` }
-				subHeaderText={ totalCampaignsUnfiltered ? subtitle : '' }
-				align="left"
-			/>
+			<div className="promote-post-i2__top-bar">
+				{ /* TODO: Do not forget to remove "Redesign page" part! */ }
+				<FormattedHeader
+					brandFont
+					className={ classNames( 'advertising__page-header', {
+						'advertising__page-header_has-banner': showBanner,
+					} ) }
+					children={ headerSubtitle }
+					headerText={ `${ translate( 'Advertising' ) } - Redesign page` }
+					align="left"
+				/>
+
+				<div className="promote-post-i2__top-bar-buttons">
+					<Button compact className="posts-list-banner__learn-more">
+						<InlineSupportLink supportContext="advertising" showIcon={ false } />
+					</Button>
+				</div>
+			</div>
+
+			{ showBanner && <PostsListBanner /> }
 
 			<PromotePostTabBar tabs={ tabs } selectedTab={ selectedTab } />
 			{ selectedTab === 'campaigns' ? (
@@ -194,19 +215,16 @@ export default function PromotedPosts( { tab }: Props ) {
 			) }
 
 			{ selectedTab === 'posts' && (
-				<>
-					<PageViewTracker path="/advertising/:site/posts" title="Advertising > Posts" />
-					<PostsList
-						isLoading={ postsIsLoadingNewContent }
-						isFetching={ postIsFetching }
-						isError={ postError as DSPMessage }
-						fetchNextPage={ fetchPostsNextPage }
-						handleSearchOptions={ setPostsSearchOptions }
-						totalCampaigns={ totalPostsUnfiltered || 0 }
-						hasMorePages={ postsHasMorePages }
-						posts={ posts as BlazablePost[] }
-					/>
-				</>
+				<PostsList
+					isLoading={ postsIsLoadingNewContent }
+					isFetching={ postIsFetching }
+					isError={ postError as DSPMessage }
+					fetchNextPage={ fetchPostsNextPage }
+					handleSearchOptions={ setPostsSearchOptions }
+					totalCampaigns={ totalPostsUnfiltered || 0 }
+					hasMorePages={ postsHasMorePages }
+					posts={ posts as BlazablePost[] }
+				/>
 			) }
 		</Main>
 	);
