@@ -15,14 +15,16 @@
 	margin-right: 24px;
 
 	&.reader-post-actions__visit {
-		flex: 1;
-
 		.reader-visit-link {
 			align-items: center;
 			box-sizing: border-box;
 			display: flex;
 			gap: 4px;
 		}
+	}
+
+	&.reader-post-actions__views {
+		flex: 1;
 	}
 
 	&:last-child {

@@ -180,6 +180,7 @@ class ReaderPostCard extends Component {
 				fullPost={ false }
 				onCommentClick={ onCommentClick }
 				showEdit={ false }
+				showViews={ ( post.views || 0 ) > 0 }
 				className="ignore-click"
 				iconSize={ 20 }
 			/>

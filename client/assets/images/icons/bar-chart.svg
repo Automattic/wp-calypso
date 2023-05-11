@@ -1,0 +1,5 @@
+<svg id="bar-chart" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+	<path d="M15 16.6666V8.33325" stroke="#606A73" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="round"/>
+	<path d="M10 16.6666V3.33325" stroke="#606A73" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="round"/>
+	<path d="M5 16.6667V11.6667" stroke="#606A73" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="round"/>
+</svg>
