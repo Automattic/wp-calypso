@@ -449,10 +449,12 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 		setSelectedDesign( _selectedDesign );
 		if ( siteSlugOrId && _selectedDesign ) {
-			const positionIndex = designs.findIndex( ( design ) => design.slug === _selectedDesign.slug );
+			const positionIndex = designs.findIndex(
+				( design ) => design.slug === _selectedDesign?.slug
+			);
 
 			setPendingAction( () => {
-				if ( _selectedDesign.is_virtual ) {
+				if ( _selectedDesign?.is_virtual ) {
 					return applyThemeWithPatterns( siteSlugOrId, _selectedDesign ).then(
 						( theme: ActiveTheme ) => reduxDispatch( setActiveTheme( site?.ID || -1, theme ) )
 					);
