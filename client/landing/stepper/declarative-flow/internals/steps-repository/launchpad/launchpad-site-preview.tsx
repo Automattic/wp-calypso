@@ -24,30 +24,37 @@ import type { Device } from '@automattic/components';
  *
  * @function
  * @param {string | null} flow - The flow identifier or null.
+ * @param {boolean} isFullSiteEditingTheme - Whether the current theme is a full site editing theme.
  * @returns {boolean} - Returns true if the edit overlay should be enabled, otherwise returns false.
  */
-export const getEnableEditOverlay = ( flow: string | null ) => {
+export const getEnableEditOverlay = ( flow: string | null, isFullSiteEditingTheme: boolean ) => {
 	if ( isNewsletterFlow( flow ) ) {
 		return false;
 	}
 	if ( isStartWritingFlow( flow ) ) {
 		return false;
 	}
+	if ( ! isFullSiteEditingTheme ) {
+		return false;
+	}
+
 	return true;
 };
 
 const LaunchpadSitePreview = ( {
 	siteSlug,
 	flow,
+	isFullSiteEditingTheme,
 }: {
 	siteSlug: string | null;
 	flow: string | null;
+	isFullSiteEditingTheme: boolean;
 } ) => {
 	const translate = useTranslate();
 	const site = useSite();
 	const { globalStylesInUse } = usePremiumGlobalStyles( site?.ID );
 	const isInVideoPressFlow = isVideoPressFlow( flow );
-	const enableEditOverlay = getEnableEditOverlay( flow );
+	const enableEditOverlay = getEnableEditOverlay( flow, isFullSiteEditingTheme );
 
 	let previewUrl = siteSlug ? 'https://' + siteSlug : null;
 	const devicesToShow: Device[] = [ DEVICE_TYPES.COMPUTER, DEVICE_TYPES.PHONE ];

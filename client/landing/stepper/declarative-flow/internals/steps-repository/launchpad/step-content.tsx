@@ -1,4 +1,5 @@
 import { useSelect } from '@wordpress/data';
+import { useSelector } from 'react-redux';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
@@ -6,6 +7,7 @@ import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import { createSiteDomainObject } from 'calypso/state/sites/domains/assembler';
+import { getActiveTheme, isFullSiteEditingTheme } from 'calypso/state/themes/selectors';
 import LaunchpadSitePreview from './launchpad-site-preview';
 import Sidebar from './sidebar';
 import { getLaunchpadTranslations } from './translations';
@@ -26,6 +28,10 @@ function sortByRegistrationDate( domainObjectA: ResponseDomain, domainObjectB: R
 const StepContent = ( { siteSlug, submit, goNext, goToStep, flow }: StepContentProps ) => {
 	const { flowName } = getLaunchpadTranslations( flow );
 	const site = useSite();
+	const activeTheme = useSelector( ( state ) => site && getActiveTheme( state, site.ID ) );
+	const isFSETheme = useSelector(
+		( state ) => isFullSiteEditingTheme( state, activeTheme ) as boolean
+	);
 	const adminUrl = useSelect(
 		( select ) =>
 			site && ( select( SITE_STORE ) as SiteSelect ).getSiteOption( site.ID, 'admin_url' ),
@@ -65,7 +71,11 @@ const StepContent = ( { siteSlug, submit, goNext, goToStep, flow }: StepContentP
 					goToStep={ goToStep }
 					flow={ flow }
 				/>
-				<LaunchpadSitePreview flow={ flow } siteSlug={ iFrameURL } />
+				<LaunchpadSitePreview
+					flow={ flow }
+					siteSlug={ iFrameURL }
+					isFullSiteEditingTheme={ isFSETheme }
+				/>
 			</div>
 		</main>
 	);
