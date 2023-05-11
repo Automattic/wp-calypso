@@ -5,6 +5,8 @@ import FacebookPostActions from './post/actions';
 import FacebookPostHeader from './post/header';
 import type { FacebookPreviewProps } from './types';
 
+import './style.scss';
+
 export const FacebookPostPreview: React.FC< FacebookPreviewProps > = ( {
 	url,
 	user,

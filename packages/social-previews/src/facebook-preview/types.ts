@@ -1,5 +1,4 @@
 import { TYPE_WEBSITE, TYPE_ARTICLE, LANDSCAPE_MODE, PORTRAIT_MODE } from '../constants';
-import type { SectionHeadingProps } from '../shared/section-heading';
 import type { SocialPreviewBaseProps } from '../types';
 
 export type ImageMode = typeof LANDSCAPE_MODE | typeof PORTRAIT_MODE;
@@ -12,7 +11,6 @@ export type FacebookUser = {
 export type FacebookPreviewProps = SocialPreviewBaseProps & {
 	user?: FacebookUser;
 	type?: typeof TYPE_WEBSITE | typeof TYPE_ARTICLE;
-	headingsLevel?: SectionHeadingProps[ 'level' ];
 	customText?: string;
 	customImage?: string;
 	imageMode?: ImageMode;
