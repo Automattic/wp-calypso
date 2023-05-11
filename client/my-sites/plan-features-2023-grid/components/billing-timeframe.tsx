@@ -96,6 +96,7 @@ function usePerMonthDescription( {
 								components: {
 									discount: <StrikethroughText />,
 								},
+								comment: 'Excl. Taxes is short for excluding taxes',
 							}
 					  )
 					: translate(
@@ -122,6 +123,7 @@ function usePerMonthDescription( {
 								components: {
 									discount: <StrikethroughText />,
 								},
+								comment: 'Excl. Taxes is short for excluding taxes',
 							}
 					  )
 					: translate(
