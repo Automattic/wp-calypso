@@ -1,6 +1,8 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable no-console */
 import { Button, FormInputValidation } from '@automattic/components';
 import { isHostingSiteCreationFlow, StepContainer } from '@automattic/onboarding';
+import { useQuery } from '@tanstack/react-query';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -16,12 +18,16 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import FormInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import wpcom from 'calypso/lib/wp';
 import { tip } from 'calypso/signup/icons';
 import { useSite } from '../../../../hooks/use-site';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import type { Step } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import './style.scss';
+
+const getSiteSuggestion = (): Promise< { title: string } > =>
+	wpcom.req.get( '/me/sites/suggestion' );
 
 const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
 	const { currentSiteTitle, currentTagling } = useSelect(
@@ -45,6 +51,14 @@ const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
 	const site = useSite();
 	const isHostingFlow = isHostingSiteCreationFlow( flow );
 	const isVideoPressFlow = 'videopress' === flow;
+
+	useQuery( [ 'me', 'sites', 'suggestion' ], getSiteSuggestion, {
+		onSuccess: ( { title } ) => {
+			if ( ! siteTitle ) {
+				setSiteTitle( title );
+			}
+		},
+	} );
 
 	const { saveSiteSettings } = useDispatch( SITE_STORE );
 
@@ -141,7 +155,7 @@ const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
 
 	const isSiteTitleRequired = isVideoPressFlow || isHostingFlow;
 	const isTaglineRequired = isVideoPressFlow;
-	const siteTitleError = null;
+
 	const taglineError = null;
 
 	const getTextsForFlow = () => {
@@ -167,6 +181,7 @@ const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
 	const isSiteTitleEmpty = ! siteTitle || siteTitle.trim().length === 0;
 	const isFormSubmitDisabled =
 		isFormDisabled || ( ( isVideoPressFlow || isHostingFlow ) && isSiteTitleEmpty );
+	const siteTitleError = formTouched && isSiteTitleRequired && isSiteTitleEmpty;
 
 	const stepContent = (
 		<form className="site-options__form" onSubmit={ handleSubmit }>
@@ -182,7 +197,14 @@ const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
 					onChange={ onChange }
 					placeholder={ isVideoPressFlow ? translate( 'My Video Site' ) : null }
 				/>
-				{ siteTitleError && <FormInputValidation isError text={ siteTitleError } /> }
+				{ siteTitleError ? (
+					<FormInputValidation isError text={ translate( 'Please provide a site name' ) } />
+				) : isHostingFlow ? (
+					<FormInputValidation
+						icon={ tip }
+						text={ translate( "Don't worry, you can change it later." ) }
+					/>
+				) : null }
 			</FormFieldset>
 			{ isHostingFlow && (
 				<DataCenterPicker onChange={ setSiteDataCenter } value={ siteDataCenter } compact />
