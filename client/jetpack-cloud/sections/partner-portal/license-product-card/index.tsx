@@ -47,7 +47,7 @@ export default function LicenseProductCard( props: Props ) {
 	}, [ onSelectProduct, product ] );
 
 	const onShowLightbox = useCallback(
-		( e: any ) => {
+		( e: React.MouseEvent< HTMLElement > ) => {
 			e.stopPropagation();
 
 			dispatch(

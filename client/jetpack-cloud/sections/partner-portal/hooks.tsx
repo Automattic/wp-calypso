@@ -484,7 +484,7 @@ export function useAssignMultipleLicenses(
  */
 export function useProductDescription( productSlug: string ): {
 	description: TranslateResult | null;
-	features: ReadonlyArray< any >;
+	features: ReadonlyArray< TranslateResult >;
 } {
 	const translate = useTranslate();
 
@@ -529,8 +529,6 @@ export function useProductDescription( productSlug: string ): {
 				description = translate( 'Automatically clear spam from your comments and forms.' );
 				break;
 			case 'jetpack-backup-t1':
-				description = translate( 'Real-time cloud backups with one-click restores.' );
-				break;
 			case 'jetpack-backup-t2':
 				description = translate( 'Real-time cloud backups with one-click restores.' );
 				break;

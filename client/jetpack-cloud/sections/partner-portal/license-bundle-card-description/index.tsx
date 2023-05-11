@@ -23,7 +23,7 @@ export default function LicenseBundleCardDescription( { product }: Props ) {
 	const [ showLightbox, setShowLightbox ] = useState( false );
 
 	const onShowLightbox = useCallback(
-		( e: any ) => {
+		( e: React.MouseEvent< HTMLElement > ) => {
 			e.stopPropagation();
 
 			dispatch(
@@ -53,7 +53,7 @@ export default function LicenseBundleCardDescription( { product }: Props ) {
 				</p>
 				<ul className="license-bundle-card-description__list">
 					{ features.map( ( feature ) => (
-						<li key={ feature }>
+						<li key={ `${ feature }` }>
 							<img src={ GreenCheckmark } alt={ translate( 'included' ) } />
 							{ feature }
 						</li>
