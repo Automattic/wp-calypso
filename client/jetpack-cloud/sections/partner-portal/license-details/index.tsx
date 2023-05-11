@@ -95,8 +95,6 @@ export default function LicenseDetails( {
 				licenseKey={ licenseKey }
 				product={ product }
 				siteUrl={ siteUrl }
-				attachedAt={ attachedAt }
-				revokedAt={ revokedAt }
 				licenseState={ licenseState }
 				licenseType={ licenseType }
 			/>

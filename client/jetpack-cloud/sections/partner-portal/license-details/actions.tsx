@@ -52,14 +52,15 @@ export default function LicenseDetailsActions( {
 	return (
 		<div className="license-details__actions">
 			{ licenseState === LicenseState.Attached && siteUrl && (
-				<>
-					<Button compact href={ siteUrl } target="_blank" rel="noopener noreferrer">
-						{ translate( 'View site' ) }
-					</Button>
-					<Button compact href={ debugUrl } target="_blank" rel="noopener noreferrer">
-						{ translate( 'Debug site' ) }
-					</Button>
-				</>
+				<Button compact href={ siteUrl } target="_blank" rel="noopener noreferrer">
+					{ translate( 'View site' ) }
+				</Button>
+			) }
+
+			{ licenseState === LicenseState.Attached && debugUrl && (
+				<Button compact href={ debugUrl } target="_blank" rel="noopener noreferrer">
+					{ translate( 'Debug site' ) }
+				</Button>
 			) }
 
 			{ licenseState === LicenseState.Attached && licenseType === LicenseType.Partner && (

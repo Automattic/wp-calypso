@@ -223,6 +223,7 @@ export interface LicenseCounts {
 	revoked: number;
 	not_revoked: number;
 	all: number;
+	standard: number;
 }
 
 export interface LicensesStore {
