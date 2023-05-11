@@ -80,15 +80,21 @@ function usePerMonthDescription( {
 			currencyCode && planPrices.rawPrice
 				? formatCurrency( planPrices.rawPrice, currencyCode, { stripZeros: true } )
 				: null;
+
+		// TODO: Remove check once text is translated
+		const displayNewPriceText =
+			isEnglishLocale ||
+			( i18n.hasTranslation(
+				'per month, {{discount}} %(rawPrice)s billed annually{{/discount}} %(fullTermDiscountedPriceText)s for the first year, Excl. Taxes'
+			) &&
+				i18n.hasTranslation(
+					'per month, {{discount}} %(rawPrice)s billed annually{{/discount}} %(fullTermDiscountedPriceText)s for the first year, Excl. Taxes'
+				) );
 		if ( fullTermDiscountedPriceText ) {
 			if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {
 				//per month, $96 billed annually $84 for the first year
 
-				// TODO: Remove check once text is translated
-				return isEnglishLocale ||
-					i18n.hasTranslation(
-						'per month, {{discount}} %(rawPrice)s billed annually{{/discount}} %(fullTermDiscountedPriceText)s for the first year, Excl. Taxes'
-					)
+				return displayNewPriceText
 					? translate(
 							'per month, {{discount}} %(rawPrice)s billed annually{{/discount}} %(fullTermDiscountedPriceText)s for the first year, Excl. Taxes',
 							{
@@ -111,11 +117,7 @@ function usePerMonthDescription( {
 			}
 
 			if ( PLAN_BIENNIAL_PERIOD === billingPeriod ) {
-				// TODO: Remove check once text is translated
-				return isEnglishLocale ||
-					i18n.hasTranslation(
-						'per month, {{discount}} %(rawPrice)s billed annually{{/discount}} %(fullTermDiscountedPriceText)s for the first year, Excl. Taxes'
-					)
+				return displayNewPriceText
 					? translate(
 							'per month, {{discount}} %(rawPrice)s billed annually{{/discount}} %(fullTermDiscountedPriceText)s for the first year, Excl. Taxes',
 							{
