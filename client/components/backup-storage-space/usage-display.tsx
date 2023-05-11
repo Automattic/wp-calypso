@@ -101,14 +101,20 @@ const UsageDisplay: React.FC< OwnProps > = ( { loading = false, usageLevel } ) =
 					} ) }
 				>
 					<span>{ loading ? loadingText : storageUsageText }</span>
-					{ ! loading && forecastInDays > 0 && forecastInDays < planRetentionPeriod && (
-						<StorageHelpTooltip
-							className="backup-storage-space__help-tooltip"
-							forecastInDays={ forecastInDays }
-							storageUpgradeUrl={ storageUpgradeUrl }
-							onClickedPurchase={ onClickedPurchase }
-						/>
-					) }
+					{
+						// Show popover only when usage level is normal, for other levels,
+						// we already show separate message with CTA under progress bar
+						! loading &&
+							forecastInDays < planRetentionPeriod &&
+							StorageUsageLevels.Normal === usageLevel && (
+								<StorageHelpTooltip
+									className="backup-storage-space__help-tooltip"
+									forecastInDays={ forecastInDays }
+									storageUpgradeUrl={ storageUpgradeUrl }
+									onClickedPurchase={ onClickedPurchase }
+								/>
+							)
+					}
 				</div>
 				<div className="backup-storage-space__progress-backups-saved-text">
 					{ ! loading && daysOfBackupsSavedText }

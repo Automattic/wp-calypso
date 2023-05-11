@@ -19,7 +19,7 @@ const StorageHelpTooltip: React.FC< OwnProps > = ( {
 	const [ isTooltipVisible, setTooltipVisible ] = React.useState< boolean >( true );
 	const tooltip = React.useRef< SVGSVGElement >( null );
 
-	if ( undefined === forecastInDays ) {
+	if ( ! forecastInDays ) {
 		return null;
 	}
 
@@ -52,14 +52,16 @@ const StorageHelpTooltip: React.FC< OwnProps > = ( {
 				<h3> { translate( 'Backup archive size' ) }</h3>
 				<p>
 					{ translate(
+						'Based on the current size of your site, Jetpack will save {{strong}}%(forecastInDays)d day of full backups{{/strong}}.',
 						'Based on the current size of your site, Jetpack will save {{strong}}%(forecastInDays)d days of full backups{{/strong}}.',
 						{
 							components: { strong: <strong /> },
+							count: forecastInDays,
 							args: {
 								forecastInDays,
 							},
 							comment:
-								'Describes available storage amounts (e.g., We store your backups on our cloud storage. Your total storage size is 20GB)',
+								'Forecasts how many days of backups site can store based on current site size. %(forecastInDays)d is day count number',
 						}
 					) }
 					<Button
@@ -73,10 +75,10 @@ const StorageHelpTooltip: React.FC< OwnProps > = ( {
 				</p>
 				<p>
 					{ translate(
-						'If you need more backup days, try {{a}}reducing the backup size{{/a}} or adding more storage.',
+						'If you need more backup days, try {{link}}reducing the backup size{{/link}} or adding more storage.',
 						{
 							components: {
-								a: (
+								link: (
 									<a
 										href="https://jetpack.com/support/backup/jetpack-vaultpress-backup-storage-and-retention/#reduce-storage-size"
 										target="_blank"
