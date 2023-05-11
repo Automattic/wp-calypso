@@ -12,7 +12,7 @@ interface Props {
 	isValid?: boolean;
 	text: ReactNode;
 	ariaLabel?: string;
-	icon?: string | ReactNode;
+	icon?: string;
 	id?: string;
 	className?: string;
 	children?: ReactNode;
@@ -41,12 +41,10 @@ const FormInputValidation: React.FC< Props > = ( {
 	return (
 		<div aria-label={ ariaLabel } className={ classes } role="alert">
 			<span id={ id }>
-				{ ! icon ? (
-					<Icon size={ 24 } icon={ defaultIcon } />
-				) : typeof icon === 'string' ? (
+				{ icon ? (
 					<Gridicon size={ 24 } icon={ icon } />
 				) : (
-					icon
+					<Icon size={ 24 } icon={ defaultIcon } />
 				) }
 				{ text }
 				{ children }

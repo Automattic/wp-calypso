@@ -151,6 +151,19 @@
 }
 
 .new-hosted-site.options {
+	.form-input-validation {
+		animation: none;
+	}
+
+	.site-title-optional-explanation {
+		margin-top: 6px !important;
+		margin-bottom: 11px !important;
+
+		&__icon {
+			margin-right: 10px;
+		}
+	}
+
 	.data-center-picker {
 		color: var(--color-text);
 	}

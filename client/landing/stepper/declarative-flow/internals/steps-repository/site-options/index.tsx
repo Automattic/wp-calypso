@@ -53,6 +53,7 @@ const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
 	const isVideoPressFlow = 'videopress' === flow;
 
 	useQuery( [ 'me', 'sites', 'suggestion' ], getSiteSuggestion, {
+		enabled: ! site?.title,
 		onSuccess: ( { title } ) => {
 			if ( ! siteTitle ) {
 				setSiteTitle( title );
@@ -195,15 +196,21 @@ const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
 					value={ siteTitle }
 					isError={ siteTitleError }
 					onChange={ onChange }
-					placeholder={ isVideoPressFlow ? translate( 'My Video Site' ) : null }
+					placeholder={
+						isVideoPressFlow
+							? translate( 'My Video Site' )
+							: isHostingFlow
+							? translate( 'My Hosted Site' )
+							: null
+					}
 				/>
 				{ siteTitleError ? (
-					<FormInputValidation isError text={ translate( 'Please provide a site name' ) } />
+					<FormInputValidation isError text={ translate( 'Please provide a site title' ) } />
 				) : isHostingFlow ? (
-					<FormInputValidation
-						icon={ tip }
-						text={ translate( "Don't worry, you can change it later." ) }
-					/>
+					<FormSettingExplanation className="site-title-optional-explanation">
+						<Icon className="site-title-optional-explanation__icon" icon={ tip } size={ 24 } />
+						{ translate( "Don't worry, you can change it later." ) }
+					</FormSettingExplanation>
 				) : null }
 			</FormFieldset>
 			{ isHostingFlow && (
