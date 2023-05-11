@@ -102,7 +102,6 @@ export function getEnhancedTasks(
 					break;
 				case 'setup_blog':
 					taskData = {
-						title: translate( 'Set up your blog' ),
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, setupBlogCompleted, task.id );
 							window.location.assign(
@@ -141,7 +140,6 @@ export function getEnhancedTasks(
 					break;
 				case 'plan_selected':
 					taskData = {
-						title: isStartWritingFlow( flow ) ? translate( 'Choose a plan' ) : task.title,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							if ( displayGlobalStylesWarning ) {
@@ -187,7 +185,6 @@ export function getEnhancedTasks(
 					break;
 				case 'first_post_published':
 					taskData = {
-						title: isStartWritingFlow( flow ) ? translate( 'Write your first post' ) : task.title,
 						completed: isStartWritingFlow( flow ) ? firstPostPublishedCompleted : task.completed,
 						disabled: mustVerifyEmailBeforePosting || isStartWritingFlow( flow || null ) || false,
 						actionDispatch: () => {
@@ -288,7 +285,6 @@ export function getEnhancedTasks(
 					break;
 				case 'blog_launched':
 					taskData = {
-						title: translate( 'Launch your blog' ),
 						completed: siteLaunchCompleted,
 						disabled: isStartWritingFlow( flow ) && ! planCompleted,
 						isLaunchTask: true,
@@ -349,7 +345,6 @@ export function getEnhancedTasks(
 					break;
 				case 'domain_upsell':
 					taskData = {
-						title: isStartWritingFlow( flow ) ? translate( 'Choose a domain' ) : task.title,
 						completed: domainUpsellCompleted,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, domainUpsellCompleted, task.id );
