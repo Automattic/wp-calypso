@@ -8,6 +8,14 @@ $sensei-onboarding-color: #b7c9be;
 $breakpoint-mobile: 600px;
 $sensei-focus-color: #217d7c;
 
+$preview-mobile-width: 464px;
+$preview-mobile-height: 779px;
+$preview-tablet-width: 656px;
+$preview-tablet-height: 768px;
+$preview-desktop-width: 928px;
+$preview-desktop-height: 804px;
+$preview-border-width: 15px;
+
 @mixin sensei-button {
 	padding: 10px 20px;
 	font-size: $font-body-small;
