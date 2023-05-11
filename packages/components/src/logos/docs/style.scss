@@ -1,8 +1,14 @@
 .example-container {
 	display: grid;
-	grid-template-columns: repeat(6, 150px);
-	grid-template-rows: repeat(3, 50px);
+	grid-template-columns: repeat(auto-fill, 150px);
+	grid-template-rows: repeat(auto-fill, 50px);
 	text-align: center;
+	.logo-container {
+		min-height: 50px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
 
 }
 
