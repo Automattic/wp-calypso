@@ -21,6 +21,7 @@ export default function LicenseListEmpty( { filter }: Props ) {
 		[ LicenseFilter.Attached ]: translate( 'No assigned licenses.' ),
 		[ LicenseFilter.Detached ]: translate( 'No unassigned licenses.' ),
 		[ LicenseFilter.Revoked ]: translate( 'No revoked licenses.' ),
+		[ LicenseFilter.Standard ]: translate( 'No standard licenses.' ),
 	};
 
 	const licenseFilterStatusTitle = licenseFilterStatusTitleMap[ filter ] as string;
