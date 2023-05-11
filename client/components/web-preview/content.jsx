@@ -411,6 +411,16 @@ export default class WebPreviewContent extends Component {
 					) }
 					{ 'seo' !== this.state.device && (
 						<div
+							onMouseEnter={ () => {
+								if ( this.props.enableEditOverlay ) {
+									this.setState( { showIFrameOverlay: true } );
+								}
+							} }
+							onMouseLeave={ () => {
+								if ( this.props.enableEditOverlay ) {
+									this.setState( { showIFrameOverlay: false } );
+								}
+							} }
 							className={ classNames( 'web-preview__frame-wrapper', {
 								'is-resizable': ! this.props.isModalWindow,
 							} ) }
@@ -421,7 +431,7 @@ export default class WebPreviewContent extends Component {
 								style={ {
 									...this.state.iframeStyle,
 									height: this.state.viewport?.height,
-									pointerEvents: 'all',
+									pointerEvents: this.props.enableEditOverlay ? 'auto' : 'all',
 								} }
 								src="about:blank"
 								onLoad={ () => this.setLoaded( 'iframe-onload' ) }
@@ -430,6 +440,37 @@ export default class WebPreviewContent extends Component {
 								scrolling={ autoHeight ? 'no' : undefined }
 								tabIndex={ disableTabbing ? -1 : 0 }
 							/>
+							{ this.props.enableEditOverlay && (
+								<div
+									className="web-preview__frame-edit-overlay"
+									style={ {
+										opacity: this.state.showIFrameOverlay ? '1' : '0',
+										background: this.state.showIFrameOverlay
+											? `rgba(16, 21, 23, 0.5)`
+											: 'rgba(16, 21, 23, 0)',
+										transition: 'background 0.2s ease',
+										pointerEvents: 'none',
+									} }
+								>
+									<button
+										style={ {
+											position: 'relative',
+											top: this.state.showIFrameOverlay ? '0' : '15px',
+											transition: 'all 0.2s ease',
+											pointerEvents: 'all',
+										} }
+										aria-label="Edit your new site"
+										className="web-preview__frame-edit-button"
+										onClick={ () => {
+											window.location.assign( `/site-editor/${ this.props.externalUrl }` );
+										} }
+										onFocus={ () => this.setState( { showIFrameOverlay: true } ) }
+										onBlur={ () => this.setState( { showIFrameOverlay: false } ) }
+									>
+										{ translate( 'Edit design' ) }
+									</button>
+								</div>
+							) }
 						</div>
 					) }
 					{ 'seo' === this.state.device && (
@@ -516,6 +557,8 @@ WebPreviewContent.propTypes = {
 	inlineCss: PropTypes.string,
 	// Uses the CSS selector to scroll to it
 	scrollToSelector: PropTypes.string,
+	// Edit overlay that redirects to the Site Editor
+	enableEditOverlay: PropTypes.bool,
 };
 
 WebPreviewContent.defaultProps = {
@@ -541,4 +584,5 @@ WebPreviewContent.defaultProps = {
 	autoHeight: false,
 	inlineCss: null,
 	scrollToSelector: null,
+	enableEditOverlay: false,
 };

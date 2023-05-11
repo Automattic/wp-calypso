@@ -60,6 +60,7 @@ const StartWritingDoneSitePreview = ( { siteSlug }: { siteSlug: string | null } 
 				defaultViewportDevice={ DEVICE_TYPES.COMPUTER }
 				devicesToShow={ devicesToShow }
 				showSiteAddressBar={ false }
+				enableEditOverlay={ false }
 			/>
 		</div>
 	);
