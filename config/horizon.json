@@ -83,6 +83,7 @@
 		"me/vat-details": true,
 		"my-sites/add-ons": true,
 		"network-connection": true,
+		"newsletter/paid-subscribers": true,
 		"newsletter/stats": true,
 		"onboarding/import-light-url-screen": true,
 		"onboarding/2023-pricing-grid": true,
