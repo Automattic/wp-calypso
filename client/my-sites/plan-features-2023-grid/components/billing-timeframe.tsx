@@ -7,7 +7,6 @@ import {
 	getPlanSlugForTermVariant,
 	TERM_ANNUALLY,
 	isWooExpressPlan,
-	getPlans,
 	isWooExpressMediumPlan,
 	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 	PLAN_WOOEXPRESS_MEDIUM,
@@ -23,7 +22,6 @@ import { FunctionComponent } from 'react';
 import { useSelector } from 'react-redux';
 import usePlanPrices from 'calypso/my-sites/plans/hooks/use-plan-prices';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { getPlanRawPrice } from 'calypso/state/plans/selectors';
 
 interface Props {
 	planName: string;
@@ -177,40 +175,27 @@ function usePerMonthDescription( {
 	return null;
 }
 
+const DiscountPromotion = styled.div`
+	text-transform: uppercase;
+	font-weight: 600;
+	color: #306e27;
+	font-size: $font-body-extra-small;
+	margin-top: 6px;
+`;
+
 interface WooExpressMonthlyPromotionProps {
 	billingTimeframe: TranslateResult;
-	monthlyPlanSlug: string;
-	yearlyPlanSlug: string;
+	discountDescription?: ReactChild | null;
 }
 
 const WooExpressMonthlyPromotion: FunctionComponent< WooExpressMonthlyPromotionProps > = (
 	props
 ) => {
-	const translate = useTranslate();
-	const { billingTimeframe, yearlyPlanSlug, monthlyPlanSlug } = props;
-
-	const annualPlan = getPlans()[ yearlyPlanSlug ];
-	const monthlyPlan = getPlans()[ monthlyPlanSlug ];
-	const planPrices = useSelector( ( state ) => ( {
-		annualPlanMonthlyPrice: getPlanRawPrice( state, annualPlan.getProductId(), true ) || 0,
-		monthlyPlanPrice: getPlanRawPrice( state, monthlyPlan.getProductId() ) || 0,
-	} ) );
-
-	const percentageSavings = Math.round(
-		( 1 - planPrices.annualPlanMonthlyPrice / planPrices.monthlyPlanPrice ) * 100
-	);
-	const discountDescription = percentageSavings
-		? translate( `Save %(percentageSavings)s%% by paying annually`, {
-				args: {
-					percentageSavings,
-				},
-				comment: 'Translators: percentageSavings is the percentage saved by paying annually',
-		  } )
-		: null;
+	const { billingTimeframe, discountDescription } = props;
 	return (
 		<div>
 			<div>{ billingTimeframe }</div>
-			<div className="plan-features-2023-grid__discount-promotion">{ discountDescription }</div>
+			<DiscountPromotion>{ discountDescription }</DiscountPromotion>
 		</div>
 	);
 };
@@ -240,7 +225,8 @@ function getWooExpressPlanSlugs( planName: string ) {
 const PlanFeatures2023GridBillingTimeframe: FunctionComponent< Props > = ( props ) => {
 	const { planName, billingTimeframe, isMonthlyPlan } = props;
 	const translate = useTranslate();
-	const perMonthDescription = usePerMonthDescription( props ) || billingTimeframe;
+	const perMonthDescription = usePerMonthDescription( props );
+	const description = perMonthDescription || billingTimeframe;
 	const price = formatCurrency( 25000, 'USD' );
 
 	if ( isWooExpressPlan( planName ) && isMonthlyPlan ) {
@@ -248,7 +234,7 @@ const PlanFeatures2023GridBillingTimeframe: FunctionComponent< Props > = ( props
 		if ( wooExpressPlansSlugs.monthlyPlanSlug && wooExpressPlansSlugs.yearlyPlanSlug ) {
 			const wooExpressMonthlyPromotionProps = {
 				billingTimeframe,
-				...wooExpressPlansSlugs,
+				discountDescription: perMonthDescription,
 			};
 			return <WooExpressMonthlyPromotion { ...wooExpressMonthlyPromotionProps } />;
 		}
@@ -266,7 +252,7 @@ const PlanFeatures2023GridBillingTimeframe: FunctionComponent< Props > = ( props
 		);
 	}
 
-	return <div>{ perMonthDescription }</div>;
+	return <div>{ description }</div>;
 };
 
 export default localize( PlanFeatures2023GridBillingTimeframe );
