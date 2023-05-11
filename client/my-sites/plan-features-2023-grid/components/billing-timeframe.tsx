@@ -7,12 +7,6 @@ import {
 	getPlanSlugForTermVariant,
 	TERM_ANNUALLY,
 	isWooExpressPlan,
-	isWooExpressMediumPlan,
-	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
-	PLAN_WOOEXPRESS_MEDIUM,
-	isWooExpressSmallPlan,
-	PLAN_WOOEXPRESS_SMALL_MONTHLY,
-	PLAN_WOOEXPRESS_SMALL,
 } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
@@ -200,28 +194,6 @@ const WooExpressMonthlyPromotion: FunctionComponent< WooExpressMonthlyPromotionP
 	);
 };
 
-/**
- * Retrieves the monthly and yearly plan slugs for a given WooExpress plan name.
- *
- * @param planName - The name of the WooExpress plan to retrieve slugs for.
- * @returns An object containing the monthly and yearly plan slugs, or an empty object if the plan name is invalid.
- */
-function getWooExpressPlanSlugs( planName: string ) {
-	let monthlyPlanSlug = null;
-	let yearlyPlanSlug = null;
-
-	if ( isWooExpressMediumPlan( planName ) ) {
-		monthlyPlanSlug = PLAN_WOOEXPRESS_MEDIUM_MONTHLY;
-		yearlyPlanSlug = PLAN_WOOEXPRESS_MEDIUM;
-	} else if ( isWooExpressSmallPlan( planName ) ) {
-		monthlyPlanSlug = PLAN_WOOEXPRESS_SMALL_MONTHLY;
-		yearlyPlanSlug = PLAN_WOOEXPRESS_SMALL;
-	} else {
-		return {};
-	}
-	return { monthlyPlanSlug, yearlyPlanSlug };
-}
-
 const PlanFeatures2023GridBillingTimeframe: FunctionComponent< Props > = ( props ) => {
 	const { planName, billingTimeframe, isMonthlyPlan } = props;
 	const translate = useTranslate();
@@ -230,14 +202,11 @@ const PlanFeatures2023GridBillingTimeframe: FunctionComponent< Props > = ( props
 	const price = formatCurrency( 25000, 'USD' );
 
 	if ( isWooExpressPlan( planName ) && isMonthlyPlan ) {
-		const wooExpressPlansSlugs = getWooExpressPlanSlugs( planName );
-		if ( wooExpressPlansSlugs.monthlyPlanSlug && wooExpressPlansSlugs.yearlyPlanSlug ) {
-			const wooExpressMonthlyPromotionProps = {
-				billingTimeframe,
-				discountDescription: perMonthDescription,
-			};
-			return <WooExpressMonthlyPromotion { ...wooExpressMonthlyPromotionProps } />;
-		}
+		const wooExpressMonthlyPromotionProps = {
+			billingTimeframe,
+			discountDescription: perMonthDescription,
+		};
+		return <WooExpressMonthlyPromotion { ...wooExpressMonthlyPromotionProps } />;
 	}
 
 	if ( isWpcomEnterpriseGridPlan( planName ) ) {
