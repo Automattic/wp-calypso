@@ -53,7 +53,8 @@ $jp-gray: #dcdcde;
 		background: var(--studio-black);
 	}
 
-	&.is-secondary-jetpack-emerald {
+	// Use `transparent` styling as secondary styles
+	&.is-transparent {
 		color: var(--studio-black);
 		background: inset 0 0 0 1.5px var(--studio-white);
 

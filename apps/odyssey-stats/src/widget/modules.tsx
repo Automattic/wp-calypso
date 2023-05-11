@@ -82,7 +82,7 @@ const ModuleCard: FunctionComponent< ModuleCardProps > = ( {
 							{ error === 'not_installed' && (
 								<Button
 									transparent
-									className="jetpack-emerald-button is-secondary-jetpack-emerald"
+									className="jetpack-emerald-button"
 									busy={ disabled }
 									onClick={ onActivateProduct }
 								>
