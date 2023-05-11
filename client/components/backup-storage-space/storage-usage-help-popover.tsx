@@ -51,7 +51,7 @@ const StorageHelpPopover: React.FC< OwnProps > = ( {
 				<h3> { translate( 'Backup archive size' ) }</h3>
 				<p>
 					{ translate(
-						'Based on the current size of your site, Jetpack will save {{strong}}%(forecastInDays)d day of full backups{{/strong}}.',
+						'Based on the current size of your site, Jetpack will save {{strong}}%(forecastInDays)d day of full backup{{/strong}}.',
 						'Based on the current size of your site, Jetpack will save {{strong}}%(forecastInDays)d days of full backups{{/strong}}.',
 						{
 							components: { strong: <strong /> },
