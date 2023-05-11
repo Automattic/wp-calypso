@@ -8,6 +8,7 @@ import {
 	TERM_ANNUALLY,
 } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
+import styled from '@emotion/styled';
 import { localize, TranslateResult, useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useSelector } from 'react-redux';
@@ -20,6 +21,11 @@ interface Props {
 	billingPeriod: number | null | undefined;
 	isMonthlyPlan: boolean;
 }
+
+const StrikethroughText = styled.span`
+	color: 'var(--studio-gray-20)';
+	text-decoration: 'line-through';
+`;
 
 function usePerMonthDescription( {
 	isMonthlyPlan,
@@ -81,11 +87,7 @@ function usePerMonthDescription( {
 					{
 						args: { fullTermDiscountedPriceText, rawPrice },
 						components: {
-							discount: (
-								<span
-									style={ { color: 'var(--studio-gray-20)', textDecoration: 'line-through' } }
-								/>
-							),
+							discount: <StrikethroughText />,
 						},
 					}
 				);
@@ -97,18 +99,14 @@ function usePerMonthDescription( {
 					{
 						args: { fullTermDiscountedPriceText, rawPrice },
 						components: {
-							discount: (
-								<span
-									style={ { color: 'var(--studio-gray-20)', textDecoration: 'line-through' } }
-								/>
-							),
+							discount: <StrikethroughText />,
 						},
 					}
 				);
 			}
 		} else if ( rawPrice ) {
 			if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {
-				return translate( 'per month, %(rawPrice)s billed annually.', {
+				return translate( 'per month, %(rawPrice)s billed annually', {
 					args: { rawPrice },
 				} );
 			}
@@ -133,7 +131,7 @@ const PlanFeatures2023GridBillingTimeframe: FunctionComponent< Props > = ( props
 	if ( isWpcomEnterpriseGridPlan( planName ) ) {
 		return (
 			<div className="plan-features-2023-grid__vip-price">
-				{ translate( 'Starts at {{b}}%(price)s{{/b}} yearly.', {
+				{ translate( 'Starts at {{b}}%(price)s{{/b}} yearly', {
 					args: { price },
 					components: { b: <b /> },
 					comment: 'Translators: the price is in US dollars for all users (US$25,000)',
