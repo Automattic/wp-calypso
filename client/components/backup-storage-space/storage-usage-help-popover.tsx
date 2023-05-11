@@ -1,7 +1,6 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button, Gridicon, Popover } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
-import Tooltip from 'calypso/components/tooltip';
 
 type OwnProps = {
 	className?: string;
@@ -9,27 +8,27 @@ type OwnProps = {
 	forecastInDays: number | undefined;
 	onClickedPurchase: () => void;
 };
-const StorageHelpTooltip: React.FC< OwnProps > = ( {
+const StorageHelpPopover: React.FC< OwnProps > = ( {
 	className,
 	storageUpgradeUrl,
 	forecastInDays,
 	onClickedPurchase,
 } ) => {
 	const translate = useTranslate();
-	const [ isTooltipVisible, setTooltipVisible ] = React.useState< boolean >( true );
-	const tooltip = React.useRef< SVGSVGElement >( null );
+	const [ isPopoverVisible, setPopoverVisible ] = React.useState< boolean >( true );
+	const popover = React.useRef< SVGSVGElement >( null );
 
 	if ( ! forecastInDays ) {
 		return null;
 	}
 
-	const toggleHelpTooltip = ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ): void => {
-		setTooltipVisible( ! isTooltipVisible );
-		// when the info tooltip inside a button, we don't want clicking it to propagate up
+	const toggleHelpPopover = ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ): void => {
+		setPopoverVisible( ! isPopoverVisible );
+		// when the info popover inside a button, we don't want clicking it to propagate up
 		event.stopPropagation();
 	};
-	const closeHelpTooltip = () => {
-		setTooltipVisible( false );
+	const closeHelpPopover = () => {
+		setPopoverVisible( false );
 	};
 
 	return (
@@ -37,16 +36,16 @@ const StorageHelpTooltip: React.FC< OwnProps > = ( {
 			<Button
 				borderless
 				compact
-				className="storage-usage-help-tooltip__toggle-tooltip"
-				onClick={ toggleHelpTooltip }
+				className="storage-usage-help-popover__toggle-popover"
+				onClick={ toggleHelpPopover }
 			>
-				<Gridicon ref={ tooltip } icon="info-outline" size={ 18 } />
+				<Gridicon ref={ popover } icon="info-outline" size={ 18 } />
 			</Button>
-			<Tooltip
-				className="storage-usage-help-tooltip__tooltip"
-				isVisible={ isTooltipVisible }
-				position="bottom"
-				context={ tooltip.current }
+			<Popover
+				className="storage-usage-help-popover__popover"
+				isVisible={ isPopoverVisible }
+				position="bottom right"
+				context={ popover.current }
 				showOnMobile
 			>
 				<h3> { translate( 'Backup archive size' ) }</h3>
@@ -67,8 +66,8 @@ const StorageHelpTooltip: React.FC< OwnProps > = ( {
 					<Button
 						borderless
 						compact
-						className="storage-usage-help-tooltip__close-tooltip"
-						onClick={ closeHelpTooltip }
+						className="storage-usage-help-popover__close-popover"
+						onClick={ closeHelpPopover }
 					>
 						<Gridicon icon="cross" size={ 18 } />
 					</Button>
@@ -89,14 +88,14 @@ const StorageHelpTooltip: React.FC< OwnProps > = ( {
 						}
 					) }
 				</p>
-				<div className="storage-usage-help-tooltip__button-section">
+				<div className="storage-usage-help-popover__button-section">
 					<Button primary href={ storageUpgradeUrl } onClick={ onClickedPurchase }>
 						{ translate( 'Add more storage' ) }
 					</Button>
 				</div>
-			</Tooltip>
+			</Popover>
 		</span>
 	);
 };
 
-export default StorageHelpTooltip;
+export default StorageHelpPopover;

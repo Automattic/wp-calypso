@@ -16,7 +16,7 @@ import { StorageUsageLevels, StorageUsageLevelName } from 'calypso/state/rewind/
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import { useDaysOfBackupsSavedText, useStorageUsageText } from './hooks';
-import StorageHelpTooltip from './storage-usage-help-tooltip';
+import StorageHelpPopover from './storage-usage-help-popover';
 import useUpsellInfo from './usage-warning/use-upsell-slug';
 
 const PROGRESS_BAR_CLASS_NAMES = {
@@ -107,8 +107,8 @@ const UsageDisplay: React.FC< OwnProps > = ( { loading = false, usageLevel } ) =
 						! loading &&
 							forecastInDays < planRetentionPeriod &&
 							StorageUsageLevels.Normal === usageLevel && (
-								<StorageHelpTooltip
-									className="backup-storage-space__help-tooltip"
+								<StorageHelpPopover
+									className="backup-storage-space__help-popover"
 									forecastInDays={ forecastInDays }
 									storageUpgradeUrl={ storageUpgradeUrl }
 									onClickedPurchase={ onClickedPurchase }
