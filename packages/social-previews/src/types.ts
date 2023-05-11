@@ -1,3 +1,5 @@
+import type { SectionHeadingProps } from './shared/section-heading';
+
 export interface SocialPreviewBaseProps {
 	/**
 	 * The URL of the post/page to preview.
@@ -18,4 +20,8 @@ export interface SocialPreviewBaseProps {
 	 * The URL of the image to use in the post/page preview.
 	 */
 	image?: string;
+}
+
+export interface SocialPreviewsBaseProps {
+	headingLevel?: SectionHeadingProps[ 'level' ];
 }
