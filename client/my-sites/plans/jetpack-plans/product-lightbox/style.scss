@@ -549,18 +549,22 @@
 .product-lightbox__included-product-list-item-title {
 	font-size: $font-body-small;
 	font-weight: 700;
+	line-height: 1.125;
 }
 
 .product-lightbox__included-product-list-item-callout {
-	padding: 3px;
+	padding: 4px 0 0 0;
 	box-sizing: border-box;
+	color: var(--studio-gray-70);
 	font-size: 0.875rem;
 	line-height: 1.125;
 
 	@media ( min-width: $break-medium ) {
+		padding: 4px;
 		min-width: 160px;
 		background-color: #eaefef;
 		border-radius: 4px;
+		color: var(--studio-black);
 		text-align: center;
 	}
 }
