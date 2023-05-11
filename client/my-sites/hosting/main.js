@@ -5,8 +5,7 @@ import {
 	FEATURE_SITE_STAGING_SITES,
 	WPCOM_FEATURES_ATOMIC,
 } from '@automattic/calypso-products';
-import { englishLocales } from '@automattic/i18n-utils';
-import i18n, { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { Component, Fragment, useMemo } from 'react';
 import wrapWithClickOutside from 'react-click-outside';
 import { connect } from 'react-redux';
@@ -208,7 +207,6 @@ class Hosting extends Component {
 			isSiteAtomic,
 			isTransferring,
 			isWpcomStagingSite,
-			locale,
 			requestSiteById,
 			siteId,
 			siteSlug,
@@ -272,18 +270,17 @@ class Hosting extends Component {
 					/>
 				);
 
-				// Don't imply additional access if site doesn't have the SFTP feature.
-				const noticeText =
-					isBasicHostingDisabled &&
-					( englishLocales.includes( locale ) ||
-						i18n.hasTranslation( 'Please activate your hosting access.' ) )
-						? translate( 'Please activate your hosting access.' )
-						: translate( 'Please activate the hosting access to begin using these features.' );
-
 				return (
 					<>
 						{ failureNotice }
-						<Notice status="is-info" showDismiss={ false } text={ noticeText } icon="globe">
+						<Notice
+							status="is-info"
+							showDismiss={ false }
+							text={ translate(
+								'Please activate the hosting access to begin using these features.'
+							) }
+							icon="globe"
+						>
 							<TrackComponentView eventName="calypso_hosting_configuration_activate_impression" />
 							<NoticeAction
 								onClick={ clickActivate }
