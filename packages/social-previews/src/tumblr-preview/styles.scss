@@ -66,8 +66,9 @@
 
 .tumblr-preview__image {
 	display: block;
-
 	margin: 3.375rem 0 1rem;
+	width: 100%;
+	aspect-ratio: 16/9;
 }
 
 .tumblr-preview__url {
@@ -96,7 +97,8 @@
 
 	.tumblr-preview__image {
 		margin: 0;
-
+		width: 100%;
+		aspect-ratio: 16/9;
 		border-top-left-radius: inherit;
 		border-top-right-radius: inherit;
 	}

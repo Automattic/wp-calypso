@@ -8,11 +8,13 @@ import FacebookPostHeader from './post/header';
 import FacebookPostIcon from './post/icons';
 import type { FacebookPreviewProps } from './types';
 
-type Props = FacebookPreviewProps & {
+import './style.scss';
+
+export type FacebookLinkPreviewProps = FacebookPreviewProps & {
 	compactDescription?: boolean;
 };
 
-export const FacebookLinkPreview: React.FC< Props > = ( {
+export const FacebookLinkPreview: React.FC< FacebookLinkPreviewProps > = ( {
 	url,
 	title,
 	description,

@@ -1,4 +1,4 @@
-import { TumblrFullPreview } from '@automattic/social-previews';
+import { TumblrPreviews } from '@automattic/social-previews';
 import { PureComponent } from 'react';
 import { decodeEntities } from 'calypso/lib/formatting';
 
@@ -18,7 +18,7 @@ export class TumblrSharePreview extends PureComponent {
 		const username = externalProfileURL?.match( /[^/]+$/ )[ 0 ];
 
 		return (
-			<TumblrFullPreview
+			<TumblrPreviews
 				url={ articleUrl }
 				title={ decodeEntities( articleTitle ) }
 				description={ decodeEntities( articleContent ) }

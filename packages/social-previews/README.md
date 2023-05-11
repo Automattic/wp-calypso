@@ -28,9 +28,9 @@ however you like.
 Here's a simple usage example using the preview component for Facebook:
 
 ```jsx
-import { FacebookPreview } from '@automattic/social-previews';
+import { FacebookPreviews } from '@automattic/social-previews';
 
-<FacebookPreview
+<FacebookPreviews
 	title="Five for the Future"
 	description="Launched in 2014, Five for the Future encourages organizations to contribute five percent of their resources to WordPress development. WordPress co-founder Matt Mullenweg proposed this benchmark to maintain a “golden ratio” of contributors to users."
 	url="https://wordpress.org/five-for-the-future/"
@@ -54,7 +54,7 @@ import { GoogleSearchPreview } from '@automattic/social-previews';
 Twitter previews support the same properties for previewing a single tweet, but can also preview multiple tweets in the form of a Twitter thread. For that, the `tweets` property takes an array of tweets. Each item in this array can take additional information about the tweet, giving the preview a more native feel.
 
 ```jsx
-import { TwitterPreview } from '@automattic/social-previews';
+import { TwitterPreviews } from '@automattic/social-previews';
 
 const tweetTemplate = {
 	date: Date.now(),
@@ -63,7 +63,7 @@ const tweetTemplate = {
 	screenName: '@myAccount',
 };
 
-<TwitterPreview
+<TwitterPreviews
 	tweets={ [
 		{
 			...tweetTemplate,
@@ -92,9 +92,9 @@ const tweetTemplate = {
 An example of LinkedIn preview
 
 ```jsx
-import { LinkedInPreview } from '@automattic/social-previews';
+import { LinkedInPreviews } from '@automattic/social-previews';
 
-<LinkedInPreview
+<LinkedInPreviews
 	jobTitle="Job Title (Company Name)"
 	image="https://url.for.the/image.png"
 	name="LinkedIn Account Name"
@@ -107,9 +107,9 @@ import { LinkedInPreview } from '@automattic/social-previews';
 Tumblr preview
 
 ```jsx
-import { TumblrLinkPreview } from '@automattic/social-previews';
+import { TumblrPreviews } from '@automattic/social-previews';
 
-<TumblrLinkPreview
+<TumblrPreviews
 	title="Five for the Future"
 	description="Launched in 2014, Five for the Future encourages organizations to contribute five percent of their resources to WordPress development. WordPress co-founder Matt Mullenweg proposed this benchmark to maintain a “golden ratio” of contributors to users."
 	image="https://url.for.the/image.png"

@@ -1,7 +1,7 @@
-import { SocialPreviewBaseProps } from '../types';
+import { SocialPreviewBaseProps, SocialPreviewsBaseProps } from '../types';
 
-export type TwitterPreviewProps = TwitterCardProps & {
-	tweets: Array< TweetProps >;
+export type TwitterPreviewsProps = SocialPreviewsBaseProps & {
+	tweets: Array< TwitterPreviewProps >;
 };
 
 export type TwitterMedia = {
@@ -11,12 +11,12 @@ export type TwitterMedia = {
 };
 
 export type TwitterCardProps = SocialPreviewBaseProps & {
-	type: string;
+	cardType: string;
 };
 
 export type SidebarProps = {
-	isLast: boolean;
-	profileImage: string;
+	showThreadConnector?: boolean;
+	profileImage?: string;
 };
 
 export type HeaderProps = {
@@ -26,25 +26,21 @@ export type HeaderProps = {
 };
 
 export type MediaProps = {
-	media: Array< TwitterMedia >;
+	media?: Array< TwitterMedia >;
 };
 
 export type QuoteTweetProps = {
-	tweet: TweetProps;
-};
-
-export type CardProps = {
-	card: TwitterCardProps;
+	tweet?: TwitterPreviewProps;
 };
 
 export type TextProps = {
 	text: string;
-	cardUrl: string;
+	url: string;
 };
 
-export type TweetProps = SidebarProps &
+export type TwitterPreviewProps = SidebarProps &
 	HeaderProps &
 	MediaProps &
 	QuoteTweetProps &
-	CardProps &
+	TwitterCardProps &
 	Pick< TextProps, 'text' >;

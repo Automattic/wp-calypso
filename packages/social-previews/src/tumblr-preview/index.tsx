@@ -1,3 +1,3 @@
 export * from './link-preview';
 export * from './post-preview';
-export * from './full-preview';
+export * from './previews';

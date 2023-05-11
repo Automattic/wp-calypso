@@ -1,21 +1,22 @@
 import { ExternalLink } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import SectionHeading from '../shared/section-heading';
+import { SocialPreviewsBaseProps } from '../types';
 import { FacebookLinkPreview } from './link-preview';
 import { LinkPreviewDetails } from './link-preview-details';
 import { FacebookPostPreview } from './post-preview';
 import type { FacebookPreviewProps } from './types';
 
-import './style.scss';
+export type FacebookPreviewsProps = FacebookPreviewProps & SocialPreviewsBaseProps;
 
-export const FacebookFullPreview: React.FC< FacebookPreviewProps > = ( props ) => {
+export const FacebookPreviews: React.FC< FacebookPreviewsProps > = ( props ) => {
 	const { customImage } = props;
 	const hasCustomImage = !! customImage;
 
 	return (
 		<div className="social-preview facebook-preview">
 			<section className="social-preview__section facebook-preview__section">
-				<SectionHeading level={ props.headingsLevel }>
+				<SectionHeading level={ props.headingLevel }>
 					{
 						// translators: refers to a social post on Facebook
 						__( 'Your post', 'social-previews' )
@@ -31,7 +32,7 @@ export const FacebookFullPreview: React.FC< FacebookPreviewProps > = ( props ) =
 				) }
 			</section>
 			<section className="social-preview__section facebook-preview__section">
-				<SectionHeading level={ props.headingsLevel }>
+				<SectionHeading level={ props.headingLevel }>
 					{
 						// translators: refers to a link to a Facebook post
 						__( 'Link preview', 'social-previews' )
