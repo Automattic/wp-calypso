@@ -460,7 +460,7 @@ class ReaderStream extends Component {
 	};
 
 	render() {
-		const { translate, forcePlaceholders, lastPage, streamKey, tag } = this.props;
+		const { translate, forcePlaceholders, lastPage, streamHeader, streamKey, tag } = this.props;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 		let { items, isRequesting } = this.props;
 		const hasNoPosts = items.length === 0 && ! isRequesting;
@@ -492,7 +492,6 @@ class ReaderStream extends Component {
 			const bodyContent = (
 				<InfiniteList
 					ref={ this.listRef }
-					className="reader__content"
 					items={ items }
 					lastPage={ lastPage }
 					fetchingNextPage={ isRequesting }
@@ -521,7 +520,10 @@ class ReaderStream extends Component {
 			} else if ( wideDisplay ) {
 				body = (
 					<div className="stream__two-column">
-						{ bodyContent }
+						<div className="reader-content">
+							{ streamHeader }
+							{ bodyContent }
+						</div>
 						<div className="stream__right-column">{ sidebarContent }</div>
 					</div>
 				);
@@ -529,6 +531,7 @@ class ReaderStream extends Component {
 			} else {
 				body = (
 					<>
+						{ streamHeader }
 						<div className="stream__header">
 							<SectionNav selectedText={ this.state.selectedTab }>
 								<NavTabs label={ translate( 'Status' ) }>
@@ -549,7 +552,9 @@ class ReaderStream extends Component {
 								</NavTabs>
 							</SectionNav>
 						</div>
-						{ this.state.selectedTab === 'posts' && bodyContent }
+						{ this.state.selectedTab === 'posts' && (
+							<div className="reader-content">{ bodyContent }</div>
+						) }
 						{ this.state.selectedTab === 'sites' && (
 							<div className="stream__two-column">
 								<div className="stream__right-column">{ sidebarContent }</div>

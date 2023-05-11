@@ -28,6 +28,10 @@
 
 	@include breakpoint-deprecated( ">660px" ) {
 		border-bottom: 1px solid #e9e9ea;
+
+		&:first-of-type {
+			border-top: 1px solid #e9e9ea;
+		}
 	}
 
 	&.is-selected {

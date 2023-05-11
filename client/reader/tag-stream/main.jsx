@@ -129,6 +129,19 @@ class TagStream extends Component {
 			);
 		}
 
+		// Put the tag stream header at the top of the body, so it can be even with the sidebar in the two column layout.
+		const tagHeader = (
+			<TagStreamHeader
+				title={ title }
+				description={ this.props.description }
+				imageSearchString={ imageSearchString }
+				showFollow={ !! ( tag && tag.id ) }
+				following={ this.isSubscribed() }
+				onFollowToggle={ this.toggleFollowing }
+				showBack={ this.props.showBack }
+			/>
+		);
+
 		return (
 			<Stream
 				{ ...this.props }
@@ -136,6 +149,7 @@ class TagStream extends Component {
 				emptyContent={ emptyContent }
 				showFollowInHeader={ true }
 				forcePlaceholders={ ! tag } // if tag has not loaded yet, then make everything a placeholder
+				streamHeader={ tagHeader }
 			>
 				<QueryReaderFollowedTags />
 				<QueryReaderTag tag={ this.props.decodedTagSlug } />
@@ -146,15 +160,6 @@ class TagStream extends Component {
 					} ) }
 				/>
 				{ this.props.showBack && <HeaderBack /> }
-				<TagStreamHeader
-					title={ title }
-					description={ this.props.description }
-					imageSearchString={ imageSearchString }
-					showFollow={ !! ( tag && tag.id ) }
-					following={ this.isSubscribed() }
-					onFollowToggle={ this.toggleFollowing }
-					showBack={ this.props.showBack }
-				/>
 			</Stream>
 		);
 	}
