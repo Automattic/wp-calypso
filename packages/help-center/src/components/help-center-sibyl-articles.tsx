@@ -9,6 +9,7 @@ import {
 	RESULT_TOUR,
 	RESULT_VIDEO,
 	HelpCenterSite,
+	Section,
 } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { external, Icon, page } from '@wordpress/icons';
@@ -80,7 +81,7 @@ function getPostUrl( article: Article, query: string, articleCanNavigateBack: bo
 	}
 }
 
-const getFilteredContextResults = ( sectionName: string, siteIntent: string ) => {
+const getFilteredContextResults = ( sectionName: Section, siteIntent: string ) => {
 	return getContextResults( sectionName, siteIntent ).filter( ( article ) => {
 		const type = ( 'type' in article && article.type ) || '';
 		return ! [ RESULT_VIDEO, RESULT_TOUR ].includes( type );

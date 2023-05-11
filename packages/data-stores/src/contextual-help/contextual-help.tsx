@@ -602,7 +602,7 @@ type SectionForVideos = keyof typeof videosForSection;
 type SectionForTours = keyof typeof toursForSection & 'posts';
 type SectionForPostsAndPages = 'posts' | 'pages';
 
-type Section = SectionForVideos | SectionForTours | SectionForPostsAndPages;
+export type Section = SectionForVideos | SectionForTours | SectionForPostsAndPages;
 
 export function getContextResults( section: Section, siteIntent: string ) {
 	// Posts and Pages have a common help section
