@@ -13,8 +13,13 @@
 	}
 }
 
-.plan-features-main__notice {
-	margin: 0;
+.notice.plan-features-main__notice {
+	margin: 0 20px;
+	width: unset;
+	@include plans-section-custom-mobile-breakpoint {
+		margin: 0;
+		width: 100%;
+	}
 }
 
 /*TODO: Remove the section below when the 2023 pricing grid is live to all locales */
