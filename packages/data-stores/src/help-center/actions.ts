@@ -61,18 +61,6 @@ export const setIsMinimized = ( minimized: boolean ) =>
 		minimized,
 	} as const );
 
-export const setShowHelpCenter = function* ( show: boolean ) {
-	if ( ! show ) {
-		yield setInitialRoute( undefined );
-		yield setIsMinimized( false );
-	}
-
-	return {
-		type: 'HELP_CENTER_SET_SHOW',
-		show,
-	} as const;
-};
-
 export const setShowMessagingLauncher = ( show: boolean ) =>
 	( {
 		type: 'HELP_CENTER_SET_SHOW_MESSAGING_LAUNCHER',
@@ -84,6 +72,20 @@ export const setShowMessagingWidget = ( show: boolean ) =>
 		type: 'HELP_CENTER_SET_SHOW_MESSAGING_WIDGET',
 		show,
 	} as const );
+
+export const setShowHelpCenter = function* ( show: boolean ) {
+	if ( ! show ) {
+		yield setInitialRoute( undefined );
+		yield setIsMinimized( false );
+	} else {
+		yield setShowMessagingWidget( false );
+	}
+
+	return {
+		type: 'HELP_CENTER_SET_SHOW',
+		show,
+	} as const;
+};
 
 export const setSubject = ( subject: string ) =>
 	( {
