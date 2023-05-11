@@ -124,13 +124,15 @@ const SenseiSetup: Step = ( { navigation } ) => {
 						) ) }
 					</div>
 					{ ! isDesktop && preview }
-					<button className="sensei-button" disabled={ ! siteTitle } onClick={ handleSubmit }>
-						{ __( 'Continue' ) }
-					</button>
-					<p className="sensei-style-notice">
-						<Gridicon icon="notice-outline" />
-						{ __( 'You can change all of this later, too.' ) }
-					</p>
+					<div className="sensei-onboarding-action">
+						<button className="sensei-button" disabled={ ! siteTitle } onClick={ handleSubmit }>
+							{ __( 'Continue' ) }
+						</button>
+						<p className="sensei-style-notice">
+							<Gridicon icon="notice-outline" />
+							{ __( 'You can change all of this later, too.' ) }
+						</p>
+					</div>
 				</div>
 				{ isDesktop && preview }
 			</div>
