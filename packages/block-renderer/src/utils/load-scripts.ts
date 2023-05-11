@@ -24,7 +24,7 @@ const loadScripts = async ( element: HTMLElement, scripts: HTMLScriptElement[] )
 	);
 
 	return uniqueScripts.reduce(
-		( promise, script ): Promise< any > =>
+		( promise: Promise< any >, script: HTMLScriptElement ): Promise< any > =>
 			promise
 				// eslint-disable-next-line no-console
 				.catch( ( error: Error ) => console.error( error ) )
