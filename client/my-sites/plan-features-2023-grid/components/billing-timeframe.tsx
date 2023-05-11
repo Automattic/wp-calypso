@@ -8,8 +8,9 @@ import {
 	TERM_ANNUALLY,
 } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
-import i18n, { getLocaleSlug, localize, TranslateResult, useTranslate } from 'i18n-calypso';
+import i18n, { localize, TranslateResult, useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useSelector } from 'react-redux';
 import usePlanPrices from 'calypso/my-sites/plans/hooks/use-plan-prices';
@@ -33,8 +34,8 @@ function usePerMonthDescription( {
 	billingPeriod,
 }: Omit< Props, 'billingTimeframe' > ) {
 	const translate = useTranslate();
-	const currentLocale = getLocaleSlug();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
+	const isEnglishLocale = useIsEnglishLocale();
 	const planPrices = usePlanPrices( {
 		planSlug: planName as PlanSlug,
 		returnMonthly: isMonthlyPlan,
@@ -79,7 +80,6 @@ function usePerMonthDescription( {
 			currencyCode && planPrices.rawPrice
 				? formatCurrency( planPrices.rawPrice, currencyCode, { stripZeros: true } )
 				: null;
-		const isEnglishLocale = currentLocale === 'en' || currentLocale?.startsWith( 'en-' );
 		if ( fullTermDiscountedPriceText ) {
 			if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {
 				//per month, $96 billed annually $84 for the first year
