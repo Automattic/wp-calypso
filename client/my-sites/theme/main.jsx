@@ -1125,6 +1125,7 @@ class ThemeSheet extends Component {
 			isBundledSoftwareSet,
 			translate,
 			isLoggedIn,
+			isPremium,
 			isExternallyManagedTheme,
 			isThemeActivationSyncStarted,
 		} = this.props;
@@ -1208,7 +1209,7 @@ class ThemeSheet extends Component {
 		} );
 
 		if ( hasWpComThemeUpsellBanner ) {
-			const forceDisplay = ! isExternallyManagedTheme && ! isBundledSoftwareSet;
+			const forceDisplay = isPremium && isExternallyManagedTheme && isBundledSoftwareSet;
 
 			const upsellNudgePlan =
 				isExternallyManagedTheme || isBundledSoftwareSet ? PLAN_BUSINESS : PLAN_PREMIUM;
