@@ -129,9 +129,10 @@
 }
 
 .product-lightbox__detail-tags {
-	background-color: #f6f7f7;
+	background-color: transparent;
 	margin-bottom: 16px;
 	padding: 5.5px 8px;
+	border: 1px solid var(--studio-gray-5);
 	border-radius: 4px;
 
 	&-label {
