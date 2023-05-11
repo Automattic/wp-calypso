@@ -912,6 +912,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 			siteId,
 			flowName,
 			currentSitePlanSlug,
+			selectedFeature,
 		} = ownProps;
 		const canUserPurchasePlan =
 			! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId );
@@ -974,15 +975,34 @@ const ConnectedPlanFeatures2023Grid = connect(
 			const annualPlansOnlyFeatures = planConstantObj.getAnnualPlansOnlyFeatures?.() || [];
 			let planFeaturesTransformed: Array< TransformedFeatureObject > = [];
 			let jetpackFeaturesTransformed: Array< TransformedFeatureObject > = [];
+			const topFeature = selectedFeature
+				? planFeatures.find( ( feature ) => feature.getSlug() === selectedFeature )
+				: undefined;
+
+			if ( topFeature ) {
+				const availableOnlyForAnnualPlans = annualPlansOnlyFeatures.includes(
+					topFeature.getSlug()
+				);
+				planFeaturesTransformed.unshift( {
+					...topFeature,
+					availableOnlyForAnnualPlans,
+					availableForCurrentPlan: ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
+				} );
+			}
+
 			if ( annualPlansOnlyFeatures.length > 0 ) {
-				planFeaturesTransformed = planFeatures.map( ( feature ) => {
+				planFeatures.forEach( ( feature ) => {
+					if ( feature === topFeature ) {
+						return;
+					}
+
 					const availableOnlyForAnnualPlans = annualPlansOnlyFeatures.includes( feature.getSlug() );
 
-					return {
+					planFeaturesTransformed.push( {
 						...feature,
 						availableOnlyForAnnualPlans,
 						availableForCurrentPlan: ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
-					};
+					} );
 				} );
 			}
 

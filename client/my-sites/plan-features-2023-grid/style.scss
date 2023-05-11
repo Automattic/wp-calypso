@@ -402,13 +402,6 @@
 				font-weight: 600;
 			}
 
-			&.is-highlighted {
-				background-color: var(--studio-yellow-5);
-				font-weight: bold;
-				margin: -8px -20px;
-				padding: 8px 20px;
-			}
-
 			@include plans-2023-break-small {
 				font-size: $font-body-extra-small;
 				line-height: 16px;
