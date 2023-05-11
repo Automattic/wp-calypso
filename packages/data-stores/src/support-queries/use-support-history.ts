@@ -16,7 +16,7 @@ const ACTIVE_STATUSES = [ 'New', 'Open', 'Hold' ];
  */
 export function useHasActiveSupport( type: 'chat' | 'ticket', email: string, show = true ) {
 	return useQuery< Response | SupportSession | boolean >(
-		[ 'help-support-history', type, show, email ],
+		[ 'help-support-history', type, email ],
 		() =>
 			canAccessWpcomApis()
 				? wpcomRequest( {
