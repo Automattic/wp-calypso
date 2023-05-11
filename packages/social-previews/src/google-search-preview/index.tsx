@@ -6,6 +6,7 @@ import {
 	stripHtmlTags,
 	baseDomain,
 } from '../helpers';
+import { SocialPreviewBaseProps } from '../types';
 
 import './style.scss';
 
@@ -35,10 +36,7 @@ const googleDescription = firstValid(
 	hardTruncation( DESCRIPTION_LENGTH )
 );
 
-export type GoogleSearchPreviewProps = {
-	title: string;
-	url: string;
-	description: string;
+export type GoogleSearchPreviewProps = Omit< SocialPreviewBaseProps, 'image' > & {
 	siteTitle?: string;
 };
 

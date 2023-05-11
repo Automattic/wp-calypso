@@ -1,61 +1,59 @@
 import { ExternalLink } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import SectionHeading from '../shared/section-heading';
-import FacebookDefaultLinkPreview from './default-link-preview';
-import FacebookDefaultPostPreview from './default-post-preview';
-import FacebookLinkPreview from './link-preview';
-import FacebookPostPreview from './post-preview';
+import { SocialPreviewsBaseProps } from '../types';
+import { FacebookLinkPreview } from './link-preview';
+import { LinkPreviewDetails } from './link-preview-details';
+import { FacebookPostPreview } from './post-preview';
 import type { FacebookPreviewProps } from './types';
 
-import './style.scss';
+export type FacebookPreviewsProps = FacebookPreviewProps & SocialPreviewsBaseProps;
 
-const FacebookFullPreview: React.FC< FacebookPreviewProps > = ( props ) => {
+export const FacebookPreviews: React.FC< FacebookPreviewsProps > = ( props ) => {
 	const { customImage } = props;
-	const isPostPreview = !! customImage;
+	const hasCustomImage = !! customImage;
 
 	return (
 		<div className="social-preview facebook-preview">
 			<section className="social-preview__section facebook-preview__section">
-				<SectionHeading level={ props.headingsLevel }>
+				<SectionHeading level={ props.headingLevel }>
 					{
 						// translators: refers to a social post on Facebook
-						__( 'Your post', 'facebook-preview' )
+						__( 'Your post', 'social-previews' )
 					}
 				</SectionHeading>
 				<p className="social-preview__section-desc">
-					{ __( 'This is what your social post will look like on Facebook:', 'facebook-preview' ) }
+					{ __( 'This is what your social post will look like on Facebook:', 'social-previews' ) }
 				</p>
-				{ isPostPreview ? (
+				{ hasCustomImage ? (
 					<FacebookPostPreview { ...props } />
 				) : (
 					<FacebookLinkPreview { ...props } />
 				) }
 			</section>
 			<section className="social-preview__section facebook-preview__section">
-				<SectionHeading level={ props.headingsLevel }>
+				<SectionHeading level={ props.headingLevel }>
 					{
 						// translators: refers to a link to a Facebook post
-						__( 'Link preview', 'facebook-preview' )
+						__( 'Link preview', 'social-previews' )
 					}
 				</SectionHeading>
 				<p className="social-preview__section-desc">
 					{ __(
 						'This is what it will look like when someone shares the link to your WordPress post on Facebook.',
-						'facebook-preview'
+						'social-previews'
 					) }
 					&nbsp;
 					<ExternalLink href="https://jetpack.com/support/jetpack-social-image-generator">
-						{ __( 'Learn more about links', 'facebook-preview' ) }
+						{ __( 'Learn more about links', 'social-previews' ) }
 					</ExternalLink>
 				</p>
-				{ isPostPreview ? (
-					<FacebookDefaultPostPreview { ...props } />
+				{ hasCustomImage ? (
+					<LinkPreviewDetails { ...props } />
 				) : (
-					<FacebookDefaultLinkPreview { ...props } />
+					<FacebookLinkPreview { ...props } compactDescription customText="" user={ undefined } />
 				) }
 			</section>
 		</div>
 	);
 };
-
-export default FacebookFullPreview;
