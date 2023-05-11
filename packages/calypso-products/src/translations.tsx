@@ -1047,6 +1047,47 @@ export const getJetpackProductsFAQs = (
 	};
 };
 
+export const getJetpackPlansAlsoIncludedFeatures = (): Record<
+	string,
+	Array< TranslateResult >
+> => {
+	const socialFree = [ translate( 'Social (free tier)' ) ];
+	const videoPressFree = [ translate( 'VideoPress (free tier)' ) ];
+	const freeBundleFeatures = [
+		translate( 'Brute force attack protection' ),
+		translate( 'Downtime monitoring' ),
+		translate( 'CDN (Content Delivery Networks)' ),
+		translate( 'Stats' ),
+	];
+
+	return {
+		[ PLAN_JETPACK_STARTER_MONTHLY ]: [ ...socialFree, ...videoPressFree, ...freeBundleFeatures ],
+		[ PLAN_JETPACK_STARTER_YEARLY ]: [ ...socialFree, ...videoPressFree, ...freeBundleFeatures ],
+		[ PLAN_JETPACK_SECURITY_T1_MONTHLY ]: [
+			...socialFree,
+			...videoPressFree,
+			...freeBundleFeatures,
+		],
+		[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: [
+			...socialFree,
+			...videoPressFree,
+			...freeBundleFeatures,
+		],
+		[ PLAN_JETPACK_SECURITY_T2_MONTHLY ]: [
+			...socialFree,
+			...videoPressFree,
+			...freeBundleFeatures,
+		],
+		[ PLAN_JETPACK_SECURITY_T2_YEARLY ]: [
+			...socialFree,
+			...videoPressFree,
+			...freeBundleFeatures,
+		],
+		[ PLAN_JETPACK_COMPLETE ]: [ ...freeBundleFeatures ],
+		[ PLAN_JETPACK_COMPLETE_MONTHLY ]: [ ...freeBundleFeatures ],
+	};
+};
+
 export const getJetpackProductsRecommendedFor = (): Record< string, TranslateResult > => {
 	return {
 		[ JETPACK_TAG_FOR_WOOCOMMERCE_STORES ]: translate( 'WooCommerce stores' ),

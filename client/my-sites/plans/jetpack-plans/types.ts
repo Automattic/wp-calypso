@@ -133,6 +133,7 @@ export interface SelectorProduct extends SelectorProductCost {
 	lightboxDescription?: TranslateResult | string;
 	productsIncluded?: ReadonlyArray< string >;
 	whatIsIncluded?: Array< TranslateResult >;
+	alsoIncluded?: Array< TranslateResult >;
 	benefits?: Array< TranslateResult >;
 	faqs?: Array< FAQ >;
 	recommendedFor?: Array< JetpackTag >;

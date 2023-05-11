@@ -80,7 +80,8 @@
 	max-height: 85vh;
 
 	hr {
-		margin: 0.75rem 0;
+		margin: 0.5rem 0 0 0;
+		background-color: var(--studio-gray-5);
 	}
 }
 
@@ -168,7 +169,7 @@
 		font-size: $font-body;
 		font-weight: 700;
 		width: 100%;
-		padding: 0.5rem 0;
+		padding: 1.5rem 0 1rem 0;
 		margin: 0;
 		line-height: 1.25;
 		color: #000;

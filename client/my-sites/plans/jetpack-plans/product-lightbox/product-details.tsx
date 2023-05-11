@@ -34,12 +34,35 @@ const ProductDetails: React.FC< ProductDetailsProps > = ( { product } ) => {
 	return (
 		<>
 			{ product.productsIncluded ? (
-				<IncludedProductList
-					products={ product.productsIncluded }
-					descriptionMap={ descriptionMap }
-				/>
+				<>
+					<IncludedProductList
+						products={ product.productsIncluded }
+						descriptionMap={ descriptionMap }
+					/>
+					<hr />
+					<div className="product-lightbox__detail-list">
+						{ isMobile ? (
+							<FoldableCard
+								hideSummary
+								header={ translate( 'Also included:' ) }
+								clickableHeader={ true }
+								smooth
+								contentExpandedStyle={ contentStlye }
+							>
+								<div ref={ ref }>
+									<DescriptionList items={ product.alsoIncluded } />
+								</div>
+							</FoldableCard>
+						) : (
+							<>
+								<p>{ translate( 'Also included:' ) }</p>
+								<DescriptionList items={ product.alsoIncluded } />
+							</>
+						) }
+					</div>
+				</>
 			) : (
-				productDetails.map( ( { type, title, items }, index, infoList ) => (
+				productDetails.map( ( { type, title, items } ) => (
 					<div className="product-lightbox__detail-list" key={ type }>
 						{ isMobile ? (
 							<FoldableCard
@@ -59,14 +82,13 @@ const ProductDetails: React.FC< ProductDetailsProps > = ( { product } ) => {
 								<DescriptionList items={ items } />
 							</>
 						) }
-						{ index !== infoList.length - 1 && <hr /> }
+						<hr />
 					</div>
 				) )
 			) }
 
 			{ product.faqs && !! product.faqs.length && (
 				<>
-					<hr />
 					<div className="product-lightbox__detail-list is-faq-list" key="faqs">
 						{ isMobile ? (
 							<FoldableCard

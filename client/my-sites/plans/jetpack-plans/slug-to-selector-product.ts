@@ -29,6 +29,7 @@ import {
 	getJetpackProductBenefits,
 	getJetpackProductFAQs,
 	getJetpackProductRecommendedFor,
+	getJetpackPlanAlsoIncludedFeatures,
 	TERM_TRIENNIALLY,
 } from '@automattic/calypso-products';
 import {
@@ -212,6 +213,7 @@ function itemToSelectorProduct(
 			whatIsIncluded: item.getWhatIsIncluded
 				? getForCurrentCROIteration( item.getWhatIsIncluded )
 				: [],
+			alsoIncluded: getJetpackPlanAlsoIncludedFeatures( productSlug ),
 			benefits: item.getBenefits ? getForCurrentCROIteration( item.getBenefits ) : [],
 			faqs: getJetpackProductFAQs( productSlug, getHelpLink, getSupportLink ),
 			recommendedFor: item.getRecommendedFor
