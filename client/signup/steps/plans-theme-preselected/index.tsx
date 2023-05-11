@@ -2,7 +2,6 @@ import { Button } from '@automattic/components';
 import { isDesktop } from '@automattic/viewport';
 import { localize, translate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { preventWidows } from 'calypso/lib/formatting';
 import { buildUpgradeFunction } from 'calypso/lib/signup/step-actions';
 import PlansStep from 'calypso/signup/steps/plans';
 
@@ -58,18 +57,12 @@ function PlansThemePreselectedStep( props: object & { signupDependencies: Signup
 	);
 
 	if ( ! isDesktop() ) {
-		subHeaderText = translate( 'Choose a plan or {{link}}start with another theme{{/link}}.', {
+		subHeaderText = translate( 'Choose a plan or {{link}}start with another theme.{{/link}}', {
 			components: { link: freePlanButton },
 		} );
 	}
 
-	return (
-		<PlansStep
-			{ ...props }
-			{ ...hidePlanProps }
-			fallbackSubHeaderText={ preventWidows( subHeaderText ) }
-		/>
-	);
+	return <PlansStep { ...props } { ...hidePlanProps } fallbackSubHeaderText={ subHeaderText } />;
 }
 
 export default localize( PlansThemePreselectedStep );
