@@ -15,17 +15,20 @@ import {
 	JETPACK_STARTER_PLANS,
 	JETPACK_COMPLETE_PLANS,
 } from '@automattic/calypso-products';
-import { TranslateResult, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { ProductDescription } from '../../types';
 
-const setProductDescription = ( slugs: ReadonlyArray< string >, description: ProductDescription ) =>
+const setProductDescription = (
+	slugs: ReadonlyArray< string >,
+	description: ProductDescription
+): Record< string, ProductDescription > =>
 	slugs.reduce( ( map, slug ) => ( { ...map, [ slug ]: description } ), {} );
 
 export const useIncludedProductDescriptionMap = ( productSlug: string ) => {
 	const translate = useTranslate();
 
-	return useMemo( () => {
+	return useMemo( (): Record< string, ProductDescription > => {
 		const backupDescription = translate(
 			'Real-time backups as you edit. {{span}}30-day{{/span}} activity log archive. Unlimited one-click restores.',
 			{
@@ -75,7 +78,7 @@ export const useIncludedProductDescriptionMap = ( productSlug: string ) => {
 			} ),
 		};
 
-		const INCLUDED_PRODUCT_DESCRIPTION_T1_MAP: Record< string, TranslateResult > = {
+		const INCLUDED_PRODUCT_DESCRIPTION_T1_MAP: Record< string, ProductDescription > = {
 			...setProductDescription(
 				[ PRODUCT_JETPACK_BACKUP_T1_YEARLY, PRODUCT_JETPACK_BACKUP_T1_MONTHLY ],
 				{
@@ -116,7 +119,7 @@ export const useIncludedProductDescriptionMap = ( productSlug: string ) => {
 			} ),
 		};
 
-		const INCLUDED_PRODUCT_DESCRIPTION_T2_MAP: Record< string, string > = {
+		const INCLUDED_PRODUCT_DESCRIPTION_T2_MAP: Record< string, ProductDescription > = {
 			...INCLUDED_PRODUCT_DESCRIPTION_T1_MAP,
 
 			...setProductDescription( JETPACK_ANTI_SPAM_PRODUCTS, {
