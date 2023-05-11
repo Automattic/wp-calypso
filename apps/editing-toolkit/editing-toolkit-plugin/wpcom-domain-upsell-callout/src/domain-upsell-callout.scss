@@ -1,16 +1,19 @@
 @import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@automattic/color-studio/dist/color-variables";
 
-.domain-upsell-callout {
+.wpcom-domain-upsell-callout {
 	font-size: $font-body-extra-small;
+	font-style: normal;
+	padding: 15px;
+	line-height: normal;
 	position: absolute;
-	z-index: 99998;
 	display: flex;
 	align-items: center;
 	left: 50%;
 	transform: translateX(-50%);
-
+	top: 0;
 	@media ( max-width: $break-xlarge ) {
 		display: none;
 	}
@@ -57,7 +60,7 @@
 		font-size: $font-body-extra-small;
 		white-space: nowrap;
 		text-decoration: underline;
-		color: #3858e9;
+		color: $studio-blue;
 	}
 
 	&__button:hover,
