@@ -309,6 +309,7 @@ export const HelpCenterContactForm = () => {
 					setShowHelpCenter( false );
 					setShowMessagingLauncher( true );
 					setShowMessagingWidget( true );
+					resetStore();
 					break;
 				}
 				break;
