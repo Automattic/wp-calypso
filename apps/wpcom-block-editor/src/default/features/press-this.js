@@ -3,7 +3,7 @@ import { dispatch } from '@wordpress/data';
 import { getQueryArgs } from '@wordpress/url';
 import { isEditorReady } from '../../utils';
 
-const { url, title, text, image, embed } = getQueryArgs( window.location.href );
+const { url, title, text, embed } = getQueryArgs( window.location.href );
 
 if ( url ) {
 	( async () => {
@@ -16,15 +16,6 @@ if ( url ) {
 
 		if ( embed ) {
 			blocks.push( createBlock( 'core/embed', { url: embed } ) );
-		}
-
-		if ( image ) {
-			blocks.push(
-				createBlock( 'core/image', {
-					url: image,
-					caption: text ? '' : link,
-				} )
-			);
 		}
 
 		if ( text ) {
