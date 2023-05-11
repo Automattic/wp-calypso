@@ -74,11 +74,10 @@ export default function SearchBar( props: Props ) {
 	const [ filterOption, setFilterOption ] = React.useState< string >( 'all' );
 
 	const onChangeFilter = ( filter: string ) => {
-		setSearchInput( null );
 		setSortOption( SORT_OPTIONS_DEFAULT );
 		setFilterOption( filter );
 		handleSetSearch( {
-			search: '',
+			search: searchInput || '',
 			filter: {
 				status: filter,
 			},
@@ -105,7 +104,7 @@ export default function SearchBar( props: Props ) {
 			},
 			order: {
 				orderBy: sort.value,
-				order: sort.value === 'post_title' ? 'ASC' : 'DESC',
+				order: sort.value === 'post_title' ? 'asc' : 'desc',
 			},
 		};
 
