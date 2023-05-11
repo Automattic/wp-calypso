@@ -15,11 +15,11 @@ const ACTIVE_STATUSES = [ 'New', 'Open', 'Hold' ];
  * NOTE: Chat mode isn't functional at the moment.
  */
 export function useHasActiveSupport( type: 'chat' | 'ticket', email: string, show = true ) {
-	return useQuery< Response | SupportSession | boolean >(
+	return useQuery(
 		[ 'help-support-history', type, email ],
 		() =>
 			canAccessWpcomApis()
-				? wpcomRequest( {
+				? wpcomRequest< Response >( {
 						path: `support-history/${ encodeURIComponent( type ) }`,
 						apiNamespace: 'wpcom/v2/',
 						apiVersion: '2',
@@ -37,8 +37,8 @@ export function useHasActiveSupport( type: 'chat' | 'ticket', email: string, sho
 			refetchOnMount: true,
 			enabled: show,
 			select: ( response ) => {
-				const recentSession = ( response as Response ).data[ 0 ];
-				return ACTIVE_STATUSES.includes( recentSession.status ) ? recentSession : false;
+				const recentSession = response.data[ 0 ];
+				return ACTIVE_STATUSES.includes( recentSession.status ) ? recentSession : null;
 			},
 			staleTime: 30 * 60 * 1000,
 		}
