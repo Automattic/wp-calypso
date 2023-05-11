@@ -1,7 +1,7 @@
 import { Card } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import classnames from 'classnames';
-import { localize } from 'i18n-calypso';
+import { localize, translate } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -39,6 +39,10 @@ class Profile extends Component {
 
 	toggleGravatarHidden = ( isHidden ) => {
 		this.props.setUserSetting( 'gravatar_profile_hidden', isHidden );
+	};
+
+	toggleIsDevAccount = ( isDevAccount ) => {
+		this.props.setUserSetting( 'is_dev_account', isDevAccount );
 	};
 
 	render() {
@@ -129,6 +133,26 @@ class Profile extends Component {
 								checked={ this.props.getSetting( 'gravatar_profile_hidden' ) }
 								onChange={ this.toggleGravatarHidden }
 								label={ <UpdatedGravatarString gravatarProfileLink={ gravatarProfileLink } /> }
+							/>
+						</FormFieldset>
+
+						<FormFieldset
+							className={ classnames( {
+								'profile__is_dev_account-fieldset-is-loading': this.props.isFetchingUserSettings,
+							} ) }
+						>
+							<ToggleControl
+								disabled={ this.props.isFetchingUserSettings }
+								checked={ this.props.getSetting( 'is_dev_account' ) }
+								onChange={ this.toggleIsDevAccount }
+								label={ translate(
+									'{{spanLead}}I am a developer.{{/spanLead}} Make my WordPress.com experience more powerful and grant me early access to developer features.',
+									{
+										components: {
+											spanLead: <strong />,
+										},
+									}
+								) }
 							/>
 						</FormFieldset>
 

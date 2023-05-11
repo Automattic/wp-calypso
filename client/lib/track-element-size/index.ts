@@ -2,7 +2,7 @@ import { throttle } from 'lodash';
 import { useRef, useEffect, useState } from 'react';
 import * as React from 'react';
 
-type NullableDOMRect = ClientRect | DOMRect | null;
+export type NullableDOMRect = ClientRect | DOMRect | null;
 type NullableElement = Element | null;
 
 export const THROTTLE_RATE = 200;

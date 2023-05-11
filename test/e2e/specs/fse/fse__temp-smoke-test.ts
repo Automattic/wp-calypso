@@ -24,12 +24,44 @@ declare const browser: Browser;
  * The goal here is to catch major breaks with the integration -- i.e. Calypso navigation no long working,
  * or getting a WSOD when trying to load the editor.
  */
+
 describe( DataHelper.createSuiteTitle( 'Site Editor Smoke Test' ), function () {
 	let page: Page;
 	let fullSiteEditorPage: FullSiteEditorPage;
 
 	const features = envToFeatureKey( envVariables );
-	const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' } );
+	const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' }, [
+		// None of our CoBlocks users use block themes, so we need to fall back to the default Gutenberg users
+		// if COBLOCKS_EDGE is set.
+		{
+			gutenberg: 'stable',
+			coblocks: 'edge',
+			siteType: 'simple',
+			variant: 'siteEditor',
+			accountName: 'siteEditorSimpleSiteUser',
+		},
+		{
+			gutenberg: 'edge',
+			coblocks: 'edge',
+			siteType: 'simple',
+			variant: 'siteEditor',
+			accountName: 'siteEditorSimpleSiteEdgeUser',
+		},
+		{
+			gutenberg: 'stable',
+			coblocks: 'edge',
+			siteType: 'atomic',
+			variant: 'siteEditor',
+			accountName: 'siteEditorAtomicSiteUser',
+		},
+		{
+			gutenberg: 'edge',
+			coblocks: 'edge',
+			siteType: 'atomic',
+			variant: 'siteEditor',
+			accountName: 'siteEditorAtomicSiteEdgeUser',
+		},
+	] );
 
 	beforeAll( async () => {
 		page = await browser.newPage();

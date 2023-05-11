@@ -55,6 +55,7 @@ import { translateResponseCartToWPCOMCart } from '../lib/translate-cart';
 import weChatProcessor from '../lib/we-chat-processor';
 import webPayProcessor from '../lib/web-pay-processor';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
+import { CheckoutLoadingPlaceholder } from './checkout-loading-placeholder';
 import WPCheckout from './wp-checkout';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
@@ -493,26 +494,34 @@ export default function CheckoutMain( {
 	const theme = { ...checkoutTheme, colors: { ...checkoutTheme.colors, ...jetpackColors } };
 
 	// This variable determines if we see the loading page or if checkout can
-	// render its steps. Note that this does not prevent everything inside
-	// `CheckoutProvider` from rendering, only everything inside
-	// `CheckoutStepGroup`. This is because this variable is used to set the
-	// `FormStatus` to `FormStatus::LOADING`. Be careful what you add to this
-	// variable because it will slow down checkout's load time.
-	const isCheckoutPageLoading: boolean =
-		isInitialCartLoading ||
-		arePaymentMethodsLoading ||
-		paymentMethods.length < 1 ||
-		responseCart.products.length < 1 ||
-		countriesList.length < 1;
+	// render its steps.
+	//
+	// Note that this does not prevent everything inside `CheckoutProvider` from
+	// rendering, only everything inside `CheckoutStepGroup`. This is because
+	// this variable is used to set the `FormStatus` to `FormStatus::LOADING`.
+	//
+	// These conditions do not need to be true if the cart is empty. The empty
+	// cart page will show itself based on `shouldShowEmptyCartPage()` which has
+	// its own set of conditions and is not affected by this list.
+	//
+	// Be careful what you add to this variable because it will slow down
+	// checkout's apparent load time. If something can be loaded async inside
+	// checkout, do that instead.
+	const checkoutLoadingConditions: Array< { name: string; isLoading: boolean } > = [
+		{ name: translate( 'Loading cart' ), isLoading: isInitialCartLoading },
+		{ name: translate( 'Loading saved payment methods' ), isLoading: arePaymentMethodsLoading },
+		{ name: translate( 'Initializing payment methods' ), isLoading: paymentMethods.length < 1 },
+		{
+			name: translate( 'Preparing products for cart' ),
+			isLoading: responseCart.products.length < 1,
+		},
+		{ name: translate( 'Loading countries list' ), isLoading: countriesList.length < 1 },
+	];
+	const isCheckoutPageLoading: boolean = checkoutLoadingConditions.some(
+		( condition ) => condition.isLoading
+	);
 	if ( isCheckoutPageLoading ) {
-		debug( 'still loading because one of these is true', {
-			isInitialCartLoading,
-			...( allowedPaymentMethods.includes( 'card' ) ? { isLoadingStoredCards } : {} ),
-			paymentMethods: paymentMethods.length < 1,
-			arePaymentMethodsLoading: arePaymentMethodsLoading,
-			items: responseCart.products.length < 1,
-			countriesList: countriesList.length < 1,
-		} );
+		debug( 'still loading because one of these is true', checkoutLoadingConditions );
 	} else {
 		debug( 'no longer loading' );
 	}
@@ -713,6 +722,9 @@ export default function CheckoutMain( {
 				selectFirstAvailablePaymentMethod
 			>
 				<WPCheckout
+					loadingContent={
+						<CheckoutLoadingPlaceholder checkoutLoadingConditions={ checkoutLoadingConditions } />
+					}
 					useVariantPickerRadioButtons={ useVariantPickerRadioButtons }
 					customizedPreviousPath={ customizedPreviousPath }
 					isRemovingProductFromCart={ isRemovingProductFromCart }

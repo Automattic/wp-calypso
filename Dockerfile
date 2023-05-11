@@ -20,6 +20,9 @@ ENV GENERATE_CACHE_IMAGE $generate_cache_image
 ###################
 FROM builder-cache-${use_cache} as builder
 
+# Make sure shell options, like pipefail, are set for the build.
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
 # Information for Sentry Releases.
 ARG manual_sentry_release=false
 ARG is_default_branch=false

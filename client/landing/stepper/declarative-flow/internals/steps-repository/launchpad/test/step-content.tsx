@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import { useLaunchpad } from '@automattic/data-stores';
 import { NEWSLETTER_FLOW, START_WRITING_FLOW } from '@automattic/onboarding';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
@@ -15,7 +14,14 @@ import { setStore } from 'calypso/state/redux-store';
 import StepContent from '../step-content';
 import { defaultSiteDetails } from './lib/fixtures';
 
-const mockSite = defaultSiteDetails;
+const mockSite = {
+	...defaultSiteDetails,
+	options: {
+		...defaultSiteDetails.options,
+		site_intent: 'newsletter',
+	},
+};
+
 const siteSlug = 'testlinkinbio.wordpress.com';
 
 const stepContentProps = {
@@ -26,13 +32,6 @@ const stepContentProps = {
 	goToStep: () => {},
 	/* eslint-enable @typescript-eslint/no-empty-function */
 };
-
-jest.mock( '@automattic/data-stores', () => ( {
-	...jest.requireActual( '@automattic/data-stores' ),
-	useLaunchpad: jest.fn().mockReturnValue( {
-		data: { site_intent: 'newsletter' },
-	} ),
-} ) );
 
 jest.mock( 'calypso/landing/stepper/hooks/use-site', () => ( {
 	useSite: () => ( {
@@ -50,8 +49,9 @@ jest.mock( 'react-router-dom', () => ( {
 	} ) ),
 } ) );
 
-jest.mock( 'calypso/../packages/help-center/src/hooks/use-launchpad-checklist', () => ( {
-	useLaunchpadChecklist: ( siteSlug, siteIntentOption ) => {
+jest.mock( '@automattic/data-stores', () => ( {
+	...jest.requireActual( '@automattic/data-stores' ),
+	useLaunchpad: ( siteSlug, siteIntentOption ) => {
 		let checklist = [
 			{
 				id: 'setup_newsletter',
@@ -101,7 +101,10 @@ jest.mock( 'calypso/../packages/help-center/src/hooks/use-launchpad-checklist', 
 		}
 
 		return {
-			data: { checklist },
+			data: {
+				site_intent: siteIntentOption,
+				checklist,
+			},
 			isFetchedAfterMount: true,
 		};
 	},
@@ -193,7 +196,7 @@ describe( 'StepContent', () => {
 			expect( choosePlanListItem ).toHaveClass( 'completed' );
 			expect( addSubscribersListItem ).toHaveClass( 'completed' );
 			expect( confirmEmailListItem ).toHaveClass( 'pending' );
-			expect( firstPostListItem ).toHaveClass( 'pending' );
+			expect( firstPostListItem ).toHaveClass( 'completed' );
 		} );
 
 		it( 'renders skip to dashboard link', () => {
@@ -220,12 +223,18 @@ describe( 'StepContent', () => {
 		} );
 
 		it( 'renders correct sidebar tasks', () => {
-			// Change the useLaunchpad hook to return a free site.
-			( useLaunchpad as jest.Mock ).mockReturnValueOnce( {
-				data: {
+			const mockStartWritingSite = {
+				...mockSite,
+				options: {
+					...mockSite.options,
 					site_intent: 'start-writing',
 				},
-			} );
+			};
+			jest.mock( 'calypso/landing/stepper/hooks/use-site', () => ( {
+				useSite: () => ( {
+					site: mockStartWritingSite,
+				} ),
+			} ) );
 			renderStepContent( false, START_WRITING_FLOW );
 
 			expect( screen.getByText( 'Write your first post' ) ).toBeInTheDocument();
