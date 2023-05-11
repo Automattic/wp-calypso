@@ -29,7 +29,7 @@ export function useSibylQuery( query: string, isJetpackSite: boolean, isAtomic: 
 				  } as APIFetchOptions ) ) as SupportArticleResult[] ),
 		{
 			refetchOnWindowFocus: false,
-			keepPreviousData: false,
+			keepPreviousData: true,
 			enabled: !! query,
 		}
 	);
