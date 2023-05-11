@@ -4,7 +4,7 @@ export interface Task {
 	disabled: boolean;
 	title?: string;
 	subtitle?: string;
-	badgeText?: string;
+	badge_text?: string;
 	actionDispatch?: () => void;
 	isLaunchTask?: boolean;
 	warning?: boolean;
@@ -31,6 +31,7 @@ export interface LaunchpadStatuses {
 	video_uploaded?: boolean;
 	publish_first_course?: boolean;
 	plan_selected?: boolean;
+	plan_completed?: boolean;
 	domain_upsell_deferred?: boolean;
 }
 

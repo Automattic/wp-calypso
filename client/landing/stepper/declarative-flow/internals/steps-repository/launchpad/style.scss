@@ -211,6 +211,7 @@
 		align-items: center;
 		flex-grow: 1;
 		width: 0;
+		margin-right: 6px;
 	}
 
 	.launchpad__url-box-domain-text {
@@ -218,21 +219,20 @@
 		white-space: nowrap;
 		overflow: hidden;
 		padding: 4px 0;
-		padding-right: 8px;
+		padding-right: 6px;
 		letter-spacing: -0.24px;
 		font-size: $font-body-small;
 	}
 
-	.launchpad__url-box-domain:hover > .launchpad__clipboard-button {
-		opacity: 1;
-	}
-
-	.launchpad__clipboard-button:focus {
-		opacity: 1;
-	}
-
 	.launchpad__clipboard-button {
 		opacity: 0;
+		margin-top: 2px;
+		flex-shrink: 0;
+	}
+
+	.launchpad__url-box-domain:hover > .launchpad__clipboard-button,
+	.launchpad__clipboard-button:focus {
+		opacity: 1;
 	}
 }
 
@@ -334,6 +334,26 @@
 	width: 100%;
 	margin: 0;
 	color: var(--color-text);
+
+	&.is-placeholder {
+		padding: 16px 0 16px 0;
+	}
+}
+
+.launchpad__checklist-item-content {
+	width: 100%;
+
+	.is-placeholder & {
+		animation: loading-fade 1.6s ease-in-out infinite;
+		background-color: var(--color-neutral-light);
+		color: transparent;
+		min-height: 44px;
+	}
+	> div {
+		.is-placeholder & {
+			color: transparent;
+		}
+	}
 }
 
 .button.launchpad__checklist-item:hover:not([disabled]),
@@ -520,13 +540,6 @@
 		@include break-large {
 			margin: 0 auto;
 		}
-
-		.web-preview__frame-edit-overlay {
-			@include break-large {
-				border-radius: 40px; /* stylelint-disable-line scales/radii */
-			}
-		}
-
 	}
 
 	.web-preview__frame-wrapper.is-resizable {
@@ -535,36 +548,6 @@
 		padding: 0;
 		background-color: transparent;
 		position: relative;
-
-
-		.web-preview__frame-edit-overlay {
-			position: absolute;
-			top: 0;
-			left: 0;
-			right: 0;
-			bottom: 0;
-			border-radius: 40px;  /* stylelint-disable-line scales/radii */
-
-			display: flex;
-			justify-content: center;
-			align-items: center;
-
-			@include break-large {
-				border-radius: 20px; /* stylelint-disable-line scales/radii */
-			}
-
-			.web-preview__frame-edit-button {
-				font-size: 14px;  /* stylelint-disable-line declaration-property-unit-allowed-list */
-				line-height: 20px;
-				padding: 10px 24px;
-				color: #000;
-				background: #fff;
-				border-radius: 4px;
-				border-color: #c3c4c7;
-				border-width: 2px;
-				cursor: pointer;
-			}
-		}
 	}
 
 	.web-preview__frame {
@@ -590,8 +573,6 @@
 	.spinner-line {
 		display: none;
 	}
-
-
 }
 
 // Launchpad - Processing Screens
@@ -606,8 +587,8 @@
 		height: 100%;
 		background-color: #d0cce3;
 		background-image:
-			url(calypso/assets/images/onboarding/link-in-bio-processing-left.png),
-			url(calypso/assets/images/onboarding/link-in-bio-processing-right.png);
+			url(calypso/assets/images/onboarding/link-in-bio-processing-left.webp),
+			url(calypso/assets/images/onboarding/link-in-bio-processing-right.webp);
 		background-repeat: no-repeat, no-repeat;
 		background-attachment: fixed;
 		background-size: auto 30%, auto 30%;
@@ -617,8 +598,8 @@
 		@include break-huge {
 			background-size: auto 50%, auto 50%;
 			background-image:
-				url(calypso/assets/images/onboarding/link-in-bio-processing-left-desktop.png),
-				url(calypso/assets/images/onboarding/link-in-bio-processing-right-desktop.png);
+				url(calypso/assets/images/onboarding/link-in-bio-processing-left-desktop.webp),
+				url(calypso/assets/images/onboarding/link-in-bio-processing-right-desktop.webp);
 		}
 	}
 

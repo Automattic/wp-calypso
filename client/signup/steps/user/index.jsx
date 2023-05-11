@@ -140,22 +140,10 @@ export class UserStep extends Component {
 		}
 	}
 
-	getSubHeaderText() {
-		const {
-			flowName,
-			oauth2Client,
-			positionInFlow,
-			translate,
-			userLoggedIn,
-			wccomFrom,
-			isReskinned,
-			sectionName,
-			from,
-			locale,
-		} = this.props;
+	getLoginUrl() {
+		const { oauth2Client, wccomFrom, isReskinned, sectionName, from, locale } = this.props;
 
-		let subHeaderText = this.props.subHeaderText;
-		const loginUrl = login( {
+		return login( {
 			isJetpack: 'jetpack-connect' === sectionName,
 			from,
 			redirectTo: getRedirectToAfterLoginUrl( this.props ),
@@ -165,6 +153,21 @@ export class UserStep extends Component {
 			isWhiteLogin: isReskinned,
 			signupUrl: window.location.pathname + window.location.search,
 		} );
+	}
+
+	getSubHeaderText() {
+		const {
+			flowName,
+			oauth2Client,
+			positionInFlow,
+			translate,
+			userLoggedIn,
+			wccomFrom,
+			isReskinned,
+		} = this.props;
+
+		let subHeaderText = this.props.subHeaderText;
+		const loginUrl = this.getLoginUrl();
 
 		if ( [ 'wpcc', 'crowdsignal' ].includes( flowName ) && oauth2Client ) {
 			if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
@@ -393,8 +396,12 @@ export class UserStep extends Component {
 	getHeaderText() {
 		const { flowName, oauth2Client, translate, headerText, wccomFrom } = this.props;
 
-		if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
-			return translate( 'Sign up for Crowdsignal' );
+		if ( isCrowdsignalOAuth2Client( oauth2Client ) || isGravatarOAuth2Client( oauth2Client ) ) {
+			return translate( 'Sign up for %(clientTitle)s', {
+				args: { clientTitle: oauth2Client.title },
+				comment:
+					"'clientTitle' is the name of the app that uses WordPress.com Connect (e.g. 'Crowdsignal' or 'Gravatar')",
+			} );
 		}
 
 		if ( isWooOAuth2Client( oauth2Client ) ) {
@@ -460,8 +467,9 @@ export class UserStep extends Component {
 		let socialService;
 		let socialServiceResponse;
 		let isSocialSignupEnabled = this.props.isSocialSignupEnabled;
+		const isGravatar = isGravatarOAuth2Client( oauth2Client );
 
-		if ( isWooOAuth2Client( oauth2Client ) || isGravatarOAuth2Client( oauth2Client ) ) {
+		if ( isWooOAuth2Client( oauth2Client ) || isGravatar ) {
 			isSocialSignupEnabled = true;
 		}
 
@@ -495,6 +503,7 @@ export class UserStep extends Component {
 					horizontal={ isReskinned }
 					isReskinned={ isReskinned }
 					shouldDisplayUserExistsError={ ! isWooOAuth2Client( oauth2Client ) }
+					loginUrl={ isGravatar ? this.getLoginUrl() : undefined }
 				/>
 				<div id="g-recaptcha"></div>
 			</>

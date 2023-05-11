@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { Modal, ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -10,7 +11,9 @@ import {
 	getSiteCountText,
 	mobileAppLink,
 } from '../../sites-overview/utils';
-import type { MonitorSettings, Site } from '../../sites-overview/types';
+import ConfigureEmailNotification from '../configure-email-notification';
+import AddNewEmailModal from '../configure-email-notification/add-new-email-modal';
+import type { MonitorSettings, Site, MonitorSettingsEmail } from '../../sites-overview/types';
 
 import './style.scss';
 
@@ -22,6 +25,11 @@ interface Props {
 	settings?: MonitorSettings;
 	monitorUserEmails?: Array< string >;
 	isLargeScreen?: boolean;
+}
+
+interface StateEmailItem extends MonitorSettingsEmail {
+	checked: boolean;
+	isDefault?: boolean;
 }
 
 export default function NotificationSettings( {
@@ -42,8 +50,16 @@ export default function NotificationSettings( {
 	const [ selectedDuration, setSelectedDuration ] = useState< Duration | undefined >(
 		defaultDuration
 	);
-	const [ addedEmailAddresses, setAddedEmailAddresses ] = useState< string[] | [] >( [] );
+	const [ defaultUserEmailAddresses, setDefaultUserEmailAddresses ] = useState< string[] | [] >(
+		[]
+	);
+	const [ allEmailItems, setAllEmailItems ] = useState< StateEmailItem[] | [] >( [] );
 	const [ validationError, setValidationError ] = useState< string >( '' );
+	const [ isAddEmailModalOpen, setIsAddEmailModalOpen ] = useState< boolean >( false );
+
+	const toggleAddEmailModal = () => {
+		setIsAddEmailModalOpen( ( isAddEmailModalOpen ) => ! isAddEmailModalOpen );
+	};
 
 	function onSave( event: React.FormEvent< HTMLFormElement > ) {
 		event.preventDefault();
@@ -75,7 +91,7 @@ export default function NotificationSettings( {
 
 	useEffect( () => {
 		if ( settings ) {
-			setAddedEmailAddresses( settings.monitor_user_emails || [] );
+			setDefaultUserEmailAddresses( settings.monitor_user_emails || [] );
 			setEnableEmailNotification( !! settings.monitor_user_email_notifications );
 			setEnableMobileNotification( !! settings.monitor_user_wp_note_notifications );
 		}
@@ -83,7 +99,7 @@ export default function NotificationSettings( {
 
 	useEffect( () => {
 		if ( monitorUserEmails ) {
-			setAddedEmailAddresses( monitorUserEmails );
+			setDefaultUserEmailAddresses( monitorUserEmails );
 		}
 	}, [ monitorUserEmails ] );
 
@@ -98,6 +114,14 @@ export default function NotificationSettings( {
 			onClose();
 		}
 	}, [ isComplete, onClose ] );
+
+	const isMultipleEmailEnabled = isEnabled(
+		'jetpack/pro-dashboard-monitor-multiple-email-recipients'
+	);
+
+	if ( isAddEmailModalOpen ) {
+		return <AddNewEmailModal toggleModal={ toggleAddEmailModal } />;
+	}
 
 	return (
 		<Modal
@@ -186,11 +210,27 @@ export default function NotificationSettings( {
 						</div>
 						<div className="notification-settings__toggle-content">
 							<div className="notification-settings__content-heading">{ translate( 'Email' ) }</div>
-							<div className="notification-settings__content-sub-heading">
-								{ translate( 'Receive email notifications with your account email address %s.', {
-									args: addedEmailAddresses,
-								} ) }
-							</div>
+							{ isMultipleEmailEnabled ? (
+								<>
+									<div className="notification-settings__content-sub-heading">
+										{ translate( 'Receive email notifications with one or more recipients.' ) }
+									</div>
+									{ enableEmailNotification && (
+										<ConfigureEmailNotification
+											defaultEmailAddresses={ defaultUserEmailAddresses }
+											toggleModal={ toggleAddEmailModal }
+											setAllEmailItems={ setAllEmailItems }
+											allEmailItems={ allEmailItems }
+										/>
+									) }
+								</>
+							) : (
+								<div className="notification-settings__content-sub-heading">
+									{ translate( 'Receive email notifications with your account email address %s.', {
+										args: defaultUserEmailAddresses,
+									} ) }
+								</div>
+							) }
 						</div>
 					</div>
 				</div>

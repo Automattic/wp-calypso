@@ -1,4 +1,9 @@
-import { LINK_IN_BIO_DOMAIN_FLOW, START_WRITING_FLOW } from '@automattic/onboarding';
+import {
+	LINK_IN_BIO_DOMAIN_FLOW,
+	START_WRITING_FLOW,
+	CONNECT_DOMAIN_FLOW,
+	HOSTING_SITE_CREATION_FLOW,
+} from '@automattic/onboarding';
 import type { Flow } from '../declarative-flow/internals/types';
 
 const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
@@ -74,6 +79,14 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	[ START_WRITING_FLOW ]: () =>
 		import( /* webpackChunkName: "start-writing-flow" */ './start-writing' ),
+
+	[ CONNECT_DOMAIN_FLOW ]: () =>
+		import( /* webpackChunkName: "connect-domain" */ '../declarative-flow/connect-domain' ),
+
+	[ HOSTING_SITE_CREATION_FLOW ]: () =>
+		import(
+			/* webpackChunkName: "hosting-site-creation-flow" */ '../declarative-flow/hosting-site-creation-flow'
+		),
 };
 
 availableFlows[ 'plugin-bundle' ] = () =>

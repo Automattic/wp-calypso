@@ -1,7 +1,7 @@
 import { Card } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import classnames from 'classnames';
-import { localize } from 'i18n-calypso';
+import { localize, translate } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -18,10 +18,10 @@ import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { protectForm } from 'calypso/lib/protect-form';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import DomainUpsell from 'calypso/me/domain-upsell';
 import withFormBase from 'calypso/me/form-base/with-form-base';
 import ProfileLinks from 'calypso/me/profile-links';
 import ReauthRequired from 'calypso/me/reauth-required';
-import DomainUpsell from 'calypso/my-sites/customer-home/cards/features/domain-upsell';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 import UpdatedGravatarString from './updated-gravatar-string';
@@ -39,6 +39,10 @@ class Profile extends Component {
 
 	toggleGravatarHidden = ( isHidden ) => {
 		this.props.setUserSetting( 'gravatar_profile_hidden', isHidden );
+	};
+
+	toggleIsDevAccount = ( isDevAccount ) => {
+		this.props.setUserSetting( 'is_dev_account', isDevAccount );
 	};
 
 	render() {
@@ -129,6 +133,26 @@ class Profile extends Component {
 								checked={ this.props.getSetting( 'gravatar_profile_hidden' ) }
 								onChange={ this.toggleGravatarHidden }
 								label={ <UpdatedGravatarString gravatarProfileLink={ gravatarProfileLink } /> }
+							/>
+						</FormFieldset>
+
+						<FormFieldset
+							className={ classnames( {
+								'profile__is_dev_account-fieldset-is-loading': this.props.isFetchingUserSettings,
+							} ) }
+						>
+							<ToggleControl
+								disabled={ this.props.isFetchingUserSettings }
+								checked={ this.props.getSetting( 'is_dev_account' ) }
+								onChange={ this.toggleIsDevAccount }
+								label={ translate(
+									'{{spanLead}}I am a developer.{{/spanLead}} Make my WordPress.com experience more powerful and grant me early access to developer features.',
+									{
+										components: {
+											spanLead: <strong />,
+										},
+									}
+								) }
 							/>
 						</FormFieldset>
 

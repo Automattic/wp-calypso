@@ -288,7 +288,13 @@ const AdvancedCredentials: FunctionComponent< Props > = ( {
 				</Button>
 			) }
 			{ isAlternate && goBackPath !== '' && (
-				<Button disabled={ disableForm } href={ goBackPath }>
+				<Button
+					disabled={ disableForm }
+					href={ goBackPath }
+					onClick={ () => {
+						dispatch( recordTracksEvent( 'calypso_jetpack_advanced_credentials_go_back' ) );
+					} }
+				>
 					{ translate( 'Go back' ) }
 				</Button>
 			) }

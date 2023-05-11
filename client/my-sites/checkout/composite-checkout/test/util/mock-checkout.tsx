@@ -12,18 +12,16 @@ import {
 	mockSetCartEndpointWith,
 	createTestReduxStore,
 } from './index';
-import type { CartKey, SetCart, ResponseCart } from '@automattic/shopping-cart';
+import type { SetCart, ResponseCart } from '@automattic/shopping-cart';
 
 export function MockCheckout( {
 	initialCart,
-	mainCartKey,
 	cartChanges,
 	additionalProps,
 	setCart,
 	useUndefinedSiteId,
 }: {
 	initialCart: ResponseCart;
-	mainCartKey: CartKey;
 	cartChanges?: Partial< ResponseCart >;
 	additionalProps?: Partial< PropsOf< typeof CheckoutMain > >;
 	setCart?: SetCart;
@@ -43,12 +41,7 @@ export function MockCheckout( {
 	return (
 		<ReduxProvider store={ reduxStore }>
 			<QueryClientProvider client={ queryClient }>
-				<ShoppingCartProvider
-					managerClient={ managerClient }
-					options={ {
-						defaultCartKey: mainCartKey,
-					} }
-				>
+				<ShoppingCartProvider managerClient={ managerClient }>
 					<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
 						<CheckoutMain
 							siteId={ useUndefinedSiteId ? undefined : siteId }

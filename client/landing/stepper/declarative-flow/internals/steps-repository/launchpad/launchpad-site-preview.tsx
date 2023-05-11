@@ -5,7 +5,6 @@ import {
 	NEWSLETTER_FLOW,
 	BUILD_FLOW,
 	WRITE_FLOW,
-	isNewsletterFlow,
 	START_WRITING_FLOW,
 } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
@@ -29,7 +28,6 @@ const LaunchpadSitePreview = ( {
 	const site = useSite();
 	const { globalStylesInUse } = usePremiumGlobalStyles( site?.ID );
 	const isInVideoPressFlow = isVideoPressFlow( flow );
-	const enableEditOverlay = ! isNewsletterFlow( flow );
 
 	let previewUrl = siteSlug ? 'https://' + siteSlug : null;
 	const devicesToShow: Device[] = [ DEVICE_TYPES.COMPUTER, DEVICE_TYPES.PHONE ];
@@ -116,7 +114,6 @@ const LaunchpadSitePreview = ( {
 				defaultViewportDevice={ defaultDevice }
 				devicesToShow={ devicesToShow }
 				showSiteAddressBar={ false }
-				enableEditOverlay={ enableEditOverlay }
 			/>
 		</div>
 	);

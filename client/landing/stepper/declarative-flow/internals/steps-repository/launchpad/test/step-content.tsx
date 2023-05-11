@@ -14,7 +14,14 @@ import { setStore } from 'calypso/state/redux-store';
 import StepContent from '../step-content';
 import { defaultSiteDetails } from './lib/fixtures';
 
-const mockSite = defaultSiteDetails;
+const mockSite = {
+	...defaultSiteDetails,
+	options: {
+		...defaultSiteDetails.options,
+		site_intent: 'newsletter',
+	},
+};
+
 const siteSlug = 'testlinkinbio.wordpress.com';
 
 const stepContentProps = {
@@ -40,6 +47,67 @@ jest.mock( 'react-router-dom', () => ( {
 		hash: '',
 		state: undefined,
 	} ) ),
+} ) );
+
+jest.mock( '@automattic/data-stores', () => ( {
+	...jest.requireActual( '@automattic/data-stores' ),
+	useLaunchpad: ( siteSlug, siteIntentOption ) => {
+		let checklist = [
+			{
+				id: 'setup_newsletter',
+				completed: true,
+				disabled: false,
+				title: 'Personalize newsletter',
+			},
+			{ id: 'plan_selected', completed: true, disabled: false, title: 'Choose a plan' },
+			{ id: 'subscribers_added', completed: true, disabled: true, title: 'Add subscribers' },
+			{
+				id: 'verify_email',
+				completed: true,
+				disabled: true,
+				title: 'Confirm email (check your inbox)',
+			},
+			{
+				id: 'first_post_published_newsletter',
+				completed: true,
+				disabled: true,
+				title: 'Start writing',
+			},
+		];
+
+		if ( siteIntentOption === 'start-writing' ) {
+			checklist = [
+				{
+					id: 'first_post_published',
+					completed: true,
+					disabled: false,
+					title: 'Write your first post',
+				},
+				{ id: 'setup_free', completed: true, disabled: false, title: 'Choose a plan' },
+				{ id: 'domain_upsell', completed: false, disabled: false, title: 'Choose a domain' },
+				{
+					id: 'plan_selected',
+					completed: false,
+					disabled: false,
+					title: 'Choose a plan',
+				},
+				{
+					id: 'blog_launched',
+					completed: false,
+					disabled: false,
+					title: 'Launch your blog',
+				},
+			];
+		}
+
+		return {
+			data: {
+				site_intent: siteIntentOption,
+				checklist,
+			},
+			isFetchedAfterMount: true,
+		};
+	},
 } ) );
 
 const user = {
@@ -128,7 +196,7 @@ describe( 'StepContent', () => {
 			expect( choosePlanListItem ).toHaveClass( 'completed' );
 			expect( addSubscribersListItem ).toHaveClass( 'completed' );
 			expect( confirmEmailListItem ).toHaveClass( 'pending' );
-			expect( firstPostListItem ).toHaveClass( 'pending' );
+			expect( firstPostListItem ).toHaveClass( 'completed' );
 		} );
 
 		it( 'renders skip to dashboard link', () => {
@@ -155,9 +223,22 @@ describe( 'StepContent', () => {
 		} );
 
 		it( 'renders correct sidebar tasks', () => {
+			const mockStartWritingSite = {
+				...mockSite,
+				options: {
+					...mockSite.options,
+					site_intent: 'start-writing',
+				},
+			};
+			jest.mock( 'calypso/landing/stepper/hooks/use-site', () => ( {
+				useSite: () => ( {
+					site: mockStartWritingSite,
+				} ),
+			} ) );
 			renderStepContent( false, START_WRITING_FLOW );
 
 			expect( screen.getByText( 'Write your first post' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Set up your blog' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Choose a domain' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Choose a plan' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Launch your blog' ) ).toBeInTheDocument();
@@ -165,6 +246,9 @@ describe( 'StepContent', () => {
 
 		it( 'renders correct status for each task', () => {
 			renderStepContent( false, START_WRITING_FLOW );
+
+			const setupBlogListItem = screen.getByText( 'Set up your blog' ).closest( 'li' );
+			expect( setupBlogListItem ).toHaveClass( 'pending' );
 
 			const choosePlanListItem = screen.getByText( 'Choose a plan' ).closest( 'li' );
 			expect( choosePlanListItem ).toHaveClass( 'pending' );

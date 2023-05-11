@@ -170,7 +170,7 @@ class DomainRow extends PureComponent {
 					args: { expiryDate: expiryDate.format( 'LL' ) },
 				} );
 			} else {
-				extraInfo = translate( 'Expired' );
+				extraInfo = translate( 'Expired', { context: 'domain status' } );
 			}
 		} else if ( domain.isAutoRenewing && domain.autoRenewalDate ) {
 			extraInfo = translate( 'Renews on %(renewalDate)s', {

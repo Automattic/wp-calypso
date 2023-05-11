@@ -21,7 +21,7 @@ const useDeliveryFrequencyLabel = ( deliveryFrequencyValue: SiteSubscriptionDeli
 		[ translate ]
 	);
 
-	return deliveryFrequencyLabels[ deliveryFrequencyValue ];
+	return deliveryFrequencyLabels[ deliveryFrequencyValue ] || translate( 'Paused' );
 };
 
 export default function SiteRow( {
@@ -39,15 +39,50 @@ export default function SiteRow( {
 		}
 		return <Gridicon className="icon" icon="globe" size={ 48 } />;
 	}, [ site_icon, name ] );
+	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
+	const translate = useTranslate();
+
+	const notifyMeOfNewPosts = useMemo(
+		() => delivery_methods?.notification?.send_posts,
+		[ delivery_methods?.notification?.send_posts ]
+	);
+
+	const emailMeNewPosts = useMemo(
+		() => delivery_methods?.email?.send_posts,
+		[ delivery_methods?.email?.send_posts ]
+	);
 
 	const deliveryFrequencyValue = useMemo(
 		() => delivery_methods?.email?.post_delivery_frequency as SiteSubscriptionDeliveryFrequency,
 		[ delivery_methods?.email?.post_delivery_frequency ]
 	);
+
+	const emailMeNewComments = useMemo(
+		() => delivery_methods?.email?.send_comments,
+		[ delivery_methods?.email?.send_comments ]
+	);
+
+	const newPostDelivery = useMemo( () => {
+		const emailDelivery = delivery_methods?.email?.send_posts ? translate( 'Email' ) : null;
+		const notificationDelivery = delivery_methods?.notification?.send_posts
+			? translate( 'Notifications' )
+			: null;
+		return [ emailDelivery, notificationDelivery ].filter( Boolean ).join( ', ' );
+	}, [ delivery_methods?.email?.send_posts, delivery_methods?.notification?.send_posts ] );
+	const newCommentDelivery = useMemo(
+		() => delivery_methods?.email?.send_comments,
+		[ delivery_methods?.email?.send_comments ]
+	);
 	const deliveryFrequencyLabel = useDeliveryFrequencyLabel( deliveryFrequencyValue );
 
+	const { mutate: updateNotifyMeOfNewPosts, isLoading: updatingNotifyMeOfNewPosts } =
+		SubscriptionManager.useSiteNotifyMeOfNewPostsMutation();
+	const { mutate: updateEmailMeNewPosts, isLoading: updatingEmailMeNewPosts } =
+		SubscriptionManager.useSiteEmailMeNewPostsMutation();
 	const { mutate: updateDeliveryFrequency, isLoading: updatingFrequency } =
 		SubscriptionManager.useSiteDeliveryFrequencyMutation();
+	const { mutate: updateEmailMeNewComments, isLoading: updatingEmailMeNewComments } =
+		SubscriptionManager.useSiteEmailMeNewCommentsMutation();
 	const { mutate: unsubscribe, isLoading: unsubscribing } =
 		SubscriptionManager.useSiteUnsubscribeMutation();
 
@@ -63,19 +98,53 @@ export default function SiteRow( {
 				</span>
 			</a>
 			<span className="date" role="cell">
-				<TimeSince date={ date_subscribed.toISOString?.() ?? date_subscribed } />
+				<TimeSince
+					date={
+						( date_subscribed.valueOf() ? date_subscribed : new Date( 0 ) ).toISOString?.() ??
+						date_subscribed
+					}
+				/>
 			</span>
+			{ isLoggedIn && (
+				<span className="new-posts" role="cell">
+					{ newPostDelivery }
+				</span>
+			) }
+			{ isLoggedIn && (
+				<span className="new-comments" role="cell">
+					{ newCommentDelivery ? (
+						<Gridicon icon="checkmark" size={ 16 } className="green" />
+					) : (
+						<Gridicon icon="cross" size={ 16 } className="red" />
+					) }
+				</span>
+			) }
 			<span className="email-frequency" role="cell">
 				{ deliveryFrequencyLabel }
 			</span>
 			<span className="actions" role="cell">
 				<SiteSettings
+					notifyMeOfNewPosts={ notifyMeOfNewPosts }
+					onNotifyMeOfNewPostsChange={ ( send_posts ) =>
+						updateNotifyMeOfNewPosts( { blog_id: blog_ID, send_posts } )
+					}
+					updatingNotifyMeOfNewPosts={ updatingNotifyMeOfNewPosts }
+					emailMeNewPosts={ emailMeNewPosts }
+					updatingEmailMeNewPosts={ updatingEmailMeNewPosts }
+					onEmailMeNewPostsChange={ ( send_posts ) =>
+						updateEmailMeNewPosts( { blog_id: blog_ID, send_posts } )
+					}
 					deliveryFrequency={ deliveryFrequencyValue }
 					onDeliveryFrequencyChange={ ( delivery_frequency ) =>
 						updateDeliveryFrequency( { blog_id: blog_ID, delivery_frequency } )
 					}
 					updatingFrequency={ updatingFrequency }
-					onUnsubscribe={ () => unsubscribe( { blog_id: blog_ID } ) }
+					emailMeNewComments={ emailMeNewComments }
+					onEmailMeNewCommentsChange={ ( send_comments ) =>
+						updateEmailMeNewComments( { blog_id: blog_ID, send_comments } )
+					}
+					updatingEmailMeNewComments={ updatingEmailMeNewComments }
+					onUnsubscribe={ () => unsubscribe( { blog_id: blog_ID, url: url } ) }
 					unsubscribing={ unsubscribing }
 				/>
 			</span>

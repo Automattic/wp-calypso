@@ -1,5 +1,6 @@
 import { Gridicon, CircularProgressBar } from '@automattic/components';
 import { OnboardSelect, useLaunchpad } from '@automattic/data-stores';
+import { isStartWritingFlow } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useRef, useState } from '@wordpress/element';
 import { Icon, copy } from '@wordpress/icons';
@@ -18,7 +19,7 @@ import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors
 import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import Checklist from './checklist';
 import { getArrayOfFilteredTasks, getEnhancedTasks } from './task-helper';
-import { DOMAIN_UPSELL, tasks } from './tasks';
+import { tasks } from './tasks';
 import { getLaunchpadTranslations } from './translations';
 import { Task } from './types';
 
@@ -42,18 +43,6 @@ function getUrlInfo( url: string ) {
 	return [ siteName, topLevelDomain ];
 }
 
-function getTasksProgress( tasks: Task[] | null ) {
-	if ( ! tasks ) {
-		return null;
-	}
-
-	const completedTasks = tasks.reduce( ( total, currentTask ) => {
-		return currentTask.completed ? total + 1 : total;
-	}, 0 );
-
-	return completedTasks;
-}
-
 const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: SidebarProps ) => {
 	let siteName = '';
 	let topLevelDomain = '';
@@ -61,21 +50,29 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 	let isDomainSSLProcessing: boolean | null = false;
 	const translate = useTranslate();
 	const site = useSite();
+	const siteIntentOption = site?.options?.site_intent;
 	const clipboardButtonEl = useRef< HTMLButtonElement >( null );
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 
 	const { globalStylesInUse, shouldLimitGlobalStyles } = usePremiumGlobalStyles( site?.ID );
-	const { data: { checklist_statuses } = {} } = useLaunchpad( siteSlug );
+
+	const {
+		data: { checklist_statuses: checklistStatuses, checklist: launchpadChecklist },
+		isFetchedAfterMount,
+	} = useLaunchpad( siteSlug, siteIntentOption );
+
+	const selectedDomain = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDomain(),
+		[]
+	);
+
+	const showDomain =
+		! isStartWritingFlow( flow ) ||
+		( checklistStatuses?.domain_upsell_deferred === true && selectedDomain );
 
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 
 	const { title, launchTitle, subtitle } = getLaunchpadTranslations( flow );
-
-	const arrayOfFilteredTasks: Task[] | null = getArrayOfFilteredTasks(
-		tasks,
-		flow,
-		isEmailVerified
-	);
 
 	const { getPlanCartItem } = useSelect(
 		( select ) => ( {
@@ -84,10 +81,16 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 		[]
 	);
 
+	const startWritingFlowTasks: Task[] | null = getArrayOfFilteredTasks(
+		tasks,
+		flow,
+		isEmailVerified
+	);
+
 	const enhancedTasks: Task[] | null =
 		site &&
 		getEnhancedTasks(
-			arrayOfFilteredTasks,
+			flow === 'start-writing' ? startWritingFlowTasks : launchpadChecklist,
 			siteSlug,
 			site,
 			submit,
@@ -95,11 +98,11 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 			goToStep,
 			flow,
 			isEmailVerified,
-			checklist_statuses,
+			checklistStatuses,
 			getPlanCartItem()?.product_slug ?? null
 		);
 
-	const currentTask = getTasksProgress( enhancedTasks );
+	const currentTask = enhancedTasks?.filter( ( task ) => task.completed ).length;
 	const launchTask = enhancedTasks?.find( ( task ) => task.isLaunchTask === true );
 
 	const showLaunchTitle = launchTask && ! launchTask.disabled;
@@ -107,7 +110,8 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 		? `/domains/manage/${ siteSlug }`
 		: `/domains/add/${ siteSlug }?domainAndPlanPackage=true`;
 	const showDomainUpgradeBadge =
-		sidebarDomain?.isWPCOMDomain && ! enhancedTasks?.find( ( task ) => task.id === DOMAIN_UPSELL );
+		sidebarDomain?.isWPCOMDomain &&
+		! enhancedTasks?.find( ( task ) => task.id === 'domain_upsell' );
 
 	if ( sidebarDomain ) {
 		const { domain, isPrimary, isWPCOMDomain, sslStatus } = sidebarDomain;
@@ -118,6 +122,21 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 		showClipboardButton = isWPCOMDomain ? true : ! isDomainSSLProcessing && isPrimary;
 	}
 
+	function getDomainName() {
+		if ( selectedDomain ) {
+			return (
+				<span className="launchpad__url-box-top-level-domain">{ selectedDomain.domain_name }</span>
+			);
+		}
+
+		return (
+			<>
+				<span>{ siteName }</span>
+				<span className="launchpad__url-box-top-level-domain">{ topLevelDomain }</span>
+			</>
+		);
+	}
+
 	return (
 		<div className="launchpad__sidebar">
 			<div className="launchpad__sidebar-content-container">
@@ -125,7 +144,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 					<CircularProgressBar
 						size={ 40 }
 						enableDesktopScaling
-						currentStep={ currentTask }
+						currentStep={ currentTask || null }
 						numberOfSteps={ enhancedTasks?.length || null }
 					/>
 				</div>
@@ -134,45 +153,44 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 					{ showLaunchTitle && launchTitle ? launchTitle : title }
 				</h1>
 				<p className="launchpad__sidebar-description">{ subtitle }</p>
-				<div className="launchpad__url-box">
-					{ /* Google Chrome is adding an extra space after highlighted text. This extra wrapping div prevents that */ }
-					<div className="launchpad__url-box-domain">
-						<div className="launchpad__url-box-domain-text">
-							<span>{ siteName }</span>
-							<span className="launchpad__url-box-top-level-domain">{ topLevelDomain }</span>
+				{ showDomain && (
+					<div className="launchpad__url-box">
+						{ /* Google Chrome is adding an extra space after highlighted text. This extra wrapping div prevents that */ }
+						<div className="launchpad__url-box-domain">
+							<div className="launchpad__url-box-domain-text">{ getDomainName() }</div>
+							{ showClipboardButton && (
+								<>
+									<ClipboardButton
+										aria-label={ translate( 'Copy URL' ) }
+										text={ siteSlug }
+										className="launchpad__clipboard-button"
+										borderless
+										compact
+										onCopy={ () => setClipboardCopied( true ) }
+										onMouseLeave={ () => setClipboardCopied( false ) }
+										ref={ clipboardButtonEl }
+									>
+										<Icon icon={ copy } size={ 18 } />
+									</ClipboardButton>
+									<Tooltip
+										context={ clipboardButtonEl.current }
+										isVisible={ clipboardCopied }
+										position="top"
+									>
+										{ translate( 'Copied to clipboard!' ) }
+									</Tooltip>
+								</>
+							) }
 						</div>
-						{ showClipboardButton && (
-							<>
-								<ClipboardButton
-									aria-label={ translate( 'Copy URL' ) }
-									text={ siteSlug }
-									className="launchpad__clipboard-button"
-									borderless
-									compact
-									onCopy={ () => setClipboardCopied( true ) }
-									onMouseLeave={ () => setClipboardCopied( false ) }
-									ref={ clipboardButtonEl }
-								>
-									<Icon icon={ copy } size={ 18 } />
-								</ClipboardButton>
-								<Tooltip
-									context={ clipboardButtonEl.current }
-									isVisible={ clipboardCopied }
-									position="top"
-								>
-									{ translate( 'Copied to clipboard!' ) }
-								</Tooltip>
-							</>
+						{ showDomainUpgradeBadge && (
+							<a href={ domainUpgradeBadgeUrl }>
+								<Badge className="launchpad__domain-upgrade-badge" type="info-blue">
+									{ translate( 'Customize' ) }
+								</Badge>
+							</a>
 						) }
 					</div>
-					{ showDomainUpgradeBadge && (
-						<a href={ domainUpgradeBadgeUrl }>
-							<Badge className="launchpad__domain-upgrade-badge" type="info-blue">
-								{ translate( 'Customize' ) }
-							</Badge>
-						</a>
-					) }
-				</div>
+				) }
 				{ isDomainSSLProcessing && (
 					<div className="launchpad__domain-notification">
 						<div className="launchpad__domain-notification-icon">
@@ -186,7 +204,11 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 						</p>
 					</div>
 				) }
-				<Checklist tasks={ enhancedTasks } />
+				{ isFetchedAfterMount || flow === 'start-writing' ? (
+					<Checklist tasks={ enhancedTasks } />
+				) : (
+					<Checklist.Placeholder />
+				) }
 			</div>
 			<div className="launchpad__sidebar-admin-link">
 				<StepNavigationLink
