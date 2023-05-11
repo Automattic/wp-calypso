@@ -61,6 +61,14 @@ class FeedHeader extends Component {
 		} );
 	};
 
+	// Create function to use with onFollowClick to open a modal with NuxModal component
+	// This function will be passed to ReaderFollowButton component
+	openNuxModal = ( isFollowing ) => {
+		// this.props.recordReaderTracksEvent( 'calypso_reader_follow_button_clicked' );
+		// this.setState( { isNuxModalOpen: true } );
+		console.log( 'openNuxModal', isFollowing );
+	};
+
 	render() {
 		const {
 			site,
@@ -159,7 +167,11 @@ class FeedHeader extends Component {
 						<div className="reader-feed-header__follow-and-settings">
 							{ siteUrl && (
 								<div className="reader-feed-header__follow-button">
-									<ReaderFollowButton siteUrl={ siteUrl } iconSize={ 24 } />
+									<ReaderFollowButton
+										siteUrl={ siteUrl }
+										iconSize={ 24 }
+										onFollowToggle={ this.openNuxModal }
+									/>
 								</div>
 							) }
 
