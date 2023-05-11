@@ -1,24 +1,20 @@
-import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { requestTags } from 'calypso/state/reader/tags/items/actions';
 
 /**
  *  QueryReaderFollowedTags takes no parameters and will add all of a
  *  users tags to the state tree.
  */
-class QueryReaderFollowedTags extends Component {
-	static propTypes = {
-		requestFollowedTags: PropTypes.func.isRequired,
-	};
+const QueryReaderFollowedTags = () => {
+	const locale = useSelector( ( state ) => getCurrentUserLocale( state ) );
+	const dispatch = useDispatch();
 
-	componentDidMount() {
-		this.props.requestFollowedTags();
-	}
+	useEffect( () => {
+		dispatch( requestTags( null, locale ) );
+	}, [ dispatch, locale ] );
+	return null;
+};
 
-	render() {
-		return null;
-	}
-}
-
-export default connect( null, { requestFollowedTags: requestTags } )( QueryReaderFollowedTags );
+export default QueryReaderFollowedTags;
