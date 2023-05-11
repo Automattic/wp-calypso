@@ -13,6 +13,7 @@ import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import useCategoriesOrder from './hooks/use-categories-order';
 import NavigatorHeader from './navigator-header';
 import PatternListPanel from './pattern-list-panel';
+import { replaceCategoryAllName } from './utils';
 import type { Pattern, Category } from './types';
 import './screen-category-list.scss';
 
@@ -63,7 +64,7 @@ const ScreenCategoryList = ( {
 
 	const trackEventCategoryClick = ( name: string ) => {
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_CATEGORY_LIST_CATEGORY_CLICK, {
-			pattern_category: name,
+			pattern_category: replaceCategoryAllName( name ),
 		} );
 	};
 
