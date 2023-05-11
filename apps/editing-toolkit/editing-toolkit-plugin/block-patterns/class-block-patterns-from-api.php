@@ -117,9 +117,9 @@ class Block_Patterns_From_API {
 
 			// Register categories (and re-register existing categories).
 			foreach ( (array) $pattern_categories as $slug => &$category_properties ) {
-				if ( 'blog' === $slug ) {
-					$category_properties['label']       = __( 'Blog Posts', 'full-site-editing' );
-					$category_properties['description'] = __( 'Display your latest posts in lists, grids or other layouts.', 'full-site-editing' );
+				// Update the Posts category label to Blog Posts.
+				if ( 'posts' === $slug ) {
+					$category_properties['label'] = __( 'Blog Posts', 'full-site-editing' );
 				}
 				register_block_pattern_category( $slug, $category_properties );
 			}
@@ -137,6 +137,12 @@ class Block_Patterns_From_API {
 
 					// Add the category 'All' to all patterns.
 					$pattern['categories'][ $category_all['slug'] ] = $category_all;
+
+					// Replace blog category with posts.
+					if ( array_key_exists( 'blog', $pattern['categories'] ) ) {
+						unset( $pattern['categories']['blog'] );
+						$pattern['categories']['posts'] = $pattern_categories['posts'];
+					}
 
 					$results[ $pattern_name ] = register_block_pattern(
 						$pattern_name,
