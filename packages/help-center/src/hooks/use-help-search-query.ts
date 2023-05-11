@@ -59,7 +59,7 @@ export const useHelpSearchQuery = (
 				}
 			},
 			refetchOnWindowFocus: false,
-			refetchOnMount: false,
+			refetchOnMount: true,
 			enabled: true,
 			...queryOptions,
 		}
