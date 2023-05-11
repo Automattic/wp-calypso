@@ -160,13 +160,17 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 	if ( ! isJetpack && PREINSTALLED_PLUGINS.includes( plugin.slug ) ) {
 		return (
 			<div className="plugin-details-cta__container">
-				<div className="plugin-details-cta__installed-text">
-					{ translate( 'Installed and {{activation /}}', {
-						components: {
-							activation: activeText,
-						},
-					} ) }
-				</div>
+				{ selectedSite ? (
+					<div className="plugin-details-cta__installed-text">
+						{ translate( 'Installed and {{activation /}}', {
+							components: {
+								activation: activeText,
+							},
+						} ) }
+					</div>
+				) : (
+					<div className="plugin-details-cta__price">{ translate( 'Free' ) }</div>
+				) }
 				<span className="plugin-details-cta__preinstalled">
 					<p>{ translate( '%s is automatically managed for you.', { args: plugin.name } ) }</p>
 					{ selectedSite && shouldUpgrade && (
