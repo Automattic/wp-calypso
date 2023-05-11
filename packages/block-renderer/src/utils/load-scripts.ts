@@ -5,7 +5,7 @@ const loadScript = async ( element: HTMLElement, { id, src, textContent }: HTMLS
 		if ( src ) {
 			script.src = src;
 			script.onload = () => resolve( script );
-			script.onerror = () => reject();
+			script.onerror = ( error ) => reject( error );
 		} else {
 			script.textContent = textContent;
 			resolve( script );
@@ -17,7 +17,11 @@ const loadScript = async ( element: HTMLElement, { id, src, textContent }: HTMLS
 
 const loadScripts = async ( element: HTMLElement, scripts: HTMLScriptElement[] ) => {
 	return scripts.reduce(
-		( promise, script ): Promise< any > => promise.then( () => loadScript( element, script ) ),
+		( promise, script ): Promise< any > =>
+			promise
+				// eslint-disable-next-line no-console
+				.catch( ( error: Error ) => console.error( error ) )
+				.then( () => loadScript( element, script ) ),
 		Promise.resolve()
 	);
 };

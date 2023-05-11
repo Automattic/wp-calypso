@@ -8,15 +8,18 @@ interface Props extends BlockRendererContainerProps {
 
 const PatternsRendererContainer = ( { patternIds, ...props }: Props ) => {
 	const renderedPatterns = usePatternsRendererContext();
-	const styles = useMemo(
-		() =>
-			patternIds
-				.flatMap( ( patternId ) => renderedPatterns[ patternId ]?.styles )
-				.filter( Boolean ),
-		[ patternIds ]
-	);
+	const { styles, scripts } = useMemo( () => {
+		const patterns = patternIds.map( ( patternId ) => renderedPatterns[ patternId ] );
+		const styles = patterns.flatMap( ( pattern ) => pattern?.styles ).filter( Boolean );
+		const scripts = patterns.flatMap( ( pattern ) => pattern?.scripts ).filter( Boolean );
 
-	return <BlockRendererContainer { ...props } styles={ styles } />;
+		return {
+			styles,
+			scripts,
+		};
+	}, [ patternIds, renderedPatterns ] );
+
+	return <BlockRendererContainer { ...props } styles={ styles } scripts={ scripts } />;
 };
 
 export default PatternsRendererContainer;

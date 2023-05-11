@@ -10,7 +10,7 @@ const loadStyle = async (
 			style.rel = rel;
 			style.media = media;
 			style.onload = () => resolve( style );
-			style.onerror = () => reject();
+			style.onerror = ( error ) => reject( error );
 		} else {
 			style.textContent = textContent;
 			resolve( style );
@@ -22,7 +22,11 @@ const loadStyle = async (
 
 const loadStyles = async ( element: HTMLElement, styles: HTMLLinkElement[] ) => {
 	return styles.reduce(
-		( promise, style ): Promise< any > => promise.then( () => loadStyle( element, style ) ),
+		( promise, style ): Promise< any > =>
+			promise
+				// eslint-disable-next-line no-console
+				.catch( ( error: Error ) => console.error( error ) )
+				.then( () => loadStyle( element, style ) ),
 		Promise.resolve()
 	);
 };
