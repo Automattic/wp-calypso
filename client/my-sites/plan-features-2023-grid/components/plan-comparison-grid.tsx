@@ -127,7 +127,7 @@ const Row = styled.div< {
 		props.isHighlighted &&
 		css`
 			${ plansBreakSmall( css`
-				background-color: var( --studio-yellow-5 );
+				background-color: var( --studio-gray-5 );
 				font-weight: bold;
 				margin: 0;
 				padding: 12px 20px;
