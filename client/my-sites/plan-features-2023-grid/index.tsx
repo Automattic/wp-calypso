@@ -169,6 +169,7 @@ const PlanLogo: React.FunctionComponent< {
 	isMobile?: boolean;
 	isInSignup: boolean;
 	currentSitePlanSlug?: string;
+	selectedPlan?: string;
 } > = ( {
 	planPropertiesObj,
 	planProperties,

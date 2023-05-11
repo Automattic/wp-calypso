@@ -185,7 +185,6 @@ const OnboardingPricingGrid2023 = ( props ) => {
 			) }
 			data-e2e-plans="wpcom"
 		>
-			{ this.renderSecondaryFormattedHeader() }
 			{ asyncPlanFeatures2023Grid }
 		</div>
 	);
@@ -386,7 +385,6 @@ export class PlansFeaturesMain extends Component {
 						) }
 					></Notice>
 				) }
-				{ this.renderSecondaryFormattedHeader() }
 				<PlanFeatures
 					redirectToAddDomainFlow={ redirectToAddDomainFlow }
 					hidePlanTypeSelector={ hidePlanTypeSelector }
@@ -717,6 +715,7 @@ export class PlansFeaturesMain extends Component {
 						discountEndDate: this.props.discountEndDate,
 					} }
 				/>
+				{ this.renderSecondaryFormattedHeader() }
 				{ ! hidePlanSelector && (
 					<TermExperimentPlanTypeSelector
 						isEligible={ is2023PricingGridVisible }
