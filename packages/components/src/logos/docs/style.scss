@@ -1,0 +1,8 @@
+.example-container {
+	display: grid;
+	grid-template-columns: repeat(6, 150px);
+	grid-template-rows: repeat(3, 50px);
+	text-align: center;
+
+}
+
