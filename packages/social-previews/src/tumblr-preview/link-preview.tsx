@@ -5,6 +5,8 @@ import TumblrPostActions from './post/actions';
 import TumblrPostHeader from './post/header';
 import type { TumblrPreviewProps } from './types';
 
+import './styles.scss';
+
 export const TumblrLinkPreview: React.FC< TumblrPreviewProps > = ( {
 	title,
 	description,
