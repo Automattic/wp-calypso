@@ -8,17 +8,13 @@ import { useGlobalStylesConfig } from './use-global-styles-config';
 
 const GlobalStylesNotice = () => {
 	const { globalStylesInUse, globalStylesId } = useGlobalStylesConfig();
-	const editor = useSelect( ( select ) => {
-		if ( select( 'core/edit-site' ) ) {
-			return 'site-editor';
-		}
-
-		if ( select( 'core/edit-post' ) ) {
-			return 'post-editor';
-		}
-
-		return undefined;
-	}, [] );
+	const { isSiteEditor, isPostEditor } = useSelect(
+		( select ) => ( {
+			isSiteEditor: !! select( 'core/edit-site' ),
+			isPostEditor: !! select( 'core/edit-post' ),
+		} ),
+		[]
+	);
 	const { createWarningNotice, removeNotice } = useDispatch( 'core/notices' );
 	const { editEntityRecord } = useDispatch( 'core' );
 
@@ -34,8 +30,12 @@ const GlobalStylesNotice = () => {
 	};
 
 	useEffect( () => {
+		if ( ! isSiteEditor && ! isPostEditor ) {
+			return;
+		}
+
 		if ( globalStylesInUse ) {
-			recordUpgradeNoticeShow( editor );
+			recordUpgradeNoticeShow( isSiteEditor ? 'site-editor' : 'post-editor' );
 			createWarningNotice(
 				__(
 					'Your site includes customized styles that are only visible to visitors after upgrading to the Premium plan or higher.',
@@ -48,11 +48,12 @@ const GlobalStylesNotice = () => {
 						{
 							url: wpcomGlobalStyles.upgradeUrl,
 							label: __( 'Upgrade now', 'full-site-editing' ),
-							onClick: () => recordUpgradeNoticeClick( editor ),
+							onClick: () =>
+								recordUpgradeNoticeClick( isSiteEditor ? 'site-editor' : 'post-editor' ),
 							variant: 'primary',
 							noDefaultClasses: true,
 						},
-						...( editor === 'post-editor'
+						...( isPostEditor
 							? [
 									{
 										url: wpcomGlobalStyles.previewUrl,
@@ -62,7 +63,7 @@ const GlobalStylesNotice = () => {
 									},
 							  ]
 							: [] ),
-						...( editor === 'site-editor'
+						...( isSiteEditor
 							? [
 									{
 										label: __( 'Remove custom styles', 'full-site-editing' ),
@@ -78,7 +79,14 @@ const GlobalStylesNotice = () => {
 		} else {
 			removeNotice( 'wpcom-global-styles/gating-notice' );
 		}
-	}, [ globalStylesInUse, editor, createWarningNotice, removeNotice, resetGlobalStyles ] );
+	}, [
+		globalStylesInUse,
+		isSiteEditor,
+		isPostEditor,
+		createWarningNotice,
+		removeNotice,
+		resetGlobalStyles,
+	] );
 
 	return null;
 };
