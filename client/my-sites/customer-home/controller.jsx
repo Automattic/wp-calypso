@@ -62,9 +62,7 @@ export async function maybeRedirect( context, next ) {
 			// client-side router, so page.redirect won't work. We need to use the
 			// traditional window.location Web API.
 			const verifiedParam = getQueryArgs()?.verified;
-			// TODO: replace start-writing for siteIntentOption once it's available in our backend and
-			// we have it in setIntentOnSite( providedDependencies?.siteSlug, START_WRITING_FLOW );
-			redirectToLaunchpad( slug, 'start-writing', verifiedParam );
+			redirectToLaunchpad( slug, siteIntentOption, verifiedParam );
 			return;
 		}
 	} catch ( error ) {}

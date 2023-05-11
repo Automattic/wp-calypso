@@ -1,6 +1,6 @@
 import { OnboardSelect, updateLaunchpadSettings } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
-import { START_WRITING_FLOW, WRITE_FLOW, replaceProductsInCart } from '@automattic/onboarding';
+import { START_WRITING_FLOW, replaceProductsInCart } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useSelector } from 'react-redux';
@@ -81,8 +81,7 @@ const startWriting: Flow = {
 						} );
 
 						setSelectedSite( providedDependencies?.siteId );
-						// TODO: Replace to START_WRITING_FLOW once it's available in our backend code.
-						setIntentOnSite( providedDependencies?.siteSlug, WRITE_FLOW );
+						setIntentOnSite( providedDependencies?.siteSlug, START_WRITING_FLOW );
 						saveSiteSettings( providedDependencies?.siteId, {
 							launchpad_screen: 'full',
 						} );
