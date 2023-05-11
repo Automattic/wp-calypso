@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import config from '@automattic/calypso-config';
-import { Site, useLaunchpad } from '@automattic/data-stores';
+import { Site } from '@automattic/data-stores';
 import { screen } from '@testing-library/react';
 import { useDispatch } from '@wordpress/data';
 import nock from 'nock';
@@ -26,28 +26,43 @@ jest.mock( 'calypso/state/sites/hooks/use-premium-global-styles', () => ( {
 
 jest.mock( '@automattic/data-stores', () => ( {
 	...jest.requireActual( '@automattic/data-stores' ),
-	useLaunchpad: jest.fn().mockReturnValue( {
-		data: { site_intent: 'build' },
-	} ),
-} ) );
-
-jest.mock( 'calypso/../packages/help-center/src/hooks/use-launchpad-checklist', () => ( {
-	useLaunchpadChecklist: ( siteSlug, siteIntentOption ) => {
+	useLaunchpad: ( siteSlug, siteIntentOption ) => {
 		let checklist = [
 			{ id: 'foo_task', completed: false, disabled: true, title: 'Foo Task' },
-			{ id: 'foo_task_1', completed: true, disabled: true, title: 'Foo Task' },
+			{ id: 'foo_task_1', completed: true, disabled: true, title: 'Foo Task 1' },
 		];
 
 		if ( siteIntentOption === 'free' ) {
 			checklist = [
 				{ id: 'foo_task', completed: false, disabled: true, title: 'Foo Task' },
-				{ id: 'domain_upsell', completed: false, disabled: false, title: 'Choose a domain' },
+				{
+					id: 'domain_upsell',
+					completed: false,
+					disabled: false,
+					title: 'Choose a domain',
+					badge_text: 'Upgrade plan',
+				},
+				{ id: 'foo_task_1', completed: true, disabled: true, title: 'Foo Task 1' },
+			];
+		}
+
+		if ( siteIntentOption === 'newsletter' ) {
+			checklist = [
+				{
+					id: 'newsletter_setup',
+					completed: false,
+					disabled: true,
+					title: 'Personalize newsletter',
+				},
 				{ id: 'foo_task_1', completed: true, disabled: true, title: 'Foo Task 1' },
 			];
 		}
 
 		return {
-			data: { checklist },
+			data: {
+				site_intent: siteIntentOption,
+				checklist,
+			},
 			isFetchedAfterMount: true,
 		};
 	},
@@ -155,6 +170,18 @@ describe( 'Sidebar', () => {
 			content.includes( secondAndTopLevelDomain )
 		);
 		expect( renderedDomain ).toBeVisible();
+	} );
+
+	it( 'start-writing flow does not display the current site url', () => {
+		renderSidebar( {
+			...props,
+			flow: 'start-writing',
+		} );
+
+		const renderedDomain = screen.queryByText( ( content ) =>
+			content.includes( secondAndTopLevelDomain )
+		);
+		expect( renderedDomain ).toBeNull();
 	} );
 
 	it( 'displays customize badge for wpcom domains (free)', () => {
@@ -336,16 +363,10 @@ describe( 'Sidebar', () => {
 			it( 'displays the upgrade plan badge on the "Choose a domain" task for free flow', () => {
 				const freeFlowProps = { ...props, flow: 'free' };
 
-				// Change the useLaunchpad hook to return a free site.
-				( useLaunchpad as jest.Mock ).mockReturnValueOnce( {
-					data: {
-						site_intent: 'free',
-					},
-				} );
-
 				const siteDetails = buildSiteDetails( {
 					options: {
 						...defaultSiteDetails.options,
+						site_intent: 'free',
 					},
 					plan: {
 						is_free: true,
@@ -365,16 +386,10 @@ describe( 'Sidebar', () => {
 			it( 'does not display the upgrade plan badge on the "Choose a domain" task for free flow', () => {
 				const freeFlowProps = { ...props, flow: 'free' };
 
-				// Change the useLaunchpad hook to return a free site.
-				( useLaunchpad as jest.Mock ).mockReturnValueOnce( {
-					data: {
-						site_intent: 'free',
-					},
-				} );
-
 				const siteDetails = buildSiteDetails( {
 					options: {
 						...defaultSiteDetails.options,
+						site_intent: 'free',
 					},
 					plan: {
 						is_free: false,

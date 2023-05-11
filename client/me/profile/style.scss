@@ -25,7 +25,8 @@
 	}
 }
 
-.profile__gravatar-fieldset-is-loading {
+.profile__gravatar-fieldset-is-loading,
+.profile__is_dev_account-fieldset-is-loading, {
 	.components-form-toggle {
 		> * {
 			visibility: hidden;

@@ -1142,6 +1142,7 @@ __metadata:
     "@wordpress/base-styles": ^4.13.0
     "@wordpress/data": ^7.6.0
     "@wordpress/dependency-extraction-webpack-plugin": ^4.5.0
+    "@wordpress/icons": ^9.23.0
     "@wordpress/scripts": ^24.6.0
     autoprefixer: ^10.2.5
     babel-jest: ^27.5
@@ -9123,14 +9124,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/icons@npm:^9.13.0, @wordpress/icons@npm:^9.22.0, @wordpress/icons@npm:^9.4.0":
-  version: 9.22.0
-  resolution: "@wordpress/icons@npm:9.22.0"
+"@wordpress/icons@npm:^9.13.0, @wordpress/icons@npm:^9.22.0, @wordpress/icons@npm:^9.23.0, @wordpress/icons@npm:^9.4.0":
+  version: 9.23.0
+  resolution: "@wordpress/icons@npm:9.23.0"
   dependencies:
     "@babel/runtime": ^7.16.0
-    "@wordpress/element": ^5.8.0
-    "@wordpress/primitives": ^3.29.0
-  checksum: 9dea77b6981951987629c84e6c8e7a2170eb47a57407b78b49f602b3c6cdae65bf659ef85796c62d36cf943b3564f494f4cd63db9bd4d504a01ef85c6ae1480c
+    "@wordpress/element": ^5.9.0
+    "@wordpress/primitives": ^3.30.0
+  checksum: 33c33a6042224f9976c81e9b4811dd0598468ae1dd10c63b05646d3f1c178b7183eb9bcd7a4b8d01f685d5cc7df5334edea3b6dbbfa372e731091ac72ed4943e
   languageName: node
   linkType: hard
 
@@ -9326,14 +9327,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/primitives@npm:^3.1.1, @wordpress/primitives@npm:^3.11.0, @wordpress/primitives@npm:^3.20.0, @wordpress/primitives@npm:^3.29.0":
-  version: 3.29.0
-  resolution: "@wordpress/primitives@npm:3.29.0"
+"@wordpress/primitives@npm:^3.1.1, @wordpress/primitives@npm:^3.11.0, @wordpress/primitives@npm:^3.20.0, @wordpress/primitives@npm:^3.30.0":
+  version: 3.30.0
+  resolution: "@wordpress/primitives@npm:3.30.0"
   dependencies:
     "@babel/runtime": ^7.16.0
-    "@wordpress/element": ^5.8.0
+    "@wordpress/element": ^5.9.0
     classnames: ^2.3.1
-  checksum: e0e6113fcc0b6fba13ab34e6a277dae6b91ab08a98929358e5ba64dff658f046ed8d0e267cd54ebfe1da477e814da6c21d288d76a6cdf0103d70489f2434ad0d
+  checksum: 7adcf77b78f1c4dcd9796f329c5156bcf7e4e3ee158594b6221da65ae6190ab35fd75aa7c572fd78d1db6ccd7e6fb30006437e2a27b744c34301f30f54921622
   languageName: node
   linkType: hard
 
