@@ -2,8 +2,6 @@
 @import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 
-$max-list-width: 1300px;
-
 %ellipsis {
 	white-space: nowrap;
 	text-overflow: ellipsis;
@@ -11,7 +9,6 @@ $max-list-width: 1300px;
 }
 
 .subscription-manager__comment-list {
-	max-width: $max-list-width;
 	min-width: 300px;
 
 	.row-wrapper {
