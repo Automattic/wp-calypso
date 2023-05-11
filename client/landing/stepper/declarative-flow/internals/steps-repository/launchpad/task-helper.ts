@@ -62,7 +62,7 @@ export function getEnhancedTasks(
 	);
 
 	const planCompleted =
-		Boolean( tasks?.find( ( task ) => task.id === 'site_launched' )?.completed ) ||
+		Boolean( tasks?.find( ( task ) => task.id === 'plan_selected' )?.completed ) ||
 		! isStartWritingFlow( flow );
 
 	const videoPressUploadCompleted = Boolean(
