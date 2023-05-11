@@ -103,11 +103,6 @@ function wpcom_global_styles_has_blog_sticker( $blog_sticker, $blog_id ) {
  * @return void
  */
 function wpcom_global_styles_enqueue_block_editor_assets() {
-	$screen = get_current_screen();
-	if ( ! $screen || 'site-editor' !== $screen->id ) {
-		return;
-	}
-
 	if ( ! wpcom_should_limit_global_styles() ) {
 		return;
 	}
@@ -153,6 +148,7 @@ function wpcom_global_styles_enqueue_block_editor_assets() {
 		array(
 			'assetsUrl'   => plugins_url( 'dist/', __FILE__ ),
 			'upgradeUrl'  => "$calypso_domain/plans/$site_slug?plan=value_bundle&feature=advanced-design-customization",
+			'previewUrl'  => add_query_arg( 'hide-global-styles', '', home_url() ),
 			'wpcomBlogId' => wpcom_global_styles_get_wpcom_current_blog_id(),
 		)
 	);

@@ -1,98 +1,86 @@
 /* global wpcomGlobalStyles */
-import { ExternalLink, Notice } from '@wordpress/components';
-import { useSelect } from '@wordpress/data';
-import { createInterpolateElement, render, useEffect, useState } from '@wordpress/element';
+import { useDispatch, useSelect } from '@wordpress/data';
+import { useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import './notice.scss';
-import { recordUpgradePreSaveNoticeClick, recordUpgradeNoticePreSaveShow } from './tracks-events';
+import { recordUpgradeNoticeShow, recordUpgradeNoticeClick } from './tracks-events';
 import { useGlobalStylesConfig } from './use-global-styles-config';
 
-function GlobalStylesNoticeComponent() {
-	const { siteChanges, globalStylesInUse } = useGlobalStylesConfig();
-
-	// Closes the sidebar if there are no more changes to be saved.
-	useEffect( () => {
-		if ( ! siteChanges.length ) {
-			/*
-			 * This uses a fragile CSS selector to target the cancel button which might be broken on
-			 * future releases of Gutenberg. Unfortunately, Gutenberg doesn't provide any mechanism
-			 * for closing the sidebar – everything is handled using an internal state that it is not
-			 * exposed publicly.
-			 *
-			 * See https://github.com/WordPress/gutenberg/blob/0b30a4cb34d39c9627b6a3795a18aee21019ce25/packages/edit-site/src/components/editor/index.js#L137-L138.
-			 */
-			document.querySelector( '.entities-saved-states__panel-header button:last-child' )?.click();
+const GlobalStylesNotice = () => {
+	const { globalStylesInUse, globalStylesId } = useGlobalStylesConfig();
+	const editor = useSelect( ( select ) => {
+		if ( select( 'core/edit-site' ) ) {
+			return 'site-editor';
 		}
-	}, [ siteChanges ] );
+
+		if ( select( 'core/edit-post' ) ) {
+			return 'post-editor';
+		}
+
+		return undefined;
+	}, [] );
+	const { createWarningNotice, removeNotice } = useDispatch( 'core/notices' );
+	const { editEntityRecord } = useDispatch( 'core' );
+
+	const resetGlobalStyles = () => {
+		if ( ! globalStylesId ) {
+			return;
+		}
+
+		editEntityRecord( 'root', 'globalStyles', globalStylesId, {
+			styles: {},
+			settings: {},
+		} );
+	};
 
 	useEffect( () => {
 		if ( globalStylesInUse ) {
-			recordUpgradeNoticePreSaveShow();
-		}
-	}, [ globalStylesInUse ] );
-
-	if ( ! globalStylesInUse ) {
-		return null;
-	}
-
-	return (
-		<Notice
-			status="warning"
-			isDismissible={ false }
-			className="wpcom-global-styles-notice notice-margin"
-		>
-			{ createInterpolateElement(
+			recordUpgradeNoticeShow( editor );
+			createWarningNotice(
 				__(
-					'Your changes include customized styles that will only be visible once you <a>upgrade to a Premium plan</a>.',
+					'Your site includes customized styles that are only visible to visitors after upgrading to the Premium plan or higher.',
 					'full-site-editing'
 				),
 				{
-					a: (
-						<ExternalLink
-							href={ wpcomGlobalStyles.upgradeUrl }
-							target="_blank"
-							onClick={ recordUpgradePreSaveNoticeClick }
-						/>
-					),
+					id: 'wpcom-global-styles/gating-notice',
+					isDismissible: false,
+					actions: [
+						{
+							url: wpcomGlobalStyles.upgradeUrl,
+							label: __( 'Upgrade now', 'full-site-editing' ),
+							onClick: () => recordUpgradeNoticeClick( editor ),
+							variant: 'primary',
+							noDefaultClasses: true,
+						},
+						...( editor === 'post-editor'
+							? [
+									{
+										url: wpcomGlobalStyles.previewUrl,
+										label: __( 'Preview your site', 'full-site-editing' ),
+										variant: 'secondary',
+										noDefaultClasses: true,
+									},
+							  ]
+							: [] ),
+						...( editor === 'site-editor'
+							? [
+									{
+										label: __( 'Remove custom styles', 'full-site-editing' ),
+										onClick: resetGlobalStyles,
+										variant: 'link',
+										noDefaultClasses: true,
+									},
+							  ]
+							: [] ),
+					],
 				}
-			) }
-		</Notice>
-	);
-}
-
-export default function GlobalStylesNotice() {
-	const { globalStylesConfig, isSaveViewOpened } = useSelect( ( select ) => ( {
-		globalStylesConfig: select( 'core' ).getEntityConfig( 'root', 'globalStyles' ),
-		isSaveViewOpened: select( 'core/edit-site' ).isSaveViewOpened(),
-	} ) );
-
-	const [ isNoticeRendered, setIsNoticeRendered ] = useState( false );
-
-	useEffect( () => {
-		if ( ! globalStylesConfig || ! isSaveViewOpened ) {
-			setIsNoticeRendered( false );
-			return;
+			);
+		} else {
+			removeNotice( 'wpcom-global-styles/gating-notice' );
 		}
-		if ( isNoticeRendered ) {
-			return;
-		}
-
-		const preSavePanelTitles = document.querySelectorAll(
-			'.entities-saved-states__panel .components-panel__body.is-opened .components-panel__body-title'
-		);
-
-		for ( const entityTitle of preSavePanelTitles ) {
-			if ( entityTitle.textContent !== globalStylesConfig.label ) {
-				continue;
-			}
-
-			const noticeContainer = document.createElement( 'div' );
-			entityTitle.parentElement.append( noticeContainer );
-			render( <GlobalStylesNoticeComponent />, noticeContainer );
-			setIsNoticeRendered( true );
-			break;
-		}
-	}, [ globalStylesConfig, isNoticeRendered, isSaveViewOpened ] );
+	}, [ globalStylesInUse, editor, createWarningNotice, removeNotice, resetGlobalStyles ] );
 
 	return null;
-}
+};
+
+export default GlobalStylesNotice;

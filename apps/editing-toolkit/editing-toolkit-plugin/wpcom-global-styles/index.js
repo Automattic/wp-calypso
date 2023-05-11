@@ -3,7 +3,6 @@ import './public-path';
 
 import domReady from '@wordpress/dom-ready';
 import { registerPlugin } from '@wordpress/plugins';
-import GlobalStylesSidebarNotice from './global-style-sidebar-notice';
 import GlobalStylesModal from './modal';
 import GlobalStylesNotice from './notice';
 import './store';
@@ -14,7 +13,6 @@ const showGlobalStylesComponents = () => {
 			<>
 				<GlobalStylesModal />
 				<GlobalStylesNotice />
-				<GlobalStylesSidebarNotice />
 			</>
 		),
 	} );

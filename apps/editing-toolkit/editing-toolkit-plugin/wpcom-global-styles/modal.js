@@ -11,11 +11,16 @@ import image from './image.svg';
 import './modal.scss';
 
 const GlobalStylesModal = () => {
+	const isSiteEditor = useSelect( ( select ) => !! select( 'core/edit-site' ), [] );
 	const [ viewCanvasPath, setViewCanvasPath ] = useState();
 
 	// Since Gutenberg doesn't provide a stable selector to get the current path of
 	// the view canvas, we need to infer it from the URL.
 	useEffect( () => {
+		if ( ! isSiteEditor ) {
+			return;
+		}
+
 		const unsubscribe = subscribe( () => {
 			// Subscriber callbacks run before the URL actually changes, so we need
 			// to delay the execution.
@@ -28,18 +33,23 @@ const GlobalStylesModal = () => {
 		}, 'core/edit-site' );
 
 		return () => unsubscribe();
-	}, [] );
+	}, [ isSiteEditor ] );
 
 	const isVisible = useSelect(
 		( select ) => {
+			if ( ! isSiteEditor ) {
+				return false;
+			}
+
 			const currentSidebar =
 				select( 'core/interface' ).getActiveComplementaryArea( 'core/edit-site' );
+
 			return select( 'automattic/wpcom-global-styles' ).isModalVisible(
 				currentSidebar,
 				viewCanvasPath
 			);
 		},
-		[ viewCanvasPath ]
+		[ viewCanvasPath, isSiteEditor ]
 	);
 
 	const { dismissModal } = useDispatch( 'automattic/wpcom-global-styles' );
@@ -47,8 +57,10 @@ const GlobalStylesModal = () => {
 
 	// Hide the welcome guide modal, so it doesn't conflict with our modal.
 	useEffect( () => {
-		setPreference( 'core/edit-site', 'welcomeGuideStyles', false );
-	}, [ setPreference ] );
+		if ( isSiteEditor ) {
+			setPreference( 'core/edit-site', 'welcomeGuideStyles', false );
+		}
+	}, [ setPreference, isSiteEditor ] );
 
 	useEffect( () => {
 		if ( isVisible ) {
@@ -65,7 +77,7 @@ const GlobalStylesModal = () => {
 		} );
 	};
 
-	if ( ! isVisible ) {
+	if ( ! isSiteEditor || ! isVisible ) {
 		return null;
 	}
 
