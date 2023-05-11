@@ -1,4 +1,4 @@
-const loadStyle = async (
+const loadStyle = (
 	element: HTMLElement,
 	{ tagName, id, href, rel, media, textContent }: HTMLLinkElement
 ) => {
@@ -20,7 +20,7 @@ const loadStyle = async (
 	} );
 };
 
-const loadStyles = async ( element: HTMLElement, styles: HTMLLinkElement[] ) => {
+const loadStyles = ( element: HTMLElement, styles: HTMLLinkElement[] ): Promise< any > => {
 	return styles.reduce(
 		( promise, style ): Promise< any > =>
 			promise

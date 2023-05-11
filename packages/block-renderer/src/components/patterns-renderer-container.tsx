@@ -11,7 +11,7 @@ const PatternsRendererContainer = ( { patternIds, ...props }: Props ) => {
 	const { styles, scripts } = useMemo( () => {
 		const patterns = patternIds.map( ( patternId ) => renderedPatterns[ patternId ] );
 		const styles = patterns.flatMap( ( pattern ) => pattern?.styles ).filter( Boolean );
-		const scripts = patterns.flatMap( ( pattern ) => pattern?.scripts ).filter( Boolean );
+		const scripts = patterns.map( ( pattern ) => pattern?.scripts ).join( '' );
 
 		return {
 			styles,

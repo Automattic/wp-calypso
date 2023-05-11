@@ -5,7 +5,7 @@ import {
 	__unstablePresetDuotoneFilter as PresetDuotoneFilter,
 } from '@wordpress/block-editor';
 import { useResizeObserver, useRefEffect } from '@wordpress/compose';
-import React, { useMemo, useState, useContext } from 'react';
+import React, { useMemo, useState, useContext, useEffect } from 'react';
 import { BLOCK_MAX_HEIGHT } from '../constants';
 import useParsedAssets from '../hooks/use-parsed-assets';
 import bubbleEvents from '../utils/bubble-events';
@@ -46,6 +46,7 @@ const ScaledBlockRendererContainer = ( {
 	const [ isLoaded, setIsLoaded ] = useState( false );
 	const [ contentResizeListener, contentSizes ] = useResizeObserver();
 	const contentHeight = contentSizes.height || 0;
+	const [ contentElement, setContentElement ] = useState< HTMLElement | null >( null );
 	const { settings } = useContext( BlockRendererContext );
 	const { styles, assets, duotone } = useMemo(
 		() => ( {
@@ -72,7 +73,7 @@ const ScaledBlockRendererContainer = ( {
 		return [ assets?.scripts, customScripts ].filter( Boolean ).join( '' );
 	}, [ assets?.scripts, customScripts ] );
 
-	const scriptAssets = useParsedAssets( scripts );
+	const scriptAssets = useParsedAssets( scripts ) as HTMLScriptElement[];
 
 	const svgFilters = useMemo( () => {
 		return [ ...( duotone?.default ?? [] ), ...( duotone?.theme ?? [] ) ];
@@ -91,11 +92,10 @@ const ScaledBlockRendererContainer = ( {
 		bodyElement.style.position = 'absolute';
 		bodyElement.style.width = '100%';
 
+		setContentElement( bodyElement );
+
 		// Load scripts and styles manually to avoid a flash of unstyled content.
-		Promise.all( [
-			loadStyles( bodyElement, styleAssets ),
-			loadScripts( bodyElement, scriptAssets as HTMLScriptElement[] ),
-		] ).then( () => setIsLoaded( true ) );
+		loadStyles( bodyElement, styleAssets ).then( () => setIsLoaded( true ) );
 
 		// Bubble the events to the owner document
 		bubbleEvents( bodyElement, [ 'click' ] );
@@ -104,6 +104,12 @@ const ScaledBlockRendererContainer = ( {
 	const scale = containerWidth / viewportWidth;
 	const containerHeight = contentHeight * scale || minHeight;
 	const containerMaxHeight = contentHeight > maxHeight ? maxHeight * scale : undefined;
+
+	useEffect( () => {
+		if ( contentElement ) {
+			loadScripts( contentElement, scriptAssets );
+		}
+	}, [ contentElement, scriptAssets ] );
 
 	return (
 		<div

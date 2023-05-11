@@ -1,3 +1,5 @@
+import { uniqueBy } from '@automattic/js-utils';
+
 const loadScript = async ( element: HTMLElement, { id, src, textContent }: HTMLScriptElement ) => {
 	return new Promise( ( resolve, reject ) => {
 		const script = element.ownerDocument.createElement( 'script' ) as HTMLScriptElement;
@@ -16,7 +18,12 @@ const loadScript = async ( element: HTMLElement, { id, src, textContent }: HTMLS
 };
 
 const loadScripts = async ( element: HTMLElement, scripts: HTMLScriptElement[] ) => {
-	return scripts.reduce(
+	const uniqueScripts = uniqueBy(
+		scripts,
+		( a: HTMLScriptElement, b: HTMLScriptElement ) => a.id === b.id
+	);
+
+	return uniqueScripts.reduce(
 		( promise, script ): Promise< any > =>
 			promise
 				// eslint-disable-next-line no-console
