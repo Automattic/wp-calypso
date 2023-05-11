@@ -441,18 +441,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			isEnabled( 'pattern-assembler/dotcompatterns' );
 
 		if ( shouldGoToAssembler ) {
-			const assemblerDesign = {
+			_selectedDesign = {
 				..._selectedDesign,
 				design_type: BLANK_CANVAS_DESIGN.design_type,
 			} as Design;
-
-			setSelectedDesign( assemblerDesign );
-
-			handleSubmit( {
-				selectedDesign: assemblerDesign,
-				selectedSiteCategory: categorization.selection,
-			} );
-			return;
 		}
 
 		setSelectedDesign( _selectedDesign );
