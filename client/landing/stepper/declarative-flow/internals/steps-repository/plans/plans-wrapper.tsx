@@ -7,6 +7,7 @@ import {
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
 	TYPE_BUSINESS,
+	TYPE_ECOMMERCE,
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
@@ -18,6 +19,8 @@ import {
 	isStartWritingFlow,
 	NEWSLETTER_FLOW,
 	LINK_IN_BIO_FLOW,
+	HOSTING_SITE_CREATION_FLOW,
+	isHostingSiteCreationFlow,
 } from '@automattic/onboarding';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -53,13 +56,19 @@ function getPlanTypes( flowName: string | null ) {
 			return [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM ];
 		case LINK_IN_BIO_FLOW:
 			return [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM ];
+		case HOSTING_SITE_CREATION_FLOW:
+			return [ TYPE_BUSINESS, TYPE_ECOMMERCE ];
 		default:
 			return undefined;
 	}
 }
 
 const PlansWrapper: React.FC< Props > = ( props ) => {
-	const { hideFreePlan, domainCartItem, hidePlansFeatureComparison } = useSelect( ( select ) => {
+	const {
+		hideFreePlan: reduxHideFreePlan,
+		domainCartItem,
+		hidePlansFeatureComparison,
+	} = useSelect( ( select ) => {
 		return {
 			hideFreePlan: ( select( ONBOARD_STORE ) as OnboardSelect ).getHideFreePlan(),
 			domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
@@ -82,6 +91,8 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const planTypes = getPlanTypes( props?.flowName );
 	const headerText = __( 'Choose a plan' );
 	const isInSignup = props?.flowName === DOMAIN_UPSELL_FLOW ? false : true;
+
+	const hideFreePlan = planTypes ? ! planTypes.includes( TYPE_FREE ) : reduxHideFreePlan;
 
 	const translate = useTranslate();
 
@@ -168,7 +179,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 
 	const getHeaderText = () => {
 		const { flowName } = props;
-		if ( flowName === DOMAIN_UPSELL_FLOW ) {
+		if ( flowName === DOMAIN_UPSELL_FLOW || isHostingSiteCreationFlow( flowName ) ) {
 			return __( 'Choose your flavor of WordPress' );
 		}
 

@@ -35,7 +35,7 @@ const FacebookPostHeader: React.FC< Props > = ( { user, timeElapsed, hideOptions
 					<div className="facebook-preview__post-header-name">
 						{ user?.displayName ||
 							// translators: name of a fictional Facebook User
-							__( 'Anonymous User', 'facebook-preview' ) }
+							__( 'Anonymous User', 'social-previews' ) }
 					</div>
 					<div className="facebook-preview__post-header-share">
 						<span className="facebook-preview__post-header-time">
@@ -43,13 +43,13 @@ const FacebookPostHeader: React.FC< Props > = ( { user, timeElapsed, hideOptions
 								? __(
 										// translators: short version of `1 hour`
 										'1h',
-										'facebook-preview'
+										'social-previews'
 								  )
 								: _x(
 										// translators: temporal indication of when a post was published
 										'Just now',
 										'',
-										'facebook-preview'
+										'social-previews'
 								  ) }
 						</span>
 						<span className="facebook-preview__post-header-dot" aria-hidden="true">

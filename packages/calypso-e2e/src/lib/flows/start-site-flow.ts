@@ -56,7 +56,7 @@ export class StartSiteFlow {
 	 * @param {string} text User-visible text on the button.
 	 */
 	async clickButton( text: string ): Promise< void > {
-		await this.page.click( selectors.button( text ) );
+		await this.page.getByRole( 'button', { name: text } ).click();
 	}
 
 	/**
@@ -165,6 +165,6 @@ export class StartSiteFlow {
 	 * @param {string} themeName Name of theme, e.g. "Zoologist".
 	 */
 	async selectTheme( themeName: string ): Promise< void > {
-		await this.page.getByRole( 'button', { name: themeName } ).click();
+		await this.page.getByRole( 'link', { name: themeName } ).click();
 	}
 }

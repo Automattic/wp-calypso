@@ -45,7 +45,7 @@
 	&:hover,
 	&:focus-visible {
 		&::after {
-			box-shadow: 0 0 0 2px var(--studio-blue-50);
+			box-shadow: 0 0 0 2px var(--color-primary-light);
 		}
 	}
 }

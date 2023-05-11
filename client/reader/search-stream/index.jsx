@@ -36,11 +36,11 @@ const updateQueryArg = ( params ) =>
 
 const pickSort = ( sort ) => ( sort === 'date' ? SORT_BY_LAST_UPDATED : SORT_BY_RELEVANCE );
 
-const SpacerDiv = withDimensions( ( { width, height } ) => (
+const SpacerDiv = withDimensions( ( { width } ) => (
 	<div
 		style={ {
 			width: `${ width }px`,
-			height: `${ height }px`,
+			height: `60px`,
 		} }
 	/>
 ) );

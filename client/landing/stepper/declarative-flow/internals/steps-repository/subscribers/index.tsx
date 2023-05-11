@@ -51,11 +51,6 @@ const Subscribers: Step = function ( { navigation } ) {
 								'Bring up to 100 subscribers for free — or add some individually — to start spreading the news.'
 							) }
 							showSubtitle={ true }
-							emailPlaceholders={ [
-								'sue@email.com',
-								'thomaswhigginson@email.com',
-								'ed.dickinson@email.com',
-							] }
 						/>
 					) }
 				</div>

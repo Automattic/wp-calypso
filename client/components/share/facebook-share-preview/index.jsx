@@ -1,4 +1,4 @@
-import { FacebookFullPreview, TYPE_ARTICLE } from '@automattic/social-previews';
+import { FacebookPreviews, TYPE_ARTICLE } from '@automattic/social-previews';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import striptags from 'striptags';
@@ -38,7 +38,7 @@ export class FacebookSharePreview extends PureComponent {
 		const originalExcerpt = rawContent.indexOf( rawExcerpt ) === 0 ? '' : articleExcerpt;
 
 		return (
-			<FacebookFullPreview
+			<FacebookPreviews
 				url={ articleUrl }
 				title={ decodeEntities( seoTitle ) }
 				description={ decodeEntities( originalExcerpt || articleContent ) }

@@ -3,7 +3,7 @@ import { dispatch } from '@wordpress/data';
 import { getQueryArgs } from '@wordpress/url';
 import { isEditorReady } from '../../utils';
 
-const { url, title, text, image, embed } = getQueryArgs( window.location.href );
+const { url, title, text, embed } = getQueryArgs( window.location.href );
 
 if ( url ) {
 	( async () => {
@@ -18,15 +18,6 @@ if ( url ) {
 			blocks.push( createBlock( 'core/embed', { url: embed } ) );
 		}
 
-		if ( image ) {
-			blocks.push(
-				createBlock( 'core/image', {
-					url: image,
-					caption: text ? '' : link,
-				} )
-			);
-		}
-
 		if ( text ) {
 			blocks.push(
 				createBlock( 'core/quote', {
@@ -37,6 +28,5 @@ if ( url ) {
 		}
 
 		dispatch( 'core/editor' ).resetEditorBlocks( blocks );
-		dispatch( 'core/editor' ).editPost( { title: title } );
 	} )();
 }

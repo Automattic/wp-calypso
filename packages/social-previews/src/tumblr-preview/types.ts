@@ -1,10 +1,11 @@
-import type { PreviewProps } from '../types';
+import type { SocialPreviewBaseProps } from '../types';
 
 export type TumblrUser = {
 	displayName: string;
 	avatarUrl?: string;
 };
 
-export type TumblrPreviewProps = PreviewProps & {
+export type TumblrPreviewProps = SocialPreviewBaseProps & {
 	user?: TumblrUser;
+	customText?: string;
 };

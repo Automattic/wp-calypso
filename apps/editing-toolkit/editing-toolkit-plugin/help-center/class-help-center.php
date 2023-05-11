@@ -206,6 +206,10 @@ class Help_Center {
 		require_once __DIR__ . '/class-wp-rest-help-center-forum.php';
 		$controller = new WP_REST_Help_Center_Forum();
 		$controller->register_rest_route();
+
+		require_once __DIR__ . '/class-wp-rest-help-center-support-history.php';
+		$controller = new WP_REST_Help_Center_Support_History();
+		$controller->register_rest_route();
 	}
 	/**
 	 * Returns true if the current site is a support site.
