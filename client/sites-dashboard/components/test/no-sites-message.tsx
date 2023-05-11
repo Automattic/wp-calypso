@@ -1,13 +1,19 @@
 /**
  * @jest-environment jsdom
  */
+import { isEnabled } from '@automattic/calypso-config';
 import { render, screen } from '@testing-library/react';
 import { NoSitesMessage } from '../no-sites-message';
 
 describe( '<NoSitesMessage>', () => {
 	test( '"Create your first site" message when status filter shows "all" sites', () => {
 		render( <NoSitesMessage status="all" statusSiteCount={ 0 } /> );
-		expect( screen.getByRole( 'link' ) ).toHaveTextContent( 'Create your first site' );
+		expect( screen.getByRole( 'link', { name: 'Create a site' } ) ).toHaveAttribute(
+			'href',
+			isEnabled( 'hosting-onboarding-i2' )
+				? '/setup/new-hosted-site?source=sites-dashboard&ref=calypso-nosites'
+				: '/start?source=sites-dashboard&ref=calypso-nosites'
+		);
 	} );
 
 	test( '"You haven\'t launched a site" message when status filter shows "public" sites', () => {
