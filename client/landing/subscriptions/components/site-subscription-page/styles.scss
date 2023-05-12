@@ -11,12 +11,14 @@
 	}
 
 	&__centered-content {
+		margin: 0 26px;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 	}
 
 	&__main-content {
+		box-sizing: content-box;
 		max-width: 602px;
 		width: 100%;
 	}
@@ -33,6 +35,10 @@
 	}
 
 	&__header {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+
 		.formatted-header {
 			&__title {
 				font-weight: 600;
@@ -53,6 +59,14 @@
 
 		.email-me-new-comments-toggle {
 			margin-bottom: 0;
+		}
+
+		.delivery-frequency-input {
+			width: fit-content;
+
+			.segmented-control__link {
+				padding: 10px 25px;
+			}
 		}
 
 		&__submit-button {
