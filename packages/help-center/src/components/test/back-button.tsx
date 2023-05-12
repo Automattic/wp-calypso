@@ -12,6 +12,9 @@ const mockNavigate = jest.fn();
 jest.mock( 'react-router-dom', () => ( {
 	...jest.requireActual( 'react-router-dom' ),
 	useNavigate: () => mockNavigate,
+	useLocation: jest.fn().mockImplementation( () => ( {
+		key: 'somethingrandom',
+	} ) ),
 } ) );
 
 describe( 'BackButton', () => {
@@ -37,6 +40,21 @@ describe( 'BackButton', () => {
 		await user.click( screen.getByRole( 'button' ) );
 
 		expect( mockNavigate ).toHaveBeenCalledWith( -1 );
+	} );
+
+	it( "navigates to root when there's no history", async () => {
+		const user = userEvent.setup();
+		jest.mock( 'react-router-dom', () => ( {
+			useLocation: jest.fn().mockImplementation( () => ( {
+				key: 'default',
+			} ) ),
+		} ) );
+
+		render( <BackButton /> );
+
+		await user.click( screen.getByRole( 'button' ) );
+
+		expect( mockNavigate ).toHaveBeenCalledWith( '/' );
 	} );
 
 	it( 'calls a custom onClick handler when defined instead of modifying history', async () => {
