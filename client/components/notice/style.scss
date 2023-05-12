@@ -322,10 +322,10 @@ a.notice__action {
 			a,
 			a:visited,
 			button.is-link {
-				color: var(--color-link);
+				color: inherit;
 
 				&:hover {
-					color: var(--color-link);
+					color: inherit;
 				}
 			}
 		}
