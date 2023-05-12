@@ -5,6 +5,6 @@ import config from '@automattic/calypso-config';
  *
  * @returns {boolean} - Whether or not the storage addon is available
  */
-const isStorageAddonAvailable = (): boolean => !! config.isEnabled( 'storage-addon' );
+const isStorageAddonEnabled = (): boolean => !! config.isEnabled( 'storage-addon' );
 
-export default isStorageAddonAvailable;
+export default isStorageAddonEnabled;
