@@ -58,10 +58,11 @@ const SiteSubscriptionSettings = ( { value = DEFAULT_VALUE }: SiteSubscriptionSe
 	};
 
 	return (
-		<div className="site-subscription-settings">
+		<form className="site-subscription-settings" onSubmit={ ( e ) => e.preventDefault() }>
 			<Notice onClose={ () => setNotice( null ) } visible={ !! notice } type={ notice?.type }>
 				{ notice?.message }
 			</Notice>
+			<h2 className="site-subscription-settings__heading">{ translate( 'Settings ' ) }</h2>
 			<SiteSettings
 				// NotifyMeOfNewPosts
 				notifyMeOfNewPosts={ formState.notifyMeOfNewPosts }
@@ -85,10 +86,11 @@ const SiteSubscriptionSettings = ( { value = DEFAULT_VALUE }: SiteSubscriptionSe
 				isPrimary
 				disabled={ isLoading }
 				onClick={ () => mutate( formState ) }
+				type="submit"
 			>
 				{ translate( 'Save changes' ) }
 			</Button>
-		</div>
+		</form>
 	);
 };
 

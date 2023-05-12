@@ -65,7 +65,7 @@ const SiteSubscriptionPage = () => {
 
 					<hr className="subscriptions__separator" />
 
-					<Button className="site-subscription-page__unsubscribe-button" isDestructive>
+					<Button className="site-subscription-page__unsubscribe-button" isSecondary>
 						{ translate( 'Cancel subscription' ) }
 					</Button>
 				</div>

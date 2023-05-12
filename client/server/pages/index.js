@@ -829,18 +829,15 @@ function wpcomPages( app ) {
 			} );
 	} );
 
-	app.get(
-		[ '/subscription/:siteId', '/subscriptions', '/subscriptions/*' ],
-		function ( req, res, next ) {
-			if ( req.cookies.subkey || req.context.isLoggedIn ) {
-				// If the user is logged in, or has a subkey cookie, they are authorized to view the page
-				return next();
-			}
-
-			// Otherwise, show them email subscriptions external landing page
-			res.redirect( 'https://wordpress.com/email-subscriptions' );
+	app.get( [ '/subscriptions', '/subscriptions/*' ], function ( req, res, next ) {
+		if ( req.cookies.subkey || req.context.isLoggedIn ) {
+			// If the user is logged in, or has a subkey cookie, they are authorized to view the page
+			return next();
 		}
-	);
+
+		// Otherwise, show them email subscriptions external landing page
+		res.redirect( 'https://wordpress.com/email-subscriptions' );
+	} );
 }
 
 export default function pages() {
@@ -917,7 +914,7 @@ export default function pages() {
 	loginRouter( serverRouter( app, setUpRoute, null ) );
 
 	handleSectionPath( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper' );
-	handleSectionPath( SUBSCRIPTIONS_SECTION_DEFINITION, '/subscription(s)?', 'entry-subscriptions' );
+	handleSectionPath( SUBSCRIPTIONS_SECTION_DEFINITION, '/subscriptions', 'entry-subscriptions' );
 
 	// Redirect legacy `/new` routes to the corresponding `/start`
 	app.get( [ '/new', '/new/*' ], ( req, res ) => {
