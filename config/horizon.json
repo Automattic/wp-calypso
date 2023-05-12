@@ -113,6 +113,7 @@
 		"server-side-rendering": true,
 		"settings/modernize-reading-settings": true,
 		"settings/security/monitor": true,
+		"show-wordpress-version": true,
 		"sign-in-with-apple": false,
 		"signup/design-picker-pattern-assembler": true,
 		"signup/inline-help": false,

@@ -95,6 +95,7 @@
 		"seller-experience": true,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
+		"show-wordpress-version": true,
 		"signup/inline-help": false,
 		"signup/social": true,
 		"site-indicator": true,
