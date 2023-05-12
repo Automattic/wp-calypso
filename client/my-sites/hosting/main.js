@@ -54,7 +54,7 @@ import './style.scss';
 
 const HEADING_OFFSET = 30;
 
-const CardsByEnabledFeatures = ( { availableTypes, cards } ) => {
+const ShowEnabledFeatureCards = ( { availableTypes, cards } ) => {
 	const enabledCards = cards.filter(
 		( card ) => ! card.type || availableTypes.includes( card.type )
 	);
@@ -149,7 +149,7 @@ const MainCards = ( {
 		! isBasicHostingDisabled ? 'basic' : null,
 	].filter( ( type ) => type !== null );
 
-	return <CardsByEnabledFeatures cards={ mainCards } availableTypes={ availableTypes } />;
+	return <ShowEnabledFeatureCards cards={ mainCards } availableTypes={ availableTypes } />;
 };
 
 const SidebarCards = ( { isBasicHostingDisabled } ) => {
@@ -169,7 +169,7 @@ const SidebarCards = ( { isBasicHostingDisabled } ) => {
 
 	const availableTypes = isBasicHostingDisabled ? [] : [ 'basic' ];
 
-	return <CardsByEnabledFeatures cards={ sidebarCards } availableTypes={ availableTypes } />;
+	return <ShowEnabledFeatureCards cards={ sidebarCards } availableTypes={ availableTypes } />;
 };
 
 class Hosting extends Component {
