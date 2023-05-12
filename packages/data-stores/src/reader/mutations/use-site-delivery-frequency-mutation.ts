@@ -1,7 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { EmailDeliveryFrequency } from '../constants';
 import { callApi, applyCallbackToPages } from '../helpers';
 import { useCacheKey, useIsLoggedIn } from '../hooks';
-import type { PagedQueryResult, SiteSubscription, EmailDeliveryFrequency } from '../types';
+import type { PagedQueryResult, SiteSubscription } from '../types';
 
 type SiteSubscriptionDeliveryFrequencyParams = {
 	delivery_frequency: EmailDeliveryFrequency;
