@@ -101,7 +101,7 @@ const SenseiSetup: Step = ( { navigation } ) => {
 						onChange={ ( ev ) => {
 							setSiteTitle( ev.target.value );
 						} }
-						placeholder={ __( 'My Site Name' ) }
+						placeholder={ __( 'Photography Class' ) }
 						value={ siteTitle }
 					/>
 					<Label>{ __( 'Pick a style' ) }</Label>
