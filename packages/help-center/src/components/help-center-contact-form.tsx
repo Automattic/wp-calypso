@@ -42,6 +42,7 @@ import { BackButton } from './back-button';
 import { HelpCenterGPT } from './help-center-gpt';
 import { HelpCenterOwnershipNotice } from './help-center-notice';
 import { SibylArticles } from './help-center-sibyl-articles';
+import ThirdPartyCookiesNotice from './help-center-third-party-cookies-notice';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 import './help-center-contact-form.scss';
 
@@ -168,15 +169,17 @@ export const HelpCenterContactForm = () => {
 	const [ sitePickerChoice, setSitePickerChoice ] = useState< 'CURRENT_SITE' | 'OTHER_SITE' >(
 		'CURRENT_SITE'
 	);
-	const { currentSite, subject, message, userDeclaredSiteUrl } = useSelect( ( select ) => {
-		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
-		return {
-			currentSite: helpCenterSelect.getSite(),
-			subject: helpCenterSelect.getSubject(),
-			message: helpCenterSelect.getMessage(),
-			userDeclaredSiteUrl: helpCenterSelect.getUserDeclaredSiteUrl(),
-		};
-	}, [] );
+	const { currentSite, subject, message, userDeclaredSiteUrl, thirdPartyCookiesAllowed } =
+		useSelect( ( select ) => {
+			const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
+			return {
+				currentSite: helpCenterSelect.getSite(),
+				subject: helpCenterSelect.getSubject(),
+				message: helpCenterSelect.getMessage(),
+				userDeclaredSiteUrl: helpCenterSelect.getUserDeclaredSiteUrl(),
+				thirdPartyCookiesAllowed: helpCenterSelect.areThirdPartyCookiesAllowed(),
+			};
+		}, [] );
 
 	const {
 		setSite,
@@ -252,8 +255,11 @@ export const HelpCenterContactForm = () => {
 		Boolean( supportSite?.is_wpcom_atomic )
 	);
 
-	const enableGPTResponse = config.isEnabled( 'help/gpt-response' );
+	if ( ! thirdPartyCookiesAllowed ) {
+		return <ThirdPartyCookiesNotice />;
+	}
 
+	const enableGPTResponse = config.isEnabled( 'help/gpt-response' );
 	const showingSibylResults = params.get( 'show-results' ) === 'true';
 	const showingGPTResponse = params.get( 'show-gpt' ) === 'true';
 

@@ -136,6 +136,17 @@ const initialRoute: Reducer< InitialEntry | undefined, HelpCenterAction > = ( st
 	return state;
 };
 
+const thirdPartyCookiesAllowed: Reducer< boolean | undefined, HelpCenterAction > = (
+	state,
+	action
+) => {
+	switch ( action.type ) {
+		case 'HELP_CENTER_SET_THIRD_PARTY_COOKIES_ALLOWED':
+			return action.areAllowed;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	showHelpCenter,
 	showMessagingLauncher,
@@ -151,6 +162,7 @@ const reducer = combineReducers( {
 	unreadCount,
 	iframe,
 	initialRoute,
+	thirdPartyCookiesAllowed,
 } );
 
 export type State = ReturnType< typeof reducer >;

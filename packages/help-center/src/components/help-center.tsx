@@ -16,6 +16,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
  */
 import useMessagingAuth from '../hooks/use-messaging-auth';
 import { useStillNeedHelpURL } from '../hooks/use-still-need-help-url';
+import useZendeskConfig from '../hooks/use-zendesk-config';
 import { HELP_CENTER_STORE, USER_STORE, SITE_STORE } from '../stores';
 import { Container } from '../types';
 import HelpCenterContainer from './help-center-container';
@@ -29,6 +30,16 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
 	const { setSite } = useDispatch( HELP_CENTER_STORE );
 	const { setShowMessagingWidget } = useDispatch( HELP_CENTER_STORE );
+	const { setThirdPartyCookiesAllowed } = useDispatch( HELP_CENTER_STORE );
+
+	const { status: zendeskStatus } = useZendeskConfig();
+	useEffect( () => {
+		if ( zendeskStatus === 'success' ) {
+			setThirdPartyCookiesAllowed( true );
+		} else if ( zendeskStatus === 'error' ) {
+			setThirdPartyCookiesAllowed( false );
+		}
+	}, [ setThirdPartyCookiesAllowed, zendeskStatus ] );
 
 	useEffect( () => {
 		const zendeskKey: string | false = config( 'zendesk_presales_chat_key' );
