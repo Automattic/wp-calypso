@@ -13,6 +13,7 @@ import { setupLocale } from 'calypso/boot/locale';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import MomentProvider from 'calypso/components/localized-moment/provider';
 import { WindowLocaleEffectManager } from 'calypso/landing/stepper/utils/window-locale-effect-manager';
+import { SiteSubscriptionPage } from 'calypso/landing/subscriptions/components/site-subscription-page';
 import { SubscriptionManagerPage } from 'calypso/landing/subscriptions/components/subscription-manager-page';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { createReduxStore } from 'calypso/state';
@@ -21,7 +22,7 @@ import { getInitialState, getStateFromCache } from 'calypso/state/initial-state'
 import { createQueryClient } from 'calypso/state/query-client';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
-import './styles.scss';
+import './styles/styles.scss';
 
 const setupReduxStore = ( user: CurrentUser ) => {
 	const initialState = getInitialState( initialReducer, user.ID );
@@ -58,6 +59,7 @@ window.AppBoot = async () => {
 						<WindowLocaleEffectManager />
 						<BrowserRouter>
 							<Routes>
+								<Route path="/subscription/:blogId" element={ <SiteSubscriptionPage /> } />
 								<Route path="/subscriptions/*" element={ <SubscriptionManagerPage /> } />
 							</Routes>
 						</BrowserRouter>

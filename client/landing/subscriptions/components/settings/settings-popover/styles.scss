@@ -1,14 +1,5 @@
 @import "@automattic/color-studio/dist/color-variables";
 
-%toggle-styles {
-	font-size: $font-body-small;
-
-	.components-form-toggle {
-		display: flex;
-		align-items: center;
-	}
-}
-
 .settings-popover {
 	outline: none;
 	min-width: 305px;
@@ -16,31 +7,17 @@
 	.popover__inner {
 		border: none;
 		box-shadow: 0 3px 8px rgba($studio-black, 0.12), 0 3px 1px rgba($studio-black, 0.04);
-	}
-
-	.popover__menu-item {
-		color: $studio-gray-100;
 		padding: 21px;
-		margin: 0;
-
-		&:not(button) {
-			cursor: default;
-		}
-
-		&:hover,
-		&:focus {
-			background-color: transparent;
-		}
 	}
 
 	.popover__menu-separator {
 		border: none;
 		border-top: solid 1px $studio-gray-5;
 		margin: 3px auto;
-		width: calc(100% - 42px);
+		width: 100%;
 	}
 
-	.settings-popover__delivery-frequency-control,
+	.delivery-frequency-input,
 	.settings-popover__item-button {
 		&.is-loading {
 			cursor: default;
@@ -49,13 +26,9 @@
 		}
 	}
 
-	.settings-popover__delivery-frequency-item {
-		&.is-logged-in {
-			padding-top: 0;
-		}
-	}
-
 	.settings-popover__item-button {
+		font-size: $font-body-small;
+		line-height: $font-title-small;
 		display: flex;
 		align-items: center;
 		gap: 16px;
@@ -76,12 +49,6 @@
 		fill: $studio-gray-50;
 	}
 
-	.settings-popover__item-label,
-	.settings-popover__item-button {
-		font-size: $font-body-small;
-		line-height: $font-title-small;
-	}
-
 	.settings-popover__item-label {
 		margin-bottom: 8px;
 		text-align: left;
@@ -93,32 +60,7 @@
 		line-height: $font-body;
 	}
 
-	.settings-popover__notify-me-of-new-posts-item {
-		padding-bottom: 0;
-		margin-bottom: 16px;
-	}
-
-	.settings-popover__email-me-new-posts-item,
-	.settings-popover__email-me-new-comments-item {
-		padding-top: 0;
-		padding-bottom: 0;
-	}
-
-	.settings-popover__notify-me-of-new-posts-toggle,
-	.settings-popover__email-me-new-posts-toggle {
-		@extend %toggle-styles;
-		margin-bottom: 16px;
-	}
-
-	.settings-popover__email-me-new-comments-toggle {
-		@extend %toggle-styles;
-		margin-bottom: 24px;
-	}
-
-	.settings-popover__popout-hint {
-		color: $studio-gray-50;
-		font-size: $font-body-extra-small;
-		text-align: left;
+	.setting-item__hint {
 		width: 212px;
 	}
 }

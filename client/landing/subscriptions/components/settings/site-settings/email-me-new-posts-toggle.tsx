@@ -1,6 +1,5 @@
 import { ToggleControl as OriginalToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import PopoverMenuItem from 'calypso/components/popover-menu/item';
 
 // This is a fix to get around the fact that the original ToggleControl component doesn't support the disabled prop.
 // TODO: Remove this when the original ToggleControl component supports the disabled prop.
@@ -10,34 +9,29 @@ const ToggleControl = OriginalToggleControl as React.ComponentType<
 	}
 >;
 
-type EmailMeNewCommentsToggleProps = {
+type EmailMeNewPostsToggleProps = {
 	value: boolean;
 	isUpdating: boolean;
 	onChange: ( value: boolean ) => void;
 };
 
-const EmailMeNewCommentsToggle = ( {
+const EmailMeNewPostsToggle = ( {
 	value = false,
 	isUpdating = false,
 	onChange,
-}: EmailMeNewCommentsToggleProps ) => {
+}: EmailMeNewPostsToggleProps ) => {
 	const translate = useTranslate();
 
 	return (
-		<PopoverMenuItem
-			itemComponent="div"
-			focusOnHover={ false }
-			className="settings-popover__email-me-new-comments-item"
-		>
+		<div className="setting-item">
 			<ToggleControl
-				className="settings-popover__email-me-new-comments-toggle"
-				label={ translate( 'Email me new comments' ) }
+				label={ translate( 'Email me new posts' ) }
 				onChange={ () => onChange( ! value ) }
 				checked={ value }
 				disabled={ isUpdating }
 			/>
-		</PopoverMenuItem>
+		</div>
 	);
 };
 
-export default EmailMeNewCommentsToggle;
+export default EmailMeNewPostsToggle;

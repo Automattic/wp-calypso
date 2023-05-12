@@ -5,10 +5,21 @@ import errorIcon from './images/error.svg';
 import successIcon from './images/success.svg';
 import warningIcon from './images/warning.svg';
 
+export enum NoticeType {
+	Success = 'success',
+	Warning = 'warning',
+	Error = 'error',
+}
+
+export type NoticeState = {
+	type: NoticeType;
+	message: string;
+};
+
 type NoticeProps = {
 	children: React.ReactNode;
 	action?: React.ReactNode;
-	type?: 'success' | 'warning' | 'error';
+	type?: NoticeType;
 	onClose?: () => void;
 	visible?: boolean;
 };

@@ -1,4 +1,4 @@
-import SettingsPopover from '../settings-popover';
+import SettingsPopover from '../settings-popover/settings-popover';
 import UnsubscribeCommentsButton from './unsubscribe-comments-button';
 
 type CommentSettingsProps = {

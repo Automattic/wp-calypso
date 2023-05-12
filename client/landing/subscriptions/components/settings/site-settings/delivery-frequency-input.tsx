@@ -1,16 +1,14 @@
-import { SubscriptionManager } from '@automattic/data-stores';
+import { EmailDeliveryFrequency, SubscriptionManager } from '@automattic/data-stores';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SegmentedControl from 'calypso/components/segmented-control';
-import type { SiteSubscriptionDeliveryFrequency } from '@automattic/data-stores/src/reader/types';
 
 type DeliveryFrequencyOptionProps = {
 	children: React.ReactNode;
-	value: SiteSubscriptionDeliveryFrequency;
+	value: EmailDeliveryFrequency;
 	selected: boolean;
-	onChange: ( value: SiteSubscriptionDeliveryFrequency ) => void;
+	onChange: ( value: EmailDeliveryFrequency ) => void;
 };
 
 const DeliveryFrequencyOption = ( {
@@ -25,13 +23,13 @@ const DeliveryFrequencyOption = ( {
 );
 
 type DeliveryFrequencyInputProps = {
-	onChange: ( value: SiteSubscriptionDeliveryFrequency ) => void;
-	value: SiteSubscriptionDeliveryFrequency;
+	onChange: ( value: EmailDeliveryFrequency ) => void;
+	value: EmailDeliveryFrequency;
 	isUpdating: boolean;
 };
 
 type DeliveryFrequencyKeyLabel = {
-	key: SiteSubscriptionDeliveryFrequency;
+	key: EmailDeliveryFrequency;
 	label: string;
 };
 
@@ -45,15 +43,15 @@ const DeliveryFrequencyInput = ( {
 	const availableFrequencies = useMemo< DeliveryFrequencyKeyLabel[] >(
 		() => [
 			{
-				key: 'instantly',
+				key: EmailDeliveryFrequency.Instantly,
 				label: translate( 'Instantly' ),
 			},
 			{
-				key: 'daily',
+				key: EmailDeliveryFrequency.Daily,
 				label: translate( 'Daily' ),
 			},
 			{
-				key: 'weekly',
+				key: EmailDeliveryFrequency.Weekly,
 				label: translate( 'Weekly' ),
 			},
 		],
@@ -61,17 +59,16 @@ const DeliveryFrequencyInput = ( {
 	);
 
 	return (
-		<PopoverMenuItem
-			itemComponent="div"
-			className={ classNames( 'settings-popover__delivery-frequency-item', {
+		<div
+			className={ classNames( 'setting-item', {
 				'is-logged-in': isLoggedIn,
 			} ) }
 		>
 			{ ! isLoggedIn && (
-				<p className="settings-popover__item-label">{ translate( 'Email me new posts' ) }</p>
+				<p className="setting-item__label">{ translate( 'Email me new posts' ) }</p>
 			) }
 			<SegmentedControl
-				className={ classNames( 'settings-popover__delivery-frequency-control', {
+				className={ classNames( 'delivery-frequency-input', {
 					'is-loading': isUpdating,
 				} ) }
 			>
@@ -86,7 +83,7 @@ const DeliveryFrequencyInput = ( {
 					</DeliveryFrequencyOption>
 				) ) }
 			</SegmentedControl>
-		</PopoverMenuItem>
+		</div>
 	);
 };
 

@@ -1,0 +1,128 @@
+@import "@automattic/color-studio/dist/color-variables";
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "../../components/settings/styles.scss";
+
+.site-subscription-page {
+	max-width: 1440px;
+
+	.loading-container {
+		text-align: center;
+	}
+
+	&__centered-content {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	&__main-content {
+		max-width: 602px;
+		width: 100%;
+	}
+
+	&__back-button.components-button.has-icon.has-text {
+		color: $studio-gray-100;
+		font-size: $font-body-small;
+		font-weight: 500;
+		padding: 0 0 0 24px;
+
+		svg {
+			margin-right: 0;
+		}
+	}
+
+	&__header {
+		.formatted-header {
+			&__title {
+				font-weight: 600;
+				color: $studio-gray-100;
+			}
+
+			&__subtitle {
+				font-family: "SF Pro Text", $sans;
+				font-weight: 400;
+				color: $studio-gray-40;
+			}
+		}
+	}
+
+	.site-subscription-settings {
+		width: 100%;
+		@extend .settings;
+
+		.email-me-new-comments-toggle {
+			margin-bottom: 0;
+		}
+
+		&__submit-button {
+			margin: 40px 0;
+		}
+	}
+
+	&__unsubscribe-button.components-button.is-destructive {
+		margin-top: 40px;
+	}
+}
+
+// Mobile screens
+@media screen and (max-width: $break-small) {
+	$back-button-height: rem(64px);
+
+	.site-subscription-page {
+		padding-bottom: $back-button-height;
+
+		&__back-button.components-button.has-icon.has-text {
+			position: fixed;
+			height: $back-button-height;
+			bottom: 0;
+			width: 100%;
+			box-shadow: inset 0 1px 0 #e2e4e7;
+		}
+
+		&__header {
+			margin-top: 48px;
+
+			.formatted-header {
+				&__title {
+					margin-top: 0;
+					font-size: $font-title-medium;
+					line-height: rem(30px);
+				}
+
+				&__subtitle {
+					font-size: $font-body-small;
+					line-height: $font-title-small;
+				}
+			}
+		}
+	}
+}
+
+// Large screens
+@media screen and (min-width: $break-small) {
+	.site-subscription-page {
+		margin-top: 26px;
+
+		&__back-button.components-button.has-icon.has-text {
+			box-shadow: none;
+		}
+
+		&__header {
+			margin-top: 36px;
+
+			.formatted-header {
+				&__title {
+					margin-top: 0;
+					font-size: rem(34px);
+					line-height: rem(38px);
+				}
+
+				&__subtitle {
+					font-size: $font-body-small;
+					line-height: $font-title-small;
+				}
+			}
+		}
+	}
+}

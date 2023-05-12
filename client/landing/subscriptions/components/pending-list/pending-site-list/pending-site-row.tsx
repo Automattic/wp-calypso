@@ -2,7 +2,7 @@ import { Gridicon } from '@automattic/components';
 import { SubscriptionManager } from '@automattic/data-stores';
 import { useMemo } from 'react';
 import TimeSince from 'calypso/components/time-since';
-import { PendingSiteSettings } from '../../settings-popover';
+import { PendingSiteSettings } from '../../settings';
 import type { PendingSiteSubscription } from '@automattic/data-stores/src/reader/types';
 
 export default function PendingSiteRow( {

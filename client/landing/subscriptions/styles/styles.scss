@@ -91,4 +91,10 @@ body {
 			color: $studio-gray-50;
 		}
 	}
+
+	hr.subscriptions__separator {
+		width: 100%;
+		height: 1px;
+		background-color: #e9e9ea;
+	}
 }

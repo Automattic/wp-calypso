@@ -1,31 +1,29 @@
-import { SubscriptionManager } from '@automattic/data-stores';
+import { SubscriptionManager, EmailDeliveryFrequency } from '@automattic/data-stores';
 import Separator from 'calypso/components/popover-menu/separator';
-import SettingsPopover from '../settings-popover';
+import SettingsPopover from '../settings-popover/settings-popover';
 import DeliveryFrequencyInput from './delivery-frequency-input';
 import EmailMeNewCommentsToggle from './email-me-new-comments-toggle';
 import EmailMeNewPostsToggle from './email-me-new-posts-toggle';
 import NotifyMeOfNewPostsToggle from './notify-me-of-new-posts-toggle';
 import UnsubscribeSiteButton from './unsubscribe-site-button';
-import type { SiteSubscriptionDeliveryFrequency } from '@automattic/data-stores/src/reader/types';
+import '../styles.scss';
 
-type SiteSettingsProps = {
-	notifyMeOfNewPosts: boolean;
+export type SiteSettingsProps = {
+	notifyMeOfNewPosts?: boolean;
 	onNotifyMeOfNewPostsChange: ( value: boolean ) => void;
 	updatingNotifyMeOfNewPosts: boolean;
-	emailMeNewPosts: boolean;
+	emailMeNewPosts?: boolean;
 	onEmailMeNewPostsChange: ( value: boolean ) => void;
 	updatingEmailMeNewPosts: boolean;
-	deliveryFrequency: SiteSubscriptionDeliveryFrequency;
-	onDeliveryFrequencyChange: ( value: SiteSubscriptionDeliveryFrequency ) => void;
-	emailMeNewComments: boolean;
+	deliveryFrequency?: EmailDeliveryFrequency;
+	onDeliveryFrequencyChange: ( value: EmailDeliveryFrequency ) => void;
+	updatingFrequency: boolean;
+	emailMeNewComments?: boolean;
 	onEmailMeNewCommentsChange: ( value: boolean ) => void;
 	updatingEmailMeNewComments: boolean;
-	onUnsubscribe: () => void;
-	unsubscribing: boolean;
-	updatingFrequency: boolean;
 };
 
-const SiteSettings = ( {
+export const SiteSettings = ( {
 	notifyMeOfNewPosts,
 	onNotifyMeOfNewPostsChange,
 	updatingNotifyMeOfNewPosts,
@@ -37,23 +35,21 @@ const SiteSettings = ( {
 	emailMeNewComments,
 	onEmailMeNewCommentsChange,
 	updatingEmailMeNewComments,
-	onUnsubscribe,
-	unsubscribing,
 	updatingFrequency,
 }: SiteSettingsProps ) => {
 	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
 
 	return (
-		<SettingsPopover>
+		<div className="settings">
 			{ isLoggedIn && (
 				<>
 					<NotifyMeOfNewPostsToggle
-						value={ notifyMeOfNewPosts }
+						value={ notifyMeOfNewPosts ?? false }
 						onChange={ onNotifyMeOfNewPostsChange }
 						isUpdating={ updatingNotifyMeOfNewPosts }
 					/>
 					<EmailMeNewPostsToggle
-						value={ emailMeNewPosts }
+						value={ emailMeNewPosts ?? false }
 						onChange={ onEmailMeNewPostsChange }
 						isUpdating={ updatingEmailMeNewPosts }
 					/>
@@ -61,18 +57,35 @@ const SiteSettings = ( {
 			) }
 			{ emailMeNewPosts && (
 				<DeliveryFrequencyInput
-					value={ deliveryFrequency }
+					value={ deliveryFrequency ?? EmailDeliveryFrequency.Daily }
 					onChange={ onDeliveryFrequencyChange }
 					isUpdating={ updatingFrequency }
 				/>
 			) }
 			{ isLoggedIn && (
 				<EmailMeNewCommentsToggle
-					value={ emailMeNewComments }
+					value={ emailMeNewComments ?? false }
 					onChange={ onEmailMeNewCommentsChange }
 					isUpdating={ updatingEmailMeNewComments }
 				/>
 			) }
+		</div>
+	);
+};
+
+type SiteSettingsPopoverProps = SiteSettingsProps & {
+	onUnsubscribe: () => void;
+	unsubscribing: boolean;
+};
+
+export const SiteSettingsPopover = ( {
+	onUnsubscribe,
+	unsubscribing,
+	...props
+}: SiteSettingsPopoverProps ) => {
+	return (
+		<SettingsPopover>
+			<SiteSettings { ...props } />
 			<Separator />
 			<UnsubscribeSiteButton unsubscribing={ unsubscribing } onUnsubscribe={ onUnsubscribe } />
 		</SettingsPopover>

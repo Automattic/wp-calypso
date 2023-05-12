@@ -1,3 +1,4 @@
+import { EmailDeliveryFrequency } from './constants';
 import { useSubscriberEmailAddress, useIsLoggedIn } from './hooks';
 import {
 	usePostUnsubscribeMutation,
@@ -24,6 +25,7 @@ import {
 } from './queries';
 
 export const SubscriptionManager = {
+	EmailDeliveryFrequency,
 	PostSubscriptionsSortBy,
 	SiteSubscriptionsSortBy,
 	usePostUnsubscribeMutation,
