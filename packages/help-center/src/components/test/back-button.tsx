@@ -13,9 +13,6 @@ const mockNavigate = jest.fn();
 jest.mock( 'react-router-dom', () => ( {
 	...jest.requireActual( 'react-router-dom' ),
 	useNavigate: () => mockNavigate,
-	useLocation: jest.fn().mockImplementation( () => ( {
-		key: 'somethingrandom',
-	} ) ),
 } ) );
 
 const testEntries = [ { pathname: '/' }, { pathname: '/contact-form' } ];
