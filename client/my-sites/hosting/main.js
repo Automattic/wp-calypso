@@ -262,7 +262,7 @@ class Hosting extends Component {
 				);
 			}
 
-			if ( isBasicHostingDisabled && ! isTransferring ) {
+			if ( hasAtomicFeature && ! isSiteAtomic && ! isTransferring ) {
 				const failureNotice = FAILURE === transferState && (
 					<Notice
 						status="is-error"
