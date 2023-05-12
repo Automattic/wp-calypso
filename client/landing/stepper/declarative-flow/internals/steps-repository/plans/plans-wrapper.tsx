@@ -64,7 +64,11 @@ function getPlanTypes( flowName: string | null ) {
 }
 
 const PlansWrapper: React.FC< Props > = ( props ) => {
-	const { hideFreePlan, domainCartItem, hidePlansFeatureComparison } = useSelect( ( select ) => {
+	const {
+		hideFreePlan: reduxHideFreePlan,
+		domainCartItem,
+		hidePlansFeatureComparison,
+	} = useSelect( ( select ) => {
 		return {
 			hideFreePlan: ( select( ONBOARD_STORE ) as OnboardSelect ).getHideFreePlan(),
 			domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
@@ -87,6 +91,8 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const planTypes = getPlanTypes( props?.flowName );
 	const headerText = __( 'Choose a plan' );
 	const isInSignup = props?.flowName === DOMAIN_UPSELL_FLOW ? false : true;
+
+	const hideFreePlan = planTypes ? ! planTypes.includes( TYPE_FREE ) : reduxHideFreePlan;
 
 	const translate = useTranslate();
 

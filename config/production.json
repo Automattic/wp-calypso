@@ -20,7 +20,7 @@
 	"features": {
 		"ad-tracking": true,
 		"akismet/siteless-checkout": true,
-		"anchor/sunset-integration": false,
+		"anchor/sunset-integration": true,
 		"bilmur-script": true,
 		"calypso/help-center": true,
 		"calypsoify/plugins": true,
