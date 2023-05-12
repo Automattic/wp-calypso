@@ -49,13 +49,7 @@ export function getEnhancedTasks(
 
 	const translatedPlanName = productSlug ? PLANS_LIST[ productSlug ].getTitle() : '';
 
-	const firstPostPublishedCompleted =
-		site?.options?.launchpad_checklist_tasks_statuses?.first_post_published || false;
-
 	const domainUpsellCompleted = isDomainUpsellCompleted( site, checklistStatuses );
-	const siteLaunchCompleted = Boolean(
-		tasks?.find( ( task ) => task.id === 'site_launched' )?.completed
-	);
 
 	const planCompleted =
 		Boolean( tasks?.find( ( task ) => task.id === 'plan_completed' )?.completed ) ||
@@ -183,7 +177,6 @@ export function getEnhancedTasks(
 					break;
 				case 'first_post_published':
 					taskData = {
-						completed: isStartWritingFlow( flow ) ? firstPostPublishedCompleted : task.completed,
 						disabled: mustVerifyEmailBeforePosting || isStartWritingFlow( flow || null ) || false,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
@@ -272,7 +265,7 @@ export function getEnhancedTasks(
 
 									// Waits for half a second so that the loading screen doesn't flash away too quickly
 									await new Promise( ( res ) => setTimeout( res, 500 ) );
-									recordTaskClickTracksEvent( flow, siteLaunchCompleted, task.id );
+									recordTaskClickTracksEvent( flow, task.completed, task.id );
 									return { goToHome: true, siteSlug };
 								} );
 
@@ -283,9 +276,7 @@ export function getEnhancedTasks(
 					break;
 				case 'blog_launched':
 					taskData = {
-						completed: siteLaunchCompleted,
 						disabled: isStartWritingFlow( flow ) && ! planCompleted,
-						isLaunchTask: true,
 						actionDispatch: () => {
 							if ( site?.ID ) {
 								const { setPendingAction, setProgressTitle } = dispatch( ONBOARD_STORE );
