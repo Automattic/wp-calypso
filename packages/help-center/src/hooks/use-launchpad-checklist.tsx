@@ -23,7 +23,7 @@ interface LaunchpadTasks {
 	checklist: Task[];
 }
 
-export const fetchLaunchpadChecklist = (
+const fetchLaunchpadChecklist = (
 	siteSlug: string | null,
 	siteIntent: string | null
 ): Promise< LaunchpadTasks > => {

@@ -313,6 +313,13 @@ $font-family: "SF Pro Text", $sans;
 		flex-grow: 1;
 		overflow-x: visible;
 	}
+
+	/**
+	 * Calypso Components
+	 */
+	.components-button:focus:not(:disabled) {
+		box-shadow: 0 0 0 2px var(--color-primary-light);
+	}
 }
 
 .popover.is-right.pattern-layout__add-button-popover {
