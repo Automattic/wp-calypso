@@ -62,7 +62,13 @@ function PlansThemePreselectedStep( props: object & { signupDependencies: Signup
 		} );
 	}
 
-	return <PlansStep { ...props } { ...hidePlanProps } fallbackSubHeaderText={ subHeaderText } />;
+	/**
+	 * Keep the default subheader text for free themes.
+	 */
+	const fallbackSubheaderTextProps =
+		'free' === props.signupDependencies.themeType ? {} : { fallbackSubHeaderText: subHeaderText };
+
+	return <PlansStep { ...props } { ...hidePlanProps } { ...fallbackSubheaderTextProps } />;
 }
 
 export default localize( PlansThemePreselectedStep );
