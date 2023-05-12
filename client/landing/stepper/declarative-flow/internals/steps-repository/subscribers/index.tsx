@@ -20,6 +20,16 @@ const Subscribers: Step = function ( { navigation } ) {
 		submit?.();
 	};
 
+	const isSiteOnFreePlan = !! site?.plan?.is_free;
+
+	const subtitleText = isSiteOnFreePlan
+		? translate(
+				'Bring your subscribers with you — or add some individually — to start spreading the news.'
+		  )
+		: translate(
+				'Bring up to 100 subscribers for free — or add some individually — to start spreading the news.'
+		  );
+
 	const submitButtonText = isImportValid
 		? translate( 'Add and continue' )
 		: translate( 'Skip for now' );
@@ -37,7 +47,7 @@ const Subscribers: Step = function ( { navigation } ) {
 					{ site?.ID && (
 						<AddSubscriberForm
 							siteId={ site.ID }
-							isSiteOnFreePlan={ !! site?.plan?.is_free }
+							isSiteOnFreePlan={ isSiteOnFreePlan }
 							flowName="onboarding_subscribers"
 							submitBtnName={ submitButtonText }
 							onImportFinished={ handleSubmit }
@@ -47,9 +57,7 @@ const Subscribers: Step = function ( { navigation } ) {
 							showCsvUpload={ isEnabled( 'subscriber-csv-upload' ) }
 							recordTracksEvent={ recordTracksEvent }
 							titleText={ translate( 'Ready to add your first subscribers?' ) }
-							subtitleText={ translate(
-								'Bring up to 100 subscribers for free — or add some individually — to start spreading the news.'
-							) }
+							subtitleText={ subtitleText }
 							showSubtitle={ true }
 						/>
 					) }
