@@ -76,7 +76,7 @@ const ModuleCard: FunctionComponent< ModuleCardProps > = ( {
 									busy={ disabled }
 									onClick={ onActivateProduct }
 								>
-									Activate
+									{ translate( 'Activate' ) }
 								</Button>
 							) }
 							{ error === 'not_installed' && (
@@ -86,12 +86,12 @@ const ModuleCard: FunctionComponent< ModuleCardProps > = ( {
 									busy={ disabled }
 									onClick={ onActivateProduct }
 								>
-									Install
+									{ translate( 'Install' ) }
 								</Button>
 							) }
 							{ error === 'invalid_key' && (
 								<a href={ manageUrl } target="_self">
-									Manage Akismet key
+									{ translate( 'Manage Akismet key' ) }
 								</a>
 							) }
 							{ ! [ 'not_active', 'not_installed', 'invalid_key' ].includes( error ) && (
