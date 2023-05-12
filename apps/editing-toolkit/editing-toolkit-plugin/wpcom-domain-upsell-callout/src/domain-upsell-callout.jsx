@@ -1,9 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { dispatch, select, subscribe } from '@wordpress/data';
+import { createElement, render } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { close, globe, Icon } from '@wordpress/icons';
-import { createElement } from 'react';
-import { render } from 'react-dom';
 
 import './domain-upsell-callout.scss';
 
