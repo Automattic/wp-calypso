@@ -177,23 +177,6 @@ const DiscountPromotion = styled.div`
 	margin-top: 6px;
 `;
 
-interface WooExpressMonthlyPromotionProps {
-	billingTimeframe: TranslateResult;
-	discountDescription?: ReactChild | null;
-}
-
-const WooExpressMonthlyPromotion: FunctionComponent< WooExpressMonthlyPromotionProps > = (
-	props
-) => {
-	const { billingTimeframe, discountDescription } = props;
-	return (
-		<div>
-			<div>{ billingTimeframe }</div>
-			<DiscountPromotion>{ discountDescription }</DiscountPromotion>
-		</div>
-	);
-};
-
 const PlanFeatures2023GridBillingTimeframe: FunctionComponent< Props > = ( props ) => {
 	const { planName, billingTimeframe, isMonthlyPlan } = props;
 	const translate = useTranslate();
@@ -202,11 +185,12 @@ const PlanFeatures2023GridBillingTimeframe: FunctionComponent< Props > = ( props
 	const price = formatCurrency( 25000, 'USD' );
 
 	if ( isWooExpressPlan( planName ) && isMonthlyPlan ) {
-		const wooExpressMonthlyPromotionProps = {
-			billingTimeframe,
-			discountDescription: perMonthDescription,
-		};
-		return <WooExpressMonthlyPromotion { ...wooExpressMonthlyPromotionProps } />;
+		return (
+			<div>
+				<div>{ billingTimeframe }</div>
+				<DiscountPromotion>{ perMonthDescription }</DiscountPromotion>
+			</div>
+		);
 	}
 
 	if ( isWpcomEnterpriseGridPlan( planName ) ) {
