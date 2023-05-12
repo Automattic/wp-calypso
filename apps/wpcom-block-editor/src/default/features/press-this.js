@@ -10,7 +10,9 @@ if ( url ) {
 		// Wait for the editor to be initialized and the core blocks registered.
 		await isEditorReady();
 
-		dispatch( 'core/editor' ).resetEditorBlocks( [ createBlock( 'core/embed', { url: url } ) ] );
+		dispatch( 'core/editor' ).resetEditorBlocks( [
+			createBlock( 'core/embed', { url, caption: title, type: 'wp-embed' } ),
+		] );
 		dispatch( 'core/editor' ).editPost( { title: title } );
 	} )();
 }
