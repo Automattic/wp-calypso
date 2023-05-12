@@ -9,7 +9,7 @@ import { getPlanDiscountedRawPrice } from 'calypso/state/sites/plans/selectors';
 import { getSitePlanRawPrice } from 'calypso/state/sites/plans/selectors/get-site-plan-raw-price';
 import isPlanAvailableForPurchase from 'calypso/state/sites/plans/selectors/is-plan-available-for-purchase';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
-import { usePlanUpgradeCredits } from '../use-plan-upgrade-credits';
+import { useCalculateMaxPlanUpgradeCredit } from '../use-plan-upgrade-credits';
 import type { PlanSlug } from '@automattic/calypso-products';
 
 jest.mock( 'calypso/state/sites/plans/selectors/is-plan-available-for-purchase', () => ( {
@@ -43,7 +43,7 @@ const plansList: PlanSlug[] = [
 	PLAN_ECOMMERCE,
 ];
 
-describe( 'usePlanUpgradeCredits hook', () => {
+describe( 'useCalculateMaxPlanUpgradeCredit hook', () => {
 	beforeEach( () => {
 		jest.resetAllMocks();
 		mGetSitePlanRawPrice.mockImplementation( ( _state, _siteId, planSlug ) => {
@@ -83,7 +83,9 @@ describe( 'usePlanUpgradeCredits hook', () => {
 	} );
 
 	test( 'Return the correct amount of credits given a plan list', () => {
-		const { result } = renderHookWithProvider( () => usePlanUpgradeCredits( siteId, plansList ) );
+		const { result } = renderHookWithProvider( () =>
+			useCalculateMaxPlanUpgradeCredit( siteId, plansList )
+		);
 		expect( result.current ).toEqual( 1000 );
 	} );
 
@@ -92,7 +94,9 @@ describe( 'usePlanUpgradeCredits hook', () => {
 			( _state, _siteId, planName ) => ! ( planName === PLAN_ECOMMERCE )
 		);
 
-		const { result } = renderHookWithProvider( () => usePlanUpgradeCredits( siteId, plansList ) );
+		const { result } = renderHookWithProvider( () =>
+			useCalculateMaxPlanUpgradeCredit( siteId, plansList )
+		);
 		expect( result.current ).toEqual( 800 );
 	} );
 } );

@@ -895,8 +895,8 @@ export const isPrimaryUpgradeByPlanDelta = ( currentPlan, plan ) =>
 		planMatches( plan, { type: TYPE_P2_PLUS, group: GROUP_WPCOM } ) );
 
 /**
- * @deprecated Use the {@link usePlanUpgradeCredits} hook instead, to be cleaned up with Plan
- * @module calypso/my-sites/plan-features-2023-grid/hooks/usePlanUpgradeCredits
+ * @deprecated Use the {@link useCalculateMaxPlanUpgradeCredit} hook instead, to be cleaned up with Plan
+ * @module calypso/my-sites/plan-features-2023-grid/hooks/useCalculateMaxPlanUpgradeCredit
  */
 export const calculatePlanCredits = ( state, siteId, planProperties ) =>
 	planProperties
