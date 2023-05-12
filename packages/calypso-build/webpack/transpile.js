@@ -43,7 +43,7 @@ module.exports.loader = ( {
 				cacheIdentifier,
 				cacheCompression,
 				presets,
-				plugins: plugins || [],
+				plugins,
 			},
 		},
 	],
