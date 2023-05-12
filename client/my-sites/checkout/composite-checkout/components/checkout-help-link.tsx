@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { HelpCenter } from '@automattic/data-stores';
-import { SUPPORT_FORUM, shouldShowHelpCenterToUser } from '@automattic/help-center';
+import { SUPPORT_FORUM } from '@automattic/help-center';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { ResponseCartMessage, useShoppingCart } from '@automattic/shopping-cart';
 import { keyframes } from '@emotion/react';
@@ -173,11 +173,7 @@ export default function CheckoutHelpLink() {
 		};
 	} );
 
-	const userAllowedToHelpCenter = !! (
-		userId &&
-		config.isEnabled( 'calypso/help-center' ) &&
-		shouldShowHelpCenterToUser( userId )
-	);
+	const userAllowedToHelpCenter = !! ( userId && config.isEnabled( 'calypso/help-center' ) );
 
 	const handleHelpButtonClicked = () => {
 		reduxDispatch( userAllowedToHelpCenter ? setShowHelpCenter( true ) : showInlineHelpPopover() );

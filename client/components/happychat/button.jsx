@@ -1,6 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
 import { HelpCenter } from '@automattic/data-stores';
-import { shouldShowHelpCenterToUser } from '@automattic/help-center';
 import { isMobile } from '@automattic/viewport';
 import { withDispatch } from '@wordpress/data';
 import classnames from 'classnames';
@@ -59,7 +58,7 @@ export class HappychatButton extends Component {
 	};
 
 	onClick = ( event ) => {
-		if ( this.props.openHelpCenter || shouldShowHelpCenterToUser( this.props.userId ) ) {
+		if ( this.props.openHelpCenter ) {
 			this.props.setHelpCenterVisible( true );
 		} else if ( this.props.allowMobileRedirect && isMobile() ) {
 			// For mobile clients, happychat will always use the

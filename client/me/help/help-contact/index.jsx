@@ -3,7 +3,6 @@ import { getPlanTermLabel } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import { HelpCenter } from '@automattic/data-stores';
 import {
-	shouldShowHelpCenterToUser,
 	SUPPORT_CHAT_OVERFLOW,
 	SUPPORT_FORUM,
 	SUPPORT_HAPPYCHAT,
@@ -36,20 +35,14 @@ import HelpContactForm from 'calypso/me/help/help-contact-form';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import {
 	getCurrentUser,
-	getCurrentUserId,
 	getCurrentUserLocale,
 	getCurrentUserSiteCount,
 	isCurrentUserEmailVerified,
 } from 'calypso/state/current-user/selectors';
-import {
-	sendMessage as sendHappychatMessage,
-	sendUserInfo,
-} from 'calypso/state/happychat/connection/actions';
 import getHappychatEnv from 'calypso/state/happychat/selectors/get-happychat-env';
 import getHappychatUserInfo from 'calypso/state/happychat/selectors/get-happychat-userinfo';
 import hasHappychatLocalizedSupport from 'calypso/state/happychat/selectors/has-happychat-localized-support';
 import isHappychatUserEligible from 'calypso/state/happychat/selectors/is-happychat-user-eligible';
-import { openChat as openHappychat } from 'calypso/state/happychat/ui/actions';
 import { getHelpSelectedSite } from 'calypso/state/help/selectors';
 import {
 	isTicketSupportConfigurationReady,
@@ -108,14 +101,7 @@ class HelpContact extends Component {
 		this.recordCompactSubmit( 'happychat' );
 		this.recordSubmitWithActiveTickets( 'chat' );
 
-		if ( this.props.shouldShowHelpCenterToUser ) {
-			this.props.startHelpCenterChat( site, message );
-		} else {
-			this.props.openHappychat();
-
-			this.props.sendUserInfo( this.props.getUserInfo( { site } ) );
-			this.props.sendHappychatMessage( message, { includeInSummary: true } );
-		}
+		this.props.startHelpCenterChat( site, message );
 
 		recordTracksEvent( 'calypso_help_live_chat_begin', {
 			site_plan_product_id: site ? site.plan.product_id : null,
@@ -645,16 +631,12 @@ export default withDispatch( ( dispatch ) => {
 				shouldStartHappychatConnection: ! isRequestingSites( state ) && isChatEligible,
 				isRequestingSites: isRequestingSites( state ),
 				supportVariation: getInlineHelpSupportVariation( state ),
-				shouldShowHelpCenterToUser: shouldShowHelpCenterToUser( getCurrentUserId( state ) ),
 				happychatEnv: getHappychatEnv( state ),
 			};
 		},
 		{
 			errorNotice,
-			openHappychat,
 			recordTracksEventAction,
-			sendHappychatMessage,
-			sendUserInfo,
 		}
 	)( localize( withActiveSupportTickets( HelpContact ) ) )
 );
