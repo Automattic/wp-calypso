@@ -1,5 +1,5 @@
 import Separator from 'calypso/components/popover-menu/separator';
-import SettingsPopover from '../settings-popover/settings-popover';
+import { SettingsPopover } from '../settings-popover';
 import ConfirmPendingSiteButton from './confirm-pending-site-button';
 import DeletePendingSiteButton from './delete-pending-site-button';
 
