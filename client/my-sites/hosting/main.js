@@ -67,11 +67,13 @@ const ShowEnabledFeatureCards = ( { availableTypes, cards } ) => {
 			{ enabledCards.map( ( card ) => {
 				return <Fragment key={ card.feature }>{ card.content }</Fragment>;
 			} ) }
-			<FeatureExample>
-				{ disabledCards.map( ( card ) => {
-					return <Fragment key={ card.feature }>{ card.content }</Fragment>;
-				} ) }
-			</FeatureExample>
+			{ disabledCards.length > 0 && (
+				<FeatureExample>
+					{ disabledCards.map( ( card ) => {
+						return <Fragment key={ card.feature }>{ card.content }</Fragment>;
+					} ) }
+				</FeatureExample>
+			) }
 		</>
 	);
 };
