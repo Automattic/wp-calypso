@@ -268,39 +268,3 @@ function enqueue_override_preview_button_url() {
 }
 
 add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_override_preview_button_url' );
-
-/**
- * Overrides the block editor preview button url with one that accounts for third party cookie
- * blocking.
- */
-function enqueue_domain_upsell_callout() {
-	if ( ! function_exists( 'is_blog_atomic' ) ) {
-		return;
-	};
-
-	$blog_details = get_blog_details( get_current_blog_id() );
-
-	if ( is_blog_atomic( $blog_details ) ) {
-		return;
-	}
-
-	wp_enqueue_script(
-		'a8c_domain_upsell_callout_script',
-		plugins_url( 'dist/domain-upsell-callout.min.js', __FILE__ ),
-		array(),
-		filemtime( plugin_dir_path( __FILE__ ) . 'dist/domain-upsell-callout.min.js' ),
-		true
-	);
-
-	$style_file = is_rtl()
-		? 'domain-upsell-callout.rtl.css'
-		: 'domain-upsell-callout.css';
-	wp_enqueue_style(
-		'a8c_domain_upsell_callout_style',
-		plugins_url( 'dist/' . $style_file, __FILE__ ),
-		'wp-edit-post',
-		filemtime( plugin_dir_path( __FILE__ ) . 'dist/' . $style_file )
-	);
-}
-
-add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_domain_upsell_callout' );
