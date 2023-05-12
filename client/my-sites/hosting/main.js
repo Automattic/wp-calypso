@@ -334,11 +334,13 @@ class Hosting extends Component {
 		 *  2. The site is Atomic, is not transferring, and doesn't have advanced hosting features.
 		 * Otherwise, we show the activation notice, which may be empty.
 		 */
-		const banner =
+		const shouldShowUpgradeBanner =
 			! hasAtomicFeature ||
-			( isSiteAtomic && ! isTransferInProgress() && isAdvancedHostingDisabled )
-				? getUpgradeBanner()
-				: getAtomicActivationNotice();
+			( isSiteAtomic &&
+				! isTransferInProgress() &&
+				isAdvancedHostingDisabled &&
+				! isWpcomStagingSite );
+		const banner = shouldShowUpgradeBanner ? getUpgradeBanner() : getAtomicActivationNotice();
 
 		return (
 			<Main wideLayout className="hosting">
