@@ -68,9 +68,9 @@ class FeedHeader extends Component {
 
 	// Create function to use with onFollowClick to open a modal with ReaderRecommendedFollowsDialogLoader component
 	// This function will be passed to ReaderFollowButton component
-	openRecommendedFollowsModal = ( isFollowing ) => {
+	openRecommendedFollowsModal = ( followClicked ) => {
 		// this.props.recordReaderTracksEvent( 'calypso_reader_follow_button_clicked' );
-		this.setState( { isRecommendedFollowsModalOpen: isFollowing } );
+		this.setState( { isRecommendedFollowsModalOpen: followClicked } );
 	};
 
 	onCloseRecommendedFollowModal = () => {
@@ -87,6 +87,7 @@ class FeedHeader extends Component {
 			isEmailBlocked,
 			hasOrganization,
 			isWPForTeamsItem,
+			post,
 		} = this.props;
 		const followerCount = this.getFollowerCount( feed, site );
 		const ownerDisplayName = site && ! site.is_multi_author && site.owner && site.owner.name;
@@ -208,7 +209,11 @@ class FeedHeader extends Component {
 					</div>
 				</div>
 				{ this.state.isRecommendedFollowsModalOpen && (
-					<ReaderRecommendedFollowsDialog onClose={ this.onCloseRecommendedFollowModal } />
+					<ReaderRecommendedFollowsDialog
+						onClose={ this.onCloseRecommendedFollowModal }
+						siteId={ site.ID }
+						postId={ post.ID }
+					/>
 				) }
 			</div>
 		);
@@ -217,6 +222,7 @@ class FeedHeader extends Component {
 
 export default connect(
 	( state, ownProps ) => ( {
+		post: Object.values( state?.reader?.posts?.items )[ 0 ],
 		isWPForTeamsItem:
 			isSiteWPForTeams( state, ownProps.site && ownProps.site.ID ) ||
 			isFeedWPForTeams( state, ownProps.feed && ownProps.feed.feed_ID ),
