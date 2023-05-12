@@ -24,10 +24,10 @@ const Subscribers: Step = function ( { navigation } ) {
 
 	const subtitleText = isSiteOnFreePlan
 		? translate(
-				'Bring your subscribers with you — or add some individually — to start spreading the news.'
+				'Bring up to 100 subscribers for free — or add some individually — to start spreading the news.'
 		  )
 		: translate(
-				'Bring up to 100 subscribers for free — or add some individually — to start spreading the news.'
+				'Bring your subscribers with you — or add some individually — to start spreading the news.'
 		  );
 
 	const submitButtonText = isImportValid
