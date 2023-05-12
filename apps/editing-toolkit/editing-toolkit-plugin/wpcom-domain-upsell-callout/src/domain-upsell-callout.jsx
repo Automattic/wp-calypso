@@ -94,7 +94,9 @@ async function showDomainUpsellCallout() {
 	await isEditorReady();
 	if ( shouldShowDomainUpsell() ) {
 		const toolbarContainer = document.querySelector( '.edit-post-header-toolbar' );
-		render( createElement( DomainUpsellCallout ), toolbarContainer );
+		if ( toolbarContainer !== null ) {
+			render( createElement( DomainUpsellCallout ), toolbarContainer );
+		}
 	}
 }
 
