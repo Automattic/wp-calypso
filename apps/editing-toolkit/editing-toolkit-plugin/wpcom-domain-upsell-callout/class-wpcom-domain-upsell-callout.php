@@ -81,11 +81,9 @@ class WPCOM_Domain_Upsell_Callout {
 	 * @return boolean
 	 */
 	private function should_not_show_callout() {
-		$user_id          = get_current_user_id();
-		$blog_id          = get_current_blog_id();
-		$email_unverified = \Email_Verification::is_email_unverified( $user_id );
+		$blog_id = defined( 'IS_WPCOM' ) && IS_WPCOM ? get_current_blog_id() : \Jetpack_Options::get_option( 'id' );
 
-		return $this->blog_has_custom_domain( $blog_id ) || $email_unverified || $this->blog_is_p2( $blog_id );
+		return $this->blog_has_custom_domain( $blog_id ) || $this->user_has_email_unverified() || $this->blog_is_p2( $blog_id );
 	}
 
 	/**
@@ -95,6 +93,10 @@ class WPCOM_Domain_Upsell_Callout {
 	 * @return boolean
 	 */
 	private function blog_has_custom_domain( $blog_id ) {
+		if ( defined( 'IS_ATOMIC' ) && IS_ATOMIC ) {
+			return false;
+		}
+
 		$domain_mappings = \Domain_Mapping::find_by_blog_id( $blog_id ) ?? array();
 
 		foreach ( $domain_mappings as $domain_mapping ) {
@@ -112,12 +114,22 @@ class WPCOM_Domain_Upsell_Callout {
 	 * @return boolean
 	 */
 	private function blog_is_p2( $blog_id ) {
+		return defined( 'IS_ATOMIC' ) && IS_ATOMIC ? false : \WPForTeams\is_wpforteams_site( $blog_id );
+	}
+
+	/**
+	 * Check if the user has an unverified email.
+	 *
+	 * @return boolean
+	 */
+	private function user_has_email_unverified() {
 		if ( defined( 'IS_ATOMIC' ) && IS_ATOMIC ) {
-			$is_p2 = false;
+			$is_email_unverified = false;
 		} else {
-			$is_p2 = \WPForTeams\is_wpforteams_site( $blog_id );
+			$user_id             = get_current_user_id();
+			$is_email_unverified = \Email_Verification::is_email_unverified( $user_id );
 		}
-		return $is_p2;
+		return $is_email_unverified;
 	}
 
 }
