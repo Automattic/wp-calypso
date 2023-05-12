@@ -1,5 +1,6 @@
 import { useSelect } from '@wordpress/data';
 import { useSelector } from 'react-redux';
+import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
@@ -58,6 +59,7 @@ const StepContent = ( { siteSlug, submit, goNext, goToStep, flow }: StepContentP
 
 	return (
 		<main className="launchpad__container">
+			{ site && <QueryActiveTheme siteId={ site.ID } /> }
 			<div className="launchpad__sidebar-header">
 				<WordPressLogo className="launchpad__sidebar-header-logo" size={ 24 } />
 				<span className="launchpad__sidebar-header-flow-name">{ flowName }</span>
