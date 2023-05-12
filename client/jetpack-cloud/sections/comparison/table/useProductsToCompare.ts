@@ -20,7 +20,7 @@ export const useProductsToCompare = () => {
 			},
 			{
 				id: 'STARTER',
-				name: translate( 'Jetpack Starter' ),
+				name: translate( 'Starter' ),
 				productSlug: PLAN_JETPACK_STARTER_YEARLY,
 			},
 			{
