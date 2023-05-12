@@ -81,17 +81,13 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 		} );
 	}, [ messagingAuth ] );
 
-	const { showMessagingLauncher, showMessagingWidget } = useSelect(
-		( select ) => ( {
-			showMessagingLauncher: (
-				select( HELP_CENTER_STORE ) as HelpCenterSelect
-			 ).isMessagingLauncherShown(),
-			showMessagingWidget: (
-				select( HELP_CENTER_STORE ) as HelpCenterSelect
-			 ).isMessagingWidgetShown(),
-		} ),
-		[]
-	);
+	const { showMessagingLauncher, showMessagingWidget } = useSelect( ( select ) => {
+		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
+		return {
+			showMessagingLauncher: helpCenterSelect.isMessagingLauncherShown(),
+			showMessagingWidget: helpCenterSelect.isMessagingWidgetShown(),
+		};
+	}, [] );
 
 	useEffect( () => {
 		if ( typeof window.zE !== 'function' ) {
