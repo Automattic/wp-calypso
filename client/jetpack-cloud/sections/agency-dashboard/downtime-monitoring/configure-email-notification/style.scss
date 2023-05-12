@@ -106,6 +106,10 @@ button.configure-email-address__button {
 
 .configure-email-notification__form {
 	margin-block-start: 24px;
+
+	.notification-settings__footer-validation-error {
+		margin-block: 8px;
+	}
 }
 
 .configure-email-notification__resend-code-button {
