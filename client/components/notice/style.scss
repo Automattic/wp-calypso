@@ -318,6 +318,17 @@ a.notice__action {
 
 	.notice__content {
 		padding: 13px 0;
+		.notice__text {
+			a,
+			a:visited,
+			button.is-link {
+				color: var(--color-link);
+
+				&:hover {
+					color: var(--color-link);
+				}
+			}
+		}
 	}
 
 	.notice__icon-wrapper {
