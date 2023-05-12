@@ -87,6 +87,38 @@ class WPCOM_Domain_Upsell_Callout {
 	}
 
 	/**
+	 * Get the domain from the site url.
+	 *
+	 * @return string
+	 */
+	private function get_domain_from_site_url() {
+		$site_url   = get_site_url();
+		$parsed_url = wp_parse_url( $site_url );
+		return $parsed_url['host'];
+	}
+
+	/**
+	 * Check if the domain is a WordPress.com-owned TLD.
+	 *
+	 * @param string $domain // The domain to check.
+	 * @return boolean
+	 */
+	private function is_wpcom_owned_tld( $domain ) {
+		// Adopted from https://opengrok.a8c.com/source/xref/wpcom/wp-content/lib/domains/wpcom-domain.php?r=e9e7bb7b#832-862.
+		$wpcom_tlds = array(
+			'wordpress.de',
+			'wordpress.lv',
+			'wordpress.com',
+			'wpcomstaging.com',
+		);
+
+		$domain_parts = explode( '.', $domain );
+		$tld          = end( $domain_parts );
+
+		return in_array( $tld, $wpcom_tlds, true );
+	}
+
+	/**
 	 * Check if the blog has a custom domain.
 	 *
 	 * @param int $blog_id // The blog id.
@@ -94,6 +126,11 @@ class WPCOM_Domain_Upsell_Callout {
 	 */
 	private function blog_has_custom_domain( $blog_id ) {
 		if ( defined( 'IS_ATOMIC' ) && IS_ATOMIC ) {
+			$domain = $this->get_domain_from_site_url();
+			if ( ! $this->is_wpcom_owned_tld( $domain ) ) {
+				return true;
+			}
+
 			return false;
 		}
 
