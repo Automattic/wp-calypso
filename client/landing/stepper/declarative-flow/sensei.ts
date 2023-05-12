@@ -70,8 +70,8 @@ const sensei: Flow = {
 		const locale = useLocale();
 		const logInUrl =
 			locale && locale !== 'en'
-				? `/start/account/user/${ locale }?redirect_to=/setup/?flow=${ flowName }`
-				: `/start/account/user?redirect_to=/setup/?flow=${ flowName }`;
+				? `/start/account/user/${ locale }?redirect_to=/setup/${ flowName }`
+				: `/start/account/user?redirect_to=/setup/${ flowName }`;
 		if ( ! userIsLoggedIn ) {
 			window.location.assign( logInUrl );
 			return {

@@ -64,14 +64,9 @@ export default function LicenseDetailsActions( {
 			) }
 
 			{ licenseState === LicenseState.Attached && licenseType === LicenseType.Partner && (
-				<>
-					<Button compact onClick={ openUnassignDialog }>
-						{ translate( 'Unassign' ) }
-					</Button>
-					<Button compact onClick={ openRevokeDialog } scary>
-						{ translate( 'Revoke' ) }
-					</Button>
-				</>
+				<Button compact onClick={ openUnassignDialog }>
+					{ translate( 'Unassign' ) }
+				</Button>
 			) }
 
 			{ licenseState === LicenseState.Detached && licenseType === LicenseType.Partner && (
@@ -80,7 +75,7 @@ export default function LicenseDetailsActions( {
 				</Button>
 			) }
 
-			{ licenseState === LicenseState.Detached && (
+			{ licenseState === LicenseState.Detached && licenseType === LicenseType.Partner && (
 				<Button
 					compact
 					primary
