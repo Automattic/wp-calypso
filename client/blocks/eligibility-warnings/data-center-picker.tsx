@@ -138,6 +138,8 @@ const FormLabelThumbnailImg = styled.img( {
 	objectFit: 'cover',
 } );
 
+const RECOMMENDED_DATA_CENTER = '';
+
 const DataCenterPicker = ( {
 	onChange,
 	onClickHidePicker = () => null,
@@ -149,10 +151,12 @@ const DataCenterPicker = ( {
 	const [ isFormShowing, setIsFormShowing ] = useState( false );
 
 	const onCancel = () => {
-		onChange( '' );
+		onChange( RECOMMENDED_DATA_CENTER );
 		onClickHidePicker();
 		setIsFormShowing( false );
 	};
+
+	const isRecommendedDataCenterPicked = value === RECOMMENDED_DATA_CENTER;
 
 	if ( compact ) {
 		return (
@@ -183,8 +187,8 @@ const DataCenterPicker = ( {
 							className="form-radio"
 							type="radio"
 							name="geo_affinity"
-							onChange={ () => onChange( '' ) }
-							checked={ ! value }
+							onChange={ () => onChange( RECOMMENDED_DATA_CENTER ) }
+							checked={ isRecommendedDataCenterPicked }
 						/>
 						<PickerOption>
 							<PickerOptionLabel>{ translate( 'Optimal data center' ) }</PickerOptionLabel>
@@ -197,22 +201,23 @@ const DataCenterPicker = ( {
 							type="radio"
 							name="geo_affinity"
 							onChange={ () => onChange( DataCenterOptions[ 0 ].value ) }
-							checked={ value !== '' }
+							checked={ ! isRecommendedDataCenterPicked }
 						/>
 						<PickerOption>
 							<PickerOptionLabel>{ translate( 'Custom data center' ) }</PickerOptionLabel>
 							<span>{ translate( 'Choose the data center that best suits your needs.' ) }</span>
-							<FormSelect
-								onChange={ ( event ) => onChange( event.currentTarget.value ) }
-								value={ value }
-								disabled={ value === '' }
-							>
-								{ DataCenterOptions.map( ( option ) => (
-									<option key={ option.value } value={ option.value }>
-										{ option.label }
-									</option>
-								) ) }
-							</FormSelect>
+							{ ! isRecommendedDataCenterPicked && (
+								<FormSelect
+									onChange={ ( event ) => onChange( event.currentTarget.value ) }
+									value={ value }
+								>
+									{ DataCenterOptions.map( ( option ) => (
+										<option key={ option.value } value={ option.value }>
+											{ option.label }
+										</option>
+									) ) }
+								</FormSelect>
+							) }
 						</PickerOption>
 					</CompactLabel>
 				</PickerOptions>
@@ -279,8 +284,8 @@ const DataCenterPicker = ( {
 								type="radio"
 								name="geo_affinity"
 								value=""
-								checked={ value === '' }
-								onChange={ () => onChange( '' ) }
+								checked={ isRecommendedDataCenterPicked }
+								onChange={ () => onChange( RECOMMENDED_DATA_CENTER ) }
 							/>
 							<span>{ translate( 'Automatically place my site in the optimal data center' ) }</span>
 						</AutomaticFormLabel>
