@@ -84,9 +84,11 @@ function usePerMonthDescription( {
 		// TODO: Remove check once text is translated
 		const displayNewPriceText =
 			isEnglishLocale ||
-			( i18n.hasTranslation(
-				'per month, {{discount}} %(rawPrice)s billed annually{{/discount}} %(fullTermDiscountedPriceText)s for the first year, Excl. Taxes'
-			) &&
+			( i18n.hasTranslation( 'per month, %(rawPrice)s billed annually, Excl. Taxes' ) &&
+				i18n.hasTranslation( 'per month, %(rawPrice)s billed every two years, Excl. Taxes' ) &&
+				i18n.hasTranslation(
+					'per month, {{discount}} %(rawPrice)s billed annually{{/discount}} %(fullTermDiscountedPriceText)s for the first year, Excl. Taxes'
+				) &&
 				i18n.hasTranslation(
 					'per month, {{discount}} %(rawPrice)s billed annually{{/discount}} %(fullTermDiscountedPriceText)s for the first year, Excl. Taxes'
 				) );
@@ -140,15 +142,25 @@ function usePerMonthDescription( {
 			}
 		} else if ( rawPrice ) {
 			if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {
-				return translate( 'per month, %(rawPrice)s billed annually', {
-					args: { rawPrice },
-				} );
+				return displayNewPriceText
+					? translate( 'per month, %(rawPrice)s billed annually, Excl. Taxes', {
+							args: { rawPrice },
+							comment: 'Excl. Taxes is short for excluding taxes',
+					  } )
+					: translate( 'per month, %(rawPrice)s billed annually', {
+							args: { rawPrice },
+					  } );
 			}
 
 			if ( PLAN_BIENNIAL_PERIOD === billingPeriod ) {
-				return translate( 'per month, %(rawPrice)s billed every two years.', {
-					args: { rawPrice },
-				} );
+				return displayNewPriceText
+					? translate( 'per month, %(rawPrice)s billed every two years, Excl. Taxes', {
+							args: { rawPrice },
+							comment: 'Excl. Taxes is short for excluding taxes',
+					  } )
+					: translate( 'per month, %(rawPrice)s billed every two years.', {
+							args: { rawPrice },
+					  } );
 			}
 		}
 	}
