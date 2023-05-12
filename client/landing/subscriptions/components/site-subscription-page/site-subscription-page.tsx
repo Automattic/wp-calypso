@@ -1,9 +1,9 @@
+import { Gridicon } from '@automattic/components';
 import { EmailDeliveryFrequency } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useNavigate, useParams } from 'react-router-dom';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { Gridicon } from 'calypso/devdocs/design/playground-scope';
 import { SiteIcon } from 'calypso/landing/subscriptions/components/site-icon';
 import PoweredByWPFooter from 'calypso/layout/powered-by-wp-footer';
 import SiteSubscriptionSettings from './site-subscription-settings';
