@@ -42,7 +42,7 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 	}, [ setThirdPartyCookiesAllowed, zendeskStatus ] );
 
 	useEffect( () => {
-		const zendeskKey: string | false = config( 'zendesk_presales_chat_key' );
+		const zendeskKey: string | false = config( 'zendesk_support_chat_key' );
 		if ( ! zendeskKey ) {
 			return;
 		}
