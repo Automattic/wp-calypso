@@ -151,7 +151,7 @@ const startWriting: Flow = {
 				case 'setup-blog':
 					if ( siteSlug ) {
 						await updateLaunchpadSettings( siteSlug, {
-							checklist_statuses: { site_edited: true },
+							checklist_statuses: { setup_blog: true },
 						} );
 					}
 					return navigate( 'launchpad' );
