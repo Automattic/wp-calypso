@@ -224,6 +224,15 @@ const UniversalNavbarHeader = ( {
 															type="dropdown"
 															target="_self"
 														/>
+														{ isEnglishLocale && (
+															<ClickableItem
+																titleValue={ __( 'Popular Tags', __i18n_text_domain__ ) }
+																content={ __( 'Popular Tags', __i18n_text_domain__ ) }
+																urlValue={ localizeUrl( '//wordpress.com/tags/' ) }
+																type="dropdown"
+																target="_self"
+															/>
+														) }
 														<ClickableItem
 															titleValue={ __( 'Daily Webinars', __i18n_text_domain__ ) }
 															content={ __( 'Daily Webinars', __i18n_text_domain__ ) }
@@ -476,6 +485,14 @@ const UniversalNavbarHeader = ( {
 												urlValue={ localizeUrl( '//wordpress.com/logo-maker/' ) }
 												type="menu"
 											/>
+											{ isEnglishLocale && (
+												<ClickableItem
+													titleValue={ __( 'Popular Tags', __i18n_text_domain__ ) }
+													content={ __( 'Popular Tags', __i18n_text_domain__ ) }
+													urlValue={ localizeUrl( '//wordpress.com/tags/' ) }
+													type="menu"
+												/>
+											) }
 											<ClickableItem
 												titleValue={ __( 'Daily Webinars', __i18n_text_domain__ ) }
 												content={ __( 'Daily Webinars', __i18n_text_domain__ ) }
