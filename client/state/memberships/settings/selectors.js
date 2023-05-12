@@ -10,6 +10,13 @@ export function getConnectedAccountDescriptionForSiteId( state, siteId ) {
 	return get( state, [ 'memberships', 'settings', siteId, 'connectedAccountDescription' ], null );
 }
 
+export function getconnectedAccountDefaultCurrencyForSiteId( state, siteId ) {
+	return get(
+		state,
+		[ 'memberships', 'settings', siteId, 'connectedAccountDefaultCurrency' ],
+		null
+	);
+}
 export function getConnectUrlForSiteId( state, siteId ) {
 	return get( state, [ 'memberships', 'settings', siteId, 'connectUrl' ], '' );
 }
