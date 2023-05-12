@@ -27,7 +27,7 @@ type Props = {
 
 const ERROR_NO_LOCAL_USER = 'no_local_user';
 
-const noCampaignListMessage = translate(
+const fetchErrorListMessage = translate(
 	'There was a problem obtaining the posts list. Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
 	{
 		components: {
@@ -70,8 +70,8 @@ export default function PostsList( props: Props ) {
 
 	if ( isError && hasLocalUser ) {
 		return (
-			<Notice status="is-error" icon="mention">
-				{ noCampaignListMessage }
+			<Notice className="promote-post-i2__aux-wrapper" status="is-error" icon="mention">
+				{ fetchErrorListMessage }
 			</Notice>
 		);
 	}
@@ -80,7 +80,7 @@ export default function PostsList( props: Props ) {
 		<>
 			<SearchBar mode="posts" handleSetSearch={ ( search ) => handleSearchOptions( search ) } />
 			{ ! isLoading && posts?.length === 0 ? (
-				<>
+				<div className="promote-post-i2__aux-wrapper">
 					{ totalCampaigns === 0 ? (
 						<EmptyContent
 							className="promote-post-i2__empty-content"
@@ -93,7 +93,7 @@ export default function PostsList( props: Props ) {
 					) : (
 						<>{ translate( 'No posts match your search' ) }</>
 					) }
-				</>
+				</div>
 			) : (
 				<>
 					<div ref={ containerRef }>

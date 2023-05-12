@@ -10,7 +10,7 @@ import CampaignsTable from '../campaigns-table';
 import EmptyPromotionList from '../empty-promotion-list';
 import SearchBar, { SearchOptions } from '../search-bar';
 
-const noCampaignListMessage = translate(
+const fetchErrorListMessage = translate(
 	'There was a problem obtaining the campaign list. Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
 	{
 		components: {
@@ -60,8 +60,8 @@ export default function CampaignsList( props: Props ) {
 
 	if ( isError && hasLocalUser ) {
 		return (
-			<Notice status="is-error" icon="mention">
-				{ noCampaignListMessage }
+			<Notice className="promote-post-i2__aux-wrapper" status="is-error" icon="mention">
+				{ fetchErrorListMessage }
 			</Notice>
 		);
 	}
@@ -76,13 +76,13 @@ export default function CampaignsList( props: Props ) {
 			/>
 
 			{ ! isLoading && campaigns?.length === 0 ? (
-				<>
+				<div className="promote-post-i2__aux-wrapper">
 					{ totalCampaigns === 0 ? (
 						<EmptyPromotionList type="campaigns" />
 					) : (
 						<>{ translate( 'No campaigns match your search' ) }</>
 					) }
-				</>
+				</div>
 			) : (
 				<>
 					<div ref={ containerRef }>
