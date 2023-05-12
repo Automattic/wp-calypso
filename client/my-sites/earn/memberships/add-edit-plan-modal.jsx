@@ -32,7 +32,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
  * https://stripe.com/docs/currencies#minimum-and-maximum-charge-amounts
  * @type { [currency: string]: number }
  */
-const MINIMUM_CURRENCY_AMOUNT = {
+const STRIPE_MINIMUM_CURRENCY_AMOUNT = {
 	USD: 0.5,
 	AUD: 0.5,
 	BRL: 0.5,
@@ -55,7 +55,7 @@ const MINIMUM_CURRENCY_AMOUNT = {
 /**
  * @type Array<{ code: string }>
  */
-const currencyList = Object.keys( MINIMUM_CURRENCY_AMOUNT ).map( ( code ) => ( { code } ) );
+const currencyList = Object.keys( STRIPE_MINIMUM_CURRENCY_AMOUNT ).map( ( code ) => ( { code } ) );
 
 /**
  * Return the minimum transaction amount for a currency.
@@ -64,8 +64,12 @@ const currencyList = Object.keys( MINIMUM_CURRENCY_AMOUNT ).map( ( code ) => ( {
  * @param {string} currency - Currency.
  * @returns {number} Minimum transaction amount for given currency.
  */
-function minimumCurrencyTransactionAmount( currency ) {
-	return MINIMUM_CURRENCY_AMOUNT[ currency ];
+function minimumCurrencyTransactionAmount( currency, connectedAccountDefaultCurrency ) {
+	if ( connectedAccountDefaultCurrency.toLowerCase() === currency.toLowerCase() ) {
+		return STRIPE_MINIMUM_CURRENCY_AMOUNT[ currency ];
+	}
+
+	return STRIPE_MINIMUM_CURRENCY_AMOUNT[ currency ] * 2;
 }
 
 /**
