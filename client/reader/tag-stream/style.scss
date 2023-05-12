@@ -6,6 +6,12 @@
 	margin-bottom: 10px;
 }
 
+.reader__content .tag-stream__header {
+	border-bottom: 1px solid #e9e9ea;
+	margin-bottom: 0;
+	padding-bottom: 55px;
+}
+
 .tag-stream__header-title-group {
 	display: flex;
 	flex-wrap: wrap;
@@ -59,11 +65,6 @@
 	margin-top: 15px;
 }
 
-// Overrides default 720px width
-.is-reader-page .tag-stream__main.main {
-	max-width: 800px;
-}
-
 // specific rule to override existing rules
 .layout.has-header-section.is-section-reader .layout__header-section-content .tag-stream__page-header {
 	text-align: center;
@@ -77,5 +78,28 @@
 	h1 {
 		font-size: 40px; /* stylelint-disable-line declaration-property-unit-allowed-list */
 		font-weight: 500;
+	}
+}
+
+// Tag page only shows site titles in the sidebar, so spacing needs to be tighter
+.tag-stream__main {
+	.stream__two-column .reader__content::after {
+		content: "";
+		background-color: #e9e9ea;
+		position: absolute;
+		right: 0;
+		top: 0;
+		height: 200%;
+		margin-top: -80px;
+		width: 1px;
+	}
+
+	.stream__two-column .stream__right-column {
+		margin-top: 0;
+	}
+
+	.reader-sidebar-site_link {
+		align-items: center;
+		margin-bottom: 12px;
 	}
 }

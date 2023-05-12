@@ -509,6 +509,7 @@ class ReaderStream extends Component {
 			if ( isTagPage ) {
 				sidebarContent = <ReaderTagSidebar tag={ tag } />;
 				tabTitle = translate( 'Related' );
+				baseClassnames = classnames( 'tag-stream__main', this.props.className );
 			} else if ( isSearchPage ) {
 				sidebarContent = <ReaderSearchSidebar items={ items } />;
 			} else {
@@ -520,7 +521,7 @@ class ReaderStream extends Component {
 			} else if ( wideDisplay ) {
 				body = (
 					<div className="stream__two-column">
-						<div className="reader-content">
+						<div className="reader__content">
 							{ streamHeader }
 							{ bodyContent }
 						</div>
@@ -553,12 +554,10 @@ class ReaderStream extends Component {
 							</SectionNav>
 						</div>
 						{ this.state.selectedTab === 'posts' && (
-							<div className="reader-content">{ bodyContent }</div>
+							<div className="reader__content">{ bodyContent }</div>
 						) }
 						{ this.state.selectedTab === 'sites' && (
-							<div className="stream__two-column">
-								<div className="stream__right-column">{ sidebarContent }</div>
-							</div>
+							<div className="stream__right-column">{ sidebarContent }</div>
 						) }
 					</>
 				);
