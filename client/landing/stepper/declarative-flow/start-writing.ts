@@ -2,7 +2,7 @@ import { OnboardSelect, updateLaunchpadSettings } from '@automattic/data-stores'
 import { useLocale } from '@automattic/i18n-utils';
 import { START_WRITING_FLOW, replaceProductsInCart } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import { useSelect } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { useSelector } from 'react-redux';
 import { recordSubmitStep } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-submit-step';
 import { redirect } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/util';
@@ -13,7 +13,7 @@ import {
 	ProvidedDependencies,
 } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 const startWriting: Flow = {
@@ -32,6 +32,10 @@ const startWriting: Flow = {
 			{
 				slug: 'domains',
 				asyncComponent: () => import( './internals/steps-repository/choose-a-domain' ),
+			},
+			{
+				slug: 'use-my-domain',
+				asyncComponent: () => import( './internals/steps-repository/use-my-domain' ),
 			},
 			{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },
 			{
@@ -59,6 +63,8 @@ const startWriting: Flow = {
 			} ),
 			[]
 		);
+		const { saveSiteSettings, setIntentOnSite } = useDispatch( SITE_STORE );
+		const { setSelectedSite } = useDispatch( ONBOARD_STORE );
 
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', flowName, currentStep );
@@ -72,6 +78,12 @@ const startWriting: Flow = {
 					if ( ! providedDependencies?.blogLaunched && providedDependencies?.siteSlug ) {
 						await updateLaunchpadSettings( String( providedDependencies?.siteSlug ), {
 							checklist_statuses: { first_post_published: true },
+						} );
+
+						setSelectedSite( providedDependencies?.siteId );
+						setIntentOnSite( providedDependencies?.siteSlug, START_WRITING_FLOW );
+						saveSiteSettings( providedDependencies?.siteId, {
+							launchpad_screen: 'full',
 						} );
 
 						const siteOrigin = window.location.origin;
@@ -113,6 +125,13 @@ const startWriting: Flow = {
 						return navigate( 'launchpad' );
 					}
 
+					return navigate( 'plans' );
+				case 'use-my-domain':
+					if ( siteSlug ) {
+						await updateLaunchpadSettings( siteSlug, {
+							checklist_statuses: { domain_upsell_deferred: true },
+						} );
+					}
 					return navigate( 'plans' );
 				case 'plans':
 					if ( siteSlug ) {

@@ -1,9 +1,9 @@
+import { SupportSession } from '@automattic/data-stores';
 import { localizeUrl, useLocale, getRelativeTimeString } from '@automattic/i18n-utils';
 import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
-import type { SupportTicket } from '../types';
 import type { AnalysisReport } from '@automattic/data-stores';
 import type { ReactNode } from 'react';
 
@@ -97,7 +97,7 @@ export function HelpCenterOwnershipNotice( { ownershipResult }: Props ) {
 export function HelpCenterActiveTicketNotice( {
 	tickets,
 }: {
-	tickets: SupportTicket[] | undefined;
+	tickets: SupportSession[] | undefined;
 } ) {
 	const locale = useLocale();
 
@@ -119,7 +119,6 @@ export function HelpCenterActiveTicketNotice( {
 						} )
 					) }
 				</strong>{ ' ' }
-				&nbsp;
 				{ __(
 					`Rest assured that we got your message and we'll be in touch as soon as we can.`,
 					__i18n_text_domain__

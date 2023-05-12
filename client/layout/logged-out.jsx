@@ -199,7 +199,7 @@ const LayoutLoggedOut = ( {
 				/>
 			) }
 
-			{ isGravatar && <PoweredByWPFooter siteName={ oauth2Client.title } /> }
+			{ isGravatar && <PoweredByWPFooter clientTitle={ oauth2Client.title } /> }
 		</div>
 	);
 };

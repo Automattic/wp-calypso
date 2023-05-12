@@ -9,9 +9,9 @@ import { buildTask } from './lib/fixtures';
 describe( 'ChecklistItem', () => {
 	describe( 'when the task requires a badge', () => {
 		it( 'displays a badge', () => {
-			const badgeText = 'Badge Text';
-			render( <ChecklistItem task={ buildTask( { badgeText } ) } /> );
-			expect( screen.getByText( badgeText ) ).toBeTruthy();
+			const badge_text = 'Badge Text';
+			render( <ChecklistItem task={ buildTask( { badge_text } ) } /> );
+			expect( screen.getByText( badge_text ) ).toBeTruthy();
 		} );
 	} );
 

@@ -20,7 +20,7 @@ import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
 import { recordSelectedDesign } from '../../analytics/record-design';
-import { SITE_TAGLINE, PATTERN_TYPES, NAVIGATOR_PATHS } from './constants';
+import { SITE_TAGLINE, PATTERN_TYPES, NAVIGATOR_PATHS, CATEGORY_ALL_SLUG } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import useGlobalStylesUpgradeModal from './hooks/use-global-styles-upgrade-modal';
 import usePatternCategories from './hooks/use-pattern-categories';
@@ -316,11 +316,23 @@ const PatternAssembler = ( {
 	) => {
 		if ( selectedPattern ) {
 			// Inject the selected pattern category or the first category
-			// because it's used in tracks and as pattern name in the list
+			// to be used in tracks and as selected pattern name.
 			const [ firstCategory ] = Object.keys( selectedPattern.categories );
-			selectedPattern.category = categories.find(
-				( { name } ) => name === ( selectedCategory || firstCategory )
-			);
+			selectedPattern.category = categories.find( ( { name } ) => {
+				if ( selectedCategory === CATEGORY_ALL_SLUG ) {
+					return name === firstCategory;
+				}
+				return name === ( selectedCategory || firstCategory );
+			} );
+
+			if ( selectedCategory === CATEGORY_ALL_SLUG ) {
+				// Use 'all' rather than 'featured' as slug for tracks.
+				// Use the first category label as selected pattern name.
+				selectedPattern.category = {
+					name: 'all',
+					label: selectedPattern.category?.label,
+				};
+			}
 
 			trackEventPatternSelect( {
 				patternType: type,

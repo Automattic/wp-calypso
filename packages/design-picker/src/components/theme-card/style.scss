@@ -1,5 +1,3 @@
-@import "@automattic/onboarding/styles/mixins";
-
 $theme-card-info-height: 48px;
 $theme-card-info-margin-top: 16px;
 
@@ -36,10 +34,6 @@ $theme-card-info-margin-top: 16px;
 
 		.theme-card__info-title {
 			color: var(--color-text-inverted);
-
-			&::before {
-				@include long-content-fade( $color: var( --color-primary-rgb ) );
-			}
 		}
 	}
 
@@ -58,7 +52,7 @@ $theme-card-info-margin-top: 16px;
 
 .theme-card__image-container {
 	border: 1px solid rgba(0, 0, 0, 0.1);
-	filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.05));
+	box-shadow: 0 15px 25px rgba(0, 0, 0, 0.05);
 	overflow: hidden;
 	padding-top: 74%;
 	position: relative;
@@ -271,10 +265,7 @@ $theme-card-info-margin-top: 16px;
 	overflow: hidden;
 	position: relative;
 	white-space: nowrap;
-
-	&::before {
-		@include long-content-fade();
-	}
+	width: 0;
 }
 
 .theme-card__info-pricing {
