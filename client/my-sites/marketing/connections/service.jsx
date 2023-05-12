@@ -1,4 +1,4 @@
-import config from '@automattic/calypso-config';
+import config, { isEnabled } from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import requestExternalAccess from '@automattic/request-external-access';
 import classnames from 'classnames';
@@ -224,6 +224,14 @@ export class SharingService extends Component {
 	 * @param {number} externalUserId      Optional. User ID for the service. Default: 0.
 	 */
 	createOrUpdateConnection = ( keyringConnectionId, externalUserId = 0 ) => {
+		if ( isEnabled( 'jetpack-social/multiple-connections' ) ) {
+			return this.props.createSiteConnection(
+				this.props.siteId,
+				keyringConnectionId,
+				externalUserId
+			);
+		}
+
 		const existingConnection = find( this.props.siteUserConnections, {
 			keyring_connection_ID: keyringConnectionId,
 		} );

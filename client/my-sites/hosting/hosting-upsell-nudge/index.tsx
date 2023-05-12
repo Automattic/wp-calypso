@@ -1,4 +1,4 @@
-import { FEATURE_SFTP, PLAN_BUSINESS } from '@automattic/calypso-products';
+import { FEATURE_SFTP, PLAN_BUSINESS, WPCOM_PLANS } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -8,6 +8,8 @@ import iconDatabase from './icons/icon-database.svg';
 import iconServerRacks from './icons/icon-server-racks.svg';
 import iconSSH from './icons/icon-ssh.svg';
 import iconTerminal from './icons/icon-terminal.svg';
+import type { TranslateResult } from 'i18n-calypso';
+
 import './style.scss';
 
 interface FeatureListItem {
@@ -16,21 +18,44 @@ interface FeatureListItem {
 	icon: string;
 }
 
-export function HostingUpsellNudge( { siteId }: { siteId: number | null } ) {
+interface HostingUpsellNudgeTargetPlan {
+	callToAction: TranslateResult;
+	feature?: string;
+	href: string;
+	plan?: typeof WPCOM_PLANS;
+	title: TranslateResult;
+}
+
+interface HostingUpsellNudgeProps {
+	siteId: number | null;
+	targetPlan?: HostingUpsellNudgeTargetPlan;
+}
+
+export function HostingUpsellNudge( { siteId, targetPlan }: HostingUpsellNudgeProps ) {
 	const translate = useTranslate();
 
 	const features = useFeatureList();
+
+	const callToAction = targetPlan
+		? targetPlan.callToAction
+		: translate( 'Upgrade to Business Plan' );
+	const feature = targetPlan ? targetPlan.feature : FEATURE_SFTP;
+	const href = targetPlan ? targetPlan.href : `/checkout/${ siteId }/business`;
+	const plan = targetPlan ? targetPlan.plan : PLAN_BUSINESS;
+	const title = targetPlan
+		? targetPlan.title
+		: translate( 'Upgrade to the Business plan to access all hosting features:' );
 
 	return (
 		<UpsellNudge
 			className="hosting-upsell-nudge"
 			compactButton={ false }
-			title={ translate( 'Upgrade to the Business plan to access all hosting features:' ) }
+			title={ title }
 			event="calypso_hosting_configuration_upgrade_click"
-			href={ `/checkout/${ siteId }/business` }
-			callToAction={ translate( 'Upgrade to Business Plan' ) }
-			plan={ PLAN_BUSINESS }
-			feature={ FEATURE_SFTP }
+			href={ href }
+			callToAction={ callToAction }
+			plan={ plan }
+			feature={ feature }
 			showIcon={ true }
 			list={ features }
 			renderListItem={ ( { icon, title, description }: FeatureListItem ) => (

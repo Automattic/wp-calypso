@@ -160,6 +160,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 		}
 
 		return {
+			siteId: site?.siteId,
 			siteSlug: site?.siteSlug,
 			goToCheckout: Boolean( planCartItem ),
 		};

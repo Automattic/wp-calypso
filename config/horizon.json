@@ -13,7 +13,7 @@
 	"features": {
 		"ad-tracking": false,
 		"akismet/siteless-checkout": true,
-		"anchor/sunset-integration": false,
+		"anchor/sunset-integration": true,
 		"calypso/help-center": true,
 		"calypsoify/plugins": true,
 		"cancellation-offers": true,
@@ -83,6 +83,7 @@
 		"me/vat-details": true,
 		"my-sites/add-ons": true,
 		"network-connection": true,
+		"newsletter/paid-subscribers": true,
 		"newsletter/stats": true,
 		"onboarding/import-light-url-screen": true,
 		"onboarding/2023-pricing-grid": true,
