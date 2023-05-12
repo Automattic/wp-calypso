@@ -334,7 +334,6 @@ export class PlanFeatures2023Grid extends Component<
 						className="plan-features-2023-grid__plan-comparison-grid-container"
 					>
 						<PlanComparisonGrid
-							siteId={ siteId }
 							planTypeSelectorProps={ planTypeSelectorProps }
 							planProperties={ planProperties }
 							intervalType={ intervalType }

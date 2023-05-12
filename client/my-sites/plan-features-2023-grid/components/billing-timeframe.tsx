@@ -22,9 +22,9 @@ interface Props {
 	isMonthlyPlan: boolean;
 }
 
-const StrikethroughText = styled.span`
-	color: 'var(--studio-gray-20)';
-	text-decoration: 'line-through';
+export const StrikethroughText = styled.span`
+	color: var( --studio-gray-20 );
+	text-decoration: line-through;
 `;
 
 function usePerMonthDescription( {

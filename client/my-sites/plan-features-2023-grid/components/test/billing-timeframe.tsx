@@ -96,18 +96,17 @@ describe( 'PlanFeatures2023GridBillingTimeframe', () => {
 			/>
 		);
 
-		const discountedPrice = formatCurrency(
-			planPrices.planDiscountedRawPrice,
-			getCurrentUserCurrencyCode(),
-			{ stripZeros: true }
-		);
-		const rawPrice = formatCurrency( planPrices.rawPrice, getCurrentUserCurrencyCode(), {
+		const discountedPrice = formatCurrency( planPrices.planDiscountedRawPrice, 'INR', {
+			stripZeros: true,
+		} );
+		const rawPrice = formatCurrency( planPrices.rawPrice, 'INR', {
 			stripZeros: true,
 		} );
 
-		expect( container ).toContainHTML(
-			`per month, <span style="text-decoration: line-through;"> ${ rawPrice } billed annually</span> ${ discountedPrice } for the first year`
+		expect( container ).toHaveTextContent(
+			`per month, ${ rawPrice } billed annually ${ discountedPrice } for the first year`
 		);
+		expect( container ).toContainHTML( `StrikethroughText` );
 	} );
 
 	test( 'should show full-term discounted price when plan is 2-yearly', () => {
@@ -127,16 +126,15 @@ describe( 'PlanFeatures2023GridBillingTimeframe', () => {
 				billingPeriod={ PLAN_BIENNIAL_PERIOD }
 			/>
 		);
-		const discountedPrice = formatCurrency(
-			planPrices.planDiscountedRawPrice,
-			getCurrentUserCurrencyCode(),
-			{ stripZeros: true }
-		);
-		const rawPrice = formatCurrency( planPrices.rawPrice, getCurrentUserCurrencyCode(), {
+		const discountedPrice = formatCurrency( planPrices.planDiscountedRawPrice, 'INR', {
 			stripZeros: true,
 		} );
-		expect( container ).toContainHTML(
-			`per month, <span style="text-decoration: line-through;"> ${ rawPrice } billed annually</span> ${ discountedPrice } for the first year`
+		const rawPrice = formatCurrency( planPrices.rawPrice, 'INR', {
+			stripZeros: true,
+		} );
+		expect( container ).toHaveTextContent(
+			`per month, ${ rawPrice } billed annually ${ discountedPrice } for the first year`
 		);
+		expect( container ).toContainHTML( `StrikethroughText` );
 	} );
 } );

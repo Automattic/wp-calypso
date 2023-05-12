@@ -9,7 +9,7 @@ import { getPlanDiscountedRawPrice } from 'calypso/state/sites/plans/selectors';
 import { getSitePlanRawPrice } from 'calypso/state/sites/plans/selectors/get-site-plan-raw-price';
 import isPlanAvailableForPurchase from 'calypso/state/sites/plans/selectors/is-plan-available-for-purchase';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
-import { useCalculateMaxPlanUpgradeCredit } from '../use-plan-upgrade-credits';
+import { useCalculateMaxPlanUpgradeCredit } from '../use-calculate-max-plan-upgrade-credit';
 import type { PlanSlug } from '@automattic/calypso-products';
 
 jest.mock( 'calypso/state/sites/plans/selectors/is-plan-available-for-purchase', () => ( {
