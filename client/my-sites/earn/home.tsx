@@ -129,7 +129,10 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		const cta = hasSimplePayments
 			? {
 					text: translate( 'Learn how to get started' ),
-					action: { url: supportLink, onClick: () => trackCtaButton( 'simple-payments' ) },
+					action: () => {
+						trackCtaButton( 'simple-payments' );
+						page( supportLink );
+					},
 			  }
 			: {
 					text: translate( 'Unlock this feature' ),
