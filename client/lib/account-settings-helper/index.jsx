@@ -1,9 +1,12 @@
 import languages from '@automattic/languages';
 import ReactDom from 'react-dom';
+import { useInView } from 'react-intersection-observer';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 import ColorSchemePicker from 'calypso/blocks/color-scheme-picker';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import LanguagePicker from 'calypso/components/language-picker';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import ReauthRequired from 'calypso/me/reauth-required';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import { setUserSetting } from 'calypso/state/user-settings/actions';
@@ -17,6 +20,7 @@ export function AccountSettingsHelper() {
 	const userSettings = useSelector( getUserSettings ) ?? {};
 	const isFetching = useSelector( isFetchingUserSettings );
 	const colorSchemePreference = useSelector( ( state ) => getPreference( state, 'colorScheme' ) );
+	const { ref, inView } = useInView( { triggerOnce: true } );
 
 	const updateLanguage = ( event ) => {
 		const { value, empathyMode, useFallbackForIncompleteLanguages } = event.target;
@@ -43,8 +47,9 @@ export function AccountSettingsHelper() {
 		<>
 			<QueryUserSettings />
 			<div>Account Settings</div>
-			<div className="account-settings-helper__popover">
+			<div ref={ ref } className="account-settings-helper__popover">
 				<div>Language Picker</div>
+				{ inView && <ReauthRequired twoStepAuthorization={ twoStepAuthorization } /> }
 				<LanguagePicker
 					isLoading={ isFetching }
 					languages={ languages }
