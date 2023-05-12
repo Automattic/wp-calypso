@@ -144,18 +144,42 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 		setDisplayManageSitePluginsModal( ! displayManageSitePluginsModal );
 	}, [ displayManageSitePluginsModal ] );
 
+	// Activation and deactivation translations.
+	const activeText = translate( '{{span}}active{{/span}}', {
+		components: {
+			span: <span className="plugin-details-cta__installed-text-active"></span>,
+		},
+	} );
+	const inactiveText = translate( '{{span}}deactivated{{/span}}', {
+		components: {
+			span: <span className="plugin-details-cta__installed-text-inactive"></span>,
+		},
+	} );
+
 	// If we cannot retrieve plugin status through jetpack ( ! isJetpack ) and plugin is preinstalled.
 	if ( ! isJetpack && PREINSTALLED_PLUGINS.includes( plugin.slug ) ) {
 		return (
 			<div className="plugin-details-cta__container">
-				<div className="plugin-details-cta__price">{ translate( 'Free' ) }</div>
+				{ selectedSite ? (
+					<div className="plugin-details-cta__installed-text">
+						{ translate( 'Installed and {{activation /}}', {
+							components: {
+								activation: activeText,
+							},
+						} ) }
+					</div>
+				) : (
+					<div className="plugin-details-cta__price">{ translate( 'Free' ) }</div>
+				) }
 				<span className="plugin-details-cta__preinstalled">
-					{ selectedSite && shouldUpgrade
-						? translate(
-								'%s is automatically managed for you. Upgrade your plan and get access to another 50,000 WordPress plugins to extend functionality for your site.',
-								{ args: plugin.name }
-						  )
-						: translate( '%s is automatically managed for you.', { args: plugin.name } ) }
+					<p>{ translate( '%s is automatically managed for you.', { args: plugin.name } ) }</p>
+					{ selectedSite && shouldUpgrade && (
+						<p>
+							{ translate(
+								'Upgrade your plan and get access to another 50,000 WordPress plugins to extend functionality for your site.'
+							) }
+						</p>
+					) }
 				</span>
 
 				{ selectedSite && shouldUpgrade && (
@@ -166,6 +190,18 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 					>
 						{ translate( 'Upgrade my plan' ) }
 					</Button>
+				) }
+				{ ! selectedSite && ! isLoggedIn && (
+					<GetStartedButton
+						onClick={ () => {
+							dispatch(
+								recordTracksEvent( 'calypso_plugin_details_get_started_click', {
+									plugin: plugin?.slug,
+									is_logged_in: isLoggedIn,
+								} )
+							);
+						} }
+					/>
 				) }
 			</div>
 		);
@@ -190,16 +226,6 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 
 	if ( isPluginInstalledOnsiteWithSubscription && sitePlugin ) {
 		// Check if already instlaled on the site
-		const activeText = translate( '{{span}}active{{/span}}', {
-			components: {
-				span: <span className="plugin-details-cta__installed-text-active"></span>,
-			},
-		} );
-		const inactiveText = translate( '{{span}}deactivated{{/span}}', {
-			components: {
-				span: <span className="plugin-details-cta__installed-text-inactive"></span>,
-			},
-		} );
 		const { active } = sitePlugin;
 
 		return (
@@ -385,7 +411,6 @@ function PrimaryButton( {
 	isWpcomStaging,
 } ) {
 	const dispatch = useDispatch();
-	const sectionName = useSelector( getSectionName );
 
 	const isMarketplaceProduct = useSelector( ( state ) =>
 		isMarketplaceProductSelector( state, plugin.slug )
@@ -403,23 +428,7 @@ function PrimaryButton( {
 	}, [ dispatch, plugin, isLoggedIn ] );
 
 	if ( ! isLoggedIn ) {
-		const startUrl = addQueryArgs(
-			{
-				ref: sectionName + '-lp',
-			},
-			'/start/business'
-		);
-		return (
-			<Button
-				type="a"
-				className="plugin-details-cta__install-button"
-				primary
-				onClick={ onClick }
-				href={ startUrl }
-			>
-				{ translate( 'Get started' ) }
-			</Button>
-		);
+		return <GetStartedButton onClick={ onClick } />;
 	}
 	if ( plugin.isSaasProduct ) {
 		return (
@@ -441,6 +450,29 @@ function PrimaryButton( {
 			hasEligibilityMessages={ hasEligibilityMessages }
 			disabled={ incompatiblePlugin || userCantManageTheSite || isDisabledForWpcomStaging }
 		/>
+	);
+}
+
+function GetStartedButton( { onClick } ) {
+	const translate = useTranslate();
+	const sectionName = useSelector( getSectionName );
+
+	const startUrl = addQueryArgs(
+		{
+			ref: sectionName + '-lp',
+		},
+		'/start/business'
+	);
+	return (
+		<Button
+			type="a"
+			className="plugin-details-cta__install-button"
+			primary
+			onClick={ onClick }
+			href={ startUrl }
+		>
+			{ translate( 'Get started' ) }
+		</Button>
 	);
 }
 
