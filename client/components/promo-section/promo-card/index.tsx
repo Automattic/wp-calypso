@@ -75,7 +75,7 @@ const PromoCard: FunctionComponent< Props > = ( {
 			{ image && (
 				<ActionPanelFigure inlineBodyText={ false } align={ imageActionPanelAlignment }>
 					{ isImage( image ) ? (
-						<img src={ image.path } alt={ image.alt } className={ image.className } />
+						<img src={ image.path } alt={ image.alt || '' } className={ image.className } />
 					) : (
 						image
 					) }
