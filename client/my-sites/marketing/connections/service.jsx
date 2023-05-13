@@ -1,4 +1,4 @@
-import config, { isEnabled } from '@automattic/calypso-config';
+import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import requestExternalAccess from '@automattic/request-external-access';
 import classnames from 'classnames';
@@ -17,6 +17,7 @@ import { successNotice, errorNotice, warningNotice } from 'calypso/state/notices
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import getRemovableConnections from 'calypso/state/selectors/get-removable-connections';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import {
 	requestKeyringConnections,
 	requestP2KeyringConnections,
@@ -81,6 +82,7 @@ export class SharingService extends Component {
 		warningNotice: PropTypes.func,
 		isP2HubSite: PropTypes.bool,
 		isJetpack: PropTypes.bool,
+		hasMultiConnections: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -102,6 +104,7 @@ export class SharingService extends Component {
 		warningNotice: () => {},
 		isP2HubSite: false,
 		isJetpack: false,
+		hasMultiConnections: false,
 	};
 
 	/**
@@ -224,7 +227,7 @@ export class SharingService extends Component {
 	 * @param {number} externalUserId      Optional. User ID for the service. Default: 0.
 	 */
 	createOrUpdateConnection = ( keyringConnectionId, externalUserId = 0 ) => {
-		if ( isEnabled( 'jetpack-social/multiple-connections' ) ) {
+		if ( this.props.hasMultiConnections ) {
 			return this.props.createSiteConnection(
 				this.props.siteId,
 				keyringConnectionId,
@@ -712,6 +715,7 @@ export function connectFor( sharingService, mapStateToProps, mapDispatchToProps 
 				isExpanded: isServiceExpanded( state, service ),
 				isP2HubSite: isSiteP2Hub( state, siteId ),
 				isJetpack: isJetpackSite( state, siteId ),
+				hasMultiConnections: siteHasFeature( state, siteId, 'social-multi-connections' ),
 			};
 			return typeof mapStateToProps === 'function' ? mapStateToProps( state, props ) : props;
 		},
