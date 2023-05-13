@@ -43,10 +43,10 @@ describe( DataHelper.createSuiteTitle( 'Support: Popover/Invalid Keywords' ), fu
 			await supportComponent.defaultStateShown();
 		} );
 
-		it( 'Enter empty search keyword and expect no results to be shown', async function () {
+		it( 'Enter empty search keyword and expect default entries to be shown', async function () {
 			const keyword = '        ';
 			await supportComponent.search( keyword );
-			await supportComponent.noResultsShown();
+			await supportComponent.defaultStateShown();
 		} );
 
 		it( 'Clear keyword', async function () {
@@ -56,10 +56,10 @@ describe( DataHelper.createSuiteTitle( 'Support: Popover/Invalid Keywords' ), fu
 
 		// Invalid keyword search often takes more than 30s to resolve.
 		// See: https://github.com/Automattic/wp-calypso/issues/55478
-		it.skip( 'Enter invalid search keyword and expect no results to be shown', async function () {
+		it.skip( 'Enter invalid search keyword and default entries to be shown', async function () {
 			const keyword = ';;;ppp;;;';
 			await supportComponent.search( keyword );
-			await supportComponent.noResultsShown();
+			await supportComponent.defaultStateShown();
 		} );
 
 		it( 'Close support popover', async function () {

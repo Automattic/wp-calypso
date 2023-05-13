@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import { localize, translate as TranslateType } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { ZendeskJetpackChat } from 'calypso/components/jetpack/jetpack-presales-chat-widget';
 import JetpackIcons from 'calypso/components/jetpack/sidebar/menu-items/jetpack-icons';
 import Sidebar from 'calypso/layout/sidebar';
 import SidebarItem from 'calypso/layout/sidebar/item';
@@ -106,7 +105,6 @@ class PartnerPortalSidebar extends Component< Props > {
 						) }
 					</SidebarMenu>
 				</SidebarRegion>
-				<ZendeskJetpackChat keyType="jpAgency" />
 			</Sidebar>
 		);
 	}

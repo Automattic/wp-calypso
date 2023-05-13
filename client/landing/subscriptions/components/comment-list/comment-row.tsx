@@ -56,7 +56,12 @@ const CommentRow = ( {
 					</span>
 				</a>
 				<span className="date" role="cell">
-					<TimeSince date={ date_subscribed.toISOString?.() ?? date_subscribed } />
+					<TimeSince
+						date={
+							( date_subscribed.valueOf() ? date_subscribed : new Date( 0 ) ).toISOString?.() ??
+							date_subscribed
+						}
+					/>
 				</span>
 				<span className="actions" role="cell">
 					<CommentSettings

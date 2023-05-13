@@ -4,10 +4,10 @@ import WordPressLogo from 'calypso/components/wordpress-logo';
 import './style.scss';
 
 interface Props {
-	siteName?: string;
+	clientTitle?: string;
 }
 
-export default function PoweredByWPFooter( { siteName }: Props ) {
+export default function PoweredByWPFooter( { clientTitle }: Props ) {
 	const translate = useTranslate();
 
 	function renderPoweredByWP() {
@@ -19,9 +19,11 @@ export default function PoweredByWPFooter( { siteName }: Props ) {
 		);
 	}
 
-	function renderPoweredByWPWithSiteName() {
-		const wording = translate( '%s is powered by <logo/> WordPress.com', {
-			args: siteName,
+	function renderPoweredByWPWithClientTitle() {
+		const wording = translate( '%(clientTitle)s is powered by <logo/> WordPress.com', {
+			args: { clientTitle },
+			comment:
+				"'clientTitle' is the name of the app that uses WordPress.com Connect (e.g. 'Crowdsignal' or 'Gravatar')",
 		} ) as string;
 
 		return createInterpolateElement( wording, {
@@ -32,7 +34,7 @@ export default function PoweredByWPFooter( { siteName }: Props ) {
 	return (
 		<footer className="powered-by-wp-footer">
 			<div className="powered-by-wp-footer__info">
-				{ siteName ? renderPoweredByWPWithSiteName() : renderPoweredByWP() }
+				{ clientTitle ? renderPoweredByWPWithClientTitle() : renderPoweredByWP() }
 			</div>
 		</footer>
 	);

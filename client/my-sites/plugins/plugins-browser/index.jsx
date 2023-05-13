@@ -12,7 +12,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import useScrollAboveElement from 'calypso/lib/use-scroll-above-element';
 import Categories from 'calypso/my-sites/plugins/categories';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
-import EducationFooter from 'calypso/my-sites/plugins/education-footer';
+import { MarketplaceFooter } from 'calypso/my-sites/plugins/education-footer';
 import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
 import PluginsAnnouncementModal from 'calypso/my-sites/plugins/plugins-announcement-modal';
 import SearchBoxHeader from 'calypso/my-sites/plugins/search-box-header';
@@ -187,7 +187,11 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 				<Categories selected={ category } noSelection={ search ? true : false } />
 			</div>
 			<div className="plugins-browser__main-container">{ renderList() }</div>
-			{ ! category && ! search && <EducationFooter /> }
+			{ ! category && ! search && (
+				<div className="plugins-browser__marketplace-footer">
+					<MarketplaceFooter />
+				</div>
+			) }
 		</MainComponent>
 	);
 };

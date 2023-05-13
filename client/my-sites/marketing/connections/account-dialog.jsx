@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Dialog } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -89,6 +90,11 @@ class AccountDialog extends Component {
 	}
 
 	areAccountsConflicting( account, otherAccount ) {
+		// If we support multiple connections, accounts should never conflict.
+		if ( isEnabled( 'jetpack-social/multiple-connections' ) ) {
+			return false;
+		}
+
 		return (
 			account.keyringConnectionId === otherAccount.keyringConnectionId &&
 			account.ID !== otherAccount.ID
