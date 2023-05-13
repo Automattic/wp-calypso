@@ -42,7 +42,10 @@ const ReaderPostActions = ( props ) => {
 		stats.recordPermalinkClick( 'card', post );
 	}
 
-	const listClassnames = classnames( 'reader-post-actions', className );
+	const listClassnames = classnames( className, {
+		'reader-post-actions': true,
+		'has-views': showViews,
+	} );
 
 	/* eslint-disable react/jsx-no-target-blank, wpcalypso/jsx-classname-namespace */
 	return (
