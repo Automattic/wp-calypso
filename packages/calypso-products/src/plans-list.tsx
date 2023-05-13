@@ -384,6 +384,8 @@ import {
 	FEATURE_NEWSLETTER_IMPORT_SUBSCRIBERS_FREE,
 	FEATURE_PAYMENT_TRANSACTION_FEES_8,
 	FEATURE_PAYMENT_TRANSACTION_FEES_4,
+	TYPE_WOOEXPRESS_SMALL,
+	TYPE_WOOEXPRESS_MEDIUM,
 } from './constants';
 import { is2023PricingGridEnabled } from './plans-utilities';
 import type {
@@ -2536,6 +2538,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 	[ PLAN_WOOEXPRESS_MEDIUM_MONTHLY ]: {
 		...getPlanWooExpressMediumDetails(),
 		...getMonthlyTimeframe(),
+		type: TYPE_WOOEXPRESS_MEDIUM,
 		availableFor: ( plan ) =>
 			[ PLAN_FREE, PLAN_ECOMMERCE_TRIAL_MONTHLY, PLAN_WOOEXPRESS_SMALL_MONTHLY ].includes( plan ),
 		getProductId: () => 1053,
@@ -2547,6 +2550,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		...getPlanWooExpressMediumDetails(),
 		term: TERM_ANNUALLY,
 		getBillingTimeFrame: WPComGetBillingTimeframe,
+		type: TYPE_WOOEXPRESS_MEDIUM,
 		availableFor: ( plan ) =>
 			[
 				PLAN_FREE,
@@ -2563,7 +2567,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 	[ PLAN_WOOEXPRESS_SMALL_MONTHLY ]: {
 		...getPlanWooExpressSmallDetails(),
 		...getMonthlyTimeframe(),
-		type: TYPE_ECOMMERCE,
+		type: TYPE_WOOEXPRESS_SMALL,
 		availableFor: ( plan ) => [ PLAN_FREE, PLAN_ECOMMERCE_TRIAL_MONTHLY ].includes( plan ),
 		getProductId: () => 1054,
 		getStoreSlug: () => PLAN_WOOEXPRESS_SMALL_MONTHLY,
@@ -2572,7 +2576,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 
 	[ PLAN_WOOEXPRESS_SMALL ]: {
 		...getPlanWooExpressSmallDetails(),
-		type: TYPE_ECOMMERCE,
+		type: TYPE_WOOEXPRESS_SMALL,
 		term: TERM_ANNUALLY,
 		getBillingTimeFrame: WPComGetBillingTimeframe,
 		availableFor: ( plan ) =>

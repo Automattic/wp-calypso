@@ -124,14 +124,16 @@ export default function LicensePreview( {
 					{ ! domain && licenseState === LicenseState.Detached && (
 						<span>
 							<Badge type="warning">{ translate( 'Unassigned' ) }</Badge>
-							<Button
-								className="license-preview__assign-button"
-								borderless
-								compact
-								onClick={ assign }
-							>
-								{ translate( 'Assign' ) }
-							</Button>
+							{ licenseType === LicenseType.Partner && (
+								<Button
+									className="license-preview__assign-button"
+									borderless
+									compact
+									onClick={ assign }
+								>
+									{ translate( 'Assign' ) }
+								</Button>
+							) }
 						</span>
 					) }
 					{ revokedAt && (

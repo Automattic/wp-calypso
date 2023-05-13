@@ -2,7 +2,7 @@ import { Icon } from '@wordpress/icons';
 import blaze from '../blaze';
 import eye from '../eye';
 
-export default { title: 'Icons' };
+export default { title: 'packages/components/Icons' };
 
 export const Default = () => (
 	<div className="icons-story">
