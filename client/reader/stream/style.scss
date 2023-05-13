@@ -584,16 +584,12 @@
 	align-items: flex-start;
 	display: flex;
 	flex-wrap: nowrap;
+	gap: 80px;
 	justify-content: flex-start;
+}
 
-	.reader__content {
-		padding-right: 56px;
-		position: relative;
-	}
-
-	stream__right-column {
-		padding-left: 24px;
-	}
+.reader__content {
+	position: relative;
 }
 
 .stream__right-column {

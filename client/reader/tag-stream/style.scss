@@ -83,14 +83,14 @@
 
 // Tag page only shows site titles in the sidebar, so spacing needs to be tighter
 .tag-stream__main {
-	.stream__two-column .reader__content::after {
+	.stream__two-column .reader__content::before {
 		content: "";
 		background-color: #e9e9ea;
 		position: absolute;
-		right: 0;
+		right: -56px;
 		top: 0;
-		height: 200%;
-		margin-top: -80px;
+		height: calc(100% + 180px);
+		margin-top: -200px;
 		width: 1px;
 	}
 
