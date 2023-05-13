@@ -2,7 +2,7 @@ import { Icon, institution } from '@wordpress/icons';
 import BaseCard from '../base-card';
 import CountCard from '../count-card';
 
-export default { title: 'Highlight Card' };
+export default { title: 'packages/components/Highlight Card' };
 
 export const BaseCard_ = () => (
 	<>
