@@ -147,3 +147,16 @@ declare module '@automattic/state-utils' {
 }
 
 declare module 'calypso/lib/mobile-app';
+
+declare module 'calypso/lib/explat' {
+	import { ExperimentAssignment } from '@automattic/explat-client';
+
+	export const useExperiment: (
+		experimentName: string,
+		providedOptions: ExperimentOptions = {
+			isEligible: true,
+		}
+	) => [ isLoadingExperimentAssignment: boolean, experimentAssignment: ExperimentAssignment ];
+}
+
+declare module 'calypso/lib/wp';

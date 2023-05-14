@@ -28,6 +28,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useDebounce } from 'use-debounce';
+import { useExperiment } from 'calypso/lib/explat';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { getCurrentUserEmail, getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -249,18 +250,20 @@ export const HelpCenterContactForm = () => {
 		Boolean( supportSite?.is_wpcom_atomic )
 	);
 
-	const enableGPTResponse = config.isEnabled( 'help/gpt-response' );
+	const featureEnabledGPTResponse = config.isEnabled( 'help/gpt-response' );
+	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
+		'caplyso_helpcenter_gpt_answer_contact_deflection',
+		{ isEligible: featureEnabledGPTResponse }
+	);
+
+	const showGptResponse =
+		! isLoadingExperimentAssignment && experimentAssignment?.variationName === 'treatment';
 
 	const showingSibylResults = params.get( 'show-results' ) === 'true';
 	const showingGPTResponse = params.get( 'show-gpt' ) === 'true';
 
 	function handleCTA() {
-		if (
-			! enableGPTResponse &&
-			! showingSibylResults &&
-			sibylArticles &&
-			sibylArticles.length > 0
-		) {
+		if ( ! showGptResponse && ! showingSibylResults && sibylArticles && sibylArticles.length > 0 ) {
 			params.set( 'show-results', 'true' );
 			navigate( {
 				pathname: '/contact-form',
@@ -269,7 +272,7 @@ export const HelpCenterContactForm = () => {
 			return;
 		}
 
-		if ( ! showingGPTResponse && enableGPTResponse ) {
+		if ( ! showingGPTResponse && showGptResponse ) {
 			params.set( 'show-gpt', 'true' );
 			navigate( {
 				pathname: '/contact-form',
@@ -446,7 +449,7 @@ export const HelpCenterContactForm = () => {
 
 	const { isFetching: isFetchingUrls, data: links } = useJetpackSearchAIQuery(
 		'9619154',
-		enableGPTResponse ? debouncedMessage : '',
+		showGptResponse ? debouncedMessage : '',
 		'urls'
 	);
 	const { isFetching: isFetchingResponse, data: gptResponse } = useJetpackSearchAIQuery(
@@ -487,8 +490,7 @@ export const HelpCenterContactForm = () => {
 		return isSubmitting ? formTitles.buttonSubmittingLabel : formTitles.buttonLabel;
 	};
 
-	// TODO: A/B test
-	if ( enableGPTResponse && showingGPTResponse ) {
+	if ( showGptResponse && showingGPTResponse ) {
 		return (
 			<div className="help-center__sibyl-articles-page">
 				<BackButton />
