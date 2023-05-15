@@ -9,8 +9,7 @@ interface APIFetchOptions {
 }
 
 async function requestMessagingAvailability() {
-	// TODO: use correct group
-	const params = new URLSearchParams( { group: 'wpcom_presales', environment: 'production' } );
+	const params = new URLSearchParams( { group: 'wpcom_messaging', environment: 'production' } );
 	return canAccessWpcomApis()
 		? ( ( await wpcomRequest( {
 				path: '/help/messaging/is-available',
