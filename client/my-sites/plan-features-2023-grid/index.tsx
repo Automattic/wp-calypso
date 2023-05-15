@@ -319,6 +319,9 @@ export class PlanFeatures2023Grid extends Component<
 							<div className="plan-features-2023-grid__desktop-view">
 								{ this.renderTable( planProperties ) }
 							</div>
+							<div className="plan-features-2023-grid__large-tablet-view">
+								{ this.renderLargeTabletView() }
+							</div>
 							<div className="plan-features-2023-grid__tablet-view">
 								{ this.renderTabletView() }
 							</div>
@@ -394,6 +397,29 @@ export class PlanFeatures2023Grid extends Component<
 					<tr>{ this.renderPlanStorageOptions( planPropertiesObj ) }</tr>
 				</tbody>
 			</table>
+		);
+	}
+
+	renderLargeTabletView() {
+		const { planProperties } = this.props;
+		let plansToShow = [];
+		const numberOfPlansToShow = 4;
+
+		plansToShow = planProperties
+			.filter( ( { isVisible } ) => isVisible )
+			.map( ( properties ) => properties.planName );
+
+		const plans = plansToShow.slice( 0, numberOfPlansToShow );
+		const planPropertiesForTopRow = planProperties.filter( ( properties: PlanProperties ) =>
+			plans.includes( properties.planName )
+		);
+
+		return (
+			<>
+				<div className="plan-features-2023-grid__table-top">
+					{ this.renderTable( planPropertiesForTopRow ) }
+				</div>
+			</>
 		);
 	}
 

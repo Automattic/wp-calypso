@@ -4,15 +4,14 @@ $plan-features-sidebar-width: 272px;
 $plan-features-header-banner-height: 20px;
 
 // Breakpoints
-$plans-2023-small-breakpoint: 780px;
-$plans-2023-medium-breakpoint: 1200px;
+$plans-2023-small-breakpoint: 880px;
+$plans-2023-medium-breakpoint: 1024px;
+$plans-2023-large-breakpoint: 1281px;
 
 $minWidthToGridWidthMap: (
-	780px: "668px",
-	1024px: "860px",
-	1200px: "1134px",
-	1440px: "1320px",
-	1600px: "1480px",
+	880px: "524px",
+	1024px: "708px",
+	1281px: "1076px",
 );
 
 
@@ -45,8 +44,20 @@ $minWidthToGridWidthMap: (
 	.plan-features-2023-grid__desktop-view {
 		display: none;
 
+		@media ( min-width: $plans-2023-large-breakpoint ) {
+			display: block;
+		}
+	}
+
+	.plan-features-2023-grid__large-tablet-view {
+		display: none;
+
 		@media ( min-width: $plans-2023-medium-breakpoint ) {
 			display: block;
+		}
+
+		@media ( min-width: $plans-2023-large-breakpoint ) {
+			display: none;
 		}
 	}
 
@@ -78,8 +89,20 @@ $minWidthToGridWidthMap: (
 	.plan-features-2023-grid__desktop-view {
 		display: none;
 
+		@media ( min-width: ( $plans-2023-large-breakpoint + $plan-features-sidebar-width ) ) {
+			display: block;
+		}
+	}
+
+	.plan-features-2023-grid__large-tablet-view {
+		display: none;
+
 		@media ( min-width: ( $plans-2023-medium-breakpoint + $plan-features-sidebar-width ) ) {
 			display: block;
+		}
+
+		@media ( min-width: ($plans-2023-large-breakpoint + $plan-features-sidebar-width ) ) {
+			display: none;
 		}
 	}
 
