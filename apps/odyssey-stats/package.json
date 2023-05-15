@@ -63,6 +63,7 @@
 		"@automattic/webpack-inline-constant-exports-plugin": "workspace:^",
 		"@automattic/wp-babel-makepot": "workspace:^",
 		"@babel/core": "^7.17.5",
+		"@size-limit/file": "^8.2.4",
 		"@wordpress/dependency-extraction-webpack-plugin": "^4.5.0",
 		"@wordpress/scripts": "^24.6.0",
 		"autoprefixer": "^10.2.5",
@@ -76,6 +77,7 @@
 		"node-fetch": "^2.6.6",
 		"path-browserify": "^1.0.1",
 		"postcss": "^8.3.11",
+		"size-limit": "^8.2.4",
 		"webpack": "^5.68.0",
 		"webpack-bundle-analyzer": "^4.5.0"
 	}

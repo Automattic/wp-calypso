@@ -1139,6 +1139,7 @@ __metadata:
     "@automattic/webpack-inline-constant-exports-plugin": "workspace:^"
     "@automattic/wp-babel-makepot": "workspace:^"
     "@babel/core": ^7.17.5
+    "@size-limit/file": ^8.2.4
     "@tanstack/react-query": 4.29.1
     "@wordpress/base-styles": ^4.13.0
     "@wordpress/data": ^7.6.0
@@ -1167,6 +1168,7 @@ __metadata:
     react-redux: ^7.2.6
     redux: ^4.1.2
     redux-thunk: ^2.3.0
+    size-limit: ^8.2.4
     webpack: ^5.68.0
     webpack-bundle-analyzer: ^4.5.0
     wpcom: "workspace:^"
@@ -4928,6 +4930,17 @@ __metadata:
   dependencies:
     "@sinonjs/commons": ^1.7.0
   checksum: d6b795f9ddaf044daf184c151555ca557ccd23636f2ee3d2f76a9d128329f81fc1aac412f6f67239ab92cb9390aad9955b71df93cf4bd442c68b1f341e381ab6
+  languageName: node
+  linkType: hard
+
+"@size-limit/file@npm:^8.2.4":
+  version: 8.2.4
+  resolution: "@size-limit/file@npm:8.2.4"
+  dependencies:
+    semver: 7.3.8
+  peerDependencies:
+    size-limit: 8.2.4
+  checksum: fea70804685ee4b0540e145c608d1bcea6fc996e3d4903ad5abff66af0fe52309767c5a09b4539abbf24f275e70654fd3358db8170412ad70a6255ddd802c421
   languageName: node
   linkType: hard
 
@@ -11677,6 +11690,13 @@ __metadata:
   bin:
     bunyan: bin/bunyan
   checksum: c7b3adc07a4db3256f857dcba42b97dd6c35ab054cb26766643aae2b90e1b614795cdf231774ddaf374572d952f52ef4f4205047e15414e155e478aa0672e041
+  languageName: node
+  linkType: hard
+
+"bytes-iec@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "bytes-iec@npm:3.1.1"
+  checksum: cb553a214d49afe2efb4f9f6f03c0a76dbf2b0db8fe176c1d9943f74b79fb36767938e5f0a60991d870309c96f21e440904dd4f92b54c9c316c88486e6eef025
   languageName: node
   linkType: hard
 
@@ -22039,6 +22059,13 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"lilconfig@npm:^2.0.6":
+  version: 2.1.0
+  resolution: "lilconfig@npm:2.1.0"
+  checksum: 64645641aa8d274c99338e130554abd6a0190533c0d9eb2ce7ebfaf2e05c7d9961f3ffe2bfa39efd3b60c521ba3dd24fa236fe2775fc38501bf82bf49d4678b8
+  languageName: node
+  linkType: hard
+
 "line-height@npm:^0.3.1":
   version: 0.3.1
   resolution: "line-height@npm:0.3.1"
@@ -23756,6 +23783,15 @@ fsevents@^1.2.7:
     snapdragon: ^0.8.1
     to-regex: ^3.0.1
   checksum: 0f5cefa755ca2e20c86332821995effb24acb79551ddaf51c1b9112628cad234a0d8fd9ac6aa56ad1f8bfad6ff6ae86e851acb960943249d9fa44b091479953a
+  languageName: node
+  linkType: hard
+
+"nanospinner@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "nanospinner@npm:1.1.0"
+  dependencies:
+    picocolors: ^1.0.0
+  checksum: 2f89e48bfb1452b5f3afd8034753bbc45040a6830fec913ec228d7a8a8eab1e2c8193bd41e2203806a1f454907641ffa035b14f3a8462cf374e874eb29fd57f1
   languageName: node
   linkType: hard
 
@@ -29515,16 +29551,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"semver@npm:^6.0.0, semver@npm:^6.1.1, semver@npm:^6.1.2, semver@npm:^6.2.0, semver@npm:^6.3.0":
-  version: 6.3.0
-  resolution: "semver@npm:6.3.0"
-  bin:
-    semver: ./bin/semver.js
-  checksum: 1f4959e15bcfbaf727e964a4920f9260141bb8805b399793160da4e7de128e42a7d1f79c1b7d5cd21a6073fba0d55feb9966f5fef3e5ccb8e1d7ead3d7527458
-  languageName: node
-  linkType: hard
-
-"semver@npm:^7.0.0, semver@npm:^7.3.2, semver@npm:^7.3.4, semver@npm:^7.3.5, semver@npm:^7.3.7, semver@npm:^7.3.8":
+"semver@npm:7.3.8, semver@npm:^7.0.0, semver@npm:^7.3.2, semver@npm:^7.3.4, semver@npm:^7.3.5, semver@npm:^7.3.7, semver@npm:^7.3.8":
   version: 7.3.8
   resolution: "semver@npm:7.3.8"
   dependencies:
@@ -29532,6 +29559,15 @@ fsevents@^1.2.7:
   bin:
     semver: bin/semver.js
   checksum: 7e581d679530db31757301c2117721577a2bb36a301a443aac833b8efad372cda58e7f2a464fe4412ae1041cc1f63a6c1fe0ced8c57ce5aca1e0b57bb0d627b9
+  languageName: node
+  linkType: hard
+
+"semver@npm:^6.0.0, semver@npm:^6.1.1, semver@npm:^6.1.2, semver@npm:^6.2.0, semver@npm:^6.3.0":
+  version: 6.3.0
+  resolution: "semver@npm:6.3.0"
+  bin:
+    semver: ./bin/semver.js
+  checksum: 1f4959e15bcfbaf727e964a4920f9260141bb8805b399793160da4e7de128e42a7d1f79c1b7d5cd21a6073fba0d55feb9966f5fef3e5ccb8e1d7ead3d7527458
   languageName: node
   linkType: hard
 
@@ -29849,6 +29885,22 @@ fsevents@^1.2.7:
   version: 1.0.5
   resolution: "sisteransi@npm:1.0.5"
   checksum: 230ac975cca485b7f6fe2b96a711aa62a6a26ead3e6fb8ba17c5a00d61b8bed0d7adc21f5626b70d7c33c62ff4e63933017a6462942c719d1980bb0b1207ad46
+  languageName: node
+  linkType: hard
+
+"size-limit@npm:^8.2.4":
+  version: 8.2.4
+  resolution: "size-limit@npm:8.2.4"
+  dependencies:
+    bytes-iec: ^3.1.1
+    chokidar: ^3.5.3
+    globby: ^11.1.0
+    lilconfig: ^2.0.6
+    nanospinner: ^1.1.0
+    picocolors: ^1.0.0
+  bin:
+    size-limit: bin.js
+  checksum: d58aa98cb863eb71b023c2c9338a8455aad4b085f490d04cc3e7174e60df222c70e4ec516b51e4317c14b3491f098f08fa1175702c16fef38a4b971c71dfd32c
   languageName: node
   linkType: hard
 
