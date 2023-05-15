@@ -36,7 +36,7 @@ import { generateSubjectFromMessage } from './utils';
 
 import './style.scss';
 
-const trackSibylClick = ( event, helpLink ) =>
+const trackArticleClick = ( event, helpLink ) =>
 	composeAnalytics(
 		bumpStat( 'sibyl_question_clicks', helpLink.id ),
 		recordTracksEventAction( 'calypso_sibyl_question_click', {
@@ -44,17 +44,17 @@ const trackSibylClick = ( event, helpLink ) =>
 		} )
 	);
 
-const trackSibylFirstClick = ( event, helpLink ) =>
+const trackArticleFirstClick = ( event, helpLink ) =>
 	composeAnalytics(
 		recordTracksEventAction( 'calypso_sibyl_first_question_click', {
 			question_id: helpLink.id,
 		} )
 	);
 
-const trackSupportAfterSibylClick = () =>
+const trackSupportAfterArticleClick = () =>
 	composeAnalytics( recordTracksEventAction( 'calypso_sibyl_support_after_question_click' ) );
 
-const trackSupportWithSibylSuggestions = ( query, suggestions ) =>
+const trackSupportWithArticleSuggestions = ( query, suggestions ) =>
 	composeAnalytics(
 		recordTracksEventAction( 'calypso_sibyl_support_with_suggestions_showing', {
 			query,
@@ -62,7 +62,7 @@ const trackSupportWithSibylSuggestions = ( query, suggestions ) =>
 		} )
 	);
 
-const trackSupportWithoutSibylSuggestions = ( query ) =>
+const trackSupportWithoutArticleSuggestions = ( query ) =>
 	composeAnalytics(
 		recordTracksEventAction( 'calypso_sibyl_support_without_suggestions_showing', { query } )
 	);
@@ -112,7 +112,7 @@ export class HelpContactForm extends PureComponent {
 	state = this.props.valueLink.value || {
 		message: '',
 		subject: '',
-		sibylClicked: false,
+		articleClicked: false,
 		userDeclaresNoSite: false,
 		userDeclaresUnableToSeeSite: this.props.siteCount === 0,
 		userDeclaredUrl: '',
@@ -151,7 +151,7 @@ export class HelpContactForm extends PureComponent {
 		} );
 	};
 
-	getSibylQuery = () => this.state.message.trim();
+	getArticleQuery = () => this.state.message.trim();
 
 	doRequestSite = () => {
 		if ( resemblesUrl( this.state.userDeclaredUrl ) ) {
@@ -183,7 +183,7 @@ export class HelpContactForm extends PureComponent {
 	requestSite = debounce( this.doRequestSite, 500 );
 
 	doQandASearch = () => {
-		const query = this.getSibylQuery();
+		const query = this.getArticleQuery();
 
 		if ( '' === query ) {
 			this.setState( { qanda: [] } );
@@ -214,23 +214,23 @@ export class HelpContactForm extends PureComponent {
 				}
 				this.setState( {
 					qanda: Array.isArray( qanda ) ? qanda : [],
-					// only keep sibylClicked true if the user is seeing the same set of questions
+					// only keep articleClicked true if the user is seeing the same set of questions
 					// we don't want to track "questions -> question click -> different questions -> support click",
-					// so we need to set sibylClicked to false here if the questions have changed
-					sibylClicked: this.state.sibylClicked && sameQuestionsReturned,
+					// so we need to set articleClicked to false here if the questions have changed
+					articleClicked: this.state.articleClicked && sameQuestionsReturned,
 				} );
 			} )
-			.catch( () => this.setState( { qanda: [], sibylClicked: false } ) );
+			.catch( () => this.setState( { qanda: [], articleClicked: false } ) );
 	};
 
 	debouncedQandA = debounce( this.doQandASearch, 500 );
 
 	trackSibylClick = ( event, helpLink ) => {
-		if ( ! this.state.sibylClicked ) {
-			this.props.trackSibylFirstClick( event, helpLink );
+		if ( ! this.state.articleClicked ) {
+			this.props.trackArticleFirstClick( event, helpLink );
 		}
-		this.props.trackSibylClick( event, helpLink );
-		this.setState( { sibylClicked: true } );
+		this.props.trackArticleClick( event, helpLink );
+		this.setState( { articleClicked: true } );
 	};
 
 	/**
@@ -319,17 +319,17 @@ export class HelpContactForm extends PureComponent {
 			} );
 		}
 
-		if ( this.state.sibylClicked ) {
+		if ( this.state.articleClicked ) {
 			// track that the user had clicked a Sibyl result, but still contacted support
-			this.props.trackSupportAfterSibylClick();
-			this.setState( { sibylClicked: false } );
+			this.props.trackSupportAfterArticleClick();
+			this.setState( { articleClicked: false } );
 		}
 
 		if ( this.state.qanda.length === 0 ) {
-			this.props.trackSupportWithoutSibylSuggestions( this.getSibylQuery() );
+			this.props.trackSupportWithoutArticleSuggestions( this.getArticleQuery() );
 		} else {
-			this.props.trackSupportWithSibylSuggestions(
-				this.getSibylQuery(),
+			this.props.trackSupportWithArticleSuggestions(
+				this.getArticleQuery(),
 				this.state.qanda.map( ( { id, title } ) => `${ id } - ${ title }` ).join( ' / ' )
 			);
 		}
@@ -474,7 +474,7 @@ export class HelpContactForm extends PureComponent {
 					</h2>
 					<InlineHelpCompactResults
 						helpLinks={ this.state.qanda }
-						onClick={ this.trackSibylClick }
+						onClick={ this.trackArticleClick }
 					/>
 					<FormButton disabled={ ! this.canSubmitForm() } type="button" onClick={ this.submitForm }>
 						{ buttonLabel }
@@ -628,7 +628,7 @@ export class HelpContactForm extends PureComponent {
 						header={ translate( 'Do you want the answer to any of these questions?' ) }
 						helpLinks={ this.state.qanda }
 						iconTypeDescription="book"
-						onClick={ this.trackSibylClick }
+						onClick={ this.trackArticleClick }
 						compact
 					/>
 				) }
@@ -675,11 +675,11 @@ const mapDispatchToProps = {
 	onChangeSite: selectSiteId,
 	recordTracksEventAction,
 	requestSite,
-	trackSibylClick,
-	trackSibylFirstClick,
-	trackSupportAfterSibylClick,
-	trackSupportWithSibylSuggestions,
-	trackSupportWithoutSibylSuggestions,
+	trackArticleClick: trackArticleClick,
+	trackArticleFirstClick: trackArticleFirstClick,
+	trackSupportAfterArticleClick: trackSupportAfterArticleClick,
+	trackSupportWithArticleSuggestions: trackSupportWithArticleSuggestions,
+	trackSupportWithoutArticleSuggestions: trackSupportWithoutArticleSuggestions,
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( HelpContactForm ) );

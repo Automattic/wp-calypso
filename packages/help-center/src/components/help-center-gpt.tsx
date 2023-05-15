@@ -134,10 +134,7 @@ export function HelpCenterGPT() {
 					<h3 id="help-center--contextual_help" className="help-center__section-title">
 						{ __( 'Relevant resources', __i18n_text_domain__ ) }
 					</h3>
-					<ul
-						className="help-center-sibyl-articles__list"
-						aria-labelledby="help-center--contextual_help"
-					>
+					<ul className="help-center-articles__list" aria-labelledby="help-center--contextual_help">
 						{ links?.urls?.map( ( article ) => {
 							return (
 								<li key={ article.url }>

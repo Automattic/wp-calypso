@@ -486,7 +486,7 @@ export const HelpCenterContactForm = () => {
 	const isFetchingGPTResponse = isFetchingUrls || isFetchingResponse;
 
 	const getCTALabel = () => {
-		const showingSibylOrGPTResults = showingHelpResults || showingGPTResponse;
+		const showingHelpOrGPTResults = showingHelpResults || showingGPTResponse;
 
 		if ( ! showingGPTResponse && ! showingHelpResults ) {
 			return __( 'Continue', __i18n_text_domain__ );
@@ -496,11 +496,11 @@ export const HelpCenterContactForm = () => {
 			return __( 'Gathering quick response.', __i18n_text_domain__ );
 		}
 
-		if ( mode === 'CHAT' && showingSibylOrGPTResults ) {
+		if ( mode === 'CHAT' && showingHelpOrGPTResults ) {
 			return __( 'Still chat with us', __i18n_text_domain__ );
 		}
 
-		if ( mode === 'EMAIL' && showingSibylOrGPTResults ) {
+		if ( mode === 'EMAIL' && showingHelpOrGPTResults ) {
 			return __( 'Still email us', __i18n_text_domain__ );
 		}
 
@@ -514,7 +514,7 @@ export const HelpCenterContactForm = () => {
 	// TODO: A/B test
 	if ( enableGPTResponse && showingGPTResponse ) {
 		return (
-			<div className="help-center__sibyl-articles-page">
+			<div className="help-center__articles-page">
 				<BackButton />
 				<HelpCenterGPT />
 				<section className="contact-form-submit">
@@ -540,7 +540,7 @@ export const HelpCenterContactForm = () => {
 	}
 
 	return showingHelpResults ? (
-		<div className="help-center__sibyl-articles-page">
+		<div className="help-center__articles-page">
 			<BackButton />
 			<HelpCenterSearchResults
 				onSelect={ redirectToArticle }

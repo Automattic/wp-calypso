@@ -23,7 +23,6 @@ export { useSubmitTicketMutation } from './support-queries/use-submit-support-ti
 export { useSubmitForumsMutation } from './support-queries/use-submit-forums-topic';
 export { useHasActiveSupport } from './support-queries/use-support-history';
 export * from './starter-designs-queries';
-export { useSibylQuery } from './support-queries/use-sibyl-query';
 export * from './support-queries/types';
 export * from './site/types';
 export * from './templates';
