@@ -1,6 +1,6 @@
 import { Button, Gridicon, Popover } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import * as React from 'react';
+import { useRef, useState } from 'react';
 
 type OwnProps = {
 	className?: string;
@@ -15,8 +15,8 @@ const StorageHelpPopover: React.FC< OwnProps > = ( {
 	onClickedPurchase,
 } ) => {
 	const translate = useTranslate();
-	const [ isPopoverVisible, setPopoverVisible ] = React.useState< boolean >( true );
-	const popover = React.useRef< SVGSVGElement >( null );
+	const [ isPopoverVisible, setPopoverVisible ] = useState< boolean >( true );
+	const popover = useRef< SVGSVGElement >( null );
 
 	if ( ! forecastInDays ) {
 		return null;
