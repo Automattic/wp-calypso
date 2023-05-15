@@ -1,6 +1,5 @@
 import { Button } from '@automattic/components';
 import { ColorPaletteVariations } from '@automattic/global-styles';
-import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { __experimentalNavigatorBackButton as NavigatorBackButton } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import NavigatorHeader from './navigator-header';
@@ -24,23 +23,14 @@ const ScreenColorPalettes = ( {
 	onDoneClick,
 }: Props ) => {
 	const translate = useTranslate();
-	const hasEnTranslation = useHasEnTranslation();
 
 	return (
 		<>
 			<NavigatorHeader
 				title={ translate( 'Colors' ) }
-				description={
-					hasEnTranslation(
-						'Choose from our curated color palettes when you upgrade to the Premium plan or above.'
-					)
-						? translate(
-								'Choose from our curated color palettes when you upgrade to the Premium plan or above.'
-						  )
-						: translate(
-								'Select from our curated color palettes or tweak to your heart’s content when you upgrade to the Premium plan or higher.'
-						  )
-				}
+				description={ translate(
+					'Choose from our curated color palettes when you upgrade to the Premium plan or above.'
+				) }
 				isPremium
 				onBack={ onBack }
 			/>
@@ -59,7 +49,7 @@ const ScreenColorPalettes = ( {
 					onClick={ onDoneClick }
 					primary
 				>
-					{ translate( 'Save' ) }
+					{ translate( 'Save colors' ) }
 				</NavigatorBackButton>
 			</div>
 		</>
