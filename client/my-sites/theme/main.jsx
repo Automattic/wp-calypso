@@ -1,5 +1,7 @@
 import config from '@automattic/calypso-config';
 import {
+	FEATURE_PREMIUM_THEMES_V2,
+	FEATURE_UPLOAD_THEMES_PLUGINS,
 	FEATURE_UPLOAD_THEMES,
 	PLAN_BUSINESS,
 	PLAN_PREMIUM,
@@ -19,7 +21,6 @@ import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import AsyncLoad from 'calypso/components/async-load';
-import Badge from 'calypso/components/badge';
 import Banner from 'calypso/components/banner';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
@@ -829,7 +830,6 @@ class ThemeSheet extends Component {
 			isPremium,
 			isThemePurchased,
 			translate,
-			isBundledSoftwareSet,
 			isExternallyManagedTheme,
 			isSiteEligibleForManagedExternalThemes,
 			isMarketplaceThemeSubscribed,
@@ -845,20 +845,7 @@ class ThemeSheet extends Component {
 				</span>
 			);
 		} else if ( isLoggedIn ) {
-			if (
-				isPremium &&
-				! isThemePurchased &&
-				! isBundledSoftwareSet &&
-				! isExternallyManagedTheme
-			) {
-				// purchase
-				return translate( 'Pick this design' );
-			} else if (
-				isPremium &&
-				! isThemePurchased &&
-				isBundledSoftwareSet &&
-				! isExternallyManagedTheme
-			) {
+			if ( isPremium && ! isThemePurchased && ! isExternallyManagedTheme ) {
 				// upgrade plan
 				return translate( 'Upgrade to activate', {
 					comment:
@@ -928,25 +915,9 @@ class ThemeSheet extends Component {
 		);
 	};
 
-	renderPrice = () => {
-		let price = this.props.price;
-		if ( ! this.isLoaded() || this.props.isActive || this.props.isBundledSoftwareSet ) {
-			price = '';
-		} else if ( ! this.props.isPremium && ! this.props.isExternallyManagedTheme ) {
-			price = this.props.translate( 'Free' );
-		}
-
-		const className = classNames( 'theme__sheet-action-bar-cost', {
-			'theme__sheet-action-bar-cost-upgrade': ! /\d/g.test( this.props.price ),
-		} );
-
-		return price ? <span className={ className }>{ price }</span> : '';
-	};
-
 	renderButton = () => {
 		const { getUrl, key } = this.props.defaultOption;
 		const label = this.getDefaultOptionLabel();
-		const price = this.renderPrice();
 		const placeholder = <span className="theme__sheet-button-placeholder">loading......</span>;
 		const { isActive, isExternallyManagedTheme, isLoggedIn } = this.props;
 
@@ -971,11 +942,6 @@ class ThemeSheet extends Component {
 				target={ isActive ? '_blank' : null }
 			>
 				{ this.isLoaded() ? label : placeholder }
-				{ price && this.props.isWpcomTheme && (
-					<Badge type="info" className="theme__sheet-badge-beta">
-						{ price }
-					</Badge>
-				) }
 			</Button>
 		);
 	};
@@ -1155,12 +1121,14 @@ class ThemeSheet extends Component {
 			retired,
 			styleVariations,
 			isBundledSoftwareSet,
-			isSiteBundleEligible,
 			translate,
 			isLoggedIn,
-			isExternallyManagedTheme,
+			isPremium,
+			isThemePurchased,
+			isSiteBundleEligible,
 			isSiteEligibleForManagedExternalThemes,
 			isMarketplaceThemeSubscribed,
+			isExternallyManagedTheme,
 			isThemeActivationSyncStarted,
 		} = this.props;
 
@@ -1178,7 +1146,13 @@ class ThemeSheet extends Component {
 		} else if ( siteSlug ) {
 			const redirectTo = `/theme/${ themeId }${ section ? '/' + section : '' }/${ siteSlug }`;
 			const plan = isExternallyManagedTheme || isBundledSoftwareSet ? PLAN_BUSINESS : PLAN_PREMIUM;
-			plansUrl = plansUrl + `/${ siteSlug }/?plan=${ plan }&redirect_to=${ redirectTo }`;
+
+			const feature =
+				PLAN_PREMIUM === plan ? FEATURE_PREMIUM_THEMES_V2 : FEATURE_UPLOAD_THEMES_PLUGINS;
+
+			plansUrl =
+				plansUrl +
+				`/${ siteSlug }/?plan=${ plan }&feature=${ feature }&redirect_to=${ redirectTo }`;
 		}
 
 		const launchPricing = () => window.open( plansUrl, '_blank' );
@@ -1244,6 +1218,7 @@ class ThemeSheet extends Component {
 
 		if ( hasWpComThemeUpsellBanner ) {
 			const forceDisplay =
+				( isPremium && ! isThemePurchased ) ||
 				( isBundledSoftwareSet && ! isSiteBundleEligible ) ||
 				( isExternallyManagedTheme &&
 					( ! isMarketplaceThemeSubscribed || ! isSiteEligibleForManagedExternalThemes ) );
