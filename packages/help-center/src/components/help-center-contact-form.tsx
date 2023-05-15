@@ -444,8 +444,21 @@ export const HelpCenterContactForm = () => {
 		);
 	};
 
+	const { isFetching: isFetchingUrls, data: links } = useJetpackSearchAIQuery(
+		'9619154',
+		enableGPTResponse ? debouncedMessage : '',
+		'urls'
+	);
+	const { isFetching: isFetchingResponse, data: gptResponse } = useJetpackSearchAIQuery(
+		'9619154',
+		links?.urls ? debouncedMessage : '',
+		'response'
+	);
+	const isFetchingGPTResponse = isFetchingUrls || isFetchingResponse;
+
 	const getCTALabel = () => {
 		const showingSibylOrGPTResults = showingSibylResults || showingGPTResponse;
+
 		if (
 			! showingGPTResponse &&
 			! showingSibylResults &&
@@ -453,6 +466,10 @@ export const HelpCenterContactForm = () => {
 			sibylArticles.length > 0
 		) {
 			return __( 'Continue', __i18n_text_domain__ );
+		}
+
+		if ( showingGPTResponse && isFetchingGPTResponse ) {
+			return __( 'Gathering quick response.', __i18n_text_domain__ );
 		}
 
 		if ( mode === 'CHAT' && showingSibylOrGPTResults ) {
@@ -470,18 +487,6 @@ export const HelpCenterContactForm = () => {
 		return isSubmitting ? formTitles.buttonSubmittingLabel : formTitles.buttonLabel;
 	};
 
-	const { isFetching: isFetchingUrls, data: links } = useJetpackSearchAIQuery(
-		'9619154',
-		debouncedMessage,
-		'urls'
-	);
-	const { isFetching: isFetchingResponse, data: gptResponse } = useJetpackSearchAIQuery(
-		'9619154',
-		links?.urls ? debouncedMessage : '',
-		'response'
-	);
-	const isFetchingGPTResponse = isFetchingUrls || isFetchingResponse;
-
 	// TODO: A/B test
 	if ( enableGPTResponse && showingGPTResponse ) {
 		return (
@@ -495,9 +500,7 @@ export const HelpCenterContactForm = () => {
 						isPrimary
 						className="help-center-contact-form__site-picker-cta"
 					>
-						{ isFetchingGPTResponse
-							? __( 'Gathering quick response.', __i18n_text_domain__ )
-							: getCTALabel() }
+						{ getCTALabel() }
 					</Button>
 					{ hasSubmittingError && (
 						<FormInputValidation
