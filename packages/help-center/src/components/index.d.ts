@@ -160,3 +160,4 @@ declare module 'calypso/lib/explat' {
 }
 
 declare module 'calypso/lib/wp';
+declare module 'calypso/server/lib/logger';
