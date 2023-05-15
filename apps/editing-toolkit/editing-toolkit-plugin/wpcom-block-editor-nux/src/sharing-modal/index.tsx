@@ -2,9 +2,9 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Modal, Button, ExternalLink } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useRef, useState, createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
 import { Icon, globe, link as linkIcon } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
+import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import React from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
@@ -29,6 +29,7 @@ const SharingModal: React.FC = () => {
 	const isDismissedDefault = window?.sharingModalOptions?.isDismissed || false;
 	const { launchpadScreenOption } = window?.launchpadOptions || {};
 	const { isDismissed, updateIsDismissed } = useSharingModalDismissed( isDismissedDefault );
+	const { __ } = useI18n();
 
 	const { link, title } = useSelect(
 		( select ) => ( select( 'core/editor' ) as CoreEditorPlaceholder ).getCurrentPost(),
