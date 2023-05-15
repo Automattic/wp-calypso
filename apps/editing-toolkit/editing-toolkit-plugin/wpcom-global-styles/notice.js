@@ -76,7 +76,7 @@ const GlobalStylesNotice = () => {
 			actions.push( {
 				label: __( 'Remove custom styles', 'full-site-editing' ),
 				onClick: resetGlobalStyles,
-				variant: 'link',
+				variant: 'secondary',
 				noDefaultClasses: true,
 			} );
 		}
