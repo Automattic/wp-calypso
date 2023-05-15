@@ -29,6 +29,10 @@ export function useStepNavigator(
 		navigation.goToStep?.( 'import' );
 	}
 
+	function goToImportListStep() {
+		navigation.goToStep?.( `importList?siteSlug=${ siteSlug }` );
+	}
+
 	function goToSiteViewPage() {
 		navigation.submit?.( {
 			type: 'redirect',
@@ -98,6 +102,7 @@ export function useStepNavigator(
 		goToWpAdminImportPage,
 		goToWpAdminWordPressPluginPage,
 		goToAddDomainPage,
+		goToImportListStep,
 		navigate: ( path ) => navigator( path ),
 	};
 }
