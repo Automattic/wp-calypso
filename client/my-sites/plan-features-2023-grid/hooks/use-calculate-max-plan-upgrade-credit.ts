@@ -12,7 +12,10 @@ import type { PlanSlug } from '@automattic/calypso-products';
  * @param {PlanSlug[]}  plans Plans that are considered for the given calculation
  * @returns {number} The maximum amount of credits possible for a given set of plans
  */
-export function usePlanUpgradeCredits( siteId: number | undefined, plans: PlanSlug[] ): number {
+export function useCalculateMaxPlanUpgradeCredit(
+	siteId: number | undefined,
+	plans: PlanSlug[]
+): number {
 	const plansDetails = useSelector( ( state ) =>
 		plans.map( ( planName ) => ( {
 			isPlanAvailableForPurchase: isPlanAvailableForPurchase( state, siteId ?? 0, planName ),
