@@ -801,6 +801,7 @@ export const normalizers = {
 					// Remove the parent name from the child name.
 					// If the child name is the same as the parent name, use a slash instead.
 					parsed.label = child.name?.replace( item.name, '' ) || '/';
+					return parsed;
 				} );
 			}
 
