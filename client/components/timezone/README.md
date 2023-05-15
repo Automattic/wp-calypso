@@ -22,12 +22,11 @@ export default class extends React.Component {
 
 ## Props
 
-`selectedZone` - **optional** String value to define the selected timezone.
-
-`includeManualOffsets` - **optional** Boolean value to include/exclude the manual offsets from the
+* `selectedZone` - **optional** String value to define the selected timezone.
+* `id` - **optional** String value to add an `id=` attribute to the `<select>` element.
+* `includeManualOffsets` - **optional** Boolean value to include/exclude the manual offsets from the
 list of timezones, the default value is `true`
-
-`onSelect` - **optional** Called when user selects a timezone from the
+* `onSelect` - **optional** Called when user selects a timezone from the
 select. An object parameter is passed to the function which has two
 properties: `label` usually used to show the selected timezone to the user and
 `value` which is the normalized timezone value.

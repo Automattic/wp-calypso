@@ -544,6 +544,7 @@ export class SiteSettingsFormGeneral extends Component {
 					selectedZone={ fields.timezone_string }
 					disabled={ isRequestingSettings }
 					onSelect={ this.onTimezoneSelect }
+					id="blogtimezone"
 				/>
 
 				<FormSettingExplanation>
