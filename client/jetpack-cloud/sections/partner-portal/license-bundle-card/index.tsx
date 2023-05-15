@@ -33,7 +33,9 @@ export default function LicenseBundleCard( props: Props ) {
 				<div className="license-bundle-card__description">{ productDescription }</div>
 
 				<LicenseLightboxLink product={ product } />
+			</div>
 
+			<div className="license-bundle-card__footer">
 				<div className="license-bundle-card__pricing">
 					<div className="license-bundle-card__price">
 						{ formatCurrency( product.amount, product.currency ) }
@@ -43,15 +45,16 @@ export default function LicenseBundleCard( props: Props ) {
 						{ product.price_interval === 'month' && translate( '/USD per license per month' ) }
 					</div>
 				</div>
+
+				<Button
+					primary
+					className="license-bundle-card__select-license"
+					onClick={ onSelect }
+					tabIndex={ tabIndex }
+				>
+					{ translate( 'Select' ) }
+				</Button>
 			</div>
-			<Button
-				primary
-				className="license-bundle-card__select-license"
-				onClick={ onSelect }
-				tabIndex={ tabIndex }
-			>
-				{ translate( 'Select' ) }
-			</Button>
 		</div>
 	);
 }
