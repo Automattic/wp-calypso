@@ -2,8 +2,6 @@
 
 A `Tooltip` allows you to add contextual and other information where needed. For example, `Tooltip` is used to display extra information, on hover, about icon-only buttons.
 
-NOTE: This component has been moved to `@automattic/components`. This file remains for backwards compatibility with Calypso Devdocs.
-
 ## Properties
 
 - `status` - (string) Modifies the style of the `Tooltip`. Can be one of the following: `error`, `warning`, or `success`.
