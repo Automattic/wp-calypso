@@ -66,13 +66,6 @@ class Block_Patterns_From_API {
 		// Used to track which patterns we successfully register.
 		$results = array();
 
-		// The category 'All' is created dynamically so all patterns are always added automatically.
-		$category_all = array(
-			'slug'        => 'featured',
-			'label'       => __( 'All', 'full-site-editing' ),
-			'description' => __( 'Explore all patterns.', 'full-site-editing' ),
-		);
-
 		// For every pattern source site, fetch the patterns.
 		foreach ( $this->patterns_sources as $patterns_source ) {
 			$patterns_cache_key = $this->utils->get_patterns_cache_key( $patterns_source );
@@ -94,12 +87,6 @@ class Block_Patterns_From_API {
 			}
 
 			$pattern_categories = array_merge( $pattern_categories, $existing_categories );
-
-			// Add the category 'All' to $pattern_categories so its ordered and registered with the others.
-			$pattern_categories[ $category_all['slug'] ] = array(
-				'label'       => $category_all['label'],
-				'description' => $category_all['description'],
-			);
 
 			// Order categories alphabetically by their label.
 			uasort(
@@ -135,9 +122,6 @@ class Block_Patterns_From_API {
 					$pattern_name   = self::PATTERN_NAMESPACE . $pattern['name'];
 					$block_types    = $this->utils->maybe_get_pattern_block_types_from_pattern_meta( $pattern );
 
-					// Add the category 'All' to all patterns.
-					$pattern['categories'][ $category_all['slug'] ] = $category_all;
-
 					$results[ $pattern_name ] = register_block_pattern(
 						$pattern_name,
 						array(
@@ -159,8 +143,6 @@ class Block_Patterns_From_API {
 		$this->update_core_patterns_with_wpcom_categories();
 
 		$this->update_pattern_post_types();
-
-		$this->update_query_patterns_with_blog_category();
 
 		return $results;
 	}
@@ -297,26 +279,6 @@ class Block_Patterns_From_API {
 				$pattern_name         = $pattern['name'];
 				unset( $pattern['name'] );
 				register_block_pattern( $pattern_name, $pattern );
-			}
-		}
-	}
-
-	/**
-	 * Ensure that all query or posts patterns use the category blog instead.
-	 */
-	private function update_query_patterns_with_blog_category() {
-		foreach ( \WP_Block_Patterns_Registry::get_instance()->get_all_registered() as $pattern ) {
-			if ( ! isset( $pattern['categories'] ) ) {
-				continue;
-			}
-			if ( in_array( 'query', $pattern['categories'], true ) || in_array( 'posts', $pattern['categories'], true ) ) {
-				foreach ( $pattern['categories'] as &$category ) {
-					if ( in_array( $category, array( 'query', 'posts' ), true ) ) {
-						$category = 'blog';
-					}
-				}
-				unregister_block_pattern( $pattern['name'] );
-				register_block_pattern( $pattern['name'], $pattern );
 			}
 		}
 	}
