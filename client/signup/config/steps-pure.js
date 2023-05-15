@@ -43,7 +43,6 @@ export function generateSteps( {
 	isPlanFulfilled = noop,
 	isAddOnsFulfilled = noop,
 	isDomainFulfilled = noop,
-	isSiteTypeFulfilled = noop,
 	maybeRemoveStepForUserlessCheckout = noop,
 	isNewOrExistingSiteFulfilled = noop,
 	createSiteAndAddDIFMToCart = noop,
@@ -66,16 +65,6 @@ export function generateSteps( {
 			},
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'themeSlugWithRepo' ],
-		},
-
-		'template-first-themes': {
-			stepName: 'template-first-themes',
-			props: {
-				designType: 'template-first',
-				quantity: 18,
-			},
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'themeSlugWithRepo', 'useThemeHeadstart' ],
 		},
 
 		// `themes` does not update the theme for an existing site as we normally
@@ -196,11 +185,6 @@ export function generateSteps( {
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 			},
-		},
-
-		'site-title': {
-			stepName: 'site-title',
-			providesDependencies: [ 'siteTitle' ],
 		},
 
 		'site-options': {
@@ -645,12 +629,6 @@ export function generateSteps( {
 		'reader-landing': {
 			stepName: 'reader-landing',
 			providesDependencies: [],
-		},
-
-		'site-type-with-theme': {
-			stepName: 'site-type',
-			providesDependencies: [ 'siteType' ],
-			fulfilledStepCallback: isSiteTypeFulfilled,
 		},
 
 		launch: {
