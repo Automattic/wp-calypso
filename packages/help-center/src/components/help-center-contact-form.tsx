@@ -495,6 +495,7 @@ export const HelpCenterContactForm = () => {
 				<HelpCenterGPT />
 				<section className="contact-form-submit">
 					<Button
+						isBusy={ isFetchingGPTResponse }
 						disabled={ isFetchingGPTResponse }
 						onClick={ handleCTA }
 						isPrimary
