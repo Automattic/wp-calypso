@@ -122,6 +122,10 @@ type PlanFeatures2023GridProps = {
 	hidePlansFeatureComparison: boolean;
 	hideUnavailableFeatures: boolean;
 	planActionOverrides?: PlanActionOverrides;
+	// Value of the `?plan=` query param, so we can highlight a given plan.
+	selectedPlan?: string;
+	// Value of the `?feature=` query param, so we can highlight a given feature and hide plans without it.
+	selectedFeature?: string;
 };
 
 type PlanFeatures2023GridConnectedProps = {
@@ -167,6 +171,7 @@ const PlanLogo: React.FunctionComponent< {
 	isMobile?: boolean;
 	isInSignup: boolean;
 	currentSitePlanSlug?: string;
+	selectedPlan?: string;
 } > = ( {
 	planPropertiesObj,
 	planProperties,
@@ -175,6 +180,7 @@ const PlanLogo: React.FunctionComponent< {
 	isInSignup,
 	flowName,
 	currentSitePlanSlug,
+	selectedPlan,
 } ) => {
 	const { planName, current } = planProperties;
 	const translate = useTranslate();
@@ -216,6 +222,7 @@ const PlanLogo: React.FunctionComponent< {
 				additionalClassName={ popularBadgeClasses }
 				flowName={ flowName }
 				currentSitePlanSlug={ currentSitePlanSlug }
+				selectedPlan={ selectedPlan }
 			/>
 			<header className={ headerClasses }>
 				{ isBusinessPlan( planName ) && (
@@ -300,6 +307,8 @@ export class PlanFeatures2023Grid extends Component<
 			selectedSiteSlug,
 			hidePlansFeatureComparison,
 			siteId,
+			selectedPlan,
+			selectedFeature,
 		} = this.props;
 		return (
 			<div className="plans-wrapper">
@@ -346,6 +355,8 @@ export class PlanFeatures2023Grid extends Component<
 							selectedSiteSlug={ selectedSiteSlug }
 							onUpgradeClick={ this.handleUpgradeClick }
 							siteId={ siteId }
+							selectedPlan={ selectedPlan }
+							selectedFeature={ selectedFeature }
 						/>
 						<div className="plan-features-2023-grid__toggle-plan-comparison-button-container">
 							<Button onClick={ this.toggleShowPlansComparisonGrid }>
@@ -419,7 +430,7 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderMobileView() {
-		const { planProperties, translate } = this.props;
+		const { planProperties, translate, selectedFeature } = this.props;
 		const CardContainer = (
 			props: React.ComponentProps< typeof FoldableCard > & { planName: string }
 		) => {
@@ -455,6 +466,10 @@ export class PlanFeatures2023Grid extends Component<
 							header={ translate( 'Show all features' ) }
 							planName={ properties.planName }
 							key={ `${ properties.planName }-${ index }` }
+							expanded={
+								selectedFeature &&
+								properties.features.some( ( feature ) => feature.getSlug() === selectedFeature )
+							}
 						>
 							{ this.renderPreviousFeaturesIncludedTitle( [ properties ], {
 								isMobile: true,
@@ -558,7 +573,7 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderPlanLogos( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { isInSignup, flowName, currentSitePlanSlug } = this.props;
+		const { isInSignup, flowName, currentSitePlanSlug, selectedPlan } = this.props;
 
 		return planPropertiesObj
 			.filter( ( { isVisible } ) => isVisible )
@@ -573,6 +588,7 @@ export class PlanFeatures2023Grid extends Component<
 						isInSignup={ isInSignup }
 						flowName={ flowName }
 						currentSitePlanSlug={ currentSitePlanSlug }
+						selectedPlan={ selectedPlan }
 					/>
 				);
 			} );
@@ -792,7 +808,7 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderPlanFeaturesList( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { domainName, translate, hideUnavailableFeatures } = this.props;
+		const { domainName, translate, hideUnavailableFeatures, selectedFeature } = this.props;
 		const planProperties = planPropertiesObj.filter(
 			( properties ) =>
 				! isWpcomEnterpriseGridPlan( properties.planName ) &&
@@ -814,6 +830,7 @@ export class PlanFeatures2023Grid extends Component<
 							planName={ planName }
 							domainName={ domainName }
 							hideUnavailableFeatures={ hideUnavailableFeatures }
+							selectedFeature={ selectedFeature }
 						/>
 						{ jpFeatures.length !== 0 && (
 							<div className="plan-features-2023-grid__jp-logo" key="jp-logo">
@@ -898,6 +915,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 			siteId,
 			flowName,
 			currentSitePlanSlug,
+			selectedFeature,
 		} = ownProps;
 		const canUserPurchasePlan =
 			! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId );
@@ -960,15 +978,34 @@ const ConnectedPlanFeatures2023Grid = connect(
 			const annualPlansOnlyFeatures = planConstantObj.getAnnualPlansOnlyFeatures?.() || [];
 			let planFeaturesTransformed: Array< TransformedFeatureObject > = [];
 			let jetpackFeaturesTransformed: Array< TransformedFeatureObject > = [];
+			const topFeature = selectedFeature
+				? planFeatures.find( ( feature ) => feature.getSlug() === selectedFeature )
+				: undefined;
+
+			if ( topFeature ) {
+				const availableOnlyForAnnualPlans = annualPlansOnlyFeatures.includes(
+					topFeature.getSlug()
+				);
+				planFeaturesTransformed.unshift( {
+					...topFeature,
+					availableOnlyForAnnualPlans,
+					availableForCurrentPlan: ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
+				} );
+			}
+
 			if ( annualPlansOnlyFeatures.length > 0 ) {
-				planFeaturesTransformed = planFeatures.map( ( feature ) => {
+				planFeatures.forEach( ( feature ) => {
+					if ( feature === topFeature ) {
+						return;
+					}
+
 					const availableOnlyForAnnualPlans = annualPlansOnlyFeatures.includes( feature.getSlug() );
 
-					return {
+					planFeaturesTransformed.push( {
 						...feature,
 						availableOnlyForAnnualPlans,
 						availableForCurrentPlan: ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
-					};
+					} );
 				} );
 			}
 
