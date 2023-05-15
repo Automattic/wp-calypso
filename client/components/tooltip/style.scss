@@ -1,0 +1,6 @@
+// This style sheet only includes Calypso-specific styles.
+
+.tooltip.popover {
+	// always display the popover on top even inside a modal with a high z index
+	z-index: z-index("root", ".tooltip.popover");
+}
