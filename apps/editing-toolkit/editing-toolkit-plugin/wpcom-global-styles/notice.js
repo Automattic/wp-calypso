@@ -65,7 +65,7 @@ const GlobalStylesNotice = () => {
 
 		if ( isPostEditor ) {
 			actions.push( {
-				label: __( 'Preview your site', 'full-site-editing' ),
+				label: __( 'Preview without custom styles', 'full-site-editing' ),
 				onClick: previewSite,
 				variant: 'secondary',
 				noDefaultClasses: true,
