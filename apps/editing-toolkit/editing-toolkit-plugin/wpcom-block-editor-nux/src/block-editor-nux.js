@@ -14,9 +14,10 @@ import { ShouldShowFirstPostPublishedModalProvider } from '../../dotcom-fse/lib/
 import { HasSeenSellerCelebrationModalProvider } from '../../dotcom-fse/lib/seller-celebration-modal/has-seen-seller-celebration-modal-context';
 import { HasSeenVideoCelebrationModalProvider } from '../../dotcom-fse/lib/video-celebration-modal/has-seen-video-celebration-modal-context';
 import DraftPostModal from './draft-post-modal';
-import PostPublishedModal from './post-published-modal';
+import FirstPostPublishedModal from './first-post-published-modal';
 import PurchaseNotice from './purchase-notice';
 import SellerCelebrationModal from './seller-celebration-modal';
+import PostPublishedSharingModal from './sharing-modal';
 import { DEFAULT_VARIANT, BLANK_CANVAS_VARIANT } from './store';
 import VideoPressCelebrationModal from './video-celebration-modal';
 import WpcomNux from './welcome-modal/wpcom-nux';
@@ -104,7 +105,8 @@ registerPlugin( 'wpcom-block-editor-nux', {
 			<HasSeenVideoCelebrationModalProvider>
 				<ShouldShowFirstPostPublishedModalProvider>
 					<WelcomeTour />
-					<PostPublishedModal />
+					<FirstPostPublishedModal />
+					<PostPublishedSharingModal />
 					<SellerCelebrationModal />
 					<PurchaseNotice />
 					<VideoPressCelebrationModal />
