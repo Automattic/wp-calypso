@@ -21,7 +21,7 @@ interface Props {
 	selectedAction?: AllowedMonitorContactActions;
 }
 
-export default function AddNewEmailModal( {
+export default function EmailAddressEditor( {
 	toggleModal,
 	selectedEmail,
 	selectedAction = 'add',

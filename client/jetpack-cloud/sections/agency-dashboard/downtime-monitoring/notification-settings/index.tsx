@@ -12,7 +12,7 @@ import {
 	mobileAppLink,
 } from '../../sites-overview/utils';
 import ConfigureEmailNotification from '../configure-email-notification';
-import AddNewEmailModal from '../configure-email-notification/add-new-email-modal';
+import EmailAddressEditor from '../configure-email-notification/email-address-editor';
 import type {
 	MonitorSettings,
 	Site,
@@ -134,7 +134,7 @@ export default function NotificationSettings( {
 
 	if ( isAddEmailModalOpen ) {
 		return (
-			<AddNewEmailModal
+			<EmailAddressEditor
 				toggleModal={ toggleAddEmailModal }
 				selectedEmail={ selectedEmail }
 				selectedAction={ selectedAction }
