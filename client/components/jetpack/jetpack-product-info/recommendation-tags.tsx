@@ -1,7 +1,7 @@
 import { JetpackTag } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
-import getTagIcon from './utils/get-tag-icon';
+import { Tags } from 'calypso/my-sites/plans/jetpack-plans/product-lightbox/icons/tags';
 
 type Props = { tags: JetpackTag[] };
 
@@ -17,7 +17,7 @@ export const JetpackProductInfoRecommendationTags: FunctionComponent< Props > = 
 			<ul className="jetpack-product-info__tags-list">
 				{ tags.map( ( tag ) => (
 					<li className="jetpack-product-info__tags-list-item" key={ tag.tag }>
-						<span aria-hidden="true">{ getTagIcon( tag.tag ) }</span>
+						<span aria-hidden="true">{ Tags[ tag.tag ] }</span>
 						<p>{ tag.label }</p>
 					</li>
 				) ) }

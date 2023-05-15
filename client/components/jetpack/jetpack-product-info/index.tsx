@@ -1,13 +1,13 @@
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
+import { useIncludedProductDescriptionMap } from 'calypso/my-sites/plans/jetpack-plans/product-store/hooks/use-included-product-description-map';
+import getProductIcon from 'calypso/my-sites/plans/jetpack-plans/product-store/utils/get-product-icon';
 import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 import JetpackProductInfoFAQList from './faq-list';
-import { useIncludedProductDescriptionMap } from './hooks/use-included-product-description-map';
 import JetpackProductInfoProductList from './product-list';
 import JetpackProductInfoRecommendationTags from './recommendation-tags';
 import JetpackProductInfoRegularList from './regular-list';
 import JetpackProductInfoSection from './section';
-import getProductIcon from './utils/get-product-icon';
 
 import './style.scss';
 

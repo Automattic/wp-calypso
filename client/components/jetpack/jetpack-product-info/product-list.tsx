@@ -1,6 +1,6 @@
 import { TranslateResult, useTranslate } from 'i18n-calypso';
+import getProductIcon from 'calypso/my-sites/plans/jetpack-plans/product-store/utils/get-product-icon';
 import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
-import getProductIcon from './utils/get-product-icon';
 
 type JetpackProductInfoProductListProps = {
 	products: ReadonlyArray< string >;
