@@ -113,7 +113,7 @@ class WPCOM_Domain_Upsell_Callout {
 		);
 
 		$domain_parts = explode( '.', $domain );
-		$tld          = end( $domain_parts );
+		$tld          = implode( '.', array_slice( $domain_parts, -2, 2 ) );
 
 		return in_array( $tld, $wpcom_tlds, true );
 	}

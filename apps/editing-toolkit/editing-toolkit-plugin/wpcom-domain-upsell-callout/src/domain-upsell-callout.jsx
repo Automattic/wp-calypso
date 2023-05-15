@@ -35,10 +35,12 @@ const shouldShowDomainUpsell = () => {
 };
 
 const DomainUpsellCallout = () => {
-	const { siteIntent: intent } = useSiteIntent();
-	if ( intent === undefined || intent ) {
+	const { siteIntent: intent, siteIntentFetched: intentFetched } = useSiteIntent();
+
+	if ( ! intentFetched || intent ) {
 		return;
 	}
+
 	const siteSlug = window.location.hostname;
 	const target = '_parent';
 	const trackEventView = 'calypso_block_editor_domain_upsell_callout_view';
