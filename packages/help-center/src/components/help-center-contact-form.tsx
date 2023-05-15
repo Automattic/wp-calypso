@@ -510,7 +510,7 @@ export const HelpCenterContactForm = () => {
 						/>
 					) }
 				</section>
-				{ gptResponse?.response && getHEsTraySection() }
+				{ gptResponse?.response && [ 'CHAT', 'EMAIL' ].includes( mode ) && getHEsTraySection() }
 			</div>
 		);
 	}
