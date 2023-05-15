@@ -1,6 +1,5 @@
 declare module '@wordpress/notices' {
 	export type Status = 'error' | 'info' | 'success' | 'warning';
-	export const store: string;
 }
 
 declare module '@wordpress/rich-text' {
