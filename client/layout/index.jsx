@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { HelpCenter } from '@automattic/data-stores';
-import { shouldShowHelpCenterToUser, shouldLoadInlineHelp } from '@automattic/help-center';
+import { shouldLoadInlineHelp } from '@automattic/help-center';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useDispatch } from '@wordpress/data';
@@ -29,7 +29,6 @@ import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
 import { isOffline } from 'calypso/state/application/selectors';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
 import isHappychatOpen from 'calypso/state/happychat/selectors/is-happychat-open';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
@@ -424,9 +423,7 @@ export default withCurrentRoute(
 		const sidebarIsHidden = ! secondary || isWcMobileApp() || isDomainAndPlanPackageFlow;
 		const chatIsDocked = ! [ 'reader', 'theme' ].includes( sectionName ) && ! sidebarIsHidden;
 
-		const userAllowedToHelpCenter =
-			config.isEnabled( 'calypso/help-center' ) &&
-			shouldShowHelpCenterToUser( getCurrentUserId( state ) );
+		const userAllowedToHelpCenter = config.isEnabled( 'calypso/help-center' );
 
 		return {
 			masterbarIsHidden,

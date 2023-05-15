@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { ProgressBar } from '@automattic/components';
 import { Hooray, Progress, SubTitle, Title, NextButton } from '@automattic/onboarding';
 import { createElement, createInterpolateElement } from '@wordpress/element';
@@ -23,6 +24,7 @@ import { isTargetSitePlanCompatible } from '../../util';
 import { MigrationStatus } from '../types';
 import { retrieveMigrateSource, clearMigrateSource } from '../utils';
 import { Confirm } from './confirm';
+import { MigrateReady } from './migrate-ready';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { StepNavigator } from 'calypso/blocks/importer/types';
 
@@ -142,6 +144,19 @@ export class ImportEverything extends SectionMigrate {
 		} = this.props;
 
 		if ( sourceSite ) {
+			if ( isEnabled( 'onboarding/import-redesign' ) ) {
+				return (
+					<MigrateReady
+						startImport={ this.startMigration }
+						isTargetSitePlanCompatible={ isTargetSitePlanCompatible }
+						targetSite={ targetSite }
+						targetSiteSlug={ targetSiteSlug }
+						sourceSite={ sourceSite }
+						sourceSiteUrl={ sourceSite.URL }
+						onContentOnlyClick={ stepNavigator?.goToImportListStep }
+					/>
+				);
+			}
 			return (
 				<Confirm
 					startImport={ this.startMigration }
