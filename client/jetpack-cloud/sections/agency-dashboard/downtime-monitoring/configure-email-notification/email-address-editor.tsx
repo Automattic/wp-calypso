@@ -175,7 +175,7 @@ export default function EmailAddressEditor( {
 				) }
 				<div className="notification-settings__footer">
 					<div className="notification-settings__footer-buttons">
-						<Button onClick={ toggleModal } aria-label={ translate( 'Cancel' ) }>
+						<Button onClick={ toggleModal }>
 							{ showCodeVerification ? translate( 'Later' ) : translate( 'Cancel' ) }
 						</Button>
 						<Button
@@ -186,7 +186,6 @@ export default function EmailAddressEditor( {
 							}
 							type="submit"
 							primary
-							aria-label={ translate( 'Verify' ) }
 						>
 							{ translate( 'Verify' ) }
 						</Button>
