@@ -59,10 +59,12 @@ export const ThemesList = ( props ) => {
 		};
 	}, [ updateShowSecondUpsellNudge ] );
 
+	const selectedSite = useSelector( getSelectedSite );
+
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	const isPatternAssemblerCTAEnabled =
-		isEnabled( 'pattern-assembler/logged-out-showcase' ) && ! isLoggedIn;
+		! isLoggedIn || isEnabled( 'pattern-assembler/logged-in-showcase' );
 
 	const fetchNextPage = useCallback(
 		( options ) => {
@@ -76,11 +78,17 @@ export const ThemesList = ( props ) => {
 			goes_to_assembler_step: shouldGoToAssemblerStep,
 		} );
 
+		const basePathname = isLoggedIn ? '/setup' : '/start';
 		const params = new URLSearchParams( {
 			ref: 'calypshowcase',
 			theme: BLANK_CANVAS_DESIGN.slug,
 		} );
-		window.location.assign( `/start/${ WITH_THEME_ASSEMBLER_FLOW }?${ params }` );
+
+		if ( selectedSite?.slug ) {
+			params.set( 'siteSlug', selectedSite.slug );
+		}
+
+		window.location.assign( `${ basePathname }/${ WITH_THEME_ASSEMBLER_FLOW }?${ params }` );
 	};
 
 	const matchingWpOrgThemes = useMemo( () => {
