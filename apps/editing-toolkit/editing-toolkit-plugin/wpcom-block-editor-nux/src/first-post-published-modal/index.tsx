@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
 import { useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { isURL } from '@wordpress/url';
@@ -20,7 +20,7 @@ type CoreEditorPlaceholder = {
 /**
  * Show the first post publish modal
  */
-const PostPublishedModal: React.FC = () => {
+const FirstPostPublishedModal: React.FC = () => {
 	const { link } = useSelect(
 		( select ) => ( select( 'core/editor' ) as CoreEditorPlaceholder ).getCurrentPost(),
 		[]
@@ -38,7 +38,6 @@ const PostPublishedModal: React.FC = () => {
 	const shouldShowFirstPostPublishedModal = useShouldShowFirstPostPublishedModal();
 	const [ isOpen, setIsOpen ] = useState( false );
 	const closeModal = () => setIsOpen( false );
-	const { setShouldShowFirstPostPublishedModal } = useDispatch( 'automattic/wpcom-welcome-guide' );
 
 	const { siteUrlOption, launchpadScreenOption, siteIntentOption } = window?.launchpadOptions || {};
 
@@ -58,7 +57,6 @@ const PostPublishedModal: React.FC = () => {
 			postType === 'post'
 		) {
 			previousIsCurrentPostPublished.current = isCurrentPostPublished;
-			setShouldShowFirstPostPublishedModal( false );
 
 			// When the post published panel shows, it is focused automatically.
 			// Thus, we need to delay open the modal so that the modal would not be close immediately
@@ -67,12 +65,7 @@ const PostPublishedModal: React.FC = () => {
 				setIsOpen( true );
 			} );
 		}
-	}, [
-		postType,
-		shouldShowFirstPostPublishedModal,
-		isCurrentPostPublished,
-		setShouldShowFirstPostPublishedModal,
-	] );
+	}, [ postType, shouldShowFirstPostPublishedModal, isCurrentPostPublished ] );
 
 	const handleViewPostClick = ( event: React.MouseEvent ) => {
 		event.preventDefault();
@@ -85,7 +78,6 @@ const PostPublishedModal: React.FC = () => {
 			window.top as Window
 		 ).location.href = `https://wordpress.com/setup/write/launchpad?siteSlug=${ siteUrl }`;
 	};
-
 	return (
 		<NuxModal
 			isOpen={ isOpen }
@@ -114,4 +106,4 @@ const PostPublishedModal: React.FC = () => {
 	);
 };
 
-export default PostPublishedModal;
+export default FirstPostPublishedModal;

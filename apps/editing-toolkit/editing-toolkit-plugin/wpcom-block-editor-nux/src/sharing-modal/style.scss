@@ -1,0 +1,157 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.wpcom-block-editor-post-published-sharing-modal {
+	border-radius: 4px;
+	@media only screen and (max-width: 600px) {
+		border-radius: 0;
+	}
+
+	.components-modal__content {
+		margin-top: 0;
+		padding-bottom: 0;
+		.wpcom-block-editor-post-published-sharing-modal__inner {
+			display: flex;
+			.wpcom-block-editor-post-published-sharing-modal__left {
+				width: 50%;
+				padding: 52px 40px 52px 20px;
+
+				p a {
+					color: var(--color-text);
+					text-decoration: underline;
+
+					&:hover {
+						color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #007cba));
+						text-decoration: none;
+					}
+
+					.components-external-link__icon {
+						margin-left: 4px;
+					}
+				}
+
+				.wpcom-block-editor-post-published-buttons {
+					display: flex;
+				}
+			}
+			.wpcom-block-editor-post-published-sharing-modal__right {
+				width: 50%;
+				padding: 52px 20px 52px 40px;
+				border-left: 1px solid var(--studio-gray-5);
+				display: flex;
+				justify-content: center;
+			}
+
+			@media only screen and (max-width: 600px) {
+				flex-direction: column-reverse;
+
+				.wpcom-block-editor-post-published-sharing-modal__left {
+					padding: 52px 0;
+					width: 100%;
+				}
+				.wpcom-block-editor-post-published-sharing-modal__right {
+					border-left: none;
+					padding: 52px 0;
+					width: 100%;
+				}
+			}
+		}
+		h1 {
+			margin-top: 0;
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			font-size: 26px;
+		}
+		p {
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			font-size: 18px;
+		}
+		.link-button {
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			font-size: 14px;
+			font-weight: 500;
+			display: inline-flex;
+			border: none;
+			background: transparent;
+			color: var(--color-text);
+			padding: 0 14px 0 0;
+			line-height: 2.71428571;
+			min-height: 40px;
+			margin-bottom: 4px;
+			align-items: center;
+			text-decoration: underline;
+			white-space: nowrap;
+
+			&:hover {
+				background: transparent;
+				color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #007cba));
+				text-decoration: none;
+			}
+
+			svg {
+				fill: currentColor;
+			}
+		}
+		hr {
+			margin-top: 20px;
+			border-top: 1px solid var(--studio-gray-5);
+			border-bottom: none;
+		}
+		h2 {
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			font-size: 18px;
+			font-weight: 600px;
+		}
+		.wpcom-block-editor-post-published-sharing-modal__checkbox-section {
+			margin-top: 40px;
+			color: var(--studio-gray-60);
+		}
+		.form-checkbox {
+			margin-top: 1px;
+			height: 1rem;
+			width: 1rem;
+		}
+	}
+}
+
+.wpcom-block-editor-post-published-buttons .link-button {
+	gap: 4px;
+	padding-left: 0;
+}
+
+.wpcom-block-editor-post-published-sharing-modal__sharing-button {
+	display: inline-block;
+	position: relative;
+	width: 32px;
+	height: 32px;
+	top: -2px;
+	margin: 8px 8px 0 0;
+	border-radius: 50%;
+	color: var(--color-neutral-80);
+	background: #fff;
+	padding: 7px;
+
+	&:hover {
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.22), 0 0 0 1px rgba(0, 0, 0, 0.22);
+	}
+
+	.social-logo {
+		top: 0;
+		color: var(--color-text-inverted);
+	}
+}
+
+@mixin sharing-button-service( $name, $color ) {
+	.wpcom-block-editor-post-published-sharing-modal__sharing-button.share-#{ $name } {
+		background: $color;
+
+		&:hover {
+			background: $color;
+		}
+	}
+}
+
+@include sharing-button-service( "facebook", var( --color-facebook ) );
+@include sharing-button-service( "twitter", var( --color-twitter ) );
+@include sharing-button-service( "linkedin", var( --color-linkedin ) );
+@include sharing-button-service( "tumblr", var( --color-tumblr ) );
+@include sharing-button-service( "pinterest", var( --color-pinterest ) );

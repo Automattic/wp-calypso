@@ -23,5 +23,8 @@ declare global {
 			launchpadScreenOption: 'full' | 'off' | 'minimized';
 			siteIntentOption: string;
 		};
+		sharingModalOptions: {
+			isDismissed: boolean;
+		};
 	}
 }
