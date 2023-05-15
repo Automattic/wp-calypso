@@ -11,7 +11,6 @@ import wpcom from 'calypso/lib/wp';
 import { jetpack } from 'calypso/signup/icons';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestSite } from 'calypso/state/sites/actions';
-import type { SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
 /* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -31,11 +30,24 @@ interface Props {
 	onContentEverythingSelection: () => void;
 }
 
+interface MigrationEnabled {
+	source_blog_id: number;
+	jetpack_activated: boolean;
+	jetpack_compatible: boolean;
+	migration_activated: boolean;
+	migration_compatible: boolean;
+}
+
 export const ContentChooser: React.FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
-	const { fromSite, onJetpackSelection, onContentOnlySelection, onContentEverythingSelection } =
-		props;
+	const {
+		fromSite,
+		siteId,
+		onJetpackSelection,
+		onContentOnlySelection,
+		onContentEverythingSelection,
+	} = props;
 
 	/**
 	 ↓ Fields
@@ -76,12 +88,22 @@ export const ContentChooser: React.FunctionComponent< Props > = ( props ) => {
 			return;
 		}
 
-		wpcom
+		/* wpcom
 			.site( fromSite )
 			.get( { apiVersion: '1.2' } )
 			.then( ( site: SiteDetails ) =>
 				setHasOriginSiteJetpackConnected( !! ( site && site.capabilities ) )
 			)
+			.catch( () => setHasOriginSiteJetpackConnected( false ) )
+			.finally( () => setInitialFetching( false ) ); */
+		wpcom.req
+			.get( {
+				apiNamespace: 'wpcom/v2/',
+				path: `sites/${ siteId }/migration-enabled/${ encodeURIComponent( fromSite ) }`,
+			} )
+			.then( ( enabled: MigrationEnabled ) => {
+				setHasOriginSiteJetpackConnected( enabled.jetpack_compatible );
+			} )
 			.catch( () => setHasOriginSiteJetpackConnected( false ) )
 			.finally( () => setInitialFetching( false ) );
 	}
