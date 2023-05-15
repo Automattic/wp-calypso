@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Dialog from '.';
 
-export default { title: 'Dialog' };
+export default { title: 'packages/components/Dialog' };
 
 export const Default = () => {
 	const [ isVisible, setVisible ] = useState( false );
