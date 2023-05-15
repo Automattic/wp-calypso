@@ -12,7 +12,6 @@ import {
 	useSiteAnalysis,
 	useUserSites,
 	AnalysisReport,
-	useSibylQuery,
 	SiteDetails,
 	HelpCenterSite,
 	useJetpackSearchAIQuery,
@@ -24,10 +23,11 @@ import { Button, TextControl, CheckboxControl, Tip } from '@wordpress/components
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useDebounce } from 'use-debounce';
+import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { getCurrentUserEmail, getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -41,7 +41,7 @@ import { SitePicker } from '../types';
 import { BackButton } from './back-button';
 import { HelpCenterGPT } from './help-center-gpt';
 import { HelpCenterOwnershipNotice } from './help-center-notice';
-import { SibylArticles } from './help-center-sibyl-articles';
+import HelpCenterSearchResults from './help-center-search-results';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 import './help-center-contact-form.scss';
 
@@ -243,24 +243,53 @@ export const HelpCenterContactForm = () => {
 
 	const [ debouncedMessage ] = useDebounce( message || '', 500 );
 
-	const { data: sibylArticles } = useSibylQuery(
-		debouncedMessage,
-		Boolean( supportSite?.jetpack ),
-		Boolean( supportSite?.is_wpcom_atomic )
-	);
-
 	const enableGPTResponse = config.isEnabled( 'help/gpt-response' );
 
-	const showingSibylResults = params.get( 'show-results' ) === 'true';
+	const showingHelpResults = params.get( 'show-results' ) === 'true';
 	const showingGPTResponse = params.get( 'show-gpt' ) === 'true';
 
+	const redirectToArticle = useCallback(
+		( event, result ) => {
+			event.preventDefault();
+
+			// if result.post_id isn't set then open in a new window
+			if ( ! result.post_id ) {
+				const tracksData = {
+					search_query: debouncedMessage,
+					force_site_id: true,
+					location: 'help-center',
+					result_url: result.link,
+					post_id: result.postId,
+					blog_id: result.blogId,
+				};
+				recordTracksEvent( `calypso_inlinehelp_article_no_postid_redirect`, tracksData );
+				window.open( result.link, '_blank' );
+				return;
+			}
+
+			const searchResult = {
+				...result,
+				title: preventWidows( decodeEntities( result.title ) ),
+				query: debouncedMessage,
+			};
+			const params = new URLSearchParams( {
+				link: result.link,
+				postId: result.post_id,
+				query: debouncedMessage || '',
+				title: preventWidows( decodeEntities( result.title ) ),
+			} );
+
+			if ( result.blog_id ) {
+				params.set( 'blogId', result.blog_id );
+			}
+
+			navigate( `/post/?${ params }`, searchResult );
+		},
+		[ navigate, debouncedMessage ]
+	);
+
 	function handleCTA() {
-		if (
-			! enableGPTResponse &&
-			! showingSibylResults &&
-			sibylArticles &&
-			sibylArticles.length > 0
-		) {
+		if ( ! enableGPTResponse && ! showingHelpResults ) {
 			params.set( 'show-results', 'true' );
 			navigate( {
 				pathname: '/contact-form',
@@ -457,14 +486,9 @@ export const HelpCenterContactForm = () => {
 	const isFetchingGPTResponse = isFetchingUrls || isFetchingResponse;
 
 	const getCTALabel = () => {
-		const showingSibylOrGPTResults = showingSibylResults || showingGPTResponse;
+		const showingSibylOrGPTResults = showingHelpResults || showingGPTResponse;
 
-		if (
-			! showingGPTResponse &&
-			! showingSibylResults &&
-			sibylArticles &&
-			sibylArticles.length > 0
-		) {
+		if ( ! showingGPTResponse && ! showingHelpResults ) {
 			return __( 'Continue', __i18n_text_domain__ );
 		}
 
@@ -515,14 +539,15 @@ export const HelpCenterContactForm = () => {
 		);
 	}
 
-	return showingSibylResults ? (
+	return showingHelpResults ? (
 		<div className="help-center__sibyl-articles-page">
 			<BackButton />
-			<SibylArticles
-				title={ __( 'These are some helpful articles', __i18n_text_domain__ ) }
-				supportSite={ supportSite }
-				message={ message }
-				articleCanNavigateBack
+			<HelpCenterSearchResults
+				onSelect={ redirectToArticle }
+				searchQuery={ message || '' }
+				openAdminInNewTab
+				placeholderLines={ 4 }
+				location="help-center-contact-form"
 			/>
 			<section className="contact-form-submit">
 				<Button
@@ -652,7 +677,13 @@ export const HelpCenterContactForm = () => {
 				) }
 			</section>
 			{ [ 'CHAT', 'EMAIL' ].includes( mode ) && getHEsTraySection() }
-			<SibylArticles supportSite={ supportSite } message={ message } articleCanNavigateBack />
+			<HelpCenterSearchResults
+				onSelect={ redirectToArticle }
+				searchQuery={ message || '' }
+				openAdminInNewTab
+				placeholderLines={ 4 }
+				location="help-center-contact-form"
+			/>
 		</main>
 	);
 };

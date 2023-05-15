@@ -51,7 +51,7 @@ export const HelpCenterSearch = () => {
 			// if result.post_id isn't set then open in a new window
 			if ( ! result.post_id ) {
 				const tracksData = {
-					search_query: query,
+					search_query: searchQuery,
 					force_site_id: true,
 					location: 'help-center',
 					result_url: result.link,
