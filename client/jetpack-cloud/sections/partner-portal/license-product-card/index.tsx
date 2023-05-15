@@ -1,14 +1,11 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import ModalLinkIcon from 'calypso/assets/images/jetpack/jetpack-icon-modal-link.svg';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { useCallback, useEffect } from 'react';
 import { APIProductFamilyProduct } from '../../../../state/partner-portal/types';
 import { useProductDescription } from '../hooks';
-import LicenseLightbox from '../license-lightbox';
+import LicenseLightboxLink from '../license-lightbox-link';
 import { getProductTitle } from '../utils';
 
 import './style.scss';
@@ -35,8 +32,6 @@ export default function LicenseProductCard( props: Props ) {
 	} = props;
 	const productTitle = getProductTitle( product.name );
 	const translate = useTranslate();
-	const dispatch = useDispatch();
-	const [ showLightbox, setShowLightbox ] = useState( false );
 
 	const onSelect = useCallback( () => {
 		if ( isDisabled ) {
@@ -45,25 +40,6 @@ export default function LicenseProductCard( props: Props ) {
 
 		onSelectProduct?.( product );
 	}, [ onSelectProduct, product ] );
-
-	const onShowLightbox = useCallback(
-		( e: React.MouseEvent< HTMLElement > ) => {
-			e.stopPropagation();
-
-			dispatch(
-				recordTracksEvent( 'calypso_partner_portal_issue_license_product_view', {
-					product: product.slug,
-				} )
-			);
-
-			setShowLightbox( true );
-		},
-		[ dispatch, product ]
-	);
-
-	const onHideLightbox = useCallback( () => {
-		setShowLightbox( false );
-	}, [] );
 
 	const onKeyDown = useCallback(
 		( e: any ) => {
@@ -111,21 +87,7 @@ export default function LicenseProductCard( props: Props ) {
 
 								<div className="license-product-card__description">{ productDescription }</div>
 
-								<Button
-									className="license-product-card__more-info-link"
-									onClick={ onShowLightbox }
-									plain
-								>
-									{ translate( 'More about {{productName/}}', {
-										components: { productName: <>{ productTitle }</> },
-									} ) }
-
-									<img
-										className="license-product-card__more-info-link-img"
-										src={ ModalLinkIcon }
-										alt=""
-									/>
-								</Button>
+								<LicenseLightboxLink product={ product } />
 							</div>
 
 							<div
@@ -149,8 +111,6 @@ export default function LicenseProductCard( props: Props ) {
 					</div>
 				</div>
 			</div>
-
-			{ showLightbox && <LicenseLightbox onClose={ onHideLightbox } /> }
 		</>
 	);
 }

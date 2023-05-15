@@ -1,8 +1,9 @@
 import { Button } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
-import LicenseBundleCardDescription from 'calypso/jetpack-cloud/sections/partner-portal/license-bundle-card-description';
 import { APIProductFamilyProduct } from '../../../../state/partner-portal/types';
+import { useProductDescription } from '../hooks';
+import LicenseLightboxLink from '../license-lightbox-link';
 import { getProductTitle } from '../utils';
 
 import './style.scss';
@@ -22,11 +23,17 @@ export default function LicenseBundleCard( props: Props ) {
 		onSelectProduct( product );
 	};
 
+	const { description: productDescription } = useProductDescription( product.slug );
+
 	return (
 		<div className="license-bundle-card">
 			<div className="license-bundle-card__details">
 				<h3 className="license-bundle-card__title">{ productTitle }</h3>
-				<LicenseBundleCardDescription product={ product } />
+
+				<div className="license-bundle-card__description">{ productDescription }</div>
+
+				<LicenseLightboxLink product={ product } />
+
 				<div className="license-bundle-card__pricing">
 					<div className="license-bundle-card__price">
 						{ formatCurrency( product.amount, product.currency ) }

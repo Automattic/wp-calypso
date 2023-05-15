@@ -155,23 +155,6 @@
 	margin: 8px 0;
 }
 
-.license-product-card__more-info-link {
-	font-size: 0.875rem;
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-	line-height: 1.5rem;
-	color: var(--studio-gray-100);
-	text-decoration: underline;
-	text-align: left;
-	cursor: pointer;
-	white-space: nowrap;
-}
-
-.license-product-card__more-info-link-img {
-	display: inline-block;
-	margin-bottom: -5px;
-	margin-inline-start: 2px;
-}
-
 @mixin license-product-card-block__select-button {
 	order: initial;
 	margin-right: 0;

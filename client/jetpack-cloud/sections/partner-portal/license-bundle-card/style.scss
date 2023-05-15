@@ -53,6 +53,14 @@
 	color: var(--studio-gray-80);
 }
 
+.license-bundle-card__description {
+	font-size: 1rem;
+	color: var(--studio-gray-60);
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+	line-height: 1.5rem;
+	margin: 8px 0;
+}
+
 @mixin license-bundle-card-block__pricing {
 	flex-basis: 100%;
 	margin: 1rem 0 0;
