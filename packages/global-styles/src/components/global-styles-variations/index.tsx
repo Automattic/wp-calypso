@@ -115,26 +115,44 @@ const GlobalStylesVariations = ( {
 
 	return (
 		<GlobalStylesContext.Provider value={ { base: baseGlobalStyles } }>
-			<div className="global-styles-variations">
-				<GlobalStylesVariation
-					key="base"
-					globalStylesVariation={ baseGlobalStyles }
-					isActive={
-						! selectedGlobalStylesVariation ||
-						isDefaultGlobalStyleVariationSlug( selectedGlobalStylesVariation )
-					}
-					showOnlyHoverView={ showOnlyHoverViewDefaultVariation }
-					onSelect={ () => onSelect( baseGlobalStyles ) }
-				/>
-				{ globalStylesVariationsWithoutDefault.map( ( globalStylesVariation, index ) => (
+			<div>
+				<div className="global-styles-variations">
+					<div className="global-styles-variations__header">
+						<h3>{ translate( 'Default style' ) }</h3>
+					</div>
 					<GlobalStylesVariation
-						key={ index }
-						globalStylesVariation={ globalStylesVariation }
-						premiumBadge={ premiumBadge }
-						isActive={ globalStylesVariation.slug === selectedGlobalStylesVariation?.slug }
-						onSelect={ () => onSelect( globalStylesVariation ) }
+						key="base"
+						globalStylesVariation={ baseGlobalStyles }
+						isActive={
+							! selectedGlobalStylesVariation ||
+							isDefaultGlobalStyleVariationSlug( selectedGlobalStylesVariation )
+						}
+						showOnlyHoverView={ showOnlyHoverViewDefaultVariation }
+						onSelect={ () => onSelect( baseGlobalStyles ) }
 					/>
-				) ) }
+				</div>
+
+				<div className="global-styles-variations">
+					<div className="global-styles-variations__header">
+						<h3> { translate( 'Premium styles' ) } </h3>
+					</div>
+					<div>
+						<p>
+							{ translate(
+								'Unlock premium styles and tons of other features with the Premium plan, or try them out now for free.'
+							) }
+						</p>
+					</div>
+					{ globalStylesVariationsWithoutDefault.map( ( globalStylesVariation, index ) => (
+						<GlobalStylesVariation
+							key={ index }
+							globalStylesVariation={ globalStylesVariation }
+							premiumBadge={ premiumBadge }
+							isActive={ globalStylesVariation.slug === selectedGlobalStylesVariation?.slug }
+							onSelect={ () => onSelect( globalStylesVariation ) }
+						/>
+					) ) }
+				</div>
 			</div>
 		</GlobalStylesContext.Provider>
 	);
