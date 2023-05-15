@@ -5,13 +5,12 @@ import { useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { isURL } from '@wordpress/url';
 import React from 'react';
+import { useShouldShowFirstPostPublishedModal } from '../../../dotcom-fse/lib/first-post-published-modal/should-show-first-post-published-modal-context';
 import NuxModal from '../nux-modal';
-import { selectors as wpcomWelcomeGuideSelectors } from '../store';
 import postPublishedImage from './images/post-published.svg';
-import type { SelectFromMap } from '@automattic/data-stores';
+
 import './style.scss';
 
-type WpcomWelcomeGuideSelectors = SelectFromMap< typeof wpcomWelcomeGuideSelectors >;
 type CoreEditorPlaceholder = {
 	getCurrentPost: ( ...args: unknown[] ) => { link: string };
 	getCurrentPostType: ( ...args: unknown[] ) => string;
@@ -36,17 +35,10 @@ const PostPublishedModal: React.FC = () => {
 		[]
 	);
 	const previousIsCurrentPostPublished = useRef( isCurrentPostPublished );
-	const shouldShowFirstPostPublishedModal = useSelect(
-		( select ) =>
-			(
-				select( 'automattic/wpcom-welcome-guide' ) as WpcomWelcomeGuideSelectors
-			 ).getShouldShowFirstPostPublishedModal(),
-		[]
-	);
+	const shouldShowFirstPostPublishedModal = useShouldShowFirstPostPublishedModal();
 	const [ isOpen, setIsOpen ] = useState( false );
 	const closeModal = () => setIsOpen( false );
-	const { fetchShouldShowFirstPostPublishedModal, setShouldShowFirstPostPublishedModal } =
-		useDispatch( 'automattic/wpcom-welcome-guide' );
+	const { setShouldShowFirstPostPublishedModal } = useDispatch( 'automattic/wpcom-welcome-guide' );
 
 	const { siteUrlOption, launchpadScreenOption, siteIntentOption } = window?.launchpadOptions || {};
 
@@ -56,9 +48,6 @@ const PostPublishedModal: React.FC = () => {
 		siteUrl = new URL( siteUrlOption ).hostname;
 	}
 
-	useEffect( () => {
-		fetchShouldShowFirstPostPublishedModal();
-	}, [ fetchShouldShowFirstPostPublishedModal ] );
 	useEffect( () => {
 		// If the user is set to see the first post modal and current post status changes to publish,
 		// open the post publish modal
