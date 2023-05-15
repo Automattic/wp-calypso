@@ -148,13 +148,11 @@ export class ImportEverything extends SectionMigrate {
 				return (
 					<MigrateReady
 						startImport={ this.startMigration }
-						isMigrateFromWp={ isMigrateFromWp }
 						isTargetSitePlanCompatible={ isTargetSitePlanCompatible }
 						targetSite={ targetSite }
 						targetSiteSlug={ targetSiteSlug }
 						sourceSite={ sourceSite }
 						sourceSiteUrl={ sourceSite.URL }
-						sourceUrlAnalyzedData={ sourceUrlAnalyzedData }
 						onContentOnlyClick={ stepNavigator?.goToImportListStep }
 					/>
 				);
