@@ -113,11 +113,7 @@ class WPCOM_Domain_Upsell_Callout {
 		);
 
 		$domain_parts = explode( '.', $domain );
-<<<<<<< HEAD
 		$tld          = implode( '.', array_slice( $domain_parts, -2, 2 ) );
-=======
-		$tld          = end( $domain_parts );
->>>>>>> 8252ea42c5 (Check domain for atomic sites)
 
 		return in_array( $tld, $wpcom_tlds, true );
 	}
