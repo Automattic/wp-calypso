@@ -26,8 +26,7 @@
 		}
 
 		&:hover,
-		&:focus,
-		&:focus-within {
+		&:focus {
 			background-color: var(--theme-highlight-color);
 			color: var(--studio-white);
 

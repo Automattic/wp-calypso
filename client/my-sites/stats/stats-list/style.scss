@@ -900,8 +900,7 @@ ul.module-content-list-legend {
 
 .horizontal-bar-list-item {
 	&:hover,
-	&:focus,
-	&:focus-within {
+	&:focus {
 		.stats-list-actions__mobile-toggle .gridicon,
 		.stats-list-actions__mobile-toggle .stats-icon {
 			fill: var(--color-text);
