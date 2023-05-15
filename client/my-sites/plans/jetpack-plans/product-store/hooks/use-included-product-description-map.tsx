@@ -17,7 +17,7 @@ import {
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import { ProductDescription } from '../../types';
+import type { ProductDescription } from '../../types';
 
 const setProductDescription = (
 	slugs: ReadonlyArray< string >,
@@ -73,7 +73,7 @@ export const useIncludedProductDescriptionMap = ( productSlug: string ) => {
 			),
 
 			...setProductDescription( JETPACK_ANTI_SPAM_PRODUCTS, {
-				value: translate( 'Save time manually reviewing spam. Comment and form spam protection.' ),
+				value: antiSpamDescription,
 				calloutText: translate( '1k API calls/mo' ),
 			} ),
 		};
@@ -115,7 +115,7 @@ export const useIncludedProductDescriptionMap = ( productSlug: string ) => {
 
 			...setProductDescription( JETPACK_CRM_PRODUCTS, {
 				value: crmDescription,
-				calloutText: translate( 'Enterpreneur plan' ),
+				calloutText: translate( 'Entrepreneur plan' ),
 			} ),
 		};
 

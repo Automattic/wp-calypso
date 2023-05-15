@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import getProductIcon from '../product-store/utils/get-product-icon';
 import slugToSelectorProduct from '../slug-to-selector-product';
-import { ProductDescription } from '../types';
+import type { ProductDescription } from '../types';
 
 type IncludedProductsProps = {
 	products: ReadonlyArray< string >;
