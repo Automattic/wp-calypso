@@ -19,7 +19,6 @@ export default function () {
 		controller.redirectToFlow,
 		controller.setSelectedSiteForSignup,
 		controller.start,
-		controller.importSiteInfoFromQuery,
 		makeLayout,
 		clientRender
 	);

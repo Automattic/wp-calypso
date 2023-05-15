@@ -33,8 +33,10 @@ const ScreenSection = ( {
 	return (
 		<>
 			<NavigatorHeader
-				title={ translate( 'Sections' ) }
-				description={ translate( 'Create your homepage by adding and rearranging patterns.' ) }
+				title={ translate( 'Homepage' ) }
+				description={ translate(
+					'Add and arrange patterns to make your homepage unique and help people understand instantly what the site’s about. '
+				) }
 			/>
 			<div className="screen-container__body">
 				<PatternLayout
@@ -54,7 +56,7 @@ const ScreenSection = ( {
 			</div>
 			<div className="screen-container__footer">
 				<NavigatorBackButton as={ Button } className="pattern-assembler__button" primary>
-					{ translate( 'Save' ) }
+					{ translate( 'Save homepage' ) }
 				</NavigatorBackButton>
 			</div>
 		</>
