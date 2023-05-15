@@ -2,10 +2,7 @@
 @import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 
-$max-list-width: 1300px;
-
 .subscription-manager__pending-list {
-	max-width: $max-list-width;
 
 	.row {
 		border-bottom: 1px solid var(--color-border-subtle);
