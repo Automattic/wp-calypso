@@ -8,4 +8,4 @@ export { useHCWindowCommunicator } from './happychat-window-communicator';
 export { default as Mail } from './icons/mail';
 export { default as NewReleases } from './icons/new-releases';
 export * from './support-variations';
-export { shouldShowHelpCenterToUser, shouldLoadInlineHelp } from './utils';
+export { shouldLoadInlineHelp } from './utils';
