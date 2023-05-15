@@ -26,7 +26,7 @@ const ThirdPartyCookiesNotice: React.FC = () => {
 				<h1>{ __( 'Action needed', __i18n_text_domain__ ) }</h1>
 				<p>
 					{ __(
-						'Your browser has third-party cookies disabled for WordPress.com. This is preventing our livechat widget from loading.',
+						'In order to access the live chat widget, you will need to enable third-party cookies for WordPress.com.',
 						__i18n_text_domain__
 					) }
 					&nbsp;
@@ -35,10 +35,7 @@ const ThirdPartyCookiesNotice: React.FC = () => {
 						rel="noopener noreferrer"
 						href="https://wordpress.com/support/third-party-cookies/"
 					>
-						{ __(
-							'Please adjust your settings as described here to proceed.',
-							__i18n_text_domain__
-						) }
+						{ __( 'Learn more in this support guide.', __i18n_text_domain__ ) }
 					</a>
 				</p>
 			</div>
