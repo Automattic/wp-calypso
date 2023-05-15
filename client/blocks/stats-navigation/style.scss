@@ -85,9 +85,12 @@
 				font-size: $font-body-small;
 				line-height: 20px;
 
-				&:hover {
-					color: var(--color-neutral-60);
-					background-color: var(--color-surface);
+				@media ( min-width: $break-mobile ) {
+					&:hover,
+					&:focus {
+						color: var(--color-neutral-60);
+						background-color: var(--color-surface);
+					}
 				}
 
 				@media ( max-width: $break-medium ) {
@@ -96,6 +99,18 @@
 
 				@media ( max-width: $break-mobile ) {
 					padding: 8px;
+				}
+			}
+
+			@media ( max-width: $break-mobile ) {
+				&.is-selected {
+					.section-nav-tab__link {
+						&:hover,
+						&:focus {
+							color: var(--color-primary);
+							background-color: var(--color-surface);
+						}
+					}
 				}
 			}
 
