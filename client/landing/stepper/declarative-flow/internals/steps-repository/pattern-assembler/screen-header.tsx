@@ -35,7 +35,7 @@ const ScreenHeader = ( {
 			<NavigatorHeader
 				title={ translate( 'Header' ) }
 				description={ translate(
-					'Your header will be added to all pages and is usually where your site navigation lives.'
+					'The header appears at the top of every page, with a site name and navigation.'
 				) }
 				onBack={ onBack }
 			/>
@@ -54,7 +54,7 @@ const ScreenHeader = ( {
 					primary
 					onClick={ onDoneClick }
 				>
-					{ translate( 'Save' ) }
+					{ translate( 'Save header' ) }
 				</NavigatorBackButton>
 			</div>
 		</>

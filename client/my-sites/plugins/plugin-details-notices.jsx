@@ -54,7 +54,7 @@ const PluginDetailsNotices = ( { selectedSite, plugin, translate } ) => {
 };
 
 PluginDetailsNotices.propTypes = {
-	selectedSite: PropTypes.object.isRequired,
+	selectedSite: PropTypes.object,
 	plugin: PropTypes.object.isRequired,
 };
 

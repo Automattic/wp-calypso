@@ -1,6 +1,7 @@
 import { useSelector } from 'react-redux';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import EducationFooter from '../education-footer';
 import CollectionListView from '../plugins-browser/collection-list-view';
 import SingleListView, { SHORT_LIST_LENGTH } from '../plugins-browser/single-list-view';
 import usePlugins from '../use-plugins';
@@ -91,6 +92,7 @@ const PluginsDiscoveryPage = ( props ) => {
 			<UpgradeNudge { ...props } paidPlugins={ true } />
 			<PaidPluginsSection { ...props } />
 			<CollectionListView category="monetization" { ...props } />
+			<EducationFooter />
 			<UpgradeNudge { ...props } />
 			{ ! isLoggedIn && <InPageCTASection /> }
 			<FeaturedPluginsSection
