@@ -128,10 +128,12 @@ const Row = styled.div< {
 		props.isHighlighted &&
 		css`
 			${ plansBreakSmall( css`
-				background-color: var( --studio-gray-5 );
+				background-color: #fafafa;
+				border-top: 1px solid #eee;
 				font-weight: bold;
-				margin: 0;
+				margin: -1px 0 0;
 				padding: 12px 20px;
+				color: #3a434a;
 			` ) }
 		` };
 `;
