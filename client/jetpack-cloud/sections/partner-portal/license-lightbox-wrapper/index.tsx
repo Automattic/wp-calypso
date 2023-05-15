@@ -4,17 +4,23 @@ import { FunctionComponent, useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import ModalLinkIcon from 'calypso/assets/images/jetpack/jetpack-icon-modal-link.svg';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
-import LicenseLightbox from '../license-lightbox';
+import LicenseLightbox, { LicenseLightBoxProps } from '../license-lightbox';
 import { getProductTitle } from '../utils';
 
 import './style.scss';
 
-type Props = {
-	product: APIProductFamilyProduct;
-};
+type Props = Pick<
+	LicenseLightBoxProps,
+	'ctaLabel' | 'isCTAPrimary' | 'isDisabled' | 'onActivate' | 'product'
+>;
 
-const LicenseLightboxLink: FunctionComponent< Props > = ( { product } ) => {
+const LicenseLightboxWrapper: FunctionComponent< Props > = ( {
+	product,
+	ctaLabel,
+	isCTAPrimary,
+	isDisabled,
+	onActivate,
+} ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -42,18 +48,27 @@ const LicenseLightboxLink: FunctionComponent< Props > = ( { product } ) => {
 	const productTitle = getProductTitle( product.name );
 
 	return (
-		<>
-			<Button className="license-lightbox-link" onClick={ onShowLightbox } plain>
+		<div className="license-lightbox-wrapper">
+			<Button className="license-lightbox-wrapper__link" onClick={ onShowLightbox } plain>
 				{ translate( 'More about {{productName/}}', {
 					components: { productName: <>{ productTitle }</> },
 				} ) }
 
-				<img className="license-lightbox-link__icon" src={ ModalLinkIcon } alt="" />
+				<img className="license-lightbox-wrapper__link-icon" src={ ModalLinkIcon } alt="" />
 			</Button>
 
-			{ showLightbox && <LicenseLightbox onClose={ onHideLightbox } /> }
-		</>
+			{ showLightbox && (
+				<LicenseLightbox
+					ctaLabel={ ctaLabel }
+					isCTAPrimary={ isCTAPrimary }
+					isDisabled={ isDisabled }
+					onActivate={ onActivate }
+					onClose={ onHideLightbox }
+					product={ product }
+				/>
+			) }
+		</div>
 	);
 };
 
-export default LicenseLightboxLink;
+export default LicenseLightboxWrapper;

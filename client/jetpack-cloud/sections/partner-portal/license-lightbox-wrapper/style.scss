@@ -1,5 +1,5 @@
 
-.license-lightbox-link {
+.license-lightbox-wrapper__link {
 	font-size: 0.875rem;
 	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	line-height: 1.5rem;
@@ -10,7 +10,7 @@
 	white-space: nowrap;
 }
 
-.license-lightbox-link__icon {
+.license-lightbox-wrapper__link-icon {
 	display: inline-block;
 	margin-bottom: -5px;
 	margin-inline-start: 2px;

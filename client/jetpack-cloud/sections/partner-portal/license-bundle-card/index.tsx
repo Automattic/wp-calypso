@@ -1,9 +1,10 @@
 import { Button } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
+import { useCallback } from 'react';
 import { APIProductFamilyProduct } from '../../../../state/partner-portal/types';
 import { useProductDescription } from '../hooks';
-import LicenseLightboxLink from '../license-lightbox-link';
+import LicenseLightbox from '../license-lightbox-wrapper';
 import { getProductTitle } from '../utils';
 
 import './style.scss';
@@ -19,9 +20,9 @@ export default function LicenseBundleCard( props: Props ) {
 	const productTitle = getProductTitle( product.name );
 	const translate = useTranslate();
 
-	const onSelect = () => {
+	const onSelect = useCallback( () => {
 		onSelectProduct( product );
-	};
+	}, [ onSelectProduct, product ] );
 
 	const { description: productDescription } = useProductDescription( product.slug );
 
@@ -32,7 +33,11 @@ export default function LicenseBundleCard( props: Props ) {
 
 				<div className="license-bundle-card__description">{ productDescription }</div>
 
-				<LicenseLightboxLink product={ product } />
+				<LicenseLightbox
+					product={ product }
+					ctaLabel={ translate( 'Select License' ) }
+					onActivate={ onSelect }
+				/>
 			</div>
 
 			<div className="license-bundle-card__footer">

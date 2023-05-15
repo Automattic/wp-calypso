@@ -12,7 +12,7 @@ import LicenseLightboxPaymentPlan from './license-lightbox-payment-plan';
 
 import './style.scss';
 
-type Props = {
+export type LicenseLightBoxProps = {
 	ctaLabel: string;
 	isCTAPrimary?: boolean;
 	isDisabled?: boolean;
@@ -21,7 +21,7 @@ type Props = {
 	product: APIProductFamilyProduct;
 };
 
-const LicenseLightbox: FunctionComponent< Props > = ( {
+const LicenseLightbox: FunctionComponent< LicenseLightBoxProps > = ( {
 	ctaLabel,
 	isCTAPrimary = true,
 	isDisabled,

@@ -5,7 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect } from 'react';
 import { APIProductFamilyProduct } from '../../../../state/partner-portal/types';
 import { useProductDescription } from '../hooks';
-import LicenseLightboxLink from '../license-lightbox-link';
+import LicenseLightbox from '../license-lightbox-wrapper';
 import { getProductTitle } from '../utils';
 
 import './style.scss';
@@ -86,7 +86,15 @@ export default function LicenseProductCard( props: Props ) {
 
 							<div className="license-product-card__description">{ productDescription }</div>
 
-							<LicenseLightboxLink product={ product } />
+							<LicenseLightbox
+								product={ product }
+								ctaLabel={
+									isSelected ? translate( 'Unselect License' ) : translate( 'Select License' )
+								}
+								isCTAPrimary={ ! isSelected }
+								isDisabled={ isDisabled }
+								onActivate={ onSelectProduct }
+							/>
 						</div>
 
 						<div
