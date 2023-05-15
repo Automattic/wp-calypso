@@ -2,7 +2,7 @@ import { Card, Button } from '@automattic/components';
 import { CheckboxControl } from '@wordpress/components';
 import { Icon, plus, pencil } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import Badge from 'calypso/components/badge';
 import type { MonitorSettingsEmail } from '../../sites-overview/types';
 
@@ -12,20 +12,23 @@ interface StateEmailItem extends MonitorSettingsEmail {
 	checked: boolean;
 	isDefault?: boolean;
 }
+
 interface Props {
 	defaultEmailAddresses: Array< string >;
 	toggleModal: () => void;
 	addedEmailAddresses?: Array< MonitorSettingsEmail >;
+	allEmailItems: Array< StateEmailItem >;
+	setAllEmailItems: ( emailAddresses: Array< StateEmailItem > ) => void;
 }
 
 export default function ConfigureEmailNotification( {
 	defaultEmailAddresses = [],
 	toggleModal,
 	addedEmailAddresses = [], // FIXME: This value will come from the API.
+	allEmailItems,
+	setAllEmailItems,
 }: Props ) {
 	const translate = useTranslate();
-
-	const [ allEmailItems, setAllEmailItems ] = useState< StateEmailItem[] >( [] );
 
 	useEffect( () => {
 		if ( defaultEmailAddresses ) {
@@ -45,12 +48,25 @@ export default function ConfigureEmailNotification( {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
-	const handleOnChange = () => {
-		if ( defaultEmailAddresses.length === 1 ) {
+	const handleOnChange = ( item: StateEmailItem, checked: boolean ) => {
+		if ( item.isDefault ) {
 			return;
-			// FIXME: We need to show a custom error message here.
+			// FIXME: We need to show a custom error message here or a tooltip.
 		}
-		// FIXME: Onselect of checkbox, we need to update the state of the checkbox.
+		if ( ! item.verified ) {
+			return;
+			// FIXME: We can open the verification modal here.
+		}
+		const updatedEmailItems = allEmailItems.map( ( emailItem ) => {
+			if ( emailItem.email === item.email ) {
+				return {
+					...emailItem,
+					checked,
+				};
+			}
+			return emailItem;
+		} );
+		setAllEmailItems( updatedEmailItems );
 	};
 
 	const showVerified = true; // FIXME: This should be dynamic.
@@ -88,7 +104,7 @@ export default function ConfigureEmailNotification( {
 					<CheckboxControl
 						className="configure-email-address__checkbox"
 						checked={ item.checked }
-						onChange={ handleOnChange }
+						onChange={ ( checked ) => handleOnChange( item, checked ) }
 						label={ getCheckboxContent( item ) }
 					/>
 				</Card>

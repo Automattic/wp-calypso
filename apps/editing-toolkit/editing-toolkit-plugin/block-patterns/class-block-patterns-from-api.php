@@ -66,6 +66,13 @@ class Block_Patterns_From_API {
 		// Used to track which patterns we successfully register.
 		$results = array();
 
+		// The category 'All' is created dynamically so all patterns are always added automatically.
+		$category_all = array(
+			'slug'        => 'featured',
+			'label'       => __( 'All', 'full-site-editing' ),
+			'description' => __( 'Explore all patterns.', 'full-site-editing' ),
+		);
+
 		// For every pattern source site, fetch the patterns.
 		foreach ( $this->patterns_sources as $patterns_source ) {
 			$patterns_cache_key = $this->utils->get_patterns_cache_key( $patterns_source );
@@ -88,6 +95,12 @@ class Block_Patterns_From_API {
 
 			$pattern_categories = array_merge( $pattern_categories, $existing_categories );
 
+			// Add the category 'All' to $pattern_categories so its ordered and registered with the others.
+			$pattern_categories[ $category_all['slug'] ] = array(
+				'label'       => $category_all['label'],
+				'description' => $category_all['description'],
+			);
+
 			// Order categories alphabetically by their label.
 			uasort(
 				$pattern_categories,
@@ -103,7 +116,11 @@ class Block_Patterns_From_API {
 			}
 
 			// Register categories (and re-register existing categories).
-			foreach ( (array) $pattern_categories as $slug => $category_properties ) {
+			foreach ( (array) $pattern_categories as $slug => &$category_properties ) {
+				if ( 'blog' === $slug ) {
+					$category_properties['label']       = __( 'Blog Posts', 'full-site-editing' );
+					$category_properties['description'] = __( 'Display your latest posts in lists, grids or other layouts.', 'full-site-editing' );
+				}
 				register_block_pattern_category( $slug, $category_properties );
 			}
 
@@ -117,6 +134,9 @@ class Block_Patterns_From_API {
 					$viewport_width = $viewport_width < 320 ? 320 : $viewport_width;
 					$pattern_name   = self::PATTERN_NAMESPACE . $pattern['name'];
 					$block_types    = $this->utils->maybe_get_pattern_block_types_from_pattern_meta( $pattern );
+
+					// Add the category 'All' to all patterns.
+					$pattern['categories'][ $category_all['slug'] ] = $category_all;
 
 					$results[ $pattern_name ] = register_block_pattern(
 						$pattern_name,

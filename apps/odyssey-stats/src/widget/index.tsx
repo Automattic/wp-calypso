@@ -4,6 +4,8 @@ import { translate } from 'i18n-calypso';
 import { render } from 'react-dom';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import config from '../lib/config-api';
+import getSiteAdminUrl from '../lib/selectors/get-site-admin-url';
+import getSiteStatsBaseUrl from '../lib/selectors/get-site-stats-base-url';
 import setLocale from '../lib/set-locale';
 import Highlights from './highlights';
 import MiniChart from './mini-chart';
@@ -17,7 +19,10 @@ import './index.scss';
 export function init() {
 	const currentSiteId = config( 'blog_id' );
 	const localeSlug = config( 'i18n_locale_slug' ) || config( 'i18n_default_locale_slug' ) || 'en';
-	const odysseyStatsBaseUrl = config( 'odyssey_stats_base_url' );
+
+	const statsBaseUrl = getSiteStatsBaseUrl( currentSiteId );
+	const adminBaseUrl = getSiteAdminUrl( currentSiteId );
+
 	const queryClient = new QueryClient();
 
 	// Ensure locale files are loaded before rendering.
@@ -28,15 +33,15 @@ export function init() {
 					<MiniChart
 						siteId={ currentSiteId }
 						gmtOffset={ config( 'gmt_offset' ) }
-						odysseyStatsBaseUrl={ odysseyStatsBaseUrl }
+						statsBaseUrl={ statsBaseUrl }
 					/>
 					<div className="stats-widget-wrapper">
 						<Highlights
 							siteId={ currentSiteId }
 							gmtOffset={ config( 'gmt_offset' ) }
-							odysseyStatsBaseUrl={ odysseyStatsBaseUrl }
+							statsBaseUrl={ statsBaseUrl }
 						/>
-						<Modules siteId={ currentSiteId } odysseyStatsBaseUrl={ odysseyStatsBaseUrl } />
+						<Modules siteId={ currentSiteId } adminBaseUrl={ adminBaseUrl } />
 						<div className="stats-widget-footer">
 							<a
 								href="https://jetpack.com/redirect/?source=jetpack-stats-widget-logo-link"
@@ -45,7 +50,9 @@ export function init() {
 							>
 								<JetpackLogo size={ 20 } monochrome full />
 							</a>
-							<a href={ odysseyStatsBaseUrl }>{ translate( 'View all stats' ) }</a>
+							<a href={ `${ statsBaseUrl }/stats/day/${ currentSiteId }` }>
+								{ translate( 'View all stats' ) }
+							</a>
 						</div>
 					</div>
 				</div>

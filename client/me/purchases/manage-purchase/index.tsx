@@ -37,11 +37,11 @@ import {
 } from '@automattic/calypso-products';
 import { Spinner, Button, Card, CompactCard, ProductIcon, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
+import { localize, LocalizeProps } from 'i18n-calypso';
 import page from 'page';
-import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import { SupportedSlugs } from 'calypso/../packages/components/src/product-icon/config';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import AsyncLoad from 'calypso/components/async-load';
 import Badge from 'calypso/components/badge';
@@ -92,6 +92,10 @@ import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view
 import WordAdsEligibilityWarningDialog from 'calypso/me/purchases/wordads-eligibility-warning-dialog';
 import PlanPrice from 'calypso/my-sites/plan-price';
 import PlanRenewalMessage from 'calypso/my-sites/plans/jetpack-plans/plan-renewal-message';
+import {
+	getCancelPurchaseUrlFor,
+	getAddNewPaymentMethodUrlFor,
+} from 'calypso/my-sites/purchases/paths';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import {
 	currentUserHasFlag,
@@ -129,46 +133,93 @@ import {
 import PurchaseNotice from './notices';
 import PurchasePlanDetails from './plan-details';
 import PurchaseMeta from './purchase-meta';
+import type { FilteredPlan } from '@automattic/calypso-products';
+import type { SiteDetails } from '@automattic/data-stores';
+import type { ResponseDomain } from 'calypso/lib/domains/types';
+import type { TracksProps } from 'calypso/lib/purchases';
+import type {
+	GetChangePaymentMethodUrlFor,
+	GetManagePurchaseUrlFor,
+	Purchase,
+} from 'calypso/lib/purchases/types';
+import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
+import type { Theme } from 'calypso/types';
 
 import './style.scss';
 
-class ManagePurchase extends Component {
-	static propTypes = {
-		cardTitle: PropTypes.string,
-		getAddNewPaymentMethodUrlFor: PropTypes.func,
-		getCancelPurchaseUrlFor: PropTypes.func,
-		getChangePaymentMethodUrlFor: PropTypes.func,
-		getManagePurchaseUrlFor: PropTypes.func,
-		hasLoadedDomains: PropTypes.bool,
-		hasLoadedSites: PropTypes.bool.isRequired,
-		hasLoadedPurchasesFromServer: PropTypes.bool.isRequired,
-		hasNonPrimaryDomainsFlag: PropTypes.bool,
-		isAtomicSite: PropTypes.bool,
-		renewableSitePurchases: PropTypes.arrayOf( PropTypes.object ),
-		productsList: PropTypes.object,
-		purchase: PropTypes.object,
-		purchases: PropTypes.array,
-		purchaseAttachedTo: PropTypes.object,
-		purchaseListUrl: PropTypes.string,
-		redirectTo: PropTypes.string,
-		showHeader: PropTypes.bool,
-		site: PropTypes.object,
-		siteId: PropTypes.number,
-		selectedSiteId: PropTypes.number,
-		siteSlug: PropTypes.string.isRequired,
-		isSiteLevel: PropTypes.bool,
-		primaryDomain: PropTypes.object,
-	};
+export interface ManagePurchaseProps {
+	cardTitle?: string;
+	getAddNewPaymentMethodUrlFor?: typeof getAddNewPaymentMethodUrlFor;
+	getCancelPurchaseUrlFor?: typeof getCancelPurchaseUrlFor;
+	getChangePaymentMethodUrlFor?: GetChangePaymentMethodUrlFor;
+	getManagePurchaseUrlFor?: GetManagePurchaseUrlFor;
+	isSiteLevel?: boolean;
+	purchaseListUrl?: string;
+	purchaseId: number;
+	redirectTo?: string;
+	siteSlug: string;
 
-	static defaultProps = {
-		showHeader: true,
-		purchaseListUrl: purchasesRoot,
-		getAddNewPaymentMethodUrlFor: getAddNewPaymentMethodPath,
-		getChangePaymentMethodUrlFor: getChangePaymentMethodPath,
-		getCancelPurchaseUrlFor: cancelPurchase,
-		getManagePurchaseUrlFor: managePurchase,
-	};
+	/**
+	 * Note: this defaults to true.
+	 */
+	showHeader?: boolean;
+}
 
+export interface ManagePurchaseConnectedProps {
+	hasCustomPrimaryDomain?: boolean | null;
+	hasLoadedDomains?: boolean;
+	hasLoadedPurchasesFromServer: boolean;
+	hasLoadedSites: boolean;
+	hasNonPrimaryDomainsFlag?: boolean;
+	hasSetupAds?: boolean;
+	isAtomicSite?: boolean | null;
+	isDomainOnlySite?: boolean | null;
+	isProductOwner?: boolean | null;
+	isPurchaseTheme?: boolean | null;
+	plan: FilteredPlan | false | undefined;
+	primaryDomain?: ResponseDomain | null;
+	productsList: Record< string, ProductListItem >;
+	purchase?: Purchase;
+	purchaseAttachedTo?: Purchase | null;
+	purchases?: Purchase[];
+	relatedMonthlyPlanPrice: number;
+	relatedMonthlyPlanSlug: string;
+	renewableSitePurchases: Purchase[];
+	selectedSiteId?: number | null;
+	site?: SiteDetails | null;
+	siteId?: number | null;
+	theme: false | 0 | Theme | null | undefined;
+
+	// Actions
+
+	handleRenewMultiplePurchasesClick: (
+		purchases: Purchase[],
+		siteSlug: string,
+		options?: { redirectTo?: string; tracksProps?: TracksProps }
+	) => void;
+	handleRenewNowClick: (
+		purchase: Purchase,
+		siteSlug: string,
+		options?: { redirectTo?: string; tracksProps?: TracksProps }
+	) => void;
+	errorNotice: ( message: string, options?: { duration?: number } ) => void;
+	successNotice: ( message: string, options?: { duration?: number } ) => void;
+}
+
+interface ManagePurchaseState {
+	showNonPrimaryDomainWarningDialog: boolean;
+	showRemoveSubscriptionWarningDialog: boolean;
+	showWordAdsEligibilityWarningDialog: boolean;
+	cancelLink: string | null;
+	isRemoving: boolean;
+	isCancelSurveyVisible: boolean;
+	isReinstalling: boolean;
+}
+
+class ManagePurchase extends Component<
+	ManagePurchaseProps & ManagePurchaseConnectedProps & LocalizeProps,
+	ManagePurchaseState
+> {
 	state = {
 		showNonPrimaryDomainWarningDialog: false,
 		showRemoveSubscriptionWarningDialog: false,
@@ -181,14 +232,16 @@ class ManagePurchase extends Component {
 
 	componentDidMount() {
 		if ( ! this.isDataValid() ) {
-			page.redirect( this.props.purchaseListUrl );
+			page.redirect( this.props.purchaseListUrl ?? purchasesRoot );
 			return;
 		}
 	}
 
-	componentDidUpdate( prevProps ) {
+	componentDidUpdate(
+		prevProps: ManagePurchaseProps & ManagePurchaseConnectedProps & LocalizeProps
+	) {
 		if ( this.isDataValid( prevProps ) && ! this.isDataValid() ) {
-			page.redirect( this.props.purchaseListUrl );
+			page.redirect( this.props.purchaseListUrl ?? purchasesRoot );
 			return;
 		}
 	}
@@ -210,6 +263,10 @@ class ManagePurchase extends Component {
 		const options = redirectTo ? { redirectTo } : undefined;
 		const isSitelessRenewal = isAkismetTemporarySitePurchase( purchase );
 
+		if ( ! purchase ) {
+			return;
+		}
+
 		// If this renewal is for a siteless purchase, we'll drop the site slug
 		this.props.handleRenewNowClick( purchase, ! isSitelessRenewal ? siteSlug : '', options );
 	};
@@ -222,7 +279,7 @@ class ManagePurchase extends Component {
 		} );
 
 		// Redirect to the checkout page with the monthly plan in cart
-		const checkoutUrlArgs = {};
+		const checkoutUrlArgs: { redirect_to?: string } = {};
 		if ( redirectTo ) {
 			checkoutUrlArgs.redirect_to = redirectTo;
 		}
@@ -233,7 +290,7 @@ class ManagePurchase extends Component {
 		page( checkoutUrlWithArgs );
 	};
 
-	handleRenewMultiplePurchases = ( purchases ) => {
+	handleRenewMultiplePurchases = ( purchases: Purchase[] ) => {
 		const { siteSlug, redirectTo } = this.props;
 		const options = redirectTo ? { redirectTo } : undefined;
 		this.props.handleRenewMultiplePurchasesClick( purchases, siteSlug, options );
@@ -241,16 +298,19 @@ class ManagePurchase extends Component {
 
 	shouldShowNonPrimaryDomainWarning() {
 		const { hasNonPrimaryDomainsFlag, hasCustomPrimaryDomain, purchase } = this.props;
-		return hasNonPrimaryDomainsFlag && isPlan( purchase ) && hasCustomPrimaryDomain;
+		return hasNonPrimaryDomainsFlag && purchase && isPlan( purchase ) && hasCustomPrimaryDomain;
 	}
 
 	shouldShowWordAdsEligibilityWarning() {
 		const { hasSetupAds, purchase } = this.props;
-		return hasSetupAds && isPlan( purchase );
+		return hasSetupAds && purchase && isPlan( purchase );
 	}
 
 	renderRenewButton() {
 		const { purchase, translate } = this.props;
+		if ( ! purchase ) {
+			return null;
+		}
 		if (
 			isPartnerPurchase( purchase ) ||
 			! isRenewable( purchase ) ||
@@ -272,8 +332,11 @@ class ManagePurchase extends Component {
 		);
 	}
 
-	renderUpgradeButton( preventRenewal ) {
+	renderUpgradeButton( preventRenewal: boolean ) {
 		const { purchase, translate } = this.props;
+		if ( ! purchase ) {
+			return null;
+		}
 
 		const isUpgradeablePlan =
 			isPlan( purchase ) &&
@@ -318,8 +381,11 @@ class ManagePurchase extends Component {
 		);
 	}
 
-	renderRenewalNavItem( content, onClick ) {
+	renderRenewalNavItem( content: JSX.Element | string, onClick: () => void ) {
 		const { purchase } = this.props;
+		if ( ! purchase ) {
+			return null;
+		}
 
 		if (
 			isPartnerPurchase( purchase ) ||
@@ -345,6 +411,9 @@ class ManagePurchase extends Component {
 
 	renderRenewAnnuallyNavItem() {
 		const { translate, purchase, relatedMonthlyPlanPrice } = this.props;
+		if ( ! purchase ) {
+			return null;
+		}
 		const annualPrice = getRenewalPrice( purchase ) / 12;
 		const savings = Math.floor(
 			( 100 * ( relatedMonthlyPlanPrice - annualPrice ) ) / relatedMonthlyPlanPrice
@@ -371,6 +440,9 @@ class ManagePurchase extends Component {
 
 	handleUpgradeClick = () => {
 		const { purchase } = this.props;
+		if ( ! purchase ) {
+			return null;
+		}
 
 		recordTracksEvent( 'calypso_purchases_upgrade_plan', {
 			status: isExpired( purchase ) ? 'expired' : 'active',
@@ -380,15 +452,24 @@ class ManagePurchase extends Component {
 
 	getUpgradeUrl() {
 		const { purchase, siteSlug } = this.props;
+		if ( ! purchase ) {
+			return null;
+		}
 
-		const isUpgradeableBackupProduct = JETPACK_BACKUP_T1_PRODUCTS.includes( purchase.productSlug );
-		const isUpgradeableSecurityPlan = JETPACK_SECURITY_T1_PLANS.includes( purchase.productSlug );
+		const isUpgradeableBackupProduct = (
+			JETPACK_BACKUP_T1_PRODUCTS as ReadonlyArray< string >
+		 ).includes( purchase.productSlug );
+		const isUpgradeableSecurityPlan = (
+			JETPACK_SECURITY_T1_PLANS as ReadonlyArray< string >
+		 ).includes( purchase.productSlug );
 
 		if ( isAkismetProduct( purchase ) ) {
 			// For the first Iteration of Calypso Akismet checkout we are only suggesting
 			// for immediate upgrades to the next plan. We will change this in the future
 			// with appropriate page.
-			return AKISMET_UPGRADES_PRODUCTS_MAP[ purchase.productSlug ];
+			return AKISMET_UPGRADES_PRODUCTS_MAP[
+				purchase.productSlug as keyof typeof AKISMET_UPGRADES_PRODUCTS_MAP
+			];
 		}
 
 		if ( isUpgradeableBackupProduct || isUpgradeableSecurityPlan ) {
@@ -400,6 +481,9 @@ class ManagePurchase extends Component {
 
 	renderUpgradeNavItem() {
 		const { purchase, translate } = this.props;
+		if ( ! purchase ) {
+			return null;
+		}
 
 		const isUpgradeablePlan =
 			purchase &&
@@ -409,7 +493,9 @@ class ManagePurchase extends Component {
 			! isComplete( purchase ) &&
 			! isP2Plus( purchase );
 
-		const isUpgradeableBackupProduct = JETPACK_BACKUP_T1_PRODUCTS.includes( purchase.productSlug );
+		const isUpgradeableBackupProduct = (
+			JETPACK_BACKUP_T1_PRODUCTS as ReadonlyArray< string >
+		 ).includes( purchase.productSlug );
 		const isUpgradeableProduct = isUpgradeableBackupProduct;
 
 		if ( ! isUpgradeablePlan && ! isUpgradeableProduct ) {
@@ -460,6 +546,9 @@ class ManagePurchase extends Component {
 
 	renderEditPaymentMethodNavItem() {
 		const { purchase, translate, siteSlug, getChangePaymentMethodUrlFor } = this.props;
+		if ( ! purchase ) {
+			return null;
+		}
 
 		if ( isPartnerPurchase( purchase ) ) {
 			return null;
@@ -470,7 +559,10 @@ class ManagePurchase extends Component {
 		}
 
 		if ( canEditPaymentDetails( purchase ) ) {
-			const path = getChangePaymentMethodUrlFor( siteSlug, purchase );
+			const path = ( getChangePaymentMethodUrlFor ?? getChangePaymentMethodPath )(
+				siteSlug,
+				purchase
+			);
 
 			return (
 				<CompactCard href={ path } onClick={ this.handleEditPaymentMethodNavItem }>
@@ -493,6 +585,9 @@ class ManagePurchase extends Component {
 			purchaseListUrl,
 			translate,
 		} = this.props;
+		if ( ! purchase ) {
+			return null;
+		}
 
 		if ( canAutoRenewBeTurnedOff( purchase ) ) {
 			return null;
@@ -516,7 +611,7 @@ class ManagePurchase extends Component {
 				activeSubscriptions={ this.getActiveMarketplaceSubscriptions() }
 				site={ site }
 				purchase={ purchase }
-				purchaseListUrl={ purchaseListUrl }
+				purchaseListUrl={ purchaseListUrl ?? purchasesRoot }
 				linkIcon="chevron-right"
 			>
 				<MaterialIcon icon="delete" className="card__icon" />
@@ -525,7 +620,7 @@ class ManagePurchase extends Component {
 		);
 	}
 
-	showNonPrimaryDomainWarningDialog( cancelLink ) {
+	showNonPrimaryDomainWarningDialog( cancelLink: string ) {
 		this.setState( {
 			showNonPrimaryDomainWarningDialog: true,
 			showRemoveSubscriptionWarningDialog: false,
@@ -536,7 +631,7 @@ class ManagePurchase extends Component {
 		} );
 	}
 
-	showRemoveSubscriptionWarningDialog( cancelLink ) {
+	showRemoveSubscriptionWarningDialog( cancelLink: string ) {
 		this.setState( {
 			showNonPrimaryDomainWarningDialog: false,
 			showRemoveSubscriptionWarningDialog: true,
@@ -547,7 +642,7 @@ class ManagePurchase extends Component {
 		} );
 	}
 
-	showWordAdsEligibilityWarningDialog( cancelLink ) {
+	showWordAdsEligibilityWarningDialog( cancelLink: string ) {
 		this.setState( {
 			showNonPrimaryDomainWarningDialog: false,
 			showRemoveSubscriptionWarningDialog: false,
@@ -558,14 +653,14 @@ class ManagePurchase extends Component {
 		} );
 	}
 
-	showPreCancellationModalDialog = ( cancelLink ) => {
+	showPreCancellationModalDialog = () => {
 		this.setState( {
 			showNonPrimaryDomainWarningDialog: false,
 			showRemoveSubscriptionWarningDialog: false,
 			showWordAdsEligibilityWarningDialog: false,
 			isRemoving: false,
 			isCancelSurveyVisible: true,
-			cancelLink,
+			cancelLink: null,
 		} );
 	};
 
@@ -582,11 +677,14 @@ class ManagePurchase extends Component {
 
 	goToCancelLink = () => {
 		const cancelLink = this.state.cancelLink;
+		if ( ! cancelLink ) {
+			return;
+		}
 		this.closeDialog();
 		page( cancelLink );
 	};
 
-	renderNonPrimaryDomainWarningDialog( site, purchase ) {
+	renderNonPrimaryDomainWarningDialog( site: SiteDetails, purchase: Purchase ) {
 		if ( this.state.showNonPrimaryDomainWarningDialog ) {
 			return (
 				<NonPrimaryDomainDialog
@@ -604,7 +702,7 @@ class ManagePurchase extends Component {
 		return null;
 	}
 
-	renderWordAdsEligibilityWarningDialog( purchase ) {
+	renderWordAdsEligibilityWarningDialog( purchase: Purchase ) {
 		if ( this.state.showWordAdsEligibilityWarningDialog ) {
 			return (
 				<WordAdsEligibilityWarningDialog
@@ -619,11 +717,11 @@ class ManagePurchase extends Component {
 		return null;
 	}
 
-	renderRemoveSubscriptionWarningDialog( site, purchase ) {
+	renderRemoveSubscriptionWarningDialog( site: SiteDetails, purchase: Purchase ) {
 		if ( this.state.showRemoveSubscriptionWarningDialog ) {
 			const { hasCustomPrimaryDomain, primaryDomain } = this.props;
-			const customDomain = hasCustomPrimaryDomain && primaryDomain.name;
-			const primaryDomainName = customDomain ? primaryDomain.name : '';
+			const customDomain = hasCustomPrimaryDomain && primaryDomain?.name;
+			const primaryDomainName = customDomain ? primaryDomain?.name : '';
 			const isPlanRefundable = isRefundable( purchase );
 			const actionFunction =
 				isPlanRefundable && customDomain
@@ -637,9 +735,9 @@ class ManagePurchase extends Component {
 					removePlan={ actionFunction }
 					site={ site }
 					purchase={ purchase }
-					hasDomain={ customDomain }
-					primaryDomain={ primaryDomainName }
-					wpcomURL={ site.wpcom_url }
+					hasDomain={ Boolean( customDomain ) }
+					primaryDomain={ primaryDomainName ?? '' }
+					wpcomURL={ site.wpcom_url ?? '' }
 				/>
 			);
 		}
@@ -647,6 +745,9 @@ class ManagePurchase extends Component {
 
 	renderCancelSurvey() {
 		const { purchase } = this.props;
+		if ( ! purchase ) {
+			return null;
+		}
 
 		return (
 			<CancelPurchaseForm
@@ -663,13 +764,16 @@ class ManagePurchase extends Component {
 
 	handleReinstall = async () => {
 		this.setState( { isReinstalling: true } );
+		if ( ! this.props.purchase ) {
+			return null;
+		}
 		const siteId = this.props.purchase.siteId;
 		try {
 			const response = await reinstallPlugins( siteId );
 
 			this.props.successNotice( response.message, { duration: 5000 } );
 		} catch ( error ) {
-			this.props.errorNotice( error.message );
+			this.props.errorNotice( ( error as Error ).message );
 		} finally {
 			this.setState( { isReinstalling: false } );
 		}
@@ -678,7 +782,7 @@ class ManagePurchase extends Component {
 	renderReinstall() {
 		const { purchase, productsList, translate } = this.props;
 		const { isReinstalling } = this.state;
-		if ( ! ( purchase.active && hasMarketplaceProduct( productsList, purchase.productSlug ) ) ) {
+		if ( ! ( purchase?.active && hasMarketplaceProduct( productsList, purchase.productSlug ) ) ) {
 			return null;
 		}
 
@@ -701,41 +805,36 @@ class ManagePurchase extends Component {
 
 	cancelSubscription = () => {
 		this.closeDialog();
-		page.redirect( this.props.purchaseListUrl );
+		page.redirect( this.props.purchaseListUrl ?? purchasesRoot );
 		return;
 	};
 
 	renderCancelPurchaseNavItem() {
 		const { isAtomicSite, purchase, translate } = this.props;
+		if ( ! purchase ) {
+			return null;
+		}
 		const { id } = purchase;
 
 		if ( ! canAutoRenewBeTurnedOff( purchase ) ) {
 			return null;
 		}
 
-		const link = this.props.getCancelPurchaseUrlFor( this.props.siteSlug, id );
+		const link = ( this.props.getCancelPurchaseUrlFor ?? cancelPurchase )(
+			this.props.siteSlug,
+			id
+		);
 		const canRefund = hasAmountAvailableToRefund( purchase );
-		let text;
 
 		if ( ! canRefund && isDomainTransfer( purchase ) ) {
 			return null;
 		}
 
-		if ( isDomainRegistration( purchase ) ) {
-			text = translate( 'Cancel domain' );
-		} else if ( isPlan( purchase ) ) {
-			text = translate( 'Cancel plan' );
-		} else if ( isSubscription( purchase ) ) {
-			text = translate( 'Cancel subscription' );
-		} else if ( isOneTimePurchase( purchase ) ) {
-			text = translate( 'Cancel' );
-		}
-
-		const onClick = ( event ) => {
+		const onClick = ( event: { preventDefault: () => void } ) => {
 			recordTracksEvent( 'calypso_purchases_manage_purchase_cancel_click', {
 				product_slug: purchase.productSlug,
 				is_atomic: isAtomicSite,
-				link_text: text,
+				link_text: getCancelPurchaseNavText( purchase, translate ),
 			} );
 
 			if ( this.shouldShowWordAdsEligibilityWarning() ) {
@@ -765,18 +864,21 @@ class ManagePurchase extends Component {
 		return (
 			<CompactCard href={ link } className="remove-purchase__card" onClick={ onClick }>
 				<MaterialIcon icon="delete" className="card__icon" />
-				{ text }
+				{ getCancelPurchaseNavText( purchase, translate ) }
 			</CompactCard>
 		);
 	}
 
 	renderPurchaseIcon() {
 		const { purchase, translate } = this.props;
+		if ( ! purchase ) {
+			return null;
+		}
 
 		if ( isPlan( purchase ) || isJetpackProduct( purchase ) ) {
 			return (
 				<div className="manage-purchase__plan-icon">
-					<ProductIcon slug={ purchase.productSlug } />
+					<ProductIcon slug={ purchase.productSlug as SupportedSlugs } />
 				</div>
 			);
 		}
@@ -818,7 +920,11 @@ class ManagePurchase extends Component {
 
 	getPurchaseDescription() {
 		const { plan, purchase, theme, translate } = this.props;
-		if ( isPlan( purchase ) ) {
+		if ( ! purchase ) {
+			return null;
+		}
+
+		if ( isPlan( purchase ) && plan ) {
 			return plan.getDescription();
 		}
 
@@ -885,7 +991,7 @@ class ManagePurchase extends Component {
 
 		if ( isDIFMProduct( purchase ) ) {
 			const difmTieredPurchaseDetails = getDIFMTieredPurchaseDetails( purchase );
-			if ( difmTieredPurchaseDetails && difmTieredPurchaseDetails.extraPageCount > 0 ) {
+			if ( difmTieredPurchaseDetails && ( difmTieredPurchaseDetails.extraPageCount ?? 0 ) > 0 ) {
 				const { extraPageCount, numberOfIncludedPages } = difmTieredPurchaseDetails;
 				return (
 					<>
@@ -905,7 +1011,7 @@ class ManagePurchase extends Component {
 							'This purchase includes %(numberOfPages)d extra page.',
 							'This purchase includes %(numberOfPages)d extra pages.',
 							{
-								count: extraPageCount,
+								count: extraPageCount ?? 0,
 								args: {
 									numberOfPages: extraPageCount,
 								},
@@ -921,6 +1027,10 @@ class ManagePurchase extends Component {
 
 	renderPurchaseDescription() {
 		const { purchase, site, translate } = this.props;
+
+		if ( ! purchase ) {
+			return null;
+		}
 
 		const registrationAgreementUrl = getDomainRegistrationAgreementUrl( purchase );
 		const domainRegistrationAgreementLinkText = translate( 'Domain Registration Agreement' );
@@ -970,8 +1080,10 @@ class ManagePurchase extends Component {
 						purchaseId={ false }
 						siteSlug={ siteSlug }
 						hasLoadedPurchasesFromServer={ hasLoadedPurchasesFromServer }
-						getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
-						getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
+						getManagePurchaseUrlFor={ getManagePurchaseUrlFor ?? managePurchase }
+						getChangePaymentMethodUrlFor={
+							getChangePaymentMethodUrlFor ?? getChangePaymentMethodPath
+						}
 					/>
 				</Card>
 				<PurchasePlanDetails isPlaceholder />
@@ -981,7 +1093,7 @@ class ManagePurchase extends Component {
 		);
 	}
 
-	isDomainsLoading( props ) {
+	isDomainsLoading( props: ManagePurchaseProps & ManagePurchaseConnectedProps ) {
 		const { purchase, hasLoadedDomains } = props;
 		if ( purchase ) {
 			if ( ! isDomainProduct( purchase ) || isDomainTransfer( purchase ) ) {
@@ -994,6 +1106,10 @@ class ManagePurchase extends Component {
 
 	getProductDisplayName() {
 		const { purchase, plan, translate } = this.props;
+
+		if ( ! purchase ) {
+			return '';
+		}
 
 		if ( ! plan || ! isWpComMonthlyPlan( purchase.productSlug ) ) {
 			return getDisplayName( purchase );
@@ -1008,7 +1124,7 @@ class ManagePurchase extends Component {
 	getActiveMarketplaceSubscriptions() {
 		const { purchase, purchases, productsList } = this.props;
 
-		if ( ! isPlan( purchase ) ) {
+		if ( ! purchase || ! purchases || ! isPlan( purchase ) ) {
 			return [];
 		}
 
@@ -1018,7 +1134,7 @@ class ManagePurchase extends Component {
 		);
 	}
 
-	renderPurchaseDetail( preventRenewal ) {
+	renderPurchaseDetail( preventRenewal: boolean ) {
 		if ( this.isDataLoading( this.props ) || this.isDomainsLoading( this.props ) ) {
 			return this.renderPlaceholder();
 		}
@@ -1032,6 +1148,10 @@ class ManagePurchase extends Component {
 			getChangePaymentMethodUrlFor,
 			hasLoadedPurchasesFromServer,
 		} = this.props;
+
+		if ( ! purchase ) {
+			return this.renderPlaceholder();
+		}
 
 		const classes = classNames( 'manage-purchase__info', {
 			'is-expired': purchase && isExpired( purchase ),
@@ -1047,7 +1167,7 @@ class ManagePurchase extends Component {
 
 		return (
 			<Fragment>
-				{ this.props.showHeader && (
+				{ ( this.props.showHeader ?? true ) && (
 					<PurchaseSiteHeader siteId={ siteId } name={ siteName } purchase={ purchase } />
 				) }
 				<Card className={ classes }>
@@ -1081,8 +1201,10 @@ class ManagePurchase extends Component {
 							purchaseId={ purchase.id }
 							siteSlug={ siteSlug }
 							hasLoadedPurchasesFromServer={ hasLoadedPurchasesFromServer }
-							getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
-							getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
+							getManagePurchaseUrlFor={ getManagePurchaseUrlFor ?? managePurchase }
+							getChangePaymentMethodUrlFor={
+								getChangePaymentMethodUrlFor ?? getChangePaymentMethodPath
+							}
 						/>
 					) }
 					{ isProductOwner && ! purchase.isLocked && (
@@ -1127,6 +1249,7 @@ class ManagePurchase extends Component {
 		if ( ! this.isDataValid() ) {
 			return null;
 		}
+
 		const {
 			site,
 			siteId,
@@ -1142,15 +1265,25 @@ class ManagePurchase extends Component {
 			isProductOwner,
 		} = this.props;
 
-		let changePaymentMethodPath = false;
+		if ( ! purchase ) {
+			return this.renderPlaceholder();
+		}
+
+		let changePaymentMethodPath: string | false = false;
 		if ( ! this.isDataLoading( this.props ) && site && canEditPaymentDetails( purchase ) ) {
-			changePaymentMethodPath = getChangePaymentMethodUrlFor( siteSlug, purchase );
+			changePaymentMethodPath = ( getChangePaymentMethodUrlFor ?? getChangePaymentMethodPath )(
+				siteSlug,
+				purchase
+			);
 		}
 
 		let showExpiryNotice = false;
 		let preventRenewal = false;
 
-		if ( purchase && JETPACK_LEGACY_PLANS.includes( purchase.productSlug ) ) {
+		if (
+			purchase &&
+			( JETPACK_LEGACY_PLANS as ReadonlyArray< string > ).includes( purchase.productSlug )
+		) {
 			showExpiryNotice = isCloseToExpiration( purchase );
 			preventRenewal = ! isRenewable( purchase );
 		}
@@ -1162,13 +1295,15 @@ class ManagePurchase extends Component {
 					purchaseId={ this.props.purchaseId }
 				/>
 				<PurchasesQueryComponent
-					isSiteLevel={ this.props.isSiteLevel }
-					selectedSiteId={ this.props.selectedSiteId }
+					isSiteLevel={ this.props.isSiteLevel ?? false }
+					selectedSiteId={ this.props.selectedSiteId ?? 0 }
 				/>
 				{ siteId && <QuerySiteDomains siteId={ siteId } /> }
-				{ isPurchaseTheme && <QueryCanonicalTheme siteId={ siteId } themeId={ purchase.meta } /> }
+				{ isPurchaseTheme && (
+					<QueryCanonicalTheme siteId={ siteId } themeId={ purchase?.meta ?? '' } />
+				) }
 
-				<HeaderCake backHref={ this.props.purchaseListUrl }>
+				<HeaderCake backHref={ this.props.purchaseListUrl ?? purchasesRoot }>
 					{ this.props.cardTitle || titles.managePurchase }
 				</HeaderCake>
 				{ showExpiryNotice ? (
@@ -1187,16 +1322,18 @@ class ManagePurchase extends Component {
 						purchaseAttachedTo={ purchaseAttachedTo }
 						renewableSitePurchases={ renewableSitePurchases }
 						changePaymentMethodPath={ changePaymentMethodPath }
-						getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
+						getManagePurchaseUrlFor={ getManagePurchaseUrlFor ?? managePurchase }
 						isProductOwner={ isProductOwner }
-						getAddNewPaymentMethodUrlFor={ getAddNewPaymentMethodUrlFor }
+						getAddNewPaymentMethodUrlFor={
+							getAddNewPaymentMethodUrlFor ?? getAddNewPaymentMethodPath
+						}
 					/>
 				) }
 				<PlanOverlapNotice
-					isSiteLevel={ this.props.isSiteLevel }
-					selectedSiteId={ this.props.selectedSiteId }
-					siteId={ this.props.siteId }
-					purchase={ this.props.purchase }
+					isSiteLevel={ this.props.isSiteLevel ?? false }
+					selectedSiteId={ this.props.selectedSiteId ?? 0 }
+					siteId={ this.props.siteId ?? 0 }
+					purchase={ purchase }
 				/>
 				{ this.renderPurchaseDetail( preventRenewal ) }
 				{ this.renderWordAdsEligibilityWarningDialog( purchase ) }
@@ -1207,7 +1344,13 @@ class ManagePurchase extends Component {
 	}
 }
 
-function addPaymentMethodLinkText( { purchase, translate } ) {
+function addPaymentMethodLinkText( {
+	purchase,
+	translate,
+}: {
+	purchase: Purchase;
+	translate: LocalizeProps[ 'translate' ];
+} ) {
 	let linkText = null;
 	// TODO: we need a "hasRechargeablePaymentMethod" function here
 	if ( hasPaymentMethod( purchase ) && ! isPaidWithCredits( purchase ) ) {
@@ -1218,7 +1361,17 @@ function addPaymentMethodLinkText( { purchase, translate } ) {
 	return linkText;
 }
 
-function PlanOverlapNotice( { isSiteLevel, selectedSiteId, siteId, purchase } ) {
+function PlanOverlapNotice( {
+	isSiteLevel,
+	selectedSiteId,
+	siteId,
+	purchase,
+}: {
+	isSiteLevel: boolean;
+	selectedSiteId: number;
+	siteId: number;
+	purchase: Purchase;
+} ) {
 	if ( isSiteLevel ) {
 		if ( ! selectedSiteId ) {
 			// Probably still loading
@@ -1251,7 +1404,13 @@ function PlanOverlapNotice( { isSiteLevel, selectedSiteId, siteId, purchase } ) 
 	);
 }
 
-function PurchasesQueryComponent( { isSiteLevel, selectedSiteId } ) {
+function PurchasesQueryComponent( {
+	isSiteLevel,
+	selectedSiteId,
+}: {
+	isSiteLevel: boolean;
+	selectedSiteId: number;
+} ) {
 	if ( isSiteLevel ) {
 		if ( ! selectedSiteId ) {
 			// Probably still loading
@@ -1263,7 +1422,7 @@ function PurchasesQueryComponent( { isSiteLevel, selectedSiteId } ) {
 }
 
 export default connect(
-	( state, props ) => {
+	( state, props: ManagePurchaseProps ) => {
 		const purchase = getByPurchaseId( state, props.purchaseId );
 
 		const purchaseAttachedTo =
@@ -1279,43 +1438,45 @@ export default connect(
 		const isPurchasePlan = purchase && isPlan( purchase );
 		const isPurchaseTheme = purchase && isThemePurchase( purchase );
 		const productsList = getProductsList( state );
-		const site = getSite( state, siteId );
+		const site = getSite( state, siteId ?? undefined );
 		const hasLoadedSites = ! isRequestingSites( state );
 		const hasLoadedDomains = hasLoadedSiteDomains( state, siteId );
-		const relatedMonthlyPlanSlug = getMonthlyPlanByYearly( purchase?.productSlug );
-		const relatedMonthlyPlanPrice = getSitePlanRawPrice( state, siteId, relatedMonthlyPlanSlug );
+		const relatedMonthlyPlanSlug = getMonthlyPlanByYearly( purchase?.productSlug ?? '' );
+		const relatedMonthlyPlanPrice = siteId
+			? getSitePlanRawPrice( state, siteId, relatedMonthlyPlanSlug ) ?? 0
+			: 0;
 		const primaryDomain = getPrimaryDomainBySiteId( state, siteId );
 
 		return {
+			hasCustomPrimaryDomain: hasCustomDomain( site ),
 			hasLoadedDomains,
-			hasLoadedSites,
 			hasLoadedPurchasesFromServer: props.isSiteLevel
 				? hasLoadedSitePurchasesFromServer( state )
 				: hasLoadedUserPurchasesFromServer( state ),
+			hasLoadedSites,
 			hasNonPrimaryDomainsFlag: getCurrentUser( state )
 				? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
 				: false,
-			hasCustomPrimaryDomain: hasCustomDomain( site ),
 			hasSetupAds: Boolean(
 				site?.options?.wordads || isRequestingWordAdsApprovalForSite( state, site )
 			),
+			isAtomicSite: isSiteAtomic( state, siteId ),
+			isDomainOnlySite: purchase && isDomainOnly( state, purchase.siteId ),
+			isProductOwner,
+			isPurchaseTheme,
+			plan: isPurchasePlan && applyTestFiltersToPlansList( purchase.productSlug, undefined ),
+			primaryDomain: primaryDomain,
 			productsList,
 			purchase,
-			purchases,
 			purchaseAttachedTo,
-			siteId,
-			selectedSiteId,
-			isProductOwner,
-			site,
-			renewableSitePurchases,
-			plan: isPurchasePlan && applyTestFiltersToPlansList( purchase.productSlug, undefined ),
-			isPurchaseTheme,
-			theme: isPurchaseTheme && getCanonicalTheme( state, siteId, purchase.meta ),
-			isAtomicSite: isSiteAtomic( state, siteId ),
-			relatedMonthlyPlanSlug,
+			purchases,
 			relatedMonthlyPlanPrice,
-			primaryDomain: primaryDomain,
-			isDomainOnlySite: purchase && isDomainOnly( state, purchase.siteId ),
+			relatedMonthlyPlanSlug,
+			renewableSitePurchases,
+			selectedSiteId,
+			site,
+			siteId,
+			theme: isPurchaseTheme && siteId && getCanonicalTheme( state, siteId, purchase.meta ?? null ),
 		};
 	},
 	{
@@ -1325,3 +1486,21 @@ export default connect(
 		successNotice,
 	}
 )( localize( ManagePurchase ) );
+
+function getCancelPurchaseNavText(
+	purchase: Purchase,
+	translate: LocalizeProps[ 'translate' ]
+): string {
+	let text = '';
+
+	if ( isDomainRegistration( purchase ) ) {
+		text = translate( 'Cancel domain' );
+	} else if ( isPlan( purchase ) ) {
+		text = translate( 'Cancel plan' );
+	} else if ( isSubscription( purchase ) ) {
+		text = translate( 'Cancel subscription' );
+	} else if ( isOneTimePurchase( purchase ) ) {
+		text = translate( 'Cancel' );
+	}
+	return text;
+}

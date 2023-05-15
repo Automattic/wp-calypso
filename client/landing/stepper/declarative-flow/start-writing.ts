@@ -33,6 +33,10 @@ const startWriting: Flow = {
 				slug: 'domains',
 				asyncComponent: () => import( './internals/steps-repository/choose-a-domain' ),
 			},
+			{
+				slug: 'use-my-domain',
+				asyncComponent: () => import( './internals/steps-repository/use-my-domain' ),
+			},
 			{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },
 			{
 				slug: 'setup-blog',
@@ -113,6 +117,13 @@ const startWriting: Flow = {
 						return navigate( 'launchpad' );
 					}
 
+					return navigate( 'plans' );
+				case 'use-my-domain':
+					if ( siteSlug ) {
+						await updateLaunchpadSettings( siteSlug, {
+							checklist_statuses: { domain_upsell_deferred: true },
+						} );
+					}
 					return navigate( 'plans' );
 				case 'plans':
 					if ( siteSlug ) {

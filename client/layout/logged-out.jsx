@@ -13,6 +13,7 @@ import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
 import MasterbarLogin from 'calypso/layout/masterbar/login';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
+import PoweredByWPFooter from 'calypso/layout/powered-by-wp-footer';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { navigate } from 'calypso/lib/navigate';
@@ -197,6 +198,8 @@ const LayoutLoggedOut = ( {
 					isLoggedIn={ isLoggedIn }
 				/>
 			) }
+
+			{ isGravatar && <PoweredByWPFooter siteName={ oauth2Client.title } /> }
 		</div>
 	);
 };

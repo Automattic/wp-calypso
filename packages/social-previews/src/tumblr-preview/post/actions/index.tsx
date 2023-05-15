@@ -15,12 +15,12 @@ const TumblrPostActions: React.FC = () => (
 					{
 						icon: 'delete',
 						// translators: "Delete" action on a Tumblr post
-						label: __( 'Delete', 'tumblr-preview' ),
+						label: __( 'Delete', 'social-previews' ),
 					},
 					{
 						icon: 'edit',
 						// translators: "Edit" action on a Tumblr post
-						label: __( 'Edit', 'tumblr-preview' ),
+						label: __( 'Edit', 'social-previews' ),
 					},
 				].map( ( { icon, label } ) => (
 					<li key={ icon } aria-label={ label }>
@@ -33,7 +33,7 @@ const TumblrPostActions: React.FC = () => (
 			<div>
 				{
 					// translators: count of notes on a Tumblr post
-					__( '0 notes', 'tumblr-preview' )
+					__( '0 notes', 'social-previews' )
 				}
 			</div>
 			<ul>
@@ -41,22 +41,22 @@ const TumblrPostActions: React.FC = () => (
 					{
 						icon: 'share',
 						// translators: "Share" action on a Tumblr post
-						label: __( 'Share', 'tumblr-preview' ),
+						label: __( 'Share', 'social-previews' ),
 					},
 					{
 						icon: 'reply',
 						// translators: "Reply" action on a Tumblr post
-						label: __( 'Reply', 'tumblr-preview' ),
+						label: __( 'Reply', 'social-previews' ),
 					},
 					{
 						icon: 'reblog',
 						// translators: "Reblog" action on a Tumblr post
-						label: __( 'Reblog', 'tumblr-preview' ),
+						label: __( 'Reblog', 'social-previews' ),
 					},
 					{
 						icon: 'like',
 						// translators: "Like" action on a Tumblr post
-						label: __( 'Like', 'tumblr-preview' ),
+						label: __( 'Like', 'social-previews' ),
 					},
 				].map( ( { icon, label } ) => (
 					<li key={ icon } aria-label={ label }>

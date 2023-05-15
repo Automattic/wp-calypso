@@ -13,7 +13,7 @@ import {
 } from '../../sites-overview/utils';
 import ConfigureEmailNotification from '../configure-email-notification';
 import AddNewEmailModal from '../configure-email-notification/add-new-email-modal';
-import type { MonitorSettings, Site } from '../../sites-overview/types';
+import type { MonitorSettings, Site, MonitorSettingsEmail } from '../../sites-overview/types';
 
 import './style.scss';
 
@@ -25,6 +25,11 @@ interface Props {
 	settings?: MonitorSettings;
 	monitorUserEmails?: Array< string >;
 	isLargeScreen?: boolean;
+}
+
+interface StateEmailItem extends MonitorSettingsEmail {
+	checked: boolean;
+	isDefault?: boolean;
 }
 
 export default function NotificationSettings( {
@@ -48,7 +53,7 @@ export default function NotificationSettings( {
 	const [ defaultUserEmailAddresses, setDefaultUserEmailAddresses ] = useState< string[] | [] >(
 		[]
 	);
-
+	const [ allEmailItems, setAllEmailItems ] = useState< StateEmailItem[] | [] >( [] );
 	const [ validationError, setValidationError ] = useState< string >( '' );
 	const [ isAddEmailModalOpen, setIsAddEmailModalOpen ] = useState< boolean >( false );
 
@@ -214,6 +219,8 @@ export default function NotificationSettings( {
 										<ConfigureEmailNotification
 											defaultEmailAddresses={ defaultUserEmailAddresses }
 											toggleModal={ toggleAddEmailModal }
+											setAllEmailItems={ setAllEmailItems }
+											allEmailItems={ allEmailItems }
 										/>
 									) }
 								</>
