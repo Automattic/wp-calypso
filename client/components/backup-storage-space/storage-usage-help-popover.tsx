@@ -15,7 +15,9 @@ const StorageHelpPopover: React.FC< OwnProps > = ( {
 	onClickedPurchase,
 } ) => {
 	const translate = useTranslate();
-	const [ isPopoverVisible, setPopoverVisible ] = useState< boolean >( true );
+	const STORAGE_USAGE_HELP_POPOVER_STATE_KEY = 'storage_usage_help_popover_state';
+	const popoverState = null === localStorage.getItem( STORAGE_USAGE_HELP_POPOVER_STATE_KEY );
+	const [ isPopoverVisible, setPopoverVisible ] = useState< boolean >( popoverState );
 	const popover = useRef< SVGSVGElement >( null );
 
 	if ( ! forecastInDays ) {
@@ -24,11 +26,9 @@ const StorageHelpPopover: React.FC< OwnProps > = ( {
 
 	const toggleHelpPopover = ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ): void => {
 		setPopoverVisible( ! isPopoverVisible );
+		localStorage.setItem( STORAGE_USAGE_HELP_POPOVER_STATE_KEY, 'shown' );
 		// when the info popover inside a button, we don't want clicking it to propagate up
 		event.stopPropagation();
-	};
-	const closeHelpPopover = () => {
-		setPopoverVisible( false );
 	};
 
 	return (
@@ -67,7 +67,7 @@ const StorageHelpPopover: React.FC< OwnProps > = ( {
 						borderless
 						compact
 						className="storage-usage-help-popover__close-popover"
-						onClick={ closeHelpPopover }
+						onClick={ toggleHelpPopover }
 					>
 						<Gridicon icon="cross" size={ 18 } />
 					</Button>
