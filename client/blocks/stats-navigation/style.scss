@@ -108,7 +108,6 @@
 						&:hover,
 						&:focus {
 							color: var(--color-primary);
-							background-color: var(--color-surface);
 						}
 					}
 				}
@@ -136,6 +135,18 @@
 				color: var(--color-neutral-80);
 				margin: 0;
 				padding: 7px 12px;
+			}
+
+			@media ( max-width: $break-mobile ) {
+				&:hover,
+				&:focus {
+					background-color: var(--color-primary-0);
+					color: var(--color-primary);
+
+					.button {
+						color: var(--color-primary);
+					}
+				}
 			}
 
 			.count {
