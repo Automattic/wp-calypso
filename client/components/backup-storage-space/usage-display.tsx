@@ -68,7 +68,7 @@ const UsageDisplay: React.FC< OwnProps > = ( { loading = false, usageLevel } ) =
 	} );
 	const onClickedPurchase = React.useCallback( () => {
 		dispatch(
-			recordTracksEvent( 'calypso_jetpack_backup_storage_upsell_click', {
+			recordTracksEvent( 'calypso_jetpack_backup_storage_popover_upsell_click', {
 				type: usageLevel,
 				bytes_used: bytesUsed,
 			} )
