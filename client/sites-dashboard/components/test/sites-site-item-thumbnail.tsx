@@ -29,20 +29,33 @@ function makeTestSite( {
 }
 
 describe( '<SiteItemThumbnail>', () => {
+	const initialState = {
+		automatedTransfer: {
+			1: {
+				fetchingStatus: true,
+				status: 'in-progress',
+			},
+		},
+	};
+	const mockStore = configureStore();
+	const store = mockStore( initialState );
+
 	describe( 'Fallback site icon', () => {
 		describe( 'Intl.Segmenter API is available', () => {
 			test( 'confirm Intl available', () => {
 				expect( Intl.Segmenter ).toBeDefined();
 			} );
 
-			defineCommonSiteInitialTests();
+			defineCommonSiteInitialTests( store );
 
 			test( 'site title can be multi-codepoint emoji', () => {
 				render(
-					<SiteItemThumbnail
-						displayMode="tile"
-						site={ makeTestSite( { title: '👩‍👩‍👦‍👦 family: woman, woman, boy, boy' } ) }
-					/>
+					<Provider store={ store }>
+						<SiteItemThumbnail
+							displayMode="tile"
+							site={ makeTestSite( { title: '👩‍👩‍👦‍👦 family: woman, woman, boy, boy' } ) }
+						/>
+					</Provider>
 				);
 				expect( screen.getByLabelText( 'Site Icon' ) ).toHaveTextContent( /^👩‍👩‍👦‍👦$/ );
 			} );
@@ -59,15 +72,17 @@ describe( '<SiteItemThumbnail>', () => {
 				Intl.Segmenter = rememberSegmenter;
 			} );
 
-			defineCommonSiteInitialTests();
+			defineCommonSiteInitialTests( store );
 
 			test( 'site name can be multi-codepoint emoji', () => {
 				// Without the Segmenter API we fall back to returning the first codepoint
 				render(
-					<SiteItemThumbnail
-						displayMode="tile"
-						site={ makeTestSite( { title: '👩‍👩‍👦‍👦 family: woman, woman, boy, boy' } ) }
-					/>
+					<Provider store={ store }>
+						<SiteItemThumbnail
+							displayMode="tile"
+							site={ makeTestSite( { title: '👩‍👩‍👦‍👦 family: woman, woman, boy, boy' } ) }
+						/>
+					</Provider>
 				);
 				expect( screen.getByLabelText( 'Site Icon' ) ).toHaveTextContent( /^👩$/ );
 			} );
@@ -75,17 +90,6 @@ describe( '<SiteItemThumbnail>', () => {
 	} );
 
 	describe( 'Atomic transfer', () => {
-		const initialState = {
-			automatedTransfer: {
-				1: {
-					fetchingStatus: true,
-					status: 'in-progress',
-				},
-			},
-		};
-		const mockStore = configureStore();
-		const store = mockStore( initialState );
-
 		test( 'show loader when atomic transfer in progress', () => {
 			const { container } = renderWithProvider(
 				<Provider store={ store }>
@@ -114,19 +118,31 @@ describe( '<SiteItemThumbnail>', () => {
 	} );
 } );
 
-function defineCommonSiteInitialTests() {
+function defineCommonSiteInitialTests( store ) {
 	test( 'an English site title', () => {
-		render( <SiteItemThumbnail displayMode="tile" site={ makeTestSite( { title: 'hello' } ) } /> );
+		render(
+			<Provider store={ store }>
+				<SiteItemThumbnail displayMode="tile" site={ makeTestSite( { title: 'hello' } ) } />
+			</Provider>
+		);
 		expect( screen.getByLabelText( 'Site Icon' ) ).toHaveTextContent( /^h$/ );
 	} );
 
 	test( 'diacritic mark on first letter', () => {
-		render( <SiteItemThumbnail displayMode="tile" site={ makeTestSite( { title: 'öwl' } ) } /> );
+		render(
+			<Provider store={ store }>
+				<SiteItemThumbnail displayMode="tile" site={ makeTestSite( { title: 'öwl' } ) } />
+			</Provider>
+		);
 		expect( screen.getByLabelText( 'Site Icon' ) ).toHaveTextContent( /^ö$/ );
 	} );
 
 	test( 'empty site title renders no initial', () => {
-		render( <SiteItemThumbnail displayMode="tile" site={ makeTestSite( { title: '' } ) } /> );
+		render(
+			<Provider store={ store }>
+				<SiteItemThumbnail displayMode="tile" site={ makeTestSite( { title: '' } ) } />
+			</Provider>
+		);
 		expect( screen.getByLabelText( 'Site Icon' ) ).toBeEmptyDOMElement();
 	} );
 
@@ -135,27 +151,41 @@ function defineCommonSiteInitialTests() {
 		// @ts-expect-error Let's artificially remove the title so it tries to render an empty string
 		testSite.title = undefined;
 
-		render( <SiteItemThumbnail displayMode="tile" site={ testSite } /> );
+		render(
+			<Provider store={ store }>
+				<SiteItemThumbnail displayMode="tile" site={ testSite } />
+			</Provider>
+		);
 		expect( screen.getByLabelText( 'Site Icon' ) ).toBeEmptyDOMElement();
 	} );
 
 	test( 'shows "Coming soon" tile if site has not launched', () => {
-		render( <SiteItemThumbnail site={ makeTestSite( { title: '', is_coming_soon: true } ) } /> );
+		render(
+			<Provider store={ store }>
+				<SiteItemThumbnail site={ makeTestSite( { title: '', is_coming_soon: true } ) } />
+			</Provider>
+		);
 		expect( screen.getByTitle( 'Coming Soon' ) ).toBeInTheDocument();
 	} );
 
 	test( 'shows "Coming soon" translated to site language', () => {
 		render(
-			<SiteItemThumbnail
-				site={ makeTestSite( { title: '', is_coming_soon: true, lang: 'de-DE' } ) }
-			/>
+			<Provider store={ store }>
+				<SiteItemThumbnail
+					site={ makeTestSite( { title: '', is_coming_soon: true, lang: 'de-DE' } ) }
+				/>
+			</Provider>
 		);
 		expect( screen.getByTitle( 'Demnächst verfügbar' ) ).toBeInTheDocument();
 	} );
 
 	test( 'shows "Coming soon" in English when site language is not translated', () => {
 		render(
-			<SiteItemThumbnail site={ makeTestSite( { title: '', is_coming_soon: true, lang: 'zz' } ) } />
+			<Provider store={ store }>
+				<SiteItemThumbnail
+					site={ makeTestSite( { title: '', is_coming_soon: true, lang: 'zz' } ) }
+				/>
+			</Provider>
 		);
 		expect( screen.getByTitle( 'Coming Soon' ) ).toBeInTheDocument();
 	} );
