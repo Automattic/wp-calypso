@@ -516,6 +516,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		image: {
 			path: earnSectionImage,
 			align: 'right' as Image[ 'align' ],
+			alt: translate( 'Monetize with your site.' ),
 		},
 		body: translate(
 			'Accept credit card payments today for just about anything – physical and digital goods, services, donations and tips, or access to your exclusive content. {{a}}Watch our tutorial videos to get started{{/a}}.',
