@@ -21,6 +21,7 @@ export { useSiteIntent } from './queries/use-site-intent';
 export { useSupportAvailability } from './support-queries/use-support-availability';
 export { useSubmitTicketMutation } from './support-queries/use-submit-support-ticket';
 export { useSubmitForumsMutation } from './support-queries/use-submit-forums-topic';
+export { useUpdateZendeskUserFieldsMutation } from './support-queries/use-update-zendesk-user-fields';
 export { useHasActiveSupport } from './support-queries/use-support-history';
 export * from './starter-designs-queries';
 export { useSibylQuery } from './support-queries/use-sibyl-query';

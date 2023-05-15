@@ -9,6 +9,7 @@ import { FormInputValidation, Popover } from '@automattic/components';
 import {
 	useSubmitTicketMutation,
 	useSubmitForumsMutation,
+	useUpdateZendeskUserFieldsMutation,
 	useSiteAnalysis,
 	useUserSites,
 	AnalysisReport,
@@ -161,6 +162,8 @@ export const HelpCenterContactForm = () => {
 	const locale = useLocale();
 	const { isLoading: submittingTicket, mutateAsync: submitTicket } = useSubmitTicketMutation();
 	const { isLoading: submittingTopic, mutateAsync: submitTopic } = useSubmitForumsMutation();
+	const { isLoading: submittingZendeskUserFields, mutateAsync: submitZendeskUserFields } =
+		useUpdateZendeskUserFieldsMutation();
 	const userId = useSelector( getCurrentUserId );
 	const { data: userSites } = useUserSites( userId );
 	const userWithNoSites = userSites?.sites.length === 0;
@@ -219,7 +222,7 @@ export const HelpCenterContactForm = () => {
 	);
 
 	const ownershipStatusLoading = ownershipResult?.result === 'LOADING';
-	const isSubmitting = submittingTicket || submittingTopic;
+	const isSubmitting = submittingTicket || submittingTopic || submittingZendeskUserFields;
 
 	// if the user picked a site from the picker, we don't need to analyze the ownership
 	if ( currentSite && sitePickerChoice === 'CURRENT_SITE' ) {
@@ -307,10 +310,16 @@ export const HelpCenterContactForm = () => {
 						section: sectionName,
 					} );
 
-					setShowHelpCenter( false );
-					setShowMessagingLauncher( true );
-					setShowMessagingWidget( true );
-					resetStore();
+					submitZendeskUserFields( { route: sectionName } )
+						.then( () => {
+							setShowHelpCenter( false );
+							setShowMessagingLauncher( true );
+							setShowMessagingWidget( true );
+							resetStore();
+						} )
+						.catch( () => {
+							setHasSubmittingError( true );
+						} );
 					break;
 				}
 				break;
