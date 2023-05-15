@@ -2,7 +2,11 @@
 
 This plugin includes many sub-features which add blocks and new functionality to the Gutenberg editor. The plugin provides a single codebase which can be installed on any platform which requires these features, such as the WordPress.com multisite or other standalone WordPress instances.
 
+New features are currently freezed and switched to use Jetpack packages instead. More info: p58i-dox-p2
+
 This code is developed in the calypso monorepo at <https://github.com/Automattic/wp-calypso/tree/trunk/apps/editing-toolkit>.
+
+
 
 ## Rename Info
 
