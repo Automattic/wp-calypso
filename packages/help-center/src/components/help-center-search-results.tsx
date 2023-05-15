@@ -73,7 +73,7 @@ const filterManagePurchaseLink = ( hasPurchases: boolean, isPurchasesSection: bo
 	) => article.post_id !== 111349;
 };
 
-interface HelpSearchResults {
+interface HelpSearchResultsProps {
 	externalLinks?: boolean;
 	onSelect: (
 		event: React.MouseEvent< HTMLAnchorElement, MouseEvent >,
@@ -94,7 +94,7 @@ function HelpSearchResults( {
 	placeholderLines,
 	openAdminInNewTab = false,
 	location = 'inline-help-popover',
-}: HelpSearchResults ) {
+}: HelpSearchResultsProps ) {
 	const dispatch = useDispatch();
 
 	const { hasPurchases, sectionName, adminResults } = useSelector( ( state ) => {
@@ -152,7 +152,7 @@ function HelpSearchResults( {
 		result: SearchResult,
 		type: string
 	) => {
-		const { link } = result;
+		const { link, post_id, blog_id, source } = result;
 		// check and catch admin section links.
 		if ( type === SUPPORT_TYPE_ADMIN_SECTION && link ) {
 			// record track-event.
@@ -174,6 +174,18 @@ function HelpSearchResults( {
 
 			return;
 		}
+
+		dispatch(
+			recordTracksEvent( 'calypso_inlinehelp_article_select', {
+				link,
+				post_id,
+				blog_id,
+				source,
+				search_term: searchQuery,
+				location,
+				section: sectionName,
+			} )
+		);
 
 		onSelect( event, result );
 	};

@@ -1,5 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 /* eslint-disable no-restricted-imports */
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useSelect } from '@wordpress/data';
 import { useState, useCallback, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -46,6 +47,22 @@ export const HelpCenterSearch = () => {
 	const redirectToArticle = useCallback(
 		( event, result ) => {
 			event.preventDefault();
+
+			// if result.post_id isn't set then open in a new window
+			if ( ! result.post_id ) {
+				const tracksData = {
+					search_query: query,
+					force_site_id: true,
+					location: 'help-center',
+					result_url: result.link,
+					post_id: result.postId,
+					blog_id: result.blogId,
+				};
+				recordTracksEvent( `calypso_inlinehelp_article_no_postid_redirect`, tracksData );
+				window.open( result.link, '_blank' );
+				return;
+			}
+
 			const searchResult = {
 				...result,
 				title: preventWidows( decodeEntities( result.title ) ),

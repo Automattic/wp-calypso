@@ -47,13 +47,21 @@ const ArticleFetchingContent = ( { postId, blogId, articleUrl }: ArticleFetching
 			articleUrl.indexOf( '#' ) !== -1 &&
 			post?.content
 		) {
+			// warn about this
+			// eslint-disable-next-line no-console
+			console.warn( 'scrolling to anchor', articleUrl );
 			setTimeout( () => {
 				const anchorId = articleUrl.split( '#' ).pop();
 				if ( anchorId ) {
+					// eslint-disable-next-line no-console
+					console.warn( 'found anchor', anchorId, articleUrl );
 					const element = document.getElementById( anchorId );
 					if ( element ) {
 						element.scrollIntoView();
 					}
+				} else {
+					// eslint-disable-next-line no-console
+					console.warn( 'no anchor for URL', articleUrl );
 				}
 			}, 0 );
 		}

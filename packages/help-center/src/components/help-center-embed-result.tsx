@@ -17,6 +17,9 @@ export const HelpCenterEmbedResult: React.FC = () => {
 	const navigate = useNavigate();
 	const sectionName = useSelector( getSectionName );
 
+	// eslint-disable-next-line no-console
+	console.warn( 'got search', search );
+
 	const params = new URLSearchParams( search );
 	const postId = params.get( 'postId' );
 	const blogId = params.get( 'blogId' );
@@ -31,10 +34,12 @@ export const HelpCenterEmbedResult: React.FC = () => {
 			location: 'help-center',
 			section: sectionName,
 			result_url: link,
+			post_id: postId,
+			blog_id: blogId,
 		};
 
 		recordTracksEvent( `calypso_inlinehelp_article_open`, tracksData );
-	}, [ query, link, sectionName ] );
+	}, [ query, link, sectionName, postId, blogId ] );
 
 	const redirectBack = () => {
 		if ( canNavigateBack ) {
@@ -44,6 +49,20 @@ export const HelpCenterEmbedResult: React.FC = () => {
 		} else {
 			navigate( '/' );
 		}
+	};
+
+	const recordTracksAndRedirect = () => {
+		const tracksData = {
+			search_query: query,
+			force_site_id: true,
+			location: 'help-center',
+			section: sectionName,
+			result_url: link,
+			post_id: postId,
+			blog_id: blogId,
+		};
+
+		recordTracksEvent( `calypso_inlinehelp_article_click_external_link`, tracksData );
 	};
 
 	return (
@@ -57,6 +76,7 @@ export const HelpCenterEmbedResult: React.FC = () => {
 						<Button
 							href={ link ?? '' }
 							target="_blank"
+							onClick={ recordTracksAndRedirect }
 							className="help-center-embed-result__external-button"
 						>
 							<Icon icon={ external } size={ 20 } />
