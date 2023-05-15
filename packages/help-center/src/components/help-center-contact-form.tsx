@@ -28,7 +28,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useDebounce } from 'use-debounce';
-import { useExperiment } from 'calypso/lib/explat';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { getCurrentUserEmail, getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -155,6 +154,7 @@ export const HelpCenterContactForm = () => {
 	const params = new URLSearchParams( search );
 	const mode = params.get( 'mode' ) as Mode;
 	const overflow = params.get( 'overflow' ) === 'true';
+	const shouldLoadGptAnswer = params.get( 'loadGpt' ) === 'true';
 	const navigate = useNavigate();
 	const [ hideSiteInfo, setHideSiteInfo ] = useState( false );
 	const [ hasSubmittingError, setHasSubmittingError ] = useState< boolean >( false );
@@ -250,20 +250,16 @@ export const HelpCenterContactForm = () => {
 		Boolean( supportSite?.is_wpcom_atomic )
 	);
 
-	const featureEnabledGPTResponse = config.isEnabled( 'help/gpt-response' );
-	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
-		'caplyso_helpcenter_gpt_answer_contact_deflection',
-		{ isEligible: featureEnabledGPTResponse }
-	);
-
-	const showGptResponse =
-		! isLoadingExperimentAssignment && experimentAssignment?.variationName === 'treatment';
-
 	const showingSibylResults = params.get( 'show-results' ) === 'true';
 	const showingGPTResponse = params.get( 'show-gpt' ) === 'true';
 
 	function handleCTA() {
-		if ( ! showGptResponse && ! showingSibylResults && sibylArticles && sibylArticles.length > 0 ) {
+		if (
+			! shouldLoadGptAnswer &&
+			! showingSibylResults &&
+			sibylArticles &&
+			sibylArticles.length > 0
+		) {
 			params.set( 'show-results', 'true' );
 			navigate( {
 				pathname: '/contact-form',
@@ -272,7 +268,7 @@ export const HelpCenterContactForm = () => {
 			return;
 		}
 
-		if ( ! showingGPTResponse && showGptResponse ) {
+		if ( ! showingGPTResponse && shouldLoadGptAnswer ) {
 			params.set( 'show-gpt', 'true' );
 			navigate( {
 				pathname: '/contact-form',
@@ -449,7 +445,7 @@ export const HelpCenterContactForm = () => {
 
 	const { isFetching: isFetchingUrls, data: links } = useJetpackSearchAIQuery(
 		'9619154',
-		showGptResponse ? debouncedMessage : '',
+		shouldLoadGptAnswer ? debouncedMessage : '',
 		'urls'
 	);
 	const { isFetching: isFetchingResponse, data: gptResponse } = useJetpackSearchAIQuery(
@@ -490,7 +486,7 @@ export const HelpCenterContactForm = () => {
 		return isSubmitting ? formTitles.buttonSubmittingLabel : formTitles.buttonLabel;
 	};
 
-	if ( showGptResponse && showingGPTResponse ) {
+	if ( shouldLoadGptAnswer && showingGPTResponse ) {
 		return (
 			<div className="help-center__sibyl-articles-page">
 				<BackButton />

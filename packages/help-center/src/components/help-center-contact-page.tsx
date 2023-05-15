@@ -16,6 +16,7 @@ import classnames from 'classnames';
 import { FC } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, LinkProps } from 'react-router-dom';
+import { useExperiment } from 'calypso/lib/explat';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { getSectionName } from 'calypso/state/ui/selectors';
 /**
@@ -48,7 +49,20 @@ export const HelpCenterContactPage: FC = () => {
 		email
 	);
 	const { data: supportAvailability } = useSupportAvailability( 'CHAT' );
-	const isLoading = renderChat.isLoading || renderEmail.isLoading || isLoadingTickets;
+	const featureEnabledGPTResponse = config.isEnabled( 'help/gpt-response' );
+	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
+		'caplyso_helpcenter_gpt_answer_contact_deflection',
+		{ isEligible: featureEnabledGPTResponse }
+	);
+
+	const loadGpt =
+		! isLoadingExperimentAssignment && experimentAssignment?.variationName === 'treatment';
+
+	const isLoading =
+		renderChat.isLoading ||
+		renderEmail.isLoading ||
+		isLoadingTickets ||
+		isLoadingExperimentAssignment;
 
 	useEffect( () => {
 		if ( isLoading ) {
@@ -142,7 +156,7 @@ export const HelpCenterContactPage: FC = () => {
 				) }
 
 				<div className={ classnames( 'help-center-contact-page__boxes' ) }>
-					<Link to="/contact-form?mode=FORUM">
+					<Link to={ `/contact-form?mode=FORUM&loadGpt=${ loadGpt.toString() }` }>
 						<div
 							className={ classnames( 'help-center-contact-page__box', 'forum' ) }
 							role="button"
@@ -162,7 +176,7 @@ export const HelpCenterContactPage: FC = () => {
 						<div className={ classnames( { disabled: renderChat.state !== 'AVAILABLE' } ) }>
 							<ConditionalLink
 								active={ renderChat.state === 'AVAILABLE' }
-								to="/contact-form?mode=CHAT"
+								to={ `/contact-form?mode=CHAT&loadGpt=${ loadGpt.toString() }` }
 							>
 								<div
 									className={ classnames( 'help-center-contact-page__box', 'chat', {
@@ -194,7 +208,7 @@ export const HelpCenterContactPage: FC = () => {
 								renderChat.eligible &&
 								renderChat.state !== 'CLOSED' &&
 								renderChat.state !== 'AVAILABLE'
-							).toString() }` }
+							).toString() }&loadGpt=${ loadGpt.toString() }` }
 						>
 							<div
 								className={ classnames( 'help-center-contact-page__box', 'email' ) }
