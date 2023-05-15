@@ -577,11 +577,7 @@ class ThemeSheet extends Component {
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = name || placeholder;
 		const tag = author ? translate( 'by %(author)s', { args: { author: author } } ) : placeholder;
-		const shouldRenderButton =
-			! retired &&
-			! this.hasWpOrgThemeUpsellBanner() &&
-			! isWPForTeamsSite &&
-			! this.shouldRenderForStaging();
+		const shouldRenderButton = ! retired && ! isWPForTeamsSite && ! this.shouldRenderForStaging();
 
 		return (
 			<div className="theme__sheet-header">
