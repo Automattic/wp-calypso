@@ -13,6 +13,5 @@ if ( url ) {
 		dispatch( 'core/editor' ).resetEditorBlocks( [
 			createBlock( 'core/embed', { url, caption: title, type: 'wp-embed' } ),
 		] );
-		dispatch( 'core/editor' ).editPost( { title: title } );
 	} )();
 }

@@ -8,6 +8,7 @@ import {
 	TERM_ANNUALLY,
 } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
+import styled from '@emotion/styled';
 import { localize, TranslateResult, useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useSelector } from 'react-redux';
@@ -20,6 +21,11 @@ interface Props {
 	billingPeriod: number | null | undefined;
 	isMonthlyPlan: boolean;
 }
+
+export const StrikethroughText = styled.span`
+	color: var( --studio-gray-20 );
+	text-decoration: line-through;
+`;
 
 function usePerMonthDescription( {
 	isMonthlyPlan,
@@ -63,23 +69,51 @@ function usePerMonthDescription( {
 	}
 
 	if ( ! isMonthlyPlan ) {
-		const maybeDiscountedPrice =
-			planPrices.planDiscountedRawPrice || planPrices.discountedRawPrice || planPrices.rawPrice;
-		const fullTermPriceText =
-			currencyCode && maybeDiscountedPrice
-				? formatCurrency( maybeDiscountedPrice, currencyCode, { stripZeros: true } )
+		const discountedPrice = planPrices.planDiscountedRawPrice || planPrices.discountedRawPrice;
+		const fullTermDiscountedPriceText =
+			currencyCode && discountedPrice
+				? formatCurrency( discountedPrice, currencyCode, { stripZeros: true } )
 				: null;
-
-		if ( fullTermPriceText ) {
+		const rawPrice =
+			currencyCode && planPrices.rawPrice
+				? formatCurrency( planPrices.rawPrice, currencyCode, { stripZeros: true } )
+				: null;
+		if ( fullTermDiscountedPriceText ) {
 			if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {
-				return translate( 'per month, %(fullTermPriceText)s billed annually', {
-					args: { fullTermPriceText },
+				//per month, $96 billed annually $84 for the first year
+
+				return translate(
+					'per month, {{discount}} %(rawPrice)s billed annually{{/discount}} %(fullTermDiscountedPriceText)s for the first year',
+					{
+						args: { fullTermDiscountedPriceText, rawPrice },
+						components: {
+							discount: <StrikethroughText />,
+						},
+					}
+				);
+			}
+
+			if ( PLAN_BIENNIAL_PERIOD === billingPeriod ) {
+				return translate(
+					'per month, {{discount}} %(rawPrice)s billed annually{{/discount}} %(fullTermDiscountedPriceText)s for the first year',
+					{
+						args: { fullTermDiscountedPriceText, rawPrice },
+						components: {
+							discount: <StrikethroughText />,
+						},
+					}
+				);
+			}
+		} else if ( rawPrice ) {
+			if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {
+				return translate( 'per month, %(rawPrice)s billed annually', {
+					args: { rawPrice },
 				} );
 			}
 
 			if ( PLAN_BIENNIAL_PERIOD === billingPeriod ) {
-				return translate( 'per month, %(fullTermPriceText)s billed every two years', {
-					args: { fullTermPriceText },
+				return translate( 'per month, %(rawPrice)s billed every two years.', {
+					args: { rawPrice },
 				} );
 			}
 		}
@@ -97,7 +131,7 @@ const PlanFeatures2023GridBillingTimeframe: FunctionComponent< Props > = ( props
 	if ( isWpcomEnterpriseGridPlan( planName ) ) {
 		return (
 			<div className="plan-features-2023-grid__vip-price">
-				{ translate( 'Starts at {{b}}%(price)s{{/b}} yearly.', {
+				{ translate( 'Starts at {{b}}%(price)s{{/b}} yearly', {
 					args: { price },
 					components: { b: <b /> },
 					comment: 'Translators: the price is in US dollars for all users (US$25,000)',

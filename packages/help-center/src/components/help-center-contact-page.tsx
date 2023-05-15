@@ -5,7 +5,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { Spinner, GMClosureNotice } from '@automattic/components';
-import { useSupportAvailability } from '@automattic/data-stores';
+import { useSupportAvailability, useHasActiveSupport } from '@automattic/data-stores';
 import { isDefaultLocale, getLanguage, useLocale } from '@automattic/i18n-utils';
 import { Notice } from '@wordpress/components';
 import { useEffect, useMemo } from '@wordpress/element';
@@ -16,7 +16,6 @@ import classnames from 'classnames';
 import { FC } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, LinkProps } from 'react-router-dom';
-import { useActiveSupportTicketsQuery } from 'calypso/data/help/use-active-support-tickets-query';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { getSectionName } from 'calypso/state/ui/selectors';
 /**
@@ -44,9 +43,10 @@ export const HelpCenterContactPage: FC = () => {
 	const renderEmail = useShouldRenderEmailOption();
 	const renderChat = useShouldRenderChatOption();
 	const email = useSelector( getCurrentUserEmail );
-	const { data: tickets, isLoading: isLoadingTickets } = useActiveSupportTicketsQuery( email, {
-		staleTime: 30 * 60 * 1000,
-	} );
+	const { data: hasActiveTickets, isLoading: isLoadingTickets } = useHasActiveSupport(
+		'ticket',
+		email
+	);
 	const { data: supportAvailability } = useSupportAvailability( 'CHAT' );
 	const isLoading = renderChat.isLoading || renderEmail.isLoading || isLoadingTickets;
 
@@ -122,7 +122,7 @@ export const HelpCenterContactPage: FC = () => {
 			<BackButton />
 			<div className="help-center-contact-page__content">
 				<h3>{ __( 'Contact our WordPress.com experts', __i18n_text_domain__ ) }</h3>
-				<HelpCenterActiveTicketNotice tickets={ tickets } />
+				{ hasActiveTickets && <HelpCenterActiveTicketNotice tickets={ [ hasActiveTickets ] } /> }
 				{ /* Easter */ }
 				<GMClosureNotice
 					displayAt="2023-04-03 00:00Z"

@@ -22,15 +22,13 @@ import 'calypso/state/reader/init';
 export const slugify = ( tag ) =>
 	encodeURIComponent( trim( tag ).toLowerCase().replace( /\s+/g, '-' ).replace( /-{2,}/g, '-' ) );
 
-export const requestTags = ( tag ) => {
-	if ( ! tag ) {
-		return { type: READER_TAGS_REQUEST };
-	}
+export const requestTags = ( tag, locale = null ) => {
+	const slug = tag ? slugify( tag ) : null;
+	const payload = { locale, slug, tag };
 
-	const slug = slugify( tag );
 	return {
 		type: READER_TAGS_REQUEST,
-		payload: { tag, slug },
+		payload,
 	};
 };
 
