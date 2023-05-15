@@ -496,7 +496,7 @@ export const HelpCenterContactForm = () => {
 		return isSubmitting ? formTitles.buttonSubmittingLabel : formTitles.buttonLabel;
 	};
 
-	if ( ! thirdPartyCookiesAllowed ) {
+	if ( mode === 'CHAT' && ! thirdPartyCookiesAllowed ) {
 		return <ThirdPartyCookiesNotice />;
 	}
 
