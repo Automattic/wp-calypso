@@ -40,43 +40,30 @@ $jp-gray: #dcdcde;
 	}
 }
 
-.jetpack-emerald-button {
-	cursor: pointer;
-	padding: 4px 8px;
-	appearance: none;
-	text-align: center;
-
-	color: var(--studio-white);
-	background: var(--studio-black);
-	font-size: $font-body-extra-small;
+// Use base component styling of `@automattic/components/Button`
+.button.jetpack-emerald-button {
 	font-weight: 600;
-	text-decoration: none;
-	line-height: 20px;
 
-	border: 1px solid var(--studio-black);
-	border-radius: 4px;
-
-	&:hover:not(:disabled) {
-		border-color: $emerald-hover-color;
-		background: $emerald-hover-color;
+	&:focus {
+		box-shadow: none;
 	}
 
-	&:disabled {
-		background: $jp-gray;
-		color: var(--studio-gray-20);
-		border: 1px solid transparent;
+	&.is-primary {
+		color: var(--studio-white);
+		background: var(--studio-black);
 	}
 
-	&.is-secondary-jetpack-emerald {
+	// Use `transparent` styling as secondary styles
+	&.is-transparent {
 		color: var(--studio-black);
 		background: inset 0 0 0 1.5px var(--studio-white);
-		box-shadow: var(--studio-white);
 
-		&:hover:not(:disabled) {
+		&:hover:not(.is-busy) {
+			color: var(--studio-black);
 			background: var(--studio-gray-0);
 		}
 
-		&:disabled {
+		&.is-busy {
 			background: $jp-gray;
 			color: var(--studio-gray-20);
 			border: 1px solid transparent;

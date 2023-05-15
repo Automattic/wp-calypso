@@ -1,4 +1,4 @@
-import { ShortenedNumber } from '@automattic/components';
+import { ShortenedNumber, Button } from '@automattic/components';
 import { protect, akismet } from '@automattic/components/src/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -70,26 +70,28 @@ const ModuleCard: FunctionComponent< ModuleCardProps > = ( {
 					{ isError && canManageModule && (
 						<div className="stats-widget-module__info">
 							{ error === 'not_active' && (
-								<button
+								<Button
+									primary
 									className="jetpack-emerald-button"
-									disabled={ disabled }
+									busy={ disabled }
 									onClick={ onActivateProduct }
 								>
-									Activate
-								</button>
+									{ translate( 'Activate' ) }
+								</Button>
 							) }
 							{ error === 'not_installed' && (
-								<button
-									className="jetpack-emerald-button is-secondary-jetpack-emerald"
-									disabled={ disabled }
+								<Button
+									transparent
+									className="jetpack-emerald-button"
+									busy={ disabled }
 									onClick={ onActivateProduct }
 								>
-									Install
-								</button>
+									{ translate( 'Install' ) }
+								</Button>
 							) }
 							{ error === 'invalid_key' && (
 								<a href={ manageUrl } target="_self">
-									Manage Akismet key
+									{ translate( 'Manage Akismet key' ) }
 								</a>
 							) }
 							{ ! [ 'not_active', 'not_installed', 'invalid_key' ].includes( error ) && (
