@@ -32,13 +32,6 @@ export class SiteAssemblerFlow {
 	 */
 	async selectLayoutComponentType( type: LayoutType ): Promise< void > {
 		await this.page.getByRole( 'button', { name: type } ).click();
-
-		// Each header element contains an iframe that loads the preview in the card.
-		// These previews are lazy-loaded and thus only load if the card is in the
-		// viewport.
-		// By waiting for the network activity to cease for the lazy-load,
-		// mis-clicks and clicks being swallowed can be prevented.
-		await this.page.waitForLoadState( 'networkidle', { timeout: 15 * 1000 } );
 	}
 
 	/**
@@ -47,6 +40,28 @@ export class SiteAssemblerFlow {
 	 * @param {number} index Index of the item to choose. Defaults to 0.
 	 */
 	async selectLayoutComponent( index = 0 ): Promise< void > {
-		await this.page.locator( '.pattern-list-renderer__pattern-list-item' ).nth( index ).click();
+		const target = this.page
+			.getByRole( 'listbox', { name: 'Block patterns' } )
+			.getByRole( 'option' )
+			.nth( index )
+			.locator( 'iframe' );
+
+		// The iframe has an attribute of "height" that is present only if the preview has loaded.
+		// By checking for the presence of the "height" attribute on the last visible
+		// iframe, we can be sure that all visible component card has loaded.
+		// If the last iframe does not yet contain the "height" attribute, then wait
+		// for a predetermined timeout, then re-evaluate.
+		while (
+			! ( await target.evaluate( ( element ) => {
+				if ( element.style.height ) {
+					return true;
+				}
+				return false;
+			} ) )
+		) {
+			await this.page.waitForTimeout( 1000 );
+		}
+
+		await target.click();
 	}
 }
