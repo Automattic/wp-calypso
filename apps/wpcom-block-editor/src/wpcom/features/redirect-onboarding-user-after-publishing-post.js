@@ -14,7 +14,17 @@ export function redirectOnboardingUserAfterPublishingPost() {
 	const siteOrigin = getQueryArg( window.location.search, 'origin' );
 	const siteSlug = window.location.hostname;
 
-	dispatch( 'core/edit-post' ).closeGeneralSidebar();
+	const unsubscribeSidebar = subscribe( () => {
+		const isComplementaryAreaVisible = select( 'core/preferences' ).get(
+			'core/edit-post',
+			'isComplementaryAreaVisible'
+		);
+
+		if ( isComplementaryAreaVisible ) {
+			dispatch( 'core/edit-post' ).closeGeneralSidebar();
+			unsubscribeSidebar();
+		}
+	} );
 
 	const unsubscribe = subscribe( () => {
 		const isSavingPost = select( 'core/editor' ).isSavingPost();

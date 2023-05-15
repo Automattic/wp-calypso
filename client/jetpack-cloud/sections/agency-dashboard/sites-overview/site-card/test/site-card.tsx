@@ -12,6 +12,11 @@ import { siteColumns } from '../../utils';
 import SiteCard from '../index';
 import type { SiteData } from '../../types';
 
+jest.mock(
+	'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-backup-staging',
+	() => 'span'
+);
+
 describe( '<SiteCard>', () => {
 	beforeAll( () => {
 		window.matchMedia = jest.fn().mockImplementation( ( query ) => {

@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.0.0-beta.0 (2023-05-04)
+
+- Converted the package to TypeScript.
+- Added LinkedIn and Tumblr previews.
+- Updated Google Search, Facebook and Twitter previews to match their latest designs.
+
 ## v1.1.5 (2022-08-24)
 
 - Declare an optional peer dependency on `@babel/runtime`, for CommonJS environments. This dependency already existed previously, it just wasn't declared.

@@ -41,7 +41,6 @@ describe( 'Checkout contact step', () => {
 	const mainCartKey = 'foo.com' as CartKey;
 	const initialCart = getBasicCart();
 	const defaultPropsForMockCheckout = {
-		mainCartKey,
 		initialCart,
 	};
 
@@ -52,7 +51,7 @@ describe( 'Checkout contact step', () => {
 	getDomainsBySiteId.mockImplementation( () => [] );
 	isMarketplaceProduct.mockImplementation( () => false );
 	isJetpackSite.mockImplementation( () => false );
-	useCartKey.mockImplementation( () => mainCartKey );
+	( useCartKey as jest.Mock ).mockImplementation( () => mainCartKey );
 	mockMatchMediaOnWindow();
 
 	beforeEach( () => {

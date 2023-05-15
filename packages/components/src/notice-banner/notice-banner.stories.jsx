@@ -3,7 +3,7 @@ import Button from '../button';
 import NoticeBanner from './index';
 
 export default {
-	title: 'Notice Banner',
+	title: 'packages/components/Notice Banner',
 	component: NoticeBanner,
 	argTypes: {
 		level: {

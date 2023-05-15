@@ -75,8 +75,11 @@ export const is2023PricingGridActivePage = (
 		return isPricingGridEnabled;
 	}
 
-	// Is this the hosting flow?
-	if ( currentRoutePath.startsWith( '/start/hosting' ) ) {
+	// Is this a hosting flow?
+	if (
+		currentRoutePath.startsWith( '/start/hosting' ) ||
+		currentRoutePath.startsWith( '/setup/new-hosted-site' )
+	) {
 		return isPricingGridEnabled;
 	}
 
@@ -92,6 +95,20 @@ export const is2023PricingGridActivePage = (
 
 	// Is this the stepper domain upsell flow?
 	if ( currentRoutePath.startsWith( '/setup/domain-upsell' ) ) {
+		return isPricingGridEnabled;
+	}
+
+	if ( currentRoutePath.startsWith( '/setup/start-writing' ) ) {
+		return isPricingGridEnabled;
+	}
+
+	// Is this the stepper Plan step on the newsletter flow?
+	if ( currentRoutePath.startsWith( '/setup/newsletter/plans' ) ) {
+		return isPricingGridEnabled;
+	}
+
+	// Is this the stepper Plan step on the link-in-bio flow?
+	if ( currentRoutePath.startsWith( '/setup/link-in-bio/plans' ) ) {
 		return isPricingGridEnabled;
 	}
 

@@ -61,7 +61,8 @@
 		"purchases/new-payment-methods": true,
 		"site-indicator": false,
 		"upgrades/redirect-payments": true,
-		"jetpack/pricing-page-cart": true
+		"jetpack/pricing-page-cart": true,
+		"jetpack-social/multiple-connections": false
 	},
 	"enable_all_sections": false,
 	"sections": {

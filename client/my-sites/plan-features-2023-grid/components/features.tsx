@@ -1,10 +1,10 @@
 import { getPlanClass, FEATURE_CUSTOM_DOMAIN, isFreePlan } from '@automattic/calypso-products';
+import { DomainSuggestions } from '@automattic/data-stores';
 import styled from '@emotion/styled';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useGetWordPressSubdomain } from '../hooks/use-get-wordpress-subdomain';
+import { LoadingPlaceHolder } from '../../plans-features-main/components/loading-placeholder';
 import { PlanFeaturesItem } from './item';
-import { LoadingPlaceHolder } from './loading-placeholder';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import type { TransformedFeatureObject } from '../types';
 
@@ -23,16 +23,16 @@ const SubdomainSuggestion = styled.div`
 
 const FreePlanCustomDomainFeature: React.FC< { domainName: string } > = ( { domainName } ) => {
 	const {
-		data: wordPressSubdomainSuggestion,
+		data: wordPressSubdomainSuggestions,
 		isInitialLoading,
 		isError,
-	} = useGetWordPressSubdomain( domainName );
+	} = DomainSuggestions.useGetWordPressSubdomain( domainName );
 
 	return (
 		<SubdomainSuggestion>
 			<div className="is-domain-name">{ domainName }</div>
 			{ isInitialLoading && <LoadingPlaceHolder /> }
-			{ ! isError && <div>{ wordPressSubdomainSuggestion?.domain_name }</div> }
+			{ ! isError && <div>{ wordPressSubdomainSuggestions?.[ 0 ]?.domain_name }</div> }
 		</SubdomainSuggestion>
 	);
 };
@@ -54,6 +54,10 @@ const PlanFeatures2023GridFeatures: React.FC< {
 
 				const isFreePlanAndCustomDomainFeature =
 					currentFeature.getSlug() === FEATURE_CUSTOM_DOMAIN && isFreePlan( planName );
+
+				if ( isFreePlanAndCustomDomainFeature && ! domainName ) {
+					return null;
+				}
 
 				const divClasses = classNames( '', getPlanClass( planName ), {
 					'is-last-feature': featureIndex + 1 === features.length,

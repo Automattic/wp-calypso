@@ -24,7 +24,9 @@ type SubscriptionManagerSiteSubscriptionsQueryProps = {
 };
 
 const sortByDateSubscribed = ( a: SiteSubscription, b: SiteSubscription ) =>
-	b.date_subscribed.getTime() - a.date_subscribed.getTime();
+	a.date_subscribed instanceof Date && b.date_subscribed instanceof Date
+		? b.date_subscribed.getTime() - a.date_subscribed.getTime()
+		: 0;
 
 const sortByLastUpdated = ( a: SiteSubscription, b: SiteSubscription ) =>
 	a.last_updated instanceof Date && b.last_updated instanceof Date

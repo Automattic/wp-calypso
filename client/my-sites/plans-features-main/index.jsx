@@ -23,6 +23,7 @@ import {
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
 	TERM_TRIENNIALLY,
+	getPlanPath,
 	GROUP_WPCOM,
 	PLAN_PERSONAL,
 	TITAN_MAIL_MONTHLY_SLUG,
@@ -30,15 +31,18 @@ import {
 	is2023PricingGridActivePage,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
+import { WpcomPlansUI } from '@automattic/data-stores';
+import { useDispatch } from '@wordpress/data';
+import { useCallback } from '@wordpress/element';
 import { hasTranslation } from '@wordpress/i18n';
 import warn from '@wordpress/warning';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
+import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
@@ -46,6 +50,7 @@ import QuerySites from 'calypso/components/data/query-sites';
 import FormattedHeader from 'calypso/components/formatted-header';
 import HappychatConnection from 'calypso/components/happychat/connection-connected';
 import Notice from 'calypso/components/notice';
+import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
 import { getTld } from 'calypso/lib/domains';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import PlanFeatures from 'calypso/my-sites/plan-features';
@@ -59,6 +64,7 @@ import { selectSiteId as selectHappychatSiteId } from 'calypso/state/help/action
 import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
+import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
@@ -69,10 +75,126 @@ import {
 	isJetpackSite,
 	isJetpackSiteMultiSite,
 } from 'calypso/state/sites/selectors';
-
+import { FreePlanPaidDomainDialog } from './components/free-plan-paid-domain-dialog';
 import './style.scss';
 
+const OnboardingPricingGrid2023 = ( props ) => {
+	const {
+		plans,
+		visiblePlans,
+		basePlansPath,
+		customerType,
+		domainName,
+		isInSignup,
+		isJetpack,
+		isLandingPage,
+		isLaunchPage,
+		flowName,
+		onUpgradeClick,
+		selectedFeature,
+		selectedPlan,
+		withDiscount,
+		discountEndDate,
+		redirectTo,
+		siteId,
+		plansWithScroll,
+		isReskinned,
+		isPlansInsideStepper,
+		intervalType,
+		planTypeSelectorProps,
+		hidePlansFeatureComparison,
+		replacePaidDomainWithFreeDomain,
+		sitePlanSlug,
+		translate,
+		siteSlug,
+	} = props;
+
+	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
+	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
+	const showDomainUpsellDialog = useCallback( () => {
+		setShowDomainUpsellDialog( true );
+	}, [ setShowDomainUpsellDialog ] );
+
+	let planActionOverrides;
+	if ( sitePlanSlug && isFreePlan( sitePlanSlug ) ) {
+		planActionOverrides = {
+			loggedInFreePlan: domainFromHomeUpsellFlow
+				? {
+						callback: showDomainUpsellDialog,
+						text: translate( 'Keep my plan', { context: 'verb' } ),
+				  }
+				: {
+						callback: () => {
+							page.redirect( `/add-ons/${ siteSlug }` );
+						},
+						text: translate( 'Manage add-ons', { context: 'verb' } ),
+				  },
+		};
+	}
+
+	const asyncProps = {
+		basePlansPath,
+		domainName,
+		isInSignup,
+		isLandingPage,
+		isLaunchPage,
+		onUpgradeClick,
+		plans,
+		flowName,
+		redirectTo,
+		visiblePlans,
+		selectedFeature,
+		selectedPlan,
+		withDiscount,
+		discountEndDate,
+		withScroll: plansWithScroll,
+		popularPlanSpec: getPopularPlanSpec( {
+			flowName,
+			customerType,
+			isJetpack,
+			availablePlans: visiblePlans,
+		} ),
+		siteId,
+		isReskinned,
+		isPlansInsideStepper,
+		intervalType,
+		hidePlansFeatureComparison,
+		replacePaidDomainWithFreeDomain,
+		currentSitePlanSlug: sitePlanSlug,
+		planActionOverrides,
+	};
+
+	const asyncPlanFeatures2023Grid = (
+		<AsyncLoad
+			require="calypso/my-sites/plan-features-2023-grid"
+			{ ...asyncProps }
+			planTypeSelectorProps={ planTypeSelectorProps }
+		/>
+	);
+
+	return (
+		<div
+			className={ classNames(
+				'plans-features-main__group',
+				'is-wpcom',
+				`is-customer-${ customerType }`,
+				'is-2023-pricing-grid',
+				{
+					'is-scrollable': plansWithScroll,
+				}
+			) }
+			data-e2e-plans="wpcom"
+		>
+			{ asyncPlanFeatures2023Grid }
+		</div>
+	);
+};
+
 export class PlansFeaturesMain extends Component {
+	state = {
+		isFreePlanPaidDomainDialogOpen: false,
+	};
+
 	componentDidUpdate( prevProps ) {
 		/**
 		 * Happychat does not update with the selected site right now :(
@@ -102,86 +224,46 @@ export class PlansFeaturesMain extends Component {
 		}
 	}
 
-	render2023OnboardingPricingGrid( plans, visiblePlans ) {
-		const {
-			basePlansPath,
-			customerType,
-			domainName,
-			isInSignup,
-			isJetpack,
-			isLandingPage,
-			isLaunchPage,
-			flowName,
-			onUpgradeClick,
-			selectedFeature,
-			selectedPlan,
-			withDiscount,
-			discountEndDate,
-			redirectTo,
-			siteId,
-			plansWithScroll,
-			isReskinned,
-			isPlansInsideStepper,
-			intervalType,
-			planTypeSelectorProps,
-			hidePlansFeatureComparison,
-			replacePaidDomainWithFreeDomain,
-		} = this.props;
+	toggleIsFreePlanPaidDomainDialogOpen = () => {
+		this.setState( ( { isFreePlanPaidDomainDialogOpen } ) => ( {
+			isFreePlanPaidDomainDialogOpen: ! isFreePlanPaidDomainDialogOpen,
+		} ) );
+	};
 
-		const asyncProps = {
-			basePlansPath,
-			domainName,
-			isInSignup,
-			isLandingPage,
-			isLaunchPage,
-			onUpgradeClick,
-			plans,
-			flowName,
-			redirectTo,
-			visiblePlans,
-			selectedFeature,
-			selectedPlan,
-			withDiscount,
-			discountEndDate,
-			withScroll: plansWithScroll,
-			popularPlanSpec: getPopularPlanSpec( {
-				flowName,
-				customerType,
-				isJetpack,
-				availablePlans: visiblePlans,
-			} ),
-			siteId,
-			isReskinned,
-			isPlansInsideStepper,
-			intervalType,
-			hidePlansFeatureComparison,
-			replacePaidDomainWithFreeDomain,
-		};
-		const asyncPlanFeatures2023Grid = (
-			<AsyncLoad
-				require="calypso/my-sites/plan-features-2023-grid"
-				{ ...asyncProps }
-				planTypeSelectorProps={ planTypeSelectorProps }
+	onUpgradeClick = ( cartItemForPlan ) => {
+		const { domainName, onUpgradeClick, siteSlug, flowName } = this.props;
+		// The `cartItemForPlan` var is null if the free plan is selected
+		if ( cartItemForPlan == null && 'onboarding' === flowName && domainName ) {
+			this.toggleIsFreePlanPaidDomainDialogOpen();
+			return;
+		}
+		if ( onUpgradeClick ) {
+			onUpgradeClick( cartItemForPlan );
+			return;
+		}
+		const planPath = getPlanPath( cartItemForPlan?.product_slug ) || '';
+		const checkoutUrlWithArgs = `/checkout/${ siteSlug }/${ planPath }`;
+		page( checkoutUrlWithArgs );
+	};
+
+	renderFreePlanPaidDomainModal = () => {
+		const { domainName, replacePaidDomainWithFreeDomain, onUpgradeClick } = this.props;
+		return (
+			<FreePlanPaidDomainDialog
+				domainName={ domainName }
+				suggestedPlanSlug={ PLAN_PERSONAL }
+				onClose={ this.toggleIsFreePlanPaidDomainDialogOpen }
+				onFreePlanSelected={ ( freeDomainSuggestion ) => {
+					replacePaidDomainWithFreeDomain( freeDomainSuggestion );
+					onUpgradeClick( null );
+				} }
+				onPlanSelected={ () => {
+					const cartItemForPlan = getCartItemForPlan( PLAN_PERSONAL );
+					onUpgradeClick( cartItemForPlan );
+				} }
 			/>
 		);
-
-		return (
-			<div
-				className={ classNames(
-					'plans-features-main__group',
-					'is-wpcom',
-					`is-customer-${ customerType }`,
-					'is-2023-pricing-grid',
-					{
-						'is-scrollable': plansWithScroll,
-					}
-				) }
-				data-e2e-plans="wpcom"
-			>
-				{ asyncPlanFeatures2023Grid }
-			</div>
-		);
-	}
+	};
 
 	// TODO:
 	// These legacy components should also be loaded in async.
@@ -402,7 +484,6 @@ export class PlansFeaturesMain extends Component {
 	getVisiblePlansForPlanFeatures( availablePlans ) {
 		const {
 			customerType,
-			flowName,
 			selectedPlan,
 			plansWithScroll,
 			isAllPaidPlansShown,
@@ -412,6 +493,7 @@ export class PlansFeaturesMain extends Component {
 			hideFreePlan,
 			hidePersonalPlan,
 			hidePremiumPlan,
+			hideBusinessPlan,
 			hideEcommercePlan,
 		} = this.props;
 
@@ -444,16 +526,12 @@ export class PlansFeaturesMain extends Component {
 			plans = plans.filter( ( planSlug ) => ! isPremiumPlan( planSlug ) );
 		}
 
-		if ( hideEcommercePlan ) {
-			plans = plans.filter( ( planSlug ) => ! isEcommercePlan( planSlug ) );
+		if ( hideBusinessPlan ) {
+			plans = plans.filter( ( planSlug ) => ! isBusinessPlan( planSlug ) );
 		}
 
-		// TODO
-		// Remove this once we migrate them to the new pricing grid
-		if ( isNewsletterOrLinkInBioFlow( flowName ) ) {
-			plans = plans.filter(
-				( planSlug ) => ! isBusinessPlan( planSlug ) && ! isEcommercePlan( planSlug )
-			);
+		if ( hideEcommercePlan ) {
+			plans = plans.filter( ( planSlug ) => ! isEcommercePlan( planSlug ) );
 		}
 
 		if ( is2023PricingGridVisible ) {
@@ -563,9 +641,16 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	renderPlansGrid( plans, visiblePlans ) {
-		return this.props.is2023PricingGridVisible
-			? this.render2023OnboardingPricingGrid( plans, visiblePlans )
-			: this.renderLegacyPricingGrid( plans, visiblePlans );
+		return this.props.is2023PricingGridVisible ? (
+			<OnboardingPricingGrid2023
+				{ ...this.props }
+				plans={ plans }
+				visiblePlans={ visiblePlans }
+				onUpgradeClick={ this.onUpgradeClick }
+			/>
+		) : (
+			this.renderLegacyPricingGrid( plans, visiblePlans )
+		);
 	}
 
 	render() {
@@ -585,9 +670,21 @@ export class PlansFeaturesMain extends Component {
 		 * we pass `visiblePlans` to its `plans` prop.
 		 */
 		const term = this.getPlanBillingPeriod( intervalType, getPlan( selectedPlan )?.term );
-		const planTypes = this.props.planTypes || this.getDefaultPlanTypes();
-		const plans = this.getPlansFromTypes( planTypes, GROUP_WPCOM, term );
-		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
+		const defaultPlanTypes = this.getDefaultPlanTypes();
+		const planTypes = this.props.planTypes || defaultPlanTypes;
+		let plans = this.getPlansFromTypes( planTypes, GROUP_WPCOM, term );
+		const filteredPlans = plans;
+
+		/*
+		 * We need to keep all the plans in the plans variable,
+		 * The filtered planTypes should be reflected in visible plans only.
+		 */
+		if ( is2023PricingGridVisible ) {
+			plans = this.getPlansFromTypes( defaultPlanTypes, GROUP_WPCOM, term );
+		}
+
+		const visiblePlans = this.getVisiblePlansForPlanFeatures( filteredPlans );
+
 		const kindOfPlanTypeSelector = this.getKindOfPlanTypeSelector( this.props );
 
 		// If advertising plans for a certain feature, ensure user has pressed "View all plans" before they can see others
@@ -627,6 +724,7 @@ export class PlansFeaturesMain extends Component {
 						planTypeSelectorProps={ planTypeSelectorProps }
 					/>
 				) }
+				{ this.state.isFreePlanPaidDomainDialogOpen && this.renderFreePlanPaidDomainModal() }
 				{ this.renderPlansGrid( plans, visiblePlans ) }
 				{ this.mayRenderFAQ() }
 			</div>

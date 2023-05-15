@@ -137,6 +137,7 @@ import {
 	FEATURE_WP_SUBDOMAIN,
 	FEATURE_WP_SUBDOMAIN_SIGNUP,
 	PREMIUM_DESIGN_FOR_STORES,
+	FEATURE_JETPACK_1GB_BACKUP_STORAGE,
 	FEATURE_JETPACK_10GB_BACKUP_STORAGE,
 	FEATURE_JETPACK_1TB_BACKUP_STORAGE,
 	FEATURE_JETPACK_1_YEAR_ARCHIVE_ACTIVITY_LOG,
@@ -166,7 +167,6 @@ import {
 	FEATURE_CUSTOMIZE_THEMES_BUTTONS_COLORS,
 	FEATURE_TRACK_VIEWS_CLICKS,
 	FEATURE_COLLECT_PAYMENTS_LINK_IN_BIO,
-	FEATURE_LINK_IN_BIO_THEMES_CUSTOMIZATION,
 	FEATURE_UNLIMITED_TRAFFIC,
 	FEATURE_MANAGED_HOSTING,
 	WPCOM_FEATURES_NO_ADVERTS,
@@ -265,6 +265,10 @@ import {
 	FEATURE_LIVE_SHIPPING_RATES,
 	FEATURE_DISCOUNTED_SHIPPING,
 	FEATURE_PRINT_SHIPPING_LABELS,
+	FEATURE_NEWSLETTER_IMPORT_SUBSCRIBERS_FREE,
+	FEATURE_PAYMENT_TRANSACTION_FEES_8,
+	FEATURE_PAYMENT_TRANSACTION_FEES_4,
+	FEATURE_PAYMENT_TRANSACTION_FEES_2,
 	isPersonalPlan,
 	isPremiumPlan,
 	isEcommercePlan,
@@ -1570,6 +1574,10 @@ export const FEATURES_LIST: FeatureList = {
 	},
 
 	/* START - Jetpack tiered product-specific features */
+	[ FEATURE_JETPACK_1GB_BACKUP_STORAGE ]: {
+		getSlug: () => FEATURE_JETPACK_1GB_BACKUP_STORAGE,
+		getTitle: () => i18n.translate( 'Starts with 1GB of storage' ),
+	},
 	[ FEATURE_JETPACK_10GB_BACKUP_STORAGE ]: {
 		getSlug: () => FEATURE_JETPACK_10GB_BACKUP_STORAGE,
 		getTitle: () => i18n.translate( 'Starts with 10GB of storage' ),
@@ -1645,7 +1653,7 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_UNLIMITED_SUBSCRIBERS ]: {
 		getSlug: () => FEATURE_UNLIMITED_SUBSCRIBERS,
-		getTitle: () => i18n.translate( 'Unlimited subscribers' ),
+		getTitle: () => i18n.translate( 'Import unlimited subscribers' ),
 	},
 	[ FEATURE_IMPORT_SUBSCRIBERS ]: {
 		getSlug: () => FEATURE_IMPORT_SUBSCRIBERS,
@@ -1693,12 +1701,23 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_COLLECT_PAYMENTS_LINK_IN_BIO ]: {
 		getSlug: () => FEATURE_COLLECT_PAYMENTS_LINK_IN_BIO,
-		getTitle: () =>
-			i18n.translate( 'Monetize your Link in Bio with payments, subscriptions, and donations' ),
+		getTitle: () => i18n.translate( 'Charge for premium content' ),
 	},
-	[ FEATURE_LINK_IN_BIO_THEMES_CUSTOMIZATION ]: {
-		getSlug: () => FEATURE_LINK_IN_BIO_THEMES_CUSTOMIZATION,
-		getTitle: () => i18n.translate( 'Advanced link in bio themes and customization' ),
+	[ FEATURE_NEWSLETTER_IMPORT_SUBSCRIBERS_FREE ]: {
+		getSlug: () => FEATURE_NEWSLETTER_IMPORT_SUBSCRIBERS_FREE,
+		getTitle: () => i18n.translate( 'Import up to 100 subscribers' ),
+	},
+	[ FEATURE_PAYMENT_TRANSACTION_FEES_8 ]: {
+		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_8,
+		getTitle: () => i18n.translate( '8% transaction fee for payments + Stripe fees' ),
+	},
+	[ FEATURE_PAYMENT_TRANSACTION_FEES_4 ]: {
+		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_4,
+		getTitle: () => i18n.translate( '4% transaction fee for payments + Stripe fees' ),
+	},
+	[ FEATURE_PAYMENT_TRANSACTION_FEES_2 ]: {
+		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_2,
+		getTitle: () => i18n.translate( '2% transaction fee for payments + Stripe fees' ),
 	},
 	[ FEATURE_UNLIMITED_TRAFFIC ]: {
 		getSlug: () => FEATURE_UNLIMITED_TRAFFIC,

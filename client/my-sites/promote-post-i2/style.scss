@@ -15,6 +15,59 @@
 	background-color: transparent;
 }
 
+body.is-section-promote-post-i2 {
+	.layout__content {
+		position: relative;
+		margin: 0;
+		padding: calc(32px + 24px) 0 32px var(--sidebar-width-max);
+
+		.main {
+			margin: 0;
+
+			&.is-wide-layout {
+				max-width: 100%; // 1040px
+
+				.section-nav-tabs__list {
+					margin: 0 64px;
+					max-width: 1040px;
+					width: 100%;
+				}
+
+				.promote-post-i2__search-bar-wrapper,
+				.posts-list__table,
+				.campaigns-list__table,
+				.posts-list__loading-container,
+				.campaigns-list__loading-container {
+					margin: 0 64px;
+					max-width: 1040px;
+					width: calc(100% - 128px);
+				}
+			}
+
+			.advertising__page-header {
+				// Without a banner
+				.formatted-header__title {
+					color: $studio-gray-100;
+					font-family: $font-sf-pro-display;
+					font-style: normal;
+					font-weight: 500;
+					font-size: 1.5rem;
+					letter-spacing: 0.36px;
+					line-height: 1.33;
+				}
+
+				// With a banner
+				&_has-banner .formatted-header__title {
+					font-family: $font-sf-pro-text;
+					font-size: 0.875rem;
+					letter-spacing: -0.15px;
+					line-height: 1.43;
+				}
+			}
+		}
+	}
+}
+
 .promote-post-i2 {
 	@media (min-width: 481px) {
 		.section-nav-tab {
@@ -118,7 +171,7 @@
 	.promote-post-i2 .post-item__link {
 		display: none;
 	}
-	.layout.has-no-masterbar.is-group-sites.is-section-promote-post .layout__content {
+	.layout.has-no-masterbar.is-group-sites.is-section-promote-post-i2 .layout__content {
 		padding-top: 0;
 	}
 

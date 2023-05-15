@@ -20,6 +20,7 @@ import {
 	EditorInlineBlockInserterComponent,
 	DimensionsSettings,
 	CookieBannerComponent,
+	EditorComponent,
 } from '..';
 import { getIdFromBlock } from '../../element-helper';
 import envVariables from '../../env-variables';
@@ -45,9 +46,7 @@ const selectors = {
  */
 export class FullSiteEditorPage {
 	private page: Page;
-	private editor: Locator;
-	private editorCanvas: Locator;
-
+	private editor: EditorComponent;
 	private editorToolbarComponent: EditorToolbarComponent;
 	private editorSidebarBlockInserterComponent: EditorSidebarBlockInserterComponent;
 	private editorInlineBlockInserterComponent: EditorInlineBlockInserterComponent;
@@ -71,11 +70,7 @@ export class FullSiteEditorPage {
 	constructor( page: Page ) {
 		this.page = page;
 
-		this.editor = page.locator( selectors.editorRoot );
-
-		this.editorCanvas = this.editor
-			.frameLocator( selectors.editorCanvasIframe )
-			.locator( selectors.editorCanvasRoot );
+		this.editor = new EditorComponent( page );
 
 		this.editorToolbarComponent = new EditorToolbarComponent( page, this.editor );
 		this.editorWelcomeTourComponent = new EditorWelcomeTourComponent( page, this.editor );
@@ -130,11 +125,9 @@ export class FullSiteEditorPage {
 	 * Waits until the site editor is fully loaded.
 	 */
 	async waitUntilLoaded(): Promise< void > {
-		// There are more stages to the site editor loading than the regular editor.
-		// The most reliable "last" thing to load is the canvas iframe
-		await this.editorCanvas.waitFor( { timeout: 60 * 1000 } );
+		const editorCanvas = await this.editor.canvas();
 		// But then, template parts load async afterwards!
-		const spinnerLocator = this.editorCanvas.locator( selectors.templateLoadingSpinner );
+		const spinnerLocator = editorCanvas.locator( selectors.templateLoadingSpinner );
 		// There could be many spinners, so we will keep waiting for the first to be detached.
 		await spinnerLocator.first().waitFor( { state: 'detached' } );
 	}
@@ -215,7 +208,8 @@ export class FullSiteEditorPage {
 			await this.editorToolbarComponent.closeBlockInserter();
 		}
 
-		return this.editorCanvas.locator( `#${ addedBlockId }` );
+		const editorCanvas = await this.editor.canvas();
+		return editorCanvas.locator( `#${ addedBlockId }` );
 	}
 
 	/**
@@ -248,10 +242,11 @@ export class FullSiteEditorPage {
 		openInlineInserter: OpenInlineInserter
 	): Promise< Locator > {
 		// First, launch the inline inserter in the way expected by the script.
-		await openInlineInserter( this.editor ); // This needed button is almost always NOT in the canvas iframe.
+		await openInlineInserter( await this.editor.canvas() ); // This needed button is almost always NOT in the canvas iframe.
 		await this.addBlockFromInserter( blockName, this.editorInlineBlockInserterComponent );
 		const addedBlockId = await this.getIdOfAddedBlock( blockEditorSelector );
-		return this.editorCanvas.locator( `#${ addedBlockId }` );
+		const editorCanvas = await this.editor.canvas();
+		return editorCanvas.locator( `#${ addedBlockId }` );
 	}
 
 	/**
@@ -276,8 +271,9 @@ export class FullSiteEditorPage {
 	 * @returns The ID of the recently added block.
 	 */
 	private async getIdOfAddedBlock( blockEditorSelector: string ): Promise< string > {
+		const editorCanvas = await this.editor.canvas();
 		// The added block will always either be focused, or will be the parent of a focused block.
-		const addedBlockLocator = this.editorCanvas.locator(
+		const addedBlockLocator = editorCanvas.locator(
 			`${ selectors.focusedBlock( blockEditorSelector ) },${ selectors.parentOfFocusedBlock(
 				blockEditorSelector
 			) }`
@@ -307,19 +303,20 @@ export class FullSiteEditorPage {
 	 * @param {string|Locator} block A way to locate the block (Locator or selector).
 	 */
 	async focusBlock( block: string | Locator ): Promise< void > {
+		const editorCanvas = await this.editor.canvas();
 		let originalBlockLocator: Locator;
 		let focusedBlockLocator: Locator;
 		if ( typeof block === 'string' ) {
 			// It's a selector.
-			originalBlockLocator = this.editorCanvas.locator( block );
-			focusedBlockLocator = this.editorCanvas.locator( selectors.focusedBlock( block ) );
+			originalBlockLocator = editorCanvas.locator( block );
+			focusedBlockLocator = editorCanvas.locator( selectors.focusedBlock( block ) );
 		} else {
 			// It's a Locator.
 			originalBlockLocator = block; // We can just re-use the Locator.
 			// For the focused Locator, we have to append a class. We can't do this with a Locator.
 			// So, we need to find the block's ID to use to create a focused locator.
 			const blockId = await getIdFromBlock( block );
-			focusedBlockLocator = this.editorCanvas.locator( selectors.focusedBlock( `#${ blockId }` ) );
+			focusedBlockLocator = editorCanvas.locator( selectors.focusedBlock( `#${ blockId }` ) );
 		}
 
 		// Some blocks are buried within parent blocks that may eat the first click.
@@ -384,10 +381,11 @@ export class FullSiteEditorPage {
 	async save(
 		{ checkPreSaveNotices }: { checkPreSaveNotices: boolean } = { checkPreSaveNotices: false }
 	): Promise< void > {
+		const editorParent = await this.editor.parent();
 		await this.clearExistingSaveConfirmationToast();
 		await this.editorToolbarComponent.saveSiteEditor();
 		if ( checkPreSaveNotices ) {
-			const limitedGlobalStylesPreSaveNotice = this.editor.locator(
+			const limitedGlobalStylesPreSaveNotice = editorParent.locator(
 				selectors.limitedGlobalStylesPreSaveNotice
 			);
 			if ( this.hasCustomStyles ) {
@@ -405,7 +403,8 @@ export class FullSiteEditorPage {
 	 * Open the navigation sidebar.
 	 */
 	async openNavSidebar(): Promise< void > {
-		const openButton = this.editor.locator( 'button[aria-label="Open Navigation Sidebar"]' );
+		const editorParent = await this.editor.parent();
+		const openButton = editorParent.locator( 'button[aria-label="Open Navigation Sidebar"]' );
 
 		await openButton.click();
 	}
@@ -420,9 +419,11 @@ export class FullSiteEditorPage {
 				'There is no standardized way to close the site editor navigation sidebar on mobile. Navigate to a template or template part instead.'
 			);
 		}
-		const openButton = this.editor.locator( 'button[aria-label="Open Navigation Sidebar"]' );
+		const editorParent = await this.editor.parent();
+		const editorCanvas = await this.editor.canvas();
+		const openButton = editorParent.locator( 'button[aria-label="Open Navigation Sidebar"]' );
 
-		await Promise.race( [ openButton.waitFor(), this.editorCanvas.click() ] );
+		await Promise.race( [ openButton.waitFor(), editorCanvas.locator( 'body' ).click() ] );
 	}
 
 	/**
@@ -478,7 +479,8 @@ export class FullSiteEditorPage {
 	 * Closes the site styles welcome guide.
 	 */
 	private async closeStylesWelcomeGuide(): Promise< void > {
-		const locator = this.editor.locator( selectors.closeStylesWelcomeGuideButton );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.closeStylesWelcomeGuideButton );
 		await locator.click( { timeout: 5 * 1000 } );
 	}
 
@@ -563,7 +565,8 @@ export class FullSiteEditorPage {
 	 * Selects the "Try it out" option on the Limited Global Styles upgrade modal.
 	 */
 	async tryGlobalStyles(): Promise< void > {
-		const locator = this.editor.locator( selectors.limitedGlobalStylesModalTryButton );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.limitedGlobalStylesModalTryButton );
 		await locator.click();
 	}
 
@@ -631,7 +634,8 @@ export class FullSiteEditorPage {
 	 * @param {string} text The text we expect on the confirmation toast.
 	 */
 	async waitForConfirmationToast( text: string ): Promise< void > {
-		const locator = this.editor.locator( selectors.confirmationToast( text ) );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.confirmationToast( text ) );
 		await locator.waitFor();
 	}
 
@@ -639,7 +643,8 @@ export class FullSiteEditorPage {
 	 * Clears existing save confirmation toasts.
 	 */
 	private async clearExistingSaveConfirmationToast(): Promise< void > {
-		const toastLocator = this.editor.locator( selectors.confirmationToast( 'Site updated.' ) );
+		const editorParent = await this.editor.parent();
+		const toastLocator = editorParent.locator( selectors.confirmationToast( 'Site updated.' ) );
 		if ( ( await toastLocator.count() ) > 0 ) {
 			await toastLocator.click();
 		}

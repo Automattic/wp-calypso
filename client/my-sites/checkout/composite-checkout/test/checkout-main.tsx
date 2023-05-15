@@ -7,6 +7,8 @@ import userEvent from '@testing-library/user-event';
 import { dispatch } from '@wordpress/data';
 import React from 'react';
 import { navigate } from 'calypso/lib/navigate';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
@@ -16,6 +18,7 @@ import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import {
 	domainProduct,
 	planWithoutDomain,
+	planWithoutDomainMonthly,
 	mockSetCartEndpointWith,
 	getActivePersonalPlanDataForType,
 	countryList,
@@ -37,6 +40,7 @@ jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
 jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
 jest.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
 jest.mock( 'calypso/lib/navigate' );
+jest.mock( 'calypso/state/notices/actions' );
 
 describe( 'CheckoutMain', () => {
 	const initialCart = getBasicCart();
@@ -53,10 +57,17 @@ describe( 'CheckoutMain', () => {
 		( getPlansBySiteId as jest.Mock ).mockImplementation( () => ( {
 			data: getActivePersonalPlanDataForType( 'yearly' ),
 		} ) );
+		( errorNotice as jest.Mock ).mockImplementation( ( value ) => {
+			return {
+				type: 'errorNotice',
+				value,
+			};
+		} );
 		( hasLoadedSiteDomains as jest.Mock ).mockImplementation( () => true );
 		( getDomainsBySiteId as jest.Mock ).mockImplementation( () => [] );
 		( isMarketplaceProduct as jest.Mock ).mockImplementation( () => false );
 		( isJetpackSite as jest.Mock ).mockImplementation( () => false );
+		( useCartKey as jest.Mock ).mockImplementation( () => mainCartKey );
 
 		mockGetPaymentMethodsEndpoint( [] );
 		mockLogStashEndpoint();
@@ -66,13 +77,7 @@ describe( 'CheckoutMain', () => {
 	} );
 
 	it( 'renders the line items with prices', async () => {
-		render(
-			<MockCheckout
-				mainCartKey={ mainCartKey }
-				initialCart={ initialCart }
-				setCart={ mockSetCartEndpoint }
-			/>
-		);
+		render( <MockCheckout initialCart={ initialCart } setCart={ mockSetCartEndpoint } /> );
 		await waitFor( () => {
 			screen
 				.getAllByLabelText( 'WordPress.com Personal' )
@@ -84,7 +89,6 @@ describe( 'CheckoutMain', () => {
 		const cartChanges = { products: [] };
 		render(
 			<MockCheckout
-				mainCartKey={ mainCartKey }
 				initialCart={ initialCart }
 				cartChanges={ cartChanges }
 				useUndefinedSiteId
@@ -103,13 +107,7 @@ describe( 'CheckoutMain', () => {
 	} );
 
 	it( 'renders the tax amount', async () => {
-		render(
-			<MockCheckout
-				mainCartKey={ mainCartKey }
-				initialCart={ initialCart }
-				setCart={ mockSetCartEndpoint }
-			/>
-		);
+		render( <MockCheckout initialCart={ initialCart } setCart={ mockSetCartEndpoint } /> );
 		await waitFor( () => {
 			screen
 				.getAllByLabelText( 'Tax' )
@@ -118,13 +116,7 @@ describe( 'CheckoutMain', () => {
 	} );
 
 	it( 'renders the total amount', async () => {
-		render(
-			<MockCheckout
-				mainCartKey={ mainCartKey }
-				initialCart={ initialCart }
-				setCart={ mockSetCartEndpoint }
-			/>
-		);
+		render( <MockCheckout initialCart={ initialCart } setCart={ mockSetCartEndpoint } /> );
 		await waitFor( () => {
 			screen
 				.getAllByLabelText( 'Total' )
@@ -133,13 +125,7 @@ describe( 'CheckoutMain', () => {
 	} );
 
 	it( 'renders the checkout summary', async () => {
-		render(
-			<MockCheckout
-				mainCartKey={ mainCartKey }
-				initialCart={ initialCart }
-				setCart={ mockSetCartEndpoint }
-			/>
-		);
+		render( <MockCheckout initialCart={ initialCart } setCart={ mockSetCartEndpoint } /> );
 		expect( await screen.findByText( 'Purchase Details' ) ).toBeInTheDocument();
 		expect( navigate ).not.toHaveBeenCalled();
 	} );
@@ -148,7 +134,6 @@ describe( 'CheckoutMain', () => {
 		const cartChanges = { products: [ planWithoutDomain, domainProduct ] };
 		render(
 			<MockCheckout
-				mainCartKey={ mainCartKey }
 				initialCart={ initialCart }
 				setCart={ mockSetCartEndpoint }
 				cartChanges={ cartChanges }
@@ -173,7 +158,6 @@ describe( 'CheckoutMain', () => {
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render(
 			<MockCheckout
-				mainCartKey={ mainCartKey }
 				initialCart={ initialCart }
 				setCart={ mockSetCartEndpoint }
 				cartChanges={ cartChanges }
@@ -197,7 +181,6 @@ describe( 'CheckoutMain', () => {
 		const cartChanges = { products: [ planWithoutDomain, domainProduct ] };
 		render(
 			<MockCheckout
-				mainCartKey={ mainCartKey }
 				initialCart={ initialCart }
 				setCart={ mockSetCartEndpoint }
 				cartChanges={ cartChanges }
@@ -221,7 +204,6 @@ describe( 'CheckoutMain', () => {
 		const cartChanges = { products: [] };
 		render(
 			<MockCheckout
-				mainCartKey={ mainCartKey }
 				initialCart={ initialCart }
 				setCart={ mockSetCartEndpoint }
 				cartChanges={ cartChanges }
@@ -237,7 +219,6 @@ describe( 'CheckoutMain', () => {
 		const additionalProps = { productAliasFromUrl: 'personal' };
 		render(
 			<MockCheckout
-				mainCartKey={ mainCartKey }
 				initialCart={ initialCart }
 				setCart={ mockSetCartEndpoint }
 				cartChanges={ cartChanges }
@@ -254,7 +235,6 @@ describe( 'CheckoutMain', () => {
 		const additionalProps = { productAliasFromUrl: 'personal' };
 		render(
 			<MockCheckout
-				mainCartKey={ mainCartKey }
 				initialCart={ initialCart }
 				setCart={ mockSetCartEndpoint }
 				cartChanges={ cartChanges }
@@ -276,7 +256,6 @@ describe( 'CheckoutMain', () => {
 		const additionalProps = { productAliasFromUrl: 'jetpack_scan' };
 		render(
 			<MockCheckout
-				mainCartKey={ mainCartKey }
 				initialCart={ initialCart }
 				setCart={ mockSetCartEndpoint }
 				cartChanges={ cartChanges }
@@ -298,7 +277,6 @@ describe( 'CheckoutMain', () => {
 		const additionalProps = { productAliasFromUrl: 'jetpack_scan,jetpack_backup_daily' };
 		render(
 			<MockCheckout
-				mainCartKey={ mainCartKey }
 				initialCart={ initialCart }
 				setCart={ mockSetCartEndpoint }
 				cartChanges={ cartChanges }
@@ -325,7 +303,6 @@ describe( 'CheckoutMain', () => {
 
 		render(
 			<MockCheckout
-				mainCartKey={ mainCartKey }
 				initialCart={ initialCart }
 				setCart={ mockSetCartEndpoint }
 				cartChanges={ cartChanges }
@@ -350,7 +327,6 @@ describe( 'CheckoutMain', () => {
 
 		render(
 			<MockCheckout
-				mainCartKey={ mainCartKey }
 				initialCart={ initialCart }
 				setCart={ mockSetCartEndpoint }
 				cartChanges={ cartChanges }
@@ -371,7 +347,6 @@ describe( 'CheckoutMain', () => {
 		await act( async () => {
 			render(
 				<MockCheckout
-					mainCartKey={ mainCartKey }
 					initialCart={ initialCart }
 					setCart={ mockSetCartEndpoint }
 					cartChanges={ cartChanges }
@@ -387,7 +362,6 @@ describe( 'CheckoutMain', () => {
 		const additionalProps = { productAliasFromUrl: 'concierge-session' };
 		render(
 			<MockCheckout
-				mainCartKey={ mainCartKey }
 				initialCart={ initialCart }
 				setCart={ mockSetCartEndpoint }
 				cartChanges={ cartChanges }
@@ -410,7 +384,6 @@ describe( 'CheckoutMain', () => {
 		await act( async () => {
 			render(
 				<MockCheckout
-					mainCartKey={ mainCartKey }
 					initialCart={ initialCart }
 					setCart={ mockSetCartEndpoint }
 					cartChanges={ cartChanges }
@@ -426,7 +399,6 @@ describe( 'CheckoutMain', () => {
 		const additionalProps = { productAliasFromUrl: 'theme:ovation' };
 		render(
 			<MockCheckout
-				mainCartKey={ mainCartKey }
 				initialCart={ initialCart }
 				setCart={ mockSetCartEndpoint }
 				cartChanges={ cartChanges }
@@ -452,7 +424,6 @@ describe( 'CheckoutMain', () => {
 		};
 		render(
 			<MockCheckout
-				mainCartKey={ mainCartKey }
 				initialCart={ initialCart }
 				setCart={ mockSetCartEndpoint }
 				additionalProps={ additionalProps }
@@ -473,7 +444,6 @@ describe( 'CheckoutMain', () => {
 		};
 		render(
 			<MockCheckout
-				mainCartKey={ mainCartKey }
 				initialCart={ initialCart }
 				setCart={ mockSetCartEndpoint }
 				additionalProps={ additionalProps }
@@ -490,7 +460,6 @@ describe( 'CheckoutMain', () => {
 		await act( async () => {
 			render(
 				<MockCheckout
-					mainCartKey={ mainCartKey }
 					initialCart={ initialCart }
 					setCart={ mockSetCartEndpoint }
 					cartChanges={ cartChanges }
@@ -506,7 +475,6 @@ describe( 'CheckoutMain', () => {
 		const additionalProps = { productAliasFromUrl: 'domain-mapping:bar.com' };
 		render(
 			<MockCheckout
-				mainCartKey={ mainCartKey }
 				initialCart={ initialCart }
 				setCart={ mockSetCartEndpoint }
 				cartChanges={ cartChanges }
@@ -529,7 +497,6 @@ describe( 'CheckoutMain', () => {
 		const additionalProps = { productAliasFromUrl: 'personal-bundle', purchaseId: '12345' };
 		render(
 			<MockCheckout
-				mainCartKey={ mainCartKey }
 				initialCart={ initialCart }
 				setCart={ mockSetCartEndpoint }
 				cartChanges={ cartChanges }
@@ -548,7 +515,6 @@ describe( 'CheckoutMain', () => {
 		const additionalProps = { productAliasFromUrl: 'domain_reg:foo.cash', purchaseId: '12345' };
 		render(
 			<MockCheckout
-				mainCartKey={ mainCartKey }
 				initialCart={ initialCart }
 				setCart={ mockSetCartEndpoint }
 				cartChanges={ cartChanges }
@@ -566,7 +532,6 @@ describe( 'CheckoutMain', () => {
 		const additionalProps = { productAliasFromUrl: 'domain_map:bar.com', purchaseId: '12345' };
 		render(
 			<MockCheckout
-				mainCartKey={ mainCartKey }
 				initialCart={ initialCart }
 				setCart={ mockSetCartEndpoint }
 				cartChanges={ cartChanges }
@@ -587,7 +552,6 @@ describe( 'CheckoutMain', () => {
 		};
 		render(
 			<MockCheckout
-				mainCartKey={ mainCartKey }
 				initialCart={ initialCart }
 				setCart={ mockSetCartEndpoint }
 				cartChanges={ cartChanges }
@@ -601,6 +565,75 @@ describe( 'CheckoutMain', () => {
 		} );
 	} );
 
+	it( 'displays an error and empties the cart when the url has a renewal but no site', async () => {
+		const cartChanges = { products: [ planWithoutDomainMonthly ] };
+		const additionalProps = {
+			productAliasFromUrl: 'personal-bundle',
+			purchaseId: '12345',
+			siteId: 0,
+		};
+
+		( useCartKey as jest.Mock ).mockImplementation( () => 'no-site' );
+		render(
+			<MockCheckout
+				cartChanges={ cartChanges }
+				additionalProps={ additionalProps }
+				initialCart={ initialCart }
+				setCart={ mockSetCartEndpoint }
+			/>
+		);
+		await waitFor( async () => {
+			expect( navigate ).not.toHaveBeenCalled();
+		} );
+		expect( await screen.findByText( /You have no items in your cart/ ) ).toBeInTheDocument();
+
+		// Noticing the error message is a little difficult because we are not
+		// mounting the error display components. Instead, we spy on the
+		// `errorNotice` action creator. However, `CheckoutMain` does not pass the
+		// raw error message string to the action creator; it passes an array of
+		// React components, one of which contains the string. The following code
+		// lets us verify that.
+		expect( errorNotice ).toHaveBeenCalledWith(
+			expect.arrayContaining( [
+				expect.objectContaining( {
+					props: expect.objectContaining( {
+						children: expect.stringMatching( /This renewal is invalid/ ),
+					} ),
+				} ),
+			] )
+		);
+	} );
+
+	it( 'adds the product to the cart for a gift renewal', async () => {
+		const cartChanges = { products: [] };
+		const additionalProps = {
+			productAliasFromUrl: 'personal-bundle',
+			purchaseId: '12345',
+			siteId: 0,
+			siteSlug: 'no-site',
+			couponCode: null,
+			isLoggedOutCart: false,
+			isNoSiteCart: false,
+			isGiftPurchase: true,
+		};
+
+		( useCartKey as jest.Mock ).mockImplementation( () => 'no-site' );
+		render(
+			<MockCheckout
+				cartChanges={ cartChanges }
+				additionalProps={ additionalProps }
+				initialCart={ initialCart }
+				setCart={ mockSetCartEndpoint }
+			/>
+		);
+		await waitFor( async () => {
+			expect( navigate ).not.toHaveBeenCalled();
+		} );
+		expect( await screen.findByText( /WordPress.com Personal/ ) ).toBeInTheDocument();
+		expect( await screen.findByText( 'Gift' ) ).toBeInTheDocument();
+		expect( errorNotice ).not.toHaveBeenCalled();
+	} );
+
 	it( 'adds the coupon to the cart when the url has a coupon code', async () => {
 		const cartChanges = { products: [ planWithoutDomain ] };
 		const additionalProps = {
@@ -610,7 +643,6 @@ describe( 'CheckoutMain', () => {
 		};
 		render(
 			<MockCheckout
-				mainCartKey={ mainCartKey }
 				initialCart={ initialCart }
 				setCart={ mockSetCartEndpoint }
 				cartChanges={ cartChanges }
@@ -628,14 +660,9 @@ describe( 'CheckoutMain', () => {
 	} );
 
 	it( 'displays loading while cart key is undefined (eg: when cart store has pending updates)', async () => {
+		( useCartKey as jest.Mock ).mockImplementation( () => undefined );
 		await act( async () => {
-			render(
-				<MockCheckout
-					mainCartKey={ undefined }
-					initialCart={ initialCart }
-					setCart={ mockSetCartEndpoint }
-				/>
-			);
+			render( <MockCheckout initialCart={ initialCart } setCart={ mockSetCartEndpoint } /> );
 		} );
 		expect( screen.getByText( 'Loading checkout' ) ).toBeInTheDocument();
 	} );

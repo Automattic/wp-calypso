@@ -379,6 +379,8 @@ export function mockSetCartEndpointWith( { currency, locale } ): SetCart {
 		const { products: requestProducts, coupon: requestCoupon } = requestCart;
 		const products = requestProducts.map( convertRequestProductToResponseProduct( currency ) );
 
+		const is_gift_purchase = requestProducts.some( ( product ) => product.extra.isGiftPurchase );
+
 		const taxInteger = products.reduce( ( accum, current ) => {
 			return accum + current.item_tax;
 		}, 0 );
@@ -388,6 +390,7 @@ export function mockSetCartEndpointWith( { currency, locale } ): SetCart {
 		}, taxInteger );
 
 		return {
+			is_gift_purchase,
 			allowed_payment_methods: normalAllowedPaymentMethods,
 			blog_id: 1234,
 			cart_generated_at_timestamp: 12345,
@@ -837,7 +840,7 @@ function convertRequestProductToResponseProduct(
 					item_tax: 0,
 					meta: product.meta,
 					volume: 1,
-					extra: {},
+					extra: product.extra,
 				};
 			case 'domain_map':
 				return {

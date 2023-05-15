@@ -21,6 +21,20 @@ export const getHelpLink = ( context ) => {
 	);
 };
 
+export const getSupportLink = ( doc ) => {
+	return (
+		<a
+			className="jetpack-faq__learn-more-link"
+			href={ `https://jetpack.com/support/${ doc }` }
+			target="_blank"
+			rel="noopener noreferrer"
+			onClick={ () => {
+				recordTracksEvent( 'calypso_' + doc.replace( /(-| )/g, '_' ), { doc } );
+			} }
+		/>
+	);
+};
+
 export const getAgenciesLink = () => {
 	return (
 		<a

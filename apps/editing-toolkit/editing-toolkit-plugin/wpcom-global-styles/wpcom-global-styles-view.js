@@ -1,11 +1,12 @@
-/* global launchBarUserData */
+/* global launchBarUserData, localStorage */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import './wpcom-global-styles-view.scss';
 
-function recordEvent( button ) {
+function recordEvent( button, props = {} ) {
 	recordTracksEvent( 'wpcom_launchbar_button_click', {
 		button,
 		blog_id: launchBarUserData?.blogId,
+		...props,
 	} );
 }
 
@@ -23,13 +24,30 @@ document.addEventListener( 'DOMContentLoaded', () => {
 	}
 	const popoverToggle = container.querySelector( '.launch-bar-global-styles-toggle' );
 	const popover = container.querySelector( '.launch-bar-global-styles-popover' );
-	const upgradeButton = container.querySelector( '.launch-bar-global-styles-upgrade-button' );
-	const previewButton = container.querySelector( '.launch-bar-global-styles-preview-link' );
+	const upgradeButton = container.querySelector( '.launch-bar-global-styles-upgrade' );
+	const previewButton = container.querySelector( '.launch-bar-global-styles-preview' );
+	const closeButton = container.querySelector( '.launch-bar-global-styles-close' );
+
+	const limitedGlobalStylesNoticeAction =
+		localStorage.getItem( 'limitedGlobalStylesNoticeAction' ) ?? 'show';
+	if ( limitedGlobalStylesNoticeAction === 'show' ) {
+		popover?.classList.remove( 'hidden' );
+		recordEvent( 'wpcom_global_styles_gating_notice', { action: 'show' } );
+	}
 
 	popoverToggle?.addEventListener( 'click', ( event ) => {
 		event.preventDefault();
-		recordEvent( 'wpcom_global_styles_gating_notice' );
+		const action = popover?.classList.contains( 'hidden' ) ? 'show' : 'hide';
+		recordEvent( 'wpcom_global_styles_gating_notice', { action } );
+		localStorage.setItem( 'limitedGlobalStylesNoticeAction', action );
 		popover?.classList.toggle( 'hidden' );
+	} );
+
+	closeButton?.addEventListener( 'click', ( event ) => {
+		event.preventDefault();
+		recordEvent( 'wpcom_global_styles_gating_notice', { action: 'hide' } );
+		localStorage.setItem( 'limitedGlobalStylesNoticeAction', 'hide' );
+		popover?.classList.add( 'hidden' );
 	} );
 
 	upgradeButton?.addEventListener( 'click', ( event ) => {

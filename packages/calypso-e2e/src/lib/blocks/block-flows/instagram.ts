@@ -37,14 +37,15 @@ export class InstagramBlockFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution
 	 */
 	async configure( context: EditorContext ): Promise< void > {
-		const embedUrlLocator = context.editorLocator.locator( selectors.embedUrlInput );
+		const editorParent = await context.editorPage.getEditorParent();
+		const embedUrlLocator = editorParent.locator( selectors.embedUrlInput );
 		await embedUrlLocator.fill( this.configurationData.embedUrl );
 
-		const embedButtonLocator = context.editorLocator.locator( selectors.embedButton );
+		const embedButtonLocator = editorParent.locator( selectors.embedButton );
 		await embedButtonLocator.click();
 
 		// We should make sure the actual Iframe loads, because it takes a second.
-		const instagramIframeLocator = context.editorLocator.locator( selectors.editorInstagramIframe );
+		const instagramIframeLocator = editorParent.locator( selectors.editorInstagramIframe );
 		await instagramIframeLocator.waitFor();
 	}
 

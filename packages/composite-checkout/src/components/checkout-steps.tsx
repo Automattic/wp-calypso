@@ -202,6 +202,7 @@ const CheckoutWrapper = styled.div`
 export const MainContentWrapper = styled.div`
 	display: flex;
 	flex-direction: column;
+	flex-wrap: wrap;
 	width: 100%;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
@@ -340,9 +341,11 @@ interface CheckoutStepsProps {
 function CheckoutStepGroupWrapper( {
 	children,
 	className,
+	loadingContent,
 	store,
 }: PropsWithChildren< {
 	className?: string;
+	loadingContent?: ReactNode;
 	store: CheckoutStepGroupStore;
 } > ) {
 	const { isRTL } = useI18n();
@@ -384,7 +387,7 @@ function CheckoutStepGroupWrapper( {
 		return (
 			<CheckoutWrapper className={ classNames }>
 				<MainContentWrapper className={ joinClasses( [ className, 'checkout__content' ] ) }>
-					<LoadingContent />
+					{ loadingContent ? loadingContent : <LoadingContent /> }
 				</MainContentWrapper>
 			</CheckoutWrapper>
 		);
@@ -1146,14 +1149,16 @@ export function CheckoutStepGroup( {
 	areStepsActive,
 	stepAreaHeader,
 	store,
+	loadingContent,
 }: PropsWithChildren< {
 	areStepsActive?: boolean;
 	stepAreaHeader?: ReactNode;
 	store?: CheckoutStepGroupStore;
+	loadingContent?: ReactNode;
 } > ) {
 	const stepGroupStore = useMemo( () => store || createCheckoutStepGroupStore(), [ store ] );
 	return (
-		<CheckoutStepGroupWrapper store={ stepGroupStore }>
+		<CheckoutStepGroupWrapper store={ stepGroupStore } loadingContent={ loadingContent }>
 			{ stepAreaHeader }
 			<CheckoutStepArea>
 				<CheckoutStepGroupInner areStepsActive={ areStepsActive }>

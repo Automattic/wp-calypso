@@ -1,7 +1,7 @@
 import { Field } from '@automattic/wpcom-checkout';
 import { CheckboxControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useTranslate } from 'i18n-calypso';
+import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
@@ -158,6 +158,19 @@ export function VatForm( {
 		reduxDispatch( recordTracksEvent( 'calypso_vat_details_support_click' ) );
 	};
 
+	const genericTaxName =
+		/* translators: This is a generic name for taxes to use when we do not know the user's country. */
+		translate( 'tax (VAT/GST/CT)' );
+	const fallbackTaxName =
+		getLocaleSlug()?.startsWith( 'en' ) || i18n.hasTranslation( 'tax (VAT/GST/CT)' )
+			? genericTaxName
+			: translate( 'VAT', { textOnly: true } );
+	/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+	const addVatText = translate( 'Add %s details', {
+		textOnly: true,
+		args: [ vendorInfo?.taxName ?? fallbackTaxName ],
+	} );
+
 	if ( ! isFormActive ) {
 		return (
 			<div className="vat-form__row">
@@ -165,13 +178,7 @@ export function VatForm( {
 					className="vat-form__expand-button"
 					checked={ isFormActive }
 					onChange={ toggleVatForm }
-					label={
-						/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
-						translate( 'Add %s details', {
-							textOnly: true,
-							args: [ vendorInfo?.taxName ?? translate( 'VAT', { textOnly: true } ) ],
-						} )
-					}
+					label={ addVatText }
 					disabled={ isDisabled }
 				/>
 			</div>
@@ -185,13 +192,7 @@ export function VatForm( {
 					className="vat-form__expand-button"
 					checked={ isFormActive }
 					onChange={ toggleVatForm }
-					label={
-						/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
-						translate( 'Add %s details', {
-							textOnly: true,
-							args: [ vendorInfo?.taxName ?? translate( 'VAT', { textOnly: true } ) ],
-						} )
-					}
+					label={ addVatText }
 					disabled={ isDisabled || Boolean( vatDetailsFromServer.id ) }
 				/>
 				{ countryCode === 'GB' && (

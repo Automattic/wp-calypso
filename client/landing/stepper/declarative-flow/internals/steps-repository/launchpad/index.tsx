@@ -5,7 +5,6 @@ import { useEffect } from '@wordpress/element';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
-import { useLaunchpadChecklist } from 'calypso/../packages/help-center/src/hooks/use-launchpad-checklist';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
@@ -35,19 +34,17 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 	const siteSlug = useSiteSlugParam();
 	const verifiedParam = useQuery().get( 'verified' );
 	const site = useSite();
+	const siteIntentOption = site?.options?.site_intent;
+	const isSiteLaunched = site?.launch_status === 'launched' || false;
 	const {
 		isError: launchpadFetchError,
-		data: { launchpad_screen: launchpadScreenOption, site_intent: siteIntentOption } = {},
-	} = useLaunchpad( siteSlug );
-	const isSiteLaunched = site?.launch_status === 'launched' || false;
+		data: { launchpad_screen: launchpadScreenOption, checklist: launchpadChecklist } = {},
+	} = useLaunchpad( siteSlug, siteIntentOption );
+
 	const recordSignupComplete = useRecordSignupComplete( flow );
 	const dispatch = useDispatch();
 	const { saveSiteSettings } = useWPDispatch( SITE_STORE );
 	const isLoggedIn = useSelector( isUserLoggedIn );
-
-	const {
-		data: { checklist: launchpadChecklist },
-	} = useLaunchpadChecklist( siteSlug, siteIntentOption );
 
 	const fetchingSiteError = useSelect(
 		( select ) => ( select( SITE_STORE ) as SiteSelect ).getFetchingSiteError(),

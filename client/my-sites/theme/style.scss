@@ -8,11 +8,19 @@ $theme-sheet-content-max-width: 1462px;
 	}
 
 	.layout:not(.has-no-sidebar) .layout__content {
+		overflow: clip;
 		padding-top: var(--masterbar-height);
 
 		@include breakpoint-deprecated( "<960px" ) {
 			padding-left: 0;
 			padding-right: 0;
+		}
+
+		.theme__sheet-web-preview {
+			@include breakpoint-deprecated( ">960px" ) {
+				height: calc(100vh - 96px);
+				top: calc(var(--masterbar-height) + 16px);
+			}
 		}
 	}
 
@@ -241,30 +249,6 @@ $theme-sheet-content-max-width: 1462px;
 
 .theme__sheet-column-right {
 	grid-area: preview;
-
-	.sticky-panel {
-		width: 100%;
-
-		&.is-sticky .sticky-panel__content {
-			margin-top: 16px;
-
-			@include breakpoint-deprecated( "<960px" ) {
-				margin-top: 0;
-				position: relative;
-				top: auto !important;
-			}
-		}
-
-		.sticky-panel__content {
-			transition: all 200ms ease-in-out;
-		}
-
-		.sticky-panel__spacer {
-			@include breakpoint-deprecated( "<960px" ) {
-				display: none;
-			}
-		}
-	}
 }
 
 .theme__sheet-action-bar-container {
@@ -406,11 +390,12 @@ $theme-sheet-content-max-width: 1462px;
 
 .theme__sheet-web-preview {
 	pointer-events: none;
-	position: relative;
 
 	@include breakpoint-deprecated( ">960px" ) {
-		height: calc(100vh - 128px);
+		height: calc(100vh - 64px);
 		pointer-events: all;
+		position: sticky;
+		top: 16px;
 
 		.theme-preview__frame-wrapper .theme-preview__frame {
 			height: 200%;

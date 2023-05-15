@@ -42,7 +42,7 @@ export default function PostsList( { content, isLoading }: Props ) {
 				/>
 			) }
 			{ ! isLoading && ! isEmpty && (
-				<table>
+				<table className="posts-list__table">
 					<PostsListHeader />
 					<tbody>
 						{ content.map( function ( post: Post ) {

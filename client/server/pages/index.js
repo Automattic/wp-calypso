@@ -698,7 +698,7 @@ function wpcomPages( app ) {
 
 	// redirect logged-out searches to en.search.wordpress.com
 	app.get( '/read/search', function ( req, res, next ) {
-		if ( ! req.context.isLoggedIn ) {
+		if ( ! req.context.isLoggedIn && calypsoEnv !== 'development' ) {
 			res.redirect( 'https://en.search.wordpress.com/?q=' + encodeURIComponent( req.query.q ) );
 		} else {
 			next();

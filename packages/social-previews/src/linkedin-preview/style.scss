@@ -1,10 +1,33 @@
+
+
 .linkedin-preview {
-	box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
-	/* stylelint-disable-next-line scales/radii */
-	border-radius: 8px;
-	overflow: hidden;
-	max-width: 555px;
 	background-color: #fff;
+	padding: 20px;
+
+	&__wrapper {
+		padding: 20px;
+		background-color: #fff;
+		margin-inline: auto;
+		max-width: clamp(450px, 100%, 555px);
+	}
+
+	// When the preview is in a section of all previews
+	&__section &__wrapper {
+		padding: 0;
+	}
+
+	&__section {
+		width: clamp(450px, 100%, 555px);
+		margin-inline: auto;
+	}
+
+	&__container {
+
+		box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 8px;
+		overflow: hidden;
+	}
 
 	&__header {
 		display: flex;

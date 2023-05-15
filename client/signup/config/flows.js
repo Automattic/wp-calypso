@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { BLANK_CANVAS_DESIGN } from '@automattic/design-picker';
 import { isSiteAssemblerFlow } from '@automattic/onboarding';
 import { isDesktop } from '@automattic/viewport';
@@ -111,11 +110,7 @@ function getThankYouNoSiteDestination() {
 }
 
 function getChecklistThemeDestination( { flowName, siteSlug, themeParameter } ) {
-	if (
-		isSiteAssemblerFlow( flowName ) &&
-		themeParameter === BLANK_CANVAS_DESIGN.slug &&
-		config.isEnabled( 'pattern-assembler/logged-out-showcase' )
-	) {
+	if ( isSiteAssemblerFlow( flowName ) && themeParameter === BLANK_CANVAS_DESIGN.slug ) {
 		// Go to the site assembler flow if viewport width >= 960px as the layout doesn't support small
 		// screen for now
 		if ( isDesktop() ) {
@@ -179,8 +174,8 @@ function getDIFMSiteContentCollectionDestination( { siteSlug } ) {
 	return `/home/${ siteSlug }`;
 }
 
-function getHomeDestination( { siteSlug } ) {
-	return `/home/${ siteSlug }`;
+function getSitesDestination( { siteSlug } ) {
+	return addQueryArgs( { 'new-site': siteSlug }, '/sites' );
 }
 
 const flows = generateFlows( {
@@ -196,7 +191,7 @@ const flows = generateFlows( {
 	getDestinationFromIntent,
 	getDIFMSignupDestination,
 	getDIFMSiteContentCollectionDestination,
-	getHomeDestination,
+	getSitesDestination,
 } );
 
 function removeUserStepFromFlow( flow ) {

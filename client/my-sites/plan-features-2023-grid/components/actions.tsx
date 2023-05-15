@@ -2,7 +2,6 @@ import {
 	getPlanClass,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	PLAN_P2_FREE,
-	isFreePlan,
 	is2023PricingGridActivePage,
 	TERM_BIENNIALLY,
 	TERM_TRIENNIALLY,
@@ -10,26 +9,23 @@ import {
 	TERM_ANNUALLY,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { WpcomPlansUI } from '@automattic/data-stores';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
-import { useDispatch } from '@wordpress/data';
-import { useCallback } from '@wordpress/element';
 import classNames from 'classnames';
 import i18n, { localize, TranslateResult, useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getPlanBillPeriod } from 'calypso/state/plans/selectors';
-import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
+import type { PlanActionOverrides } from '../types';
 
 type PlanFeaturesActionsButtonProps = {
 	availableForPurchase: boolean;
 	canUserPurchasePlan: boolean;
 	className: string;
-	currentSitePlanSlug: string;
+	currentSitePlanSlug?: string;
 	current: boolean;
 	forceDisplayButton?: boolean;
 	freePlan: boolean;
@@ -46,6 +42,7 @@ type PlanFeaturesActionsButtonProps = {
 	isWpcomEnterpriseGridPlan: boolean;
 	isWooExpressPlusPlan?: boolean;
 	selectedSiteSlug: string | null;
+	planActionOverrides?: PlanActionOverrides;
 };
 
 const DummyDisabledButton = styled.div`
@@ -146,7 +143,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	currentSitePlanSlug,
 	buttonText,
 	forceDisplayButton,
-	selectedSiteSlug,
+	planActionOverrides,
 }: {
 	freePlan: boolean;
 	isPlaceholder: boolean;
@@ -161,10 +158,9 @@ const LoggedInPlansFeatureActionButton = ( {
 	buttonText?: string;
 	forceDisplayButton: boolean;
 	selectedSiteSlug: string | null;
+	planActionOverrides?: PlanActionOverrides;
 } ) => {
-	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
 	const translate = useTranslate();
-	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
 	const currentPlanBillPeriod = useSelector( ( state ) => {
 		return currentSitePlanSlug ? getPlanBillPeriod( state, currentSitePlanSlug ) : null;
 	} );
@@ -172,27 +168,15 @@ const LoggedInPlansFeatureActionButton = ( {
 		return planType ? getPlanBillPeriod( state, planType ) : null;
 	} );
 
-	const showDomainUpsellDialog = useCallback( () => {
-		setShowDomainUpsellDialog( true );
-	}, [ setShowDomainUpsellDialog ] );
-
 	if ( freePlan ) {
-		if ( currentSitePlanSlug && isFreePlan( currentSitePlanSlug ) ) {
-			if ( domainFromHomeUpsellFlow ) {
-				return (
-					<Button className={ classes } onClick={ showDomainUpsellDialog }>
-						{ translate( 'Keep my plan', { context: 'verb' } ) }
-					</Button>
-				);
-			}
-
+		if ( planActionOverrides?.loggedInFreePlan ) {
 			return (
 				<Button
 					className={ classes }
-					href={ `/add-ons/${ selectedSiteSlug }` }
-					disabled={ ! manageHref }
+					onClick={ planActionOverrides.loggedInFreePlan.callback }
+					disabled={ ! manageHref } // not sure why this is here
 				>
-					{ translate( 'Manage add-ons', { context: 'verb' } ) }
+					{ planActionOverrides.loggedInFreePlan.text }
 				</Button>
 			);
 		}
@@ -331,6 +315,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	isWpcomEnterpriseGridPlan = false,
 	isWooExpressPlusPlan = false,
 	selectedSiteSlug,
+	planActionOverrides,
 } ) => {
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
@@ -432,6 +417,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 			buttonText={ buttonText }
 			forceDisplayButton={ forceDisplayButton }
 			selectedSiteSlug={ selectedSiteSlug }
+			planActionOverrides={ planActionOverrides }
 		/>
 	);
 };

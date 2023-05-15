@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import { SubscriptionManager } from '@automattic/data-stores';
-import { useLocale } from '@automattic/i18n-utils';
 import SearchInput from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -27,9 +26,9 @@ const Comments = () => {
 	const [ sortTerm, setSortTerm ] = useState( SortBy.RecentlySubscribed );
 	const { searchTerm, handleSearch } = useSearch();
 	const sortOptions = useSortOptions();
-	const locale = useLocale();
-	const isListControlsEnabled =
-		config.isEnabled( 'subscription-management/comments-list-controls' ) && locale === 'en';
+	const isListControlsEnabled = config.isEnabled(
+		'subscription-management/comments-list-controls'
+	);
 
 	const {
 		data: { posts, totalCount },

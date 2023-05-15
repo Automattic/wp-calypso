@@ -3,15 +3,19 @@ import { Button, Gridicon, useScrollToTop, JetpackLogo } from '@automattic/compo
 import { createSitesListComponent } from '@automattic/sites';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
+import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
-import { useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
+import { useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import Pagination from 'calypso/components/pagination';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SplitButton from 'calypso/components/split-button';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
+import { withoutHttp } from 'calypso/lib/url';
+import { successNotice } from 'calypso/state/notices/actions';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 import { MEDIA_QUERIES } from '../utils';
 import { NoSitesMessage } from './no-sites-message';
@@ -24,6 +28,7 @@ import { SitesDashboardOptInBanner } from './sites-dashboard-opt-in-banner';
 import { useSitesDisplayMode } from './sites-display-mode-switcher';
 import { SitesGrid } from './sites-grid';
 import { SitesTable } from './sites-table';
+import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
 interface SitesDashboardProps {
 	queryParams: SitesDashboardQueryParams;
@@ -138,7 +143,7 @@ const ScrollButton = styled( Button, { shouldForwardProp: ( prop ) => prop !== '
 const SitesDashboardSitesList = createSitesListComponent();
 
 export function SitesDashboard( {
-	queryParams: { page = 1, perPage = 96, search, status = 'all' },
+	queryParams: { page = 1, perPage = 96, search, status = 'all', newSiteSlug },
 }: SitesDashboardProps ) {
 	const { __, _n } = useI18n();
 	const { data: allSites = [], isLoading } = useSiteExcerptsQuery();
@@ -158,6 +163,8 @@ export function SitesDashboard( {
 		isBelowThreshold,
 		smoothScrolling: true,
 	} );
+
+	useShowSiteCreationNotice( allSites, newSiteSlug );
 
 	return (
 		<main>
@@ -306,4 +313,41 @@ export function SitesDashboard( {
 			</ScrollButton>
 		</main>
 	);
+}
+
+function useShowSiteCreationNotice( allSites: SiteExcerptData[], newSiteSlug: string | undefined ) {
+	const { __ } = useI18n();
+	const dispatch = useDispatch();
+	const shownSiteCreationNotice = useRef( false );
+
+	useEffect( () => {
+		if ( shownSiteCreationNotice.current || ! newSiteSlug ) {
+			return;
+		}
+
+		const site = allSites.find( ( { slug } ) => slug === newSiteSlug );
+		if ( ! site ) {
+			return;
+		}
+
+		shownSiteCreationNotice.current = true;
+
+		dispatch(
+			successNotice(
+				createInterpolateElement(
+					/* translators: siteURL is the URL name of a newly created site, excluding the "http://" */
+					sprintf( __( 'New site <strong>%(siteURL)s</strong> created.' ), {
+						siteURL: withoutHttp( site.URL ),
+					} ),
+					{ strong: <strong /> }
+				),
+				{ duration: 8000 }
+			)
+		);
+
+		// Remove query param without triggering a re-render
+		const newUrl = new URL( window.location.href );
+		newUrl.searchParams.delete( 'new-site' );
+		window.history.replaceState( null, '', newUrl.toString() );
+	}, [ __, allSites, dispatch, newSiteSlug ] );
 }

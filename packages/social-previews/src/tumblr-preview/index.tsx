@@ -1,2 +1,3 @@
-export { default as TumblrLinkPreview } from './link-preview';
-export { default as TumblrFullPreview } from './full-preview';
+export * from './link-preview';
+export * from './post-preview';
+export * from './previews';

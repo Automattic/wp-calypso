@@ -96,6 +96,14 @@ export const actionEventNames: ActionEventNames = {
 		large_screen: 'calypso_jetpack_agency_dashboard_visit_wp_admin_large_screen',
 		small_screen: 'calypso_jetpack_agency_dashboard_visit_wp_admin_small_screen',
 	},
+	clone_site: {
+		large_screen: 'calypso_jetpack_agency_dashboard_clone_site_large_screen',
+		small_screen: 'calypso_jetpack_agency_dashboard_clone_site_small_screen',
+	},
+	site_settings: {
+		large_screen: 'calypso_jetpack_agency_dashboard_site_settings_large_screen',
+		small_screen: 'calypso_jetpack_agency_dashboard_site_settings_small_screen',
+	},
 };
 
 // Returns event name based on the action type

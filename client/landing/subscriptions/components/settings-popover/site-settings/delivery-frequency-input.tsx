@@ -1,6 +1,8 @@
+import { SubscriptionManager } from '@automattic/data-stores';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SegmentedControl from 'calypso/components/segmented-control';
 import type { SiteSubscriptionDeliveryFrequency } from '@automattic/data-stores/src/reader/types';
 
@@ -38,6 +40,7 @@ const DeliveryFrequencyInput = ( {
 	value: selectedValue,
 	isUpdating,
 }: DeliveryFrequencyInputProps ) => {
+	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
 	const translate = useTranslate();
 	const availableFrequencies = useMemo< DeliveryFrequencyKeyLabel[] >(
 		() => [
@@ -58,22 +61,32 @@ const DeliveryFrequencyInput = ( {
 	);
 
 	return (
-		<SegmentedControl
-			className={ classNames( 'settings-popover__delivery-frequency-control', {
-				'is-loading': isUpdating,
+		<PopoverMenuItem
+			itemComponent="div"
+			className={ classNames( 'settings-popover__delivery-frequency-item', {
+				'is-logged-in': isLoggedIn,
 			} ) }
 		>
-			{ availableFrequencies.map( ( { key, label }, index ) => (
-				<DeliveryFrequencyOption
-					selected={ selectedValue === key }
-					value={ key }
-					onChange={ onChange }
-					key={ index }
-				>
-					{ label }
-				</DeliveryFrequencyOption>
-			) ) }
-		</SegmentedControl>
+			{ ! isLoggedIn && (
+				<p className="settings-popover__item-label">{ translate( 'Email me new posts' ) }</p>
+			) }
+			<SegmentedControl
+				className={ classNames( 'settings-popover__delivery-frequency-control', {
+					'is-loading': isUpdating,
+				} ) }
+			>
+				{ availableFrequencies.map( ( { key, label }, index ) => (
+					<DeliveryFrequencyOption
+						selected={ selectedValue === key }
+						value={ key }
+						onChange={ onChange }
+						key={ index }
+					>
+						{ label }
+					</DeliveryFrequencyOption>
+				) ) }
+			</SegmentedControl>
+		</PopoverMenuItem>
 	);
 };
 

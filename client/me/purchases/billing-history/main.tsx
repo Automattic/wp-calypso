@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { CompactCard, Card } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
+import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryBillingTransactions from 'calypso/components/data/query-billing-transactions';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -41,15 +41,22 @@ function BillingHistory() {
 		translate
 	);
 
+	const genericTaxName =
+		/* translators: This is a generic name for taxes to use when we do not know the user's country. */
+		translate( 'tax (VAT/GST/CT)' );
+	const fallbackTaxName =
+		getLocaleSlug()?.startsWith( 'en' ) || i18n.hasTranslation( 'tax (VAT/GST/CT)' )
+			? genericTaxName
+			: translate( 'VAT', { textOnly: true } );
 	/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
 	const editVatText = translate( 'Edit %s details', {
 		textOnly: true,
-		args: [ vendorInfo?.taxName ?? translate( 'VAT', { textOnly: true } ) ],
+		args: [ vendorInfo?.taxName ?? fallbackTaxName ],
 	} );
 	/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
 	const addVatText = translate( 'Add %s details', {
 		textOnly: true,
-		args: [ vendorInfo?.taxName ?? translate( 'VAT', { textOnly: true } ) ],
+		args: [ vendorInfo?.taxName ?? fallbackTaxName ],
 	} );
 	const vatText = vatDetails.id ? editVatText : addVatText;
 

@@ -1,5 +1,14 @@
 @import "@automattic/color-studio/dist/color-variables";
 
+%toggle-styles {
+	font-size: $font-body-small;
+
+	.components-form-toggle {
+		display: flex;
+		align-items: center;
+	}
+}
+
 .settings-popover {
 	outline: none;
 	min-width: 305px;
@@ -37,6 +46,12 @@
 			cursor: default;
 			opacity: 0.5;
 			pointer-events: none;
+		}
+	}
+
+	.settings-popover__delivery-frequency-item {
+		&.is-logged-in {
+			padding-top: 0;
 		}
 	}
 
@@ -83,14 +98,21 @@
 		margin-bottom: 16px;
 	}
 
-	.settings-popover__notify-me-of-new-posts-toggle {
-		font-size: $font-body-small;
-		margin-bottom: 16px;
+	.settings-popover__email-me-new-posts-item,
+	.settings-popover__email-me-new-comments-item {
+		padding-top: 0;
+		padding-bottom: 0;
+	}
 
-		.components-form-toggle {
-			display: flex;
-			align-items: center;
-		}
+	.settings-popover__notify-me-of-new-posts-toggle,
+	.settings-popover__email-me-new-posts-toggle {
+		@extend %toggle-styles;
+		margin-bottom: 16px;
+	}
+
+	.settings-popover__email-me-new-comments-toggle {
+		@extend %toggle-styles;
+		margin-bottom: 24px;
 	}
 
 	.settings-popover__popout-hint {

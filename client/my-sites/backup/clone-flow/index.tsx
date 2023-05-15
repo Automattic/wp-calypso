@@ -17,8 +17,10 @@ import useRewindableActivityLogQuery from 'calypso/data/activity-log/use-rewinda
 import accept from 'calypso/lib/accept';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
 import { rewindClone, rewindStagingClone } from 'calypso/state/activity-log/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
 import { getInProgressBackupForSite } from 'calypso/state/rewind/selectors';
@@ -149,6 +151,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 	function onAddNewClick() {
 		setShowCredentialForm( true );
 		setIsCloneToStaging( false );
+		dispatch( recordTracksEvent( 'calypso_jetpack_clone_flow_set_new_destination' ) );
 	}
 
 	function onSearchChange( newValue: string, isNavigating: boolean ) {
@@ -158,6 +161,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 				setCloneDestination( selectedSite.blog_id.toString() );
 				setUserHasSetDestination( true );
 				setIsCloneToStaging( true );
+				dispatch( recordTracksEvent( 'calypso_jetpack_clone_flow_set_staging_site' ) );
 			}
 		}
 	}
@@ -210,6 +214,14 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 			setBackupDisplayDate( displayDate );
 		},
 		[ moment, gmtOffset, timezone ]
+	);
+	const trackedSetLatestBackupPeriod = useTrackCallback(
+		onSetBackupPeriod,
+		'calypso_jetpack_clone_flow_set_backup_period_latest'
+	);
+	const trackedSetOtherBackupPeriod = useTrackCallback(
+		onSetBackupPeriod,
+		'calypso_jetpack_clone_flow_set_backup_period_other'
 	);
 
 	const loading = rewindState.state === 'uninitialized';
@@ -274,7 +286,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 							selectedDate={ moment( lastBackup.activityDate ) }
 							lastBackupAttemptOnDate={ undefined }
 							availableActions={ [ 'clone' ] }
-							onClickClone={ onSetBackupPeriod }
+							onClickClone={ trackedSetLatestBackupPeriod }
 						/>
 					</Card>
 				) }
@@ -283,7 +295,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 					pageSize={ 10 }
 					showFilter={ false }
 					availableActions={ [ 'clone' ] }
-					onClickClone={ onSetBackupPeriod }
+					onClickClone={ trackedSetOtherBackupPeriod }
 				/>
 			</div>
 		</>
@@ -322,6 +334,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 
 	const goBackFromConfirm = () => {
 		setUserHasSetBackupPeriod( false );
+		dispatch( recordTracksEvent( 'calypso_jetpack_clone_flow_back_from_configure' ) );
 	};
 
 	// Screen that allows the user to configure which items to clone
@@ -426,7 +439,13 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 						'Jetpack is copying your site. You will be notified when the process is finished in the activity log.'
 					) }
 				</p>
-				<Button className="clone-flow__activity-log-button" href={ activityLogPath }>
+				<Button
+					className="clone-flow__activity-log-button"
+					href={ activityLogPath }
+					onClick={ () =>
+						dispatch( recordTracksEvent( 'calypso_jetpack_clone_flow_in_progress_activity_log' ) )
+					}
+				>
 					{ translate( 'Go to Activity Log' ) }
 				</Button>
 			</Card>
@@ -459,10 +478,22 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 						}
 					) }
 				</p>
-				<Button className="clone-flow__activity-log-button" href={ activityLogPath }>
+				<Button
+					className="clone-flow__activity-log-button"
+					href={ activityLogPath }
+					onClick={ () =>
+						dispatch( recordTracksEvent( 'calypso_jetpack_clone_flow_finished_activity_log' ) )
+					}
+				>
 					{ translate( 'Go to Activity Log' ) }
 				</Button>
-				<Button primary href={ getDestinationUrl() }>
+				<Button
+					primary
+					href={ getDestinationUrl() }
+					onClick={ () =>
+						dispatch( recordTracksEvent( 'calypso_jetpack_clone_flow_finished_view_site' ) )
+					}
+				>
 					{ translate( 'View your website' ) }
 					<Gridicon icon="external" size={ 18 } />
 				</Button>

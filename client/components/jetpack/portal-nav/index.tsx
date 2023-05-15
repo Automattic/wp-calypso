@@ -18,6 +18,7 @@ import { isPartnerPortal } from 'calypso/state/partner-portal/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPrimarySiteIsJetpack from 'calypso/state/selectors/get-primary-site-is-jetpack';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { ZendeskJetpackChat } from '../jetpack-presales-chat-widget';
 
 import './style.scss';
 
@@ -113,6 +114,7 @@ export default function PortalNav( { className = '' }: Props ) {
 							{ translate( 'Licensing' ) }
 						</NavItem>
 					</NavTabs>
+					<ZendeskJetpackChat keyType="jpAgency" />
 				</SectionNav>
 			) }
 		</>

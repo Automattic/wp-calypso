@@ -8,6 +8,7 @@ interface ThemeSupports {
 }
 
 export type ActiveTheme = {
+	is_block_theme: boolean;
 	theme_supports: ThemeSupports;
 };
 

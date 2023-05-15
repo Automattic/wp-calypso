@@ -13,6 +13,7 @@ import InfiniteScroll from 'calypso/components/infinite-scroll';
 import Theme from 'calypso/components/theme';
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { upsellCardDisplayed as upsellCardDisplayedAction } from 'calypso/state/themes/actions';
@@ -58,10 +59,12 @@ export const ThemesList = ( props ) => {
 		};
 	}, [ updateShowSecondUpsellNudge ] );
 
+	const selectedSite = useSelector( getSelectedSite );
+
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	const isPatternAssemblerCTAEnabled =
-		isEnabled( 'pattern-assembler/logged-out-showcase' ) && ! isLoggedIn;
+		! isLoggedIn || isEnabled( 'pattern-assembler/logged-in-showcase' );
 
 	const fetchNextPage = useCallback(
 		( options ) => {
@@ -75,11 +78,17 @@ export const ThemesList = ( props ) => {
 			goes_to_assembler_step: shouldGoToAssemblerStep,
 		} );
 
+		const basePathname = isLoggedIn ? '/setup' : '/start';
 		const params = new URLSearchParams( {
 			ref: 'calypshowcase',
 			theme: BLANK_CANVAS_DESIGN.slug,
 		} );
-		window.location.assign( `/start/${ WITH_THEME_ASSEMBLER_FLOW }?${ params }` );
+
+		if ( selectedSite?.slug ) {
+			params.set( 'siteSlug', selectedSite.slug );
+		}
+
+		window.location.assign( `${ basePathname }/${ WITH_THEME_ASSEMBLER_FLOW }?${ params }` );
 	};
 
 	const matchingWpOrgThemes = useMemo( () => {
@@ -221,6 +230,7 @@ function Options( { isFSEActive, recordTracksEvent, searchTerm, translate, upsel
 	);
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, selectedSite?.ID ) );
 	const sitePlan = selectedSite?.plan?.product_slug;
+	const siteEditorUrl = useSelector( ( state ) => getSiteEditorUrl( state, selectedSite?.ID ) );
 
 	const options = [];
 
@@ -246,7 +256,7 @@ function Options( { isFSEActive, recordTracksEvent, searchTerm, translate, upsel
 						search_term: searchTerm,
 						destination: 'site-editor',
 					} ),
-				url: `/site-editor/${ selectedSite.slug }`,
+				url: siteEditorUrl,
 				buttonText: translate( 'Open the editor' ),
 			} );
 		}

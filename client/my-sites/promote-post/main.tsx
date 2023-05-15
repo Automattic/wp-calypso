@@ -81,6 +81,8 @@ const today = moment().locale( 'en' );
 const period = 'year';
 const topPostsQuery = memoizedQuery( period, 'month', 20, today.format( 'YYYY-MM-DD' ), -1 );
 
+const allowedPostTypes = [ 'post', 'page', 'product' ];
+
 export default function PromotedPosts( { tab }: Props ) {
 	const selectedTab = tab === 'campaigns' ? 'campaigns' : 'posts';
 	const selectedSite = useSelector( getSelectedSite );
@@ -95,12 +97,16 @@ export default function PromotedPosts( { tab }: Props ) {
 
 	const postAndPagesByComments = useSelector( ( state ) => {
 		const postsAndPages = getPostsForQuery( state, selectedSiteId, queryPageAndPostsByComments );
-		return postsAndPages?.filter( ( product: any ) => ! product.password );
+		return postsAndPages?.filter(
+			( product: any ) => ! product.password && allowedPostTypes.includes( product.type )
+		);
 	} );
 
 	const postAndPagesByIDs = useSelector( ( state ) => {
 		const postsAndPages = getPostsForQuery( state, selectedSiteId, queryPageAndPostsByIDs );
-		return postsAndPages?.filter( ( product: any ) => ! product.password );
+		return postsAndPages?.filter(
+			( product: any ) => ! product.password && allowedPostTypes.includes( product.type )
+		);
 	} );
 
 	const isLoadingProducts = useSelector( ( state ) =>

@@ -6,51 +6,95 @@
 
 .launch-bar-global-styles-popover {
 	position: absolute;
-	width: 260px;
+	width: 320px;
 	top: 48px;
 	font-size: 14px;
 	left: 50%;
 	transform: translateX(-50%);
 	background-color: #fff;
-	padding: 16px;
+	padding: 24px;
 	line-height: 20px;
-	color: #24282d;
-	box-shadow: 0 3px 10px rgb(0 0 0 / 20%);
-	font-weight: 400;
+	color: #2c3338;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+	border: 1px solid #c3c4c7;
 	display: flex;
 	flex-direction: column;
-	align-items: center;
-	box-sizing: border-box;
+	align-items: flex-start;
+	gap: 12px;
 
-	.launch-bar-global-styles-upgrade-button {
-		font-size: 14px;
-		margin-top: 16px;
-		background: #007cba;
-		min-height: 36px;
+	&::before {
+		content: "";
+		width: 0;
+		height: 0;
+		border-left: 8px solid transparent;
+		border-right: 8px solid transparent;
+		border-bottom: 8px solid #fff;
+		position: absolute;
+		top: -8px;
+		left: 50%;
+		transform: translateX(-50%);
+	}
+
+	.launch-bar-global-styles-upgrade,
+	.launch-bar-global-styles-preview {
+		min-height: 28px;
 		box-sizing: border-box;
 		border-radius: 2px;
 		width: 100%;
 		justify-content: center;
 		height: auto;
+		border: 1px solid;
+	}
+
+	.launch-bar-global-styles-upgrade {
+		background: #0675c4;
+		border-color: #0675c4;
+		color: #fff;
 
 		&:hover {
 			background: #006ba1;
 		}
 	}
 
-	.launch-bar-global-styles-preview-link {
-		margin: 20px 0 0;
-		padding: 0;
-		min-height: auto;
-		color: #0675c4;
-		font-weight: 500;
-		font-size: 12px;
-		height: auto;
+	.launch-bar-global-styles-preview {
+		border-color: #c3c4c7;
+		color: #3c434a;
 
 		&:hover {
-			background: #fff;
-			color: #044b7a;
+			background: #f6f7f7;
 		}
+	}
+}
+
+.launch-banner-content .launch-bar-global-styles-popover .launch-bar-global-styles-message a {
+	display: inline;
+	color: inherit;
+	padding: 0;
+	font-weight: normal;
+	font-size: inherit;
+	text-decoration: underline !important;
+	background: none;
+}
+
+.launch-bar-global-styles-toggle svg {
+	margin-right: 4px;
+}
+
+.launch-bar-global-styles-close {
+	position: absolute;
+	top: 4px;
+	right: 4px;
+	width: 24px;
+	height: 24px;
+	cursor: pointer;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	svg {
+		fill: #1e1e1e;
+		width: 18px;
+		height: 18px;
 	}
 }
 

@@ -452,6 +452,16 @@ const hideFreePlan: Reducer< boolean, OnboardAction > = ( state = false, action 
 	return state;
 };
 
+const hidePlansFeatureComparison: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'SET_HIDE_PLANS_FEATURE_COMPARISON' ) {
+		return action.hidePlansFeatureComparison;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return false;
+	}
+	return state;
+};
+
 const domainCartItem: Reducer< MinimalRequestCartProduct | undefined, OnboardAction > = (
 	state = undefined,
 	action
@@ -542,6 +552,7 @@ const reducer = combineReducers( {
 	goals,
 	editEmail,
 	hideFreePlan,
+	hidePlansFeatureComparison,
 	siteDescription,
 	siteLogo,
 	siteAccentColor,

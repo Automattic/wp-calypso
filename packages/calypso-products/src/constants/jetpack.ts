@@ -6,6 +6,8 @@ export const GROUP_JETPACK = 'GROUP_JETPACK';
 export const PRODUCT_JETPACK_BOOST = 'jetpack_boost_yearly';
 export const PRODUCT_JETPACK_BOOST_MONTHLY = 'jetpack_boost_monthly';
 export const PRODUCT_JETPACK_BACKUP = 'jetpack_backup';
+export const PRODUCT_JETPACK_BACKUP_T0_YEARLY = 'jetpack_backup_t0_yearly';
+export const PRODUCT_JETPACK_BACKUP_T0_MONTHLY = 'jetpack_backup_t0_monthly';
 export const PRODUCT_JETPACK_BACKUP_T1_YEARLY = 'jetpack_backup_t1_yearly';
 export const PRODUCT_JETPACK_BACKUP_T1_MONTHLY = 'jetpack_backup_t1_monthly';
 export const PRODUCT_JETPACK_BACKUP_T2_YEARLY = 'jetpack_backup_t2_yearly';
@@ -63,12 +65,14 @@ export const PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY = 'jetpack_backup_realtime_
 export const JETPACK_BACKUP_PRODUCTS_YEARLY = <const>[
 	PRODUCT_JETPACK_BACKUP_DAILY,
 	PRODUCT_JETPACK_BACKUP_REALTIME,
+	PRODUCT_JETPACK_BACKUP_T0_YEARLY,
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 	PRODUCT_JETPACK_BACKUP_T2_YEARLY,
 ];
 export const JETPACK_BACKUP_PRODUCTS_MONTHLY = <const>[
 	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_T0_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
 ];
@@ -93,6 +97,10 @@ export const JETPACK_BACKUP_ADDON_YEARLY = <const>[
 export const JETPACK_BACKUP_ADDON_PRODUCTS = <const>[
 	...JETPACK_BACKUP_ADDON_MONTHLY,
 	...JETPACK_BACKUP_ADDON_YEARLY,
+];
+export const JETPACK_BACKUP_T0_PRODUCTS = <const>[
+	PRODUCT_JETPACK_BACKUP_T0_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_T0_YEARLY,
 ];
 export const JETPACK_BACKUP_T1_PRODUCTS = <const>[
 	PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
@@ -296,6 +304,8 @@ export const PLAN_JETPACK_SECURITY_T2_YEARLY = 'jetpack_security_t2_yearly';
 export const PLAN_JETPACK_SECURITY_T2_MONTHLY = 'jetpack_security_t2_monthly';
 export const PLAN_JETPACK_COMPLETE = 'jetpack_complete';
 export const PLAN_JETPACK_COMPLETE_MONTHLY = 'jetpack_complete_monthly';
+export const PLAN_JETPACK_STARTER_YEARLY = 'jetpack_starter_yearly';
+export const PLAN_JETPACK_STARTER_MONTHLY = 'jetpack_starter_monthly';
 export const PLAN_JETPACK_GOLDEN_TOKEN = 'jetpack_golden_token_lifetime';
 
 // Legacy Security Plans
@@ -335,10 +345,17 @@ export const JETPACK_SECURITY_T2_PLANS = <const>[
 	PLAN_JETPACK_SECURITY_T2_MONTHLY,
 	PLAN_JETPACK_SECURITY_T2_YEARLY,
 ];
+
 // Complete
 export const JETPACK_COMPLETE_PLANS = <const>[
 	PLAN_JETPACK_COMPLETE,
 	PLAN_JETPACK_COMPLETE_MONTHLY,
+];
+
+// Starter
+export const JETPACK_STARTER_PLANS = <const>[
+	PLAN_JETPACK_STARTER_YEARLY,
+	PLAN_JETPACK_STARTER_MONTHLY,
 ];
 
 export const JETPACK_MONTHLY_PLANS = <const>[
@@ -352,6 +369,7 @@ export const JETPACK_MONTHLY_PLANS = <const>[
 	PLAN_JETPACK_COMPLETE_MONTHLY,
 ];
 export const JETPACK_RESET_PLANS = <const>[
+	...JETPACK_STARTER_PLANS,
 	...JETPACK_SECURITY_PLANS,
 	...JETPACK_COMPLETE_PLANS,
 	PLAN_JETPACK_GOLDEN_TOKEN,
@@ -377,6 +395,10 @@ export const JETPACK_RESET_PLANS_BY_TERM = <const>[
 		yearly: PLAN_JETPACK_SECURITY_T2_YEARLY,
 		monthly: PLAN_JETPACK_SECURITY_T2_MONTHLY,
 	},
+	{
+		yearly: PLAN_JETPACK_STARTER_YEARLY,
+		monthly: PLAN_JETPACK_STARTER_MONTHLY,
+	},
 ];
 export const JETPACK_PLANS = <const>[
 	PLAN_JETPACK_FREE,
@@ -401,13 +423,18 @@ export const JETPACK_PLANS_BY_TERM = <const>[
 export const BEST_VALUE_PLANS = <const>[ PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ];
 // Key/value: Superseding plan/Plans superseded (yearly terms)
 export const JETPACK_PLAN_UPGRADE_MAP: Record< string, string[] > = {
-	[ PLAN_JETPACK_SECURITY_T2_YEARLY ]: [ PLAN_JETPACK_SECURITY_T1_YEARLY ],
+	[ PLAN_JETPACK_SECURITY_T2_YEARLY ]: [
+		PLAN_JETPACK_SECURITY_T1_YEARLY,
+		PLAN_JETPACK_STARTER_YEARLY,
+	],
+	[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: [ PLAN_JETPACK_STARTER_YEARLY ],
 	[ PLAN_JETPACK_SECURITY_REALTIME ]: [ PLAN_JETPACK_SECURITY_DAILY ],
 	[ PLAN_JETPACK_COMPLETE ]: [
 		PLAN_JETPACK_SECURITY_REALTIME,
 		PLAN_JETPACK_SECURITY_DAILY,
 		PLAN_JETPACK_SECURITY_T2_YEARLY,
 		PLAN_JETPACK_SECURITY_T1_YEARLY,
+		PLAN_JETPACK_STARTER_YEARLY,
 	],
 };
 
@@ -467,6 +494,7 @@ export const JETPACK_TAG_FOR_VIDEOGRAPHERS = 'jetpack_tag_for_videographers';
 export const JETPACK_TAG_FOR_EDUCATORS = 'jetpack_tag_for_educators';
 export const JETPACK_TAG_FOR_BLOGGERS = 'jetpack_tag_for_bloggers';
 export const JETPACK_TAG_FOR_ALL_SITES = 'jetpack_tag_for_all_sites';
+export const JETPACK_TAG_FOR_SMALL_SITES = 'jetpack_tag_for_small_sites';
 
 // Maps products to 'Recommended for' tags
 export const JETPACK_PRODUCT_RECCOMENDATION_MAP: Record< string, string[] > = {

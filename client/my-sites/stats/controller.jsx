@@ -265,7 +265,7 @@ export function subscribers( context, next ) {
 
 	context.primary = (
 		<AsyncLoad
-			require="calypso/my-sites/stats/stats-subscribers-page"
+			require="calypso/my-sites/stats/stats-subscribers"
 			placeholder={ PageLoading }
 			period={ activeFilter.period } // TODO: investigate rangeOfPeriod() for date changes
 		/>

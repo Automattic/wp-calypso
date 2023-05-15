@@ -1,5 +1,5 @@
-import { shouldLoadGutenframe } from 'calypso/state/selectors/should-load-gutenframe';
-import { getSiteAdminUrl, getSiteSlug } from 'calypso/state/sites/selectors';
+import { addQueryArgs } from 'calypso/lib/route';
+import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 
 /**
  * Retrieves url for site editor.
@@ -10,14 +10,12 @@ import { getSiteAdminUrl, getSiteSlug } from 'calypso/state/sites/selectors';
  */
 export const getSiteEditorUrl = ( state, siteId ) => {
 	const siteAdminUrl = getSiteAdminUrl( state, siteId );
-
-	if ( ! shouldLoadGutenframe( state, siteId ) ) {
-		return `${ siteAdminUrl }site-editor.php`;
+	const queryArgs = {};
+	// Only add the origin if it's not wordpress.com.
+	if ( typeof window !== 'undefined' && window.location.origin !== 'https://wordpress.com' ) {
+		queryArgs.calypso_origin = window.location.origin;
 	}
-
-	const siteSlug = getSiteSlug( state, siteId );
-
-	return `/site-editor/${ siteSlug }`;
+	return addQueryArgs( queryArgs, `${ siteAdminUrl }site-editor.php` );
 };
 
 export default getSiteEditorUrl;

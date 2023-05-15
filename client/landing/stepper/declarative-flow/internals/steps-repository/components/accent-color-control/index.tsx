@@ -44,7 +44,7 @@ export type AccentColor = {
 };
 
 enum COLORS {
-	Lettre = '#113AF5',
+	AllegroBlue = '#113AF5',
 	Black = '#000000',
 	VividRed = '#CF2E2E',
 	VividPurple = '#9B51E0',
@@ -65,9 +65,9 @@ const AccentColorControl = ( {
 	const getColorOptions = useCallback(
 		(): ColorOption[] => [
 			{
-				label: __( 'Lettre' ),
-				value: COLORS.Lettre,
-				icon: <ColorSwatch color={ COLORS.Lettre } />,
+				label: __( 'Allegro Blue' ),
+				value: COLORS.AllegroBlue,
+				icon: <ColorSwatch color={ COLORS.AllegroBlue } />,
 				isPremium: false,
 			},
 			{

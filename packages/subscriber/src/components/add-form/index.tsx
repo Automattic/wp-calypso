@@ -43,7 +43,6 @@ interface Props {
 	onChangeIsImportValid?: ( isValid: boolean ) => void;
 	titleText?: string;
 	subtitleText?: string;
-	emailPlaceholders?: string[];
 }
 
 export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
@@ -69,7 +68,6 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		onChangeIsImportValid,
 		titleText,
 		subtitleText,
-		emailPlaceholders,
 	} = props;
 
 	const {
@@ -83,10 +81,10 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	 * ↓ Fields
 	 */
 	const emailControlMaxNum = 6;
-	const emailControlPlaceholder = emailPlaceholders ?? [
-		translate( 'sibling@example.com' ),
-		translate( 'parents@example.com' ),
-		translate( 'friend@example.com' ),
+	const emailControlPlaceholder = [
+		translate( 'bestie@email.com' ),
+		translate( 'chrisfromwork@email.com' ),
+		translate( 'mom@email.com' ),
 	];
 	const inProgress = useInProgressState();
 	const prevInProgress = useRef( inProgress );
@@ -404,9 +402,9 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		return (
 			isSelectedFileValid &&
 			! selectedFile && (
-				<p aria-label={ ariaLabelMsg } className="add-subscriber__form--disclaimer">
+				<div aria-label={ ariaLabelMsg } className="add-subscriber__form--disclaimer">
 					{ labelText }
-				</p>
+				</div>
 			)
 		);
 	}
@@ -435,16 +433,6 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 					) }
 				</label>
 			)
-		);
-	}
-
-	function renderFollowerNoticeLabel() {
-		return (
-			<p className="add-subscriber__form--disclaimer">
-				{ translate(
-					"If you enter an email address that has a WordPress.com account, they'll become a follower."
-				) }
-			</p>
 		);
 	}
 
@@ -504,7 +492,6 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 
 					{ ! includesHandledError() && renderImportCsvSelectedFileLabel() }
 					{ showCsvUpload && ! includesHandledError() && renderImportCsvLabel() }
-					{ ! includesHandledError() && renderFollowerNoticeLabel() }
 
 					{ renderEmptyFormValidationMsg() }
 

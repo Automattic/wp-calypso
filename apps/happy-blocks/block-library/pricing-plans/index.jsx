@@ -66,8 +66,8 @@ function registerBlocks() {
 			},
 			{
 				name: 'ecommerce',
-				title: __( 'Upgrade eCommerce', 'happy-blocks' ),
-				description: __( 'Upgrade to eCommerce pricing plan', 'happy-blocks' ),
+				title: __( 'Upgrade Commerce', 'happy-blocks' ),
+				description: __( 'Upgrade to Commerce pricing plan', 'happy-blocks' ),
 				attributes: {
 					defaultProductSlug: PLAN_ECOMMERCE,
 				},

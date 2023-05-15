@@ -6,10 +6,30 @@
 	margin-bottom: 10px;
 }
 
+.tag-stream__header-title-group {
+	display: flex;
+	flex-wrap: wrap;
+	margin-right: 6px;
+}
+
 .tag-stream__header-title {
+	font-family: "Noto Serif", Georgia, "Times New Roman", Times, serif;
 	font-size: 2rem;
 	text-transform: capitalize;
 	font-weight: 600;
+	line-height: 24px;
+	margin-bottom: 4px;
+}
+
+.has-description .tag-stream__header-title {
+	font-size: $font-title-small;
+}
+
+.tag-stream__header-description {
+	font-family: "Noto Serif", Georgia, "Times New Roman", Times, serif;
+	font-size: $font-headline-small;
+	font-weight: 600;
+	line-height: 48px;
 }
 
 // Back button in Tag streams
