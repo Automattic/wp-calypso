@@ -76,10 +76,6 @@ const startWriting: Flow = {
 				case 'processing': {
 					// If we just created a new site.
 					if ( ! providedDependencies?.blogLaunched && providedDependencies?.siteSlug ) {
-						await updateLaunchpadSettings( String( providedDependencies?.siteSlug ), {
-							checklist_statuses: { first_post_published: true },
-						} );
-
 						setSelectedSite( providedDependencies?.siteId );
 						setIntentOnSite( providedDependencies?.siteSlug, START_WRITING_FLOW );
 						saveSiteSettings( providedDependencies?.siteId, {
@@ -151,7 +147,7 @@ const startWriting: Flow = {
 				case 'setup-blog':
 					if ( siteSlug ) {
 						await updateLaunchpadSettings( siteSlug, {
-							checklist_statuses: { site_edited: true },
+							checklist_statuses: { setup_blog: true },
 						} );
 					}
 					return navigate( 'launchpad' );
