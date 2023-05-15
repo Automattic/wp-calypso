@@ -255,10 +255,6 @@ export const HelpCenterContactForm = () => {
 		Boolean( supportSite?.is_wpcom_atomic )
 	);
 
-	if ( ! thirdPartyCookiesAllowed ) {
-		return <ThirdPartyCookiesNotice />;
-	}
-
 	const enableGPTResponse = config.isEnabled( 'help/gpt-response' );
 	const showingSibylResults = params.get( 'show-results' ) === 'true';
 	const showingGPTResponse = params.get( 'show-gpt' ) === 'true';
@@ -311,7 +307,6 @@ export const HelpCenterContactForm = () => {
 						section: sectionName,
 					} );
 
-					//navigate( '/inline-chat' );
 					setShowHelpCenter( false );
 					setShowMessagingLauncher( true );
 					setShowMessagingWidget( true );
@@ -500,6 +495,10 @@ export const HelpCenterContactForm = () => {
 
 		return isSubmitting ? formTitles.buttonSubmittingLabel : formTitles.buttonLabel;
 	};
+
+	if ( ! thirdPartyCookiesAllowed ) {
+		return <ThirdPartyCookiesNotice />;
+	}
 
 	// TODO: A/B test
 	if ( enableGPTResponse && showingGPTResponse ) {
