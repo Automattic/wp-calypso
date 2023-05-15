@@ -259,6 +259,16 @@ private object OdysseyStats : WPComPluginBuild(
 				yarn test:js --reporters=default --reporters=jest-teamcity --maxWorkers=${'$'}JEST_MAX_WORKERS
 			"""
 		}
+		bashNodeScript {
+			name = "Run Size Test"
+			scriptContent = """
+				cd apps/odyssey-stats
+
+				# run unit tests
+				yarn test:size
+			"""
+		}
+		
 	}
 )
 
