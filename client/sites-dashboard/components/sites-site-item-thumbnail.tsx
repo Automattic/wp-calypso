@@ -5,8 +5,15 @@ import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
-import { ComponentProps } from 'react';
+import { ComponentProps, useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Image from 'calypso/components/image';
+import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
+import { transferStates } from 'calypso/state/automated-transfer/constants';
+import {
+	getAutomatedTransferStatus,
+	isFetchingAutomatedTransferStatus,
+} from 'calypso/state/automated-transfer/selectors';
 import { P2Thumbnail } from './p2-thumbnail';
 import { SiteComingSoon } from './sites-site-coming-soon';
 import type { SitesDisplayMode } from './sites-display-mode-switcher';
@@ -36,6 +43,15 @@ export const SiteItemThumbnail = ( {
 }: SiteItemThumbnailProps ) => {
 	const { __ } = useI18n();
 	const classes = classNames( props.className, disallowSelection );
+	const newSiteId = site.is_creating ? site.ID : null;
+	const transferStatus = useCheckSiteTransferStatus( newSiteId );
+
+	const isTransferCompleted = transferStatus === transferStates.COMPLETE;
+	const isTransferring = transferStatus !== null && ! isTransferCompleted;
+
+	if ( isTransferCompleted && newSiteId ) {
+		site.is_creating = false;
+	}
 
 	// Allow parent component to lazy load the entire component.
 	if ( showPlaceholder === true ) {
@@ -82,6 +98,7 @@ export const SiteItemThumbnail = ( {
 				width={ style.width }
 				height={ style.height }
 				lang={ site.lang }
+				showLoader={ isTransferring }
 			/>
 		);
 	}
@@ -145,4 +162,37 @@ function getFirstGrapheme( input: string ) {
 		return String.fromCodePoint( codePoint );
 	}
 	return '';
+}
+
+function useCheckSiteTransferStatus( siteId: number | null, intervalTime = 3000 ) {
+	const dispatch = useDispatch();
+
+	const transferStatus = useSelector( ( state ) => getAutomatedTransferStatus( state, siteId ) );
+	const isFetchingTransferStatus = useSelector( ( state ) =>
+		isFetchingAutomatedTransferStatus( state, siteId )
+	);
+
+	const intervalRef = useRef< NodeJS.Timeout >();
+
+	useEffect( () => {
+		if ( ! siteId || transferStatus === transferStates.COMPLETE ) {
+			return;
+		}
+
+		if ( ! isFetchingTransferStatus ) {
+			intervalRef.current = setInterval( () => {
+				dispatch( fetchAutomatedTransferStatus( siteId ) );
+			}, intervalTime );
+		}
+
+		return () => clearInterval( intervalRef.current );
+	}, [ siteId, dispatch, transferStatus, isFetchingTransferStatus, intervalTime ] );
+
+	useEffect( () => {
+		if ( siteId ) {
+			dispatch( fetchAutomatedTransferStatus( siteId ) );
+		}
+	}, [ siteId, dispatch ] );
+
+	return transferStatus;
 }

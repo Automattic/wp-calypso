@@ -2,9 +2,18 @@
  * @jest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import React from 'react';
+import { Provider } from 'react-redux';
+import configureStore from 'redux-mock-store';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { SiteItemThumbnail } from '../sites-site-item-thumbnail';
 
-function makeTestSite( { title = 'test', is_coming_soon = false, lang = 'en' } = {} ) {
+function makeTestSite( {
+	title = 'test',
+	is_coming_soon = false,
+	lang = 'en',
+	is_creating = false,
+} = {} ) {
 	return {
 		ID: 1,
 		title,
@@ -15,6 +24,7 @@ function makeTestSite( { title = 'test', is_coming_soon = false, lang = 'en' } =
 		jetpack: false,
 		is_coming_soon,
 		lang,
+		is_creating,
 	};
 }
 
@@ -61,6 +71,45 @@ describe( '<SiteItemThumbnail>', () => {
 				);
 				expect( screen.getByLabelText( 'Site Icon' ) ).toHaveTextContent( /^👩$/ );
 			} );
+		} );
+	} );
+
+	describe( 'Atomic transfer', () => {
+		const initialState = {
+			automatedTransfer: {
+				1: {
+					fetchingStatus: true,
+					status: 'in-progress',
+				},
+			},
+		};
+		const mockStore = configureStore();
+		const store = mockStore( initialState );
+
+		test( 'show loader when atomic transfer in progress', () => {
+			const { container } = renderWithProvider(
+				<Provider store={ store }>
+					<SiteItemThumbnail
+						displayMode="tile"
+						site={ makeTestSite( { title: 'test', is_coming_soon: true, is_creating: true } ) }
+					/>
+				</Provider>
+			);
+
+			expect( container.querySelector( 'div[class*="Loader"]' ) ).toBeInTheDocument();
+		} );
+
+		test( 'does not show loader when atomic transfer is not in progress', () => {
+			const { container } = renderWithProvider(
+				<Provider store={ store }>
+					<SiteItemThumbnail
+						displayMode="tile"
+						site={ makeTestSite( { title: 'test', is_coming_soon: true, is_creating: false } ) }
+					/>
+				</Provider>
+			);
+
+			expect( container.querySelector( 'div[class*="Loader"]' ) ).not.toBeInTheDocument();
 		} );
 	} );
 } );
