@@ -13,8 +13,6 @@ import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/
 import { setCurrentFlowName, setPreviousFlowName } from 'calypso/state/signup/flow/actions';
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
-import { setSiteType } from 'calypso/state/signup/steps/site-type/actions';
-import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getSiteId } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
@@ -370,15 +368,5 @@ export default {
 					next();
 				} );
 		}
-	},
-	importSiteInfoFromQuery( { store: signupStore, query }, next ) {
-		const state = signupStore.getState();
-		const siteType = getSiteType( state );
-
-		if ( ! siteType && query.site_type ) {
-			signupStore.dispatch( setSiteType( query.site_type ) );
-		}
-
-		next();
 	},
 };

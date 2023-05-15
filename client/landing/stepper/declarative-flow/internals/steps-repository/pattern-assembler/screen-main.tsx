@@ -20,6 +20,8 @@ import type { MouseEvent } from 'react';
 interface Props {
 	shouldUnlockGlobalStyles: boolean;
 	isDismissedGlobalStylesUpgradeModal?: boolean;
+	hasSelectedColorVariation?: boolean;
+	hasSelectedFontVariation?: boolean;
 	onSelect: ( name: string ) => void;
 	onContinueClick: () => void;
 	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
@@ -28,6 +30,8 @@ interface Props {
 const ScreenMain = ( {
 	shouldUnlockGlobalStyles,
 	isDismissedGlobalStylesUpgradeModal,
+	hasSelectedColorVariation,
+	hasSelectedFontVariation,
 	onSelect,
 	onContinueClick,
 	recordTracksEvent,
@@ -44,20 +48,38 @@ const ScreenMain = ( {
 
 	const headerDescription = selectedDesign?.is_virtual
 		? translate( 'Customize your homepage with our library of styles and patterns.' )
-		: translate( 'Use our library of styles and patterns to design your own homepage.' );
+		: translate( 'Use our library of styles and patterns to build a homepage.' );
 
 	const getDescription = () => {
 		if ( ! shouldUnlockGlobalStyles ) {
-			return translate( 'Ready? Go to the Site Editor to edit your content.' );
+			return translate( 'Ready? Go to the Site Editor to continue editing.' );
 		}
 
 		if ( isDismissedGlobalStylesUpgradeModal ) {
 			return translate(
-				'Ready? Keep your styles and go to the Site Editor to edit your content. You’ll be able to upgrade to the Premium plan later.'
+				'Ready to continue? Keep your selected styles and upgrade to the Premium plan later.'
 			);
 		}
 
-		return translate( "You've selected a premium color or font for your site." );
+		if ( hasSelectedColorVariation && hasSelectedFontVariation ) {
+			return translate(
+				'Your font and color choices are exclusive to the Premium plan and above.'
+			);
+		} else if ( hasSelectedColorVariation ) {
+			return translate( 'Your color choices are exclusive to the Premium plan and above.' );
+		} else if ( hasSelectedFontVariation ) {
+			return translate( 'Your font choices are exclusive to the Premium plan and above.' );
+		}
+	};
+
+	const getContinueText = () => {
+		if ( isDismissedGlobalStylesUpgradeModal ) {
+			return translate( 'Continue to the editor' );
+		}
+
+		return shouldUnlockGlobalStyles && ! isDismissedGlobalStylesUpgradeModal
+			? translate( 'Unlock this style' )
+			: translate( 'Continue' );
 	};
 
 	// Use the mousedown event to prevent either the button focusing or text selection
@@ -100,7 +122,7 @@ const ScreenMain = ( {
 	return (
 		<>
 			<NavigatorHeader
-				title={ translate( 'Let’s get creative' ) }
+				title={ translate( 'Design your own' ) }
 				description={ headerDescription }
 				hideBack
 			/>
@@ -121,10 +143,10 @@ const ScreenMain = ( {
 						<NavigationButtonAsItem
 							path="/section"
 							icon={ layout }
-							aria-label={ translate( 'Sections' ) }
+							aria-label={ translate( 'Homepage' ) }
 							onClick={ () => onSelect( 'section' ) }
 						>
-							<span className="pattern-layout__list-item-text">{ translate( 'Sections' ) }</span>
+							<span className="pattern-layout__list-item-text">{ translate( 'Homepage' ) }</span>
 						</NavigationButtonAsItem>
 						<NavigationButtonAsItem
 							path="/footer"
@@ -168,9 +190,7 @@ const ScreenMain = ( {
 					onMouseDown={ handleMouseDown }
 					onClick={ handleClick }
 				>
-					{ shouldUnlockGlobalStyles && ! isDismissedGlobalStylesUpgradeModal
-						? translate( 'Unlock this style' )
-						: translate( 'Continue' ) }
+					{ getContinueText() }
 				</Button>
 			</div>
 		</>
