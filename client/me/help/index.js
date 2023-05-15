@@ -17,8 +17,7 @@ export default function () {
 		page(
 			'/help/contact',
 			helpController.loggedOut,
-			sidebar,
-			helpController.contact,
+			helpController.contactRedirect,
 			makeLayout,
 			clientRender
 		);
