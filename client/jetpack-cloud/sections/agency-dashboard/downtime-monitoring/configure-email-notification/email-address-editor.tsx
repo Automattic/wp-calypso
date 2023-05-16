@@ -95,12 +95,10 @@ export default function EmailAddressEditor( {
 		<Modal
 			open={ true }
 			onRequestClose={ toggleModal }
-			title={ translate( 'Add your email address' ) }
+			title={ title }
 			className="notification-settings__modal"
 		>
-			<div className="notification-settings__sub-title">
-				{ translate( 'Please use only your number or one you have access to. ' ) }
-			</div>
+			<div className="notification-settings__sub-title">{ subTitle }</div>
 
 			<form className="configure-email-notification__form" onSubmit={ onSave }>
 				<FormFieldset>
@@ -108,12 +106,15 @@ export default function EmailAddressEditor( {
 					<FormTextInput
 						id="name"
 						name="name"
+						value={ emailItem.name }
 						disabled={ showCodeVerification }
-						aria-describedby="nameHelp"
+						onChange={ handleChange( 'name' ) }
 					/>
-					<div id="nameHelp" className="configure-email-notification__help-text">
-						{ translate( 'Give this email a nickname for your personal reference' ) }
-					</div>
+					{ ! isVerifyAction && (
+						<div className="configure-email-notification__help-text">
+							{ translate( 'Give this email a nickname for your personal reference' ) }
+						</div>
+					) }
 				</FormFieldset>
 
 				<FormFieldset>
@@ -121,12 +122,20 @@ export default function EmailAddressEditor( {
 					<FormTextInput
 						id="email"
 						name="email"
+						value={ emailItem.email }
 						disabled={ showCodeVerification }
-						aria-describedby="emailHelp"
+						onChange={ handleChange( 'email' ) }
 					/>
-					<div id="emailHelp" className="configure-email-notification__help-text">
-						{ translate( 'We’ll send a code to verify your email address.' ) }
-					</div>
+					{ validationError?.email && (
+						<div className="notification-settings__footer-validation-error">
+							{ validationError.email }
+						</div>
+					) }
+					{ ! isVerifyAction && (
+						<div className="configure-email-notification__help-text">
+							{ translate( 'We’ll send a code to verify your email address.' ) }
+						</div>
+					) }
 				</FormFieldset>
 
 				{ showCodeVerification && (
@@ -134,8 +143,18 @@ export default function EmailAddressEditor( {
 						<FormLabel htmlFor="code">
 							{ translate( 'Please enter the code you received via email' ) }
 						</FormLabel>
-						<FormTextInput id="code" name="code" aria-describedby="codeHelp" />
-						<div id="codeHelp" className="configure-email-notification__help-text">
+						<FormTextInput
+							id="code"
+							name="code"
+							value={ emailItem.code }
+							onChange={ handleChange( 'code' ) }
+						/>
+						{ validationError?.code && (
+							<div className="notification-settings__footer-validation-error">
+								{ validationError.code }
+							</div>
+						) }
+						<div className="configure-email-notification__help-text">
 							{ translate(
 								'Please wait for a minute. If you didn’t receive it, we can {{button}}resend{{/button}} it.',
 								{
@@ -155,16 +174,19 @@ export default function EmailAddressEditor( {
 					</FormFieldset>
 				) }
 				<div className="notification-settings__footer">
-					{ validationError && (
-						<div role="alert" className="notification-settings__footer-validation-error">
-							{ validationError }
-						</div>
-					) }
 					<div className="notification-settings__footer-buttons">
-						<Button onClick={ toggleModal } aria-label={ translate( 'Cancel' ) }>
+						<Button onClick={ toggleModal }>
 							{ showCodeVerification ? translate( 'Later' ) : translate( 'Cancel' ) }
 						</Button>
-						<Button disabled={ false } type="submit" primary aria-label={ translate( 'Verify' ) }>
+						<Button
+							disabled={
+								! emailItem.name ||
+								! emailItem.email ||
+								( showCodeVerification && ! emailItem.code )
+							}
+							type="submit"
+							primary
+						>
 							{ translate( 'Verify' ) }
 						</Button>
 					</div>
