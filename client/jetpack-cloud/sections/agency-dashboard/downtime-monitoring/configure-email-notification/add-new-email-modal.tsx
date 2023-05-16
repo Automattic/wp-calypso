@@ -2,7 +2,7 @@ import { Button } from '@automattic/components';
 import { Modal } from '@wordpress/components';
 import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -50,7 +50,7 @@ export default function AddNewEmailModal( {
 		}
 	}, [ selectedEmail ] );
 
-	function onSave( event: React.FormEvent< HTMLFormElement > ) {
+	const onSave = ( event: React.FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
 		setValidationError( '' );
 
@@ -72,7 +72,7 @@ export default function AddNewEmailModal( {
 			setShowCodeVerification( true );
 			// TODO: implement sending verification code
 		}
-	}
+	};
 
 	let title = translate( 'Add new email address' );
 	let subTitle = translate( 'Please use only your number or one you have access to. ' );
@@ -82,9 +82,16 @@ export default function AddNewEmailModal( {
 		subTitle = translate( 'We’ll send a code to verify your email address.' );
 	}
 
-	function handleResendCode() {
+	const handleResendCode = () => {
 		// TODO: implement resending verification code
-	}
+	};
+
+	const handleChange = useCallback(
+		( key ) => ( event: React.ChangeEvent< HTMLInputElement > ) => {
+			setEmailItem( ( prevState ) => ( { ...prevState, [ key ]: event.target.value } ) );
+		},
+		[]
+	);
 
 	return (
 		<Modal
@@ -103,9 +110,7 @@ export default function AddNewEmailModal( {
 						name="name"
 						value={ emailItem.name }
 						disabled={ showCodeVerification }
-						onChange={ ( event: { target: { value: string } } ) =>
-							setEmailItem( { ...emailItem, name: event.target.value } )
-						}
+						onChange={ handleChange( 'name' ) }
 					/>
 					{ ! isVerifyAction && (
 						<div className="configure-email-notification__help-text">
@@ -121,9 +126,7 @@ export default function AddNewEmailModal( {
 						name="email"
 						value={ emailItem.email }
 						disabled={ showCodeVerification }
-						onChange={ ( event: { target: { value: string } } ) =>
-							setEmailItem( { ...emailItem, email: event.target.value } )
-						}
+						onChange={ handleChange( 'email' ) }
 					/>
 					{ ! isVerifyAction && (
 						<div className="configure-email-notification__help-text">
@@ -141,9 +144,7 @@ export default function AddNewEmailModal( {
 							id="code"
 							name="code"
 							value={ emailItem.code }
-							onChange={ ( event: { target: { value: string } } ) =>
-								setEmailItem( { ...emailItem, code: event.target.value } )
-							}
+							onChange={ handleChange( 'code' ) }
 						/>
 						<div className="configure-email-notification__help-text">
 							{ translate(
