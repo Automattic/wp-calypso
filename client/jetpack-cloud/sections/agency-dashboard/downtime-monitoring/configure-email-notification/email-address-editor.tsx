@@ -21,7 +21,7 @@ interface Props {
 	selectedAction?: AllowedMonitorContactActions;
 }
 
-export default function AddNewEmailModal( {
+export default function EmailAddressEditor( {
 	toggleModal,
 	selectedEmail,
 	selectedAction = 'add',
@@ -37,6 +37,7 @@ export default function AddNewEmailModal( {
 	} );
 
 	const isVerifyAction = selectedAction === 'verify';
+	const isEditAction = selectedAction === 'edit';
 
 	useEffect( () => {
 		if ( isVerifyAction ) {
@@ -75,11 +76,16 @@ export default function AddNewEmailModal( {
 	};
 
 	let title = translate( 'Add new email address' );
-	let subTitle = translate( 'Please use only your number or one you have access to. ' );
+	let subTitle = translate( 'Please use only your number or one you have access to.' );
 
 	if ( isVerifyAction ) {
 		title = translate( 'Verify your email address' );
 		subTitle = translate( 'We’ll send a code to verify your email address.' );
+	}
+
+	if ( isEditAction ) {
+		title = translate( 'Edit your email address' );
+		subTitle = translate( 'If you update your email address, you’ll need to verify it.' );
 	}
 
 	const handleResendCode = () => {

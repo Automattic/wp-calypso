@@ -1,9 +1,8 @@
-import { Card, Button } from '@automattic/components';
-import { CheckboxControl } from '@wordpress/components';
-import { Icon, plus, pencil } from '@wordpress/icons';
+import { Button } from '@automattic/components';
+import { Icon, plus } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import Badge from 'calypso/components/badge';
+import SelectEmailCheckbox from './select-email-checkbox';
 import type {
 	MonitorSettingsEmail,
 	StateMonitorSettingsEmail,
@@ -47,79 +46,16 @@ export default function ConfigureEmailNotification( {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
-	const handleOnChange = ( item: StateMonitorSettingsEmail, checked: boolean ) => {
-		if ( item.isDefault ) {
-			return;
-			// FIXME: We need to show a custom error message here or a tooltip.
-		}
-		if ( ! item.verified ) {
-			return;
-			// FIXME: We can open the verification modal here.
-		}
-		const updatedEmailItems = allEmailItems.map( ( emailItem ) => {
-			if ( emailItem.email === item.email ) {
-				return {
-					...emailItem,
-					checked,
-				};
-			}
-			return emailItem;
-		} );
-		setAllEmailItems( updatedEmailItems );
-	};
-
-	const showVerified = true; // FIXME: This should be dynamic.
-
-	const handleToggleModal = (
-		item: StateMonitorSettingsEmail,
-		action: AllowedMonitorContactActions
-	) => {
-		toggleModal( item, action );
-	};
-
-	const getCheckboxContent = ( item: StateMonitorSettingsEmail ) => (
-		<div className="configure-email-address__checkbox-content-container">
-			<span className="configure-email-address__checkbox-content">
-				<div className="configure-email-address__checkbox-heading">{ item.email }</div>
-				<div className="configure-email-address__checkbox-sub-heading">{ item.name }</div>
-			</span>
-			{ ! item.isDefault && (
-				<>
-					{ ! item.verified && (
-						<span
-							role="button"
-							tabIndex={ 0 }
-							onKeyPress={ () => handleToggleModal( item, 'verify' ) }
-							onClick={ () => handleToggleModal( item, 'verify' ) }
-							className="configure-email-address__verification-status cursor-pointer"
-						>
-							<Badge type="warning">{ translate( 'Pending Verification' ) }</Badge>
-						</span>
-					) }
-					{ showVerified && item.verified && (
-						<span className="configure-email-address__verification-status">
-							<Badge type="success">{ translate( 'Verified' ) }</Badge>
-						</span>
-					) }
-					<span className="configure-email-address__edit-icon">
-						<Icon size={ 18 } icon={ pencil } />
-					</span>
-				</>
-			) }
-		</div>
-	);
-
 	return (
 		<div className="configure-email-address__card-container">
 			{ allEmailItems.map( ( item ) => (
-				<Card className="configure-email-address__card" key={ item.email } compact>
-					<CheckboxControl
-						className="configure-email-address__checkbox"
-						checked={ item.checked }
-						onChange={ ( checked ) => handleOnChange( item, checked ) }
-						label={ getCheckboxContent( item ) }
-					/>
-				</Card>
+				<SelectEmailCheckbox
+					key={ item.email }
+					item={ item }
+					toggleModal={ toggleModal }
+					allEmailItems={ allEmailItems }
+					setAllEmailItems={ setAllEmailItems }
+				/>
 			) ) }
 			<Button
 				compact
