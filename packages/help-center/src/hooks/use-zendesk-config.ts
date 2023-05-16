@@ -6,12 +6,13 @@ async function requestZendeskConfig() {
 	} );
 }
 
-export default function useZendeskConfig() {
+export default function useZendeskConfig( enabled: boolean ) {
 	return useQuery< Response >( [ 'getZendeskConfig' ], requestZendeskConfig, {
 		staleTime: Infinity,
 		retry: false,
 		meta: {
 			persist: false,
 		},
+		enabled,
 	} );
 }

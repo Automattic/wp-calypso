@@ -27,11 +27,12 @@ async function requestMessagingAuth() {
 		  } as APIFetchOptions ) ) as MessagingAuth );
 }
 
-export default function useMessagingAuth() {
+export default function useMessagingAuth( enabled: boolean ) {
 	return useQuery< MessagingAuth >( [ 'getMessagingAuth' ], requestMessagingAuth, {
 		staleTime: 10 * 60 * 1000, // 10 minutes
 		meta: {
 			persist: false,
 		},
+		enabled,
 	} );
 }

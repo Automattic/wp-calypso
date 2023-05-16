@@ -4,7 +4,6 @@
  */
 import config from '@automattic/calypso-config';
 import { useSupportAvailability } from '@automattic/data-stores';
-import { useHappychatAvailable } from '@automattic/happychat-connection';
 import { loadScript } from '@automattic/load-script';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { createPortal, useEffect, useRef } from '@wordpress/element';
@@ -28,13 +27,11 @@ const ZENDESK_SCRIPT_ID = 'ze-snippet';
 const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
 	const { data: chatStatus } = useSupportAvailability( 'CHAT' );
-	const { data } = useHappychatAvailable( Boolean( chatStatus?.is_user_eligible ) );
-	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
 	const { setSite } = useDispatch( HELP_CENTER_STORE );
 	const { setShowMessagingWidget } = useDispatch( HELP_CENTER_STORE );
 	const { setThirdPartyCookiesAllowed } = useDispatch( HELP_CENTER_STORE );
 
-	const { status: zendeskStatus } = useZendeskConfig();
+	const { status: zendeskStatus } = useZendeskConfig( Boolean( chatStatus?.is_user_eligible ) );
 	useEffect( () => {
 		if ( zendeskStatus === 'success' ) {
 			setThirdPartyCookiesAllowed( true );
@@ -44,6 +41,10 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 	}, [ setThirdPartyCookiesAllowed, zendeskStatus ] );
 
 	useEffect( () => {
+		if ( ! chatStatus?.is_user_eligible ) {
+			return;
+		}
+
 		const zendeskKey: string | false = config( 'zendesk_support_chat_key' );
 		if ( ! zendeskKey ) {
 			return;
@@ -73,9 +74,9 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 			setUpMessagingEventHandlers,
 			{ id: ZENDESK_SCRIPT_ID }
 		);
-	}, [ setShowMessagingWidget ] );
+	}, [ setShowMessagingWidget, chatStatus ] );
 
-	const { data: messagingAuth } = useMessagingAuth();
+	const { data: messagingAuth } = useMessagingAuth( Boolean( chatStatus?.is_user_eligible ) );
 	useEffect( () => {
 		const jwt = messagingAuth?.user.jwt;
 		if ( typeof window.zE !== 'function' || ! jwt ) {
@@ -117,12 +118,6 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 		}
 	}, [ showMessagingWidget ] );
 
-	useEffect( () => {
-		if ( data?.status === 'assigned' ) {
-			setShowHelpCenter( true );
-		}
-	}, [ data, setShowHelpCenter ] );
-
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const primarySiteId = useSelector( ( state ) => getPrimarySiteId( state ) );
 
@@ -135,7 +130,6 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 	);
 
 	setSite( currentSite ? currentSite : site );
-	useSupportAvailability( 'CHAT' );
 
 	useStillNeedHelpURL();
 
