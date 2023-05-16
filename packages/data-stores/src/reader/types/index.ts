@@ -55,7 +55,7 @@ export type SiteSubscription = {
 	ID: string;
 	blog_ID: string;
 	feed_ID: string;
-	URL: string | false;
+	URL: string;
 	date_subscribed: Date;
 	delivery_methods: SiteSubscriptionDeliveryMethods;
 	name: string;
