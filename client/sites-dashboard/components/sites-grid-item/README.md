@@ -5,6 +5,7 @@ Renders a SitesGridItem component.
 ## How to use
 
 ```jsx
+import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import SitesGridItem from 'calypso/sites-dashboard/components/sites-grid-item';
 
 function render() {
@@ -18,7 +19,7 @@ function render() {
 				showBadgeSection={ false } // optional
 				showThumbnailLink={ false } // optional
 				showSiteRenewLink={ false } // optional
-				onSiteSelectBtnClick={ ( site: SiteExcerptData ) => {} } // optional
+				onSiteSelectBtnClick={ ( s: SiteExcerptData ) => {} } // optional
 			></SitesGridItem>
 		</div>
 	);

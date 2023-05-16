@@ -41,8 +41,8 @@ const SitesGridItemExample = () => {
 						showBadgeSection={ false }
 						showThumbnailLink={ false }
 						showSiteRenewLink={ false }
-						onSiteSelectBtnClick={ ( _site ) => {
-							console.log( _site );
+						onSiteSelectBtnClick={ () => {
+							// console.log( _site );
 						} }
 					/>
 				</div>
