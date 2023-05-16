@@ -40,7 +40,9 @@ const LicenseLightbox: FunctionComponent< LicenseLightBoxProps > = ( {
 	return (
 		<JetpackLightbox className="license-lightbox" isOpen={ true } onClose={ onClose }>
 			<JetpackLightboxMain>
-				<JetpackProductInfo title={ title } product={ productInfo } full={ isLargeScreen } />
+				{ productInfo && (
+					<JetpackProductInfo title={ title } product={ productInfo } full={ isLargeScreen } />
+				) }
 			</JetpackLightboxMain>
 
 			<JetpackLightboxAside>
