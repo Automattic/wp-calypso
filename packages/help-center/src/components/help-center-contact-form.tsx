@@ -531,16 +531,19 @@ export const HelpCenterContactForm = () => {
 		);
 	};
 
-	const { isFetching: isFetchingGPTUrls, data: links } = useJetpackSearchAIQuery(
-		'9619154',
-		enableGPTResponse ? debouncedMessage : '',
-		'urls'
-	);
-	const { isFetching: isFetchingGPTAnswer, data: gptResponse } = useJetpackSearchAIQuery(
-		'9619154',
-		links?.urls ? debouncedMessage : '',
-		'response'
-	);
+	const { isFetching: isFetchingGPTUrls, data: links } = useJetpackSearchAIQuery( {
+		siteId: '9619154',
+		query: debouncedMessage,
+		stopAt: 'urls',
+		enabled: enableGPTResponse,
+	} );
+	const { isFetching: isFetchingGPTAnswer, data: gptResponse } = useJetpackSearchAIQuery( {
+		siteId: '9619154',
+		query: debouncedMessage,
+		stopAt: 'response',
+		enabled: !! links?.urls,
+	} );
+
 	const isFetchingGPTResponse = isFetchingGPTUrls || isFetchingGPTAnswer;
 
 	const getCTALabel = () => {
