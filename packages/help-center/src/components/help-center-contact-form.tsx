@@ -448,13 +448,11 @@ export const HelpCenterContactForm = () => {
 		shouldLoadGptAnswer ? debouncedMessage : '',
 		'urls'
 	);
-	const { isFetching: isFetchingGPTAnswer, data: gptResponse } = useJetpackSearchAIQuery(
+	const { data: gptResponse } = useJetpackSearchAIQuery(
 		'9619154',
 		links?.urls ? debouncedMessage : '',
 		'response'
 	);
-	const isFetchingGPTResponse = isFetchingGPTUrls || isFetchingGPTAnswer;
-
 	const getCTALabel = () => {
 		const showingSibylOrGPTResults = showingSibylResults || showingGPTResponse;
 
@@ -493,7 +491,7 @@ export const HelpCenterContactForm = () => {
 				<HelpCenterGPT />
 				<section className="contact-form-submit">
 					<Button
-						isBusy={ isFetchingGPTResponse }
+						isBusy={ isFetchingGPTUrls }
 						onClick={ handleCTA }
 						isPrimary
 						className="help-center-contact-form__site-picker-cta"
