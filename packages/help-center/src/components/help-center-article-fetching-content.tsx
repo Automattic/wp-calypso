@@ -26,13 +26,13 @@ const useSupportArticleAlternatePostKey = ( blogId: number, postId: number ) => 
 	return getPostKey( supportArticleAlternates.data.blog_id, supportArticleAlternates.data.page_id );
 };
 
-interface ArticleFetchingContent {
+interface ArticleFetchingContentProps {
 	postId: number;
 	blogId?: string | null;
-	articleUrl?: string;
+	articleUrl?: string | null;
 }
 
-const ArticleFetchingContent = ( { postId, blogId, articleUrl }: ArticleFetchingContent ) => {
+const ArticleFetchingContent = ( { postId, blogId, articleUrl }: ArticleFetchingContentProps ) => {
 	const postKey = useSupportArticleAlternatePostKey( +( blogId ?? SUPPORT_BLOG_ID ), postId );
 	const post = useSelector( ( state ) => getPostByKey( state, postKey ) );
 	const isLoading = ! post?.content || ! postKey;
@@ -47,21 +47,13 @@ const ArticleFetchingContent = ( { postId, blogId, articleUrl }: ArticleFetching
 			articleUrl.indexOf( '#' ) !== -1 &&
 			post?.content
 		) {
-			// warn about this
-			// eslint-disable-next-line no-console
-			console.warn( 'scrolling to anchor', articleUrl );
 			setTimeout( () => {
 				const anchorId = articleUrl.split( '#' ).pop();
 				if ( anchorId ) {
-					// eslint-disable-next-line no-console
-					console.warn( 'found anchor', anchorId, articleUrl );
 					const element = document.getElementById( anchorId );
 					if ( element ) {
 						element.scrollIntoView();
 					}
-				} else {
-					// eslint-disable-next-line no-console
-					console.warn( 'no anchor for URL', articleUrl );
 				}
 			}, 0 );
 		}

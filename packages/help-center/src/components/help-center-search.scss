@@ -446,7 +446,7 @@
 						margin-right: 15px;
 						border-radius: 2px;
 						display: block;
-						background: var(--studio-gray-0);
+						background: var(--color-surface);
 						fill: var(--studio-blue-50);
 					}
 
@@ -462,6 +462,20 @@
 	/**
  	 * ARTICLE EMBED
  	 */
+
+	.help-center-embed-result__header {
+		top: 0;
+		background: var(--color-surface);
+		position: sticky;
+		z-index: 99;
+		border-bottom: 1px solid var(--studio-gray-0);
+		padding: 0 10px;
+
+		.help-center-embed-result__external-button {
+			display: flex;
+			align-items: center;
+		}
+	}
 	.help-center-embed-result article.help-center-article-content__story {
 		padding: 0 20px 20px;
 
@@ -545,11 +559,6 @@
 					margin-left: 2em;
 				}
 			}
-		}
-
-		.help-center-embed-result__external-button {
-			display: flex;
-			align-items: center;
 		}
 
 		p {

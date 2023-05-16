@@ -9,16 +9,12 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import { BackButton } from './back-button';
 import { BackToTopButton } from './back-to-top-button';
-import ArticleContent from './help-center-article-content';
 import ArticleFetchingContent from './help-center-article-fetching-content';
 
 export const HelpCenterEmbedResult: React.FC = () => {
-	const { state, search } = useLocation();
+	const { search } = useLocation();
 	const navigate = useNavigate();
 	const sectionName = useSelector( getSectionName );
-
-	// eslint-disable-next-line no-console
-	console.warn( 'got search', search );
 
 	const params = new URLSearchParams( search );
 	const postId = params.get( 'postId' );
@@ -67,7 +63,7 @@ export const HelpCenterEmbedResult: React.FC = () => {
 
 	return (
 		<>
-			<div className="help-center-embed-result">
+			<div className="help-center-embed-result__header">
 				<Flex justify="space-between">
 					<FlexItem>
 						<BackButton onClick={ redirectBack } />
@@ -83,11 +79,9 @@ export const HelpCenterEmbedResult: React.FC = () => {
 						</Button>
 					</FlexItem>
 				</Flex>
-				{ state?.content ? (
-					<ArticleContent content={ state.content } title={ state.title } link={ state.link } />
-				) : (
-					postId && <ArticleFetchingContent postId={ +postId } blogId={ blogId } />
-				) }
+			</div>
+			<div className="help-center-embed-result">
+				<ArticleFetchingContent articleUrl={ link } postId={ +( postId || 0 ) } blogId={ blogId } />
 			</div>
 			<BackToTopButton />
 		</>

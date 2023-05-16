@@ -268,7 +268,12 @@ function HelpSearchResults( {
 				) : null }
 				<ul className="help-center-search-results__list" aria-labelledby={ title ? id : undefined }>
 					{ results.map( ( result, index ) => (
-						<HelpLink result={ result } type={ type } index={ index } />
+						<HelpLink
+							key={ `${ id }-${ index }` }
+							result={ result }
+							type={ type }
+							index={ index }
+						/>
 					) ) }
 				</ul>
 			</Fragment>
