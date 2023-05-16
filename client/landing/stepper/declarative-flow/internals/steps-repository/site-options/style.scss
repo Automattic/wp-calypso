@@ -169,7 +169,9 @@
 	}
 
 	.data-center-picker__description {
-		white-space: nowrap;
+		@include break-medium {
+			white-space: nowrap;
+		}
 
 		&,
 		& a {
