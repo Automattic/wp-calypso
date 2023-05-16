@@ -418,8 +418,10 @@ function wpcom_display_global_styles_launch_bar( $bar_controls ) {
 	$upgrade_url = 'https://wordpress.com/plans/' . $site_slug . '?plan=value_bundle&feature=advanced-design-customization';
 
 	if ( wpcom_is_previewing_global_styles() ) {
+		$preview_text     = __( 'Turn off preview', 'full-site-editing' );
 		$preview_location = add_query_arg( 'hide-global-styles', '' );
 	} else {
+		$preview_text     = __( 'Turn on preview', 'full-site-editing' );
 		$preview_location = remove_query_arg( 'hide-global-styles' );
 	}
 
@@ -474,11 +476,10 @@ function wpcom_display_global_styles_launch_bar( $bar_controls ) {
 					class="launch-bar-global-styles-upgrade"
 					href="<?php echo esc_url( $upgrade_url ); ?>"
 				>
-					<?php echo esc_html__( 'Upgrade now', 'full-site-editing' ); ?>
+					<?php echo esc_html__( 'Upgrade your plan', 'full-site-editing' ); ?>
 				</a>
 				<a class="launch-bar-global-styles-preview" href="<?php echo esc_url( $preview_location ); ?>">
-					<label><input type="checkbox" <?php echo wpcom_is_previewing_global_styles() ? 'checked' : ''; ?>><span></span></label>
-					<?php echo esc_html__( 'Preview custom styles', 'full-site-editing' ); ?>
+					<?php echo esc_html( $preview_text ); ?>
 				</a>
 			</div>
 			<a class="launch-bar-global-styles-toggle" href="#">

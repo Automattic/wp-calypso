@@ -58,12 +58,6 @@ document.addEventListener( 'DOMContentLoaded', () => {
 
 	previewButton?.addEventListener( 'click', ( event ) => {
 		event.preventDefault();
-
-		const checkbox = previewButton.querySelector( 'input[type="checkbox"]' );
-		if ( checkbox ) {
-			checkbox.checked = ! checkbox.checked;
-		}
-
 		recordEvent( 'wpcom_global_styles_gating_notice_preview' );
 		window.location = previewButton.href;
 	} );
