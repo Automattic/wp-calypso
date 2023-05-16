@@ -443,17 +443,17 @@ export const HelpCenterContactForm = () => {
 		);
 	};
 
-	const { isFetching: isFetchingUrls, data: links } = useJetpackSearchAIQuery(
+	const { isFetching: isFetchingGPTUrls, data: links } = useJetpackSearchAIQuery(
 		'9619154',
 		shouldLoadGptAnswer ? debouncedMessage : '',
 		'urls'
 	);
-	const { isFetching: isFetchingResponse, data: gptResponse } = useJetpackSearchAIQuery(
+	const { isFetching: isFetchingGPTAnswer, data: gptResponse } = useJetpackSearchAIQuery(
 		'9619154',
 		links?.urls ? debouncedMessage : '',
 		'response'
 	);
-	const isFetchingGPTResponse = isFetchingUrls || isFetchingResponse;
+	const isFetchingGPTResponse = isFetchingGPTUrls || isFetchingGPTAnswer;
 
 	const getCTALabel = () => {
 		const showingSibylOrGPTResults = showingSibylResults || showingGPTResponse;
@@ -467,7 +467,7 @@ export const HelpCenterContactForm = () => {
 			return __( 'Continue', __i18n_text_domain__ );
 		}
 
-		if ( showingGPTResponse && isFetchingGPTResponse ) {
+		if ( showingGPTResponse && isFetchingGPTUrls ) {
 			return __( 'Gathering quick response.', __i18n_text_domain__ );
 		}
 
@@ -494,7 +494,6 @@ export const HelpCenterContactForm = () => {
 				<section className="contact-form-submit">
 					<Button
 						isBusy={ isFetchingGPTResponse }
-						disabled={ isFetchingGPTResponse }
 						onClick={ handleCTA }
 						isPrimary
 						className="help-center-contact-form__site-picker-cta"
