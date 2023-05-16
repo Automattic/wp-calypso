@@ -39,7 +39,7 @@ const JetpackLightbox: FunctionComponent< JetpackLightboxProps > = ( {
 			overlayClassName="jetpack-lightbox__modal-overlay"
 			isOpen={ isOpen }
 			onRequestClose={ onClose }
-			htmlOpenClassName="jetpack-lightbox__Html--is-open lightbox-mode"
+			htmlOpenClassName="jetpack-lightbox__html--is-open lightbox-mode"
 		>
 			<div className="jetpack-lightbox__content-wrapper">
 				<Button
