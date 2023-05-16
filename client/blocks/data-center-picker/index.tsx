@@ -117,6 +117,11 @@ const PickerRadio = styled.input( {
 	margin: '2px 16px 0 0',
 } );
 
+const CompactPickerSelect = styled( FormSelect )( {
+	width: 'fit-content',
+	borderRadius: '4px',
+} );
+
 const FormLabelThumbnail = styled.div( {
 	display: 'flex',
 	width: '100%',
@@ -207,7 +212,7 @@ const DataCenterPicker = ( {
 							<PickerOptionLabel>{ translate( 'Custom data center' ) }</PickerOptionLabel>
 							<span>{ translate( 'Choose the data center that best suits your needs.' ) }</span>
 							{ ! isRecommendedDataCenterPicked && (
-								<FormSelect
+								<CompactPickerSelect
 									onChange={ ( event ) => onChange( event.currentTarget.value ) }
 									value={ value }
 								>
@@ -216,7 +221,7 @@ const DataCenterPicker = ( {
 											{ option.label }
 										</option>
 									) ) }
-								</FormSelect>
+								</CompactPickerSelect>
 							) }
 						</PickerOption>
 					</CompactLabel>
