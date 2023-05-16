@@ -15,7 +15,7 @@ const selectors = {
  */
 export class SupportComponent {
 	private page: Page;
-	private root: Locator;
+	private helpCenter: Locator;
 
 	/**
 	 * Constructs an instance of the component.
@@ -24,7 +24,7 @@ export class SupportComponent {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
-		this.root = this.page.getByLabel( 'Help Center' );
+		this.helpCenter = this.page.getByLabel( 'Help Center' );
 	}
 
 	/**
@@ -87,7 +87,7 @@ export class SupportComponent {
 	 * @param {string} text Text to match on the results.
 	 */
 	async clickResult( text: string ): Promise< void > {
-		await this.root
+		await this.helpCenter
 			.getByRole( 'list', { name: /(Recommended resources|Show me where)/ } )
 			.getByRole( 'link', { name: text } )
 			.first()
@@ -102,7 +102,7 @@ export class SupportComponent {
 	 * @param {string} text Search keyword to be entered into the search field.
 	 */
 	async search( text: string ): Promise< void > {
-		await this.root.getByPlaceholder( 'Search for help' ).fill( text );
+		await this.helpCenter.getByPlaceholder( 'Search for help' ).fill( text );
 
 		await Promise.all( [
 			this.page.waitForResponse( /wpcom\?query/ ),
