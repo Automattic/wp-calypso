@@ -89,7 +89,7 @@ const hosting: Flow = {
 
 		useEffect(
 			() => {
-				if ( currentStepSlug === 'options' ) {
+				if ( currentStepSlug === undefined ) {
 					resetOnboardStore();
 				}
 			},
