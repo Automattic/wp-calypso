@@ -1,5 +1,6 @@
 import { dispatch, select, subscribe } from '@wordpress/data';
 import { getQueryArg } from '@wordpress/url';
+import { useEffect } from 'react';
 import useSiteIntent from './use-site-intent';
 
 const START_WRITING_FLOW = 'start-writing';
@@ -7,30 +8,25 @@ const START_WRITING_FLOW = 'start-writing';
 export function RedirectOnboardingUserAfterPublishingPost() {
 	const { siteIntent: intent } = useSiteIntent();
 
+	useEffect( () => {
+		if ( intent === START_WRITING_FLOW ) {
+			dispatch( 'core/edit-post' ).closeGeneralSidebar();
+			document.documentElement.classList.add( 'start-writing-hide' );
+		}
+	}, [ intent ] );
+
 	if ( intent !== START_WRITING_FLOW ) {
 		return false;
 	}
 
-	const siteOrigin =
-		getQueryArg( window.location.search, 'origin' ) ||
-		window.sessionStorage.getItem( 'site-origin' ) ||
-		'https://wordpress.com';
-	const siteSlug = window.location.hostname;
-
 	// Save site origin in session storage to be used in editor refresh.
-	window.sessionStorage.setItem( 'site-origin', siteOrigin );
+	const siteOriginParam = getQueryArg( window.location.search, 'origin' );
+	if ( getQueryArg( window.location.search, 'origin' ) ) {
+		window.sessionStorage.setItem( 'site-origin', siteOriginParam );
+	}
 
-	const unsubscribeSidebar = subscribe( () => {
-		const isComplementaryAreaVisible = select( 'core/preferences' ).get(
-			'core/edit-post',
-			'isComplementaryAreaVisible'
-		);
-
-		if ( isComplementaryAreaVisible ) {
-			dispatch( 'core/edit-post' ).closeGeneralSidebar();
-			unsubscribeSidebar();
-		}
-	} );
+	const siteOrigin = window.sessionStorage.getItem( 'site-origin' ) || 'https://wordpress.com';
+	const siteSlug = window.location.hostname;
 
 	const unsubscribe = subscribe( () => {
 		const isSavingPost = select( 'core/editor' ).isSavingPost();
