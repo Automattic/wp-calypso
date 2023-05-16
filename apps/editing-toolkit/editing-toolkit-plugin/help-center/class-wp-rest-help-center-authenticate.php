@@ -33,9 +33,14 @@ class WP_REST_Help_Center_Authenticate extends \WP_REST_Controller {
 				'callback'            => array( $this, 'get_chat_authentication' ),
 				'permission_callback' => array( $this, 'permission_callback' ),
 				'args'                => array(
-					'type' => array(
+					'type'      => array(
 						'type'     => 'string',
 						'default'  => 'happychat',
+						'required' => false,
+					),
+					'test_mode' => array(
+						'type'     => 'boolean',
+						'default'  => false,
 						'required' => false,
 					),
 				),
@@ -52,11 +57,12 @@ class WP_REST_Help_Center_Authenticate extends \WP_REST_Controller {
 	 */
 	public function get_chat_authentication( \WP_REST_Request $request ) {
 		$query_parameters = array(
-			'type' => $request['type'],
+			'test_mode' => $request['test_mode'],
+			'type'      => $request['type'],
 		);
 
 		$body = Client::wpcom_json_api_request_as_user(
-			'help/authenticate/chat' . http_build_query( $query_parameters ),
+			'help/authenticate/chat?' . http_build_query( $query_parameters ),
 			'2',
 			array(
 				'method' => 'POST',
