@@ -166,6 +166,11 @@ button {
 	}
 }
 
+.import-focused .step-container.site-picker {
+	max-width: 1280px;
+	padding: 1.5rem;
+}
+
 .is-section-stepper {
 	.search-filters__popover {
 		--color-accent: #117ac9 !important;
