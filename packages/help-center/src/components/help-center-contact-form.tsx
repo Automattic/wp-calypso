@@ -19,13 +19,12 @@ import {
 	useSupportAvailability,
 } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
-import { SitePickerDropDown, SitePickerSite } from '@automattic/site-picker';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button, TextControl, CheckboxControl, Tip } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useDebounce } from 'use-debounce';
@@ -40,11 +39,10 @@ import { getSectionName } from 'calypso/state/ui/selectors';
 import useZendeskConfig from '../hooks/use-zendesk-config';
 import { HELP_CENTER_STORE } from '../stores';
 import { getSupportVariationFromMode } from '../support-variations';
-import { SitePicker } from '../types';
 import { BackButton } from './back-button';
 import { HelpCenterGPT } from './help-center-gpt';
-import { HelpCenterOwnershipNotice } from './help-center-notice';
 import HelpCenterSearchResults from './help-center-search-results';
+import { HelpCenterSitePicker } from './help-center-site-picker';
 import ThirdPartyCookiesNotice from './help-center-third-party-cookies-notice';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 import './help-center-contact-form.scss';
@@ -65,35 +63,6 @@ const fakeFaces = [
 	'tony',
 ].map( ( name ) => `https://s0.wp.com/i/support-engineers/${ name }.jpg` );
 const randomTwoFaces = fakeFaces.sort( () => Math.random() - 0.5 ).slice( 0, 2 );
-
-const HelpCenterSitePicker: React.FC< SitePicker > = ( {
-	onSelect,
-	currentSite,
-	siteId,
-	enabled,
-} ) => {
-	const otherSite = {
-		name: __( 'Other site', __i18n_text_domain__ ),
-		ID: 0,
-		logo: { id: '', sizes: [] as never[], url: '' },
-		URL: '',
-	} as const;
-
-	function pickSite( ID: number | string ) {
-		onSelect( ID );
-	}
-
-	const options: ( SitePickerSite | undefined )[] = [ currentSite, otherSite ];
-
-	return (
-		<SitePickerDropDown
-			enabled={ enabled }
-			onPickSite={ pickSite }
-			options={ options }
-			siteId={ siteId }
-		/>
-	);
-};
 
 function useFormTitles( mode: Mode ): {
 	formTitle: string;
@@ -187,7 +156,6 @@ export const HelpCenterContactForm = () => {
 	const {
 		setSite,
 		resetStore,
-		setUserDeclaredSiteUrl,
 		setUserDeclaredSite,
 		setSubject,
 		setMessage,
@@ -642,13 +610,6 @@ export const HelpCenterContactForm = () => {
 		);
 	}
 
-	const sitePickerEnabled =
-		! userWithNoSites &&
-		mode === 'FORUM' &&
-		( ( supportSite?.plan?.product_slug &&
-			isFreePlanProduct( { product_slug: supportSite.plan?.product_slug } ) ) ||
-			userWithNoSites );
-
 	return showingSearchResults ? (
 		<div className="help-center__articles-page">
 			<BackButton />
@@ -693,34 +654,19 @@ export const HelpCenterContactForm = () => {
 				</p>
 			) }
 
-			{ sitePickerEnabled && (
-				<section>
-					<HelpCenterSitePicker
-						enabled={ true }
-						currentSite={ currentSite }
-						onSelect={ ( id: string | number ) => {
-							if ( id !== 0 ) {
-								setSite( currentSite );
-							}
-							setSitePickerChoice( id === 0 ? 'OTHER_SITE' : 'CURRENT_SITE' );
-						} }
-						siteId={ sitePickerChoice === 'CURRENT_SITE' ? currentSite?.ID : 0 }
-					/>
-				</section>
-			) }
-
-			{ sitePickerChoice === 'OTHER_SITE' && (
-				<>
-					<section>
-						<TextControl
-							label={ __( 'Site address', __i18n_text_domain__ ) }
-							value={ userDeclaredSiteUrl ?? '' }
-							onChange={ setUserDeclaredSiteUrl }
-						/>
-					</section>
-					<HelpCenterOwnershipNotice ownershipResult={ ownershipResult } />
-				</>
-			) }
+			<HelpCenterSitePicker
+				ownershipResult={ ownershipResult }
+				sitePickerChoice={ sitePickerChoice }
+				setSitePickerChoice={ setSitePickerChoice }
+				currentSite={ currentSite }
+				siteId={ sitePickerChoice === 'CURRENT_SITE' ? currentSite?.ID : 0 }
+				showDropDown={ ! userWithNoSites }
+				enabled={
+					mode === 'FORUM' &&
+					Boolean( supportSite?.plan?.product_slug ) &&
+					isFreePlanProduct( { product_slug: supportSite.plan?.product_slug as string } )
+				}
+			/>
 
 			{ [ 'FORUM', 'EMAIL' ].includes( mode ) && (
 				<section>
