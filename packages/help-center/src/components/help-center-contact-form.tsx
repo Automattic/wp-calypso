@@ -310,7 +310,12 @@ export const HelpCenterContactForm = () => {
 						section: sectionName,
 					} );
 
-					submitZendeskUserFields( { route: sectionName } )
+					submitZendeskUserFields( {
+						messaging_source: sectionName,
+						messaging_initial_message: message,
+						messaging_plan: '', // Will be filled out by backend
+						messaging_url: supportSite?.URL,
+					} )
 						.then( () => {
 							setShowHelpCenter( false );
 							setShowMessagingLauncher( true );

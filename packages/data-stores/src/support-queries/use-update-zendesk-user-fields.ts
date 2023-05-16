@@ -3,7 +3,10 @@ import apiFetch, { APIFetchOptions } from '@wordpress/api-fetch';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 
 type ZendeskUserFields = {
-	route?: string;
+	messaging_initial_message?: string;
+	messaging_plan?: string;
+	messaging_source?: string;
+	messaging_url?: string;
 };
 
 export function useUpdateZendeskUserFieldsMutation() {
