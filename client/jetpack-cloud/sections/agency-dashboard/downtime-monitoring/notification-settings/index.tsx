@@ -234,14 +234,6 @@ export default function NotificationSettings( {
 									<div className="notification-settings__content-sub-heading">
 										{ translate( 'Receive email notifications with one or more recipients.' ) }
 									</div>
-									{ enableEmailNotification && (
-										<ConfigureEmailNotification
-											defaultEmailAddresses={ defaultUserEmailAddresses }
-											toggleModal={ toggleAddEmailModal }
-											setAllEmailItems={ setAllEmailItems }
-											allEmailItems={ allEmailItems }
-										/>
-									) }
 								</>
 							) : (
 								<div className="notification-settings__content-sub-heading">
@@ -252,6 +244,15 @@ export default function NotificationSettings( {
 							) }
 						</div>
 					</div>
+
+					{ enableEmailNotification && (
+						<ConfigureEmailNotification
+							defaultEmailAddresses={ defaultUserEmailAddresses }
+							toggleModal={ toggleAddEmailModal }
+							setAllEmailItems={ setAllEmailItems }
+							allEmailItems={ allEmailItems }
+						/>
+					) }
 				</div>
 
 				<div className="notification-settings__footer">

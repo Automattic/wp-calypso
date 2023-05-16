@@ -81,7 +81,7 @@ export default function SelectEmailCheckbox( {
 							onClick={ () => handleToggleModal( 'verify' ) }
 							className="configure-email-address__verification-status cursor-pointer"
 						>
-							<Badge type="warning">{ translate( 'Pending Verification' ) }</Badge>
+							<Badge type="warning">{ translate( 'Pending' ) }</Badge>
 						</span>
 					) }
 					{ showVerified && item.verified && (
