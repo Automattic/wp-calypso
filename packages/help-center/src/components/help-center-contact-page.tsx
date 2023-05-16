@@ -55,8 +55,9 @@ export const HelpCenterContactPage: FC = () => {
 		{ isEligible: featureEnabledGPTResponse }
 	);
 
-	const loadGpt =
-		! isLoadingExperimentAssignment && experimentAssignment?.variationName === 'treatment';
+	const loadGpt = Boolean(
+		! isLoadingExperimentAssignment && experimentAssignment?.variationName === 'treatment'
+	);
 
 	const isLoading =
 		renderChat.isLoading ||
