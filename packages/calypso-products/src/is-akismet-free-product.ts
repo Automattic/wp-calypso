@@ -1,7 +1,12 @@
 import { camelOrSnakeSlug } from './camel-or-snake-slug';
-import { PRODUCT_AKISMET_FREE } from './constants/akismet';
-import type { WithSnakeCaseSlug, WithCamelCaseSlug } from './types';
+import { PRODUCT_AKISMET_FREE, PRODUCT_AKISMET_ENTERPRISE_YEARLY } from './constants/akismet';
+import type { WithSlugAndAmount } from './types';
 
-export function isAkismetFreeProduct( product: WithCamelCaseSlug | WithSnakeCaseSlug ): boolean {
-	return PRODUCT_AKISMET_FREE === camelOrSnakeSlug( product );
+// AKISMET_ENTERPRISE_YEARLY has a $0 plan for nonprofits, so we need to check the amount
+// to determine if it's free or not.
+export function isAkismetFreeProduct( product: WithSlugAndAmount ): boolean {
+	return (
+		PRODUCT_AKISMET_FREE === camelOrSnakeSlug( product ) ||
+		( PRODUCT_AKISMET_ENTERPRISE_YEARLY === camelOrSnakeSlug( product ) && product.amount === 0 )
+	);
 }
