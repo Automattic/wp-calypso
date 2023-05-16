@@ -11,6 +11,7 @@ import { ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import type { Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect } from '@automattic/data-stores';
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import './internals/hosting-site-creation-flow.scss';
 
 const hosting: Flow = {
@@ -52,7 +53,8 @@ const hosting: Flow = {
 				}
 				case 'plans':
 					setPlanCartItem( {
-						product_slug: providedDependencies.product_slug,
+						product_slug: ( providedDependencies.plan as MinimalRequestCartProduct | null )
+							?.product_slug,
 						extra: { geo_affinity: siteGeoAffinity },
 					} );
 

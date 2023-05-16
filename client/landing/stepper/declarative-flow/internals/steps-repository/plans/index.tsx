@@ -17,7 +17,7 @@ const plans: Step = function Plans( { navigation, flow } ) {
 
 	const handleSubmit = ( plan: MinimalRequestCartProduct | null ) => {
 		const providedDependencies: ProvidedDependencies = {
-			...plan,
+			plan,
 		};
 
 		if ( flow === DOMAIN_UPSELL_FLOW || flow === START_WRITING_FLOW ) {
