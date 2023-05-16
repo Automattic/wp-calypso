@@ -16,6 +16,7 @@ import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
+// test.
 const startWriting: Flow = {
 	name: START_WRITING_FLOW,
 	title: 'Blog',
