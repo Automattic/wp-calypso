@@ -96,10 +96,10 @@ async function showDomainUpsellCallout() {
 	if ( shouldShowDomainUpsell() ) {
 		const toolbarContainer = document.querySelector( '.edit-post-header-toolbar' );
 		if ( toolbarContainer !== null ) {
-			const noticeContainer = document.createElement( 'div' );
-			noticeContainer.className = 'wpcom-domain-upsell-callout';
-			document.body.appendChild( noticeContainer );
-			render( <DomainUpsellCallout />, noticeContainer );
+			const domainUpsellContainer = document.createElement( 'div' );
+			domainUpsellContainer.className = 'wpcom-domain-upsell-callout';
+			document.body.appendChild( domainUpsellContainer );
+			render( <DomainUpsellCallout />, domainUpsellContainer );
 		}
 	}
 }
