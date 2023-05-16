@@ -10,7 +10,13 @@ import {
 import { localizeUrl, useLocale } from '@automattic/i18n-utils';
 import { speak } from '@wordpress/a11y';
 import { __ } from '@wordpress/i18n';
-import { Icon, page as pageIcon, arrowRight } from '@wordpress/icons';
+import {
+	Icon,
+	page as pageIcon,
+	arrowRight,
+	chevronRight,
+	external as externalIcon,
+} from '@wordpress/icons';
 import { debounce } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -27,7 +33,7 @@ import { useHelpSearchQuery } from '../hooks/use-help-search-query';
 import PlaceholderLines from './placeholder-lines';
 import type { SearchResult } from '../types';
 
-interface SearchResultsSection {
+interface SearchResultsSectionProps {
 	type: string;
 	title: string;
 	results: SearchResult[];
@@ -233,6 +239,11 @@ function HelpSearchResults( {
 						>
 							<LinkIcon />
 							<span>{ preventWidows( decodeEntities( title ) ) }</span>
+							<Icon
+								width={ 20 }
+								height={ 20 }
+								icon={ result.post_id ? chevronRight : externalIcon }
+							/>
 						</a>
 					</div>
 				</li>
@@ -245,7 +256,7 @@ function HelpSearchResults( {
 		title,
 		results,
 		condition,
-	}: SearchResultsSection ) => {
+	}: SearchResultsSectionProps ) => {
 		const id = `inline-search--${ type }`;
 
 		return condition ? (

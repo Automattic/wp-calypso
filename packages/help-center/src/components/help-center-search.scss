@@ -135,12 +135,16 @@
 					color: var(--studio-gray-100);
 					font-size: $font-body-small;
 
-					svg {
+					svg:first-child {
 						margin-right: 15px;
 						display: block;
 						background: var(--studio-gray-0);
 						fill: var(--studio-blue-50);
 						padding: 8px;
+					}
+
+					svg:last-child {
+						fill: var(--studio-gray-20);
 					}
 
 					span {

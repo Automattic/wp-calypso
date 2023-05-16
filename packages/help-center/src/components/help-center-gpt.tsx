@@ -49,12 +49,14 @@ export function HelpCenterGPT() {
 	const [ feedbackGiven, setFeedbackGiven ] = useState< boolean >( false );
 
 	// Report loading state up.
-	const { message } = useSelect(
-		( select ) => ( {
-			message: ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getMessage(),
-		} ),
-		[]
-	);
+	const { message } = useSelect( ( select ) => {
+		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+		const subject = store.getSubject();
+		const message = store.getMessage();
+		return {
+			message: `${ subject }\n\n${ message }`,
+		};
+	}, [] );
 
 	const query = message ?? '';
 
@@ -120,7 +122,11 @@ export function HelpCenterGPT() {
 			<h3 id="help-center--contextual_help_query" className="help-center__section-title">
 				{ __( 'Your request:', __i18n_text_domain__ ) }
 			</h3>
-			<div className="help-center-gpt-query">{ query }</div>
+			<div className="help-center-gpt-query">
+				{ query.split( '\n\n' ).map( ( line ) => (
+					<p>{ line }</p>
+				) ) }
+			</div>
 			<h3 id="help-center--contextual_help" className="help-center__section-title">
 				{ __( 'AI generated response:', __i18n_text_domain__ ) }
 			</h3>
