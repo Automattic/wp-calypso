@@ -4,7 +4,7 @@ import './public-path';
 import domReady from '@wordpress/dom-ready';
 import { registerPlugin } from '@wordpress/plugins';
 import GlobalStylesModal from './modal';
-import GlobalStylesNotice from './notice';
+import GlobalStylesNotices from './notices';
 import './store';
 
 const showGlobalStylesComponents = () => {
@@ -12,7 +12,7 @@ const showGlobalStylesComponents = () => {
 		render: () => (
 			<>
 				<GlobalStylesModal />
-				<GlobalStylesNotice />
+				<GlobalStylesNotices />
 			</>
 		),
 	} );

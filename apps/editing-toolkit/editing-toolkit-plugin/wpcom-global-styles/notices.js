@@ -1,14 +1,78 @@
 /* global wpcomGlobalStyles */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { ExternalLink, Notice } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useEffect, useCallback } from '@wordpress/element';
+import { createInterpolateElement, render, useEffect, useCallback } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useCanvas } from './use-canvas';
 import { useGlobalStylesConfig } from './use-global-styles-config';
 import './notice.scss';
 
-const NOTICE_ID = 'wpcom-global-styles/gating-notice';
+const trackEvent = ( eventName, isSiteEditor = true ) =>
+	recordTracksEvent( eventName, {
+		context: isSiteEditor ? 'site-editor' : 'post-editor',
+		blog_id: wpcomGlobalStyles.wpcomBlogId,
+	} );
 
-const GlobalStylesNotice = () => {
+function GlobalStylesWarningNotice() {
+	const { globalStylesInUse } = useGlobalStylesConfig();
+
+	useEffect( () => {
+		if ( globalStylesInUse ) {
+			trackEvent( 'calypso_global_styles_gating_notice_view_canvas_show' );
+		}
+	}, [ globalStylesInUse ] );
+
+	if ( ! globalStylesInUse ) {
+		return null;
+	}
+
+	return (
+		<Notice status="warning" isDismissible={ false } className="wpcom-global-styles-notice">
+			{ createInterpolateElement(
+				__(
+					'Your site includes customized styles that are only visible to visitors after <a>upgrading to the Premium plan or higher</a>.',
+					'full-site-editing'
+				),
+				{
+					a: (
+						<ExternalLink
+							href={ wpcomGlobalStyles.upgradeUrl }
+							target="_blank"
+							onClick={ () =>
+								trackEvent( 'calypso_global_styles_gating_notice_view_canvas_upgrade_click' )
+							}
+						/>
+					),
+				}
+			) }
+		</Notice>
+	);
+}
+
+function GlobalStylesViewNotice() {
+	const { canvas } = useCanvas();
+
+	useEffect( () => {
+		if ( canvas !== 'view' ) {
+			return;
+		}
+
+		const footer = document.querySelector( '.edit-site-sidebar__footer' );
+		if ( ! footer ) {
+			return;
+		}
+
+		const noticeContainer = document.createElement( 'div' );
+		footer.prepend( noticeContainer );
+		render( <GlobalStylesWarningNotice />, noticeContainer );
+	}, [ canvas ] );
+
+	return null;
+}
+
+function GlobalStylesEditNotice() {
+	const NOTICE_ID = 'wpcom-global-styles/gating-notice';
 	const { globalStylesInUse, globalStylesId } = useGlobalStylesConfig();
 	const { isSiteEditor, isPostEditor } = useSelect(
 		( select ) => ( {
@@ -21,24 +85,15 @@ const GlobalStylesNotice = () => {
 	const { createWarningNotice, removeNotice } = useDispatch( 'core/notices' );
 	const { editEntityRecord } = useDispatch( 'core' );
 
-	const trackEvent = useCallback(
-		( eventName ) =>
-			recordTracksEvent( eventName, {
-				context: isSiteEditor ? 'site-editor' : 'post-editor',
-				blog_id: wpcomGlobalStyles.wpcomBlogId,
-			} ),
-		[ isSiteEditor ]
-	);
-
 	const upgradePlan = useCallback( () => {
 		window.open( wpcomGlobalStyles.upgradeUrl, '_blank' ).focus();
-		trackEvent( 'calypso_global_styles_gating_notice_upgrade_click' );
-	}, [ trackEvent ] );
+		trackEvent( 'calypso_global_styles_gating_notice_upgrade_click', isSiteEditor );
+	}, [ isSiteEditor ] );
 
 	const previewSite = useCallback( () => {
 		window.open( wpcomGlobalStyles.previewUrl, '_blank' ).focus();
-		trackEvent( 'calypso_global_styles_gating_notice_preview_click' );
-	}, [ trackEvent ] );
+		trackEvent( 'calypso_global_styles_gating_notice_preview_click', isSiteEditor );
+	}, [ isSiteEditor ] );
 
 	const resetGlobalStyles = useCallback( () => {
 		if ( ! globalStylesId ) {
@@ -50,8 +105,8 @@ const GlobalStylesNotice = () => {
 			settings: {},
 		} );
 
-		trackEvent( 'calypso_global_styles_gating_notice_reset_click' );
-	}, [ editEntityRecord, globalStylesId, trackEvent ] );
+		trackEvent( 'calypso_global_styles_gating_notice_reset_click', isSiteEditor );
+	}, [ editEntityRecord, globalStylesId, isSiteEditor ] );
 
 	const showNotice = useCallback( () => {
 		const actions = [
@@ -100,7 +155,6 @@ const GlobalStylesNotice = () => {
 		isSiteEditor,
 		previewSite,
 		resetGlobalStyles,
-		trackEvent,
 		upgradePlan,
 	] );
 
@@ -119,6 +173,13 @@ const GlobalStylesNotice = () => {
 	}, [ globalStylesInUse, isSiteEditor, isPostEditor, removeNotice, showNotice ] );
 
 	return null;
-};
+}
 
-export default GlobalStylesNotice;
+export default function GlobalStylesNotices() {
+	return (
+		<>
+			<GlobalStylesViewNotice />
+			<GlobalStylesEditNotice />
+		</>
+	);
+}
