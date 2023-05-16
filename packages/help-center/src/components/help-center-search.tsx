@@ -1,7 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 /* eslint-disable no-restricted-imports */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useSelect } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useState, useCallback, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useSelector } from 'react-redux';
@@ -9,7 +9,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import InlineHelpSearchCard from 'calypso/blocks/inline-help/inline-help-search-card';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { SITE_STORE } from '../stores';
+import { HELP_CENTER_STORE, SITE_STORE } from '../stores';
 import { HelpCenterLaunchpad } from './help-center-launchpad';
 import { HelpCenterMoreResources } from './help-center-more-resources';
 import HelpCenterSearchResults from './help-center-search-results';
@@ -24,6 +24,20 @@ export const HelpCenterSearch = () => {
 	const query = params.get( 'query' );
 
 	const [ searchQuery, setSearchQuery ] = useState( query || '' );
+	const { setSubject, setMessage } = useDispatch( HELP_CENTER_STORE );
+
+	// when the user sets the search query, let's also populate the email subject and body
+	// for later in case they subject the same query via email
+	const setSearchQueryAndEmailSubject = useCallback(
+		( query ) => {
+			const subject =
+				query.length > 100 ? query.replace( /\n/g, ' ' ).trim().slice( 0, 100 ) + '...' : query;
+			setSearchQuery( query );
+			setSubject( subject );
+			setMessage( query );
+		},
+		[ setSearchQuery, setSubject, setMessage ]
+	);
 
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const site = useSelect(
@@ -89,7 +103,7 @@ export const HelpCenterSearch = () => {
 			{ launchpadEnabled && <HelpCenterLaunchpad /> }
 			<InlineHelpSearchCard
 				searchQuery={ searchQuery }
-				onSearch={ setSearchQuery }
+				onSearch={ setSearchQueryAndEmailSubject }
 				location="help-center"
 				isVisible
 				placeholder={ __( 'Search for help', __i18n_text_domain__ ) }
