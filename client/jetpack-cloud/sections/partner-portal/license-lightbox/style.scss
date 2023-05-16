@@ -1,9 +1,7 @@
-@import "@wordpress/base-styles/colors";
-
 .license-lightbox__pricing {
-	background-color: $white;
+	background-color: var(--studio-white);
 	border-radius: 8px; /* stylelint-disable-line scales/radii */
-	border: 1px solid #008710;
+	border: 1px solid var(--studio-jetpack-green-50);
 	padding: 1rem;
 }
 

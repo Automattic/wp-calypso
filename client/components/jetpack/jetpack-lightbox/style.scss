@@ -6,7 +6,7 @@
 	border-radius: 8px; /* stylelint-disable-line scales/radii */
 	width: 85%;
 	height: auto;
-	background-color: #fff;
+	background-color: var(--studio-white);
 	transition: all 0.25s ease;
 	font-family: Inter, $sans;
 	max-width: 1080px;
@@ -75,7 +75,7 @@
 .jetpack-lightbox__content-aside {
 	padding: 40px;
 	width: 40%;
-	background-color: #f6f7f7;
+	background-color: var(--studio-gray-0);
 	border-radius: 0 8px 8px 0; /* stylelint-disable-line scales/radii */
 	box-shadow: 0 4px 8px rgb(0 0 0 / 30%);
 
@@ -132,7 +132,7 @@
 
 	.jetpack-lightbox__close-button {
 		z-index: 1;
-		background-color: #fff;
+		background-color: var(--studio-white);
 	}
 }
 
@@ -154,7 +154,7 @@
 @media screen and ( max-height: 365px ) and ( orientation: landscape ) {
 	.jetpack-lightbox__content-aside {
 		padding: 1.5rem;
-		background: #f6f7f7;
+		background: var(--studio-gray-0);
 	}
 }
 
