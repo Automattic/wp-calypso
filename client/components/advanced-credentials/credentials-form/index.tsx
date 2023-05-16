@@ -26,6 +26,7 @@ interface Props {
 	onModeChange: ( fromMode: FormMode ) => void;
 	host: string;
 	role: string;
+	withHeader?: boolean;
 }
 
 const ServerCredentialsForm: FunctionComponent< Props > = ( {
@@ -38,6 +39,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 	onModeChange,
 	host,
 	role = 'main',
+	withHeader = true,
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -375,12 +377,12 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 						) }
 				</FormFieldset>
 			) }
-			{ ! isAlternate && (
+			{ ! isAlternate && withHeader && (
 				<>
 					<h3>{ translate( 'Provide your SSH, SFTP or FTP server credentials' ) }</h3>
 				</>
 			) }
-			<p className="credentials-form__intro-text">{ getSubHeaderText() }</p>
+			{ withHeader && <p className="credentials-form__intro-text">{ getSubHeaderText() }</p> }
 			{ renderCredentialLinks() }
 			<FormFieldset className="credentials-form__protocol-type">
 				<div className="credentials-form__support-info">

@@ -1,0 +1,123 @@
+@import "~calypso/blocks/import/style/base";
+
+.import__pre-migration {
+
+	padding: 0 20px;
+
+	> div {
+		text-align: center;
+		margin: 20px auto 40px auto !important;
+	}
+
+	.pre-migration__form-container {
+		display: flex;
+		flex-wrap: wrap;
+		position: relative;
+		justify-content: center;
+		width: 100%;
+
+		.pre-migration__form {
+			width: 100%;
+
+			@include break-medium {
+				width: 450px;
+			}
+
+			@include break-large {
+				width: 550px;
+			}
+
+			.credentials-form {
+				margin-top: 0;
+				margin-bottom: 20px;
+			}
+		}
+
+		.pre-migration__credentials-help {
+			text-align: left;
+			width: 100%;
+			order: 0;
+			margin-bottom: 1rem;
+
+			@include break-medium {
+				margin-inline-start: 40px;
+				width: 220px;
+				order: 1;
+			}
+
+			@include break-large {
+				width: 240px;
+			}
+
+			@include break-xlarge {
+				margin-inline-end: 0;
+				position: absolute;
+				inset-inline-end: -85px;
+				width: 250px;
+			}
+
+			h3 {
+				font-weight: 500;
+				font-size: 1rem;
+			}
+
+			p {
+				margin-top: 1rem;
+				color: var(--color-text-subtle);
+				font-size: 0.875rem;
+			}
+
+			select {
+				margin-top: 1rem;
+				width: 100%;
+			}
+		}
+	}
+
+	.step-container__content {
+		padding: 20px;
+		box-sizing: border-box;
+	}
+
+	.pre-migration__title-container {
+		text-align: center;
+
+		margin: 20px 0 40px 0 !important;
+
+		@include break-small {
+			margin: 36px auto 58px auto !important;
+		}
+
+		.onboarding-subtitle {
+			margin-bottom: 1.5rem;
+			font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
+		}
+	}
+
+	.pre-migration__content button.action {
+		font-size: $font-body-small;
+		color: var(--color-text);
+		text-decoration: underline;
+		height: unset;
+		font-weight: 500;
+
+		&:hover {
+			color: var(--color-text-subtle);
+		}
+	}
+
+	.pre-migration__proceed {
+		display: flex;
+		align-items: baseline;
+		justify-content: center;
+
+		button.button {
+			margin-right: 10px;
+		}
+	}
+
+	.pre-migration__error {
+		color: var(--color-error);
+		margin-bottom: 40px;
+	}
+}
