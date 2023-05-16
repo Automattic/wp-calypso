@@ -164,6 +164,9 @@ const streamApis = {
 				algorithm: 'read:recommendations:sites/es/2',
 				posts_per_site: 1,
 			} ),
+		// Recommended sites can only return a max of 10 sites per request, so we need to override the default number.
+		pollQuery: ( extraFields = [], extraQueryParams = {} ) =>
+			getQueryStringForPoll( extraFields, { ...extraQueryParams, number: 10 } ),
 	},
 	tag: {
 		path: ( { streamKey } ) => `/read/tags/${ streamKeySuffix( streamKey ) }/posts`,

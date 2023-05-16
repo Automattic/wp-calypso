@@ -24,7 +24,13 @@ const SharingConnections = ( { translate, isP2Hub, siteId } ) => {
 					type="publicize"
 					title={ translate( 'Share posts with Jetpack Social {{learnMoreLink/}}', {
 						components: {
-							learnMoreLink: <InlineSupportLink supportContext="publicize" showText={ false } />,
+							learnMoreLink: (
+								<InlineSupportLink
+									linkTitle={ translate( 'Learn more about sharing posts with Jetpack Social' ) }
+									supportContext="publicize"
+									showText={ false }
+								/>
+							),
 						},
 					} ) }
 				/>
