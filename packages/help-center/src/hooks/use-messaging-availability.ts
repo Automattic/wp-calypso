@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import { addQueryArgs } from '@wordpress/url';
@@ -10,7 +11,11 @@ interface APIFetchOptions {
 }
 
 async function requestMessagingAvailability() {
-	const params = { group: 'wpcom_messaging', environment: 'production' };
+	const currentEnvironment = config( 'env_id' );
+	const params = {
+		group: 'wpcom_messaging',
+		environment: currentEnvironment === 'development' ? 'development' : 'production',
+	};
 	const wpcomParams = new URLSearchParams( params );
 	return canAccessWpcomApis()
 		? ( ( await wpcomRequest( {
