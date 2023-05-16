@@ -1,0 +1,108 @@
+.reader-recommended-follows-dialog__header {
+	h2 {
+		color: var(--color-neutral-70);
+		font-size: $font-title-medium;
+		font-weight: 400;
+		margin-bottom: 20px;
+	}
+}
+
+.reader-recommended-follows-dialog__follow-list {
+	ul {
+		margin: 0;
+		width: 100%;
+		list-style: none;
+	}
+
+	.reader-suggested-follow-item {
+		display: flex;
+		flex-direction: row;
+	}
+
+	.reader-suggested-follow-item_link {
+		align-items: flex-start;
+		display: flex;
+		flex-wrap: nowrap;
+		gap: 11px;
+		justify-content: flex-start;
+		margin-bottom: 24px;
+
+		.count {
+			position: relative;
+			top: 2px;
+		}
+
+		img {
+			border-radius: 100%;
+		}
+	}
+
+	.reader-suggested-follow-item_siteicon {
+		height: 32px;
+		width: 32px;
+		min-width: 32px;
+	}
+
+	.reader-suggested-follow-item_sitename {
+		color: var(--color-neutral-100);
+		font-weight: 600;
+		font-size: $font-body-small;
+		display: flex;
+		flex-direction: column;
+		max-width: 200px;
+
+		&:hover {
+			color: var(--color-text-subtle);
+		}
+
+		.reader-suggested-follow-item_nameurl,
+		.reader-suggested-follow-item_updated {
+			display: block;
+			display: -webkit-box;
+			overflow: hidden;
+			width: 227px;
+			-webkit-line-clamp: 1;
+			-webkit-box-orient: vertical;
+		}
+	}
+
+	.reader-suggested-follow-item_url {
+		color: var(--color-text-subtle);
+		font-weight: 400;
+		font-size: $font-body-extra-small;
+		line-height: 18px;
+	}
+
+	.reader-suggested-follow-item_description {
+		color: var(--color-neutral-70);
+		font-weight: 600;
+		font-size: $font-body-extra-small;
+		line-height: 18px;
+		overflow: hidden;
+		width: auto;
+		-webkit-line-clamp: 1;
+		-webkit-box-orient: vertical;
+	}
+}
+
+.reader-recommended-follows-dialog__follow-item {
+	margin: 20px 0;
+	border-bottom: 1px solid var(--studio-gray-5);
+
+	.reader-related-card__meta {
+		display: flex;
+		gap: 20px;
+		flex-direction: row;
+		overflow: hidden;
+		margin-bottom: 20px;
+	}
+
+	//last child has no border
+	&:last-child {
+		border-bottom: none;
+
+		.reader-related-card__meta {
+			margin-bottom: 0;
+		}
+	}
+}
