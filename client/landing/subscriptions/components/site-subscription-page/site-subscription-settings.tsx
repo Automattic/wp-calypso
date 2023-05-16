@@ -3,22 +3,19 @@ import { useTranslate } from 'i18n-calypso';
 import { SiteSettings } from 'calypso/landing/subscriptions/components/settings';
 
 type SiteSubscriptionSettingsProps = {
-	value: SettingsFormState;
-	blogId: number | string;
-};
-
-type SettingsFormState = Partial< {
 	notifyMeOfNewPosts: boolean;
 	emailMeNewPosts: boolean;
 	deliveryFrequency: Reader.EmailDeliveryFrequency;
 	emailMeNewComments: boolean;
-} >;
-
-const DEFAULT_VALUE = {};
+	blogId: number | string;
+};
 
 const SiteSubscriptionSettings = ( {
 	blogId,
-	value = DEFAULT_VALUE,
+	notifyMeOfNewPosts,
+	emailMeNewPosts,
+	deliveryFrequency,
+	emailMeNewComments,
 }: SiteSubscriptionSettingsProps ) => {
 	const translate = useTranslate();
 
@@ -36,25 +33,25 @@ const SiteSubscriptionSettings = ( {
 			<h2 className="site-subscription-settings__heading">{ translate( 'Settings ' ) }</h2>
 			<SiteSettings
 				// NotifyMeOfNewPosts
-				notifyMeOfNewPosts={ value.notifyMeOfNewPosts }
+				notifyMeOfNewPosts={ notifyMeOfNewPosts }
 				onNotifyMeOfNewPostsChange={ ( send_posts ) =>
 					updateNotifyMeOfNewPosts( { blog_id: blogId, send_posts } )
 				}
 				updatingNotifyMeOfNewPosts={ updatingNotifyMeOfNewPosts }
 				// EmailMeNewPosts
-				emailMeNewPosts={ value.emailMeNewPosts }
+				emailMeNewPosts={ emailMeNewPosts }
 				onEmailMeNewPostsChange={ ( send_posts ) =>
 					updateEmailMeNewPosts( { blog_id: blogId, send_posts } )
 				}
 				updatingEmailMeNewPosts={ updatingEmailMeNewPosts }
 				// DeliveryFrequency
-				deliveryFrequency={ value.deliveryFrequency }
+				deliveryFrequency={ deliveryFrequency }
 				onDeliveryFrequencyChange={ ( delivery_frequency ) =>
 					updateDeliveryFrequency( { blog_id: blogId, delivery_frequency } )
 				}
 				updatingFrequency={ updatingFrequency }
 				// EmailMeNewComments
-				emailMeNewComments={ value.emailMeNewComments }
+				emailMeNewComments={ emailMeNewComments }
 				onEmailMeNewCommentsChange={ ( send_comments ) =>
 					updateEmailMeNewComments( { blog_id: blogId, send_comments } )
 				}

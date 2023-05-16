@@ -18,7 +18,7 @@ const useSiteSubscription = ( blogId?: string ) => ( {
 		siteUrl: 'https://theatavistmagazine.wordpress.com/',
 		notifyMeOfNewPosts: true,
 		emailMeNewPosts: true,
-		newPostsEmailFrequency: Reader.EmailDeliveryFrequency.Daily,
+		deliveryFrequency: Reader.EmailDeliveryFrequency.Daily,
 		emailMeNewComments: true,
 	},
 	isLoading: false,
@@ -30,7 +30,14 @@ const SiteSubscriptionPage = () => {
 	const navigate = useNavigate();
 	const { blogId } = useParams();
 	const { data, isLoading, isError } = useSiteSubscription( blogId );
-	const { siteName, subscribers } = data;
+	const {
+		siteName,
+		notifyMeOfNewPosts,
+		emailMeNewComments,
+		emailMeNewPosts,
+		deliveryFrequency,
+		subscribers,
+	} = data;
 
 	if ( ! blogId || isError ) {
 		return <div>Something went wrong.</div>;
@@ -69,7 +76,13 @@ const SiteSubscriptionPage = () => {
 						<FormattedHeader brandFont headerText={ siteName } subHeaderText={ subHeaderText } />
 					</header>
 
-					<SiteSubscriptionSettings blogId={ blogId } value={ data } />
+					<SiteSubscriptionSettings
+						blogId={ blogId }
+						notifyMeOfNewPosts={ notifyMeOfNewPosts }
+						emailMeNewPosts={ emailMeNewPosts }
+						deliveryFrequency={ deliveryFrequency }
+						emailMeNewComments={ emailMeNewComments }
+					/>
 
 					<hr className="subscriptions__separator" />
 

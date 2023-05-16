@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import { SubscriptionManager, PendingPostSubscription } from '@automattic/data-stores';
+import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { useMemo } from 'react';
 import TimeSince from 'calypso/components/time-since';
 import { PendingSubscriptionSettingsPopover } from 'calypso/landing/subscriptions/components/settings';
@@ -13,7 +13,7 @@ export default function PendingPostRow( {
 	post_excerpt,
 	site_url,
 	site_title,
-}: PendingPostSubscription ) {
+}: Reader.PendingPostSubscription ) {
 	const hostname = useMemo( () => new URL( post_url ).hostname, [ post_url ] );
 	const siteIcon = useMemo( () => {
 		if ( site_icon ) {
