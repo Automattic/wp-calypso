@@ -42,7 +42,13 @@ export default function SiteRow( {
 	date_subscribed,
 	delivery_methods,
 }: SiteSubscription ) {
-	const hostname = new URL( url ).hostname;
+	const hostname = useMemo( () => {
+		try {
+			return new URL( url ).hostname;
+		} catch ( e ) {
+			return '';
+		}
+	}, [ url ] );
 	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
 	const newPostDelivery = useSelectedNewPostDeliveryMethodsLabel(
 		delivery_methods?.email?.send_posts,
@@ -63,7 +69,12 @@ export default function SiteRow( {
 		SubscriptionManager.useSiteUnsubscribeMutation();
 	return (
 		<li className="row" role="row">
-			<a href={ url } rel="noreferrer noopener" className="title-box" target="_blank">
+			<a
+				{ ...( url && { href: url } ) }
+				rel="noreferrer noopener"
+				className="title-box"
+				target="_blank"
+			>
 				<span className="title-box" role="cell">
 					<SiteIcon iconUrl={ site_icon } size={ 48 } siteName={ name } />
 					<span className="title-column">

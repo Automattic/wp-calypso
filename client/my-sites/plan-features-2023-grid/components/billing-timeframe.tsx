@@ -8,8 +8,9 @@ import {
 	TERM_ANNUALLY,
 } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
-import { localize, TranslateResult, useTranslate } from 'i18n-calypso';
+import i18n, { localize, TranslateResult, useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useSelector } from 'react-redux';
 import usePlanPrices from 'calypso/my-sites/plans/hooks/use-plan-prices';
@@ -34,6 +35,7 @@ function usePerMonthDescription( {
 }: Omit< Props, 'billingTimeframe' > ) {
 	const translate = useTranslate();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
+	const isEnglishLocale = useIsEnglishLocale();
 	const planPrices = usePlanPrices( {
 		planSlug: planName as PlanSlug,
 		returnMonthly: isMonthlyPlan,
@@ -78,43 +80,87 @@ function usePerMonthDescription( {
 			currencyCode && planPrices.rawPrice
 				? formatCurrency( planPrices.rawPrice, currencyCode, { stripZeros: true } )
 				: null;
+
+		// TODO: Remove check once text is translated
+		const displayNewPriceText =
+			isEnglishLocale ||
+			( i18n.hasTranslation( 'per month, %(rawPrice)s billed annually, Excl. Taxes' ) &&
+				i18n.hasTranslation( 'per month, %(rawPrice)s billed every two years, Excl. Taxes' ) &&
+				i18n.hasTranslation(
+					'per month, {{discount}} %(rawPrice)s billed annually{{/discount}} %(fullTermDiscountedPriceText)s for the first year, Excl. Taxes'
+				) &&
+				i18n.hasTranslation(
+					'per month, {{discount}} %(rawPrice)s billed annually{{/discount}} %(fullTermDiscountedPriceText)s for the first year, Excl. Taxes'
+				) );
 		if ( fullTermDiscountedPriceText ) {
 			if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {
 				//per month, $96 billed annually $84 for the first year
 
-				return translate(
-					'per month, {{discount}} %(rawPrice)s billed annually{{/discount}} %(fullTermDiscountedPriceText)s for the first year',
-					{
-						args: { fullTermDiscountedPriceText, rawPrice },
-						components: {
-							discount: <StrikethroughText />,
-						},
-					}
-				);
+				return displayNewPriceText
+					? translate(
+							'per month, {{discount}} %(rawPrice)s billed annually{{/discount}} %(fullTermDiscountedPriceText)s for the first year, Excl. Taxes',
+							{
+								args: { fullTermDiscountedPriceText, rawPrice },
+								components: {
+									discount: <StrikethroughText />,
+								},
+								comment: 'Excl. Taxes is short for excluding taxes',
+							}
+					  )
+					: translate(
+							'per month, {{discount}} %(rawPrice)s billed annually{{/discount}} %(fullTermDiscountedPriceText)s for the first year',
+							{
+								args: { fullTermDiscountedPriceText, rawPrice },
+								components: {
+									discount: <StrikethroughText />,
+								},
+							}
+					  );
 			}
 
 			if ( PLAN_BIENNIAL_PERIOD === billingPeriod ) {
-				return translate(
-					'per month, {{discount}} %(rawPrice)s billed annually{{/discount}} %(fullTermDiscountedPriceText)s for the first year',
-					{
-						args: { fullTermDiscountedPriceText, rawPrice },
-						components: {
-							discount: <StrikethroughText />,
-						},
-					}
-				);
+				return displayNewPriceText
+					? translate(
+							'per month, {{discount}} %(rawPrice)s billed annually{{/discount}} %(fullTermDiscountedPriceText)s for the first year, Excl. Taxes',
+							{
+								args: { fullTermDiscountedPriceText, rawPrice },
+								components: {
+									discount: <StrikethroughText />,
+								},
+								comment: 'Excl. Taxes is short for excluding taxes',
+							}
+					  )
+					: translate(
+							'per month, {{discount}} %(rawPrice)s billed annually{{/discount}} %(fullTermDiscountedPriceText)s for the first year',
+							{
+								args: { fullTermDiscountedPriceText, rawPrice },
+								components: {
+									discount: <StrikethroughText />,
+								},
+							}
+					  );
 			}
 		} else if ( rawPrice ) {
 			if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {
-				return translate( 'per month, %(rawPrice)s billed annually', {
-					args: { rawPrice },
-				} );
+				return displayNewPriceText
+					? translate( 'per month, %(rawPrice)s billed annually, Excl. Taxes', {
+							args: { rawPrice },
+							comment: 'Excl. Taxes is short for excluding taxes',
+					  } )
+					: translate( 'per month, %(rawPrice)s billed annually', {
+							args: { rawPrice },
+					  } );
 			}
 
 			if ( PLAN_BIENNIAL_PERIOD === billingPeriod ) {
-				return translate( 'per month, %(rawPrice)s billed every two years.', {
-					args: { rawPrice },
-				} );
+				return displayNewPriceText
+					? translate( 'per month, %(rawPrice)s billed every two years, Excl. Taxes', {
+							args: { rawPrice },
+							comment: 'Excl. Taxes is short for excluding taxes',
+					  } )
+					: translate( 'per month, %(rawPrice)s billed every two years.', {
+							args: { rawPrice },
+					  } );
 			}
 		}
 	}
