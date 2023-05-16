@@ -531,17 +531,17 @@ export const HelpCenterContactForm = () => {
 		);
 	};
 
-	const { isFetching: isFetchingUrls, data: links } = useJetpackSearchAIQuery(
+	const { isFetching: isFetchingGPTUrls, data: links } = useJetpackSearchAIQuery(
 		'9619154',
 		enableGPTResponse ? debouncedMessage : '',
 		'urls'
 	);
-	const { isFetching: isFetchingResponse, data: gptResponse } = useJetpackSearchAIQuery(
+	const { isFetching: isFetchingGPTAnswer, data: gptResponse } = useJetpackSearchAIQuery(
 		'9619154',
 		links?.urls ? debouncedMessage : '',
 		'response'
 	);
-	const isFetchingGPTResponse = isFetchingUrls || isFetchingResponse;
+	const isFetchingGPTResponse = isFetchingGPTUrls || isFetchingGPTAnswer;
 
 	const getCTALabel = () => {
 		const showingHelpOrGPTResults = showingSearchResults || showingGPTResponse;
@@ -582,7 +582,6 @@ export const HelpCenterContactForm = () => {
 				<section className="contact-form-submit">
 					<Button
 						isBusy={ isFetchingGPTResponse }
-						disabled={ isFetchingGPTResponse }
 						onClick={ handleCTA }
 						isPrimary={ ! showingGPTResponse }
 						isSecondary={ showingGPTResponse }
