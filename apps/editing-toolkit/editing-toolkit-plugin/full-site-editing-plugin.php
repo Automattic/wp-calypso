@@ -411,14 +411,6 @@ function load_wpcom_global_styles() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_global_styles' );
 
 /**
- * WP.com-specific Site Editor changes.
- * (Core Full Site Editing)
- */
-function load_wpcom_domain_upsell_callout() {
-	require_once __DIR__ . '/wpcom-domain-upsell-callout/class-wpcom-domain-upsell-callout.php';
-}
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_domain_upsell_callout' );
-/**
  * Shows a confirm prompt when the plugin is about to be deactivated on a unlaunched site.
  *
  * This will filter the FSE actions on the plugin manager list to add the confirm
