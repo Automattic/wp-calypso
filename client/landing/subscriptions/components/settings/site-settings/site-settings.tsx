@@ -26,7 +26,7 @@ export type SiteSettingsProps = {
 	updatingEmailMeNewComments: boolean;
 };
 
-export const SiteSettings = ( {
+const SiteSettings = ( {
 	notifyMeOfNewPosts,
 	onNotifyMeOfNewPostsChange,
 	updatingNotifyMeOfNewPosts,

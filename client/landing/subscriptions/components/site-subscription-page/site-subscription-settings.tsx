@@ -1,6 +1,6 @@
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
-import { SiteSettings } from 'calypso/landing/subscriptions/components/settings/site-settings/site-settings';
+import { SiteSettings } from 'calypso/landing/subscriptions/components/settings';
 
 type SiteSubscriptionSettingsProps = {
 	value: SettingsFormState;
