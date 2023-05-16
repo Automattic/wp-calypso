@@ -54,7 +54,7 @@ describe( 'Support: Popover/Invalid Keywords', function () {
 			expect( links ).toBeFalsy();
 		} );
 
-		it( 'Search for non-matching string returns only articles', async function () {
+		it( 'Search for gibberish string returns only articles', async function () {
 			const keyword = ';;;ppp;;;';
 			await supportComponent.search( keyword );
 

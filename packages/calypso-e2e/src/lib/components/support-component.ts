@@ -104,7 +104,10 @@ export class SupportComponent {
 	async search( text: string ): Promise< void > {
 		await this.root.getByPlaceholder( 'Search for help' ).fill( text );
 
-		await this.page.waitForResponse( /wpcom\?query/ );
+		await Promise.all( [
+			this.page.waitForResponse( /wpcom\?query/ ),
+			this.page.locator( selectors.resultsPlaceholder ).waitFor( { state: 'hidden' } ),
+		] );
 	}
 
 	/**
