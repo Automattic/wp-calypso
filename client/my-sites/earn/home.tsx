@@ -14,15 +14,16 @@ import wp from 'calypso/lib/wp';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import siteHasWordAds from 'calypso/state/selectors/site-has-wordads';
 import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import getSiteBySlug from 'calypso/state/sites/selectors/get-site-by-slug';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isRequestingWordAdsApprovalForSite } from 'calypso/state/wordads/approve/selectors';
 import type { Image } from 'calypso/components/promo-section/promo-card/index';
 import type { AppState, SiteSlug } from 'calypso/types';
-
+// eslint-disable-next-line import/order
 import './style.scss';
+// eslint-disable-next-line import/order
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 
 interface ConnectedProps {
 	siteId: number;
@@ -452,17 +453,13 @@ export default connect(
 		const hasConnectedAccount =
 			state?.memberships?.settings?.[ siteId ]?.connectedAccountId ?? null;
 		const sitePlanSlug = getSitePlanSlug( state, siteId );
-		const hasWordAdsFeature = siteHasWordAds( state, siteId );
 		const isLoading = hasConnectedAccount === null || sitePlanSlug === null;
-
+		const isJetpack = isJetpackSite( state, siteId );
 		return {
 			siteId,
 			selectedSiteSlug,
-			isNonAtomicJetpack: Boolean(
-				isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId )
-			),
+			isNonAtomicJetpack: Boolean( isJetpack && ! isSiteAutomatedTransfer( state, siteId ) ),
 			isUserAdmin: canCurrentUser( state, siteId, 'manage_options' ),
-			hasWordAdsFeature,
 			hasConnectedAccount,
 			isLoading,
 			hasSetupAds: Boolean(
