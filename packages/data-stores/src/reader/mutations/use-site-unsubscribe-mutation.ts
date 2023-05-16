@@ -125,8 +125,8 @@ const useSiteUnsubscribeMutation = () => {
 			},
 			onSettled: () => {
 				// pass in more minimal keys, everything to the right will be invalidated
-				queryClient.invalidateQueries( [ 'read', 'site-subscriptions' ] );
-				queryClient.invalidateQueries( [ 'read', 'subscriptions-count' ] );
+				queryClient.invalidateQueries( siteSubscriptionsCacheKey );
+				queryClient.invalidateQueries( subscriptionsCountCacheKey );
 			},
 		}
 	);
