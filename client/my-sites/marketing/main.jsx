@@ -15,7 +15,6 @@ import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
-import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -27,7 +26,6 @@ export const Sharing = ( {
 	showButtons,
 	showConnections,
 	showTraffic,
-	showBusinessTools,
 	siteId,
 	isJetpack,
 	isP2Hub,
@@ -105,16 +103,6 @@ export const Sharing = ( {
 		} );
 	}
 
-	// Include Business Tools link if a site is selected and the
-	// site is not VIP
-	if ( ! isVip && showBusinessTools ) {
-		filters.push( {
-			id: 'business-buttons',
-			route: '/marketing/business-tools' + pathSuffix,
-			title: translate( 'Business Tools' ),
-		} );
-	}
-
 	// For p2 hub sites show only connections tab
 	let titleHeader = translate( 'Marketing and Integrations' );
 
@@ -178,7 +166,6 @@ Sharing.propTypes = {
 	path: PropTypes.string,
 	showButtons: PropTypes.bool,
 	showConnections: PropTypes.bool,
-	showBusinessTools: PropTypes.bool,
 	siteId: PropTypes.number,
 	siteSlug: PropTypes.string,
 	translate: PropTypes.func,
@@ -187,7 +174,6 @@ Sharing.propTypes = {
 export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const isJetpack = isJetpackSite( state, siteId );
-	const isAtomic = isSiteWpcomAtomic( state, siteId );
 	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
 
 	return {
@@ -195,7 +181,6 @@ export default connect( ( state ) => {
 		showButtons: siteId && canManageOptions,
 		showConnections: !! siteId,
 		showTraffic: canManageOptions && !! siteId,
-		showBusinessTools: ( !! siteId && canManageOptions && ! isJetpack ) || isAtomic,
 		isVip: isVipSite( state, siteId ),
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),

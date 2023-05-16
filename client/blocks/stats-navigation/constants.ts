@@ -31,6 +31,16 @@ const insights = {
 	path: '/stats/insights',
 	showIntervals: false,
 } as NavItem;
+const email = {
+	label: translate( 'Email' ),
+	path: '/stats/day/email',
+	showIntervals: false,
+} as NavItem;
+const earn = {
+	label: translate( 'Earn' ),
+	path: '/stats/earn',
+	showIntervals: false,
+} as NavItem;
 // TODO: Consider adding subscriber counts into this nav item in the future.
 // See client/blocks/subscribers-count/index.jsx.
 const subscribers = {
@@ -60,13 +70,17 @@ export interface NavItems {
 	store: NavItem;
 	wordads: NavItem;
 	googleMyBusiness: NavItem;
+	earn?: NavItem;
 	subscribers?: NavItem;
+	email?: NavItem;
 }
 
 const assembleNavItems = () => {
 	const navItems = {
 		traffic,
 		insights,
+		earn,
+		email,
 		store,
 		wordads,
 		googleMyBusiness,
@@ -92,6 +106,8 @@ Object.defineProperty( year, 'label', { get: () => translate( 'Years' ) } );
 
 Object.defineProperty( traffic, 'label', { get: () => translate( 'Traffic' ) } );
 Object.defineProperty( insights, 'label', { get: () => translate( 'Insights' ) } );
+Object.defineProperty( earn, 'label', { get: () => translate( 'Earn' ) } );
+Object.defineProperty( email, 'label', { get: () => translate( 'Email' ) } );
 Object.defineProperty( store, 'label', { get: () => translate( 'Store' ) } );
 Object.defineProperty( wordads, 'label', { get: () => translate( 'Ads' ) } );
 Object.defineProperty( googleMyBusiness, 'label', {

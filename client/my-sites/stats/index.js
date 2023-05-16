@@ -5,6 +5,7 @@ import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import {
 	follows,
 	insights,
+	earn,
 	overview,
 	post,
 	site,
@@ -55,6 +56,10 @@ export default function () {
 	// Stat Insights Page
 	statsPage( '/stats/insights/:site', insights );
 
+	// Stat Earn Page
+	statsPage( '/stats/earn', sites );
+	statsPage( '/stats/earn/:site', earn );
+
 	if ( config.isEnabled( 'stats/subscribers-section' ) ) {
 		// Stat Subscribers Page (do not cofuse with people/subscribers/)
 		statsPage( '/stats/subscribers/:site', subscribers );
@@ -93,7 +98,7 @@ export default function () {
 			`/stats/email/:statType/:period(${ validEmailPeriods })/:email_id/:site`,
 			emailStats
 		);
-		statsPage( `/stats/day/emails/:site`, emailSummary );
+		statsPage( '/stats/day/emails/:site', emailSummary );
 	}
 
 	// Anything else should redirect to default stats page

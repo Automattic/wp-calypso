@@ -207,7 +207,7 @@ class EarningsMain extends Component {
 				<FormattedHeader
 					brandFont
 					className="earn__page-header"
-					headerText={ translate( 'Earn' ) }
+					headerText={ translate( 'Monetization' ) }
 					subHeaderText={ translate(
 						'Explore tools to earn money with your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						{

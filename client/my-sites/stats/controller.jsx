@@ -253,6 +253,13 @@ export function insights( context, next ) {
 	next();
 }
 
+export function earn( context, next ) {
+	context.primary = (
+		<AsyncLoad require="calypso/my-sites/stats/stats-earn" placeholder={ PageLoading } />
+	);
+	next();
+}
+
 export function subscribers( context, next ) {
 	const givenSiteId = context.params.site;
 	const filters = getSiteFilters( givenSiteId );

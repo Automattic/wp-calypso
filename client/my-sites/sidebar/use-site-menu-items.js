@@ -94,7 +94,8 @@ const useSiteMenuItems = () => {
 		showSiteLogs: isAtomic,
 	};
 
-	return menuItems ?? buildFallbackResponse( fallbackDataOverrides );
+	// return menuItems ?? buildFallbackResponse( fallbackDataOverrides );
+	return buildFallbackResponse( fallbackDataOverrides );
 };
 
 export default useSiteMenuItems;
