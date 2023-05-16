@@ -11,17 +11,17 @@ import NotifyMeOfNewPostsToggle from './notify-me-of-new-posts-toggle';
 import './styles.scss';
 import '../styles.scss';
 
-export type SiteSettingsProps = {
-	notifyMeOfNewPosts?: boolean;
+type SiteSettingsProps = {
+	notifyMeOfNewPosts: boolean;
 	onNotifyMeOfNewPostsChange: ( value: boolean ) => void;
 	updatingNotifyMeOfNewPosts: boolean;
-	emailMeNewPosts?: boolean;
+	emailMeNewPosts: boolean;
 	onEmailMeNewPostsChange: ( value: boolean ) => void;
 	updatingEmailMeNewPosts: boolean;
-	deliveryFrequency?: Reader.EmailDeliveryFrequency;
+	deliveryFrequency: Reader.EmailDeliveryFrequency;
 	onDeliveryFrequencyChange: ( value: Reader.EmailDeliveryFrequency ) => void;
 	updatingFrequency: boolean;
-	emailMeNewComments?: boolean;
+	emailMeNewComments: boolean;
 	onEmailMeNewCommentsChange: ( value: boolean ) => void;
 	updatingEmailMeNewComments: boolean;
 };
@@ -47,12 +47,12 @@ const SiteSettings = ( {
 			{ isLoggedIn && (
 				<>
 					<NotifyMeOfNewPostsToggle
-						value={ notifyMeOfNewPosts ?? false }
+						value={ notifyMeOfNewPosts }
 						onChange={ onNotifyMeOfNewPostsChange }
 						isUpdating={ updatingNotifyMeOfNewPosts }
 					/>
 					<EmailMeNewPostsToggle
-						value={ emailMeNewPosts ?? false }
+						value={ emailMeNewPosts }
 						onChange={ onEmailMeNewPostsChange }
 						isUpdating={ updatingEmailMeNewPosts }
 					/>
@@ -60,14 +60,14 @@ const SiteSettings = ( {
 			) }
 			{ emailMeNewPosts && (
 				<DeliveryFrequencyInput
-					value={ deliveryFrequency ?? Reader.EmailDeliveryFrequency.Daily }
+					value={ deliveryFrequency }
 					onChange={ onDeliveryFrequencyChange }
 					isUpdating={ updatingFrequency }
 				/>
 			) }
 			{ isLoggedIn && (
 				<EmailMeNewCommentsToggle
-					value={ emailMeNewComments ?? false }
+					value={ emailMeNewComments }
 					onChange={ onEmailMeNewCommentsChange }
 					isUpdating={ updatingEmailMeNewComments }
 				/>
