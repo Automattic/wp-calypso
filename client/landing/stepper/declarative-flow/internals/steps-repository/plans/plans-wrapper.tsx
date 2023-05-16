@@ -92,7 +92,12 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const headerText = __( 'Choose a plan' );
 	const isInSignup = props?.flowName === DOMAIN_UPSELL_FLOW ? false : true;
 
-	const hideFreePlan = planTypes ? ! planTypes.includes( TYPE_FREE ) : reduxHideFreePlan;
+	// eslint-disable-next-line no-nested-ternary
+	const hideFreePlan = reduxHideFreePlan
+		? true
+		: planTypes
+		? ! planTypes.includes( TYPE_FREE )
+		: false;
 
 	const translate = useTranslate();
 
