@@ -443,16 +443,18 @@ export const HelpCenterContactForm = () => {
 		);
 	};
 
-	const { isFetching: isFetchingGPTUrls, data: links } = useJetpackSearchAIQuery(
-		'9619154',
-		shouldLoadGptAnswer ? debouncedMessage : '',
-		'urls'
-	);
-	const { data: gptResponse } = useJetpackSearchAIQuery(
-		'9619154',
-		links?.urls ? debouncedMessage : '',
-		'response'
-	);
+	const { isFetching: isFetchingGPTUrls, data: links } = useJetpackSearchAIQuery( {
+		siteId: '9619154',
+		query: debouncedMessage,
+		stopAt: 'urls',
+		enabled: shouldLoadGptAnswer,
+	} );
+	const { data: gptResponse } = useJetpackSearchAIQuery( {
+		siteId: '9619154',
+		query: debouncedMessage,
+		stopAt: 'response',
+		enabled: !! links?.urls,
+	} );
 	const getCTALabel = () => {
 		const showingSibylOrGPTResults = showingSibylResults || showingGPTResponse;
 

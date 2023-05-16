@@ -57,18 +57,20 @@ export function HelpCenterGPT() {
 	const query = message ?? '';
 
 	// First fetch the links
-	const { data: links, isError: isLinksError } = useJetpackSearchAIQuery(
-		'9619154',
-		query,
-		'urls'
-	);
+	const { data: links, isError: isLinksError } = useJetpackSearchAIQuery( {
+		siteId: '9619154',
+		query: query,
+		stopAt: 'urls',
+		enabled: true,
+	} );
 
 	// Then fetch the response
-	const { data, isError: isResponseError } = useJetpackSearchAIQuery(
-		'9619154',
-		links?.urls ? query : '',
-		'response'
-	);
+	const { data, isError: isResponseError } = useJetpackSearchAIQuery( {
+		siteId: '9619154',
+		query: query,
+		stopAt: 'response',
+		enabled: !! links?.urls,
+	} );
 
 	const allowedTags = [ 'a', 'p', 'ol', 'ul', 'li', 'br', 'b', 'strong', 'i', 'em' ];
 
