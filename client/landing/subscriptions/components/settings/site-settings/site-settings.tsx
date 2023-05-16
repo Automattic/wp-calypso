@@ -1,12 +1,15 @@
-import { SubscriptionManager } from '@automattic/data-stores';
-import Separator from 'calypso/components/popover-menu/separator';
-import SettingsPopover from '../settings-popover';
+import { Reader, SubscriptionManager } from '@automattic/data-stores';
+import { Button } from '@wordpress/components';
+import classNames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
+import { UnsubscribeIcon } from '../icons';
+import SettingsPopover from '../settings-popover/settings-popover';
 import DeliveryFrequencyInput from './delivery-frequency-input';
 import EmailMeNewCommentsToggle from './email-me-new-comments-toggle';
 import EmailMeNewPostsToggle from './email-me-new-posts-toggle';
 import NotifyMeOfNewPostsToggle from './notify-me-of-new-posts-toggle';
-import UnsubscribeSiteButton from './unsubscribe-site-button';
-import type { SiteSubscriptionDeliveryFrequency } from '@automattic/data-stores/src/reader/types';
+import './styles.scss';
+import '../styles.scss';
 
 type SiteSettingsProps = {
 	notifyMeOfNewPosts: boolean;
@@ -15,14 +18,12 @@ type SiteSettingsProps = {
 	emailMeNewPosts: boolean;
 	onEmailMeNewPostsChange: ( value: boolean ) => void;
 	updatingEmailMeNewPosts: boolean;
-	deliveryFrequency: SiteSubscriptionDeliveryFrequency;
-	onDeliveryFrequencyChange: ( value: SiteSubscriptionDeliveryFrequency ) => void;
+	deliveryFrequency: Reader.EmailDeliveryFrequency;
+	onDeliveryFrequencyChange: ( value: Reader.EmailDeliveryFrequency ) => void;
+	updatingFrequency: boolean;
 	emailMeNewComments: boolean;
 	onEmailMeNewCommentsChange: ( value: boolean ) => void;
 	updatingEmailMeNewComments: boolean;
-	onUnsubscribe: () => void;
-	unsubscribing: boolean;
-	updatingFrequency: boolean;
 };
 
 const SiteSettings = ( {
@@ -37,14 +38,12 @@ const SiteSettings = ( {
 	emailMeNewComments,
 	onEmailMeNewCommentsChange,
 	updatingEmailMeNewComments,
-	onUnsubscribe,
-	unsubscribing,
 	updatingFrequency,
 }: SiteSettingsProps ) => {
 	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
 
 	return (
-		<SettingsPopover>
+		<div className="settings site-settings">
 			{ isLoggedIn && (
 				<>
 					<NotifyMeOfNewPostsToggle
@@ -73,8 +72,35 @@ const SiteSettings = ( {
 					isUpdating={ updatingEmailMeNewComments }
 				/>
 			) }
-			<Separator />
-			<UnsubscribeSiteButton unsubscribing={ unsubscribing } onUnsubscribe={ onUnsubscribe } />
+		</div>
+	);
+};
+
+type SiteSettingsPopoverProps = SiteSettingsProps & {
+	onUnsubscribe: () => void;
+	unsubscribing: boolean;
+};
+
+export const SiteSettingsPopover = ( {
+	onUnsubscribe,
+	unsubscribing,
+	...props
+}: SiteSettingsPopoverProps ) => {
+	const translate = useTranslate();
+	return (
+		<SettingsPopover className="site-settings-popover">
+			<SiteSettings { ...props } />
+
+			<hr className="subscriptions__separator" />
+
+			<Button
+				className={ classNames( 'unsubscribe-button', { 'is-loading': unsubscribing } ) }
+				disabled={ unsubscribing }
+				icon={ <UnsubscribeIcon className="settings-popover__item-icon" /> }
+				onClick={ onUnsubscribe }
+			>
+				{ translate( 'Unsubscribe' ) }
+			</Button>
 		</SettingsPopover>
 	);
 };

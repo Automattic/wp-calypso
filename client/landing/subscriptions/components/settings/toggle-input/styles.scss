@@ -4,7 +4,6 @@
 	.toggle-input__control {
 		padding: 16px 21px;
 		margin-bottom: 0;
-
 		.components-form-toggle__input,
 		.components-toggle-control__label {
 			cursor: pointer;
@@ -14,10 +13,6 @@
 			cursor: default;
 			opacity: 0.5;
 			pointer-events: none;
-		}
-
-		.is-checked .components-form-toggle__track {
-			background-color: $studio-black;
 		}
 
 		.components-toggle-control__label {

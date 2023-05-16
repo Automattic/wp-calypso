@@ -47,10 +47,5 @@ export const SubscriptionManager = {
 	useIsLoggedIn,
 };
 
-// Types
-export type {
-	DeliveryWindowDayType,
-	DeliveryWindowHourType,
-	EmailFormatType,
-	SubscriptionManagerUserSettings,
-} from './types';
+export { EmailDeliveryFrequency } from './constants';
+export * from './types';
