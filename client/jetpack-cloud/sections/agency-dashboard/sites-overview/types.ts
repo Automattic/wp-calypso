@@ -265,3 +265,10 @@ export interface MonitorSettingsEmail {
 	name: string;
 	verified: boolean;
 }
+
+export interface StateMonitorSettingsEmail extends MonitorSettingsEmail {
+	checked: boolean;
+	isDefault?: boolean;
+}
+
+export type AllowedMonitorContactActions = 'add' | 'verify';
