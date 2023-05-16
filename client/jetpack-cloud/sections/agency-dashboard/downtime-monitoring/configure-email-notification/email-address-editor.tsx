@@ -29,7 +29,9 @@ export default function EmailAddressEditor( {
 	const translate = useTranslate();
 
 	const [ showCodeVerification, setShowCodeVerification ] = useState< boolean >( false );
-	const [ validationError, setValidationError ] = useState< string >( '' );
+	const [ validationError, setValidationError ] = useState<
+		{ email?: string; code?: string } | undefined
+	>( {} );
 	const [ emailItem, setEmailItem ] = useState< { name: string; email: string; code?: string } >( {
 		name: '',
 		email: '',
@@ -53,21 +55,11 @@ export default function EmailAddressEditor( {
 
 	const onSave = ( event: React.FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
-		setValidationError( '' );
-
-		if ( ! emailItem.name ) {
-			return setValidationError( translate( 'Please enter a name.' ) );
-		}
-		if ( ! emailItem.email ) {
-			return setValidationError( translate( 'Please enter an email address.' ) );
-		}
+		setValidationError( undefined );
 		if ( ! emailValidator.validate( emailItem.email ) ) {
-			return setValidationError( translate( 'Please enter a valid email address.' ) );
+			return setValidationError( { email: translate( 'Please enter a valid email address.' ) } );
 		}
 		if ( showCodeVerification ) {
-			if ( ! emailItem.code ) {
-				return setValidationError( translate( 'Please enter the verification code.' ) );
-			}
 			// TODO: verify email address with code
 		} else {
 			setShowCodeVerification( true );
@@ -134,6 +126,11 @@ export default function EmailAddressEditor( {
 						disabled={ showCodeVerification }
 						onChange={ handleChange( 'email' ) }
 					/>
+					{ validationError?.email && (
+						<div className="notification-settings__footer-validation-error">
+							{ validationError.email }
+						</div>
+					) }
 					{ ! isVerifyAction && (
 						<div className="configure-email-notification__help-text">
 							{ translate( 'We’ll send a code to verify your email address.' ) }
@@ -152,6 +149,11 @@ export default function EmailAddressEditor( {
 							value={ emailItem.code }
 							onChange={ handleChange( 'code' ) }
 						/>
+						{ validationError?.code && (
+							<div className="notification-settings__footer-validation-error">
+								{ validationError.code }
+							</div>
+						) }
 						<div className="configure-email-notification__help-text">
 							{ translate(
 								'Please wait for a minute. If you didn’t receive it, we can {{button}}resend{{/button}} it.',
@@ -172,16 +174,19 @@ export default function EmailAddressEditor( {
 					</FormFieldset>
 				) }
 				<div className="notification-settings__footer">
-					{ validationError && (
-						<div className="notification-settings__footer-validation-error">
-							{ validationError }
-						</div>
-					) }
 					<div className="notification-settings__footer-buttons">
-						<Button onClick={ toggleModal } aria-label={ translate( 'Cancel' ) }>
+						<Button onClick={ toggleModal }>
 							{ showCodeVerification ? translate( 'Later' ) : translate( 'Cancel' ) }
 						</Button>
-						<Button disabled={ false } type="submit" primary aria-label={ translate( 'Verify' ) }>
+						<Button
+							disabled={
+								! emailItem.name ||
+								! emailItem.email ||
+								( showCodeVerification && ! emailItem.code )
+							}
+							type="submit"
+							primary
+						>
 							{ translate( 'Verify' ) }
 						</Button>
 					</div>
