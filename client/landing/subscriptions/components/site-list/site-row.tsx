@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import { EmailDeliveryFrequency, SubscriptionManager } from '@automattic/data-stores';
+import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import TimeSince from 'calypso/components/time-since';
@@ -7,7 +7,7 @@ import { SiteSettingsPopover } from '../settings';
 import { SiteIcon } from '../site-icon';
 import type { SiteSubscription } from '@automattic/data-stores/src/reader/types';
 
-const useDeliveryFrequencyLabel = ( deliveryFrequencyValue: EmailDeliveryFrequency ) => {
+const useDeliveryFrequencyLabel = ( deliveryFrequencyValue: Reader.EmailDeliveryFrequency ) => {
 	const translate = useTranslate();
 
 	const deliveryFrequencyLabels = useMemo(

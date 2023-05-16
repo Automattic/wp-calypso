@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import { EmailDeliveryFrequency } from '@automattic/data-stores';
+import { Reader } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -18,7 +18,7 @@ const useSiteSubscription = ( blogId?: string ) => ( {
 		siteUrl: 'https://theatavistmagazine.wordpress.com/',
 		notifyMeOfNewPosts: true,
 		emailMeNewPosts: true,
-		newPostsEmailFrequency: EmailDeliveryFrequency.Daily,
+		newPostsEmailFrequency: Reader.EmailDeliveryFrequency.Daily,
 		emailMeNewComments: true,
 	},
 	isLoading: false,

@@ -1,4 +1,4 @@
-import { EmailDeliveryFrequency, SubscriptionManager } from '@automattic/data-stores';
+import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { SiteSettings } from 'calypso/landing/subscriptions/components/settings/site-settings/site-settings';
 
@@ -10,7 +10,7 @@ type SiteSubscriptionSettingsProps = {
 type SettingsFormState = Partial< {
 	notifyMeOfNewPosts: boolean;
 	emailMeNewPosts: boolean;
-	deliveryFrequency: EmailDeliveryFrequency;
+	deliveryFrequency: Reader.EmailDeliveryFrequency;
 	emailMeNewComments: boolean;
 } >;
 

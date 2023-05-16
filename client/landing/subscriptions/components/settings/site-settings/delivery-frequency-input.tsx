@@ -1,4 +1,4 @@
-import { EmailDeliveryFrequency, SubscriptionManager } from '@automattic/data-stores';
+import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -6,9 +6,9 @@ import SegmentedControl from 'calypso/components/segmented-control';
 
 type DeliveryFrequencyOptionProps = {
 	children: React.ReactNode;
-	value: EmailDeliveryFrequency;
+	value: Reader.EmailDeliveryFrequency;
 	selected: boolean;
-	onChange: ( value: EmailDeliveryFrequency ) => void;
+	onChange: ( value: Reader.EmailDeliveryFrequency ) => void;
 };
 
 const DeliveryFrequencyOption = ( {
@@ -23,13 +23,13 @@ const DeliveryFrequencyOption = ( {
 );
 
 type DeliveryFrequencyInputProps = {
-	onChange: ( value: EmailDeliveryFrequency ) => void;
-	value: EmailDeliveryFrequency;
+	onChange: ( value: Reader.EmailDeliveryFrequency ) => void;
+	value: Reader.EmailDeliveryFrequency;
 	isUpdating: boolean;
 };
 
 type DeliveryFrequencyKeyLabel = {
-	key: EmailDeliveryFrequency;
+	key: Reader.EmailDeliveryFrequency;
 	label: string;
 };
 
@@ -43,15 +43,15 @@ const DeliveryFrequencyInput = ( {
 	const availableFrequencies = useMemo< DeliveryFrequencyKeyLabel[] >(
 		() => [
 			{
-				key: EmailDeliveryFrequency.Instantly,
+				key: Reader.EmailDeliveryFrequency.Instantly,
 				label: translate( 'Instantly' ),
 			},
 			{
-				key: EmailDeliveryFrequency.Daily,
+				key: Reader.EmailDeliveryFrequency.Daily,
 				label: translate( 'Daily' ),
 			},
 			{
-				key: EmailDeliveryFrequency.Weekly,
+				key: Reader.EmailDeliveryFrequency.Weekly,
 				label: translate( 'Weekly' ),
 			},
 		],

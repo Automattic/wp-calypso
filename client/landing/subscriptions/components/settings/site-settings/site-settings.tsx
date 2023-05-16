@@ -1,4 +1,4 @@
-import { SubscriptionManager, EmailDeliveryFrequency } from '@automattic/data-stores';
+import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -18,8 +18,8 @@ export type SiteSettingsProps = {
 	emailMeNewPosts?: boolean;
 	onEmailMeNewPostsChange: ( value: boolean ) => void;
 	updatingEmailMeNewPosts: boolean;
-	deliveryFrequency?: EmailDeliveryFrequency;
-	onDeliveryFrequencyChange: ( value: EmailDeliveryFrequency ) => void;
+	deliveryFrequency?: Reader.EmailDeliveryFrequency;
+	onDeliveryFrequencyChange: ( value: Reader.EmailDeliveryFrequency ) => void;
 	updatingFrequency: boolean;
 	emailMeNewComments?: boolean;
 	onEmailMeNewCommentsChange: ( value: boolean ) => void;
@@ -60,7 +60,7 @@ export const SiteSettings = ( {
 			) }
 			{ emailMeNewPosts && (
 				<DeliveryFrequencyInput
-					value={ deliveryFrequency ?? EmailDeliveryFrequency.Daily }
+					value={ deliveryFrequency ?? Reader.EmailDeliveryFrequency.Daily }
 					onChange={ onDeliveryFrequencyChange }
 					isUpdating={ updatingFrequency }
 				/>
