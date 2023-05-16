@@ -74,12 +74,13 @@ function GlobalStylesViewNotice() {
 function GlobalStylesEditNotice() {
 	const NOTICE_ID = 'wpcom-global-styles/gating-notice';
 	const { globalStylesInUse, globalStylesId } = useGlobalStylesConfig();
+	const { canvas } = useCanvas();
 	const { isSiteEditor, isPostEditor } = useSelect(
 		( select ) => ( {
-			isSiteEditor: !! select( 'core/edit-site' ),
+			isSiteEditor: !! select( 'core/edit-site' ) && canvas === 'edit',
 			isPostEditor: ! select( 'core/edit-site' ) && !! select( 'core/editor' ).getCurrentPostId(),
 		} ),
-		[]
+		[ canvas ]
 	);
 
 	const { createWarningNotice, removeNotice } = useDispatch( 'core/notices' );
