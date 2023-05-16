@@ -23,6 +23,8 @@ import HelpCenterContainer from './help-center-container';
 import type { HelpCenterSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 import '../styles.scss';
 
+const ZENDESK_SCRIPT_ID = 'ze-snippet';
+
 const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
 	const { data: chatStatus } = useSupportAvailability( 'CHAT' );
@@ -47,6 +49,10 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 			return;
 		}
 
+		if ( document.getElementById( ZENDESK_SCRIPT_ID ) ) {
+			return;
+		}
+
 		function setUpMessagingEventHandlers() {
 			if ( typeof window.zE !== 'function' ) {
 				return;
@@ -65,7 +71,7 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 		loadScript(
 			'https://static.zdassets.com/ekr/snippet.js?key=' + encodeURIComponent( zendeskKey ),
 			setUpMessagingEventHandlers,
-			{ id: 'ze-snippet' }
+			{ id: ZENDESK_SCRIPT_ID }
 		);
 	}, [ setShowMessagingWidget ] );
 
