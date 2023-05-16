@@ -24,7 +24,13 @@ type NoticeProps = {
 	visible?: boolean;
 };
 
-const Notice = ( { children, action, type = 'success', onClose, visible = true }: NoticeProps ) => {
+const Notice = ( {
+	children,
+	action,
+	type = NoticeType.Success,
+	onClose,
+	visible = true,
+}: NoticeProps ) => {
 	return visible ? (
 		<div className={ `subscription-management__notice subscription-management__notice--${ type }` }>
 			{ onClose && (

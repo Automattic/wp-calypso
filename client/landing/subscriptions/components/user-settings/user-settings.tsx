@@ -1,5 +1,9 @@
 import { Button } from '@automattic/components';
-import { Reader, SubscriptionManager } from '@automattic/data-stores';
+import {
+	DeliveryWindowDayType,
+	DeliveryWindowHourType,
+	SubscriptionManager,
+} from '@automattic/data-stores';
 import { useState, useCallback, useEffect } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
 import { FormEvent } from 'react';
@@ -8,9 +12,6 @@ import { BlockEmailsSetting } from '../fields/block-emails-setting';
 import { DeliveryWindowInput } from '../fields/delivery-window-input';
 import { Notice, NoticeState, NoticeType } from '../notice';
 import './styles.scss';
-
-type DeliveryWindowDayType = Reader.DeliveryWindowDayType;
-type DeliveryWindowHourType = Reader.DeliveryWindowHourType;
 
 type SubscriptionUserSettings = Partial< {
 	mail_option: EmailFormatType;
