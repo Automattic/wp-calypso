@@ -153,18 +153,16 @@
 		.step-container__content h1.launchpad__sidebar-h1 {
 			color: var(--studio-gray-100);
 			font-family: $brand-serif;
-			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-			font-size: 32px;
+			font-size: rem(32px);
 			font-weight: 400;
-			line-height: 40px;
+			line-height: rem(40px);
 			margin: 0 0 10px;
 			padding: 0;
 			letter-spacing: -0.32px;
 
 			@include break-large {
-				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-				font-size: 44px;
-				line-height: 52px;
+				font-size: rem(44px);
+				line-height: rem(52px);
 			}
 		}
 	}
