@@ -130,9 +130,8 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 	useEffect( () => {
 		if ( supportHistory?.some( ( ticket ) => ticket.channel === 'native_messaging' ) ) {
 			setShowMessagingLauncher( true );
-			setShowMessagingWidget( true );
 		}
-	}, [ setShowMessagingLauncher, setShowMessagingWidget, supportHistory ] );
+	}, [ setShowMessagingLauncher, supportHistory ] );
 
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const primarySiteId = useSelector( ( state ) => getPrimarySiteId( state ) );
