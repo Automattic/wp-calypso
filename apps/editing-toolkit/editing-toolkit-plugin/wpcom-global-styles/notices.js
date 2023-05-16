@@ -149,7 +149,7 @@ function GlobalStylesEditNotice() {
 			}
 		);
 
-		trackEvent( 'calypso_global_styles_gating_notice_show' );
+		trackEvent( 'calypso_global_styles_gating_notice_show', isSiteEditor );
 	}, [
 		createWarningNotice,
 		isPostEditor,
