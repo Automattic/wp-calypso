@@ -5,7 +5,42 @@
 }
 
 .global-styles-variations__header {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
 	width: 100%;
+}
+
+.global-styles-variations__header h2 {
+	display: inline-block;
+	font-size: 1rem;
+	font-weight: 500;
+	line-height: 24px;
+	margin: 0;
+}
+
+.global-styles-variations__header p {
+	color: var(--color-neutral-60);
+	font-size: 0.875rem;
+	letter-spacing: -0.15px;
+	line-height: 20px;
+	margin: 0;
+}
+
+.global-styles-variations__free-badge {
+	display: inline-flex;
+	align-items: center;
+	height: 20px;
+	line-height: 20px;
+	padding: 0 10px 0 9px;
+	border-radius: 20px; /* stylelint-disable-line scales/radii */
+	margin-left: 10px;
+	box-sizing: border-box;
+	font-size: 0.75rem;
+	font-weight: 500;
+	color: var(--studio-blue-80);
+	background: var(--studio-blue-5);
+	z-index: 1;
 }
 
 .global-styles-variations__item {

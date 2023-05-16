@@ -3,7 +3,7 @@ import { mergeBaseAndUserConfigs } from '@wordpress/edit-site/build-module/compo
 import { useState } from '@wordpress/element';
 import { ENTER } from '@wordpress/keycodes';
 import classnames from 'classnames';
-import { translate } from 'i18n-calypso';
+import { translate, TranslateResult } from 'i18n-calypso';
 import { useMemo, useContext } from 'react';
 import { DEFAULT_GLOBAL_STYLES_VARIATION_SLUG } from '../../constants';
 import GlobalStylesVariationPreview from './preview';
@@ -21,6 +21,7 @@ interface GlobalStylesVariationProps {
 interface GlobalStylesVariationsProps {
 	globalStylesVariations: GlobalStylesObject[];
 	selectedGlobalStylesVariation: GlobalStylesObject | null;
+	description?: TranslateResult;
 	premiumBadge?: React.ReactNode;
 	showOnlyHoverViewDefaultVariation?: boolean;
 	onSelect: ( globalStylesVariation: GlobalStylesObject ) => void;
@@ -94,6 +95,7 @@ const GlobalStylesVariations = ( {
 	globalStylesVariations,
 	selectedGlobalStylesVariation,
 	premiumBadge,
+	description,
 	showOnlyHoverViewDefaultVariation,
 	onSelect,
 }: GlobalStylesVariationsProps ) => {
@@ -113,13 +115,24 @@ const GlobalStylesVariations = ( {
 		[ globalStylesVariations ]
 	);
 
+	const premiumStylesDescription =
+		description ??
+		translate(
+			'Unlock premium styles and tons of other features with the Premium plan, or try them out now for free.'
+		);
+
 	return (
 		<GlobalStylesContext.Provider value={ { base: baseGlobalStyles } }>
 			<div>
+				<div className="global-styles-variations__header">
+					<h2>
+						{ translate( 'Default style' ) }
+						<div className="global-styles-variations__free-badge">
+							<span>{ translate( 'Free' ) }</span>
+						</div>
+					</h2>
+				</div>
 				<div className="global-styles-variations">
-					<div className="global-styles-variations__header">
-						<h3>{ translate( 'Default style' ) }</h3>
-					</div>
 					<GlobalStylesVariation
 						key="base"
 						globalStylesVariation={ baseGlobalStyles }
@@ -132,17 +145,13 @@ const GlobalStylesVariations = ( {
 					/>
 				</div>
 
-				<div className="global-styles-variations">
-					<div className="global-styles-variations__header">
-						<h3> { translate( 'Premium styles' ) } </h3>
-					</div>
+				<div className="global-styles-variations__header">
+					<h2> { translate( 'Premium styles' ) } </h2>
 					<div>
-						<p>
-							{ translate(
-								'Unlock premium styles and tons of other features with the Premium plan, or try them out now for free.'
-							) }
-						</p>
+						<p>{ premiumStylesDescription }</p>
 					</div>
+				</div>
+				<div className="global-styles-variations">
 					{ globalStylesVariationsWithoutDefault.map( ( globalStylesVariation, index ) => (
 						<GlobalStylesVariation
 							key={ index }
