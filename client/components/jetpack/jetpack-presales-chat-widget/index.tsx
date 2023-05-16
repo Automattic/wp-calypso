@@ -1,6 +1,3 @@
-//temp ignore linter console.log stuff
-/* eslint-disable no-console */
-
 import config from '@automattic/calypso-config';
 import { useHappychatAuth } from '@automattic/happychat-connection';
 import { loadScript } from '@automattic/load-script';
@@ -40,8 +37,7 @@ export const ZendeskJetpackChat: React.VFC< { keyType: KeyType } > = ( { keyType
 		return config( get_config_chat_key( keyType ) );
 	}, [ keyType ] );
 
-	const { data: dataAuth, isLoading: isLoadingAuth } = useHappychatAuth(); // call the hook
-	console.log( 'dataAuth:', dataAuth );
+	const { data: dataAuth, isLoading: isLoadingAuth } = useHappychatAuth( true, 'zendesk' );
 	const zendeskdJwt = dataAuth?.user?.jwt;
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const shouldShowZendeskPresalesChat = useMemo( () => {
@@ -60,8 +56,6 @@ export const ZendeskJetpackChat: React.VFC< { keyType: KeyType } > = ( { keyType
 	}, [ isStaffed, isLoggedIn, keyType ] );
 	useEffect( () => {
 		if ( ! zendeskChatKey || isLoadingAuth ) {
-			// Add isLoadingAuth check
-			console.log( 'Zendesk chat key is not provided or auth data is still loading.' );
 			return;
 		}
 
@@ -74,26 +68,18 @@ export const ZendeskJetpackChat: React.VFC< { keyType: KeyType } > = ( { keyType
 		Promise.resolve( result ).then( () => {
 			if ( typeof window !== 'undefined' ) {
 				window.zE = window.zE || [];
-				console.log( 'ze', window.zE );
 
 				if ( zendeskdJwt && typeof window.zE === 'function' ) {
 					window.zE( 'messenger', 'loginUser', function ( callback ) {
 						callback( zendeskdJwt );
 					} );
-					console.log( 'Authenticated with JWT.' );
-				} else if ( zendeskdJwt ) {
-					console.log( 'window.zE is not a function.' );
-				} else {
-					console.log( 'No JWT provided for authentication.' );
 				}
-			} else {
-				console.log( 'window object is undefined.' );
 			}
 		} );
-	}, [ zendeskChatKey, zendeskdJwt, isLoadingAuth ] ); // Add isLoadingAuth to dependencies array
+	}, [ zendeskChatKey, zendeskdJwt, isLoadingAuth ] );
 
 	if ( error ) {
-		console.log( 'Error occurred in ZendeskJetpackChat component.' );
+		//fail slilently
 		return null;
 	}
 

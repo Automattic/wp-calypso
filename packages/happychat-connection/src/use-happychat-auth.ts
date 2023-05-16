@@ -10,23 +10,26 @@ interface APIFetchOptions {
 	path: string;
 }
 
-export async function requestHappyChatAuth() {
+export async function requestHappyChatAuth( type?: string ) {
+	const body = type ? { type } : undefined;
 	return canAccessWpcomApis()
 		? ( ( await wpcomRequest( {
 				path: '/help/authenticate/chat',
 				apiNamespace: 'wpcom/v2',
 				apiVersion: '2',
 				method: 'POST',
+				body,
 		  } ) ) as HappychatAuth )
 		: ( ( await apiFetch( {
 				path: '/help-center/authenticate/chat',
 				method: 'POST',
 				global: true,
+				body,
 		  } as APIFetchOptions ) ) as HappychatAuth );
 }
 
-export default function useHappychatAuth( enabled = true ) {
-	return useQuery< HappychatAuth >( happychatAuthQueryKey, requestHappyChatAuth, {
+export default function useHappychatAuth( enabled = true, type?: string ) {
+	return useQuery< HappychatAuth >( happychatAuthQueryKey, () => requestHappyChatAuth( type ), {
 		staleTime: 10 * 60 * 1000, // 10 minutes
 		enabled,
 		meta: {
