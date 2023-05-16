@@ -11,8 +11,14 @@ export function RedirectOnboardingUserAfterPublishingPost() {
 		return false;
 	}
 
-	const siteOrigin = getQueryArg( window.location.search, 'origin' );
+	const siteOrigin =
+		getQueryArg( window.location.search, 'origin' ) ||
+		window.sessionStorage.getItem( 'site-origin' ) ||
+		'https://wordpress.com';
 	const siteSlug = window.location.hostname;
+
+	// Save site origin in session storage to be used in editor refresh.
+	window.sessionStorage.setItem( 'site-origin', siteOrigin );
 
 	const unsubscribeSidebar = subscribe( () => {
 		const isComplementaryAreaVisible = select( 'core/preferences' ).get(
@@ -29,9 +35,14 @@ export function RedirectOnboardingUserAfterPublishingPost() {
 	const unsubscribe = subscribe( () => {
 		const isSavingPost = select( 'core/editor' ).isSavingPost();
 		const isCurrentPostPublished = select( 'core/editor' ).isCurrentPostPublished();
+		const isCurrentPostScheduled = select( 'core/editor' ).isCurrentPostScheduled();
 		const getCurrentPostRevisionsCount = select( 'core/editor' ).getCurrentPostRevisionsCount();
 
-		if ( ! isSavingPost && isCurrentPostPublished && getCurrentPostRevisionsCount === 1 ) {
+		if (
+			! isSavingPost &&
+			( isCurrentPostPublished || isCurrentPostScheduled ) &&
+			getCurrentPostRevisionsCount === 1
+		) {
 			unsubscribe();
 
 			dispatch( 'core/edit-post' ).closePublishSidebar();
