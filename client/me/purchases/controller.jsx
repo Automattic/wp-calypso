@@ -21,6 +21,7 @@ import {
 	billingHistory,
 } from 'calypso/me/purchases/paths';
 import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
+import { convertErrorToString } from 'calypso/my-sites/checkout/composite-checkout/lib/analytics';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { getVatVendorInfo } from './billing-history/vat-vendor-details';
 import CancelPurchase from './cancel-purchase';
@@ -41,7 +42,7 @@ function useLogPurchasesError( message ) {
 				extra: {
 					env: config( 'env_id' ),
 					type: 'account_level_purchases',
-					message: error.message + '; Stack: ' + error.stack,
+					message: convertErrorToString( error ),
 				},
 			} );
 		},
