@@ -80,9 +80,9 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 * @returns {Object} Object with props to render a PromoCard.
 	 */
 	const getSimplePaymentsCard = () => {
-		const supportLink = localizeUrl(
-			'https://wordpress.com/support/wordpress-editor/blocks/pay-with-paypal/'
-		);
+		const supportLink = isNonAtomicJetpack
+			? localizeUrl( 'https://jetpack.com/support/pay-with-paypal/' )
+			: localizeUrl( 'https://wordpress.com/support/wordpress-editor/blocks/pay-with-paypal/' );
 		const cta = {
 			text: translate( 'Learn how to get started' ),
 			action: () => {
