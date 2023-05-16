@@ -4,21 +4,20 @@ import { Icon, plus, pencil } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import Badge from 'calypso/components/badge';
-import type { MonitorSettingsEmail } from '../../sites-overview/types';
+import type {
+	MonitorSettingsEmail,
+	StateMonitorSettingsEmail,
+	AllowedMonitorContactActions,
+} from '../../sites-overview/types';
 
 import './style.scss';
 
-interface StateEmailItem extends MonitorSettingsEmail {
-	checked: boolean;
-	isDefault?: boolean;
-}
-
 interface Props {
 	defaultEmailAddresses: Array< string >;
-	toggleModal: () => void;
+	toggleModal: ( item?: StateMonitorSettingsEmail, action?: AllowedMonitorContactActions ) => void;
 	addedEmailAddresses?: Array< MonitorSettingsEmail >;
-	allEmailItems: Array< StateEmailItem >;
-	setAllEmailItems: ( emailAddresses: Array< StateEmailItem > ) => void;
+	allEmailItems: Array< StateMonitorSettingsEmail >;
+	setAllEmailItems: ( emailAddresses: Array< StateMonitorSettingsEmail > ) => void;
 }
 
 export default function ConfigureEmailNotification( {
@@ -48,7 +47,7 @@ export default function ConfigureEmailNotification( {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
-	const handleOnChange = ( item: StateEmailItem, checked: boolean ) => {
+	const handleOnChange = ( item: StateMonitorSettingsEmail, checked: boolean ) => {
 		if ( item.isDefault ) {
 			return;
 			// FIXME: We need to show a custom error message here or a tooltip.
@@ -71,7 +70,14 @@ export default function ConfigureEmailNotification( {
 
 	const showVerified = true; // FIXME: This should be dynamic.
 
-	const getCheckboxContent = ( item: StateEmailItem ) => (
+	const handleToggleModal = (
+		item: StateMonitorSettingsEmail,
+		action: AllowedMonitorContactActions
+	) => {
+		toggleModal( item, action );
+	};
+
+	const getCheckboxContent = ( item: StateMonitorSettingsEmail ) => (
 		<div className="configure-email-address__checkbox-content-container">
 			<span className="configure-email-address__checkbox-content">
 				<div className="configure-email-address__checkbox-heading">{ item.email }</div>
@@ -80,7 +86,13 @@ export default function ConfigureEmailNotification( {
 			{ ! item.isDefault && (
 				<>
 					{ ! item.verified && (
-						<span className="configure-email-address__verification-status">
+						<span
+							role="button"
+							tabIndex={ 0 }
+							onKeyPress={ () => handleToggleModal( item, 'verify' ) }
+							onClick={ () => handleToggleModal( item, 'verify' ) }
+							className="configure-email-address__verification-status cursor-pointer"
+						>
 							<Badge type="warning">{ translate( 'Pending Verification' ) }</Badge>
 						</span>
 					) }
@@ -112,7 +124,7 @@ export default function ConfigureEmailNotification( {
 			<Button
 				compact
 				className="configure-email-address__button"
-				onClick={ toggleModal }
+				onClick={ () => toggleModal() }
 				aria-label={ translate( 'Add email address' ) }
 			>
 				<Icon size={ 18 } icon={ plus } />

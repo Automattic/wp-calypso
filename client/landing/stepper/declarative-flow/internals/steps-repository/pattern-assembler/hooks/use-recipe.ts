@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useColorPaletteVariations, useFontPairingVariations } from '@automattic/global-styles';
 import { keyBy } from '@automattic/js-utils';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -62,13 +61,7 @@ const useRecipe = ( siteId = 0, patterns: Pattern[], categories: Category[] ) =>
 	 * Initialize the default value from the recipe of the selected design when both patterns and categories are ready
 	 */
 	useEffect( () => {
-		if (
-			patterns.length === 0 ||
-			categories.length === 0 ||
-			! selectedDesignRef.current?.recipe ||
-			// Avoid adding the preselected patterns from the virtual theme for now
-			( selectedDesignRef.current?.is_virtual && ! isEnabled( 'pattern-assembler/dotcompatterns' ) )
-		) {
+		if ( patterns.length === 0 || categories.length === 0 || ! selectedDesignRef.current?.recipe ) {
 			return;
 		}
 

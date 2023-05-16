@@ -385,7 +385,6 @@ export class PlansFeaturesMain extends Component {
 						) }
 					></Notice>
 				) }
-				{ this.renderSecondaryFormattedHeader() }
 				<PlanFeatures
 					redirectToAddDomainFlow={ redirectToAddDomainFlow }
 					hidePlanTypeSelector={ hidePlanTypeSelector }
@@ -716,6 +715,7 @@ export class PlansFeaturesMain extends Component {
 						discountEndDate: this.props.discountEndDate,
 					} }
 				/>
+				{ this.renderSecondaryFormattedHeader() }
 				{ ! hidePlanSelector && (
 					<TermExperimentPlanTypeSelector
 						isEligible={ is2023PricingGridVisible }
@@ -832,6 +832,8 @@ export default connect(
 			customerType: customerType,
 			hidePersonalPlan: props.hidePersonalPlan,
 			siteSlug,
+			selectedPlan: props.selectedPlan,
+			selectedFeature: props.selectedFeature,
 		};
 
 		return {

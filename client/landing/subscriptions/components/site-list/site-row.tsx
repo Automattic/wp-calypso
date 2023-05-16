@@ -32,7 +32,13 @@ export default function SiteRow( {
 	date_subscribed,
 	delivery_methods,
 }: SiteSubscription ) {
-	const hostname = useMemo( () => new URL( url ).hostname, [ url ] );
+	const hostname = useMemo( () => {
+		try {
+			return new URL( url ).hostname;
+		} catch ( e ) {
+			return '';
+		}
+	}, [ url ] );
 	const siteIcon = useMemo( () => {
 		if ( site_icon ) {
 			return <img className="icon" src={ site_icon } alt={ name } />;
@@ -88,7 +94,12 @@ export default function SiteRow( {
 
 	return (
 		<li className="row" role="row">
-			<a href={ url } rel="noreferrer noopener" className="title-box" target="_blank">
+			<a
+				{ ...( url && { href: url } ) }
+				rel="noreferrer noopener"
+				className="title-box"
+				target="_blank"
+			>
 				<span className="title-box" role="cell">
 					{ siteIcon }
 					<span className="title-column">
