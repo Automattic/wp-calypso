@@ -64,11 +64,3 @@ export * from './contextual-help/constants';
 export type { HelpCenterSite, HelpCenterSelect } from './help-center/types';
 export type { OnboardSelect } from './onboard';
 export type { StepperInternalSelect } from './stepper-internal';
-export type {
-	DeliveryWindowDayType,
-	DeliveryWindowHourType,
-	EmailFormatType,
-	SubscriptionManagerUserSettings,
-	PendingSiteSubscription,
-	PendingPostSubscription,
-} from './reader/types';

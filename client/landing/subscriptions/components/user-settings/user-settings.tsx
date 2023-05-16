@@ -1,22 +1,18 @@
 import { Button } from '@automattic/components';
-import {
-	DeliveryWindowDayType,
-	DeliveryWindowHourType,
-	SubscriptionManager,
-} from '@automattic/data-stores';
+import { SubscriptionManager, Reader } from '@automattic/data-stores';
 import { useState, useCallback, useEffect } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
 import { FormEvent } from 'react';
-import { EmailFormatInput, EmailFormatType } from '../fields';
+import { EmailFormatInput } from '../fields';
 import { BlockEmailsSetting } from '../fields/block-emails-setting';
 import { DeliveryWindowInput } from '../fields/delivery-window-input';
 import { Notice, NoticeState, NoticeType } from '../notice';
 import './styles.scss';
 
 type SubscriptionUserSettings = Partial< {
-	mail_option: EmailFormatType;
-	delivery_day: DeliveryWindowDayType;
-	delivery_hour: DeliveryWindowHourType;
+	mail_option: Reader.EmailFormatType;
+	delivery_day: Reader.DeliveryWindowDayType;
+	delivery_hour: Reader.DeliveryWindowHourType;
 	blocked: boolean;
 	email: string;
 } >;
@@ -65,7 +61,7 @@ const UserSettings = ( { value = DEFAULT_VALUE }: UserSettingsProps ) => {
 			<EmailFormatInput
 				value={ formState.mail_option ?? 'html' }
 				onChange={ ( evt: FormEvent< HTMLSelectElement > ) =>
-					onChange?.( { mail_option: evt.currentTarget.value as EmailFormatType } )
+					onChange?.( { mail_option: evt.currentTarget.value as Reader.EmailFormatType } )
 				}
 			/>
 			<DeliveryWindowInput
@@ -73,12 +69,12 @@ const UserSettings = ( { value = DEFAULT_VALUE }: UserSettingsProps ) => {
 				hourValue={ formState.delivery_hour ?? 0 }
 				onDayChange={ ( evt: FormEvent< HTMLSelectElement > ) =>
 					onChange?.( {
-						delivery_day: parseInt( evt.currentTarget.value ) as DeliveryWindowDayType,
+						delivery_day: parseInt( evt.currentTarget.value ) as Reader.DeliveryWindowDayType,
 					} )
 				}
 				onHourChange={ ( evt: FormEvent< HTMLSelectElement > ) =>
 					onChange?.( {
-						delivery_hour: parseInt( evt.currentTarget.value ) as DeliveryWindowHourType,
+						delivery_hour: parseInt( evt.currentTarget.value ) as Reader.DeliveryWindowHourType,
 					} )
 				}
 			/>

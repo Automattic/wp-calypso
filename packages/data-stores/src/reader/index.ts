@@ -48,3 +48,5 @@ export const SubscriptionManager = {
 	useSiteEmailMeNewCommentsMutation,
 	useIsLoggedIn,
 };
+
+export * from './types';
