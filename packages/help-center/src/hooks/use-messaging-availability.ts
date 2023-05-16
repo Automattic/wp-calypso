@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
+import { addQueryArgs } from '@wordpress/url';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import type { MessagingAvailability } from '../types';
 
@@ -9,18 +10,18 @@ interface APIFetchOptions {
 }
 
 async function requestMessagingAvailability() {
-	const params = new URLSearchParams( { group: 'wpcom_messaging', environment: 'production' } );
+	const params = { group: 'wpcom_messaging', environment: 'production' };
+	const wpcomParams = new URLSearchParams( params );
 	return canAccessWpcomApis()
 		? ( ( await wpcomRequest( {
 				path: '/help/messaging/is-available',
-				query: params.toString(),
+				query: wpcomParams.toString(),
 				apiNamespace: 'wpcom/v2',
 				apiVersion: '2',
 				method: 'GET',
 		  } ) ) as MessagingAvailability )
 		: ( ( await apiFetch( {
-				path: '/help-center/support-availability/messaging',
-				query: params.toString(),
+				path: addQueryArgs( '/help-center/support-availability/messaging', params ),
 				method: 'GET',
 				global: true,
 		  } as APIFetchOptions ) ) as MessagingAvailability );
