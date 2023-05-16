@@ -309,6 +309,17 @@ $head-foot-height: 50px;
 			margin-left: 5px;
 			padding-left: 10px;
 		}
+
+		.help-center-gpt-response__actions {
+			button {
+				padding: 2px 5px;
+				margin-right: 5px;
+			}
+		}
+
+		.help-center-gpt-response__feedback {
+			color: var(--studio-green-50);
+		}
 	}
 
 	.help-center-container__loading,

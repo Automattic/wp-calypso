@@ -245,7 +245,7 @@ export const HelpCenterContactForm = () => {
 
 	const enableGPTResponse = config.isEnabled( 'help/gpt-response' );
 
-	const showingHelpResults = params.get( 'show-results' ) === 'true';
+	const showingSearchResults = params.get( 'show-results' ) === 'true';
 	const showingGPTResponse = params.get( 'show-gpt' ) === 'true';
 
 	const redirectToArticle = useCallback(
@@ -288,8 +288,33 @@ export const HelpCenterContactForm = () => {
 		[ navigate, debouncedMessage ]
 	);
 
+	// this indicates the user was happy with the GPT response
+	function handleGPTClose() {
+		// send a tracks event
+		recordTracksEvent( 'calypso_inlinehelp_contact_gpt_close', {
+			force_site_id: true,
+			location: 'help-center',
+			section: sectionName,
+		} );
+
+		resetStore();
+		navigate( '/' );
+	}
+
+	function handleGPTCancel() {
+		// send a tracks event
+		recordTracksEvent( 'calypso_inlinehelp_contact_gpt_cancel', {
+			force_site_id: true,
+			location: 'help-center',
+			section: sectionName,
+		} );
+
+		// stop loading the GPT response
+		params.set( 'show-gpt', 'false' );
+	}
+
 	function handleCTA() {
-		if ( ! enableGPTResponse && ! showingHelpResults ) {
+		if ( ! enableGPTResponse && ! showingSearchResults ) {
 			params.set( 'show-results', 'true' );
 			navigate( {
 				pathname: '/contact-form',
@@ -486,9 +511,9 @@ export const HelpCenterContactForm = () => {
 	const isFetchingGPTResponse = isFetchingUrls || isFetchingResponse;
 
 	const getCTALabel = () => {
-		const showingHelpOrGPTResults = showingHelpResults || showingGPTResponse;
+		const showingHelpOrGPTResults = showingSearchResults || showingGPTResponse;
 
-		if ( ! showingGPTResponse && ! showingHelpResults ) {
+		if ( ! showingGPTResponse && ! showingSearchResults ) {
 			return __( 'Continue', __i18n_text_domain__ );
 		}
 
@@ -522,11 +547,22 @@ export const HelpCenterContactForm = () => {
 						isBusy={ isFetchingGPTResponse }
 						disabled={ isFetchingGPTResponse }
 						onClick={ handleCTA }
-						isPrimary
+						isPrimary={ ! showingGPTResponse }
+						isSecondary={ showingGPTResponse }
 						className="help-center-contact-form__site-picker-cta"
 					>
 						{ getCTALabel() }
 					</Button>
+					{ ! isFetchingGPTResponse && showingGPTResponse && ! hasSubmittingError && (
+						<Button isPrimary onClick={ handleGPTClose }>
+							Close
+						</Button>
+					) }
+					{ isFetchingGPTResponse && (
+						<Button isSecondary onClick={ handleGPTCancel }>
+							Cancel
+						</Button>
+					) }
 					{ hasSubmittingError && (
 						<FormInputValidation
 							isError
@@ -539,7 +575,7 @@ export const HelpCenterContactForm = () => {
 		);
 	}
 
-	return showingHelpResults ? (
+	return showingSearchResults ? (
 		<div className="help-center__articles-page">
 			<BackButton />
 			<HelpCenterSearchResults
