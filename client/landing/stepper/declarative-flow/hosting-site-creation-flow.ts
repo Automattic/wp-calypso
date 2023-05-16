@@ -52,8 +52,12 @@ const hosting: Flow = {
 					return navigate( 'plans' );
 				}
 				case 'plans':
+					if ( providedDependencies?.goBack ) {
+						return navigate( 'options' );
+					}
+
 					setPlanCartItem( {
-						product_slug: ( providedDependencies.plan as MinimalRequestCartProduct | null )
+						product_slug: ( providedDependencies?.plan as MinimalRequestCartProduct | null )
 							?.product_slug,
 						extra: { geo_affinity: siteGeoAffinity },
 					} );

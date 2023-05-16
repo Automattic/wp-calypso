@@ -6,14 +6,12 @@ import {
 	StepContainer,
 } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import { useI18n } from '@wordpress/react-i18n';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import PlansWrapper from './plans-wrapper';
 import type { ProvidedDependencies, Step } from '../../types';
 
 const plans: Step = function Plans( { navigation, flow } ) {
 	const { submit } = navigation;
-	const { __ } = useI18n();
 
 	const handleSubmit = ( plan: MinimalRequestCartProduct | null ) => {
 		const providedDependencies: ProvidedDependencies = {
@@ -28,36 +26,18 @@ const plans: Step = function Plans( { navigation, flow } ) {
 	};
 	const is2023PricingGridVisible = is2023PricingGridActivePage( window );
 
-	const handleGoBack = () => {
-		if ( flow === DOMAIN_UPSELL_FLOW ) {
-			submit?.( { returnToDomainSelection: true } );
-		}
-	};
-
-	const getBackLabelText = () => {
-		if ( flow === DOMAIN_UPSELL_FLOW || isHostingSiteCreationFlow( flow ) ) {
-			return __( 'Back' );
-		}
-	};
-
-	const shouldHideBackButton = () => {
-		if ( flow === DOMAIN_UPSELL_FLOW || isHostingSiteCreationFlow( flow ) ) {
-			return false;
-		}
-		return true;
-	};
+	const isAllowedToGoBack = flow === DOMAIN_UPSELL_FLOW || isHostingSiteCreationFlow( flow );
 
 	return (
 		<StepContainer
 			stepName="plans"
-			goBack={ handleGoBack }
+			goBack={ () => submit?.( { goBack: true } ) }
 			isHorizontalLayout={ false }
 			isWideLayout={ ! is2023PricingGridVisible }
 			isFullLayout={ is2023PricingGridVisible }
 			hideFormattedHeader={ true }
 			isLargeSkipLayout={ false }
-			backLabelText={ getBackLabelText() }
-			hideBack={ shouldHideBackButton() }
+			hideBack={ ! isAllowedToGoBack }
 			stepContent={
 				<PlansWrapper
 					flowName={ flow }
