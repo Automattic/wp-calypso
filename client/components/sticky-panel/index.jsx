@@ -1,6 +1,6 @@
 import { isMobile } from '@automattic/viewport';
 import classNames from 'classnames';
-import { throttle, defer } from 'lodash';
+import { throttle, debounce, defer } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import ReactDom from 'react-dom';
@@ -63,12 +63,19 @@ function renderStickyPanel( props, state ) {
 			<div className="sticky-panel__content" style={ getBlockStyle( state ) }>
 				{ props.children }
 			</div>
-			<div className="sticky-panel__spacer" style={ { height: state.spacerHeight } } />
+			<div
+				className="sticky-panel__spacer"
+				style={ { height: state.spacerHeight, width: state.blockWidth } }
+			/>
 		</div>
 	);
 }
 
 function isWindowTooSmall( minLimit ) {
+	// if minLimit is 0, we don't want to check for window size
+	if ( minLimit === 0 ) {
+		return false;
+	}
 	return ( minLimit !== false && minLimit >= window.innerWidth ) || isMobile();
 }
 
@@ -98,8 +105,22 @@ class StickyPanelWithIntersectionObserver extends Component {
 		RESIZE_RATE_IN_MS
 	);
 
+	// backup in case the user scrolls past the panel too quickly
+	// debounce triggers after the scroll event has finished firing
+	// see https://github.com/Automattic/wp-calypso/issues/76743
+	throttleOnScroll = debounce(
+		afterLayoutFlush( () => {
+			// Determine vertical threshold from rendered element's offset relative the document
+			const threshold = ReactDom.findDOMNode( this ).getBoundingClientRect().top;
+			const isSticky = threshold < calculateOffset();
+			this.updateStickyState( isSticky );
+		} ),
+		50
+	);
+
 	componentDidMount() {
 		window.addEventListener( 'resize', this.throttleOnResize );
+		window.addEventListener( 'scroll', this.throttleOnScroll );
 
 		this.deferredMount = defer( () => {
 			this.observer = new IntersectionObserver( this.onIntersection, {
