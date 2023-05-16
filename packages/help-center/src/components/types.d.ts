@@ -5,6 +5,6 @@ interface Window {
 	zE?: (
 		action: string,
 		value: string,
-		handler?: ( callback: ( data: string ) => void ) => void
+		handler?: ( callback: ( data: string | number ) => void ) => void
 	) => void;
 }

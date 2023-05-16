@@ -28,6 +28,7 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
 	const { data: chatStatus } = useSupportAvailability( 'CHAT' );
 	const { setSite } = useDispatch( HELP_CENTER_STORE );
+	const { setShowMessagingLauncher } = useDispatch( HELP_CENTER_STORE );
 	const { setShowMessagingWidget } = useDispatch( HELP_CENTER_STORE );
 	const { setThirdPartyCookiesAllowed } = useDispatch( HELP_CENTER_STORE );
 
@@ -67,6 +68,11 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 			window.zE( 'messenger:on', 'close', function () {
 				setShowMessagingWidget( false );
 			} );
+			window.zE( 'messenger:on', 'unreadMessages', function ( count ) {
+				if ( Number( count ) > 0 ) {
+					setShowMessagingLauncher( true );
+				}
+			} );
 		}
 
 		loadScript(
@@ -74,7 +80,7 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 			setUpMessagingEventHandlers,
 			{ id: ZENDESK_SCRIPT_ID }
 		);
-	}, [ setShowMessagingWidget, chatStatus ] );
+	}, [ setShowMessagingLauncher, setShowMessagingWidget, chatStatus ] );
 
 	const { data: messagingAuth } = useMessagingAuth( Boolean( chatStatus?.is_user_eligible ) );
 	useEffect( () => {
