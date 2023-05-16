@@ -11,7 +11,15 @@ function render() {
 	const site = {};
 	return (
 		<div>
-			<SitesGridItem site={ site } key={ site.ID }></SitesGridItem>
+			<SitesGridItem
+				site={ site }
+				key={ site.ID }
+				showLaunchNag={ false } // optional
+				showBadgeSection={ false } // optional
+				showThumbnailLink={ false } // optional
+				showSiteRenewLink={ false } // optional
+				onSiteSelectBtnClick={ ( site: SiteExcerptData ) => {} } // optional
+			></SitesGridItem>
 		</div>
 	);
 }
@@ -21,3 +29,8 @@ function render() {
 
 - `site`: a site data e.g. SiteExcerptData object.
 - `key`: unique key eg. Site ID.
+- `showLaunchNag`: boolean, optional, default: true.
+- `showBadgeSection`: boolean, optional, default: true.
+- `showThumbnailLink`: boolean, optional, default: true.
+- `showSiteRenewLink`: boolean, optional, default: true.
+- `onSiteSelectBtnClick`: function, optional, default: undefined.

@@ -34,7 +34,17 @@ const SitesGridItemExample = () => {
 		<div className={ classnames( container, className ) }>
 			{ sampleSiteData.map( ( site ) => (
 				<div className={ itemClassName } key={ site.ID }>
-					<SitesGridItem site={ site } />
+					<SitesGridItem
+						site={ site }
+						key={ site.ID }
+						showLaunchNag={ false }
+						showBadgeSection={ false }
+						showThumbnailLink={ false }
+						showSiteRenewLink={ false }
+						onSiteSelectBtnClick={ ( _site ) => {
+							console.log( _site );
+						} }
+					/>
 				</div>
 			) ) }
 		</div>
