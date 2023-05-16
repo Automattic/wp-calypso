@@ -3,11 +3,12 @@
  * External Dependencies
  */
 import config from '@automattic/calypso-config';
-import { useSupportAvailability } from '@automattic/data-stores';
+import { useSupportAvailability, useSupportHistory } from '@automattic/data-stores';
 import { loadScript } from '@automattic/load-script';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { createPortal, useEffect, useRef } from '@wordpress/element';
 import { useSelector } from 'react-redux';
+import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 /**
@@ -123,6 +124,15 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 			window.zE( 'messenger', 'close' );
 		}
 	}, [ showMessagingWidget ] );
+
+	const email = useSelector( getCurrentUserEmail );
+	const { data: supportHistory } = useSupportHistory( 'ticket', email );
+	useEffect( () => {
+		if ( supportHistory?.some( ( ticket ) => ticket.channel === 'native_messaging' ) ) {
+			setShowMessagingLauncher( true );
+			setShowMessagingWidget( true );
+		}
+	}, [ setShowMessagingLauncher, setShowMessagingWidget, supportHistory ] );
 
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const primarySiteId = useSelector( ( state ) => getPrimarySiteId( state ) );
