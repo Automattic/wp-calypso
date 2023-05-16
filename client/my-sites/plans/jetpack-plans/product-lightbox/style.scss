@@ -533,6 +533,10 @@
 .product-lightbox__included-product-list-item {
 	display: flex;
 	gap: 12px;
+
+	@media ( max-width: $break-medium ) {
+		align-items: center;
+	}
 }
 
 .product-lightbox__included-product-list-item-header {
@@ -560,7 +564,7 @@
 	line-height: 1.125;
 
 	@media ( min-width: $break-medium ) {
-		padding: 4px;
+		padding: 0.25rem;
 		min-width: 160px;
 		background-color: #eaefef;
 		border-radius: 4px;
@@ -602,8 +606,8 @@ p.product-lightbox__included-product-list-item-description--mobile {
 }
 
 .product-lightbox__included-product-list-item-icon {
-	min-width: 38px;
-	max-height: 38px;
+	width: 38px;
+	height: 38px;
 	background: linear-gradient(159.87deg, #f6f6f4 7.24%, #f7f4ea 64.73%, #ddedd5 116.53%);
 	border-radius: 4px;
 	display: flex;
