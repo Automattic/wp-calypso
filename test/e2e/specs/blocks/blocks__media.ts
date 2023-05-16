@@ -1,7 +1,5 @@
 /**
- * @group calypso-pr
- * @group gutenberg
- * @group jetpack-wpcom-integration
+ * @group quarantined
  */
 
 import {

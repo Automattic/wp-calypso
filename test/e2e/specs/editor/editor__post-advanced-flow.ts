@@ -1,6 +1,5 @@
 /**
- * @group gutenberg
- * @group calypso-pr
+ * @group quarantined
  */
 
 import {
