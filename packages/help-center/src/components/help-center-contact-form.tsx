@@ -108,7 +108,7 @@ function useFormTitles( mode: Mode ): {
 			buttonSubmittingLabel: __( 'Connecting to chat', __i18n_text_domain__ ),
 		},
 		EMAIL: {
-			formTitle: __( 'Send us an email', __i18n_text_domain__ ),
+			formTitle: __( '', __i18n_text_domain__ ),
 			trayText: __( 'Our WordPress experts will get back to you soon', __i18n_text_domain__ ),
 			buttonLabel: __( 'Email us', __i18n_text_domain__ ),
 			buttonSubmittingLabel: __( 'Sending email', __i18n_text_domain__ ),
@@ -581,6 +581,13 @@ export const HelpCenterContactForm = () => {
 		);
 	}
 
+	const sitePickerEnabled =
+		! userWithNoSites &&
+		mode === 'FORUM' &&
+		( ( supportSite?.plan?.product_slug &&
+			isFreePlanProduct( { product_slug: supportSite.plan?.product_slug } ) ) ||
+			userWithNoSites );
+
 	return showingSearchResults ? (
 		<div className="help-center__articles-page">
 			<BackButton />
@@ -625,15 +632,10 @@ export const HelpCenterContactForm = () => {
 				</p>
 			) }
 
-			{ ! userWithNoSites && (
+			{ sitePickerEnabled && (
 				<section>
 					<HelpCenterSitePicker
-						enabled={
-							mode === 'FORUM' &&
-							( ( supportSite?.plan?.product_slug &&
-								isFreePlanProduct( { product_slug: supportSite.plan?.product_slug } ) ) ||
-								userWithNoSites )
-						}
+						enabled={ true }
 						currentSite={ currentSite }
 						onSelect={ ( id: string | number ) => {
 							if ( id !== 0 ) {

@@ -266,7 +266,7 @@ $head-foot-height: 50px;
 			}
 		}
 
-		svg {
+		svg:first-child {
 			margin-right: 15px;
 			border-radius: 2px;
 			display: block;
@@ -274,6 +274,10 @@ $head-foot-height: 50px;
 			background: var(--studio-gray-0);
 			fill: var(--studio-blue-50);
 			flex-shrink: 0;
+		}
+
+		svg:last-child {
+			fill: var(--studio-gray-20);
 		}
 	}
 

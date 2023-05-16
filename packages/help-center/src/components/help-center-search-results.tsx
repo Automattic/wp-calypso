@@ -266,7 +266,10 @@ function HelpSearchResults( {
 						{ title }
 					</h3>
 				) : null }
-				<ul className="help-center-search-results__list" aria-labelledby={ title ? id : undefined }>
+				<ul
+					className="help-center-search-results__list help-center-articles__list"
+					aria-labelledby={ title ? id : undefined }
+				>
 					{ results.map( ( result, index ) => (
 						<HelpLink
 							key={ `${ id }-${ index }` }
