@@ -126,7 +126,7 @@ function HelpSearchResults( {
 		onSelect( event, result );
 	};
 
-	const HelpLink = ( { result, type } ) => {
+	const renderHelpLink = ( result, type ) => {
 		const { link, title, icon } = result;
 
 		const external = externalLinks && type !== SUPPORT_TYPE_ADMIN_SECTION;
@@ -182,9 +182,7 @@ function HelpSearchResults( {
 					</h3>
 				) : null }
 				<ul className="inline-help__results-list" aria-labelledby={ title ? id : undefined }>
-					{ results.map( ( result ) => (
-						<HelpLink key={ result.link } result={ result } type={ type } />
-					) ) }
+					{ results.map( ( result ) => renderHelpLink( result, type ) ) }
 				</ul>
 			</Fragment>
 		) : null;
