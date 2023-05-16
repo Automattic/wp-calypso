@@ -97,6 +97,10 @@ const PopoverContent = styled.div`
 	color: var( --studio-gray-60 );
 `;
 
+const StatsColumnStyled = styled( Column )`
+	text-align: center;
+`;
+
 const StatsOffIndicator = () => {
 	const [ showPopover, setShowPopover ] = useState( false );
 	const tooltipRef = useRef( null );
@@ -193,7 +197,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 			<Column mobileHidden>
 				{ site.options?.updated_at ? <TimeSince date={ site.options.updated_at } /> : '' }
 			</Column>
-			<Column mobileHidden>
+			<StatsColumnStyled mobileHidden>
 				{ inView && (
 					<>
 						{ hasStatsLoadingError ? (
@@ -205,7 +209,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 						) }
 					</>
 				) }
-			</Column>
+			</StatsColumnStyled>
 			<Column style={ { width: '24px' } }>{ inView && <SitesEllipsisMenu site={ site } /> }</Column>
 		</Row>
 	);
