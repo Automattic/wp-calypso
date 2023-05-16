@@ -243,10 +243,11 @@ export const HelpCenterContactForm = () => {
 
 	const [ debouncedMessage ] = useDebounce( message || '', 500 );
 
-	const enableGPTResponse = config.isEnabled( 'help/gpt-response' );
+	const enableGPTResponse =
+		config.isEnabled( 'help/gpt-response' ) && ! ( params.get( 'disable-gpt' ) === 'true' );
 
 	const showingSearchResults = params.get( 'show-results' ) === 'true';
-	const showingGPTResponse = params.get( 'show-gpt' ) === 'true';
+	const showingGPTResponse = enableGPTResponse && params.get( 'show-gpt' ) === 'true';
 
 	const redirectToArticle = useCallback(
 		( event, result ) => {
@@ -311,6 +312,11 @@ export const HelpCenterContactForm = () => {
 
 		// stop loading the GPT response
 		params.set( 'show-gpt', 'false' );
+		params.set( 'disable-gpt', 'true' );
+		navigate( {
+			pathname: '/contact-form',
+			search: params.toString(),
+		} );
 	}
 
 	function handleCTA() {
