@@ -1,5 +1,7 @@
+@import "@wordpress/base-styles/colors";
+
 .license-lightbox__pricing {
-	background-color: #fff;
+	background-color: $white;
 	border-radius: 8px; /* stylelint-disable-line scales/radii */
 	border: 1px solid #008710;
 	padding: 1rem;
@@ -7,7 +9,7 @@
 
 .license-lightbox__payment-plan-title {
 	font-size: 1rem;
-	margin-bottom: 8px;
+	margin-block-end: 8px;
 }
 
 .license-lightbox__pricing-amount {

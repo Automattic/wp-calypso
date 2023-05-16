@@ -15,10 +15,10 @@ export const JetpackProductInfoRecommendationTags: FunctionComponent< Props > = 
 			<span className="jetpack-product-info__tags-label">{ translate( 'Great for:' ) }</span>
 
 			<ul className="jetpack-product-info__tags-list">
-				{ tags.map( ( tag ) => (
-					<li className="jetpack-product-info__tags-list-item" key={ tag.tag }>
-						<span aria-hidden="true">{ Tags[ tag.tag ] }</span>
-						<p>{ tag.label }</p>
+				{ tags.map( ( { tag, label } ) => (
+					<li className="jetpack-product-info__tags-list-item" key={ tag }>
+						<span aria-hidden="true">{ Tags[ tag ] }</span>
+						<p>{ label }</p>
 					</li>
 				) ) }
 			</ul>

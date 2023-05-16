@@ -36,7 +36,7 @@ export default function LicenseBundleCard( props: Props ) {
 			e.stopPropagation();
 
 			dispatch(
-				recordTracksEvent( 'calypso_partner_portal_issue_license_product_view', {
+				recordTracksEvent( 'calypso_partner_portal_issue_license_bundle_product_view', {
 					product: product.slug,
 				} )
 			);

@@ -6,7 +6,7 @@ import { getProductTitle } from '../../utils';
 
 type LicenseLightboxData = {
 	title: string;
-	product: SelectorProduct;
+	product?: SelectorProduct;
 };
 
 export function useLicenseLightboxData( product: APIProductFamilyProduct ): LicenseLightboxData {
@@ -24,9 +24,9 @@ export function useLicenseLightboxData( product: APIProductFamilyProduct ): Lice
 			return {
 				title,
 				product: productInfo,
-			} as LicenseLightboxData;
+			};
 		}
 
-		return { title } as LicenseLightboxData;
+		return { title };
 	}, [ product ] );
 }

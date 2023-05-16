@@ -1,8 +1,10 @@
+@import "@wordpress/base-styles/colors";
+
 .jetpack-product-info__header {
 	align-items: center;
 	display: flex;
 	justify-content: flex-start;
-	margin-bottom: 1rem;
+	margin-block-end: 1rem;
 
 	h2 {
 		font-size: 1.5rem;
@@ -20,7 +22,7 @@
 	height: 3.25rem;
 	background: linear-gradient(159.87deg, #f6f6f4 7.24%, #f7f4ea 64.73%, #ddedd5 116.53%);
 	border-radius: 4px;
-	margin-right: 1rem;
+	margin-inline-end: 1rem;
 
 	img {
 		width: 25px;
@@ -30,7 +32,7 @@
 
 
 .jetpack-product-info__description {
-	margin-bottom: 16px;
+	margin-block-end: 16px;
 	line-height: 1.5;
 	color: #2c3338;
 	font-size: 1rem;
@@ -38,7 +40,7 @@
 
 .jetpack-product-info__tags {
 	background-color: #f6f7f7;
-	margin-bottom: 16px;
+	margin-block-end: 16px;
 	padding: 5.5px 8px;
 	border-radius: 4px;
 }
@@ -46,8 +48,8 @@
 .jetpack-product-info__tags-label {
 	font-weight: 600;
 	font-size: $font-body-extra-small;
-	margin-right: 6px;
-	color: #000;
+	margin-inline-end: 6px;
+	color: $black;
 }
 
 .jetpack-product-info__tags-list {
@@ -60,10 +62,10 @@
 	align-items: center;
 	display: inline-flex;
 	justify-content: center;
-	margin-right: 16px;
+	margin-inline-end: 16px;
 
 	span {
-		margin-right: 4px;
+		margin-inline-end: 4px;
 		top: 2px;
 		display: inline-flex;
 		position: relative;
@@ -116,7 +118,7 @@
 	padding: 0.5rem 0;
 	margin: 0;
 	line-height: 1.25;
-	color: #000;
+	color: $black;
 }
 
 .jetpack-product-info__regular-list,
@@ -141,7 +143,7 @@
 .jetpack-product-info__faq-list {
 	.foldable-faq {
 		padding: 0;
-		margin-bottom: 8px;
+		margin-inline-end: 8px;
 	}
 
 	.foldable-faq__question {
@@ -164,7 +166,7 @@
 	.foldable-faq__answer {
 		border: none;
 		padding-inline-start: 24px;
-		padding-bottom: 0;
+		padding-block-end: 0;
 	}
 }
 
@@ -173,14 +175,14 @@
 	margin: 0;
 
 	li {
-		margin-bottom: 16px;
+		margin-block-end: 16px;
 	}
 }
 
 .jetpack-product-info__product-list-label {
 	font-weight: 600;
 	font-size: $font-body;
-	margin-bottom: 16px;
+	margin-block-end: 16px;
 }
 
 .jetpack-product-info__product-list-item {
@@ -196,7 +198,7 @@
 p.jetpack-product-info__product-list-item-description {
 	font-size: $font-body-small;
 	font-weight: 400;
-	margin-bottom: 0;
+	margin-block-end: 0;
 
 	span {
 		white-space: nowrap;

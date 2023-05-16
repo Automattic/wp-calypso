@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { Icon, close } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, ReactNode } from 'react';
@@ -15,12 +16,6 @@ type JetpackLightboxProps = ContainerProps & {
 	isOpen: boolean;
 	onClose: () => void;
 };
-
-const CloseIcon = (
-	<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-		<path d="M5.40456 5L19 19M5 19L18.5954 5" stroke="#1E1E1E" strokeWidth="1.5" />
-	</svg>
-);
 
 export const JetpackLightboxMain: FunctionComponent< ContainerProps > = ( { children } ) => {
 	return <div className="jetpack-lightbox__content-main">{ children }</div>;
@@ -44,7 +39,7 @@ const JetpackLightbox: FunctionComponent< JetpackLightboxProps > = ( {
 			overlayClassName="jetpack-lightbox__modal-overlay"
 			isOpen={ isOpen }
 			onRequestClose={ onClose }
-			htmlOpenClassName="ReactModal__Html--open lightbox-mode"
+			htmlOpenClassName="jetpack-lightbox__Html--is-open lightbox-mode"
 		>
 			<div className="jetpack-lightbox__content-wrapper">
 				<Button
@@ -58,7 +53,7 @@ const JetpackLightbox: FunctionComponent< JetpackLightboxProps > = ( {
 						} ) as string
 					}
 				>
-					{ CloseIcon }
+					<Icon size={ 24 } icon={ close } />
 				</Button>
 
 				{ children }

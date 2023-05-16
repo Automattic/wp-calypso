@@ -18,7 +18,7 @@ const JetpackProductInfoFAQList: FunctionComponent< Props > = ( { items } ) => {
 
 			dispatch(
 				recordTracksEvent(
-					isExpanded ? 'calypso_plans_faq_open' : 'calypso_plans_faq_closed',
+					isExpanded ? 'calypso_product_details_faq_open' : 'calypso_product_details_faq_closed',
 					tracksArgs
 				)
 			);
