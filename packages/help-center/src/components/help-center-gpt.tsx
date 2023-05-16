@@ -155,7 +155,7 @@ export function HelpCenterGPT() {
 											}
 										) }
 									</p>
-									<span className="help-center-gpt-response__continue_quote">{ query }</span>
+									<div className="help-center-gpt-response__continue_quote">{ query }</div>
 								</div>
 							</>
 						) }
