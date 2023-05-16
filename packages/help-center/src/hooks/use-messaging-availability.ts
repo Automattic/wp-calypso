@@ -19,7 +19,7 @@ async function requestMessagingAvailability() {
 				method: 'GET',
 		  } ) ) as MessagingAvailability )
 		: ( ( await apiFetch( {
-				path: '/help-center/messaging/is-available',
+				path: '/help-center/support-availability/messaging',
 				query: params.toString(),
 				method: 'GET',
 				global: true,
