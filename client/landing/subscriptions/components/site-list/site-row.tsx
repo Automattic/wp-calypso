@@ -99,21 +99,25 @@ export default function SiteRow( {
 			</span>
 			<span className="actions" role="cell">
 				<SiteSettingsPopover
+					// NotifyMeOfNewPosts
 					notifyMeOfNewPosts={ delivery_methods?.notification?.send_posts }
 					onNotifyMeOfNewPostsChange={ ( send_posts ) =>
 						updateNotifyMeOfNewPosts( { blog_id: blog_ID, send_posts } )
 					}
 					updatingNotifyMeOfNewPosts={ updatingNotifyMeOfNewPosts }
+					// EmailMeNewPosts
 					emailMeNewPosts={ delivery_methods?.email?.send_posts }
 					updatingEmailMeNewPosts={ updatingEmailMeNewPosts }
 					onEmailMeNewPostsChange={ ( send_posts ) =>
 						updateEmailMeNewPosts( { blog_id: blog_ID, send_posts } )
 					}
+					// DeliveryFrequency
 					deliveryFrequency={ delivery_methods?.email?.post_delivery_frequency }
 					onDeliveryFrequencyChange={ ( delivery_frequency ) =>
 						updateDeliveryFrequency( { blog_id: blog_ID, delivery_frequency } )
 					}
 					updatingFrequency={ updatingFrequency }
+					// EmailMeNewComments
 					emailMeNewComments={ delivery_methods?.email?.send_comments }
 					onEmailMeNewCommentsChange={ ( send_comments ) =>
 						updateEmailMeNewComments( { blog_id: blog_ID, send_comments } )

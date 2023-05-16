@@ -48,11 +48,3 @@ export const SubscriptionManager = {
 	useSiteEmailMeNewCommentsMutation,
 	useIsLoggedIn,
 };
-
-// Types
-export type {
-	DeliveryWindowDayType,
-	DeliveryWindowHourType,
-	EmailFormatType,
-	SubscriptionManagerUserSettings,
-} from './types';

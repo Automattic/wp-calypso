@@ -1,11 +1,14 @@
 import { SubscriptionManager, EmailDeliveryFrequency } from '@automattic/data-stores';
-import Separator from 'calypso/components/popover-menu/separator';
+import { Button } from '@wordpress/components';
+import classNames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
+import { UnsubscribeIcon } from '../icons';
 import SettingsPopover from '../settings-popover/settings-popover';
 import DeliveryFrequencyInput from './delivery-frequency-input';
 import EmailMeNewCommentsToggle from './email-me-new-comments-toggle';
 import EmailMeNewPostsToggle from './email-me-new-posts-toggle';
 import NotifyMeOfNewPostsToggle from './notify-me-of-new-posts-toggle';
-import UnsubscribeSiteButton from './unsubscribe-site-button';
+import './styles.scss';
 import '../styles.scss';
 
 export type SiteSettingsProps = {
@@ -40,7 +43,7 @@ export const SiteSettings = ( {
 	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
 
 	return (
-		<div className="settings">
+		<div className="settings site-settings">
 			{ isLoggedIn && (
 				<>
 					<NotifyMeOfNewPostsToggle
@@ -83,11 +86,21 @@ export const SiteSettingsPopover = ( {
 	unsubscribing,
 	...props
 }: SiteSettingsPopoverProps ) => {
+	const translate = useTranslate();
 	return (
-		<SettingsPopover>
+		<SettingsPopover className="site-settings-popover">
 			<SiteSettings { ...props } />
-			<Separator />
-			<UnsubscribeSiteButton unsubscribing={ unsubscribing } onUnsubscribe={ onUnsubscribe } />
+
+			<hr className="subscriptions__separator" />
+
+			<Button
+				className={ classNames( 'unsubscribe-button', { 'is-loading': unsubscribing } ) }
+				disabled={ unsubscribing }
+				icon={ <UnsubscribeIcon className="settings-popover__item-icon" /> }
+				onClick={ onUnsubscribe }
+			>
+				{ translate( 'Unsubscribe' ) }
+			</Button>
 		</SettingsPopover>
 	);
 };

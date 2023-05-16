@@ -1,9 +1,8 @@
 import { Gridicon } from '@automattic/components';
+import { SubscriptionManager, PendingPostSubscription } from '@automattic/data-stores';
 import { useMemo } from 'react';
-import { SubscriptionManager } from 'calypso/../packages/data-stores/src';
 import TimeSince from 'calypso/components/time-since';
-import { PendingPostSettings } from '../../settings';
-import type { PendingPostSubscription } from '@automattic/data-stores/src/reader/types';
+import { PendingSubscriptionSettingsPopover } from 'calypso/landing/subscriptions/components/settings';
 
 export default function PendingPostRow( {
 	id,
@@ -57,7 +56,7 @@ export default function PendingPostRow( {
 					/>
 				</span>
 				<span className="actions" role="cell">
-					<PendingPostSettings
+					<PendingSubscriptionSettingsPopover
 						onConfirm={ () => confirmPendingSubscription( { id } ) }
 						onDelete={ () => deletePendingSubscription( { id } ) }
 						confirming={ confirmingPendingSubscription }

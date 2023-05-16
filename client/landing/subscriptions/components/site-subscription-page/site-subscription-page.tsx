@@ -14,7 +14,7 @@ const useSiteSubscription = ( blogId?: string ) => ( {
 	// TODO: Use function to format number
 	data: {
 		siteName: 'The Atavist Magazine',
-		followers: '44,109,166 followers',
+		subscribers: 44109166,
 		siteUrl: 'https://theatavistmagazine.wordpress.com/',
 		notifyMeOfNewPosts: true,
 		emailMeNewPosts: true,
@@ -30,7 +30,7 @@ const SiteSubscriptionPage = () => {
 	const navigate = useNavigate();
 	const { blogId } = useParams();
 	const { data, isLoading, isError } = useSiteSubscription( blogId );
-	const { siteName, followers } = data;
+	const { siteName, subscribers } = data;
 
 	if ( ! blogId || isError ) {
 		return <div>Something went wrong.</div>;
@@ -40,6 +40,14 @@ const SiteSubscriptionPage = () => {
 		// Full page Wordpress logo loader
 		return <div>Loading...</div>;
 	}
+
+	const subHeaderText =
+		subscribers > 1
+			? translate( '%d subscribers', {
+					args: [ subscribers ],
+					comment: 'Number of subscribers of the subscribed-to site.',
+			  } )
+			: '';
 
 	return (
 		<div className="site-subscription-page">
@@ -58,10 +66,10 @@ const SiteSubscriptionPage = () => {
 							iconUrl="https://simplesitetest456643757.files.wordpress.com/2022/03/cropped-pexels-photo-190340.jpeg"
 							size={ 116 }
 						/>
-						<FormattedHeader brandFont headerText={ siteName } subHeaderText={ followers } />
+						<FormattedHeader brandFont headerText={ siteName } subHeaderText={ subHeaderText } />
 					</header>
 
-					<SiteSubscriptionSettings value={ data } />
+					<SiteSubscriptionSettings blogId={ blogId } value={ data } />
 
 					<hr className="subscriptions__separator" />
 

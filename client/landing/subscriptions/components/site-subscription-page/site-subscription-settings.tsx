@@ -1,12 +1,10 @@
-import { EmailDeliveryFrequency } from '@automattic/data-stores';
-import { Button } from '@wordpress/components';
+import { EmailDeliveryFrequency, SubscriptionManager } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
-import { Notice, NoticeState, NoticeType } from 'calypso/landing/subscriptions/components/notice';
 import { SiteSettings } from 'calypso/landing/subscriptions/components/settings/site-settings/site-settings';
 
 type SiteSubscriptionSettingsProps = {
 	value: SettingsFormState;
+	blogId: number | string;
 };
 
 type SettingsFormState = Partial< {
@@ -16,81 +14,53 @@ type SettingsFormState = Partial< {
 	emailMeNewComments: boolean;
 } >;
 
-const SubscriptionManager = {
-	useSiteSubscriptionSettingsMutation: () => {
-		return {
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			mutate: ( _formState: SettingsFormState ) => undefined,
-			isLoading: false,
-			isSuccess: true,
-			error: undefined as Error | undefined,
-		};
-	},
-};
-
 const DEFAULT_VALUE = {};
 
-const SiteSubscriptionSettings = ( { value = DEFAULT_VALUE }: SiteSubscriptionSettingsProps ) => {
+const SiteSubscriptionSettings = ( {
+	blogId,
+	value = DEFAULT_VALUE,
+}: SiteSubscriptionSettingsProps ) => {
 	const translate = useTranslate();
-	const [ formState, setFormState ] = useState( value );
-	const { mutate, isLoading, isSuccess, error } =
-		SubscriptionManager.useSiteSubscriptionSettingsMutation();
-	const [ notice, setNotice ] = useState< NoticeState | null >( null );
 
-	useEffect( () => {
-		// check if formState is empty object
-		if ( value ) {
-			setFormState( value );
-		}
-	}, [ value ] );
-
-	useEffect( () => {
-		if ( isSuccess ) {
-			setNotice( { type: NoticeType.Success, message: translate( 'Settings saved' ) as string } );
-		}
-		if ( error ) {
-			setNotice( { type: NoticeType.Error, message: error.message } );
-		}
-	}, [ error, isSuccess, translate ] );
-
-	const onChange = ( newState: SettingsFormState ) => {
-		setFormState( ( prevState ) => ( { ...prevState, ...newState } ) );
-	};
+	const { mutate: updateNotifyMeOfNewPosts, isLoading: updatingNotifyMeOfNewPosts } =
+		SubscriptionManager.useSiteNotifyMeOfNewPostsMutation();
+	const { mutate: updateEmailMeNewPosts, isLoading: updatingEmailMeNewPosts } =
+		SubscriptionManager.useSiteEmailMeNewPostsMutation();
+	const { mutate: updateDeliveryFrequency, isLoading: updatingFrequency } =
+		SubscriptionManager.useSiteDeliveryFrequencyMutation();
+	const { mutate: updateEmailMeNewComments, isLoading: updatingEmailMeNewComments } =
+		SubscriptionManager.useSiteEmailMeNewCommentsMutation();
 
 	return (
-		<form className="site-subscription-settings" onSubmit={ ( e ) => e.preventDefault() }>
-			<Notice onClose={ () => setNotice( null ) } visible={ !! notice } type={ notice?.type }>
-				{ notice?.message }
-			</Notice>
+		<div className="site-subscription-settings">
 			<h2 className="site-subscription-settings__heading">{ translate( 'Settings ' ) }</h2>
 			<SiteSettings
 				// NotifyMeOfNewPosts
-				notifyMeOfNewPosts={ formState.notifyMeOfNewPosts }
-				onNotifyMeOfNewPostsChange={ ( value ) => onChange( { notifyMeOfNewPosts: value } ) }
-				updatingNotifyMeOfNewPosts={ isLoading }
+				notifyMeOfNewPosts={ value.notifyMeOfNewPosts }
+				onNotifyMeOfNewPostsChange={ ( send_posts ) =>
+					updateNotifyMeOfNewPosts( { blog_id: blogId, send_posts } )
+				}
+				updatingNotifyMeOfNewPosts={ updatingNotifyMeOfNewPosts }
 				// EmailMeNewPosts
-				emailMeNewPosts={ formState.emailMeNewPosts }
-				onEmailMeNewPostsChange={ ( value ) => onChange( { emailMeNewPosts: value } ) }
-				updatingEmailMeNewPosts={ isLoading }
+				emailMeNewPosts={ value.emailMeNewPosts }
+				onEmailMeNewPostsChange={ ( send_posts ) =>
+					updateEmailMeNewPosts( { blog_id: blogId, send_posts } )
+				}
+				updatingEmailMeNewPosts={ updatingEmailMeNewPosts }
 				// DeliveryFrequency
-				deliveryFrequency={ formState.deliveryFrequency }
-				onDeliveryFrequencyChange={ ( value ) => onChange( { deliveryFrequency: value } ) }
-				updatingFrequency={ isLoading }
+				deliveryFrequency={ value.deliveryFrequency }
+				onDeliveryFrequencyChange={ ( delivery_frequency ) =>
+					updateDeliveryFrequency( { blog_id: blogId, delivery_frequency } )
+				}
+				updatingFrequency={ updatingFrequency }
 				// EmailMeNewComments
-				emailMeNewComments={ formState.emailMeNewComments }
-				onEmailMeNewCommentsChange={ ( value ) => onChange( { emailMeNewComments: value } ) }
-				updatingEmailMeNewComments={ isLoading }
+				emailMeNewComments={ value.emailMeNewComments }
+				onEmailMeNewCommentsChange={ ( send_comments ) =>
+					updateEmailMeNewComments( { blog_id: blogId, send_comments } )
+				}
+				updatingEmailMeNewComments={ updatingEmailMeNewComments }
 			/>
-			<Button
-				className="site-subscription-settings__submit-button"
-				isPrimary
-				disabled={ isLoading }
-				onClick={ () => mutate( formState ) }
-				type="submit"
-			>
-				{ translate( 'Save changes' ) }
-			</Button>
-		</form>
+		</div>
 	);
 };
 

@@ -60,7 +60,7 @@ const DeliveryFrequencyInput = ( {
 
 	return (
 		<div
-			className={ classNames( 'setting-item', {
+			className={ classNames( 'setting-item', 'delivery-frequency-input', {
 				'is-logged-in': isLoggedIn,
 			} ) }
 		>
@@ -68,7 +68,7 @@ const DeliveryFrequencyInput = ( {
 				<p className="setting-item__label">{ translate( 'Email me new posts' ) }</p>
 			) }
 			<SegmentedControl
-				className={ classNames( 'delivery-frequency-input', {
+				className={ classNames( 'delivery-frequency-input__control', {
 					'is-loading': isUpdating,
 				} ) }
 			>

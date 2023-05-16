@@ -22,6 +22,11 @@ $setting-item-margin-bottom: 16px;
 			color: $studio-gray-100;
 		}
 
+		&__label {
+			margin-bottom: 8px;
+			text-align: left;
+		}
+
 		.components-toggle-control {
 			margin: 0;
 		}

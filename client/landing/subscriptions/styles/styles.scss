@@ -94,7 +94,9 @@ body {
 
 	hr.subscriptions__separator {
 		width: 100%;
-		height: 1px;
-		background-color: #e9e9ea;
+		height: 0;
+		margin: 0;
+		padding: 0;
+		border: 1px solid #dcdcde;
 	}
 }
