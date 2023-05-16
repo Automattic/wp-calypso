@@ -7,7 +7,7 @@ const selectors = {
 	closeButton: '[aria-label="Close Help Center"]',
 
 	// Results
-	resultsPlaceholder: '.inline-help__results-placeholder-item',
+	resultsPlaceholder: '.help-center-loading',
 };
 
 /**
