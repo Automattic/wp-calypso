@@ -513,6 +513,8 @@ const PatternAssembler = ( {
 					<ScreenMain
 						shouldUnlockGlobalStyles={ shouldUnlockGlobalStyles }
 						isDismissedGlobalStylesUpgradeModal={ isDismissedGlobalStylesUpgradeModal }
+						hasSelectedColorVariation={ !! colorVariation }
+						hasSelectedFontVariation={ !! fontVariation }
 						onSelect={ onMainItemSelect }
 						onContinueClick={ onContinueClick }
 						recordTracksEvent={ recordTracksEvent }

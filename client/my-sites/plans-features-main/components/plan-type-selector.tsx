@@ -131,6 +131,8 @@ export type IntervalTypeProps = Pick<
 	| 'hideDiscountLabel'
 	| 'redirectTo'
 	| 'showBiannualToggle'
+	| 'selectedPlan'
+	| 'selectedFeature'
 >;
 
 export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = ( props ) => {
@@ -166,7 +168,11 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 		}
 	}
 
-	const additionalPathProps = props.redirectTo ? { redirect_to: props.redirectTo } : {};
+	const additionalPathProps = {
+		...( props.redirectTo ? { redirect_to: props.redirectTo } : {} ),
+		...( props.selectedPlan ? { plan: props.selectedPlan } : {} ),
+		...( props.selectedFeature ? { feature: props.selectedFeature } : {} ),
+	};
 
 	const isDomainUpsellFlow = new URLSearchParams( window.location.search ).get( 'domain' );
 

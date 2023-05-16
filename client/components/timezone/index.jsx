@@ -54,9 +54,9 @@ class Timezone extends Component {
 	}
 
 	render() {
-		const { selectedZone } = this.props;
+		const { id, selectedZone } = this.props;
 		return (
-			<FormSelect onChange={ this.onSelect } value={ selectedZone || '' }>
+			<FormSelect id={ id } onChange={ this.onSelect } value={ selectedZone || '' }>
 				<QueryTimezones />
 				{ this.renderOptionsByContinent() }
 				<optgroup label="UTC">
@@ -77,6 +77,7 @@ Timezone.propTypes = {
 	selectedZone: PropTypes.string,
 	onSelect: PropTypes.func,
 	includeManualOffsets: PropTypes.bool,
+	id: PropTypes.string,
 };
 
 export default connect( ( state ) => ( {

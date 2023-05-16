@@ -2,7 +2,7 @@ import { action } from '@storybook/addon-actions';
 import AnnualCards from '../annual-highlight-cards';
 import WeeklyCards from '../weekly-highlight-cards';
 
-export default { title: 'Highlight Cards' };
+export default { title: 'packages/components/Highlight Cards' };
 
 const handleClick = action( 'click' );
 
