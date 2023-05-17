@@ -16,9 +16,11 @@ const useImage: UseImage = ( { mode: initialMode } ) => {
 	const [ isLoadingImage, setLoadingImage ] = useState< boolean >( true );
 
 	const onLoad = useCallback(
-		( { target } ) => {
+		( { currentTarget }: React.SyntheticEvent< HTMLImageElement > ) => {
 			if ( ! mode ) {
-				setMode( target.naturalWidth > target.naturalHeight ? LANDSCAPE_MODE : PORTRAIT_MODE );
+				setMode(
+					currentTarget.naturalWidth > currentTarget.naturalHeight ? LANDSCAPE_MODE : PORTRAIT_MODE
+				);
 			}
 			setLoadingImage( false );
 		},
