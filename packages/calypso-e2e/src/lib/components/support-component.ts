@@ -1,17 +1,7 @@
 import { Locator, Page } from 'playwright';
 
-const selectors = {
-	// Components
-	supportPopoverButton: ( { isActive }: { isActive?: boolean } = {} ) =>
-		`button[title="Help"]${ isActive ? '.is-active' : '' }`,
-	closeButton: '[aria-label="Close Help Center"]',
-
-	// Results
-	resultsPlaceholder: '.help-center-loading',
-};
-
 /**
- * Represents the Support popover available on most WPCOM screens.
+ * Represents the Inline Help popover.
  */
 export class SupportComponent {
 	private page: Page;
@@ -24,38 +14,43 @@ export class SupportComponent {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
-		this.helpCenter = this.page.getByLabel( 'Help Center' );
+		this.helpCenter = this.page.locator( '.components-card__body > .inline-help__search' );
 	}
 
 	/**
 	 * Opens the support popover from the closed state.
-	 *
-	 * @returns {Promise<void>} No return value.
 	 */
 	async openPopover(): Promise< void > {
-		if ( await this.page.isVisible( selectors.supportPopoverButton( { isActive: true } ) ) ) {
+		const helpButton = this.page
+			.getByRole( 'banner' )
+			.getByRole( 'button', { name: 'Help', exact: true } );
+
+		// The `isVisible` API is deprecated becaues it returns immediately,
+		// so it is not recommended here.
+		if ( await this.helpCenter.count() ) {
 			return;
 		}
 
-		await Promise.all( [
-			this.page.waitForSelector( selectors.supportPopoverButton() ),
-			this.page.click( selectors.supportPopoverButton() ),
-		] );
-
-		await this.page.waitForSelector( selectors.supportPopoverButton( { isActive: true } ) );
+		await helpButton.click();
+		await this.helpCenter.waitFor( { state: 'visible' } );
 	}
 
 	/**
 	 * Closes the support popover from the open state.
-	 *
-	 * @returns {Promise<void>} No return value.
 	 */
 	async closePopover(): Promise< void > {
-		if ( await this.page.isHidden( selectors.closeButton ) ) {
+		const helpButton = this.page
+			.getByRole( 'banner' )
+			.getByRole( 'button', { name: 'Help', exact: true } );
+
+		// The `isVisible` API is deprecated becaues it returns immediately,
+		// so it is not recommended here.
+		if ( ! ( await this.helpCenter.count() ) ) {
 			return;
 		}
-		await this.page.click( selectors.closeButton );
-		await this.page.waitForSelector( selectors.closeButton, { state: 'hidden' } );
+
+		await helpButton.click();
+		await this.helpCenter.waitFor( { state: 'detached' } );
 	}
 
 	/* Results */
@@ -110,7 +105,7 @@ export class SupportComponent {
 		await Promise.all( [
 			// @example https://public-api.wordpress.com/wpcom/v2/help/search/wpcom?query=themes
 			this.page.waitForResponse( /wpcom\?query/ ),
-			this.page.locator( selectors.resultsPlaceholder ).waitFor( { state: 'hidden' } ),
+			this.page.locator( '.help-center-loading' ).waitFor( { state: 'hidden' } ),
 		] );
 	}
 
