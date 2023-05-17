@@ -15,15 +15,13 @@ import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/ana
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import getSiteBySlug from 'calypso/state/sites/selectors/get-site-by-slug';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isRequestingWordAdsApprovalForSite } from 'calypso/state/wordads/approve/selectors';
 import type { Image } from 'calypso/components/promo-section/promo-card/index';
 import type { AppState, SiteSlug } from 'calypso/types';
-// eslint-disable-next-line import/order
 import './style.scss';
-// eslint-disable-next-line import/order
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 
 interface ConnectedProps {
 	siteId: number;
