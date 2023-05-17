@@ -675,11 +675,11 @@ const mapDispatchToProps = {
 	onChangeSite: selectSiteId,
 	recordTracksEventAction,
 	requestSite,
-	trackArticleClick: trackArticleClick,
-	trackArticleFirstClick: trackArticleFirstClick,
-	trackSupportAfterArticleClick: trackSupportAfterArticleClick,
-	trackSupportWithArticleSuggestions: trackSupportWithArticleSuggestions,
-	trackSupportWithoutArticleSuggestions: trackSupportWithoutArticleSuggestions,
+	trackArticleClick,
+	trackArticleFirstClick,
+	trackSupportAfterArticleClick,
+	trackSupportWithArticleSuggestions,
+	trackSupportWithoutArticleSuggestions,
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( HelpContactForm ) );
