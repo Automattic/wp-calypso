@@ -87,7 +87,7 @@ const ContactVerificationCard: FunctionComponent< Props > = ( props ) => {
 				</ul>
 				<p>
 					{ translate(
-						'Click on the button below to upload one or more documents and then click on the "Submit" button. You can upload images (JPEG or PNG) and/or PDF files up to 5MB each.'
+						'Click on the button below to upload up to three documents and then click on the "Submit" button. You can upload images (JPEG or PNG) and/or PDF files up to 5MB each.'
 					) }
 				</p>
 			</div>
@@ -159,7 +159,9 @@ const ContactVerificationCard: FunctionComponent< Props > = ( props ) => {
 
 				setSubmitted( true );
 				setError( false );
-				dispatch( successNotice( translate( 'Documents submitted succcesfully!' ) ) );
+				dispatch(
+					successNotice( translate( 'Documents submitted for verification succcesfully!' ) )
+				);
 			}
 		);
 	};
