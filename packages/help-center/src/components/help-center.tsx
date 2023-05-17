@@ -114,7 +114,7 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 		}
 	}, [ showMessagingWidget ] );
 
-	const { data: supportActivity } = useSupportActivity();
+	const { data: supportActivity } = useSupportActivity( Boolean( chatStatus?.is_user_eligible ) );
 	useEffect( () => {
 		if ( supportActivity?.some( ( ticket ) => ticket.channel === 'Messaging' ) ) {
 			setShowMessagingLauncher( true );
