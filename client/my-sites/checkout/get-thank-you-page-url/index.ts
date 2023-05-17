@@ -17,11 +17,11 @@ import {
 	isPlan,
 	isWpComPremiumPlan,
 	isTitanMail,
-	isDomainRegistration,
 	TERM_MONTHLY,
 	TERM_ANNUALLY,
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_MONTHLY,
+	isDomainProduct,
 } from '@automattic/calypso-products';
 import {
 	URL_TYPE,
@@ -316,8 +316,7 @@ export default function getThankYouPageUrl( {
 	// signup flow that is not only for domain registrations and the cookie
 	// post-checkout URL is not the signup "intent" flow.
 	const signupFlowName = getSignupCompleteFlowName();
-	const isDomainOnly =
-		siteSlug === 'no-site' && getAllCartItems( cart ).every( isDomainRegistration );
+	const isDomainOnly = siteSlug === 'no-site' && getAllCartItems( cart ).every( isDomainProduct );
 	if (
 		( [ 'no-user', 'no-site' ].includes( String( cart?.cart_key ?? '' ) ) ||
 			signupFlowName === 'domain' ) &&
