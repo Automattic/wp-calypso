@@ -91,11 +91,6 @@ function GlobalStylesEditNotice() {
 		trackEvent( 'calypso_global_styles_gating_notice_upgrade_click', isSiteEditor );
 	}, [ isSiteEditor ] );
 
-	const previewSite = useCallback( () => {
-		window.open( wpcomGlobalStyles.previewUrl, '_blank' ).focus();
-		trackEvent( 'calypso_global_styles_gating_notice_preview_click', isSiteEditor );
-	}, [ isSiteEditor ] );
-
 	const resetGlobalStyles = useCallback( () => {
 		if ( ! globalStylesId ) {
 			return;
@@ -119,15 +114,6 @@ function GlobalStylesEditNotice() {
 			},
 		];
 
-		if ( isPostEditor ) {
-			actions.push( {
-				label: __( 'Preview without custom styles', 'full-site-editing' ),
-				onClick: previewSite,
-				variant: 'secondary',
-				noDefaultClasses: true,
-			} );
-		}
-
 		if ( isSiteEditor ) {
 			actions.push( {
 				label: __( 'Remove custom styles', 'full-site-editing' ),
@@ -150,14 +136,7 @@ function GlobalStylesEditNotice() {
 		);
 
 		trackEvent( 'calypso_global_styles_gating_notice_show', isSiteEditor );
-	}, [
-		createWarningNotice,
-		isPostEditor,
-		isSiteEditor,
-		previewSite,
-		resetGlobalStyles,
-		upgradePlan,
-	] );
+	}, [ createWarningNotice, isPostEditor, isSiteEditor, resetGlobalStyles, upgradePlan ] );
 
 	useEffect( () => {
 		if ( ! isSiteEditor && ! isPostEditor ) {
