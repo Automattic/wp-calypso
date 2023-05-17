@@ -153,13 +153,11 @@ export default function DesignCarousel( {
 								<>
 									<Item
 										design={ design }
-										type="desktop"
 										options={ carouselOptions }
 										className="design-carousel__item-desktop"
 									/>
 									<Item
 										design={ design }
-										type="mobile"
 										options={ mobileOptions }
 										className="design-carousel__item-mobile"
 									/>
@@ -167,7 +165,6 @@ export default function DesignCarousel( {
 							) : (
 								<Item
 									design={ design }
-									type="mobile"
 									options={ mobileOptions }
 									className="design-carousel__item-mobile-only"
 								/>
