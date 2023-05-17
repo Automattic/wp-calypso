@@ -102,8 +102,6 @@ export class SupportComponent {
 		// Wait on two factors in the inline help popover:
 		//	- the query to the search endpoint;
 		//	- the placeholder elements in the search results.
-
-		console.log( 'start' );
 		await Promise.all( [
 			// @example https://public-api.wordpress.com/wpcom/v2/help/search/wpcom?query=themes
 			// this.page.waitForResponse( /wpcom\?query/ ),
@@ -113,7 +111,6 @@ export class SupportComponent {
 				.getByRole( 'list', { name: 'Recommended resources' } )
 				.waitFor( { state: 'visible' } ),
 		] );
-		console.log( 'end' );
 	}
 
 	/**
