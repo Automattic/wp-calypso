@@ -95,6 +95,11 @@ const ContactVerificationCard: FunctionComponent< Props > = ( props ) => {
 	};
 
 	const handleFilesSelected = ( files: FileList ) => {
+		if ( files.length > 3 ) {
+			dispatch( errorNotice( translate( 'You can only upload up to three documents.' ) ) );
+			return;
+		}
+
 		setSelectedFiles( files );
 		setError( false );
 	};
