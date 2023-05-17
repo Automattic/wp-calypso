@@ -17,9 +17,10 @@
 		}
 
 		&-content {
-			font-size: $font-body;
+			font-size: $font-body-small;
 			line-height: $font-title-small;
 			letter-spacing: -0.15px;
+			color: $studio-gray-80;
 		}
 
 		&-close {
