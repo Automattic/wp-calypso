@@ -10,23 +10,23 @@ interface APIFetchOptions {
 	path: string;
 }
 
-async function requestMessagingAuth() {
+function requestMessagingAuth() {
 	const currentEnvironment = config( 'env_id' );
 	const params = { type: 'zendesk', test_mode: String( currentEnvironment === 'development' ) };
 	const wpcomParams = new URLSearchParams( params );
 	return canAccessWpcomApis()
-		? ( ( await wpcomRequest( {
+		? wpcomRequest< MessagingAuth >( {
 				path: '/help/authenticate/chat',
 				query: wpcomParams.toString(),
 				apiNamespace: 'wpcom/v2',
 				apiVersion: '2',
 				method: 'POST',
-		  } ) ) as MessagingAuth )
-		: ( ( await apiFetch( {
+		  } )
+		: apiFetch< MessagingAuth >( {
 				path: addQueryArgs( '/help-center/authenticate/chat', params ),
 				method: 'POST',
 				global: true,
-		  } as APIFetchOptions ) ) as MessagingAuth );
+		  } as APIFetchOptions );
 }
 
 export default function useMessagingAuth( enabled: boolean ) {

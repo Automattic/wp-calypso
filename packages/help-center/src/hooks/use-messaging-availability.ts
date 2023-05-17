@@ -10,7 +10,7 @@ interface APIFetchOptions {
 	path: string;
 }
 
-async function requestMessagingAvailability() {
+function requestMessagingAvailability() {
 	const currentEnvironment = config( 'env_id' );
 	const params = {
 		group: 'wpcom_messaging',
@@ -18,18 +18,18 @@ async function requestMessagingAvailability() {
 	};
 	const wpcomParams = new URLSearchParams( params );
 	return canAccessWpcomApis()
-		? ( ( await wpcomRequest( {
+		? wpcomRequest< MessagingAvailability >( {
 				path: '/help/messaging/is-available',
 				query: wpcomParams.toString(),
 				apiNamespace: 'wpcom/v2',
 				apiVersion: '2',
 				method: 'GET',
-		  } ) ) as MessagingAvailability )
-		: ( ( await apiFetch( {
+		  } )
+		: apiFetch< MessagingAvailability >( {
 				path: addQueryArgs( '/help-center/support-availability/messaging', params ),
 				method: 'GET',
 				global: true,
-		  } as APIFetchOptions ) ) as MessagingAvailability );
+		  } as APIFetchOptions );
 }
 
 export default function useMessagingAvailability( enabled = true ) {

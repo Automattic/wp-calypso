@@ -1,9 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
-async function requestZendeskConfig() {
-	return await window.fetch( 'https://wpcom.zendesk.com/embeddable/config', {
-		method: 'GET',
-	} );
+function requestZendeskConfig() {
+	return window.fetch( 'https://wpcom.zendesk.com/embeddable/config' );
 }
 
 export default function useZendeskConfig( enabled: boolean ) {
