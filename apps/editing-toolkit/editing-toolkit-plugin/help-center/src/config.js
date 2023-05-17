@@ -1,8 +1,7 @@
 window.configData = {
-	env_id: 'production',
+	env_id: 'development',
 	i18n_default_locale_slug: 'en',
 	google_analytics_key: 'UA-10673494-15',
-	zendesk_support_chat_key: 'cec07bc9-4da6-4dd2-afa7-c7e01ae73584',
 	client_slug: 'browser',
 	twemoji_cdn_url: 'https://s0.wp.com/wp-content/mu-plugins/wpcom-smileys/twemoji/2/',
 	site_filter: [],
@@ -40,7 +39,7 @@ window.configData = {
 	is_running_in_jetpack_site: false,
 	gutenboarding_url: '/new',
 	features: {
-		happychat: false,
+		happychat: true,
 	},
 	signup_url: '/',
 	discover_blog_id: 53424024,

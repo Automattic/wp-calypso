@@ -5,8 +5,9 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { Spinner, GMClosureNotice } from '@automattic/components';
-import { useSupportAvailability, useSupportHistory } from '@automattic/data-stores';
+import { useSupportAvailability, useHasActiveSupport } from '@automattic/data-stores';
 import { isDefaultLocale, getLanguage, useLocale } from '@automattic/i18n-utils';
+import { Notice } from '@wordpress/components';
 import { useEffect, useMemo } from '@wordpress/element';
 import { hasTranslation, sprintf } from '@wordpress/i18n';
 import { comment, Icon } from '@wordpress/icons';
@@ -42,12 +43,12 @@ export const HelpCenterContactPage: FC = () => {
 	const renderEmail = useShouldRenderEmailOption();
 	const renderChat = useShouldRenderChatOption();
 	const email = useSelector( getCurrentUserEmail );
-	const { data: supportHistory, isLoading: isLoadingSupportHistory } = useSupportHistory(
+	const { data: hasActiveTickets, isLoading: isLoadingTickets } = useHasActiveSupport(
 		'ticket',
 		email
 	);
 	const { data: supportAvailability } = useSupportAvailability( 'CHAT' );
-	const isLoading = renderChat.isLoading || renderEmail.isLoading || isLoadingSupportHistory;
+	const isLoading = renderChat.isLoading || renderEmail.isLoading || isLoadingTickets;
 
 	useEffect( () => {
 		if ( isLoading ) {
@@ -121,7 +122,7 @@ export const HelpCenterContactPage: FC = () => {
 			<BackButton />
 			<div className="help-center-contact-page__content">
 				<h3>{ __( 'Contact our WordPress.com experts', __i18n_text_domain__ ) }</h3>
-				{ supportHistory && <HelpCenterActiveTicketNotice tickets={ supportHistory } /> }
+				{ hasActiveTickets && <HelpCenterActiveTicketNotice tickets={ [ hasActiveTickets ] } /> }
 				{ /* Easter */ }
 				<GMClosureNotice
 					displayAt="2023-04-03 00:00Z"
@@ -129,6 +130,16 @@ export const HelpCenterContactPage: FC = () => {
 					reopensAt="2023-04-10 07:00Z"
 					enabled={ hasAccessToLivechat }
 				/>
+				{ renderChat.env === 'staging' && (
+					<Notice
+						status="warning"
+						actions={ [ { label: 'Learn more', url: 'https://wp.me/PCYsg-Q7X' } ] }
+						className="help-center-contact-page__staging-notice"
+						isDismissible={ false }
+					>
+						Targeting HappyChat staging
+					</Notice>
+				) }
 
 				<div className={ classnames( 'help-center-contact-page__boxes' ) }>
 					<Link to="/contact-form?mode=FORUM">

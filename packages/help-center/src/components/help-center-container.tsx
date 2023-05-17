@@ -1,13 +1,15 @@
 /**
  * External Dependencies
  */
+import { useSupportAvailability } from '@automattic/data-stores';
+import { useHappychatAvailable } from '@automattic/happychat-connection';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Card } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
-import { useState, useRef, FC } from 'react';
+import { useState, useRef, FC, useEffect } from 'react';
 import Draggable, { DraggableProps } from 'react-draggable';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, useLocation, useNavigate } from 'react-router-dom';
 /**
  * Internal Dependencies
  */
@@ -30,6 +32,20 @@ const OptionalDraggable: FC< OptionalDraggableProps > = ( { draggable, ...props 
 	return <Draggable { ...props } />;
 };
 
+const RedirectAssigned = ( { status }: { status?: string } ) => {
+	const navigate = useNavigate();
+	const { pathname } = useLocation();
+	const assigned = status === 'assigned';
+
+	useEffect( () => {
+		if ( assigned && ! pathname.startsWith( '/inline-chat' ) ) {
+			navigate( '/inline-chat?session=continued', { replace: true } );
+		}
+	}, [ assigned, navigate, pathname ] );
+
+	return null;
+};
+
 const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden } ) => {
 	const { show, isMinimized, initialRoute } = useSelect(
 		( select ) => ( {
@@ -47,6 +63,8 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden } ) =
 	const classNames = classnames( 'help-center__container', isMobile ? 'is-mobile' : 'is-desktop', {
 		'is-minimized': isMinimized,
 	} );
+	const { data: supportAvailability } = useSupportAvailability( 'CHAT' );
+	const { data } = useHappychatAvailable( Boolean( supportAvailability?.is_user_eligible ) );
 
 	const onDismiss = () => {
 		setIsVisible( false );
@@ -76,6 +94,7 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden } ) =
 
 	return (
 		<MemoryRouter initialEntries={ initialRoute ? [ initialRoute ] : undefined }>
+			<RedirectAssigned status={ data?.status } />
 			<FeatureFlagProvider>
 				<OptionalDraggable
 					draggable={ ! isMobile && ! isMinimized }
