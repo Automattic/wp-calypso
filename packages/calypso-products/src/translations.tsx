@@ -27,6 +27,8 @@ import {
 	PLAN_JETPACK_SECURITY_T1_MONTHLY,
 	PLAN_JETPACK_SECURITY_T2_YEARLY,
 	PLAN_JETPACK_SECURITY_T2_MONTHLY,
+	PLAN_JETPACK_COMPLETE,
+	PLAN_JETPACK_COMPLETE_MONTHLY,
 	PRODUCT_WPCOM_SEARCH,
 	PRODUCT_JETPACK_SEARCH_FREE,
 	PRODUCT_WPCOM_SEARCH_MONTHLY,
@@ -1028,16 +1030,61 @@ export const getJetpackProductsFAQs = (
 	];
 
 	return {
+		[ PLAN_JETPACK_STARTER_MONTHLY ]: backupFAQs,
+		[ PLAN_JETPACK_STARTER_YEARLY ]: backupFAQs,
 		[ PLAN_JETPACK_SECURITY_T1_MONTHLY ]: backupFAQs,
 		[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: backupFAQs,
 		[ PLAN_JETPACK_SECURITY_T2_MONTHLY ]: backupFAQs,
 		[ PLAN_JETPACK_SECURITY_T2_YEARLY ]: backupFAQs,
+		[ PLAN_JETPACK_COMPLETE ]: backupFAQs,
+		[ PLAN_JETPACK_COMPLETE_MONTHLY ]: backupFAQs,
 		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupFAQs,
 		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backupFAQs,
 		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backupFAQs,
 		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupFAQs,
 		[ PRODUCT_JETPACK_SCAN ]: scanFAQs,
 		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scanFAQs,
+	};
+};
+
+export const getJetpackPlansAlsoIncludedFeatures = (): Record<
+	string,
+	Array< TranslateResult >
+> => {
+	const socialFree = [ translate( 'Social (free tier)' ) ];
+	const videoPressFree = [ translate( 'VideoPress (free tier)' ) ];
+	const freeBundleFeatures = [
+		translate( 'Brute force attack protection' ),
+		translate( 'Downtime monitoring' ),
+		translate( 'CDN (Content Delivery Networks)' ),
+		translate( 'Stats' ),
+	];
+
+	return {
+		[ PLAN_JETPACK_STARTER_MONTHLY ]: [ ...socialFree, ...videoPressFree, ...freeBundleFeatures ],
+		[ PLAN_JETPACK_STARTER_YEARLY ]: [ ...socialFree, ...videoPressFree, ...freeBundleFeatures ],
+		[ PLAN_JETPACK_SECURITY_T1_MONTHLY ]: [
+			...socialFree,
+			...videoPressFree,
+			...freeBundleFeatures,
+		],
+		[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: [
+			...socialFree,
+			...videoPressFree,
+			...freeBundleFeatures,
+		],
+		[ PLAN_JETPACK_SECURITY_T2_MONTHLY ]: [
+			...socialFree,
+			...videoPressFree,
+			...freeBundleFeatures,
+		],
+		[ PLAN_JETPACK_SECURITY_T2_YEARLY ]: [
+			...socialFree,
+			...videoPressFree,
+			...freeBundleFeatures,
+		],
+		[ PLAN_JETPACK_COMPLETE ]: [ ...freeBundleFeatures ],
+		[ PLAN_JETPACK_COMPLETE_MONTHLY ]: [ ...freeBundleFeatures ],
 	};
 };
 

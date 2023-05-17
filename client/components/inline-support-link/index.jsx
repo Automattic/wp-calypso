@@ -30,6 +30,7 @@ class InlineSupportLink extends Component {
 		showIcon: PropTypes.bool,
 		supportContext: PropTypes.string,
 		iconSize: PropTypes.number,
+		linkTitle: PropTypes.string,
 		tracksEvent: PropTypes.string,
 		tracksOptions: PropTypes.object,
 		statsGroup: PropTypes.string,
@@ -76,7 +77,8 @@ class InlineSupportLink extends Component {
 	}
 
 	render() {
-		const { className, showText, showIcon, iconSize, translate, children, noWrap } = this.props;
+		const { className, showText, showIcon, linkTitle, iconSize, translate, children, noWrap } =
+			this.props;
 
 		let { supportPostId, supportLink } = this.props;
 		if ( this.state.supportDataFromContext ) {
@@ -119,6 +121,7 @@ class InlineSupportLink extends Component {
 				onClick={ ( event ) => this.onSupportLinkClick( event, supportPostId, url ) }
 				target="_blank"
 				rel="noopener noreferrer"
+				title={ linkTitle }
 				{ ...externalLinkProps }
 			>
 				{ content }

@@ -2,8 +2,7 @@ import { isMobile } from '@automattic/viewport';
 import classNames from 'classnames';
 import { throttle, debounce, defer } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
-import ReactDom from 'react-dom';
+import { Component, createRef } from 'react';
 import afterLayoutFlush from 'calypso/lib/after-layout-flush';
 
 import './style.scss';
@@ -40,8 +39,8 @@ export function getBlockStyle( state ) {
 
 export function getDimensions( node, isSticky ) {
 	return {
-		spacerHeight: isSticky ? ReactDom.findDOMNode( node ).clientHeight : 0,
-		blockWidth: isSticky ? ReactDom.findDOMNode( node ).clientWidth : 0,
+		spacerHeight: isSticky ? node.clientHeight : 0,
+		blockWidth: isSticky ? node.clientWidth : 0,
 	};
 }
 
@@ -59,7 +58,7 @@ function renderStickyPanel( props, state ) {
 	} );
 
 	return (
-		<div className={ classes }>
+		<div className={ classes } ref={ state._ref }>
 			<div className="sticky-panel__content" style={ getBlockStyle( state ) }>
 				{ props.children }
 			</div>
@@ -89,6 +88,7 @@ class StickyPanelWithIntersectionObserver extends Component {
 		isSticky: false,
 		spacerHeight: 0,
 		blockWidth: 0,
+		_ref: createRef(),
 	};
 
 	onIntersection = afterLayoutFlush( ( entries ) => {
@@ -101,7 +101,10 @@ class StickyPanelWithIntersectionObserver extends Component {
 	} );
 
 	throttleOnResize = throttle(
-		() => this.setState( ( prevState ) => getDimensions( this, prevState.isSticky ) ),
+		() =>
+			this.setState( ( prevState ) =>
+				getDimensions( this.state._ref.current, prevState.isSticky )
+			),
 		RESIZE_RATE_IN_MS
 	);
 
@@ -110,8 +113,11 @@ class StickyPanelWithIntersectionObserver extends Component {
 	// see https://github.com/Automattic/wp-calypso/issues/76743
 	throttleOnScroll = debounce(
 		afterLayoutFlush( () => {
+			if ( ! this.state._ref.current ) {
+				return;
+			}
 			// Determine vertical threshold from rendered element's offset relative the document
-			const threshold = ReactDom.findDOMNode( this ).getBoundingClientRect().top;
+			const threshold = this.state._ref.current.getBoundingClientRect().top;
 			const isSticky = threshold < calculateOffset();
 			this.updateStickyState( isSticky );
 		} ),
@@ -127,7 +133,7 @@ class StickyPanelWithIntersectionObserver extends Component {
 				threshold: [ 0, 1 ],
 				rootMargin: `-${ calculateOffset() }px 0px 0px 0px`,
 			} );
-			this.observer.observe( ReactDom.findDOMNode( this ) );
+			this.observer.observe( this.state._ref.current );
 		} );
 	}
 
@@ -136,8 +142,10 @@ class StickyPanelWithIntersectionObserver extends Component {
 			this.observer.disconnect();
 		}
 		this.onIntersection.cancel();
+		this.throttleOnScroll.cancel();
 		clearTimeout( this.deferredMount );
 		window.removeEventListener( 'resize', this.throttleOnResize );
+		window.removeEventListener( 'scroll', this.onWindowScroll );
 	}
 
 	updateStickyState( isSticky ) {
@@ -148,7 +156,7 @@ class StickyPanelWithIntersectionObserver extends Component {
 		if ( isSticky !== this.state.isSticky ) {
 			this.setState( {
 				isSticky,
-				...getDimensions( this, isSticky ),
+				...getDimensions( this.state._ref.current, isSticky ),
 			} );
 		}
 	}
@@ -168,17 +176,19 @@ class StickyPanelWithScrollEvent extends Component {
 		isSticky: false,
 		spacerHeight: 0,
 		blockWidth: 0,
+		_ref: createRef(),
 	};
 
 	onWindowScroll = afterLayoutFlush( () => {
 		// Determine vertical threshold from rendered element's offset relative the document
-		const threshold = ReactDom.findDOMNode( this ).getBoundingClientRect().top;
+		const threshold = this.state._ref.current.getBoundingClientRect().top;
 		const isSticky = threshold < calculateOffset();
 		this.updateStickyState( isSticky );
 	} );
 
 	throttleOnResize = throttle(
-		() => this.setState( ( prevState ) => getDimensionUpdates( this, prevState ) ),
+		() =>
+			this.setState( ( prevState ) => getDimensionUpdates( this.state._ref.current, prevState ) ),
 		RESIZE_RATE_IN_MS
 	);
 
@@ -203,7 +213,7 @@ class StickyPanelWithScrollEvent extends Component {
 		if ( isSticky !== this.state.isSticky ) {
 			this.setState( {
 				isSticky,
-				...getDimensions( this, isSticky ),
+				...getDimensions( this.state._ref.current, isSticky ),
 			} );
 		}
 	}

@@ -104,14 +104,15 @@ class Block_Patterns_From_API {
 
 			// Register categories (and re-register existing categories).
 			foreach ( (array) $pattern_categories as $slug => &$category_properties ) {
-				if ( 'blog' === $slug ) {
+				// Update the Posts category label to Blog Posts.
+				if ( 'posts' === $slug ) {
 					$category_properties['label']       = __( 'Blog Posts', 'full-site-editing' );
 					$category_properties['description'] = __( 'Display your latest posts in lists, grids or other layouts.', 'full-site-editing' );
 				}
 				register_block_pattern_category( $slug, $category_properties );
 			}
 
-			foreach ( (array) $block_patterns as $pattern ) {
+			foreach ( (array) $block_patterns as &$pattern ) {
 				if ( $this->can_register_pattern( $pattern ) ) {
 					$is_premium = isset( $pattern['pattern_meta']['is_premium'] ) ? boolval( $pattern['pattern_meta']['is_premium'] ) : false;
 
@@ -121,6 +122,13 @@ class Block_Patterns_From_API {
 					$viewport_width = $viewport_width < 320 ? 320 : $viewport_width;
 					$pattern_name   = self::PATTERN_NAMESPACE . $pattern['name'];
 					$block_types    = $this->utils->maybe_get_pattern_block_types_from_pattern_meta( $pattern );
+
+					// The API /ptk/patterns/ adds all patterns to the category Featured because it's reused as All.
+					// Here we remove the category from All patterns because the editor crashes
+					// when rendering all patterns in the background.
+					if ( array_key_exists( 'featured', $pattern['categories'] ) ) {
+						unset( $pattern['categories']['featured'] );
+					}
 
 					$results[ $pattern_name ] = register_block_pattern(
 						$pattern_name,
