@@ -41,6 +41,7 @@ const SiteSubscriptionPage = () => {
 		subscribers,
 	} = data;
 	const [ showSettings, setShowSettings ] = useState( true );
+	const Resubscribe = () => <Button onClick={ () => null }>{ translate( 'Resubscribe' ) }</Button>;
 
 	const {
 		mutate: unsubscribe,
@@ -105,7 +106,7 @@ const SiteSubscriptionPage = () => {
 					) }
 
 					{ unsubscribeError && (
-						<Notice type={ NoticeType.Error }>
+						<Notice type={ NoticeType.Error } action={ <Resubscribe /> }>
 							{ translate( 'There was an error when trying to unsubscribe from %s.', {
 								args: [ data.siteName ],
 								comment: 'Name of the site that the user tried to unsubscribe from.',
