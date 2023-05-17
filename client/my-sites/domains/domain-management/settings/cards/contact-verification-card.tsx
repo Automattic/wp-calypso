@@ -87,7 +87,7 @@ const ContactVerificationCard: FunctionComponent< Props > = ( props ) => {
 				</ul>
 				<p>
 					{ translate(
-						'Click on the button below to upload one or more documents and then click on the "Submit" button. You can upload images and/or PDF files up to 5MB each.'
+						'Click on the button below to upload one or more documents and then click on the "Submit" button. You can upload images (JPEG or PNG) and/or PDF files up to 5MB each.'
 					) }
 				</p>
 			</div>
