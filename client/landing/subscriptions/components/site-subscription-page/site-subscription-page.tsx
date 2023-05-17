@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import { Reader } from '@automattic/data-stores';
+import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -38,6 +38,9 @@ const SiteSubscriptionPage = () => {
 		deliveryFrequency,
 		subscribers,
 	} = data;
+
+	const { mutate: unsubscribe, isLoading: unsubscribing } =
+		SubscriptionManager.useSiteUnsubscribeMutation();
 
 	if ( ! blogId || isError ) {
 		return <div>Something went wrong.</div>;
@@ -86,7 +89,12 @@ const SiteSubscriptionPage = () => {
 
 					<hr className="subscriptions__separator" />
 
-					<Button className="site-subscription-page__unsubscribe-button" isSecondary>
+					<Button
+						className="site-subscription-page__unsubscribe-button"
+						isSecondary
+						onClick={ () => unsubscribe( { blog_id: blogId, url: data.siteUrl } ) }
+						disabled={ unsubscribing }
+					>
 						{ translate( 'Cancel subscription' ) }
 					</Button>
 				</div>
