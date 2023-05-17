@@ -3,7 +3,7 @@ import path from 'path';
 import chalk from 'chalk';
 import { BrowserContext, Page } from 'playwright';
 import { TestAccountName } from '..';
-import { getAccountSiteURL, getCalypsoURL } from '../data-helper';
+import { getAccountSiteURL } from '../data-helper';
 import { EmailClient } from '../email-client';
 import envVariables from '../env-variables';
 import { SecretsManager } from '../secrets';
@@ -34,21 +34,31 @@ export class TestAccount {
 	 * @param {Page} page Page object.
 	 * @param {string} [url] URL to expect once authenticated and redirections are finished.
 	 */
-	async authenticate( page: Page, { url }: { url?: string | RegExp } = {} ): Promise< void > {
+	async authenticate( page: Page, { url }: { url?: URL } = {} ): Promise< void > {
 		const browserContext = page.context();
 		await browserContext.clearCookies();
+
+		const loginPage = new LoginPage( page );
+		await loginPage.visit();
 
 		if ( await this.hasFreshAuthCookies() ) {
 			this.log( 'Found fresh cookies, skipping log in' );
 			await browserContext.addCookies( await this.getAuthCookies() );
-			await page.goto( getCalypsoURL( '/' ) );
+
+			// Reload the page.
+			// See: https://github.com/Automattic/wp-calypso/issues/70674 and
+			// https://github.com/microsoft/playwright/issues/18137.
+			await page.reload();
+			await loginPage.clickContinue();
 		} else {
 			this.log( 'Logging in via Login Page' );
 			await this.logInViaLoginPage( page );
 		}
 
 		if ( url ) {
-			await page.waitForURL( url, { timeout: 20 * 1000 } );
+			await page.waitForURL( new RegExp( url.href ), { timeout: 20 * 1000 } );
+		} else {
+			await page.waitForURL( /(home|reader)/, { timeout: 20 * 1000 } );
 		}
 	}
 
@@ -61,7 +71,6 @@ export class TestAccount {
 	async logInViaLoginPage( page: Page ): Promise< void > {
 		const loginPage = new LoginPage( page );
 
-		await loginPage.visit();
 		await loginPage.logInWithCredentials( this.credentials.username, this.credentials.password );
 
 		// Handle possible 2FA.

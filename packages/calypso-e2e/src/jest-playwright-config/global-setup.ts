@@ -29,7 +29,7 @@ export default async (): Promise< void > => {
 				const page = await browser.newPage( pwConfig.contextOptions );
 				page.setDefaultTimeout( envVariables.TIMEOUT );
 
-				await testAccount.logInViaLoginPage( page );
+				await testAccount.authenticate( page );
 				await testAccount.saveAuthCookies( page.context() );
 
 				await page.close();

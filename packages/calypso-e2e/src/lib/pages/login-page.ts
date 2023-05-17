@@ -31,7 +31,7 @@ export class LoginPage {
 				status: 200,
 			} );
 		} );
-		return await this.page.goto( getCalypsoURL( targetUrl ) );
+		return await this.page.goto( getCalypsoURL( targetUrl ), { timeout: 20 * 1000 } );
 	}
 
 	/**
@@ -41,10 +41,7 @@ export class LoginPage {
 		await this.fillUsername( username );
 		await this.clickSubmit();
 		await this.fillPassword( password );
-		await Promise.all( [
-			this.page.waitForNavigation( { timeout: 20 * 1000 } ),
-			this.clickSubmit(),
-		] );
+		await this.clickSubmit();
 	}
 
 	/**
@@ -96,6 +93,13 @@ export class LoginPage {
 		await locator.click();
 
 		return locator;
+	}
+
+	/**
+	 * Clicks on the continue button when the user is already logged in.
+	 */
+	async clickContinue(): Promise< void > {
+		await this.page.getByRole( 'link', { name: 'Continue' } ).click();
 	}
 
 	/**

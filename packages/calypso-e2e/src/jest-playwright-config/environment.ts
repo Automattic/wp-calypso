@@ -143,76 +143,72 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 	 * The browser is then shut down at the end regardless of failure status.
 	 */
 	async teardown(): Promise< void > {
-		try {
-			if ( ! this.global.browser ) {
-				throw new Error( 'Browser instance unavailable' );
-			}
-			const contexts = this.global.browser.contexts();
-			if ( this.failure ) {
-				let contextIndex = 1;
-
-				const artifactFilename = `${ this.testFilename }__${ sanitizeString( this.failure.name ) }`;
-
-				for await ( const context of contexts ) {
-					let pageIndex = 1;
-					const traceFilePath = path.join(
-						this.testArtifactsPath,
-						`${ artifactFilename }__${ contextIndex }.zip`
-					);
-
-					// Traces are saved per context.
-					await context.tracing.stop( { path: traceFilePath } );
-
-					for await ( const page of context.pages() ) {
-						const pageName = `${ artifactFilename }__${ contextIndex }-${ pageIndex }`;
-						// Define artifact filename.
-						const mediaFilePath = path.join( this.testArtifactsPath, pageName );
-
-						// Screenshots and video are saved per page, where numerous
-						// pages may exist within a context.
-						try {
-							await page.screenshot( {
-								path: `${ mediaFilePath }-fullpage.png`,
-								timeout: env.TIMEOUT,
-								fullPage: true,
-							} );
-							await page.screenshot( {
-								path: `${ mediaFilePath }.png`,
-								timeout: env.TIMEOUT,
-							} );
-						} catch ( error ) {
-							console.error(
-								`Error while capturing page (${ pageName }) screenshot. ` +
-									'This may mean the page already crashed during test execution. Error: ',
-								error
-							);
-						}
-
-						try {
-							// Close the now unnecessary page which also triggers saving
-							// of video to the disk.
-							await page.close();
-							await page.video()?.saveAs( `${ mediaFilePath }.webm` );
-						} catch ( error ) {
-							console.error(
-								`Error while closing page (${ pageName }) and saving video. ` +
-									'This may mean the page already crashed during test execution. Error: ',
-								error
-							);
-						}
-
-						pageIndex++;
-					}
-					contextIndex++;
-				}
-				// Print paths to captured artifacts for faster triaging.
-				console.error( `Artifacts for ${ this.testFilename }: ${ this.testArtifactsPath }` );
-			}
-			// Regardless of pass/fail status, close the browser instance.
-			await this.global.browser.close();
-		} catch ( error ) {
-			console.error( 'Unexepected error during Jest teardown: ', error );
+		if ( ! this.global.browser ) {
+			throw new Error( 'Browser instance unavailable' );
 		}
+		const contexts = this.global.browser.contexts();
+		if ( this.failure ) {
+			let contextIndex = 1;
+
+			const artifactFilename = `${ this.testFilename }__${ sanitizeString( this.failure.name ) }`;
+
+			for await ( const context of contexts ) {
+				let pageIndex = 1;
+				const traceFilePath = path.join(
+					this.testArtifactsPath,
+					`${ artifactFilename }__${ contextIndex }.zip`
+				);
+
+				// Traces are saved per context.
+				await context.tracing.stop( { path: traceFilePath } );
+
+				for await ( const page of context.pages() ) {
+					const pageName = `${ artifactFilename }__${ contextIndex }-${ pageIndex }`;
+					// Define artifact filename.
+					const mediaFilePath = path.join( this.testArtifactsPath, pageName );
+
+					// Screenshots and video are saved per page, where numerous
+					// pages may exist within a context.
+					try {
+						await page.screenshot( {
+							path: `${ mediaFilePath }-fullpage.png`,
+							timeout: env.TIMEOUT,
+							fullPage: true,
+						} );
+						await page.screenshot( {
+							path: `${ mediaFilePath }.png`,
+							timeout: env.TIMEOUT,
+						} );
+					} catch ( error ) {
+						console.error(
+							`Error while capturing page (${ pageName }) screenshot. ` +
+								'This may mean the page already crashed during test execution. Error: ',
+							error
+						);
+					}
+
+					try {
+						// Close the now unnecessary page which also triggers saving
+						// of video to the disk.
+						await page.close();
+						await page.video()?.saveAs( `${ mediaFilePath }.webm` );
+					} catch ( error ) {
+						console.error(
+							`Error while closing page (${ pageName }) and saving video. ` +
+								'This may mean the page already crashed during test execution. Error: ',
+							error
+						);
+					}
+
+					pageIndex++;
+				}
+				contextIndex++;
+			}
+			// Print paths to captured artifacts for faster triaging.
+			console.error( `Artifacts for ${ this.testFilename }: ${ this.testArtifactsPath }` );
+		}
+		// Regardless of pass/fail status, close the browser instance.
+		await this.global.browser.close();
 
 		await super.teardown();
 	}

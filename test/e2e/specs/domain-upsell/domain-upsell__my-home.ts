@@ -33,7 +33,7 @@ describe( DataHelper.createSuiteTitle( 'My Home: Domain upsell' ), function () {
 		await BrowserManager.setStoreCookie( page );
 
 		const testAccount = new TestAccount( 'simpleSiteFreePlanUser' );
-		await testAccount.authenticate( page, { url: /home/ } );
+		await testAccount.authenticate( page );
 	} );
 
 	it( 'Navigate to my home page', async function () {
