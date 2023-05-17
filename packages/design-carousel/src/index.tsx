@@ -193,7 +193,6 @@ export default function DesignCarousel( {
 				>
 					<span>{ __( 'Continue' ) }</span>
 					<Gridicon icon="heart" size={ 18 } />
-					{ /* Heart icon when hovering over continue missing here */ }
 				</Button>
 			</div>
 		</div>
