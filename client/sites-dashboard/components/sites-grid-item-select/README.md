@@ -1,10 +1,11 @@
 # SitesGridItem
 
-Renders a SitesGridItem component.
+Renders a SitesGridItem component with site selection option.
 
 ## How to use
 
 ```jsx
+import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import SitesGridItem from 'calypso/sites-dashboard/components/sites-grid-item';
 
 function render() {
@@ -14,6 +15,11 @@ function render() {
 			<SitesGridItem
 				site={ site }
 				key={ site.ID }
+				showLaunchNag={ false } // optional
+				showBadgeSection={ false } // optional
+				showThumbnailLink={ false } // optional
+				showSiteRenewLink={ false } // optional
+				onSiteSelectBtnClick={ ( s: SiteExcerptData ) => {} } // optional
 			></SitesGridItem>
 		</div>
 	);
