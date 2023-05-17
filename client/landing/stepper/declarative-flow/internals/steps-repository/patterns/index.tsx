@@ -10,7 +10,7 @@ import type { Design } from '@automattic/design-picker';
 
 import './styles.scss';
 
-const Patterns: Step = function Patterns( { navigation, flow } ) {
+const Patterns: Step = function Patterns( { navigation } ) {
 	const { goNext, goBack, submit } = navigation;
 	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
 	const { __ } = useI18n();
@@ -32,7 +32,6 @@ const Patterns: Step = function Patterns( { navigation, flow } ) {
 					require="@automattic/pattern-picker"
 					placeholder={ null }
 					onPick={ handleSubmit }
-					flow={ flow }
 				/>
 			}
 			recordTracksEvent={ recordTracksEvent }
