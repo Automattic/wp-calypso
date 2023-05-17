@@ -311,32 +311,34 @@ export class PlanFeatures2023Grid extends Component<
 			selectedFeature,
 		} = this.props;
 		return (
-			<div className="plans-wrapper">
-				<QueryActivePromotions />
-				<div className="plan-features">
-					<div className="plan-features-2023-grid__content">
-						<div>
-							<div className="plan-features-2023-grid__desktop-view">
-								{ this.renderTable( planProperties ) }
-							</div>
-							<div className="plan-features-2023-grid__tablet-view">
-								{ this.renderTabletView() }
-							</div>
-							<div className="plan-features-2023-grid__mobile-view">
-								{ this.renderMobileView() }
+			<>
+				<div className="plans-wrapper">
+					<QueryActivePromotions />
+					<div className="plan-features">
+						<div className="plan-features-2023-grid__content">
+							<div>
+								<div className="plan-features-2023-grid__desktop-view">
+									{ this.renderTable( planProperties ) }
+								</div>
+								<div className="plan-features-2023-grid__tablet-view">
+									{ this.renderTabletView() }
+								</div>
+								<div className="plan-features-2023-grid__mobile-view">
+									{ this.renderMobileView() }
+								</div>
 							</div>
 						</div>
 					</div>
+					{ ! hidePlansFeatureComparison && (
+						<div className="plan-features-2023-grid__toggle-plan-comparison-button-container">
+							<Button onClick={ this.toggleShowPlansComparisonGrid }>
+								{ this.state.showPlansComparisonGrid
+									? translate( 'Hide comparison' )
+									: translate( 'Compare plans' ) }
+							</Button>
+						</div>
+					) }
 				</div>
-				{ ! hidePlansFeatureComparison && (
-					<div className="plan-features-2023-grid__toggle-plan-comparison-button-container">
-						<Button onClick={ this.toggleShowPlansComparisonGrid }>
-							{ this.state.showPlansComparisonGrid
-								? translate( 'Hide comparison' )
-								: translate( 'Compare plans' ) }
-						</Button>
-					</div>
-				) }
 				{ ! hidePlansFeatureComparison && this.state.showPlansComparisonGrid ? (
 					<div
 						ref={ this.plansComparisonGridContainerRef }
@@ -365,7 +367,7 @@ export class PlanFeatures2023Grid extends Component<
 						</div>
 					</div>
 				) : null }
-			</div>
+			</>
 		);
 	}
 

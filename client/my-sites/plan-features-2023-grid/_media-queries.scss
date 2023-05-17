@@ -3,7 +3,7 @@
 $plan-features-sidebar-width: 272px;
 $plan-features-header-banner-height: 20px;
 
-// Breakpoints
+// Plan Features Grid Breakpoints
 $plans-2023-small-breakpoint: 780px;
 $plans-2023-medium-breakpoint: 1200px;
 
@@ -16,11 +16,34 @@ $minWidthToGridWidthMap: (
 	// 1600px: "1480px",
 );
 
+// Plan Comparison Grid Breakpoints
+$plans-comparison-small-breakpoint: 880px;
+$plans-comparison-medium-breakpoint: 1024px;
+$plans-comparison-large-breakpoint: 1281px;
+
+$planComparisonMinWidthToGridWidthMap: (
+	780px: "630px",
+	880px: "800px",
+	1024px: "942px",
+	1281px: "1091px",
+);
+
 
 @mixin pricing-grid-breakpoints {
 	width: 100%;
 
 	@each $screenMinWidth, $gridWidth in $minWidthToGridWidthMap {
+		@media ( min-width: #{$screenMinWidth} ) {
+			width: #{$gridWidth};
+		}
+	}
+
+}
+
+@mixin plan-comparison-grid-breakpoints {
+	width: 100%;
+
+	@each $screenMinWidth, $gridWidth in $planComparisonMinWidthToGridWidthMap {
 		@media ( min-width: #{$screenMinWidth} ) {
 			width: #{$gridWidth};
 		}

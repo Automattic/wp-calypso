@@ -744,6 +744,10 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 	const isLargeBreakpoint = usePricingBreakpoint( 1612 ); // 1340px + 272px (sidebar)
 	const isMediumBreakpoint = usePricingBreakpoint( 1340 ); // keeping original breakpoint to match Plan Grid
 
+	const isSignupLargeBreakpoint = usePricingBreakpoint( 1281 );
+	const isSignupMediumBreakpoint = usePricingBreakpoint( 1024 );
+	const isSignupSmallBreakpoint = usePricingBreakpoint( 880 );
+
 	const [ visiblePlans, setVisiblePlans ] = useState< string[] >( [] );
 	const [ firstSetOfFeatures ] = Object.keys( featureGroupMap );
 	const [ visibleFeatureGroups, setVisibleFeatureGroups ] = useState< string[] >( [
@@ -771,7 +775,9 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 			visibleLength = isLargeBreakpoint ? 3 : visibleLength;
 		}
 
-		visibleLength = isMediumBreakpoint ? 2 : visibleLength;
+		visibleLength = isSignupLargeBreakpoint ? 4 : visibleLength;
+		visibleLength = isSignupMediumBreakpoint ? 3 : visibleLength;
+		visibleLength = isSignupSmallBreakpoint ? 2 : visibleLength;
 
 		if ( newVisiblePlans.length !== visibleLength ) {
 			newVisiblePlans = newVisiblePlans.slice( 0, visibleLength );
@@ -784,6 +790,9 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 		isMediumBreakpoint,
 		displayedPlansProperties,
 		isInSignup,
+		isSignupLargeBreakpoint,
+		isSignupMediumBreakpoint,
+		isSignupSmallBreakpoint,
 	] );
 
 	const restructuredFootnotes = useMemo( () => {
