@@ -2,7 +2,7 @@ import { Button } from '@automattic/components';
 import { Icon, plus } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import SelectEmailCheckbox from './select-email-checkbox';
+import EmailItemContent from './email-item-content';
 import type {
 	MonitorSettingsEmail,
 	StateMonitorSettingsEmail,
@@ -33,15 +33,10 @@ export default function ConfigureEmailNotification( {
 			const defaultEmailItems = defaultEmailAddresses.map( ( email ) => ( {
 				email,
 				name: 'Default Email', //FIXME: This should be dynamic.
-				checked: true,
 				isDefault: true,
 				verified: true,
 			} ) );
-			const addedEmailItems = addedEmailAddresses.map( ( email ) => ( {
-				...email,
-				checked: email.verified, // Checked only if the email is verified.
-			} ) );
-			setAllEmailItems( [ ...defaultEmailItems, ...addedEmailItems ] );
+			setAllEmailItems( [ ...defaultEmailItems, ...addedEmailAddresses ] );
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
@@ -49,13 +44,7 @@ export default function ConfigureEmailNotification( {
 	return (
 		<div className="configure-email-address__card-container">
 			{ allEmailItems.map( ( item ) => (
-				<SelectEmailCheckbox
-					key={ item.email }
-					item={ item }
-					toggleModal={ toggleModal }
-					allEmailItems={ allEmailItems }
-					setAllEmailItems={ setAllEmailItems }
-				/>
+				<EmailItemContent key={ item.email } item={ item } toggleModal={ toggleModal } />
 			) ) }
 			<Button
 				compact
