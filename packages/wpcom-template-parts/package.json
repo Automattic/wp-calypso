@@ -32,7 +32,7 @@
 	"dependencies": {
 		"@automattic/components": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
-		"@wordpress/url": "^3.23.0",
+		"@wordpress/url": "^3.24.0",
 		"i18n-calypso": "workspace:^",
 		"social-logos": "^2.5.2"
 	},
