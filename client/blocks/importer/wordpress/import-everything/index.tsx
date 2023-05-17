@@ -141,6 +141,7 @@ export class ImportEverything extends SectionMigrate {
 			stepNavigator,
 			showConfirmDialog = true,
 			isMigrateFromWp,
+			onContentOnlySelection,
 		} = this.props;
 
 		if ( sourceSite ) {
@@ -153,7 +154,7 @@ export class ImportEverything extends SectionMigrate {
 						targetSiteSlug={ targetSiteSlug }
 						sourceSite={ sourceSite }
 						sourceSiteUrl={ sourceSite.URL }
-						onContentOnlyClick={ stepNavigator?.goToImportListStep }
+						onContentOnlyClick={ onContentOnlySelection }
 					/>
 				);
 			}

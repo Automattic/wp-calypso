@@ -2,7 +2,7 @@
 @import "@automattic/onboarding/styles/mixins";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-// @include onboarding-font-recoleta;
+
 [dir="rtl"] {
 	.import__import-everything {
 		.import_site-mapper-name .site-icon {
@@ -116,7 +116,7 @@
 		margin-bottom: 2.5rem;
 	}
 
-	.action-buttons__importer-list {
+	.action-buttons__content-only {
 		font-weight: 500;
 		text-decoration: underline;
 		color: var(--studio-gray-100);
