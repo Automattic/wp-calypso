@@ -49,8 +49,17 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 		},
 	} );
 
+	const isSiteTitleEmpty = ! siteTitle || siteTitle.trim().length === 0;
+	const isFormSubmitDisabled = isSiteTitleEmpty;
+
 	const handleSubmit = async ( event: React.FormEvent ) => {
 		event.preventDefault();
+
+		if ( isFormSubmitDisabled ) {
+			setFormTouched( true );
+
+			return;
+		}
 
 		recordTracksEvent( 'calypso_signup_site_options_submit', {
 			has_site_title: !! siteTitle,
@@ -67,8 +76,6 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 		}
 	};
 
-	const isSiteTitleEmpty = ! siteTitle || siteTitle.trim().length === 0;
-	const isFormSubmitDisabled = isSiteTitleEmpty;
 	const siteTitleError = formTouched && isSiteTitleEmpty;
 
 	const stepContent = (
@@ -93,12 +100,7 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 				) }
 			</FormFieldset>
 			<DataCenterPicker onChange={ setSiteGeoAffinity } value={ siteGeoAffinity } compact />
-			<Button
-				disabled={ isFormSubmitDisabled }
-				className="site-options__submit-button"
-				type="submit"
-				primary
-			>
+			<Button className="site-options__submit-button" type="submit" primary>
 				{ translate( 'Continue' ) }
 			</Button>
 		</form>

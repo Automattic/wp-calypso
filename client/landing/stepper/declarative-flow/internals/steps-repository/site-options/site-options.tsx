@@ -136,12 +136,7 @@ export const SiteOptions = ( { navigation }: Pick< StepProps, 'navigation' > ) =
 					{ taglineExplanation }
 				</FormSettingExplanation>
 			</FormFieldset>
-			<Button
-				disabled={ isFormDisabled }
-				className="site-options__submit-button"
-				type="submit"
-				primary
-			>
+			<Button className="site-options__submit-button" type="submit" primary>
 				{ translate( 'Continue' ) }
 			</Button>
 		</form>

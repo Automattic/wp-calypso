@@ -14,6 +14,11 @@ import { ONBOARD_STORE } from '../../../../stores';
 import type { StepProps } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 
+const formTouchedFactory = ( touched = false ) => ( {
+	siteTitle: touched,
+	tagline: touched,
+} );
+
 export const VideoPressSiteOptions = ( { navigation }: Pick< StepProps, 'navigation' > ) => {
 	const { currentSiteTitle, currentTagline } = useSelect(
 		( select ) => ( {
@@ -24,12 +29,24 @@ export const VideoPressSiteOptions = ( { navigation }: Pick< StepProps, 'navigat
 	);
 
 	const { submit } = navigation;
-	const [ siteTitle, setSiteTitle ] = React.useState( currentSiteTitle || null );
-	const [ tagline, setTagline ] = React.useState( currentTagline || null );
+	const [ siteTitle, setSiteTitle ] = React.useState( currentSiteTitle ?? '' );
+	const [ tagline, setTagline ] = React.useState( currentTagline ?? '' );
 	const translate = useTranslate();
+	const [ formTouched, setFormTouched ] = React.useState( formTouchedFactory );
+
+	const isSiteTitleEmpty = siteTitle.length === 0;
+	const isTaglineEmpty = tagline.length === 0;
+
+	const isFormSubmitDisabled = isSiteTitleEmpty || isTaglineEmpty;
 
 	const handleSubmit = async ( event: React.FormEvent ) => {
 		event.preventDefault();
+
+		if ( isFormSubmitDisabled ) {
+			setFormTouched( formTouchedFactory( true ) );
+
+			return;
+		}
 
 		recordTracksEvent( 'calypso_signup_site_options_submit', {
 			has_site_title: !! siteTitle,
@@ -40,7 +57,14 @@ export const VideoPressSiteOptions = ( { navigation }: Pick< StepProps, 'navigat
 	};
 
 	const onChange = ( event: React.FormEvent< HTMLInputElement > ) => {
-		switch ( event.currentTarget.name ) {
+		const inputName = event.currentTarget.name;
+
+		setFormTouched( ( value ) => ( {
+			...value,
+			[ inputName ]: true,
+		} ) );
+
+		switch ( inputName ) {
 			case 'siteTitle':
 				return setSiteTitle( event.currentTarget.value.trim() );
 			case 'tagline':
@@ -50,9 +74,8 @@ export const VideoPressSiteOptions = ( { navigation }: Pick< StepProps, 'navigat
 
 	const headerText = translate( 'Set up your video site' );
 
-	const isSiteTitleEmpty = siteTitle !== null && siteTitle.length === 0;
-	const isTaglineEmpty = tagline !== null && tagline.length === 0;
-	const isFormSubmitDisabled = ! tagline || ! siteTitle;
+	const hasSiteTitleError = formTouched.siteTitle && isSiteTitleEmpty;
+	const hasTaglineError = formTouched.tagline && isTaglineEmpty;
 
 	const stepContent = (
 		<form className="site-options__form" onSubmit={ handleSubmit }>
@@ -62,11 +85,11 @@ export const VideoPressSiteOptions = ( { navigation }: Pick< StepProps, 'navigat
 					name="siteTitle"
 					id="siteTitle"
 					value={ siteTitle }
-					isError={ isSiteTitleEmpty }
+					isError={ hasSiteTitleError }
 					onChange={ onChange }
 					placeholder={ translate( 'My Video Site' ) }
 				/>
-				{ isSiteTitleEmpty && (
+				{ hasSiteTitleError && (
 					<FormInputValidation isError text={ translate( 'Please provide a site title' ) } />
 				) }
 			</FormFieldset>
@@ -76,20 +99,15 @@ export const VideoPressSiteOptions = ( { navigation }: Pick< StepProps, 'navigat
 					name="tagline"
 					id="tagline"
 					value={ tagline }
-					isError={ isTaglineEmpty }
+					isError={ hasTaglineError }
 					onChange={ onChange }
 					placeholder={ translate( 'Add a short description of your video site here.' ) }
 				/>
-				{ isTaglineEmpty && (
+				{ hasTaglineError && (
 					<FormInputValidation isError text={ translate( 'Please provide a site description' ) } />
 				) }
 			</FormFieldset>
-			<Button
-				disabled={ isFormSubmitDisabled }
-				className="site-options__submit-button"
-				type="submit"
-				primary
-			>
+			<Button className="site-options__submit-button" type="submit" primary>
 				{ translate( 'Continue' ) }
 			</Button>
 		</form>
