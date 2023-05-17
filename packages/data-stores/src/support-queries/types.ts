@@ -36,4 +36,5 @@ export interface SupportSession {
 	type: string;
 	url: string;
 	when: string;
+	channel: string;
 }

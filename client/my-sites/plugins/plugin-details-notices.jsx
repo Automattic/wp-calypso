@@ -33,7 +33,8 @@ const PluginDetailsNotices = ( { selectedSite, plugin, translate } ) => {
 		! plugin?.active ||
 		marketplacePluginHasSubscription ||
 		isWpcomPreinstalled ||
-		isBundledPlugin
+		isBundledPlugin ||
+		! plugin.isMarketplaceProduct
 	) {
 		return null;
 	}

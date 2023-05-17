@@ -267,7 +267,6 @@ export interface MonitorSettingsEmail {
 }
 
 export interface StateMonitorSettingsEmail extends MonitorSettingsEmail {
-	checked: boolean;
 	isDefault?: boolean;
 }
 

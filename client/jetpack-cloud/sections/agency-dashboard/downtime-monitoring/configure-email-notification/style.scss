@@ -12,12 +12,14 @@ $help-text-color: #757575;
 	padding: 16px !important;
 }
 
-.configure-email-address__checkbox-content-container {
+.configure-email-address__card-content-container {
 	display: flex;
 	align-items: center;
+	gap: 4px;
+	width: 100%;
 }
 
-.configure-email-address__checkbox-content {
+.configure-email-address__card-content {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -26,10 +28,9 @@ $help-text-color: #757575;
 }
 
 .configure-email-address__verification-status {
-	margin-right: 42px;
+	margin-inline-end: 24px;
 
 	.badge {
-		line-height: 14px;
 		font-size: 0.75rem;
 	}
 }
@@ -44,25 +45,6 @@ button.configure-email-address__edit-icon {
 	padding: 4px !important;
 }
 
-.configure-email-address__checkbox {
-	width: 100%;
-
-	.components-checkbox-control__input:checked {
-		background: var(--studio-gray-80);
-		border-color: var(--studio-gray-80);
-	}
-
-	.components-checkbox-control__label {
-		font-weight: 500;
-		min-width: 95%;
-	}
-
-	.components-base-control__field {
-		margin-bottom: 0;
-		display: flex;
-		align-items: center;
-	}
-}
 
 .handle-overflow {
 	white-space: nowrap;
@@ -70,7 +52,7 @@ button.configure-email-address__edit-icon {
 	text-overflow: ellipsis;
 }
 
-.configure-email-address__checkbox-heading {
+.configure-email-address__card-heading {
 	@extend .handle-overflow;
 	font-weight: 500;
 	font-size: 0.875rem;
@@ -78,7 +60,7 @@ button.configure-email-address__edit-icon {
 	color: var(--studio-gray-100);
 }
 
-.configure-email-address__checkbox-sub-heading {
+.configure-email-address__card-sub-heading {
 	@extend .handle-overflow;
 	font-weight: 400;
 	font-size: 0.75rem;
