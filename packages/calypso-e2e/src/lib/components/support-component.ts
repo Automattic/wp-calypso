@@ -65,11 +65,11 @@ export class SupportComponent {
 	 */
 	async getResultCount(): Promise< { articleCount: number; linkCount: number } > {
 		return {
-			articleCount: await this.page
+			articleCount: await this.helpCenter
 				.getByLabel( 'Search Results' )
 				.getByRole( 'list', { name: 'Recommended resources' } )
 				.count(),
-			linkCount: await this.page
+			linkCount: await this.helpCenter
 				.getByLabel( 'Search Results' )
 				.getByRole( 'list', { name: 'Show me where to' } )
 				.count(),
@@ -102,11 +102,18 @@ export class SupportComponent {
 		// Wait on two factors in the inline help popover:
 		//	- the query to the search endpoint;
 		//	- the placeholder elements in the search results.
+
+		console.log( 'start' );
 		await Promise.all( [
 			// @example https://public-api.wordpress.com/wpcom/v2/help/search/wpcom?query=themes
-			this.page.waitForResponse( /wpcom\?query/ ),
-			this.page.locator( '.help-center-loading' ).waitFor( { state: 'hidden' } ),
+			// this.page.waitForResponse( /wpcom\?query/ ),
+			// this.page.locator( '.placeholder-lines__help-center' ).waitFor( { state: 'detached' } ),
+			this.helpCenter
+				.getByLabel( 'Search Results' )
+				.getByRole( 'list', { name: 'Recommended resources' } )
+				.waitFor( { state: 'visible' } ),
 		] );
+		console.log( 'end' );
 	}
 
 	/**
