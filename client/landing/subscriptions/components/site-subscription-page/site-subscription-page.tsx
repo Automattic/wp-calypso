@@ -15,7 +15,7 @@ const useSiteSubscription = ( blogId?: string ) => ( {
 	data: {
 		siteName: 'The Atavist Magazine',
 		subscribers: 44109166,
-		siteUrl: 'https://theatavistmagazine.wordpress.com/',
+		siteUrl: 'https://ivanthemetest.wordpress.com/',
 		notifyMeOfNewPosts: true,
 		emailMeNewPosts: true,
 		deliveryFrequency: Reader.EmailDeliveryFrequency.Daily,
