@@ -104,7 +104,7 @@ export const MigrateReady: React.FunctionComponent< Props > = ( props ) => {
 								</NextButton>
 								<Button
 									borderless={ true }
-									className="action-buttons__importer-list"
+									className="action-buttons__content-only"
 									onClick={ onContentOnlyClick }
 								>
 									{ __( 'Use the content-only import option' ) }

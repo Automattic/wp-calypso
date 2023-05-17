@@ -1,24 +1,19 @@
 @import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@automattic/color-studio/dist/color-variables";
 
-body.is-section-gutenberg-editor .domain-upsell-callout {
-	height: 60px;
-}
-body.is-section-posts .domain-upsell-callout {
-	height: 46px;
-}
-
-.domain-upsell-callout {
+.wpcom-domain-upsell-callout {
 	font-size: $font-body-extra-small;
+	font-style: normal;
+	padding: 15px;
+	line-height: normal;
 	position: absolute;
-	z-index: 99998;
 	display: flex;
 	align-items: center;
 	left: 50%;
 	transform: translateX(-50%);
-	height: 46px;
-
+	top: 0;
 	@media ( max-width: $break-xlarge ) {
 		display: none;
 	}
@@ -65,7 +60,7 @@ body.is-section-posts .domain-upsell-callout {
 		font-size: $font-body-extra-small;
 		white-space: nowrap;
 		text-decoration: underline;
-		color: #3858e9;
+		color: $studio-blue;
 	}
 
 	&__button:hover,
