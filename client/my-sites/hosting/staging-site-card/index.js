@@ -39,6 +39,12 @@ const StyledLoadingBar = styled( LoadingBar )( {
 const ActionButtons = styled.div( {
 	display: 'flex',
 	gap: '1em',
+
+	'@media screen and (max-width: 768px)': {
+		gap: '0.5em',
+		flexDirection: 'column',
+		'.button': { flexGrow: 1 },
+	},
 } );
 
 const ExceedQuotaErrorWrapper = styled.div( {
