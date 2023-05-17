@@ -2,8 +2,10 @@ import { Button } from '@automattic/components';
 import { Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import FilePicker from 'calypso/components/file-picker';
 import wpcom from 'calypso/lib/wp';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import type { WhoisData } from '../types';
 
 import './style.scss';
@@ -15,6 +17,7 @@ interface Props {
 }
 
 const ContactVerificationCard: FunctionComponent< Props > = ( props ) => {
+	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const [ selectedFiles, setSelectedFiles ] = useState< FileList | null >( null );
 	const [ submitting, setSubmitting ] = useState( false );
@@ -145,11 +148,13 @@ const ContactVerificationCard: FunctionComponent< Props > = ( props ) => {
 
 				if ( error ) {
 					setError( true );
+					dispatch( errorNotice( error.message ) );
 					return;
 				}
 
 				setSubmitted( true );
 				setError( false );
+				dispatch( successNotice( translate( 'Documents submitted succcesfully!' ) ) );
 			}
 		);
 	};
