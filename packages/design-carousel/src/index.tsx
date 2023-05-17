@@ -1,6 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import { StarterDesigns, useStarterDesignsQuery } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
+import { ECOMMERCE_FLOW, MShotsOptions, isLinkInBioFlow } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
 import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
@@ -10,12 +11,87 @@ import Swiper from 'swiper';
 import { Item } from './item';
 import 'swiper/dist/css/swiper.css';
 import type { Design } from '@automattic/design-picker/src/types';
-import type { MShotsOptions } from '@automattic/onboarding';
 
 type DesignCarouselProps = {
 	onPick: ( design: Design ) => void;
 	selectedDesignSlugs?: string[];
-	flow?: string;
+	flow?: string | null | undefined;
+};
+
+const shouldDisplayMobileViewOnly = ( flow: string | null | undefined ) => {
+	switch ( true ) {
+		case isLinkInBioFlow( flow ):
+			return true;
+		default:
+			return false;
+	}
+};
+
+const getLinkInBioDesigns = ( allDesigns: StarterDesigns | undefined ) => {
+	const designs =
+		allDesigns?.designs.filter(
+			( design ) =>
+				design.is_virtual &&
+				design.categories.some( ( category ) => category.slug === 'link-in-bio' )
+		) ?? [];
+
+	return designs;
+};
+
+const getEcommerceDesigns = (
+	allDesigns: StarterDesigns | undefined,
+	selectedDesignSlugs: string[] | undefined
+) => {
+	let selectedDesigns = allDesigns?.designs;
+
+	if ( selectedDesigns && selectedDesignSlugs ) {
+		// If we have a restricted set of designs, filter out all unwanted designs
+		const filteredDesigns = selectedDesigns.filter( ( design ) =>
+			selectedDesignSlugs.includes( design.slug )
+		);
+
+		// Now order the filtered set based on the supplied slugs.
+		selectedDesigns = selectedDesignSlugs
+			.map( ( selectedDesignSlug ) =>
+				filteredDesigns.find( ( design ) => design.slug === selectedDesignSlug )
+			)
+			.filter( ( selectedDesign ) => !! selectedDesign ) as Design[];
+	}
+
+	return selectedDesigns;
+};
+
+const getCarouselOptions = (
+	flow: string | null | undefined,
+	mobileOptions: MShotsOptions,
+	desktopOptions: MShotsOptions
+) => {
+	switch ( true ) {
+		case isLinkInBioFlow( flow ):
+			return mobileOptions;
+		default:
+			return desktopOptions;
+	}
+};
+
+const getFlowDesigns = (
+	allDesigns: StarterDesigns | undefined,
+	locale: string | undefined,
+	selectedDesignSlugs: string[] | undefined,
+	flow: string | null | undefined
+) => {
+	if ( ! allDesigns || ! locale ) {
+		return null;
+	}
+
+	switch ( true ) {
+		case isLinkInBioFlow( flow ):
+			return getLinkInBioDesigns( allDesigns );
+		case flow === ECOMMERCE_FLOW:
+			return getEcommerceDesigns( allDesigns, selectedDesignSlugs );
+		default:
+			return allDesigns?.designs;
+	}
 };
 
 export default function DesignCarousel( {
@@ -39,83 +115,10 @@ export default function DesignCarousel( {
 		_locale: locale,
 	} );
 
-	const shouldDisplayMobileViewOnly = ( flow: string | undefined ) => {
-		switch ( flow ) {
-			case 'link-in-bio':
-				return true;
-			default:
-				return false;
-		}
-	};
-
-	const getLinkInBioDesigns = ( allDesigns: StarterDesigns | undefined ) => {
-		const designs = allDesigns
-			? allDesigns?.designs.filter(
-					( design ) =>
-						design.is_virtual &&
-						design.categories.some( ( category ) => category.slug === 'link-in-bio' )
-			  )
-			: [];
-
-		return designs;
-	};
-
-	const getEcommerceDesigns = (
-		allDesigns: StarterDesigns | undefined,
-		selectedDesignSlugs: string[] | undefined
-	) => {
-		let selectedDesigns = allDesigns?.designs;
-
-		if ( selectedDesigns && selectedDesignSlugs ) {
-			// If we have a restricted set of designs, filter out all unwanted designs
-			const filteredDesigns = selectedDesigns.filter( ( design ) =>
-				selectedDesignSlugs.includes( design.slug )
-			);
-
-			// Now order the filtered set based on the supplied slugs.
-			selectedDesigns = selectedDesignSlugs
-				.map( ( selectedDesignSlug ) =>
-					filteredDesigns.find( ( design ) => design.slug === selectedDesignSlug )
-				)
-				.filter( ( selectedDesign ) => !! selectedDesign ) as Design[];
-		}
-
-		return selectedDesigns;
-	};
-
-	const getCarouselOptions = ( flow: string | undefined ) => {
-		switch ( flow ) {
-			case 'link-in-bio':
-				return mobileOptions;
-			default:
-				return desktopOptions;
-		}
-	};
-
-	const getFlowDesigns = (
-		allDesigns: StarterDesigns | undefined,
-		locale: string | undefined,
-		selectedDesignSlugs: string[] | undefined,
-		flow: string | undefined
-	) => {
-		if ( ! allDesigns || ! locale ) {
-			return null;
-		}
-
-		switch ( flow ) {
-			case 'link-in-bio':
-				return getLinkInBioDesigns( allDesigns );
-			case 'ecommerce':
-				return getEcommerceDesigns( allDesigns, selectedDesignSlugs );
-			default:
-				return allDesigns?.designs;
-		}
-	};
-
 	const selectedDesigns = getFlowDesigns( allDesigns, locale, selectedDesignSlugs, flow );
 
 	const onlyDisplayMobileCarousel = shouldDisplayMobileViewOnly( flow );
-	const carouselOptions = getCarouselOptions( flow );
+	const carouselOptions = getCarouselOptions( flow, mobileOptions, desktopOptions );
 
 	useEffect( () => {
 		if ( selectedDesigns ) {
