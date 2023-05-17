@@ -17,6 +17,8 @@ export function useSite() {
 		},
 		[ siteSlug, siteIdParam ]
 	);
-
-	return site;
+	if ( ( siteSlug || siteIdParam ) && site ) {
+		return site;
+	}
+	return null;
 }
