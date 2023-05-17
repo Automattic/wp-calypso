@@ -66,19 +66,19 @@ export class SupportComponent {
 	 * If the category has no results (eg. Show Me Where has no results)
 	 * then the value 0 is returned.
 	 *
-	 * @returns {Promise<[number, number]>} Array of numbers.
+	 * @returns {Promise<{articleCount: number, linkCount: number}>} Object with named values.
 	 */
-	async getResultCount(): Promise< [ number, number ] > {
-		return [
-			await this.page
+	async getResultCount(): Promise< { articleCount: number; linkCount: number } > {
+		return {
+			articleCount: await this.page
 				.getByLabel( 'Search Results' )
 				.getByRole( 'list', { name: 'Recommended resources' } )
 				.count(),
-			await this.page
+			linkCount: await this.page
 				.getByLabel( 'Search Results' )
 				.getByRole( 'list', { name: 'Show me where to' } )
 				.count(),
-		];
+		};
 	}
 
 	/**
@@ -104,7 +104,11 @@ export class SupportComponent {
 	async search( text: string ): Promise< void > {
 		await this.helpCenter.getByPlaceholder( 'Search for help' ).fill( text );
 
+		// Wait on two factors in the inline help popover:
+		//	- the query to the search endpoint;
+		//	- the placeholder elements in the search results.
 		await Promise.all( [
+			// @example https://public-api.wordpress.com/wpcom/v2/help/search/wpcom?query=themes
 			this.page.waitForResponse( /wpcom\?query/ ),
 			this.page.locator( selectors.resultsPlaceholder ).waitFor( { state: 'hidden' } ),
 		] );

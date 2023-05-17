@@ -35,6 +35,7 @@ describe( 'Support: Show me where', function () {
 	} );
 
 	it( 'Signup flow is started', async function () {
+		// @example https://wordpress.com/start/domains?ref=calypso-inline-help
 		await newPage.waitForURL( /start/ );
 	} );
 } );

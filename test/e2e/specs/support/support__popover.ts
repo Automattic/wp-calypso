@@ -40,27 +40,27 @@ describe( 'Support: Popover/Invalid Keywords', function () {
 			const keyword = 'theme';
 			await supportComponent.search( keyword );
 
-			const [ articles, links ] = await supportComponent.getResultCount();
-			expect( articles ).toBeTruthy();
-			expect( links ).toBeTruthy();
+			const { articleCount, linkCount } = await supportComponent.getResultCount();
+			expect( articleCount ).toBeGreaterThan( 0 );
+			expect( linkCount ).toBeGreaterThan( 0 );
 		} );
 
 		it( 'Search for blank string returns only articles', async function () {
 			const keyword = '        ';
 			await supportComponent.search( keyword );
 
-			const [ articles, links ] = await supportComponent.getResultCount();
-			expect( articles ).toBeTruthy();
-			expect( links ).toBeFalsy();
+			const { articleCount, linkCount } = await supportComponent.getResultCount();
+			expect( articleCount ).toBeGreaterThan( 0 );
+			expect( linkCount ).toBe( 0 );
 		} );
 
 		it( 'Search for gibberish string returns only articles', async function () {
 			const keyword = ';;;ppp;;;';
 			await supportComponent.search( keyword );
 
-			const [ articles, links ] = await supportComponent.getResultCount();
-			expect( articles ).toBeTruthy();
-			expect( links ).toBeFalsy();
+			const { articleCount, linkCount } = await supportComponent.getResultCount();
+			expect( articleCount ).toBeGreaterThan( 0 );
+			expect( linkCount ).toBe( 0 );
 		} );
 	} );
 
