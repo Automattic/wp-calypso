@@ -37,7 +37,6 @@ import {
 	recordSignupProcessingScreen,
 	recordSignupPlanChange,
 } from 'calypso/lib/analytics/signup';
-import { loadExperimentAssignment } from 'calypso/lib/explat';
 import * as oauthToken from 'calypso/lib/oauth-token';
 import { isWooOAuth2Client, isGravatarOAuth2Client } from 'calypso/lib/oauth2-clients';
 import SignupFlowController from 'calypso/lib/signup/flow-controller';
@@ -201,11 +200,6 @@ class Signup extends Component {
 					this.getCurrentFlowSupportedQueryParams()
 				)
 			);
-		}
-
-		// preload the experiment to minimize the perceived loading time
-		if ( this.props.flowName === flows.defaultFlowName ) {
-			loadExperimentAssignment( 'calypso_plans_2yr_toggle' );
 		}
 	}
 
