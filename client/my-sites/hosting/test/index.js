@@ -6,8 +6,15 @@ jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'page-view-tracker' 
 jest.mock( 'calypso/components/feature-example', () => ( { children } ) => {
 	return <div data-testid="feature-example-wrapper">{ children }</div>;
 } );
+jest.mock( '../staging-site-card', () => () => (
+	<div data-testid="staging-site-card">
+		<span>Staging site</span>
+	</div>
+) );
 jest.mock( '../staging-site-card/staging-site-production-card', () => () => (
-	<div data-testid="staging-site-production-card" />
+	<div data-testid="staging-site-production-card">
+		<span>Staging site</span>
+	</div>
 ) );
 
 import {
@@ -135,10 +142,7 @@ const getExpectedStringsForTestConfig = ( testConfig, { enabledOnly = false } = 
 		expectedStrings = stringsForAllAtomicFeatureCards;
 	}
 
-	if (
-		testConfig.siteFeatures.includes( FEATURE_SITE_STAGING_SITES ) &&
-		! testConfig.isWpcomStagingSite
-	) {
+	if ( testConfig.siteFeatures.includes( FEATURE_SITE_STAGING_SITES ) ) {
 		expectedStrings.push( 'Staging site' );
 	}
 
