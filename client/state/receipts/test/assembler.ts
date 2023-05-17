@@ -92,8 +92,13 @@ const standardAssembledReceipt: ReceiptData = {
 };
 
 describe( 'createReceiptObject', () => {
-	it( 'returns an expected object for standard receipt data', () => {
+	it( 'returns an expected object for standard transaction receipt data', () => {
 		const actual = createReceiptObject( rawTransactionReceipt );
+		expect( actual ).toEqual( standardAssembledReceipt );
+	} );
+
+	it( 'returns an expected object for standard receipt endpoint data', () => {
+		const actual = createReceiptObject( rawReceiptEndpointReceipt );
 		expect( actual ).toEqual( standardAssembledReceipt );
 	} );
 
