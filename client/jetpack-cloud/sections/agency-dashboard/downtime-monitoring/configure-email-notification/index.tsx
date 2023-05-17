@@ -49,13 +49,7 @@ export default function ConfigureEmailNotification( {
 	return (
 		<div className="configure-email-address__card-container">
 			{ allEmailItems.map( ( item ) => (
-				<SelectEmailCheckbox
-					key={ item.email }
-					item={ item }
-					toggleModal={ toggleModal }
-					allEmailItems={ allEmailItems }
-					setAllEmailItems={ setAllEmailItems }
-				/>
+				<SelectEmailCheckbox key={ item.email } item={ item } toggleModal={ toggleModal } />
 			) ) }
 			<Button
 				compact
