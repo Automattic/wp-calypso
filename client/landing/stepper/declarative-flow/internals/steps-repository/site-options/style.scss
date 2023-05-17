@@ -150,6 +150,10 @@
 	}
 }
 
+body:has(.new-hosted-site.options) {
+	height: auto;
+}
+
 .new-hosted-site.options {
 	.form-input-validation {
 		animation: none;
