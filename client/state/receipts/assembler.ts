@@ -1,11 +1,4 @@
-import type {
-	RawFailedReceiptPurchase,
-	RawFailedReceiptPurchases,
-	RawReceiptData,
-	RawReceiptPurchase,
-	RawReceiptPurchases,
-	ReceiptData,
-} from './types';
+import type { RawReceiptData, ReceiptData } from './types';
 
 /**
  * Converts raw receipt data into receipt data
@@ -14,10 +7,7 @@ import type {
  * @returns {ReceiptData} The formatted receipt data
  */
 export function createReceiptObject( data: RawReceiptData ): ReceiptData {
-	const purchases = Array.isArray( data.purchases )
-		? data.purchases
-		: flattenPurchases( data.purchases || {} );
-	const failedPurchases = Array.isArray( data.failed_purchases ) ? {} : data.failed_purchases;
+	const purchases = Array.isArray( data.purchases ) ? data.purchases : [];
 
 	return {
 		receiptId: data.receipt_id,
@@ -45,40 +35,5 @@ export function createReceiptObject( data: RawReceiptData ): ReceiptData {
 				saasRedirectUrl: purchase.saas_redirect_url ?? '',
 			};
 		} ),
-		failedPurchases: flattenFailedPurchases( failedPurchases || {} ).map( ( purchase ) => {
-			return {
-				meta: purchase.product_meta,
-				productId: purchase.product_id,
-				productCost: purchase.product_cost,
-				productSlug: purchase.product_slug,
-				productName: purchase.product_name,
-			};
-		} ),
 	};
-}
-
-/**
- * Purchases are of the format { [siteId]: [ { productId: ... } ] }
- * so we need to flatten them to get a list of purchases
- */
-function flattenPurchases(
-	purchases: RawReceiptPurchases | Array< void >
-): Array< RawReceiptPurchase > {
-	if ( Array.isArray( purchases ) ) {
-		return [];
-	}
-	return Object.values( purchases ).flat();
-}
-
-/**
- * Purchases are of the format { [siteId]: [ { productId: ... } ] }
- * so we need to flatten them to get a list of purchases
- */
-function flattenFailedPurchases(
-	purchases: RawFailedReceiptPurchases | Array< void >
-): Array< RawFailedReceiptPurchase > {
-	if ( Array.isArray( purchases ) ) {
-		return [];
-	}
-	return Object.values( purchases ).flat();
 }

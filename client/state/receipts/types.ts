@@ -17,14 +17,6 @@ export interface RawReceiptPurchase {
 	saas_redirect_url?: string;
 }
 
-export interface RawFailedReceiptPurchase {
-	product_meta: string;
-	product_id: string | number;
-	product_slug: string;
-	product_cost: string | number;
-	product_name: string;
-}
-
 export interface ReceiptPurchase {
 	delayedProvisioning: boolean;
 	freeTrial: boolean;
@@ -43,38 +35,14 @@ export interface ReceiptPurchase {
 	saasRedirectUrl: string;
 }
 
-export interface FailedReceiptPurchase {
-	meta: string;
-	productId: string | number;
-	productSlug: string;
-	productCost: string | number;
-	productName: string;
-}
-
 export interface RawReceiptData {
 	receipt_id: string;
 	display_price: string;
 	price_float: number;
 	price_integer: number;
 	currency: string;
-
-	/**
-	 * Data returned by the transactions endpoint is a key-value array of blog_id
-	 * to list of purchases. However, data returned by the receipt endpoint is
-	 * just a list of purchases.
-	 */
-	purchases: RawReceiptPurchases | RawReceiptPurchase[] | undefined | false;
-
-	/**
-	 * This is only returned by the transactions endpoint and will only be an
-	 * array if it is empty.
-	 */
-	failed_purchases?: RawFailedReceiptPurchases | Array< void > | undefined | false;
+	purchases: RawReceiptPurchase[] | undefined | false;
 }
-
-export type RawFailedReceiptPurchases = Record< string, RawFailedReceiptPurchase[] >;
-
-export type RawReceiptPurchases = Record< string, RawReceiptPurchase[] >;
 
 export interface ReceiptData {
 	receiptId: string;
@@ -83,7 +51,6 @@ export interface ReceiptData {
 	priceFloat: number;
 	priceInteger: number;
 	purchases: ReceiptPurchase[];
-	failedPurchases: FailedReceiptPurchase[];
 }
 
 export interface ReceiptState {
