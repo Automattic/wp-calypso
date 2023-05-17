@@ -53,7 +53,8 @@ button {
 }
 
 .accessible-focus {
-	.site-setup {
+	.site-setup,
+	.import-focused {
 		.button.is-primary:focus {
 			box-shadow: 0 0 0 2px var(--color-primary-light);
 		}
