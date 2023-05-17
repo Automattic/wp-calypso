@@ -83,7 +83,7 @@ describe( 'queuedRequests', () => {
 		expect(
 			queuedRequests(
 				{
-					'1-1-all-2': true,
+					'1-1-all-5': true,
 				},
 				{
 					type: READER_RELATED_POSTS_REQUEST_SUCCESS,
