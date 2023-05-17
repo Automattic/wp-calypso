@@ -355,6 +355,7 @@ class Plans extends Component {
 			isFreePlan,
 			currentPlanIntervalType,
 			domainFromHomeUpsellFlow,
+			jetpackAppPlans,
 		} = this.props;
 
 		if ( ! selectedSite || this.isInvalidPlanInterval() || ! currentPlan ) {
@@ -418,7 +419,9 @@ class Plans extends Component {
 						{ isDomainAndPlanPackageFlow && (
 							<>
 								<div className="plans__header">
-									<DomainAndPlanPackageNavigation goBackLink={ goBackLink } step={ 2 } />
+									{ ! jetpackAppPlans && (
+										<DomainAndPlanPackageNavigation goBackLink={ goBackLink } step={ 2 } />
+									) }
 
 									<FormattedHeader brandFont headerText={ headline } align="center" />
 
