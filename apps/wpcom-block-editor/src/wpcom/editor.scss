@@ -4,4 +4,10 @@
 	.components-external-link {
 		display: none !important;
 	}
+	.edit-post-post-schedule {
+		display: none !important;
+	}
+	.components-panel__row:has(.editor-post-trash) {
+		display: none !important;
+	}
 }
