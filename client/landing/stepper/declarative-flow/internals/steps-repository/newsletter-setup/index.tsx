@@ -1,9 +1,8 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Onboard } from '@automattic/data-stores';
 import { hexToRgb, StepContainer, base64ImageToBlob } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
-import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -37,17 +36,10 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 		buttonText: translate( 'Save and continue' ),
 	};
 
-	const {
-		setSiteTitle,
-		setSiteAccentColor,
-		setSiteDescription,
-		setSiteLogo,
-		setGoals,
-		resetGoals,
-	} = useDispatch( ONBOARD_STORE );
+	const { setSiteTitle, setSiteAccentColor, setSiteDescription, setSiteLogo } =
+		useDispatch( ONBOARD_STORE );
 
 	const [ invalidSiteTitle, setInvalidSiteTitle ] = useState( false );
-	const [ paidSubscribers, setPaidSubscribers ] = useState( false );
 	const [ siteTitle, setComponentSiteTitle ] = useState( '' );
 	const [ tagline, setTagline ] = useState( '' );
 	const [ accentColor, setAccentColor ] = useState< AccentColor >( defaultAccentColor );
@@ -56,7 +48,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 	const state = useSelect( ( select ) => select( ONBOARD_STORE ) as OnboardSelect, [] ).getState();
 
 	useEffect( () => {
-		const { siteAccentColor, siteTitle, siteDescription, siteLogo, paidSubscribers } = state;
+		const { siteAccentColor, siteTitle, siteDescription, siteLogo } = state;
 		if ( siteAccentColor && siteAccentColor !== '' && siteAccentColor !== defaultAccentColor.hex ) {
 			setAccentColor( { hex: siteAccentColor, rgb: hexToRgb( siteAccentColor ) } );
 		} else {
@@ -65,7 +57,6 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 
 		setTagline( siteDescription );
 		setComponentSiteTitle( siteTitle );
-		setPaidSubscribers( paidSubscribers );
 		if ( siteLogo ) {
 			const file = new File( [ base64ImageToBlob( siteLogo ) ], 'site-logo.png' );
 			setSelectedFile( file );
@@ -88,15 +79,6 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 		setSiteDescription( tagline );
 		setSiteTitle( siteTitle );
 		setSiteAccentColor( accentColor.hex );
-		setPaidSubscribers( paidSubscribers );
-
-		if ( paidSubscribers ) {
-			setGoals( [ Onboard.SiteGoal.PaidSubscribers ] );
-		} else {
-			// Clears goals entirely each time, regardless if they were set previously or not.
-			// We could instead just handle removing PaidSubscribers goal, and avoid doing anything if nothing wasn't set ever.
-			resetGoals();
-		}
 
 		if ( selectedFile && base64Image ) {
 			try {
@@ -109,10 +91,6 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 		if ( siteTitle.trim().length ) {
 			submit?.( { siteTitle, tagline, siteAccentColor: accentColor.hex, paidSubscribers } );
 		}
-	};
-
-	const onPaidSubscribersChanged = ( event: ChangeEvent< HTMLInputElement > ) => {
-		setPaidSubscribers( !! event?.target.checked );
 	};
 
 	return (
@@ -152,12 +130,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 							setAccentColor={ setAccentColor }
 							labelText={ newsletterFormText?.colorLabel }
 						/>
-						{ isEnabled( 'newsletter/paid-subscribers' ) && (
-							<PaidMembershipsControl
-								paidSubscribers={ paidSubscribers }
-								onChange={ onPaidSubscribersChanged }
-							/>
-						) }
+						{ isEnabled( 'newsletter/paid-subscribers' ) && <PaidMembershipsControl /> }
 					</>
 				</SetupForm>
 			}
