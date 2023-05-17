@@ -169,7 +169,7 @@ body:has(.new-hosted-site.options) {
 	}
 
 	.data-center-picker {
-		color: var(--color-text);
+		color: var(--studio-gray-60);
 	}
 
 	.data-center-picker__description {
@@ -180,7 +180,7 @@ body:has(.new-hosted-site.options) {
 		&,
 		& a {
 			font-size: $font-body-extra-small;
-			color: var(--color-text);
+			color: var(--studio-gray-60);
 		}
 
 		a {
