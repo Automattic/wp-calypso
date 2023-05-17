@@ -2,7 +2,7 @@ import { Button } from '@automattic/components';
 import { Icon, plus } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import SelectEmailCheckbox from './select-email-checkbox';
+import EmailItemContent from './email-item-content';
 import type {
 	MonitorSettingsEmail,
 	StateMonitorSettingsEmail,
@@ -44,7 +44,7 @@ export default function ConfigureEmailNotification( {
 	return (
 		<div className="configure-email-address__card-container">
 			{ allEmailItems.map( ( item ) => (
-				<SelectEmailCheckbox key={ item.email } item={ item } toggleModal={ toggleModal } />
+				<EmailItemContent key={ item.email } item={ item } toggleModal={ toggleModal } />
 			) ) }
 			<Button
 				compact

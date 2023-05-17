@@ -15,7 +15,7 @@ interface Props {
 	toggleModal: ( item?: StateMonitorSettingsEmail, action?: AllowedMonitorContactActions ) => void;
 }
 
-export default function SelectEmailCheckbox( { item, toggleModal }: Props ) {
+export default function EmailItemContent( { item, toggleModal }: Props ) {
 	const translate = useTranslate();
 
 	const [ isOpen, setIsOpen ] = useState( false );
