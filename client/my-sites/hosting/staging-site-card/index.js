@@ -74,6 +74,10 @@ const SiteName = styled.a( {
 	},
 } );
 
+const StagingSiteLink = styled.div( {
+	wordBreak: 'break-word',
+} );
+
 export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId, translate } ) => {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
@@ -302,9 +306,9 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 							</SiteName>
 							<SitesStagingBadge>{ translate( 'Staging' ) }</SitesStagingBadge>
 						</SiteNameContainer>
-						<div>
+						<StagingSiteLink>
 							<a href={ stagingSite.url }>{ stagingSite.url }</a>
-						</div>
+						</StagingSiteLink>
 					</SiteInfo>
 				</SiteRow>
 				<ActionButtons>
