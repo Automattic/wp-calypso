@@ -510,7 +510,7 @@ export const HelpCenterContactForm = () => {
 		return isSubmitting ? formTitles.buttonSubmittingLabel : formTitles.buttonLabel;
 	};
 
-	if ( mode === 'CHAT' && ! thirdPartyCookiesAllowed ) {
+	if ( mode === 'CHAT' && thirdPartyCookiesAllowed === false ) {
 		return <ThirdPartyCookiesNotice />;
 	}
 
