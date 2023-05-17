@@ -1,21 +1,4 @@
-export interface RawReceiptPurchase {
-	delayed_provisioning?: boolean;
-	free_trial?: boolean;
-	is_domain_registration?: boolean;
-	meta: string;
-	product_id: string | number;
-	product_slug: string;
-	product_type: string;
-	product_name: string;
-	product_name_short: string;
-	new_quantity: number;
-	registrar_support_url?: string;
-	is_email_verified?: boolean;
-	is_root_domain_with_us?: boolean;
-	is_renewal?: boolean;
-	will_auto_renew?: boolean;
-	saas_redirect_url?: string;
-}
+import type { Purchase } from '@automattic/wpcom-checkout';
 
 export interface ReceiptPurchase {
 	delayedProvisioning: boolean;
@@ -35,13 +18,21 @@ export interface ReceiptPurchase {
 	saasRedirectUrl: string;
 }
 
+export interface FailedReceiptPurchase {
+	meta: string;
+	productId: string | number;
+	productSlug: string;
+	productCost: string | number;
+	productName: string;
+}
+
 export interface RawReceiptData {
 	receipt_id: string;
 	display_price: string;
 	price_float: number;
 	price_integer: number;
 	currency: string;
-	purchases: RawReceiptPurchase[] | undefined | false;
+	purchases: Purchase[] | undefined | false;
 }
 
 export interface ReceiptData {
@@ -51,6 +42,7 @@ export interface ReceiptData {
 	priceFloat: number;
 	priceInteger: number;
 	purchases: ReceiptPurchase[];
+	failedPurchases: FailedReceiptPurchase[];
 }
 
 export interface ReceiptState {
