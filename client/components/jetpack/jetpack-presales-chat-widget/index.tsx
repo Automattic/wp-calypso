@@ -30,7 +30,7 @@ function get_config_chat_key( keyType: KeyType ): keyof ConfigData {
 
 export const ZendeskJetpackChat: React.VFC< { keyType: KeyType } > = ( { keyType } ) => {
 	const [ error, setError ] = useState( false );
-	const { data: isStaffed } = useJpPresalesAvailabilityQuery( setError );
+	const { data: isStaffed } = useJpPresalesAvailabilityQuery( true, setError );
 	const zendeskChatKey: string | false = useMemo( () => {
 		return config( get_config_chat_key( keyType ) );
 	}, [ keyType ] );
