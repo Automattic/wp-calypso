@@ -10,7 +10,7 @@ import type { Design } from '@automattic/design-picker';
 
 import './styles.scss';
 
-const Patterns: Step = function Patterns( { navigation } ) {
+const Patterns: Step = function Patterns( { navigation, flow } ) {
 	const { goNext, goBack, submit } = navigation;
 	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
 	const { __ } = useI18n();
@@ -29,9 +29,10 @@ const Patterns: Step = function Patterns( { navigation } ) {
 			isFullLayout={ true }
 			stepContent={
 				<AsyncLoad
-					require="@automattic/pattern-picker"
+					require="@automattic/design-carousel"
 					placeholder={ null }
 					onPick={ handleSubmit }
+					flow={ flow }
 				/>
 			}
 			recordTracksEvent={ recordTracksEvent }

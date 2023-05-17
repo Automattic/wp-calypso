@@ -10,7 +10,7 @@ export const getDesignPreviewUrl = (
 	design: Design,
 	options: DesignPreviewOptions = {}
 ): string => {
-	const { recipe, slug, preview_data } = design;
+	const { recipe, slug, preview_data, title } = design;
 
 	//Anchor.fm themes get previews from their starter sites, ${slug}starter.wordpress.com
 	if ( [ 'hannah', 'riley', 'gilbert' ].indexOf( slug ) >= 0 ) {
@@ -33,12 +33,13 @@ export const getDesignPreviewUrl = (
 			? options.viewport_height || DEFAULT_VIEWPORT_HEIGHT
 			: undefined,
 		source_site: 'patternboilerplates.wordpress.com',
-		use_screenshot_overrides: options.use_screenshot_overrides,
+		use_screenshot_overrides: options.use_screenshot_overrides || true,
 		remove_assets: options.remove_assets,
 		...( options.style_variation &&
 			options.style_variation.slug !== 'default' && {
 				style_variation: options.style_variation.title,
 			} ),
+		site_title: title,
 	} );
 
 	// The preview url is sometimes used in a `background-image: url()` CSS rule and unescaped
