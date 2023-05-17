@@ -97,10 +97,24 @@ export default function NotificationSettings( {
 		'jetpack/pro-dashboard-monitor-multiple-email-recipients'
 	);
 
-	const handleSetEmailItems = useCallback( ( settings: MonitorSettings ) => {
-		const userEmails = settings.monitor_user_emails || [];
-		setDefaultUserEmailAddresses( userEmails );
-	}, [] );
+	const handleSetEmailItems = useCallback(
+		( settings: MonitorSettings ) => {
+			const userEmails = settings.monitor_user_emails || [];
+			setDefaultUserEmailAddresses( userEmails );
+
+			if ( isMultipleEmailEnabled ) {
+				const userEmailItems = userEmails.map( ( email ) => ( {
+					email,
+					name: 'Default Email', //FIXME: This should be dynamic.
+					isDefault: true,
+					verified: true,
+				} ) );
+				// This will also include site's additional email addresses.
+				setAllEmailItems( [ ...userEmailItems ] );
+			}
+		},
+		[ isMultipleEmailEnabled ]
+	);
 
 	useEffect( () => {
 		if ( settings?.monitor_deferment_time ) {
@@ -254,9 +268,7 @@ export default function NotificationSettings( {
 
 					{ enableEmailNotification && isMultipleEmailEnabled && (
 						<ConfigureEmailNotification
-							defaultEmailAddresses={ defaultUserEmailAddresses }
 							toggleModal={ toggleAddEmailModal }
-							setAllEmailItems={ setAllEmailItems }
 							allEmailItems={ allEmailItems }
 						/>
 					) }
