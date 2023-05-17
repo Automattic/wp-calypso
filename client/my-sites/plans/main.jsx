@@ -9,6 +9,8 @@ import {
 	PLAN_WOOEXPRESS_SMALL_MONTHLY,
 	PLAN_WOOEXPRESS_MEDIUM,
 	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
+	TYPE_PERSONAL,
+	TYPE_PREMIUM,
 } from '@automattic/calypso-products';
 import { is2023PricingGridActivePage } from '@automattic/calypso-products/src/plans-utilities';
 import { WpcomPlansUI } from '@automattic/data-stores';
@@ -259,6 +261,7 @@ class Plans extends Component {
 		}
 
 		const hideFreePlan = ! is2023PricingGridVisible || this.props.isDomainAndPlanPackageFlow;
+		const planTypes = this.props.jetpackAppPlans ? [ TYPE_PERSONAL, TYPE_PREMIUM ] : null;
 
 		const hidePlanTypeSelector =
 			this.props.domainAndPlanPackage &&
@@ -281,6 +284,7 @@ class Plans extends Component {
 				showTreatmentPlansReorderTest={ this.props.showTreatmentPlansReorderTest }
 				hidePlansFeatureComparison={ this.props.isDomainAndPlanPackageFlow }
 				is2023PricingGridVisible={ is2023PricingGridVisible }
+				planTypes={ planTypes }
 			/>
 		);
 	}

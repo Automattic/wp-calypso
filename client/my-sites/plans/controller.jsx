@@ -39,6 +39,7 @@ export function plans( context, next ) {
 					: undefined
 			}
 			domainAndPlanPackage={ context.query.domainAndPlanPackage }
+			jetpackAppPlans={ context.query.jetpackAppPlans }
 			is2023PricingGridVisible={ is2023PricingGridActivePage( null, context.pathname ) }
 		/>
 	);
