@@ -1,5 +1,4 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Onboard } from '@automattic/data-stores';
 import {
 	StepContainer,
 	base64ImageToBlob,
@@ -9,7 +8,7 @@ import {
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import useAccentColor from 'calypso/landing/stepper/hooks/use-accent-color';
 import useSaveAccentColor from 'calypso/landing/stepper/hooks/use-save-accent-color';
@@ -47,16 +46,9 @@ const NewsletterPostSetup: Step = ( { navigation } ) => {
 	const [ selectedFile, setSelectedFile ] = useState< File | undefined >();
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ isSubmitError, setIsSubmitError ] = useState( false );
-	const { setGoalsOnSite, saveSiteSettings } = useDispatch( SITE_STORE );
+	const { saveSiteSettings } = useDispatch( SITE_STORE );
 
-	const {
-		siteTitle,
-		setComponentSiteTitle,
-		tagline,
-		setTagline,
-		paidSubscribers,
-		setPaidSubscribers,
-	} = useSetupFormInitialValues();
+	const { siteTitle, setComponentSiteTitle, tagline, setTagline } = useSetupFormInitialValues();
 
 	useEffect( () => {
 		if ( fetchedAccentColor ) {
@@ -96,10 +88,6 @@ const NewsletterPostSetup: Step = ( { navigation } ) => {
 						new File( [ base64ImageToBlob( base64Image ) ], 'site-logo.png' )
 					);
 				}
-
-				const goals = paidSubscribers ? [ Onboard.SiteGoal.PaidSubscribers ] : [];
-				setGoalsOnSite( site.ID, goals );
-
 				setIsLoading( false );
 				submit?.( { color: accentColor.hex.replace( '#', '' ) } );
 			}
@@ -107,10 +95,6 @@ const NewsletterPostSetup: Step = ( { navigation } ) => {
 			setIsSubmitError( true );
 			setIsLoading( false );
 		}
-	};
-
-	const onPaidSubscribersChanged = ( event: ChangeEvent< HTMLInputElement > ) => {
-		setPaidSubscribers( !! event?.target.checked );
 	};
 
 	return (
@@ -151,12 +135,7 @@ const NewsletterPostSetup: Step = ( { navigation } ) => {
 							setAccentColor={ setAccentColor }
 							labelText={ newsletterFormText?.colorLabel }
 						/>
-						{ isEnabled( 'newsletter/paid-subscribers' ) && (
-							<PaidMembershipsControl
-								paidSubscribers={ paidSubscribers }
-								onChange={ onPaidSubscribersChanged }
-							/>
-						) }
+						{ isEnabled( 'newsletter/paid-subscribers' ) && <PaidMembershipsControl /> }
 					</>
 				</SetupForm>
 			}
