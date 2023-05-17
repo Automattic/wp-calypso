@@ -99,18 +99,13 @@ export class SupportComponent {
 	async search( text: string ): Promise< void > {
 		await this.helpCenter.getByPlaceholder( 'Search for help' ).fill( text );
 
-		// Wait on two factors in the inline help popover:
-		//	- the query to the search endpoint;
-		//	- the placeholder elements in the search results.
-		await Promise.all( [
-			// @example https://public-api.wordpress.com/wpcom/v2/help/search/wpcom?query=themes
-			// this.page.waitForResponse( /wpcom\?query/ ),
-			// this.page.locator( '.placeholder-lines__help-center' ).waitFor( { state: 'detached' } ),
-			this.helpCenter
-				.getByLabel( 'Search Results' )
-				.getByRole( 'list', { name: 'Recommended resources' } )
-				.waitFor( { state: 'visible' } ),
-		] );
+		// Wait for the search results to populate.
+		// For any query (valid or invalid), the Recommended resources will populate,
+		// so check for the presence of results under this header.
+		await this.helpCenter
+			.getByLabel( 'Search Results' )
+			.getByRole( 'list', { name: 'Recommended resources' } )
+			.waitFor( { state: 'visible' } );
 	}
 
 	/**
