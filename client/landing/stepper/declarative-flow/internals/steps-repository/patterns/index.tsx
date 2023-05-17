@@ -29,7 +29,7 @@ const Patterns: Step = function Patterns( { navigation, flow } ) {
 			isFullLayout={ true }
 			stepContent={
 				<AsyncLoad
-					require="@automattic/design-carousel"
+					require="@automattic/pattern-picker"
 					placeholder={ null }
 					onPick={ handleSubmit }
 					flow={ flow }
