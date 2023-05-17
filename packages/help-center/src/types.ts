@@ -59,13 +59,3 @@ export interface SupportTicket {
 	url: string;
 	when: string;
 }
-
-export interface MessagingAuth {
-	user: {
-		jwt: string;
-	};
-}
-
-export interface MessagingAvailability {
-	is_available: boolean;
-}

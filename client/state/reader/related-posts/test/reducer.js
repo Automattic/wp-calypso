@@ -21,7 +21,7 @@ describe( 'items', () => {
 				}
 			)
 		).toEqual( {
-			'1-1-all': [ 2, 3, 4 ],
+			'1-1-all-2': [ 2, 3, 4 ],
 		} );
 	} );
 
@@ -29,7 +29,7 @@ describe( 'items', () => {
 		expect(
 			items(
 				{
-					'1-1-all': [ 2, 3, 4 ],
+					'1-1-all-2': [ 2, 3, 4 ],
 				},
 				{
 					type: READER_RELATED_POSTS_RECEIVE,
@@ -41,7 +41,7 @@ describe( 'items', () => {
 				}
 			)
 		).toEqual( {
-			'1-1-all': [ 3, 4, 9 ],
+			'1-1-all-2': [ 3, 4, 9 ],
 		} );
 	} );
 } );
@@ -60,7 +60,7 @@ describe( 'queuedRequests', () => {
 				}
 			)
 		).toEqual( {
-			'1-1-all': true,
+			'1-1-all-2': true,
 		} );
 	} );
 
@@ -68,7 +68,7 @@ describe( 'queuedRequests', () => {
 		expect(
 			queuedRequests(
 				{
-					'1-1-all': true,
+					'1-1-all-2': true,
 				},
 				{
 					type: READER_RELATED_POSTS_REQUEST_SUCCESS,
@@ -79,7 +79,7 @@ describe( 'queuedRequests', () => {
 				}
 			)
 		).toEqual( {
-			'1-1-all': false,
+			'1-1-all-2': false,
 		} );
 	} );
 
@@ -96,7 +96,7 @@ describe( 'queuedRequests', () => {
 				}
 			)
 		).toEqual( {
-			'1-1-all': false,
+			'1-1-all-2': false,
 		} );
 	} );
 } );

@@ -39,7 +39,6 @@
 	"zendesk_presales_chat_key_akismet": false,
 	"zendesk_presales_chat_key_jp_checkout": false,
 	"zendesk_presales_chat_key_jp_agency_dashboard": false,
-	"zendesk_support_chat_key": false,
 	"upwork_support_locales": [
 		"de",
 		"de-at",
