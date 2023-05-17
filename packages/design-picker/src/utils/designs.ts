@@ -10,7 +10,7 @@ export const getDesignPreviewUrl = (
 	design: Design,
 	options: DesignPreviewOptions = {}
 ): string => {
-	const { recipe, slug, preview_data, title } = design;
+	const { recipe, slug, preview_data } = design;
 
 	//Anchor.fm themes get previews from their starter sites, ${slug}starter.wordpress.com
 	if ( [ 'hannah', 'riley', 'gilbert' ].indexOf( slug ) >= 0 ) {
@@ -39,7 +39,6 @@ export const getDesignPreviewUrl = (
 			options.style_variation.slug !== 'default' && {
 				style_variation: options.style_variation.title,
 			} ),
-		site_title: title,
 	} );
 
 	// The preview url is sometimes used in a `background-image: url()` CSS rule and unescaped
