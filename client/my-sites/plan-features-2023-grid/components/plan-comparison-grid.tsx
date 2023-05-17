@@ -818,6 +818,9 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 		isSmallBreakpoint,
 		displayedPlansProperties,
 		isInSignup,
+		isSignupLargeBreakpoint,
+		isSignupMediumBreakpoint,
+		isSignupSmallBreakpoint,
 	] );
 
 	const restructuredFootnotes = useMemo( () => {
