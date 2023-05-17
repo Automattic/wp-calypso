@@ -110,7 +110,6 @@ section.contact-form-submit {
 	box-sizing: border-box;
 	background: #fff;
 	padding: 16px;
-	// add a 5px horizontal gap between children
 	& > * + * {
 		margin-left: 10px;
 	}
