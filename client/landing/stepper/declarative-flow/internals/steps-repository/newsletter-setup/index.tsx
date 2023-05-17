@@ -89,7 +89,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 		}
 
 		if ( siteTitle.trim().length ) {
-			submit?.( { siteTitle, tagline, siteAccentColor: accentColor.hex, paidSubscribers } );
+			submit?.( { siteTitle, tagline, siteAccentColor: accentColor.hex } );
 		}
 	};
 
