@@ -42,7 +42,7 @@
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"i18n-calypso": "workspace:^",
 		"jest": "^27.3.1",
-		"react": "^17.0.2",
+		"react": "^18.2.0",
 		"rimraf": "^3.0.2"
 	}
 }
