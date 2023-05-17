@@ -101,7 +101,15 @@ export const clearValidationError = ( siteId ) => ( dispatch ) => {
 };
 
 export const requestSiteAddressChange =
-	( siteId, newBlogName, domain, oldDomain, siteType, discard = true, requireValidEmail = true ) =>
+	(
+		siteId,
+		newBlogName,
+		domain,
+		oldDomain,
+		siteType,
+		discard = true,
+		requireVerifiedEmail = true
+	) =>
 	async ( dispatch, getState ) => {
 		dispatch( {
 			type: SITE_ADDRESS_CHANGE_REQUEST,
@@ -115,7 +123,7 @@ export const requestSiteAddressChange =
 			old_domain: oldDomain,
 			site_type: siteType,
 			discard,
-			require_valid_email: requireValidEmail,
+			require_verified_email: requireVerifiedEmail,
 		};
 
 		dispatch( recordTracksEvent( 'calypso_siteaddresschange_request', eventProperties ) );
@@ -134,7 +142,7 @@ export const requestSiteAddressChange =
 					type: siteType,
 					discard,
 					nonce,
-					require_valid_email: requireValidEmail,
+					require_verified_email: requireVerifiedEmail,
 				}
 			);
 

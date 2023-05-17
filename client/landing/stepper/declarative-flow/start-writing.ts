@@ -117,12 +117,6 @@ const startWriting: Flow = {
 					return navigate( 'launchpad' );
 				}
 				case 'domains':
-					if ( siteSlug ) {
-						await updateLaunchpadSettings( siteSlug, {
-							checklist_statuses: { domain_upsell_deferred: true },
-						} );
-					}
-
 					if ( providedDependencies?.freeDomain ) {
 						const freeDomainSuffix = '.wordpress.com';
 						const newDomainName = String( providedDependencies?.domainName ).replace(
@@ -130,25 +124,31 @@ const startWriting: Flow = {
 							''
 						);
 
-						requestSiteAddressChange(
-							selectedSiteId,
-							newDomainName,
-							'wordpress.com',
-							siteSlug,
-							freeSiteAddressType.BLOG,
-							true,
-							false
-						)( dispatch, state );
+						if ( providedDependencies?.domainName ) {
+							await requestSiteAddressChange(
+								selectedSiteId,
+								newDomainName,
+								'wordpress.com',
+								siteSlug,
+								freeSiteAddressType.BLOG,
+								true,
+								false
+							)( dispatch, state );
+						}
+
+						const currentSiteSlug = String( providedDependencies?.domainName ?? siteSlug );
 
 						await replaceProductsInCart(
-							siteSlug as string,
+							currentSiteSlug as string,
 							[ getPlanCartItem() ].filter( Boolean ) as MinimalRequestCartProduct[]
 						);
 
+						await updateLaunchpadSettings( currentSiteSlug, {
+							checklist_statuses: { domain_upsell_deferred: true },
+						} );
+
 						return window.location.assign(
-							`/setup/start-writing/launchpad?siteSlug=${ encodeURIComponent(
-								newDomainName + freeDomainSuffix
-							) }`
+							`/setup/start-writing/launchpad?siteSlug=${ currentSiteSlug }`
 						);
 					}
 
