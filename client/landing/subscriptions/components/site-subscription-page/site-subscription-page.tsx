@@ -2,6 +2,7 @@ import { Gridicon } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { SiteIcon } from 'calypso/landing/subscriptions/components/site-icon';
@@ -38,6 +39,7 @@ const SiteSubscriptionPage = () => {
 		deliveryFrequency,
 		subscribers,
 	} = data;
+	const [ showSettings, setShowSettings ] = useState( true );
 
 	const { mutate: unsubscribe, isLoading: unsubscribing } =
 		SubscriptionManager.useSiteUnsubscribeMutation();
@@ -50,6 +52,11 @@ const SiteSubscriptionPage = () => {
 		// Full page Wordpress logo loader
 		return <div>Loading...</div>;
 	}
+
+	const handleUnsubscribe: () => void = () => {
+		setShowSettings( false );
+		unsubscribe( { blog_id: blogId, url: data.siteUrl } );
+	};
 
 	const subHeaderText =
 		subscribers > 1
@@ -79,24 +86,28 @@ const SiteSubscriptionPage = () => {
 						<FormattedHeader brandFont headerText={ siteName } subHeaderText={ subHeaderText } />
 					</header>
 
-					<SiteSubscriptionSettings
-						blogId={ blogId }
-						notifyMeOfNewPosts={ notifyMeOfNewPosts }
-						emailMeNewPosts={ emailMeNewPosts }
-						deliveryFrequency={ deliveryFrequency }
-						emailMeNewComments={ emailMeNewComments }
-					/>
+					{ showSettings && (
+						<>
+							<SiteSubscriptionSettings
+								blogId={ blogId }
+								notifyMeOfNewPosts={ notifyMeOfNewPosts }
+								emailMeNewPosts={ emailMeNewPosts }
+								deliveryFrequency={ deliveryFrequency }
+								emailMeNewComments={ emailMeNewComments }
+							/>
 
-					<hr className="subscriptions__separator" />
+							<hr className="subscriptions__separator" />
 
-					<Button
-						className="site-subscription-page__unsubscribe-button"
-						isSecondary
-						onClick={ () => unsubscribe( { blog_id: blogId, url: data.siteUrl } ) }
-						disabled={ unsubscribing }
-					>
-						{ translate( 'Cancel subscription' ) }
-					</Button>
+							<Button
+								className="site-subscription-page__unsubscribe-button"
+								isSecondary
+								onClick={ () => handleUnsubscribe() }
+								disabled={ unsubscribing }
+							>
+								{ translate( 'Cancel subscription' ) }
+							</Button>
+						</>
+					) }
 				</div>
 			</div>
 
