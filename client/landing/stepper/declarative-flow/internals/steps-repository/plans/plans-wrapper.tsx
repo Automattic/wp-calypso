@@ -48,10 +48,12 @@ interface Props {
 	is2023PricingGridVisible: boolean;
 }
 
-function getPlanTypes( flowName: string | null ) {
+function getPlanTypes( flowName: string | null, hideFreePlan: boolean ) {
 	switch ( flowName ) {
 		case START_WRITING_FLOW:
-			return [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ];
+			return hideFreePlan
+				? [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ]
+				: [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ];
 		case NEWSLETTER_FLOW:
 			return [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM ];
 		case LINK_IN_BIO_FLOW:
@@ -88,7 +90,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const isReskinned = true;
 	const customerType = 'personal';
 	const isInVerticalScrollingPlansExperiment = true;
-	const planTypes = getPlanTypes( props?.flowName );
+	const planTypes = getPlanTypes( props?.flowName, reduxHideFreePlan );
 	const headerText = __( 'Choose a plan' );
 	const isInSignup = props?.flowName === DOMAIN_UPSELL_FLOW ? false : true;
 
