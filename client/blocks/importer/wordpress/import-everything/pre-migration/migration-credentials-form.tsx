@@ -11,18 +11,20 @@ import {
 	INITIAL_FORM_STATE,
 	validate,
 } from 'calypso/components/advanced-credentials/form';
+import { useMigrateProvisionMutation } from 'calypso/data/site-migration/migrate-provision-mutation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { updateCredentials } from 'calypso/state/jetpack/credentials/actions';
 import getJetpackCredentialsUpdateError from 'calypso/state/selectors/get-jetpack-credentials-update-error';
 import getJetpackCredentialsUpdateStatus from 'calypso/state/selectors/get-jetpack-credentials-update-status';
 
 interface Props {
-	siteId: number | null;
+	sourceSiteId: number;
+	targetSiteId: number;
 	startImport: () => void;
 }
 
 export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( props ) => {
-	const { siteId, startImport } = props;
+	const { sourceSiteId, targetSiteId, startImport } = props;
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -32,7 +34,7 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 
 	const formSubmissionStatus = useSelector(
 		( state ) =>
-			getJetpackCredentialsUpdateStatus( state, siteId ) as
+			getJetpackCredentialsUpdateStatus( state, sourceSiteId ) as
 				| 'unsubmitted'
 				| 'pending'
 				| 'success'
@@ -47,37 +49,42 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 		setFormErrors( validate( formState, formMode ) );
 	}, [ formState, formMode ] );
 
-	const handleUpdateCredentials = useCallback(
+	const handleUpdateCredentials = () => {
+		if ( formHasErrors ) {
+			return;
+		}
+
+		const credentials = { ...formState };
+
+		if ( formMode === FormMode.Password ) {
+			credentials.kpri = '';
+		} else if ( formMode === FormMode.PrivateKey ) {
+			credentials.pass = '';
+		}
+
+		// @todo custom event for migration flow?
+		dispatch( recordTracksEvent( 'calypso_jetpack_advanced_credentials_flow_credentials_update' ) );
+		dispatch( updateCredentials( sourceSiteId, credentials, true, false ) );
+	};
+
+	const { migrateProvision, isLoading, isError, error } =
+		useMigrateProvisionMutation( handleUpdateCredentials );
+
+	const submitCredentials = useCallback(
 		( e ) => {
 			e.preventDefault();
-
-			// First provision the site if necessary.
-
-			if ( formHasErrors ) {
-				return;
-			}
-
-			const credentials = { ...formState };
-
-			if ( formMode === FormMode.Password ) {
-				credentials.kpri = '';
-			} else if ( formMode === FormMode.PrivateKey ) {
-				credentials.pass = '';
-			}
-
-			// @todo custom event for migration flow?
-			dispatch(
-				recordTracksEvent( 'calypso_jetpack_advanced_credentials_flow_credentials_update' )
-			);
-			dispatch( updateCredentials( siteId, credentials, true, false ) );
+			migrateProvision( targetSiteId, sourceSiteId, true );
 		},
-		[ formHasErrors, dispatch, siteId, formState, formMode ]
+		[ formHasErrors, dispatch, sourceSiteId, formState, formMode ]
 	);
 
-	const updateError = useSelector( ( state ) => getJetpackCredentialsUpdateError( state, siteId ) );
+	const updateError = useSelector( ( state ) =>
+		getJetpackCredentialsUpdateError( state, sourceSiteId )
+	);
+
 	return (
 		<>
-			<form onSubmit={ handleUpdateCredentials }>
+			<form onSubmit={ submitCredentials }>
 				<CredentialsForm
 					disabled={ isFormSubmissionPending }
 					formErrors={ formErrors }
@@ -96,6 +103,13 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 					</div>
 				) }
 
+				{ isError && (
+					<div className="pre-migration__content pre-migration__error">
+						We could not store your credentials:
+						{ error.message }
+					</div>
+				) }
+
 				<div className="pre-migration__content pre-migration__proceed pre-migration__credential-buttons">
 					<NextButton
 						type="submit"
@@ -103,7 +117,7 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 						className="pre-migration__form-submit-btn"
 						disabled={ formHasErrors }
 					>
-						{ isFormSubmissionPending
+						{ isFormSubmissionPending || isLoading
 							? translate( 'Testing credentials' )
 							: translate( 'Start migration' ) }
 					</NextButton>

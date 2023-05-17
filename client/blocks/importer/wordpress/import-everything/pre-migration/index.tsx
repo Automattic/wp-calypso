@@ -68,7 +68,11 @@ export const PreMigrationScreen: React.FunctionComponent< Props > = ( props: Pro
 							<CredentialsHelper />
 						</div>
 						<div className="pre-migration__form">
-							<MigrationCredentialsForm siteId={ sourceSite.ID } startImport={ startImport } />
+							<MigrationCredentialsForm
+								sourceSiteId={ sourceSite.ID }
+								targetSiteId={ targetSite.ID }
+								startImport={ startImport }
+							/>
 						</div>
 					</div>
 				) }
