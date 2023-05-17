@@ -14,7 +14,7 @@ const ACTIVE_STATUSES = [ 'New', 'Open', 'Hold' ];
  *
  * NOTE: Chat mode isn't functional at the moment.
  */
-export function useSupportHistory( type: 'chat' | 'ticket', email: string, show = true ) {
+export function useHasActiveSupport( type: 'chat' | 'ticket', email: string, show = true ) {
 	return useQuery(
 		[ 'help-support-history', type, email ],
 		() =>
@@ -37,12 +37,10 @@ export function useSupportHistory( type: 'chat' | 'ticket', email: string, show 
 			refetchOnMount: true,
 			enabled: show,
 			select: ( response ) => {
-				return response.data.filter( ( session ) => ACTIVE_STATUSES.includes( session.status ) );
+				const recentSession = response.data[ 0 ];
+				return ACTIVE_STATUSES.includes( recentSession.status ) ? recentSession : null;
 			},
 			staleTime: 30 * 60 * 1000,
-			meta: {
-				persist: false,
-			},
 		}
 	);
 }
