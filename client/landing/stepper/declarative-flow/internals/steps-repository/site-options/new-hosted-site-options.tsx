@@ -20,8 +20,21 @@ import { ONBOARD_STORE } from '../../../../stores';
 import type { StepProps } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 
-const getSiteSuggestion = (): Promise< { title: string } > =>
-	wpcom.req.get( '/me/sites/suggestion' );
+type SuggestionsResponse =
+	| {
+			success: true;
+			suggestions: { title: string }[];
+	  }
+	| {
+			success: false;
+	  };
+
+const getSiteSuggestions = (): Promise< SuggestionsResponse > =>
+	wpcom.req.get( {
+		method: 'GET',
+		apiNamespace: 'wpcom/v2',
+		path: '/site-suggestions',
+	} );
 
 export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigation' > ) => {
 	const { currentSiteTitle, currentSiteGeoAffinity } = useSelect(
@@ -40,11 +53,11 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 	const [ formTouched, setFormTouched ] = React.useState( false );
 	const translate = useTranslate();
 
-	useQuery( [ 'me', 'sites', 'suggestion' ], getSiteSuggestion, {
+	useQuery( [ 'site-suggestions' ], getSiteSuggestions, {
 		enabled: ! currentSiteTitle,
-		onSuccess: ( { title } ) => {
-			if ( ! siteTitle ) {
-				setSiteTitle( title );
+		onSuccess: ( response ) => {
+			if ( ! siteTitle && response.success === true ) {
+				setSiteTitle( response.suggestions[ 0 ].title );
 			}
 		},
 	} );
