@@ -11,13 +11,13 @@ const ThirdPartyCookiesNotice: React.FC = () => {
 	const { __ } = useI18n();
 	const sectionName = useSelector( getSectionName );
 
-	useEffect( () =>
+	useEffect( () => {
 		recordTracksEvent( 'calypso_helpcenter_third_party_cookies_notice_open', {
 			force_site_id: true,
 			location: 'help-center',
 			section: sectionName,
-		} )
-	);
+		} );
+	}, [] ); // Dependencies do not include sectionName on purpose - we just care about reporting it once
 
 	return (
 		<div className="help-center-third-party-cookies-notice">
