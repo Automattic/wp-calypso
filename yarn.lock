@@ -7159,6 +7159,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/gradient-parser@npm:^0.1.2":
+  version: 0.1.2
+  resolution: "@types/gradient-parser@npm:0.1.2"
+  checksum: 11fb28e66a16209904e50ac4e6405c707e103ad00271880732dcf4d73b1e8f65bdab6dd4f371a51b777e8c2fb0a51f38d82d9a0ea5fa44c43684c1f970b77b5d
+  languageName: node
+  linkType: hard
+
 "@types/gtag.js@npm:^0.0.10":
   version: 0.0.10
   resolution: "@types/gtag.js@npm:0.0.10"
@@ -7172,6 +7179,13 @@ __metadata:
   dependencies:
     "@types/unist": "*"
   checksum: 1c8302f30cc951ed963a8f3ac70533e9093c2aebe3a872e2a12dd71fbb005fd37fa1149c56d00d13290bf55f1929fa54ed2334c71874bae56158b4aa59fffa13
+  languageName: node
+  linkType: hard
+
+"@types/highlight-words-core@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "@types/highlight-words-core@npm:1.2.1"
+  checksum: f3795656cbe4215e849faa2e53c74a9c6a7b2e148f54267c6a7f25a4f3cd55374f3e4d2e2618740c96fafabdb36b855f7cec27cab207957d566d0500a10e2312
   languageName: node
   linkType: hard
 
@@ -34678,7 +34692,9 @@ fsevents@^1.2.7:
     "@types/cookie": ^0.4.1
     "@types/debug": ^4.1.7
     "@types/fast-json-stable-stringify": ^2.0.0
+    "@types/gradient-parser": ^0.1.2
     "@types/gtag.js": ^0.0.10
+    "@types/highlight-words-core": ^1.2.1
     "@types/lodash": ^4.14.179
     "@types/node": ^18.11.18
     "@types/page": ^1.11.5
