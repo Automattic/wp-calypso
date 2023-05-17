@@ -1,7 +1,7 @@
 @import "calypso/my-sites/plan-features-2023-grid/media-queries";
 
 .is-section-stepper .plans-features-main__group.is-2023-pricing-grid,
-.is-section-signup .plans-features-main__group.is-2023-pricing-grid {
+.is-section-signup .is-2023-pricing-grid .plans-wrapper {
 	@include pricing-grid-breakpoints;
 }
 
