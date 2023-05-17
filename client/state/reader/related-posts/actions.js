@@ -19,6 +19,7 @@ export function requestRelatedPosts( siteId, postId, scope = SCOPE_ALL, size = 2
 				siteId,
 				postId,
 				scope,
+				size,
 			},
 		} );
 
@@ -44,7 +45,7 @@ export function requestRelatedPosts( siteId, postId, scope = SCOPE_ALL, size = 2
 			( response ) => {
 				dispatch( {
 					type: READER_RELATED_POSTS_REQUEST_SUCCESS,
-					payload: { siteId, postId, scope },
+					payload: { siteId, postId, scope, size },
 				} );
 
 				// collect posts and dispatch
@@ -55,6 +56,7 @@ export function requestRelatedPosts( siteId, postId, scope = SCOPE_ALL, size = 2
 							siteId,
 							postId,
 							scope,
+							size,
 							posts: ( response && response.posts ) || [],
 						},
 					} );
@@ -63,7 +65,7 @@ export function requestRelatedPosts( siteId, postId, scope = SCOPE_ALL, size = 2
 			( err ) => {
 				dispatch( {
 					type: READER_RELATED_POSTS_REQUEST_FAILURE,
-					payload: { siteId, postId, scope, error: err },
+					payload: { siteId, postId, scope, size, error: err },
 					error: true,
 				} );
 
@@ -73,6 +75,7 @@ export function requestRelatedPosts( siteId, postId, scope = SCOPE_ALL, size = 2
 						siteId,
 						postId,
 						scope,
+						size,
 						posts: [],
 					},
 				} );
