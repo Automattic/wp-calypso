@@ -33,15 +33,10 @@ export default function ConfigureEmailNotification( {
 			const defaultEmailItems = defaultEmailAddresses.map( ( email ) => ( {
 				email,
 				name: 'Default Email', //FIXME: This should be dynamic.
-				checked: true,
 				isDefault: true,
 				verified: true,
 			} ) );
-			const addedEmailItems = addedEmailAddresses.map( ( email ) => ( {
-				...email,
-				checked: email.verified, // Checked only if the email is verified.
-			} ) );
-			setAllEmailItems( [ ...defaultEmailItems, ...addedEmailItems ] );
+			setAllEmailItems( [ ...defaultEmailItems, ...addedEmailAddresses ] );
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );

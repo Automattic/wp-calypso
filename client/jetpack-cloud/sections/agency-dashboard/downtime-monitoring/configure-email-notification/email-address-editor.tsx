@@ -7,17 +7,13 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import type {
-	MonitorSettingsEmail,
 	AllowedMonitorContactActions,
+	StateMonitorSettingsEmail,
 } from '../../sites-overview/types';
-interface StateEmailItem extends MonitorSettingsEmail {
-	checked: boolean;
-	isDefault?: boolean;
-}
 
 interface Props {
 	toggleModal: () => void;
-	selectedEmail?: StateEmailItem;
+	selectedEmail?: StateMonitorSettingsEmail;
 	selectedAction?: AllowedMonitorContactActions;
 }
 
