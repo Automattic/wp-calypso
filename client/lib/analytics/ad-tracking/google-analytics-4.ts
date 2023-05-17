@@ -1,3 +1,4 @@
+import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { GaPurchase } from '../utils/cart-to-ga-purchase';
 import { GaItem } from '../utils/product-to-ga-item';
@@ -23,6 +24,9 @@ export function setup( params: Gtag.ConfigParams ) {
 
 	if ( isJetpackCloud() ) {
 		window.gtag( 'config', TRACKING_IDS.jetpackGoogleGA4Gtag, params );
+	}
+	if ( isAkismetCheckout() ) {
+		window.gtag( 'config', TRACKING_IDS.akismetGoogleGA4Gtag, params );
 	}
 }
 
