@@ -6,7 +6,7 @@ import {
 	WPCOM_FEATURES_ATOMIC,
 } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
-import { Component, Fragment, useMemo } from 'react';
+import { Component, Fragment } from 'react';
 import wrapWithClickOutside from 'react-click-outside';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -86,65 +86,56 @@ const MainCards = ( {
 	isWpcomStagingSite,
 	siteId,
 } ) => {
-	const mainCards = useMemo( () => {
-		return [
-			{
-				feature: 'sftp',
-				content: <SFTPCard disabled={ isAdvancedHostingDisabled } />,
-				type: 'advanced',
-			},
-			{
-				feature: 'phpmyadmin',
-				content: <PhpMyAdminCard disabled={ isAdvancedHostingDisabled } />,
-				type: 'advanced',
-			},
-			! isWpcomStagingSite && hasStagingSitesFeature
-				? {
-						feature: 'staging-site',
-						content: <StagingSiteCard disabled={ isAdvancedHostingDisabled } />,
-						type: 'advanced',
-				  }
-				: null,
-			isWpcomStagingSite && siteId
-				? {
-						feature: 'staging-production-site',
-						content: (
-							<StagingSiteProductionCard siteId={ siteId } disabled={ isAdvancedHostingDisabled } />
-						),
-						type: 'advanced',
-				  }
-				: null,
-			isGithubIntegrationEnabled
-				? {
-						feature: 'github',
-						content: <GitHubCard />,
-						type: 'advanced',
-				  }
-				: null,
-			{
-				feature: 'web-server-settings',
-				content: <WebServerSettingsCard disabled={ isAdvancedHostingDisabled } />,
-				type: 'advanced',
-			},
-			{
-				feature: 'restore-plan-software',
-				content: <RestorePlanSoftwareCard disabled={ isBasicHostingDisabled } />,
-				type: 'basic',
-			},
-			{
-				feature: 'cache',
-				content: <CacheCard disabled={ isBasicHostingDisabled } />,
-				type: 'basic',
-			},
-		].filter( ( card ) => card !== null );
-	}, [
-		hasStagingSitesFeature,
-		isAdvancedHostingDisabled,
-		isBasicHostingDisabled,
-		isGithubIntegrationEnabled,
-		isWpcomStagingSite,
-		siteId,
-	] );
+	const mainCards = [
+		{
+			feature: 'sftp',
+			content: <SFTPCard disabled={ isAdvancedHostingDisabled } />,
+			type: 'advanced',
+		},
+		{
+			feature: 'phpmyadmin',
+			content: <PhpMyAdminCard disabled={ isAdvancedHostingDisabled } />,
+			type: 'advanced',
+		},
+		! isWpcomStagingSite && hasStagingSitesFeature
+			? {
+					feature: 'staging-site',
+					content: <StagingSiteCard disabled={ isAdvancedHostingDisabled } />,
+					type: 'advanced',
+			  }
+			: null,
+		isWpcomStagingSite && siteId
+			? {
+					feature: 'staging-production-site',
+					content: (
+						<StagingSiteProductionCard siteId={ siteId } disabled={ isAdvancedHostingDisabled } />
+					),
+					type: 'advanced',
+			  }
+			: null,
+		isGithubIntegrationEnabled
+			? {
+					feature: 'github',
+					content: <GitHubCard />,
+					type: 'advanced',
+			  }
+			: null,
+		{
+			feature: 'web-server-settings',
+			content: <WebServerSettingsCard disabled={ isAdvancedHostingDisabled } />,
+			type: 'advanced',
+		},
+		{
+			feature: 'restore-plan-software',
+			content: <RestorePlanSoftwareCard disabled={ isBasicHostingDisabled } />,
+			type: 'basic',
+		},
+		{
+			feature: 'cache',
+			content: <CacheCard disabled={ isBasicHostingDisabled } />,
+			type: 'basic',
+		},
+	].filter( ( card ) => card !== null );
 
 	const availableTypes = [
 		! isAdvancedHostingDisabled ? 'advanced' : null,
@@ -155,19 +146,17 @@ const MainCards = ( {
 };
 
 const SidebarCards = ( { isBasicHostingDisabled } ) => {
-	const sidebarCards = useMemo( () => {
-		return [
-			{
-				feature: 'site-backup',
-				content: <SiteBackupCard disabled={ isBasicHostingDisabled } />,
-				type: 'basic',
-			},
-			{
-				feature: 'support',
-				content: <SupportCard />,
-			},
-		];
-	}, [ isBasicHostingDisabled ] );
+	const sidebarCards = [
+		{
+			feature: 'site-backup',
+			content: <SiteBackupCard disabled={ isBasicHostingDisabled } />,
+			type: 'basic',
+		},
+		{
+			feature: 'support',
+			content: <SupportCard />,
+		},
+	];
 
 	const availableTypes = isBasicHostingDisabled ? [] : [ 'basic' ];
 
