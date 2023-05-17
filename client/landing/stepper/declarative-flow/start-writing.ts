@@ -91,6 +91,9 @@ const startWriting: Flow = {
 
 					// If the user's site has just been launched.
 					if ( providedDependencies?.blogLaunched && providedDependencies?.siteSlug ) {
+						// Remove the site_intent.
+						setIntentOnSite( providedDependencies?.siteSlug, '' );
+
 						// If the user launched their site with a plan or domain in their cart, redirect them to
 						// checkout before sending them home.
 						if ( getPlanCartItem() || getDomainCartItem() ) {
