@@ -91,8 +91,8 @@ __metadata:
     "@wordpress/compose": ^6.0.0
     "@wordpress/edit-site": ^5.0.0
     classnames: ^2.3.1
-    react: ^17.0.2
-    react-dom: ^17.0.2
+    react: ^18.2.0
+    react-dom: ^18.2.0
     tslib: ^2.3.0
     typescript: ^4.7.4
     utility-types: ^3.10.0
@@ -366,8 +366,8 @@ __metadata:
     "@storybook/manager-webpack5": ^6.4.19
     "@storybook/preset-scss": ^1.0.3
     css-loader: ^6.5.1
-    react: ^17.0.2
-    react-dom: ^17.0.2
+    react: ^18.2.0
+    react-dom: ^18.2.0
     sass-loader: ^12.1.0
     style-loader: ^1.2.1
     webpack: ^5.68.0
@@ -384,8 +384,8 @@ __metadata:
     "@stripe/react-stripe-js": ^1.4.1
     "@stripe/stripe-js": 1.17.1
     debug: ^4.3.3
-    react: ^17.0.2
-    react-dom: ^17.0.2
+    react: ^18.2.0
+    react-dom: ^18.2.0
     typescript: ^4.7.4
   languageName: unknown
   linkType: soft
@@ -470,8 +470,8 @@ __metadata:
     "@wordpress/react-i18n": ^3.21.0
     debug: ^4.3.3
     prop-types: ^15.7.2
-    react: ^17.0.2
-    react-dom: ^17.0.2
+    react: ^18.2.0
+    react-dom: ^18.2.0
     typescript: ^4.7.4
   peerDependencies:
     react: ^17.0.2
@@ -535,8 +535,8 @@ __metadata:
     "@automattic/onboarding": "workspace:^"
     classnames: ^2.3.1
     postcss: ^8.4.5
-    react: ^17.0.2
-    react-dom: ^17.0.2
+    react: ^18.2.0
+    react-dom: ^18.2.0
     react-query: ^3.32.1
     redux: ^4.1.2
     swiper: ^4.5.1
@@ -577,8 +577,8 @@ __metadata:
     classnames: ^2.3.1
     jest: ^27.3.1
     postcss: ^8.4.5
-    react: ^17.0.2
-    react-dom: ^17.0.2
+    react: ^18.2.0
+    react-dom: ^18.2.0
     react-intersection-observer: ^9.4.3
     reakit-utils: ^0.15.1
     redux: ^4.1.2
@@ -612,8 +612,8 @@ __metadata:
     "@wordpress/components": ^23.0.0
     "@wordpress/react-i18n": ^3.21.0
     classnames: ^2.3.1
-    react: ^17.0.2
-    react-dom: ^17.0.2
+    react: ^18.2.0
+    react-dom: ^18.2.0
     tslib: ^2.3.0
     typescript: ^4.7.4
   peerDependencies:
@@ -648,8 +648,8 @@ __metadata:
     "@wordpress/react-i18n": ^3.21.0
     classnames: ^2.3.1
     lodash: ^4.17.21
-    react: ^17.0.2
-    react-dom: ^17.0.2
+    react: ^18.2.0
+    react-dom: ^18.2.0
     tslib: ^2.3.0
     typescript: ^4.7.4
     use-debounce: ^3.1.0
@@ -702,8 +702,8 @@ __metadata:
     "@automattic/explat-client": "workspace:^"
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
-    react: ">=16.8 <18"
-    react-dom: ">=16.8 <18"
+    react: ^18.2.0
+    react-dom: ^18.2.0
     tslib: ">=2.3.0"
     typescript: ^4.7.4
   languageName: unknown
@@ -752,8 +752,8 @@ __metadata:
     "@wordpress/keycodes": ^3.23.0
     classnames: ^2.3.1
     i18n-calypso: "workspace:^"
-    react: ^17.0.2
-    react-dom: ^17.0.2
+    react: ^18.2.0
+    react-dom: ^18.2.0
     tslib: ^2.3.0
     typescript: ^4.7.4
     wpcom-proxy-request: "workspace:^"
@@ -780,8 +780,8 @@ __metadata:
     html-webpack-plugin: ^5.0.0-beta.4
     jest: ^27.2.4
     postcss: ^8.3.11
-    react: ^17.0.2
-    react-dom: ^17.0.2
+    react: ^18.2.0
+    react-dom: ^18.2.0
     react-query: ^3.32.1
     react-redux: ^7.2.6
     redux: ^4.1.2
@@ -804,7 +804,7 @@ __metadata:
     "@tanstack/react-query": ^4.29.1
     debug: 4.3.3
     i18n-calypso: "workspace:^"
-    react: ^17.0.2
+    react: ^18.2.0
     socket.io-client: 2.3.0
     typescript: ^4.7.4
     wpcom-proxy-request: "workspace:^"
@@ -836,8 +836,8 @@ __metadata:
     "@wordpress/icons": ^9.14.0
     "@wordpress/primitives": ^3.21.0
     classnames: ^2.3.1
-    react: ^17.0.2
-    react-dom: ^17.0.2
+    react: ^18.2.0
+    react-dom: ^18.2.0
     react-draggable: ^4.4.4
     typescript: ^4.7.4
   peerDependencies:
@@ -863,8 +863,8 @@ __metadata:
     "@types/react": ^17.0.39
     "@wordpress/compose": ^6.0.0
     "@wordpress/i18n": ^4.23.0
-    react: ^17.0.2
-    react-dom: ^17.0.2
+    react: ^18.2.0
+    react-dom: ^18.2.0
     react-test-renderer: ^17.0.2
     tslib: ^2.3.0
     typescript: ^4.7.4
@@ -887,8 +887,8 @@ __metadata:
     jest: ^27.2.4
     path-browserify: ^1.0.1
     postcss: ^8.3.11
-    react: ^17.0.2
-    react-dom: ^17.0.2
+    react: ^18.2.0
+    react-dom: ^18.2.0
     react-query: ^3.32.1
     react-redux: ^7.2.6
     redux: ^4.1.2
@@ -906,7 +906,7 @@ __metadata:
   resolution: "@automattic/interpolate-components@workspace:packages/interpolate-components"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    react-dom: ^17.0.2
+    react-dom: ^18.2.0
   peerDependencies:
     "@types/react": ">=16.14.23"
     react: ">=16.2.0"
@@ -970,8 +970,8 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     jest: ^27.3.1
     postcss: ^8.4.5
-    react: ^17.0.2
-    react-dom: ^17.0.2
+    react: ^18.2.0
+    react-dom: ^18.2.0
     redux: ^4.1.2
     tslib: ^2.3.0
     typescript: ^4.7.4
@@ -1023,8 +1023,8 @@ __metadata:
     "@wordpress/i18n": ^4.23.0
     "@wordpress/react-i18n": ^3.21.0
     debug: ^4.3.3
-    react: ^17.0.2
-    react-dom: ^17.0.2
+    react: ^18.2.0
+    react-dom: ^18.2.0
     typescript: ^4.7.4
   peerDependencies:
     "@emotion/react": ^11.4.1
@@ -1071,8 +1071,8 @@ __metadata:
     postcss: ^8.4.5
     postcss-custom-properties: ^11.0.0
     prop-types: ^15.7.2
-    react: ^17.0.2
-    react-dom: ^17.0.2
+    react: ^18.2.0
+    react-dom: ^18.2.0
     react-redux: ^7.2.6
     redux: ^4.1.2
     redux-thunk: ^2.3.0
@@ -1112,8 +1112,8 @@ __metadata:
     moment: ^2.26.0
     new-github-issue-url: ^0.2.1
     postcss: ^8.4.5
-    react: ^17.0.2
-    react-dom: ^17.0.2
+    react: ^18.2.0
+    react-dom: ^18.2.0
     reakit-utils: ^0.15.1
     redux: ^4.1.2
     webpack: ^5.68.0
@@ -1163,8 +1163,8 @@ __metadata:
     path-browserify: ^1.0.1
     postcss: ^8.3.11
     prop-types: ^15.8.1
-    react: ^17.0.2
-    react-dom: ^17.0.2
+    react: ^18.2.0
+    react-dom: ^18.2.0
     react-redux: ^7.2.6
     redux: ^4.1.2
     redux-thunk: ^2.3.0
@@ -1193,8 +1193,8 @@ __metadata:
     classnames: ^2.3.1
     copyfiles: ^2.3.0
     css-loader: ^3.6.0
-    react: ^17.0.2
-    react-dom: ^17.0.2
+    react: ^18.2.0
+    react-dom: ^18.2.0
     react-router-dom: ^6.10.0
     redux: ^4.1.2
     sass-loader: ^10.1.1
@@ -1228,8 +1228,8 @@ __metadata:
     debug: ^4.3.3
     jest: ^27.3.1
     lodash: ^4.17.21
-    react: ^17.0.2
-    react-dom: ^17.0.2
+    react: ^18.2.0
+    react-dom: ^18.2.0
     resize-observer-polyfill: 1.5.1
     typescript: ^4.7.4
   peerDependencies:
@@ -1251,8 +1251,8 @@ __metadata:
     "@tanstack/react-query": ^4.29.1
     classnames: ^2.3.1
     postcss: ^8.4.5
-    react: ^17.0.2
-    react-dom: ^17.0.2
+    react: ^18.2.0
+    react-dom: ^18.2.0
     redux: ^4.1.2
     swiper: ^4.5.1
     tslib: ^2.3.0
@@ -1383,8 +1383,8 @@ __metadata:
     classnames: ^2.3.1
     fuse.js: ^6.6.2
     lodash: ^4.17.21
-    react: ^17.0.2
-    react-dom: ^17.0.2
+    react: ^18.2.0
+    react-dom: ^18.2.0
     reakit-utils: ^0.15.1
     redux: ^4.1.2
     tslib: ^2.3.0
@@ -1465,8 +1465,8 @@ __metadata:
     classnames: ^2.3.1
     postcss: ^8.4.5
     prop-types: ^15.7.2
-    react: ^17.0.2
-    react-dom: ^17.0.2
+    react: ^18.2.0
+    react-dom: ^18.2.0
     tslib: ^2.3.0
     typescript: ^4.7.4
     webpack: ^5.68.0
@@ -1695,7 +1695,7 @@ __metadata:
     i18n-calypso: "workspace:^"
     jest: ^27.3.1
     lodash.mergewith: ^4.6.2
-    react: ^17.0.2
+    react: ^18.2.0
     rimraf: ^3.0.2
   bin:
     wp-babel-makepot: ./cli.js
@@ -1737,8 +1737,8 @@ __metadata:
     lodash: ^4.17.21
     npm-run-all: ^4.1.5
     postcss: ^8.4.5
-    react: ^17.0.2
-    react-dom: ^17.0.2
+    react: ^18.2.0
+    react-dom: ^18.2.0
     reakit-utils: ^0.15.1
     redux: ^4.1.2
     tinymce: ^5.0.0
@@ -1767,8 +1767,8 @@ __metadata:
     debug: ^4.3.3
     i18n-calypso: "workspace:^"
     prop-types: ^15.7.2
-    react: ^17.0.2
-    react-dom: ^17.0.2
+    react: ^18.2.0
+    react-dom: ^18.2.0
     typescript: ^4.7.4
   peerDependencies:
     "@emotion/react": ^11.4.1
@@ -1858,8 +1858,8 @@ __metadata:
     moment: ^2.26.0
     npm-run-all: ^4.1.5
     postcss: ^8.4.5
-    react: ^17.0.2
-    react-dom: ^17.0.2
+    react: ^18.2.0
+    react-dom: ^18.2.0
     react-popper: ^2.2.5
     react-redux: ^7.2.6
     reakit-utils: ^0.15.1
@@ -10276,8 +10276,8 @@ __metadata:
     make-dir: ^3.1.0
     playwright: ^1.32
     postcss: ^8.4.5
-    react: ^17.0.2
-    react-dom: ^17.0.2
+    react: ^18.2.0
+    react-dom: ^18.2.0
     semver: ^7.3.2
     superagent: ^3.8.3
     webpack: ^5.68.0
@@ -12658,10 +12658,10 @@ __metadata:
     prop-types: ^15.7.2
     qrcode.react: ^1.0.1
     qs: ^6.9.1
-    react: ^17.0.2
+    react: ^18.2.0
     react-click-outside: ^3.0.1
     react-day-picker: ^7.4.10
-    react-dom: ^17.0.2
+    react-dom: ^18.2.0
     react-element-to-jsx-string: ^14.3.2
     react-intersection-observer: ^9.4.3
     react-live: ^2.3.0
@@ -19219,8 +19219,8 @@ fsevents@^1.2.7:
     i18n-calypso: "workspace:^"
     jest: ^27.3.1
     postcss: ^8.4.5
-    react: ^17.0.2
-    react-dom: ^17.0.2
+    react: ^18.2.0
+    react-dom: ^18.2.0
     webpack: ^5.68.0
   peerDependencies:
     "@wordpress/data": ^7.6.0
@@ -20044,8 +20044,8 @@ fsevents@^1.2.7:
     hash.js: ^1.1.5
     lodash: ^4.17.21
     lru: ^3.1.0
-    react: ^17.0.2
-    react-dom: ^17.0.2
+    react: ^18.2.0
+    react-dom: ^18.2.0
     react-test-renderer: ^17.0.2
     tannin: ^1.1.1
     use-subscription: ^1.5.1
@@ -27684,7 +27684,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"react-dom@npm:>=16.8 <18, react-dom@npm:^17.0.2":
+"react-dom@npm:^17.0.2":
   version: 17.0.2
   resolution: "react-dom@npm:17.0.2"
   dependencies:
@@ -27694,6 +27694,18 @@ fsevents@^1.2.7:
   peerDependencies:
     react: 17.0.2
   checksum: 51abbcb72450fe527ebf978c3bc989ba266630faaa53f47a2fae5392369729e8de62b2e4683598cbe651ea7873cd34ec7d5127e2f50bf4bfe6bd0c3ad9bddcb0
+  languageName: node
+  linkType: hard
+
+"react-dom@npm:^18.2.0":
+  version: 18.2.0
+  resolution: "react-dom@npm:18.2.0"
+  dependencies:
+    loose-envify: ^1.1.0
+    scheduler: ^0.23.0
+  peerDependencies:
+    react: ^18.2.0
+  checksum: 66dfc5f93e13d0674e78ef41f92ed21dfb80f9c4ac4ac25a4b51046d41d4d2186abc915b897f69d3d0ebbffe6184e7c5876f2af26bfa956f179225d921be713a
   languageName: node
   linkType: hard
 
@@ -28212,13 +28224,22 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"react@npm:>=16.8 <18, react@npm:^17.0.2":
+"react@npm:^17.0.2":
   version: 17.0.2
   resolution: "react@npm:17.0.2"
   dependencies:
     loose-envify: ^1.1.0
     object-assign: ^4.1.1
   checksum: 07ae8959acf1596f0550685102fd6097d461a54a4fd46a50f88a0cd7daaa97fdd6415de1dcb4bfe0da6aa43221a6746ce380410fa848acc60f8ac41f6649c148
+  languageName: node
+  linkType: hard
+
+"react@npm:^18.2.0":
+  version: 18.2.0
+  resolution: "react@npm:18.2.0"
+  dependencies:
+    loose-envify: ^1.1.0
+  checksum: b562d9b569b0cb315e44b48099f7712283d93df36b19a39a67c254c6686479d3980b7f013dc931f4a5a3ae7645eae6386b4aa5eea933baa54ecd0f9acb0902b8
   languageName: node
   linkType: hard
 
@@ -30115,6 +30136,15 @@ fsevents@^1.2.7:
     loose-envify: ^1.1.0
     object-assign: ^4.1.1
   checksum: b0982e4b0f34f4ffa4f2f486161c0fd9ce9b88680b045dccbf250eb1aa4fd27413570645455187a83535e2370f5c667a251045547765408492bd883cbe95fcdb
+  languageName: node
+  linkType: hard
+
+"scheduler@npm:^0.23.0":
+  version: 0.23.0
+  resolution: "scheduler@npm:0.23.0"
+  dependencies:
+    loose-envify: ^1.1.0
+  checksum: b777f7ca0115e6d93e126ac490dbd82642d14983b3079f58f35519d992fa46260be7d6e6cede433a92db70306310c6f5f06e144f0e40c484199e09c1f7be53dd
   languageName: node
   linkType: hard
 
@@ -34736,8 +34766,8 @@ fsevents@^1.2.7:
     postcss-cli: ^9.0.1
     postcss-custom-properties: ^11.0.0
     prettier: "npm:wp-prettier@2.8.5"
-    react: ^17.0.2
-    react-dom: ^17.0.2
+    react: ^18.2.0
+    react-dom: ^18.2.0
     react-intersection-observer: ^9.4.3
     react-modal: ^3.14.3
     readline-sync: ^1.4.10

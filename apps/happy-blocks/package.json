@@ -42,8 +42,8 @@
 		"classnames": "^2.3.2",
 		"glob": "^7.1.6",
 		"i18n-calypso": "workspace:^",
-		"react": "^17.0.2",
-		"react-dom": "^17.0.2"
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",
