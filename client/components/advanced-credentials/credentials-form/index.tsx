@@ -383,7 +383,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 				</>
 			) }
 			{ withHeader && <p className="credentials-form__intro-text">{ getSubHeaderText() }</p> }
-			{ renderCredentialLinks() }
+			{ withHeader && renderCredentialLinks() }
 			<FormFieldset className="credentials-form__protocol-type">
 				<div className="credentials-form__support-info">
 					<FormLabel htmlFor="protocol-type">{ translate( 'Credential type' ) }</FormLabel>

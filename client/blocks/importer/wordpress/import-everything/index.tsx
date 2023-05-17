@@ -149,12 +149,10 @@ export class ImportEverything extends SectionMigrate {
 				return (
 					<PreMigrationScreen
 						startImport={ this.startMigration }
-						//isTargetSitePlanCompatible={ isTargetSitePlanCompatible }
+						isTargetSitePlanCompatible={ isTargetSitePlanCompatible }
 						targetSite={ targetSite }
-						//targetSiteSlug={ targetSiteSlug }
 						sourceSite={ sourceSite }
-						//sourceSiteUrl={ sourceSite.URL }
-						//onContentOnlyClick={ stepNavigator?.goToImportListStep }
+						onContentOnlyClick={ stepNavigator?.goToImportListStep }
 					/>
 				);
 			}

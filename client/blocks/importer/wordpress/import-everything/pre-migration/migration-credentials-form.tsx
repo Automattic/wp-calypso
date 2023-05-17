@@ -21,6 +21,8 @@ interface Props {
 	sourceSiteId: number;
 	targetSiteId: number;
 	startImport: () => void;
+	selectedHost: string;
+	onChangeProtocol: ( protocol: 'ftp' | 'ssh' ) => void;
 }
 
 export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( props ) => {
@@ -48,6 +50,16 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 	useEffect( () => {
 		setFormErrors( validate( formState, formMode ) );
 	}, [ formState, formMode ] );
+
+	useEffect( () => {
+		props.onChangeProtocol( formState.protocol as 'ftp' | 'ssh' );
+	}, [ formState.protocol ] );
+
+	useEffect( () => {
+		if ( formSubmissionStatus === 'success' ) {
+			startImport();
+		}
+	}, [ formSubmissionStatus ] );
 
 	const handleUpdateCredentials = () => {
 		if ( formHasErrors ) {
@@ -86,11 +98,11 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 		<>
 			<form onSubmit={ submitCredentials }>
 				<CredentialsForm
-					disabled={ isFormSubmissionPending }
+					disabled={ isFormSubmissionPending || isLoading }
 					formErrors={ formErrors }
 					formMode={ formMode }
 					formState={ formState }
-					host="bluehost"
+					host={ props.selectedHost }
 					role="main"
 					onFormStateChange={ setFormState }
 					onModeChange={ setFormMode }
@@ -103,25 +115,23 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 					</div>
 				) }
 
-				{ isError && (
+				{ isError && error instanceof Error && (
 					<div className="pre-migration__content pre-migration__error">
-						We could not store your credentials:
-						{ error.message }
+						{ translate( 'We could not store your credentials:' ) } { error.message }
 					</div>
 				) }
 
-				<div className="pre-migration__content pre-migration__proceed pre-migration__credential-buttons">
+				<div className="pre-migration__content pre-migration__proceed import__footer-button-container">
 					<NextButton
 						type="submit"
-						isBusy={ isFormSubmissionPending }
-						className="pre-migration__form-submit-btn"
+						isBusy={ isFormSubmissionPending || isLoading }
 						disabled={ formHasErrors }
 					>
 						{ isFormSubmissionPending || isLoading
 							? translate( 'Testing credentials' )
 							: translate( 'Start migration' ) }
 					</NextButton>
-					<button className="action" onClick={ startImport }>
+					<button className="action-buttons__importer-list" onClick={ startImport }>
 						{ translate( 'Skip credentials (slower setup)' ) }
 					</button>
 				</div>

@@ -1,8 +1,14 @@
 @import "~calypso/blocks/import/style/base";
+@import "../style.scss";
+
+.import__pre-migration.import__import-everything--redesign {
+	max-width: 100%;
+}
 
 .import__pre-migration {
 
 	padding: 0 20px;
+	max-width: 100%;
 
 	> div {
 		text-align: center;
@@ -91,28 +97,6 @@
 		.onboarding-subtitle {
 			margin-bottom: 1.5rem;
 			font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
-		}
-	}
-
-	.pre-migration__content button.action {
-		font-size: $font-body-small;
-		color: var(--color-text);
-		text-decoration: underline;
-		height: unset;
-		font-weight: 500;
-
-		&:hover {
-			color: var(--color-text-subtle);
-		}
-	}
-
-	.pre-migration__proceed {
-		display: flex;
-		align-items: baseline;
-		justify-content: center;
-
-		button.button {
-			margin-right: 10px;
 		}
 	}
 

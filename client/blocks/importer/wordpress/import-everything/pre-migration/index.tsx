@@ -1,13 +1,16 @@
 //create a pre-migration component
 
+import { isEnabled } from '@automattic/calypso-config';
 import { SiteDetails } from '@automattic/data-stores';
 import { NextButton, SubTitle, Title } from '@automattic/onboarding';
+import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { convertToFriendlyWebsiteName } from 'calypso/blocks/import/util';
 import MigrationCredentialsForm from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/migration-credentials-form';
 import './style.scss';
+import { PreMigrationUpgradePlan } from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/upgrade-plan';
 import { FormState } from 'calypso/components/advanced-credentials/form';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { getCredentials } from 'calypso/state/jetpack/credentials/actions';
@@ -15,18 +18,26 @@ import getJetpackCredentials from 'calypso/state/selectors/get-jetpack-credentia
 import isRequestingSiteCredentials from 'calypso/state/selectors/is-requesting-site-credentials';
 import { CredentialsHelper } from './credentials-helper';
 
-interface Props {
+interface PreMigrationProps {
 	sourceSite: SiteDetails;
 	targetSite: SiteDetails;
 	startImport: () => void;
+	isTargetSitePlanCompatible: boolean;
+	onContentOnlyClick: () => void;
 }
 
-export const PreMigrationScreen: React.FunctionComponent< Props > = ( props: Props ) => {
-	const { startImport, targetSite, sourceSite } = props;
+export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = (
+	props: PreMigrationProps
+) => {
+	const { startImport, targetSite, sourceSite, isTargetSitePlanCompatible, onContentOnlyClick } =
+		props;
+
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const [ showCredentials, setShowCredentials ] = useState( false );
+	const [ selectedHost, setSelectedHost ] = useState( 'generic' );
+	const [ selectedProtocol, setSelectedProtocol ] = useState< 'ftp' | 'ssh' >( 'ftp' );
 
 	const toggleCredentialsForm = () => {
 		// Should we trigger provisioning here and have a loading state while we wait for the vaultpress site to be provisioned?
@@ -43,6 +54,14 @@ export const PreMigrationScreen: React.FunctionComponent< Props > = ( props: Pro
 		isRequestingSiteCredentials( state, sourceSite.ID as number )
 	);
 
+	const changeCredentialsHelperHost = ( host: string ) => {
+		setSelectedHost( host );
+	};
+
+	const changeCredentialsProtocol = ( protocol: 'ftp' | 'ssh' ) => {
+		setSelectedProtocol( protocol );
+	};
+
 	useEffect( () => {
 		dispatch( getCredentials( sourceSite.ID ) );
 	}, [] );
@@ -56,22 +75,35 @@ export const PreMigrationScreen: React.FunctionComponent< Props > = ( props: Pro
 		return (
 			<>
 				<div className="pre-migration__content pre-migration__credentials">
-					Optionally,{ ' ' }
-					<button className="action" onClick={ toggleCredentialsForm }>
-						provide the server credentials
-					</button>{ ' ' }
-					site to speed up the migration.
+					{ translate(
+						'Optionally, {{button}}provide the server credentials{{/button}} of your site to speed up the migration',
+						{
+							components: {
+								button: (
+									<button
+										className="action-buttons__importer-list"
+										onClick={ toggleCredentialsForm }
+									/>
+								),
+							},
+						}
+					) }
 				</div>
 				{ showCredentials && (
 					<div className="pre-migration__form-container pre-migration__credentials-form">
 						<div className="pre-migration__credentials-help">
-							<CredentialsHelper />
+							<CredentialsHelper
+								onHostChange={ changeCredentialsHelperHost }
+								selectedProtocol={ selectedProtocol }
+							/>
 						</div>
 						<div className="pre-migration__form">
 							<MigrationCredentialsForm
 								sourceSiteId={ sourceSite.ID }
 								targetSiteId={ targetSite.ID }
 								startImport={ startImport }
+								selectedHost={ selectedHost }
+								onChangeProtocol={ changeCredentialsProtocol }
 							/>
 						</div>
 					</div>
@@ -80,15 +112,15 @@ export const PreMigrationScreen: React.FunctionComponent< Props > = ( props: Pro
 		);
 	}
 
-	function render() {
+	function renderPreMigration() {
 		// Show a loading state when we are trying to fetch existing credentials
 		if ( isRequestingCredentials ) {
 			return <LoadingEllipsis />;
 		}
 
 		return (
-			<div className="import__pre-migration">
-				<div className="pre-migration__content pre-migration__title-container">
+			<>
+				<div className="import__heading-title">
 					<Title>{ translate( 'You are ready to migrate' ) }</Title>
 					<SubTitle>
 						{ translate( 'Your entire site %(from)s will be migrated to %(to)s', {
@@ -101,16 +133,41 @@ export const PreMigrationScreen: React.FunctionComponent< Props > = ( props: Pro
 				</div>
 				{ renderCredentialsFormSection() }
 				{ ! showCredentials && (
-					<div className="pre-migration__content pre-migration__proceed">
-						<NextButton
-							type="button"
-							className="add-subscriber__form-submit-btn"
-							onClick={ startImport }
-						>
+					<div className="import__footer-button-container pre-migration__proceed">
+						<NextButton type="button" onClick={ startImport }>
 							{ translate( 'Start migration' ) }
 						</NextButton>
 					</div>
 				) }
+			</>
+		);
+	}
+
+	function render() {
+		if ( isTargetSitePlanCompatible ) {
+			return (
+				<div
+					className={ classnames( 'import__pre-migration import__import-everything', {
+						'import__import-everything--redesign': isEnabled( 'onboarding/import-redesign' ),
+					} ) }
+				>
+					{ renderPreMigration() }
+				</div>
+			);
+		}
+
+		return (
+			<div
+				className={ classnames( 'import__import-everything', {
+					'import__import-everything--redesign': isEnabled( 'onboarding/import-redesign' ),
+				} ) }
+			>
+				<PreMigrationUpgradePlan
+					sourceSite={ sourceSite }
+					targetSite={ targetSite }
+					startImport={ startImport }
+					onContentOnlyClick={ onContentOnlyClick }
+				/>
 			</div>
 		);
 	}
