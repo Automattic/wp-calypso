@@ -1,9 +1,11 @@
 import { Gridicon } from '@automattic/components';
-import { Reader } from '@automattic/data-stores';
+import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { Notice, NoticeType } from 'calypso/landing/subscriptions/components/notice';
 import { SiteIcon } from 'calypso/landing/subscriptions/components/site-icon';
 import PoweredByWPFooter from 'calypso/layout/powered-by-wp-footer';
 import SiteSubscriptionSettings from './site-subscription-settings';
@@ -15,7 +17,7 @@ const useSiteSubscription = ( blogId?: string ) => ( {
 	data: {
 		siteName: 'The Atavist Magazine',
 		subscribers: 44109166,
-		siteUrl: 'https://theatavistmagazine.wordpress.com/',
+		siteUrl: 'https://ivanthemetest.wordpress.com/',
 		notifyMeOfNewPosts: true,
 		emailMeNewPosts: true,
 		deliveryFrequency: Reader.EmailDeliveryFrequency.Daily,
@@ -38,6 +40,20 @@ const SiteSubscriptionPage = () => {
 		deliveryFrequency,
 		subscribers,
 	} = data;
+	const [ showSettings, setShowSettings ] = useState( true );
+
+	const {
+		mutate: unsubscribe,
+		isLoading: unsubscribing,
+		isSuccess: unsubscribed,
+		error: unsubscribeError,
+	} = SubscriptionManager.useSiteUnsubscribeMutation();
+
+	useEffect( () => {
+		if ( unsubscribed ) {
+			setShowSettings( false );
+		}
+	}, [ unsubscribed ] );
 
 	if ( ! blogId || isError ) {
 		return <div>Something went wrong.</div>;
@@ -76,19 +92,49 @@ const SiteSubscriptionPage = () => {
 						<FormattedHeader brandFont headerText={ siteName } subHeaderText={ subHeaderText } />
 					</header>
 
-					<SiteSubscriptionSettings
-						blogId={ blogId }
-						notifyMeOfNewPosts={ notifyMeOfNewPosts }
-						emailMeNewPosts={ emailMeNewPosts }
-						deliveryFrequency={ deliveryFrequency }
-						emailMeNewComments={ emailMeNewComments }
-					/>
+					{ unsubscribed && (
+						<Notice type={ NoticeType.Success }>
+							{ translate(
+								'You have successfully unsubscribed and will no longer receive emails from %s.',
+								{
+									args: [ data.siteName ],
+									comment: 'Name of the site that the user has unsubscribed from.',
+								}
+							) }
+						</Notice>
+					) }
 
-					<hr className="subscriptions__separator" />
+					{ unsubscribeError && (
+						<Notice type={ NoticeType.Error }>
+							{ translate( 'There was an error when trying to unsubscribe from %s.', {
+								args: [ data.siteName ],
+								comment: 'Name of the site that the user tried to unsubscribe from.',
+							} ) }
+						</Notice>
+					) }
 
-					<Button className="site-subscription-page__unsubscribe-button" isSecondary>
-						{ translate( 'Cancel subscription' ) }
-					</Button>
+					{ showSettings && (
+						<>
+							<SiteSubscriptionSettings
+								blogId={ blogId }
+								notifyMeOfNewPosts={ notifyMeOfNewPosts }
+								emailMeNewPosts={ emailMeNewPosts }
+								deliveryFrequency={ deliveryFrequency }
+								emailMeNewComments={ emailMeNewComments }
+							/>
+
+							<hr className="subscriptions__separator" />
+
+							<Button
+								className="site-subscription-page__unsubscribe-button"
+								isSecondary
+								onClick={ () => unsubscribe( { blog_id: blogId, url: data.siteUrl } ) }
+								disabled={ unsubscribing }
+							>
+								{ translate( 'Cancel subscription' ) }
+							</Button>
+						</>
+					) }
 				</div>
 			</div>
 
