@@ -9,6 +9,7 @@ declare const browser: Browser;
 
 describe( 'Support: Show me where', function () {
 	let page: Page;
+	let newPage: Page;
 	let supportComponent: SupportComponent;
 
 	beforeAll( async () => {
@@ -20,17 +21,21 @@ describe( 'Support: Show me where', function () {
 
 	it( 'Search for help: Create a site', async function () {
 		supportComponent = new SupportComponent( page );
-		await supportComponent.showSupportCard();
+
+		await supportComponent.openPopover();
+
 		await supportComponent.search( 'create a site' );
-		const results = await supportComponent.getResults( 'article' );
-		expect( await results.count() ).toBeGreaterThan( 0 );
 	} );
 
 	it( 'Click on result under Show me where', async function () {
-		await supportComponent.clickResult( 'where', 1 );
+		[ newPage ] = await Promise.all( [
+			page.waitForEvent( 'popup' ),
+			supportComponent.clickResult( 'Create a new site' ),
+		] );
 	} );
 
 	it( 'Signup flow is started', async function () {
-		await page.waitForURL( /start/ );
+		// @example https://wordpress.com/start/domains?ref=calypso-inline-help
+		await newPage.waitForURL( /start/ );
 	} );
 } );

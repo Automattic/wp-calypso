@@ -1,4 +1,4 @@
-import { useLocale } from '@automattic/i18n-utils';
+import { localizeUrl, useLocale } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -22,25 +22,10 @@ const usePlanComparisonUrl = () => {
 	}, [ locale ] );
 };
 
-const useForAgenciesUrl = () => {
-	const locale = useLocale();
-
-	return useMemo( () => {
-		// Locale is guaranteed to be 'en' if no locale is defined;
-		// see @automattic/i18n-utils/src/locale-context.tsx:35
-		if ( locale === 'en' ) {
-			return 'https://jetpack.com/for/agencies';
-		}
-
-		return `https://${ locale }.jetpack.com/for/agencies`;
-	}, [ locale ] );
-};
-
 export const NeedMoreInfo: React.FC = () => {
 	const translate = useTranslate();
 
 	const planComparisonUrl = usePlanComparisonUrl();
-	const forAgenciesUrl = useForAgenciesUrl();
 
 	return (
 		<div className="jetpack-product-store__need-more-info">
@@ -55,7 +40,7 @@ export const NeedMoreInfo: React.FC = () => {
 				/>
 				<MoreInfoBox
 					buttonLabel={ translate( 'Explore Jetpack for Agencies' ) }
-					buttonLink={ forAgenciesUrl }
+					buttonLink={ localizeUrl( 'https://jetpack.com/for/agencies/' ) }
 					trackEventName="calypso_jpcom_agencies_page_more_info_button_link_click"
 				/>
 			</div>

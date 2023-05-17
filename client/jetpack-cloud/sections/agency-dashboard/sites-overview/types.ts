@@ -271,4 +271,4 @@ export interface StateMonitorSettingsEmail extends MonitorSettingsEmail {
 	isDefault?: boolean;
 }
 
-export type AllowedMonitorContactActions = 'add' | 'verify';
+export type AllowedMonitorContactActions = 'add' | 'verify' | 'edit';

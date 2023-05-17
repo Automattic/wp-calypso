@@ -110,7 +110,7 @@ export const EXTERNAL_PRODUCT_CRM = (): SelectorProduct => ( {
 	monthlyProductSlug: PRODUCT_JETPACK_CRM,
 	iconSlug: 'jetpack_crm',
 	displayName: translate( 'CRM Entrepreneur' ),
-	shortName: translate( 'CRM Entrepreneur' ),
+	shortName: translate( 'CRM' ),
 	tagline: translate( 'Manage contacts effortlessly' ),
 	// Jetpack CRM isn't considered as a product like others for the time being (and therefore not
 	// available via the API). Rather like a third-party product.

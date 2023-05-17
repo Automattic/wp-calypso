@@ -1,1 +1,7 @@
 @import "./features/use-classic-block-guide";
+
+.start-writing-hide {
+	.components-external-link {
+		display: none !important;
+	}
+}
