@@ -2,9 +2,10 @@ import { Gridicon } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { Notice, NoticeType } from 'calypso/landing/subscriptions/components/notice';
 import { SiteIcon } from 'calypso/landing/subscriptions/components/site-icon';
 import PoweredByWPFooter from 'calypso/layout/powered-by-wp-footer';
 import SiteSubscriptionSettings from './site-subscription-settings';
@@ -41,8 +42,18 @@ const SiteSubscriptionPage = () => {
 	} = data;
 	const [ showSettings, setShowSettings ] = useState( true );
 
-	const { mutate: unsubscribe, isLoading: unsubscribing } =
-		SubscriptionManager.useSiteUnsubscribeMutation();
+	const {
+		mutate: unsubscribe,
+		isLoading: unsubscribing,
+		isSuccess: unsubscribed,
+		error: unsubscribeError,
+	} = SubscriptionManager.useSiteUnsubscribeMutation();
+
+	useEffect( () => {
+		if ( unsubscribed ) {
+			setShowSettings( false );
+		}
+	}, [ unsubscribed ] );
 
 	if ( ! blogId || isError ) {
 		return <div>Something went wrong.</div>;
@@ -52,11 +63,6 @@ const SiteSubscriptionPage = () => {
 		// Full page Wordpress logo loader
 		return <div>Loading...</div>;
 	}
-
-	const handleUnsubscribe: () => void = () => {
-		setShowSettings( false );
-		unsubscribe( { blog_id: blogId, url: data.siteUrl } );
-	};
 
 	const subHeaderText =
 		subscribers > 1
@@ -86,6 +92,27 @@ const SiteSubscriptionPage = () => {
 						<FormattedHeader brandFont headerText={ siteName } subHeaderText={ subHeaderText } />
 					</header>
 
+					{ unsubscribed && (
+						<Notice type={ NoticeType.Success }>
+							{ translate(
+								'You have successfully unsubscribed and will no longer receive emails from %s.',
+								{
+									args: [ data.siteName ],
+									comment: 'Name of the site that the user has unsubscribed from.',
+								}
+							) }
+						</Notice>
+					) }
+
+					{ unsubscribeError && (
+						<Notice type={ NoticeType.Error }>
+							{ translate( 'There was an error when trying to unsubscribe from %s.', {
+								args: [ data.siteName ],
+								comment: 'Name of the site that the user tried to unsubscribe from.',
+							} ) }
+						</Notice>
+					) }
+
 					{ showSettings && (
 						<>
 							<SiteSubscriptionSettings
@@ -101,7 +128,7 @@ const SiteSubscriptionPage = () => {
 							<Button
 								className="site-subscription-page__unsubscribe-button"
 								isSecondary
-								onClick={ () => handleUnsubscribe() }
+								onClick={ () => unsubscribe( { blog_id: blogId, url: data.siteUrl } ) }
 								disabled={ unsubscribing }
 							>
 								{ translate( 'Cancel subscription' ) }
