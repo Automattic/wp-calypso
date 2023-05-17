@@ -1,7 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import { StarterDesigns, useStarterDesignsQuery } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
-import { MShotsOptions } from '@automattic/onboarding/src';
+import { MShotsOptions } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
 import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
