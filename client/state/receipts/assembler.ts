@@ -14,7 +14,9 @@ import type {
  * @returns {ReceiptData} The formatted receipt data
  */
 export function createReceiptObject( data: RawReceiptData ): ReceiptData {
-	const purchases = Array.isArray( data.purchases ) ? {} : data.purchases;
+	const purchases = Array.isArray( data.purchases )
+		? data.purchases
+		: flattenPurchases( data.purchases || {} );
 	const failedPurchases = Array.isArray( data.failed_purchases ) ? {} : data.failed_purchases;
 
 	return {
@@ -23,7 +25,7 @@ export function createReceiptObject( data: RawReceiptData ): ReceiptData {
 		currency: data.currency,
 		priceInteger: data.price_integer,
 		priceFloat: data.price_float,
-		purchases: flattenPurchases( purchases || {} ).map( ( purchase ) => {
+		purchases: purchases.map( ( purchase ) => {
 			return {
 				delayedProvisioning: Boolean( purchase.delayed_provisioning ),
 				freeTrial: Boolean( purchase.free_trial ),

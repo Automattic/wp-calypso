@@ -59,14 +59,17 @@ export interface RawReceiptData {
 	currency: string;
 
 	/**
-	 * Will only be an array if it is empty.
+	 * Data returned by the transactions endpoint is a key-value array of blog_id
+	 * to list of purchases. However, data returned by the receipt endpoint is
+	 * just a list of purchases.
 	 */
-	purchases: RawReceiptPurchases | Array< void > | undefined | false;
+	purchases: RawReceiptPurchases | RawReceiptPurchase[] | undefined | false;
 
 	/**
-	 * Will only be an array if it is empty.
+	 * This is only returned by the transactions endpoint and will only be an
+	 * array if it is empty.
 	 */
-	failed_purchases: RawFailedReceiptPurchases | Array< void > | undefined | false;
+	failed_purchases?: RawFailedReceiptPurchases | Array< void > | undefined | false;
 }
 
 export type RawFailedReceiptPurchases = Record< string, RawFailedReceiptPurchase[] >;
