@@ -245,7 +245,7 @@ export default function NotificationSettings( {
 						</div>
 					</div>
 
-					{ enableEmailNotification && (
+					{ enableEmailNotification && isMultipleEmailEnabled && (
 						<ConfigureEmailNotification
 							defaultEmailAddresses={ defaultUserEmailAddresses }
 							toggleModal={ toggleAddEmailModal }
