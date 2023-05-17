@@ -12,7 +12,7 @@ import {
 	useHandleResetNotification,
 	useHandleShowHideActionBar,
 } from './hooks';
-import type { Site } from '../sites-overview/types';
+import type { Site, MonitorSettings } from '../sites-overview/types';
 
 import './style.scss';
 
@@ -20,13 +20,13 @@ import './style.scss';
 
 interface Props {
 	selectedSites: Array< Site >;
-	monitorUserEmails: Array< string >;
+	bulkUpdateSettings?: MonitorSettings;
 	isLargeScreen?: boolean;
 }
 
 export default function DashboardBulkActions( {
 	selectedSites,
-	monitorUserEmails,
+	bulkUpdateSettings,
 	isLargeScreen,
 }: Props ) {
 	const actionBarRef = createRef< HTMLDivElement >();
@@ -142,7 +142,7 @@ export default function DashboardBulkActions( {
 			{ showNotificationSettingsPopup && (
 				<NotificationSettings
 					sites={ selectedSites }
-					monitorUserEmails={ monitorUserEmails }
+					bulkUpdateSettings={ bulkUpdateSettings }
 					onClose={ toggleNotificationSettingsPopup }
 					isLargeScreen={ isLargeScreen }
 				/>
