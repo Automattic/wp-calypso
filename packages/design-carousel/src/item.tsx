@@ -15,7 +15,9 @@ export function Item( { style, design, className, options }: Props ) {
 	return (
 		<div style={ style } className={ cx( 'design-carousel__item', className ) }>
 			<MShotsImage
-				url={ getDesignPreviewUrl( design ) }
+				url={ getDesignPreviewUrl( design, {
+					use_screenshot_overrides: true,
+				} ) }
 				options={ options }
 				alt={ design.title }
 				aria-labelledby=""
