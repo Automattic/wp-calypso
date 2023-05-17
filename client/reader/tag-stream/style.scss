@@ -48,17 +48,6 @@
 	box-shadow: none;
 	padding: 0;
 	position: relative;
-	left: -3px;
-	top: 8px;
-
-	@include breakpoint-deprecated( "<660px" ) {
-		left: 13px;
-		top: 20px;
-	}
-
-	@include breakpoint-deprecated( "<480px" ) {
-		top: 14px;
-	}
 
 	.button.header-cake__back {
 		padding: 0;

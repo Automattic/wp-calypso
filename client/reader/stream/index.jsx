@@ -517,7 +517,7 @@ class ReaderStream extends Component {
 			}
 
 			if ( excludesSidebar.includes( streamType ) ) {
-				body = bodyContent;
+				body = <div className="reader__content">{ bodyContent }</div>;
 			} else if ( wideDisplay ) {
 				body = (
 					<div className="stream__two-column">
