@@ -1,6 +1,5 @@
 import type { State } from './reducer';
 
-export const areThirdPartyCookiesAllowed = ( state: State ) => state.thirdPartyCookiesAllowed;
 export const isHelpCenterShown = ( state: State ) => state.showHelpCenter;
 export const isMessagingLauncherShown = ( state: State ) => state.showMessagingLauncher;
 export const isMessagingWidgetShown = ( state: State ) => state.showMessagingWidget;

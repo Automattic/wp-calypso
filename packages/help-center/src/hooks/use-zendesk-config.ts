@@ -5,9 +5,12 @@ function requestZendeskConfig() {
 }
 
 export default function useZendeskConfig( enabled: boolean ) {
-	return useQuery< Response >( [ 'getZendeskConfig' ], requestZendeskConfig, {
+	return useQuery( [ 'getZendeskConfig' ], requestZendeskConfig, {
 		staleTime: Infinity,
 		retry: false,
+		refetchOnMount: false,
+		retryOnMount: false,
+		refetchOnWindowFocus: false,
 		meta: {
 			persist: false,
 		},

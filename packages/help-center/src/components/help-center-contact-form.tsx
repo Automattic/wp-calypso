@@ -17,6 +17,7 @@ import {
 	SiteDetails,
 	HelpCenterSite,
 	useJetpackSearchAIQuery,
+	useSupportAvailability,
 } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { SitePickerDropDown, SitePickerSite } from '@automattic/site-picker';
@@ -36,6 +37,7 @@ import { getSectionName } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
  */
+import useZendeskConfig from '../hooks/use-zendesk-config';
 import { HELP_CENTER_STORE } from '../stores';
 import { getSupportVariationFromMode } from '../support-variations';
 import { SitePicker } from '../types';
@@ -172,17 +174,15 @@ export const HelpCenterContactForm = () => {
 	const [ sitePickerChoice, setSitePickerChoice ] = useState< 'CURRENT_SITE' | 'OTHER_SITE' >(
 		'CURRENT_SITE'
 	);
-	const { currentSite, subject, message, userDeclaredSiteUrl, thirdPartyCookiesAllowed } =
-		useSelect( ( select ) => {
-			const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
-			return {
-				currentSite: helpCenterSelect.getSite(),
-				subject: helpCenterSelect.getSubject(),
-				message: helpCenterSelect.getMessage(),
-				userDeclaredSiteUrl: helpCenterSelect.getUserDeclaredSiteUrl(),
-				thirdPartyCookiesAllowed: helpCenterSelect.areThirdPartyCookiesAllowed(),
-			};
-		}, [] );
+	const { currentSite, subject, message, userDeclaredSiteUrl } = useSelect( ( select ) => {
+		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
+		return {
+			currentSite: helpCenterSelect.getSite(),
+			subject: helpCenterSelect.getSubject(),
+			message: helpCenterSelect.getMessage(),
+			userDeclaredSiteUrl: helpCenterSelect.getUserDeclaredSiteUrl(),
+		};
+	}, [] );
 
 	const {
 		setSite,
@@ -195,6 +195,9 @@ export const HelpCenterContactForm = () => {
 		setShowMessagingLauncher,
 		setShowMessagingWidget,
 	} = useDispatch( HELP_CENTER_STORE );
+
+	const { data: chatStatus } = useSupportAvailability( 'CHAT' );
+	const { status: zendeskStatus } = useZendeskConfig( Boolean( chatStatus?.is_user_eligible ) );
 
 	useEffect( () => {
 		const supportVariation = getSupportVariationFromMode( mode );
@@ -510,7 +513,7 @@ export const HelpCenterContactForm = () => {
 		return isSubmitting ? formTitles.buttonSubmittingLabel : formTitles.buttonLabel;
 	};
 
-	if ( mode === 'CHAT' && thirdPartyCookiesAllowed === false ) {
+	if ( mode === 'CHAT' && zendeskStatus === 'error' ) {
 		return <ThirdPartyCookiesNotice />;
 	}
 

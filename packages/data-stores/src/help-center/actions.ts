@@ -93,12 +93,6 @@ export const setSubject = ( subject: string ) =>
 		subject,
 	} as const );
 
-export const setThirdPartyCookiesAllowed = ( areAllowed: boolean ) =>
-	( {
-		type: 'HELP_CENTER_SET_THIRD_PARTY_COOKIES_ALLOWED',
-		areAllowed,
-	} as const );
-
 export const setMessage = ( message: string ) =>
 	( {
 		type: 'HELP_CENTER_SET_MESSAGE',
@@ -163,6 +157,5 @@ export type HelpCenterAction =
 			| typeof setUnreadCount
 			| typeof setIsMinimized
 			| typeof setInitialRoute
-			| typeof setThirdPartyCookiesAllowed
 	  >
 	| GeneratorReturnType< typeof setShowHelpCenter | typeof setHasSeenWhatsNewModal >;

@@ -31,16 +31,6 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 	const { setSite } = useDispatch( HELP_CENTER_STORE );
 	const { setShowMessagingLauncher } = useDispatch( HELP_CENTER_STORE );
 	const { setShowMessagingWidget } = useDispatch( HELP_CENTER_STORE );
-	const { setThirdPartyCookiesAllowed } = useDispatch( HELP_CENTER_STORE );
-
-	const { status: zendeskStatus } = useZendeskConfig( Boolean( chatStatus?.is_user_eligible ) );
-	useEffect( () => {
-		if ( zendeskStatus === 'success' ) {
-			setThirdPartyCookiesAllowed( true );
-		} else if ( zendeskStatus === 'error' ) {
-			setThirdPartyCookiesAllowed( false );
-		}
-	}, [ setThirdPartyCookiesAllowed, zendeskStatus ] );
 
 	useEffect( () => {
 		if ( ! chatStatus?.is_user_eligible ) {
@@ -132,6 +122,8 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 			setShowMessagingLauncher( true );
 		}
 	}, [ setShowMessagingLauncher, supportHistory ] );
+
+	useZendeskConfig( Boolean( chatStatus?.is_user_eligible ) ); // Pre-fetch
 
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const primarySiteId = useSelector( ( state ) => getPrimarySiteId( state ) );
