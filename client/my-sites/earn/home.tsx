@@ -4,6 +4,7 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_PREMIUM,
 } from '@automattic/calypso-products';
+import { useLaunchpad } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -29,6 +30,7 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import getSiteBySlug from 'calypso/state/sites/selectors/get-site-by-slug';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isRequestingWordAdsApprovalForSite } from 'calypso/state/wordads/approve/selectors';
+import { redirectToLaunchpad } from 'calypso/utils';
 import type { Image } from 'calypso/components/promo-section/promo-card/index';
 import type { AppState, SiteSlug } from 'calypso/types';
 import './style.scss';
@@ -36,6 +38,7 @@ import './style.scss';
 interface ConnectedProps {
 	siteId: number;
 	selectedSiteSlug: SiteSlug | null;
+	siteIntent: string;
 	isNonAtomicJetpack: boolean;
 	isLoading: boolean;
 	hasSimplePayments: boolean;
@@ -52,6 +55,7 @@ interface ConnectedProps {
 const Home: FunctionComponent< ConnectedProps > = ( {
 	siteId,
 	selectedSiteSlug,
+	siteIntent,
 	isNonAtomicJetpack,
 	isUserAdmin,
 	isLoading,
@@ -66,6 +70,11 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 } ) => {
 	const translate = useTranslate();
 	const [ peerReferralLink, setPeerReferralLink ] = useState( '' );
+
+	const {
+		data: { launchpad_screen: isLaunchpadEnabled },
+	} = useLaunchpad( selectedSiteSlug );
+	const isNewsletterSite = siteIntent === 'newsletter';
 
 	useEffect( () => {
 		if ( peerReferralLink ) {
@@ -477,8 +486,22 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		return { title: '', body: '', image: <div /> };
 	};
 
+	const getLaunchpadCard = () => ( {
+		title: translate( 'Continue setting up your site!' ),
+		body: '',
+		actions: {
+			cta: {
+				text: translate( 'Next Steps' ),
+				action: () => {
+					redirectToLaunchpad( selectedSiteSlug || '', siteIntent, false );
+				},
+			},
+		},
+	} );
+
 	const promos: PromoSectionProps = {
 		header: getHeaderCard(),
+		launchpad: isLaunchpadEnabled && isNewsletterSite ? getLaunchpadCard() : null,
 		promos: compact( [
 			getRecurringPaymentsCard(),
 			getDonationsCard(),
@@ -521,6 +544,7 @@ export default connect(
 		const siteId = getSelectedSiteId( state ) ?? 0;
 		const selectedSiteSlug = getSelectedSiteSlug( state );
 		const site = getSiteBySlug( state, selectedSiteSlug );
+		const siteIntent = site?.options?.site_intent ?? '';
 
 		const hasConnectedAccount =
 			state?.memberships?.settings?.[ siteId ]?.connectedAccountId ?? null;
@@ -531,6 +555,7 @@ export default connect(
 		return {
 			siteId,
 			selectedSiteSlug,
+			siteIntent,
 			isNonAtomicJetpack: Boolean( isJetpack && ! isSiteAutomatedTransfer( state, siteId ) ),
 			isUserAdmin: canCurrentUser( state, siteId, 'manage_options' ),
 			hasWordAdsFeature,

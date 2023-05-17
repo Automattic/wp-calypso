@@ -31,6 +31,7 @@ export interface Props {
 	titleComponent?: ReactElement;
 	titleComponentLocation?: TitleLocation;
 	isPrimary?: boolean;
+	isLaunchpad?: boolean;
 	badge?: string | ReactElement;
 	className?: string;
 }
@@ -44,6 +45,7 @@ const PromoCard: FunctionComponent< Props > = ( {
 	icon,
 	image,
 	isPrimary,
+	isLaunchpad,
 	children,
 	badge,
 	className,
@@ -52,6 +54,7 @@ const PromoCard: FunctionComponent< Props > = ( {
 		{
 			'promo-card': true,
 			'is-primary': isPrimary,
+			'is-launchpad': isLaunchpad,
 		},
 		className
 	);

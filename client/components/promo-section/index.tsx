@@ -12,6 +12,7 @@ interface PromoSectionCardProps extends PromoCardProps {
 
 export interface Props {
 	header?: PromoSectionCardProps;
+	launchpad?: PromoSectionCardProps | null;
 	promos: PromoSectionCardProps[];
 }
 
@@ -19,6 +20,7 @@ import './style.scss';
 
 const PromoSectionCard: FunctionComponent< PromoSectionCardProps > = ( {
 	isPrimary,
+	isLaunchpad,
 	title,
 	image,
 	icon,
@@ -41,6 +43,7 @@ const PromoSectionCard: FunctionComponent< PromoSectionCardProps > = ( {
 	return (
 		<PromoCard
 			isPrimary={ !! isPrimary }
+			isLaunchpad={ !! isLaunchpad }
 			title={ title }
 			image={ image }
 			badge={ badge }
@@ -52,9 +55,10 @@ const PromoSectionCard: FunctionComponent< PromoSectionCardProps > = ( {
 	);
 };
 
-const PromoSection: FunctionComponent< Props > = ( { header, promos } ) => {
+const PromoSection: FunctionComponent< Props > = ( { header, launchpad, promos } ) => {
 	return (
 		<div className="promo-section">
+			{ launchpad && <PromoSectionCard isPrimary={ true } isLaunchpad={ true } { ...launchpad } /> }
 			{ header && <PromoSectionCard isPrimary={ true } { ...header } /> }
 			<div className="promo-section__promos">
 				{ promos.map( ( promo, i ) => (
