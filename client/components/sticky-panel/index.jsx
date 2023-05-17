@@ -37,15 +37,15 @@ export function getBlockStyle( state ) {
 	}
 }
 
-export function getDimensions( _ref, isSticky ) {
+export function getDimensions( node, isSticky ) {
 	return {
-		spacerHeight: isSticky ? _ref.current?.clientHeight : 0,
-		blockWidth: isSticky ? _ref.current?.clientWidth : 0,
+		spacerHeight: isSticky ? node.clientHeight : 0,
+		blockWidth: isSticky ? node.clientWidth : 0,
 	};
 }
 
-export function getDimensionUpdates( _ref, previous ) {
-	const newDimensions = getDimensions( _ref, previous.isSticky );
+export function getDimensionUpdates( node, previous ) {
+	const newDimensions = getDimensions( node, previous.isSticky );
 	return previous.spacerHeight !== newDimensions.spacerHeight ||
 		previous.blockWidth !== newDimensions.blockWidth
 		? newDimensions
@@ -101,7 +101,10 @@ class StickyPanelWithIntersectionObserver extends Component {
 	} );
 
 	throttleOnResize = throttle(
-		() => this.setState( ( prevState ) => getDimensions( this.state._ref, prevState.isSticky ) ),
+		() =>
+			this.setState( ( prevState ) =>
+				getDimensions( this.state._ref.current, prevState.isSticky )
+			),
 		RESIZE_RATE_IN_MS
 	);
 
@@ -153,7 +156,7 @@ class StickyPanelWithIntersectionObserver extends Component {
 		if ( isSticky !== this.state.isSticky ) {
 			this.setState( {
 				isSticky,
-				...getDimensions( this.state._ref, isSticky ),
+				...getDimensions( this.state._ref.current, isSticky ),
 			} );
 		}
 	}
@@ -184,7 +187,8 @@ class StickyPanelWithScrollEvent extends Component {
 	} );
 
 	throttleOnResize = throttle(
-		() => this.setState( ( prevState ) => getDimensionUpdates( this.state._ref, prevState ) ),
+		() =>
+			this.setState( ( prevState ) => getDimensionUpdates( this.state._ref.current, prevState ) ),
 		RESIZE_RATE_IN_MS
 	);
 
@@ -209,7 +213,7 @@ class StickyPanelWithScrollEvent extends Component {
 		if ( isSticky !== this.state.isSticky ) {
 			this.setState( {
 				isSticky,
-				...getDimensions( this.state._ref, isSticky ),
+				...getDimensions( this.state._ref.current, isSticky ),
 			} );
 		}
 	}
