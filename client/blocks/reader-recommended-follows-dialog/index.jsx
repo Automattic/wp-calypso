@@ -48,7 +48,12 @@ const ReaderRecommendedFollowsDialog = ( { onClose, siteId, postId, posts, follo
 				<div className="reader-recommended-follows-dialog__body">
 					<div className="reader-recommended-follows-dialog__follow-list">
 						{ ! posts && (
-							<QueryReaderRelatedPosts siteId={ siteId } postId={ postId } scope={ SCOPE_OTHER } />
+							<QueryReaderRelatedPosts
+								siteId={ siteId }
+								postId={ postId }
+								scope={ SCOPE_OTHER }
+								size={ 5 }
+							/>
 						) }
 						{ posts && posts.length > 0 && (
 							<SuggestedFollowItems posts={ posts } followSource={ followSource } />
@@ -62,7 +67,7 @@ const ReaderRecommendedFollowsDialog = ( { onClose, siteId, postId, posts, follo
 
 export default connect( ( state, ownProps ) => {
 	return {
-		posts: relatedPostsForPost( state, ownProps.siteId, ownProps.postId, SCOPE_OTHER ),
+		posts: relatedPostsForPost( state, ownProps.siteId, ownProps.postId, SCOPE_OTHER, 5 ),
 		scope: SCOPE_OTHER,
 	};
 }, null )( ReaderRecommendedFollowsDialog );
