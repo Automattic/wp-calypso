@@ -13,7 +13,7 @@ import './highlights.scss';
 
 interface ItemWrapperProps {
 	siteId: number;
-	odysseyStatsBaseUrl: string;
+	statsBaseUrl: string;
 	isItemLink: boolean;
 	item: HighLightItem;
 	isItemLinkExternal: boolean;
@@ -25,7 +25,7 @@ interface TopColumnProps {
 	viewAllText: string;
 	title: string;
 	isLoading: boolean;
-	odysseyStatsBaseUrl: string;
+	statsBaseUrl: string;
 	siteId: number;
 	isItemLinkExternal?: boolean;
 	isItemLink?: boolean;
@@ -35,7 +35,7 @@ interface TopColumnProps {
 interface HighlightsProps {
 	siteId: number;
 	gmtOffset: number;
-	odysseyStatsBaseUrl: string;
+	statsBaseUrl: string;
 }
 
 const HIGHLIGHT_ITEMS_LIMIT = 5;
@@ -43,7 +43,7 @@ const HIGHLIGHT_TAB_TOP_POSTS_PAGES = 'topPostsAndPages';
 const HIGHLIGHT_TAB_TOP_REFERRERS = 'topReferrers';
 
 const postAndPageLink = ( baseUrl: string, siteId: number, postId: number ) => {
-	return `${ baseUrl }#!/stats/post/${ postId }/${ siteId }`;
+	return `${ baseUrl }/stats/post/${ postId }/${ siteId }`;
 };
 
 const externalLink = ( item: HighLightItem ) => {
@@ -52,7 +52,7 @@ const externalLink = ( item: HighLightItem ) => {
 };
 
 const ItemWrapper: FunctionComponent< ItemWrapperProps > = ( {
-	odysseyStatsBaseUrl,
+	statsBaseUrl,
 	siteId,
 	isItemLink,
 	item,
@@ -74,9 +74,7 @@ const ItemWrapper: FunctionComponent< ItemWrapperProps > = ( {
 	return isItemLink ? (
 		<a
 			href={
-				isItemLinkExternal
-					? externalLink( item )
-					: postAndPageLink( odysseyStatsBaseUrl, siteId, item.id )
+				isItemLinkExternal ? externalLink( item ) : postAndPageLink( statsBaseUrl, siteId, item.id )
 			}
 			target={ isItemLinkExternal ? '_blank' : '_self' }
 			rel="noopener noreferrer"
@@ -102,7 +100,7 @@ const TopColumn: FunctionComponent< TopColumnProps > = ( {
 	viewAllText,
 	title,
 	isLoading,
-	odysseyStatsBaseUrl,
+	statsBaseUrl,
 	siteId,
 	isItemLink = false,
 	isItemLinkExternal = false,
@@ -124,7 +122,7 @@ const TopColumn: FunctionComponent< TopColumnProps > = ( {
 						<li key={ idx }>
 							<ItemWrapper
 								item={ item }
-								odysseyStatsBaseUrl={ odysseyStatsBaseUrl }
+								statsBaseUrl={ statsBaseUrl }
 								siteId={ siteId }
 								isItemLink={ isItemLink }
 								isItemLinkExternal={ isItemLinkExternal }
@@ -140,7 +138,7 @@ const TopColumn: FunctionComponent< TopColumnProps > = ( {
 	);
 };
 
-export default function Highlights( { siteId, gmtOffset, odysseyStatsBaseUrl }: HighlightsProps ) {
+export default function Highlights( { siteId, gmtOffset, statsBaseUrl }: HighlightsProps ) {
 	const translate = useTranslate();
 
 	const headingTitle = translate( '7 Day Highlights' );
@@ -164,8 +162,8 @@ export default function Highlights( { siteId, gmtOffset, odysseyStatsBaseUrl }: 
 	const queryDate = moment()
 		.utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 )
 		.format( 'YYYY-MM-DD' );
-	const viewAllPostsStatsUrl = `${ odysseyStatsBaseUrl }#!/stats/day/posts/${ siteId }?startDate=${ queryDate }&summarize=1&num=7`;
-	const viewAllReferrerStatsUrl = `${ odysseyStatsBaseUrl }#!/stats/day/referrers/${ siteId }?startDate=${ queryDate }&summarize=1&num=7`;
+	const viewAllPostsStatsUrl = `${ statsBaseUrl }/stats/day/posts/${ siteId }?startDate=${ queryDate }&summarize=1&num=7`;
+	const viewAllReferrerStatsUrl = `${ statsBaseUrl }/stats/day/referrers/${ siteId }?startDate=${ queryDate }&summarize=1&num=7`;
 
 	const { data: topPostsAndPages = [], isFetching: isFetchingPostsAndPages } = useTopPostsQuery(
 		siteId,
@@ -212,7 +210,7 @@ export default function Highlights( { siteId, gmtOffset, odysseyStatsBaseUrl }: 
 					viewAllText={ translate( 'View all posts & pages stats' ) }
 					items={ topPostsAndPages }
 					isLoading={ isFetchingPostsAndPages }
-					odysseyStatsBaseUrl={ odysseyStatsBaseUrl }
+					statsBaseUrl={ statsBaseUrl }
 					siteId={ siteId }
 					isItemLink
 				/>
@@ -226,7 +224,7 @@ export default function Highlights( { siteId, gmtOffset, odysseyStatsBaseUrl }: 
 					viewAllText={ translate( 'View all referrer stats' ) }
 					items={ topReferrers }
 					isLoading={ isFetchingReferrers }
-					odysseyStatsBaseUrl={ odysseyStatsBaseUrl }
+					statsBaseUrl={ statsBaseUrl }
 					siteId={ siteId }
 					isItemLink
 					isItemLinkExternal

@@ -1265,8 +1265,17 @@ class ManagePurchase extends Component<
 			isProductOwner,
 		} = this.props;
 
+		// If there is no purchase, query to load the purchases
 		if ( ! purchase ) {
-			return this.renderPlaceholder();
+			return (
+				<Fragment>
+					<PurchasesQueryComponent
+						isSiteLevel={ this.props.isSiteLevel ?? false }
+						selectedSiteId={ this.props.selectedSiteId ?? 0 }
+					/>
+					{ this.renderPlaceholder() }
+				</Fragment>
+			);
 		}
 
 		let changePaymentMethodPath: string | false = false;
@@ -1293,10 +1302,6 @@ class ManagePurchase extends Component<
 				<TrackPurchasePageView
 					eventName="calypso_manage_purchase_view"
 					purchaseId={ this.props.purchaseId }
-				/>
-				<PurchasesQueryComponent
-					isSiteLevel={ this.props.isSiteLevel ?? false }
-					selectedSiteId={ this.props.selectedSiteId ?? 0 }
 				/>
 				{ siteId && <QuerySiteDomains siteId={ siteId } /> }
 				{ isPurchaseTheme && (

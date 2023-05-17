@@ -103,7 +103,15 @@ class Block_Patterns_From_API {
 			}
 
 			// Register categories (and re-register existing categories).
-			foreach ( (array) $pattern_categories as $slug => $category_properties ) {
+			foreach ( (array) $pattern_categories as $slug => &$category_properties ) {
+				// Repurpose categories.
+				if ( 'featured' === $slug ) {
+					$category_properties['label']       = __( 'All', 'full-site-editing' );
+					$category_properties['description'] = __( 'Explore all patterns.', 'full-site-editing' );
+				} elseif ( 'posts' === $slug ) {
+					$category_properties['label']       = __( 'Blog Posts', 'full-site-editing' );
+					$category_properties['description'] = __( 'Display your latest posts in lists, grids or other layouts.', 'full-site-editing' );
+				}
 				register_block_pattern_category( $slug, $category_properties );
 			}
 

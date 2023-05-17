@@ -1,3 +1,5 @@
+import { EmailDeliveryFrequency } from '../constants';
+
 export type EmailFormatType = 'html' | 'text';
 
 export type DeliveryWindowDayType = 0 | 1 | 2 | 3 | 4 | 5 | 6;
@@ -36,7 +38,7 @@ type SiteSubscriptionDeliveryMethods = {
 	email: {
 		send_posts: boolean;
 		send_comments: boolean;
-		post_delivery_frequency: string;
+		post_delivery_frequency: EmailDeliveryFrequency;
 		date_subscribed: Date;
 	};
 	notification: {
@@ -76,8 +78,6 @@ export type SiteSubscriptionsPages = {
 	pageParams: [];
 	pages: SiteSubscriptionPage[];
 };
-
-export type SiteSubscriptionDeliveryFrequency = 'instantly' | 'daily' | 'weekly';
 
 export type PostSubscription = {
 	id: string;

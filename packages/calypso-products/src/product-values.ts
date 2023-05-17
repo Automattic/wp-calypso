@@ -14,6 +14,7 @@ export { getJetpackProductWhatIsIncluded } from './get-jetpack-product-what-is-i
 export { getJetpackProductBenefits } from './get-jetpack-product-benefits';
 export { getJetpackProductFAQs } from './get-jetpack-product-faqs';
 export { getJetpackProductRecommendedFor } from './get-jetpack-product-recommended-for';
+export { getJetpackPlanAlsoIncludedFeatures } from './get-jetpack-plan-also-included-features';
 export { getProductClass } from './get-product-class';
 export { getProductTermVariants } from './get-product-term-variants';
 export { getProductYearlyVariant } from './get-product-yearly-variant';

@@ -29,7 +29,7 @@ describe( 'Mastodon', () => {
 	} );
 
 	test( 'displays an error message when instance is invalid', async () => {
-		const { container } = render( <Mastodon { ...props } /> );
+		render( <Mastodon { ...props } /> );
 
 		await userEvent.type(
 			screen.getByLabelText( 'Enter your Mastodon username' ),
@@ -38,9 +38,6 @@ describe( 'Mastodon', () => {
 
 		// error message is displayed
 		expect( screen.getByRole( 'alert' ) ).toBeInTheDocument();
-
-		// spinner is shown
-		expect( container.getElementsByClassName( 'spinner' ).length ).toBe( 1 );
 
 		const btn = screen.getByRole( 'button', { name: /Connect account/i } );
 		expect( btn ).toBeDisabled();

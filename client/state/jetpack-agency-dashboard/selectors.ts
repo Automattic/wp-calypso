@@ -13,13 +13,13 @@ export const JETPACK_DASHBOARD_WELCOME_BANNER_PREFERENCE =
 export const JETPACK_DASHBOARD_WELCOME_BANNER_PREFERENCE_HOME_PAGE =
 	'jetpack-dashboard-welcome-banner-preference-home-page';
 
+export const JETPACK_DASHBOARD_SURVEY_BANNER_PREFERENCE =
+	'jetpack-dashboard-survey-banner-preference';
+
 /**
- * Returns preference associated with the welcome banner.
+ * Returns preference associated with the key provided.
  */
-export function getJetpackDashboardWelcomeBannerPreference(
-	state: AppState,
-	key: string
-): Preference {
+export function getJetpackDashboardPreference( state: AppState, key: string ): Preference {
 	const preference = getPreference( state, key );
 	return preference;
 }

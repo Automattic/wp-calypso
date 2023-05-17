@@ -1,11 +1,11 @@
-import { ShortenedNumber } from '@automattic/components';
+import { ShortenedNumber, Button } from '@automattic/components';
 import { protect, akismet } from '@automattic/components/src/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState, FunctionComponent } from 'react';
 import wpcom from 'calypso/lib/wp';
 import useModuleDataQuery from '../hooks/use-module-data-query';
-import canCurrentUser from '../lib/can-current-user';
+import canCurrentUser from '../lib/selectors/can-current-user';
 
 import './modules.scss';
 
@@ -27,7 +27,7 @@ interface ProtectModuleProps {
 }
 
 interface ModulesProps extends ProtectModuleProps {
-	odysseyStatsBaseUrl: string;
+	adminBaseUrl: null | string;
 }
 
 interface AkismetModuleProps extends ProtectModuleProps {
@@ -70,26 +70,28 @@ const ModuleCard: FunctionComponent< ModuleCardProps > = ( {
 					{ isError && canManageModule && (
 						<div className="stats-widget-module__info">
 							{ error === 'not_active' && (
-								<button
+								<Button
+									primary
 									className="jetpack-emerald-button"
-									disabled={ disabled }
+									busy={ disabled }
 									onClick={ onActivateProduct }
 								>
-									Activate
-								</button>
+									{ translate( 'Activate' ) }
+								</Button>
 							) }
 							{ error === 'not_installed' && (
-								<button
-									className="jetpack-emerald-button is-secondary-jetpack-emerald"
-									disabled={ disabled }
+								<Button
+									transparent
+									className="jetpack-emerald-button"
+									busy={ disabled }
 									onClick={ onActivateProduct }
 								>
-									Install
-								</button>
+									{ translate( 'Install' ) }
+								</Button>
 							) }
 							{ error === 'invalid_key' && (
 								<a href={ manageUrl } target="_self">
-									Manage Akismet key
+									{ translate( 'Manage Akismet key' ) }
 								</a>
 							) }
 							{ ! [ 'not_active', 'not_installed', 'invalid_key' ].includes( error ) && (
@@ -178,17 +180,14 @@ const ProtectModule: FunctionComponent< ProtectModuleProps > = ( { siteId } ) =>
 	);
 };
 
-export default function Modules( { siteId, odysseyStatsBaseUrl }: ModulesProps ) {
+export default function Modules( { siteId, adminBaseUrl }: ModulesProps ) {
 	return (
 		<div className="stats-widget-modules">
 			<ProtectModule siteId={ siteId } />
 			<AkismetModule
 				siteId={ siteId }
 				// The URL is used to redirect the user to the Akismet Key configuration page.
-				manageUrl={
-					odysseyStatsBaseUrl &&
-					odysseyStatsBaseUrl.replaceAll( /page=stats/g, 'page=akismet-key-config' )
-				}
+				manageUrl={ adminBaseUrl + 'admin.php?page=akismet-key-config' }
 			/>
 		</div>
 	);

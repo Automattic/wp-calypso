@@ -18,7 +18,7 @@ interface MiniChartProps {
 	siteId: number;
 	quantity?: number;
 	gmtOffset: number;
-	odysseyStatsBaseUrl: string;
+	statsBaseUrl: string;
 }
 
 interface BarData {
@@ -29,7 +29,7 @@ interface BarData {
 const MiniChart: FunctionComponent< MiniChartProps > = ( {
 	siteId,
 	gmtOffset,
-	odysseyStatsBaseUrl,
+	statsBaseUrl,
 	quantity = 7,
 } ) => {
 	const translate = useTranslate();
@@ -53,7 +53,7 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 	const { isLoading, data } = useVisitsQuery( siteId, period, quantity, queryDate );
 
 	const barClick = ( bar: { data: BarData } ) => {
-		window.location.href = `${ odysseyStatsBaseUrl }#!/stats/${ period }/${ siteId }?startDate=${ bar.data.period }`;
+		window.location.href = `${ statsBaseUrl }/stats/${ period }/${ siteId }?startDate=${ bar.data.period }`;
 	};
 
 	const chartData = buildChartData(

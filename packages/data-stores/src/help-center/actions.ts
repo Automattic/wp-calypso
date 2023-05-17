@@ -49,6 +49,12 @@ export const setUnreadCount = ( count: number ) =>
 		count,
 	} as const );
 
+export const setInitialRoute = ( route?: InitialEntry ) =>
+	( {
+		type: 'HELP_CENTER_SET_INITIAL_ROUTE',
+		route,
+	} as const );
+
 export const setIsMinimized = ( minimized: boolean ) =>
 	( {
 		type: 'HELP_CENTER_SET_MINIMIZED',
@@ -57,7 +63,7 @@ export const setIsMinimized = ( minimized: boolean ) =>
 
 export const setShowHelpCenter = function* ( show: boolean ) {
 	if ( ! show ) {
-		// reset minimized state when the help center is closed
+		yield setInitialRoute( undefined );
 		yield setIsMinimized( false );
 	}
 
@@ -106,12 +112,6 @@ export const setUserDeclaredSite = ( site: SiteDetails | undefined ) =>
 	( {
 		type: 'HELP_CENTER_SET_USER_DECLARED_SITE',
 		site,
-	} as const );
-
-export const setInitialRoute = ( route: InitialEntry ) =>
-	( {
-		type: 'HELP_CENTER_SET_INITIAL_ROUTE',
-		route,
 	} as const );
 
 export const startHelpCenterChat = function* ( site: HelpCenterSite, message: string ) {

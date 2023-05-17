@@ -24,7 +24,6 @@ import {
 	CheckoutFormSubmit,
 	PaymentMethodStep,
 } from '@automattic/composite-checkout';
-import { isHostingFlow } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled } from '@automattic/wpcom-checkout';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -48,7 +47,6 @@ import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/composite-checkou
 import { leaveCheckout } from 'calypso/my-sites/checkout/composite-checkout/lib/leave-checkout';
 import { prepareDomainContactValidationRequest } from 'calypso/my-sites/checkout/composite-checkout/types/wpcom-store-state';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { saveContactDetailsCache } from 'calypso/state/domains/management/actions';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
@@ -633,9 +631,7 @@ const SubmitButtonFooter = () => {
 		isJetpackPurchasableItem( product.product_slug )
 	);
 
-	const signupFlowName = getSignupCompleteFlowName();
-
-	if ( ! hasCartJetpackProductsOnly && ! isHostingFlow( signupFlowName ) ) {
+	if ( ! hasCartJetpackProductsOnly ) {
 		return null;
 	}
 

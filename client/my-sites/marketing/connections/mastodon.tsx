@@ -1,4 +1,4 @@
-import { FormInputValidation, Spinner } from '@automattic/components';
+import { FormInputValidation } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState, FormEvent, ChangeEvent } from 'react';
@@ -121,7 +121,6 @@ export const Mastodon: React.FC< Props > = ( {
 							isError={ showError }
 							onChange={ handleInstanceChange }
 						/>
-						{ showError && <Spinner /> }
 					</InstanceContainer>
 					{ showError && <FormInputValidation isError text={ error } /> }
 				</div>

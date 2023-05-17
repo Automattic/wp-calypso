@@ -21,6 +21,7 @@ import {
 	requestAddProduct,
 	requestUpdateProduct,
 } from 'calypso/state/memberships/product-list/actions';
+import { getconnectedAccountDefaultCurrencyForSiteId } from 'calypso/state/memberships/settings/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
@@ -32,7 +33,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
  * https://stripe.com/docs/currencies#minimum-and-maximum-charge-amounts
  * @type { [currency: string]: number }
  */
-const MINIMUM_CURRENCY_AMOUNT = {
+const STRIPE_MINIMUM_CURRENCY_AMOUNT = {
 	USD: 0.5,
 	AUD: 0.5,
 	BRL: 0.5,
@@ -55,17 +56,23 @@ const MINIMUM_CURRENCY_AMOUNT = {
 /**
  * @type Array<{ code: string }>
  */
-const currencyList = Object.keys( MINIMUM_CURRENCY_AMOUNT ).map( ( code ) => ( { code } ) );
+const currencyList = Object.keys( STRIPE_MINIMUM_CURRENCY_AMOUNT ).map( ( code ) => ( { code } ) );
 
 /**
  * Return the minimum transaction amount for a currency.
- *
+ * If the defaultCurrency is not the same as the current currency, return the double, in order to prevent issues with Stripe minimum amounts
+ * See https://wp.me/p81Rsd-1hN
  *
  * @param {string} currency - Currency.
+ * @param {string} connectedAccountDefaultCurrency - Default currency of the current account
  * @returns {number} Minimum transaction amount for given currency.
  */
-function minimumCurrencyTransactionAmount( currency ) {
-	return MINIMUM_CURRENCY_AMOUNT[ currency ];
+function minimumCurrencyTransactionAmount( currency, connectedAccountDefaultCurrency ) {
+	if ( connectedAccountDefaultCurrency.toLowerCase() === currency.toLowerCase() ) {
+		return STRIPE_MINIMUM_CURRENCY_AMOUNT[ currency ];
+	}
+
+	return STRIPE_MINIMUM_CURRENCY_AMOUNT[ currency ] * 2;
 }
 
 /**
@@ -100,6 +107,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	product,
 	siteId,
 	updateProduct,
+	connectedAccountDefaultCurrency,
 } ) => {
 	const translate = useTranslate();
 	const [ currentDialogTab, setCurrentDialogTab ] = useState( TAB_GENERAL );
@@ -115,10 +123,15 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	const [ editedPayWhatYouWant, setEditedPayWhatYouWant ] = useState(
 		product?.buyer_can_change_amount ?? false
 	);
-	const [ editedPrice, setEditedPrice ] = useState( {
-		currency: product?.currency ?? 'USD',
-		value: product?.price ?? minimumCurrencyTransactionAmount( 'USD' ),
-	} );
+
+	const [ currentCurrency, setCurrentCurrency ] = useState(
+		product?.currency ?? connectedAccountDefaultCurrency.toUpperCase()
+	);
+	const [ currentPrice, setCurrentPrice ] = useState(
+		product?.price ??
+			minimumCurrencyTransactionAmount( currentCurrency, connectedAccountDefaultCurrency )
+	);
+
 	const [ editedProductName, setEditedProductName ] = useState( product?.title ?? '' );
 	const [ editedPostsEmail, setEditedPostsEmail ] = useState(
 		product?.subscribe_as_site_subscriber ?? false
@@ -136,12 +149,12 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	};
 
 	const isValidCurrencyAmount = ( currency, price ) =>
-		price >= minimumCurrencyTransactionAmount( currency );
+		price >= minimumCurrencyTransactionAmount( currency, connectedAccountDefaultCurrency );
 
 	const isFormValid = ( field ) => {
 		if (
 			( field === 'price' || ! field ) &&
-			! isValidCurrencyAmount( editedPrice.currency, editedPrice.value )
+			! isValidCurrencyAmount( currentCurrency, currentPrice )
 		) {
 			return false;
 		}
@@ -160,11 +173,11 @@ const RecurringPaymentsPlanAddEditModal = ( {
 
 	const handleCurrencyChange = ( event ) => {
 		const { value: currency } = event.currentTarget;
-		setEditedPrice( { ...editedPrice, currency } );
+		setCurrentCurrency( currency );
 	};
 	const handlePriceChange = ( event ) => {
 		const value = parseFloat( event.currentTarget.value );
-		setEditedPrice( { ...editedPrice, value } );
+		setCurrentPrice( value );
 	};
 	const handlePayWhatYouWant = ( newValue ) => setEditedPayWhatYouWant( newValue );
 	const handleMultiplePerUser = ( newValue ) => setEditedMultiplePerUser( newValue );
@@ -200,8 +213,8 @@ const RecurringPaymentsPlanAddEditModal = ( {
 			addProduct(
 				siteId,
 				{
-					currency: editedPrice.currency,
-					price: editedPrice.value,
+					currency: currentCurrency,
+					price: currentPrice,
 					title: editedProductName,
 					interval: editedSchedule,
 					buyer_can_change_amount: editedPayWhatYouWant,
@@ -218,8 +231,8 @@ const RecurringPaymentsPlanAddEditModal = ( {
 				siteId,
 				{
 					ID: product.ID,
-					currency: editedPrice.currency,
-					price: editedPrice.value,
+					currency: currentCurrency,
+					price: currentPrice,
 					title: editedProductName,
 					interval: editedSchedule,
 					buyer_can_change_amount: editedPayWhatYouWant,
@@ -256,9 +269,9 @@ const RecurringPaymentsPlanAddEditModal = ( {
 					<FormCurrencyInput
 						name="currency"
 						id="currency"
-						value={ isNaN( editedPrice.value ) ? '' : editedPrice.value }
+						value={ currentPrice }
 						onChange={ handlePriceChange }
-						currencySymbolPrefix={ editedPrice.currency }
+						currencySymbolPrefix={ currentCurrency }
 						onCurrencyChange={ handleCurrencyChange }
 						currencyList={ currencyList }
 						placeholder="0.00"
@@ -269,8 +282,11 @@ const RecurringPaymentsPlanAddEditModal = ( {
 							text={ translate( 'Please enter a price higher than %s', {
 								args: [
 									formatCurrency(
-										minimumCurrencyTransactionAmount( editedPrice.currency ),
-										editedPrice.currency
+										minimumCurrencyTransactionAmount(
+											currentCurrency,
+											connectedAccountDefaultCurrency
+										),
+										currentCurrency
 									),
 								],
 							} ) }
@@ -436,6 +452,10 @@ const RecurringPaymentsPlanAddEditModal = ( {
 export default connect(
 	( state ) => ( {
 		siteId: getSelectedSiteId( state ),
+		connectedAccountDefaultCurrency: getconnectedAccountDefaultCurrencyForSiteId(
+			state,
+			getSelectedSiteId( state )
+		),
 	} ),
 	{ addProduct: requestAddProduct, updateProduct: requestUpdateProduct }
 )( RecurringPaymentsPlanAddEditModal );

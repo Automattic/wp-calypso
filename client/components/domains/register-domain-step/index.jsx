@@ -464,7 +464,11 @@ class RegisterDomainStep extends Component {
 					{ this.renderSideContent() }
 					<QueryContactDetailsCache />
 				</div>
-				{ showAlreadyOwnADomain && <AlreadyOwnADomain onClick={ this.useYourDomainFunction() } /> }
+				{ showAlreadyOwnADomain && (
+					<AlreadyOwnADomain
+						onClick={ this.props.handleClickUseYourDomain ?? this.useYourDomainFunction() }
+					/>
+				) }
 			</>
 		);
 	}

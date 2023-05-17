@@ -204,7 +204,10 @@ export function RenderDomainUpsell( {
 			<TrackComponentView eventName="calypso_my_home_domain_upsell_impression" />
 			<div>
 				<div className="domain-upsell__card-dismiss">
-					<button onClick={ getDismissClickHandler }>
+					<button
+						aria-label={ translate( 'Dismiss domain name promotion' ) }
+						onClick={ getDismissClickHandler }
+					>
 						<Gridicon icon="cross" width={ 18 } />
 					</button>
 				</div>

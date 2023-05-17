@@ -3,7 +3,7 @@ import { SubscriptionManager } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { memo, useMemo } from 'react';
 import TimeSince from 'calypso/components/time-since';
-import { CommentSettings } from '../settings-popover';
+import { CommentSettings } from '../settings';
 import type { PostSubscription } from '@automattic/data-stores/src/reader/types';
 
 type CommentRowProps = PostSubscription & {
@@ -56,7 +56,12 @@ const CommentRow = ( {
 					</span>
 				</a>
 				<span className="date" role="cell">
-					<TimeSince date={ date_subscribed.toISOString?.() ?? date_subscribed } />
+					<TimeSince
+						date={
+							( date_subscribed.valueOf() ? date_subscribed : new Date( 0 ) ).toISOString?.() ??
+							date_subscribed
+						}
+					/>
 				</span>
 				<span className="actions" role="cell">
 					<CommentSettings

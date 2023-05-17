@@ -15,6 +15,7 @@ import {
 	useSibylQuery,
 	SiteDetails,
 	HelpCenterSite,
+	useJetpackSearchAIQuery,
 } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { SitePickerDropDown, SitePickerSite } from '@automattic/site-picker';
@@ -38,6 +39,7 @@ import { HELP_CENTER_STORE } from '../stores';
 import { getSupportVariationFromMode } from '../support-variations';
 import { SitePicker } from '../types';
 import { BackButton } from './back-button';
+import { HelpCenterGPT } from './help-center-gpt';
 import { HelpCenterOwnershipNotice } from './help-center-notice';
 import { SibylArticles } from './help-center-sibyl-articles';
 import type { HelpCenterSelect } from '@automattic/data-stores';
@@ -247,9 +249,18 @@ export const HelpCenterContactForm = () => {
 		Boolean( supportSite?.is_wpcom_atomic )
 	);
 
+	const enableGPTResponse = config.isEnabled( 'help/gpt-response' );
+
 	const showingSibylResults = params.get( 'show-results' ) === 'true';
+	const showingGPTResponse = params.get( 'show-gpt' ) === 'true';
+
 	function handleCTA() {
-		if ( ! showingSibylResults && sibylArticles && sibylArticles.length > 0 ) {
+		if (
+			! enableGPTResponse &&
+			! showingSibylResults &&
+			sibylArticles &&
+			sibylArticles.length > 0
+		) {
 			params.set( 'show-results', 'true' );
 			navigate( {
 				pathname: '/contact-form',
@@ -257,6 +268,16 @@ export const HelpCenterContactForm = () => {
 			} );
 			return;
 		}
+
+		if ( ! showingGPTResponse && enableGPTResponse ) {
+			params.set( 'show-gpt', 'true' );
+			navigate( {
+				pathname: '/contact-form',
+				search: params.toString(),
+			} );
+			return;
+		}
+
 		const productSlug = ( supportSite as HelpCenterSite )?.plan.product_slug;
 		const plan = getPlan( productSlug );
 		const productId = plan?.getProductId();
@@ -324,7 +345,7 @@ export const HelpCenterContactForm = () => {
 							setTimeout( () => {
 								// wait 30 seconds until support-history endpoint actually updates
 								// yup, it takes that long (tried 5, and 10)
-								queryClient.invalidateQueries( [ `activeSupportTickets`, email ] );
+								queryClient.invalidateQueries( [ 'help-support-history', 'ticket', email ] );
 							}, 30000 );
 						} )
 						.catch( () => {
@@ -408,16 +429,54 @@ export const HelpCenterContactForm = () => {
 		}
 	};
 
+	const getHEsTraySection = () => {
+		return (
+			<section>
+				<div className="help-center-contact-form__site-picker-hes-tray">
+					{ randomTwoFaces.map( ( f ) => (
+						<img key={ f } src={ f } aria-hidden="true" alt=""></img>
+					) ) }
+					<p className="help-center-contact-form__site-picker-hes-tray-text">
+						{ formTitles.trayText }
+					</p>
+				</div>
+			</section>
+		);
+	};
+
+	const { isFetching: isFetchingUrls, data: links } = useJetpackSearchAIQuery(
+		'9619154',
+		enableGPTResponse ? debouncedMessage : '',
+		'urls'
+	);
+	const { isFetching: isFetchingResponse, data: gptResponse } = useJetpackSearchAIQuery(
+		'9619154',
+		links?.urls ? debouncedMessage : '',
+		'response'
+	);
+	const isFetchingGPTResponse = isFetchingUrls || isFetchingResponse;
+
 	const getCTALabel = () => {
-		if ( ! showingSibylResults && sibylArticles && sibylArticles.length > 0 ) {
+		const showingSibylOrGPTResults = showingSibylResults || showingGPTResponse;
+
+		if (
+			! showingGPTResponse &&
+			! showingSibylResults &&
+			sibylArticles &&
+			sibylArticles.length > 0
+		) {
 			return __( 'Continue', __i18n_text_domain__ );
 		}
 
-		if ( mode === 'CHAT' && showingSibylResults ) {
+		if ( showingGPTResponse && isFetchingGPTResponse ) {
+			return __( 'Gathering quick response.', __i18n_text_domain__ );
+		}
+
+		if ( mode === 'CHAT' && showingSibylOrGPTResults ) {
 			return __( 'Still chat with us', __i18n_text_domain__ );
 		}
 
-		if ( mode === 'EMAIL' && showingSibylResults ) {
+		if ( mode === 'EMAIL' && showingSibylOrGPTResults ) {
 			return __( 'Still email us', __i18n_text_domain__ );
 		}
 
@@ -427,6 +486,34 @@ export const HelpCenterContactForm = () => {
 
 		return isSubmitting ? formTitles.buttonSubmittingLabel : formTitles.buttonLabel;
 	};
+
+	// TODO: A/B test
+	if ( enableGPTResponse && showingGPTResponse ) {
+		return (
+			<div className="help-center__sibyl-articles-page">
+				<BackButton />
+				<HelpCenterGPT />
+				<section className="contact-form-submit">
+					<Button
+						isBusy={ isFetchingGPTResponse }
+						disabled={ isFetchingGPTResponse }
+						onClick={ handleCTA }
+						isPrimary
+						className="help-center-contact-form__site-picker-cta"
+					>
+						{ getCTALabel() }
+					</Button>
+					{ hasSubmittingError && (
+						<FormInputValidation
+							isError
+							text={ __( 'Something went wrong, please try again later.', __i18n_text_domain__ ) }
+						/>
+					) }
+				</section>
+				{ gptResponse?.response && [ 'CHAT', 'EMAIL' ].includes( mode ) && getHEsTraySection() }
+			</div>
+		);
+	}
 
 	return showingSibylResults ? (
 		<div className="help-center__sibyl-articles-page">
@@ -453,6 +540,7 @@ export const HelpCenterContactForm = () => {
 					/>
 				) }
 			</section>
+			{ [ 'CHAT', 'EMAIL' ].includes( mode ) && getHEsTraySection() }
 		</div>
 	) : (
 		<main className="help-center-contact-form">
@@ -549,7 +637,6 @@ export const HelpCenterContactForm = () => {
 					disabled={ isCTADisabled() }
 					onClick={ handleCTA }
 					isPrimary
-					isLarge
 					className="help-center-contact-form__site-picker-cta"
 				>
 					{ getCTALabel() }
@@ -564,18 +651,7 @@ export const HelpCenterContactForm = () => {
 					/>
 				) }
 			</section>
-			{ [ 'CHAT', 'EMAIL' ].includes( mode ) && (
-				<section>
-					<div className="help-center-contact-form__site-picker-hes-tray">
-						{ randomTwoFaces.map( ( f ) => (
-							<img key={ f } src={ f } aria-hidden="true" alt=""></img>
-						) ) }
-						<p className="help-center-contact-form__site-picker-hes-tray-text">
-							{ formTitles.trayText }
-						</p>
-					</div>
-				</section>
-			) }
+			{ [ 'CHAT', 'EMAIL' ].includes( mode ) && getHEsTraySection() }
 			<SibylArticles supportSite={ supportSite } message={ message } articleCanNavigateBack />
 		</main>
 	);

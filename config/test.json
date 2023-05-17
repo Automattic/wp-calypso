@@ -25,7 +25,7 @@
 	"features": {
 		"ad-tracking": false,
 		"akismet/siteless-checkout": true,
-		"anchor/sunset-integration": false,
+		"anchor/sunset-integration": true,
 		"calypsoify/plugins": true,
 		"cancellation-offers": true,
 		"catch-js-errors": false,

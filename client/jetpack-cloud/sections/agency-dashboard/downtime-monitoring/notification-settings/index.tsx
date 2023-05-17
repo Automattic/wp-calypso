@@ -12,8 +12,13 @@ import {
 	mobileAppLink,
 } from '../../sites-overview/utils';
 import ConfigureEmailNotification from '../configure-email-notification';
-import AddNewEmailModal from '../configure-email-notification/add-new-email-modal';
-import type { MonitorSettings, Site } from '../../sites-overview/types';
+import EmailAddressEditor from '../configure-email-notification/email-address-editor';
+import type {
+	MonitorSettings,
+	Site,
+	StateMonitorSettingsEmail,
+	AllowedMonitorContactActions,
+} from '../../sites-overview/types';
 
 import './style.scss';
 
@@ -48,12 +53,25 @@ export default function NotificationSettings( {
 	const [ defaultUserEmailAddresses, setDefaultUserEmailAddresses ] = useState< string[] | [] >(
 		[]
 	);
-
+	const [ allEmailItems, setAllEmailItems ] = useState< StateMonitorSettingsEmail[] | [] >( [] );
 	const [ validationError, setValidationError ] = useState< string >( '' );
 	const [ isAddEmailModalOpen, setIsAddEmailModalOpen ] = useState< boolean >( false );
+	const [ selectedEmail, setSelectedEmail ] = useState< StateMonitorSettingsEmail | undefined >();
+	const [ selectedAction, setSelectedAction ] = useState< AllowedMonitorContactActions >();
 
-	const toggleAddEmailModal = () => {
+	const toggleAddEmailModal = (
+		item?: StateMonitorSettingsEmail,
+		action?: AllowedMonitorContactActions
+	) => {
+		if ( item && action ) {
+			setSelectedEmail( item );
+			setSelectedAction( action );
+		}
 		setIsAddEmailModalOpen( ( isAddEmailModalOpen ) => ! isAddEmailModalOpen );
+		if ( isAddEmailModalOpen ) {
+			setSelectedEmail( undefined );
+			setSelectedAction( undefined );
+		}
 	};
 
 	function onSave( event: React.FormEvent< HTMLFormElement > ) {
@@ -115,7 +133,13 @@ export default function NotificationSettings( {
 	);
 
 	if ( isAddEmailModalOpen ) {
-		return <AddNewEmailModal toggleModal={ toggleAddEmailModal } />;
+		return (
+			<EmailAddressEditor
+				toggleModal={ toggleAddEmailModal }
+				selectedEmail={ selectedEmail }
+				selectedAction={ selectedAction }
+			/>
+		);
 	}
 
 	return (
@@ -214,6 +238,8 @@ export default function NotificationSettings( {
 										<ConfigureEmailNotification
 											defaultEmailAddresses={ defaultUserEmailAddresses }
 											toggleModal={ toggleAddEmailModal }
+											setAllEmailItems={ setAllEmailItems }
+											allEmailItems={ allEmailItems }
 										/>
 									) }
 								</>

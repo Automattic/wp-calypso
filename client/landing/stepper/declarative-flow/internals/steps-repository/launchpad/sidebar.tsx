@@ -6,7 +6,6 @@ import { useRef, useState } from '@wordpress/element';
 import { Icon, copy } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import { useLaunchpadChecklist } from 'calypso/../packages/help-center/src/hooks/use-launchpad-checklist';
 import { StepNavigationLink } from 'calypso/../packages/onboarding/src';
 import Badge from 'calypso/components/badge';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
@@ -19,8 +18,7 @@ import { ResponseDomain } from 'calypso/lib/domains/types';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import Checklist from './checklist';
-import { getArrayOfFilteredTasks, getEnhancedTasks } from './task-helper';
-import { tasks } from './tasks';
+import { getEnhancedTasks } from './task-helper';
 import { getLaunchpadTranslations } from './translations';
 import { Task } from './types';
 
@@ -51,14 +49,16 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 	let isDomainSSLProcessing: boolean | null = false;
 	const translate = useTranslate();
 	const site = useSite();
+	const siteIntentOption = site?.options?.site_intent;
 	const clipboardButtonEl = useRef< HTMLButtonElement >( null );
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 
 	const { globalStylesInUse, shouldLimitGlobalStyles } = usePremiumGlobalStyles( site?.ID );
 
 	const {
-		data: { site_intent: siteIntentOption, checklist_statuses: checklistStatuses },
-	} = useLaunchpad( siteSlug );
+		data: { checklist_statuses: checklistStatuses, checklist: launchpadChecklist },
+		isFetchedAfterMount,
+	} = useLaunchpad( siteSlug, siteIntentOption );
 
 	const selectedDomain = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDomain(),
@@ -68,11 +68,6 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 	const showDomain =
 		! isStartWritingFlow( flow ) ||
 		( checklistStatuses?.domain_upsell_deferred === true && selectedDomain );
-
-	const {
-		data: { checklist: launchpadChecklist },
-		isFetchedAfterMount,
-	} = useLaunchpadChecklist( siteSlug, siteIntentOption );
 
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 
@@ -85,16 +80,10 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 		[]
 	);
 
-	const startWritingFlowTasks: Task[] | null = getArrayOfFilteredTasks(
-		tasks,
-		flow,
-		isEmailVerified
-	);
-
 	const enhancedTasks: Task[] | null =
 		site &&
 		getEnhancedTasks(
-			flow === 'start-writing' ? startWritingFlowTasks : launchpadChecklist,
+			launchpadChecklist,
 			siteSlug,
 			site,
 			submit,
@@ -208,11 +197,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 						</p>
 					</div>
 				) }
-				{ isFetchedAfterMount || flow === 'start-writing' ? (
-					<Checklist tasks={ enhancedTasks } />
-				) : (
-					<Checklist.Placeholder />
-				) }
+				{ isFetchedAfterMount ? <Checklist tasks={ enhancedTasks } /> : <Checklist.Placeholder /> }
 			</div>
 			<div className="launchpad__sidebar-admin-link">
 				<StepNavigationLink
