@@ -88,7 +88,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 			setDomainCartItem( domainCartItem );
 		}
 
-		submit?.( { freeDomain: suggestion?.is_free } );
+		submit?.( { freeDomain: suggestion?.is_free, domainName: suggestion?.domain_name } );
 	};
 
 	const getStartWritingFlowStepContent = () => {

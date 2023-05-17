@@ -2,7 +2,7 @@ import { OnboardSelect, updateLaunchpadSettings } from '@automattic/data-stores'
 import { useLocale } from '@automattic/i18n-utils';
 import { START_WRITING_FLOW, replaceProductsInCart } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { useSelect, useDispatch, dispatch } from '@wordpress/data';
 import { useSelector } from 'react-redux';
 import { recordSubmitStep } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-submit-step';
 import { redirect } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/util';
@@ -14,7 +14,9 @@ import {
 } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { freeSiteAddressType } from 'calypso/lib/domains/constants';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { requestSiteAddressChange } from 'calypso/state/site-address-change/actions';
 
 const startWriting: Flow = {
 	name: START_WRITING_FLOW,
@@ -65,6 +67,14 @@ const startWriting: Flow = {
 		);
 		const { saveSiteSettings, setIntentOnSite } = useDispatch( SITE_STORE );
 		const { setSelectedSite } = useDispatch( ONBOARD_STORE );
+		const selectedSiteId = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSite(),
+			[]
+		);
+		const state = useSelect(
+			( select ) => select( ONBOARD_STORE ) as OnboardSelect,
+			[]
+		).getState();
 
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', flowName, currentStep );
@@ -114,11 +124,32 @@ const startWriting: Flow = {
 					}
 
 					if ( providedDependencies?.freeDomain ) {
+						const freeDomainSuffix = '.wordpress.com';
+						const newDomainName = String( providedDependencies?.domainName ).replace(
+							freeDomainSuffix,
+							''
+						);
+
+						requestSiteAddressChange(
+							selectedSiteId,
+							newDomainName,
+							'wordpress.com',
+							siteSlug,
+							freeSiteAddressType.BLOG,
+							true,
+							false
+						)( dispatch, state );
+
 						await replaceProductsInCart(
 							siteSlug as string,
 							[ getPlanCartItem() ].filter( Boolean ) as MinimalRequestCartProduct[]
 						);
-						return navigate( 'launchpad' );
+
+						return window.location.assign(
+							`/setup/start-writing/launchpad?siteSlug=${ encodeURIComponent(
+								newDomainName + freeDomainSuffix
+							) }`
+						);
 					}
 
 					return navigate( 'plans' );
