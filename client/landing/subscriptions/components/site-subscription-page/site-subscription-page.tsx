@@ -41,7 +41,8 @@ const SiteSubscriptionPage = () => {
 		subscribers,
 	} = data;
 	const [ showSettings, setShowSettings ] = useState( true );
-	const Resubscribe = () => <Button onClick={ () => null }>{ translate( 'Resubscribe' ) }</Button>;
+
+	const { mutate: subscribe } = SubscriptionManager.useSiteSubscribeMutation();
 
 	const {
 		mutate: unsubscribe,
@@ -59,6 +60,12 @@ const SiteSubscriptionPage = () => {
 	if ( ! blogId || isError ) {
 		return <div>Something went wrong.</div>;
 	}
+
+	const Resubscribe = () => (
+		<Button onClick={ () => subscribe( { blog_id: blogId } ) }>
+			{ translate( 'Resubscribe' ) }
+		</Button>
+	);
 
 	if ( isLoading ) {
 		// Full page Wordpress logo loader
@@ -94,7 +101,7 @@ const SiteSubscriptionPage = () => {
 					</header>
 
 					{ unsubscribed && (
-						<Notice type={ NoticeType.Success }>
+						<Notice type={ NoticeType.Success } action={ <Resubscribe /> }>
 							{ translate(
 								'You have successfully unsubscribed and will no longer receive emails from %s.',
 								{
@@ -106,7 +113,7 @@ const SiteSubscriptionPage = () => {
 					) }
 
 					{ unsubscribeError && (
-						<Notice type={ NoticeType.Error } action={ <Resubscribe /> }>
+						<Notice type={ NoticeType.Error }>
 							{ translate( 'There was an error when trying to unsubscribe from %s.', {
 								args: [ data.siteName ],
 								comment: 'Name of the site that the user tried to unsubscribe from.',
