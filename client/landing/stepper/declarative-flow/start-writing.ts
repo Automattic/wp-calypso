@@ -117,6 +117,12 @@ const startWriting: Flow = {
 					return navigate( 'launchpad' );
 				}
 				case 'domains':
+					if ( siteSlug ) {
+						await updateLaunchpadSettings( siteSlug, {
+							checklist_statuses: { domain_upsell_deferred: true },
+						} );
+					}
+
 					if ( providedDependencies?.freeDomain ) {
 						const freeDomainSuffix = '.wordpress.com';
 						const newDomainName = String( providedDependencies?.domainName ).replace(
@@ -142,10 +148,6 @@ const startWriting: Flow = {
 							currentSiteSlug as string,
 							[ getPlanCartItem() ].filter( Boolean ) as MinimalRequestCartProduct[]
 						);
-
-						await updateLaunchpadSettings( currentSiteSlug, {
-							checklist_statuses: { domain_upsell_deferred: true },
-						} );
 
 						return window.location.assign(
 							`/setup/start-writing/launchpad?siteSlug=${ currentSiteSlug }`
