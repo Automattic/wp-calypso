@@ -22,7 +22,7 @@ export { useSupportAvailability } from './support-queries/use-support-availabili
 export { useSubmitTicketMutation } from './support-queries/use-submit-support-ticket';
 export { useSubmitForumsMutation } from './support-queries/use-submit-forums-topic';
 export { useUpdateZendeskUserFieldsMutation } from './support-queries/use-update-zendesk-user-fields';
-export { useSupportHistory } from './support-queries/use-support-history';
+export { useSupportActivity } from './support-queries/use-support-activity';
 export * from './starter-designs-queries';
 export * from './support-queries/types';
 export * from './site/types';

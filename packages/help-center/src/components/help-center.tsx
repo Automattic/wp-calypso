@@ -3,12 +3,11 @@
  * External Dependencies
  */
 import config from '@automattic/calypso-config';
-import { useSupportAvailability, useSupportHistory } from '@automattic/data-stores';
+import { useSupportAvailability, useSupportActivity } from '@automattic/data-stores';
 import { loadScript } from '@automattic/load-script';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { createPortal, useEffect, useRef } from '@wordpress/element';
 import { useSelector } from 'react-redux';
-import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 /**
@@ -115,13 +114,12 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 		}
 	}, [ showMessagingWidget ] );
 
-	const email = useSelector( getCurrentUserEmail );
-	const { data: supportHistory } = useSupportHistory( 'ticket', email );
+	const { data: supportActivity } = useSupportActivity();
 	useEffect( () => {
-		if ( supportHistory?.some( ( ticket ) => ticket.channel === 'native_messaging' ) ) {
+		if ( supportActivity?.some( ( ticket ) => ticket.channel === 'Messaging' ) ) {
 			setShowMessagingLauncher( true );
 		}
-	}, [ setShowMessagingLauncher, supportHistory ] );
+	}, [ setShowMessagingLauncher, supportActivity ] );
 
 	useZendeskConfig( Boolean( chatStatus?.is_user_eligible ) ); // Pre-fetch
 

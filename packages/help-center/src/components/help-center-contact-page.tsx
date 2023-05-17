@@ -5,7 +5,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { Spinner, GMClosureNotice } from '@automattic/components';
-import { useSupportAvailability, useSupportHistory } from '@automattic/data-stores';
+import { useSupportAvailability, useSupportActivity } from '@automattic/data-stores';
 import { isDefaultLocale, getLanguage, useLocale } from '@automattic/i18n-utils';
 import { useEffect, useMemo } from '@wordpress/element';
 import { hasTranslation, sprintf } from '@wordpress/i18n';
@@ -15,7 +15,6 @@ import classnames from 'classnames';
 import { FC } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, LinkProps } from 'react-router-dom';
-import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { getSectionName } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
@@ -40,13 +39,9 @@ export const HelpCenterContactPage: FC = () => {
 
 	const renderEmail = useShouldRenderEmailOption();
 	const renderChat = useShouldRenderChatOption();
-	const email = useSelector( getCurrentUserEmail );
-	const { data: supportHistory, isLoading: isLoadingSupportHistory } = useSupportHistory(
-		'ticket',
-		email
-	);
+	const { data: supportActivity, isLoading: isLoadingSupportActivity } = useSupportActivity();
 	const { data: supportAvailability } = useSupportAvailability( 'CHAT' );
-	const isLoading = renderChat.isLoading || renderEmail.isLoading || isLoadingSupportHistory;
+	const isLoading = renderChat.isLoading || renderEmail.isLoading || isLoadingSupportActivity;
 
 	useEffect( () => {
 		if ( isLoading ) {
@@ -120,7 +115,7 @@ export const HelpCenterContactPage: FC = () => {
 			<BackButton />
 			<div className="help-center-contact-page__content">
 				<h3>{ __( 'Contact our WordPress.com experts', __i18n_text_domain__ ) }</h3>
-				{ supportHistory && <HelpCenterActiveTicketNotice tickets={ supportHistory } /> }
+				{ supportActivity && <HelpCenterActiveTicketNotice tickets={ supportActivity } /> }
 				{ /* Easter */ }
 				<GMClosureNotice
 					displayAt="2023-04-03 00:00Z"
@@ -148,10 +143,7 @@ export const HelpCenterContactPage: FC = () => {
 
 					{ renderChat.render && (
 						<div className={ classnames( { disabled: renderChat.state !== 'AVAILABLE' } ) }>
-							<ConditionalLink
-								active={ renderChat.state === 'AVAILABLE' }
-								to="/contact-form?mode=CHAT"
-							>
+							<ConditionalLink active={ renderChat.state === 'AVAILABLE' } to={ renderChat.to }>
 								<div
 									className={ classnames( 'help-center-contact-page__box', 'chat', {
 										'is-disabled': renderChat.state !== 'AVAILABLE',
