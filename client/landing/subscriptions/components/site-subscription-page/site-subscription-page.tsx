@@ -40,9 +40,14 @@ const SiteSubscriptionPage = () => {
 		deliveryFrequency,
 		subscribers,
 	} = data;
-	const [ showSettings, setShowSettings ] = useState( true );
+	const [ siteSubscribed, setSiteSubscribed ] = useState( true );
 
-	const { mutate: subscribe } = SubscriptionManager.useSiteSubscribeMutation();
+	const {
+		mutate: subscribe,
+		isLoading: subscribing,
+		isSuccess: subscribed,
+	} = SubscriptionManager.useSiteSubscribeMutation();
+	// todo: handle error
 
 	const {
 		mutate: unsubscribe,
@@ -52,8 +57,14 @@ const SiteSubscriptionPage = () => {
 	} = SubscriptionManager.useSiteUnsubscribeMutation();
 
 	useEffect( () => {
+		if ( subscribed ) {
+			setSiteSubscribed( true );
+		}
+	}, [ subscribed ] );
+
+	useEffect( () => {
 		if ( unsubscribed ) {
-			setShowSettings( false );
+			setSiteSubscribed( false );
 		}
 	}, [ unsubscribed ] );
 
@@ -61,8 +72,9 @@ const SiteSubscriptionPage = () => {
 		return <div>Something went wrong.</div>;
 	}
 
+	// todo: style the button (underline, color?, etc.)
 	const Resubscribe = () => (
-		<Button onClick={ () => subscribe( { blog_id: blogId } ) }>
+		<Button onClick={ () => subscribe( { blog_id: blogId } ) } disabled={ subscribing }>
 			{ translate( 'Resubscribe' ) }
 		</Button>
 	);
@@ -100,7 +112,7 @@ const SiteSubscriptionPage = () => {
 						<FormattedHeader brandFont headerText={ siteName } subHeaderText={ subHeaderText } />
 					</header>
 
-					{ unsubscribed && (
+					{ ! siteSubscribed && (
 						<Notice type={ NoticeType.Success } action={ <Resubscribe /> }>
 							{ translate(
 								'You have successfully unsubscribed and will no longer receive emails from %s.',
@@ -121,7 +133,7 @@ const SiteSubscriptionPage = () => {
 						</Notice>
 					) }
 
-					{ showSettings && (
+					{ siteSubscribed && (
 						<>
 							<SiteSubscriptionSettings
 								blogId={ blogId }
