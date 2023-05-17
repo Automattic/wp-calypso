@@ -1,13 +1,18 @@
 import { createReceiptObject } from '../assembler';
+import type { RawReceiptData, ReceiptData } from '../types';
+import type { WPCOMTransactionEndpointResponse } from '@automattic/wpcom-checkout';
 
-const standardRawReceipt = {
+const siteId = 42561;
+
+const rawReceiptEndpointReceipt: RawReceiptData = {
 	receipt_id: '12345',
 	display_price: '$100',
 	price_float: 100,
 	price_integer: 10000,
 	currency: 'USD',
-	purchases: {
-		one: {
+	purchases: [
+		{
+			user_email: '',
 			is_domain_registration: true,
 			meta: 'example.com',
 			product_id: '54321',
@@ -22,11 +27,42 @@ const standardRawReceipt = {
 			is_renewal: false,
 			will_auto_renew: true,
 		},
+	],
+};
+
+const rawTransactionReceipt: WPCOMTransactionEndpointResponse = {
+	success: true,
+	order_id: 3,
+	is_gift_purchase: false,
+	receipt_id: 12345,
+	display_price: '$100',
+	price_float: 100,
+	price_integer: 10000,
+	currency: 'USD',
+	purchases: {
+		[ siteId ]: [
+			{
+				user_email: '',
+				is_domain_registration: true,
+				meta: 'example.com',
+				product_id: '54321',
+				product_slug: 'domain-reg',
+				product_type: 'domain',
+				product_name: 'Domain Reg',
+				product_name_short: 'Domain',
+				new_quantity: 1,
+				registrar_support_url: 'something.com',
+				is_email_verified: true,
+				is_root_domain_with_us: false,
+				is_renewal: false,
+				will_auto_renew: true,
+			},
+		],
 	},
 	failed_purchases: [],
 };
 
-const standardAssembledReceipt = {
+const standardAssembledReceipt: ReceiptData = {
 	currency: 'USD',
 	displayPrice: '$100',
 	failedPurchases: [],
@@ -57,13 +93,13 @@ const standardAssembledReceipt = {
 
 describe( 'createReceiptObject', () => {
 	it( 'returns an expected object for standard receipt data', () => {
-		const actual = createReceiptObject( standardRawReceipt );
+		const actual = createReceiptObject( rawTransactionReceipt );
 		expect( actual ).toEqual( standardAssembledReceipt );
 	} );
 
 	it( 'returns an expected object for receipt data with no purchases', () => {
 		const actual = createReceiptObject( {
-			...standardRawReceipt,
+			...rawTransactionReceipt,
 			purchases: [],
 		} );
 		expect( actual ).toEqual( {
@@ -74,7 +110,7 @@ describe( 'createReceiptObject', () => {
 
 	it( 'returns an expected object for receipt data with undefined purchases', () => {
 		const actual = createReceiptObject( {
-			...standardRawReceipt,
+			...rawTransactionReceipt,
 			purchases: undefined,
 		} );
 		expect( actual ).toEqual( {
@@ -85,7 +121,7 @@ describe( 'createReceiptObject', () => {
 
 	it( 'returns an expected object for receipt data with false purchases', () => {
 		const actual = createReceiptObject( {
-			...standardRawReceipt,
+			...rawReceiptEndpointReceipt,
 			purchases: false,
 		} );
 		expect( actual ).toEqual( {
@@ -97,8 +133,8 @@ describe( 'createReceiptObject', () => {
 	it( 'returns an expected object for standard receipt data when saas redirect key is supplied', () => {
 		const url = 'http://example.com';
 
-		const clonedStandardRawReceipt = { ...standardRawReceipt };
-		clonedStandardRawReceipt.purchases.one.saas_redirect_url = url;
+		const clonedStandardRawReceipt = { ...rawTransactionReceipt };
+		clonedStandardRawReceipt.purchases[ siteId ][ 0 ].saas_redirect_url = url;
 
 		const actual = createReceiptObject( clonedStandardRawReceipt );
 
