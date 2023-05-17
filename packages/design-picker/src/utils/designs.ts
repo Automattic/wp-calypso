@@ -33,7 +33,9 @@ export const getDesignPreviewUrl = (
 			? options.viewport_height || DEFAULT_VIEWPORT_HEIGHT
 			: undefined,
 		source_site: 'patternboilerplates.wordpress.com',
-		use_screenshot_overrides: options.use_screenshot_overrides || true,
+		...( options.use_screenshot_overrides && {
+			use_screenshot_overrides: options.use_screenshot_overrides,
+		} ),
 		remove_assets: options.remove_assets,
 		...( options.style_variation &&
 			options.style_variation.slug !== 'default' && {
