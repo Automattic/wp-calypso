@@ -79,12 +79,12 @@ const PatternAssembler = ( {
 	const locale = useLocale();
 
 	// Fetching all patterns and categories
+	const categories = usePatternCategories( site?.ID );
 	const allPatterns = useAllPatterns( locale );
 	const patternIds = useMemo(
 		() => allPatterns.map( ( pattern ) => encodePatternId( pattern.ID ) ),
 		[ allPatterns ]
 	);
-	const categories = usePatternCategories( site?.ID );
 	const patternsMapByCategory = usePatternsMapByCategory( allPatterns, categories );
 	const {
 		header,
