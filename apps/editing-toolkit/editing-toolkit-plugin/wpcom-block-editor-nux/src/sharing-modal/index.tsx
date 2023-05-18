@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useLocale } from '@automattic/i18n-utils';
 import { Modal, Button, ExternalLink } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useRef, useState, createInterpolateElement } from '@wordpress/element';
@@ -31,8 +30,6 @@ const SharingModal: React.FC = () => {
 	const { launchpadScreenOption } = window?.launchpadOptions || {};
 	const { isDismissed, updateIsDismissed } = useSharingModalDismissed( isDismissedDefault );
 	const { __ } = useI18n();
-	const localeSlug = useLocale();
-	const isEnglish = localeSlug?.startsWith( 'en' );
 
 	const { link, title } = useSelect(
 		( select ) => ( select( 'core/editor' ) as CoreEditorPlaceholder ).getCurrentPost(),
@@ -160,7 +157,7 @@ const SharingModal: React.FC = () => {
 		recordTracksEvent( 'calypso_editor_sharing_view_subscribers' );
 	};
 
-	if ( ! isOpen || isDismissedDefault || ! isEnglish ) {
+	if ( ! isOpen || isDismissedDefault ) {
 		return null;
 	}
 
