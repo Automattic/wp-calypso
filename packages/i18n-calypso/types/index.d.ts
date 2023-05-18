@@ -12,7 +12,11 @@ type NormalizedTranslateArgs =
 			count: number;
 	  } );
 
-export type Substitution = string | number | React.ReactFragment;
+// Note: types like ReactNode, ReactFragment, and ReactText have been deprecated,
+// so we need to define a more specific ReactNode type ourselves.
+type ExistingReactNode = Exclude< React.ReactNode, boolean | null | undefined >;
+
+export type Substitution = ExistingReactNode;
 
 export type Substitutions =
 	| Substitution
@@ -56,7 +60,7 @@ export type TranslateOptionsPluralText = TranslateOptionsPlural & { textOnly: tr
 
 // Translate hooks, like component interpolation or highlighting untranslated strings,
 // force us to declare the return type as a generic React node, not as just string.
-export type TranslateResult = React.ReactChild;
+export type TranslateResult = ExistingReactNode;
 
 export interface NumberFormatOptions {
 	decimals?: number;
@@ -65,21 +69,21 @@ export interface NumberFormatOptions {
 }
 
 export type TranslateHook = (
-	translation: React.ReactChild,
+	translation: ExistingReactNode,
 	options: NormalizedTranslateArgs
-) => React.ReactChild;
+) => ExistingReactNode;
 
 export type ComponentUpdateHook = ( ...args: any ) => any;
 
 export type EventListener = ( ...payload: any ) => any;
 
 export interface I18N {
-	translate( options: DeprecatedTranslateOptions ): React.ReactChild;
+	translate( options: DeprecatedTranslateOptions ): ExistingReactNode;
 	translate( original: string ): string;
-	translate( original: string ): React.ReactChild;
-	translate( original: string, options: TranslateOptions ): React.ReactChild;
+	translate( original: string ): ExistingReactNode;
+	translate( original: string, options: TranslateOptions ): ExistingReactNode;
 	translate( original: string, options: TranslateOptionsText ): string;
-	translate( original: string, plural: string, options: TranslateOptionsPlural ): React.ReactChild;
+	translate( original: string, plural: string, options: TranslateOptionsPlural ): ExistingReactNode;
 	translate( original: string, plural: string, options: TranslateOptionsPluralText ): string;
 
 	numberFormat( number: number, numberOfDecimalPlaces: number ): string;
