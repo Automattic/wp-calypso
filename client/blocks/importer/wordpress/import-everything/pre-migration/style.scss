@@ -139,5 +139,9 @@
 			/* We need to allow space for the SVG checkmark */
 			padding: 0.875rem calc(0.5rem + 24px) 0.875rem 1rem;
 		}
+
+		.form-password-input .form-password-input__toggle-visibility {
+			top: 14px;
+		}
 	}
 }
