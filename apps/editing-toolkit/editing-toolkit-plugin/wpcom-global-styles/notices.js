@@ -111,6 +111,11 @@ function GlobalStylesEditNotice() {
 		trackEvent( 'calypso_global_styles_gating_notice_reset_click', isSiteEditor );
 	}, [ editEntityRecord, globalStylesId, isSiteEditor ] );
 
+	const openResetGlobalStylesSupport = useCallback( () => {
+		window.open( 'https://wordpress.com/support/using-styles/#reset-all-styles', '_blank' ).focus();
+		trackEvent( 'calypso_global_styles_gating_notice_reset_support_click', isSiteEditor );
+	}, [ isSiteEditor ] );
+
 	const showNotice = useCallback( () => {
 		const actions = [
 			{
@@ -132,14 +137,13 @@ function GlobalStylesEditNotice() {
 			} );
 		}
 
-		if ( isSiteEditor ) {
-			actions.push( {
-				label: __( 'Remove custom styles', 'full-site-editing' ),
-				onClick: resetGlobalStyles,
-				variant: 'secondary',
-				noDefaultClasses: true,
-			} );
-		}
+		actions.push( {
+			label: __( 'Remove custom styles', 'full-site-editing' ),
+			onClick: isSiteEditor ? resetGlobalStyles : openResetGlobalStylesSupport,
+			variant: isSiteEditor ? 'secondary' : 'link',
+			noDefaultClasses: true,
+			className: isSiteEditor ? '' : 'wpcom-global-styles-reset-support',
+		} );
 
 		createWarningNotice(
 			__(
@@ -158,6 +162,7 @@ function GlobalStylesEditNotice() {
 		createWarningNotice,
 		isPostEditor,
 		isSiteEditor,
+		openResetGlobalStylesSupport,
 		previewPost,
 		resetGlobalStyles,
 		upgradePlan,
