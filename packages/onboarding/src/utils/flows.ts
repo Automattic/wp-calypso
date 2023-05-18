@@ -25,7 +25,7 @@ export const WITH_THEME_ASSEMBLER_FLOW = 'with-theme-assembler';
 export const UPDATE_DESIGN_FLOW = 'update-design';
 export const DOMAIN_UPSELL_FLOW = 'domain-upsell';
 
-export const isLinkInBioFlow = ( flowName: string | null ) => {
+export const isLinkInBioFlow = ( flowName: string | null | undefined ) => {
 	return Boolean(
 		flowName &&
 			[ LINK_IN_BIO_FLOW, LINK_IN_BIO_TLD_FLOW, LINK_IN_BIO_POST_SETUP_FLOW ].includes( flowName )
