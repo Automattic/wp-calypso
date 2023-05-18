@@ -16,6 +16,8 @@ interface Props {
  * useInline allows us to reference an svg sprite from the current page instead.
  * see https://github.com/w3c/svgwg/issues/707
  *
+ * InlineSocialLogosSprite must be included on the page where this is used
+ *
  * @returns A Social Logo SVG
  */
 function InlineSocialLogo( props: Assign< React.SVGProps< SVGSVGElement >, Props > ) {

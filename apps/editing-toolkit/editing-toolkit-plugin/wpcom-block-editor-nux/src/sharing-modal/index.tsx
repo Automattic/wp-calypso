@@ -34,6 +34,7 @@ const SharingModal: React.FC = () => {
 	const { __ } = useI18n();
 	const localeSlug = useLocale();
 	const isEnglish = localeSlug?.startsWith( 'en' );
+	const isPrivateBlog = window?.wpcomGutenberg?.blogPublic === '-1';
 
 	const { link, title } = useSelect(
 		( select ) => ( select( 'core/editor' ) as CoreEditorPlaceholder ).getCurrentPost(),
@@ -57,9 +58,6 @@ const SharingModal: React.FC = () => {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const closeModal = () => setIsOpen( false );
 	const { createNotice } = useDispatch( noticesStore );
-
-	const siteSlug = window.location.hostname;
-	const subscribersUrl = `https://wordpress.com/people/subscribers/${ siteSlug }`;
 
 	useEffect( () => {
 		// The first post will show a different modal.
@@ -90,6 +88,10 @@ const SharingModal: React.FC = () => {
 		isCurrentPostPublished,
 		launchpadScreenOption,
 	] );
+
+	if ( ! isOpen || isDismissedDefault || isPrivateBlog || ! isEnglish ) {
+		return null;
+	}
 
 	const shareTwitter = () => {
 		const baseUrl = new URL( 'https://twitter.com/intent/tweet' );
@@ -161,9 +163,7 @@ const SharingModal: React.FC = () => {
 		recordTracksEvent( 'calypso_editor_sharing_view_subscribers' );
 	};
 
-	if ( ! isOpen || isDismissedDefault || ! isEnglish ) {
-		return null;
-	}
+	const subscribersUrl = `https://wordpress.com/people/subscribers/${ window.location.hostname }`;
 
 	return (
 		<Modal
