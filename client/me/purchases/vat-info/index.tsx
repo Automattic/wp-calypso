@@ -14,10 +14,10 @@ import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import useCountryList, {
 	isVatSupported,
+	useTaxName,
 } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-country-list';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice, removeNotice } from 'calypso/state/notices/actions';
-import { useVatVendorInfo } from '../billing-history/vat-vendor-details';
 import useVatDetails from './use-vat-details';
 import type { UpdateError, FetchError } from './use-vat-details';
 import type { CountryListItem, VatDetails } from '@automattic/wpcom-checkout';
@@ -29,7 +29,7 @@ export default function VatInfoPage() {
 	const { data: geoData } = useGeoLocationQuery();
 	const { isLoading, fetchError, vatDetails } = useVatDetails();
 	const [ currentVatDetails, setCurrentVatDetails ] = useState< VatDetails >( {} );
-	const vendorInfo = useVatVendorInfo(
+	const taxName = useTaxName(
 		currentVatDetails.country ?? vatDetails.country ?? geoData?.country_short ?? 'GB'
 	);
 
@@ -43,7 +43,7 @@ export default function VatInfoPage() {
 						/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
 						translate( 'An error occurred while fetching %s details.', {
 							textOnly: true,
-							args: [ vendorInfo?.tax_name ?? translate( 'VAT', { textOnly: true } ) ],
+							args: [ taxName ?? translate( 'VAT', { textOnly: true } ) ],
 						} )
 					}
 				</CompactCard>
@@ -61,7 +61,7 @@ export default function VatInfoPage() {
 	/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
 	const title = translate( 'Add %s details', {
 		textOnly: true,
-		args: [ vendorInfo?.tax_name ?? fallbackTaxName ],
+		args: [ taxName ?? fallbackTaxName ],
 	} );
 
 	return (
@@ -88,7 +88,7 @@ export default function VatInfoPage() {
 							"We currently only provide %(taxName)s invoices to users who are properly registered. %(taxName)s information saved on this page will be applied to all of your account's receipts.",
 							{
 								textOnly: true,
-								args: { taxName: vendorInfo?.tax_name ?? translate( 'VAT', { textOnly: true } ) },
+								args: { taxName: taxName ?? translate( 'VAT', { textOnly: true } ) },
 							}
 						) }
 					</p>
@@ -110,7 +110,7 @@ function VatForm( {
 	const { data: geoData } = useGeoLocationQuery();
 	const { vatDetails, isUpdating, isUpdateSuccessful, setVatDetails, updateError } =
 		useVatDetails();
-	const vendorInfo = useVatVendorInfo(
+	const taxName = useTaxName(
 		currentVatDetails.country ?? vatDetails.country ?? geoData?.country_short ?? 'GB'
 	);
 
@@ -147,7 +147,7 @@ function VatForm( {
 						/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
 						translate( '%s ID', {
 							textOnly: true,
-							args: [ vendorInfo?.tax_name ?? translate( 'VAT', { textOnly: true } ) ],
+							args: [ taxName ?? translate( 'VAT', { textOnly: true } ) ],
 						} )
 					}
 				</FormLabel>
@@ -165,7 +165,7 @@ function VatForm( {
 							/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
 							'To change your %(taxName)s ID, {{contactSupportLink}}please contact support{{/contactSupportLink}}.',
 							{
-								args: { taxName: vendorInfo?.tax_name ?? translate( 'VAT', { textOnly: true } ) },
+								args: { taxName: taxName ?? translate( 'VAT', { textOnly: true } ) },
 								components: {
 									contactSupportLink: (
 										<a
@@ -280,7 +280,7 @@ function useDisplayVatNotices( {
 	const translate = useTranslate();
 	const { data: geoData } = useGeoLocationQuery();
 	const { vatDetails } = useVatDetails();
-	const vendorInfo = useVatVendorInfo( vatDetails.country ?? geoData?.country_short ?? 'GB' );
+	const taxName = useTaxName( vatDetails.country ?? geoData?.country_short ?? 'GB' );
 
 	useEffect( () => {
 		if ( error ) {
@@ -296,7 +296,7 @@ function useDisplayVatNotices( {
 					/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
 					translate( 'Your %s details have been updated!', {
 						textOnly: true,
-						args: [ vendorInfo?.tax_name ?? translate( 'VAT', { textOnly: true } ) ],
+						args: [ taxName ?? translate( 'VAT', { textOnly: true } ) ],
 					} ),
 					{
 						id: 'vat_info_notice',
@@ -305,7 +305,7 @@ function useDisplayVatNotices( {
 			);
 			return;
 		}
-	}, [ error, success, reduxDispatch, translate, vendorInfo?.tax_name ] );
+	}, [ error, success, reduxDispatch, translate, taxName ] );
 }
 
 function useRecordVatEvents( {
