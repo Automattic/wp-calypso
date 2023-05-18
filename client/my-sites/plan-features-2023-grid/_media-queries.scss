@@ -64,6 +64,16 @@ $planComparisonMinWidthToGridWidthMap: (
 	width: 100%;
 }
 
+@mixin plan-comparison-grid-breakpoints-with-sidebar {
+	width: 100%;
+
+	@each $screenMinWidth, $gridWidth in $planComparisonMinWidthToGridWidthMap {
+		@media ( min-width: #{$screenMinWidth} ) {
+			width: #{$gridWidth} + $plan-features-sidebar-width;
+		}
+	}
+}
+
 /**
  * Show/hide desktop/tablet/mobile layouts based on the screen width.
  * Desktop layout: width > $plans-2023-medium-breakpoint
