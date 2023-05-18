@@ -1,6 +1,5 @@
 import classnames from 'classnames';
 import * as React from 'react';
-import spritePath from 'social-logos/svg-sprite/social-logos.svg';
 import { Assign } from 'utility-types';
 
 interface Props {
@@ -8,8 +7,19 @@ interface Props {
 	size?: number;
 }
 
-function SocialLogo( props: Assign< React.SVGProps< SVGSVGElement >, Props > ) {
-	const { size = 24, icon, onClick, className, ...otherProps } = props;
+/**
+ * InlineSocialLogo is a copy of client/components/social-logo that references an inline SVG sprite.
+ * This componenet is needed because:
+ *
+ * The XML <use> element does not work with SVGs loaded from external domains.
+ * In the editor, images are loaded from the CDN (s0.wp.com) in production.
+ * useInline allows us to reference an svg sprite from the current page instead.
+ * see https://github.com/w3c/svgwg/issues/707
+ *
+ * @returns A Social Logo SVG
+ */
+function InlineSocialLogo( props: Assign< React.SVGProps< SVGSVGElement >, Props > ) {
+	const { size = 24, icon, className, ...otherProps } = props;
 
 	// Using a missing icon doesn't produce any errors, just a blank icon, which is the exact intended behaviour.
 	// This means we don't need to perform any checks on the icon name.
@@ -26,12 +36,11 @@ function SocialLogo( props: Assign< React.SVGProps< SVGSVGElement >, Props > ) {
 			className={ iconClass }
 			height={ size }
 			width={ size }
-			onClick={ onClick }
 			{ ...otherProps }
 		>
-			<use xlinkHref={ `${ spritePath }#${ icon }` } />
+			<use xlinkHref={ `#${ icon }` } />
 		</svg>
 	);
 }
 
-export default React.memo( SocialLogo );
+export default React.memo( InlineSocialLogo );
