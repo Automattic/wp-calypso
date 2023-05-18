@@ -62,7 +62,7 @@ const domainUpsell: Flow = {
 					navigate( 'plans' );
 
 				case 'plans':
-					if ( providedDependencies?.returnToDomainSelection ) {
+					if ( providedDependencies?.goBack ) {
 						return navigate( 'domains' );
 					}
 					if ( providedDependencies?.goToCheckout ) {

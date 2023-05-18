@@ -2,7 +2,7 @@ import {
 	FEATURE_VIDEO_UPLOADS,
 	planHasFeature,
 	PLAN_PREMIUM,
-	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
+	FEATURE_STYLE_CUSTOMIZATION,
 } from '@automattic/calypso-products';
 import { isNewsletterFlow, isStartWritingFlow, START_WRITING_FLOW } from '@automattic/onboarding';
 import { dispatch } from '@wordpress/data';
@@ -141,7 +141,7 @@ export function getEnhancedTasks(
 									plan: PLAN_PREMIUM,
 									feature: isVideoPressFlowWithUnsupportedPlan
 										? FEATURE_VIDEO_UPLOADS
-										: FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
+										: FEATURE_STYLE_CUSTOMIZATION,
 								} ),
 							} );
 							window.location.assign( plansUrl );
