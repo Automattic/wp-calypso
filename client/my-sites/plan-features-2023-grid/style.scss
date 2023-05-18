@@ -170,7 +170,7 @@
 }
 
 .is-2023-pricing-grid .plans-wrapper {
-	margin: 0 auto;
+	margin: 0 20px;
 	padding: 0 0 10px;
 	transform: translateY(-20px);
 	overflow-x: visible;
@@ -208,7 +208,7 @@
 			/* stylelint-disable-next-line */
 			border-radius: 5px;
 			padding: 38px 0 20px 0;
-			margin: 20px;
+			margin: 0;
 
 			@include plans-section-custom-mobile-breakpoint {
 				margin-left: 0;
@@ -303,9 +303,9 @@
 		border: 1px solid #e0e0e0;
 		border-radius: 5px; /* stylelint-disable-line */
 		background-color: #fff;
-		margin: 0;
+		margin: 0 auto;
 		border-spacing: 0;
-		width: 100%;
+		width: unset;
 	}
 
 	.plan-features-2023-grid__table-bottom .plan-features-2023-grid__table {
@@ -350,6 +350,7 @@
 		background-color: var(--color-surface);
 		position: relative;
 		vertical-align: baseline;
+		max-width: 344px;
 
 		.is-bold {
 			font-weight: 600;
