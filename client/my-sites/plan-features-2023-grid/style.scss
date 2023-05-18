@@ -377,6 +377,7 @@ $mobile-card-max-width: 440px;
 		background-color: var(--color-surface);
 		position: relative;
 		vertical-align: baseline;
+		max-width: 344px;
 
 		.is-bold {
 			font-weight: 600;
