@@ -207,8 +207,8 @@ export function HelpCenterGPT() {
 										) }
 									</p>
 									<div className="help-center-gpt-response__continue_quote">
-										{ query.split( '\n\n' ).map( ( line ) => (
-											<p>{ line }</p>
+										{ query.split( '\n\n' ).map( ( line, index ) => (
+											<p key={ index }>{ line }</p>
 										) ) }
 									</div>
 								</div>
