@@ -232,24 +232,11 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 		stagingSite,
 	] );
 
-	const getNewStagingSiteContent = () => {
-		const onAddClick = () => {
-			dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_click' ) );
-			setWasCreating( true );
-			setProgress( 0.1 );
-			addStagingSite();
-		};
-		return (
-			<>
-				<NewStagingSiteCardContent
-					disabled={ disabled }
-					addingStagingSite={ addingStagingSite }
-					isLoadingQuotaValidation={ isLoadingQuotaValidation }
-					hasValidQuota={ hasValidQuota }
-					onAddClick={ onAddClick }
-				/>
-			</>
-		);
+	const onAddClick = () => {
+		dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_click' ) );
+		setWasCreating( true );
+		setProgress( 0.1 );
+		addStagingSite();
 	};
 
 	const getManageStagingSiteContent = () => {
@@ -374,7 +361,15 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 	} else if ( showManageStagingSite && isStagingSiteTransferComplete ) {
 		stagingSiteCardContent = getManageStagingSiteContent();
 	} else if ( showAddStagingSite && ! addingStagingSite ) {
-		stagingSiteCardContent = getNewStagingSiteContent();
+		stagingSiteCardContent = (
+			<NewStagingSiteCardContent
+				disabled={ disabled }
+				addingStagingSite={ addingStagingSite }
+				isLoadingQuotaValidation={ isLoadingQuotaValidation }
+				hasValidQuota={ hasValidQuota }
+				onAddClick={ onAddClick }
+			/>
+		);
 	} else {
 		stagingSiteCardContent = <LoadingPlaceholder />;
 	}
