@@ -2,11 +2,7 @@ import { useSelect } from '@wordpress/data';
 
 export function useGlobalStylesConfig() {
 	return useSelect( ( select ) => {
-		const {
-			getEditedEntityRecord,
-			__experimentalGetCurrentGlobalStylesId,
-			__experimentalGetDirtyEntityRecords,
-		} = select( 'core' );
+		const { getEditedEntityRecord, __experimentalGetCurrentGlobalStylesId } = select( 'core' );
 
 		const _globalStylesId = __experimentalGetCurrentGlobalStylesId
 			? __experimentalGetCurrentGlobalStylesId()
@@ -26,7 +22,7 @@ export function useGlobalStylesConfig() {
 
 		return {
 			globalStylesInUse,
-			siteChanges: __experimentalGetDirtyEntityRecords ? __experimentalGetDirtyEntityRecords() : [],
+			globalStylesId: _globalStylesId,
 		};
 	}, [] );
 }

@@ -470,7 +470,7 @@ export const getJetpackProductDisclaimers = (
 	};
 
 	const backupDisclaimer = doesProductHaveCompatibleSlug( backupDisclaimerFeatureSlugs ) ? (
-		translate( '* Subject to your usage and storage limit. {{link}}Learn more{{/link}}.', {
+		translate( 'Subject to your usage and storage limit. {{link}}Learn more{{/link}}.', {
 			components: {
 				link: getLink(),
 			},
@@ -750,7 +750,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		}
 	);
 
-	const backupIncludesInfoT1Log = translate( '30-day activity log archive*' );
+	const backupIncludesInfoT1Log = translate( '30-day activity log archive' );
 	const backupIncludesInfoT2Log = translate( '{{strong}}1 year{{/strong}} activity log archive', {
 		components: {
 			strong: <strong />,
@@ -1001,7 +1001,7 @@ export const getJetpackProductsFAQs = (
 	const backupFAQs: Array< FAQ > = [
 		{
 			id: 'backup-storage-limits',
-			question: translate( '*How do backup storage limits work?' ),
+			question: translate( 'How do backup storage limits work?' ),
 			answer: translate(
 				'If your backup storage limit is reached, older backups will be deleted and, depending on your site’s size, the backup retention period (archive) might be reduced to %(monthlyDays)d days. This will affect how far back you can see backups in your activity log. Existing backups can still be restored, but new updates won’t be backed up until you upgrade or free up storage.',
 				{

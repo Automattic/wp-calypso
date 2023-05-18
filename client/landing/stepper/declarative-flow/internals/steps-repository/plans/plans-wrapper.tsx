@@ -22,6 +22,7 @@ import {
 	HOSTING_SITE_CREATION_FLOW,
 	isHostingSiteCreationFlow,
 } from '@automattic/onboarding';
+import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -43,7 +44,7 @@ import './style.scss';
 type IntervalType = 'yearly' | 'monthly';
 interface Props {
 	flowName: string | null;
-	onSubmit: () => void;
+	onSubmit: ( pickedPlan: MinimalRequestCartProduct | null ) => void;
 	plansLoaded: boolean;
 	is2023PricingGridVisible: boolean;
 }
@@ -112,7 +113,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		}
 
 		setPlanCartItem( selectedPlan );
-		props.onSubmit?.();
+		props.onSubmit?.( selectedPlan );
 	};
 
 	const getDomainName = () => {
@@ -121,7 +122,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 
 	const handleFreePlanButtonClick = () => {
 		onSelectPlan( null ); // onUpgradeClick expects a cart item -- null means Free Plan.
-		props.onSubmit();
+		props.onSubmit( null );
 	};
 
 	const renderLoading = () => {
