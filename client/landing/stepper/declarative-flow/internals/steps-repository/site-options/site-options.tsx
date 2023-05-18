@@ -77,6 +77,10 @@ export const SiteOptions = ( { navigation }: Pick< StepProps, 'navigation' > ) =
 	};
 
 	const onChange = ( event: React.FormEvent< HTMLInputElement > ) => {
+		if ( isFormDisabled ) {
+			return;
+		}
+
 		setFormTouched( true );
 
 		switch ( event.currentTarget.name ) {
