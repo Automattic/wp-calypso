@@ -10,8 +10,8 @@ import type { FacebookPreviewProps } from './types';
 export type FacebookPreviewsProps = FacebookPreviewProps & SocialPreviewsBaseProps;
 
 export const FacebookPreviews: React.FC< FacebookPreviewsProps > = ( props ) => {
-	const { customImage } = props;
-	const hasCustomImage = !! customImage;
+	const hasMedia = !! props.media?.length;
+	const hasCustomImage = !! props.customImage;
 
 	return (
 		<div className="social-preview facebook-preview">
@@ -25,11 +25,7 @@ export const FacebookPreviews: React.FC< FacebookPreviewsProps > = ( props ) => 
 				<p className="social-preview__section-desc">
 					{ __( 'This is what your social post will look like on Facebook:', 'social-previews' ) }
 				</p>
-				{ hasCustomImage ? (
-					<FacebookPostPreview { ...props } />
-				) : (
-					<FacebookLinkPreview { ...props } />
-				) }
+				{ hasMedia ? <FacebookPostPreview { ...props } /> : <FacebookLinkPreview { ...props } /> }
 			</section>
 			<section className="social-preview__section facebook-preview__section">
 				<SectionHeading level={ props.headingLevel }>

@@ -8,5 +8,13 @@ export type TwitterLinkPreviewProps = Omit< TwitterPreviewProps, keyof OptionalP
 	OptionalProps;
 
 export const TwitterLinkPreview: React.FC< TwitterLinkPreviewProps > = ( props ) => {
-	return <TwitterPostPreview { ...DEFAULT_PROPS } { ...props } text="" />;
+	return (
+		<TwitterPostPreview
+			{ ...DEFAULT_PROPS }
+			{ ...props }
+			// Override the props that are irrelevant to link preview
+			text=""
+			media={ undefined }
+		/>
+	);
 };

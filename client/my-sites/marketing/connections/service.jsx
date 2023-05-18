@@ -108,7 +108,10 @@ export class SharingService extends Component {
 	 * Triggers an action based on the current connection status.
 	 */
 	performAction = () => {
-		const connectionStatus = this.getConnectionStatus( this.props.service.ID );
+		const connectionStatus = this.getConnectionStatus(
+			this.props.service.ID,
+			this.props.service.status ?? 'ok'
+		);
 		const { path } = this.props;
 
 		// Depending on current status, perform an action when user clicks the
@@ -407,7 +410,7 @@ export class SharingService extends Component {
 	 * @param {string} service The name of the service to check
 	 * @returns {string} Connection status.
 	 */
-	getConnectionStatus( service ) {
+	getConnectionStatus( service, serviceStatus = 'ok' ) {
 		let status;
 
 		if ( this.props.isFetching ) {
@@ -430,6 +433,7 @@ export class SharingService extends Component {
 			status = 'connected';
 		}
 
+		status = 'ok' !== serviceStatus && 'not-connected' !== status ? 'must-disconnect' : status;
 		return status;
 	}
 
@@ -532,7 +536,8 @@ export class SharingService extends Component {
 
 	render() {
 		const connections = this.getConnections();
-		const connectionStatus = this.getConnectionStatus( this.props.service.ID );
+		const serviceStatus = this.props.service.status ?? 'ok';
+		const connectionStatus = this.getConnectionStatus( this.props.service.ID, serviceStatus );
 		const earliestExpiry = this.getConnectionExpiry();
 		const classNames = classnames( 'sharing-service', this.props.service.ID, connectionStatus, {
 			'is-open': this.state.isOpen,
@@ -540,7 +545,6 @@ export class SharingService extends Component {
 		const accounts = this.state.isSelectingAccount ? this.props.availableExternalAccounts : [];
 		const showLinkedInNotice =
 			'linkedin' === this.props.service.ID && some( connections, { status: 'must_reauth' } );
-		const serviceStatus = this.props.service.status ?? 'ok';
 
 		const header = (
 			<div>
@@ -567,10 +571,33 @@ export class SharingService extends Component {
 			</div>
 		);
 
+		const action = (
+			<ServiceAction
+				status={ 'ok' !== serviceStatus ? 'must-disconnect' : connectionStatus }
+				service={ this.props.service }
+				onAction={ this.performAction }
+				isConnecting={ this.state.isConnecting }
+				isRefreshing={ this.state.isRefreshing }
+				isDisconnecting={ this.state.isDisconnecting }
+			/>
+		);
+
 		if ( 'ok' !== serviceStatus ) {
 			return (
 				<li>
-					<FoldableCard disabled header={ header } compact className={ classNames } />
+					<FoldableCard
+						disabled={ 'must-disconnect' !== connectionStatus }
+						compact
+						header={ header }
+						className={ classNames }
+						summary={
+							[ 'connected', 'reconnect', 'refresh-falied', 'must-disconnect' ].includes(
+								connectionStatus
+							)
+								? action
+								: undefined
+						}
+					/>
 					<Notice isCompact status="is-error" className="sharing-service__unsupported">
 						{ this.props.translate(
 							'Twitter is no longer supported. {{a}}Learn more about this{{/a}}',
@@ -595,17 +622,6 @@ export class SharingService extends Component {
 				</li>
 			);
 		}
-
-		const action = (
-			<ServiceAction
-				status={ connectionStatus }
-				service={ this.props.service }
-				onAction={ this.performAction }
-				isConnecting={ this.state.isConnecting }
-				isRefreshing={ this.state.isRefreshing }
-				isDisconnecting={ this.state.isDisconnecting }
-			/>
-		);
 
 		return (
 			<li>

@@ -68,7 +68,7 @@ declare module 'calypso/state/purchases/selectors' {
 
 declare module 'calypso/state/ui/selectors' {
 	export const getSelectedSiteId: ( state: unknown ) => number;
-	export const getSectionName: ( state: unknown ) => string;
+	export const getSectionName: ( state: unknown ) => SectionName;
 }
 
 declare module 'calypso/state/sites/selectors' {

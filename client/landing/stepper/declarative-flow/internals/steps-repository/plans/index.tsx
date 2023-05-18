@@ -1,16 +1,22 @@
 import { is2023PricingGridActivePage } from '@automattic/calypso-products';
-import { DOMAIN_UPSELL_FLOW, START_WRITING_FLOW, StepContainer } from '@automattic/onboarding';
-import { useI18n } from '@wordpress/react-i18n';
+import {
+	DOMAIN_UPSELL_FLOW,
+	isHostingSiteCreationFlow,
+	START_WRITING_FLOW,
+	StepContainer,
+} from '@automattic/onboarding';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import PlansWrapper from './plans-wrapper';
 import type { ProvidedDependencies, Step } from '../../types';
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 const plans: Step = function Plans( { navigation, flow } ) {
 	const { submit } = navigation;
-	const { __ } = useI18n();
 
-	const handleSubmit = () => {
-		const providedDependencies: ProvidedDependencies = {};
+	const handleSubmit = ( plan: MinimalRequestCartProduct | null ) => {
+		const providedDependencies: ProvidedDependencies = {
+			plan,
+		};
 
 		if ( flow === DOMAIN_UPSELL_FLOW || flow === START_WRITING_FLOW ) {
 			providedDependencies.goToCheckout = true;
@@ -20,36 +26,18 @@ const plans: Step = function Plans( { navigation, flow } ) {
 	};
 	const is2023PricingGridVisible = is2023PricingGridActivePage( window );
 
-	const handleGoBack = () => {
-		if ( flow === DOMAIN_UPSELL_FLOW ) {
-			submit?.( { returnToDomainSelection: true } );
-		}
-	};
-
-	const getBackLabelText = () => {
-		if ( flow === DOMAIN_UPSELL_FLOW ) {
-			return __( 'Back' );
-		}
-	};
-
-	const shouldHideBackButton = () => {
-		if ( flow === DOMAIN_UPSELL_FLOW ) {
-			return false;
-		}
-		return true;
-	};
+	const isAllowedToGoBack = flow === DOMAIN_UPSELL_FLOW || isHostingSiteCreationFlow( flow );
 
 	return (
 		<StepContainer
 			stepName="plans"
-			goBack={ handleGoBack }
+			goBack={ () => submit?.( { goBack: true } ) }
 			isHorizontalLayout={ false }
 			isWideLayout={ ! is2023PricingGridVisible }
 			isFullLayout={ is2023PricingGridVisible }
 			hideFormattedHeader={ true }
 			isLargeSkipLayout={ false }
-			backLabelText={ getBackLabelText() }
-			hideBack={ shouldHideBackButton() }
+			hideBack={ ! isAllowedToGoBack }
 			stepContent={
 				<PlansWrapper
 					flowName={ flow }
