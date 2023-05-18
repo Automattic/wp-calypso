@@ -1,10 +1,6 @@
 import { Dialog } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { connect } from 'react-redux';
 import SuggestedFollowItem from 'calypso/blocks/reader-suggested-follows';
-import QueryReaderRelatedPosts from 'calypso/components/data/query-reader-related-posts';
-import { relatedPostsForPost } from 'calypso/state/reader/related-posts/selectors';
-import { SCOPE_OTHER } from 'calypso/state/reader/related-posts/utils';
 
 import './style.scss';
 
@@ -26,8 +22,11 @@ const SuggestedFollowItems = ( { posts } ) => {
 	return <ul className="reader-recommended-follows-dialog__follow-list">{ items }</ul>;
 };
 
-const ReaderRecommendedFollowsDialog = ( { onClose, siteId, postId, posts, followSource } ) => {
+const ReaderRecommendedFollowsDialog = ( { onClose, posts, followSource } ) => {
 	const translate = useTranslate();
+	if ( ! posts ) {
+		return null;
+	}
 	return (
 		<Dialog
 			additionalClassNames="reader-recommended-follows-dialog"
@@ -47,14 +46,6 @@ const ReaderRecommendedFollowsDialog = ( { onClose, siteId, postId, posts, follo
 				</div>
 				<div className="reader-recommended-follows-dialog__body">
 					<div className="reader-recommended-follows-dialog__follow-list">
-						{ ! posts && (
-							<QueryReaderRelatedPosts
-								siteId={ siteId }
-								postId={ postId }
-								scope={ SCOPE_OTHER }
-								size={ 5 }
-							/>
-						) }
 						{ posts && posts.length > 0 && (
 							<SuggestedFollowItems posts={ posts } followSource={ followSource } />
 						) }
@@ -65,9 +56,4 @@ const ReaderRecommendedFollowsDialog = ( { onClose, siteId, postId, posts, follo
 	);
 };
 
-export default connect( ( state, ownProps ) => {
-	return {
-		posts: relatedPostsForPost( state, ownProps.siteId, ownProps.postId, SCOPE_OTHER, 5 ),
-		scope: SCOPE_OTHER,
-	};
-}, null )( ReaderRecommendedFollowsDialog );
+export default ReaderRecommendedFollowsDialog;

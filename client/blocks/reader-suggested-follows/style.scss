@@ -17,6 +17,7 @@
 	.reader-suggested-follow-item {
 		display: flex;
 		flex-direction: row;
+		justify-content: space-between;
 	}
 
 	.reader-suggested-follow-item_link {
@@ -49,33 +50,15 @@
 		font-size: $font-body-small;
 		display: flex;
 		flex-direction: column;
-		max-width: 200px;
 
 		&:hover {
 			color: var(--color-text-subtle);
 		}
-
-		.reader-suggested-follow-item_nameurl,
-		.reader-suggested-follow-item_updated {
-			display: block;
-			display: -webkit-box;
-			overflow: hidden;
-			width: 227px;
-			-webkit-line-clamp: 1;
-			-webkit-box-orient: vertical;
-		}
-	}
-
-	.reader-suggested-follow-item_url {
-		color: var(--color-text-subtle);
-		font-weight: 400;
-		font-size: $font-body-extra-small;
-		line-height: 18px;
 	}
 
 	.reader-suggested-follow-item_description {
-		color: var(--color-neutral-70);
-		font-weight: 600;
+		color: var(--color-text-subtle);
+		font-weight: 400;
 		font-size: $font-body-extra-small;
 		line-height: 18px;
 		overflow: hidden;

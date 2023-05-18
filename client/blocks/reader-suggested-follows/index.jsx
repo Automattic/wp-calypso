@@ -63,17 +63,16 @@ const SuggestedFollowItem = ( { post, site, siteId } ) => {
 									{ site.description }
 								</span>
 							) }
-							{ urlForDisplay.length > 0 && (
-								<span className="reader-suggested-follow-item_url">{ urlForDisplay }</span>
-							) }
 						</span>
 					</a>
-					<FollowButton
-						siteUrl={ site.URL }
-						railcar={ post.railcar }
-						followIcon={ ReaderFollowFeedIcon( { iconSize: 20 } ) }
-						followingIcon={ ReaderFollowingFeedIcon( { iconSize: 20 } ) }
-					/>
+					<span className="reader-suggested-follow-button">
+						<FollowButton
+							siteUrl={ site.URL }
+							railcar={ post.railcar }
+							followIcon={ ReaderFollowFeedIcon( { iconSize: 20 } ) }
+							followingIcon={ ReaderFollowingFeedIcon( { iconSize: 20 } ) }
+						/>
+					</span>
 				</>
 			) }
 		</div>
