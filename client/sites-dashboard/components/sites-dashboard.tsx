@@ -330,8 +330,6 @@ function useShowSiteCreationNotice( allSites: SiteExcerptData[], newSiteSlug: st
 			return;
 		}
 
-		site.is_creating = true;
-
 		shownSiteCreationNotice.current = true;
 
 		dispatch(

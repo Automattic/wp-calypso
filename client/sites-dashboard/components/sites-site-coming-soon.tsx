@@ -1,7 +1,5 @@
-import { css, keyframes } from '@emotion/css';
 import styled from '@emotion/styled';
 import { __, isRTL } from '@wordpress/i18n';
-import classnames from 'classnames';
 
 type Props = {
 	siteName?: string;
@@ -9,37 +7,7 @@ type Props = {
 	lang?: string;
 	width: number;
 	height: number;
-	showLoader?: boolean;
 };
-
-const shimmer = keyframes( {
-	'0%': {
-		backgroundPosition: '0 -1200px',
-	},
-	'100%': {
-		backgroundPosition: '0 1200px',
-	},
-} );
-
-const Loader = css( {
-	'&::before': {
-		content: "''",
-		animationDuration: '2.4s',
-		animationFillMode: 'forwards',
-		animationIterationCount: 'infinite',
-		animationName: shimmer,
-		animationTimingFunction: 'linear',
-		background: 'linear-gradient(to top, transparent 8%, #f0f0f066 18%, transparent 33%)',
-		backgroundSize: '100% 1200px',
-		width: '100%',
-		height: '100%',
-		position: 'absolute',
-		left: 0,
-		top: 0,
-		zIndex: 1,
-		display: 'inline-table',
-	},
-} );
 
 const Root = styled.div( {
 	display: 'flex',
@@ -90,18 +58,11 @@ const getTranslation = ( lang?: string ) => {
 	return { text, isRtl };
 };
 
-export const SiteComingSoon = ( {
-	siteName = '',
-	className,
-	lang,
-	width,
-	height,
-	showLoader,
-}: Props ) => {
+export const SiteComingSoon = ( { siteName = '', className, lang, width, height }: Props ) => {
 	const { text: comingSoon, isRtl } = getTranslation( lang );
 	const x = isRtl ? 375 - 31 : 31;
 	return (
-		<Root className={ classnames( { [ Loader ]: showLoader }, className ) }>
+		<Root className={ className }>
 			<svg
 				width={ width }
 				height={ height }
