@@ -52,6 +52,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 	const onSkip = async () => {
 		if ( isStartWritingFlow ) {
 			setDomain( null );
+			setDomainCartItem( undefined );
 			setHideFreePlan( false );
 			submit?.( { freeDomain: true } );
 		} else {
