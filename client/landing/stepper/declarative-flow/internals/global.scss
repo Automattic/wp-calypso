@@ -166,6 +166,13 @@ button {
 	}
 }
 
+.is-section-stepper:has(div.domains) {
+	.search-filters__popover {
+		--color-accent: #117ac9 !important;
+		--color-accent-60: #0e64a5 !important;
+	}
+}
+
 .intro {
 	.signup-header {
 		z-index: 0 !important; /* set to 0 to prevent it from covering top of intro modal */
