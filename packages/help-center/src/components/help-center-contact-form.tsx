@@ -9,12 +9,14 @@ import { FormInputValidation, Popover } from '@automattic/components';
 import {
 	useSubmitTicketMutation,
 	useSubmitForumsMutation,
+	useUpdateZendeskUserFieldsMutation,
 	useSiteAnalysis,
 	useUserSites,
 	AnalysisReport,
 	SiteDetails,
 	HelpCenterSite,
 	useJetpackSearchAIQuery,
+	useSupportAvailability,
 } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { SitePickerDropDown, SitePickerSite } from '@automattic/site-picker';
@@ -35,6 +37,7 @@ import { getSectionName } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
  */
+import useZendeskConfig from '../hooks/use-zendesk-config';
 import { HELP_CENTER_STORE } from '../stores';
 import { getSupportVariationFromMode } from '../support-variations';
 import { SitePicker } from '../types';
@@ -42,6 +45,7 @@ import { BackButton } from './back-button';
 import { HelpCenterGPT } from './help-center-gpt';
 import { HelpCenterOwnershipNotice } from './help-center-notice';
 import HelpCenterSearchResults from './help-center-search-results';
+import ThirdPartyCookiesNotice from './help-center-third-party-cookies-notice';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 import './help-center-contact-form.scss';
 
@@ -160,6 +164,8 @@ export const HelpCenterContactForm = () => {
 	const locale = useLocale();
 	const { isLoading: submittingTicket, mutateAsync: submitTicket } = useSubmitTicketMutation();
 	const { isLoading: submittingTopic, mutateAsync: submitTopic } = useSubmitForumsMutation();
+	const { isLoading: submittingZendeskUserFields, mutateAsync: submitZendeskUserFields } =
+		useUpdateZendeskUserFieldsMutation();
 	const userId = useSelector( getCurrentUserId );
 	const { data: userSites } = useUserSites( userId );
 	const userWithNoSites = userSites?.sites.length === 0;
@@ -185,7 +191,13 @@ export const HelpCenterContactForm = () => {
 		setUserDeclaredSite,
 		setSubject,
 		setMessage,
+		setShowHelpCenter,
+		setShowMessagingLauncher,
+		setShowMessagingWidget,
 	} = useDispatch( HELP_CENTER_STORE );
+
+	const { data: chatStatus } = useSupportAvailability( 'CHAT' );
+	const { status: zendeskStatus } = useZendeskConfig( Boolean( chatStatus?.is_user_eligible ) );
 
 	useEffect( () => {
 		const supportVariation = getSupportVariationFromMode( mode );
@@ -213,7 +225,7 @@ export const HelpCenterContactForm = () => {
 	);
 
 	const ownershipStatusLoading = ownershipResult?.result === 'LOADING';
-	const isSubmitting = submittingTicket || submittingTopic;
+	const isSubmitting = submittingTicket || submittingTopic || submittingZendeskUserFields;
 
 	// if the user picked a site from the picker, we don't need to analyze the ownership
 	if ( currentSite && sitePickerChoice === 'CURRENT_SITE' ) {
@@ -348,7 +360,7 @@ export const HelpCenterContactForm = () => {
 			case 'CHAT':
 				if ( supportSite ) {
 					recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
-						support_variation: 'happychat',
+						support_variation: 'messaging',
 						force_site_id: true,
 						location: 'help-center',
 						section: sectionName,
@@ -361,7 +373,22 @@ export const HelpCenterContactForm = () => {
 						location: 'help-center',
 						section: sectionName,
 					} );
-					navigate( '/inline-chat' );
+
+					submitZendeskUserFields( {
+						messaging_source: sectionName,
+						messaging_initial_message: message,
+						messaging_plan: '', // Will be filled out by backend
+						messaging_url: supportSite?.URL,
+					} )
+						.then( () => {
+							setShowHelpCenter( false );
+							setShowMessagingLauncher( true );
+							setShowMessagingWidget( true );
+							resetStore();
+						} )
+						.catch( () => {
+							setHasSubmittingError( true );
+						} );
 					break;
 				}
 				break;
@@ -541,6 +568,10 @@ export const HelpCenterContactForm = () => {
 
 		return isSubmitting ? formTitles.buttonSubmittingLabel : formTitles.buttonLabel;
 	};
+
+	if ( mode === 'CHAT' && zendeskStatus === 'error' ) {
+		return <ThirdPartyCookiesNotice />;
+	}
 
 	// TODO: A/B test
 	if ( enableGPTResponse && showingGPTResponse ) {
