@@ -16,6 +16,7 @@ import { useShouldShowFirstPostPublishedModal } from '../../../dotcom-fse/lib/fi
 import useShouldShowSellerCelebrationModal from '../../../dotcom-fse/lib/seller-celebration-modal/use-should-show-seller-celebration-modal';
 import useShouldShowVideoCelebrationModal from '../../../dotcom-fse/lib/video-celebration-modal/use-should-show-video-celebration-modal';
 import postPublishedImage from './images/illo-share.svg';
+import InlineSocialLogosSprite from './inline-social-logos-sprite';
 import useSharingModalDismissed from './use-sharing-modal-dismissed';
 import './style.scss';
 
@@ -171,6 +172,7 @@ const SharingModal: React.FC = () => {
 			title=""
 			onRequestClose={ closeModal }
 		>
+			<InlineSocialLogosSprite />
 			<div className="wpcom-block-editor-post-published-sharing-modal__inner">
 				<div className="wpcom-block-editor-post-published-sharing-modal__left">
 					<h1> { __( 'Post published!', 'full-site-editing' ) } </h1>
@@ -213,7 +215,7 @@ const SharingModal: React.FC = () => {
 						) }
 						onClick={ shareFb }
 					>
-						<SocialLogo icon="facebook" size={ 18 } />
+						<SocialLogo icon="facebook" size={ 18 } useInline={ true } />
 					</Button>
 					<Button
 						className={ classnames(
@@ -222,7 +224,7 @@ const SharingModal: React.FC = () => {
 						) }
 						onClick={ shareTwitter }
 					>
-						<SocialLogo icon="twitter-alt" size={ 18 } />
+						<SocialLogo icon="twitter-alt" size={ 18 } useInline={ true } />
 					</Button>
 					<Button
 						className={ classnames(
@@ -231,7 +233,7 @@ const SharingModal: React.FC = () => {
 						) }
 						onClick={ shareLinkedin }
 					>
-						<SocialLogo icon="linkedin" size={ 18 } />
+						<SocialLogo icon="linkedin" size={ 18 } useInline={ true } />
 					</Button>
 					<Button
 						className={ classnames(
@@ -240,7 +242,7 @@ const SharingModal: React.FC = () => {
 						) }
 						onClick={ shareTumblr }
 					>
-						<SocialLogo icon="tumblr-alt" size={ 18 } />
+						<SocialLogo icon="tumblr-alt" size={ 18 } useInline={ true } />
 					</Button>
 					<Button
 						className={ classnames(
@@ -249,7 +251,7 @@ const SharingModal: React.FC = () => {
 						) }
 						onClick={ sharePinterest }
 					>
-						<SocialLogo icon="pinterest-alt" size={ 18 } />
+						<SocialLogo icon="pinterest-alt" size={ 18 } useInline={ true } />
 					</Button>
 					<div className="wpcom-block-editor-post-published-sharing-modal__checkbox-section">
 						<FormLabel htmlFor="toggle" className="is-checkbox">

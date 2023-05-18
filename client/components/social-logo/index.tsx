@@ -5,11 +5,12 @@ import { Assign } from 'utility-types';
 
 interface Props {
 	icon: string;
+	useInline?: boolean;
 	size?: number;
 }
 
 function SocialLogo( props: Assign< React.SVGProps< SVGSVGElement >, Props > ) {
-	const { size = 24, icon, onClick, className, ...otherProps } = props;
+	const { size = 24, icon, onClick, className, useInline, ...otherProps } = props;
 
 	// Using a missing icon doesn't produce any errors, just a blank icon, which is the exact intended behaviour.
 	// This means we don't need to perform any checks on the icon name.
@@ -19,6 +20,11 @@ function SocialLogo( props: Assign< React.SVGProps< SVGSVGElement >, Props > ) {
 	// We add both here, to ensure compatibility.
 	const iconClass = classnames( 'social-logo', iconName, icon, className );
 
+	// The XML <use> element does not work with SVGs loaded from external domains.
+	// In the editor, images are loaded from the CDN (s0.wp.com) in production.
+	// useInline allows us to reference an svg sprite from the current page instead.
+	// see https://github.com/w3c/svgwg/issues/707
+	const spriteUrl = useInline ? '' : spritePath;
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
@@ -29,7 +35,7 @@ function SocialLogo( props: Assign< React.SVGProps< SVGSVGElement >, Props > ) {
 			onClick={ onClick }
 			{ ...otherProps }
 		>
-			<use xlinkHref={ `${ spritePath }#${ icon }` } />
+			<use xlinkHref={ `${ spriteUrl }#${ icon }` } />
 		</svg>
 	);
 }
