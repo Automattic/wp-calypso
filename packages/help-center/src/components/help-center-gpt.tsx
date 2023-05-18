@@ -126,8 +126,6 @@ export function HelpCenterGPT() {
 		} );
 	};
 
-	// show a "thank you" message if the user has clicked thumbs up or down
-
 	return (
 		<div className="help-center-gpt__container">
 			<h1 id="help-center--contextual_help" className="help-center__section-title">

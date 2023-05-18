@@ -254,6 +254,7 @@ export const HelpCenterContactForm = () => {
 	}
 
 	const [ debouncedMessage ] = useDebounce( message || '', 500 );
+	const [ debouncedSubject ] = useDebounce( subject || '', 500 );
 
 	const enableGPTResponse =
 		config.isEnabled( 'help/gpt-response' ) && ! ( params.get( 'disable-gpt' ) === 'true' );
@@ -531,20 +532,40 @@ export const HelpCenterContactForm = () => {
 		);
 	};
 
-	const { isFetching: isFetchingGPTUrls, data: links } = useJetpackSearchAIQuery( {
+	let jpSearchAiQueryText = debouncedMessage;
+	// For the JP search, we want to join the subject and message together if they're not the same
+	if (
+		debouncedSubject &&
+		debouncedMessage &&
+		debouncedSubject.slice( 0, 50 ) !== debouncedMessage.slice( 0, 50 )
+	) {
+		jpSearchAiQueryText = `${ debouncedSubject }\n\n${ debouncedMessage }`;
+	}
+
+	const {
+		isFetching: isFetchingGPTUrls,
+		isError: isGPTLinksError,
+		data: links,
+	} = useJetpackSearchAIQuery( {
 		siteId: '9619154',
-		query: debouncedMessage,
+		query: jpSearchAiQueryText,
 		stopAt: 'urls',
 		enabled: enableGPTResponse,
 	} );
-	const { isFetching: isFetchingGPTAnswer, data: gptResponse } = useJetpackSearchAIQuery( {
+
+	const {
+		isFetching: isFetchingGPTAnswer,
+		isError: isGPTResponseError,
+		data: gptResponse,
+	} = useJetpackSearchAIQuery( {
 		siteId: '9619154',
-		query: debouncedMessage,
+		query: jpSearchAiQueryText,
 		stopAt: 'response',
 		enabled: !! links?.urls,
 	} );
 
 	const isFetchingGPTResponse = isFetchingGPTUrls || isFetchingGPTAnswer;
+	const isGPTError = isGPTLinksError || isGPTResponseError;
 
 	const getCTALabel = () => {
 		const showingHelpOrGPTResults = showingSearchResults || showingGPTResponse;
@@ -576,7 +597,6 @@ export const HelpCenterContactForm = () => {
 		return <ThirdPartyCookiesNotice />;
 	}
 
-	// TODO: A/B test
 	if ( enableGPTResponse && showingGPTResponse ) {
 		return (
 			<div className="help-center__articles-page">
@@ -585,6 +605,7 @@ export const HelpCenterContactForm = () => {
 				<section className="contact-form-submit">
 					<Button
 						isBusy={ isFetchingGPTResponse }
+						disabled={ isFetchingGPTResponse }
 						onClick={ handleCTA }
 						isPrimary={ ! showingGPTResponse }
 						isSecondary={ showingGPTResponse }
@@ -597,7 +618,7 @@ export const HelpCenterContactForm = () => {
 							{ __( 'Close', __i18n_text_domain__ ) }
 						</Button>
 					) }
-					{ isFetchingGPTResponse && (
+					{ isFetchingGPTResponse && ! isGPTError && (
 						<Button isSecondary onClick={ handleGPTCancel }>
 							{ __( 'Cancel', __i18n_text_domain__ ) }
 						</Button>
