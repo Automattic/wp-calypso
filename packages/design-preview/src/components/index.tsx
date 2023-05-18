@@ -18,7 +18,6 @@ interface PreviewProps {
 	onClickCategory?: ( category: Category ) => void;
 	actionButtons: React.ReactNode;
 	recordDeviceClick: ( device: string ) => void;
-	showGlobalStylesPremiumBadge: boolean;
 }
 
 const INJECTED_CSS = `body{ transition: background-color 0.2s linear, color 0.2s linear; };`;
@@ -40,7 +39,6 @@ const Preview: React.FC< PreviewProps > = ( {
 	onClickCategory,
 	actionButtons,
 	recordDeviceClick,
-	showGlobalStylesPremiumBadge,
 } ) => {
 	const sitePreviewInlineCss = useMemo( () => {
 		if ( selectedVariation ) {
@@ -68,7 +66,6 @@ const Preview: React.FC< PreviewProps > = ( {
 				onSelectVariation={ onSelectVariation }
 				onClickCategory={ onClickCategory }
 				actionButtons={ actionButtons }
-				showGlobalStylesPremiumBadge={ showGlobalStylesPremiumBadge }
 			/>
 			<SitePreview
 				url={ previewUrl }

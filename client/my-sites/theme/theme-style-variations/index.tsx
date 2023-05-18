@@ -19,6 +19,8 @@ const ThemeStyleVariations = ( {
 }: ThemeStyleVariationsProps ) => {
 	return (
 		<div className="theme__sheet-style-variations">
+			<p>{ description }</p>
+
 			<div className="theme__sheet-style-variations-previews">
 				<AsyncLoad
 					require="@automattic/design-preview/src/components/style-variation"

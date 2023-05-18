@@ -196,6 +196,19 @@
 		line-height: 20px;
 	}
 
+	.global-styles-variations__header {
+		p {
+			color: var(--studio-gray-100);
+			font-size: 0.875rem;
+			line-height: 20px;
+		}
+
+		h2 {
+			font-size: $font-body-small;
+			font-weight: 500;
+		}
+	}
+
 	.global-styles-variations {
 		align-items: center;
 		display: flex;
@@ -220,8 +233,6 @@
 			display: grid;
 			gap: 12px;
 			grid-template-columns: repeat(2, 1fr);
-			margin: 24px -5px 0;
-			padding: 2px;
 			width: 100%;
 
 			.global-styles-variations__item {

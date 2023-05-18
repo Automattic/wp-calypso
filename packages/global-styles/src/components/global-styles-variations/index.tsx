@@ -13,7 +13,6 @@ import './style.scss';
 interface GlobalStylesVariationProps {
 	globalStylesVariation: GlobalStylesObject;
 	isActive: boolean;
-	premiumBadge?: React.ReactNode;
 	showOnlyHoverView?: boolean;
 	onSelect: () => void;
 }
@@ -22,7 +21,6 @@ interface GlobalStylesVariationsProps {
 	globalStylesVariations: GlobalStylesObject[];
 	selectedGlobalStylesVariation: GlobalStylesObject | null;
 	description?: TranslateResult;
-	premiumBadge?: React.ReactNode;
 	showOnlyHoverViewDefaultVariation?: boolean;
 	onSelect: ( globalStylesVariation: GlobalStylesObject ) => void;
 }
@@ -33,7 +31,6 @@ const isDefaultGlobalStyleVariationSlug = ( globalStylesVariation: GlobalStylesO
 const GlobalStylesVariation = ( {
 	globalStylesVariation,
 	isActive,
-	premiumBadge,
 	showOnlyHoverView,
 	onSelect,
 }: GlobalStylesVariationProps ) => {
@@ -76,7 +73,6 @@ const GlobalStylesVariation = ( {
 				} ) as string
 			}
 		>
-			{ premiumBadge }
 			<div className="global-styles-variation__item-preview">
 				<GlobalStylesContext.Provider value={ context }>
 					<GlobalStylesVariationPreview
@@ -94,7 +90,6 @@ const GlobalStylesVariation = ( {
 const GlobalStylesVariations = ( {
 	globalStylesVariations,
 	selectedGlobalStylesVariation,
-	premiumBadge,
 	description,
 	showOnlyHoverViewDefaultVariation,
 	onSelect,
@@ -156,7 +151,6 @@ const GlobalStylesVariations = ( {
 						<GlobalStylesVariation
 							key={ index }
 							globalStylesVariation={ globalStylesVariation }
-							premiumBadge={ premiumBadge }
 							isActive={ globalStylesVariation.slug === selectedGlobalStylesVariation?.slug }
 							onSelect={ () => onSelect( globalStylesVariation ) }
 						/>

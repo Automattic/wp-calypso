@@ -36,7 +36,6 @@ interface SidebarProps {
 	onSelectVariation: ( variation: StyleVariation ) => void;
 	onClickCategory?: ( category: Category ) => void;
 	actionButtons: React.ReactNode;
-	showGlobalStylesPremiumBadge: boolean;
 }
 
 const Sidebar: React.FC< SidebarProps > = ( {
@@ -51,7 +50,6 @@ const Sidebar: React.FC< SidebarProps > = ( {
 	onSelectVariation,
 	onClickCategory,
 	actionButtons,
-	showGlobalStylesPremiumBadge,
 } ) => {
 	const translate = useTranslate();
 	const [ isShowFullDescription, setIsShowFullDescription ] = useState( false );
@@ -101,14 +99,11 @@ const Sidebar: React.FC< SidebarProps > = ( {
 				) }
 				{ variations.length > 0 && (
 					<div className="design-preview__sidebar-variations">
-						<h2>{ translate( 'Choose your style' ) }</h2>
-						<p>{ translate( 'You can change your style at any time.' ) }</p>
 						<div className="design-preview__sidebar-variations-grid">
 							<StyleVariationPreviews
 								variations={ variations }
 								selectedVariation={ selectedVariation }
 								onClick={ onSelectVariation }
-								showGlobalStylesPremiumBadge={ showGlobalStylesPremiumBadge }
 							/>
 						</div>
 					</div>

@@ -1103,13 +1103,11 @@ class ThemeSheet extends Component {
 			} );
 		}
 
-		if ( ! shouldLimitGlobalStyles ) {
-			return '';
+		if ( ! shouldLimitGlobalStyles || isWpcomTheme ) {
+			return;
 		}
 
-		return isWpcomTheme
-			? translate( 'Additional styles require the Premium plan or higher.' )
-			: translate( 'Additional styles require the Business plan or higher.' );
+		return translate( 'Additional styles require the Business plan or higher.' );
 	};
 
 	renderSheet = () => {

@@ -642,7 +642,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 						onSelectVariation={ previewDesignVariation }
 						actionButtons={ actionButtons }
 						recordDeviceClick={ recordDeviceClick }
-						showGlobalStylesPremiumBadge={ shouldLimitGlobalStyles }
 					/>
 				) : (
 					<WebPreview
@@ -726,7 +725,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			isPremiumThemeAvailable={ isPremiumThemeAvailable }
 			purchasedThemes={ purchasedThemes }
 			currentPlanFeatures={ currentPlanFeatures }
-			shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
 		/>
 	);
 
