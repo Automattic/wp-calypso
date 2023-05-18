@@ -1,5 +1,3 @@
-//create a pre-migration component
-
 import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
@@ -10,14 +8,15 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { convertToFriendlyWebsiteName } from 'calypso/blocks/import/util';
 import MigrationCredentialsForm from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/migration-credentials-form';
-import './style.scss';
 import { PreMigrationUpgradePlan } from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/upgrade-plan';
 import { FormState } from 'calypso/components/advanced-credentials/form';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCredentials } from 'calypso/state/jetpack/credentials/actions';
 import getJetpackCredentials from 'calypso/state/selectors/get-jetpack-credentials';
 import isRequestingSiteCredentials from 'calypso/state/selectors/is-requesting-site-credentials';
 import { CredentialsHelper } from './credentials-helper';
+import './style.scss';
 
 interface PreMigrationProps {
 	sourceSite: SiteDetails;
@@ -43,6 +42,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 
 	const toggleCredentialsForm = () => {
 		setShowCredentials( ! showCredentials );
+		recordTracksEvent( 'calypso_site_importer_migration_credentials_form_toggle' );
 	};
 
 	const credentials = useSelector( ( state ) =>

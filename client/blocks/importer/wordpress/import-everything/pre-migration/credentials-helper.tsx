@@ -80,21 +80,23 @@ export const CredentialsHelper = ( props: Props ) => {
 		<>
 			<h3>{ translate( 'Do you need help locating your credentials?' ) }</h3>
 			<p>{ translate( "Select your hosting and we'll help you find your server credentials." ) }</p>
-			<FormSelect
-				name="provider"
-				id="hosting-provider"
-				value={ selectedProvider }
-				onChange={ handleProviderChange }
-				disabled={ false }
-			>
-				<option value="generic">{ translate( 'Choose your hosting' ) }</option>
-				{ topHosts.map( ( host ) => (
-					<option key={ host.id } value={ host.id }>
-						{ host.name }
-					</option>
-				) ) }
-			</FormSelect>
-			<p>{ renderHelpText() }</p>
+			<form>
+				<FormSelect
+					name="provider"
+					id="hosting-provider"
+					value={ selectedProvider }
+					onChange={ handleProviderChange }
+					disabled={ false }
+				>
+					<option value="generic">{ translate( 'Choose your hosting' ) }</option>
+					{ topHosts.map( ( host ) => (
+						<option key={ host.id } value={ host.id }>
+							{ host.name }
+						</option>
+					) ) }
+				</FormSelect>
+			</form>
+			<p className="pre-migration__credentials-help-text">{ renderHelpText() }</p>
 		</>
 	);
 };

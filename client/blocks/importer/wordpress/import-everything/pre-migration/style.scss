@@ -103,6 +103,7 @@
 	.pre-migration__error {
 		color: var(--color-error);
 		margin-bottom: 40px;
+		font-size: 0.875rem;
 	}
 
 	.pre-migration__credentials {
@@ -112,7 +113,33 @@
 		}
 	}
 
-	.credentials-form__support-info {
-		margin-bottom: 0.75rem;
+	.pre-migration__credentials-help-text a {
+		color: var(--studio-gray-100);
+		text-decoration: underline;
+	}
+
+	form {
+		text-align: start;
+
+		.credentials-form__support-info {
+			margin-bottom: 0.75rem;
+		}
+
+		label {
+			color: var(--studio-gray-60);
+		}
+
+		select,
+		input[type="text"],
+		input[type="password"],
+		textarea {
+			border-color: var(--studio-gray-10);
+			border-radius: 4px;
+			box-sizing: border-box;
+			font-size: 0.875rem;
+			padding: 0.875rem 1rem;
+			/* We need to allow space for the SVG checkmark */
+			padding-right: calc(0.5rem + 24px);
+		}
 	}
 }

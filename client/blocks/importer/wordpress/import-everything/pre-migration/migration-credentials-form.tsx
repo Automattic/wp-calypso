@@ -1,5 +1,3 @@
-//Migration SSH/FTP credentials form
-
 import { Button } from '@automattic/components';
 import { NextButton } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
@@ -34,6 +32,7 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 	const [ formState, setFormState ] = useState( INITIAL_FORM_STATE );
 	const [ formErrors, setFormErrors ] = useState( INITIAL_FORM_ERRORS );
 	const [ formMode, setFormMode ] = useState( FormMode.Password );
+	const [ hasMissingFields, setHasMissingFields ] = useState( false );
 
 	const formSubmissionStatus = useSelector(
 		( state ) =>
@@ -86,6 +85,13 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 	const submitCredentials = useCallback(
 		( e ) => {
 			e.preventDefault();
+			setHasMissingFields( false );
+			// If the form is submitted with errors, prevent the submission and show the errors.
+			if ( formHasErrors ) {
+				setHasMissingFields( true );
+				return;
+			}
+
 			migrateProvision( targetSiteId, sourceSiteId, true );
 		},
 		[ formHasErrors, dispatch, sourceSiteId, formState, formMode ]
@@ -122,12 +128,16 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 					</div>
 				) }
 
+				{ hasMissingFields && (
+					<div className="pre-migration__content pre-migration__error">
+						{ translate(
+							'Please make sure all fields are filled in correctly before proceeding.'
+						) }
+					</div>
+				) }
+
 				<div className="pre-migration__content pre-migration__proceed import__footer-button-container">
-					<NextButton
-						type="submit"
-						isBusy={ isFormSubmissionPending || isLoading }
-						disabled={ formHasErrors }
-					>
+					<NextButton type="submit" isBusy={ isFormSubmissionPending || isLoading }>
 						{ isFormSubmissionPending || isLoading
 							? translate( 'Testing credentials' )
 							: translate( 'Start migration' ) }
