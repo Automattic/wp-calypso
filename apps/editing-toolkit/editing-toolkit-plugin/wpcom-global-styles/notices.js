@@ -130,13 +130,12 @@ function GlobalStylesEditNotice() {
 			),
 			{
 				id: NOTICE_ID,
-				isDismissible: false,
 				actions: actions,
 			}
 		);
 
 		trackEvent( 'calypso_global_styles_gating_notice_show', isSiteEditor );
-	}, [ createWarningNotice, isPostEditor, isSiteEditor, resetGlobalStyles, upgradePlan ] );
+	}, [ createWarningNotice, isSiteEditor, resetGlobalStyles, upgradePlan ] );
 
 	useEffect( () => {
 		if ( ! isSiteEditor && ! isPostEditor ) {
