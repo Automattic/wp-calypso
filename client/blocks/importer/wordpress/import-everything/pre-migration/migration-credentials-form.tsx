@@ -48,7 +48,17 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 
 	// validate changes to the credentials form
 	useEffect( () => {
-		setFormErrors( validate( formState, formMode ) );
+		const errors = validate( formState, formMode );
+
+		// Shorten the root user error message as the original message used in the form is too long.
+		if ( formState.user === 'root' ) {
+			errors.user = {
+				message: translate( "We can't accept credentials for the root user." ),
+				waitForInteraction: true,
+			};
+		}
+
+		setFormErrors( errors );
 	}, [ formState, formMode ] );
 
 	useEffect( () => {
