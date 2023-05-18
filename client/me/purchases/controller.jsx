@@ -21,9 +21,9 @@ import {
 	billingHistory,
 } from 'calypso/me/purchases/paths';
 import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
+import { useTaxName } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-country-list';
 import { convertErrorToString } from 'calypso/my-sites/checkout/composite-checkout/lib/analytics';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
-import { useVatVendorInfo } from './billing-history/vat-vendor-details';
 import CancelPurchase from './cancel-purchase';
 import ConfirmCancelDomain from './confirm-cancel-domain';
 import ManagePurchase from './manage-purchase';
@@ -149,9 +149,7 @@ export function vatDetails( context, next ) {
 		const translate = useTranslate();
 		const { data: geoData } = useGeoLocationQuery();
 		const { vatDetails: vatDetailsFromServer } = useVatDetails();
-		const vendorInfo = useVatVendorInfo(
-			vatDetailsFromServer.country ?? geoData?.country_short ?? 'GB'
-		);
+		const taxName = useTaxName( vatDetailsFromServer.country ?? geoData?.country_short ?? 'GB' );
 		const genericTaxName =
 			/* translators: This is a generic name for taxes to use when we do not know the user's country. */
 			translate( 'tax (VAT/GST/CT)' );
@@ -162,7 +160,7 @@ export function vatDetails( context, next ) {
 		/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
 		const title = translate( 'Add %s details', {
 			textOnly: true,
-			args: [ vendorInfo?.tax_name ?? fallbackTaxName ],
+			args: [ taxName ?? fallbackTaxName ],
 		} );
 
 		return (
