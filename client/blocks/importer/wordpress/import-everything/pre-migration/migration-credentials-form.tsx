@@ -46,6 +46,13 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 	const isFormSubmissionPending = formSubmissionStatus === 'pending';
 	const formHasErrors = formErrors && Object.keys( formErrors ).length > 0;
 
+	useEffect( () => {
+		// Clear the hasMissingFields flag when there are no more errors.
+		if ( ! formHasErrors ) {
+			setHasMissingFields( false );
+		}
+	}, [ formErrors ] );
+
 	// validate changes to the credentials form
 	useEffect( () => {
 		const errors = validate( formState, formMode );
@@ -138,7 +145,7 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 					</div>
 				) }
 
-				{ hasMissingFields && (
+				{ hasMissingFields && formHasErrors && (
 					<div className="pre-migration__content pre-migration__error">
 						{ translate(
 							'Please make sure all fields are filled in correctly before proceeding.'
