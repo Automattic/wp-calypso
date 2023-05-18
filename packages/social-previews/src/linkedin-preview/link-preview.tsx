@@ -8,5 +8,13 @@ export type LinkedInLinkPreviewProps = Omit< LinkedInPreviewProps, keyof Optiona
 	OptionalProps;
 
 export function LinkedInLinkPreview( props: LinkedInLinkPreviewProps ) {
-	return <LinkedInPostPreview { ...DEFAULT_PROPS } { ...props } />;
+	return (
+		<LinkedInPostPreview
+			{ ...DEFAULT_PROPS }
+			{ ...props }
+			// Override the props that are irrelevant to link preview
+			description=""
+			media={ undefined }
+		/>
+	);
 }

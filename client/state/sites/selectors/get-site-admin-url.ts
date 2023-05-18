@@ -1,3 +1,4 @@
+import { AppState } from 'calypso/types';
 import getSiteOption from './get-site-option';
 
 /**
@@ -10,7 +11,11 @@ import getSiteOption from './get-site-option';
  * @param  {?string} path   Admin screen path
  * @returns {?string}        Admin URL
  */
-export default function getSiteAdminUrl( state, siteId, path = '' ) {
+export default function getSiteAdminUrl(
+	state: AppState,
+	siteId: number | null | undefined,
+	path = ''
+): string | null {
 	const adminUrl = getSiteOption( state, siteId, 'admin_url' );
 	if ( ! adminUrl ) {
 		return null;

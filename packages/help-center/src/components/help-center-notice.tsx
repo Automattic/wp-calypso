@@ -1,4 +1,4 @@
-import { SupportSession } from '@automattic/data-stores';
+import { SupportActivity } from '@automattic/data-stores';
 import { localizeUrl, useLocale, getRelativeTimeString } from '@automattic/i18n-utils';
 import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
@@ -98,7 +98,7 @@ export function HelpCenterOwnershipNotice( { ownershipResult }: Props ) {
 export function HelpCenterActiveTicketNotice( {
 	tickets,
 }: {
-	tickets: SupportSession[] | undefined;
+	tickets: SupportActivity[] | undefined;
 } ) {
 	const locale = useLocale();
 

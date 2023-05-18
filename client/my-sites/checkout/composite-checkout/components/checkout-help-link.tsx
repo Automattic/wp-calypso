@@ -146,7 +146,6 @@ export default function CheckoutHelpLink() {
 	const translate = useTranslate();
 	const { setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const isEnglishLocale = useIsEnglishLocale();
-	const { data: isJpPresalesStaffed } = useJpPresalesAvailabilityQuery();
 
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
@@ -165,6 +164,9 @@ export default function CheckoutHelpLink() {
 				supportVariation: getSupportVariation( state ),
 			};
 		} );
+	const { data: isJpPresalesStaffed } = useJpPresalesAvailabilityQuery(
+		presalesZendeskChatAvailable
+	);
 
 	const userAllowedToHelpCenter = config.isEnabled( 'calypso/help-center' );
 

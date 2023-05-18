@@ -207,8 +207,12 @@ class Help_Center {
 		$controller = new WP_REST_Help_Center_Forum();
 		$controller->register_rest_route();
 
-		require_once __DIR__ . '/class-wp-rest-help-center-support-history.php';
-		$controller = new WP_REST_Help_Center_Support_History();
+		require_once __DIR__ . '/class-wp-rest-help-center-support-activity.php';
+		$controller = new WP_REST_Help_Center_Support_Activity();
+		$controller->register_rest_route();
+
+		require_once __DIR__ . '/class-wp-rest-help-center-user-fields.php';
+		$controller = new WP_REST_Help_Center_User_Fields();
 		$controller->register_rest_route();
 	}
 	/**

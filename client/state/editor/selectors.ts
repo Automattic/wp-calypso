@@ -3,6 +3,7 @@ import { addQueryArgs } from 'calypso/lib/route';
 import { getEditedPost } from 'calypso/state/posts/selectors';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
+import type { AppState } from 'calypso/types';
 
 import 'calypso/state/editor/init';
 
@@ -12,7 +13,7 @@ import 'calypso/state/editor/init';
  * @param  {Object} state Global state tree
  * @returns {?number}      Current editor post ID
  */
-export function getEditorPostId( state ) {
+export function getEditorPostId( state: AppState ): number | undefined {
 	return state.editor.postId;
 }
 
@@ -22,7 +23,7 @@ export function getEditorPostId( state ) {
  * @param  {Object}  state Global state tree
  * @returns {boolean}       Whether editing new post in editor
  */
-export function isEditorNewPost( state ) {
+export function isEditorNewPost( state: AppState ): boolean {
 	return ! getEditorPostId( state );
 }
 
@@ -35,7 +36,12 @@ export function isEditorNewPost( state ) {
  * @param  {string} type        Post type
  * @returns {string}             Editor URL path
  */
-export function getEditorDuplicatePostPath( state, siteId, postId, type = 'post' ) {
+export function getEditorDuplicatePostPath(
+	state: AppState,
+	siteId: number,
+	postId: number,
+	type = 'post'
+): string {
 	return addQueryArgs(
 		{
 			'jetpack-copy': postId,
@@ -52,7 +58,7 @@ export function getEditorDuplicatePostPath( state, siteId, postId, type = 'post'
  * @param  {number} type        Post type
  * @returns {string}             Editor URL path
  */
-export function getEditorNewPostPath( state, siteId, type = 'post' ) {
+export function getEditorNewPostPath( state: AppState, siteId: number, type = 'post' ): string {
 	let path;
 	switch ( type ) {
 		case 'post':
@@ -85,7 +91,12 @@ export function getEditorNewPostPath( state, siteId, type = 'post' ) {
  * @param  {string} defaultType Fallback post type if post not found
  * @returns {string}             Editor URL path
  */
-export function getEditorPath( state, siteId, postId, defaultType = 'post' ) {
+export function getEditorPath(
+	state: AppState,
+	siteId: number,
+	postId: number | string,
+	defaultType = 'post'
+): string {
 	if ( ! siteId ) {
 		return 'post';
 	}
@@ -100,10 +111,10 @@ export function getEditorPath( state, siteId, postId, defaultType = 'post' ) {
 	return path;
 }
 
-export function isEditorIframeLoaded( state ) {
+export function isEditorIframeLoaded( state: AppState ): boolean {
 	return state.editor.isIframeLoaded;
 }
 
-export function getEditorIframePort( state ) {
+export function getEditorIframePort( state: AppState ): boolean {
 	return state.editor.iframePort;
 }

@@ -1,13 +1,7 @@
-import { SocialPreviewBaseProps, SocialPreviewsBaseProps } from '../types';
+import { MediaItem, SocialPreviewBaseProps, SocialPreviewsBaseProps } from '../types';
 
 export type TwitterPreviewsProps = SocialPreviewsBaseProps & {
 	tweets: Array< TwitterPreviewProps >;
-};
-
-export type TwitterMedia = {
-	alt: string;
-	type: string;
-	url: string;
 };
 
 export type TwitterCardProps = SocialPreviewBaseProps & {
@@ -26,21 +20,19 @@ export type HeaderProps = {
 };
 
 export type MediaProps = {
-	media?: Array< TwitterMedia >;
+	media: Array< MediaItem >;
 };
 
 export type QuoteTweetProps = {
-	tweet?: TwitterPreviewProps;
+	tweet: TwitterPreviewProps;
 };
 
 export type TextProps = {
 	text: string;
 	url: string;
+	retainUrl?: boolean;
 };
 
 export type TwitterPreviewProps = SidebarProps &
 	HeaderProps &
-	MediaProps &
-	QuoteTweetProps &
-	TwitterCardProps &
-	Pick< TextProps, 'text' >;
+	Partial< MediaProps & QuoteTweetProps & TwitterCardProps & Pick< TextProps, 'text' > >;
