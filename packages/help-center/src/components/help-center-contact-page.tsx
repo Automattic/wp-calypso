@@ -20,6 +20,7 @@ import { getSectionName } from 'calypso/state/ui/selectors';
  * Internal Dependencies
  */
 import { BackButton } from '..';
+import useMessagingAuth from '../hooks/use-messaging-auth';
 import { useShouldRenderChatOption } from '../hooks/use-should-render-chat-option';
 import { useShouldRenderEmailOption } from '../hooks/use-should-render-email-option';
 import { useStillNeedHelpURL } from '../hooks/use-still-need-help-url';
@@ -42,6 +43,20 @@ export const HelpCenterContactPage: FC = () => {
 	const { data: supportActivity, isLoading: isLoadingSupportActivity } = useSupportActivity();
 	const { data: supportAvailability } = useSupportAvailability( 'CHAT' );
 	const isLoading = renderChat.isLoading || renderEmail.isLoading || isLoadingSupportActivity;
+
+	const { data: messagingAuth } = useMessagingAuth(
+		Boolean( supportAvailability?.is_user_eligible )
+	);
+	useEffect( () => {
+		const jwt = messagingAuth?.user.jwt;
+		if ( typeof window.zE !== 'function' || ! jwt ) {
+			return;
+		}
+
+		window.zE( 'messenger', 'loginUser', function ( callback ) {
+			callback( jwt );
+		} );
+	}, [ messagingAuth ] );
 
 	useEffect( () => {
 		if ( isLoading ) {
