@@ -45,9 +45,11 @@ const domainUpsell: Flow = {
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( currentStep ) {
 				case 'domains':
-					if ( providedDependencies?.exitFlowTo as string ) {
-						const redirectionURL = providedDependencies?.exitFlowTo?.toString() as string;
-						return window.location.assign( redirectionURL );
+					if (
+						providedDependencies?.exitFlowTo &&
+						typeof providedDependencies?.exitFlowTo === 'string'
+					) {
+						return window.location.assign( providedDependencies.exitFlowTo );
 					}
 					if ( providedDependencies?.deferDomainSelection ) {
 						try {
