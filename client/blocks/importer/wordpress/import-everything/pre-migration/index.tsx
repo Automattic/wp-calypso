@@ -1,12 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
-import { NextButton, SubTitle, Title } from '@automattic/onboarding';
+import { NextButton, Title } from '@automattic/onboarding';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { convertToFriendlyWebsiteName } from 'calypso/blocks/import/util';
 import MigrationCredentialsForm from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/migration-credentials-form';
 import { PreMigrationUpgradePlan } from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/upgrade-plan';
 import { FormState } from 'calypso/components/advanced-credentials/form';
@@ -79,7 +78,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 				{ ! showCredentials && (
 					<div className="pre-migration__content pre-migration__credentials">
 						{ translate(
-							'Optionally, {{button}}provide the server credentials{{/button}} of your site to speed up the migration',
+							'Want to speed up the migration? {{button}}Provide the server credentials{{/button}} of your site',
 							{
 								components: {
 									button: (
@@ -131,14 +130,6 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 			>
 				<div className="import__heading-title">
 					<Title>{ translate( 'You are ready to migrate' ) }</Title>
-					<SubTitle>
-						{ translate( 'Your entire site %(from)s will be migrated to %(to)s', {
-							args: {
-								from: convertToFriendlyWebsiteName( sourceSite.URL ),
-								to: convertToFriendlyWebsiteName( targetSite.URL ),
-							},
-						} ) }
-					</SubTitle>
 				</div>
 				{ renderCredentialsFormSection() }
 				{ ! showCredentials && (
