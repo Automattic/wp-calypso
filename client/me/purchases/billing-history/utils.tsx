@@ -5,13 +5,13 @@ import {
 	isTitanMail,
 } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
+import { LocalizeProps, useTranslate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import {
 	BillingTransaction,
 	BillingTransactionItem,
 } from 'calypso/state/billing-transactions/types';
-import { getVatVendorInfo } from './vat-vendor-details';
-import type { LocalizeProps } from 'calypso/../packages/i18n-calypso/types';
+import { useVatVendorInfo } from './vat-vendor-details';
 
 interface GroupedDomainProduct {
 	product: BillingTransactionItem;
@@ -80,22 +80,26 @@ export function transactionIncludesTax( transaction: BillingTransaction ) {
 	return transaction.items.some( ( item ) => item.tax_integer > 0 );
 }
 
-export function renderTransactionAmount(
-	transaction: BillingTransaction,
-	{ translate, addingTax = false }: { translate: LocalizeProps[ 'translate' ]; addingTax?: boolean }
-) {
-	if ( ! transactionIncludesTax( transaction ) ) {
-		return formatCurrency( transaction.amount_integer, transaction.currency, {
-			isSmallestUnit: true,
-			stripZeros: true,
-		} );
-	}
+export function TransactionAmount( {
+	transaction,
+	addingTax = false,
+}: {
+	transaction: BillingTransaction;
+	addingTax?: boolean;
+} ): JSX.Element {
+	const translate = useTranslate();
+	const countryTaxInfo = useVatVendorInfo( transaction.tax_country_code );
 
-	const countryTaxInfo = getVatVendorInfo(
-		transaction.tax_country_code,
-		transaction.date,
-		translate
-	);
+	if ( ! transactionIncludesTax( transaction ) ) {
+		return (
+			<>
+				{ formatCurrency( transaction.amount_integer, transaction.currency, {
+					isSmallestUnit: true,
+					stripZeros: true,
+				} ) }
+			</>
+		);
+	}
 
 	const addingTaxString = countryTaxInfo
 		? translate( '(+%(taxAmount)s %(taxName)s)', {
@@ -104,7 +108,7 @@ export function renderTransactionAmount(
 						isSmallestUnit: true,
 						stripZeros: true,
 					} ),
-					taxName: countryTaxInfo.taxName,
+					taxName: countryTaxInfo.tax_name,
 				},
 				comment:
 					'taxAmount is a localized price, like $12.34 | taxName is a localized tax, like VAT or GST',
@@ -126,7 +130,7 @@ export function renderTransactionAmount(
 						isSmallestUnit: true,
 						stripZeros: true,
 					} ),
-					taxName: countryTaxInfo.taxName,
+					taxName: countryTaxInfo.tax_name,
 				},
 				comment:
 					'taxAmount is a localized price, like $12.34 | taxName is a localized tax, like VAT or GST',
