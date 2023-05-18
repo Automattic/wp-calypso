@@ -48,6 +48,8 @@ export interface SearchResult {
 	post_id?: number;
 	blog_id?: number;
 	source?: string;
+	postId?: number;
+	blogId?: number;
 }
 
 export interface SupportTicket {
