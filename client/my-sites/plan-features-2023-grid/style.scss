@@ -178,6 +178,12 @@
 	@include plans-2023-break-small {
 		padding-top: 35px; // enough to cover `plan-features-2023-grid__popular-badge` repositioning (top: -35px)
 	}
+
+	@media ( min-width: $plans-2023-small-breakpoint ) {
+		.is-section-plans & {
+			margin: 0;
+		}
+	}
 }
 
 .is-2023-pricing-grid {
