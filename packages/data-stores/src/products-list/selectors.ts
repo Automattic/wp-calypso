@@ -1,5 +1,3 @@
-import { select } from '@wordpress/data';
-import { STORE_KEY } from './constants';
 import type { State } from './reducer';
 
 export const getState = ( state: State ) => state;
@@ -12,7 +10,7 @@ export const getProductBySlug = ( _state: State, slug: string ) => {
 	if ( ! slug ) {
 		return undefined;
 	}
-	const products = select( STORE_KEY ).getProductsList();
+	const products = getProductsList( _state );
 
 	if ( ! products ) {
 		return undefined;
