@@ -45,8 +45,18 @@ const ProductDetails: React.FC< ProductDetailsProps > = ( { product } ) => {
 	const translate = useTranslate();
 
 	const productDetails = [
-		{ type: 'includes', title: translate( 'Includes' ), items: product.whatIsIncluded },
-		{ type: 'benefits', title: translate( 'Benefits' ), items: product.benefits },
+		{
+			type: 'includes',
+			title: translate( 'Includes' ),
+			items: product.whatIsIncluded,
+			comingSoon: product.whatIsIncludedComingSoon,
+		},
+		{
+			type: 'benefits',
+			title: translate( 'Benefits' ),
+			items: product.benefits,
+			comingSoon: product.benefitsComingSoon,
+		},
 	];
 
 	const descriptionMap = useIncludedProductDescriptionMap( product.productSlug );
@@ -68,11 +78,11 @@ const ProductDetails: React.FC< ProductDetailsProps > = ( { product } ) => {
 					</div>
 				</>
 			) : (
-				productDetails.map( ( { type, title, items } ) => (
+				productDetails.map( ( { type, title, items, comingSoon } ) => (
 					<div className="product-lightbox__detail-list" key={ type }>
 						<ProductDetailsList
 							title={ title }
-							detailsList={ <DescriptionList items={ items } /> }
+							detailsList={ <DescriptionList items={ items } comingSoon={ comingSoon } /> }
 						/>
 						<hr />
 					</div>

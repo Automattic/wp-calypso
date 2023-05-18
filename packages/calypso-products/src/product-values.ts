@@ -11,7 +11,9 @@ export { getJetpackProductDisplayName } from './get-jetpack-product-display-name
 export { getJetpackProductShortName } from './get-jetpack-product-short-name';
 export { getJetpackProductTagline } from './get-jetpack-product-tagline';
 export { getJetpackProductWhatIsIncluded } from './get-jetpack-product-what-is-included';
+export { getJetpackProductWhatIsIncludedComingSoon } from './get-jetpack-product-what-is-included-coming-soon';
 export { getJetpackProductBenefits } from './get-jetpack-product-benefits';
+export { getJetpackProductBenefitsComingSoon } from './get-jetpack-product-benefits-coming-soon';
 export { getJetpackProductFAQs } from './get-jetpack-product-faqs';
 export { getJetpackProductRecommendedFor } from './get-jetpack-product-recommended-for';
 export { getJetpackPlanAlsoIncludedFeatures } from './get-jetpack-plan-also-included-features';

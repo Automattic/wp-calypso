@@ -847,9 +847,6 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Share to Facebook, LinkedIn, and Tumblr' ),
 		translate( 'Engagement Optimizer' ),
 		translate( 'Recycle content' ),
-		translate( 'Coming soon: Image generator' ),
-		translate( 'Coming soon: Multi-image sharing' ),
-		translate( 'Coming soon: Video sharing' ),
 	];
 
 	return {
@@ -877,6 +874,22 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: boostIncludesInfo,
 		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: socialBasicIncludesInfo,
 		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialBasicIncludesInfo,
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedIncludesInfo,
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedIncludesInfo,
+	};
+};
+
+export const getJetpackProductsWhatIsIncludedComingSoon = (): Record<
+	string,
+	Array< TranslateResult >
+> => {
+	const socialAdvancedIncludesInfo = [
+		translate( 'Coming soon: Image generator' ),
+		translate( 'Coming soon: Multi-image sharing' ),
+		translate( 'Coming soon: Video sharing' ),
+	];
+
+	return {
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedIncludesInfo,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedIncludesInfo,
 	};
@@ -937,7 +950,6 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		translate( 'Repurpose, reuse or republish already published content' ),
 	];
 
-	//TODO: fill in the actual values.
 	const socialAdvancedBenefits = [
 		translate( 'Save time by sharing your posts automatically' ),
 		translate( 'Unlock your growth potential by building a following on social media' ),
@@ -945,11 +957,6 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		translate( 'No developer required' ),
 		translate( 'Enhance social media engagement with personalized posts' ),
 		translate( 'Repurpose, reuse or republish already published content' ),
-		translate(
-			'Coming soon: Automatically create custom images, saving you hours of tedious work'
-		),
-		translate( 'Coming soon: Share multiple images at once on social media platforms' ),
-		translate( 'Coming soon: Upload and share videos to your social platforms' ),
 	];
 
 	return {
@@ -977,6 +984,24 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: boostBenefits,
 		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: socialBenefits,
 		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialBenefits,
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedBenefits,
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedBenefits,
+	};
+};
+
+export const getJetpackProductsBenefitsComingSoon = (): Record<
+	string,
+	Array< TranslateResult >
+> => {
+	const socialAdvancedBenefits = [
+		translate(
+			'Coming soon: Automatically create custom images, saving you hours of tedious work'
+		),
+		translate( 'Coming soon: Share multiple images at once on social media platforms' ),
+		translate( 'Coming soon: Upload and share videos to your social platforms' ),
+	];
+
+	return {
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedBenefits,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedBenefits,
 	};
