@@ -12,6 +12,7 @@ import {
 	Flow,
 	ProvidedDependencies,
 } from 'calypso/landing/stepper/declarative-flow/internals/types';
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { freeSiteAddressType } from 'calypso/lib/domains/constants';
@@ -71,6 +72,7 @@ const startWriting: Flow = {
 			( select ) => select( ONBOARD_STORE ) as OnboardSelect,
 			[]
 		).getState();
+		const site = useSite();
 
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', flowName, currentStep );
@@ -128,7 +130,7 @@ const startWriting: Flow = {
 
 						if ( providedDependencies?.domainName ) {
 							await requestSiteAddressChange(
-								state.selectedSite,
+								site?.ID,
 								newDomainName,
 								'wordpress.com',
 								siteSlug,
