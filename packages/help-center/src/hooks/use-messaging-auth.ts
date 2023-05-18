@@ -31,10 +31,7 @@ function requestMessagingAuth() {
 
 export default function useMessagingAuth( enabled: boolean ) {
 	return useQuery< MessagingAuth >( [ 'getMessagingAuth' ], requestMessagingAuth, {
-		staleTime: 10 * 60 * 1000, // 10 minutes
-		meta: {
-			persist: false,
-		},
+		staleTime: 7 * 24 * 60 * 60 * 1000, // 1 week (JWT is actually 2 weeks, but lets be on the safe side)
 		enabled,
 	} );
 }

@@ -6,7 +6,7 @@ import config from '@automattic/calypso-config';
 import { useSupportAvailability, useSupportActivity } from '@automattic/data-stores';
 import { loadScript } from '@automattic/load-script';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { createPortal, useEffect, useRef } from '@wordpress/element';
+import { createPortal, useEffect, useRef, useState } from '@wordpress/element';
 import { useSelector } from 'react-redux';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -30,6 +30,7 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 	const { setSite } = useDispatch( HELP_CENTER_STORE );
 	const { setShowMessagingLauncher } = useDispatch( HELP_CENTER_STORE );
 	const { setShowMessagingWidget } = useDispatch( HELP_CENTER_STORE );
+	const [ isMessagingScriptLoaded, setMessagingScriptLoaded ] = useState( false );
 
 	useEffect( () => {
 		if ( ! chatStatus?.is_user_eligible ) {
@@ -46,6 +47,7 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 		}
 
 		function setUpMessagingEventHandlers() {
+			setMessagingScriptLoaded( true );
 			if ( typeof window.zE !== 'function' ) {
 				return;
 			}
@@ -75,14 +77,14 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 	const { data: messagingAuth } = useMessagingAuth( Boolean( chatStatus?.is_user_eligible ) );
 	useEffect( () => {
 		const jwt = messagingAuth?.user.jwt;
-		if ( typeof window.zE !== 'function' || ! jwt ) {
+		if ( typeof window.zE !== 'function' || ! jwt || ! isMessagingScriptLoaded ) {
 			return;
 		}
 
 		window.zE( 'messenger', 'loginUser', function ( callback ) {
 			callback( jwt );
 		} );
-	}, [ messagingAuth ] );
+	}, [ messagingAuth, isMessagingScriptLoaded ] );
 
 	const { showMessagingLauncher, showMessagingWidget } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
@@ -93,7 +95,7 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 	}, [] );
 
 	useEffect( () => {
-		if ( typeof window.zE !== 'function' ) {
+		if ( typeof window.zE !== 'function' || ! isMessagingScriptLoaded ) {
 			return;
 		}
 		if ( showMessagingLauncher ) {
@@ -101,10 +103,10 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 		} else {
 			window.zE( 'messenger', 'hide' );
 		}
-	}, [ showMessagingLauncher ] );
+	}, [ showMessagingLauncher, isMessagingScriptLoaded ] );
 
 	useEffect( () => {
-		if ( typeof window.zE !== 'function' ) {
+		if ( typeof window.zE !== 'function' || ! isMessagingScriptLoaded ) {
 			return;
 		}
 		if ( showMessagingWidget ) {
@@ -112,7 +114,7 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 		} else {
 			window.zE( 'messenger', 'close' );
 		}
-	}, [ showMessagingWidget ] );
+	}, [ showMessagingWidget, isMessagingScriptLoaded ] );
 
 	const { data: supportActivity } = useSupportActivity( Boolean( chatStatus?.is_user_eligible ) );
 	useEffect( () => {
