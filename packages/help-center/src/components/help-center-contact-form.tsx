@@ -37,7 +37,6 @@ import { getSectionName } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
  */
-import useMessagingAuth from '../hooks/use-messaging-auth';
 import useZendeskConfig from '../hooks/use-zendesk-config';
 import { HELP_CENTER_STORE } from '../stores';
 import { getSupportVariationFromMode } from '../support-variations';
@@ -198,17 +197,6 @@ export const HelpCenterContactForm = () => {
 	} = useDispatch( HELP_CENTER_STORE );
 
 	const { data: chatStatus } = useSupportAvailability( 'CHAT' );
-	const { data: messagingAuth } = useMessagingAuth( Boolean( chatStatus?.is_user_eligible ) );
-	useEffect( () => {
-		const jwt = messagingAuth?.user.jwt;
-		if ( typeof window.zE !== 'function' || ! jwt ) {
-			return;
-		}
-
-		window.zE( 'messenger', 'loginUser', function ( callback ) {
-			callback( jwt );
-		} );
-	}, [ messagingAuth ] );
 	const { status: zendeskStatus } = useZendeskConfig( Boolean( chatStatus?.is_user_eligible ) );
 
 	useEffect( () => {
