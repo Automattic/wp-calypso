@@ -84,25 +84,34 @@ function writeInterstitialMessage( targetDocument ) {
 }
 
 export function usePreview() {
-	const { currentPostLink, isAutosaveable, isDraft, isPostEditor, isLocked, previewLink } =
-		useSelect( ( select ) => {
-			const {
-				getCurrentPostId,
-				getCurrentPostAttribute,
-				getEditedPostPreviewLink,
-				isEditedPostAutosaveable,
-				isPostLocked,
-				getEditedPostAttribute,
-			} = select( 'core/editor' );
-			return {
-				currentPostLink: getCurrentPostAttribute( 'link' ),
-				isAutosaveable: isEditedPostAutosaveable(),
-				isDraft: [ 'draft', 'auto-draft' ].indexOf( getEditedPostAttribute( 'status' ) ) !== -1,
-				isLocked: isPostLocked(),
-				isPostEditor: ! select( 'core/edit-site' ) && !! getCurrentPostId(),
-				previewLink: getEditedPostPreviewLink(),
-			};
-		} );
+	const {
+		currentPostLink,
+		isAutosaveable,
+		isDraft,
+		isPostEditor,
+		isLocked,
+		isSaveable,
+		previewLink,
+	} = useSelect( ( select ) => {
+		const {
+			getCurrentPostId,
+			getCurrentPostAttribute,
+			getEditedPostPreviewLink,
+			isEditedPostAutosaveable,
+			isEditedPostSaveable,
+			isPostLocked,
+			getEditedPostAttribute,
+		} = select( 'core/editor' );
+		return {
+			currentPostLink: getCurrentPostAttribute( 'link' ),
+			isAutosaveable: isEditedPostAutosaveable(),
+			isDraft: [ 'draft', 'auto-draft' ].indexOf( getEditedPostAttribute( 'status' ) ) !== -1,
+			isLocked: isPostLocked(),
+			isPostEditor: ! select( 'core/edit-site' ) && !! getCurrentPostId(),
+			isSaveable: isEditedPostSaveable(),
+			previewLink: getEditedPostPreviewLink(),
+		};
+	} );
 	const previewWindow = useRef( null );
 
 	const { autosave, savePost } = useDispatch( 'core/editor' );
@@ -154,5 +163,5 @@ export function usePreview() {
 		}
 	}, [ isPostEditor, previewLink ] );
 
-	return { previewPostWithoutCustomStyles };
+	return { previewPostWithoutCustomStyles, canPreviewPost: isSaveable };
 }

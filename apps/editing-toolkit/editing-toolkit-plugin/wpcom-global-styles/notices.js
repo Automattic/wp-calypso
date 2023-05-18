@@ -83,7 +83,7 @@ function GlobalStylesEditNotice() {
 		} ),
 		[ canvas ]
 	);
-	const { previewPostWithoutCustomStyles } = usePreview();
+	const { previewPostWithoutCustomStyles, canPreviewPost } = usePreview();
 
 	const { createWarningNotice, removeNotice } = useDispatch( 'core/notices' );
 	const { editEntityRecord } = useDispatch( 'core' );
@@ -121,7 +121,7 @@ function GlobalStylesEditNotice() {
 			},
 		];
 
-		if ( isPostEditor ) {
+		if ( isPostEditor && canPreviewPost ) {
 			actions.push( {
 				label: __( 'Preview without custom styles', 'full-site-editing' ),
 				onClick: previewPost,
@@ -152,6 +152,7 @@ function GlobalStylesEditNotice() {
 
 		trackEvent( 'calypso_global_styles_gating_notice_show', isSiteEditor );
 	}, [
+		canPreviewPost,
 		createWarningNotice,
 		isPostEditor,
 		isSiteEditor,
