@@ -1,4 +1,5 @@
 import config, { isEnabled } from '@automattic/calypso-config';
+import { FEATURE_SOCIAL_MASTODON_CONNECTION } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import requestExternalAccess from '@automattic/request-external-access';
 import classnames from 'classnames';
@@ -17,6 +18,7 @@ import { successNotice, errorNotice, warningNotice } from 'calypso/state/notices
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import getRemovableConnections from 'calypso/state/selectors/get-removable-connections';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import {
 	requestKeyringConnections,
 	requestP2KeyringConnections,
@@ -519,13 +521,6 @@ export class SharingService extends Component {
 		return get( this, 'props.service.ID' ) === 'mailchimp';
 	};
 
-	isMastodonService = () => {
-		if ( ! config.isEnabled( 'mastodon' ) ) {
-			return false;
-		}
-		return get( this, 'props.service.ID' ) === 'mastodon';
-	};
-
 	isPicasaMigration( status ) {
 		if ( status === 'must-disconnect' && get( this, 'props.service.ID' ) === 'google_photos' ) {
 			return true;
@@ -641,7 +636,9 @@ export class SharingService extends Component {
 					compact
 					summary={ action }
 					expandedSummary={
-						this.isMastodonService() ? cloneElement( action, { isExpanded: true } ) : action
+						this.props.isMastodonEligible && this.props.service.ID === 'mastodon'
+							? cloneElement( action, { isExpanded: true } )
+							: action
 					}
 				>
 					<div
@@ -728,6 +725,7 @@ export function connectFor( sharingService, mapStateToProps, mapDispatchToProps 
 				isExpanded: isServiceExpanded( state, service ),
 				isP2HubSite: isSiteP2Hub( state, siteId ),
 				isJetpack: isJetpackSite( state, siteId ),
+				isMastodonEligible: siteHasFeature( state, siteId, FEATURE_SOCIAL_MASTODON_CONNECTION ),
 			};
 			return typeof mapStateToProps === 'function' ? mapStateToProps( state, props ) : props;
 		},
