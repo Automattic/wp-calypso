@@ -355,7 +355,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 						),
 						{
 							Button: createElement( Button, {
-								isLink: true,
+								variant: 'link',
 								target: '__blank',
 								href: localizeUrl(
 									'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/'
@@ -376,7 +376,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		const interpolateElement = {
 			uploadBtn: formFileUploadElement,
 			Button: createElement( Button, {
-				isLink: true,
+				variant: 'link',
 				target: '__blank',
 				rel: 'noreferrer',
 				href: localizeUrl(
@@ -426,7 +426,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 							strong: createElement( 'strong' ),
 							uploadBtn: formFileUploadElement,
 							removeBtn: createElement( Button, {
-								isLink: true,
+								variant: 'link',
 								onClick: onFileRemoveClick,
 							} ),
 						}

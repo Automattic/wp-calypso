@@ -205,7 +205,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 									onClick={ () => {
 										onSelect( planProduct?.productId );
 									} }
-									isPrimary
+									variant="primary"
 									disabled={ !! disabledLabel }
 								>
 									<span>{ disabledLabel ?? normalCtaLabelFallback }</span>
@@ -219,7 +219,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 									onClick={ () => {
 										onSelect( planProduct?.productId );
 									} }
-									isPrimary={ isPopular }
+									variant={ isPopular ? 'primary' : 'secondary' }
 									disabled={ !! disabledLabel }
 								>
 									<span>
@@ -256,7 +256,11 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 			</div>
 
 			{ isPopular && ! isDesktop && (
-				<Button onClick={ onToggleExpandAll } className="plan-item__mobile-expand-all-plans" isLink>
+				<Button
+					onClick={ onToggleExpandAll }
+					className="plan-item__mobile-expand-all-plans"
+					variant="link"
+				>
 					{ allPlansExpanded ? expandToggleLabelExpanded : expandToggleLabelCollapsed }
 				</Button>
 			) }

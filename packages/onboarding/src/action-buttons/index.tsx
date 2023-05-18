@@ -34,7 +34,7 @@ const ActionButtons: React.FunctionComponent< ActionButtonsProps > = ( {
 
 export default ActionButtons;
 
-export const BackButton: React.FunctionComponent< Button.ButtonProps > = ( {
+export const BackButton: React.FunctionComponent< React.ComponentProps< typeof Button > > = ( {
 	className,
 	children,
 	...buttonProps
@@ -44,7 +44,7 @@ export const BackButton: React.FunctionComponent< Button.ButtonProps > = ( {
 	return (
 		<Button
 			className={ classnames( 'action_buttons__button action-buttons__back', className ) }
-			isLink
+			variant="link"
 			{ ...buttonProps }
 		>
 			{ children ||
@@ -54,7 +54,7 @@ export const BackButton: React.FunctionComponent< Button.ButtonProps > = ( {
 	);
 };
 
-export const NextButton: React.FunctionComponent< Button.ButtonProps > = ( {
+export const NextButton: React.FunctionComponent< React.ComponentProps< typeof Button > > = ( {
 	className,
 	children,
 	...buttonProps
@@ -64,7 +64,7 @@ export const NextButton: React.FunctionComponent< Button.ButtonProps > = ( {
 	return (
 		<Button
 			className={ classnames( 'button action_buttons__button action-buttons__next', className ) }
-			isPrimary
+			variant="primary"
 			{ ...buttonProps }
 		>
 			{ children ||
@@ -74,7 +74,7 @@ export const NextButton: React.FunctionComponent< Button.ButtonProps > = ( {
 	);
 };
 
-export const SkipButton: React.FunctionComponent< Button.ButtonProps > = ( {
+export const SkipButton: React.FunctionComponent< React.ComponentProps< typeof Button > > = ( {
 	className,
 	children,
 	...buttonProps
@@ -93,16 +93,13 @@ export const SkipButton: React.FunctionComponent< Button.ButtonProps > = ( {
 	);
 };
 
-interface ArrowButtonProps extends Button.ButtonProps {
+interface ArrowButtonProps {
 	arrow: 'left' | 'right';
 }
 
-export const ArrowButton: React.FunctionComponent< ArrowButtonProps > = ( {
-	className,
-	children,
-	arrow = 'right',
-	...buttonProps
-} ) => {
+export const ArrowButton: React.FunctionComponent<
+	React.ComponentProps< typeof Button > & ArrowButtonProps
+> = ( { className, children, arrow = 'right', ...buttonProps } ) => {
 	return (
 		<Button
 			className={ classnames(

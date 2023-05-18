@@ -287,7 +287,7 @@ export class ImportEverything extends SectionMigrate {
 				<DoneButton
 					className="is-normal-width"
 					label={ translate( 'View your dashboard' ) }
-					isPrimary={ false }
+					variant="secondary"
 					onSiteViewClick={ () => {
 						this.props.recordTracksEvent( 'calypso_site_importer_view_site' );
 						stepNavigator?.goToSiteViewPage?.();

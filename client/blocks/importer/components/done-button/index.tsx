@@ -11,7 +11,7 @@ interface Props {
 	resetImport?: ( siteId: number, importerId: string ) => void;
 	onSiteViewClick?: () => void;
 	className?: string;
-	isPrimary?: boolean;
+	variant?: 'primary' | 'secondary';
 }
 const DoneButton: React.FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
@@ -24,10 +24,8 @@ const DoneButton: React.FunctionComponent< Props > = ( props ) => {
 		resetImport,
 		onSiteViewClick,
 		className,
-		isPrimary = true,
+		variant = 'primary',
 	} = props;
-
-	const isSecondary = isPrimary ? false : true;
 
 	function onButtonClick() {
 		onSiteViewClick?.();
@@ -35,12 +33,7 @@ const DoneButton: React.FunctionComponent< Props > = ( props ) => {
 	}
 
 	return (
-		<NextButton
-			isPrimary={ isPrimary }
-			isSecondary={ isSecondary }
-			className={ className }
-			onClick={ onButtonClick }
-		>
+		<NextButton variant={ variant } className={ className } onClick={ onButtonClick }>
 			{ label }
 		</NextButton>
 	);

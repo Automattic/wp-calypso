@@ -65,7 +65,7 @@ export default function PatternPicker( { onPick }: Props ) {
 			<div className="pattern-picker__cta">
 				<Button
 					className="pattern-picker__select"
-					isPrimary
+					variant="primary"
 					onClick={ () => {
 						if ( swiperInstance.current ) {
 							onPick( designs[ swiperInstance.current?.activeIndex ] );
