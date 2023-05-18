@@ -1,3 +1,4 @@
+import { FEATURE_WORDADS_INSTANT, PLAN_PREMIUM } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { compact } from 'lodash';
@@ -11,9 +12,11 @@ import EmptyContent from 'calypso/components/empty-content';
 import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
 import { CtaButton } from 'calypso/components/promo-section/promo-card/cta';
 import wp from 'calypso/lib/wp';
+import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import siteHasWordAds from 'calypso/state/selectors/site-has-wordads';
 import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import getSiteBySlug from 'calypso/state/sites/selectors/get-site-by-slug';
@@ -31,6 +34,7 @@ interface ConnectedProps {
 	hasWordAdsFeature: boolean;
 	hasConnectedAccount: boolean | null;
 	hasSetupAds: boolean;
+	eligibleForProPlan?: boolean;
 	trackUpgrade: ( plan: string, feature: string ) => void;
 	trackLearnLink: ( feature: string ) => void;
 	trackCtaButton: ( feature: string ) => void;
@@ -45,8 +49,11 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	isLoading,
 	hasConnectedAccount,
 	hasSetupAds,
+	eligibleForProPlan,
+	trackUpgrade,
 	trackLearnLink,
 	trackCtaButton,
+	hasWordAdsFeature,
 } ) => {
 	const translate = useTranslate();
 	const [ peerReferralLink, setPeerReferralLink ] = useState( '' );
@@ -71,6 +78,24 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 				setPeerReferralLink( ! error && data ? data : '' );
 			}
 		);
+	};
+
+	const getAnyPlanNames = () => {
+		const jetpackText = translate( 'Available with Jetpack Security and Jetpack Complete.' );
+
+		// Space isn't included in the translatable string to prevent it being easily missed.
+		return isNonAtomicJetpack
+			? ' ' + jetpackText
+			: ' ' + translate( 'Available with any paid plan — no plugin required.' );
+	};
+
+	const getPremiumPlanNames = () => {
+		const nonAtomicJetpackText = eligibleForProPlan
+			? translate( 'Available only with a Pro plan.' )
+			: translate( 'Available only with a Premium, Business, or eCommerce plan.' );
+
+		// Space isn't included in the translatable string to prevent it being easily missed.
+		return isNonAtomicJetpack ? getAnyPlanNames() : ' ' + nonAtomicJetpackText;
 	};
 
 	/**
@@ -344,14 +369,32 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 *
 	 * @returns {Object} Object with props to render a PromoCard.
 	 */
+	/**
+	 * Return the content to display in the Ads card based on the current plan.
+	 *
+	 * @returns {Object} Object with props to render a PromoCard.
+	 */
 	const getAdsCard = () => {
-		const cta = {
-			text: hasSetupAds ? translate( 'View ad dashboard' ) : translate( 'Earn ad revenue' ),
-			action: () => {
-				trackCtaButton( 'ads' );
-				page( `/earn/${ hasSetupAds ? 'ads-earnings' : 'ads-settings' }/${ selectedSiteSlug }` );
-			},
-		};
+		const cta =
+			hasWordAdsFeature || hasSetupAds
+				? {
+						text: hasSetupAds ? translate( 'View ad dashboard' ) : translate( 'Earn ad revenue' ),
+						action: () => {
+							trackCtaButton( 'ads' );
+							page(
+								`/earn/${ hasSetupAds ? 'ads-earnings' : 'ads-settings' }/${ selectedSiteSlug }`
+							);
+						},
+				  }
+				: {
+						text: translate( 'Unlock this feature' ),
+						action: () => {
+							trackUpgrade( 'plans', 'ads' );
+							page(
+								`/plans/${ selectedSiteSlug }?feature=${ FEATURE_WORDADS_INSTANT }&plan=${ PLAN_PREMIUM }`
+							);
+						},
+				  };
 
 		const title = hasSetupAds ? translate( 'View ad dashboard' ) : translate( 'Earn ad revenue' );
 
@@ -364,15 +407,20 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 				{ translate(
 					'Make money each time someone visits your site by displaying advertisements on all your posts and pages.'
 				) }
+				{ ! hasWordAdsFeature && <em>{ getPremiumPlanNames() }</em> }
 			</>
 		);
 
+		const learnMoreLink = ! ( hasWordAdsFeature || hasSetupAds )
+			? { url: 'https://wordads.co/', onClick: () => trackLearnLink( 'ads' ) }
+			: null;
 		return {
 			title,
 			body,
 			icon: 'speaker',
 			actions: {
 				cta,
+				learnMoreLink,
 			},
 		};
 	};
@@ -451,6 +499,7 @@ export default connect(
 		const hasConnectedAccount =
 			state?.memberships?.settings?.[ siteId ]?.connectedAccountId ?? null;
 		const sitePlanSlug = getSitePlanSlug( state, siteId );
+		const hasWordAdsFeature = siteHasWordAds( state, siteId );
 		const isLoading = hasConnectedAccount === null || sitePlanSlug === null;
 		const isJetpack = isJetpackSite( state, siteId );
 		return {
@@ -458,7 +507,9 @@ export default connect(
 			selectedSiteSlug,
 			isNonAtomicJetpack: Boolean( isJetpack && ! isSiteAutomatedTransfer( state, siteId ) ),
 			isUserAdmin: canCurrentUser( state, siteId, 'manage_options' ),
+			hasWordAdsFeature,
 			hasConnectedAccount,
+			eligibleForProPlan: isEligibleForProPlan( state, siteId ),
 			isLoading,
 			hasSetupAds: Boolean(
 				site?.options?.wordads || isRequestingWordAdsApprovalForSite( state, site )
