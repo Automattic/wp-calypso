@@ -40,7 +40,9 @@ const InfoTooltip: FunctionComponent< Props > = ( {
 		setShowTooltip( false );
 	};
 
-	const ButtonWithIcon = ( props: Button.Props & { icon: typeof info } ) => <Button { ...props } />;
+	const ButtonWithIcon = (
+		props: React.ComponentProps< typeof Button > & { icon: typeof info }
+	) => <Button { ...props } />;
 
 	return (
 		<ButtonWithIcon
