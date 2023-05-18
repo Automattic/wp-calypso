@@ -70,7 +70,6 @@
 		"marketplace-fetch-all-dynamic-products": true,
 		"marketplace-jetpack-plugin-search": true,
 		"marketplace-personal-premium": false,
-		"mastodon": false,
 		"me/account-close": true,
 		"me/vat-details": true,
 		"my-sites/add-ons": true,
@@ -109,6 +108,7 @@
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
 		"wordpress-action-search": false,
-		"wpcom-user-bootstrap": false
+		"wpcom-user-bootstrap": false,
+		"newsletter/paid-subscribers": true
 	}
 }

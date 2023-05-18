@@ -7,17 +7,13 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import type {
-	MonitorSettingsEmail,
 	AllowedMonitorContactActions,
+	StateMonitorSettingsEmail,
 } from '../../sites-overview/types';
-interface StateEmailItem extends MonitorSettingsEmail {
-	checked: boolean;
-	isDefault?: boolean;
-}
 
 interface Props {
 	toggleModal: () => void;
-	selectedEmail?: StateEmailItem;
+	selectedEmail?: StateMonitorSettingsEmail;
 	selectedAction?: AllowedMonitorContactActions;
 }
 
@@ -109,9 +105,10 @@ export default function EmailAddressEditor( {
 						value={ emailItem.name }
 						disabled={ showCodeVerification }
 						onChange={ handleChange( 'name' ) }
+						aria-describedby={ ! isVerifyAction ? 'name-help-text' : undefined }
 					/>
 					{ ! isVerifyAction && (
-						<div className="configure-email-notification__help-text">
+						<div className="configure-email-notification__help-text" id="name-help-text">
 							{ translate( 'Give this email a nickname for your personal reference' ) }
 						</div>
 					) }
@@ -125,14 +122,15 @@ export default function EmailAddressEditor( {
 						value={ emailItem.email }
 						disabled={ showCodeVerification }
 						onChange={ handleChange( 'email' ) }
+						aria-describedby={ ! isVerifyAction ? 'email-help-text' : undefined }
 					/>
 					{ validationError?.email && (
-						<div className="notification-settings__footer-validation-error">
+						<div className="notification-settings__footer-validation-error" role="alert">
 							{ validationError.email }
 						</div>
 					) }
 					{ ! isVerifyAction && (
-						<div className="configure-email-notification__help-text">
+						<div className="configure-email-notification__help-text" id="email-help-text">
 							{ translate( 'We’ll send a code to verify your email address.' ) }
 						</div>
 					) }
@@ -150,11 +148,11 @@ export default function EmailAddressEditor( {
 							onChange={ handleChange( 'code' ) }
 						/>
 						{ validationError?.code && (
-							<div className="notification-settings__footer-validation-error">
+							<div className="notification-settings__footer-validation-error" role="alert">
 								{ validationError.code }
 							</div>
 						) }
-						<div className="configure-email-notification__help-text">
+						<div className="configure-email-notification__help-text" id="code-help-text">
 							{ translate(
 								'Please wait for a minute. If you didn’t receive it, we can {{button}}resend{{/button}} it.',
 								{

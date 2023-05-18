@@ -103,11 +103,6 @@ function wpcom_global_styles_has_blog_sticker( $blog_sticker, $blog_id ) {
  * @return void
  */
 function wpcom_global_styles_enqueue_block_editor_assets() {
-	$screen = get_current_screen();
-	if ( ! $screen || 'site-editor' !== $screen->id ) {
-		return;
-	}
-
 	if ( ! wpcom_should_limit_global_styles() ) {
 		return;
 	}
@@ -153,6 +148,7 @@ function wpcom_global_styles_enqueue_block_editor_assets() {
 		array(
 			'assetsUrl'   => plugins_url( 'dist/', __FILE__ ),
 			'upgradeUrl'  => "$calypso_domain/plans/$site_slug?plan=value_bundle&feature=style-customization",
+			'previewUrl'  => add_query_arg( 'hide-global-styles', '', home_url() ),
 			'wpcomBlogId' => wpcom_global_styles_get_wpcom_current_blog_id(),
 		)
 	);
@@ -422,11 +418,9 @@ function wpcom_display_global_styles_launch_bar( $bar_controls ) {
 	$upgrade_url = 'https://wordpress.com/plans/' . $site_slug . '?plan=value_bundle&feature=style-customization';
 
 	if ( wpcom_is_previewing_global_styles() ) {
-		$preview_text     = __( 'Turn off preview', 'full-site-editing' );
-		$preview_location = remove_query_arg( 'preview-global-styles' );
+		$preview_location = add_query_arg( 'hide-global-styles', '' );
 	} else {
-		$preview_text     = __( 'Turn on preview', 'full-site-editing' );
-		$preview_location = add_query_arg( 'preview-global-styles', '' );
+		$preview_location = remove_query_arg( 'hide-global-styles' );
 	}
 
 	ob_start(); ?>
@@ -480,10 +474,11 @@ function wpcom_display_global_styles_launch_bar( $bar_controls ) {
 					class="launch-bar-global-styles-upgrade"
 					href="<?php echo esc_url( $upgrade_url ); ?>"
 				>
-					<?php echo esc_html__( 'Upgrade your plan', 'full-site-editing' ); ?>
+					<?php echo esc_html__( 'Upgrade now', 'full-site-editing' ); ?>
 				</a>
 				<a class="launch-bar-global-styles-preview" href="<?php echo esc_url( $preview_location ); ?>">
-					<?php echo esc_html( $preview_text ); ?>
+					<label><input type="checkbox" <?php echo wpcom_is_previewing_global_styles() ? 'checked' : ''; ?>><span></span></label>
+					<?php echo esc_html__( 'Preview custom styles', 'full-site-editing' ); ?>
 				</a>
 			</div>
 			<a class="launch-bar-global-styles-toggle" href="#">
@@ -534,5 +529,5 @@ function wpcom_is_previewing_global_styles( ?int $user_id = null ) {
 	}
 
 	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-	return isset( $_GET['preview-global-styles'] ) && user_can( $user_id, 'administrator' );
+	return ! isset( $_GET['hide-global-styles'] ) && user_can( $user_id, 'administrator' );
 }

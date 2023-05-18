@@ -23,6 +23,7 @@ import getAvailableConciergeSessions from 'calypso/state/selectors/get-available
 import getConciergeNextAppointment from 'calypso/state/selectors/get-concierge-next-appointment';
 import getConciergeUserBlocked from 'calypso/state/selectors/get-concierge-user-blocked';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { convertErrorToString } from '../checkout/composite-checkout/lib/analytics';
 import {
 	getPurchaseListUrlFor,
 	getCancelPurchaseUrlFor,
@@ -43,7 +44,7 @@ function useLogPurchasesError( message: string ) {
 				extra: {
 					env: config( 'env_id' ),
 					type: 'site_level_purchases',
-					message: error.message + '; Stack: ' + error.stack,
+					message: convertErrorToString( error ),
 				},
 			} );
 		},

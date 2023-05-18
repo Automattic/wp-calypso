@@ -4,7 +4,7 @@ import SearchInput from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import { SearchIcon } from 'calypso/landing/subscriptions/components/icons';
-import { Notice } from 'calypso/landing/subscriptions/components/notice';
+import { Notice, NoticeType } from 'calypso/landing/subscriptions/components/notice';
 import { SiteList } from 'calypso/landing/subscriptions/components/site-list';
 import { SortControls, Option } from 'calypso/landing/subscriptions/components/sort-controls';
 import { useSearch } from 'calypso/landing/subscriptions/hooks';
@@ -36,7 +36,11 @@ const Sites = () => {
 	const isListControlsEnabled = config.isEnabled( 'subscription-management/sites-list-controls' );
 
 	if ( ! isLoading && ! totalCount ) {
-		return <Notice type="warning">{ translate( 'You are not subscribed to any sites.' ) }</Notice>;
+		return (
+			<Notice type={ NoticeType.Warning }>
+				{ translate( 'You are not subscribed to any sites.' ) }
+			</Notice>
+		);
 	}
 
 	return (
@@ -55,7 +59,7 @@ const Sites = () => {
 			<SiteList sites={ subscriptions } />
 
 			{ totalCount > 0 && subscriptions.length === 0 && (
-				<Notice type="warning">
+				<Notice type={ NoticeType.Warning }>
 					{ translate( 'Sorry, no sites match {{italic}}%s.{{/italic}}', {
 						components: { italic: <i /> },
 						args: searchTerm,
