@@ -1,9 +1,12 @@
-import { useStarterDesignsQuery } from '@automattic/data-stores';
+import { Gridicon } from '@automattic/components';
+import { StarterDesigns, useStarterDesignsQuery } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
+import { ECOMMERCE_FLOW, MShotsOptions, isLinkInBioFlow } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
+import { useMediaQuery } from '@wordpress/compose';
 import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import Swiper from 'swiper';
 import { Item } from './item';
 import 'swiper/dist/css/swiper.css';
@@ -12,19 +15,33 @@ import type { Design } from '@automattic/design-picker/src/types';
 type DesignCarouselProps = {
 	onPick: ( design: Design ) => void;
 	selectedDesignSlugs?: string[];
+	flow?: string | null | undefined;
 };
 
-export default function DesignCarousel( { onPick, selectedDesignSlugs }: DesignCarouselProps ) {
-	const { __ } = useI18n();
+const shouldDisplayMobileViewOnly = ( flow: string | null | undefined ) => {
+	switch ( true ) {
+		case isLinkInBioFlow( flow ):
+			return true;
+		default:
+			return false;
+	}
+};
 
-	const swiperInstance = useRef< Swiper | null >( null );
+const getLinkInBioDesigns = ( allDesigns: StarterDesigns | undefined ) => {
+	const designs =
+		allDesigns?.designs.filter(
+			( design ) =>
+				design.is_virtual &&
+				design.categories.some( ( category ) => category.slug === 'link-in-bio' )
+		) ?? [];
 
-	const locale = useLocale();
+	return designs;
+};
 
-	const { data: allDesigns } = useStarterDesignsQuery( {
-		_locale: locale,
-	} );
-
+const getEcommerceDesigns = (
+	allDesigns: StarterDesigns | undefined,
+	selectedDesignSlugs: string[] | undefined
+) => {
 	let selectedDesigns = allDesigns?.designs;
 
 	if ( selectedDesigns && selectedDesignSlugs ) {
@@ -40,6 +57,68 @@ export default function DesignCarousel( { onPick, selectedDesignSlugs }: DesignC
 			)
 			.filter( ( selectedDesign ) => !! selectedDesign ) as Design[];
 	}
+
+	return selectedDesigns;
+};
+
+const getCarouselOptions = (
+	flow: string | null | undefined,
+	mobileOptions: MShotsOptions,
+	desktopOptions: MShotsOptions
+) => {
+	switch ( true ) {
+		case isLinkInBioFlow( flow ):
+			return mobileOptions;
+		default:
+			return desktopOptions;
+	}
+};
+
+const getFlowDesigns = (
+	allDesigns: StarterDesigns | undefined,
+	locale: string | undefined,
+	selectedDesignSlugs: string[] | undefined,
+	flow: string | null | undefined
+) => {
+	if ( ! allDesigns || ! locale ) {
+		return null;
+	}
+
+	switch ( true ) {
+		case isLinkInBioFlow( flow ):
+			return getLinkInBioDesigns( allDesigns );
+		case flow === ECOMMERCE_FLOW:
+			return getEcommerceDesigns( allDesigns, selectedDesignSlugs );
+		default:
+			return allDesigns?.designs;
+	}
+};
+
+export default function DesignCarousel( {
+	onPick,
+	selectedDesignSlugs,
+	flow,
+}: DesignCarouselProps ) {
+	const { __ } = useI18n();
+	const swiperInstance = useRef< Swiper | null >( null );
+	const locale = useLocale();
+	const isLargerThan1440px = useMediaQuery( '(min-width: 1440px)' );
+	const mobileOptions: MShotsOptions = { w: 400, vpw: 400, vph: 872, format: 'png' };
+	const desktopOptions: MShotsOptions = {
+		w: isLargerThan1440px ? 1920 : 1280,
+		vpw: 1920,
+		vph: 1280,
+		format: 'png',
+	};
+
+	const { data: allDesigns } = useStarterDesignsQuery( {
+		_locale: locale,
+	} );
+
+	const selectedDesigns = getFlowDesigns( allDesigns, locale, selectedDesignSlugs, flow );
+
+	const onlyDisplayMobileCarousel = shouldDisplayMobileViewOnly( flow );
+	const carouselOptions = getCarouselOptions( flow, mobileOptions, desktopOptions );
 
 	useEffect( () => {
 		if ( selectedDesigns ) {
@@ -71,13 +150,28 @@ export default function DesignCarousel( { onPick, selectedDesignSlugs }: DesignC
 		<div className="design-carousel">
 			<div className="design-carousel__carousel swiper-container">
 				<div className="swiper-wrapper">
-					{ selectedDesigns.map( ( design ) => (
-						<div
-							className="design-carousel__slide swiper-slide"
-							key={ `${ design.slug }-slide-item` }
-						>
-							<Item design={ design } type="desktop" className="design-carousel__item-desktop" />
-							<Item design={ design } type="mobile" className="design-carousel__item-mobile" />
+					{ selectedDesigns.map( ( design, key ) => (
+						<div className="design-carousel__slide swiper-slide" key={ key }>
+							{ ! onlyDisplayMobileCarousel ? (
+								<>
+									<Item
+										design={ design }
+										options={ carouselOptions }
+										className="design-carousel__item-desktop"
+									/>
+									<Item
+										design={ design }
+										options={ mobileOptions }
+										className="design-carousel__item-mobile"
+									/>
+								</>
+							) : (
+								<Item
+									design={ design }
+									options={ mobileOptions }
+									className="design-carousel__item-mobile-only"
+								/>
+							) }
 						</div>
 					) ) }
 				</div>
@@ -101,6 +195,7 @@ export default function DesignCarousel( { onPick, selectedDesignSlugs }: DesignC
 					} }
 				>
 					<span>{ __( 'Continue' ) }</span>
+					<Gridicon icon="heart" size={ 18 } />
 				</Button>
 			</div>
 		</div>

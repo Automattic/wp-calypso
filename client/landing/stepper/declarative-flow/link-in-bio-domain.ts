@@ -49,7 +49,10 @@ const linkInBioDomain: Flow = {
 				slug: 'linkInBioSetup',
 				asyncComponent: () => import( './internals/steps-repository/link-in-bio-setup' ),
 			},
-			{ slug: 'patterns', asyncComponent: () => import( './internals/steps-repository/patterns' ) },
+			{
+				slug: 'patterns',
+				asyncComponent: () => import( './internals/steps-repository/design-carousel' ),
+			},
 			{
 				slug: 'siteCreationStep',
 				asyncComponent: () => import( './internals/steps-repository/site-creation-step' ),
