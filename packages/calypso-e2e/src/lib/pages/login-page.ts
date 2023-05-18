@@ -31,6 +31,8 @@ export class LoginPage {
 				status: 200,
 			} );
 		} );
+		// Reload the page to clear any outstanding redirects before navigation.
+		await this.page.reload();
 		return await this.page.goto( getCalypsoURL( targetUrl ) );
 	}
 
