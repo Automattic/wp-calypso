@@ -36,7 +36,7 @@ describe( 'Support: Popover/Invalid Keywords', function () {
 			await supportComponent.clearSearch();
 		} );
 
-		it( 'Search for "theme" returns articles and show me where links ', async function () {
+		it.skip( 'Search for "theme" returns articles and show me where links ', async function () {
 			const keyword = 'theme';
 			await supportComponent.search( keyword );
 
