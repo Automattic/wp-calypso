@@ -6,11 +6,13 @@ import { SubscriptionOptions } from '../settings-reading/main';
 import { EmailsTextSetting } from './EmailsTextSetting';
 import { ExcerptSetting } from './ExcerptSetting';
 import { FeaturedImageEmailSetting } from './FeaturedImageEmailSetting';
+import { SubscribeModalSetting } from './SubscribeModalSetting';
 
 type Fields = {
 	wpcom_featured_image_in_email?: boolean;
 	wpcom_subscription_emails_use_excerpt?: boolean;
 	subscription_options?: SubscriptionOptions;
+	wpcom_subscribe_modal?: boolean;
 };
 
 type NewsletterSettingsSectionProps = {
@@ -37,6 +39,7 @@ export const NewsletterSettingsSection = ( {
 		wpcom_featured_image_in_email,
 		wpcom_subscription_emails_use_excerpt,
 		subscription_options,
+		wpcom_subscribe_modal,
 	} = fields;
 
 	// Update subscription_options form fields when savedSubscriptionOptions changes.
@@ -65,6 +68,13 @@ export const NewsletterSettingsSection = ( {
 			<Card className="site-settings__card">
 				<FeaturedImageEmailSetting
 					value={ wpcom_featured_image_in_email }
+					handleToggle={ handleToggle }
+					disabled={ disabled }
+				/>
+			</Card>
+			<Card className="site-settings__card">
+				<SubscribeModalSetting
+					value={ wpcom_subscribe_modal }
 					handleToggle={ handleToggle }
 					disabled={ disabled }
 				/>
