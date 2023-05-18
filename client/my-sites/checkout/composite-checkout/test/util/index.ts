@@ -83,12 +83,7 @@ export const countryList: CountryListItem[] = [
 		name: 'Australia',
 		has_postal_codes: true,
 		vat_supported: false,
-		tax_vendor_info: {
-			country_code: 'AU',
-			tax_name: 'GST',
-			vat_id: 'AU-vat-id',
-			address: [ 'VAT Address' ],
-		},
+		tax_name: 'GST',
 	},
 	{
 		code: 'ES',
@@ -96,12 +91,7 @@ export const countryList: CountryListItem[] = [
 		has_postal_codes: true,
 		vat_supported: true,
 		tax_country_codes: [ 'ES' ],
-		tax_vendor_info: {
-			country_code: 'ES',
-			tax_name: 'VAT',
-			vat_id: 'ES-vat-id',
-			address: [ 'VAT Address' ],
-		},
+		tax_name: 'VAT',
 	},
 	{
 		code: 'CA',
@@ -111,12 +101,7 @@ export const countryList: CountryListItem[] = [
 		tax_needs_subdivision: true,
 		vat_supported: true,
 		tax_country_codes: [ 'CA' ],
-		tax_vendor_info: {
-			country_code: 'CA',
-			tax_name: 'VAT',
-			vat_id: 'CA-vat-id',
-			address: [ 'VAT Address' ],
-		},
+		tax_name: 'VAT',
 	},
 	{
 		code: 'CH',
@@ -133,12 +118,7 @@ export const countryList: CountryListItem[] = [
 		tax_needs_organization: true, // added for testing, not present in API data
 		vat_supported: true,
 		tax_country_codes: [ 'GB', 'XI' ],
-		tax_vendor_info: {
-			country_code: 'GB',
-			tax_name: 'VAT',
-			vat_id: 'GB-vat-id',
-			address: [ 'VAT Address' ],
-		},
+		tax_name: 'VAT',
 	},
 	{
 		code: 'IN',
@@ -153,12 +133,7 @@ export const countryList: CountryListItem[] = [
 		has_postal_codes: true,
 		tax_needs_organization: true,
 		vat_supported: false,
-		tax_vendor_info: {
-			country_code: 'JP',
-			tax_name: 'VAT',
-			vat_id: 'JP-vat-id',
-			address: [ 'VAT Address' ],
-		},
+		tax_name: 'CT',
 	},
 	{
 		code: 'NO',
