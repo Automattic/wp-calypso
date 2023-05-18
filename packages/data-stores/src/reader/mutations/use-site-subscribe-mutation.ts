@@ -3,7 +3,7 @@ import { callApi } from '../helpers';
 import { useIsLoggedIn } from '../hooks';
 
 type SubscribeParams = {
-	blog_id: number | string;
+	blog_id?: number | string;
 };
 
 type SubscribeResponse = {

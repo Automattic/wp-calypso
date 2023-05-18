@@ -5,7 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { Notice, NoticeType } from 'calypso/landing/subscriptions/components/notice';
+import { Notice, NoticeState, NoticeType } from 'calypso/landing/subscriptions/components/notice';
 import { SiteIcon } from 'calypso/landing/subscriptions/components/site-icon';
 import PoweredByWPFooter from 'calypso/layout/powered-by-wp-footer';
 import SiteSubscriptionSettings from './site-subscription-settings';
@@ -40,14 +40,15 @@ const SiteSubscriptionPage = () => {
 		deliveryFrequency,
 		subscribers,
 	} = data;
+	const [ notice, setNotice ] = useState< NoticeState | null >( null );
 	const [ siteSubscribed, setSiteSubscribed ] = useState( true );
 
 	const {
 		mutate: subscribe,
 		isLoading: subscribing,
 		isSuccess: subscribed,
+		error: subscribeError,
 	} = SubscriptionManager.useSiteSubscribeMutation();
-	// todo: handle error
 
 	const {
 		mutate: unsubscribe,
@@ -55,6 +56,16 @@ const SiteSubscriptionPage = () => {
 		isSuccess: unsubscribed,
 		error: unsubscribeError,
 	} = SubscriptionManager.useSiteUnsubscribeMutation();
+
+	// todo: style the button (underline, color?, etc.)
+	const Resubscribe = () => (
+		<Button
+			onClick={ () => subscribe( { blog_id: blogId } ) }
+			disabled={ subscribing || unsubscribing }
+		>
+			{ translate( 'Resubscribe' ) }
+		</Button>
+	);
 
 	useEffect( () => {
 		if ( subscribed ) {
@@ -68,16 +79,48 @@ const SiteSubscriptionPage = () => {
 		}
 	}, [ unsubscribed ] );
 
+	useEffect( () => {
+		if ( siteSubscribed ) {
+			setNotice( null );
+		}
+		if ( ! siteSubscribed && ! subscribeError ) {
+			setNotice( {
+				type: NoticeType.Success,
+				action: <Resubscribe />,
+				message: translate(
+					'You have successfully unsubscribed and will no longer receive emails from %s.',
+					{
+						args: [ data.siteName ],
+						comment: 'Name of the site that the user has unsubscribed from.',
+					}
+				),
+			} );
+		}
+		if ( unsubscribeError ) {
+			setNotice( {
+				type: NoticeType.Error,
+				onClose: () => setNotice( null ),
+				message: translate( 'There was an error when trying to unsubscribe from %s.', {
+					args: [ data.siteName ],
+					comment: 'Name of the site that the user tried to unsubscribe from.',
+				} ),
+			} );
+		}
+		if ( subscribeError ) {
+			setNotice( {
+				type: NoticeType.Error,
+				action: <Resubscribe />,
+				message: translate( 'There was an error when trying to resubscribe to %s.', {
+					args: [ data.siteName ],
+					comment: 'Name of the site that the user tried to resubscribe to.',
+				} ),
+			} );
+		}
+	}, [ siteSubscribed, unsubscribeError, subscribeError, subscribing, unsubscribing ] );
+
 	if ( ! blogId || isError ) {
 		return <div>Something went wrong.</div>;
 	}
-
-	// todo: style the button (underline, color?, etc.)
-	const Resubscribe = () => (
-		<Button onClick={ () => subscribe( { blog_id: blogId } ) } disabled={ subscribing }>
-			{ translate( 'Resubscribe' ) }
-		</Button>
-	);
 
 	if ( isLoading ) {
 		// Full page Wordpress logo loader
@@ -112,26 +155,14 @@ const SiteSubscriptionPage = () => {
 						<FormattedHeader brandFont headerText={ siteName } subHeaderText={ subHeaderText } />
 					</header>
 
-					{ ! siteSubscribed && (
-						<Notice type={ NoticeType.Success } action={ <Resubscribe /> }>
-							{ translate(
-								'You have successfully unsubscribed and will no longer receive emails from %s.',
-								{
-									args: [ data.siteName ],
-									comment: 'Name of the site that the user has unsubscribed from.',
-								}
-							) }
-						</Notice>
-					) }
-
-					{ unsubscribeError && (
-						<Notice type={ NoticeType.Error }>
-							{ translate( 'There was an error when trying to unsubscribe from %s.', {
-								args: [ data.siteName ],
-								comment: 'Name of the site that the user tried to unsubscribe from.',
-							} ) }
-						</Notice>
-					) }
+					<Notice
+						onClose={ notice?.onClose }
+						visible={ !! notice }
+						type={ notice?.type }
+						action={ notice?.action }
+					>
+						{ notice?.message }
+					</Notice>
 
 					{ siteSubscribed && (
 						<>

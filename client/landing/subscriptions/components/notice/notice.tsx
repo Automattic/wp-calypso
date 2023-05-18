@@ -13,7 +13,9 @@ export enum NoticeType {
 
 export type NoticeState = {
 	type: NoticeType;
-	message: string;
+	message: string | React.ReactNode;
+	onClose?: () => void;
+	action?: React.ReactNode;
 };
 
 type NoticeProps = {
