@@ -312,6 +312,9 @@
 		margin: 0 auto;
 		border-spacing: 0;
 		width: unset;
+		@mixin plans-2023-break-small {
+			width: 100%;
+		}
 	}
 
 	.plan-features-2023-grid__table-bottom .plan-features-2023-grid__table {
