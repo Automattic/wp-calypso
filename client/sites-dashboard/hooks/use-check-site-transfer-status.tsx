@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import {
@@ -9,16 +8,15 @@ import {
 } from 'calypso/state/automated-transfer/selectors';
 
 interface SiteTransferStatusProps {
-	site: SiteExcerptData;
+	siteId: number | null;
 	intervalTime?: number;
 }
 
 export const useCheckSiteTransferStatus = ( {
-	site,
+	siteId,
 	intervalTime = 3000,
 }: SiteTransferStatusProps ) => {
 	const dispatch = useDispatch();
-	const { ID: siteId, is_wpcom_atomic: isAtomic } = site;
 
 	const transferStatus = useSelector( ( state ) => getAutomatedTransferStatus( state, siteId ) );
 	const isFetchingTransferStatus = useSelector( ( state ) =>
@@ -32,7 +30,7 @@ export const useCheckSiteTransferStatus = ( {
 	const intervalRef = useRef< NodeJS.Timeout >();
 
 	useEffect( () => {
-		if ( ! isAtomic || ! siteId || transferStatus === transferStates.COMPLETE ) {
+		if ( ! siteId || transferStatus === transferStates.COMPLETE ) {
 			return;
 		}
 
@@ -43,13 +41,13 @@ export const useCheckSiteTransferStatus = ( {
 		}
 
 		return () => clearInterval( intervalRef.current );
-	}, [ siteId, dispatch, transferStatus, isFetchingTransferStatus, intervalTime, isAtomic ] );
+	}, [ siteId, dispatch, transferStatus, isFetchingTransferStatus, intervalTime ] );
 
 	useEffect( () => {
-		if ( siteId && isAtomic ) {
+		if ( siteId ) {
 			dispatch( fetchAutomatedTransferStatus( siteId ) );
 		}
-	}, [ siteId, dispatch, isAtomic ] );
+	}, [ siteId, dispatch ] );
 
 	return { transferStatus, isTransferring, isTransferCompleted };
 };

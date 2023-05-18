@@ -83,7 +83,7 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 	const isWpcomStagingSite = isStagingSite( site );
 	const translatedStatus = useSiteLaunchStatusLabel( site );
 	const isECommerceTrialSite = site.plan?.product_slug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
-	const { isTransferring, isTransferCompleted } = useCheckSiteTransferStatus( { site } );
+	const { isTransferring, isTransferCompleted } = useCheckSiteTransferStatus( { siteId: site.ID } );
 	const [ wasTransferring, setWasTransferring ] = useState( false );
 	const dismissTransferNoticeRef = useRef< NodeJS.Timeout >();
 
