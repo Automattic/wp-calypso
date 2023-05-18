@@ -12,8 +12,13 @@ import {
 	mobileAppLink,
 } from '../../sites-overview/utils';
 import ConfigureEmailNotification from '../configure-email-notification';
-import AddNewEmailModal from '../configure-email-notification/add-new-email-modal';
-import type { MonitorSettings, Site, MonitorSettingsEmail } from '../../sites-overview/types';
+import EmailAddressEditor from '../configure-email-notification/email-address-editor';
+import type {
+	MonitorSettings,
+	Site,
+	StateMonitorSettingsEmail,
+	AllowedMonitorContactActions,
+} from '../../sites-overview/types';
 
 import './style.scss';
 
@@ -25,11 +30,6 @@ interface Props {
 	settings?: MonitorSettings;
 	monitorUserEmails?: Array< string >;
 	isLargeScreen?: boolean;
-}
-
-interface StateEmailItem extends MonitorSettingsEmail {
-	checked: boolean;
-	isDefault?: boolean;
 }
 
 export default function NotificationSettings( {
@@ -53,12 +53,25 @@ export default function NotificationSettings( {
 	const [ defaultUserEmailAddresses, setDefaultUserEmailAddresses ] = useState< string[] | [] >(
 		[]
 	);
-	const [ allEmailItems, setAllEmailItems ] = useState< StateEmailItem[] | [] >( [] );
+	const [ allEmailItems, setAllEmailItems ] = useState< StateMonitorSettingsEmail[] | [] >( [] );
 	const [ validationError, setValidationError ] = useState< string >( '' );
 	const [ isAddEmailModalOpen, setIsAddEmailModalOpen ] = useState< boolean >( false );
+	const [ selectedEmail, setSelectedEmail ] = useState< StateMonitorSettingsEmail | undefined >();
+	const [ selectedAction, setSelectedAction ] = useState< AllowedMonitorContactActions >();
 
-	const toggleAddEmailModal = () => {
+	const toggleAddEmailModal = (
+		item?: StateMonitorSettingsEmail,
+		action?: AllowedMonitorContactActions
+	) => {
+		if ( item && action ) {
+			setSelectedEmail( item );
+			setSelectedAction( action );
+		}
 		setIsAddEmailModalOpen( ( isAddEmailModalOpen ) => ! isAddEmailModalOpen );
+		if ( isAddEmailModalOpen ) {
+			setSelectedEmail( undefined );
+			setSelectedAction( undefined );
+		}
 	};
 
 	function onSave( event: React.FormEvent< HTMLFormElement > ) {
@@ -120,7 +133,13 @@ export default function NotificationSettings( {
 	);
 
 	if ( isAddEmailModalOpen ) {
-		return <AddNewEmailModal toggleModal={ toggleAddEmailModal } />;
+		return (
+			<EmailAddressEditor
+				toggleModal={ toggleAddEmailModal }
+				selectedEmail={ selectedEmail }
+				selectedAction={ selectedAction }
+			/>
+		);
 	}
 
 	return (
@@ -215,14 +234,6 @@ export default function NotificationSettings( {
 									<div className="notification-settings__content-sub-heading">
 										{ translate( 'Receive email notifications with one or more recipients.' ) }
 									</div>
-									{ enableEmailNotification && (
-										<ConfigureEmailNotification
-											defaultEmailAddresses={ defaultUserEmailAddresses }
-											toggleModal={ toggleAddEmailModal }
-											setAllEmailItems={ setAllEmailItems }
-											allEmailItems={ allEmailItems }
-										/>
-									) }
 								</>
 							) : (
 								<div className="notification-settings__content-sub-heading">
@@ -233,6 +244,15 @@ export default function NotificationSettings( {
 							) }
 						</div>
 					</div>
+
+					{ enableEmailNotification && isMultipleEmailEnabled && (
+						<ConfigureEmailNotification
+							defaultEmailAddresses={ defaultUserEmailAddresses }
+							toggleModal={ toggleAddEmailModal }
+							setAllEmailItems={ setAllEmailItems }
+							allEmailItems={ allEmailItems }
+						/>
+					) }
 				</div>
 
 				<div className="notification-settings__footer">

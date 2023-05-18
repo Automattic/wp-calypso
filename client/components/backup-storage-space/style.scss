@@ -18,6 +18,14 @@
 		margin-right: 4px;
 		vertical-align: middle;
 	}
+
+	&__help-popover {
+		margin-inline-start: 8px;
+
+		.button.is-compact .gridicon {
+			margin-top: 0;
+		}
+	}
 }
 
 .backup-storage-space__progress-bar-container {
@@ -130,57 +138,53 @@
 	.used-space__span {
 		font-weight: 700;
 	}
+
+	> span {
+		vertical-align: middle;
+	}
 }
 
 .backup-storage-space__progress-backups-saved-text {
 	margin-left: auto;
 }
 
-.storage-usage-help-tooltip {
+.storage-usage-help-popover {
 
-	&__tooltip.tooltip.popover {
-		&.is-right .popover__arrow {
-			border-right-color: #fff;
-		}
-
-		&.is-top-right .popover__arrow {
-			border-top-color: #fff;
-		}
-
-		&.is-bottom-right .popover__arrow {
-			border-bottom-color: #fff;
-		}
+	&__popover.popover {
 
 		.popover__inner {
-			padding: 16px;
+			padding: 24px;
 			color: var(--studio-gray-70);
 			background: #fff;
 			border-radius: 2px;
-			box-shadow: 0 0 40px rgba(0, 0, 0, 0.08);
+			box-shadow: 0 12px 20px rgba(0, 0, 0, 0.08);
+			border: 1px solid #dcdcde;
+			text-align: start;
+
+			h3 {
+				margin-bottom: 16px;
+			}
 
 			p {
-				padding-right: 24px;
-				font-size: $font-body-small;
-				color: var(--studio-gray-60);
-				margin: 0;
+				font-size: $font-body;
+				color: var(--studio-gray-80);
 			}
 
 			hr {
 				margin-bottom: 0.25rem;
 			}
 
-			a {
-				font-size: $font-body-small;
+			p > a {
 				text-decoration: underline;
 			}
 		}
 
 		@include break-mobile() {
-			max-width: 270px;
+			max-width: 304px;
 		}
 	}
 
-	&__toggle-tooltip {
+	&__toggle-popover {
 		vertical-align: middle;
 
 		&.button.is-borderless {
@@ -189,20 +193,32 @@
 
 			.gridicon {
 				top: 0;
-				color: var(--studio-gray-60);
+				color: var(--studio-gray-30);
 			}
 		}
 	}
 
-	&__close-tooltip {
+	&__close-popover {
 		position: absolute;
-		right: 16px;
-		top: 16px;
+		right: 24px;
+		top: 24px;
 		color: var(--studio-gray-40);
 
-		&.button {
-			height: 18px;
+		&.button.is-borderless {
+			height: 24px;
+			width: 24px;
 			padding: 0;
+			color: var(--studio-gray-50);
+		}
+	}
+
+	&__button-section {
+		display: flex;
+		justify-content: flex-end;
+		margin-top: 24px;
+
+		.button {
+			padding: 8px 24px;
 		}
 	}
 }

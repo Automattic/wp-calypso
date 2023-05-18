@@ -13,6 +13,7 @@ import * as User from './user';
 import * as WpcomPlansUI from './wpcom-plans-ui';
 export { useHappinessEngineersQuery } from './queries/use-happiness-engineers-query';
 export { useHas3PC } from './queries/use-has-3rd-party-cookies';
+export { useJetpackSearchAIQuery } from './queries/use-jetpack-search-ai';
 export { useSiteAnalysis } from './queries/use-site-analysis';
 export { useUserSites } from './queries/use-user-sites';
 export type { AnalysisReport } from './queries/use-site-analysis';
@@ -22,7 +23,6 @@ export { useSubmitTicketMutation } from './support-queries/use-submit-support-ti
 export { useSubmitForumsMutation } from './support-queries/use-submit-forums-topic';
 export { useHasActiveSupport } from './support-queries/use-support-history';
 export * from './starter-designs-queries';
-export { useSibylQuery } from './support-queries/use-sibyl-query';
 export * from './support-queries/types';
 export * from './site/types';
 export * from './templates';
@@ -56,6 +56,7 @@ export {
  */
 export * from './mapped-types';
 export { getContextResults } from './contextual-help/contextual-help';
+export type { Section } from './contextual-help/contextual-help';
 export { generateAdminSections } from './contextual-help/admin-sections';
 export type { LinksForSection } from './contextual-help/contextual-help';
 export * from './contextual-help/constants';

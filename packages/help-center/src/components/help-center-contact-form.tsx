@@ -12,9 +12,9 @@ import {
 	useSiteAnalysis,
 	useUserSites,
 	AnalysisReport,
-	useSibylQuery,
 	SiteDetails,
 	HelpCenterSite,
+	useJetpackSearchAIQuery,
 } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { SitePickerDropDown, SitePickerSite } from '@automattic/site-picker';
@@ -23,10 +23,11 @@ import { Button, TextControl, CheckboxControl, Tip } from '@wordpress/components
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useDebounce } from 'use-debounce';
+import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { getCurrentUserEmail, getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -38,8 +39,9 @@ import { HELP_CENTER_STORE } from '../stores';
 import { getSupportVariationFromMode } from '../support-variations';
 import { SitePicker } from '../types';
 import { BackButton } from './back-button';
+import { HelpCenterGPT } from './help-center-gpt';
 import { HelpCenterOwnershipNotice } from './help-center-notice';
-import { SibylArticles } from './help-center-sibyl-articles';
+import HelpCenterSearchResults from './help-center-search-results';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 import './help-center-contact-form.scss';
 
@@ -106,7 +108,7 @@ function useFormTitles( mode: Mode ): {
 			buttonSubmittingLabel: __( 'Connecting to chat', __i18n_text_domain__ ),
 		},
 		EMAIL: {
-			formTitle: __( 'Send us an email', __i18n_text_domain__ ),
+			formTitle: __( '', __i18n_text_domain__ ),
 			trayText: __( 'Our WordPress experts will get back to you soon', __i18n_text_domain__ ),
 			buttonLabel: __( 'Email us', __i18n_text_domain__ ),
 			buttonSubmittingLabel: __( 'Sending email', __i18n_text_domain__ ),
@@ -241,15 +243,84 @@ export const HelpCenterContactForm = () => {
 
 	const [ debouncedMessage ] = useDebounce( message || '', 500 );
 
-	const { data: sibylArticles } = useSibylQuery(
-		debouncedMessage,
-		Boolean( supportSite?.jetpack ),
-		Boolean( supportSite?.is_wpcom_atomic )
+	const enableGPTResponse =
+		config.isEnabled( 'help/gpt-response' ) && ! ( params.get( 'disable-gpt' ) === 'true' );
+
+	const showingSearchResults = params.get( 'show-results' ) === 'true';
+	const showingGPTResponse = enableGPTResponse && params.get( 'show-gpt' ) === 'true';
+
+	const redirectToArticle = useCallback(
+		( event, result ) => {
+			event.preventDefault();
+
+			// if result.post_id isn't set then open in a new window
+			if ( ! result.post_id ) {
+				const tracksData = {
+					search_query: debouncedMessage,
+					force_site_id: true,
+					location: 'help-center',
+					result_url: result.link,
+					post_id: result.postId,
+					blog_id: result.blogId,
+				};
+				recordTracksEvent( `calypso_inlinehelp_article_no_postid_redirect`, tracksData );
+				window.open( result.link, '_blank' );
+				return;
+			}
+
+			const searchResult = {
+				...result,
+				title: preventWidows( decodeEntities( result.title ) ),
+				query: debouncedMessage,
+			};
+			const params = new URLSearchParams( {
+				link: result.link,
+				postId: result.post_id,
+				query: debouncedMessage || '',
+				title: preventWidows( decodeEntities( result.title ) ),
+			} );
+
+			if ( result.blog_id ) {
+				params.set( 'blogId', result.blog_id );
+			}
+
+			navigate( `/post/?${ params }`, searchResult );
+		},
+		[ navigate, debouncedMessage ]
 	);
 
-	const showingSibylResults = params.get( 'show-results' ) === 'true';
+	// this indicates the user was happy with the GPT response
+	function handleGPTClose() {
+		// send a tracks event
+		recordTracksEvent( 'calypso_inlinehelp_contact_gpt_close', {
+			force_site_id: true,
+			location: 'help-center',
+			section: sectionName,
+		} );
+
+		resetStore();
+		navigate( '/' );
+	}
+
+	function handleGPTCancel() {
+		// send a tracks event
+		recordTracksEvent( 'calypso_inlinehelp_contact_gpt_cancel', {
+			force_site_id: true,
+			location: 'help-center',
+			section: sectionName,
+		} );
+
+		// stop loading the GPT response
+		params.set( 'show-gpt', 'false' );
+		params.set( 'disable-gpt', 'true' );
+		navigate( {
+			pathname: '/contact-form',
+			search: params.toString(),
+		} );
+	}
+
 	function handleCTA() {
-		if ( ! showingSibylResults && sibylArticles && sibylArticles.length > 0 ) {
+		if ( ! enableGPTResponse && ! showingSearchResults ) {
 			params.set( 'show-results', 'true' );
 			navigate( {
 				pathname: '/contact-form',
@@ -257,6 +328,16 @@ export const HelpCenterContactForm = () => {
 			} );
 			return;
 		}
+
+		if ( ! showingGPTResponse && enableGPTResponse ) {
+			params.set( 'show-gpt', 'true' );
+			navigate( {
+				pathname: '/contact-form',
+				search: params.toString(),
+			} );
+			return;
+		}
+
 		const productSlug = ( supportSite as HelpCenterSite )?.plan.product_slug;
 		const plan = getPlan( productSlug );
 		const productId = plan?.getProductId();
@@ -408,16 +489,49 @@ export const HelpCenterContactForm = () => {
 		}
 	};
 
+	const getHEsTraySection = () => {
+		return (
+			<section>
+				<div className="help-center-contact-form__site-picker-hes-tray">
+					{ randomTwoFaces.map( ( f ) => (
+						<img key={ f } src={ f } aria-hidden="true" alt=""></img>
+					) ) }
+					<p className="help-center-contact-form__site-picker-hes-tray-text">
+						{ formTitles.trayText }
+					</p>
+				</div>
+			</section>
+		);
+	};
+
+	const { isFetching: isFetchingUrls, data: links } = useJetpackSearchAIQuery(
+		'9619154',
+		enableGPTResponse ? debouncedMessage : '',
+		'urls'
+	);
+	const { isFetching: isFetchingResponse, data: gptResponse } = useJetpackSearchAIQuery(
+		'9619154',
+		links?.urls ? debouncedMessage : '',
+		'response'
+	);
+	const isFetchingGPTResponse = isFetchingUrls || isFetchingResponse;
+
 	const getCTALabel = () => {
-		if ( ! showingSibylResults && sibylArticles && sibylArticles.length > 0 ) {
+		const showingHelpOrGPTResults = showingSearchResults || showingGPTResponse;
+
+		if ( ! showingGPTResponse && ! showingSearchResults ) {
 			return __( 'Continue', __i18n_text_domain__ );
 		}
 
-		if ( mode === 'CHAT' && showingSibylResults ) {
+		if ( showingGPTResponse && isFetchingGPTResponse ) {
+			return __( 'Gathering quick response.', __i18n_text_domain__ );
+		}
+
+		if ( mode === 'CHAT' && showingHelpOrGPTResults ) {
 			return __( 'Still chat with us', __i18n_text_domain__ );
 		}
 
-		if ( mode === 'EMAIL' && showingSibylResults ) {
+		if ( mode === 'EMAIL' && showingHelpOrGPTResults ) {
 			return __( 'Still email us', __i18n_text_domain__ );
 		}
 
@@ -428,14 +542,61 @@ export const HelpCenterContactForm = () => {
 		return isSubmitting ? formTitles.buttonSubmittingLabel : formTitles.buttonLabel;
 	};
 
-	return showingSibylResults ? (
-		<div className="help-center__sibyl-articles-page">
+	// TODO: A/B test
+	if ( enableGPTResponse && showingGPTResponse ) {
+		return (
+			<div className="help-center__articles-page">
+				<BackButton />
+				<HelpCenterGPT />
+				<section className="contact-form-submit">
+					<Button
+						isBusy={ isFetchingGPTResponse }
+						disabled={ isFetchingGPTResponse }
+						onClick={ handleCTA }
+						isPrimary={ ! showingGPTResponse }
+						isSecondary={ showingGPTResponse }
+						className="help-center-contact-form__site-picker-cta"
+					>
+						{ getCTALabel() }
+					</Button>
+					{ ! isFetchingGPTResponse && showingGPTResponse && ! hasSubmittingError && (
+						<Button isPrimary onClick={ handleGPTClose }>
+							Close
+						</Button>
+					) }
+					{ isFetchingGPTResponse && (
+						<Button isSecondary onClick={ handleGPTCancel }>
+							Cancel
+						</Button>
+					) }
+					{ hasSubmittingError && (
+						<FormInputValidation
+							isError
+							text={ __( 'Something went wrong, please try again later.', __i18n_text_domain__ ) }
+						/>
+					) }
+				</section>
+				{ gptResponse?.response && [ 'CHAT', 'EMAIL' ].includes( mode ) && getHEsTraySection() }
+			</div>
+		);
+	}
+
+	const sitePickerEnabled =
+		! userWithNoSites &&
+		mode === 'FORUM' &&
+		( ( supportSite?.plan?.product_slug &&
+			isFreePlanProduct( { product_slug: supportSite.plan?.product_slug } ) ) ||
+			userWithNoSites );
+
+	return showingSearchResults ? (
+		<div className="help-center__articles-page">
 			<BackButton />
-			<SibylArticles
-				title={ __( 'These are some helpful articles', __i18n_text_domain__ ) }
-				supportSite={ supportSite }
-				message={ message }
-				articleCanNavigateBack
+			<HelpCenterSearchResults
+				onSelect={ redirectToArticle }
+				searchQuery={ message || '' }
+				openAdminInNewTab
+				placeholderLines={ 4 }
+				location="help-center-contact-form"
 			/>
 			<section className="contact-form-submit">
 				<Button
@@ -453,6 +614,7 @@ export const HelpCenterContactForm = () => {
 					/>
 				) }
 			</section>
+			{ [ 'CHAT', 'EMAIL' ].includes( mode ) && getHEsTraySection() }
 		</div>
 	) : (
 		<main className="help-center-contact-form">
@@ -470,15 +632,10 @@ export const HelpCenterContactForm = () => {
 				</p>
 			) }
 
-			{ ! userWithNoSites && (
+			{ sitePickerEnabled && (
 				<section>
 					<HelpCenterSitePicker
-						enabled={
-							mode === 'FORUM' &&
-							( ( supportSite?.plan?.product_slug &&
-								isFreePlanProduct( { product_slug: supportSite.plan?.product_slug } ) ) ||
-								userWithNoSites )
-						}
+						enabled={ true }
 						currentSite={ currentSite }
 						onSelect={ ( id: string | number ) => {
 							if ( id !== 0 ) {
@@ -549,7 +706,6 @@ export const HelpCenterContactForm = () => {
 					disabled={ isCTADisabled() }
 					onClick={ handleCTA }
 					isPrimary
-					isLarge
 					className="help-center-contact-form__site-picker-cta"
 				>
 					{ getCTALabel() }
@@ -564,19 +720,14 @@ export const HelpCenterContactForm = () => {
 					/>
 				) }
 			</section>
-			{ [ 'CHAT', 'EMAIL' ].includes( mode ) && (
-				<section>
-					<div className="help-center-contact-form__site-picker-hes-tray">
-						{ randomTwoFaces.map( ( f ) => (
-							<img key={ f } src={ f } aria-hidden="true" alt=""></img>
-						) ) }
-						<p className="help-center-contact-form__site-picker-hes-tray-text">
-							{ formTitles.trayText }
-						</p>
-					</div>
-				</section>
-			) }
-			<SibylArticles supportSite={ supportSite } message={ message } articleCanNavigateBack />
+			{ [ 'CHAT', 'EMAIL' ].includes( mode ) && getHEsTraySection() }
+			<HelpCenterSearchResults
+				onSelect={ redirectToArticle }
+				searchQuery={ message || '' }
+				openAdminInNewTab
+				placeholderLines={ 4 }
+				location="help-center-contact-form"
+			/>
 		</main>
 	);
 };
