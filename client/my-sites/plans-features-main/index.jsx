@@ -443,10 +443,10 @@ export class PlansFeaturesMain extends Component {
 		const isEnterpriseAvailable = is2023PricingGridVisible && ! hideEnterprisePlan;
 
 		return [
-			TYPE_FREE,
-			isBloggerAvailable && TYPE_BLOGGER,
-			TYPE_PERSONAL,
-			TYPE_PREMIUM,
+			// TYPE_FREE,
+			// isBloggerAvailable && TYPE_BLOGGER,
+			// TYPE_PERSONAL,
+			// TYPE_PREMIUM,
 			TYPE_BUSINESS,
 			TYPE_ECOMMERCE,
 			isEnterpriseAvailable && TYPE_ENTERPRISE_GRID_WPCOM,
