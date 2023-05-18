@@ -884,6 +884,7 @@ export const getJetpackProductsWhatIsIncludedComingSoon = (): Record<
 	Array< TranslateResult >
 > => {
 	const socialAdvancedIncludesInfo = [
+		translate( 'Auto-sharing to Instagram & Mastodon' ),
 		translate( 'Image generator' ),
 		translate( 'Multi-image sharing' ),
 		translate( 'Video sharing' ),
@@ -994,9 +995,9 @@ export const getJetpackProductsBenefitsComingSoon = (): Record<
 	Array< TranslateResult >
 > => {
 	const socialAdvancedBenefits = [
+		translate( 'Share multiple images to social media' ),
+		translate( 'Upload & automatically share videos to social media' ),
 		translate( 'Automatically create custom images, saving you hours of tedious work' ),
-		translate( 'Share multiple images at once on social media platforms' ),
-		translate( 'Upload and share videos to your social platforms' ),
 	];
 
 	return {
