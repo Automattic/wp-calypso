@@ -67,10 +67,6 @@ const startWriting: Flow = {
 		);
 		const { saveSiteSettings, setIntentOnSite } = useDispatch( SITE_STORE );
 		const { setSelectedSite } = useDispatch( ONBOARD_STORE );
-		const selectedSiteId = useSelect(
-			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSite(),
-			[]
-		);
 		const state = useSelect(
 			( select ) => select( ONBOARD_STORE ) as OnboardSelect,
 			[]
@@ -132,7 +128,7 @@ const startWriting: Flow = {
 
 						if ( providedDependencies?.domainName ) {
 							await requestSiteAddressChange(
-								selectedSiteId,
+								state.selectedSite,
 								newDomainName,
 								'wordpress.com',
 								siteSlug,
