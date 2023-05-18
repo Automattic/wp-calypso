@@ -661,6 +661,23 @@ export class CheckoutThankYou extends Component<
 		return [ 'TRANSFER', isDomainTransfer ];
 	}
 
+	startTransfer = ( event: { preventDefault: () => void } ) => {
+		event.preventDefault();
+
+		const { selectedSite } = this.props;
+		const purchases = getPurchases( this.props );
+		const delayedTransferPurchase = purchases.find( isDelayedDomainTransfer );
+
+		this.props.recordStartTransferClickInThankYou( delayedTransferPurchase?.meta ?? '' );
+
+		page(
+			domainManagementTransferInPrecheck(
+				selectedSite?.slug ?? '',
+				delayedTransferPurchase?.meta ?? ''
+			)
+		);
+	};
+
 	/**
 	 * Retrieves the component (and any corresponding data) that should be displayed according to the type of purchase
 	 * just performed by the user.
@@ -730,23 +747,6 @@ export class CheckoutThankYou extends Component<
 			return [ 'chargeback-details', purchases.find( isChargeback ) ];
 		}
 		return [];
-	};
-
-	startTransfer = ( event: { preventDefault: () => void } ) => {
-		event.preventDefault();
-
-		const { selectedSite } = this.props;
-		const purchases = getPurchases( this.props );
-		const delayedTransferPurchase = purchases.find( isDelayedDomainTransfer );
-
-		this.props.recordStartTransferClickInThankYou( delayedTransferPurchase?.meta ?? '' );
-
-		page(
-			domainManagementTransferInPrecheck(
-				selectedSite?.slug ?? '',
-				delayedTransferPurchase?.meta ?? ''
-			)
-		);
 	};
 
 	productRelatedMessages = () => {
