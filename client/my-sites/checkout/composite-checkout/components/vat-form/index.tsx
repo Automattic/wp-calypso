@@ -6,8 +6,8 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
-import { useVatVendorInfo } from 'calypso/me/purchases/billing-history/vat-vendor-details';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
+import { useTaxName } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-country-list';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useCountryList, { isVatSupported } from '../../hooks/use-country-list';
 import { CHECKOUT_STORE } from '../../lib/wpcom-store';
@@ -32,7 +32,7 @@ export function VatForm( {
 	const translate = useTranslate();
 	const vatDetailsInForm = useSelect( ( select ) => select( CHECKOUT_STORE ).getVatDetails(), [] );
 	const wpcomStoreActions = useDispatch( CHECKOUT_STORE );
-	const vendorInfo = useVatVendorInfo( countryCode ?? 'GB' );
+	const taxName = useTaxName( countryCode ?? 'GB' );
 	const setVatDetailsInForm = wpcomStoreActions?.setVatDetails;
 	const { vatDetails: vatDetailsFromServer, isLoading: isLoadingVatDetails } = useVatDetails();
 	const [ isFormActive, setIsFormActive ] = useState< boolean >( false );
@@ -168,7 +168,7 @@ export function VatForm( {
 	/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
 	const addVatText = translate( 'Add %s details', {
 		textOnly: true,
-		args: [ vendorInfo?.tax_name ?? fallbackTaxName ],
+		args: [ taxName ?? fallbackTaxName ],
 	} );
 
 	if ( ! isFormActive ) {
@@ -204,7 +204,7 @@ export function VatForm( {
 							/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
 							translate( 'Is %s for Northern Ireland?', {
 								textOnly: true,
-								args: [ vendorInfo?.tax_name ?? translate( 'VAT', { textOnly: true } ) ],
+								args: [ taxName ?? translate( 'VAT', { textOnly: true } ) ],
 							} )
 						}
 						disabled={ isDisabled }
@@ -219,7 +219,7 @@ export function VatForm( {
 						/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
 						translate( 'Organization for %s', {
 							textOnly: true,
-							args: [ vendorInfo?.tax_name ?? translate( 'VAT', { textOnly: true } ) ],
+							args: [ taxName ?? translate( 'VAT', { textOnly: true } ) ],
 						} )
 					}
 					value={ vatDetailsInForm.name ?? '' }
@@ -238,7 +238,7 @@ export function VatForm( {
 						/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
 						translate( '%s ID', {
 							textOnly: true,
-							args: [ vendorInfo?.tax_name ?? translate( 'VAT', { textOnly: true } ) ],
+							args: [ taxName ?? translate( 'VAT', { textOnly: true } ) ],
 						} )
 					}
 					value={ vatDetailsInForm.id ?? '' }
@@ -259,7 +259,7 @@ export function VatForm( {
 						/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
 						translate( 'Address for %s', {
 							textOnly: true,
-							args: [ vendorInfo?.tax_name ?? translate( 'VAT', { textOnly: true } ) ],
+							args: [ taxName ?? translate( 'VAT', { textOnly: true } ) ],
 						} )
 					}
 					value={ vatDetailsInForm.address ?? '' }
@@ -280,7 +280,7 @@ export function VatForm( {
 							/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
 							'To change your %(taxName)s ID, {{contactSupportLink}}please contact support{{/contactSupportLink}}.',
 							{
-								args: { taxName: vendorInfo?.tax_name ?? translate( 'VAT', { textOnly: true } ) },
+								args: { taxName: taxName ?? translate( 'VAT', { textOnly: true } ) },
 								components: {
 									contactSupportLink: (
 										<a
