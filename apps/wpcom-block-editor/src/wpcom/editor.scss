@@ -1,13 +1,10 @@
 @import "./features/use-classic-block-guide";
 
 .start-writing-hide {
-	.components-external-link {
-		display: none !important;
-	}
-	.edit-post-post-schedule {
-		display: none !important;
-	}
-	.components-panel__row:has(.editor-post-trash) {
+	.components-external-link,
+	.edit-post-post-schedule,
+	.components-panel__row:has(.editor-post-trash),
+	.launchpad__save-modal {
 		display: none !important;
 	}
 }
