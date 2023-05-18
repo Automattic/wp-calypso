@@ -200,6 +200,7 @@
 		"reakit-utils": "^0.15.1",
 		"redux": "^4.1.2",
 		"request": "^2.88.2",
+		"stream": "^0.0.2",
 		"wpcom": "workspace:^"
 	},
 	"optionalDependencies": {
