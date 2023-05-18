@@ -1,8 +1,8 @@
-import type { RawReceiptPurchase } from 'calypso/state/receipts/types';
+import type { Purchase } from '@automattic/wpcom-checkout';
 
 export interface IndividualReceipt {
 	receipt_id: number;
-	purchases: RawReceiptPurchase[];
+	purchases: Purchase[];
 	display_price: string;
 	price_integer: number;
 	price_float: number;
