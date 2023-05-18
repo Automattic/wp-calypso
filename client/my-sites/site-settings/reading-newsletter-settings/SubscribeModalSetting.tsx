@@ -30,7 +30,7 @@ export const SubscribeModalSetting = ( {
 				checked={ !! value }
 				onChange={ handleToggle( SUBSCRIBE_MODAL_OPTION ) }
 				disabled={ disabled }
-				label={ translate( 'Enable subscriber modal.' ) }
+				label={ translate( 'Enable subscriber modal' ) }
 			/>
 			<FormSettingExplanation>
 				{ translate(
