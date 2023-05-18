@@ -40,6 +40,7 @@ export function useJetpackSearchAIQuery( siteId: number | string, query: string,
 			refetchOnWindowFocus: false,
 			keepPreviousData: false,
 			enabled: !! query,
+			retry: false,
 		}
 	);
 }
