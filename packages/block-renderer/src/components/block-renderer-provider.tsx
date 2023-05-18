@@ -1,4 +1,4 @@
-import { useGlobalStylesOutput } from '@wordpress/edit-site/build-module/components/global-styles/use-global-styles-output';
+// import { useGlobalStylesOutput } from '@wordpress/edit-site/build-module/components/global-styles/use-global-styles-output';
 import { useMemo } from 'react';
 import useBlockRendererSettings from '../hooks/use-block-renderer-settings';
 import BlockRendererContext from './block-renderer-context';
@@ -18,8 +18,7 @@ const useBlockRendererContext = (
 ) => {
 	const { data: settings } = useBlockRendererSettings( siteId, stylesheet, useInlineStyles );
 
-	const [ globalStyles ] = useGlobalStylesOutput();
-
+	// const [ globalStyles ] = useGlobalStylesOutput();
 	const context = useMemo(
 		() => ( {
 			isReady: !! settings,
@@ -27,7 +26,7 @@ const useBlockRendererContext = (
 				...settings,
 				styles: [
 					...( settings?.styles || [] ),
-					...( globalStyles || [] ),
+					// ...( globalStyles || [] ),
 					// Avoid scrollbars for previews.
 					{
 						css: 'body{height:auto;overflow:hidden;}',
@@ -41,7 +40,7 @@ const useBlockRendererContext = (
 				],
 			},
 		} ),
-		[ settings, globalStyles ]
+		[ settings ]
 	);
 
 	return context;

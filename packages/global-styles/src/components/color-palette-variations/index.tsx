@@ -3,8 +3,8 @@ import {
 	__unstableUseCompositeState as useCompositeState,
 	__unstableCompositeItem as CompositeItem,
 } from '@wordpress/components';
-import { GlobalStylesContext } from '@wordpress/edit-site/build-module/components/global-styles/context';
-import { mergeBaseAndUserConfigs } from '@wordpress/edit-site/build-module/components/global-styles/global-styles-provider';
+// import { GlobalStylesContext } from '@wordpress/edit-site/build-module/components/global-styles/context';
+// import { mergeBaseAndUserConfigs } from '@wordpress/edit-site/build-module/components/global-styles/global-styles-provider';
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { useMemo, useContext } from 'react';
@@ -33,39 +33,38 @@ const ColorPaletteVariation = ( {
 	composite,
 	onSelect,
 }: ColorPaletteVariationProps ) => {
-	const { base } = useContext( GlobalStylesContext );
-	const context = useMemo( () => {
-		return {
-			user: colorPaletteVariation,
-			base,
-			merged: mergeBaseAndUserConfigs( base, colorPaletteVariation ),
-		};
-	}, [ colorPaletteVariation, base ] );
-
-	return (
-		<CompositeItem
-			role="option"
-			as="button"
-			{ ...composite }
-			className={ classnames( 'global-styles-variation__item', {
-				'is-active': isActive,
-			} ) }
-			onClick={ onSelect }
-			aria-current={ isActive }
-			aria-label={
-				translate( 'Color: %s', {
-					comment: 'Aria label for color preview buttons',
-					args: colorPaletteVariation.title ?? translate( 'Default' ),
-				} ) as string
-			}
-		>
-			<div className="global-styles-variation__item-preview">
-				<GlobalStylesContext.Provider value={ context }>
-					<ColorPaletteVariationPreview title={ colorPaletteVariation.title } />
-				</GlobalStylesContext.Provider>
-			</div>
-		</CompositeItem>
-	);
+	// const { base } = useContext( GlobalStylesContext );
+	// const context = useMemo( () => {
+	// 	return {
+	// 		user: colorPaletteVariation,
+	// 		base,
+	// 		merged: mergeBaseAndUserConfigs( base, colorPaletteVariation ),
+	// 	};
+	// }, [ colorPaletteVariation, base ] );
+	// return (
+	// 	<CompositeItem
+	// 		role="option"
+	// 		as="button"
+	// 		{ ...composite }
+	// 		className={ classnames( 'global-styles-variation__item', {
+	// 			'is-active': isActive,
+	// 		} ) }
+	// 		onClick={ onSelect }
+	// 		aria-current={ isActive }
+	// 		aria-label={
+	// 			translate( 'Color: %s', {
+	// 				comment: 'Aria label for color preview buttons',
+	// 				args: colorPaletteVariation.title ?? translate( 'Default' ),
+	// 			} ) as string
+	// 		}
+	// 	>
+	// 		<div className="global-styles-variation__item-preview">
+	// 			<GlobalStylesContext.Provider value={ context }>
+	// 				<ColorPaletteVariationPreview title={ colorPaletteVariation.title } />
+	// 			</GlobalStylesContext.Provider>
+	// 		</div>
+	// 	</CompositeItem>
+	// );
 };
 
 const ColorPaletteVariations = ( {
@@ -74,35 +73,34 @@ const ColorPaletteVariations = ( {
 	selectedColorPaletteVariation,
 	onSelect,
 }: ColorPaletteVariationsProps ) => {
-	const { base } = useContext( GlobalStylesContext );
-	const colorPaletteVariations = useColorPaletteVariations( siteId, stylesheet ) ?? [];
-	const composite = useCompositeState();
-
-	return (
-		<Composite
-			{ ...composite }
-			role="listbox"
-			className="color-palette-variations"
-			aria-label={ translate( 'Color palette variations' ) }
-		>
-			<ColorPaletteVariation
-				key="base"
-				colorPaletteVariation={ base }
-				isActive={ ! selectedColorPaletteVariation }
-				composite={ composite }
-				onSelect={ () => onSelect( null ) }
-			/>
-			{ colorPaletteVariations.map( ( colorPaletteVariation, index ) => (
-				<ColorPaletteVariation
-					key={ index }
-					colorPaletteVariation={ colorPaletteVariation }
-					isActive={ colorPaletteVariation.title === selectedColorPaletteVariation?.title }
-					composite={ composite }
-					onSelect={ () => onSelect( colorPaletteVariation ) }
-				/>
-			) ) }
-		</Composite>
-	);
+	// const { base } = useContext( GlobalStylesContext );
+	// const colorPaletteVariations = useColorPaletteVariations( siteId, stylesheet ) ?? [];
+	// const composite = useCompositeState();
+	// return (
+	// 	<Composite
+	// 		{ ...composite }
+	// 		role="listbox"
+	// 		className="color-palette-variations"
+	// 		aria-label={ translate( 'Color palette variations' ) }
+	// 	>
+	// 		<ColorPaletteVariation
+	// 			key="base"
+	// 			colorPaletteVariation={ base }
+	// 			isActive={ ! selectedColorPaletteVariation }
+	// 			composite={ composite }
+	// 			onSelect={ () => onSelect( null ) }
+	// 		/>
+	// 		{ colorPaletteVariations.map( ( colorPaletteVariation, index ) => (
+	// 			<ColorPaletteVariation
+	// 				key={ index }
+	// 				colorPaletteVariation={ colorPaletteVariation }
+	// 				isActive={ colorPaletteVariation.title === selectedColorPaletteVariation?.title }
+	// 				composite={ composite }
+	// 				onSelect={ () => onSelect( colorPaletteVariation ) }
+	// 			/>
+	// 		) ) }
+	// 	</Composite>
+	// );
 };
 
 export default ColorPaletteVariations;
