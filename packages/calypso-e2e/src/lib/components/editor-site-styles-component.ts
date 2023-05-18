@@ -133,20 +133,6 @@ export class EditorSiteStylesComponent {
 	}
 
 	/**
-	 * Sets a style variation for the site.
-	 * This auto-handles returning to top menu and navigating down.
-	 *
-	 * @param {string} styleVariationName The name of the style variation to set.
-	 */
-	async setStyleVariation( styleVariationName: string ): Promise< void > {
-		await this.returnToTopMenu();
-		await this.clickMenuButton( 'Browse styles' );
-		const editorParent = await this.editor.parent();
-		const locator = editorParent.locator( selectors.styleVariation( styleVariationName ) );
-		await locator.click();
-	}
-
-	/**
 	 * Clicks a menu button in the site styles sidebar/panel.
 	 *
 	 * @param {string} buttonName Button name.

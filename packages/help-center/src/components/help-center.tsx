@@ -2,51 +2,128 @@
 /**
  * External Dependencies
  */
-import { useSupportAvailability } from '@automattic/data-stores';
-import { useHappychatAvailable } from '@automattic/happychat-connection';
+import config from '@automattic/calypso-config';
+import { useSupportAvailability, useSupportActivity } from '@automattic/data-stores';
+import { loadScript } from '@automattic/load-script';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { createPortal, useEffect, useRef } from '@wordpress/element';
+import { createPortal, useEffect, useRef, useState } from '@wordpress/element';
 import { useSelector } from 'react-redux';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
  */
-import { useHCWindowCommunicator } from '../happychat-window-communicator';
+import useMessagingAuth from '../hooks/use-messaging-auth';
 import { useStillNeedHelpURL } from '../hooks/use-still-need-help-url';
+import useZendeskConfig from '../hooks/use-zendesk-config';
 import { HELP_CENTER_STORE, USER_STORE, SITE_STORE } from '../stores';
 import { Container } from '../types';
 import HelpCenterContainer from './help-center-container';
 import type { HelpCenterSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 import '../styles.scss';
 
+const ZENDESK_SCRIPT_ID = 'ze-snippet';
+
 const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
 	const { data: chatStatus } = useSupportAvailability( 'CHAT' );
-	const { data } = useHappychatAvailable( Boolean( chatStatus?.is_user_eligible ) );
-	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
-	const { setUnreadCount } = useDispatch( HELP_CENTER_STORE );
 	const { setSite } = useDispatch( HELP_CENTER_STORE );
-
-	const { show, isMinimized } = useSelect(
-		( select ) => ( {
-			isMinimized: ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getIsMinimized(),
-			show: ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isHelpCenterShown(),
-		} ),
-		[]
-	);
-
-	const { unreadCount, closeChat } = useHCWindowCommunicator( isMinimized || ! show );
+	const { setShowMessagingLauncher } = useDispatch( HELP_CENTER_STORE );
+	const { setShowMessagingWidget } = useDispatch( HELP_CENTER_STORE );
+	const [ isMessagingScriptLoaded, setMessagingScriptLoaded ] = useState( false );
 
 	useEffect( () => {
-		setUnreadCount( unreadCount );
-	}, [ unreadCount, setUnreadCount ] );
-
-	useEffect( () => {
-		if ( data?.status === 'assigned' ) {
-			setShowHelpCenter( true );
+		if ( ! chatStatus?.is_user_eligible ) {
+			return;
 		}
-	}, [ data, setShowHelpCenter ] );
+
+		const zendeskKey: string | false = config( 'zendesk_support_chat_key' );
+		if ( ! zendeskKey ) {
+			return;
+		}
+
+		if ( document.getElementById( ZENDESK_SCRIPT_ID ) ) {
+			return;
+		}
+
+		function setUpMessagingEventHandlers() {
+			setMessagingScriptLoaded( true );
+			if ( typeof window.zE !== 'function' ) {
+				return;
+			}
+
+			window.zE( 'messenger', 'hide' );
+
+			window.zE( 'messenger:on', 'open', function () {
+				setShowMessagingWidget( true );
+			} );
+			window.zE( 'messenger:on', 'close', function () {
+				setShowMessagingWidget( false );
+			} );
+			window.zE( 'messenger:on', 'unreadMessages', function ( count ) {
+				if ( Number( count ) > 0 ) {
+					setShowMessagingLauncher( true );
+				}
+			} );
+		}
+
+		loadScript(
+			'https://static.zdassets.com/ekr/snippet.js?key=' + encodeURIComponent( zendeskKey ),
+			setUpMessagingEventHandlers,
+			{ id: ZENDESK_SCRIPT_ID }
+		);
+	}, [ setShowMessagingLauncher, setShowMessagingWidget, chatStatus ] );
+
+	const { data: messagingAuth } = useMessagingAuth( Boolean( chatStatus?.is_user_eligible ) );
+	useEffect( () => {
+		const jwt = messagingAuth?.user.jwt;
+		if ( typeof window.zE !== 'function' || ! jwt || ! isMessagingScriptLoaded ) {
+			return;
+		}
+
+		window.zE( 'messenger', 'loginUser', function ( callback ) {
+			callback( jwt );
+		} );
+	}, [ messagingAuth, isMessagingScriptLoaded ] );
+
+	const { showMessagingLauncher, showMessagingWidget } = useSelect( ( select ) => {
+		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
+		return {
+			showMessagingLauncher: helpCenterSelect.isMessagingLauncherShown(),
+			showMessagingWidget: helpCenterSelect.isMessagingWidgetShown(),
+		};
+	}, [] );
+
+	useEffect( () => {
+		if ( typeof window.zE !== 'function' || ! isMessagingScriptLoaded ) {
+			return;
+		}
+		if ( showMessagingLauncher ) {
+			window.zE( 'messenger', 'show' );
+		} else {
+			window.zE( 'messenger', 'hide' );
+		}
+	}, [ showMessagingLauncher, isMessagingScriptLoaded ] );
+
+	useEffect( () => {
+		if ( typeof window.zE !== 'function' || ! isMessagingScriptLoaded ) {
+			return;
+		}
+		if ( showMessagingWidget ) {
+			window.zE( 'messenger', 'open' );
+		} else {
+			window.zE( 'messenger', 'close' );
+		}
+	}, [ showMessagingWidget, isMessagingScriptLoaded ] );
+
+	const { data: supportActivity } = useSupportActivity( Boolean( chatStatus?.is_user_eligible ) );
+	useEffect( () => {
+		if ( supportActivity?.some( ( ticket ) => ticket.channel === 'Messaging' ) ) {
+			setShowMessagingLauncher( true );
+		}
+	}, [ setShowMessagingLauncher, supportActivity ] );
+
+	useZendeskConfig( Boolean( chatStatus?.is_user_eligible ) ); // Pre-fetch
 
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const primarySiteId = useSelector( ( state ) => getPrimarySiteId( state ) );
@@ -60,7 +137,6 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 	);
 
 	setSite( currentSite ? currentSite : site );
-	useSupportAvailability( 'CHAT' );
 
 	useStillNeedHelpURL();
 
@@ -75,7 +151,6 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 
 		return () => {
 			document.body.removeChild( portalParent );
-			closeChat();
 			handleClose();
 		};
 	}, [ portalParent ] );

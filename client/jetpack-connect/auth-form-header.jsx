@@ -17,6 +17,7 @@ export class AuthFormHeader extends Component {
 	static propTypes = {
 		authQuery: authQueryPropTypes.isRequired,
 		isWoo: PropTypes.bool,
+		isWpcomMigration: PropTypes.bool,
 		wooDnaConfig: PropTypes.object,
 
 		// Connected props
@@ -47,7 +48,7 @@ export class AuthFormHeader extends Component {
 	}
 
 	getHeaderText() {
-		const { translate, partnerSlug, isWoo, wooDnaConfig } = this.props;
+		const { translate, partnerSlug, isWoo, wooDnaConfig, isWpcomMigration } = this.props;
 
 		if ( wooDnaConfig && wooDnaConfig.isWooDnaFlow() ) {
 			return wooDnaConfig.getServiceName();
@@ -90,6 +91,13 @@ export class AuthFormHeader extends Component {
 			}
 		}
 
+		if ( isWpcomMigration ) {
+			switch ( currentState ) {
+				case 'logged-in':
+					return translate( 'Log in to your account' );
+			}
+		}
+
 		switch ( currentState ) {
 			case 'logged-out':
 				return translate( 'Create an account to set up Jetpack' );
@@ -102,7 +110,7 @@ export class AuthFormHeader extends Component {
 	}
 
 	getSubHeaderText() {
-		const { translate, isWoo, wooDnaConfig } = this.props;
+		const { translate, isWoo, wooDnaConfig, isWpcomMigration } = this.props;
 		const currentState = this.getState();
 
 		if ( isWoo ) {
@@ -131,6 +139,13 @@ export class AuthFormHeader extends Component {
 			}
 		}
 
+		if ( isWpcomMigration ) {
+			switch ( currentState ) {
+				case 'logged-in':
+					return translate( 'Connect your site with your WordPress.com account' );
+			}
+		}
+
 		switch ( currentState ) {
 			case 'logged-out':
 				return translate( 'You are moments away from a better WordPress.' );
@@ -145,8 +160,13 @@ export class AuthFormHeader extends Component {
 	}
 
 	getSiteCard() {
+		const { isWpcomMigration } = this.props;
 		const { jpVersion } = this.props.authQuery;
 		if ( ! versionCompare( jpVersion, '4.0.3', '>' ) ) {
+			return null;
+		}
+
+		if ( isWpcomMigration ) {
 			return null;
 		}
 
