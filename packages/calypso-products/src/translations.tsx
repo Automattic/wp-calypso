@@ -847,6 +847,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Share to Facebook, LinkedIn, and Tumblr' ),
 		translate( 'Engagement Optimizer' ),
 		translate( 'Recycle content' ),
+		translate( 'Image generator' ),
 	];
 
 	return {
@@ -885,7 +886,6 @@ export const getJetpackProductsWhatIsIncludedComingSoon = (): Record<
 > => {
 	const socialAdvancedIncludesInfo = [
 		translate( 'Auto-sharing to Instagram & Mastodon' ),
-		translate( 'Image generator' ),
 		translate( 'Multi-image sharing' ),
 		translate( 'Video sharing' ),
 	];
