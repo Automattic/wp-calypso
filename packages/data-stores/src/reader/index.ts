@@ -2,6 +2,7 @@ import { useSubscriberEmailAddress, useIsLoggedIn } from './hooks';
 import {
 	usePostUnsubscribeMutation,
 	useSiteDeliveryFrequencyMutation,
+	useSiteSubscribeMutation,
 	useSiteUnsubscribeMutation,
 	useUserSettingsMutation,
 	usePendingSiteConfirmMutation,
@@ -30,6 +31,7 @@ export const SubscriptionManager = {
 	useSiteDeliveryFrequencyMutation,
 	useSiteSubscriptionsQuery,
 	usePostSubscriptionsQuery,
+	useSiteSubscribeMutation,
 	useSiteUnsubscribeMutation,
 	useSubscriptionsCountQuery,
 	useSubscriberEmailAddress,
