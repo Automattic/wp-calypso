@@ -6,17 +6,19 @@ export function querySubscribers(
 	period: string,
 	quantity: number,
 	date?: string
-	// todo: add type
 ): Promise< any > {
-	const query: { unit: string; quantity: number; http_envelope: number; date?: string } = {
+	// Create a date object from the passed date string or create a new date object if no date is provided.
+	const periodStart = date ? new Date( date ) : new Date();
+
+	// Formatted date
+	const formattedDate = periodStart.toISOString().slice( 0, 10 );
+
+	const query: { unit: string; quantity: number; http_envelope: number; date: string } = {
 		unit: period,
 		quantity,
 		http_envelope: 1,
+		date: formattedDate,
 	};
-
-	if ( date ) {
-		query.date = date;
-	}
 
 	return wpcom.req.get(
 		{
