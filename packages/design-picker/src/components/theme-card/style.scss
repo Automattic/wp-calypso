@@ -1,4 +1,5 @@
 @import "@automattic/typography/styles/variables";
+// stylelint-disable-next-line scss/at-import-no-partial-leading-underscore
 @import "client/assets/stylesheets/shared/mixins/_breakpoints";
 
 $theme-card-info-height: 48px;
