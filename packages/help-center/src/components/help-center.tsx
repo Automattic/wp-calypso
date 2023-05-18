@@ -74,7 +74,11 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 		);
 	}, [ setShowMessagingLauncher, setShowMessagingWidget, chatStatus ] );
 
-	const { data: messagingAuth } = useMessagingAuth( Boolean( chatStatus?.is_user_eligible ) );
+	const { data: supportActivity } = useSupportActivity( Boolean( chatStatus?.is_user_eligible ) );
+	const hasActiveChats = supportActivity?.some( ( ticket ) => ticket.channel === 'Messaging' );
+	const { data: messagingAuth } = useMessagingAuth(
+		Boolean( chatStatus?.is_user_eligible ) && Boolean( hasActiveChats )
+	);
 	useEffect( () => {
 		const jwt = messagingAuth?.user.jwt;
 		if ( typeof window.zE !== 'function' || ! jwt || ! isMessagingScriptLoaded ) {
@@ -116,12 +120,11 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 		}
 	}, [ showMessagingWidget, isMessagingScriptLoaded ] );
 
-	const { data: supportActivity } = useSupportActivity( Boolean( chatStatus?.is_user_eligible ) );
 	useEffect( () => {
-		if ( supportActivity?.some( ( ticket ) => ticket.channel === 'Messaging' ) ) {
+		if ( hasActiveChats ) {
 			setShowMessagingLauncher( true );
 		}
-	}, [ setShowMessagingLauncher, supportActivity ] );
+	}, [ setShowMessagingLauncher, hasActiveChats ] );
 
 	useZendeskConfig( Boolean( chatStatus?.is_user_eligible ) ); // Pre-fetch
 
