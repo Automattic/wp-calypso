@@ -485,6 +485,10 @@
 			.login__form-userdata input:last-of-type {
 				margin-bottom: 10px;
 			}
+
+			input[disabled] {
+				border: 1px solid var(--studio-gray-10);
+			}
 		}
 
 		.card {
