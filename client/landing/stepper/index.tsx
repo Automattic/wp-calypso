@@ -152,7 +152,3 @@ window.AppBoot = async () => {
 		document.getElementById( 'wpcom' )
 	);
 };
-
-if ( module.hot ) {
-	module.hot.accept();
-}

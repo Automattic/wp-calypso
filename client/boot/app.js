@@ -8,7 +8,3 @@ import 'calypso/assets/stylesheets/style.scss';
 window.AppBoot = () => {
 	bootApp( 'Calypso' );
 };
-
-if ( module.hot ) {
-	module.hot.accept();
-}
