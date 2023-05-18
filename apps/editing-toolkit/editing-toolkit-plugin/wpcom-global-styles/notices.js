@@ -2,10 +2,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { ExternalLink, Notice } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { createInterpolateElement, render, useEffect, useCallback } from '@wordpress/element';
+import { createInterpolateElement, render, useCallback, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useCanvas } from './use-canvas';
 import { useGlobalStylesConfig } from './use-global-styles-config';
+import { usePreview } from './use-preview';
 import './notice.scss';
 
 const trackEvent = ( eventName, isSiteEditor = true ) =>
@@ -82,6 +83,7 @@ function GlobalStylesEditNotice() {
 		} ),
 		[ canvas ]
 	);
+	const { previewCurrentPost } = usePreview();
 
 	const { createWarningNotice, removeNotice } = useDispatch( 'core/notices' );
 	const { editEntityRecord } = useDispatch( 'core' );
@@ -90,6 +92,11 @@ function GlobalStylesEditNotice() {
 		window.open( wpcomGlobalStyles.upgradeUrl, '_blank' ).focus();
 		trackEvent( 'calypso_global_styles_gating_notice_upgrade_click', isSiteEditor );
 	}, [ isSiteEditor ] );
+
+	const previewPost = useCallback( () => {
+		previewCurrentPost();
+		trackEvent( 'calypso_global_styles_gating_notice_preview_click', isSiteEditor );
+	}, [ isSiteEditor, previewCurrentPost ] );
 
 	const resetGlobalStyles = useCallback( () => {
 		if ( ! globalStylesId ) {
@@ -114,6 +121,15 @@ function GlobalStylesEditNotice() {
 			},
 		];
 
+		if ( isPostEditor ) {
+			actions.push( {
+				label: __( 'Preview without custom styles', 'full-site-editing' ),
+				onClick: previewPost,
+				variant: 'secondary',
+				noDefaultClasses: true,
+			} );
+		}
+
 		if ( isSiteEditor ) {
 			actions.push( {
 				label: __( 'Remove custom styles', 'full-site-editing' ),
@@ -135,7 +151,14 @@ function GlobalStylesEditNotice() {
 		);
 
 		trackEvent( 'calypso_global_styles_gating_notice_show', isSiteEditor );
-	}, [ createWarningNotice, isSiteEditor, resetGlobalStyles, upgradePlan ] );
+	}, [
+		createWarningNotice,
+		isPostEditor,
+		isSiteEditor,
+		previewPost,
+		resetGlobalStyles,
+		upgradePlan,
+	] );
 
 	useEffect( () => {
 		if ( ! isSiteEditor && ! isPostEditor ) {
