@@ -43,7 +43,7 @@ import useRecordCartLoaded from '../hooks/use-record-cart-loaded';
 import useRecordCheckoutLoaded from '../hooks/use-record-checkout-loaded';
 import useRemoveFromCartAndRedirect from '../hooks/use-remove-from-cart-and-redirect';
 import { useStoredPaymentMethods } from '../hooks/use-stored-payment-methods';
-import { logStashLoadErrorEvent, logStashEvent } from '../lib/analytics';
+import { logStashLoadErrorEvent, logStashEvent, convertErrorToString } from '../lib/analytics';
 import existingCardProcessor from '../lib/existing-card-processor';
 import filterAppropriatePaymentMethods from '../lib/filter-appropriate-payment-methods';
 import freePurchaseProcessor from '../lib/free-purchase-processor';
@@ -556,7 +556,7 @@ export default function CheckoutMain( {
 			}
 			reduxDispatch(
 				recordTracksEvent( errorTypeToTracksEventName( errorType ), {
-					error_message: error.message + '; Stack: ' + error.stack,
+					error_message: convertErrorToString( error ),
 					...errorData,
 				} )
 			);

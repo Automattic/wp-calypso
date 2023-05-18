@@ -37,7 +37,7 @@ const selectors = {
 	confirmationToast: ( text: string ) => `.components-snackbar:has-text('${ text }')`,
 	focusedBlock: ( blockSelector: string ) => `${ blockSelector }.is-selected`,
 	parentOfFocusedBlock: ( blockSelector: string ) => `${ blockSelector }.has-child-selected`,
-	limitedGlobalStylesPreSaveNotice: '.wpcom-global-styles-notice',
+	limitedGlobalStylesNotice: '.wpcom-global-styles-notice',
 };
 
 /**
@@ -59,8 +59,6 @@ export class FullSiteEditorPage {
 	private templatePartModalComponent: TemplatePartModalComponent;
 	private templatePartListComponent: TemplatePartListComponent;
 	private cookieBannerComponent: CookieBannerComponent;
-
-	private hasCustomStyles = false;
 
 	/**
 	 * Constructs an instance of the page POM class.
@@ -374,27 +372,10 @@ export class FullSiteEditorPage {
 
 	/**
 	 * Save the changes in the full site editor (equivalent of publish).
-	 *
-	 * @param {Object} param0 Keyed options parameter.
-	 * @param {boolean} param0.checkPreSaveNotices Whether the presence of the pre-save notices should be checked.
 	 */
-	async save(
-		{ checkPreSaveNotices }: { checkPreSaveNotices: boolean } = { checkPreSaveNotices: false }
-	): Promise< void > {
-		const editorParent = await this.editor.parent();
+	async save(): Promise< void > {
 		await this.clearExistingSaveConfirmationToast();
 		await this.editorToolbarComponent.saveSiteEditor();
-		if ( checkPreSaveNotices ) {
-			const limitedGlobalStylesPreSaveNotice = editorParent.locator(
-				selectors.limitedGlobalStylesPreSaveNotice
-			);
-			if ( this.hasCustomStyles ) {
-				await limitedGlobalStylesPreSaveNotice.waitFor();
-			} else {
-				const count = await limitedGlobalStylesPreSaveNotice.count();
-				assert.equal( count, 0 );
-			}
-		}
 		await this.fullSiteEditorSavePanelComponent.confirmSave();
 		await this.waitForConfirmationToast( 'Site updated.' );
 	}
@@ -577,8 +558,16 @@ export class FullSiteEditorPage {
 	 * @param {string} styleVariationName The name of the style variation to set.
 	 */
 	async setStyleVariation( styleVariationName: string ): Promise< void > {
-		await this.editorSiteStylesComponent.setStyleVariation( styleVariationName );
-		this.hasCustomStyles = styleVariationName !== 'Default';
+		await this.fullSiteEditorNavSidebarComponent.setStyleVariation( styleVariationName );
+		const hasCustomStyles = styleVariationName !== 'Default';
+		const editorParent = await this.editor.parent();
+		const limitedGlobalStylesNotice = editorParent.locator( selectors.limitedGlobalStylesNotice );
+		if ( hasCustomStyles ) {
+			await limitedGlobalStylesNotice.waitFor();
+		} else {
+			const count = await limitedGlobalStylesNotice.count();
+			assert.equal( count, 0 );
+		}
 	}
 
 	//#endregion

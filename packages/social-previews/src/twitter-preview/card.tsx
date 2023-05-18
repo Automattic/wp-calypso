@@ -16,9 +16,6 @@ export const Card: React.FC< TwitterCardProps > = ( {
 	cardType,
 	url,
 } ) => {
-	if ( ! title && ! description && ! image && ! url ) {
-		return null;
-	}
 	const cardClassNames = classnames( `twitter-preview__card-${ cardType }`, {
 		'twitter-preview__card-has-image': !! image,
 	} );

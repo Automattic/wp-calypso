@@ -28,6 +28,8 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 				isBlankCanvas: theme?.includes( 'blank-canvas' ),
 				domainProductSlug: '',
 				planProductSlug: '',
+				isMapping: false,
+				isTransfer: false,
 			},
 			true
 		);

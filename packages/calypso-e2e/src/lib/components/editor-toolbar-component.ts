@@ -127,7 +127,9 @@ export class EditorToolbarComponent {
 			// that disables the block inserter button after inserting a block using the block API V2.
 			// See https://github.com/WordPress/gutenberg/issues/43090.
 			const editorParent = await this.editor.parent();
-			const locator = editorParent.locator( panel );
+			const locator = editorParent
+				.locator( panel )
+				.getByRole( 'button', { name: 'Toggle block inserter' } );
 			await locator.click();
 		}
 	}

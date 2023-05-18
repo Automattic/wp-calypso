@@ -518,6 +518,8 @@ class Signup extends Component {
 			intent,
 			startingPoint,
 			isBlankCanvas: isBlankCanvasDesign( dependencies.selectedDesign ),
+			isMapping: domainItem && isDomainMapping( domainItem ),
+			isTransfer: domainItem && isDomainTransfer( domainItem ),
 		} );
 	};
 

@@ -27,7 +27,6 @@ import { useShouldRenderEmailOption } from '../hooks/use-should-render-email-opt
 import { useStillNeedHelpURL } from '../hooks/use-still-need-help-url';
 import { Mail, Forum } from '../icons';
 import { HelpCenterActiveTicketNotice } from './help-center-notice';
-import { SibylArticles } from './help-center-sibyl-articles';
 
 const ConditionalLink: FC< { active: boolean } & LinkProps > = ( { active, ...props } ) => {
 	if ( active ) {
@@ -213,7 +212,6 @@ export const HelpCenterContactPage: FC = () => {
 					) }
 				</div>
 			</div>
-			<SibylArticles articleCanNavigateBack />
 		</div>
 	);
 };
