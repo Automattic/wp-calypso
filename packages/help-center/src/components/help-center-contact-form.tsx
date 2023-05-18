@@ -592,12 +592,12 @@ export const HelpCenterContactForm = () => {
 					</Button>
 					{ ! isFetchingGPTResponse && showingGPTResponse && ! hasSubmittingError && (
 						<Button isPrimary onClick={ handleGPTClose }>
-							Close
+							{ __( 'Close', __i18n_text_domain__ ) }
 						</Button>
 					) }
 					{ isFetchingGPTResponse && (
 						<Button isSecondary onClick={ handleGPTCancel }>
-							Cancel
+							{ __( 'Cancel', __i18n_text_domain__ ) }
 						</Button>
 					) }
 					{ hasSubmittingError && (
