@@ -108,6 +108,11 @@
 	.pre-migration__credentials {
 		button {
 			vertical-align: baseline;
+			font-size: 1rem;
 		}
+	}
+
+	.credentials-form__support-info {
+		margin-bottom: 0.75rem;
 	}
 }

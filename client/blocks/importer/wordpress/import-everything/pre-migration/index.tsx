@@ -76,22 +76,24 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 
 		return (
 			<>
-				<div className="pre-migration__content pre-migration__credentials">
-					{ translate(
-						'Optionally, {{button}}provide the server credentials{{/button}} of your site to speed up the migration',
-						{
-							components: {
-								button: (
-									<Button
-										borderless={ true }
-										className="action-buttons__content-only"
-										onClick={ toggleCredentialsForm }
-									/>
-								),
-							},
-						}
-					) }
-				</div>
+				{ ! showCredentials && (
+					<div className="pre-migration__content pre-migration__credentials">
+						{ translate(
+							'Optionally, {{button}}provide the server credentials{{/button}} of your site to speed up the migration',
+							{
+								components: {
+									button: (
+										<Button
+											borderless={ true }
+											className="action-buttons__content-only"
+											onClick={ toggleCredentialsForm }
+										/>
+									),
+								},
+							}
+						) }
+					</div>
+				) }
 				{ showCredentials && (
 					<div className="pre-migration__form-container pre-migration__credentials-form">
 						<div className="pre-migration__credentials-help">
@@ -122,7 +124,11 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		}
 
 		return (
-			<>
+			<div
+				className={ classnames( 'import__pre-migration import__import-everything', {
+					'import__import-everything--redesign': isEnabled( 'onboarding/import-redesign' ),
+				} ) }
+			>
 				<div className="import__heading-title">
 					<Title>{ translate( 'You are ready to migrate' ) }</Title>
 					<SubTitle>
@@ -142,36 +148,24 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 						</NextButton>
 					</div>
 				) }
-			</>
+			</div>
 		);
 	}
 
 	function render() {
+		// If the target site is plan compatible, we show the pre-migration screen
 		if ( isTargetSitePlanCompatible ) {
-			return (
-				<div
-					className={ classnames( 'import__pre-migration import__import-everything', {
-						'import__import-everything--redesign': isEnabled( 'onboarding/import-redesign' ),
-					} ) }
-				>
-					{ renderPreMigration() }
-				</div>
-			);
+			return renderPreMigration();
 		}
 
+		// If the target site is not plan compatible, we show the upgrade plan screen
 		return (
-			<div
-				className={ classnames( 'import__import-everything', {
-					'import__import-everything--redesign': isEnabled( 'onboarding/import-redesign' ),
-				} ) }
-			>
-				<PreMigrationUpgradePlan
-					sourceSite={ sourceSite }
-					targetSite={ targetSite }
-					startImport={ startImport }
-					onContentOnlyClick={ onContentOnlyClick }
-				/>
-			</div>
+			<PreMigrationUpgradePlan
+				sourceSite={ sourceSite }
+				targetSite={ targetSite }
+				startImport={ startImport }
+				onContentOnlyClick={ onContentOnlyClick }
+			/>
 		);
 	}
 
