@@ -111,6 +111,7 @@
 	display: flex;
 	margin: 0 0 0 15px;
 	padding: 20px 0;
+	width: 100%;
 
 	@include breakpoint-deprecated( "<960px" ) {
 		margin: 0;
@@ -429,5 +430,15 @@
 				color: var(--color-success);
 			}
 		}
+	}
+}
+
+.search-stream__site-results-none {
+	color: var(--color-neutral-50);
+	margin-top: 1em;
+	text-align: center;
+
+	@include breakpoint-deprecated( "<960px" ) {
+		margin-top: 2em;
 	}
 }

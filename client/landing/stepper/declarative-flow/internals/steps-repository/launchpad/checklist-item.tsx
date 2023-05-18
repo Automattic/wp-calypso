@@ -9,7 +9,7 @@ const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction
 	const { id, completed, disabled, title, subtitle, actionDispatch, warning } = task;
 
 	// Display chevron if task is incomplete. Don't display chevron and badge at the same time.
-	const shouldDisplayChevron = ! completed && ! disabled && ! task.badgeText;
+	const shouldDisplayChevron = ! completed && ! disabled && ! task.badge_text;
 
 	const handlePrimaryAction = () => {
 		localStorage.removeItem( 'launchpad_siteSlug' );
@@ -67,7 +67,7 @@ const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction
 						<span className="launchpad__checklist-item-text">{ title }</span>
 						{ subtitle && <p className="launchpad__checklist-item-subtext">{ subtitle }</p> }
 					</div>
-					{ task.badgeText ? <Badge type="info-blue">{ task.badgeText }</Badge> : null }
+					{ task.badge_text ? <Badge type="info-blue">{ task.badge_text }</Badge> : null }
 					{ shouldDisplayChevron && (
 						<Gridicon
 							aria-label={ translate( 'Task enabled' ) }

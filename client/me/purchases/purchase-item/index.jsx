@@ -1,6 +1,7 @@
 import {
 	isDomainTransfer,
 	isConciergeSession,
+	isAkismetFreeProduct,
 	PLAN_MONTHLY_PERIOD,
 	PLAN_ANNUAL_PERIOD,
 	PLAN_BIENNIAL_PERIOD,
@@ -299,7 +300,7 @@ class PurchaseItem extends Component {
 			} );
 		}
 
-		if ( isExpiring( purchase ) ) {
+		if ( isExpiring( purchase ) && ! isAkismetFreeProduct( purchase ) ) {
 			if ( expiry < moment().add( 30, 'days' ) && ! isRecentMonthlyPurchase( purchase ) ) {
 				const expiryClass =
 					expiry < moment().add( 7, 'days' )
@@ -358,7 +359,10 @@ class PurchaseItem extends Component {
 			return translate( 'Included with Plan' );
 		}
 
-		if ( isOneTimePurchase( purchase ) && ! isDomainTransfer( purchase ) ) {
+		if (
+			( isOneTimePurchase( purchase ) || isAkismetFreeProduct( purchase ) ) &&
+			! isDomainTransfer( purchase )
+		) {
 			return translate( 'Never Expires' );
 		}
 
@@ -445,7 +449,8 @@ class PurchaseItem extends Component {
 		if (
 			purchase.isAutoRenewEnabled &&
 			! hasPaymentMethod( purchase ) &&
-			! isPartnerPurchase( purchase )
+			! isPartnerPurchase( purchase ) &&
+			! isAkismetFreeProduct( purchase )
 		) {
 			return (
 				<div className="purchase-item__no-payment-method">
@@ -456,6 +461,7 @@ class PurchaseItem extends Component {
 		}
 
 		if (
+			! isAkismetFreeProduct( purchase ) &&
 			! isRechargeable( purchase ) &&
 			hasPaymentMethod( purchase ) &&
 			purchase.isAutoRenewEnabled

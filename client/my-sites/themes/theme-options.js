@@ -22,7 +22,6 @@ import {
 	getTheme,
 	getThemeDemoUrl,
 	getThemeDetailsUrl,
-	getThemePurchaseUrl,
 	getThemeSignupUrl,
 	isPremiumThemeAvailable,
 	isThemeActive,
@@ -47,7 +46,13 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			context: 'verb',
 			comment: 'label for selecting a site for which to purchase a theme',
 		} ),
-		getUrl: getThemePurchaseUrl,
+		getUrl: ( state, themeId, siteId ) => {
+			const siteSlug = getSiteSlug( state, siteId );
+			const redirectTo = `/theme/${ themeId }/${ siteSlug }`;
+			return `/checkout/${ siteSlug }/value_bundle?redirect_to=${ encodeURIComponent(
+				redirectTo
+			) }`;
+		},
 		hideForTheme: ( state, themeId, siteId ) =>
 			( isJetpackSite( state, siteId ) && ! isSiteWpcomAtomic( state, siteId ) ) || // No individual theme purchase on a JP site
 			! isUserLoggedIn( state ) || // Not logged in

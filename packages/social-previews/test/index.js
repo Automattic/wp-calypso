@@ -7,7 +7,8 @@ import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
 import {
 	FacebookLinkPreview as Facebook,
-	TwitterPreview as Twitter,
+	TwitterPostPreview as Twitter,
+	TwitterPreviews,
 	GoogleSearchPreview as Search,
 } from '../src';
 import { formatTweetDate } from '../src/helpers';
@@ -179,7 +180,7 @@ describe( 'Twitter previews', () => {
 			</>
 		);
 
-		const twitterPreviews = container.querySelectorAll( '.twitter-preview' );
+		const twitterPreviews = container.querySelectorAll( '.twitter-preview__wrapper' );
 		const tweetWrapperNoImage = twitterPreviews[ 0 ];
 		const tweetWrapperWithImage = twitterPreviews[ 1 ];
 
@@ -199,6 +200,7 @@ describe( 'Twitter previews', () => {
 		const { container } = render( <Twitter url="https://wordpress.com" /> );
 
 		const tweetWrapper = container.querySelector( '.twitter-preview__container' );
+
 		const urlEl = tweetWrapper.querySelector( '.twitter-preview__card-url' );
 
 		expect( urlEl ).toBeVisible();
@@ -207,7 +209,7 @@ describe( 'Twitter previews', () => {
 
 	describe( 'Styling hooks', () => {
 		it( 'should append a classname with the correct "type" to the root element when provided', () => {
-			const { container } = render( <Twitter type="article" /> );
+			const { container } = render( <Twitter cardType="article" title="test" /> );
 
 			const tweetWrapper = container.querySelector( '.twitter-preview__container' );
 			const innerEl = tweetWrapper.querySelector( '.twitter-preview__card > div' );
@@ -221,17 +223,14 @@ describe( 'Twitter previews', () => {
 		const name = 'WordPress';
 		const screenName = '@WordPress';
 		const date = Date.now();
-		const tweets = [
-			{
-				...emptyTweet,
-				profileImage,
-				name,
-				screenName,
-				date,
-			},
-		];
-
-		const { container } = render( <Twitter tweets={ tweets } /> );
+		const tweet = {
+			...emptyTweet,
+			profileImage,
+			name,
+			screenName,
+			date,
+		};
+		const { container } = render( <Twitter { ...tweet } /> );
 
 		const tweetWrapper = container.querySelector( '.twitter-preview__container' );
 
@@ -250,14 +249,12 @@ describe( 'Twitter previews', () => {
 	} );
 
 	it( 'should replace URLs with hyperlinks', () => {
-		const tweets = [
-			{
-				...emptyTweet,
-				text: 'This text https://jetpack.com/ has https://wordpress.com/ some https://jetpack.com/ URLs https://wordpress.org/.',
-			},
-		];
+		const tweet = {
+			...emptyTweet,
+			text: 'This text https://jetpack.com/ has https://wordpress.com/ some https://jetpack.com/ URLs https://wordpress.org/.',
+		};
 
-		const { container } = render( <Twitter tweets={ tweets } /> );
+		const { container } = render( <Twitter { ...tweet } /> );
 
 		const tweetWrapper = container.querySelector( '.twitter-preview__container' );
 
@@ -272,14 +269,12 @@ describe( 'Twitter previews', () => {
 	} );
 
 	it( 'should replace hashtags with hyperlinks', () => {
-		const tweets = [
-			{
-				...emptyTweet,
-				text: '#hashtag here\n\nsome #otherHashtag here\n#hashtag on a new line',
-			},
-		];
+		const tweet = {
+			...emptyTweet,
+			text: '#hashtag here\n\nsome #otherHashtag here\n#hashtag on a new line',
+		};
 
-		const { container } = render( <Twitter tweets={ tweets } /> );
+		const { container } = render( <Twitter { ...tweet } /> );
 
 		const tweetWrapper = container.querySelector( '.twitter-preview__container' );
 
@@ -294,15 +289,13 @@ describe( 'Twitter previews', () => {
 	} );
 
 	it( 'should render a quoted tweet', () => {
-		const tweet = 'https://twitter.com/GaryPendergast/status/934003415507546112';
-		const tweets = [
-			{
-				...emptyTweet,
-				tweet,
-			},
-		];
+		const quoteTweet = 'https://twitter.com/GaryPendergast/status/934003415507546112';
+		const tweet = {
+			...emptyTweet,
+			tweet: quoteTweet,
+		};
 
-		const { container } = render( <Twitter tweets={ tweets } /> );
+		const { container } = render( <Twitter { ...tweet } /> );
 
 		const tweetWrapper = container.querySelector( '.twitter-preview__container' );
 
@@ -312,7 +305,7 @@ describe( 'Twitter previews', () => {
 
 		expect( quoteEl ).toBeVisible();
 		expect( quoteEl.children.item( 0 ).contentWindow.document.body ).toContainHTML(
-			`<blockquote class="twitter-tweet" data-conversation="none" data-dnt="true"><a href="${ tweet }"></a></blockquote>`
+			`<blockquote class="twitter-tweet" data-conversation="none" data-dnt="true"><a href="${ quoteTweet }"></a></blockquote>`
 		);
 	} );
 
@@ -327,11 +320,11 @@ describe( 'Twitter previews', () => {
 				text: 'tweet-2',
 			},
 		];
-		const { container } = render( <Twitter tweets={ tweets } /> );
+		const { container } = render( <TwitterPreviews tweets={ tweets } /> );
 
 		const tweetWrappers = container.querySelectorAll( '.twitter-preview__container' );
 
-		expect( tweetWrappers ).toHaveLength( 2 );
+		expect( tweetWrappers ).toHaveLength( 2 + 1 ); // 1 for link preview
 
 		expect( tweetWrappers.item( 0 ).querySelector( '.twitter-preview__text' ) ).toHaveTextContent(
 			'tweet-1'
@@ -466,13 +459,17 @@ describe( 'Twitter previews', () => {
 			],
 		];
 
-		const { container } = render( <Twitter tweets={ tweets } /> );
+		const { container } = render( <TwitterPreviews tweets={ tweets } /> );
 
 		const tweetWrappers = container.querySelectorAll( '.twitter-preview__container' );
 
-		expect( tweetWrappers ).toHaveLength( tweets.length );
+		expect( tweetWrappers ).toHaveLength( tweets.length + 1 ); // 1 for link preview
 
-		tweetWrappers.forEach( ( tweet, index ) => {
+		tweetWrappers.forEach( ( tweet, index, list ) => {
+			// If it's the last tweet, it's the link preview.
+			if ( index === list.length - 1 ) {
+				return;
+			}
 			const mediaEl = tweet.querySelector( '.twitter-preview__media' );
 
 			if ( expected[ index ].length === 0 ) {

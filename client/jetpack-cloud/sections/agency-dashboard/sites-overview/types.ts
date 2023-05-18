@@ -259,3 +259,15 @@ export type AllowedMonitorPeriods = 'day' | 'week' | '30 days' | '90 days';
 export interface MonitorUptimeAPIResponse {
 	[ key: string ]: { status: string; downtime_in_minutes?: number };
 }
+
+export interface MonitorSettingsEmail {
+	email: string;
+	name: string;
+	verified: boolean;
+}
+
+export interface StateMonitorSettingsEmail extends MonitorSettingsEmail {
+	isDefault?: boolean;
+}
+
+export type AllowedMonitorContactActions = 'add' | 'verify' | 'edit';

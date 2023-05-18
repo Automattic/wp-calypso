@@ -1,4 +1,4 @@
-import { applyTestFiltersToPlansList } from '@automattic/calypso-products';
+import { applyTestFiltersToPlansList, PlanSlug } from '@automattic/calypso-products';
 import { FeatureObject } from 'calypso/lib/plans/features-list';
 import type { PricedAPIPlan } from '@automattic/data-stores';
 
@@ -19,7 +19,7 @@ export type PlanProperties = {
 	isPlaceholder?: boolean;
 	isVisible: boolean;
 	planConstantObj: ReturnType< typeof applyTestFiltersToPlansList >;
-	planName: string;
+	planName: PlanSlug;
 	planObject: PricedAPIPlan | undefined;
 	product_name_short: string;
 	hideMonthly?: boolean;
@@ -32,4 +32,12 @@ export type PlanProperties = {
 	availableForPurchase: boolean;
 	current?: boolean;
 	showMonthlyPrice: boolean;
+	planActionOverrides?: PlanActionOverrides;
 };
+
+export interface PlanActionOverrides {
+	loggedInFreePlan?: {
+		callback: () => void;
+		text: string;
+	};
+}

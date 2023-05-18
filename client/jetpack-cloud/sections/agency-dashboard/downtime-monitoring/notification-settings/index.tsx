@@ -12,7 +12,13 @@ import {
 	mobileAppLink,
 } from '../../sites-overview/utils';
 import ConfigureEmailNotification from '../configure-email-notification';
-import type { MonitorSettings, Site } from '../../sites-overview/types';
+import EmailAddressEditor from '../configure-email-notification/email-address-editor';
+import type {
+	MonitorSettings,
+	Site,
+	StateMonitorSettingsEmail,
+	AllowedMonitorContactActions,
+} from '../../sites-overview/types';
 
 import './style.scss';
 
@@ -44,8 +50,29 @@ export default function NotificationSettings( {
 	const [ selectedDuration, setSelectedDuration ] = useState< Duration | undefined >(
 		defaultDuration
 	);
-	const [ addedEmailAddresses, setAddedEmailAddresses ] = useState< string[] | [] >( [] );
+	const [ defaultUserEmailAddresses, setDefaultUserEmailAddresses ] = useState< string[] | [] >(
+		[]
+	);
+	const [ allEmailItems, setAllEmailItems ] = useState< StateMonitorSettingsEmail[] | [] >( [] );
 	const [ validationError, setValidationError ] = useState< string >( '' );
+	const [ isAddEmailModalOpen, setIsAddEmailModalOpen ] = useState< boolean >( false );
+	const [ selectedEmail, setSelectedEmail ] = useState< StateMonitorSettingsEmail | undefined >();
+	const [ selectedAction, setSelectedAction ] = useState< AllowedMonitorContactActions >();
+
+	const toggleAddEmailModal = (
+		item?: StateMonitorSettingsEmail,
+		action?: AllowedMonitorContactActions
+	) => {
+		if ( item && action ) {
+			setSelectedEmail( item );
+			setSelectedAction( action );
+		}
+		setIsAddEmailModalOpen( ( isAddEmailModalOpen ) => ! isAddEmailModalOpen );
+		if ( isAddEmailModalOpen ) {
+			setSelectedEmail( undefined );
+			setSelectedAction( undefined );
+		}
+	};
 
 	function onSave( event: React.FormEvent< HTMLFormElement > ) {
 		event.preventDefault();
@@ -77,7 +104,7 @@ export default function NotificationSettings( {
 
 	useEffect( () => {
 		if ( settings ) {
-			setAddedEmailAddresses( settings.monitor_user_emails || [] );
+			setDefaultUserEmailAddresses( settings.monitor_user_emails || [] );
 			setEnableEmailNotification( !! settings.monitor_user_email_notifications );
 			setEnableMobileNotification( !! settings.monitor_user_wp_note_notifications );
 		}
@@ -85,7 +112,7 @@ export default function NotificationSettings( {
 
 	useEffect( () => {
 		if ( monitorUserEmails ) {
-			setAddedEmailAddresses( monitorUserEmails );
+			setDefaultUserEmailAddresses( monitorUserEmails );
 		}
 	}, [ monitorUserEmails ] );
 
@@ -104,6 +131,16 @@ export default function NotificationSettings( {
 	const isMultipleEmailEnabled = isEnabled(
 		'jetpack/pro-dashboard-monitor-multiple-email-recipients'
 	);
+
+	if ( isAddEmailModalOpen ) {
+		return (
+			<EmailAddressEditor
+				toggleModal={ toggleAddEmailModal }
+				selectedEmail={ selectedEmail }
+				selectedAction={ selectedAction }
+			/>
+		);
+	}
 
 	return (
 		<Modal
@@ -197,19 +234,25 @@ export default function NotificationSettings( {
 									<div className="notification-settings__content-sub-heading">
 										{ translate( 'Receive email notifications with one or more recipients.' ) }
 									</div>
-									{ enableEmailNotification && (
-										<ConfigureEmailNotification defaultEmailAddresses={ addedEmailAddresses } />
-									) }
 								</>
 							) : (
 								<div className="notification-settings__content-sub-heading">
 									{ translate( 'Receive email notifications with your account email address %s.', {
-										args: addedEmailAddresses,
+										args: defaultUserEmailAddresses,
 									} ) }
 								</div>
 							) }
 						</div>
 					</div>
+
+					{ enableEmailNotification && isMultipleEmailEnabled && (
+						<ConfigureEmailNotification
+							defaultEmailAddresses={ defaultUserEmailAddresses }
+							toggleModal={ toggleAddEmailModal }
+							setAllEmailItems={ setAllEmailItems }
+							allEmailItems={ allEmailItems }
+						/>
+					) }
 				</div>
 
 				<div className="notification-settings__footer">

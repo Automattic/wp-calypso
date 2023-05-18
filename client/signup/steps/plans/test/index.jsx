@@ -214,13 +214,9 @@ describe( 'Plans.onSelectPlan', () => {
 } );
 
 describe( 'Plans.getCustomerType', () => {
-	test( 'Should return site type property is siteType is provided', () => {
-		const comp = new PlansStep( { ...props, siteType: 'online-store' } );
-		expect( comp.getCustomerType() ).toEqual( 'business' );
-	} );
 	test( "Should return customerType prop when it's provided", () => {
-		const comp = new PlansStep( { ...props, customerType: 'personal' } );
-		expect( comp.getCustomerType() ).toEqual( 'personal' );
+		const comp = new PlansStep( { ...props, customerType: 'customerType' } );
+		expect( comp.getCustomerType() ).toEqual( 'customerType' );
 	} );
 } );
 

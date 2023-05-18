@@ -1,0 +1,70 @@
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@automattic/color-studio/dist/color-variables";
+
+.wpcom-domain-upsell-callout {
+	font-size: $font-body-extra-small;
+	font-style: normal;
+	padding: 15px;
+	line-height: normal;
+	position: absolute;
+	display: flex;
+	align-items: center;
+	left: 50%;
+	transform: translateX(-50%);
+	top: 0;
+	@media ( max-width: $break-xlarge ) {
+		display: none;
+	}
+
+	&__content {
+		width: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: var(--studio-gray-60);
+	}
+
+	&__content-text {
+		display: flex;
+		align-items: center;
+		border-radius: 24px; /* stylelint-disable-line scales/radii */
+		padding: 6px 20px;
+		column-gap: 10px;
+		background: #f6f7f7;
+		@media ( max-width: $break-wide ) {
+			padding: 6px 10px;
+		}
+	}
+
+	&__button-text-desktop {
+		display: block;
+		@media ( max-width: $break-wide ) {
+			display: none;
+		}
+	}
+	&__button-text-mobile {
+		display: none;
+		@media ( max-width: $break-wide ) {
+			display: block;
+		}
+	}
+	&__icon {
+		fill: var(--studio-gray-60);
+		@media ( max-width: $break-wide ) {
+			display: none;
+		}
+	}
+	&__button {
+		font-size: $font-body-extra-small;
+		white-space: nowrap;
+		text-decoration: underline;
+		color: $studio-blue;
+	}
+
+	&__button:hover,
+	&__dismiss-icon:hover {
+		cursor: pointer;
+	}
+}

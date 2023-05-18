@@ -25,7 +25,7 @@ import { apiCloseAccount } from '../shared';
 
 declare const browser: Browser;
 
-describe( DataHelper.createSuiteTitle( 'FTME: Sell' ), function () {
+describe( 'FTME: Sell', function () {
 	const planName = 'Personal';
 	const testUser = DataHelper.getNewTestUser( {
 		usernamePrefix: 'ftmepersonal',
@@ -33,7 +33,6 @@ describe( DataHelper.createSuiteTitle( 'FTME: Sell' ), function () {
 	const blogTagLine = DataHelper.getRandomPhrase();
 
 	let page: Page;
-	let accountCreatedFlag = false;
 	let newUserDetails: NewUserResponse;
 	let newSiteDetails: NewSiteResponse;
 
@@ -63,7 +62,6 @@ describe( DataHelper.createSuiteTitle( 'FTME: Sell' ), function () {
 				testUser.username,
 				testUser.password
 			);
-			accountCreatedFlag = true;
 		} );
 
 		it( 'Skip domain selection', async function () {
@@ -167,18 +165,9 @@ describe( DataHelper.createSuiteTitle( 'FTME: Sell' ), function () {
 			startSiteFlow = new StartSiteFlow( page );
 		} );
 
-		// This step is only applicable if the flag themes/plugin-bundling
-		// is false.
-		// When the flag is turned on for all environments, delete this.
-		// -mreishus 2022-09-13
-		it.skip( 'Continue with simple option', async function () {
-			await page.waitForURL( /.*setup\/site-setup\/storeFeatures.*/ );
-			await startSiteFlow.clickButton( 'Continue' );
-		} );
-
 		it( 'Select theme', async function () {
 			await startSiteFlow.selectTheme( themeName );
-			await startSiteFlow.clickButton( `Start with ${ themeName }` );
+			await startSiteFlow.clickButton( 'Continue' );
 		} );
 
 		it( 'Land in Home dashboard', async function () {
@@ -229,7 +218,7 @@ describe( DataHelper.createSuiteTitle( 'FTME: Sell' ), function () {
 	} );
 
 	afterAll( async function () {
-		if ( ! accountCreatedFlag ) {
+		if ( ! newUserDetails ) {
 			return;
 		}
 

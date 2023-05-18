@@ -35,6 +35,7 @@ interface APILicense {
 	issued_at: string;
 	attached_at: string | null;
 	revoked_at: string | null;
+	owner_type: string | null;
 }
 
 interface APIPaginatedItems< T > {
@@ -107,6 +108,7 @@ function formatLicenses( items: APILicense[] ): License[] {
 		issuedAt: item.issued_at,
 		attachedAt: item.attached_at,
 		revokedAt: item.revoked_at,
+		ownerType: item.owner_type,
 	} ) );
 }
 

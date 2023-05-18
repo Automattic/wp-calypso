@@ -1,59 +1,60 @@
-import { Card } from '@automattic/components';
-import { CheckboxControl } from '@wordpress/components';
-import { useEffect, useState } from 'react';
+import { Button } from '@automattic/components';
+import { Icon, plus } from '@wordpress/icons';
+import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
+import EmailItemContent from './email-item-content';
+import type {
+	MonitorSettingsEmail,
+	StateMonitorSettingsEmail,
+	AllowedMonitorContactActions,
+} from '../../sites-overview/types';
 
 import './style.scss';
 
-interface EmailItem {
-	email: string;
-	name: string;
-	checked: boolean;
-}
 interface Props {
 	defaultEmailAddresses: Array< string >;
+	toggleModal: ( item?: StateMonitorSettingsEmail, action?: AllowedMonitorContactActions ) => void;
+	addedEmailAddresses?: Array< MonitorSettingsEmail >;
+	allEmailItems: Array< StateMonitorSettingsEmail >;
+	setAllEmailItems: ( emailAddresses: Array< StateMonitorSettingsEmail > ) => void;
 }
 
-export default function ConfigureEmailNotification( { defaultEmailAddresses = [] }: Props ) {
-	const [ allEmailItems, setAllEmailItems ] = useState< EmailItem[] >( [] );
+export default function ConfigureEmailNotification( {
+	defaultEmailAddresses = [],
+	toggleModal,
+	addedEmailAddresses = [], // FIXME: This value will come from the API.
+	allEmailItems,
+	setAllEmailItems,
+}: Props ) {
+	const translate = useTranslate();
 
 	useEffect( () => {
 		if ( defaultEmailAddresses ) {
-			const allEmailItems = defaultEmailAddresses.map( ( email, index ) => ( {
+			const defaultEmailItems = defaultEmailAddresses.map( ( email ) => ( {
 				email,
-				checked: index === 0, // FIXME: This should be dynamic.
 				name: 'Default Email', //FIXME: This should be dynamic.
+				isDefault: true,
+				verified: true,
 			} ) );
-			setAllEmailItems( allEmailItems );
+			setAllEmailItems( [ ...defaultEmailItems, ...addedEmailAddresses ] );
 		}
-	}, [ defaultEmailAddresses ] );
-
-	const handleOnChange = () => {
-		if ( defaultEmailAddresses.length === 1 ) {
-			return;
-			// FIXME: We need to show a custom error message here.
-		}
-		// FIXME: Onselect of checkbox, we need to update the state of the checkbox.
-	};
-
-	const getCheckboxContent = ( item: EmailItem ) => (
-		<span className="configure-email-address__checkbox-content">
-			<div className="configure-email-address__checkbox-heading">{ item.email }</div>
-			<div className="configure-email-address__checkbox-sub-heading">{ item.name }</div>
-		</span>
-	);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
 
 	return (
-		<>
+		<div className="configure-email-address__card-container">
 			{ allEmailItems.map( ( item ) => (
-				<Card className="configure-email-address__card" key={ item.email } compact>
-					<CheckboxControl
-						className="configure-email-address__checkbox"
-						checked={ item.checked }
-						onChange={ handleOnChange }
-						label={ getCheckboxContent( item ) }
-					/>
-				</Card>
+				<EmailItemContent key={ item.email } item={ item } toggleModal={ toggleModal } />
 			) ) }
-		</>
+			<Button
+				compact
+				className="configure-email-address__button"
+				onClick={ () => toggleModal() }
+				aria-label={ translate( 'Add email address' ) }
+			>
+				<Icon size={ 18 } icon={ plus } />
+				{ translate( 'Add email address' ) }
+			</Button>
+		</div>
 	);
 }

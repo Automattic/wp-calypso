@@ -35,7 +35,7 @@ const ScreenFooter = ( {
 			<NavigatorHeader
 				title={ translate( 'Footer' ) }
 				description={ translate(
-					'Your footer will be added to all pages and can be used to show information or links that will help visitors take the next step.'
+					'The footer appears at the bottom of a site and shows useful links and contact information.'
 				) }
 				onBack={ onBack }
 			/>
@@ -54,7 +54,7 @@ const ScreenFooter = ( {
 					primary
 					onClick={ onDoneClick }
 				>
-					{ translate( 'Save' ) }
+					{ translate( 'Save footer' ) }
 				</NavigatorBackButton>
 			</div>
 		</>
