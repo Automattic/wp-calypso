@@ -45,7 +45,9 @@ export class InstagramBlockFlow implements BlockFlow {
 		await embedButtonLocator.click();
 
 		// We should make sure the actual Iframe loads, because it takes a second.
-		const instagramIframeLocator = editorParent.locator( selectors.editorInstagramIframe );
+		const instagramIframeLocator = editorParent
+			.frameLocator( selectors.editorInstagramIframe )
+			.locator( 'body' );
 		await instagramIframeLocator.waitFor();
 	}
 
