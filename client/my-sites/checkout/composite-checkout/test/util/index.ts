@@ -110,6 +110,7 @@ export const countryList: CountryListItem[] = [
 		tax_needs_address: true,
 		vat_supported: true,
 		tax_country_codes: [ 'CH' ],
+		tax_name: 'GST',
 	},
 	{
 		code: 'GB',
