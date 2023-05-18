@@ -50,6 +50,7 @@ function LaunchWpcomWelcomeTour() {
 	const localeSlug = useLocale();
 	const editorType = getEditorType();
 	const { siteIntent: intent } = useSiteIntent();
+	// We check the URL param along with site intent because the param loads faster and prevents element flashing.
 	const isStartWritingFlow =
 		intent === START_WRITING_FLOW ||
 		getQueryArg( window.location.search, START_WRITING_FLOW ) === 'true';

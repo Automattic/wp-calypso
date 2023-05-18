@@ -9,6 +9,7 @@ export function RedirectOnboardingUserAfterPublishingPost() {
 	const { siteIntent: intent } = useSiteIntent();
 
 	useEffect( () => {
+		// We check the URL param along with site intent because the param loads faster and prevents element flashing.
 		const hasStartWritingFlowQueryArg =
 			getQueryArg( window.location.search, START_WRITING_FLOW ) === 'true';
 
