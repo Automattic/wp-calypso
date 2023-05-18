@@ -189,6 +189,12 @@ $mobile-card-max-width: 440px;
 	@include plans-section-break-medium {
 		margin: 0;
 	}
+
+	@media ( min-width: $plans-2023-small-breakpoint ) {
+		.is-section-plans & {
+			margin: 0;
+		}
+	}
 }
 
 .is-2023-pricing-grid {
