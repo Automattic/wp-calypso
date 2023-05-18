@@ -196,6 +196,7 @@ export const FEATURE_JETPACK_SOCIAL_BASIC = PRODUCT_JETPACK_SOCIAL_BASIC;
 export const FEATURE_JETPACK_SOCIAL_BASIC_MONTHLY = PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY;
 export const FEATURE_SOCIAL_SHARES_1000 = 'social-shares-1000';
 export const FEATURE_SOCIAL_ENHANCED_PUBLISHING = 'social-enhanced-publishing';
+export const FEATURE_SOCIAL_MASTODON_CONNECTION = 'social-mastodon-connection';
 
 // Jetpack tiered product features
 export const FEATURE_JETPACK_1GB_BACKUP_STORAGE = 'jetpack-1gb-backup-storage';
