@@ -43,7 +43,7 @@ const TabsSwitcher = () => {
 
 					<NavItem
 						onClick={ () => navigate( commentsPath ) }
-						count={ counts?.comments || undefined }
+						count={ undefined /* temporarily disable inaccurate comments count */ }
 						selected={ pathname.startsWith( commentsPath ) }
 					>
 						{ translate( 'Comments' ) }
