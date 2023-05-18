@@ -5,10 +5,10 @@ import {
 	START_WRITING_FLOW,
 	StepContainer,
 } from '@automattic/onboarding';
-import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import PlansWrapper from './plans-wrapper';
 import type { ProvidedDependencies, Step } from '../../types';
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 const plans: Step = function Plans( { navigation, flow } ) {
 	const { submit } = navigation;
