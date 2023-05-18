@@ -60,7 +60,7 @@ export const getMShotOptions = ( {
 		// 901 renders well with all the current designs, more details in the links below
 		// https://github.com/Automattic/wp-calypso/issues/71439#issuecomment-1367335609
 		// https://github.com/Automattic/wp-calypso/issues/71439#issuecomment-1369694397
-		vph: scrollable ? 1600 : 901,
+		vph: scrollable ? 1600 : 1040,
 		// When `w` was 1200 it created a visual glitch on one thumbnail. #57261
 		w: highRes ? 1199 : 600,
 		screen_height: 3600,
