@@ -1,7 +1,7 @@
 import { WordPressLogo, JetpackLogo, WooCommerceWooLogo } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { ReactChild, ReactElement } from 'react';
+import { ReactChild, ReactElement, ReactNode } from 'react';
 import ActionButtons from '../action-buttons';
 import StepNavigationLink from '../step-navigation-link';
 import VideoPressLogo from '../videopress-logo';
@@ -45,6 +45,7 @@ interface Props {
 	showHeaderWooCommercePowered?: boolean;
 	showFooterWooCommercePowered?: boolean;
 	showVideoPressPowered?: boolean;
+	children?: ReactNode;
 }
 
 const StepContainer: React.FC< Props > = ( {

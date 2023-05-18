@@ -9,6 +9,7 @@ import type { ReactNode } from 'react';
 
 type Props = {
 	ownershipResult: AnalysisReport | null;
+	children?: ReactNode;
 };
 
 function getResponses( siteName?: string ) {

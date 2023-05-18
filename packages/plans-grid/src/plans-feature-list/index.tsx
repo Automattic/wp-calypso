@@ -12,6 +12,7 @@ import './style.scss';
 
 interface FeatureListItemContentWrapperProps {
 	className: string;
+	children: React.ReactNode;
 }
 
 interface FeatureListIconProps {
@@ -209,7 +210,7 @@ const PlansFeatureList: React.FunctionComponent< PlansFeatureListProps > = ( {
 				<Button
 					className={ classnames( domainFeatureItem.wrapperClassName, className ) }
 					onClick={ onPickDomain }
-					isLink
+					variant="link"
 				>
 					{ children }
 				</Button>

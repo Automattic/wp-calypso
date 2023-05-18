@@ -37,6 +37,7 @@ type DomainGroup = 'sub-domain' | 'professional';
 
 export const ItemGrouper: FunctionComponent< {
 	groupItems: boolean;
+	children: React.ReactNode;
 } > = function ItemGrouper( { groupItems, children } ) {
 	if ( groupItems ) {
 		return <div className="domain-picker__suggestion-item-group">{ children }</div>;
@@ -44,7 +45,11 @@ export const ItemGrouper: FunctionComponent< {
 	return <>{ children }</>;
 };
 
-export const ItemGroupLabel: FunctionComponent = function ItemGroupLabel( { children } ) {
+export const ItemGroupLabel = function ItemGroupLabel( {
+	children,
+}: {
+	children: React.ReactNode;
+} ) {
 	return <p className="domain-picker__suggestion-group-label">{ children }</p>;
 };
 

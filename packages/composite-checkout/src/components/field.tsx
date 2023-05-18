@@ -214,7 +214,7 @@ function RenderedIcon( {
 	if ( iconAction ) {
 		return (
 			<ButtonIcon>
-				<Button onClick={ iconAction }>{ icon as React.ReactChildren }</Button>
+				<Button onClick={ iconAction }>{ icon }</Button>
 			</ButtonIcon>
 		);
 	}
