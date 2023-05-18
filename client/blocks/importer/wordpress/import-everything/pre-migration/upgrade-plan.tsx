@@ -30,7 +30,7 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 				} ) }
 			>
 				<div className="import__heading-title">
-					<Title>Upgrade your plan</Title>
+					<Title>{ translate( 'Upgrade your plan' ) }</Title>
 					<SubTitle>
 						{ translate(
 							'Migrating themes, plugins, users, and settings requires a %(plan)s plan',

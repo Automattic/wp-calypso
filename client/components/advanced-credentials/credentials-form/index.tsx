@@ -378,9 +378,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 				</FormFieldset>
 			) }
 			{ ! isAlternate && withHeader && (
-				<>
-					<h3>{ translate( 'Provide your SSH, SFTP or FTP server credentials' ) }</h3>
-				</>
+				<h3>{ translate( 'Provide your SSH, SFTP or FTP server credentials' ) }</h3>
 			) }
 			{ withHeader && <p className="credentials-form__intro-text">{ getSubHeaderText() }</p> }
 			{ withHeader && renderCredentialLinks() }

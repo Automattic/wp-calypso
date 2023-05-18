@@ -6,13 +6,12 @@
 }
 
 .import__pre-migration {
-
-	padding: 0 20px;
+	padding: 0 rem(20px);
 	max-width: 100%;
 
 	> div {
 		text-align: center;
-		margin: 20px auto 40px auto !important;
+		margin: rem(20px) auto rem(40px) auto !important;
 	}
 
 	.pre-migration__form-container {
@@ -35,7 +34,7 @@
 
 			.credentials-form {
 				margin-top: 0;
-				margin-bottom: 20px;
+				margin-bottom: rem(20px);
 			}
 		}
 
@@ -46,7 +45,7 @@
 			margin-bottom: 1rem;
 
 			@include break-medium {
-				margin-inline-start: 40px;
+				margin-inline-start: rem(40px);
 				width: 220px;
 				order: 1;
 			}
@@ -81,17 +80,17 @@
 	}
 
 	.step-container__content {
-		padding: 20px;
+		padding: rem(20px);
 		box-sizing: border-box;
 	}
 
 	.pre-migration__title-container {
 		text-align: center;
 
-		margin: 20px 0 40px 0 !important;
+		margin: rem(20px) 0 rem(40px) 0 !important;
 
 		@include break-small {
-			margin: 36px auto 58px auto !important;
+			margin: rem(36px) auto rem(58px) auto !important;
 		}
 
 		.onboarding-subtitle {
@@ -102,7 +101,7 @@
 
 	.pre-migration__error {
 		color: var(--color-error);
-		margin-bottom: 40px;
+		margin-bottom: rem(40px);
 		font-size: 0.875rem;
 	}
 
@@ -137,9 +136,8 @@
 			border-radius: 4px;
 			box-sizing: border-box;
 			font-size: 0.875rem;
-			padding: 0.875rem 1rem;
 			/* We need to allow space for the SVG checkmark */
-			padding-right: calc(0.5rem + 24px);
+			padding: 0.875rem calc(0.5rem + 24px) 0.875rem 1rem;
 		}
 	}
 }
