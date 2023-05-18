@@ -11,12 +11,15 @@ export function LinkedInPostPreview( {
 	name,
 	profileImage,
 	description,
+	media,
 	title,
 	url,
 }: LinkedInPreviewProps ) {
+	const hasMedia = !! media?.length;
+
 	return (
 		<div className="linkedin-preview__wrapper">
-			<section className="linkedin-preview__container">
+			<section className={ `linkedin-preview__container ${ hasMedia ? 'has-media' : '' }` }>
 				<div className="linkedin-preview__header">
 					<div className="linkedin-preview__header--avatar">
 						<img src={ profileImage } alt="" />
@@ -65,24 +68,46 @@ export function LinkedInPostPreview( {
 							} }
 						/>
 					) : null }
-					<article>
-						{ image ? <img className="linkedin-preview__image" src={ image } alt="" /> : null }
-						{ url ? (
-							<div className="linkedin-preview__description">
-								<h2 className="linkedin-preview__description--title">{ title }</h2>
-								<div className="linkedin-preview__description--meta">
-									<span className="linkedin-preview__description--url">{ baseDomain( url ) }</span>
-									<span>•</span>
-									<span>
-										{
-											// translators: x is the number of minutes it takes to read the article
-											__( 'x min read', 'social-previews' )
-										}
-									</span>
+					{ hasMedia ? (
+						<div className="linkedin-preview__media">
+							{ media.map( ( mediaItem, index ) => (
+								<div
+									key={ `linkedin-preview__media-item-${ index }` }
+									className="linkedin-preview__media-item"
+								>
+									{ mediaItem.type.startsWith( 'video/' ) ? (
+										// eslint-disable-next-line jsx-a11y/media-has-caption
+										<video controls>
+											<source src={ mediaItem.url } type={ mediaItem.type } />
+										</video>
+									) : (
+										<img alt={ mediaItem.alt || '' } src={ mediaItem.url } />
+									) }
 								</div>
-							</div>
-						) : null }
-					</article>
+							) ) }
+						</div>
+					) : (
+						<article>
+							{ image ? <img className="linkedin-preview__image" src={ image } alt="" /> : null }
+							{ url ? (
+								<div className="linkedin-preview__description">
+									<h2 className="linkedin-preview__description--title">{ title }</h2>
+									<div className="linkedin-preview__description--meta">
+										<span className="linkedin-preview__description--url">
+											{ baseDomain( url ) }
+										</span>
+										<span>•</span>
+										<span>
+											{
+												// translators: x is the number of minutes it takes to read the article
+												__( 'x min read', 'social-previews' )
+											}
+										</span>
+									</div>
+								</div>
+							) : null }
+						</article>
+					) }
 				</div>
 			</section>
 		</div>
