@@ -511,29 +511,6 @@ export type RawDomainContactValidationResponse =
 			messages_simple: string[];
 	  };
 
-export interface TaxVendorInfo {
-	/**
-	 * The country code for this info.
-	 */
-	country_code: string;
-
-	/**
-	 * The localized name of the tax (eg: "VAT", "GST", etc.).
-	 */
-	tax_name: string;
-
-	/**
-	 * The mailing address to display on receipts as a list of strings (each
-	 * string should be on its own line).
-	 */
-	address: string[];
-
-	/**
-	 * The vendor's VAT id.
-	 */
-	vat_id: string;
-}
-
 export interface CountryListItemBase {
 	code: string;
 	name: string;
@@ -542,7 +519,11 @@ export interface CountryListItemBase {
 	tax_needs_subdivision?: boolean;
 	tax_needs_organization?: boolean;
 	tax_needs_address?: boolean;
-	tax_vendor_info?: TaxVendorInfo;
+
+	/**
+	 * The localized name of the tax (eg: "VAT", "GST", etc.).
+	 */
+	tax_name?: string;
 }
 export interface CountryListItemWithoutVat extends CountryListItemBase {
 	vat_supported: false;
