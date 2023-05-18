@@ -83,7 +83,7 @@ function GlobalStylesEditNotice() {
 		} ),
 		[ canvas ]
 	);
-	const { previewCurrentPost } = usePreview();
+	const { previewPostWithoutCustomStyles } = usePreview();
 
 	const { createWarningNotice, removeNotice } = useDispatch( 'core/notices' );
 	const { editEntityRecord } = useDispatch( 'core' );
@@ -94,9 +94,9 @@ function GlobalStylesEditNotice() {
 	}, [ isSiteEditor ] );
 
 	const previewPost = useCallback( () => {
-		previewCurrentPost();
+		previewPostWithoutCustomStyles();
 		trackEvent( 'calypso_global_styles_gating_notice_preview_click', isSiteEditor );
-	}, [ isSiteEditor, previewCurrentPost ] );
+	}, [ isSiteEditor, previewPostWithoutCustomStyles ] );
 
 	const resetGlobalStyles = useCallback( () => {
 		if ( ! globalStylesId ) {

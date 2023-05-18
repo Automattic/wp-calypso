@@ -2,6 +2,7 @@ import { Path, SVG } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useRef, renderToString, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { addQueryArgs } from '@wordpress/url';
 
 function writeInterstitialMessage( targetDocument ) {
 	let markup = renderToString(
@@ -106,7 +107,7 @@ export function usePreview() {
 
 	const { autosave, savePost } = useDispatch( 'core/editor' );
 
-	const previewCurrentPost = useCallback( () => {
+	const previewPostWithoutCustomStyles = useCallback( () => {
 		if ( ! isPostEditor ) {
 			return;
 		}
@@ -117,8 +118,10 @@ export function usePreview() {
 		previewWindow.current.focus();
 
 		if ( ! isAutosaveable || isLocked ) {
-			if ( previewWindow && ! previewWindow.closed ) {
-				previewWindow.current.location = previewLink || currentPostLink;
+			if ( previewWindow.current && ! previewWindow.current.closed ) {
+				previewWindow.current.location = addQueryArgs( previewLink || currentPostLink, {
+					'hide-global-styles': '',
+				} );
 			}
 			return;
 		}
@@ -147,9 +150,9 @@ export function usePreview() {
 		}
 
 		if ( previewWindow.current && previewLink && ! previewWindow.current.closed ) {
-			previewWindow.current.location = previewLink;
+			previewWindow.current.location = addQueryArgs( previewLink, { 'hide-global-styles': '' } );
 		}
 	}, [ isPostEditor, previewLink ] );
 
-	return { previewCurrentPost };
+	return { previewPostWithoutCustomStyles };
 }
