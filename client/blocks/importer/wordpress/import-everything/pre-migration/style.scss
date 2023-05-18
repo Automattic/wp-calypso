@@ -104,4 +104,10 @@
 		color: var(--color-error);
 		margin-bottom: 40px;
 	}
+
+	.pre-migration__credentials {
+		button {
+			vertical-align: baseline;
+		}
+	}
 }

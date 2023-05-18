@@ -1,5 +1,6 @@
 //Migration SSH/FTP credentials form
 
+import { Button } from '@automattic/components';
 import { NextButton } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -131,9 +132,13 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 							? translate( 'Testing credentials' )
 							: translate( 'Start migration' ) }
 					</NextButton>
-					<button className="action-buttons__importer-list" onClick={ startImport }>
+					<Button
+						borderless={ true }
+						className="action-buttons__content-only"
+						onClick={ startImport }
+					>
 						{ translate( 'Skip credentials (slower setup)' ) }
-					</button>
+					</Button>
 				</div>
 			</form>
 		</>

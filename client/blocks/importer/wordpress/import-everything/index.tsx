@@ -152,7 +152,7 @@ export class ImportEverything extends SectionMigrate {
 						isTargetSitePlanCompatible={ isTargetSitePlanCompatible }
 						targetSite={ targetSite }
 						sourceSite={ sourceSite }
-						onContentOnlyClick={ stepNavigator?.goToImportListStep }
+						onContentOnlyClick={ onContentOnlySelection }
 					/>
 				);
 			}

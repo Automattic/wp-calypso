@@ -50,7 +50,7 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 				</NextButton>
 				<Button
 					borderless={ true }
-					className="action-buttons__importer-list"
+					className="action-buttons__content-only"
 					onClick={ onContentOnlyClick }
 				>
 					{ translate( 'Use the content-only import option' ) }

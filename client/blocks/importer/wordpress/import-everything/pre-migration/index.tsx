@@ -1,6 +1,7 @@
 //create a pre-migration component
 
 import { isEnabled } from '@automattic/calypso-config';
+import { Button } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { NextButton, SubTitle, Title } from '@automattic/onboarding';
 import classnames from 'classnames';
@@ -38,9 +39,9 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 	const [ showCredentials, setShowCredentials ] = useState( false );
 	const [ selectedHost, setSelectedHost ] = useState( 'generic' );
 	const [ selectedProtocol, setSelectedProtocol ] = useState< 'ftp' | 'ssh' >( 'ftp' );
+	const [ hasLoaded, setHasLoaded ] = useState( false );
 
 	const toggleCredentialsForm = () => {
-		// Should we trigger provisioning here and have a loading state while we wait for the vaultpress site to be provisioned?
 		setShowCredentials( ! showCredentials );
 	};
 
@@ -64,6 +65,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 
 	useEffect( () => {
 		dispatch( getCredentials( sourceSite.ID ) );
+		setHasLoaded( true );
 	}, [] );
 
 	function renderCredentialsFormSection() {
@@ -80,8 +82,9 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 						{
 							components: {
 								button: (
-									<button
-										className="action-buttons__importer-list"
+									<Button
+										borderless={ true }
+										className="action-buttons__content-only"
 										onClick={ toggleCredentialsForm }
 									/>
 								),
@@ -114,7 +117,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 
 	function renderPreMigration() {
 		// Show a loading state when we are trying to fetch existing credentials
-		if ( isRequestingCredentials ) {
+		if ( ! hasLoaded || isRequestingCredentials ) {
 			return <LoadingEllipsis />;
 		}
 
