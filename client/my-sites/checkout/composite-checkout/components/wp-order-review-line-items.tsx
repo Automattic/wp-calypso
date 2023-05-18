@@ -1,4 +1,9 @@
-import { isAkismetProduct, isJetpackPurchasableItem } from '@automattic/calypso-products';
+import {
+	isAkismetProduct,
+	isJetpackPurchasableItem,
+	PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY,
+	PLAN_JETPACK_SECURITY_T1_BI_YEARLY,
+} from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { isCopySiteFlow } from '@automattic/onboarding';
 import {
@@ -195,9 +200,19 @@ function LineItemWrapper( {
 		// was in the cart when checkout finished loading (not necessarily the
 		// current variant). For WordPress.com only, not Jetpack or Akismet. See
 		// https://github.com/Automattic/wp-calypso/issues/69633
+
+		// Temporarily remove jetpack bi-yearly products so users can't purchase them for now.
+		if (
+			variant.productSlug === PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY ||
+			variant.productSlug === PLAN_JETPACK_SECURITY_T1_BI_YEARLY
+		) {
+			return false;
+		}
+
 		if ( ! initialVariantTerm ) {
 			return true;
 		}
+
 		const isAkismet = isAkismetProduct( { product_slug: variant.productSlug } );
 		if ( isJetpack || isAkismet ) {
 			return true;
