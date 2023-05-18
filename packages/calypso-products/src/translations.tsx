@@ -884,9 +884,9 @@ export const getJetpackProductsWhatIsIncludedComingSoon = (): Record<
 	Array< TranslateResult >
 > => {
 	const socialAdvancedIncludesInfo = [
-		translate( 'Coming soon: Image generator' ),
-		translate( 'Coming soon: Multi-image sharing' ),
-		translate( 'Coming soon: Video sharing' ),
+		translate( 'Image generator' ),
+		translate( 'Multi-image sharing' ),
+		translate( 'Video sharing' ),
 	];
 
 	return {
@@ -994,11 +994,9 @@ export const getJetpackProductsBenefitsComingSoon = (): Record<
 	Array< TranslateResult >
 > => {
 	const socialAdvancedBenefits = [
-		translate(
-			'Coming soon: Automatically create custom images, saving you hours of tedious work'
-		),
-		translate( 'Coming soon: Share multiple images at once on social media platforms' ),
-		translate( 'Coming soon: Upload and share videos to your social platforms' ),
+		translate( 'Automatically create custom images, saving you hours of tedious work' ),
+		translate( 'Share multiple images at once on social media platforms' ),
+		translate( 'Upload and share videos to your social platforms' ),
 	];
 
 	return {
