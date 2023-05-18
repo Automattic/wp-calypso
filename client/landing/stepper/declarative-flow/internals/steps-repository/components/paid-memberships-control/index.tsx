@@ -6,26 +6,35 @@ import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import InfoPopover from 'calypso/components/info-popover';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
+import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import type { OnboardSelect } from '@automattic/data-stores';
 import './style.scss';
 
 const PaidMembershipsControl = () => {
 	const { __ } = useI18n();
+	const siteSlug = useSiteSlug();
 	const paidSubscribers = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPaidSubscribers(),
 		[]
 	);
 	const { setPaidSubscribers, setGoals, resetGoals } = useDispatch( ONBOARD_STORE );
+	const { setGoalsOnSite } = useDispatch( SITE_STORE );
 	const onPaidSubscribersChanged = ( event: ChangeEvent< HTMLInputElement > ) => {
 		const isPaidSelected = !! event?.target.checked;
+		const paidSubscriberGoal = [ Onboard.SiteGoal.PaidSubscribers ];
 		setPaidSubscribers( isPaidSelected );
+
 		if ( isPaidSelected ) {
-			setGoals( [ Onboard.SiteGoal.PaidSubscribers ] );
+			// Update goal in frontend state and DB
+			setGoals( paidSubscriberGoal );
+			setGoalsOnSite( siteSlug, paidSubscriberGoal );
 		} else {
-			// Clears goals entirely each time. We could instead just removine the
-			// PaidSubscribers goal and/or avoid doing anything if nothing wasn't set ever.
+			// Clears goals entirely each time. We could instead removine the
+			// PaidSubscribers goal and/or avoid action if nothing was ever set.
+			// Again, must clear frontend state and DB.
 			resetGoals();
+			setGoalsOnSite( siteSlug, [] );
 		}
 	};
 
