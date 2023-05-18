@@ -107,7 +107,7 @@ export function HelpCenterGPT() {
 		__( 'Really, any minute now…', __i18n_text_domain__ ),
 	];
 
-	const loadingMessage = useTyper( loadingMessages, true, {
+	const loadingMessage = useTyper( loadingMessages, ! data?.response, {
 		delayBetweenCharacters: 80,
 		delayBetweenWords: 1400,
 	} );
