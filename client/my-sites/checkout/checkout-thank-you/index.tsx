@@ -102,6 +102,12 @@ import type { DomainThankYouType } from 'calypso/my-sites/checkout/checkout-than
 import type { ReceiptState, ReceiptPurchase } from 'calypso/state/receipts/types';
 import type { LocalizeProps } from 'i18n-calypso';
 
+type ComponentAndPrimaryPurchaseAndDomain =
+	| []
+	| [ string | false ]
+	| [ string | false, ReceiptPurchase | undefined ]
+	| [ string | false, ReceiptPurchase | undefined, string | undefined ];
+
 export interface CheckoutThankYouProps {
 	domainOnlySiteFlow: boolean;
 	email: string;
@@ -655,6 +661,77 @@ export class CheckoutThankYou extends Component<
 		return [ 'TRANSFER', isDomainTransfer ];
 	}
 
+	/**
+	 * Retrieves the component (and any corresponding data) that should be displayed according to the type of purchase
+	 * just performed by the user.
+	 *
+	 * returns an array of varying size with the component instance,
+	 * then an optional purchase object possibly followed by a domain name
+	 */
+	getComponentAndPrimaryPurchaseAndDomain = (): ComponentAndPrimaryPurchaseAndDomain => {
+		if ( ! this.isDataLoaded() || this.isGenericReceipt() ) {
+			return [];
+		}
+		const purchases = getPurchases( this.props );
+		const failedPurchases = getFailedPurchases( this.props );
+		const hasFailedPurchases = failedPurchases.length > 0;
+		if ( hasFailedPurchases ) {
+			return [ 'failed-purchase-details' ];
+		}
+		if ( purchases.some( isJetpackPlan ) ) {
+			return [ 'jetpack-plan-details', purchases.find( isJetpackPlan ) ];
+		}
+		if ( purchases.some( isBlogger ) ) {
+			return [ 'blogger-plan-details', purchases.find( isBlogger ) ];
+		}
+		if ( purchases.some( isPersonal ) ) {
+			return [ 'personal-plan-details', purchases.find( isPersonal ) ];
+		}
+		if ( purchases.some( isStarter ) ) {
+			return [ 'starter-plan-details', purchases.find( isStarter ) ];
+		}
+		if ( purchases.some( isPremium ) ) {
+			return [ 'premium-plan-details', purchases.find( isPremium ) ];
+		}
+		if ( purchases.some( isBusiness ) ) {
+			return [ 'business-plan-details', purchases.find( isBusiness ) ];
+		}
+		if ( purchases.some( isPro ) ) {
+			return [ 'pro-plan-details', purchases.find( isPro ) ];
+		}
+		if ( purchases.some( isEcommerce ) ) {
+			return [ 'ecommerce-plan-details', purchases.find( isEcommerce ) ];
+		}
+		if ( purchases.some( isDomainRegistration ) ) {
+			return [
+				'domain-registration-details',
+				...findPurchaseAndDomain( purchases, isDomainRegistration ),
+			];
+		}
+		if ( purchases.some( isGSuiteOrExtraLicenseOrGoogleWorkspace ) ) {
+			return [
+				'google-apps-details',
+				...findPurchaseAndDomain( purchases, isGSuiteOrExtraLicenseOrGoogleWorkspace ),
+			];
+		}
+		if ( purchases.some( isDomainMapping ) ) {
+			return [ 'domain-mapping-details', ...findPurchaseAndDomain( purchases, isDomainMapping ) ];
+		}
+		if ( purchases.some( isSiteRedirect ) ) {
+			return [ 'site-redirect-details', ...findPurchaseAndDomain( purchases, isSiteRedirect ) ];
+		}
+		if ( purchases.some( isDomainTransfer ) ) {
+			return [ false, ...findPurchaseAndDomain( purchases, isDomainTransfer ) ];
+		}
+		if ( purchases.some( isTitanMail ) ) {
+			return [ false, ...findPurchaseAndDomain( purchases, isTitanMail ) ];
+		}
+		if ( purchases.some( isChargeback ) ) {
+			return [ 'chargeback-details', purchases.find( isChargeback ) ];
+		}
+		return [];
+	};
+
 	startTransfer = ( event: { preventDefault: () => void } ) => {
 		event.preventDefault();
 
@@ -678,7 +755,8 @@ export class CheckoutThankYou extends Component<
 		const purchases = getPurchases( this.props );
 		const failedPurchases = getFailedPurchases( this.props );
 		const hasFailedPurchases = failedPurchases.length > 0;
-		const primaryPurchase = getPrimaryPurchase( purchases, hasFailedPurchases );
+		const componentAndPrimaryPurchaseAndDomain = this.getComponentAndPrimaryPurchaseAndDomain();
+		const [ component, primaryPurchase ] = componentAndPrimaryPurchaseAndDomain;
 
 		if ( ! this.isDataLoaded() ) {
 			return (
@@ -730,9 +808,12 @@ export class CheckoutThankYou extends Component<
 						/>
 					) }
 
-					{ ! isSimplified && ! this.isGenericReceipt() && (
+					{ ! isSimplified && component && (
 						<div className="checkout-thank-you__purchase-details-list">
-							<PurchaseDetailsWrapper { ...this.props } />
+							<PurchaseDetailsWrapper
+								{ ...this.props }
+								componentAndPrimaryPurchaseAndDomain={ componentAndPrimaryPurchaseAndDomain }
+							/>
 						</div>
 					) }
 				</CheckoutThankYouHeader>
@@ -787,73 +868,23 @@ export default connect(
 	}
 )( localize( CheckoutThankYou ) );
 
-function getPrimaryPurchase(
-	purchases: ReceiptPurchase[],
-	hasFailedPurchases: boolean
-): [] | [ ReceiptPurchase | undefined ] | [ ReceiptPurchase | undefined, string | undefined ] {
-	if ( hasFailedPurchases ) {
-		return [];
-	}
-	if ( purchases.some( isJetpackPlan ) ) {
-		return [ purchases.find( isJetpackPlan ) ];
-	}
-	if ( purchases.some( isBlogger ) ) {
-		return [ purchases.find( isBlogger ) ];
-	}
-	if ( purchases.some( isPersonal ) ) {
-		return [ purchases.find( isPersonal ) ];
-	}
-	if ( purchases.some( isStarter ) ) {
-		return [ purchases.find( isStarter ) ];
-	}
-	if ( purchases.some( isPremium ) ) {
-		return [ purchases.find( isPremium ) ];
-	}
-	if ( purchases.some( isBusiness ) ) {
-		return [ purchases.find( isBusiness ) ];
-	}
-	if ( purchases.some( isPro ) ) {
-		return [ purchases.find( isPro ) ];
-	}
-	if ( purchases.some( isEcommerce ) ) {
-		return [ purchases.find( isEcommerce ) ];
-	}
-	if ( purchases.some( isDomainRegistration ) ) {
-		return findPurchaseAndDomain( purchases, isDomainRegistration );
-	}
-	if ( purchases.some( isGSuiteOrExtraLicenseOrGoogleWorkspace ) ) {
-		return findPurchaseAndDomain( purchases, isGSuiteOrExtraLicenseOrGoogleWorkspace );
-	}
-	if ( purchases.some( isDomainMapping ) ) {
-		return findPurchaseAndDomain( purchases, isDomainMapping );
-	}
-	if ( purchases.some( isSiteRedirect ) ) {
-		return findPurchaseAndDomain( purchases, isSiteRedirect );
-	}
-	if ( purchases.some( isDomainTransfer ) ) {
-		return findPurchaseAndDomain( purchases, isDomainTransfer );
-	}
-	if ( purchases.some( isTitanMail ) ) {
-		return findPurchaseAndDomain( purchases, isTitanMail );
-	}
-	if ( purchases.some( isChargeback ) ) {
-		return [ purchases.find( isChargeback ) ];
-	}
-	return [];
-}
-
 /**
  * Retrieves the component (and any corresponding data) that should be displayed according to the type of purchase
  * just performed by the user.
  */
-function PurchaseDetailsWrapper( props: CheckoutThankYouCombinedProps ): JSX.Element | null {
+function PurchaseDetailsWrapper(
+	props: CheckoutThankYouCombinedProps & {
+		componentAndPrimaryPurchaseAndDomain: ComponentAndPrimaryPurchaseAndDomain;
+	}
+): JSX.Element | null {
 	const purchases = getPurchases( props );
 	const failedPurchases = getFailedPurchases( props );
 	const hasFailedPurchases = failedPurchases.length > 0;
-	const [ primaryPurchase, domain ] = getPrimaryPurchase( purchases, hasFailedPurchases );
-	const hasNoSupportUrl = purchases.some( isDomainTransfer ) || purchases.some( isTitanMail );
+	const [ component, primaryPurchase, domain ] = props.componentAndPrimaryPurchaseAndDomain;
+	const primaryPurchaseSupportUrl = primaryPurchase?.registrarSupportUrl ?? null;
+	const isGenericReceipt = ! props.receiptId;
 	const registrarSupportUrl =
-		hasNoSupportUrl || hasFailedPurchases ? null : primaryPurchase?.registrarSupportUrl ?? null;
+		! component || isGenericReceipt || hasFailedPurchases ? null : primaryPurchaseSupportUrl;
 	const isRootDomainWithUs = primaryPurchase?.isRootDomainWithUs ?? false;
 
 	if ( hasFailedPurchases ) {
