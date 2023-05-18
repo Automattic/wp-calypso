@@ -52,6 +52,9 @@ export interface SitePlanData {
 
 export interface SitesPlansResult {
 	data: SitePlanData[] | null;
+	hasLoadedFromServer: boolean;
+	isRequesting: boolean;
+	error: unknown;
 }
 
 export type VariantFilterCallback = ( variant: WPCOMProductVariant ) => boolean;

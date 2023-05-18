@@ -1,11 +1,7 @@
 /**
  * Mapping from Calypso panel slug to tuple of focus key and value.
- *
- *
- * @type {Object}
  */
-
-export const PANEL_MAPPINGS = {
+export const PANEL_MAPPINGS: Record< string, [ string, string ] > = {
 	widgets: [ 'panel', 'widgets' ],
 	fonts: [ 'section', 'jetpack_fonts' ],
 	identity: [ 'section', 'title_tagline' ],
@@ -24,7 +20,7 @@ export const PANEL_MAPPINGS = {
  * @param  {string}  panel Calypso panel slug
  * @returns {?Object}       WordPress autofocus argument object
  */
-export function getCustomizerFocus( panel ) {
+export function getCustomizerFocus( panel: string ) {
 	if ( PANEL_MAPPINGS.hasOwnProperty( panel ) ) {
 		const [ key, value ] = PANEL_MAPPINGS[ panel ];
 		return { [ `autofocus[${ key }]` ]: value };

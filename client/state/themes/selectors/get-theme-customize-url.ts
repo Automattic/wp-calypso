@@ -1,6 +1,7 @@
 import { getCustomizerUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getTheme } from 'calypso/state/themes/selectors/get-theme';
 import { isThemeActive } from 'calypso/state/themes/selectors/is-theme-active';
+import type { AppState } from 'calypso/types';
 
 import 'calypso/state/themes/init';
 
@@ -12,7 +13,11 @@ import 'calypso/state/themes/init';
  * @param  {?number}  siteId  Site ID to open the customizer for
  * @returns {?string}          Customizer URL
  */
-export function getThemeCustomizeUrl( state, themeId, siteId ) {
+export function getThemeCustomizeUrl(
+	state: AppState,
+	themeId: string,
+	siteId: number | null | undefined
+): string | undefined | null {
 	const customizerUrl = getCustomizerUrl( state, siteId );
 
 	if ( ! ( siteId && themeId ) || isThemeActive( state, themeId, siteId ) ) {
