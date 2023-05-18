@@ -72,6 +72,15 @@ class Hosting extends Component {
 		this.props.fetchAutomatedTransferStatus( this.props.siteId );
 	}
 
+	componentDidUpdate( prevProps ) {
+		const { COMPLETE } = transferStates;
+		const { transferState, requestSiteById, siteId } = this.props;
+
+		if ( prevProps.transferState !== COMPLETE && transferState === COMPLETE ) {
+			requestSiteById( siteId );
+		}
+	}
+
 	render() {
 		const {
 			teams,
@@ -81,7 +90,6 @@ class Hosting extends Component {
 			isECommerceTrial,
 			isWpcomStagingSite,
 			isTransferring,
-			requestSiteById,
 			siteId,
 			siteSlug,
 			translate,
@@ -112,10 +120,6 @@ class Hosting extends Component {
 				( isTransferring && COMPLETE !== transferState ) ||
 				( isDisabled && COMPLETE === transferState )
 			) {
-				if ( COMPLETE === transferState ) {
-					requestSiteById( siteId );
-				}
-
 				let activationText = translate( 'Please wait while we activate the hosting features.' );
 				if ( this.state.clickOutside ) {
 					activationText = translate( "Don't leave quite yet! Just a bit longer." );
