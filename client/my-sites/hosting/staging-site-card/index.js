@@ -13,6 +13,7 @@ import { LoadingBar } from 'calypso/components/loading-bar';
 import Notice from 'calypso/components/notice';
 import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpts-query';
 import { urlToSlug } from 'calypso/lib/url';
+import { NewStagingSiteCardContent } from 'calypso/my-sites/hosting/staging-site-card/card-content/new-staging-site-card-content';
 import { LoadingPlaceholder } from 'calypso/my-sites/hosting/staging-site-card/loading-placeholder';
 import { useAddStagingSiteMutation } from 'calypso/my-sites/hosting/staging-site-card/use-add-staging-site';
 import { useCheckStagingSiteStatus } from 'calypso/my-sites/hosting/staging-site-card/use-check-staging-site-status';
@@ -39,10 +40,6 @@ const StyledLoadingBar = styled( LoadingBar )( {
 const ActionButtons = styled.div( {
 	display: 'flex',
 	gap: '1em',
-} );
-
-const ExceedQuotaErrorWrapper = styled.div( {
-	marginTop: '1em',
 } );
 
 const SiteRow = styled.div( {
@@ -235,44 +232,22 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 		stagingSite,
 	] );
 
-	const getExceedQuotaErrorContent = () => {
-		return (
-			<ExceedQuotaErrorWrapper data-testid="quota-message">
-				<Notice status="is-warning" showDismiss={ false }>
-					{ __(
-						'Your available storage space is lower than 50%, which is insufficient for creating a staging site.'
-					) }
-				</Notice>
-			</ExceedQuotaErrorWrapper>
-		);
-	};
-
 	const getNewStagingSiteContent = () => {
+		const onAddClick = () => {
+			dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_click' ) );
+			setWasCreating( true );
+			setProgress( 0.1 );
+			addStagingSite();
+		};
 		return (
 			<>
-				<p>
-					{ translate(
-						'A staging site is a test version of your website you can use to preview and troubleshoot changes before applying them to your production site. {{a}}Learn more{{/a}}.',
-						{
-							components: {
-								a: <InlineSupportLink supportContext="hosting-staging-site" showIcon={ false } />,
-							},
-						}
-					) }
-				</p>
-				<Button
-					primary
-					disabled={ disabled || addingStagingSite || isLoadingQuotaValidation || ! hasValidQuota }
-					onClick={ () => {
-						dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_click' ) );
-						setWasCreating( true );
-						setProgress( 0.1 );
-						addStagingSite();
-					} }
-				>
-					<span>{ translate( 'Add staging site' ) }</span>
-				</Button>
-				{ ! hasValidQuota && ! isLoadingQuotaValidation && getExceedQuotaErrorContent() }
+				<NewStagingSiteCardContent
+					disabled={ disabled }
+					addingStagingSite={ addingStagingSite }
+					isLoadingQuotaValidation={ isLoadingQuotaValidation }
+					hasValidQuota={ hasValidQuota }
+					onAddClick={ onAddClick }
+				/>
 			</>
 		);
 	};
