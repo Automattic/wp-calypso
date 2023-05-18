@@ -35,9 +35,8 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 						title: __( "Woo! We're creating your store" ),
 						subtitle: (
 							<>
-								{ __(
-									'Hang tight! Your free trial is currently being set up and may take a few minutes.'
-								) }
+								<strong>{ __( 'Hang tight! ' ) }</strong>
+								{ __( 'Your free trial is currently being set up and may take a few minutes.' ) }
 							</>
 						),
 						duration: 15000,
@@ -125,7 +124,10 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 					{
 						title: __( 'Opening the doors' ),
 						subtitle: (
-							<>{ __( "We're almost there! Your free trial will be ready in just a moment." ) }</>
+							<>
+								<strong>{ __( "We're almost there! " ) }</strong>
+								{ __( 'Your free trial will be ready in just a moment.' ) }
+							</>
 						),
 						// Set a very long duration to make sure it shows until the step is completed
 						duration: 150000,
