@@ -5,6 +5,7 @@ import { WpcomTourKit, usePrefetchTourAssets } from '@automattic/tour-kit';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { useDispatch, useSelect, dispatch } from '@wordpress/data';
 import { useEffect, useMemo } from '@wordpress/element';
+import { getQueryArg } from '@wordpress/url';
 import useSiteIntent from '../../../dotcom-fse/lib/site-intent/use-site-intent';
 import useSitePlan from '../../../dotcom-fse/lib/site-plan/use-site-plan';
 import { selectors as starterPageTemplatesSelectors } from '../../../starter-page-templates/store';
@@ -49,7 +50,9 @@ function LaunchWpcomWelcomeTour() {
 	const localeSlug = useLocale();
 	const editorType = getEditorType();
 	const { siteIntent: intent } = useSiteIntent();
-	const isStartWritingFlow = intent === START_WRITING_FLOW;
+	const isStartWritingFlow =
+		intent === START_WRITING_FLOW ||
+		getQueryArg( window.location.search, START_WRITING_FLOW ) === 'true';
 
 	// Preload first card image (others preloaded after open state confirmed)
 	usePrefetchTourAssets( [ getTourSteps( localeSlug, false, false, null, siteIntent )[ 0 ] ] );

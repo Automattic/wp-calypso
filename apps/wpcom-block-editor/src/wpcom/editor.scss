@@ -4,7 +4,8 @@
 	.components-external-link,
 	.edit-post-post-schedule,
 	.components-panel__row:has(.editor-post-trash),
-	.launchpad__save-modal {
+	.launchpad__save-modal,
+	.edit-post-header > div:has(.wpcom-block-editor-nav-sidebar-toggle-sidebar-button__button) {
 		display: none !important;
 	}
 }

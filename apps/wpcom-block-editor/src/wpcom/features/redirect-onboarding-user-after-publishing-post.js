@@ -9,7 +9,10 @@ export function RedirectOnboardingUserAfterPublishingPost() {
 	const { siteIntent: intent } = useSiteIntent();
 
 	useEffect( () => {
-		if ( intent === START_WRITING_FLOW ) {
+		const hasStartWritingFlowQueryArg =
+			getQueryArg( window.location.search, START_WRITING_FLOW ) === 'true';
+
+		if ( intent === START_WRITING_FLOW || hasStartWritingFlowQueryArg ) {
 			dispatch( 'core/edit-post' ).closeGeneralSidebar();
 			document.documentElement.classList.add( 'start-writing-hide' );
 		}
