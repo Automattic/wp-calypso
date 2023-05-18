@@ -36,13 +36,28 @@ const LoaderNoticeContainer = styled.div( {
 
 type SitesTransferNoticeProps = {
 	isTransfering: boolean;
+	hasError?: boolean;
 };
 
-export const SitesTransferNotice = ( { isTransfering = false }: SitesTransferNoticeProps ) => {
+export const SitesTransferNotice = ( {
+	isTransfering = false,
+	hasError = false,
+}: SitesTransferNoticeProps ) => {
 	const { __ } = useI18n();
-	const status = isTransfering ? 'is-info' : 'is-success';
-	const icon = isTransfering ? 'sync' : 'checkmark';
-	const text = isTransfering ? __( 'Activating site! Please wait.' ) : __( 'Site activated!' );
+
+	let status;
+	let icon;
+	let text;
+
+	if ( hasError ) {
+		status = 'is-error';
+		icon = 'notice';
+		text = __( 'An error occurred during transfer.' );
+	} else {
+		status = isTransfering ? 'is-info' : 'is-success';
+		icon = isTransfering ? 'sync' : 'checkmark';
+		text = isTransfering ? __( 'Activating site! Please wait.' ) : __( 'Site activated!' );
+	}
 
 	return (
 		<LoaderNoticeContainer>

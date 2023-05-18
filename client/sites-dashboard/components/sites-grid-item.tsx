@@ -107,7 +107,9 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 	const isWpcomStagingSite = isStagingSite( site );
 	const translatedStatus = useSiteLaunchStatusLabel( site );
 	const isECommerceTrialSite = site.plan?.product_slug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
-	const { isTransferring, isTransferCompleted } = useCheckSiteTransferStatus( { siteId: site.ID } );
+	const { isTransferring, isTransferCompleted, isErrored } = useCheckSiteTransferStatus( {
+		siteId: site.ID,
+	} );
 	const [ wasTransferring, setWasTransferring ] = useState( false );
 	const dismissTransferNoticeRef = useRef< NodeJS.Timeout >();
 
@@ -159,8 +161,8 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 						<SitesGridActionRenew site={ site } hideRenewLink={ isECommerceTrialSite } />
 					) }
 					{ isTransferring && <SitesTransferNotice isTransfering={ true } /> }
-					{ wasTransferring && isTransferCompleted && (
-						<SitesTransferNotice isTransfering={ false } />
+					{ wasTransferring && ( isTransferCompleted || isErrored ) && (
+						<SitesTransferNotice isTransfering={ false } hasError={ isErrored } />
 					) }
 				</>
 			}

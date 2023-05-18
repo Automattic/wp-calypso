@@ -26,6 +26,8 @@ export const useCheckSiteTransferStatus = ( {
 	const isTransferCompleted = transferStatus === transferStates.COMPLETE;
 	const isTransferring =
 		transferStatus !== null && transferStatus !== transferStates.NONE && ! isTransferCompleted;
+	const isErrored =
+		transferStatus === transferStates.ERROR || transferStatus === transferStates.FAILURE;
 
 	const intervalRef = useRef< NodeJS.Timeout >();
 
@@ -49,5 +51,5 @@ export const useCheckSiteTransferStatus = ( {
 		}
 	}, [ siteId, dispatch ] );
 
-	return { transferStatus, isTransferring, isTransferCompleted };
+	return { transferStatus, isTransferring, isTransferCompleted, isErrored };
 };
