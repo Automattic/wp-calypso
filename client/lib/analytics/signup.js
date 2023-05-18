@@ -37,6 +37,8 @@ export function recordSignupComplete(
 		theme,
 		intent,
 		startingPoint,
+		isTransfer,
+		isMapping,
 	},
 	now
 ) {
@@ -59,6 +61,8 @@ export function recordSignupComplete(
 				theme,
 				intent,
 				startingPoint,
+				isTransfer,
+				isMapping,
 			},
 			true
 		);
@@ -80,6 +84,8 @@ export function recordSignupComplete(
 		theme,
 		intent,
 		starting_point: startingPoint,
+		is_transfer: isTransfer,
+		is_mapping: isMapping,
 	} );
 
 	// Google Analytics
