@@ -35,9 +35,8 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 						title: __( "Woo! We're creating your store" ),
 						subtitle: (
 							<>
-								<strong>{ __( '#FunWooFact: ' ) }</strong>
 								{ __(
-									"Did you know that Woo powers almost 4 million stores worldwide? You're in good company."
+									'Hang tight! Your free trial is currently being set up and may take a few minutes.'
 								) }
 							</>
 						),
@@ -56,7 +55,19 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 								) }
 							</>
 						),
-						duration: 15000,
+						duration: 8000,
+					},
+					{
+						title: __( 'Organizing the stock room' ),
+						subtitle: (
+							<>
+								<strong>{ __( '#FunWooFact: ' ) }</strong>
+								{ __(
+									"Did you know that Woo powers almost 4 million stores worldwide? You're in good company."
+								) }
+							</>
+						),
+						duration: 6000,
 					},
 					{
 						title: __( 'Organizing the stock room' ),
@@ -66,11 +77,8 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 								{ __( 'Are you Team Cat or Team Dog? The Woo team is split 50/50!' ) }
 							</>
 						),
-						duration: 15000,
+						duration: 6000,
 					},
-				];
-			default:
-				return [
 					{
 						title: __( 'Applying the finishing touches' ),
 						subtitle: (
@@ -81,7 +89,7 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 								) }
 							</>
 						),
-						duration: 10000,
+						duration: 8000,
 					},
 					{
 						title: __( 'Turning on the lights' ),
@@ -93,10 +101,10 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 								) }
 							</>
 						),
-						duration: 15000,
+						duration: 8000,
 					},
 					{
-						title: __( 'Opening the doors' ),
+						title: __( 'Turning on the lights' ),
 						subtitle: (
 							<>
 								<strong>{ __( '#FunWooFact: ' ) }</strong>
@@ -107,6 +115,17 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 									src={ WooPurpleHeart }
 								/>
 							</>
+						),
+						// Set a very long duration to make sure it shows until the step is completed
+						duration: 150000,
+					},
+				];
+			default:
+				return [
+					{
+						title: __( 'Opening the doors' ),
+						subtitle: (
+							<>{ __( "We're almost there! Your free trial will be ready in just a moment." ) }</>
 						),
 						// Set a very long duration to make sure it shows until the step is completed
 						duration: 150000,
