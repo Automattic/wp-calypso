@@ -6,11 +6,6 @@ import React from 'react';
 export type NavigationControls = {
 	/**
 	 * Call this function if you want to go to the previous step.
-	 *
-	 * @deprecated Avoid this method. Use submit() instead.
-	 * If you need to navigate back and forth between
-	 * stepper screens, consider adding screen(s) to a new
-	 * stepper flow and linking directly between flows/screens.
 	 */
 	goBack?: () => void;
 
@@ -32,6 +27,7 @@ export type NavigationControls = {
 	 * between flows/screens.
 	 */
 	goToStep?: ( step: string ) => void;
+
 	/**
 	 * Submits the answers provided in the flow
 	 */
