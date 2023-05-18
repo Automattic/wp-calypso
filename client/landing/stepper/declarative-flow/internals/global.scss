@@ -166,7 +166,7 @@ button {
 	}
 }
 
-.is-section-stepper:has(div.domains) {
+.is-section-stepper {
 	.search-filters__popover {
 		--color-accent: #117ac9 !important;
 		--color-accent-60: #0e64a5 !important;
