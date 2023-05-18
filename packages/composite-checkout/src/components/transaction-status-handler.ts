@@ -12,7 +12,12 @@ export default function TransactionStatusHandler( {
 }: {
 	redirectToUrl?: ( url: string ) => void;
 } ): null {
-	const defaultRedirect = useCallback( ( url ) => ( window.location = url ), [] );
+	const defaultRedirect = useCallback(
+		// See https://github.com/microsoft/TypeScript/issues/48949#issuecomment-1203967132
+		// for why we have to cast to Window.
+		( url: string ) => ( ( window as Window ).location = url ),
+		[]
+	);
 	useTransactionStatusHandler( redirectToUrl || defaultRedirect );
 	return null;
 }

@@ -384,9 +384,14 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 							className="page-pattern-modal__category-list"
 							orientation="vertical"
 							aria-labelledby={ `page-pattern-modal__list-heading-${ instanceId }` }
-							onNavigate={ ( _index, child ) =>
-								this.handleCategorySelection( child.dataset.slug ?? null )
-							}
+							onNavigate={ (
+								_index: number,
+								child: {
+									dataset: {
+										slug?: string;
+									};
+								}
+							) => this.handleCategorySelection( child.dataset.slug ?? null ) }
 						>
 							{ this.getPatternCategories()?.map( ( { slug, name } ) => (
 								<MenuItem

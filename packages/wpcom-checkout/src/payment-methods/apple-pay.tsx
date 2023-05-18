@@ -4,7 +4,11 @@ import debugFactory from 'debug';
 import { Fragment, useCallback, useEffect } from 'react';
 import { PaymentMethodLogos } from '../payment-method-logos';
 import PaymentRequestButton from '../payment-request-button';
-import { usePaymentRequestOptions, useStripePaymentRequest } from './web-pay-utils';
+import {
+	SubmitCompletePaymentMethodTransaction,
+	usePaymentRequestOptions,
+	useStripePaymentRequest,
+} from './web-pay-utils';
 import type { StripeConfiguration } from '@automattic/calypso-stripe';
 import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
 import type { CartKey } from '@automattic/shopping-cart';
@@ -61,7 +65,7 @@ export function ApplePaySubmitButton( {
 } ) {
 	const togglePaymentMethod = useTogglePaymentMethod();
 	const paymentRequestOptions = usePaymentRequestOptions( stripeConfiguration, cartKey );
-	const onSubmit = useCallback(
+	const onSubmit = useCallback< SubmitCompletePaymentMethodTransaction >(
 		( { name, paymentMethodToken } ) => {
 			debug( 'submitting stripe payment with key', paymentMethodToken );
 			if ( ! onClick ) {

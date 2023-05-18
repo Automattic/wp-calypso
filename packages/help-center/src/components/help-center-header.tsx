@@ -3,7 +3,7 @@ import { useSelect } from '@wordpress/data';
 import { closeSmall, chevronUp, lineSolid, commentContent, page, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import { useCallback } from 'react';
+import { SyntheticEvent, useCallback } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import { HELP_CENTER_STORE } from '../stores';
 import type { Header } from '../types';
@@ -59,7 +59,7 @@ const HelpCenterHeader = ( { isMinimized = false, onMinimize, onMaximize, onDism
 	const formattedUnreadCount = unreadCount > 9 ? '9+' : unreadCount;
 
 	const handleClick = useCallback(
-		( event ) => {
+		( event: SyntheticEvent ) => {
 			if ( isMinimized && event.target === event.currentTarget ) {
 				onMaximize?.();
 			}
@@ -85,8 +85,8 @@ const HelpCenterHeader = ( { isMinimized = false, onMinimize, onMaximize, onDism
 								element={ __( 'Contact Options', __i18n_text_domain__ ) }
 							/>
 							<Route path="/inline-chat" element={ __( 'Live Chat', __i18n_text_domain__ ) } />
-							<Route path="/contact-form" element={ SupportModeTitle } />
-							<Route path="/post" element={ ArticleTitle } />
+							<Route path="/contact-form" element={ <SupportModeTitle /> } />
+							<Route path="/post" element={ <ArticleTitle /> } />
 							<Route path="/success" element={ __( 'Message Submitted', __i18n_text_domain__ ) } />
 						</Routes>
 					) : (
