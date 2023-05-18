@@ -13,7 +13,7 @@ import { vatDetails as vatDetailsPath, billingHistoryReceipt } from 'calypso/me/
 import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
 import titles from 'calypso/me/purchases/titles';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
-import { getVatVendorInfo } from './vat-vendor-details';
+import { useVatVendorInfo } from './vat-vendor-details';
 
 import './style.scss';
 
@@ -35,11 +35,7 @@ function BillingHistory() {
 	const translate = useTranslate();
 	const { vatDetails } = useVatDetails();
 	const { data: geoData } = useGeoLocationQuery();
-	const vendorInfo = getVatVendorInfo(
-		vatDetails.country ?? geoData?.country_short ?? 'GB',
-		'now',
-		translate
-	);
+	const vendorInfo = useVatVendorInfo( vatDetails.country ?? geoData?.country_short ?? 'GB' );
 
 	const genericTaxName =
 		/* translators: This is a generic name for taxes to use when we do not know the user's country. */
@@ -51,12 +47,12 @@ function BillingHistory() {
 	/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
 	const editVatText = translate( 'Edit %s details', {
 		textOnly: true,
-		args: [ vendorInfo?.taxName ?? fallbackTaxName ],
+		args: [ vendorInfo?.tax_name ?? fallbackTaxName ],
 	} );
 	/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
 	const addVatText = translate( 'Add %s details', {
 		textOnly: true,
-		args: [ vendorInfo?.taxName ?? fallbackTaxName ],
+		args: [ vendorInfo?.tax_name ?? fallbackTaxName ],
 	} );
 	const vatText = vatDetails.id ? editVatText : addVatText;
 
