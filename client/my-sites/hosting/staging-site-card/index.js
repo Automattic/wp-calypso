@@ -65,8 +65,7 @@ const SiteInfo = styled.div( {
 } );
 
 const SiteNameContainer = styled.div( {
-	display: 'flex',
-	alignItems: 'center',
+	display: 'block',
 } );
 
 const SiteName = styled.a( {
