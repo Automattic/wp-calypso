@@ -1,16 +1,9 @@
 import { useTranslate } from 'i18n-calypso';
-import useCountryList from 'calypso/my-sites/checkout/composite-checkout/hooks/use-country-list';
 import type { BillingTransaction } from 'calypso/state/billing-transactions/types';
-
-export function useVatVendorInfo( countryCode: string ) {
-	const countryList = useCountryList();
-	const country = countryList.find( ( country ) => country.code === countryCode );
-	return country?.tax_vendor_info;
-}
 
 export function VatVendorDetails( { transaction }: { transaction: BillingTransaction } ) {
 	const translate = useTranslate();
-	const vendorInfo = useVatVendorInfo( transaction.tax_country_code );
+	const vendorInfo = transaction.tax_vendor_info;
 	if ( ! vendorInfo ) {
 		return null;
 	}
