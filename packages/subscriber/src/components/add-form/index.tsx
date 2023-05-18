@@ -274,26 +274,28 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		return (
 			error && (
 				<FormInputValidation icon="tip" isError={ false } isWarning={ true } text="">
-					<Icon icon={ tip } />
-					{ ( () => {
-						switch ( error.code ) {
-							case HANDLED_ERROR.IMPORT_LIMIT:
-								return createInterpolateElement(
-									translate(
-										'We couldn’t import your subscriber list as you’ve hit the 100 email limit for our free plan. The good news? You can upload a list of any size after upgrading to any paid plan. If you’d like to import a smaller list now, you can <uploadBtn>upload a different file</uploadBtn>.'
-									),
-									{ uploadBtn: formFileUploadElement }
-								);
+					<>
+						<Icon icon={ tip } />
+						{ ( () => {
+							switch ( error.code ) {
+								case HANDLED_ERROR.IMPORT_LIMIT:
+									return createInterpolateElement(
+										translate(
+											'We couldn’t import your subscriber list as you’ve hit the 100 email limit for our free plan. The good news? You can upload a list of any size after upgrading to any paid plan. If you’d like to import a smaller list now, you can <uploadBtn>upload a different file</uploadBtn>.'
+										),
+										{ uploadBtn: formFileUploadElement }
+									);
 
-							case HANDLED_ERROR.IMPORT_BLOCKED:
-								return translate(
-									'We ran into a security issue with your subscriber list. It’s nothing to worry about. If you reach out to our support team when you’ve finished setting things up, they’ll help resolve this for you.'
-								);
+								case HANDLED_ERROR.IMPORT_BLOCKED:
+									return translate(
+										'We ran into a security issue with your subscriber list. It’s nothing to worry about. If you reach out to our support team when you’ve finished setting things up, they’ll help resolve this for you.'
+									);
 
-							default:
-								return error.message;
-						}
-					} )() }
+								default:
+									return error.message;
+							}
+						} )() }
+					</>
 				</FormInputValidation>
 			)
 		);
