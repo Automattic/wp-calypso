@@ -3,6 +3,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { __experimentalMainDashboardButton as MainDashboardButton } from '@wordpress/edit-post';
 import { useEffect, createPortal, useState } from '@wordpress/element';
 import { registerPlugin as originalRegisterPlugin, PluginSettings } from '@wordpress/plugins';
+import { getQueryArg } from '@wordpress/url';
 import useSiteIntent from '../../dotcom-fse/lib/site-intent/use-site-intent';
 import WpcomBlockEditorNavSidebar from './components/nav-sidebar';
 import ToggleSidebarButton from './components/toggle-sidebar-button';
@@ -36,7 +37,9 @@ if ( typeof MainDashboardButton !== 'undefined' ) {
 			}, [] );
 
 			const { siteIntent: intent } = useSiteIntent();
-			const isStartWritingFlow = intent === START_WRITING_FLOW;
+			const isStartWritingFlow =
+				intent === START_WRITING_FLOW ||
+				getQueryArg( window.location.search, START_WRITING_FLOW ) === 'true';
 
 			const [ clickGuardRoot ] = useState( () => document.createElement( 'div' ) );
 			useEffect( () => {
