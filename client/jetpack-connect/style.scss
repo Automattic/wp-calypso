@@ -1178,11 +1178,13 @@ body.is-section-jetpack-connect {
 
 	.jetpack-connect__logged-in-form-user-text {
 		font-size: $font-title-small;
+		margin-bottom: 0;
 	}
 
 	.jetpack-connect__tos-link {
 		font-size: $font-body-small;
 		margin-bottom: rem(50px);
+		color: var(--studio-gray-50);
 
 		a {
 			text-decoration: underline;
@@ -1194,6 +1196,10 @@ body.is-section-jetpack-connect {
 		min-width: 170px;
 		margin: auto;
 		display: block;
+	}
+
+	.logged-out-form__links::before {
+		background: #c3c4c7;
 	}
 
 	.logged-out-form__link-item {
