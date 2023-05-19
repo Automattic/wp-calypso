@@ -100,7 +100,6 @@
 		"me/vat-details": true,
 		"my-sites/add-ons": true,
 		"network-connection": true,
-		"newsletter/paid-subscribers": true,
 		"newsletter/stats": false,
 		"onboarding/import": true,
 		"onboarding/import-from-blogger": true,
