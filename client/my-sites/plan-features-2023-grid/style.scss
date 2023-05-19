@@ -311,9 +311,22 @@
 		background-color: #fff;
 		margin: 0 auto;
 		border-spacing: 0;
-		width: unset;
-		@mixin plans-2023-break-small {
-			width: 100%;
+		width: 100%;
+
+		&.has-1-cols {
+			width: 344px;
+		}
+
+		&.has-2-cols {
+			width: 688px;
+		}
+
+		&.has-3-cols {
+			max-width: 1032px;
+			// // media query between 780px and 1040px
+			// @media (max-width: 1040px) and (min-width: 780px) {
+			// 	width: 740px;
+			// }
 		}
 	}
 
