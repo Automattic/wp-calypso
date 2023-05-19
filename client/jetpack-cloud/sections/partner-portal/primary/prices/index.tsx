@@ -1,3 +1,4 @@
+import { Card } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -9,6 +10,7 @@ import LicenseBundleCardDescription from 'calypso/jetpack-cloud/sections/partner
 import SelectPartnerKeyDropdown from 'calypso/jetpack-cloud/sections/partner-portal/select-partner-key-dropdown';
 import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
+import { getCurrentPartner } from 'calypso/state/partner-portal/partner/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 
 import './style.scss';
@@ -18,6 +20,7 @@ export default function Prices() {
 	const { data: agencyProducts } = useProductsQuery();
 	const userProducts = useSelector( ( state ) => getProductsList( state ) );
 	const currencyFormatOptions = { stripZeros: true };
+	const partner = useSelector( getCurrentPartner );
 
 	const productRows = agencyProducts?.map( ( product ) => {
 		const userYearlyProduct = Object.values( userProducts ).find(
@@ -124,6 +127,14 @@ export default function Prices() {
 					) }
 				</p>
 			</div>
+
+			{ partner.warn_bad_agency_pricing && (
+				<Card highlight="error">
+					<CardHeading size={ 24 }>
+						{ translate( 'WARNING: This pricing may be incorrect for Automatticians.' ) }
+					</CardHeading>
+				</Card>
+			) }
 
 			<table className="prices__table">
 				<thead>
