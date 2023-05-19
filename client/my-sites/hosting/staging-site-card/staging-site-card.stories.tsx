@@ -7,6 +7,12 @@ import { documentHeadStoreMock, ReduxDecorator } from 'calypso/__mocks__/storybo
 import CardHeading from 'calypso/components/card-heading';
 import { NewStagingSiteCardContent } from './card-content/new-staging-site-card-content';
 
+/**
+ * Ideally, this component should depend only on local `./style.scss`. However, currently, some card styles are defined
+ * in hosting page CSS file, so we need to include it here.
+ */
+import '../style.scss';
+
 export default {
 	title: 'client/components/StagingSite',
 	component: NewStagingSiteCardContent,
@@ -33,7 +39,7 @@ export default {
 		},
 		( Story ) => {
 			return (
-				<div style={ { padding: '20px', backgroundColor: '#f6f7f7' } }>
+				<div className="hosting" style={ { padding: '20px', backgroundColor: '#f6f7f7' } }>
 					<Story></Story>
 				</div>
 			);
