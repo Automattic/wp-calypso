@@ -12050,7 +12050,7 @@ __metadata:
     react-router-dom: ^6.10.0
     react-test-renderer: ^17.0.2
     react-transition-group: ^4.3.0
-    reakit: ^1.2.3
+    reakit: ^1.3.11
     reakit-utils: ^0.15.1
     redux: ^4.2.1
     redux-dynamic-middlewares: ^2.0.0
@@ -27314,7 +27314,23 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"reakit@npm:^1.2.3, reakit@npm:^1.3.8":
+"reakit@npm:^1.3.11":
+  version: 1.3.11
+  resolution: "reakit@npm:1.3.11"
+  dependencies:
+    "@popperjs/core": ^2.5.4
+    body-scroll-lock: ^3.1.5
+    reakit-system: ^0.15.2
+    reakit-utils: ^0.15.2
+    reakit-warning: ^0.6.2
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0
+    react-dom: ^16.8.0 || ^17.0.0
+  checksum: ce5972b1242bd0704840c77faa6f687cc3bd0e66ac5f6fe84328408d2e624a4532c4bb1d82b6b6dcbc876dc0700c472b420acebf80603d59115a810ae8916e12
+  languageName: node
+  linkType: hard
+
+"reakit@npm:^1.3.8":
   version: 1.3.9
   resolution: "reakit@npm:1.3.9"
   dependencies:
