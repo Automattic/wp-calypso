@@ -1,10 +1,8 @@
-import { Card, Gridicon } from '@automattic/components';
 import { action } from '@storybook/addon-actions';
 import { Story, Meta } from '@storybook/react';
-import { useTranslate } from 'i18n-calypso';
 import { ComponentProps } from 'react';
 import { documentHeadStoreMock, ReduxDecorator } from 'calypso/__mocks__/storybook/redux';
-import CardHeading from 'calypso/components/card-heading';
+import { CardContentWrapper } from 'calypso/my-sites/hosting/staging-site-card/card-content/card-content-wrapper';
 import { NewStagingSiteCardContent } from './card-content/new-staging-site-card-content';
 
 /**
@@ -25,16 +23,10 @@ export default {
 			);
 		},
 		( Story ) => {
-			const translate = useTranslate();
 			return (
-				<Card className="staging-site-card">
-					{
-						// eslint-disable-next-line wpcalypso/jsx-gridicon-size
-						<Gridicon icon="science" size={ 32 } />
-					}
-					<CardHeading id="staging-site">{ translate( 'Staging site' ) }</CardHeading>
+				<CardContentWrapper>
 					<Story></Story>
-				</Card>
+				</CardContentWrapper>
 			);
 		},
 		( Story ) => {

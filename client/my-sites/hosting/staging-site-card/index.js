@@ -1,4 +1,4 @@
-import { Button, Card, Gridicon } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useQueryClient } from '@tanstack/react-query';
 import { sprintf } from '@wordpress/i18n';
@@ -7,12 +7,12 @@ import { localize } from 'i18n-calypso';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
-import CardHeading from 'calypso/components/card-heading';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import Notice from 'calypso/components/notice';
 import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpts-query';
 import { urlToSlug } from 'calypso/lib/url';
+import { CardContentWrapper } from 'calypso/my-sites/hosting/staging-site-card/card-content/card-content-wrapper';
 import { NewStagingSiteCardContent } from 'calypso/my-sites/hosting/staging-site-card/card-content/new-staging-site-card-content';
 import { LoadingPlaceholder } from 'calypso/my-sites/hosting/staging-site-card/loading-placeholder';
 import { useAddStagingSiteMutation } from 'calypso/my-sites/hosting/staging-site-card/use-add-staging-site';
@@ -374,16 +374,7 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 		stagingSiteCardContent = <LoadingPlaceholder />;
 	}
 
-	return (
-		<Card className="staging-site-card">
-			{
-				// eslint-disable-next-line wpcalypso/jsx-gridicon-size
-				<Gridicon icon="science" size={ 32 } />
-			}
-			<CardHeading id="staging-site">{ translate( 'Staging site' ) }</CardHeading>
-			{ stagingSiteCardContent }
-		</Card>
-	);
+	return <CardContentWrapper>{ stagingSiteCardContent }</CardContentWrapper>;
 };
 
 export default connect( ( state ) => {
