@@ -214,8 +214,10 @@ $mobile-card-max-width: 440px;
 
 	.plan-features-2023-grid__mobile-view {
 		flex-direction: column;
-		align-items: center;
+		align-items: stretch;
 		gap: 20px;
+		margin: 0 auto;
+		max-width: $mobile-card-max-width;
 
 		.plan-features-2023-grid__mobile-plan-card {
 			background-color: var(--studio-white);
@@ -223,7 +225,6 @@ $mobile-card-max-width: 440px;
 			/* stylelint-disable-next-line */
 			border-radius: 5px;
 			padding: 38px 0 20px 0;
-			max-width: $mobile-card-max-width;
 
 			@include plans-section-custom-mobile-breakpoint {
 				margin-left: 0;
