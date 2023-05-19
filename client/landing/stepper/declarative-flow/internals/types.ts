@@ -6,6 +6,9 @@ import React from 'react';
 export type NavigationControls = {
 	/**
 	 * Call this function if you want to go to the previous step.
+	 *
+	 * Please don't change the type of this function to add parameters. Passing data should strictly happen through the `submit` function.
+	 * If you disagree with this, please ping Vertex Team.
 	 */
 	goBack?: () => void;
 
