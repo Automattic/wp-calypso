@@ -6,8 +6,7 @@
 	.launchpad__save-modal, // "Great progress" modal popup after publishing a post. Used in other flows.
 	.edit-post-post-schedule, // Schedule post in sidebar.
 	.block-editor-publish-date-time-picker, // Schedule post date/time picker panel in publish confirmation panel.
-	#wpadminbar // Masterbar on mobile.
-	{
+	#wpadminbar { // Masterbar on mobile.
 		display: none !important;
 	}
 
