@@ -31,6 +31,8 @@ export class LoginPage {
 				status: 200,
 			} );
 		} );
+		// Reload the page to clear the state.
+		await this.page.reload();
 		return await this.page.goto( getCalypsoURL( targetUrl ) );
 	}
 
