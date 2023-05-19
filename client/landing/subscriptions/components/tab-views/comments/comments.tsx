@@ -2,12 +2,12 @@ import { SubscriptionManager } from '@automattic/data-stores';
 import { SiteSubscriptionsFilterBy } from '@automattic/data-stores/src/reader/queries/use-post-subscriptions-query';
 import SearchInput from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
+import { useMemo, useState } from 'react';
+import SelectDropdown from 'calypso/components/select-dropdown';
 import { CommentList } from 'calypso/landing/subscriptions/components/comment-list';
 import { SearchIcon } from 'calypso/landing/subscriptions/components/icons';
 import { Notice, NoticeType } from 'calypso/landing/subscriptions/components/notice';
 import { SortControls, Option } from 'calypso/landing/subscriptions/components/sort-controls';
-import { useMemo, useState } from 'react';
-import SelectDropdown from 'calypso/components/select-dropdown';
 import { useSearch } from 'calypso/landing/subscriptions/hooks';
 import TabView from '../tab-view';
 
@@ -28,7 +28,7 @@ const useFilterOptions = () => {
 	return useMemo(
 		() => [
 			{ value: SiteSubscriptionsFilterBy.All, label: translate( 'All' ) },
-			{ value: SiteSubscriptionsFilterBy.Paid, label: translate( 'Paid' ) },
+			// { value: SiteSubscriptionsFilterBy.Paid, label: translate( 'Paid' ) },		// todo: add back when we have paid subscriptions support
 			{ value: SiteSubscriptionsFilterBy.P2, label: translate( 'P2' ) },
 		],
 		[ translate ]
