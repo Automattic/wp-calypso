@@ -51,8 +51,8 @@ const SuggestedFollowItem = ( { post, site, siteId } ) => {
 						aria-hidden="true"
 					>
 						<span className="reader-suggested-follow-item_siteicon">
-							{ site.site_icon && <Favicon site={ site } size={ 32 } /> }
-							{ ! site.site_icon && <Gravatar user={ post.author } /> }
+							{ site.site_icon && <Favicon site={ site } size={ 48 } /> }
+							{ ! site.site_icon && <Gravatar user={ post.author } size={ 48 } /> }
 						</span>
 						<span className="reader-suggested-follow-item_sitename">
 							<span className="reader-suggested-follow-item_nameurl">
