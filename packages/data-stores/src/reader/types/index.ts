@@ -96,7 +96,6 @@ export type PostSubscription = {
 	post_title: string;
 	post_excerpt: string;
 	post_url: string;
-	is_wpforteams_site: boolean;
 };
 
 export type PendingSiteSubscription = {
