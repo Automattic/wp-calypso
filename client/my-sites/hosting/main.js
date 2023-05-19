@@ -113,7 +113,11 @@ class Hosting extends Component {
 		};
 
 		const getAtomicActivationNotice = () => {
-			const { COMPLETE, FAILURE } = transferStates;
+			const { COMPLETE, FAILURE, RELOCATING_REVERT } = transferStates;
+
+			if ( transferState === RELOCATING_REVERT ) {
+				return null;
+			}
 
 			// Transfer in progress
 			if (
