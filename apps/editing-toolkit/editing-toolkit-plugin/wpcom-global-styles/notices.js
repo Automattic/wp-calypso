@@ -118,6 +118,7 @@ function GlobalStylesEditNotice() {
 				onClick: upgradePlan,
 				variant: 'primary',
 				noDefaultClasses: true,
+				className: 'wpcom-global-styles-is-external',
 			},
 		];
 
@@ -127,6 +128,7 @@ function GlobalStylesEditNotice() {
 				onClick: previewPost,
 				variant: 'secondary',
 				noDefaultClasses: true,
+				className: 'wpcom-global-styles-is-external',
 			} );
 		}
 
