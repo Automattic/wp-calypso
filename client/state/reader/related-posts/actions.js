@@ -42,8 +42,7 @@ export function requestRelatedPosts( siteId, postId, scope = SCOPE_ALL, size = 2
 		} else if ( scope === SCOPE_SUGGESTED_FOLLOWS ) {
 			query.size_local = 0;
 			query.size_global = size;
-			query.include_site_icon = true;
-			query.include_site_description = true;
+			query.include_site_details = true;
 		}
 
 		return wpcom.req.get( `/read/site/${ siteId }/post/${ postId }/related`, query ).then(
