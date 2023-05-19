@@ -21,9 +21,6 @@ const SitePickerStep: Step = function SitePickerStep( { navigation } ) {
 		( useQuery().get( 'status' ) as GroupableSiteLaunchStatuses ) ||
 		DEFAULT_SITE_LAUNCH_STATUS_GROUP_VALUE;
 
-	const goBack = () => {
-		// Go back logic goes here
-	};
 	const onQueryParamChange = ( params: Partial< SitesDashboardQueryParams > ) => {
 		navigation.submit?.( { queryParams: params } );
 	};
@@ -34,7 +31,7 @@ const SitePickerStep: Step = function SitePickerStep( { navigation } ) {
 			<StepContainer
 				stepName="site-picker"
 				hideSkip={ true }
-				goBack={ goBack }
+				hideBack={ true }
 				stepContent={
 					<SitePicker
 						page={ page }
