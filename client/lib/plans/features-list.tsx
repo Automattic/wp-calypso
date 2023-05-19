@@ -1650,7 +1650,7 @@ export const FEATURES_LIST: FeatureList = {
 
 	[ FEATURE_UNLIMITED_EMAILS ]: {
 		getSlug: () => FEATURE_UNLIMITED_EMAILS,
-		getTitle: () => i18n.translate( 'Send unlimited emails' ),
+		getTitle: () => i18n.translate( 'Unlimited newsletter distribution' ),
 	},
 	[ FEATURE_UNLIMITED_SUBSCRIBERS ]: {
 		getSlug: () => FEATURE_UNLIMITED_SUBSCRIBERS,
@@ -1710,15 +1710,18 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_10 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_10,
-		getTitle: () => i18n.translate( '10% transaction fee for payments + Stripe fees' ),
+		getTitle: () => i18n.translate( 'Transaction fee: 10%' ),
+		getDescription: () => i18n.translate( '10% transaction fee for payments + Stripe fees.' ),
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_8 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_8,
-		getTitle: () => i18n.translate( '8% transaction fee for payments + Stripe fees' ),
+		getTitle: () => i18n.translate( 'Reduced fees: 8%' ),
+		getDescription: () => i18n.translate( '8% transaction fee for payments + Stripe fees.' ),
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_4 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_4,
-		getTitle: () => i18n.translate( '4% transaction fee for payments + Stripe fees' ),
+		getTitle: () => i18n.translate( 'Lowest fees: 4%' ),
+		getDescription: () => i18n.translate( '4% transaction fee for payments + Stripe fees.' ),
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_2 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_2,
@@ -2098,7 +2101,7 @@ export const FEATURES_LIST: FeatureList = {
 	// FOLLOWING ARE JETPACK FEATURES BUNDLED IN WPCOM
 	[ FEATURE_STATS_JP ]: {
 		getSlug: () => FEATURE_STATS_JP,
-		getTitle: () => i18n.translate( 'Visitor stats' ),
+		getTitle: () => i18n.translate( 'Insightful audience analytics' ),
 		getDescription: () =>
 			i18n.translate( 'At-a-glance and deep-dive data to measure your site’s success.' ),
 	},
@@ -2110,7 +2113,7 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_LTD_SOCIAL_MEDIA_JP ]: {
 		getSlug: () => FEATURE_LTD_SOCIAL_MEDIA_JP,
-		getTitle: () => i18n.translate( 'Limited automatic shares in social media' ),
+		getTitle: () => i18n.translate( 'Up to 30 social media auto-sharing' ),
 		getDescription: () =>
 			i18n.translate(
 				'Get 30 social shares per month to promote your posts on Facebook, Tumblr, and more.'
@@ -2152,7 +2155,7 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_PREMIUM_CONTENT_JP ]: {
 		getSlug: () => FEATURE_PREMIUM_CONTENT_JP,
-		getTitle: () => i18n.translate( 'Premium content gating' ),
+		getTitle: () => i18n.translate( 'Paid content gating' ),
 		getDescription: () => i18n.translate( 'Sell access to premium content, right from your site.' ),
 	},
 	[ FEATURE_VIDEOPRESS_JP ]: {
@@ -2163,7 +2166,7 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_UNLTD_SOCIAL_MEDIA_JP ]: {
 		getSlug: () => FEATURE_UNLTD_SOCIAL_MEDIA_JP,
-		getTitle: () => i18n.translate( 'Unlimited automatic shares in social media' ),
+		getTitle: () => i18n.translate( 'Unlimited social media auto-sharing' ),
 		getDescription: () =>
 			i18n.translate( 'Share your latest posts to your social channels, without limits.' ),
 	},
