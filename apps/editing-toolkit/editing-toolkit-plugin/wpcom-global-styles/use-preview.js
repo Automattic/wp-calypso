@@ -159,7 +159,7 @@ export function usePreview() {
 		}
 
 		if ( previewWindow.current && previewLink && ! previewWindow.current.closed ) {
-			previewWindow.current.location = addQueryArgs( previewLink, { 'hide-global-styles': '' } );
+			previewWindow.current.location = addQueryArgs( previewLink, { 'hide-global-styles': true } );
 		}
 	}, [ isPostEditor, previewLink ] );
 
