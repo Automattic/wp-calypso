@@ -1,11 +1,13 @@
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import {
 	topHosts,
 	genericInfo,
 	getHostInfoFromId,
 } from 'calypso/components/advanced-credentials/host-info';
 import FormSelect from 'calypso/components/forms/form-select';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 interface Props {
 	onHostChange: ( host: string ) => void;
@@ -14,11 +16,17 @@ interface Props {
 
 export const CredentialsHelper = ( props: Props ) => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const [ selectedProvider, setSelectedProvider ] = useState( 'generic' );
 
 	const handleProviderChange = ( event: React.ChangeEvent< HTMLSelectElement > ) => {
 		setSelectedProvider( event.target.value );
+		dispatch(
+			recordTracksEvent( 'calypso_site_migration_helper_select_host', {
+				host: event.target.value,
+			} )
+		);
 	};
 
 	useEffect( () => {
@@ -35,7 +43,20 @@ export const CredentialsHelper = ( props: Props ) => {
 						{
 							args: { provider: selectedProvider },
 							components: {
-								a: <a href={ genericInfo.supportLink } target="_blank" rel="noopener noreferrer" />,
+								a: (
+									<a
+										href={ genericInfo.supportLink }
+										target="_blank"
+										rel="noopener noreferrer"
+										onClick={ () =>
+											dispatch(
+												recordTracksEvent( 'calypso_site_migration_helper_support_link_click', {
+													host: 'generic',
+												} )
+											)
+										}
+									/>
+								),
 							},
 						}
 					) }
@@ -65,7 +86,21 @@ export const CredentialsHelper = ( props: Props ) => {
 						{
 							args: { hostingProvider: hostDetails.name },
 							components: {
-								a: <a href={ link } target="_blank" rel="noopener noreferrer" />,
+								a: (
+									<a
+										href={ link }
+										target="_blank"
+										rel="noopener noreferrer"
+										onClick={ () =>
+											dispatch(
+												recordTracksEvent( 'calypso_site_migration_helper_support_link_click', {
+													host: hostDetails.id,
+													protocol,
+												} )
+											)
+										}
+									/>
+								),
 							},
 						}
 					) }

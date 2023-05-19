@@ -15,12 +15,13 @@ import { getCredentials } from 'calypso/state/jetpack/credentials/actions';
 import getJetpackCredentials from 'calypso/state/selectors/get-jetpack-credentials';
 import isRequestingSiteCredentials from 'calypso/state/selectors/is-requesting-site-credentials';
 import { CredentialsHelper } from './credentials-helper';
+import { StartImportTrackingProps } from './types';
 import './style.scss';
 
 interface PreMigrationProps {
 	sourceSite: SiteDetails;
 	targetSite: SiteDetails;
-	startImport: () => void;
+	startImport: ( props?: StartImportTrackingProps ) => void;
 	isTargetSitePlanCompatible: boolean;
 	onContentOnlyClick: () => void;
 }
@@ -41,7 +42,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 
 	const toggleCredentialsForm = () => {
 		setShowCredentials( ! showCredentials );
-		recordTracksEvent( 'calypso_site_importer_migration_credentials_form_toggle' );
+		dispatch( recordTracksEvent( 'calypso_site_migration_credentials_form_toggle' ) );
 	};
 
 	const credentials = useSelector( ( state ) =>
@@ -134,7 +135,14 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 				{ renderCredentialsFormSection() }
 				{ ! showCredentials && (
 					<div className="import__footer-button-container pre-migration__proceed">
-						<NextButton type="button" onClick={ startImport }>
+						<NextButton
+							type="button"
+							onClick={ () =>
+								startImport( {
+									type: 'without-credentials',
+								} )
+							}
+						>
 							{ translate( 'Start migration' ) }
 						</NextButton>
 					</div>

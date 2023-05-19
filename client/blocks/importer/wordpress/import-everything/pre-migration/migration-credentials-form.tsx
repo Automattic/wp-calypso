@@ -15,11 +15,12 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { updateCredentials } from 'calypso/state/jetpack/credentials/actions';
 import getJetpackCredentialsUpdateError from 'calypso/state/selectors/get-jetpack-credentials-update-error';
 import getJetpackCredentialsUpdateStatus from 'calypso/state/selectors/get-jetpack-credentials-update-status';
+import { StartImportTrackingProps } from './types';
 
 interface Props {
 	sourceSiteId: number;
 	targetSiteId: number;
-	startImport: () => void;
+	startImport: ( props?: StartImportTrackingProps ) => void;
 	selectedHost: string;
 	onChangeProtocol: ( protocol: 'ftp' | 'ssh' ) => void;
 }
@@ -74,7 +75,9 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 
 	useEffect( () => {
 		if ( formSubmissionStatus === 'success' ) {
-			startImport();
+			startImport( {
+				type: 'with-credentials',
+			} );
 		}
 	}, [ formSubmissionStatus ] );
 
@@ -117,6 +120,12 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 	const updateError = useSelector( ( state ) =>
 		getJetpackCredentialsUpdateError( state, sourceSiteId )
 	);
+
+	useEffect( () => {
+		if ( updateError ) {
+			dispatch( recordTracksEvent( 'calypso_site_migration_credentials_update_error' ) );
+		}
+	}, [ updateError ] );
 
 	return (
 		<>
@@ -162,7 +171,11 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 					<Button
 						borderless={ true }
 						className="action-buttons__content-only"
-						onClick={ startImport }
+						onClick={ () =>
+							startImport( {
+								type: 'skip-credentials',
+							} )
+						}
 					>
 						{ translate( 'Skip credentials (slower setup)' ) }
 					</Button>
