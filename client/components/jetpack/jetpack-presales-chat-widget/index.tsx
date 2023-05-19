@@ -38,7 +38,7 @@ export const ZendeskJetpackChat: React.VFC< { keyType: KeyType } > = ( { keyType
 	//get user's authentication key
 	const { data: dataAuth, isLoading: isLoadingAuth } = useMessagingAuth( true );
 
-	const zendeskdJwt = dataAuth?.user?.jwt;
+	const zendeskJwt = dataAuth?.user?.jwt;
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const shouldShowZendeskPresalesChat = useMemo( () => {
 		const isEnglishLocale = ( config( 'english_locales' ) as string[] ).includes(
@@ -68,17 +68,26 @@ export const ZendeskJetpackChat: React.VFC< { keyType: KeyType } > = ( { keyType
 
 		//pass authentication key to Zendesk
 		Promise.resolve( result ).then( () => {
-			if ( typeof window !== 'undefined' ) {
-				window.zE = window.zE || [];
-
-				if ( zendeskdJwt && typeof window.zE === 'function' ) {
-					window.zE( 'messenger', 'loginUser', function ( callback: ( jwt: string ) => void ) {
-						callback( zendeskdJwt );
-					} );
-				}
+			// We need the user's authentication token to log them into chat
+			if ( ! zendeskJwt ) {
+				return;
 			}
+
+			// Chat can't exist if we're not in a browser window
+			if ( typeof window === 'undefined' ) {
+				return;
+			}
+
+			// The `zE` function exposes the required action to authenticate the user
+			if ( typeof window.zE !== 'function' ) {
+				return;
+			}
+
+			window.zE( 'messenger', 'loginUser', function ( callback: ( jwt: string ) => void ) {
+				callback( zendeskJwt );
+			} );
 		} );
-	}, [ zendeskChatKey, zendeskdJwt, isLoadingAuth ] );
+	}, [ zendeskChatKey, zendeskJwt, isLoadingAuth ] );
 
 	return shouldShowZendeskPresalesChat ? <ZendeskChat chatKey={ zendeskChatKey } /> : null;
 };
