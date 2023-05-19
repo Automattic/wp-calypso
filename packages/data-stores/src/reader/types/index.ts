@@ -140,6 +140,7 @@ export type SiteSubscriptionDetails = {
 	URL: string;
 	site_icon: string;
 	date_subscribed: Date;
+	subscriber_count: number;
 	delivery_methods: SiteSubscriptionDeliveryMethods;
 };
 
@@ -150,5 +151,6 @@ export type SiteSubscriptionDetailsAPIResponse = {
 	URL: string;
 	site_icon: string;
 	date_subscribed: Date;
+	subscriber_count: number;
 	delivery_methods: SiteSubscriptionDeliveryMethods;
 };
