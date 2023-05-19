@@ -12,7 +12,7 @@ import {
 
 import 'calypso/state/themes/init';
 
-function initiateTransfer( siteId, plugin, theme, onProgress ) {
+function initiateTransfer( siteId, plugin, theme, context, onProgress ) {
 	return new Promise( ( resolve, rejectPromise ) => {
 		const resolver = ( error, data ) => {
 			error ? rejectPromise( error ) : resolve( data );
@@ -30,6 +30,13 @@ function initiateTransfer( siteId, plugin, theme, onProgress ) {
 		}
 		if ( theme ) {
 			post.formData = [ [ 'theme', theme ] ];
+		}
+
+		if ( context ) {
+			post.body = {
+				...post.body,
+				context,
+			};
 		}
 
 		const req = wpcom.req.post( post, resolver );
@@ -60,7 +67,7 @@ export function initiateThemeTransfer( siteId, file, plugin ) {
 				themeInitiateRequest
 			)
 		);
-		return initiateTransfer( siteId, plugin, file, ( event ) => {
+		return initiateTransfer( siteId, plugin, file, context, ( event ) => {
 			dispatch( {
 				type: THEME_TRANSFER_INITIATE_PROGRESS,
 				siteId,
