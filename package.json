@@ -197,7 +197,7 @@
 		"react-intersection-observer": "^9.4.3",
 		"react-modal": "^3.16.1",
 		"reakit-utils": "^0.15.1",
-		"redux": "^4.1.2",
+		"redux": "^4.2.1",
 		"request": "^2.88.2",
 		"wpcom": "workspace:^"
 	},

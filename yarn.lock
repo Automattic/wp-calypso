@@ -510,7 +510,7 @@ __metadata:
     nock: ^12.0.3
     node-fetch: ^2.6.6
     qs: ^6.9.1
-    redux: ^4.1.2
+    redux: ^4.2.1
     tslib: ^2.3.0
     typescript: ^4.7.4
     use-debounce: ^3.1.0
@@ -539,7 +539,7 @@ __metadata:
     postcss: ^8.4.5
     react: ^17.0.2
     react-dom: ^17.0.2
-    redux: ^4.1.2
+    redux: ^4.2.1
     swiper: ^4.5.1
     tslib: ^2.3.0
     typescript: ^4.7.4
@@ -582,7 +582,7 @@ __metadata:
     react-dom: ^17.0.2
     react-intersection-observer: ^9.4.3
     reakit-utils: ^0.15.1
-    redux: ^4.1.2
+    redux: ^4.2.1
     tslib: ^2.3.0
     typescript: ^4.7.4
     utility-types: ^3.10.0
@@ -786,8 +786,8 @@ __metadata:
     react-dom: ^17.0.2
     react-query: ^3.32.1
     react-redux: ^8.0.5
-    redux: ^4.1.2
-    redux-thunk: ^2.3.0
+    redux: ^4.2.1
+    redux-thunk: ^2.4.2
     webpack: ^5.68.0
     webpack-bundle-analyzer: ^4.5.0
     webpack-dev-server: ^4.7.3
@@ -893,8 +893,8 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     react-redux: ^8.0.5
-    redux: ^4.1.2
-    redux-thunk: ^2.3.0
+    redux: ^4.2.1
+    redux-thunk: ^2.4.2
     webpack: ^5.68.0
     webpack-bundle-analyzer: ^4.5.0
     webpack-dev-server: ^4.7.3
@@ -974,7 +974,7 @@ __metadata:
     postcss: ^8.4.5
     react: ^17.0.2
     react-dom: ^17.0.2
-    redux: ^4.1.2
+    redux: ^4.2.1
     tslib: ^2.3.0
     typescript: ^4.7.4
     webpack: ^5.68.0
@@ -1076,8 +1076,8 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     react-redux: ^8.0.5
-    redux: ^4.1.2
-    redux-thunk: ^2.3.0
+    redux: ^4.2.1
+    redux-thunk: ^2.4.2
     webpack: ^5.68.0
     webpack-bundle-analyzer: ^4.5.0
     webpack-dev-server: ^4.7.3
@@ -1117,7 +1117,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     reakit-utils: ^0.15.1
-    redux: ^4.1.2
+    redux: ^4.2.1
     webpack: ^5.68.0
   languageName: unknown
   linkType: soft
@@ -1168,8 +1168,8 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     react-redux: ^8.0.5
-    redux: ^4.1.2
-    redux-thunk: ^2.3.0
+    redux: ^4.2.1
+    redux-thunk: ^2.4.2
     size-limit: ^8.2.4
     webpack: ^5.68.0
     webpack-bundle-analyzer: ^4.5.0
@@ -1198,7 +1198,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     react-router-dom: ^6.10.0
-    redux: ^4.1.2
+    redux: ^4.2.1
     sass-loader: ^10.1.1
     style-loader: ^1.2.1
     tslib: ^2.5.0
@@ -1255,7 +1255,7 @@ __metadata:
     postcss: ^8.4.5
     react: ^17.0.2
     react-dom: ^17.0.2
-    redux: ^4.1.2
+    redux: ^4.2.1
     swiper: ^4.5.1
     tslib: ^2.3.0
     typescript: ^4.7.4
@@ -1388,7 +1388,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     reakit-utils: ^0.15.1
-    redux: ^4.1.2
+    redux: ^4.2.1
     tslib: ^2.3.0
     typescript: ^4.7.4
     webpack: ^5.68.0
@@ -1490,8 +1490,8 @@ __metadata:
     "@wordpress/is-shallow-equal": ^4.22.0
     "@wordpress/warning": ^2.22.0
     lodash: ^4.17.21
-    redux: ^4.1.2
-    redux-thunk: ^2.3.0
+    redux: ^4.2.1
+    redux-thunk: ^2.4.2
     tslib: ^2.3.0
     typescript: ^4.7.4
   languageName: unknown
@@ -1742,7 +1742,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     reakit-utils: ^0.15.1
-    redux: ^4.1.2
+    redux: ^4.2.1
     tinymce: ^5.0.0
     webpack: ^5.68.0
   languageName: unknown
@@ -1865,8 +1865,8 @@ __metadata:
     react-popper: ^2.3.0
     react-redux: ^8.0.5
     reakit-utils: ^0.15.1
-    redux: ^4.1.2
-    redux-thunk: ^2.3.0
+    redux: ^4.2.1
+    redux-thunk: ^2.4.2
     swiper: ^8.4.5
     utility-types: ^3.10.0
     wait-for-expect: ^3.0.2
@@ -12052,10 +12052,10 @@ __metadata:
     react-transition-group: ^4.3.0
     reakit: ^1.2.3
     reakit-utils: ^0.15.1
-    redux: ^4.1.2
+    redux: ^4.2.1
     redux-dynamic-middlewares: ^2.0.0
     redux-mock-store: ^1.5.4
-    redux-thunk: ^2.3.0
+    redux-thunk: ^2.4.2
     regenerator-runtime: ^0.13.9
     social-logos: ^2.5.2
     socket.io-client: ^2.3.0
@@ -27471,14 +27471,16 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"redux-thunk@npm:^2.3.0":
-  version: 2.3.0
-  resolution: "redux-thunk@npm:2.3.0"
-  checksum: fbf342e56809240af5f41257eee0dbba1b8165b611a1dd96d6d2831f84046e30f037a7e90cbff5636cd6e053d53237c4ed3287403f2c6d28fa1ad26543d7a016
+"redux-thunk@npm:^2.4.2":
+  version: 2.4.2
+  resolution: "redux-thunk@npm:2.4.2"
+  peerDependencies:
+    redux: ^4
+  checksum: e202d6ef7dfa7df08ed24cb221aa89d6c84dbaa7d65fe90dbd8e826d0c10d801f48388f9a7598a4fd970ecbc93d335014570a61ca7bc8bf569eab5de77b31a3c
   languageName: node
   linkType: hard
 
-"redux@npm:^4.0.4, redux@npm:^4.0.5, redux@npm:^4.1.2, redux@npm:^4.2.0":
+"redux@npm:^4.0.4, redux@npm:^4.0.5, redux@npm:^4.1.2, redux@npm:^4.2.0, redux@npm:^4.2.1":
   version: 4.2.1
   resolution: "redux@npm:4.2.1"
   dependencies:
@@ -33459,7 +33461,7 @@ fsevents@^1.2.7:
     readline-sync: ^1.4.10
     reakit-utils: ^0.15.1
     recursive-copy: ^2.0.14
-    redux: ^4.1.2
+    redux: ^4.2.1
     replace: ^1.1.5
     request: ^2.88.2
     sass: ^1.37.5

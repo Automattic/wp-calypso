@@ -115,8 +115,8 @@
 		"react-popper": "^2.3.0",
 		"react-redux": "^8.0.5",
 		"reakit-utils": "^0.15.1",
-		"redux": "^4.1.2",
-		"redux-thunk": "^2.3.0",
+		"redux": "^4.2.1",
+		"redux-thunk": "^2.4.2",
 		"swiper": "^8.4.5",
 		"utility-types": "^3.10.0"
 	},
