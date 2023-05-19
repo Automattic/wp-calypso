@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { Button, FormInputValidation } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { CheckboxControl } from '@wordpress/components';
 import classNames from 'classnames';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
@@ -40,6 +41,7 @@ import TextControl from 'calypso/components/text-control';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import formState from 'calypso/lib/form-state';
+import { preventWidows } from 'calypso/lib/formatting';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import {
 	isCrowdsignalOAuth2Client,
@@ -95,6 +97,7 @@ class SignupForm extends Component {
 		handleLogin: PropTypes.func,
 		handleSocialResponse: PropTypes.func,
 		isPasswordless: PropTypes.bool,
+		showIsDevAccountCheckbox: PropTypes.bool,
 		isSocialSignupEnabled: PropTypes.bool,
 		locale: PropTypes.string,
 		positionInFlow: PropTypes.number,
@@ -119,6 +122,7 @@ class SignupForm extends Component {
 		displayUsernameInput: true,
 		flowName: '',
 		isPasswordless: false,
+		showIsDevAccountCheckbox: false,
 		isSocialSignupEnabled: false,
 		horizontal: false,
 		shouldDisplayUserExistsError: false,
@@ -150,6 +154,7 @@ class SignupForm extends Component {
 
 		this.state = {
 			submitting: false,
+			isDevAccount: false,
 			isFieldDirty: {
 				email: false,
 				username: false,
@@ -924,6 +929,25 @@ class SignupForm extends Component {
 		return false;
 	}
 
+	isDevAccountCheckbox() {
+		if ( ! this.props.showIsDevAccountCheckbox ) {
+			return null;
+		}
+
+		const { translate } = this.props;
+		return (
+			<CheckboxControl
+				label={ preventWidows(
+					translate(
+						"I'm a developer. Boost my WordPress.com experience and give me early access to developer features"
+					)
+				) }
+				checked={ this.state.isDevAccount }
+				onChange={ ( isDevAccount ) => this.setState( { isDevAccount } ) }
+			/>
+		);
+	}
+
 	emailDisableExplanation() {
 		if ( this.props.disableEmailInput && this.props.disableEmailExplanation ) {
 			return (
@@ -1152,6 +1176,7 @@ class SignupForm extends Component {
 					} ) }
 				>
 					{ this.getNotice() }
+					{ this.isDevAccountCheckbox() }
 					<PasswordlessSignupForm
 						step={ this.props.step }
 						stepName={ this.props.stepName }
@@ -1162,6 +1187,7 @@ class SignupForm extends Component {
 						disabled={ this.props.disabled }
 						disableSubmitButton={ this.props.disableSubmitButton }
 						queryArgs={ this.props.queryArgs }
+						isDevAccount={ this.state.isDevAccount }
 					/>
 
 					{ showSeparator && (

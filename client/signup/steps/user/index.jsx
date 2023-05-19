@@ -113,10 +113,12 @@ export class UserStep extends Component {
 		subHeaderText: PropTypes.string,
 		isSocialSignupEnabled: PropTypes.bool,
 		initialContext: PropTypes.object,
+		showIsDevAccountCheckbox: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		isSocialSignupEnabled: false,
+		showIsDevAccountCheckbox: false,
 	};
 
 	state = {
@@ -482,7 +484,7 @@ export class UserStep extends Component {
 	}
 
 	renderSignupForm() {
-		const { oauth2Client, isReskinned, isPasswordless } = this.props;
+		const { oauth2Client, isReskinned, isPasswordless, showIsDevAccountCheckbox } = this.props;
 		let socialService;
 		let socialServiceResponse;
 		let isSocialSignupEnabled = this.props.isSocialSignupEnabled;
@@ -514,6 +516,7 @@ export class UserStep extends Component {
 					suggestedUsername={ this.props.suggestedUsername }
 					handleSocialResponse={ this.handleSocialResponse }
 					isPasswordless={ isMobile() || isPasswordless }
+					showIsDevAccountCheckbox={ showIsDevAccountCheckbox }
 					queryArgs={ this.props.initialContext?.query || {} }
 					isSocialSignupEnabled={ isSocialSignupEnabled }
 					socialService={ socialService }
