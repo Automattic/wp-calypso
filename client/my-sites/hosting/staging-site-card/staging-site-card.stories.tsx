@@ -31,6 +31,13 @@ export default {
 				</Card>
 			);
 		},
+		( Story ) => {
+			return (
+				<div style={ { padding: '20px', backgroundColor: '#f6f7f7' } }>
+					<Story></Story>
+				</div>
+			);
+		},
 	],
 } as Meta;
 
@@ -48,4 +55,11 @@ const defaultArgs = {
 export const NewStagingSiteCard = Template.bind( {} );
 NewStagingSiteCard.args = {
 	...defaultArgs,
+};
+
+export const NewStagingSiteCardWithQuotaError = Template.bind( {} );
+NewStagingSiteCardWithQuotaError.args = {
+	...defaultArgs,
+	isButtonDisabled: true,
+	showQuotaError: true,
 };
