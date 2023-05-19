@@ -395,14 +395,24 @@ button {
 	}
 	.loading-bar {
 		background-color: var(--studio-woocommerce-purple-5);
-		width: 520px;
+		width: 590px;
 		max-width: 100%;
 		margin-left: auto;
 		margin-right: auto;
+
+		@media screen and (max-width: 640px) {
+			width: 100%;
+		}
+	}
+	.processing-step {
+		width: 100%;
+		max-width: 640px;
+		box-sizing: border-box;
 	}
 	p.processing-step__subtitle {
 		font-family: "SF Pro Text", $sans;
 		font-weight: 400;
+		letter-spacing: initial;
 
 		.woo-inline-purple-heart {
 			width: 18px;
