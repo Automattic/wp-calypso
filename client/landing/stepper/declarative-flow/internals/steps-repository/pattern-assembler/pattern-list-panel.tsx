@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import PatternSelector from './pattern-selector';
 import type { Pattern, Category } from './types';
 import './pattern-list-panel.scss';
@@ -19,11 +20,15 @@ const PatternListPanel = ( {
 }: PatternListPanelProps ) => {
 	const categoryPatterns = selectedCategory ? patternsMapByCategory[ selectedCategory ] : [];
 
-	if ( ! selectedCategory ) {
+	const category = useMemo(
+		() => selectedCategory && categories.find( ( { name } ) => name === selectedCategory ),
+		[ categories, selectedCategory ]
+	);
+
+	if ( ! category ) {
 		return null;
 	}
 
-	const category = categories.find( ( { name } ) => name === selectedCategory );
 	return (
 		<div key="pattern-list-panel" className="pattern-list-panel__wrapper">
 			<div className="pattern-list-panel__title">{ category?.label }</div>
