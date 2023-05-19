@@ -41,7 +41,6 @@
 		"new-github-issue-url": "^0.2.1",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
-		"reakit-utils": "^0.15.1",
 		"redux": "^4.1.2"
 	},
 	"devDependencies": {

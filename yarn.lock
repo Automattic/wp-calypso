@@ -586,7 +586,6 @@ __metadata:
     react: ^18.2.0
     react-dom: ^18.2.0
     react-intersection-observer: ^9.4.3
-    reakit-utils: ^0.15.1
     redux: ^4.1.2
     tslib: ^2.3.0
     typescript: ^4.7.4
@@ -1115,7 +1114,6 @@ __metadata:
     postcss: ^8.4.5
     react: ^18.2.0
     react-dom: ^18.2.0
-    reakit-utils: ^0.15.1
     redux: ^4.1.2
     webpack: ^5.68.0
   languageName: unknown
@@ -1382,7 +1380,6 @@ __metadata:
     lodash: ^4.17.21
     react: ^18.2.0
     react-dom: ^18.2.0
-    reakit-utils: ^0.15.1
     redux: ^4.1.2
     tslib: ^2.3.0
     typescript: ^4.7.4
@@ -1731,7 +1728,6 @@ __metadata:
     postcss: ^8.4.5
     react: ^18.2.0
     react-dom: ^18.2.0
-    reakit-utils: ^0.15.1
     redux: ^4.1.2
     tinymce: ^5.0.0
     webpack: ^5.68.0
@@ -1854,7 +1850,6 @@ __metadata:
     react-dom: ^18.2.0
     react-popper: ^2.2.5
     react-redux: ^7.2.6
-    reakit-utils: ^0.15.1
     redux: ^4.1.2
     redux-thunk: ^2.3.0
     swiper: ^8.4.5
@@ -12715,7 +12710,6 @@ __metadata:
     react-test-renderer: ^18.2.0
     react-transition-group: ^4.3.0
     reakit: ^1.2.3
-    reakit-utils: ^0.15.1
     redux: ^4.1.2
     redux-dynamic-middlewares: ^2.0.0
     redux-mock-store: ^1.5.4
@@ -28459,7 +28453,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"reakit-utils@npm:^0.15.1, reakit-utils@npm:^0.15.2":
+"reakit-utils@npm:^0.15.2":
   version: 0.15.2
   resolution: "reakit-utils@npm:0.15.2"
   peerDependencies:
@@ -34826,7 +34820,6 @@ fsevents@^1.2.7:
     react-modal: ^3.14.3
     react-refresh: ^0.14.0
     readline-sync: ^1.4.10
-    reakit-utils: ^0.15.1
     recursive-copy: ^2.0.14
     redux: ^4.1.2
     replace: ^1.1.5

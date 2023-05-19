@@ -197,7 +197,6 @@
 		"react-dom": "^18.2.0",
 		"react-intersection-observer": "^9.4.3",
 		"react-modal": "^3.14.3",
-		"reakit-utils": "^0.15.1",
 		"redux": "^4.1.2",
 		"request": "^2.88.2",
 		"stream": "^0.0.2",
