@@ -31,13 +31,7 @@ export const mapToRequestBody = ( action ) => {
 		requestBody.plugin_file = action.pluginFile;
 	}
 
-	if ( action.geoAffinity ) {
-		requestBody.geo_affinity = action.geoAffinity;
-	}
-
-	if ( action.context ) {
-		requestBody.context = action.context;
-	}
+	requestBody.context = action.context ?? 'plugin_upload';
 
 	return requestBody;
 };
