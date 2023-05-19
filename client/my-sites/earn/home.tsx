@@ -1,5 +1,11 @@
-import { FEATURE_WORDADS_INSTANT, PLAN_PREMIUM } from '@automattic/calypso-products';
+import {
+	FEATURE_SIMPLE_PAYMENTS,
+	FEATURE_WORDADS_INSTANT,
+	PLAN_JETPACK_SECURITY_DAILY,
+	PLAN_PREMIUM,
+} from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { compact } from 'lodash';
 import page from 'page';
@@ -16,6 +22,7 @@ import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import siteHasWordAds from 'calypso/state/selectors/site-has-wordads';
 import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -31,6 +38,7 @@ interface ConnectedProps {
 	selectedSiteSlug: SiteSlug | null;
 	isNonAtomicJetpack: boolean;
 	isLoading: boolean;
+	hasSimplePayments: boolean;
 	hasWordAdsFeature: boolean;
 	hasConnectedAccount: boolean | null;
 	hasSetupAds: boolean;
@@ -47,6 +55,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	isNonAtomicJetpack,
 	isUserAdmin,
 	isLoading,
+	hasSimplePayments,
 	hasConnectedAccount,
 	hasSetupAds,
 	eligibleForProPlan,
@@ -104,23 +113,39 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 * @returns {Object} Object with props to render a PromoCard.
 	 */
 	const getSimplePaymentsCard = () => {
-		const supportLink = isNonAtomicJetpack
-			? localizeUrl( 'https://jetpack.com/support/pay-with-paypal/' )
-			: localizeUrl( 'https://wordpress.com/support/wordpress-editor/blocks/pay-with-paypal/' );
-		const cta = {
-			text: translate( 'Learn how to get started' ),
-			action: () => {
-				trackCtaButton( 'simple-payments' );
-				page( supportLink );
-			},
-		};
-
+		const supportLink = localizeUrl(
+			'https://wordpress.com/support/wordpress-editor/blocks/pay-with-paypal/'
+		);
+		const cta = hasSimplePayments
+			? {
+					text: translate( 'Learn how to get started' ),
+					action: () => {
+						trackCtaButton( 'simple-payments' );
+						page( supportLink );
+					},
+			  }
+			: {
+					text: translate( 'Unlock this feature' ),
+					action: () => {
+						trackUpgrade( 'plans', 'simple-payments' );
+						page(
+							addQueryArgs( `/plans/${ selectedSiteSlug }`, {
+								feature: FEATURE_SIMPLE_PAYMENTS,
+								plan: isNonAtomicJetpack ? PLAN_JETPACK_SECURITY_DAILY : PLAN_PREMIUM,
+							} )
+						);
+					},
+			  };
+		const learnMoreLink = hasSimplePayments
+			? null
+			: { url: supportLink, onClick: () => trackLearnLink( 'simple-payments' ) };
 		const title = translate( 'Collect PayPal payments' );
 		const body = (
 			<>
 				{ translate(
 					'Accept credit card payments via PayPal for physical products, services, donations, or support of your creative work.'
 				) }
+				{ ! hasSimplePayments && <em>{ getPremiumPlanNames() }</em> }
 			</>
 		);
 
@@ -130,6 +155,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			icon: 'credit-card',
 			actions: {
 				cta,
+				learnMoreLink,
 			},
 		};
 	};
@@ -508,6 +534,7 @@ export default connect(
 			isNonAtomicJetpack: Boolean( isJetpack && ! isSiteAutomatedTransfer( state, siteId ) ),
 			isUserAdmin: canCurrentUser( state, siteId, 'manage_options' ),
 			hasWordAdsFeature,
+			hasSimplePayments: siteHasFeature( state, siteId, FEATURE_SIMPLE_PAYMENTS ),
 			hasConnectedAccount,
 			eligibleForProPlan: isEligibleForProPlan( state, siteId ),
 			isLoading,
