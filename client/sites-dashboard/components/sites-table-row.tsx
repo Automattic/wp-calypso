@@ -124,11 +124,9 @@ const StatsOffIndicator = () => {
 			<StatsOffIndicatorStyled className="tooltip-target" ref={ tooltipRef }>
 				{ translate( 'Stats off' ) }
 			</StatsOffIndicatorStyled>
-			{ showPopover && (
-				<Popover isVisible={ true } context={ tooltipRef.current }>
-					<PopoverContent>{ translate( 'Stats are disabled on this site.' ) }</PopoverContent>
-				</Popover>
-			) }
+			<Popover isVisible={ showPopover } context={ tooltipRef.current } css={ { marginTop: -5 } }>
+				<PopoverContent>{ translate( 'Stats are disabled on this site.' ) }</PopoverContent>
+			</Popover>
 		</div>
 	);
 };
