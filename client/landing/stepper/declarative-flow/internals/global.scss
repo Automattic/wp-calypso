@@ -53,7 +53,8 @@ button {
 }
 
 .accessible-focus {
-	.site-setup {
+	.site-setup,
+	.import-focused {
 		.button.is-primary:focus {
 			box-shadow: 0 0 0 2px var(--color-primary-light);
 		}
@@ -164,6 +165,11 @@ button {
 			}
 		}
 	}
+}
+
+.import-focused .step-container.site-picker {
+	max-width: 1280px;
+	padding: 1.5rem;
 }
 
 .is-section-stepper {
