@@ -64,7 +64,7 @@ $minWidthToGridWidthMap: (
 	}
 
 	.plan-features-2023-grid__mobile-view {
-		display: block;
+		display: flex;
 
 		@media ( min-width: $plans-2023-small-breakpoint ) {
 			display: none;
@@ -97,7 +97,7 @@ $minWidthToGridWidthMap: (
 	}
 
 	.plan-features-2023-grid__mobile-view {
-		display: block;
+		display: flex;
 
 		@media ( min-width: ( $plans-2023-small-breakpoint + $plan-features-sidebar-width ) ) {
 			display: none;
