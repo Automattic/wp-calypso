@@ -26,6 +26,25 @@
 	margin-block-start: -16px;
 }
 
+.notification-settings__content-heading-with-beta {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+}
+
+.notification-settings__beta-tag {
+	background: #8c8f94;
+	border-radius: 4px;
+	font-style: normal;
+	font-weight: 700;
+	font-size: 0.6rem;
+	line-height: 17px;
+	display: flex;
+	color: #fff;
+	padding: 0 5px;
+	margin-block-end: 8px;
+}
+
 .notification-settings__content-heading {
 	font-size: 0.875rem;
 	line-height: 17px;
@@ -89,7 +108,6 @@
 			}
 		}
 	}
-
 }
 
 .select-dropdown .select-dropdown__container {
