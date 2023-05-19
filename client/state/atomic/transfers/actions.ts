@@ -30,6 +30,8 @@ export interface InitiateTransfer {
 	pluginSlug?: string;
 	pluginFile?: File;
 	themeFile?: File;
+	geoAffinity?: string;
+	context?: string;
 }
 
 /**
