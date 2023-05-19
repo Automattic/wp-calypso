@@ -93,8 +93,8 @@ const StatsOffIndicatorStyled = styled.div`
 
 const PopoverContent = styled.div`
 	font-size: 14px;
-	padding: 10px;
-	color: var( --studio-gray-60 );
+	padding: 16px;
+	color: var( --color-neutral-50 );
 `;
 
 const StatsColumnStyled = styled( Column )`
@@ -122,11 +122,11 @@ const StatsOffIndicator = () => {
 			onBlur={ handleOnMouseExit }
 		>
 			<StatsOffIndicatorStyled className="tooltip-target" ref={ tooltipRef }>
-				{ translate( 'Stats Off' ) }
+				{ translate( 'Stats off' ) }
 			</StatsOffIndicatorStyled>
 			{ showPopover && (
 				<Popover isVisible={ true } context={ tooltipRef.current }>
-					<PopoverContent>{ translate( 'Stats are disabled on this site' ) }</PopoverContent>
+					<PopoverContent>{ translate( 'Stats are disabled on this site.' ) }</PopoverContent>
 				</Popover>
 			) }
 		</div>
