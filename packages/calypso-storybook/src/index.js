@@ -11,6 +11,9 @@ module.exports = function storybookDefaultConfig( {
 		core: {
 			builder: 'webpack5',
 		},
+		framework: {
+			name: '@storybook/react-webpack5',
+		},
 		features: {
 			/**
 			 * Can probably be removed after the next major storybook release with emotion 11 support.

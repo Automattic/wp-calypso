@@ -27,6 +27,7 @@
 	"dependencies": {
 		"@automattic/calypso-babel-config": "workspace:^",
 		"@storybook/addon-actions": "^7.0.12",
+		"@storybook/addon-controls": "^7.0.12",
 		"@storybook/builder-webpack5": "^7.0.12",
 		"@storybook/manager-webpack5": "^6.5.16",
 		"@storybook/preset-scss": "^1.0.3",
