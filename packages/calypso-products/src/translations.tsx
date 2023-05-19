@@ -568,7 +568,13 @@ export const getJetpackProductsShortDescriptions = (): Record< string, Translate
 	const backupRealtimeShortDescription = translate(
 		'Real-time cloud backups with one-click restores.'
 	);
-	const backupShortDescription = translate( 'Real-time cloud backups with one-click restores.' );
+	const backupShortDescription = translate(
+		'Real-time cloud backups with one-click restores. Starts with %(amount)s.',
+		{
+			args: { amount: '10GB' },
+			comment: '%s is a storage amount like 1TB or 10GB',
+		}
+	);
 	const boostShortDescription = translate(
 		'Speed up your site and improve SEO - no developer required.'
 	);
