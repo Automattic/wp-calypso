@@ -132,3 +132,23 @@ export type PendingPostSubscriptionsResult = {
 	pendingPosts: PendingPostSubscription[];
 	totalCount: number;
 };
+
+export type SiteSubscriptionDetails = {
+	ID: string;
+	blog_ID: string;
+	name: string;
+	URL: string;
+	site_icon: string;
+	date_subscribed: Date;
+	delivery_methods: SiteSubscriptionDeliveryMethods;
+};
+
+export type SiteSubscriptionDetailsAPIResponse = {
+	ID: string;
+	blog_ID: string;
+	name: string;
+	URL: string;
+	site_icon: string;
+	date_subscribed: Date;
+	delivery_methods: SiteSubscriptionDeliveryMethods;
+};
