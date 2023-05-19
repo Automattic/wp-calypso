@@ -371,6 +371,7 @@ __metadata:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@storybook/addon-actions": ^7.0.12
+    "@storybook/addon-controls": ^7.0.12
     "@storybook/addon-viewport": ^7.0.12
     "@storybook/builder-webpack5": ^7.0.12
     "@storybook/manager-webpack5": ^6.5.16
@@ -5883,6 +5884,33 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@storybook/addon-controls@npm:^7.0.12":
+  version: 7.0.12
+  resolution: "@storybook/addon-controls@npm:7.0.12"
+  dependencies:
+    "@storybook/blocks": 7.0.12
+    "@storybook/client-logger": 7.0.12
+    "@storybook/components": 7.0.12
+    "@storybook/core-common": 7.0.12
+    "@storybook/manager-api": 7.0.12
+    "@storybook/node-logger": 7.0.12
+    "@storybook/preview-api": 7.0.12
+    "@storybook/theming": 7.0.12
+    "@storybook/types": 7.0.12
+    lodash: ^4.17.21
+    ts-dedent: ^2.0.0
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+  peerDependenciesMeta:
+    react:
+      optional: true
+    react-dom:
+      optional: true
+  checksum: 8ad4391ed7e0dee20b78abf3f153fc76db013a491cbf8c1dc41047a148795d7ae081c30b5b929d277e028023a2f3e1f29e741fa1636bb37d4a0f7c5e28ac18ce
+  languageName: node
+  linkType: hard
+
 "@storybook/addon-viewport@npm:^7.0.12":
   version: 7.0.12
   resolution: "@storybook/addon-viewport@npm:7.0.12"
@@ -5987,6 +6015,39 @@ __metadata:
     react-dom:
       optional: true
   checksum: b2f21a8f12f3ead9026a9b47dba99df2b0d9bad9ca9c5bac0be9b114e359e27895ebe3b1758578782b46cc0e1043029a8993f38f65cac4d0a4229dde718827af
+  languageName: node
+  linkType: hard
+
+"@storybook/blocks@npm:7.0.12":
+  version: 7.0.12
+  resolution: "@storybook/blocks@npm:7.0.12"
+  dependencies:
+    "@storybook/channels": 7.0.12
+    "@storybook/client-logger": 7.0.12
+    "@storybook/components": 7.0.12
+    "@storybook/core-events": 7.0.12
+    "@storybook/csf": ^0.1.0
+    "@storybook/docs-tools": 7.0.12
+    "@storybook/global": ^5.0.0
+    "@storybook/manager-api": 7.0.12
+    "@storybook/preview-api": 7.0.12
+    "@storybook/theming": 7.0.12
+    "@storybook/types": 7.0.12
+    "@types/lodash": ^4.14.167
+    color-convert: ^2.0.1
+    dequal: ^2.0.2
+    lodash: ^4.17.21
+    markdown-to-jsx: ^7.1.8
+    memoizerific: ^1.11.3
+    polished: ^4.2.2
+    react-colorful: ^5.1.2
+    telejson: ^7.0.3
+    ts-dedent: ^2.0.0
+    util-deprecate: ^1.0.2
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+  checksum: e86d87ac28da2b7218b7021640a50ea7481dfebace9c54f037e9dc48a1143364ffc66a0f1860ff1fab15e6c883ad2f61e68c77dba2785354133ee009afe98710
   languageName: node
   linkType: hard
 
@@ -7835,6 +7896,13 @@ __metadata:
     "@types/fined": "*"
     "@types/node": "*"
   checksum: 4825776d4f567cfe51211214d4ff05974654793a6913d8176b8be3934f87d25c165fa8d5b40809464e5e8c8743baf7ad60f3912625b7043545c7d7a3d332b3f0
+  languageName: node
+  linkType: hard
+
+"@types/lodash@npm:^4.14.167":
+  version: 4.14.194
+  resolution: "@types/lodash@npm:4.14.194"
+  checksum: 2d1ecf21a356bf089d3b5de2e8ddb1376526f0c75456fea61c03c14d276898f29a8ff75d290a32865dc74933617c9eed4ecdec048257031569df927a2c053c0e
   languageName: node
   linkType: hard
 
@@ -23668,6 +23736,15 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"markdown-to-jsx@npm:^7.1.8":
+  version: 7.2.0
+  resolution: "markdown-to-jsx@npm:7.2.0"
+  peerDependencies:
+    react: ">= 0.14.0"
+  checksum: 43056a49a222efddb0d5a055bc0ad61e038ac299d1008db4c4bebb270b4efc9872dc51dad2f6078d58bf178f8f15df6677f6e67295095284d8b61cfb8e9876f3
+  languageName: node
+  linkType: hard
+
 "markdownlint-cli@npm:^0.31.1":
   version: 0.31.1
   resolution: "markdownlint-cli@npm:0.31.1"
@@ -27684,6 +27761,16 @@ fsevents@^1.2.7:
   bin:
     react-codemod: ./bin/react-codemod.js
   checksum: eac9281a123a88115e3230f7b9295d02f1ba9d05b3f8f8769c05aa23401a66e689d122d7c30e804a83a3a77822cf88d159bd920be5afbfa85f905d1091a71eab
+  languageName: node
+  linkType: hard
+
+"react-colorful@npm:^5.1.2":
+  version: 5.6.1
+  resolution: "react-colorful@npm:5.6.1"
+  peerDependencies:
+    react: ">=16.8.0"
+    react-dom: ">=16.8.0"
+  checksum: 48eb73cf71e10841c2a61b6b06ab81da9fffa9876134c239bfdebcf348ce2a47e56b146338e35dfb03512c85966bfc9a53844fc56bc50154e71f8daee59ff6f0
   languageName: node
   linkType: hard
 
