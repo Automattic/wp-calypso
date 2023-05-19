@@ -400,12 +400,12 @@ export class PlanFeatures2023Grid extends Component<
 	renderTabletView() {
 		const { planProperties } = this.props;
 		let plansToShow = [];
-		const numberOfPlansToShowOnTop = 3;
 
 		plansToShow = planProperties
 			.filter( ( { isVisible } ) => isVisible )
 			.map( ( properties ) => properties.planName );
 
+		const numberOfPlansToShowOnTop = 4 === plansToShow.length ? 2 : 3;
 		const topRowPlans = plansToShow.slice( 0, numberOfPlansToShowOnTop );
 		const bottomRowPlans = plansToShow.slice( numberOfPlansToShowOnTop, plansToShow.length );
 		const planPropertiesForTopRow = planProperties.filter( ( properties: PlanProperties ) =>
