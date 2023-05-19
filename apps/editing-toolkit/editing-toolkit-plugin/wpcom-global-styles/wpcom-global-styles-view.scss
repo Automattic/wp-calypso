@@ -59,8 +59,14 @@
 		color: inherit;
 		font-weight: normal !important;
 
-		svg {
+		svg:first-child {
 			margin-right: 4px;
+		}
+
+		svg:last-child {
+			margin-left: 4px;
+			position: relative;
+			top: 1px;
 		}
 
 		&:hover {

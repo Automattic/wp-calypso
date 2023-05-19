@@ -123,7 +123,7 @@ function GlobalStylesEditNotice() {
 				onClick: upgradePlan,
 				variant: 'primary',
 				noDefaultClasses: true,
-				className: 'wpcom-global-styles-is-external',
+				className: 'wpcom-global-styles-action-has-icon wpcom-global-styles-action-is-external',
 			},
 		];
 
@@ -133,7 +133,7 @@ function GlobalStylesEditNotice() {
 				onClick: previewPost,
 				variant: 'secondary',
 				noDefaultClasses: true,
-				className: 'wpcom-global-styles-is-external',
+				className: 'wpcom-global-styles-action-has-icon wpcom-global-styles-action-is-external',
 			} );
 		}
 
@@ -142,7 +142,9 @@ function GlobalStylesEditNotice() {
 			onClick: isSiteEditor ? resetGlobalStyles : openResetGlobalStylesSupport,
 			variant: isSiteEditor ? 'secondary' : 'link',
 			noDefaultClasses: true,
-			className: isSiteEditor ? '' : 'wpcom-global-styles-reset-support',
+			className: isSiteEditor
+				? ''
+				: 'wpcom-global-styles-action-has-icon wpcom-global-styles-action-is-external wpcom-global-styles-action-is-support',
 		} );
 
 		createWarningNotice(
