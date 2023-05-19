@@ -11,10 +11,10 @@ type Result = {
 
 export function useShouldRenderChatOption(): Result {
 	const { data: chatStatus } = useSupportAvailability( 'CHAT' );
-	const { data, isLoading: isLoadingAvailability } = useMessagingAvailability(
+	const { data, isInitialLoading: isLoadingAvailability } = useMessagingAvailability(
 		Boolean( chatStatus?.is_user_eligible )
 	);
-	const { data: supportActivity, isLoading: isLoadingSupportActivity } = useSupportActivity(
+	const { data: supportActivity, isInitialLoading: isLoadingSupportActivity } = useSupportActivity(
 		Boolean( chatStatus?.is_user_eligible )
 	);
 
