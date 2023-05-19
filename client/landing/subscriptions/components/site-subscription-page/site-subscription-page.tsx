@@ -5,6 +5,7 @@ import { useTranslate, numberFormat } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import FormattedHeader from 'calypso/components/formatted-header';
+import TimeSince from 'calypso/components/time-since';
 import { Notice, NoticeState, NoticeType } from 'calypso/landing/subscriptions/components/notice';
 import { SiteIcon } from 'calypso/landing/subscriptions/components/site-icon';
 import PoweredByWPFooter from 'calypso/layout/powered-by-wp-footer';
@@ -125,6 +126,8 @@ const SiteSubscriptionPage = () => {
 		  } )
 		: '';
 
+	const date_subscribed = data?.date_subscribed;
+
 	return (
 		<div className="site-subscription-page">
 			<Button
@@ -162,6 +165,24 @@ const SiteSubscriptionPage = () => {
 							/>
 
 							<hr className="subscriptions__separator" />
+
+							{ /* TODO: Move to SiteSubscriptionInfo component when payment details are in. */ }
+							<div className="site-subscription-info">
+								<h2 className="site-subscription-info__heading">{ translate( 'Subscription' ) }</h2>
+								<dl className="site-subscription-info__list">
+									<dt>{ translate( 'Date' ) }</dt>
+									<dd>
+										<TimeSince
+											date={
+												( date_subscribed.valueOf()
+													? date_subscribed
+													: new Date( 0 )
+												).toISOString?.() ?? date_subscribed
+											}
+										/>
+									</dd>
+								</dl>
+							</div>
 
 							<Button
 								className="site-subscription-page__unsubscribe-button"
