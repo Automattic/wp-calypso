@@ -10,6 +10,7 @@ import { SiteIcon } from 'calypso/landing/subscriptions/components/site-icon';
 import PoweredByWPFooter from 'calypso/layout/powered-by-wp-footer';
 import SiteSubscriptionSettings from './site-subscription-settings';
 import './styles.scss';
+//import type { SingleSiteSubscription } from '@automattic/data-stores/src/reader/types';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const useSiteSubscription = ( blogId?: string ) => ( {
@@ -27,6 +28,38 @@ const useSiteSubscription = ( blogId?: string ) => ( {
 	isError: false,
 } );
 
+const singleData = {
+	ID: '769481850',
+	blog_ID: '214221608',
+	feed_ID: null,
+	URL: 'http://fresh20230112.wordpress.com',
+	date_subscribed: '2023-03-29T14:55:04+00:00',
+	delivery_methods: {
+		email: {
+			send_posts: true,
+			send_comments: false,
+			post_delivery_frequency: 'daily',
+			date_subscribed: '2023-03-29 14:55:04',
+		},
+		notification: {
+			send_posts: false,
+		},
+	},
+	name: 'Site Title',
+	organization_id: 0,
+	unseen_count: 0,
+	last_updated: null,
+	site_icon: null,
+	is_owner: false,
+	meta: {
+		links: {
+			site: 'https://public-api.wordpress.com/rest/v1.2/read/sites/214221608',
+		},
+	},
+	is_wpforteams_site: null,
+	subscribers: 400,
+};
+
 const SiteSubscriptionPage = () => {
 	const translate = useTranslate();
 	const navigate = useNavigate();
@@ -38,7 +71,7 @@ const SiteSubscriptionPage = () => {
 		emailMeNewComments,
 		emailMeNewPosts,
 		deliveryFrequency,
-		subscribers,
+		//subscribers,
 	} = data;
 	const [ notice, setNotice ] = useState< NoticeState | null >( null );
 	const [ siteSubscribed, setSiteSubscribed ] = useState( true );
@@ -128,9 +161,9 @@ const SiteSubscriptionPage = () => {
 	}
 
 	const subHeaderText =
-		subscribers > 1
+		singleData.subscribers > 1
 			? translate( '%d subscribers', {
-					args: [ subscribers ],
+					args: [ singleData.subscribers ],
 					comment: 'Number of subscribers of the subscribed-to site.',
 			  } )
 			: '';

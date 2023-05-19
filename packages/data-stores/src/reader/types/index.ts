@@ -70,6 +70,10 @@ export type SiteSubscription = {
 	is_wpforteams_site: boolean;
 };
 
+export type SingleSiteSubscription = SiteSubscription & {
+	subscriptions: number;
+};
+
 export type SiteSubscriptionPage = {
 	subscriptions: SiteSubscription[];
 	total_subscriptions: number;
