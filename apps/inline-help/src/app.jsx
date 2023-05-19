@@ -3,8 +3,8 @@
  */
 import '@automattic/calypso-polyfills';
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ReactDom from 'react-dom';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunkMiddleware from 'redux-thunk';
