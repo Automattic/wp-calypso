@@ -128,7 +128,7 @@ export default function Prices() {
 				</p>
 			</div>
 
-			{ partner.warn_bad_agency_pricing && (
+			{ partner?.warn_bad_agency_pricing && (
 				<Card highlight="error">
 					<CardHeading size={ 24 }>
 						{ translate( 'WARNING: This pricing may be incorrect for Automatticians.' ) }
