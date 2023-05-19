@@ -186,6 +186,10 @@ export interface SitesOverviewContextInterface extends DashboardOverviewContextI
 	setSelectedSites: ( value: Array< Site > ) => void;
 }
 
+export interface DashboardDataContextInterface {
+	verifiedContacts: { emails: Array< string > };
+}
+
 export type AgencyDashboardFilterOption =
 	| 'backup_failed'
 	| 'backup_warning'
