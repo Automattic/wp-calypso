@@ -4,19 +4,15 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import { ExceedQuotaErrorContent } from './exceed-quota-error-content';
 
 type CardContentProps = {
-	disabled: boolean;
-	addingStagingSite: boolean;
-	isLoadingQuotaValidation: boolean;
-	hasValidQuota: boolean;
 	onAddClick: () => void;
+	isButtonDisabled: boolean;
+	showQuotaError: boolean;
 };
 
 export const NewStagingSiteCardContent = ( {
-	disabled,
-	addingStagingSite,
-	isLoadingQuotaValidation,
-	hasValidQuota,
 	onAddClick,
+	isButtonDisabled,
+	showQuotaError,
 }: CardContentProps ) => {
 	{
 		const translate = useTranslate();
@@ -32,14 +28,10 @@ export const NewStagingSiteCardContent = ( {
 						}
 					) }
 				</p>
-				<Button
-					primary
-					disabled={ disabled || addingStagingSite || isLoadingQuotaValidation || ! hasValidQuota }
-					onClick={ onAddClick }
-				>
+				<Button primary disabled={ isButtonDisabled } onClick={ onAddClick }>
 					<span>{ translate( 'Add staging site' ) }</span>
 				</Button>
-				{ ! hasValidQuota && ! isLoadingQuotaValidation && <ExceedQuotaErrorContent /> }
+				{ showQuotaError && <ExceedQuotaErrorContent /> }
 			</>
 		);
 	}

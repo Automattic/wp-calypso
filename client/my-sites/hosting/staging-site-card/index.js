@@ -242,11 +242,11 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 		return (
 			<>
 				<NewStagingSiteCardContent
-					disabled={ disabled }
-					addingStagingSite={ addingStagingSite }
-					isLoadingQuotaValidation={ isLoadingQuotaValidation }
-					hasValidQuota={ hasValidQuota }
 					onAddClick={ onAddClick }
+					isButtonDisabled={
+						disabled || addingStagingSite || isLoadingQuotaValidation || ! hasValidQuota
+					}
+					showQuotaError={ ! hasValidQuota && ! isLoadingQuotaValidation }
 				/>
 			</>
 		);

@@ -40,11 +40,9 @@ const Template: NewStagingSiteCardContentStory = ( args ) => {
 };
 
 const defaultArgs = {
-	disabled: false,
-	addingStagingSite: false,
-	isLoadingQuotaValidation: false,
-	hasValidQuota: true,
 	onAddClick: action( 'onClick' ),
+	isButtonDisabled: false,
+	showQuotaError: false,
 };
 
 export const NewStagingSiteCard = Template.bind( {} );
