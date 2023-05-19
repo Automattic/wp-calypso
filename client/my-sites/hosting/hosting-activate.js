@@ -5,14 +5,14 @@ import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import HeaderCake from 'calypso/components/header-cake';
 import MainComponent from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { initiateAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
+import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const HostingActivate = ( { initiateTransfer, siteId, siteSlug, translate } ) => {
 	const backUrl = `/hosting-config/${ siteSlug }`;
 
 	const transferInitiate = ( { geo_affinity = '' } ) => {
-		initiateTransfer( siteId, { geoAffinity: geo_affinity, context: 'hosting' } );
+		initiateTransfer( siteId, null, null, geo_affinity, 'hosting' );
 		page( backUrl );
 	};
 
@@ -46,7 +46,7 @@ const mapStateToProps = ( state ) => {
 };
 
 const mapDispatchToProps = {
-	initiateTransfer: initiateAtomicTransfer,
+	initiateTransfer: initiateThemeTransfer,
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( HostingActivate ) );
