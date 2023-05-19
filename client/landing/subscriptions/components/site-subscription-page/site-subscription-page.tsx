@@ -1,7 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import { SubscriptionManager } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, numberFormat } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -18,8 +18,6 @@ const SiteSubscriptionPage = () => {
 
 	const { data, isLoading, isError } =
 		SubscriptionManager.useSiteSubscriptionDetailsQuery( blogId );
-
-	const subscribers = 1234567; // TODO: API needs to return subscriber count
 
 	const [ notice, setNotice ] = useState< NoticeState | null >( null );
 	const [ siteSubscribed, setSiteSubscribed ] = useState( true );
@@ -118,13 +116,14 @@ const SiteSubscriptionPage = () => {
 		return <div>Loading...</div>;
 	}
 
-	const subHeaderText =
-		subscribers > 1
-			? translate( '%d subscribers', {
-					args: [ subscribers ],
-					comment: 'Number of subscribers of the subscribed-to site.',
-			  } )
-			: '';
+	const subscriberCount = data?.subscriber_count;
+	const subHeaderText = subscriberCount
+		? translate( '%s subscriber', '%s subscribers', {
+				count: subscriberCount,
+				args: [ numberFormat( subscriberCount, 0 ) ],
+				comment: '%s is the number of subscribers. For example: "12,000,000"',
+		  } )
+		: '';
 
 	return (
 		<div className="site-subscription-page">
