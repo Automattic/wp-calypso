@@ -12,7 +12,7 @@
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch",
-		"storybook": "start-storybook"
+		"storybook": "sb dev"
 	},
 	"files": [
 		"dist",
@@ -46,6 +46,7 @@
 	"devDependencies": {
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
+		"@storybook/cli": "^7.0.12",
 		"@storybook/react": "^7.0.12",
 		"@testing-library/dom": "^8.13.0",
 		"@testing-library/jest-dom": "^5.16.2",
