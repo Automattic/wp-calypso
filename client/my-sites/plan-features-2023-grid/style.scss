@@ -172,17 +172,20 @@
 .is-2023-pricing-grid .plans-wrapper {
 	margin: 0 20px;
 	padding: 0 0 10px;
-	transform: translateY(-20px);
+	// transform: translateY(-20px);
 	overflow-x: visible;
 
 	@include plans-2023-break-small {
 		padding-top: 35px; // enough to cover `plan-features-2023-grid__popular-badge` repositioning (top: -35px)
+		margin: 0;
 	}
 
-	@media ( min-width: $plans-2023-small-breakpoint ) {
-		.is-section-plans & {
-			margin: 0;
-		}
+	@include plans-2023-break-medium {
+		margin: 0 20px;
+	}
+
+	@include plans-section-break-medium {
+		margin: 0;
 	}
 }
 
@@ -368,7 +371,6 @@
 		background-color: var(--color-surface);
 		position: relative;
 		vertical-align: baseline;
-		max-width: 344px;
 
 		.is-bold {
 			font-weight: 600;
@@ -386,6 +388,13 @@
 
 		@include plans-2023-break-small {
 			border-left: solid 1px #e0e0e0;
+		}
+	}
+
+	.plan-features-2023-grid__desktop-view,
+	.plan-features-2023-grid__tablet-view {
+		.plan-features-2023-grid__table-item {
+			max-width: 344px;
 		}
 	}
 

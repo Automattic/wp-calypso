@@ -6,7 +6,6 @@ $plan-features-header-banner-height: 20px;
 // Breakpoints
 $plans-2023-small-breakpoint: 780px;
 $plans-2023-medium-breakpoint: 1200px;
-$plans-2023-large-breakpoint: 1440px;
 
 $minWidthToGridWidthMap: (
 	780px: "668px",
@@ -135,6 +134,20 @@ $minWidthToGridWidthMap: (
 		}
 	}
 
+	.is-section-plans:not(.is-sidebar-collapsed) & {
+		@media ( min-width: $plans-2023-medium-breakpoint + $plan-features-sidebar-width ) {
+			@content;
+		}
+	}
+
+	.is-section-plans.is-sidebar-collapsed & {
+		@media ( min-width: $plans-2023-medium-breakpoint ) {
+			@content;
+		}
+	}
+}
+
+@mixin plans-section-break-medium() {
 	.is-section-plans:not(.is-sidebar-collapsed) & {
 		@media ( min-width: $plans-2023-medium-breakpoint + $plan-features-sidebar-width ) {
 			@content;
