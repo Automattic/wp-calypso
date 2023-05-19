@@ -1,6 +1,8 @@
 @import "@automattic/onboarding/styles/mixins";
 @import "calypso/my-sites/plan-features-2023-grid/media-queries";
 
+$table-cell-max-width: 344px;
+
 .plan-features--loading-container {
 	margin-top: 300px;
 }
@@ -317,15 +319,15 @@
 		width: 100%;
 
 		&.has-1-cols {
-			max-width: 344px;
+			max-width: $table-cell-max-width;
 		}
 
 		&.has-2-cols {
-			max-width: 688px;
+			max-width: $table-cell-max-width * 2;
 		}
 
 		&.has-3-cols {
-			max-width: 1032px;
+			max-width: $table-cell-max-width * 3;
 		}
 	}
 
