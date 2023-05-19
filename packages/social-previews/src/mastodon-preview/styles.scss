@@ -1,0 +1,83 @@
+@import "./variables";
+@import "../shared";
+
+.mastodon-preview__section {
+	max-width: 100%;
+	width: $mastodon-preview-width;
+	margin-inline: auto;
+}
+
+.mastodon-preview__card {
+	width: 100%;
+	overflow-y: hidden;
+	box-sizing: border-box;
+	padding: 1rem;
+
+	background-color: $mastodon-preview-background-color;
+
+	color: $mastodon-preview-text-color;
+	font-family: $mastodon-preview-font-family;
+	/* stylelint-disable-next-line scales/font-sizes */
+	font-size: 0.9375rem;
+	line-height: 1.47;
+
+	:any-link {
+		color: $mastodon-preview-accent-color;
+
+		text-decoration: none;
+	}
+}
+
+.mastodon-preview__body {
+	margin-bottom: 1rem;
+
+	color: $mastodon-body-text-color;
+}
+
+.mastodon-preview__window {
+	display: flex;
+
+	margin-top: 1rem;
+
+	border: solid 1px #ccd7e0;
+	border-radius: 4px;
+}
+
+.mastodon-preview__window-img {
+	width: 60px;
+	min-height: 60px;
+
+	border-start-start-radius: inherit;
+	border-end-start-radius: inherit;
+
+	img {
+		display: block;
+
+		min-height: 100%;
+		object-fit: cover;
+
+		border-start-start-radius: inherit;
+		border-end-start-radius: inherit;
+	}
+}
+
+.mastodon-preview__window-text {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+
+	padding: 0.625rem 0.5rem;
+}
+
+.mastodon-preview__window-title {
+	color: #282c37;
+
+	font-size: 0.875rem;
+	font-weight: 700;
+	line-height: 1.3;
+}
+
+.mastodon-preview__window-site {
+	/* stylelint-disable-next-line scales/font-sizes */
+	font-size: 0.8125rem;
+}
