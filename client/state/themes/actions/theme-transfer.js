@@ -92,7 +92,7 @@ export function initiateThemeTransfer( siteId, file, plugin ) {
 						themeInitiateSuccessAction
 					)
 				);
-				dispatch( pollThemeTransferStatus( siteId, transfer_id, context ) );
+				dispatch( pollThemeTransferStatus( siteId, transfer_id ) );
 			} )
 			.catch( ( error ) => {
 				dispatch( transferInitiateFailure( siteId, error, plugin, context ) );
@@ -147,18 +147,11 @@ function transferInitiateFailure( siteId, error, plugin, context ) {
  *
  * @param {number} siteId -- the site being transferred
  * @param {number} transferId -- the specific transfer
- * @param {string} context -- from which the transfer was initiated
  * @param {number} [interval] -- time between poll attempts
  * @param {number} [timeout] -- time to wait for 'complete' status before bailing
  * @returns {Promise} for testing purposes only
  */
-export function pollThemeTransferStatus(
-	siteId,
-	transferId,
-	context,
-	interval = 3000,
-	timeout = 180000
-) {
+export function pollThemeTransferStatus( siteId, transferId, interval = 3000, timeout = 180000 ) {
 	const endTime = Date.now() + timeout;
 	return ( dispatch ) => {
 		const pollStatus = ( resolve, reject ) => {
@@ -173,12 +166,6 @@ export function pollThemeTransferStatus(
 					dispatch( transferStatus( siteId, transferId, status, message, uploaded_theme_slug ) );
 					if ( status === 'complete' ) {
 						// finished, stop polling
-						dispatch(
-							recordTracksEvent( 'calypso_automated_transfer_complete', {
-								transfer_id: transferId,
-								context,
-							} )
-						);
 						return resolve();
 					}
 					// poll again
