@@ -21,7 +21,7 @@ export function useUpdateZendeskUserFieldsMutation() {
 			  } )
 			: apiFetch( {
 					global: true,
-					path: '/help-center/ticket/new',
+					path: '/help-center/zendesk/user-fields',
 					method: 'POST',
 					data: { fields: userFields },
 			  } as APIFetchOptions );

@@ -56,7 +56,7 @@ class WP_REST_Help_Center_User_Fields extends \WP_REST_Controller {
 			array(
 				'method' => 'POST',
 			),
-			$request['fields']
+			array( 'fields' => $request['fields'] )
 		);
 
 		if ( is_wp_error( $body ) ) {
