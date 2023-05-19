@@ -39,6 +39,12 @@ const StyledLoadingBar = styled( LoadingBar )( {
 const ActionButtons = styled.div( {
 	display: 'flex',
 	gap: '1em',
+
+	'@media screen and (max-width: 768px)': {
+		gap: '0.5em',
+		flexDirection: 'column',
+		'.button': { flexGrow: 1 },
+	},
 } );
 
 const ExceedQuotaErrorWrapper = styled.div( {
@@ -59,8 +65,7 @@ const SiteInfo = styled.div( {
 } );
 
 const SiteNameContainer = styled.div( {
-	display: 'flex',
-	alignItems: 'center',
+	display: 'block',
 } );
 
 const SiteName = styled.a( {
@@ -72,6 +77,10 @@ const SiteName = styled.a( {
 	'&, &:hover, &:visited': {
 		color: 'var( --studio-gray-100 )',
 	},
+} );
+
+const StagingSiteLink = styled.div( {
+	wordBreak: 'break-word',
 } );
 
 export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId, translate } ) => {
@@ -302,9 +311,9 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 							</SiteName>
 							<SitesStagingBadge>{ translate( 'Staging' ) }</SitesStagingBadge>
 						</SiteNameContainer>
-						<div>
+						<StagingSiteLink>
 							<a href={ stagingSite.url }>{ stagingSite.url }</a>
-						</div>
+						</StagingSiteLink>
 					</SiteInfo>
 				</SiteRow>
 				<ActionButtons>

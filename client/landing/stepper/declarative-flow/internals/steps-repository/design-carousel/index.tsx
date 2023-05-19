@@ -9,7 +9,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../../types';
 import './style.scss';
 
-const DesignCarousel: Step = function DesignCarousel( { navigation } ) {
+const DesignCarousel: Step = function DesignCarousel( { navigation, flow } ) {
 	const { goNext, goBack, submit } = navigation;
 	const { __ } = useI18n();
 	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
@@ -31,6 +31,7 @@ const DesignCarousel: Step = function DesignCarousel( { navigation } ) {
 					require="@automattic/design-carousel"
 					placeholder={ null }
 					onPick={ pickDesign }
+					flow={ flow }
 					selectedDesignSlugs={ [ 'tsubaki', 'amulet', 'tazza', 'zaino', 'thriving-artist' ] }
 				/>
 			}

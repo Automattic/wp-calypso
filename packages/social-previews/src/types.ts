@@ -25,3 +25,20 @@ export interface SocialPreviewBaseProps {
 export interface SocialPreviewsBaseProps {
 	headingLevel?: SectionHeadingProps[ 'level' ];
 }
+
+export type MediaItem = {
+	/**
+	 * The alt text for the image.
+	 */
+	alt?: string;
+
+	/**
+	 * The mime type of the media
+	 */
+	type: string;
+
+	/**
+	 * The URL of the media.
+	 */
+	url: string;
+};

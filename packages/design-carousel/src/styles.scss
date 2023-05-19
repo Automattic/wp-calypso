@@ -36,6 +36,10 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 		}
 	}
 
+	&.design-carousel__item-mobile-only {
+		width: calc((65svh - 50px) * 0.48);
+	}
+
 	display: flex;
 	align-items: center;
 	justify-content: center;

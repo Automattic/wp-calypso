@@ -13,6 +13,7 @@ export class JetpackConnectMainWrapper extends PureComponent {
 	static propTypes = {
 		isWide: PropTypes.bool,
 		isWoo: PropTypes.bool,
+		isWpcomMigration: PropTypes.bool,
 		wooDnaConfig: PropTypes.object,
 		partnerSlug: PropTypes.string,
 		translate: PropTypes.func.isRequired,
@@ -26,8 +27,17 @@ export class JetpackConnectMainWrapper extends PureComponent {
 	};
 
 	render() {
-		const { isWide, isWoo, className, children, partnerSlug, translate, wooDnaConfig, pageTitle } =
-			this.props;
+		const {
+			isWide,
+			isWoo,
+			isWpcomMigration,
+			className,
+			children,
+			partnerSlug,
+			translate,
+			wooDnaConfig,
+			pageTitle,
+		} = this.props;
 
 		const isWooDna = wooDnaConfig && wooDnaConfig.isWooDnaFlow();
 
@@ -35,6 +45,7 @@ export class JetpackConnectMainWrapper extends PureComponent {
 			'is-wide': isWide,
 			'is-woocommerce': isWoo || isWooDna,
 			'is-mobile-app-flow': !! retrieveMobileRedirect(),
+			'is-wpcom-migration': isWpcomMigration,
 		} );
 
 		const width = isWoo || isWooDna ? 200 : undefined;
@@ -47,13 +58,15 @@ export class JetpackConnectMainWrapper extends PureComponent {
 					skipTitleFormatting={ Boolean( pageTitle ) }
 				/>
 				<div className="jetpack-connect__main-logo">
-					<JetpackHeader
-						partnerSlug={ partnerSlug }
-						isWoo={ isWoo }
-						isWooDna={ isWooDna }
-						width={ width }
-						darkColorScheme={ darkColorScheme }
-					/>
+					{ ! isWpcomMigration && (
+						<JetpackHeader
+							partnerSlug={ partnerSlug }
+							isWoo={ isWoo }
+							isWooDna={ isWooDna }
+							width={ width }
+							darkColorScheme={ darkColorScheme }
+						/>
+					) }
 				</div>
 				{ children }
 			</Main>
