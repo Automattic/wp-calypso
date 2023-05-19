@@ -5,12 +5,14 @@ interface ConfigurationData {
 	expectedPostText: string;
 }
 
+const INSTAGRAM_EMBED_TIMEOUT = 20000; // Can take a bit longer to load.
+
 const blockParentSelector = '[aria-label="Block: Embed"]:has-text("Instagram URL")';
 const selectors = {
 	embedUrlInput: `${ blockParentSelector } input`,
 	embedButton: `${ blockParentSelector } button:has-text("Embed")`,
-	editorInstagramIframe: `iframe[title="Embedded content from instagram.com"]`,
-	publishedInstagramIframe: `iframe.instagram-media`,
+	emberIframe: `iframe[title="Embedded content from instagram.com"]`,
+	instagramIframe: `iframe.instagram-media`,
 };
 
 /**
@@ -46,9 +48,12 @@ export class InstagramBlockFlow implements BlockFlow {
 
 		// We should make sure the actual Iframe loads, because it takes a second.
 		const instagramIframeLocator = editorCanvas
-			.frameLocator( selectors.editorInstagramIframe )
-			.locator( 'body' );
-		await instagramIframeLocator.waitFor();
+			.frameLocator( selectors.emberIframe )
+			.frameLocator( selectors.instagramIframe )
+			.locator( `text=${ this.configurationData.expectedPostText }` )
+			.first();
+
+		await instagramIframeLocator.waitFor( { timeout: INSTAGRAM_EMBED_TIMEOUT } );
 	}
 
 	/**
@@ -58,9 +63,10 @@ export class InstagramBlockFlow implements BlockFlow {
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
 		const expectedPostTextLocator = context.page
-			.frameLocator( selectors.publishedInstagramIframe )
+			.frameLocator( selectors.instagramIframe )
 			.locator( `text=${ this.configurationData.expectedPostText }` )
 			.first(); // In case the post text isn't particularly specific, just resolve to the first one!
-		await expectedPostTextLocator.waitFor();
+
+		await expectedPostTextLocator.waitFor( { timeout: INSTAGRAM_EMBED_TIMEOUT } );
 	}
 }
