@@ -11,7 +11,7 @@ const blockParentSelector = '[aria-label="Block: Embed"]:has-text("Instagram URL
 const selectors = {
 	embedUrlInput: `${ blockParentSelector } input`,
 	embedButton: `${ blockParentSelector } button:has-text("Embed")`,
-	emberIframe: `iframe[title="Embedded content from instagram.com"]`,
+	embedIframe: `iframe[title="Embedded content from instagram.com"]`,
 	instagramIframe: `iframe.instagram-media`,
 };
 
@@ -48,7 +48,7 @@ export class InstagramBlockFlow implements BlockFlow {
 
 		// We should make sure the actual Iframe loads, because it takes a second.
 		const instagramIframeLocator = editorCanvas
-			.frameLocator( selectors.emberIframe )
+			.frameLocator( selectors.embedIframe )
 			.frameLocator( selectors.instagramIframe )
 			.locator( `text=${ this.configurationData.expectedPostText }` )
 			.first();
