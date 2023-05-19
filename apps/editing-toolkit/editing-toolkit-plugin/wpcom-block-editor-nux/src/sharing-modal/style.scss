@@ -109,6 +109,10 @@
 			margin-top: 1px;
 			height: 1rem;
 			width: 1rem;
+			&::before {
+				width: 1.3125rem;
+				height: 1.3125rem;
+			}
 		}
 	}
 }
