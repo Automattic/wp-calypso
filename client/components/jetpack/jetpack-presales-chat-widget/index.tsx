@@ -59,30 +59,27 @@ export const ZendeskJetpackChat: React.VFC< { keyType: KeyType } > = ( { keyType
 		if ( ! zendeskChatKey || isLoadingAuth ) {
 			return;
 		}
-
 		const result = loadScript(
 			'https://static.zdassets.com/ekr/snippet.js?key=' + encodeURIComponent( zendeskChatKey ),
 			undefined,
 			{ id: 'ze-snippet' }
 		);
-
 		//pass authentication key to Zendesk
 		Promise.resolve( result ).then( () => {
-			// We need the user's authentication token to log them into chat
-			if ( ! zendeskJwt ) {
-				return;
-			}
-
 			// Chat can't exist if we're not in a browser window
 			if ( typeof window === 'undefined' ) {
 				return;
 			}
-
 			// The `zE` function exposes the required action to authenticate the user
-			if ( typeof window.zE !== 'function' ) {
+			if ( ! ( 'zE' in window ) || typeof window.zE !== 'function' ) {
 				return;
 			}
-
+			// We need the user's authentication token to log them into chat
+			if ( ! zendeskJwt ) {
+				return;
+			}
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore: TypeScript doesn't see the zE property added by the external script.
 			window.zE( 'messenger', 'loginUser', function ( callback: ( jwt: string ) => void ) {
 				callback( zendeskJwt );
 			} );
