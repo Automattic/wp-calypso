@@ -26,6 +26,7 @@ import flows from 'calypso/signup/config/flows';
 import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import {
+	getFlowDestination,
 	getFlowSteps,
 	getNextStepName,
 	getPreviousStepName,
@@ -48,6 +49,9 @@ function getRedirectToAfterLoginUrl( {
 	oauth2Signup,
 	initialContext,
 	flowName,
+	localeSlug,
+	progress,
+	signupDependencies,
 	stepName,
 	userLoggedIn,
 } ) {
@@ -65,6 +69,21 @@ function getRedirectToAfterLoginUrl( {
 	const stepAfterRedirect =
 		getNextStepName( flowName, stepName, userLoggedIn ) ||
 		getPreviousStepName( flowName, stepName, userLoggedIn );
+
+	if ( ! stepAfterRedirect ) {
+		// This is the only step in the flow
+		const goesThroughCheckout = !! progress?.plans?.cartItem;
+		const destination = getFlowDestination(
+			flowName,
+			userLoggedIn,
+			signupDependencies,
+			localeSlug,
+			goesThroughCheckout
+		);
+		if ( destination ) {
+			return destination;
+		}
+	}
 
 	return (
 		window.location.origin +
