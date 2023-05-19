@@ -190,10 +190,12 @@ $mobile-card-max-width: 440px;
 		margin: 0;
 	}
 
-	@media ( min-width: $plans-2023-small-breakpoint ) {
-		.is-section-plans & {
-			margin: 0;
-		}
+	@include plans-2023-break-medium {
+		margin: 0 20px;
+	}
+
+	@include plans-section-break-medium {
+		margin: 0;
 	}
 }
 
@@ -383,7 +385,6 @@ $mobile-card-max-width: 440px;
 		background-color: var(--color-surface);
 		position: relative;
 		vertical-align: baseline;
-		max-width: 344px;
 
 		.is-bold {
 			font-weight: 600;
