@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect, useDispatch } from 'react-redux';
-import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import Gravatar from 'calypso/components/gravatar';
+import { decodeEntities } from 'calypso/lib/formatting';
 import Favicon from 'calypso/reader/components/favicon';
 import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
 import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
@@ -10,11 +10,9 @@ import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { getPostById } from 'calypso/state/reader/posts/selectors';
-import { getSite } from 'calypso/state/reader/sites/selectors';
-
 import './style.scss';
 
-const SuggestedFollowItem = ( { post, site, siteId } ) => {
+const SuggestedFollowItem = ( { post, site } ) => {
 	const dispatch = useDispatch();
 
 	const onSiteClick = ( selectedSite ) => {
@@ -41,7 +39,6 @@ const SuggestedFollowItem = ( { post, site, siteId } ) => {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div className="reader-suggested-follow-item">
-			{ ! site && siteId && <QueryReaderSite siteId={ siteId } /> }
 			{ site && (
 				<>
 					<a
@@ -83,15 +80,15 @@ const SuggestedFollowItem = ( { post, site, siteId } ) => {
 export default connect( ( state, ownProps ) => {
 	const { post } = ownProps;
 	const actualPost = getPostById( state, post );
-	const siteId = actualPost && actualPost.site_ID;
-	const site = siteId && getSite( state, siteId );
-
 	return {
 		post: actualPost,
-		site: site && {
-			...site,
-			site_icon: site?.icon?.img,
+		site: {
+			URL: actualPost?.site_URL,
+			site_icon: actualPost?.site_icon?.ico,
+			blog_ID: actualPost?.site_ID,
+			feed_ID: actualPost?.feed_ID,
+			name: actualPost?.site_name,
+			description: decodeEntities( actualPost?.site_description ),
 		},
-		siteId: siteId,
 	};
 } )( SuggestedFollowItem );

@@ -2,6 +2,8 @@
 	max-width: 534px;
 
 	.reader-recommended-follows-dialog__header {
+		margin-bottom: 30px;
+
 		h2 {
 			color: var(--color-neutral-70);
 			font-size: $font-headline-small;
@@ -54,9 +56,10 @@
 		.reader-suggested-follow-item_sitename {
 			color: var(--color-neutral-100);
 			font-weight: 600;
-			font-size: $font-body-small;
+			font-size: $font-body;
 			display: flex;
 			flex-direction: column;
+			max-width: 250px;
 
 			&:hover {
 				color: var(--color-text-subtle);
@@ -66,12 +69,13 @@
 		.reader-suggested-follow-item_description {
 			color: var(--color-text-subtle);
 			font-weight: 400;
-			font-size: $font-body-extra-small;
+			font-size: $font-body-small;
 			line-height: 18px;
 			overflow: hidden;
 			width: auto;
 			-webkit-line-clamp: 1;
 			-webkit-box-orient: vertical;
+			display: -webkit-box;
 		}
 	}
 
@@ -90,6 +94,7 @@
 		//last child has no border
 		&:last-child {
 			border-bottom: none;
+			margin-bottom: 0;
 
 			.reader-related-card__meta {
 				margin-bottom: 0;

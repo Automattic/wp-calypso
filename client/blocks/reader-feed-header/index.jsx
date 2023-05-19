@@ -26,7 +26,7 @@ import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions'
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import { hasReaderFollowOrganization, isFollowing } from 'calypso/state/reader/follows/selectors';
 import { relatedPostsForPost } from 'calypso/state/reader/related-posts/selectors';
-import { SCOPE_OTHER } from 'calypso/state/reader/related-posts/utils';
+import { SCOPE_SUGGESTED_FOLLOWS } from 'calypso/state/reader/related-posts/utils';
 import { requestMarkAllAsSeen } from 'calypso/state/reader/seen-posts/actions';
 import { getSite } from 'calypso/state/reader/sites/selectors';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
@@ -218,7 +218,7 @@ class FeedHeader extends Component {
 					<QueryReaderRelatedPosts
 						siteId={ siteId }
 						postId={ latestPostId }
-						scope={ SCOPE_OTHER }
+						scope={ SCOPE_SUGGESTED_FOLLOWS }
 						size={ 5 }
 					/>
 				) }
@@ -273,7 +273,7 @@ const mapStateToProps = ( state, ownProps ) => {
 		latestPostId,
 		relatedPosts:
 			siteId && latestPostId
-				? relatedPostsForPost( state, siteId, latestPostId, SCOPE_OTHER, 5 )
+				? relatedPostsForPost( state, siteId, latestPostId, SCOPE_SUGGESTED_FOLLOWS, 5 )
 				: null,
 	};
 };
