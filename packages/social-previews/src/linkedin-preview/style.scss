@@ -1,14 +1,11 @@
 
 
 .linkedin-preview {
-	background-color: #fff;
-	padding: 20px;
-
 	&__wrapper {
 		padding: 20px;
 		background-color: #fff;
 		margin-inline: auto;
-		max-width: clamp(450px, 100%, 555px);
+		max-width: clamp(200px, 100%, 555px);
 	}
 
 	// When the preview is in a section of all previews
@@ -16,9 +13,8 @@
 		padding: 0;
 	}
 
-	&__section {
-		width: clamp(450px, 100%, 555px);
-		margin-inline: auto;
+	&__section.social-preview__section {
+		width: clamp(200px, 100%, 555px);
 	}
 
 	&__container {
@@ -41,6 +37,10 @@
 		padding: 0.8rem 1rem 0;
 		margin-bottom: 0.8rem;
 
+		&--avatar {
+			flex-shrink: 0;
+		}
+
 		&--avatar img {
 			width: 48px;
 			height: 48px;
@@ -50,6 +50,7 @@
 		&--profile {
 			display: flex;
 			flex-direction: column;
+			overflow: hidden;
 		}
 
 		&--profile-title {
@@ -63,6 +64,9 @@
 
 		&--profile-name {
 			font-weight: 600;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
 		}
 
 		&--profile-meta {

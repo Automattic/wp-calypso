@@ -2,8 +2,6 @@ import { TwitterPreviews } from '@automattic/social-previews';
 import { PureComponent } from 'react';
 import { decodeEntities } from 'calypso/lib/formatting';
 
-import './style.scss';
-
 export class TwitterSharePreview extends PureComponent {
 	render() {
 		const {

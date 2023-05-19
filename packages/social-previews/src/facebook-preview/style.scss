@@ -1,11 +1,6 @@
 @import "./variables";
 @import "../shared";
 
-.facebook-preview__section {
-	width: clamp(#{$facebook-preview-min-width}, 100%, #{$facebook-preview-max-width});
-	margin-inline: auto;
-}
-
 .facebook-preview__post {
 	overflow-y: hidden;
 	max-width: clamp(#{$facebook-preview-min-width}, 100%, #{$facebook-preview-max-width});
