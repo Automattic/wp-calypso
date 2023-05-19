@@ -13,7 +13,6 @@ import SiteIcon from 'calypso/blocks/site-icon';
 import QueryReaderRelatedPosts from 'calypso/components/data/query-reader-related-posts';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import ReaderFollowButton from 'calypso/reader/follow-button';
-import { READER_SUGGESTED_FOLLOWS_DIALOG } from 'calypso/reader/follow-sources';
 import {
 	getSiteDescription,
 	getSiteName,
@@ -225,8 +224,7 @@ class FeedHeader extends Component {
 				{ relatedPosts && this.state.isRecommendedFollowsModalOpen && (
 					<ReaderRecommendedFollowsDialog
 						onClose={ this.onCloseRecommendedFollowModal }
-						posts={ relatedPosts }
-						followSource={ READER_SUGGESTED_FOLLOWS_DIALOG }
+						relatedPosts={ relatedPosts }
 					/>
 				) }
 			</div>

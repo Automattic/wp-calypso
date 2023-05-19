@@ -1,19 +1,20 @@
 import { Dialog } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import SuggestedFollowItem from 'calypso/blocks/reader-suggested-follows';
+import { READER_SUGGESTED_FOLLOWS_DIALOG } from 'calypso/reader/follow-sources';
 
 import './style.scss';
 
 // Create component to convert posts to list of sites
-const SuggestedFollowItems = ( { posts } ) => {
-	if ( ! posts ) {
+const SuggestedFollowItems = ( { relatedPosts } ) => {
+	if ( ! relatedPosts ) {
 		return null;
 	}
-	const items = posts.map( ( post_id ) => {
+	const items = relatedPosts.map( ( post_id ) => {
 		return (
 			post_id && (
 				<li key={ post_id } className="reader-recommended-follows-dialog__follow-item">
-					<SuggestedFollowItem post={ post_id } />
+					<SuggestedFollowItem post={ post_id } followSource={ READER_SUGGESTED_FOLLOWS_DIALOG } />
 				</li>
 			)
 		);
@@ -22,9 +23,9 @@ const SuggestedFollowItems = ( { posts } ) => {
 	return <ul className="reader-recommended-follows-dialog__follow-list">{ items }</ul>;
 };
 
-const ReaderRecommendedFollowsDialog = ( { onClose, posts, followSource } ) => {
+const ReaderRecommendedFollowsDialog = ( { onClose, relatedPosts } ) => {
 	const translate = useTranslate();
-	if ( ! posts ) {
+	if ( ! relatedPosts ) {
 		return null;
 	}
 	return (
@@ -46,8 +47,8 @@ const ReaderRecommendedFollowsDialog = ( { onClose, posts, followSource } ) => {
 				</div>
 				<div className="reader-recommended-follows-dialog__body">
 					<div className="reader-recommended-follows-dialog__follow-list">
-						{ posts && posts.length > 0 && (
-							<SuggestedFollowItems posts={ posts } followSource={ followSource } />
+						{ relatedPosts && relatedPosts.length > 0 && (
+							<SuggestedFollowItems relatedPosts={ relatedPosts } />
 						) }
 					</div>
 				</div>

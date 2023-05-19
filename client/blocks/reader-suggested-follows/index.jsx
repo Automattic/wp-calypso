@@ -12,7 +12,7 @@ import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions'
 import { getPostById } from 'calypso/state/reader/posts/selectors';
 import './style.scss';
 
-const SuggestedFollowItem = ( { post, site } ) => {
+const SuggestedFollowItem = ( { post, site, followSource } ) => {
 	const dispatch = useDispatch();
 
 	const onSiteClick = ( selectedSite ) => {
@@ -68,6 +68,7 @@ const SuggestedFollowItem = ( { post, site } ) => {
 							railcar={ post.railcar }
 							followIcon={ ReaderFollowFeedIcon( { iconSize: 20 } ) }
 							followingIcon={ ReaderFollowingFeedIcon( { iconSize: 20 } ) }
+							followSource={ followSource }
 						/>
 					</span>
 				</>
