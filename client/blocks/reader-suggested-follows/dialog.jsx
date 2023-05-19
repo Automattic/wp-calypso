@@ -23,7 +23,7 @@ const SuggestedFollowItems = ( { relatedPosts } ) => {
 	return <ul className="reader-recommended-follows-dialog__follow-list">{ items }</ul>;
 };
 
-const ReaderRecommendedFollowsDialog = ( { onClose, relatedPosts } ) => {
+const ReaderSuggestedFollowsDialog = ( { onClose, relatedPosts } ) => {
 	const translate = useTranslate();
 	if ( ! relatedPosts ) {
 		return null;
@@ -57,4 +57,4 @@ const ReaderRecommendedFollowsDialog = ( { onClose, relatedPosts } ) => {
 	);
 };
 
-export default ReaderRecommendedFollowsDialog;
+export default ReaderSuggestedFollowsDialog;

@@ -7,8 +7,8 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import BlogStickers from 'calypso/blocks/blog-stickers';
-import ReaderRecommendedFollowsDialog from 'calypso/blocks/reader-recommended-follows-dialog';
 import ReaderSiteNotificationSettings from 'calypso/blocks/reader-site-notification-settings';
+import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
 import SiteIcon from 'calypso/blocks/site-icon';
 import QueryReaderRelatedPosts from 'calypso/components/data/query-reader-related-posts';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
@@ -45,7 +45,7 @@ class FeedHeader extends Component {
 	};
 
 	state = {
-		isRecommendedFollowsModalOpen: false,
+		isSuggestedFollowsModalOpen: false,
 	};
 
 	getFollowerCount = ( feed, site ) => {
@@ -70,15 +70,12 @@ class FeedHeader extends Component {
 		} );
 	};
 
-	// Create function to use with onFollowClick to open a modal with ReaderRecommendedFollowsDialogLoader component
-	// This function will be passed to ReaderFollowButton component
-	openRecommendedFollowsModal = ( followClicked ) => {
-		// this.props.recordReaderTracksEvent( 'calypso_reader_follow_button_clicked' );
-		this.setState( { isRecommendedFollowsModalOpen: followClicked } );
+	openSuggestedFollowsModal = ( followClicked ) => {
+		this.setState( { isSuggestedFollowsModalOpen: followClicked } );
 	};
 
-	onCloseRecommendedFollowModal = () => {
-		this.setState( { isRecommendedFollowsModalOpen: false } );
+	onCloseSuggestedFollowModal = () => {
+		this.setState( { isSuggestedFollowsModalOpen: false } );
 	};
 
 	render() {
@@ -184,7 +181,7 @@ class FeedHeader extends Component {
 									<ReaderFollowButton
 										siteUrl={ siteUrl }
 										iconSize={ 24 }
-										onFollowToggle={ this.openRecommendedFollowsModal }
+										onFollowToggle={ this.openSuggestedFollowsModal }
 									/>
 								</div>
 							) }
@@ -213,7 +210,7 @@ class FeedHeader extends Component {
 						</div>
 					</div>
 				</div>
-				{ ! relatedPosts && latestPostId && ! this.state.isRecommendedFollowsModalOpen && (
+				{ ! relatedPosts && latestPostId && ! this.state.isSuggestedFollowsModalOpen && (
 					<QueryReaderRelatedPosts
 						siteId={ siteId }
 						postId={ latestPostId }
@@ -221,9 +218,9 @@ class FeedHeader extends Component {
 						size={ 5 }
 					/>
 				) }
-				{ relatedPosts && this.state.isRecommendedFollowsModalOpen && (
-					<ReaderRecommendedFollowsDialog
-						onClose={ this.onCloseRecommendedFollowModal }
+				{ relatedPosts && this.state.isSuggestedFollowsModalOpen && (
+					<ReaderSuggestedFollowsDialog
+						onClose={ this.onCloseSuggestedFollowModal }
 						relatedPosts={ relatedPosts }
 					/>
 				) }
