@@ -373,7 +373,7 @@ export class PlanFeatures2023Grid extends Component<
 		const { translate } = this.props;
 		const tableClasses = classNames(
 			'plan-features-2023-grid__table',
-			`has-${ planPropertiesObj.length }-cols`
+			`has-${ planPropertiesObj.filter( ( { isVisible } ) => isVisible ).length }-cols`
 		);
 
 		return (
