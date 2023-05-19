@@ -18,6 +18,7 @@ import type {
 	Site,
 	StateMonitorSettingsEmail,
 	AllowedMonitorContactActions,
+	MonitorSettingsEmail,
 } from '../../sites-overview/types';
 
 import './style.scss';
@@ -109,8 +110,8 @@ export default function NotificationSettings( {
 					isDefault: true,
 					verified: true,
 				} ) );
-				// This will also include site's additional email addresses.
-				setAllEmailItems( [ ...userEmailItems ] );
+				const siteEmailItems: Array< MonitorSettingsEmail > = []; // FIXME: This should be dynamic.
+				setAllEmailItems( [ ...userEmailItems, ...siteEmailItems ] );
 			}
 		},
 		[ isMultipleEmailEnabled ]
