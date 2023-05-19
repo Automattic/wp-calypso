@@ -11,7 +11,11 @@ const useAddCategoryAll = ( categories: Category[] ) => {
 		}
 		const categoriesWithAll = categories.map( ( category ) => {
 			if ( 'featured' === category.name ) {
-				return { ...category, label: translate( 'All' ) };
+				return {
+					...category,
+					label: translate( 'All' ),
+					description: translate( 'Browse through all the patterns.' ),
+				};
 			}
 			return category;
 		} );
