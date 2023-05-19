@@ -67,6 +67,7 @@ export type SiteSubscription = {
 	site_icon: string;
 	is_owner: boolean;
 	meta: SiteSubscriptionMeta;
+	is_wpforteams_site: boolean;
 };
 
 export type SiteSubscriptionPage = {

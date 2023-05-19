@@ -21,6 +21,7 @@ import { fetchReceipt } from 'calypso/state/receipts/actions';
 import { getReceiptById } from 'calypso/state/receipts/selectors';
 import getOrderTransaction from 'calypso/state/selectors/get-order-transaction';
 import getOrderTransactionError from 'calypso/state/selectors/get-order-transaction-error';
+import { convertErrorToString } from '../../composite-checkout/lib/analytics';
 import type { RedirectInstructions } from 'calypso/my-sites/checkout/composite-checkout/lib/pending-page';
 import type { ReceiptState } from 'calypso/state/receipts/types';
 import type {
@@ -354,7 +355,7 @@ const logCheckoutError = ( error: Error ) => {
 		extra: {
 			env: config( 'env_id' ),
 			type: 'checkout_pending',
-			message: error.message + '; Stack: ' + error.stack,
+			message: convertErrorToString( error ),
 		},
 	} );
 };

@@ -31,7 +31,10 @@ async function fetchWithRetry(
 	}
 }
 
-export function useJpPresalesAvailabilityQuery( setError?: Dispatch< SetStateAction< boolean > > ) {
+export function useJpPresalesAvailabilityQuery(
+	enabled = true,
+	setError?: Dispatch< SetStateAction< boolean > >
+) {
 	//adding a safeguard to ensure if there's an unkown error with the widget it won't crash the whole app
 	try {
 		return useQuery< boolean, Error >(
@@ -58,6 +61,7 @@ export function useJpPresalesAvailabilityQuery( setError?: Dispatch< SetStateAct
 				return data.is_available;
 			},
 			{
+				enabled,
 				meta: { persist: false },
 			}
 		);

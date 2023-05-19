@@ -47,7 +47,7 @@ const useTabs = (): SubscriptionManagerTab[] => {
 			{
 				id: 'comments',
 				label: translate( 'Comments' ),
-				count: counts?.comments || undefined,
+				count: undefined, // temporarily disable inaccurate comments count
 				onClick: () => navigate( getPathWithLocale( 'comments', locale ) ),
 				selected: pathname.startsWith( getPath( 'comments' ) ),
 			},
@@ -66,7 +66,7 @@ const useTabs = (): SubscriptionManagerTab[] => {
 				selected: pathname.startsWith( getPath( 'settings' ) ),
 			},
 		];
-	}, [ counts?.blogs, counts?.comments, counts?.pending, locale, navigate, pathname, translate ] );
+	}, [ counts?.blogs, counts?.pending, locale, navigate, pathname, translate ] );
 };
 
 const TabsSwitcher = () => {

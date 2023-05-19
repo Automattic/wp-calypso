@@ -63,8 +63,13 @@ const AssignTrialPlanStep: Step = function AssignTrialPlanStep( { navigation, da
 	};
 
 	const getSubTitle = () => {
-		return __(
-			'#FunWooFact: Did you know that Woo powers almost 4 million stores worldwide? You’re in good company.'
+		return (
+			<>
+				<strong>{ __( '#FunWooFact: ' ) }</strong>
+				{ __(
+					'Did you know that Woo powers almost 4 million stores worldwide? You’re in good company.'
+				) }
+			</>
 		);
 	};
 

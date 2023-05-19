@@ -127,6 +127,10 @@ export class EditorPage {
 
 	/**
 	 * Resolves with the Editor canvas element locator.
+	 *
+	 * You *must* use this method if you want to select an element inside the canvas
+	 * iframe. This already takes into account the parent wrapper element, so
+	 * there's *no* need to to chain `getEditorParent()` before calling it.
 	 */
 	async getEditorCanvas() {
 		return await this.editor.canvas();
