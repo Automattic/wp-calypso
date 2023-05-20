@@ -1,5 +1,7 @@
 import { SubTitle, Title } from '@automattic/onboarding';
 import { createSitesListComponent, GroupableSiteLaunchStatuses } from '@automattic/sites';
+import { Button } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import React from 'react';
 import Pagination from 'calypso/components/pagination';
@@ -21,11 +23,12 @@ interface Props {
 	perPage?: number;
 	search: string;
 	status: GroupableSiteLaunchStatuses;
+	onCreateSiteClick: () => void;
 	onQueryParamChange: ( params: Partial< SitesDashboardQueryParams > ) => void;
 }
 const SitePicker = function SitePicker( props: Props ) {
 	const { __ } = useI18n();
-	const { page, perPage = 96, search, status, onQueryParamChange } = props;
+	const { page, perPage = 96, search, status, onCreateSiteClick, onQueryParamChange } = props;
 	const { sitesSorting, onSitesSortingChange } = useSitesSorting();
 	const { data: allSites = [], isLoading } = useSiteExcerptsQuery( SITE_PICKER_FILTER_CONFIG );
 
@@ -34,8 +37,13 @@ const SitePicker = function SitePicker( props: Props ) {
 			<div className="site-picker--title">
 				<Title>{ __( 'Pick your destination' ) }</Title>
 				<SubTitle>
-					{ __(
-						'Select the WordPress.com site where you’ll move your old site or create a new one'
+					{ createInterpolateElement(
+						__(
+							'Select the WordPress.com site where you’ll move your old site or <button>create a new one</button>'
+						),
+						{
+							button: <Button onClick={ onCreateSiteClick } />,
+						}
 					) }
 				</SubTitle>
 			</div>
