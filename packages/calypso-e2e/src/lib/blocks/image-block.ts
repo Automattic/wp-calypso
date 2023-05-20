@@ -84,13 +84,18 @@ export class ImageBlock {
 	async uploadThroughMediaLibrary( path: string ): Promise< ElementHandle > {
 		await this.selectImageSource( 'Media Library' );
 
-		const editorParent = await this.editor.parent();
-		await editorParent.locator( 'input[type="file"][multiple]' ).setInputFiles( path );
+		// Note: editorParent() doesn't work in Gutenframe due to the media library's
+		// use of a ReactPortal, changing the DOM hierarchy. Instead, we use the
+		// expression below, which is compatible with both simple and AT (which is not
+		// rendered from Gutenframe).
+		const page = ( await this.block.ownerFrame() )?.page() as Page;
+		await page.locator( 'input[type="file"][multiple]' ).setInputFiles( path );
 
 		const confirmButtonSelector = envVariables.TEST_ON_ATOMIC
 			? 'button:text-is("Select")'
 			: 'button :text-is("Insert")'; // The whitespace is intentional as the text is nested in a span element.
-		await editorParent.locator( confirmButtonSelector ).click();
+
+		await page.locator( confirmButtonSelector ).click();
 
 		return await this.getImage();
 	}
