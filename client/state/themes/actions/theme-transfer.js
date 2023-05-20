@@ -61,13 +61,7 @@ function initiateTransfer( siteId, plugin, theme, geoAffinity, context, onProgre
  * @param {string} context -- place where this function is being called (e.g. hosting configuration, theme/plugin upload)
  * @returns {Promise} for testing purposes only
  */
-export function initiateThemeTransfer(
-	siteId,
-	file,
-	plugin,
-	geoAffinity = '',
-	context = plugin ? 'plugins' : 'themes'
-) {
+export function initiateThemeTransfer( siteId, file, plugin, geoAffinity = '', context ) {
 	return ( dispatch ) => {
 		const themeInitiateRequest = {
 			type: THEME_TRANSFER_INITIATE_REQUEST,

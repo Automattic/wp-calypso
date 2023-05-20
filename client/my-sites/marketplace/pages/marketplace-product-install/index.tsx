@@ -216,7 +216,7 @@ const MarketplaceProductInstall = ( {
 					dispatch( initiateAtomicTransfer( siteId, { themeSlug } ) );
 				} else {
 					setAtomicFlow( true );
-					dispatch( initiateTransfer( siteId, null, pluginSlug ) );
+					dispatch( initiateTransfer( siteId, null, pluginSlug, '', 'plugins' ) );
 				}
 
 				triggerInstallFlow();

@@ -30,7 +30,7 @@ class PluginEligibility extends Component {
 
 	pluginTransferInitiate = () => {
 		// Use theme transfer action until we introduce generic ones that will handle both plugins and themes
-		this.props.initiateTransfer( this.props.siteId, null, this.props.pluginSlug );
+		this.props.initiateTransfer( this.props.siteId, null, this.props.pluginSlug, '', 'plugins' );
 		this.goBack();
 	};
 

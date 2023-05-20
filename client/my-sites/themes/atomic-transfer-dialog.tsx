@@ -92,7 +92,7 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 		const { requestActiveThemeCount } = this.state;
 		this.setState( { requestActiveThemeCount: requestActiveThemeCount + 1 } );
 
-		dispatchInitiateThemeTransfer( siteId, null, '' );
+		dispatchInitiateThemeTransfer( siteId, null, '', '', 'themes' );
 	}
 
 	getAtomicSitePath = () => {
