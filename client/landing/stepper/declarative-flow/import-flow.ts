@@ -82,7 +82,7 @@ const importFlow: Flow = {
 
 		const handleMigrationRedirects = ( providedDependencies: ProvidedDependencies = {} ) => {
 			const from = urlQueryParams.get( 'from' );
-			// If there's any errors, we redirct them to the siteCreationStep for a clean start
+			// If there's any errors, we redirect them to the siteCreationStep for a clean start
 			if ( providedDependencies?.hasError ) {
 				return navigate( 'siteCreationStep' );
 			}
