@@ -11,6 +11,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { SitesDashboardQueryParams } from 'calypso/sites-dashboard/components/sites-content-controls';
 import SitePicker from './site-picker';
 import type { Step } from '../../types';
+import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
 import './styles.scss';
 
@@ -31,6 +32,10 @@ const SitePickerStep: Step = function SitePickerStep( { navigation } ) {
 		navigation.submit?.( { action: 'create-site' } );
 	};
 
+	const selectSite = ( site: SiteExcerptData ) => {
+		navigation.submit?.( { action: 'select-site', site } );
+	};
+
 	return (
 		<>
 			<DocumentHead title={ headerText } />
@@ -46,6 +51,7 @@ const SitePickerStep: Step = function SitePickerStep( { navigation } ) {
 						search={ search }
 						status={ status }
 						onCreateSiteClick={ createNewSite }
+						onSelectSite={ selectSite }
 						onQueryParamChange={ onQueryParamChange }
 					/>
 				}

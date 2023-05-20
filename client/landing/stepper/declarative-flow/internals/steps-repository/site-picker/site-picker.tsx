@@ -14,6 +14,7 @@ import {
 import { PageBodyBottomContainer } from 'calypso/sites-dashboard/components/sites-dashboard';
 import { SitesGrid } from 'calypso/sites-dashboard/components/sites-grid';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
+import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
 const SitesDashboardSitesList = createSitesListComponent();
 const SITE_PICKER_FILTER_CONFIG = [ 'wpcom', 'atomic' ];
@@ -24,11 +25,20 @@ interface Props {
 	search: string;
 	status: GroupableSiteLaunchStatuses;
 	onCreateSiteClick: () => void;
+	onSelectSite: ( site: SiteExcerptData ) => void;
 	onQueryParamChange: ( params: Partial< SitesDashboardQueryParams > ) => void;
 }
 const SitePicker = function SitePicker( props: Props ) {
 	const { __ } = useI18n();
-	const { page, perPage = 96, search, status, onCreateSiteClick, onQueryParamChange } = props;
+	const {
+		page,
+		perPage = 96,
+		search,
+		status,
+		onSelectSite,
+		onCreateSiteClick,
+		onQueryParamChange,
+	} = props;
 	const { sitesSorting, onSitesSortingChange } = useSitesSorting();
 	const { data: allSites = [], isLoading } = useSiteExcerptsQuery( SITE_PICKER_FILTER_CONFIG );
 
@@ -75,9 +85,7 @@ const SitePicker = function SitePicker( props: Props ) {
 										sites={ paginatedSites }
 										siteSelectorMode={ true }
 										showLinkInBioBanner={ false }
-										onSiteSelectBtnClick={ () => {
-											// console.log( 'onSiteSelectBtnClick', site );
-										} }
+										onSiteSelectBtnClick={ onSelectSite }
 									/>
 									{ ( selectedStatus.hiddenCount > 0 || sites.length > perPage ) && (
 										<PageBodyBottomContainer>

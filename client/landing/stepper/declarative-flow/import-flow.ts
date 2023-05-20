@@ -186,6 +186,7 @@ const importFlow: Flow = {
 							return navigate( `migrationHandler` );
 
 						case 'select-site':
+							// console.log( 'select-site', providedDependencies.site );
 							break;
 					}
 				}
