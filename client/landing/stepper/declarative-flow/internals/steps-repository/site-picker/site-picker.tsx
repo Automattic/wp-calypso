@@ -24,7 +24,7 @@ interface Props {
 	perPage?: number;
 	search: string;
 	status: GroupableSiteLaunchStatuses;
-	onCreateSiteClick: () => void;
+	onCreateSite: () => void;
 	onSelectSite: ( site: SiteExcerptData ) => void;
 	onQueryParamChange: ( params: Partial< SitesDashboardQueryParams > ) => void;
 }
@@ -36,7 +36,7 @@ const SitePicker = function SitePicker( props: Props ) {
 		search,
 		status,
 		onSelectSite,
-		onCreateSiteClick,
+		onCreateSite,
 		onQueryParamChange,
 	} = props;
 	const { sitesSorting, onSitesSortingChange } = useSitesSorting();
@@ -52,7 +52,7 @@ const SitePicker = function SitePicker( props: Props ) {
 							'Select the WordPress.com site where you’ll move your old site or <button>create a new one</button>'
 						),
 						{
-							button: <Button onClick={ onCreateSiteClick } />,
+							button: <Button onClick={ onCreateSite } />,
 						}
 					) }
 				</SubTitle>

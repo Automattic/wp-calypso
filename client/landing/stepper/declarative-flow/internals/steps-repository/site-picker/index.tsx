@@ -50,7 +50,7 @@ const SitePickerStep: Step = function SitePickerStep( { navigation } ) {
 						page={ page }
 						search={ search }
 						status={ status }
-						onCreateSiteClick={ createNewSite }
+						onCreateSite={ createNewSite }
 						onSelectSite={ selectSite }
 						onQueryParamChange={ onQueryParamChange }
 					/>
