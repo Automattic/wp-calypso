@@ -31,7 +31,9 @@ export const mapToRequestBody = ( action ) => {
 		requestBody.plugin_file = action.pluginFile;
 	}
 
-	requestBody.context = action.context ?? 'plugin_upload';
+	if ( action.context ) {
+		requestBody.context = action.context;
+	}
 
 	return requestBody;
 };
