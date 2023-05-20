@@ -17,7 +17,6 @@ import './styles.scss';
 
 const SitePickerStep: Step = function SitePickerStep( { navigation } ) {
 	const { __ } = useI18n();
-	const headerText = __( 'Pick your destination' );
 	const page = Number( useQuery().get( 'page' ) ) || 1;
 	const search = useQuery().get( 'search' ) || '';
 	const status =
@@ -38,7 +37,7 @@ const SitePickerStep: Step = function SitePickerStep( { navigation } ) {
 
 	return (
 		<>
-			<DocumentHead title={ headerText } />
+			<DocumentHead title={ __( 'Pick your destination' ) } />
 			<StepContainer
 				stepName="site-picker"
 				hideBack={ true }
