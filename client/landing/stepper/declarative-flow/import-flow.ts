@@ -25,6 +25,7 @@ import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import SitePickerStep from './internals/steps-repository/site-picker';
 import { Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect } from '@automattic/data-stores';
+import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
 const importFlow: Flow = {
 	name: IMPORT_FOCUSED_FLOW,
@@ -182,12 +183,20 @@ const importFlow: Flow = {
 							return navigate( `sitePicker?${ urlQueryParams.toString() }` );
 						}
 
-						case 'create-site':
-							return navigate( `migrationHandler` );
+						case 'select-site': {
+							const selectedSite = providedDependencies.site as SiteExcerptData;
 
-						case 'select-site':
-							// console.log( 'select-site', providedDependencies.site );
-							break;
+							if ( selectedSite ) {
+								urlQueryParams.set( 'siteSlug', selectedSite.slug );
+								urlQueryParams.set( 'option', 'everything' );
+
+								return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
+							}
+						}
+
+						case 'create-site':
+						default:
+							return navigate( `migrationHandler` );
 					}
 				}
 			}
