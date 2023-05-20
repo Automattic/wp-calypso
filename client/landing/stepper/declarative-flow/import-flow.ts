@@ -168,16 +168,26 @@ const importFlow: Flow = {
 				}
 
 				case 'sitePicker': {
-					const newQueryParams =
-						( providedDependencies?.queryParams as { [ key: string ]: string } ) || {};
+					switch ( providedDependencies?.action ) {
+						case 'update-query': {
+							const newQueryParams =
+								( providedDependencies?.queryParams as { [ key: string ]: string } ) || {};
 
-					Object.keys( newQueryParams ).forEach( ( key ) => {
-						newQueryParams[ key ]
-							? urlQueryParams.set( key, newQueryParams[ key ] )
-							: urlQueryParams.delete( key );
-					} );
+							Object.keys( newQueryParams ).forEach( ( key ) => {
+								newQueryParams[ key ]
+									? urlQueryParams.set( key, newQueryParams[ key ] )
+									: urlQueryParams.delete( key );
+							} );
 
-					return navigate( `sitePicker?${ urlQueryParams.toString() }` );
+							return navigate( `sitePicker?${ urlQueryParams.toString() }` );
+						}
+
+						case 'create-site':
+							return navigate( `migrationHandler` );
+
+						case 'select-site':
+							break;
+					}
 				}
 			}
 		};

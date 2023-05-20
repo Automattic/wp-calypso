@@ -3,6 +3,7 @@ import {
 	DEFAULT_SITE_LAUNCH_STATUS_GROUP_VALUE,
 	GroupableSiteLaunchStatuses,
 } from '@automattic/sites';
+import { useI18n } from '@wordpress/react-i18n';
 import React from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -14,7 +15,8 @@ import type { Step } from '../../types';
 import './styles.scss';
 
 const SitePickerStep: Step = function SitePickerStep( { navigation } ) {
-	const headerText = 'Pick your destination';
+	const { __ } = useI18n();
+	const headerText = __( 'Pick your destination' );
 	const page = Number( useQuery().get( 'page' ) ) || 1;
 	const search = useQuery().get( 'search' ) || '';
 	const status =
@@ -22,7 +24,11 @@ const SitePickerStep: Step = function SitePickerStep( { navigation } ) {
 		DEFAULT_SITE_LAUNCH_STATUS_GROUP_VALUE;
 
 	const onQueryParamChange = ( params: Partial< SitesDashboardQueryParams > ) => {
-		navigation.submit?.( { queryParams: params } );
+		navigation.submit?.( { action: 'update-query', queryParams: params } );
+	};
+
+	const createNewSite = () => {
+		navigation.submit?.( { action: 'create-site' } );
 	};
 
 	return (
@@ -30,13 +36,16 @@ const SitePickerStep: Step = function SitePickerStep( { navigation } ) {
 			<DocumentHead title={ headerText } />
 			<StepContainer
 				stepName="site-picker"
-				hideSkip={ true }
 				hideBack={ true }
+				hideSkip={ false }
+				skipLabelText={ __( 'Skip and create a new site' ) }
+				goNext={ createNewSite }
 				stepContent={
 					<SitePicker
 						page={ page }
 						search={ search }
 						status={ status }
+						onCreateSiteClick={ createNewSite }
 						onQueryParamChange={ onQueryParamChange }
 					/>
 				}
