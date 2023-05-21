@@ -39,9 +39,9 @@ export function useJetpackSearchAIQuery( config: JetpackSearchAIConfig ) {
 				  } )
 				: apiFetch( {
 						global: true,
-						path: `/sites/${ config.siteId }/jetpack-search/ai/search?query=${ encodeURIComponent(
-							config.query
-						) }&stop_at=${ config.stopAt }`,
+						path: `/help-center/jetpack-search/ai/search?site=${
+							config.siteId
+						}&query=${ encodeURIComponent( config.query ) }&stop_at=${ config.stopAt }`,
 				  } as APIFetchOptions ),
 		{
 			refetchOnWindowFocus: false,
