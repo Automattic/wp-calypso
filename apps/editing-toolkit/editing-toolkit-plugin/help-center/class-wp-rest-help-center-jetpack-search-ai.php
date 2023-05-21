@@ -49,7 +49,11 @@ class WP_REST_Help_Center_Jetpack_Search_AI extends \WP_REST_Controller {
 			'stop_at' => $request['stop_at'],
 		);
 		$body             = Client::wpcom_json_api_request_as_user(
-			'sites/' . $request['site'] . '/jetpack-search/ai/search?' . http_build_query( $query_parameters )
+			'sites/' . $request['site'] . '/jetpack-search/ai/search?' . http_build_query( $query_parameters ),
+			2,
+			array(
+				'timeout' => 75,
+			)
 		);
 
 		if ( is_wp_error( $body ) ) {
