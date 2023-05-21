@@ -311,7 +311,10 @@ export const HelpCenterContactForm = () => {
 			section: sectionName,
 		} );
 
+		const savedCurrentSite = currentSite;
 		resetStore();
+		setSite( savedCurrentSite );
+
 		navigate( '/' );
 	}
 
