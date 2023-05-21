@@ -52,18 +52,18 @@ export function HelpCenterGPT() {
 	// Report loading state up.
 	const { message } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
-		const subject = store.getSubject();
+		const subject = store.getSubject() || '';
 		const message = store.getMessage();
 
 		// if the first 50 chars of subject and message match, only show the message (they're probably identical)
-		if ( subject && message && subject.slice( 0, 50 ) === message.slice( 0, 50 ) ) {
+		if ( subject && message && subject.slice( 0, 50 ) !== message.slice( 0, 50 ) ) {
 			return {
-				message,
+				message: `${ subject }\n\n${ message }`,
 			};
 		}
 
 		return {
-			message: `${ subject }\n\n${ message }`,
+			message,
 		};
 	}, [] );
 
