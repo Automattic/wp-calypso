@@ -4,8 +4,14 @@ import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { shouldCalypsoifyJetpack } from 'calypso/state/selectors/should-calypsoify-jetpack';
 import shouldLoadGutenframe from 'calypso/state/selectors/should-load-gutenframe';
 import { getSiteAdminUrl, getSiteSlug } from 'calypso/state/sites/selectors';
+import { AppState } from 'calypso/types';
 
-export const getEditorUrl = ( state, siteId, postId = '', postType = 'post' ) => {
+export const getEditorUrl = (
+	state: AppState,
+	siteId: number,
+	postId: string | number | null | undefined = '',
+	postType = 'post'
+): string => {
 	if ( ! shouldLoadGutenframe( state, siteId, postType ) ) {
 		const siteAdminUrl = getSiteAdminUrl( state, siteId );
 		let url = `${ siteAdminUrl }post-new.php?post_type=${ postType }`;

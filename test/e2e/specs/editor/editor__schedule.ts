@@ -97,10 +97,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 			const tmpPage = await browser.newPage(); // Calling from browser opens new incognito window
 
 			await tmpPage.goto( postURL.href );
-			await new PublishedPostPage( tmpPage ).validateTextInPost(
-				'It looks like nothing was found at this location. Maybe try a search?'
-			);
-
+			await tmpPage.locator( 'body.error404' ).waitFor();
 			await tmpPage.close();
 		} );
 	} );

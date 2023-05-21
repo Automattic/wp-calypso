@@ -5,6 +5,7 @@ export type LinkedInPreviewProps = SocialPreviewBaseProps & {
 	name: string;
 	profileImage: string;
 	media?: Array< MediaItem >;
+	articleReadTime?: number;
 };
 
 export type LinkedInPreviewsProps = LinkedInPreviewProps & SocialPreviewsBaseProps;
