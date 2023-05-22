@@ -79,6 +79,7 @@ export interface APIPartner {
 	tos: string;
 	partner_type: string;
 	has_valid_payment_method: boolean;
+	warn_bad_agency_pricing: boolean;
 }
 
 // The API-returned license object is not quite consistent right now so we only define the properties we actively rely on.
@@ -191,6 +192,7 @@ export interface Partner {
 	tos: string;
 	partner_type: string;
 	has_valid_payment_method: boolean;
+	warn_bad_agency_pricing: boolean;
 }
 
 export interface PartnerStore {
