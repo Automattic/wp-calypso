@@ -44,8 +44,6 @@ const getSortFunction = ( sortTerm: PostSubscriptionsSortBy ) => {
 	}
 };
 
-const defaultFilter = () => true;
-
 const usePostSubscriptionsQuery = ( {
 	searchTerm = '',
 	filterOption = SiteSubscriptionsFilterBy.All,
