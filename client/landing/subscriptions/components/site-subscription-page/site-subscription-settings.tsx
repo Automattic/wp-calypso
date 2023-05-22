@@ -26,7 +26,7 @@ const SiteSubscriptionSettings = ( {
 	const { mutate: updateDeliveryFrequency, isLoading: updatingFrequency } =
 		SubscriptionManager.useSiteDeliveryFrequencyMutation( blogId );
 	const { mutate: updateEmailMeNewComments, isLoading: updatingEmailMeNewComments } =
-		SubscriptionManager.useSiteEmailMeNewCommentsMutation();
+		SubscriptionManager.useSiteEmailMeNewCommentsMutation( blogId );
 
 	return (
 		<div className="site-subscription-settings">
