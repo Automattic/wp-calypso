@@ -96,19 +96,19 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 				) }
 				{ showCredentials && (
 					<div className="pre-migration__form-container pre-migration__credentials-form">
+						<div className="pre-migration__form">
+							<MigrationCredentialsForm
+								sourceSite={ sourceSite }
+								targetSite={ targetSite }
+								startImport={ startImport }
+								selectedHost={ selectedHost }
+								onChangeProtocol={ changeCredentialsProtocol }
+							/>
+						</div>
 						<div className="pre-migration__credentials-help">
 							<CredentialsHelper
 								onHostChange={ changeCredentialsHelperHost }
 								selectedProtocol={ selectedProtocol }
-							/>
-						</div>
-						<div className="pre-migration__form">
-							<MigrationCredentialsForm
-								sourceSiteId={ sourceSite.ID }
-								targetSiteId={ targetSite.ID }
-								startImport={ startImport }
-								selectedHost={ selectedHost }
-								onChangeProtocol={ changeCredentialsProtocol }
 							/>
 						</div>
 					</div>

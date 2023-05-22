@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { SiteDetails } from '@automattic/data-stores';
 import { NextButton } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -18,26 +19,26 @@ import getJetpackCredentialsUpdateStatus from 'calypso/state/selectors/get-jetpa
 import { StartImportTrackingProps } from './types';
 
 interface Props {
-	sourceSiteId: number;
-	targetSiteId: number;
+	sourceSite: SiteDetails;
+	targetSite: SiteDetails;
 	startImport: ( props?: StartImportTrackingProps ) => void;
 	selectedHost: string;
 	onChangeProtocol: ( protocol: 'ftp' | 'ssh' ) => void;
 }
 
 export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( props ) => {
-	const { sourceSiteId, targetSiteId, startImport } = props;
+	const { sourceSite, targetSite, startImport } = props;
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-
-	const [ formState, setFormState ] = useState( INITIAL_FORM_STATE );
+	const { hostname } = new URL( sourceSite.URL );
+	const [ formState, setFormState ] = useState( { ...INITIAL_FORM_STATE, host: hostname } );
 	const [ formErrors, setFormErrors ] = useState( INITIAL_FORM_ERRORS );
 	const [ formMode, setFormMode ] = useState( FormMode.Password );
 	const [ hasMissingFields, setHasMissingFields ] = useState( false );
 
 	const formSubmissionStatus = useSelector(
 		( state ) =>
-			getJetpackCredentialsUpdateStatus( state, sourceSiteId ) as
+			getJetpackCredentialsUpdateStatus( state, sourceSite.ID ) as
 				| 'unsubmitted'
 				| 'pending'
 				| 'success'
@@ -62,6 +63,13 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 		if ( formState.user === 'root' ) {
 			errors.user = {
 				message: translate( "We can't accept credentials for the root user." ),
+				waitForInteraction: true,
+			};
+		}
+
+		if ( typeof formState.port === 'string' ) {
+			errors.port = {
+				message: translate( 'Invalid port.' ),
 				waitForInteraction: true,
 			};
 		}
@@ -94,9 +102,8 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 			credentials.pass = '';
 		}
 
-		// @todo custom event for migration flow?
-		dispatch( recordTracksEvent( 'calypso_jetpack_advanced_credentials_flow_credentials_update' ) );
-		dispatch( updateCredentials( sourceSiteId, credentials, true, false ) );
+		dispatch( recordTracksEvent( 'calypso_site_migration_credentials_update' ) );
+		dispatch( updateCredentials( sourceSite.ID, credentials, true, false ) );
 	};
 
 	const { migrateProvision, isLoading, isError, error } =
@@ -112,13 +119,13 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 				return;
 			}
 
-			migrateProvision( targetSiteId, sourceSiteId, true );
+			migrateProvision( targetSite.ID, sourceSite.ID, true );
 		},
-		[ formHasErrors, dispatch, sourceSiteId, formState, formMode ]
+		[ formHasErrors, dispatch, sourceSite.ID, formState, formMode ]
 	);
 
 	const updateError = useSelector( ( state ) =>
-		getJetpackCredentialsUpdateError( state, sourceSiteId )
+		getJetpackCredentialsUpdateError( state, sourceSite.ID )
 	);
 
 	useEffect( () => {

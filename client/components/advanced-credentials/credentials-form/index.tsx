@@ -57,7 +57,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 					...formState,
 					protocol: currentTarget.value as 'ftp' | 'ssh' | 'dynamic-ssh',
 					port: ( () => {
-						let port = parseInt( String( formState.port ) );
+						let port = parseInt( String( formState.port ) ) || 22;
 
 						if ( formState.port === 22 && currentTarget.value === 'ftp' ) {
 							port = 21;
