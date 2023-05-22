@@ -22,7 +22,7 @@ const SiteSubscriptionSettings = ( {
 	const { mutate: updateNotifyMeOfNewPosts, isLoading: updatingNotifyMeOfNewPosts } =
 		SubscriptionManager.useSiteNotifyMeOfNewPostsMutation( blogId );
 	const { mutate: updateEmailMeNewPosts, isLoading: updatingEmailMeNewPosts } =
-		SubscriptionManager.useSiteEmailMeNewPostsMutation();
+		SubscriptionManager.useSiteEmailMeNewPostsMutation( blogId );
 	const { mutate: updateDeliveryFrequency, isLoading: updatingFrequency } =
 		SubscriptionManager.useSiteDeliveryFrequencyMutation( blogId );
 	const { mutate: updateEmailMeNewComments, isLoading: updatingEmailMeNewComments } =
