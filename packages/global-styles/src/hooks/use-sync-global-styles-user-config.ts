@@ -12,7 +12,7 @@ const useSyncGlobalStylesUserConfig = ( globalStyles: GlobalStylesObject[] ) => 
 				.filter( Boolean )
 				.reduce( ( prev, current ) => mergeBaseAndUserConfigs( prev, current ), {} )
 		);
-	}, [ globalStyles, enabled ] );
+	}, [ globalStyles ] );
 
 	return user;
 };
