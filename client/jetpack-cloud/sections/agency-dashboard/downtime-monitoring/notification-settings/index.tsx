@@ -97,7 +97,7 @@ export default function NotificationSettings( {
 				emails: extraEmails.map( ( item ) => {
 					return {
 						name: item.name,
-						value: item.email,
+						email_address: item.email,
 						verified: item.verified,
 					};
 				} ),
@@ -128,7 +128,7 @@ export default function NotificationSettings( {
 				let siteEmailItems: Array< MonitorSettingsEmail > = [];
 				if ( settings.monitor_notify_additional_user_emails ) {
 					siteEmailItems = settings.monitor_notify_additional_user_emails.map( ( item ) => ( {
-						email: item.value,
+						email: item.email_address,
 						name: item.name,
 						verified: item.verified,
 					} ) );

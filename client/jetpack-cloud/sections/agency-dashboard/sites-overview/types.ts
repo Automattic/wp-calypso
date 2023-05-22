@@ -24,7 +24,7 @@ export type AllowedStatusTypes =
 
 interface MonitorContactEmail {
 	name: string;
-	value: string;
+	email_address: string;
 	verified: boolean;
 }
 interface MonitorContacts {
