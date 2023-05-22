@@ -15,8 +15,8 @@ import DeleteSite from './delete-site';
 import DisconnectSite from './disconnect-site';
 import ConfirmDisconnection from './disconnect-site/confirm';
 import ManageConnection from './manage-connection';
+import StartSiteTransfer from './site-transfer/start-site-transfer';
 import StartOver from './start-over';
-import StartSiteTransfer from './start-site-transfer';
 
 function canDeleteSite( state, siteId ) {
 	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
