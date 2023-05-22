@@ -218,6 +218,7 @@ function getIsTranslationChunkPreloaded( chunkId, localeSlug ) {
 	if ( typeof window !== 'undefined' ) {
 		return (
 			window.i18nLanguageManifest?.locale?.[ '' ]?.localeSlug === localeSlug &&
+			window.i18nTranslationChunks &&
 			chunkId in window.i18nTranslationChunks
 		);
 	}
@@ -286,12 +287,15 @@ function addRequireChunkTranslationsHandler( localeSlug = i18n.getLocaleSlug(), 
 			return;
 		}
 
-		const translationChunkPromise = getTranslationChunkFile( chunkId, localeSlug ).then(
-			( translations ) => {
+		const translationChunkPromise = getTranslationChunkFile( chunkId, localeSlug )
+			.then( ( translations ) => {
 				addTranslations( translations, userTranslations );
 				loadedTranslationChunks[ chunkId ] = true;
-			}
-		);
+			} )
+			.catch( ( error ) => {
+				debug( `Encountered an error loading translation chunk ${ chunkId }.` );
+				debug( error );
+			} );
 
 		promises.push( translationChunkPromise );
 	};
