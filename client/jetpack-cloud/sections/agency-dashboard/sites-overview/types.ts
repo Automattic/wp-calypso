@@ -289,3 +289,14 @@ export interface StateMonitorSettingsEmail extends MonitorSettingsEmail {
 }
 
 export type AllowedMonitorContactActions = 'add' | 'verify' | 'edit' | 'remove';
+
+export interface RequestVerificationCodeParams {
+	type: 'email';
+	value: string;
+}
+
+export interface ValidateVerificationCodeParams {
+	type: 'email';
+	value: string;
+	verification_code: string;
+}
