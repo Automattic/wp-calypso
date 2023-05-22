@@ -32,15 +32,21 @@
 	margin-bottom: 1rem;
 
 	color: $mastodon-body-text-color;
+
+	> p {
+		margin-bottom: 1.25rem;
+	}
 }
 
 .mastodon-preview__window {
 	display: flex;
 
 	margin-top: 1rem;
+	margin-bottom: 1rem;
 
 	border: solid 1px #ccd7e0;
 	border-radius: 4px;
+	color: $mastodon-body-text-color;
 }
 
 .mastodon-preview__window-img {

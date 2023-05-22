@@ -9,18 +9,34 @@ import './styles.scss';
 
 export const MastodonPostPreview: React.FC< MastodonPreviewProps > = ( {
 	title,
+	description,
+	customText,
 	user,
 	url,
 	image,
-} ) => (
-	<div className="mastodon-preview__card">
-		<MastodonPostHeader user={ user } />
-		<div className="mastodon-preview__body">
-			{ mastodonBody( title ) }
-			&nbsp;
-			<a href={ url } target="_blank" rel="noreferrer noopener">
-				{ mastodonUrl( url.replace( /^https?:\/\//, '' ) ) }
-			</a>
+} ) => {
+	let bodyTxt;
+
+	if ( customText ) {
+		bodyTxt = <p>{ mastodonBody( customText ) }</p>;
+	} else {
+		bodyTxt = (
+			<>
+				<p>{ mastodonTitle( title ) }</p>
+				{ description && <p>{ mastodonBody( description ) }</p> }
+			</>
+		);
+	}
+
+	return (
+		<div className="mastodon-preview__card">
+			<MastodonPostHeader user={ user } />
+			<div className="mastodon-preview__body">
+				{ bodyTxt }
+				<a href={ url } target="_blank" rel="noreferrer noopener">
+					{ mastodonUrl( url.replace( /^https?:\/\//, '' ) ) }
+				</a>
+			</div>
 			<div className="mastodon-preview__window">
 				<div className="mastodon-preview__window-img">
 					{ image && (
@@ -32,7 +48,8 @@ export const MastodonPostPreview: React.FC< MastodonPreviewProps > = ( {
 					<span className="mastodon-preview__window-site">{ baseDomain( url ) }</span>
 				</div>
 			</div>
+
+			<MastodonPostActions />
 		</div>
-		<MastodonPostActions />
-	</div>
-);
+	);
+};

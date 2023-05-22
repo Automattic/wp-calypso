@@ -151,7 +151,7 @@ class SharingPreviewPane extends PureComponent {
 			case 'twitter':
 				return <TwitterSharePreview { ...previewProps } externalDisplay={ externalDisplay } />;
 			case 'mastodon':
-				return <MastodonSharePreview { ...previewProps } />;
+				return <MastodonSharePreview { ...previewProps } articleContent={ post.content } />;
 			default:
 				return null;
 		}
