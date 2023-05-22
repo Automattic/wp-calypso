@@ -61,8 +61,8 @@ const importFlow: Flow = {
 		const { data: sites } = useSiteExcerptsQuery( SITE_PICKER_FILTER_CONFIG );
 		const { addTempSiteToSourceOption } = useAddTempSiteToSourceOptionMutation();
 		const urlQueryParams = useQuery();
-		const from = urlQueryParams.get( 'from' );
-		const { data: sourceSite } = useSiteQuery( from as string );
+		const fromParam = urlQueryParams.get( 'from' );
+		const { data: sourceSite } = useSiteQuery( fromParam as string );
 		const siteSlugParam = useSiteSlugParam();
 		const selectedDesign = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
@@ -107,7 +107,7 @@ const importFlow: Flow = {
 			}
 			// For those who hasn't paid or in the middle of the migration process, we sent them to the importerWordPress step
 			return navigate(
-				`importerWordpress?siteSlug=${ providedDependencies?.targetBlogSlug }&from=${ from }&option=everything`
+				`importerWordpress?siteSlug=${ providedDependencies?.targetBlogSlug }&from=${ fromParam }&option=everything`
 			);
 		};
 
@@ -160,9 +160,11 @@ const importFlow: Flow = {
 
 				case 'processing': {
 					if ( providedDependencies?.siteSlug ) {
-						return ! from
+						return ! fromParam
 							? navigate( `import?siteSlug=${ providedDependencies?.siteSlug }` )
-							: navigate( `import?siteSlug=${ providedDependencies?.siteSlug }&from=${ from }` );
+							: navigate(
+									`import?siteSlug=${ providedDependencies?.siteSlug }&from=${ fromParam }`
+							  );
 					}
 					// End of Pattern Assembler flow
 					if ( isBlankCanvasDesign( selectedDesign ) ) {
@@ -193,7 +195,7 @@ const importFlow: Flow = {
 						case 'select-site': {
 							const selectedSite = providedDependencies.site as SiteExcerptData;
 
-							if ( selectedSite && from ) {
+							if ( selectedSite && sourceSite ) {
 								// Store temporary target blog id to source site option
 								selectedSite &&
 									sourceSite &&
