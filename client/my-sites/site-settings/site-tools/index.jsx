@@ -88,7 +88,7 @@ class SiteTools extends Component {
 		const cloneTitle = translate( 'Clone', { context: 'verb' } );
 		const cloneText = translate( 'Clone your existing site and all its data to a new location.' );
 
-		const startSiteTransferTitle = translate( 'Transfer site' );
+		const startSiteTransferTitle = translate( 'Transfer your site' );
 		const startSiteTransferText = translate(
 			'Transfer your site and plan to another WordPress.com user.'
 		);
