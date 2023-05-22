@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	StepContainer,
 	base64ImageToBlob,
@@ -135,7 +134,7 @@ const NewsletterPostSetup: Step = ( { navigation } ) => {
 							setAccentColor={ setAccentColor }
 							labelText={ newsletterFormText?.colorLabel }
 						/>
-						{ isEnabled( 'newsletter/paid-subscribers' ) && <PaidMembershipsControl /> }
+						<PaidMembershipsControl />
 					</>
 				</SetupForm>
 			}
