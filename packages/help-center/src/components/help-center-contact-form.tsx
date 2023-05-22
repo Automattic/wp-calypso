@@ -610,14 +610,18 @@ export const HelpCenterContactForm = () => {
 						isBusy={ isFetchingGPTResponse }
 						disabled={ isFetchingGPTResponse }
 						onClick={ handleCTA }
-						isPrimary={ ! showingGPTResponse }
-						isSecondary={ showingGPTResponse }
+						isPrimary={ ! showingGPTResponse || isGPTError }
+						isSecondary={ showingGPTResponse && ! isGPTError }
 						className="help-center-contact-form__site-picker-cta"
 					>
 						{ getCTALabel() }
 					</Button>
 					{ ! isFetchingGPTResponse && showingGPTResponse && ! hasSubmittingError && (
-						<Button isPrimary onClick={ handleGPTClose }>
+						<Button
+							isPrimary={ ! isGPTError }
+							isSecondary={ isGPTError }
+							onClick={ handleGPTClose }
+						>
 							{ __( 'Close', __i18n_text_domain__ ) }
 						</Button>
 					) }
