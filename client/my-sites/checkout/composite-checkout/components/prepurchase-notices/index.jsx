@@ -2,7 +2,6 @@ import {
 	getProductFromSlug,
 	isJetpackAntiSpamSlug,
 	isJetpackBackupSlug,
-	isJetpackPlanSlug,
 	isJetpackScanSlug,
 	getAllFeaturesForPlan,
 	planHasSuperiorFeature,
@@ -13,14 +12,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { requestRewindCapabilities } from 'calypso/state/rewind/capabilities/actions';
-import {
-	getSitePlan,
-	getSiteProducts,
-	isJetpackMinimumVersion,
-	getSiteOption,
-} from 'calypso/state/sites/selectors';
+import { getSitePlan, isJetpackMinimumVersion, getSiteOption } from 'calypso/state/sites/selectors';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
-import CartPlanOverlapsOwnedProductNotice from './cart-plan-overlaps-owned-product-notice';
 import JetpackPluginRequiredVersionNotice from './jetpack-plugin-required-version-notice';
 import SitePlanIncludesCartProductNotice from './site-plan-includes-cart-product-notice';
 import './style.scss';
@@ -55,14 +48,6 @@ const PrePurchaseNotices = () => {
 
 		return getSitePlan( state, siteId );
 	} );
-	const currentSiteProducts = useSelector( ( state ) => {
-		if ( ! siteId ) {
-			return null;
-		}
-
-		const products = getSiteProducts( state, siteId ) || [];
-		return products.filter( ( p ) => ! p.expired );
-	} );
 
 	const getMatchingProducts = ( items, planSlug, isCartItem ) => {
 		const planFeatures = getAllFeaturesForPlan( planSlug );
@@ -79,16 +64,6 @@ const PrePurchaseNotices = () => {
 			);
 		} );
 	};
-
-	const siteProductThatOverlapsCartPlan = useMemo( () => {
-		const planSlugInCart = cartItemSlugs.find( isJetpackPlanSlug );
-		if ( ! planSlugInCart || ! currentSiteProducts ) {
-			return null;
-		}
-
-		const matchingProducts = getMatchingProducts( currentSiteProducts, planSlugInCart, false );
-		return matchingProducts?.[ 0 ];
-	}, [ currentSiteProducts, cartItemSlugs ] );
 
 	const cartProductThatOverlapsSitePlan = useMemo( () => {
 		const planSlugOnSite = currentSitePlan?.product_slug;
@@ -123,19 +98,6 @@ const PrePurchaseNotices = () => {
 	// safely assume a site ID has been defined.
 	if ( ! siteId ) {
 		return null;
-	}
-
-	// This site has an active Jetpack product purchase, but we're
-	// attempting to buy a plan that includes the same one as well.
-	// i.e. User owns a Jetpack Backup product, and is attempting
-	// to purchase Jetpack Security.
-	if ( siteProductThatOverlapsCartPlan ) {
-		return (
-			<CartPlanOverlapsOwnedProductNotice
-				product={ siteProductThatOverlapsCartPlan }
-				selectedSite={ selectedSite }
-			/>
-		);
 	}
 
 	// We're attempting to buy Jetpack Backup individually,
