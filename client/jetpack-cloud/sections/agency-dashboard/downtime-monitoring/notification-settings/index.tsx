@@ -19,6 +19,7 @@ import type {
 	StateMonitorSettingsEmail,
 	AllowedMonitorContactActions,
 	MonitorSettingsEmail,
+	UpdateMonitorSettingsParams,
 } from '../../sites-overview/types';
 
 import './style.scss';
@@ -60,6 +61,10 @@ export default function NotificationSettings( {
 	const [ selectedEmail, setSelectedEmail ] = useState< StateMonitorSettingsEmail | undefined >();
 	const [ selectedAction, setSelectedAction ] = useState< AllowedMonitorContactActions >();
 
+	const isMultipleEmailEnabled = isEnabled(
+		'jetpack/pro-dashboard-monitor-multiple-email-recipients'
+	);
+
 	const toggleAddEmailModal = (
 		item?: StateMonitorSettingsEmail,
 		action?: AllowedMonitorContactActions
@@ -84,7 +89,21 @@ export default function NotificationSettings( {
 			wp_note_notifications: enableMobileNotification,
 			email_notifications: enableEmailNotification,
 			jetmon_defer_status_down_minutes: selectedDuration?.time,
-		};
+		} as UpdateMonitorSettingsParams;
+
+		if ( isMultipleEmailEnabled ) {
+			const extraEmails = allEmailItems.filter( ( item ) => ! item.isDefault );
+			params.contacts = {
+				emails: extraEmails.map( ( item ) => {
+					return {
+						name: item.name,
+						value: item.email,
+						verified: item.verified,
+					};
+				} ),
+			};
+		}
+
 		recordEvent( 'notification_save_click', params );
 		updateMonitorSettings( params );
 	}
@@ -94,10 +113,6 @@ export default function NotificationSettings( {
 		setSelectedDuration( duration );
 	}
 
-	const isMultipleEmailEnabled = isEnabled(
-		'jetpack/pro-dashboard-monitor-multiple-email-recipients'
-	);
-
 	const handleSetEmailItems = useCallback(
 		( settings: MonitorSettings ) => {
 			const userEmails = settings.monitor_user_emails || [];
@@ -106,11 +121,18 @@ export default function NotificationSettings( {
 			if ( isMultipleEmailEnabled ) {
 				const userEmailItems = userEmails.map( ( email ) => ( {
 					email,
-					name: 'Default Email', //FIXME: This should be dynamic.
+					name: 'Default Email',
 					isDefault: true,
 					verified: true,
 				} ) );
-				const siteEmailItems: Array< MonitorSettingsEmail > = []; // FIXME: This should be dynamic.
+				let siteEmailItems: Array< MonitorSettingsEmail > = [];
+				if ( settings.monitor_notify_additional_user_emails ) {
+					siteEmailItems = settings.monitor_notify_additional_user_emails.map( ( item ) => ( {
+						email: item.value,
+						name: item.name,
+						verified: item.verified,
+					} ) );
+				}
 				setAllEmailItems( [ ...userEmailItems, ...siteEmailItems ] );
 			}
 		},
