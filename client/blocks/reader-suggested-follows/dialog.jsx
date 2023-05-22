@@ -42,7 +42,7 @@ const ReaderSuggestedFollowsDialog = ( { onClose, relatedPosts } ) => {
 						{ translate( 'Suggested follows' ) }
 					</h2>
 					<p className="reader-recommended-follows-dialog__description">
-						{ translate( "While you're at it, you might as well check out these sites" ) }
+						{ translate( "While you're at it, you might check out these sites." ) }
 					</p>
 				</div>
 				<div className="reader-recommended-follows-dialog__body">

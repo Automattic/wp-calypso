@@ -46,6 +46,8 @@ const SuggestedFollowItem = ( { post, site, followSource } ) => {
 						href={ streamLink }
 						onClick={ () => onSiteClick( site ) }
 						aria-hidden="true"
+						target="_blank"
+						rel="noreferrer"
 					>
 						<span className="reader-suggested-follow-item_siteicon">
 							{ site.site_icon && <Favicon site={ site } size={ 48 } /> }
