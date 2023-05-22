@@ -47,6 +47,7 @@ export default function NotificationSettings( {
 }: Props ) {
 	const isBulkUpdate = !! bulkUpdateSettings;
 	const translate = useTranslate();
+
 	const { updateMonitorSettings, isLoading, isComplete } = useUpdateMonitorSettings( sites );
 	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( sites, isLargeScreen );
 	const { verifiedItem, handleSetVerifiedItem } = useShowVerifiedBadge();
