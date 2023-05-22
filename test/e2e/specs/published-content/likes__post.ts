@@ -83,7 +83,7 @@ describe( 'Likes: Post', function () {
 		} );
 
 		it( 'Go to the published post page', async () => {
-			await newPage.goto( newPost.URL );
+			await newPage.goto( newPost.URL, { timeout: 20 * 1000 } );
 		} );
 
 		it( 'Like post', async function () {
