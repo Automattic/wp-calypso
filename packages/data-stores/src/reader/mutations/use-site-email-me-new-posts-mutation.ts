@@ -13,15 +13,16 @@ type SiteSubscriptionEmailMeNewPostsResponse = {
 	subscribed: boolean;
 };
 
-const useSiteEmailMeNewPostsMutation = ( blog_id?: number | string ) => {
+const useSiteEmailMeNewPostsMutation = ( blog_id?: string ) => {
 	const { isLoggedIn } = useIsLoggedIn();
 	const queryClient = useQueryClient();
 
 	const siteSubscriptionsCacheKey = useCacheKey( [ 'read', 'site-subscriptions' ] );
-	const siteSubscriptionDetailsCacheKey = useCacheKey(
-		[ 'read', 'site-subscription-details' ],
-		blog_id
-	);
+	const siteSubscriptionDetailsCacheKey = useCacheKey( [
+		'read',
+		'site-subscription-details',
+		...( blog_id ? [ blog_id ] : [] ),
+	] );
 
 	return useMutation(
 		async ( params: SiteSubscriptionEmailMeNewPostsParams ) => {

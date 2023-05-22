@@ -7,7 +7,7 @@ type SiteSubscriptionSettingsProps = {
 	emailMeNewPosts: boolean;
 	deliveryFrequency: Reader.EmailDeliveryFrequency;
 	emailMeNewComments: boolean;
-	blogId: number | string;
+	blogId: string;
 };
 
 const SiteSubscriptionSettings = ( {
