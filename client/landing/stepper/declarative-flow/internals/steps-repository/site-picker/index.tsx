@@ -24,14 +24,17 @@ const SitePickerStep: Step = function SitePickerStep( { navigation } ) {
 		DEFAULT_SITE_LAUNCH_STATUS_GROUP_VALUE;
 
 	const onQueryParamChange = ( params: Partial< SitesDashboardQueryParams > ) => {
+		recordTracksEvent( 'calypso_import_site_picker_query_param_change', params );
 		navigation.submit?.( { action: 'update-query', queryParams: params } );
 	};
 
 	const createNewSite = () => {
+		recordTracksEvent( 'calypso_import_site_picker_create_new_site' );
 		navigation.submit?.( { action: 'create-site' } );
 	};
 
 	const selectSite = ( site: SiteExcerptData ) => {
+		recordTracksEvent( 'calypso_import_site_picker_select_site', site );
 		navigation.submit?.( { action: 'select-site', site } );
 	};
 
