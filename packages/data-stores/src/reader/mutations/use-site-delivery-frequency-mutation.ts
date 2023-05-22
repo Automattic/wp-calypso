@@ -68,6 +68,9 @@ const useSiteDeliveryFrequencyMutation = ( blog_id?: number | string ) => {
 					queryClient.getQueryData< PagedQueryResult< SiteSubscription, 'subscriptions' > >(
 						siteSubscriptionsCacheKey
 					);
+				const previousSiteSubscriptionDetails = queryClient.getQueryData< SiteSubscriptionDetails >(
+					siteSubscriptionDetailsCacheKey
+				);
 
 				const mutatedSiteSubscriptions = applyCallbackToPages< 'subscriptions', SiteSubscription >(
 					previousSiteSubscriptions,
@@ -90,12 +93,7 @@ const useSiteDeliveryFrequencyMutation = ( blog_id?: number | string ) => {
 						} ),
 					} )
 				);
-
 				queryClient.setQueryData( siteSubscriptionsCacheKey, mutatedSiteSubscriptions );
-
-				const previousSiteSubscriptionDetails = queryClient.getQueryData< SiteSubscriptionDetails >(
-					siteSubscriptionDetailsCacheKey
-				);
 
 				if ( previousSiteSubscriptionDetails ) {
 					queryClient.setQueryData( siteSubscriptionDetailsCacheKey, {
