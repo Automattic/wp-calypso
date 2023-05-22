@@ -55,7 +55,9 @@ describe( 'Likes: Post', function () {
 		let publishedPostPage: PublishedPostPage;
 
 		it( 'View post', async function () {
-			await page.goto( newPost.URL, { timeout: 20 * 1000 } );
+			await ElementHelper.reloadAndRetry( page, async () => {
+				await page.goto( newPost.URL, { timeout: 20 * 1000 } );
+			} );
 		} );
 
 		it( 'Like post', async function () {
@@ -83,7 +85,9 @@ describe( 'Likes: Post', function () {
 		} );
 
 		it( 'Go to the published post page', async () => {
-			await newPage.goto( newPost.URL, { timeout: 20 * 1000 } );
+			await ElementHelper.reloadAndRetry( newPage, async () => {
+				await newPage.goto( newPost.URL, { timeout: 20 * 1000 } );
+			} );
 		} );
 
 		it( 'Like post', async function () {
