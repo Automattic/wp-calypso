@@ -183,7 +183,12 @@ const StartSiteTransfer = ( {
 					</ul>
 					{ startSiteTransferSuccess && (
 						<Notice status="is-success" showDismiss={ false }>
-							{ translate( 'Site transfer started' ) }
+							{ translate(
+								'You have been sent a transfer confirmation email to %(currentUserEmail)s. Please check your inbox and spam folder. The transfer will not proceed unless you authorize it using the link in the email.',
+								{
+									args: { currentUserEmail },
+								}
+							) }
 						</Notice>
 					) }
 					{ ! startSiteTransferSuccess && startSiteTransferForm }
