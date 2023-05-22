@@ -20,7 +20,7 @@ const SiteSubscriptionSettings = ( {
 	const translate = useTranslate();
 
 	const { mutate: updateNotifyMeOfNewPosts, isLoading: updatingNotifyMeOfNewPosts } =
-		SubscriptionManager.useSiteNotifyMeOfNewPostsMutation();
+		SubscriptionManager.useSiteNotifyMeOfNewPostsMutation( blogId );
 	const { mutate: updateEmailMeNewPosts, isLoading: updatingEmailMeNewPosts } =
 		SubscriptionManager.useSiteEmailMeNewPostsMutation();
 	const { mutate: updateDeliveryFrequency, isLoading: updatingFrequency } =
