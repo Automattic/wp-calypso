@@ -116,8 +116,7 @@ class Block_Patterns_From_API {
 				if ( 'posts' === $slug ) {
 					$category_properties['label'] = __(
 						'Blog Posts',
-						'full-sitgit add .
-					e-editing'
+						'full-site-editing'
 					);
 				} elseif ( 'gallery' === $slug ) {
 					$category_properties['label'] = __( 'Image Gallery', 'full-site-editing' );
