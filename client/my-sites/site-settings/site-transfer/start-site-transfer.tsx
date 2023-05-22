@@ -9,13 +9,20 @@ import ActionPanelBody from 'calypso/components/action-panel/body';
 import ActionPanelFooter from 'calypso/components/action-panel/footer';
 import ActionPanelTitle from 'calypso/components/action-panel/title';
 import HeaderCake from 'calypso/components/header-cake';
+import Notice from 'calypso/components/notice';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { TRANSFER_SITE } from 'calypso/lib/url/support';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
-import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import {
+	getSelectedSiteId,
+	getSelectedSite,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
+import { useStartSiteTransfer } from './use-start-site-transfer';
 
 type Props = {
 	currentUserEmail: string;
+	selectedSiteId: number;
 	selectedSiteSlug: string;
 	selectedSiteTitle: string;
 	translate: ( text: string, args?: Record< string, unknown > ) => string;
@@ -23,6 +30,7 @@ type Props = {
 
 const StartSiteTransfer = ( {
 	currentUserEmail,
+	selectedSiteId,
 	selectedSiteSlug,
 	selectedSiteTitle,
 	translate,
@@ -31,6 +39,89 @@ const StartSiteTransfer = ( {
 	const [ confirmFirstToggle, setConfirmFirstToggle ] = useState( false );
 	const [ confirmSecondToggle, setConfirmSecondToggle ] = useState( false );
 	const [ newOwnerUsername, setNewOwnerUsername ] = useState( '' );
+	const [ startSiteTransferError, setStartSiteTransferError ] = useState( '' );
+	const [ startSiteTransferSuccess, setStartSiteTransferSuccess ] = useState( '' );
+
+	const { startSiteTransfer, isLoading: isStartingSiteTransfer } = useStartSiteTransfer(
+		selectedSiteId,
+		{
+			onMutate: () => {
+				setStartSiteTransferError( '' );
+				setStartSiteTransferSuccess( false );
+			},
+			onError: ( error ) => {
+				setStartSiteTransferError( error.message );
+			},
+			onSuccess: () => {
+				setStartSiteTransferSuccess( true );
+			},
+		}
+	);
+
+	const handleFormSubmit = ( event ) => {
+		event.preventDefault();
+		startSiteTransfer( { newSiteOwner: newOwnerUsername } );
+	};
+
+	const startSiteTransferForm = (
+		<>
+			<p>
+				{ translate(
+					'Please make sure you understand the changes that will be made and that these changes cannot be undone before you continue:'
+				) }
+			</p>
+			<ToggleControl
+				disabled={ false }
+				label={ translate(
+					'I understand the changes that will be made once I authorize this transfer'
+				) }
+				checked={ confirmFirstToggle }
+				onChange={ () => setConfirmFirstToggle( ! confirmFirstToggle ) }
+			/>
+			<ToggleControl
+				disabled={ false }
+				label={ translate(
+					'I want to transfer ownership of the site and all my related upgrades'
+				) }
+				checked={ confirmSecondToggle }
+				onChange={ () => setConfirmSecondToggle( ! confirmSecondToggle ) }
+			/>
+			{ confirmFirstToggle && confirmSecondToggle && (
+				<form onSubmit={ handleFormSubmit }>
+					{ startSiteTransferError && (
+						<Notice status="is-error" showDismiss={ false }>
+							{ startSiteTransferError }
+						</Notice>
+					) }
+					<p>
+						{ translate(
+							'Enter the username or email address of the registered WordPress.com user that you want to transfer ownership of %(selectedSiteTitle)s (%(selectedSiteSlug)s) to:',
+							{
+								args: { selectedSiteTitle, selectedSiteSlug },
+							}
+						) }
+					</p>
+					<TextControl
+						autoComplete="off"
+						label={ translate( 'Username or email address of user to receive the blog' ) }
+						value={ newOwnerUsername }
+						onChange={ ( value ) => setNewOwnerUsername( value ) }
+					/>
+					<Button
+						primary
+						onClick={ () => {
+							false;
+						} }
+						disabled={ ! newOwnerUsername || isStartingSiteTransfer }
+						type="submit"
+					>
+						{ translate( 'Start site transfer' ) }
+					</Button>
+				</form>
+			) }
+		</>
+	);
+
 	return (
 		<div
 			className="main main-column" // eslint-disable-line wpcalypso/jsx-classname-namespace
@@ -90,53 +181,12 @@ const StartSiteTransfer = ( {
 							) }
 						</li>
 					</ul>
-					<p>
-						{ translate(
-							'Please make sure you understand the changes that will be made and that these changes cannot be undone before you continue:'
-						) }
-					</p>
-					<ToggleControl
-						disabled={ false }
-						label={ translate(
-							'I understand the changes that will be made once I authorize this transfer'
-						) }
-						checked={ confirmFirstToggle }
-						onChange={ () => setConfirmFirstToggle( ! confirmFirstToggle ) }
-					/>
-					<ToggleControl
-						disabled={ false }
-						label={ translate(
-							'I want to transfer ownership of the site and all my related upgrades'
-						) }
-						checked={ confirmSecondToggle }
-						onChange={ () => setConfirmSecondToggle( ! confirmSecondToggle ) }
-					/>
-					{ confirmFirstToggle && confirmSecondToggle && (
-						<form>
-							<p>
-								{ translate(
-									'Enter the username or email address of the registered WordPress.com user that you want to transfer ownership of %(selectedSiteTitle)s (%(selectedSiteSlug)s) to:',
-									{
-										args: { selectedSiteTitle, selectedSiteSlug },
-									}
-								) }
-							</p>
-							<TextControl
-								label={ translate( 'Username or email address of user to receive the blog' ) }
-								value={ newOwnerUsername }
-								onChange={ ( value ) => setNewOwnerUsername( value ) }
-							/>
-							<Button
-								primary
-								onClick={ () => {
-									false;
-								} }
-								disabled={ ! newOwnerUsername }
-							>
-								{ translate( 'Start site transfer' ) }
-							</Button>
-						</form>
+					{ startSiteTransferSuccess && (
+						<Notice status="is-success" showDismiss={ false }>
+							{ translate( 'Site transfer started' ) }
+						</Notice>
 					) }
+					{ ! startSiteTransferSuccess && startSiteTransferForm }
 				</ActionPanelBody>
 				<ActionPanelFooter>
 					<Button
@@ -160,6 +210,7 @@ const StartSiteTransfer = ( {
 
 export default connect( ( state ) => ( {
 	currentUserEmail: getCurrentUserEmail( state ),
+	selectedSiteId: getSelectedSiteId( state ),
 	selectedSiteSlug: getSelectedSiteSlug( state ),
 	selectedSiteTitle: getSelectedSite( state )?.title,
 } ) )( localize( StartSiteTransfer ) );
