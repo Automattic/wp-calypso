@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { compose } from '@wordpress/compose';
 import { addQueryArgs } from '@wordpress/url';
 import { localize } from 'i18n-calypso';
@@ -56,11 +57,13 @@ class SiteTools extends Component {
 			showDeleteContent,
 			showDeleteSite,
 			showManageConnection,
+			showStartSiteTransfer,
 			siteId,
 		} = this.props;
 
 		const changeAddressLink = `/domains/manage/${ siteSlug }`;
 		const startOverLink = `/settings/start-over/${ siteSlug }`;
+		const startSiteTransferLink = `/settings/start-site-transfer/${ siteSlug }`;
 		const deleteSiteLink = `/settings/delete-site/${ siteSlug }`;
 		const manageConnectionLink = `/settings/manage-connection/${ siteSlug }`;
 
@@ -84,6 +87,11 @@ class SiteTools extends Component {
 
 		const cloneTitle = translate( 'Clone', { context: 'verb' } );
 		const cloneText = translate( 'Clone your existing site and all its data to a new location.' );
+
+		const startSiteTransferTitle = translate( 'Transfer site' );
+		const startSiteTransferText = translate(
+			'Transfer your site and plan to another WordPress.com user.'
+		);
 
 		return (
 			<div className="site-tools">
@@ -110,6 +118,13 @@ class SiteTools extends Component {
 				) }
 				{ showClone && (
 					<SiteToolsLink href={ cloneUrl } title={ cloneTitle } description={ cloneText } />
+				) }
+				{ showStartSiteTransfer && (
+					<SiteToolsLink
+						href={ startSiteTransferLink }
+						title={ startSiteTransferTitle }
+						description={ startSiteTransferText }
+					/>
 				) }
 				{ showDeleteContent && (
 					<SiteToolsLink
@@ -190,6 +205,9 @@ export default compose( [
 				sourceSlug: siteSlug,
 			} );
 
+			const showStartSiteTransfer =
+				isEnabled( 'yolo/site-transfers-i1' ) && ! isJetpack && ! isVip && ! isP2Hub && ! isAtomic;
+
 			return {
 				site,
 				isAtomic,
@@ -202,6 +220,7 @@ export default compose( [
 				showDeleteContent: ! isJetpack && ! isVip && ! isP2Hub,
 				showDeleteSite: ( ! isJetpack || isAtomic ) && ! isVip && sitePurchasesLoaded,
 				showManageConnection: isJetpack && ! isAtomic,
+				showStartSiteTransfer,
 				siteId,
 				hasCancelablePurchases: hasCancelableSitePurchases( state, siteId ),
 			};
