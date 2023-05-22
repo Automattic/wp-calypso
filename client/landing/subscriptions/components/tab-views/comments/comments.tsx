@@ -75,7 +75,6 @@ const Comments = () => {
 					searchIcon={ <SearchIcon size={ 18 } /> }
 					onSearch={ handleSearch }
 				/>
-				<SortControls options={ sortOptions } value={ sortTerm } onChange={ setSortTerm } />
 
 				<SelectDropdown
 					className="subscriptions-manager__filter-control"
@@ -87,6 +86,8 @@ const Comments = () => {
 						translate( 'View: ' ) + getFilterLabel( availableFilterOptions, filterOption )
 					}
 				/>
+
+				<SortControls options={ sortOptions } value={ sortTerm } onChange={ setSortTerm } />
 			</div>
 
 			<CommentList posts={ posts } />
