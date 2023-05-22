@@ -114,7 +114,6 @@
 		"p2/p2-plus": true,
 		"pattern-assembler/all-patterns-category": true,
 		"pattern-assembler/color-and-fonts": true,
-		"pattern-assembler/dotcompatterns": true,
 		"pattern-assembler/logged-in-showcase": true,
 		"pattern-assembler/inline-styles": true,
 		"pattern-assembler/show-waitlist-patterns": false,

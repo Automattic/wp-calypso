@@ -4,7 +4,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import NavigatorHeader from './navigator-header';
 import PatternSelector from './pattern-selector';
-import { useHeaderPatterns } from './patterns-data';
 import type { Pattern } from './types';
 
 interface Props {
@@ -25,7 +24,6 @@ const ScreenHeader = ( {
 	patterns,
 }: Props ) => {
 	const translate = useTranslate();
-	const headerPatterns = useHeaderPatterns( patterns );
 	useEffect( () => {
 		updateActivePatternPosition();
 	}, [ updateActivePatternPosition ] );
@@ -41,7 +39,7 @@ const ScreenHeader = ( {
 			/>
 			<div className="screen-container__body">
 				<PatternSelector
-					patterns={ headerPatterns }
+					patterns={ patterns }
 					onSelect={ ( selectedPattern ) => onSelect( 'header', selectedPattern, 'header' ) }
 					selectedPattern={ selectedPattern }
 					emptyPatternText={ translate( 'No Header' ) }
