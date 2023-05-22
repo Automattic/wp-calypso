@@ -66,6 +66,7 @@ const SaleBanner: React.FC< Props > = ( { coupon } ) => {
 								'Take %(discount)d%% off new annual Jetpack Security and Complete purchases.',
 								{
 									args: { discount: coupon.final_discount },
+									comment: '%(discount)d%% is discount amount in percentage, e.g. 65%',
 								}
 							) }
 						</div>
