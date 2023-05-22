@@ -29,7 +29,7 @@ function requestMessagingAuth() {
 		  } as APIFetchOptions );
 }
 
-export default function useMessagingAuth( zendeskKey: string, enabled: boolean ) {
+export default function useMessagingAuth( zendeskKey: string | false, enabled: boolean ) {
 	return useQuery< MessagingAuth >( [ 'getMessagingAuth', zendeskKey ], requestMessagingAuth, {
 		staleTime: 7 * 24 * 60 * 60 * 1000, // 1 week (JWT is actually 2 weeks, but lets be on the safe side)
 		enabled,
