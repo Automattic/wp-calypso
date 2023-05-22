@@ -6,6 +6,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import React from 'react';
 import Pagination from 'calypso/components/pagination';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
+import { SITE_PICKER_FILTER_CONFIG } from 'calypso/landing/stepper/constants';
 import { NoSitesMessage } from 'calypso/sites-dashboard/components/no-sites-message';
 import {
 	SitesContentControls,
@@ -17,7 +18,6 @@ import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
 const SitesDashboardSitesList = createSitesListComponent();
-const SITE_PICKER_FILTER_CONFIG = [ 'wpcom', 'atomic' ];
 
 interface Props {
 	page: number;
