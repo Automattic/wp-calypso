@@ -71,6 +71,8 @@ export const ZendeskJetpackChat: React.VFC< { keyType: KeyType } > = ( { keyType
 				return;
 			}
 			// The `zE` function exposes the required action to authenticate the user
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore: TypeScript doesn't see the zE property added by the external script.
 			if ( ! ( 'zE' in window ) || typeof window.zE !== 'function' ) {
 				return;
 			}
