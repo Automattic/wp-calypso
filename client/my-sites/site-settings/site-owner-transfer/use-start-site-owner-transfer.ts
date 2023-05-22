@@ -15,7 +15,7 @@ interface MutationError {
 	message: string;
 }
 
-export const useStartSiteTransfer = (
+export const useStartSiteOwnerTransfer = (
 	siteId: number | null,
 	options: UseMutationOptions< MutationResponse, MutationError, MutationVariables > = {}
 ) => {
@@ -35,10 +35,10 @@ export const useStartSiteTransfer = (
 
 	const { mutate, isLoading } = mutation;
 
-	const startSiteTransfer = useCallback(
+	const startSiteOwnerTransfer = useCallback(
 		( args: MutationVariables ) => mutate( args ),
 		[ mutate ]
 	);
 
-	return { startSiteTransfer, isLoading };
+	return { startSiteOwnerTransfer, isLoading };
 };

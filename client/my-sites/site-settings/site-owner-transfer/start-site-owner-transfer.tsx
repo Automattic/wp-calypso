@@ -18,7 +18,7 @@ import {
 	getSelectedSite,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import { useStartSiteTransfer } from './use-start-site-transfer';
+import { useStartSiteOwnerTransfer } from './use-start-site-owner-transfer';
 
 type Props = {
 	currentUserEmail: string;
@@ -28,7 +28,7 @@ type Props = {
 	translate: ( text: string, args?: Record< string, unknown > ) => string;
 };
 
-const StartSiteTransfer = ( {
+const StartSiteOwnerTransfer = ( {
 	currentUserEmail,
 	selectedSiteId,
 	selectedSiteSlug,
@@ -42,7 +42,7 @@ const StartSiteTransfer = ( {
 	const [ startSiteTransferError, setStartSiteTransferError ] = useState( '' );
 	const [ startSiteTransferSuccess, setStartSiteTransferSuccess ] = useState( '' );
 
-	const { startSiteTransfer, isLoading: isStartingSiteTransfer } = useStartSiteTransfer(
+	const { startSiteOwnerTransfer, isLoading: isStartingSiteTransfer } = useStartSiteOwnerTransfer(
 		selectedSiteId,
 		{
 			onMutate: () => {
@@ -58,9 +58,9 @@ const StartSiteTransfer = ( {
 		}
 	);
 
-	const handleFormSubmit = ( event ) => {
+	const handleFormSubmit = ( event: HTMLFormElement ) => {
 		event.preventDefault();
-		startSiteTransfer( { newSiteOwner: newOwnerUsername } );
+		startSiteOwnerTransfer( { newSiteOwner: newOwnerUsername } );
 	};
 
 	const startSiteTransferForm = (
@@ -218,4 +218,4 @@ export default connect( ( state ) => ( {
 	selectedSiteId: getSelectedSiteId( state ),
 	selectedSiteSlug: getSelectedSiteSlug( state ),
 	selectedSiteTitle: getSelectedSite( state )?.title,
-} ) )( localize( StartSiteTransfer ) );
+} ) )( localize( StartSiteOwnerTransfer ) );

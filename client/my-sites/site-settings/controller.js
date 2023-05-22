@@ -15,7 +15,7 @@ import DeleteSite from './delete-site';
 import DisconnectSite from './disconnect-site';
 import ConfirmDisconnection from './disconnect-site/confirm';
 import ManageConnection from './manage-connection';
-import StartSiteTransfer from './site-transfer/start-site-transfer';
+import StartSiteOwnerTransfer from './site-owner-transfer/start-site-owner-transfer';
 import StartOver from './start-over';
 
 function canDeleteSite( state, siteId ) {
@@ -39,7 +39,7 @@ function canDeleteSite( state, siteId ) {
 	return true;
 }
 
-function canStartSiteTransfer( state, siteId ) {
+function canStartSiteOwnerTransfer( state, siteId ) {
 	const userId = getCurrentUserId( state );
 	const siteOwnerId = getSelectedSite( state )?.site_owner;
 	if ( ! siteOwnerId || ! userId ) {
@@ -69,9 +69,9 @@ export function redirectIfCantDeleteSite( context, next ) {
 	next();
 }
 
-export function redirectIfCantStartSiteTransfer( context, next ) {
+export function redirectIfCantStartSiteOwnerTransfer( context, next ) {
 	const state = context.store.getState();
-	if ( ! canStartSiteTransfer( state, getSelectedSiteId( state ) ) ) {
+	if ( ! canStartSiteOwnerTransfer( state, getSelectedSiteId( state ) ) ) {
 		return page.redirect( '/settings/general/' + getSelectedSiteSlug( state ) );
 	}
 	next();
@@ -109,8 +109,8 @@ export function manageConnection( context, next ) {
 	next();
 }
 
-export function startSiteTransfer( context, next ) {
-	context.primary = <StartSiteTransfer path={ context.path } />;
+export function startSiteOwnerTransfer( context, next ) {
+	context.primary = <StartSiteOwnerTransfer path={ context.path } />;
 	next();
 }
 
