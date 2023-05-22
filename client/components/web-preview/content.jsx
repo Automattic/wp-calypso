@@ -429,6 +429,8 @@ export default class WebPreviewContent extends Component {
 								fetchpriority={ fetchpriority ? fetchpriority : undefined }
 								scrolling={ autoHeight ? 'no' : undefined }
 								tabIndex={ disableTabbing ? -1 : 0 }
+								/* See https://help.hotjar.com/hc/en-us/articles/115011624347-Can-I-Track-iframes-Inside-Heatmaps-and-Recordings- */
+								data-hj-allow-iframe
 							/>
 						</div>
 					) }

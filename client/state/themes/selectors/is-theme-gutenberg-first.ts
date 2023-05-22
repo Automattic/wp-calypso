@@ -1,6 +1,7 @@
 import { intersection } from 'lodash';
 import { getTheme } from 'calypso/state/themes/selectors/get-theme';
 import { getThemeTaxonomySlugs } from 'calypso/state/themes/utils';
+import type { AppState } from 'calypso/types';
 
 import 'calypso/state/themes/init';
 
@@ -15,7 +16,7 @@ import 'calypso/state/themes/init';
  *                         `independent-publisher-2` or `maywood`.
  * @returns {boolean} True if the theme should be edited with gutenberg.
  */
-export function isThemeGutenbergFirst( state, themeId ) {
+export function isThemeGutenbergFirst( state: AppState, themeId: string ): boolean {
 	const theme = getTheme( state, 'wpcom', themeId );
 	const themeFeatures = getThemeTaxonomySlugs( theme, 'theme_feature' );
 	const neededFeatures = [ 'global-styles', 'auto-loading-homepage' ];

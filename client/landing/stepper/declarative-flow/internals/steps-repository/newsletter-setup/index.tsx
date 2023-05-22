@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { hexToRgb, StepContainer, base64ImageToBlob } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -130,7 +129,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 							setAccentColor={ setAccentColor }
 							labelText={ newsletterFormText?.colorLabel }
 						/>
-						{ isEnabled( 'newsletter/paid-subscribers' ) && <PaidMembershipsControl /> }
+						<PaidMembershipsControl />
 					</>
 				</SetupForm>
 			}

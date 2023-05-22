@@ -22,6 +22,7 @@ import MigrationHandler from './internals/steps-repository/migration-handler';
 import PatternAssembler from './internals/steps-repository/pattern-assembler';
 import ProcessingStep from './internals/steps-repository/processing-step';
 import SiteCreationStep from './internals/steps-repository/site-creation-step';
+import SitePickerStep from './internals/steps-repository/site-picker';
 import { Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect } from '@automattic/data-stores';
 
@@ -46,6 +47,7 @@ const importFlow: Flow = {
 			{ slug: 'processing', component: ProcessingStep },
 			{ slug: 'siteCreationStep', component: SiteCreationStep },
 			{ slug: 'migrationHandler', component: MigrationHandler },
+			{ slug: 'sitePicker', component: SitePickerStep },
 		];
 	},
 
@@ -163,6 +165,19 @@ const importFlow: Flow = {
 				}
 				case 'migrationHandler': {
 					return handleMigrationRedirects( providedDependencies );
+				}
+
+				case 'sitePicker': {
+					const newQueryParams =
+						( providedDependencies?.queryParams as { [ key: string ]: string } ) || {};
+
+					Object.keys( newQueryParams ).forEach( ( key ) => {
+						newQueryParams[ key ]
+							? urlQueryParams.set( key, newQueryParams[ key ] )
+							: urlQueryParams.delete( key );
+					} );
+
+					return navigate( `sitePicker?${ urlQueryParams.toString() }` );
 				}
 			}
 		};

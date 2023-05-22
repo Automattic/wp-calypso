@@ -2,6 +2,7 @@ import getFrontPageEditorUrl from 'calypso/state/selectors/get-front-page-editor
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import shouldCustomizeHomepageWithGutenberg from 'calypso/state/selectors/should-customize-homepage-with-gutenberg';
 import { getThemeCustomizeUrl, isThemeActive } from 'calypso/state/themes/selectors';
+import { AppState } from 'calypso/types';
 
 /**
  * Returns the URL for opening customizing the given site in either the block editor with
@@ -16,7 +17,12 @@ import { getThemeCustomizeUrl, isThemeActive } from 'calypso/state/themes/select
  * @param  {boolean}  isFSEActive Whether full-site editing is enabled for the site
  * @returns {string}              Customizer or Block Editor URL
  */
-export default function getCustomizeOrEditFrontPageUrl( state, themeId, siteId, isFSEActive ) {
+export default function getCustomizeOrEditFrontPageUrl(
+	state: AppState,
+	themeId: string,
+	siteId: number,
+	isFSEActive?: boolean
+): string | undefined | null {
 	if ( isFSEActive ) {
 		return getSiteEditorUrl( state, siteId );
 	}

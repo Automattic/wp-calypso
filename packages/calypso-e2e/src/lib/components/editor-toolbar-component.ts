@@ -13,7 +13,6 @@ const selectors = {
 	blockInserterButton: `${ panel } button[class*="inserter-toggle"]`,
 
 	// Draft
-	saveDraftButton: `${ panel } button[aria-label="Save draft"], button[aria-label="Saved"]`,
 	switchToDraftButton: `${ panel } button.editor-post-switch-to-draft`,
 
 	// Preview
@@ -99,7 +98,6 @@ export class EditorToolbarComponent {
 	private async targetIsOpen( selector: string ): Promise< boolean > {
 		const editorParent = await this.editor.parent();
 		const locator = editorParent.locator( selector );
-		// await this.page.pause();
 		const pressed = await locator.getAttribute( 'aria-pressed' );
 		const expanded = await locator.getAttribute( 'aria-expanded' );
 		return pressed === 'true' || expanded === 'true';
@@ -137,25 +135,21 @@ export class EditorToolbarComponent {
 	/* Draft */
 
 	/**
-	 * Clicks on the 'Save Draft' button on the editor.
-	 *
-	 * If the button cannot be clicked, the method short-circuits.
+	 * Clicks the Save draft button and waits until it's saved.
 	 */
 	async saveDraft(): Promise< void > {
 		const editorParent = await this.editor.parent();
-		const saveButtonLocator = editorParent.locator( selectors.saveDraftButton );
+		// On a Simple site (desktop viewport) the domain upsell banner can
+		// be covering the "Save draft" button. We need to close that banner to
+		// be able to perform the click action.
+		// See https://github.com/Automattic/wp-calypso/pull/76987
+		await Promise.any( [
+			editorParent.locator( '.wpcom-domain-upsell-callout__dismiss-icon' ).click(),
+			editorParent.getByRole( 'button', { name: 'Save draft' } ).click( { trial: true } ),
+		] );
 
-		try {
-			await saveButtonLocator.waitFor( { timeout: 5 * 1000 } );
-		} catch {
-			return;
-		}
-
-		const savedButtonLocator = editorParent.locator( `${ selectors.saveDraftButton }.is-saved` );
-
-		await saveButtonLocator.click();
-
-		await savedButtonLocator.waitFor();
+		await editorParent.getByRole( 'button', { name: 'Save draft' } ).click();
+		await editorParent.getByRole( 'button', { name: 'Saved' } ).waitFor();
 	}
 
 	/* Preview */
@@ -257,8 +251,18 @@ export class EditorToolbarComponent {
 	 */
 	async switchToDraft(): Promise< void > {
 		const editorParent = await this.editor.parent();
-		const swithcToDraftLocator = editorParent.locator( selectors.switchToDraftButton );
-		await swithcToDraftLocator.click();
+
+		await Promise.race( [
+			( async () => {
+				// Works with Gutenberg >=v15.8.0
+				await this.openSettings();
+				await editorParent.getByRole( 'button', { name: 'Switch to draft' } ).click();
+			} )(),
+			( async () => {
+				// Works with Gutenberg <v15.8.0
+				await editorParent.getByRole( 'button', { name: 'Draft' } ).click();
+			} )(),
+		] );
 	}
 
 	/* Editor Settings sidebar */

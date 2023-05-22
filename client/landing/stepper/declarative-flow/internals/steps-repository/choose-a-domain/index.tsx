@@ -52,6 +52,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 	const onSkip = async () => {
 		if ( isStartWritingFlow ) {
 			setDomain( null );
+			setDomainCartItem( undefined );
 			setHideFreePlan( false );
 			submit?.( { freeDomain: true } );
 		} else {
@@ -88,7 +89,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 			setDomainCartItem( domainCartItem );
 		}
 
-		submit?.( { freeDomain: suggestion?.is_free } );
+		submit?.( { freeDomain: suggestion?.is_free, domainName: suggestion?.domain_name } );
 	};
 
 	const getStartWritingFlowStepContent = () => {
@@ -99,7 +100,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 					domainsWithPlansOnly={ true }
 					onAddDomain={ submitWithDomain }
 					includeWordPressDotCom={ true }
-					offerUnavailableOption={ true }
+					offerUnavailableOption={ false }
 					showAlreadyOwnADomain={ false }
 					isSignupStep={ true }
 					basePath=""

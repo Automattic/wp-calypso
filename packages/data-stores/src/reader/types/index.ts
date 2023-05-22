@@ -94,6 +94,7 @@ export type PostSubscription = {
 	post_title: string;
 	post_excerpt: string;
 	post_url: string;
+	is_wpforteams_site: boolean;
 };
 
 export type PendingSiteSubscription = {
@@ -130,4 +131,26 @@ export type PendingSiteSubscriptionsResult = {
 export type PendingPostSubscriptionsResult = {
 	pendingPosts: PendingPostSubscription[];
 	totalCount: number;
+};
+
+export type SiteSubscriptionDetails = {
+	ID: string;
+	blog_ID: string;
+	name: string;
+	URL: string;
+	site_icon: string;
+	date_subscribed: Date;
+	subscriber_count: number;
+	delivery_methods: SiteSubscriptionDeliveryMethods;
+};
+
+export type SiteSubscriptionDetailsAPIResponse = {
+	ID: string;
+	blog_ID: string;
+	name: string;
+	URL: string;
+	site_icon: string;
+	date_subscribed: Date;
+	subscriber_count: number;
+	delivery_methods: SiteSubscriptionDeliveryMethods;
 };
