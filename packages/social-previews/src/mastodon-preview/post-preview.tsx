@@ -29,7 +29,7 @@ export const MastodonPostPreview: React.FC< MastodonPreviewProps > = ( {
 	}
 
 	return (
-		<div className="mastodon-preview__card">
+		<div className="mastodon-preview__post">
 			<MastodonPostHeader user={ user } />
 			<div className="mastodon-preview__body">
 				{ bodyTxt }
@@ -37,15 +37,15 @@ export const MastodonPostPreview: React.FC< MastodonPreviewProps > = ( {
 					{ mastodonUrl( url.replace( /^https?:\/\//, '' ) ) }
 				</a>
 			</div>
-			<div className="mastodon-preview__window">
-				<div className="mastodon-preview__window-img">
+			<div className="mastodon-preview__card">
+				<div className="mastodon-preview__card-img">
 					{ image && (
 						<img src={ image } alt={ __( 'Mastodon preview thumbnail', 'social-previews' ) } />
 					) }
 				</div>
-				<div className="mastodon-preview__window-text">
-					<span className="mastodon-preview__window-title">{ mastodonTitle( title ) }</span>
-					<span className="mastodon-preview__window-site">{ baseDomain( url ) }</span>
+				<div className="mastodon-preview__card-text">
+					<span className="mastodon-preview__card-title">{ mastodonTitle( title ) }</span>
+					<span className="mastodon-preview__card-site">{ baseDomain( url ) }</span>
 				</div>
 			</div>
 
