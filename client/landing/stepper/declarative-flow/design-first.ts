@@ -3,6 +3,7 @@ import { useLocale } from '@automattic/i18n-utils';
 import { DESIGN_FIRST_FLOW, replaceProductsInCart } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useSelect, useDispatch, dispatch } from '@wordpress/data';
+import { addQueryArgs } from '@wordpress/url';
 import { useSelector } from 'react-redux';
 import { recordSubmitStep } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-submit-step';
 import { redirect } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/util';
@@ -83,24 +84,27 @@ const designFirst: Flow = {
 					return navigate( 'processing' );
 				case 'processing': {
 					// If we just created a new site.
-					if ( ! providedDependencies?.blogLaunched && providedDependencies?.siteSlug ) {
-						setSelectedSite( providedDependencies?.siteId );
-						setIntentOnSite( providedDependencies?.siteSlug, DESIGN_FIRST_FLOW );
-						saveSiteSettings( providedDependencies?.siteId, {
+					const siteSlug = providedDependencies?.siteSlug;
+					if ( ! providedDependencies?.blogLaunched && siteSlug ) {
+						const siteId = providedDependencies?.siteId;
+						setSelectedSite( siteId );
+						setIntentOnSite( siteSlug, DESIGN_FIRST_FLOW );
+						saveSiteSettings( siteId, {
 							launchpad_screen: 'full',
 						} );
 
-						const siteOrigin = window.location.origin;
-
-						return redirect(
-							`https://${ providedDependencies?.siteSlug }/wp-admin/post-new.php?${ DESIGN_FIRST_FLOW }=true&origin=${ siteOrigin }`
+						return window.location.assign(
+							addQueryArgs( `/setup/update-design/designSetup`, {
+								siteSlug: siteSlug,
+								flowToReturnTo: flowName,
+							} )
 						);
 					}
 
 					// If the user's site has just been launched.
-					if ( providedDependencies?.blogLaunched && providedDependencies?.siteSlug ) {
+					if ( providedDependencies?.blogLaunched && siteSlug ) {
 						// Remove the site_intent.
-						setIntentOnSite( providedDependencies?.siteSlug, '' );
+						setIntentOnSite( siteSlug, '' );
 
 						// If the user launched their site with a plan or domain in their cart, redirect them to
 						// checkout before sending them home.
