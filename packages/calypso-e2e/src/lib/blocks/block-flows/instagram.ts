@@ -5,8 +5,6 @@ interface ConfigurationData {
 	expectedPostText: string;
 }
 
-const INSTAGRAM_EMBED_TIMEOUT = 20000; // Can take a bit longer to load.
-
 const blockParentSelector = '[aria-label="Block: Embed"]:has-text("Instagram URL")';
 const selectors = {
 	embedUrlInput: `${ blockParentSelector } input`,
@@ -46,27 +44,39 @@ export class InstagramBlockFlow implements BlockFlow {
 		const embedButtonLocator = editorCanvas.locator( selectors.embedButton );
 		await embedButtonLocator.click();
 
-		// We should make sure the actual Iframe loads, because it takes a second.
-		const instagramIframeLocator = editorCanvas
-			.frameLocator( selectors.embedIframe )
-			.frameLocator( selectors.instagramIframe )
-			.locator( `text=${ this.configurationData.expectedPostText }` )
-			.first();
+		const response = {
+			version: '1.0',
+			author_name: 'woocommerce',
+			provider_name: 'Instagram',
+			provider_url: 'https://www.instagram.com/',
+			html: '<a href="">A post shared by WooCommerce (@woocommerce)</a>',
+		};
 
-		await instagramIframeLocator.waitFor( { timeout: INSTAGRAM_EMBED_TIMEOUT } );
+		// Intercept the embed request to Instagram to fulfill with dummy data.
+		// This data will not fully render the block, but will decouple our test
+		// results from any issues Instagram-side (eg. request blocking, server outage).
+		await context.page.route( /instagram.com/, ( route ) => {
+			route.fulfill( {
+				body: JSON.stringify( response ),
+				headers: {
+					Allow: 'GET',
+				},
+			} );
+		} );
+
+		// Wait for the embed iframe to render alongside placeholder text.
+		await editorCanvas
+			.frameLocator( selectors.embedIframe )
+			.getByText( 'View this post on Instagram' )
+			.waitFor();
 	}
 
 	/**
-	 * Validate the block in the published post
+	 * Validate the block in the published post.
 	 *
 	 * @param {PublishedPostContext} context The current context for the published post at the point of test execution
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
-		const expectedPostTextLocator = context.page
-			.frameLocator( selectors.instagramIframe )
-			.locator( `text=${ this.configurationData.expectedPostText }` )
-			.first(); // In case the post text isn't particularly specific, just resolve to the first one!
-
-		await expectedPostTextLocator.waitFor( { timeout: INSTAGRAM_EMBED_TIMEOUT } );
+		await context.page.getByText( 'View this post on Instagram' ).waitFor();
 	}
 }
