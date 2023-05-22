@@ -135,3 +135,8 @@
 		width: 100%;
 	}
 }
+
+.dialog__backdrop,
+.dialog__backdrop.card {
+	background-color: rgba(var(--color-neutral-70-rgb), 0.8) !important;
+}
