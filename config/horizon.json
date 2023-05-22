@@ -89,7 +89,6 @@
 		"pattern-assembler/all-patterns-category": true,
 		"pattern-assembler/color-and-fonts": true,
 		"pattern-assembler/logged-in-showcase": true,
-		"pattern-assembler/inline-styles": true,
 		"pattern-assembler/show-waitlist-patterns": true,
 		"plans/personal-plan": true,
 		"plans/pro-plan": false,
