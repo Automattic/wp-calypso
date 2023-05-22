@@ -14,6 +14,7 @@ import { SitesGrid } from 'calypso/sites-dashboard/components/sites-grid';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 
 const SitesDashboardSitesList = createSitesListComponent();
+const SITE_PICKER_FILTER_CONFIG = [ 'wpcom', 'atomic' ];
 
 interface Props {
 	page: number;
@@ -26,7 +27,7 @@ const SitePicker = function SitePicker( props: Props ) {
 	const { __ } = useI18n();
 	const { page, perPage = 96, search, status, onQueryParamChange } = props;
 	const { sitesSorting, onSitesSortingChange } = useSitesSorting();
-	const { data: allSites = [], isLoading } = useSiteExcerptsQuery();
+	const { data: allSites = [], isLoading } = useSiteExcerptsQuery( SITE_PICKER_FILTER_CONFIG );
 
 	return (
 		<div className="site-picker--container">
