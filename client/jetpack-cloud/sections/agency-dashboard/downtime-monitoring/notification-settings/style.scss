@@ -1,19 +1,20 @@
-@import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/breakpoints";
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/breakpoints';
 
 @keyframes components-modal__appear-animation {
 	from {
-		transform: translateY(32px);
+		transform: translateY( 32px );
 	}
+
 	to {
-		transform: translateY(0);
+		transform: translateY( 0 );
 	}
 }
 
 .notification-settings-title-light {
 	font-size: 0.75rem;
 	line-height: 14px;
-	color: var(--studio-gray-50);
+	color: var( --studio-gray-50 );
 }
 
 .notification-settings__sub-title {
@@ -29,18 +30,18 @@
 .notification-settings__content-heading-with-beta {
 	display: flex;
 	align-items: center;
-	gap: 5px;
+	gap: 8px;
 }
 
 .notification-settings__beta-tag {
-	background: #8c8f94;
+	background: var( --studio-gray-30 );
 	border-radius: 4px;
 	font-style: normal;
 	font-weight: 700;
 	font-size: 0.75rem;
 	line-height: 17px;
 	display: flex;
-	color: #fff;
+	color: var( --studio-white );
 	padding: 0 5px;
 	margin-block-end: 8px;
 }
@@ -66,7 +67,7 @@
 
 .notification-settings__footer {
 	margin-block-end: 32px;
-	width: calc(100% - 64px); // reducing the left and right padding
+	width: calc( 100% - 64px ); // reducing the left and right padding
 	display: flex;
 	justify-content: flex-start;
 	flex-direction: column;
@@ -82,7 +83,7 @@
 		height: 36px;
 		line-height: 18px;
 
-		&:nth-child(2) {
+		&:nth-child( 2 ) {
 			margin-block-start: 16px;
 		}
 	}
@@ -102,7 +103,7 @@
 		}
 
 		button {
-			&:nth-child(2) {
+			&:nth-child( 2 ) {
 				margin-inline-start: 12px;
 				margin-block-start: 0;
 			}
@@ -188,13 +189,13 @@
 
 .notification-settings__footer-validation-error {
 	@extend .notification-settings-title-light;
-	color: var(--color-scary-40);
+	color: var( --color-scary-40 );
 	margin-block-end: 16px;
 }
 
 .notification-settings__warning {
 	font-weight: 500;
-	color: var(--color-scary-40);
+	color: var( --color-scary-40 );
 	padding: 10px 0;
 
 	.gridicon {
