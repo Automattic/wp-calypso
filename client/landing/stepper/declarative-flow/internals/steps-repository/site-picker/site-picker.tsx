@@ -65,6 +65,7 @@ const SitePicker = function SitePicker( props: Props ) {
 										isLoading={ isLoading }
 										sites={ paginatedSites }
 										siteSelectorMode={ true }
+										showLinkInBioBanner={ false }
 										onSiteSelectBtnClick={ () => {
 											// console.log( 'onSiteSelectBtnClick', site );
 										} }
