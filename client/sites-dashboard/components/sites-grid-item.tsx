@@ -83,6 +83,20 @@ const ellipsis = css( {
 	},
 } );
 
+const LoaderNoticeContainer = styled.div( {
+	position: 'absolute',
+	top: 0,
+	left: 0,
+	padding: 6,
+	width: '100%',
+	boxSizing: 'border-box',
+	'.notice__text': {
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'space-between',
+	},
+} );
+
 interface SitesGridItemProps {
 	site: SiteExcerptData;
 	showLaunchNag?: boolean;
@@ -160,9 +174,15 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 					{ showSiteRenewLink && site.plan?.expired && (
 						<SitesGridActionRenew site={ site } hideRenewLink={ isECommerceTrialSite } />
 					) }
-					{ isTransferring && <SitesTransferNotice isTransfering={ true } /> }
+					{ isTransferring && (
+						<LoaderNoticeContainer>
+							<SitesTransferNotice isTransfering={ true } />
+						</LoaderNoticeContainer>
+					) }
 					{ wasTransferring && ( isTransferCompleted || isErrored ) && (
-						<SitesTransferNotice isTransfering={ false } hasError={ isErrored } />
+						<LoaderNoticeContainer>
+							<SitesTransferNotice isTransfering={ false } hasError={ isErrored } />
+						</LoaderNoticeContainer>
 					) }
 				</>
 			}

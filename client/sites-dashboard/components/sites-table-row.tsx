@@ -3,12 +3,13 @@ import { useSiteLaunchStatusLabel } from '@automattic/sites';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import { memo } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useSelector } from 'react-redux';
 import StatsSparkline from 'calypso/blocks/stats-sparkline';
 import TimeSince from 'calypso/components/time-since';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { useCheckSiteTransferStatus } from '../hooks/use-check-site-transfer-status';
 import { displaySiteUrl, getDashboardUrl, isStagingSite, MEDIA_QUERIES } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import SitesP2Badge from './sites-p2-badge';
@@ -18,6 +19,7 @@ import { SiteName } from './sites-site-name';
 import { SitePlan } from './sites-site-plan';
 import { SiteUrl, Truncated } from './sites-site-url';
 import SitesStagingBadge from './sites-staging-badge';
+import { SitesTransferNotice } from './sites-transfer-notice';
 import { ThumbnailLink } from './thumbnail-link';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
@@ -87,6 +89,24 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const isP2Site = site.options?.is_wpforteams_site;
 	const isWpcomStagingSite = isStagingSite( site );
 
+	const { isTransferring, isTransferCompleted, isErrored } = useCheckSiteTransferStatus( {
+		siteId: site.ID,
+	} );
+	const [ wasTransferring, setWasTransferring ] = useState( false );
+	const dismissTransferNoticeRef = useRef< NodeJS.Timeout >();
+
+	useEffect( () => {
+		if ( isTransferring && ! wasTransferring ) {
+			setWasTransferring( true );
+		} else if ( ! isTransferring && wasTransferring && isTransferCompleted ) {
+			dismissTransferNoticeRef.current = setTimeout( () => {
+				setWasTransferring( false );
+			}, 3000 );
+		}
+
+		return () => clearTimeout( dismissTransferNoticeRef.current );
+	}, [ isTransferring, isTransferCompleted, wasTransferring, setWasTransferring ] );
+
 	let siteUrl = site.URL;
 	if ( site.options?.is_redirect && site.options?.unmapped_url ) {
 		siteUrl = site.options?.unmapped_url;
@@ -129,8 +149,12 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 				<SitePlan site={ site } userId={ userId } />
 			</Column>
 			<Column mobileHidden>
-				{ translatedStatus }
-				<SiteLaunchNag site={ site } />
+				{ ! wasTransferring && translatedStatus }
+				{ ! wasTransferring && <SiteLaunchNag site={ site } /> }
+				{ isTransferring && <SitesTransferNotice isTransfering={ true } isCompact={ true } /> }
+				{ wasTransferring && ( isTransferCompleted || isErrored ) && (
+					<SitesTransferNotice isTransfering={ false } hasError={ isErrored } isCompact={ true } />
+				) }
 			</Column>
 			<Column mobileHidden>
 				{ site.options?.updated_at ? <TimeSince date={ site.options.updated_at } /> : '' }

@@ -1,5 +1,4 @@
 import { css, keyframes } from '@emotion/css';
-import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import Notice from 'calypso/components/notice';
@@ -20,28 +19,16 @@ const hostingActivatingNotice = css( {
 	},
 } );
 
-const LoaderNoticeContainer = styled.div( {
-	position: 'absolute',
-	top: 0,
-	left: 0,
-	padding: 6,
-	width: '100%',
-	boxSizing: 'border-box',
-	'.notice__text': {
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: 'space-between',
-	},
-} );
-
 type SitesTransferNoticeProps = {
 	isTransfering: boolean;
 	hasError?: boolean;
+	isCompact?: boolean;
 };
 
 export const SitesTransferNotice = ( {
 	isTransfering = false,
 	hasError = false,
+	isCompact = false,
 }: SitesTransferNoticeProps ) => {
 	const { __ } = useI18n();
 
@@ -52,22 +39,25 @@ export const SitesTransferNotice = ( {
 	if ( hasError ) {
 		status = 'is-error';
 		icon = 'notice';
-		text = __( 'An error occurred during transfer.' );
+		text = isCompact ? __( 'Error' ) : __( 'An error occurred during transfer.' );
 	} else {
 		status = isTransfering ? 'is-info' : 'is-success';
 		icon = isTransfering ? 'sync' : 'checkmark';
-		text = isTransfering ? __( 'Activating site! Please wait.' ) : __( 'Site activated!' );
+		if ( isCompact ) {
+			text = isTransfering ? __( 'Activating.' ) : __( 'Activated!' );
+		} else {
+			text = isTransfering ? __( 'Activating site! Please wait.' ) : __( 'Site activated!' );
+		}
 	}
 
 	return (
-		<LoaderNoticeContainer>
-			<Notice
-				className={ classnames( { [ hostingActivatingNotice ]: isTransfering } ) }
-				status={ status }
-				showDismiss={ false }
-				icon={ icon }
-				text={ text }
-			/>
-		</LoaderNoticeContainer>
+		<Notice
+			className={ classnames( { [ hostingActivatingNotice ]: isTransfering } ) }
+			status={ status }
+			showDismiss={ false }
+			isCompact={ isCompact }
+			icon={ icon }
+			text={ text }
+		/>
 	);
 };
