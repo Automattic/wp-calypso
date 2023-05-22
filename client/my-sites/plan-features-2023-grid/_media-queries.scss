@@ -45,17 +45,6 @@ $planComparisonMinWidthToGridWidthMap: (
 	}
 }
 
-@mixin plan-comparison-grid-breakpoints {
-	width: 100%;
-
-	@each $screenMinWidth, $gridWidth in $planComparisonMinWidthToGridWidthMap {
-		@media ( min-width: #{$screenMinWidth} ) {
-			width: #{$gridWidth};
-		}
-	}
-
-}
-
 /**
  * Media queries for the plans grid on the /plans page.
  * This should stretch to fill it's container.
