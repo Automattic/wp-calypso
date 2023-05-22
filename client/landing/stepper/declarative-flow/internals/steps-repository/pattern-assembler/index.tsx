@@ -506,9 +506,7 @@ const PatternAssembler = ( {
 			ref={ wrapperRef }
 			tabIndex={ -1 }
 		>
-			{ isEnabled( 'pattern-assembler/notices' ) && (
-				<Notices noticeList={ noticeList } noticeOperations={ noticeOperations } />
-			) }
+			<Notices noticeList={ noticeList } noticeOperations={ noticeOperations } />
 			<div className="pattern-assembler__sidebar">
 				<NavigatorScreen path={ NAVIGATOR_PATHS.MAIN }>
 					<ScreenMain

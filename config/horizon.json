@@ -91,7 +91,6 @@
 		"pattern-assembler/dotcompatterns": true,
 		"pattern-assembler/logged-in-showcase": true,
 		"pattern-assembler/inline-styles": true,
-		"pattern-assembler/notices": true,
 		"pattern-assembler/show-waitlist-patterns": true,
 		"plans/personal-plan": true,
 		"plans/pro-plan": false,
