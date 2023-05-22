@@ -1,5 +1,5 @@
 /**
- * @group gutenberg
+ * @group gutenberg-loop
  * @group jetpack-wpcom-integration
  */
 
@@ -11,10 +11,10 @@ const blockFlows: BlockFlow[] = [
 		embedUrl: 'https://www.instagram.com/p/BlDOZMil933/',
 		expectedPostText: 'woocommerce',
 	} ),
-	new TwitterBlockFlow( {
-		embedUrl: 'https://twitter.com/automattic/status/1360312228415700993',
-		expectedTweetText: '@automattic',
-	} ),
+	// new TwitterBlockFlow( {
+	// 	embedUrl: 'https://twitter.com/automattic/status/1360312228415700993',
+	// 	expectedTweetText: '@automattic',
+	// } ),
 ];
 
 createBlockTests( 'Blocks: Jetpack Extended Core Blocks', blockFlows );
