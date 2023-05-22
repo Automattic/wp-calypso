@@ -28,7 +28,6 @@ $planComparisonMinWidthToGridWidthMap: (
 	1281px: "1091px",
 );
 
-
 @mixin pricing-grid-breakpoints {
 	width: 100%;
 
@@ -37,7 +36,6 @@ $planComparisonMinWidthToGridWidthMap: (
 			width: #{$gridWidth};
 		}
 	}
-
 }
 
 @mixin plan-comparison-grid-breakpoints {
@@ -48,7 +46,6 @@ $planComparisonMinWidthToGridWidthMap: (
 			width: #{$gridWidth};
 		}
 	}
-
 }
 
 /**
