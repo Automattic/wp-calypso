@@ -22,17 +22,15 @@ type SiteSubscriptionDeliveryFrequencyResponse = {
 	subscription: SubscriptionResponse | null;
 };
 
-const useSiteDeliveryFrequencyMutation = () => {
+const useSiteDeliveryFrequencyMutation = ( blog_id?: number | string ) => {
 	const { isLoggedIn } = useIsLoggedIn();
 	const queryClient = useQueryClient();
 
 	const siteSubscriptionsCacheKey = useCacheKey( [ 'read', 'site-subscriptions' ] );
-	// todo: cache key need to be fixed
-	const siteSubscriptionDetailsCacheKey = useCacheKey( [
-		'read',
-		'site-subscription-details',
-		'194561095',
-	] );
+	const siteSubscriptionDetailsCacheKey = useCacheKey(
+		[ 'read', 'site-subscription-details' ],
+		blog_id
+	);
 
 	return useMutation(
 		async ( params: SiteSubscriptionDeliveryFrequencyParams ) => {

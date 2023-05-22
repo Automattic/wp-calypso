@@ -24,7 +24,7 @@ const SiteSubscriptionSettings = ( {
 	const { mutate: updateEmailMeNewPosts, isLoading: updatingEmailMeNewPosts } =
 		SubscriptionManager.useSiteEmailMeNewPostsMutation();
 	const { mutate: updateDeliveryFrequency, isLoading: updatingFrequency } =
-		SubscriptionManager.useSiteDeliveryFrequencyMutation();
+		SubscriptionManager.useSiteDeliveryFrequencyMutation( blogId );
 	const { mutate: updateEmailMeNewComments, isLoading: updatingEmailMeNewComments } =
 		SubscriptionManager.useSiteEmailMeNewCommentsMutation();
 

@@ -6,7 +6,7 @@ import type { SiteSubscriptionDetails, SiteSubscriptionDetailsAPIResponse } from
 const useSiteSubscriptionDetailsQuery = ( siteId: string ) => {
 	const { isLoggedIn } = useIsLoggedIn();
 	const enabled = useIsQueryEnabled();
-	const cacheKey = useCacheKey( [ 'read', 'site-subscription-details', siteId ] );
+	const cacheKey = useCacheKey( [ 'read', 'site-subscription-details' ], siteId );
 	return useQuery< SiteSubscriptionDetails >(
 		cacheKey,
 		async () => {
