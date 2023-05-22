@@ -81,7 +81,6 @@ describe( 'Likes: Post', function () {
 
 		beforeAll( async () => {
 			newPage = await browser.newPage();
-			await otherUser.authenticate( newPage );
 		} );
 
 		it( 'Go to the published post page', async () => {
@@ -90,7 +89,11 @@ describe( 'Likes: Post', function () {
 			} );
 		} );
 
-		it( 'Like post', async function () {
+		it( 'Login via popup to like the post', async function () {
+			newPage.on( 'popup', async ( popup ) => {
+				await otherUser.logInViaPopupPage( popup );
+			} );
+
 			await ElementHelper.reloadAndRetry( newPage, async () => {
 				publishedPostPage = new PublishedPostPage( newPage );
 				await publishedPostPage.likePost();
