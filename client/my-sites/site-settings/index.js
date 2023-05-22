@@ -10,6 +10,7 @@ import {
 	legacyRedirects,
 	manageConnection,
 	redirectIfCantDeleteSite,
+	redirectIfCantStartSiteTransfer,
 	redirectToGeneral,
 	redirectToTraffic,
 	startOver,
@@ -102,6 +103,7 @@ export default function () {
 	page(
 		'/settings/start-site-transfer/:site_id',
 		siteSelection,
+		redirectIfCantStartSiteTransfer,
 		navigation,
 		setScroll,
 		startSiteTransfer,
