@@ -96,7 +96,7 @@ const useSiteNotifyMeOfNewPostsMutation = ( blog_id?: number | string ) => {
 							...previousSiteSubscriptionDetails.delivery_methods,
 							notification: {
 								...previousSiteSubscriptionDetails.delivery_methods?.notification,
-								post_delivery_frequency: params.send_posts,
+								send_posts: params.send_posts,
 							},
 						},
 					} );
