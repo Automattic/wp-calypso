@@ -11,14 +11,22 @@ import ActionPanelTitle from 'calypso/components/action-panel/title';
 import HeaderCake from 'calypso/components/header-cake';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { TRANSFER_SITE } from 'calypso/lib/url/support';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
+import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 type Props = {
+	currentUserEmail: string;
 	selectedSiteSlug: string;
+	selectedSiteTitle: string;
 	translate: ( text: string, args?: Record< string, unknown > ) => string;
 };
 
-const StartSiteTransfer = ( { translate, selectedSiteSlug }: Props ) => {
+const StartSiteTransfer = ( {
+	currentUserEmail,
+	selectedSiteSlug,
+	selectedSiteTitle,
+	translate,
+}: Props ) => {
 	const localizeUrl = useLocalizeUrl();
 	const [ confirmFirstToggle, setConfirmFirstToggle ] = useState( false );
 	const [ confirmSecondToggle, setConfirmSecondToggle ] = useState( false );
@@ -44,23 +52,41 @@ const StartSiteTransfer = ( { translate, selectedSiteSlug }: Props ) => {
 						) }
 					</p>
 					<ul>
-						<li>{ translate( 'You will be removed as owner of %s' ) }</li>
 						<li>
-							{ translate( 'You will not be able to access %s unless allowed by the new owner' ) }
+							{ translate( 'You will be removed as owner of %(selectedSiteSlug)s', {
+								args: { selectedSiteSlug },
+							} ) }
 						</li>
 						<li>
 							{ translate(
-								'Your posts on %s will be transferred to the new owner and will no longer be authored by your account.'
+								'You will not be able to access %(selectedSiteSlug)s unless allowed by the new owner',
+								{
+									args: { selectedSiteSlug },
+								}
 							) }
 						</li>
 						<li>
 							{ translate(
-								'Your paid upgrades on daniela8cpersonaltest.wordpress.com will be transferred to the new owner, and will remain with the blog'
+								'Your posts on %(selectedSiteSlug)s will be transferred to the new owner and will no longer be authored by your account.',
+								{
+									args: { selectedSiteSlug },
+								}
 							) }
 						</li>
 						<li>
 							{ translate(
-								'You must authorize the transfer via a confirmation email sent to daniela8ctesting@gmail.com. The transfer will not proceed unless you authorize it.'
+								'Your paid upgrades on %(selectedSiteSlug)s will be transferred to the new owner, and will remain with the blog',
+								{
+									args: { selectedSiteSlug },
+								}
+							) }
+						</li>
+						<li>
+							{ translate(
+								'You must authorize the transfer via a confirmation email sent to %(currentUserEmail)s. The transfer will not proceed unless you authorize it.',
+								{
+									args: { currentUserEmail },
+								}
 							) }
 						</li>
 					</ul>
@@ -89,7 +115,10 @@ const StartSiteTransfer = ( { translate, selectedSiteSlug }: Props ) => {
 						<form>
 							<p>
 								{ translate(
-									'Enter the username or email address of the registered WordPress.com user that you want to transfer ownership of Site Title (daniela8cpersonaltest.wordpress.com) to:'
+									'Enter the username or email address of the registered WordPress.com user that you want to transfer ownership of %(selectedSiteTitle)s (%(selectedSiteSlug)s) to:',
+									{
+										args: { selectedSiteTitle, selectedSiteSlug },
+									}
 								) }
 							</p>
 							<TextControl
@@ -130,5 +159,7 @@ const StartSiteTransfer = ( { translate, selectedSiteSlug }: Props ) => {
 };
 
 export default connect( ( state ) => ( {
+	currentUserEmail: getCurrentUserEmail( state ),
 	selectedSiteSlug: getSelectedSiteSlug( state ),
+	selectedSiteTitle: getSelectedSite( state )?.title,
 } ) )( localize( StartSiteTransfer ) );
