@@ -9,13 +9,14 @@ import {
 	isWooExpressPlan,
 } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
-import i18n, { localize, TranslateResult, useTranslate } from 'i18n-calypso';
+import { localize, TranslateResult, useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useSelector } from 'react-redux';
+import { isCountryInEu } from 'calypso/me/purchases/is-country-in-eu';
 import usePlanPrices from 'calypso/my-sites/plans/hooks/use-plan-prices';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
 
 interface Props {
 	planName: string;
@@ -36,7 +37,8 @@ function usePerMonthDescription( {
 }: Omit< Props, 'billingTimeframe' > ) {
 	const translate = useTranslate();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
-	const isEnglishLocale = useIsEnglishLocale();
+	const countryCode = useSelector( getCurrentUserCountryCode );
+	const isUserInEU = isCountryInEu( countryCode );
 	const planPrices = usePlanPrices( {
 		planSlug: planName as PlanSlug,
 		returnMonthly: isMonthlyPlan,
@@ -82,22 +84,11 @@ function usePerMonthDescription( {
 				? formatCurrency( planPrices.rawPrice, currencyCode, { stripZeros: true } )
 				: null;
 
-		// TODO: Remove check once text is translated
-		const displayNewPriceText =
-			isEnglishLocale ||
-			( i18n.hasTranslation( 'per month, %(rawPrice)s billed annually, Excl. Taxes' ) &&
-				i18n.hasTranslation( 'per month, %(rawPrice)s billed every two years, Excl. Taxes' ) &&
-				i18n.hasTranslation(
-					'per month, {{discount}} %(rawPrice)s billed annually{{/discount}} %(fullTermDiscountedPriceText)s for the first year, Excl. Taxes'
-				) &&
-				i18n.hasTranslation(
-					'per month, {{discount}} %(rawPrice)s billed annually{{/discount}} %(fullTermDiscountedPriceText)s for the first year, Excl. Taxes'
-				) );
 		if ( fullTermDiscountedPriceText ) {
 			if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {
 				//per month, $96 billed annually $84 for the first year
 
-				return displayNewPriceText
+				return isUserInEU
 					? translate(
 							'per month, {{discount}} %(rawPrice)s billed annually{{/discount}} %(fullTermDiscountedPriceText)s for the first year, Excl. Taxes',
 							{
@@ -120,7 +111,7 @@ function usePerMonthDescription( {
 			}
 
 			if ( PLAN_BIENNIAL_PERIOD === billingPeriod ) {
-				return displayNewPriceText
+				return isUserInEU
 					? translate(
 							'per month, {{discount}} %(rawPrice)s billed annually{{/discount}} %(fullTermDiscountedPriceText)s for the first year, Excl. Taxes',
 							{
@@ -143,7 +134,7 @@ function usePerMonthDescription( {
 			}
 		} else if ( rawPrice ) {
 			if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {
-				return displayNewPriceText
+				return isUserInEU
 					? translate( 'per month, %(rawPrice)s billed annually, Excl. Taxes', {
 							args: { rawPrice },
 							comment: 'Excl. Taxes is short for excluding taxes',
@@ -154,7 +145,7 @@ function usePerMonthDescription( {
 			}
 
 			if ( PLAN_BIENNIAL_PERIOD === billingPeriod ) {
-				return displayNewPriceText
+				return isUserInEU
 					? translate( 'per month, %(rawPrice)s billed every two years, Excl. Taxes', {
 							args: { rawPrice },
 							comment: 'Excl. Taxes is short for excluding taxes',
