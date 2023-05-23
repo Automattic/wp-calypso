@@ -197,7 +197,7 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 
 					<footer className="footer">
 						<p>
-							{ translate( 'Handled by WordPress.com. {{a}}WordPress.com{{/a}}', {
+							{ translate( 'Handled by {{a}}WordPress.com{{/a}}', {
 								components: {
 									a: <a href="https://wordpress.com/" target="_blank" rel="noreferrer" />,
 								},
