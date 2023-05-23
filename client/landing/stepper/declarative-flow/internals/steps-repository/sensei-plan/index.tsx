@@ -197,13 +197,19 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 
 					<footer className="footer">
 						<p>
-							{ translate( 'Handled by {{a}}WordPress.com{{/a}}', {
+							{ translate( 'Hosting by {{a}}WordPress.com{{/a}}', {
 								components: {
 									a: <a href="https://wordpress.com/" target="_blank" rel="noreferrer" />,
 								},
 							} ) }
 						</p>
-						<p>{ __( 'Course creation and LMS tools powered by SenseiLMS' ) }</p>
+						<p>
+							{ translate( 'Course creation and LMS tools powered by {{a}}SenseiLMS.com{{/a}}', {
+								components: {
+									a: <a href="https://senseilms.com/" target="_blank" rel="noreferrer" />,
+								},
+							} ) }
+						</p>
 					</footer>
 				</>
 			) }
