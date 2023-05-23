@@ -92,7 +92,7 @@ export default function NotificationSettings( {
 			jetmon_defer_status_down_minutes: selectedDuration?.time,
 		} as UpdateMonitorSettingsParams;
 
-		const eventParams = { ...params } as any;
+		const eventParams = { ...params } as any; // Adding eventParams since parameters for tracking events should be flat, not nested.
 
 		if ( isMultipleEmailEnabled ) {
 			const extraEmails = allEmailItems.filter( ( item ) => ! item.isDefault );
