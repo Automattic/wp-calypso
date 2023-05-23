@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { callApi, getApiParams } from '../helpers';
+import { callApi, getSubscriptionMutationParams } from '../helpers';
 import { useCacheKey, useIsLoggedIn } from '../hooks';
 import { SiteSubscriptionsPages, SubscriptionManagerSubscriptionsCount } from '../types';
 
@@ -29,7 +29,7 @@ const useSiteUnsubscribeMutation = () => {
 				);
 			}
 
-			const { path, apiVersion, body } = getApiParams(
+			const { path, apiVersion, body } = getSubscriptionMutationParams(
 				'delete',
 				isLoggedIn,
 				params.blog_id,

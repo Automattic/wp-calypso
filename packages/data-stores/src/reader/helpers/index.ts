@@ -82,8 +82,8 @@ const applyCallbackToPages = < K extends string, T >(
 	};
 };
 
-// Helper function to determine which API endpoint to call based on whether the user is logged in or not.
-const getApiParams = (
+// Subscriptions Management helper function to determine which API endpoint to call based on whether the user is logged in or not.
+const getSubscriptionMutationParams = (
 	action: 'new' | 'delete',
 	isLoggedIn: boolean,
 	blogId: number | string,
@@ -104,4 +104,4 @@ const getApiParams = (
 	};
 };
 
-export { callApi, applyCallbackToPages, getSubkey, getApiParams };
+export { callApi, applyCallbackToPages, getSubkey, getSubscriptionMutationParams };

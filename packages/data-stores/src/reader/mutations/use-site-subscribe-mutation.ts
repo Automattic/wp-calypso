@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { callApi, getApiParams } from '../helpers';
+import { callApi, getSubscriptionMutationParams } from '../helpers';
 import { useIsLoggedIn } from '../hooks';
 
 type SubscribeParams = {
@@ -29,7 +29,7 @@ const useSiteSubscribeMutation = () => {
 			);
 		}
 
-		const { path, apiVersion, body } = getApiParams(
+		const { path, apiVersion, body } = getSubscriptionMutationParams(
 			'new',
 			isLoggedIn,
 			params.blog_id,
