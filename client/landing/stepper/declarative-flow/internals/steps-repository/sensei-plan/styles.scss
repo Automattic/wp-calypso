@@ -30,6 +30,7 @@
 	}
 	.plan-item:not(.is-open) .plan-item__price {
 		margin-left: 0;
+		margin-bottom: 2px;
 		@include onboarding-font-recoleta;
 		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 32px;
@@ -44,14 +45,12 @@
 
 		&__viewport {
 			border: none;
-			padding: 24px 0 0;
-		}
-
-		&__price-discount {
-			margin-bottom: 0;
+			padding: 0;
 		}
 
 		&__price {
+			height: 40px;
+
 			.plan-price,
 			.plan-price__currency-symbol {
 				color: $black;
@@ -82,6 +81,7 @@
 
 		&__price-note {
 			margin-top: 0;
+			margin-bottom: 16px;
 		}
 
 		&__summary,
@@ -98,8 +98,7 @@
 
 			.plan-item {
 				&__summary,
-				&__price-note,
-				&__price-discount {
+				&__price-note {
 					display: block;
 					text-transform: unset;
 				}
@@ -108,17 +107,13 @@
 
 		&--is-loading {
 			.plan-item {
-				&__price-amount {
+				&__price {
 					@include onboarding-placeholder();
 					width: 30%;
 				}
 				&__price-note {
 					@include onboarding-placeholder();
 					width: 80%;
-				}
-				&__price-discount {
-					@include onboarding-placeholder();
-					width: 90%;
 				}
 			}
 		}
@@ -146,13 +141,6 @@
 		&__item--requires-annual-disabled {
 			.plans-feature-list__item-description {
 				font-weight: 700;
-			}
-		}
-		&__item--requires-annual-disabled {
-			.plans-feature-list {
-				&__item-annual-nudge {
-					display: block;
-				}
 			}
 		}
 

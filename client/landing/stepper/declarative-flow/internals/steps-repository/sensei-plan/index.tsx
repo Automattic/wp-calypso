@@ -128,7 +128,11 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 			? sprintf( newPlanItemPriceLabelAnnually, annualPriceStr )
 			: fallbackPlanItemPriceLabelAnnually;
 
-	const planItemPriceLabelMonthly = __( 'per month, billed monthly' );
+	const planItemPriceLabelMonthly = sprintf(
+		// translators: %s is the annual savings
+		__( 'Save %s by paying annually' ),
+		annualSavingsStr
+	);
 	const title = __( 'Sensei Bundle' );
 
 	return (
@@ -176,18 +180,6 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 									? planItemPriceLabelAnnually
 									: planItemPriceLabelMonthly }
 							</div>
-							<div
-								className={ classnames( 'plan-item__price-discount', {
-									'plan-item__price-discount--disabled': billingPeriod !== 'ANNUALLY',
-								} ) }
-							>
-								{ ! isLoading &&
-									sprintf(
-										// Translators: will be like "Save 30% by paying annually".  Make sure the % symbol is kept.
-										__( `You're saving %s by paying annually` ),
-										annualSavingsStr
-									) }
-							</div>
 						</div>
 						<PlanItem
 							allPlansExpanded
@@ -205,7 +197,7 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 
 					<footer className="footer">
 						<p>
-							{ translate( 'Handled by WordPress.com. {{a}}WordPress.com{{/a}}.', {
+							{ translate( 'Handled by WordPress.com. {{a}}WordPress.com{{/a}}', {
 								components: {
 									a: <a href="https://wordpress.com/" target="_blank" rel="noreferrer" />,
 								},
