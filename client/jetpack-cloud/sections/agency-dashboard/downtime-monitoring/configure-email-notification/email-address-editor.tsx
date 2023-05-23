@@ -7,7 +7,11 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import DashboardDataContext from '../../sites-overview/dashboard-data-context';
-import { useRequestVerificationCode, useValidateVerificationCode } from '../hooks';
+import {
+	useRequestVerificationCode,
+	useValidateVerificationCode,
+	useResendVerificationCode,
+} from '../hooks';
 import EmailItemContent from './email-item-content';
 import type {
 	AllowedMonitorContactActions,

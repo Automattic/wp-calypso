@@ -1,6 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
 import useRequestContactVerificationCode from 'calypso/state/jetpack-agency-dashboard/hooks/use-request-contact-verification-code';
+import useResendVerificationCodeMutation from 'calypso/state/jetpack-agency-dashboard/hooks/use-resend-contact-verification-code';
 import useValidateVerificationCodeMutation from 'calypso/state/jetpack-agency-dashboard/hooks/use-validate-contact-verification-code';
 import {
 	RequestVerificationCodeParams,
@@ -81,4 +82,24 @@ export function useValidateVerificationCode(): {
 		}
 	}
 	return { ...data, errorMessage };
+}
+
+export function useResendVerificationCode(): {
+	resendVerificationCode: ( params: RequestVerificationCodeParams ) => void;
+	isResending: boolean;
+	resendSuccess: boolean;
+	resendingFailed: boolean;
+} {
+	const { isLoading, isSuccess, isError, mutate } = useResendVerificationCodeMutation( {
+		retry: ( errorCount ) => {
+			return errorCount < 3;
+		},
+	} );
+
+	return {
+		resendVerificationCode: mutate,
+		isResending: isLoading,
+		resendSuccess: isSuccess,
+		resendingFailed: isError,
+	};
 }
