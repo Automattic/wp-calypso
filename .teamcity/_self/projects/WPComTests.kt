@@ -247,7 +247,8 @@ fun jetpackPlaywrightBuildType( targetDevice: String, buildUuid: String, jetpack
 			param("env.JETPACK_TARGET", jetpackTarget)
 		},
 		buildFeatures = {},
-		buildTriggers = triggers
+		buildTriggers = triggers,
+		addWpcomVcsRoot = true
 	)
 }
 
