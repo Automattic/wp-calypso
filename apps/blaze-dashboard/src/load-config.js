@@ -11,6 +11,7 @@ productionConfig.features[ 'use-translation-chunks' ] = false;
 
 // Override the redesign feature
 productionConfig.features[ 'promote-post/redesign-i2' ] = true;
+productionConfig.dsp_widget_js_src = 'https://widgets.wp.com/promote-v2/widget.js';
 
 // Note: configData is hydrated in https://github.com/Automattic/jetpack/blob/d4d0f987cbf63a864b03b542b7813aabe87e0ed3/projects/packages/stats-admin/src/class-dashboard.php#L214
 window.configData.features = productionConfig.features;
