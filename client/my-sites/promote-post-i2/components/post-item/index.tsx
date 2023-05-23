@@ -1,18 +1,12 @@
-import config from '@automattic/calypso-config';
 import { safeImageUrl } from '@automattic/calypso-url';
 import './style.scss';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import page from 'page';
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { recordDSPEntryPoint } from 'calypso/lib/promote-post';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
-import { useRouteModal } from 'calypso/lib/route-modal';
 import PostRelativeTimeStatus from 'calypso/my-sites/post-relative-time-status';
 import { getPostType } from 'calypso/my-sites/promote-post/utils';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { getAdvertisingDashboardPath } from '../../utils';
+import useOpenPromoteWidget from '../../hooks/use-open-promote-widget';
 
 type Discussion = {
 	comment_count: number;
@@ -43,19 +37,11 @@ type Props = {
 
 export default function PostItem( { post }: Props ) {
 	const [ loading ] = useState( false );
-	const dispatch = useDispatch();
-	const keyValue = 'post-' + post.ID;
-	const { openModal } = useRouteModal( 'blazepress-widget', keyValue );
-	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 
-	const onClickPromote = async () => {
-		if ( config.isEnabled( 'is_running_in_jetpack_site' ) ) {
-			page( getAdvertisingDashboardPath( `/${ selectedSiteSlug }/posts/promote/${ keyValue }` ) );
-		} else {
-			openModal();
-		}
-		dispatch( recordDSPEntryPoint( 'promoted_posts-post_item' ) );
-	};
+	const onClickPromote = useOpenPromoteWidget( {
+		keyValue: 'post-' + post.ID,
+		entrypoint: 'promoted_posts-post_item',
+	} );
 
 	const safeUrl = safeImageUrl( post.featured_image );
 	const featuredImage = safeUrl && resizeImageUrl( safeUrl, { h: 80 }, 0 );

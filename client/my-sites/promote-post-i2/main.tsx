@@ -5,7 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import moment from 'moment';
 import { useEffect, useMemo, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryPosts from 'calypso/components/data/query-posts';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
@@ -19,8 +19,6 @@ import useCampaignsStatsQuery from 'calypso/data/promote-post/use-promote-post-c
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import memoizeLast from 'calypso/lib/memoize-last';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
-import { recordDSPEntryPoint } from 'calypso/lib/promote-post';
-import { useRouteModal } from 'calypso/lib/route-modal';
 import CampaignsList from 'calypso/my-sites/promote-post-i2/components/campaigns-list';
 import PostsList from 'calypso/my-sites/promote-post-i2/components/posts-list';
 import PostsListBanner from 'calypso/my-sites/promote-post-i2/components/posts-list-banner';
@@ -36,6 +34,7 @@ import {
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { PostType } from 'calypso/types';
+import useOpenPromoteWidget from './hooks/use-open-promote-widget';
 import { getAdvertisingDashboardPath, unifyCampaigns } from './utils';
 
 export type TabType = 'posts' | 'campaigns';
@@ -94,9 +93,10 @@ export default function PromotedPosts( { tab }: Props ) {
 	const [ expandedCampaigns, setExpandedCampaigns ] = useState< number[] >( [] );
 	const [ alreadyScrolled, setAlreadyScrolled ] = useState< boolean >( false );
 	const selectedSiteId = selectedSite?.ID || 0;
-	const dispatch = useDispatch();
-	const keyValue = 'post-0'; // post 0 means to open post selector in widget
-	const { openModal } = useRouteModal( 'blazepress-widget', keyValue );
+	const onClickPromote = useOpenPromoteWidget( {
+		keyValue: 'post-0',
+		entrypoint: 'promoted_posts-header',
+	} );
 
 	const products = useSelector( ( state ) => {
 		const products = getPostsForQuery( state, selectedSiteId, queryProducts );
@@ -280,11 +280,6 @@ export default function PromotedPosts( { tab }: Props ) {
 			) }
 		</div>
 	);
-
-	const onClickPromote = async () => {
-		openModal();
-		dispatch( recordDSPEntryPoint( 'promoted_posts-header' ) );
-	};
 
 	return (
 		<Main wideLayout className="promote-post-i2">
