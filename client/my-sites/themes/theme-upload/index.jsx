@@ -277,7 +277,7 @@ class Upload extends Component {
 		const uploadAction = ( siteId, file ) =>
 			isJetpack
 				? this.props.uploadTheme( siteId, file )
-				: this.props.initiateThemeTransfer( siteId, file, '', '', 'themes' );
+				: this.props.initiateThemeTransfer( siteId, file, '', '', 'theme_upload' );
 		const isDisabled =
 			! isStandaloneJetpack && ( ! canUploadThemesOrPlugins || ( ! isAtomic && showEligibility ) );
 
