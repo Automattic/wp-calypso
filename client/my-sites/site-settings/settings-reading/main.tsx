@@ -10,6 +10,7 @@ import { getSiteUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ReaderSettingsSection from '../reader-settings';
+import { FediverseSettingsSection } from '../reading-fediverse-settings';
 import { NewsletterSettingsSection } from '../reading-newsletter-settings';
 import { RssFeedSettingsSection } from '../reading-rss-feed-settings';
 import { SiteSettingsSection } from '../reading-site-settings';
@@ -139,15 +140,7 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 						isSavingSettings={ isSavingSettings }
 						updateFields={ updateFields }
 					/>
-					<RssFeedSettingsSection
-						fields={ fields }
-						onChangeField={ onChangeField }
-						handleSubmitForm={ handleSubmitForm }
-						updateFields={ updateFields }
-						disabled={ disabled }
-						isSavingSettings={ isSavingSettings }
-						siteUrl={ siteUrl }
-					/>
+					{ config.isEnabled( 'fediverse/allow-opt-in' ) && <FediverseSettingsSection /> }
 					<NewsletterSettingsSection
 						fields={ fields }
 						handleToggle={ handleToggle }
@@ -164,6 +157,15 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 						isSavingSettings={ isSavingSettings }
 						isAtomic={ isAtomic }
 						siteIsJetpack={ siteIsJetpack }
+					/>
+					<RssFeedSettingsSection
+						fields={ fields }
+						onChangeField={ onChangeField }
+						handleSubmitForm={ handleSubmitForm }
+						updateFields={ updateFields }
+						disabled={ disabled }
+						isSavingSettings={ isSavingSettings }
+						siteUrl={ siteUrl }
 					/>
 				</form>
 			);
