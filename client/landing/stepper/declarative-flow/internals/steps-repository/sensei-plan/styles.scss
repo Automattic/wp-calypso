@@ -8,7 +8,9 @@
 	}
 
 	.footer {
-		margin: 87px 0 20px;
+		margin: 87px 20px 20px;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+		font-size: 13px;
 		text-align: center;
 
 		a {
