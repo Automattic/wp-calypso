@@ -45,7 +45,8 @@ export function getEnhancedTasks(
 	const enhancedTaskList: Task[] = [];
 
 	const productSlug =
-		( isStartWritingFlow( flow ) ? planCartProductSlug : null ) ?? site?.plan?.product_slug;
+		( isStartWritingFlow( flow ) || isDesignFirstFlow( flow ) ? planCartProductSlug : null ) ??
+		site?.plan?.product_slug;
 
 	const translatedPlanName = productSlug ? PLANS_LIST[ productSlug ].getTitle() : '';
 
@@ -53,7 +54,7 @@ export function getEnhancedTasks(
 
 	const planCompleted =
 		Boolean( tasks?.find( ( task ) => task.id === 'plan_completed' )?.completed ) ||
-		! isStartWritingFlow( flow );
+		! ( isStartWritingFlow( flow ) || isDesignFirstFlow( flow ) );
 
 	const videoPressUploadCompleted = Boolean(
 		tasks?.find( ( task ) => task.id === 'video_uploaded' )?.completed
@@ -276,7 +277,8 @@ export function getEnhancedTasks(
 					break;
 				case 'blog_launched':
 					taskData = {
-						disabled: isStartWritingFlow( flow ) && ! planCompleted,
+						disabled:
+							( isStartWritingFlow( flow ) || isDesignFirstFlow( flow ) ) && ! planCompleted,
 						actionDispatch: () => {
 							if ( site?.ID ) {
 								const { setPendingAction, setProgressTitle } = dispatch( ONBOARD_STORE );

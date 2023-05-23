@@ -1,7 +1,12 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { useDispatch } from '@wordpress/data';
 import { getQueryArg } from '@wordpress/url';
-import { StepContainer } from 'calypso/../packages/onboarding/src';
+import {
+	DESIGN_FIRST_FLOW,
+	START_WRITING_FLOW,
+	StepContainer,
+	isStartWritingFlow,
+} from 'calypso/../packages/onboarding/src';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { useMyDomainInputMode as inputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import UseMyDomainComponent from 'calypso/components/domains/use-my-domain';
@@ -16,7 +21,6 @@ import './style.scss';
 const UseMyDomain: Step = function UseMyDomain( { navigation, flow } ) {
 	const { setHideFreePlan, setDomainCartItem } = useDispatch( ONBOARD_STORE );
 	const { goNext, goBack, submit } = navigation;
-	const isStartWritingFlow = 'start-writing' === flow;
 	const getDefaultStepContent = () => <h1>Choose a domain step</h1>;
 
 	const handleOnTransfer = async ( domain: string, authCode: string ) => {
@@ -64,7 +68,8 @@ const UseMyDomain: Step = function UseMyDomain( { navigation, flow } ) {
 
 	const getStepContent = () => {
 		switch ( flow ) {
-			case 'start-writing':
+			case START_WRITING_FLOW:
+			case DESIGN_FIRST_FLOW:
 				return getStartWritingFlowStepContent();
 			default:
 				return getDefaultStepContent();
@@ -76,7 +81,7 @@ const UseMyDomain: Step = function UseMyDomain( { navigation, flow } ) {
 			<QueryProductsList />
 			<StepContainer
 				stepName="useMyDomain"
-				shouldHideNavButtons={ isStartWritingFlow }
+				shouldHideNavButtons={ isStartWritingFlow( flow ) }
 				goBack={ goBack }
 				goNext={ goNext }
 				isHorizontalLayout={ false }

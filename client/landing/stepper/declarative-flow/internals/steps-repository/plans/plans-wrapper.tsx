@@ -21,6 +21,8 @@ import {
 	LINK_IN_BIO_FLOW,
 	HOSTING_SITE_CREATION_FLOW,
 	isHostingSiteCreationFlow,
+	isDesignFirstFlow,
+	isDomainUpsellFlow,
 } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
@@ -189,6 +191,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		if (
 			isNewsletterFlow( flowName ) ||
 			isStartWritingFlow( flowName ) ||
+			isDesignFirstFlow( flowName ) ||
 			isLinkInBioFlow( flowName )
 		) {
 			return __( `There's a plan for you.` );
@@ -208,19 +211,13 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			<Button onClick={ handleFreePlanButtonClick } className="is-borderless" />
 		);
 
-		if ( isStartWritingFlow( flowName ) ) {
-			return;
-		}
-
-		if ( isNewsletterFlow( flowName ) ) {
-			return;
-		}
-
-		if ( isLinkInBioFlow( flowName ) ) {
-			return;
-		}
-
-		if ( flowName === DOMAIN_UPSELL_FLOW ) {
+		if (
+			isStartWritingFlow( flowName ) ||
+			isDesignFirstFlow( flowName ) ||
+			isNewsletterFlow( flowName ) ||
+			isLinkInBioFlow( flowName ) ||
+			isDomainUpsellFlow( flowName )
+		) {
 			return;
 		}
 

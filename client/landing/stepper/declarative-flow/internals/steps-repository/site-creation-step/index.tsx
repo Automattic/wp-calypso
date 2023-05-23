@@ -13,6 +13,7 @@ import {
 	isStartWritingFlow,
 	isWooExpressFlow,
 	isHostingSiteCreationFlow,
+	isDesignFirstFlow,
 } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -103,6 +104,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 		isLinkInBioFlow( flow ) ||
 		isMigrationFlow( flow ) ||
 		isStartWritingFlow( flow ) ||
+		isDesignFirstFlow( flow ) ||
 		isHostingSiteCreationFlow( flow ) ||
 		wooFlows.includes( flow || '' )
 	) {
