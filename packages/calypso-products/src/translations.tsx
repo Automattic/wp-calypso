@@ -579,7 +579,7 @@ export const getJetpackProductsShortDescriptions = (): Record< string, Translate
 		'Speed up your site and improve SEO - no developer required.'
 	);
 	const searchShortDescription = translate( 'Help your site visitors find answers instantly.' );
-	const scanShortDescription = translate( 'Automatic malware scanning with one-click fixes.' );
+	const scanShortDescription = translate( '24/7 protection: WAF and automatic malware scanning.' );
 	const videoPressShortDescription = translate(
 		'High-quality, ad-free video built specifically for WordPress.'
 	);
@@ -693,7 +693,7 @@ export const getJetpackProductsLightboxDescription = (): Record< string, Transla
 		'Automatically clear spam from your comments and forms.'
 	);
 	const scanLightboxDescription = translate(
-		'Keep your site or store ahead of security threats with automated malware scanning; including one-click fixes.'
+		'Keep your site or store ahead of security threats with our WAF and automated malware scanning, including one-click fixes.'
 	);
 	const searchLightboxDescription = translate(
 		'Incredibly powerful and customizable, Jetpack Search helps your visitors instantly find the right content - right when they need it.'
