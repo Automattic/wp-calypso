@@ -53,7 +53,7 @@ const SiteSubscriptionPage = () => {
 		// todo: style the button (underline, color?, etc.)
 		const Resubscribe = () => (
 			<Button
-				onClick={ () => subscribe( { blog_id: blogId } ) }
+				onClick={ () => subscribe( { blog_id: blogId, url: data?.URL } ) }
 				disabled={ subscribing || unsubscribing }
 			>
 				{ translate( 'Resubscribe' ) }
@@ -159,9 +159,9 @@ const SiteSubscriptionPage = () => {
 							<SiteSubscriptionSettings
 								blogId={ blogId }
 								notifyMeOfNewPosts={ data.delivery_methods?.notification?.send_posts }
-								emailMeNewPosts={ data.delivery_methods?.email.send_posts }
-								deliveryFrequency={ data.delivery_methods?.email.post_delivery_frequency }
-								emailMeNewComments={ data.delivery_methods?.email.send_comments }
+								emailMeNewPosts={ data.delivery_methods?.email?.send_posts }
+								deliveryFrequency={ data.delivery_methods?.email?.post_delivery_frequency }
+								emailMeNewComments={ data.delivery_methods?.email?.send_comments }
 							/>
 
 							<hr className="subscriptions__separator" />
