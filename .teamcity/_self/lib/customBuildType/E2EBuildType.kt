@@ -83,6 +83,7 @@ open class E2EBuildType(
 
 		vcs {
 			root(Settings.WpCalypso)
+			root(AbsoluteId("%WPCOM_VCS_ROOT_ID%"), "-:.")
 			cleanCheckout = true
 		}
 
