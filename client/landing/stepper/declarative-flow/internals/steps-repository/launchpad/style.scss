@@ -142,6 +142,7 @@
 
 // Launchpad - Sidebar heading text
 .start-writing,
+.design-first,
 .newsletter,
 .link-in-bio.launchpad,
 .link-in-bio-tld:not(.domains),
@@ -262,7 +263,8 @@
 
 }
 
-.start-writing .launchpad__sidebar-admin-link {
+.start-writing .launchpad__sidebar-admin-link,
+.design-first .launchpad__sidebar-admin-link {
 	display: none;
 }
 
