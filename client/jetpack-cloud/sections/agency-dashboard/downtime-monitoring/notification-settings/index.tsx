@@ -123,7 +123,7 @@ export default function NotificationSettings( {
 			if ( isMultipleEmailEnabled ) {
 				const userEmailItems = userEmails.map( ( email ) => ( {
 					email,
-					name: 'Default Email',
+					name: translate( 'Default account email' ),
 					isDefault: true,
 					verified: true,
 				} ) );
@@ -138,7 +138,7 @@ export default function NotificationSettings( {
 				setAllEmailItems( [ ...userEmailItems, ...siteEmailItems ] );
 			}
 		},
-		[ isMultipleEmailEnabled ]
+		[ isMultipleEmailEnabled, translate ]
 	);
 
 	useEffect( () => {
