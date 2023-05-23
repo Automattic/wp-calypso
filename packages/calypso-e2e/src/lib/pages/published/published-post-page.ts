@@ -2,16 +2,7 @@ import { Page } from 'playwright';
 
 const selectors = {
 	// Post body
-	postBody: '.entry-content',
 	postPasswordInput: 'input[name="post_password"]',
-	submitPasswordButton: 'input[name="Submit"]',
-
-	// Like Widget
-	likeWidget: 'iframe[title="Like or Reblog"]',
-	likeButton: 'a.like',
-	unlikeButton: 'a.liked',
-	likedText: 'text=Liked',
-	notLikedText: 'text=Like',
 };
 
 /**
