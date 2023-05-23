@@ -1,4 +1,5 @@
-import { ReactChild, useMemo } from 'react';
+import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import { useCountries } from 'calypso/landing/stepper/hooks/use-countries';
 
 /**
@@ -42,16 +43,16 @@ const stripeSupportedStateCountries = [
 
 export interface Option {
 	value: string;
-	label: ReactChild;
-	// isLabel: boolean;
+	label: string;
 }
 
 export function useCountriesAndStates() {
 	const { data: countriesList } = useCountries();
+	const translate = useTranslate();
 
 	return useMemo( () => {
 		const countryOptions = <{ [ key: string ]: Option }>{};
-		const stateOptions = <{ [ key: string ]: Array< object > }>{};
+		const stateOptions = <{ [ key: string ]: Array< Option > }>{};
 
 		Object.entries( countriesList ?? [] ).map( ( [ key, value ] ) => {
 			// We just have to add the country to the list of countries if the key / country
@@ -60,7 +61,6 @@ export function useCountriesAndStates() {
 				countryOptions[ key ] = {
 					value: key,
 					label: value,
-					// isLabel: false,
 				};
 
 				return;
@@ -77,7 +77,6 @@ export function useCountriesAndStates() {
 				countryOptions[ countryCode ] = {
 					value: countryCode,
 					label: countryLabel,
-					// isLabel: false,
 				};
 			}
 
@@ -90,12 +89,16 @@ export function useCountriesAndStates() {
 				stateOptions[ countryCode ].push( {
 					value: stateCode,
 					label: stateLabel,
-					// isLabel: false,
 				} );
 			}
 		} );
 
 		const countries = Object.values( countryOptions );
+		countries.unshift( {
+			value: '',
+			label: translate( '- Select Country -' ),
+		} );
+
 		// Alphabetizes country list after translated.
 		countries.sort( ( { label: countryA }, { label: countryB } ) => {
 			if ( countryA < countryB ) {
@@ -111,5 +114,5 @@ export function useCountriesAndStates() {
 			countryOptions: countries as Option[],
 			stateOptionsMap: stateOptions,
 		};
-	}, [ countriesList ] );
+	}, [ countriesList, translate ] );
 }

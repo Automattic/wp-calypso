@@ -5,39 +5,24 @@ import { ReactChild, useCallback, useState, useMemo, ChangeEvent } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import { PartnerDetailsPayload } from 'calypso/state/partner-portal/types';
 import { Option as CountryOption, useCountriesAndStates } from './hooks/use-countries-and-states';
 
 import './style.scss';
 
-const defaultCountry: CountryOption = {
-	value: 'US',
-	label: 'United States (US)',
-	// isLabel: false,
-};
-
-interface StateOption {
-	value: string;
-	label: string;
-	isLabel: false;
-}
-
-function getCountry( country: string, options: CountryOption[] ): CountryOption {
+function getCountry( country: string, options: CountryOption[] ): string {
 	if ( options.length < 1 ) {
-		return defaultCountry;
+		return country;
 	}
 
 	for ( let i = 0; i < options.length; i++ ) {
 		if ( options[ i ].value === country ) {
-			return options[ i ];
+			return country;
 		}
 	}
 
-	return options[ 0 ];
-}
-
-function getState( state: string, options: StateOption[] ): StateOption {
-	return options.find( ( option ) => option.value === state ) ?? options[ 0 ];
+	return options[ 0 ].value;
 }
 
 interface Props {
@@ -67,7 +52,7 @@ export default function CompanyDetailsForm( {
 }: Props ) {
 	const translate = useTranslate();
 	const { countryOptions, stateOptionsMap } = useCountriesAndStates();
-	const showCountryFields = countryOptions.length > 1;
+	const showCountryFields = countryOptions.length > 0;
 
 	const [ name, setName ] = useState( initialValues.name ?? '' );
 	const [ countryValue, setCountryValue ] = useState( initialValues.country ?? '' );
@@ -80,10 +65,7 @@ export default function CompanyDetailsForm( {
 	const [ companyWebsite, setCompanyWebsite ] = useState( initialValues.companyWebsite ?? '' );
 
 	const country = getCountry( countryValue, countryOptions );
-	const stateOptions = stateOptionsMap.hasOwnProperty( country.value )
-		? ( stateOptionsMap[ country.value ] as StateOption[] )
-		: false;
-	const state = stateOptions ? getState( addressState, stateOptions ) : false;
+	const stateOptions = stateOptionsMap[ country ];
 
 	const payload: PartnerDetailsPayload = useMemo(
 		() => ( {
@@ -93,22 +75,22 @@ export default function CompanyDetailsForm( {
 			city,
 			line1,
 			line2,
-			country: country.value,
+			country,
 			postalCode,
 			state: addressState,
 			...( includeTermsOfService ? { tos: 'consented' } : {} ),
 		} ),
 		[
-			addressState,
-			city,
-			companyWebsite,
+			name,
 			contactPerson,
-			country.value,
-			includeTermsOfService,
+			companyWebsite,
+			city,
 			line1,
 			line2,
-			name,
+			country,
 			postalCode,
+			addressState,
+			includeTermsOfService,
 		]
 	);
 
@@ -167,19 +149,31 @@ export default function CompanyDetailsForm( {
 					/>
 				</FormFieldset>
 
-				<FormLabel>{ translate( 'Country' ) }</FormLabel>
-				<ComboboxControl
-					value={ countryValue }
-					onChange={ setCountryValue }
-					options={ countryOptions }
-				/>
+				<FormFieldset>
+					<FormLabel>{ translate( 'Country' ) }</FormLabel>
+					{ showCountryFields && (
+						<ComboboxControl
+							className="company-details-form__combo-box"
+							value={ countryValue }
+							onChange={ ( value ) => {
+								setCountryValue( value ?? '' );
+								// Reset the value of state since it no longer matches with the selected country.
+								setAddressState( '' );
+							} }
+							options={ countryOptions }
+						/>
+					) }
 
-				{ showCountryFields && stateOptions && state && (
+					{ ! showCountryFields && <TextPlaceholder /> }
+				</FormFieldset>
+
+				{ showCountryFields && stateOptions && (
 					<FormFieldset>
 						<FormLabel>{ translate( 'State' ) }</FormLabel>
 						<ComboboxControl
+							className="company-details-form__combo-box"
 							value={ addressState }
-							onChange={ setAddressState }
+							onChange={ ( value ) => setAddressState( value ?? '' ) }
 							options={ stateOptions }
 						/>
 					</FormFieldset>

@@ -5,30 +5,6 @@
 	margin-bottom: 100px;
 }
 
-.company-details-form__dropdown {
-	.select-dropdown__container {
-		width: 100%;
-	}
-
-	&.is-open .select-dropdown__options {
-		width: 100%;
-		height: 200px;
-		overflow: auto;
-	}
-
-	.select-dropdown__options {
-		position: absolute;
-	}
-
-	.select-dropdown__option {
-		user-select: none;
-	}
-
-	.select-dropdown__item {
-		padding: 0 16px;
-	}
-}
-
 .company-details-form__controls {
 	margin-top: 2rem;
 }
@@ -51,35 +27,41 @@
 	color: var(--studio-black);
 }
 
-input.components-combobox-control__input[type="text"] {
-	font-size: 1rem;
-	line-height: 1.5;
-	padding: 7px 14px;
-}
+.company-details-form__combo-box {
+	.components-base-control__field.components-base-control__field {
+		margin: 0;
+	}
 
-.components-combobox-control__suggestions-container .components-flex {
-	border: 1px solid var(--color-neutral-10);
-	border-radius: 2px;
-    background-color: var(--color-surface);
-    transition: all 0.15s ease-in-out;
-	height: 38px;
-}
+	input.components-combobox-control__input[type="text"] {
+		font-size: 1rem;
+		line-height: 1.5;
+		padding: 7px 14px;
+	}
 
-.components-combobox-control__suggestions-container:focus-within {
-	border-color: var(--color-primary);
-	box-shadow: 0 0 0 2px var(--color-primary-10);
-	outline: none;
-}
+	.components-combobox-control__suggestions-container .components-flex {
+		border: 1px solid var(--color-neutral-10);
+		border-radius: 2px;
+		background-color: var(--color-surface);
+		transition: all 0.15s ease-in-out;
+		height: 40px;
+	}
 
-.components-combobox-control__suggestions-container {
-	border: none;
-}
+	.components-combobox-control__suggestions-container:focus-within {
+		border-color: var(--color-primary);
+		box-shadow: 0 0 0 2px var(--color-primary-10);
+		outline: none;
+	}
 
-.components-form-token-field__suggestion.is-selected {
-	background-color: var(--color-primary);
-}
+	.components-combobox-control__suggestions-container {
+		border: none;
+	}
 
-.components-form-token-field__suggestions-list li{
-	padding: 10px;
-	font-size: 1rem;
+	.components-form-token-field__suggestion.is-selected {
+		background-color: var(--color-primary);
+	}
+
+	.components-form-token-field__suggestions-list li {
+		padding: 10px;
+		font-size: 1rem;
+	}
 }
