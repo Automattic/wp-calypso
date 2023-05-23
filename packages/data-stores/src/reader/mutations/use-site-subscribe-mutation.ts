@@ -1,9 +1,10 @@
 import { useMutation } from '@tanstack/react-query';
-import { callApi } from '../helpers';
+import { callApi, getApiParams } from '../helpers';
 import { useIsLoggedIn } from '../hooks';
 
 type SubscribeParams = {
 	blog_id?: number | string;
+	url?: string;
 };
 
 type SubscribeResponse = {
@@ -28,12 +29,19 @@ const useSiteSubscribeMutation = () => {
 			);
 		}
 
+		const { path, apiVersion, body } = getApiParams(
+			'new',
+			isLoggedIn,
+			params.blog_id,
+			params.url
+		);
+
 		const response = await callApi< SubscribeResponse >( {
-			path: `/read/site/${ params.blog_id }/post_email_subscriptions/new`,
+			path,
 			method: 'POST',
 			isLoggedIn,
-			apiVersion: '1.2',
-			body: {},
+			apiVersion,
+			body,
 		} );
 		if ( ! response.success ) {
 			throw new Error(

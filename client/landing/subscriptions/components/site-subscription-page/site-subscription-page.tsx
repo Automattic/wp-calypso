@@ -52,7 +52,7 @@ const SiteSubscriptionPage = () => {
 		// todo: style the button (underline, color?, etc.)
 		const Resubscribe = () => (
 			<Button
-				onClick={ () => subscribe( { blog_id: blogId } ) }
+				onClick={ () => subscribe( { blog_id: blogId, url: data?.URL } ) }
 				disabled={ subscribing || unsubscribing }
 			>
 				{ translate( 'Resubscribe' ) }
