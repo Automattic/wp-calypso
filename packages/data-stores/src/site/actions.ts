@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Design, DesignOptions } from '@automattic/design-picker/src/types';
 import { __ } from '@wordpress/i18n';
 import { SiteGoal } from '../onboard';
@@ -543,7 +542,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		// modified Home template.
 		const activatedTheme: ActiveTheme = yield setThemeOnSite( siteSlug, theme, undefined, false );
 
-		if ( isEnabled( 'pattern-assembler/color-and-fonts' ) && globalStyles ) {
+		if ( globalStyles ) {
 			yield setGlobalStyles( siteSlug, stylesheet, globalStyles, activatedTheme );
 		}
 

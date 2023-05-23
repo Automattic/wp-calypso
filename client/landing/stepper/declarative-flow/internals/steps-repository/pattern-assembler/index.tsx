@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useSyncGlobalStylesUserConfig } from '@automattic/global-styles';
 import { useLocale } from '@automattic/i18n-utils';
 import { StepContainer, WITH_THEME_ASSEMBLER_FLOW } from '@automattic/onboarding';
@@ -106,8 +105,6 @@ const PatternAssembler = ( {
 
 	const stylesheet = selectedDesign?.recipe?.stylesheet || '';
 
-	const isEnabledColorAndFonts = isEnabled( 'pattern-assembler/color-and-fonts' );
-
 	const recordTracksEvent = useMemo(
 		() =>
 			createRecordTracksEvent( {
@@ -128,10 +125,7 @@ const PatternAssembler = ( {
 		[ colorVariation, fontVariation ]
 	);
 
-	const syncedGlobalStylesUserConfig = useSyncGlobalStylesUserConfig(
-		selectedVariations,
-		isEnabledColorAndFonts
-	);
+	const syncedGlobalStylesUserConfig = useSyncGlobalStylesUserConfig( selectedVariations );
 
 	usePrefetchImages();
 
@@ -568,31 +562,27 @@ const PatternAssembler = ( {
 					/>
 				</NavigatorScreen>
 
-				{ isEnabledColorAndFonts && (
-					<NavigatorScreen path={ NAVIGATOR_PATHS.COLOR_PALETTES }>
-						<ScreenColorPalettes
-							siteId={ site?.ID }
-							stylesheet={ stylesheet }
-							selectedColorPaletteVariation={ colorVariation }
-							onSelect={ onScreenColorsSelect }
-							onBack={ onScreenColorsBack }
-							onDoneClick={ onScreenColorsDone }
-						/>
-					</NavigatorScreen>
-				) }
+				<NavigatorScreen path={ NAVIGATOR_PATHS.COLOR_PALETTES }>
+					<ScreenColorPalettes
+						siteId={ site?.ID }
+						stylesheet={ stylesheet }
+						selectedColorPaletteVariation={ colorVariation }
+						onSelect={ onScreenColorsSelect }
+						onBack={ onScreenColorsBack }
+						onDoneClick={ onScreenColorsDone }
+					/>
+				</NavigatorScreen>
 
-				{ isEnabledColorAndFonts && (
-					<NavigatorScreen path={ NAVIGATOR_PATHS.FONT_PAIRINGS }>
-						<ScreenFontPairings
-							siteId={ site?.ID }
-							stylesheet={ stylesheet }
-							selectedFontPairingVariation={ fontVariation }
-							onSelect={ onScreenFontsSelect }
-							onBack={ onScreenFontsBack }
-							onDoneClick={ onScreenFontsDone }
-						/>
-					</NavigatorScreen>
-				) }
+				<NavigatorScreen path={ NAVIGATOR_PATHS.FONT_PAIRINGS }>
+					<ScreenFontPairings
+						siteId={ site?.ID }
+						stylesheet={ stylesheet }
+						selectedFontPairingVariation={ fontVariation }
+						onSelect={ onScreenFontsSelect }
+						onBack={ onScreenFontsBack }
+						onDoneClick={ onScreenFontsDone }
+					/>
+				</NavigatorScreen>
 
 				<NavigatorListener
 					onLocationChange={ ( navigatorLocation ) => {
