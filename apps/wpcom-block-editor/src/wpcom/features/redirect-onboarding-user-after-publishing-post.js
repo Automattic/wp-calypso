@@ -9,7 +9,11 @@ export function RedirectOnboardingUserAfterPublishingPost() {
 	const { siteIntent: intent } = useSiteIntent();
 
 	useEffect( () => {
-		if ( intent === START_WRITING_FLOW ) {
+		// We check the URL param along with site intent because the param loads faster and prevents element flashing.
+		const hasStartWritingFlowQueryArg =
+			getQueryArg( window.location.search, START_WRITING_FLOW ) === 'true';
+
+		if ( intent === START_WRITING_FLOW || hasStartWritingFlowQueryArg ) {
 			dispatch( 'core/edit-post' ).closeGeneralSidebar();
 			document.documentElement.classList.add( 'start-writing-hide' );
 		}

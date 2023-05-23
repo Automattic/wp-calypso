@@ -568,7 +568,13 @@ export const getJetpackProductsShortDescriptions = (): Record< string, Translate
 	const backupRealtimeShortDescription = translate(
 		'Real-time cloud backups with one-click restores.'
 	);
-	const backupShortDescription = translate( 'Real-time cloud backups with one-click restores.' );
+	const backupShortDescription = translate(
+		'Real-time cloud backups with one-click restores. Starts with %(amount)s.',
+		{
+			args: { amount: '10GB' },
+			comment: '%s is a storage amount like 1TB or 10GB',
+		}
+	);
 	const boostShortDescription = translate(
 		'Speed up your site and improve SEO - no developer required.'
 	);
@@ -806,7 +812,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Flexible API that works with any type of site' ),
 	];
 	const scanIncludesInfo = [
-		translate( 'Website firewall (WAF beta)' ),
+		translate( 'Website firewall (WAF)' ),
 		translate( 'Automated daily scanning' ),
 		translate( 'One-click fixes for most issues' ),
 		translate( 'Instant email threat notifications' ),
@@ -847,6 +853,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Share to Facebook, LinkedIn, and Tumblr' ),
 		translate( 'Engagement Optimizer' ),
 		translate( 'Recycle content' ),
+		translate( 'Image generator' ),
 	];
 
 	return {
@@ -885,7 +892,6 @@ export const getJetpackProductsWhatIsIncludedComingSoon = (): Record<
 > => {
 	const socialAdvancedIncludesInfo = [
 		translate( 'Auto-sharing to Instagram & Mastodon' ),
-		translate( 'Image generator' ),
 		translate( 'Multi-image sharing' ),
 		translate( 'Video sharing' ),
 	];

@@ -9,21 +9,15 @@ export const storedPaymentMethodsQueryKey = 'use-stored-payment-methods';
 
 export type PaymentMethodRequestType = 'card' | 'agreement' | 'all';
 
-const fetchPaymentMethods = ( {
-	type,
-	expired,
-}: {
-	type?: PaymentMethodRequestType;
-	expired?: boolean;
-} ): StoredPaymentMethod[] =>
-	wp.req.get(
-		{
-			path: `/me/payment-methods?type=${ type ?? 'all' }&expired=${
-				expired ? 'include' : 'exclude'
-			}`,
-		},
-		{ apiVersion: '1.2' }
-	);
+const fetchPaymentMethods = (
+	type: PaymentMethodRequestType,
+	expired: boolean
+): StoredPaymentMethod[] =>
+	wp.req.get( '/me/payment-methods', {
+		type,
+		expired: expired ? 'include' : 'exclude',
+		apiVersion: '1.2',
+	} );
 
 const requestPaymentMethodDeletion = ( id: StoredPaymentMethod[ 'stored_details_id' ] ) =>
 	wp.req.post( { path: '/me/stored-cards/' + id + '/delete' } );
@@ -56,9 +50,9 @@ export function withStoredPaymentMethods< P >(
 }
 
 export function useStoredPaymentMethods( {
-	type,
-	expired,
-	isLoggedOut,
+	type = 'all',
+	expired = false,
+	isLoggedOut = false,
 }: {
 	/**
 	 * If there is no logged-in user, we will not try to fetch anything.
@@ -85,7 +79,7 @@ export function useStoredPaymentMethods( {
 
 	const { data, isLoading, error } = useQuery< StoredPaymentMethod[], Error >(
 		queryKey,
-		() => fetchPaymentMethods( { type, expired } ),
+		() => fetchPaymentMethods( type, expired ),
 		{
 			enabled: ! isLoggedOut,
 		}

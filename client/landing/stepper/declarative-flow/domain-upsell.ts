@@ -42,11 +42,10 @@ const domainUpsell: Flow = {
 		const returnUrl = `/setup/${ flowName ?? 'free' }/launchpad?siteSlug=${ siteSlug }`;
 		const encodedReturnUrl = encodeURIComponent( returnUrl );
 
-		const exitFlow = ( location = '/sites' ) => {
-			window.location.assign( location );
-		};
-
 		function goBack() {
+			if ( currentStep === 'domains' ) {
+				return window.location.assign( returnUrl );
+			}
 			if ( currentStep === 'plans' ) {
 				navigate( 'domains' );
 			}
@@ -88,7 +87,7 @@ const domainUpsell: Flow = {
 			}
 		}
 
-		return { submit, exitFlow, goBack };
+		return { submit, goBack };
 	},
 };
 

@@ -17,7 +17,7 @@ import DraftPostModal from './draft-post-modal';
 import FirstPostPublishedModal from './first-post-published-modal';
 import PurchaseNotice from './purchase-notice';
 import SellerCelebrationModal from './seller-celebration-modal';
-// import PostPublishedSharingModal from './sharing-modal';
+import PostPublishedSharingModal from './sharing-modal';
 import { DEFAULT_VARIANT, BLANK_CANVAS_VARIANT } from './store';
 import VideoPressCelebrationModal from './video-celebration-modal';
 import WpcomNux from './welcome-modal/wpcom-nux';
@@ -106,8 +106,7 @@ registerPlugin( 'wpcom-block-editor-nux', {
 				<ShouldShowFirstPostPublishedModalProvider>
 					<WelcomeTour />
 					<FirstPostPublishedModal />
-					{ /* todo: enable once translations are complete */ }
-					{ /* <PostPublishedSharingModal /> */ }
+					<PostPublishedSharingModal />
 					<SellerCelebrationModal />
 					<PurchaseNotice />
 					<VideoPressCelebrationModal />
