@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 
-const YEAR_IN_SECONDS = 365 * 24 * 60 * 60;
+const YEAR_IN_SECONDS = 373 * 24 * 60 * 60;
 
 const isResurrected = ( lastSeen ) => {
 	// Get the current timestamp in seconds
