@@ -7,7 +7,11 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import DashboardDataContext from '../../sites-overview/dashboard-data-context';
-import { useRequestVerificationCode, useValidateVerificationCode } from '../hooks';
+import {
+	useRequestVerificationCode,
+	useValidateVerificationCode,
+	useResendVerificationCode,
+} from '../hooks';
 import EmailItemContent from './email-item-content';
 import type {
 	AllowedMonitorContactActions,
@@ -61,6 +65,7 @@ export default function EmailAddressEditor( {
 		useRequestVerificationCode();
 	const { validateVerificationCode, isValidating, isVerified, validationFailed } =
 		useValidateVerificationCode();
+	const { resendVerificationCode } = useResendVerificationCode();
 
 	const handleSetEmailItems = useCallback(
 		( isVerified = true ) => {
@@ -205,7 +210,7 @@ export default function EmailAddressEditor( {
 
 	const handleResendCode = () => {
 		recordEvent( 'downtime_monitoring_resend_email_verification_code' );
-		// TODO: implement resending verification code
+		resendVerificationCode( { type: 'email', value: emailItem.email } );
 	};
 
 	const handleChange = useCallback(
