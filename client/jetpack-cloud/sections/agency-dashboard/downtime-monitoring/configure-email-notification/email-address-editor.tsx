@@ -19,6 +19,7 @@ interface Props {
 	selectedAction?: AllowedMonitorContactActions;
 	allEmailItems: Array< StateMonitorSettingsEmail >;
 	setAllEmailItems: ( emailAddresses: Array< StateMonitorSettingsEmail > ) => void;
+	recordEvent: ( action: string, params?: object ) => void;
 }
 
 export default function EmailAddressEditor( {
@@ -27,6 +28,7 @@ export default function EmailAddressEditor( {
 	selectedAction = 'add',
 	allEmailItems,
 	setAllEmailItems,
+	recordEvent,
 }: Props ) {
 	const translate = useTranslate();
 
@@ -87,6 +89,7 @@ export default function EmailAddressEditor( {
 	}, [ selectedEmail ] );
 
 	const handleRemove = () => {
+		recordEvent( 'downtime_monitoring_remove_email' );
 		const emailItems = [ ...allEmailItems ];
 		const emailItemIndex = emailItems.findIndex( ( item ) => item.email === emailItem.email );
 		if ( emailItemIndex > -1 ) {
@@ -94,6 +97,22 @@ export default function EmailAddressEditor( {
 		}
 		setAllEmailItems( emailItems );
 		toggleModal();
+	};
+
+	const handleSendVerificationCode = () => {
+		recordEvent( 'downtime_monitoring_request_email_verification_code' );
+		setShowCodeVerification( true );
+		// TODO: implement sending verification code
+	};
+
+	const handleVerifyEmail = () => {
+		recordEvent( 'downtime_monitoring_verify_email' );
+		// TODO: verify email address with code
+	};
+
+	const handleAddVerifiedEmail = () => {
+		recordEvent( 'downtime_monitoring_email_already_verified' );
+		handleSetEmailItems();
 	};
 
 	const onSave = ( event: React.FormEvent< HTMLFormElement > ) => {
@@ -116,16 +135,16 @@ export default function EmailAddressEditor( {
 			return setValidationError( { email: translate( 'Please enter a valid email address.' ) } );
 		}
 		if ( showCodeVerification ) {
-			// TODO: verify email address with code
-		} else if ( verifiedContacts.emails.includes( emailItem.email ) ) {
-			handleSetEmailItems();
-		} else {
-			setShowCodeVerification( true );
-			// TODO: implement sending verification code
+			return handleVerifyEmail();
 		}
+		if ( verifiedContacts.emails.includes( emailItem.email ) ) {
+			return handleAddVerifiedEmail();
+		}
+		handleSendVerificationCode();
 	};
 
 	function onSaveLater() {
+		recordEvent( 'downtime_monitoring_verify_email_later' );
 		handleSetEmailItems( false );
 	}
 
@@ -148,6 +167,7 @@ export default function EmailAddressEditor( {
 	}
 
 	const handleResendCode = () => {
+		recordEvent( 'downtime_monitoring_resend_email_verification_code' );
 		// TODO: implement resending verification code
 	};
 
