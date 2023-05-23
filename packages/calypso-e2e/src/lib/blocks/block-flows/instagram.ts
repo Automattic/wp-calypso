@@ -51,11 +51,6 @@ export class InstagramBlockFlow implements BlockFlow {
 	 * @param {PublishedPostContext} context The current context for the published post at the point of test execution
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
-		await context.page
-			.getByRole( 'figure' )
-			.filter( {
-				hasText: 'View this post on Instagram',
-			} )
-			.waitFor();
+		await context.page.getByRole( 'figure' ).getByText( 'View this post on Instagram' ).waitFor();
 	}
 }
