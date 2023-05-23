@@ -34,7 +34,11 @@ const SitePickerStep: Step = function SitePickerStep( { navigation } ) {
 	};
 
 	const selectSite = ( site: SiteExcerptData ) => {
-		recordTracksEvent( 'calypso_import_site_picker_select_site', site );
+		recordTracksEvent( 'calypso_import_site_picker_select_site', {
+			id: site?.ID,
+			slug: site?.slug,
+			title: site?.title,
+		} );
 		navigation.submit?.( { action: 'select-site', site } );
 	};
 
