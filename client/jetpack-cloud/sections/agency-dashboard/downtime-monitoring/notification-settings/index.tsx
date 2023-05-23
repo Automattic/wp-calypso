@@ -2,7 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { Modal, ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import clockIcon from 'calypso/assets/images/jetpack/clock-icon.svg';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import { useUpdateMonitorSettings, useJetpackAgencyDashboardRecordTrackEvent } from '../../hooks';
@@ -18,6 +18,7 @@ import type {
 	Site,
 	StateMonitorSettingsEmail,
 	AllowedMonitorContactActions,
+	MonitorSettingsEmail,
 } from '../../sites-overview/types';
 
 import './style.scss';
@@ -28,7 +29,7 @@ interface Props {
 	sites: Array< Site >;
 	onClose: () => void;
 	settings?: MonitorSettings;
-	monitorUserEmails?: Array< string >;
+	bulkUpdateSettings?: MonitorSettings;
 	isLargeScreen?: boolean;
 }
 
@@ -36,7 +37,7 @@ export default function NotificationSettings( {
 	onClose,
 	sites,
 	settings,
-	monitorUserEmails,
+	bulkUpdateSettings,
 	isLargeScreen,
 }: Props ) {
 	const translate = useTranslate();
@@ -93,6 +94,29 @@ export default function NotificationSettings( {
 		setSelectedDuration( duration );
 	}
 
+	const isMultipleEmailEnabled = isEnabled(
+		'jetpack/pro-dashboard-monitor-multiple-email-recipients'
+	);
+
+	const handleSetEmailItems = useCallback(
+		( settings: MonitorSettings ) => {
+			const userEmails = settings.monitor_user_emails || [];
+			setDefaultUserEmailAddresses( userEmails );
+
+			if ( isMultipleEmailEnabled ) {
+				const userEmailItems = userEmails.map( ( email ) => ( {
+					email,
+					name: 'Default Email', //FIXME: This should be dynamic.
+					isDefault: true,
+					verified: true,
+				} ) );
+				const siteEmailItems: Array< MonitorSettingsEmail > = []; // FIXME: This should be dynamic.
+				setAllEmailItems( [ ...userEmailItems, ...siteEmailItems ] );
+			}
+		},
+		[ isMultipleEmailEnabled ]
+	);
+
 	useEffect( () => {
 		if ( settings?.monitor_deferment_time ) {
 			const foundDuration = durations.find(
@@ -104,17 +128,17 @@ export default function NotificationSettings( {
 
 	useEffect( () => {
 		if ( settings ) {
-			setDefaultUserEmailAddresses( settings.monitor_user_emails || [] );
+			handleSetEmailItems( settings );
 			setEnableEmailNotification( !! settings.monitor_user_email_notifications );
 			setEnableMobileNotification( !! settings.monitor_user_wp_note_notifications );
 		}
-	}, [ settings ] );
+	}, [ handleSetEmailItems, settings ] );
 
 	useEffect( () => {
-		if ( monitorUserEmails ) {
-			setDefaultUserEmailAddresses( monitorUserEmails );
+		if ( bulkUpdateSettings ) {
+			handleSetEmailItems( bulkUpdateSettings );
 		}
-	}, [ monitorUserEmails ] );
+	}, [ handleSetEmailItems, bulkUpdateSettings ] );
 
 	useEffect( () => {
 		if ( enableMobileNotification || enableEmailNotification ) {
@@ -128,16 +152,15 @@ export default function NotificationSettings( {
 		}
 	}, [ isComplete, onClose ] );
 
-	const isMultipleEmailEnabled = isEnabled(
-		'jetpack/pro-dashboard-monitor-multiple-email-recipients'
-	);
-
 	if ( isAddEmailModalOpen ) {
 		return (
 			<EmailAddressEditor
 				toggleModal={ toggleAddEmailModal }
 				selectedEmail={ selectedEmail }
 				selectedAction={ selectedAction }
+				allEmailItems={ allEmailItems }
+				setAllEmailItems={ setAllEmailItems }
+				recordEvent={ recordEvent }
 			/>
 		);
 	}
@@ -234,14 +257,6 @@ export default function NotificationSettings( {
 									<div className="notification-settings__content-sub-heading">
 										{ translate( 'Receive email notifications with one or more recipients.' ) }
 									</div>
-									{ enableEmailNotification && (
-										<ConfigureEmailNotification
-											defaultEmailAddresses={ defaultUserEmailAddresses }
-											toggleModal={ toggleAddEmailModal }
-											setAllEmailItems={ setAllEmailItems }
-											allEmailItems={ allEmailItems }
-										/>
-									) }
 								</>
 							) : (
 								<div className="notification-settings__content-sub-heading">
@@ -252,6 +267,14 @@ export default function NotificationSettings( {
 							) }
 						</div>
 					</div>
+
+					{ enableEmailNotification && isMultipleEmailEnabled && (
+						<ConfigureEmailNotification
+							toggleModal={ toggleAddEmailModal }
+							allEmailItems={ allEmailItems }
+							recordEvent={ recordEvent }
+						/>
+					) }
 				</div>
 
 				<div className="notification-settings__footer">

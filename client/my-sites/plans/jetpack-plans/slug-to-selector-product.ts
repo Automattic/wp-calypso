@@ -26,9 +26,12 @@ import {
 	TERM_BIENNIALLY,
 	TERM_MONTHLY,
 	getJetpackProductWhatIsIncluded,
+	getJetpackProductWhatIsIncludedComingSoon,
 	getJetpackProductBenefits,
+	getJetpackProductBenefitsComingSoon,
 	getJetpackProductFAQs,
 	getJetpackProductRecommendedFor,
+	getJetpackPlanAlsoIncludedFeatures,
 	TERM_TRIENNIALLY,
 } from '@automattic/calypso-products';
 import {
@@ -169,7 +172,9 @@ function itemToSelectorProduct(
 			lightboxDescription: getLightboxProductDescription( item ),
 			buttonLabel: getJetpackProductCallToAction( item ),
 			whatIsIncluded: getJetpackProductWhatIsIncluded( item ),
+			whatIsIncludedComingSoon: getJetpackProductWhatIsIncludedComingSoon( item ),
 			benefits: getJetpackProductBenefits( item ),
+			benefitsComingSoon: getJetpackProductBenefitsComingSoon( item ),
 			faqs: getJetpackProductFAQs( item.product_slug, getHelpLink, getSupportLink ),
 			recommendedFor: getJetpackProductRecommendedFor( item ),
 			monthlyProductSlug,
@@ -212,6 +217,7 @@ function itemToSelectorProduct(
 			whatIsIncluded: item.getWhatIsIncluded
 				? getForCurrentCROIteration( item.getWhatIsIncluded )
 				: [],
+			alsoIncluded: getJetpackPlanAlsoIncludedFeatures( productSlug ),
 			benefits: item.getBenefits ? getForCurrentCROIteration( item.getBenefits ) : [],
 			faqs: getJetpackProductFAQs( productSlug, getHelpLink, getSupportLink ),
 			recommendedFor: item.getRecommendedFor

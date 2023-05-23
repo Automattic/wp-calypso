@@ -14,10 +14,13 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { useStableCallback } from 'calypso/lib/use-stable-callback';
+import { convertErrorToString } from '../lib/analytics';
 import type { WPCOMProductVariant } from '../components/item-variation-picker';
 import type { ResponseCartProduct, ResponseCartProductVariant } from '@automattic/shopping-cart';
 
 const debug = debugFactory( 'calypso:composite-checkout:product-variants' );
+
+const isError = ( err: unknown ): err is Error => err instanceof Error;
 
 export interface SitePlanData {
 	autoRenew?: boolean;
@@ -49,6 +52,9 @@ export interface SitePlanData {
 
 export interface SitesPlansResult {
 	data: SitePlanData[] | null;
+	hasLoadedFromServer: boolean;
+	isRequesting: boolean;
+	error: unknown;
 }
 
 export type VariantFilterCallback = ( variant: WPCOMProductVariant ) => boolean;
@@ -109,7 +115,9 @@ export function useGetProductVariants(
 						extra: {
 							env: config( 'env_id' ),
 							variant: JSON.stringify( variant ),
-							message: ( error as Error ).message + '; Stack: ' + ( error as Error ).stack,
+							message: isError( error )
+								? convertErrorToString( error )
+								: `Unknown error: ${ error }`,
 						},
 					} );
 				}

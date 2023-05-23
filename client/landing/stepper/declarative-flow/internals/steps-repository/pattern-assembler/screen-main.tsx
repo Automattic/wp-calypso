@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import {
 	__experimentalHStack as HStack,
@@ -157,28 +156,26 @@ const ScreenMain = ( {
 							<span className="pattern-layout__list-item-text">{ translate( 'Footer' ) }</span>
 						</NavigationButtonAsItem>
 					</NavigatorItemGroup>
-					{ isEnabled( 'pattern-assembler/color-and-fonts' ) && (
-						<NavigatorItemGroup title={ translate( 'Style' ) }>
-							<>
-								<NavigationButtonAsItem
-									path="/color-palettes"
-									icon={ color }
-									aria-label={ translate( 'Colors' ) }
-									onClick={ () => onSelect( 'color-palettes' ) }
-								>
-									<span className="pattern-layout__list-item-text">{ translate( 'Colors' ) }</span>
-								</NavigationButtonAsItem>
-								<NavigationButtonAsItem
-									path="/font-pairings"
-									icon={ typography }
-									aria-label={ translate( 'Fonts' ) }
-									onClick={ () => onSelect( 'font-pairings' ) }
-								>
-									<span className="pattern-layout__list-item-text">{ translate( 'Fonts' ) }</span>
-								</NavigationButtonAsItem>
-							</>
-						</NavigatorItemGroup>
-					) }
+					<NavigatorItemGroup title={ translate( 'Style' ) }>
+						<>
+							<NavigationButtonAsItem
+								path="/color-palettes"
+								icon={ color }
+								aria-label={ translate( 'Colors' ) }
+								onClick={ () => onSelect( 'color-palettes' ) }
+							>
+								<span className="pattern-layout__list-item-text">{ translate( 'Colors' ) }</span>
+							</NavigationButtonAsItem>
+							<NavigationButtonAsItem
+								path="/font-pairings"
+								icon={ typography }
+								aria-label={ translate( 'Fonts' ) }
+								onClick={ () => onSelect( 'font-pairings' ) }
+							>
+								<span className="pattern-layout__list-item-text">{ translate( 'Fonts' ) }</span>
+							</NavigationButtonAsItem>
+						</>
+					</NavigatorItemGroup>
 				</HStack>
 			</div>
 			<div className="screen-container__footer">

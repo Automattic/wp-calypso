@@ -55,7 +55,7 @@ describe( 'CoBlocks: Extensions: Replace Image', function () {
 			ImageBlock.blockName,
 			ImageBlock.blockEditorSelector
 		);
-		imageBlock = new ImageBlock( blockHandle );
+		imageBlock = new ImageBlock( page, blockHandle );
 		const uploadedImage = await imageBlock.upload( imageFile.fullpath );
 		uploadedImageURL = ( await uploadedImage.getAttribute( 'src' ) ) as string;
 		uploadedImageURL = uploadedImageURL.split( '?' )[ 0 ];

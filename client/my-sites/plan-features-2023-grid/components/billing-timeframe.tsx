@@ -6,6 +6,7 @@ import {
 	PlanSlug,
 	getPlanSlugForTermVariant,
 	TERM_ANNUALLY,
+	isWooExpressPlan,
 } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
@@ -168,11 +169,29 @@ function usePerMonthDescription( {
 	return null;
 }
 
+const DiscountPromotion = styled.div`
+	text-transform: uppercase;
+	font-weight: 600;
+	color: #306e27;
+	font-size: $font-body-extra-small;
+	margin-top: 6px;
+`;
+
 const PlanFeatures2023GridBillingTimeframe: FunctionComponent< Props > = ( props ) => {
-	const { planName, billingTimeframe } = props;
+	const { planName, billingTimeframe, isMonthlyPlan } = props;
 	const translate = useTranslate();
-	const perMonthDescription = usePerMonthDescription( props ) || billingTimeframe;
+	const perMonthDescription = usePerMonthDescription( props );
+	const description = perMonthDescription || billingTimeframe;
 	const price = formatCurrency( 25000, 'USD' );
+
+	if ( isWooExpressPlan( planName ) && isMonthlyPlan ) {
+		return (
+			<div>
+				<div>{ billingTimeframe }</div>
+				<DiscountPromotion>{ perMonthDescription }</DiscountPromotion>
+			</div>
+		);
+	}
 
 	if ( isWpcomEnterpriseGridPlan( planName ) ) {
 		return (
@@ -186,7 +205,7 @@ const PlanFeatures2023GridBillingTimeframe: FunctionComponent< Props > = ( props
 		);
 	}
 
-	return <div>{ perMonthDescription }</div>;
+	return <div>{ description }</div>;
 };
 
 export default localize( PlanFeatures2023GridBillingTimeframe );

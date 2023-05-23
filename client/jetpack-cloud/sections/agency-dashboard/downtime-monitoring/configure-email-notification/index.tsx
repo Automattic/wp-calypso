@@ -1,10 +1,8 @@
 import { Button } from '@automattic/components';
 import { Icon, plus } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
-import SelectEmailCheckbox from './select-email-checkbox';
+import EmailItemContent from './email-item-content';
 import type {
-	MonitorSettingsEmail,
 	StateMonitorSettingsEmail,
 	AllowedMonitorContactActions,
 } from '../../sites-overview/types';
@@ -12,55 +10,37 @@ import type {
 import './style.scss';
 
 interface Props {
-	defaultEmailAddresses: Array< string >;
 	toggleModal: ( item?: StateMonitorSettingsEmail, action?: AllowedMonitorContactActions ) => void;
-	addedEmailAddresses?: Array< MonitorSettingsEmail >;
 	allEmailItems: Array< StateMonitorSettingsEmail >;
-	setAllEmailItems: ( emailAddresses: Array< StateMonitorSettingsEmail > ) => void;
+	recordEvent: ( action: string, params?: object ) => void;
 }
 
 export default function ConfigureEmailNotification( {
-	defaultEmailAddresses = [],
 	toggleModal,
-	addedEmailAddresses = [], // FIXME: This value will come from the API.
 	allEmailItems,
-	setAllEmailItems,
+	recordEvent,
 }: Props ) {
 	const translate = useTranslate();
 
-	useEffect( () => {
-		if ( defaultEmailAddresses ) {
-			const defaultEmailItems = defaultEmailAddresses.map( ( email ) => ( {
-				email,
-				name: 'Default Email', //FIXME: This should be dynamic.
-				checked: true,
-				isDefault: true,
-				verified: true,
-			} ) );
-			const addedEmailItems = addedEmailAddresses.map( ( email ) => ( {
-				...email,
-				checked: email.verified, // Checked only if the email is verified.
-			} ) );
-			setAllEmailItems( [ ...defaultEmailItems, ...addedEmailItems ] );
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [] );
+	const handleAddEmailClick = () => {
+		recordEvent( 'add_email_address_click' );
+		toggleModal();
+	};
 
 	return (
 		<div className="configure-email-address__card-container">
 			{ allEmailItems.map( ( item ) => (
-				<SelectEmailCheckbox
+				<EmailItemContent
 					key={ item.email }
 					item={ item }
 					toggleModal={ toggleModal }
-					allEmailItems={ allEmailItems }
-					setAllEmailItems={ setAllEmailItems }
+					recordEvent={ recordEvent }
 				/>
 			) ) }
 			<Button
 				compact
 				className="configure-email-address__button"
-				onClick={ () => toggleModal() }
+				onClick={ handleAddEmailClick }
 				aria-label={ translate( 'Add email address' ) }
 			>
 				<Icon size={ 18 } icon={ plus } />

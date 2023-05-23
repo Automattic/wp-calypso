@@ -3,7 +3,7 @@ import { SubscriptionManager } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { memo, useMemo } from 'react';
 import TimeSince from 'calypso/components/time-since';
-import { CommentSettings } from '../settings-popover';
+import { CommentSettings } from '../settings';
 import type { PostSubscription } from '@automattic/data-stores/src/reader/types';
 
 type CommentRowProps = PostSubscription & {
@@ -24,6 +24,7 @@ const CommentRow = ( {
 	date_subscribed,
 	forwardedRef,
 	style,
+	is_wpforteams_site,
 }: CommentRowProps ) => {
 	const translate = useTranslate();
 	const hostname = useMemo( () => new URL( site_url ).hostname, [ site_url ] );
@@ -50,7 +51,10 @@ const CommentRow = ( {
 					<span className="title-box" role="cell">
 						{ siteIcon }
 						<span className="title-column">
-							<span className="name">{ site_title }</span>
+							<span className="name">
+								{ site_title }
+								{ !! is_wpforteams_site && <span className="p2-label">P2</span> }
+							</span>
 							<span className="url">{ hostname }</span>
 						</span>
 					</span>

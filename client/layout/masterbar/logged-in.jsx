@@ -236,7 +236,7 @@ class MasterbarLoggedIn extends Component {
 				icon={ icon }
 				onClick={ this.clickMySites }
 				isActive={ this.isActive( 'sites' ) && ! isMenuOpen }
-				tooltip={ translate( 'View a list of your sites and access their dashboards' ) }
+				tooltip={ translate( 'Manage your sites' ) }
 				preloadSection={ this.preloadMySites }
 			>
 				{ hasMoreThanOneSite

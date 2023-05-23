@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { callApi } from '../helpers';
 import { useCacheKey, useIsLoggedIn } from '../hooks';
-import type { SiteSubscriptionsPages } from '../types';
+import type { SiteSubscriptionsPages, SiteSubscriptionDetails } from '../types';
 
 type SiteSubscriptionEmailMeNewPostsParams = {
 	send_posts: boolean;
@@ -13,11 +13,16 @@ type SiteSubscriptionEmailMeNewPostsResponse = {
 	subscribed: boolean;
 };
 
-const useSiteEmailMeNewPostsMutation = () => {
+const useSiteEmailMeNewPostsMutation = ( blog_id?: string ) => {
 	const { isLoggedIn } = useIsLoggedIn();
 	const queryClient = useQueryClient();
 
 	const siteSubscriptionsCacheKey = useCacheKey( [ 'read', 'site-subscriptions' ] );
+	const siteSubscriptionDetailsCacheKey = useCacheKey( [
+		'read',
+		'site-subscription-details',
+		...( blog_id ? [ blog_id ] : [] ),
+	] );
 
 	return useMutation(
 		async ( params: SiteSubscriptionEmailMeNewPostsParams ) => {
@@ -49,9 +54,13 @@ const useSiteEmailMeNewPostsMutation = () => {
 		{
 			onMutate: async ( params ) => {
 				await queryClient.cancelQueries( siteSubscriptionsCacheKey );
+				await queryClient.cancelQueries( siteSubscriptionDetailsCacheKey );
 
 				const previousSiteSubscriptions =
 					queryClient.getQueryData< SiteSubscriptionsPages >( siteSubscriptionsCacheKey );
+				const previousSiteSubscriptionDetails = queryClient.getQueryData< SiteSubscriptionDetails >(
+					siteSubscriptionDetailsCacheKey
+				);
 
 				if ( previousSiteSubscriptions ) {
 					queryClient.setQueryData( siteSubscriptionsCacheKey, {
@@ -78,16 +87,36 @@ const useSiteEmailMeNewPostsMutation = () => {
 						} ),
 					} );
 				}
-				return { previousSiteSubscriptions };
+				if ( previousSiteSubscriptionDetails ) {
+					queryClient.setQueryData( siteSubscriptionDetailsCacheKey, {
+						...previousSiteSubscriptionDetails,
+						delivery_methods: {
+							...previousSiteSubscriptionDetails.delivery_methods,
+							email: {
+								...previousSiteSubscriptionDetails.delivery_methods?.email,
+								send_posts: params.send_posts,
+							},
+						},
+					} );
+				}
+
+				return { previousSiteSubscriptions, previousSiteSubscriptionDetails };
 			},
 
 			onError: ( err, params, context ) => {
 				if ( context?.previousSiteSubscriptions ) {
 					queryClient.setQueryData( siteSubscriptionsCacheKey, context.previousSiteSubscriptions );
 				}
+				if ( context?.previousSiteSubscriptionDetails ) {
+					queryClient.setQueryData(
+						siteSubscriptionDetailsCacheKey,
+						context.previousSiteSubscriptionDetails
+					);
+				}
 			},
 			onSettled: () => {
 				queryClient.invalidateQueries( [ 'read', 'site-subscriptions' ] );
+				queryClient.invalidateQueries( siteSubscriptionDetailsCacheKey );
 			},
 		}
 	);

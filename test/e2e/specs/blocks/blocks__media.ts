@@ -67,7 +67,7 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 				ImageBlock.blockEditorSelector,
 				{ noSearch: true }
 			);
-			const imageBlock = new ImageBlock( blockHandle );
+			const imageBlock = new ImageBlock( page, blockHandle );
 			await imageBlock.upload( testFiles.imageReservedName.fullpath );
 		} );
 
@@ -77,7 +77,7 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 				ImageBlock.blockEditorSelector,
 				{ noSearch: true }
 			);
-			const imageBlock = new ImageBlock( blockHandle );
+			const imageBlock = new ImageBlock( page, blockHandle );
 			await imageBlock.uploadThroughMediaLibrary( testFiles.image.fullpath );
 		} );
 
@@ -97,7 +97,7 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 				FileBlock.blockEditorSelector,
 				{ noSearch: true }
 			);
-			const fileBlock = new FileBlock( blockHandle );
+			const fileBlock = new FileBlock( page, blockHandle );
 			await fileBlock.upload( testFiles.audio.fullpath );
 		} );
 

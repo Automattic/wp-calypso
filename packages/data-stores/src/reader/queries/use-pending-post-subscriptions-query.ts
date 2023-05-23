@@ -13,30 +13,33 @@ type SubscriptionManagerPendingPostSubscriptionsQueryProps = {
 	sort?: ( a?: PendingPostSubscription, b?: PendingPostSubscription ) => number;
 };
 
-const callPendingBlogSubscriptionsEndpoint =
-	async (): Promise< PendingPostSubscriptionsResult > => {
-		const pendingPosts = [];
-		const perPage = 1000; // TODO: This is a temporary workaround to get all pending subscriptions. We should remove this once we decide how to handle pagination.
+const callPendingBlogSubscriptionsEndpoint = async (
+	isLoggedIn: boolean
+): Promise< PendingPostSubscriptionsResult > => {
+	const pendingPosts = [];
+	const perPage = 1000; // TODO: This is a temporary workaround to get all pending subscriptions. We should remove this once we decide how to handle pagination.
 
-		const incoming = await callApi< SubscriptionManagerPendingPostSubscriptions >( {
-			path: `/post-comment-subscriptions?status=pending&per_page=${ perPage }`,
-			apiVersion: '2',
-		} );
+	const incoming = await callApi< SubscriptionManagerPendingPostSubscriptions >( {
+		path: `/post-comment-subscriptions?status=pending&per_page=${ perPage }`,
+		apiNamespace: 'wpcom/v2',
+		apiVersion: '2',
+		isLoggedIn,
+	} );
 
-		if ( incoming && incoming.comment_subscriptions ) {
-			pendingPosts.push(
-				...incoming.comment_subscriptions.map( ( pendingSubscription ) => ( {
-					...pendingSubscription,
-					date_subscribed: new Date( pendingSubscription.date_subscribed ),
-				} ) )
-			);
-		}
+	if ( incoming && incoming.comment_subscriptions ) {
+		pendingPosts.push(
+			...incoming.comment_subscriptions.map( ( pendingSubscription ) => ( {
+				...pendingSubscription,
+				date_subscribed: new Date( pendingSubscription.date_subscribed ),
+			} ) )
+		);
+	}
 
-		return {
-			pendingPosts,
-			totalCount: incoming?.total_comment_subscriptions_count ?? 0,
-		};
+	return {
+		pendingPosts,
+		totalCount: incoming?.total_comment_subscriptions_count ?? 0,
 	};
+};
 
 const defaultFilter = () => true;
 const defaultSort = () => 0;
@@ -45,13 +48,13 @@ const usePendingPostSubscriptionsQuery = ( {
 	filter = defaultFilter,
 	sort = defaultSort,
 }: SubscriptionManagerPendingPostSubscriptionsQueryProps = {} ) => {
-	const isLoggedIn = useIsLoggedIn();
+	const { isLoggedIn } = useIsLoggedIn();
 	const enabled = useIsQueryEnabled();
 
 	const { data, ...rest } = useQuery< PendingPostSubscriptionsResult >(
 		[ 'read', 'pending-post-subscriptions', isLoggedIn ],
 		async () => {
-			return await callPendingBlogSubscriptionsEndpoint();
+			return await callPendingBlogSubscriptionsEndpoint( isLoggedIn );
 		},
 		{
 			enabled,

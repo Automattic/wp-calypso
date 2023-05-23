@@ -1,4 +1,4 @@
-import { Button, Card, Gridicon } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useQueryClient } from '@tanstack/react-query';
 import { sprintf } from '@wordpress/i18n';
@@ -7,12 +7,13 @@ import { localize } from 'i18n-calypso';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
-import CardHeading from 'calypso/components/card-heading';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import Notice from 'calypso/components/notice';
 import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpts-query';
 import { urlToSlug } from 'calypso/lib/url';
+import { CardContentWrapper } from 'calypso/my-sites/hosting/staging-site-card/card-content/card-content-wrapper';
+import { NewStagingSiteCardContent } from 'calypso/my-sites/hosting/staging-site-card/card-content/new-staging-site-card-content';
 import { LoadingPlaceholder } from 'calypso/my-sites/hosting/staging-site-card/loading-placeholder';
 import { useAddStagingSiteMutation } from 'calypso/my-sites/hosting/staging-site-card/use-add-staging-site';
 import { useCheckStagingSiteStatus } from 'calypso/my-sites/hosting/staging-site-card/use-check-staging-site-status';
@@ -39,10 +40,12 @@ const StyledLoadingBar = styled( LoadingBar )( {
 const ActionButtons = styled.div( {
 	display: 'flex',
 	gap: '1em',
-} );
 
-const ExceedQuotaErrorWrapper = styled.div( {
-	marginTop: '1em',
+	'@media screen and (max-width: 768px)': {
+		gap: '0.5em',
+		flexDirection: 'column',
+		'.button': { flexGrow: 1 },
+	},
 } );
 
 const SiteRow = styled.div( {
@@ -59,8 +62,7 @@ const SiteInfo = styled.div( {
 } );
 
 const SiteNameContainer = styled.div( {
-	display: 'flex',
-	alignItems: 'center',
+	display: 'block',
 } );
 
 const SiteName = styled.a( {
@@ -72,6 +74,10 @@ const SiteName = styled.a( {
 	'&, &:hover, &:visited': {
 		color: 'var( --studio-gray-100 )',
 	},
+} );
+
+const StagingSiteLink = styled.div( {
+	wordBreak: 'break-word',
 } );
 
 export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId, translate } ) => {
@@ -235,46 +241,11 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 		stagingSite,
 	] );
 
-	const getExceedQuotaErrorContent = () => {
-		return (
-			<ExceedQuotaErrorWrapper data-testid="quota-message">
-				<Notice status="is-warning" showDismiss={ false }>
-					{ __(
-						'Your available storage space is lower than 50%, which is insufficient for creating a staging site.'
-					) }
-				</Notice>
-			</ExceedQuotaErrorWrapper>
-		);
-	};
-
-	const getNewStagingSiteContent = () => {
-		return (
-			<>
-				<p>
-					{ translate(
-						'A staging site is a test version of your website you can use to preview and troubleshoot changes before applying them to your production site. {{a}}Learn more{{/a}}.',
-						{
-							components: {
-								a: <InlineSupportLink supportContext="hosting-staging-site" showIcon={ false } />,
-							},
-						}
-					) }
-				</p>
-				<Button
-					primary
-					disabled={ disabled || addingStagingSite || isLoadingQuotaValidation || ! hasValidQuota }
-					onClick={ () => {
-						dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_click' ) );
-						setWasCreating( true );
-						setProgress( 0.1 );
-						addStagingSite();
-					} }
-				>
-					<span>{ translate( 'Add staging site' ) }</span>
-				</Button>
-				{ ! hasValidQuota && ! isLoadingQuotaValidation && getExceedQuotaErrorContent() }
-			</>
-		);
+	const onAddClick = () => {
+		dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_click' ) );
+		setWasCreating( true );
+		setProgress( 0.1 );
+		addStagingSite();
 	};
 
 	const getManageStagingSiteContent = () => {
@@ -302,9 +273,9 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 							</SiteName>
 							<SitesStagingBadge>{ translate( 'Staging' ) }</SitesStagingBadge>
 						</SiteNameContainer>
-						<div>
+						<StagingSiteLink>
 							<a href={ stagingSite.url }>{ stagingSite.url }</a>
-						</div>
+						</StagingSiteLink>
 					</SiteInfo>
 				</SiteRow>
 				<ActionButtons>
@@ -399,21 +370,20 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 	} else if ( showManageStagingSite && isStagingSiteTransferComplete ) {
 		stagingSiteCardContent = getManageStagingSiteContent();
 	} else if ( showAddStagingSite && ! addingStagingSite ) {
-		stagingSiteCardContent = getNewStagingSiteContent();
+		stagingSiteCardContent = (
+			<NewStagingSiteCardContent
+				onAddClick={ onAddClick }
+				isButtonDisabled={
+					disabled || addingStagingSite || isLoadingQuotaValidation || ! hasValidQuota
+				}
+				showQuotaError={ ! hasValidQuota && ! isLoadingQuotaValidation }
+			/>
+		);
 	} else {
 		stagingSiteCardContent = <LoadingPlaceholder />;
 	}
 
-	return (
-		<Card className="staging-site-card">
-			{
-				// eslint-disable-next-line wpcalypso/jsx-gridicon-size
-				<Gridicon icon="science" size={ 32 } />
-			}
-			<CardHeading id="staging-site">{ translate( 'Staging site' ) }</CardHeading>
-			{ stagingSiteCardContent }
-		</Card>
-	);
+	return <CardContentWrapper>{ stagingSiteCardContent }</CardContentWrapper>;
 };
 
 export default connect( ( state ) => {
