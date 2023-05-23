@@ -403,14 +403,6 @@ function load_block_description_links() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_block_description_links' );
 
 /**
- * Load WP.com Global Styles.
- */
-function load_wpcom_global_styles() {
-	require_once __DIR__ . '/wpcom-global-styles/index.php';
-}
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_global_styles' );
-
-/**
  * Shows a confirm prompt when the plugin is about to be deactivated on a unlaunched site.
  *
  * This will filter the FSE actions on the plugin manager list to add the confirm
