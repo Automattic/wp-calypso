@@ -1,4 +1,3 @@
-import { envVariables } from '../../..';
 import { BlockFlow, EditorContext, PublishedPostContext } from '.';
 
 interface ConfigurationData {
@@ -36,16 +35,12 @@ export class InstagramBlockFlow implements BlockFlow {
 			.getByPlaceholder( 'Enter URL to embed here…' )
 			.fill( this.configurationData.embedUrl );
 
-		if ( envVariables.TEST_ON_ATOMIC ) {
-			await editorCanvas.getByRole( 'button', { name: 'Embed' } ).click();
-		} else {
-			// For some reason, the hierarchy/selector changes for simple sites. Probably
-			// because it's running from within the Gutenframe?
-			await editorCanvas
-				.getByRole( 'document', { name: 'Block: Embed' } )
-				.getByRole( 'button', { name: 'Embed' } )
-				.click();
-		}
+		await editorCanvas
+			.getByRole( 'document', { name: 'Block: Embed' } )
+			.getByRole( 'button', {
+				name: 'Embed',
+			} )
+			.click();
 
 		await editorCanvas.getByTitle( 'Embedded content from instagram.com' ).waitFor();
 	}
@@ -56,7 +51,6 @@ export class InstagramBlockFlow implements BlockFlow {
 	 * @param {PublishedPostContext} context The current context for the published post at the point of test execution
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
-		// await context.page.pause();
-		await context.page.locator( '.wp-block-embed-instagram' ).waitFor();
+		await context.page.getByRole( 'figure' ).getByText( 'View this post on Instagram' ).waitFor();
 	}
 }
