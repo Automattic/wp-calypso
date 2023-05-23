@@ -160,6 +160,7 @@ export default function NotificationSettings( {
 				selectedAction={ selectedAction }
 				allEmailItems={ allEmailItems }
 				setAllEmailItems={ setAllEmailItems }
+				recordEvent={ recordEvent }
 			/>
 		);
 	}
@@ -271,6 +272,7 @@ export default function NotificationSettings( {
 						<ConfigureEmailNotification
 							toggleModal={ toggleAddEmailModal }
 							allEmailItems={ allEmailItems }
+							recordEvent={ recordEvent }
 						/>
 					) }
 				</div>

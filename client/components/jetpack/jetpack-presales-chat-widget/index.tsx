@@ -36,7 +36,7 @@ export const ZendeskJetpackChat: React.VFC< { keyType: KeyType } > = ( { keyType
 	}, [ keyType ] );
 
 	//get user's authentication key
-	const { data: dataAuth, isLoading: isLoadingAuth } = useMessagingAuth( true );
+	const { data: dataAuth, isLoading: isLoadingAuth } = useMessagingAuth( zendeskChatKey, true );
 
 	const zendeskJwt = dataAuth?.user?.jwt;
 	const isLoggedIn = useSelector( isUserLoggedIn );

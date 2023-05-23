@@ -14,9 +14,21 @@ interface Props {
 	item: StateMonitorSettingsEmail;
 	toggleModal?: ( item?: StateMonitorSettingsEmail, action?: AllowedMonitorContactActions ) => void;
 	isRemoveAction?: boolean;
+	recordEvent?: ( action: string, params?: object ) => void;
 }
 
-export default function EmailItemContent( { item, toggleModal, isRemoveAction = false }: Props ) {
+const EVENT_NAMES = {
+	edit: 'downtime_monitoring_email_address_edit_click',
+	remove: 'downtime_monitoring_email_address_remove_click',
+	verify: 'downtime_monitoring_email_address_verify_click',
+};
+
+export default function EmailItemContent( {
+	item,
+	toggleModal,
+	isRemoveAction = false,
+	recordEvent,
+}: Props ) {
 	const translate = useTranslate();
 
 	const [ isOpen, setIsOpen ] = useState( false );
@@ -35,6 +47,10 @@ export default function EmailItemContent( { item, toggleModal, isRemoveAction = 
 
 	const handleToggleModal = ( action: AllowedMonitorContactActions ) => {
 		toggleModal?.( item, action );
+		if ( recordEvent ) {
+			const eventName = EVENT_NAMES?.[ action as keyof typeof EVENT_NAMES ];
+			recordEvent( eventName );
+		}
 	};
 
 	return (
