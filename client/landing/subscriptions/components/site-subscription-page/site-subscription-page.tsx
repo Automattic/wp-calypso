@@ -156,9 +156,9 @@ const SiteSubscriptionPage = () => {
 							<SiteSubscriptionSettings
 								blogId={ blogId }
 								notifyMeOfNewPosts={ data.delivery_methods?.notification?.send_posts }
-								emailMeNewPosts={ data.delivery_methods?.email.send_posts }
-								deliveryFrequency={ data.delivery_methods?.email.post_delivery_frequency }
-								emailMeNewComments={ data.delivery_methods?.email.send_comments }
+								emailMeNewPosts={ data.delivery_methods?.email?.send_posts }
+								deliveryFrequency={ data.delivery_methods?.email?.post_delivery_frequency }
+								emailMeNewComments={ data.delivery_methods?.email?.send_comments }
 							/>
 
 							<hr className="subscriptions__separator" />
