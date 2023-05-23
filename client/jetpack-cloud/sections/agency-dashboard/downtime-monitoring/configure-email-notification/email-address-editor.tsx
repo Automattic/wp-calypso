@@ -135,12 +135,12 @@ export default function EmailAddressEditor( {
 			return setValidationError( { email: translate( 'Please enter a valid email address.' ) } );
 		}
 		if ( showCodeVerification ) {
-			handleVerifyEmail();
-		} else if ( verifiedContacts.emails.includes( emailItem.email ) ) {
-			handleAddVerifiedEmail();
-		} else {
-			handleSendVerificationCode();
+			return handleVerifyEmail();
 		}
+		if ( verifiedContacts.emails.includes( emailItem.email ) ) {
+			return handleAddVerifiedEmail();
+		}
+		handleSendVerificationCode();
 	};
 
 	function onSaveLater() {
