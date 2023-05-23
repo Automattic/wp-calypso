@@ -1,3 +1,4 @@
+import { envVariables } from '../../..';
 import { BlockFlow, EditorContext, PublishedPostContext } from '.';
 
 interface ConfigurationData {
@@ -34,7 +35,17 @@ export class InstagramBlockFlow implements BlockFlow {
 		await editorCanvas
 			.getByPlaceholder( 'Enter URL to embed here…' )
 			.fill( this.configurationData.embedUrl );
-		await editorCanvas.getByRole( 'button', { name: 'Embed' } ).click();
+
+		if ( envVariables.TEST_ON_ATOMIC ) {
+			await editorCanvas.getByRole( 'button', { name: 'Embed' } ).click();
+		} else {
+			// For some reason, the hierarchy/selector changes for simple sites. Probably
+			// because it's running from within the Gutenframe?
+			await editorCanvas
+				.getByRole( 'document', { name: 'Block: Embed' } )
+				.getByRole( 'button', { name: 'Embed' } )
+				.click();
+		}
 
 		await editorCanvas.getByTitle( 'Embedded content from instagram.com' ).waitFor();
 	}
