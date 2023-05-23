@@ -4,18 +4,18 @@ import { useSelector } from 'react-redux';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 
-const RESURRECTION_POLICY = 373; // Number of days that constitute a resurrection.
-const POLICY_IN_SECONDS = RESURRECTION_POLICY * 24 * 60 * 60;
+const RESURRECTION_DAY_LIMIT = 373; // A user is considered resurrected if they have not been seen for at least these number of days.
+const RESURRECTION_DAY_LIMIT_IN_SECONDS = RESURRECTION_DAY_LIMIT * 24 * 60 * 60;
 
 const isResurrected = ( lastSeen ) => {
 	// Get the current timestamp in seconds
 	const nowInSeconds = Math.floor( Date.now() / 1000 );
 
-	// Calculate the timestamp for a point in time beyond which a dormant user is considered resurrected.
-	const resurrectionThreshold = nowInSeconds - POLICY_IN_SECONDS;
+	// This constant defines the timestamp for a point in time beyond which a formally dormant user is considered resurrected.
+	const lastSeenThreshold = nowInSeconds - RESURRECTION_DAY_LIMIT_IN_SECONDS;
 
-	// Consider a user resurrected if they were last seen at a time later than the resurrection threshold.
-	return lastSeen < resurrectionThreshold;
+	// Consider a user resurrected if they were last seen at a time later than the lastSeen threshold.
+	return lastSeen < lastSeenThreshold;
 };
 
 const TrackResurrections = () => {
@@ -33,7 +33,7 @@ const TrackResurrections = () => {
 		}
 		recordTracksEvent( 'calypso_user_resurrected', {
 			last_seen: lastSeen,
-			policy: RESURRECTION_POLICY,
+			day_limit: RESURRECTION_DAY_LIMIT,
 		} );
 	}, [ lastSeen ] ); // Only run this when LastSeen value changes.
 
