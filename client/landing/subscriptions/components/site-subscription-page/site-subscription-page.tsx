@@ -28,14 +28,14 @@ const SiteSubscriptionPage = () => {
 		isLoading: subscribing,
 		isSuccess: subscribed,
 		error: subscribeError,
-	} = SubscriptionManager.useSiteSubscribeMutation();
+	} = SubscriptionManager.useSiteSubscribeMutation( blogId );
 
 	const {
 		mutate: unsubscribe,
 		isLoading: unsubscribing,
 		isSuccess: unsubscribed,
 		error: unsubscribeError,
-	} = SubscriptionManager.useSiteUnsubscribeMutation();
+	} = SubscriptionManager.useSiteUnsubscribeMutation( blogId );
 
 	useEffect( () => {
 		if ( subscribed ) {
@@ -174,7 +174,7 @@ const SiteSubscriptionPage = () => {
 									<dd>
 										<TimeSince
 											date={
-												( date_subscribed.valueOf()
+												( date_subscribed?.valueOf()
 													? date_subscribed
 													: new Date( 0 )
 												).toISOString?.() ?? date_subscribed

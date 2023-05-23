@@ -1,6 +1,7 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { callApi, getSubscriptionMutationParams } from '../helpers';
-import { useIsLoggedIn } from '../hooks';
+import { useIsLoggedIn, useCacheKey } from '../hooks';
+import type { SiteSubscriptionDetails } from '../types';
 
 type SubscribeParams = {
 	blog_id?: number | string;
@@ -18,8 +19,14 @@ type SubscribeResponse = {
 	};
 };
 
-const useSiteSubscribeMutation = () => {
+const useSiteSubscribeMutation = ( blog_id?: string ) => {
 	const { isLoggedIn } = useIsLoggedIn();
+	const queryClient = useQueryClient();
+	const siteSubscriptionDetailsCacheKey = useCacheKey( [
+		'read',
+		'site-subscription-details',
+		...( blog_id ? [ blog_id ] : [] ),
+	] );
 
 	return useMutation( {
 		mutationFn: async ( params: SubscribeParams ) => {
@@ -52,6 +59,33 @@ const useSiteSubscribeMutation = () => {
 			}
 
 			return response;
+		},
+		onMutate: async () => {
+			await queryClient.cancelQueries( siteSubscriptionDetailsCacheKey );
+
+			const previousSiteSubscriptionDetails = queryClient.getQueryData< SiteSubscriptionDetails >(
+				siteSubscriptionDetailsCacheKey
+			);
+
+			if ( previousSiteSubscriptionDetails ) {
+				queryClient.setQueryData( siteSubscriptionDetailsCacheKey, {
+					...previousSiteSubscriptionDetails,
+					subscriber_count: previousSiteSubscriptionDetails.subscriber_count + 1,
+				} );
+			}
+
+			return { previousSiteSubscriptionDetails };
+		},
+		onError: ( error, variables, context ) => {
+			if ( context?.previousSiteSubscriptionDetails ) {
+				queryClient.setQueryData(
+					siteSubscriptionDetailsCacheKey,
+					context.previousSiteSubscriptionDetails
+				);
+			}
+		},
+		onSettled: () => {
+			queryClient.invalidateQueries( siteSubscriptionDetailsCacheKey );
 		},
 	} );
 };
