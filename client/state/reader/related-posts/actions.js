@@ -7,7 +7,7 @@ import {
 	READER_RELATED_POSTS_RECEIVE,
 } from 'calypso/state/reader/action-types';
 import { receivePosts } from 'calypso/state/reader/posts/actions';
-import { SCOPE_ALL, SCOPE_SAME, SCOPE_OTHER, SCOPE_SUGGESTED_FOLLOWS } from './utils';
+import { SCOPE_ALL, SCOPE_SAME, SCOPE_OTHER } from './utils';
 
 import 'calypso/state/reader/init';
 
@@ -39,10 +39,6 @@ export function requestRelatedPosts( siteId, postId, scope = SCOPE_ALL, size = 2
 		} else if ( scope === SCOPE_OTHER ) {
 			query.size_local = 0;
 			query.size_global = size;
-		} else if ( scope === SCOPE_SUGGESTED_FOLLOWS ) {
-			query.size_local = 0;
-			query.size_global = size;
-			query.include_site_details = true;
 		}
 
 		return wpcom.req.get( `/read/site/${ siteId }/post/${ postId }/related`, query ).then(
