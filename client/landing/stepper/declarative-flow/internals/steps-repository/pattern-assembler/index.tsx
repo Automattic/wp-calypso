@@ -78,13 +78,14 @@ const PatternAssembler = ( {
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
 	const locale = useLocale();
 
-	// Fetching all patterns and categories
+	// The categories api triggers the ETK plugin before the PTK api request
+	const categories = usePatternCategories( site?.ID );
+	// Fetching all patterns and categories from PTK api
 	const allPatterns = useAllPatterns( locale );
 	const patternIds = useMemo(
 		() => allPatterns.map( ( pattern ) => encodePatternId( pattern.ID ) ),
 		[ allPatterns ]
 	);
-	const categories = usePatternCategories( site?.ID );
 	const patternsMapByCategory = usePatternsMapByCategory( allPatterns, categories );
 	const {
 		header,
