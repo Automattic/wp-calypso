@@ -4,7 +4,7 @@ import {
 	PLAN_PREMIUM,
 	FEATURE_STYLE_CUSTOMIZATION,
 } from '@automattic/calypso-products';
-import { isNewsletterFlow, isStartWritingFlow, START_WRITING_FLOW } from '@automattic/onboarding';
+import { isDesignFirstFlow, isNewsletterFlow, isStartWritingFlow } from '@automattic/onboarding';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
@@ -95,8 +95,8 @@ export function getEnhancedTasks(
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
-								addQueryArgs( `/setup/${ START_WRITING_FLOW }/setup-blog`, {
-									...{ siteSlug: siteSlug, 'start-writing': true },
+								addQueryArgs( `/setup/${ flow }/setup-blog`, {
+									...{ siteSlug: siteSlug },
 								} )
 							);
 						},
@@ -155,8 +155,8 @@ export function getEnhancedTasks(
 					taskData = {
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
-							const plansUrl = addQueryArgs( `/setup/${ START_WRITING_FLOW }/plans`, {
-								...{ siteSlug: siteSlug, 'start-writing': true },
+							const plansUrl = addQueryArgs( `/setup/${ flow }/plans`, {
+								...{ siteSlug: siteSlug },
 							} );
 
 							window.location.assign( plansUrl );
@@ -338,14 +338,13 @@ export function getEnhancedTasks(
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, domainUpsellCompleted, task.id );
 
-							if ( isStartWritingFlow( flow || null ) ) {
+							if ( isStartWritingFlow( flow ) || isDesignFirstFlow( flow ) ) {
 								window.location.assign(
-									addQueryArgs( `/setup/${ START_WRITING_FLOW }/domains`, {
+									addQueryArgs( `/setup/${ flow }/domains`, {
 										siteSlug,
 										flowToReturnTo: flow,
 										new: site?.name,
 										domainAndPlanPackage: true,
-										[ START_WRITING_FLOW ]: true,
 									} )
 								);
 
@@ -362,7 +361,9 @@ export function getEnhancedTasks(
 							window.location.assign( destinationUrl );
 						},
 						badge_text:
-							domainUpsellCompleted || isStartWritingFlow( flow || null )
+							domainUpsellCompleted ||
+							isStartWritingFlow( flow || null ) ||
+							isDesignFirstFlow( flow || null )
 								? ''
 								: translate( 'Upgrade plan' ),
 					};

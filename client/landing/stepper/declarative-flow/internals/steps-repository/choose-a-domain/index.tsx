@@ -1,6 +1,11 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { ProductsList } from '@automattic/data-stores';
-import { START_WRITING_FLOW } from '@automattic/onboarding';
+import {
+	DESIGN_FIRST_FLOW,
+	START_WRITING_FLOW,
+	isDesignFirstFlow,
+	isStartWritingFlow,
+} from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
@@ -23,7 +28,6 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 	const { goNext, goBack, submit } = navigation;
 	const { __ } = useI18n();
 	const isVideoPressFlow = 'videopress' === flow;
-	const isStartWritingFlow = 'start-writing' === flow;
 	const { siteTitle, domain, productsList } = useSelect(
 		( select ) => ( {
 			siteTitle: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
@@ -50,7 +54,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 	};
 
 	const onSkip = async () => {
-		if ( isStartWritingFlow ) {
+		if ( isStartWritingFlow( flow ) || isDesignFirstFlow( flow ) ) {
 			setDomain( null );
 			setDomainCartItem( undefined );
 			setHideFreePlan( false );
@@ -64,11 +68,11 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 		recordUseYourDomainButtonClick( flow );
 		const siteSlug = getQueryArg( window.location.search, 'siteSlug' );
 		window.location.assign(
-			addQueryArgs( `/setup/${ START_WRITING_FLOW }/use-my-domain`, {
+			addQueryArgs( `/setup/${ flow }/use-my-domain`, {
 				siteSlug,
 				flowToReturnTo: flow,
 				domainAndPlanPackage: true,
-				[ START_WRITING_FLOW ]: true,
+				[ flow ]: true,
 			} )
 		);
 	};
@@ -172,7 +176,8 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 		switch ( flow ) {
 			case 'videopress':
 				return getVideoPressFlowStepContent();
-			case 'start-writing':
+			case START_WRITING_FLOW:
+			case DESIGN_FIRST_FLOW:
 				return getStartWritingFlowStepContent();
 			default:
 				return getDefaultStepContent();
@@ -201,7 +206,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 			);
 		}
 
-		if ( isStartWritingFlow ) {
+		if ( isStartWritingFlow( flow ) || isDesignFirstFlow( flow ) ) {
 			return (
 				<FormattedHeader
 					id="choose-a-domain-writer-header"
@@ -228,7 +233,9 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 			<QueryProductsList />
 			<StepContainer
 				stepName="chooseADomain"
-				shouldHideNavButtons={ isVideoPressFlow || isStartWritingFlow }
+				shouldHideNavButtons={
+					isVideoPressFlow || isStartWritingFlow( flow ) || isDesignFirstFlow( flow )
+				}
 				goBack={ goBack }
 				goNext={ goNext }
 				isHorizontalLayout={ false }
