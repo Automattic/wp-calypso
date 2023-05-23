@@ -42,6 +42,14 @@ export function getEnhancedTasks(
 		return [];
 	}
 
+	/**
+	 * Remove the first_post_published task from the task list if the flow is design-first.
+	 * This is temporary until we proper implement the editor flow.
+	 */
+	if ( isDesignFirstFlow( flow ) ) {
+		tasks = tasks.filter( ( task ) => task.id !== 'first_post_published' );
+	}
+
 	const enhancedTaskList: Task[] = [];
 
 	const productSlug =
