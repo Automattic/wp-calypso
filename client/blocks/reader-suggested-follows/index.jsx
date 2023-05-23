@@ -1,7 +1,6 @@
 import React from 'react';
-import { connect, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import Gravatar from 'calypso/components/gravatar';
-import { decodeEntities } from 'calypso/lib/formatting';
 import Favicon from 'calypso/reader/components/favicon';
 import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
 import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
@@ -9,10 +8,9 @@ import FollowButton from 'calypso/reader/follow-button';
 import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { getPostById } from 'calypso/state/reader/posts/selectors';
 import './style.scss';
 
-const SuggestedFollowItem = ( { post, site, followSource } ) => {
+const SuggestedFollowItem = ( { site, followSource } ) => {
 	const dispatch = useDispatch();
 
 	const onSiteClick = ( selectedSite ) => {
@@ -51,7 +49,7 @@ const SuggestedFollowItem = ( { post, site, followSource } ) => {
 					>
 						<span className="reader-suggested-follow-item_siteicon">
 							{ site.site_icon && <Favicon site={ site } size={ 48 } /> }
-							{ ! site.site_icon && <Gravatar user={ post.author } size={ 48 } /> }
+							{ ! site.site_icon && <Gravatar user={ site.author } size={ 48 } /> }
 						</span>
 						<span className="reader-suggested-follow-item_sitename">
 							<span className="reader-suggested-follow-item_nameurl">
@@ -67,7 +65,6 @@ const SuggestedFollowItem = ( { post, site, followSource } ) => {
 					<span className="reader-suggested-follow-button">
 						<FollowButton
 							siteUrl={ site.URL }
-							railcar={ post.railcar }
 							followIcon={ ReaderFollowFeedIcon( { iconSize: 20 } ) }
 							followingIcon={ ReaderFollowingFeedIcon( { iconSize: 20 } ) }
 							followSource={ followSource }
@@ -80,18 +77,4 @@ const SuggestedFollowItem = ( { post, site, followSource } ) => {
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
-export default connect( ( state, ownProps ) => {
-	const { post } = ownProps;
-	const actualPost = getPostById( state, post );
-	return {
-		post: actualPost,
-		site: {
-			URL: actualPost?.site_URL,
-			site_icon: actualPost?.site_icon?.ico,
-			blog_ID: actualPost?.site_ID,
-			feed_ID: actualPost?.feed_ID,
-			name: actualPost?.site_name,
-			description: decodeEntities( actualPost?.site_description ),
-		},
-	};
-} )( SuggestedFollowItem );
+export default SuggestedFollowItem;

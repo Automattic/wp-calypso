@@ -10,7 +10,6 @@ import BlogStickers from 'calypso/blocks/blog-stickers';
 import ReaderSiteNotificationSettings from 'calypso/blocks/reader-site-notification-settings';
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
 import SiteIcon from 'calypso/blocks/site-icon';
-import QueryReaderRelatedPosts from 'calypso/components/data/query-reader-related-posts';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import {
@@ -24,8 +23,6 @@ import { isAuthorNameBlocked } from 'calypso/reader/lib/author-name-blocklist';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import { hasReaderFollowOrganization, isFollowing } from 'calypso/state/reader/follows/selectors';
-import { relatedPostsForPost } from 'calypso/state/reader/related-posts/selectors';
-import { SCOPE_SUGGESTED_FOLLOWS } from 'calypso/state/reader/related-posts/utils';
 import { requestMarkAllAsSeen } from 'calypso/state/reader/seen-posts/actions';
 import { getSite } from 'calypso/state/reader/sites/selectors';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
@@ -88,8 +85,6 @@ class FeedHeader extends Component {
 			isEmailBlocked,
 			hasOrganization,
 			isWPForTeamsItem,
-			latestPostId,
-			relatedPosts,
 		} = this.props;
 		const followerCount = this.getFollowerCount( feed, site );
 		const ownerDisplayName = site && ! site.is_multi_author && site.owner && site.owner.name;
@@ -210,36 +205,17 @@ class FeedHeader extends Component {
 						</div>
 					</div>
 				</div>
-				{ ! relatedPosts && latestPostId && ! this.state.isSuggestedFollowsModalOpen && (
-					<QueryReaderRelatedPosts
-						siteId={ siteId }
-						postId={ latestPostId }
-						scope={ SCOPE_SUGGESTED_FOLLOWS }
-						size={ 5 }
-					/>
-				) }
-				{ relatedPosts && this.state.isSuggestedFollowsModalOpen && (
+				{ siteId && (
 					<ReaderSuggestedFollowsDialog
 						onClose={ this.onCloseSuggestedFollowModal }
-						relatedPosts={ relatedPosts }
+						siteId={ siteId }
+						isVisible={ this.state.isSuggestedFollowsModalOpen }
 					/>
 				) }
 			</div>
 		);
 	}
 }
-
-const getLatestPostId = ( siteId, posts ) => {
-	if ( ! siteId || ! posts ) {
-		return null;
-	}
-
-	const sitePosts = Object.values( posts )
-		.filter( ( post ) => post.site_ID === siteId )
-		.sort( ( a, b ) => b.ID - a.ID );
-
-	return sitePosts[ 0 ]?.ID || null;
-};
 
 const mapStateToProps = ( state, ownProps ) => {
 	let siteId = ownProps.site?.ID;
@@ -257,19 +233,13 @@ const mapStateToProps = ( state, ownProps ) => {
 		feed = feedId ? getFeed( state, site.feed_ID ) : undefined;
 	}
 
-	const posts = state.reader?.posts?.items;
-	const latestPostId = getLatestPostId( siteId, posts );
-
 	return {
 		isWPForTeamsItem: isSiteWPForTeams( state, siteId ) || isFeedWPForTeams( state, feedId ),
 		hasOrganization: hasReaderFollowOrganization( state, feedId, siteId ),
 		following: feed && isFollowing( state, { feedUrl: feed.feed_URL } ),
 		isEmailBlocked: getUserSetting( state, 'subscription_delivery_email_blocked' ),
-		latestPostId,
-		relatedPosts:
-			siteId && latestPostId
-				? relatedPostsForPost( state, siteId, latestPostId, SCOPE_SUGGESTED_FOLLOWS, 5 )
-				: null,
+		siteId: siteId,
+		feedId: feedId,
 	};
 };
 
