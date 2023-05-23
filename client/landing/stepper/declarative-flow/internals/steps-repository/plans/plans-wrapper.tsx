@@ -23,6 +23,7 @@ import {
 	isHostingSiteCreationFlow,
 	isDesignFirstFlow,
 	isDomainUpsellFlow,
+	DESIGN_FIRST_FLOW,
 } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
@@ -54,6 +55,7 @@ interface Props {
 function getPlanTypes( flowName: string | null, hideFreePlan: boolean ) {
 	switch ( flowName ) {
 		case START_WRITING_FLOW:
+		case DESIGN_FIRST_FLOW:
 			return hideFreePlan
 				? [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ]
 				: [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ];
