@@ -37,7 +37,7 @@ describe( 'CoBlocks: Extensions: Gutter Control', function () {
 	beforeAll( async () => {
 		page = await browser.newPage();
 		testAccount = new TestAccount( accountName );
-		editorPage = new EditorPage( page, { target: features.siteType } );
+		editorPage = new EditorPage( page );
 
 		await testAccount.authenticate( page );
 	} );
@@ -51,7 +51,7 @@ describe( 'CoBlocks: Extensions: Gutter Control', function () {
 			PricingTableBlock.blockName,
 			PricingTableBlock.blockEditorSelector
 		);
-		pricingTableBlock = new PricingTableBlock( blockHandle );
+		pricingTableBlock = new PricingTableBlock( page, blockHandle );
 	} );
 
 	it( 'Open settings sidebar', async () => {

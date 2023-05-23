@@ -1,4 +1,5 @@
-import { Locator, Page } from 'playwright';
+import { Page } from 'playwright';
+import { EditorComponent } from './editor-component';
 
 const parentSelector = '.components-modal__frame';
 
@@ -13,13 +14,19 @@ const selectors = {
  * Represents the modal in the full site editor that lets you create or select template parts.
  */
 export class TemplatePartModalComponent {
+	private page: Page;
+	private editor: EditorComponent;
+
 	/**
-	 * Creates an instance of the component.
+	 * Constructs an instance of the component.
 	 *
-	 * @param {Page} page Object representing the base page.
-	 * @param {Locator} editor Frame-safe locator to the editor.
+	 * @param {Page} page The underlying page.
+	 * @param {EditorComponent} editor The EditorComponent instance.
 	 */
-	constructor( private page: Page, private editor: Locator ) {}
+	constructor( page: Page, editor: EditorComponent ) {
+		this.page = page;
+		this.editor = editor;
+	}
 
 	/**
 	 * Enter a name for a new template part.
@@ -27,7 +34,8 @@ export class TemplatePartModalComponent {
 	 * @param {string} name Name for the new template.
 	 */
 	async enterTemplateName( name: string ): Promise< void > {
-		const locator = this.editor.locator( selectors.nameInput );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.nameInput );
 		await locator.fill( name );
 	}
 
@@ -35,7 +43,8 @@ export class TemplatePartModalComponent {
 	 * Click the create button for a new template part.
 	 */
 	async clickCreate(): Promise< void > {
-		const locator = this.editor.locator( selectors.createButton );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.createButton );
 		await locator.click();
 	}
 
@@ -45,7 +54,8 @@ export class TemplatePartModalComponent {
 	 * @param {string} name Name of the existing template part.
 	 */
 	async selectExistingTemplatePart( name: string ): Promise< void > {
-		const locator = this.editor.locator( selectors.existingTemplatePart( name ) );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.existingTemplatePart( name ) );
 		await locator.click();
 	}
 }

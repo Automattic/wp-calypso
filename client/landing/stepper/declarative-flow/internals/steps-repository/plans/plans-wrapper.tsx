@@ -7,6 +7,7 @@ import {
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
 	TYPE_BUSINESS,
+	TYPE_ECOMMERCE,
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
@@ -17,7 +18,11 @@ import {
 	isNewsletterFlow,
 	isStartWritingFlow,
 	NEWSLETTER_FLOW,
+	LINK_IN_BIO_FLOW,
+	HOSTING_SITE_CREATION_FLOW,
+	isHostingSiteCreationFlow,
 } from '@automattic/onboarding';
+import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -39,24 +44,34 @@ import './style.scss';
 type IntervalType = 'yearly' | 'monthly';
 interface Props {
 	flowName: string | null;
-	onSubmit: () => void;
+	onSubmit: ( pickedPlan: MinimalRequestCartProduct | null ) => void;
 	plansLoaded: boolean;
 	is2023PricingGridVisible: boolean;
 }
 
-function getPlanTypes( flowName: string | null ) {
+function getPlanTypes( flowName: string | null, hideFreePlan: boolean ) {
 	switch ( flowName ) {
 		case START_WRITING_FLOW:
-			return [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ];
+			return hideFreePlan
+				? [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ]
+				: [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ];
 		case NEWSLETTER_FLOW:
 			return [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM ];
+		case LINK_IN_BIO_FLOW:
+			return [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM ];
+		case HOSTING_SITE_CREATION_FLOW:
+			return [ TYPE_BUSINESS, TYPE_ECOMMERCE ];
 		default:
 			return undefined;
 	}
 }
 
 const PlansWrapper: React.FC< Props > = ( props ) => {
-	const { hideFreePlan, domainCartItem, hidePlansFeatureComparison } = useSelect( ( select ) => {
+	const {
+		hideFreePlan: reduxHideFreePlan,
+		domainCartItem,
+		hidePlansFeatureComparison,
+	} = useSelect( ( select ) => {
 		return {
 			hideFreePlan: ( select( ONBOARD_STORE ) as OnboardSelect ).getHideFreePlan(),
 			domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
@@ -76,9 +91,11 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const isReskinned = true;
 	const customerType = 'personal';
 	const isInVerticalScrollingPlansExperiment = true;
-	const planTypes = getPlanTypes( props?.flowName );
+	const planTypes = getPlanTypes( props?.flowName, reduxHideFreePlan );
 	const headerText = __( 'Choose a plan' );
 	const isInSignup = props?.flowName === DOMAIN_UPSELL_FLOW ? false : true;
+
+	const hideFreePlan = planTypes ? ! planTypes.includes( TYPE_FREE ) : reduxHideFreePlan;
 
 	const translate = useTranslate();
 
@@ -96,7 +113,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		}
 
 		setPlanCartItem( selectedPlan );
-		props.onSubmit?.();
+		props.onSubmit?.( selectedPlan );
 	};
 
 	const getDomainName = () => {
@@ -105,7 +122,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 
 	const handleFreePlanButtonClick = () => {
 		onSelectPlan( null ); // onUpgradeClick expects a cart item -- null means Free Plan.
-		props.onSubmit();
+		props.onSubmit( null );
 	};
 
 	const renderLoading = () => {
@@ -165,11 +182,15 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 
 	const getHeaderText = () => {
 		const { flowName } = props;
-		if ( flowName === DOMAIN_UPSELL_FLOW ) {
+		if ( flowName === DOMAIN_UPSELL_FLOW || isHostingSiteCreationFlow( flowName ) ) {
 			return __( 'Choose your flavor of WordPress' );
 		}
 
-		if ( isNewsletterFlow( flowName ) || isStartWritingFlow( flowName ) ) {
+		if (
+			isNewsletterFlow( flowName ) ||
+			isStartWritingFlow( flowName ) ||
+			isLinkInBioFlow( flowName )
+		) {
 			return __( `There's a plan for you.` );
 		}
 
@@ -196,12 +217,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		}
 
 		if ( isLinkInBioFlow( flowName ) ) {
-			return hideFreePlan
-				? __( 'Unlock a powerful bundle of features for your Link in Bio.' )
-				: translate(
-						`Unlock a powerful bundle of features for your Link in Bio. Or {{link}}start with a free plan{{/link}}.`,
-						{ components: { link: freePlanButton } }
-				  );
+			return;
 		}
 
 		if ( flowName === DOMAIN_UPSELL_FLOW ) {

@@ -43,7 +43,7 @@ type LaunchpadUpdateSettings = {
 
 export const fetchLaunchpad = (
 	siteSlug: string | null,
-	checklist_slug?: string | null
+	checklist_slug?: string | 0 | null | undefined
 ): Promise< LaunchpadResponse > => {
 	const slug = encodeURIComponent( siteSlug as string );
 	const requestUrl = checklist_slug
@@ -62,7 +62,10 @@ export const fetchLaunchpad = (
 		  } as APIFetchOptions );
 };
 
-export const useLaunchpad = ( siteSlug: string | null, checklist_slug?: string | null ) => {
+export const useLaunchpad = (
+	siteSlug: string | null,
+	checklist_slug?: string | 0 | null | undefined
+) => {
 	const key = [ 'launchpad', siteSlug, checklist_slug ];
 	return useQuery( key, () => fetchLaunchpad( siteSlug, checklist_slug ), {
 		retry: 3,
@@ -87,12 +90,12 @@ export const updateLaunchpadSettings = (
 				path: requestUrl,
 				apiNamespace: 'wpcom/v2',
 				method: 'PUT',
-				body: { settings },
+				body: settings,
 		  } )
 		: apiFetch( {
 				global: true,
 				path: `/wpcom/v2${ requestUrl }`,
 				method: 'PUT',
-				data: { settings },
+				data: settings,
 		  } as APIFetchOptions );
 };

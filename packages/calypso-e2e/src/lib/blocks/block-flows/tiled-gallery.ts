@@ -45,12 +45,12 @@ export class TiledGalleryBlockFlow implements BlockFlow {
 			// We keep track of the names for later validation in the published post.
 			this.preparedImageFileNames.push( testFile.basename );
 
-			const fileInputLocator = context.editorLocator.locator( selectors.fileInput );
+			const editorCanvas = await context.editorPage.getEditorCanvas();
+
+			const fileInputLocator = editorCanvas.locator( selectors.fileInput );
 			await fileInputLocator.setInputFiles( testFile.fullpath );
 
-			const uploadingIndicatorLocator = context.editorLocator.locator(
-				selectors.uploadingIndicator
-			);
+			const uploadingIndicatorLocator = editorCanvas.locator( selectors.uploadingIndicator );
 			await uploadingIndicatorLocator.waitFor( { state: 'detached' } );
 		}
 	}

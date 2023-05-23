@@ -1,5 +1,6 @@
-import { Page, Locator } from 'playwright';
+import { Page } from 'playwright';
 import envVariables from '../../env-variables';
+import { EditorComponent } from './editor-component';
 
 const sidebarParentSelector = '.block-editor-inserter__main-area';
 const selectors = {
@@ -15,15 +16,15 @@ const selectors = {
  */
 export class EditorSidebarBlockInserterComponent {
 	private page: Page;
-	private editor: Locator;
+	private editor: EditorComponent;
 
 	/**
-	 * Creates an instance of the component.
+	 * Constructs an instance of the component.
 	 *
-	 * @param {Page} page Object representing the base page.
-	 * @param {Locator} editor Frame-safe locator to the editor.
+	 * @param {Page} page The underlying page.
+	 * @param {EditorComponent} editor The EditorComponent instance.
 	 */
-	constructor( page: Page, editor: Locator ) {
+	constructor( page: Page, editor: EditorComponent ) {
 		this.page = page;
 		this.editor = editor;
 	}
@@ -39,7 +40,8 @@ export class EditorSidebarBlockInserterComponent {
 			return;
 		}
 
-		const blockInserterPanelLocator = this.editor.locator( selectors.closeBlockInserterButton );
+		const editorParent = await this.editor.parent();
+		const blockInserterPanelLocator = editorParent.locator( selectors.closeBlockInserterButton );
 		if ( ( await blockInserterPanelLocator.count() ) > 0 ) {
 			await blockInserterPanelLocator.click();
 		}
@@ -51,7 +53,8 @@ export class EditorSidebarBlockInserterComponent {
 	 * @param {string} text Text to enter into the search input.
 	 */
 	async searchBlockInserter( text: string ): Promise< void > {
-		const locator = this.editor.locator( selectors.blockSearchInput );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.blockSearchInput );
 		await locator.fill( text );
 	}
 
@@ -69,12 +72,13 @@ export class EditorSidebarBlockInserterComponent {
 		name: string,
 		{ type = 'block' }: { type?: 'block' | 'pattern' } = {}
 	): Promise< void > {
+		const editorParent = await this.editor.parent();
 		let locator;
 
 		if ( type === 'pattern' ) {
-			locator = this.editor.locator( selectors.patternResultItem( name ) ).first();
+			locator = editorParent.locator( selectors.patternResultItem( name ) ).first();
 		} else {
-			locator = this.editor.locator( selectors.blockResultItem( name ) ).first();
+			locator = editorParent.locator( selectors.blockResultItem( name ) ).first();
 		}
 
 		await Promise.all( [ locator.hover(), locator.focus() ] );

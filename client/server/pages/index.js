@@ -698,7 +698,7 @@ function wpcomPages( app ) {
 
 	// redirect logged-out searches to en.search.wordpress.com
 	app.get( '/read/search', function ( req, res, next ) {
-		if ( ! req.context.isLoggedIn ) {
+		if ( ! req.context.isLoggedIn && calypsoEnv !== 'development' ) {
 			res.redirect( 'https://en.search.wordpress.com/?q=' + encodeURIComponent( req.query.q ) );
 		} else {
 			next();
@@ -914,10 +914,7 @@ export default function pages() {
 	loginRouter( serverRouter( app, setUpRoute, null ) );
 
 	handleSectionPath( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper' );
-
-	if ( config.isEnabled( 'subscription-management' ) ) {
-		handleSectionPath( SUBSCRIPTIONS_SECTION_DEFINITION, '/subscriptions', 'entry-subscriptions' );
-	}
+	handleSectionPath( SUBSCRIPTIONS_SECTION_DEFINITION, '/subscriptions', 'entry-subscriptions' );
 
 	// Redirect legacy `/new` routes to the corresponding `/start`
 	app.get( [ '/new', '/new/*' ], ( req, res ) => {

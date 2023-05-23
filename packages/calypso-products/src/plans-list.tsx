@@ -119,6 +119,7 @@ import {
 	FEATURE_REPUBLICIZE,
 	FEATURE_SCAN_V2,
 	FEATURE_SEO_PREVIEW_TOOLS,
+	FEATURE_SITE_STAGING_SITES,
 	FEATURE_SFTP_DATABASE,
 	FEATURE_SHIPPING_CARRIERS,
 	FEATURE_SIMPLE_PAYMENTS,
@@ -226,17 +227,14 @@ import {
 	FEATURE_UNLIMITED_EMAILS,
 	FEATURE_UNLIMITED_SUBSCRIBERS,
 	FEATURE_AD_FREE_EXPERIENCE,
-	FEATURE_POST_BY_EMAIL,
-	FEATURE_GOOGLE_ANALYTICS_V2,
 	FEATURE_ADD_UNLIMITED_LINKS,
 	FEATURE_COLLECT_PAYMENTS_LINK_IN_BIO,
-	FEATURE_CUSTOMIZE_THEMES_BUTTONS_COLORS,
-	FEATURE_TRACK_VIEWS_CLICKS,
-	FEATURE_LINK_IN_BIO_THEMES_CUSTOMIZATION,
 	FEATURE_REAL_TIME_ANALYTICS,
 	JETPACK_TAG_FOR_WOOCOMMERCE_STORES,
 	JETPACK_TAG_FOR_NEWS_ORGANISATIONS,
 	JETPACK_TAG_FOR_MEMBERSHIP_SITES,
+	JETPACK_TAG_FOR_SMALL_SITES,
+	JETPACK_TAG_FOR_BLOGS,
 	FEATURE_CANCELLATION_ACCEPT_PAYMENTS,
 	FEATURE_CANCELLATION_AD_FREE_SITE,
 	FEATURE_CANCELLATION_BACKUPS_AND_RESTORE,
@@ -385,8 +383,11 @@ import {
 	PLAN_WOOEXPRESS_PLUS,
 	TYPE_WOO_EXPRESS_PLUS,
 	FEATURE_NEWSLETTER_IMPORT_SUBSCRIBERS_FREE,
+	FEATURE_PAYMENT_TRANSACTION_FEES_10,
 	FEATURE_PAYMENT_TRANSACTION_FEES_8,
 	FEATURE_PAYMENT_TRANSACTION_FEES_4,
+	TYPE_WOOEXPRESS_SMALL,
+	TYPE_WOOEXPRESS_MEDIUM,
 } from './constants';
 import { is2023PricingGridEnabled } from './plans-utilities';
 import type {
@@ -465,6 +466,10 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		i18n.translate( 'Get a taste of the world’s most popular CMS & blogging software.' ),
 	getNewsletterTagLine: () =>
 		i18n.translate( 'Start fresh or make the switch, bringing your first 100 readers with you.' ),
+	getLinkInBioTagLine: () =>
+		i18n.translate(
+			'Get started for free with unlimited links and keep track of how many visits you get.'
+		),
 	getDescription: () =>
 		i18n.translate(
 			'Get a free website and be on your way to publishing your ' +
@@ -545,6 +550,16 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_UNLIMITED_EMAILS,
 		FEATURE_STATS_JP,
 		FEATURE_BANDWIDTH,
+		FEATURE_LTD_SOCIAL_MEDIA_JP,
+		FEATURE_PAYMENT_TRANSACTION_FEES_10,
+	],
+	getLinkInBioSignupFeatures: () => [
+		FEATURE_BEAUTIFUL_THEMES,
+		FEATURE_PAGES,
+		FEATURE_ADD_UNLIMITED_LINKS,
+		FEATURE_STATS_JP,
+		FEATURE_ALWAYS_ONLINE,
+		FEATURE_CONTACT_FORM_JP,
 		FEATURE_LTD_SOCIAL_MEDIA_JP,
 	],
 	getIncludedFeatures: () => [],
@@ -671,6 +686,10 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	getPlanTagline: () => i18n.translate( 'Create your home on the web with a custom domain name.' ),
 	getNewsletterTagLine: () =>
 		i18n.translate( 'Monetize your writing, go ad-free, and expand your media content.' ),
+	getLinkInBioTagLine: () =>
+		i18n.translate(
+			'Take Link In Bio to the next level with gated content, paid subscribers, and an ad-free site.'
+		),
 	getDescription: () =>
 		i18n.translate(
 			'{{strong}}Best for personal use:{{/strong}} Boost your' +
@@ -754,20 +773,13 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		),
 	getLinkInBioSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_ADD_UNLIMITED_LINKS,
-		FEATURE_CUSTOMIZE_THEMES_BUTTONS_COLORS,
 		FEATURE_AD_FREE_EXPERIENCE,
-		FEATURE_TRACK_VIEWS_CLICKS,
+		FEATURE_SUPPORT_EMAIL,
 		FEATURE_COLLECT_PAYMENTS_LINK_IN_BIO,
-		FEATURE_POST_BY_EMAIL,
-		FEATURE_EMAIL_SUPPORT_SIGNUP,
+		FEATURE_PAID_SUBSCRIBERS_JP,
+		FEATURE_SUPPORT_EMAIL,
 	],
-	getLinkInBioHighlightedFeatures: () => [
-		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_ADD_UNLIMITED_LINKS,
-		FEATURE_CUSTOMIZE_THEMES_BUTTONS_COLORS,
-		FEATURE_TRACK_VIEWS_CLICKS,
-	],
+	getLinkInBioHighlightedFeatures: () => [ FEATURE_CUSTOM_DOMAIN ],
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [ FEATURE_AUDIO_UPLOADS ],
 	getInferiorFeatures: () => [],
@@ -1140,6 +1152,8 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	getPlanTagline: () => i18n.translate( 'Build a unique website with powerful design tools.' ),
 	getNewsletterTagLine: () =>
 		i18n.translate( 'Make it even more memorable with premium designs and style customization.' ),
+	getLinkInBioTagLine: () =>
+		i18n.translate( 'Make a great first impression with premium designs and style customization.' ),
 	getDescription: () =>
 		i18n.translate(
 			'{{strong}}Best for freelancers:{{/strong}} Build a unique website with advanced design tools, CSS editing, lots of space for audio and video,' +
@@ -1211,25 +1225,14 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		),
 	getLinkInBioSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_ADD_UNLIMITED_LINKS,
-		FEATURE_CUSTOMIZE_THEMES_BUTTONS_COLORS,
-		FEATURE_AD_FREE_EXPERIENCE,
-		FEATURE_TRACK_VIEWS_CLICKS,
-		FEATURE_COLLECT_PAYMENTS_LINK_IN_BIO,
-		FEATURE_POST_BY_EMAIL,
-		FEATURE_EMAIL_SUPPORT_SIGNUP,
 		FEATURE_LIVE_CHAT_SUPPORT,
-		FEATURE_REAL_TIME_ANALYTICS,
-		FEATURE_GOOGLE_ANALYTICS_V2,
-		FEATURE_MONETISE,
-		FEATURE_LINK_IN_BIO_THEMES_CUSTOMIZATION,
+		FEATURE_PREMIUM_THEMES_V2,
+		FEATURE_STYLE_CUSTOMIZATION,
+		FEATURE_VIDEOPRESS_JP,
+		FEATURE_UNLTD_SOCIAL_MEDIA_JP,
+		FEATURE_WORDADS,
 	],
-	getLinkInBioHighlightedFeatures: () => [
-		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_ADD_UNLIMITED_LINKS,
-		FEATURE_CUSTOMIZE_THEMES_BUTTONS_COLORS,
-		FEATURE_TRACK_VIEWS_CLICKS,
-	],
+	getLinkInBioHighlightedFeatures: () => [ FEATURE_CUSTOM_DOMAIN ],
 	getBlogSignupFeatures: () =>
 		[
 			FEATURE_MONETISE,
@@ -1417,6 +1420,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SECURITY_MALWARE,
 		FEATURE_SECURITY_DDOS,
 		FEATURE_DEV_TOOLS,
+		FEATURE_SITE_STAGING_SITES,
 		FEATURE_WP_UPDATES,
 		FEATURE_MULTI_SITE,
 	],
@@ -1455,6 +1459,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_SECURITY_MALWARE,
 			FEATURE_SECURITY_DDOS,
 			FEATURE_DEV_TOOLS,
+			FEATURE_SITE_STAGING_SITES,
 			FEATURE_WP_UPDATES,
 			FEATURE_MULTI_SITE,
 		] ),
@@ -1914,7 +1919,7 @@ const getPlanJetpackSecurityT1Details = (): IncompleteJetpackPlan => ( {
 		),
 	getFeaturedDescription: () =>
 		translate(
-			'This bundle includes:{{ul}}{{li}}VaultPress Backup{{/li}}{{li}}Scan{{/li}}{{li}}Akismet Anti-spam{{/li}}{{/ul}}',
+			'This bundle includes:{{ul}}{{li}}VaultPress Backup (10GB){{/li}}{{li}}Scan{{/li}}{{li}}Akismet Anti-spam (10k API calls/mo){{/li}}{{/ul}}',
 			{
 				components: {
 					ul: <ul />,
@@ -2018,13 +2023,7 @@ const getPlanJetpackCompleteDetails = (): IncompleteJetpackPlan => ( {
 		),
 	getFeaturedDescription: () =>
 		translate(
-			'Get the full Jetpack suite with real-time security tools, improved site performance, and tools to grow your business.{{br/}}{{br/}}',
-			{
-				components: {
-					br: <br />,
-				},
-				comment: '{{br/}} represents a line break',
-			}
+			'Get the full Jetpack suite with real-time security tools, improved site performance, and tools to grow your business.'
 		),
 	getLightboxDescription: () =>
 		translate(
@@ -2096,13 +2095,13 @@ const getPlanJetpackStarterDetails = (): IncompleteJetpackPlan => ( {
 	type: TYPE_JETPACK_STARTER,
 	getTitle: () => translate( 'Starter', { context: 'Jetpack product name' } ),
 	availableFor: ( plan ) => [ PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
+	getTagline: () =>
+		translate( 'Essential security tools: real-time backups and comment spam protection.' ),
 	getDescription: () =>
-		translate(
-			'Enhance your website with the starter Jetpack tools for security, growth, and performance.'
-		),
+		translate( 'Essential security tools: real-time backups and comment spam protection.' ),
 	getFeaturedDescription: () =>
 		translate(
-			'This bundle includes:{{ul}}{{li}}VaultPress Backup{{/li}}{{li}}Akismet Anti-spam{{/li}}{{/ul}}',
+			'This bundle includes:{{ul}}{{li}}VaultPress Backup (1GB){{/li}}{{li}}Akismet Anti-spam (1k API calls/mo){{/li}}{{/ul}}',
 			{
 				components: {
 					ul: <ul />,
@@ -2112,10 +2111,12 @@ const getPlanJetpackStarterDetails = (): IncompleteJetpackPlan => ( {
 					'{{ul}}{{ul/}} represents an unordered list, and {{li}}{/li} represents a list item',
 			}
 		),
+	getRecommendedFor: () => [
+		{ tag: JETPACK_TAG_FOR_SMALL_SITES, label: translate( 'Small sites' ) },
+		{ tag: JETPACK_TAG_FOR_BLOGS, label: translate( 'Blogs' ) },
+	],
 	getLightboxDescription: () =>
-		translate(
-			'Enhance your website with the starter Jetpack tools for security, growth, and performance.'
-		),
+		translate( 'Essential security tools: real-time backups and comment spam protection.' ),
 	getPlanCardFeatures: () => [ FEATURE_JETPACK_PRODUCT_BACKUP, FEATURE_ANTISPAM_V2 ],
 	getIncludedFeatures: () => [
 		FEATURE_JETPACK_BACKUP_T0_YEARLY,
@@ -2542,6 +2543,8 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 	[ PLAN_WOOEXPRESS_MEDIUM_MONTHLY ]: {
 		...getPlanWooExpressMediumDetails(),
 		...getMonthlyTimeframe(),
+		type: TYPE_WOOEXPRESS_MEDIUM,
+		getBillingTimeFrame: () => translate( 'per month' ),
 		availableFor: ( plan ) =>
 			[ PLAN_FREE, PLAN_ECOMMERCE_TRIAL_MONTHLY, PLAN_WOOEXPRESS_SMALL_MONTHLY ].includes( plan ),
 		getProductId: () => 1053,
@@ -2553,6 +2556,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		...getPlanWooExpressMediumDetails(),
 		term: TERM_ANNUALLY,
 		getBillingTimeFrame: WPComGetBillingTimeframe,
+		type: TYPE_WOOEXPRESS_MEDIUM,
 		availableFor: ( plan ) =>
 			[
 				PLAN_FREE,
@@ -2569,7 +2573,8 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 	[ PLAN_WOOEXPRESS_SMALL_MONTHLY ]: {
 		...getPlanWooExpressSmallDetails(),
 		...getMonthlyTimeframe(),
-		type: TYPE_ECOMMERCE,
+		type: TYPE_WOOEXPRESS_SMALL,
+		getBillingTimeFrame: () => translate( 'per month' ),
 		availableFor: ( plan ) => [ PLAN_FREE, PLAN_ECOMMERCE_TRIAL_MONTHLY ].includes( plan ),
 		getProductId: () => 1054,
 		getStoreSlug: () => PLAN_WOOEXPRESS_SMALL_MONTHLY,
@@ -2578,7 +2583,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 
 	[ PLAN_WOOEXPRESS_SMALL ]: {
 		...getPlanWooExpressSmallDetails(),
-		type: TYPE_ECOMMERCE,
+		type: TYPE_WOOEXPRESS_SMALL,
 		term: TERM_ANNUALLY,
 		getBillingTimeFrame: WPComGetBillingTimeframe,
 		availableFor: ( plan ) =>
@@ -2974,7 +2979,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 			translate( '1GB of cloud storage' ),
 			translate( '30-day activity log archive' ),
 			translate( 'Unlimited one-click restores from the last 30 days' ),
-			translate( 'Akismet: Comment and form spam protection (10k API calls/mo)' ),
+			translate( 'Akismet: Comment and form spam protection (1k API calls/mo)' ),
 		],
 	},
 
@@ -2993,7 +2998,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 			translate( '1GB of cloud storage' ),
 			translate( '30-day activity log archive' ),
 			translate( 'Unlimited one-click restores from the last 30 days' ),
-			translate( 'Akismet: Comment and form spam protection (10k API calls/mo)' ),
+			translate( 'Akismet: Comment and form spam protection (1k API calls/mo)' ),
 		],
 	},
 

@@ -1,3 +1,5 @@
+@import "@automattic/typography/styles/fonts";
+@import "@automattic/onboarding/styles/mixins";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
@@ -89,6 +91,67 @@
 			color: var(--studio-gray-40);
 		}
 	}
+}
+
+.import__import-everything--redesign {
+	.onboarding-title {
+		@include onboarding-font-recoleta;
+		color: var(--studio-gray-100);
+		font-size: 2.75rem;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+		line-height: 3rem;
+		margin-bottom: 0.5rem;
+	}
+
+	.import__heading-title {
+		text-align: center;
+	}
+
+	.onboarding-subtitle {
+		margin-bottom: 2.5rem;
+	}
+
+	.import__upgrade-plan {
+		margin-top: 2.5rem;
+		margin-bottom: 2.5rem;
+	}
+
+	.action-buttons__content-only {
+		font-weight: 500;
+		text-decoration: underline;
+		color: var(--studio-gray-100);
+	}
+
+	.action-buttons__migration-method-cta {
+		text-decoration: underline;
+		color: var(--studio-gray-100);
+		padding: 0;
+		font-size: 1rem;
+	}
+
+	.import__note {
+		text-align: center;
+		margin-bottom: 2.5rem;
+	}
+
+	.import__footer-button-container {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+
+		@include break-medium {
+			flex-direction: row;
+			justify-content: center;
+		}
+
+		button {
+			margin: 8px 0;
+			@include break-medium {
+				margin: 0 8px;
+			}
+		}
+	}
+
 }
 
 .import__upgrade-plan {

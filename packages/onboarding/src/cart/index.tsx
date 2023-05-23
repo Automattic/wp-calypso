@@ -205,6 +205,23 @@ export async function addPlanToCart(
 	);
 }
 
+export async function replaceProductsInCart(
+	siteSlug: string,
+	cartItems: MinimalRequestCartProduct[]
+) {
+	const cartKey = await cartManagerClient.getCartKeyForSiteSlug( siteSlug );
+
+	try {
+		const updatedCart = await cartManagerClient
+			.forCartKey( cartKey )
+			.actions.replaceProductsInCart( cartItems );
+
+		debug( 'product replace request complete', updatedCart );
+	} catch ( error ) {
+		debug( 'product replace request had an error', error );
+	}
+}
+
 const addToCartAndProceed = async (
 	newCartItem: MinimalRequestCartProduct,
 	siteSlug: string,

@@ -199,6 +199,7 @@
 	text-overflow: clip;
 	vertical-align: middle;
 	color: var(--studio-gray-100);
+	align-items: center;
 	@include break-zoomed-in {
 		width: calc(100% - 120px);
 		margin-inline-start: 8px;
@@ -451,3 +452,6 @@
 	min-width: 140px !important;
 }
 
+.cursor-pointer {
+	cursor: pointer;
+}

@@ -5,7 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import moment from 'moment';
 import { useEffect, useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryPosts from 'calypso/components/data/query-posts';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
@@ -19,6 +19,8 @@ import useCampaignsStatsQuery from 'calypso/data/promote-post/use-promote-post-c
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import memoizeLast from 'calypso/lib/memoize-last';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
+import { recordDSPEntryPoint } from 'calypso/lib/promote-post';
+import { useRouteModal } from 'calypso/lib/route-modal';
 import CampaignsList from 'calypso/my-sites/promote-post-i2/components/campaigns-list';
 import PostsList from 'calypso/my-sites/promote-post-i2/components/posts-list';
 import PostsListBanner from 'calypso/my-sites/promote-post-i2/components/posts-list-banner';
@@ -84,12 +86,17 @@ const today = moment().locale( 'en' );
 const period = 'year';
 const topPostsQuery = memoizedQuery( period, 'month', 20, today.format( 'YYYY-MM-DD' ), -1 );
 
+const allowedPostTypes = [ 'post', 'page', 'product' ];
+
 export default function PromotedPosts( { tab }: Props ) {
 	const selectedTab = tab === 'campaigns' ? 'campaigns' : 'posts';
 	const selectedSite = useSelector( getSelectedSite );
 	const [ expandedCampaigns, setExpandedCampaigns ] = useState< number[] >( [] );
 	const [ alreadyScrolled, setAlreadyScrolled ] = useState< boolean >( false );
 	const selectedSiteId = selectedSite?.ID || 0;
+	const dispatch = useDispatch();
+	const keyValue = 'post-0'; // post 0 means to open post selector in widget
+	const { openModal } = useRouteModal( 'blazepress-widget', keyValue );
 
 	const products = useSelector( ( state ) => {
 		const products = getPostsForQuery( state, selectedSiteId, queryProducts );
@@ -98,12 +105,16 @@ export default function PromotedPosts( { tab }: Props ) {
 
 	const postAndPagesByComments = useSelector( ( state ) => {
 		const postsAndPages = getPostsForQuery( state, selectedSiteId, queryPageAndPostsByComments );
-		return postsAndPages?.filter( ( product: any ) => ! product.password );
+		return postsAndPages?.filter(
+			( product: any ) => ! product.password && allowedPostTypes.includes( product.type )
+		);
 	} );
 
 	const postAndPagesByIDs = useSelector( ( state ) => {
 		const postsAndPages = getPostsForQuery( state, selectedSiteId, queryPageAndPostsByIDs );
-		return postsAndPages?.filter( ( product: any ) => ! product.password );
+		return postsAndPages?.filter(
+			( product: any ) => ! product.password && allowedPostTypes.includes( product.type )
+		);
 	} );
 
 	const isLoadingProducts = useSelector( ( state ) =>
@@ -283,6 +294,11 @@ export default function PromotedPosts( { tab }: Props ) {
 		);
 	};
 
+	const onClickPromote = async () => {
+		openModal();
+		dispatch( recordDSPEntryPoint( 'promoted_posts-header' ) );
+	};
+
 	return (
 		<Main wideLayout className="promote-post-i2">
 			<DocumentHead title={ translate( 'Advertising' ) } />
@@ -301,6 +317,9 @@ export default function PromotedPosts( { tab }: Props ) {
 				<div className="promote-post-i2__top-bar-buttons">
 					<Button compact className="posts-list-banner__learn-more">
 						<InlineSupportLink supportContext="advertising" showIcon={ false } />
+					</Button>
+					<Button primary onClick={ onClickPromote }>
+						{ translate( 'Promote' ) }
 					</Button>
 				</div>
 			</div>

@@ -1,11 +1,13 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { ProductsList } from '@automattic/data-stores';
+import { START_WRITING_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import { getQueryArg } from '@wordpress/url';
+import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
+import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -30,6 +32,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 		} ),
 		[]
 	);
+	const siteSlug = getQueryArg( window.location.search, 'siteSlug' );
 
 	const getDefaultStepContent = () => <h1>Choose a domain step</h1>;
 
@@ -40,16 +43,34 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 	};
 
 	const getInitialSuggestion = function () {
-		const siteSlug = getQueryArg( window.location.search, 'siteSlug' );
-
 		const wpcomSubdomainWithRandomNumberSuffix = /^(.+?)([0-9]{5,})\.wordpress\.com$/i;
 		const [ , strippedHostname ] =
 			String( siteSlug ).match( wpcomSubdomainWithRandomNumberSuffix ) || [];
 		return strippedHostname ?? String( siteSlug ).split( '.' )[ 0 ];
 	};
 
-	const onSkip = () => {
-		onAddDomain( null );
+	const onSkip = async () => {
+		if ( isStartWritingFlow ) {
+			setDomain( null );
+			setDomainCartItem( undefined );
+			setHideFreePlan( false );
+			submit?.( { freeDomain: true } );
+		} else {
+			onAddDomain( null );
+		}
+	};
+
+	const onClickUseYourDomain = function () {
+		recordUseYourDomainButtonClick( flow );
+		const siteSlug = getQueryArg( window.location.search, 'siteSlug' );
+		window.location.assign(
+			addQueryArgs( `/setup/${ START_WRITING_FLOW }/use-my-domain`, {
+				siteSlug,
+				flowToReturnTo: flow,
+				domainAndPlanPackage: true,
+				[ START_WRITING_FLOW ]: true,
+			} )
+		);
 	};
 
 	const submitWithDomain = async ( suggestion: DomainSuggestion | undefined ) => {
@@ -68,7 +89,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 			setDomainCartItem( domainCartItem );
 		}
 
-		submit?.();
+		submit?.( { freeDomain: suggestion?.is_free, domainName: suggestion?.domain_name } );
 	};
 
 	const getStartWritingFlowStepContent = () => {
@@ -79,8 +100,8 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 					domainsWithPlansOnly={ true }
 					onAddDomain={ submitWithDomain }
 					includeWordPressDotCom={ true }
-					offerUnavailableOption={ false } // TODO
-					showAlreadyOwnADomain={ true }
+					offerUnavailableOption={ false }
+					showAlreadyOwnADomain={ false }
 					isSignupStep={ true }
 					basePath=""
 					products={ productsList }
@@ -89,6 +110,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 						isDomainOnly: false,
 						flowName: flow || undefined,
 					} ) }
+					handleClickUseYourDomain={ onClickUseYourDomain }
 				/>
 			</CalypsoShoppingCartProvider>
 		);

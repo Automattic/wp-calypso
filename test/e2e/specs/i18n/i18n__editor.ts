@@ -10,6 +10,7 @@ import {
 	envToFeatureKey,
 	RestAPIClient,
 	EditorWelcomeTourComponent,
+	EditorComponent,
 } from '@automattic/calypso-e2e';
 import { Page, Browser, Locator } from 'playwright';
 import type { LanguageSlug } from '@automattic/languages';
@@ -270,7 +271,7 @@ describe( 'I18N: Editor', function () {
 		await testAccount.authenticate( page );
 		restAPIClient = new RestAPIClient( testAccount.credentials );
 
-		editorPage = new EditorPage( page, { target: features.siteType } );
+		editorPage = new EditorPage( page );
 	} );
 
 	describe.each( locales )( `Locale: %s`, function ( locale ) {
@@ -291,11 +292,9 @@ describe( 'I18N: Editor', function () {
 					route.abort();
 				} );
 
-				const editorWindowLocator = editorPage.getEditorWindowLocator();
-				const editorWelcomeTourComponent = new EditorWelcomeTourComponent(
-					page,
-					editorWindowLocator
-				);
+				// @TODO Consider moving this to EditorPage.
+				const editor = new EditorComponent( page );
+				const editorWelcomeTourComponent = new EditorWelcomeTourComponent( page, editor );
 
 				// We know these are all defined because of the filtering above. Non-null asserting is safe here.
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -304,12 +303,10 @@ describe( 'I18N: Editor', function () {
 				// Ensure the Welcome Guide component is shown.
 				await editorWelcomeTourComponent.forceShowWelcomeTour();
 
-				await editorWindowLocator
-					.locator( etkTranslations.welcomeGuide.welcomeTitleSelector )
-					.waitFor();
-				await editorWindowLocator
-					.locator( etkTranslations.welcomeGuide.closeButtonSelector )
-					.click();
+				const editorParent = await editorPage.getEditorParent();
+
+				await editorParent.locator( etkTranslations.welcomeGuide.welcomeTitleSelector ).waitFor();
+				await editorParent.locator( etkTranslations.welcomeGuide.closeButtonSelector ).click();
 			} );
 		} );
 
@@ -319,22 +316,22 @@ describe( 'I18N: Editor', function () {
 			'Translations for block: $blockName',
 			( ...args ) => {
 				const block = args[ 0 ]; // Makes TS stop complaining about incompatible args type
-				let editorWindowLocator: Locator;
 				let editorPage: EditorPage;
+				let editorParent: Locator;
 
 				it( 'Insert test block', async function () {
-					editorPage = new EditorPage( page, { target: features.siteType } );
+					editorPage = new EditorPage( page );
 					await editorPage.addBlockFromSidebar( block.blockName, block.blockEditorSelector );
 				} );
 
 				it( 'Render block content translations', async function () {
-					editorWindowLocator = editorPage.getEditorWindowLocator();
+					editorParent = await editorPage.getEditorParent();
 					// Ensure block contents are translated as expected.
 					// To deal with multiple potential matches (eg. Jetpack/Business Hours > Add Hours)
 					// the first locator is matched.
 					await Promise.all(
 						block.blockEditorContent.map( ( content ) =>
-							editorWindowLocator
+							editorParent
 								.locator( `${ block.blockEditorSelector } ${ content }` )
 								.first()
 								.waitFor()
@@ -344,10 +341,10 @@ describe( 'I18N: Editor', function () {
 
 				it( 'Render block title translations', async function () {
 					await editorPage.openSettings();
-					await editorWindowLocator.locator( block.blockEditorSelector ).click();
+					await editorParent.locator( block.blockEditorSelector ).click();
 
 					// Ensure the block is highlighted.
-					await editorWindowLocator
+					await editorParent
 						.locator(
 							`:is( ${ block.blockEditorSelector }.is-selected, ${ block.blockEditorSelector }.has-child-selected)`
 						)
@@ -357,17 +354,15 @@ describe( 'I18N: Editor', function () {
 					// the first button in the floating toolbar which selects the overall
 					// block.
 					if (
-						await editorWindowLocator
+						await editorParent
 							.locator( '.block-editor-block-parent-selector__button:visible' )
 							.count()
 					) {
-						await editorWindowLocator
-							.locator( '.block-editor-block-parent-selector__button' )
-							.click();
+						await editorParent.locator( '.block-editor-block-parent-selector__button' ).click();
 					}
 
 					// Ensure the Settings with the block selected shows the expected title.
-					await editorWindowLocator
+					await editorParent
 						.locator( `.block-editor-block-card__title:has-text("${ block.blockPanelTitle }")` )
 						.waitFor();
 				} );
