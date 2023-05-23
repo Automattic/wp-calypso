@@ -82,4 +82,26 @@ const applyCallbackToPages = < K extends string, T >(
 	};
 };
 
-export { callApi, applyCallbackToPages, getSubkey };
+// Helper function to determine which API endpoint to call based on whether the user is logged in or not.
+const getApiParams = (
+	action: 'new' | 'delete',
+	isLoggedIn: boolean,
+	blogId: number | string,
+	url?: string
+) => {
+	if ( isLoggedIn ) {
+		return {
+			path: `/read/following/mine/${ action }`,
+			apiVersion: '1.1',
+			body: { source: 'calypso', url: url },
+		};
+	}
+
+	return {
+		path: `/read/site/${ blogId }/post_email_subscriptions/${ action }`,
+		apiVersion: '1.2',
+		body: {},
+	};
+};
+
+export { callApi, applyCallbackToPages, getSubkey, getApiParams };
