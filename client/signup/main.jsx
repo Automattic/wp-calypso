@@ -37,7 +37,6 @@ import {
 	recordSignupProcessingScreen,
 	recordSignupPlanChange,
 } from 'calypso/lib/analytics/signup';
-import { loadExperimentAssignment } from 'calypso/lib/explat';
 import * as oauthToken from 'calypso/lib/oauth-token';
 import { isWooOAuth2Client, isGravatarOAuth2Client } from 'calypso/lib/oauth2-clients';
 import SignupFlowController from 'calypso/lib/signup/flow-controller';
@@ -62,8 +61,6 @@ import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-r
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { submitSignupStep, removeStep, addStep } from 'calypso/state/signup/progress/actions';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
-import { submitSiteType } from 'calypso/state/signup/steps/site-type/actions';
-import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import {
 	getSiteId,
@@ -97,10 +94,7 @@ import './style.scss';
 const debug = debugModule( 'calypso:signup' );
 
 function dependenciesContainCartItem( dependencies ) {
-	return !! (
-		dependencies &&
-		( dependencies.cartItem || dependencies.domainItem || dependencies.themeItem )
-	);
+	return !! ( dependencies && ( dependencies.cartItem || dependencies.domainItem ) );
 }
 
 function addLoadingScreenClassNamesToBody() {
@@ -131,7 +125,6 @@ class Signup extends Component {
 		isLoggedIn: PropTypes.bool,
 		isEmailVerified: PropTypes.bool,
 		loadTrackingTool: PropTypes.func.isRequired,
-		submitSiteType: PropTypes.func.isRequired,
 		submitSignupStep: PropTypes.func.isRequired,
 		signupDependencies: PropTypes.object,
 		siteDomains: PropTypes.array,
@@ -141,7 +134,6 @@ class Signup extends Component {
 		flowName: PropTypes.string,
 		stepName: PropTypes.string,
 		pageTitle: PropTypes.string,
-		siteType: PropTypes.string,
 		stepSectionName: PropTypes.string,
 	};
 
@@ -209,11 +201,6 @@ class Signup extends Component {
 				)
 			);
 		}
-
-		// preload the experiment to minimize the perceived loading time
-		if ( this.props.flowName === flows.defaultFlowName ) {
-			loadExperimentAssignment( 'calypso_plans_2yr_toggle' );
-		}
 	}
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
@@ -252,7 +239,6 @@ class Signup extends Component {
 	componentDidMount() {
 		debug( 'Signup component mounted' );
 		this.props.flowName === 'onboarding' && ! this.props.isLoggedIn && addHotJarScript();
-		this.startTrackingForBusinessSite();
 
 		recordSignupStart( this.props.flowName, this.props.refParameter, this.getRecordProps() );
 
@@ -263,19 +249,13 @@ class Signup extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		const { flowName, stepName, signupDependencies, sitePlanName, sitePlanSlug } = this.props;
+		const { flowName, stepName, sitePlanName, sitePlanSlug } = this.props;
 
 		if (
 			( flowName !== prevProps.flowName || stepName !== prevProps.stepName ) &&
 			! this.state.shouldShowLoadingScreen
 		) {
 			recordSignupStep( flowName, stepName, this.getRecordProps() );
-		}
-
-		if (
-			get( signupDependencies, 'siteType' ) !== get( prevProps.signupDependencies, 'siteType' )
-		) {
-			this.startTrackingForBusinessSite();
 		}
 
 		if ( stepName !== prevProps.stepName ) {
@@ -405,14 +385,6 @@ class Signup extends Component {
 		this.handleDestination( dependencies, filteredDestination );
 	};
 
-	startTrackingForBusinessSite() {
-		const siteType = get( this.props.signupDependencies, 'siteType' );
-
-		if ( siteType === 'business' ) {
-			this.props.loadTrackingTool( 'HotJar' );
-		}
-	}
-
 	updateShouldShowLoadingScreen = ( progress = this.props.progress ) => {
 		if (
 			isWooOAuth2Client( this.props.oauth2Client ) ||
@@ -540,6 +512,8 @@ class Signup extends Component {
 			intent,
 			startingPoint,
 			isBlankCanvas: isBlankCanvasDesign( dependencies.selectedDesign ),
+			isMapping: domainItem && isDomainMapping( domainItem ),
+			isTransfer: domainItem && isDomainTransfer( domainItem ),
 		} );
 	};
 
@@ -964,14 +938,12 @@ export default connect(
 			sitePlanSlug: getSitePlanSlug( state, siteId ),
 			siteDomains,
 			siteId,
-			siteType: getSiteType( state ),
 			localeSlug: getCurrentLocaleSlug( state ),
 			oauth2Client,
 			isGravatar: isGravatarOAuth2Client( oauth2Client ),
 		};
 	},
 	{
-		submitSiteType,
 		submitSignupStep,
 		removeStep,
 		loadTrackingTool,

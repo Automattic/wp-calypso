@@ -31,7 +31,10 @@ const linkInBio: Flow = {
 			},
 			{ slug: 'domains', asyncComponent: () => import( './internals/steps-repository/domains' ) },
 			{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },
-			{ slug: 'patterns', asyncComponent: () => import( './internals/steps-repository/patterns' ) },
+			{
+				slug: 'patterns',
+				asyncComponent: () => import( './internals/steps-repository/design-carousel' ),
+			},
 			{
 				slug: 'siteCreationStep',
 				asyncComponent: () => import( './internals/steps-repository/site-creation-step' ),

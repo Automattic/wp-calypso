@@ -35,7 +35,7 @@ const HelpCenterContent: React.FC = () => {
 		} );
 	}, [ location, section ] );
 
-	// reset the scroll location on navigation
+	// reset the scroll location on navigation, TODO: unless there's an anchor
 	useEffect( () => {
 		if ( containerRef.current ) {
 			containerRef.current.scrollTo( 0, 0 );

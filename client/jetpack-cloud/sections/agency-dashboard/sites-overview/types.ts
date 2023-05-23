@@ -186,6 +186,10 @@ export interface SitesOverviewContextInterface extends DashboardOverviewContextI
 	setSelectedSites: ( value: Array< Site > ) => void;
 }
 
+export interface DashboardDataContextInterface {
+	verifiedContacts: { emails: Array< string > };
+}
+
 export type AgencyDashboardFilterOption =
 	| 'backup_failed'
 	| 'backup_warning'
@@ -265,3 +269,9 @@ export interface MonitorSettingsEmail {
 	name: string;
 	verified: boolean;
 }
+
+export interface StateMonitorSettingsEmail extends MonitorSettingsEmail {
+	isDefault?: boolean;
+}
+
+export type AllowedMonitorContactActions = 'add' | 'verify' | 'edit' | 'remove';

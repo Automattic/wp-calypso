@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { HelpCenter } from '@automattic/data-stores';
-import { SUPPORT_FORUM, shouldShowHelpCenterToUser } from '@automattic/help-center';
+import { SUPPORT_FORUM } from '@automattic/help-center';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { ResponseCartMessage, useShoppingCart } from '@automattic/shopping-cart';
 import { keyframes } from '@emotion/react';
@@ -18,7 +18,6 @@ import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import { useJpPresalesAvailabilityQuery } from 'calypso/lib/jetpack/use-jp-presales-availability-query';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import getSupportLevel from 'calypso/state/happychat/selectors/get-support-level';
 import isPresalesZendeskChatAvailable from 'calypso/state/happychat/selectors/is-presales-zendesk-chat-available';
 import { showInlineHelpPopover } from 'calypso/state/inline-help/actions';
@@ -147,7 +146,6 @@ export default function CheckoutHelpLink() {
 	const translate = useTranslate();
 	const { setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const isEnglishLocale = useIsEnglishLocale();
-	const { data: isJpPresalesStaffed } = useJpPresalesAvailabilityQuery();
 
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
@@ -157,27 +155,20 @@ export default function CheckoutHelpLink() {
 		( error: ResponseCartMessage ) => error.code === 'blocked'
 	);
 
-	const {
-		presalesZendeskChatAvailable,
-		section,
-		userId,
-		supportVariationDetermined,
-		supportVariation,
-	} = useSelector( ( state ) => {
-		return {
-			presalesZendeskChatAvailable: isPresalesZendeskChatAvailable( state ),
-			section: getSectionName( state ),
-			userId: getCurrentUserId( state ),
-			supportVariationDetermined: isSupportVariationDetermined( state ),
-			supportVariation: getSupportVariation( state ),
-		};
-	} );
-
-	const userAllowedToHelpCenter = !! (
-		userId &&
-		config.isEnabled( 'calypso/help-center' ) &&
-		shouldShowHelpCenterToUser( userId )
+	const { presalesZendeskChatAvailable, section, supportVariationDetermined, supportVariation } =
+		useSelector( ( state ) => {
+			return {
+				presalesZendeskChatAvailable: isPresalesZendeskChatAvailable( state ),
+				section: getSectionName( state ),
+				supportVariationDetermined: isSupportVariationDetermined( state ),
+				supportVariation: getSupportVariation( state ),
+			};
+		} );
+	const { data: isJpPresalesStaffed } = useJpPresalesAvailabilityQuery(
+		presalesZendeskChatAvailable
 	);
+
+	const userAllowedToHelpCenter = config.isEnabled( 'calypso/help-center' );
 
 	const handleHelpButtonClicked = () => {
 		reduxDispatch( userAllowedToHelpCenter ? setShowHelpCenter( true ) : showInlineHelpPopover() );

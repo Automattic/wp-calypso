@@ -43,6 +43,10 @@ function LicenseStateFilter( { doSearch }: Props ) {
 			key: LicenseFilter.Revoked,
 			label: translate( 'Revoked' ),
 		},
+		{
+			key: LicenseFilter.Standard,
+			label: translate( 'Standard licenses' ),
+		},
 	].map( ( navItem ) => ( {
 		...navItem,
 		count: counts[ navItem.key ] || 0,

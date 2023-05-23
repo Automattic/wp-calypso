@@ -5,8 +5,8 @@ const storybookDefaultConfig = require( '@automattic/calypso-storybook' );
 const storybookConfig = storybookDefaultConfig( {
 	stories: [
 		'../client/**/*.stories.{ts,tsx}',
-		'../packages/design-picker/**/*.stories.{ts,tsx}',
-		'../packages/components/**/*.stories.{ts,tsx}',
+		'../packages/design-picker/src/**/*.stories.{ts,tsx}',
+		'../packages/components/src/**/*.stories.{js,jsx,ts,tsx}',
 	],
 } );
 

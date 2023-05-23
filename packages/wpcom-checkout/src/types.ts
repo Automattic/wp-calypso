@@ -4,33 +4,48 @@ import type { TranslateResult } from 'i18n-calypso';
 
 type PurchaseSiteId = number;
 
-export type WPCOMTransactionEndpointResponse = {
-	success: boolean;
-	error_code: string;
-	error_message: string;
-	failed_purchases?: Record< PurchaseSiteId, Purchase[] >;
-	purchases?: Record< PurchaseSiteId, Purchase[] >;
-	receipt_id?: number;
-	order_id?: number;
+export type WPCOMTransactionEndpointResponseSuccess = {
+	success: true;
+	purchases: Record< PurchaseSiteId, Purchase[] > | [];
+	failed_purchases: Record< PurchaseSiteId, FailedPurchase[] > | [];
+	receipt_id: number;
+	order_id: number;
 	redirect_url?: string;
-	message?: { payment_intent_client_secret: string };
+	is_gift_purchase: boolean;
+	display_price: string;
+	price_integer: number;
+	price_float: number;
+	currency: string;
 };
 
+export type WPCOMTransactionEndpointResponseRedirect = {
+	message: { payment_intent_client_secret: string } | '';
+	order_id: number;
+	redirect_url: string;
+};
+
+export type WPCOMTransactionEndpointResponse =
+	| WPCOMTransactionEndpointResponseSuccess
+	| WPCOMTransactionEndpointResponseRedirect;
+
 export interface Purchase {
-	meta: string;
+	delayed_provisioning?: boolean;
+	expiry?: string;
+	is_domain_registration: boolean;
+	is_email_verified?: boolean;
+	is_renewal: boolean;
+	is_root_domain_with_us?: boolean;
+	meta: string | null;
+	new_quantity?: number;
 	product_id: string | number;
-	product_slug: string;
-	product_cost: string | number;
 	product_name: string;
 	product_name_short: string;
-	delayed_provisioning?: boolean;
-	is_domain_registration?: boolean;
+	product_type: string;
+	product_slug: string;
 	registrar_support_url?: string;
-	is_email_verified?: boolean;
-	is_root_domain_with_us?: boolean;
-	will_auto_renew?: boolean;
-	expiry: string;
 	user_email: string;
+	saas_redirect_url?: string;
+	will_auto_renew?: boolean;
 }
 
 export interface TransactionRequest {

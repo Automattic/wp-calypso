@@ -116,6 +116,7 @@ import {
 	FEATURE_SHIPPING_CARRIERS,
 	FEATURE_SIMPLE_PAYMENTS,
 	FEATURE_SITE_BACKUPS_AND_RESTORE,
+	FEATURE_SITE_STAGING_SITES,
 	FEATURE_SITE_STATS,
 	FEATURE_SPAM_AKISMET_PLUS,
 	FEATURE_SPAM_BLOCK_V2,
@@ -265,6 +266,7 @@ import {
 	FEATURE_DISCOUNTED_SHIPPING,
 	FEATURE_PRINT_SHIPPING_LABELS,
 	FEATURE_NEWSLETTER_IMPORT_SUBSCRIBERS_FREE,
+	FEATURE_PAYMENT_TRANSACTION_FEES_10,
 	FEATURE_PAYMENT_TRANSACTION_FEES_8,
 	FEATURE_PAYMENT_TRANSACTION_FEES_4,
 	FEATURE_PAYMENT_TRANSACTION_FEES_2,
@@ -1706,6 +1708,10 @@ export const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_NEWSLETTER_IMPORT_SUBSCRIBERS_FREE,
 		getTitle: () => i18n.translate( 'Import up to 100 subscribers' ),
 	},
+	[ FEATURE_PAYMENT_TRANSACTION_FEES_10 ]: {
+		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_10,
+		getTitle: () => i18n.translate( '10% transaction fee for payments + Stripe fees' ),
+	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_8 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_8,
 		getTitle: () => i18n.translate( '8% transaction fee for payments + Stripe fees' ),
@@ -1896,9 +1902,14 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_DEV_TOOLS ]: {
 		getSlug: () => FEATURE_DEV_TOOLS,
-		getTitle: () => i18n.translate( 'SFTP-SSH, WP-CLI, Git tools' ),
+		getTitle: () => i18n.translate( 'SFTP/SSH, WP-CLI, Git tools' ),
 		getDescription: () =>
 			i18n.translate( 'Use familiar developer tools to manage and deploy your site.' ),
+	},
+	[ FEATURE_SITE_STAGING_SITES ]: {
+		getSlug: () => FEATURE_SITE_STAGING_SITES,
+		getTitle: () => i18n.translate( 'Free staging site' ),
+		getDescription: () => i18n.translate( 'Test product and design changes in a staging site.' ),
 	},
 	[ FEATURE_WP_UPDATES ]: {
 		getSlug: () => FEATURE_WP_UPDATES,
@@ -1908,7 +1919,7 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_MULTI_SITE ]: {
 		getSlug: () => FEATURE_MULTI_SITE,
-		getTitle: () => i18n.translate( 'Centralized Site Management' ),
+		getTitle: () => i18n.translate( 'Centralized site management' ),
 		getDescription: () =>
 			i18n.translate( 'Seamlessly switch between 2, 20, or 200 sites. All from one place.' ),
 	},

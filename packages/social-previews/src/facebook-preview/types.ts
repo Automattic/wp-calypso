@@ -1,5 +1,5 @@
 import { TYPE_WEBSITE, TYPE_ARTICLE, LANDSCAPE_MODE, PORTRAIT_MODE } from '../constants';
-import type { SocialPreviewBaseProps } from '../types';
+import type { MediaItem, SocialPreviewBaseProps } from '../types';
 
 export type ImageMode = typeof LANDSCAPE_MODE | typeof PORTRAIT_MODE;
 
@@ -14,4 +14,5 @@ export type FacebookPreviewProps = SocialPreviewBaseProps & {
 	customText?: string;
 	customImage?: string;
 	imageMode?: ImageMode;
+	media?: Array< MediaItem >;
 };

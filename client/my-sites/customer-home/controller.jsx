@@ -1,7 +1,6 @@
 import { isEcommerce } from '@automattic/calypso-products/src';
 import { fetchLaunchpad } from '@automattic/data-stores';
 import page from 'page';
-import { fetchLaunchpadChecklist } from 'calypso/../packages/help-center/src/hooks/use-launchpad-checklist';
 import { areLaunchpadTasksCompleted } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/launchpad/task-helper';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
@@ -47,13 +46,12 @@ export async function maybeRedirect( context, next ) {
 	const isSiteLaunched = site?.launch_status === 'launched' || false;
 
 	try {
-		const { launchpad_screen: launchpadScreenOption, site_intent: siteIntentOption } =
-			await fetchLaunchpad( slug );
-		// We can remove this fetchLaunchpadChecklist call once we add the checklist data into the launchpad endpoint
-		const { checklist: launchpadChecklist } = await fetchLaunchpadChecklist(
-			slug,
-			siteIntentOption
-		);
+		const {
+			launchpad_screen: launchpadScreenOption,
+			site_intent: siteIntentOption,
+			checklist: launchpadChecklist,
+		} = await fetchLaunchpad( slug );
+
 		if (
 			launchpadScreenOption === 'full' &&
 			! areLaunchpadTasksCompleted( launchpadChecklist, isSiteLaunched )

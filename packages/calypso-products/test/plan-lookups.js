@@ -796,9 +796,13 @@ describe( 'findSimilarPlansKeys', () => {
 		] );
 		expect( findSimilarPlansKeys( PLAN_ECOMMERCE_MONTHLY, { term: TERM_ANNUALLY } ) ).toEqual( [
 			PLAN_ECOMMERCE,
-			PLAN_WOOEXPRESS_MEDIUM,
-			PLAN_WOOEXPRESS_SMALL,
 		] );
+		expect(
+			findSimilarPlansKeys( PLAN_WOOEXPRESS_SMALL_MONTHLY, { term: TERM_ANNUALLY } )
+		).toEqual( [ PLAN_WOOEXPRESS_SMALL ] );
+		expect(
+			findSimilarPlansKeys( PLAN_WOOEXPRESS_MEDIUM_MONTHLY, { term: TERM_ANNUALLY } )
+		).toEqual( [ PLAN_WOOEXPRESS_MEDIUM ] );
 		expect( findSimilarPlansKeys( PLAN_BLOGGER, { term: TERM_BIENNIALLY } ) ).toEqual( [
 			PLAN_BLOGGER_2_YEARS,
 		] );
@@ -846,8 +850,12 @@ describe( 'findSimilarPlansKeys', () => {
 		] );
 		expect( findSimilarPlansKeys( PLAN_ECOMMERCE_3_YEARS, { term: TERM_ANNUALLY } ) ).toEqual( [
 			PLAN_ECOMMERCE,
-			PLAN_WOOEXPRESS_MEDIUM,
-			PLAN_WOOEXPRESS_SMALL,
+		] );
+		expect( findSimilarPlansKeys( PLAN_WOOEXPRESS_SMALL, { term: TERM_MONTHLY } ) ).toEqual( [
+			PLAN_WOOEXPRESS_SMALL_MONTHLY,
+		] );
+		expect( findSimilarPlansKeys( PLAN_WOOEXPRESS_MEDIUM, { term: TERM_MONTHLY } ) ).toEqual( [
+			PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 		] );
 		expect( findSimilarPlansKeys( PLAN_PERSONAL_3_YEARS, { term: TERM_ANNUALLY } ) ).toEqual( [
 			PLAN_PERSONAL,
