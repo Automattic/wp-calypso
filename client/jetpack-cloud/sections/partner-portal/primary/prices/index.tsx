@@ -128,7 +128,7 @@ export default function Prices() {
 
 			<table className="prices__table">
 				<thead>
-					<tr style={ { backgroundColor: 'transparent' } }>
+					<tr className="prices__head-row" style={ { backgroundColor: 'transparent' } }>
 						<th colSpan={ 3 }></th>
 						<th className="prices__column-highlight">
 							<div className="prices__column-highlight-content">
@@ -139,7 +139,7 @@ export default function Prices() {
 							</div>
 						</th>
 					</tr>
-					<tr>
+					<tr className="prices__head-row">
 						<th></th>
 						<th>
 							<div>{ translate( 'Jetpack.com Pricing' ) }</div>

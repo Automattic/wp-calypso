@@ -99,12 +99,20 @@ tr:nth-child(odd) {
 	.prices__table th {
 		display: block;
 		width: 100%;
-		padding: 0.5rem 0;
+		padding: 0.5rem;
 	}
 }
 
+.prices__table thead {
+	display: none;
+}
+
 /* "Your Price" column highlight */
-@include break-xlarge {
+@include break-large {
+	.prices__table thead {
+		display: table-header-group;
+	}
+
 	.prices__table td:last-child,
 	.prices__table th:last-child {
 		border: 2px solid #c9356e;
@@ -116,6 +124,7 @@ tr:nth-child(odd) {
 	}
 
 	th.prices__column-highlight {
+		visibility: visible;
 		padding: 8px;
 		line-height: 24px;
 		font-size: 0.75rem;
