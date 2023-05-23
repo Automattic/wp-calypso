@@ -43,7 +43,7 @@ const useSiteSubscribeMutation = () => {
 			apiVersion,
 			body,
 		} );
-		if ( ! response.success ) {
+		if ( ! response.subscribed ) {
 			throw new Error(
 				// reminder: translate this string when we add it to the UI
 				'Something went wrong while subscribing.'
