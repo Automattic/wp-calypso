@@ -39,7 +39,7 @@ export class PublishedPostPage {
 	async likePost(): Promise< void > {
 		const locator = this.page
 			.frameLocator( 'iframe[title="Like or Reblog"]' )
-			.getByRole( 'link', { name: 'Like' } );
+			.getByRole( 'link', { name: 'Like', exact: true } );
 
 		// On AT sites Playwright is not able to scroll directly to the iframe
 		// containing the Like/Unlike button (similar to Post Comments).
@@ -74,7 +74,7 @@ export class PublishedPostPage {
 		// The button should now read "Like".
 		await this.page
 			.frameLocator( 'iframe[title="Like or Reblog"]' )
-			.getByRole( 'link', { name: 'Like' } )
+			.getByRole( 'link', { name: 'Like', exact: true } )
 			.waitFor();
 	}
 
