@@ -41,6 +41,7 @@ export default function NotificationSettings( {
 	bulkUpdateSettings,
 	isLargeScreen,
 }: Props ) {
+	const isBulkUpdate = !! bulkUpdateSettings;
 	const translate = useTranslate();
 	const { updateMonitorSettings, isLoading, isComplete } = useUpdateMonitorSettings( sites );
 	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( sites, isLargeScreen );
@@ -128,7 +129,7 @@ export default function NotificationSettings( {
 					verified: true,
 				} ) );
 				let siteEmailItems: Array< MonitorSettingsEmail > = [];
-				if ( settings.monitor_notify_additional_user_emails ) {
+				if ( ! isBulkUpdate && settings.monitor_notify_additional_user_emails ) {
 					siteEmailItems = settings.monitor_notify_additional_user_emails.map( ( item ) => ( {
 						email: item.email_address,
 						name: item.name,
@@ -138,7 +139,7 @@ export default function NotificationSettings( {
 				setAllEmailItems( [ ...userEmailItems, ...siteEmailItems ] );
 			}
 		},
-		[ isMultipleEmailEnabled, translate ]
+		[ isBulkUpdate, isMultipleEmailEnabled, translate ]
 	);
 
 	useEffect( () => {
