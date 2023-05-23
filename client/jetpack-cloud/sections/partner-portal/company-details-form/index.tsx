@@ -1,5 +1,4 @@
 import { Button, Gridicon } from '@automattic/components';
-import { ComboboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { ReactChild, useCallback, useState, useMemo, ChangeEvent } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -7,6 +6,7 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import { PartnerDetailsPayload } from 'calypso/state/partner-portal/types';
+import SearchableDropdown from '../searchable-dropdown';
 import { Option as CountryOption, useCountriesAndStates } from './hooks/use-countries-and-states';
 
 import './style.scss';
@@ -152,8 +152,7 @@ export default function CompanyDetailsForm( {
 				<FormFieldset>
 					<FormLabel>{ translate( 'Country' ) }</FormLabel>
 					{ showCountryFields && (
-						<ComboboxControl
-							className="company-details-form__combo-box"
+						<SearchableDropdown
 							value={ countryValue }
 							onChange={ ( value ) => {
 								setCountryValue( value ?? '' );
@@ -161,6 +160,8 @@ export default function CompanyDetailsForm( {
 								setAddressState( '' );
 							} }
 							options={ countryOptions }
+							disabled={ isLoading }
+							loading={ countryOptions.length === 0 }
 						/>
 					) }
 
@@ -170,11 +171,11 @@ export default function CompanyDetailsForm( {
 				{ showCountryFields && stateOptions && (
 					<FormFieldset>
 						<FormLabel>{ translate( 'State' ) }</FormLabel>
-						<ComboboxControl
-							className="company-details-form__combo-box"
+						<SearchableDropdown
 							value={ addressState }
 							onChange={ ( value ) => setAddressState( value ?? '' ) }
 							options={ stateOptions }
+							disabled={ isLoading }
 						/>
 					</FormFieldset>
 				) }
