@@ -4,7 +4,7 @@ import { useSiteLaunchStatusLabel, getSiteLaunchStatus } from '@automattic/sites
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import { memo, useEffect, useRef, useState } from 'react';
+import { memo } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { useCheckSiteTransferStatus } from '../hooks/use-check-site-transfer-status';
@@ -19,7 +19,7 @@ import { SiteLaunchNag } from './sites-site-launch-nag';
 import { SiteName } from './sites-site-name';
 import { SiteUrl, Truncated } from './sites-site-url';
 import SitesStagingBadge from './sites-staging-badge';
-import { SitesTransferNotice } from './sites-transfer-notice';
+import TransferNoticeWrapper from './sites-transfer-notice-wrapper';
 import { ThumbnailLink } from './thumbnail-link';
 
 const SIZES_ATTR = [
@@ -83,7 +83,7 @@ const ellipsis = css( {
 	},
 } );
 
-const LoaderNoticeContainer = styled.div( {
+const LoaderNoticeContainer = css( {
 	position: 'absolute',
 	top: 0,
 	left: 0,
@@ -121,11 +121,10 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 	const isWpcomStagingSite = isStagingSite( site );
 	const translatedStatus = useSiteLaunchStatusLabel( site );
 	const isECommerceTrialSite = site.plan?.product_slug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
-	const { isTransferring, isTransferCompleted, isErrored } = useCheckSiteTransferStatus( {
-		siteId: site.ID,
-	} );
-	const [ wasTransferring, setWasTransferring ] = useState( false );
-	const dismissTransferNoticeRef = useRef< NodeJS.Timeout >();
+	const { isTransferring, wasTransferring, isTransferCompleted, isErrored } =
+		useCheckSiteTransferStatus( {
+			siteId: site.ID,
+		} );
 
 	const { ref, inView } = useInView( { triggerOnce: true } );
 
@@ -142,18 +141,6 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 	if ( site.options?.is_redirect && site.options?.unmapped_url ) {
 		siteUrl = site.options?.unmapped_url;
 	}
-
-	useEffect( () => {
-		if ( isTransferring && ! wasTransferring ) {
-			setWasTransferring( true );
-		} else if ( ! isTransferring && wasTransferring && isTransferCompleted ) {
-			dismissTransferNoticeRef.current = setTimeout( () => {
-				setWasTransferring( false );
-			}, 3000 );
-		}
-
-		return () => clearTimeout( dismissTransferNoticeRef.current );
-	}, [ isTransferring, isTransferCompleted, wasTransferring, setWasTransferring ] );
 
 	return (
 		<SitesGridTile
@@ -174,15 +161,13 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 					{ showSiteRenewLink && site.plan?.expired && (
 						<SitesGridActionRenew site={ site } hideRenewLink={ isECommerceTrialSite } />
 					) }
-					{ isTransferring && (
-						<LoaderNoticeContainer>
-							<SitesTransferNotice isTransfering={ true } />
-						</LoaderNoticeContainer>
-					) }
-					{ wasTransferring && ( isTransferCompleted || isErrored ) && (
-						<LoaderNoticeContainer>
-							<SitesTransferNotice isTransfering={ false } hasError={ isErrored } />
-						</LoaderNoticeContainer>
+					{ wasTransferring && (
+						<TransferNoticeWrapper
+							className={ LoaderNoticeContainer }
+							isTransfering={ isTransferring }
+							isTransferCompleted={ isTransferCompleted }
+							hasError={ isErrored }
+						/>
 					) }
 				</>
 			}

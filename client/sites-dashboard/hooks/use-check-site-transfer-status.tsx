@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
@@ -29,7 +29,8 @@ export const useCheckSiteTransferStatus = ( {
 	const isErrored =
 		transferStatus === transferStates.ERROR || transferStatus === transferStates.FAILURE;
 
-	const intervalRef = useRef< NodeJS.Timeout >();
+	const [ wasTransferring, setWasTransferring ] = useState( false );
+	const dismissTransferNoticeRef = useRef< NodeJS.Timeout >();
 
 	useEffect( () => {
 		if ( ! siteId || transferStatus === transferStates.COMPLETE ) {
@@ -37,12 +38,12 @@ export const useCheckSiteTransferStatus = ( {
 		}
 
 		if ( ! isFetchingTransferStatus ) {
-			intervalRef.current = setInterval( () => {
+			const intervalId = setInterval( () => {
 				dispatch( fetchAutomatedTransferStatus( siteId ) );
 			}, intervalTime );
-		}
 
-		return () => clearInterval( intervalRef.current );
+			return () => clearInterval( intervalId );
+		}
 	}, [ siteId, dispatch, transferStatus, isFetchingTransferStatus, intervalTime ] );
 
 	useEffect( () => {
@@ -51,5 +52,23 @@ export const useCheckSiteTransferStatus = ( {
 		}
 	}, [ siteId, dispatch ] );
 
-	return { transferStatus, isTransferring, isTransferCompleted, isErrored };
+	useEffect( () => {
+		if ( isTransferring && ! wasTransferring ) {
+			setWasTransferring( true );
+		} else if ( ! isTransferring && wasTransferring && isTransferCompleted ) {
+			dismissTransferNoticeRef.current = setTimeout( () => {
+				setWasTransferring( false );
+			}, 3000 );
+		}
+
+		return () => clearTimeout( dismissTransferNoticeRef.current );
+	}, [ isTransferring, isTransferCompleted, wasTransferring, setWasTransferring ] );
+
+	return {
+		transferStatus,
+		isTransferring,
+		isTransferCompleted,
+		isErrored,
+		wasTransferring,
+	};
 };
