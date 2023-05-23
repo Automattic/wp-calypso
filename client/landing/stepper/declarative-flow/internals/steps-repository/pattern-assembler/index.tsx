@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useSyncGlobalStylesUserConfig } from '@automattic/global-styles';
 import { useLocale } from '@automattic/i18n-utils';
 import { StepContainer, WITH_THEME_ASSEMBLER_FLOW } from '@automattic/onboarding';
