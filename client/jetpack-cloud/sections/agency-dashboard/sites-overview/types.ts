@@ -256,6 +256,8 @@ export interface ToggleActivateMonitorArgs {
 export interface Backup {
 	activityTitle: string;
 	activityDescription: { children: { text: string }[] }[];
+	activityName: string;
+	activityTs: number;
 }
 
 export type AllowedMonitorPeriods = 'day' | 'week' | '30 days' | '90 days';
