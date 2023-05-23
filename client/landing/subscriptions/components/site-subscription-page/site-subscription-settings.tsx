@@ -30,7 +30,7 @@ const SiteSubscriptionSettings = ( {
 
 	return (
 		<div className="site-subscription-settings">
-			<h2 className="site-subscription-settings__heading">{ translate( 'Settings ' ) }</h2>
+			<h2 className="site-subscription-settings__heading">{ translate( 'Settings' ) }</h2>
 			<SiteSettings
 				// NotifyMeOfNewPosts
 				notifyMeOfNewPosts={ notifyMeOfNewPosts }
