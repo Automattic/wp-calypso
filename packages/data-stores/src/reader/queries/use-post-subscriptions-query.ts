@@ -1,5 +1,5 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { callApi } from '../helpers';
 import { useCacheKey, useIsLoggedIn, useIsQueryEnabled } from '../hooks';
 import type { PostSubscription } from '../types';
@@ -10,14 +10,20 @@ export enum PostSubscriptionsSortBy {
 	RecentlySubscribed = 'recently_subscribed',
 }
 
+export enum SiteSubscriptionsFilterBy {
+	All = 'all',
+	Paid = 'paid',
+	P2 = 'p2',
+}
+
 type SubscriptionManagerPostSubscriptions = {
 	comment_subscriptions: PostSubscription[];
 	total_comment_subscriptions_count: number;
 };
 
-type SubscriptionManagerPostSubscriptionsQueryProps = {
+type PostSubscriptionsQueryProps = {
 	searchTerm?: string;
-	filter?: ( item?: PostSubscription ) => boolean;
+	filterOption?: SiteSubscriptionsFilterBy;
 	sortTerm?: PostSubscriptionsSortBy;
 	number?: number;
 };
@@ -38,14 +44,12 @@ const getSortFunction = ( sortTerm: PostSubscriptionsSortBy ) => {
 	}
 };
 
-const defaultFilter = () => true;
-
 const usePostSubscriptionsQuery = ( {
 	searchTerm = '',
-	filter = defaultFilter,
+	filterOption = SiteSubscriptionsFilterBy.All,
 	sortTerm = PostSubscriptionsSortBy.RecentlySubscribed,
 	number = 500,
-}: SubscriptionManagerPostSubscriptionsQueryProps = {} ) => {
+}: PostSubscriptionsQueryProps = {} ) => {
 	const { isLoggedIn } = useIsLoggedIn();
 	const enabled = useIsQueryEnabled();
 	const cacheKey = useCacheKey( [ 'read', 'post-subscriptions' ] );
@@ -58,6 +62,7 @@ const usePostSubscriptionsQuery = ( {
 					path: `/post-comment-subscriptions?per_page=${ number }&page=${ pageParam }`,
 					isLoggedIn,
 					apiVersion: '2',
+					apiNamespace: 'wpcom/v2',
 				} );
 			},
 			{
@@ -76,12 +81,32 @@ const usePostSubscriptionsQuery = ( {
 		}
 	}, [ hasNextPage, isFetchingNextPage, isFetching, fetchNextPage ] );
 
+	const filterFunction = useCallback(
+		( item: PostSubscription ) => {
+			switch ( filterOption ) {
+				case SiteSubscriptionsFilterBy.Paid:
+					return item.is_paid_subscription;
+				case SiteSubscriptionsFilterBy.P2:
+					return item.is_wpforteams_site;
+				case SiteSubscriptionsFilterBy.All:
+				default:
+					return true;
+			}
+		},
+		[ filterOption ]
+	);
+
 	const outputData = useMemo( () => {
 		// Flatten all the pages into a single array containing all subscriptions
 		const flattenedData = data?.pages?.map( ( page ) => page.comment_subscriptions ).flat();
 
+		// TODO: Temporary fix for https://github.com/Automattic/wp-calypso/issues/76678, remove once fixed
+		const filteredData = flattenedData?.filter(
+			( comment_subscription ) => typeof comment_subscription.post_url === 'string'
+		);
+
 		// Transform the dates into Date objects
-		const transformedData = flattenedData?.map( ( comment_subscription ) => ( {
+		const transformedData = filteredData?.map( ( comment_subscription ) => ( {
 			...comment_subscription,
 			date_subscribed: new Date( comment_subscription.date_subscribed ),
 		} ) );
@@ -99,11 +124,11 @@ const usePostSubscriptionsQuery = ( {
 
 		return {
 			posts: transformedData
-				?.filter( ( item ) => item && filter( item ) && searchFilter( item ) )
+				?.filter( ( item ) => item && filterFunction( item ) && searchFilter( item ) )
 				.sort( sort ),
 			totalCount: data?.pages?.[ 0 ]?.total_comment_subscriptions_count ?? 0,
 		};
-	}, [ data?.pages, filter, searchTerm, sortTerm ] );
+	}, [ data?.pages, filterFunction, searchTerm, sortTerm ] );
 
 	return {
 		data: outputData,

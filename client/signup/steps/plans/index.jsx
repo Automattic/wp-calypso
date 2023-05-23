@@ -13,7 +13,7 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
 import { getTld, isSubdomain } from 'calypso/lib/domains';
-import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
+import { ProvideExperimentData } from 'calypso/lib/explat';
 import { buildUpgradeFunction } from 'calypso/lib/signup/step-actions';
 import wp from 'calypso/lib/wp';
 import PlansComparison, {
@@ -29,7 +29,6 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import { getPlanSlug } from 'calypso/state/plans/selectors';
 import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
-import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { getDomainName, getIntervalType } from './util';
 import './style.scss';
@@ -73,10 +72,7 @@ export class PlansStep extends Component {
 			return this.props.customerType;
 		}
 
-		const customerType =
-			getSiteTypePropertyValue( 'slug', this.props.siteType, 'customerType' ) || 'personal';
-
-		return customerType;
+		return 'personal';
 	}
 
 	replacePaidDomainWithFreeDomain = ( freeDomainSuggestion ) => {
@@ -151,34 +147,48 @@ export class PlansStep extends Component {
 			);
 		}
 
+		const domainName = getDomainName( this.props.signupDependencies.domainItem );
+
 		return (
 			<div>
 				{ errorDisplay }
-				<PlansFeaturesMain
-					site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
-					showFAQ={ this.state.isDesktop }
-					hideFreePlan={ hideFreePlan }
-					hideEcommercePlan={ this.shouldHideEcommercePlan() }
-					isInSignup={ true }
-					isLaunchPage={ isLaunchPage }
-					intervalType={ intervalType }
-					onUpgradeClick={ ( cartItem ) => this.onSelectPlan( cartItem ) }
-					domainName={ getDomainName( this.props.signupDependencies.domainItem ) }
-					customerType={ this.getCustomerType() }
-					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
-					plansWithScroll={ this.state.isDesktop }
-					planTypes={ planTypes }
-					flowName={ flowName }
-					showTreatmentPlansReorderTest={ showTreatmentPlansReorderTest }
-					isAllPaidPlansShown={ true }
-					isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
-					shouldShowPlansFeatureComparison={ this.state.isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
-					isReskinned={ isReskinned }
-					hidePremiumPlan={ this.props.hidePremiumPlan }
-					hidePersonalPlan={ this.props.hidePersonalPlan }
-					hideEnterprisePlan={ this.props.hideEnterprisePlan }
-					replacePaidDomainWithFreeDomain={ this.replacePaidDomainWithFreeDomain }
-				/>
+				<ProvideExperimentData
+					name="calypso_wpcom_onboarding_plans_hide_free_202305"
+					options={ { isEligible: 'onboarding' === flowName && !! domainName } }
+				>
+					{ ( isLoading, experimentAssignment ) => {
+						if ( isLoading ) {
+							return this.renderLoading();
+						}
+						return (
+							<PlansFeaturesMain
+								site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
+								showFAQ={ this.state.isDesktop }
+								hideFreePlan={ hideFreePlan || 'treatment' === experimentAssignment?.variationName }
+								hideEcommercePlan={ this.shouldHideEcommercePlan() }
+								isInSignup={ true }
+								isLaunchPage={ isLaunchPage }
+								intervalType={ intervalType }
+								onUpgradeClick={ ( cartItem ) => this.onSelectPlan( cartItem ) }
+								domainName={ domainName }
+								customerType={ this.getCustomerType() }
+								disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
+								plansWithScroll={ this.state.isDesktop }
+								planTypes={ planTypes }
+								flowName={ flowName }
+								showTreatmentPlansReorderTest={ showTreatmentPlansReorderTest }
+								isAllPaidPlansShown={ true }
+								isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
+								shouldShowPlansFeatureComparison={ this.state.isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
+								isReskinned={ isReskinned }
+								hidePremiumPlan={ this.props.hidePremiumPlan }
+								hidePersonalPlan={ this.props.hidePersonalPlan }
+								hideEnterprisePlan={ this.props.hideEnterprisePlan }
+								replacePaidDomainWithFreeDomain={ this.replacePaidDomainWithFreeDomain }
+							/>
+						);
+					} }
+				</ProvideExperimentData>
 			</div>
 		);
 	}
@@ -408,7 +418,6 @@ export default connect(
 		// they apply to the given site.
 		selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null,
 		customerType: parseQs( path.split( '?' ).pop() ).customerType,
-		siteType: getSiteType( state ),
 		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
 		showTreatmentPlansReorderTest:
 			'treatment' === plans_reorder_abtest_variation || isTreatmentPlansReorderTest( state ),

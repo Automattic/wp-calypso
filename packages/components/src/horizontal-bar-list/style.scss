@@ -148,7 +148,7 @@
 
 .horizontal-bar-list-group {
 	list-style: none;
-	margin: $space-between-rows 0 $row-height 0;
+	margin: $space-between-rows 0 ($space-between-rows * 2) 0;
 }
 
 .horizontal-bar-list-group-toggle {

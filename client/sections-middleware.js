@@ -114,3 +114,11 @@ export const setupRoutes = () => {
 		}
 	}
 };
+
+if ( module.hot ) {
+	module.hot.accept( './sections', () => {
+		const updatedSections = require( './sections' ).default;
+		receiveSections( updatedSections );
+		setupRoutes();
+	} );
+}

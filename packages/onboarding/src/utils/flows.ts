@@ -1,6 +1,7 @@
 export const NEWSLETTER_FLOW = 'newsletter';
 export const NEWSLETTER_POST_SETUP_FLOW = 'newsletter-post-setup';
 export const HOSTING_LP_FLOW = 'hosting';
+export const HOSTING_SITE_CREATION_FLOW = 'new-hosted-site';
 export const LINK_IN_BIO_FLOW = 'link-in-bio';
 export const LINK_IN_BIO_DOMAIN_FLOW = 'link-in-bio-domain';
 export const LINK_IN_BIO_TLD_FLOW = 'link-in-bio-tld';
@@ -24,7 +25,7 @@ export const WITH_THEME_ASSEMBLER_FLOW = 'with-theme-assembler';
 export const UPDATE_DESIGN_FLOW = 'update-design';
 export const DOMAIN_UPSELL_FLOW = 'domain-upsell';
 
-export const isLinkInBioFlow = ( flowName: string | null ) => {
+export const isLinkInBioFlow = ( flowName: string | null | undefined ) => {
 	return Boolean(
 		flowName &&
 			[ LINK_IN_BIO_FLOW, LINK_IN_BIO_TLD_FLOW, LINK_IN_BIO_POST_SETUP_FLOW ].includes( flowName )
@@ -66,6 +67,10 @@ export const isTailoredSignupFlow = ( flowName: string | null ) => {
 
 export const isHostingFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && HOSTING_LP_FLOW === flowName );
+};
+
+export const isHostingSiteCreationFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && HOSTING_SITE_CREATION_FLOW === flowName );
 };
 
 export const isMigrationFlow = ( flowName: string | null ) => {

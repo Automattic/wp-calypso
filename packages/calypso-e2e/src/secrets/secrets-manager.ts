@@ -113,7 +113,7 @@ export class SecretsManager {
 							'This also may mean the typings for the secrets are stale and need updating.\n\n' +
 							'Details:\n' +
 							`\tInvalid or missing key: ${ fullKeyPath }\n` +
-							`\tExpected type: ${ typeof reference[ key ] }`
+							`\tExpected type: ${ typeof reference[ key ] }, got ${ typeof target[ key ] }`
 					);
 				}
 

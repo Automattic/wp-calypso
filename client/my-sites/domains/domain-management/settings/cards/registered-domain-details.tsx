@@ -85,6 +85,10 @@ const RegisteredDomainDetails = ( {
 				  } )
 				: null;
 
+		if ( ! purchase ) {
+			return null;
+		}
+
 		return (
 			<>
 				<AutoRenewToggle

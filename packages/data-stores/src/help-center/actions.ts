@@ -49,16 +49,36 @@ export const setUnreadCount = ( count: number ) =>
 		count,
 	} as const );
 
+export const setInitialRoute = ( route?: InitialEntry ) =>
+	( {
+		type: 'HELP_CENTER_SET_INITIAL_ROUTE',
+		route,
+	} as const );
+
 export const setIsMinimized = ( minimized: boolean ) =>
 	( {
 		type: 'HELP_CENTER_SET_MINIMIZED',
 		minimized,
 	} as const );
 
+export const setShowMessagingLauncher = ( show: boolean ) =>
+	( {
+		type: 'HELP_CENTER_SET_SHOW_MESSAGING_LAUNCHER',
+		show,
+	} as const );
+
+export const setShowMessagingWidget = ( show: boolean ) =>
+	( {
+		type: 'HELP_CENTER_SET_SHOW_MESSAGING_WIDGET',
+		show,
+	} as const );
+
 export const setShowHelpCenter = function* ( show: boolean ) {
 	if ( ! show ) {
-		// reset minimized state when the help center is closed
+		yield setInitialRoute( undefined );
 		yield setIsMinimized( false );
+	} else {
+		yield setShowMessagingWidget( false );
 	}
 
 	return {
@@ -108,12 +128,6 @@ export const setUserDeclaredSite = ( site: SiteDetails | undefined ) =>
 		site,
 	} as const );
 
-export const setInitialRoute = ( route: InitialEntry ) =>
-	( {
-		type: 'HELP_CENTER_SET_INITIAL_ROUTE',
-		route,
-	} as const );
-
 export const startHelpCenterChat = function* ( site: HelpCenterSite, message: string ) {
 	yield setInitialRoute( '/inline-chat' );
 	yield setSite( site );
@@ -128,6 +142,8 @@ export const resetStore = () =>
 
 export type HelpCenterAction =
 	| ReturnType<
+			| typeof setShowMessagingLauncher
+			| typeof setShowMessagingWidget
 			| typeof setSite
 			| typeof setSubject
 			| typeof resetStore

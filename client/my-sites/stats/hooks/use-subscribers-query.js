@@ -29,7 +29,9 @@ function selectSubscribers( payload ) {
 		unit: payload.unit,
 		data: payload.data.map( ( dataSet ) => {
 			return {
-				[ payload.fields[ 0 ] ]: dataSet[ 0 ],
+				// For `week` period replace `W` separator to match the format.
+				[ payload.fields[ 0 ] ]:
+					payload.unit !== 'week' ? dataSet[ 0 ] : dataSet[ 0 ].replaceAll( 'W', '-' ),
 				[ payload.fields[ 1 ] ]: dataSet[ 1 ],
 				[ payload.fields[ 2 ] ]: dataSet[ 2 ],
 			};

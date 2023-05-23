@@ -162,8 +162,11 @@ const streamApis = {
 			getQueryString( {
 				...extras,
 				algorithm: 'read:recommendations:sites/es/2',
-				number: 10,
+				posts_per_site: 1,
 			} ),
+		// Recommended sites can only return a max of 10 sites per request, so we need to override the default number.
+		pollQuery: ( extraFields = [], extraQueryParams = {} ) =>
+			getQueryStringForPoll( extraFields, { ...extraQueryParams, number: 10 } ),
 	},
 	tag: {
 		path: ( { streamKey } ) => `/read/tags/${ streamKeySuffix( streamKey ) }/posts`,
@@ -242,10 +245,6 @@ export function handlePage( action, data ) {
 		pageHandle = { before: after };
 	}
 
-	if ( streamType === 'custom_recs_sites_with_images' ) {
-		pageHandle = { page_handle: next_page || meta.next_page };
-	}
-
 	const actions = analyticsForStream( {
 		streamKey,
 		algorithm: data.algorithm,
@@ -270,7 +269,10 @@ export function handlePage( action, data ) {
 		} ) );
 	} else if ( sites ) {
 		streamItems = sites.map( ( site ) => {
-			const post = site.posts[ 0 ];
+			const post = site.posts[ 0 ] ?? null;
+			if ( ! post ) {
+				return null;
+			}
 			return {
 				...keyForPost( post ),
 				date: post[ dateProperty ],
@@ -284,8 +286,14 @@ export function handlePage( action, data ) {
 				xPostMetadata: XPostHelper.getXPostMetadata( post ),
 			};
 		} );
+
+		// Filter out nulls
+		streamItems = streamItems.filter( ( item ) => item !== null );
+
 		// get array of posts from sites object
-		streamPosts = sites.map( ( site ) => site.posts[ 0 ] );
+		streamPosts = sites.map( ( site ) => {
+			return site.posts[ 0 ];
+		} );
 	}
 
 	if ( isPoll ) {

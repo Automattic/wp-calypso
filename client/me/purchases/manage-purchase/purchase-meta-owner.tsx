@@ -2,7 +2,7 @@ import { useTranslate } from 'i18n-calypso';
 import UserItem from 'calypso/components/user';
 import type { Owner } from 'calypso/lib/purchases/types';
 
-function PurchaseMetaOwner( { owner }: { owner: Owner } ) {
+function PurchaseMetaOwner( { owner }: { owner: Owner | undefined | null } ) {
 	const translate = useTranslate();
 	if ( ! owner ) {
 		return null;

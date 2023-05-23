@@ -47,6 +47,7 @@ export interface SearchResult {
 	icon?: string;
 	post_id?: number;
 	blog_id?: number;
+	source?: string;
 }
 
 export interface SupportTicket {
@@ -58,4 +59,14 @@ export interface SupportTicket {
 	type: string;
 	url: string;
 	when: string;
+}
+
+export interface MessagingAuth {
+	user: {
+		jwt: string;
+	};
+}
+
+export interface MessagingAvailability {
+	is_available: boolean;
 }

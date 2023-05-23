@@ -1,8 +1,6 @@
-import { TwitterPreview } from '@automattic/social-previews';
+import { TwitterPreviews } from '@automattic/social-previews';
 import { PureComponent } from 'react';
 import { decodeEntities } from 'calypso/lib/formatting';
-
-import './style.scss';
 
 export class TwitterSharePreview extends PureComponent {
 	render() {
@@ -19,16 +17,14 @@ export class TwitterSharePreview extends PureComponent {
 
 		return (
 			<div className="twitter-share-preview">
-				<TwitterPreview
+				<TwitterPreviews
 					tweets={ [
 						{
-							card: {
-								type: 'summary_large_image',
-								description: decodeEntities( articleSummary ),
-								title: decodeEntities( seoTitle ),
-								image: imageUrl,
-								url: articleUrl,
-							},
+							cardType: imageUrl ? 'summary_large_image' : null,
+							description: decodeEntities( articleSummary ),
+							title: decodeEntities( seoTitle ),
+							image: imageUrl,
+							url: articleUrl,
 							date: Date.now(),
 							name: externalName,
 							profileImage: externalProfilePicture,

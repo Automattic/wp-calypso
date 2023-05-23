@@ -17,15 +17,21 @@
 		}
 
 		&-content {
-			font-size: $font-body;
+			font-size: $font-body-small;
 			line-height: $font-title-small;
 			letter-spacing: -0.15px;
+			color: $studio-gray-80;
+			margin-right: 16px;
+		}
+
+		&-action {
+			align-self: center;
 		}
 
 		&-close {
 			position: absolute;
-			right: 23px;
-			top: 19px;
+			right: 20px;
+			top: 16px;
 		}
 	}
 }

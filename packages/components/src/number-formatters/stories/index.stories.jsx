@@ -1,7 +1,7 @@
 import ShortenedNumber from '..';
 import formattedNumber from '../formatted-number';
 
-export default { title: 'Shortened Number' };
+export default { title: 'packages/components/Shortened Number' };
 
 const ShortenedNumberExample = ( { value } ) => (
 	<p>

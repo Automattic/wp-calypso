@@ -58,7 +58,13 @@ document.addEventListener( 'DOMContentLoaded', () => {
 
 	previewButton?.addEventListener( 'click', ( event ) => {
 		event.preventDefault();
-		recordEvent( 'wpcom_global_styles_gating_notice_preview' );
+		const checkbox = previewButton.querySelector( 'input[type="checkbox"]' );
+		if ( checkbox ) {
+			checkbox.checked = ! checkbox.checked;
+		}
+		recordEvent( 'wpcom_global_styles_gating_notice_preview', {
+			action: checkbox.checked ? 'show' : 'hide',
+		} );
 		window.location = previewButton.href;
 	} );
 } );

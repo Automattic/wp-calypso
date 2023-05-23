@@ -1,0 +1,34 @@
+@import "@automattic/color-studio/dist/color-variables";
+@import "@automattic/typography/styles/variables";
+
+$setting-item-margin-bottom: 16px;
+
+.settings {
+	.setting-item {
+		margin-bottom: $setting-item-margin-bottom;
+
+		&__hint {
+			margin-top: 16px;
+			color: $studio-gray-50;
+			font-size: $font-body-extra-small;
+			text-align: left;
+		}
+
+		&__label,
+		.components-toggle-control__label {
+			font-size: $font-body-small;
+			line-height: $font-title-small;
+			font-weight: 400;
+			color: $studio-gray-100;
+		}
+
+		&__label {
+			margin-bottom: 8px;
+			text-align: left;
+		}
+
+		.components-toggle-control {
+			margin: 0;
+		}
+	}
+}

@@ -1,24 +1,16 @@
-export type TwitterPreviewProps = TwitterCardProps & {
-	tweets: Array< TweetProps >;
+import { MediaItem, SocialPreviewBaseProps, SocialPreviewsBaseProps } from '../types';
+
+export type TwitterPreviewsProps = SocialPreviewsBaseProps & {
+	tweets: Array< TwitterPreviewProps >;
 };
 
-export type TwitterMedia = {
-	alt: string;
-	type: string;
-	url: string;
-};
-
-export type TwitterCardProps = {
-	description: string;
-	image: string;
-	title: string;
-	type: string;
-	url: string;
+export type TwitterCardProps = SocialPreviewBaseProps & {
+	cardType: string;
 };
 
 export type SidebarProps = {
-	isLast: boolean;
-	profileImage: string;
+	showThreadConnector?: boolean;
+	profileImage?: string;
 };
 
 export type HeaderProps = {
@@ -28,25 +20,19 @@ export type HeaderProps = {
 };
 
 export type MediaProps = {
-	media: Array< TwitterMedia >;
+	media: Array< MediaItem >;
 };
 
 export type QuoteTweetProps = {
-	tweet: TweetProps;
-};
-
-export type CardProps = {
-	card: TwitterCardProps;
+	tweet: TwitterPreviewProps;
 };
 
 export type TextProps = {
 	text: string;
-	cardUrl: string;
+	url: string;
+	retainUrl?: boolean;
 };
 
-export type TweetProps = SidebarProps &
+export type TwitterPreviewProps = SidebarProps &
 	HeaderProps &
-	MediaProps &
-	QuoteTweetProps &
-	CardProps &
-	Pick< TextProps, 'text' >;
+	Partial< MediaProps & QuoteTweetProps & TwitterCardProps & Pick< TextProps, 'text' > >;

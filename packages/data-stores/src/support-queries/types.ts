@@ -26,3 +26,11 @@ export interface OtherSupportAvailability {
 	is_user_eligible_for_tickets: boolean;
 	is_user_eligible_for_chat: boolean;
 }
+
+export interface SupportActivity {
+	id: number;
+	status: string;
+	subject: string;
+	timestamp: number;
+	channel: string;
+}

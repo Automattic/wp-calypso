@@ -75,8 +75,11 @@ export const is2023PricingGridActivePage = (
 		return isPricingGridEnabled;
 	}
 
-	// Is this the hosting flow?
-	if ( currentRoutePath.startsWith( '/start/hosting' ) ) {
+	// Is this a hosting flow?
+	if (
+		currentRoutePath.startsWith( '/start/hosting' ) ||
+		currentRoutePath.startsWith( '/setup/new-hosted-site' )
+	) {
 		return isPricingGridEnabled;
 	}
 

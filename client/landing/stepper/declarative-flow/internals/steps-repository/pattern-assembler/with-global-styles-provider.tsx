@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { GlobalStylesProvider } from '@automattic/global-styles';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { useSelect } from '@wordpress/data';
@@ -22,10 +21,6 @@ const withGlobalStylesProvider = createHigherOrderComponent(
 
 			if ( ! siteSlugOrId || ! stylesheet ) {
 				return <StepperLoader />;
-			}
-
-			if ( ! isEnabled( 'pattern-assembler/color-and-fonts' ) ) {
-				return <InnerComponent { ...props } />;
 			}
 
 			// TODO: We might need to lazy load the GlobalStylesProvider

@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
@@ -99,7 +100,7 @@ const IntroPricingBanner: React.FC = () => {
 							onClick={ () =>
 								recordTracksEvent( 'calypso_jpcom_agencies_page_intro_banner_link_click' )
 							}
-							href="https://jetpack.com/for/agencies/"
+							href={ localizeUrl( 'https://jetpack.com/for/agencies/' ) }
 							target="_blank"
 							rel="noreferrer"
 						>
