@@ -5,6 +5,7 @@ import { useCallback, useState } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import formatCurrency from 'calypso/../packages/format-currency/src';
 import PlanItem from 'calypso/../packages/plans-grid/src/plans-table/plan-item';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -12,6 +13,7 @@ import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
+import PlanPrice from 'calypso/my-sites/plan-price';
 import { SenseiStepContainer } from '../components/sensei-step-container';
 import { SenseiStepError } from '../components/sensei-step-error';
 import { SenseiStepProgress } from '../components/sensei-step-progress';
@@ -32,6 +34,7 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 	const [ status, setStatus ] = useState< Status >( Status.Initial );
 	const locale = useLocale();
 	const { __, hasTranslation } = useI18n();
+	const translate = useTranslate();
 	const features = useFeatures();
 
 	const domain = useSelect(
@@ -106,7 +109,6 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 	const currencyCode = senseiProPlan.currencyCode;
 	const isLoading = ! businessPlan.monthlyPrice || ! senseiProPlan.monthlyPrice;
 	const price = businessPlan.price + senseiProPlan.price;
-	const priceStr = formatCurrency( price, currencyCode, { stripZeros: true } );
 	const monthlyPrice = businessPlan.monthlyPrice + senseiProPlan.monthlyPrice;
 	const annualPrice = businessPlan.yearlyPrice + senseiProPlan.yearlyPrice;
 	const annualPriceStr = formatCurrency( annualPrice, currencyCode, { stripZeros: true } );
@@ -127,7 +129,7 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 			: fallbackPlanItemPriceLabelAnnually;
 
 	const planItemPriceLabelMonthly = __( 'per month, billed monthly' );
-	const title = __( 'Sensei Pro Bundle' );
+	const title = __( 'Sensei Bundle' );
 
 	return (
 		<SenseiStepContainer
@@ -153,49 +155,64 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 						maxMonthlyDiscountPercentage={ annualDiscount }
 					/>
 
-					<div
-						className={ classnames( 'plan-item plan-item--sensei', {
-							'plan-item--is-loading': isLoading,
-						} ) }
-					>
-						<div tabIndex={ 0 } role="button" className="plan-item__summary">
-							<div className="plan-item__heading">
-								<div className="plan-item__name">{ title }</div>
-							</div>
-							<div className="plan-item__price">
-								<div className="plan-item__price-amount">{ ! isLoading && priceStr }</div>
-							</div>
-						</div>
-						<div className="plan-item__price-note">
-							{ ! isLoading && billingPeriod === 'ANNUALLY'
-								? planItemPriceLabelAnnually
-								: planItemPriceLabelMonthly }
-						</div>
+					<div className="plan-item-wrapper">
 						<div
-							className={ classnames( 'plan-item__price-discount', {
-								'plan-item__price-discount--disabled': billingPeriod !== 'ANNUALLY',
+							className={ classnames( 'plan-item plan-item--sensei', {
+								'plan-item--is-loading': isLoading,
 							} ) }
 						>
-							{ ! isLoading &&
-								sprintf(
-									// Translators: will be like "Save 30% by paying annually".  Make sure the % symbol is kept.
-									__( `You're saving %s by paying annually` ),
-									annualSavingsStr
-								) }
+							<div tabIndex={ 0 } role="button" className="plan-item__summary">
+								<div className="plan-item__heading">
+									<div className="plan-item__name">{ title }</div>
+								</div>
+								<div className="plan-item__price">
+									{ ! isLoading && (
+										<PlanPrice rawPrice={ price ?? undefined } currencyCode={ currencyCode } />
+									) }
+								</div>
+							</div>
+							<div className="plan-item__price-note">
+								{ ! isLoading && billingPeriod === 'ANNUALLY'
+									? planItemPriceLabelAnnually
+									: planItemPriceLabelMonthly }
+							</div>
+							<div
+								className={ classnames( 'plan-item__price-discount', {
+									'plan-item__price-discount--disabled': billingPeriod !== 'ANNUALLY',
+								} ) }
+							>
+								{ ! isLoading &&
+									sprintf(
+										// Translators: will be like "Save 30% by paying annually".  Make sure the % symbol is kept.
+										__( `You're saving %s by paying annually` ),
+										annualSavingsStr
+									) }
+							</div>
 						</div>
+						<PlanItem
+							allPlansExpanded
+							slug="business"
+							domain={ domain }
+							CTAVariation="NORMAL"
+							features={ features }
+							billingPeriod={ billingPeriod }
+							name={ title }
+							onSelect={ onPlanSelect }
+							onPickDomainClick={ goToDomainStep }
+							CTAButtonLabel={ __( 'Get Sensei Pro Bundle' ) }
+						/>
 					</div>
-					<PlanItem
-						allPlansExpanded
-						slug="business"
-						domain={ domain }
-						CTAVariation="NORMAL"
-						features={ features }
-						billingPeriod={ billingPeriod }
-						name={ title }
-						onSelect={ onPlanSelect }
-						onPickDomainClick={ goToDomainStep }
-						CTAButtonLabel={ __( 'Get Sensei Pro Bundle' ) }
-					/>
+
+					<footer className="footer">
+						<p>
+							{ translate( 'Handled by WordPress.com. {{a}}WordPress.com{{/a}}.', {
+								components: {
+									a: <a href="https://wordpress.com/" target="_blank" rel="noreferrer" />,
+								},
+							} ) }
+						</p>
+						<p>{ __( 'Course creation and LMS tools powered by SenseiLMS' ) }</p>
+					</footer>
 				</>
 			) }
 			{ status === Status.Bundling && <SenseiStepProgress progress={ progress } /> }
