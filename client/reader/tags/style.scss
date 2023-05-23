@@ -191,6 +191,8 @@
 	.sticky-panel {
 		position: absolute;
 		right: -12px;
+		// width must be set for resizing when the panel is already sticky
+		width: 16px;
 	}
 	.sticky-panel__content {
 		padding-top: 24px;
