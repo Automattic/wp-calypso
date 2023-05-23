@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { dispatch, select, subscribe } from '@wordpress/data';
-import { createElement, render } from '@wordpress/element';
+import { render } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { close, globe, Icon } from '@wordpress/icons';
 import useSiteIntent from '../../dotcom-fse/lib/site-intent/use-site-intent';
@@ -64,32 +64,26 @@ const DomainUpsellCallout = () => {
 
 	return (
 		<>
-			<div className="wpcom-domain-upsell-callout">
-				<div className="wpcom-domain-upsell-callout__content">
-					<div className="wpcom-domain-upsell-callout__content-text">
-						<Icon icon={ globe } size={ 16 } />
-						<span className="wpcom-domain-upsell-callout__domain-name">{ siteSlug }</span>
-						{ /* We can only use <a> here because the button somehow just disappears from the page */ }
-						{ /* eslint-disable-next-line */ }
-						<a
-							className="wpcom-domain-upsell-callout__button"
-							role="button"
-							onClick={ handleClick }
-						>
-							<span className="wpcom-domain-upsell-callout__button-text-desktop">
-								{ __( 'Customize your domain', 'full-site-editing' ) }
-							</span>
-							<span className="wpcom-domain-upsell-callout__button-text-mobile">
-								{ __( 'Customize', 'full-site-editing' ) }
-							</span>
-						</a>
-						<Icon
-							icon={ close }
-							className="wpcom-domain-upsell-callout__dismiss-icon"
-							onClick={ handleDismiss }
-							size={ 16 }
-						/>
-					</div>
+			<div className="wpcom-domain-upsell-callout__content">
+				<div className="wpcom-domain-upsell-callout__content-text">
+					<Icon icon={ globe } size={ 16 } />
+					<span className="wpcom-domain-upsell-callout__domain-name">{ siteSlug }</span>
+					{ /* We can only use <a> here because the button somehow just disappears from the page */ }
+					{ /* eslint-disable-next-line */ }
+					<a className="wpcom-domain-upsell-callout__button" role="button" onClick={ handleClick }>
+						<span className="wpcom-domain-upsell-callout__button-text-desktop">
+							{ __( 'Customize your domain', 'full-site-editing' ) }
+						</span>
+						<span className="wpcom-domain-upsell-callout__button-text-mobile">
+							{ __( 'Customize', 'full-site-editing' ) }
+						</span>
+					</a>
+					<Icon
+						icon={ close }
+						className="wpcom-domain-upsell-callout__dismiss-icon"
+						onClick={ handleDismiss }
+						size={ 16 }
+					/>
 				</div>
 			</div>
 		</>
@@ -102,7 +96,10 @@ async function showDomainUpsellCallout() {
 	if ( shouldShowDomainUpsell() ) {
 		const toolbarContainer = document.querySelector( '.edit-post-header-toolbar' );
 		if ( toolbarContainer !== null ) {
-			render( createElement( DomainUpsellCallout ), toolbarContainer );
+			const domainUpsellContainer = document.createElement( 'div' );
+			domainUpsellContainer.className = 'wpcom-domain-upsell-callout';
+			document.body.appendChild( domainUpsellContainer );
+			render( <DomainUpsellCallout />, domainUpsellContainer );
 		}
 	}
 }

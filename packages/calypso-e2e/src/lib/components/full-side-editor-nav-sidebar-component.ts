@@ -6,6 +6,8 @@ const selectors = {
 	templatePartsItem: 'button[id="/wp_template_part"]',
 	manageAllTemplatePartsItem: 'button:text("Manage all template parts")',
 	navigationScreenTitle: '.edit-site-sidebar-navigation-screen__title',
+	styleVariation: ( styleVariationName: string ) =>
+		`.edit-site-global-styles-variations_item[aria-label="${ styleVariationName }"]`,
 };
 
 /**
@@ -90,5 +92,16 @@ export class FullSiteEditorNavSidebarComponent {
 	async clickNavButtonByExactText( text: string ): Promise< void > {
 		const editorParent = await this.editor.parent();
 		await editorParent.getByRole( 'button', { name: text, exact: true } ).click();
+	}
+
+	/**
+	 * Sets a style variation for the site.
+	 *
+	 * @param {string} styleVariationName The name of the style variation to set.
+	 */
+	async setStyleVariation( styleVariationName: string ): Promise< void > {
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.styleVariation( styleVariationName ) );
+		await locator.click();
 	}
 }

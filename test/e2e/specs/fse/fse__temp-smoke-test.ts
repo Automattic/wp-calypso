@@ -21,7 +21,7 @@ declare const browser: Browser;
  * This is a temporary smoke test for FSE on WordPress.com until a more comprehensive E2E strategy
  * can be designed and implemented.
  *
- * The goal here is to catch major breaks with the integration -- i.e. Calypso navigation no long working,
+ * The goal here is to catch major breaks with the integration --- i.e. Calypso navigation no long working,
  * or getting a WSOD when trying to load the editor.
  */
 

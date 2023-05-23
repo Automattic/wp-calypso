@@ -2,6 +2,7 @@ import { useSubscriberEmailAddress, useIsLoggedIn } from './hooks';
 import {
 	usePostUnsubscribeMutation,
 	useSiteDeliveryFrequencyMutation,
+	useSiteSubscribeMutation,
 	useSiteUnsubscribeMutation,
 	useUserSettingsMutation,
 	usePendingSiteConfirmMutation,
@@ -21,6 +22,7 @@ import {
 	useUserSettingsQuery,
 	usePendingSiteSubscriptionsQuery,
 	usePendingPostSubscriptionsQuery,
+	useSiteSubscriptionDetailsQuery,
 } from './queries';
 
 export const SubscriptionManager = {
@@ -30,6 +32,7 @@ export const SubscriptionManager = {
 	useSiteDeliveryFrequencyMutation,
 	useSiteSubscriptionsQuery,
 	usePostSubscriptionsQuery,
+	useSiteSubscribeMutation,
 	useSiteUnsubscribeMutation,
 	useSubscriptionsCountQuery,
 	useSubscriberEmailAddress,
@@ -45,12 +48,8 @@ export const SubscriptionManager = {
 	useSiteEmailMeNewPostsMutation,
 	useSiteEmailMeNewCommentsMutation,
 	useIsLoggedIn,
+	useSiteSubscriptionDetailsQuery,
 };
 
-// Types
-export type {
-	DeliveryWindowDayType,
-	DeliveryWindowHourType,
-	EmailFormatType,
-	SubscriptionManagerUserSettings,
-} from './types';
+export { EmailDeliveryFrequency } from './constants';
+export * from './types';

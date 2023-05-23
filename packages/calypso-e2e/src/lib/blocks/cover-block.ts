@@ -1,5 +1,5 @@
-import { Locator } from 'playwright';
-import { EditorPage } from '../pages';
+import { Page, Locator } from 'playwright';
+import { EditorComponent } from '../components';
 
 const coverStylesArray = [ 'Default', 'Bottom Wave', 'Top Wave' ] as const;
 export type coverStyles = ( typeof coverStylesArray )[ number ];
@@ -11,18 +11,18 @@ export class CoverBlock {
 	static blockName = 'Cover';
 	static blockEditorSelector = '[aria-label="Block: Cover"]';
 	static coverStyles = coverStylesArray;
-	private editorPage: EditorPage;
+	private editor: EditorComponent;
 	block: Locator;
 
 	/**
 	 * Constructs an instance of this block.
 	 *
-	 * @param {EditorPage} editorPage The EditorPage instance.
+	 * @param {Page} page The underlying page object.
 	 * @param {Locator} block Handle referencing the block as inserted on the Gutenberg editor.
 	 */
-	constructor( editorPage: EditorPage, block: Locator ) {
-		this.editorPage = editorPage;
+	constructor( page: Page, block: Locator ) {
 		this.block = block;
+		this.editor = new EditorComponent( page );
 	}
 
 	/**
@@ -39,7 +39,7 @@ export class CoverBlock {
 
 		// After uploading the image the focus is switched to the inner
 		// paragraph block (Cover title), so we need to switch it back outside.
-		const editorParent = await this.editorPage.getEditorParent();
+		const editorParent = await this.editor.parent();
 		await editorParent
 			.locator( CoverBlock.blockEditorSelector )
 			.click( { position: { x: 1, y: 1 } } );
@@ -60,7 +60,7 @@ export class CoverBlock {
 	 * @param {'Settings'|'Styles'} name Supported tabs.
 	 */
 	async activateTab( name: 'Settings' | 'Styles' ) {
-		const editorParent = await this.editorPage.getEditorParent();
+		const editorParent = await this.editor.parent();
 		await editorParent.locator( `[aria-label="${ name }"]` ).click();
 	}
 
@@ -70,7 +70,7 @@ export class CoverBlock {
 	 * @param {coverStyles} style The title of one of the Cover style buttons
 	 */
 	async setCoverStyle( style: coverStyles ): Promise< void > {
-		const editorParent = await this.editorPage.getEditorParent();
+		const editorParent = await this.editor.parent();
 		await editorParent.locator( `button[aria-label="${ style }"]` ).click();
 
 		const blockId = await this.block.getAttribute( 'data-block' );

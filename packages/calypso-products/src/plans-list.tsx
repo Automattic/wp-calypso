@@ -383,6 +383,7 @@ import {
 	PLAN_WOOEXPRESS_PLUS,
 	TYPE_WOO_EXPRESS_PLUS,
 	FEATURE_NEWSLETTER_IMPORT_SUBSCRIBERS_FREE,
+	FEATURE_PAYMENT_TRANSACTION_FEES_10,
 	FEATURE_PAYMENT_TRANSACTION_FEES_8,
 	FEATURE_PAYMENT_TRANSACTION_FEES_4,
 	TYPE_WOOEXPRESS_SMALL,
@@ -550,6 +551,7 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_STATS_JP,
 		FEATURE_BANDWIDTH,
 		FEATURE_LTD_SOCIAL_MEDIA_JP,
+		FEATURE_PAYMENT_TRANSACTION_FEES_10,
 	],
 	getLinkInBioSignupFeatures: () => [
 		FEATURE_BEAUTIFUL_THEMES,
@@ -2091,7 +2093,7 @@ const getPlanJetpackStarterDetails = (): IncompleteJetpackPlan => ( {
 	...getJetpackCommonPlanDetails(),
 	group: GROUP_JETPACK,
 	type: TYPE_JETPACK_STARTER,
-	getTitle: () => translate( 'Jetpack Starter', { context: 'Jetpack product name' } ),
+	getTitle: () => translate( 'Starter', { context: 'Jetpack product name' } ),
 	availableFor: ( plan ) => [ PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
 	getTagline: () =>
 		translate( 'Essential security tools: real-time backups and comment spam protection.' ),
@@ -2542,6 +2544,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		...getPlanWooExpressMediumDetails(),
 		...getMonthlyTimeframe(),
 		type: TYPE_WOOEXPRESS_MEDIUM,
+		getBillingTimeFrame: () => translate( 'per month' ),
 		availableFor: ( plan ) =>
 			[ PLAN_FREE, PLAN_ECOMMERCE_TRIAL_MONTHLY, PLAN_WOOEXPRESS_SMALL_MONTHLY ].includes( plan ),
 		getProductId: () => 1053,
@@ -2571,6 +2574,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		...getPlanWooExpressSmallDetails(),
 		...getMonthlyTimeframe(),
 		type: TYPE_WOOEXPRESS_SMALL,
+		getBillingTimeFrame: () => translate( 'per month' ),
 		availableFor: ( plan ) => [ PLAN_FREE, PLAN_ECOMMERCE_TRIAL_MONTHLY ].includes( plan ),
 		getProductId: () => 1054,
 		getStoreSlug: () => PLAN_WOOEXPRESS_SMALL_MONTHLY,

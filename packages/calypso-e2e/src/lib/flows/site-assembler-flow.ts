@@ -40,28 +40,13 @@ export class SiteAssemblerFlow {
 	 * @param {number} index Index of the item to choose. Defaults to 0.
 	 */
 	async selectLayoutComponent( index = 0 ): Promise< void > {
-		const target = this.page
+		await this.page
 			.getByRole( 'listbox', { name: 'Block patterns' } )
 			.getByRole( 'option' )
 			.nth( index )
-			.locator( 'iframe' );
-
-		// The iframe has an attribute of "height" that is present only if the preview has loaded.
-		// By checking for the presence of the "height" attribute on the last visible
-		// iframe, we can be sure that all visible component card has loaded.
-		// If the last iframe does not yet contain the "height" attribute, then wait
-		// for a predetermined timeout, then re-evaluate.
-		while (
-			! ( await target.evaluate( ( element ) => {
-				if ( element.style.height ) {
-					return true;
-				}
-				return false;
-			} ) )
-		) {
-			await this.page.waitForTimeout( 1000 );
-		}
-
-		await target.click();
+			// Pierce through the iframe holding the component preview.
+			.frameLocator( 'iframe' )
+			.locator( '.block-editor-iframe__body' )
+			.click();
 	}
 }

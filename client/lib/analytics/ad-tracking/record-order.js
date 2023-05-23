@@ -469,9 +469,9 @@ function recordOrderInGoogleAds( cart, orderId, wpcomJetpackCartInfo ) {
 			'conversion',
 			{
 				send_to: TRACKING_IDS.akismetGoogleAdsGtagPurchase,
-				transactionTotal: wpcomJetpackCartInfo.akismetCost,
-				currencyCode: cart.currency,
-				transactionId: orderId,
+				value: wpcomJetpackCartInfo.akismetCost,
+				currency: cart.currency,
+				transaction_id: orderId,
 			},
 		];
 		debug( 'recordOrderInGoogleAds: Record Akismet Purchase', params );

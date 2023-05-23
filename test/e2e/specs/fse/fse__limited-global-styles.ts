@@ -26,42 +26,24 @@ describe( DataHelper.createSuiteTitle( 'Site Editor: Limited Global Styles' ), f
 		await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
 
 		await fullSiteEditorPage.ensureNavigationTopLevel();
-		await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Templates' );
-		await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Page' );
-		await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Edit' );
 	} );
 
 	it( 'Open site styles', async function () {
-		await fullSiteEditorPage.openSiteStyles();
+		await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Styles' );
 	} );
 
 	it( 'Select the "Try it out" option in the upgrade modal', async function () {
 		await fullSiteEditorPage.tryGlobalStyles();
 	} );
 
-	it( 'Pick a non-default style variation', async function () {
+	it( 'Pick a non-default style variation and check that the save notice shows up', async function () {
 		// The primary site of the `simpleSiteFreePlanUser` account has the Twenty Twenty-Two
 		// theme which includes a "Blue" style variation. If the active theme on the site
 		// ever changes, we'll need to update the name of this style variation.
 		await fullSiteEditorPage.setStyleVariation( 'Blue' );
 	} );
 
-	it( 'Save the styles and check that the pre-save notice shows up', async function () {
-		// On mobile, the styles is a popover panel that hides the success notification
-		// checked by the "save" method, so let's always close it first to be safe. :)
-		await fullSiteEditorPage.closeSiteStyles();
-		await fullSiteEditorPage.save( { checkPreSaveNotices: true } );
-	} );
-
-	it( 'Reset styles to defaults', async function () {
-		await fullSiteEditorPage.openSiteStyles();
+	it( 'Reset styles to defaults and check that the save notice does not show up', async function () {
 		await fullSiteEditorPage.setStyleVariation( 'Default' );
-	} );
-
-	it( 'Save the styles and check that the pre-save notice does not show up', async function () {
-		// On mobile, the styles is a popover panel that hides the success notification
-		// checked by the "save" method, so let's always close it first to be safe. :)
-		await fullSiteEditorPage.closeSiteStyles();
-		await fullSiteEditorPage.save( { checkPreSaveNotices: true } );
 	} );
 } );

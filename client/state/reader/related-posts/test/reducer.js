@@ -16,12 +16,19 @@ describe( 'items', () => {
 					payload: {
 						siteId: 1,
 						postId: 1,
-						posts: [ { global_ID: 2 }, { global_ID: 3 }, { global_ID: 4 } ],
+						size: 5,
+						posts: [
+							{ global_ID: 2 },
+							{ global_ID: 3 },
+							{ global_ID: 4 },
+							{ global_ID: 5 },
+							{ global_ID: 6 },
+						],
 					},
 				}
 			)
 		).toEqual( {
-			'1-1-all': [ 2, 3, 4 ],
+			'1-1-all-5': [ 2, 3, 4, 5, 6 ],
 		} );
 	} );
 
@@ -29,19 +36,26 @@ describe( 'items', () => {
 		expect(
 			items(
 				{
-					'1-1-all': [ 2, 3, 4 ],
+					'1-1-all-5': [ 2, 3, 4, 5, 6 ],
 				},
 				{
 					type: READER_RELATED_POSTS_RECEIVE,
 					payload: {
 						siteId: 1,
 						postId: 1,
-						posts: [ { global_ID: 3 }, { global_ID: 4 }, { global_ID: 9 } ],
+						size: 5,
+						posts: [
+							{ global_ID: 3 },
+							{ global_ID: 4 },
+							{ global_ID: 9 },
+							{ global_ID: 10 },
+							{ global_ID: 11 },
+						],
 					},
 				}
 			)
 		).toEqual( {
-			'1-1-all': [ 3, 4, 9 ],
+			'1-1-all-5': [ 3, 4, 9, 10, 11 ],
 		} );
 	} );
 } );
@@ -56,11 +70,12 @@ describe( 'queuedRequests', () => {
 					payload: {
 						siteId: 1,
 						postId: 1,
+						size: 5,
 					},
 				}
 			)
 		).toEqual( {
-			'1-1-all': true,
+			'1-1-all-5': true,
 		} );
 	} );
 
@@ -68,18 +83,19 @@ describe( 'queuedRequests', () => {
 		expect(
 			queuedRequests(
 				{
-					'1-1-all': true,
+					'1-1-all-5': true,
 				},
 				{
 					type: READER_RELATED_POSTS_REQUEST_SUCCESS,
 					payload: {
 						siteId: 1,
 						postId: 1,
+						size: 5,
 					},
 				}
 			)
 		).toEqual( {
-			'1-1-all': false,
+			'1-1-all-5': false,
 		} );
 	} );
 
@@ -92,11 +108,12 @@ describe( 'queuedRequests', () => {
 					payload: {
 						siteId: 1,
 						postId: 1,
+						size: 5,
 					},
 				}
 			)
 		).toEqual( {
-			'1-1-all': false,
+			'1-1-all-5': false,
 		} );
 	} );
 } );

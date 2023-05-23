@@ -14,6 +14,7 @@ import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
+import useFetchMonitorVerfiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
 import {
@@ -24,6 +25,7 @@ import {
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
 import OnboardingWidget from '../../partner-portal/primary/onboarding-widget';
 import SitesOverviewContext from './context';
+import DashboardDataContext from './dashboard-data-context';
 import SiteAddLicenseNotification from './site-add-license-notification';
 import SiteContent from './site-content';
 import SiteContentHeader from './site-content-header';
@@ -70,6 +72,8 @@ export default function SitesOverview() {
 		filter,
 		sort
 	);
+
+	const { data: verifiedContacts } = useFetchMonitorVerfiedContacts();
 
 	const selectedSiteIds = selectedSites.map( ( site ) => site.blog_id );
 
@@ -272,13 +276,21 @@ export default function SitesOverview() {
 						{ showEmptyState ? (
 							<div className="sites-overview__no-sites">{ emptyState }</div>
 						) : (
-							<SiteContent
-								data={ data }
-								isLoading={ isLoading }
-								currentPage={ currentPage }
-								isFavoritesTab={ isFavoritesTab }
-								ref={ containerRef }
-							/>
+							<DashboardDataContext.Provider
+								value={ {
+									verifiedContacts: {
+										emails: verifiedContacts?.emails ?? [],
+									},
+								} }
+							>
+								<SiteContent
+									data={ data }
+									isLoading={ isLoading }
+									currentPage={ currentPage }
+									isFavoritesTab={ isFavoritesTab }
+									ref={ containerRef }
+								/>
+							</DashboardDataContext.Provider>
 						) }
 					</div>
 				</div>

@@ -7,6 +7,12 @@
  * @package happy-blocks
  */
 
+/**
+ * Load functions from the h4 theme, we're using localized_tailored_flow_url here.
+ */
+require_once WP_CONTENT_DIR . '/themes/h4/landing/marketing/pages/_common/lib/functions.php';
+use function \WPCOM\Themes\H4\Landing\Marketing\localized_tailored_flow_url;
+
 if ( ! isset( $args ) ) {
 	$args = array();
 }
@@ -131,6 +137,26 @@ $happy_blocks_tabs = array(
 							<li>
 								<a role="menuitem" class="x-dropdown-link x-link" href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/professional-email/' ) ); ?>" title="<?php echo esc_attr( fixme__( 'Professional Email', __( 'Email', 'happy-blocks' ) ) ); ?>" tabindex="-1">
 									<?php echo esc_html( fixme__( 'Professional Email', __( 'Email', 'happy-blocks' ) ) ); ?>
+								</a>
+							</li>
+							<li>
+								<a role="menuitem" class="x-dropdown-link x-link" href="<?php echo esc_url( localized_tailored_flow_url( '//wordpress.com/setup/link-in-bio/intro?ref=main-menu' ) ); ?>" title="<?php echo esc_attr( fixme__( 'Link in Bio', 'happy-blocks' ) ); ?>" tabindex="-1">
+									<?php echo esc_html( fixme__( 'Link in Bio', 'happy-blocks' ) ); ?>
+								</a>
+							</li>
+							<li>
+								<a role="menuitem" class="x-dropdown-link x-link" href="<?php echo esc_url( localized_tailored_flow_url( '//wordpress.com/setup/newsletter/intro?ref=main-menu' ) ); ?>" title="<?php echo esc_attr( fixme__( 'Newsletter', 'happy-blocks' ) ); ?>" tabindex="-1">
+									<?php echo esc_html( fixme__( 'Newsletter', 'happy-blocks' ) ); ?>
+								</a>
+							</li>
+							<li>
+								<a role="menuitem" class="x-dropdown-link x-link" href="<?php echo esc_url( localized_tailored_flow_url( '//wordpress.com/setup/videopress/intro?ref=main-menu' ) ); ?>" title="<?php echo esc_attr( fixme__( 'Video', 'happy-blocks' ) ); ?>" tabindex="-1">
+									<?php echo esc_html( fixme__( 'Video', 'happy-blocks' ) ); ?>
+								</a>
+							</li>
+							<li>
+								<a role="menuitem" class="x-dropdown-link x-link" href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/create-a-course' ) ); ?>" title="<?php echo esc_attr( fixme__( 'Course', 'happy-blocks' ) ); ?>" tabindex="-1">
+									<?php echo esc_html( fixme__( 'Course', 'happy-blocks' ) ); ?>
 								</a>
 							</li>
 						</ul>

@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { capitalize, get, isEmpty } from 'lodash';
+import { capitalize, get, isEmpty, startsWith } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
@@ -72,6 +72,7 @@ class Login extends Component {
 		isJetpack: PropTypes.bool.isRequired,
 		isWhiteLogin: PropTypes.bool.isRequired,
 		isJetpackWooCommerceFlow: PropTypes.bool.isRequired,
+		isFromMigrationPlugin: PropTypes.bool,
 		isManualRenewalImmediateLoginAttempt: PropTypes.bool,
 		linkingSocialService: PropTypes.string,
 		oauth2Client: PropTypes.object,
@@ -258,6 +259,7 @@ class Login extends Component {
 			isJetpack,
 			isWhiteLogin,
 			isJetpackWooCommerceFlow,
+			isFromMigrationPlugin,
 			isP2Login,
 			wccomFrom,
 			isManualRenewalImmediateLoginAttempt,
@@ -440,6 +442,8 @@ class Login extends Component {
 					) }
 				</p>
 			);
+		} else if ( isFromMigrationPlugin ) {
+			headerText = translate( 'Log in to your account' );
 		} else if ( isJetpack ) {
 			const isJetpackMagicLinkSignUpFlow = config.isEnabled( 'jetpack/magic-link-signup' );
 			headerText = isJetpackMagicLinkSignUpFlow
@@ -710,6 +714,10 @@ export default connect(
 		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
 		isAnchorFmSignup: getIsAnchorFmSignup(
 			get( getCurrentQueryArguments( state ), 'redirect_to' )
+		),
+		isFromMigrationPlugin: startsWith(
+			get( getCurrentQueryArguments( state ), 'from' ),
+			'wpcom-migration'
 		),
 		currentQuery: getCurrentQueryArguments( state ),
 		currentRoute: getCurrentRoute( state ),

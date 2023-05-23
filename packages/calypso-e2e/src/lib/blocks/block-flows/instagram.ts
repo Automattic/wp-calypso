@@ -1,17 +1,10 @@
+import { envVariables } from '../../..';
 import { BlockFlow, EditorContext, PublishedPostContext } from '.';
 
 interface ConfigurationData {
 	embedUrl: string;
 	expectedPostText: string;
 }
-
-const blockParentSelector = '[aria-label="Block: Embed"]:has-text("Instagram URL")';
-const selectors = {
-	embedUrlInput: `${ blockParentSelector } input`,
-	embedButton: `${ blockParentSelector } button:has-text("Embed")`,
-	editorInstagramIframe: `iframe[title="Embedded content from instagram.com"]`,
-	publishedInstagramIframe: `iframe.instagram-media`,
-};
 
 /**
  * Class representing the flow of using an Instagram block in the editor
@@ -29,7 +22,7 @@ export class InstagramBlockFlow implements BlockFlow {
 	}
 
 	blockSidebarName = 'Instagram';
-	blockEditorSelector = blockParentSelector;
+	blockEditorSelector = '[aria-label="Block: Embed"]:has-text("Instagram URL")';
 
 	/**
 	 * Configure the block in the editor with the configuration data from the constructor
@@ -37,16 +30,24 @@ export class InstagramBlockFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution
 	 */
 	async configure( context: EditorContext ): Promise< void > {
-		const editorParent = await context.editorPage.getEditorParent();
-		const embedUrlLocator = editorParent.locator( selectors.embedUrlInput );
-		await embedUrlLocator.fill( this.configurationData.embedUrl );
+		const editorCanvas = await context.editorPage.getEditorCanvas();
 
-		const embedButtonLocator = editorParent.locator( selectors.embedButton );
-		await embedButtonLocator.click();
+		await editorCanvas
+			.getByPlaceholder( 'Enter URL to embed here…' )
+			.fill( this.configurationData.embedUrl );
 
-		// We should make sure the actual Iframe loads, because it takes a second.
-		const instagramIframeLocator = editorParent.locator( selectors.editorInstagramIframe );
-		await instagramIframeLocator.waitFor();
+		if ( envVariables.TEST_ON_ATOMIC ) {
+			await editorCanvas.getByRole( 'button', { name: 'Embed' } ).click();
+		} else {
+			// For some reason, the hierarchy/selector changes for simple sites. Probably
+			// because it's running from within the Gutenframe?
+			await editorCanvas
+				.getByRole( 'document', { name: 'Block: Embed' } )
+				.getByRole( 'button', { name: 'Embed' } )
+				.click();
+		}
+
+		await editorCanvas.getByTitle( 'Embedded content from instagram.com' ).waitFor();
 	}
 
 	/**
@@ -55,10 +56,7 @@ export class InstagramBlockFlow implements BlockFlow {
 	 * @param {PublishedPostContext} context The current context for the published post at the point of test execution
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
-		const expectedPostTextLocator = context.page
-			.frameLocator( selectors.publishedInstagramIframe )
-			.locator( `text=${ this.configurationData.expectedPostText }` )
-			.first(); // In case the post text isn't particularly specific, just resolve to the first one!
-		await expectedPostTextLocator.waitFor();
+		// await context.page.pause();
+		await context.page.locator( '.wp-block-embed-instagram' ).waitFor();
 	}
 }

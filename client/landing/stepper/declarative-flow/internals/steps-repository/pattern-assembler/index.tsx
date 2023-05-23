@@ -22,6 +22,8 @@ import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
 import { recordSelectedDesign } from '../../analytics/record-design';
 import { SITE_TAGLINE, PATTERN_TYPES, NAVIGATOR_PATHS, CATEGORY_ALL_SLUG } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
+import useCategoryAll from './hooks/use-category-all';
+import useDotcomPatterns from './hooks/use-dotcom-patterns';
 import useGlobalStylesUpgradeModal from './hooks/use-global-styles-upgrade-modal';
 import usePatternCategories from './hooks/use-pattern-categories';
 import usePatternsMapByCategory from './hooks/use-patterns-map-by-category';
@@ -31,7 +33,6 @@ import NavigatorListener from './navigator-listener';
 import Notices, { getNoticeContent } from './notices/notices';
 import PatternAssemblerContainer from './pattern-assembler-container';
 import PatternLargePreview from './pattern-large-preview';
-import { useAllPatterns } from './patterns-data';
 import ScreenCategoryList from './screen-category-list';
 import ScreenColorPalettes from './screen-color-palettes';
 import ScreenFontPairings from './screen-font-pairings';
@@ -78,13 +79,15 @@ const PatternAssembler = ( {
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
 	const locale = useLocale();
 
-	// Fetching all patterns and categories
-	const allPatterns = useAllPatterns( locale );
+	// The categories api triggers the ETK plugin before the PTK api request
+	const categories = usePatternCategories( site?.ID );
+	// Fetching all patterns and categories from PTK api
+	const dotcomPatterns = useDotcomPatterns( locale );
+	const allPatterns = useCategoryAll( dotcomPatterns );
 	const patternIds = useMemo(
 		() => allPatterns.map( ( pattern ) => encodePatternId( pattern.ID ) ),
 		[ allPatterns ]
 	);
-	const categories = usePatternCategories( site?.ID );
 	const patternsMapByCategory = usePatternsMapByCategory( allPatterns, categories );
 	const {
 		header,
@@ -505,9 +508,7 @@ const PatternAssembler = ( {
 			ref={ wrapperRef }
 			tabIndex={ -1 }
 		>
-			{ isEnabled( 'pattern-assembler/notices' ) && (
-				<Notices noticeList={ noticeList } noticeOperations={ noticeOperations } />
-			) }
+			<Notices noticeList={ noticeList } noticeOperations={ noticeOperations } />
 			<div className="pattern-assembler__sidebar">
 				<NavigatorScreen path={ NAVIGATOR_PATHS.MAIN }>
 					<ScreenMain
