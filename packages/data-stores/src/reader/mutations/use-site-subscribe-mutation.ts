@@ -21,36 +21,38 @@ type SubscribeResponse = {
 const useSiteSubscribeMutation = () => {
 	const { isLoggedIn } = useIsLoggedIn();
 
-	return useMutation( async ( params: SubscribeParams ) => {
-		if ( ! params.blog_id ) {
-			throw new Error(
-				// reminder: translate this string when we add it to the UI
-				'Something went wrong while subscribing.'
+	return useMutation( {
+		mutationFn: async ( params: SubscribeParams ) => {
+			if ( ! params.blog_id ) {
+				throw new Error(
+					// reminder: translate this string when we add it to the UI
+					'Something went wrong while subscribing.'
+				);
+			}
+
+			const { path, apiVersion, body } = getSubscriptionMutationParams(
+				'new',
+				isLoggedIn,
+				params.blog_id,
+				params.url
 			);
-		}
 
-		const { path, apiVersion, body } = getSubscriptionMutationParams(
-			'new',
-			isLoggedIn,
-			params.blog_id,
-			params.url
-		);
+			const response = await callApi< SubscribeResponse >( {
+				path,
+				method: 'POST',
+				isLoggedIn,
+				apiVersion,
+				body,
+			} );
+			if ( ! response.subscribed ) {
+				throw new Error(
+					// reminder: translate this string when we add it to the UI
+					'Something went wrong while subscribing.'
+				);
+			}
 
-		const response = await callApi< SubscribeResponse >( {
-			path,
-			method: 'POST',
-			isLoggedIn,
-			apiVersion,
-			body,
-		} );
-		if ( ! response.subscribed ) {
-			throw new Error(
-				// reminder: translate this string when we add it to the UI
-				'Something went wrong while subscribing.'
-			);
-		}
-
-		return response;
+			return response;
+		},
 	} );
 };
 

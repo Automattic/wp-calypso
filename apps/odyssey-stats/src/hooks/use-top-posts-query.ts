@@ -21,12 +21,10 @@ export default function useTopPostsQuery(
 	summarize = 1,
 	max = 0
 ) {
-	return useQuery(
-		[ 'stats-widget', 'top-posts', siteId, period, num, date, summarize, max ],
-		() => queryTopPosts( siteId, { period, num, date, summarize, max } ),
-		{
-			select: ( data ) => data?.summary?.postviews,
-			staleTime: 5 * 60 * 1000,
-		}
-	);
+	return useQuery( {
+		queryKey: [ 'stats-widget', 'top-posts', siteId, period, num, date, summarize, max ],
+		queryFn: () => queryTopPosts( siteId, { period, num, date, summarize, max } ),
+		select: ( data ) => data?.summary?.postviews,
+		staleTime: 5 * 60 * 1000,
+	} );
 }

@@ -33,15 +33,13 @@ function requestMessagingAvailability() {
 }
 
 export default function useMessagingAvailability( enabled = true ) {
-	return useQuery< MessagingAvailability >(
-		[ 'getMessagingAvailability' ],
-		requestMessagingAvailability,
-		{
-			staleTime: 60 * 1000, // 1 minute
-			meta: {
-				persist: false,
-			},
-			enabled,
-		}
-	);
+	return useQuery< MessagingAvailability >( {
+		queryKey: [ 'getMessagingAvailability' ],
+		queryFn: requestMessagingAvailability,
+		staleTime: 60 * 1000, // 1 minute
+		meta: {
+			persist: false,
+		},
+		enabled,
+	} );
 }
