@@ -91,6 +91,8 @@ export default function NotificationSettings( {
 			jetmon_defer_status_down_minutes: selectedDuration?.time,
 		} as UpdateMonitorSettingsParams;
 
+		const eventParams = { ...params } as any;
+
 		if ( isMultipleEmailEnabled ) {
 			const extraEmails = allEmailItems.filter( ( item ) => ! item.isDefault );
 			params.contacts = {
@@ -102,9 +104,9 @@ export default function NotificationSettings( {
 					};
 				} ),
 			};
+			eventParams.email_contacts = params.contacts.emails.length;
 		}
-
-		recordEvent( 'notification_save_click', params );
+		recordEvent( 'notification_save_click', eventParams );
 		updateMonitorSettings( params );
 	}
 
