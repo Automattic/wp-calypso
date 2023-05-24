@@ -3,8 +3,6 @@ import styled from '@emotion/styled';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import EmptyContent from 'calypso/components/empty-content';
-import { MEDIA_QUERIES } from '../utils';
-import { CreateSiteCTA, MigrateSiteCTA } from './sites-dashboard-ctas';
 
 const NoSitesLayout = styled( EmptyContent )`
 	display: flex;
@@ -162,46 +160,5 @@ export const NoSitesMessage = ( { status, statusSiteCount }: SitesContainerProps
 		);
 	}
 
-	return (
-		<NoSitesLayout
-			css={ {
-				maxWidth: '480px',
-				[ MEDIA_QUERIES.small ]: {
-					width: '100%',
-					alignItems: 'flex-start',
-					marginLeft: 0,
-					marginRight: 0,
-				},
-			} }
-			title={ <Title css={ { marginBlockEnd: 0 } }> { __( "Let's add your first site" ) } </Title> }
-			illustration=""
-		>
-			<div
-				css={ {
-					width: '100%',
-					display: 'flex',
-					flexDirection: 'column',
-				} }
-			>
-				<CreateSiteCTA />
-				<div
-					css={ {
-						margin: '32px 0',
-						[ MEDIA_QUERIES.small ]: {
-							margin: '24px 0',
-						},
-
-						'&:before': {
-							content: '""',
-							display: 'block',
-							height: '1px',
-							opacity: 0.64,
-							background: '#DCDCDE',
-						},
-					} }
-				/>
-				<MigrateSiteCTA />
-			</div>
-		</NoSitesLayout>
-	);
+	return null;
 };
