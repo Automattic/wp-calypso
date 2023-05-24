@@ -15,6 +15,7 @@ const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 
 const {
 	cleanEmptyObject,
+	ExperimentalBlockEditorProvider,
 	GlobalStylesContext,
 	useGlobalStylesOutput,
 	useGlobalSetting,
@@ -36,6 +37,7 @@ const mergeBaseAndUserConfigs = ( base: GlobalStylesObject, user: GlobalStylesOb
 
 export {
 	cleanEmptyObject,
+	ExperimentalBlockEditorProvider,
 	GlobalStylesContext,
 	useGlobalStylesOutput,
 	useGlobalSetting,
