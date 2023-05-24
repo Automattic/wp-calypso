@@ -15,6 +15,7 @@ import {
 	hasLoadedSitePurchasesFromServer,
 	getPurchasesError,
 } from 'calypso/state/purchases/selectors';
+import canCurrentUserStartSiteOwnerTransfer from 'calypso/state/selectors/can-current-user-start-site-owner-transfer';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import hasCancelableSitePurchases from 'calypso/state/selectors/has-cancelable-site-purchases';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -206,7 +207,8 @@ export default compose( [
 			} );
 
 			const showStartSiteTransfer =
-				isEnabled( 'yolo/site-transfers-i1' ) && ! isJetpack && ! isVip && ! isP2Hub && ! isAtomic;
+				isEnabled( 'yolo/site-transfers-i1' ) &&
+				canCurrentUserStartSiteOwnerTransfer( state, siteId );
 
 			return {
 				site,

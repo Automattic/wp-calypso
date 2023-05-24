@@ -1,16 +1,12 @@
 import page from 'page';
 import { billingHistory } from 'calypso/me/purchases/paths';
 import SiteSettingsMain from 'calypso/my-sites/site-settings/main';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import canCurrentUserStartSiteOwnerTransfer from 'calypso/state/selectors/can-current-user-start-site-owner-transfer';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import {
-	getSelectedSiteId,
-	getSelectedSiteSlug,
-	getSelectedSite,
-} from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import DeleteSite from './delete-site';
 import DisconnectSite from './disconnect-site';
 import ConfirmDisconnection from './disconnect-site/confirm';
@@ -39,26 +35,6 @@ function canDeleteSite( state, siteId ) {
 	return true;
 }
 
-function canStartSiteOwnerTransfer( state, siteId ) {
-	const userId = getCurrentUserId( state );
-	const siteOwnerId = getSelectedSite( state )?.site_owner;
-	if ( ! siteOwnerId || ! userId ) {
-		return false;
-	}
-
-	if ( isJetpackSite( state, siteId ) ) {
-		// Current user can't transfer a Jetpack site
-		return false;
-	}
-
-	if ( isVipSite( state, siteId ) ) {
-		// Current user can't transfer a VIP site
-		return false;
-	}
-
-	return siteOwnerId === userId;
-}
-
 export function redirectIfCantDeleteSite( context, next ) {
 	const state = context.store.getState();
 
@@ -71,7 +47,7 @@ export function redirectIfCantDeleteSite( context, next ) {
 
 export function redirectIfCantStartSiteOwnerTransfer( context, next ) {
 	const state = context.store.getState();
-	if ( ! canStartSiteOwnerTransfer( state, getSelectedSiteId( state ) ) ) {
+	if ( ! canCurrentUserStartSiteOwnerTransfer( state, getSelectedSiteId( state ) ) ) {
 		return page.redirect( '/settings/general/' + getSelectedSiteSlug( state ) );
 	}
 	next();
