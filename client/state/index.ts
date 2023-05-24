@@ -7,6 +7,7 @@ import {
 import { AnyAction, createStore, applyMiddleware, compose, Store, StoreEnhancer } from 'redux';
 import dynamicMiddlewares from 'redux-dynamic-middlewares';
 import thunkMiddleware from 'redux-thunk';
+import { WithAddReducer } from 'calypso/state/add-reducer';
 import wpcomApiMiddleware from 'calypso/state/data-layer/wpcom-api-middleware';
 import { addReducerEnhancer } from 'calypso/state/utils/add-reducer-enhancer';
 import actionLogger from './action-log';
@@ -17,7 +18,7 @@ import { IAppState, CalypsoDispatch } from './types';
 export function createReduxStore(
 	initialState: Record< string, unknown >,
 	reducer = initialReducer
-): Store {
+): Store & WithAddReducer {
 	const isBrowser = typeof window === 'object';
 	const isDesktop = isEnabled( 'desktop' );
 	const isAudioSupported = typeof window === 'object' && typeof window.Audio === 'function';
