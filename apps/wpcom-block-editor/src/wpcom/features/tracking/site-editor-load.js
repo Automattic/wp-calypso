@@ -9,7 +9,7 @@ registerPlugin( 'wpcom-site-editor-load', {
 			return;
 		}
 		// this is no longer, strictly speaking, a "calypso" page view, but this is for back compat post-un-iframing.
-		tracksRecordEvent( 'caplyso_page_view', { path: '/:post_type/:site' } );
+		tracksRecordEvent( 'calypso_page_view', { path: '/:post_type/:site' } );
 		// @todo handle canvas=edit case: is the nav sidebar open? None of the `select('core/edit-site')` selectors seem to work.
 	},
 } );
