@@ -380,6 +380,7 @@ export default function WPCheckout( {
 			/>
 			{ contactDetailsType !== 'none' && (
 				<CheckoutStep
+					className="checkout-contact-form-step"
 					stepId="contact-form"
 					isCompleteCallback={ async () => {
 						// Touch the fields so they display validation errors
