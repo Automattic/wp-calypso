@@ -22,6 +22,15 @@ export type AllowedStatusTypes =
 	| 'disabled'
 	| 'critical';
 
+interface MonitorContactEmail {
+	name: string;
+	email_address: string;
+	verified: boolean;
+}
+interface MonitorContacts {
+	emails: Array< MonitorContactEmail >;
+}
+
 export interface MonitorSettings {
 	monitor_active: boolean;
 	monitor_site_status: boolean;
@@ -30,6 +39,7 @@ export interface MonitorSettings {
 	monitor_user_emails: Array< string >;
 	monitor_user_email_notifications: boolean;
 	monitor_user_wp_note_notifications: boolean;
+	monitor_notify_additional_user_emails: Array< MonitorContactEmail >;
 }
 
 interface StatsObject {
@@ -227,6 +237,7 @@ export interface UpdateMonitorSettingsAPIResponse {
 		email_notifications: boolean;
 		wp_note_notifications: boolean;
 		jetmon_defer_status_down_minutes: number;
+		contacts?: MonitorContacts;
 	};
 }
 
@@ -234,6 +245,7 @@ export interface UpdateMonitorSettingsParams {
 	wp_note_notifications?: boolean;
 	email_notifications?: boolean;
 	jetmon_defer_status_down_minutes?: number;
+	contacts?: MonitorContacts;
 }
 export interface UpdateMonitorSettingsArgs {
 	siteId: number;
