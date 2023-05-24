@@ -3,8 +3,9 @@ const config = require( '@automattic/calypso-config' );
 const chalk = require( 'chalk' );
 const webpack = require( 'webpack' );
 const webpackMiddleware = require( 'webpack-dev-middleware' );
-const hotMiddleware = require( 'webpack-hot-middleware' );
+//const hotMiddleware = require( 'webpack-hot-middleware' );
 const webpackConfig = require( 'calypso/webpack.config' );
+const hotMiddleware = require( './webpack-hot-middleware-ws.js' );
 
 const protocol = config( 'protocol' );
 const host = config( 'hostname' );
