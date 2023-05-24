@@ -164,7 +164,6 @@ export default function CompanyDetailsForm( {
 							} }
 							options={ countryOptions }
 							disabled={ isLoading }
-							loading={ countryOptions.length === 0 }
 						/>
 					) }
 
