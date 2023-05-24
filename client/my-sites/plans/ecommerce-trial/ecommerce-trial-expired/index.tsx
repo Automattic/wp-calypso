@@ -13,7 +13,6 @@ import { WooExpressPlans } from 'calypso/my-sites/plans/ecommerce-trial/wooexpre
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-
 import './style.scss';
 
 const ECommerceTrialExpired = (): JSX.Element => {
@@ -96,6 +95,22 @@ const ECommerceTrialExpired = (): JSX.Element => {
 					yearlyControlProps={ yearlyControlProps }
 					showIntervalToggle={ true }
 				/>
+
+				<div className="enterprise-ecommerce__banner">
+					<div className="enterprise-ecommerce__content">
+						<h3 className="enterprise-ecommerce__title">{ translate( 'Enterprise ecommerce' ) }</h3>
+						<div className="enterprise-ecommerce__subtitle">
+							{ translate(
+								'Learn how Woo can support the unique needs of businesses using WooCommerce at scale.'
+							) }
+						</div>
+					</div>
+					<div className="enterprise-ecommerce__cta">
+						<Button href="https://woocommerce.com/enterprise-ecommerce/?utm_source=wooexpress&utm_campaign=plans_grid">
+							{ translate( 'Learn more' ) }
+						</Button>
+					</div>
+				</div>
 
 				<div className="ecommerce-trial-expired__footer">
 					<Button href={ exportUrl }>
