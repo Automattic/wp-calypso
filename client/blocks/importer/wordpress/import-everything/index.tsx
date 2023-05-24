@@ -16,6 +16,7 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { receiveSite, requestSite, updateSiteMigrationMeta } from 'calypso/state/sites/actions';
 import { getSite, getSiteAdminUrl, isJetpackSite } from 'calypso/state/sites/selectors';
+import { IAppState } from 'calypso/state/types';
 import DomainInfo from '../../components/domain-info';
 import DoneButton from '../../components/done-button';
 import GettingStartedVideo from '../../components/getting-started-video';
@@ -323,7 +324,7 @@ export class ImportEverything extends SectionMigrate {
 }
 
 export const connector = connect(
-	( state, ownProps: Partial< Props > ) => {
+	( state: IAppState, ownProps: Partial< Props > ) => {
 		return {
 			isTargetSiteAtomic: !! isSiteAutomatedTransfer( state, ownProps.targetSiteId as number ),
 			isTargetSiteJetpack: !! isJetpackSite( state, ownProps.targetSiteId as number ),

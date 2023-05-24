@@ -14,6 +14,7 @@ import Main from 'calypso/components/main';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { getSiteProducts, getSitePlan } from 'calypso/state/sites/selectors';
+import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { SitePlan } from 'calypso/state/sites/selectors/get-site-plan';
 import type { SiteProduct } from 'calypso/state/sites/selectors/get-site-products';
@@ -150,7 +151,7 @@ function UpsellSwitch( props: Props ) {
 	return display;
 }
 
-export default connect( ( state, { getStateForSite, isRequestingForSite }: Props ) => {
+export default connect( ( state: IAppState, { getStateForSite, isRequestingForSite }: Props ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteState = getStateForSite( state, siteId );
 	const atomicSite = ( siteId && isAtomicSite( state, siteId ) ) as boolean;

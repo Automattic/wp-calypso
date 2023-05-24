@@ -9,6 +9,7 @@ import {
 	hasLoadedSitePurchasesFromServer,
 	isFetchingSitePurchases,
 } from 'calypso/state/purchases/selectors';
+import { IAppState } from 'calypso/state/types';
 import DomainInfoCard from '..';
 import type { DomainDeleteInfoCardProps, DomainInfoCardProps } from '../types';
 
@@ -85,7 +86,7 @@ const DomainDeleteInfoCard = ( {
 	);
 };
 
-export default connect( ( state, ownProps: DomainInfoCardProps ) => {
+export default connect( ( state: IAppState, ownProps: DomainInfoCardProps ) => {
 	const { subscriptionId } = ownProps.domain;
 	return {
 		purchase: getByPurchaseId( state, Number( subscriptionId ) ),

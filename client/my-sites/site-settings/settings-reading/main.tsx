@@ -6,6 +6,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import { getSiteUrl } from 'calypso/state/sites/selectors';
+import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { NewsletterSettingsSection } from '../reading-newsletter-settings';
 import { RssFeedSettingsSection } from '../reading-rss-feed-settings';
@@ -76,7 +77,7 @@ const getFormSettings = ( settings: unknown & Fields ) => {
 	};
 };
 
-const connectComponent = connect( ( state ) => {
+const connectComponent = connect( ( state: IAppState ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteUrl = siteId && getSiteUrl( state, siteId );
 	return {
