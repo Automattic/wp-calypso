@@ -143,7 +143,6 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 						isTransfering={ isTransferring }
 						isTransferCompleted={ isTransferCompleted }
 						hasError={ isErrored }
-						isCompact={ true }
 					/>
 				) }
 			</Column>

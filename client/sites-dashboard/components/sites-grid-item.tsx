@@ -83,20 +83,6 @@ const ellipsis = css( {
 	},
 } );
 
-const LoaderNoticeContainer = css( {
-	position: 'absolute',
-	top: 0,
-	left: 0,
-	padding: 6,
-	width: '100%',
-	boxSizing: 'border-box',
-	'.notice__text': {
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: 'space-between',
-	},
-} );
-
 interface SitesGridItemProps {
 	site: SiteExcerptData;
 	showLaunchNag?: boolean;
@@ -161,14 +147,6 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 					{ showSiteRenewLink && site.plan?.expired && (
 						<SitesGridActionRenew site={ site } hideRenewLink={ isECommerceTrialSite } />
 					) }
-					{ wasTransferring && (
-						<TransferNoticeWrapper
-							className={ LoaderNoticeContainer }
-							isTransfering={ isTransferring }
-							isTransferCompleted={ isTransferCompleted }
-							hasError={ isErrored }
-						/>
-					) }
 				</>
 			}
 			primary={
@@ -207,7 +185,14 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 					<SiteUrl href={ siteUrl } title={ siteUrl }>
 						<Truncated>{ displaySiteUrl( siteUrl ) }</Truncated>
 					</SiteUrl>
-					{ showLaunchNag && <SiteLaunchNag site={ site } /> }
+					{ ! wasTransferring && showLaunchNag && <SiteLaunchNag site={ site } /> }
+					{ wasTransferring && (
+						<TransferNoticeWrapper
+							isTransfering={ isTransferring }
+							isTransferCompleted={ isTransferCompleted }
+							hasError={ isErrored }
+						/>
+					) }
 				</SitesGridItemSecondary>
 			}
 		/>
