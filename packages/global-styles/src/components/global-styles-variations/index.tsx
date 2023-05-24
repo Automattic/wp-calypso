@@ -73,6 +73,11 @@ const GlobalStylesVariation = ( {
 				} ) as string
 			}
 		>
+			{ globalStylesVariation.slug === DEFAULT_GLOBAL_STYLES_VARIATION_SLUG && (
+				<div className="global-styles-variations__free-badge">
+					<span>{ translate( 'Free' ) }</span>
+				</div>
+			) }
 			<div className="global-styles-variation__item-preview">
 				<GlobalStylesContext.Provider value={ context }>
 					<GlobalStylesVariationPreview
@@ -118,43 +123,46 @@ const GlobalStylesVariations = ( {
 
 	return (
 		<GlobalStylesContext.Provider value={ { base: baseGlobalStyles } }>
-			<div>
-				<div className="global-styles-variations__header">
-					<h2>
-						{ translate( 'Default style' ) }
-						<div className="global-styles-variations__free-badge">
-							<span>{ translate( 'Free' ) }</span>
-						</div>
-					</h2>
-				</div>
-				<div className="global-styles-variations">
-					<GlobalStylesVariation
-						key="base"
-						globalStylesVariation={ baseGlobalStyles }
-						isActive={
-							! selectedGlobalStylesVariation ||
-							isDefaultGlobalStyleVariationSlug( selectedGlobalStylesVariation )
-						}
-						showOnlyHoverView={ showOnlyHoverViewDefaultVariation }
-						onSelect={ () => onSelect( baseGlobalStyles ) }
-					/>
-				</div>
-
-				<div className="global-styles-variations__header">
-					<h2> { translate( 'Premium styles' ) } </h2>
-					<div>
-						<p>{ premiumStylesDescription }</p>
+			<div className="global-styles-variations__container">
+				<div className="global-styles-variations__type">
+					<div className="global-styles-variations__header">
+						<h2>
+							{ translate( 'Default style' ) }
+							<div className="global-styles-variations__free-badge">
+								<span>{ translate( 'Free' ) }</span>
+							</div>
+						</h2>
+					</div>
+					<div className="global-styles-variations">
+						<GlobalStylesVariation
+							key="base"
+							globalStylesVariation={ baseGlobalStyles }
+							isActive={
+								! selectedGlobalStylesVariation ||
+								isDefaultGlobalStyleVariationSlug( selectedGlobalStylesVariation )
+							}
+							showOnlyHoverView={ showOnlyHoverViewDefaultVariation }
+							onSelect={ () => onSelect( baseGlobalStyles ) }
+						/>
 					</div>
 				</div>
-				<div className="global-styles-variations">
-					{ globalStylesVariationsWithoutDefault.map( ( globalStylesVariation, index ) => (
-						<GlobalStylesVariation
-							key={ index }
-							globalStylesVariation={ globalStylesVariation }
-							isActive={ globalStylesVariation.slug === selectedGlobalStylesVariation?.slug }
-							onSelect={ () => onSelect( globalStylesVariation ) }
-						/>
-					) ) }
+				<div className="global-styles-variations__type">
+					<div className="global-styles-variations__header">
+						<h2> { translate( 'Premium styles' ) } </h2>
+						<div>
+							<p>{ premiumStylesDescription }</p>
+						</div>
+					</div>
+					<div className="global-styles-variations">
+						{ globalStylesVariationsWithoutDefault.map( ( globalStylesVariation, index ) => (
+							<GlobalStylesVariation
+								key={ index }
+								globalStylesVariation={ globalStylesVariation }
+								isActive={ globalStylesVariation.slug === selectedGlobalStylesVariation?.slug }
+								onSelect={ () => onSelect( globalStylesVariation ) }
+							/>
+						) ) }
+					</div>
 				</div>
 			</div>
 		</GlobalStylesContext.Provider>

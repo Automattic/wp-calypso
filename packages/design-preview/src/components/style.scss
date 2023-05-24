@@ -21,14 +21,20 @@
 	box-shadow: -4px 0 8px rgb(0 0 0 / 7%);
 	box-sizing: border-box;
 	display: flex;
-	height: 96px;
 	inset-inline-start: 0;
 	inset-inline-end: 0;
 	overflow: auto;
-	padding: 8px 24px 0;
+	padding: 8px 8px 0;
 	position: fixed;
 	top: 0;
 	z-index: z-index(".is-section-stepper", ".design-preview__sticky-variations");
+
+	.global-styles-variations__container {
+		flex-direction: row;
+		@include break-xlarge {
+			flex-direction: column;
+		}
+	}
 
 	.design-preview__sidebar-action-buttons {
 		display: none;
@@ -199,8 +205,13 @@
 	.global-styles-variations__header {
 		p {
 			color: var(--studio-gray-100);
-			font-size: 0.875rem;
-			line-height: 20px;
+			display: none;
+		}
+
+		@include break-xlarge {
+			p {
+				display: block;
+			}
 		}
 
 		h2 {
@@ -231,7 +242,7 @@
 		.global-styles-variations {
 			box-sizing: border-box;
 			display: grid;
-			gap: 12px;
+			column-gap: 12px;
 			grid-template-columns: repeat(2, 1fr);
 			width: 100%;
 
