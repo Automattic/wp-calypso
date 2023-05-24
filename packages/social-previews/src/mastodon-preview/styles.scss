@@ -14,6 +14,7 @@
 	padding: 1rem;
 
 	background-color: $mastodon-preview-background-color;
+	border: 1px solid #c0cdd9;
 	color: $mastodon-preview-text-color;
 
 	font-family: $mastodon-preview-font-family;
@@ -31,6 +32,7 @@
 .mastodon-preview__img {
 	display: block;
 
+	width: 100%;
 	margin: 0.875rem auto 0;
 
 	border-radius: 4px;
