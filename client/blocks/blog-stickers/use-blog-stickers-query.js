@@ -8,13 +8,11 @@ export const useBlogStickersQuery = ( blogId, queryOptions = {} ) => {
 	const teams = useSelector( getReaderTeams );
 	const isAutomattician = isAutomatticTeamMember( teams );
 
-	return useQuery(
-		[ 'blog-stickers', blogId ],
-		() => wp.req.get( `/sites/${ blogId }/blog-stickers` ),
-		{
-			...queryOptions,
-			enabled: !! blogId && isAutomattician,
-			staleTime: 1000 * 60 * 5, // 5 minutes
-		}
-	);
+	return useQuery( {
+		queryKey: [ 'blog-stickers', blogId ],
+		queryFn: () => wp.req.get( `/sites/${ blogId }/blog-stickers` ),
+		...queryOptions,
+		enabled: !! blogId && isAutomattician,
+		staleTime: 1000 * 60 * 5,
+	} );
 };

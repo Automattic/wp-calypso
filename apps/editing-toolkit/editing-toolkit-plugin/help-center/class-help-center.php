@@ -195,6 +195,10 @@ class Help_Center {
 		$controller = new WP_REST_Help_Center_Search();
 		$controller->register_rest_route();
 
+		require_once __DIR__ . '/class-wp-rest-help-center-jetpack-search-ai.php';
+		$controller = new WP_REST_Help_Center_Jetpack_Search_AI();
+		$controller->register_rest_route();
+
 		require_once __DIR__ . '/class-wp-rest-help-center-fetch-post.php';
 		$controller = new WP_REST_Help_Center_Fetch_Post();
 		$controller->register_rest_route();

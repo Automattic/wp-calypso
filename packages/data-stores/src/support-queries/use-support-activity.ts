@@ -6,9 +6,9 @@ import type { SupportActivity } from './types';
 const ACTIVE_STATUSES = [ 'New', 'Open', 'Hold' ];
 
 export function useSupportActivity( enabled = true ) {
-	return useQuery(
-		[ 'help-support-activity' ],
-		() =>
+	return useQuery( {
+		queryKey: [ 'help-support-activity' ],
+		queryFn: () =>
 			canAccessWpcomApis()
 				? wpcomRequest< SupportActivity[] >( {
 						path: 'support-activity',
@@ -19,18 +19,16 @@ export function useSupportActivity( enabled = true ) {
 						path: 'help-center/support-activity',
 						global: true,
 				  } as APIFetchOptions ),
-		{
-			refetchOnWindowFocus: false,
-			keepPreviousData: false,
-			refetchOnMount: true,
-			enabled,
-			select: ( activities ) => {
-				return activities.filter( ( activity ) => ACTIVE_STATUSES.includes( activity.status ) );
-			},
-			staleTime: 30 * 60 * 1000,
-			meta: {
-				persist: false,
-			},
-		}
-	);
+		refetchOnWindowFocus: false,
+		keepPreviousData: false,
+		refetchOnMount: true,
+		enabled,
+		select: ( activities ) => {
+			return activities.filter( ( activity ) => ACTIVE_STATUSES.includes( activity.status ) );
+		},
+		staleTime: 30 * 60 * 1000,
+		meta: {
+			persist: false,
+		},
+	} );
 }

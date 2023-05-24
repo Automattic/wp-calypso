@@ -7,9 +7,9 @@ const useSiteSubscriptionDetailsQuery = ( siteId: string ) => {
 	const { isLoggedIn } = useIsLoggedIn();
 	const enabled = useIsQueryEnabled();
 	const cacheKey = useCacheKey( [ 'read', 'site-subscription-details', siteId ] );
-	return useQuery< SiteSubscriptionDetails >(
-		cacheKey,
-		async () => {
+	return useQuery< SiteSubscriptionDetails >( {
+		queryKey: cacheKey,
+		queryFn: async () => {
 			const subscriptionDetails = await callApi< SiteSubscriptionDetailsAPIResponse >( {
 				path: '/read/sites/' + siteId + '/subscription-details',
 				isLoggedIn,
@@ -18,11 +18,9 @@ const useSiteSubscriptionDetailsQuery = ( siteId: string ) => {
 			} );
 			return subscriptionDetails;
 		},
-		{
-			enabled,
-			refetchOnWindowFocus: false,
-		}
-	);
+		enabled,
+		refetchOnWindowFocus: false,
+	} );
 };
 
 export default useSiteSubscriptionDetailsQuery;

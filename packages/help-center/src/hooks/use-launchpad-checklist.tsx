@@ -46,7 +46,9 @@ export const useLaunchpadChecklist = (
 	siteIntent: string | null = null
 ) => {
 	const key = [ 'launchpad-checklist', siteSlug ];
-	const queryResult = useQuery( key, () => fetchLaunchpadChecklist( siteSlug, siteIntent ), {
+	const queryResult = useQuery( {
+		queryKey: key,
+		queryFn: () => fetchLaunchpadChecklist( siteSlug, siteIntent ),
 		retry: 3,
 		placeholderData: { checklist: [] },
 		enabled: !! siteSlug && !! siteIntent,

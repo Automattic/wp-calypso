@@ -16,9 +16,9 @@ export const useHelpSearchQuery = (
 ) => {
 	const queryClient = useQueryClient();
 
-	return useQuery< SearchResult[] >(
-		[ 'help-center-search', search, sectionName ],
-		() =>
+	return useQuery< SearchResult[] >( {
+		queryKey: [ 'help-center-search', search, sectionName ],
+		queryFn: () =>
 			canAccessWpcomApis()
 				? wpcomRequest( {
 						path: `help/search/wpcom?query=${ encodeURIComponent(
@@ -37,31 +37,29 @@ export const useHelpSearchQuery = (
 							sectionName
 						) }`,
 				  } as APIFetchOptions ),
-		{
-			onSuccess: async ( data ) => {
-				if ( ! data[ 0 ]?.content ) {
-					const newData = await Promise.all(
-						data.map( async ( result: SearchResult ) => {
-							const article: { [ content: string ]: string } = canAccessWpcomApis()
-								? await wpcomRequest( {
-										path: `help/article/${ result.blog_id }/${ result.post_id }`,
-										apiNamespace: 'wpcom/v2/',
-										apiVersion: '2',
-								  } )
-								: await apiFetch( {
-										global: true,
-										path: `/help-center/fetch-post?blog_id=${ result.blog_id }&post_id=${ result.post_id }`,
-								  } as APIFetchOptions );
-							return { ...result, content: article.content };
-						} )
-					);
-					queryClient.setQueryData( [ 'help', search ], newData );
-				}
-			},
-			refetchOnWindowFocus: false,
-			refetchOnMount: true,
-			enabled: true,
-			...queryOptions,
-		}
-	);
+		onSuccess: async ( data ) => {
+			if ( ! data[ 0 ]?.content ) {
+				const newData = await Promise.all(
+					data.map( async ( result: SearchResult ) => {
+						const article: { [ content: string ]: string } = canAccessWpcomApis()
+							? await wpcomRequest( {
+									path: `help/article/${ result.blog_id }/${ result.post_id }`,
+									apiNamespace: 'wpcom/v2/',
+									apiVersion: '2',
+							  } )
+							: await apiFetch( {
+									global: true,
+									path: `/help-center/fetch-post?blog_id=${ result.blog_id }&post_id=${ result.post_id }`,
+							  } as APIFetchOptions );
+						return { ...result, content: article.content };
+					} )
+				);
+				queryClient.setQueryData( [ 'help', search ], newData );
+			}
+		},
+		refetchOnWindowFocus: false,
+		refetchOnMount: true,
+		enabled: true,
+		...queryOptions,
+	} );
 };

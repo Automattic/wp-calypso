@@ -19,6 +19,7 @@ import type {
 	StateMonitorSettingsEmail,
 	AllowedMonitorContactActions,
 	MonitorSettingsEmail,
+	UpdateMonitorSettingsParams,
 } from '../../sites-overview/types';
 
 import './style.scss';
@@ -40,6 +41,7 @@ export default function NotificationSettings( {
 	bulkUpdateSettings,
 	isLargeScreen,
 }: Props ) {
+	const isBulkUpdate = !! bulkUpdateSettings;
 	const translate = useTranslate();
 	const { updateMonitorSettings, isLoading, isComplete } = useUpdateMonitorSettings( sites );
 	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( sites, isLargeScreen );
@@ -59,6 +61,10 @@ export default function NotificationSettings( {
 	const [ isAddEmailModalOpen, setIsAddEmailModalOpen ] = useState< boolean >( false );
 	const [ selectedEmail, setSelectedEmail ] = useState< StateMonitorSettingsEmail | undefined >();
 	const [ selectedAction, setSelectedAction ] = useState< AllowedMonitorContactActions >();
+
+	const isMultipleEmailEnabled = isEnabled(
+		'jetpack/pro-dashboard-monitor-multiple-email-recipients'
+	);
 
 	const toggleAddEmailModal = (
 		item?: StateMonitorSettingsEmail,
@@ -84,8 +90,24 @@ export default function NotificationSettings( {
 			wp_note_notifications: enableMobileNotification,
 			email_notifications: enableEmailNotification,
 			jetmon_defer_status_down_minutes: selectedDuration?.time,
-		};
-		recordEvent( 'notification_save_click', params );
+		} as UpdateMonitorSettingsParams;
+
+		const eventParams = { ...params } as any; // Adding eventParams since parameters for tracking events should be flat, not nested.
+
+		if ( isMultipleEmailEnabled ) {
+			const extraEmails = allEmailItems.filter( ( item ) => ! item.isDefault );
+			params.contacts = {
+				emails: extraEmails.map( ( item ) => {
+					return {
+						name: item.name,
+						email_address: item.email,
+						verified: item.verified,
+					};
+				} ),
+			};
+			eventParams.email_contacts = params.contacts.emails.length;
+		}
+		recordEvent( 'notification_save_click', eventParams );
 		updateMonitorSettings( params );
 	}
 
@@ -93,10 +115,6 @@ export default function NotificationSettings( {
 		recordEvent( 'duration_select', { duration: duration.time } );
 		setSelectedDuration( duration );
 	}
-
-	const isMultipleEmailEnabled = isEnabled(
-		'jetpack/pro-dashboard-monitor-multiple-email-recipients'
-	);
 
 	const handleSetEmailItems = useCallback(
 		( settings: MonitorSettings ) => {
@@ -106,15 +124,22 @@ export default function NotificationSettings( {
 			if ( isMultipleEmailEnabled ) {
 				const userEmailItems = userEmails.map( ( email ) => ( {
 					email,
-					name: 'Default Email', //FIXME: This should be dynamic.
+					name: translate( 'Default account email' ),
 					isDefault: true,
 					verified: true,
 				} ) );
-				const siteEmailItems: Array< MonitorSettingsEmail > = []; // FIXME: This should be dynamic.
+				let siteEmailItems: Array< MonitorSettingsEmail > = [];
+				if ( ! isBulkUpdate && settings.monitor_notify_additional_user_emails ) {
+					siteEmailItems = settings.monitor_notify_additional_user_emails.map( ( item ) => ( {
+						email: item.email_address,
+						name: item.name,
+						verified: item.verified,
+					} ) );
+				}
 				setAllEmailItems( [ ...userEmailItems, ...siteEmailItems ] );
 			}
 		},
-		[ isMultipleEmailEnabled ]
+		[ isBulkUpdate, isMultipleEmailEnabled, translate ]
 	);
 
 	useEffect( () => {
@@ -160,6 +185,7 @@ export default function NotificationSettings( {
 				selectedAction={ selectedAction }
 				allEmailItems={ allEmailItems }
 				setAllEmailItems={ setAllEmailItems }
+				recordEvent={ recordEvent }
 			/>
 		);
 	}
@@ -271,6 +297,7 @@ export default function NotificationSettings( {
 						<ConfigureEmailNotification
 							toggleModal={ toggleAddEmailModal }
 							allEmailItems={ allEmailItems }
+							recordEvent={ recordEvent }
 						/>
 					) }
 				</div>

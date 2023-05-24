@@ -28,11 +28,19 @@ interface SitesGridProps {
 	isLoading: boolean;
 	sites: SiteExcerptData[];
 	siteSelectorMode?: boolean;
+	showLinkInBioBanner?: boolean;
 	onSiteSelectBtnClick?: ( site: SiteExcerptData ) => void;
 }
 
 export const SitesGrid = ( props: SitesGridProps ) => {
-	const { sites, isLoading, className, siteSelectorMode = false, onSiteSelectBtnClick } = props;
+	const {
+		sites,
+		isLoading,
+		className,
+		showLinkInBioBanner = true,
+		siteSelectorMode = false,
+		onSiteSelectBtnClick,
+	} = props;
 	const additionalProps = siteSelectorMode
 		? {
 				showLaunchNag: false,
@@ -52,7 +60,7 @@ export const SitesGrid = ( props: SitesGridProps ) => {
 				: sites.map( ( site ) => (
 						<SitesGridItem site={ site } key={ site.ID } { ...additionalProps } />
 				  ) ) }
-			<LinkInBioBanner displayMode="grid" />
+			{ showLinkInBioBanner && <LinkInBioBanner displayMode="grid" /> }
 		</div>
 	);
 };

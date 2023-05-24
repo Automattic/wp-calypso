@@ -210,7 +210,7 @@ describe( 'Site Actions', () => {
 					apiNamespace: 'wpcom/v2',
 					method: 'POST',
 					path: `/sites/${ siteId }/atomic/transfers`,
-					body: { software_set: softwareSet },
+					body: { software_set: softwareSet, context: 'woo-on-plans' },
 				},
 				type: 'WPCOM_REQUEST',
 			};
@@ -242,7 +242,7 @@ describe( 'Site Actions', () => {
 					apiNamespace: 'wpcom/v2',
 					method: 'POST',
 					path: `/sites/${ siteId }/atomic/transfers`,
-					body: { software_set: softwareSet },
+					body: { software_set: softwareSet, context: 'woo-on-plans' },
 				},
 				type: 'WPCOM_REQUEST',
 			};
