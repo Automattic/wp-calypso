@@ -22,7 +22,7 @@ interface Props {
 }
 
 const FontPairingVariationPreview = ( { title }: Props ) => {
-	const [ fontFamilies ] = useGlobalSetting( 'typography.fontFamilies' ) as [ FontFamily[] ];
+	const [ fontFamilies ] = useGlobalSetting( 'typography.fontFamilies.theme' ) as [ FontFamily[] ];
 	const [ textFontFamily = 'serif' ] = useGlobalStyle( 'typography.fontFamily' );
 	const [ textFontStyle = 'normal' ] = useGlobalStyle( 'typography.fontStyle' );
 	const [ textFontWeight = 400 ] = useGlobalStyle( 'typography.fontWeight' );
