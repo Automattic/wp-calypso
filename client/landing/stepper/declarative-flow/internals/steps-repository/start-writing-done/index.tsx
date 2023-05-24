@@ -1,9 +1,10 @@
 import { Button, ConfettiAnimation } from '@automattic/components';
-import { StepContainer } from '@automattic/onboarding';
+import { StepContainer, isStartWritingFlow } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { OnboardSelect } from 'calypso/../packages/data-stores/src';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { useLaunchpad } from 'calypso/data/sites/use-launchpad';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
@@ -13,7 +14,7 @@ import type { Step } from '../../types';
 
 import './styles.scss';
 
-const StartWritingDone: Step = () => {
+const StartWritingDone: Step = ( { flow } ) => {
 	const translate = useTranslate();
 	const siteSlug = useSiteSlugParam();
 	const site = useSite();
@@ -23,9 +24,38 @@ const StartWritingDone: Step = () => {
 		[]
 	);
 
+	const {
+		data: { checklist_statuses: checklistStatuses },
+	} = useLaunchpad( siteSlug );
+
 	if ( ! site ) {
 		return null;
 	}
+
+	const isFirstPostPublished = checklistStatuses.first_post_published;
+
+	const MainCta = () => {
+		const mainCtaText =
+			isStartWritingFlow( flow ) || isFirstPostPublished
+				? translate( 'Connect to social' )
+				: translate( 'Write your first post' );
+
+		const mainCtaLink =
+			isStartWritingFlow( flow ) || isFirstPostPublished
+				? `/marketing/connections/${ siteSlug }`
+				: `/post/${ siteSlug }`;
+
+		return (
+			<Button className="start-writing-done__top-content-cta-social" primary href={ mainCtaLink }>
+				{ mainCtaText }
+			</Button>
+		);
+	};
+
+	const subtitleText =
+		isStartWritingFlow( flow ) || isFirstPostPublished
+			? translate( 'Now it’s time to connect your social accounts.' )
+			: translate( 'Now it’s time to start posting.' );
 
 	return (
 		<StepContainer
@@ -37,7 +67,7 @@ const StartWritingDone: Step = () => {
 				<FormattedHeader
 					id="start-writing-done-header"
 					headerText={ translate( 'Your blog’s ready!' ) }
-					subHeaderText={ translate( 'Now it’s time to connect your social accounts.' ) }
+					subHeaderText={ subtitleText }
 					align="center"
 					subHeaderAlign="center"
 				/>
@@ -53,13 +83,7 @@ const StartWritingDone: Step = () => {
 							</div>
 						</div>
 						<div className="start-writing-done__top-content-cta">
-							<Button
-								className="start-writing-done__top-content-cta-social"
-								primary
-								href={ `/marketing/connections/${ siteSlug }` }
-							>
-								{ translate( 'Connect to social' ) }
-							</Button>
+							<MainCta />
 							<Button
 								className="start-writing-done__top-content-cta-blog"
 								href={ `https://${ siteSlug }` }
