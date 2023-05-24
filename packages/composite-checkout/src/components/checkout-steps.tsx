@@ -374,9 +374,7 @@ function CheckoutStepGroupWrapper( {
 	// Change the step if the url changes
 	useChangeStepNumberForUrl( store.actions.setActiveStepNumber );
 
-	// Note: the composite-checkout class name is also used by FullStory to avoid recording
-	// WordPress.com checkout session activity. If this class name is changed or removed, we
-	// will also need to adjust this FullStory configuration.
+	// WordPress.com checkout session activity.
 	const classNames = joinClasses( [
 		'composite-checkout',
 		...( className ? [ className ] : [] ),

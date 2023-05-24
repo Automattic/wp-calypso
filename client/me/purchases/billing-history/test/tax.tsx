@@ -3,12 +3,13 @@
  */
 
 import { render, screen } from '@testing-library/react';
-import { translate } from 'i18n-calypso';
+import { Provider as ReduxProvider } from 'react-redux';
+import { createTestReduxStore } from 'calypso/my-sites/checkout/composite-checkout/test/util';
 import {
 	BillingTransaction,
 	BillingTransactionItem,
 } from 'calypso/state/billing-transactions/types';
-import { renderTransactionAmount, transactionIncludesTax } from '../utils';
+import { TransactionAmount, transactionIncludesTax } from '../utils';
 
 const mockTransaction: BillingTransaction = {
 	currency: 'USD',
@@ -159,8 +160,13 @@ test( 'tax shown if available', () => {
 			},
 		],
 	};
+	const store = createTestReduxStore();
 
-	render( renderTransactionAmount( transaction, { translate } ) as any );
+	render(
+		<ReduxProvider store={ store }>
+			<TransactionAmount transaction={ transaction } />
+		</ReduxProvider>
+	);
 	expect( screen.getByText( /tax/ ) ).toBeInTheDocument();
 } );
 
@@ -182,7 +188,13 @@ test( 'tax includes', () => {
 		],
 	};
 
-	render( renderTransactionAmount( transaction, { translate, addingTax: false } ) as any );
+	const store = createTestReduxStore();
+
+	render(
+		<ReduxProvider store={ store }>
+			<TransactionAmount transaction={ transaction } />
+		</ReduxProvider>
+	);
 	expect( screen.getByText( `(includes ${ transaction.tax } tax)` ) ).toBeInTheDocument();
 } );
 
@@ -204,7 +216,13 @@ test( 'tax adding', () => {
 		],
 	};
 
-	render( renderTransactionAmount( transaction, { translate, addingTax: true } ) as any );
+	const store = createTestReduxStore();
+
+	render(
+		<ReduxProvider store={ store }>
+			<TransactionAmount transaction={ transaction } addingTax />
+		</ReduxProvider>
+	);
 	expect( screen.getByText( `(+${ transaction.tax } tax)` ) ).toBeInTheDocument();
 } );
 
@@ -227,7 +245,13 @@ test( 'tax includes with localized tax name', () => {
 		],
 	};
 
-	render( renderTransactionAmount( transaction, { translate, addingTax: false } ) as any );
+	const store = createTestReduxStore();
+
+	render(
+		<ReduxProvider store={ store }>
+			<TransactionAmount transaction={ transaction } />
+		</ReduxProvider>
+	);
 	expect( screen.getByText( `(includes ${ transaction.tax } VAT)` ) ).toBeInTheDocument();
 } );
 
@@ -250,7 +274,13 @@ test( 'tax adding with localized tax name', () => {
 		],
 	};
 
-	render( renderTransactionAmount( transaction, { translate, addingTax: true } ) as any );
+	const store = createTestReduxStore();
+
+	render(
+		<ReduxProvider store={ store }>
+			<TransactionAmount transaction={ transaction } addingTax />
+		</ReduxProvider>
+	);
 	expect( screen.getByText( `(+${ transaction.tax } VAT)` ) ).toBeInTheDocument();
 } );
 
@@ -265,5 +295,13 @@ test( 'tax hidden if not available', () => {
 		items: [ { ...mockItem } ],
 	};
 
-	expect( renderTransactionAmount( transaction, { translate } ) ).toEqual( '$36' );
+	const store = createTestReduxStore();
+
+	render(
+		<ReduxProvider store={ store }>
+			<TransactionAmount transaction={ transaction } />
+		</ReduxProvider>
+	);
+	expect( screen.queryByText( `(includes ${ transaction.tax } VAT)` ) ).not.toBeInTheDocument();
+	expect( screen.getByText( `$36` ) ).toBeInTheDocument();
 } );

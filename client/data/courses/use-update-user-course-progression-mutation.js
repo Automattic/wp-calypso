@@ -4,8 +4,8 @@ import wpcom from 'calypso/lib/wp';
 
 function useUpdateUserCourseProgressionMutation( queryOptions = {} ) {
 	const queryClient = useQueryClient();
-	const mutation = useMutation(
-		( { courseSlug, videoSlug } ) =>
+	const mutation = useMutation( {
+		mutationFn: ( { courseSlug, videoSlug } ) =>
 			wpcom.req.post(
 				'/courses/videos',
 				{
@@ -16,14 +16,12 @@ function useUpdateUserCourseProgressionMutation( queryOptions = {} ) {
 					video_slug: videoSlug,
 				}
 			),
-		{
-			...queryOptions,
-			onSuccess( data, variables, context ) {
-				queryClient.invalidateQueries( [ 'courses', variables.courseSlug ] );
-				queryOptions.onSuccess?.( data, variables, context );
-			},
-		}
-	);
+		...queryOptions,
+		onSuccess( data, variables, context ) {
+			queryClient.invalidateQueries( [ 'courses', variables.courseSlug ] );
+			queryOptions.onSuccess?.( data, variables, context );
+		},
+	} );
 
 	const { mutate } = mutation;
 

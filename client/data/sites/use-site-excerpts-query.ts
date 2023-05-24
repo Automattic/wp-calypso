@@ -30,7 +30,9 @@ const fetchSites = (
 export const useSiteExcerptsQuery = ( siteFilter?: string[] ) => {
 	const store = useStore();
 
-	return useQuery( [ USE_SITE_EXCERPTS_QUERY_KEY ], () => fetchSites( siteFilter ), {
+	return useQuery( {
+		queryKey: [ USE_SITE_EXCERPTS_QUERY_KEY ],
+		queryFn: () => fetchSites( siteFilter ),
 		select: ( data ) => data?.sites.map( computeFields( data?.sites ) ),
 		initialData: () => {
 			// Not using `useSelector` (i.e. calling `getSites` directly) because we

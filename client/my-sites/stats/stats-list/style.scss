@@ -494,6 +494,10 @@ ul.module-content-list-item-action-submenu {
 	display: inline-block;
 	margin: 0 1em 0 0;
 
+	button {
+		cursor: pointer;
+	}
+
 	// So that 'View' label is moved more to the right since icon has been dropped
 	@include breakpoint-deprecated( ">960px" ) {
 		.stats__module-list & {

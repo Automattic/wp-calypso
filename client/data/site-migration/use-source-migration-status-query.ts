@@ -4,18 +4,16 @@ import wp from 'calypso/lib/wp';
 import type { SiteId } from 'calypso/types';
 
 export const useSourceMigrationStatusQuery = ( sourceId: SiteId | undefined ) => {
-	return useQuery(
-		[ 'source-migration-status', sourceId ],
-		(): Promise< SourceSiteMigrationDetails > =>
+	return useQuery( {
+		queryKey: [ 'source-migration-status', sourceId ],
+		queryFn: (): Promise< SourceSiteMigrationDetails > =>
 			wp.req.get( {
 				path: '/migrations/from-source/' + encodeURIComponent( sourceId as number ),
 				apiNamespace: 'wpcom/v2',
 			} ),
-		{
-			meta: {
-				persist: false,
-			},
-			enabled: !! sourceId,
-		}
-	);
+		meta: {
+			persist: false,
+		},
+		enabled: !! sourceId,
+	} );
 };

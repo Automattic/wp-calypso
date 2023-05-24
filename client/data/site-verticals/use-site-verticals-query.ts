@@ -14,16 +14,14 @@ const useSiteVerticalsQuery = (
 ): UseQueryResult< SiteVerticalsResponse[] > => {
 	const { term } = fetchOptions;
 
-	return useQuery(
-		getCacheKey( term || '' ),
-		() => fetchSiteVerticals( { ...defaults, ...fetchOptions } ),
-		{
-			enabled: typeof term === 'string' && term !== '',
-			staleTime: Infinity,
-			refetchInterval: false,
-			refetchOnMount: 'always',
-		}
-	);
+	return useQuery( {
+		queryKey: getCacheKey( term || '' ),
+		queryFn: () => fetchSiteVerticals( { ...defaults, ...fetchOptions } ),
+		enabled: typeof term === 'string' && term !== '',
+		staleTime: Infinity,
+		refetchInterval: false,
+		refetchOnMount: 'always',
+	} );
 };
 
 export function fetchSiteVerticals(

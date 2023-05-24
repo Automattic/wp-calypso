@@ -8,7 +8,6 @@ import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, ECOMMERCE_FLOW, ecommerceFlowRecurTypes } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
-import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	setSignupCompleteSlug,
@@ -61,7 +60,6 @@ const ecommerceFlow: Flow = {
 
 		useEffect( () => {
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name, recur: recurType } );
-			recordFullStoryEvent( 'calypso_signup_start_ecommerce', { flow: this.name } );
 		}, [] );
 
 		return [

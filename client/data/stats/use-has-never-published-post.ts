@@ -17,14 +17,12 @@ export const useHasNeverPublishedPost = (
 	queryOptions: Options
 ): UseQueryResult< boolean > => {
 	const { enabled = true } = queryOptions;
-	return useQuery(
-		useHasNeverPublishedPostCacheKey( siteId, includePages ),
-		() => fetchHasNeverPublishedPost( siteId, includePages ),
-		{
-			...queryOptions,
-			enabled: !! siteId && enabled,
-		}
-	);
+	return useQuery( {
+		queryKey: useHasNeverPublishedPostCacheKey( siteId, includePages ),
+		queryFn: () => fetchHasNeverPublishedPost( siteId, includePages ),
+		...queryOptions,
+		enabled: !! siteId && enabled,
+	} );
 };
 
 function fetchHasNeverPublishedPost(

@@ -28,6 +28,29 @@ export type WPCOMTransactionEndpointResponse =
 	| WPCOMTransactionEndpointResponseSuccess
 	| WPCOMTransactionEndpointResponseRedirect;
 
+export interface TaxVendorInfo {
+	/**
+	 * The country code for this info.
+	 */
+	country_code: string;
+
+	/**
+	 * The localized name of the tax (eg: "VAT", "GST", etc.).
+	 */
+	tax_name: string;
+
+	/**
+	 * The mailing address to display on receipts as a list of strings (each
+	 * string should be on its own line).
+	 */
+	address: string[];
+
+	/**
+	 * The vendor's VAT id.
+	 */
+	vat_id: string;
+}
+
 export interface Purchase {
 	delayed_provisioning?: boolean;
 	expiry?: string;
@@ -46,6 +69,7 @@ export interface Purchase {
 	user_email: string;
 	saas_redirect_url?: string;
 	will_auto_renew?: boolean;
+	tax_vendor_info?: TaxVendorInfo;
 }
 
 export interface TransactionRequest {
@@ -519,6 +543,11 @@ export interface CountryListItemBase {
 	tax_needs_subdivision?: boolean;
 	tax_needs_organization?: boolean;
 	tax_needs_address?: boolean;
+
+	/**
+	 * The localized name of the tax (eg: "VAT", "GST", etc.).
+	 */
+	tax_name?: string;
 }
 export interface CountryListItemWithoutVat extends CountryListItemBase {
 	vat_supported: false;

@@ -4,19 +4,17 @@ import wp from 'calypso/lib/wp';
 
 const useCreateAppPasswordMutation = ( queryOptions = {} ) => {
 	const queryClient = useQueryClient();
-	const mutation = useMutation(
-		( { appName } ) =>
+	const mutation = useMutation( {
+		mutationFn: ( { appName } ) =>
 			wp.req.post( '/me/two-step/application-passwords/new', {
 				application_name: appName,
 			} ),
-		{
-			...queryOptions,
-			onSuccess( ...args ) {
-				queryClient.invalidateQueries( [ 'application-passwords' ] );
-				queryOptions.onSuccess?.( ...args );
-			},
-		}
-	);
+		...queryOptions,
+		onSuccess( ...args ) {
+			queryClient.invalidateQueries( [ 'application-passwords' ] );
+			queryOptions.onSuccess?.( ...args );
+		},
+	} );
 
 	const { mutate } = mutation;
 

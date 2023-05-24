@@ -44,7 +44,9 @@ export const HelpCenterContactPage: FC = () => {
 	const { data: supportAvailability } = useSupportAvailability( 'CHAT' );
 	const isLoading = renderChat.isLoading || renderEmail.isLoading || isLoadingSupportActivity;
 
+	const zendeskKey: string = config( 'zendesk_support_chat_key' );
 	const { data: messagingAuth } = useMessagingAuth(
+		zendeskKey,
 		Boolean( supportAvailability?.is_user_eligible )
 	);
 	useEffect( () => {
