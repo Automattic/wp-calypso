@@ -2,7 +2,6 @@ import type { CountriesState } from './countries/types';
 import type { BillingTransactionsState } from 'calypso/state/billing-transactions/types';
 import type { IMarketplaceState } from 'calypso/state/marketplace/types';
 import type { IPluginsState } from 'calypso/state/plugins/reducer';
-import type { DefaultRootState } from 'react-redux';
 import type { AnyAction } from 'redux';
 import type { ThunkDispatch } from 'redux-thunk';
 
@@ -17,7 +16,7 @@ import type { ThunkDispatch } from 'redux-thunk';
  * its selector is called (eg: in tests which do not implement dynamic
  * reducers).
  */
-export interface IAppState extends DefaultRootState {
+export interface IAppState {
 	plugins?: IPluginsState;
 	marketplace?: IMarketplaceState;
 	countries?: CountriesState;
@@ -27,4 +26,4 @@ export interface IAppState extends DefaultRootState {
 /**
  * Type of the Calypso Redux store `dispatch` function. Accepts both plain actions and thunks.
  */
-export type CalypsoDispatch = ThunkDispatch< unknown, void, AnyAction >;
+export type CalypsoDispatch = ThunkDispatch< IAppState, void, AnyAction >;
