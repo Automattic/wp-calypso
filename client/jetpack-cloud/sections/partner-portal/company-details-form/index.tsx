@@ -1,6 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { ReactChild, useCallback, useState, useMemo, ChangeEvent } from 'react';
+import { ReactChild, useCallback, useState, useMemo, ChangeEvent, useEffect } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -66,6 +66,11 @@ export default function CompanyDetailsForm( {
 
 	const country = getCountry( countryValue, countryOptions );
 	const stateOptions = stateOptionsMap[ country ];
+
+	useEffect( () => {
+		// Reset the value of state since our options have changed.
+		setAddressState( stateOptions?.length ? stateOptions[ 0 ].value : '' );
+	}, [ stateOptions ] );
 
 	const payload: PartnerDetailsPayload = useMemo(
 		() => ( {
@@ -156,8 +161,6 @@ export default function CompanyDetailsForm( {
 							value={ countryValue }
 							onChange={ ( value ) => {
 								setCountryValue( value ?? '' );
-								// Reset the value of state since it no longer matches with the selected country.
-								setAddressState( '' );
 							} }
 							options={ countryOptions }
 							disabled={ isLoading }
@@ -176,6 +179,7 @@ export default function CompanyDetailsForm( {
 							onChange={ ( value ) => setAddressState( value ?? '' ) }
 							options={ stateOptions }
 							disabled={ isLoading }
+							allowReset={ false }
 						/>
 					</FormFieldset>
 				) }
