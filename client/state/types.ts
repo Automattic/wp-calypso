@@ -1,6 +1,7 @@
 import type { CountriesState } from './countries/types';
 import type { BillingTransactionsState } from 'calypso/state/billing-transactions/types';
 import type { IMarketplaceState } from 'calypso/state/marketplace/types';
+import type { IMembershipsState } from 'calypso/state/memberships/reducer';
 import type { IPluginsState } from 'calypso/state/plugins/reducer';
 import type { AnyAction } from 'redux';
 import type { ThunkDispatch } from 'redux-thunk';
@@ -19,6 +20,7 @@ import type { ThunkDispatch } from 'redux-thunk';
 export interface IAppState {
 	plugins?: IPluginsState;
 	marketplace?: IMarketplaceState;
+	memberships?: IMembershipsState;
 	countries?: CountriesState;
 	billingTransactions?: BillingTransactionsState;
 }
