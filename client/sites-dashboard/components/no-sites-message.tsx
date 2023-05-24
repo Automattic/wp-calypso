@@ -164,23 +164,42 @@ export const NoSitesMessage = ( { status, statusSiteCount }: SitesContainerProps
 
 	return (
 		<NoSitesLayout
-			title={ <Title css={ { marginBlockEnd: 0 } }> { __( 'Add a site to start' ) } </Title> }
-			line={
-				<SecondaryText>{ __( 'Create a brand new site or import an existing one' ) }</SecondaryText>
-			}
+			css={ {
+				maxWidth: '480px',
+				[ MEDIA_QUERIES.small ]: {
+					width: '100%',
+					alignItems: 'flex-start',
+					marginLeft: 0,
+					marginRight: 0,
+				},
+			} }
+			title={ <Title css={ { marginBlockEnd: 0 } }> { __( "Let's add your first site" ) } </Title> }
 			illustration=""
 		>
 			<div
 				css={ {
+					width: '100%',
 					display: 'flex',
-					gap: 32,
-					[ MEDIA_QUERIES.small ]: {
-						gap: 16,
-						flexDirection: 'column',
-					},
+					flexDirection: 'column',
 				} }
 			>
 				<CreateSiteCTA />
+				<div
+					css={ {
+						margin: '32px 0',
+						[ MEDIA_QUERIES.small ]: {
+							margin: '24px 0',
+						},
+
+						'&:before': {
+							content: '""',
+							display: 'block',
+							height: '1px',
+							opacity: 0.64,
+							background: '#DCDCDE',
+						},
+					} }
+				/>
 				<MigrateSiteCTA />
 			</div>
 		</NoSitesLayout>

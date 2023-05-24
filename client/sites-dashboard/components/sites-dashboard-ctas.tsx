@@ -3,13 +3,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useSelector } from 'react-redux';
 import { addQueryArgs } from 'calypso/lib/url';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
-import {
-	CreateSiteIcon,
-	CREATE_SITE_ICON_SPARKLES,
-	MigrateSiteIcon,
-	MIGRATE_SITE_ICON_SPARKLES,
-} from './sites-dashboard-cta-icons';
-import { SparklingCTA } from './sparkling-cta';
+import { EmptyStateCTA } from './empty-state-cta';
 
 export const CreateSiteCTA = () => {
 	const { __ } = useI18n();
@@ -19,11 +13,11 @@ export const CreateSiteCTA = () => {
 		isEnabled( 'hosting-onboarding-i2' ) && isDevAccount ? '/setup/new-hosted-site' : '/start';
 
 	return (
-		<SparklingCTA
-			label={ __( 'Create a site' ) }
+		<EmptyStateCTA
+			heading={ __( 'New site' ) }
+			description={ __( 'Build a new site from scratch' ) }
+			cta={ __( 'Create a site' ) }
 			target={ addQueryArgs( { source: 'sites-dashboard', ref: 'calypso-nosites' }, newSiteURL ) }
-			icon={ <CreateSiteIcon /> }
-			sparkles={ CREATE_SITE_ICON_SPARKLES }
 		/>
 	);
 };
@@ -32,11 +26,11 @@ export const MigrateSiteCTA = () => {
 	const { __ } = useI18n();
 
 	return (
-		<SparklingCTA
-			label={ __( 'Migrate a site' ) }
+		<EmptyStateCTA
+			heading={ __( 'Existing site' ) }
+			description={ __( 'Bring an existing site to WordPress.com' ) }
+			cta={ __( 'Migrate a site' ) }
 			target="/setup/import-focused"
-			icon={ <MigrateSiteIcon /> }
-			sparkles={ MIGRATE_SITE_ICON_SPARKLES }
 		/>
 	);
 };
