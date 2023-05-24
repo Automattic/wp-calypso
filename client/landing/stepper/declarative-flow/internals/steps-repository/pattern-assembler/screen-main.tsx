@@ -129,7 +129,7 @@ const ScreenMain = ( {
 				className="screen-container__body screen-container__body--align-sides"
 				ref={ wrapperRef }
 			>
-				<HStack direction="column" alignment="top" spacing="4">
+				<HStack direction="column" justify="flex-start" alignment="flex-start" spacing="4">
 					<NavigatorItemGroup title={ translate( 'Layout' ) }>
 						<NavigationButtonAsItem
 							path="/header"
