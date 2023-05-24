@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import { getSitePurchases } from 'calypso/state/purchases/selectors/get-site-purchases';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSite } from 'calypso/state/ui/selectors';

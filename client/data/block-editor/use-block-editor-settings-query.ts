@@ -1,6 +1,6 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
-import { useSelector } from 'react-redux';
 import wpcom from 'calypso/lib/wp';
+import { useSelector } from 'calypso/state';
 import { getActiveTheme } from 'calypso/state/themes/selectors';
 
 type HomeTemplateSettings = {

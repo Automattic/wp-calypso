@@ -3,7 +3,6 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { CHANGE_NAME_SERVERS } from 'calypso/lib/url/support';
 import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
 import NonPrimaryDomainPlanUpsell from 'calypso/my-sites/domains/domain-management/components/domain/non-primary-domain-plan-upsell';
@@ -15,6 +14,7 @@ import {
 } from 'calypso/my-sites/domains/domain-management/name-servers/constants';
 import CustomNameserversForm from 'calypso/my-sites/domains/domain-management/name-servers/custom-nameservers-form';
 import FetchError from 'calypso/my-sites/domains/domain-management/name-servers/fetch-error';
+import { useDispatch } from 'calypso/state';
 import {
 	composeAnalytics,
 	recordGoogleEvent,

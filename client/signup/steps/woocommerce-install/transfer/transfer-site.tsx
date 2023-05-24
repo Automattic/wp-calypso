@@ -1,7 +1,7 @@
 import page from 'page';
 import { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import { useInterval } from 'calypso/lib/interval/use-interval';
+import { useSelector, useDispatch } from 'calypso/state';
 import { requestAtomicSoftwareStatus } from 'calypso/state/atomic/software/actions';
 import { getAtomicSoftwareStatus } from 'calypso/state/atomic/software/selectors';
 import {

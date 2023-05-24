@@ -1,10 +1,10 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { onboardingUrl } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 

@@ -5,7 +5,6 @@ import { useTranslate } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import moment from 'moment';
 import { useEffect, useMemo, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryPosts from 'calypso/components/data/query-posts';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
@@ -25,6 +24,7 @@ import CampaignsList from 'calypso/my-sites/promote-post-i2/components/campaigns
 import PostsList from 'calypso/my-sites/promote-post-i2/components/posts-list';
 import PostsListBanner from 'calypso/my-sites/promote-post-i2/components/posts-list-banner';
 import PromotePostTabBar from 'calypso/my-sites/promote-post-i2/components/promoted-post-filter';
+import { useDispatch, useSelector } from 'calypso/state';
 import {
 	getSitePost,
 	getPostsForQuery,

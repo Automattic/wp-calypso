@@ -4,9 +4,9 @@ import {
 	JETPACK_PLANS,
 	JETPACK_PRODUCTS_LIST,
 } from '@automattic/calypso-products';
-import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import QuerySites from 'calypso/components/data/query-sites';
+import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
 import { managePurchase } from '../paths';
 import PurchaseItem from '../purchase-item';

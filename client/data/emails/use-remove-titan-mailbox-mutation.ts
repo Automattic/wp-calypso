@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useSelector } from 'react-redux';
 import wp from 'calypso/lib/wp';
+import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getCacheKey } from './use-get-email-accounts-query';
 import type {

@@ -9,7 +9,7 @@ import { Button } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { localize, useTranslate } from 'i18n-calypso';
 import { Component } from 'react';
-import { connect, useDispatch } from 'react-redux';
+import { connect } from 'react-redux';
 import SectionHeader from 'calypso/components/section-header';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import {
@@ -20,6 +20,7 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isRequestingPlans } from 'calypso/state/plans/selectors';
 import { getPlanPrice } from 'calypso/state/products-list/selectors';

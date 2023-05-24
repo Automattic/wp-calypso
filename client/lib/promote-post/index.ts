@@ -1,9 +1,9 @@
 import config from '@automattic/calypso-config';
 import { loadScript } from '@automattic/load-script';
 import { __ } from '@wordpress/i18n';
-import { useSelector } from 'react-redux';
 import request, { requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
+import { useSelector } from 'calypso/state';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getSiteOption } from 'calypso/state/sites/selectors';

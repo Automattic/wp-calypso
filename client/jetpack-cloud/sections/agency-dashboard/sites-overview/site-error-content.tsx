@@ -1,6 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch } from 'react-redux';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 export default function SiteErrorContent( { siteUrl }: { siteUrl: string } ) {

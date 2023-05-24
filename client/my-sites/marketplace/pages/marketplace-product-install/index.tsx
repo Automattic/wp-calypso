@@ -4,7 +4,6 @@ import { ThemeProvider } from '@emotion/react';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useState, useMemo, useRef } from 'react';
-import { useSelector, useDispatch, DefaultRootState } from 'react-redux';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -20,6 +19,7 @@ import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/prog
 import useMarketplaceAdditionalSteps from 'calypso/my-sites/marketplace/pages/marketplace-product-install/use-marketplace-additional-steps';
 import theme from 'calypso/my-sites/marketplace/theme';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
+import { useSelector, useDispatch, DefaultRootState } from 'calypso/state';
 import { initiateAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';

@@ -1,7 +1,7 @@
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 
 import './style.scss';

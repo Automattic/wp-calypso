@@ -1,4 +1,4 @@
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import isJetpackCloudEligible from 'calypso/state/selectors/is-jetpack-cloud-eligible';
 import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
 import { getSiteSlug } from 'calypso/state/sites/selectors';

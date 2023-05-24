@@ -1,7 +1,7 @@
 import debugFactory from 'debug';
 import { useCallback } from 'react';
-import { useSelector } from 'react-redux';
 import getThankYouPageUrl from 'calypso/my-sites/checkout/get-thank-you-page-url';
+import { useSelector } from 'calypso/state';
 import { isMonthlyToAnnualPostPurchaseExperimentUser } from 'calypso/state/selectors/is-monthly-to-annual-post-purchase-experiment-user';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { ResponseCart } from '@automattic/shopping-cart';

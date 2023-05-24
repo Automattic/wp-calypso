@@ -6,7 +6,7 @@ import {
 } from '@automattic/calypso-products';
 import { isLinkInBioFlow, isNewsletterFlow } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import isPlanAvailableForPurchase from 'calypso/state/sites/plans/selectors/is-plan-available-for-purchase';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isPopularPlan } from '../lib/is-popular-plan';

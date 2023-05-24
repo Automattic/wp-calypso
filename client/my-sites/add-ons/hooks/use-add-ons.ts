@@ -2,7 +2,7 @@ import {
 	PRODUCT_WPCOM_CUSTOM_DESIGN,
 	PRODUCT_WPCOM_UNLIMITED_THEMES,
 } from '@automattic/calypso-products';
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import {
 	getProductBySlug,
 	getProductDescription,

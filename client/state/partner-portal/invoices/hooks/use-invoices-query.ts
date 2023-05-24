@@ -5,9 +5,9 @@ import {
 	QueryFunctionContext,
 } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch, useSelector } from 'react-redux';
 import { addQueryArgs } from 'calypso/lib/url';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
+import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getActivePartnerKeyId } from 'calypso/state/partner-portal/partner/selectors';
 import type { APIInvoices, Invoices } from 'calypso/state/partner-portal/types';

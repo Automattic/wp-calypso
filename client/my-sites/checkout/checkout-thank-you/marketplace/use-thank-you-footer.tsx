@@ -2,8 +2,8 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
-import { useSelector } from 'react-redux';
 import { ThankYouSectionProps, ThankYouNextStepProps } from 'calypso/components/thank-you/types';
+import { useSelector } from 'calypso/state';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 export function useThankYouFoooter(

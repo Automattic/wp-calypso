@@ -1,7 +1,7 @@
 import { useQuery, UseQueryOptions, UseQueryResult } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch, useSelector } from 'react-redux';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
+import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice, plainNotice } from 'calypso/state/notices/actions';
 import { getActivePartnerKeyId } from 'calypso/state/partner-portal/partner/selectors';
 

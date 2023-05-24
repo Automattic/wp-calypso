@@ -7,7 +7,6 @@ import {
 	useJetpack1TbStorageAmountText,
 } from '@automattic/calypso-products';
 import { useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import {
 	BYTES_10GB,
 	BYTES_1TB,
@@ -15,6 +14,7 @@ import {
 } from 'calypso/components/backup-storage-space/usage-warning/use-upsell-slug';
 import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
 import useItemPrice from 'calypso/my-sites/plans/jetpack-plans/use-item-price';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import type { SelectorProductWithStorage } from 'calypso/components/backup-storage-space/usage-warning/use-upsell-slug';
 

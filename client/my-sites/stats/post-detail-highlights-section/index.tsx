@@ -1,10 +1,10 @@
 import config from '@automattic/calypso-config';
 import { Card, PostStatsCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import Count from 'calypso/components/count';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { isJetpackSite } from 'calypso/state/sites/selectors';

@@ -1,10 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch, useSelector } from 'react-redux';
 import { getCacheKey as getEmailDomainsQueryKey } from 'calypso/data/domains/use-get-domains-query';
 import { getEmailAddress } from 'calypso/lib/emails';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import wp from 'calypso/lib/wp';
+import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getCacheKey as getEmailAccountsQueryKey } from './use-get-email-accounts-query';

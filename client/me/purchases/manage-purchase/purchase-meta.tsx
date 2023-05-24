@@ -8,7 +8,6 @@ import { Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -24,6 +23,7 @@ import {
 	isSubscription,
 } from 'calypso/lib/purchases';
 import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'calypso/lib/url/support';
+import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';

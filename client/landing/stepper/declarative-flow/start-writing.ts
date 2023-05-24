@@ -3,7 +3,6 @@ import { useLocale } from '@automattic/i18n-utils';
 import { START_WRITING_FLOW, replaceProductsInCart } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useSelect, useDispatch, dispatch } from '@wordpress/data';
-import { useSelector } from 'react-redux';
 import { recordSubmitStep } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-submit-step';
 import { redirect } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/util';
 import {
@@ -16,6 +15,7 @@ import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { freeSiteAddressType } from 'calypso/lib/domains/constants';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { requestSiteAddressChange } from 'calypso/state/site-address-change/actions';
 

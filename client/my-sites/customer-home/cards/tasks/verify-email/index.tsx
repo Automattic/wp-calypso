@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch, useSelector } from 'react-redux';
 import { TASK_VERIFY_EMAIL } from 'calypso/my-sites/customer-home/cards/constants';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
+import { useDispatch, useSelector } from 'calypso/state';
 import { verifyEmail } from 'calypso/state/current-user/email-verification/actions';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 

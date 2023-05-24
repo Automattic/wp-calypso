@@ -9,10 +9,10 @@ import {
 import { useDispatch, useSelect } from '@wordpress/data';
 import classnames from 'classnames';
 import { useState, useRef, useMemo } from 'react';
-import { useDispatch as useReduxDispatch } from 'react-redux';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
 import { ActiveTheme } from 'calypso/data/themes/use-active-theme-query';
 import { createRecordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { setActiveTheme } from 'calypso/state/themes/actions';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';

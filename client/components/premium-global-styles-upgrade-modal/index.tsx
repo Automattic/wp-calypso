@@ -2,9 +2,9 @@ import { PLAN_PREMIUM } from '@automattic/calypso-products';
 import { Button, Gridicon, Dialog, ScreenReaderText } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 
 import './style.scss';

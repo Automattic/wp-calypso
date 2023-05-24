@@ -1,6 +1,6 @@
 import { WeeklyHighlightCards } from '@automattic/components';
 import { useEffect, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'calypso/state';
 import { requestHighlights } from 'calypso/state/stats/highlights/actions';
 import { getHighlights } from 'calypso/state/stats/highlights/selectors';
 

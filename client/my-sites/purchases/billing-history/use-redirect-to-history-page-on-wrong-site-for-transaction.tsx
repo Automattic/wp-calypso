@@ -1,6 +1,6 @@
 import page from 'page';
 import { useEffect, useRef } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getBillingHistoryUrlFor } from '../paths';
 import type { BillingTransaction } from 'calypso/state/billing-transactions/types';

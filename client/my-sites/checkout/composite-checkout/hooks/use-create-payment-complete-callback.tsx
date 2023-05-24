@@ -3,7 +3,6 @@ import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { isURL } from '@wordpress/url';
 import debugFactory from 'debug';
 import { useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import { recordPurchase } from 'calypso/lib/analytics/record-purchase';
 import { hasEcommercePlan } from 'calypso/lib/cart-values/cart-items';
 import useSiteDomains from 'calypso/my-sites/checkout/composite-checkout/hooks/use-site-domains';
@@ -13,6 +12,7 @@ import {
 	retrieveSignupDestination,
 	clearSignupDestinationCookie,
 } from 'calypso/signup/storageUtils';
+import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { clearPurchases } from 'calypso/state/purchases/actions';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';

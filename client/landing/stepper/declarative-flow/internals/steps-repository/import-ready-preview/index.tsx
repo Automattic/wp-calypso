@@ -1,12 +1,12 @@
 import { useSelect } from '@wordpress/data';
 import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import { ReadyPreviewStep } from 'calypso/blocks/import/ready';
 import { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useSelector } from 'calypso/state';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { ImportWrapper } from '../import';
 import { BASE_ROUTE } from '../import/config';

@@ -1,6 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import useGetDisplayDate from 'calypso/components/jetpack/daily-backup-status/use-get-display-date';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import useRewindableActivityLogQuery from 'calypso/data/activity-log/use-rewindable-activity-log-query';
@@ -8,6 +7,7 @@ import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-
 import { isSuccessfulRealtimeBackup } from 'calypso/lib/jetpack/backup-utils';
 import useDateOffsetForSite from 'calypso/lib/jetpack/hooks/use-date-offset-for-site';
 import { urlToSlug } from 'calypso/lib/url';
+import { useSelector } from 'calypso/state';
 import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import { useDashboardAddRemoveLicense } from '../../hooks';
 import { DASHBOARD_LICENSE_TYPES, getExtractedBackupTitle } from '../utils';

@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch } from 'react-redux';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
+import { useDispatch } from 'calypso/state';
 import { errorNotice } from 'calypso/state/notices/actions';
 import type {
 	AgencyDashboardFilter,

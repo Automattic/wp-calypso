@@ -3,7 +3,7 @@ import { css } from '@emotion/css';
 import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useRef } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { useAsyncPreference } from 'calypso/state/preferences/use-async-preference';
 
