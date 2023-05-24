@@ -182,7 +182,7 @@
 		"reakit": "^1.3.11",
 		"reakit-utils": "^0.15.1",
 		"redux": "^4.2.1",
-		"redux-dynamic-middlewares": "^2.0.0",
+		"redux-dynamic-middlewares": "^2.2.0",
 		"redux-thunk": "^2.4.2",
 		"regenerator-runtime": "^0.13.9",
 		"social-logos": "^2.5.2",

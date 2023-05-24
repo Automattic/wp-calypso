@@ -11984,7 +11984,7 @@ __metadata:
     reakit: ^1.3.11
     reakit-utils: ^0.15.1
     redux: ^4.2.1
-    redux-dynamic-middlewares: ^2.0.0
+    redux-dynamic-middlewares: ^2.2.0
     redux-mock-store: ^1.5.4
     redux-thunk: ^2.4.2
     regenerator-runtime: ^0.13.9
@@ -27570,10 +27570,10 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"redux-dynamic-middlewares@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "redux-dynamic-middlewares@npm:2.0.0"
-  checksum: 258988dd25f6582a65563b3a31a57658494a1290ab6f7e9ade52f0d8116a3c64be3d9f1be8af23c21fb84997e80430b55d4594dc6e8036ceeb3e723888b38f90
+"redux-dynamic-middlewares@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "redux-dynamic-middlewares@npm:2.2.0"
+  checksum: a57f00575eec6e4ea8834b4e50bdc1ae0342be3edb5d580740dde488ebf5ddcca59e3fdfbc1b4e658999dcbf9d46dc573d885cdc44ef9f46d04cf4bc93ef33cb
   languageName: node
   linkType: hard
 
