@@ -24,6 +24,7 @@ import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { GitHubCard } from 'calypso/my-sites/hosting/github';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { useAtomicTransferQuery } from 'calypso/state/atomic-transfer/hooks/use-atomic-transfer-query';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import {
@@ -31,7 +32,6 @@ import {
 	isAutomatedTransferActive,
 } from 'calypso/state/automated-transfer/selectors';
 import { getAtomicHostingIsLoadingSftpData } from 'calypso/state/selectors/get-atomic-hosting-is-loading-sftp-data';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { requestSite } from 'calypso/state/sites/actions';
@@ -62,14 +62,16 @@ const Hosting = ( props ) => {
 		isDisabled,
 		isECommerceTrial,
 		isWpcomStagingSite,
-		isTransferring,
 		siteId,
 		siteSlug,
 		translate,
-		transferState,
 		isLoadingSftpData,
 		hasStagingSitesFeature,
 	} = props;
+
+	const { isTransferring, transferStatus } = useAtomicTransferQuery( siteSlug, {
+		refetchInterval: 5000,
+	} );
 
 	useEffect( () => {
 		function onClickOutside( event ) {
@@ -79,13 +81,15 @@ const Hosting = ( props ) => {
 			window.removeEventListener( 'click', onClickOutside );
 		}
 
-		if ( ! hasClickedOutside && isTransferring && transferStates.COMPLETE !== transferState ) {
+		if ( ! hasClickedOutside && isTransferring ) {
 			window.addEventListener( 'click', onClickOutside );
 			return () => {
 				window.removeEventListener( 'click', onClickOutside );
 			};
+		} else if ( isTransferring ) {
+			setHasClickedOutside( false );
 		}
-	}, [ hasClickedOutside, isTransferring, transferState ] );
+	}, [ hasClickedOutside, isTransferring ] );
 
 	const getUpgradeBanner = () => {
 		// The eCommerce Trial requires a different upsell path.
@@ -102,17 +106,8 @@ const Hosting = ( props ) => {
 	};
 
 	const getAtomicActivationNotice = () => {
-		const { COMPLETE, FAILURE, RELOCATING_REVERT } = transferStates;
-
-		if ( transferState === RELOCATING_REVERT ) {
-			return null;
-		}
-
 		// Transfer in progress
-		if (
-			( isTransferring && COMPLETE !== transferState ) ||
-			( isDisabled && COMPLETE === transferState )
-		) {
+		if ( isTransferring ) {
 			let activationText = translate( 'Please wait while we activate the hosting features.' );
 			if ( hasClickedOutside ) {
 				activationText = translate( "Don't leave quite yet! Just a bit longer." );
@@ -131,7 +126,7 @@ const Hosting = ( props ) => {
 			);
 		}
 
-		const failureNotice = FAILURE === transferState && (
+		const failureNotice = transferStatus === transferStates.ERROR && (
 			<Notice
 				status="is-error"
 				showDismiss={ false }
@@ -140,7 +135,7 @@ const Hosting = ( props ) => {
 			/>
 		);
 
-		if ( isDisabled && ! isTransferring ) {
+		if ( ! isTransferring ) {
 			return (
 				<>
 					{ failureNotice }
@@ -236,7 +231,7 @@ export default connect(
 			isECommerceTrial: isSiteOnECommerceTrial( state, siteId ),
 			transferState: getAutomatedTransferStatus( state, siteId ),
 			isTransferring: isAutomatedTransferActive( state, siteId ),
-			isDisabled: ! hasSftpFeature || ! isSiteAutomatedTransfer( state, siteId ),
+			isDisabled: ! hasSftpFeature,
 			isLoadingSftpData: getAtomicHostingIsLoadingSftpData( state, siteId ),
 			hasSftpFeature,
 			siteSlug: getSelectedSiteSlug( state ),
