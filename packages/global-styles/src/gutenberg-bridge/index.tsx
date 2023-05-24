@@ -4,6 +4,7 @@
  * See https://github.com/Automattic/wp-calypso/issues/77048
  */
 import { privateApis as blockEditorPrivateApis } from '@wordpress/block-editor';
+import { createHigherOrderComponent } from '@wordpress/compose';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import mergeWith from 'lodash/mergeWith';
 import type { GlobalStylesObject } from '../types';
@@ -35,6 +36,25 @@ const mergeBaseAndUserConfigs = ( base: GlobalStylesObject, user: GlobalStylesOb
 	return mergeWith( {}, base, user, mergeTreesCustomizer );
 };
 
+const withExperimentalBlockEditorProvider = createHigherOrderComponent(
+	< OuterProps, >( InnerComponent: React.ComponentType< OuterProps > ) => {
+		// Use fake assets to eliminate the compatStyles without the id.
+		// See https://github.com/WordPress/gutenberg/blob/f77958cfc13c02b0c0e6b9b697b43bbcad4ba40b/packages/block-editor/src/components/iframe/index.js#L127
+		const settings = {
+			__unstableResolvedAssets: {
+				styles: '<style id="" />',
+			},
+		};
+
+		return ( props: OuterProps ) => (
+			<ExperimentalBlockEditorProvider settings={ settings }>
+				<InnerComponent { ...props } />
+			</ExperimentalBlockEditorProvider>
+		);
+	},
+	'withExperimentalBlockEditorProvider'
+);
+
 export {
 	cleanEmptyObject,
 	ExperimentalBlockEditorProvider,
@@ -43,4 +63,5 @@ export {
 	useGlobalSetting,
 	useGlobalStyle,
 	mergeBaseAndUserConfigs,
+	withExperimentalBlockEditorProvider,
 };

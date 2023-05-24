@@ -1,4 +1,7 @@
-import { useGlobalStylesOutput } from '@automattic/global-styles';
+import {
+	useGlobalStylesOutput,
+	withExperimentalBlockEditorProvider,
+} from '@automattic/global-styles';
 import { useMemo } from 'react';
 import useBlockRendererSettings from '../hooks/use-block-renderer-settings';
 import BlockRendererContext from './block-renderer-context';
@@ -64,4 +67,4 @@ const BlockRendererProvider = ( {
 	);
 };
 
-export default BlockRendererProvider;
+export default withExperimentalBlockEditorProvider( BlockRendererProvider );

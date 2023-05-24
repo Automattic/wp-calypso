@@ -6,7 +6,11 @@ import {
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { useMemo, useContext } from 'react';
-import { GlobalStylesContext, mergeBaseAndUserConfigs } from '../../gutenberg-bridge';
+import {
+	GlobalStylesContext,
+	mergeBaseAndUserConfigs,
+	withExperimentalBlockEditorProvider,
+} from '../../gutenberg-bridge';
 import { useFontPairingVariations } from '../../hooks';
 import FontPairingVariationPreview from './preview';
 import type { GlobalStylesObject } from '../../types';
@@ -102,4 +106,4 @@ const FontPairingVariations = ( {
 	);
 };
 
-export default FontPairingVariations;
+export default withExperimentalBlockEditorProvider( FontPairingVariations );
