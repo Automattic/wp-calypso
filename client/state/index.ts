@@ -1,9 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import {
-	useSelector as reduxUseSelector,
-	useDispatch as reduxUseDispatch,
-	TypedUseSelectorHook,
-} from 'react-redux';
+import { useSelector as reduxUseSelector, useDispatch as reduxUseDispatch } from 'react-redux';
 import { createStore, applyMiddleware, compose, Store, StoreEnhancer } from 'redux';
 import dynamicMiddlewares from 'redux-dynamic-middlewares';
 import thunkMiddleware from 'redux-thunk';
@@ -58,4 +54,11 @@ export function createReduxStore(
 }
 
 export const useDispatch: () => CalypsoDispatch = reduxUseDispatch;
-export const useSelector: TypedUseSelectorHook< IAppState > = reduxUseSelector;
+
+// Basically the same types as TypedUseSelectorHook but with IAppState as the default state type.
+export function useSelector< State = IAppState, Selected = unknown >(
+	selector: ( state: State ) => Selected,
+	equalityFn?: ( a: Selected, b: Selected ) => boolean
+): Selected {
+	return reduxUseSelector( selector, equalityFn );
+}
