@@ -10,7 +10,7 @@ import { getInitialState, getStateFromCache } from 'calypso/state/initial-state'
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
 import { defaultSiteDetails } from '../../launchpad/test/lib/fixtures';
-import StartWritingDone from '../index';
+import CelebrationStep from '../index';
 
 const mockSite = {
 	...defaultSiteDetails,
@@ -91,7 +91,7 @@ function renderCelebrationScreen() {
 	render(
 		<Provider store={ reduxStore }>
 			<QueryClientProvider client={ queryClient }>
-				<StartWritingDone { ...stepContentProps } flow="site-setup" navigation={ navigation } />
+				<CelebrationStep { ...stepContentProps } flow="site-setup" navigation={ navigation } />
 			</QueryClientProvider>
 		</Provider>
 	);

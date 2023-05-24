@@ -51,8 +51,8 @@ const designFirst: Flow = {
 				asyncComponent: () => import( './internals/steps-repository/launchpad' ),
 			},
 			{
-				slug: 'design-first-done',
-				asyncComponent: () => import( './internals/steps-repository/start-writing-done' ),
+				slug: 'celebration-step',
+				asyncComponent: () => import( './internals/steps-repository/celebration-step' ),
 			},
 		];
 	},
@@ -77,7 +77,7 @@ const designFirst: Flow = {
 
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', flowName, currentStep );
-			const returnUrl = `/setup/design-first/design-first-done?siteSlug=${ siteSlug }`;
+			const returnUrl = `/setup/design-first/celebration-step?siteSlug=${ siteSlug }`;
 
 			switch ( currentStep ) {
 				case 'site-creation-step':

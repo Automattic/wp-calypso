@@ -9,12 +9,12 @@ import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import StartWritingDoneSitePreview from './site-preview';
+import CelebrationStepSitePreview from './site-preview';
 import type { Step } from '../../types';
 
 import './styles.scss';
 
-const StartWritingDone: Step = ( { flow } ) => {
+const CelebrationStep: Step = ( { flow } ) => {
 	const translate = useTranslate();
 	const siteSlug = useSiteSlugParam();
 	const site = useSite();
@@ -46,7 +46,7 @@ const StartWritingDone: Step = ( { flow } ) => {
 				: `/post/${ siteSlug }`;
 
 		return (
-			<Button className="start-writing-done__top-content-cta-social" primary href={ mainCtaLink }>
+			<Button className="celebration-step__top-content-cta-social" primary href={ mainCtaLink }>
 				{ mainCtaText }
 			</Button>
 		);
@@ -59,13 +59,13 @@ const StartWritingDone: Step = ( { flow } ) => {
 
 	return (
 		<StepContainer
-			stepName="start-writing-done"
+			stepName="celebration-step"
 			isWideLayout={ true }
 			hideBack={ true }
 			flowName="free"
 			formattedHeader={
 				<FormattedHeader
-					id="start-writing-done-header"
+					id="celebration-step-header"
 					headerText={ translate( 'Your blog’s ready!' ) }
 					subHeaderText={ subtitleText }
 					align="center"
@@ -75,26 +75,26 @@ const StartWritingDone: Step = ( { flow } ) => {
 			stepContent={
 				<>
 					<ConfettiAnimation />
-					<div className="start-writing-done__top-content">
-						<div className="start-writing-done__top-content-main">
-							<div className="start-writing-done__top-content-title">{ site?.name }</div>
-							<div className="start-writing-done__top-content-description">
+					<div className="celebration-step__top-content">
+						<div className="celebration-step__top-content-main">
+							<div className="celebration-step__top-content-title">{ site?.name }</div>
+							<div className="celebration-step__top-content-description">
 								{ selectedDomain?.domain_name || siteSlug }
 							</div>
 						</div>
-						<div className="start-writing-done__top-content-cta">
+						<div className="celebration-step__top-content-cta">
 							<MainCta />
 							<Button
-								className="start-writing-done__top-content-cta-blog"
+								className="celebration-step__top-content-cta-blog"
 								href={ `https://${ siteSlug }` }
 							>
 								{ translate( 'Visit your blog' ) }
 							</Button>
 						</div>
 					</div>
-					<StartWritingDoneSitePreview siteSlug={ siteSlug } />
-					<footer className="start-writing-done__footer">
-						<a className="start-writing-done__footer-link" href={ `/home/${ siteSlug }` }>
+					<CelebrationStepSitePreview siteSlug={ siteSlug } />
+					<footer className="celebration-step__footer">
+						<a className="celebration-step__footer-link" href={ `/home/${ siteSlug }` }>
 							Go to dashboard
 						</a>
 					</footer>
@@ -105,4 +105,4 @@ const StartWritingDone: Step = ( { flow } ) => {
 	);
 };
 
-export default StartWritingDone;
+export default CelebrationStep;

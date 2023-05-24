@@ -8,7 +8,7 @@ import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-gl
 import PreviewToolbar from '../design-setup/preview-toolbar';
 import type { Device } from '@automattic/components';
 
-const StartWritingDoneSitePreview = ( { siteSlug }: { siteSlug: string | null } ) => {
+const CelebrationStepSitePreview = ( { siteSlug }: { siteSlug: string | null } ) => {
 	const translate = useTranslate();
 	const site = useSite();
 	const { globalStylesInUse } = usePremiumGlobalStyles( site?.ID );
@@ -65,4 +65,4 @@ const StartWritingDoneSitePreview = ( { siteSlug }: { siteSlug: string | null } 
 	);
 };
 
-export default StartWritingDoneSitePreview;
+export default CelebrationStepSitePreview;
