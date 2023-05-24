@@ -15,4 +15,4 @@ const DisneyLogo = ( props: React.SVGProps< SVGSVGElement > ) => (
 		/>
 	</svg>
 );
-export { DisneyLogo };
+export default DisneyLogo;

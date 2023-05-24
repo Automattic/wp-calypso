@@ -37,4 +37,4 @@ const CloudLogo = ( props: React.SVGProps< SVGSVGElement > ) => (
 		/>
 	</svg>
 );
-export { CloudLogo };
+export default CloudLogo;
