@@ -1,9 +1,9 @@
 import config from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
-import { useStore } from 'react-redux';
 import { getJetpackSiteCollisions, getUnmappedUrl } from 'calypso/lib/site/utils';
 import { urlToSlug, withoutHttp } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
+import { useStore } from 'calypso/state';
 import getSites from 'calypso/state/selectors/get-sites';
 import {
 	SITE_EXCERPT_REQUEST_FIELDS,

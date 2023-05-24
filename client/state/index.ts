@@ -1,6 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { useSelector as reduxUseSelector, useDispatch as reduxUseDispatch } from 'react-redux';
-import { createStore, applyMiddleware, compose, Store, StoreEnhancer } from 'redux';
+import {
+	useSelector as reduxUseSelector,
+	useDispatch as reduxUseDispatch,
+	useStore as reduxUseStore,
+} from 'react-redux';
+import { AnyAction, createStore, applyMiddleware, compose, Store, StoreEnhancer } from 'redux';
 import dynamicMiddlewares from 'redux-dynamic-middlewares';
 import thunkMiddleware from 'redux-thunk';
 import wpcomApiMiddleware from 'calypso/state/data-layer/wpcom-api-middleware';
@@ -61,4 +65,8 @@ export function useSelector< State = IAppState, Selected = unknown >(
 	equalityFn?: ( a: Selected, b: Selected ) => boolean
 ): Selected {
 	return reduxUseSelector( selector, equalityFn );
+}
+
+export function useStore(): Store< IAppState, AnyAction > {
+	return reduxUseStore();
 }
