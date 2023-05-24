@@ -102,6 +102,7 @@
 		"jetpack-social/multiple-connections": true,
 		"jitms": true,
 		"lasagna": true,
+		"launchpad-updates": true,
 		"layout/app-banner": true,
 		"layout/guided-tours": true,
 		"layout/query-selected-editor": true,
