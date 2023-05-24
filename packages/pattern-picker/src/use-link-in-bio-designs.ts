@@ -10,19 +10,17 @@ import type { Design } from '@automattic/design-picker';
  * @returns an array of numbers in a random order
  */
 function useOrder( length: number ) {
-	return useQuery(
-		[ 'ptk/order', length ],
-		async () => {
+	return useQuery( {
+		queryKey: [ 'ptk/order', length ],
+		queryFn: async () => {
 			const indices = Array.from( { length }, ( _, i ) => i );
 			const firstFour = indices.slice( 0, 4 ).sort( () => Math.random() - 0.5 );
 			const theRest = indices.slice( 4 );
 			return [ ...firstFour, ...theRest ];
 		},
-		{
-			staleTime: Infinity,
-			enabled: length > 0,
-		}
-	);
+		staleTime: Infinity,
+		enabled: length > 0,
+	} );
 }
 
 export const useLinkInBioDesigns = (): Design[] => {

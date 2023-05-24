@@ -9,11 +9,14 @@ const useGetInvitesQuery = ( siteId: number ) => {
 		isRequestingInvitesForSite( state, siteId )
 	);
 
-	return useQuery( [ 'invites', siteId ], () => {
-		if ( siteId && ! requestingInProgress ) {
-			dispatch( requestSiteInvites( siteId ) );
-		}
-		return null;
+	return useQuery( {
+		queryKey: [ 'invites', siteId ],
+		queryFn: () => {
+			if ( siteId && ! requestingInProgress ) {
+				dispatch( requestSiteInvites( siteId ) );
+			}
+			return null;
+		},
 	} );
 };
 

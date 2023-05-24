@@ -43,7 +43,9 @@ export function useStarterDesignsQuery(
 	queryParams: StarterDesignsQueryParams,
 	{ select, ...queryOptions }: Options = {}
 ): UseQueryResult< StarterDesigns > {
-	return useQuery( [ 'starter-designs', queryParams ], () => fetchStarterDesigns( queryParams ), {
+	return useQuery( {
+		queryKey: [ 'starter-designs', queryParams ],
+		queryFn: () => fetchStarterDesigns( queryParams ),
 		select: ( response: StarterDesignsResponse ) => {
 			const allDesigns = {
 				filters: {

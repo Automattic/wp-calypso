@@ -51,16 +51,14 @@ const usePendingSiteSubscriptionsQuery = ( {
 	const { isLoggedIn } = useIsLoggedIn();
 	const enabled = useIsQueryEnabled();
 
-	const { data, ...rest } = useQuery< PendingSiteSubscriptionsResult >(
-		[ 'read', 'pending-site-subscriptions', isLoggedIn ],
-		async () => {
+	const { data, ...rest } = useQuery< PendingSiteSubscriptionsResult >( {
+		queryKey: [ 'read', 'pending-site-subscriptions', isLoggedIn ],
+		queryFn: async () => {
 			return await callPendingSiteSubscriptionsEndpoint( isLoggedIn );
 		},
-		{
-			enabled,
-			refetchOnWindowFocus: false,
-		}
-	);
+		enabled,
+		refetchOnWindowFocus: false,
+	} );
 
 	return {
 		data: {
