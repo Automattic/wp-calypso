@@ -49,6 +49,7 @@ export interface StyleVariationPreviewColorPalette {
 	primary?: string;
 	secondary?: string;
 	tertiary?: string;
+	gradient?: string;
 }
 
 export interface StyleVariationStylesColor {

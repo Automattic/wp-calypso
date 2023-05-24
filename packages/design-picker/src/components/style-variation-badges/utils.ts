@@ -1,23 +1,20 @@
 import { hexToRgb, hasMinContrast } from '@automattic/onboarding';
 import type {
 	StyleVariation,
-	StyleVariationSettingsColorPalette,
 	StyleVariationPreviewColorPalette,
 	StyleVariationStylesColor,
 } from '../../types';
 
-const COLOR_PALETTE_SUPPORTS = [ 'background', 'base', 'contrast', 'foreground', 'primary' ];
-
-function getValueFromVariationSettingColorPalette(
-	variation: StyleVariation,
-	name: string
-): string | undefined {
+function getSlugValuePalette( variation: StyleVariation ): StyleVariationPreviewColorPalette {
 	const palette = variation.settings?.color?.palette?.theme || [];
-	return palette.find( ( item: StyleVariationSettingsColorPalette ) => item.slug === name )?.color;
+	return palette.reduce( ( acc, item ) => {
+		acc[ item.slug ] = item.color;
+		return acc;
+	}, {} as StyleVariationPreviewColorPalette );
 }
 
 function getColorBackground( color: StyleVariationPreviewColorPalette ) {
-	return color.base || color.background || '#ffffff';
+	return color.gradient || color.background || color.base || '#ffffff';
 }
 
 function getColorText( color: StyleVariationPreviewColorPalette ) {
@@ -25,20 +22,28 @@ function getColorText( color: StyleVariationPreviewColorPalette ) {
 	if ( contrast ) {
 		const backgroundRgb = hexToRgb( getColorBackground( color ) );
 		const contrastRgb = hexToRgb( contrast );
-		return hasMinContrast( contrastRgb, backgroundRgb, 0.2 ) ? contrast : foreground || primary;
+		if ( hasMinContrast( contrastRgb, backgroundRgb, 0.2 ) ) {
+			return contrast;
+		}
 	}
 
-	return foreground || primary;
+	// return the first color in `color` that is not contrast, foreground, primary or the result of `getColorBackground`
+	let values = Object.values( color ).find(
+		( value ) =>
+			! [ contrast, foreground, primary ].includes( value ) &&
+			value !== getColorBackground( color ) &&
+			hasMinContrast( hexToRgb( value ), hexToRgb( getColorBackground( color ) ), 0.2 )
+	);
+	if ( ! values ) {
+		values = foreground || primary;
+	}
+	return values;
 }
 
 export function getStylesColorFromVariation(
 	variation: StyleVariation
 ): StyleVariationStylesColor {
-	let color: StyleVariationPreviewColorPalette = {};
-	for ( const key of COLOR_PALETTE_SUPPORTS ) {
-		const value = getValueFromVariationSettingColorPalette( variation, key );
-		color = { ...color, ...( value && { [ key ]: value } ) };
-	}
+	const color = getSlugValuePalette( variation );
 
 	return {
 		background: getColorBackground( color ),
