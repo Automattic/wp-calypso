@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector, useStore } from 'calypso/state';
+import { useStore } from 'react-redux';
+import { useDispatch, useSelector } from 'calypso/state';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 

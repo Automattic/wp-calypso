@@ -16,6 +16,7 @@ import {
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { IAppState } from 'calypso/state/types';
 
 const ActionButtons = styled.div( {
 	display: 'flex',
@@ -103,7 +104,7 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 	);
 }
 
-export default connect( ( state ) => {
+export default connect( ( state: IAppState ) => {
 	const currentUserId = getCurrentUserId( state );
 
 	return {
