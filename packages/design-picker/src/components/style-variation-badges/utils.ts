@@ -2,7 +2,6 @@ import { hexToRgb } from '@automattic/onboarding';
 import type {
 	StyleVariation,
 	StyleVariationSettingsColorPalette,
-	StyleVariationPreviewColorPalette,
 	StyleVariationStylesColor,
 } from '../../types';
 
@@ -16,11 +15,9 @@ function getColors( variation: StyleVariation ) {
 	return variation.settings?.color?.palette?.theme || [];
 }
 
-function getColorBaseFromColors( colors: StyleVariationPreviewColorPalette[] ) {
-	const background = colors.find(
-		( item: StyleVariationSettingsColorPalette ) => item.slug === 'background'
-	);
-	const base = colors.find( ( item: StyleVariationSettingsColorPalette ) => item.slug === 'base' );
+function getColorBaseFromColors( colors: StyleVariationSettingsColorPalette[] ) {
+	const background = colors.find( ( item ) => item.slug === 'background' );
+	const base = colors.find( ( item ) => item.slug === 'base' );
 	return base?.color || background?.color || '#ffffff';
 }
 
