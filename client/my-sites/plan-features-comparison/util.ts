@@ -15,7 +15,7 @@ const linkInBioFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
 };
 
 const hostingFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
-	return isHostingFlow( flowName ) && plan.getHostingSignupFeatures?.( plan.term );
+	return isHostingFlow( flowName ) && plan.getHostingSignupFeatures;
 };
 
 const signupFlowDefaultFeatures = (
