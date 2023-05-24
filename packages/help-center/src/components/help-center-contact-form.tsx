@@ -660,8 +660,7 @@ export const HelpCenterContactForm = () => {
 				setSitePickerChoice={ setSitePickerChoice }
 				currentSite={ currentSite }
 				siteId={ sitePickerChoice === 'CURRENT_SITE' ? currentSite?.ID : 0 }
-				showDropDown={ ! userWithNoSites }
-				enabled={
+				sitePickerEnabled={
 					mode === 'FORUM' &&
 					Boolean( supportSite?.plan?.product_slug ) &&
 					isFreePlanProduct( { product_slug: supportSite.plan?.product_slug as string } )

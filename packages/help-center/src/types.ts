@@ -21,12 +21,8 @@ export interface SitePicker {
 	sitePickerChoice: string;
 	currentSite: HelpCenterSite | undefined;
 	siteId: string | number | null | undefined;
-	enabled: boolean;
-	showDropDown: boolean;
+	sitePickerEnabled: boolean;
 }
-
-// ended means the user closed the popup or reloaded the iframe
-export type WindowState = 'open' | 'closed' | 'blurred' | 'ended';
 
 export interface Article {
 	title: string;

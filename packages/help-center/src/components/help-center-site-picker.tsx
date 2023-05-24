@@ -9,11 +9,11 @@ import type { HelpCenterSelect } from '@automattic/data-stores';
 
 export const HelpCenterSitePicker: React.FC< SitePicker > = ( {
 	ownershipResult,
+	sitePickerChoice,
 	setSitePickerChoice,
 	currentSite,
 	siteId,
-	enabled,
-	showDropDown,
+	sitePickerEnabled,
 } ) => {
 	const { setSite, setUserDeclaredSiteUrl } = useDispatch( HELP_CENTER_STORE );
 	const userDeclaredSiteUrl = useSelect( ( select ) => {
@@ -31,29 +31,33 @@ export const HelpCenterSitePicker: React.FC< SitePicker > = ( {
 	const options: ( SitePickerSite | undefined )[] = [ currentSite, otherSite ];
 
 	return (
-		<section>
-			{ showDropDown ? (
-				<SitePickerDropDown
-					enabled={ enabled }
-					onPickSite={ ( id: string | number ) => {
-						if ( id !== 0 ) {
-							setSite( currentSite );
-						}
-						setSitePickerChoice( id === 0 ? 'OTHER_SITE' : 'CURRENT_SITE' );
-					} }
-					options={ options }
-					siteId={ siteId }
-				/>
-			) : (
-				<>
+		<>
+			{ sitePickerEnabled && (
+				<section>
+					<SitePickerDropDown
+						enabled={ true }
+						onPickSite={ ( id: string | number ) => {
+							if ( id !== 0 ) {
+								setSite( currentSite );
+							}
+							setSitePickerChoice( id === 0 ? 'OTHER_SITE' : 'CURRENT_SITE' );
+						} }
+						options={ options }
+						siteId={ siteId }
+					/>
+				</section>
+			) }
+
+			{ sitePickerChoice === 'OTHER_SITE' && (
+				<section>
 					<TextControl
 						label={ __( 'Site address', __i18n_text_domain__ ) }
 						value={ userDeclaredSiteUrl ?? '' }
 						onChange={ setUserDeclaredSiteUrl }
 					/>
 					<HelpCenterOwnershipNotice ownershipResult={ ownershipResult } />
-				</>
+				</section>
 			) }
-		</section>
+		</>
 	);
 };
