@@ -10,7 +10,7 @@ import type { GlobalStylesObject } from '../types';
 
 const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 	'I know using unstable features means my plugin or theme will inevitably break on the next WordPress release.',
-	'@automattic/global-styles'
+	'@wordpress/block-editor'
 );
 
 const {
