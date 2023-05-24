@@ -14,3 +14,4 @@ export const READER_FULL_POST = 'reader-full-post';
 export const READER_POST_OPTIONS_MENU = 'reader-post-options-menu';
 export const TAG_PAGE = 'reader-tag-page';
 export const DISCOVER_POST = 'reader-discover-post';
+export const READER_SUGGESTED_FOLLOWS_DIALOG = 'reader-suggested-follows-dialog';
