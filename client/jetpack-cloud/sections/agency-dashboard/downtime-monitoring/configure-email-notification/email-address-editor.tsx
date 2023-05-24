@@ -137,7 +137,7 @@ export default function EmailAddressEditor( {
 	const handleSendVerificationCode = () => {
 		recordEvent( 'downtime_monitoring_request_email_verification_code' );
 		setShowCodeVerification( true );
-		requestVerificationCode( { type: 'email', value: emailItem.email } );
+		requestVerificationCode( { type: 'email', name: emailItem.name, value: emailItem.email } );
 	};
 
 	const handleVerifyEmail = () => {
@@ -210,7 +210,7 @@ export default function EmailAddressEditor( {
 
 	const handleResendCode = () => {
 		recordEvent( 'downtime_monitoring_resend_email_verification_code' );
-		resendVerificationCode( { type: 'email', value: emailItem.email } );
+		resendVerificationCode( { type: 'email', name: emailItem.name, value: emailItem.email } );
 	};
 
 	const handleChange = useCallback(

@@ -73,7 +73,7 @@ export default function SitesOverview() {
 		sort
 	);
 
-	const { data: verifiedContacts } = useFetchMonitorVerfiedContacts();
+	const { data: verifiedContacts } = useFetchMonitorVerfiedContacts( isPartnerOAuthTokenLoaded );
 
 	const selectedSiteIds = selectedSites.map( ( site ) => site.blog_id );
 
