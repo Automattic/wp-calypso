@@ -86,7 +86,7 @@ export default function SiteRow( {
 							{ !! is_wpforteams_site && <span className="p2-label">P2</span> }
 							{ !! is_paid_subscription && (
 								<span className="paid-label">
-									{ translate( 'Paid', { context: 'verb: past participle' } ) }
+									{ translate( 'Paid', { context: 'Label for a paid subscription plan' } ) }
 								</span>
 							) }
 						</span>
