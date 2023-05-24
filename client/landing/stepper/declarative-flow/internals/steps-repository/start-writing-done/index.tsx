@@ -79,7 +79,7 @@ const StartWritingDone: Step = ( { flow } ) => {
 						<div className="start-writing-done__top-content-main">
 							<div className="start-writing-done__top-content-title">{ site?.name }</div>
 							<div className="start-writing-done__top-content-description">
-								{ selectedDomain?.domain_name }
+								{ selectedDomain?.domain_name || siteSlug }
 							</div>
 						</div>
 						<div className="start-writing-done__top-content-cta">
