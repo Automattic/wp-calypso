@@ -7,4 +7,4 @@ const CNNLogo = ( props: React.SVGProps< SVGSVGElement > ) => (
 		/>
 	</svg>
 );
-export { CNNLogo };
+export default CNNLogo;

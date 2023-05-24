@@ -1,15 +1,15 @@
-import { BloombergLogo } from '../bloomberg-logo';
-import { CloudLogo } from '../cloud-logo';
-import { CNNLogo } from '../cnn-logo';
-import { CondenastLogo } from '../condenast-logo';
-import { DisneyLogo } from '../disney-logo';
-import { FacebookLogo } from '../facebook-logo';
-import { JetpackLogo } from '../jetpack-logo';
-import { SalesforceLogo } from '../salesforce-logo';
-import { SlackLogo } from '../slack-logo';
-import { TimeLogo } from '../time-logo';
-import { VIPLogo } from '../vip-logo';
-import { WooLogo } from '../woo-logo';
+import BloombergLogo from '../bloomberg-logo';
+import CloudLogo from '../cloud-logo';
+import CNNLogo from '../cnn-logo';
+import CondenastLogo from '../condenast-logo';
+import DisneyLogo from '../disney-logo';
+import FacebookLogo from '../facebook-logo';
+import JetpackLogo from '../jetpack-logo';
+import SalesforceLogo from '../salesforce-logo';
+import SlackLogo from '../slack-logo';
+import TimeLogo from '../time-logo';
+import VIPLogo from '../vip-logo';
+import WooLogo from '../woo-logo';
 
 import './style.scss';
 export default function ProductLogoExample() {

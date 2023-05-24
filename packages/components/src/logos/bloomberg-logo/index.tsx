@@ -19,4 +19,4 @@ const BloombergLogo = ( props: React.SVGProps< SVGSVGElement > ) => (
 		</g>
 	</svg>
 );
-export { BloombergLogo };
+export default BloombergLogo;

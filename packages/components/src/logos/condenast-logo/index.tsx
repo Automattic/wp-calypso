@@ -9,4 +9,4 @@ const CondenastLogo = ( props: React.SVGProps< SVGSVGElement > ) => (
 		/>
 	</svg>
 );
-export { CondenastLogo };
+export default CondenastLogo;

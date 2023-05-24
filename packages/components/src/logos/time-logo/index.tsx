@@ -20,4 +20,4 @@ const TimeLogo = ( props: React.SVGProps< SVGSVGElement > ) => (
 		</g>
 	</svg>
 );
-export { TimeLogo };
+export default TimeLogo;
