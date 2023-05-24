@@ -10,10 +10,10 @@ export const mastodonTitle: Formatter = ( text ) =>
 		hardTruncation( TITLE_LENGTH )
 	)( stripHtmlTags( text ) ) || '';
 
-export const mastodonBody: Formatter = ( text ) =>
+export const mastodonBody: Formatter = ( text, offset = 0 ) =>
 	firstValid(
-		shortEnough( BODY_LENGTH ),
-		hardTruncation( BODY_LENGTH )
+		shortEnough( BODY_LENGTH - URL_LENGTH - offset ),
+		hardTruncation( BODY_LENGTH - URL_LENGTH - offset )
 	)( stripHtmlTags( text ) ) || '';
 
 export const mastodonUrl: Formatter = ( text ) =>

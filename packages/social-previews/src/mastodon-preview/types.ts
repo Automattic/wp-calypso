@@ -9,4 +9,6 @@ export type MastodonUser = {
 export type MastodonPreviewProps = SocialPreviewBaseProps & {
 	user?: MastodonUser;
 	customText?: string;
+	customImage?: string;
+	isSocialPost: boolean;
 };

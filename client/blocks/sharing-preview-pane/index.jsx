@@ -20,7 +20,13 @@ import getSiteIconUrl from 'calypso/state/selectors/get-site-icon-url';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteUserConnections } from 'calypso/state/sharing/publicize/selectors';
 import { getSeoTitle, getSite, getSiteSlug } from 'calypso/state/sites/selectors';
-import { getPostImage, getExcerptForPost, getSummaryForPost } from './utils';
+import {
+	getPostImage,
+	getExcerptForPost,
+	getSummaryForPost,
+	getPostCustomImage,
+	isSocialPost,
+} from './utils';
 
 import './style.scss';
 
@@ -70,7 +76,7 @@ class SharingPreviewPane extends PureComponent {
 	};
 
 	renderPreview() {
-		const { post, site, message, connections, translate, seoTitle, siteSlug, siteIcon } =
+		const { post, site, message, connections, translate, seoTitle, siteSlug, siteIcon, siteName } =
 			this.props;
 		const { selectedService } = this.state;
 
@@ -102,6 +108,7 @@ class SharingPreviewPane extends PureComponent {
 		const articleSummary = getSummaryForPost( post, translate );
 		const siteDomain = get( site, 'domain', '' );
 		const imageUrl = getPostImage( post );
+		const customImage = getPostCustomImage( post );
 		const {
 			external_name: externalName,
 			external_profile_url: externalProfileURL,
@@ -123,6 +130,7 @@ class SharingPreviewPane extends PureComponent {
 			seoTitle,
 			siteDomain,
 			siteIcon,
+			siteName,
 		};
 
 		switch ( selectedService ) {
@@ -132,10 +140,7 @@ class SharingPreviewPane extends PureComponent {
 						{ ...previewProps }
 						articleExcerpt={ post.excerpt }
 						articleContent={ post.content }
-						customImage={
-							post.metadata?.find( ( meta ) => meta.key === '_wpas_options' )?.value
-								?.attached_media?.[ 0 ]?.url
-						}
+						customImage={ customImage }
 					/>
 				);
 			case 'tumblr':
@@ -151,7 +156,15 @@ class SharingPreviewPane extends PureComponent {
 			case 'twitter':
 				return <TwitterSharePreview { ...previewProps } externalDisplay={ externalDisplay } />;
 			case 'mastodon':
-				return <MastodonSharePreview { ...previewProps } articleContent={ post.content } />;
+				return (
+					<MastodonSharePreview
+						{ ...previewProps }
+						articleExcerpt={ post.excerpt }
+						articleContent={ post.content }
+						customImage={ customImage }
+						isSocialPost={ isSocialPost( post ) }
+					/>
+				);
 			default:
 				return null;
 		}
@@ -203,6 +216,7 @@ const mapStateToProps = ( state, ownProps ) => {
 		connections,
 		siteSlug,
 		siteIcon,
+		siteName: site.name,
 		isMastodonEligible: siteHasFeature( state, siteId, FEATURE_SOCIAL_MASTODON_CONNECTION ),
 	};
 };
