@@ -56,14 +56,7 @@ describe( `Editor: Revisions`, function () {
 
 	it( 'View revisions', async function () {
 		await editorPage.openSettings();
-
-		if ( envVariables.TEST_ON_ATOMIC ) {
-			// Revisions are opened on a dedicated page on Atomic sites, e.g.
-			// https://yourblog.wpcomstaging.com/wp-admin/revision.php?revision=123
-			await Promise.all( [ page.waitForNavigation(), editorPage.viewRevisions() ] );
-		} else {
-			await editorPage.viewRevisions();
-		}
+		await editorPage.viewRevisions();
 	} );
 
 	it( 'Select first revision', async function () {

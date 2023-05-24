@@ -24,25 +24,21 @@ export const GithubAuthorizeCard = () => {
 		getKeyringServiceByName( state, 'github-deploy' )
 	) as Service;
 
-	const { mutate: authorize, isLoading: isAuthorizing } = useMutation< void, unknown, string >(
-		async ( connectURL ) => {
+	const { mutate: authorize, isLoading: isAuthorizing } = useMutation< void, unknown, string >( {
+		mutationFn: async ( connectURL ) => {
 			dispatch( recordTracksEvent( 'calypso_hosting_github_authorize_click' ) );
 			await new Promise( ( resolve ) => requestExternalAccess( connectURL, resolve ) );
 			await dispatch( requestKeyringConnections() );
 		},
-		{
-			onSuccess: async () => {
-				const connectionKey = [ GITHUB_INTEGRATION_QUERY_KEY, siteId, GITHUB_CONNECTION_QUERY_KEY ];
-				await queryClient.invalidateQueries( connectionKey );
+		onSuccess: async () => {
+			const connectionKey = [ GITHUB_INTEGRATION_QUERY_KEY, siteId, GITHUB_CONNECTION_QUERY_KEY ];
+			await queryClient.invalidateQueries( connectionKey );
 
-				const authorized =
-					queryClient.getQueryData< GithubConnectionData >( connectionKey )?.connected;
-				dispatch(
-					recordTracksEvent( 'calypso_hosting_github_authorize_complete', { authorized } )
-				);
-			},
-		}
-	);
+			const authorized =
+				queryClient.getQueryData< GithubConnectionData >( connectionKey )?.connected;
+			dispatch( recordTracksEvent( 'calypso_hosting_github_authorize_complete', { authorized } ) );
+		},
+	} );
 
 	return (
 		<Card className="github-hosting-card">

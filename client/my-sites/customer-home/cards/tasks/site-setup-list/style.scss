@@ -73,11 +73,11 @@
 		}
 
 		.site-setup-list__nav-item-email {
-			color: var(--studio-gray-40);
+			color: var(--color-text-subtle);
 			display: block;
 			@include break-mobile {
+				color: var(--color-text-subtle);
 				font-weight: 400;
-				color: var(--studio-gray-40);
 			}
 		}
 
@@ -263,8 +263,8 @@
 }
 
 .button.is-primary.is-jetpack-branded {
-	background-color: var(--studio-jetpack-green-40);
-	border-color: var(--studio-jetpack-green-40);
+	background-color: var(--studio-jetpack-green-50);
+	border-color: var(--studio-jetpack-green-50);
 
 	&:hover,
 	&:focus {

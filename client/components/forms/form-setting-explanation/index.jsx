@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import './style.scss';
 
 function FormSettingExplanation( {
-	className = undefined,
+	className = '',
 	noValidate = false,
 	isIndented = false,
 	...rest

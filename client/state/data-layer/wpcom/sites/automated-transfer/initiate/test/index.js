@@ -40,7 +40,10 @@ describe( 'initiateTransferWithPluginZip', () => {
 					method: 'POST',
 					path: `/sites/${ siteId }/automated-transfers/initiate`,
 					apiVersion: '1',
-					formData: [ [ 'plugin_zip', 'foo' ] ],
+					formData: [
+						[ 'plugin_zip', 'foo' ],
+						[ 'context', 'plugin_upload' ],
+					],
 				},
 				{ siteId, pluginZip: 'foo' }
 			)

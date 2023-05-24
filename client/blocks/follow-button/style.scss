@@ -18,6 +18,7 @@ button.follow-button {
 	.follow-button__label {
 		color: var(--color-text-subtle);
 		margin-left: 5px;
+		white-space: nowrap;
 	}
 
 	&:hover {

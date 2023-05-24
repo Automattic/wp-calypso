@@ -9,11 +9,11 @@ import { READER_TAGS_REQUEST } from 'calypso/state/reader/action-types';
 import { receiveTags } from 'calypso/state/reader/tags/items/actions';
 
 export function requestTags( action ) {
-	const path =
-		action.payload && action.payload.slug ? `/read/tags/${ action.payload.slug }` : '/read/tags';
+	const path = action.payload.slug ? `/read/tags/${ action.payload.slug }` : '/read/tags';
 
 	return http( {
 		path,
+		query: { locale: action.payload.locale },
 		method: 'GET',
 		apiVersion: '1.2',
 		onSuccess: action,

@@ -57,7 +57,7 @@ import PlanFeatures from 'calypso/my-sites/plan-features';
 import PlanFeaturesComparison from 'calypso/my-sites/plan-features-comparison';
 import PlanFAQ from 'calypso/my-sites/plans-features-main/components/plan-faq';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
-import TermExperimentPlanTypeSelector from 'calypso/my-sites/plans-features-main/components/term-experiment-plan-type-selector';
+import PlanTypeSelector from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import WpcomFAQ from 'calypso/my-sites/plans-features-main/components/wpcom-faq';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 import { selectSiteId as selectHappychatSiteId } from 'calypso/state/help/actions';
@@ -385,7 +385,6 @@ export class PlansFeaturesMain extends Component {
 						) }
 					></Notice>
 				) }
-				{ this.renderSecondaryFormattedHeader() }
 				<PlanFeatures
 					redirectToAddDomainFlow={ redirectToAddDomainFlow }
 					hidePlanTypeSelector={ hidePlanTypeSelector }
@@ -716,12 +715,12 @@ export class PlansFeaturesMain extends Component {
 						discountEndDate: this.props.discountEndDate,
 					} }
 				/>
+				{ this.renderSecondaryFormattedHeader() }
 				{ ! hidePlanSelector && (
-					<TermExperimentPlanTypeSelector
-						isEligible={ is2023PricingGridVisible }
+					<PlanTypeSelector
+						{ ...planTypeSelectorProps }
 						kind={ kindOfPlanTypeSelector }
 						plans={ visiblePlans }
-						planTypeSelectorProps={ planTypeSelectorProps }
 					/>
 				) }
 				{ this.state.isFreePlanPaidDomainDialogOpen && this.renderFreePlanPaidDomainModal() }
@@ -832,6 +831,8 @@ export default connect(
 			customerType: customerType,
 			hidePersonalPlan: props.hidePersonalPlan,
 			siteSlug,
+			selectedPlan: props.selectedPlan,
+			selectedFeature: props.selectedFeature,
 		};
 
 		return {

@@ -8,11 +8,13 @@ import FacebookPostHeader from './post/header';
 import FacebookPostIcon from './post/icons';
 import type { FacebookPreviewProps } from './types';
 
-type Props = FacebookPreviewProps & {
+import './style.scss';
+
+export type FacebookLinkPreviewProps = FacebookPreviewProps & {
 	compactDescription?: boolean;
 };
 
-const FacebookLinkPreview: React.FC< Props > = ( {
+export const FacebookLinkPreview: React.FC< FacebookLinkPreviewProps > = ( {
 	url,
 	title,
 	description,
@@ -61,7 +63,7 @@ const FacebookLinkPreview: React.FC< Props > = ( {
 								{ isArticle &&
 									! description &&
 									// translators: Default description for a Facebook post
-									__( 'Visit the post for more.', 'facebook-preview' ) }
+									__( 'Visit the post for more.', 'social-previews' ) }
 							</div>
 							<div className="facebook-preview__info">
 								<FacebookPostIcon name="info" />
@@ -74,5 +76,3 @@ const FacebookLinkPreview: React.FC< Props > = ( {
 		</div>
 	);
 };
-
-export default FacebookLinkPreview;

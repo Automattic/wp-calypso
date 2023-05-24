@@ -365,7 +365,6 @@
 }
 
 .layout.has-header-section.is-section-reader {
-
 	.layout__header-section {
 		color: var(--studio-white);
 		background-color: #021827;
@@ -385,13 +384,6 @@
 		border-bottom: none;
 		background: transparent;
 		color: var(--studio-white);
-	}
-
-	// logged in master bar
-	header.masterbar {
-		padding: 16px 16px;
-		height: 78px;
-		position: relative;
 	}
 
 	// logged out master bar

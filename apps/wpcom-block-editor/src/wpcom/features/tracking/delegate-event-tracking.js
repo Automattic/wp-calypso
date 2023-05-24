@@ -11,7 +11,6 @@ import {
 	wpcomBlockEditorSaveDraftClick,
 } from './wpcom-block-editor-save-click';
 import wpcomBlockEditorTemplatePartDetachBlocks from './wpcom-block-editor-template-part-detach-blocks';
-import wpcomBlockPremiumContentPlanUpgrade from './wpcom-block-premium-content-plan-upgrade';
 import wpcomBlockPremiumContentStripeConnect from './wpcom-block-premium-content-stripe-connect';
 import wpcomInserterInlineSearchTerm from './wpcom-inserter-inline-search-term';
 import wpcomInserterTabPanelSelected from './wpcom-inserter-tab-panel-selected';
@@ -62,7 +61,6 @@ const EVENTS_MAPPING = [
 	wpcomInserterTabPanelSelected(),
 	wpcomBlockDonationsPlanUpgrade(),
 	wpcomBlockDonationsStripeConnect(),
-	wpcomBlockPremiumContentPlanUpgrade(),
 	wpcomBlockPremiumContentStripeConnect(),
 	wpcomTemplatePartChooseCapture(),
 	wpcomTemplatePartChooseBubble(),

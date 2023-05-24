@@ -38,7 +38,7 @@ export const knownConflictingThemes = new Set( [ 'bistro' ] );
  *
  * @param  {Object}  state   Global state tree
  * @param  {number}  siteId  Jetpack Site ID to fall back to
- * @param  {string | null}  themeId Theme ID
+ * @param  {string|null|undefined}  themeId Theme ID
  * @returns {?Theme}         Theme object
  */
 export function getCanonicalTheme( state, siteId, themeId ) {

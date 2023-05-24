@@ -10,10 +10,14 @@ import { useEffect, useState } from '@wordpress/element';
 import { registerPlugin } from '@wordpress/plugins';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { getQueryArg } from '@wordpress/url';
+import { ShouldShowFirstPostPublishedModalProvider } from '../../dotcom-fse/lib/first-post-published-modal/should-show-first-post-published-modal-context';
+import { HasSeenSellerCelebrationModalProvider } from '../../dotcom-fse/lib/seller-celebration-modal/has-seen-seller-celebration-modal-context';
+import { HasSeenVideoCelebrationModalProvider } from '../../dotcom-fse/lib/video-celebration-modal/has-seen-video-celebration-modal-context';
 import DraftPostModal from './draft-post-modal';
-import PostPublishedModal from './post-published-modal';
+import FirstPostPublishedModal from './first-post-published-modal';
 import PurchaseNotice from './purchase-notice';
 import SellerCelebrationModal from './seller-celebration-modal';
+import PostPublishedSharingModal from './sharing-modal';
 import { DEFAULT_VARIANT, BLANK_CANVAS_VARIANT } from './store';
 import VideoPressCelebrationModal from './video-celebration-modal';
 import WpcomNux from './welcome-modal/wpcom-nux';
@@ -97,12 +101,17 @@ function WelcomeTour() {
 
 registerPlugin( 'wpcom-block-editor-nux', {
 	render: () => (
-		<>
-			<WelcomeTour />
-			<PostPublishedModal />
-			<SellerCelebrationModal />
-			<PurchaseNotice />
-			<VideoPressCelebrationModal />
-		</>
+		<HasSeenSellerCelebrationModalProvider>
+			<HasSeenVideoCelebrationModalProvider>
+				<ShouldShowFirstPostPublishedModalProvider>
+					<WelcomeTour />
+					<FirstPostPublishedModal />
+					<PostPublishedSharingModal />
+					<SellerCelebrationModal />
+					<PurchaseNotice />
+					<VideoPressCelebrationModal />
+				</ShouldShowFirstPostPublishedModalProvider>
+			</HasSeenVideoCelebrationModalProvider>
+		</HasSeenSellerCelebrationModalProvider>
 	),
 } );

@@ -1,10 +1,10 @@
+import { Reader } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import PendingSiteRow from './pending-site-row';
 import '../styles.scss';
-import type { PendingSiteSubscription } from '@automattic/data-stores/src/reader/types';
 
 type PendingSiteListProps = {
-	pendingSites?: PendingSiteSubscription[];
+	pendingSites?: Reader.PendingSiteSubscription[];
 };
 
 export default function PendingSiteList( { pendingSites }: PendingSiteListProps ) {

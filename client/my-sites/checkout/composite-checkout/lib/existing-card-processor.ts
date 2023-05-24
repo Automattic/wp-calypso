@@ -84,7 +84,12 @@ export default async function existingCardProcessor(
 
 	return submitWpcomTransaction( formattedTransactionData, dataForProcessor )
 		.then( async ( stripeResponse ) => {
-			if ( stripeResponse?.message?.payment_intent_client_secret ) {
+			if (
+				stripeResponse &&
+				'message' in stripeResponse &&
+				typeof stripeResponse.message !== 'string' &&
+				stripeResponse.message?.payment_intent_client_secret
+			) {
 				debug( 'transaction requires authentication' );
 				// 3DS authentication required
 				reduxDispatch( recordTracksEvent( 'calypso_checkout_modal_authorization', {} ) );
@@ -100,10 +105,12 @@ export default async function existingCardProcessor(
 			return stripeResponse;
 		} )
 		.then( ( stripeResponse ) => {
-			if (
-				stripeResponse?.redirect_url &&
-				! stripeResponse?.message?.payment_intent_client_secret
-			) {
+			const hasPaymentIntent =
+				stripeResponse &&
+				'message' in stripeResponse &&
+				typeof stripeResponse.message !== 'string' &&
+				stripeResponse?.message?.payment_intent_client_secret;
+			if ( stripeResponse?.redirect_url && ! hasPaymentIntent ) {
 				debug( 'transaction requires redirect' );
 				return makeRedirectResponse( stripeResponse.redirect_url );
 			}

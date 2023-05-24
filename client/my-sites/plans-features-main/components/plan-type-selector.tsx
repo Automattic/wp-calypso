@@ -131,6 +131,8 @@ export type IntervalTypeProps = Pick<
 	| 'hideDiscountLabel'
 	| 'redirectTo'
 	| 'showBiannualToggle'
+	| 'selectedPlan'
+	| 'selectedFeature'
 >;
 
 export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = ( props ) => {
@@ -166,7 +168,11 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 		}
 	}
 
-	const additionalPathProps = props.redirectTo ? { redirect_to: props.redirectTo } : {};
+	const additionalPathProps = {
+		...( props.redirectTo ? { redirect_to: props.redirectTo } : {} ),
+		...( props.selectedPlan ? { plan: props.selectedPlan } : {} ),
+		...( props.selectedFeature ? { feature: props.selectedFeature } : {} ),
+	};
 
 	const isDomainUpsellFlow = new URLSearchParams( window.location.search ).get( 'domain' );
 
@@ -323,7 +329,7 @@ const IntervalTypeToggleWrapper = styled.div< { showingMonthly: boolean; isInSig
 	display: ${ ( { isInSignup } ) => ( isInSignup ? 'flex' : 'block' ) };
 	align-content: space-between;
 	justify-content: center;
-	margin: 0 20px;
+	margin: 0 20px 24px;
 
 	> .segmented-control.is-compact:not( .is-signup ) {
 		margin: 8px auto 16px;

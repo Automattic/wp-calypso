@@ -16,12 +16,11 @@ export const useHelpSearchQuery = (
 		params.append( 'query', search );
 	}
 
-	return useQuery< { wordpress_support_links: LinksForSection[] } >(
-		[ 'help', search ],
-		() => wpcomRequest( { path: '/help/search', query: params.toString(), apiVersion: '1.1' } ),
-		{
-			enabled: !! search,
-			...queryOptions,
-		}
-	);
+	return useQuery< { wordpress_support_links: LinksForSection[] } >( {
+		queryKey: [ 'help', search ],
+		queryFn: () =>
+			wpcomRequest( { path: '/help/search', query: params.toString(), apiVersion: '1.1' } ),
+		enabled: !! search,
+		...queryOptions,
+	} );
 };

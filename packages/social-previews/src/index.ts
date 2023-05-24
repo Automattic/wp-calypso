@@ -4,3 +4,4 @@ export * from './linkedin-preview';
 export * from './tumblr-preview';
 export * from './facebook-preview';
 export * from './constants';
+export * from './types';

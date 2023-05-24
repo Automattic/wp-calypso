@@ -14,6 +14,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 import CheckoutMain from './composite-checkout/components/checkout-main';
 import PrePurchaseNotices from './composite-checkout/components/prepurchase-notices';
+import { convertErrorToString } from './composite-checkout/lib/analytics';
 import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
 
 const logCheckoutError = ( error: Error ) => {
@@ -24,7 +25,7 @@ const logCheckoutError = ( error: Error ) => {
 		extra: {
 			env: config( 'env_id' ),
 			type: 'checkout_system_decider',
-			message: error.message + '; Stack: ' + error.stack,
+			message: convertErrorToString( error ),
 		},
 	} );
 	captureException( error );

@@ -51,6 +51,7 @@ const contextLinks = {
 - `showText` - _optional_ (bool) Whether or not to display the link text. Default `true`.
 - `showIcon` - _optional_ (bool) Whether or not to display the "help-outline" Gridicon. Default `true`.
 - `iconSize` - _optional_ (number) Gridicon size. Default `14`.
+- `linkTitle` - _optional_ (string) Text to use in the link's `title=` attribute.
 - `tracksEvent` - _optional_ (string) Tracks Analytics Event name
 - `tracksOptions` - _optional_ (object) Tracks Analytics options
 - `statsGroup` - _optional_ (string) Stat analytics group name

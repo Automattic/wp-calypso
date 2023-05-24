@@ -26,18 +26,16 @@ export const useGetTitanMailboxAvailability = (
 	mailboxName: string,
 	queryOptions: UseQueryOptions< any, any > = {}
 ) => {
-	return useQuery< any, any >(
-		getCacheKey( domainName, mailboxName ),
-		() =>
+	return useQuery< any, any >( {
+		queryKey: getCacheKey( domainName, mailboxName ),
+		queryFn: () =>
 			wpcom.req.get( {
 				path: `/emails/titan/${ encodeURIComponent(
 					domainName
 				) }/check-mailbox-availability/${ encodeURIComponent( mailboxName ) }`,
 				apiNamespace: 'wpcom/v2',
 			} ),
-		{
-			...queryOptions,
-			retry: ( count, { message: status } ) => finalErrorStatuses.includes( status ),
-		}
-	);
+		...queryOptions,
+		retry: ( count, { message: status } ) => finalErrorStatuses.includes( status ),
+	} );
 };

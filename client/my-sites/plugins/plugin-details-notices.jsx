@@ -33,7 +33,8 @@ const PluginDetailsNotices = ( { selectedSite, plugin, translate } ) => {
 		! plugin?.active ||
 		marketplacePluginHasSubscription ||
 		isWpcomPreinstalled ||
-		isBundledPlugin
+		isBundledPlugin ||
+		! plugin.isMarketplaceProduct
 	) {
 		return null;
 	}
@@ -54,7 +55,7 @@ const PluginDetailsNotices = ( { selectedSite, plugin, translate } ) => {
 };
 
 PluginDetailsNotices.propTypes = {
-	selectedSite: PropTypes.object.isRequired,
+	selectedSite: PropTypes.object,
 	plugin: PropTypes.object.isRequired,
 };
 
