@@ -42,11 +42,11 @@ export function createReduxStore(
 
 	const enhancers = [
 		addReducerEnhancer,
-		isBrowser && window?.app?.isDebug && consoleDispatcher,
+		isBrowser && window.app && window.app.isDebug && consoleDispatcher,
 		applyMiddleware( ...middlewares ),
-		isBrowser && window?.app?.isDebug && actionLogger,
-		isBrowser && window?.__REDUX_DEVTOOLS_EXTENSION__?.(),
-	];
+		isBrowser && window.app && window.app.isDebug && actionLogger,
+		isBrowser && window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
+	].filter( Boolean );
 
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	// @ts-ignore The store enhancer types don't line up exactly and it's not worth fixing immediately.
