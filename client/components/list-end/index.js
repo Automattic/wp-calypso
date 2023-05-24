@@ -4,7 +4,7 @@ import './style.scss';
 
 export default function ListEnd() {
 	return (
-		<div className="list-end promote-post-i2__aux-wrapper">
+		<div className="list-end">
 			<Gridicon icon="my-sites" />
 		</div>
 	);
