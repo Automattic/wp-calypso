@@ -1,7 +1,6 @@
-import { GlobalStylesContext } from '@wordpress/edit-site/build-module/components/global-styles/context';
-import { mergeBaseAndUserConfigs } from '@wordpress/edit-site/build-module/components/global-styles/global-styles-provider';
 import { isEmpty, mapValues } from 'lodash';
 import { useState, useMemo, useCallback } from 'react';
+import { GlobalStylesContext, mergeBaseAndUserConfigs } from '../../gutenberg-bridge';
 import { useGetGlobalStylesBaseConfig } from '../../hooks';
 import type { GlobalStylesObject } from '../../types';
 
@@ -17,14 +16,15 @@ const cleanEmptyObject = ( object: any ) => {
 	return isEmpty( cleanedNestedObjects ) ? undefined : cleanedNestedObjects;
 };
 
-const useGlobalStylesUserConfig = () => {
+type SetConfig = ( callback: ( config: GlobalStylesObject ) => GlobalStylesObject ) => void;
+
+const useGlobalStylesUserConfig = (): [ boolean, GlobalStylesObject, SetConfig ] => {
 	const [ userConfig, setUserConfig ] = useState< GlobalStylesObject >( {
 		settings: {},
 		styles: {},
 	} );
-
-	const setConfig = useCallback(
-		( callback: ( config: GlobalStylesObject ) => GlobalStylesObject ) => {
+	const setConfig: SetConfig = useCallback(
+		( callback ) => {
 			setUserConfig( ( currentConfig ) => {
 				const updatedConfig = callback( currentConfig );
 				return {
@@ -35,28 +35,26 @@ const useGlobalStylesUserConfig = () => {
 		},
 		[ setUserConfig ]
 	);
-
 	return [ !! true, userConfig, setConfig ];
 };
 
-const useGlobalStylesBaseConfig = ( siteId: number | string, stylesheet: string ) => {
+const useGlobalStylesBaseConfig = (
+	siteId: number | string,
+	stylesheet: string
+): [ boolean, GlobalStylesObject | undefined ] => {
 	const { data } = useGetGlobalStylesBaseConfig( siteId, stylesheet );
-
 	return [ !! data, data ];
 };
 
 const useGlobalStylesContext = ( siteId: number | string, stylesheet: string ) => {
 	const [ isUserConfigReady, userConfig, setUserConfig ] = useGlobalStylesUserConfig();
-
 	const [ isBaseConfigReady, baseConfig ] = useGlobalStylesBaseConfig( siteId, stylesheet );
-
 	const mergedConfig = useMemo( () => {
 		if ( ! baseConfig || ! userConfig ) {
 			return {};
 		}
 		return mergeBaseAndUserConfigs( baseConfig, userConfig );
 	}, [ userConfig, baseConfig ] );
-
 	const context = useMemo( () => {
 		return {
 			isReady: isUserConfigReady && isBaseConfigReady,
@@ -73,7 +71,6 @@ const useGlobalStylesContext = ( siteId: number | string, stylesheet: string ) =
 		isUserConfigReady,
 		isBaseConfigReady,
 	] );
-
 	return context;
 };
 
@@ -86,11 +83,9 @@ interface Props {
 
 const GlobalStylesProvider = ( { siteId, stylesheet, children, placeholder = null }: Props ) => {
 	const context = useGlobalStylesContext( siteId, stylesheet );
-
 	if ( ! context.isReady ) {
 		return placeholder;
 	}
-
 	return (
 		<GlobalStylesContext.Provider value={ context }>{ children }</GlobalStylesContext.Provider>
 	);

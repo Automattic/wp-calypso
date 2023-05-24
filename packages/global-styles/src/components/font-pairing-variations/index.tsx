@@ -4,11 +4,10 @@ import {
 	__unstableUseCompositeState as useCompositeState,
 	__unstableCompositeItem as CompositeItem,
 } from '@wordpress/components';
-import { GlobalStylesContext } from '@wordpress/edit-site/build-module/components/global-styles/context';
-import { mergeBaseAndUserConfigs } from '@wordpress/edit-site/build-module/components/global-styles/global-styles-provider';
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { useMemo, useContext } from 'react';
+import { GlobalStylesContext, mergeBaseAndUserConfigs } from '../../gutenberg-bridge';
 import { useFontPairingVariations } from '../../hooks';
 import FontPairingVariationPreview from './preview';
 import type { GlobalStylesObject } from '../../types';
@@ -42,7 +41,6 @@ const FontPairingVariation = ( {
 			merged: mergeBaseAndUserConfigs( base, fontPairingVariation ),
 		};
 	}, [ fontPairingVariation, base ] );
-
 	return (
 		<CompositeItem
 			role="option"
@@ -56,7 +54,7 @@ const FontPairingVariation = ( {
 			aria-label={
 				translate( 'Font: %s', {
 					comment: 'Aria label for font preview buttons',
-					args: fontPairingVariation.title ?? translate( 'Free font' ),
+					args: fontPairingVariation.title ?? translate( 'Default' ),
 				} ) as string
 			}
 		>
@@ -78,38 +76,29 @@ const FontPairingVariations = ( {
 	const { base } = useContext( GlobalStylesContext );
 	const fontPairingVariations = useFontPairingVariations( siteId, stylesheet ) ?? [];
 	const composite = useCompositeState();
-
 	return (
 		<Composite
 			{ ...composite }
 			role="listbox"
+			className="font-pairing-variations"
 			aria-label={ translate( 'Font pairing variations' ) }
 		>
-			<h3 className="global-styles-variation__title">{ translate( 'Free font' ) }</h3>
-			<div className="font-pairing-variations">
+			<FontPairingVariation
+				key="base"
+				fontPairingVariation={ base }
+				isActive={ ! selectedFontPairingVariation }
+				composite={ composite }
+				onSelect={ () => onSelect( null ) }
+			/>
+			{ fontPairingVariations.map( ( fontPairingVariation, index ) => (
 				<FontPairingVariation
-					key="base"
-					fontPairingVariation={ { ...base, title: translate( 'Free font' ) } }
-					isActive={ ! selectedFontPairingVariation }
+					key={ index }
+					fontPairingVariation={ fontPairingVariation }
+					isActive={ fontPairingVariation.title === selectedFontPairingVariation?.title }
 					composite={ composite }
-					onSelect={ () => onSelect( null ) }
+					onSelect={ () => onSelect( fontPairingVariation ) }
 				/>
-			</div>
-			<h3 className="global-styles-variation__title">
-				{ translate( 'Premium fonts' ) }
-				<PremiumBadge shouldHideTooltip shouldCompactWithAnimation />
-			</h3>
-			<div className="font-pairing-variations">
-				{ fontPairingVariations.map( ( fontPairingVariation, index ) => (
-					<FontPairingVariation
-						key={ index }
-						fontPairingVariation={ fontPairingVariation }
-						isActive={ fontPairingVariation.title === selectedFontPairingVariation?.title }
-						composite={ composite }
-						onSelect={ () => onSelect( fontPairingVariation ) }
-					/>
-				) ) }
-			</div>
+			) ) }
 		</Composite>
 	);
 };

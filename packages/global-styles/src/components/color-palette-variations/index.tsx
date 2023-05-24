@@ -4,11 +4,10 @@ import {
 	__unstableUseCompositeState as useCompositeState,
 	__unstableCompositeItem as CompositeItem,
 } from '@wordpress/components';
-import { GlobalStylesContext } from '@wordpress/edit-site/build-module/components/global-styles/context';
-import { mergeBaseAndUserConfigs } from '@wordpress/edit-site/build-module/components/global-styles/global-styles-provider';
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { useMemo, useContext } from 'react';
+import { GlobalStylesContext, mergeBaseAndUserConfigs } from '../../gutenberg-bridge';
 import { useColorPaletteVariations } from '../../hooks';
 import ColorPaletteVariationPreview from './preview';
 import type { GlobalStylesObject } from '../../types';
@@ -42,7 +41,6 @@ const ColorPaletteVariation = ( {
 			merged: mergeBaseAndUserConfigs( base, colorPaletteVariation ),
 		};
 	}, [ colorPaletteVariation, base ] );
-
 	return (
 		<CompositeItem
 			role="option"
@@ -56,7 +54,7 @@ const ColorPaletteVariation = ( {
 			aria-label={
 				translate( 'Color: %s', {
 					comment: 'Aria label for color preview buttons',
-					args: colorPaletteVariation.title ?? translate( 'Free style' ),
+					args: colorPaletteVariation.title ?? translate( 'Default' ),
 				} ) as string
 			}
 		>
@@ -78,38 +76,29 @@ const ColorPaletteVariations = ( {
 	const { base } = useContext( GlobalStylesContext );
 	const colorPaletteVariations = useColorPaletteVariations( siteId, stylesheet ) ?? [];
 	const composite = useCompositeState();
-
 	return (
 		<Composite
 			{ ...composite }
 			role="listbox"
+			className="color-palette-variations"
 			aria-label={ translate( 'Color palette variations' ) }
 		>
-			<h3 className="global-styles-variation__title">{ translate( 'Free style' ) }</h3>
-			<div className="color-palette-variations">
+			<ColorPaletteVariation
+				key="base"
+				colorPaletteVariation={ base }
+				isActive={ ! selectedColorPaletteVariation }
+				composite={ composite }
+				onSelect={ () => onSelect( null ) }
+			/>
+			{ colorPaletteVariations.map( ( colorPaletteVariation, index ) => (
 				<ColorPaletteVariation
-					key="base"
-					colorPaletteVariation={ { ...base, title: translate( 'Free style' ) } }
-					isActive={ ! selectedColorPaletteVariation }
+					key={ index }
+					colorPaletteVariation={ colorPaletteVariation }
+					isActive={ colorPaletteVariation.title === selectedColorPaletteVariation?.title }
 					composite={ composite }
-					onSelect={ () => onSelect( null ) }
+					onSelect={ () => onSelect( colorPaletteVariation ) }
 				/>
-			</div>
-			<h3 className="global-styles-variation__title">
-				{ translate( 'Premium styles' ) }
-				<PremiumBadge shouldHideTooltip shouldCompactWithAnimation />
-			</h3>
-			<div className="color-palette-variations">
-				{ colorPaletteVariations.map( ( colorPaletteVariation, index ) => (
-					<ColorPaletteVariation
-						key={ index }
-						colorPaletteVariation={ colorPaletteVariation }
-						isActive={ colorPaletteVariation.title === selectedColorPaletteVariation?.title }
-						composite={ composite }
-						onSelect={ () => onSelect( colorPaletteVariation ) }
-					/>
-				) ) }
-			</div>
+			) ) }
 		</Composite>
 	);
 };

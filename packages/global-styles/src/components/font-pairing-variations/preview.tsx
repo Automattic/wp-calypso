@@ -3,13 +3,10 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
-import {
-	useSetting,
-	useStyle,
-} from '@wordpress/edit-site/build-module/components/global-styles/hooks';
 import { translate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import { STYLE_PREVIEW_WIDTH, STYLE_PREVIEW_HEIGHT, SYSTEM_FONT_SLUG } from '../../constants';
+import { useGlobalSetting, useGlobalStyle } from '../../gutenberg-bridge';
 import GlobalStylesVariationContainer from '../global-styles-variation-container';
 import FontFamiliesLoader from './font-families-loader';
 import type { FontFamily } from '../../types';
@@ -25,43 +22,37 @@ interface Props {
 }
 
 const FontPairingVariationPreview = ( { title }: Props ) => {
-	const [ fontFamilies ] = useSetting( 'typography.fontFamilies' ) as [ FontFamily[] ];
-
-	const [ textFontFamily = 'serif' ] = useStyle( 'typography.fontFamily' );
-	const [ textFontStyle = 'normal' ] = useStyle( 'typography.fontStyle' );
-	const [ textFontWeight = 400 ] = useStyle( 'typography.fontWeight' );
-
-	const [ headingFontFamily = textFontFamily ] = useStyle(
+	const [ fontFamilies ] = useGlobalSetting( 'typography.fontFamilies' ) as [ FontFamily[] ];
+	const [ textFontFamily = 'serif' ] = useGlobalStyle( 'typography.fontFamily' );
+	const [ textFontStyle = 'normal' ] = useGlobalStyle( 'typography.fontStyle' );
+	const [ textFontWeight = 400 ] = useGlobalStyle( 'typography.fontWeight' );
+	const [ headingFontFamily = textFontFamily ] = useGlobalStyle(
 		'elements.heading.typography.fontFamily'
 	);
-	const [ headingFontStyle = textFontStyle ] = useStyle( 'elements.heading.typography.fontStyle' );
-	const [ headingFontWeight = textFontWeight ] = useStyle(
+	const [ headingFontStyle = textFontStyle ] = useGlobalStyle(
+		'elements.heading.typography.fontStyle'
+	);
+	const [ headingFontWeight = textFontWeight ] = useGlobalStyle(
 		'elements.heading.typography.fontWeight'
 	);
-
 	const [ containerResizeListener, { width } ] = useResizeObserver();
 	const ratio = width ? width / STYLE_PREVIEW_WIDTH : 1;
 	const normalizedHeight = Math.ceil( STYLE_PREVIEW_HEIGHT * ratio * 0.5 );
 	const externalFontFamilies = fontFamilies.filter( ( { slug } ) => slug !== SYSTEM_FONT_SLUG );
 	const [ isLoaded, setIsLoaded ] = useState( ! externalFontFamilies.length );
-
 	const getFontFamilyName = ( targetFontFamily: string ) => {
 		const fontFamily = fontFamilies.find( ( { fontFamily } ) => fontFamily === targetFontFamily );
-		return fontFamily?.name || fontFamily?.fontFamily || targetFontFamily;
+		return fontFamily ? fontFamily.name : targetFontFamily;
 	};
-
 	const textFontFamilyName = useMemo(
 		() => getFontFamilyName( textFontFamily ),
 		[ textFontFamily, fontFamilies ]
 	);
-
 	const headingFontFamilyName = useMemo(
 		() => getFontFamilyName( headingFontFamily ),
 		[ headingFontFamily, fontFamilies ]
 	);
-
 	const handleOnLoad = () => setIsLoaded( true );
-
 	return (
 		<GlobalStylesVariationContainer
 			width={ width }
