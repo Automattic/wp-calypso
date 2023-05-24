@@ -751,7 +751,7 @@ __metadata:
     "@wordpress/components": ^23.0.0
     "@wordpress/compose": ^6.0.0
     "@wordpress/keycodes": ^3.23.0
-    "@wordpress/private-apis": ^0.9.0
+    "@wordpress/private-apis": ^0.15.0
     classnames: ^2.3.1
     i18n-calypso: "workspace:^"
     lodash: ^4.17.21
@@ -1766,7 +1766,7 @@ __metadata:
     "@wordpress/nux": ^6.0.0
     "@wordpress/plugins": ^5.0.0
     "@wordpress/primitives": ^3.21.0
-    "@wordpress/private-apis": ^0.9.0
+    "@wordpress/private-apis": ^0.15.0
     "@wordpress/readable-js-assets-webpack-plugin": ^2.6.0
     "@wordpress/rich-text": ^6.0.0
     "@wordpress/scripts": ^25.0.0
@@ -9846,48 +9846,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/private-apis@npm:^0.11.0":
-  version: 0.11.0
-  resolution: "@wordpress/private-apis@npm:0.11.0"
-  dependencies:
-    "@babel/runtime": ^7.16.0
-  checksum: d45457205978de2d6a30149cb31bf55ce9c857963b6f7830484fbf59b15ec0b9001efd918e1fb24525c80ff9fd54dc71fd11fe590999f31b97bea9889af8da06
-  languageName: node
-  linkType: hard
-
-"@wordpress/private-apis@npm:^0.13.0":
-  version: 0.13.0
-  resolution: "@wordpress/private-apis@npm:0.13.0"
-  dependencies:
-    "@babel/runtime": ^7.16.0
-  checksum: 52c50c405286a4ef579999240b5b305e276f17df52d4283a5cc4f74c24c28a72520bba596e2e920f29e1552f5b09ad3694e7e9ab2279d332819323683a056ead
-  languageName: node
-  linkType: hard
-
-"@wordpress/private-apis@npm:^0.14.0":
-  version: 0.14.0
-  resolution: "@wordpress/private-apis@npm:0.14.0"
-  dependencies:
-    "@babel/runtime": ^7.16.0
-  checksum: f4c2db1efdd298e9b2d438a449229975f55f8908eb60f1b9f38bee2be975ed46b3a855a5e114033b7ca70b73e4bf3aa31a2b1520ed2a03fd0ebb643cc917f350
-  languageName: node
-  linkType: hard
-
 "@wordpress/private-apis@npm:^0.15.0":
   version: 0.15.0
   resolution: "@wordpress/private-apis@npm:0.15.0"
   dependencies:
     "@babel/runtime": ^7.16.0
   checksum: 410a62f76ed72c19467cea751bbf400368b7a4fa367b99e2a656980066da4cdd0eec4506e5dd9bae18fe8c89b46d53b5eed89583f65f08cc52c5e9d0756063fa
-  languageName: node
-  linkType: hard
-
-"@wordpress/private-apis@npm:^0.9.0":
-  version: 0.9.0
-  resolution: "@wordpress/private-apis@npm:0.9.0"
-  dependencies:
-    "@babel/runtime": ^7.16.0
-  checksum: e18f2fe7e226283664d3218c45583becd6f5e87e7f6431b0f5633de6d3624fa8f0941f2d2606023170ce318fcd9dff536a8e056029f436b206590f836fceae80
   languageName: node
   linkType: hard
 
