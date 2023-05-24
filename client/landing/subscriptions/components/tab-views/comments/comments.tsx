@@ -1,13 +1,15 @@
 import { SubscriptionManager, Reader } from '@automattic/data-stores';
+import { SiteSubscriptionsFilterBy } from '@automattic/data-stores/src/reader/queries';
 import SearchInput from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import { CommentList } from 'calypso/landing/subscriptions/components/comment-list';
 import { SearchIcon } from 'calypso/landing/subscriptions/components/icons';
 import { Notice, NoticeType } from 'calypso/landing/subscriptions/components/notice';
 import { SortControls, Option } from 'calypso/landing/subscriptions/components/sort-controls';
 import { useSearch } from 'calypso/landing/subscriptions/hooks';
+import { getFilterLabel, useFilterOptions } from '../tab-filters/tab-filters';
 import TabView from '../tab-view';
 
 const { PostSubscriptionsSortBy: SortBy, SiteSubscriptionsFilterBy: FilterBy } = Reader;
@@ -20,24 +22,6 @@ const useSortOptions = (): Option[] => {
 		{ value: SortBy.PostName, label: translate( 'Post name' ) },
 	];
 };
-
-const useFilterOptions = () => {
-	const translate = useTranslate();
-
-	return useMemo(
-		() => [
-			{ value: FilterBy.All, label: translate( 'All' ) },
-			// { value: SiteSubscriptionsFilterBy.Paid, label: translate( 'Paid' ) },		// todo: add back when we have paid subscriptions support
-			{ value: FilterBy.P2, label: translate( 'P2' ) },
-		],
-		[ translate ]
-	);
-};
-
-const getFilterLabel = (
-	availableFilterOptions: Option[],
-	filterValue: Reader.SiteSubscriptionsFilterBy
-) => availableFilterOptions.find( ( option ) => option.value === filterValue )?.label;
 
 const Comments = () => {
 	const translate = useTranslate();
