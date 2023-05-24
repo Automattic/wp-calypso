@@ -2,7 +2,7 @@ import { Button, Gridicon } from '@automattic/components';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl, TextControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
-import { useState } from 'react';
+import { useState, FormEvent } from 'react';
 import { connect } from 'react-redux';
 import ActionPanel from 'calypso/components/action-panel';
 import ActionPanelBody from 'calypso/components/action-panel/body';
@@ -21,10 +21,10 @@ import {
 import { useStartSiteOwnerTransfer } from './use-start-site-owner-transfer';
 
 type Props = {
-	currentUserEmail: string;
-	selectedSiteId: number;
-	selectedSiteSlug: string;
-	selectedSiteTitle: string;
+	currentUserEmail: string | null;
+	selectedSiteId: number | null;
+	selectedSiteSlug: string | null;
+	selectedSiteTitle: string | undefined;
 	translate: ( text: string, args?: Record< string, unknown > ) => string;
 };
 
@@ -40,7 +40,7 @@ const StartSiteOwnerTransfer = ( {
 	const [ confirmSecondToggle, setConfirmSecondToggle ] = useState( false );
 	const [ newOwnerUsername, setNewOwnerUsername ] = useState( '' );
 	const [ startSiteTransferError, setStartSiteTransferError ] = useState( '' );
-	const [ startSiteTransferSuccess, setStartSiteTransferSuccess ] = useState( '' );
+	const [ startSiteTransferSuccess, setStartSiteTransferSuccess ] = useState( false );
 
 	const { startSiteOwnerTransfer, isLoading: isStartingSiteTransfer } = useStartSiteOwnerTransfer(
 		selectedSiteId,
@@ -58,7 +58,7 @@ const StartSiteOwnerTransfer = ( {
 		}
 	);
 
-	const handleFormSubmit = ( event: HTMLFormElement ) => {
+	const handleFormSubmit = ( event: FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
 		startSiteOwnerTransfer( { newSiteOwner: newOwnerUsername } );
 	};
