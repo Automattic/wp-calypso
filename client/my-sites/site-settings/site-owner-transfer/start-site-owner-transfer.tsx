@@ -1,5 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
+import styled from '@emotion/styled';
 import { ToggleControl, TextControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { useState, FormEvent } from 'react';
@@ -27,6 +28,14 @@ type Props = {
 	selectedSiteTitle: string | undefined;
 	translate: ( text: string, args?: Record< string, unknown > ) => string;
 };
+
+const FormWrapper = styled.div( {
+	marginBottom: '1.5em',
+} );
+
+const SiteOwnerTransferActionPanelBody = styled( ActionPanelBody )( {
+	overflow: 'visible !important',
+} );
 
 const StartSiteOwnerTransfer = ( {
 	currentUserEmail,
@@ -64,7 +73,7 @@ const StartSiteOwnerTransfer = ( {
 	};
 
 	const startSiteTransferForm = (
-		<>
+		<FormWrapper>
 			<p>
 				{ translate(
 					'Please make sure you understand the changes that will be made and that these changes cannot be undone before you continue:'
@@ -119,7 +128,7 @@ const StartSiteOwnerTransfer = ( {
 					</Button>
 				</form>
 			) }
-		</>
+		</FormWrapper>
 	);
 
 	return (
@@ -135,7 +144,7 @@ const StartSiteOwnerTransfer = ( {
 				<h1>{ translate( 'Start Site Transfer' ) }</h1>
 			</HeaderCake>
 			<ActionPanel>
-				<ActionPanelBody>
+				<SiteOwnerTransferActionPanelBody>
 					<ActionPanelTitle>{ translate( 'Start Site Transfer' ) }</ActionPanelTitle>
 					<p>
 						{ translate(
@@ -192,7 +201,7 @@ const StartSiteOwnerTransfer = ( {
 						</Notice>
 					) }
 					{ ! startSiteTransferSuccess && startSiteTransferForm }
-				</ActionPanelBody>
+				</SiteOwnerTransferActionPanelBody>
 				<ActionPanelFooter>
 					<Button
 						className="action-panel__support-button is-external" // eslint-disable-line wpcalypso/jsx-classname-namespace
