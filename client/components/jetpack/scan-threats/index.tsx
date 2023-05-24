@@ -262,7 +262,7 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 			</Card>
 			<ThreatListHeader />
 			<div className="scan-threats__threats">
-				{ highSeverityThreats &&
+				{ highSeverityThreats.length > 0 &&
 					highSeverityThreats.map( ( threat ) => (
 						<ThreatItem
 							key={ threat.id }
@@ -274,8 +274,8 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 							isPlaceholder={ false }
 						/>
 					) ) }
-				{ ! highSeverityThreats &&
-					lowSeverityThreats &&
+				{ highSeverityThreats.length === 0 &&
+					lowSeverityThreats.length > 0 &&
 					lowSeverityThreats.map( ( threat ) => (
 						<ThreatItem
 							key={ threat.id }
@@ -287,25 +287,23 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 							isPlaceholder={ false }
 						/>
 					) ) }
-				{ lowSeverityThreats.length > 0 && (
+				{ highSeverityThreats.length > 0 && lowSeverityThreats.length > 0 && (
 					<div className="scan-threats__low-risk">
 						<FoldableCard
 							clickableHeader={ true }
 							header={ <ThreatLowRiskItemHeader threatCount={ countMap.low } /> }
 						>
-							{ highSeverityThreats &&
-								lowSeverityThreats &&
-								lowSeverityThreats.map( ( threat ) => (
-									<ThreatItem
-										key={ threat.id }
-										threat={ threat }
-										onFixThreat={ () => openDialog( 'fix', threat ) }
-										onIgnoreThreat={ () => openDialog( 'ignore', threat ) }
-										isFixing={ isFixing( threat ) }
-										contactSupportUrl={ contactSupportUrl( site.URL ) }
-										isPlaceholder={ false }
-									/>
-								) ) }
+							{ lowSeverityThreats.map( ( threat ) => (
+								<ThreatItem
+									key={ threat.id }
+									threat={ threat }
+									onFixThreat={ () => openDialog( 'fix', threat ) }
+									onIgnoreThreat={ () => openDialog( 'ignore', threat ) }
+									isFixing={ isFixing( threat ) }
+									contactSupportUrl={ contactSupportUrl( site.URL ) }
+									isPlaceholder={ false }
+								/>
+							) ) }
 						</FoldableCard>
 					</div>
 				) }
