@@ -5,8 +5,7 @@ import {
 	FEATURE_SITE_STAGING_SITES,
 } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
-import { Component, Fragment } from 'react';
-import wrapWithClickOutside from 'react-click-outside';
+import { Fragment, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
@@ -52,189 +51,176 @@ import WebServerSettingsCard from './web-server-settings-card';
 import './style.scss';
 
 const HEADING_OFFSET = 30;
-class Hosting extends Component {
-	state = {
-		clickOutside: false,
-	};
 
-	handleClickOutside( event ) {
-		const { COMPLETE } = transferStates;
-		const { isTransferring, transferState } = this.props;
+const Hosting = ( props ) => {
+	const [ hasClickedOutside, setHasClickedOutside ] = useState( false );
 
-		if ( isTransferring && COMPLETE !== transferState ) {
+	const {
+		teams,
+		clickActivate,
+		hasSftpFeature,
+		isDisabled,
+		isECommerceTrial,
+		isWpcomStagingSite,
+		isTransferring,
+		siteId,
+		siteSlug,
+		translate,
+		transferState,
+		isLoadingSftpData,
+		hasStagingSitesFeature,
+	} = props;
+
+	useEffect( () => {
+		function onClickOutside( event ) {
 			event.preventDefault();
 			event.stopImmediatePropagation();
-			this.setState( { clickOutside: true } );
+			setHasClickedOutside( true );
+			window.removeEventListener( 'click', onClickOutside );
 		}
-	}
 
-	componentDidMount() {
-		this.props.fetchAutomatedTransferStatus( this.props.siteId );
-	}
-
-	componentDidUpdate( prevProps ) {
-		const { COMPLETE } = transferStates;
-		const { transferState, requestSiteById, siteId } = this.props;
-
-		if ( prevProps.transferState !== COMPLETE && transferState === COMPLETE ) {
-			requestSiteById( siteId );
+		if ( ! hasClickedOutside && isTransferring && transferStates.COMPLETE !== transferState ) {
+			window.addEventListener( 'click', onClickOutside );
+			return () => {
+				window.removeEventListener( 'click', onClickOutside );
+			};
 		}
-	}
+	}, [ hasClickedOutside, isTransferring, transferState ] );
 
-	render() {
-		const {
-			teams,
-			clickActivate,
-			hasSftpFeature,
-			isDisabled,
-			isECommerceTrial,
-			isWpcomStagingSite,
-			isTransferring,
-			siteId,
-			siteSlug,
-			translate,
-			transferState,
-			isLoadingSftpData,
-			hasStagingSitesFeature,
-		} = this.props;
+	const getUpgradeBanner = () => {
+		// The eCommerce Trial requires a different upsell path.
+		const targetPlan = ! isECommerceTrial
+			? undefined
+			: {
+					callToAction: translate( 'Upgrade your plan' ),
+					feature: FEATURE_SFTP_DATABASE,
+					href: `/plans/${ siteSlug }?feature=${ encodeURIComponent( FEATURE_SFTP_DATABASE ) }`,
+					title: translate( 'Upgrade your plan to access all hosting features' ),
+			  };
 
-		const getUpgradeBanner = () => {
-			// The eCommerce Trial requires a different upsell path.
-			const targetPlan = ! isECommerceTrial
-				? undefined
-				: {
-						callToAction: translate( 'Upgrade your plan' ),
-						feature: FEATURE_SFTP_DATABASE,
-						href: `/plans/${ siteSlug }?feature=${ encodeURIComponent( FEATURE_SFTP_DATABASE ) }`,
-						title: translate( 'Upgrade your plan to access all hosting features' ),
-				  };
+		return <HostingUpsellNudge siteId={ siteId } targetPlan={ targetPlan } />;
+	};
 
-			return <HostingUpsellNudge siteId={ siteId } targetPlan={ targetPlan } />;
-		};
+	const getAtomicActivationNotice = () => {
+		const { COMPLETE, FAILURE, RELOCATING_REVERT } = transferStates;
 
-		const getAtomicActivationNotice = () => {
-			const { COMPLETE, FAILURE, RELOCATING_REVERT } = transferStates;
+		if ( transferState === RELOCATING_REVERT ) {
+			return null;
+		}
 
-			if ( transferState === RELOCATING_REVERT ) {
-				return null;
+		// Transfer in progress
+		if (
+			( isTransferring && COMPLETE !== transferState ) ||
+			( isDisabled && COMPLETE === transferState )
+		) {
+			let activationText = translate( 'Please wait while we activate the hosting features.' );
+			if ( hasClickedOutside ) {
+				activationText = translate( "Don't leave quite yet! Just a bit longer." );
 			}
-
-			// Transfer in progress
-			if (
-				( isTransferring && COMPLETE !== transferState ) ||
-				( isDisabled && COMPLETE === transferState )
-			) {
-				let activationText = translate( 'Please wait while we activate the hosting features.' );
-				if ( this.state.clickOutside ) {
-					activationText = translate( "Don't leave quite yet! Just a bit longer." );
-				}
-
-				return (
-					<>
-						<Notice
-							className="hosting__activating-notice"
-							status="is-info"
-							showDismiss={ false }
-							text={ activationText }
-							icon="sync"
-						/>
-					</>
-				);
-			}
-
-			const failureNotice = FAILURE === transferState && (
-				<Notice
-					status="is-error"
-					showDismiss={ false }
-					text={ translate( 'There was an error activating hosting features.' ) }
-					icon="bug"
-				/>
-			);
-
-			if ( isDisabled && ! isTransferring ) {
-				return (
-					<>
-						{ failureNotice }
-						<Notice
-							status="is-info"
-							showDismiss={ false }
-							text={ translate(
-								'Please activate the hosting access to begin using these features.'
-							) }
-							icon="globe"
-						>
-							<TrackComponentView eventName="calypso_hosting_configuration_activate_impression" />
-							<NoticeAction
-								onClick={ clickActivate }
-								href={ `/hosting-config/activate/${ siteSlug }` }
-							>
-								{ translate( 'Activate' ) }
-							</NoticeAction>
-						</Notice>
-					</>
-				);
-			}
-		};
-
-		const getContent = () => {
-			const isGithubIntegrationEnabled =
-				isEnabled( 'github-integration-i1' ) && isAutomatticTeamMember( teams );
-			const WrapperComponent = isDisabled || isTransferring ? FeatureExample : Fragment;
 
 			return (
 				<>
-					{ isGithubIntegrationEnabled && (
-						<>
-							<QueryKeyringServices />
-							<QueryKeyringConnections />
-						</>
-					) }
-					<WrapperComponent>
-						<Layout className="hosting__layout">
-							<Column type="main" className="hosting__main-layout-col">
-								<SFTPCard disabled={ isDisabled } />
-								<PhpMyAdminCard disabled={ isDisabled } />
-								{ ! isWpcomStagingSite && hasStagingSitesFeature && (
-									<StagingSiteCard disabled={ isDisabled } />
-								) }
-								{ isWpcomStagingSite && siteId && (
-									<StagingSiteProductionCard siteId={ siteId } disabled={ isDisabled } />
-								) }
-								{ isGithubIntegrationEnabled && <GitHubCard /> }
-								<WebServerSettingsCard disabled={ isDisabled } />
-								<RestorePlanSoftwareCard disabled={ isDisabled } />
-								<CacheCard disabled={ isDisabled } />
-							</Column>
-							<Column type="sidebar">
-								<SiteBackupCard disabled={ isDisabled } />
-								<SupportCard />
-							</Column>
-						</Layout>
-					</WrapperComponent>
+					<Notice
+						className="hosting__activating-notice"
+						status="is-info"
+						showDismiss={ false }
+						text={ activationText }
+						icon="sync"
+					/>
 				</>
 			);
-		};
+		}
+
+		const failureNotice = FAILURE === transferState && (
+			<Notice
+				status="is-error"
+				showDismiss={ false }
+				text={ translate( 'There was an error activating hosting features.' ) }
+				icon="bug"
+			/>
+		);
+
+		if ( isDisabled && ! isTransferring ) {
+			return (
+				<>
+					{ failureNotice }
+					<Notice
+						status="is-info"
+						showDismiss={ false }
+						text={ translate(
+							'Please activate the hosting access to begin using these features.'
+						) }
+						icon="globe"
+					>
+						<TrackComponentView eventName="calypso_hosting_configuration_activate_impression" />
+						<NoticeAction
+							onClick={ clickActivate }
+							href={ `/hosting-config/activate/${ siteSlug }` }
+						>
+							{ translate( 'Activate' ) }
+						</NoticeAction>
+					</Notice>
+				</>
+			);
+		}
+	};
+
+	const getContent = () => {
+		const isGithubIntegrationEnabled =
+			isEnabled( 'github-integration-i1' ) && isAutomatticTeamMember( teams );
+		const WrapperComponent = isDisabled || isTransferring ? FeatureExample : Fragment;
 
 		return (
-			<Main wideLayout className="hosting">
-				{ ! isLoadingSftpData && <ScrollToAnchorOnMount offset={ HEADING_OFFSET } /> }
-				<PageViewTracker path="/hosting-config/:site" title="Hosting Configuration" />
-				<DocumentHead title={ translate( 'Hosting Configuration' ) } />
-				<FormattedHeader
-					brandFont
-					headerText={ translate( 'Hosting Configuration' ) }
-					subHeaderText={ translate(
-						'Access your website’s database and more advanced settings.'
-					) }
-					align="left"
-				/>
-				{ hasSftpFeature ? getAtomicActivationNotice() : getUpgradeBanner() }
-				{ getContent() }
-				<QueryReaderTeams />
-			</Main>
+			<>
+				{ isGithubIntegrationEnabled && (
+					<>
+						<QueryKeyringServices />
+						<QueryKeyringConnections />
+					</>
+				) }
+				<WrapperComponent>
+					<Layout className="hosting__layout">
+						<Column type="main" className="hosting__main-layout-col">
+							<SFTPCard disabled={ isDisabled } />
+							<PhpMyAdminCard disabled={ isDisabled } />
+							{ ! isWpcomStagingSite && hasStagingSitesFeature && (
+								<StagingSiteCard disabled={ isDisabled } />
+							) }
+							{ isWpcomStagingSite && siteId && (
+								<StagingSiteProductionCard siteId={ siteId } disabled={ isDisabled } />
+							) }
+							{ isGithubIntegrationEnabled && <GitHubCard /> }
+							<WebServerSettingsCard disabled={ isDisabled } />
+							<RestorePlanSoftwareCard disabled={ isDisabled } />
+							<CacheCard disabled={ isDisabled } />
+						</Column>
+						<Column type="sidebar">
+							<SiteBackupCard disabled={ isDisabled } />
+							<SupportCard />
+						</Column>
+					</Layout>
+				</WrapperComponent>
+			</>
 		);
-	}
-}
+	};
+
+	return (
+		<Main wideLayout className="hosting">
+			{ ! isLoadingSftpData && <ScrollToAnchorOnMount offset={ HEADING_OFFSET } /> }
+			<PageViewTracker path="/hosting-config/:site" title="Hosting Configuration" />
+			<DocumentHead title={ translate( 'Hosting Configuration' ) } />
+			<FormattedHeader
+				brandFont
+				headerText={ translate( 'Hosting Configuration' ) }
+				subHeaderText={ translate( 'Access your website’s database and more advanced settings.' ) }
+				align="left"
+			/>
+			{ hasSftpFeature ? getAtomicActivationNotice() : getUpgradeBanner() }
+			{ getContent() }
+			<QueryReaderTeams />
+		</Main>
+	);
+};
 
 export const clickActivate = () =>
 	recordTracksEvent( 'calypso_hosting_configuration_activate_click' );
@@ -264,4 +250,4 @@ export default connect(
 		fetchAutomatedTransferStatus,
 		requestSiteById: requestSite,
 	}
-)( localize( wrapWithClickOutside( Hosting ) ) );
+)( localize( Hosting ) );
