@@ -14,6 +14,7 @@ import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpt
 import { urlToSlug } from 'calypso/lib/url';
 import { CardContentWrapper } from 'calypso/my-sites/hosting/staging-site-card/card-content/card-content-wrapper';
 import { NewStagingSiteCardContent } from 'calypso/my-sites/hosting/staging-site-card/card-content/new-staging-site-card-content';
+import { StagingSiteLoadingErrorCardContent } from 'calypso/my-sites/hosting/staging-site-card/card-content/staging-site-loading-error-card-content';
 import { LoadingPlaceholder } from 'calypso/my-sites/hosting/staging-site-card/loading-placeholder';
 import { useAddStagingSiteMutation } from 'calypso/my-sites/hosting/staging-site-card/use-add-staging-site';
 import { useCheckStagingSiteStatus } from 'calypso/my-sites/hosting/staging-site-card/use-check-staging-site-status';
@@ -321,14 +322,6 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 		);
 	}, [ progress, __, siteOwnerId, currentUserId, isReverting ] );
 
-	const getLoadingErrorContent = ( message ) => {
-		return (
-			<Notice status="is-error" showDismiss={ false }>
-				{ message }
-			</Notice>
-		);
-	};
-
 	const getAccessError = () => {
 		return (
 			<Notice status="is-error" showDismiss={ false }>
@@ -352,16 +345,20 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 	let stagingSiteCardContent;
 
 	if ( ! isLoadingStagingSites && loadingError ) {
-		stagingSiteCardContent = getLoadingErrorContent(
-			__(
-				'Unable to load staging sites. Please contact support if you believe you are seeing this message in error.'
-			)
+		stagingSiteCardContent = (
+			<StagingSiteLoadingErrorCardContent
+				message={ __(
+					'Unable to load staging sites. Please contact support if you believe you are seeing this message in error.'
+				) }
+			/>
 		);
 	} else if ( ! isLoadingQuotaValidation && isErrorValidQuota ) {
-		stagingSiteCardContent = getLoadingErrorContent(
-			__(
-				'Unable to validate your site quota. Please contact support if you believe you are seeing this message in error.'
-			)
+		stagingSiteCardContent = (
+			<StagingSiteLoadingErrorCardContent
+				message={ __(
+					'Unable to validate your site quota. Please contact support if you believe you are seeing this message in error.'
+				) }
+			/>
 		);
 	} else if ( ! wasCreating && ! hasSiteAccess && transferStatus !== null ) {
 		stagingSiteCardContent = getAccessError();
