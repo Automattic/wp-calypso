@@ -5,19 +5,17 @@ import type { UserLicenseApi, UserLicense } from './types';
 
 const useUserLicenseByReceiptQuery = ( receiptId: number ): UseQueryResult< UserLicense[] > => {
 	const queryKey = [ 'user-license', receiptId ];
-	return useQuery< UserLicenseApi[], unknown, UserLicense[] >(
+	return useQuery< UserLicenseApi[], unknown, UserLicense[] >( {
 		queryKey,
-		async () =>
+		queryFn: async () =>
 			wpcom.req.get( {
 				path: `/jetpack-licensing/user/receipt/${ receiptId }`,
 				apiNamespace: 'wpcom/v2',
 			} ),
-		{
-			select: mapManyLicenseApiToLicense,
-			refetchIntervalInBackground: false,
-			refetchOnWindowFocus: false,
-		}
-	);
+		select: mapManyLicenseApiToLicense,
+		refetchIntervalInBackground: false,
+		refetchOnWindowFocus: false,
+	} );
 };
 
 export default useUserLicenseByReceiptQuery;

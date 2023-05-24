@@ -27,16 +27,14 @@ export const useGetEmailAccountsQuery = (
 	domain: string,
 	queryOptions?: UseQueryOptions< any, unknown, UseGetEmailAccountsQueryData >
 ) => {
-	return useQuery< any, unknown, UseGetEmailAccountsQueryData >(
-		getCacheKey( siteId, domain ),
-		() =>
+	return useQuery< any, unknown, UseGetEmailAccountsQueryData >( {
+		queryKey: getCacheKey( siteId, domain ),
+		queryFn: () =>
 			wpcom.req.get( {
 				path: `/sites/${ siteId }/emails/accounts/${ encodeURIComponent( domain ) }/mailboxes`,
 				apiNamespace: 'wpcom/v2',
 			} ),
-		{
-			select: ( data ) => data.accounts,
-			...queryOptions,
-		}
-	);
+		select: ( data ) => data.accounts,
+		...queryOptions,
+	} );
 };

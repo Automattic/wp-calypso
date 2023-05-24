@@ -28,21 +28,19 @@ export const useAddStagingSiteMutation = (
 	options: UseMutationOptions< MutationResponse, MutationError, MutationVariables > = {}
 ) => {
 	const queryClient = useQueryClient();
-	const mutation = useMutation(
-		async () =>
+	const mutation = useMutation( {
+		mutationFn: async () =>
 			wp.req.post( {
 				path: `/sites/${ siteId }/staging-site`,
 				apiNamespace: 'wpcom/v2',
 			} ),
-		{
-			...options,
-			mutationKey: [ ADD_STAGING_SITE_MUTATION_KEY, siteId ],
-			onSuccess: async ( ...args ) => {
-				await queryClient.invalidateQueries( [ USE_STAGING_SITE_QUERY_KEY, siteId ] );
-				options.onSuccess?.( ...args );
-			},
-		}
-	);
+		...options,
+		mutationKey: [ ADD_STAGING_SITE_MUTATION_KEY, siteId ],
+		onSuccess: async ( ...args ) => {
+			await queryClient.invalidateQueries( [ USE_STAGING_SITE_QUERY_KEY, siteId ] );
+			options.onSuccess?.( ...args );
+		},
+	} );
 
 	const { mutate } = mutation;
 	// isMutating is returning a number. Greater than 0 means we have some pending mutations for

@@ -3,7 +3,9 @@ import wpcom from 'calypso/lib/wp';
 import type { SiteVerticalsResponse, SiteVerticalQueryByIdParams } from './types';
 
 const useSiteVerticalQueryById = ( id: string ): UseQueryResult< SiteVerticalsResponse > => {
-	return useQuery( getCacheKey( id ), () => fetchSiteVertical( { id } ), {
+	return useQuery( {
+		queryKey: getCacheKey( id ),
+		queryFn: () => fetchSiteVertical( { id } ),
 		enabled: typeof id === 'string' && id !== '',
 		staleTime: Infinity,
 		refetchInterval: false,

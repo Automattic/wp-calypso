@@ -5,17 +5,16 @@ import wpcom from 'calypso/lib/wp';
 import { ConnectedThemesSelection } from './themes-selection';
 
 const FseThemes = localize( ( { translate, ...restProps } ) => {
-	const { data, error, isLoading } = useQuery(
-		[ 'fse-themes' ],
-		() =>
+	const { data, error, isLoading } = useQuery( {
+		queryKey: [ 'fse-themes' ],
+		queryFn: () =>
 			wpcom.req.get( '/themes', {
 				filter: 'full-site-editing',
 				number: 50,
 				tier: '',
 				apiVersion: '1.2',
 			} ),
-		{}
-	);
+	} );
 	if ( error ) {
 		return <EmptyContent title={ translate( 'Sorry, no themes found.' ) } />;
 	}
