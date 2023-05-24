@@ -1,5 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
+import styled from '@emotion/styled';
 import { ToggleControl, TextControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { useState } from 'react';
@@ -27,6 +28,10 @@ type Props = {
 	selectedSiteTitle: string;
 	translate: ( text: string, args?: Record< string, unknown > ) => string;
 };
+
+const FormWrapper = styled.div( {
+	marginBottom: '1.5em',
+} );
 
 const StartSiteOwnerTransfer = ( {
 	currentUserEmail,
@@ -64,7 +69,7 @@ const StartSiteOwnerTransfer = ( {
 	};
 
 	const startSiteTransferForm = (
-		<>
+		<FormWrapper>
 			<p>
 				{ translate(
 					'Please make sure you understand the changes that will be made and that these changes cannot be undone before you continue:'
@@ -119,7 +124,7 @@ const StartSiteOwnerTransfer = ( {
 					</Button>
 				</form>
 			) }
-		</>
+		</FormWrapper>
 	);
 
 	return (
