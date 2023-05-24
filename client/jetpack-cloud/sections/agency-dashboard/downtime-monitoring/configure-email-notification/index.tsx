@@ -13,12 +13,14 @@ interface Props {
 	toggleModal: ( item?: StateMonitorSettingsEmail, action?: AllowedMonitorContactActions ) => void;
 	allEmailItems: Array< StateMonitorSettingsEmail >;
 	recordEvent: ( action: string, params?: object ) => void;
+	verifiedEmail: string | undefined;
 }
 
 export default function ConfigureEmailNotification( {
 	toggleModal,
 	allEmailItems,
 	recordEvent,
+	verifiedEmail,
 }: Props ) {
 	const translate = useTranslate();
 
@@ -35,6 +37,7 @@ export default function ConfigureEmailNotification( {
 					item={ item }
 					toggleModal={ toggleModal }
 					recordEvent={ recordEvent }
+					showVerifiedBadge={ item.email === verifiedEmail }
 				/>
 			) ) }
 			<Button
