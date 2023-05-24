@@ -60,7 +60,8 @@ export class PluginAutoUpdateToggle extends Component {
 
 	isAutoManaged = () =>
 		( this.props.isMarketplaceProduct && this.props.productPurchase ) ||
-		PREINSTALLED_PLUGINS.includes( this.props.plugin.slug ) ||
+		( this.props.site?.is_wpcom_atomic &&
+			PREINSTALLED_PLUGINS.includes( this.props.plugin.slug ) ) ||
 		AUTOMOMANAGED_PLUGINS.includes( this.props.plugin.slug );
 
 	getDisabledInfo() {
