@@ -26,5 +26,7 @@ export interface IAppState {
 
 /**
  * Type of the Calypso Redux store `dispatch` function. Accepts both plain actions and thunks.
+ *
+ * TODO: Change `any` to `AnyAction` when all action creators have been converted to TS.
  */
 export type CalypsoDispatch = ThunkDispatch< IAppState, unknown, any >;
