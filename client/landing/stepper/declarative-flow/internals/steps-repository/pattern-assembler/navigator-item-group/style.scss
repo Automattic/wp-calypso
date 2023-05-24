@@ -3,6 +3,7 @@
 .pattern-assembler {
 	.navigator-item-group {
 		flex-shrink: 0;
+		width: 100%;
 
 		&:only-child {
 			.navigator-item-group__title {
