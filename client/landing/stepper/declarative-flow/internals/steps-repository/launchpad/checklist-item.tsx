@@ -63,10 +63,7 @@ const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction
 							/>
 						</div>
 					) }
-					<div className="launchpad__checklist-item-text-container">
-						<span className="launchpad__checklist-item-text">{ title }</span>
-						{ subtitle && <p className="launchpad__checklist-item-subtext">{ subtitle }</p> }
-					</div>
+					<span className="launchpad__checklist-item-text">{ title }</span>
 					{ task.badge_text ? <Badge type="info-blue">{ task.badge_text }</Badge> : null }
 					{ shouldDisplayChevron && (
 						<Gridicon
@@ -76,6 +73,7 @@ const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction
 							size={ 18 }
 						/>
 					) }
+					{ subtitle && <p className="launchpad__checklist-item-subtext">{ subtitle }</p> }
 				</Button>
 			) }
 		</li>

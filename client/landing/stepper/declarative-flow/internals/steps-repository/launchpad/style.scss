@@ -330,6 +330,7 @@
 	border-right: none;
 	border-top: none;
 	display: flex;
+	flex-wrap: wrap;
 	padding: 16px;
 	width: 100%;
 	margin: 0;
@@ -365,6 +366,7 @@
 
 .launchpad__checklist-item .badge,
 .launchpad__domain-upgrade-badge {
+	margin-left: auto;
 	background-color: var(--studio-blue-5);
 	color: var(--studio-blue-80);
 	font-size: $font-body-extra-small;
@@ -396,14 +398,17 @@
 }
 
 // general styles
-.launchpad__checklist-item-text-container {
-	flex-grow: 1;
-	font-size: $font-body-small;
-	line-height: 20px;
-	text-align: left;
-}
 .launchpad__checklist-item-text {
 	font-weight: 600;
+}
+
+.launchpad__checklist-item-subtext {
+	flex-basis: 100%;
+	margin-left: 28px;
+	margin-top: 8px;
+	text-align: left;
+	font-size: $font-body-small;
+	line-height: 20px;
 }
 
 .launchpad__task:nth-last-child(2) {
