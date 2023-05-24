@@ -153,7 +153,8 @@ class StickyPanelWithIntersectionObserver extends Component {
 			return this.setState( { isSticky: false } );
 		}
 
-		if ( isSticky !== this.state.isSticky ) {
+		const dimensionUpdates = getDimensionUpdates( this.state._ref.current, this.state );
+		if ( isSticky !== this.state.isSticky || dimensionUpdates ) {
 			this.setState( {
 				isSticky,
 				...getDimensions( this.state._ref.current, isSticky ),

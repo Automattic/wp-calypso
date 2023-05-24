@@ -1,14 +1,16 @@
-import { ListTile } from '@automattic/components';
+import { ListTile, Popover } from '@automattic/components';
 import { useSiteLaunchStatusLabel } from '@automattic/sites';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import { memo } from 'react';
+import { useTranslate } from 'i18n-calypso';
+import { memo, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useSelector } from 'react-redux';
 import StatsSparkline from 'calypso/blocks/stats-sparkline';
 import TimeSince from 'calypso/components/time-since';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { hasSiteStatsQueryFailed } from 'calypso/state/stats/lists/selectors';
 import { useCheckSiteTransferStatus } from '../hooks/use-check-site-transfer-status';
 import { displaySiteUrl, getDashboardUrl, isStagingSite, MEDIA_QUERIES } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
@@ -80,6 +82,57 @@ const ListTileSubtitle = styled.div`
 	align-items: center;
 `;
 
+const StatsOffIndicatorStyled = styled.div`
+	text-align: center;
+	border: 1px solid var( --studio-gray-5 );
+	border-radius: 4px;
+	background-color: var( --studio-gray-5 );
+	color: var( --studio-gray-100 );
+	font-size: 12px;
+	padding: 0 7px;
+	display: inline-flex;
+`;
+
+const PopoverContent = styled.div`
+	font-size: 14px;
+	padding: 16px;
+	color: var( --color-neutral-50 );
+`;
+
+const StatsColumnStyled = styled( Column )`
+	text-align: center;
+`;
+
+const StatsOffIndicator = () => {
+	const [ showPopover, setShowPopover ] = useState( false );
+	const tooltipRef = useRef( null );
+	const translate = useTranslate();
+
+	const handleOnMouseEnter = () => {
+		setShowPopover( true );
+	};
+
+	const handleOnMouseExit = () => {
+		setShowPopover( false );
+	};
+
+	return (
+		<div
+			onMouseOver={ handleOnMouseEnter }
+			onMouseOut={ handleOnMouseExit }
+			onFocus={ handleOnMouseEnter }
+			onBlur={ handleOnMouseExit }
+		>
+			<StatsOffIndicatorStyled className="tooltip-target" ref={ tooltipRef }>
+				{ translate( 'Stats off' ) }
+			</StatsOffIndicatorStyled>
+			<Popover isVisible={ showPopover } context={ tooltipRef.current } css={ { marginTop: -5 } }>
+				<PopoverContent>{ translate( 'Stats are disabled on this site.' ) }</PopoverContent>
+			</Popover>
+		</div>
+	);
+};
+
 export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const { __ } = useI18n();
 	const translatedStatus = useSiteLaunchStatusLabel( site );
@@ -93,6 +146,12 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 		useCheckSiteTransferStatus( {
 			siteId: site.ID,
 		} );
+	const hasStatsLoadingError = useSelector( ( state ) => {
+		const siteId = site.ID;
+		const query = {};
+		const statType = 'statsInsights';
+		return siteId && hasSiteStatsQueryFailed( state, siteId, statType, query );
+	} );
 
 	let siteUrl = site.URL;
 	if ( site.options?.is_redirect && site.options?.unmapped_url ) {
@@ -149,13 +208,19 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 			<Column mobileHidden>
 				{ site.options?.updated_at ? <TimeSince date={ site.options.updated_at } /> : '' }
 			</Column>
-			<Column mobileHidden>
+			<StatsColumnStyled mobileHidden>
 				{ inView && (
-					<a href={ `/stats/day/${ site.slug }` }>
-						<StatsSparkline siteId={ site.ID } showLoader={ true }></StatsSparkline>
-					</a>
+					<>
+						{ hasStatsLoadingError ? (
+							<StatsOffIndicator />
+						) : (
+							<a href={ `/stats/day/${ site.slug }` }>
+								<StatsSparkline siteId={ site.ID } showLoader={ true } />
+							</a>
+						) }
+					</>
 				) }
-			</Column>
+			</StatsColumnStyled>
 			<Column style={ { width: '24px' } }>{ inView && <SitesEllipsisMenu site={ site } /> }</Column>
 		</Row>
 	);

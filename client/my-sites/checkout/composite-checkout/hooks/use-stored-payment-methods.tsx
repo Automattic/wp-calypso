@@ -9,21 +9,15 @@ export const storedPaymentMethodsQueryKey = 'use-stored-payment-methods';
 
 export type PaymentMethodRequestType = 'card' | 'agreement' | 'all';
 
-const fetchPaymentMethods = ( {
-	type,
-	expired,
-}: {
-	type?: PaymentMethodRequestType;
-	expired?: boolean;
-} ): StoredPaymentMethod[] =>
-	wp.req.get(
-		{
-			path: `/me/payment-methods?type=${ type ?? 'all' }&expired=${
-				expired ? 'include' : 'exclude'
-			}`,
-		},
-		{ apiVersion: '1.2' }
-	);
+const fetchPaymentMethods = (
+	type: PaymentMethodRequestType,
+	expired: boolean
+): StoredPaymentMethod[] =>
+	wp.req.get( '/me/payment-methods', {
+		type,
+		expired: expired ? 'include' : 'exclude',
+		apiVersion: '1.2',
+	} );
 
 const requestPaymentMethodDeletion = ( id: StoredPaymentMethod[ 'stored_details_id' ] ) =>
 	wp.req.post( { path: '/me/stored-cards/' + id + '/delete' } );
@@ -56,9 +50,9 @@ export function withStoredPaymentMethods< P >(
 }
 
 export function useStoredPaymentMethods( {
-	type,
-	expired,
-	isLoggedOut,
+	type = 'all',
+	expired = false,
+	isLoggedOut = false,
 }: {
 	/**
 	 * If there is no logged-in user, we will not try to fetch anything.
@@ -83,13 +77,11 @@ export function useStoredPaymentMethods( {
 
 	const queryKey = [ storedPaymentMethodsQueryKey, type, expired ];
 
-	const { data, isLoading, error } = useQuery< StoredPaymentMethod[], Error >(
+	const { data, isLoading, error } = useQuery< StoredPaymentMethod[], Error >( {
 		queryKey,
-		() => fetchPaymentMethods( { type, expired } ),
-		{
-			enabled: ! isLoggedOut,
-		}
-	);
+		queryFn: () => fetchPaymentMethods( type, expired ),
+		enabled: ! isLoggedOut,
+	} );
 
 	const translate = useTranslate();
 	const isDataValid = Array.isArray( data );
@@ -99,7 +91,8 @@ export function useStoredPaymentMethods( {
 		StoredPaymentMethod[ 'stored_details_id' ],
 		Error,
 		StoredPaymentMethod[ 'stored_details_id' ]
-	>( ( id ) => requestPaymentMethodDeletion( id ), {
+	>( {
+		mutationFn: ( id ) => requestPaymentMethodDeletion( id ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( [ storedPaymentMethodsQueryKey ] );
 		},

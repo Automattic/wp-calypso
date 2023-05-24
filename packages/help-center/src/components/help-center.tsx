@@ -32,13 +32,9 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 	const { setShowMessagingWidget } = useDispatch( HELP_CENTER_STORE );
 	const [ isMessagingScriptLoaded, setMessagingScriptLoaded ] = useState( false );
 
+	const zendeskKey: string = config( 'zendesk_support_chat_key' );
 	useEffect( () => {
 		if ( ! chatStatus?.is_user_eligible ) {
-			return;
-		}
-
-		const zendeskKey: string | false = config( 'zendesk_support_chat_key' );
-		if ( ! zendeskKey ) {
 			return;
 		}
 
@@ -72,11 +68,12 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 			setUpMessagingEventHandlers,
 			{ id: ZENDESK_SCRIPT_ID }
 		);
-	}, [ setShowMessagingLauncher, setShowMessagingWidget, chatStatus ] );
+	}, [ setShowMessagingLauncher, setShowMessagingWidget, chatStatus, zendeskKey ] );
 
 	const { data: supportActivity } = useSupportActivity( Boolean( chatStatus?.is_user_eligible ) );
 	const hasActiveChats = supportActivity?.some( ( ticket ) => ticket.channel === 'Messaging' );
 	const { data: messagingAuth } = useMessagingAuth(
+		zendeskKey,
 		Boolean( chatStatus?.is_user_eligible ) && Boolean( hasActiveChats )
 	);
 	useEffect( () => {

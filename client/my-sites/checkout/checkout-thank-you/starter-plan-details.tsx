@@ -13,7 +13,7 @@ const StarterPlanDetails = ( {
 	sitePlans,
 	purchases,
 }: {
-	selectedSite: false | { slug: string };
+	selectedSite: null | false | { slug: string };
 	sitePlans: SitesPlansResult;
 	purchases: Array< WithSnakeCaseSlug | WithCamelCaseSlug >;
 } ) => {

@@ -84,7 +84,7 @@ export default function SiteBulkSelect( { sites, isLoading, isLargeScreen }: Pro
 			</div>
 			<DashboardBulkActions
 				selectedSites={ selectedSites }
-				monitorUserEmails={ sites?.[ 0 ]?.monitor?.settings?.monitor_user_emails ?? [] }
+				bulkUpdateSettings={ sites?.[ 0 ]?.monitor?.settings }
 				isLargeScreen={ isLargeScreen }
 			/>
 		</div>

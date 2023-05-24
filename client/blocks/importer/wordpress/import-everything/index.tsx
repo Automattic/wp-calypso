@@ -7,6 +7,7 @@ import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import { connect } from 'react-redux';
+import PreMigrationScreen from 'calypso/blocks/importer/wordpress/import-everything/pre-migration';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { EVERY_TEN_SECONDS, Interval } from 'calypso/lib/interval';
 import { SectionMigrate } from 'calypso/my-sites/migrate/section-migrate';
@@ -24,7 +25,6 @@ import { isTargetSitePlanCompatible } from '../../util';
 import { MigrationStatus } from '../types';
 import { retrieveMigrateSource, clearMigrateSource } from '../utils';
 import { Confirm } from './confirm';
-import { MigrateReady } from './migrate-ready';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { StepNavigator } from 'calypso/blocks/importer/types';
 
@@ -147,13 +147,11 @@ export class ImportEverything extends SectionMigrate {
 		if ( sourceSite ) {
 			if ( isEnabled( 'onboarding/import-redesign' ) ) {
 				return (
-					<MigrateReady
+					<PreMigrationScreen
 						startImport={ this.startMigration }
 						isTargetSitePlanCompatible={ isTargetSitePlanCompatible }
 						targetSite={ targetSite }
-						targetSiteSlug={ targetSiteSlug }
 						sourceSite={ sourceSite }
-						sourceSiteUrl={ sourceSite.URL }
 						onContentOnlyClick={ onContentOnlySelection }
 					/>
 				);

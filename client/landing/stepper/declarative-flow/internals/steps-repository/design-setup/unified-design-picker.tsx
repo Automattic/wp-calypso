@@ -238,10 +238,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	function previewDesign( design: Design, styleVariation?: StyleVariation ) {
 		// Virtual designs don't need to be previewed and can go directly to the site assembler.
 		const shouldGoToAssembler =
-			design.is_virtual &&
-			design.slug === BLANK_CANVAS_DESIGN.slug &&
-			isDesktop &&
-			isEnabled( 'pattern-assembler/dotcompatterns' );
+			design.is_virtual && design.slug === BLANK_CANVAS_DESIGN.slug && isDesktop;
 
 		if ( shouldGoToAssembler ) {
 			design = {

@@ -20,6 +20,10 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 			justify-content: center;
 		}
 	}
+
+	.empty-promotion-list__title {
+		font-size: 1.5rem;
+	}
 }
 
 .promote-post-i2__table {
@@ -36,16 +40,17 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 
 	tr {
 		font-size: 1rem;
+
 	}
 
 	tr td:last-child {
-		border: 0;
+		// border: 0;
 	}
 
 	td {
 		color: $studio-gray-60;
 		padding-top: 16px;
-		padding-bottom: 12px;
+		padding-bottom: 16px;
 		border-top: 1px solid #d8d8d8; /* #EEEEEE if bg is white */
 		font-size: 0.875rem;
 		vertical-align: middle;
@@ -58,14 +63,29 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 		display: flex;
 		align-items: center;
 		font-weight: 500;
+
+		.campaign-item__skeleton-text {
+			width: 142px;
+			height: 12px;
+			background-color: #f5f5f5;
+			border-radius: 100%;
+			margin-top: 8px;
+			&.campaign-item__skeleton-text2 {
+				width: 97px;
+				margin-top: 12px;
+			}
+		}
 	}
 
-	.campaign-item__header-image img {
+	.campaign-item__header-image img,
+	.campaign-item__header-image-skeleton {
 		border: 1px solid #eee;
 		border-radius: 4px;
 		width: 108px;
 		height: 78px;
 		margin-right: 16px;
+		display: block;
+		background-color: #f5f5f5;
 	}
 
 	.badge {
