@@ -3,7 +3,6 @@ import type { BillingTransactionsState } from 'calypso/state/billing-transaction
 import type { IMarketplaceState } from 'calypso/state/marketplace/types';
 import type { IMembershipsState } from 'calypso/state/memberships/reducer';
 import type { IPluginsState } from 'calypso/state/plugins/reducer';
-import type { AnyAction } from 'redux';
 import type { ThunkDispatch } from 'redux-thunk';
 
 /**
@@ -28,5 +27,4 @@ export interface IAppState {
 /**
  * Type of the Calypso Redux store `dispatch` function. Accepts both plain actions and thunks.
  */
-export type CalypsoDispatch = ( ( action: object ) => void ) &
-	ThunkDispatch< IAppState, unknown, AnyAction >;
+export type CalypsoDispatch = ThunkDispatch< IAppState, unknown, any >;
