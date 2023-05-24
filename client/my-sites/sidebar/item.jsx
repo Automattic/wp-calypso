@@ -6,12 +6,16 @@
  * These two cases might be to be split up?
  */
 
+import { isWooExpressPlan, PLAN_ECOMMERCE_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import PropTypes from 'prop-types';
 import { memo } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
 import SidebarItem from 'calypso/layout/sidebar/item';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { collapseAllMySitesSidebarSections } from 'calypso/state/my-sites/sidebar/actions';
+import { getSitePlanSlug } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import MySitesSidebarUnifiedStatsSparkline from './sparkline';
 
 export const MySitesSidebarUnifiedItem = ( {
@@ -27,6 +31,24 @@ export const MySitesSidebarUnifiedItem = ( {
 	canNavigate,
 } ) => {
 	const reduxDispatch = useDispatch();
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	const sitePlanSlug = useSelector( ( state ) => getSitePlanSlug( state, selectedSiteId ) );
+
+	const trackItemClick = () => {
+		// For now, we only track clicks on the Plans menu item for WooExpress sites.
+		const isEcommerceTrial = sitePlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
+		if ( ! isEcommerceTrial && ! isWooExpressPlan( sitePlanSlug ) ) {
+			return;
+		}
+
+		if ( url.startsWith( '/plans/' ) ) {
+			reduxDispatch(
+				recordTracksEvent( 'calypso_sidebar_item_click', {
+					path: '/plans',
+				} )
+			);
+		}
+	};
 
 	const onNavigate = ( event ) => {
 		if ( ! canNavigate( url ) ) {
@@ -34,6 +56,7 @@ export const MySitesSidebarUnifiedItem = ( {
 			return;
 		}
 
+		trackItemClick();
 		reduxDispatch( collapseAllMySitesSidebarSections() );
 		window.scrollTo( 0, 0 );
 	};
