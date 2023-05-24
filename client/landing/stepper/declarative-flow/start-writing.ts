@@ -85,10 +85,12 @@ const startWriting: Flow = {
 					// If we just created a new site.
 					if ( ! providedDependencies?.blogLaunched && providedDependencies?.siteSlug ) {
 						setSelectedSite( providedDependencies?.siteId );
-						setIntentOnSite( providedDependencies?.siteSlug, START_WRITING_FLOW );
-						saveSiteSettings( providedDependencies?.siteId, {
-							launchpad_screen: 'full',
-						} );
+						await Promise.all( [
+							setIntentOnSite( providedDependencies?.siteSlug, START_WRITING_FLOW ),
+							saveSiteSettings( providedDependencies?.siteId, {
+								launchpad_screen: 'full',
+							} ),
+						] );
 
 						const siteOrigin = window.location.origin;
 
