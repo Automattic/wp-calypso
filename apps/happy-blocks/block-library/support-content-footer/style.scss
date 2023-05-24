@@ -11,8 +11,7 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 	max-width: none !important;
 	align-items: normal !important;
 	box-sizing: border-box;
-	padding-bottom: 20px;
-	padding-top: 20px;
+	padding: 20px 24px;
 
 	p {
 		font-size: 1rem;
@@ -51,6 +50,7 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 
 		.support-content-cta-right {
 			flex: 1;
+			text-align: right;
 
 			figure {
 				margin-bottom: 0;
