@@ -1,8 +1,4 @@
-import {
-	applyTestFiltersToPlansList,
-	getPlan,
-	FEATURE_CUSTOM_DOMAIN,
-} from '@automattic/calypso-products';
+import { getPlan } from '@automattic/calypso-products';
 import { ResponseCartProduct } from '@automattic/shopping-cart';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import {
@@ -12,24 +8,15 @@ import {
 
 export default function getFlowPlanFeatures(
 	flowName: string,
-	product: ResponseCartProduct | undefined,
-	hasDomainsInCart: boolean,
-	hasRenewalInCart: boolean,
-	nextDomainIsFree: boolean
+	plan: ResponseCartProduct | undefined
 ) {
-	const productSlug = product?.product_slug;
+	const productSlug = plan?.product_slug;
 
 	if ( ! productSlug ) {
 		return [];
 	}
 
-	const plan = getPlan( productSlug );
-
-	if ( ! plan ) {
-		return [];
-	}
-
-	const planConstantObj = applyTestFiltersToPlansList( plan, undefined );
+	const planConstantObj = getPlan( productSlug );
 
 	if ( ! planConstantObj ) {
 		return [];
@@ -46,15 +33,10 @@ export default function getFlowPlanFeatures(
 	}
 
 	const highlightedFeatures = getHighlightedFeatures( flowName, planConstantObj );
-	const showFreeDomainFeature = ! hasDomainsInCart && ! hasRenewalInCart && nextDomainIsFree;
-	return getPlanFeaturesObject( ( featureAccessor as () => string[] )() )
-		.filter( ( feature ) => {
-			return showFreeDomainFeature || feature.getSlug() !== FEATURE_CUSTOM_DOMAIN;
-		} )
-		.map( ( feature ) => {
-			return {
-				...feature,
-				isHighlightedFeature: highlightedFeatures.includes( feature.getSlug() ),
-			};
-		} );
+	return getPlanFeaturesObject( featureAccessor() ).map( ( feature ) => {
+		return {
+			...feature,
+			isHighlightedFeature: highlightedFeatures.includes( feature.getSlug() ),
+		};
+	} );
 }

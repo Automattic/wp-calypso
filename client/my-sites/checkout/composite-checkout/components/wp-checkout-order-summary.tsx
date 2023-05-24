@@ -178,12 +178,7 @@ function CheckoutSummaryFeaturesWrapper( props: {
 	}
 
 	if ( signupFlowName && shouldUseFlowFeatureList ) {
-		return (
-			<CheckoutSummaryFlowFeaturesList
-				flowName={ signupFlowName }
-				nextDomainIsFree={ nextDomainIsFree }
-			/>
-		);
+		return <CheckoutSummaryFlowFeaturesList flowName={ signupFlowName } />;
 	}
 
 	return <CheckoutSummaryFeaturesList siteId={ siteId } nextDomainIsFree={ nextDomainIsFree } />;
@@ -384,39 +379,14 @@ function CheckoutSummaryFeaturesList( props: {
 	);
 }
 
-function CheckoutSummaryFlowFeaturesList( {
-	flowName,
-	nextDomainIsFree,
-}: {
-	flowName: string;
-	nextDomainIsFree: boolean;
-} ) {
+function CheckoutSummaryFlowFeaturesList( { flowName }: { flowName: string } ) {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const planInCart = responseCart.products.find( ( product ) => isPlan( product ) );
-	const hasDomainsInCart = responseCart.products.some(
-		( product ) => isDomainProduct( product ) || isDomainTransfer( product )
-	);
-	const domains = responseCart.products.filter(
-		( product ) => isDomainProduct( product ) || isDomainTransfer( product )
-	);
-	const hasRenewalInCart = responseCart.products.some(
-		( product ) => product.extra.purchaseType === 'renewal'
-	);
-	const planFeatures = getFlowPlanFeatures(
-		flowName,
-		planInCart,
-		hasDomainsInCart,
-		hasRenewalInCart,
-		nextDomainIsFree
-	);
+	const planFeatures = getFlowPlanFeatures( flowName, planInCart );
 
 	return (
 		<CheckoutSummaryFeaturesListWrapper>
-			{ hasDomainsInCart &&
-				domains.map( ( domain ) => {
-					return <CheckoutSummaryFeaturesListDomainItem domain={ domain } key={ domain.uuid } />;
-				} ) }
 			{ planFeatures.map( ( feature ) => {
 				return (
 					<CheckoutSummaryFeaturesListItem key={ `feature-list-${ feature.getSlug() }` }>
