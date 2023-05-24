@@ -7,7 +7,11 @@ import {
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { useMemo, useContext } from 'react';
-import { GlobalStylesContext, mergeBaseAndUserConfigs } from '../../gutenberg-bridge';
+import {
+	GlobalStylesContext,
+	mergeBaseAndUserConfigs,
+	withExperimentalBlockEditorProvider,
+} from '../../gutenberg-bridge';
 import { useColorPaletteVariations } from '../../hooks';
 import ColorPaletteVariationPreview from './preview';
 import type { GlobalStylesObject } from '../../types';
@@ -103,4 +107,4 @@ const ColorPaletteVariations = ( {
 	);
 };
 
-export default ColorPaletteVariations;
+export default withExperimentalBlockEditorProvider( ColorPaletteVariations );

@@ -4,7 +4,11 @@ import classnames from 'classnames';
 import { translate, TranslateResult } from 'i18n-calypso';
 import { useMemo, useContext } from 'react';
 import { DEFAULT_GLOBAL_STYLES_VARIATION_SLUG } from '../../constants';
-import { GlobalStylesContext, mergeBaseAndUserConfigs } from '../../gutenberg-bridge';
+import {
+	GlobalStylesContext,
+	mergeBaseAndUserConfigs,
+	withExperimentalBlockEditorProvider,
+} from '../../gutenberg-bridge';
 import GlobalStylesVariationPreview from './preview';
 import type { GlobalStylesObject } from '../../types';
 import './style.scss';
@@ -139,4 +143,4 @@ const GlobalStylesVariations = ( {
 	);
 };
 
-export default GlobalStylesVariations;
+export default withExperimentalBlockEditorProvider( GlobalStylesVariations );

@@ -50,7 +50,7 @@ const GlobalStylesVariationContainer = ( {
 	return (
 		<Iframe
 			className="global-styles-variation-container__iframe"
-			head={ <EditorStyles styles={ editorStyles } /> }
+			head={ <EditorStyles styles={ editorStyles ?? [] } /> }
 			style={ {
 				height,
 				visibility: width ? 'visible' : 'hidden',
