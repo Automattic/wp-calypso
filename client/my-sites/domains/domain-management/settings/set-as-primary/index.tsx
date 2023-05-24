@@ -22,7 +22,6 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { setPrimaryDomain } from 'calypso/state/sites/domains/actions';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
-import type { CalypsoDispatch } from 'calypso/state/types';
 
 type SetAsPrimaryProps = {
 	domain: ResponseDomain;
@@ -31,7 +30,7 @@ type SetAsPrimaryProps = {
 
 const SetAsPrimary = ( { domain, selectedSite }: SetAsPrimaryProps ) => {
 	const translate = useTranslate();
-	const dispatch = useDispatch< CalypsoDispatch >();
+	const dispatch = useDispatch();
 
 	const isOnFreePlan = selectedSite?.plan?.is_free ?? false;
 	const hasDomainOnlySite = useSelector( ( state ) => isDomainOnlySite( state, selectedSite.ID ) );

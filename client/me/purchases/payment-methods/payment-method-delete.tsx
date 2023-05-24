@@ -8,7 +8,6 @@ import { useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import PaymentMethodDeleteDialog from './payment-method-delete-dialog';
 import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
-import type { CalypsoDispatch } from 'calypso/state/types';
 
 interface Props {
 	card: StoredPaymentMethod;
@@ -20,7 +19,7 @@ const PaymentMethodDelete: FunctionComponent< Props > = ( { card } ) => {
 		type: 'all',
 		expired: true,
 	} );
-	const reduxDispatch = useDispatch< CalypsoDispatch >();
+	const reduxDispatch = useDispatch();
 	const [ isDialogVisible, setIsDialogVisible ] = useState( false );
 	const closeDialog = useCallback( () => setIsDialogVisible( false ), [] );
 

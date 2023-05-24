@@ -12,7 +12,6 @@ import CurrentSite from 'calypso/my-sites/current-site';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import 'calypso/components/jetpack/sidebar/style.scss';
-import type { CalypsoDispatch } from 'calypso/state/types';
 import type { FunctionComponent } from 'react';
 
 interface Props {
@@ -20,7 +19,7 @@ interface Props {
 }
 const DashboardSidebar: FunctionComponent< Props > = ( { path } ) => {
 	const translate = useTranslate();
-	const reduxDispatch = useDispatch< CalypsoDispatch >();
+	const reduxDispatch = useDispatch();
 
 	const onNavigate = ( menuItem: string ) => () => {
 		reduxDispatch(
