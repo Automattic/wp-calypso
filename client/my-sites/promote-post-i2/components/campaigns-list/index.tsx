@@ -96,9 +96,9 @@ export default function CampaignsList( props: Props ) {
 					</div>
 
 					{ ! isEmpty && ! isError && (
-						<>
+						<div className="promote-post-i2__aux-wrapper">
 							<ListEnd />
-						</>
+						</div>
 					) }
 				</>
 			) }
