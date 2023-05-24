@@ -6,14 +6,13 @@ import { READER_SUGGESTED_FOLLOWS_DIALOG } from 'calypso/reader/follow-sources';
 
 import './style.scss';
 
-const ReaderSuggestedFollowsDialog = ( { onClose, siteId, isVisible } ) => {
+const ReaderSuggestedFollowsDialog = ( { onClose, siteId, postId, isVisible } ) => {
 	const translate = useTranslate();
-	const relatedSites = useRelatedSites( siteId );
-	if ( ! relatedSites ) {
+	const { data, isLoading } = useRelatedSites( siteId, postId );
+	if ( isLoading || ! data ) {
 		return null;
 	}
-	console.log( 'relatedSites', relatedSites );
-	const suggestedFollowItems = relatedSites?.data?.map( ( relatedSite ) => (
+	const suggestedFollowItems = data.map( ( relatedSite ) => (
 		<li key={ relatedSite.global_ID } className="reader-recommended-follows-dialog__follow-item">
 			<SuggestedFollowItem site={ relatedSite } followSource={ READER_SUGGESTED_FOLLOWS_DIALOG } />
 		</li>
@@ -37,7 +36,9 @@ const ReaderSuggestedFollowsDialog = ( { onClose, siteId, isVisible } ) => {
 				</div>
 				<div className="reader-recommended-follows-dialog__body">
 					<div className="reader-recommended-follows-dialog__follow-list">
-						{ suggestedFollowItems }
+						<ul className="reader-recommended-follows-dialog__follow-list">
+							{ suggestedFollowItems }
+						</ul>
 					</div>
 				</div>
 			</div>

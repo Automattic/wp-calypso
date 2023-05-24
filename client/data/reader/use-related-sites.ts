@@ -1,6 +1,6 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { decodeEntities } from 'calypso/lib/formatting';
-import wp from 'calypso/lib/wp';
+import wpcom from 'calypso/lib/wp';
 
 export interface RelatedSite {
 	global_ID: string;
@@ -12,28 +12,24 @@ export interface RelatedSite {
 	site_icon: string | null;
 	post_author: number;
 	feed_ID: number;
+	description: string;
 }
 
 interface Site {
-	pseudo_ID: string;
 	global_ID: string;
-	is_external: boolean;
 	site_ID: number;
 	site_name: string;
 	site_URL: string;
-	site_is_private: boolean;
-	featured_media: any;
 	site_icon: {
 		img: string;
 		ico: string;
 	} | null;
-	site_description: string;
-	post_author: number;
+	description: string;
+	author: number;
 	feed_ID: number;
 }
 
 const selectRelatedSites = ( response: { sites: Site[] } ): RelatedSite[] | null => {
-	console.log( 'selectRelatedSites', response );
 	if ( ! response?.sites ) {
 		return null;
 	}
@@ -45,32 +41,32 @@ const selectRelatedSites = ( response: { sites: Site[] } ): RelatedSite[] | null
 		last_updated: 0,
 		unseen_count: 0,
 		site_icon: site.site_icon?.img || site.site_icon?.ico || null,
-		post_author: site.post_author,
+		post_author: site.author,
 		feed_ID: site.feed_ID,
+		description: decodeEntities( site.description ),
 	} ) );
-
 	return relatedSites.length > 0 ? relatedSites : null;
 };
 
-export const useRelatedSites = ( siteId: string ): UseQueryResult< RelatedSite[] | null > => {
+export const useRelatedSites = (
+	siteId: number,
+	postId: number
+): UseQueryResult< RelatedSite[] | null > => {
 	const site_recs = 5;
+	const path =
+		'/read/site/' +
+		siteId +
+		'/sites/related?post_id=' +
+		postId +
+		'&size_global=' +
+		site_recs +
+		'&http_envelope=1';
 	return useQuery(
 		[ 'related-sites-' + site_recs, siteId ],
-		() =>
-			wp.req
-				.get( {
-					path: `/read/site/${ encodeURIComponent(
-						siteId
-					) }/sites/related?size_global=${ site_recs }`,
-					apiNamespace: 'rest/v1.2',
-				} )
-				.then( ( response: any ) => {
-					console.log( 'API response:', response );
-					return response;
-				} ),
+		() => wpcom.req.get( { path: path, apiNamespace: 'rest/v1.2' } ),
 		{
 			enabled: !! siteId,
-			//staleTime: 3600000, // 1 hour
+			staleTime: 3600000, // 1 hour
 			select: selectRelatedSites,
 		}
 	);

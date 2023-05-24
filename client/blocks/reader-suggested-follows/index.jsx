@@ -49,7 +49,9 @@ const SuggestedFollowItem = ( { site, followSource } ) => {
 					>
 						<span className="reader-suggested-follow-item_siteicon">
 							{ site.site_icon && <Favicon site={ site } size={ 48 } /> }
-							{ ! site.site_icon && <Gravatar user={ site.author } size={ 48 } /> }
+							{ ! site.site_icon && site.post_author && (
+								<Gravatar user={ site.post_author } size={ 48 } />
+							) }
 						</span>
 						<span className="reader-suggested-follow-item_sitename">
 							<span className="reader-suggested-follow-item_nameurl">

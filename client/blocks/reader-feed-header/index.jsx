@@ -85,6 +85,7 @@ class FeedHeader extends Component {
 			isEmailBlocked,
 			hasOrganization,
 			isWPForTeamsItem,
+			latestPostId,
 		} = this.props;
 		const followerCount = this.getFollowerCount( feed, site );
 		const ownerDisplayName = site && ! site.is_multi_author && site.owner && site.owner.name;
@@ -205,10 +206,11 @@ class FeedHeader extends Component {
 						</div>
 					</div>
 				</div>
-				{ siteId && (
+				{ siteId && latestPostId && (
 					<ReaderSuggestedFollowsDialog
 						onClose={ this.onCloseSuggestedFollowModal }
 						siteId={ siteId }
+						postId={ latestPostId }
 						isVisible={ this.state.isSuggestedFollowsModalOpen }
 					/>
 				) }
@@ -216,6 +218,18 @@ class FeedHeader extends Component {
 		);
 	}
 }
+
+const getLatestPostId = ( siteId, posts ) => {
+	if ( ! siteId || ! posts ) {
+		return null;
+	}
+
+	const sitePosts = Object.values( posts )
+		.filter( ( post ) => post.site_ID === siteId )
+		.sort( ( a, b ) => b.ID - a.ID );
+
+	return sitePosts[ 0 ]?.ID || null;
+};
 
 const mapStateToProps = ( state, ownProps ) => {
 	let siteId = ownProps.site?.ID;
@@ -233,6 +247,9 @@ const mapStateToProps = ( state, ownProps ) => {
 		feed = feedId ? getFeed( state, site.feed_ID ) : undefined;
 	}
 
+	const posts = state.reader?.posts?.items;
+	const latestPostId = getLatestPostId( siteId, posts );
+
 	return {
 		isWPForTeamsItem: isSiteWPForTeams( state, siteId ) || isFeedWPForTeams( state, feedId ),
 		hasOrganization: hasReaderFollowOrganization( state, feedId, siteId ),
@@ -240,6 +257,7 @@ const mapStateToProps = ( state, ownProps ) => {
 		isEmailBlocked: getUserSetting( state, 'subscription_delivery_email_blocked' ),
 		siteId: siteId,
 		feedId: feedId,
+		latestPostId: latestPostId,
 	};
 };
 
