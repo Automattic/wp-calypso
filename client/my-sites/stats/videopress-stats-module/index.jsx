@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import SectionHeader from 'calypso/components/section-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
-import getSiteAdminUrlFromState from 'calypso/state/sites/selectors/get-site-admin-url';
+import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import {
 	isRequestingSiteStatsForQuery,
 	getVideoPressPlaysComplete,
@@ -110,6 +110,7 @@ class VideoPressStatsModule extends Component {
 			period,
 			siteSlug,
 			translate,
+			siteAdminUrl,
 		} = this.props;
 
 		let completeVideoStats = [];
@@ -143,11 +144,10 @@ class VideoPressStatsModule extends Component {
 			const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 			if ( ! isOdysseyStats ) {
 				page( `/media/${ siteSlug }/${ postId }` );
+				return;
 			}
-			location.href = `${ getSiteAdminUrlFromState(
-				config( 'intial_state' ),
-				this.props.siteId
-			) }upload.php?item=${ postId }`;
+			// If it's Odyssey, redirect user to media lib page.
+			location.href = `${ siteAdminUrl }upload.php?item=${ postId }`;
 		};
 
 		const showStat = ( queryStatType, row ) => {
@@ -342,6 +342,7 @@ export default connect( ( state, ownProps ) => {
 	return {
 		requesting: isRequestingSiteStatsForQuery( state, siteId, statType, query ),
 		data: getVideoPressPlaysComplete( state, siteId, statType, query ),
+		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		siteId,
 		siteSlug,
 	};
