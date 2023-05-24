@@ -13,14 +13,14 @@ export const useBlockEditorNuxStatusQuery = (
 	const queryKey = [ 'blockEditorNuxStatus', siteId ];
 	const siteIsJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 
-	return useQuery< BlockEditorNuxStatus >(
+	return useQuery< BlockEditorNuxStatus >( {
 		queryKey,
-		() => {
+		queryFn: () => {
 			return wpcom.req.get( {
 				path: `/sites/${ siteId }/block-editor/nux`,
 				apiNamespace: 'wpcom/v2',
 			} );
 		},
-		{ enabled: !! siteId && ! siteIsJetpack }
-	);
+		enabled: !! siteId && ! siteIsJetpack,
+	} );
 };

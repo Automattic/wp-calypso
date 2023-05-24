@@ -18,19 +18,17 @@ interface Guess {
 }
 
 function useHostingProviderGuessQuery( siteId: SiteId ) {
-	return useQuery(
-		[ 'site-hosting-provider-guess', siteId ],
-		(): Promise< Guess > =>
+	return useQuery( {
+		queryKey: [ 'site-hosting-provider-guess', siteId ],
+		queryFn: (): Promise< Guess > =>
 			wpcom.req.get( {
 				path: `/sites/${ siteId }/hosting-provider`,
 				apiNamespace: 'wpcom/v2',
 			} ),
-		{
-			enabled: !! siteId,
-			meta: { persist: false },
-			select: ( data ) => data.guess,
-		}
-	);
+		enabled: !! siteId,
+		meta: { persist: false },
+		select: ( data ) => data.guess,
+	} );
 }
 
 const HostSelection: FunctionComponent = () => {

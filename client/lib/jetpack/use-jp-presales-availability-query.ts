@@ -37,9 +37,9 @@ export function useJpPresalesAvailabilityQuery(
 ) {
 	//adding a safeguard to ensure if there's an unkown error with the widget it won't crash the whole app
 	try {
-		return useQuery< boolean, Error >(
-			[ 'presales-availability' ],
-			async () => {
+		return useQuery< boolean, Error >( {
+			queryKey: [ 'presales-availability' ],
+			queryFn: async () => {
 				const url = 'https://public-api.wordpress.com/wpcom/v2/presales/chat';
 				const queryObject = {
 					group: 'jp_presales',
@@ -60,11 +60,9 @@ export function useJpPresalesAvailabilityQuery(
 				const data: PresalesChatResponse = await response.json();
 				return data.is_available;
 			},
-			{
-				enabled,
-				meta: { persist: false },
-			}
-		);
+			enabled,
+			meta: { persist: false },
+		} );
 	} catch ( error ) {
 		setError && setError( true );
 		return { data: false };

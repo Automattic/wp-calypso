@@ -9,20 +9,18 @@ export const useGithubReposQuery = (
 	connectionId: number,
 	options?: UseQueryOptions< string[] >
 ) => {
-	return useQuery< string[] >(
-		[ GITHUB_INTEGRATION_QUERY_KEY, siteId, connectionId, 'repos', query ],
-		(): string[] =>
+	return useQuery< string[] >( {
+		queryKey: [ GITHUB_INTEGRATION_QUERY_KEY, siteId, connectionId, 'repos', query ],
+		queryFn: (): string[] =>
 			wp.req.get( {
 				path: addQueryArgs( { query }, `/sites/${ siteId }/hosting/github/repos` ),
 				apiNamespace: 'wpcom/v2',
 			} ),
-		{
-			enabled: !! siteId && !! query,
-			meta: {
-				persist: false,
-			},
-			refetchOnWindowFocus: false,
-			...options,
-		}
-	);
+		enabled: !! siteId && !! query,
+		meta: {
+			persist: false,
+		},
+		refetchOnWindowFocus: false,
+		...options,
+	} );
 };

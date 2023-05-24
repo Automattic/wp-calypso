@@ -20,8 +20,8 @@ const useSiteUnsubscribeMutation = () => {
 	const siteSubscriptionsCacheKey = useCacheKey( [ 'read', 'site-subscriptions' ] );
 	const subscriptionsCountCacheKey = useCacheKey( [ 'read', 'subscriptions-count' ] );
 
-	return useMutation(
-		async ( params: UnsubscribeParams ) => {
+	return useMutation( {
+		mutationFn: async ( params: UnsubscribeParams ) => {
 			if ( ! params.blog_id ) {
 				throw new Error(
 					// reminder: translate this string when we add it to the UI
@@ -57,67 +57,63 @@ const useSiteUnsubscribeMutation = () => {
 
 			return response;
 		},
-		{
-			onMutate: async ( params ) => {
-				await queryClient.cancelQueries( siteSubscriptionsCacheKey );
-				await queryClient.cancelQueries( subscriptionsCountCacheKey );
+		onMutate: async ( params ) => {
+			await queryClient.cancelQueries( siteSubscriptionsCacheKey );
+			await queryClient.cancelQueries( subscriptionsCountCacheKey );
 
-				const previousSiteSubscriptions =
-					queryClient.getQueryData< SiteSubscriptionsPages >( siteSubscriptionsCacheKey );
-				// remove blog from site subscriptions
-				if ( previousSiteSubscriptions ) {
-					queryClient.setQueryData( siteSubscriptionsCacheKey, {
-						...previousSiteSubscriptions,
-						pages: previousSiteSubscriptions.pages.map( ( page ) => {
-							return {
-								...page,
-								subscriptions: page.subscriptions.filter(
-									( siteSubscription ) => siteSubscription.blog_ID !== params.blog_id
-								),
-								total_subscriptions: page.total_subscriptions - 1,
-							};
-						} ),
-					} );
-				}
+			const previousSiteSubscriptions =
+				queryClient.getQueryData< SiteSubscriptionsPages >( siteSubscriptionsCacheKey );
+			// remove blog from site subscriptions
+			if ( previousSiteSubscriptions ) {
+				queryClient.setQueryData( siteSubscriptionsCacheKey, {
+					...previousSiteSubscriptions,
+					pages: previousSiteSubscriptions.pages.map( ( page ) => {
+						return {
+							...page,
+							subscriptions: page.subscriptions.filter(
+								( siteSubscription ) => siteSubscription.blog_ID !== params.blog_id
+							),
+							total_subscriptions: page.total_subscriptions - 1,
+						};
+					} ),
+				} );
+			}
 
-				const previousSubscriptionsCount =
-					queryClient.getQueryData< SubscriptionManagerSubscriptionsCount >(
-						subscriptionsCountCacheKey
-					);
+			const previousSubscriptionsCount =
+				queryClient.getQueryData< SubscriptionManagerSubscriptionsCount >(
+					subscriptionsCountCacheKey
+				);
 
-				// decrement the blog count
-				if ( previousSubscriptionsCount ) {
-					queryClient.setQueryData< SubscriptionManagerSubscriptionsCount >(
-						subscriptionsCountCacheKey,
-						{
-							...previousSubscriptionsCount,
-							blogs: previousSubscriptionsCount?.blogs
-								? previousSubscriptionsCount?.blogs - 1
-								: null,
-						}
-					);
-				}
+			// decrement the blog count
+			if ( previousSubscriptionsCount ) {
+				queryClient.setQueryData< SubscriptionManagerSubscriptionsCount >(
+					subscriptionsCountCacheKey,
+					{
+						...previousSubscriptionsCount,
+						blogs: previousSubscriptionsCount?.blogs ? previousSubscriptionsCount?.blogs - 1 : null,
+					}
+				);
+			}
 
-				return { previousSiteSubscriptions, previousSubscriptionsCount };
-			},
-			onError: ( error, variables, context ) => {
-				if ( context?.previousSiteSubscriptions ) {
-					queryClient.setQueryData( siteSubscriptionsCacheKey, context.previousSiteSubscriptions );
-				}
-				if ( context?.previousSubscriptionsCount ) {
-					queryClient.setQueryData< SubscriptionManagerSubscriptionsCount >(
-						subscriptionsCountCacheKey,
-						context.previousSubscriptionsCount
-					);
-				}
-			},
-			onSettled: () => {
-				// pass in more minimal keys, everything to the right will be invalidated
-				queryClient.invalidateQueries( siteSubscriptionsCacheKey );
-				queryClient.invalidateQueries( subscriptionsCountCacheKey );
-			},
-		}
-	);
+			return { previousSiteSubscriptions, previousSubscriptionsCount };
+		},
+		onError: ( error, variables, context ) => {
+			if ( context?.previousSiteSubscriptions ) {
+				queryClient.setQueryData( siteSubscriptionsCacheKey, context.previousSiteSubscriptions );
+			}
+			if ( context?.previousSubscriptionsCount ) {
+				queryClient.setQueryData< SubscriptionManagerSubscriptionsCount >(
+					subscriptionsCountCacheKey,
+					context.previousSubscriptionsCount
+				);
+			}
+		},
+		onSettled: () => {
+			// pass in more minimal keys, everything to the right will be invalidated
+			queryClient.invalidateQueries( siteSubscriptionsCacheKey );
+			queryClient.invalidateQueries( subscriptionsCountCacheKey );
+		},
+	} );
 };
 
 export default useSiteUnsubscribeMutation;

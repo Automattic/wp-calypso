@@ -194,7 +194,11 @@ const SharingModal: React.FC = () => {
 						) }
 					</p>
 					<div className="wpcom-block-editor-post-published-buttons">
-						<a href={ link } className="link-button" rel="external">
+						<a
+							href={ link }
+							className="link-button wpcom-block-editor-post-published-sharing-modal__view-post-link"
+							rel="external"
+						>
 							{ ' ' }
 							<Icon icon={ globe } /> { __( 'View Post', 'full-site-editing' ) }
 						</a>

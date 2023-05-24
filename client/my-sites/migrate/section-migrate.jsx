@@ -231,7 +231,7 @@ export class SectionMigrate extends Component {
 
 	setUrl = ( event ) => this.setState( { url: event.target.value } );
 
-	startMigration = () => {
+	startMigration = ( trackingProps = {} ) => {
 		const { sourceSiteId, targetSiteId, targetSite } = this.props;
 
 		if ( ! sourceSiteId || ! targetSiteId ) {
@@ -250,7 +250,7 @@ export class SectionMigrate extends Component {
 
 		this.setMigrationState( { migrationStatus: 'backing-up', startTime: null } );
 
-		this.props.recordTracksEvent( 'calypso_site_migration_start_migration' );
+		this.props.recordTracksEvent( 'calypso_site_migration_start_migration', trackingProps );
 
 		wpcom.req
 			.post( {
