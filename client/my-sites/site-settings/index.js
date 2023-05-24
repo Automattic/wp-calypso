@@ -103,5 +103,13 @@ export default function () {
 	page( '/settings/seo/:site_id?', redirectToTraffic );
 	page( '/settings/theme-setup/:site_id?', redirectToGeneral );
 
-	page( '/settings/:section', legacyRedirects, siteSelection, sites, makeLayout, clientRender );
+	page(
+		'/settings/:section',
+		legacyRedirects,
+		siteSelection,
+		redirectToGeneral,
+		sites,
+		makeLayout,
+		clientRender
+	);
 }

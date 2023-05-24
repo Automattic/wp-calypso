@@ -1,4 +1,5 @@
 import page from 'page';
+import { getSiteFragment } from 'calypso/lib/route';
 import { billingHistory } from 'calypso/me/purchases/paths';
 import SiteSettingsMain from 'calypso/my-sites/site-settings/main';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -91,6 +92,16 @@ export function legacyRedirects( context, next ) {
 
 	if ( redirectMap[ section ] ) {
 		return page.redirect( redirectMap[ section ] );
+	}
+
+	next();
+}
+
+export function redirectToGeneral( context, next ) {
+	const site = getSiteFragment( context.path );
+
+	if ( site ) {
+		return page.redirect( `/settings/general/${ site }` );
 	}
 
 	next();
