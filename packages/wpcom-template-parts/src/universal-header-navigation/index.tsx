@@ -441,6 +441,51 @@ const UniversalNavbarHeader = ( {
 												urlValue={ localizeUrl( '//wordpress.com/professional-email/' ) }
 												type="menu"
 											/>
+											{ isEnglishLocale && (
+												<ClickableItem
+													titleValue={ __( 'Website Design Services', __i18n_text_domain__ ) }
+													content={ __( 'Website Design Services', __i18n_text_domain__ ) }
+													urlValue={ localizeUrl( '//wordpress.com/built-by/?ref=main-menu' ) }
+													type="menu"
+													target="_self"
+												/>
+											) }
+											<ClickableItem
+												titleValue={ __( 'Link in Bio', __i18n_text_domain__ ) }
+												content={ __( 'Link in Bio', __i18n_text_domain__ ) }
+												urlValue={ localizeUrl(
+													'//wordpress.com/setup/link-in-bio/intro?ref=main-menu',
+													locale,
+													isLoggedIn
+												) }
+												type="menu"
+											/>
+											<ClickableItem
+												titleValue={ __( 'Newsletter', __i18n_text_domain__ ) }
+												content={ __( 'Newsletter', __i18n_text_domain__ ) }
+												urlValue={ localizeUrl(
+													'//wordpress.com/setup/newsletter/intro?ref=main-menu',
+													locale,
+													isLoggedIn
+												) }
+												type="menu"
+											/>
+											<ClickableItem
+												titleValue={ __( 'Video', __i18n_text_domain__ ) }
+												content={ __( 'Video', __i18n_text_domain__ ) }
+												urlValue={ localizeUrl(
+													'//wordpress.com/setup/videopress/intro?ref=main-menu',
+													locale,
+													isLoggedIn
+												) }
+												type="menu"
+											/>
+											<ClickableItem
+												titleValue={ __( 'Course', __i18n_text_domain__ ) }
+												content={ __( 'Course', __i18n_text_domain__ ) }
+												urlValue={ localizeUrl( '//wordpress.com/create-a-course/' ) }
+												type="menu"
+											/>
 											<ClickableItem
 												titleValue={ __( 'Enterprise', __i18n_text_domain__ ) }
 												content={ __( 'Enterprise', __i18n_text_domain__ ) }
