@@ -42,6 +42,7 @@ export const MySitesSidebarUnifiedItem = ( {
 		}
 
 		if ( url.startsWith( '/plans/' ) ) {
+			// Note that we also track this event in WooCommerce Screen via wc-calypso-bridge. If you change this event, please update it there as well. See: https://github.com/Automattic/wc-calypso-bridge/pull/1156.
 			reduxDispatch(
 				recordTracksEvent( 'calypso_sidebar_item_click', {
 					path: '/plans',
