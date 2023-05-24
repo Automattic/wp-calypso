@@ -19,7 +19,7 @@ import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/prog
 import useMarketplaceAdditionalSteps from 'calypso/my-sites/marketplace/pages/marketplace-product-install/use-marketplace-additional-steps';
 import theme from 'calypso/my-sites/marketplace/theme';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
-import { useSelector, useDispatch, DefaultRootState } from 'calypso/state';
+import { useSelector, useDispatch } from 'calypso/state';
 import { initiateAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
@@ -88,7 +88,7 @@ const MarketplaceProductInstall = ( {
 		getUploadedPluginId( state, siteId )
 	) as string;
 	const pluginUploadComplete = useSelector( ( state ) => isPluginUploadComplete( state, siteId ) );
-	const installedPlugin = useSelector( ( state: DefaultRootState ): InstalledPlugin | undefined =>
+	const installedPlugin = useSelector( ( state ): InstalledPlugin | undefined =>
 		getPluginOnSite( state, siteId, isPluginUploadFlow ? uploadedPluginSlug : pluginSlug )
 	);
 	const pluginActive = useSelector( ( state ) =>

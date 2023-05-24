@@ -9,7 +9,7 @@ import {
 	useMemo,
 } from 'react';
 import * as React from 'react';
-import { connect, DefaultRootState } from 'react-redux';
+import { connect } from 'react-redux';
 import Main from 'calypso/components/main';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
@@ -23,8 +23,8 @@ type QueryComponentProps = {
 	siteId: number | null;
 };
 
-type QueryFunction = ( arg0: DefaultRootState, arg1: number | null ) => SiteState;
-type RequestFunction = ( arg0: DefaultRootState, arg1: number | null ) => boolean;
+type QueryFunction = ( arg0: IAppState, arg1: number | null ) => SiteState;
+type RequestFunction = ( arg0: IAppState, arg1: number | null ) => boolean;
 
 export type UpsellComponentProps = {
 	reason?: string;
