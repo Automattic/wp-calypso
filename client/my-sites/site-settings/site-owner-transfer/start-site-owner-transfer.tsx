@@ -33,6 +33,10 @@ const FormWrapper = styled.div( {
 	marginBottom: '1.5em',
 } );
 
+const SiteOwnerTransferActionPanelBody = styled( ActionPanelBody )( {
+	overflow: 'visible !important',
+} );
+
 const StartSiteOwnerTransfer = ( {
 	currentUserEmail,
 	selectedSiteId,
@@ -140,7 +144,7 @@ const StartSiteOwnerTransfer = ( {
 				<h1>{ translate( 'Start Site Transfer' ) }</h1>
 			</HeaderCake>
 			<ActionPanel>
-				<ActionPanelBody>
+				<SiteOwnerTransferActionPanelBody>
 					<ActionPanelTitle>{ translate( 'Start Site Transfer' ) }</ActionPanelTitle>
 					<p>
 						{ translate(
@@ -197,7 +201,7 @@ const StartSiteOwnerTransfer = ( {
 						</Notice>
 					) }
 					{ ! startSiteTransferSuccess && startSiteTransferForm }
-				</ActionPanelBody>
+				</SiteOwnerTransferActionPanelBody>
 				<ActionPanelFooter>
 					<Button
 						className="action-panel__support-button is-external" // eslint-disable-line wpcalypso/jsx-classname-namespace
