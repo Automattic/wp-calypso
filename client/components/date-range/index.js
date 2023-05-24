@@ -4,7 +4,7 @@ import { localize } from 'i18n-calypso';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
-import { addToRange } from 'react-day-picker';
+import { DateUtils } from 'react-day-picker';
 import DatePicker from 'calypso/components/date-picker';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import DateRangeHeader from './header';
@@ -299,7 +299,7 @@ export class DateRange extends Component {
 		const rawDay = this.momentDateToJsDate( date );
 
 		// Calculate the new Date range
-		const newRange = addToRange( rawDay, range );
+		const newRange = DateUtils.addDayToRange( rawDay, range );
 
 		// Update state to reflect new date range for
 		// calendar and text inputs
