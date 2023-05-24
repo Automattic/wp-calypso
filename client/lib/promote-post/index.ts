@@ -25,7 +25,7 @@ declare global {
 				urn: string;
 				onLoaded?: () => void;
 				onClose?: () => void;
-				translateFn?: ( value: string, options?: any ) => string;
+				translateFn?: ( value: string, plural_or_options?: any, options?: any ) => string;
 				localizeUrlFn?: ( fullUrl: string ) => string;
 				locale?: string;
 				showDialog?: boolean;
@@ -62,7 +62,7 @@ export async function showDSP(
 	postId: number | string,
 	onClose: () => void,
 	source: string,
-	translateFn: ( value: string, options?: any ) => string,
+	translateFn: ( value: string, plural_or_options?: any, options?: any ) => string,
 	localizeUrlFn: ( fullUrl: string ) => string,
 	domNodeOrId?: HTMLElement | string | null,
 	setShowCancelButton?: ( show: boolean ) => void,

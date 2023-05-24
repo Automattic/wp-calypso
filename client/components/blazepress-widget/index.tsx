@@ -91,12 +91,20 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 					props.postId,
 					onClose,
 					source,
-					( original: string, options?: TranslateOptionsText ): string => {
-						if ( options ) {
+					(
+						original: string,
+						plural_or_options?: string | TranslateOptionsText,
+						options?: TranslateOptionsText
+					): string => {
+						if ( plural_or_options && options ) {
 							// This is a special case where we re-use the translate in another application
 							// that is mounted inside calypso
 							// eslint-disable-next-line wpcalypso/i18n-no-variables
-							return translate( original, options );
+							return translate( original, plural_or_options, options );
+						}
+						if ( plural_or_options ) {
+							// eslint-disable-next-line wpcalypso/i18n-no-variables
+							return translate( original, plural_or_options );
 						}
 						// eslint-disable-next-line wpcalypso/i18n-no-variables
 						return translate( original );
