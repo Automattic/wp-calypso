@@ -52,32 +52,21 @@ function SubscribersOverviewCardStats( subscribersData: SubscribersData[][] ) {
 		return 0;
 	};
 
-	const getHeading = ( index: number, daysAgo: number ) => {
-		if ( index === 0 ) {
-			return translate( 'Today' );
-		}
-		return translate( '%d days ago', { args: daysAgo } );
-	};
-
 	const overviewCardStats = [
-		// Card for Today
 		{
-			heading: getHeading( 0, indexFirstCard ),
+			heading: translate( 'Today' ),
 			count: getCount( 0 ),
 		},
-		// Card for 30 days ago
 		{
-			heading: getHeading( 1, indexSecondCard ),
+			heading: translate( '30 days ago' ),
 			count: getCount( 1 ),
 		},
-		// Card for 60 days ago
 		{
-			heading: getHeading( 2, indexThirdCard ),
+			heading: translate( '60 days ago' ),
 			count: getCount( 2 ),
 		},
-		// Card for 90 days ago
 		{
-			heading: getHeading( 3, indexFourthCard ),
+			heading: translate( '90 days ago' ),
 			count: getCount( 3 ),
 		},
 	];
