@@ -10,9 +10,9 @@ const useP2GuestsQuery = ( siteId, queryOptions = {} ) => {
 	// For sites that can't have P2 guests, don't even make the request.
 	const requestUnnecessary = ! isWPForTeamsSite || isP2Hub;
 
-	return useQuery(
-		[ 'p2-guest-users', siteId ],
-		() =>
+	return useQuery( {
+		queryKey: [ 'p2-guest-users', siteId ],
+		queryFn: () =>
 			wpcom.req.get(
 				{
 					path: `/p2/users/guests/`,
@@ -22,12 +22,10 @@ const useP2GuestsQuery = ( siteId, queryOptions = {} ) => {
 					blog_id: siteId,
 				}
 			),
-		{
-			...queryOptions,
-			enabled: !! siteId && ! requestUnnecessary,
-			retryDelay: 3000,
-		}
-	);
+		...queryOptions,
+		enabled: !! siteId && ! requestUnnecessary,
+		retryDelay: 3000,
+	} );
 };
 
 export default useP2GuestsQuery;

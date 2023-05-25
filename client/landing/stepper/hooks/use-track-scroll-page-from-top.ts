@@ -1,6 +1,5 @@
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { useEffect, useRef } from 'react';
-import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 type OptionalProps = {
@@ -32,7 +31,6 @@ const useTrackScrollPageFromTop = (
 			};
 
 			recordTracksEvent( 'calypso_signup_scroll_page', eventProps );
-			recordFullStoryEvent( 'calypso_signup_scroll_page', eventProps );
 		};
 
 		const onScroll = () => {

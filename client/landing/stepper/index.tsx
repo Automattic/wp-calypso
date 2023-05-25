@@ -16,7 +16,6 @@ import { setupErrorLogger } from 'calypso/boot/common';
 import { setupLocale } from 'calypso/boot/locale';
 import AsyncLoad from 'calypso/components/async-load';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
-import { retargetFullStory } from 'calypso/lib/analytics/fullstory';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { createReduxStore } from 'calypso/state';
@@ -98,7 +97,6 @@ window.AppBoot = async () => {
 
 	setupWpDataDebug();
 	addHotJarScript();
-	retargetFullStory();
 
 	// Add accessible-focus listener.
 	accessibleFocus();

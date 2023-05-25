@@ -158,6 +158,7 @@ export const SitePickerDropDown: FC< Props > = ( {
 								} }
 								selected={ option?.ID === siteId }
 								id={ `site-picker-button-item-${ index }` }
+								key={ index }
 							/>
 						) ) }
 					</div>

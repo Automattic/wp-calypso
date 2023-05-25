@@ -746,7 +746,7 @@ export const normalizers = {
 		const dataPath = query.summarize ? [ 'summary', 'clicks' ] : [ 'days', startOf, 'clicks' ];
 		const statsData = get( data, dataPath, [] );
 
-		return statsData.map( ( item ) => {
+		const output = statsData.map( ( item ) => {
 			const hasChildren = item.children && item.children.length > 0;
 			const newRecord = {
 				label: item.name,
@@ -760,7 +760,9 @@ export const normalizers = {
 			if ( item.children ) {
 				newRecord.children = item.children.map( ( child ) => {
 					return {
-						label: child.name,
+						// Remove the parent name from the child name.
+						// If the child name is the same as the parent name, use a slash instead.
+						label: child.name?.replace( item.name, '' ) || '/',
 						value: child.views,
 						children: null,
 						link: child.url,
@@ -771,6 +773,7 @@ export const normalizers = {
 
 			return newRecord;
 		} );
+		return output;
 	},
 
 	/*
@@ -793,7 +796,13 @@ export const normalizers = {
 		const parseItem = ( item ) => {
 			let children;
 			if ( item.children && item.children.length > 0 ) {
-				children = item.children.map( parseItem );
+				children = item.children.map( ( child ) => {
+					const parsed = parseItem( child );
+					// Remove the parent name from the child name.
+					// If the child name is the same as the parent name, use a slash instead.
+					parsed.label = child.name?.replace( item.name, '' ) || '/';
+					return parsed;
+				} );
 			}
 
 			const record = {

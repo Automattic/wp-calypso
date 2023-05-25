@@ -146,9 +146,7 @@ export function getEnhancedTasks(
 							} );
 							window.location.assign( plansUrl );
 						},
-						badgeText: isVideoPressFlowWithUnsupportedPlan ? null : translatedPlanName,
-						completed: task.completed && ! shouldDisplayWarning,
-						warning: shouldDisplayWarning,
+						completed: task.completed && ! isVideoPressFlowWithUnsupportedPlan,
 					};
 					break;
 				case 'plan_completed':

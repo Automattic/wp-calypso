@@ -64,7 +64,6 @@
 		"external-media/google-photos": true,
 		"external-media/openverse": true,
 		"full-site-editing/beta-opt-in": true,
-		"fullstory": true,
 		"cookie-banner": false,
 		"google-drive": true,
 		"google-my-business": true,
@@ -103,6 +102,7 @@
 		"jetpack-social/multiple-connections": true,
 		"jitms": true,
 		"lasagna": true,
+		"launchpad-updates": true,
 		"layout/app-banner": true,
 		"layout/guided-tours": true,
 		"layout/query-selected-editor": true,
@@ -207,6 +207,7 @@
 		"user-management-revamp": true,
 		"woop": false,
 		"wordpress-action-search": false,
-		"wpcom-user-bootstrap": false
+		"wpcom-user-bootstrap": false,
+		"yolo/site-transfers-i1": true
 	}
 }
