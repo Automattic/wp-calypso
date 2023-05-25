@@ -299,7 +299,7 @@ export interface RequestVerificationCodeParams {
 export interface ValidateVerificationCodeParams {
 	type: 'email';
 	value: string;
-	verification_code: string;
+	verification_code: number;
 }
 
 export interface ResendVerificationCodeParams {

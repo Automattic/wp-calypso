@@ -14,7 +14,7 @@ function mutationResendVerificationCode(
 ): Promise< APIResponse > {
 	return wpcom.req.post( {
 		apiNamespace: 'wpcom/v2',
-		path: 'jetpack-agency/contacts/resend-verification',
+		path: '/jetpack-agency/contacts/resend-verification',
 		body: params,
 	} );
 }

@@ -49,12 +49,12 @@ export default function EmailAddressEditor( {
 	const [ emailItem, setEmailItem ] = useState< {
 		name: string;
 		email: string;
-		code?: string;
+		code?: number;
 		id: string;
 	} >( {
 		name: '',
 		email: '',
-		code: '',
+		code: undefined,
 		id: '',
 	} );
 
@@ -65,9 +65,8 @@ export default function EmailAddressEditor( {
 	const isRemoveAction = selectedAction === 'remove';
 
 	const requestVerificationCode = useRequestVerificationCode();
-	const { validateVerificationCode, isValidating, isVerified, validationFailed } =
-		useValidateVerificationCode();
-	const { resendVerificationCode } = useResendVerificationCode();
+	const verifyEmail = useValidateVerificationCode();
+	const resendCode = useResendVerificationCode();
 
 	const handleSetEmailItems = useCallback(
 		( isVerified = true ) => {
@@ -94,10 +93,10 @@ export default function EmailAddressEditor( {
 	}, [ isVerifyAction ] );
 
 	useEffect( () => {
-		if ( isVerified ) {
-			handleSetEmailItems();
+		if ( requestVerificationCode.isSuccess ) {
+			setShowCodeVerification( true );
 		}
-	}, [ handleSetEmailItems, isVerified ] );
+	}, [ requestVerificationCode.isSuccess ] );
 
 	useEffect( () => {
 		if ( requestVerificationCode.isError ) {
@@ -108,18 +107,18 @@ export default function EmailAddressEditor( {
 	}, [ requestVerificationCode.isError, translate ] );
 
 	useEffect( () => {
-		if ( requestVerificationCode.isSuccess ) {
-			setShowCodeVerification( true );
+		if ( verifyEmail.isSuccess ) {
+			handleSetEmailItems();
 		}
-	}, [ requestVerificationCode.isSuccess ] );
+	}, [ handleSetEmailItems, verifyEmail.isSuccess ] );
 
 	useEffect( () => {
-		if ( validationFailed ) {
+		if ( verifyEmail.errorMessage ) {
 			setValidationError( {
-				code: translate( 'Incorrect code.' ),
+				code: verifyEmail.errorMessage,
 			} );
 		}
-	}, [ translate, validationFailed ] );
+	}, [ translate, verifyEmail.errorMessage ] );
 
 	useEffect( () => {
 		if ( selectedEmail ) {
@@ -154,10 +153,10 @@ export default function EmailAddressEditor( {
 	const handleVerifyEmail = () => {
 		recordEvent( 'downtime_monitoring_verify_email' );
 		if ( emailItem?.code ) {
-			validateVerificationCode( {
+			verifyEmail.mutate( {
 				type: 'email',
 				value: emailItem.email,
-				verification_code: emailItem.code,
+				verification_code: Number( emailItem.code ),
 			} );
 		}
 	};
@@ -221,7 +220,7 @@ export default function EmailAddressEditor( {
 
 	const handleResendCode = () => {
 		recordEvent( 'downtime_monitoring_resend_email_verification_code' );
-		resendVerificationCode( { type: 'email', value: emailItem.email } );
+		resendCode.mutate( { type: 'email', value: emailItem.email } );
 	};
 
 	const handleChange = useCallback(
@@ -231,7 +230,9 @@ export default function EmailAddressEditor( {
 		[]
 	);
 
-	const verificationButtonTitle = isValidating ? translate( 'Verifying…' ) : translate( 'Verify' );
+	const verificationButtonTitle = verifyEmail.isLoading
+		? translate( 'Verifying…' )
+		: translate( 'Verify' );
 
 	const translationArgs = {
 		components: {
@@ -316,7 +317,7 @@ export default function EmailAddressEditor( {
 									</div>
 								) }
 								<div className="configure-email-notification__help-text" id="code-help-text">
-									{ validationFailed
+									{ verifyEmail.isError
 										? translate(
 												'Please try again or we can {{button}}resend a new code{{/button}}',
 												translationArgs
@@ -340,7 +341,7 @@ export default function EmailAddressEditor( {
 								! emailItem.name ||
 								! emailItem.email ||
 								( showCodeVerification && ! emailItem.code ) ||
-								isValidating ||
+								verifyEmail.isLoading ||
 								requestVerificationCode.isLoading
 							}
 							type="submit"
