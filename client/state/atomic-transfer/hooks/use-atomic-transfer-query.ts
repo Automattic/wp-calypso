@@ -23,13 +23,14 @@ interface UseAtomicTransferQueryOptions {
 	refetchInterval?: number;
 }
 
-const endStates = [
+const endStates: TransferStates[] = [
 	transferStates.NONE,
 	transferStates.COMPLETE,
+	transferStates.COMPLETED,
 	transferStates.FAILURE,
 	transferStates.ERROR,
 	transferStates.REVERTED,
-] as const;
+];
 
 export const useAtomicTransferQuery = (
 	siteSlug: SiteSlug,
@@ -56,6 +57,6 @@ export const useAtomicTransferQuery = (
 
 	return {
 		transferStatus: data.status,
-		isTransferring: ! endStates.includes( data.status as ( typeof endStates )[ number ] ),
+		isTransferring: ! endStates.includes( data.status ),
 	};
 };

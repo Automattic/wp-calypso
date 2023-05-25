@@ -15,6 +15,7 @@ export const transferStates = {
 	BACKFILLING: 'backfilling',
 	RELOCATING: 'relocating_switcheroo',
 	COMPLETE: 'complete',
+	COMPLETED: 'completed', // there seems to be two spellings for this state
 	/**
 	 * Similar to 'none' there is no existing transfer, but this is when the site has been already reverted from atomic
 	 */

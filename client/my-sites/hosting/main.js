@@ -135,7 +135,7 @@ const Hosting = ( props ) => {
 			/>
 		);
 
-		if ( ! isTransferring ) {
+		if ( isDisabled && ! isTransferring ) {
 			return (
 				<>
 					{ failureNotice }
