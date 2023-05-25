@@ -12,6 +12,12 @@
 	}
 
 	.promote-post-i2__search-bar-dropdown {
+		@media screen and (max-width: $break-mobile) {
+			& {
+				z-index: 100; // For mobile version, Search dropdown should be above the post list.
+			}
+		}
+
 		&.select-dropdown {
 			height: 50px;
 		}

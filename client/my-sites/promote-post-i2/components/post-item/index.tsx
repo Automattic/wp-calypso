@@ -24,7 +24,7 @@ export type BlazablePost = {
 	comment_count: number;
 	like_count: number;
 	monthly_view_count: number;
-	URL: string; // todo
+	post_url: string;
 	featured_image: string;
 	post_thumbnail: string;
 };
@@ -116,7 +116,7 @@ export default function PostItem( { post }: Props ) {
 						}
 					</div>
 					<div className="post-item__actions-mobile">
-						<a href={ post.URL } className="post-item__view-link">
+						<a href={ post.post_url } className="post-item__view-link">
 							{ __( 'View' ) }
 						</a>
 						<Button
@@ -137,7 +137,7 @@ export default function PostItem( { post }: Props ) {
 			<td className="post-item__post-likes">{ likeCount }</td>
 			<td className="post-item__post-comments">{ commentCount }</td>
 			<td className="post-item__post-view">
-				<a href={ post.URL } className="post-item__view-link">
+				<a href={ post.post_url } className="post-item__view-link">
 					{ __( 'View' ) }
 				</a>
 			</td>

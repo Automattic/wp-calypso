@@ -74,6 +74,7 @@ body.is-section-promote-post-i2 {
 
 					&-mobile {
 						display: none;
+						margin-top: 20px;
 
 						@media screen and (max-width: $break-mobile) {
 							& {
@@ -172,6 +173,8 @@ body.is-section-promote-post-i2 {
 			& {
 				@include post-data-small-font-mobile;
 				color: #3858ea;
+				height: 16px;
+				padding: 0 12px;
 			}
 		}
 	}
