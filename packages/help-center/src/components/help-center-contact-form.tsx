@@ -36,7 +36,7 @@ import { getSectionName } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
  */
-import useZendeskConfig from '../hooks/use-zendesk-config';
+import { useZendeskConfig, useContactFormTitle } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 import { getSupportVariationFromMode } from '../support-variations';
 import { BackButton } from './back-button';
@@ -63,41 +63,6 @@ const fakeFaces = [
 	'tony',
 ].map( ( name ) => `https://s0.wp.com/i/support-engineers/${ name }.jpg` );
 const randomTwoFaces = fakeFaces.sort( () => Math.random() - 0.5 ).slice( 0, 2 );
-
-function useFormTitles( mode: Mode ): {
-	formTitle: string;
-	formSubtitle?: string;
-	trayText?: string;
-	formDisclaimer?: string;
-	buttonLabel: string;
-	buttonSubmittingLabel: string;
-	buttonLoadingLabel?: string;
-} {
-	return {
-		CHAT: {
-			formTitle: __( 'Start live chat', __i18n_text_domain__ ),
-			trayText: __( 'Our WordPress experts will be with you right away', __i18n_text_domain__ ),
-			buttonLabel: __( 'Chat with us', __i18n_text_domain__ ),
-			buttonSubmittingLabel: __( 'Connecting to chat', __i18n_text_domain__ ),
-		},
-		EMAIL: {
-			formTitle: __( '', __i18n_text_domain__ ),
-			trayText: __( 'Our WordPress experts will get back to you soon', __i18n_text_domain__ ),
-			buttonLabel: __( 'Email us', __i18n_text_domain__ ),
-			buttonSubmittingLabel: __( 'Sending email', __i18n_text_domain__ ),
-		},
-		FORUM: {
-			formTitle: __( 'Ask in our community forums', __i18n_text_domain__ ),
-			formDisclaimer: __(
-				'Please do not provide financial or contact information when submitting this form.',
-				__i18n_text_domain__
-			),
-			buttonLabel: __( 'Ask in the forums', __i18n_text_domain__ ),
-			buttonSubmittingLabel: __( 'Posting in the forums', __i18n_text_domain__ ),
-			buttonLoadingLabel: __( 'Analyzing site…', __i18n_text_domain__ ),
-		},
-	}[ mode ];
-}
 
 const getSupportedLanguages = ( supportType: string, locale: string ) => {
 	const isLiveChatLanguageSupported = (
@@ -183,7 +148,7 @@ export const HelpCenterContactForm = () => {
 		}
 	}, [ userWithNoSites ] );
 
-	const formTitles = useFormTitles( mode );
+	const formTitles = useContactFormTitle( mode );
 
 	let ownershipResult: AnalysisReport = useSiteAnalysis(
 		// pass user email as query cache key
@@ -642,11 +607,6 @@ export const HelpCenterContactForm = () => {
 		<main className="help-center-contact-form">
 			<BackButton />
 			<h1 className="help-center-contact-form__site-picker-title">{ formTitles.formTitle }</h1>
-			{ formTitles.formSubtitle && (
-				<p className="help-center-contact-form__site-picker-form-subtitle">
-					{ formTitles.formSubtitle }
-				</p>
-			) }
 
 			{ formTitles.formDisclaimer && (
 				<p className="help-center-contact-form__site-picker-form-warning">
