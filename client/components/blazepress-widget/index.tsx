@@ -4,7 +4,7 @@ import { Dialog } from '@automattic/components';
 import { useLocale, useLocalizeUrl } from '@automattic/i18n-utils';
 import { useQueryClient } from '@tanstack/react-query';
 import classNames from 'classnames';
-import { TranslateOptionsText, useTranslate } from 'i18n-calypso';
+import { TranslateOptionsText, TranslateOptionsPluralText, useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
