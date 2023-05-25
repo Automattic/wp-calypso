@@ -785,7 +785,7 @@ export default connect(
 		) {
 			customerType = 'business';
 		}
-		const is2023PricingGridVisible = props.is2023PricingGridVisible ?? is2023PricingGridEnabled();
+		const is2023PricingGridVisible = props.is2023PricingGridVisible ?? true;
 		const planTypeSelectorProps = {
 			basePlansPath: props.basePlansPath,
 			isStepperUpgradeFlow: props.isStepperUpgradeFlow,

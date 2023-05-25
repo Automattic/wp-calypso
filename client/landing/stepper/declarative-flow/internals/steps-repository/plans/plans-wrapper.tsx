@@ -232,7 +232,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 
 		return;
 	};
-	const is2023PricingGridVisible = is2023PricingGridEnabled();
+	const is2023PricingGridVisible = true;
 
 	const plansFeaturesSelection = () => {
 		const { flowName } = props;
