@@ -98,7 +98,11 @@ const SettingsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 const SiteLogsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
 	const hasFeatureSFTP = useSafeSiteHasFeature( site.ID, FEATURE_SFTP );
-	const href = hasFeatureSFTP ? getSiteLogsUrl( site.slug ) : getHostingConfigUrl( site.slug );
+
+	const href = hasFeatureSFTP
+		? getSiteLogsUrl( site.slug )
+		: // There's no upsell message on the logging page, so we send users to the hosting page instead.
+		  getHostingConfigUrl( site.slug );
 
 	return (
 		<MenuItemLink
