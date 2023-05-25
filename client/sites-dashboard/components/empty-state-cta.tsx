@@ -2,13 +2,13 @@ import { Button } from '@automattic/components';
 import { MEDIA_QUERIES } from '../utils';
 
 interface EmptyStateCTAProps {
-	heading: string;
+	heading?: string;
 	description: string;
-	cta: string;
+	label: string;
 	target: string;
 }
 
-export const EmptyStateCTA = ( { heading, description, cta, target }: EmptyStateCTAProps ) => {
+export const EmptyStateCTA = ( { description, label, target }: EmptyStateCTAProps ) => {
 	return (
 		<div
 			css={ {
@@ -18,40 +18,27 @@ export const EmptyStateCTA = ( { heading, description, cta, target }: EmptyState
 				[ MEDIA_QUERIES.small ]: {
 					alignItems: 'flex-start',
 					flexDirection: 'column',
-					gap: '24px',
+					gap: '20px',
 				},
 			} }
 		>
 			<div
 				css={ {
-					display: 'flex',
-					flexDirection: 'column',
-					gap: '8px',
-					alignItems: 'flex-start',
 					marginRight: '32px',
 				} }
 			>
-				<h2
-					css={ {
-						fontSize: '20px',
-						lineHeight: '24px',
-						color: '#101517',
-					} }
-				>
-					{ heading }
-				</h2>
 				<span
 					css={ {
-						fontSize: '14px',
-						lineHeight: '20px',
-						color: '#646970',
+						textAlign: 'left',
+						whiteSpace: 'nowrap',
+						color: 'var(--studio-gray-100)',
 					} }
 				>
 					{ description }
 				</span>
 			</div>
 			<Button href={ target } primary>
-				{ cta }
+				{ label }
 			</Button>
 		</div>
 	);

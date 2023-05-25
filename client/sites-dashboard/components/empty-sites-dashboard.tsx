@@ -9,35 +9,39 @@ export const EmptySitesDashboard = () => {
 	return (
 		<EmptyContent
 			css={ {
+				display: 'flex',
+				flexDirection: 'column',
+				alignItems: 'center',
 				margin: 0,
 				padding: 0,
-				maxWidth: '480px',
 				[ MEDIA_QUERIES.small ]: {
 					width: '100%',
+					maxWidth: '100%',
 					alignItems: 'flex-start',
 				},
 			} }
 			title={
 				<h2
 					css={ {
-						fontSize: '44px',
-						[ MEDIA_QUERIES.small ]: { fontSize: '28px', textAlign: 'left' },
+						color: 'var(--studio-gray-100)',
+						fontSize: '3rem',
+						fontWeight: 400,
+						[ MEDIA_QUERIES.small ]: { fontSize: '2rem', textAlign: 'left' },
 						fontFamily: 'Recoleta, sans-serif',
 					} }
 				>
-					{ __( "Let's add your first site" ) }
+					{ __( 'Let’s add your first site' ) }
 				</h2>
 			}
 			illustration=""
 		>
 			<div
 				css={ {
-					width: '100%',
+					width: '85%',
 					display: 'flex',
 					flexDirection: 'column',
-					marginTop: '56px',
 					[ MEDIA_QUERIES.small ]: {
-						marginTop: '32px',
+						width: '100%',
 					},
 				} }
 			>

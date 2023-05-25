@@ -14,9 +14,8 @@ export const CreateSiteCTA = () => {
 
 	return (
 		<EmptyStateCTA
-			heading={ __( 'New site' ) }
 			description={ __( 'Build a new site from scratch' ) }
-			cta={ __( 'Create a site' ) }
+			label={ __( 'Create a site' ) }
 			target={ addQueryArgs( { source: 'sites-dashboard', ref: 'calypso-nosites' }, newSiteURL ) }
 		/>
 	);
@@ -27,9 +26,8 @@ export const MigrateSiteCTA = () => {
 
 	return (
 		<EmptyStateCTA
-			heading={ __( 'Existing site' ) }
-			description={ __( 'Bring an existing site to WordPress.com' ) }
-			cta={ __( 'Migrate a site' ) }
+			description={ __( 'Bring a site to WordPress.com' ) }
+			label={ __( 'Migrate a site' ) }
 			target="/setup/import-focused"
 		/>
 	);
