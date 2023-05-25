@@ -7,3 +7,5 @@ export { default as useMessagingAuth } from './use-messaging-auth';
 export { default as useMessagingAvailability } from './use-messaging-availability';
 export { default as useTyper } from './use-typer';
 export { default as useZendeskConfig } from './use-zendesk-config';
+export { default as useChat } from './use-chat';
+export { default as useChatWidget } from './use-chat-widget';

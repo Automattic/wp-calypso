@@ -10,6 +10,8 @@ interface APIFetchOptions {
 	path: string;
 }
 
+let isLoggedIn = false;
+
 function requestMessagingAuth() {
 	const currentEnvironment = config( 'env_id' );
 	const params = { type: 'zendesk', test_mode: String( currentEnvironment === 'development' ) };
@@ -30,10 +32,24 @@ function requestMessagingAuth() {
 }
 
 export default function useMessagingAuth( zendeskKey: string | false, enabled: boolean ) {
-	return useQuery< MessagingAuth >( {
+	return useQuery( {
 		queryKey: [ 'getMessagingAuth', zendeskKey ],
 		queryFn: requestMessagingAuth,
 		staleTime: 7 * 24 * 60 * 60 * 1000, // 1 week (JWT is actually 2 weeks, but lets be on the safe side)
 		enabled,
+		select: ( messagingAuth ) => {
+			if ( ! isLoggedIn ) {
+				const jwt = messagingAuth?.user.jwt;
+				if ( typeof window.zE !== 'function' || ! jwt ) {
+					return;
+				}
+
+				window.zE( 'messenger', 'loginUser', function ( callback ) {
+					isLoggedIn = true;
+					callback( jwt );
+				} );
+			}
+			return { isLoggedIn };
+		},
 	} );
 }
