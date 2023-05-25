@@ -165,7 +165,9 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 					: translate( '%(formattedCurrentPrice)s first year', { args } );
 				// translation example: $1 first month
 			}
-			return translate( '%(formattedCurrentPrice)s first %(introCount)s months', { args } );
+			return introTerm === 'month'
+				? translate( '%(formattedCurrentPrice)s first %(introCount)s months', { args } )
+				: translate( '%(formattedCurrentPrice)s first %(introCount)s years', { args } );
 			// translation example: $1 first 3 months
 		}
 
