@@ -27,10 +27,10 @@ $planComparisonMinWidthToGridWidthMap: (
 
 // TODO: Replace with use of $plan-features-sidebar-width
 $planComparisonMinWidthToGridWidthWithSidebarMap: (
-	1052px: "630px",
-	1152px: "800px",
-	1296px: "942px",
-	1553px: "1091px",
+	1052px: "686px",
+	1152px: "870px",
+	1296px: "1024px",
+	1553px: "1238px",
 );
 
 
@@ -52,17 +52,6 @@ $planComparisonMinWidthToGridWidthWithSidebarMap: (
 			width: #{$gridWidth};
 		}
 	}
-}
-
-@mixin plan-comparison-grid-breakpoints {
-	width: 100%;
-
-	@each $screenMinWidth, $gridWidth in $planComparisonMinWidthToGridWidthMap {
-		@media ( min-width: #{$screenMinWidth} ) {
-			width: #{$gridWidth};
-		}
-	}
-
 }
 
 /**
