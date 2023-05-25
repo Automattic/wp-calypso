@@ -144,10 +144,10 @@ const SiteSubscriptionDetails = ( {
 				<>
 					<SiteSubscriptionSettings
 						blogId={ blogId }
-						notifyMeOfNewPosts={ Boolean( deliveryMethods.notification?.send_posts ) }
+						notifyMeOfNewPosts={ !! deliveryMethods.notification?.send_posts }
 						emailMeNewPosts={ deliveryMethods.email.send_posts }
 						deliveryFrequency={ deliveryMethods.email.post_delivery_frequency }
-						emailMeNewComments={ Boolean( deliveryMethods.email.send_comments ) }
+						emailMeNewComments={ !! deliveryMethods.email.send_comments }
 					/>
 
 					<hr className="subscriptions__separator" />
