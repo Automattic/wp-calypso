@@ -457,18 +457,29 @@
 	.product-lightbox__content-wrapper {
 		padding: 0;
 		flex-direction: column;
+		overflow: hidden;
 	}
 
 	.product-lightbox__detail {
 		padding: 24px;
 		width: auto;
+		max-height: 100%;
 	}
 
 	.product-lightbox__sidebar {
+		width: 100%;
+		position: absolute;
+		bottom: 0;
+		left: 0;
 		border-radius: 0;
 		padding: 24px;
-		position: relative;
-		width: auto;
+		box-sizing: border-box;
+		transition: transform 0.2s;
+		transform: translateY(100%);
+
+		&.is-expanded {
+			transform: translateY(0);
+		}
 	}
 
 	.product-lightbox__variants-options {
