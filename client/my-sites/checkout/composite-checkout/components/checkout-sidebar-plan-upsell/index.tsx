@@ -122,19 +122,15 @@ export function CheckoutSidebarPlanUpsell() {
 					{ currentVariant.variantLabel }
 				</div>
 				<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-					{ isComparisonWithIntroOffer
-						? formatCurrency(
-								currentVariant.priceInteger + currentVariant.priceBeforeDiscounts,
-								currentVariant.currency,
-								{
-									stripZeros: true,
-									isSmallestUnit: true,
-								}
-						  )
-						: formatCurrency( currentVariant.priceInteger, currentVariant.currency, {
-								stripZeros: true,
-								isSmallestUnit: true,
-						  } ) }
+					{ formatCurrency(
+						currentVariant.priceInteger +
+							( isComparisonWithIntroOffer ? currentVariant.priceBeforeDiscounts : 0 ),
+						currentVariant.currency,
+						{
+							stripZeros: true,
+							isSmallestUnit: true,
+						}
+					) }
 				</div>
 				<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
 					{ biennialVariant.variantLabel }
