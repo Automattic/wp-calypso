@@ -22,6 +22,8 @@ type SubscribeResponse = {
 const useSiteSubscribeMutation = ( blog_id?: string ) => {
 	const { isLoggedIn } = useIsLoggedIn();
 	const queryClient = useQueryClient();
+	const siteSubscriptionsCacheKey = useCacheKey( [ 'read', 'site-subscriptions' ] );
+	const subscriptionsCountCacheKey = useCacheKey( [ 'read', 'subscriptions-count' ] );
 	const siteSubscriptionDetailsCacheKey = useCacheKey( [
 		'read',
 		'site-subscription-details',
@@ -85,6 +87,8 @@ const useSiteSubscribeMutation = ( blog_id?: string ) => {
 			}
 		},
 		onSettled: () => {
+			queryClient.invalidateQueries( siteSubscriptionsCacheKey );
+			queryClient.invalidateQueries( subscriptionsCountCacheKey );
 			queryClient.invalidateQueries( siteSubscriptionDetailsCacheKey );
 		},
 	} );
