@@ -1,0 +1,15 @@
+.instagram-business {
+	&__info {
+		margin-inline-start: 2px;
+		.popover__inner {
+			max-width: 370px !important;
+		}
+	}
+}
+
+.sharing-service__description {
+	& > .instagram-business__info {
+		position: relative;
+		top: 2px;
+	}
+}
