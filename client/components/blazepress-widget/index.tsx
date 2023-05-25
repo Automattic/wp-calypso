@@ -26,7 +26,11 @@ export type BlazePressPromotionProps = {
 	source?: string;
 };
 
-type BlazePressTranslatable = ( original: string, extra?: TranslateOptionsText ) => string;
+type BlazePressTranslatable = (
+	original: string,
+	plural_or_extra?: string | TranslateOptionsText,
+	extra?: TranslateOptionsPluralText
+) => string;
 
 export function goToOriginalEndpoint() {
 	const { pathname } = getUrlParts( window.location.href );
@@ -94,7 +98,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 					(
 						original: string,
 						plural_or_options?: string | TranslateOptionsText,
-						options?: TranslateOptionsText
+						options?: TranslateOptionsPluralText
 					): string => {
 						if ( plural_or_options && options ) {
 							// This is a special case where we re-use the translate in another application
