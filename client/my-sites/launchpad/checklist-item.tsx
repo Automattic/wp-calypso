@@ -2,7 +2,7 @@ import { Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { translate, useRtl } from 'i18n-calypso';
 import Badge from 'calypso/components/badge';
-import { Task } from './types';
+import { Task } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/launchpad/types';
 
 const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction?: boolean } ) => {
 	const isRtl = useRtl();
