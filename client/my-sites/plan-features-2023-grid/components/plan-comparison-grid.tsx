@@ -784,14 +784,12 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 		let newVisiblePlans = displayedPlansProperties.map( ( { planName } ) => planName );
 
 		let visibleLength = newVisiblePlans.length;
-		if ( ! isInSignup ) {
-			visibleLength = isLargeBreakpoint ? 4 : visibleLength;
-			visibleLength = isMediumBreakpoint ? 3 : visibleLength;
-		}
 
 		visibleLength = isLargeBreakpoint ? 4 : visibleLength;
 		visibleLength = isMediumBreakpoint ? 3 : visibleLength;
-		visibleLength = isSmallBreakpoint ? 2 : visibleLength;
+		if ( isInSignup ) {
+			visibleLength = isSmallBreakpoint ? 2 : visibleLength;
+		}
 
 		if ( newVisiblePlans.length !== visibleLength ) {
 			newVisiblePlans = newVisiblePlans.slice( 0, visibleLength );
