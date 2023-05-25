@@ -3,7 +3,7 @@
  */
 import { render, screen } from '@testing-library/react';
 import React from 'react';
-import Checklist from '../checklist';
+import Checklist from 'calypso/my-sites/launchpad/checklist';
 import { buildTask } from './lib/fixtures';
 
 describe( 'Checklist', () => {
