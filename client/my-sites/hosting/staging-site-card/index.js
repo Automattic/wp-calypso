@@ -1,15 +1,14 @@
-import styled from '@emotion/styled';
 import { useQueryClient } from '@tanstack/react-query';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { localize } from 'i18n-calypso';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { connect, useDispatch } from 'react-redux';
-import { LoadingBar } from 'calypso/components/loading-bar';
 import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpts-query';
 import { CardContentWrapper } from 'calypso/my-sites/hosting/staging-site-card/card-content/card-content-wrapper';
 import { ManageStagingSiteCardContent } from 'calypso/my-sites/hosting/staging-site-card/card-content/manage-staging-site-card-content';
 import { NewStagingSiteCardContent } from 'calypso/my-sites/hosting/staging-site-card/card-content/new-staging-site-card-content';
+import { StagingSiteLoadingBarCardContent } from 'calypso/my-sites/hosting/staging-site-card/card-content/staging-site-loading-bar-card-content';
 import { StagingSiteLoadingErrorCardContent } from 'calypso/my-sites/hosting/staging-site-card/card-content/staging-site-loading-error-card-content';
 import { LoadingPlaceholder } from 'calypso/my-sites/hosting/staging-site-card/loading-placeholder';
 import { useAddStagingSiteMutation } from 'calypso/my-sites/hosting/staging-site-card/use-add-staging-site';
@@ -27,10 +26,6 @@ const stagingSiteAddSuccessNoticeId = 'staging-site-add-success';
 const stagingSiteAddFailureNoticeId = 'staging-site-add-failure';
 const stagingSiteDeleteSuccessNoticeId = 'staging-site-remove-success';
 const stagingSiteDeleteFailureNoticeId = 'staging-site-remove-failure';
-
-const StyledLoadingBar = styled( LoadingBar )( {
-	marginBottom: '1em',
-} );
 
 export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId, translate } ) => {
 	const { __ } = useI18n();
@@ -201,24 +196,14 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 	};
 
 	const getTransferringStagingSiteContent = useCallback( () => {
-		if ( isReverting ) {
-			return (
-				<>
-					<StyledLoadingBar key="delete-loading-bar" progress={ progress } />
-					<p>{ __( 'We are deleting your staging site.' ) }</p>
-				</>
-			);
-		}
-
-		const message =
-			siteOwnerId === currentUserId
-				? __( 'We are setting up your staging site. We’ll email you once it is ready.' )
-				: __( 'We are setting up the staging site. We’ll email the site owner once it is ready.' );
 		return (
-			<div data-testid="transferring-staging-content">
-				<StyledLoadingBar progress={ progress } />
-				<p>{ message }</p>
-			</div>
+			<>
+				<StagingSiteLoadingBarCardContent
+					isOwner={ siteOwnerId === currentUserId }
+					isReverting={ isReverting }
+					progress={ progress }
+				/>
+			</>
 		);
 	}, [ progress, __, siteOwnerId, currentUserId, isReverting ] );
 
