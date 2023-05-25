@@ -4,7 +4,12 @@ import {
 	PLAN_PREMIUM,
 	FEATURE_STYLE_CUSTOMIZATION,
 } from '@automattic/calypso-products';
-import { isDesignFirstFlow, isNewsletterFlow, isStartWritingFlow } from '@automattic/onboarding';
+import {
+	isBlogOnboardingFlow,
+	isDesignFirstFlow,
+	isNewsletterFlow,
+	isStartWritingFlow,
+} from '@automattic/onboarding';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
@@ -54,8 +59,7 @@ export function getEnhancedTasks(
 	const enhancedTaskList: Task[] = [];
 
 	const productSlug =
-		( isStartWritingFlow( flow ) || isDesignFirstFlow( flow ) ? planCartProductSlug : null ) ??
-		site?.plan?.product_slug;
+		( isBlogOnboardingFlow( flow ) ? planCartProductSlug : null ) ?? site?.plan?.product_slug;
 
 	const translatedPlanName = productSlug ? PLANS_LIST[ productSlug ].getTitle() : '';
 
@@ -67,7 +71,7 @@ export function getEnhancedTasks(
 
 	const planCompleted =
 		Boolean( tasks?.find( ( task ) => task.id === 'plan_completed' )?.completed ) ||
-		! ( isStartWritingFlow( flow ) || isDesignFirstFlow( flow ) );
+		! isBlogOnboardingFlow( flow );
 
 	const videoPressUploadCompleted = Boolean(
 		tasks?.find( ( task ) => task.id === 'video_uploaded' )?.completed
@@ -289,7 +293,7 @@ export function getEnhancedTasks(
 				case 'blog_launched':
 					taskData = {
 						disabled:
-							( isStartWritingFlow( flow ) || isDesignFirstFlow( flow ) ) &&
+							isBlogOnboardingFlow( flow ) &&
 							( ! planCompleted || ! domainUpsellCompleted || ! setupBlogCompleted ),
 						actionDispatch: () => {
 							if ( site?.ID ) {
@@ -352,7 +356,7 @@ export function getEnhancedTasks(
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, domainUpsellCompleted, task.id );
 
-							if ( isStartWritingFlow( flow ) || isDesignFirstFlow( flow ) ) {
+							if ( isBlogOnboardingFlow( flow ) ) {
 								window.location.assign(
 									addQueryArgs( `/setup/${ flow }/domains`, {
 										siteSlug,
@@ -375,9 +379,7 @@ export function getEnhancedTasks(
 							window.location.assign( destinationUrl );
 						},
 						badge_text:
-							domainUpsellCompleted ||
-							isStartWritingFlow( flow || null ) ||
-							isDesignFirstFlow( flow || null )
+							domainUpsellCompleted || isBlogOnboardingFlow( flow )
 								? ''
 								: translate( 'Upgrade plan' ),
 					};

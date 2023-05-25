@@ -106,6 +106,10 @@ export const isDesignFirstFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ DESIGN_FIRST_FLOW ].includes( flowName ) );
 };
 
+export const isBlogOnboardingFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ START_WRITING_FLOW, DESIGN_FIRST_FLOW ].includes( flowName ) );
+};
+
 export const isDomainUpsellFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ DOMAIN_UPSELL_FLOW ].includes( flowName ) );
 };
