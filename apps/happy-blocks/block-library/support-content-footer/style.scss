@@ -50,7 +50,8 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 
 		.support-content-cta-right {
 			flex: 1;
-			text-align: right;
+			display: flex;
+			justify-content: flex-end;
 
 			figure {
 				margin-bottom: 0;
