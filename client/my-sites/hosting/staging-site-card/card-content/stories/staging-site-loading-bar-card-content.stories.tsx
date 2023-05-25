@@ -46,12 +46,24 @@ const Template: StagingSiteLoadingBarCardContentStory = ( args ) => {
 };
 
 const defaultArgs = {
-	isReverting: true,
+	isReverting: false,
 	progress: 10,
-	isOwner: true,
+	isOwner: false,
 };
 
 export const StagingSiteLoadingBar = Template.bind( {} );
 StagingSiteLoadingBar.args = {
 	...defaultArgs,
+};
+
+export const StagingSiteLoadingBarForOwner = Template.bind( {} );
+StagingSiteLoadingBarForOwner.args = {
+	...defaultArgs,
+	isOwner: true,
+};
+
+export const StagingSiteLoadingBarDeleting = Template.bind( {} );
+StagingSiteLoadingBarDeleting.args = {
+	...defaultArgs,
+	isReverting: true,
 };
