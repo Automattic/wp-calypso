@@ -49,7 +49,7 @@ export const formatTweetDate = new Intl.DateTimeFormat( 'en-US', {
 	day: 'numeric',
 } ).format;
 
-type Platform = 'twitter' | 'facebook' | 'linkedin';
+type Platform = 'twitter' | 'facebook' | 'linkedin' | 'instagram';
 
 type PreviewTextOptions = {
 	platform: Platform;
@@ -90,6 +90,8 @@ export function preparePreviewText( text: string, options: PreviewTextOptions ):
 		hashtagUrl = 'https://twitter.com/hashtag/';
 	} else if ( 'linkedin' === platform ) {
 		hashtagUrl = 'https://www.linkedin.com/feed/hashtag/?keywords=';
+	} else if ( 'instagram' === platform ) {
+		hashtagUrl = 'https://www.instagram.com/explore/tags/';
 	}
 
 	if ( hashtagUrl ) {
