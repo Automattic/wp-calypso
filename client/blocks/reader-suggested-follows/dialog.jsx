@@ -6,17 +6,9 @@ import { READER_SUGGESTED_FOLLOWS_DIALOG } from 'calypso/reader/follow-sources';
 
 import './style.scss';
 
-const ReaderSuggestedFollowsDialog = ( { onClose, siteId, postId, isVisible } ) => {
+const ReaderSuggestedFollowsDialog = ( { onClose, siteId, isVisible } ) => {
 	const translate = useTranslate();
-	const { data, isLoading } = useRelatedSites( siteId, postId );
-	if ( isLoading || ! data ) {
-		return null;
-	}
-	const suggestedFollowItems = data.map( ( relatedSite ) => (
-		<li key={ relatedSite.global_ID } className="reader-recommended-follows-dialog__follow-item">
-			<SuggestedFollowItem site={ relatedSite } followSource={ READER_SUGGESTED_FOLLOWS_DIALOG } />
-		</li>
-	) );
+	const { data, isLoading } = useRelatedSites( siteId );
 	return (
 		<Dialog
 			additionalClassNames="reader-recommended-follows-dialog"
@@ -24,6 +16,7 @@ const ReaderSuggestedFollowsDialog = ( { onClose, siteId, postId, isVisible } ) 
 			isVisible={ isVisible }
 			onClose={ onClose }
 			showCloseIcon={ true }
+			label={ translate( 'Suggested follows' ) }
 		>
 			<div className="reader-recommended-follows-dialog__content">
 				<div className="reader-recommended-follows-dialog__header">
@@ -37,7 +30,22 @@ const ReaderSuggestedFollowsDialog = ( { onClose, siteId, postId, isVisible } ) 
 				<div className="reader-recommended-follows-dialog__body">
 					<div className="reader-recommended-follows-dialog__follow-list">
 						<ul className="reader-recommended-follows-dialog__follow-list">
-							{ suggestedFollowItems }
+							{ isLoading && (
+								<li className="reader-recommended-follows-dialog__follow-item is-placeholder"></li>
+							) }
+							{ ! isLoading &&
+								data &&
+								data.map( ( relatedSite ) => (
+									<li
+										key={ relatedSite.global_ID }
+										className="reader-recommended-follows-dialog__follow-item"
+									>
+										<SuggestedFollowItem
+											site={ relatedSite }
+											followSource={ READER_SUGGESTED_FOLLOWS_DIALOG }
+										/>
+									</li>
+								) ) }
 						</ul>
 					</div>
 				</div>

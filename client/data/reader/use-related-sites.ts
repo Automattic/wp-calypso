@@ -48,19 +48,10 @@ const selectRelatedSites = ( response: { sites: Site[] } ): RelatedSite[] | null
 	return relatedSites.length > 0 ? relatedSites : null;
 };
 
-export const useRelatedSites = (
-	siteId: number,
-	postId: number
-): UseQueryResult< RelatedSite[] | null > => {
+export const useRelatedSites = ( siteId: number ): UseQueryResult< RelatedSite[] | null > => {
 	const site_recs = 5;
 	const path =
-		'/read/site/' +
-		siteId +
-		'/sites/related?post_id=' +
-		postId +
-		'&size_global=' +
-		site_recs +
-		'&http_envelope=1';
+		'/read/site/' + siteId + '/sites/related?size_global=' + site_recs + '&http_envelope=1';
 	return useQuery(
 		[ 'related-sites-' + site_recs, siteId ],
 		() => wpcom.req.get( { path: path, apiNamespace: 'rest/v1.2' } ),
