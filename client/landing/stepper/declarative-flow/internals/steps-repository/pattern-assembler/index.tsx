@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useSyncGlobalStylesUserConfig } from '@automattic/global-styles';
 import { useLocale } from '@automattic/i18n-utils';
-import { StepContainer, WITH_THEME_ASSEMBLER_FLOW } from '@automattic/onboarding';
+import { StepContainer, isSiteAssemblerFlow, isSiteSetupFlow } from '@automattic/onboarding';
 import {
 	__experimentalNavigatorProvider as NavigatorProvider,
 	__experimentalNavigatorScreen as NavigatorScreen,
@@ -81,7 +81,7 @@ const PatternAssembler = ( {
 	const siteId = useSiteIdParam();
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
 	const locale = useLocale();
-	const isNewSite = !! useQuery().get( 'isNewSite' );
+	const isNewSite = !! useQuery().get( 'isNewSite' ) || isSiteSetupFlow( flow );
 	const isSiteJetpack = useSelector( ( state ) => isJetpackSite( state, site?.ID ) );
 
 	// The categories api triggers the ETK plugin before the PTK api request
@@ -638,7 +638,7 @@ const PatternAssembler = ( {
 		<StepContainer
 			className="pattern-assembler__sidebar-revamp"
 			stepName="pattern-assembler"
-			hideBack={ navigatorPath !== NAVIGATOR_PATHS.MAIN || flow === WITH_THEME_ASSEMBLER_FLOW }
+			hideBack={ navigatorPath !== NAVIGATOR_PATHS.MAIN || isSiteAssemblerFlow( flow ) }
 			goBack={ onBack }
 			goNext={ goNext }
 			isHorizontalLayout={ false }
