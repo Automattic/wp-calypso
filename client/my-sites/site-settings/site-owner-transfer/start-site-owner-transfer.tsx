@@ -14,6 +14,7 @@ import Notice from 'calypso/components/notice';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { TRANSFER_SITE } from 'calypso/lib/url/support';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
+import { IAppState } from 'calypso/state/types';
 import {
 	getSelectedSiteId,
 	getSelectedSite,
@@ -222,7 +223,7 @@ const StartSiteOwnerTransfer = ( {
 	);
 };
 
-export default connect( ( state ) => ( {
+export default connect( ( state: IAppState ) => ( {
 	currentUserEmail: getCurrentUserEmail( state ),
 	selectedSiteId: getSelectedSiteId( state ),
 	selectedSiteSlug: getSelectedSiteSlug( state ),
