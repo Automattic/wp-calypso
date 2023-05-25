@@ -4,6 +4,7 @@ import { isDefaultLocale, getLanguage } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import i18n from 'i18n-calypso';
 import { forEach, throttle } from 'lodash';
+import { captureException } from 'calypso/lib/sentry';
 
 const debug = debugFactory( 'calypso:i18n' );
 
@@ -292,8 +293,12 @@ function addRequireChunkTranslationsHandler( localeSlug = i18n.getLocaleSlug(), 
 				addTranslations( translations, userTranslations );
 				loadedTranslationChunks[ chunkId ] = true;
 			} )
-			.catch( ( error ) => {
-				debug( `Encountered an error loading translation chunk ${ chunkId }.` );
+			.catch( ( cause ) => {
+				const error = new Error(
+					`Encountered an error loading translation chunk ${ chunkId } for "${ localeSlug }" in require chunk translations handler.`,
+					{ cause }
+				);
+				captureException( error );
 				debug( error );
 			} );
 
@@ -380,8 +385,12 @@ export default async function switchLocale( localeSlug ) {
 			translatedInstalledChunksToBeLoaded.forEach( ( chunkId ) =>
 				getTranslationChunkFile( chunkId, localeSlug )
 					.then( ( translations ) => addTranslations( translations ) )
-					.catch( ( error ) => {
-						debug( `Encountered an error loading translation chunk ${ chunkId }.` );
+					.catch( ( cause ) => {
+						const error = new Error(
+							`Encountered an error loading translation chunk ${ chunkId } for "${ localeSlug }" while switching the locale.`,
+							{ cause }
+						);
+						captureException( error );
 						debug( error );
 					} )
 			);
