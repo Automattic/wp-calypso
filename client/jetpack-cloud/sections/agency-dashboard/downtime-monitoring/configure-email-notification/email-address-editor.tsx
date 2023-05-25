@@ -68,6 +68,15 @@ export default function EmailAddressEditor( {
 	const verifyEmail = useValidateVerificationCode();
 	const resendCode = useResendVerificationCode();
 
+	const handleResendCode = useCallback( () => {
+		recordEvent( 'downtime_monitoring_resend_email_verification_code' );
+		if ( emailItem.email ) {
+			resendCode.mutate( { type: 'email', value: emailItem.email } );
+		}
+		// Disabled because we don't want to re-run this effect when resendCode changes
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ recordEvent, emailItem ] );
+
 	const handleSetEmailItems = useCallback(
 		( isVerified = true ) => {
 			const emailItemIndex = allEmailItems.findIndex( ( item ) => item.email === emailItem.id );
@@ -89,8 +98,9 @@ export default function EmailAddressEditor( {
 	useEffect( () => {
 		if ( isVerifyAction ) {
 			setShowCodeVerification( true );
+			handleResendCode();
 		}
-	}, [ isVerifyAction ] );
+	}, [ handleResendCode, isVerifyAction ] );
 
 	useEffect( () => {
 		if ( requestVerificationCode.isSuccess ) {
@@ -217,11 +227,6 @@ export default function EmailAddressEditor( {
 		title = translate( 'Remove Email' );
 		subTitle = translate( 'Are you sure you want to remove this email address?' );
 	}
-
-	const handleResendCode = () => {
-		recordEvent( 'downtime_monitoring_resend_email_verification_code' );
-		resendCode.mutate( { type: 'email', value: emailItem.email } );
-	};
 
 	const handleChange = useCallback(
 		( key ) => ( event: React.ChangeEvent< HTMLInputElement > ) => {
