@@ -29,7 +29,10 @@ export const initiateTransferWithPluginZip = ( action ) => {
 				method: 'POST',
 				path: `/sites/${ siteId }/automated-transfers/initiate`,
 				apiVersion: '1',
-				formData: [ [ 'plugin_zip', pluginZip ] ],
+				formData: [
+					[ 'plugin_zip', pluginZip ],
+					[ 'context', 'plugin_upload' ],
+				],
 			},
 			action
 		),

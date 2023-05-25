@@ -23,5 +23,35 @@ export interface SocialPreviewBaseProps {
 }
 
 export interface SocialPreviewsBaseProps {
+	/**
+	 * The heading level to use for the preview section title
+	 */
 	headingLevel?: SectionHeadingProps[ 'level' ];
+
+	/**
+	 * Whether to hide the "Your post" section
+	 */
+	hidePostPreview?: boolean;
+
+	/**
+	 * Whether to hide the "Link preview" section
+	 */
+	hideLinkPreview?: boolean;
 }
+
+export type MediaItem = {
+	/**
+	 * The alt text for the image.
+	 */
+	alt?: string;
+
+	/**
+	 * The mime type of the media
+	 */
+	type: string;
+
+	/**
+	 * The URL of the media.
+	 */
+	url: string;
+};

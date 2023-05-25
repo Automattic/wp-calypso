@@ -49,7 +49,11 @@ function LaunchWpcomWelcomeTour() {
 	const { siteIntent, siteIntentFetched } = useSiteIntent();
 	const localeSlug = useLocale();
 	const editorType = getEditorType();
-	const isStartWritingFlow = getQueryArg( window.location.search, START_WRITING_FLOW ) === 'true';
+	const { siteIntent: intent } = useSiteIntent();
+	// We check the URL param along with site intent because the param loads faster and prevents element flashing.
+	const isStartWritingFlow =
+		intent === START_WRITING_FLOW ||
+		getQueryArg( window.location.search, START_WRITING_FLOW ) === 'true';
 
 	// Preload first card image (others preloaded after open state confirmed)
 	usePrefetchTourAssets( [ getTourSteps( localeSlug, false, false, null, siteIntent )[ 0 ] ] );

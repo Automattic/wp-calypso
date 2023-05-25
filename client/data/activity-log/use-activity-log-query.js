@@ -5,18 +5,16 @@ import fromActivityLogApi from 'calypso/state/data-layer/wpcom/sites/activity/fr
 import { getFilterKey } from './utils';
 
 export default function useActivityLogQuery( siteId, filter, options ) {
-	return useQuery(
-		[ 'activity-log', siteId, getFilterKey( filter ) ],
-		() =>
+	return useQuery( {
+		queryKey: [ 'activity-log', siteId, getFilterKey( filter ) ],
+		queryFn: () =>
 			wpcom.req
 				.get(
 					{ path: `/sites/${ siteId }/activity`, apiNamespace: 'wpcom/v2' },
 					filterStateToApiQuery( filter )
 				)
 				.then( fromActivityLogApi ),
-		{
-			refetchInterval: 5 * 60 * 1000,
-			...options,
-		}
-	);
+		refetchInterval: 5 * 60 * 1000,
+		...options,
+	} );
 }

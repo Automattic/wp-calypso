@@ -2,44 +2,34 @@
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, Modal } from '@wordpress/components';
-import { subscribe, useDispatch, useSelect } from '@wordpress/data';
-import { useEffect, useState } from '@wordpress/element';
+import { useDispatch, useSelect } from '@wordpress/data';
+import { useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import React from 'react';
 import image from './image.svg';
+import { useCanvas } from './use-canvas';
 
 import './modal.scss';
 
 const GlobalStylesModal = () => {
-	const [ viewCanvasPath, setViewCanvasPath ] = useState();
-
-	// Since Gutenberg doesn't provide a stable selector to get the current path of
-	// the view canvas, we need to infer it from the URL.
-	useEffect( () => {
-		const unsubscribe = subscribe( () => {
-			// Subscriber callbacks run before the URL actually changes, so we need
-			// to delay the execution.
-			setTimeout( () => {
-				const params = new URLSearchParams( window.location.search );
-
-				const canvasMode = params.get( 'canvas' ) ?? 'view';
-				setViewCanvasPath( canvasMode === 'view' ? params.get( 'path' ) : undefined );
-			}, 0 );
-		}, 'core/edit-site' );
-
-		return () => unsubscribe();
-	}, [] );
+	const isSiteEditor = useSelect( ( select ) => !! select( 'core/edit-site' ), [] );
+	const { viewCanvasPath } = useCanvas();
 
 	const isVisible = useSelect(
 		( select ) => {
+			if ( ! isSiteEditor ) {
+				return false;
+			}
+
 			const currentSidebar =
 				select( 'core/interface' ).getActiveComplementaryArea( 'core/edit-site' );
+
 			return select( 'automattic/wpcom-global-styles' ).isModalVisible(
 				currentSidebar,
 				viewCanvasPath
 			);
 		},
-		[ viewCanvasPath ]
+		[ viewCanvasPath, isSiteEditor ]
 	);
 
 	const { dismissModal } = useDispatch( 'automattic/wpcom-global-styles' );
@@ -47,8 +37,10 @@ const GlobalStylesModal = () => {
 
 	// Hide the welcome guide modal, so it doesn't conflict with our modal.
 	useEffect( () => {
-		setPreference( 'core/edit-site', 'welcomeGuideStyles', false );
-	}, [ setPreference ] );
+		if ( isSiteEditor ) {
+			setPreference( 'core/edit-site', 'welcomeGuideStyles', false );
+		}
+	}, [ setPreference, isSiteEditor ] );
 
 	useEffect( () => {
 		if ( isVisible ) {
@@ -65,7 +57,7 @@ const GlobalStylesModal = () => {
 		} );
 	};
 
-	if ( ! isVisible ) {
+	if ( ! isSiteEditor || ! isVisible ) {
 		return null;
 	}
 

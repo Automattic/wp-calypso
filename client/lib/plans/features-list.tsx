@@ -116,6 +116,7 @@ import {
 	FEATURE_SHIPPING_CARRIERS,
 	FEATURE_SIMPLE_PAYMENTS,
 	FEATURE_SITE_BACKUPS_AND_RESTORE,
+	FEATURE_SITE_STAGING_SITES,
 	FEATURE_SITE_STATS,
 	FEATURE_SPAM_AKISMET_PLUS,
 	FEATURE_SPAM_BLOCK_V2,
@@ -265,9 +266,26 @@ import {
 	FEATURE_DISCOUNTED_SHIPPING,
 	FEATURE_PRINT_SHIPPING_LABELS,
 	FEATURE_NEWSLETTER_IMPORT_SUBSCRIBERS_FREE,
+	FEATURE_PAYMENT_TRANSACTION_FEES_10,
 	FEATURE_PAYMENT_TRANSACTION_FEES_8,
 	FEATURE_PAYMENT_TRANSACTION_FEES_4,
 	FEATURE_PAYMENT_TRANSACTION_FEES_2,
+	FEATURE_PREMIUM_STORE_THEMES,
+	FEATURE_STORE_DESIGN,
+	FEATURE_UNLIMITED_PRODUCTS,
+	FEATURE_DISPLAY_PRODUCTS_BRAND,
+	FEATURE_PRODUCT_ADD_ONS,
+	FEATURE_ASSEMBLED_KITS,
+	FEATURE_MIN_MAX_QTY,
+	FEATURE_STOCK_NOTIFS,
+	FEATURE_DYNAMIC_UPSELLS,
+	FEATURE_LOYALTY_PROG,
+	FEATURE_CUSTOM_MARKETING_AUTOMATION,
+	FEATURE_BULK_DISCOUNTS,
+	FEATURE_INVENTORY_MGMT,
+	FEATURE_STREAMLINED_CHECKOUT,
+	FEATURE_SELL_60_COUNTRIES,
+	FEATURE_SHIPPING_INTEGRATIONS,
 	isPersonalPlan,
 	isPremiumPlan,
 	isEcommercePlan,
@@ -1706,6 +1724,10 @@ export const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_NEWSLETTER_IMPORT_SUBSCRIBERS_FREE,
 		getTitle: () => i18n.translate( 'Import up to 100 subscribers' ),
 	},
+	[ FEATURE_PAYMENT_TRANSACTION_FEES_10 ]: {
+		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_10,
+		getTitle: () => i18n.translate( '10% transaction fee for payments + Stripe fees' ),
+	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_8 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_8,
 		getTitle: () => i18n.translate( '8% transaction fee for payments + Stripe fees' ),
@@ -1896,9 +1918,14 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_DEV_TOOLS ]: {
 		getSlug: () => FEATURE_DEV_TOOLS,
-		getTitle: () => i18n.translate( 'SFTP-SSH, WP-CLI, Git tools' ),
+		getTitle: () => i18n.translate( 'SFTP/SSH, WP-CLI, Git tools' ),
 		getDescription: () =>
 			i18n.translate( 'Use familiar developer tools to manage and deploy your site.' ),
+	},
+	[ FEATURE_SITE_STAGING_SITES ]: {
+		getSlug: () => FEATURE_SITE_STAGING_SITES,
+		getTitle: () => i18n.translate( 'Free staging site' ),
+		getDescription: () => i18n.translate( 'Test product and design changes in a staging site.' ),
 	},
 	[ FEATURE_WP_UPDATES ]: {
 		getSlug: () => FEATURE_WP_UPDATES,
@@ -1908,7 +1935,7 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_MULTI_SITE ]: {
 		getSlug: () => FEATURE_MULTI_SITE,
-		getTitle: () => i18n.translate( 'Centralized Site Management' ),
+		getTitle: () => i18n.translate( 'Centralized site management' ),
 		getDescription: () =>
 			i18n.translate( 'Seamlessly switch between 2, 20, or 200 sites. All from one place.' ),
 	},
@@ -2209,6 +2236,166 @@ export const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Site activity log' ),
 		getDescription: () =>
 			i18n.translate( 'Keep an administrative eye on activity across your site.' ),
+	},
+	[ FEATURE_PREMIUM_STORE_THEMES ]: {
+		getSlug: () => FEATURE_PREMIUM_STORE_THEMES,
+		getTitle: () => i18n.translate( 'Premium store themes' ),
+		getDescription: () =>
+			i18n.translate( 'Jumpstart your store’s design with a professionally designed theme.' ),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
+	},
+	[ FEATURE_STORE_DESIGN ]: {
+		getSlug: () => FEATURE_STORE_DESIGN,
+		getTitle: () => i18n.translate( 'Powerful store design tools' ),
+		getDescription: () =>
+			i18n.translate(
+				'Fine-tune your store’s design with on-brand styles and drag and drop layout editing.'
+			),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
+	},
+	[ FEATURE_UNLIMITED_PRODUCTS ]: {
+		getSlug: () => FEATURE_UNLIMITED_PRODUCTS,
+		getTitle: () => i18n.translate( 'Unlimited products' ),
+
+		getDescription: () =>
+			i18n.translate(
+				'Grow your store as big as you want with the ability to add unlimited products and services.'
+			),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
+	},
+	[ FEATURE_DISPLAY_PRODUCTS_BRAND ]: {
+		getSlug: () => FEATURE_DISPLAY_PRODUCTS_BRAND,
+		getTitle: () => i18n.translate( 'Display products by brand' ),
+
+		getDescription: () =>
+			i18n.translate(
+				'Create, assign and list brands for products, and allow customers to view by brand.'
+			),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
+	},
+	[ FEATURE_PRODUCT_ADD_ONS ]: {
+		getSlug: () => FEATURE_PRODUCT_ADD_ONS,
+		getTitle: () => i18n.translate( 'Product add-ons' ),
+
+		getDescription: () =>
+			i18n.translate(
+				'Increase your revenue with add-ons like gift wrapping or personalizations like engraving.'
+			),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
+	},
+	[ FEATURE_ASSEMBLED_KITS ]: {
+		getSlug: () => FEATURE_ASSEMBLED_KITS,
+		getTitle: () => i18n.translate( 'Assembled products and kits' ),
+
+		getDescription: () =>
+			i18n.translate(
+				'Give customers the freedom to build their own products utilizing your existing items.'
+			),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
+	},
+	[ FEATURE_MIN_MAX_QTY ]: {
+		getSlug: () => FEATURE_MIN_MAX_QTY,
+		getTitle: () => i18n.translate( 'Min/max order quantities' ),
+
+		getDescription: () =>
+			i18n.translate( 'Specify the minimum and maximum allowed product quantities for orders.' ),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
+	},
+	[ FEATURE_STOCK_NOTIFS ]: {
+		getSlug: () => FEATURE_STOCK_NOTIFS,
+		getTitle: () => i18n.translate( 'Back-in-stock notifications' ),
+
+		getDescription: () =>
+			i18n.translate( 'Automatically notify customers when your products are restocked.' ),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
+	},
+	[ FEATURE_DYNAMIC_UPSELLS ]: {
+		getSlug: () => FEATURE_DYNAMIC_UPSELLS,
+		getTitle: () => i18n.translate( 'Dynamic product upsells' ),
+
+		getDescription: () =>
+			i18n.translate(
+				'Earn more revenue with automated upsell and cross-sell product recommendations.'
+			),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
+	},
+	[ FEATURE_LOYALTY_PROG ]: {
+		getSlug: () => FEATURE_LOYALTY_PROG,
+		getTitle: () => i18n.translate( 'Referral and loyalty programs' ),
+
+		getDescription: () =>
+			i18n.translate(
+				'Boost organic sales with a customer referral program and offer free gifts or coupons as a reward.'
+			),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
+	},
+	[ FEATURE_CUSTOM_MARKETING_AUTOMATION ]: {
+		getSlug: () => FEATURE_CUSTOM_MARKETING_AUTOMATION,
+		getTitle: () => i18n.translate( 'Custom marketing automation' ),
+
+		getDescription: () =>
+			i18n.translate(
+				'Advanced email marketing functionality, including subscriber segmentation, advanced analytics, and automation.'
+			),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
+	},
+	[ FEATURE_BULK_DISCOUNTS ]: {
+		getSlug: () => FEATURE_BULK_DISCOUNTS,
+		getTitle: () => i18n.translate( 'Offer bulk discounts' ),
+
+		getDescription: () => i18n.translate( 'Offer personalized packages and bulk discounts.' ),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
+	},
+	[ FEATURE_INVENTORY_MGMT ]: {
+		getSlug: () => FEATURE_INVENTORY_MGMT,
+		getTitle: () => i18n.translate( 'Inventory management' ),
+
+		getDescription: () =>
+			i18n.translate( 'Keep inventory up-to-date with POS integrations and real-time tracking.' ),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
+	},
+	[ FEATURE_STREAMLINED_CHECKOUT ]: {
+		getSlug: () => FEATURE_STREAMLINED_CHECKOUT,
+		getTitle: () => i18n.translate( 'Streamlined checkout' ),
+
+		getDescription: () =>
+			i18n.translate(
+				'Remove the friction from checkout by giving your customers multiple ways to pay.'
+			),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
+	},
+	[ FEATURE_SELL_60_COUNTRIES ]: {
+		getSlug: () => FEATURE_SELL_60_COUNTRIES,
+		getTitle: () => i18n.translate( 'Sell in 60+ countries' ),
+
+		getDescription: () => i18n.translate( 'Grow globally by accepting 135+ currencies.' ),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
+	},
+	[ FEATURE_SHIPPING_INTEGRATIONS ]: {
+		getSlug: () => FEATURE_SHIPPING_INTEGRATIONS,
+		getTitle: () => i18n.translate( 'Integrations with top shipping carriers' ),
+
+		getDescription: () =>
+			i18n.translate(
+				'Get real-time shipping prices, print labels and give your customers tracking codes.'
+			),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	/* END: 2023 Pricing Grid Features */
 

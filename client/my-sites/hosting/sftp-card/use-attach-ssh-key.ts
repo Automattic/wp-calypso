@@ -21,21 +21,19 @@ export const useAttachSshKeyMutation = (
 	options: UseMutationOptions< MutationResponse, MutationError, MutationVariables > = {}
 ) => {
 	const queryClient = useQueryClient();
-	const mutation = useMutation(
-		async ( { name }: MutationVariables ) =>
+	const mutation = useMutation( {
+		mutationFn: async ( { name }: MutationVariables ) =>
 			wp.req.post( {
 				path: `/sites/${ siteId }/hosting/ssh-keys`,
 				apiNamespace: 'wpcom/v2',
 				body: { name },
 			} ),
-		{
-			...options,
-			onSuccess: async ( ...args ) => {
-				await queryClient.invalidateQueries( [ USE_ATOMIC_SSH_KEYS_QUERY_KEY, siteId ] );
-				options.onSuccess?.( ...args );
-			},
-		}
-	);
+		...options,
+		onSuccess: async ( ...args ) => {
+			await queryClient.invalidateQueries( [ USE_ATOMIC_SSH_KEYS_QUERY_KEY, siteId ] );
+			options.onSuccess?.( ...args );
+		},
+	} );
 
 	const { mutate, isLoading } = mutation;
 

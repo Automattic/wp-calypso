@@ -51,7 +51,7 @@ describe( 'CoBlocks: Extensions: Gutter Control', function () {
 			PricingTableBlock.blockName,
 			PricingTableBlock.blockEditorSelector
 		);
-		pricingTableBlock = new PricingTableBlock( blockHandle );
+		pricingTableBlock = new PricingTableBlock( page, blockHandle );
 	} );
 
 	it( 'Open settings sidebar', async () => {

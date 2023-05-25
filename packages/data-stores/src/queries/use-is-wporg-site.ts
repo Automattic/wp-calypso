@@ -12,9 +12,9 @@ type Analysis = {
 };
 
 export function useIsWpOrgSite( siteUrl: string | undefined, enabled = true ) {
-	return useQuery(
-		[ 'is-site-wporg-', siteUrl ],
-		async () => {
+	return useQuery( {
+		queryKey: [ 'is-site-wporg-', siteUrl ],
+		queryFn: async () => {
 			const analysis = await wpcomRequest< Analysis >( {
 				path: `/imports/analyze-url?site_url=${ encodeURIComponent( siteUrl as string ) }`,
 				apiNamespace: 'wpcom/v2',
@@ -24,10 +24,8 @@ export function useIsWpOrgSite( siteUrl: string | undefined, enabled = true ) {
 			}
 			return false;
 		},
-		{
-			refetchOnWindowFocus: false,
-			staleTime: Infinity,
-			enabled: !! siteUrl && enabled,
-		}
-	);
+		refetchOnWindowFocus: false,
+		staleTime: Infinity,
+		enabled: !! siteUrl && enabled,
+	} );
 }

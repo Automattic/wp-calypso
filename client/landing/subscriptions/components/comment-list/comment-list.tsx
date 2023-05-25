@@ -31,7 +31,12 @@ const CommentList = ( { posts }: CommentListProps ) => {
 			{ posts ? (
 				<VirtualizedList items={ posts }>
 					{ ( { item, key, style, registerChild } ) => (
-						<CommentRow key={ key } style={ style } forwardedRef={ registerChild } { ...item } />
+						<CommentRow
+							key={ `${ item.id }-${ key }` }
+							style={ style }
+							forwardedRef={ registerChild }
+							{ ...item }
+						/>
 					) }
 				</VirtualizedList>
 			) : null }
