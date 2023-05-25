@@ -6,6 +6,7 @@ import useValidateVerificationCodeMutation from 'calypso/state/jetpack-agency-da
 import {
 	RequestVerificationCodeParams,
 	ValidateVerificationCodeParams,
+	ResendVerificationCodeParams,
 } from '../sites-overview/types';
 
 export function useRequestVerificationCode(): {
@@ -85,14 +86,14 @@ export function useValidateVerificationCode(): {
 }
 
 export function useResendVerificationCode(): {
-	resendVerificationCode: ( params: RequestVerificationCodeParams ) => void;
+	resendVerificationCode: ( params: ResendVerificationCodeParams ) => void;
 	isResending: boolean;
 	resendSuccess: boolean;
 	resendingFailed: boolean;
 } {
 	const { isLoading, isSuccess, isError, mutate } = useResendVerificationCodeMutation( {
-		retry: ( errorCount ) => {
-			return errorCount < 3;
+		retry: () => {
+			return false;
 		},
 	} );
 

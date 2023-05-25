@@ -2,7 +2,7 @@ import { useMutation, UseMutationOptions, UseMutationResult } from '@tanstack/re
 import wpcom from 'calypso/lib/wp';
 import type {
 	APIError,
-	RequestVerificationCodeParams,
+	ResendVerificationCodeParams,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 
 interface APIResponse {
@@ -10,7 +10,7 @@ interface APIResponse {
 }
 
 function mutationResendVerificationCode(
-	params: RequestVerificationCodeParams
+	params: ResendVerificationCodeParams
 ): Promise< APIResponse > {
 	return wpcom.req.post( {
 		apiNamespace: 'wpcom/v2',
@@ -20,9 +20,9 @@ function mutationResendVerificationCode(
 }
 
 export default function useResendVerificationCodeMutation< TContext = unknown >(
-	options?: UseMutationOptions< APIResponse, APIError, RequestVerificationCodeParams, TContext >
-): UseMutationResult< APIResponse, APIError, RequestVerificationCodeParams, TContext > {
-	return useMutation< APIResponse, APIError, RequestVerificationCodeParams, TContext >(
+	options?: UseMutationOptions< APIResponse, APIError, ResendVerificationCodeParams, TContext >
+): UseMutationResult< APIResponse, APIError, ResendVerificationCodeParams, TContext > {
+	return useMutation< APIResponse, APIError, ResendVerificationCodeParams, TContext >(
 		mutationResendVerificationCode,
 		options
 	);
