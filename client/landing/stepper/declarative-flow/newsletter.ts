@@ -4,6 +4,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import wpcom from 'calypso/lib/wp';
 import {
 	clearSignupDestinationCookie,
@@ -24,8 +25,10 @@ const newsletter: Flow = {
 		return translate( 'Newsletter' );
 	},
 	useSteps() {
-		return [
-			{ slug: 'intro', asyncComponent: () => import( './internals/steps-repository/intro' ) },
+		const query = useQuery();
+		const ref = query.get( 'ref' ) || '';
+
+		let steps = [
 			{
 				slug: 'newsletterSetup',
 				asyncComponent: () => import( './internals/steps-repository/newsletter-setup' ),
@@ -49,6 +52,13 @@ const newsletter: Flow = {
 				asyncComponent: () => import( './internals/steps-repository/launchpad' ),
 			},
 		];
+		if ( ref !== 'newsletter-lp' ) {
+			steps = [
+				{ slug: 'intro', asyncComponent: () => import( './internals/steps-repository/intro' ) },
+				...steps,
+			];
+		}
+		return steps;
 	},
 	useSideEffect() {
 		const { setHidePlansFeatureComparison } = useDispatch( ONBOARD_STORE );
@@ -64,13 +74,16 @@ const newsletter: Flow = {
 		);
 		const siteSlug = useSiteSlug();
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
+		const query = useQuery();
+		const ref = query.get( 'ref' ) || '';
+		const initialStep = ref === 'newsletter-lp' ? 'newsletterSetup' : 'intro';
+
 		const flowProgress = useFlowProgress( {
 			stepName: _currentStep,
 			flowName,
 		} );
 		setStepProgress( flowProgress );
 		const locale = useLocale();
-
 		const getStartUrl = () => {
 			return locale && locale !== 'en'
 				? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Newsletter&redirect_to=/setup/${ flowName }/newsletterSetup`
@@ -93,14 +106,14 @@ const newsletter: Flow = {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStep );
 			const logInUrl = getStartUrl();
 
+			if ( ! userIsLoggedIn ) {
+				clearSignupDestinationCookie();
+				return window.location.assign( logInUrl );
+			}
+
 			switch ( _currentStep ) {
 				case 'intro':
-					clearSignupDestinationCookie();
-
-					if ( userIsLoggedIn ) {
-						return navigate( 'newsletterSetup' );
-					}
-					return window.location.assign( logInUrl );
+					return navigate( 'newsletterSetup' );
 
 				case 'newsletterSetup':
 					return navigate( 'domains' );
@@ -157,9 +170,8 @@ const newsletter: Flow = {
 			switch ( _currentStep ) {
 				case 'launchpad':
 					return window.location.assign( `/view/${ siteSlug }` );
-
 				default:
-					return navigate( 'intro' );
+					return navigate( initialStep );
 			}
 		};
 
