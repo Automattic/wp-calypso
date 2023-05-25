@@ -48,9 +48,12 @@ const GoogleAnalyticsJetpackForm = ( {
 	siteId,
 	sitePlugins,
 	translate,
+	isAtomic,
 } ) => {
 	const upsellHref = `/checkout/${ site.slug }/${ PRODUCT_UPSELLS_BY_FEATURE[ FEATURE_GOOGLE_ANALYTICS ] }`;
-	const analyticsSupportUrl = 'https://jetpack.com/support/google-analytics/';
+	const analyticsSupportUrl = isAtomic
+		? 'https://wordpress.com/support/google-analytics/'
+		: 'https://jetpack.com/support/google-analytics/';
 	const nudgeTitle = translate( 'Connect your site to Google Analytics' );
 	const wooCommercePlugin = find( sitePlugins, { slug: 'woocommerce' } );
 	const wooCommerceActive = wooCommercePlugin ? wooCommercePlugin.active : false;

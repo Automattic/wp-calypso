@@ -148,7 +148,6 @@ function wpcom_global_styles_enqueue_block_editor_assets() {
 		array(
 			'assetsUrl'   => plugins_url( 'dist/', __FILE__ ),
 			'upgradeUrl'  => "$calypso_domain/plans/$site_slug?plan=value_bundle&feature=style-customization",
-			'previewUrl'  => add_query_arg( 'hide-global-styles', '', home_url() ),
 			'wpcomBlogId' => wpcom_global_styles_get_wpcom_current_blog_id(),
 		)
 	);

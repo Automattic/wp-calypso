@@ -35,10 +35,6 @@ import { setupRoutes } from 'calypso/sections-middleware';
 import { createReduxStore } from 'calypso/state';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
 import { getCurrentUserId, isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { initConnection as initHappychatConnection } from 'calypso/state/happychat/connection/actions';
-import wasHappychatRecentlyActive from 'calypso/state/happychat/selectors/was-happychat-recently-active';
-import { requestHappychatEligibility } from 'calypso/state/happychat/user/actions';
-import { getHappychatAuth } from 'calypso/state/happychat/utils';
 import { getInitialState, getStateFromCache, persistOnChange } from 'calypso/state/initial-state';
 import { init as pushNotificationsInit } from 'calypso/state/push-notifications/actions';
 import {
@@ -387,15 +383,6 @@ const setupMiddlewares = ( currentUser, reduxStore, reactQueryClient ) => {
 
 			next();
 		} );
-	}
-
-	const state = reduxStore.getState();
-
-	if ( config.isEnabled( 'happychat' ) ) {
-		reduxStore.dispatch( requestHappychatEligibility() );
-	}
-	if ( wasHappychatRecentlyActive( state ) ) {
-		reduxStore.dispatch( initHappychatConnection( getHappychatAuth( state )() ) );
 	}
 
 	if ( window.electron ) {

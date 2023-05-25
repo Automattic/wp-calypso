@@ -11,21 +11,19 @@ export interface AtomicKey {
 }
 
 export const useAtomicSshKeys = ( siteId: number, options: UseQueryOptions ) => {
-	return useQuery< { ssh_keys: Array< AtomicKey > }, unknown, Array< AtomicKey > >(
-		[ USE_ATOMIC_SSH_KEYS_QUERY_KEY, siteId ],
-		() =>
+	return useQuery< { ssh_keys: Array< AtomicKey > }, unknown, Array< AtomicKey > >( {
+		queryKey: [ USE_ATOMIC_SSH_KEYS_QUERY_KEY, siteId ],
+		queryFn: () =>
 			wp.req.get( {
 				path: `/sites/${ siteId }/hosting/ssh-keys`,
 				apiNamespace: 'wpcom/v2',
 			} ),
-		{
-			enabled: !! siteId && ( options.enabled ?? true ),
-			select: ( data ) => {
-				return data.ssh_keys;
-			},
-			meta: {
-				persist: false,
-			},
-		}
-	);
+		enabled: !! siteId && ( options.enabled ?? true ),
+		select: ( data ) => {
+			return data.ssh_keys;
+		},
+		meta: {
+			persist: false,
+		},
+	} );
 };

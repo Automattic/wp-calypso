@@ -190,6 +190,11 @@
 		background-position-y: 5px;
 	}
 
+	li.is-coming-soon {
+		background: url(./icons/tool.svg) no-repeat 1px 7px;
+		background-size: 12px;
+	}
+
 	.foldable-card.card {
 		box-shadow: none;
 	}

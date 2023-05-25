@@ -11,7 +11,7 @@ import type { ProvidedDependencies, Step } from '../../types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 const plans: Step = function Plans( { navigation, flow } ) {
-	const { submit } = navigation;
+	const { goBack, submit } = navigation;
 
 	const handleSubmit = ( plan: MinimalRequestCartProduct | null ) => {
 		const providedDependencies: ProvidedDependencies = {
@@ -31,7 +31,7 @@ const plans: Step = function Plans( { navigation, flow } ) {
 	return (
 		<StepContainer
 			stepName="plans"
-			goBack={ () => submit?.( { goBack: true } ) }
+			goBack={ goBack }
 			isHorizontalLayout={ false }
 			isWideLayout={ ! is2023PricingGridVisible }
 			isFullLayout={ is2023PricingGridVisible }

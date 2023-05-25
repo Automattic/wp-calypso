@@ -8,40 +8,49 @@ import { TumblrPreviewProps } from './types';
 
 export type TumblrPreviewsProps = TumblrPreviewProps & SocialPreviewsBaseProps;
 
-export const TumblrPreviews: React.FC< TumblrPreviewsProps > = ( props ) => {
+export const TumblrPreviews: React.FC< TumblrPreviewsProps > = ( {
+	headingLevel,
+	hideLinkPreview,
+	hidePostPreview,
+	...props
+} ) => {
 	return (
 		<div className="social-preview tumblr-preview">
-			<section className="social-preview__section tumblr-preview__section">
-				<SectionHeading level={ props.headingLevel }>
-					{
-						// translators: refers to a social post on Tumblr
-						__( 'Your post', 'social-previews' )
-					}
-				</SectionHeading>
-				<p className="social-preview__section-desc">
-					{ __( 'This is what your social post will look like on Tumblr:', 'social-previews' ) }
-				</p>
-				<TumblrPostPreview { ...props } />
-			</section>
-			<section className="social-preview__section tumblr-preview__section">
-				<SectionHeading level={ props.headingLevel }>
-					{
-						// translators: refers to a link on Tumblr
-						__( 'Link preview', 'social-previews' )
-					}
-				</SectionHeading>
-				<p className="social-preview__section-desc">
-					{ __(
-						'This is what it will look like when someone shares the link to your WordPress post on Tumblr.',
-						'social-previews'
-					) }
-					&nbsp;
-					<ExternalLink href="https://jetpack.com/support/jetpack-social-image-generator">
-						{ __( 'Learn more about links', 'social-previews' ) }
-					</ExternalLink>
-				</p>
-				<TumblrLinkPreview { ...props } />
-			</section>
+			{ ! hidePostPreview && (
+				<section className="social-preview__section tumblr-preview__section">
+					<SectionHeading level={ headingLevel }>
+						{
+							// translators: refers to a social post on Tumblr
+							__( 'Your post', 'social-previews' )
+						}
+					</SectionHeading>
+					<p className="social-preview__section-desc">
+						{ __( 'This is what your social post will look like on Tumblr:', 'social-previews' ) }
+					</p>
+					<TumblrPostPreview { ...props } />
+				</section>
+			) }
+			{ ! hideLinkPreview && (
+				<section className="social-preview__section tumblr-preview__section">
+					<SectionHeading level={ headingLevel }>
+						{
+							// translators: refers to a link on Tumblr
+							__( 'Link preview', 'social-previews' )
+						}
+					</SectionHeading>
+					<p className="social-preview__section-desc">
+						{ __(
+							'This is what it will look like when someone shares the link to your WordPress post on Tumblr.',
+							'social-previews'
+						) }
+						&nbsp;
+						<ExternalLink href="https://jetpack.com/support/jetpack-social-image-generator">
+							{ __( 'Learn more about links', 'social-previews' ) }
+						</ExternalLink>
+					</p>
+					<TumblrLinkPreview { ...props } />
+				</section>
+			) }
 		</div>
 	);
 };

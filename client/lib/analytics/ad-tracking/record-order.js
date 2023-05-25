@@ -289,12 +289,28 @@ function recordOrderInFacebook( cart, orderId, wpcomJetpackCartInfo ) {
 	// WPCom
 	if ( wpcomJetpackCartInfo.containsWpcomProducts ) {
 		if ( null !== wpcomJetpackCartInfo.wpcomCostUSD && wpcomJetpackCartInfo.wpcomCostUSD > 0 ) {
+			// This gives us the billing frequency as a string, and combines yearly and multi-yearly into one bucket.
+			// Due to tracking-constraints in Facebook, this is needed. But we also supply the bill_period separately
+			// as this is used for other tracking purposes in Facebook.
+			const getFrequencyTypeForProduct = ( product ) => {
+				switch ( product.bill_period ) {
+					case '31':
+						return 'monthly';
+					case '365':
+					case '730':
+					case '1095':
+						return 'yearly_or_higher';
+					default:
+						return 'other';
+				}
+			};
 			const cartItemsArray = wpcomJetpackCartInfo.wpcomProducts.map( ( product ) => {
 				return {
 					product_slug: product.product_slug ?? '',
 					id: product.product_id ?? '',
 					product_name: product.product_name ?? '',
 					bill_period: product.bill_period ?? 0,
+					billing_frequency: getFrequencyTypeForProduct( product ),
 					is_sale_coupon_applied: product.is_sale_coupon_applied ?? false,
 					is_bundled: product.is_bundled ?? false,
 					is_domain_registration: product.is_domain_registration ?? false,
@@ -469,9 +485,9 @@ function recordOrderInGoogleAds( cart, orderId, wpcomJetpackCartInfo ) {
 			'conversion',
 			{
 				send_to: TRACKING_IDS.akismetGoogleAdsGtagPurchase,
-				transactionTotal: wpcomJetpackCartInfo.akismetCost,
-				currencyCode: cart.currency,
-				transactionId: orderId,
+				value: wpcomJetpackCartInfo.akismetCost,
+				currency: cart.currency,
+				transaction_id: orderId,
 			},
 		];
 		debug( 'recordOrderInGoogleAds: Record Akismet Purchase', params );
