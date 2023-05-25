@@ -62,7 +62,10 @@ class SharingServiceDescription extends Component {
 							{ this.props.translate(
 								'Instagram requires a business account connected to Facebook in order to work with third party services.'
 							) }
-							<ExternalLink className="instagram-business__help-link" href="https://wordpress.org">
+							<ExternalLink
+								className="instagram-business__help-link"
+								href="https://jetpack.com/redirect/?source=jetpack-social-instagram-business-help"
+							>
 								{ this.props.translate( 'Learn how to convert & link your Instagram account.' ) }
 							</ExternalLink>
 						</InfoPopover>
