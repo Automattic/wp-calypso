@@ -74,6 +74,7 @@ export default function EmailAddressEditor( {
 	}, [ recordEvent ] );
 
 	const handleResendCode = useCallback( () => {
+		setValidationError( undefined );
 		recordEvent( 'downtime_monitoring_resend_email_verification_code' );
 		if ( emailItem.email ) {
 			resendCode.mutate( { type: 'email', value: emailItem.email } );
@@ -125,6 +126,14 @@ export default function EmailAddressEditor( {
 	}, [ requestVerificationCode.isError, translate ] );
 
 	// Add email item to the list once the email is verified
+	useEffect( () => {
+		if ( resendCode.isError ) {
+			setValidationError( {
+				code: translate( 'Something went wrong. Please try again by clicking the resend button.' ),
+			} );
+		}
+	}, [ resendCode.isError, translate ] );
+
 	useEffect( () => {
 		if ( verifyEmail.isSuccess ) {
 			handleSetEmailItems();
