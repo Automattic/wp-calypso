@@ -353,6 +353,7 @@ export default async function switchLocale( localeSlug ) {
 
 			i18n.setLocale( locale );
 			setLocaleInDOM();
+			removeRequireChunkTranslationsHandler();
 			addRequireChunkTranslationsHandler( localeSlug, { translatedChunks } );
 
 			const translatedInstalledChunks = getInstalledChunks().filter( ( chunkId ) =>
