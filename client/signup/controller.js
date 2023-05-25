@@ -3,6 +3,7 @@ import { isEmpty } from 'lodash';
 import page from 'page';
 import { createElement } from 'react';
 import store from 'store';
+import { notFound } from 'calypso/controller';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { login } from 'calypso/lib/paths';
 import { sectionify } from 'calypso/lib/route';
@@ -347,7 +348,7 @@ export default {
 			// Fetch the site by siteIdOrSlug and then try to select again
 			dispatch( requestSite( siteIdOrSlug ) )
 				.catch( () => {
-					next();
+					notFound( context, next );
 					return null;
 				} )
 				.then( () => {

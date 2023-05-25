@@ -75,7 +75,13 @@ class Block_Patterns_From_API {
 
 			foreach ( (array) $block_patterns as $pattern ) {
 				foreach ( (array) $pattern['categories'] as $slug => $category ) {
-					$pattern_categories[ $slug ] = array( 'label' => $category['title'] );
+					// Register categories from first pattern in each category.
+					if ( ! $pattern_categories[ $slug ] ) {
+						$pattern_categories[ $slug ] = array(
+							'label'       => $category['title'],
+							'description' => $category['description'],
+						);
+					}
 				}
 			}
 
@@ -86,7 +92,9 @@ class Block_Patterns_From_API {
 				unregister_block_pattern_category( $existing_category['name'] );
 			}
 
-			$pattern_categories = array_merge( $pattern_categories, $existing_categories );
+			// Existing categories are registered in Gutenberg or other plugins.
+			// We overwrite them with the categories from Dotcom patterns.
+			$pattern_categories = array_merge( $existing_categories, $pattern_categories );
 
 			// Order categories alphabetically by their label.
 			uasort(
@@ -104,10 +112,14 @@ class Block_Patterns_From_API {
 
 			// Register categories (and re-register existing categories).
 			foreach ( (array) $pattern_categories as $slug => &$category_properties ) {
-				// Update the Posts category label to Blog Posts.
+				// Rename category labels.
 				if ( 'posts' === $slug ) {
-					$category_properties['label']       = __( 'Blog Posts', 'full-site-editing' );
-					$category_properties['description'] = __( 'Display your latest posts in lists, grids or other layouts.', 'full-site-editing' );
+					$category_properties['label'] = __(
+						'Blog Posts',
+						'full-site-editing'
+					);
+				} elseif ( 'gallery' === $slug ) {
+					$category_properties['label'] = __( 'Image Gallery', 'full-site-editing' );
 				}
 				register_block_pattern_category( $slug, $category_properties );
 			}

@@ -17,6 +17,7 @@ import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { launchpadFlowTasks } from './tasks';
 import { LaunchpadChecklist, LaunchpadStatuses, Task } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
+
 /**
  * Some attributes of these enhanced tasks will soon be fetched through a WordPress REST
  * API, making said enhancements here unnecessary ( Ex. title, subtitle, completed,
@@ -57,6 +58,10 @@ export function getEnhancedTasks(
 		site?.plan?.product_slug;
 
 	const translatedPlanName = productSlug ? PLANS_LIST[ productSlug ].getTitle() : '';
+
+	const setupBlogCompleted =
+		Boolean( tasks?.find( ( task ) => task.id === 'setup_blog' )?.completed ) ||
+		! isStartWritingFlow( flow );
 
 	const domainUpsellCompleted = isDomainUpsellCompleted( site, checklistStatuses );
 
@@ -155,9 +160,7 @@ export function getEnhancedTasks(
 							} );
 							window.location.assign( plansUrl );
 						},
-						badgeText: isVideoPressFlowWithUnsupportedPlan ? null : translatedPlanName,
-						completed: task.completed && ! shouldDisplayWarning,
-						warning: shouldDisplayWarning,
+						completed: task.completed && ! isVideoPressFlowWithUnsupportedPlan,
 					};
 					break;
 				case 'plan_completed':
@@ -286,7 +289,8 @@ export function getEnhancedTasks(
 				case 'blog_launched':
 					taskData = {
 						disabled:
-							( isStartWritingFlow( flow ) || isDesignFirstFlow( flow ) ) && ! planCompleted,
+							( isStartWritingFlow( flow ) || isDesignFirstFlow( flow ) ) &&
+							( ! planCompleted || ! domainUpsellCompleted || ! setupBlogCompleted ),
 						actionDispatch: () => {
 							if ( site?.ID ) {
 								const { setPendingAction, setProgressTitle } = dispatch( ONBOARD_STORE );

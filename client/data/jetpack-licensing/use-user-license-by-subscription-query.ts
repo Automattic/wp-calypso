@@ -7,19 +7,17 @@ const useUserLicenseBySubscriptionQuery = (
 	subscriptionId: number
 ): UseQueryResult< UserLicense > => {
 	const queryKey = [ 'user-license', subscriptionId ];
-	return useQuery< UserLicenseApi, unknown, UserLicense >(
+	return useQuery< UserLicenseApi, unknown, UserLicense >( {
 		queryKey,
-		async () =>
+		queryFn: async () =>
 			wpcom.req.get( {
 				path: `/jetpack-licensing/user/subscription/${ subscriptionId }`,
 				apiNamespace: 'wpcom/v2',
 			} ),
-		{
-			select: mapSingleLicenseApiToLicense,
-			refetchIntervalInBackground: false,
-			refetchOnWindowFocus: false,
-		}
-	);
+		select: mapSingleLicenseApiToLicense,
+		refetchIntervalInBackground: false,
+		refetchOnWindowFocus: false,
+	} );
 };
 
 export default useUserLicenseBySubscriptionQuery;

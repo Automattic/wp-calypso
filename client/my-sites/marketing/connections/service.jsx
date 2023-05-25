@@ -8,6 +8,7 @@ import { isEqual, find, some, get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, cloneElement } from 'react';
 import { connect } from 'react-redux';
+import Badge from 'calypso/components/badge';
 import ExternalLink from 'calypso/components/external-link';
 import FoldableCard from 'calypso/components/foldable-card';
 import Notice from 'calypso/components/notice';
@@ -83,6 +84,7 @@ export class SharingService extends Component {
 		warningNotice: PropTypes.func,
 		isP2HubSite: PropTypes.bool,
 		isJetpack: PropTypes.bool,
+		isNew: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -104,6 +106,7 @@ export class SharingService extends Component {
 		warningNotice: () => {},
 		isP2HubSite: false,
 		isJetpack: false,
+		isNew: false,
 	};
 
 	/**
@@ -529,6 +532,12 @@ export class SharingService extends Component {
 		return false;
 	}
 
+	renderBadges() {
+		return this.props.isNew ? (
+			<Badge className="service__new-badge">{ this.props.translate( 'New' ) }</Badge>
+		) : null;
+	}
+
 	render() {
 		const connections = this.getConnections();
 		const serviceStatus = this.props.service.status ?? 'ok';
@@ -547,7 +556,9 @@ export class SharingService extends Component {
 				{ this.isMailchimpService( connectionStatus ) && renderMailchimpLogo() }
 
 				<div className="sharing-service__name">
-					<h2>{ this.props.service.label }</h2>
+					<h2>
+						{ this.props.service.label } { this.renderBadges() }
+					</h2>
 					<ServiceDescription
 						service={ this.props.service }
 						status={ connectionStatus }

@@ -192,9 +192,12 @@ ThemesList.defaultProps = {
 
 function ThemeBlock( props ) {
 	const { theme, index } = props;
+	const [ selectedStyleVariation, setSelectedStyleVariation ] = useState( null );
+
 	if ( isEmpty( theme ) ) {
 		return null;
 	}
+
 	// Decide if we should pass ref for bookmark.
 	const { themesBookmark, siteId } = props;
 	const bookmarkRef = themesBookmark === theme.id ? props.bookmarkRef : null;
@@ -202,10 +205,13 @@ function ThemeBlock( props ) {
 	return (
 		<Theme
 			key={ 'theme-' + theme.id }
-			buttonContents={ props.getButtonOptions( theme.id ) }
-			screenshotClickUrl={ props.getScreenshotUrl && props.getScreenshotUrl( theme.id ) }
+			buttonContents={ props.getButtonOptions( theme.id, selectedStyleVariation ) }
+			screenshotClickUrl={ props.getScreenshotUrl?.( theme.id, selectedStyleVariation ) }
 			onScreenshotClick={ props.onScreenshotClick }
-			onStyleVariationClick={ props.onStyleVariationClick }
+			onStyleVariationClick={ ( themeId, themeIndex, variation ) => {
+				setSelectedStyleVariation( variation );
+				props.onStyleVariationClick?.( themeId, themeIndex, variation );
+			} }
 			onMoreButtonClick={ props.onMoreButtonClick }
 			onMoreButtonItemClick={ props.onMoreButtonItemClick }
 			actionLabel={ props.getActionLabel( theme.id ) }
@@ -218,6 +224,7 @@ function ThemeBlock( props ) {
 			bookmarkRef={ bookmarkRef }
 			siteId={ siteId }
 			softLaunched={ theme.soft_launched }
+			selectedStyleVariation={ selectedStyleVariation }
 		/>
 	);
 }

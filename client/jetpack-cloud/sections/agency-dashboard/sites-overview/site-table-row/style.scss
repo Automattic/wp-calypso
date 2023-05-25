@@ -2,7 +2,7 @@
 @import "@wordpress/base-styles/mixins";
 
 .site-table__table-row {
-	&:hover:not(.is-expanded):not(.site-table__table-row-site-error) {
+	&:hover:not(.is-expanded):not(.site-table__table-row-site-error):not(.site-table__table-row-active) {
 		background: var(--studio-gray-0);
 
 		.sites-overview__overlay {
@@ -20,14 +20,17 @@
 		}
 	}
 	&-disabled {
-		opacity: 0.5;
-		user-select: none;
+		background: unset !important;
+
+		.sites-overview__overlay {
+			background: unset !important;
+		}
 	}
 	&-active {
 		border-width: 0 1px;
 		border-style: solid;
 		border-color: var(--studio-gray-5);
-		box-shadow: 0 0 20px rgba(0, 0, 0, 0.16);
+		box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
 	}
 }
 

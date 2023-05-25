@@ -21,11 +21,13 @@ export function generateFlows( {
 	const flows = [
 		{
 			name: HOSTING_LP_FLOW,
-			steps: [ 'plans-hosting', 'user-hosting', 'domains' ],
+			steps: isEnabled( 'hosting-onboarding-i2' )
+				? [ 'user-hosting' ]
+				: [ 'plans-hosting', 'user-hosting', 'domains' ],
 			destination: getSitesDestination,
 			description:
 				'Create an account and a blog and give the user the option of adding a domain and plan to the cart.',
-			lastModified: '2023-02-09',
+			lastModified: '2023-05-19',
 			showRecaptcha: true,
 		},
 		{

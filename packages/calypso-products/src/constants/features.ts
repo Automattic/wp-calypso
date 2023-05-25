@@ -363,6 +363,22 @@ export const FEATURE_PLUGIN_AUTOUPDATE_JP = 'plugin-autoupdate-jp';
 export const FEATURE_PREMIUM_CONTENT_JP = 'premium-content-jp';
 export const FEATURE_SITE_ACTIVITY_LOG_JP = 'site-activity-log-jp';
 export const FEATURE_AUTOMATTIC_DATACENTER_FAILOVER = 'automattic-datacenter-fail-over';
+export const FEATURE_PREMIUM_STORE_THEMES = 'premium-store-themes';
+export const FEATURE_STORE_DESIGN = 'store-design';
+export const FEATURE_UNLIMITED_PRODUCTS = 'unlimited-products';
+export const FEATURE_DISPLAY_PRODUCTS_BRAND = 'display-products-brand';
+export const FEATURE_PRODUCT_ADD_ONS = 'product-add-ons';
+export const FEATURE_ASSEMBLED_KITS = 'assembled-kits';
+export const FEATURE_MIN_MAX_QTY = 'min-max-qty';
+export const FEATURE_STOCK_NOTIFS = 'stock-notifs';
+export const FEATURE_DYNAMIC_UPSELLS = 'dynamic-upsells';
+export const FEATURE_LOYALTY_PROG = 'loyalty-prog';
+export const FEATURE_CUSTOM_MARKETING_AUTOMATION = 'custom-marketing-automation';
+export const FEATURE_BULK_DISCOUNTS = 'bulk-discounts';
+export const FEATURE_INVENTORY_MGMT = 'inventory-mgmt';
+export const FEATURE_STREAMLINED_CHECKOUT = 'streamlined-checkout';
+export const FEATURE_SELL_60_COUNTRIES = 'sell-60-countries';
+export const FEATURE_SHIPPING_INTEGRATIONS = 'shipping-integrations';
 
 // Woo Express Features
 export const FEATURE_WOOCOMMERCE_STORE = 'woocommerce-store'; // WooCommerce store

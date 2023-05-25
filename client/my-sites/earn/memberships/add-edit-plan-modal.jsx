@@ -3,7 +3,7 @@ import formatCurrency from '@automattic/format-currency';
 import { ToggleControl } from '@wordpress/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { connect } from 'react-redux';
 import CountedTextArea from 'calypso/components/forms/counted-textarea';
 import FormCurrencyInput from 'calypso/components/forms/form-currency-input';
@@ -68,7 +68,7 @@ const currencyList = Object.keys( STRIPE_MINIMUM_CURRENCY_AMOUNT ).map( ( code )
  * @returns {number} Minimum transaction amount for given currency.
  */
 function minimumCurrencyTransactionAmount( currency, connectedAccountDefaultCurrency ) {
-	if ( connectedAccountDefaultCurrency.toLowerCase() === currency.toLowerCase() ) {
+	if ( connectedAccountDefaultCurrency === currency.toUpperCase() ) {
 		return STRIPE_MINIMUM_CURRENCY_AMOUNT[ currency ];
 	}
 
@@ -124,9 +124,19 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		product?.buyer_can_change_amount ?? false
 	);
 
-	const [ currentCurrency, setCurrentCurrency ] = useState(
-		product?.currency ?? connectedAccountDefaultCurrency.toUpperCase()
-	);
+	const defaultCurrency = useMemo( () => {
+		const flatCurrencyList = currencyList.map( ( e ) => e.code );
+		if ( product?.currency ) {
+			return product?.currency;
+		}
+		// Return the Stripe currency if supported. Otherwise default to USD
+		if ( flatCurrencyList.includes( connectedAccountDefaultCurrency ) ) {
+			return connectedAccountDefaultCurrency;
+		}
+		return 'USD';
+	}, [ currencyList, product ] );
+	const [ currentCurrency, setCurrentCurrency ] = useState( defaultCurrency );
+
 	const [ currentPrice, setCurrentPrice ] = useState(
 		product?.price ??
 			minimumCurrencyTransactionAmount( currentCurrency, connectedAccountDefaultCurrency )

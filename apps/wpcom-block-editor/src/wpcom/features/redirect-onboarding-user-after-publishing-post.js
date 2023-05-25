@@ -41,7 +41,7 @@ export function RedirectOnboardingUserAfterPublishingPost() {
 		if (
 			! isSavingPost &&
 			( isCurrentPostPublished || isCurrentPostScheduled ) &&
-			getCurrentPostRevisionsCount === 1
+			getCurrentPostRevisionsCount >= 1
 		) {
 			unsubscribe();
 
