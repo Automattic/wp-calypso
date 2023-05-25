@@ -13,7 +13,7 @@ import {
 import customDesignIcon from '../icons/custom-design';
 import spaceUpgradeIcon from '../icons/space-upgrade';
 import unlimitedThemesIcon from '../icons/unlimited-themes';
-import isStorageAddonAvailable from '../is-storage-addon-available';
+import isStorageAddonEnabled from '../is-storage-addon-enabled';
 import useAddOnDisplayCost from './use-add-on-display-cost';
 import useAddOnFeatureSlugs from './use-add-on-feature-slugs';
 
@@ -73,12 +73,13 @@ const useAddOns = (): ( AddOnMeta | null )[] => {
 		},
 	];
 
-	if ( ! isStorageAddonAvailable() ) {
-		addOnsActive.pop();
-	}
+	// Filter out storage add ons if they are disabled in the config
+	const filteredAddOns = ! isStorageAddonEnabled()
+		? addOnsActive.filter( ( addOn ) => addOn.productSlug !== PRODUCT_1GB_SPACE )
+		: addOnsActive;
 
 	return useSelector( ( state ): ( AddOnMeta | null )[] => {
-		return addOnsActive.map( ( addOn ) => {
+		return filteredAddOns.map( ( addOn ) => {
 			const product = getProductBySlug( state, addOn.productSlug );
 			const name = addOn.name ? addOn.name : getProductName( state, addOn.productSlug );
 			const description = addOn.description ?? getProductDescription( state, addOn.productSlug );
