@@ -32,7 +32,7 @@ const useAddOnDisplayCost = ( productSlug: string, quantity?: number ) => {
 			stripZeros: true,
 		} );
 
-		return translate( '%(monthlyCost)s monthly, billed yearly', {
+		return translate( '%(monthlyCost)s/month, billed yearly', {
 			/* Translators: $montlyCost: monthly price formatted with currency */
 			args: {
 				monthlyCost,

@@ -3,6 +3,7 @@ import {
 	PRODUCT_WPCOM_UNLIMITED_THEMES,
 	PRODUCT_1GB_SPACE,
 } from '@automattic/calypso-products';
+import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import {
 	getProductBySlug,
@@ -25,11 +26,12 @@ export interface AddOnMeta {
 	quantity?: number;
 	description: string | React.ReactChild | null;
 	displayCost: string | React.ReactChild | null;
-	variations?: Partial< AddOnMeta >[];
 }
 
 // some memoization. executes far too many times
 const useAddOns = (): ( AddOnMeta | null )[] => {
+	const translate = useTranslate();
+
 	const addOnsActive = [
 		{
 			productSlug: PRODUCT_WPCOM_UNLIMITED_THEMES,
@@ -51,21 +53,23 @@ const useAddOns = (): ( AddOnMeta | null )[] => {
 			productSlug: PRODUCT_1GB_SPACE,
 			icon: spaceUpgradeIcon,
 			quantity: 50,
+			name: translate( '50 GB Storage' ),
 			displayCost: useAddOnDisplayCost( PRODUCT_1GB_SPACE, 50 ),
-			description: 'Add additional high-performance SSD NvME storage space to your site.',
+			description: translate(
+				'Make more space for high-quality photos, videos, and other media. '
+			),
 			featured: false,
-			variations: [
-				{
-					name: '50GB Added Space',
-					quantity: 50,
-					displayCost: useAddOnDisplayCost( PRODUCT_1GB_SPACE, 50 ),
-				},
-				{
-					name: '100GB Added Space',
-					quantity: 100,
-					displayCost: useAddOnDisplayCost( PRODUCT_1GB_SPACE, 100 ),
-				},
-			],
+		},
+		{
+			productSlug: PRODUCT_1GB_SPACE,
+			icon: spaceUpgradeIcon,
+			quantity: 100,
+			name: translate( '100 GB Storage' ),
+			displayCost: useAddOnDisplayCost( PRODUCT_1GB_SPACE, 100 ),
+			description: translate(
+				'Take your site to the next level. Store all your media in one place without worrying about running out of space.'
+			),
+			featured: false,
 		},
 	];
 
@@ -76,7 +80,7 @@ const useAddOns = (): ( AddOnMeta | null )[] => {
 	return useSelector( ( state ): ( AddOnMeta | null )[] => {
 		return addOnsActive.map( ( addOn ) => {
 			const product = getProductBySlug( state, addOn.productSlug );
-			const name = getProductName( state, addOn.productSlug );
+			const name = addOn.name ? addOn.name : getProductName( state, addOn.productSlug );
 			const description = addOn.description ?? getProductDescription( state, addOn.productSlug );
 
 			if ( ! product ) {
