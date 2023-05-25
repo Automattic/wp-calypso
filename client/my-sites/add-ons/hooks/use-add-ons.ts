@@ -4,12 +4,14 @@ import {
 	PRODUCT_1GB_SPACE,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
+import useMediaStorageQuery from 'calypso/data/media-storage/use-media-storage-query';
 import { useSelector } from 'calypso/state';
 import {
 	getProductBySlug,
 	getProductDescription,
 	getProductName,
 } from 'calypso/state/products-list/selectors';
+import { STORAGE_LIMIT } from '../constants';
 import customDesignIcon from '../icons/custom-design';
 import spaceUpgradeIcon from '../icons/space-upgrade';
 import unlimitedThemesIcon from '../icons/unlimited-themes';
@@ -29,7 +31,7 @@ export interface AddOnMeta {
 }
 
 // some memoization. executes far too many times
-const useAddOns = (): ( AddOnMeta | null )[] => {
+const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 	const translate = useTranslate();
 
 	const addOnsActive = [
@@ -73,10 +75,28 @@ const useAddOns = (): ( AddOnMeta | null )[] => {
 		},
 	];
 
-	// Filter out storage add ons if they are disabled in the config
-	const filteredAddOns = ! isStorageAddonEnabled()
-		? addOnsActive.filter( ( addOn ) => addOn.productSlug !== PRODUCT_1GB_SPACE )
-		: addOnsActive;
+	// try to build storage add ons
+	const { data: mediaStorage } = useMediaStorageQuery( siteId );
+
+	const filteredAddOns = addOnsActive.filter( ( addOn ) => {
+		// if it's a storage add on
+		if ( addOn.productSlug === PRODUCT_1GB_SPACE ) {
+			// if storage add ons are not enabled in the config, remove them
+			if ( ! isStorageAddonEnabled() ) {
+				return false;
+			}
+
+			const currentMaxStorage = mediaStorage?.max_storage_bytes / Math.pow( 1024, 3 );
+			const availableStorageUpgrade = STORAGE_LIMIT - currentMaxStorage;
+
+			// if the current storage add on option is greater than the available upgrade, remove it
+			if ( ( addOn.quantity as number ) > availableStorageUpgrade ) {
+				return false;
+			}
+		}
+
+		return true;
+	} );
 
 	return useSelector( ( state ): ( AddOnMeta | null )[] => {
 		return filteredAddOns.map( ( addOn ) => {
