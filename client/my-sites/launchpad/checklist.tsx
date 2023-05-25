@@ -1,5 +1,5 @@
-import ChecklistItem from './checklist-item';
 import { Task } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/launchpad/types';
+import ChecklistItem from './checklist-item';
 
 interface ChecklistProps {
 	tasks: Task[] | null;
