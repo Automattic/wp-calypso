@@ -4,7 +4,7 @@ import { Dialog } from '@automattic/components';
 import { useLocale, useLocalizeUrl } from '@automattic/i18n-utils';
 import { useQueryClient } from '@tanstack/react-query';
 import classNames from 'classnames';
-import { TranslateOptionsText, TranslateOptionsPluralText, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -26,12 +26,6 @@ export type BlazePressPromotionProps = {
 	source?: string;
 };
 
-type BlazePressTranslatable = (
-	original: string,
-	plural_or_extra?: string | TranslateOptionsText,
-	extra?: TranslateOptionsPluralText
-) => string;
-
 export function goToOriginalEndpoint() {
 	const { pathname } = getUrlParts( window.location.href );
 	page( pathname );
@@ -46,7 +40,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	const [ hiddenHeader, setHiddenHeader ] = useState( true );
 	const widgetContainer = useRef< HTMLDivElement >( null );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
-	const translate = useTranslate() as BlazePressTranslatable;
+	const translate = useTranslate();
 	const localizeUrl = useLocalizeUrl();
 	const previousRoute = useSelector( getPreviousRoute );
 	const selectedSiteId = useSelector( getSelectedSiteId );
@@ -95,24 +89,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 					props.postId,
 					onClose,
 					source,
-					(
-						original: string,
-						plural_or_options?: string | TranslateOptionsText,
-						options?: TranslateOptionsPluralText
-					): string => {
-						if ( plural_or_options && options ) {
-							// This is a special case where we re-use the translate in another application
-							// that is mounted inside calypso
-							// eslint-disable-next-line wpcalypso/i18n-no-variables
-							return translate( original, plural_or_options, options );
-						}
-						if ( plural_or_options ) {
-							// eslint-disable-next-line wpcalypso/i18n-no-variables
-							return translate( original, plural_or_options );
-						}
-						// eslint-disable-next-line wpcalypso/i18n-no-variables
-						return translate( original );
-					},
+					translate,
 					localizeUrl,
 					widgetContainer.current,
 					handleShowCancel,

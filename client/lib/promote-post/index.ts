@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { loadScript } from '@automattic/load-script';
 import { __ } from '@wordpress/i18n';
+import { translate } from 'i18n-calypso/types';
 import { useSelector } from 'react-redux';
 import request, { requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
@@ -25,7 +26,7 @@ declare global {
 				urn: string;
 				onLoaded?: () => void;
 				onClose?: () => void;
-				translateFn?: ( value: string, plural_or_options?: any, options?: any ) => string;
+				translateFn?: typeof translate;
 				localizeUrlFn?: ( fullUrl: string ) => string;
 				locale?: string;
 				showDialog?: boolean;
