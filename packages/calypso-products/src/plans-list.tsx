@@ -2869,7 +2869,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		...getPlanJetpackSecurityT1Details(),
 		...getBiAnnualTimeframe(),
 		getStoreSlug: () => PLAN_JETPACK_SECURITY_T1_BI_YEARLY,
-		getPathSlug: () => 'security-20gb-yearly',
+		getPathSlug: () => 'security-20gb-bi-yearly',
 		getProductId: () => 2034,
 		getProductsIncluded: () => [
 			PRODUCT_JETPACK_BACKUP_T1_YEARLY,
