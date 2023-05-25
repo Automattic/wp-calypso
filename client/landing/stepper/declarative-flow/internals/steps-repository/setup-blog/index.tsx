@@ -36,7 +36,6 @@ const SetupBlog: Step = ( { navigation, flow } ) => {
 	const { siteTitle, setComponentSiteTitle, tagline, setTagline } = useSetupFormInitialValues();
 
 	useEffect( () => {
-		// Clear site title and show placeholder for the flows below
 		if ( siteTitle === 'Site Title' ) {
 			setComponentSiteTitle( '' );
 		}

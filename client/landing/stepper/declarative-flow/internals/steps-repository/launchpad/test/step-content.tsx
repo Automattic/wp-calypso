@@ -105,7 +105,7 @@ jest.mock( '@automattic/data-stores', () => ( {
 
 			case 'design-first':
 				checklist = [
-					{ id: 'select_design', completed: false, disabled: false, title: 'Select a design' },
+					{ id: 'design_selected', completed: false, disabled: false, title: 'Select a design' },
 					{ id: 'setup_blog', completed: false, disabled: false, title: 'Name your blog' },
 					{ id: 'domain_upsell', completed: false, disabled: false, title: 'Choose a domain' },
 					{

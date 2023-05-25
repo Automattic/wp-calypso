@@ -1,12 +1,12 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-import { useDispatch } from '@wordpress/data';
-import { getQueryArg } from '@wordpress/url';
 import {
 	DESIGN_FIRST_FLOW,
 	START_WRITING_FLOW,
 	StepContainer,
 	isStartWritingFlow,
-} from 'calypso/../packages/onboarding/src';
+} from '@automattic/onboarding';
+import { useDispatch } from '@wordpress/data';
+import { getQueryArg } from '@wordpress/url';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { useMyDomainInputMode as inputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import UseMyDomainComponent from 'calypso/components/domains/use-my-domain';
