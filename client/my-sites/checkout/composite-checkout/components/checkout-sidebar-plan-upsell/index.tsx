@@ -1,4 +1,4 @@
-import { isPlan } from '@automattic/calypso-products';
+import { isJetpackProduct, isPlan } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
 import { useShoppingCart } from '@automattic/shopping-cart';
@@ -28,7 +28,9 @@ export function CheckoutSidebarPlanUpsell() {
 	const { __ } = useI18n();
 	const cartKey = useCartKey();
 	const { responseCart, replaceProductInCart } = useShoppingCart( cartKey );
-	const plan = responseCart.products.find( ( product ) => isPlan( product ) );
+	const plan = responseCart.products.find(
+		( product ) => isPlan( product ) || isJetpackProduct( product )
+	);
 	const variants = useGetProductVariants( plan );
 
 	if ( ! plan ) {
@@ -90,6 +92,12 @@ export function CheckoutSidebarPlanUpsell() {
 		return null;
 	}
 
+	const isComparisonWithIntroOffer =
+		biennialVariant.introductoryInterval === 2 &&
+		biennialVariant.introductoryTerm === 'year' &&
+		currentVariant.introductoryInterval === 1 &&
+		currentVariant.introductoryTerm === 'year';
+
 	const cardTitle = createInterpolateElement(
 		sprintf(
 			// translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
@@ -99,17 +107,36 @@ export function CheckoutSidebarPlanUpsell() {
 		{ strong: createElement( 'strong' ) }
 	);
 
+	const twoYearCostLabel = createInterpolateElement( __( '<strong>2 Year Cost</strong>' ), {
+		strong: createElement( 'strong' ),
+	} );
+
 	return (
 		<PromoCard title={ cardTitle } className="checkout-sidebar-plan-upsell">
 			<div className="checkout-sidebar-plan-upsell__plan-grid">
+				{ isComparisonWithIntroOffer && (
+					<>
+						<div className="checkout-sidebar-plan-upsell__plan-grid-cell"></div>
+						<div className="checkout-sidebar-plan-upsell__plan-grid-cell">{ twoYearCostLabel }</div>
+					</>
+				) }
 				<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
 					{ currentVariant.variantLabel }
 				</div>
 				<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-					{ formatCurrency( currentVariant.priceInteger, currentVariant.currency, {
-						stripZeros: true,
-						isSmallestUnit: true,
-					} ) }
+					{ isComparisonWithIntroOffer
+						? formatCurrency(
+								currentVariant.priceInteger + currentVariant.priceBeforeDiscounts,
+								currentVariant.currency,
+								{
+									stripZeros: true,
+									isSmallestUnit: true,
+								}
+						  )
+						: formatCurrency( currentVariant.priceInteger, currentVariant.currency, {
+								stripZeros: true,
+								isSmallestUnit: true,
+						  } ) }
 				</div>
 				<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
 					{ biennialVariant.variantLabel }

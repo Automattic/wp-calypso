@@ -57,7 +57,7 @@ const Variant = styled.div`
 	justify-content: space-between;
 	line-height: 20px;
 	width: 100%;
-	column-gap: 10%;
+	column-gap: 20px;
 
 	.item-variant-option--selected & {
 		color: #fff;
@@ -66,6 +66,7 @@ const Variant = styled.div`
 
 const Label = styled.span`
 	display: flex;
+	white-space: nowrap;
 	// MOBILE_BREAKPOINT is <480px, used in useMobileBreakpoint
 	@media ( max-width: 480px ) {
 		flex-direction: column;
@@ -150,7 +151,7 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 		//generic introductory offer to catch unexpected offer terms
 		if (
 			( introTerm !== 'month' && introTerm !== 'year' ) ||
-			( introCount > 1 && introTerm === 'year' )
+			( introCount > 2 && introTerm === 'year' )
 		) {
 			return translate( '%(formattedCurrentPrice)s introductory offer', { args } );
 			// translation example: $1 introductory offer
@@ -202,10 +203,15 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 			// multiple period introductory offers (eg 3 months) there are no multi-year introductory offers
 		} else if ( introCount > 1 ) {
 			if ( productBillingTermInMonths > 12 ) {
-				return translate(
-					'%(formattedCurrentPrice)s first %(introCount)s months then %(formattedPriceBeforeDiscounts)s per %(billingTermInYears)s years',
-					{ args }
-				);
+				return introTerm === 'month'
+					? translate(
+							'%(formattedCurrentPrice)s first %(introCount)s months then %(formattedPriceBeforeDiscounts)s per %(billingTermInYears)s years',
+							{ args }
+					  )
+					: translate(
+							'%(formattedCurrentPrice)s for first %(introCount)s years then %(formattedPriceBeforeDiscounts)s per %(billingTermInYears)s years',
+							{ args }
+					  );
 				// translation example: $1 first 3 months then $2 per 2 years
 			} else if ( productBillingTermInMonths === 12 ) {
 				return translate(
