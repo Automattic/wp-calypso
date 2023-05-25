@@ -1,51 +1,39 @@
-import { useSupportAvailability, useSupportActivity } from '@automattic/data-stores';
-import useMessagingAvailability from './use-messaging-availability';
+import useChat from '../hooks/use-chat';
 
 type Result = {
 	render: boolean;
 	state: 'AVAILABLE' | 'UNAVAILABLE' | 'CLOSED';
 	isLoading: boolean;
 	eligible: boolean;
-	to: string;
+	hasActiveChats: boolean;
 };
 
 export function useShouldRenderChatOption(): Result {
-	const { data: chatStatus } = useSupportAvailability( 'CHAT' );
-	const { data, isInitialLoading: isLoadingAvailability } = useMessagingAvailability(
-		'wpcom_messaging',
-		Boolean( chatStatus?.is_user_eligible )
-	);
-	const { data: supportActivity, isInitialLoading: isLoadingSupportActivity } = useSupportActivity(
-		Boolean( chatStatus?.is_user_eligible )
-	);
+	const { hasActiveChats, isChatAvailable, isChatClosed, isEligibleForChat, isLoading } = useChat();
 
-	const isLoading = isLoadingAvailability || isLoadingSupportActivity;
-
-	if ( ! chatStatus?.is_user_eligible ) {
+	if ( ! isEligibleForChat ) {
 		return {
 			render: false,
 			isLoading,
-			state: chatStatus?.is_chat_closed ? 'CLOSED' : 'UNAVAILABLE',
+			state: isChatClosed ? 'CLOSED' : 'UNAVAILABLE',
 			eligible: false,
-			to: '',
+			hasActiveChats,
 		};
-	} else if ( chatStatus?.is_chat_closed ) {
+	} else if ( isChatClosed ) {
 		return {
 			render: true,
 			state: 'CLOSED',
 			isLoading,
 			eligible: true,
-			to: '',
+			hasActiveChats,
 		};
-	} else if ( data?.is_available ) {
-		const hasActiveChats = supportActivity?.some( ( ticket ) => ticket.channel === 'Messaging' );
-		const to = hasActiveChats ? '/inline-chat' : '/contact-form?mode=CHAT';
+	} else if ( isChatAvailable || hasActiveChats ) {
 		return {
 			render: true,
 			state: 'AVAILABLE',
 			isLoading,
 			eligible: true,
-			to,
+			hasActiveChats,
 		};
 	}
 	return {
@@ -53,6 +41,6 @@ export function useShouldRenderChatOption(): Result {
 		state: 'UNAVAILABLE',
 		isLoading,
 		eligible: true,
-		to: '',
+		hasActiveChats,
 	};
 }

@@ -99,6 +99,12 @@ export const setMessage = ( message: string ) =>
 		message,
 	} as const );
 
+export const setMessagingScriptLoaded = ( isLoaded: boolean ) =>
+	( {
+		type: 'HELP_CENTER_SET_MESSAGING_SCRIPT_LOADED',
+		isLoaded,
+	} as const );
+
 export const setChatTag = ( chatTag: string ) =>
 	( {
 		type: 'HELP_CENTER_SET_CHAT_TAG',
@@ -128,17 +134,24 @@ export const setUserDeclaredSite = ( site: SiteDetails | undefined ) =>
 		site,
 	} as const );
 
+export const resetStore = () =>
+	( {
+		type: 'HELP_CENTER_RESET_STORE',
+	} as const );
+
 export const startHelpCenterChat = function* ( site: HelpCenterSite, message: string ) {
-	yield setInitialRoute( '/inline-chat' );
+	yield setInitialRoute( '/contact-form?mode=CHAT' );
 	yield setSite( site );
 	yield setMessage( message );
 	yield setShowHelpCenter( true );
 };
 
-export const resetStore = () =>
-	( {
-		type: 'HELP_CENTER_RESET_STORE',
-	} as const );
+export const setShowMessagingChat = function* () {
+	yield setShowHelpCenter( false );
+	yield setShowMessagingLauncher( true );
+	yield setShowMessagingWidget( true );
+	yield resetStore();
+};
 
 export type HelpCenterAction =
 	| ReturnType<
@@ -149,6 +162,7 @@ export type HelpCenterAction =
 			| typeof resetStore
 			| typeof receiveHasSeenWhatsNewModal
 			| typeof setMessage
+			| typeof setMessagingScriptLoaded
 			| typeof setChatTag
 			| typeof setUserDeclaredSite
 			| typeof setUserDeclaredSiteUrl
@@ -158,4 +172,6 @@ export type HelpCenterAction =
 			| typeof setIsMinimized
 			| typeof setInitialRoute
 	  >
-	| GeneratorReturnType< typeof setShowHelpCenter | typeof setHasSeenWhatsNewModal >;
+	| GeneratorReturnType<
+			typeof setShowHelpCenter | typeof setHasSeenWhatsNewModal | typeof setShowMessagingChat
+	  >;

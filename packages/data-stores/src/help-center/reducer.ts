@@ -136,6 +136,16 @@ const initialRoute: Reducer< InitialEntry | undefined, HelpCenterAction > = ( st
 	return state;
 };
 
+const isMessagingScriptLoaded: Reducer< boolean | undefined, HelpCenterAction > = (
+	state,
+	action
+) => {
+	if ( action.type === 'HELP_CENTER_SET_MESSAGING_SCRIPT_LOADED' ) {
+		return action.isLoaded;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	showHelpCenter,
 	showMessagingLauncher,
@@ -151,6 +161,7 @@ const reducer = combineReducers( {
 	unreadCount,
 	iframe,
 	initialRoute,
+	isMessagingScriptLoaded,
 } );
 
 export type State = ReturnType< typeof reducer >;

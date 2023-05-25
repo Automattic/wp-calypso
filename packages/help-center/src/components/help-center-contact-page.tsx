@@ -7,6 +7,7 @@ import config from '@automattic/calypso-config';
 import { Spinner, GMClosureNotice } from '@automattic/components';
 import { useSupportAvailability, useSupportActivity } from '@automattic/data-stores';
 import { isDefaultLocale, getLanguage, useLocale } from '@automattic/i18n-utils';
+import { useDispatch } from '@wordpress/data';
 import { useEffect, useMemo } from '@wordpress/element';
 import { hasTranslation, sprintf } from '@wordpress/i18n';
 import { comment, Icon } from '@wordpress/icons';
@@ -22,11 +23,11 @@ import { getSectionName } from 'calypso/state/ui/selectors';
 import { BackButton } from '..';
 import {
 	useShouldRenderChatOption,
-	useMessagingAuth,
 	useShouldRenderEmailOption,
 	useStillNeedHelpURL,
 } from '../hooks';
 import { Mail, Forum } from '../icons';
+import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterActiveTicketNotice } from './help-center-notice';
 
 const ConditionalLink: FC< { active: boolean } & LinkProps > = ( { active, ...props } ) => {
@@ -45,22 +46,7 @@ export const HelpCenterContactPage: FC = () => {
 	const { data: supportActivity, isLoading: isLoadingSupportActivity } = useSupportActivity();
 	const { data: supportAvailability } = useSupportAvailability( 'CHAT' );
 	const isLoading = renderChat.isLoading || renderEmail.isLoading || isLoadingSupportActivity;
-
-	const zendeskKey: string = config( 'zendesk_support_chat_key' );
-	const { data: messagingAuth } = useMessagingAuth(
-		zendeskKey,
-		Boolean( supportAvailability?.is_user_eligible )
-	);
-	useEffect( () => {
-		const jwt = messagingAuth?.user.jwt;
-		if ( typeof window.zE !== 'function' || ! jwt ) {
-			return;
-		}
-
-		window.zE( 'messenger', 'loginUser', function ( callback ) {
-			callback( jwt );
-		} );
-	}, [ messagingAuth ] );
+	const { setShowMessagingChat } = useDispatch( HELP_CENTER_STORE );
 
 	useEffect( () => {
 		if ( isLoading ) {
@@ -73,6 +59,12 @@ export const HelpCenterContactPage: FC = () => {
 			email_available: renderEmail.render,
 		} );
 	}, [ isLoading, renderChat.state, renderEmail.render ] );
+
+	const openChatIfOngoing = () => {
+		if ( renderChat.state === 'AVAILABLE' && renderChat.hasActiveChats ) {
+			setShowMessagingChat();
+		}
+	};
 
 	const liveChatHeaderText = useMemo( () => {
 		if ( isDefaultLocale( locale ) || ! hasTranslation( 'Live chat (English)' ) ) {
@@ -162,7 +154,11 @@ export const HelpCenterContactPage: FC = () => {
 
 					{ renderChat.render && (
 						<div className={ classnames( { disabled: renderChat.state !== 'AVAILABLE' } ) }>
-							<ConditionalLink active={ renderChat.state === 'AVAILABLE' } to={ renderChat.to }>
+							<ConditionalLink
+								active={ renderChat.state === 'AVAILABLE' }
+								onClick={ openChatIfOngoing }
+								to="/contact-form?mode=CHAT"
+							>
 								<div
 									className={ classnames( 'help-center-contact-page__box', 'chat', {
 										'is-disabled': renderChat.state !== 'AVAILABLE',
