@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useSourceMigrationStatusQuery } from 'calypso/data/site-migration/use-source-migration-status-query';
-import { useSiteQuery } from 'calypso/data/sites/use-site-query';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../../types';
@@ -20,11 +20,10 @@ const MigrationHandler: Step = function MigrationHandler( { navigation } ) {
 		[]
 	);
 	const { setIsMigrateFromWp } = useDispatch( ONBOARD_STORE );
-	const search = window.location.search;
-	const sourceSiteSlug = new URLSearchParams( search ).get( 'from' ) || '';
-	const { data: sourceSite, isError: isErrorSourcSite } = useSiteQuery( sourceSiteSlug );
+	const urlQueryParams = useQuery();
+	const sourceSiteSlug = urlQueryParams.get( 'from' ) || '';
 	const { data: sourceSiteMigrationStatus, isError: isErrorSourceSiteMigrationStatus } =
-		useSourceMigrationStatusQuery( sourceSite?.ID );
+		useSourceMigrationStatusQuery( sourceSiteSlug );
 	const errorDependency = {
 		isFromMigrationPlugin: true,
 		hasError: true,
@@ -37,7 +36,7 @@ const MigrationHandler: Step = function MigrationHandler( { navigation } ) {
 
 	useEffect( () => {
 		if ( submit ) {
-			if ( isErrorSourcSite || isErrorSourceSiteMigrationStatus ) {
+			if ( isErrorSourceSiteMigrationStatus ) {
 				return submit( errorDependency );
 			}
 			if ( sourceSiteMigrationStatus ) {
@@ -52,7 +51,7 @@ const MigrationHandler: Step = function MigrationHandler( { navigation } ) {
 			}
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ isErrorSourcSite, isErrorSourceSiteMigrationStatus, sourceSiteMigrationStatus ] );
+	}, [ isErrorSourceSiteMigrationStatus, sourceSiteMigrationStatus ] );
 
 	const getCurrentMessage = () => {
 		return __( 'Scanning your site' );
