@@ -50,13 +50,13 @@ const defaultArgs = {
 	showQuotaError: false,
 };
 
-export const NewStagingSiteCard = Template.bind( {} );
-NewStagingSiteCard.args = {
+export const NewStagingSite = Template.bind( {} );
+NewStagingSite.args = {
 	...defaultArgs,
 };
 
-export const NewStagingSiteCardWithQuotaError = Template.bind( {} );
-NewStagingSiteCardWithQuotaError.args = {
+export const NewStagingSiteWithQuotaError = Template.bind( {} );
+NewStagingSiteWithQuotaError.args = {
 	...defaultArgs,
 	isButtonDisabled: true,
 	showQuotaError: true,

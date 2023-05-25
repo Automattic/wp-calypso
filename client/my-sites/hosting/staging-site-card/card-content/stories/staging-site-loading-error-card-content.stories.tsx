@@ -62,7 +62,7 @@ const defaultArgs = {
 	testId: 'staging-sites-access-message',
 };
 
-export const StagingSiteLoadingErrorCard = Template.bind( {} );
-StagingSiteLoadingErrorCard.args = {
+export const StagingSiteLoadingError = Template.bind( {} );
+StagingSiteLoadingError.args = {
 	...defaultArgs,
 };

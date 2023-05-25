@@ -51,7 +51,7 @@ const defaultArgs = {
 	isOwner: true,
 };
 
-export const StagingSiteLoadingBarCard = Template.bind( {} );
-StagingSiteLoadingBarCard.args = {
+export const StagingSiteLoadingBar = Template.bind( {} );
+StagingSiteLoadingBar.args = {
 	...defaultArgs,
 };

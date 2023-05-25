@@ -65,7 +65,7 @@ const defaultArgs = {
 	isBusy: false,
 };
 
-export const ManageStagingSiteCard = Template.bind( {} );
-ManageStagingSiteCard.args = {
+export const ManageStagingSite = Template.bind( {} );
+ManageStagingSite.args = {
 	...defaultArgs,
 };
