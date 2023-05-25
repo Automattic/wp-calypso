@@ -19,10 +19,10 @@ $plans-comparison-medium-breakpoint: 1024px;
 $plans-comparison-large-breakpoint: 1281px;
 
 $planComparisonMinWidthToGridWidthMap: (
-	780px: "630px",
-	880px: "800px",
-	1024px: "942px",
-	1281px: "1091px",
+	780px: "686px",
+	880px: "870px",
+	1024px: "1024px",
+	1281px: "1238px",
 );
 
 @mixin pricing-grid-breakpoints {
