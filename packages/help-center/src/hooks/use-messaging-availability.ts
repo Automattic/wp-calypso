@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, QueryFunctionContext } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import { addQueryArgs } from '@wordpress/url';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
@@ -10,10 +10,13 @@ interface APIFetchOptions {
 	path: string;
 }
 
-function requestMessagingAvailability() {
+type MessagingGroup = 'wpcom_messaging' | 'wpcom_presales';
+
+function requestMessagingAvailability( { queryKey }: QueryFunctionContext ) {
 	const currentEnvironment = config( 'env_id' );
+	const [ , group ] = queryKey;
 	const params = {
-		group: 'wpcom_messaging',
+		group: group as string,
 		environment: currentEnvironment === 'development' ? 'development' : 'production',
 	};
 	const wpcomParams = new URLSearchParams( params );
@@ -32,9 +35,9 @@ function requestMessagingAvailability() {
 		  } as APIFetchOptions );
 }
 
-export default function useMessagingAvailability( enabled = true ) {
+export default function useMessagingAvailability( group: MessagingGroup, enabled = true ) {
 	return useQuery< MessagingAvailability >( {
-		queryKey: [ 'getMessagingAvailability' ],
+		queryKey: [ 'getMessagingAvailability', group ],
 		queryFn: requestMessagingAvailability,
 		staleTime: 60 * 1000, // 1 minute
 		meta: {
