@@ -86,21 +86,14 @@ export function useValidateVerificationCode(): {
 }
 
 export function useResendVerificationCode(): {
-	resendVerificationCode: ( params: ResendVerificationCodeParams ) => void;
-	isResending: boolean;
-	resendSuccess: boolean;
-	resendingFailed: boolean;
+	mutate: ( params: ResendVerificationCodeParams ) => void;
+	isLoading: boolean;
+	isSuccess: boolean;
+	isError: boolean;
 } {
-	const { isLoading, isSuccess, isError, mutate } = useResendVerificationCodeMutation( {
+	return useResendVerificationCodeMutation( {
 		retry: () => {
 			return false;
 		},
 	} );
-
-	return {
-		resendVerificationCode: mutate,
-		isResending: isLoading,
-		resendSuccess: isSuccess,
-		resendingFailed: isError,
-	};
 }
