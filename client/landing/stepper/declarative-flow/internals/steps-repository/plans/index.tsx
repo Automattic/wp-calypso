@@ -27,7 +27,7 @@ const plans: Step = function Plans( { navigation, flow } ) {
 
 		submit?.( providedDependencies );
 	};
-	const is2023PricingGridVisible = is2023PricingGridEnabled();
+	const is2023PricingGridVisible = true;
 
 	const isAllowedToGoBack =
 		isDomainUpsellFlow( flow ) || ( isNewHostedSiteCreationFlow( flow ) && hostingFlow );
