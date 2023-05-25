@@ -53,7 +53,9 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 	const [ formTouched, setFormTouched ] = React.useState( false );
 	const translate = useTranslate();
 
-	useQuery( [ 'site-suggestions' ], getSiteSuggestions, {
+	useQuery( {
+		queryKey: [ 'site-suggestions' ],
+		queryFn: getSiteSuggestions,
 		enabled: ! currentSiteTitle,
 		onSuccess: ( response ) => {
 			if ( ! siteTitle && response.success === true ) {

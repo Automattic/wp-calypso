@@ -35,7 +35,6 @@ object WPComPlugins : Project({
 	buildType(O2Blocks)
 	buildType(HappyBlocks)
 	buildType(Happychat)
-	buildType(InlineHelp)
 	buildType(GutenbergUploadSourceMapsToSentry);
 
 	cleanup {
@@ -183,15 +182,6 @@ private object Happychat : WPComPluginBuild(
 	buildId = "WPComPlugins_Happychat",
 	buildName = "Happychat",
 	pluginSlug = "happychat",
-	archiveDir = "./dist/",
-	docsLink = "TODO",
-	withPRNotify = "false",
-)
-
-private object InlineHelp : WPComPluginBuild(
-	buildId = "WPComPlugins_InlineHelp",
-	buildName = "Inline Help",
-	pluginSlug = "inline-help",
 	archiveDir = "./dist/",
 	docsLink = "TODO",
 	withPRNotify = "false",

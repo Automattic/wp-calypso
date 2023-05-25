@@ -1,4 +1,5 @@
 import config, { isEnabled } from '@automattic/calypso-config';
+import { FEATURE_SOCIAL_MASTODON_CONNECTION } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import requestExternalAccess from '@automattic/request-external-access';
 import classnames from 'classnames';
@@ -7,6 +8,7 @@ import { isEqual, find, some, get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, cloneElement } from 'react';
 import { connect } from 'react-redux';
+import Badge from 'calypso/components/badge';
 import ExternalLink from 'calypso/components/external-link';
 import FoldableCard from 'calypso/components/foldable-card';
 import Notice from 'calypso/components/notice';
@@ -17,6 +19,7 @@ import { successNotice, errorNotice, warningNotice } from 'calypso/state/notices
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import getRemovableConnections from 'calypso/state/selectors/get-removable-connections';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import {
 	requestKeyringConnections,
 	requestP2KeyringConnections,
@@ -81,6 +84,7 @@ export class SharingService extends Component {
 		warningNotice: PropTypes.func,
 		isP2HubSite: PropTypes.bool,
 		isJetpack: PropTypes.bool,
+		isNew: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -102,6 +106,7 @@ export class SharingService extends Component {
 		warningNotice: () => {},
 		isP2HubSite: false,
 		isJetpack: false,
+		isNew: false,
 	};
 
 	/**
@@ -519,19 +524,18 @@ export class SharingService extends Component {
 		return get( this, 'props.service.ID' ) === 'mailchimp';
 	};
 
-	isMastodonService = () => {
-		if ( ! config.isEnabled( 'mastodon' ) ) {
-			return false;
-		}
-		return get( this, 'props.service.ID' ) === 'mastodon';
-	};
-
 	isPicasaMigration( status ) {
 		if ( status === 'must-disconnect' && get( this, 'props.service.ID' ) === 'google_photos' ) {
 			return true;
 		}
 
 		return false;
+	}
+
+	renderBadges() {
+		return this.props.isNew ? (
+			<Badge className="service__new-badge">{ this.props.translate( 'New' ) }</Badge>
+		) : null;
 	}
 
 	render() {
@@ -552,7 +556,9 @@ export class SharingService extends Component {
 				{ this.isMailchimpService( connectionStatus ) && renderMailchimpLogo() }
 
 				<div className="sharing-service__name">
-					<h2>{ this.props.service.label }</h2>
+					<h2>
+						{ this.props.service.label } { this.renderBadges() }
+					</h2>
 					<ServiceDescription
 						service={ this.props.service }
 						status={ connectionStatus }
@@ -641,7 +647,9 @@ export class SharingService extends Component {
 					compact
 					summary={ action }
 					expandedSummary={
-						this.isMastodonService() ? cloneElement( action, { isExpanded: true } ) : action
+						this.props.isMastodonEligible && this.props.service.ID === 'mastodon'
+							? cloneElement( action, { isExpanded: true } )
+							: action
 					}
 				>
 					<div
@@ -728,6 +736,7 @@ export function connectFor( sharingService, mapStateToProps, mapDispatchToProps 
 				isExpanded: isServiceExpanded( state, service ),
 				isP2HubSite: isSiteP2Hub( state, siteId ),
 				isJetpack: isJetpackSite( state, siteId ),
+				isMastodonEligible: siteHasFeature( state, siteId, FEATURE_SOCIAL_MASTODON_CONNECTION ),
 			};
 			return typeof mapStateToProps === 'function' ? mapStateToProps( state, props ) : props;
 		},

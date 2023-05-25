@@ -1,10 +1,8 @@
 @import "./variables";
 @import "../shared";
 
-.tumblr-preview__section {
-	max-width: 100%;
-	width: calc(#{$tumblr-preview-width + $tumblr-preview-avatar-size} + #{$tumblr-preview-card-inline-padding});
-	margin-inline: auto;
+.tumblr-preview__section.social-preview__section {
+	width: clamp(200px, 100%, calc(#{$tumblr-preview-width + $tumblr-preview-avatar-size} + #{$tumblr-preview-card-inline-padding}));
 }
 
 .tumblr-preview__post {
@@ -25,7 +23,6 @@
 }
 
 .tumblr-preview__card {
-	width: $tumblr-preview-width;
 	overflow-y: hidden;
 
 	background-color: $tumblr-preview-background-color;

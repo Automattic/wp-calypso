@@ -61,10 +61,24 @@ export const setIsMinimized = ( minimized: boolean ) =>
 		minimized,
 	} as const );
 
+export const setShowMessagingLauncher = ( show: boolean ) =>
+	( {
+		type: 'HELP_CENTER_SET_SHOW_MESSAGING_LAUNCHER',
+		show,
+	} as const );
+
+export const setShowMessagingWidget = ( show: boolean ) =>
+	( {
+		type: 'HELP_CENTER_SET_SHOW_MESSAGING_WIDGET',
+		show,
+	} as const );
+
 export const setShowHelpCenter = function* ( show: boolean ) {
 	if ( ! show ) {
 		yield setInitialRoute( undefined );
 		yield setIsMinimized( false );
+	} else {
+		yield setShowMessagingWidget( false );
 	}
 
 	return {
@@ -128,6 +142,8 @@ export const resetStore = () =>
 
 export type HelpCenterAction =
 	| ReturnType<
+			| typeof setShowMessagingLauncher
+			| typeof setShowMessagingWidget
 			| typeof setSite
 			| typeof setSubject
 			| typeof resetStore

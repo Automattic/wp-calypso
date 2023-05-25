@@ -11,6 +11,7 @@
 	"references": [
 		{ "path": "../calypso-config" },
 		{ "path": "../js-utils" },
-		{ "path": "../onboarding" }
+		{ "path": "../onboarding" },
+		{ "path": "../design-picker" }
 	]
 }

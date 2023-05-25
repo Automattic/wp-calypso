@@ -1,4 +1,5 @@
-import { Frame, Page, ElementHandle } from 'playwright';
+import { Page, ElementHandle } from 'playwright';
+import { EditorComponent } from '../components';
 
 const selectors = {
 	block: '.wp-block-coblocks-pricing-table',
@@ -13,16 +14,18 @@ export class PricingTableBlock {
 	// Static properties.
 	static blockName = 'Pricing Table';
 	static blockEditorSelector = '[aria-label="Block: Pricing Table"]';
-
+	private editor: EditorComponent;
 	block: ElementHandle;
 
 	/**
 	 * Constructs an instance of this block.
 	 *
+	 * @param {Page} page The underlying page object.
 	 * @param {ElementHandle} block Handle referencing the block as inserted on the Gutenberg editor.
 	 */
-	constructor( block: ElementHandle ) {
+	constructor( page: Page, block: ElementHandle ) {
 		this.block = block;
+		this.editor = new EditorComponent( page );
 	}
 
 	/**
@@ -47,14 +50,16 @@ export class PricingTableBlock {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async setGutter( name: string, value?: number ): Promise< void > {
-		const frame = ( await this.block.ownerFrame() ) as Frame;
+		const editorParent = await this.editor.parent();
 		const buttonSelector = `${ selectors.gutterControl } button[aria-label="${ name }"]`;
 
-		await frame.locator( buttonSelector ).click();
-		await frame.locator( `${ buttonSelector }[aria-pressed="true"]` ).waitFor();
+		await editorParent.locator( buttonSelector ).click();
+		await editorParent.locator( `${ buttonSelector }[aria-pressed="true"]` ).waitFor();
 
 		if ( name === 'Custom' && value !== undefined ) {
-			const valueInput = frame.locator( 'input[type="number"]:below(button[aria-label="Custom"])' );
+			const valueInput = editorParent.locator(
+				'input[type="number"]:below(button[aria-label="Custom"])'
+			);
 			await valueInput.fill( String( value ) );
 		}
 	}

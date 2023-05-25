@@ -4,7 +4,6 @@ import {
 	HAPPYCHAT_IO_RECEIVE_MESSAGE_UPDATE,
 	HAPPYCHAT_IO_RECEIVE_STATUS,
 	HAPPYCHAT_IO_REQUEST_TRANSCRIPT_RECEIVE,
-	HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE,
 } from 'calypso/state/action-types';
 import {
 	HAPPYCHAT_CHAT_STATUS_DEFAULT,
@@ -21,19 +20,6 @@ import { timelineSchema } from './schema';
 const UNIX_TIMESTAMP_2023_IN_SECONDS = 1700000000;
 export const maybeUpscaleTimePrecision = ( time ) =>
 	time < UNIX_TIMESTAMP_2023_IN_SECONDS ? time * 1000 : time;
-
-const lastActivityTimestampSchema = { type: 'number' };
-export const lastActivityTimestamp = withSchemaValidation(
-	lastActivityTimestampSchema,
-	( state = null, action ) => {
-		switch ( action.type ) {
-			case HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE:
-			case HAPPYCHAT_IO_RECEIVE_MESSAGE:
-				return Date.now();
-		}
-		return state;
-	}
-);
 
 /**
  * Tracks the state of the happychat chat. Valid states are:
@@ -172,5 +158,4 @@ export const timeline = withSchemaValidation(
 export default combineReducers( {
 	status,
 	timeline,
-	lastActivityTimestamp,
 } );

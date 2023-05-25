@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Dialog } from '@automattic/components';
 import { useLocale, useLocalizeUrl } from '@automattic/i18n-utils';
@@ -104,7 +105,8 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 					widgetContainer.current,
 					handleShowCancel,
 					handleShowTopBar,
-					localeSlug
+					localeSlug,
+					config.isEnabled( 'promote-post/redesign-i2' )
 				);
 				setIsLoading( false );
 			} )();

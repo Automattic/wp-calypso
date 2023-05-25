@@ -67,6 +67,8 @@ export type SiteSubscription = {
 	site_icon: string;
 	is_owner: boolean;
 	meta: SiteSubscriptionMeta;
+	is_wpforteams_site: boolean;
+	is_paid_subscription: boolean;
 };
 
 export type SiteSubscriptionPage = {
@@ -88,6 +90,8 @@ export type PostSubscription = {
 	site_icon: string;
 	site_url: string;
 	domain: string;
+	is_wpforteams_site: boolean;
+	is_paid_subscription: boolean;
 	organization_id: number;
 	post_id: number;
 	post_title: string;
@@ -129,4 +133,26 @@ export type PendingSiteSubscriptionsResult = {
 export type PendingPostSubscriptionsResult = {
 	pendingPosts: PendingPostSubscription[];
 	totalCount: number;
+};
+
+export type SiteSubscriptionDetails = {
+	ID: string;
+	blog_ID: string;
+	name: string;
+	URL: string;
+	site_icon: string;
+	date_subscribed: Date;
+	subscriber_count: number;
+	delivery_methods: SiteSubscriptionDeliveryMethods;
+};
+
+export type SiteSubscriptionDetailsAPIResponse = {
+	ID: string;
+	blog_ID: string;
+	name: string;
+	URL: string;
+	site_icon: string;
+	date_subscribed: Date;
+	subscriber_count: number;
+	delivery_methods: SiteSubscriptionDeliveryMethods;
 };

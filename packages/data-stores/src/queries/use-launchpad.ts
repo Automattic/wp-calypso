@@ -67,7 +67,9 @@ export const useLaunchpad = (
 	checklist_slug?: string | 0 | null | undefined
 ) => {
 	const key = [ 'launchpad', siteSlug, checklist_slug ];
-	return useQuery( key, () => fetchLaunchpad( siteSlug, checklist_slug ), {
+	return useQuery( {
+		queryKey: key,
+		queryFn: () => fetchLaunchpad( siteSlug, checklist_slug ),
 		retry: 3,
 		initialData: {
 			site_intent: '',

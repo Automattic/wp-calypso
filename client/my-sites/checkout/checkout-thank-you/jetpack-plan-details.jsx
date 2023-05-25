@@ -6,7 +6,7 @@ import PurchaseDetail from 'calypso/components/purchase-detail';
 import { getSiteFileModDisableReason } from 'calypso/lib/site/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
-class EnhancedDetails extends Component {
+class JetpackPlanDetails extends Component {
 	componentDidMount() {
 		this.props.trackAutoconfigHalt();
 	}
@@ -101,4 +101,4 @@ const mapDispatchToProps = ( dispatch, { selectedSite } ) => ( {
 	},
 } );
 
-export default localize( connect( null, mapDispatchToProps )( EnhancedDetails ) );
+export default localize( connect( null, mapDispatchToProps )( JetpackPlanDetails ) );

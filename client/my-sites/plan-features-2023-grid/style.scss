@@ -175,7 +175,6 @@ $mobile-card-max-width: 440px;
 .is-2023-pricing-grid .plans-wrapper {
 	margin: 0 20px;
 	padding: 0 0 10px;
-	// transform: translateY(-20px);
 	overflow-x: visible;
 
 	@include plans-2023-break-small {
@@ -401,7 +400,7 @@ $mobile-card-max-width: 440px;
 	.plan-features-2023-grid__desktop-view,
 	.plan-features-2023-grid__tablet-view {
 		.plan-features-2023-grid__table-item {
-			max-width: 344px;
+			max-width: $table-cell-max-width;
 		}
 	}
 

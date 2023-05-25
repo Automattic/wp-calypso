@@ -142,11 +142,6 @@ describe( 'FTME: Sell', function () {
 			await startSiteFlow.clickButton( 'Continue' );
 		} );
 
-		it( 'Select "Food" category', async function () {
-			await startSiteFlow.enterVertical( 'Food & Drink' );
-			await startSiteFlow.clickButton( 'Continue' );
-		} );
-
 		it( 'Enter blog name', async function () {
 			await startSiteFlow.enterBlogName( testUser.siteName );
 		} );

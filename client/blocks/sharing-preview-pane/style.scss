@@ -11,6 +11,8 @@
 	right: 0;
 	bottom: 0;
 	left: 0;
+	max-width: 98%;
+	width: clamp(200px, 98%, 1440px);
 
 	@include breakpoint-deprecated( ">960px" ) {
 		top: 24px;
@@ -22,6 +24,7 @@
 	flex-direction: column;
 	height: 100%;
 	padding: 0;
+	overflow: hidden;
 }
 
 .post-share__sharing-preview-modal-header {
@@ -49,6 +52,7 @@
 	display: flex;
 	flex-direction: column;
 	height: 100%;
+	overflow: hidden;
 
 	@include breakpoint-deprecated( ">660px" ) {
 		flex-direction: row;
@@ -134,7 +138,7 @@
 	background-color: #f3f5f9;
 	flex: 1 1 auto;
 	overflow-y: auto;
-	padding: 1.5rem;
+	padding: 1.5rem 0.5rem;
 }
 
 .sharing-preview-pane__message {

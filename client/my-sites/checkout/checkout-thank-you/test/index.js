@@ -9,6 +9,7 @@ import {
 	isDotComPlan,
 	WPCOM_DIFM_LITE,
 	isDIFMProduct,
+	PLAN_PERSONAL,
 } from '@automattic/calypso-products';
 import { render, screen } from '@testing-library/react';
 import CheckoutThankYouHeader from '../header';
@@ -28,6 +29,7 @@ jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 jest.mock( '../domain-registration-details', () => () => 'component--domain-registration-details' );
 jest.mock( '../google-apps-details', () => () => 'component--google-apps-details' );
 jest.mock( '../jetpack-plan-details', () => () => 'component--jetpack-plan-details' );
+jest.mock( '../personal-plan-details', () => () => 'component--personal-plan-details' );
 jest.mock( '../atomic-store-thank-you-card', () => () => (
 	<div data-testid="atomic-store-thank-you-card" />
 ) );
@@ -232,5 +234,81 @@ describe( 'CheckoutThankYou', () => {
 			);
 			expect( screen.queryByTestId( 'difm-lite-thank-you' ) ).not.toBeInTheDocument();
 		} );
+	} );
+
+	it( 'renders the failed purchases content if there are failed purchases', async () => {
+		const props = {
+			...defaultProps,
+			receiptId: 12,
+			selectedSite: {
+				ID: 12,
+			},
+			sitePlans: {
+				hasLoadedFromServer: true,
+			},
+			receipt: {
+				hasLoadedFromServer: true,
+				data: {
+					purchases: [],
+					failedPurchases: [ { productSlug: PLAN_PREMIUM } ],
+				},
+			},
+			refreshSitePlans: ( selectedSite ) => selectedSite,
+			planSlug: PLAN_PREMIUM,
+		};
+
+		render( <CheckoutThankYou { ...props } /> );
+
+		expect( await screen.findByText( /These items could not be added/ ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders the Jetpack plan content if the purchases include a Jetpack plan', async () => {
+		const props = {
+			...defaultProps,
+			receiptId: 12,
+			selectedSite: {
+				ID: 12,
+			},
+			sitePlans: {
+				hasLoadedFromServer: true,
+			},
+			receipt: {
+				hasLoadedFromServer: true,
+				data: {
+					purchases: [ { productSlug: 'jetpack_personal' } ],
+				},
+			},
+			refreshSitePlans: ( selectedSite ) => selectedSite,
+			planSlug: PLAN_PREMIUM,
+		};
+
+		render( <CheckoutThankYou { ...props } /> );
+
+		expect( await screen.findByText( 'component--jetpack-plan-details' ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders the Personal plan content if the purchases include a Personal plan', async () => {
+		const props = {
+			...defaultProps,
+			receiptId: 12,
+			selectedSite: {
+				ID: 12,
+			},
+			sitePlans: {
+				hasLoadedFromServer: true,
+			},
+			receipt: {
+				hasLoadedFromServer: true,
+				data: {
+					purchases: [ { productSlug: PLAN_PERSONAL } ],
+				},
+			},
+			refreshSitePlans: ( selectedSite ) => selectedSite,
+			planSlug: PLAN_PREMIUM,
+		};
+
+		render( <CheckoutThankYou { ...props } /> );
+
+		expect( await screen.findByText( 'component--personal-plan-details' ) ).toBeInTheDocument();
 	} );
 } );

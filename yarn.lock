@@ -531,6 +531,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/design-picker": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/onboarding": "workspace:^"
     classnames: ^2.3.1
@@ -871,36 +872,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/inline-help@workspace:apps/inline-help":
-  version: 0.0.0-use.local
-  resolution: "@automattic/inline-help@workspace:apps/inline-help"
-  dependencies:
-    "@automattic/calypso-apps-builder": "workspace:^"
-    "@automattic/calypso-babel-config": "workspace:^"
-    "@automattic/calypso-build": "workspace:^"
-    "@automattic/calypso-polyfills": "workspace:^"
-    "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
-    "@automattic/webpack-inline-constant-exports-plugin": "workspace:^"
-    autoprefixer: ^10.2.5
-    calypso: "workspace:^"
-    html-webpack-plugin: ^5.0.0-beta.4
-    jest: ^27.2.4
-    path-browserify: ^1.0.1
-    postcss: ^8.3.11
-    react: ^17.0.2
-    react-dom: ^17.0.2
-    react-query: ^3.32.1
-    react-redux: ^7.2.6
-    redux: ^4.1.2
-    redux-thunk: ^2.3.0
-    webpack: ^5.68.0
-    webpack-bundle-analyzer: ^4.5.0
-    webpack-dev-server: ^4.7.3
-    wpcom: "workspace:^"
-    wpcom-proxy-request: "workspace:^"
-  languageName: unknown
-  linkType: soft
-
 "@automattic/interpolate-components@workspace:^, @automattic/interpolate-components@workspace:packages/interpolate-components":
   version: 0.0.0-use.local
   resolution: "@automattic/interpolate-components@workspace:packages/interpolate-components"
@@ -1235,38 +1206,6 @@ __metadata:
   peerDependencies:
     "@wordpress/data": ^7.6.0
     react: ^17.0.2
-    reakit-utils: ^0.15.1
-    redux: ^4.1.2
-  languageName: unknown
-  linkType: soft
-
-"@automattic/pattern-picker@workspace:^, @automattic/pattern-picker@workspace:packages/pattern-picker":
-  version: 0.0.0-use.local
-  resolution: "@automattic/pattern-picker@workspace:packages/pattern-picker"
-  dependencies:
-    "@automattic/calypso-build": "workspace:^"
-    "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/i18n-utils": "workspace:^"
-    "@automattic/onboarding": "workspace:^"
-    "@tanstack/react-query": ^4.29.1
-    classnames: ^2.3.1
-    postcss: ^8.4.5
-    react: ^17.0.2
-    react-dom: ^17.0.2
-    redux: ^4.1.2
-    swiper: ^4.5.1
-    tslib: ^2.3.0
-    typescript: ^4.7.4
-    utility-types: ^3.10.0
-    webpack: ^5.68.0
-    wpcom-proxy-request: "workspace:^"
-  peerDependencies:
-    "@wordpress/data": ^7.6.0
-    "@wordpress/element": ^4.20.0
-    "@wordpress/i18n": ^4.22.0
-    debug: ^4.3.3
-    react: ^17.0.2
-    react-dom: ^17.0.2
     reakit-utils: ^0.15.1
     redux: ^4.1.2
   languageName: unknown
@@ -4544,24 +4483,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@pmmmwh/react-refresh-webpack-plugin@npm:^0.5.1, @pmmmwh/react-refresh-webpack-plugin@npm:^0.5.2":
-  version: 0.5.5
-  resolution: "@pmmmwh/react-refresh-webpack-plugin@npm:0.5.5"
+"@pmmmwh/react-refresh-webpack-plugin@npm:^0.5.1, @pmmmwh/react-refresh-webpack-plugin@npm:^0.5.10, @pmmmwh/react-refresh-webpack-plugin@npm:^0.5.2":
+  version: 0.5.10
+  resolution: "@pmmmwh/react-refresh-webpack-plugin@npm:0.5.10"
   dependencies:
     ansi-html-community: ^0.0.8
     common-path-prefix: ^3.0.0
-    core-js-pure: ^3.8.1
+    core-js-pure: ^3.23.3
     error-stack-parser: ^2.0.6
     find-up: ^5.0.0
     html-entities: ^2.1.0
-    loader-utils: ^2.0.0
+    loader-utils: ^2.0.4
     schema-utils: ^3.0.0
     source-map: ^0.7.3
   peerDependencies:
     "@types/webpack": 4.x || 5.x
     react-refresh: ">=0.10.0 <1.0.0"
     sockjs-client: ^1.4.0
-    type-fest: ">=0.17.0 <3.0.0"
+    type-fest: ">=0.17.0 <4.0.0"
     webpack: ">=4.43.0 <6.0.0"
     webpack-dev-server: 3.x || 4.x
     webpack-hot-middleware: 2.x
@@ -4579,7 +4518,7 @@ __metadata:
       optional: true
     webpack-plugin-serve:
       optional: true
-  checksum: bd20a6b59a521d74f628c4bfe73ea413b3212058bd68ff637b18b0dc13744f045f4720cb0b4c5eebdfbc761a18352efefda5d026c3e206cc4345b19400526397
+  checksum: e470b543c5e8d73eeaa73636e1976e6719db6ae29c93fa62818f5796c1883051f379a3cb1ff85d909ef2c6bb9ef13ca46c36f1878c48d143b1355fea6660e547
   languageName: node
   linkType: hard
 
@@ -11925,7 +11864,6 @@ __metadata:
     "@automattic/mini-cart": "workspace:^"
     "@automattic/notifications": "workspace:^"
     "@automattic/onboarding": "workspace:^"
-    "@automattic/pattern-picker": "workspace:^"
     "@automattic/plans-grid": "workspace:^"
     "@automattic/react-virtualized": ^9.22.3
     "@automattic/request-external-access": "workspace:^"
@@ -13440,10 +13378,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"core-js-pure@npm:^3.8.1, core-js-pure@npm:^3.8.2":
-  version: 3.19.3
-  resolution: "core-js-pure@npm:3.19.3"
-  checksum: 688478e76faff18e28872e647100b79fd031f11f5ead16c44e60eab8d939ff42a548ddf936067bafae74ff859feff7952373bffd7fb8d3ab4142e5e19bdec65a
+"core-js-pure@npm:^3.23.3, core-js-pure@npm:^3.8.2":
+  version: 3.30.1
+  resolution: "core-js-pure@npm:3.30.1"
+  checksum: 6d05c823f0b3c71119327d41d5feb195e2e86dcb27ed13754131a155bbe5462f7043a086031092f56a2d8d0477ea8a71ff2eca28ad79726aba08a6ab507d6c33
   languageName: node
   linkType: hard
 
@@ -22122,14 +22060,14 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"loader-utils@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "loader-utils@npm:2.0.0"
+"loader-utils@npm:^2.0.0, loader-utils@npm:^2.0.4":
+  version: 2.0.4
+  resolution: "loader-utils@npm:2.0.4"
   dependencies:
     big.js: ^5.2.2
     emojis-list: ^3.0.0
     json5: ^2.1.2
-  checksum: 206eda981e486a28536b8a142074e0e927aac4c1f61565b2be402f0434f783a6bb0cef241fabec32ce541f28633a85e0beb68abd8fe9227b76b66d717de40550
+  checksum: d5654a77f9d339ec2a03d88221a5a695f337bf71eb8dea031b3223420bb818964ba8ed0069145c19b095f6c8b8fd386e602a3fc7ca987042bd8bb1dcc90d7100
   languageName: node
   linkType: hard
 
@@ -27310,6 +27248,13 @@ fsevents@^1.2.7:
   version: 0.11.0
   resolution: "react-refresh@npm:0.11.0"
   checksum: cbb5616c7ba670bbd2f37ddadcdfefa66e727ea188e89733ccb8184d3b874631104b0bc016d5676a7ade4d9c79100b99b46b6ed10cd117ab5d1ddcbf8653a9f2
+  languageName: node
+  linkType: hard
+
+"react-refresh@npm:^0.14.0":
+  version: 0.14.0
+  resolution: "react-refresh@npm:0.14.0"
+  checksum: b8ae07ad153357d77830928a7f1fc2df837aabefee907fa273ba04c7643f3b860e986f1d4b7ada9b721c8d79b8c24b5b911a314a1a2398b105f1b13d19ea2b8d
   languageName: node
   linkType: hard
 
@@ -33908,6 +33853,7 @@ fsevents@^1.2.7:
     "@babel/register": ^7.17.0
     "@babel/runtime": ^7.17.2
     "@bartekbp/typescript-checkstyle": ^5.0.0
+    "@pmmmwh/react-refresh-webpack-plugin": ^0.5.10
     "@signal-noise/stylelint-scales": ^2.0.3
     "@storybook/react": ^6.4.18
     "@testing-library/jest-dom": ^5.16.2
@@ -34006,6 +33952,7 @@ fsevents@^1.2.7:
     react-dom: ^17.0.2
     react-intersection-observer: ^9.4.3
     react-modal: ^3.14.3
+    react-refresh: ^0.14.0
     readline-sync: ^1.4.10
     reakit-utils: ^0.15.1
     recursive-copy: ^2.0.14

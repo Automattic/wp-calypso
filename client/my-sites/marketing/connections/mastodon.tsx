@@ -1,4 +1,4 @@
-import { FormInputValidation } from '@automattic/components';
+import { FormInputValidation, Spinner } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState, FormEvent, ChangeEvent, useEffect } from 'react';
@@ -138,7 +138,9 @@ export const Mastodon: React.FC< Props > = ( {
 							value={ instance }
 							isError={ showError }
 							onChange={ handleInstanceChange }
+							placeholder="@mastodon@mastodon.social"
 						/>
+						{ isConnecting && <Spinner /> }
 					</InstanceContainer>
 					{ showError && <FormInputValidation isError text={ error } /> }
 				</div>

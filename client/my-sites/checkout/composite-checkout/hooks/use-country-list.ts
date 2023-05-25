@@ -43,3 +43,9 @@ export default function useCountryList(
 
 	return overrideCountryList ?? countriesList;
 }
+
+export function useTaxName( countryCode: string ): undefined | string {
+	const countryList = useCountryList();
+	const country = countryList.find( ( country ) => country.code === countryCode );
+	return country?.tax_name;
+}

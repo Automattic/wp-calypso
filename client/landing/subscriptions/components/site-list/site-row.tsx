@@ -41,7 +41,10 @@ export default function SiteRow( {
 	URL: url,
 	date_subscribed,
 	delivery_methods,
+	is_wpforteams_site,
+	is_paid_subscription,
 }: SiteSubscription ) {
+	const translate = useTranslate();
 	const hostname = useMemo( () => {
 		try {
 			return new URL( url ).hostname;
@@ -78,7 +81,15 @@ export default function SiteRow( {
 				<span className="title-box" role="cell">
 					<SiteIcon iconUrl={ site_icon } size={ 48 } siteName={ name } />
 					<span className="title-column">
-						<span className="name">{ name }</span>
+						<span className="name">
+							{ name }
+							{ !! is_wpforteams_site && <span className="p2-label">P2</span> }
+							{ !! is_paid_subscription && (
+								<span className="paid-label">
+									{ translate( 'Paid', { context: 'verb: past participle' } ) }
+								</span>
+							) }
+						</span>
 						<span className="url">{ hostname }</span>
 					</span>
 				</span>

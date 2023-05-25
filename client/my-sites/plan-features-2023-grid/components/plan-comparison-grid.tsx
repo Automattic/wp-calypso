@@ -23,8 +23,9 @@ import { useState, useCallback, useEffect, ChangeEvent } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { FeatureObject, getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-is-plan-upgrade-credit-visible';
-import { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
-import TermExperimentPlanTypeSelector from 'calypso/my-sites/plans-features-main/components/term-experiment-plan-type-selector';
+import PlanTypeSelector, {
+	PlanTypeSelectorProps,
+} from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import useHighlightAdjacencyMatrix from '../hooks/use-highlight-adjacency-matrix';
 import useHighlightLabel from '../hooks/use-highlight-label';
 import useIsLargeCurrency from '../hooks/use-is-large-currency';
@@ -931,11 +932,10 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 			<PlanComparisonHeader className="wp-brand-font">
 				{ translate( 'Compare our plans and find yours' ) }
 			</PlanComparisonHeader>
-			<TermExperimentPlanTypeSelector
-				isEligible={ true }
+			<PlanTypeSelector
+				{ ...planTypeSelectorProps }
 				kind="interval"
 				plans={ displayedPlansProperties.map( ( { planName } ) => planName ) }
-				planTypeSelectorProps={ planTypeSelectorProps }
 			/>
 			<Grid isInSignup={ isInSignup }>
 				<PlanComparisonGridHeader

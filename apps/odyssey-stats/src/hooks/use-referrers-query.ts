@@ -36,33 +36,31 @@ export default function useReferrersQuery(
 	summarize = 1,
 	max = 0
 ) {
-	return useQuery(
-		[ 'stats-widget', 'referrers', siteId, period, num, date, summarize, max ],
-		() => queryReferrers( siteId, { period, num, date, summarize, max } ),
-		{
-			select: ( data ) => {
-				// The groups' views count may not be in descending order
-				// since we use the first result for nest groups.
-				return data?.summary?.groups.map( ( group: GroupWithChildren & GroupWithoutChildren ) => {
-					// Get the first result as the nested group's data.
-					if ( Array.isArray( group.results ) && group.results.length > 0 ) {
-						const subGroup = group.results[ 0 ];
-
-						return {
-							...subGroup,
-							title: subGroup.name,
-							views: subGroup.views,
-						};
-					}
+	return useQuery( {
+		queryKey: [ 'stats-widget', 'referrers', siteId, period, num, date, summarize, max ],
+		queryFn: () => queryReferrers( siteId, { period, num, date, summarize, max } ),
+		select: ( data ) => {
+			// The groups' views count may not be in descending order
+			// since we use the first result for nest groups.
+			return data?.summary?.groups.map( ( group: GroupWithChildren & GroupWithoutChildren ) => {
+				// Get the first result as the nested group's data.
+				if ( Array.isArray( group.results ) && group.results.length > 0 ) {
+					const subGroup = group.results[ 0 ];
 
 					return {
-						...group,
-						title: group.name,
-						views: group.results.views,
+						...subGroup,
+						title: subGroup.name,
+						views: subGroup.views,
 					};
-				} );
-			},
-			staleTime: 5 * 60 * 1000,
-		}
-	);
+				}
+
+				return {
+					...group,
+					title: group.name,
+					views: group.results.views,
+				};
+			} );
+		},
+		staleTime: 5 * 60 * 1000,
+	} );
 }

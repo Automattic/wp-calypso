@@ -59,6 +59,7 @@ export const SETTING_UP_PREMIUM_SERVICES = `${ root }/setting-up-premium-service
 export const SITE_REDIRECT = `${ root }/site-redirect/`;
 export const SUPPORT_ROOT = `${ root }/`;
 export const TRANSFER_DOMAIN_REGISTRATION = `${ root }/transfer-domain-registration/`;
+export const TRANSFER_SITE = `${ root }/transferring-a-site-to-another-wordpress-com-account/`;
 export const UPDATE_CONTACT_INFORMATION_EMAIL_OR_NAME_CHANGES = `${ root }/update-contact-information/#email-or-name-changes`;
 export const UPDATE_NAMESERVERS = `${ root }/domains/change-name-servers/`;
 export const WPCC = `${ root }/wpcc-faq/`;
