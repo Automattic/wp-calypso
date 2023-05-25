@@ -62,3 +62,5 @@ export const PLAN_RENEW_NAG_EVENT_NAMES = {
 	IN_VIEW: 'calypso_sites_dashboard_plan_renew_nag_inview',
 	ON_CLICK: 'calypso_sites_dashboard_plan_renew_nag_click',
 };
+
+export const TRACK_SOURCE_NAME = 'sites-dashboard';
