@@ -15,8 +15,8 @@ export function formatSlugToURL( inputUrl: string ) {
 	if ( ! inputUrl ) {
 		return '';
 	}
-	// If it's already a URL, return it
-	if ( CAPTURE_URL_RGX.test( inputUrl ) ) {
+	// If it's not a valid URL, return it
+	if ( ! CAPTURE_URL_RGX.test( inputUrl ) ) {
 		return inputUrl;
 	}
 	let url = inputUrl.trim().toLowerCase();
