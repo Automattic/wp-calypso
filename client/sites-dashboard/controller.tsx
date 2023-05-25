@@ -65,7 +65,8 @@ function emptySites( context: PageJSContext, next: () => void ) {
 			}
 
 			.layout__content {
-				padding: 0;
+				padding: 0 !important; /* this is overriden by other styles being injected on the page */
+				min-height: auto; /* browsing a different page might inject this style on the page */
 			}
 
 			${ MEDIA_QUERIES.mediumOrLarger } {
