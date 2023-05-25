@@ -70,6 +70,10 @@
 		gap: 0.5rem;
 		padding: 0.5rem 1rem;
 
+		a {
+			text-decoration: none;
+		}
+
 		&--actions {
 			display: flex;
 			justify-content: space-between;
