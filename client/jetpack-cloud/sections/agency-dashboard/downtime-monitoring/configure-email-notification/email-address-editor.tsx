@@ -73,6 +73,15 @@ export default function EmailAddressEditor( {
 		// TODO: implement resending verification code
 	}, [ recordEvent ] );
 
+	const handleResendCode = useCallback( () => {
+		recordEvent( 'downtime_monitoring_resend_email_verification_code' );
+		if ( emailItem.email ) {
+			resendCode.mutate( { type: 'email', value: emailItem.email } );
+		}
+		// Disabled because we don't want to re-run this effect when resendCode changes
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ recordEvent, emailItem ] );
+
 	const handleSetEmailItems = useCallback(
 		( isVerified = true ) => {
 			const emailItemIndex = allEmailItems.findIndex( ( item ) => item.email === emailItem.id );
