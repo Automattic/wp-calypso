@@ -233,7 +233,7 @@ class MasterbarLoggedIn extends Component {
 		}
 		if ( ! siteSlug && section === 'sites-dashboard' ) {
 			// we are the /sites page but there is no site. Disable the home link
-			return <Item icon={ icon } />;
+			return <Item icon={ icon } disabled />;
 		}
 
 		return (

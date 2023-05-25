@@ -20,6 +20,7 @@ interface MasterbarItemProps {
 	hasUnseen?: boolean;
 	children?: ReactNode;
 	alwaysShowContent?: boolean;
+	disabled?: boolean;
 }
 
 class MasterbarItem extends Component< MasterbarItemProps > {
@@ -71,6 +72,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 			'is-active': this.props.isActive,
 			'has-unseen': this.props.hasUnseen,
 			'masterbar__item--always-show-content': this.props.alwaysShowContent,
+			'masterbar__item-disabled': this.props.disabled,
 		} );
 
 		const attributes = {
@@ -80,6 +82,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 			className: itemClasses,
 			onTouchStart: this.preload,
 			onMouseEnter: this.preload,
+			tabIndex: this.props.disabled ? -1 : undefined,
 		};
 
 		if ( this.props.url ) {
