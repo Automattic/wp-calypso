@@ -1,4 +1,4 @@
-import type { HelpCenterSite } from '@automattic/data-stores';
+import type { HelpCenterSite, AnalysisReport } from '@automattic/data-stores';
 import type { ReactElement } from 'react';
 
 export interface Container {
@@ -16,14 +16,13 @@ export interface Header {
 }
 
 export interface SitePicker {
+	ownershipResult: AnalysisReport;
+	setSitePickerChoice: any;
+	sitePickerChoice: string;
 	currentSite: HelpCenterSite | undefined;
-	onSelect: ( siteId: number | string ) => void;
 	siteId: string | number | null | undefined;
-	enabled: boolean;
+	sitePickerEnabled: boolean;
 }
-
-// ended means the user closed the popup or reloaded the iframe
-export type WindowState = 'open' | 'closed' | 'blurred' | 'ended';
 
 export interface Article {
 	title: string;
@@ -70,3 +69,5 @@ export interface MessagingAuth {
 export interface MessagingAvailability {
 	is_available: boolean;
 }
+
+export type Mode = 'CHAT' | 'EMAIL' | 'FORUM';

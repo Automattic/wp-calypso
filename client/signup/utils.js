@@ -91,6 +91,19 @@ export function getFlowPageTitle( flowName, isUserLoggedIn ) {
 	return flow.pageTitle || translate( 'Create a site' );
 }
 
+export function getFlowDestination(
+	flowName,
+	isUserLoggedIn,
+	dependencies,
+	localeSlug,
+	goesThroughCheckout
+) {
+	const flow = flows.getFlow( flowName, isUserLoggedIn );
+	return typeof flow?.destination === 'function'
+		? flow.destination( { flowName, ...dependencies }, localeSlug, goesThroughCheckout )
+		: flow?.destination;
+}
+
 export function getValueFromProgressStore( { signupProgress, stepName, fieldName } ) {
 	const siteStepProgress = find( signupProgress, ( step ) => step.stepName === stepName );
 	return siteStepProgress ? siteStepProgress[ fieldName ] : null;

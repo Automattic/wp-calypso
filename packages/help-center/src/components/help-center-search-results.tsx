@@ -22,6 +22,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import { Fragment, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useDebounce } from 'use-debounce';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -29,7 +30,7 @@ import getAdminHelpResults from 'calypso/state/inline-help/selectors/get-admin-h
 import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
 import { useSiteOption } from 'calypso/state/sites/hooks';
 import { getSectionName } from 'calypso/state/ui/selectors';
-import { useHelpSearchQuery } from '../hooks/use-help-search-query';
+import { useHelpSearchQuery } from '../hooks';
 import PlaceholderLines from './placeholder-lines';
 import type { SearchResult } from '../types';
 
@@ -123,8 +124,10 @@ function HelpSearchResults( {
 		// "Managing Purchases" documentation link for users who have not made a purchase.
 		filterManagePurchaseLink( hasPurchases, isPurchasesSection )
 	);
+
+	const [ debouncedQuery ] = useDebounce( searchQuery || '', 500 );
 	const { data: searchData, isLoading: isSearching } = useHelpSearchQuery(
-		searchQuery,
+		debouncedQuery,
 		locale,
 		{},
 		sectionName

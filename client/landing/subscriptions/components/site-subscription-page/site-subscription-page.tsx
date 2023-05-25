@@ -5,6 +5,8 @@ import { useTranslate, numberFormat } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import FormattedHeader from 'calypso/components/formatted-header';
+import TimeSince from 'calypso/components/time-since';
+import WordPressLogo from 'calypso/components/wordpress-logo';
 import { Notice, NoticeState, NoticeType } from 'calypso/landing/subscriptions/components/notice';
 import { SiteIcon } from 'calypso/landing/subscriptions/components/site-icon';
 import PoweredByWPFooter from 'calypso/layout/powered-by-wp-footer';
@@ -27,14 +29,14 @@ const SiteSubscriptionPage = () => {
 		isLoading: subscribing,
 		isSuccess: subscribed,
 		error: subscribeError,
-	} = SubscriptionManager.useSiteSubscribeMutation();
+	} = SubscriptionManager.useSiteSubscribeMutation( blogId );
 
 	const {
 		mutate: unsubscribe,
 		isLoading: unsubscribing,
 		isSuccess: unsubscribed,
 		error: unsubscribeError,
-	} = SubscriptionManager.useSiteUnsubscribeMutation();
+	} = SubscriptionManager.useSiteUnsubscribeMutation( blogId );
 
 	useEffect( () => {
 		if ( subscribed ) {
@@ -52,7 +54,7 @@ const SiteSubscriptionPage = () => {
 		// todo: style the button (underline, color?, etc.)
 		const Resubscribe = () => (
 			<Button
-				onClick={ () => subscribe( { blog_id: blogId } ) }
+				onClick={ () => subscribe( { blog_id: blogId, url: data?.URL } ) }
 				disabled={ subscribing || unsubscribing }
 			>
 				{ translate( 'Resubscribe' ) }
@@ -112,8 +114,7 @@ const SiteSubscriptionPage = () => {
 	}
 
 	if ( isLoading ) {
-		// Full page Wordpress logo loader
-		return <div>Loading...</div>;
+		return <WordPressLogo size={ 72 } className="wpcom-site__logo" />;
 	}
 
 	const subscriberCount = data?.subscriber_count;
@@ -124,6 +125,8 @@ const SiteSubscriptionPage = () => {
 				comment: '%s is the number of subscribers. For example: "12,000,000"',
 		  } )
 		: '';
+
+	const date_subscribed = data?.date_subscribed;
 
 	return (
 		<div className="site-subscription-page">
@@ -156,12 +159,30 @@ const SiteSubscriptionPage = () => {
 							<SiteSubscriptionSettings
 								blogId={ blogId }
 								notifyMeOfNewPosts={ data.delivery_methods?.notification?.send_posts }
-								emailMeNewPosts={ data.delivery_methods?.email.send_posts }
-								deliveryFrequency={ data.delivery_methods?.email.post_delivery_frequency }
-								emailMeNewComments={ data.delivery_methods?.email.send_comments }
+								emailMeNewPosts={ data.delivery_methods?.email?.send_posts }
+								deliveryFrequency={ data.delivery_methods?.email?.post_delivery_frequency }
+								emailMeNewComments={ data.delivery_methods?.email?.send_comments }
 							/>
 
 							<hr className="subscriptions__separator" />
+
+							{ /* TODO: Move to SiteSubscriptionInfo component when payment details are in. */ }
+							<div className="site-subscription-info">
+								<h2 className="site-subscription-info__heading">{ translate( 'Subscription' ) }</h2>
+								<dl className="site-subscription-info__list">
+									<dt>{ translate( 'Date' ) }</dt>
+									<dd>
+										<TimeSince
+											date={
+												( date_subscribed?.valueOf()
+													? date_subscribed
+													: new Date( 0 )
+												).toISOString?.() ?? date_subscribed
+											}
+										/>
+									</dd>
+								</dl>
+							</div>
 
 							<Button
 								className="site-subscription-page__unsubscribe-button"

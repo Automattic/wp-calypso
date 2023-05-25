@@ -16,12 +16,10 @@ import { setupErrorLogger } from 'calypso/boot/common';
 import { setupLocale } from 'calypso/boot/locale';
 import AsyncLoad from 'calypso/components/async-load';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
-import { retargetFullStory } from 'calypso/lib/analytics/fullstory';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { createReduxStore } from 'calypso/state';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
-import { requestHappychatEligibility } from 'calypso/state/happychat/user/actions';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
 import { createQueryClient } from 'calypso/state/query-client';
 import initialReducer from 'calypso/state/reducer';
@@ -42,7 +40,6 @@ declare const window: AppWindow;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function initializeCalypsoUserStore( reduxStore: any, user: CurrentUser ) {
-	config.isEnabled( 'signup/inline-help' ) && reduxStore.dispatch( requestHappychatEligibility() );
 	reduxStore.dispatch( setCurrentUser( user ) );
 	reduxStore.dispatch( requestSites() );
 }
@@ -100,7 +97,6 @@ window.AppBoot = async () => {
 
 	setupWpDataDebug();
 	addHotJarScript();
-	retargetFullStory();
 
 	// Add accessible-focus listener.
 	accessibleFocus();
@@ -142,9 +138,6 @@ window.AppBoot = async () => {
 					</BrowserRouter>
 					{ 'development' === process.env.NODE_ENV && (
 						<AsyncLoad require="calypso/components/webpack-build-monitor" placeholder={ null } />
-					) }
-					{ config.isEnabled( 'signup/inline-help' ) && (
-						<AsyncLoad require="calypso/blocks/inline-help" placeholder={ null } />
 					) }
 				</QueryClientProvider>
 			</Provider>

@@ -5,16 +5,6 @@ interface ConfigurationData {
 	expectedPostText: string;
 }
 
-const INSTAGRAM_EMBED_TIMEOUT = 20000; // Can take a bit longer to load.
-
-const blockParentSelector = '[aria-label="Block: Embed"]:has-text("Instagram URL")';
-const selectors = {
-	embedUrlInput: `${ blockParentSelector } input`,
-	embedButton: `${ blockParentSelector } button:has-text("Embed")`,
-	embedIframe: `iframe[title="Embedded content from instagram.com"]`,
-	instagramIframe: `iframe.instagram-media`,
-};
-
 /**
  * Class representing the flow of using an Instagram block in the editor
  */
@@ -31,7 +21,7 @@ export class InstagramBlockFlow implements BlockFlow {
 	}
 
 	blockSidebarName = 'Instagram';
-	blockEditorSelector = blockParentSelector;
+	blockEditorSelector = '[aria-label="Block: Embed"]:has-text("Instagram URL")';
 
 	/**
 	 * Configure the block in the editor with the configuration data from the constructor
@@ -40,20 +30,19 @@ export class InstagramBlockFlow implements BlockFlow {
 	 */
 	async configure( context: EditorContext ): Promise< void > {
 		const editorCanvas = await context.editorPage.getEditorCanvas();
-		const embedUrlLocator = editorCanvas.locator( selectors.embedUrlInput );
-		await embedUrlLocator.fill( this.configurationData.embedUrl );
 
-		const embedButtonLocator = editorCanvas.locator( selectors.embedButton );
-		await embedButtonLocator.click();
+		await editorCanvas
+			.getByPlaceholder( 'Enter URL to embed here…' )
+			.fill( this.configurationData.embedUrl );
 
-		// We should make sure the actual Iframe loads, because it takes a second.
-		const instagramIframeLocator = editorCanvas
-			.frameLocator( selectors.embedIframe )
-			.frameLocator( selectors.instagramIframe )
-			.locator( `text=${ this.configurationData.expectedPostText }` )
-			.first();
+		await editorCanvas
+			.getByRole( 'document', { name: 'Block: Embed' } )
+			.getByRole( 'button', {
+				name: 'Embed',
+			} )
+			.click();
 
-		await instagramIframeLocator.waitFor( { timeout: INSTAGRAM_EMBED_TIMEOUT } );
+		await editorCanvas.getByTitle( 'Embedded content from instagram.com' ).waitFor();
 	}
 
 	/**
@@ -62,11 +51,6 @@ export class InstagramBlockFlow implements BlockFlow {
 	 * @param {PublishedPostContext} context The current context for the published post at the point of test execution
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
-		const expectedPostTextLocator = context.page
-			.frameLocator( selectors.instagramIframe )
-			.locator( `text=${ this.configurationData.expectedPostText }` )
-			.first(); // In case the post text isn't particularly specific, just resolve to the first one!
-
-		await expectedPostTextLocator.waitFor( { timeout: INSTAGRAM_EMBED_TIMEOUT } );
+		await context.page.getByRole( 'figure' ).getByText( 'View this post on Instagram' ).waitFor();
 	}
 }

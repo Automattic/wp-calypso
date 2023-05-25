@@ -68,6 +68,7 @@ export type SiteSubscription = {
 	is_owner: boolean;
 	meta: SiteSubscriptionMeta;
 	is_wpforteams_site: boolean;
+	is_paid_subscription: boolean;
 };
 
 export type SiteSubscriptionPage = {
@@ -89,12 +90,13 @@ export type PostSubscription = {
 	site_icon: string;
 	site_url: string;
 	domain: string;
+	is_wpforteams_site: boolean;
+	is_paid_subscription: boolean;
 	organization_id: number;
 	post_id: number;
 	post_title: string;
 	post_excerpt: string;
 	post_url: string;
-	is_wpforteams_site: boolean;
 };
 
 export type PendingSiteSubscription = {

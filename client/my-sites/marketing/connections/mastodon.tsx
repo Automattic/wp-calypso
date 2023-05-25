@@ -138,6 +138,7 @@ export const Mastodon: React.FC< Props > = ( {
 							value={ instance }
 							isError={ showError }
 							onChange={ handleInstanceChange }
+							placeholder="@mastodon@mastodon.social"
 						/>
 						{ isConnecting && <Spinner /> }
 					</InstanceContainer>

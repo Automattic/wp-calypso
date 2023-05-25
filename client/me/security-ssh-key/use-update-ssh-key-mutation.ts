@@ -22,8 +22,8 @@ export const useUpdateSSHKeyMutation = (
 	options: UseMutationOptions< MutationResponse, MutationError, MutationVariables > = {}
 ) => {
 	const queryClient = useQueryClient();
-	const mutation = useMutation(
-		async ( { name, key }: MutationVariables ) =>
+	const mutation = useMutation( {
+		mutationFn: async ( { name, key }: MutationVariables ) =>
 			wp.req.put(
 				{
 					path: `/me/ssh-keys/${ name }`,
@@ -35,15 +35,13 @@ export const useUpdateSSHKeyMutation = (
 					key,
 				}
 			),
-		{
-			...options,
-			onSuccess: async ( ...args ) => {
-				await queryClient.invalidateQueries( SSH_KEY_QUERY_KEY );
-				await queryClient.invalidateQueries( [ USE_ATOMIC_SSH_KEYS_QUERY_KEY ] );
-				options.onSuccess?.( ...args );
-			},
-		}
-	);
+		...options,
+		onSuccess: async ( ...args ) => {
+			await queryClient.invalidateQueries( SSH_KEY_QUERY_KEY );
+			await queryClient.invalidateQueries( [ USE_ATOMIC_SSH_KEYS_QUERY_KEY ] );
+			options.onSuccess?.( ...args );
+		},
+	} );
 
 	const { mutate, isLoading } = mutation;
 

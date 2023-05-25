@@ -1,17 +1,8 @@
-import { Frame, Page } from 'playwright';
+import { Page } from 'playwright';
 
 const selectors = {
 	// Post body
-	postBody: '.entry-content',
 	postPasswordInput: 'input[name="post_password"]',
-	submitPasswordButton: 'input[name="Submit"]',
-
-	// Like Widget
-	likeWidget: 'iframe[title="Like or Reblog"]',
-	likeButton: 'a.like',
-	unlikeButton: 'a.liked',
-	likedText: 'text=Liked',
-	notLikedText: 'text=Like',
 };
 
 /**
@@ -40,36 +31,27 @@ export class PublishedPostPage {
 	}
 
 	/**
-	 * Returns the frame which holds the Like widget.
-	 *
-	 * @returns {Promise<Frame>} Frame holding the like widget on page.
-	 */
-	private async getLikeFrame(): Promise< Frame > {
-		// Obtain the ElementHandle for the widget containing the like/unlike button.
-		const elementHandle = await this.page.waitForSelector( selectors.likeWidget );
-		// Without the next line, headless viewports fail to locate the Like widget.
-		await elementHandle.scrollIntoViewIfNeeded();
-		// Obtain the Frame object from the elementHandleHandle. This represents the widget iframe.
-		const frame = ( await elementHandle.contentFrame() ) as Frame;
-		// Wait until the widget element is stable in the DOM.
-		await elementHandle.waitForElementState( 'stable' );
-
-		return frame;
-	}
-
-	/**
 	 * Clicks the Like button on the post.
 	 *
 	 * This method will also confirm that click action on the Like button
 	 * had the intended effect.
-	 *
-	 * @returns {Promise<void>} No return value.
 	 */
 	async likePost(): Promise< void > {
-		await this.page.evaluate( () => window.scrollTo( 0, document.body.scrollHeight ) );
-		const frame = await this.getLikeFrame();
-		await frame.click( selectors.likeButton );
-		await frame.waitForSelector( selectors.likedText, { state: 'visible' } );
+		const locator = this.page
+			.frameLocator( 'iframe[title="Like or Reblog"]' )
+			.getByRole( 'link', { name: 'Like', exact: true } );
+
+		// On AT sites Playwright is not able to scroll directly to the iframe
+		// containing the Like/Unlike button (similar to Post Comments).
+		await locator.evaluate( ( element ) => element.scrollIntoView() );
+
+		await locator.click();
+
+		// The button should now read "Liked".
+		await this.page
+			.frameLocator( 'iframe[title="Like or Reblog"]' )
+			.getByRole( 'link', { name: 'Liked', exact: true } )
+			.waitFor();
 	}
 
 	/**
@@ -77,13 +59,23 @@ export class PublishedPostPage {
 	 *
 	 * This method will also confirm that click action on the Like button
 	 * had the intended effect.
-	 *
-	 * @returns {Promise<void>} No return value.
 	 */
 	async unlikePost(): Promise< void > {
-		const frame = await this.getLikeFrame();
-		await frame.click( selectors.unlikeButton );
-		await frame.waitForSelector( selectors.notLikedText, { state: 'visible' } );
+		const locator = this.page
+			.frameLocator( 'iframe[title="Like or Reblog"]' )
+			.getByRole( 'link', { name: 'Liked', exact: true } );
+
+		// On AT sites Playwright is not able to scroll directly to the iframe
+		// containing the Like/Unlike button (similar to Post Comments).
+		await locator.evaluate( ( element ) => element.scrollIntoView() );
+
+		await locator.click();
+
+		// The button should now read "Like".
+		await this.page
+			.frameLocator( 'iframe[title="Like or Reblog"]' )
+			.getByRole( 'link', { name: 'Like', exact: true } )
+			.waitFor();
 	}
 
 	/**

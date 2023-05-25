@@ -20,6 +20,7 @@ interface MasterbarItemProps {
 	hasUnseen?: boolean;
 	children?: ReactNode;
 	alwaysShowContent?: boolean;
+	disabled?: boolean;
 }
 
 class MasterbarItem extends Component< MasterbarItemProps > {
@@ -80,6 +81,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 			className: itemClasses,
 			onTouchStart: this.preload,
 			onMouseEnter: this.preload,
+			disabled: this.props.disabled,
 		};
 
 		if ( this.props.url ) {
