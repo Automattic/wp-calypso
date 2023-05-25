@@ -16,7 +16,7 @@ export function generateFlows( {
 	getDestinationFromIntent = noop,
 	getDIFMSignupDestination = noop,
 	getDIFMSiteContentCollectionDestination = noop,
-	getSitesDestination = noop,
+	getHostingFlowDestination = noop,
 } = {} ) {
 	const flows = [
 		{
@@ -24,7 +24,7 @@ export function generateFlows( {
 			steps: isEnabled( 'hosting-onboarding-i2' )
 				? [ 'user-hosting' ]
 				: [ 'plans-hosting', 'user-hosting', 'domains' ],
-			destination: getSitesDestination,
+			destination: getHostingFlowDestination,
 			description:
 				'Create an account and a blog and give the user the option of adding a domain and plan to the cart.',
 			lastModified: '2023-05-19',
