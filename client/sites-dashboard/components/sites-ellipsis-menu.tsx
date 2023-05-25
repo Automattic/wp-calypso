@@ -98,11 +98,12 @@ const SettingsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 const SiteLogsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
 	const hasFeatureSFTP = useSafeSiteHasFeature( site.ID, FEATURE_SFTP );
+	const href = hasFeatureSFTP ? getSiteLogsUrl( site.slug ) : getHostingConfigUrl( site.slug );
 
 	return (
 		<MenuItemLink
 			info={ ! hasFeatureSFTP && __( 'Requires a Business Plan' ) }
-			href={ getSiteLogsUrl( site.slug ) }
+			href={ href }
 			onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_site_logs_click' ) }
 		>
 			{ __( 'Site logs' ) }
