@@ -3,7 +3,7 @@ import { dispatch } from '@wordpress/data';
 import { getQueryArgs } from '@wordpress/url';
 import { isEditorReady } from '../../utils';
 
-const { url, title } = getQueryArgs( window.location.href );
+const { url } = getQueryArgs( window.location.href );
 
 if ( url ) {
 	( async () => {
@@ -11,7 +11,7 @@ if ( url ) {
 		await isEditorReady();
 
 		dispatch( 'core/editor' ).resetEditorBlocks( [
-			createBlock( 'core/embed', { url, caption: title, type: 'wp-embed' } ),
+			createBlock( 'core/embed', { url, type: 'wp-embed' } ),
 		] );
 	} )();
 }

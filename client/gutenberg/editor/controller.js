@@ -206,8 +206,8 @@ export const redirect = async ( context, next ) => {
 };
 
 function getPressThisData( query ) {
-	const { url, title } = query;
-	return url ? { url, title } : null;
+	const { url } = query;
+	return url ? { url } : null;
 }
 
 function getAnchorFmData( query ) {

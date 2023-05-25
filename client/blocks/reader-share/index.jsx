@@ -54,8 +54,6 @@ const actionMap = {
 
 function buildQuerystringForPost( post ) {
 	const args = {};
-
-	args.title = `${ post.title } — ${ post.site_name }`;
 	args.url = post.URL;
 	args.is_post_share = true; // There is a dependency on this here https://github.com/Automattic/wp-calypso/blob/a69ded693a99fa6a957b590b1a538f32a581eb8a/client/gutenberg/editor/controller.js#L209
 
