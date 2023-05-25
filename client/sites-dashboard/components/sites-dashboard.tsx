@@ -197,7 +197,9 @@ export function SitesDashboard( {
 							onClick={ () => {
 								recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_import' );
 							} }
-							href={ addQueryArgs( '/start/import' ) }
+							href={ addQueryArgs( '/start/import', {
+								source: TRACK_SOURCE_NAME,
+							} ) }
 							icon="arrow-down"
 						>
 							<span>{ __( 'Import an existing site' ) }</span>
