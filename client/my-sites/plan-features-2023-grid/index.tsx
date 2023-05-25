@@ -34,7 +34,12 @@ import {
 	VIPLogo,
 	WooLogo,
 } from '@automattic/components';
-import { isHostingFlow, isLinkInBioFlow, isNewsletterFlow } from '@automattic/onboarding';
+import {
+	isHostingFlow,
+	isLinkInBioFlow,
+	isNewsletterFlow,
+	isBlogOnboardingFlow,
+} from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
@@ -940,6 +945,15 @@ const ConnectedPlanFeatures2023Grid = connect(
 					planConstantObj?.getLinkInBioSignupFeatures?.() ?? []
 				);
 				tagline = planConstantObj.getLinkInBioTagLine?.() ?? '';
+			} else if ( isBlogOnboardingFlow( flowName ) ) {
+				planFeatures = getPlanFeaturesObject(
+					planConstantObj?.getBlogOnboardingSignupFeatures?.() ?? []
+				);
+
+				jetpackFeatures = getPlanFeaturesObject(
+					planConstantObj.getBlogOnboardingSignupJetpackFeatures?.() ?? []
+				);
+				tagline = planConstantObj.getBlogOnboardingTagLine?.() ?? '';
 			} else {
 				planFeatures = getPlanFeaturesObject(
 					planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ?? []
