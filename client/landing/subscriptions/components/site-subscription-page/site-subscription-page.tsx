@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import FormattedHeader from 'calypso/components/formatted-header';
 import TimeSince from 'calypso/components/time-since';
+import WordPressLogo from 'calypso/components/wordpress-logo';
 import { Notice, NoticeState, NoticeType } from 'calypso/landing/subscriptions/components/notice';
 import { SiteIcon } from 'calypso/landing/subscriptions/components/site-icon';
 import PoweredByWPFooter from 'calypso/layout/powered-by-wp-footer';
@@ -113,8 +114,7 @@ const SiteSubscriptionPage = () => {
 	}
 
 	if ( isLoading ) {
-		// Full page Wordpress logo loader
-		return <div>Loading...</div>;
+		return <WordPressLogo size={ 72 } className="wpcom-site__logo" />;
 	}
 
 	const subscriberCount = data?.subscriber_count;
