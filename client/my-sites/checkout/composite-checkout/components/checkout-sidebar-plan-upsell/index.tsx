@@ -107,17 +107,15 @@ export function CheckoutSidebarPlanUpsell() {
 		{ strong: createElement( 'strong' ) }
 	);
 
-	const twoYearCostLabel = createInterpolateElement( __( '<strong>2 Year Cost</strong>' ), {
-		strong: createElement( 'strong' ),
-	} );
-
 	return (
 		<PromoCard title={ cardTitle } className="checkout-sidebar-plan-upsell">
 			<div className="checkout-sidebar-plan-upsell__plan-grid">
 				{ isComparisonWithIntroOffer && (
 					<>
 						<div className="checkout-sidebar-plan-upsell__plan-grid-cell"></div>
-						<div className="checkout-sidebar-plan-upsell__plan-grid-cell">{ twoYearCostLabel }</div>
+						<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
+							<strong>{ __( '2 Year Cost' ) }</strong>
+						</div>
 					</>
 				) }
 				<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
