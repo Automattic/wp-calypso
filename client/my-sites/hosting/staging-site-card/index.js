@@ -9,7 +9,6 @@ import { connect, useDispatch } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { LoadingBar } from 'calypso/components/loading-bar';
-import Notice from 'calypso/components/notice';
 import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpts-query';
 import { urlToSlug } from 'calypso/lib/url';
 import { CardContentWrapper } from 'calypso/my-sites/hosting/staging-site-card/card-content/card-content-wrapper';
@@ -322,26 +321,6 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 		);
 	}, [ progress, __, siteOwnerId, currentUserId, isReverting ] );
 
-	const getAccessError = () => {
-		return (
-			<Notice status="is-error" showDismiss={ false }>
-				<div data-testid="staging-sites-access-message">
-					{ translate(
-						'Unable to access the staging site {{a}}%(stagingSiteName)s{{/a}}. Please contact the site owner.',
-						{
-							args: {
-								stagingSiteName: stagingSite.url,
-							},
-							components: {
-								a: <a href={ stagingSite.url } />,
-							},
-						}
-					) }
-				</div>
-			</Notice>
-		);
-	};
-
 	let stagingSiteCardContent;
 
 	if ( ! isLoadingStagingSites && loadingError ) {
@@ -361,7 +340,22 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 			/>
 		);
 	} else if ( ! wasCreating && ! hasSiteAccess && transferStatus !== null ) {
-		stagingSiteCardContent = getAccessError();
+		stagingSiteCardContent = (
+			<StagingSiteLoadingErrorCardContent
+				message={ translate(
+					'Unable to access the staging site {{a}}%(stagingSiteName)s{{/a}}. Please contact the site owner.',
+					{
+						args: {
+							stagingSiteName: stagingSite.url,
+						},
+						components: {
+							a: <a href={ stagingSite.url } />,
+						},
+					}
+				) }
+				testId="staging-sites-access-message"
+			/>
+		);
 	} else if ( addingStagingSite || isTrasferInProgress || isReverting ) {
 		stagingSiteCardContent = getTransferringStagingSiteContent();
 	} else if ( showManageStagingSite && isStagingSiteTransferComplete ) {
