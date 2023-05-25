@@ -1,5 +1,5 @@
 import { useMutation, UseMutationOptions, UseMutationResult } from '@tanstack/react-query';
-import wpcom from 'calypso/lib/wp';
+import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
 import type {
 	APIError,
 	ValidateVerificationCodeParams,
@@ -12,7 +12,7 @@ interface APIResponse {
 function mutationValidateVerificationCode(
 	params: ValidateVerificationCodeParams
 ): Promise< APIResponse > {
-	return wpcom.req.post( {
+	return wpcomJpl.req.post( {
 		apiNamespace: 'wpcom/v2',
 		path: '/jetpack-agency/contacts/verify',
 		body: params,
