@@ -4,24 +4,21 @@ import useValidateVerificationCodeMutation from 'calypso/state/jetpack-agency-da
 import {
 	RequestVerificationCodeParams,
 	ValidateVerificationCodeParams,
+	ResendVerificationCodeParams,
 } from '../sites-overview/types';
 
 export function useRequestVerificationCode(): {
 	requestVerificationCode: ( params: RequestVerificationCodeParams ) => void;
-	isRequestingVerificationCode: boolean;
-	isSuccess: boolean;
 	requestingVerificationCodeFailed: boolean;
 } {
-	const { isLoading, isSuccess, isError, mutate } = useRequestContactVerificationCode( {
-		retry: ( errorCount ) => {
-			return errorCount < 3;
+	const { isError, mutate } = useRequestContactVerificationCode( {
+		retry: () => {
+			return false;
 		},
 	} );
 
 	return {
 		requestVerificationCode: mutate,
-		isRequestingVerificationCode: isLoading,
-		isSuccess,
 		requestingVerificationCodeFailed: isError,
 	};
 }
@@ -33,8 +30,8 @@ export function useValidateVerificationCode(): {
 	validationFailed: boolean;
 } {
 	const { isLoading, isSuccess, isError, mutate } = useValidateVerificationCodeMutation( {
-		retry: ( errorCount ) => {
-			return errorCount < 3;
+		retry: () => {
+			return false;
 		},
 	} );
 
@@ -47,14 +44,14 @@ export function useValidateVerificationCode(): {
 }
 
 export function useResendVerificationCode(): {
-	resendVerificationCode: ( params: RequestVerificationCodeParams ) => void;
+	resendVerificationCode: ( params: ResendVerificationCodeParams ) => void;
 	isResending: boolean;
 	resendSuccess: boolean;
 	resendingFailed: boolean;
 } {
 	const { isLoading, isSuccess, isError, mutate } = useResendVerificationCodeMutation( {
-		retry: ( errorCount ) => {
-			return errorCount < 3;
+		retry: () => {
+			return false;
 		},
 	} );
 

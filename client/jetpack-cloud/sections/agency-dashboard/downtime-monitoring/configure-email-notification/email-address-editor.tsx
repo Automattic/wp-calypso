@@ -210,7 +210,7 @@ export default function EmailAddressEditor( {
 
 	const handleResendCode = () => {
 		recordEvent( 'downtime_monitoring_resend_email_verification_code' );
-		resendVerificationCode( { type: 'email', name: emailItem.name, value: emailItem.email } );
+		resendVerificationCode( { type: 'email', value: emailItem.email } );
 	};
 
 	const handleChange = useCallback(
