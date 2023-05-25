@@ -971,8 +971,7 @@ describe( 'actions', () => {
 		test( 'should dispatch success on status complete', () => {
 			return pollThemeTransferStatus(
 				siteId,
-				1,
-				'themes'
+				1
 			)( spy ).then( () => {
 				expect( spy ).toBeCalledWith( {
 					type: THEME_TRANSFER_STATUS_RECEIVE,
@@ -989,7 +988,6 @@ describe( 'actions', () => {
 			return pollThemeTransferStatus(
 				siteId,
 				2,
-				'themes',
 				10,
 				25
 			)( spy ).then( () => {
@@ -1003,9 +1001,9 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch status update', async () => {
-			await pollThemeTransferStatus( siteId, 3, 'themes', 20 )( spy );
+			await pollThemeTransferStatus( siteId, 3, 20 )( spy );
 			// Two 'progress' then a 'complete'
-			expect( spy ).toBeCalledTimes( 4 );
+			expect( spy ).toBeCalledTimes( 3 );
 			expect( spy ).toBeCalledWith( {
 				type: THEME_TRANSFER_STATUS_RECEIVE,
 				siteId: siteId,
@@ -1025,7 +1023,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch failure on receipt of error', async () => {
-			await pollThemeTransferStatus( siteId, 4, 'themes' )( spy );
+			await pollThemeTransferStatus( siteId, 4 )( spy );
 			expect( spy ).toBeCalledWith(
 				expect.objectContaining( {
 					type: THEME_TRANSFER_STATUS_FAILURE,

@@ -11,7 +11,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState } from 'react';
 import stripTags from 'striptags';
 import './help-center-article-content.scss';
-import useTyper from '../hooks/use-typer';
+import { useTyper } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 
 const GPTResponsePlaceholder = styled( LoadingPlaceholder )< { width?: string } >`

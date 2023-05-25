@@ -47,7 +47,6 @@
 		"external-media/free-photo-library": true,
 		"external-media/google-photos": true,
 		"external-media/openverse": true,
-		"fullstory": true,
 		"cookie-banner": true,
 		"google-my-business": true,
 		"gutenboarding/alpha-templates": false,
@@ -80,6 +79,7 @@
 		"jetpack-social/multiple-connections": false,
 		"jitms": true,
 		"lasagna": true,
+		"launchpad-updates": false,
 		"layout/app-banner": true,
 		"layout/guided-tours": true,
 		"layout/query-selected-editor": true,
@@ -177,7 +177,8 @@
 		"user-management-revamp": true,
 		"woop": false,
 		"wordpress-action-search": false,
-		"wpcom-user-bootstrap": true
+		"wpcom-user-bootstrap": true,
+		"yolo/site-transfers-i1": true
 	},
 	"siftscience_key": "e00e878351",
 	"oauth_client_id": "39911",

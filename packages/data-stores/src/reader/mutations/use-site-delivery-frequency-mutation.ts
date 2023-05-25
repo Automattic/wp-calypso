@@ -33,8 +33,8 @@ const useSiteDeliveryFrequencyMutation = ( blog_id?: string ) => {
 		...( blog_id ? [ blog_id ] : [] ),
 	] );
 
-	return useMutation(
-		async ( params: SiteSubscriptionDeliveryFrequencyParams ) => {
+	return useMutation( {
+		mutationFn: async ( params: SiteSubscriptionDeliveryFrequencyParams ) => {
 			if ( ! params.blog_id || ! params.delivery_frequency ) {
 				throw new Error(
 					// reminder: translate this string when we add it to the UI
@@ -60,71 +60,69 @@ const useSiteDeliveryFrequencyMutation = ( blog_id?: string ) => {
 
 			return response;
 		},
-		{
-			onMutate: async ( params ) => {
-				await queryClient.cancelQueries( siteSubscriptionsCacheKey );
-				await queryClient.cancelQueries( siteSubscriptionDetailsCacheKey );
+		onMutate: async ( params ) => {
+			await queryClient.cancelQueries( siteSubscriptionsCacheKey );
+			await queryClient.cancelQueries( siteSubscriptionDetailsCacheKey );
 
-				const previousSiteSubscriptions =
-					queryClient.getQueryData< PagedQueryResult< SiteSubscription, 'subscriptions' > >(
-						siteSubscriptionsCacheKey
-					);
-				const previousSiteSubscriptionDetails = queryClient.getQueryData< SiteSubscriptionDetails >(
-					siteSubscriptionDetailsCacheKey
+			const previousSiteSubscriptions =
+				queryClient.getQueryData< PagedQueryResult< SiteSubscription, 'subscriptions' > >(
+					siteSubscriptionsCacheKey
 				);
+			const previousSiteSubscriptionDetails = queryClient.getQueryData< SiteSubscriptionDetails >(
+				siteSubscriptionDetailsCacheKey
+			);
 
-				const mutatedSiteSubscriptions = applyCallbackToPages< 'subscriptions', SiteSubscription >(
-					previousSiteSubscriptions,
-					( page ) => ( {
-						...page,
-						subscriptions: page.subscriptions.map( ( siteSubscription ) => {
-							if ( siteSubscription.blog_ID === params.blog_id ) {
-								return {
-									...siteSubscription,
-									delivery_methods: {
-										...siteSubscription.delivery_methods,
-										email: {
-											...siteSubscription.delivery_methods?.email,
-											post_delivery_frequency: params.delivery_frequency,
-										},
+			const mutatedSiteSubscriptions = applyCallbackToPages< 'subscriptions', SiteSubscription >(
+				previousSiteSubscriptions,
+				( page ) => ( {
+					...page,
+					subscriptions: page.subscriptions.map( ( siteSubscription ) => {
+						if ( siteSubscription.blog_ID === params.blog_id ) {
+							return {
+								...siteSubscription,
+								delivery_methods: {
+									...siteSubscription.delivery_methods,
+									email: {
+										...siteSubscription.delivery_methods?.email,
+										post_delivery_frequency: params.delivery_frequency,
 									},
-								};
-							}
-							return siteSubscription;
-						} ),
-					} )
-				);
-				queryClient.setQueryData( siteSubscriptionsCacheKey, mutatedSiteSubscriptions );
+								},
+							};
+						}
+						return siteSubscription;
+					} ),
+				} )
+			);
+			queryClient.setQueryData( siteSubscriptionsCacheKey, mutatedSiteSubscriptions );
 
-				if ( previousSiteSubscriptionDetails ) {
-					queryClient.setQueryData( siteSubscriptionDetailsCacheKey, {
-						...previousSiteSubscriptionDetails,
-						delivery_methods: {
-							...previousSiteSubscriptionDetails.delivery_methods,
-							email: {
-								...previousSiteSubscriptionDetails.delivery_methods?.email,
-								post_delivery_frequency: params.delivery_frequency,
-							},
+			if ( previousSiteSubscriptionDetails ) {
+				queryClient.setQueryData( siteSubscriptionDetailsCacheKey, {
+					...previousSiteSubscriptionDetails,
+					delivery_methods: {
+						...previousSiteSubscriptionDetails.delivery_methods,
+						email: {
+							...previousSiteSubscriptionDetails.delivery_methods?.email,
+							post_delivery_frequency: params.delivery_frequency,
 						},
-					} );
-				}
+					},
+				} );
+			}
 
-				return { previousSiteSubscriptions, previousSiteSubscriptionDetails };
-			},
-			onError: ( err, params, context ) => {
-				queryClient.setQueryData( siteSubscriptionsCacheKey, context?.previousSiteSubscriptions );
-				queryClient.setQueryData(
-					siteSubscriptionDetailsCacheKey,
-					context?.previousSiteSubscriptionDetails
-				);
-			},
-			onSettled: () => {
-				// pass in a more minimal key, everything to the right will be invalidated
-				queryClient.invalidateQueries( [ 'read', 'site-subscriptions' ] );
-				queryClient.invalidateQueries( siteSubscriptionDetailsCacheKey );
-			},
-		}
-	);
+			return { previousSiteSubscriptions, previousSiteSubscriptionDetails };
+		},
+		onError: ( err, params, context ) => {
+			queryClient.setQueryData( siteSubscriptionsCacheKey, context?.previousSiteSubscriptions );
+			queryClient.setQueryData(
+				siteSubscriptionDetailsCacheKey,
+				context?.previousSiteSubscriptionDetails
+			);
+		},
+		onSettled: () => {
+			// pass in a more minimal key, everything to the right will be invalidated
+			queryClient.invalidateQueries( [ 'read', 'site-subscriptions' ] );
+			queryClient.invalidateQueries( siteSubscriptionDetailsCacheKey );
+		},
+	} );
 };
 
 export default useSiteDeliveryFrequencyMutation;

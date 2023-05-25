@@ -10,31 +10,27 @@ import { useRouteModal } from 'calypso/lib/route-modal';
 import PostRelativeTimeStatus from 'calypso/my-sites/post-relative-time-status';
 import { getPostType } from 'calypso/my-sites/promote-post/utils';
 
-type Discussion = {
-	comment_count: number;
-};
-
-export type Post = {
+export type BlazablePost = {
 	ID: number;
-	global_ID: string;
-	featured_image: string;
-	title: string;
+	author: string;
 	date: string;
+	date_gtm: string;
 	modified: string;
-	excerpt: string;
-	content: string;
-	site_ID: number;
-	slug: string;
+	modified_gmt: string;
 	status: string;
-	type: string; // post, page
-	URL: string;
+	guid: string;
+	title: string;
+	type: string;
+	comment_count: number;
 	like_count: number;
-	discussion: Discussion;
-	views: number;
+	view_count: number;
+	URL: string; // todo
+	featured_image: string;
+	post_thumbnail: string;
 };
 
 type Props = {
-	post: Post;
+	post: BlazablePost;
 };
 
 export default function PostItem( { post }: Props ) {
