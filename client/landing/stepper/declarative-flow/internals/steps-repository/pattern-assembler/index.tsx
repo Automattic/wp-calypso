@@ -383,7 +383,6 @@ const PatternAssembler = ( {
 	};
 
 	const {
-		isDismissed: isDismissedGlobalStylesUpgradeModal,
 		shouldUnlockGlobalStyles,
 		openModal: openGlobalStylesUpgradeModal,
 		globalStylesUpgradeModalProps,
@@ -393,6 +392,7 @@ const PatternAssembler = ( {
 		hasSelectedColorVariation: !! colorVariation,
 		hasSelectedFontVariation: !! fontVariation,
 		onCheckout: snapshotRecipe,
+		onUpgradeLater: onSubmit,
 		recordTracksEvent,
 	} );
 
@@ -415,7 +415,7 @@ const PatternAssembler = ( {
 	const onContinueClick = () => {
 		trackEventContinue();
 
-		if ( shouldUnlockGlobalStyles && ! isDismissedGlobalStylesUpgradeModal ) {
+		if ( shouldUnlockGlobalStyles ) {
 			openGlobalStylesUpgradeModal();
 			return;
 		}
@@ -506,10 +506,6 @@ const PatternAssembler = ( {
 			<div className="pattern-assembler__sidebar">
 				<NavigatorScreen path={ NAVIGATOR_PATHS.MAIN }>
 					<ScreenMain
-						shouldUnlockGlobalStyles={ shouldUnlockGlobalStyles }
-						isDismissedGlobalStylesUpgradeModal={ isDismissedGlobalStylesUpgradeModal }
-						hasSelectedColorVariation={ !! colorVariation }
-						hasSelectedFontVariation={ !! fontVariation }
 						onSelect={ onMainItemSelect }
 						onContinueClick={ onContinueClick }
 						recordTracksEvent={ recordTracksEvent }
