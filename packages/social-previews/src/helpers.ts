@@ -55,13 +55,14 @@ type PreviewTextOptions = {
 	platform: Platform;
 	maxChars?: number;
 	maxLines?: number;
+	hyperlinkUrls?: boolean;
 };
 
 /**
  * Prepares the text for the preview.
  */
 export function preparePreviewText( text: string, options: PreviewTextOptions ): string {
-	const { platform, maxChars, maxLines } = options;
+	const { platform, maxChars, maxLines, hyperlinkUrls = true } = options;
 
 	let result = stripHtmlTags( text );
 
@@ -77,12 +78,14 @@ export function preparePreviewText( text: string, options: PreviewTextOptions ):
 		}
 	}
 
-	// Convert URLs to hyperlinks.
-	result = result.replace(
-		// TODO: Use a better regex here to match the URLs without protocol.
-		/(https?:\/\/\S+)/g,
-		'<a href="$1" rel="noopener noreferrer" target="_blank">$1</a>'
-	);
+	if ( hyperlinkUrls ) {
+		// Convert URLs to hyperlinks.
+		result = result.replace(
+			// TODO: Use a better regex here to match the URLs without protocol.
+			/(https?:\/\/\S+)/g,
+			'<a href="$1" rel="noopener noreferrer" target="_blank">$1</a>'
+		);
+	}
 
 	let hashtagUrl;
 

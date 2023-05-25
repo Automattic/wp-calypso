@@ -60,6 +60,7 @@ export function InstagramPostPreview( {
 										platform: 'instagram',
 										maxChars: FEED_TEXT_MAX_LENGTH,
 										maxLines: FEED_TEXT_MAX_LINES,
+										hyperlinkUrls: false,
 									} ),
 								} }
 							/>
