@@ -47,6 +47,7 @@ import StatsPageHeader from './stats-page-header';
 import StatsPeriodHeader from './stats-period-header';
 import StatsPeriodNavigation from './stats-period-navigation';
 import statsStrings from './stats-strings';
+import StatsSubscribers from './stats-subscribers';
 import { getPathWithUpdatedQueryString } from './utils';
 
 const memoizedQuery = memoizeLast( ( period, endOf ) => ( {
@@ -188,6 +189,7 @@ class StatsSite extends Component {
 					slug={ slug }
 				/>
 				{ isOdysseyStats && <StatsNotices siteId={ siteId } /> }
+				<StatsSubscribers />
 				<HighlightsSection siteId={ siteId } />
 				<div id="my-stats-content" className={ wrapperClass }>
 					<>
