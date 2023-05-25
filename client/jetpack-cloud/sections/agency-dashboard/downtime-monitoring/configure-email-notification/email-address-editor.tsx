@@ -16,6 +16,7 @@ import EmailItemContent from './email-item-content';
 import type {
 	AllowedMonitorContactActions,
 	StateMonitorSettingsEmail,
+	Site,
 } from '../../sites-overview/types';
 
 interface Props {
@@ -26,6 +27,7 @@ interface Props {
 	setAllEmailItems: ( emailAddresses: Array< StateMonitorSettingsEmail > ) => void;
 	recordEvent: ( action: string, params?: object ) => void;
 	setVerifiedEmail: ( item: string ) => void;
+	sites: Array< Site >;
 }
 
 export default function EmailAddressEditor( {
@@ -36,6 +38,7 @@ export default function EmailAddressEditor( {
 	setAllEmailItems,
 	recordEvent,
 	setVerifiedEmail,
+	sites,
 }: Props ) {
 	const translate = useTranslate();
 
@@ -61,8 +64,7 @@ export default function EmailAddressEditor( {
 	const isEditAction = selectedAction === 'edit';
 	const isRemoveAction = selectedAction === 'remove';
 
-	const { requestVerificationCode, requestingVerificationCodeFailed } =
-		useRequestVerificationCode();
+	const requestVerificationCode = useRequestVerificationCode();
 	const { validateVerificationCode, isValidating, isVerified, validationFailed } =
 		useValidateVerificationCode();
 	const { resendVerificationCode } = useResendVerificationCode();
@@ -98,12 +100,18 @@ export default function EmailAddressEditor( {
 	}, [ handleSetEmailItems, isVerified ] );
 
 	useEffect( () => {
-		if ( requestingVerificationCodeFailed ) {
+		if ( requestVerificationCode.isError ) {
 			setValidationError( {
-				code: translate( 'Something went wrong. Please try again by clicking the resend button.' ),
+				email: translate( 'Something went wrong. Please try again.' ),
 			} );
 		}
-	}, [ requestingVerificationCodeFailed, translate ] );
+	}, [ requestVerificationCode.isError, translate ] );
+
+	useEffect( () => {
+		if ( requestVerificationCode.isSuccess ) {
+			setShowCodeVerification( true );
+		}
+	}, [ requestVerificationCode.isSuccess ] );
 
 	useEffect( () => {
 		if ( validationFailed ) {
@@ -136,8 +144,11 @@ export default function EmailAddressEditor( {
 
 	const handleSendVerificationCode = () => {
 		recordEvent( 'downtime_monitoring_request_email_verification_code' );
-		setShowCodeVerification( true );
-		requestVerificationCode( { type: 'email', name: emailItem.name, value: emailItem.email } );
+		requestVerificationCode.mutate( {
+			type: 'email',
+			value: emailItem.email,
+			site_id: sites[ 0 ].blog_id, // Fix this when we support multiple sites
+		} );
 	};
 
 	const handleVerifyEmail = () => {
@@ -329,7 +340,8 @@ export default function EmailAddressEditor( {
 								! emailItem.name ||
 								! emailItem.email ||
 								( showCodeVerification && ! emailItem.code ) ||
-								isValidating
+								isValidating ||
+								requestVerificationCode.isLoading
 							}
 							type="submit"
 							primary

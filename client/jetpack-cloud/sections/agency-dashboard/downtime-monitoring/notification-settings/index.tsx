@@ -195,6 +195,7 @@ export default function NotificationSettings( {
 				setAllEmailItems={ setAllEmailItems }
 				recordEvent={ recordEvent }
 				setVerifiedEmail={ ( item ) => handleSetVerifiedItem( 'email', item ) }
+				sites={ sites }
 			/>
 		);
 	}

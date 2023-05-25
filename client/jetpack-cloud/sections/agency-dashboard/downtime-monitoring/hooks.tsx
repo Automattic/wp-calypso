@@ -8,18 +8,18 @@ import {
 } from '../sites-overview/types';
 
 export function useRequestVerificationCode(): {
-	requestVerificationCode: ( params: RequestVerificationCodeParams ) => void;
-	requestingVerificationCodeFailed: boolean;
+	mutate: ( params: RequestVerificationCodeParams ) => void;
+	isError: boolean;
+	isLoading: boolean;
+	isSuccess: boolean;
 } {
-	const { isError, mutate } = useRequestContactVerificationCode( {
-		retry: () => {
-			return false;
-		},
-	} );
+	const { isError, isLoading, isSuccess, mutate } = useRequestContactVerificationCode();
 
 	return {
-		requestVerificationCode: mutate,
-		requestingVerificationCodeFailed: isError,
+		mutate,
+		isError,
+		isLoading,
+		isSuccess,
 	};
 }
 
