@@ -23,7 +23,7 @@ export type BlazablePost = {
 	type: string;
 	comment_count: number;
 	like_count: number;
-	view_count: number;
+	monthly_view_count: number;
 	URL: string; // todo
 	featured_image: string;
 	post_thumbnail: string;
@@ -51,9 +51,9 @@ export default function PostItem( { post }: Props ) {
 		<PostRelativeTimeStatus showPublishedStatus={ false } post={ post } showGridIcon={ false } />
 	);
 
-	const viewCount = post?.views ?? 0;
+	const viewCount = post?.monthly_view_count ?? 0;
 	const likeCount = post?.like_count ?? 0;
-	const commentCount = post.discussion.comment_count;
+	const commentCount = post?.comment_count ?? 0;
 
 	return (
 		<tr className="post-item__row">
@@ -107,7 +107,7 @@ export default function PostItem( { post }: Props ) {
 						<span className="post-item__mid-dot">&#183;</span>
 						{
 							// translators: %d is number of post's likes
-							sprintf( _n( '%d view', '%d views', likeCount ), likeCount )
+							sprintf( _n( '%d like', '%d likes', likeCount ), likeCount )
 						}
 						<span className="post-item__mid-dot">&#183;</span>
 						{

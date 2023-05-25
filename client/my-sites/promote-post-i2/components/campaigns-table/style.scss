@@ -1,5 +1,6 @@
 @import "@automattic/typography/styles/variables";
 @import "@automattic/color-studio/dist/color-variables";
+@import "@wordpress/base-styles/breakpoints";
 
 $font-sf-pro-display: "SF Pro Display", $sans;
 $font-sf-pro-text: "SF Pro Text", $sans;
@@ -27,6 +28,12 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 }
 
 .promote-post-i2__table {
+	@media screen and (max-width: $break-mobile) {
+		& {
+			width: calc(100% - 32px);
+		}
+	}
+
 	th {
 		font-family: $font-sf-pro-text;
 		font-style: normal;
