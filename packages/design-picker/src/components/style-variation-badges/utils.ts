@@ -105,7 +105,8 @@ function findColorBestAnalogous( hexCodes: string[], baseHex: string ) {
 export function getStylesColorFromVariation(
 	variation: StyleVariation
 ): StyleVariationStylesColor {
-	const colorBase = getColorBaseFromColors( getColors( variation ) );
+	const palette = getColors( variation );
+	const colorBase = getColorBaseFromColors( palette );
 	const colorList = palette.map( ( item ) => item.color );
 
 	return {
