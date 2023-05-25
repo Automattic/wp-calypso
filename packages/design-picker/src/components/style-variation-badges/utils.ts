@@ -11,14 +11,21 @@ interface Hsl {
 	l: number;
 }
 
+const COLOR_BASE_CANDIDATE_KEYS = [ 'base', 'background', 'primary' ];
+const HSL_BEST_DIFFERENCE_VALUE = 155;
+
 function getColors( variation: StyleVariation ) {
 	return variation.settings?.color?.palette?.theme || [];
 }
 
 function getColorBaseFromColors( colors: StyleVariationSettingsColorPalette[] ) {
-	const background = colors.find( ( item ) => item.slug === 'background' );
-	const base = colors.find( ( item ) => item.slug === 'base' );
-	return base?.color || background?.color || '#ffffff';
+	const colorMap: Record< string, string > = colors.reduce(
+		( map, { color, slug } ) => ( { ...map, [ slug ]: color } ),
+		{}
+	);
+
+	const baseColorKey = COLOR_BASE_CANDIDATE_KEYS.find( ( key ) => colorMap[ key ] ) ?? '';
+	return colorMap[ baseColorKey ] || '#ffffff';
 }
 
 // See: https://en.wikipedia.org/wiki/HSL_and_HSV#From_RGB
@@ -69,12 +76,16 @@ function getHslDifference( hslA: Hsl, hslB: Hsl ) {
 	return Math.abs( hA - hB ) + Math.abs( sA - sB ) + Math.abs( lA - lB );
 }
 
-function findColorLeastAnalogous( hexCodes: string[], baseHex: string ) {
+function getHslBestDifference( value: number ) {
+	return Math.abs( value - HSL_BEST_DIFFERENCE_VALUE );
+}
+
+function findColorBestAnalogous( hexCodes: string[], baseHex: string ) {
 	const baseHsl = hexToHsl( baseHex );
 	const analogous = getColorAnalogous( baseHsl );
 
-	let maxHslDifference = -Infinity;
-	let leastAnalogous = '';
+	let bestHslDifference = -Infinity;
+	let bestAnalogous = '';
 	for ( const hex of hexCodes ) {
 		const hsl = hexToHsl( hex );
 		const hslDifference = Math.max(
@@ -82,25 +93,23 @@ function findColorLeastAnalogous( hexCodes: string[], baseHex: string ) {
 			getHslDifference( analogous[ 1 ], hsl )
 		);
 
-		if ( hslDifference > maxHslDifference ) {
-			maxHslDifference = hslDifference;
-			leastAnalogous = hex;
+		if ( getHslBestDifference( hslDifference ) < getHslBestDifference( bestHslDifference ) ) {
+			bestHslDifference = hslDifference;
+			bestAnalogous = hex;
 		}
 	}
 
-	return leastAnalogous;
+	return bestAnalogous;
 }
 
 export function getStylesColorFromVariation(
 	variation: StyleVariation
 ): StyleVariationStylesColor {
-	const palette = getColors( variation );
-	const colorBase = getColorBaseFromColors( palette );
+	const colorBase = getColorBaseFromColors( getColors( variation ) );
 	const colorList = palette.map( ( item ) => item.color );
-	const foregroundColor = findColorLeastAnalogous( colorList, colorBase );
 
 	return {
 		background: colorBase,
-		text: foregroundColor,
+		text: findColorBestAnalogous( colorList, colorBase ),
 	};
 }
