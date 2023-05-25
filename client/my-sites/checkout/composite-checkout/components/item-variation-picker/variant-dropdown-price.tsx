@@ -4,6 +4,7 @@ import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { styled } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
+import { preventWidows } from 'calypso/lib/formatting';
 import { getItemVariantDiscountPercentage, getItemVariantCompareToPrice } from './util';
 import type { WPCOMProductVariant } from './types';
 
@@ -206,13 +207,17 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 		} else if ( introCount > 1 ) {
 			if ( productBillingTermInMonths > 12 ) {
 				return introTerm === 'month'
-					? translate(
-							'%(formattedCurrentPrice)s first %(introCount)s months then %(formattedPriceBeforeDiscounts)s per %(billingTermInYears)s years',
-							{ args }
+					? preventWidows(
+							translate(
+								'%(formattedCurrentPrice)s first %(introCount)s months then %(formattedPriceBeforeDiscounts)s per %(billingTermInYears)s years',
+								{ args }
+							)
 					  )
-					: translate(
-							'%(formattedCurrentPrice)s for first %(introCount)s years then %(formattedPriceBeforeDiscounts)s per %(billingTermInYears)s years',
-							{ args }
+					: preventWidows(
+							translate(
+								'%(formattedCurrentPrice)s for first %(introCount)s years then %(formattedPriceBeforeDiscounts)s per %(billingTermInYears)s years',
+								{ args }
+							)
 					  );
 				// translation example: $1 first 3 months then $2 per 2 years
 			} else if ( productBillingTermInMonths === 12 ) {
