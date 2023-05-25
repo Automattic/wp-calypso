@@ -28,11 +28,13 @@ import './style.scss';
 const MOBILE_BREAKPOINT = 782;
 
 const useMobileSidebar = () => {
+	// We need to wait for ReactModal to render elements to get access to refs properly
 	const [ isInitialized, setIsInitialized ] = useState( false );
 	const [ clientWidth, setClientWidth ] = useState( window.innerWidth );
 	const sidebarRef = useRef< HTMLDivElement | null >( null );
 	const detailsRef = useRef< HTMLDivElement | null >( null );
 
+	// Monitor current viewport width to unload hook when on desktop
 	useLayoutEffect( () => {
 		const onResize = () => setClientWidth( window.innerWidth );
 		window.addEventListener( 'resize', onResize );
@@ -47,8 +49,10 @@ const useMobileSidebar = () => {
 		const { current: details } = detailsRef;
 
 		if ( clientWidth <= MOBILE_BREAKPOINT && sidebar && details ) {
+			// Fetch initial padding bottom set in styles
 			const detailsPaddingBottom = window.getComputedStyle( details ).paddingBottom;
 
+			// Watch for changes in sidebar height (i.e. due to lazy loading of prices)
 			const sidebarObserver = new ResizeObserver( () => {
 				const rect = sidebar.getBoundingClientRect();
 				details.style.paddingBottom = `calc( ${ rect.height }px + ${ detailsPaddingBottom } )`;
@@ -57,6 +61,7 @@ const useMobileSidebar = () => {
 			sidebarObserver.observe( sidebar );
 
 			const onScroll = () => {
+				// Show sidebar when user scrolls past half of the content (or when there is not enough to scroll)
 				const sidebarThreshold = ( details.scrollHeight - details.clientHeight ) / 2;
 
 				if ( details.scrollTop + 50 >= sidebarThreshold ) {
@@ -66,13 +71,17 @@ const useMobileSidebar = () => {
 				}
 			};
 
+			// Show/hide sidebar on mount
 			onScroll();
 
+			// Check for changes in attributes for details content (i.e. when toggling visibility of sections)
 			const detailsObserver = new MutationObserver( onScroll );
-			details.addEventListener( 'scroll', onScroll );
 			detailsObserver.observe( details, { subtree: true, attributes: true } );
 
+			details.addEventListener( 'scroll', onScroll );
+
 			return () => {
+				// Unload everything and reset styles
 				details.style.paddingBottom = '';
 
 				details.removeEventListener( 'scroll', onScroll );
