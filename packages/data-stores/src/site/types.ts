@@ -505,6 +505,7 @@ export type SiteSelect = SelectFromMap< typeof selectors >;
 
 export interface SourceSiteMigrationDetails {
 	status: string;
+	source_blog_id?: number;
 	target_blog_id?: number;
 	is_target_blog_admin?: boolean;
 	is_target_blog_upgraded?: boolean;
