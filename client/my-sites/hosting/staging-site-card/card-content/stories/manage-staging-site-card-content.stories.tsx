@@ -12,7 +12,7 @@ import { ManageStagingSiteCardContent } from 'calypso/my-sites/hosting/staging-s
 import '../../../style.scss';
 
 export default {
-	title: 'client/components/StagingSite',
+	title: 'client/my-sites/hosting/StagingSiteCard',
 	component: ManageStagingSiteCardContent,
 	decorators: [
 		( Story ) => {

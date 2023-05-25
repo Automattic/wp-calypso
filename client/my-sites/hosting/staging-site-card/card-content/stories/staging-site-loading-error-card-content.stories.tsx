@@ -12,7 +12,7 @@ import { StagingSiteLoadingErrorCardContent } from 'calypso/my-sites/hosting/sta
 import '../../../style.scss';
 
 export default {
-	title: 'client/components/StagingSite',
+	title: 'client/my-sites/hosting/StagingSiteCard',
 	component: StagingSiteLoadingErrorCardContent,
 	decorators: [
 		( Story ) => {

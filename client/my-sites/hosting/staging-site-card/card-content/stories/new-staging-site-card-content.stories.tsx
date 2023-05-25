@@ -12,7 +12,7 @@ import { NewStagingSiteCardContent } from '../new-staging-site-card-content';
 import '../../../style.scss';
 
 export default {
-	title: 'client/components/StagingSite',
+	title: 'client/my-sites/hosting/StagingSiteCard',
 	component: NewStagingSiteCardContent,
 	decorators: [
 		( Story ) => {
