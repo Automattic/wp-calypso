@@ -197,8 +197,8 @@ fun jetpackPlaywrightBuildType( targetDevice: String, buildUuid: String, jetpack
 
 				// Trigger only when changes are made to the Jetpack staging directories in our WPCOM connection
 				triggerRules = """
-					+:root=%WPCOM_VCS_ROOT_ID%:%WPCOM_JETPACK_MU_WPCOM_PLUGIN_PATH%/staging/**
-					+:root=%WPCOM_VCS_ROOT_ID%:%WPCOM_JETPACK_PLUGIN_PATH%/staging/**
+					+:root=wpcom:%WPCOM_JETPACK_MU_WPCOM_PLUGIN_PATH%/staging/**
+					+:root=wpcom:%WPCOM_JETPACK_PLUGIN_PATH%/staging/**
 				""".trimIndent()
 			}
 		} else if (jetpackTarget == "wpcom-production") {
@@ -210,8 +210,8 @@ fun jetpackPlaywrightBuildType( targetDevice: String, buildUuid: String, jetpack
 
 				// Trigger only when changes are made to the Jetpack prod directories in our WPCOM connection
 				triggerRules = """
-					+:root=%WPCOM_VCS_ROOT_ID%:%WPCOM_JETPACK_MU_WPCOM_PLUGIN_PATH%/production/**
-					+:root=%WPCOM_VCS_ROOT_ID%:%WPCOM_JETPACK_PLUGIN_PATH%/production/**
+					+:root=wpcom:%WPCOM_JETPACK_MU_WPCOM_PLUGIN_PATH%/production/**
+					+:root=wpcom:%WPCOM_JETPACK_PLUGIN_PATH%/production/**
 				""".trimIndent()
 			}
 		} else {
