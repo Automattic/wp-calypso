@@ -211,7 +211,10 @@ class SharingServiceExamples extends Component {
 					}
 				) }
 				<br />
-				<ExternalLink className="instagram-business__help-link" href="https://wordpress.org">
+				<ExternalLink
+					className="instagram-business__help-link"
+					href="https://jetpack.com/redirect/?source=jetpack-social-instagram-business-help"
+				>
 					{ this.props.translate( 'Learn how to convert & link your Instagram account.' ) }
 				</ExternalLink>
 			</>
