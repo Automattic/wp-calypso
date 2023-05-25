@@ -145,7 +145,7 @@ export default function WPCOMBusinessAT() {
 	const dispatch = useDispatch();
 	const initiateAT = useCallback( () => {
 		setShowDialog( false );
-		dispatch( initiateThemeTransfer( siteId, null, '' ) );
+		dispatch( initiateThemeTransfer( siteId, null, '', '', 'jetpack_product_activation' ) );
 	}, [ dispatch, siteId ] );
 	const trackInitiateAT = useTrackCallback( initiateAT, 'calypso_jetpack_backup_business_at' );
 

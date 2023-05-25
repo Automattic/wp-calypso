@@ -26,6 +26,7 @@ interface Props {
 	onModeChange: ( fromMode: FormMode ) => void;
 	host: string;
 	role: string;
+	withHeader?: boolean;
 }
 
 const ServerCredentialsForm: FunctionComponent< Props > = ( {
@@ -38,6 +39,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 	onModeChange,
 	host,
 	role = 'main',
+	withHeader = true,
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -55,7 +57,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 					...formState,
 					protocol: currentTarget.value as 'ftp' | 'ssh' | 'dynamic-ssh',
 					port: ( () => {
-						let port = parseInt( String( formState.port ) );
+						let port = parseInt( String( formState.port ) ) || 22;
 
 						if ( formState.port === 22 && currentTarget.value === 'ftp' ) {
 							port = 21;
@@ -375,13 +377,11 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 						) }
 				</FormFieldset>
 			) }
-			{ ! isAlternate && (
-				<>
-					<h3>{ translate( 'Provide your SSH, SFTP or FTP server credentials' ) }</h3>
-				</>
+			{ ! isAlternate && withHeader && (
+				<h3>{ translate( 'Provide your SSH, SFTP or FTP server credentials' ) }</h3>
 			) }
-			<p className="credentials-form__intro-text">{ getSubHeaderText() }</p>
-			{ renderCredentialLinks() }
+			{ withHeader && <p className="credentials-form__intro-text">{ getSubHeaderText() }</p> }
+			{ withHeader && renderCredentialLinks() }
 			<FormFieldset className="credentials-form__protocol-type">
 				<div className="credentials-form__support-info">
 					<FormLabel htmlFor="protocol-type">{ translate( 'Credential type' ) }</FormLabel>

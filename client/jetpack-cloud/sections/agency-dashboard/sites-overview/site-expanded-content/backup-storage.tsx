@@ -13,6 +13,8 @@ import { useDashboardAddRemoveLicense } from '../../hooks';
 import { DASHBOARD_LICENSE_TYPES, getExtractedBackupTitle } from '../utils';
 import ExpandedCard from './expanded-card';
 import type { Site, Backup } from '../types';
+import type { UseQueryResult } from '@tanstack/react-query';
+import type { Moment } from 'moment';
 
 interface Props {
 	site: Site;
@@ -47,11 +49,14 @@ const BackupStorageContent = ( {
 			select: ( backups: Backup[] ) =>
 				backups.filter( ( backup ) => isSuccessfulRealtimeBackup( backup ) ),
 		}
-	);
+	) as UseQueryResult< Backup[] >;
 
 	const backup = data?.[ 0 ] ?? null;
 
-	const lastBackupDate = useDateOffsetForSite( backup?.activityTs, siteId );
+	const lastBackupDate = useDateOffsetForSite(
+		backup?.activityTs as Moment | undefined | null,
+		siteId
+	);
 	// Ignore type checking because TypeScript is incorrectly inferring the prop type due to .js usage in use-get-display-date
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	// @ts-ignore

@@ -97,6 +97,8 @@ const blockLinks: { [ key: string ]: string } = {
 
 	'core/comments': 'https://wordpress.com/support/full-site-editing/theme-blocks/comments-block/',
 
+	'core/post-time-to-read':
+		'https://wordpress.com/support/site-editing/theme-blocks/time-to-read-block',
 	/**
 	 * A8C and CO Blocks
 	 */

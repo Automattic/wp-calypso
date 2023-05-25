@@ -20,17 +20,21 @@ export const useDeploymentLogsURL = ( {
 }: UseDeploymentLogsURLArguments ) => {
 	const siteId = useSelector( getSelectedSiteId );
 
-	const { data } = useQuery< DeploymentLogsData >(
-		[ GITHUB_INTEGRATION_QUERY_KEY, siteId, connectionId, 'deployment-logs', deploymentTimestamp ],
-		() =>
+	const { data } = useQuery< DeploymentLogsData >( {
+		queryKey: [
+			GITHUB_INTEGRATION_QUERY_KEY,
+			siteId,
+			connectionId,
+			'deployment-logs',
+			deploymentTimestamp,
+		],
+		queryFn: () =>
 			wp.req.get( {
 				path: `/sites/${ siteId }/hosting/github/deployment-logs`,
 				apiNamespace: 'wpcom/v2',
 			} ),
-		{
-			enabled: !! siteId,
-		}
-	);
+		enabled: !! siteId,
+	} );
 
 	const logsBlobUrl = useMemo( () => {
 		if ( ! data ) {

@@ -43,17 +43,17 @@ const BackupRewindFlow: FunctionComponent< Props > = ( { rewindId, purpose } ) =
 	const siteId = useSelector( getSelectedSiteId );
 	const siteUrl = useSelector( ( state ) => ( siteId && getSiteUrl( state, siteId ) ) || '' );
 
-	const activityQuery = useQuery< Activity, ActivityError >(
-		[ 'activity', siteId, rewindId ],
-		() =>
+	const activityQuery = useQuery< Activity, ActivityError >( {
+		queryKey: [ 'activity', siteId, rewindId ],
+		queryFn: () =>
 			wpcom.req
 				.get( {
 					apiNamespace: 'wpcom/v2',
 					path: `/sites/${ siteId }/activity/${ rewindId }`,
 				} )
 				.then( fromActivityApi ),
-		{ retry: false }
-	);
+		retry: false,
+	} );
 
 	const gmtOffset = useSelector( ( state ) => getSiteGmtOffset( state, siteId ?? 0 ) );
 	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ?? 0 ) );

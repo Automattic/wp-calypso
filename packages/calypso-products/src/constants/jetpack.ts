@@ -9,6 +9,7 @@ export const PRODUCT_JETPACK_BACKUP = 'jetpack_backup';
 export const PRODUCT_JETPACK_BACKUP_T0_YEARLY = 'jetpack_backup_t0_yearly';
 export const PRODUCT_JETPACK_BACKUP_T0_MONTHLY = 'jetpack_backup_t0_monthly';
 export const PRODUCT_JETPACK_BACKUP_T1_YEARLY = 'jetpack_backup_t1_yearly';
+export const PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY = 'jetpack_backup_t1_bi_yearly';
 export const PRODUCT_JETPACK_BACKUP_T1_MONTHLY = 'jetpack_backup_t1_monthly';
 export const PRODUCT_JETPACK_BACKUP_T2_YEARLY = 'jetpack_backup_t2_yearly';
 export const PRODUCT_JETPACK_BACKUP_T2_MONTHLY = 'jetpack_backup_t2_monthly';
@@ -77,6 +78,7 @@ export const JETPACK_BACKUP_PRODUCTS_MONTHLY = <const>[
 	PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
 ];
 export const JETPACK_BACKUP_PRODUCTS = <const>[
+	PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY,
 	...JETPACK_BACKUP_PRODUCTS_YEARLY,
 	...JETPACK_BACKUP_PRODUCTS_MONTHLY,
 ];
@@ -103,6 +105,7 @@ export const JETPACK_BACKUP_T0_PRODUCTS = <const>[
 	PRODUCT_JETPACK_BACKUP_T0_YEARLY,
 ];
 export const JETPACK_BACKUP_T1_PRODUCTS = <const>[
+	PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY,
 	PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 ];
@@ -300,6 +303,7 @@ export const PLAN_JETPACK_BUSINESS = 'jetpack_business';
 export const PLAN_JETPACK_BUSINESS_MONTHLY = 'jetpack_business_monthly';
 export const PLAN_JETPACK_SECURITY_T1_YEARLY = 'jetpack_security_t1_yearly';
 export const PLAN_JETPACK_SECURITY_T1_MONTHLY = 'jetpack_security_t1_monthly';
+export const PLAN_JETPACK_SECURITY_T1_BI_YEARLY = 'jetpack_security_t1_bi_yearly';
 export const PLAN_JETPACK_SECURITY_T2_YEARLY = 'jetpack_security_t2_yearly';
 export const PLAN_JETPACK_SECURITY_T2_MONTHLY = 'jetpack_security_t2_monthly';
 export const PLAN_JETPACK_COMPLETE = 'jetpack_complete';
@@ -333,12 +337,14 @@ export const JETPACK_SECURITY_PLANS = <const>[
 	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
 	PLAN_JETPACK_SECURITY_T1_YEARLY,
 	PLAN_JETPACK_SECURITY_T1_MONTHLY,
+	PLAN_JETPACK_SECURITY_T1_BI_YEARLY,
 	PLAN_JETPACK_SECURITY_T2_YEARLY,
 	PLAN_JETPACK_SECURITY_T2_MONTHLY,
 ];
 export const JETPACK_SECURITY_T1_PLANS = <const>[
 	PLAN_JETPACK_SECURITY_T1_MONTHLY,
 	PLAN_JETPACK_SECURITY_T1_YEARLY,
+	PLAN_JETPACK_SECURITY_T1_BI_YEARLY,
 ];
 
 export const JETPACK_SECURITY_T2_PLANS = <const>[

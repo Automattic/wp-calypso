@@ -178,6 +178,7 @@ class SharingButtonsPreviewButtons extends Component {
 				width="100%"
 				frameBorder="0"
 				className="official-preview"
+				role="presentation"
 			/>
 		);
 	};

@@ -6,3 +6,4 @@ export * from './constants';
 export * from './product-values';
 export * from './get-interval-type-for-term';
 export * from './get-price-tier-for-units';
+export * from './is-tiered-volume-space-addon';

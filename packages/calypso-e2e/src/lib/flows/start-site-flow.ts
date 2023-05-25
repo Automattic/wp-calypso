@@ -16,8 +16,6 @@ const selectors = {
 	// Inputs
 	blogNameInput: 'input[name="siteTitle"]:not(:disabled)',
 	taglineInput: 'input[name="tagline"]:not(:disabled)',
-	verticalInput: '.select-vertical__suggestion-input input',
-	verticalSelectItem: ( target: string ) => `.suggestions__item :text("${ target }")`,
 
 	// Themes
 	individualThemeContainer: ( name: string ) => `.design-button-container:has-text("${ name }")`,
@@ -68,9 +66,6 @@ export class StartSiteFlow {
 		if ( ( await this.page.locator( selectors.goalsStepContainer ).count() ) > 0 ) {
 			return 'goals';
 		}
-		if ( ( await this.page.locator( selectors.verticalsStepContainer ).count() ) > 0 ) {
-			return 'vertical';
-		}
 		if ( ( await this.page.locator( selectors.intentStepContainer ).count() ) > 0 ) {
 			return 'intent';
 		}
@@ -91,24 +86,6 @@ export class StartSiteFlow {
 	async selectGoal( goal: Goals ): Promise< void > {
 		await this.page.click( selectors.goalButton( goal ) );
 		await this.page.waitForSelector( selectors.selectedGoalButton( goal ) );
-	}
-
-	/**
-	 * Enter site vertical.
-	 *
-	 * @param {string} vertical Name of the vertical to select
-	 */
-	async enterVertical( vertical: string ): Promise< void > {
-		const input = this.page.locator( selectors.verticalInput );
-		await input.fill( vertical );
-
-		const targetVerticalLocator = this.page.locator( selectors.verticalSelectItem( vertical ) );
-		await targetVerticalLocator.click();
-
-		const readBack = await input.inputValue();
-		if ( readBack !== vertical ) {
-			throw new Error( `Failed to set vertical: expected ${ vertical }, got ${ readBack }` );
-		}
 	}
 
 	/**

@@ -226,6 +226,7 @@ export function useUpdateMonitorSettings( sites: Array< { blog_id: number; url: 
 									monitor_deferment_time: data.settings.jetmon_defer_status_down_minutes,
 									monitor_user_email_notifications: data.settings.email_notifications,
 									monitor_user_wp_note_notifications: data.settings.wp_note_notifications,
+									monitor_notify_additional_user_emails: data.settings.contacts?.emails ?? [],
 								},
 							};
 						}

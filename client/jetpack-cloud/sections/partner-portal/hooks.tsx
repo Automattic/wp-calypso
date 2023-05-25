@@ -49,17 +49,15 @@ export function useReturnUrl( redirect: boolean ): void {
  *
  */
 export function useRecentPaymentMethodsQuery( { enabled = true }: UseQueryOptions = {} ) {
-	return useQuery(
-		[ 'jetpack-cloud', 'partner-portal', 'recent-cards' ],
-		() =>
+	return useQuery( {
+		queryKey: [ 'jetpack-cloud', 'partner-portal', 'recent-cards' ],
+		queryFn: () =>
 			wpcomJpl.req.get( {
 				apiNamespace: 'wpcom/v2',
 				path: '/jetpack-licensing/stripe/payment-methods',
 			} ),
-		{
-			enabled: enabled,
-		}
-	);
+		enabled: enabled,
+	} );
 }
 
 /**

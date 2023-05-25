@@ -22,14 +22,14 @@ export const useBlockEditorSettingsQuery = (
 
 	const queryKey = [ 'blockEditorSettings', siteId, themeId ];
 
-	return useQuery< BlockEditorSettings >(
+	return useQuery< BlockEditorSettings >( {
 		queryKey,
-		() => {
+		queryFn: () => {
 			return wpcom.req.get( {
 				path: `/sites/${ siteId }/block-editor`,
 				apiNamespace: 'wpcom/v2',
 			} );
 		},
-		{ enabled: isEnabled && !! siteId }
-	);
+		enabled: isEnabled && !! siteId,
+	} );
 };

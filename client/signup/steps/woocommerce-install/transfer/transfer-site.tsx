@@ -56,7 +56,9 @@ export default function TransferSite( {
 		if ( ! siteId ) {
 			return;
 		}
-		dispatch( initiateAtomicTransfer( siteId, { softwareSet: 'woo-on-plans' } ) );
+		dispatch(
+			initiateAtomicTransfer( siteId, { softwareSet: 'woo-on-plans', context: 'woo-on-plans' } )
+		);
 	}, [ dispatch, siteId ] );
 
 	// Poll for transfer status

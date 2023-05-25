@@ -77,13 +77,11 @@ export function useStoredPaymentMethods( {
 
 	const queryKey = [ storedPaymentMethodsQueryKey, type, expired ];
 
-	const { data, isLoading, error } = useQuery< StoredPaymentMethod[], Error >(
+	const { data, isLoading, error } = useQuery< StoredPaymentMethod[], Error >( {
 		queryKey,
-		() => fetchPaymentMethods( type, expired ),
-		{
-			enabled: ! isLoggedOut,
-		}
-	);
+		queryFn: () => fetchPaymentMethods( type, expired ),
+		enabled: ! isLoggedOut,
+	} );
 
 	const translate = useTranslate();
 	const isDataValid = Array.isArray( data );
@@ -93,7 +91,8 @@ export function useStoredPaymentMethods( {
 		StoredPaymentMethod[ 'stored_details_id' ],
 		Error,
 		StoredPaymentMethod[ 'stored_details_id' ]
-	>( ( id ) => requestPaymentMethodDeletion( id ), {
+	>( {
+		mutationFn: ( id ) => requestPaymentMethodDeletion( id ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( [ storedPaymentMethodsQueryKey ] );
 		},

@@ -6,7 +6,7 @@ import {
 import { Button } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import Modal from 'react-modal';
 import MultipleChoiceQuestion from 'calypso/components/multiple-choice-question';
 import { useDispatch } from 'calypso/state';
@@ -24,6 +24,75 @@ import PaymentPlan from './payment-plan';
 import ProductDetails from './product-details';
 
 import './style.scss';
+
+const MOBILE_BREAKPOINT = 782;
+
+const useMobileSidebar = () => {
+	// We need to wait for ReactModal to render elements to get access to refs properly
+	const [ isInitialized, setIsInitialized ] = useState( false );
+	const [ clientWidth, setClientWidth ] = useState( window.innerWidth );
+	const sidebarRef = useRef< HTMLDivElement | null >( null );
+	const detailsRef = useRef< HTMLDivElement | null >( null );
+
+	// Monitor current viewport width to unload hook when on desktop
+	useLayoutEffect( () => {
+		const onResize = () => setClientWidth( window.innerWidth );
+		window.addEventListener( 'resize', onResize );
+
+		return () => {
+			window.removeEventListener( 'resize', onResize );
+		};
+	} );
+
+	useLayoutEffect( () => {
+		const { current: sidebar } = sidebarRef;
+		const { current: details } = detailsRef;
+
+		if ( clientWidth <= MOBILE_BREAKPOINT && sidebar && details ) {
+			// Fetch initial padding bottom set in styles
+			const detailsPaddingBottom = window.getComputedStyle( details ).paddingBottom;
+
+			// Watch for changes in sidebar height (i.e. due to lazy loading of prices)
+			const sidebarObserver = new ResizeObserver( () => {
+				const rect = sidebar.getBoundingClientRect();
+				details.style.paddingBottom = `calc( ${ rect.height }px + ${ detailsPaddingBottom } )`;
+			} );
+
+			sidebarObserver.observe( sidebar );
+
+			const onScroll = () => {
+				// Show sidebar when user scrolls past half of the content (or when there is not enough to scroll)
+				const sidebarThreshold = ( details.scrollHeight - details.clientHeight ) / 2;
+
+				if ( details.scrollTop + 50 >= sidebarThreshold ) {
+					sidebar.classList.add( 'is-expanded' );
+				} else {
+					sidebar.classList.remove( 'is-expanded' );
+				}
+			};
+
+			// Show/hide sidebar on mount
+			onScroll();
+
+			// Check for changes in attributes for details content (i.e. when toggling visibility of sections)
+			const detailsObserver = new MutationObserver( onScroll );
+			detailsObserver.observe( details, { subtree: true, attributes: true } );
+
+			details.addEventListener( 'scroll', onScroll );
+
+			return () => {
+				// Unload everything and reset styles
+				details.style.paddingBottom = '';
+
+				details.removeEventListener( 'scroll', onScroll );
+				detailsObserver.disconnect();
+				sidebarObserver.disconnect();
+			};
+		}
+	}, [ clientWidth, isInitialized ] );
+
+	return { sidebarRef, detailsRef, initMobileSidebar: () => setIsInitialized( true ) };
+};
 
 type Props = ProductStoreBaseProps & {
 	product: SelectorProduct;
@@ -109,6 +178,8 @@ const ProductLightbox: React.FC< Props > = ( {
 		} ) );
 	}, [ product.productSlug ] );
 
+	const { detailsRef, sidebarRef, initMobileSidebar } = useMobileSidebar();
+
 	const shouldShowOptions = variantOptions.length > 1;
 
 	const isMultiSiteIncompatible = isMultisite && ! getIsMultisiteCompatible( product );
@@ -130,6 +201,7 @@ const ProductLightbox: React.FC< Props > = ( {
 			overlayClassName="product-lightbox__modal-overlay"
 			isOpen={ isVisible }
 			onRequestClose={ close }
+			onAfterOpen={ initMobileSidebar }
 			htmlOpenClassName="ReactModal__Html--open lightbox-mode"
 		>
 			<div className="product-lightbox__content-wrapper">
@@ -146,7 +218,7 @@ const ProductLightbox: React.FC< Props > = ( {
 				>
 					{ Icons.close }
 				</Button>
-				<div className="product-lightbox__detail">
+				<div className="product-lightbox__detail" ref={ detailsRef }>
 					<div className="product-lightbox__detail-header">
 						<div className="product-lightbox__product-icon">
 							<img alt="" src={ getProductIcon( { productSlug: product.productSlug } ) } />
@@ -176,7 +248,7 @@ const ProductLightbox: React.FC< Props > = ( {
 
 					<ProductDetails product={ product } />
 				</div>
-				<div className="product-lightbox__sidebar">
+				<div className="product-lightbox__sidebar" ref={ sidebarRef }>
 					<div className="product-lightbox__variants">
 						<div className="product-lightbox__variants-content">
 							{ shouldShowOptions && (

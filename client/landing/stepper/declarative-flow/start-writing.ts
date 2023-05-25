@@ -85,10 +85,12 @@ const startWriting: Flow = {
 					// If we just created a new site.
 					if ( ! providedDependencies?.blogLaunched && providedDependencies?.siteSlug ) {
 						setSelectedSite( providedDependencies?.siteId );
-						setIntentOnSite( providedDependencies?.siteSlug, START_WRITING_FLOW );
-						saveSiteSettings( providedDependencies?.siteId, {
-							launchpad_screen: 'full',
-						} );
+						await Promise.all( [
+							setIntentOnSite( providedDependencies?.siteSlug, START_WRITING_FLOW ),
+							saveSiteSettings( providedDependencies?.siteId, {
+								launchpad_screen: 'full',
+							} ),
+						] );
 
 						const siteOrigin = window.location.origin;
 
@@ -100,7 +102,7 @@ const startWriting: Flow = {
 					// If the user's site has just been launched.
 					if ( providedDependencies?.blogLaunched && providedDependencies?.siteSlug ) {
 						// Remove the site_intent.
-						setIntentOnSite( providedDependencies?.siteSlug, '' );
+						await setIntentOnSite( providedDependencies?.siteSlug, '' );
 
 						// If the user launched their site with a plan or domain in their cart, redirect them to
 						// checkout before sending them home.

@@ -53,20 +53,18 @@ export default function useInvoicesQuery(
 	const dispatch = useDispatch();
 	const activeKeyId = useSelector( getActivePartnerKeyId );
 
-	return useQuery< APIInvoices, QueryError, Invoices >(
-		[ 'partner-portal', 'invoices', activeKeyId, pagination ],
-		queryInvoices,
-		{
-			refetchOnWindowFocus: false,
-			select: selectInvoices,
-			onError: () => {
-				dispatch(
-					errorNotice( translate( 'We were unable to retrieve your invoices.' ), {
-						id: 'partner-portal-invoices-failure',
-					} )
-				);
-			},
-			...options,
-		}
-	);
+	return useQuery< APIInvoices, QueryError, Invoices >( {
+		queryKey: [ 'partner-portal', 'invoices', activeKeyId, pagination ],
+		queryFn: queryInvoices,
+		refetchOnWindowFocus: false,
+		select: selectInvoices,
+		onError: () => {
+			dispatch(
+				errorNotice( translate( 'We were unable to retrieve your invoices.' ), {
+					id: 'partner-portal-invoices-failure',
+				} )
+			);
+		},
+		...options,
+	} );
 }
