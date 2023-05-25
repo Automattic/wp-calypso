@@ -17,6 +17,7 @@ import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { launchpadFlowTasks } from './tasks';
 import { LaunchpadChecklist, LaunchpadStatuses, Task } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
+
 /**
  * Some attributes of these enhanced tasks will soon be fetched through a WordPress REST
  * API, making said enhancements here unnecessary ( Ex. title, subtitle, completed,
@@ -48,6 +49,10 @@ export function getEnhancedTasks(
 		( isStartWritingFlow( flow ) ? planCartProductSlug : null ) ?? site?.plan?.product_slug;
 
 	const translatedPlanName = productSlug ? PLANS_LIST[ productSlug ].getTitle() : '';
+
+	const setupBlogCompleted =
+		Boolean( tasks?.find( ( task ) => task.id === 'setup_blog' )?.completed ) ||
+		! isStartWritingFlow( flow );
 
 	const domainUpsellCompleted = isDomainUpsellCompleted( site, checklistStatuses );
 
@@ -274,7 +279,9 @@ export function getEnhancedTasks(
 					break;
 				case 'blog_launched':
 					taskData = {
-						disabled: isStartWritingFlow( flow ) && ! planCompleted,
+						disabled:
+							isStartWritingFlow( flow ) &&
+							( ! planCompleted || ! domainUpsellCompleted || ! setupBlogCompleted ),
 						actionDispatch: () => {
 							if ( site?.ID ) {
 								const { setPendingAction, setProgressTitle } = dispatch( ONBOARD_STORE );
