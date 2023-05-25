@@ -1,4 +1,3 @@
-import { Button, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useQueryClient } from '@tanstack/react-query';
 import { sprintf } from '@wordpress/i18n';
@@ -6,12 +5,10 @@ import { useI18n } from '@wordpress/react-i18n';
 import { localize } from 'i18n-calypso';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { connect, useDispatch } from 'react-redux';
-import SiteIcon from 'calypso/blocks/site-icon';
-import InlineSupportLink from 'calypso/components/inline-support-link';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpts-query';
-import { urlToSlug } from 'calypso/lib/url';
 import { CardContentWrapper } from 'calypso/my-sites/hosting/staging-site-card/card-content/card-content-wrapper';
+import { ManageStagingSiteCardContent } from 'calypso/my-sites/hosting/staging-site-card/card-content/manage-staging-site-card-content';
 import { NewStagingSiteCardContent } from 'calypso/my-sites/hosting/staging-site-card/card-content/new-staging-site-card-content';
 import { StagingSiteLoadingErrorCardContent } from 'calypso/my-sites/hosting/staging-site-card/card-content/staging-site-loading-error-card-content';
 import { LoadingPlaceholder } from 'calypso/my-sites/hosting/staging-site-card/loading-placeholder';
@@ -19,13 +16,11 @@ import { useAddStagingSiteMutation } from 'calypso/my-sites/hosting/staging-site
 import { useCheckStagingSiteStatus } from 'calypso/my-sites/hosting/staging-site-card/use-check-staging-site-status';
 import { useHasValidQuotaQuery } from 'calypso/my-sites/hosting/staging-site-card/use-has-valid-quota';
 import { useStagingSite } from 'calypso/my-sites/hosting/staging-site-card/use-staging-site';
-import SitesStagingBadge from 'calypso/sites-dashboard/components/sites-staging-badge';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
-import { DeleteStagingSite } from './delete-staging-site';
 import { useDeleteStagingSite } from './use-delete-staging-site';
 
 const stagingSiteAddSuccessNoticeId = 'staging-site-add-success';
@@ -35,49 +30,6 @@ const stagingSiteDeleteFailureNoticeId = 'staging-site-remove-failure';
 
 const StyledLoadingBar = styled( LoadingBar )( {
 	marginBottom: '1em',
-} );
-
-const ActionButtons = styled.div( {
-	display: 'flex',
-	gap: '1em',
-
-	'@media screen and (max-width: 768px)': {
-		gap: '0.5em',
-		flexDirection: 'column',
-		'.button': { flexGrow: 1 },
-	},
-} );
-
-const SiteRow = styled.div( {
-	display: 'flex',
-	alignItems: 'center',
-	marginBottom: 24,
-	'.site-icon': { flexShrink: 0 },
-} );
-
-const SiteInfo = styled.div( {
-	display: 'flex',
-	flexDirection: 'column',
-	marginLeft: 10,
-} );
-
-const SiteNameContainer = styled.div( {
-	display: 'block',
-} );
-
-const SiteName = styled.a( {
-	fontWeight: 500,
-	marginInlineEnd: '8px',
-	'&:hover': {
-		textDecoration: 'underline',
-	},
-	'&, &:hover, &:visited': {
-		color: 'var( --studio-gray-100 )',
-	},
-} );
-
-const StagingSiteLink = styled.div( {
-	wordBreak: 'break-word',
 } );
 
 export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId, translate } ) => {
@@ -248,57 +200,6 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 		addStagingSite();
 	};
 
-	const getManageStagingSiteContent = () => {
-		return (
-			<>
-				<p>
-					{ translate(
-						'Your staging site lets you preview and troubleshoot changes before updating the production site. {{a}}Learn more{{/a}}.',
-						{
-							components: {
-								a: <InlineSupportLink supportContext="hosting-staging-site" showIcon={ false } />,
-							},
-						}
-					) }
-				</p>
-				<SiteRow>
-					<SiteIcon siteId={ stagingSite.id } size={ 40 } />
-					<SiteInfo>
-						<SiteNameContainer>
-							<SiteName
-								href={ `/hosting-config/${ urlToSlug( stagingSite.url ) }` }
-								title={ __( 'Visit Dashboard' ) }
-							>
-								{ stagingSite.name }
-							</SiteName>
-							<SitesStagingBadge>{ translate( 'Staging' ) }</SitesStagingBadge>
-						</SiteNameContainer>
-						<StagingSiteLink>
-							<a href={ stagingSite.url }>{ stagingSite.url }</a>
-						</StagingSiteLink>
-					</SiteInfo>
-				</SiteRow>
-				<ActionButtons>
-					<Button
-						primary
-						href={ `/hosting-config/${ urlToSlug( stagingSite.url ) }` }
-						disabled={ disabled }
-					>
-						<span>{ translate( 'Manage staging site' ) }</span>
-					</Button>
-					<DeleteStagingSite
-						disabled={ disabled }
-						onClickDelete={ deleteStagingSite }
-						isBusy={ isReverting }
-					>
-						<Gridicon icon="trash" />
-						<span>{ __( 'Delete staging site' ) }</span>
-					</DeleteStagingSite>
-				</ActionButtons>
-			</>
-		);
-	};
-
 	const getTransferringStagingSiteContent = useCallback( () => {
 		if ( isReverting ) {
 			return (
@@ -359,7 +260,14 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 	} else if ( addingStagingSite || isTrasferInProgress || isReverting ) {
 		stagingSiteCardContent = getTransferringStagingSiteContent();
 	} else if ( showManageStagingSite && isStagingSiteTransferComplete ) {
-		stagingSiteCardContent = getManageStagingSiteContent();
+		stagingSiteCardContent = (
+			<ManageStagingSiteCardContent
+				stagingSite={ stagingSite }
+				onDeleteClick={ deleteStagingSite }
+				isButtonDisabled={ disabled }
+				isBusy={ isReverting }
+			/>
+		);
 	} else if ( showAddStagingSite && ! addingStagingSite ) {
 		stagingSiteCardContent = (
 			<NewStagingSiteCardContent
