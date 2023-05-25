@@ -13,24 +13,22 @@ const useBlockRendererSettings = (
 		use_inline_styles: useInlineStyles.toString(),
 	} );
 
-	return useQuery< any, unknown, BlockRendererSettings >(
-		[ siteId, 'block-renderer', stylesheet, useInlineStyles ],
-		() =>
+	return useQuery< any, unknown, BlockRendererSettings >( {
+		queryKey: [ siteId, 'block-renderer', stylesheet, useInlineStyles ],
+		queryFn: () =>
 			wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteId ) }/block-renderer/settings`,
 				method: 'GET',
 				apiNamespace: 'wpcom/v2',
 				query: params.toString(),
 			} ),
-		{
-			...queryOptions,
-			staleTime: Infinity,
-			meta: {
-				persist: false,
-				...queryOptions.meta,
-			},
-		}
-	);
+		...queryOptions,
+		staleTime: Infinity,
+		meta: {
+			persist: false,
+			...queryOptions.meta,
+		},
+	} );
 };
 
 export default useBlockRendererSettings;

@@ -22,7 +22,7 @@ import { filterTransactions, paginateTransactions } from './filter-transactions'
 import {
 	getTransactionTermLabel,
 	groupDomainProducts,
-	renderTransactionAmount,
+	TransactionAmount,
 	renderTransactionQuantitySummary,
 } from './utils';
 import type { MouseEvent } from 'react';
@@ -242,10 +242,7 @@ class BillingHistoryList extends Component<
 						</div>
 					</td>
 					<td className="billing-history__amount">
-						{ renderTransactionAmount( transaction, {
-							addingTax: false,
-							translate,
-						} ) }
+						<TransactionAmount transaction={ transaction } />
 					</td>
 				</tr>
 			);

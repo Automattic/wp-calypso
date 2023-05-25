@@ -872,36 +872,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/inline-help@workspace:apps/inline-help":
-  version: 0.0.0-use.local
-  resolution: "@automattic/inline-help@workspace:apps/inline-help"
-  dependencies:
-    "@automattic/calypso-apps-builder": "workspace:^"
-    "@automattic/calypso-babel-config": "workspace:^"
-    "@automattic/calypso-build": "workspace:^"
-    "@automattic/calypso-polyfills": "workspace:^"
-    "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
-    "@automattic/webpack-inline-constant-exports-plugin": "workspace:^"
-    autoprefixer: ^10.2.5
-    calypso: "workspace:^"
-    html-webpack-plugin: ^5.0.0-beta.4
-    jest: ^27.2.4
-    path-browserify: ^1.0.1
-    postcss: ^8.3.11
-    react: ^18.2.0
-    react-dom: ^18.2.0
-    react-query: ^3.32.1
-    react-redux: ^7.2.6
-    redux: ^4.1.2
-    redux-thunk: ^2.3.0
-    webpack: ^5.68.0
-    webpack-bundle-analyzer: ^4.5.0
-    webpack-dev-server: ^4.7.3
-    wpcom: "workspace:^"
-    wpcom-proxy-request: "workspace:^"
-  languageName: unknown
-  linkType: soft
-
 "@automattic/interpolate-components@workspace:^, @automattic/interpolate-components@workspace:packages/interpolate-components":
   version: 0.0.0-use.local
   resolution: "@automattic/interpolate-components@workspace:packages/interpolate-components"
@@ -1233,37 +1203,6 @@ __metadata:
   peerDependencies:
     "@wordpress/data": ^8.0.0
     react: ^18.2.0
-    redux: ^4.1.2
-  languageName: unknown
-  linkType: soft
-
-"@automattic/pattern-picker@workspace:^, @automattic/pattern-picker@workspace:packages/pattern-picker":
-  version: 0.0.0-use.local
-  resolution: "@automattic/pattern-picker@workspace:packages/pattern-picker"
-  dependencies:
-    "@automattic/calypso-build": "workspace:^"
-    "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/i18n-utils": "workspace:^"
-    "@automattic/onboarding": "workspace:^"
-    "@tanstack/react-query": ^4.29.1
-    classnames: ^2.3.1
-    postcss: ^8.4.5
-    react: ^18.2.0
-    react-dom: ^18.2.0
-    redux: ^4.1.2
-    swiper: ^4.5.1
-    tslib: ^2.3.0
-    typescript: ^4.7.4
-    utility-types: ^3.10.0
-    webpack: ^5.68.0
-    wpcom-proxy-request: "workspace:^"
-  peerDependencies:
-    "@wordpress/data": ^8.0.0
-    "@wordpress/element": ^5.0.0
-    "@wordpress/i18n": ^4.22.0
-    debug: ^4.3.3
-    react: ^18.2.0
-    react-dom: ^18.2.0
     redux: ^4.1.2
   languageName: unknown
   linkType: soft
@@ -12563,7 +12502,6 @@ __metadata:
     "@automattic/mini-cart": "workspace:^"
     "@automattic/notifications": "workspace:^"
     "@automattic/onboarding": "workspace:^"
-    "@automattic/pattern-picker": "workspace:^"
     "@automattic/plans-grid": "workspace:^"
     "@automattic/react-virtualized": ^9.22.3
     "@automattic/request-external-access": "workspace:^"

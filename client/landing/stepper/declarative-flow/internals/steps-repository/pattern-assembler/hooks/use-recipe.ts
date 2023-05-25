@@ -92,7 +92,7 @@ const useRecipe = ( siteId = 0, patterns: Pattern[], categories: Category[] ) =>
 					};
 				} )
 		);
-	}, [ patterns.length, categories ] );
+	}, [ patterns.length, categories.length ] );
 
 	useEffect( () => {
 		if ( ! colorVariations || ! color_variation_title ) {

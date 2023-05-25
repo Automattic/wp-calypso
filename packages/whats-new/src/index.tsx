@@ -29,9 +29,9 @@ interface APIFetchOptions {
 const WhatsNewGuide: React.FC< Props > = ( { onClose } ) => {
 	const locale = useLocale();
 
-	const { data, isLoading } = useQuery< WhatsNewAnnouncement[] >(
-		[ 'WhatsNewAnnouncements' ],
-		async () =>
+	const { data, isLoading } = useQuery< WhatsNewAnnouncement[] >( {
+		queryKey: [ 'WhatsNewAnnouncements' ],
+		queryFn: async () =>
 			canAccessWpcomApis()
 				? await wpcomRequest( {
 						path: `/whats-new/list?_locale=${ locale }`,
@@ -41,10 +41,8 @@ const WhatsNewGuide: React.FC< Props > = ( { onClose } ) => {
 						global: true,
 						path: `/wpcom/v2/block-editor/whats-new-list?_locale=${ locale }`,
 				  } as APIFetchOptions ),
-		{
-			refetchOnWindowFocus: false,
-		}
-	);
+		refetchOnWindowFocus: false,
+	} );
 
 	if ( ! data || isLoading ) {
 		return null;

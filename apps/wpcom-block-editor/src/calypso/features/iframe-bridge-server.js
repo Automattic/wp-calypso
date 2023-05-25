@@ -530,6 +530,7 @@ async function openLinksInParentFrame( calypsoPort ) {
 		'.components-snackbar-list .components-snackbar__content a', // View Post link in success snackbar, Gutenberg >=5.9
 		'.post-publish-panel__postpublish .components-panel__body.is-opened a', // Post title link in publish panel
 		'.components-panel__body.is-opened .post-publish-panel__postpublish-buttons a.components-button', // View Post button in publish panel
+		'.wpcom-block-editor-post-published-sharing-modal__view-post-link', // View Post button in sharing modal
 	].join( ',' );
 
 	addEditorListener( viewPostLinks, ( e ) => {

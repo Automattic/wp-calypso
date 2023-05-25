@@ -53,9 +53,9 @@ export function useSiteLogsQuery(
 		setScrollId( undefined );
 	}
 
-	const queryResult = useQuery< SiteLogsAPIResponse, unknown, SiteLogsData >(
-		buildQueryKey( siteId, params ),
-		() => {
+	const queryResult = useQuery< SiteLogsAPIResponse, unknown, SiteLogsData >( {
+		queryKey: buildQueryKey( siteId, params ),
+		queryFn: () => {
 			const logTypeFragment = params.logType === 'php' ? 'error-logs' : 'logs';
 			const path = `/sites/${ siteId }/hosting/${ logTypeFragment }`;
 			return wpcom.req.post(
@@ -69,33 +69,31 @@ export function useSiteLogsQuery(
 				}
 			);
 		},
-		{
-			enabled: !! siteId && params.start <= params.end,
-			staleTime: Infinity, // The logs within a specified time range never change.
-			select( { data } ) {
-				return {
-					...data,
-					total_results:
-						typeof data.total_results === 'number' ? data.total_results : data.total_results.value,
-				};
-			},
-			onSuccess( data ) {
-				if ( data.scroll_id ) {
-					setScrollId( data.scroll_id );
-				} else {
-					setIsFinishedPaging( true );
-				}
+		enabled: !! siteId && params.start <= params.end,
+		staleTime: Infinity, // The logs within a specified time range never change.
+		select( { data } ) {
+			return {
+				...data,
+				total_results:
+					typeof data.total_results === 'number' ? data.total_results : data.total_results.value,
+			};
+		},
+		onSuccess( data ) {
+			if ( data.scroll_id ) {
+				setScrollId( data.scroll_id );
+			} else {
+				setIsFinishedPaging( true );
+			}
 
-				if ( queryOptions.onSuccess ) {
-					return queryOptions.onSuccess( data );
-				}
-			},
-			meta: {
-				persist: false,
-			},
-			...queryOptions,
-		}
-	);
+			if ( queryOptions.onSuccess ) {
+				return queryOptions.onSuccess( data );
+			}
+		},
+		meta: {
+			persist: false,
+		},
+		...queryOptions,
+	} );
 
 	// The state represented by scroll ID will have already advanced to the next page, so we
 	// can't allow `refetch` to be used. Remember, the logs are fetched with a POST and the

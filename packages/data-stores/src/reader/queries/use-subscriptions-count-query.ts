@@ -8,19 +8,17 @@ const useSubscriptionsCountQuery = () => {
 	const enabled = useIsQueryEnabled();
 	const cacheKey = useCacheKey( [ 'read', 'subscriptions-count' ] );
 
-	return useQuery< SubscriptionManagerSubscriptionsCount >(
-		cacheKey,
-		async () => {
+	return useQuery< SubscriptionManagerSubscriptionsCount >( {
+		queryKey: cacheKey,
+		queryFn: async () => {
 			return await callApi< SubscriptionManagerSubscriptionsCount >( {
 				path: '/read/subscriptions-count',
 				isLoggedIn,
 			} );
 		},
-		{
-			enabled,
-			refetchOnWindowFocus: false,
-		}
-	);
+		enabled,
+		refetchOnWindowFocus: false,
+	} );
 };
 
 export default useSubscriptionsCountQuery;

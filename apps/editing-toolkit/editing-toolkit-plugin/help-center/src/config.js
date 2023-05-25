@@ -41,6 +41,7 @@ window.configData = {
 	gutenboarding_url: '/new',
 	features: {
 		happychat: false,
+		'help/gpt-response': true,
 	},
 	signup_url: '/',
 	discover_blog_id: 53424024,

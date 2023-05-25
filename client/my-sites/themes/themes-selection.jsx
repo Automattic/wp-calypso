@@ -25,7 +25,7 @@ import {
 	isInstallingTheme,
 	prependThemeFilterKeys,
 } from 'calypso/state/themes/selectors';
-import { trackClick } from './helpers';
+import { addStyleVariation, trackClick } from './helpers';
 import SearchThemesTracks from './search-themes-tracks';
 import './themes-selection.scss';
 
@@ -136,18 +136,8 @@ class ThemesSelection extends Component {
 				'calypso_themeshowcase_theme_style_variation_more_click',
 				tracksProps
 			);
-		}
 
-		const url = this.props.getThemeDetailsUrl( themeId );
-		if ( url ) {
-			const [ urlBase, urlQuery ] = url.split( '?' );
-			const params = new URLSearchParams( urlQuery );
-			if ( variation ) {
-				params.set( 'style_variation', variation.slug );
-			}
-
-			const paramsString = params.toString().length ? `?${ params.toString() }` : '';
-			pageRouter( `${ urlBase }${ paramsString }` );
+			pageRouter( this.props.getThemeDetailsUrl( themeId ) );
 		}
 	};
 
@@ -183,7 +173,7 @@ class ThemesSelection extends Component {
 
 	//intercept preview and add primary and secondary
 	getOptions = ( themeId, styleVariation, context ) => {
-		const options = this.props.getOptions( themeId );
+		let options = this.props.getOptions( themeId, styleVariation );
 		const wrappedPreviewAction = ( action ) => {
 			let defaultOption;
 			let secondaryOption = this.props.secondaryOption;
@@ -212,13 +202,21 @@ class ThemesSelection extends Component {
 				} else {
 					defaultOption = options.activate;
 				}
-				this.props.setThemePreviewOptions( themeId, defaultOption, secondaryOption, null );
+				this.props.setThemePreviewOptions(
+					themeId,
+					defaultOption,
+					secondaryOption,
+					styleVariation
+				);
 				return action( t, context );
 			};
 		};
 
-		if ( options && options.preview ) {
-			options.preview.action = wrappedPreviewAction( options.preview.action );
+		if ( options ) {
+			options = addStyleVariation( options, styleVariation, this.props.isLoggedIn );
+			if ( options.preview ) {
+				options.preview.action = wrappedPreviewAction( options.preview.action );
+			}
 		}
 
 		return options;

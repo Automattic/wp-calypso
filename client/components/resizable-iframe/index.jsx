@@ -18,6 +18,7 @@ export default class extends Component {
 		height: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
 		onLoad: PropTypes.func,
 		onResize: PropTypes.func,
+		role: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -155,6 +156,7 @@ export default class extends Component {
 		const omitProps = [ 'onResize' ];
 		return (
 			<iframe
+				title="resizable iframe"
 				ref={ this.iframeRef }
 				{ ...omit( this.props, omitProps ) }
 				onLoad={ this.onLoad }

@@ -9,14 +9,12 @@ export interface TagStats {
 }
 
 export const useTagStats = ( tag: string ): UseQueryResult< TagStats | null > =>
-	useQuery(
-		[ 'tag-stats', tag ],
-		() =>
+	useQuery( {
+		queryKey: [ 'tag-stats', tag ],
+		queryFn: () =>
 			wp.req.get( `/read/topics/${ encodeURIComponent( tag ) }/stats`, {
 				apiVersion: '1.3',
 			} ),
-		{
-			staleTime: 86400000, // 1 day
-			refetchOnMount: 'always',
-		}
-	);
+		staleTime: 86400000, // 1 day
+		refetchOnMount: 'always',
+	} );
