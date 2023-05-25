@@ -72,7 +72,6 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 			'is-active': this.props.isActive,
 			'has-unseen': this.props.hasUnseen,
 			'masterbar__item--always-show-content': this.props.alwaysShowContent,
-			'masterbar__item-disabled': this.props.disabled,
 		} );
 
 		const attributes = {
@@ -82,7 +81,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 			className: itemClasses,
 			onTouchStart: this.preload,
 			onMouseEnter: this.preload,
-			tabIndex: this.props.disabled ? -1 : undefined,
+			disabled: this.props.disabled,
 		};
 
 		if ( this.props.url ) {

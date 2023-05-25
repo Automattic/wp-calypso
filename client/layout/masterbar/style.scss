@@ -315,10 +315,7 @@ $masterbar-color-secondary: #101517;
 		}
 	}
 
-	&.masterbar__item-disabled {
-		&:focus {
-			box-shadow: none;
-		}
+	&:disabled {
 		&:hover {
 			background: initial;
 			color: initial;
