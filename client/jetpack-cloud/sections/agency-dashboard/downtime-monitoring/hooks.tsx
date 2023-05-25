@@ -36,8 +36,9 @@ export function useValidateVerificationCode(): {
 		},
 	} );
 	let errorMessage = '';
-	if ( data.isError && data.error?.data ) {
-		const reasonCode = data.error.data.reason_code;
+	if ( data.isError ) {
+		errorMessage = translate( 'Something went wrong. Please try again.' );
+		const reasonCode = data?.error?.data?.reason_code;
 		if ( reasonCode === 'invalid_partner_authentication_token' ) {
 			errorMessage = translate( 'Invalid Code' );
 		}
