@@ -379,7 +379,12 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 } ) => {
 	const { planName, planConstantObj, availableForPurchase, current, ...planPropertiesObj } =
 		planProperties;
-	const highlightLabel = useHighlightLabel( { planName, flowName, currentSitePlanSlug } );
+	const highlightLabel = useHighlightLabel( {
+		planName,
+		flowName,
+		currentSitePlanSlug,
+		selectedPlan,
+	} );
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
 		visiblePlans: visiblePlansProperties,
 		flowName,
@@ -545,6 +550,7 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	isStorageFeature: boolean;
 	flowName: string;
 	currentSitePlanSlug?: string;
+	selectedPlan?: string;
 } > = ( {
 	feature,
 	visiblePlansProperties,
@@ -553,6 +559,7 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	isStorageFeature,
 	flowName,
 	currentSitePlanSlug,
+	selectedPlan,
 } ) => {
 	const translate = useTranslate();
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
@@ -560,7 +567,12 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 		flowName,
 		currentSitePlanSlug,
 	} );
-	const highlightLabel = useHighlightLabel( { planName, flowName, currentSitePlanSlug } );
+	const highlightLabel = useHighlightLabel( {
+		planName,
+		flowName,
+		currentSitePlanSlug,
+		selectedPlan,
+	} );
 	const featureSlug = feature?.getSlug();
 	const hasFeature =
 		isStorageFeature ||
@@ -639,6 +651,7 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	flowName: string;
 	currentSitePlanSlug?: string;
 	isHighlighted: boolean;
+	selectedPlan?: string;
 } > = ( {
 	feature,
 	isHiddenInMobile,
@@ -650,6 +663,7 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	flowName,
 	currentSitePlanSlug,
 	isHighlighted,
+	selectedPlan,
 } ) => {
 	const translate = useTranslate();
 	const rowClasses = classNames( 'plan-comparison-grid__feature-group-row', {
@@ -702,6 +716,7 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 					isStorageFeature={ isStorageFeature }
 					flowName={ flowName }
 					currentSitePlanSlug={ currentSitePlanSlug }
+					selectedPlan={ selectedPlan }
 				/>
 			) ) }
 		</Row>
@@ -974,6 +989,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 									flowName={ flowName }
 									currentSitePlanSlug={ currentSitePlanSlug }
 									isHighlighted={ feature.getSlug() === selectedFeature }
+									selectedPlan={ selectedPlan }
 								/>
 							) ) }
 							{ featureGroup.slug === FEATURE_GROUP_ESSENTIAL_FEATURES ? (
@@ -988,6 +1004,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 									flowName={ flowName }
 									currentSitePlanSlug={ currentSitePlanSlug }
 									isHighlighted={ false }
+									selectedPlan={ selectedPlan }
 								/>
 							) : null }
 						</div>
