@@ -8,7 +8,7 @@ import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-secti
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { useActivityPubStatus, useActivityPubStatusMutation } from './hooks';
+import { useActivityPubStatus } from './hooks';
 
 const ACTIVITYPUB_CATCHALL_PREFIX = 'feed';
 
@@ -73,9 +73,8 @@ export const FediverseSettingsSection = () => {
 	// todo: get/set this from a real endpoint.
 	// todo: make the endpoint.
 	const siteId = useSelector( getSelectedSiteId );
-	const { isEnabled, isLoading, isError } = useActivityPubStatus( siteId );
-	const { setEnabled, isMutating } = useActivityPubStatusMutation( siteId );
-	const disabled = isMutating || isLoading || isError;
+	const { isEnabled, setEnabled, isLoading, isError } = useActivityPubStatus( siteId );
+	const disabled = isLoading || isError;
 
 	return (
 		<>

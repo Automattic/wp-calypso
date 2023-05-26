@@ -1,41 +1,35 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
-const queryKey = ( blogId ) => [ 'activitypub/status', blogId ];
-const queryPath = ( blogId ) => `/sites/${ blogId }/activitypub/status`;
+export const useActivityPubStatus = ( blogId ) => {
+	const key = [ 'activitypub/status', blogId ];
+	const path = `/sites/${ blogId }/activitypub/status`;
 
-export const useActivityPubStatusMutation = ( blogId ) => {
+	const { data, isInitialLoading, isError } = useQuery( {
+		queryKey: key,
+		queryFn: () => {
+			return wpcom.req.get( {
+				path,
+				apiNamespace: 'wpcom/v2',
+			} );
+		},
+	} );
 	const queryClient = useQueryClient();
 	const { mutate, isLoading } = useMutation( {
 		mutationFn: ( enabled ) => {
 			return wpcom.req.post( {
-				path: queryPath( blogId ),
+				path,
 				body: { enabled },
 				apiNamespace: 'wpcom/v2',
 			} );
 		},
-		onSuccess: ( { enabled } ) => queryClient.setQueryData( queryKey( blogId ), { enabled } ),
-	} );
-	return {
-		setEnabled: mutate,
-		isMutating: isLoading,
-	};
-};
-
-export const useActivityPubStatus = ( blogId ) => {
-	const { data, isInitialLoading, isError } = useQuery( {
-		queryKey: [ 'activitypub/status', blogId ],
-		queryFn: () => {
-			return wpcom.req.get( {
-				path: queryPath( blogId ),
-				apiNamespace: 'wpcom/v2',
-			} );
-		},
+		onSuccess: ( { enabled } ) => queryClient.setQueryData( key, { enabled } ),
 	} );
 
 	return {
 		isEnabled: !! data?.enabled,
-		isLoading: isInitialLoading,
+		setEnabled: mutate,
+		isLoading: isInitialLoading || isLoading,
 		isError,
 	};
 };
