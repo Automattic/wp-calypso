@@ -66,6 +66,7 @@ export default function EmailAddressEditor( {
 	const handleResendCode = useCallback( () => {
 		setValidationError( undefined );
 		recordEvent( 'downtime_monitoring_resend_email_verification_code' );
+		// TODO: implement resending verification code
 	}, [ recordEvent ] );
 
 	const handleSetEmailItems = useCallback(
