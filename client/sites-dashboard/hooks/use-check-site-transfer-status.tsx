@@ -1,21 +1,19 @@
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { requestLatestAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
+import { transferStates } from 'calypso/state/atomic/transfers/constants';
 import { getLatestAtomicTransfer } from 'calypso/state/atomic/transfers/selectors';
-import { transferStates } from 'calypso/state/automated-transfer/constants';
 
 interface SiteTransferStatusProps {
 	siteId: number;
 	intervalTime?: number;
 }
 
-const inactiveTransferStatuses = [
-	transferStates.NONE,
-	transferStates.ERROR,
-	transferStates.FAILURE,
-	transferStates.REVERTED,
-	transferStates.COMPLETE,
-	transferStates.RELOCATING_REVERT,
+const activeTransferStatuses = [
+	transferStates.PENDING,
+	transferStates.ACTIVE,
+	transferStates.PROVISIONED,
+	transferStates.RELOCATING_SWITCHEROO,
 ] as const;
 
 const isTransferInProgress = ( transferStatus: string | null ) => {
@@ -23,9 +21,9 @@ const isTransferInProgress = ( transferStatus: string | null ) => {
 		return false;
 	}
 
-	const typedTransferStatus = transferStatus as ( typeof inactiveTransferStatuses )[ number ];
+	const typedTransferStatus = transferStatus as ( typeof activeTransferStatuses )[ number ];
 
-	return ! inactiveTransferStatuses.includes( typedTransferStatus );
+	return activeTransferStatuses.includes( typedTransferStatus );
 };
 
 export const useCheckSiteTransferStatus = ( {
@@ -38,10 +36,9 @@ export const useCheckSiteTransferStatus = ( {
 		( state ) => getLatestAtomicTransfer( state, siteId ).transfer?.status ?? null
 	);
 
-	const isTransferCompleted = transferStatus === transferStates.COMPLETE;
+	const isTransferCompleted = transferStatus === transferStates.COMPLETED;
 	const isTransferring = isTransferInProgress( transferStatus );
-	const isErrored =
-		transferStatus === transferStates.ERROR || transferStatus === transferStates.FAILURE;
+	const isErrored = transferStatus === transferStates.ERROR;
 
 	const [ wasTransferring, setWasTransferring ] = useState( false );
 	const dismissTransferNoticeRef = useRef< NodeJS.Timeout >();
