@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import { MigrationEnabledResponse } from './types';
 import type { SiteId, URL } from 'calypso/types';
@@ -14,8 +14,10 @@ export const useMigrationEnabledInfoQuery = (
 	targetSiteId: SiteId,
 	sourcSite: SiteId | URL,
 	enabled = true,
-	onSuccessCallback?: ( data: MigrationEnabledResponse ) => void
+	onSuccessCallback?: ( data: MigrationEnabledResponse ) => void,
+	onErrorCallback?: () => void
 ) => {
+	const queryClient = useQueryClient();
 	const queryKey = [ 'migration-enabled', sourcSite ];
 
 	return useQuery(
@@ -32,6 +34,11 @@ export const useMigrationEnabledInfoQuery = (
 			enabled: !! ( enabled && targetSiteId && sourcSite ),
 			retry: false,
 			onSuccess: onSuccessCallback,
+			onError: () => {
+				// Clear data on error
+				queryClient.setQueryData( queryKey, null );
+				onErrorCallback && onErrorCallback();
+			},
 		}
 	);
 };
