@@ -112,6 +112,10 @@ export const isWithThemeFlow = ( flowName: string | null ) => {
 	return !! flowName && WITH_THEME_FLOWS.includes( flowName );
 };
 
+export const isSiteSetupFlow = ( flowName: string | null ) => {
+	return !! flowName && SITE_SETUP_FLOW === flowName;
+};
+
 export const ecommerceFlowRecurTypes = {
 	YEARLY: 'yearly',
 	MONTHLY: 'monthly',

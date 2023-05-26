@@ -118,6 +118,7 @@ function getChecklistThemeDestination( { flowName, siteSlug, themeParameter } ) 
 				{
 					theme: themeParameter,
 					siteSlug: siteSlug,
+					isNewSite: true,
 				},
 				`/setup/with-theme-assembler`
 			);
