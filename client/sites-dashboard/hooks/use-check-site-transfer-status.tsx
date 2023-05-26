@@ -25,7 +25,10 @@ export const useCheckSiteTransferStatus = ( {
 
 	const isTransferCompleted = transferStatus === transferStates.COMPLETE;
 	const isTransferring =
-		transferStatus !== null && transferStatus !== transferStates.NONE && ! isTransferCompleted;
+		transferStatus !== null &&
+		transferStatus !== transferStates.NONE &&
+		transferStatus !== transferStates.REVERTED &&
+		! isTransferCompleted;
 	const isErrored =
 		transferStatus === transferStates.ERROR || transferStatus === transferStates.FAILURE;
 
