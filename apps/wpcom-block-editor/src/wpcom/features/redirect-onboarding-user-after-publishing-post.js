@@ -1,9 +1,11 @@
 import { dispatch, select, subscribe } from '@wordpress/data';
 import { getQueryArg } from '@wordpress/url';
 import { useEffect } from 'react';
+import { inIframe } from '../../utils';
 import useSiteIntent from './use-site-intent';
 
 const START_WRITING_FLOW = 'start-writing';
+const DESIGN_FIRST_FLOW = 'design-first';
 
 export function RedirectOnboardingUserAfterPublishingPost() {
 	const { siteIntent: intent } = useSiteIntent();
@@ -13,13 +15,17 @@ export function RedirectOnboardingUserAfterPublishingPost() {
 		const hasStartWritingFlowQueryArg =
 			getQueryArg( window.location.search, START_WRITING_FLOW ) === 'true';
 
-		if ( intent === START_WRITING_FLOW || hasStartWritingFlowQueryArg ) {
+		if (
+			intent === START_WRITING_FLOW ||
+			intent === DESIGN_FIRST_FLOW ||
+			hasStartWritingFlowQueryArg
+		) {
 			dispatch( 'core/edit-post' ).closeGeneralSidebar();
-			document.documentElement.classList.add( 'start-writing-hide' );
+			document.documentElement.classList.add( 'blog-onboarding-hide' );
 		}
 	}, [ intent ] );
 
-	if ( intent !== START_WRITING_FLOW ) {
+	if ( intent !== START_WRITING_FLOW && intent !== DESIGN_FIRST_FLOW ) {
 		return false;
 	}
 
@@ -46,7 +52,13 @@ export function RedirectOnboardingUserAfterPublishingPost() {
 			unsubscribe();
 
 			dispatch( 'core/edit-post' ).closePublishSidebar();
-			window.location.href = `${ siteOrigin }/setup/start-writing/launchpad?siteSlug=${ siteSlug }&${ START_WRITING_FLOW }=true`;
+
+			const postPublishURL = `${ siteOrigin }/setup/${ intent }/launchpad?siteSlug=${ siteSlug }`;
+			if ( ! inIframe ) {
+				window.location.href = postPublishURL;
+			} else {
+				window.open( postPublishURL, '_top' );
+			}
 		}
 	} );
 }
