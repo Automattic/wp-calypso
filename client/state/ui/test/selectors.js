@@ -7,7 +7,6 @@ import {
 	getSectionName,
 	getSectionGroup,
 	isSiteSection,
-	isBlazeEnabled,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -229,40 +228,6 @@ describe( 'selectors', () => {
 			} );
 
 			expect( siteSection ).toBe( true );
-		} );
-	} );
-
-	describe( 'isBlazeEnabled()', () => {
-		test( 'should return false if no siteId is defined', () => {
-			const siteId = null;
-			const state = {
-				sites: {
-					items: {
-						[ siteId ]: {},
-					},
-				},
-			};
-			const blazeEnabled = isBlazeEnabled( state, siteId );
-
-			expect( blazeEnabled ).toBe( false );
-		} );
-
-		test( 'should return true if siteId is defined', () => {
-			const siteId = 1;
-			const state = {
-				sites: {
-					items: {
-						[ siteId ]: {
-							options: {
-								can_blaze: true,
-							},
-						},
-					},
-				},
-			};
-			const blazeEnabled = isBlazeEnabled( state, siteId );
-
-			expect( blazeEnabled ).toBe( true );
 		} );
 	} );
 } );
