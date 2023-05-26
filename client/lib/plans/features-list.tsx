@@ -1762,7 +1762,7 @@ export const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'The Reader' ),
 		getDescription: () =>
 			i18n.translate(
-				'Read posts from all the sites you follow, find great new reads, and keep track of your comments and replies in one convenient place.'
+				'Discover new reads and catch up on posts, comments, and replies from the sites you subscribe to.'
 			),
 	},
 
