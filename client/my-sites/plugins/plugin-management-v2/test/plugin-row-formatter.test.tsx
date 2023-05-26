@@ -120,7 +120,7 @@ describe( '<PluginRowFormatter>', () => {
 		plugin.sites = sitesOriginal;
 	} );
 
-	// These skipped test nevers actually worked, it just tests that the HTML toggle actually toggled.
+	// TODO: These skipped test nevers actually worked, it just tests that the HTML toggle actually toggled.
 	// To verify comment out the entirety of the toggle callbacks in the relevant components and observe
 	// that the test still pass.
 	// They were passing because their toggle code didn't execute. I changed some test data which caused
