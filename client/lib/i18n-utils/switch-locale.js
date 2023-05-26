@@ -265,6 +265,22 @@ function getInstalledChunks() {
 }
 
 /**
+ * Capture exceptions from `getTranslationChunkFile`.
+ *
+ * @param  {Error}  error
+ * @param  {string} chunkId
+ * @param  {string} localeSlug
+ */
+function captureGetTranslationChunkFileException( error, chunkId, localeSlug ) {
+	captureException( error, {
+		tags: {
+			chunk_id: chunkId,
+			locale_slug: localeSlug,
+		},
+	} );
+}
+
+/**
  * Used to keep the reference to the require chunk translations handler.
  */
 let lastRequireChunkTranslationsHandler = null;
@@ -298,12 +314,7 @@ function addRequireChunkTranslationsHandler( localeSlug = i18n.getLocaleSlug(), 
 					`Encountered an error loading translation chunk in require chunk translations handler.`,
 					{ cause }
 				);
-				captureException( error, {
-					tags: {
-						chunk_id: chunkId,
-						locale_slug: localeSlug,
-					},
-				} );
+				captureGetTranslationChunkFileException( error, chunkId, localeSlug );
 				debug( error );
 			} );
 
@@ -395,12 +406,7 @@ export default async function switchLocale( localeSlug ) {
 							`Encountered an error loading translation chunk while switching the locale.`,
 							{ cause }
 						);
-						captureException( error, {
-							tags: {
-								chunk_id: chunkId,
-								locale_slug: localeSlug,
-							},
-						} );
+						captureGetTranslationChunkFileException( error, chunkId, localeSlug );
 						debug( error );
 					} )
 			);
