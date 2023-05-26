@@ -2,11 +2,6 @@ import type { SectionHeadingProps } from './shared/section-heading';
 
 export interface SocialPreviewBaseProps {
 	/**
-	 * The name of the site
-	 */
-	siteName?: string;
-
-	/**
 	 * The URL of the post/page to preview.
 	 */
 	url: string;
