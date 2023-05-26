@@ -1,0 +1,42 @@
+@import "./variables";
+@import "../shared";
+
+.mastodon-preview__section {
+	max-width: 100%;
+	width: $mastodon-preview-width;
+	margin-inline: auto;
+}
+
+.mastodon-preview__post {
+	width: 100%;
+	overflow-y: hidden;
+	box-sizing: border-box;
+	padding: 1rem;
+
+	background-color: $mastodon-preview-background-color;
+	border: 1px solid #c0cdd9;
+	color: $mastodon-preview-text-color;
+
+	font-family: $mastodon-preview-font-family;
+	/* stylelint-disable-next-line scales/font-sizes */
+	font-size: 0.9375rem;
+	line-height: 1.47;
+
+	:any-link {
+		color: $mastodon-preview-accent-color;
+
+		text-decoration: none;
+	}
+}
+
+.mastodon-preview__img {
+	display: block;
+
+	width: 100%;
+	margin: 0.875rem auto 0;
+
+	border-radius: 4px;
+
+	aspect-ratio: 16 / 9;
+	object-fit: cover;
+}
