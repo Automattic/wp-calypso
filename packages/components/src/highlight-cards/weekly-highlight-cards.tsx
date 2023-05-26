@@ -53,7 +53,7 @@ export default function WeeklyHighlightCards( {
 	const textRef = useRef( null );
 	const settingsActionRef = useRef( null );
 	const [ isTooltipVisible, setTooltipVisible ] = useState( false );
-	const [ isPopoverVisible, setPopoverVisible ] = useState( true );
+	const [ isPopoverVisible, setPopoverVisible ] = useState( false );
 
 	const togglePopoverMenu = () => {
 		setPopoverVisible( ! isPopoverVisible );
@@ -128,7 +128,7 @@ export default function WeeklyHighlightCards( {
 							</button>
 							<button>
 								{ translate( '30-day highlights' ) }
-								<Icon className="gridicon" icon={ check } />
+								{ false && <Icon className="gridicon" icon={ check } /> }
 							</button>
 						</Popover>
 					</div>
