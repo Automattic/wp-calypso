@@ -49,7 +49,7 @@ const UseMyDomain: Step = function UseMyDomain( { navigation, flow } ) {
 		return String( getQueryArg( window.location.search, 'lastQuery' ) ?? '' );
 	};
 
-	const getStartWritingFlowStepContent = () => {
+	const getBlogOnboardingFlowStepContent = () => {
 		return (
 			<CalypsoShoppingCartProvider>
 				<UseMyDomainComponent
@@ -70,7 +70,7 @@ const UseMyDomain: Step = function UseMyDomain( { navigation, flow } ) {
 		switch ( flow ) {
 			case START_WRITING_FLOW:
 			case DESIGN_FIRST_FLOW:
-				return getStartWritingFlowStepContent();
+				return getBlogOnboardingFlowStepContent();
 			default:
 				return getDefaultStepContent();
 		}

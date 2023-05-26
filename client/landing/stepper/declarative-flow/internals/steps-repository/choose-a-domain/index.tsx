@@ -95,7 +95,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 		submit?.( { freeDomain: suggestion?.is_free, domainName: suggestion?.domain_name } );
 	};
 
-	const getStartWritingFlowStepContent = () => {
+	const getBlogOnboardingFlowStepContent = () => {
 		return (
 			<CalypsoShoppingCartProvider>
 				<RegisterDomainStep
@@ -177,7 +177,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 				return getVideoPressFlowStepContent();
 			case START_WRITING_FLOW:
 			case DESIGN_FIRST_FLOW:
-				return getStartWritingFlowStepContent();
+				return getBlogOnboardingFlowStepContent();
 			default:
 				return getDefaultStepContent();
 		}
