@@ -1,4 +1,4 @@
-import { StepContainer, isStartWritingFlow } from '@automattic/onboarding';
+import { StepContainer } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
@@ -36,8 +36,7 @@ const SetupBlog: Step = ( { navigation, flow } ) => {
 	const { siteTitle, setComponentSiteTitle, tagline, setTagline } = useSetupFormInitialValues();
 
 	useEffect( () => {
-		// Clear site title and show placeholder for the flows below
-		if ( isStartWritingFlow( flow ) && siteTitle === 'Site Title' ) {
+		if ( siteTitle === 'Site Title' ) {
 			setComponentSiteTitle( '' );
 		}
 	}, [ flow, setComponentSiteTitle, siteTitle ] );
