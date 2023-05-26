@@ -47,19 +47,21 @@ const usePostSubscriptionsQuery = ( {
 		useInfiniteQuery< SubscriptionManagerPostSubscriptions >(
 			cacheKey,
 			async ( { pageParam = 1 } ) => {
-				return await callApi< SubscriptionManagerPostSubscriptions >( {
+				const result = await callApi< SubscriptionManagerPostSubscriptions >( {
 					path: `/post-comment-subscriptions?per_page=${ number }&page=${ pageParam }`,
 					isLoggedIn,
 					apiVersion: '2',
 					apiNamespace: 'wpcom/v2',
 				} );
+
+				return result;
 			},
 			{
 				enabled,
-				getNextPageParam: ( lastPage, pages ) => {
-					const total = pages.reduce( ( sum, page ) => sum + page.comment_subscriptions.length, 0 );
-					return total < lastPage.total_comment_subscriptions_count ? pages.length + 1 : undefined;
-				},
+				getNextPageParam: ( lastPage, pages ) =>
+					pages.length * number >= lastPage.total_comment_subscriptions_count
+						? undefined
+						: pages.length + 1,
 				refetchOnWindowFocus: false,
 			}
 		);
