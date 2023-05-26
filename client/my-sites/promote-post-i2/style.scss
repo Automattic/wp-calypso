@@ -233,6 +233,12 @@ body.is-section-promote-post-i2 {
 					font-size: 0.875rem;
 					line-height: 1.67;
 					padding: 0 8px;
+
+					@media screen and (max-width: $break-mobile) {
+						& {
+							font-size: 0.75rem;
+						}
+					}
 				}
 			}
 		}
