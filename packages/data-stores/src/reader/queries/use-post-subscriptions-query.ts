@@ -66,7 +66,7 @@ const usePostSubscriptionsQuery = ( {
 					apiNamespace: 'wpcom/v2',
 				} );
 
-				if ( result.comment_subscriptions.length === 0 ) {
+				if ( pageParam * number >= result.total_comment_subscriptions_count ) {
 					stopFetchingRef.current = true;
 				}
 
