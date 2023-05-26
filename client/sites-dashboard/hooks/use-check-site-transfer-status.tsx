@@ -47,7 +47,7 @@ export const useCheckSiteTransferStatus = ( {
 	const dismissTransferNoticeRef = useRef< NodeJS.Timeout >();
 
 	useEffect( () => {
-		if ( ! isTransferInProgress( transferStatus ) ) {
+		if ( ! isTransferring ) {
 			return;
 		}
 
@@ -56,13 +56,11 @@ export const useCheckSiteTransferStatus = ( {
 		}, intervalTime );
 
 		return () => clearInterval( intervalId );
-	}, [ siteId, dispatch, transferStatus, isTransferCompleted, intervalTime ] );
+	}, [ siteId, dispatch, isTransferring, intervalTime ] );
 
 	useEffect( () => {
-		if ( siteId ) {
-			dispatch( requestLatestAtomicTransfer( siteId ) );
-		}
-	}, [ siteId, dispatch ] );
+		dispatch( requestLatestAtomicTransfer( siteId ) );
+	}, [ isTransferCompleted, siteId, dispatch ] );
 
 	useEffect( () => {
 		if ( isTransferring && ! wasTransferring ) {
