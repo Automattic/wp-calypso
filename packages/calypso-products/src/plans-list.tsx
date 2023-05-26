@@ -406,6 +406,7 @@ import {
 	FEATURE_STREAMLINED_CHECKOUT,
 	FEATURE_SELL_60_COUNTRIES,
 	FEATURE_SHIPPING_INTEGRATIONS,
+	FEATURE_THE_READER,
 } from './constants';
 import { is2023PricingGridEnabled } from './plans-utilities';
 import type {
@@ -595,6 +596,7 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_POST_EDITS_HISTORY,
 		FEATURE_SECURITY_BRUTE_FORCE,
 		FEATURE_ALWAYS_ONLINE,
+		FEATURE_THE_READER,
 	],
 	getBlogOnboardingSignupJetpackFeatures: () => [
 		FEATURE_NEWSLETTER_IMPORT_SUBSCRIBERS_FREE,

@@ -169,6 +169,7 @@ import {
 	FEATURE_COLLECT_PAYMENTS_LINK_IN_BIO,
 	FEATURE_UNLIMITED_TRAFFIC,
 	FEATURE_MANAGED_HOSTING,
+	FEATURE_THE_READER,
 	WPCOM_FEATURES_NO_ADVERTS,
 	FEATURE_BEAUTIFUL_THEMES,
 	FEATURE_PAGES,
@@ -1754,6 +1755,14 @@ export const FEATURES_LIST: FeatureList = {
 		getDescription: () =>
 			i18n.translate(
 				'All plans include world-class managed hosting, including automatic updates, security, backups, and more.'
+			),
+	},
+	[ FEATURE_THE_READER ]: {
+		getSlug: () => FEATURE_THE_READER,
+		getTitle: () => i18n.translate( 'The Reader' ),
+		getDescription: () =>
+			i18n.translate(
+				'Read posts from all the sites you follow, find great new reads, and keep track of your comments and replies in one convenient place.'
 			),
 	},
 
