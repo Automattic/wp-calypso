@@ -24,7 +24,7 @@ const blockFlows: BlockFlow[] = [
 ];
 
 // Stripe is not connected to this WordPress.com account, so skipping on Atomic
-if ( ! envVariables.TEST_ON_ATOMIC ) {
+if ( envVariables.VIEWPORT_NAME === 'desktop' && ! envVariables.TEST_ON_ATOMIC ) {
 	blockFlows.push(
 		new PaidContentBlockFlow( {
 			subscriberTitle: DataHelper.getRandomPhrase(),
