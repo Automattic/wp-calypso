@@ -3,6 +3,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useSelector } from 'react-redux';
 import { addQueryArgs } from 'calypso/lib/url';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
+import { TRACK_SOURCE_NAME } from '../utils';
 import { EmptyStateCTA } from './empty-state-cta';
 
 export const CreateSiteCTA = () => {
@@ -16,7 +17,7 @@ export const CreateSiteCTA = () => {
 		<EmptyStateCTA
 			description={ __( 'Build a new site from scratch' ) }
 			label={ __( 'Create a site' ) }
-			target={ addQueryArgs( { source: 'sites-dashboard', ref: 'calypso-nosites' }, newSiteURL ) }
+			target={ addQueryArgs( { source: TRACK_SOURCE_NAME, ref: 'calypso-nosites' }, newSiteURL ) }
 		/>
 	);
 };
@@ -28,7 +29,7 @@ export const MigrateSiteCTA = () => {
 		<EmptyStateCTA
 			description={ __( 'Bring a site to WordPress.com' ) }
 			label={ __( 'Migrate a site' ) }
-			target="/setup/import-focused"
+			target={ addQueryArgs( { source: TRACK_SOURCE_NAME }, '/setup/import-focused' ) }
 		/>
 	);
 };
