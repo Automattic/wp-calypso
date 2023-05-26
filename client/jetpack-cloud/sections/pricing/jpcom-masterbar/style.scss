@@ -21,6 +21,13 @@
 		color: #101517;
 		font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
 		transition: background 0.1s;
+		.jetpack-logo {
+			display: inline-block;
+			text-align: center;
+		}
+		.force-hide {
+			display: none !important;
+		}
 	}
 	.header__nav-wrapper {
 		text-align: left;
@@ -252,6 +259,7 @@
 		transition: none;
 		z-index: 2;
 		margin-inline-end: 3rem;
+		width: 100%;
 	}
 	.header__home-link:focus-visible {
 		border-radius: 2px;
@@ -1333,6 +1341,10 @@
 			//display mobile cart at the top most layer
 			z-index: 9999999;
 		}
+	}
+	//logo is really close to the top of the page on mobile
+	.jetpack-logo {
+		margin-top: 25px;
 	}
 }
 
