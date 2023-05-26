@@ -20,6 +20,7 @@ export default () => {
 	page(
 		'/advertising/:site?/campaigns/:campaignId',
 		redirectToPrimarySite,
+		siteSelection,
 		campaignDetails,
 		navigation,
 		makeLayout,
