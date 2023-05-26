@@ -1,5 +1,5 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { callApi } from '../helpers';
 import { useCacheKey, useIsLoggedIn, useIsQueryEnabled } from '../hooks';
 import type { PostSubscription } from '../types';
@@ -53,7 +53,6 @@ const usePostSubscriptionsQuery = ( {
 	const { isLoggedIn } = useIsLoggedIn();
 	const enabled = useIsQueryEnabled();
 	const cacheKey = useCacheKey( [ 'read', 'post-subscriptions' ] );
-	const stopFetchingRef = useRef( false );
 
 	const { data, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage, ...rest } =
 		useInfiniteQuery< SubscriptionManagerPostSubscriptions >(
@@ -66,22 +65,20 @@ const usePostSubscriptionsQuery = ( {
 					apiNamespace: 'wpcom/v2',
 				} );
 
-				if ( pageParam * number >= result.total_comment_subscriptions_count ) {
-					stopFetchingRef.current = true;
-				}
-
 				return result;
 			},
 			{
 				enabled,
 				getNextPageParam: ( lastPage, pages ) =>
-					stopFetchingRef.current ? undefined : pages.length + 1,
+					pages.length * number >= lastPage.total_comment_subscriptions_count
+						? undefined
+						: pages.length + 1,
 				refetchOnWindowFocus: false,
 			}
 		);
 
 	useEffect( () => {
-		if ( hasNextPage && ! isFetchingNextPage && ! isFetching && ! stopFetchingRef.current ) {
+		if ( hasNextPage && ! isFetchingNextPage && ! isFetching ) {
 			fetchNextPage();
 		}
 	}, [ hasNextPage, isFetchingNextPage, isFetching, fetchNextPage ] );
