@@ -695,6 +695,13 @@
 			margin-bottom: 14px;
 		}
 	}
+	.reader-tag-sidebar-tags-page {
+		display: block;
+		font-size: $font-body-small;
+		font-weight: 600;
+		margin-bottom: 32px;
+		color: var(--color-neutral-100);
+	}
 
 	.reader-tag-sidebar-stats {
 		display: flex;
