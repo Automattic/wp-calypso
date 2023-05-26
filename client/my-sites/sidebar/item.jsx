@@ -69,6 +69,7 @@ MySitesSidebarUnifiedItem.propTypes = {
 	url: PropTypes.string,
 	shouldOpenExternalLinksInCurrentTab: PropTypes.bool.isRequired,
 	canNavigate: PropTypes.func.isRequired,
+	trackClickEvent: PropTypes.func,
 };
 
 export default memo( MySitesSidebarUnifiedItem );
