@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
+import { MonitorContactsResponse } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
 
 const isMultipleEmailEnabled = isEnabled(
@@ -15,7 +16,7 @@ const useFetchMonitorVerfiedContacts = ( isPartnerOAuthTokenLoaded: boolean ) =>
 				apiNamespace: 'wpcom/v2',
 			} ),
 		{
-			select: ( contacts: { emails: [ { verified: boolean; email_address: string } ] } ) => {
+			select: ( contacts: MonitorContactsResponse ) => {
 				return {
 					emails: contacts?.emails
 						.filter( ( email ) => email.verified )
@@ -23,6 +24,8 @@ const useFetchMonitorVerfiedContacts = ( isPartnerOAuthTokenLoaded: boolean ) =>
 				};
 			},
 			enabled: isPartnerOAuthTokenLoaded && isMultipleEmailEnabled,
+			refetchOnWindowFocus: false,
+			staleTime: 1000 * 60 * 5,
 		}
 	);
 };

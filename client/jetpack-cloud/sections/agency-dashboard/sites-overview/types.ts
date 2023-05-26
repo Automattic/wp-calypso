@@ -301,3 +301,7 @@ export interface ValidateVerificationCodeParams {
 	value: string;
 	verification_code: number;
 }
+
+export interface MonitorContactsResponse {
+	emails: [ { verified: boolean; email_address: string } ];
+}

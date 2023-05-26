@@ -6,7 +6,8 @@ import type {
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 
 interface APIResponse {
-	success: boolean;
+	verified: boolean;
+	email_address: string;
 }
 
 function mutationValidateVerificationCode(
