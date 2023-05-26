@@ -141,6 +141,8 @@ const newsletter: Flow = {
 						persistSignupDestination( destination );
 						setSignupCompleteSlug( providedDependencies?.siteSlug );
 						setSignupCompleteFlowName( flowName );
+
+						// Return to subscribers after checkout
 						const returnUrl = encodeURIComponent(
 							`/setup/${ flowName }/subscribers?siteSlug=${ providedDependencies?.siteSlug }`
 						);
@@ -151,7 +153,7 @@ const newsletter: Flow = {
 							) }?redirect_to=${ returnUrl }&signup=1`
 						);
 					}
-					// If the user chooses a free plan, we need to redirect to the subscribers and not checkout.
+					// If the user chooses a free plan, we need to redirect to the subscribers directly and not checkout.
 					return window.location.assign(
 						`/setup/${ flowName }/subscribers?siteSlug=${ providedDependencies?.siteSlug }`
 					);
