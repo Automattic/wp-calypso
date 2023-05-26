@@ -1,6 +1,7 @@
 import { Design, isBlankCanvasDesign } from '@automattic/design-picker';
 import { IMPORT_FOCUSED_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { addQueryArgs } from '@wordpress/url';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
 import useAddTempSiteToSourceOptionMutation from 'calypso/data/site-migration/use-add-temp-site-mutation';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
@@ -219,10 +220,10 @@ const importFlow: Flow = {
 		};
 
 		const goBack = () => {
+			const source = urlQueryParams.get( 'source' );
+
 			switch ( _currentStep ) {
 				case 'import': {
-					const source = urlQueryParams.get( 'source' );
-
 					if ( source === 'sites-dashboard' ) {
 						return window.location.assign( '/sites' );
 					}
@@ -235,7 +236,7 @@ const importFlow: Flow = {
 					const backToStep = urlQueryParams.get( 'backToStep' );
 
 					if ( backToStep ) {
-						const path = `${ backToStep }?siteSlug=${ siteSlugParam }`;
+						const path = addQueryArgs( backToStep, { siteSlug: siteSlugParam, source } );
 
 						return navigate( path );
 					}
@@ -252,7 +253,7 @@ const importFlow: Flow = {
 				case 'importerSquarespace':
 				case 'importerWordpress':
 				case 'designSetup':
-					return navigate( `import?siteSlug=${ siteSlugParam }` );
+					return navigate( addQueryArgs( 'import', { siteSlug: siteSlugParam, source } ) );
 			}
 		};
 
