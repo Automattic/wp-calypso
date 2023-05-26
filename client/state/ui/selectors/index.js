@@ -10,3 +10,4 @@ export { default as appBannerIsEnabled } from './app-banner-is-visible';
 export { default as appBannerIsDismissed } from './app-banner-is-dismissed';
 export { default as masterbarIsVisible } from './masterbar-is-visible';
 export { default as getSidebarIsCollapsed } from './sidebar-visibility';
+export { default as isBlazeEnabled } from './is-blaze-enabled';

@@ -20,8 +20,7 @@ import Sitemaps from 'calypso/my-sites/site-settings/sitemaps';
 import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import isBlazeEnabled from 'calypso/state/ui/selectors/is-blaze-enabled';
+import { getSelectedSite, getSelectedSiteId, isBlazeEnabled } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
