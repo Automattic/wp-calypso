@@ -1,4 +1,4 @@
-import { useTranslate } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import useRequestContactVerificationCode from 'calypso/state/jetpack-agency-dashboard/hooks/use-request-contact-verification-code';
 import useResendVerificationCodeMutation from 'calypso/state/jetpack-agency-dashboard/hooks/use-resend-contact-verification-code';
 import useValidateVerificationCodeMutation from 'calypso/state/jetpack-agency-dashboard/hooks/use-validate-contact-verification-code';
@@ -21,6 +21,11 @@ export function useRequestVerificationCode(): {
 	} );
 }
 
+const verificationErrorMessages: { [ key: string ]: string } = {
+	jetpack_agency_contact_invalid_verification_code: translate( 'Invalid Code' ),
+	jetpack_agency_contact_expired_verification_code: translate( 'Code Expired' ),
+};
+
 export function useValidateVerificationCode(): {
 	mutate: ( params: ValidateVerificationCodeParams ) => void;
 	isLoading: boolean;
@@ -28,19 +33,17 @@ export function useValidateVerificationCode(): {
 	isError: boolean;
 	errorMessage?: string;
 } {
-	const translate = useTranslate();
-
 	const data = useValidateVerificationCodeMutation( {
 		retry: () => {
 			return false;
 		},
 	} );
-	let errorMessage = '';
+	let errorMessage;
 	if ( data.isError ) {
 		errorMessage = translate( 'Something went wrong. Please try again.' );
-		const reasonCode = data?.error?.data?.reason_code;
-		if ( reasonCode === 'invalid_partner_authentication_token' ) {
-			errorMessage = translate( 'Invalid Code' );
+		const reasonCode = data?.error?.code;
+		if ( reasonCode ) {
+			errorMessage = verificationErrorMessages?.[ reasonCode ] || errorMessage;
 		}
 	}
 	return { ...data, errorMessage };
