@@ -198,6 +198,7 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 		}
 	}
 
+	// @TODO: Introduce the support for the border of white background arrows in the popover component.
 	// Set the border of the white background bottom arrows.
 	&.highlight-card-popover {
 		&.is-bottom,
