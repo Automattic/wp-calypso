@@ -4,7 +4,6 @@ import { Component } from 'react';
 import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
 import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
 import FollowButton from 'calypso/reader/follow-button';
-import { DISCOVER_POST } from 'calypso/reader/follow-sources';
 import { recordFollowToggle } from './stats';
 
 class DiscoverFollowButton extends Component {
@@ -42,7 +41,6 @@ class DiscoverFollowButton extends Component {
 				onFollowToggle={ this.recordFollowToggle }
 				followLabel={ followLabel }
 				followingLabel={ followingLabel }
-				followSource={ DISCOVER_POST }
 				followIcon={ ReaderFollowFeedIcon( { iconSize: 20 } ) }
 				followingIcon={ ReaderFollowingFeedIcon( { iconSize: 20 } ) }
 			/>
