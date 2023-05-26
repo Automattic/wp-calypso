@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
 export function querySubscribers(
-	siteId: number,
+	siteId: number | null,
 	period: string,
 	quantity: number,
 	date?: string
@@ -57,7 +57,7 @@ export function selectSubscribers( payload: {
 }
 
 export default function useSubscribersQuery(
-	siteId: number,
+	siteId: number | null,
 	period: string,
 	quantity: number,
 	date?: string
