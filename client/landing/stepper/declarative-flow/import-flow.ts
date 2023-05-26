@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Design, isBlankCanvasDesign } from '@automattic/design-picker';
 import { IMPORT_FOCUSED_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -160,6 +161,15 @@ const importFlow: Flow = {
 
 				case 'processing': {
 					if ( providedDependencies?.siteSlug ) {
+						if ( isEnabled( 'onboarding/import-redesign' ) && fromParam ) {
+							const slectedSiteSlug = providedDependencies?.siteSlug as string;
+							urlQueryParams.set( 'siteSlug', slectedSiteSlug );
+							urlQueryParams.set( 'from', fromParam );
+							urlQueryParams.set( 'option', 'everything' );
+
+							return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
+						}
+
 						return ! fromParam
 							? navigate( `import?siteSlug=${ providedDependencies?.siteSlug }` )
 							: navigate(
