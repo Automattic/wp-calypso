@@ -12,8 +12,7 @@ function BlankSuggestions( props ) {
 							suggestions: props.suggestions,
 							tagsLink: (
 								<a href="/tags" onClick={ props.trackTagsPageLinkClick }>
-									{ ' ' }
-									{ props.translate( 'See all tags' ) }{ ' ' }
+									{ props.translate( 'See all tags' ) }
 								</a>
 							),
 						},
