@@ -2,7 +2,6 @@ import { Gridicon } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import { EmailDeliveryFrequency } from 'calypso/../packages/data-stores/src/reader';
 import TimeSince from 'calypso/components/time-since';
 import { SiteSettingsPopover } from '../settings';
 import { SiteIcon } from '../site-icon';
@@ -132,7 +131,8 @@ export default function SiteRow( {
 					}
 					// DeliveryFrequency
 					deliveryFrequency={
-						delivery_methods.email?.post_delivery_frequency ?? EmailDeliveryFrequency.Instantly
+						delivery_methods.email?.post_delivery_frequency ??
+						Reader.EmailDeliveryFrequency.Instantly
 					}
 					onDeliveryFrequencyChange={ ( delivery_frequency ) =>
 						updateDeliveryFrequency( { blog_id: blog_ID, delivery_frequency } )
