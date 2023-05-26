@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	commentContent,
 	Icon,
@@ -58,6 +59,8 @@ export default function WeeklyHighlightCards( {
 		setPopoverVisible( ! isPopoverVisible );
 	};
 
+	const isHighlightsSettingsEnabled = config.isEnabled( 'stats/highlights-settings' );
+
 	return (
 		<div className={ classNames( 'highlight-cards', className ?? null ) }>
 			<h3 className="highlight-cards-heading">
@@ -104,30 +107,32 @@ export default function WeeklyHighlightCards( {
 						</div>
 					</Popover>
 				</div>
-				<div className="highlight-cards-heading__settings">
-					<button
-						className="highlight-cards-heading__settings-action"
-						ref={ settingsActionRef }
-						onClick={ togglePopoverMenu }
-					>
-						<Icon className="gridicon" icon={ moreVertical } />
-					</button>
-					<Popover
-						className="tooltip highlight-card-popover"
-						isVisible={ isPopoverVisible }
-						position="bottom left"
-						context={ settingsActionRef.current }
-					>
-						<button>
-							{ translate( '7-day highlights' ) }
-							<Icon className="gridicon" icon={ check } />
+				{ isHighlightsSettingsEnabled && (
+					<div className="highlight-cards-heading__settings">
+						<button
+							className="highlight-cards-heading__settings-action"
+							ref={ settingsActionRef }
+							onClick={ togglePopoverMenu }
+						>
+							<Icon className="gridicon" icon={ moreVertical } />
 						</button>
-						<button>
-							{ translate( '30-day highlights' ) }
-							<Icon className="gridicon" icon={ check } />
-						</button>
-					</Popover>
-				</div>
+						<Popover
+							className="tooltip highlight-card-popover"
+							isVisible={ isPopoverVisible }
+							position="bottom left"
+							context={ settingsActionRef.current }
+						>
+							<button>
+								{ translate( '7-day highlights' ) }
+								<Icon className="gridicon" icon={ check } />
+							</button>
+							<button>
+								{ translate( '30-day highlights' ) }
+								<Icon className="gridicon" icon={ check } />
+							</button>
+						</Popover>
+					</div>
+				) }
 			</h3>
 
 			<div className="highlight-cards-list">
