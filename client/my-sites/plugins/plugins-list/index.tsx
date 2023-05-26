@@ -575,7 +575,7 @@ export class PluginsList extends Component< Props, State > {
 		const { plugins } = this.props;
 		return plugins.reduce( ( sites, plugin ) => {
 			Object.keys( plugin.sites ).map( ( pluginSiteId ) => {
-				if ( ! sites.find( ( site ) => site && site.ID === Number( pluginSiteId ) ) ) {
+				if ( ! sites.some( ( site ) => site && site.ID === Number( pluginSiteId ) ) ) {
 					const pluginSite = this.props.allSites.find(
 						( s ) => s && s.ID === parseInt( pluginSiteId )
 					);
