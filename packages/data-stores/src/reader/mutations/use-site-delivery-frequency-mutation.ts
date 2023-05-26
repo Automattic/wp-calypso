@@ -83,7 +83,7 @@ const useSiteDeliveryFrequencyMutation = ( blog_id?: string ) => {
 								delivery_methods: {
 									...siteSubscription.delivery_methods,
 									email: {
-										...siteSubscription.delivery_methods?.email,
+										...( siteSubscription.delivery_methods?.email ?? { send_posts: false } ),
 										post_delivery_frequency: params.delivery_frequency,
 									},
 								},

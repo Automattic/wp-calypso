@@ -7,7 +7,7 @@ import { SiteSettingsPopover } from '../settings';
 import { SiteIcon } from '../site-icon';
 import type { SiteSubscription } from '@automattic/data-stores/src/reader/types';
 
-const useDeliveryFrequencyLabel = ( deliveryFrequencyValue: Reader.EmailDeliveryFrequency ) => {
+const useDeliveryFrequencyLabel = ( deliveryFrequencyValue?: Reader.EmailDeliveryFrequency ) => {
 	const translate = useTranslate();
 
 	const deliveryFrequencyLabels = useMemo(
@@ -19,7 +19,10 @@ const useDeliveryFrequencyLabel = ( deliveryFrequencyValue: Reader.EmailDelivery
 		[ translate ]
 	);
 
-	return deliveryFrequencyLabels[ deliveryFrequencyValue ] || translate( 'Paused' );
+	return (
+		deliveryFrequencyLabels[ deliveryFrequencyValue as Reader.EmailDeliveryFrequency ] ??
+		translate( 'Paused' )
+	);
 };
 
 const useSelectedNewPostDeliveryMethodsLabel = (
@@ -54,11 +57,11 @@ export default function SiteRow( {
 	}, [ url ] );
 	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
 	const newPostDelivery = useSelectedNewPostDeliveryMethodsLabel(
-		delivery_methods?.email?.send_posts,
-		delivery_methods?.notification?.send_posts
+		!! delivery_methods.email?.send_posts,
+		!! delivery_methods.notification?.send_posts
 	);
 	const deliveryFrequencyLabel = useDeliveryFrequencyLabel(
-		delivery_methods?.email?.post_delivery_frequency
+		delivery_methods.email?.post_delivery_frequency
 	);
 	const { mutate: updateNotifyMeOfNewPosts, isLoading: updatingNotifyMeOfNewPosts } =
 		SubscriptionManager.useSiteNotifyMeOfNewPostsMutation();
@@ -122,25 +125,28 @@ export default function SiteRow( {
 			<span className="actions" role="cell">
 				<SiteSettingsPopover
 					// NotifyMeOfNewPosts
-					notifyMeOfNewPosts={ delivery_methods?.notification?.send_posts }
+					notifyMeOfNewPosts={ !! delivery_methods.notification?.send_posts }
 					onNotifyMeOfNewPostsChange={ ( send_posts ) =>
 						updateNotifyMeOfNewPosts( { blog_id: blog_ID, send_posts } )
 					}
 					updatingNotifyMeOfNewPosts={ updatingNotifyMeOfNewPosts }
 					// EmailMeNewPosts
-					emailMeNewPosts={ delivery_methods?.email?.send_posts }
+					emailMeNewPosts={ !! delivery_methods.email?.send_posts }
 					updatingEmailMeNewPosts={ updatingEmailMeNewPosts }
 					onEmailMeNewPostsChange={ ( send_posts ) =>
 						updateEmailMeNewPosts( { blog_id: blog_ID, send_posts } )
 					}
 					// DeliveryFrequency
-					deliveryFrequency={ delivery_methods?.email?.post_delivery_frequency }
+					deliveryFrequency={
+						delivery_methods.email?.post_delivery_frequency ??
+						Reader.EmailDeliveryFrequency.Instantly
+					}
 					onDeliveryFrequencyChange={ ( delivery_frequency ) =>
 						updateDeliveryFrequency( { blog_id: blog_ID, delivery_frequency } )
 					}
 					updatingFrequency={ updatingFrequency }
 					// EmailMeNewComments
-					emailMeNewComments={ delivery_methods?.email?.send_comments }
+					emailMeNewComments={ !! delivery_methods.email?.send_comments }
 					onEmailMeNewCommentsChange={ ( send_comments ) =>
 						updateEmailMeNewComments( { blog_id: blog_ID, send_comments } )
 					}
