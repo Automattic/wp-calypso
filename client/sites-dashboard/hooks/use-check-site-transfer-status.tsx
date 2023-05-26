@@ -1,16 +1,30 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
-import { transferStates } from 'calypso/state/automated-transfer/constants';
-import {
-	getAutomatedTransferStatus,
-	isFetchingAutomatedTransferStatus,
-} from 'calypso/state/automated-transfer/selectors';
+import { requestLatestAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
+import { transferStates } from 'calypso/state/atomic/transfers/constants';
+import { getLatestAtomicTransfer } from 'calypso/state/atomic/transfers/selectors';
 
 interface SiteTransferStatusProps {
-	siteId: number | null;
+	siteId: number;
 	intervalTime?: number;
 }
+
+const activeTransferStatuses = [
+	transferStates.PENDING,
+	transferStates.ACTIVE,
+	transferStates.PROVISIONED,
+	transferStates.RELOCATING_SWITCHEROO,
+] as const;
+
+const isTransferInProgress = ( transferStatus: string | null ) => {
+	if ( ! transferStatus ) {
+		return false;
+	}
+
+	const typedTransferStatus = transferStatus as ( typeof activeTransferStatuses )[ number ];
+
+	return activeTransferStatuses.includes( typedTransferStatus );
+};
 
 export const useCheckSiteTransferStatus = ( {
 	siteId,
@@ -18,51 +32,49 @@ export const useCheckSiteTransferStatus = ( {
 }: SiteTransferStatusProps ) => {
 	const dispatch = useDispatch();
 
-	const transferStatus = useSelector( ( state ) => getAutomatedTransferStatus( state, siteId ) );
-	const isFetchingTransferStatus = useSelector( ( state ) =>
-		isFetchingAutomatedTransferStatus( state, siteId )
+	const transferStatus = useSelector(
+		( state ) => getLatestAtomicTransfer( state, siteId ).transfer?.status ?? null
 	);
 
-	const isTransferCompleted = transferStatus === transferStates.COMPLETE;
-	const isTransferring =
-		transferStatus !== null && transferStatus !== transferStates.NONE && ! isTransferCompleted;
-	const isErrored =
-		transferStatus === transferStates.ERROR || transferStatus === transferStates.FAILURE;
+	const isTransferCompleted = transferStatus === transferStates.COMPLETED;
+	const isTransferring = isTransferInProgress( transferStatus );
+	const isErrored = transferStatus === transferStates.ERROR;
 
 	const [ wasTransferring, setWasTransferring ] = useState( false );
-	const dismissTransferNoticeRef = useRef< NodeJS.Timeout >();
 
 	useEffect( () => {
-		if ( ! siteId || transferStatus === transferStates.COMPLETE ) {
+		dispatch( requestLatestAtomicTransfer( siteId ) );
+	}, [ siteId, dispatch ] );
+
+	useEffect( () => {
+		if ( ! isTransferring ) {
 			return;
 		}
 
-		if ( ! isFetchingTransferStatus ) {
-			const intervalId = setInterval( () => {
-				dispatch( fetchAutomatedTransferStatus( siteId ) );
-			}, intervalTime );
+		const intervalId = setInterval( () => {
+			dispatch( requestLatestAtomicTransfer( siteId ) );
+		}, intervalTime );
 
-			return () => clearInterval( intervalId );
-		}
-	}, [ siteId, dispatch, transferStatus, isFetchingTransferStatus, intervalTime ] );
-
-	useEffect( () => {
-		if ( siteId ) {
-			dispatch( fetchAutomatedTransferStatus( siteId ) );
-		}
-	}, [ siteId, dispatch ] );
+		return () => clearInterval( intervalId );
+	}, [ siteId, dispatch, isTransferring, intervalTime ] );
 
 	useEffect( () => {
 		if ( isTransferring && ! wasTransferring ) {
 			setWasTransferring( true );
-		} else if ( ! isTransferring && wasTransferring && isTransferCompleted ) {
-			dismissTransferNoticeRef.current = setTimeout( () => {
+		}
+	}, [ isTransferring, wasTransferring ] );
+
+	useEffect( () => {
+		if ( ! isTransferring && wasTransferring && isTransferCompleted ) {
+			const dismissTransferNoticeTimeout = setTimeout( () => {
 				setWasTransferring( false );
 			}, 3000 );
-		}
 
-		return () => clearTimeout( dismissTransferNoticeRef.current );
-	}, [ isTransferring, isTransferCompleted, wasTransferring, setWasTransferring ] );
+			return () => {
+				clearTimeout( dismissTransferNoticeTimeout );
+			};
+		}
+	}, [ isTransferring, wasTransferring, isTransferCompleted ] );
 
 	return {
 		transferStatus,
