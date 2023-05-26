@@ -16,6 +16,7 @@ import {
 	TYPE_SECURITY_REALTIME,
 	TYPE_SECURITY_T1,
 	TYPE_SECURITY_T2,
+	TYPE_JETPACK_STARTER,
 	TYPE_ALL,
 	GROUP_WPCOM,
 	GROUP_JETPACK,
@@ -164,6 +165,10 @@ export function getPlanClass( planKey: string ): string {
 
 	if ( isCompletePlan( planKey ) ) {
 		return 'is-complete-plan';
+	}
+
+	if ( isJetpackStarterPlan( planKey ) ) {
+		return 'is-jetpack-starter-plan';
 	}
 
 	return '';
@@ -370,6 +375,10 @@ export function isSecurityT2Plan( planSlug: string ): boolean {
 
 export function isCompletePlan( planSlug: string ): boolean {
 	return planMatches( planSlug, { type: TYPE_ALL } );
+}
+
+export function isJetpackStarterPlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_JETPACK_STARTER } );
 }
 
 export function isWpComPlan( planSlug: string ): boolean {
@@ -603,12 +612,21 @@ export function plansLink(
 	return url.toString();
 }
 
+export type FilteredPlan = Plan &
+	Pick<
+		WPComPlan,
+		| 'getPlanCompareFeatures'
+		| 'getAnnualPlansOnlyFeatures'
+		| 'getPlanTagline'
+		| 'getNewsletterTagLine'
+		| 'getLinkInBioTagLine'
+	>;
+
 export function applyTestFiltersToPlansList(
 	planName: string | Plan,
 	abtest: string | undefined,
 	extraArgs: Record< string, string | boolean[] > = {}
-): Plan &
-	Pick< WPComPlan, 'getPlanCompareFeatures' | 'getAnnualPlansOnlyFeatures' | 'getPlanTagline' > {
+): FilteredPlan {
 	const plan = getPlan( planName );
 	if ( ! plan ) {
 		throw new Error( `Unknown plan: ${ planName }` );

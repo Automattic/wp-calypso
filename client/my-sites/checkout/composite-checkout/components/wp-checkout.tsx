@@ -1,4 +1,10 @@
-import { isYearly, isJetpackPurchasableItem, isMonthlyProduct } from '@automattic/calypso-products';
+import {
+	isYearly,
+	isJetpackPurchasableItem,
+	isMonthlyProduct,
+	isBiennially,
+	isTriennially,
+} from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import {
 	MainContentWrapper,
@@ -18,7 +24,6 @@ import {
 	CheckoutFormSubmit,
 	PaymentMethodStep,
 } from '@automattic/composite-checkout';
-import { isHostingFlow } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled } from '@automattic/wpcom-checkout';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -42,7 +47,6 @@ import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/composite-checkou
 import { leaveCheckout } from 'calypso/my-sites/checkout/composite-checkout/lib/leave-checkout';
 import { prepareDomainContactValidationRequest } from 'calypso/my-sites/checkout/composite-checkout/types/wpcom-store-state';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { saveContactDetailsCache } from 'calypso/state/domains/management/actions';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
@@ -72,6 +76,7 @@ import type { OnChangeItemVariant } from './item-variation-picker';
 import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
 import type { RemoveProductFromCart, MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { CountryListItem } from '@automattic/wpcom-checkout';
+import type { ReactNode } from 'react';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
 
@@ -151,6 +156,7 @@ export default function WPCheckout( {
 	isInitialCartLoading,
 	customizedPreviousPath,
 	useVariantPickerRadioButtons,
+	loadingContent,
 }: {
 	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
 	changePlanLength: OnChangeItemVariant;
@@ -169,6 +175,7 @@ export default function WPCheckout( {
 	customizedPreviousPath?: string;
 	// This is just for unit tests.
 	useVariantPickerRadioButtons?: boolean;
+	loadingContent: ReactNode;
 } ) {
 	const cartKey = useCartKey();
 	const {
@@ -311,9 +318,11 @@ export default function WPCheckout( {
 	}
 
 	const isDIFMInCart = hasDIFMProduct( responseCart );
+	const hasMonthlyProduct = responseCart?.products?.some( isMonthlyProduct );
 
 	return (
 		<CheckoutStepGroup
+			loadingContent={ loadingContent }
 			stepAreaHeader={
 				<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
 					<CheckoutErrorBoundary
@@ -336,7 +345,9 @@ export default function WPCheckout( {
 								onChangePlanLength={ changePlanLength }
 								nextDomainIsFree={ responseCart?.next_domain_is_free }
 							/>
-							{ ! isWcMobile && ! isDIFMInCart && <CheckoutSidebarPlanUpsell /> }
+							{ ! isWcMobile && ! isDIFMInCart && ! hasMonthlyProduct && (
+								<CheckoutSidebarPlanUpsell />
+							) }
 							<SecondaryCartPromotions
 								responseCart={ responseCart }
 								addItemToCart={ addItemToCart }
@@ -620,14 +631,14 @@ const SubmitButtonFooter = () => {
 		isJetpackPurchasableItem( product.product_slug )
 	);
 
-	const signupFlowName = getSignupCompleteFlowName();
-
-	if ( ! hasCartJetpackProductsOnly && ! isHostingFlow( signupFlowName ) ) {
+	if ( ! hasCartJetpackProductsOnly ) {
 		return null;
 	}
 
 	const show7DayGuarantee = responseCart?.products?.every( isMonthlyProduct );
-	const show14DayGuarantee = responseCart?.products?.every( isYearly );
+	const show14DayGuarantee = responseCart?.products?.every(
+		( product ) => isYearly( product ) || isBiennially( product ) || isTriennially( product )
+	);
 	const content =
 		show7DayGuarantee || show14DayGuarantee ? (
 			translate( '%(dayCount)s day money back guarantee', {

@@ -1,20 +1,20 @@
-import { Page, Locator } from 'playwright';
-import { EXTENDED_EDITOR_WAIT_TIMEOUT } from '../pages/editor-page';
+import { Page } from 'playwright';
+import { EditorComponent } from './editor-component';
 
 /**
  * Represents the welcome tour that shows in a popover when the editor loads.
  */
 export class EditorWelcomeTourComponent {
 	private page: Page;
-	private editor: Locator;
+	private editor: EditorComponent;
 
 	/**
-	 * Creates an instance of the component.
+	 * Constructs an instance of the component.
 	 *
-	 * @param {Page} page Object representing the base page.
-	 * @param {Locator} editor Frame-safe locator to the editor.
+	 * @param {Page} page The underlying page.
+	 * @param {EditorComponent} editor The EditorComponent instance.
 	 */
-	constructor( page: Page, editor: Locator ) {
+	constructor( page: Page, editor: EditorComponent ) {
 		this.page = page;
 		this.editor = editor;
 	}
@@ -25,11 +25,8 @@ export class EditorWelcomeTourComponent {
 	 * @see {@link https://github.com/Automattic/wp-calypso/issues/57660}
 	 */
 	async forceToggleWelcomeTour( show = true ): Promise< void > {
-		// Locator API doesn't have waitForFunction yet. We need a Frame for now.
-		const editorElement = await this.editor.elementHandle( {
-			timeout: EXTENDED_EDITOR_WAIT_TIMEOUT,
-		} );
-		const editorFrame = await editorElement?.ownerFrame();
+		const editorParent = await this.editor.parent();
+		const editorFrame = await ( await editorParent.elementHandle() )?.ownerFrame();
 		if ( ! editorFrame ) {
 			return;
 		}

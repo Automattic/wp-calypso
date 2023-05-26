@@ -44,4 +44,5 @@ export type OptionalUserData = {
 	username: string;
 	visible_site_count: number;
 	jetpack_visible_site_count?: number;
+	calypso_postpurchase_upsell_monthly_to_annual_plan?: boolean;
 };

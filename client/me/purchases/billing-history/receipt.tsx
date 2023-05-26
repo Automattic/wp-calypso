@@ -30,7 +30,7 @@ import isPastBillingTransactionError from 'calypso/state/selectors/is-past-billi
 import {
 	getTransactionTermLabel,
 	groupDomainProducts,
-	renderTransactionAmount,
+	TransactionAmount,
 	renderTransactionQuantitySummary,
 } from './utils';
 import { VatVendorDetails } from './vat-vendor-details';
@@ -311,9 +311,9 @@ function ReceiptLineItems( { transaction }: { transaction: BillingTransaction } 
 				<td className="billing-history__receipt-item-name">
 					<span>{ item.variation }</span>
 					<small>({ item.type_localized })</small>
-					{ termLabel ? <em>{ termLabel }</em> : null }
+					{ termLabel && <em>{ termLabel }</em> }
 					<br />
-					<em>{ item.domain }</em>
+					{ item.domain && <em>{ item.domain }</em> }
 					{ item.licensed_quantity && (
 						<em>{ renderTransactionQuantitySummary( item, translate ) }</em>
 					) }
@@ -354,7 +354,7 @@ function ReceiptLineItems( { transaction }: { transaction: BillingTransaction } 
 								transaction.credit
 							}
 						>
-							{ renderTransactionAmount( transaction, { translate } ) }
+							<TransactionAmount transaction={ transaction } />
 						</td>
 					</tr>
 				</tfoot>

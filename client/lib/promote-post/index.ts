@@ -14,6 +14,7 @@ declare global {
 		BlazePress?: {
 			render: ( params: {
 				siteSlug: string | null;
+				siteId?: number | string;
 				domNode?: HTMLElement | null;
 				domNodeId?: string;
 				stripeKey: string;
@@ -25,6 +26,7 @@ declare global {
 				onLoaded?: () => void;
 				onClose?: () => void;
 				translateFn?: ( value: string, options?: any ) => string;
+				localizeUrlFn?: ( fullUrl: string ) => string;
 				locale?: string;
 				showDialog?: boolean;
 				setShowCancelButton?: ( show: boolean ) => void;
@@ -33,6 +35,7 @@ declare global {
 				showGetStartedMessage?: boolean;
 				onGetStartedMessageClose?: ( dontShowAgain: boolean ) => void;
 				source?: string;
+				isV2?: boolean;
 			} ) => void;
 			strings: any;
 		};
@@ -60,16 +63,19 @@ export async function showDSP(
 	onClose: () => void,
 	source: string,
 	translateFn: ( value: string, options?: any ) => string,
+	localizeUrlFn: ( fullUrl: string ) => string,
 	domNodeOrId?: HTMLElement | string | null,
 	setShowCancelButton?: ( show: boolean ) => void,
 	setShowTopBar?: ( show: boolean ) => void,
-	locale?: string
+	locale?: string,
+	isV2?: boolean
 ) {
 	await loadDSPWidgetJS();
 	return new Promise( ( resolve, reject ) => {
 		if ( window.BlazePress ) {
 			window.BlazePress.render( {
 				siteSlug: siteSlug,
+				siteId: siteId,
 				domNode: typeof domNodeOrId !== 'string' ? domNodeOrId : undefined,
 				domNodeId: typeof domNodeOrId === 'string' ? domNodeOrId : undefined,
 				stripeKey: config( 'dsp_stripe_pub_key' ),
@@ -81,13 +87,15 @@ export async function showDSP(
 				onLoaded: () => resolve( true ),
 				onClose: onClose,
 				translateFn: translateFn,
+				localizeUrlFn: localizeUrlFn,
 				locale,
-				urn: `urn:wpcom:post:${ siteId }:${ postId || 0 }`,
+				urn: postId && postId !== '0' ? `urn:wpcom:post:${ siteId }:${ postId || 0 }` : '',
 				setShowCancelButton: setShowCancelButton,
 				setShowTopBar: setShowTopBar,
 				uploadImageLabel: isWpMobileApp() ? __( 'Tap to add image' ) : undefined,
 				showGetStartedMessage: ! isWpMobileApp(), // Don't show the GetStartedMessage in the mobile app.
 				source: source,
+				isV2,
 			} );
 		} else {
 			reject( false );

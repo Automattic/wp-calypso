@@ -2,16 +2,9 @@ import {
 	FEATURE_VIDEO_UPLOADS,
 	planHasFeature,
 	PLAN_PREMIUM,
-	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
+	FEATURE_STYLE_CUSTOMIZATION,
 } from '@automattic/calypso-products';
-import {
-	isFreeFlow,
-	isBuildFlow,
-	isWriteFlow,
-	isNewsletterFlow,
-	isStartWritingFlow,
-	START_WRITING_FLOW,
-} from '@automattic/onboarding';
+import { isNewsletterFlow, isStartWritingFlow, START_WRITING_FLOW } from '@automattic/onboarding';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
@@ -24,6 +17,7 @@ import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { launchpadFlowTasks } from './tasks';
 import { LaunchpadChecklist, LaunchpadStatuses, Task } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
+
 /**
  * Some attributes of these enhanced tasks will soon be fetched through a WordPress REST
  * API, making said enhancements here unnecessary ( Ex. title, subtitle, completed,
@@ -34,7 +28,7 @@ import type { SiteDetails } from '@automattic/data-stores';
  * generated in the REST API
  */
 export function getEnhancedTasks(
-	tasks: Task[] | null,
+	tasks: Task[] | null | undefined,
 	siteSlug: string | null,
 	site: SiteDetails | null,
 	submit: NavigationControls[ 'submit' ],
@@ -45,6 +39,10 @@ export function getEnhancedTasks(
 	checklistStatuses: LaunchpadStatuses = {},
 	planCartProductSlug?: string | null
 ) {
+	if ( ! tasks ) {
+		return [];
+	}
+
 	const enhancedTaskList: Task[] = [];
 
 	const productSlug =
@@ -52,22 +50,19 @@ export function getEnhancedTasks(
 
 	const translatedPlanName = productSlug ? PLANS_LIST[ productSlug ].getTitle() : '';
 
-	const linkInBioLinksEditCompleted = checklistStatuses?.links_edited || false;
-
-	const siteEditCompleted = checklistStatuses?.site_edited || false;
-
-	const siteLaunchCompleted = checklistStatuses?.site_launched || false;
-
-	const firstPostPublishedCompleted = checklistStatuses?.first_post_published || false;
-
-	const planCompleted = checklistStatuses?.plan_selected || ! isStartWritingFlow( flow );
-
-	const videoPressUploadCompleted = checklistStatuses?.video_uploaded || false;
-
-	const allowUpdateDesign =
-		flow && ( isFreeFlow( flow ) || isBuildFlow( flow ) || isWriteFlow( flow ) );
+	const setupBlogCompleted =
+		Boolean( tasks?.find( ( task ) => task.id === 'setup_blog' )?.completed ) ||
+		! isStartWritingFlow( flow );
 
 	const domainUpsellCompleted = isDomainUpsellCompleted( site, checklistStatuses );
+
+	const planCompleted =
+		Boolean( tasks?.find( ( task ) => task.id === 'plan_completed' )?.completed ) ||
+		! isStartWritingFlow( flow );
+
+	const videoPressUploadCompleted = Boolean(
+		tasks?.find( ( task ) => task.id === 'video_uploaded' )?.completed
+	);
 
 	const mustVerifyEmailBeforePosting = isNewsletterFlow( flow || null ) && ! isEmailVerified;
 
@@ -79,20 +74,8 @@ export function getEnhancedTasks(
 				canvas: 'edit',
 		  } );
 
-	let planWarningText = displayGlobalStylesWarning
-		? translate(
-				'Your site contains custom colors that will only be visible once you upgrade to a Premium plan.'
-		  )
-		: '';
-
 	const isVideoPressFlowWithUnsupportedPlan =
 		isVideoPressFlow( flow ) && ! planHasFeature( productSlug as string, FEATURE_VIDEO_UPLOADS );
-
-	if ( isVideoPressFlowWithUnsupportedPlan ) {
-		planWarningText = translate(
-			'Upgrade to a plan with VideoPress support to upload your videos.'
-		);
-	}
 
 	const shouldDisplayWarning = displayGlobalStylesWarning || isVideoPressFlowWithUnsupportedPlan;
 
@@ -100,14 +83,8 @@ export function getEnhancedTasks(
 		tasks.map( ( task ) => {
 			let taskData = {};
 			switch ( task.id ) {
-				case 'setup_write':
-					taskData = {
-						title: translate( 'Set up your site' ),
-					};
-					break;
 				case 'setup_free':
 					taskData = {
-						title: translate( 'Personalize your site' ),
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
@@ -118,9 +95,21 @@ export function getEnhancedTasks(
 						},
 					};
 					break;
+				case 'setup_blog':
+					taskData = {
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.assign(
+								addQueryArgs( `/setup/${ START_WRITING_FLOW }/setup-blog`, {
+									...{ siteSlug: siteSlug, 'start-writing': true },
+								} )
+							);
+						},
+						disabled: task.completed,
+					};
+					break;
 				case 'setup_newsletter':
 					taskData = {
-						title: translate( 'Personalize newsletter' ),
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
@@ -131,17 +120,10 @@ export function getEnhancedTasks(
 						},
 					};
 					break;
-				case 'setup_general':
-					taskData = {
-						title: translate( 'Set up your site' ),
-					};
-					break;
 				case 'design_edited':
 					taskData = {
-						title: translate( 'Edit site design' ),
-						completed: siteEditCompleted,
 						actionDispatch: () => {
-							recordTaskClickTracksEvent( flow, siteEditCompleted, task.id );
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
 								addQueryArgs( `/site-editor/${ siteSlug }`, {
 									canvas: 'edit',
@@ -152,8 +134,6 @@ export function getEnhancedTasks(
 					break;
 				case 'plan_selected':
 					taskData = {
-						title: translate( 'Choose a plan' ),
-						subtitle: planWarningText,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							if ( displayGlobalStylesWarning ) {
@@ -161,34 +141,35 @@ export function getEnhancedTasks(
 									'calypso_launchpad_global_styles_gating_plan_selected_task_clicked'
 								);
 							}
-							let plansUrl = addQueryArgs( `/plans/${ siteSlug }`, {
+							const plansUrl = addQueryArgs( `/plans/${ siteSlug }`, {
 								...( shouldDisplayWarning && {
 									plan: PLAN_PREMIUM,
 									feature: isVideoPressFlowWithUnsupportedPlan
 										? FEATURE_VIDEO_UPLOADS
-										: FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
+										: FEATURE_STYLE_CUSTOMIZATION,
 								} ),
 							} );
-							if ( isStartWritingFlow( flow ) && site?.plan?.is_free ) {
-								plansUrl = addQueryArgs( `/setup/${ START_WRITING_FLOW }/plans`, {
-									...{ siteSlug: siteSlug, 'start-writing': true },
-								} );
-							}
+							window.location.assign( plansUrl );
+						},
+						completed: task.completed && ! isVideoPressFlowWithUnsupportedPlan,
+					};
+					break;
+				case 'plan_completed':
+					taskData = {
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							const plansUrl = addQueryArgs( `/setup/${ START_WRITING_FLOW }/plans`, {
+								...{ siteSlug: siteSlug, 'start-writing': true },
+							} );
 
 							window.location.assign( plansUrl );
 						},
-						badgeText:
-							isVideoPressFlowWithUnsupportedPlan ||
-							( isStartWritingFlow( flow ) && ! planCompleted )
-								? null
-								: translatedPlanName,
-						completed: ( planCompleted ?? task.completed ) && ! shouldDisplayWarning,
-						warning: shouldDisplayWarning,
+						badge_text: ! task.completed ? null : translatedPlanName,
+						disabled: task.completed || ! domainUpsellCompleted,
 					};
 					break;
 				case 'subscribers_added':
 					taskData = {
-						title: translate( 'Add subscribers' ),
 						actionDispatch: () => {
 							if ( goToStep ) {
 								recordTaskClickTracksEvent( flow, task.completed, task.id );
@@ -199,8 +180,6 @@ export function getEnhancedTasks(
 					break;
 				case 'first_post_published':
 					taskData = {
-						title: translate( 'Write your first post' ),
-						completed: firstPostPublishedCompleted,
 						disabled: mustVerifyEmailBeforePosting || isStartWritingFlow( flow || null ) || false,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
@@ -210,8 +189,6 @@ export function getEnhancedTasks(
 					break;
 				case 'first_post_published_newsletter':
 					taskData = {
-						title: translate( 'Start writing' ),
-						completed: firstPostPublishedCompleted,
 						disabled: mustVerifyEmailBeforePosting || false,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
@@ -221,8 +198,6 @@ export function getEnhancedTasks(
 					break;
 				case 'design_selected':
 					taskData = {
-						title: translate( 'Select a design' ),
-						disabled: ! allowUpdateDesign,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
@@ -236,7 +211,6 @@ export function getEnhancedTasks(
 					break;
 				case 'setup_link_in_bio':
 					taskData = {
-						title: translate( 'Personalize Link in Bio' ),
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
@@ -249,10 +223,8 @@ export function getEnhancedTasks(
 					break;
 				case 'links_added':
 					taskData = {
-						title: translate( 'Add links' ),
-						completed: linkInBioLinksEditCompleted,
 						actionDispatch: () => {
-							recordTaskClickTracksEvent( flow, linkInBioLinksEditCompleted, task.id );
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
 								addQueryArgs( `/site-editor/${ siteSlug }`, {
 									canvas: 'edit',
@@ -263,10 +235,6 @@ export function getEnhancedTasks(
 					break;
 				case 'link_in_bio_launched':
 					taskData = {
-						title: translate( 'Launch your site' ),
-						completed: siteLaunchCompleted,
-						disabled: ! linkInBioLinksEditCompleted,
-						isLaunchTask: true,
 						actionDispatch: () => {
 							if ( site?.ID ) {
 								const { setPendingAction, setProgressTitle } = dispatch( ONBOARD_STORE );
@@ -278,7 +246,7 @@ export function getEnhancedTasks(
 
 									// Waits for half a second so that the loading screen doesn't flash away too quickly
 									await new Promise( ( res ) => setTimeout( res, 500 ) );
-									recordTaskClickTracksEvent( flow, siteLaunchCompleted, task.id );
+									recordTaskClickTracksEvent( flow, task.completed, task.id );
 									return { goToHome: true, siteSlug };
 								} );
 
@@ -289,9 +257,6 @@ export function getEnhancedTasks(
 					break;
 				case 'site_launched':
 					taskData = {
-						title: translate( 'Launch your site' ),
-						completed: siteLaunchCompleted,
-						isLaunchTask: true,
 						actionDispatch: () => {
 							if ( site?.ID ) {
 								const { setPendingAction, setProgressTitle } = dispatch( ONBOARD_STORE );
@@ -303,7 +268,7 @@ export function getEnhancedTasks(
 
 									// Waits for half a second so that the loading screen doesn't flash away too quickly
 									await new Promise( ( res ) => setTimeout( res, 500 ) );
-									recordTaskClickTracksEvent( flow, siteLaunchCompleted, task.id );
+									recordTaskClickTracksEvent( flow, task.completed, task.id );
 									return { goToHome: true, siteSlug };
 								} );
 
@@ -314,9 +279,9 @@ export function getEnhancedTasks(
 					break;
 				case 'blog_launched':
 					taskData = {
-						title: translate( 'Launch your blog' ),
-						completed: siteLaunchCompleted,
-						isLaunchTask: true,
+						disabled:
+							isStartWritingFlow( flow ) &&
+							( ! planCompleted || ! domainUpsellCompleted || ! setupBlogCompleted ),
 						actionDispatch: () => {
 							if ( site?.ID ) {
 								const { setPendingAction, setProgressTitle } = dispatch( ONBOARD_STORE );
@@ -328,7 +293,7 @@ export function getEnhancedTasks(
 
 									// Waits for half a second so that the loading screen doesn't flash away too quickly
 									await new Promise( ( res ) => setTimeout( res, 500 ) );
-									recordTaskClickTracksEvent( flow, siteLaunchCompleted, task.id );
+									recordTaskClickTracksEvent( flow, task.completed, task.id );
 									return { blogLaunched: true, siteSlug };
 								} );
 
@@ -337,18 +302,9 @@ export function getEnhancedTasks(
 						},
 					};
 					break;
-				case 'videopress_setup':
-					taskData = {
-						completed: true,
-						disabled: true,
-						title: translate( 'Set up your video site' ),
-					};
-					break;
 				case 'videopress_upload':
 					taskData = {
-						title: translate( 'Upload your first video' ),
 						actionUrl: launchpadUploadVideoLink,
-						completed: videoPressUploadCompleted,
 						disabled: isVideoPressFlowWithUnsupportedPlan || videoPressUploadCompleted,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
@@ -358,9 +314,6 @@ export function getEnhancedTasks(
 					break;
 				case 'videopress_launched':
 					taskData = {
-						title: translate( 'Launch site' ),
-						completed: siteLaunchCompleted,
-						disabled: ! videoPressUploadCompleted,
 						actionDispatch: () => {
 							if ( site?.ID ) {
 								const { setPendingAction, setProgressTitle } = dispatch( ONBOARD_STORE );
@@ -386,26 +339,60 @@ export function getEnhancedTasks(
 					break;
 				case 'domain_upsell':
 					taskData = {
-						title: translate( 'Choose a domain' ),
 						completed: domainUpsellCompleted,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, domainUpsellCompleted, task.id );
+
+							if ( isStartWritingFlow( flow || null ) ) {
+								window.location.assign(
+									addQueryArgs( `/setup/${ START_WRITING_FLOW }/domains`, {
+										siteSlug,
+										flowToReturnTo: flow,
+										new: site?.name,
+										domainAndPlanPackage: true,
+										[ START_WRITING_FLOW ]: true,
+									} )
+								);
+
+								return;
+							}
+
 							const destinationUrl = domainUpsellCompleted
 								? `/domains/manage/${ siteSlug }`
-								: addQueryArgs( '/setup/domain-upsell/domains', {
+								: addQueryArgs( `/setup/domain-upsell/domains`, {
 										siteSlug,
 										flowToReturnTo: flow,
 										new: site?.name,
 								  } );
 							window.location.assign( destinationUrl );
 						},
-						badgeText: domainUpsellCompleted ? '' : translate( 'Upgrade plan' ),
+						badge_text:
+							domainUpsellCompleted || isStartWritingFlow( flow || null )
+								? ''
+								: translate( 'Upgrade plan' ),
 					};
 					break;
 				case 'verify_email':
 					taskData = {
 						completed: isEmailVerified,
-						title: translate( 'Confirm email (check your inbox)' ),
+					};
+					break;
+				case 'set_up_payments':
+					taskData = {
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.assign( `/earn/payments/${ siteSlug }#launchpad` );
+						},
+					};
+					break;
+				case 'newsletter_plan_created':
+					taskData = {
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.assign(
+								`/earn/payments-plans/${ siteSlug }?launchpad=add-product#add-newsletter-payment-plan`
+							);
+						},
 					};
 					break;
 			}
@@ -469,10 +456,10 @@ export function getArrayOfFilteredTasks(
  * @returns {boolean} - True if the final task for the given site checklist is completed
  */
 export function areLaunchpadTasksCompleted(
-	checklist: LaunchpadChecklist,
+	checklist: LaunchpadChecklist | null | undefined,
 	isSiteLaunched: boolean
 ) {
-	if ( ! Array.isArray( checklist ) ) {
+	if ( ! checklist || ! Array.isArray( checklist ) ) {
 		return false;
 	}
 

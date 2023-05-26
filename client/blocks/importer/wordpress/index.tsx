@@ -166,6 +166,7 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 							stepNavigator={ stepNavigator }
 							isMigrateFromWp={ isMigrateFromWp }
 							showConfirmDialog={ showConfirmDialog }
+							onContentOnlySelection={ switchToContentUploadScreen }
 						/>
 					);
 				} else if ( WPImportOption.CONTENT_ONLY === option ) {

@@ -3,6 +3,7 @@ import { useFlowProgress, LINK_IN_BIO_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import wpcom from 'calypso/lib/wp';
 import {
 	clearSignupDestinationCookie,
@@ -30,7 +31,10 @@ const linkInBio: Flow = {
 			},
 			{ slug: 'domains', asyncComponent: () => import( './internals/steps-repository/domains' ) },
 			{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },
-			{ slug: 'patterns', asyncComponent: () => import( './internals/steps-repository/patterns' ) },
+			{
+				slug: 'patterns',
+				asyncComponent: () => import( './internals/steps-repository/design-carousel' ),
+			},
 			{
 				slug: 'siteCreationStep',
 				asyncComponent: () => import( './internals/steps-repository/site-creation-step' ),
@@ -44,6 +48,13 @@ const linkInBio: Flow = {
 				asyncComponent: () => import( './internals/steps-repository/launchpad' ),
 			},
 		];
+	},
+
+	useSideEffect() {
+		const { setHidePlansFeatureComparison } = useDispatch( ONBOARD_STORE );
+		useEffect( () => {
+			setHidePlansFeatureComparison( true );
+		} );
 	},
 
 	useStepNavigation( _currentStepSlug, navigate ) {

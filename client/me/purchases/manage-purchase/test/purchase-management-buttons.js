@@ -13,7 +13,7 @@ import { render, screen } from '@testing-library/react';
 import nock from 'nock';
 import { Provider as ReduxProvider } from 'react-redux';
 import { createReduxStore } from 'calypso/state';
-import ManagePurchase from '../index.jsx';
+import ManagePurchase from '../index';
 
 const purchase = {
 	ID: '19823155',

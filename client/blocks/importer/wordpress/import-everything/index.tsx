@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { ProgressBar } from '@automattic/components';
 import { Hooray, Progress, SubTitle, Title, NextButton } from '@automattic/onboarding';
 import { createElement, createInterpolateElement } from '@wordpress/element';
@@ -6,6 +7,7 @@ import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import { connect } from 'react-redux';
+import PreMigrationScreen from 'calypso/blocks/importer/wordpress/import-everything/pre-migration';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { EVERY_TEN_SECONDS, Interval } from 'calypso/lib/interval';
 import { SectionMigrate } from 'calypso/my-sites/migrate/section-migrate';
@@ -139,9 +141,21 @@ export class ImportEverything extends SectionMigrate {
 			stepNavigator,
 			showConfirmDialog = true,
 			isMigrateFromWp,
+			onContentOnlySelection,
 		} = this.props;
 
 		if ( sourceSite ) {
+			if ( isEnabled( 'onboarding/import-redesign' ) ) {
+				return (
+					<PreMigrationScreen
+						startImport={ this.startMigration }
+						isTargetSitePlanCompatible={ isTargetSitePlanCompatible }
+						targetSite={ targetSite }
+						sourceSite={ sourceSite }
+						onContentOnlyClick={ onContentOnlySelection }
+					/>
+				);
+			}
 			return (
 				<Confirm
 					startImport={ this.startMigration }

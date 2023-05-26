@@ -64,7 +64,13 @@ class SharingPreviewPane extends PureComponent {
 		const { post, site, message, connections, translate, seoTitle, siteSlug, siteIcon } =
 			this.props;
 		const { selectedService } = this.state;
+
+		if ( ! selectedService ) {
+			return null;
+		}
+
 		const connection = find( connections, { service: selectedService } );
+
 		if ( ! connection ) {
 			return (
 				<Notice
@@ -124,7 +130,13 @@ class SharingPreviewPane extends PureComponent {
 					/>
 				);
 			case 'tumblr':
-				return <TumblrSharePreview { ...previewProps } />;
+				return (
+					<TumblrSharePreview
+						{ ...previewProps }
+						articleContent={ post.content }
+						externalProfileURL={ connection.external_profile_URL }
+					/>
+				);
 			case 'linkedin':
 				return <LinkedinSharePreview { ...previewProps } />;
 			case 'twitter':

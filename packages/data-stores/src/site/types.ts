@@ -128,6 +128,7 @@ export interface SiteDetails {
 	single_user_site?: boolean;
 	site_owner?: number;
 	slug: string;
+	title: string;
 	visible?: boolean;
 	was_ecommerce_trial?: boolean;
 	wpcom_url?: string;
@@ -474,6 +475,9 @@ export interface LaunchPadCheckListTasksStatuses {
 	site_edited?: boolean;
 	video_uploaded?: boolean;
 	publish_first_course?: boolean;
+	domain_upsell_deferred?: boolean;
+	plan_selected?: boolean;
+	plan_completed?: boolean;
 }
 
 export interface ThemeSetupOptions {
@@ -505,4 +509,12 @@ export interface SourceSiteMigrationDetails {
 	is_target_blog_admin?: boolean;
 	is_target_blog_upgraded?: boolean;
 	target_blog_slug?: string;
+}
+
+export interface AssembleSiteOptions {
+	homeHtml?: string;
+	headerHtml?: string;
+	footerHtml?: string;
+	globalStyles?: GlobalStyles;
+	shouldResetContent?: boolean;
 }

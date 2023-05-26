@@ -92,6 +92,8 @@ const SetupForm = ( {
 					value={ siteTitle }
 					onChange={ ( value ) => setComponentSiteTitle( value ) }
 					placeholder={ translatedText?.titlePlaceholder || __( 'My Site Name' ) }
+					// eslint-disable-next-line jsx-a11y/no-autofocus
+					autoFocus
 				/>
 				{ invalidSiteTitle && (
 					<FormInputValidation

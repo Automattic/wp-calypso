@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import tracksRecordEvent from './track-record-event';
 
-function trackGlobalStylesMenuSelected( { path } ) {
+function trackGlobalStylesMenuSelected( event, target ) {
 	// Gutenberg 12.5.0 changes the selector for the preview at the top level to have the '*__iframe' suffix.
 	const isAtTopLevel = document.querySelector(
 		'.edit-site-global-styles-sidebar .edit-site-global-styles-preview, .edit-site-global-styles-sidebar .edit-site-global-styles-preview__iframe'
@@ -11,7 +11,7 @@ function trackGlobalStylesMenuSelected( { path } ) {
 		return;
 	}
 
-	const buttonText = path.find( ( node ) => node.nodeName === 'BUTTON' )?.innerText;
+	const buttonText = target.innerText;
 
 	if ( buttonText === __( 'Typography' ) ) {
 		tracksRecordEvent( 'wpcom_block_editor_global_styles_menu_selected', {
@@ -28,6 +28,10 @@ function trackGlobalStylesMenuSelected( { path } ) {
 	} else if ( buttonText === __( 'Layout' ) ) {
 		tracksRecordEvent( 'wpcom_block_editor_global_styles_menu_selected', {
 			menu: 'layout',
+		} );
+	} else if ( buttonText === __( 'Browse styles' ) ) {
+		tracksRecordEvent( 'wpcom_block_editor_global_styles_menu_selected', {
+			menu: 'styles',
 		} );
 	}
 }

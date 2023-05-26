@@ -63,7 +63,7 @@
 	}
 
 	// Black segmented controls.
-	.is-section-stats .segmented-control .segmented-control__item {
+	.is-section-stats ul.segmented-control li.segmented-control__item {
 		.segmented-control__link:hover {
 			background-color: var(--color-neutral-0);
 		}

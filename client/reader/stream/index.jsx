@@ -18,6 +18,7 @@ import withDimensions from 'calypso/lib/with-dimensions';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { shouldShowLikes } from 'calypso/reader/like-helper';
 import { keysAreEqual, keyToString } from 'calypso/reader/post-key';
+import ReaderSearchSidebar from 'calypso/reader/stream/reader-search-sidebar';
 import ReaderTagSidebar from 'calypso/reader/stream/reader-tag-sidebar';
 import UpdateNotice from 'calypso/reader/update-notice';
 import { showSelectedPost, getStreamType } from 'calypso/reader/utils';
@@ -63,7 +64,6 @@ const excludesSidebar = [
 	'feed',
 	'likes',
 	'search',
-	'custom_recs_posts_with_images',
 	'list',
 	'p2',
 ];
@@ -460,7 +460,7 @@ class ReaderStream extends Component {
 	};
 
 	render() {
-		const { translate, forcePlaceholders, lastPage, streamKey, tag } = this.props;
+		const { translate, forcePlaceholders, lastPage, streamHeader, streamKey, tag } = this.props;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 		let { items, isRequesting } = this.props;
 		const hasNoPosts = items.length === 0 && ! isRequesting;
@@ -475,6 +475,7 @@ class ReaderStream extends Component {
 
 		const path = window.location.pathname;
 		const isTagPage = path.startsWith( '/tag/' );
+		const isSearchPage = path.startsWith( '/read/search' );
 		const streamType = getStreamType( streamKey );
 
 		let baseClassnames = classnames( 'following', this.props.className );
@@ -491,7 +492,6 @@ class ReaderStream extends Component {
 			const bodyContent = (
 				<InfiniteList
 					ref={ this.listRef }
-					className="reader__content"
 					items={ items }
 					lastPage={ lastPage }
 					fetchingNextPage={ isRequesting }
@@ -503,20 +503,28 @@ class ReaderStream extends Component {
 				/>
 			);
 
-			const sidebarContent = isTagPage ? (
-				<ReaderTagSidebar tag={ tag } />
-			) : (
-				<ReaderListFollowedSites path={ path } />
-			);
+			let sidebarContent = null;
+			let tabTitle = translate( 'Sites' );
 
-			const tabTitle = isTagPage ? translate( 'Related' ) : translate( 'Sites' );
+			if ( isTagPage ) {
+				sidebarContent = <ReaderTagSidebar tag={ tag } />;
+				tabTitle = translate( 'Related' );
+				baseClassnames = classnames( 'tag-stream__main', this.props.className );
+			} else if ( isSearchPage ) {
+				sidebarContent = <ReaderSearchSidebar items={ items } />;
+			} else {
+				sidebarContent = <ReaderListFollowedSites path={ path } />;
+			}
 
 			if ( excludesSidebar.includes( streamType ) ) {
-				body = bodyContent;
+				body = <div className="reader__content">{ bodyContent }</div>;
 			} else if ( wideDisplay ) {
 				body = (
 					<div className="stream__two-column">
-						{ bodyContent }
+						<div className="reader__content">
+							{ streamHeader }
+							{ bodyContent }
+						</div>
 						<div className="stream__right-column">{ sidebarContent }</div>
 					</div>
 				);
@@ -524,6 +532,7 @@ class ReaderStream extends Component {
 			} else {
 				body = (
 					<>
+						{ streamHeader }
 						<div className="stream__header">
 							<SectionNav selectedText={ this.state.selectedTab }>
 								<NavTabs label={ translate( 'Status' ) }>
@@ -544,11 +553,11 @@ class ReaderStream extends Component {
 								</NavTabs>
 							</SectionNav>
 						</div>
-						{ this.state.selectedTab === 'posts' && bodyContent }
+						{ this.state.selectedTab === 'posts' && (
+							<div className="reader__content">{ bodyContent }</div>
+						) }
 						{ this.state.selectedTab === 'sites' && (
-							<div className="stream__two-column">
-								<div className="stream__right-column">{ sidebarContent }</div>
-							</div>
+							<div className="stream__right-column">{ sidebarContent }</div>
 						) }
 					</>
 				);

@@ -43,7 +43,6 @@ import {
 	getVirtualDesignProps,
 } from '../../analytics/record-design';
 import StepperLoader from '../../components/stepper-loader';
-import { PLACEHOLDER_SITE_ID } from '../pattern-assembler/constants';
 import { getCategorizationOptions } from './categories';
 import { DEFAULT_VARIATION_SLUG, RETIRING_DESIGN_SLUGS, STEP_NAME } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
@@ -237,7 +236,23 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	}
 
 	function previewDesign( design: Design, styleVariation?: StyleVariation ) {
+		// Virtual designs don't need to be previewed and can go directly to the site assembler.
+		const shouldGoToAssembler =
+			design.is_virtual && design.slug === BLANK_CANVAS_DESIGN.slug && isDesktop;
+
+		if ( shouldGoToAssembler ) {
+			design = {
+				...design,
+				design_type: BLANK_CANVAS_DESIGN.design_type,
+			} as Design;
+		}
+
 		recordPreviewedDesign( { flow, intent, design, styleVariation } );
+
+		if ( shouldGoToAssembler ) {
+			pickDesign( design );
+			return;
+		}
 
 		setSelectedDesign( design );
 		if ( styleVariation ) {
@@ -435,40 +450,16 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 
 	function pickDesign( _selectedDesign: Design | undefined = selectedDesign ) {
-		const shouldGoToAssembler =
-			_selectedDesign?.is_virtual &&
-			_selectedDesign?.slug === BLANK_CANVAS_DESIGN.slug &&
-			isDesktop &&
-			isEnabled( 'pattern-assembler/dotcompatterns' );
-
-		if ( shouldGoToAssembler ) {
-			const assemblerDesign = {
-				..._selectedDesign,
-				design_type: BLANK_CANVAS_DESIGN.design_type,
-			} as Design;
-
-			setSelectedDesign( assemblerDesign );
-
-			handleSubmit( {
-				selectedDesign: assemblerDesign,
-				selectedSiteCategory: categorization.selection,
-			} );
-			return;
-		}
-
 		setSelectedDesign( _selectedDesign );
 		if ( siteSlugOrId && _selectedDesign ) {
-			const positionIndex = designs.findIndex( ( design ) => design.slug === _selectedDesign.slug );
+			const positionIndex = designs.findIndex(
+				( design ) => design.slug === _selectedDesign?.slug
+			);
 
 			setPendingAction( () => {
-				if ( _selectedDesign.is_virtual ) {
-					return applyThemeWithPatterns(
-						siteSlugOrId,
-						_selectedDesign,
-						null,
-						PLACEHOLDER_SITE_ID
-					).then( ( theme: ActiveTheme ) =>
-						reduxDispatch( setActiveTheme( site?.ID || -1, theme ) )
+				if ( _selectedDesign?.is_virtual ) {
+					return applyThemeWithPatterns( siteSlugOrId, _selectedDesign ).then(
+						( theme: ActiveTheme ) => reduxDispatch( setActiveTheme( site?.ID || -1, theme ) )
 					);
 				}
 				return setDesignOnSite( siteSlugOrId, _selectedDesign, {

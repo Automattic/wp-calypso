@@ -6,7 +6,7 @@ function BlankSuggestions( props ) {
 	return (
 		<div className="reader-blank-suggestions">
 			{ props.suggestions &&
-				props.translate( 'Suggestions: {{suggestions /}}.', {
+				props.translate( 'Suggestions: {{suggestions /}}', {
 					components: {
 						suggestions: props.suggestions,
 					},

@@ -1,66 +1,103 @@
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
-import { useLayoutEffect, useRef, useState } from 'react';
 import FoldableCard from 'calypso/components/foldable-card';
 import { useIncludedProductDescriptionMap } from '../product-store/hooks/use-included-product-description-map';
 import { SelectorProduct } from '../types';
 import DescriptionList from './description-list';
+import FAQList from './faq-list';
 import IncludedProductList from './included-product-list';
 
 type ProductDetailsProps = {
 	product: SelectorProduct;
 };
 
-const ProductDetails: React.FC< ProductDetailsProps > = ( { product } ) => {
+type ProductDetailsListProps = {
+	title: string;
+	detailsList: JSX.Element;
+};
+
+const ProductDetailsList: React.FC< ProductDetailsListProps > = ( { title, detailsList } ) => {
 	const isMobile = useMobileBreakpoint();
+
+	if ( isMobile ) {
+		return (
+			<FoldableCard
+				hideSummary
+				header={ title }
+				clickableHeader={ true }
+				smooth
+				contentExpandedStyle={ { maxHeight: 'fit-content' } }
+			>
+				<div>{ detailsList }</div>
+			</FoldableCard>
+		);
+	}
+
+	return (
+		<>
+			<p>{ title }</p>
+			{ detailsList }
+		</>
+	);
+};
+
+const ProductDetails: React.FC< ProductDetailsProps > = ( { product } ) => {
 	const translate = useTranslate();
 
 	const productDetails = [
-		{ type: 'includes', title: translate( 'Includes' ), items: product.whatIsIncluded },
-		{ type: 'benefits', title: translate( 'Benefits' ), items: product.benefits },
+		{
+			type: 'includes',
+			title: translate( 'Includes' ),
+			items: product.whatIsIncluded,
+			comingSoon: product.whatIsIncludedComingSoon,
+		},
+		{
+			type: 'benefits',
+			title: translate( 'Benefits' ),
+			items: product.benefits,
+			comingSoon: product.benefitsComingSoon,
+		},
 	];
-
-	const ref = useRef< HTMLDivElement | null >( null );
-	const [ contentStlye, setContentStyle ] = useState( {} );
-
-	useLayoutEffect( () => {
-		const height = ref?.current?.scrollHeight || 250;
-		setContentStyle( { maxHeight: `${ height }px` } );
-	}, [ setContentStyle ] );
 
 	const descriptionMap = useIncludedProductDescriptionMap( product.productSlug );
 
 	return (
 		<>
 			{ product.productsIncluded ? (
-				<IncludedProductList
-					products={ product.productsIncluded }
-					descriptionMap={ descriptionMap }
-				/>
+				<>
+					<IncludedProductList
+						products={ product.productsIncluded }
+						descriptionMap={ descriptionMap }
+					/>
+					<hr />
+					<div className="product-lightbox__detail-list">
+						<ProductDetailsList
+							title={ translate( 'Also included:' ) }
+							detailsList={ <DescriptionList items={ product.alsoIncluded } /> }
+						/>
+					</div>
+				</>
 			) : (
-				productDetails.map( ( { type, title, items }, index, infoList ) => (
+				productDetails.map( ( { type, title, items, comingSoon } ) => (
 					<div className="product-lightbox__detail-list" key={ type }>
-						{ isMobile ? (
-							<FoldableCard
-								hideSummary
-								header={ title }
-								clickableHeader={ true }
-								smooth
-								contentExpandedStyle={ contentStlye }
-							>
-								<div ref={ ref }>
-									<DescriptionList items={ items } />
-								</div>
-							</FoldableCard>
-						) : (
-							<>
-								<p>{ title }</p>
-								<DescriptionList items={ items } />
-							</>
-						) }
-						{ index !== infoList.length - 1 && <hr /> }
+						<ProductDetailsList
+							title={ title }
+							detailsList={ <DescriptionList items={ items } comingSoon={ comingSoon } /> }
+						/>
+						<hr />
 					</div>
 				) )
+			) }
+
+			{ product.faqs && !! product.faqs.length && (
+				<>
+					<div className="product-lightbox__detail-list is-faq-list" key="faqs">
+						<ProductDetailsList
+							title={ translate( 'FAQs' ) }
+							detailsList={ <FAQList items={ product.faqs } /> }
+						/>
+					</div>
+				</>
 			) }
 		</>
 	);

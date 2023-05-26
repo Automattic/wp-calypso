@@ -85,23 +85,11 @@
 .reader-list-item__by-text,
 .reader-list-item__site-excerpt,
 .reader-list-item__site-url-timestamp {
-	display: block;
-	line-height: 18px;
-	max-height: 16px * 2.6;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	position: relative;
-	width: 100%;
-	overflow-wrap: break-word;
-	word-wrap: break-word;
-	word-break: break-word;
-	margin-bottom: 4px;
-
-	&:not(.is-placeholder)::after {
-		@include long-content-fade( $size: 20% );
-		height: 16px * 1.3;
-		top: auto;
-	}
 }
 
 .reader-list-item__by-text,
@@ -109,21 +97,17 @@
 	word-break: break-all;
 }
 
-.reader-list-item__site-excerpt {
-	max-height: 16px * 2.8;
-}
-
 .reader-list-item__site-title {
 	font-size: $font-body;
 	font-weight: 600;
 	line-height: 20px;
+	-webkit-line-clamp: 1;
 }
 
 .reader-list-item__site-url-timestamp {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
-	max-height: 16px * 3.2;
 	min-width: 100%;
 
 	@include breakpoint-deprecated( "<960px" ) {
@@ -151,28 +135,11 @@
 }
 
 .reader-list-item__site-url {
-	display: inline;
-	margin-right: 8px;
+	display: -webkit-box;
+	-webkit-line-clamp: 1;
+	-webkit-box-orient: vertical;
 	overflow: hidden;
-	position: relative;
 	text-overflow: ellipsis;
-	word-break: break-all;
-	max-height: 16px * 1.3;
-
-	@include breakpoint-deprecated( "<960px" ) {
-		height: 20px;
-		flex: 1 1 auto;
-		max-width: none;
-	}
-
-	@include breakpoint-deprecated( "<660px" ) {
-		flex: 0 1 auto;
-	}
-
-	@include breakpoint-deprecated( "<480px" ) {
-		flex: 1 1 auto;
-		max-width: none;
-	}
 }
 
 .reader-list-item .follow-button .gridicon {

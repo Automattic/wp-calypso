@@ -1,6 +1,6 @@
 import { isFreePlanProduct } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
-import { BackButton } from '@automattic/onboarding';
+import { BackButton, ECOMMERCE_FLOW } from '@automattic/onboarding';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -45,6 +45,11 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import isSiteOnMonthlyPlan from 'calypso/state/selectors/is-site-on-monthly-plan';
 import isSiteUpgradeable from 'calypso/state/selectors/is-site-upgradeable';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import {
+	isSiteOnECommerceTrial,
+	isSiteOnWooExpress,
+	isSiteOnEcommerce,
+} from 'calypso/state/sites/plans/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -236,6 +241,7 @@ class DomainSearch extends Component {
 			cart,
 			isDomainAndPlanPackageFlow,
 			isDomainUpsell,
+			isEcommerceSite,
 		} = this.props;
 
 		if ( ! selectedSite ) {
@@ -372,7 +378,9 @@ class DomainSearch extends Component {
 								selectedSite={ selectedSite }
 								basePath={ this.props.basePath }
 								products={ this.props.productsList }
-								vendor={ getSuggestionsVendor() }
+								vendor={ getSuggestionsVendor( {
+									flowName: isEcommerceSite ? ECOMMERCE_FLOW : '',
+								} ) }
 							/>
 						</EmailVerificationGate>
 					</div>
@@ -410,6 +418,10 @@ export default connect(
 				!! getCurrentQueryArguments( state )?.domainAndPlanPackage &&
 				!! getCurrentQueryArguments( state )?.domain,
 			isSiteOnFreePlan: site && isFreePlanProduct( site.plan ),
+			isEcommerceSite:
+				isSiteOnECommerceTrial( state, siteId ) ||
+				isSiteOnWooExpress( state, siteId ) ||
+				isSiteOnEcommerce( state, siteId ),
 		};
 	},
 	{

@@ -16,7 +16,7 @@ import { SiteLogs } from '../main';
 // Mock it for now to avoid the error.
 jest.mock( 'page' );
 
-// Mock matchMedia in DateRange component
+// Mock matchMedia, used in Gutenberg components
 Object.defineProperty( window, 'matchMedia', {
 	value: jest.fn( () => {
 		return {

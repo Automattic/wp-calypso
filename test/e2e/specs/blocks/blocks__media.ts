@@ -55,7 +55,7 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
 
-		editorPage = new EditorPage( page, { target: features.siteType } );
+		editorPage = new EditorPage( page );
 		await editorPage.visit( 'post' );
 		await editorPage.enterTitle( DataHelper.getRandomPhrase() );
 	} );
@@ -67,7 +67,7 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 				ImageBlock.blockEditorSelector,
 				{ noSearch: true }
 			);
-			const imageBlock = new ImageBlock( blockHandle );
+			const imageBlock = new ImageBlock( page, blockHandle );
 			await imageBlock.upload( testFiles.imageReservedName.fullpath );
 		} );
 
@@ -77,7 +77,7 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 				ImageBlock.blockEditorSelector,
 				{ noSearch: true }
 			);
-			const imageBlock = new ImageBlock( blockHandle );
+			const imageBlock = new ImageBlock( page, blockHandle );
 			await imageBlock.uploadThroughMediaLibrary( testFiles.image.fullpath );
 		} );
 
@@ -97,7 +97,7 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 				FileBlock.blockEditorSelector,
 				{ noSearch: true }
 			);
-			const fileBlock = new FileBlock( blockHandle );
+			const fileBlock = new FileBlock( page, blockHandle );
 			await fileBlock.upload( testFiles.audio.fullpath );
 		} );
 

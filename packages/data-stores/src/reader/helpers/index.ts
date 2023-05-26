@@ -2,6 +2,7 @@ import apiFetch, { APIFetchOptions } from '@wordpress/api-fetch';
 import wpcomRequest from 'wpcom-proxy-request';
 
 type callApiParams = {
+	apiNamespace?: string;
 	path: string;
 	method?: 'GET' | 'POST';
 	body?: object;
@@ -16,6 +17,7 @@ const getSubkey = () => {
 
 // Helper function for fetching from subkey authenticated API. Subkey authentication process is only applied in case of logged-out users.
 async function callApi< ReturnType >( {
+	apiNamespace = '',
 	path,
 	method = 'GET',
 	body,
@@ -24,6 +26,7 @@ async function callApi< ReturnType >( {
 }: callApiParams ): Promise< ReturnType > {
 	if ( isLoggedIn ) {
 		const res = await wpcomRequest( {
+			apiNamespace,
 			path,
 			apiVersion,
 			method,
@@ -79,4 +82,26 @@ const applyCallbackToPages = < K extends string, T >(
 	};
 };
 
-export { callApi, applyCallbackToPages, getSubkey };
+// Subscriptions Management helper function to determine which API endpoint to call based on whether the user is logged in or not.
+const getSubscriptionMutationParams = (
+	action: 'new' | 'delete',
+	isLoggedIn: boolean,
+	blogId: number | string,
+	url?: string
+) => {
+	if ( isLoggedIn ) {
+		return {
+			path: `/read/following/mine/${ action }`,
+			apiVersion: '1.1',
+			body: { source: 'calypso', url: url },
+		};
+	}
+
+	return {
+		path: `/read/site/${ blogId }/post_email_subscriptions/${ action }`,
+		apiVersion: '1.2',
+		body: {},
+	};
+};
+
+export { callApi, applyCallbackToPages, getSubkey, getSubscriptionMutationParams };

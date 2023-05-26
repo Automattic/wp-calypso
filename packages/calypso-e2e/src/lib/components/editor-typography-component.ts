@@ -1,4 +1,5 @@
-import { Locator, Page } from 'playwright';
+import { Page } from 'playwright';
+import { EditorComponent } from './editor-component';
 
 type FontSize = 'Small' | 'Medium' | 'Large' | 'Extra Large'; // expand as needed.
 type FontAppearance = 'Default' | 'Thin' | 'Regular' | 'Medium'; // expand as needed.
@@ -11,27 +12,22 @@ export interface TypographySettings {
 	// Can add other block editor specific ones later (like drop cap)
 }
 
-type EditorContext = 'site-styles' | 'block';
-
 /**
  * Represents a typography settings component (used in blocks and site styles).
  */
 export class EditorTypographyComponent {
 	private page: Page;
-	private editor: Locator;
-	private context: EditorContext;
+	private editor: EditorComponent;
 
 	/**
-	 * Creates an instance of the component.
+	 * Constructs an instance of the component.
 	 *
-	 * @param {Page} page Object representing the base page.
-	 * @param {Locator} editor Frame-safe locator to the editor.
-	 * @param {EditorContext} context Whether we're in global styles or a block.
+	 * @param {Page} page The underlying page.
+	 * @param {EditorComponent} editor The EditorComponent instance.
 	 */
-	constructor( page: Page, editor: Locator, context: EditorContext ) {
+	constructor( page: Page, editor: EditorComponent ) {
 		this.page = page;
 		this.editor = editor;
-		this.context = context;
 	}
 
 	/**
@@ -63,15 +59,15 @@ export class EditorTypographyComponent {
 	 * @param {FontAppearance} fontAppearance Font appearance to select.
 	 */
 	private async setAppearance( fontAppearance: FontAppearance ): Promise< void > {
+		const editorParent = await this.editor.parent();
 		// In the future, if we're in the block context, we'll have to add this field first.
-
-		const dropdownButtonLocator = this.editor.getByRole( 'button', {
+		const dropdownButtonLocator = editorParent.getByRole( 'button', {
 			name: 'Appearance',
 			exact: true,
 		} );
 		await dropdownButtonLocator.click();
 
-		const selectionLocator = this.editor.getByRole( 'option', {
+		const selectionLocator = editorParent.getByRole( 'option', {
 			name: fontAppearance,
 			exact: true,
 		} );

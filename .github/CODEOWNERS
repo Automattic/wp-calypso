@@ -82,13 +82,6 @@
 /client/lib/explat @Automattic/experimentation-platform
 /packages/explat-* @Automattic/experimentation-platform
 
-# Framework
-/client/boot @Automattic/team-calypso-frameworks
-/client/controller @Automattic/team-calypso-frameworks
-/client/layout @Automattic/team-calypso-frameworks
-/client/server @Automattic/team-calypso-frameworks
-/packages/js-utils @Automattic/team-calypso-frameworks
-
 # Jetpack Search
 /client/my-sites/jetpack-search @Automattic/jetpack-search
 
@@ -154,12 +147,4 @@
 /packages/wpcom.js/src/lib/domains.js @Automattic/nomado
 
 #Plans
-/client/signup/steps/plans @Automattic/martech-autobots
-/client/lib/plans @Automattic/martech-autobots
-/client/my-sites/plan-features-comparison @Automattic/martech-autobots
-/client/my-sites/plan-features @Automattic/martech-autobots
-/client/my-sites/plans-comparison @Automattic/martech-autobots
-/client/my-sites/plans-features-main @Automattic/martech-autobots
-/client/my-sites/plan-price @Automattic/martech-autobots
-/packages/calypso-products/src/plans-list.tsx @Automattic/martech-autobots
 /client/my-sites/plan-features-2023-grid @Automattic/martech-decepticons

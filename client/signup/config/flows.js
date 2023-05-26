@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { BLANK_CANVAS_DESIGN } from '@automattic/design-picker';
 import { isSiteAssemblerFlow } from '@automattic/onboarding';
 import { isDesktop } from '@automattic/viewport';
@@ -28,7 +27,7 @@ function getCheckoutUrl( dependencies, localeSlug, flowName ) {
 }
 
 function dependenciesContainCartItem( dependencies ) {
-	return dependencies.cartItem || dependencies.domainItem || dependencies.themeItem;
+	return dependencies.cartItem || dependencies.domainItem;
 }
 
 function getSiteDestination( dependencies ) {
@@ -111,11 +110,7 @@ function getThankYouNoSiteDestination() {
 }
 
 function getChecklistThemeDestination( { flowName, siteSlug, themeParameter } ) {
-	if (
-		isSiteAssemblerFlow( flowName ) &&
-		themeParameter === BLANK_CANVAS_DESIGN.slug &&
-		config.isEnabled( 'pattern-assembler/logged-out-showcase' )
-	) {
+	if ( isSiteAssemblerFlow( flowName ) && themeParameter === BLANK_CANVAS_DESIGN.slug ) {
 		// Go to the site assembler flow if viewport width >= 960px as the layout doesn't support small
 		// screen for now
 		if ( isDesktop() ) {
@@ -123,6 +118,7 @@ function getChecklistThemeDestination( { flowName, siteSlug, themeParameter } ) 
 				{
 					theme: themeParameter,
 					siteSlug: siteSlug,
+					isNewSite: true,
 				},
 				`/setup/with-theme-assembler`
 			);
@@ -133,14 +129,27 @@ function getChecklistThemeDestination( { flowName, siteSlug, themeParameter } ) 
 	return `/home/${ siteSlug }`;
 }
 
-function getWithThemeDestination( { siteSlug, themeParameter, styleVariation, themeType } ) {
+function getWithThemeDestination( {
+	siteSlug,
+	themeParameter,
+	styleVariation,
+	themeType,
+	cartItem,
+} ) {
+	if (
+		! cartItem &&
+		[ 'dot-org', 'premium', 'externally-managed', 'woocommerce' ].includes( themeType )
+	) {
+		return `/setup/site-setup/designSetup?siteSlug=${ siteSlug }`;
+	}
+
 	if ( 'dot-org' === themeType ) {
 		return `/marketplace/theme/${ themeParameter }/install/${ siteSlug }`;
 	}
 
 	const style = styleVariation ? `&style=${ styleVariation }` : '';
 
-	return `/setup/site-setup/designSetup?siteSlug=${ siteSlug }&theme=${ themeParameter }${ style }&hideBack=true`;
+	return `/setup/site-setup/designSetup?siteSlug=${ siteSlug }&theme=${ themeParameter }${ style }`;
 }
 
 function getEditorDestination( dependencies ) {
@@ -179,8 +188,8 @@ function getDIFMSiteContentCollectionDestination( { siteSlug } ) {
 	return `/home/${ siteSlug }`;
 }
 
-function getHomeDestination( { siteSlug } ) {
-	return `/home/${ siteSlug }`;
+function getSitesDestination( { siteSlug } ) {
+	return addQueryArgs( { 'new-site': siteSlug }, '/sites' );
 }
 
 const flows = generateFlows( {
@@ -196,7 +205,7 @@ const flows = generateFlows( {
 	getDestinationFromIntent,
 	getDIFMSignupDestination,
 	getDIFMSiteContentCollectionDestination,
-	getHomeDestination,
+	getSitesDestination,
 } );
 
 function removeUserStepFromFlow( flow ) {

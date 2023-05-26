@@ -18,6 +18,7 @@ import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
+import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
@@ -63,6 +64,7 @@ export const QuickLinks = ( {
 	editHomePageUrl,
 	siteSlug,
 	isFSEActive,
+	siteEditorUrl,
 } ) => {
 	const translate = useTranslate();
 	const [
@@ -87,7 +89,7 @@ export const QuickLinks = ( {
 		<div className="quick-links__boxes">
 			{ isFSEActive && canManageSite ? (
 				<ActionBox
-					href={ `/site-editor/${ siteSlug }` }
+					href={ siteEditorUrl }
 					hideLinkIndicator
 					onClick={ trackEditSiteAction }
 					label={ translate( 'Edit site' ) }
@@ -406,6 +408,7 @@ const mapStateToProps = ( state ) => {
 		isWpcomStagingSite: isSiteWpcomStaging( state, siteId ),
 		isExpanded: getPreference( state, 'homeQuickLinksToggleStatus' ) !== 'collapsed',
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
+		siteEditorUrl: getSiteEditorUrl( state, siteId ),
 	};
 };
 

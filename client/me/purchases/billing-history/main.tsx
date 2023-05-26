@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { CompactCard, Card } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
+import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryBillingTransactions from 'calypso/components/data/query-billing-transactions';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -13,7 +13,7 @@ import { vatDetails as vatDetailsPath, billingHistoryReceipt } from 'calypso/me/
 import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
 import titles from 'calypso/me/purchases/titles';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
-import { getVatVendorInfo } from './vat-vendor-details';
+import { useTaxName } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-country-list';
 
 import './style.scss';
 
@@ -35,21 +35,24 @@ function BillingHistory() {
 	const translate = useTranslate();
 	const { vatDetails } = useVatDetails();
 	const { data: geoData } = useGeoLocationQuery();
-	const vendorInfo = getVatVendorInfo(
-		vatDetails.country ?? geoData?.country_short ?? 'GB',
-		'now',
-		translate
-	);
+	const taxName = useTaxName( vatDetails.country ?? geoData?.country_short ?? 'GB' );
 
+	const genericTaxName =
+		/* translators: This is a generic name for taxes to use when we do not know the user's country. */
+		translate( 'tax (VAT/GST/CT)' );
+	const fallbackTaxName =
+		getLocaleSlug()?.startsWith( 'en' ) || i18n.hasTranslation( 'tax (VAT/GST/CT)' )
+			? genericTaxName
+			: translate( 'VAT', { textOnly: true } );
 	/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
 	const editVatText = translate( 'Edit %s details', {
 		textOnly: true,
-		args: [ vendorInfo?.taxName ?? translate( 'VAT', { textOnly: true } ) ],
+		args: [ taxName ?? fallbackTaxName ],
 	} );
 	/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
 	const addVatText = translate( 'Add %s details', {
 		textOnly: true,
-		args: [ vendorInfo?.taxName ?? translate( 'VAT', { textOnly: true } ) ],
+		args: [ taxName ?? fallbackTaxName ],
 	} );
 	const vatText = vatDetails.id ? editVatText : addVatText;
 

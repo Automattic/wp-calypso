@@ -13,19 +13,17 @@ export const useGetDomainsQuery = (
 ) => {
 	const enabled = queryOptions?.enabled ?? true;
 
-	return useQuery< any, unknown, UseGetDomainsQueryData >(
-		getCacheKey( siteId ),
-		() =>
+	return useQuery< any, unknown, UseGetDomainsQueryData >( {
+		queryKey: getCacheKey( siteId ),
+		queryFn: () =>
 			wpcom.req.get(
 				{
 					path: `/sites/${ siteId }/domains`,
 				},
 				{ apiVersion: '1.2' }
 			),
-		{
-			select: ( data ) => data.domains,
-			...queryOptions,
-			enabled: !! siteId && enabled,
-		}
-	);
+		select: ( data ) => data.domains,
+		...queryOptions,
+		enabled: !! siteId && enabled,
+	} );
 };

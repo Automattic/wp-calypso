@@ -3,7 +3,7 @@
 @import "../../style.scss";
 
 $post-item-background-color: var(--color-surface);
-body.is-section-promote-post {
+body.is-section-promote-post-i2 {
 	background-color: $post-item-background-color;
 }
 
@@ -106,7 +106,8 @@ body.is-section-promote-post {
 		border: 1px solid #eee;
 		border-radius: 4px;
 		overflow: hidden;
-		margin: 16px 0;
+		background-size: cover;
+		background-repeat: no-repeat;
 
 		&_no-image {
 			align-items: center;

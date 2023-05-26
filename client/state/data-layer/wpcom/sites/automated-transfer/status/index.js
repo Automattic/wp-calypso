@@ -1,6 +1,5 @@
 import { delay } from 'lodash';
 import { AUTOMATED_TRANSFER_STATUS_REQUEST } from 'calypso/state/action-types';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	fetchAutomatedTransferStatus,
 	setAutomatedTransferStatus,
@@ -23,7 +22,7 @@ export const requestStatus = ( action ) =>
 	);
 
 export const receiveStatus =
-	( { siteId }, { status, uploaded_plugin_slug, transfer_id } ) =>
+	( { siteId }, { status, uploaded_plugin_slug } ) =>
 	( dispatch ) => {
 		const pluginId = uploaded_plugin_slug;
 
@@ -33,14 +32,6 @@ export const receiveStatus =
 		}
 
 		if ( status === transferStates.COMPLETE ) {
-			dispatch(
-				recordTracksEvent( 'calypso_automated_transfer_complete', {
-					context: 'plugin_upload',
-					transfer_id,
-					uploaded_plugin_slug,
-				} )
-			);
-
 			// Update the now-atomic site to ensure plugin page displays correctly.
 			dispatch( requestSite( siteId ) );
 		}

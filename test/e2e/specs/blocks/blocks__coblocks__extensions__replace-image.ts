@@ -40,7 +40,7 @@ describe( 'CoBlocks: Extensions: Replace Image', function () {
 	beforeAll( async () => {
 		page = await browser.newPage();
 		imageFile = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
-		editorPage = new EditorPage( page, { target: features.siteType } );
+		editorPage = new EditorPage( page );
 
 		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
@@ -55,16 +55,16 @@ describe( 'CoBlocks: Extensions: Replace Image', function () {
 			ImageBlock.blockName,
 			ImageBlock.blockEditorSelector
 		);
-		imageBlock = new ImageBlock( blockHandle );
+		imageBlock = new ImageBlock( page, blockHandle );
 		const uploadedImage = await imageBlock.upload( imageFile.fullpath );
 		uploadedImageURL = ( await uploadedImage.getAttribute( 'src' ) ) as string;
 		uploadedImageURL = uploadedImageURL.split( '?' )[ 0 ];
 	} );
 
 	it( `Replace uploaded image`, async () => {
-		const editorWindowLocator = editorPage.getEditorWindowLocator();
-		await editorWindowLocator.locator( 'button:text("Replace")' ).click();
-		await editorWindowLocator
+		const editorParent = await editorPage.getEditorParent();
+		await editorParent.locator( 'button:text("Replace")' ).click();
+		await editorParent
 			.locator( '.components-form-file-upload input[type="file"]' )
 			.setInputFiles( imageFile.fullpath );
 

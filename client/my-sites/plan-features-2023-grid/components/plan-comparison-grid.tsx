@@ -22,11 +22,13 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback, useEffect, ChangeEvent } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { FeatureObject, getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
-import { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/plan-type-selector';
-import TermExperimentPlanTypeSelector from 'calypso/my-sites/plans-features-main/term-experiment-plan-type-selector';
-import useIsLargeCurrency from '../../plans/hooks/use-is-large-currency';
+import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-is-plan-upgrade-credit-visible';
+import PlanTypeSelector, {
+	PlanTypeSelectorProps,
+} from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import useHighlightAdjacencyMatrix from '../hooks/use-highlight-adjacency-matrix';
 import useHighlightLabel from '../hooks/use-highlight-label';
+import useIsLargeCurrency from '../hooks/use-is-large-currency';
 import { sortPlans } from '../lib/sort-plan-properties';
 import { plansBreakSmall } from '../media-queries';
 import { PlanProperties } from '../types';
@@ -36,6 +38,7 @@ import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
 import PlanFeatures2023GridHeaderPrice from './header-price';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import PopularBadge from './popular-badge';
+import type { PlanActionOverrides } from '../types';
 
 function DropdownIcon() {
 	return (
@@ -105,7 +108,11 @@ const Grid = styled.div< { isInSignup: boolean } >`
 	` ) }
 `;
 
-const Row = styled.div< { isHiddenInMobile?: boolean; className?: string } >`
+const Row = styled.div< {
+	isHiddenInMobile?: boolean;
+	className?: string;
+	isHighlighted?: boolean;
+} >`
 	justify-content: space-between;
 	margin-bottom: -1px;
 	align-items: stretch;
@@ -117,6 +124,19 @@ const Row = styled.div< { isHiddenInMobile?: boolean; className?: string } >`
 		padding: 12px 0;
 		border-bottom: 1px solid #eee;
 	` ) }
+
+	${ ( props ) =>
+		props.isHighlighted &&
+		css`
+			${ plansBreakSmall( css`
+				background-color: #fafafa;
+				border-top: 1px solid #eee;
+				font-weight: bold;
+				margin: -1px 0 0;
+				padding: 12px 20px;
+				color: #3a434a;
+			` ) }
+		` };
 `;
 
 const PlanRow = styled( Row )`
@@ -288,11 +308,15 @@ type PlanComparisonGridProps = {
 	isInSignup: boolean;
 	isLaunchPage?: boolean;
 	flowName: string;
-	currentSitePlanSlug: string;
+	currentSitePlanSlug?: string;
 	manageHref: string;
 	canUserPurchasePlan: boolean;
 	selectedSiteSlug: string | null;
 	onUpgradeClick: ( properties: PlanProperties ) => void;
+	siteId?: number | null;
+	planActionOverrides?: PlanActionOverrides;
+	selectedPlan?: string;
+	selectedFeature?: string;
 };
 
 type PlanComparisonGridHeaderProps = {
@@ -303,11 +327,14 @@ type PlanComparisonGridHeaderProps = {
 	isFooter?: boolean;
 	flowName: string;
 	onPlanChange: ( currentPlan: string, event: ChangeEvent ) => void;
-	currentSitePlanSlug: string;
+	currentSitePlanSlug?: string;
 	manageHref: string;
 	canUserPurchasePlan: boolean;
 	selectedSiteSlug: string | null;
 	onUpgradeClick: ( properties: PlanProperties ) => void;
+	siteId?: number | null;
+	planActionOverrides?: PlanActionOverrides;
+	selectedPlan?: string;
 };
 
 type RestructuredFeatures = {
@@ -327,6 +354,7 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 		allVisible: boolean;
 		isLastInRow: boolean;
 		isLargeCurrency: boolean;
+		isPlanUpgradeCreditEligible: boolean;
 	}
 > = ( {
 	planProperties,
@@ -345,11 +373,18 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 	selectedSiteSlug,
 	isLargeCurrency,
 	onUpgradeClick,
+	planActionOverrides,
+	isPlanUpgradeCreditEligible,
+	selectedPlan,
 } ) => {
 	const { planName, planConstantObj, availableForPurchase, current, ...planPropertiesObj } =
 		planProperties;
-	const highlightLabel = useHighlightLabel( planName );
-	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( visiblePlansProperties );
+	const highlightLabel = useHighlightLabel( { planName, flowName, currentSitePlanSlug } );
+	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
+		visiblePlans: visiblePlansProperties,
+		flowName,
+		currentSitePlanSlug,
+	} );
 	const headerClasses = classNames( 'plan-comparison-grid__header-cell', getPlanClass( planName ), {
 		'popular-plan-parent-class': highlightLabel,
 		'is-last-in-row': isLastInRow,
@@ -370,6 +405,9 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 				isInSignup={ isInSignup }
 				planName={ planName }
 				additionalClassName={ popularBadgeClasses }
+				flowName={ flowName }
+				currentSitePlanSlug={ currentSitePlanSlug }
+				selectedPlan={ selectedPlan }
 			/>
 			<PlanSelector>
 				{ showPlanSelect && (
@@ -401,6 +439,7 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 				</h4>
 			</PlanSelector>
 			<PlanFeatures2023GridHeaderPrice
+				isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
 				planProperties={ planProperties }
 				is2023OnboardingPricingGrid={ true }
 				isLargeCurrency={ isLargeCurrency }
@@ -430,6 +469,7 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 				flowName={ flowName }
 				selectedSiteSlug={ selectedSiteSlug }
 				onUpgradeClick={ () => onUpgradeClick( planProperties ) }
+				planActionOverrides={ planActionOverrides }
 			/>
 		</Cell>
 	);
@@ -448,13 +488,20 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 	canUserPurchasePlan,
 	selectedSiteSlug,
 	onUpgradeClick,
+	siteId,
+	planActionOverrides,
+	selectedPlan,
 } ) => {
 	const allVisible = visiblePlansProperties.length === displayedPlansProperties.length;
 
-	const isLargeCurrency = useIsLargeCurrency(
-		displayedPlansProperties.map( ( properties ) => properties.planName as PlanSlug )
+	const isLargeCurrency = useIsLargeCurrency( {
+		planSlugs: displayedPlansProperties.map( ( properties ) => properties.planName as PlanSlug ),
+		siteId,
+	} );
+	const isPlanUpgradeCreditEligible = useIsPlanUpgradeCreditVisible(
+		siteId ?? 0,
+		displayedPlansProperties.map( ( { planName } ) => planName )
 	);
-
 	return (
 		<PlanRow>
 			<RowTitleCell
@@ -463,6 +510,7 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 			/>
 			{ visiblePlansProperties.map( ( planProperties, index ) => (
 				<PlanComparisonGridHeaderCell
+					isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
 					key={ planProperties.planName }
 					planProperties={ planProperties }
 					isLastInRow={ index === visiblePlansProperties.length - 1 }
@@ -480,6 +528,8 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 					onUpgradeClick={ onUpgradeClick }
 					isLaunchPage={ isLaunchPage }
 					isLargeCurrency={ isLargeCurrency }
+					planActionOverrides={ planActionOverrides }
+					selectedPlan={ selectedPlan }
 				/>
 			) ) }
 		</PlanRow>
@@ -493,10 +543,24 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	restructuredFeatures: RestructuredFeatures;
 	planName: string;
 	isStorageFeature: boolean;
-} > = ( { feature, visiblePlansProperties, restructuredFeatures, planName, isStorageFeature } ) => {
+	flowName: string;
+	currentSitePlanSlug?: string;
+} > = ( {
+	feature,
+	visiblePlansProperties,
+	restructuredFeatures,
+	planName,
+	isStorageFeature,
+	flowName,
+	currentSitePlanSlug,
+} ) => {
 	const translate = useTranslate();
-	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( visiblePlansProperties );
-	const highlightLabel = useHighlightLabel( planName );
+	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
+		visiblePlans: visiblePlansProperties,
+		flowName,
+		currentSitePlanSlug,
+	} );
+	const highlightLabel = useHighlightLabel( { planName, flowName, currentSitePlanSlug } );
 	const featureSlug = feature?.getSlug();
 	const hasFeature =
 		isStorageFeature ||
@@ -572,6 +636,9 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	restructuredFeatures: RestructuredFeatures;
 	restructuredFootnotes: RestructuredFootnotes;
 	isStorageFeature: boolean;
+	flowName: string;
+	currentSitePlanSlug?: string;
+	isHighlighted: boolean;
 } > = ( {
 	feature,
 	isHiddenInMobile,
@@ -580,6 +647,9 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	restructuredFeatures,
 	restructuredFootnotes,
 	isStorageFeature,
+	flowName,
+	currentSitePlanSlug,
+	isHighlighted,
 } ) => {
 	const translate = useTranslate();
 	const rowClasses = classNames( 'plan-comparison-grid__feature-group-row', {
@@ -589,7 +659,11 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	const footnote = restructuredFootnotes?.footnotesByFeature?.[ featureSlug ];
 
 	return (
-		<Row isHiddenInMobile={ isHiddenInMobile } className={ rowClasses }>
+		<Row
+			isHiddenInMobile={ isHiddenInMobile }
+			className={ rowClasses }
+			isHighlighted={ isHighlighted }
+		>
 			<RowTitleCell key="feature-name" className="is-feature-group-row-title-cell">
 				{ isStorageFeature ? (
 					<Plans2023Tooltip text={ translate( 'Space to store your photos, media, and more.' ) }>
@@ -626,6 +700,8 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 					restructuredFeatures={ restructuredFeatures }
 					planName={ planName }
 					isStorageFeature={ isStorageFeature }
+					flowName={ flowName }
+					currentSitePlanSlug={ currentSitePlanSlug }
 				/>
 			) ) }
 		</Row>
@@ -644,6 +720,10 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 	canUserPurchasePlan,
 	selectedSiteSlug,
 	onUpgradeClick,
+	siteId,
+	planActionOverrides,
+	selectedPlan,
+	selectedFeature,
 } ) => {
 	const translate = useTranslate();
 	// Check to see if we have at least one Woo Express plan we're comparing.
@@ -843,14 +923,14 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 			<PlanComparisonHeader className="wp-brand-font">
 				{ translate( 'Compare our plans and find yours' ) }
 			</PlanComparisonHeader>
-			<TermExperimentPlanTypeSelector
-				isEligible={ true }
+			<PlanTypeSelector
+				{ ...planTypeSelectorProps }
 				kind="interval"
 				plans={ displayedPlansProperties.map( ( { planName } ) => planName ) }
-				planTypeSelectorProps={ planTypeSelectorProps }
 			/>
 			<Grid isInSignup={ isInSignup }>
 				<PlanComparisonGridHeader
+					siteId={ siteId }
 					displayedPlansProperties={ displayedPlansProperties }
 					visiblePlansProperties={ visiblePlansProperties }
 					isInSignup={ isInSignup }
@@ -862,6 +942,8 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 					canUserPurchasePlan={ canUserPurchasePlan }
 					selectedSiteSlug={ selectedSiteSlug }
 					onUpgradeClick={ onUpgradeClick }
+					planActionOverrides={ planActionOverrides }
+					selectedPlan={ selectedPlan }
 				/>
 				{ Object.values( featureGroupMap ).map( ( featureGroup: FeatureGroup ) => {
 					const features = featureGroup.get2023PricingGridSignupWpcomFeatures();
@@ -889,6 +971,9 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 									restructuredFeatures={ restructuredFeatures }
 									restructuredFootnotes={ restructuredFootnotes }
 									isStorageFeature={ false }
+									flowName={ flowName }
+									currentSitePlanSlug={ currentSitePlanSlug }
+									isHighlighted={ feature.getSlug() === selectedFeature }
 								/>
 							) ) }
 							{ featureGroup.slug === FEATURE_GROUP_ESSENTIAL_FEATURES ? (
@@ -900,6 +985,9 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 									restructuredFeatures={ restructuredFeatures }
 									restructuredFootnotes={ restructuredFootnotes }
 									isStorageFeature={ true }
+									flowName={ flowName }
+									currentSitePlanSlug={ currentSitePlanSlug }
+									isHighlighted={ false }
 								/>
 							) : null }
 						</div>
@@ -918,6 +1006,9 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 					canUserPurchasePlan={ canUserPurchasePlan }
 					selectedSiteSlug={ selectedSiteSlug }
 					onUpgradeClick={ onUpgradeClick }
+					siteId={ siteId }
+					planActionOverrides={ planActionOverrides }
+					selectedPlan={ selectedPlan }
 				/>
 			</Grid>
 

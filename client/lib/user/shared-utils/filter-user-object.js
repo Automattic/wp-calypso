@@ -32,6 +32,7 @@ const allowedKeys = [
 	'lasagna_jwt',
 	'i18n_empathy_mode',
 	'use_fallback_for_incomplete_languages',
+	'calypso_postpurchase_upsell_monthly_to_annual_plan',
 ];
 const requiredKeys = [ 'ID' ];
 const decodedKeys = [ 'display_name', 'description', 'user_URL' ];

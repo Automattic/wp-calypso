@@ -23,10 +23,6 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 .design-carousel__item {
 	flex: 1;
 
-	@include break-medium {
-		aspect-ratio: 1.5;
-	}
-
 	&.design-carousel__item-mobile {
 		@include break-medium {
 			display: none;
@@ -40,8 +36,10 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 		}
 	}
 
-	// iPhone aspect ratio
-	aspect-ratio: 0.48;
+	&.design-carousel__item-mobile-only {
+		width: calc((65svh - 50px) * 0.48);
+	}
+
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -54,12 +52,21 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 	padding: 0;
 	overflow: hidden;
 	height: calc(65vh - 50px);
+	width: calc((65vh - 50px) * 0.48);
 	outline: none;
-	max-width: 100%;
 
 	// needed for iOS Safari.
 	@supports (min-height: 65svh) {
 		height: calc(65svh - 50px);
+		width: calc((65svh - 50px) * 0.48);
+	}
+
+	@include break-medium {
+		width: calc((65vh - 50px) * 1.5);
+
+		@supports (height: 65svh) {
+			width: calc((65svh - 50px) * 1.5);
+		}
 	}
 
 	opacity: 0.5;
@@ -119,6 +126,7 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 	opacity: 0.5;
 	display: flex;
 	box-shadow: 1px 1px 3px 0 rgb(0 0 0 / 18%);
+	justify-content: center;
 	transition: opacity 0.3s ease-in-out;
 	pointer-events: all;
 	z-index: 2;

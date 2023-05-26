@@ -1,5 +1,6 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useI18n } from '@wordpress/react-i18n';
+import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -11,7 +12,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import useScrollAboveElement from 'calypso/lib/use-scroll-above-element';
 import Categories from 'calypso/my-sites/plugins/categories';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
-import EducationFooter from 'calypso/my-sites/plugins/education-footer';
+import { MarketplaceFooter } from 'calypso/my-sites/plugins/education-footer';
 import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
 import PluginsAnnouncementModal from 'calypso/my-sites/plugins/plugins-announcement-modal';
 import SearchBoxHeader from 'calypso/my-sites/plugins/search-box-header';
@@ -88,6 +89,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	const { __, hasTranslation } = useI18n();
+	const translate = useTranslate();
 	const locale = useLocale();
 
 	const categories = useCategories();
@@ -139,7 +141,13 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 				trackPageViews={ trackPageViews }
 				isLoggedIn={ isLoggedIn }
 			/>
-			<DocumentHead title={ __( 'Plugins' ) } />
+			<DocumentHead
+				title={
+					category && ! search
+						? translate( '%(categoryName)s Plugins', { args: { categoryName } } )
+						: translate( 'Plugins' )
+				}
+			/>
 
 			<PluginsAnnouncementModal />
 			{ ! hideHeader && (
@@ -179,7 +187,11 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 				<Categories selected={ category } noSelection={ search ? true : false } />
 			</div>
 			<div className="plugins-browser__main-container">{ renderList() }</div>
-			{ ! category && ! search && <EducationFooter /> }
+			{ ! category && ! search && (
+				<div className="plugins-browser__marketplace-footer">
+					<MarketplaceFooter />
+				</div>
+			) }
 		</MainComponent>
 	);
 };

@@ -20,8 +20,8 @@ import { Component } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import PlanFeatures from 'calypso/my-sites/plan-features';
 import PlanFeaturesComparison from 'calypso/my-sites/plan-features-comparison';
-import PlanTypeSelector from 'calypso/my-sites/plans-features-main/plan-type-selector';
-import PlanFAQ from 'calypso/my-sites/plans-features-main/plansStepFaq';
+import PlanFAQ from 'calypso/my-sites/plans-features-main/components/plan-faq';
+import PlanTypeSelector from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 
 import 'calypso/my-sites/plans-features-main/style.scss';
 

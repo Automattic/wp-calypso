@@ -418,6 +418,7 @@ __metadata:
   resolution: "@automattic/components@workspace:packages/components"
   dependencies:
     "@automattic/calypso-color-schemes": "workspace:^"
+    "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
     "@automattic/data-stores": "workspace:^"
@@ -530,6 +531,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/design-picker": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/onboarding": "workspace:^"
     classnames: ^2.3.1
@@ -870,36 +872,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/inline-help@workspace:apps/inline-help":
-  version: 0.0.0-use.local
-  resolution: "@automattic/inline-help@workspace:apps/inline-help"
-  dependencies:
-    "@automattic/calypso-apps-builder": "workspace:^"
-    "@automattic/calypso-babel-config": "workspace:^"
-    "@automattic/calypso-build": "workspace:^"
-    "@automattic/calypso-polyfills": "workspace:^"
-    "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
-    "@automattic/webpack-inline-constant-exports-plugin": "workspace:^"
-    autoprefixer: ^10.2.5
-    calypso: "workspace:^"
-    html-webpack-plugin: ^5.0.0-beta.4
-    jest: ^27.2.4
-    path-browserify: ^1.0.1
-    postcss: ^8.3.11
-    react: ^17.0.2
-    react-dom: ^17.0.2
-    react-query: ^3.32.1
-    react-redux: ^7.2.6
-    redux: ^4.1.2
-    redux-thunk: ^2.3.0
-    webpack: ^5.68.0
-    webpack-bundle-analyzer: ^4.5.0
-    webpack-dev-server: ^4.7.3
-    wpcom: "workspace:^"
-    wpcom-proxy-request: "workspace:^"
-  languageName: unknown
-  linkType: soft
-
 "@automattic/interpolate-components@workspace:^, @automattic/interpolate-components@workspace:packages/interpolate-components":
   version: 0.0.0-use.local
   resolution: "@automattic/interpolate-components@workspace:packages/interpolate-components"
@@ -1138,10 +1110,12 @@ __metadata:
     "@automattic/webpack-inline-constant-exports-plugin": "workspace:^"
     "@automattic/wp-babel-makepot": "workspace:^"
     "@babel/core": ^7.17.5
+    "@size-limit/file": ^8.2.4
     "@tanstack/react-query": 4.29.1
+    "@wordpress/base-styles": ^4.13.0
     "@wordpress/data": ^7.6.0
     "@wordpress/dependency-extraction-webpack-plugin": ^4.5.0
-    "@wordpress/icons": ^9.22.0
+    "@wordpress/icons": ^9.23.0
     "@wordpress/scripts": ^24.6.0
     autoprefixer: ^10.2.5
     babel-jest: ^27.5
@@ -1165,6 +1139,7 @@ __metadata:
     react-redux: ^7.2.6
     redux: ^4.1.2
     redux-thunk: ^2.3.0
+    size-limit: ^8.2.4
     webpack: ^5.68.0
     webpack-bundle-analyzer: ^4.5.0
     wpcom: "workspace:^"
@@ -1231,38 +1206,6 @@ __metadata:
   peerDependencies:
     "@wordpress/data": ^7.6.0
     react: ^17.0.2
-    reakit-utils: ^0.15.1
-    redux: ^4.1.2
-  languageName: unknown
-  linkType: soft
-
-"@automattic/pattern-picker@workspace:^, @automattic/pattern-picker@workspace:packages/pattern-picker":
-  version: 0.0.0-use.local
-  resolution: "@automattic/pattern-picker@workspace:packages/pattern-picker"
-  dependencies:
-    "@automattic/calypso-build": "workspace:^"
-    "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/i18n-utils": "workspace:^"
-    "@automattic/onboarding": "workspace:^"
-    "@tanstack/react-query": ^4.29.1
-    classnames: ^2.3.1
-    postcss: ^8.4.5
-    react: ^17.0.2
-    react-dom: ^17.0.2
-    redux: ^4.1.2
-    swiper: ^4.5.1
-    tslib: ^2.3.0
-    typescript: ^4.7.4
-    utility-types: ^3.10.0
-    webpack: ^5.68.0
-    wpcom-proxy-request: "workspace:^"
-  peerDependencies:
-    "@wordpress/data": ^7.6.0
-    "@wordpress/element": ^4.20.0
-    "@wordpress/i18n": ^4.22.0
-    debug: ^4.3.3
-    react: ^17.0.2
-    react-dom: ^17.0.2
     reakit-utils: ^0.15.1
     redux: ^4.1.2
   languageName: unknown
@@ -1463,6 +1406,7 @@ __metadata:
     prop-types: ^15.7.2
     react: ^17.0.2
     react-dom: ^17.0.2
+    tslib: ^2.3.0
     typescript: ^4.7.4
     webpack: ^5.68.0
   peerDependencies:
@@ -1707,6 +1651,7 @@ __metadata:
     "@automattic/calypso-url": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@babel/runtime": ^7.17.2
+    "@wordpress/api-fetch": ^6.19.0
     "@wordpress/base-styles": ^4.13.0
     "@wordpress/block-editor": ^10.5.0
     "@wordpress/blocks": ^11.21.0
@@ -4538,24 +4483,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@pmmmwh/react-refresh-webpack-plugin@npm:^0.5.1, @pmmmwh/react-refresh-webpack-plugin@npm:^0.5.2":
-  version: 0.5.5
-  resolution: "@pmmmwh/react-refresh-webpack-plugin@npm:0.5.5"
+"@pmmmwh/react-refresh-webpack-plugin@npm:^0.5.1, @pmmmwh/react-refresh-webpack-plugin@npm:^0.5.10, @pmmmwh/react-refresh-webpack-plugin@npm:^0.5.2":
+  version: 0.5.10
+  resolution: "@pmmmwh/react-refresh-webpack-plugin@npm:0.5.10"
   dependencies:
     ansi-html-community: ^0.0.8
     common-path-prefix: ^3.0.0
-    core-js-pure: ^3.8.1
+    core-js-pure: ^3.23.3
     error-stack-parser: ^2.0.6
     find-up: ^5.0.0
     html-entities: ^2.1.0
-    loader-utils: ^2.0.0
+    loader-utils: ^2.0.4
     schema-utils: ^3.0.0
     source-map: ^0.7.3
   peerDependencies:
     "@types/webpack": 4.x || 5.x
     react-refresh: ">=0.10.0 <1.0.0"
     sockjs-client: ^1.4.0
-    type-fest: ">=0.17.0 <3.0.0"
+    type-fest: ">=0.17.0 <4.0.0"
     webpack: ">=4.43.0 <6.0.0"
     webpack-dev-server: 3.x || 4.x
     webpack-hot-middleware: 2.x
@@ -4573,7 +4518,7 @@ __metadata:
       optional: true
     webpack-plugin-serve:
       optional: true
-  checksum: bd20a6b59a521d74f628c4bfe73ea413b3212058bd68ff637b18b0dc13744f045f4720cb0b4c5eebdfbc761a18352efefda5d026c3e206cc4345b19400526397
+  checksum: e470b543c5e8d73eeaa73636e1976e6719db6ae29c93fa62818f5796c1883051f379a3cb1ff85d909ef2c6bb9ef13ca46c36f1878c48d143b1355fea6660e547
   languageName: node
   linkType: hard
 
@@ -4925,6 +4870,17 @@ __metadata:
   dependencies:
     "@sinonjs/commons": ^1.7.0
   checksum: d6b795f9ddaf044daf184c151555ca557ccd23636f2ee3d2f76a9d128329f81fc1aac412f6f67239ab92cb9390aad9955b71df93cf4bd442c68b1f341e381ab6
+  languageName: node
+  linkType: hard
+
+"@size-limit/file@npm:^8.2.4":
+  version: 8.2.4
+  resolution: "@size-limit/file@npm:8.2.4"
+  dependencies:
+    semver: 7.3.8
+  peerDependencies:
+    size-limit: 8.2.4
+  checksum: fea70804685ee4b0540e145c608d1bcea6fc996e3d4903ad5abff66af0fe52309767c5a09b4539abbf24f275e70654fd3358db8170412ad70a6255ddd802c421
   languageName: node
   linkType: hard
 
@@ -9060,12 +9016,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/hooks@npm:^3.13.0, @wordpress/hooks@npm:^3.22.0, @wordpress/hooks@npm:^3.27.0, @wordpress/hooks@npm:^3.28.0, @wordpress/hooks@npm:^3.9.0":
-  version: 3.28.0
-  resolution: "@wordpress/hooks@npm:3.28.0"
+"@wordpress/hooks@npm:^3.13.0, @wordpress/hooks@npm:^3.22.0, @wordpress/hooks@npm:^3.27.0, @wordpress/hooks@npm:^3.32.0, @wordpress/hooks@npm:^3.9.0":
+  version: 3.32.0
+  resolution: "@wordpress/hooks@npm:3.32.0"
   dependencies:
     "@babel/runtime": ^7.16.0
-  checksum: 4c53add48cd3d31fbf26cec27c45aeee7a9286f8855ee2ba623eca5ed46b7ab514858e183e584b24bdd58d31fd5c56411978f771d175a3885842b56c61f14f7d
+  checksum: 3e5343ae76be3277ebb102feb1989453acbe37580c26a963c2fe52ffc3338e7cad9071d2b063db4dc58b60d7bd24dcd787a2b7ae8ed9417baea3cff1b6164b9b
   languageName: node
   linkType: hard
 
@@ -9096,18 +9052,18 @@ __metadata:
   linkType: hard
 
 "@wordpress/i18n@npm:^4.13.0, @wordpress/i18n@npm:^4.2.4, @wordpress/i18n@npm:^4.22.0, @wordpress/i18n@npm:^4.27.0":
-  version: 4.28.0
-  resolution: "@wordpress/i18n@npm:4.28.0"
+  version: 4.32.0
+  resolution: "@wordpress/i18n@npm:4.32.0"
   dependencies:
     "@babel/runtime": ^7.16.0
-    "@wordpress/hooks": ^3.28.0
+    "@wordpress/hooks": ^3.32.0
     gettext-parser: ^1.3.1
     memize: ^1.1.0
     sprintf-js: ^1.1.1
     tannin: ^1.2.0
   bin:
     pot-to-php: tools/pot-to-php.js
-  checksum: a332b340086a02340b69821ecbb6e5ac0c720876e89de4fbcdc21f7eb8086991ac5d6d1c65236cbd6e0bd66dd0e42e66af9dcc555e4ac0cc40a5f96f0f56507a
+  checksum: 9404a1cb1189b526b418224fef310d80ea5e7136ae5d5b615c6bfcdc34082cab785f7b053fce1f264a0d434f7677e29f4c7a1934c1f4dff6d7f365ed57e994cb
   languageName: node
   linkType: hard
 
@@ -9122,14 +9078,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/icons@npm:^9.13.0, @wordpress/icons@npm:^9.22.0, @wordpress/icons@npm:^9.4.0":
-  version: 9.22.0
-  resolution: "@wordpress/icons@npm:9.22.0"
+"@wordpress/icons@npm:^9.13.0, @wordpress/icons@npm:^9.22.0, @wordpress/icons@npm:^9.23.0, @wordpress/icons@npm:^9.4.0":
+  version: 9.23.0
+  resolution: "@wordpress/icons@npm:9.23.0"
   dependencies:
     "@babel/runtime": ^7.16.0
-    "@wordpress/element": ^5.8.0
-    "@wordpress/primitives": ^3.29.0
-  checksum: 9dea77b6981951987629c84e6c8e7a2170eb47a57407b78b49f602b3c6cdae65bf659ef85796c62d36cf943b3564f494f4cd63db9bd4d504a01ef85c6ae1480c
+    "@wordpress/element": ^5.9.0
+    "@wordpress/primitives": ^3.30.0
+  checksum: 33c33a6042224f9976c81e9b4811dd0598468ae1dd10c63b05646d3f1c178b7183eb9bcd7a4b8d01f685d5cc7df5334edea3b6dbbfa372e731091ac72ed4943e
   languageName: node
   linkType: hard
 
@@ -9325,14 +9281,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/primitives@npm:^3.1.1, @wordpress/primitives@npm:^3.11.0, @wordpress/primitives@npm:^3.20.0, @wordpress/primitives@npm:^3.29.0":
-  version: 3.29.0
-  resolution: "@wordpress/primitives@npm:3.29.0"
+"@wordpress/primitives@npm:^3.1.1, @wordpress/primitives@npm:^3.11.0, @wordpress/primitives@npm:^3.20.0, @wordpress/primitives@npm:^3.30.0":
+  version: 3.30.0
+  resolution: "@wordpress/primitives@npm:3.30.0"
   dependencies:
     "@babel/runtime": ^7.16.0
-    "@wordpress/element": ^5.8.0
+    "@wordpress/element": ^5.9.0
     classnames: ^2.3.1
-  checksum: e0e6113fcc0b6fba13ab34e6a277dae6b91ab08a98929358e5ba64dff658f046ed8d0e267cd54ebfe1da477e814da6c21d288d76a6cdf0103d70489f2434ad0d
+  checksum: 7adcf77b78f1c4dcd9796f329c5156bcf7e4e3ee158594b6221da65ae6190ab35fd75aa7c572fd78d1db6ccd7e6fb30006437e2a27b744c34301f30f54921622
   languageName: node
   linkType: hard
 
@@ -11677,6 +11633,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"bytes-iec@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "bytes-iec@npm:3.1.1"
+  checksum: cb553a214d49afe2efb4f9f6f03c0a76dbf2b0db8fe176c1d9943f74b79fb36767938e5f0a60991d870309c96f21e440904dd4f92b54c9c316c88486e6eef025
+  languageName: node
+  linkType: hard
+
 "bytes@npm:3.0.0":
   version: 3.0.0
   resolution: "bytes@npm:3.0.0"
@@ -11901,7 +11864,6 @@ __metadata:
     "@automattic/mini-cart": "workspace:^"
     "@automattic/notifications": "workspace:^"
     "@automattic/onboarding": "workspace:^"
-    "@automattic/pattern-picker": "workspace:^"
     "@automattic/plans-grid": "workspace:^"
     "@automattic/react-virtualized": ^9.22.3
     "@automattic/request-external-access": "workspace:^"
@@ -13416,10 +13378,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"core-js-pure@npm:^3.8.1, core-js-pure@npm:^3.8.2":
-  version: 3.19.3
-  resolution: "core-js-pure@npm:3.19.3"
-  checksum: 688478e76faff18e28872e647100b79fd031f11f5ead16c44e60eab8d939ff42a548ddf936067bafae74ff859feff7952373bffd7fb8d3ab4142e5e19bdec65a
+"core-js-pure@npm:^3.23.3, core-js-pure@npm:^3.8.2":
+  version: 3.30.1
+  resolution: "core-js-pure@npm:3.30.1"
+  checksum: 6d05c823f0b3c71119327d41d5feb195e2e86dcb27ed13754131a155bbe5462f7043a086031092f56a2d8d0477ea8a71ff2eca28ad79726aba08a6ab507d6c33
   languageName: node
   linkType: hard
 
@@ -22029,10 +21991,10 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"lilconfig@npm:^2.0.3":
-  version: 2.0.3
-  resolution: "lilconfig@npm:2.0.3"
-  checksum: 8298e0e6e4b5827d936439c425e361a8142aacb9bd13c983d29240b555bb0bbe3fe763e570d0377976c2055684f9036acbbe78c44ec992db3e637f26b6158f75
+"lilconfig@npm:^2.0.3, lilconfig@npm:^2.0.6":
+  version: 2.1.0
+  resolution: "lilconfig@npm:2.1.0"
+  checksum: 64645641aa8d274c99338e130554abd6a0190533c0d9eb2ce7ebfaf2e05c7d9961f3ffe2bfa39efd3b60c521ba3dd24fa236fe2775fc38501bf82bf49d4678b8
   languageName: node
   linkType: hard
 
@@ -22098,14 +22060,14 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"loader-utils@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "loader-utils@npm:2.0.0"
+"loader-utils@npm:^2.0.0, loader-utils@npm:^2.0.4":
+  version: 2.0.4
+  resolution: "loader-utils@npm:2.0.4"
   dependencies:
     big.js: ^5.2.2
     emojis-list: ^3.0.0
     json5: ^2.1.2
-  checksum: 206eda981e486a28536b8a142074e0e927aac4c1f61565b2be402f0434f783a6bb0cef241fabec32ce541f28633a85e0beb68abd8fe9227b76b66d717de40550
+  checksum: d5654a77f9d339ec2a03d88221a5a695f337bf71eb8dea031b3223420bb818964ba8ed0069145c19b095f6c8b8fd386e602a3fc7ca987042bd8bb1dcc90d7100
   languageName: node
   linkType: hard
 
@@ -23753,6 +23715,15 @@ fsevents@^1.2.7:
     snapdragon: ^0.8.1
     to-regex: ^3.0.1
   checksum: 0f5cefa755ca2e20c86332821995effb24acb79551ddaf51c1b9112628cad234a0d8fd9ac6aa56ad1f8bfad6ff6ae86e851acb960943249d9fa44b091479953a
+  languageName: node
+  linkType: hard
+
+"nanospinner@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "nanospinner@npm:1.1.0"
+  dependencies:
+    picocolors: ^1.0.0
+  checksum: 2f89e48bfb1452b5f3afd8034753bbc45040a6830fec913ec228d7a8a8eab1e2c8193bd41e2203806a1f454907641ffa035b14f3a8462cf374e874eb29fd57f1
   languageName: node
   linkType: hard
 
@@ -27280,6 +27251,13 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"react-refresh@npm:^0.14.0":
+  version: 0.14.0
+  resolution: "react-refresh@npm:0.14.0"
+  checksum: b8ae07ad153357d77830928a7f1fc2df837aabefee907fa273ba04c7643f3b860e986f1d4b7ada9b721c8d79b8c24b5b911a314a1a2398b105f1b13d19ea2b8d
+  languageName: node
+  linkType: hard
+
 "react-router-dom@npm:^5.3.0":
   version: 5.3.4
   resolution: "react-router-dom@npm:5.3.4"
@@ -29512,16 +29490,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"semver@npm:^6.0.0, semver@npm:^6.1.1, semver@npm:^6.1.2, semver@npm:^6.2.0, semver@npm:^6.3.0":
-  version: 6.3.0
-  resolution: "semver@npm:6.3.0"
-  bin:
-    semver: ./bin/semver.js
-  checksum: 1f4959e15bcfbaf727e964a4920f9260141bb8805b399793160da4e7de128e42a7d1f79c1b7d5cd21a6073fba0d55feb9966f5fef3e5ccb8e1d7ead3d7527458
-  languageName: node
-  linkType: hard
-
-"semver@npm:^7.0.0, semver@npm:^7.3.2, semver@npm:^7.3.4, semver@npm:^7.3.5, semver@npm:^7.3.7, semver@npm:^7.3.8":
+"semver@npm:7.3.8, semver@npm:^7.0.0, semver@npm:^7.3.2, semver@npm:^7.3.4, semver@npm:^7.3.5, semver@npm:^7.3.7, semver@npm:^7.3.8":
   version: 7.3.8
   resolution: "semver@npm:7.3.8"
   dependencies:
@@ -29529,6 +29498,15 @@ fsevents@^1.2.7:
   bin:
     semver: bin/semver.js
   checksum: 7e581d679530db31757301c2117721577a2bb36a301a443aac833b8efad372cda58e7f2a464fe4412ae1041cc1f63a6c1fe0ced8c57ce5aca1e0b57bb0d627b9
+  languageName: node
+  linkType: hard
+
+"semver@npm:^6.0.0, semver@npm:^6.1.1, semver@npm:^6.1.2, semver@npm:^6.2.0, semver@npm:^6.3.0":
+  version: 6.3.0
+  resolution: "semver@npm:6.3.0"
+  bin:
+    semver: ./bin/semver.js
+  checksum: 1f4959e15bcfbaf727e964a4920f9260141bb8805b399793160da4e7de128e42a7d1f79c1b7d5cd21a6073fba0d55feb9966f5fef3e5ccb8e1d7ead3d7527458
   languageName: node
   linkType: hard
 
@@ -29846,6 +29824,22 @@ fsevents@^1.2.7:
   version: 1.0.5
   resolution: "sisteransi@npm:1.0.5"
   checksum: 230ac975cca485b7f6fe2b96a711aa62a6a26ead3e6fb8ba17c5a00d61b8bed0d7adc21f5626b70d7c33c62ff4e63933017a6462942c719d1980bb0b1207ad46
+  languageName: node
+  linkType: hard
+
+"size-limit@npm:^8.2.4":
+  version: 8.2.4
+  resolution: "size-limit@npm:8.2.4"
+  dependencies:
+    bytes-iec: ^3.1.1
+    chokidar: ^3.5.3
+    globby: ^11.1.0
+    lilconfig: ^2.0.6
+    nanospinner: ^1.1.0
+    picocolors: ^1.0.0
+  bin:
+    size-limit: bin.js
+  checksum: d58aa98cb863eb71b023c2c9338a8455aad4b085f490d04cc3e7174e60df222c70e4ec516b51e4317c14b3491f098f08fa1175702c16fef38a4b971c71dfd32c
   languageName: node
   linkType: hard
 
@@ -33859,6 +33853,7 @@ fsevents@^1.2.7:
     "@babel/register": ^7.17.0
     "@babel/runtime": ^7.17.2
     "@bartekbp/typescript-checkstyle": ^5.0.0
+    "@pmmmwh/react-refresh-webpack-plugin": ^0.5.10
     "@signal-noise/stylelint-scales": ^2.0.3
     "@storybook/react": ^6.4.18
     "@testing-library/jest-dom": ^5.16.2
@@ -33957,6 +33952,7 @@ fsevents@^1.2.7:
     react-dom: ^17.0.2
     react-intersection-observer: ^9.4.3
     react-modal: ^3.14.3
+    react-refresh: ^0.14.0
     readline-sync: ^1.4.10
     reakit-utils: ^0.15.1
     recursive-copy: ^2.0.14

@@ -1,11 +1,8 @@
 import classnames from 'classnames';
+import { Fragment } from 'react';
 import { MediaProps } from './types';
 
 export const Media: React.FC< MediaProps > = ( { media } ) => {
-	if ( ! media ) {
-		return null;
-	}
-
 	// Ensure we're only trying to show valid media, and the correct quantity.
 	const filteredMedia = media
 		// Only image/ and video/ mime types are supported.
@@ -34,34 +31,31 @@ export const Media: React.FC< MediaProps > = ( { media } ) => {
 		// We only want the first four items of the array, at most.
 		.slice( 0, 4 );
 
-	const isVideo = filteredMedia.length > 0 && filteredMedia[ 0 ].type.startsWith( 'video/' );
+	if ( 0 === filteredMedia.length ) {
+		return null;
+	}
+
+	const isVideo = filteredMedia[ 0 ].type.startsWith( 'video/' );
 
 	const mediaClasses = classnames( [
 		'twitter-preview__media',
 		'twitter-preview__media-children-' + filteredMedia.length,
 	] );
 
-	if ( 0 === filteredMedia.length ) {
-		return null;
-	}
-
 	return (
 		<div className={ mediaClasses }>
-			{ isVideo &&
-				filteredMedia.map( ( mediaItem, index ) => (
-					// eslint-disable-next-line jsx-a11y/media-has-caption
-					<video key={ `twitter-preview__media-item-${ index }` } controls>
-						<source src={ mediaItem.url } type={ mediaItem.type } />{ ' ' }
-					</video>
-				) ) }
-			{ ! isVideo &&
-				filteredMedia.map( ( mediaItem, index ) => (
-					<img
-						key={ `twitter-preview__media-item-${ index }` }
-						alt={ mediaItem.alt }
-						src={ mediaItem.url }
-					/>
-				) ) }
+			{ filteredMedia.map( ( mediaItem, index ) => (
+				<Fragment key={ `twitter-preview__media-item-${ index }` }>
+					{ isVideo ? (
+						// eslint-disable-next-line jsx-a11y/media-has-caption
+						<video controls>
+							<source src={ mediaItem.url } type={ mediaItem.type } />
+						</video>
+					) : (
+						<img alt={ mediaItem.alt || '' } src={ mediaItem.url } />
+					) }
+				</Fragment>
+			) ) }
 		</div>
 	);
 };

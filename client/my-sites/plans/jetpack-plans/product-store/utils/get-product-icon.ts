@@ -9,6 +9,7 @@ import {
 	JETPACK_VIDEOPRESS_PRODUCTS,
 	JETPACK_COMPLETE_PLANS,
 	JETPACK_SECURITY_PLANS,
+	JETPACK_STARTER_PLANS,
 } from '@automattic/calypso-products';
 import JetpackProductIconAntiSpamLight from 'calypso/assets/images/jetpack/jetpack-product-icon-antispam-light.svg';
 import JetpackProductIconAntiSpam from 'calypso/assets/images/jetpack/jetpack-product-icon-antispam.svg';
@@ -26,6 +27,7 @@ import JetpackProductIconSearch from 'calypso/assets/images/jetpack/jetpack-prod
 import JetpackProductIconSecurity from 'calypso/assets/images/jetpack/jetpack-product-icon-security.svg';
 import JetpackProductIconSocialLight from 'calypso/assets/images/jetpack/jetpack-product-icon-social-light.svg';
 import JetpackProductIconSocial from 'calypso/assets/images/jetpack/jetpack-product-icon-social.svg';
+import JetpackProductIconStarter from 'calypso/assets/images/jetpack/jetpack-product-icon-starter.svg';
 import JetpackProductIconVideopressLight from 'calypso/assets/images/jetpack/jetpack-product-icon-videopress-light.svg';
 import JetpackProductIconVideopress from 'calypso/assets/images/jetpack/jetpack-product-icon-videopress.svg';
 import { productIconProps } from '../types';
@@ -77,6 +79,10 @@ const PRODUCT_ICON_MAP: Record< string, IconResource > = {
 	} ),
 	...setProductsIcon( JETPACK_SECURITY_PLANS, {
 		regular: JetpackProductIconSecurity,
+		light: '',
+	} ),
+	...setProductsIcon( JETPACK_STARTER_PLANS, {
+		regular: JetpackProductIconStarter,
 		light: '',
 	} ),
 };

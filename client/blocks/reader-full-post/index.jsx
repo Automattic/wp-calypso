@@ -16,6 +16,7 @@ import { isDailyPostChallengeOrPrompt } from 'calypso/blocks/daily-post-button/h
 import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
 import WPiFrameResize from 'calypso/blocks/reader-full-post/wp-iframe-resize';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
+import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
 import AutoDirection from 'calypso/components/auto-direction';
 import BackButton from 'calypso/components/back-button';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -99,6 +100,18 @@ export class FullPostView extends Component {
 	hasScrolledToCommentAnchor = false;
 	commentsWrapper = createRef();
 	postContentWrapper = createRef();
+
+	state = {
+		isSuggestedFollowsModalOpen: false,
+	};
+
+	openSuggestedFollowsModal = ( followClicked ) => {
+		this.setState( { isSuggestedFollowsModalOpen: followClicked } );
+	};
+
+	onCloseSuggestedFollowModal = () => {
+		this.setState( { isSuggestedFollowsModalOpen: false } );
+	};
 
 	componentDidMount() {
 		// Send page view
@@ -514,6 +527,7 @@ export class FullPostView extends Component {
 								siteUrl={ post.site_URL }
 								feedUrl={ get( post, 'feed_URL' ) }
 								followCount={ site && site.subscribers_count }
+								onFollowToggle={ this.openSuggestedFollowsModal }
 								feedId={ +post.feed_ID }
 								siteId={ +post.site_ID }
 								post={ post }
@@ -646,6 +660,13 @@ export class FullPostView extends Component {
 						) }
 					</article>
 				</div>
+				{ post.site_ID && (
+					<ReaderSuggestedFollowsDialog
+						onClose={ this.onCloseSuggestedFollowModal }
+						siteId={ +post.site_ID }
+						isVisible={ this.state.isSuggestedFollowsModalOpen }
+					/>
+				) }
 			</ReaderMain>
 		);
 	}

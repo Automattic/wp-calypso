@@ -1,10 +1,25 @@
-@import "./variables.scss";
-
-$segmentedControlItemBorderRadius: 4px;
 $barDarkColor: var(--color-primary-60);
 
 .stats-widget-minichart {
 	border-bottom: 1px solid #c3c4c7;
+
+	// For empty chart placeholder
+	.chart.is-placeholder {
+		padding: 8px 16px;
+
+		.chart__y-axis-marker.is-hundred {
+			display: none;
+		}
+
+		.chart__bar {
+			&,
+			&:hover {
+				.chart__bar-section {
+					background-color: var(--studio-blue-0);
+				}
+			}
+		}
+	}
 
 	.stats-widget-minichart__chart-head {
 		display: flex;
@@ -78,52 +93,9 @@ $barDarkColor: var(--color-primary-60);
 		background-color: $barDarkColor;
 	}
 
-	.segmented-control {
-		&.stats-navigation__intervals {
-			height: 36px;
-			min-width: 259px;
-
-			@media only screen and (max-width: $break-dashboard-mobile) {
-				width: 100%;
-			}
-		}
-
-		.segmented-control__item {
-			&:first-of-type .segmented-control__link {
-				border-top-left-radius: $segmentedControlItemBorderRadius;
-				border-bottom-left-radius: $segmentedControlItemBorderRadius;
-			}
-
-			&:last-of-type .segmented-control__link {
-				border-top-right-radius: $segmentedControlItemBorderRadius;
-				border-bottom-right-radius: $segmentedControlItemBorderRadius;
-			}
-
-			// Black segmented controls.
-			.segmented-control__link:hover {
-				background-color: var(--color-neutral-0);
-			}
-
-			&.is-selected .segmented-control__link,
-			&.is-selected .segmented-control__link:hover {
-				background-color: var(--studio-black);
-				border-color: var(--studio-black);
-			}
-
-			&.is-selected + .segmented-control__item .segmented-control__link {
-				border-left-color: var(--studio-black);
-			}
-		}
-
-		.segmented-control__link {
-			color: var(--studio-gray-70);
-			font-weight: 600;
-		}
-	}
-
 	.stats__empty-state {
 		.empty-state-card {
-			padding: 16px;
+			padding: 24px;
 			border: 1px solid var(--studio-gray-5);
 			box-shadow: none;
 		}
@@ -133,7 +105,7 @@ $barDarkColor: var(--color-primary-60);
 		}
 
 		.empty-state-card-info {
-			margin: 8px 0;
+			margin: 0;
 			color: var(--studio-gray-60);
 		}
 	}

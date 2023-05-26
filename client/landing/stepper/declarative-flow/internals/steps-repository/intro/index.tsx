@@ -85,11 +85,11 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 
 		if ( flowName === NEWSLETTER_FLOW ) {
 			return {
-				title: __( 'The Newsletter. Elevated.' ),
+				title: __( 'The newsletter. Elevated.' ),
 				text: __(
-					'Unlimited subscribers. Beautiful design. And everything you need to grow your audience. Powered by WordPress.com.'
+					'Everything you need to reach and grow an audience, with the power and permanence of WordPress.com.'
 				),
-				buttonText: __( 'Launch your Newsletter' ),
+				buttonText: __( 'Launch your newsletter' ),
 			};
 		}
 
@@ -121,7 +121,7 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 
 		return {
 			title: createInterpolateElement(
-				__( 'You’re 3 minutes away from<br />a launch-ready Newsletter. ' ),
+				__( 'You’re 3 minutes away from<br />a launch-ready newsletter. ' ),
 				{ br: <br /> }
 			),
 			buttonText: __( 'Get started' ),

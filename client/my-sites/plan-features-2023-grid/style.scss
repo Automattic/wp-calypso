@@ -1,6 +1,9 @@
 @import "@automattic/onboarding/styles/mixins";
 @import "calypso/my-sites/plan-features-2023-grid/media-queries";
 
+$table-cell-max-width: 344px;
+$mobile-card-max-width: 440px;
+
 .plan-features--loading-container {
 	margin-top: 300px;
 }
@@ -170,13 +173,21 @@
 }
 
 .is-2023-pricing-grid .plans-wrapper {
-	margin: 0 auto;
-	padding: 28px 0 10px;
-	transform: translateY(-20px);
+	margin: 0 20px;
+	padding: 0 0 10px;
 	overflow-x: visible;
 
 	@include plans-2023-break-small {
-		padding-top: 64px;
+		padding-top: 35px; // enough to cover `plan-features-2023-grid__popular-badge` repositioning (top: -35px)
+		margin: 0;
+	}
+
+	@include plans-2023-break-medium {
+		margin: 0 20px;
+	}
+
+	@include plans-section-break-medium {
+		margin: 0;
 	}
 }
 
@@ -201,6 +212,11 @@
 	}
 
 	.plan-features-2023-grid__mobile-view {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 20px;
+		margin: 0 auto;
+		max-width: $mobile-card-max-width;
 
 		.plan-features-2023-grid__mobile-plan-card {
 			background-color: var(--studio-white);
@@ -208,7 +224,6 @@
 			/* stylelint-disable-next-line */
 			border-radius: 5px;
 			padding: 38px 0 20px 0;
-			margin: 20px;
 
 			@include plans-section-custom-mobile-breakpoint {
 				margin-left: 0;
@@ -303,9 +318,21 @@
 		border: 1px solid #e0e0e0;
 		border-radius: 5px; /* stylelint-disable-line */
 		background-color: #fff;
-		margin: 0;
+		margin: 0 auto;
 		border-spacing: 0;
 		width: 100%;
+
+		&.has-1-cols {
+			max-width: $table-cell-max-width;
+		}
+
+		&.has-2-cols {
+			max-width: $table-cell-max-width * 2;
+		}
+
+		&.has-3-cols {
+			max-width: $table-cell-max-width * 3;
+		}
 	}
 
 	.plan-features-2023-grid__table-bottom .plan-features-2023-grid__table {
@@ -367,6 +394,13 @@
 
 		@include plans-2023-break-small {
 			border-left: solid 1px #e0e0e0;
+		}
+	}
+
+	.plan-features-2023-grid__desktop-view,
+	.plan-features-2023-grid__tablet-view {
+		.plan-features-2023-grid__table-item {
+			max-width: $table-cell-max-width;
 		}
 	}
 
@@ -687,7 +721,7 @@ body.is-section-signup.is-white-signup,
 body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup__step .segmented-control.price-toggle,
 #primary .is-pricing-grid-2023-plans-features-main .segmented-control.price-toggle {
 	background-color: #f2f2f2;
-	width: 414px; // width of mobile plans grid
+	width: 100%;
 	margin: 0 auto;
 
 	@include plans-2023-break-small {

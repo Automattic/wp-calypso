@@ -24,6 +24,50 @@ jest.mock( 'calypso/state/sites/hooks/use-premium-global-styles', () => ( {
 	} ),
 } ) );
 
+jest.mock( '@automattic/data-stores', () => ( {
+	...jest.requireActual( '@automattic/data-stores' ),
+	useLaunchpad: ( siteSlug, siteIntentOption ) => {
+		let checklist = [
+			{ id: 'foo_task', completed: false, disabled: true, title: 'Foo Task' },
+			{ id: 'foo_task_1', completed: true, disabled: true, title: 'Foo Task 1' },
+		];
+
+		if ( siteIntentOption === 'free' ) {
+			checklist = [
+				{ id: 'foo_task', completed: false, disabled: true, title: 'Foo Task' },
+				{
+					id: 'domain_upsell',
+					completed: false,
+					disabled: false,
+					title: 'Choose a domain',
+					badge_text: 'Upgrade plan',
+				},
+				{ id: 'foo_task_1', completed: true, disabled: true, title: 'Foo Task 1' },
+			];
+		}
+
+		if ( siteIntentOption === 'newsletter' ) {
+			checklist = [
+				{
+					id: 'newsletter_setup',
+					completed: false,
+					disabled: true,
+					title: 'Personalize newsletter',
+				},
+				{ id: 'foo_task_1', completed: true, disabled: true, title: 'Foo Task 1' },
+			];
+		}
+
+		return {
+			data: {
+				site_intent: siteIntentOption,
+				checklist,
+			},
+			isFetchedAfterMount: true,
+		};
+	},
+} ) );
+
 const siteName = 'testlinkinbio';
 const secondAndTopLevelDomain = 'wordpress.com';
 const siteSlug = `${ siteName }.${ secondAndTopLevelDomain }`;
@@ -126,6 +170,18 @@ describe( 'Sidebar', () => {
 			content.includes( secondAndTopLevelDomain )
 		);
 		expect( renderedDomain ).toBeVisible();
+	} );
+
+	it( 'start-writing flow does not display the current site url', () => {
+		renderSidebar( {
+			...props,
+			flow: 'start-writing',
+		} );
+
+		const renderedDomain = screen.queryByText( ( content ) =>
+			content.includes( secondAndTopLevelDomain )
+		);
+		expect( renderedDomain ).toBeNull();
 	} );
 
 	it( 'displays customize badge for wpcom domains (free)', () => {
@@ -310,6 +366,7 @@ describe( 'Sidebar', () => {
 				const siteDetails = buildSiteDetails( {
 					options: {
 						...defaultSiteDetails.options,
+						site_intent: 'free',
 					},
 					plan: {
 						is_free: true,
@@ -319,6 +376,7 @@ describe( 'Sidebar', () => {
 
 				const domainUpsellTaskFreeFlow = screen.queryByText( 'Choose a domain' );
 				const domainUpsellTaskBadgeFreeFlow = screen.queryByText( 'Upgrade plan' );
+
 				expect( domainUpsellTaskFreeFlow ).toBeVisible();
 				expect( domainUpsellTaskBadgeFreeFlow ).toBeVisible();
 			} );
@@ -327,9 +385,11 @@ describe( 'Sidebar', () => {
 		describe( 'and the site is on a paid plan', () => {
 			it( 'does not display the upgrade plan badge on the "Choose a domain" task for free flow', () => {
 				const freeFlowProps = { ...props, flow: 'free' };
+
 				const siteDetails = buildSiteDetails( {
 					options: {
 						...defaultSiteDetails.options,
+						site_intent: 'free',
 					},
 					plan: {
 						is_free: false,

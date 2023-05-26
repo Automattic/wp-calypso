@@ -1,21 +1,48 @@
-import { isBusinessPlan } from '@automattic/calypso-products';
+import {
+	isBusinessPlan,
+	isPremiumPlan,
+	isPersonalPlan,
+	planLevelsMatch,
+} from '@automattic/calypso-products';
+import { isLinkInBioFlow, isNewsletterFlow } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import isPlanAvailableForPurchase from 'calypso/state/sites/plans/selectors/is-plan-available-for-purchase';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isPopularPlan } from '../lib/is-popular-plan';
 
-const useHighlightLabel = ( planName: string ) => {
-	const translate = useTranslate();
-	const selectedSiteId = useSelector( getSelectedSiteId );
-	const currentPlan = useSelector( ( state ) => getCurrentPlan( state, selectedSiteId ) );
-	const isCurrentPlan = currentPlan?.productSlug === planName;
+interface Props {
+	planName: string;
+	flowName?: string | null;
+	currentSitePlanSlug?: string;
+	selectedPlan?: string;
+}
 
-	if ( isCurrentPlan ) {
+const useHighlightLabel = ( { planName, flowName, currentSitePlanSlug, selectedPlan }: Props ) => {
+	const translate = useTranslate();
+	const isCurrentPlan = currentSitePlanSlug === planName;
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	const isAvailableForPurchase = useSelector(
+		( state ) => !! selectedSiteId && isPlanAvailableForPurchase( state, selectedSiteId, planName )
+	);
+	const isSuggestedPlan =
+		selectedPlan && planLevelsMatch( planName, selectedPlan ) && isAvailableForPurchase;
+
+	if ( flowName && isNewsletterFlow( flowName ) ) {
+		if ( isPersonalPlan( planName ) ) {
+			return translate( 'Best for Newsletter' );
+		}
+	} else if ( flowName && isLinkInBioFlow( flowName ) ) {
+		if ( isPremiumPlan( planName ) ) {
+			return translate( 'Best for Link in Bio' );
+		}
+	} else if ( isCurrentPlan ) {
 		return translate( 'Your plan' );
-	} else if ( isBusinessPlan( planName ) ) {
+	} else if ( isSuggestedPlan ) {
+		return translate( 'Suggested' );
+	} else if ( isBusinessPlan( planName ) && ! selectedPlan ) {
 		return translate( 'Best for devs' );
-	} else if ( isPopularPlan( planName ) ) {
+	} else if ( isPopularPlan( planName ) && ! selectedPlan ) {
 		return translate( 'Popular' );
 	}
 

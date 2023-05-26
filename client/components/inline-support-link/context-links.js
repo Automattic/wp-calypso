@@ -83,6 +83,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/sftp/',
 		post_id: 159771,
 	},
+	'hosting-staging-site': {
+		link: 'https://wordpress.com/support/how-to-create-a-staging-site/',
+		post_id: 239448,
+	},
 	'hosting-clear-cache': {
 		link: 'https://wordpress.com/support/clear-your-sites-cache/',
 		post_id: 164969,

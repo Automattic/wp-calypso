@@ -1,4 +1,4 @@
-import { isEnabled } from '@automattic/calypso-config';
+import { Onboard } from '@automattic/data-stores';
 import { hexToRgb, StepContainer, base64ImageToBlob } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -29,18 +29,24 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 	const site = useSite();
 
 	const newsletterFormText = {
-		titleLabel: translate( 'Give your blog a name' ),
+		titleLabel: translate( 'Give your newsletter a name' ),
 		titlePlaceholder: translate( 'Open Me Carefully' ),
-		titleMissing: translate( `Oops. Looks like your Newsletter doesn't have a name yet.` ),
+		titleMissing: translate( `Oops. Looks like your newsletter doesn't have a name yet.` ),
 		taglineLabel: translate( 'Add a brief description' ),
 		taglinePlaceholder: translate( `Letters from Emily Dickinson's garden` ),
 		iconPlaceholder: translate( 'Add a site icon' ),
-		colorLabel: translate( 'Favorite color' ),
+		colorLabel: translate( 'Choose an accent color' ),
 		buttonText: translate( 'Save and continue' ),
 	};
 
-	const { setSiteTitle, setSiteAccentColor, setSiteDescription, setSiteLogo } =
-		useDispatch( ONBOARD_STORE );
+	const {
+		setSiteTitle,
+		setSiteAccentColor,
+		setSiteDescription,
+		setSiteLogo,
+		setGoals,
+		resetGoals,
+	} = useDispatch( ONBOARD_STORE );
 
 	const [ invalidSiteTitle, setInvalidSiteTitle ] = useState( false );
 	const [ paidSubscribers, setPaidSubscribers ] = useState( false );
@@ -86,6 +92,14 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 		setSiteAccentColor( accentColor.hex );
 		setPaidSubscribers( paidSubscribers );
 
+		if ( paidSubscribers ) {
+			setGoals( [ Onboard.SiteGoal.PaidSubscribers ] );
+		} else {
+			// Clears goals entirely each time, regardless if they were set previously or not.
+			// We could instead just handle removing PaidSubscribers goal, and avoid doing anything if nothing wasn't set ever.
+			resetGoals();
+		}
+
 		if ( selectedFile && base64Image ) {
 			try {
 				setSiteLogo( base64Image );
@@ -95,7 +109,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 		}
 
 		if ( siteTitle.trim().length ) {
-			submit?.( { siteTitle, tagline, siteAccentColor: accentColor.hex } );
+			submit?.( { siteTitle, tagline, siteAccentColor: accentColor.hex, paidSubscribers } );
 		}
 	};
 
@@ -140,23 +154,21 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 							setAccentColor={ setAccentColor }
 							labelText={ newsletterFormText?.colorLabel }
 						/>
-						{ isEnabled( 'newsletter/paid-subscribers' ) && (
-							<FormFieldset className="newsletter-setup__paid-subscribers">
-								<FormLabel>
-									<FormInputCheckbox
-										name="paid_newsletters"
-										checked={ paidSubscribers }
-										onChange={ onPaidSubscribersChanged }
-									/>
-									<span>{ translate( 'I want to start a paid newsletter' ) }</span>
-								</FormLabel>
-								<InfoPopover position="bottom right">
-									{ translate(
-										'Let your audience support your work. Add paid subscriptions and gated content to your newsletter.'
-									) }
-								</InfoPopover>
-							</FormFieldset>
-						) }
+						<FormFieldset className="newsletter-setup__paid-subscribers">
+							<FormLabel>
+								<FormInputCheckbox
+									name="paid_newsletters"
+									checked={ paidSubscribers }
+									onChange={ onPaidSubscribersChanged }
+								/>
+								<span>{ translate( 'I want to start a paid newsletter' ) }</span>
+							</FormLabel>
+							<InfoPopover position="bottom right">
+								{ translate(
+									'Let your audience support your work. Add paid subscriptions and gated content to your newsletter.'
+								) }
+							</InfoPopover>
+						</FormFieldset>
 					</>
 				</SetupForm>
 			}

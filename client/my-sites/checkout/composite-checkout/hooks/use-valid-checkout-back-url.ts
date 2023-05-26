@@ -24,7 +24,9 @@ const getAllowedHosts = ( siteSlug?: string ) => {
 const useValidCheckoutBackUrl = ( siteSlug: string | undefined ): string | undefined => {
 	const { checkoutBackUrl } = useSelector( getInitialQueryArguments ) ?? {};
 	const siteId = useSelector( ( state ) => getSiteId( state, siteSlug as string | null ) );
-	const jetpackSite = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+	const jetpackSite = useSelector( ( state ) =>
+		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
+	);
 	return useMemo( () => {
 		if ( ! checkoutBackUrl ) {
 			// For akismet specific checkout, if navigated with direct link

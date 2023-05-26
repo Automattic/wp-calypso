@@ -8,6 +8,7 @@ import { useResizeObserver, useRefEffect } from '@wordpress/compose';
 import React, { useMemo, useState, useContext } from 'react';
 import { BLOCK_MAX_HEIGHT } from '../constants';
 import useParsedAssets from '../hooks/use-parsed-assets';
+import loadScripts from '../utils/load-scripts';
 import loadStyles from '../utils/load-styles';
 import BlockRendererContext from './block-renderer-context';
 import type { RenderedStyle } from '../types';
@@ -16,6 +17,7 @@ import './block-renderer-container.scss';
 interface BlockRendererContainerProps {
 	children: React.ReactChild;
 	styles?: RenderedStyle[];
+	scripts?: string;
 	inlineCss?: string;
 	viewportWidth?: number;
 	viewportHeight?: number;
@@ -32,6 +34,7 @@ interface ScaledBlockRendererContainerProps extends BlockRendererContainerProps 
 const ScaledBlockRendererContainer = ( {
 	children,
 	styles: customStyles,
+	scripts: customScripts,
 	inlineCss = '',
 	viewportWidth = 1200,
 	viewportHeight,
@@ -65,6 +68,12 @@ const ScaledBlockRendererContainer = ( {
 		return [ ...mergedStyles, { css: inlineCss } ];
 	}, [ styles, customStyles, inlineCss ] );
 
+	const scripts = useMemo( () => {
+		return [ assets?.scripts, customScripts ].filter( Boolean ).join( '' );
+	}, [ assets?.scripts, customScripts ] );
+
+	const scriptAssets = useParsedAssets( scripts );
+
 	const svgFilters = useMemo( () => {
 		return [ ...( duotone?.default ?? [] ), ...( duotone?.theme ?? [] ) ];
 	}, [ duotone ] );
@@ -82,9 +91,11 @@ const ScaledBlockRendererContainer = ( {
 		bodyElement.style.position = 'absolute';
 		bodyElement.style.width = '100%';
 
-		// Load styles manually to avoid a flash of unstyled content.
-		// Gutenberg fixed this issue via https://github.com/WordPress/gutenberg/pull/46706 but it requires `@wordpress/block-editor: ^11.2.0`
-		loadStyles( bodyElement, styleAssets ).then( () => setIsLoaded( true ) );
+		// Load scripts and styles manually to avoid a flash of unstyled content.
+		Promise.all( [
+			loadStyles( bodyElement, styleAssets ),
+			loadScripts( bodyElement, scriptAssets as HTMLScriptElement[] ),
+		] ).then( () => setIsLoaded( true ) );
 	}, [] );
 
 	const scale = containerWidth / viewportWidth;
@@ -120,7 +131,6 @@ const ScaledBlockRendererContainer = ( {
 		>
 			<Iframe
 				head={ <EditorStyles styles={ editorStyles } /> }
-				assets={ { scripts: assets?.scripts } }
 				contentRef={ contentRef }
 				aria-hidden
 				tabIndex={ -1 }

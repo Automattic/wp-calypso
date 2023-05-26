@@ -17,6 +17,7 @@ import SectionHeader from 'calypso/components/section-header';
 import { getImporterByKey, getImporters } from 'calypso/lib/importer/importer-config';
 import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
 import memoizeLast from 'calypso/lib/memoize-last';
+import version_compare from 'calypso/lib/version-compare';
 import BloggerImporter from 'calypso/my-sites/importer/importer-blogger';
 import MediumImporter from 'calypso/my-sites/importer/importer-medium';
 import SquarespaceImporter from 'calypso/my-sites/importer/importer-squarespace';
@@ -32,13 +33,12 @@ import {
 	isImporterStatusHydrated,
 } from 'calypso/state/imports/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import { getSiteTitle, getSiteOption } from 'calypso/state/sites/selectors';
+import { getSiteOption, getSiteTitle } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-
 import './section-import.scss';
 
 /**
@@ -62,7 +62,7 @@ const getImporterTypeForEngine = ( engine ) => `importer-type-${ engine }`;
 /**
  * The minimum version of the Jetpack plugin required to use the Jetpack Importer API.
  */
-const JETPACK_IMPORT_MIN_PLUGIN_VERSION = '12.0';
+const JETPACK_IMPORT_MIN_PLUGIN_VERSION = '12.1';
 
 class SectionImport extends Component {
 	static propTypes = {
@@ -290,8 +290,14 @@ class SectionImport extends Component {
 			options: { is_wpcom_atomic: isAtomic },
 		} = site;
 
-		const jetpackVersionInCompatible =
-			this.props.siteJetpackVersion < JETPACK_IMPORT_MIN_PLUGIN_VERSION;
+		// Target site Jetpack version is not compatible with the importer.
+		const jetpackVersionInCompatible = version_compare(
+			this.props.siteJetpackVersion,
+			JETPACK_IMPORT_MIN_PLUGIN_VERSION,
+			'<'
+		);
+
+		const hasUnifiedImporter = isEnabled( 'importer/unified' );
 
 		return (
 			<Main>
@@ -313,7 +319,7 @@ class SectionImport extends Component {
 					hasScreenOptions
 				/>
 				<EmailVerificationGate allowUnlaunched>
-					{ isJetpack && ! isAtomic && ! isEnabled( 'importer/unified' ) ? (
+					{ isJetpack && ! isAtomic && ! hasUnifiedImporter ? (
 						<JetpackImporter />
 					) : (
 						<>

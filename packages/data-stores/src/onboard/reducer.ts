@@ -19,16 +19,6 @@ const domain: Reducer< DomainSuggestion | undefined, OnboardAction > = ( state, 
 	return state;
 };
 
-const patternContent: Reducer< string | undefined, OnboardAction > = ( state, action ) => {
-	if ( action.type === 'SET_SITE_PATTERN_CONTENT' ) {
-		return action.patternContent;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return undefined;
-	}
-	return state;
-};
-
 const domainSearch: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	if ( action.type === 'SET_DOMAIN_SEARCH_TERM' ) {
 		return action.domainSearch;
@@ -213,6 +203,16 @@ const siteLogo: Reducer< null | string, OnboardAction > = ( state = null, action
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return null;
+	}
+	return state;
+};
+
+const siteGeoAffinity: Reducer< string, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_SITE_GEO_AFFINITY' ) {
+		return action.siteGeoAffinity;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
 	}
 	return state;
 };
@@ -462,6 +462,16 @@ const hideFreePlan: Reducer< boolean, OnboardAction > = ( state = false, action 
 	return state;
 };
 
+const hidePlansFeatureComparison: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'SET_HIDE_PLANS_FEATURE_COMPARISON' ) {
+		return action.hidePlansFeatureComparison;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return false;
+	}
+	return state;
+};
+
 const domainCartItem: Reducer< MinimalRequestCartProduct | undefined, OnboardAction > = (
 	state = undefined,
 	action
@@ -525,7 +535,6 @@ const reducer = combineReducers( {
 	anchorSpotifyUrl,
 	domain,
 	domainCartItem,
-	patternContent,
 	domainSearch,
 	domainCategory,
 	domainForm,
@@ -539,6 +548,7 @@ const reducer = combineReducers( {
 	selectedStyleVariation,
 	selectedSite,
 	siteTitle,
+	siteGeoAffinity,
 	showSignupDialog,
 	planProductId,
 	randomizedDesigns,
@@ -553,6 +563,7 @@ const reducer = combineReducers( {
 	goals,
 	editEmail,
 	hideFreePlan,
+	hidePlansFeatureComparison,
 	siteDescription,
 	siteLogo,
 	siteAccentColor,

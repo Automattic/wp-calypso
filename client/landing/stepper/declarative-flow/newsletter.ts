@@ -3,6 +3,7 @@ import { useFlowProgress, NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import wpcom from 'calypso/lib/wp';
 import {
 	clearSignupDestinationCookie,
@@ -49,7 +50,12 @@ const newsletter: Flow = {
 			},
 		];
 	},
-
+	useSideEffect() {
+		const { setHidePlansFeatureComparison } = useDispatch( ONBOARD_STORE );
+		useEffect( () => {
+			setHidePlansFeatureComparison( true );
+		}, [] );
+	},
 	useStepNavigation( _currentStep, navigate ) {
 		const flowName = this.name;
 		const userIsLoggedIn = useSelect(

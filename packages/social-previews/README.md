@@ -7,6 +7,8 @@ At the current time there are components to display previews for a:
 - Facebook post.
 - Twitter post.
 - Google Search result.
+- Tumblr post.
+- LinkedIn post.
 
 ## Prerequisites
 
@@ -25,34 +27,34 @@ however you like.
 
 Here's a simple usage example using the preview component for Facebook:
 
-```js
-import { FacebookPreview } from '@automattic/social-previews';
+```jsx
+import { FacebookPreviews } from '@automattic/social-previews';
 
-<FacebookPreview
+<FacebookPreviews
 	title="Five for the Future"
 	description="Launched in 2014, Five for the Future encourages organizations to contribute five percent of their resources to WordPress development. WordPress co-founder Matt Mullenweg proposed this benchmark to maintain a “golden ratio” of contributors to users."
 	url="https://wordpress.org/five-for-the-future/"
-	user={ { displayName: "Matt Mullenweg" } }
+	user={ { displayName: 'Matt Mullenweg' } }
 />;
 ```
 
 Here is another example using the Search result component:
 
-```js
-import { SearchPreview } from '@automattic/social-previews';
+```jsx
+import { GoogleSearchPreview } from '@automattic/social-previews';
 
-<SearchPreview
+<GoogleSearchPreview
 	title="Five for the Future"
 	description="Launched in 2014, Five for the Future encourages organizations to contribute five percent of their resources to WordPress development. WordPress co-founder Matt Mullenweg proposed this benchmark to maintain a “golden ratio” of contributors to users."
 	url="https://wordpress.org/five-for-the-future/"
-	author="Matt Mullenweg"
+	siteTitle="Five for the Future"
 />;
 ```
 
 Twitter previews support the same properties for previewing a single tweet, but can also preview multiple tweets in the form of a Twitter thread. For that, the `tweets` property takes an array of tweets. Each item in this array can take additional information about the tweet, giving the preview a more native feel.
 
-```js
-import { TwitterPreview } from '@automattic/social-previews';
+```jsx
+import { TwitterPreviews } from '@automattic/social-previews';
 
 const tweetTemplate = {
 	date: Date.now(),
@@ -61,7 +63,7 @@ const tweetTemplate = {
 	screenName: '@myAccount',
 };
 
-<TwitterPreview
+<TwitterPreviews
 	tweets={ [
 		{
 			...tweetTemplate,
@@ -84,6 +86,36 @@ const tweetTemplate = {
 			],
 		},
 	] }
+/>;
+```
+
+An example of LinkedIn preview
+
+```jsx
+import { LinkedInPreviews } from '@automattic/social-previews';
+
+<LinkedInPreviews
+	jobTitle="Job Title (Company Name)"
+	image="https://url.for.the/image.png"
+	name="LinkedIn Account Name"
+	profileImage="https://static.licdn.com/sc/h/1c5u578iilxfi4m4dvc4q810q"
+	title="Post title goes here"
+	text="The text of the post goes here."
+/>;
+```
+
+Tumblr preview
+
+```jsx
+import { TumblrPreviews } from '@automattic/social-previews';
+
+<TumblrPreviews
+	title="Five for the Future"
+	description="Launched in 2014, Five for the Future encourages organizations to contribute five percent of their resources to WordPress development. WordPress co-founder Matt Mullenweg proposed this benchmark to maintain a “golden ratio” of contributors to users."
+	image="https://url.for.the/image.png"
+	url="https://wordpress.org/five-for-the-future/"
+	user={ { displayName: 'Matt Mullenweg' } }
+	customText="Some custom text here"
 />;
 ```
 

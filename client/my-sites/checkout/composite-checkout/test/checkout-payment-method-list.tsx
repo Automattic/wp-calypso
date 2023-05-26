@@ -3,6 +3,7 @@
  */
 import { render, screen, waitFor } from '@testing-library/react';
 import { dispatch } from '@wordpress/data';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
@@ -51,6 +52,7 @@ describe( 'Checkout payment methods list', () => {
 		getDomainsBySiteId.mockImplementation( () => [] );
 		isMarketplaceProduct.mockImplementation( () => false );
 		isJetpackSite.mockImplementation( () => false );
+		( useCartKey as jest.Mock ).mockImplementation( () => mainCartKey );
 
 		mockGetPaymentMethodsEndpoint( [] );
 		mockLogStashEndpoint();
@@ -60,26 +62,14 @@ describe( 'Checkout payment methods list', () => {
 	} );
 
 	it( 'renders the paypal payment method option', async () => {
-		render(
-			<MockCheckout
-				mainCartKey={ mainCartKey }
-				initialCart={ initialCart }
-				setCart={ mockSetCartEndpoint }
-			/>
-		);
+		render( <MockCheckout initialCart={ initialCart } setCart={ mockSetCartEndpoint } /> );
 		await waitFor( () => {
 			expect( screen.getByText( 'PayPal' ) ).toBeInTheDocument();
 		} );
 	} );
 
 	it( 'does not render the full credits payment method option when no credits are available', async () => {
-		render(
-			<MockCheckout
-				mainCartKey={ mainCartKey }
-				initialCart={ initialCart }
-				setCart={ mockSetCartEndpoint }
-			/>
-		);
+		render( <MockCheckout initialCart={ initialCart } setCart={ mockSetCartEndpoint } /> );
 		await waitFor( () => {
 			expect( screen.queryByText( /WordPress.com Credits:/ ) ).not.toBeInTheDocument();
 		} );
@@ -89,7 +79,6 @@ describe( 'Checkout payment methods list', () => {
 		const cartChanges = { credits_integer: 15400, credits_display: 'R$154' };
 		render(
 			<MockCheckout
-				mainCartKey={ mainCartKey }
 				initialCart={ initialCart }
 				setCart={ mockSetCartEndpoint }
 				cartChanges={ cartChanges }
@@ -104,7 +93,6 @@ describe( 'Checkout payment methods list', () => {
 		const cartChanges = { credits_integer: 15400, credits_display: 'R$154' };
 		render(
 			<MockCheckout
-				mainCartKey={ mainCartKey }
 				initialCart={ initialCart }
 				setCart={ mockSetCartEndpoint }
 				cartChanges={ cartChanges }
@@ -124,7 +112,6 @@ describe( 'Checkout payment methods list', () => {
 		};
 		render(
 			<MockCheckout
-				mainCartKey={ mainCartKey }
 				initialCart={ initialCart }
 				setCart={ mockSetCartEndpoint }
 				cartChanges={ cartChanges }
@@ -144,7 +131,6 @@ describe( 'Checkout payment methods list', () => {
 		};
 		render(
 			<MockCheckout
-				mainCartKey={ mainCartKey }
 				initialCart={ initialCart }
 				setCart={ mockSetCartEndpoint }
 				cartChanges={ cartChanges }
@@ -156,13 +142,7 @@ describe( 'Checkout payment methods list', () => {
 	} );
 
 	it( 'does not render the free payment method option when the purchase is not free', async () => {
-		render(
-			<MockCheckout
-				mainCartKey={ mainCartKey }
-				initialCart={ initialCart }
-				setCart={ mockSetCartEndpoint }
-			/>
-		);
+		render( <MockCheckout initialCart={ initialCart } setCart={ mockSetCartEndpoint } /> );
 		await waitFor( () => {
 			expect( screen.queryByText( 'Free Purchase' ) ).not.toBeInTheDocument();
 		} );
@@ -172,7 +152,6 @@ describe( 'Checkout payment methods list', () => {
 		const cartChanges = { total_cost_integer: 0, total_cost_display: '0' };
 		render(
 			<MockCheckout
-				mainCartKey={ mainCartKey }
 				initialCart={ initialCart }
 				setCart={ mockSetCartEndpoint }
 				cartChanges={ cartChanges }
@@ -196,7 +175,6 @@ describe( 'Checkout payment methods list', () => {
 		};
 		render(
 			<MockCheckout
-				mainCartKey={ mainCartKey }
 				initialCart={ initialCart }
 				setCart={ mockSetCartEndpoint }
 				cartChanges={ cartChanges }
@@ -211,7 +189,6 @@ describe( 'Checkout payment methods list', () => {
 		const cartChanges = { total_cost_integer: 0, total_cost_display: '0' };
 		render(
 			<MockCheckout
-				mainCartKey={ mainCartKey }
 				initialCart={ initialCart }
 				setCart={ mockSetCartEndpoint }
 				cartChanges={ cartChanges }
@@ -226,7 +203,6 @@ describe( 'Checkout payment methods list', () => {
 		const cartChanges = { total_cost_integer: 0, total_cost_display: '0' };
 		render(
 			<MockCheckout
-				mainCartKey={ mainCartKey }
 				initialCart={ initialCart }
 				setCart={ mockSetCartEndpoint }
 				cartChanges={ cartChanges }

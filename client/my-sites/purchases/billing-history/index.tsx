@@ -21,6 +21,7 @@ import {
 	ReceiptTitle,
 } from 'calypso/me/purchases/billing-history/receipt';
 import titles from 'calypso/me/purchases/titles';
+import { convertErrorToString } from 'calypso/my-sites/checkout/composite-checkout/lib/analytics';
 import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import getPastBillingTransaction from 'calypso/state/selectors/get-past-billing-transaction';
@@ -42,7 +43,7 @@ function useLogBillingHistoryError( message: string ) {
 				extra: {
 					env: config( 'env_id' ),
 					type: 'site_level_billing_history',
-					message: error.message + '; Stack: ' + error.stack,
+					message: convertErrorToString( error ),
 				},
 			} );
 		},

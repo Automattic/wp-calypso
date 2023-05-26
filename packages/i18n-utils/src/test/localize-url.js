@@ -91,11 +91,34 @@ describe( '#localizeUrl', () => {
 	} );
 
 	test( 'trailing slash variations', () => {
-		expect( localizeUrl( 'https://automattic.com/cookies/', 'de' ) ).toEqual(
+		const isLoggedIn = false;
+
+		// Add trailing slashes everywhere (default).
+		expect( localizeUrl( 'https://automattic.com/cookies/', 'de', isLoggedIn ) ).toEqual(
 			'https://automattic.com/de/cookies/'
 		);
-		expect( localizeUrl( 'https://automattic.com/cookies', 'de' ) ).toEqual(
+		expect( localizeUrl( 'https://automattic.com/cookies', 'de', isLoggedIn ) ).toEqual(
 			'https://automattic.com/de/cookies/'
+		);
+		expect( localizeUrl( 'https://automattic.com/cookies?foo=bar', 'de', isLoggedIn ) ).toEqual(
+			'https://automattic.com/de/cookies/?foo=bar'
+		);
+		expect( localizeUrl( 'https://automattic.com/cookies#baz', 'de', isLoggedIn ) ).toEqual(
+			'https://automattic.com/de/cookies/#baz'
+		);
+
+		// Preserve trailing slash variation.
+		expect( localizeUrl( 'https://automattic.com/cookies/', 'de', isLoggedIn, true ) ).toEqual(
+			'https://automattic.com/de/cookies/'
+		);
+		expect( localizeUrl( 'https://automattic.com/cookies', 'de', isLoggedIn, true ) ).toEqual(
+			'https://automattic.com/de/cookies'
+		);
+		expect(
+			localizeUrl( 'https://automattic.com/cookies?foo=bar', 'de', isLoggedIn, true )
+		).toEqual( 'https://automattic.com/de/cookies?foo=bar' );
+		expect( localizeUrl( 'https://automattic.com/cookies#baz', 'de', isLoggedIn, true ) ).toEqual(
+			'https://automattic.com/de/cookies#baz'
 		);
 	} );
 
@@ -434,13 +457,13 @@ describe( '#localizeUrl', () => {
 			'https://jetpack.com/features/comparison/'
 		);
 		expect( localizeUrl( 'https://jetpack.com/features/comparison/', 'de' ) ).toEqual(
-			'https://de.jetpack.com/features/comparison/'
+			'https://jetpack.com/de/features/comparison/'
 		);
 		expect( localizeUrl( 'https://jetpack.com/features/comparison/', 'pt-br' ) ).toEqual(
-			'https://br.jetpack.com/features/comparison/'
+			'https://jetpack.com/pt-br/features/comparison/'
 		);
 		expect( localizeUrl( 'https://jetpack.com/features/comparison/', 'zh-tw' ) ).toEqual(
-			'https://zh-tw.jetpack.com/features/comparison/'
+			'https://jetpack.com/zh-tw/features/comparison/'
 		);
 		expect( localizeUrl( 'https://jetpack.com/features/comparison/', 'pl' ) ).toEqual(
 			'https://jetpack.com/features/comparison/'

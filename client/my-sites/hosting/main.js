@@ -8,7 +8,6 @@ import { localize } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
 import wrapWithClickOutside from 'react-click-outside';
 import { connect } from 'react-redux';
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
 import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
@@ -49,7 +48,6 @@ import SiteBackupCard from './site-backup-card';
 import StagingSiteCard from './staging-site-card';
 import StagingSiteProductionCard from './staging-site-card/staging-site-production-card';
 import SupportCard from './support-card';
-import WebServerLogsCard from './web-server-logs-card';
 import WebServerSettingsCard from './web-server-settings-card';
 import './style.scss';
 
@@ -98,20 +96,17 @@ class Hosting extends Component {
 		} = this.props;
 
 		const getUpgradeBanner = () => {
-			//eCommerce Trial requires different wording because Business is not the obvious upgrade path
-			if ( isECommerceTrial ) {
-				return (
-					<UpsellNudge
-						title={ translate( 'Upgrade your plan to access all hosting features' ) }
-						event="calypso_hosting_configuration_upgrade_click"
-						href={ `/plans/${ siteSlug }?feature=${ encodeURIComponent( FEATURE_SFTP_DATABASE ) }` }
-						feature={ FEATURE_SFTP_DATABASE }
-						showIcon={ true }
-					/>
-				);
-			}
+			// The eCommerce Trial requires a different upsell path.
+			const targetPlan = ! isECommerceTrial
+				? undefined
+				: {
+						callToAction: translate( 'Upgrade your plan' ),
+						feature: FEATURE_SFTP_DATABASE,
+						href: `/plans/${ siteSlug }?feature=${ encodeURIComponent( FEATURE_SFTP_DATABASE ) }`,
+						title: translate( 'Upgrade your plan to access all hosting features' ),
+				  };
 
-			return <HostingUpsellNudge siteId={ siteId } />;
+			return <HostingUpsellNudge siteId={ siteId } targetPlan={ targetPlan } />;
 		};
 
 		const getAtomicActivationNotice = () => {
@@ -179,9 +174,9 @@ class Hosting extends Component {
 		};
 
 		const getContent = () => {
-			const isGithubIntegrationEnabled = isAutomatticTeamMember( teams );
+			const isGithubIntegrationEnabled =
+				isEnabled( 'github-integration-i1' ) && isAutomatticTeamMember( teams );
 			const WrapperComponent = isDisabled || isTransferring ? FeatureExample : Fragment;
-			const isStagingSiteEnabled = isEnabled( 'yolo/staging-sites-i1' );
 
 			return (
 				<>
@@ -196,7 +191,7 @@ class Hosting extends Component {
 							<Column type="main" className="hosting__main-layout-col">
 								<SFTPCard disabled={ isDisabled } />
 								<PhpMyAdminCard disabled={ isDisabled } />
-								{ isStagingSiteEnabled && ! isWpcomStagingSite && hasStagingSitesFeature && (
+								{ ! isWpcomStagingSite && hasStagingSitesFeature && (
 									<StagingSiteCard disabled={ isDisabled } />
 								) }
 								{ isWpcomStagingSite && siteId && (
@@ -206,9 +201,6 @@ class Hosting extends Component {
 								<WebServerSettingsCard disabled={ isDisabled } />
 								<RestorePlanSoftwareCard disabled={ isDisabled } />
 								<CacheCard disabled={ isDisabled } />
-								{ ! isEnabled( 'woa-logging-moved' ) && (
-									<WebServerLogsCard disabled={ isDisabled } />
-								) }
 							</Column>
 							<Column type="sidebar">
 								<SiteBackupCard disabled={ isDisabled } />

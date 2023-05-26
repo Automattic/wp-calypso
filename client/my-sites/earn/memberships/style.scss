@@ -20,6 +20,13 @@
 	width: auto;
 }
 
+.memberships__module-content {
+	max-height: 520px;
+	overflow-y: scroll;
+	margin-top: -24px;
+	border-bottom: 1px solid var(--color-neutral-5);
+}
+
 .memberships__onboarding-wrapper {
 	display: flex;
 	flex-direction: row;

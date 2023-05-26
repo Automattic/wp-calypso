@@ -1,7 +1,7 @@
 import { FormInputValidation, Spinner } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { useState, FormEvent, ChangeEvent } from 'react';
+import { useState, FormEvent, ChangeEvent, useEffect } from 'react';
 import FormsButton from 'calypso/components/forms/form-button';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -65,6 +65,13 @@ const InstanceContainer = styled.div( {
 export const isValidUsername = ( username: string ) =>
 	/@?\b([A-Z0-9_]+)@([A-Z0-9.-]+\.[A-Z]{2,})\b/gi.test( username );
 
+const isAlreadyConnected = ( connections: Connection[], instance: string ) => {
+	return connections.some( ( connection ) => {
+		const { external_display } = connection;
+		return external_display === instance;
+	} );
+};
+
 export const Mastodon: React.FC< Props > = ( {
 	service,
 	action,
@@ -76,10 +83,21 @@ export const Mastodon: React.FC< Props > = ( {
 	const [ instance, setInstance ] = useState( '' );
 	const [ error, setError ] = useState( '' );
 
+	// After sucessfully connecting an account, reset the instance.
+	// Disabled react-hooks/exhaustive-deps because we don't want to run this on instance change
+	useEffect( () => {
+		if ( ! isConnecting && isAlreadyConnected( connections, instance ) ) {
+			setInstance( '' );
+		}
+	}, [ isConnecting, connections ] ); // eslint-disable-line react-hooks/exhaustive-deps
+
 	const handleInstanceChange = ( e: ChangeEvent< HTMLInputElement > ) => {
 		const instance = e.target.value.trim();
 		setInstance( instance );
-		if ( isValidUsername( instance ) || ! instance ) {
+
+		if ( isAlreadyConnected( connections, instance ) ) {
+			setError( translate( 'This account is already connected.' ) );
+		} else if ( isValidUsername( instance ) || ! instance ) {
 			setError( '' );
 		} else {
 			setError( translate( 'This username is not valid.' ) );
@@ -120,8 +138,9 @@ export const Mastodon: React.FC< Props > = ( {
 							value={ instance }
 							isError={ showError }
 							onChange={ handleInstanceChange }
+							placeholder="@mastodon@mastodon.social"
 						/>
-						{ showError && <Spinner /> }
+						{ isConnecting && <Spinner /> }
 					</InstanceContainer>
 					{ showError && <FormInputValidation isError text={ error } /> }
 				</div>

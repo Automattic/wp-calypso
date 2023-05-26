@@ -1,18 +1,20 @@
-import { createElement } from 'react';
+const HEADING_LEVELS = [ 2, 3, 4, 5, 6 ] as const;
 
-type Props = {
+export type SectionHeadingProps = {
 	className?: string;
-	level?: number;
+	level?: ( typeof HEADING_LEVELS )[ number ];
 	children?: React.ReactNode;
 };
 
-const HEADING_LEVELS = [ 2, 3, 4, 5, 6 ];
+export const SectionHeading: React.FC< SectionHeadingProps > = ( {
+	className,
+	level,
+	children,
+} ) => {
+	const Tag = `h${ level && HEADING_LEVELS.includes( level ) ? level : 3 }` as const;
 
-const SectionHeading: React.FC< Props > = ( { className, level, children } ) => {
-	return createElement(
-		`h${ level && HEADING_LEVELS.indexOf( level ) > -1 ? level : 3 }`,
-		{ className: `social-preview__section-heading ${ className ?? '' }` },
-		children
+	return (
+		<Tag className={ `social-preview__section-heading ${ className ?? '' }` }>{ children }</Tag>
 	);
 };
 

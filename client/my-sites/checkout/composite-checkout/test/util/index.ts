@@ -83,6 +83,7 @@ export const countryList: CountryListItem[] = [
 		name: 'Australia',
 		has_postal_codes: true,
 		vat_supported: false,
+		tax_name: 'GST',
 	},
 	{
 		code: 'ES',
@@ -90,6 +91,7 @@ export const countryList: CountryListItem[] = [
 		has_postal_codes: true,
 		vat_supported: true,
 		tax_country_codes: [ 'ES' ],
+		tax_name: 'VAT',
 	},
 	{
 		code: 'CA',
@@ -99,6 +101,7 @@ export const countryList: CountryListItem[] = [
 		tax_needs_subdivision: true,
 		vat_supported: true,
 		tax_country_codes: [ 'CA' ],
+		tax_name: 'VAT',
 	},
 	{
 		code: 'CH',
@@ -107,6 +110,7 @@ export const countryList: CountryListItem[] = [
 		tax_needs_address: true,
 		vat_supported: true,
 		tax_country_codes: [ 'CH' ],
+		tax_name: 'GST',
 	},
 	{
 		code: 'GB',
@@ -115,6 +119,7 @@ export const countryList: CountryListItem[] = [
 		tax_needs_organization: true, // added for testing, not present in API data
 		vat_supported: true,
 		tax_country_codes: [ 'GB', 'XI' ],
+		tax_name: 'VAT',
 	},
 	{
 		code: 'IN',
@@ -129,6 +134,7 @@ export const countryList: CountryListItem[] = [
 		has_postal_codes: true,
 		tax_needs_organization: true,
 		vat_supported: false,
+		tax_name: 'CT',
 	},
 	{
 		code: 'NO',
@@ -379,6 +385,8 @@ export function mockSetCartEndpointWith( { currency, locale } ): SetCart {
 		const { products: requestProducts, coupon: requestCoupon } = requestCart;
 		const products = requestProducts.map( convertRequestProductToResponseProduct( currency ) );
 
+		const is_gift_purchase = requestProducts.some( ( product ) => product.extra.isGiftPurchase );
+
 		const taxInteger = products.reduce( ( accum, current ) => {
 			return accum + current.item_tax;
 		}, 0 );
@@ -388,6 +396,7 @@ export function mockSetCartEndpointWith( { currency, locale } ): SetCart {
 		}, taxInteger );
 
 		return {
+			is_gift_purchase,
 			allowed_payment_methods: normalAllowedPaymentMethods,
 			blog_id: 1234,
 			cart_generated_at_timestamp: 12345,
@@ -837,7 +846,7 @@ function convertRequestProductToResponseProduct(
 					item_tax: 0,
 					meta: product.meta,
 					volume: 1,
-					extra: {},
+					extra: product.extra,
 				};
 			case 'domain_map':
 				return {

@@ -214,6 +214,27 @@ describe( 'useSitesSorting', () => {
 		},
 	];
 
+	const sitesWithEmptyStagingSites = [
+		{
+			ID: 1,
+			title: 'A',
+			options: {
+				updated_at: '2022-06-14T13:32:34+00:00',
+				wpcom_staging_blog_ids: '',
+			},
+			user_interactions: [ '2022-09-16', '2022-09-13', '2022-09-09' ],
+		},
+		{
+			ID: 4,
+			title: 'E',
+			options: {
+				updated_at: '2022-06-15T13:32:34+00:00',
+				wpcom_staging_blog_ids: '',
+			},
+			user_interactions: [ '2022-09-16', '2022-09-13', '2022-09-09' ],
+		},
+	];
+
 	test( 'should not sort sites if unsupported sortKey is provided', () => {
 		const { result } = renderHook( () =>
 			useSitesListSorting( filteredSites, {
@@ -438,5 +459,16 @@ describe( 'useSitesSorting', () => {
 		expect( result.current[ 0 ] ).toBe( filteredSites[ 1 ] );
 		expect( result.current[ 1 ] ).toBe( filteredSites[ 0 ] );
 		expect( result.current[ 2 ] ).toBe( filteredSites[ 2 ] );
+	} );
+
+	test( 'should not break when wpcom_staging_blog_ids is empty', () => {
+		const { result } = renderHook( () =>
+			useSitesListSorting( sitesWithEmptyStagingSites, {
+				sortKey: 'lastInteractedWith',
+				sortOrder: 'asc',
+			} )
+		);
+
+		expect( result.current.length ).toBe( 2 );
 	} );
 } );

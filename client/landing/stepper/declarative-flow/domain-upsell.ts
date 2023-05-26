@@ -1,12 +1,11 @@
 import { useDispatch, useSelect } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
-import { OnboardSelect } from 'calypso/../packages/data-stores/src';
+import { OnboardSelect, updateLaunchpadSettings } from 'calypso/../packages/data-stores/src';
 import {
 	addPlanToCart,
 	addProductsToCart,
 	DOMAIN_UPSELL_FLOW,
 } from 'calypso/../packages/onboarding/src';
-import { updateLaunchpadSettings } from 'calypso/data/sites/use-launchpad';
 import { useQuery } from '../hooks/use-query';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../stores';
@@ -40,12 +39,17 @@ const domainUpsell: Flow = {
 		);
 		const { setHideFreePlan } = useDispatch( ONBOARD_STORE );
 
-		const returnUrl = `/setup/${ flowName }/launchpad?siteSlug=${ siteSlug }`;
+		const returnUrl = `/setup/${ flowName ?? 'free' }/launchpad?siteSlug=${ siteSlug }`;
 		const encodedReturnUrl = encodeURIComponent( returnUrl );
 
-		const exitFlow = ( location = '/sites' ) => {
-			window.location.assign( location );
-		};
+		function goBack() {
+			if ( currentStep === 'domains' ) {
+				return window.location.assign( returnUrl );
+			}
+			if ( currentStep === 'plans' ) {
+				navigate( 'domains' );
+			}
+		}
 
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( currentStep ) {
@@ -63,30 +67,27 @@ const domainUpsell: Flow = {
 					navigate( 'plans' );
 
 				case 'plans':
-					if ( providedDependencies?.returnToDomainSelection ) {
-						return navigate( 'domains' );
-					}
 					if ( providedDependencies?.goToCheckout ) {
 						const planCartItem = getPlanCartItem();
 						const domainCartItem = getDomainCartItem();
-						if ( planCartItem ) {
-							await addPlanToCart( siteSlug as string, flowName as string, true, '', planCartItem );
+						if ( planCartItem && siteSlug && flowName ) {
+							await addPlanToCart( siteSlug, flowName, true, '', planCartItem );
 						}
 
-						if ( domainCartItem ) {
-							await addProductsToCart( siteSlug as string, flowName as string, [ domainCartItem ] );
+						if ( domainCartItem && siteSlug && flowName ) {
+							await addProductsToCart( siteSlug, flowName, [ domainCartItem ] );
 						}
 
 						return window.location.assign(
 							`/checkout/${ encodeURIComponent(
-								( siteSlug as string ) ?? ''
+								siteSlug ?? ''
 							) }?redirect_to=${ encodedReturnUrl }`
 						);
 					}
 			}
 		}
 
-		return { submit, exitFlow };
+		return { submit, goBack };
 	},
 };
 

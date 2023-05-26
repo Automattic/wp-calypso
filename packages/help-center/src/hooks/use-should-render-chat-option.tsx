@@ -1,22 +1,25 @@
-import { useSupportAvailability } from '@automattic/data-stores';
-import { useHappychatAvailable } from '@automattic/happychat-connection';
+import { useSupportAvailability, useSupportActivity } from '@automattic/data-stores';
+import useMessagingAvailability from './use-messaging-availability';
 
 type Result = {
 	render: boolean;
 	state: 'AVAILABLE' | 'UNAVAILABLE' | 'CLOSED';
 	isLoading: boolean;
 	eligible: boolean;
-	env?: 'staging' | 'production';
+	to: string;
 };
 
 export function useShouldRenderChatOption(): Result {
 	const { data: chatStatus } = useSupportAvailability( 'CHAT' );
-	// when the user is looking at the help page, we want to be extra sure they don't start a chat without available operators
-	// so in this case, let's make stale time 1 minute.
-	const { data, isLoading } = useHappychatAvailable(
-		Boolean( chatStatus?.is_user_eligible ),
-		60 * 1000
+	const { data, isInitialLoading: isLoadingAvailability } = useMessagingAvailability(
+		'wpcom_messaging',
+		Boolean( chatStatus?.is_user_eligible )
 	);
+	const { data: supportActivity, isInitialLoading: isLoadingSupportActivity } = useSupportActivity(
+		Boolean( chatStatus?.is_user_eligible )
+	);
+
+	const isLoading = isLoadingAvailability || isLoadingSupportActivity;
 
 	if ( ! chatStatus?.is_user_eligible ) {
 		return {
@@ -24,7 +27,7 @@ export function useShouldRenderChatOption(): Result {
 			isLoading,
 			state: chatStatus?.is_chat_closed ? 'CLOSED' : 'UNAVAILABLE',
 			eligible: false,
-			env: data?.env,
+			to: '',
 		};
 	} else if ( chatStatus?.is_chat_closed ) {
 		return {
@@ -32,15 +35,17 @@ export function useShouldRenderChatOption(): Result {
 			state: 'CLOSED',
 			isLoading,
 			eligible: true,
-			env: data?.env,
+			to: '',
 		};
-	} else if ( data?.available ) {
+	} else if ( data?.is_available ) {
+		const hasActiveChats = supportActivity?.some( ( ticket ) => ticket.channel === 'Messaging' );
+		const to = hasActiveChats ? '/inline-chat' : '/contact-form?mode=CHAT';
 		return {
 			render: true,
 			state: 'AVAILABLE',
 			isLoading,
 			eligible: true,
-			env: data.env,
+			to,
 		};
 	}
 	return {
@@ -48,6 +53,6 @@ export function useShouldRenderChatOption(): Result {
 		state: 'UNAVAILABLE',
 		isLoading,
 		eligible: true,
-		env: data?.env,
+		to: '',
 	};
 }

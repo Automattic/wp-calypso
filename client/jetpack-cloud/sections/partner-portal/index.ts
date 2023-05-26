@@ -29,7 +29,7 @@ export default function () {
 
 	// List licenses.
 	page(
-		`/partner-portal/licenses/:filter(unassigned|assigned|revoked)?`,
+		`/partner-portal/licenses/:filter(unassigned|assigned|revoked|standard)?`,
 		controller.requireAccessContext,
 		controller.requireTermsOfServiceConsentContext,
 		controller.requireSelectedPartnerKeyContext,

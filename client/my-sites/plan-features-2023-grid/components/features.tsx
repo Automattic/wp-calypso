@@ -1,10 +1,10 @@
 import { getPlanClass, FEATURE_CUSTOM_DOMAIN, isFreePlan } from '@automattic/calypso-products';
+import { DomainSuggestions } from '@automattic/data-stores';
 import styled from '@emotion/styled';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useGetWordPressSubdomain } from '../hooks/use-get-wordpress-subdomain';
+import { LoadingPlaceHolder } from '../../plans-features-main/components/loading-placeholder';
 import { PlanFeaturesItem } from './item';
-import { LoadingPlaceHolder } from './loading-placeholder';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import type { TransformedFeatureObject } from '../types';
 
@@ -23,16 +23,16 @@ const SubdomainSuggestion = styled.div`
 
 const FreePlanCustomDomainFeature: React.FC< { domainName: string } > = ( { domainName } ) => {
 	const {
-		data: wordPressSubdomainSuggestion,
+		data: wordPressSubdomainSuggestions,
 		isInitialLoading,
 		isError,
-	} = useGetWordPressSubdomain( domainName );
+	} = DomainSuggestions.useGetWordPressSubdomain( domainName );
 
 	return (
 		<SubdomainSuggestion>
 			<div className="is-domain-name">{ domainName }</div>
 			{ isInitialLoading && <LoadingPlaceHolder /> }
-			{ ! isError && <div>{ wordPressSubdomainSuggestion?.domain_name }</div> }
+			{ ! isError && <div>{ wordPressSubdomainSuggestions?.[ 0 ]?.domain_name }</div> }
 		</SubdomainSuggestion>
 	);
 };
@@ -42,7 +42,8 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	planName: string;
 	domainName: string;
 	hideUnavailableFeatures: boolean;
-} > = ( { features, planName, domainName, hideUnavailableFeatures } ) => {
+	selectedFeature?: string;
+} > = ( { features, planName, domainName, hideUnavailableFeatures, selectedFeature } ) => {
 	const translate = useTranslate();
 	return (
 		<>
@@ -55,6 +56,15 @@ const PlanFeatures2023GridFeatures: React.FC< {
 				const isFreePlanAndCustomDomainFeature =
 					currentFeature.getSlug() === FEATURE_CUSTOM_DOMAIN && isFreePlan( planName );
 
+				if ( isFreePlanAndCustomDomainFeature && ! domainName ) {
+					return null;
+				}
+
+				const isHighlightedFeature = selectedFeature
+					? currentFeature.getSlug() === selectedFeature
+					: currentFeature.getSlug() === FEATURE_CUSTOM_DOMAIN ||
+					  ! currentFeature.availableForCurrentPlan;
+
 				const divClasses = classNames( '', getPlanClass( planName ), {
 					'is-last-feature': featureIndex + 1 === features.length,
 				} );
@@ -64,10 +74,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 						isFreePlanAndCustomDomainFeature || currentFeature.availableForCurrentPlan,
 				} );
 				const itemTitleClasses = classNames( 'plan-features-2023-grid__item-title', {
-					'is-bold':
-						currentFeature.getSlug() === FEATURE_CUSTOM_DOMAIN
-							? true
-							: ! currentFeature.availableForCurrentPlan,
+					'is-bold': isHighlightedFeature,
 				} );
 
 				return (

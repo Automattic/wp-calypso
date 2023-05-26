@@ -1,109 +1,92 @@
 import config from '@automattic/calypso-config';
-import { useQuery } from '@tanstack/react-query';
-import { addQueryArgs } from '@wordpress/url';
+import { loadScript } from '@automattic/load-script';
 import { getLocaleSlug } from 'i18n-calypso';
-import { useMemo, useState } from 'react';
+import { useMemo, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import useMessagingAuth from 'calypso/../packages/help-center/src/hooks/use-messaging-auth';
 import ZendeskChat from 'calypso/components/presales-zendesk-chat';
+import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
+import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { useJpPresalesAvailabilityQuery } from 'calypso/lib/jetpack/use-jp-presales-availability-query';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import type { ConfigData } from '@automattic/create-calypso-config';
 
-type PresalesChatResponse = {
-	is_available: boolean;
-};
-
-export type KeyType = 'jpAgency' | 'jpGeneral';
+export type KeyType = 'jpAgency' | 'jpCheckout' | 'akismet' | 'jpGeneral';
 
 export interface ZendeskJetpackChatProps {
 	keyType: KeyType;
 }
+// The akismet chat key is included here because the availability for Akismet presales is in the same group as Jetpack (jp_presales)
+function get_config_chat_key( keyType: KeyType ): keyof ConfigData {
+	const chatWidgetKeyMap = {
+		jpAgency: 'zendesk_presales_chat_key_jp_agency_dashboard',
+		jpCheckout: 'zendesk_presales_chat_key_jp_checkout',
+		akismet: 'zendesk_presales_chat_key_akismet',
+		jpGeneral: 'zendesk_presales_chat_key',
+	};
 
-//the API is rate limited if we hit the limit we'll back off and retry
-async function fetchWithRetry(
-	url: string,
-	options: RequestInit,
-	retries = 3,
-	delay = 30000
-): Promise< Response > {
-	try {
-		const response = await fetch( url, options );
-
-		if ( response.status === 429 && retries > 0 ) {
-			await new Promise( ( resolve ) => setTimeout( resolve, delay ) );
-			return await fetchWithRetry( url, options, retries - 1, delay * 2 );
-		}
-
-		return response;
-	} catch ( error ) {
-		if ( retries > 0 ) {
-			await new Promise( ( resolve ) => setTimeout( resolve, delay ) );
-			return await fetchWithRetry( url, options, retries - 1, delay * 2 );
-		}
-		throw error;
-	}
+	return chatWidgetKeyMap[ keyType ] ?? 'zendesk_presales_chat_key';
 }
 
 export const ZendeskJetpackChat: React.VFC< { keyType: KeyType } > = ( { keyType } ) => {
-	const [ error, setError ] = useState( false );
-	const { data: isStaffed } = usePresalesAvailabilityQuery();
-	const zendeskChatKey = useMemo( () => {
-		return config(
-			keyType === 'jpAgency'
-				? 'zendesk_presales_chat_key_jp_agency_dashboard'
-				: 'zendesk_presales_chat_key'
-		) as keyof ConfigData;
+	const { data: isStaffed } = useJpPresalesAvailabilityQuery( true );
+	const zendeskChatKey: string | false = useMemo( () => {
+		return config( get_config_chat_key( keyType ) );
 	}, [ keyType ] );
+
+	//get user's authentication key
+	const { data: dataAuth, isLoading: isLoadingAuth } = useMessagingAuth( zendeskChatKey, true );
+
+	const zendeskJwt = dataAuth?.user?.jwt;
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const shouldShowZendeskPresalesChat = useMemo( () => {
 		const isEnglishLocale = ( config( 'english_locales' ) as string[] ).includes(
 			getLocaleSlug() ?? ''
 		);
 
+		const isCorrectContext =
+			( isAkismetCheckout() && keyType === 'akismet' ) ||
+			( isJetpackCheckout() && keyType === 'jpCheckout' ) ||
+			( isJetpackCloud() && ( keyType === 'jpAgency' || keyType === 'jpGeneral' ) );
+
 		return config.isEnabled( 'jetpack/zendesk-chat-for-logged-in-users' )
-			? isEnglishLocale && isJetpackCloud() && isStaffed
-			: ! isLoggedIn && isEnglishLocale && isJetpackCloud() && isStaffed;
-	}, [ isStaffed, isLoggedIn ] );
+			? isEnglishLocale && isCorrectContext && isStaffed
+			: ! isLoggedIn && isEnglishLocale && isCorrectContext && isStaffed;
+	}, [ isStaffed, isLoggedIn, keyType ] );
 
-	function usePresalesAvailabilityQuery() {
-		//adding a safeguard to ensure if there's an unkown error with the widget it won't crash the whole app
-		try {
-			return useQuery< boolean, Error >(
-				[ 'presales-availability' ],
-				async () => {
-					const url = 'https://public-api.wordpress.com/wpcom/v2/presales/chat';
-					const queryObject = {
-						group: 'jp_presales',
-					};
-
-					const response = await fetchWithRetry(
-						addQueryArgs( url, queryObject as Record< string, string > ),
-						{
-							credentials: 'same-origin',
-							mode: 'cors',
-						}
-					);
-
-					if ( ! response.ok ) {
-						throw new Error( `API request failed with status ${ response.status }` );
-					}
-
-					const data: PresalesChatResponse = await response.json();
-					return data.is_available;
-				},
-				{
-					meta: { persist: false },
-				}
-			);
-		} catch ( error ) {
-			setError( true );
-			return { data: false };
+	useEffect( () => {
+		if ( ! zendeskChatKey || isLoadingAuth ) {
+			return;
 		}
-	}
-
-	if ( error ) {
-		return null;
-	}
+		const result = loadScript(
+			'https://static.zdassets.com/ekr/snippet.js?key=' + encodeURIComponent( zendeskChatKey ),
+			undefined,
+			{ id: 'ze-snippet' }
+		);
+		//pass authentication key to Zendesk
+		Promise.resolve( result ).then( () => {
+			// Chat can't exist if we're not in a browser window
+			if ( typeof window === 'undefined' ) {
+				return;
+			}
+			// The `zE` function exposes the required action to authenticate the user
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore: TypeScript doesn't see the zE property added by the external script.
+			if ( ! ( 'zE' in window ) || typeof window.zE !== 'function' ) {
+				return;
+			}
+			// We need the user's authentication token to log them into chat
+			if ( ! zendeskJwt ) {
+				return;
+			}
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore: TypeScript doesn't see the zE property added by the external script.
+			window.zE( 'messenger', 'loginUser', function ( callback: ( jwt: string ) => void ) {
+				callback( zendeskJwt );
+			} );
+		} );
+	}, [ zendeskChatKey, zendeskJwt, isLoadingAuth ] );
 
 	return shouldShowZendeskPresalesChat ? <ZendeskChat chatKey={ zendeskChatKey } /> : null;
 };
