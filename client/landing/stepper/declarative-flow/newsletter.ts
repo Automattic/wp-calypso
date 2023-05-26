@@ -74,8 +74,7 @@ const newsletter: Flow = {
 		const siteSlug = useSiteSlug();
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const query = useQuery();
-		const ref = query.get( 'ref' ) || '';
-		const initialStep = ref === 'newsletter-lp' ? 'newsletterSetup' : 'intro';
+		const isComingFromMarketingPage = query.get( 'ref' ) === 'newsletter-lp';
 
 		const flowProgress = useFlowProgress( {
 			stepName: _currentStep,
@@ -172,7 +171,7 @@ const newsletter: Flow = {
 				case 'launchpad':
 					return window.location.assign( `/view/${ siteSlug }` );
 				default:
-					return navigate( initialStep );
+					return navigate( isComingFromMarketingPage ? 'newsletterSetup' : 'intro' );
 			}
 		};
 
