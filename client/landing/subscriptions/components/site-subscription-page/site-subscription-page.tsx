@@ -40,7 +40,7 @@ const SiteSubscriptionPage = () => {
 						</Notice>
 					) : (
 						<SiteSubscriptionDetails
-							blogId={ data.blog_ID }
+							blogId={ blogId }
 							name={ data.name }
 							subscriberCount={ data.subscriber_count }
 							dateSubscribed={ data.date_subscribed }
