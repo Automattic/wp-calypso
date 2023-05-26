@@ -7,6 +7,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { memo } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+import { useCheckSiteTransferStatus } from '../hooks/use-check-site-transfer-status';
 import { displaySiteUrl, getDashboardUrl, isStagingSite } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import { SitesGridActionRenew } from './sites-grid-action-renew';
@@ -18,6 +19,7 @@ import { SiteLaunchNag } from './sites-site-launch-nag';
 import { SiteName } from './sites-site-name';
 import { SiteUrl, Truncated } from './sites-site-url';
 import SitesStagingBadge from './sites-staging-badge';
+import TransferNoticeWrapper from './sites-transfer-notice-wrapper';
 import { ThumbnailLink } from './thumbnail-link';
 
 const SIZES_ATTR = [
@@ -105,6 +107,10 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 	const isWpcomStagingSite = isStagingSite( site );
 	const translatedStatus = useSiteLaunchStatusLabel( site );
 	const isECommerceTrialSite = site.plan?.product_slug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
+	const { isTransferring, wasTransferring, isTransferCompleted, isErrored } =
+		useCheckSiteTransferStatus( {
+			siteId: site.ID,
+		} );
 
 	const { ref, inView } = useInView( { triggerOnce: true } );
 
@@ -179,7 +185,14 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 					<SiteUrl href={ siteUrl } title={ siteUrl }>
 						<Truncated>{ displaySiteUrl( siteUrl ) }</Truncated>
 					</SiteUrl>
-					{ showLaunchNag && <SiteLaunchNag site={ site } /> }
+					{ ! wasTransferring && showLaunchNag && <SiteLaunchNag site={ site } /> }
+					{ wasTransferring && (
+						<TransferNoticeWrapper
+							isTransfering={ isTransferring }
+							isTransferCompleted={ isTransferCompleted }
+							hasError={ isErrored }
+						/>
+					) }
 				</SitesGridItemSecondary>
 			}
 		/>
