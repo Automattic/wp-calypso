@@ -1,11 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
+import { requestLatestAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
+import { getLatestAtomicTransfer } from 'calypso/state/atomic/transfers/selectors';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
-import {
-	getAutomatedTransferStatus,
-	isFetchingAutomatedTransferStatus,
-} from 'calypso/state/automated-transfer/selectors';
 
 interface SiteTransferStatusProps {
 	siteId: number;
@@ -37,9 +34,8 @@ export const useCheckSiteTransferStatus = ( {
 }: SiteTransferStatusProps ) => {
 	const dispatch = useDispatch();
 
-	const transferStatus = useSelector( ( state ) => getAutomatedTransferStatus( state, siteId ) );
-	const isFetchingTransferStatus = useSelector( ( state ) =>
-		isFetchingAutomatedTransferStatus( state, siteId )
+	const transferStatus = useSelector(
+		( state ) => getLatestAtomicTransfer( state, siteId ).transfer?.status ?? null
 	);
 
 	const isTransferCompleted = transferStatus === transferStates.COMPLETE;
@@ -51,22 +47,20 @@ export const useCheckSiteTransferStatus = ( {
 	const dismissTransferNoticeRef = useRef< NodeJS.Timeout >();
 
 	useEffect( () => {
-		if ( isTransferInProgress( transferStatus ) ) {
+		if ( ! isTransferInProgress( transferStatus ) ) {
 			return;
 		}
 
-		if ( ! isFetchingTransferStatus ) {
-			const intervalId = setInterval( () => {
-				dispatch( fetchAutomatedTransferStatus( siteId ) );
-			}, intervalTime );
+		const intervalId = setInterval( () => {
+			dispatch( requestLatestAtomicTransfer( siteId ) );
+		}, intervalTime );
 
-			return () => clearInterval( intervalId );
-		}
-	}, [ siteId, dispatch, transferStatus, isFetchingTransferStatus, intervalTime ] );
+		return () => clearInterval( intervalId );
+	}, [ siteId, dispatch, transferStatus, isTransferCompleted, intervalTime ] );
 
 	useEffect( () => {
 		if ( siteId ) {
-			dispatch( fetchAutomatedTransferStatus( siteId ) );
+			dispatch( requestLatestAtomicTransfer( siteId ) );
 		}
 	}, [ siteId, dispatch ] );
 
