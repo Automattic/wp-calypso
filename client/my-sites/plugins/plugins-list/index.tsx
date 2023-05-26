@@ -46,7 +46,7 @@ interface Props {
 	siteIsJetpack?: boolean;
 	searchTerm: string;
 	recordGoogleEvent: typeof recordGoogleEvent;
-	allSites: ReturnType< typeof getSites >;
+	allSites: SiteDetails[];
 	pluginsOnSites: ReturnType< typeof getPluginsOnSites >;
 	removePluginStatuses: typeof removePluginStatuses;
 	translate: I18N[ 'translate' ];
