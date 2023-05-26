@@ -389,6 +389,7 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 		visiblePlans: visiblePlansProperties,
 		flowName,
 		currentSitePlanSlug,
+		selectedPlan,
 	} );
 	const headerClasses = classNames( 'plan-comparison-grid__header-cell', getPlanClass( planName ), {
 		'popular-plan-parent-class': highlightLabel,
@@ -566,6 +567,7 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 		visiblePlans: visiblePlansProperties,
 		flowName,
 		currentSitePlanSlug,
+		selectedPlan,
 	} );
 	const highlightLabel = useHighlightLabel( {
 		planName,
