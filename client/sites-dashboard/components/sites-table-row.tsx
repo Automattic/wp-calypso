@@ -11,7 +11,6 @@ import StatsSparkline from 'calypso/blocks/stats-sparkline';
 import TimeSince from 'calypso/components/time-since';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { hasSiteStatsQueryFailed } from 'calypso/state/stats/lists/selectors';
-import { useCheckSiteTransferStatus } from '../hooks/use-check-site-transfer-status';
 import { displaySiteUrl, getDashboardUrl, isStagingSite, MEDIA_QUERIES } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import SitesP2Badge from './sites-p2-badge';
@@ -23,6 +22,7 @@ import { SiteUrl, Truncated } from './sites-site-url';
 import SitesStagingBadge from './sites-staging-badge';
 import TransferNoticeWrapper from './sites-transfer-notice-wrapper';
 import { ThumbnailLink } from './thumbnail-link';
+import { WithAtomicTransfer } from './with-atomic-transfer';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
 interface SiteTableRowProps {
@@ -142,10 +142,6 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const isP2Site = site.options?.is_wpforteams_site;
 	const isWpcomStagingSite = isStagingSite( site );
 
-	const { wasTransferring, isTransferCompleted, isTransferring, isErrored } =
-		useCheckSiteTransferStatus( {
-			siteId: site.ID,
-		} );
 	const hasStatsLoadingError = useSelector( ( state ) => {
 		const siteId = site.ID;
 		const query = {};
@@ -195,15 +191,18 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 				<SitePlan site={ site } userId={ userId } />
 			</Column>
 			<Column mobileHidden>
-				{ ! wasTransferring && translatedStatus }
-				{ ! wasTransferring && <SiteLaunchNag site={ site } /> }
-				{ wasTransferring && (
-					<TransferNoticeWrapper
-						isTransfering={ isTransferring }
-						isTransferCompleted={ isTransferCompleted }
-						hasError={ isErrored }
-					/>
-				) }
+				<WithAtomicTransfer site={ site }>
+					{ ( result ) =>
+						result.wasTransferring ? (
+							<TransferNoticeWrapper { ...result } />
+						) : (
+							<>
+								{ translatedStatus }
+								<SiteLaunchNag site={ site } />
+							</>
+						)
+					}
+				</WithAtomicTransfer>
 			</Column>
 			<Column mobileHidden>
 				{ site.options?.updated_at ? <TimeSince date={ site.options.updated_at } /> : '' }

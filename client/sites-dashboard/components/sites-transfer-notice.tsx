@@ -24,12 +24,12 @@ const NoticeText = styled.span( {
 } );
 
 type SitesTransferNoticeProps = {
-	isTransfering: boolean;
+	isTransferring: boolean;
 	hasError?: boolean;
 };
 
 export const SitesTransferNotice = ( {
-	isTransfering = false,
+	isTransferring = false,
 	hasError = false,
 }: SitesTransferNoticeProps ) => {
 	const { __ } = useI18n();
@@ -45,13 +45,13 @@ export const SitesTransferNotice = ( {
 	} else {
 		icon = 'checkmark';
 		color = 'green';
-		text = isTransfering ? __( 'Activating site' ) : __( 'Activated!' );
+		text = isTransferring ? __( 'Activating site' ) : __( 'Activated!' );
 	}
 
 	return (
 		<Container>
 			<span>
-				{ isTransfering ? <Spinner /> : <StatusIcon color={ color } icon={ icon } size={ 18 } /> }
+				{ isTransferring ? <Spinner /> : <StatusIcon color={ color } icon={ icon } size={ 18 } /> }
 			</span>
 			<NoticeText>{ text }</NoticeText>
 		</Container>

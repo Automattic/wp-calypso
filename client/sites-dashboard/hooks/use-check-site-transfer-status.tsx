@@ -8,7 +8,7 @@ import {
 } from 'calypso/state/automated-transfer/selectors';
 
 interface SiteTransferStatusProps {
-	siteId: number | null;
+	siteId: number;
 	intervalTime?: number;
 }
 
@@ -51,7 +51,7 @@ export const useCheckSiteTransferStatus = ( {
 	const dismissTransferNoticeRef = useRef< NodeJS.Timeout >();
 
 	useEffect( () => {
-		if ( ! siteId || isTransferInProgress( transferStatus ) ) {
+		if ( isTransferInProgress( transferStatus ) ) {
 			return;
 		}
 
