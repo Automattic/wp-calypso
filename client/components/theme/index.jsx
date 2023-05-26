@@ -385,6 +385,15 @@ export class Theme extends Component {
 					},
 				}
 			);
+		} else if ( isWporgOnlyTheme ) {
+			return createInterpolateElement(
+				translate(
+					'This community theme can only be installed if you have the <Link>Business plan</Link> or higher on your site.'
+				),
+				{
+					Link: <LinkButton isLink onClick={ () => this.goToCheckout( 'business' ) } />,
+				}
+			);
 		} else if ( isUsablePremiumTheme ) {
 			return translate( 'This premium theme is included in your plan.' );
 		} else if ( isUsableBundledTheme ) {
@@ -392,15 +401,6 @@ export class Theme extends Component {
 		} else if ( doesThemeBundleSoftwareSet ) {
 			return createInterpolateElement(
 				translate( 'This WooCommerce theme is included in the <Link>Business plan</Link>.' ),
-				{
-					Link: <LinkButton isLink onClick={ () => this.goToCheckout( 'business' ) } />,
-				}
-			);
-		} else if ( isWporgOnlyTheme ) {
-			return createInterpolateElement(
-				translate(
-					'This community theme can only be installed if you have the <Link>Business plan</Link> or higher on your site.'
-				),
 				{
 					Link: <LinkButton isLink onClick={ () => this.goToCheckout( 'business' ) } />,
 				}
