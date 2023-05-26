@@ -220,6 +220,16 @@ const importFlow: Flow = {
 
 		const goBack = () => {
 			switch ( _currentStep ) {
+				case 'import': {
+					const source = urlQueryParams.get( 'source' );
+
+					if ( source === 'sites-dashboard' ) {
+						return window.location.assign( '/sites' );
+					}
+
+					return;
+				}
+
 				case 'importList':
 					// eslint-disable-next-line no-case-declarations
 					const backToStep = urlQueryParams.get( 'backToStep' );

@@ -7,6 +7,7 @@ import CaptureStep from 'calypso/blocks/import/capture';
 import CaptureStepRetired from 'calypso/blocks/import/capture-retired';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useCurrentRoute } from 'calypso/landing/stepper/hooks/use-current-route';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { BASE_ROUTE } from './config';
 import { generateStepPath } from './helper';
@@ -19,7 +20,10 @@ export const ImportWrapper: Step = function ( props ) {
 	const { __ } = useI18n();
 	const { navigation, children, stepName, flow } = props;
 	const currentRoute = useCurrentRoute();
-	const shouldHideBackBtn = currentRoute === `${ IMPORT_FOCUSED_FLOW }/${ BASE_ROUTE }`;
+	const source = useQuery().get( 'source' );
+	const shouldHideBackBtn = source
+		? false
+		: currentRoute === `${ IMPORT_FOCUSED_FLOW }/${ BASE_ROUTE }`;
 	const skipLabelText =
 		flow === IMPORT_FOCUSED_FLOW ? __( 'Skip to dashboard' ) : __( "I don't have a site address" );
 
@@ -41,7 +45,7 @@ export const ImportWrapper: Step = function ( props ) {
 				stepName={ stepName || 'import-step' }
 				flowName="importer"
 				className="import__onboarding-page"
-				hideSkip={ shouldHideSkipBtn() }
+				hideSkip={ !! source || shouldHideSkipBtn() }
 				hideBack={ shouldHideBackBtn }
 				hideFormattedHeader={ true }
 				goBack={ navigation.goBack }
