@@ -25,7 +25,7 @@ interface SubscribersDataResult {
 }
 
 interface SubscribersOverviewProps {
-	siteId: number;
+	siteId: number | null;
 }
 
 // calculate the dates to query for
