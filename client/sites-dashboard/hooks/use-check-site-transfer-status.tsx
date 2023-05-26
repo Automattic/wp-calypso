@@ -12,6 +12,25 @@ interface SiteTransferStatusProps {
 	intervalTime?: number;
 }
 
+const terminatedTransferStatuses = [
+	transferStates.NONE,
+	transferStates.ERROR,
+	transferStates.FAILURE,
+	transferStates.REVERTED,
+	transferStates.COMPLETE,
+] as const;
+
+const isTransferInProgress = ( transferStatus: string | null ) => {
+	if ( ! transferStatus ) {
+		return false;
+	}
+
+	const terminatedTransferStatus =
+		transferStatus as ( typeof terminatedTransferStatuses )[ number ];
+
+	return ! terminatedTransferStatuses.includes( terminatedTransferStatus );
+};
+
 export const useCheckSiteTransferStatus = ( {
 	siteId,
 	intervalTime = 3000,
@@ -24,11 +43,7 @@ export const useCheckSiteTransferStatus = ( {
 	);
 
 	const isTransferCompleted = transferStatus === transferStates.COMPLETE;
-	const isTransferring =
-		transferStatus !== null &&
-		transferStatus !== transferStates.NONE &&
-		transferStatus !== transferStates.REVERTED &&
-		! isTransferCompleted;
+	const isTransferring = isTransferInProgress( transferStatus );
 	const isErrored =
 		transferStatus === transferStates.ERROR || transferStatus === transferStates.FAILURE;
 
@@ -36,12 +51,7 @@ export const useCheckSiteTransferStatus = ( {
 	const dismissTransferNoticeRef = useRef< NodeJS.Timeout >();
 
 	useEffect( () => {
-		if (
-			! siteId ||
-			transferStatus === transferStates.COMPLETE ||
-			transferStatus === transferStates.NONE ||
-			transferStatus === transferStates.REVERTED
-		) {
+		if ( ! siteId || isTransferInProgress( transferStatus ) ) {
 			return;
 		}
 
