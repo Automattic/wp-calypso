@@ -3,7 +3,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useSelector } from 'react-redux';
 import { addQueryArgs } from 'calypso/lib/url';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
-import { TRACK_SOURCE_NAME } from '../utils';
+import { getImportSiteUrl, TRACK_SOURCE_NAME } from '../utils';
 import { EmptyStateCTA } from './empty-state-cta';
 
 export const CreateSiteCTA = () => {
@@ -29,7 +29,7 @@ export const MigrateSiteCTA = () => {
 		<EmptyStateCTA
 			description={ __( 'Bring a site to WordPress.com' ) }
 			label={ __( 'Migrate a site' ) }
-			target={ addQueryArgs( { source: TRACK_SOURCE_NAME }, '/setup/import-focused' ) }
+			target={ getImportSiteUrl() }
 		/>
 	);
 };

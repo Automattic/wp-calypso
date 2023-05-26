@@ -1,4 +1,12 @@
+import { addQueryArgs } from '@wordpress/url';
 import { SiteExcerptNetworkData } from 'calypso/data/sites/site-excerpt-types';
+
+export const TRACK_SOURCE_NAME = 'sites-dashboard';
+
+export const getImportSiteUrl = () =>
+	addQueryArgs( '/setup/import-focused', {
+		source: TRACK_SOURCE_NAME,
+	} );
 
 export const getLaunchpadUrl = ( slug: string, flow: string ) => {
 	return `/setup/${ flow }/launchpad?siteSlug=${ slug }`;
@@ -62,5 +70,3 @@ export const PLAN_RENEW_NAG_EVENT_NAMES = {
 	IN_VIEW: 'calypso_sites_dashboard_plan_renew_nag_inview',
 	ON_CLICK: 'calypso_sites_dashboard_plan_renew_nag_click',
 };
-
-export const TRACK_SOURCE_NAME = 'sites-dashboard';
