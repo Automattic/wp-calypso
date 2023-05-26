@@ -57,7 +57,7 @@ export const useCheckSiteTransferStatus = ( {
 
 	useEffect( () => {
 		dispatch( requestLatestAtomicTransfer( siteId ) );
-	}, [ isTransferCompleted, siteId, dispatch ] );
+	}, [ siteId, dispatch ] );
 
 	useEffect( () => {
 		if ( isTransferring && ! wasTransferring ) {
