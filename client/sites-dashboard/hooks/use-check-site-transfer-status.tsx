@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { requestLatestAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
 import { transferStates } from 'calypso/state/atomic/transfers/constants';
@@ -41,7 +41,10 @@ export const useCheckSiteTransferStatus = ( {
 	const isErrored = transferStatus === transferStates.ERROR;
 
 	const [ wasTransferring, setWasTransferring ] = useState( false );
-	const dismissTransferNoticeRef = useRef< NodeJS.Timeout >();
+
+	useEffect( () => {
+		dispatch( requestLatestAtomicTransfer( siteId ) );
+	}, [ siteId, dispatch ] );
 
 	useEffect( () => {
 		if ( ! isTransferring ) {
@@ -56,20 +59,22 @@ export const useCheckSiteTransferStatus = ( {
 	}, [ siteId, dispatch, isTransferring, intervalTime ] );
 
 	useEffect( () => {
-		dispatch( requestLatestAtomicTransfer( siteId ) );
-	}, [ siteId, dispatch ] );
-
-	useEffect( () => {
 		if ( isTransferring && ! wasTransferring ) {
 			setWasTransferring( true );
-		} else if ( ! isTransferring && wasTransferring && isTransferCompleted ) {
-			dismissTransferNoticeRef.current = setTimeout( () => {
+		}
+	}, [ isTransferring, wasTransferring ] );
+
+	useEffect( () => {
+		if ( ! isTransferring && wasTransferring && isTransferCompleted ) {
+			const dismissTransferNoticeTimeout = setTimeout( () => {
 				setWasTransferring( false );
 			}, 3000 );
-		}
 
-		return () => clearTimeout( dismissTransferNoticeRef.current );
-	}, [ isTransferring, isTransferCompleted, wasTransferring, setWasTransferring ] );
+			return () => {
+				clearTimeout( dismissTransferNoticeTimeout );
+			};
+		}
+	}, [ isTransferring, wasTransferring, isTransferCompleted ] );
 
 	return {
 		transferStatus,
