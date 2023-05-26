@@ -14,7 +14,7 @@ describe( 'isBlazeEnabled()', () => {
 	} );
 
 	test( 'should return true if siteId is defined', () => {
-		const siteId = 1;
+		const siteId = 123;
 		const state = {
 			sites: {
 				items: {
