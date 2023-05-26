@@ -1842,6 +1842,7 @@ export function mockStripeElements() {
 		mount: jest.fn(),
 		destroy: jest.fn(),
 		on: jest.fn(),
+		off: jest.fn(),
 		update: jest.fn(),
 	} );
 
