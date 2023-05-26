@@ -81,6 +81,7 @@ const PatternAssembler = ( {
 	const siteId = useSiteIdParam();
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
 	const locale = useLocale();
+	// New sites are created from 'site-setup' and 'with-site-assembler' flows
 	const isNewSite = !! useQuery().get( 'isNewSite' ) || isSiteSetupFlow( flow );
 	const isSiteJetpack = useSelector( ( state ) => isJetpackSite( state, site?.ID ) );
 
@@ -394,7 +395,10 @@ const PatternAssembler = ( {
 							headerHtml: header?.html,
 							footerHtml: footer?.html,
 							globalStyles: syncedGlobalStylesUserConfig,
+							// Newly created sites should reset the starter content created from the default Headstart annotation
 							shouldResetContent: isNewSite,
+							// Also, new sites except for virtual themes set the option wpcom_site_setup=assembler
+							shouldSetSiteSetupOption: ( isNewSite && ! design.is_virtual ) ?? 'assembler',
 						} )
 					)
 			);
