@@ -112,7 +112,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 			setSourceSiteId( 0 );
 			return;
 		}
-		const { source_blog_id } = migrationEnabledData as MigrationEnabledResponse;
+		const { source_blog_id } = migrationEnabledData;
 		if ( ! sourceSiteId ) {
 			setSourceSiteId( source_blog_id );
 			dispatch( requestSites() );
