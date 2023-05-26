@@ -1,10 +1,12 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
 import useRequestContactVerificationCode from 'calypso/state/jetpack-agency-dashboard/hooks/use-request-contact-verification-code';
+import useResendVerificationCodeMutation from 'calypso/state/jetpack-agency-dashboard/hooks/use-resend-contact-verification-code';
 import useValidateVerificationCodeMutation from 'calypso/state/jetpack-agency-dashboard/hooks/use-validate-contact-verification-code';
 import {
 	RequestVerificationCodeParams,
 	ValidateVerificationCodeParams,
+	ResendVerificationCodeParams,
 } from '../sites-overview/types';
 
 export function useRequestVerificationCode(): {
@@ -81,4 +83,17 @@ export function useValidateVerificationCode(): {
 		}
 	}
 	return { ...data, errorMessage };
+}
+
+export function useResendVerificationCode(): {
+	mutate: ( params: ResendVerificationCodeParams ) => void;
+	isLoading: boolean;
+	isSuccess: boolean;
+	isError: boolean;
+} {
+	return useResendVerificationCodeMutation( {
+		retry: () => {
+			return false;
+		},
+	} );
 }

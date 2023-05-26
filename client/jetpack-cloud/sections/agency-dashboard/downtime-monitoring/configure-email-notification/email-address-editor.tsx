@@ -7,7 +7,11 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import DashboardDataContext from '../../sites-overview/dashboard-data-context';
-import { useRequestVerificationCode, useValidateVerificationCode } from '../hooks';
+import {
+	useRequestVerificationCode,
+	useValidateVerificationCode,
+	useResendVerificationCode,
+} from '../hooks';
 import EmailItemContent from './email-item-content';
 import type {
 	AllowedMonitorContactActions,
@@ -61,13 +65,18 @@ export default function EmailAddressEditor( {
 
 	const requestVerificationCode = useRequestVerificationCode();
 	const verifyEmail = useValidateVerificationCode();
+	const resendCode = useResendVerificationCode();
 
 	// Function to handle resending verification code
 	const handleResendCode = useCallback( () => {
 		setValidationError( undefined );
 		recordEvent( 'downtime_monitoring_resend_email_verification_code' );
-		// TODO: implement resending verification code
-	}, [ recordEvent ] );
+		if ( emailItem.email ) {
+			resendCode.mutate( { type: 'email', value: emailItem.email } );
+		}
+		// Disabled because we don't want to re-run this effect when resendCode changes
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ recordEvent, emailItem ] );
 
 	const handleSetEmailItems = useCallback(
 		( isVerified = true ) => {
@@ -127,6 +136,15 @@ export default function EmailAddressEditor( {
 			} );
 		}
 	}, [ translate, verifyEmail.errorMessage ] );
+
+	// Show error message when resend code fails
+	useEffect( () => {
+		if ( resendCode.isError ) {
+			setValidationError( {
+				code: translate( 'Something went wrong. Please try again by clicking the resend button.' ),
+			} );
+		}
+	}, [ resendCode.isError, translate ] );
 
 	// Set email item when selectedEmail changes
 	useEffect( () => {
