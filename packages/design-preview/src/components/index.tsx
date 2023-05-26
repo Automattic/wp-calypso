@@ -15,6 +15,7 @@ interface PreviewProps {
 	variations?: StyleVariation[];
 	selectedVariation?: StyleVariation;
 	onSelectVariation: ( variation: StyleVariation ) => void;
+	splitPremiumVariations: boolean;
 	onClickCategory?: ( category: Category ) => void;
 	actionButtons: React.ReactNode;
 	recordDeviceClick: ( device: string ) => void;
@@ -36,6 +37,7 @@ const Preview: React.FC< PreviewProps > = ( {
 	variations = [],
 	selectedVariation,
 	onSelectVariation,
+	splitPremiumVariations,
 	onClickCategory,
 	actionButtons,
 	recordDeviceClick,
@@ -64,6 +66,7 @@ const Preview: React.FC< PreviewProps > = ( {
 				variations={ variations }
 				selectedVariation={ selectedVariation }
 				onSelectVariation={ onSelectVariation }
+				splitPremiumVariations={ splitPremiumVariations }
 				onClickCategory={ onClickCategory }
 				actionButtons={ actionButtons }
 			/>

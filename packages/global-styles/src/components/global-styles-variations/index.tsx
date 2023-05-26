@@ -15,6 +15,7 @@ interface GlobalStylesVariationProps {
 	isActive: boolean;
 	showOnlyHoverView?: boolean;
 	onSelect: () => void;
+	showFreeBadge: boolean;
 }
 
 interface GlobalStylesVariationsProps {
@@ -22,9 +23,8 @@ interface GlobalStylesVariationsProps {
 	selectedGlobalStylesVariation: GlobalStylesObject | null;
 	description?: TranslateResult;
 	showOnlyHoverViewDefaultVariation?: boolean;
-	splitPremiumStyles?: boolean;
+	splitPremiumVariations?: boolean;
 	displayFreeLabel?: boolean;
-	defaultStylesHeader?: string;
 	onSelect: ( globalStylesVariation: GlobalStylesObject ) => void;
 }
 
@@ -35,6 +35,7 @@ const GlobalStylesVariation = ( {
 	globalStylesVariation,
 	isActive,
 	showOnlyHoverView,
+	showFreeBadge,
 	onSelect,
 }: GlobalStylesVariationProps ) => {
 	const [ isFocused, setIsFocused ] = useState( false );
@@ -76,7 +77,7 @@ const GlobalStylesVariation = ( {
 				} ) as string
 			}
 		>
-			{ globalStylesVariation.slug === DEFAULT_GLOBAL_STYLES_VARIATION_SLUG && (
+			{ showFreeBadge && (
 				<div className="global-styles-variations__free-badge">
 					<span>{ translate( 'Free' ) }</span>
 				</div>
@@ -101,9 +102,8 @@ const GlobalStylesVariations = ( {
 	description,
 	showOnlyHoverViewDefaultVariation,
 	onSelect,
-	splitPremiumStyles = true,
+	splitPremiumVariations = true,
 	displayFreeLabel = true,
-	defaultStylesHeader = translate( 'Default Style' ),
 }: GlobalStylesVariationsProps ) => {
 	const baseGlobalStyles = useMemo(
 		() =>
@@ -131,6 +131,7 @@ const GlobalStylesVariations = ( {
 		( globalStylesVariation, index ) => (
 			<GlobalStylesVariation
 				key={ index }
+				showFreeBadge={ false }
 				globalStylesVariation={ globalStylesVariation }
 				isActive={ globalStylesVariation.slug === selectedGlobalStylesVariation?.slug }
 				onSelect={ () => onSelect( globalStylesVariation ) }
@@ -138,23 +139,29 @@ const GlobalStylesVariations = ( {
 		)
 	);
 
+	const headerText = splitPremiumVariations ? translate( 'Default Style' ) : translate( 'Styles' );
+
 	return (
 		<GlobalStylesContext.Provider value={ { base: baseGlobalStyles } }>
 			<div className="global-styles-variations__container">
 				<div className="global-styles-variations__type">
 					<div className="global-styles-variations__header">
 						<h2>
-							{ defaultStylesHeader }
+							{ headerText }
 							{ displayFreeLabel && (
 								<div className="global-styles-variations__free-badge">
 									<span>{ translate( 'Free' ) }</span>
 								</div>
 							) }
 						</h2>
+						<div>
+							<p>{ translate( 'You can change your style at any time.' ) }</p>
+						</div>
 					</div>
 					<div className="global-styles-variations">
 						<GlobalStylesVariation
 							key="base"
+							showFreeBadge={ displayFreeLabel }
 							globalStylesVariation={ baseGlobalStyles }
 							isActive={
 								! selectedGlobalStylesVariation ||
@@ -163,10 +170,10 @@ const GlobalStylesVariations = ( {
 							showOnlyHoverView={ showOnlyHoverViewDefaultVariation }
 							onSelect={ () => onSelect( baseGlobalStyles ) }
 						/>
-						{ ! splitPremiumStyles && premiumStyles }
+						{ ! splitPremiumVariations && premiumStyles }
 					</div>
 				</div>
-				{ splitPremiumStyles && (
+				{ splitPremiumVariations && (
 					<div className="global-styles-variations__type">
 						<div className="global-styles-variations__header">
 							<h2> { translate( 'Premium styles' ) } </h2>

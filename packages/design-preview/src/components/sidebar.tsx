@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
+import { GlobalStylesVariations, GlobalStylesObject } from '@automattic/global-styles';
 import { useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import StyleVariationPreviews from './style-variation';
 import type { Category, StyleVariation } from '@automattic/design-picker/src/types';
 
 interface CategoryBadgeProps {
@@ -34,6 +34,7 @@ interface SidebarProps {
 	variations: StyleVariation[];
 	selectedVariation?: StyleVariation;
 	onSelectVariation: ( variation: StyleVariation ) => void;
+	splitPremiumVariations: boolean;
 	onClickCategory?: ( category: Category ) => void;
 	actionButtons: React.ReactNode;
 }
@@ -48,6 +49,7 @@ const Sidebar: React.FC< SidebarProps > = ( {
 	variations = [],
 	selectedVariation,
 	onSelectVariation,
+	splitPremiumVariations,
 	onClickCategory,
 	actionButtons,
 } ) => {
@@ -100,10 +102,15 @@ const Sidebar: React.FC< SidebarProps > = ( {
 				{ variations.length > 0 && (
 					<div className="design-preview__sidebar-variations">
 						<div className="design-preview__sidebar-variations-grid">
-							<StyleVariationPreviews
-								variations={ variations }
-								selectedVariation={ selectedVariation }
-								onClick={ onSelectVariation }
+							<GlobalStylesVariations
+								globalStylesVariations={ variations as GlobalStylesObject[] }
+								selectedGlobalStylesVariation={ selectedVariation as GlobalStylesObject }
+								splitPremiumVariations={ splitPremiumVariations }
+								displayFreeLabel={ splitPremiumVariations }
+								showOnlyHoverViewDefaultVariation={ false }
+								onSelect={ ( globalStyleVariation: GlobalStylesObject ) =>
+									onSelectVariation( globalStyleVariation as StyleVariation )
+								}
 							/>
 						</div>
 					</div>

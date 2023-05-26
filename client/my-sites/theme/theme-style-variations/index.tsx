@@ -1,13 +1,13 @@
 import AsyncLoad from 'calypso/components/async-load';
 import type { StyleVariation } from '@automattic/design-picker/src/types';
 import type { TranslateResult } from 'i18n-calypso';
-
 import './style.scss';
 
 interface ThemeStyleVariationsProps {
 	description: TranslateResult;
 	selectedVariation: StyleVariation;
 	variations: StyleVariation[];
+	splitPremiumVariations: boolean;
 	onClick: ( variation: StyleVariation ) => void;
 }
 
@@ -15,6 +15,7 @@ const ThemeStyleVariations = ( {
 	description,
 	selectedVariation,
 	variations,
+	splitPremiumVariations,
 	onClick,
 }: ThemeStyleVariationsProps ) => {
 	return (
@@ -23,13 +24,14 @@ const ThemeStyleVariations = ( {
 
 			<div className="theme__sheet-style-variations-previews">
 				<AsyncLoad
-					require="@automattic/design-preview/src/components/style-variation"
+					require="@automattic/global-styles/src/components/global-styles-variations"
 					placeholder={ null }
-					selectedVariation={ selectedVariation }
-					description={ description }
-					variations={ variations }
-					showOnlyHoverViewDefaultVariation
-					onClick={ onClick }
+					globalStylesVariations={ variations }
+					selectedGlobalStylesVariation={ selectedVariation }
+					splitPremiumVariations={ splitPremiumVariations }
+					displayFreeLabel={ splitPremiumVariations }
+					showOnlyHoverViewDefaultVariation={ false }
+					onSelect={ onClick }
 				/>
 			</div>
 		</div>
