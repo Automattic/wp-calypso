@@ -59,7 +59,7 @@ export default function PremiumGlobalStylesUpgradeModal( {
 									</p>
 									<p>
 										{ translate(
-											'Upgrade now to unlock it and get access to tons of other features. Or you can try it out first and decide later.'
+											'Upgrade now to unlock your custom style and get access to tons of other features. Or you can decide later and try it out first.'
 										) }
 									</p>
 								</>
