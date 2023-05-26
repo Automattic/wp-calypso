@@ -71,7 +71,7 @@ document.addEventListener( 'DOMContentLoaded', () => {
 
 	resetButton?.addEventListener( 'click', ( event ) => {
 		event.preventDefault();
-		recordEvent( 'wpcom_global_styles_gating_notice_reset' );
+		recordEvent( 'wpcom_global_styles_gating_notice_reset_support' );
 		window.open( resetButton.href, '_blank' ).focus();
 	} );
 } );
