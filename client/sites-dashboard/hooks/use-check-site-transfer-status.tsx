@@ -33,7 +33,12 @@ export const useCheckSiteTransferStatus = ( {
 	const dismissTransferNoticeRef = useRef< NodeJS.Timeout >();
 
 	useEffect( () => {
-		if ( ! siteId || transferStatus === transferStates.COMPLETE ) {
+		if (
+			! siteId ||
+			transferStatus === transferStates.COMPLETE ||
+			transferStatus === transferStates.NONE ||
+			transferStatus === transferStates.REVERTED
+		) {
 			return;
 		}
 
