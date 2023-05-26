@@ -650,6 +650,7 @@ const PatternAssembler = ( {
 					stylesheet={ stylesheet }
 					patternIds={ patternIds }
 					siteInfo={ siteInfo }
+					isNewSite={ isNewSite }
 				>
 					{ stepContent }
 				</PatternAssemblerContainer>
