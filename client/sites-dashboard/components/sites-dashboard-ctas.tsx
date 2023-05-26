@@ -28,7 +28,7 @@ export const MigrateSiteCTA = () => {
 		<EmptyStateCTA
 			description={ __( 'Bring a site to WordPress.com' ) }
 			label={ __( 'Migrate a site' ) }
-			target="/setup/import-focused"
+			target="/start/import"
 		/>
 	);
 };
