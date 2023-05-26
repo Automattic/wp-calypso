@@ -60,3 +60,5 @@ export default function ProductLogoExample() {
 		</div>
 	);
 }
+
+ProductLogoExample.displayName = 'ProductLogoExample';
