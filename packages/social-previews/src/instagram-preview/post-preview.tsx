@@ -51,19 +51,14 @@ export function InstagramPostPreview( {
 						<div className="instagram-preview__content--name">{ username }</div>
 						&nbsp;
 						{ caption ? (
-							<div
-								className="instagram-preview__content--text"
-								// TODO: Replace `dangerouslySetInnerHTML` with `createInterpolateElement` inside `preparePreviewText`
-								// eslint-disable-next-line react/no-danger
-								dangerouslySetInnerHTML={ {
-									__html: preparePreviewText( caption, {
-										platform: 'instagram',
-										maxChars: FEED_TEXT_MAX_LENGTH,
-										maxLines: FEED_TEXT_MAX_LINES,
-										hyperlinkUrls: false,
-									} ),
-								} }
-							/>
+							<div className="instagram-preview__content--text">
+								{ preparePreviewText( caption, {
+									platform: 'instagram',
+									maxChars: FEED_TEXT_MAX_LENGTH,
+									maxLines: FEED_TEXT_MAX_LINES,
+									hyperlinkUrls: false,
+								} ) }
+							</div>
 						) : null }
 					</div>
 					<div className="instagram-preview__content--footer">
