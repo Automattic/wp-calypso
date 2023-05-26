@@ -35,7 +35,7 @@ type SiteSubscriptionMeta = {
 };
 
 export type SiteSubscriptionDeliveryMethods = {
-	email: {
+	email?: {
 		send_posts: boolean;
 		send_comments?: boolean;
 		post_delivery_frequency: EmailDeliveryFrequency;
@@ -145,20 +145,25 @@ export type SiteSubscriptionDetails = {
 	delivery_methods: SiteSubscriptionDeliveryMethods;
 };
 
-export type SiteSubscriptionDetailsErrorResponse = {
-	error_data: {
-		invalid_blog?: { status: 404 };
-		invalid_user?: { status: 403 };
-		subscription_not_found?: { status: 404 };
-		unauthorized?: { status: 401 };
-	};
-	errors: {
+export type ErrorResponse< Errors = unknown, ErrorData = unknown > = {
+	errors: Errors;
+	error_data: ErrorData;
+};
+
+export type SiteSubscriptionDetailsErrorResponse = ErrorResponse<
+	{
 		invalid_blog?: string[];
 		invalid_user?: string[];
 		subscription_not_found?: string[];
 		unauthorized?: string[];
-	};
-};
+	},
+	{
+		invalid_blog?: { status: 404 };
+		invalid_user?: { status: 403 };
+		subscription_not_found?: { status: 404 };
+		unauthorized?: { status: 401 };
+	}
+>;
 
 export type SiteSubscriptionDetailsResponse =
 	| SiteSubscriptionDetails

@@ -1,20 +1,9 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo } from 'react';
+import { PostSubscriptionsSortBy, SiteSubscriptionsFilterBy } from '../constants';
 import { callApi } from '../helpers';
 import { useCacheKey, useIsLoggedIn, useIsQueryEnabled } from '../hooks';
 import type { PostSubscription } from '../types';
-
-export enum PostSubscriptionsSortBy {
-	PostName = 'post_name',
-	RecentlyCommented = 'recently_commented',
-	RecentlySubscribed = 'recently_subscribed',
-}
-
-export enum SiteSubscriptionsFilterBy {
-	All = 'all',
-	Paid = 'paid',
-	P2 = 'p2',
-}
 
 type SubscriptionManagerPostSubscriptions = {
 	comment_subscriptions: PostSubscription[];

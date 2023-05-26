@@ -9,14 +9,6 @@ import PoweredByWPFooter from 'calypso/layout/powered-by-wp-footer';
 import './styles.scss';
 import SiteSubscriptionDetails from './site-subscription-details';
 
-const isSiteSubscriptionDetailsErrorResponse = (
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	response: any
-): response is Reader.SiteSubscriptionDetailsErrorResponse => {
-	// This is good enough for us to know that the response is an error response
-	return response && ( response.errors || response.error_data );
-};
-
 const SiteSubscriptionPage = () => {
 	const translate = useTranslate();
 	const navigate = useNavigate();
@@ -39,7 +31,7 @@ const SiteSubscriptionPage = () => {
 
 			<div className="site-subscription-page__centered-content">
 				<div className="site-subscription-page__main-content">
-					{ error || ! blogId || ! data || isSiteSubscriptionDetailsErrorResponse( data ) ? (
+					{ error || ! blogId || ! data || Reader.isErrorResponse( data ) ? (
 						<Notice
 							className="site-subscription-page__fetch-details-error"
 							type={ NoticeType.Error }
@@ -48,11 +40,11 @@ const SiteSubscriptionPage = () => {
 						</Notice>
 					) : (
 						<SiteSubscriptionDetails
+							blogId={ data.blog_ID }
 							name={ data.name }
 							subscriberCount={ data.subscriber_count }
 							dateSubscribed={ data.date_subscribed }
 							siteIcon={ data.site_icon }
-							blogId={ data.blog_ID }
 							deliveryMethods={ data.delivery_methods }
 							url={ data.URL }
 						/>

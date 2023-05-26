@@ -1,14 +1,9 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useMemo, useEffect } from 'react';
+import { SiteSubscriptionsSortBy } from '../constants';
 import { callApi } from '../helpers';
 import { useCacheKey, useIsLoggedIn, useIsQueryEnabled } from '../hooks';
 import type { SiteSubscription } from '../types';
-
-export enum SiteSubscriptionsSortBy {
-	SiteName = 'site_name',
-	LastUpdated = 'last_updated',
-	DateSubscribed = 'date_subscribed',
-}
 
 type SubscriptionManagerSiteSubscriptions = {
 	subscriptions: SiteSubscription[];

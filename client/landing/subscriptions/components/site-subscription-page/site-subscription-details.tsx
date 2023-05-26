@@ -145,9 +145,12 @@ const SiteSubscriptionDetails = ( {
 					<SiteSubscriptionSettings
 						blogId={ blogId }
 						notifyMeOfNewPosts={ !! deliveryMethods.notification?.send_posts }
-						emailMeNewPosts={ deliveryMethods.email.send_posts }
-						deliveryFrequency={ deliveryMethods.email.post_delivery_frequency }
-						emailMeNewComments={ !! deliveryMethods.email.send_comments }
+						emailMeNewPosts={ !! deliveryMethods.email?.send_posts }
+						deliveryFrequency={
+							deliveryMethods.email?.post_delivery_frequency ??
+							Reader.EmailDeliveryFrequency.Instantly
+						}
+						emailMeNewComments={ !! deliveryMethods.email?.send_comments }
 					/>
 
 					<hr className="subscriptions__separator" />
