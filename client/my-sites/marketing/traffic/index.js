@@ -123,7 +123,7 @@ const connectComponent = connect( ( state ) => {
 	const isAdmin = canCurrentUser( state, siteId, 'manage_options' );
 	const isJetpack = isJetpackSite( state, siteId );
 	const isJetpackAdmin = isJetpack && isAdmin;
-	const shouldShowAdvertisingOption = isBlazeEnabled( state );
+	const shouldShowAdvertisingOption = isBlazeEnabled( state, siteId );
 
 	return {
 		siteId,
