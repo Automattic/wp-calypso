@@ -188,8 +188,14 @@ const PlanLogo: React.FunctionComponent< {
 		visiblePlans: planPropertiesObj,
 		flowName,
 		currentSitePlanSlug,
+		selectedPlan,
 	} );
-	const highlightLabel = useHighlightLabel( { planName, flowName, currentSitePlanSlug } );
+	const highlightLabel = useHighlightLabel( {
+		planName,
+		flowName,
+		currentSitePlanSlug,
+		selectedPlan,
+	} );
 	const headerClasses = classNames(
 		'plan-features-2023-grid__header-logo',
 		getPlanClass( planName )
