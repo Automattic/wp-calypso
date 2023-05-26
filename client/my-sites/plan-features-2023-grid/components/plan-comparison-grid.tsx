@@ -757,9 +757,26 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 	const hiddenPlans = useMemo( () => [ PLAN_WOOEXPRESS_PLUS, PLAN_ENTERPRISE_GRID_WPCOM ], [] );
 
 	const isMonthly = intervalType === 'monthly';
-	const isLargestBreakpoint = usePricingBreakpoint( 1772 ); // 1500px + 272px (sidebar)
-	const isLargeBreakpoint = usePricingBreakpoint( 1612 ); // 1340px + 272px (sidebar)
-	const isMediumBreakpoint = usePricingBreakpoint( 1340 ); // keeping original breakpoint to match Plan Grid
+
+	let largeBreakpoint;
+	let mediumBreakpoint;
+	let smallBreakpoint;
+
+	if ( isInSignup ) {
+		// Breakpoints without admin sidebar
+		largeBreakpoint = 1281;
+		mediumBreakpoint = 1024;
+		smallBreakpoint = 880;
+	} else {
+		// Breakpoints with admin sidebar
+		largeBreakpoint = 1772; // 1500px + 272px (sidebar)
+		mediumBreakpoint = 1612; // 1340px + 272px (sidebar)
+		smallBreakpoint = 1340; // keeping original breakpoint to match Plan Grid
+	}
+
+	const isLargeBreakpoint = usePricingBreakpoint( largeBreakpoint );
+	const isMediumBreakpoint = usePricingBreakpoint( mediumBreakpoint );
+	const isSmallBreakpoint = usePricingBreakpoint( smallBreakpoint );
 
 	const [ visiblePlans, setVisiblePlans ] = useState< string[] >( [] );
 	const [ firstSetOfFeatures ] = Object.keys( featureGroupMap );
@@ -783,12 +800,12 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 		let newVisiblePlans = displayedPlansProperties.map( ( { planName } ) => planName );
 
 		let visibleLength = newVisiblePlans.length;
-		if ( ! isInSignup ) {
-			visibleLength = isLargestBreakpoint ? 4 : visibleLength;
-			visibleLength = isLargeBreakpoint ? 3 : visibleLength;
-		}
 
-		visibleLength = isMediumBreakpoint ? 2 : visibleLength;
+		visibleLength = isLargeBreakpoint ? 4 : visibleLength;
+		visibleLength = isMediumBreakpoint ? 3 : visibleLength;
+		if ( isInSignup ) {
+			visibleLength = isSmallBreakpoint ? 2 : visibleLength;
+		}
 
 		if ( newVisiblePlans.length !== visibleLength ) {
 			newVisiblePlans = newVisiblePlans.slice( 0, visibleLength );
@@ -796,9 +813,9 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 
 		setVisiblePlans( newVisiblePlans );
 	}, [
-		isLargestBreakpoint,
 		isLargeBreakpoint,
 		isMediumBreakpoint,
+		isSmallBreakpoint,
 		displayedPlansProperties,
 		isInSignup,
 	] );
