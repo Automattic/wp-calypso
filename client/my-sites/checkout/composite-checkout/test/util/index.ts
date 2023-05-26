@@ -466,6 +466,15 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				bill_period: 'yearly',
 				currency: 'USD',
 			};
+		case 'jetpack_backup_t1_bi_yearly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2123,
+				product_name: 'Jetpack VaultPress Backup (10GB)',
+				product_slug: productSlug,
+				bill_period: 'bi-yearly',
+				currency: 'USD',
+			};
 		case 'jetpack_backup_t2_monthly':
 			return {
 				...getEmptyResponseCartProduct(),
@@ -563,6 +572,15 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_name: 'Jetpack Security T1',
 				product_slug: productSlug,
 				bill_period: 'monthly',
+				currency: 'USD',
+			};
+		case 'jetpack_security_t1_bi_yearly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2034,
+				product_name: 'Jetpack Security T1',
+				product_slug: productSlug,
+				bill_period: 'bi-yearly',
 				currency: 'USD',
 			};
 		case 'jetpack_security_t1_yearly':

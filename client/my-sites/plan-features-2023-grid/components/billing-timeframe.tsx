@@ -24,11 +24,6 @@ interface Props {
 	isMonthlyPlan: boolean;
 }
 
-export const StrikethroughText = styled.span`
-	color: var( --studio-gray-20 );
-	text-decoration: line-through;
-`;
-
 function usePerMonthDescription( {
 	isMonthlyPlan,
 	planName,
@@ -99,47 +94,29 @@ function usePerMonthDescription( {
 
 				return displayNewPriceText
 					? translate(
-							'per month, {{discount}} %(rawPrice)s billed annually{{/discount}} %(fullTermDiscountedPriceText)s for the first year, Excl. Taxes',
+							'per month, %(fullTermDiscountedPriceText)s for the first year, Excl. Taxes',
 							{
-								args: { fullTermDiscountedPriceText, rawPrice },
-								components: {
-									discount: <StrikethroughText />,
-								},
+								args: { fullTermDiscountedPriceText },
 								comment: 'Excl. Taxes is short for excluding taxes',
 							}
 					  )
-					: translate(
-							'per month, {{discount}} %(rawPrice)s billed annually{{/discount}} %(fullTermDiscountedPriceText)s for the first year',
-							{
-								args: { fullTermDiscountedPriceText, rawPrice },
-								components: {
-									discount: <StrikethroughText />,
-								},
-							}
-					  );
+					: translate( 'per month, %(fullTermDiscountedPriceText)s for the first year', {
+							args: { fullTermDiscountedPriceText },
+					  } );
 			}
 
 			if ( PLAN_BIENNIAL_PERIOD === billingPeriod ) {
 				return displayNewPriceText
 					? translate(
-							'per month, {{discount}} %(rawPrice)s billed annually{{/discount}} %(fullTermDiscountedPriceText)s for the first year, Excl. Taxes',
+							'per month, %(fullTermDiscountedPriceText)s for the first year, Excl. Taxes',
 							{
 								args: { fullTermDiscountedPriceText, rawPrice },
-								components: {
-									discount: <StrikethroughText />,
-								},
 								comment: 'Excl. Taxes is short for excluding taxes',
 							}
 					  )
-					: translate(
-							'per month, {{discount}} %(rawPrice)s billed annually{{/discount}} %(fullTermDiscountedPriceText)s for the first year',
-							{
-								args: { fullTermDiscountedPriceText, rawPrice },
-								components: {
-									discount: <StrikethroughText />,
-								},
-							}
-					  );
+					: translate( 'per month, %(fullTermDiscountedPriceText)s for the first year', {
+							args: { fullTermDiscountedPriceText },
+					  } );
 			}
 		} else if ( rawPrice ) {
 			if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {

@@ -177,6 +177,7 @@ import {
 	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
 	PLAN_JETPACK_SECURITY_T1_MONTHLY,
 	PLAN_JETPACK_SECURITY_T1_YEARLY,
+	PLAN_JETPACK_SECURITY_T1_BI_YEARLY,
 	PLAN_JETPACK_SECURITY_T2_MONTHLY,
 	PLAN_JETPACK_SECURITY_T2_YEARLY,
 	PLAN_JETPACK_STARTER_MONTHLY,
@@ -431,6 +432,11 @@ const WPComGetBiennialBillingTimeframe = (): TranslateResult =>
 	i18n.translate( '/month, billed every two years' );
 const WPComGetTriennialBillingTimeframe = (): TranslateResult =>
 	i18n.translate( '/month, billed every three years' );
+
+const getBiAnnualTimeframe = (): BillingTerm => ( {
+	term: TERM_BIENNIALLY,
+	getBillingTimeFrame: () => translate( 'per 2 years' ),
+} );
 
 const getAnnualTimeframe = (): BillingTerm => ( {
 	term: TERM_ANNUALLY,
@@ -2888,6 +2894,27 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				'Social: Get unlimited shares and share as a post by attaching images or videos.'
 			),
 			translate( 'CRM: Entrepreneur with 30 extensions' ),
+		],
+	},
+
+	[ PLAN_JETPACK_SECURITY_T1_BI_YEARLY ]: {
+		...getPlanJetpackSecurityT1Details(),
+		...getBiAnnualTimeframe(),
+		getStoreSlug: () => PLAN_JETPACK_SECURITY_T1_BI_YEARLY,
+		getPathSlug: () => 'security-20gb-bi-yearly',
+		getProductId: () => 2034,
+		getProductsIncluded: () => [
+			PRODUCT_JETPACK_BACKUP_T1_YEARLY,
+			PRODUCT_JETPACK_SCAN,
+			PRODUCT_JETPACK_ANTI_SPAM,
+		],
+		getWhatIsIncluded: () => [
+			translate( 'VaultPress Backup: Real-time backups as you edit' ),
+			translate( '10GB of cloud storage' ),
+			translate( '30-day activity log archive' ),
+			translate( 'Unlimited one-click restores from the last 30 days' ),
+			translate( 'Scan: Real-time malware scanning and one-click fixes' ),
+			translate( 'Akismet: Comment and form spam protection (10k API calls/mo)' ),
 		],
 	},
 

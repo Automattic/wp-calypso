@@ -267,7 +267,7 @@ describe( 'CheckoutMain with a variant picker', () => {
 			const intervalsInVariant = Math.round( variantInterval / currentVariantInterval );
 			const priceBeforeDiscount = currentVariantPrice * intervalsInVariant;
 
-			const discountPercentage = Math.floor( 100 - ( finalPrice / priceBeforeDiscount ) * 100 );
+			const discountPercentage = Math.round( 100 - ( finalPrice / priceBeforeDiscount ) * 100 );
 			expect(
 				within( variantItem ).getByText( `Save ${ discountPercentage }%` )
 			).toBeInTheDocument();

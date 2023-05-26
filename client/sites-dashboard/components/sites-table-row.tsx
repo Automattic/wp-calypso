@@ -11,6 +11,7 @@ import StatsSparkline from 'calypso/blocks/stats-sparkline';
 import TimeSince from 'calypso/components/time-since';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { hasSiteStatsQueryFailed } from 'calypso/state/stats/lists/selectors';
+import { useCheckSiteTransferStatus } from '../hooks/use-check-site-transfer-status';
 import { displaySiteUrl, getDashboardUrl, isStagingSite, MEDIA_QUERIES } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import SitesP2Badge from './sites-p2-badge';
@@ -20,6 +21,7 @@ import { SiteName } from './sites-site-name';
 import { SitePlan } from './sites-site-plan';
 import { SiteUrl, Truncated } from './sites-site-url';
 import SitesStagingBadge from './sites-staging-badge';
+import TransferNoticeWrapper from './sites-transfer-notice-wrapper';
 import { ThumbnailLink } from './thumbnail-link';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
@@ -140,6 +142,10 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const isP2Site = site.options?.is_wpforteams_site;
 	const isWpcomStagingSite = isStagingSite( site );
 
+	const { wasTransferring, isTransferCompleted, isTransferring, isErrored } =
+		useCheckSiteTransferStatus( {
+			siteId: site.ID,
+		} );
 	const hasStatsLoadingError = useSelector( ( state ) => {
 		const siteId = site.ID;
 		const query = {};
@@ -189,8 +195,15 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 				<SitePlan site={ site } userId={ userId } />
 			</Column>
 			<Column mobileHidden>
-				{ translatedStatus }
-				<SiteLaunchNag site={ site } />
+				{ ! wasTransferring && translatedStatus }
+				{ ! wasTransferring && <SiteLaunchNag site={ site } /> }
+				{ wasTransferring && (
+					<TransferNoticeWrapper
+						isTransfering={ isTransferring }
+						isTransferCompleted={ isTransferCompleted }
+						hasError={ isErrored }
+					/>
+				) }
 			</Column>
 			<Column mobileHidden>
 				{ site.options?.updated_at ? <TimeSince date={ site.options.updated_at } /> : '' }
