@@ -3,21 +3,28 @@ import { Story, Meta } from '@storybook/react';
 import { ComponentProps } from 'react';
 import { documentHeadStoreMock, ReduxDecorator } from 'calypso/__mocks__/storybook/redux';
 import { CardContentWrapper } from 'calypso/my-sites/hosting/staging-site-card/card-content/card-content-wrapper';
-import { NewStagingSiteCardContent } from './card-content/new-staging-site-card-content';
+import { ManageStagingSiteCardContent } from 'calypso/my-sites/hosting/staging-site-card/card-content/manage-staging-site-card-content';
 
 /**
  * Ideally, this component should depend only on local `./style.scss`. However, currently, some card styles are defined
  * in hosting page CSS file, so we need to include it here.
  */
-import '../style.scss';
+import '../../../style.scss';
 
 export default {
-	title: 'client/components/StagingSite',
-	component: NewStagingSiteCardContent,
+	title: 'client/my-sites/hosting/StagingSiteCard',
+	component: ManageStagingSiteCardContent,
 	decorators: [
 		( Story ) => {
 			return (
-				<ReduxDecorator store={ { ...documentHeadStoreMock } }>
+				<ReduxDecorator
+					store={ {
+						...documentHeadStoreMock,
+						sites: {
+							items: { 25: { ID: 25 } },
+						},
+					} }
+				>
 					<Story></Story>
 				</ReduxDecorator>
 			);
@@ -39,25 +46,26 @@ export default {
 	],
 } as Meta;
 
-type NewStagingSiteCardContentStory = Story< ComponentProps< typeof NewStagingSiteCardContent > >;
-const Template: NewStagingSiteCardContentStory = ( args ) => {
-	return <NewStagingSiteCardContent { ...args } />;
+type ManageStagingSiteCardContentStory = Story<
+	ComponentProps< typeof ManageStagingSiteCardContent >
+>;
+const Template: ManageStagingSiteCardContentStory = ( args ) => {
+	return <ManageStagingSiteCardContent { ...args } />;
 };
 
 const defaultArgs = {
-	onAddClick: action( 'onClick' ),
+	stagingSite: {
+		id: 25,
+		url: 'http://example.com',
+		name: 'Test Staging Site',
+		user_has_permission: true,
+	},
+	onDeleteClick: action( 'onClick' ),
 	isButtonDisabled: false,
-	showQuotaError: false,
+	isBusy: false,
 };
 
-export const NewStagingSiteCard = Template.bind( {} );
-NewStagingSiteCard.args = {
+export const ManageStagingSite = Template.bind( {} );
+ManageStagingSite.args = {
 	...defaultArgs,
-};
-
-export const NewStagingSiteCardWithQuotaError = Template.bind( {} );
-NewStagingSiteCardWithQuotaError.args = {
-	...defaultArgs,
-	isButtonDisabled: true,
-	showQuotaError: true,
 };
