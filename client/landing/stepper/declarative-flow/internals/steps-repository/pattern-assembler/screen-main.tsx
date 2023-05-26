@@ -11,6 +11,7 @@ import { header, footer, layout, color, typography } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useRef } from 'react';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { NAVIGATOR_PATHS } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import { NavigationButtonAsItem } from './navigator-buttons';
 import NavigatorHeader from './navigator-header';
@@ -19,17 +20,18 @@ import type { OnboardSelect } from '@automattic/data-stores';
 import type { MouseEvent } from 'react';
 
 interface Props {
+	isNewSite?: boolean;
 	onSelect: ( name: string ) => void;
-	onContinueClick: () => void;
+	onContinueClick: ( callback?: () => void ) => void;
 	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
 }
 
-const ScreenMain = ( { onSelect, onContinueClick, recordTracksEvent }: Props ) => {
+const ScreenMain = ( { isNewSite, onSelect, onContinueClick, recordTracksEvent }: Props ) => {
 	const translate = useTranslate();
 	const [ disabled, setDisabled ] = useState( true );
-	const [ isNoticeDismissed, setIsNoticeDismissed ] = useState( false );
+	const [ isNoticeDismissed, setIsNoticeDismissed ] = useState( isNewSite );
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
-	const { location } = useNavigator();
+	const { location, goTo } = useNavigator();
 	const isInitialLocation = location.isInitial && ! location.isBack;
 	const selectedDesign = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
@@ -50,7 +52,8 @@ const ScreenMain = ( { onSelect, onContinueClick, recordTracksEvent }: Props ) =
 
 	const handleClick = () => {
 		if ( ! disabled ) {
-			onContinueClick();
+			const callback = ! isNewSite ? () => goTo( NAVIGATOR_PATHS.ACTIVATION ) : undefined;
+			onContinueClick( callback );
 		}
 	};
 

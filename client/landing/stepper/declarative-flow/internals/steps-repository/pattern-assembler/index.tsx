@@ -35,6 +35,7 @@ import NavigatorListener from './navigator-listener';
 import Notices, { getNoticeContent } from './notices/notices';
 import PatternAssemblerContainer from './pattern-assembler-container';
 import PatternLargePreview from './pattern-large-preview';
+import ScreenActivation from './screen-activation';
 import ScreenCategoryList from './screen-category-list';
 import ScreenColorPalettes from './screen-color-palettes';
 import ScreenFontPairings from './screen-font-pairings';
@@ -444,7 +445,7 @@ const PatternAssembler = ( {
 		} );
 	};
 
-	const onContinueClick = () => {
+	const onContinueClick = ( callback: () => void = onSubmit ) => {
 		trackEventContinue();
 
 		if ( shouldUnlockGlobalStyles ) {
@@ -452,6 +453,11 @@ const PatternAssembler = ( {
 			return;
 		}
 
+		callback();
+	};
+
+	const onActivate = () => {
+		// TODO: Add track event
 		onSubmit();
 	};
 
@@ -538,6 +544,7 @@ const PatternAssembler = ( {
 			<div className="pattern-assembler__sidebar">
 				<NavigatorScreen path={ NAVIGATOR_PATHS.MAIN }>
 					<ScreenMain
+						isNewSite={ isNewSite }
 						onSelect={ onMainItemSelect }
 						onContinueClick={ onContinueClick }
 						recordTracksEvent={ recordTracksEvent }
@@ -610,6 +617,10 @@ const PatternAssembler = ( {
 						onBack={ onScreenFontsBack }
 						onDoneClick={ onScreenFontsDone }
 					/>
+				</NavigatorScreen>
+
+				<NavigatorScreen path={ NAVIGATOR_PATHS.ACTIVATION } className="screen-activation">
+					<ScreenActivation onActivate={ onActivate } />
 				</NavigatorScreen>
 
 				<NavigatorListener
