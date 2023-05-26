@@ -21,7 +21,7 @@ export const EmptySitesDashboard = () => {
 				},
 			} }
 			title={
-				<h2
+				<span
 					css={ {
 						color: 'var(--studio-gray-100)',
 						fontSize: '3rem',
@@ -31,7 +31,7 @@ export const EmptySitesDashboard = () => {
 					} }
 				>
 					{ __( 'Let’s add your first site' ) }
-				</h2>
+				</span>
 			}
 			illustration=""
 		>
