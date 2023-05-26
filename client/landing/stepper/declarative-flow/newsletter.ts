@@ -26,9 +26,15 @@ const newsletter: Flow = {
 	},
 	useSteps() {
 		const query = useQuery();
-		const ref = query.get( 'ref' ) || '';
+		const isComingFromMarketingPage = query.get( 'ref' ) === 'newsletter-lp';
 
-		let steps = [
+		return [
+			// Load intro step component only when not coming from the marketing page
+			...( ! isComingFromMarketingPage
+				? [
+						{ slug: 'intro', asyncComponent: () => import( './internals/steps-repository/intro' ) },
+				  ]
+				: [] ),
 			{
 				slug: 'newsletterSetup',
 				asyncComponent: () => import( './internals/steps-repository/newsletter-setup' ),
@@ -52,13 +58,6 @@ const newsletter: Flow = {
 				asyncComponent: () => import( './internals/steps-repository/launchpad' ),
 			},
 		];
-		if ( ref !== 'newsletter-lp' ) {
-			steps = [
-				{ slug: 'intro', asyncComponent: () => import( './internals/steps-repository/intro' ) },
-				...steps,
-			];
-		}
-		return steps;
 	},
 	useSideEffect() {
 		const { setHidePlansFeatureComparison } = useDispatch( ONBOARD_STORE );
