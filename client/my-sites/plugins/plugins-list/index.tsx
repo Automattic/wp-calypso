@@ -577,7 +577,7 @@ export class PluginsList extends Component< Props, State > {
 			Object.keys( plugin.sites ).map( ( pluginSiteId ) => {
 				if ( ! sites.some( ( site ) => site && site.ID === Number( pluginSiteId ) ) ) {
 					const pluginSite = this.props.allSites.find(
-						( s ) => s && s.ID === parseInt( pluginSiteId )
+						( s ) => s && s.ID === Number( pluginSiteId )
 					);
 					if ( pluginSite ) {
 						sites.push( pluginSite );
