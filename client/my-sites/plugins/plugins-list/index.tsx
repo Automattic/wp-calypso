@@ -220,7 +220,7 @@ export class PluginsList extends Component< Props, State > {
 				return Object.keys( plugin.sites ).some( ( siteId ) => {
 					const sitePlugin = getSitePlugin( plugin, siteId, this.props.pluginsOnSites );
 					const site = this.props.allSites.find( ( s ) => s?.ID === parseInt( siteId ) );
-					return site && sitePlugin?.update?.new_version && site.canUpdateFiles;
+					return sitePlugin?.update?.new_version && site?.canUpdateFiles;
 				} );
 			}
 			return false;
