@@ -1,4 +1,11 @@
-import { firstValid, hardTruncation, shortEnough, stripHtmlTags, Formatter } from '../helpers';
+import {
+	firstValid,
+	hardTruncation,
+	shortEnough,
+	stripHtmlTags,
+	preparePreviewText,
+	Formatter,
+} from '../helpers';
 
 const TITLE_LENGTH = 200;
 const BODY_LENGTH = 500;
@@ -10,11 +17,12 @@ export const mastodonTitle: Formatter = ( text ) =>
 		hardTruncation( TITLE_LENGTH )
 	)( stripHtmlTags( text ) ) || '';
 
-export const mastodonBody: Formatter = ( text, offset = 0 ) =>
-	firstValid(
-		shortEnough( BODY_LENGTH - URL_LENGTH - offset ),
-		hardTruncation( BODY_LENGTH - URL_LENGTH - offset )
-	)( stripHtmlTags( text ) ) || '';
+export const mastodonBody = ( text: string, offset = 0 ) => {
+	return preparePreviewText( text, {
+		platform: 'mastodon',
+		maxChars: BODY_LENGTH - URL_LENGTH - offset,
+	} );
+};
 
 export const mastodonUrl: Formatter = ( text ) =>
 	firstValid( shortEnough( URL_LENGTH ), hardTruncation( URL_LENGTH ) )( stripHtmlTags( text ) ) ||

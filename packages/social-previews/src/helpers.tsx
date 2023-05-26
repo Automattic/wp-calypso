@@ -52,7 +52,7 @@ export const formatTweetDate = new Intl.DateTimeFormat( 'en-US', {
 	day: 'numeric',
 } ).format;
 
-export type Platform = 'twitter' | 'facebook' | 'linkedin' | 'instagram';
+export type Platform = 'twitter' | 'facebook' | 'linkedin' | 'instagram' | 'mastodon';
 
 type PreviewTextOptions = {
 	platform: Platform;
@@ -67,6 +67,7 @@ export const hashtagUrlMap: Record< Platform, string > = {
 	facebook: 'https://www.facebook.com/hashtag/%s',
 	linkedin: 'https://www.linkedin.com/feed/hashtag/?keywords=%s',
 	instagram: 'https://www.instagram.com/explore/tags/%s',
+	mastodon: 'https://mastodon.social/tags/%s',
 };
 
 /**
