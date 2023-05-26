@@ -8,6 +8,7 @@ import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-secti
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { useActivityPubStatus, useActivityPubStatusMutation } from './hooks';
 
 const ACTIVITYPUB_CATCHALL_PREFIX = 'feed';
 
@@ -28,7 +29,7 @@ const CopyButton = ( { alias } ) => {
 	);
 };
 
-const FediverseInnerSettingsSection = () => {
+const FediverseInnerSettingsSection = ( { error } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
@@ -40,6 +41,15 @@ const FediverseInnerSettingsSection = () => {
 	// todo: warnings for non-custom domains
 	return (
 		<Card className="site-settings__card">
+			{ error && (
+				<p>
+					<strong>
+						{ translate(
+							'This section will only appear once the toggle is enabled (not yet working)'
+						) }
+					</strong>
+				</p>
+			) }
 			<p>
 				{ translate(
 					'Lots of cool customizations and bonus features coming soon with WordPress.com Premium and up!'
@@ -62,16 +72,18 @@ export const FediverseSettingsSection = () => {
 	const translate = useTranslate();
 	// todo: get/set this from a real endpoint.
 	// todo: make the endpoint.
-	const [ isActivityPubEnabled, setIsActivityPubEnabled ] = useState( false );
+	const siteId = useSelector( getSelectedSiteId );
+	const { isEnabled, isLoading, isError } = useActivityPubStatus( siteId );
+	const { setEnabled, isMutating } = useActivityPubStatusMutation( siteId );
+	const disabled = isMutating || isLoading || isError;
 
 	return (
 		<>
-			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
 			<SettingsSectionHeader title={ translate( 'Fediverse settings' ) } />
 			<Card className="site-settings__card">
 				<p>
 					{ translate(
-						'The fediverse is a network of social media sites like Mastodon, Pixelfed, and Peertube!'
+						'The fediverse is a network of social media sites like Mastodon and Pixelfed and Calckey and Peertube and Pleroma, oh my!'
 					) }
 				</p>
 				<p>
@@ -81,13 +93,14 @@ export const FediverseSettingsSection = () => {
 				</p>
 				<ToggleControl
 					label={ translate( 'Enter the fediverse' ) }
-					checked={ isActivityPubEnabled }
-					onChange={ () => {
-						setIsActivityPubEnabled( ! isActivityPubEnabled );
-					} }
+					disabled={ disabled }
+					checked={ isEnabled }
+					onChange={ () => setEnabled( ! isEnabled ) }
 				/>
 			</Card>
-			{ isActivityPubEnabled && <FediverseInnerSettingsSection /> }
+			{ ( isEnabled /* get rid of isError once the endpoint lands */ || isError ) && (
+				<FediverseInnerSettingsSection error={ isError } />
+			) }
 		</>
 	);
 };
