@@ -1,7 +1,7 @@
 import { Card } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
@@ -16,14 +16,13 @@ const CopyButton = ( { alias } ) => {
 	const translate = useTranslate();
 	const [ isCopied, setIsCopied ] = useState( false );
 	const text = isCopied ? translate( '✅ Copied!' ) : <code>{ alias }</code>;
-	useEffect( () => {
-		setTimeout( () => {
-			setIsCopied( false );
-		}, 3330 );
-	}, [ isCopied ] );
+	const onCopy = () => {
+		setIsCopied( true );
+		setTimeout( () => setIsCopied( false ), 3333 );
+	};
 
 	return (
-		<ClipboardButton text={ alias } onCopy={ () => setIsCopied( true ) }>
+		<ClipboardButton text={ alias } onCopy={ onCopy }>
 			{ text }
 		</ClipboardButton>
 	);
