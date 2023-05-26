@@ -63,6 +63,7 @@ export default function EmailAddressEditor( {
 	const requestVerificationCode = useRequestVerificationCode();
 	const verifyEmail = useValidateVerificationCode();
 
+	// Function to handle resending verification code
 	const handleResendCode = useCallback( () => {
 		setValidationError( undefined );
 		recordEvent( 'downtime_monitoring_resend_email_verification_code' );
@@ -87,6 +88,7 @@ export default function EmailAddressEditor( {
 		[ allEmailItems, emailItem, setAllEmailItems, toggleModal ]
 	);
 
+	// Trigger resend code when user chooses to verify email action
 	useEffect( () => {
 		if ( isVerifyAction ) {
 			setShowCodeVerification( true );
@@ -94,12 +96,14 @@ export default function EmailAddressEditor( {
 		}
 	}, [ handleResendCode, isVerifyAction ] );
 
+	// Show code input when verification code request is successful
 	useEffect( () => {
 		if ( requestVerificationCode.isSuccess ) {
 			setShowCodeVerification( true );
 		}
 	}, [ requestVerificationCode.isSuccess ] );
 
+	// Show error message when verification code request fails
 	useEffect( () => {
 		if ( requestVerificationCode.isError ) {
 			setValidationError( {
@@ -108,12 +112,14 @@ export default function EmailAddressEditor( {
 		}
 	}, [ requestVerificationCode.isError, translate ] );
 
+	// Call handleSetEmailItems when email verification is successful
 	useEffect( () => {
 		if ( verifyEmail.isSuccess ) {
 			handleSetEmailItems();
 		}
 	}, [ handleSetEmailItems, verifyEmail.isSuccess ] );
 
+	// Show error message when email verification fails
 	useEffect( () => {
 		if ( verifyEmail.errorMessage ) {
 			setValidationError( {
@@ -122,6 +128,7 @@ export default function EmailAddressEditor( {
 		}
 	}, [ translate, verifyEmail.errorMessage ] );
 
+	// Set email item when selectedEmail changes
 	useEffect( () => {
 		if ( selectedEmail ) {
 			setEmailItem( {
@@ -132,6 +139,7 @@ export default function EmailAddressEditor( {
 		}
 	}, [ selectedEmail ] );
 
+	// Remove email item when user confirms to remove the email address
 	const handleRemove = () => {
 		recordEvent( 'downtime_monitoring_remove_email' );
 		const emailItems = [ ...allEmailItems ];
@@ -143,6 +151,7 @@ export default function EmailAddressEditor( {
 		toggleModal();
 	};
 
+	// Send verification code when user clicks on Verify button
 	const handleSendVerificationCode = () => {
 		recordEvent( 'downtime_monitoring_request_email_verification_code' );
 		requestVerificationCode.mutate( {
@@ -152,6 +161,7 @@ export default function EmailAddressEditor( {
 		} );
 	};
 
+	// Verify email when user clicks on Verify button
 	const handleVerifyEmail = () => {
 		recordEvent( 'downtime_monitoring_verify_email' );
 		if ( emailItem?.code ) {
@@ -163,6 +173,7 @@ export default function EmailAddressEditor( {
 		}
 	};
 
+	// Add email item to the list if the email is already verified
 	const handleAddVerifiedEmail = () => {
 		recordEvent( 'downtime_monitoring_email_already_verified' );
 		handleSetEmailItems();
@@ -197,6 +208,7 @@ export default function EmailAddressEditor( {
 		handleSendVerificationCode();
 	};
 
+	// Save unverified email item to the list when user clicks on Later button
 	function onSaveLater() {
 		recordEvent( 'downtime_monitoring_verify_email_later' );
 		handleSetEmailItems( false );
