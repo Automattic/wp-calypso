@@ -4,7 +4,7 @@ import { Button, Gridicon } from '@automattic/components';
 import { Title, SubTitle, SelectItems } from '@automattic/onboarding';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
 import { jetpack } from 'calypso/signup/icons';
 import { URL } from 'calypso/types';
@@ -17,6 +17,12 @@ interface Props {
 export const UpgradePluginInfo: React.FunctionComponent< Props > = ( props: Props ) => {
 	const translate = useTranslate();
 	const { isMigrateFromWp, sourceSiteUrl } = props;
+
+	useEffect( () => {
+		recordTracksEvent( 'calypso_site_importer_show_upgrade_info', {
+			plugins_info: isMigrateFromWp ? 'wpcom_migration_plugin' : 'jetpack',
+		} );
+	}, [] );
 
 	function renderTitle() {
 		return isMigrateFromWp
