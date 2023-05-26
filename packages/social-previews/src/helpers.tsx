@@ -60,14 +60,15 @@ type PreviewTextOptions = {
 	maxLines?: number;
 	hyperlinkUrls?: boolean;
 	hyperlinkHashtags?: boolean;
+	hashtagDomain?: string;
 };
 
 export const hashtagUrlMap: Record< Platform, string > = {
-	twitter: 'https://twitter.com/hashtag/%s',
-	facebook: 'https://www.facebook.com/hashtag/%s',
-	linkedin: 'https://www.linkedin.com/feed/hashtag/?keywords=%s',
-	instagram: 'https://www.instagram.com/explore/tags/%s',
-	mastodon: 'https://mastodon.social/tags/%s',
+	twitter: 'https://twitter.com/hashtag/%1$s',
+	facebook: 'https://www.facebook.com/hashtag/%1$s',
+	linkedin: 'https://www.linkedin.com/feed/hashtag/?keywords=%1$s',
+	instagram: 'https://www.instagram.com/explore/tags/%1$s',
+	mastodon: 'https://%2$s/tags/%1$s',
 };
 
 /**
@@ -145,7 +146,7 @@ export function preparePreviewText( text: string, options: PreviewTextOptions ):
 		 * with a url https://github.com/Automattic/wp-calypso#security that has a hash in it`
 		 */
 		[ ...hashtags ].forEach( ( [ fullMatch, whitespace, hashtag ], index ) => {
-			const url = sprintf( hashtagUrl, hashtag );
+			const url = sprintf( hashtagUrl, hashtag, options.hashtagDomain );
 
 			// Add the element to the component map.
 			componentMap[ `Hashtag${ index }` ] = (

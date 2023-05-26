@@ -1,4 +1,5 @@
 import { __ } from '@wordpress/i18n';
+import { DEFAULT_MASTODON_INSTANCE } from '../../constants';
 import MastodonPostIcon from '../icons';
 import type { MastodonPreviewProps } from '../../types';
 
@@ -7,7 +8,7 @@ import './styles.scss';
 type Props = Pick< MastodonPreviewProps, 'user' >;
 
 const MastodonPostHeader: React.FC< Props > = ( { user } ) => {
-	const { displayName, userName, avatarUrl } = user || {};
+	const { displayName, address, avatarUrl } = user || {};
 
 	return (
 		<div className="mastodon-preview__post-header">
@@ -19,7 +20,9 @@ const MastodonPostHeader: React.FC< Props > = ( { user } ) => {
 							// translators: username of a fictional Mastodon User
 							__( 'anonymous-user', 'social-previews' ) }
 					</div>
-					<div className="mastodon-preview__post-header-username">{ userName }</div>
+					<div className="mastodon-preview__post-header-username">
+						{ address?.replace( DEFAULT_MASTODON_INSTANCE, '' ) }
+					</div>
 				</div>
 			</div>
 			<div className="mastodon-preview__post-header-audience">
