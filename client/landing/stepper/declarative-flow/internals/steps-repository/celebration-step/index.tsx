@@ -68,8 +68,6 @@ const CelebrationStep: Step = ( { flow } ) => {
 					id="celebration-step-header"
 					headerText={ translate( 'Your blog’s ready!' ) }
 					subHeaderText={ subtitleText }
-					align="center"
-					subHeaderAlign="center"
 				/>
 			}
 			stepContent={
