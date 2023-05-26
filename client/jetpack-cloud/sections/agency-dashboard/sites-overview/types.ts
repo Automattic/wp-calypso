@@ -301,8 +301,3 @@ export interface ValidateVerificationCodeParams {
 	value: string;
 	verification_code: number;
 }
-
-export interface ResendVerificationCodeParams {
-	type: 'email';
-	value: string;
-}
