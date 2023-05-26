@@ -3,7 +3,7 @@ import { Button } from '@automattic/components';
 import { Modal, ToggleControl } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useContext } from 'react';
 import clockIcon from 'calypso/assets/images/jetpack/clock-icon.svg';
 import AlertBanner from 'calypso/components/jetpack/alert-banner';
 import SelectDropdown from 'calypso/components/select-dropdown';
@@ -12,6 +12,7 @@ import {
 	useJetpackAgencyDashboardRecordTrackEvent,
 	useShowVerifiedBadge,
 } from '../../hooks';
+import DashboardDataContext from '../../sites-overview/dashboard-data-context';
 import {
 	availableNotificationDurations as durations,
 	getSiteCountText,
@@ -54,6 +55,8 @@ export default function NotificationSettings( {
 	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( sites, isLargeScreen );
 	const { verifiedItem, handleSetVerifiedItem } = useShowVerifiedBadge();
 
+	const { verifiedContacts } = useContext( DashboardDataContext );
+
 	const defaultDuration = durations.find( ( duration ) => duration.time === 5 );
 
 	const [ enableMobileNotification, setEnableMobileNotification ] = useState< boolean >( false );
@@ -81,15 +84,17 @@ export default function NotificationSettings( {
 		'jetpack/pro-dashboard-monitor-multiple-email-recipients'
 	);
 
+	const mapAndStringifyEmails = ( emails: MonitorSettingsEmail[] ) => {
+		return JSON.stringify( emails.map( ( { name, email } ) => ( { name, email } ) ) );
+	};
+
 	const unsavedChangesExist =
 		enableMobileNotification !== initialSettings.enableMobileNotification ||
 		enableEmailNotification !== initialSettings.enableEmailNotification ||
 		selectedDuration?.time !== initialSettings.selectedDuration?.time ||
 		( isMultipleEmailEnabled &&
-			JSON.stringify( allEmailItems.map( ( { name, email } ) => ( { name, email } ) ) ) !==
-				JSON.stringify(
-					initialSettings?.emailContacts?.map( ( { name, email } ) => ( { name, email } ) )
-				) );
+			mapAndStringifyEmails( allEmailItems ) !==
+				mapAndStringifyEmails( initialSettings?.emailContacts ?? [] ) );
 
 	// Check if any unsaved changes are present and prompt user to confirm before closing the modal.
 	const handleOnClose = useCallback( () => {
@@ -137,10 +142,11 @@ export default function NotificationSettings( {
 			const extraEmails = allEmailItems.filter( ( item ) => ! item.isDefault );
 			params.contacts = {
 				emails: extraEmails.map( ( item ) => {
+					const isVerified = verifiedContacts.emails.includes( item.email ) || item.verified;
 					return {
 						name: item.name,
 						email_address: item.email,
-						verified: item.verified,
+						verified: isVerified,
 					};
 				} ),
 			};
