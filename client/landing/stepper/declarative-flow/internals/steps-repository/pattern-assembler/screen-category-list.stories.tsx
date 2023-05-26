@@ -7,7 +7,6 @@ import ScreenCategoryList from './screen-category-list';
 /**
  * FIXME: This component should depend only on local `./style.scss`.
  */
-import '../../../internals/global.scss';
 import './navigator-buttons/style.scss';
 import './style.scss';
 
@@ -30,7 +29,12 @@ export default {
 					 * The following style is for fixing the position of the PatternListPanel.
 					 * It depends on `348px` since it uses `margin-inline-start: 348px;` for its position.
 					 */
-					style={ { width: '348px', padding: '32px', boxSizing: 'border-box' } }
+					style={ {
+						width: '348px',
+						padding: '32px',
+						boxSizing: 'border-box',
+						backgroundColor: '#fdfdfd',
+					} }
 				>
 					<Story></Story>
 				</div>
