@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
 import useRequestContactVerificationCode from 'calypso/state/jetpack-agency-dashboard/hooks/use-request-contact-verification-code';
 import useValidateVerificationCodeMutation from 'calypso/state/jetpack-agency-dashboard/hooks/use-validate-contact-verification-code';
@@ -13,9 +14,7 @@ export function useRequestVerificationCode(): {
 	isSuccess: boolean;
 } {
 	return useRequestContactVerificationCode( {
-		retry: () => {
-			return false;
-		},
+		retry: false,
 	} );
 }
 
@@ -31,9 +30,38 @@ export function useValidateVerificationCode(): {
 	isError: boolean;
 	errorMessage?: string;
 } {
+	const queryClient = useQueryClient();
+
 	const data = useValidateVerificationCodeMutation( {
-		retry: () => {
-			return false;
+		retry: false,
+		onSuccess: async ( data: { verified: boolean; email_address: string }, params ) => {
+			const queryKey = [ 'monitor_notification_contacts' ];
+
+			// Cancel any current refetches, so they don't overwrite our optimistic update
+			await queryClient.cancelQueries( queryKey );
+
+			// Optimistically update the contacts
+			queryClient.setQueryData( queryKey, ( oldContacts: any ) => {
+				const type = params.type;
+				if ( ! oldContacts ) {
+					// If there are no contacts, create a new object
+					return {
+						emails: [ { email_address: params.value, verified: data.verified } ],
+					};
+				}
+				return {
+					...oldContacts,
+					...( type === 'email' && {
+						// Replace if it exists, otherwise add it
+						emails: [
+							...oldContacts.emails.filter(
+								( email: { email_address: string } ) => email.email_address !== params.value
+							),
+							{ email_address: params.value, verified: data.verified },
+						],
+					} ),
+				};
+			} );
 		},
 	} );
 	let errorMessage;
