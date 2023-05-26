@@ -1,5 +1,7 @@
 import { Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import {
+	Notice,
 	__experimentalHStack as HStack,
 	__experimentalUseNavigator as useNavigator,
 } from '@wordpress/components';
@@ -25,6 +27,7 @@ interface Props {
 const ScreenMain = ( { onSelect, onContinueClick, recordTracksEvent }: Props ) => {
 	const translate = useTranslate();
 	const [ disabled, setDisabled ] = useState( true );
+	const [ isNoticeDismissed, setIsNoticeDismissed ] = useState( false );
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
 	const { location } = useNavigator();
 	const isInitialLocation = location.isInitial && ! location.isBack;
@@ -50,6 +53,8 @@ const ScreenMain = ( { onSelect, onContinueClick, recordTracksEvent }: Props ) =
 			onContinueClick();
 		}
 	};
+
+	const dismissNotice = () => setIsNoticeDismissed( true );
 
 	// Set a delay to enable the Continue button since the user might mis-click easily when they go back from another screen
 	useEffect( () => {
@@ -132,6 +137,26 @@ const ScreenMain = ( { onSelect, onContinueClick, recordTracksEvent }: Props ) =
 							</NavigationButtonAsItem>
 						</>
 					</NavigatorItemGroup>
+					{ ! isNoticeDismissed && (
+						<Notice className="screen-container__notice" onRemove={ dismissNotice }>
+							{ translate(
+								'After activation, your homepage content will be replaced. But you can still access your old content. {{a}}Learn more{{/a}}.',
+								{
+									components: {
+										a: (
+											<a
+												href={ localizeUrl(
+													'https://wordpress.com/support/themes/changing-themes'
+												) }
+												target="_blank"
+												rel="noopener noreferrer"
+											/>
+										),
+									},
+								}
+							) }
+						</Notice>
+					) }
 				</HStack>
 			</div>
 			<div className="screen-container__footer">
