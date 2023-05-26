@@ -1,5 +1,5 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { callApi } from '../helpers';
 import { useCacheKey, useIsLoggedIn, useIsQueryEnabled } from '../hooks';
 import type { PostSubscription } from '../types';
@@ -53,7 +53,7 @@ const usePostSubscriptionsQuery = ( {
 	const { isLoggedIn } = useIsLoggedIn();
 	const enabled = useIsQueryEnabled();
 	const cacheKey = useCacheKey( [ 'read', 'post-subscriptions' ] );
-	const [ stopFetching, setStopFetching ] = useState( false );
+	const stopFetchingRef = useRef( false );
 
 	const { data, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage, ...rest } =
 		useInfiniteQuery< SubscriptionManagerPostSubscriptions >(
@@ -67,20 +67,21 @@ const usePostSubscriptionsQuery = ( {
 				} );
 
 				if ( result.comment_subscriptions.length === 0 ) {
-					setStopFetching( true );
+					stopFetchingRef.current = true;
 				}
 
 				return result;
 			},
 			{
 				enabled,
-				getNextPageParam: ( lastPage, pages ) => ( stopFetching ? undefined : pages.length + 1 ),
+				getNextPageParam: ( lastPage, pages ) =>
+					stopFetchingRef.current ? undefined : pages.length + 1,
 				refetchOnWindowFocus: false,
 			}
 		);
 
 	useEffect( () => {
-		if ( hasNextPage && ! isFetchingNextPage && ! isFetching ) {
+		if ( hasNextPage && ! isFetchingNextPage && ! isFetching && ! stopFetchingRef.current ) {
 			fetchNextPage();
 		}
 	}, [ hasNextPage, isFetchingNextPage, isFetching, fetchNextPage ] );
