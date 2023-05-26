@@ -9,12 +9,13 @@ interface SiteTransferStatusProps {
 	intervalTime?: number;
 }
 
-const terminatedTransferStatuses = [
+const inactiveTransferStatuses = [
 	transferStates.NONE,
 	transferStates.ERROR,
 	transferStates.FAILURE,
 	transferStates.REVERTED,
 	transferStates.COMPLETE,
+	transferStates.RELOCATING_REVERT,
 ] as const;
 
 const isTransferInProgress = ( transferStatus: string | null ) => {
@@ -22,10 +23,9 @@ const isTransferInProgress = ( transferStatus: string | null ) => {
 		return false;
 	}
 
-	const terminatedTransferStatus =
-		transferStatus as ( typeof terminatedTransferStatuses )[ number ];
+	const typedTransferStatus = transferStatus as ( typeof inactiveTransferStatuses )[ number ];
 
-	return ! terminatedTransferStatuses.includes( terminatedTransferStatus );
+	return ! inactiveTransferStatuses.includes( typedTransferStatus );
 };
 
 export const useCheckSiteTransferStatus = ( {
