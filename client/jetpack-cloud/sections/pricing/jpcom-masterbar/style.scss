@@ -183,6 +183,7 @@
 		margin: 0 auto;
 		display: flex;
 		align-items: center;
+		justify-content: center;
 	}
 	@media ( max-width: 1300px ) {
 		.header__content {
@@ -259,7 +260,6 @@
 		transition: none;
 		z-index: 2;
 		margin-inline-end: 3rem;
-		width: 100%;
 	}
 	.header__home-link:focus-visible {
 		border-radius: 2px;
