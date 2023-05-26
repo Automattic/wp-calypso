@@ -20,33 +20,29 @@ import {
 	PlanSlug,
 	isWooExpressPlusPlan,
 } from '@automattic/calypso-products';
+import {
+	JetpackLogo,
+	BloombergLogo,
+	CloudLogo,
+	CNNLogo,
+	CondenastLogo,
+	DisneyLogo,
+	FacebookLogo,
+	SalesforceLogo,
+	SlackLogo,
+	TimeLogo,
+	VIPLogo,
+	WooLogo,
+} from '@automattic/components';
 import { isHostingFlow, isLinkInBioFlow, isNewsletterFlow } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
-import {
-	localize,
-	LocalizedComponent,
-	LocalizeProps,
-	TranslateResult,
-	useTranslate,
-} from 'i18n-calypso';
+import { localize, LocalizedComponent, LocalizeProps, useTranslate } from 'i18n-calypso';
 import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
-import BloombergLogo from 'calypso/assets/images/onboarding/bloomberg-logo.svg';
-import cloudLogo from 'calypso/assets/images/onboarding/cloud-logo.svg';
-import CNNLogo from 'calypso/assets/images/onboarding/cnn-logo.svg';
-import CondenastLogo from 'calypso/assets/images/onboarding/condenast-logo.svg';
-import DisneyLogo from 'calypso/assets/images/onboarding/disney-logo.svg';
-import FacebookLogo from 'calypso/assets/images/onboarding/facebook-logo.svg';
-import SalesforceLogo from 'calypso/assets/images/onboarding/salesforce-logo.svg';
-import SlackLogo from 'calypso/assets/images/onboarding/slack-logo.svg';
-import TimeLogo from 'calypso/assets/images/onboarding/time-logo.svg';
-import vipLogo from 'calypso/assets/images/onboarding/vip-logo.svg';
-import wooLogo from 'calypso/assets/images/onboarding/woo-logo.svg';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import FoldableCard from 'calypso/components/foldable-card';
-import JetpackLogo from 'calypso/components/jetpack-logo';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
 import { FeatureObject, getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
@@ -149,20 +145,6 @@ type PlanFeatures2023GridState = {
 	showPlansComparisonGrid: boolean;
 };
 
-type ServiceLogoProps = {
-	imgSrc: string;
-	imgAlt: string;
-	hoverText: TranslateResult;
-};
-
-const ServiceLogo = ( props: ServiceLogoProps ) => (
-	<div className="plan-features-2023-grid__plan-logo">
-		<Plans2023Tooltip text={ props.hoverText }>
-			<img src={ props.imgSrc } alt={ props.imgAlt } />{ ' ' }
-		</Plans2023Tooltip>
-	</div>
-);
-
 const PlanLogo: React.FunctionComponent< {
 	planPropertiesObj: PlanProperties[];
 	planIndex: number;
@@ -232,29 +214,27 @@ const PlanLogo: React.FunctionComponent< {
 			/>
 			<header className={ headerClasses }>
 				{ isBusinessPlan( planName ) && (
-					<ServiceLogo
-						hoverText={ translate(
+					<Plans2023Tooltip
+						text={ translate(
 							'WP Cloud gives you the tools you need to add scalable, highly available, extremely fast WordPress hosting.'
 						) }
-						imgSrc={ cloudLogo }
-						imgAlt="WP Cloud logo"
-					/>
+					>
+						<CloudLogo />
+					</Plans2023Tooltip>
 				) }
 				{ shouldShowWooLogo && (
-					<ServiceLogo
-						hoverText={ translate(
-							'Make your online store a reality with the power of WooCommerce.'
-						) }
-						imgSrc={ wooLogo }
-						imgAlt="WooCommerce logo"
-					/>
+					<Plans2023Tooltip
+						text={ translate( 'Make your online store a reality with the power of WooCommerce.' ) }
+					>
+						<WooLogo />
+					</Plans2023Tooltip>
 				) }
 				{ isWpcomEnterpriseGridPlan( planName ) && (
-					<ServiceLogo
-						hoverText={ translate( 'The trusted choice for enterprise WordPress hosting.' ) }
-						imgSrc={ vipLogo }
-						imgAlt="WPVIP logo"
-					/>
+					<Plans2023Tooltip
+						text={ translate( 'The trusted choice for enterprise WordPress hosting.' ) }
+					>
+						<VIPLogo />
+					</Plans2023Tooltip>
 				) }
 			</header>
 		</Container>
@@ -758,14 +738,14 @@ export class PlanFeatures2023Grid extends Component<
 	renderEnterpriseClientLogos() {
 		return (
 			<div className="plan-features-2023-grid__item plan-features-2023-grid__enterprise-logo">
-				<img src={ TimeLogo } alt="WordPress VIP client logo for TIME" loading="lazy" />
-				<img src={ SlackLogo } alt="WordPress VIP client logo for Slack" loading="lazy" />
-				<img src={ DisneyLogo } alt="WordPress VIP client logo for Disney" loading="lazy" />
-				<img src={ CNNLogo } alt="WordPress VIP client logo for CNN" loading="lazy" />
-				<img src={ SalesforceLogo } alt="WordPress VIP client logo for Salesforce" loading="lazy" />
-				<img src={ FacebookLogo } alt="WordPress VIP client logo for Facebook" loading="lazy" />
-				<img src={ CondenastLogo } alt="WordPress VIP client logo for Conde Nast" loading="lazy" />
-				<img src={ BloombergLogo } alt="WordPress VIP client logo for Bloomberg" loading="lazy" />
+				<TimeLogo />
+				<SlackLogo />
+				<DisneyLogo />
+				<CNNLogo />
+				<SalesforceLogo />
+				<FacebookLogo />
+				<CondenastLogo />
+				<BloombergLogo />
 			</div>
 		);
 	}
