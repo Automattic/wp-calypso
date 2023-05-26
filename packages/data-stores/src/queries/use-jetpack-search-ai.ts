@@ -27,9 +27,9 @@ export type JetpackSearchAIResult = {
 };
 
 export function useJetpackSearchAIQuery( config: JetpackSearchAIConfig ) {
-	return useQuery< JetpackSearchAIResult >(
-		[ 'aiQuery', config.query, config.stopAt ],
-		() =>
+	return useQuery< JetpackSearchAIResult >( {
+		queryKey: [ 'aiQuery', config.query, config.stopAt ],
+		queryFn: () =>
 			canAccessWpcomApis()
 				? wpcomRequest( {
 						path: `sites/${ config.siteId }/jetpack-search/ai/search`,
@@ -43,11 +43,9 @@ export function useJetpackSearchAIQuery( config: JetpackSearchAIConfig ) {
 							config.siteId
 						}&query=${ encodeURIComponent( config.query ) }&stop_at=${ config.stopAt }`,
 				  } as APIFetchOptions ),
-		{
-			refetchOnWindowFocus: false,
-			keepPreviousData: false,
-			enabled: config.enabled && !! config.query,
-			retry: false,
-		}
-	);
+		refetchOnWindowFocus: false,
+		keepPreviousData: false,
+		enabled: config.enabled && !! config.query,
+		retry: false,
+	} );
 }

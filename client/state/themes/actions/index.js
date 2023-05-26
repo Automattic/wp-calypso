@@ -1,6 +1,6 @@
 export { acceptAtomicTransferDialog } from 'calypso/state/themes/actions/accept-atomic-transfer-dialog';
 export { acceptAutoLoadingHomepageWarning } from 'calypso/state/themes/actions/accept-auto-loading-homepage-warning';
-export { activate } from 'calypso/state/themes/actions/activate';
+export { activate, activateOrInstallThenActivate } from 'calypso/state/themes/actions/activate';
 export { activateTheme } from 'calypso/state/themes/actions/activate-theme';
 export { addExternalManagedThemeToCart } from 'calypso/state/themes/actions/add-external-managed-theme-to-cart';
 export { clearActivated } from 'calypso/state/themes/actions/clear-activated';

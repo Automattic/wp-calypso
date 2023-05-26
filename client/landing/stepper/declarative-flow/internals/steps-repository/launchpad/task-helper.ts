@@ -4,7 +4,12 @@ import {
 	PLAN_PREMIUM,
 	FEATURE_STYLE_CUSTOMIZATION,
 } from '@automattic/calypso-products';
-import { isDesignFirstFlow, isNewsletterFlow, isStartWritingFlow } from '@automattic/onboarding';
+import {
+	isBlogOnboardingFlow,
+	isDesignFirstFlow,
+	isNewsletterFlow,
+	isStartWritingFlow,
+} from '@automattic/onboarding';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
@@ -17,6 +22,7 @@ import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { launchpadFlowTasks } from './tasks';
 import { LaunchpadChecklist, LaunchpadStatuses, Task } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
+
 /**
  * Some attributes of these enhanced tasks will soon be fetched through a WordPress REST
  * API, making said enhancements here unnecessary ( Ex. title, subtitle, completed,
@@ -53,16 +59,19 @@ export function getEnhancedTasks(
 	const enhancedTaskList: Task[] = [];
 
 	const productSlug =
-		( isStartWritingFlow( flow ) || isDesignFirstFlow( flow ) ? planCartProductSlug : null ) ??
-		site?.plan?.product_slug;
+		( isBlogOnboardingFlow( flow ) ? planCartProductSlug : null ) ?? site?.plan?.product_slug;
 
 	const translatedPlanName = productSlug ? PLANS_LIST[ productSlug ].getTitle() : '';
+
+	const setupBlogCompleted =
+		Boolean( tasks?.find( ( task ) => task.id === 'setup_blog' )?.completed ) ||
+		! isStartWritingFlow( flow );
 
 	const domainUpsellCompleted = isDomainUpsellCompleted( site, checklistStatuses );
 
 	const planCompleted =
 		Boolean( tasks?.find( ( task ) => task.id === 'plan_completed' )?.completed ) ||
-		! ( isStartWritingFlow( flow ) || isDesignFirstFlow( flow ) );
+		! isBlogOnboardingFlow( flow );
 
 	const videoPressUploadCompleted = Boolean(
 		tasks?.find( ( task ) => task.id === 'video_uploaded' )?.completed
@@ -155,9 +164,7 @@ export function getEnhancedTasks(
 							} );
 							window.location.assign( plansUrl );
 						},
-						badgeText: isVideoPressFlowWithUnsupportedPlan ? null : translatedPlanName,
-						completed: task.completed && ! shouldDisplayWarning,
-						warning: shouldDisplayWarning,
+						completed: task.completed && ! isVideoPressFlowWithUnsupportedPlan,
 					};
 					break;
 				case 'plan_completed':
@@ -286,7 +293,8 @@ export function getEnhancedTasks(
 				case 'blog_launched':
 					taskData = {
 						disabled:
-							( isStartWritingFlow( flow ) || isDesignFirstFlow( flow ) ) && ! planCompleted,
+							isBlogOnboardingFlow( flow ) &&
+							( ! planCompleted || ! domainUpsellCompleted || ! setupBlogCompleted ),
 						actionDispatch: () => {
 							if ( site?.ID ) {
 								const { setPendingAction, setProgressTitle } = dispatch( ONBOARD_STORE );
@@ -348,7 +356,7 @@ export function getEnhancedTasks(
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, domainUpsellCompleted, task.id );
 
-							if ( isStartWritingFlow( flow ) || isDesignFirstFlow( flow ) ) {
+							if ( isBlogOnboardingFlow( flow ) ) {
 								window.location.assign(
 									addQueryArgs( `/setup/${ flow }/domains`, {
 										siteSlug,
@@ -371,9 +379,7 @@ export function getEnhancedTasks(
 							window.location.assign( destinationUrl );
 						},
 						badge_text:
-							domainUpsellCompleted ||
-							isStartWritingFlow( flow || null ) ||
-							isDesignFirstFlow( flow || null )
+							domainUpsellCompleted || isBlogOnboardingFlow( flow )
 								? ''
 								: translate( 'Upgrade plan' ),
 					};

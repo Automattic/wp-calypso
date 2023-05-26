@@ -7,7 +7,7 @@ type SiteSubscriptionSettingsProps = {
 	emailMeNewPosts: boolean;
 	deliveryFrequency: Reader.EmailDeliveryFrequency;
 	emailMeNewComments: boolean;
-	blogId: number | string;
+	blogId: string;
 };
 
 const SiteSubscriptionSettings = ( {
@@ -20,17 +20,17 @@ const SiteSubscriptionSettings = ( {
 	const translate = useTranslate();
 
 	const { mutate: updateNotifyMeOfNewPosts, isLoading: updatingNotifyMeOfNewPosts } =
-		SubscriptionManager.useSiteNotifyMeOfNewPostsMutation();
+		SubscriptionManager.useSiteNotifyMeOfNewPostsMutation( blogId );
 	const { mutate: updateEmailMeNewPosts, isLoading: updatingEmailMeNewPosts } =
-		SubscriptionManager.useSiteEmailMeNewPostsMutation();
+		SubscriptionManager.useSiteEmailMeNewPostsMutation( blogId );
 	const { mutate: updateDeliveryFrequency, isLoading: updatingFrequency } =
-		SubscriptionManager.useSiteDeliveryFrequencyMutation();
+		SubscriptionManager.useSiteDeliveryFrequencyMutation( blogId );
 	const { mutate: updateEmailMeNewComments, isLoading: updatingEmailMeNewComments } =
-		SubscriptionManager.useSiteEmailMeNewCommentsMutation();
+		SubscriptionManager.useSiteEmailMeNewCommentsMutation( blogId );
 
 	return (
 		<div className="site-subscription-settings">
-			<h2 className="site-subscription-settings__heading">{ translate( 'Settings ' ) }</h2>
+			<h2 className="site-subscription-settings__heading">{ translate( 'Settings' ) }</h2>
 			<SiteSettings
 				// NotifyMeOfNewPosts
 				notifyMeOfNewPosts={ notifyMeOfNewPosts }

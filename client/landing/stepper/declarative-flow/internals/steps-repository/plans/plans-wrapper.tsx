@@ -16,14 +16,13 @@ import {
 	START_WRITING_FLOW,
 	isLinkInBioFlow,
 	isNewsletterFlow,
-	isStartWritingFlow,
 	NEWSLETTER_FLOW,
 	LINK_IN_BIO_FLOW,
 	HOSTING_SITE_CREATION_FLOW,
 	isHostingSiteCreationFlow,
-	isDesignFirstFlow,
 	isDomainUpsellFlow,
 	DESIGN_FIRST_FLOW,
+	isBlogOnboardingFlow,
 } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
@@ -192,8 +191,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 
 		if (
 			isNewsletterFlow( flowName ) ||
-			isStartWritingFlow( flowName ) ||
-			isDesignFirstFlow( flowName ) ||
+			isBlogOnboardingFlow( flowName ) ||
 			isLinkInBioFlow( flowName )
 		) {
 			return __( `There's a plan for you.` );
@@ -214,8 +212,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		);
 
 		if (
-			isStartWritingFlow( flowName ) ||
-			isDesignFirstFlow( flowName ) ||
+			isBlogOnboardingFlow( flowName ) ||
 			isNewsletterFlow( flowName ) ||
 			isLinkInBioFlow( flowName ) ||
 			isDomainUpsellFlow( flowName )

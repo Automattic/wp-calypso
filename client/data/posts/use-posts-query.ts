@@ -44,14 +44,12 @@ type Response = {
 };
 
 const usePostsQuery = ( siteId?: number, params: PostsRequestParams = {}, queryOptions = {} ) => {
-	return useQuery(
-		[ 'sites', siteId, 'posts', params ],
-		(): Promise< Response > => wpcom.req.get( `/sites/${ siteId }/posts`, params ),
-		{
-			enabled: !! siteId,
-			...queryOptions,
-		}
-	);
+	return useQuery( {
+		queryKey: [ 'sites', siteId, 'posts', params ],
+		queryFn: (): Promise< Response > => wpcom.req.get( `/sites/${ siteId }/posts`, params ),
+		enabled: !! siteId,
+		...queryOptions,
+	} );
 };
 
 export default usePostsQuery;

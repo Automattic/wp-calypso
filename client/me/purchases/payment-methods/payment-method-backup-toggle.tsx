@@ -27,14 +27,13 @@ export default function PaymentMethodBackupToggle( { card }: { card: StoredPayme
 	const storedDetailsId = card.stored_details_id;
 	const initialIsBackup = !! card.is_backup;
 	const queryClient = useQueryClient();
-	const { isLoading, isError, data } = useQuery< { is_backup: boolean }, Error >(
-		[ 'payment-method-backup-toggle', storedDetailsId ],
-		() => fetchIsBackup( storedDetailsId ),
-		{
-			initialData: { is_backup: initialIsBackup },
-		}
-	);
-	const mutation = useMutation( ( isBackup: boolean ) => setIsBackup( storedDetailsId, isBackup ), {
+	const { isLoading, isError, data } = useQuery< { is_backup: boolean }, Error >( {
+		queryKey: [ 'payment-method-backup-toggle', storedDetailsId ],
+		queryFn: () => fetchIsBackup( storedDetailsId ),
+		initialData: { is_backup: initialIsBackup },
+	} );
+	const mutation = useMutation( {
+		mutationFn: ( isBackup: boolean ) => setIsBackup( storedDetailsId, isBackup ),
 		onMutate: ( isBackup ) => {
 			// Optimistically update the toggle
 			queryClient.setQueryData( [ 'payment-method-backup-toggle', storedDetailsId ], {

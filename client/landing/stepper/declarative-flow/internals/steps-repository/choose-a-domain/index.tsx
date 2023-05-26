@@ -3,8 +3,7 @@ import { ProductsList } from '@automattic/data-stores';
 import {
 	DESIGN_FIRST_FLOW,
 	START_WRITING_FLOW,
-	isDesignFirstFlow,
-	isStartWritingFlow,
+	isBlogOnboardingFlow,
 } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -54,7 +53,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 	};
 
 	const onSkip = async () => {
-		if ( isStartWritingFlow( flow ) || isDesignFirstFlow( flow ) ) {
+		if ( isBlogOnboardingFlow( flow ) ) {
 			setDomain( null );
 			setDomainCartItem( undefined );
 			setHideFreePlan( false );
@@ -96,7 +95,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 		submit?.( { freeDomain: suggestion?.is_free, domainName: suggestion?.domain_name } );
 	};
 
-	const getStartWritingFlowStepContent = () => {
+	const getBlogOnboardingFlowStepContent = () => {
 		return (
 			<CalypsoShoppingCartProvider>
 				<RegisterDomainStep
@@ -178,7 +177,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 				return getVideoPressFlowStepContent();
 			case START_WRITING_FLOW:
 			case DESIGN_FIRST_FLOW:
-				return getStartWritingFlowStepContent();
+				return getBlogOnboardingFlowStepContent();
 			default:
 				return getDefaultStepContent();
 		}
@@ -206,7 +205,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 			);
 		}
 
-		if ( isStartWritingFlow( flow ) || isDesignFirstFlow( flow ) ) {
+		if ( isBlogOnboardingFlow( flow ) ) {
 			return (
 				<FormattedHeader
 					id="choose-a-domain-writer-header"
@@ -233,9 +232,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 			<QueryProductsList />
 			<StepContainer
 				stepName="chooseADomain"
-				shouldHideNavButtons={
-					isVideoPressFlow || isStartWritingFlow( flow ) || isDesignFirstFlow( flow )
-				}
+				shouldHideNavButtons={ isVideoPressFlow || isBlogOnboardingFlow( flow ) }
 				goBack={ goBack }
 				goNext={ goNext }
 				isHorizontalLayout={ false }

@@ -10,9 +10,7 @@ $plans-2023-medium-breakpoint: 1200px;
 $minWidthToGridWidthMap: (
 	780px: "668px",
 	1024px: "860px",
-	1200px: "1134px",
-	1440px: "1320px",
-	1600px: "1480px",
+	1200px: "100%",
 );
 
 
@@ -63,7 +61,7 @@ $minWidthToGridWidthMap: (
 	}
 
 	.plan-features-2023-grid__mobile-view {
-		display: block;
+		display: flex;
 
 		@media ( min-width: $plans-2023-small-breakpoint ) {
 			display: none;
@@ -96,7 +94,7 @@ $minWidthToGridWidthMap: (
 	}
 
 	.plan-features-2023-grid__mobile-view {
-		display: block;
+		display: flex;
 
 		@media ( min-width: ( $plans-2023-small-breakpoint + $plan-features-sidebar-width ) ) {
 			display: none;
@@ -133,6 +131,20 @@ $minWidthToGridWidthMap: (
 		}
 	}
 
+	.is-section-plans:not(.is-sidebar-collapsed) & {
+		@media ( min-width: $plans-2023-medium-breakpoint + $plan-features-sidebar-width ) {
+			@content;
+		}
+	}
+
+	.is-section-plans.is-sidebar-collapsed & {
+		@media ( min-width: $plans-2023-medium-breakpoint ) {
+			@content;
+		}
+	}
+}
+
+@mixin plans-section-break-medium() {
 	.is-section-plans:not(.is-sidebar-collapsed) & {
 		@media ( min-width: $plans-2023-medium-breakpoint + $plan-features-sidebar-width ) {
 			@content;

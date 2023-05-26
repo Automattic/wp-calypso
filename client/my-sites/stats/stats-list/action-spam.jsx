@@ -1,4 +1,4 @@
-import { Button, Dialog } from '@automattic/components';
+import { Dialog } from '@automattic/components';
 import { Icon, warning } from '@wordpress/icons';
 import classNames from 'classnames';
 import debugFactory from 'debug';
@@ -86,8 +86,7 @@ class StatsActionSpam extends Component {
 
 		return (
 			<li className="stats-list__spam-action module-content-list-item-action">
-				<Button
-					href="#"
+				<button
 					onClick={ this.clickHandler }
 					className={ wrapperClass }
 					title={ title }
@@ -97,7 +96,7 @@ class StatsActionSpam extends Component {
 					<span className="stats-list__spam-label module-content-list-item-action-label">
 						{ label }
 					</span>
-				</Button>
+				</button>
 				{ this.props.inHorizontalBarList && (
 					<Dialog
 						isVisible={ this.state.showConfirmDialog }

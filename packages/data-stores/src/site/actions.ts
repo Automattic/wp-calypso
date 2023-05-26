@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Design, DesignOptions } from '@automattic/design-picker/src/types';
 import { __ } from '@wordpress/i18n';
 import { SiteGoal } from '../onboard';
@@ -11,7 +10,9 @@ import {
 	AtomicSoftwareStatusError,
 	AtomicSoftwareInstallError,
 	GlobalStyles,
+	AssembleSiteOptions,
 } from './types';
+import { createCustomHomeTemplateContent } from './utils';
 import type {
 	CreateSiteParams,
 	NewSiteErrorResponse,
@@ -33,6 +34,7 @@ import type {
 	CurrentTheme,
 } from './types';
 import type { WpcomClientCredentials } from '../shared-types';
+import type { RequestTemplate } from '../templates';
 
 export function createActions( clientCreds: WpcomClientCredentials ) {
 	const fetchSite = () => ( {
@@ -403,42 +405,12 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		return activatedTheme;
 	}
 
-	function createCustomHomeTemplateContent(
-		stylesheet: string,
-		hasHeader: boolean,
-		hasFooter: boolean,
-		hasSections: boolean
-	) {
-		const content: string[] = [];
-		if ( hasHeader ) {
-			content.push(
-				`<!-- wp:template-part {"slug":"header","tagName":"header","theme":"${ stylesheet }"} /-->`
-			);
-		}
-
-		if ( hasSections ) {
-			content.push( `
-	<!-- wp:group {"tagName":"main"} -->
-		<main class="wp-block-group">
-		</main>
-	<!-- /wp:group -->` );
-		}
-
-		if ( hasFooter ) {
-			content.push(
-				`<!-- wp:template-part {"slug":"footer","tagName":"footer","theme":"${ stylesheet }","className":"site-footer-container"} /-->`
-			);
-		}
-
-		return content.join( '\n' );
-	}
-
 	function* runThemeSetupOnSite(
 		siteSlug: string,
 		selectedDesign: Design,
 		options?: DesignOptions
 	) {
-		const { recipe, verticalizable } = selectedDesign;
+		const { recipe } = selectedDesign;
 
 		/*
 		 * Anchor themes are set up directly via Headstart on the server side
@@ -455,10 +427,6 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 
 		if ( options?.posts_source_site_id ) {
 			themeSetupOptions.posts_source_site_id = options.posts_source_site_id;
-		}
-
-		if ( verticalizable ) {
-			themeSetupOptions.vertical_id = options?.verticalId;
 		}
 
 		if ( recipe?.pattern_ids ) {
@@ -543,7 +511,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		// modified Home template.
 		const activatedTheme: ActiveTheme = yield setThemeOnSite( siteSlug, theme, undefined, false );
 
-		if ( isEnabled( 'pattern-assembler/color-and-fonts' ) && globalStyles ) {
+		if ( globalStyles ) {
 			yield setGlobalStyles( siteSlug, stylesheet, globalStyles, activatedTheme );
 		}
 
@@ -565,6 +533,47 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		} );
 
 		return activatedTheme;
+	}
+
+	function* assembleSite(
+		siteSlug: string,
+		stylesheet = '',
+		{ homeHtml, headerHtml, footerHtml, globalStyles, shouldResetContent }: AssembleSiteOptions = {}
+	) {
+		const templates: RequestTemplate[] = [
+			{
+				type: 'wp_template' as const,
+				slug: 'home',
+				content: createCustomHomeTemplateContent(
+					stylesheet,
+					!! headerHtml,
+					!! footerHtml,
+					!! homeHtml,
+					homeHtml
+				),
+			},
+			{
+				type: 'wp_template_part' as const,
+				slug: 'header',
+				content: headerHtml,
+			},
+			{
+				type: 'wp_template_part' as const,
+				slug: 'footer',
+				content: footerHtml,
+			},
+		].filter( ( template: RequestTemplate ) => !! template.content );
+
+		yield wpcomRequest( {
+			path: `/sites/${ encodeURIComponent( siteSlug ) }/site-assembler`,
+			apiNamespace: 'wpcom/v2',
+			body: {
+				templates,
+				global_styles: globalStyles,
+				should_reset_content: shouldResetContent,
+			},
+			method: 'POST',
+		} );
 	}
 
 	const setSiteSetupError = ( error: string, message: string ) => ( {
@@ -612,9 +621,14 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 					? {
 							body: {
 								software_set: encodeURIComponent( softwareSet ),
+								context: softwareSet,
 							},
 					  }
-					: {} ),
+					: {
+							body: {
+								context: 'unknown',
+							},
+					  } ),
 			} );
 			yield atomicTransferSuccess( siteId, softwareSet );
 		} catch ( _ ) {
@@ -768,6 +782,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		setDesignOnSite,
 		createCustomTemplate,
 		applyThemeWithPatterns,
+		assembleSite,
 		createSite,
 		receiveSite,
 		receiveSiteFailed,

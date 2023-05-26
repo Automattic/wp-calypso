@@ -1,6 +1,6 @@
 import { Gridicon, CircularProgressBar } from '@automattic/components';
 import { OnboardSelect, useLaunchpad } from '@automattic/data-stores';
-import { isDesignFirstFlow, isStartWritingFlow } from '@automattic/onboarding';
+import { isBlogOnboardingFlow } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useRef, useState } from '@wordpress/element';
 import { Icon, copy } from '@wordpress/icons';
@@ -66,7 +66,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 	);
 
 	const showDomain =
-		! ( isStartWritingFlow( flow ) || isDesignFirstFlow( flow ) ) ||
+		! isBlogOnboardingFlow( flow ) ||
 		( checklistStatuses?.domain_upsell_deferred === true && selectedDomain );
 
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );

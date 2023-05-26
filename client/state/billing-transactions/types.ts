@@ -1,4 +1,4 @@
-import type { Purchase } from '@automattic/wpcom-checkout';
+import type { Purchase, TaxVendorInfo } from '@automattic/wpcom-checkout';
 
 export interface IndividualReceipt {
 	receipt_id: number;
@@ -65,6 +65,8 @@ export interface BillingTransaction {
 	tax_integer: number;
 
 	url: string;
+
+	tax_vendor_info?: TaxVendorInfo;
 }
 
 export interface BillingTransactionItem {

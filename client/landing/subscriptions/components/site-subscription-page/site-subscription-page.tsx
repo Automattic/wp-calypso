@@ -1,129 +1,23 @@
 import { Gridicon } from '@automattic/components';
-import { SubscriptionManager } from '@automattic/data-stores';
+import { SubscriptionManager, Reader } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
-import { useTranslate, numberFormat } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useTranslate } from 'i18n-calypso';
 import { useNavigate, useParams } from 'react-router-dom';
-import FormattedHeader from 'calypso/components/formatted-header';
-import { Notice, NoticeState, NoticeType } from 'calypso/landing/subscriptions/components/notice';
-import { SiteIcon } from 'calypso/landing/subscriptions/components/site-icon';
+import WordPressLogo from 'calypso/components/wordpress-logo';
+import { Notice, NoticeType } from 'calypso/landing/subscriptions/components/notice';
 import PoweredByWPFooter from 'calypso/layout/powered-by-wp-footer';
-import SiteSubscriptionSettings from './site-subscription-settings';
 import './styles.scss';
+import SiteSubscriptionDetails from './site-subscription-details';
 
 const SiteSubscriptionPage = () => {
 	const translate = useTranslate();
 	const navigate = useNavigate();
 	const { blogId = '' } = useParams();
-
-	const { data, isLoading, isError } =
-		SubscriptionManager.useSiteSubscriptionDetailsQuery( blogId );
-
-	const [ notice, setNotice ] = useState< NoticeState | null >( null );
-	const [ siteSubscribed, setSiteSubscribed ] = useState( true );
-
-	const {
-		mutate: subscribe,
-		isLoading: subscribing,
-		isSuccess: subscribed,
-		error: subscribeError,
-	} = SubscriptionManager.useSiteSubscribeMutation();
-
-	const {
-		mutate: unsubscribe,
-		isLoading: unsubscribing,
-		isSuccess: unsubscribed,
-		error: unsubscribeError,
-	} = SubscriptionManager.useSiteUnsubscribeMutation();
-
-	useEffect( () => {
-		if ( subscribed ) {
-			setSiteSubscribed( true );
-		}
-	}, [ subscribed ] );
-
-	useEffect( () => {
-		if ( unsubscribed ) {
-			setSiteSubscribed( false );
-		}
-	}, [ unsubscribed ] );
-
-	useEffect( () => {
-		// todo: style the button (underline, color?, etc.)
-		const Resubscribe = () => (
-			<Button
-				onClick={ () => subscribe( { blog_id: blogId } ) }
-				disabled={ subscribing || unsubscribing }
-			>
-				{ translate( 'Resubscribe' ) }
-			</Button>
-		);
-
-		if ( siteSubscribed ) {
-			setNotice( null );
-		}
-		if ( ! siteSubscribed && ! subscribeError ) {
-			setNotice( {
-				type: NoticeType.Success,
-				action: <Resubscribe />,
-				message: translate(
-					'You have successfully unsubscribed and will no longer receive emails from %s.',
-					{
-						args: [ data?.name ],
-						comment: 'Name of the site that the user has unsubscribed from.',
-					}
-				),
-			} );
-		}
-		if ( unsubscribeError ) {
-			setNotice( {
-				type: NoticeType.Error,
-				onClose: () => setNotice( null ),
-				message: translate( 'There was an error when trying to unsubscribe from %s.', {
-					args: [ data?.name ],
-					comment: 'Name of the site that the user tried to unsubscribe from.',
-				} ),
-			} );
-		}
-		if ( subscribeError ) {
-			setNotice( {
-				type: NoticeType.Error,
-				action: <Resubscribe />,
-				message: translate( 'There was an error when trying to resubscribe to %s.', {
-					args: [ data?.name ],
-					comment: 'Name of the site that the user tried to resubscribe to.',
-				} ),
-			} );
-		}
-	}, [
-		siteSubscribed,
-		unsubscribeError,
-		subscribeError,
-		subscribing,
-		unsubscribing,
-		data,
-		translate,
-		blogId,
-		subscribe,
-	] );
-
-	if ( ! blogId || isError ) {
-		return <div>Something went wrong.</div>;
-	}
+	const { data, isLoading, error } = SubscriptionManager.useSiteSubscriptionDetailsQuery( blogId );
 
 	if ( isLoading ) {
-		// Full page Wordpress logo loader
-		return <div>Loading...</div>;
+		return <WordPressLogo size={ 72 } className="wpcom-site__logo" />;
 	}
-
-	const subscriberCount = data?.subscriber_count;
-	const subHeaderText = subscriberCount
-		? translate( '%s subscriber', '%s subscribers', {
-				count: subscriberCount,
-				args: [ numberFormat( subscriberCount, 0 ) ],
-				comment: '%s is the number of subscribers. For example: "12,000,000"',
-		  } )
-		: '';
 
 	return (
 		<div className="site-subscription-page">
@@ -137,41 +31,23 @@ const SiteSubscriptionPage = () => {
 
 			<div className="site-subscription-page__centered-content">
 				<div className="site-subscription-page__main-content">
-					<header className="site-subscription-page__header site-subscription-page__centered-content">
-						<SiteIcon iconUrl={ data?.site_icon } size={ 116 } />
-						<FormattedHeader brandFont headerText={ data?.name } subHeaderText={ subHeaderText } />
-					</header>
-
-					<Notice
-						onClose={ notice?.onClose }
-						visible={ !! notice }
-						type={ notice?.type }
-						action={ notice?.action }
-					>
-						{ notice?.message }
-					</Notice>
-
-					{ siteSubscribed && (
-						<>
-							<SiteSubscriptionSettings
-								blogId={ blogId }
-								notifyMeOfNewPosts={ data.delivery_methods?.notification?.send_posts }
-								emailMeNewPosts={ data.delivery_methods?.email.send_posts }
-								deliveryFrequency={ data.delivery_methods?.email.post_delivery_frequency }
-								emailMeNewComments={ data.delivery_methods?.email.send_comments }
-							/>
-
-							<hr className="subscriptions__separator" />
-
-							<Button
-								className="site-subscription-page__unsubscribe-button"
-								isSecondary
-								onClick={ () => unsubscribe( { blog_id: blogId, url: data.URL } ) }
-								disabled={ unsubscribing }
-							>
-								{ translate( 'Cancel subscription' ) }
-							</Button>
-						</>
+					{ error || ! blogId || ! data || Reader.isErrorResponse( data ) ? (
+						<Notice
+							className="site-subscription-page__fetch-details-error"
+							type={ NoticeType.Error }
+						>
+							Subscription not found
+						</Notice>
+					) : (
+						<SiteSubscriptionDetails
+							blogId={ blogId }
+							name={ data.name }
+							subscriberCount={ data.subscriber_count }
+							dateSubscribed={ data.date_subscribed }
+							siteIcon={ data.site_icon }
+							deliveryMethods={ data.delivery_methods }
+							url={ data.URL }
+						/>
 					) }
 				</div>
 			</div>

@@ -37,14 +37,12 @@ export const getGlobalStylesInfoForSite = ( siteId: number | null ): GlobalStyle
 };
 
 export function useSiteGlobalStylesStatus( siteId: number ): GlobalStylesStatus {
-	const { data } = useQuery(
-		[ 'globalStylesInfo', siteId ],
-		() => getGlobalStylesInfoForSite( siteId ),
-		{
-			placeholderData: DEFAULT_GLOBAL_STYLES_INFO,
-			refetchOnWindowFocus: false,
-		}
-	);
+	const { data } = useQuery( {
+		queryKey: [ 'globalStylesInfo', siteId ],
+		queryFn: () => getGlobalStylesInfoForSite( siteId ),
+		placeholderData: DEFAULT_GLOBAL_STYLES_INFO,
+		refetchOnWindowFocus: false,
+	} );
 
 	return data ?? DEFAULT_GLOBAL_STYLES_INFO;
 }

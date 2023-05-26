@@ -13,14 +13,13 @@ import {
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	PlanSlug,
 } from '@automattic/calypso-products';
-import { Gridicon } from '@automattic/components';
+import { Gridicon, JetpackLogo } from '@automattic/components';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo } from '@wordpress/element';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback, useEffect, ChangeEvent } from 'react';
-import JetpackLogo from 'calypso/components/jetpack-logo';
 import { FeatureObject, getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-is-plan-upgrade-credit-visible';
 import PlanTypeSelector, {
@@ -379,11 +378,17 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 } ) => {
 	const { planName, planConstantObj, availableForPurchase, current, ...planPropertiesObj } =
 		planProperties;
-	const highlightLabel = useHighlightLabel( { planName, flowName, currentSitePlanSlug } );
+	const highlightLabel = useHighlightLabel( {
+		planName,
+		flowName,
+		currentSitePlanSlug,
+		selectedPlan,
+	} );
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
 		visiblePlans: visiblePlansProperties,
 		flowName,
 		currentSitePlanSlug,
+		selectedPlan,
 	} );
 	const headerClasses = classNames( 'plan-comparison-grid__header-cell', getPlanClass( planName ), {
 		'popular-plan-parent-class': highlightLabel,
@@ -545,6 +550,7 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	isStorageFeature: boolean;
 	flowName: string;
 	currentSitePlanSlug?: string;
+	selectedPlan?: string;
 } > = ( {
 	feature,
 	visiblePlansProperties,
@@ -553,14 +559,21 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	isStorageFeature,
 	flowName,
 	currentSitePlanSlug,
+	selectedPlan,
 } ) => {
 	const translate = useTranslate();
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
 		visiblePlans: visiblePlansProperties,
 		flowName,
 		currentSitePlanSlug,
+		selectedPlan,
 	} );
-	const highlightLabel = useHighlightLabel( { planName, flowName, currentSitePlanSlug } );
+	const highlightLabel = useHighlightLabel( {
+		planName,
+		flowName,
+		currentSitePlanSlug,
+		selectedPlan,
+	} );
 	const featureSlug = feature?.getSlug();
 	const hasFeature =
 		isStorageFeature ||
@@ -639,6 +652,7 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	flowName: string;
 	currentSitePlanSlug?: string;
 	isHighlighted: boolean;
+	selectedPlan?: string;
 } > = ( {
 	feature,
 	isHiddenInMobile,
@@ -650,6 +664,7 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	flowName,
 	currentSitePlanSlug,
 	isHighlighted,
+	selectedPlan,
 } ) => {
 	const translate = useTranslate();
 	const rowClasses = classNames( 'plan-comparison-grid__feature-group-row', {
@@ -702,6 +717,7 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 					isStorageFeature={ isStorageFeature }
 					flowName={ flowName }
 					currentSitePlanSlug={ currentSitePlanSlug }
+					selectedPlan={ selectedPlan }
 				/>
 			) ) }
 		</Row>
@@ -974,6 +990,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 									flowName={ flowName }
 									currentSitePlanSlug={ currentSitePlanSlug }
 									isHighlighted={ feature.getSlug() === selectedFeature }
+									selectedPlan={ selectedPlan }
 								/>
 							) ) }
 							{ featureGroup.slug === FEATURE_GROUP_ESSENTIAL_FEATURES ? (
@@ -988,6 +1005,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 									flowName={ flowName }
 									currentSitePlanSlug={ currentSitePlanSlug }
 									isHighlighted={ false }
+									selectedPlan={ selectedPlan }
 								/>
 							) : null }
 						</div>

@@ -1,9 +1,8 @@
 import { is2023PricingGridActivePage } from '@automattic/calypso-products';
 import {
-	isDesignFirstFlow,
+	isBlogOnboardingFlow,
 	isDomainUpsellFlow,
 	isHostingSiteCreationFlow,
-	isStartWritingFlow,
 	StepContainer,
 } from '@automattic/onboarding';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -19,7 +18,7 @@ const plans: Step = function Plans( { navigation, flow } ) {
 			plan,
 		};
 
-		if ( isDomainUpsellFlow( flow ) || isStartWritingFlow( flow ) || isDesignFirstFlow( flow ) ) {
+		if ( isDomainUpsellFlow( flow ) || isBlogOnboardingFlow( flow ) ) {
 			providedDependencies.goToCheckout = true;
 		}
 
