@@ -219,7 +219,7 @@ export class PluginsList extends Component< Props, State > {
 			if ( this.isSelected( plugin ) ) {
 				return Object.keys( plugin.sites ).some( ( siteId ) => {
 					const sitePlugin = getSitePlugin( plugin, siteId, this.props.pluginsOnSites );
-					const site = this.props.allSites.find( ( s ) => s && s.ID === parseInt( siteId ) );
+					const site = this.props.allSites.find( ( s ) => s?.ID === parseInt( siteId ) );
 					return site && sitePlugin?.update?.new_version && site.canUpdateFiles;
 				} );
 			}
