@@ -4,7 +4,7 @@ import { __experimentalMainDashboardButton as MainDashboardButton } from '@wordp
 import { useEffect, createPortal, useState } from '@wordpress/element';
 import { registerPlugin as originalRegisterPlugin, PluginSettings } from '@wordpress/plugins';
 import { getQueryArg } from '@wordpress/url';
-import useSiteIntent from '../../dotcom-fse/lib/site-intent/use-site-intent';
+import useLaunchpadTasksCompleted from '../../dotcom-fse/lib/launchpad/use-launchpad';
 import WpcomBlockEditorNavSidebar from './components/nav-sidebar';
 import ToggleSidebarButton from './components/toggle-sidebar-button';
 
@@ -36,10 +36,18 @@ if ( typeof MainDashboardButton !== 'undefined' ) {
 				// eslint-disable-next-line react-hooks/exhaustive-deps
 			}, [] );
 
-			const { siteIntent: intent } = useSiteIntent();
+			const {
+				launchpadSiteIntent: intent,
+				launchpadTasksCompleted,
+				launchpadFetched,
+			} = useLaunchpadTasksCompleted();
+
+			const hasStartWritingFlowActiveFromApi = launchpadFetched
+				? intent === START_WRITING_FLOW && ! launchpadTasksCompleted
+				: false;
 			// We check the URL param along with site intent because the param loads faster and prevents element flashing.
 			const isStartWritingFlow =
-				intent === START_WRITING_FLOW ||
+				hasStartWritingFlowActiveFromApi ||
 				getQueryArg( window.location.search, START_WRITING_FLOW ) === 'true';
 
 			const [ clickGuardRoot ] = useState( () => document.createElement( 'div' ) );
