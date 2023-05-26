@@ -38,7 +38,6 @@ import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { isDiscoverPost, isDiscoverSitePick } from 'calypso/reader/discover/helper';
 import DiscoverSiteAttribution from 'calypso/reader/discover/site-attribution';
-import { READER_FULL_POST } from 'calypso/reader/follow-sources';
 import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import LikeButton from 'calypso/reader/like-button';
@@ -640,7 +639,6 @@ export class FullPostView extends Component {
 									maxDepth={ 1 }
 									commentsFilterDisplay={ COMMENTS_FILTER_ALL }
 									showConversationFollowButton={ true }
-									followSource={ READER_FULL_POST }
 									shouldPollForNewComments={ config.isEnabled( 'reader/comment-polling' ) }
 									shouldHighlightNew={ true }
 								/>

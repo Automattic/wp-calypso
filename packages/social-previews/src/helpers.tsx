@@ -1,3 +1,6 @@
+import { createInterpolateElement } from '@wordpress/element';
+import { sprintf } from '@wordpress/i18n';
+
 export type Formatter = ( text: string, options?: any ) => string;
 type AugmentFormatterReturnType< T extends Formatter, TNewReturn > = (
 	...a: Parameters< T >
@@ -49,20 +52,36 @@ export const formatTweetDate = new Intl.DateTimeFormat( 'en-US', {
 	day: 'numeric',
 } ).format;
 
-type Platform = 'twitter' | 'facebook' | 'linkedin' | 'instagram';
+export type Platform = 'twitter' | 'facebook' | 'linkedin' | 'instagram' | 'mastodon';
 
 type PreviewTextOptions = {
 	platform: Platform;
 	maxChars?: number;
 	maxLines?: number;
 	hyperlinkUrls?: boolean;
+	hyperlinkHashtags?: boolean;
+};
+
+export const hashtagUrlMap: Record< Platform, string > = {
+	twitter: 'https://twitter.com/hashtag/%s',
+	facebook: 'https://www.facebook.com/hashtag/%s',
+	linkedin: 'https://www.linkedin.com/feed/hashtag/?keywords=%s',
+	instagram: 'https://www.instagram.com/explore/tags/%s',
+	mastodon: 'https://mastodon.social/tags/%s',
 };
 
 /**
  * Prepares the text for the preview.
  */
-export function preparePreviewText( text: string, options: PreviewTextOptions ): string {
-	const { platform, maxChars, maxLines, hyperlinkUrls = true } = options;
+export function preparePreviewText( text: string, options: PreviewTextOptions ): React.ReactNode {
+	const {
+		platform,
+		maxChars,
+		maxLines,
+		hyperlinkHashtags = true,
+		// Instagram doesn't support hyperlink URLs at the moment.
+		hyperlinkUrls = 'instagram' !== platform,
+	} = options;
 
 	let result = stripHtmlTags( text );
 
@@ -78,35 +97,91 @@ export function preparePreviewText( text: string, options: PreviewTextOptions ):
 		}
 	}
 
+	const componentMap: Record< string, React.ReactNode > = {};
+
 	if ( hyperlinkUrls ) {
 		// Convert URLs to hyperlinks.
-		result = result.replace(
-			// TODO: Use a better regex here to match the URLs without protocol.
-			/(https?:\/\/\S+)/g,
-			'<a href="$1" rel="noopener noreferrer" target="_blank">$1</a>'
-		);
+		// TODO: Use a better regex here to match the URLs without protocol.
+		const urls = result.match( /(https?:\/\/\S+)/g ) || [];
+
+		/**
+		 * BEFORE:
+		 * result = 'Check out this cool site: https://wordpress.org and this one: https://wordpress.com'
+		 */
+		urls.forEach( ( url, index ) => {
+			// Add the element to the component map.
+			componentMap[ `Link${ index }` ] = (
+				<a href={ url } rel="noopener noreferrer" target="_blank">
+					{ url }
+				</a>
+			);
+			// Replace the URL with the component placeholder.
+			result = result.replace( url, `<Link${ index } />` );
+		} );
+		/**
+		 * AFTER:
+		 * result = 'Check out this cool site: <Link0 /> and this one: <Link1 />'
+		 * componentMap = {
+		 *     Link0: <a href="https://wordpress.org" ...>https://wordpress.org</a>,
+		 *     Link1: <a href="https://wordpress.com" ...>https://wordpress.com</a>
+		 * }
+		 */
 	}
 
-	let hashtagUrl;
+	// Convert hashtags to hyperlinks.
+	if ( hyperlinkHashtags && hashtagUrlMap[ platform ] ) {
+		/**
+		 * We need to ensure that only the standalone hashtags are matched.
+		 * For example, we don't want to match the hash in the URL.
+		 * Thus we need to match the whitespace character before the hashtag or the beginning of the string.
+		 */
+		const hashtags = result.matchAll( /(^|\s)#(\w+)/g );
 
-	if ( 'twitter' === platform ) {
-		hashtagUrl = 'https://twitter.com/hashtag/';
-	} else if ( 'linkedin' === platform ) {
-		hashtagUrl = 'https://www.linkedin.com/feed/hashtag/?keywords=';
-	} else if ( 'instagram' === platform ) {
-		hashtagUrl = 'https://www.instagram.com/explore/tags/';
-	}
+		const hashtagUrl = hashtagUrlMap[ platform ];
 
-	if ( hashtagUrl ) {
-		// Convert hashtags to hyperlinks.
-		result = result.replace(
-			/(^|\s)#(\w+)/g,
-			'$1<a href="' + hashtagUrl + '$2" rel="noopener noreferrer" target="_blank">#$2</a>'
-		);
+		/**
+		 * BEFORE:
+		 * result = `#breaking text with a #hashtag on the #web
+		 * with a url https://github.com/Automattic/wp-calypso#security that has a hash in it`
+		 */
+		[ ...hashtags ].forEach( ( [ fullMatch, whitespace, hashtag ], index ) => {
+			const url = sprintf( hashtagUrl, hashtag );
+
+			// Add the element to the component map.
+			componentMap[ `Hashtag${ index }` ] = (
+				<a href={ url } rel="noopener noreferrer" target="_blank">
+					{ `#${ hashtag }` }
+				</a>
+			);
+
+			// Replace the hashtag with the component placeholder.
+			result = result.replace( fullMatch, `${ whitespace }<Hashtag${ index } />` );
+		} );
+		/**
+		 * AFTER:
+		 * result = `<Hashtag0 /> text with a <Hashtag1 /> on the <Hashtag2 />
+		 * with a url https://github.com/Automattic/wp-calypso#security that has a hash in it`
+		 *
+		 * componentMap = {
+		 *    Hashtag0: <a href="https://twitter.com/hashtag/breaking" ...>#breaking</a>,
+		 *    Hashtag1: <a href="https://twitter.com/hashtag/hashtag" ...>#hashtag</a>,
+		 *    Hashtag2: <a href="https://twitter.com/hashtag/web" ...>#web</a>
+		 * }
+		 */
 	}
 
 	// Convert newlines to <br> tags.
-	result = result.replace( /\n/g, '<br/>' );
+	/**
+	 * BEFORE:
+	 * result = 'This is a text\nwith a newline\nin it'
+	 */
+	result = result.replace( /\n/g, '<br />' );
+	componentMap.br = <br />;
+	/**
+	 * AFTER:
+	 * result = 'This is a text<br />with a newline<br />in it'
+	 * componentMap = { br: <br /> }
+	 */
 
-	return result;
+	return createInterpolateElement( result, componentMap );
 }

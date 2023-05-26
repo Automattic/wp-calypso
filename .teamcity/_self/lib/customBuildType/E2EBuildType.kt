@@ -2,6 +2,7 @@ package _self.lib.customBuildType
 
 import Settings
 import _self.bashNodeScript
+import jetbrains.buildServer.configs.kotlin.v2019_2.AbsoluteId
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildSteps
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
@@ -56,6 +57,7 @@ open class E2EBuildType(
 	var enableCommitStatusPublisher: Boolean = false,
 	var buildTriggers: Triggers.() -> Unit = {},
 	var buildDependencies: Dependencies.() -> Unit = {},
+	var addWpcomVcsRoot: Boolean = false,
 
 ): BuildType() {
 	init {
@@ -68,6 +70,7 @@ open class E2EBuildType(
 		val buildTriggers = buildTriggers
 		val buildDependencies = buildDependencies
 		val params = params
+		val addWpcomVcsRoot = addWpcomVcsRoot
 
 		id( buildId )
 		uuid = buildUuid
@@ -83,6 +86,9 @@ open class E2EBuildType(
 
 		vcs {
 			root(Settings.WpCalypso)
+			if (addWpcomVcsRoot) {
+				root(AbsoluteId("wpcom"), "-:.")
+			}
 			cleanCheckout = true
 		}
 

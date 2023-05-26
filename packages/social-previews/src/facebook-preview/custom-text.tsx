@@ -1,5 +1,5 @@
-import { hasTag } from '../helpers';
-import { facebookCustomText } from './helpers';
+import { hasTag, preparePreviewText } from '../helpers';
+import { CUSTOM_TEXT_LENGTH } from './helpers';
 
 type Props = {
 	text: string;
@@ -25,10 +25,12 @@ const CustomText: React.FC< Props > = ( { text, url, forceUrlDisplay } ) => {
 
 	return (
 		<p className="facebook-preview__custom-text">
-			<span
-				// eslint-disable-next-line react/no-danger
-				dangerouslySetInnerHTML={ { __html: facebookCustomText( text, { allowedTags: [ 'a' ] } ) } }
-			/>
+			<span>
+				{ preparePreviewText( text, {
+					platform: 'facebook',
+					maxChars: CUSTOM_TEXT_LENGTH,
+				} ) }
+			</span>
 			{ postLink }
 		</p>
 	);

@@ -97,17 +97,10 @@ const SettingsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 
 const SiteLogsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
-	const hasFeatureSFTP = useSafeSiteHasFeature( site.ID, FEATURE_SFTP );
-
-	const href = hasFeatureSFTP
-		? getSiteLogsUrl( site.slug )
-		: // There's no upsell message on the logging page, so we send users to the hosting page instead.
-		  getHostingConfigUrl( site.slug );
 
 	return (
 		<MenuItemLink
-			info={ ! hasFeatureSFTP && __( 'Requires a Business Plan' ) }
-			href={ href }
+			href={ getSiteLogsUrl( site.slug ) }
 			onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_site_logs_click' ) }
 		>
 			{ __( 'Site logs' ) }
@@ -420,7 +413,7 @@ export const SitesEllipsisMenu = ( {
 					{ ! isWpcomStagingSite && ! isLaunched && <LaunchItem { ...props } /> }
 					<SettingsItem { ...props } />
 					{ hasHostingFeatures && <HostingConfigurationSubmenu { ...props } /> }
-					{ hasHostingFeatures && <SiteLogsItem { ...props } /> }
+					{ site.is_wpcom_atomic && <SiteLogsItem { ...props } /> }
 					{ ! isP2Site( site ) && <ManagePluginsItem { ...props } /> }
 					{ site.is_coming_soon && <PreviewSiteModalItem { ...props } /> }
 					{ ! isWpcomStagingSite && shouldShowSiteCopyItem && (

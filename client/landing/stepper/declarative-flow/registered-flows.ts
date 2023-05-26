@@ -3,6 +3,7 @@ import {
 	START_WRITING_FLOW,
 	CONNECT_DOMAIN_FLOW,
 	HOSTING_SITE_CREATION_FLOW,
+	DESIGN_FIRST_FLOW,
 } from '@automattic/onboarding';
 import type { Flow } from '../declarative-flow/internals/types';
 
@@ -79,6 +80,9 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	[ START_WRITING_FLOW ]: () =>
 		import( /* webpackChunkName: "start-writing-flow" */ './start-writing' ),
+
+	[ DESIGN_FIRST_FLOW ]: () =>
+		import( /* webpackChunkName: "design-first-flow" */ './design-first' ),
 
 	[ CONNECT_DOMAIN_FLOW ]: () =>
 		import( /* webpackChunkName: "connect-domain" */ '../declarative-flow/connect-domain' ),

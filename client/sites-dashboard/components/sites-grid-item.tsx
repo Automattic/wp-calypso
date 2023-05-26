@@ -7,7 +7,6 @@ import { useI18n } from '@wordpress/react-i18n';
 import { memo } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
-import { useCheckSiteTransferStatus } from '../hooks/use-check-site-transfer-status';
 import { displaySiteUrl, getDashboardUrl, isStagingSite } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import { SitesGridActionRenew } from './sites-grid-action-renew';
@@ -21,6 +20,7 @@ import { SiteUrl, Truncated } from './sites-site-url';
 import SitesStagingBadge from './sites-staging-badge';
 import TransferNoticeWrapper from './sites-transfer-notice-wrapper';
 import { ThumbnailLink } from './thumbnail-link';
+import { WithAtomicTransfer } from './with-atomic-transfer';
 
 const SIZES_ATTR = [
 	'(min-width: 1345px) calc((1280px - 64px) / 3)',
@@ -107,10 +107,6 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 	const isWpcomStagingSite = isStagingSite( site );
 	const translatedStatus = useSiteLaunchStatusLabel( site );
 	const isECommerceTrialSite = site.plan?.product_slug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
-	const { isTransferring, wasTransferring, isTransferCompleted, isErrored } =
-		useCheckSiteTransferStatus( {
-			siteId: site.ID,
-		} );
 
 	const { ref, inView } = useInView( { triggerOnce: true } );
 
@@ -185,14 +181,15 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 					<SiteUrl href={ siteUrl } title={ siteUrl }>
 						<Truncated>{ displaySiteUrl( siteUrl ) }</Truncated>
 					</SiteUrl>
-					{ ! wasTransferring && showLaunchNag && <SiteLaunchNag site={ site } /> }
-					{ wasTransferring && (
-						<TransferNoticeWrapper
-							isTransfering={ isTransferring }
-							isTransferCompleted={ isTransferCompleted }
-							hasError={ isErrored }
-						/>
-					) }
+					<WithAtomicTransfer site={ site }>
+						{ ( result ) =>
+							result.wasTransferring ? (
+								<TransferNoticeWrapper { ...result } />
+							) : (
+								<>{ showLaunchNag && <SiteLaunchNag site={ site } /> }</>
+							)
+						}
+					</WithAtomicTransfer>
 				</SitesGridItemSecondary>
 			}
 		/>
