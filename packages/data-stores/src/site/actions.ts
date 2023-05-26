@@ -538,7 +538,14 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 	function* assembleSite(
 		siteSlug: string,
 		stylesheet = '',
-		{ homeHtml, headerHtml, footerHtml, globalStyles, shouldResetContent }: AssembleSiteOptions = {}
+		{
+			homeHtml,
+			headerHtml,
+			footerHtml,
+			globalStyles,
+			shouldResetContent,
+			setSiteSetupOption,
+		}: AssembleSiteOptions = {}
 	) {
 		const templates: RequestTemplate[] = [
 			{
@@ -571,6 +578,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 				templates,
 				global_styles: globalStyles,
 				should_reset_content: shouldResetContent,
+				set_site_setup_option: setSiteSetupOption,
 			},
 			method: 'POST',
 		} );

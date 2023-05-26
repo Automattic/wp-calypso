@@ -398,7 +398,7 @@ const PatternAssembler = ( {
 							// Newly created sites should reset the starter content created from the default Headstart annotation
 							shouldResetContent: isNewSite,
 							// Also, new sites except for virtual themes set the option wpcom_site_setup=assembler
-							shouldSetSiteSetupOption: ( isNewSite && ! design.is_virtual ) ?? 'assembler',
+							setSiteSetupOption: ( isNewSite && ! design.is_virtual ) ?? 'assembler',
 						} )
 					)
 			);
