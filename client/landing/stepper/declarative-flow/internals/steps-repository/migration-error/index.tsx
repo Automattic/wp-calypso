@@ -26,11 +26,11 @@ const MigrationError: Step = function ( props ) {
 			className={ classnames( 'import__onboarding-page', 'import__error-message' ) }
 			stepName="migration-error"
 			hideSkip={ true }
+			hideBack={ true }
 			hideFormattedHeader={ true }
 			isWideLayout={ true }
 			stepContent={ renderError() }
 			recordTracksEvent={ recordTracksEvent }
-			goBack={ goToMigrationHandler }
 		/>
 	);
 };
