@@ -293,7 +293,7 @@ export type AllowedMonitorContactActions = 'add' | 'verify' | 'edit' | 'remove';
 export interface RequestVerificationCodeParams {
 	type: 'email';
 	value: string;
-	site_id: number;
+	site_ids: Array< number >;
 }
 
 export interface ValidateVerificationCodeParams {

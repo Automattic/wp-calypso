@@ -165,7 +165,7 @@ export default function EmailAddressEditor( {
 		requestVerificationCode.mutate( {
 			type: 'email',
 			value: emailItem.email,
-			site_id: sites[ 0 ].blog_id, // Fix this when we support multiple sites
+			site_ids: sites?.map( ( site ) => site.blog_id ) ?? [],
 		} );
 	};
 
