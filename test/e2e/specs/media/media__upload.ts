@@ -1,5 +1,5 @@
 /**
- * @group calypso-loop
+ * @group calypso-pr
  * @group jetpack-remote-site
  * @group jetpack-wpcom-integration
  */

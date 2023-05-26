@@ -1,4 +1,5 @@
 /**
+ * @group calypso-pr
  */
 
 import { DataHelper, SecretsManager, StartImportFlow, TestAccount } from '@automattic/calypso-e2e';
