@@ -20,6 +20,27 @@
 		}
 	}
 
+	.step-container__header .formatted-header {
+		margin: 16px;
+
+		.formatted-header__title {
+			text-align: left;
+
+			@include break-small {
+				text-align: center;
+			}
+		}
+
+		.formatted-header__subtitle {
+			text-align: left;
+			margin-top: 5px;
+
+			@include break-small {
+				text-align: center;
+			}
+		}
+	}
+
 	&__top-content {
 		display: flex;
 		flex-direction: column;
