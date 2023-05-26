@@ -284,7 +284,7 @@ export class PluginsList extends Component< Props, State > {
 			.filter( ( plugin: Plugin ) => ! isDeactivatingOrRemovingAndJetpackSelected( plugin.slug ) ) // ignore sites that are deactivating, activating or removing jetpack
 			.map( ( p: Plugin ) => {
 				return Object.keys( p.sites ).map( ( siteId ) => {
-					const site = this.props.allSites.find( ( s ) => s && s.ID === parseInt( siteId ) );
+					const site = this.props.allSites.find( ( s ) => s?.ID === parseInt( siteId ) );
 					return {
 						site,
 						plugin: p,
