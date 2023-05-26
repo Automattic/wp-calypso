@@ -138,6 +138,7 @@ describe( '<PluginRowFormatter>', () => {
 		expect( toggleButton ).toHaveProperty( 'checked', true );
 	} );
 
+	// TODO: fix along with the above.
 	test.skip( 'should render correctly and show auto-update and toggle checked value', async () => {
 		props.columnKey = 'autoupdate';
 		const { container } = render( <PluginRowFormatter { ...props } /> );
