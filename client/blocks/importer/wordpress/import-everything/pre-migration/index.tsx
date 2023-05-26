@@ -4,8 +4,12 @@ import { SiteDetails } from '@automattic/data-stores';
 import { NextButton, Title } from '@automattic/onboarding';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import {
+	useSiteMigrateInfo,
+	useSiteCanMigrate,
+} from 'calypso/blocks/importer/hooks/use-site-can-migrate';
 import { formatSlugToURL } from 'calypso/blocks/importer/util';
 import MigrationCredentialsForm from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/migration-credentials-form';
 import { PreMigrationUpgradePlan } from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/upgrade-plan';
@@ -24,6 +28,7 @@ import { requestSites } from 'calypso/state/sites/actions';
 import { isRequestingSites, getSite } from 'calypso/state/sites/selectors';
 import { CredentialsHelper } from './credentials-helper';
 import { StartImportTrackingProps } from './types';
+
 import './style.scss';
 
 interface PreMigrationProps {
@@ -64,7 +69,33 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		dispatch( recordTracksEvent( 'calypso_site_migration_credentials_form_toggle' ) );
 	};
 
-	const [ sourceSiteId, setSourceSiteId ] = useState( 0 );
+	const canSiteMigrate = useSiteCanMigrate( isMigrateFromWp );
+
+	const onMigrationEnabledSuccess = ( data: MigrationEnabledResponse ) => {
+		const needsToBlock = ! canSiteMigrate( data );
+		if ( needsToBlock !== showUpgradePluginInfo ) {
+			setShowUpgradePluginInfo( needsToBlock );
+		}
+	};
+
+	const onMigrationEnabledError = () => {
+		setShowUpgradePluginInfo( true );
+	};
+
+	const {
+		refetch,
+		isFetching: migrationEnabledFetching,
+		data: migrationEnabledData,
+	} = useMigrationEnabledInfoQuery(
+		targetSite?.ID ?? 0,
+		sourceSiteSlug,
+		fetchMigrationEnabledOnMount,
+		onMigrationEnabledSuccess,
+		onMigrationEnabledError
+	);
+
+	const { sourceSiteId } = useSiteMigrateInfo( migrationEnabledData as MigrationEnabledResponse );
+
 	const sourceSite = useSelector( ( state ) => getSite( state, sourceSiteId ) );
 
 	const credentials = useSelector( ( state ) =>
@@ -87,49 +118,6 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		setSelectedProtocol( protocol );
 	};
 
-	const shouldBlockedByPluginUpgradeCheck = useCallback(
-		( data: MigrationEnabledResponse | unknown ) => {
-			let shouldBlockedByPluginUpgradeCheck = true;
-			if ( ! data ) {
-				return shouldBlockedByPluginUpgradeCheck;
-			}
-			const { jetpack_activated, jetpack_compatible, migration_activated, migration_compatible } =
-				data as MigrationEnabledResponse;
-			if ( isMigrateFromWp && migration_activated && migration_compatible ) {
-				shouldBlockedByPluginUpgradeCheck = false;
-			} else if ( jetpack_activated && jetpack_compatible ) {
-				shouldBlockedByPluginUpgradeCheck = false;
-			}
-			return shouldBlockedByPluginUpgradeCheck;
-		},
-		[ isMigrateFromWp ]
-	);
-
-	const checkMigrationEnabledCallback = ( migrationEnabledData: MigrationEnabledResponse ) => {
-		const shouldShowUpgradePluginInfo = shouldBlockedByPluginUpgradeCheck( migrationEnabledData );
-		setShowUpgradePluginInfo( shouldShowUpgradePluginInfo );
-		if ( shouldShowUpgradePluginInfo ) {
-			setSourceSiteId( 0 );
-			return;
-		}
-		const { source_blog_id } = migrationEnabledData;
-		if ( ! sourceSiteId ) {
-			setSourceSiteId( source_blog_id );
-			dispatch( requestSites() );
-		}
-	};
-
-	const {
-		refetch,
-		isError: migrationEnabledError,
-		isFetching: migrationEnabledFetching,
-	} = useMigrationEnabledInfoQuery(
-		targetSite?.ID ?? 0,
-		sourceSiteSlug,
-		fetchMigrationEnabledOnMount,
-		checkMigrationEnabledCallback
-	);
-
 	const onUpgradeAndMigrateClick = () => {
 		setContinueImport( true );
 		refetch();
@@ -143,29 +131,21 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 	}, [ isTargetSitePlanCompatible, sourceSiteId, dispatch ] );
 
 	useEffect( () => {
-		if ( migrationEnabledError ) {
-			setShowUpgradePluginInfo( true );
-		}
-	}, [ migrationEnabledError ] );
-
-	useEffect( () => {
-		// If we are blocked by plugin upgrade check, we do not need to request sites
+		// If we are blocked by plugin upgrade check or has continueImport set to false, we do not start the migration
 		if ( showUpgradePluginInfo || ! continueImport ) {
 			return;
 		}
 		if ( sourceSite ) {
 			startImport();
-		} else if ( ! isRequestingAllSites ) {
+		}
+	}, [ continueImport, sourceSite, startImport, showUpgradePluginInfo ] );
+
+	useEffect( () => {
+		// If has source site id and we do not have the source site, it means the data is not update to date, so we request the site
+		if ( sourceSiteId && ! sourceSite && ! isRequestingAllSites ) {
 			dispatch( requestSites() );
 		}
-	}, [
-		continueImport,
-		sourceSite,
-		isRequestingAllSites,
-		startImport,
-		dispatch,
-		showUpgradePluginInfo,
-	] );
+	}, [ sourceSiteId, sourceSite, isRequestingAllSites, dispatch ] );
 
 	function renderCredentialsFormSection() {
 		// We do not show the credentials form if we already have credentials
