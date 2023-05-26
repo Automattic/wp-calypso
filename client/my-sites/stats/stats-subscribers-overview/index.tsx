@@ -97,7 +97,7 @@ const SubscribersOverview: React.FC< SubscribersOverviewProps > = ( { siteId } )
 				<div className="highlight-cards-list">
 					{ overviewCardStats.map( ( overviewCardStat ) => (
 						<CountComparisonCard
-							key={ overviewCardStat.count }
+							key={ overviewCardStat.count.toString() }
 							heading={ overviewCardStat.heading }
 							count={ overviewCardStat.count }
 							showValueTooltip
