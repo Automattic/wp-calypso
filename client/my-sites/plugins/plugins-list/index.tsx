@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { WPCOM_FEATURES_MANAGE_PLUGINS } from '@automattic/calypso-products';
-import { localize, translate } from 'i18n-calypso';
+import { localize, I18N } from 'i18n-calypso';
 import { isEqual, reduce } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -49,7 +49,7 @@ interface Props {
 	allSites: ReturnType< typeof getSites >;
 	pluginsOnSites: ReturnType< typeof getPluginsOnSites >;
 	removePluginStatuses: typeof removePluginStatuses;
-	translate: typeof translate;
+	translate: I18N[ 'translate' ];
 	removePlugin: typeof removePlugin;
 	updatePlugin: typeof updatePlugin;
 	activatePlugin: typeof activatePlugin;
