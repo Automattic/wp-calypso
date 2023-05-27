@@ -55,9 +55,8 @@ const GoogleAnalyticsJetpackForm = ( {
 		? 'https://wordpress.com/support/google-analytics/'
 		: 'https://jetpack.com/support/google-analytics/';
 	const nudgeTitle = translate( 'Connect your site to Google Analytics' );
-	// TODO: it would be better to get wooCommercePlugin directly in form-google-analytics using getAllPluginsIndexedByPluginSlug
 	const wooCommercePlugin = find( sitePlugins, { slug: 'woocommerce' } );
-	const wooCommerceActive = wooCommercePlugin ? wooCommercePlugin.sites[ siteId ].active : false;
+	const wooCommerceActive = wooCommercePlugin ? wooCommercePlugin.active : false;
 
 	useEffect( () => {
 		if ( jetpackModuleActive ) {
