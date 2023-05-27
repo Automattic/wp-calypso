@@ -21,7 +21,7 @@ const MastodonPostHeader: React.FC< Props > = ( { user } ) => {
 							__( 'anonymous-user', 'social-previews' ) }
 					</div>
 					<div className="mastodon-preview__post-header-username">
-						{ address?.replace( DEFAULT_MASTODON_INSTANCE, '' ) }
+						{ address?.replace( `@${ DEFAULT_MASTODON_INSTANCE }`, '' ) }
 					</div>
 				</div>
 			</div>
