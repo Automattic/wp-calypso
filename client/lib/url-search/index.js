@@ -20,7 +20,9 @@ const debug = debugFactory( 'calypso:url-search' );
  * @returns {string} The built search url
  */
 export const buildSearchUrl = ( { uri, search, queryKey = 's' } ) => {
-	// const parsedUrl = pick( url.parse( uri, true ), 'pathname', 'hash', 'query' );
+	if ( ! uri.startsWith( 'http' ) ) {
+		uri = 'https://' + uri;
+	}
 	const parsedUrl = new URL( uri );
 	if ( search ) {
 		// Note: spaces in the search term are automatically converted to +
