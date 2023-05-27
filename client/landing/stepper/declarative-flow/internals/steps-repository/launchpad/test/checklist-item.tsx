@@ -1,9 +1,9 @@
 /**
  * @jest-environment jsdom
  */
+import { ChecklistItem } from '@automattic/launchpad';
 import { render, screen } from '@testing-library/react';
 import React from 'react';
-import ChecklistItem from '../checklist-item';
 import { buildTask } from './lib/fixtures';
 
 describe( 'ChecklistItem', () => {
