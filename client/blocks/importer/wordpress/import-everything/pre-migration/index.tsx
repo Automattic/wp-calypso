@@ -6,26 +6,19 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-	useSiteMigrateInfo,
-	useSiteCanMigrate,
-} from 'calypso/blocks/importer/hooks/use-site-can-migrate';
+import { useSiteMigrateInfo } from 'calypso/blocks/importer/hooks/use-site-can-migrate';
 import { formatSlugToURL } from 'calypso/blocks/importer/util';
 import MigrationCredentialsForm from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/migration-credentials-form';
 import { PreMigrationUpgradePlan } from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/upgrade-plan';
 import { UpgradePluginInfo } from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/upgrade-plugins';
 import { FormState } from 'calypso/components/advanced-credentials/form';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import { MigrationEnabledResponse } from 'calypso/data/site-migration/types';
-import { useMigrationEnabledInfoQuery } from 'calypso/data/site-migration/use-migration-enabled';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCredentials } from 'calypso/state/jetpack/credentials/actions';
 import getJetpackCredentials from 'calypso/state/selectors/get-jetpack-credentials';
 import isRequestingSiteCredentials from 'calypso/state/selectors/is-requesting-site-credentials';
-import { requestSites } from 'calypso/state/sites/actions';
-import { isRequestingSites, getSite } from 'calypso/state/sites/selectors';
 import { CredentialsHelper } from './credentials-helper';
 import { StartImportTrackingProps } from './types';
 
@@ -69,34 +62,22 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		dispatch( recordTracksEvent( 'calypso_site_migration_credentials_form_toggle' ) );
 	};
 
-	const canSiteMigrate = useSiteCanMigrate( isMigrateFromWp );
-
-	const onMigrationEnabledSuccess = ( data: MigrationEnabledResponse ) => {
-		const needsToBlock = ! canSiteMigrate( data );
-		if ( needsToBlock !== showUpgradePluginInfo ) {
-			setShowUpgradePluginInfo( needsToBlock );
+	const onfetchCallback = ( siteCanMigrate: boolean ) => {
+		if ( ! siteCanMigrate ) {
+			setShowUpgradePluginInfo( true );
+		} else {
+			setShowUpgradePluginInfo( false );
 		}
 	};
 
-	const onMigrationEnabledError = () => {
-		setShowUpgradePluginInfo( true );
-	};
-
-	const {
-		refetch,
-		isFetching: migrationEnabledFetching,
-		data: migrationEnabledData,
-	} = useMigrationEnabledInfoQuery(
-		targetSite?.ID ?? 0,
-		sourceSiteSlug,
-		fetchMigrationEnabledOnMount,
-		onMigrationEnabledSuccess,
-		onMigrationEnabledError
-	);
-
-	const { sourceSiteId } = useSiteMigrateInfo( migrationEnabledData as MigrationEnabledResponse );
-
-	const sourceSite = useSelector( ( state ) => getSite( state, sourceSiteId ) );
+	const { sourceSiteId, sourceSite, fetchMigrationEnabledStatus, isFetchingData } =
+		useSiteMigrateInfo(
+			targetSite.ID,
+			sourceSiteSlug,
+			fetchMigrationEnabledOnMount,
+			isMigrateFromWp,
+			onfetchCallback
+		);
 
 	const credentials = useSelector( ( state ) =>
 		getJetpackCredentials( state, sourceSiteId, 'main' )
@@ -108,8 +89,6 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		isRequestingSiteCredentials( state, sourceSiteId as number )
 	);
 
-	const isRequestingAllSites = useSelector( ( state ) => isRequestingSites( state ) );
-
 	const changeCredentialsHelperHost = ( host: string ) => {
 		setSelectedHost( host );
 	};
@@ -120,7 +99,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 
 	const onUpgradeAndMigrateClick = () => {
 		setContinueImport( true );
-		refetch();
+		fetchMigrationEnabledStatus();
 	};
 
 	useEffect( () => {
@@ -139,13 +118,6 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 			startImport();
 		}
 	}, [ continueImport, sourceSite, startImport, showUpgradePluginInfo ] );
-
-	useEffect( () => {
-		// If has source site id and we do not have the source site, it means the data is not update to date, so we request the site
-		if ( sourceSiteId && ! sourceSite && ! isRequestingAllSites ) {
-			dispatch( requestSites() );
-		}
-	}, [ sourceSiteId, sourceSite, isRequestingAllSites, dispatch ] );
 
 	function renderCredentialsFormSection() {
 		// We do not show the credentials form if we already have credentials
@@ -234,7 +206,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		return (
 			<>
 				<UpgradePluginInfo isMigrateFromWp={ isMigrateFromWp } sourceSiteUrl={ sourceSiteUrl } />
-				<Interval onTick={ refetch } period={ EVERY_FIVE_SECONDS } />
+				<Interval onTick={ fetchMigrationEnabledStatus } period={ EVERY_FIVE_SECONDS } />
 			</>
 		);
 	}
@@ -258,7 +230,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 				targetSite={ targetSite }
 				startImport={ onUpgradeAndMigrateClick }
 				onContentOnlyClick={ onContentOnlyClick }
-				isBusy={ migrationEnabledFetching || isRequestingAllSites }
+				isBusy={ isFetchingData }
 			/>
 		);
 	}
