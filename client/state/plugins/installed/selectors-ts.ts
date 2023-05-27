@@ -411,7 +411,7 @@ export function isPluginActionInProgress(
 	state: AppState,
 	siteId: number,
 	pluginId: string,
-	action: string
+	action: string | string[]
 ) {
 	return isPluginActionStatus( state, siteId, pluginId, action, 'inProgress' );
 }
