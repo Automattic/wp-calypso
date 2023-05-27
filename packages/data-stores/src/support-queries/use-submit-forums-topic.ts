@@ -21,8 +21,8 @@ export type ForumResponse = {
 };
 
 export function useSubmitForumsMutation() {
-	return useMutation(
-		( {
+	return useMutation( {
+		mutationFn: ( {
 			ownershipResult,
 			message,
 			subject,
@@ -70,6 +70,6 @@ export function useSubmitForumsMutation() {
 						method: 'POST',
 						data: requestData,
 				  } as APIFetchOptions );
-		}
-	);
+		},
+	} );
 }

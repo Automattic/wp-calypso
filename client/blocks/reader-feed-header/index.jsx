@@ -8,6 +8,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import BlogStickers from 'calypso/blocks/blog-stickers';
 import ReaderSiteNotificationSettings from 'calypso/blocks/reader-site-notification-settings';
+import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
 import SiteIcon from 'calypso/blocks/site-icon';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import ReaderFollowButton from 'calypso/reader/follow-button';
@@ -20,13 +21,14 @@ import {
 import HeaderBack from 'calypso/reader/header-back';
 import { isAuthorNameBlocked } from 'calypso/reader/lib/author-name-blocklist';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import { hasReaderFollowOrganization, isFollowing } from 'calypso/state/reader/follows/selectors';
 import { requestMarkAllAsSeen } from 'calypso/state/reader/seen-posts/actions';
+import { getSite } from 'calypso/state/reader/sites/selectors';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import ReaderFeedHeaderSiteBadge from './badge';
-
 import './style.scss';
 
 class FeedHeader extends Component {
@@ -37,6 +39,10 @@ class FeedHeader extends Component {
 		streamKey: PropTypes.string,
 		isWPForTeamsItem: PropTypes.bool,
 		hasOrganization: PropTypes.bool,
+	};
+
+	state = {
+		isSuggestedFollowsModalOpen: false,
 	};
 
 	getFollowerCount = ( feed, site ) => {
@@ -59,6 +65,14 @@ class FeedHeader extends Component {
 			feedIds: [ this.props.feed.feed_ID ],
 			feedUrls: [ this.props.feed.URL ],
 		} );
+	};
+
+	openSuggestedFollowsModal = ( followClicked ) => {
+		this.setState( { isSuggestedFollowsModalOpen: followClicked } );
+	};
+
+	onCloseSuggestedFollowModal = () => {
+		this.setState( { isSuggestedFollowsModalOpen: false } );
 	};
 
 	render() {
@@ -159,7 +173,11 @@ class FeedHeader extends Component {
 						<div className="reader-feed-header__follow-and-settings">
 							{ siteUrl && (
 								<div className="reader-feed-header__follow-button">
-									<ReaderFollowButton siteUrl={ siteUrl } iconSize={ 24 } />
+									<ReaderFollowButton
+										siteUrl={ siteUrl }
+										iconSize={ 24 }
+										onFollowToggle={ this.openSuggestedFollowsModal }
+									/>
 								</div>
 							) }
 
@@ -187,23 +205,45 @@ class FeedHeader extends Component {
 						</div>
 					</div>
 				</div>
+				{ siteId && (
+					<ReaderSuggestedFollowsDialog
+						onClose={ this.onCloseSuggestedFollowModal }
+						siteId={ siteId }
+						isVisible={ this.state.isSuggestedFollowsModalOpen }
+					/>
+				) }
 			</div>
 		);
 	}
 }
 
-export default connect(
-	( state, ownProps ) => ( {
-		isWPForTeamsItem:
-			isSiteWPForTeams( state, ownProps.site && ownProps.site.ID ) ||
-			isFeedWPForTeams( state, ownProps.feed && ownProps.feed.feed_ID ),
-		hasOrganization: hasReaderFollowOrganization(
-			state,
-			ownProps.feed && ownProps.feed.feed_ID,
-			ownProps.site && ownProps.site.ID
-		),
-		following: ownProps.feed && isFollowing( state, { feedUrl: ownProps.feed.feed_URL } ),
+const mapStateToProps = ( state, ownProps ) => {
+	let siteId = ownProps.site?.ID;
+	let feedId = ownProps.feed?.feed_ID;
+	let feed = feedId ? getFeed( state, feedId ) : undefined;
+	let site = siteId ? getSite( state, siteId ) : undefined;
+
+	if ( feed && ! siteId ) {
+		siteId = feed.blog_ID || undefined;
+		site = siteId ? getSite( state, feed.blog_ID ) : undefined;
+	}
+
+	if ( site && ! feedId ) {
+		feedId = site.feed_ID;
+		feed = feedId ? getFeed( state, site.feed_ID ) : undefined;
+	}
+
+	return {
+		isWPForTeamsItem: isSiteWPForTeams( state, siteId ) || isFeedWPForTeams( state, feedId ),
+		hasOrganization: hasReaderFollowOrganization( state, feedId, siteId ),
+		following: feed && isFollowing( state, { feedUrl: feed.feed_URL } ),
 		isEmailBlocked: getUserSetting( state, 'subscription_delivery_email_blocked' ),
-	} ),
-	{ requestMarkAllAsSeen, recordReaderTracksEvent }
-)( localize( FeedHeader ) );
+		siteId: siteId,
+		feedId: feedId,
+	};
+};
+
+export default connect( mapStateToProps, {
+	requestMarkAllAsSeen,
+	recordReaderTracksEvent,
+} )( localize( FeedHeader ) );

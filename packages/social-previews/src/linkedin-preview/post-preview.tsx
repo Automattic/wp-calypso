@@ -56,18 +56,13 @@ export function LinkedInPostPreview( {
 				</div>
 				<div className="linkedin-preview__content">
 					{ description ? (
-						<div
-							className="linkedin-preview__caption"
-							// TODO: Replace `dangerouslySetInnerHTML` with `createInterpolateElement` inside `preparePreviewText`
-							// eslint-disable-next-line react/no-danger
-							dangerouslySetInnerHTML={ {
-								__html: preparePreviewText( description, {
-									platform: 'linkedin',
-									maxChars: FEED_TEXT_MAX_LENGTH,
-									maxLines: FEED_TEXT_MAX_LINES,
-								} ),
-							} }
-						/>
+						<div className="linkedin-preview__caption">
+							{ preparePreviewText( description, {
+								platform: 'linkedin',
+								maxChars: FEED_TEXT_MAX_LENGTH,
+								maxLines: FEED_TEXT_MAX_LINES,
+							} ) }
+						</div>
 					) : null }
 					{ hasMedia ? (
 						<div className="linkedin-preview__media">

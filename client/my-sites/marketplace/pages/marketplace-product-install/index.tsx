@@ -213,10 +213,10 @@ const MarketplaceProductInstall = ( {
 			} else if ( hasAtomicFeature ) {
 				// initialize atomic flow
 				if ( wpOrgTheme ) {
-					dispatch( initiateAtomicTransfer( siteId, { themeSlug } ) );
+					dispatch( initiateAtomicTransfer( siteId, { themeSlug, context: 'theme_install' } ) );
 				} else {
 					setAtomicFlow( true );
-					dispatch( initiateTransfer( siteId, null, pluginSlug ) );
+					dispatch( initiateTransfer( siteId, null, pluginSlug, '', 'plugin_install' ) );
 				}
 
 				triggerInstallFlow();

@@ -14,8 +14,6 @@ import {
 	useSiteEmailMeNewCommentsMutation,
 } from './mutations';
 import {
-	PostSubscriptionsSortBy,
-	SiteSubscriptionsSortBy,
 	useSiteSubscriptionsQuery,
 	usePostSubscriptionsQuery,
 	useSubscriptionsCountQuery,
@@ -26,8 +24,6 @@ import {
 } from './queries';
 
 export const SubscriptionManager = {
-	PostSubscriptionsSortBy,
-	SiteSubscriptionsSortBy,
 	usePostUnsubscribeMutation,
 	useSiteDeliveryFrequencyMutation,
 	useSiteSubscriptionsQuery,
@@ -51,5 +47,13 @@ export const SubscriptionManager = {
 	useSiteSubscriptionDetailsQuery,
 };
 
-export { EmailDeliveryFrequency } from './constants';
+export {
+	EmailDeliveryFrequency,
+	PostSubscriptionsSortBy,
+	SiteSubscriptionsFilterBy,
+	SiteSubscriptionsSortBy,
+} from './constants';
+
+export { isErrorResponse } from './helpers';
+
 export * from './types';

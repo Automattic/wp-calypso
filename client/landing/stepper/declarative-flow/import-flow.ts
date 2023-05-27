@@ -3,8 +3,8 @@ import { IMPORT_FOCUSED_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
 import useAddTempSiteToSourceOptionMutation from 'calypso/data/site-migration/use-add-temp-site-mutation';
+import { useSourceMigrationStatusQuery } from 'calypso/data/site-migration/use-source-migration-status-query';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
-import { useSiteQuery } from 'calypso/data/sites/use-site-query';
 import { SITE_PICKER_FILTER_CONFIG } from 'calypso/landing/stepper/constants';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
@@ -62,7 +62,7 @@ const importFlow: Flow = {
 		const { addTempSiteToSourceOption } = useAddTempSiteToSourceOptionMutation();
 		const urlQueryParams = useQuery();
 		const fromParam = urlQueryParams.get( 'from' );
-		const { data: sourceSite } = useSiteQuery( fromParam as string );
+		const { data: migrationStatus } = useSourceMigrationStatusQuery( fromParam );
 		const siteSlugParam = useSiteSlugParam();
 		const selectedDesign = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
@@ -195,11 +195,11 @@ const importFlow: Flow = {
 						case 'select-site': {
 							const selectedSite = providedDependencies.site as SiteExcerptData;
 
-							if ( selectedSite && sourceSite ) {
+							if ( selectedSite && migrationStatus ) {
 								// Store temporary target blog id to source site option
 								selectedSite &&
-									sourceSite &&
-									addTempSiteToSourceOption( selectedSite.ID, sourceSite.ID );
+									migrationStatus?.source_blog_id &&
+									addTempSiteToSourceOption( selectedSite.ID, migrationStatus.source_blog_id );
 
 								urlQueryParams.set( 'siteSlug', selectedSite.slug );
 								urlQueryParams.set( 'option', 'everything' );

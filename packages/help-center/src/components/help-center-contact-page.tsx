@@ -20,10 +20,12 @@ import { getSectionName } from 'calypso/state/ui/selectors';
  * Internal Dependencies
  */
 import { BackButton } from '..';
-import useMessagingAuth from '../hooks/use-messaging-auth';
-import { useShouldRenderChatOption } from '../hooks/use-should-render-chat-option';
-import { useShouldRenderEmailOption } from '../hooks/use-should-render-email-option';
-import { useStillNeedHelpURL } from '../hooks/use-still-need-help-url';
+import {
+	useShouldRenderChatOption,
+	useMessagingAuth,
+	useShouldRenderEmailOption,
+	useStillNeedHelpURL,
+} from '../hooks';
 import { Mail, Forum } from '../icons';
 import { HelpCenterActiveTicketNotice } from './help-center-notice';
 

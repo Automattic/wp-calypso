@@ -12,6 +12,7 @@ type Result = {
 export function useShouldRenderChatOption(): Result {
 	const { data: chatStatus } = useSupportAvailability( 'CHAT' );
 	const { data, isInitialLoading: isLoadingAvailability } = useMessagingAvailability(
+		'wpcom_messaging',
 		Boolean( chatStatus?.is_user_eligible )
 	);
 	const { data: supportActivity, isInitialLoading: isLoadingSupportActivity } = useSupportActivity(

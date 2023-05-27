@@ -13,9 +13,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
  */
-import useMessagingAuth from '../hooks/use-messaging-auth';
-import { useStillNeedHelpURL } from '../hooks/use-still-need-help-url';
-import useZendeskConfig from '../hooks/use-zendesk-config';
+import { useStillNeedHelpURL, useMessagingAuth, useZendeskConfig } from '../hooks';
 import { HELP_CENTER_STORE, USER_STORE, SITE_STORE } from '../stores';
 import { Container } from '../types';
 import HelpCenterContainer from './help-center-container';

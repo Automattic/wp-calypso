@@ -93,6 +93,53 @@
 	}
 }
 
+.import__onboarding-page--redesign {
+	.onboarding-progress-simple {
+		min-width: 100% !important;
+
+		.onboarding-title {
+			font-size: rem(48px);
+		}
+
+		h2.onboarding-subtitle {
+			color: var(--studio-gray-60);
+			font-size: rem(18px);
+			line-height: rem(26px);
+			margin-bottom: rem(40px);
+		}
+
+		h3.onboarding-subtitle {
+			margin-bottom: rem(50px);
+		}
+
+		.progress-bar {
+			max-width: 385px;
+			margin-bottom: rem(14px);
+		}
+
+		.progress-status {
+			display: inline-block;
+			font-size: rem(14px);
+			font-weight: 500;
+			color: var(--studio-gray-60);
+			border: solid 1px var(--studio-gray-10);
+			border-radius: 4px;
+			margin-bottom: rem(24px);
+			padding: rem(10px) rem(24px);
+		}
+
+		.support-block {
+			font-size: rem(14px);
+			color: var(--studio-gray-50);
+
+			a {
+				color: var(--studio-gray-50);
+				text-decoration: underline;
+			}
+		}
+	}
+}
+
 .import__import-everything--redesign {
 	.onboarding-title {
 		@include onboarding-font-recoleta;
@@ -151,7 +198,6 @@
 			}
 		}
 	}
-
 }
 
 .import__upgrade-plan {

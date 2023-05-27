@@ -1,5 +1,5 @@
 import { PatternRenderer } from '@automattic/block-renderer';
-import { DeviceSwitcher } from '@automattic/components';
+import { Button, DeviceSwitcher } from '@automattic/components';
 import { useStyle } from '@automattic/global-styles';
 import { __experimentalUseNavigator as useNavigator } from '@wordpress/components';
 import { Icon, layout } from '@wordpress/icons';
@@ -81,22 +81,15 @@ const PatternLargePreview = ( {
 			return translate( "It's time to get creative. Add your first pattern to get started." );
 		}
 
-		return translate(
-			'You can view your color and font selections after you select a pattern. Get started by {{link}}adding a header pattern{{/link}}.',
-			{
-				components: {
-					link: (
-						// eslint-disable-next-line jsx-a11y/anchor-is-valid
-						<a
-							href="#"
-							target="_blank"
-							rel="noopener noreferrer"
-							onClick={ handleAddHeaderClick }
-						/>
-					),
-				},
-			}
-		);
+		return translate( 'You can view your color and font selections after you select a pattern.' );
+	};
+
+	const getAction = () => {
+		if ( ! shouldShowSelectPatternHint ) {
+			return null;
+		}
+
+		return <Button onClick={ handleAddHeaderClick }>{ translate( 'Add header' ) }</Button>;
 	};
 
 	const renderPattern = ( type: string, pattern: Pattern, position = -1 ) => {
@@ -219,9 +212,10 @@ const PatternLargePreview = ( {
 				</ul>
 			) : (
 				<div className="pattern-large-preview__placeholder">
-					<Icon className="pattern-large-preview__placeholder-icon" icon={ layout } size={ 72 } />
+					<Icon className="pattern-large-preview__placeholder-icon" icon={ layout } size={ 56 } />
 					<h2>{ getTitle() }</h2>
 					<span>{ getDescription() }</span>
+					{ getAction() }
 				</div>
 			) }
 		</DeviceSwitcher>

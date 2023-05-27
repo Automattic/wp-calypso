@@ -7,7 +7,6 @@ export interface Task {
 	badge_text?: string;
 	actionDispatch?: () => void;
 	isLaunchTask?: boolean;
-	warning?: boolean;
 }
 
 export type LaunchpadChecklist = Task[];

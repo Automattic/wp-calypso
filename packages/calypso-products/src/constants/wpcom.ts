@@ -5,6 +5,7 @@ export const PRODUCT_NO_ADS = 'no-adverts/no-adverts.php';
 export const PRODUCT_WPCOM_SEARCH = 'wpcom_search';
 export const PRODUCT_WPCOM_SEARCH_MONTHLY = 'wpcom_search_monthly';
 export const PRODUCT_WPCOM_UNLIMITED_THEMES = 'unlimited_themes';
+export const PRODUCT_1GB_SPACE = 'wordpress_com_1gb_space_addon_yearly';
 export const PRODUCT_WPCOM_CUSTOM_DESIGN = 'custom-design';
 
 export const WPCOM_SEARCH_PRODUCTS = <const>[ PRODUCT_WPCOM_SEARCH, PRODUCT_WPCOM_SEARCH_MONTHLY ];

@@ -4,9 +4,9 @@ import wpcom from 'calypso/lib/wp';
 const isAPIAvailable = false; // FIXME: Remove this line when API is available
 
 const useFetchMonitorVerfiedContacts = () => {
-	return useQuery(
-		[ 'monitor_notification_contacts' ],
-		() =>
+	return useQuery( {
+		queryKey: [ 'monitor_notification_contacts' ],
+		queryFn: () =>
 			isAPIAvailable
 				? wpcom.req.get( {
 						path: '/jetpack-agency/contacts',
@@ -15,16 +15,14 @@ const useFetchMonitorVerfiedContacts = () => {
 				: {
 						emails: [],
 				  }, // FIXME: Remove this line and enable API call when API is available
-		{
-			select: ( contacts: { emails: [ { verified: boolean; value: string } ] } ) => {
-				return {
-					emails: contacts?.emails
-						.filter( ( email ) => email.verified )
-						.map( ( email ) => email.value ),
-				};
-			},
-		}
-	);
+		select: ( contacts: { emails: [ { verified: boolean; value: string } ] } ) => {
+			return {
+				emails: contacts?.emails
+					.filter( ( email ) => email.verified )
+					.map( ( email ) => email.value ),
+			};
+		},
+	} );
 };
 
 export default useFetchMonitorVerfiedContacts;

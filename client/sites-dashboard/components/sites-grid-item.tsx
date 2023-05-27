@@ -18,7 +18,9 @@ import { SiteLaunchNag } from './sites-site-launch-nag';
 import { SiteName } from './sites-site-name';
 import { SiteUrl, Truncated } from './sites-site-url';
 import SitesStagingBadge from './sites-staging-badge';
+import TransferNoticeWrapper from './sites-transfer-notice-wrapper';
 import { ThumbnailLink } from './thumbnail-link';
+import { WithAtomicTransfer } from './with-atomic-transfer';
 
 const SIZES_ATTR = [
 	'(min-width: 1345px) calc((1280px - 64px) / 3)',
@@ -179,7 +181,15 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 					<SiteUrl href={ siteUrl } title={ siteUrl }>
 						<Truncated>{ displaySiteUrl( siteUrl ) }</Truncated>
 					</SiteUrl>
-					{ showLaunchNag && <SiteLaunchNag site={ site } /> }
+					<WithAtomicTransfer site={ site }>
+						{ ( result ) =>
+							result.wasTransferring ? (
+								<TransferNoticeWrapper { ...result } />
+							) : (
+								<>{ showLaunchNag && <SiteLaunchNag site={ site } /> }</>
+							)
+						}
+					</WithAtomicTransfer>
 				</SitesGridItemSecondary>
 			}
 		/>
