@@ -53,7 +53,7 @@ const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction
 						</div>
 					) }
 					<span className="launchpad__checklist-item-text">{ title }</span>
-					{/* { task.badge_text ? <Badge type="info-blue">{ task.badge_text }</Badge> : null } */}
+					{ /* { task.badge_text ? <Badge type="info-blue">{ task.badge_text }</Badge> : null } */ }
 					{ shouldDisplayChevron && (
 						<Gridicon
 							aria-label={ translate( 'Task enabled' ) }
