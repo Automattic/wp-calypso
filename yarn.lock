@@ -960,7 +960,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@automattic/launchpad@workspace:packages/launchpad":
+"@automattic/launchpad@workspace:^, @automattic/launchpad@workspace:packages/launchpad":
   version: 0.0.0-use.local
   resolution: "@automattic/launchpad@workspace:packages/launchpad"
   dependencies:
@@ -33873,6 +33873,7 @@ fsevents@^1.2.7:
     "@automattic/help-center": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/languages": "workspace:^"
+    "@automattic/launchpad": "workspace:^"
     "@automattic/privacy-toolset": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@automattic/viewport": "workspace:^"
