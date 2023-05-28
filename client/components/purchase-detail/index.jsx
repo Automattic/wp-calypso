@@ -13,6 +13,7 @@ const noop = () => {};
 export default class PurchaseDetail extends PureComponent {
 	static propTypes = {
 		buttonText: PropTypes.string,
+		buttonIcon: PropTypes.string,
 		description: PropTypes.oneOfType( [ PropTypes.array, PropTypes.string, PropTypes.object ] ),
 		href: PropTypes.string,
 		icon: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
@@ -33,8 +34,17 @@ export default class PurchaseDetail extends PureComponent {
 	};
 
 	renderPurchaseButton() {
-		const { buttonText, isPlaceholder, isSubmitting, href, onClick, primaryButton, target, rel } =
-			this.props;
+		const {
+			buttonText,
+			buttonIcon,
+			isPlaceholder,
+			isSubmitting,
+			href,
+			onClick,
+			primaryButton,
+			target,
+			rel,
+		} = this.props;
 
 		if ( ! buttonText && ! isPlaceholder ) {
 			return null;
@@ -49,6 +59,7 @@ export default class PurchaseDetail extends PureComponent {
 				target={ target }
 				rel={ rel }
 				text={ buttonText }
+				icon={ buttonIcon }
 			/>
 		);
 	}

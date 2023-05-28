@@ -114,6 +114,7 @@ const GoogleAppsDetails = ( { purchases } ) => {
 				},
 				comment: '%(productFamily)s can be either "G Suite" or "Google Workspace"',
 			} ) }
+			buttonIcon="external"
 			href={ GSUITE_LEARNING_CENTER }
 			target="_blank"
 			rel="noopener noreferrer"

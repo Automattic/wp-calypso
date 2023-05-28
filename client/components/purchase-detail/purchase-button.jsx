@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
@@ -11,6 +11,7 @@ const PurchaseButton = ( {
 	target,
 	rel,
 	text,
+	icon,
 	primary = true,
 } ) => {
 	return (
@@ -23,7 +24,7 @@ const PurchaseButton = ( {
 			rel={ rel }
 			primary={ primary }
 		>
-			{ text }
+			{ text } { icon && <Gridicon icon={ icon } /> }
 		</Button>
 	);
 };
