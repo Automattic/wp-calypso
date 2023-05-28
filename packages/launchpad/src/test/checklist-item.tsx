@@ -1,19 +1,20 @@
 /**
  * @jest-environment jsdom
  */
-import { ChecklistItem } from '@automattic/launchpad';
 import { render, screen } from '@testing-library/react';
 import React from 'react';
+import ChecklistItem from '../checklist-item';
 import { buildTask } from './lib/fixtures';
+import '@testing-library/jest-dom';
 
 describe( 'ChecklistItem', () => {
-	// describe( 'when the task requires a badge', () => {
-	// 	it( 'displays a badge', () => {
-	// 		const badge_text = 'Badge Text';
-	// 		render( <ChecklistItem task={ buildTask( { badge_text } ) } /> );
-	// 		expect( screen.getByText( badge_text ) ).toBeTruthy();
-	// 	} );
-	// } );
+	describe( 'when the task requires a badge', () => {
+		it( 'displays a badge', () => {
+			const badge_text = 'Badge Text';
+			render( <ChecklistItem task={ buildTask( { badge_text } ) } /> );
+			expect( screen.getByText( badge_text ) ).toBeTruthy();
+		} );
+	} );
 
 	describe( 'when the task is completed', () => {
 		it( 'shows the task completed icon', () => {

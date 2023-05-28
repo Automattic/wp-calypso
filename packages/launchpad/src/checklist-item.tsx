@@ -1,7 +1,7 @@
 import { Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { translate, useRtl } from 'i18n-calypso';
-// import Badge from 'calypso/components/badge';
+import Badge from './badge';
 import { Task } from './types';
 
 const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction?: boolean } ) => {
@@ -53,7 +53,7 @@ const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction
 						</div>
 					) }
 					<span className="launchpad__checklist-item-text">{ title }</span>
-					{ /* { task.badge_text ? <Badge type="info-blue">{ task.badge_text }</Badge> : null } */ }
+					{ task.badge_text ? <Badge type="info-blue">{ task.badge_text }</Badge> : null }
 					{ shouldDisplayChevron && (
 						<Gridicon
 							aria-label={ translate( 'Task enabled' ) }

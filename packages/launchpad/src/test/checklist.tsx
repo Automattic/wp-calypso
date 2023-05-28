@@ -1,10 +1,11 @@
 /**
  * @jest-environment jsdom
  */
-import { Checklist } from '@automattic/launchpad';
 import { render, screen } from '@testing-library/react';
 import React from 'react';
+import Checklist from '../checklist';
 import { buildTask } from './lib/fixtures';
+import '@testing-library/jest-dom';
 
 describe( 'Checklist', () => {
 	describe( 'when provided no tasks', () => {
