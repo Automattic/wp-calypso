@@ -374,6 +374,7 @@ describe( 'Sidebar', () => {
 		describe( 'and the site is on a free plan', () => {
 			it( 'displays the upgrade plan badge on the "Choose a domain" task for free flow', () => {
 				const freeFlowProps = { ...props, flow: 'free' };
+
 				const siteDetails = buildSiteDetails( {
 					options: {
 						...defaultSiteDetails.options,
@@ -384,8 +385,10 @@ describe( 'Sidebar', () => {
 					},
 				} );
 				renderSidebar( freeFlowProps, siteDetails );
+
 				const domainUpsellTaskFreeFlow = screen.queryByText( 'Choose a domain' );
 				const domainUpsellTaskBadgeFreeFlow = screen.queryByText( 'Upgrade plan' );
+
 				expect( domainUpsellTaskFreeFlow ).toBeVisible();
 				expect( domainUpsellTaskBadgeFreeFlow ).toBeVisible();
 			} );
