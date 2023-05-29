@@ -75,7 +75,7 @@ export const useCheckSiteTransferStatus = ( {
 				clearTimeout( dismissTransferNoticeTimeout );
 			};
 			// eslint-disable-next-line no-else-return
-		} else {
+		} else if ( wasTransferring && isTransferCompleted ) {
 			dispatch( requestSite( siteId ) );
 		}
 	}, [ isTransferring, wasTransferring, isTransferCompleted ] );
