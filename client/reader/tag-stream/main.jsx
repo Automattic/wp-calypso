@@ -17,6 +17,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { requestFollowTag, requestUnfollowTag } from 'calypso/state/reader/tags/items/actions';
 import { getReaderTags, getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
+import getReaderTagBySlug from 'calypso/state/reader/tags/selectors/get-reader-tag-by-slug';
 import EmptyContent from './empty';
 import TagStreamHeader from './header';
 import './style.scss';
@@ -128,6 +129,19 @@ class TagStream extends Component {
 			);
 		}
 
+		// Put the tag stream header at the top of the body, so it can be even with the sidebar in the two column layout.
+		const tagHeader = (
+			<TagStreamHeader
+				title={ title }
+				description={ this.props.description }
+				imageSearchString={ imageSearchString }
+				showFollow={ !! ( tag && tag.id ) }
+				following={ this.isSubscribed() }
+				onFollowToggle={ this.toggleFollowing }
+				showBack={ this.props.showBack }
+			/>
+		);
+
 		return (
 			<Stream
 				{ ...this.props }
@@ -135,6 +149,7 @@ class TagStream extends Component {
 				emptyContent={ emptyContent }
 				showFollowInHeader={ true }
 				forcePlaceholders={ ! tag } // if tag has not loaded yet, then make everything a placeholder
+				streamHeader={ tagHeader }
 			>
 				<QueryReaderFollowedTags />
 				<QueryReaderTag tag={ this.props.decodedTagSlug } />
@@ -145,25 +160,21 @@ class TagStream extends Component {
 					} ) }
 				/>
 				{ this.props.showBack && <HeaderBack /> }
-				<TagStreamHeader
-					title={ title }
-					imageSearchString={ imageSearchString }
-					showFollow={ !! ( tag && tag.id ) }
-					following={ this.isSubscribed() }
-					onFollowToggle={ this.toggleFollowing }
-					showBack={ this.props.showBack }
-				/>
 			</Stream>
 		);
 	}
 }
 
 export default connect(
-	( state ) => ( {
-		followedTags: getReaderFollowedTags( state ),
-		tags: getReaderTags( state ),
-		isLoggedIn: isUserLoggedIn( state ),
-	} ),
+	( state, { decodedTagSlug } ) => {
+		const tag = getReaderTagBySlug( state, decodedTagSlug );
+		return {
+			description: tag?.description,
+			followedTags: getReaderFollowedTags( state ),
+			tags: getReaderTags( state ),
+			isLoggedIn: isUserLoggedIn( state ),
+		};
+	},
 	{
 		followTag: requestFollowTag,
 		recordReaderTracksEvent,

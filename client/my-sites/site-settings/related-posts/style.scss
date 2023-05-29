@@ -12,7 +12,7 @@
 	margin-top: 8px;
 	padding: 16px 8px;
 	width: 100%;
-	background: var(--color-neutral-0);
+	border: 1px solid var(--color-border-subtle);
 	box-sizing: border-box;
 
 	@include clear-fix;
@@ -58,7 +58,7 @@
 }
 
 .related-posts__preview-post .related-posts__preview-post-context {
-	opacity: 0.6;
+	color: var(--color-text-subtle);
 }
 
 .related-posts__preview-post-a {

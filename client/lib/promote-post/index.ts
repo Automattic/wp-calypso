@@ -14,6 +14,7 @@ declare global {
 		BlazePress?: {
 			render: ( params: {
 				siteSlug: string | null;
+				siteId?: number | string;
 				domNode?: HTMLElement | null;
 				domNodeId?: string;
 				stripeKey: string;
@@ -39,6 +40,7 @@ declare global {
 					apiRoot: string;
 					headerNonce: string;
 				};
+				isV2?: boolean;
 			} ) => void;
 			strings: any;
 		};
@@ -70,7 +72,8 @@ export async function showDSP(
 	domNodeOrId?: HTMLElement | string | null,
 	setShowCancelButton?: ( show: boolean ) => void,
 	setShowTopBar?: ( show: boolean ) => void,
-	locale?: string
+	locale?: string,
+	isV2?: boolean
 ) {
 	await loadDSPWidgetJS();
 	return new Promise( ( resolve, reject ) => {
@@ -79,6 +82,7 @@ export async function showDSP(
 
 			window.BlazePress.render( {
 				siteSlug: siteSlug,
+				siteId: siteId,
 				domNode: typeof domNodeOrId !== 'string' ? domNodeOrId : undefined,
 				domNodeId: typeof domNodeOrId === 'string' ? domNodeOrId : undefined,
 				stripeKey: config( 'dsp_stripe_pub_key' ),
@@ -92,7 +96,7 @@ export async function showDSP(
 				translateFn: translateFn,
 				localizeUrlFn: localizeUrlFn,
 				locale,
-				urn: `urn:wpcom:post:${ siteId }:${ postId || 0 }`,
+				urn: postId && postId !== '0' ? `urn:wpcom:post:${ siteId }:${ postId || 0 }` : '',
 				setShowCancelButton: setShowCancelButton,
 				setShowTopBar: setShowTopBar,
 				uploadImageLabel: isWpMobileApp() ? __( 'Tap to add image' ) : undefined,
@@ -105,6 +109,7 @@ export async function showDSP(
 							headerNonce: config( 'nonce' ),
 					  }
 					: undefined,
+				isV2,
 			} );
 		} else {
 			reject( false );

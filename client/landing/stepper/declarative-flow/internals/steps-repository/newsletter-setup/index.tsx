@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { hexToRgb, StepContainer, base64ImageToBlob } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -110,7 +109,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 		}
 
 		if ( siteTitle.trim().length ) {
-			submit?.( { siteTitle, tagline, siteAccentColor: accentColor.hex } );
+			submit?.( { siteTitle, tagline, siteAccentColor: accentColor.hex, paidSubscribers } );
 		}
 	};
 
@@ -155,23 +154,21 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 							setAccentColor={ setAccentColor }
 							labelText={ newsletterFormText?.colorLabel }
 						/>
-						{ isEnabled( 'newsletter/paid-subscribers' ) && (
-							<FormFieldset className="newsletter-setup__paid-subscribers">
-								<FormLabel>
-									<FormInputCheckbox
-										name="paid_newsletters"
-										checked={ paidSubscribers }
-										onChange={ onPaidSubscribersChanged }
-									/>
-									<span>{ translate( 'I want to start a paid newsletter' ) }</span>
-								</FormLabel>
-								<InfoPopover position="bottom right">
-									{ translate(
-										'Let your audience support your work. Add paid subscriptions and gated content to your newsletter.'
-									) }
-								</InfoPopover>
-							</FormFieldset>
-						) }
+						<FormFieldset className="newsletter-setup__paid-subscribers">
+							<FormLabel>
+								<FormInputCheckbox
+									name="paid_newsletters"
+									checked={ paidSubscribers }
+									onChange={ onPaidSubscribersChanged }
+								/>
+								<span>{ translate( 'I want to start a paid newsletter' ) }</span>
+							</FormLabel>
+							<InfoPopover position="bottom right">
+								{ translate(
+									'Let your audience support your work. Add paid subscriptions and gated content to your newsletter.'
+								) }
+							</InfoPopover>
+						</FormFieldset>
 					</>
 				</SetupForm>
 			}

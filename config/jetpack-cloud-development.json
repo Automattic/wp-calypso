@@ -38,7 +38,6 @@
 		"current-site/stale-cart-notice": false,
 		"dev/auth-helper": true,
 		"dev/preferences-helper": true,
-		"fullstory": true,
 		"jetpack-cloud": true,
 		"jetpack/activity-log-sharing": true,
 		"jetpack/agency-dashboard": true,
@@ -68,7 +67,8 @@
 		"realtime-site-count": true,
 		"site-indicator": false,
 		"upgrades/redirect-payments": true,
-		"jetpack/pricing-page-cart": true
+		"jetpack/pricing-page-cart": true,
+		"jetpack-social/multiple-connections": true
 	},
 	"enable_all_sections": false,
 	"sections": {

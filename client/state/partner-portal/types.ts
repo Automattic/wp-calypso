@@ -214,6 +214,7 @@ export interface License {
 	issuedAt: string;
 	attachedAt: string | null;
 	revokedAt: string | null;
+	ownerType: string | null;
 }
 
 export interface LicenseCounts {
@@ -222,6 +223,7 @@ export interface LicenseCounts {
 	revoked: number;
 	not_revoked: number;
 	all: number;
+	standard: number;
 }
 
 export interface LicensesStore {

@@ -6,10 +6,10 @@ import { Task } from './types';
 
 const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction?: boolean } ) => {
 	const isRtl = useRtl();
-	const { id, completed, disabled, title, subtitle, actionDispatch, warning } = task;
+	const { id, completed, disabled, title, subtitle, actionDispatch } = task;
 
 	// Display chevron if task is incomplete. Don't display chevron and badge at the same time.
-	const shouldDisplayChevron = ! completed && ! disabled && ! task.badgeText;
+	const shouldDisplayChevron = ! completed && ! disabled && ! task.badge_text;
 
 	const handlePrimaryAction = () => {
 		localStorage.removeItem( 'launchpad_siteSlug' );
@@ -52,22 +52,8 @@ const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction
 							/>
 						</div>
 					) }
-					{ ! completed && warning && (
-						// show exclamation mark for tasks with warnings
-						<div className="launchpad__checklist-item-warning-container">
-							<Gridicon
-								aria-label={ translate( 'Task has a warning' ) }
-								className="launchpad__checklist-item-warning"
-								icon="notice-outline"
-								size={ 18 }
-							/>
-						</div>
-					) }
-					<div className="launchpad__checklist-item-text-container">
-						<span className="launchpad__checklist-item-text">{ title }</span>
-						{ subtitle && <p className="launchpad__checklist-item-subtext">{ subtitle }</p> }
-					</div>
-					{ task.badgeText ? <Badge type="info-blue">{ task.badgeText }</Badge> : null }
+					<span className="launchpad__checklist-item-text">{ title }</span>
+					{ task.badge_text ? <Badge type="info-blue">{ task.badge_text }</Badge> : null }
 					{ shouldDisplayChevron && (
 						<Gridicon
 							aria-label={ translate( 'Task enabled' ) }
@@ -76,6 +62,7 @@ const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction
 							size={ 18 }
 						/>
 					) }
+					{ subtitle && <p className="launchpad__checklist-item-subtext">{ subtitle }</p> }
 				</Button>
 			) }
 		</li>

@@ -37,11 +37,11 @@ import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
-import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
 import { getPlanSlug } from 'calypso/state/plans/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
@@ -277,7 +277,6 @@ class Plans extends Component {
 				discountEndDate={ this.props.discountEndDate }
 				site={ selectedSite }
 				plansWithScroll={ false }
-				showTreatmentPlansReorderTest={ this.props.showTreatmentPlansReorderTest }
 				hidePlansFeatureComparison={ this.props.isDomainAndPlanPackageFlow }
 				is2023PricingGridVisible={ is2023PricingGridVisible }
 			/>
@@ -349,6 +348,7 @@ class Plans extends Component {
 			isDomainUpsellSuggested,
 			isFreePlan,
 			currentPlanIntervalType,
+			domainFromHomeUpsellFlow,
 		} = this.props;
 
 		if ( ! selectedSite || this.isInvalidPlanInterval() || ! currentPlan ) {
@@ -398,10 +398,17 @@ class Plans extends Component {
 				<QueryContactDetailsCache />
 				<QueryPlans />
 				<TrackComponentView eventName="calypso_plans_view" />
-				{ isDomainUpsell && <DomainUpsellDialog domain={ selectedSite.slug } /> }
+				{ ( isDomainUpsell || domainFromHomeUpsellFlow ) && (
+					<DomainUpsellDialog domain={ selectedSite.slug } />
+				) }
 				{ canAccessPlans && (
 					<div>
-						{ ! isDomainAndPlanPackageFlow && <PlansHeader subHeaderText={ subHeaderText } /> }
+						{ ! isDomainAndPlanPackageFlow && (
+							<PlansHeader
+								domainFromHomeUpsellFlow={ domainFromHomeUpsellFlow }
+								subHeaderText={ subHeaderText }
+							/>
+						) }
 						{ isDomainAndPlanPackageFlow && (
 							<>
 								<div className="plans__header">
@@ -460,7 +467,6 @@ const ConnectedPlans = connect( ( state, props ) => {
 		canAccessPlans: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
 		isWPForTeamsSite: isSiteWPForTeams( state, selectedSiteId ),
 		isSiteEligibleForMonthlyPlan: isEligibleForWpComMonthlyPlan( state, selectedSiteId ),
-		showTreatmentPlansReorderTest: isTreatmentPlansReorderTest( state ),
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
 		is2023PricingGridVisible:
 			props.is2023PricingGridVisible ?? is2023PricingGridActivePage( window ),
@@ -471,6 +477,7 @@ const ConnectedPlans = connect( ( state, props ) => {
 			!! getCurrentQueryArguments( state )?.domain,
 		isDomainUpsellSuggested: getCurrentQueryArguments( state )?.domain === 'true',
 		isFreePlan: isFreePlanProduct( currentPlan ),
+		domainFromHomeUpsellFlow: getDomainFromHomeUpsellInQuery( state ),
 	};
 } )( withCartKey( withShoppingCart( localize( withTrackingTool( 'HotJar' )( Plans ) ) ) ) );
 

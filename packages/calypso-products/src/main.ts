@@ -612,11 +612,7 @@ export function plansLink(
 	return url.toString();
 }
 
-export function applyTestFiltersToPlansList(
-	planName: string | Plan,
-	abtest: string | undefined,
-	extraArgs: Record< string, string | boolean[] > = {}
-): Plan &
+export type FilteredPlan = Plan &
 	Pick<
 		WPComPlan,
 		| 'getPlanCompareFeatures'
@@ -624,7 +620,13 @@ export function applyTestFiltersToPlansList(
 		| 'getPlanTagline'
 		| 'getNewsletterTagLine'
 		| 'getLinkInBioTagLine'
-	> {
+	>;
+
+export function applyTestFiltersToPlansList(
+	planName: string | Plan,
+	abtest: string | undefined,
+	extraArgs: Record< string, string | boolean[] > = {}
+): FilteredPlan {
 	const plan = getPlan( planName );
 	if ( ! plan ) {
 		throw new Error( `Unknown plan: ${ planName }` );

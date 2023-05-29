@@ -1,7 +1,14 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Design, isBlankCanvasDesign } from '@automattic/design-picker';
 import { IMPORT_FOCUSED_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
+import useAddTempSiteToSourceOptionMutation from 'calypso/data/site-migration/use-add-temp-site-mutation';
+import { useSourceMigrationStatusQuery } from 'calypso/data/site-migration/use-source-migration-status-query';
+import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
+import { SITE_PICKER_FILTER_CONFIG } from 'calypso/landing/stepper/constants';
+import MigrationError from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/migration-error';
+import { ProcessingResult } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/processing-step/constants';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
@@ -22,8 +29,10 @@ import MigrationHandler from './internals/steps-repository/migration-handler';
 import PatternAssembler from './internals/steps-repository/pattern-assembler';
 import ProcessingStep from './internals/steps-repository/processing-step';
 import SiteCreationStep from './internals/steps-repository/site-creation-step';
+import SitePickerStep from './internals/steps-repository/site-picker';
 import { Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect } from '@automattic/data-stores';
+import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
 const importFlow: Flow = {
 	name: IMPORT_FOCUSED_FLOW,
@@ -46,14 +55,19 @@ const importFlow: Flow = {
 			{ slug: 'processing', component: ProcessingStep },
 			{ slug: 'siteCreationStep', component: SiteCreationStep },
 			{ slug: 'migrationHandler', component: MigrationHandler },
+			{ slug: 'sitePicker', component: SitePickerStep },
+			{ slug: 'error', component: MigrationError },
 		];
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
-		const { setStepProgress } = useDispatch( ONBOARD_STORE );
+		const { setStepProgress, setPendingAction } = useDispatch( ONBOARD_STORE );
+		const { data: sites } = useSiteExcerptsQuery( SITE_PICKER_FILTER_CONFIG );
+		const { addTempSiteToSourceOption } = useAddTempSiteToSourceOptionMutation();
 		const urlQueryParams = useQuery();
+		const fromParam = urlQueryParams.get( 'from' );
+		const { data: migrationStatus } = useSourceMigrationStatusQuery( fromParam );
 		const siteSlugParam = useSiteSlugParam();
-		const { setPendingAction } = useDispatch( ONBOARD_STORE );
 		const selectedDesign = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
 			[]
@@ -79,28 +93,29 @@ const importFlow: Flow = {
 		};
 
 		const handleMigrationRedirects = ( providedDependencies: ProvidedDependencies = {} ) => {
-			const from = urlQueryParams.get( 'from' );
-			// If there's any errors, we redirct them to the siteCreationStep for a clean start
+			const userHasSite = sites && sites.length > 0;
+
+			// If there's any errors, we redirect them to the select/create a new site for a clean start
 			if ( providedDependencies?.hasError ) {
-				return navigate( 'siteCreationStep' );
+				return userHasSite ? navigate( 'sitePicker' ) : navigate( 'siteCreationStep' );
 			}
 			if ( providedDependencies?.status === 'inactive' ) {
-				// This means they haven't kick off the migration before, so we send them to create a new site
+				// This means they haven't kick off the migration before, so we send them to select/create a new site
 				if ( ! providedDependencies?.targetBlogId ) {
-					return navigate( 'siteCreationStep' );
+					return userHasSite ? navigate( 'sitePicker' ) : navigate( 'siteCreationStep' );
 				}
-				// For some reason, the admin role is mismatch, we want to create a new site for them as well
+				// For some reason, the admin role is mismatch, we want to select/create a new site for them as well
 				if ( providedDependencies?.isAdminOnTarget === false ) {
-					return navigate( 'siteCreationStep' );
+					return userHasSite ? navigate( 'sitePicker' ) : navigate( 'siteCreationStep' );
 				}
 			}
 			// For those who hasn't paid or in the middle of the migration process, we sent them to the importerWordPress step
 			return navigate(
-				`importerWordpress?siteSlug=${ providedDependencies?.targetBlogSlug }&from=${ from }&option=everything`
+				`importerWordpress?siteSlug=${ providedDependencies?.targetBlogSlug }&from=${ fromParam }&option=everything`
 			);
 		};
 
-		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
+		const submit = ( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) => {
 			switch ( _currentStep ) {
 				case 'importReady': {
 					const depUrl = ( providedDependencies?.url as string ) || '';
@@ -148,11 +163,26 @@ const importFlow: Flow = {
 					return navigate( 'processing' );
 
 				case 'processing': {
+					const processingResult = params[ 0 ] as ProcessingResult;
+					if ( processingResult === ProcessingResult.FAILURE ) {
+						return navigate( 'error' );
+					}
+
 					if ( providedDependencies?.siteSlug ) {
-						const from = urlQueryParams.get( 'from' );
-						return ! from
+						if ( isEnabled( 'onboarding/import-redesign' ) && fromParam ) {
+							const slectedSiteSlug = providedDependencies?.siteSlug as string;
+							urlQueryParams.set( 'siteSlug', slectedSiteSlug );
+							urlQueryParams.set( 'from', fromParam );
+							urlQueryParams.set( 'option', 'everything' );
+
+							return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
+						}
+
+						return ! fromParam
 							? navigate( `import?siteSlug=${ providedDependencies?.siteSlug }` )
-							: navigate( `import?siteSlug=${ providedDependencies?.siteSlug }&from=${ from }` );
+							: navigate(
+									`import?siteSlug=${ providedDependencies?.siteSlug }&from=${ fromParam }`
+							  );
 					}
 					// End of Pattern Assembler flow
 					if ( isBlankCanvasDesign( selectedDesign ) ) {
@@ -161,8 +191,51 @@ const importFlow: Flow = {
 
 					return exitFlow( `/home/${ siteSlugParam }` );
 				}
+
 				case 'migrationHandler': {
 					return handleMigrationRedirects( providedDependencies );
+				}
+
+				case 'error':
+					return navigate( providedDependencies?.url as string );
+
+				case 'sitePicker': {
+					switch ( providedDependencies?.action ) {
+						case 'update-query': {
+							const newQueryParams =
+								( providedDependencies?.queryParams as { [ key: string ]: string } ) || {};
+
+							Object.keys( newQueryParams ).forEach( ( key ) => {
+								newQueryParams[ key ]
+									? urlQueryParams.set( key, newQueryParams[ key ] )
+									: urlQueryParams.delete( key );
+							} );
+
+							return navigate( `sitePicker?${ urlQueryParams.toString() }` );
+						}
+
+						case 'select-site': {
+							const selectedSite = providedDependencies.site as SiteExcerptData;
+
+							if ( selectedSite && migrationStatus ) {
+								// Store temporary target blog id to source site option
+								selectedSite &&
+									migrationStatus?.source_blog_id &&
+									addTempSiteToSourceOption( selectedSite.ID, migrationStatus.source_blog_id );
+
+								urlQueryParams.set( 'siteSlug', selectedSite.slug );
+								urlQueryParams.set( 'option', 'everything' );
+
+								return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
+							}
+						}
+
+						case 'create-site':
+							return navigate( 'siteCreationStep' );
+
+						default:
+							return navigate( `migrationHandler` );
+					}
 				}
 			}
 		};

@@ -36,7 +36,6 @@ object WPComPlugins : Project({
 	buildType(O2Blocks)
 	buildType(HappyBlocks)
 	buildType(Happychat)
-	buildType(InlineHelp)
 	buildType(GutenbergUploadSourceMapsToSentry);
 
 	cleanup {
@@ -190,15 +189,6 @@ private object Happychat : WPComPluginBuild(
 	withPRNotify = "false",
 )
 
-private object InlineHelp : WPComPluginBuild(
-	buildId = "WPComPlugins_InlineHelp",
-	buildName = "Inline Help",
-	pluginSlug = "inline-help",
-	archiveDir = "./dist/",
-	docsLink = "TODO",
-	withPRNotify = "false",
-)
-
 private object Notifications : WPComPluginBuild(
 	buildId = "WPComPlugins_Notifications",
 	buildName = "Notifications",
@@ -261,6 +251,16 @@ private object OdysseyStats : WPComPluginBuild(
 				yarn test:js --reporters=default --reporters=jest-teamcity --maxWorkers=${'$'}JEST_MAX_WORKERS
 			"""
 		}
+		bashNodeScript {
+			name = "Run Size Test"
+			scriptContent = """
+				cd apps/odyssey-stats
+
+				# run unit tests
+				yarn test:size
+			"""
+		}
+		
 	}
 )
 

@@ -128,6 +128,7 @@ export interface SiteDetails {
 	single_user_site?: boolean;
 	site_owner?: number;
 	slug: string;
+	title: string;
 	visible?: boolean;
 	was_ecommerce_trial?: boolean;
 	wpcom_url?: string;
@@ -504,8 +505,18 @@ export type SiteSelect = SelectFromMap< typeof selectors >;
 
 export interface SourceSiteMigrationDetails {
 	status: string;
+	source_blog_id?: number;
 	target_blog_id?: number;
 	is_target_blog_admin?: boolean;
 	is_target_blog_upgraded?: boolean;
 	target_blog_slug?: string;
+}
+
+export interface AssembleSiteOptions {
+	homeHtml?: string;
+	headerHtml?: string;
+	footerHtml?: string;
+	globalStyles?: GlobalStyles;
+	shouldResetContent?: boolean;
+	siteSetupOption?: string;
 }

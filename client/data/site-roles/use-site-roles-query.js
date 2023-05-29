@@ -2,7 +2,9 @@ import { useQuery } from '@tanstack/react-query';
 import wp from 'calypso/lib/wp';
 
 function useSiteRolesQuery( siteId, queryOptions = {} ) {
-	return useQuery( [ 'site-roles', siteId ], () => wp.req.get( `/sites/${ siteId }/roles` ), {
+	return useQuery( {
+		queryKey: [ 'site-roles', siteId ],
+		queryFn: () => wp.req.get( `/sites/${ siteId }/roles` ),
 		...queryOptions,
 		select: ( { roles } ) => {
 			return roles.map( ( role ) =>

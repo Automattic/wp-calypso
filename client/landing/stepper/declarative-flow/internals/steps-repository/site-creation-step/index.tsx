@@ -12,6 +12,8 @@ import {
 	isMigrationFlow,
 	isStartWritingFlow,
 	isWooExpressFlow,
+	isHostingSiteCreationFlow,
+	isBlogOnboardingFlow,
 } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -21,7 +23,8 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import useAddTempSiteToSourceOptionMutation from 'calypso/data/site-migration/use-add-temp-site-mutation';
-import { useSiteQuery } from 'calypso/data/sites/use-site-query';
+import { useSourceMigrationStatusQuery } from 'calypso/data/site-migration/use-source-migration-status-query';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
@@ -101,7 +104,8 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 		isFreeFlow( flow ) ||
 		isLinkInBioFlow( flow ) ||
 		isMigrationFlow( flow ) ||
-		isStartWritingFlow( flow ) ||
+		isBlogOnboardingFlow( flow ) ||
+		isHostingSiteCreationFlow( flow ) ||
 		wooFlows.includes( flow || '' )
 	) {
 		siteVisibility = Site.Visibility.PublicNotIndexed;
@@ -116,9 +120,9 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 	);
 	const blogTitle = isFreeFlow( 'free' ) ? getSelectedSiteTitle : '';
 	const { addTempSiteToSourceOption } = useAddTempSiteToSourceOptionMutation();
-	const search = window.location.search;
-	const sourceSiteSlug = new URLSearchParams( search ).get( 'from' ) || '';
-	const { data: siteData } = useSiteQuery( sourceSiteSlug, isCopySiteFlow( flow ) );
+	const urlQueryParams = useQuery();
+	const sourceSiteSlug = urlQueryParams.get( 'from' ) || '';
+	const { data: sourceMigrationStatus } = useSourceMigrationStatusQuery( sourceSiteSlug );
 	const useThemeHeadstart = ! isStartWritingFlow( flow );
 
 	async function createSite() {
@@ -152,12 +156,13 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 			await addProductsToCart( site.siteSlug, flow, productCartItems );
 		}
 
-		if ( isMigrationFlow( flow ) && site?.siteSlug && siteData?.ID ) {
+		if ( isMigrationFlow( flow ) && site?.siteSlug && sourceMigrationStatus?.source_blog_id ) {
 			// Store temporary target blog id to source site option
-			addTempSiteToSourceOption( site.siteId, siteData.ID );
+			addTempSiteToSourceOption( site.siteId, sourceMigrationStatus?.source_blog_id );
 		}
 
 		return {
+			siteId: site?.siteId,
 			siteSlug: site?.siteSlug,
 			goToCheckout: Boolean( planCartItem ),
 		};

@@ -1,11 +1,9 @@
 @import "@automattic/color-studio/dist/color-variables";
 @import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
-
-$max-list-width: 1300px;
+@import "client/assets/stylesheets/p2-vars";
 
 .subscription-manager__site-list {
-	max-width: $max-list-width;
 
 	.row {
 		border-block-end: 1px solid rgb(238, 238, 238);

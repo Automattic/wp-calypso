@@ -7,19 +7,16 @@ import type { SiteSelect } from '@automattic/data-stores';
 export function useSite() {
 	const siteSlug = useSiteSlugParam();
 	const siteIdParam = useSiteIdParam();
-	const siteId = useSelect(
-		( select ) => siteSlug && ( select( SITE_STORE ) as SiteSelect ).getSiteIdBySlug( siteSlug ),
-		[ siteSlug ]
-	);
-	const site = useSelect(
-		( select ) =>
-			( siteId || siteIdParam ) &&
-			( select( SITE_STORE ) as SiteSelect ).getSite(
-				( siteId ?? siteIdParam ) as string | number
-			),
-		[ siteId, siteIdParam ]
-	);
 
+	const site = useSelect(
+		( select ) => {
+			const siteStore = select( SITE_STORE ) as SiteSelect;
+			const siteKey = siteSlug ?? siteIdParam;
+
+			return siteKey ? siteStore.getSite( siteKey as string | number ) : null;
+		},
+		[ siteSlug, siteIdParam ]
+	);
 	if ( ( siteSlug || siteIdParam ) && site ) {
 		return site;
 	}

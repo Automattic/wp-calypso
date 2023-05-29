@@ -96,7 +96,7 @@ const sitesMargin = css( {
 	marginBlockEnd: '1.5em',
 } );
 
-const PageBodyBottomContainer = styled.div( {
+export const PageBodyBottomContainer = styled.div( {
 	color: 'var( --color-text-subtle )',
 	paddingBlockStart: '16px',
 	paddingBlockEnd: '24px',

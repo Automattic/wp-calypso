@@ -30,12 +30,18 @@ export function themeActivated(
 	purchased = false,
 	styleVariationSlug
 ) {
-	const themeActivatedThunk = ( dispatch, getState ) => {
-		const action = {
-			type: THEME_ACTIVATE_SUCCESS,
-			themeStylesheet,
-			siteId,
-		};
+	const action = {
+		type: THEME_ACTIVATE_SUCCESS,
+		themeStylesheet,
+		siteId,
+	};
+
+	if ( source === 'assembler' ) {
+		return action;
+	}
+
+	// it is named function just for testing purposes
+	return function themeActivatedThunk( dispatch, getState ) {
 		const previousThemeId = getActiveTheme( getState(), siteId );
 		const query = getLastThemeQuery( getState(), siteId );
 		const search_taxonomies = prependThemeFilterKeys( getState(), query.filter );
@@ -58,5 +64,4 @@ export function themeActivated(
 		// Update pages in case the front page was updated on theme switch.
 		dispatch( requestSitePosts( siteId, { type: 'page' } ) );
 	};
-	return themeActivatedThunk; // it is named function just for testing purposes
 }

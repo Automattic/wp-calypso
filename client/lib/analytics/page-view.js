@@ -3,7 +3,6 @@
 import { recordTracksPageViewWithPageParams } from '@automattic/calypso-analytics';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { retarget as retargetAdTrackers } from 'calypso/lib/analytics/ad-tracking';
-import { retargetFullStory } from 'calypso/lib/analytics/fullstory';
 import { updateQueryParamsTracking } from 'calypso/lib/analytics/sem';
 import { refreshCountryCodeCookieGdpr, saveCouponQueryArgument } from 'calypso/lib/analytics/utils';
 import { gaRecordPageView } from './ga';
@@ -31,9 +30,6 @@ export function recordPageView( urlPath, pageTitle, params = {}, options = {} ) 
 		saveCouponQueryArgument();
 		updateQueryParamsTracking();
 		retargetAdTrackers( urlPath );
-
-		// FullStory.
-		retargetFullStory();
 
 		// Process queue.
 		processQueue();

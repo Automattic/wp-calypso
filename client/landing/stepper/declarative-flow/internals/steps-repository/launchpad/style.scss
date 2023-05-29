@@ -142,6 +142,7 @@
 
 // Launchpad - Sidebar heading text
 .start-writing,
+.design-first,
 .newsletter,
 .link-in-bio.launchpad,
 .link-in-bio-tld:not(.domains),
@@ -152,17 +153,17 @@
 		.step-container__content h1,
 		.step-container__content h1.launchpad__sidebar-h1 {
 			color: var(--studio-gray-100);
-			font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
-			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-			font-size: 28px;
+			font-family: $brand-serif;
+			font-size: $font-title-large;
 			font-weight: 400;
-			line-height: 1.1;
+			line-height: rem(40px);
 			margin: 0 0 10px;
 			padding: 0;
 			letter-spacing: -0.32px;
 
 			@include break-large {
-				font-size: $font-headline-medium;
+				font-size: rem(44px);
+				line-height: rem(52px);
 			}
 		}
 	}
@@ -179,7 +180,7 @@
 }
 
 .launchpad__sidebar-header-flow-name {
-	font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+	font-family: $brand-serif;
 	font-style: normal;
 	font-weight: 400;
 	font-size: $font-body-large;
@@ -211,6 +212,7 @@
 		align-items: center;
 		flex-grow: 1;
 		width: 0;
+		margin-right: 6px;
 	}
 
 	.launchpad__url-box-domain-text {
@@ -218,21 +220,20 @@
 		white-space: nowrap;
 		overflow: hidden;
 		padding: 4px 0;
-		padding-right: 8px;
+		padding-right: 6px;
 		letter-spacing: -0.24px;
 		font-size: $font-body-small;
 	}
 
-	.launchpad__url-box-domain:hover > .launchpad__clipboard-button {
-		opacity: 1;
-	}
-
-	.launchpad__clipboard-button:focus {
-		opacity: 1;
-	}
-
 	.launchpad__clipboard-button {
 		opacity: 0;
+		margin-top: 2px;
+		flex-shrink: 0;
+	}
+
+	.launchpad__url-box-domain:hover > .launchpad__clipboard-button,
+	.launchpad__clipboard-button:focus {
+		opacity: 1;
 	}
 }
 
@@ -262,7 +263,8 @@
 
 }
 
-.start-writing .launchpad__sidebar-admin-link {
+.start-writing .launchpad__sidebar-admin-link,
+.design-first .launchpad__sidebar-admin-link {
 	display: none;
 }
 
@@ -330,6 +332,7 @@
 	border-right: none;
 	border-top: none;
 	display: flex;
+	flex-wrap: wrap;
 	padding: 16px;
 	width: 100%;
 	margin: 0;
@@ -365,6 +368,7 @@
 
 .launchpad__checklist-item .badge,
 .launchpad__domain-upgrade-badge {
+	margin-left: auto;
 	background-color: var(--studio-blue-5);
 	color: var(--studio-blue-80);
 	font-size: $font-body-extra-small;
@@ -380,30 +384,28 @@
 	color: var(--color-text);
 }
 
-.launchpad__checklist-item-checkmark-container,
-.launchpad__checklist-item-warning-container {
+.launchpad__checklist-item-checkmark-container {
 	margin-right: 8px;
 	width: 20px;
 
-	.launchpad__checklist-item-checkmark,
-	.launchpad__checklist-item-warning {
+	.launchpad__checklist-item-checkmark {
 		top: 2px;
 		vertical-align: text-bottom;
 	}
 }
-.launchpad__checklist-item-warning {
-	fill: var(--color-warning);
-}
 
 // general styles
-.launchpad__checklist-item-text-container {
-	flex-grow: 1;
-	font-size: $font-body-small;
-	line-height: 20px;
-	text-align: left;
-}
 .launchpad__checklist-item-text {
 	font-weight: 600;
+}
+
+.launchpad__checklist-item-subtext {
+	flex-basis: 100%;
+	margin-left: 28px;
+	margin-top: 8px;
+	text-align: left;
+	font-size: $font-body-small;
+	line-height: 20px;
 }
 
 .launchpad__task:nth-last-child(2) {
@@ -462,6 +464,7 @@
 	line-height: 20px;
 	text-align: left;
 	width: 30px;
+	margin-left: auto;
 }
 
 .gridicon.launchpad__checklist-item-chevron {
@@ -540,13 +543,6 @@
 		@include break-large {
 			margin: 0 auto;
 		}
-
-		.web-preview__frame-edit-overlay {
-			@include break-large {
-				border-radius: 40px; /* stylelint-disable-line scales/radii */
-			}
-		}
-
 	}
 
 	.web-preview__frame-wrapper.is-resizable {
@@ -555,36 +551,6 @@
 		padding: 0;
 		background-color: transparent;
 		position: relative;
-
-
-		.web-preview__frame-edit-overlay {
-			position: absolute;
-			top: 0;
-			left: 0;
-			right: 0;
-			bottom: 0;
-			border-radius: 40px;  /* stylelint-disable-line scales/radii */
-
-			display: flex;
-			justify-content: center;
-			align-items: center;
-
-			@include break-large {
-				border-radius: 20px; /* stylelint-disable-line scales/radii */
-			}
-
-			.web-preview__frame-edit-button {
-				font-size: 14px;  /* stylelint-disable-line declaration-property-unit-allowed-list */
-				line-height: 20px;
-				padding: 10px 24px;
-				color: #000;
-				background: #fff;
-				border-radius: 4px;
-				border-color: #c3c4c7;
-				border-width: 2px;
-				cursor: pointer;
-			}
-		}
 	}
 
 	.web-preview__frame {
@@ -610,8 +576,6 @@
 	.spinner-line {
 		display: none;
 	}
-
-
 }
 
 // Launchpad - Processing Screens

@@ -8,7 +8,7 @@ import {
 import type { CheckoutPaymentMethodSlug } from '@automattic/wpcom-checkout';
 import type { CalypsoDispatch } from 'calypso/state/types';
 
-function convertErrorToString( error: Error ): string {
+export function convertErrorToString( error: Error ): string {
 	if ( error.cause ) {
 		return `${ error.message }; Cause: ${ error.cause }; Stack: ${ error.stack }`;
 	}

@@ -43,12 +43,13 @@ type LaunchpadUpdateSettings = {
 
 export const fetchLaunchpad = (
 	siteSlug: string | null,
-	checklist_slug?: string | null
+	checklist_slug?: string | 0 | null | undefined
 ): Promise< LaunchpadResponse > => {
 	const slug = encodeURIComponent( siteSlug as string );
-	const requestUrl = checklist_slug
-		? `/sites/${ slug }/launchpad?checklist_slug=${ checklist_slug }`
-		: `/sites/${ slug }/launchpad`;
+	const checklistSlug = checklist_slug ? encodeURIComponent( checklist_slug ) : null;
+	const requestUrl = checklistSlug
+		? `/sites/${ slug }/launchpad?_locale=user&checklist_slug=${ checklistSlug }`
+		: `/sites/${ slug }/launchpad?_locale=user`;
 
 	return canAccessWpcomApis()
 		? wpcomRequest( {
@@ -62,9 +63,14 @@ export const fetchLaunchpad = (
 		  } as APIFetchOptions );
 };
 
-export const useLaunchpad = ( siteSlug: string | null, checklist_slug?: string | null ) => {
+export const useLaunchpad = (
+	siteSlug: string | null,
+	checklist_slug?: string | 0 | null | undefined
+) => {
 	const key = [ 'launchpad', siteSlug, checklist_slug ];
-	return useQuery( key, () => fetchLaunchpad( siteSlug, checklist_slug ), {
+	return useQuery( {
+		queryKey: key,
+		queryFn: () => fetchLaunchpad( siteSlug, checklist_slug ),
 		retry: 3,
 		initialData: {
 			site_intent: '',

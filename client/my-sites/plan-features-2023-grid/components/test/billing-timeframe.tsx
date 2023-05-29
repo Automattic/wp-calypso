@@ -96,13 +96,10 @@ describe( 'PlanFeatures2023GridBillingTimeframe', () => {
 			/>
 		);
 
-		expect( container ).toHaveTextContent(
-			`per month, ${ formatCurrency(
-				planPrices.planDiscountedRawPrice,
-				getCurrentUserCurrencyCode(),
-				{ stripZeros: true }
-			) } billed annually`
-		);
+		const discountedPrice = formatCurrency( planPrices.planDiscountedRawPrice, 'INR', {
+			stripZeros: true,
+		} );
+		expect( container ).toHaveTextContent( `per month, ${ discountedPrice } for the first year` );
 	} );
 
 	test( 'should show full-term discounted price when plan is 2-yearly', () => {
@@ -122,13 +119,9 @@ describe( 'PlanFeatures2023GridBillingTimeframe', () => {
 				billingPeriod={ PLAN_BIENNIAL_PERIOD }
 			/>
 		);
-
-		expect( container ).toHaveTextContent(
-			`per month, ${ formatCurrency(
-				planPrices.planDiscountedRawPrice,
-				getCurrentUserCurrencyCode(),
-				{ stripZeros: true }
-			) } billed every two years`
-		);
+		const discountedPrice = formatCurrency( planPrices.planDiscountedRawPrice, 'INR', {
+			stripZeros: true,
+		} );
+		expect( container ).toHaveTextContent( `per month, ${ discountedPrice } for the first year` );
 	} );
 } );

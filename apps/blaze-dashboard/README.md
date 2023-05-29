@@ -15,7 +15,7 @@ Blaze Dashboard is built as a standalone application to be used inside Jetpack, 
 
 ## Routing
 
-It utilizes the [hashbang (#!) in page.js](https://github.com/visionmedia/page.js), however it doesn't work out of the box, because we are using hardcoded paths in Calypso, so some tricks are done in Jetpack to intecept the anchor clicks and covert them to hashbangs.
+It utilizes the [hashbang (#!) in page.js](https://github.com/visionmedia/page.js), however it doesn't work out of the box, because we are using hardcoded paths in Calypso, so some tricks are done in Jetpack to intercept the anchor clicks and convert them to hashbangs.
 
 ```
 $("#wpcom").on('click', 'a', function (e) {
@@ -32,7 +32,7 @@ $("#wpcom").on('click', 'a', function (e) {
 The `Gridicon` in `@automattic/components` leverages `<use>` to load SVG sprites and has issues when loading from CDN (i.e. other than the main domain). So we had to replace with one that doesn't load the SVG sprite file - `packages/components/src/gridicon/no-asset.tsx` - and then in Jetpack, we load it separately:
 
 ```
-$.get("https://widgets.wp.com/calypso-happychat/images/gridicons-506499ddac13811fee8e.svg", function(data) {
+$.get("https://widgets.wp.com/blaze-dashboard/common/gridicons-506499ddac13811fee8e.svg", function(data) {
 	var div = document.createElement("div");
 	div.innerHTML = new XMLSerializer().serializeToString(data.documentElement);
 	div.style = 'display: none';
@@ -58,3 +58,4 @@ BLAZE_DASHBOARD_PACKAGE_PATH=/path/to/jetpack/projects/packages/blaze yarn dev
 ## Uploading to CDN
 
 The path is `widgets.wp.com/blaze-dashboard`.
+

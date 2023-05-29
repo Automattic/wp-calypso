@@ -22,6 +22,15 @@ export type AllowedStatusTypes =
 	| 'disabled'
 	| 'critical';
 
+interface MonitorContactEmail {
+	name: string;
+	email_address: string;
+	verified: boolean;
+}
+interface MonitorContacts {
+	emails: Array< MonitorContactEmail >;
+}
+
 export interface MonitorSettings {
 	monitor_active: boolean;
 	monitor_site_status: boolean;
@@ -30,6 +39,7 @@ export interface MonitorSettings {
 	monitor_user_emails: Array< string >;
 	monitor_user_email_notifications: boolean;
 	monitor_user_wp_note_notifications: boolean;
+	monitor_notify_additional_user_emails: Array< MonitorContactEmail >;
 }
 
 interface StatsObject {
@@ -186,6 +196,10 @@ export interface SitesOverviewContextInterface extends DashboardOverviewContextI
 	setSelectedSites: ( value: Array< Site > ) => void;
 }
 
+export interface DashboardDataContextInterface {
+	verifiedContacts: { emails: Array< string > };
+}
+
 export type AgencyDashboardFilterOption =
 	| 'backup_failed'
 	| 'backup_warning'
@@ -223,6 +237,7 @@ export interface UpdateMonitorSettingsAPIResponse {
 		email_notifications: boolean;
 		wp_note_notifications: boolean;
 		jetmon_defer_status_down_minutes: number;
+		contacts?: MonitorContacts;
 	};
 }
 
@@ -230,6 +245,7 @@ export interface UpdateMonitorSettingsParams {
 	wp_note_notifications?: boolean;
 	email_notifications?: boolean;
 	jetmon_defer_status_down_minutes?: number;
+	contacts?: MonitorContacts;
 }
 export interface UpdateMonitorSettingsArgs {
 	siteId: number;
@@ -252,6 +268,8 @@ export interface ToggleActivateMonitorArgs {
 export interface Backup {
 	activityTitle: string;
 	activityDescription: { children: { text: string }[] }[];
+	activityName: string;
+	activityTs: number;
 }
 
 export type AllowedMonitorPeriods = 'day' | 'week' | '30 days' | '90 days';
@@ -259,3 +277,15 @@ export type AllowedMonitorPeriods = 'day' | 'week' | '30 days' | '90 days';
 export interface MonitorUptimeAPIResponse {
 	[ key: string ]: { status: string; downtime_in_minutes?: number };
 }
+
+export interface MonitorSettingsEmail {
+	email: string;
+	name: string;
+	verified: boolean;
+}
+
+export interface StateMonitorSettingsEmail extends MonitorSettingsEmail {
+	isDefault?: boolean;
+}
+
+export type AllowedMonitorContactActions = 'add' | 'verify' | 'edit' | 'remove';

@@ -1,9 +1,8 @@
 import { Gridicon } from '@automattic/components';
-import { SubscriptionManager } from '@automattic/data-stores';
+import { SubscriptionManager, Reader } from '@automattic/data-stores';
 import { useMemo } from 'react';
 import TimeSince from 'calypso/components/time-since';
-import { PendingSiteSettings } from '../../settings-popover';
-import type { PendingSiteSubscription } from '@automattic/data-stores/src/reader/types';
+import { PendingSubscriptionSettingsPopover } from 'calypso/landing/subscriptions/components/settings';
 
 export default function PendingSiteRow( {
 	id,
@@ -12,7 +11,7 @@ export default function PendingSiteRow( {
 	site_icon,
 	site_url,
 	date_subscribed,
-}: PendingSiteSubscription ) {
+}: Reader.PendingSiteSubscription ) {
 	const hostname = useMemo( () => new URL( site_url ).hostname, [ site_url ] );
 	const siteIcon = useMemo( () => {
 		if ( site_icon ) {
@@ -38,10 +37,15 @@ export default function PendingSiteRow( {
 				</span>
 			</a>
 			<span className="date" role="cell">
-				<TimeSince date={ date_subscribed.toISOString?.() ?? date_subscribed } />
+				<TimeSince
+					date={
+						( date_subscribed.valueOf() ? date_subscribed : new Date( 0 ) ).toISOString?.() ??
+						date_subscribed
+					}
+				/>
 			</span>
 			<span className="actions" role="cell">
-				<PendingSiteSettings
+				<PendingSubscriptionSettingsPopover
 					onConfirm={ () => confirmPendingSubscription( { id, activation_key } ) }
 					onDelete={ () => deletePendingSubscription( { id } ) }
 					confirming={ confirmingPendingSubscription }

@@ -7,10 +7,8 @@ export type NavigationControls = {
 	/**
 	 * Call this function if you want to go to the previous step.
 	 *
-	 * @deprecated Avoid this method. Use submit() instead.
-	 * If you need to navigate back and forth between
-	 * stepper screens, consider adding screen(s) to a new
-	 * stepper flow and linking directly between flows/screens.
+	 * Please don't change the type of this function to add parameters. Passing data should strictly happen through the `submit` function.
+	 * See why here: pdDR7T-KR-p2#steps-should-only-submit
 	 */
 	goBack?: () => void;
 
@@ -32,6 +30,7 @@ export type NavigationControls = {
 	 * between flows/screens.
 	 */
 	goToStep?: ( step: string ) => void;
+
 	/**
 	 * Submits the answers provided in the flow
 	 */

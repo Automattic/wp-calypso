@@ -10,23 +10,21 @@ export interface ProductionSite {
 }
 
 export const useProductionSiteDetail = ( siteId: number, options: UseQueryOptions ) => {
-	return useQuery< ProductionSite, unknown, ProductionSite >(
-		[ USE_PRODUCTION_SITE_DETAIL_QUERY_KEY, siteId ],
-		() =>
+	return useQuery< ProductionSite, unknown, ProductionSite >( {
+		queryKey: [ USE_PRODUCTION_SITE_DETAIL_QUERY_KEY, siteId ],
+		queryFn: () =>
 			wp.req.get( {
 				path: `/sites/${ siteId }/staging-site/production-site-details`,
 				apiNamespace: 'wpcom/v2',
 			} ),
-		{
-			enabled: !! siteId && ( options.enabled ?? true ),
-			select: ( data ) => {
-				return data;
-			},
-			meta: {
-				persist: false,
-			},
-			staleTime: 10 * 1000,
-			onError: options.onError,
-		}
-	);
+		enabled: !! siteId && ( options.enabled ?? true ),
+		select: ( data ) => {
+			return data;
+		},
+		meta: {
+			persist: false,
+		},
+		staleTime: 10 * 1000,
+		onError: options.onError,
+	} );
 };

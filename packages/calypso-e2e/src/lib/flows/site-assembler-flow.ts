@@ -40,6 +40,13 @@ export class SiteAssemblerFlow {
 	 * @param {number} index Index of the item to choose. Defaults to 0.
 	 */
 	async selectLayoutComponent( index = 0 ): Promise< void > {
-		await this.page.locator( '.pattern-list-renderer__pattern-list-item' ).nth( index ).click();
+		await this.page
+			.getByRole( 'listbox', { name: 'Block patterns' } )
+			.getByRole( 'option' )
+			.nth( index )
+			// Pierce through the iframe holding the component preview.
+			.frameLocator( 'iframe' )
+			.locator( '.block-editor-iframe__body' )
+			.click();
 	}
 }

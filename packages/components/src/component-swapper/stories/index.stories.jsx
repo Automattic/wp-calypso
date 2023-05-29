@@ -1,7 +1,7 @@
 import ComponentSwapper from '../.';
 import { Button } from '../../.';
 
-export default { title: 'Component swapper' };
+export default { title: 'packages/components/Component swapper' };
 
 const ComponentSwapperVariations = () => {
 	return (

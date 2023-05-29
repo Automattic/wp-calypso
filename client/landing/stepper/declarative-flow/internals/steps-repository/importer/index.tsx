@@ -1,4 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+import { isEnabled } from '@automattic/calypso-config';
 import { StepContainer } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -7,7 +8,6 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import NotAuthorized from 'calypso/blocks/importer/components/not-authorized';
 import NotFound from 'calypso/blocks/importer/components/not-found';
-import { Importer, ImportJob } from 'calypso/blocks/importer/types';
 import { getImporterTypeForEngine } from 'calypso/blocks/importer/util';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySites from 'calypso/components/data/query-sites';
@@ -34,6 +34,7 @@ import { useInitialQueryRun } from './hooks/use-initial-query-run';
 import { useStepNavigator } from './hooks/use-step-navigator';
 import type { ImporterCompType } from './types';
 import type { OnboardSelect } from '@automattic/data-stores';
+import type { Importer, ImportJob } from 'calypso/blocks/importer/types';
 
 interface Props {
 	importer: Importer;
@@ -174,7 +175,10 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 						'import__onboarding-page',
 						'import-layout__center',
 						'importer-wrapper',
-						{ [ `importer-wrapper__${ importer }` ]: !! importer }
+						{
+							[ `importer-wrapper__${ importer }` ]: !! importer,
+							'import__onboarding-page--redesign': isEnabled( 'onboarding/import-redesign' ),
+						}
 					) }
 					stepName="importer-step"
 					hideSkip={ true }

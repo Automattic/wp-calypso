@@ -5,6 +5,7 @@ import { getSiteFragment } from 'calypso/lib/route';
 import { siteSelection } from 'calypso/my-sites/controller';
 import PromotedPosts from 'calypso/my-sites/promote-post/main';
 import PromotedPostsRedesignI2 from 'calypso/my-sites/promote-post-i2/main';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getPrimarySiteSlug from 'calypso/state/selectors/get-primary-site-slug';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getAdvertisingDashboardPath } from './utils';
@@ -45,13 +46,16 @@ export const promoteWidget = ( context, next ) => {
 
 	const postId = item?.split( '-' )[ 1 ];
 
+	const currentQuery = getCurrentQueryArguments( state );
+	const source = currentQuery?.source?.toString();
+
 	context.primary = (
 		<BlazePressWidget
 			isVisible={ true }
 			siteId={ siteId }
 			postId={ postId }
 			keyValue={ item }
-			// source={ source }
+			source={ source }
 		/>
 	);
 

@@ -12,7 +12,7 @@ import useSetupFormInitialValues from '../components/setup-form/hooks/use-setup-
 import type { Step } from '../../types';
 import './styles.scss';
 
-const SetupBlog: Step = ( { navigation } ) => {
+const SetupBlog: Step = ( { navigation, flow } ) => {
 	const { submit } = navigation;
 	const translate = useTranslate();
 	const site = useSite();
@@ -36,6 +36,12 @@ const SetupBlog: Step = ( { navigation } ) => {
 	const { siteTitle, setComponentSiteTitle, tagline, setTagline } = useSetupFormInitialValues();
 
 	useEffect( () => {
+		if ( siteTitle === 'Site Title' ) {
+			setComponentSiteTitle( '' );
+		}
+	}, [ flow, setComponentSiteTitle, siteTitle ] );
+
+	useEffect( () => {
 		setIsSubmitError( false );
 	}, [ siteTitle, tagline, selectedFile, base64Image ] );
 
@@ -54,7 +60,6 @@ const SetupBlog: Step = ( { navigation } ) => {
 					blogname: siteTitle,
 					blogdescription: tagline,
 				} );
-				setIsLoading( false );
 				submit?.();
 			}
 		} catch {
