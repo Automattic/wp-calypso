@@ -110,16 +110,15 @@ const newsletter: Flow = {
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStep );
+			const logInUrl = getStartUrl();
 
 			switch ( _currentStep ) {
 				case 'intro':
 					clearSignupDestinationCookie();
-					// This redirect for non-logged in users nearly duplicates one above,
-					// but is needed to avoid a short flash of the newsletterSetup screen.
-					if ( ! userIsLoggedIn ) {
-						return window.location.assign( getStartUrl() );
+					if ( userIsLoggedIn ) {
+						return navigate( 'newsletterSetup' );
 					}
-					return navigate( 'newsletterSetup' );
+					return window.location.assign( logInUrl );
 
 				case 'newsletterSetup':
 					clearSignupDestinationCookie();
