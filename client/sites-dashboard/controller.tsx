@@ -6,6 +6,7 @@ import { Global, css } from '@emotion/react';
 import { removeQueryArgs } from '@wordpress/url';
 import AsyncLoad from 'calypso/components/async-load';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { removeNotice } from 'calypso/state/notices/actions';
 import { SitesDashboard } from './components/sites-dashboard';
 import { MEDIA_QUERIES } from './utils';
@@ -44,6 +45,8 @@ export function sanitizeQueryParameters( context: PageJSContext, next: () => voi
 }
 
 export function sitesDashboard( context: PageJSContext, next: () => void ) {
+	const siteCount = getCurrentUser( context.store.getState() )?.site_count ?? 0;
+
 	const sitesDashboardGlobalStyles = css`
 		body.is-group-sites-dashboard {
 			background: #fdfdfd;
@@ -70,6 +73,7 @@ export function sitesDashboard( context: PageJSContext, next: () => void ) {
 			<PageViewTracker path="/sites" title="Sites Management Page" delay={ 500 } />
 			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
 			<SitesDashboard
+				hasSites={ siteCount > 0 }
 				queryParams={ {
 					page: context.query.page ? parseInt( context.query.page ) : undefined,
 					perPage: context.query[ 'per-page' ]

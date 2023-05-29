@@ -18,6 +18,7 @@ import { withoutHttp } from 'calypso/lib/url';
 import { successNotice } from 'calypso/state/notices/actions';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 import { MEDIA_QUERIES } from '../utils';
+import { EmptySitesDashboard } from './empty-sites-dashboard';
 import { NoSitesMessage } from './no-sites-message';
 import {
 	SitesDashboardQueryParams,
@@ -31,6 +32,7 @@ import { SitesTable } from './sites-table';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
 interface SitesDashboardProps {
+	hasSites: boolean;
 	queryParams: SitesDashboardQueryParams;
 }
 
@@ -144,6 +146,7 @@ const SitesDashboardSitesList = createSitesListComponent();
 
 export function SitesDashboard( {
 	queryParams: { page = 1, perPage = 96, search, status = 'all', newSiteSlug },
+	hasSites,
 }: SitesDashboardProps ) {
 	const { __, _n } = useI18n();
 	const { data: allSites = [], isLoading } = useSiteExcerptsQuery();
@@ -172,136 +175,144 @@ export function SitesDashboard( {
 			<PageHeader>
 				<HeaderControls>
 					<DashboardHeading>{ __( 'Sites' ) }</DashboardHeading>
-					<SplitButton
-						primary
-						whiteSeparator
-						label={ __( 'Add new site' ) }
-						onClick={ () => {
-							recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_add' );
-						} }
-						href={ addQueryArgs( '/start', {
-							ref: TRACK_SOURCE_NAME,
-						} ) }
-					>
-						<PopoverMenuItem
+					{ hasSites && (
+						<SplitButton
+							primary
+							whiteSeparator
+							label={ __( 'Add new site' ) }
 							onClick={ () => {
-								recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_jetpack' );
+								recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_add' );
 							} }
-							href={ addQueryArgs( '/jetpack/connect', {
-								cta_from: TRACK_SOURCE_NAME,
-								cta_id: 'add-site',
+							href={ addQueryArgs( '/start', {
+								ref: TRACK_SOURCE_NAME,
 							} ) }
 						>
-							<JetpackLogo className="gridicon" size={ 18 } />
-							<span>{ __( 'Add Jetpack to a self-hosted site' ) }</span>
-						</PopoverMenuItem>
-						<PopoverMenuItem
-							onClick={ () => {
-								recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_import' );
-							} }
-							href={ addQueryArgs( '/start/import' ) }
-							icon="arrow-down"
-						>
-							<span>{ __( 'Import an existing site' ) }</span>
-						</PopoverMenuItem>
-					</SplitButton>
+							<PopoverMenuItem
+								onClick={ () => {
+									recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_jetpack' );
+								} }
+								href={ addQueryArgs( '/jetpack/connect', {
+									cta_from: TRACK_SOURCE_NAME,
+									cta_id: 'add-site',
+								} ) }
+							>
+								<JetpackLogo className="gridicon" size={ 18 } />
+								<span>{ __( 'Add Jetpack to a self-hosted site' ) }</span>
+							</PopoverMenuItem>
+							<PopoverMenuItem
+								onClick={ () => {
+									recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_import' );
+								} }
+								href={ addQueryArgs( '/start/import' ) }
+								icon="arrow-down"
+							>
+								<span>{ __( 'Import an existing site' ) }</span>
+							</PopoverMenuItem>
+						</SplitButton>
+					) }
 				</HeaderControls>
 			</PageHeader>
 			<PageBodyWrapper>
-				<SitesDashboardOptInBanner sites={ allSites } />
-				<SitesDashboardSitesList
-					sites={ allSites }
-					filtering={ { search } }
-					sorting={ sitesSorting }
-					grouping={ { status, showHidden: true } }
-				>
-					{ ( { sites, statuses } ) => {
-						const paginatedSites = sites.slice( ( page - 1 ) * perPage, page * perPage );
+				{ hasSites ? (
+					<>
+						<SitesDashboardOptInBanner sites={ allSites } />
+						<SitesDashboardSitesList
+							sites={ allSites }
+							filtering={ { search } }
+							sorting={ sitesSorting }
+							grouping={ { status, showHidden: true } }
+						>
+							{ ( { sites, statuses } ) => {
+								const paginatedSites = sites.slice( ( page - 1 ) * perPage, page * perPage );
 
-						const selectedStatus =
-							statuses.find( ( { name } ) => name === status ) || statuses[ 0 ];
+								const selectedStatus =
+									statuses.find( ( { name } ) => name === status ) || statuses[ 0 ];
 
-						return (
-							<>
-								{ ( allSites.length > 0 || isLoading ) && (
-									<SitesContentControls
-										initialSearch={ search }
-										statuses={ statuses }
-										selectedStatus={ selectedStatus }
-										displayMode={ displayMode }
-										onDisplayModeChange={ setDisplayMode }
-										sitesSorting={ sitesSorting }
-										onSitesSortingChange={ onSitesSortingChange }
-										hasSitesSortingPreferenceLoaded={ hasSitesSortingPreferenceLoaded }
-									/>
-								) }
-								{ userPreferencesLoaded && (
+								return (
 									<>
-										{ paginatedSites.length > 0 || isLoading ? (
-											<>
-												{ displayMode === 'list' && (
-													<SitesTable
-														isLoading={ isLoading }
-														sites={ paginatedSites }
-														className={ sitesMargin }
-													/>
-												) }
-												{ displayMode === 'tile' && (
-													<SitesGrid
-														isLoading={ isLoading }
-														sites={ paginatedSites }
-														className={ sitesMargin }
-													/>
-												) }
-												{ ( selectedStatus.hiddenCount > 0 || sites.length > perPage ) && (
-													<PageBodyBottomContainer>
-														<Pagination
-															page={ page }
-															perPage={ perPage }
-															total={ sites.length }
-															pageClick={ ( newPage: number ) => {
-																handleQueryParamChange( { page: newPage } );
-															} }
-														/>
-														{ selectedStatus.hiddenCount > 0 && (
-															<HiddenSitesMessageContainer>
-																<HiddenSitesMessage>
-																	{ sprintf(
-																		/* translators: the `hiddenSitesCount` field will be a number greater than 0 */
-																		_n(
-																			'%(hiddenSitesCount)d site is hidden from the list. Use search to access it.',
-																			'%(hiddenSitesCount)d sites are hidden from the list. Use search to access them.',
-																			selectedStatus.hiddenCount
-																		),
-																		{
-																			hiddenSitesCount: selectedStatus.hiddenCount,
-																		}
-																	) }
-																</HiddenSitesMessage>
-																<Button
-																	href={ addQueryArgs( window.location.href, {
-																		'show-hidden': 'true',
-																	} ) }
-																>
-																	{ __( 'Show all' ) }
-																</Button>
-															</HiddenSitesMessageContainer>
-														) }
-													</PageBodyBottomContainer>
-												) }
-											</>
-										) : (
-											<NoSitesMessage
-												status={ selectedStatus.name }
-												statusSiteCount={ selectedStatus.count }
+										{ ( allSites.length > 0 || isLoading ) && (
+											<SitesContentControls
+												initialSearch={ search }
+												statuses={ statuses }
+												selectedStatus={ selectedStatus }
+												displayMode={ displayMode }
+												onDisplayModeChange={ setDisplayMode }
+												sitesSorting={ sitesSorting }
+												onSitesSortingChange={ onSitesSortingChange }
+												hasSitesSortingPreferenceLoaded={ hasSitesSortingPreferenceLoaded }
 											/>
 										) }
+										{ userPreferencesLoaded && (
+											<>
+												{ paginatedSites.length > 0 || isLoading ? (
+													<>
+														{ displayMode === 'list' && (
+															<SitesTable
+																isLoading={ isLoading }
+																sites={ paginatedSites }
+																className={ sitesMargin }
+															/>
+														) }
+														{ displayMode === 'tile' && (
+															<SitesGrid
+																isLoading={ isLoading }
+																sites={ paginatedSites }
+																className={ sitesMargin }
+															/>
+														) }
+														{ ( selectedStatus.hiddenCount > 0 || sites.length > perPage ) && (
+															<PageBodyBottomContainer>
+																<Pagination
+																	page={ page }
+																	perPage={ perPage }
+																	total={ sites.length }
+																	pageClick={ ( newPage: number ) => {
+																		handleQueryParamChange( { page: newPage } );
+																	} }
+																/>
+																{ selectedStatus.hiddenCount > 0 && (
+																	<HiddenSitesMessageContainer>
+																		<HiddenSitesMessage>
+																			{ sprintf(
+																				/* translators: the `hiddenSitesCount` field will be a number greater than 0 */
+																				_n(
+																					'%(hiddenSitesCount)d site is hidden from the list. Use search to access it.',
+																					'%(hiddenSitesCount)d sites are hidden from the list. Use search to access them.',
+																					selectedStatus.hiddenCount
+																				),
+																				{
+																					hiddenSitesCount: selectedStatus.hiddenCount,
+																				}
+																			) }
+																		</HiddenSitesMessage>
+																		<Button
+																			href={ addQueryArgs( window.location.href, {
+																				'show-hidden': 'true',
+																			} ) }
+																		>
+																			{ __( 'Show all' ) }
+																		</Button>
+																	</HiddenSitesMessageContainer>
+																) }
+															</PageBodyBottomContainer>
+														) }
+													</>
+												) : (
+													<NoSitesMessage
+														status={ selectedStatus.name }
+														statusSiteCount={ selectedStatus.count }
+													/>
+												) }
+											</>
+										) }
 									</>
-								) }
-							</>
-						);
-					} }
-				</SitesDashboardSitesList>
+								);
+							} }
+						</SitesDashboardSitesList>
+					</>
+				) : (
+					<EmptySitesDashboard />
+				) }
 			</PageBodyWrapper>
 			<ScrollButton
 				onClick={ scrollToTop }
