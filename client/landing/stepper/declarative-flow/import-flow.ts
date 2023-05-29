@@ -113,6 +113,8 @@ const importFlow: Flow = {
 		};
 
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
+			const source = urlQueryParams.get( 'source' );
+
 			switch ( _currentStep ) {
 				case 'importReady': {
 					const depUrl = ( providedDependencies?.url as string ) || '';
@@ -126,7 +128,7 @@ const importFlow: Flow = {
 						return exitFlow( providedDependencies?.url as string );
 					}
 
-					return navigate( providedDependencies?.url as string );
+					return navigate( addQueryArgs( providedDependencies?.url as string, { source } ) );
 				}
 				case 'importReadyPreview': {
 					return navigate( providedDependencies?.url as string );
