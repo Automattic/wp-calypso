@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { requestLatestAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
 import { transferStates } from 'calypso/state/atomic/transfers/constants';
 import { getLatestAtomicTransfer } from 'calypso/state/atomic/transfers/selectors';
+import { requestSite } from 'calypso/state/sites/actions';
 
 interface SiteTransferStatusProps {
 	siteId: number;
@@ -73,6 +74,9 @@ export const useCheckSiteTransferStatus = ( {
 			return () => {
 				clearTimeout( dismissTransferNoticeTimeout );
 			};
+			// eslint-disable-next-line no-else-return
+		} else {
+			dispatch( requestSite( siteId ) );
 		}
 	}, [ isTransferring, wasTransferring, isTransferCompleted ] );
 
