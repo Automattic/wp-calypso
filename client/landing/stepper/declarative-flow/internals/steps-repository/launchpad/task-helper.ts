@@ -4,7 +4,12 @@ import {
 	PLAN_PREMIUM,
 	FEATURE_STYLE_CUSTOMIZATION,
 } from '@automattic/calypso-products';
-import { isBlogOnboardingFlow, isNewsletterFlow, isStartWritingFlow } from '@automattic/onboarding';
+import {
+	isBlogOnboardingFlow,
+	isDesignFirstFlow,
+	isNewsletterFlow,
+	isStartWritingFlow,
+} from '@automattic/onboarding';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
@@ -180,7 +185,11 @@ export function getEnhancedTasks(
 					break;
 				case 'first_post_published':
 					taskData = {
-						disabled: mustVerifyEmailBeforePosting || isBlogOnboardingFlow( flow || null ) || false,
+						disabled:
+							mustVerifyEmailBeforePosting ||
+							isStartWritingFlow( flow || null ) ||
+							( task.completed && isDesignFirstFlow( flow || null ) ) ||
+							false,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign( `/post/${ siteSlug }` );
