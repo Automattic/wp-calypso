@@ -1,5 +1,4 @@
-import { SubscriptionManager } from '@automattic/data-stores';
-import { SiteSubscriptionsFilterBy } from '@automattic/data-stores/src/reader/queries/use-post-subscriptions-query';
+import { SubscriptionManager, Reader } from '@automattic/data-stores';
 import SearchInput from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
@@ -11,7 +10,7 @@ import { SortControls, Option } from 'calypso/landing/subscriptions/components/s
 import { useSearch } from 'calypso/landing/subscriptions/hooks';
 import TabView from '../tab-view';
 
-const SortBy = SubscriptionManager.PostSubscriptionsSortBy;
+const { PostSubscriptionsSortBy: SortBy, SiteSubscriptionsFilterBy: FilterBy } = Reader;
 
 const useSortOptions = (): Option[] => {
 	const translate = useTranslate();
@@ -27,9 +26,9 @@ const useFilterOptions = () => {
 
 	return useMemo(
 		() => [
-			{ value: SiteSubscriptionsFilterBy.All, label: translate( 'All' ) },
+			{ value: FilterBy.All, label: translate( 'All' ) },
 			// { value: SiteSubscriptionsFilterBy.Paid, label: translate( 'Paid' ) },		// todo: add back when we have paid subscriptions support
-			{ value: SiteSubscriptionsFilterBy.P2, label: translate( 'P2' ) },
+			{ value: FilterBy.P2, label: translate( 'P2' ) },
 		],
 		[ translate ]
 	);
@@ -37,7 +36,7 @@ const useFilterOptions = () => {
 
 const getFilterLabel = (
 	availableFilterOptions: Option[],
-	filterValue: SiteSubscriptionsFilterBy
+	filterValue: Reader.SiteSubscriptionsFilterBy
 ) => availableFilterOptions.find( ( option ) => option.value === filterValue )?.label;
 
 const Comments = () => {
@@ -46,9 +45,7 @@ const Comments = () => {
 	const { searchTerm, handleSearch } = useSearch();
 	const sortOptions = useSortOptions();
 	const availableFilterOptions = useFilterOptions();
-	const [ filterOption, setFilterOption ] = useState< SiteSubscriptionsFilterBy >(
-		SiteSubscriptionsFilterBy.All
-	);
+	const [ filterOption, setFilterOption ] = useState( FilterBy.All );
 
 	const {
 		data: { posts, totalCount },
@@ -80,7 +77,7 @@ const Comments = () => {
 					className="subscriptions-manager__filter-control"
 					options={ availableFilterOptions }
 					onSelect={ ( selectedOption: Option ) =>
-						setFilterOption( selectedOption.value as SiteSubscriptionsFilterBy )
+						setFilterOption( selectedOption.value as Reader.SiteSubscriptionsFilterBy )
 					}
 					selectedText={
 						translate( 'View: ' ) + getFilterLabel( availableFilterOptions, filterOption )

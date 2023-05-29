@@ -3,7 +3,7 @@ import { pick } from 'lodash';
 import { useState } from 'react';
 import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getPlugins } from 'calypso/state/plugins/installed/selectors';
+import { getFilteredAndSortedPlugins } from 'calypso/state/plugins/installed/selectors-ts';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -97,7 +97,7 @@ const mapStateToProps = ( state ) => {
 	const jetpackModuleActive = isJetpackModuleActive( state, siteId, 'google-analytics' );
 	const siteIsJetpack = isJetpackSite( state, siteId );
 	const googleAnalyticsEnabled = site && ( ! siteIsJetpack || jetpackModuleActive );
-	const sitePlugins = site ? getPlugins( state, [ site.ID ] ) : [];
+	const sitePlugins = site ? getFilteredAndSortedPlugins( state, [ site.ID ] ) : [];
 	const path = getCurrentRouteParameterized( state, siteId );
 
 	return {

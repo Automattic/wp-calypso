@@ -16,11 +16,13 @@ import {
 	START_WRITING_FLOW,
 	isLinkInBioFlow,
 	isNewsletterFlow,
-	isStartWritingFlow,
 	NEWSLETTER_FLOW,
 	LINK_IN_BIO_FLOW,
 	HOSTING_SITE_CREATION_FLOW,
 	isHostingSiteCreationFlow,
+	isDomainUpsellFlow,
+	DESIGN_FIRST_FLOW,
+	isBlogOnboardingFlow,
 } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
@@ -52,6 +54,7 @@ interface Props {
 function getPlanTypes( flowName: string | null, hideFreePlan: boolean ) {
 	switch ( flowName ) {
 		case START_WRITING_FLOW:
+		case DESIGN_FIRST_FLOW:
 			return hideFreePlan
 				? [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ]
 				: [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ];
@@ -168,7 +171,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					plansWithScroll={ isDesktop }
 					planTypes={ planTypes }
 					flowName={ flowName }
-					showTreatmentPlansReorderTest={ false }
 					isAllPaidPlansShown={ true }
 					isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 					shouldShowPlansFeatureComparison={ isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
@@ -188,7 +190,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 
 		if (
 			isNewsletterFlow( flowName ) ||
-			isStartWritingFlow( flowName ) ||
+			isBlogOnboardingFlow( flowName ) ||
 			isLinkInBioFlow( flowName )
 		) {
 			return __( `There's a plan for you.` );
@@ -208,19 +210,12 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			<Button onClick={ handleFreePlanButtonClick } className="is-borderless" />
 		);
 
-		if ( isStartWritingFlow( flowName ) ) {
-			return;
-		}
-
-		if ( isNewsletterFlow( flowName ) ) {
-			return;
-		}
-
-		if ( isLinkInBioFlow( flowName ) ) {
-			return;
-		}
-
-		if ( flowName === DOMAIN_UPSELL_FLOW ) {
+		if (
+			isBlogOnboardingFlow( flowName ) ||
+			isNewsletterFlow( flowName ) ||
+			isLinkInBioFlow( flowName ) ||
+			isDomainUpsellFlow( flowName )
+		) {
 			return;
 		}
 

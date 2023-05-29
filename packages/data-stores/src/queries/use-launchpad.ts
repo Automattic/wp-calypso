@@ -46,9 +46,10 @@ export const fetchLaunchpad = (
 	checklist_slug?: string | 0 | null | undefined
 ): Promise< LaunchpadResponse > => {
 	const slug = encodeURIComponent( siteSlug as string );
-	const requestUrl = checklist_slug
-		? `/sites/${ slug }/launchpad?checklist_slug=${ checklist_slug }`
-		: `/sites/${ slug }/launchpad`;
+	const checklistSlug = checklist_slug ? encodeURIComponent( checklist_slug ) : null;
+	const requestUrl = checklistSlug
+		? `/sites/${ slug }/launchpad?_locale=user&checklist_slug=${ checklistSlug }`
+		: `/sites/${ slug }/launchpad?_locale=user`;
 
 	return canAccessWpcomApis()
 		? wpcomRequest( {

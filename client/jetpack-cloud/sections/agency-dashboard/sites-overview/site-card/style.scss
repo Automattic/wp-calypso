@@ -68,15 +68,19 @@
 }
 
 .site-card__card-disabled {
-	opacity: 0.5;
-	user-select: none;
+	background: unset !important;
+
+	.sites-overview__overlay {
+		background: unset !important;
+	}
 }
 
 .site-card__card-active {
 	border-width: 0 1px;
 	border-style: solid;
 	border-color: var(--studio-gray-5);
-	box-shadow: 0 0 20px rgba(0, 0, 0, 0.16);
+	box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+	margin-inline: -1px;
 }
 
 .site-card__expanded-column {

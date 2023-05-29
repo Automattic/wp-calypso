@@ -212,6 +212,13 @@ export const PureUniversalNavbarFooter = ( {
 									</a>
 								</li>
 								<li>
+									{ isEnglishLocale && (
+										<a href={ localizeUrl( 'https://wordpress.com/tags/' ) } target="_self">
+											{ __( 'Popular Tags', __i18n_text_domain__ ) }
+										</a>
+									) }
+								</li>
+								<li>
 									<a href={ localizeUrl( 'https://wordpress.com/webinars/' ) } target="_self">
 										{ __( 'Daily Webinars', __i18n_text_domain__ ) }
 									</a>

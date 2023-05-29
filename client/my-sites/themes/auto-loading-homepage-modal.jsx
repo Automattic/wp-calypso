@@ -254,7 +254,7 @@ class AutoLoadingHomepageModal extends Component {
 								<ExternalLink
 									href={ localizeUrl( 'https://wordpress.com/support/changing-themes/' ) }
 									icon
-									target="__blank"
+									target="_blank"
 								>
 									{ translate( 'Learn more.' ) }
 								</ExternalLink>
@@ -275,7 +275,7 @@ class AutoLoadingHomepageModal extends Component {
 								<ExternalLink
 									href={ localizeUrl( 'https://wordpress.com/support/changing-themes/' ) }
 									icon
-									target="__blank"
+									target="_blank"
 								>
 									{ translate( 'Learn more.' ) }
 								</ExternalLink>

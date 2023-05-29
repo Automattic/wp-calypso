@@ -406,7 +406,11 @@ const webpackConfig = {
 				},
 			} ),
 		isDevelopment && new webpack.HotModuleReplacementPlugin(),
-		isDevelopment && new ReactRefreshWebpackPlugin( { overlay: false } ),
+		isDevelopment &&
+			new ReactRefreshWebpackPlugin( {
+				overlay: false,
+				exclude: [ /node_modules/, /devdocs/ ],
+			} ),
 	].filter( Boolean ),
 	externals: [ 'keytar' ],
 
