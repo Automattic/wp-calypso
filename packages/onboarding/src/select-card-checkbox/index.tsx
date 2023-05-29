@@ -1,8 +1,9 @@
 import { CheckboxControl } from '@wordpress/components';
 import { useInstanceId } from '@wordpress/compose';
 import classNames from 'classnames';
+import './style.scss';
 
-type SelectCardProps< T > = {
+type SelectCardCheckboxProps< T > = {
 	children: React.ReactNode;
 	className?: string;
 	onChange: ( checked: boolean, value: T ) => void;
@@ -10,13 +11,13 @@ type SelectCardProps< T > = {
 	value: T;
 };
 
-const SelectCard = < T, >( {
+const SelectCardCheckbox = < T, >( {
 	children,
 	className,
 	onChange,
 	selected,
 	value,
-}: SelectCardProps< T > ) => {
+}: SelectCardCheckboxProps< T > ) => {
 	const handleClick = ( evt: React.MouseEvent ) => {
 		onChange( ! selected, value );
 		evt.stopPropagation();
@@ -27,16 +28,16 @@ const SelectCard = < T, >( {
 
 	return (
 		<div
-			className={ classNames( 'select-card__container', className, { selected } ) }
+			className={ classNames( 'select-card-checkbox__container', className, { selected } ) }
 			onClickCapture={ handleClick }
 			role="presentation"
 		>
 			<CheckboxControl checked={ selected } id={ id } onChange={ () => undefined } />
-			<label className="select-card__label" htmlFor={ id }>
+			<label className="select-card-checkbox__label" htmlFor={ id }>
 				{ children }
 			</label>
 		</div>
 	);
 };
 
-export default SelectCard;
+export default SelectCardCheckbox;
