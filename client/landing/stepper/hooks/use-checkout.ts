@@ -40,7 +40,7 @@ const useCheckout = () => {
 			// See https://github.com/Automattic/wp-calypso/pull/64899
 			window.location.href = `/checkout/${ encodeURIComponent( siteSlug ) }?${ params }`;
 		} else {
-			openCheckoutModal( [ plan ] );
+			openCheckoutModal( [ plan ], { redirect_to: destination } );
 		}
 	};
 
