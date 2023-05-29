@@ -20,7 +20,7 @@ const ThemeStyleVariations = ( {
 }: ThemeStyleVariationsProps ) => {
 	return (
 		<div className="theme__sheet-style-variations">
-			<p>{ description }</p>
+			{ !! description && <p>{ description }</p> }
 
 			<div className="theme__sheet-style-variations-previews">
 				<AsyncLoad

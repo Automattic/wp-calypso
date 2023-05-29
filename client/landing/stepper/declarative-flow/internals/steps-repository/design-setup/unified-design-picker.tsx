@@ -724,6 +724,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			isPremiumThemeAvailable={ isPremiumThemeAvailable }
 			purchasedThemes={ purchasedThemes }
 			currentPlanFeatures={ currentPlanFeatures }
+			shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
 		/>
 	);
 

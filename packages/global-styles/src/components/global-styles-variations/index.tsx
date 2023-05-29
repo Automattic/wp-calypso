@@ -154,9 +154,11 @@ const GlobalStylesVariations = ( {
 								</div>
 							) }
 						</h2>
-						<div>
-							<p>{ translate( 'You can change your style at any time.' ) }</p>
-						</div>
+						{ ! splitPremiumVariations && (
+							<div>
+								<p>{ translate( 'You can change your style at any time.' ) }</p>
+							</div>
+						) }
 					</div>
 					<div className="global-styles-variations">
 						<GlobalStylesVariation
