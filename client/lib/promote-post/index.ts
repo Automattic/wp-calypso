@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { loadScript } from '@automattic/load-script';
 import { __ } from '@wordpress/i18n';
+import { translate } from 'i18n-calypso/types';
 import { useSelector } from 'react-redux';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import wpcom from 'calypso/lib/wp';
@@ -25,7 +26,7 @@ declare global {
 				urn: string;
 				onLoaded?: () => void;
 				onClose?: () => void;
-				translateFn?: ( value: string, options?: any ) => string;
+				translateFn?: typeof translate;
 				localizeUrlFn?: ( fullUrl: string ) => string;
 				locale?: string;
 				showDialog?: boolean;
@@ -67,7 +68,7 @@ export async function showDSP(
 	postId: number | string,
 	onClose: () => void,
 	source: string,
-	translateFn: ( value: string, options?: any ) => string,
+	translateFn: typeof translate,
 	localizeUrlFn: ( fullUrl: string ) => string,
 	domNodeOrId?: HTMLElement | string | null,
 	setShowCancelButton?: ( show: boolean ) => void,
