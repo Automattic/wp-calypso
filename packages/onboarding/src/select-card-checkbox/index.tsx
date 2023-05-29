@@ -3,36 +3,31 @@ import { useInstanceId } from '@wordpress/compose';
 import classNames from 'classnames';
 import './style.scss';
 
-type SelectCardCheckboxProps< T > = {
+type SelectCardCheckboxProps = {
 	children: React.ReactNode;
 	className?: string;
-	onChange: ( checked: boolean, value: T ) => void;
-	selected: boolean;
-	value: T;
+	onChange: ( checked: boolean ) => void;
+	checked: boolean;
 };
 
-const SelectCardCheckbox = < T, >( {
+const SelectCardCheckbox = ( {
 	children,
 	className,
 	onChange,
-	selected,
-	value,
-}: SelectCardCheckboxProps< T > ) => {
-	const handleClick = ( evt: React.MouseEvent ) => {
-		onChange( ! selected, value );
-		evt.stopPropagation();
-	};
-
+	checked,
+}: SelectCardCheckboxProps ) => {
 	const instanceId = useInstanceId( CheckboxControl );
 	const id = `select-card-checkbox-${ instanceId }`;
 
 	return (
 		<div
-			className={ classNames( 'select-card-checkbox__container', className, { selected } ) }
-			onClickCapture={ handleClick }
+			className={ classNames( 'select-card-checkbox__container', className, {
+				'is-checked': checked,
+			} ) }
+			onClick={ () => onChange( ! checked ) }
 			role="presentation"
 		>
-			<CheckboxControl checked={ selected } id={ id } onChange={ () => undefined } />
+			<CheckboxControl checked={ checked } id={ id } onChange={ onChange } />
 			<label className="select-card-checkbox__label" htmlFor={ id }>
 				{ children }
 			</label>

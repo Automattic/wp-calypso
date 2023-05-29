@@ -91,9 +91,8 @@ export const SelectGoals = ( { onChange, onSubmit, selectedGoals }: SelectGoalsP
 					: goalOptions.map( ( { key, title, isPremium } ) => (
 							<SelectCardCheckbox
 								key={ key }
-								onChange={ handleChange }
-								selected={ selectedGoals.includes( key ) }
-								value={ key }
+								onChange={ ( checked ) => handleChange( checked, key ) }
+								checked={ selectedGoals.includes( key ) }
 							>
 								<span className="select-goals__goal-title">{ title }</span>
 								{ isPremium && <PremiumBadge shouldHideTooltip={ true } /> }
