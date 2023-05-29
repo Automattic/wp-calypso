@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { __, sprintf } from '@wordpress/i18n';
 import moment from 'moment';
 import {
@@ -266,3 +267,14 @@ export const getPagedBlazeSearchData = (
 		items: [],
 	};
 };
+
+/**
+ * Update the path by adding the advertising section URL prefix
+ *
+ * @param {string} path partial URL
+ * @returns pathname concatenated with the advertising configured path prefix
+ */
+export function getAdvertisingDashboardPath( path: string ) {
+	const pathPrefix = config( 'advertising_dashboard_path_prefix' ) || '/advertising';
+	return `${ pathPrefix }${ path }`;
+}

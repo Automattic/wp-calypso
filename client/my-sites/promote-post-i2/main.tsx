@@ -4,7 +4,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -15,8 +15,6 @@ import useCampaignsQueryPaged, {
 } from 'calypso/data/promote-post/use-promote-post-campaigns-query-paged';
 import usePostsQueryPaged from 'calypso/data/promote-post/use-promote-post-posts-query-paged';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { recordDSPEntryPoint } from 'calypso/lib/promote-post';
-import { useRouteModal } from 'calypso/lib/route-modal';
 import CampaignsList from 'calypso/my-sites/promote-post-i2/components/campaigns-list';
 import PostsList from 'calypso/my-sites/promote-post-i2/components/posts-list';
 import PromotePostTabBar from 'calypso/my-sites/promote-post-i2/components/promoted-post-filter';
@@ -25,6 +23,8 @@ import { getPagedBlazeSearchData } from 'calypso/my-sites/promote-post-i2/utils'
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { BlazablePost } from './components/post-item';
 import PostsListBanner from './components/posts-list-banner';
+import useOpenPromoteWidget from './hooks/use-open-promote-widget';
+import { getAdvertisingDashboardPath } from './utils';
 
 export type TabType = 'posts' | 'campaigns';
 export type TabOption = {
@@ -56,9 +56,10 @@ export default function PromotedPosts( { tab }: Props ) {
 	const selectedSite = useSelector( getSelectedSite );
 	const selectedSiteId = selectedSite?.ID || 0;
 	const translate = useTranslate();
-	const dispatch = useDispatch();
-	const keyValue = 'post-0'; // post 0 means to open post selector in widget
-	const { openModal } = useRouteModal( 'blazepress-widget', keyValue );
+	const onClickPromote = useOpenPromoteWidget( {
+		keyValue: 'post-0', // post 0 means to open post selector in widget
+		entrypoint: 'promoted_posts-header',
+	} );
 
 	/* query for campaigns */
 	const [ campaignsSearchOptions, setCampaignsSearchOptions ] = useState< SearchOptions >( {} );
@@ -175,11 +176,6 @@ export default function PromotedPosts( { tab }: Props ) {
 		</div>
 	);
 
-	const onClickPromote = async () => {
-		openModal();
-		dispatch( recordDSPEntryPoint( 'promoted_posts-header' ) );
-	};
-
 	return (
 		<Main wideLayout className="promote-post-i2">
 			<DocumentHead title={ translate( 'Advertising - Redesign page!' ) } />
@@ -211,7 +207,10 @@ export default function PromotedPosts( { tab }: Props ) {
 			<PromotePostTabBar tabs={ tabs } selectedTab={ selectedTab } />
 			{ selectedTab === 'campaigns' ? (
 				<>
-					<PageViewTracker path="/advertising/:site/campaigns" title="Advertising > Campaigns" />
+					<PageViewTracker
+						path={ getAdvertisingDashboardPath( '/:site/campaigns' ) }
+						title="Advertising > Campaigns"
+					/>
 					<CampaignsList
 						isLoading={ campaignIsLoadingNewContent }
 						isFetching={ campaignIsFetching }
@@ -224,7 +223,10 @@ export default function PromotedPosts( { tab }: Props ) {
 					/>
 				</>
 			) : (
-				<PageViewTracker path="/advertising/:site/posts" title="Advertising > Ready to Blaze" />
+				<PageViewTracker
+					path={ getAdvertisingDashboardPath( '/:site/posts' ) }
+					title="Advertising > Ready to Blaze"
+				/>
 			) }
 
 			{ selectedTab === 'posts' && (

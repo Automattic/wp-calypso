@@ -6,6 +6,7 @@ import NavTabs from 'calypso/components/section-nav/tabs';
 import { TabType } from 'calypso/my-sites/promote-post/main';
 import { TabOption } from 'calypso/my-sites/promote-post-i2/main';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getAdvertisingDashboardPath } from '../../utils';
 
 type Props = {
 	tabs: TabOption[];
@@ -24,7 +25,7 @@ export default function PromotePostTabBar( { tabs, selectedTab }: Props ) {
 					return (
 						<NavItem
 							key={ id }
-							path={ `/advertising/${ selectedSiteSlug }/${ id }` }
+							path={ getAdvertisingDashboardPath( `/${ selectedSiteSlug }/${ id }` ) }
 							selected={ selectedTab === id }
 							children={ name }
 							count={ itemCount }

@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import { SearchOptions } from 'calypso/my-sites/promote-post-i2/components/search-bar';
@@ -28,7 +29,9 @@ const getSearchOptionsQueryParams = ( searchOptions: SearchOptions ) => {
 async function queryPosts( siteId: number, queryparams: string ) {
 	return await wpcom.req.get( {
 		path: `/sites/${ siteId }/blaze/posts?${ queryparams }`,
-		apiNamespace: 'wpcom/v2',
+		apiNamespace: config.isEnabled( 'is_running_in_jetpack_site' )
+			? 'jetpack/v4/blaze-app'
+			: 'wpcom/v2',
 	} );
 }
 
