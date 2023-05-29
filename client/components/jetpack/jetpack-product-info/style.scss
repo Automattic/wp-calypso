@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .jetpack-product-info__header {
 	align-items: center;
 	display: flex;
@@ -37,9 +40,10 @@
 }
 
 .jetpack-product-info__tags {
-	background-color: var(--studio-gray-0);
-	margin-block-end: 16px;
+	background-color: transparent;
+	margin-bottom: 16px;
 	padding: 5.5px 8px;
+	border: 1px solid var(--studio-gray-5);
 	border-radius: 4px;
 }
 
@@ -79,6 +83,13 @@
 }
 
 .jetpack-product-info__section {
+	padding-block-start: 16px;
+	padding-block-end: 8px;
+
+	&:not(:last-child) {
+		border-block-end: 1px solid var(--studio-gray-5);
+	}
+
 	.foldable-card.card {
 		box-shadow: none;
 	}
@@ -168,12 +179,15 @@
 	}
 }
 
-.jetpack-product-info__product-list ul {
-	list-style-type: none;
-	margin: 0;
+.jetpack-product-info__product-list {
+	border-block-end: 1px solid var(--studio-gray-5);
+	ul {
+		list-style-type: none;
+		margin: 0;
 
-	li {
-		margin-block-end: 16px;
+		li {
+			margin-block-end: 16px;
+		}
 	}
 }
 
@@ -188,9 +202,36 @@
 	gap: 12px;
 }
 
+.jetpack-product-info__product-list-item-header {
+	display: flex;
+	flex-direction: column;
+
+	@media ( min-width: $break-medium ) {
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+	}
+}
+
 .jetpack-product-info__product-list-item-title {
 	font-size: $font-body-small;
 	font-weight: 700;
+}
+
+.jetpack-product-info__product-list-item-callout {
+	padding: 0.25rem 0 0 0;
+	box-sizing: border-box;
+	color: var(--studio-gray-70);
+	font-size: 0.875rem;
+
+	@media ( min-width: $break-medium ) {
+		padding: 0.25rem;
+		min-width: 160px;
+		background-color: #eaefef;
+		border-radius: 4px;
+		color: var(--studio-black);
+		text-align: center;
+	}
 }
 
 p.jetpack-product-info__product-list-item-description {
@@ -201,7 +242,27 @@ p.jetpack-product-info__product-list-item-description {
 	span {
 		white-space: nowrap;
 	}
+
+	display: none;
+
+	@media ( min-width: $break-medium ) {
+		display: block;
+	}
+
+	&.is-mobile {
+		display: block;
+		margin-top: 0.75rem;
+
+		@media ( min-width: $break-medium ) {
+			display: none;
+		}
+	}
 }
+
+.jetpack-product-info__product-list-item-content {
+	width: 100%;
+}
+
 
 .jetpack-product-info__product-list-item-icon {
 	min-width: 38px;

@@ -22,7 +22,8 @@ const JetpackProductInfo: FunctionComponent< JetpackProductInfoProps > = ( {
 	product,
 	full,
 } ) => {
-	const { description, recommendedFor, whatIsIncluded, benefits, faqs, productSlug } = product;
+	const { description, recommendedFor, whatIsIncluded, alsoIncluded, benefits, faqs, productSlug } =
+		product;
 
 	const translate = useTranslate();
 	const icon = getProductIcon( { productSlug } );
@@ -42,10 +43,18 @@ const JetpackProductInfo: FunctionComponent< JetpackProductInfoProps > = ( {
 			{ full && recommendedFor && <JetpackProductInfoRecommendationTags tags={ recommendedFor } /> }
 
 			{ product.productsIncluded ? (
-				<JetpackProductInfoProductList
-					products={ product.productsIncluded }
-					descriptionMap={ descriptionMap }
-				/>
+				<>
+					<JetpackProductInfoProductList
+						products={ product.productsIncluded }
+						descriptionMap={ descriptionMap }
+					/>
+
+					{ alsoIncluded?.length && (
+						<JetpackProductInfoSection title={ translate( 'Also included:' ) }>
+							<JetpackProductInfoRegularList items={ alsoIncluded } />
+						</JetpackProductInfoSection>
+					) }
+				</>
 			) : (
 				<>
 					{ whatIsIncluded?.length && (

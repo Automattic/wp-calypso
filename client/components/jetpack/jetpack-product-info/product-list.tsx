@@ -1,15 +1,16 @@
-import { TranslateResult, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import getProductIcon from 'calypso/my-sites/plans/jetpack-plans/product-store/utils/get-product-icon';
 import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
+import { ProductDescription } from 'calypso/my-sites/plans/jetpack-plans/types';
 
 type JetpackProductInfoProductListProps = {
 	products: ReadonlyArray< string >;
-	descriptionMap: Record< string, TranslateResult >;
+	descriptionMap: Record< string, ProductDescription >;
 };
 
 type JetpackProductInfoProductListItemProps = {
 	productSlug: string;
-	descriptionMap: Record< string, TranslateResult >;
+	descriptionMap: Record< string, ProductDescription >;
 };
 
 const JetpackProductInfoProductListItem: React.FC< JetpackProductInfoProductListItemProps > = ( {
@@ -18,19 +19,33 @@ const JetpackProductInfoProductListItem: React.FC< JetpackProductInfoProductList
 } ) => {
 	const product = slugToSelectorProduct( productSlug );
 	return (
-		<div className="jetpack-product-info__product-list-item">
-			<div className="jetpack-product-info__product-list-item-icon">
-				<img alt="" src={ getProductIcon( { productSlug } ) } />
-			</div>
+		<>
+			<div className="jetpack-product-info__product-list-item">
+				<div className="jetpack-product-info__product-list-item-icon">
+					<img alt="" src={ getProductIcon( { productSlug } ) } />
+				</div>
 
-			<div className="jetpack-product-info__product-list-item-content">
-				<h1 className="jetpack-product-info__product-list-item-title">{ product?.shortName }</h1>
+				<div className="jetpack-product-info__product-list-item-content">
+					<div className="jetpack-product-info__product-list-item-header">
+						<h1 className="jetpack-product-info__product-list-item-title">
+							{ product?.shortName }
+						</h1>
+						{ descriptionMap[ productSlug ]?.calloutText && (
+							<span className="jetpack-product-info__product-list-item-callout">
+								{ descriptionMap[ productSlug ].calloutText }
+							</span>
+						) }
+					</div>
 
-				<p className="jetpack-product-info__product-list-item-description">
-					{ descriptionMap[ productSlug ] }
-				</p>
+					<p className="jetpack-product-info__product-list-item-description">
+						{ descriptionMap[ productSlug ].value }
+					</p>
+				</div>
 			</div>
-		</div>
+			<p className="jetpack-product-info__product-list-item-description is-mobile">
+				{ descriptionMap[ productSlug ].value }
+			</p>
+		</>
 	);
 };
 
