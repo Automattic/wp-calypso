@@ -34,7 +34,8 @@ const SiteOwnerTransfer = () => {
 			/>
 			<PageViewTracker
 				path="/settings/start-site-transfer/:site"
-				title="Settings > Start Site Transfer"
+				subHeaderText={ translate( 'Transfer your site to another WordPress.com user.' ) }
+				align="left"
 			/>
 			<HeaderCake backHref={ '/settings/general/' + selectedSiteSlug } isCompact={ true }>
 				<h1>{ translate( 'Site Transfer' ) }</h1>
