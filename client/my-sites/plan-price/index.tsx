@@ -21,7 +21,6 @@ export class PlanPrice extends Component< PlanPriceProps > {
 			isOnSale,
 			taxText,
 			omitHeading,
-			is2023OnboardingPricingGrid,
 			isLargeCurrency,
 		} = this.props;
 
@@ -81,7 +80,6 @@ export class PlanPrice extends Component< PlanPriceProps > {
 				taxText={ taxText }
 				displayPerMonthNotation={ displayPerMonthNotation }
 				isOnSale={ isOnSale }
-				is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
 				isSmallestUnit={ isSmallestUnit }
 			/>
 		);
@@ -187,16 +185,6 @@ export interface PlanPriceProps {
 	displayFlatPrice?: boolean;
 
 	/**
-	 * If true, this renders each price inside a `div` with the class
-	 * `plan-price__integer-fraction` but is otherwise identical to the output normally used by `rawPrice`.
-	 *
-	 * Ignored if `displayFlatPrice` is set.
-	 *
-	 * Ignored if `productDisplayPrice` is set and `rawPrice` is not an array.
-	 */
-	is2023OnboardingPricingGrid?: boolean;
-
-	/**
 	 * If true, this renders the price with a smaller font size by adding the `is-large-currency` class.
 	 */
 	isLargeCurrency?: boolean;
@@ -287,7 +275,6 @@ function MultiPriceDisplay( {
 	taxText,
 	displayPerMonthNotation,
 	isOnSale,
-	is2023OnboardingPricingGrid,
 	isSmallestUnit,
 }: {
 	tagName: 'h4' | 'span';
@@ -298,7 +285,6 @@ function MultiPriceDisplay( {
 	taxText?: string;
 	displayPerMonthNotation?: boolean;
 	isOnSale?: boolean;
-	is2023OnboardingPricingGrid?: boolean;
 	isSmallestUnit?: boolean;
 } ) {
 	const { symbol: currencySymbol, symbolPosition } = getCurrencyObject(
@@ -319,7 +305,6 @@ function MultiPriceDisplay( {
 				<HtmlPriceDisplay
 					price={ smallerPrice }
 					currencyCode={ currencyCode }
-					is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
 					isSmallestUnit={ isSmallestUnit }
 				/>
 			) }
@@ -330,7 +315,6 @@ function MultiPriceDisplay( {
 							<HtmlPriceDisplay
 								price={ smallerPrice }
 								currencyCode={ currencyCode }
-								is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
 								isSmallestUnit={ isSmallestUnit }
 							/>
 						),
@@ -338,7 +322,6 @@ function MultiPriceDisplay( {
 							<HtmlPriceDisplay
 								price={ higherPrice }
 								currencyCode={ currencyCode }
-								is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
 								isSmallestUnit={ isSmallestUnit }
 							/>
 						),
@@ -378,33 +361,20 @@ function MultiPriceDisplay( {
 function HtmlPriceDisplay( {
 	price,
 	currencyCode,
-	is2023OnboardingPricingGrid,
 	isSmallestUnit,
 }: {
 	price: number;
 	currencyCode: string;
-	is2023OnboardingPricingGrid?: boolean;
 	isSmallestUnit?: boolean;
 } ) {
 	const priceObj = getCurrencyObject( price, currencyCode, { isSmallestUnit } );
 
-	if ( is2023OnboardingPricingGrid ) {
-		return (
-			<div className="plan-price__integer-fraction">
-				<span className="plan-price__integer">
-					{ priceObj.integer }
-					{ priceObj.hasNonZeroFraction && priceObj.fraction }
-				</span>
-			</div>
-		);
-	}
-
 	return (
-		<>
-			<span className="plan-price__integer">{ priceObj.integer }</span>
-			<sup className="plan-price__fraction">
+		<div className="plan-price__integer-fraction">
+			<span className="plan-price__integer">
+				{ priceObj.integer }
 				{ priceObj.hasNonZeroFraction && priceObj.fraction }
-			</sup>
-		</>
+			</span>
+		</div>
 	);
 }

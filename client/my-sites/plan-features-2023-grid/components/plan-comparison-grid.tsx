@@ -447,7 +447,6 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 			<PlanFeatures2023GridHeaderPrice
 				isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
 				planProperties={ planProperties }
-				is2023OnboardingPricingGrid={ true }
 				isLargeCurrency={ isLargeCurrency }
 				currentSitePlanSlug={ currentSitePlanSlug }
 				siteId={ siteId }
