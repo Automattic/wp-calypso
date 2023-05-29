@@ -52,6 +52,7 @@ import type { OnboardSelect } from '@automattic/data-stores';
 import type { DesignRecipe, Design } from '@automattic/design-picker/src/types';
 import type { GlobalStylesObject } from '@automattic/global-styles';
 import type { ActiveTheme } from 'calypso/data/themes/use-active-theme-query';
+import type { FC } from 'react';
 import './style.scss';
 
 const PatternAssembler = ( {
@@ -683,4 +684,7 @@ const PatternAssemblerStep = ( props: StepProps & withNotices.Props ) => (
 	</NavigatorProvider>
 );
 
-export default compose( withGlobalStylesProvider, withNotices )( PatternAssemblerStep );
+export default compose(
+	withGlobalStylesProvider,
+	withNotices
+)( PatternAssemblerStep ) as FC< StepProps >;
