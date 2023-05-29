@@ -43,7 +43,6 @@ export function generateSteps( {
 	isPlanFulfilled = noop,
 	isAddOnsFulfilled = noop,
 	isDomainFulfilled = noop,
-	isSiteTypeFulfilled = noop,
 	maybeRemoveStepForUserlessCheckout = noop,
 	isNewOrExistingSiteFulfilled = noop,
 	createSiteAndAddDIFMToCart = noop,
@@ -66,16 +65,6 @@ export function generateSteps( {
 			},
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'themeSlugWithRepo' ],
-		},
-
-		'template-first-themes': {
-			stepName: 'template-first-themes',
-			props: {
-				designType: 'template-first',
-				quantity: 18,
-			},
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'themeSlugWithRepo', 'useThemeHeadstart' ],
 		},
 
 		// `themes` does not update the theme for an existing site as we normally
@@ -112,7 +101,7 @@ export function generateSteps( {
 			stepName: 'plans-site-selected',
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem' ],
+			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
 			props: {
 				hideFreePlan: true,
 				hideEnterprisePlan: true,
@@ -129,7 +118,7 @@ export function generateSteps( {
 			stepName: 'plans-site-selected-legacy',
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem' ],
+			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
 		},
 
 		site: {
@@ -142,14 +131,8 @@ export function generateSteps( {
 			stepName: 'user',
 			apiRequestFunction: createAccount,
 			providesToken: true,
-			providesDependencies: [
-				'bearer_token',
-				'username',
-				'marketing_price_group',
-				'plans_reorder_abtest_variation',
-				'redirect',
-			],
-			optionalDependencies: [ 'plans_reorder_abtest_variation', 'redirect' ],
+			providesDependencies: [ 'bearer_token', 'username', 'marketing_price_group', 'redirect' ],
+			optionalDependencies: [ 'redirect' ],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 			},
@@ -159,17 +142,12 @@ export function generateSteps( {
 			stepName: 'user-hosting',
 			apiRequestFunction: createAccount,
 			providesToken: true,
-			providesDependencies: [
-				'bearer_token',
-				'username',
-				'marketing_price_group',
-				'plans_reorder_abtest_variation',
-				'redirect',
-			],
-			optionalDependencies: [ 'plans_reorder_abtest_variation', 'redirect' ],
+			providesDependencies: [ 'bearer_token', 'username', 'marketing_price_group', 'redirect' ],
+			optionalDependencies: [ 'redirect' ],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 				isPasswordless: true,
+				showIsDevAccountCheckbox: config.isEnabled( 'hosting-onboarding-i2' ),
 			},
 		},
 
@@ -183,24 +161,17 @@ export function generateSteps( {
 				'bearer_token',
 				'username',
 				'marketing_price_group',
-				'plans_reorder_abtest_variation',
 				'allowUnauthenticated',
 			],
 			optionalDependencies: [
 				'bearer_token',
 				'username',
 				'marketing_price_group',
-				'plans_reorder_abtest_variation',
 				'allowUnauthenticated',
 			],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 			},
-		},
-
-		'site-title': {
-			stepName: 'site-title',
-			providesDependencies: [ 'siteTitle' ],
 		},
 
 		'site-options': {
@@ -504,9 +475,7 @@ export function generateSteps( {
 				'oauth2_client_id',
 				'oauth2_redirect',
 				'marketing_price_group',
-				'plans_reorder_abtest_variation',
 			],
-			optionalDependencies: [ 'plans_reorder_abtest_variation' ],
 		},
 
 		'oauth2-name': {
@@ -519,9 +488,7 @@ export function generateSteps( {
 				'oauth2_client_id',
 				'oauth2_redirect',
 				'marketing_price_group',
-				'plans_reorder_abtest_variation',
 			],
-			optionalDependencies: [ 'plans_reorder_abtest_variation' ],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 				oauth2Signup: true,
@@ -645,12 +612,6 @@ export function generateSteps( {
 		'reader-landing': {
 			stepName: 'reader-landing',
 			providesDependencies: [],
-		},
-
-		'site-type-with-theme': {
-			stepName: 'site-type',
-			providesDependencies: [ 'siteType' ],
-			fulfilledStepCallback: isSiteTypeFulfilled,
 		},
 
 		launch: {

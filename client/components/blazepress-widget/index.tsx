@@ -1,9 +1,10 @@
+import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Dialog } from '@automattic/components';
 import { useLocale, useLocalizeUrl } from '@automattic/i18n-utils';
 import { useQueryClient } from '@tanstack/react-query';
 import classNames from 'classnames';
-import { TranslateOptionsText, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -13,6 +14,7 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { showDSP, usePromoteWidget, PromoteWidgetStatus } from 'calypso/lib/promote-post';
 import './style.scss';
 import { useRouteModal } from 'calypso/lib/route-modal';
+import { getAdvertisingDashboardPath } from 'calypso/my-sites/promote-post/utils';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -25,11 +27,10 @@ export type BlazePressPromotionProps = {
 	source?: string;
 };
 
-type BlazePressTranslatable = ( original: string, extra?: TranslateOptionsText ) => string;
-
 export function goToOriginalEndpoint() {
 	const { pathname } = getUrlParts( window.location.href );
-	page( pathname );
+	const index = pathname.indexOf( '/promote' );
+	page( index < 0 ? pathname : pathname.substring( 0, index ) );
 }
 
 const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
@@ -41,7 +42,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	const [ hiddenHeader, setHiddenHeader ] = useState( true );
 	const widgetContainer = useRef< HTMLDivElement >( null );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
-	const translate = useTranslate() as BlazePressTranslatable;
+	const translate = useTranslate();
 	const localizeUrl = useLocalizeUrl();
 	const previousRoute = useSelector( getPreviousRoute );
 	const selectedSiteId = useSelector( getSelectedSiteId );
@@ -65,7 +66,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	const onClose = ( goToCampaigns?: boolean ) => {
 		queryClient.invalidateQueries( [ 'promote-post-campaigns', siteId ] );
 		if ( goToCampaigns ) {
-			page( `/advertising/${ siteSlug }/campaigns` );
+			page( getAdvertisingDashboardPath( `/${ siteSlug }/campaigns` ) );
 		} else {
 			queryClient && queryClient.invalidateQueries( [ 'promote-post-campaigns', siteId ] );
 			if ( previousRoute ) {
@@ -90,21 +91,13 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 					props.postId,
 					onClose,
 					source,
-					( original: string, options?: TranslateOptionsText ): string => {
-						if ( options ) {
-							// This is a special case where we re-use the translate in another application
-							// that is mounted inside calypso
-							// eslint-disable-next-line wpcalypso/i18n-no-variables
-							return translate( original, options );
-						}
-						// eslint-disable-next-line wpcalypso/i18n-no-variables
-						return translate( original );
-					},
+					translate,
 					localizeUrl,
 					widgetContainer.current,
 					handleShowCancel,
 					handleShowTopBar,
-					localeSlug
+					localeSlug,
+					config.isEnabled( 'promote-post/redesign-i2' )
 				);
 				setIsLoading( false );
 			} )();

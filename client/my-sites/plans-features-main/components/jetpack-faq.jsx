@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import FAQ from 'calypso/components/faq';
 import FAQItem from 'calypso/components/faq/faq-item';
@@ -11,7 +12,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 export const getHelpLink = ( context ) => {
 	return (
 		<a
-			href="https://jetpack.com/contact-support/?rel=support&hpi=1"
+			href={ localizeUrl( 'https://jetpack.com/contact-support/?rel=support&hpi=1' ) }
 			target="_blank"
 			rel="noopener noreferrer"
 			onClick={ () => {
@@ -38,7 +39,7 @@ export const getSupportLink = ( doc ) => {
 export const getAgenciesLink = () => {
 	return (
 		<a
-			href="https://jetpack.com/for/agencies/"
+			href={ localizeUrl( 'https://jetpack.com/for/agencies/' ) }
 			target="_blank"
 			rel="noopener noreferrer"
 			onClick={ () => {

@@ -6,7 +6,6 @@ import { Navigate, Route, Routes, generatePath, useNavigate, useLocation } from 
 import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
-import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { recordSignupStart } from 'calypso/lib/analytics/signup';
 import AsyncCheckoutModal from 'calypso/my-sites/checkout/modal/async';
@@ -117,7 +116,6 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	useEffect( () => {
 		if ( isFlowStart() ) {
 			recordSignupStart( flow.name, ref );
-			recordFullStoryEvent( `calypso_signup_start_${ flow.name }`, { flow: flow.name } );
 		}
 	}, [ flow, ref, isFlowStart ] );
 

@@ -27,6 +27,7 @@ document.addEventListener( 'DOMContentLoaded', () => {
 	const upgradeButton = container.querySelector( '.launch-bar-global-styles-upgrade' );
 	const previewButton = container.querySelector( '.launch-bar-global-styles-preview' );
 	const closeButton = container.querySelector( '.launch-bar-global-styles-close' );
+	const resetButton = container.querySelector( '.launch-bar-global-styles-reset' );
 
 	const limitedGlobalStylesNoticeAction =
 		localStorage.getItem( 'limitedGlobalStylesNoticeAction' ) ?? 'show';
@@ -58,7 +59,19 @@ document.addEventListener( 'DOMContentLoaded', () => {
 
 	previewButton?.addEventListener( 'click', ( event ) => {
 		event.preventDefault();
-		recordEvent( 'wpcom_global_styles_gating_notice_preview' );
+		const checkbox = previewButton.querySelector( 'input[type="checkbox"]' );
+		if ( checkbox ) {
+			checkbox.checked = ! checkbox.checked;
+		}
+		recordEvent( 'wpcom_global_styles_gating_notice_preview', {
+			action: checkbox.checked ? 'show' : 'hide',
+		} );
 		window.location = previewButton.href;
+	} );
+
+	resetButton?.addEventListener( 'click', ( event ) => {
+		event.preventDefault();
+		recordEvent( 'wpcom_global_styles_gating_notice_reset_support' );
+		window.open( resetButton.href, '_blank' ).focus();
 	} );
 } );

@@ -83,6 +83,7 @@ export const countryList: CountryListItem[] = [
 		name: 'Australia',
 		has_postal_codes: true,
 		vat_supported: false,
+		tax_name: 'GST',
 	},
 	{
 		code: 'ES',
@@ -90,6 +91,7 @@ export const countryList: CountryListItem[] = [
 		has_postal_codes: true,
 		vat_supported: true,
 		tax_country_codes: [ 'ES' ],
+		tax_name: 'VAT',
 	},
 	{
 		code: 'CA',
@@ -99,6 +101,7 @@ export const countryList: CountryListItem[] = [
 		tax_needs_subdivision: true,
 		vat_supported: true,
 		tax_country_codes: [ 'CA' ],
+		tax_name: 'VAT',
 	},
 	{
 		code: 'CH',
@@ -107,6 +110,7 @@ export const countryList: CountryListItem[] = [
 		tax_needs_address: true,
 		vat_supported: true,
 		tax_country_codes: [ 'CH' ],
+		tax_name: 'GST',
 	},
 	{
 		code: 'GB',
@@ -115,6 +119,7 @@ export const countryList: CountryListItem[] = [
 		tax_needs_organization: true, // added for testing, not present in API data
 		vat_supported: true,
 		tax_country_codes: [ 'GB', 'XI' ],
+		tax_name: 'VAT',
 	},
 	{
 		code: 'IN',
@@ -129,6 +134,7 @@ export const countryList: CountryListItem[] = [
 		has_postal_codes: true,
 		tax_needs_organization: true,
 		vat_supported: false,
+		tax_name: 'CT',
 	},
 	{
 		code: 'NO',
@@ -460,6 +466,15 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				bill_period: 'yearly',
 				currency: 'USD',
 			};
+		case 'jetpack_backup_t1_bi_yearly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2123,
+				product_name: 'Jetpack VaultPress Backup (10GB)',
+				product_slug: productSlug,
+				bill_period: 'bi-yearly',
+				currency: 'USD',
+			};
 		case 'jetpack_backup_t2_monthly':
 			return {
 				...getEmptyResponseCartProduct(),
@@ -557,6 +572,15 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_name: 'Jetpack Security T1',
 				product_slug: productSlug,
 				bill_period: 'monthly',
+				currency: 'USD',
+			};
+		case 'jetpack_security_t1_bi_yearly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2034,
+				product_name: 'Jetpack Security T1',
+				product_slug: productSlug,
+				bill_period: 'bi-yearly',
 				currency: 'USD',
 			};
 		case 'jetpack_security_t1_yearly':

@@ -1,3 +1,5 @@
+@import "@automattic/typography/styles/variables";
+
 $theme-card-info-height: 48px;
 $theme-card-info-margin-top: 16px;
 
@@ -52,7 +54,7 @@ $theme-card-info-margin-top: 16px;
 
 .theme-card__image-container {
 	border: 1px solid rgba(0, 0, 0, 0.1);
-	filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.05));
+	box-shadow: 0 15px 25px rgba(0, 0, 0, 0.05);
 	overflow: hidden;
 	padding-top: 74%;
 	position: relative;
@@ -106,6 +108,7 @@ $theme-card-info-margin-top: 16px;
 		display: block;
 		height: auto;
 		left: 0;
+		min-height: 100%;
 		padding: 0;
 		position: absolute;
 		right: 0;

@@ -12,12 +12,14 @@ $help-text-color: #757575;
 	padding: 16px !important;
 }
 
-.configure-email-address__checkbox-content-container {
+.configure-email-address__card-content-container {
 	display: flex;
 	align-items: center;
+	gap: 4px;
+	width: 100%;
 }
 
-.configure-email-address__checkbox-content {
+.configure-email-address__card-content {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -26,39 +28,23 @@ $help-text-color: #757575;
 }
 
 .configure-email-address__verification-status {
-	margin-right: 42px;
+	margin-inline-end: 24px;
 
 	.badge {
-		line-height: 14px;
 		font-size: 0.75rem;
 	}
 }
 
-.configure-email-address__edit-icon {
+button.configure-email-address__action-icon {
 	position: absolute;
-	right: 16px;
+	right: 8px;
 	display: flex;
+	background: rgba(255, 255, 255, 0.9) !important;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+	border-radius: 2px;
+	padding: 4px !important;
 }
 
-.configure-email-address__checkbox {
-	width: 100%;
-
-	.components-checkbox-control__input:checked {
-		background: var(--studio-gray-80);
-		border-color: var(--studio-gray-80);
-	}
-
-	.components-checkbox-control__label {
-		font-weight: 500;
-		min-width: 95%;
-	}
-
-	.components-base-control__field {
-		margin-bottom: 0;
-		display: flex;
-		align-items: center;
-	}
-}
 
 .handle-overflow {
 	white-space: nowrap;
@@ -66,7 +52,7 @@ $help-text-color: #757575;
 	text-overflow: ellipsis;
 }
 
-.configure-email-address__checkbox-heading {
+.configure-email-address__card-heading {
 	@extend .handle-overflow;
 	font-weight: 500;
 	font-size: 0.875rem;
@@ -74,7 +60,7 @@ $help-text-color: #757575;
 	color: var(--studio-gray-100);
 }
 
-.configure-email-address__checkbox-sub-heading {
+.configure-email-address__card-sub-heading {
 	@extend .handle-overflow;
 	font-weight: 400;
 	font-size: 0.75rem;
@@ -102,6 +88,10 @@ button.configure-email-address__button {
 
 .configure-email-notification__form {
 	margin-block-start: 24px;
+
+	.notification-settings__footer-validation-error {
+		margin-block: 8px;
+	}
 }
 
 .configure-email-notification__resend-code-button {
@@ -109,4 +99,8 @@ button.configure-email-address__button {
 	padding: 0;
 	color: var(--studio-green-50) !important;
 	text-decoration: underline;
+}
+
+.configure-email-address__popover-menu {
+	z-index: 999999;
 }

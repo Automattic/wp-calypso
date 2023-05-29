@@ -39,7 +39,7 @@ const PatternAssemblerCta = ( {
 	if ( ! text ) {
 		text = shouldGoToAssemblerStep
 			? translate(
-					"Can't find something you like? Start with a blank canvas and design your own homepage using our library of patterns."
+					'Can’t find something you like? Use our library of styles and patterns to build a homepage.'
 			  )
 			: translate(
 					"Can't find something you like? Jump right into the editor to design your homepage from scratch."

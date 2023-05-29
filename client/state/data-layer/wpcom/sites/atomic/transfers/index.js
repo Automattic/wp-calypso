@@ -31,6 +31,10 @@ export const mapToRequestBody = ( action ) => {
 		requestBody.plugin_file = action.pluginFile;
 	}
 
+	if ( action.context ) {
+		requestBody.context = action.context;
+	}
+
 	return requestBody;
 };
 
@@ -40,11 +44,7 @@ const initiateAtomicTransfer = ( action ) =>
 			apiNamespace: 'wpcom/v2',
 			method: 'POST',
 			path: `/sites/${ action.siteId }/atomic/transfers/`,
-			...( action.softwareSet || action.themeSlug
-				? {
-						body: mapToRequestBody( action ),
-				  }
-				: {} ),
+			body: mapToRequestBody( action ),
 		},
 		action
 	);

@@ -12,6 +12,7 @@ const services = ( translate = ( string ) => string ) => ( {
 	google_plus: { icon: 'google-plus', label: translate( 'Google+ ' ) },
 	linkedin: { icon: 'linkedin', label: translate( 'LinkedIn' ) },
 	tumblr: { icon: 'tumblr', label: translate( 'Tumblr' ) },
+	mastodon: { icon: 'mastodon', label: translate( 'Mastodon' ) },
 	twitter: { icon: 'twitter', label: translate( 'Twitter' ) },
 	wordpress: { icon: 'wordpress', label: translate( 'WordPress.com Reader' ) },
 } );

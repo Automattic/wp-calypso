@@ -41,7 +41,6 @@ describe( DataHelper.createSuiteTitle( 'Site Assembler' ), () => {
 
 		it( 'Skip until the Design Picker', async function () {
 			await startSiteFlow.clickButton( 'Continue' );
-			await startSiteFlow.clickButton( 'Continue' );
 		} );
 
 		it( 'Select "Start designing" and land on the Site Assembler', async function () {

@@ -4,8 +4,6 @@ import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { decodeEntities } from 'calypso/lib/formatting';
 
-import './style.scss';
-
 export class LinkedinSharePreview extends PureComponent {
 	static propTypes = {
 		articleUrl: PropTypes.string,

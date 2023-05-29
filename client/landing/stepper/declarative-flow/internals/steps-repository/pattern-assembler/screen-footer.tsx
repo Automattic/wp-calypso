@@ -4,7 +4,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import NavigatorHeader from './navigator-header';
 import PatternSelector from './pattern-selector';
-import { useFooterPatterns } from './patterns-data';
 import type { Pattern } from './types';
 
 interface Props {
@@ -25,7 +24,6 @@ const ScreenFooter = ( {
 	patterns,
 }: Props ) => {
 	const translate = useTranslate();
-	const footerPatterns = useFooterPatterns( patterns );
 	useEffect( () => {
 		updateActivePatternPosition();
 	}, [ updateActivePatternPosition ] );
@@ -35,13 +33,13 @@ const ScreenFooter = ( {
 			<NavigatorHeader
 				title={ translate( 'Footer' ) }
 				description={ translate(
-					'Your footer will be added to all pages and can be used to show information or links that will help visitors take the next step.'
+					'The footer appears at the bottom of a site and shows useful links and contact information.'
 				) }
 				onBack={ onBack }
 			/>
 			<div className="screen-container__body">
 				<PatternSelector
-					patterns={ footerPatterns }
+					patterns={ patterns }
 					onSelect={ ( selectedPattern ) => onSelect( 'footer', selectedPattern, 'footer' ) }
 					selectedPattern={ selectedPattern }
 					emptyPatternText={ translate( 'No Footer' ) }
@@ -54,7 +52,7 @@ const ScreenFooter = ( {
 					primary
 					onClick={ onDoneClick }
 				>
-					{ translate( 'Save' ) }
+					{ translate( 'Save footer' ) }
 				</NavigatorBackButton>
 			</div>
 		</>

@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useSyncGlobalStylesUserConfig } from '@automattic/global-styles';
 import { useLocale } from '@automattic/i18n-utils';
-import { StepContainer, WITH_THEME_ASSEMBLER_FLOW } from '@automattic/onboarding';
+import { StepContainer, isSiteAssemblerFlow, isSiteSetupFlow } from '@automattic/onboarding';
 import {
 	__experimentalNavigatorProvider as NavigatorProvider,
 	__experimentalNavigatorScreen as NavigatorScreen,
@@ -10,11 +10,13 @@ import {
 import { useDispatch, useSelect } from '@wordpress/data';
 import classnames from 'classnames';
 import { useState, useRef, useMemo } from 'react';
-import { useDispatch as useReduxDispatch } from 'react-redux';
+import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
-import { ActiveTheme } from 'calypso/data/themes/use-active-theme-query';
 import { createRecordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { setActiveTheme } from 'calypso/state/themes/actions';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { activateOrInstallThenActivate, setActiveTheme } from 'calypso/state/themes/actions';
+import { getThemeIdFromStylesheet } from 'calypso/state/themes/utils';
+import { useQuery } from '../../../../hooks/use-query';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
@@ -22,6 +24,8 @@ import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
 import { recordSelectedDesign } from '../../analytics/record-design';
 import { SITE_TAGLINE, PATTERN_TYPES, NAVIGATOR_PATHS, CATEGORY_ALL_SLUG } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
+import useCategoryAll from './hooks/use-category-all';
+import useDotcomPatterns from './hooks/use-dotcom-patterns';
 import useGlobalStylesUpgradeModal from './hooks/use-global-styles-upgrade-modal';
 import usePatternCategories from './hooks/use-pattern-categories';
 import usePatternsMapByCategory from './hooks/use-patterns-map-by-category';
@@ -31,7 +35,6 @@ import NavigatorListener from './navigator-listener';
 import Notices, { getNoticeContent } from './notices/notices';
 import PatternAssemblerContainer from './pattern-assembler-container';
 import PatternLargePreview from './pattern-large-preview';
-import { useAllPatterns } from './patterns-data';
 import ScreenCategoryList from './screen-category-list';
 import ScreenColorPalettes from './screen-color-palettes';
 import ScreenFontPairings from './screen-font-pairings';
@@ -46,6 +49,7 @@ import type { StepProps } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { DesignRecipe, Design } from '@automattic/design-picker/src/types';
 import type { GlobalStylesObject } from '@automattic/global-styles';
+import type { ActiveTheme } from 'calypso/data/themes/use-active-theme-query';
 import './style.scss';
 
 const PatternAssembler = ( {
@@ -61,7 +65,7 @@ const PatternAssembler = ( {
 	const [ activePosition, setActivePosition ] = useState( -1 );
 	const [ isPatternPanelListOpen, setIsPatternPanelListOpen ] = useState( false );
 	const { goBack, goNext, submit } = navigation;
-	const { applyThemeWithPatterns } = useDispatch( SITE_STORE );
+	const { applyThemeWithPatterns, assembleSite } = useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 	const selectedDesign = useSelect(
@@ -77,14 +81,19 @@ const PatternAssembler = ( {
 	const siteId = useSiteIdParam();
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
 	const locale = useLocale();
+	// New sites are created from 'site-setup' and 'with-site-assembler' flows
+	const isNewSite = !! useQuery().get( 'isNewSite' ) || isSiteSetupFlow( flow );
+	const isSiteJetpack = useSelector( ( state ) => isJetpackSite( state, site?.ID ) );
 
-	// Fetching all patterns and categories
-	const allPatterns = useAllPatterns( locale );
+	// The categories api triggers the ETK plugin before the PTK api request
+	const categories = usePatternCategories( site?.ID );
+	// Fetching all patterns and categories from PTK api
+	const dotcomPatterns = useDotcomPatterns( locale );
+	const allPatterns = useCategoryAll( dotcomPatterns );
 	const patternIds = useMemo(
 		() => allPatterns.map( ( pattern ) => encodePatternId( pattern.ID ) ),
 		[ allPatterns ]
 	);
-	const categories = usePatternCategories( site?.ID );
 	const patternsMapByCategory = usePatternsMapByCategory( allPatterns, categories );
 	const {
 		header,
@@ -102,8 +111,6 @@ const PatternAssembler = ( {
 	} = useRecipe( site?.ID, allPatterns, categories );
 
 	const stylesheet = selectedDesign?.recipe?.stylesheet || '';
-
-	const isEnabledColorAndFonts = isEnabled( 'pattern-assembler/color-and-fonts' );
 
 	const recordTracksEvent = useMemo(
 		() =>
@@ -125,10 +132,7 @@ const PatternAssembler = ( {
 		[ colorVariation, fontVariation ]
 	);
 
-	const syncedGlobalStylesUserConfig = useSyncGlobalStylesUserConfig(
-		selectedVariations,
-		isEnabledColorAndFonts
-	);
+	const syncedGlobalStylesUserConfig = useSyncGlobalStylesUserConfig( selectedVariations );
 
 	usePrefetchImages();
 
@@ -370,23 +374,47 @@ const PatternAssembler = ( {
 
 	const onSubmit = () => {
 		const design = getDesign();
+		const stylesheet = design?.recipe?.stylesheet ?? '';
+		const themeId = getThemeIdFromStylesheet( stylesheet );
 
-		if ( ! siteSlugOrId ) {
+		if ( ! siteSlugOrId || ! site?.ID || ! themeId ) {
 			return;
 		}
 
-		setPendingAction( () =>
-			applyThemeWithPatterns( siteSlugOrId, design, syncedGlobalStylesUserConfig ).then(
-				( theme: ActiveTheme ) => reduxDispatch( setActiveTheme( site?.ID || -1, theme ) )
-			)
-		);
+		if ( isEnabled( 'pattern-assembler/logged-in-showcase' ) ) {
+			setPendingAction( () =>
+				Promise.resolve()
+					.then( () =>
+						reduxDispatch(
+							activateOrInstallThenActivate( themeId, site?.ID, 'assembler', false, false )
+						)
+					)
+					.then( () =>
+						assembleSite( siteSlugOrId, isSiteJetpack ? themeId : stylesheet, {
+							homeHtml: sections.map( ( pattern ) => pattern.html ).join( '' ),
+							headerHtml: header?.html,
+							footerHtml: footer?.html,
+							globalStyles: syncedGlobalStylesUserConfig,
+							// Newly created sites should reset the starter content created from the default Headstart annotation
+							shouldResetContent: isNewSite,
+							// Also, new sites except for virtual themes set the option wpcom_site_setup=assembler
+							siteSetupOption: isNewSite && ! design.is_virtual ? 'assembler' : '',
+						} )
+					)
+			);
+		} else {
+			setPendingAction( () =>
+				applyThemeWithPatterns( siteSlugOrId, design, syncedGlobalStylesUserConfig ).then(
+					( theme: ActiveTheme ) => reduxDispatch( setActiveTheme( site?.ID, theme ) )
+				)
+			);
+		}
 
 		recordSelectedDesign( { flow, intent, design } );
 		submit?.();
 	};
 
 	const {
-		isDismissed: isDismissedGlobalStylesUpgradeModal,
 		shouldUnlockGlobalStyles,
 		openModal: openGlobalStylesUpgradeModal,
 		globalStylesUpgradeModalProps,
@@ -396,6 +424,7 @@ const PatternAssembler = ( {
 		hasSelectedColorVariation: !! colorVariation,
 		hasSelectedFontVariation: !! fontVariation,
 		onCheckout: snapshotRecipe,
+		onUpgradeLater: onSubmit,
 		recordTracksEvent,
 	} );
 
@@ -418,7 +447,7 @@ const PatternAssembler = ( {
 	const onContinueClick = () => {
 		trackEventContinue();
 
-		if ( shouldUnlockGlobalStyles && ! isDismissedGlobalStylesUpgradeModal ) {
+		if ( shouldUnlockGlobalStyles ) {
 			openGlobalStylesUpgradeModal();
 			return;
 		}
@@ -505,14 +534,10 @@ const PatternAssembler = ( {
 			ref={ wrapperRef }
 			tabIndex={ -1 }
 		>
-			{ isEnabled( 'pattern-assembler/notices' ) && (
-				<Notices noticeList={ noticeList } noticeOperations={ noticeOperations } />
-			) }
+			<Notices noticeList={ noticeList } noticeOperations={ noticeOperations } />
 			<div className="pattern-assembler__sidebar">
 				<NavigatorScreen path={ NAVIGATOR_PATHS.MAIN }>
 					<ScreenMain
-						shouldUnlockGlobalStyles={ shouldUnlockGlobalStyles }
-						isDismissedGlobalStylesUpgradeModal={ isDismissedGlobalStylesUpgradeModal }
 						onSelect={ onMainItemSelect }
 						onContinueClick={ onContinueClick }
 						recordTracksEvent={ recordTracksEvent }
@@ -565,31 +590,27 @@ const PatternAssembler = ( {
 					/>
 				</NavigatorScreen>
 
-				{ isEnabledColorAndFonts && (
-					<NavigatorScreen path={ NAVIGATOR_PATHS.COLOR_PALETTES }>
-						<ScreenColorPalettes
-							siteId={ site?.ID }
-							stylesheet={ stylesheet }
-							selectedColorPaletteVariation={ colorVariation }
-							onSelect={ onScreenColorsSelect }
-							onBack={ onScreenColorsBack }
-							onDoneClick={ onScreenColorsDone }
-						/>
-					</NavigatorScreen>
-				) }
+				<NavigatorScreen path={ NAVIGATOR_PATHS.COLOR_PALETTES }>
+					<ScreenColorPalettes
+						siteId={ site?.ID }
+						stylesheet={ stylesheet }
+						selectedColorPaletteVariation={ colorVariation }
+						onSelect={ onScreenColorsSelect }
+						onBack={ onScreenColorsBack }
+						onDoneClick={ onScreenColorsDone }
+					/>
+				</NavigatorScreen>
 
-				{ isEnabledColorAndFonts && (
-					<NavigatorScreen path={ NAVIGATOR_PATHS.FONT_PAIRINGS }>
-						<ScreenFontPairings
-							siteId={ site?.ID }
-							stylesheet={ stylesheet }
-							selectedFontPairingVariation={ fontVariation }
-							onSelect={ onScreenFontsSelect }
-							onBack={ onScreenFontsBack }
-							onDoneClick={ onScreenFontsDone }
-						/>
-					</NavigatorScreen>
-				) }
+				<NavigatorScreen path={ NAVIGATOR_PATHS.FONT_PAIRINGS }>
+					<ScreenFontPairings
+						siteId={ site?.ID }
+						stylesheet={ stylesheet }
+						selectedFontPairingVariation={ fontVariation }
+						onSelect={ onScreenFontsSelect }
+						onBack={ onScreenFontsBack }
+						onDoneClick={ onScreenFontsDone }
+					/>
+				</NavigatorScreen>
 
 				<NavigatorListener
 					onLocationChange={ ( navigatorLocation ) => {
@@ -617,7 +638,7 @@ const PatternAssembler = ( {
 		<StepContainer
 			className="pattern-assembler__sidebar-revamp"
 			stepName="pattern-assembler"
-			hideBack={ navigatorPath !== NAVIGATOR_PATHS.MAIN || flow === WITH_THEME_ASSEMBLER_FLOW }
+			hideBack={ navigatorPath !== NAVIGATOR_PATHS.MAIN || isSiteAssemblerFlow( flow ) }
 			goBack={ onBack }
 			goNext={ goNext }
 			isHorizontalLayout={ false }
@@ -629,6 +650,7 @@ const PatternAssembler = ( {
 					stylesheet={ stylesheet }
 					patternIds={ patternIds }
 					siteInfo={ siteInfo }
+					isNewSite={ isNewSite }
 				>
 					{ stepContent }
 				</PatternAssemblerContainer>

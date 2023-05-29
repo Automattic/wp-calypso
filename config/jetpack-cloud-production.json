@@ -35,7 +35,6 @@
 		"current-site/domain-warning": false,
 		"current-site/notice": false,
 		"current-site/stale-cart-notice": false,
-		"fullstory": true,
 		"i18n/community-translator": false,
 		"jetpack-cloud": true,
 		"jetpack/agency-dashboard": true,

@@ -42,7 +42,8 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	planName: string;
 	domainName: string;
 	hideUnavailableFeatures: boolean;
-} > = ( { features, planName, domainName, hideUnavailableFeatures } ) => {
+	selectedFeature?: string;
+} > = ( { features, planName, domainName, hideUnavailableFeatures, selectedFeature } ) => {
 	const translate = useTranslate();
 	return (
 		<>
@@ -59,6 +60,11 @@ const PlanFeatures2023GridFeatures: React.FC< {
 					return null;
 				}
 
+				const isHighlightedFeature = selectedFeature
+					? currentFeature.getSlug() === selectedFeature
+					: currentFeature.getSlug() === FEATURE_CUSTOM_DOMAIN ||
+					  ! currentFeature.availableForCurrentPlan;
+
 				const divClasses = classNames( '', getPlanClass( planName ), {
 					'is-last-feature': featureIndex + 1 === features.length,
 				} );
@@ -68,10 +74,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 						isFreePlanAndCustomDomainFeature || currentFeature.availableForCurrentPlan,
 				} );
 				const itemTitleClasses = classNames( 'plan-features-2023-grid__item-title', {
-					'is-bold':
-						currentFeature.getSlug() === FEATURE_CUSTOM_DOMAIN
-							? true
-							: ! currentFeature.availableForCurrentPlan,
+					'is-bold': isHighlightedFeature,
 				} );
 
 				return (

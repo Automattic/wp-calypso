@@ -7,8 +7,10 @@ import { useQuery } from '../hooks/use-query';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
+import ErrorStep from './internals/steps-repository/error-step';
 import PatternAssembler from './internals/steps-repository/pattern-assembler/lazy';
-import Processing from './internals/steps-repository/processing-step';
+import ProcessingStep from './internals/steps-repository/processing-step';
+import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import { Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { Design } from '@automattic/design-picker/src/types';
@@ -34,7 +36,8 @@ const withThemeAssemblerFlow: Flow = {
 	useSteps() {
 		return [
 			{ slug: 'patternAssembler', component: PatternAssembler },
-			{ slug: 'processing', component: Processing },
+			{ slug: 'processing', component: ProcessingStep },
+			{ slug: 'error', component: ErrorStep },
 		];
 	},
 
@@ -59,11 +62,15 @@ const withThemeAssemblerFlow: Flow = {
 			return navigate( 'processing' );
 		};
 
-		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
+		const submit = ( providedDependencies: ProvidedDependencies = {}, ...results: string[] ) => {
 			recordSubmitStep( providedDependencies, intent, flowName, _currentStep );
 
 			switch ( _currentStep ) {
 				case 'processing': {
+					if ( results.some( ( result ) => result === ProcessingResult.FAILURE ) ) {
+						return navigate( 'error' );
+					}
+
 					const params = new URLSearchParams( {
 						canvas: 'edit',
 						assembler: '1',

@@ -16,7 +16,6 @@ import UrlSearch from 'calypso/lib/url-search';
 import InfiniteStream from 'calypso/reader/components/reader-infinite-stream';
 import { siteRowRenderer } from 'calypso/reader/components/reader-infinite-stream/row-renderers';
 import { filterFollowsByQuery } from 'calypso/reader/follow-helpers';
-import { READER_SUBSCRIPTIONS } from 'calypso/reader/follow-sources';
 import { formatUrlForDisplay, getFeedTitle } from 'calypso/reader/lib/feed-display-helper';
 import { getReaderFollows, getReaderFollowsCount } from 'calypso/state/reader/follows/selectors';
 import FollowingManageSearchFollowed from './search-followed';
@@ -115,9 +114,6 @@ class FollowingManageSubscriptions extends Component {
 					{ ! noSitesMatchQuery && (
 						<InfiniteStream
 							items={ sortedFollows }
-							extraRenderItemProps={ {
-								followSource: READER_SUBSCRIPTIONS,
-							} }
 							width={ width }
 							totalCount={ sortedFollows.length }
 							windowScrollerRef={ this.props.windowScrollerRef }

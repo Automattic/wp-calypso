@@ -45,7 +45,8 @@ export function init() {
 						<div className="stats-widget-footer">
 							<a
 								href="https://jetpack.com/redirect/?source=jetpack-stats-widget-logo-link"
-								target="__blank"
+								target="_blank"
+								rel="noreferrer noopener"
 								aria-label="Jetpack Stats Website"
 							>
 								<JetpackLogo size={ 20 } monochrome full />

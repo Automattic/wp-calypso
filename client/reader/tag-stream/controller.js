@@ -7,7 +7,6 @@ import {
 	trackScrollPage,
 	getStartDate,
 } from 'calypso/reader/controller-helper';
-import { TAG_PAGE } from 'calypso/reader/follow-sources';
 import { recordTrack } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
@@ -64,7 +63,6 @@ export const tagListing = ( context, next ) => {
 			onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) } // eslint-disable-line
 			showBack={ !! context.lastRoute }
 			showPrimaryFollowButtonOnCards={ false }
-			followSource={ TAG_PAGE }
 		/>
 	);
 	next();

@@ -2,6 +2,7 @@ import page from 'page';
 import { billingHistory } from 'calypso/me/purchases/paths';
 import SiteSettingsMain from 'calypso/my-sites/site-settings/main';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import canCurrentUserStartSiteOwnerTransfer from 'calypso/state/selectors/can-current-user-start-site-owner-transfer';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -10,6 +11,7 @@ import DeleteSite from './delete-site';
 import DisconnectSite from './disconnect-site';
 import ConfirmDisconnection from './disconnect-site/confirm';
 import ManageConnection from './manage-connection';
+import SiteOwnerTransfer from './site-owner-transfer/site-owner-transfer';
 import StartOver from './start-over';
 
 function canDeleteSite( state, siteId ) {
@@ -43,6 +45,14 @@ export function redirectIfCantDeleteSite( context, next ) {
 	next();
 }
 
+export function redirectIfCantStartSiteOwnerTransfer( context, next ) {
+	const state = context.store.getState();
+	if ( ! canCurrentUserStartSiteOwnerTransfer( state, getSelectedSiteId( state ) ) ) {
+		return page.redirect( '/settings/general/' + getSelectedSiteSlug( state ) );
+	}
+	next();
+}
+
 export function general( context, next ) {
 	context.primary = <SiteSettingsMain />;
 	next();
@@ -72,6 +82,11 @@ export function startOver( context, next ) {
 
 export function manageConnection( context, next ) {
 	context.primary = <ManageConnection />;
+	next();
+}
+
+export function startSiteOwnerTransfer( context, next ) {
+	context.primary = <SiteOwnerTransfer />;
 	next();
 }
 

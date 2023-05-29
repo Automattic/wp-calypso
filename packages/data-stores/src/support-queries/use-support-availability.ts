@@ -16,9 +16,9 @@ export function useSupportAvailability< SUPPORT_TYPE extends 'CHAT' | 'OTHER' >(
 	supportType: SUPPORT_TYPE,
 	enabled = true
 ) {
-	return useQuery< ResponseType< SUPPORT_TYPE >, typeof Error >(
-		[ supportType === 'OTHER' ? 'otherSupportAvailability' : 'chatSupportAvailability' ],
-		async () =>
+	return useQuery< ResponseType< SUPPORT_TYPE >, typeof Error >( {
+		queryKey: [ supportType === 'OTHER' ? 'otherSupportAvailability' : 'chatSupportAvailability' ],
+		queryFn: async () =>
 			canAccessWpcomApis()
 				? await wpcomRequest( {
 						path: `help/eligibility/${ supportType === 'OTHER' ? 'all' : 'chat' }/mine`,
@@ -29,11 +29,9 @@ export function useSupportAvailability< SUPPORT_TYPE extends 'CHAT' | 'OTHER' >(
 						path: `help-center/support-availability/${ supportType === 'OTHER' ? 'all' : 'chat' }`,
 						global: true,
 				  } as APIFetchOptions ),
-		{
-			enabled,
-			refetchOnWindowFocus: false,
-			keepPreviousData: true,
-			staleTime: 6 * 60 * 60 * 1000, // 6 hours
-		}
-	);
+		enabled,
+		refetchOnWindowFocus: false,
+		keepPreviousData: true,
+		staleTime: 6 * 60 * 60 * 1000, // 6 hours
+	} );
 }

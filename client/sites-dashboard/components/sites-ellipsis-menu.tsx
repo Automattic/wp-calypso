@@ -413,7 +413,7 @@ export const SitesEllipsisMenu = ( {
 					{ ! isWpcomStagingSite && ! isLaunched && <LaunchItem { ...props } /> }
 					<SettingsItem { ...props } />
 					{ hasHostingFeatures && <HostingConfigurationSubmenu { ...props } /> }
-					{ hasHostingFeatures && <SiteLogsItem { ...props } /> }
+					{ site.is_wpcom_atomic && <SiteLogsItem { ...props } /> }
 					{ ! isP2Site( site ) && <ManagePluginsItem { ...props } /> }
 					{ site.is_coming_soon && <PreviewSiteModalItem { ...props } /> }
 					{ ! isWpcomStagingSite && shouldShowSiteCopyItem && (

@@ -4,16 +4,14 @@ import wp from 'calypso/lib/wp';
 
 function useUpdateSiteMonitorSettingsMutation( siteId, queryOptions = {} ) {
 	const queryClient = useQueryClient();
-	const mutation = useMutation(
-		( { settings } ) => wp.req.post( `/jetpack-blogs/${ siteId }`, settings ),
-		{
-			...queryOptions,
-			onSuccess( ...args ) {
-				queryClient.invalidateQueries( [ 'site-monitor-settings', siteId ] );
-				queryOptions.onSuccess?.( ...args );
-			},
-		}
-	);
+	const mutation = useMutation( {
+		mutationFn: ( { settings } ) => wp.req.post( `/jetpack-blogs/${ siteId }`, settings ),
+		...queryOptions,
+		onSuccess( ...args ) {
+			queryClient.invalidateQueries( [ 'site-monitor-settings', siteId ] );
+			queryOptions.onSuccess?.( ...args );
+		},
+	} );
 
 	const { mutate } = mutation;
 

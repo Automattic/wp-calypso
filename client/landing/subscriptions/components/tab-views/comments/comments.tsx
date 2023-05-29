@@ -1,16 +1,16 @@
-import config from '@automattic/calypso-config';
-import { SubscriptionManager } from '@automattic/data-stores';
+import { SubscriptionManager, Reader } from '@automattic/data-stores';
 import SearchInput from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import SelectDropdown from 'calypso/components/select-dropdown';
 import { CommentList } from 'calypso/landing/subscriptions/components/comment-list';
 import { SearchIcon } from 'calypso/landing/subscriptions/components/icons';
-import { Notice } from 'calypso/landing/subscriptions/components/notice';
+import { Notice, NoticeType } from 'calypso/landing/subscriptions/components/notice';
 import { SortControls, Option } from 'calypso/landing/subscriptions/components/sort-controls';
-import useSearch from 'calypso/landing/subscriptions/hooks/use-search';
+import { useSearch } from 'calypso/landing/subscriptions/hooks';
 import TabView from '../tab-view';
 
-const SortBy = SubscriptionManager.PostSubscriptionsSortBy;
+const { PostSubscriptionsSortBy: SortBy, SiteSubscriptionsFilterBy: FilterBy } = Reader;
 
 const useSortOptions = (): Option[] => {
 	const translate = useTranslate();
@@ -21,50 +21,79 @@ const useSortOptions = (): Option[] => {
 	];
 };
 
+const useFilterOptions = () => {
+	const translate = useTranslate();
+
+	return useMemo(
+		() => [
+			{ value: FilterBy.All, label: translate( 'All' ) },
+			// { value: SiteSubscriptionsFilterBy.Paid, label: translate( 'Paid' ) },		// todo: add back when we have paid subscriptions support
+			{ value: FilterBy.P2, label: translate( 'P2' ) },
+		],
+		[ translate ]
+	);
+};
+
+const getFilterLabel = (
+	availableFilterOptions: Option[],
+	filterValue: Reader.SiteSubscriptionsFilterBy
+) => availableFilterOptions.find( ( option ) => option.value === filterValue )?.label;
+
 const Comments = () => {
 	const translate = useTranslate();
 	const [ sortTerm, setSortTerm ] = useState( SortBy.RecentlySubscribed );
 	const { searchTerm, handleSearch } = useSearch();
 	const sortOptions = useSortOptions();
-	const isListControlsEnabled = config.isEnabled(
-		'subscription-management/comments-list-controls'
-	);
+	const availableFilterOptions = useFilterOptions();
+	const [ filterOption, setFilterOption ] = useState( FilterBy.All );
 
 	const {
 		data: { posts, totalCount },
 		isLoading,
 		error,
-	} = SubscriptionManager.usePostSubscriptionsQuery( { searchTerm, sortTerm } );
+	} = SubscriptionManager.usePostSubscriptionsQuery( { searchTerm, sortTerm, filterOption } );
 
 	// todo: translate when we have agreed on the error message
 	const errorMessage = error ? 'An error occurred while fetching your subscriptions.' : '';
 
 	if ( ! isLoading && ! totalCount ) {
 		return (
-			<Notice type="warning">{ translate( 'You are not subscribed to any comments.' ) }</Notice>
+			<Notice type={ NoticeType.Warning }>
+				{ translate( 'You are not subscribed to any comments.' ) }
+			</Notice>
 		);
 	}
 
 	return (
 		<TabView errorMessage={ errorMessage } isLoading={ isLoading }>
-			{ isListControlsEnabled && (
-				<div className="subscriptions-manager__list-actions-bar">
-					<SearchInput
-						placeholder={ translate( 'Search by post, site title, or address…' ) }
-						searchIcon={ <SearchIcon size={ 18 } /> }
-						onSearch={ handleSearch }
-					/>
-					<SortControls options={ sortOptions } value={ sortTerm } onChange={ setSortTerm } />
-				</div>
-			) }
+			<div className="subscriptions-manager__list-actions-bar">
+				<SearchInput
+					placeholder={ translate( 'Search by post, site title, or address…' ) }
+					searchIcon={ <SearchIcon size={ 18 } /> }
+					onSearch={ handleSearch }
+				/>
+
+				<SelectDropdown
+					className="subscriptions-manager__filter-control"
+					options={ availableFilterOptions }
+					onSelect={ ( selectedOption: Option ) =>
+						setFilterOption( selectedOption.value as Reader.SiteSubscriptionsFilterBy )
+					}
+					selectedText={
+						translate( 'View: ' ) + getFilterLabel( availableFilterOptions, filterOption )
+					}
+				/>
+
+				<SortControls options={ sortOptions } value={ sortTerm } onChange={ setSortTerm } />
+			</div>
 
 			<CommentList posts={ posts } />
 
 			{ totalCount && posts?.length === 0 && (
-				<Notice type="warning">
+				<Notice type={ NoticeType.Warning }>
 					{ translate( 'Sorry, no posts match {{italic}}%s.{{/italic}}', {
 						components: { italic: <i /> },
-						args: searchTerm,
+						args: searchTerm || getFilterLabel( availableFilterOptions, filterOption ),
 					} ) }
 				</Notice>
 			) }

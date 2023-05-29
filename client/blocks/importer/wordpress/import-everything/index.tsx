@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { ProgressBar } from '@automattic/components';
 import { Hooray, Progress, SubTitle, Title, NextButton } from '@automattic/onboarding';
 import { createElement, createInterpolateElement } from '@wordpress/element';
@@ -6,6 +7,7 @@ import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import { connect } from 'react-redux';
+import PreMigrationScreen from 'calypso/blocks/importer/wordpress/import-everything/pre-migration';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { EVERY_TEN_SECONDS, Interval } from 'calypso/lib/interval';
 import { SectionMigrate } from 'calypso/my-sites/migrate/section-migrate';
@@ -139,7 +141,20 @@ export class ImportEverything extends SectionMigrate {
 			stepNavigator,
 			showConfirmDialog = true,
 			isMigrateFromWp,
+			onContentOnlySelection,
 		} = this.props;
+
+		if ( isEnabled( 'onboarding/import-redesign' ) ) {
+			return (
+				<PreMigrationScreen
+					startImport={ this.startMigration }
+					isTargetSitePlanCompatible={ isTargetSitePlanCompatible }
+					targetSite={ targetSite }
+					onContentOnlyClick={ onContentOnlySelection }
+					isMigrateFromWp={ isMigrateFromWp }
+				/>
+			);
+		}
 
 		if ( sourceSite ) {
 			return (
@@ -190,6 +205,47 @@ export class ImportEverything extends SectionMigrate {
 				</Progress>
 				<GettingStartedVideo />
 			</>
+		);
+	}
+
+	renderMigrationProgressSimple() {
+		const { translate } = this.props;
+		const statusSteps: string[] = [
+			translate( 'Preparing your files' ),
+			translate( 'Gathering your data' ),
+			translate( 'Preparing your files' ),
+		];
+		const statusStep =
+			statusSteps[ Math.floor( this.state.percent / ( 100 / statusSteps.length ) ) ];
+
+		return (
+			<Progress className="onboarding-progress-simple">
+				<Interval onTick={ this.updateFromAPI } period={ EVERY_TEN_SECONDS } />
+				<Title>{ translate( 'We’re safely gathering all your data.' ) }</Title>
+				<SubTitle tagName="h2">
+					{ translate( 'This can take from a few minutes to a few hours.' ) }
+				</SubTitle>
+				<ProgressBar compact={ false } value={ this.state.percent ? this.state.percent : 0 } />
+				<SubTitle tagName="h3">
+					{ statusStep ? statusStep : statusSteps[ statusSteps.length - 1 ] }...
+				</SubTitle>
+
+				<div className="progress-status">{ translate( 'Site migration in progress' ) }...</div>
+
+				<p className="support-block">
+					{ translate( 'Do you need help? {{a}}Contact us{{/a}}.', {
+						components: {
+							a: (
+								<a
+									href="https://wordpress.com/help/contact"
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
+						},
+					} ) }
+				</p>
+			</Progress>
 		);
 	}
 
@@ -282,6 +338,8 @@ export class ImportEverything extends SectionMigrate {
 	}
 
 	render() {
+		const { isMigrateFromWp } = this.props;
+
 		switch ( this.state.migrationStatus ) {
 			case MigrationStatus.UNKNOWN:
 				return this.renderLoading();
@@ -292,7 +350,9 @@ export class ImportEverything extends SectionMigrate {
 			case MigrationStatus.NEW:
 			case MigrationStatus.BACKING_UP:
 			case MigrationStatus.RESTORING:
-				return this.renderMigrationProgress();
+				return isMigrateFromWp
+					? this.renderMigrationProgressSimple()
+					: this.renderMigrationProgress();
 
 			case MigrationStatus.DONE:
 				return this.renderMigrationComplete();

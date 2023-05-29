@@ -1,3 +1,4 @@
+import { Gridicon } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -127,7 +128,18 @@ export default function Prices() {
 
 			<table className="prices__table">
 				<thead>
-					<tr>
+					<tr className="prices__head-row" style={ { backgroundColor: 'transparent' } }>
+						<th colSpan={ 3 }></th>
+						<th className="prices__column-highlight">
+							<div className="prices__column-highlight-content">
+								<Gridicon icon="star" size={ 18 } className="prices__column-highlight-icon" />
+								<span className="prices__column-highlight-label">
+									{ translate( 'Your Price' ) }
+								</span>
+							</div>
+						</th>
+					</tr>
+					<tr className="prices__head-row">
 						<th></th>
 						<th>
 							<div>{ translate( 'Jetpack.com Pricing' ) }</div>

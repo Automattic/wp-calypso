@@ -1,11 +1,6 @@
 @import "./variables";
 @import "../shared";
 
-.facebook-preview__section {
-	width: clamp(#{$facebook-preview-min-width}, 100%, #{$facebook-preview-max-width});
-	margin-inline: auto;
-}
-
 .facebook-preview__post {
 	overflow-y: hidden;
 	max-width: clamp(#{$facebook-preview-min-width}, 100%, #{$facebook-preview-max-width});
@@ -114,11 +109,13 @@
 }
 
 .facebook-preview__image,
-.facebook-preview__custom-image {
-	img {
+.facebook-preview__custom-image,
+.facebook-preview__media-item {
+	img,
+	video {
 		display: block;
-
 		object-fit: cover;
+		width: 100%;
 	}
 }
 
@@ -148,7 +145,8 @@
 	}
 }
 
-.facebook-preview__custom-image {
+.facebook-preview__custom-image,
+.facebook-preview__media-item {
 	display: flex;
 	justify-content: center;
 
