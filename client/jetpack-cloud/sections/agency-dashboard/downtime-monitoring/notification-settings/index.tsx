@@ -399,7 +399,7 @@ export default function NotificationSettings( {
 
 				<div className="notification-settings__footer">
 					{ ( validationError || hasUnsavedChanges ) && (
-						<div className="notification-settings__footer-validation-error">
+						<div className="notification-settings__footer-validation-error" role="alert">
 							{ hasUnsavedChanges
 								? translate( 'You have unsaved changes. Are you sure you want to close?' )
 								: validationError }
