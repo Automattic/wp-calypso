@@ -26,7 +26,6 @@ type PlanFeaturesActionsButtonProps = {
 	className: string;
 	currentSitePlanSlug?: string;
 	current: boolean;
-	forceDisplayButton?: boolean;
 	freePlan: boolean;
 	manageHref: string;
 	isPlaceholder?: boolean;
@@ -141,7 +140,6 @@ const LoggedInPlansFeatureActionButton = ( {
 	canUserPurchasePlan,
 	currentSitePlanSlug,
 	buttonText,
-	forceDisplayButton,
 	planActionOverrides,
 }: {
 	freePlan: boolean;
@@ -155,7 +153,6 @@ const LoggedInPlansFeatureActionButton = ( {
 	canUserPurchasePlan?: boolean;
 	currentSitePlanSlug?: string;
 	buttonText?: string;
-	forceDisplayButton: boolean;
 	selectedSiteSlug: string | null;
 	planActionOverrides?: PlanActionOverrides;
 } ) => {
@@ -267,28 +264,17 @@ const LoggedInPlansFeatureActionButton = ( {
 		);
 	}
 
-	const is2023PricingGridVisible = true;
 	if ( ! availableForPurchase ) {
-		if ( is2023PricingGridVisible ) {
-			return (
-				<Plans2023Tooltip text={ translate( 'Please contact support to downgrade your plan.' ) }>
-					<DummyDisabledButton>
-						{ translate( 'Downgrade', { context: 'verb' } ) }
-					</DummyDisabledButton>
-					{ isMobile() && (
-						<div className="plan-features-2023-grid__actions-downgrade-context-mobile">
-							{ translate( 'Please contact support to downgrade your plan.' ) }
-						</div>
-					) }
-				</Plans2023Tooltip>
-			);
-		} else if ( forceDisplayButton ) {
-			return (
-				<Button className={ classes } disabled={ true }>
-					{ buttonText }
-				</Button>
-			);
-		}
+		return (
+			<Plans2023Tooltip text={ translate( 'Please contact support to downgrade your plan.' ) }>
+				<DummyDisabledButton>{ translate( 'Downgrade', { context: 'verb' } ) }</DummyDisabledButton>
+				{ isMobile() && (
+					<div className="plan-features-2023-grid__actions-downgrade-context-mobile">
+						{ translate( 'Please contact support to downgrade your plan.' ) }
+					</div>
+				) }
+			</Plans2023Tooltip>
+		);
 	}
 
 	return null;
@@ -300,7 +286,6 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	className,
 	currentSitePlanSlug,
 	current = false,
-	forceDisplayButton = false,
 	freePlan = false,
 	manageHref,
 	isPlaceholder = false,
@@ -414,7 +399,6 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 			canUserPurchasePlan={ canUserPurchasePlan }
 			currentSitePlanSlug={ currentSitePlanSlug }
 			buttonText={ buttonText }
-			forceDisplayButton={ forceDisplayButton }
 			selectedSiteSlug={ selectedSiteSlug }
 			planActionOverrides={ planActionOverrides }
 		/>

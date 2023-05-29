@@ -199,8 +199,7 @@ export class PlansStep extends Component {
 	}
 
 	getHeaderText() {
-		const { headerText, translate, eligibleForProPlan, locale, is2023PricingGridVisible } =
-			this.props;
+		const { headerText, translate, eligibleForProPlan, locale } = this.props;
 
 		if ( headerText ) {
 			return headerText;
@@ -212,26 +211,12 @@ export class PlansStep extends Component {
 				: translate( 'Choose the plan that’s right for you' );
 		}
 
-		if ( is2023PricingGridVisible ) {
-			return translate( 'Choose your flavor of WordPress' );
-		}
-
-		if ( this.state.isDesktop ) {
-			return translate( 'Choose a plan' );
-		}
-
-		return translate( "Pick a plan that's right for you." );
+		return translate( 'Choose your flavor of WordPress' );
 	}
 
 	getSubHeaderText() {
-		const {
-			eligibleForProPlan,
-			hideFreePlan,
-			locale,
-			translate,
-			useEmailOnboardingSubheader,
-			is2023PricingGridVisible,
-		} = this.props;
+		const { eligibleForProPlan, hideFreePlan, locale, translate, useEmailOnboardingSubheader } =
+			this.props;
 
 		const freePlanButton = (
 			<Button onClick={ () => buildUpgradeFunction( this.props, null ) } borderless />
@@ -259,29 +244,6 @@ export class PlansStep extends Component {
 				{ components: { link: freePlanButton } }
 			);
 		}
-
-		if ( is2023PricingGridVisible ) {
-			return;
-		}
-
-		if ( this.state.isDesktop ) {
-			if ( hideFreePlan ) {
-				return translate( "Pick one that's right for you and unlock features that help you grow." );
-			}
-
-			return translate(
-				"Pick one that's right for you and unlock features that help you grow. Or {{link}}start with a free site{{/link}}.",
-				{ components: { link: freePlanButton } }
-			);
-		}
-
-		if ( hideFreePlan ) {
-			return translate( 'Choose a plan.' );
-		}
-
-		return translate( 'Choose a plan or {{link}}start with a free site{{/link}}.', {
-			components: { link: freePlanButton },
-		} );
 	}
 
 	shouldHideEcommercePlan() {
@@ -290,15 +252,8 @@ export class PlansStep extends Component {
 	}
 
 	plansFeaturesSelection() {
-		const {
-			flowName,
-			stepName,
-			positionInFlow,
-			translate,
-			hasInitializedSitesBackUrl,
-			steps,
-			is2023PricingGridVisible,
-		} = this.props;
+		const { flowName, stepName, positionInFlow, translate, hasInitializedSitesBackUrl, steps } =
+			this.props;
 
 		const headerText = this.getHeaderText();
 		const fallbackHeaderText = this.props.fallbackHeaderText || headerText;
@@ -340,8 +295,8 @@ export class PlansStep extends Component {
 					fallbackHeaderText={ fallbackHeaderText }
 					subHeaderText={ subHeaderText }
 					fallbackSubHeaderText={ fallbackSubHeaderText }
-					isWideLayout={ ! is2023PricingGridVisible }
-					isExtraWideLayout={ is2023PricingGridVisible }
+					isWideLayout={ false }
+					isExtraWideLayout={ true }
 					stepContent={ this.plansFeaturesList() }
 					allowBackFirstStep={ !! hasInitializedSitesBackUrl }
 					backUrl={ backUrl }
@@ -354,11 +309,10 @@ export class PlansStep extends Component {
 
 	render() {
 		const classes = classNames( 'plans plans-step', {
-			'in-vertically-scrolled-plans-experiment':
-				! this.props.is2023PricingGridVisible && this.props.isInVerticalScrollingPlansExperiment,
+			'in-vertically-scrolled-plans-experiment': this.props.isInVerticalScrollingPlansExperiment, // TODO clk: confirm this is still needed
 			'has-no-sidebar': true,
-			'is-wide-layout': ! this.props.is2023PricingGridVisible,
-			'is-extra-wide-layout': this.props.is2023PricingGridVisible,
+			'is-wide-layout': false,
+			'is-extra-wide-layout': true,
 		} );
 
 		return (
@@ -419,7 +373,6 @@ export default connect(
 		isInVerticalScrollingPlansExperiment: true,
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
 		eligibleForProPlan: isEligibleForProPlan( state, getSiteBySlug( state, siteSlug )?.ID ),
-		is2023PricingGridVisible: true,
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep, errorNotice }
 )( localize( PlansStep ) );

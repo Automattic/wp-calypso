@@ -38,7 +38,6 @@ export function plans( context, next ) {
 					: undefined
 			}
 			domainAndPlanPackage={ context.query.domainAndPlanPackage }
-			is2023PricingGridVisible={ true }
 		/>
 	);
 	next();

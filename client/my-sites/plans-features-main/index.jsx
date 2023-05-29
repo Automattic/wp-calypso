@@ -27,7 +27,6 @@ import {
 	GROUP_WPCOM,
 	PLAN_PERSONAL,
 	TITAN_MAIL_MONTHLY_SLUG,
-	PLAN_FREE,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
@@ -48,7 +47,6 @@ import QuerySites from 'calypso/components/data/query-sites';
 import FormattedHeader from 'calypso/components/formatted-header';
 import HappychatConnection from 'calypso/components/happychat/connection-connected';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
-import { getTld } from 'calypso/lib/domains';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import PlanFAQ from 'calypso/my-sites/plans-features-main/components/plan-faq';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
@@ -276,13 +274,13 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	getDefaultPlanTypes() {
-		const { selectedPlan, sitePlanSlug, hideEnterprisePlan, is2023PricingGridVisible } = this.props;
+		const { selectedPlan, sitePlanSlug, hideEnterprisePlan } = this.props;
 		const isBloggerAvailable = isBloggerPlan( selectedPlan ) || isBloggerPlan( sitePlanSlug );
 		// TODO:
 		// this should fall into the processing function for the visible plans
 		// however, the Enterprise plan isn't a real plan and lack of some required support
 		// from the utility functions right now.
-		const isEnterpriseAvailable = is2023PricingGridVisible && ! hideEnterprisePlan;
+		const isEnterpriseAvailable = ! hideEnterprisePlan;
 
 		return [
 			TYPE_FREE,
@@ -324,13 +322,7 @@ export class PlansFeaturesMain extends Component {
 
 	getVisiblePlansForPlanFeatures( availablePlans ) {
 		const {
-			customerType,
 			selectedPlan,
-			plansWithScroll,
-			isAllPaidPlansShown,
-			isInMarketplace,
-			sitePlanSlug,
-			is2023PricingGridVisible,
 			hideFreePlan,
 			hidePersonalPlan,
 			hidePremiumPlan,
@@ -375,60 +367,18 @@ export class PlansFeaturesMain extends Component {
 			plans = plans.filter( ( planSlug ) => ! isEcommercePlan( planSlug ) );
 		}
 
-		if ( is2023PricingGridVisible ) {
-			plans = plans.filter( ( plan ) =>
-				isPlanOneOfType( plan, [
-					TYPE_FREE,
-					TYPE_PERSONAL,
-					TYPE_PREMIUM,
-					TYPE_BUSINESS,
-					TYPE_ECOMMERCE,
-					TYPE_ENTERPRISE_GRID_WPCOM,
-				] )
-			);
-
-			return plans;
-		}
-
-		if ( plansWithScroll ) {
-			return plans.filter( ( plan ) =>
-				isPlanOneOfType( plan, [
-					TYPE_BLOGGER,
-					TYPE_PERSONAL,
-					TYPE_PREMIUM,
-					TYPE_BUSINESS,
-					TYPE_ECOMMERCE,
-				] )
-			);
-		}
-
-		if ( isInMarketplace ) {
-			// workaround to show free plan on both monthly/yearly toggle
-			if ( sitePlanSlug === PLAN_FREE && ! plans.includes( PLAN_FREE ) ) {
-				// elements are rendered in order, needs to be the first one
-				plans.unshift( PLAN_FREE );
-			}
-			return plans.filter(
-				( plan ) =>
-					plan === sitePlanSlug || isPlanOneOfType( plan, [ TYPE_BUSINESS, TYPE_ECOMMERCE ] )
-			);
-		}
-
-		if ( isAllPaidPlansShown || 'interval' === this.props.planTypeSelector ) {
-			return plans.filter( ( plan ) =>
-				isPlanOneOfType( plan, [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ] )
-			);
-		}
-
-		if ( customerType === 'personal' && this.isPersonalCustomerTypePlanVisible() ) {
-			return plans.filter( ( plan ) =>
-				isPlanOneOfType( plan, [ TYPE_FREE, TYPE_BLOGGER, TYPE_PERSONAL, TYPE_PREMIUM ] )
-			);
-		}
-
-		return plans.filter( ( plan ) =>
-			isPlanOneOfType( plan, [ TYPE_FREE, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ] )
+		plans = plans.filter( ( plan ) =>
+			isPlanOneOfType( plan, [
+				TYPE_FREE,
+				TYPE_PERSONAL,
+				TYPE_PREMIUM,
+				TYPE_BUSINESS,
+				TYPE_ECOMMERCE,
+				TYPE_ENTERPRISE_GRID_WPCOM,
+			] )
 		);
+
+		return plans;
 	}
 
 	renderSecondaryFormattedHeader() {
@@ -480,7 +430,6 @@ export class PlansFeaturesMain extends Component {
 			siteId,
 			redirectToAddDomainFlow,
 			hidePlanTypeSelector,
-			is2023PricingGridVisible,
 			planTypeSelectorProps,
 			intervalType,
 			selectedPlan,
@@ -507,9 +456,10 @@ export class PlansFeaturesMain extends Component {
 
 		return (
 			<div
-				className={ classNames( 'plans-features-main', {
-					'is-pricing-grid-2023-plans-features-main ': is2023PricingGridVisible,
-				} ) }
+				className={ classNames(
+					'plans-features-main',
+					'is-pricing-grid-2023-plans-features-main'
+				) }
 			>
 				<QueryPlans />
 				<QuerySites siteId={ siteId } />
@@ -542,18 +492,6 @@ export class PlansFeaturesMain extends Component {
 				{ this.mayRenderFAQ() }
 			</div>
 		);
-	}
-
-	filterDotBlogDomains() {
-		const domains = get( this.props, 'domains', [] );
-		return domains.filter( function ( domainInfo ) {
-			if ( domainInfo.type === 'WPCOM' ) {
-				return false;
-			}
-
-			const domainName = get( domainInfo, [ 'domain' ], '' );
-			return ! 'blog'.startsWith( getTld( domainName ) );
-		} );
 	}
 }
 
@@ -633,7 +571,6 @@ export default connect(
 		) {
 			customerType = 'business';
 		}
-		const is2023PricingGridVisible = props.is2023PricingGridVisible ?? true;
 		const planTypeSelectorProps = {
 			basePlansPath: props.basePlansPath,
 			isStepperUpgradeFlow: props.isStepperUpgradeFlow,
@@ -662,8 +599,7 @@ export default connect(
 			sitePlanSlug,
 			eligibleForWpcomMonthlyPlans,
 			titanMonthlyRenewalCost,
-			is2023PricingGridVisible,
-			showFAQ: !! props.showFAQ && ! is2023PricingGridVisible,
+			showFAQ: false,
 			planTypeSelectorProps,
 		};
 	},
