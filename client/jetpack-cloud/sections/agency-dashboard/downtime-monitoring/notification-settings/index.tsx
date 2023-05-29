@@ -26,11 +26,11 @@ import type {
 	AllowedMonitorContactActions,
 	MonitorSettingsEmail,
 	UpdateMonitorSettingsParams,
+	MonitorDuration,
+	InitialMonitorSettings,
 } from '../../sites-overview/types';
 
 import './style.scss';
-
-type Duration = { label: string; time: number };
 
 interface Props {
 	sites: Array< Site >;
@@ -58,7 +58,7 @@ export default function NotificationSettings( {
 
 	const [ enableMobileNotification, setEnableMobileNotification ] = useState< boolean >( false );
 	const [ enableEmailNotification, setEnableEmailNotification ] = useState< boolean >( false );
-	const [ selectedDuration, setSelectedDuration ] = useState< Duration | undefined >(
+	const [ selectedDuration, setSelectedDuration ] = useState< MonitorDuration | undefined >(
 		defaultDuration
 	);
 	const [ defaultUserEmailAddresses, setDefaultUserEmailAddresses ] = useState< string[] | [] >(
@@ -69,10 +69,42 @@ export default function NotificationSettings( {
 	const [ isAddEmailModalOpen, setIsAddEmailModalOpen ] = useState< boolean >( false );
 	const [ selectedEmail, setSelectedEmail ] = useState< StateMonitorSettingsEmail | undefined >();
 	const [ selectedAction, setSelectedAction ] = useState< AllowedMonitorContactActions >();
+	const [ initialSettings, setInitialSettings ] = useState< InitialMonitorSettings >( {
+		enableEmailNotification: false,
+		enableMobileNotification: false,
+		selectedDuration: defaultDuration,
+		emailContacts: [],
+	} );
+	const [ hasUnsavedChanges, setHasUnsavedChanges ] = useState< boolean >( false );
 
 	const isMultipleEmailEnabled = isEnabled(
 		'jetpack/pro-dashboard-monitor-multiple-email-recipients'
 	);
+
+	// Check if any unsaved changes are present and prompt user to confirm before closing the modal.
+	const handleOnClose = useCallback( () => {
+		const unsavedChangesExist =
+			enableMobileNotification !== initialSettings.enableMobileNotification ||
+			enableEmailNotification !== initialSettings.enableEmailNotification ||
+			selectedDuration?.time !== initialSettings.selectedDuration?.time ||
+			JSON.stringify( allEmailItems.map( ( { name, email } ) => ( { name, email } ) ) ) !==
+				JSON.stringify(
+					initialSettings.emailContacts.map( ( { name, email } ) => ( { name, email } ) )
+				);
+
+		if ( hasUnsavedChanges || ! unsavedChangesExist ) {
+			return onClose();
+		}
+		return setHasUnsavedChanges( true );
+	}, [
+		allEmailItems,
+		enableEmailNotification,
+		enableMobileNotification,
+		hasUnsavedChanges,
+		initialSettings,
+		onClose,
+		selectedDuration?.time,
+	] );
 
 	const toggleAddEmailModal = (
 		item?: StateMonitorSettingsEmail,
@@ -89,8 +121,14 @@ export default function NotificationSettings( {
 		}
 	};
 
+	const handleSetAllEmailItems = ( items: StateMonitorSettingsEmail[] ) => {
+		setAllEmailItems( items );
+		setHasUnsavedChanges( false );
+	};
+
 	function onSave( event: React.FormEvent< HTMLFormElement > ) {
 		event.preventDefault();
+
 		if ( ! enableMobileNotification && ! enableEmailNotification ) {
 			return setValidationError( translate( 'Please select at least one contact method.' ) );
 		}
@@ -119,10 +157,36 @@ export default function NotificationSettings( {
 		updateMonitorSettings( params );
 	}
 
-	function selectDuration( duration: Duration ) {
+	function selectDuration( duration: MonitorDuration ) {
 		recordEvent( 'duration_select', { duration: duration.time } );
 		setSelectedDuration( duration );
+		setHasUnsavedChanges( false );
 	}
+
+	const getAllEmailItems = useCallback(
+		( settings: MonitorSettings ) => {
+			const userEmailItems =
+				settings.monitor_user_emails.map( ( email ) => ( {
+					email,
+					name: translate( 'Default account email' ),
+					isDefault: true,
+					verified: true,
+				} ) ) ?? [];
+			let siteEmailItems: Array< MonitorSettingsEmail > = [];
+
+			// If it is not bulk update, we should not show the site email addresses.
+			if ( ! isBulkUpdate && settings.monitor_notify_additional_user_emails ) {
+				siteEmailItems = settings.monitor_notify_additional_user_emails.map( ( item ) => ( {
+					email: item.email_address,
+					name: item.name,
+					verified: item.verified,
+				} ) );
+			}
+
+			return [ ...userEmailItems, ...siteEmailItems ];
+		},
+		[ isBulkUpdate, translate ]
+	);
 
 	const handleSetEmailItems = useCallback(
 		( settings: MonitorSettings ) => {
@@ -130,42 +194,49 @@ export default function NotificationSettings( {
 			setDefaultUserEmailAddresses( userEmails );
 
 			if ( isMultipleEmailEnabled ) {
-				const userEmailItems = userEmails.map( ( email ) => ( {
-					email,
-					name: translate( 'Default account email' ),
-					isDefault: true,
-					verified: true,
-				} ) );
-				let siteEmailItems: Array< MonitorSettingsEmail > = [];
-				if ( ! isBulkUpdate && settings.monitor_notify_additional_user_emails ) {
-					siteEmailItems = settings.monitor_notify_additional_user_emails.map( ( item ) => ( {
-						email: item.email_address,
-						name: item.name,
-						verified: item.verified,
-					} ) );
-				}
-				setAllEmailItems( [ ...userEmailItems, ...siteEmailItems ] );
+				const allEmailItems = getAllEmailItems( settings );
+				setAllEmailItems( allEmailItems );
 			}
 		},
-		[ isBulkUpdate, isMultipleEmailEnabled, translate ]
+		[ getAllEmailItems, isMultipleEmailEnabled ]
+	);
+
+	const setInitialMonitorSettings = useCallback(
+		( settings: MonitorSettings ) => {
+			// Set all email items
+			handleSetEmailItems( settings );
+
+			// Set email and mobile notification settings
+			const isEmailEnabled = !! settings.monitor_user_email_notifications;
+			const isMobileEnabled = !! settings.monitor_user_wp_note_notifications;
+			setEnableEmailNotification( isEmailEnabled );
+			setEnableMobileNotification( isMobileEnabled );
+
+			// Set duration
+			let foundDuration = defaultDuration;
+			if ( settings?.monitor_deferment_time ) {
+				foundDuration = durations.find(
+					( duration ) => duration.time === settings.monitor_deferment_time
+				);
+				setSelectedDuration( foundDuration );
+			}
+
+			// Set initial settings
+			setInitialSettings( {
+				enableEmailNotification: isEmailEnabled,
+				enableMobileNotification: isMobileEnabled,
+				selectedDuration: foundDuration,
+				emailContacts: getAllEmailItems( settings ),
+			} );
+		},
+		[ defaultDuration, getAllEmailItems, handleSetEmailItems ]
 	);
 
 	useEffect( () => {
-		if ( settings?.monitor_deferment_time ) {
-			const foundDuration = durations.find(
-				( duration ) => duration.time === settings.monitor_deferment_time
-			);
-			foundDuration && setSelectedDuration( foundDuration );
-		}
-	}, [ settings?.monitor_deferment_time ] );
-
-	useEffect( () => {
 		if ( settings ) {
-			handleSetEmailItems( settings );
-			setEnableEmailNotification( !! settings.monitor_user_email_notifications );
-			setEnableMobileNotification( !! settings.monitor_user_wp_note_notifications );
+			setInitialMonitorSettings( settings );
 		}
-	}, [ handleSetEmailItems, settings ] );
+	}, [ setInitialMonitorSettings, settings ] );
 
 	useEffect( () => {
 		if ( bulkUpdateSettings ) {
@@ -176,6 +247,7 @@ export default function NotificationSettings( {
 	useEffect( () => {
 		if ( enableMobileNotification || enableEmailNotification ) {
 			setValidationError( '' );
+			setHasUnsavedChanges( false );
 		}
 	}, [ enableMobileNotification, enableEmailNotification ] );
 
@@ -192,7 +264,7 @@ export default function NotificationSettings( {
 				selectedEmail={ selectedEmail }
 				selectedAction={ selectedAction }
 				allEmailItems={ allEmailItems }
-				setAllEmailItems={ setAllEmailItems }
+				setAllEmailItems={ handleSetAllEmailItems }
 				recordEvent={ recordEvent }
 				setVerifiedEmail={ ( item ) => handleSetVerifiedItem( 'email', item ) }
 				sites={ sites }
@@ -203,7 +275,7 @@ export default function NotificationSettings( {
 	return (
 		<Modal
 			open={ true }
-			onRequestClose={ onClose }
+			onRequestClose={ handleOnClose }
 			title={ translate( 'Set custom notification' ) }
 			className="notification-settings__modal"
 		>
@@ -326,14 +398,16 @@ export default function NotificationSettings( {
 				</div>
 
 				<div className="notification-settings__footer">
-					{ validationError && (
+					{ ( validationError || hasUnsavedChanges ) && (
 						<div className="notification-settings__footer-validation-error">
-							{ validationError }
+							{ hasUnsavedChanges
+								? translate( 'You have unsaved changes. Are you sure you want to close?' )
+								: validationError }
 						</div>
 					) }
 					<div className="notification-settings__footer-buttons">
 						<Button
-							onClick={ onClose }
+							onClick={ handleOnClose }
 							aria-label={ translate( 'Cancel and close notification settings popup' ) }
 						>
 							{ translate( 'Cancel' ) }
