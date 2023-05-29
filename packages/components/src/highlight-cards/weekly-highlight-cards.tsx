@@ -36,7 +36,14 @@ type WeeklyHighlightCardsProps = {
 	onClickLikes: ( event: MouseEvent ) => void;
 	onClickViews: ( event: MouseEvent ) => void;
 	onClickVisitors: ( event: MouseEvent ) => void;
+	onTogglePeriod: ( period: string ) => void;
+	currentPeriod: string;
 };
+
+export const PAST_SEVEN_DAYS = 'past_seven_days';
+export const PAST_THIRTY_DAYS = 'past_thirty_days';
+export const BETWEEN_PAST_EIGHT_AND_FIFTEEN_DAYS = 'between_past_eight_and_fifteen_days';
+export const BETWEEN_PAST_THIRTY_ONE_AND_SIXTY_DAYS = 'between_past_thirty_one_and_sixty_days';
 
 export default function WeeklyHighlightCards( {
 	className,
@@ -45,8 +52,10 @@ export default function WeeklyHighlightCards( {
 	onClickLikes,
 	onClickViews,
 	onClickVisitors,
+	onTogglePeriod,
 	previousCounts,
 	showValueTooltip,
+	currentPeriod,
 }: WeeklyHighlightCardsProps ) {
 	const translate = useTranslate();
 
@@ -64,7 +73,11 @@ export default function WeeklyHighlightCards( {
 	return (
 		<div className={ classNames( 'highlight-cards', className ?? null ) }>
 			<h3 className="highlight-cards-heading">
-				<span>{ translate( '7-day highlights' ) }</span>
+				<span>
+					{ currentPeriod === PAST_THIRTY_DAYS
+						? translate( '30-day highlights' )
+						: translate( '7-day highlights' ) }
+				</span>
 				<div className="highlight-cards-heading__tooltip">
 					<span
 						className="highlight-cards-heading-icon"
@@ -122,13 +135,25 @@ export default function WeeklyHighlightCards( {
 							position="bottom left"
 							context={ settingsActionRef.current }
 						>
-							<button>
+							<button
+								onClick={ () => {
+									onTogglePeriod( PAST_SEVEN_DAYS );
+								} }
+							>
 								{ translate( '7-day highlights' ) }
-								<Icon className="gridicon" icon={ check } />
+								{ currentPeriod === PAST_SEVEN_DAYS && (
+									<Icon className="gridicon" icon={ check } />
+								) }
 							</button>
-							<button>
+							<button
+								onClick={ () => {
+									onTogglePeriod( PAST_THIRTY_DAYS );
+								} }
+							>
 								{ translate( '30-day highlights' ) }
-								{ false && <Icon className="gridicon" icon={ check } /> }
+								{ currentPeriod === PAST_THIRTY_DAYS && (
+									<Icon className="gridicon" icon={ check } />
+								) }
 							</button>
 						</Popover>
 					</div>
