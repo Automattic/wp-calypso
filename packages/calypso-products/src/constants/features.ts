@@ -290,6 +290,7 @@ export const FEATURE_PAYMENT_TRANSACTION_FEES_10 = 'payment-transaction-fees-10'
 export const FEATURE_PAYMENT_TRANSACTION_FEES_8 = 'payment-transaction-fees-8';
 export const FEATURE_PAYMENT_TRANSACTION_FEES_4 = 'payment-transaction-fees-4';
 export const FEATURE_PAYMENT_TRANSACTION_FEES_2 = 'payment-transaction-fees-2';
+export const FEATURE_THE_READER = 'the-reader';
 
 // Pricing Grid 2023 Features
 export const FEATURE_BEAUTIFUL_THEMES = 'beautiful-themes';
