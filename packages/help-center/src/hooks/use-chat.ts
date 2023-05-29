@@ -46,7 +46,8 @@ export default function useChat( checkAvailability = true, authOnlyWhenActiveCha
 		isLoading: isLoadingAvailability || isLoadingSupportActivity,
 		hasActiveChats,
 		isChatAvailable: Boolean( chatAvailability?.is_available ),
-		isChatClosed: Boolean( chatStatus?.is_chat_closed ),
+		isPresalesChatOpen: Boolean( chatStatus?.is_presales_chat_open ),
+		isPrecancellationChatOpen: Boolean( chatStatus?.is_precancellation_chat_open ),
 		isEligibleForChat,
 		isLoggedIn: authData?.isLoggedIn,
 	};
