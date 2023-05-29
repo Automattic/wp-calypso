@@ -1,7 +1,6 @@
 import { dispatch, select, subscribe } from '@wordpress/data';
 import { getQueryArg } from '@wordpress/url';
 import { useEffect } from 'react';
-import { inIframe } from '../../utils';
 import useSiteIntent from './use-site-intent';
 
 const START_WRITING_FLOW = 'start-writing';
@@ -53,12 +52,7 @@ export function RedirectOnboardingUserAfterPublishingPost() {
 
 			dispatch( 'core/edit-post' ).closePublishSidebar();
 
-			const postPublishURL = `${ siteOrigin }/setup/${ intent }/launchpad?siteSlug=${ siteSlug }`;
-			if ( ! inIframe ) {
-				window.location.href = postPublishURL;
-			} else {
-				window.open( postPublishURL, '_top' );
-			}
+			window.location.href = `${ siteOrigin }/setup/${ intent }/launchpad?siteSlug=${ siteSlug }`;
 		}
 	} );
 }
