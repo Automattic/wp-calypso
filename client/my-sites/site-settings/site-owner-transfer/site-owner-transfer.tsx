@@ -23,10 +23,10 @@ const SiteOwnerTransfer = () => {
 	const translate = useTranslate();
 	const nonWPCOMDomains = useSelector( ( state ) =>
 		getDomainsBySiteId( state, selectedSiteId as unknown as number )
-	)?.find( ( domain ) => ! domain.isWPCOMDomain );
+	)?.filter( ( domain ) => ! domain.isWPCOMDomain );
 
-	const pendingDomain = nonWPCOMDomains.find(
-		( wpcomDomain: ResponseDomain ) => wpcomDomain.pendingTransfer && wpcomDomain.isPrimary
+	const pendingDomain = nonWPCOMDomains?.find(
+		( wpcomDomain: ResponseDomain ) => ! wpcomDomain.pendingTransfer
 	);
 
 	if ( ! selectedSiteId || ! selectedSiteSlug ) {
