@@ -25,16 +25,29 @@ const useDeliveryFrequencyLabel = ( deliveryFrequencyValue?: Reader.EmailDeliver
 	);
 };
 
-const useSelectedNewPostDeliveryMethodsLabel = (
-	isEmailMeNewPostsSelected: boolean,
-	isNotifyMeOfNewPostsSelected: boolean
-) => {
+const RedCross = () => <Gridicon icon="cross" size={ 16 } className="red" />;
+
+const GreenCheck = () => <Gridicon icon="checkmark" size={ 16 } className="green" />;
+
+const SelectedNewPostDeliveryMethods = ( {
+	isEmailMeNewPostsSelected,
+	isNotifyMeOfNewPostsSelected,
+}: {
+	isEmailMeNewPostsSelected: boolean;
+	isNotifyMeOfNewPostsSelected: boolean;
+} ) => {
 	const translate = useTranslate();
-	return useMemo( () => {
-		const emailDelivery = isEmailMeNewPostsSelected ? translate( 'Email' ) : null;
-		const notificationDelivery = isNotifyMeOfNewPostsSelected ? translate( 'Notifications' ) : null;
-		return [ emailDelivery, notificationDelivery ].filter( Boolean ).join( ', ' );
-	}, [ isEmailMeNewPostsSelected, isNotifyMeOfNewPostsSelected, translate ] );
+
+	if ( ! isEmailMeNewPostsSelected && ! isNotifyMeOfNewPostsSelected ) {
+		return <RedCross />;
+	}
+
+	const emailDelivery = isEmailMeNewPostsSelected ? translate( 'Email' ) : null;
+	const notificationDelivery = isNotifyMeOfNewPostsSelected ? translate( 'Notifications' ) : null;
+	const selectedNewPostDeliveryMethods = [ emailDelivery, notificationDelivery ]
+		.filter( Boolean )
+		.join( ', ' );
+	return <>{ selectedNewPostDeliveryMethods }</>;
 };
 
 export default function SiteRow( {
@@ -56,10 +69,6 @@ export default function SiteRow( {
 		}
 	}, [ url ] );
 	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
-	const newPostDelivery = useSelectedNewPostDeliveryMethodsLabel(
-		!! delivery_methods.email?.send_posts,
-		!! delivery_methods.notification?.send_posts
-	);
 	const deliveryFrequencyLabel = useDeliveryFrequencyLabel(
 		delivery_methods.email?.post_delivery_frequency
 	);
@@ -107,16 +116,15 @@ export default function SiteRow( {
 			</span>
 			{ isLoggedIn && (
 				<span className="new-posts" role="cell">
-					{ newPostDelivery }
+					<SelectedNewPostDeliveryMethods
+						isEmailMeNewPostsSelected={ !! delivery_methods.email?.send_posts }
+						isNotifyMeOfNewPostsSelected={ !! delivery_methods.notification?.send_posts }
+					/>
 				</span>
 			) }
 			{ isLoggedIn && (
 				<span className="new-comments" role="cell">
-					{ delivery_methods?.email?.send_comments ? (
-						<Gridicon icon="checkmark" size={ 16 } className="green" />
-					) : (
-						<Gridicon icon="cross" size={ 16 } className="red" />
-					) }
+					{ delivery_methods.email?.send_comments ? <GreenCheck /> : <RedCross /> }
 				</span>
 			) }
 			<span className="email-frequency" role="cell">
