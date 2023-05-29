@@ -1,19 +1,19 @@
-import { isEmpty, mapValues } from 'lodash';
 import { useState, useMemo, useCallback } from 'react';
 import { GlobalStylesContext, mergeBaseAndUserConfigs } from '../../gutenberg-bridge';
 import { useGetGlobalStylesBaseConfig } from '../../hooks';
 import type { GlobalStylesObject } from '../../types';
 
-const cleanEmptyObject = ( object: any ) => {
+const cleanEmptyObject = ( object ) => {
 	if ( object === null || typeof object !== 'object' || Array.isArray( object ) ) {
 		return object;
 	}
-	const cleanedNestedObjects: any = Object.fromEntries(
-		Object.entries( mapValues( object, cleanEmptyObject ) ).filter( ( [ , value ] ) =>
-			Boolean( value )
-		)
+	const cleanedNestedObjects = Object.fromEntries(
+		Object.entries( object )
+			.map( ( [ key, value ] ) => [ key, cleanEmptyObject( value ) ] )
+			.filter( ( [ , value ] ) => value !== undefined )
 	);
-	return isEmpty( cleanedNestedObjects ) ? undefined : cleanedNestedObjects;
+
+	return Object.keys( cleanedNestedObjects ).length > 0 ? cleanedNestedObjects : undefined;
 };
 
 type SetConfig = ( callback: ( config: GlobalStylesObject ) => GlobalStylesObject ) => void;
