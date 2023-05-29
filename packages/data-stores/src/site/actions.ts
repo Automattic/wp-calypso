@@ -578,7 +578,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 				templates,
 				global_styles: globalStyles,
 				should_reset_content: shouldResetContent,
-				set_site_setup_option: siteSetupOption,
+				site_setup_option: siteSetupOption,
 			},
 			method: 'POST',
 		} );
