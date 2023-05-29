@@ -2,7 +2,7 @@ import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 
 interface LoadingPlaceholderProps {
-	delayMS?: number;
+	delayMS?: number | null;
 }
 
 const pulseLightKeyframes = keyframes`
@@ -11,11 +11,14 @@ const pulseLightKeyframes = keyframes`
 	}`;
 
 const LoadingPlaceholder = styled.div< LoadingPlaceholderProps >`
-	animation: ${ pulseLightKeyframes } 1.8s ease-in-out infinite;
 	background-color: var( --color-neutral-10 );
 	min-height: 18px;
 	width: 100%;
-	animation-delay: ${ ( { delayMS = 0 } ) => delayMS }ms;
+	${ ( props ) =>
+		props.delayMS !== null && {
+			animation: `${ pulseLightKeyframes } 1.8s ease-in-out infinite`,
+			animationDelay: `${ props.delayMS ?? 0 }ms`,
+		} }
 `;
 
 export default LoadingPlaceholder;

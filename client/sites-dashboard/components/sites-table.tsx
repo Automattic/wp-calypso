@@ -14,6 +14,8 @@ interface SitesTableProps {
 	className?: string;
 	sites: SiteExcerptData[];
 	isLoading?: boolean;
+	delayAnimation?: boolean;
+	hideLinkInBio?: boolean;
 }
 
 const Table = styled.table`
@@ -80,7 +82,13 @@ const StatsThInner = styled.div( {
 	gap: '6px',
 } );
 
-export function SitesTable( { className, sites, isLoading = false }: SitesTableProps ) {
+export function SitesTable( {
+	className,
+	sites,
+	isLoading = false,
+	delayAnimation = true,
+	hideLinkInBio,
+}: SitesTableProps ) {
 	const { __ } = useI18n();
 
 	const headerRef = useRef< HTMLTableSectionElement >( null );
@@ -170,7 +178,7 @@ export function SitesTable( { className, sites, isLoading = false }: SitesTableP
 								<SitesTableRowLoading
 									key={ i }
 									columns={ 6 }
-									delayMS={ i * 150 }
+									delayMS={ delayAnimation ? i * 150 : null }
 									logoProps={ { width: 108, height: 78 } }
 								/>
 							) ) }
@@ -179,7 +187,7 @@ export function SitesTable( { className, sites, isLoading = false }: SitesTableP
 					) ) }
 				</tbody>
 			</Table>
-			<LinkInBioBanner displayMode="row" />
+			{ ! hideLinkInBio && <LinkInBioBanner displayMode="row" /> }
 		</>
 	);
 }

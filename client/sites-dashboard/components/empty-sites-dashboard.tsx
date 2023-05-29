@@ -3,7 +3,7 @@ import EmptyContent from 'calypso/components/empty-content';
 import { MEDIA_QUERIES } from '../utils';
 import { CreateSiteCTA, MigrateSiteCTA } from './sites-dashboard-ctas';
 
-export const EmptySitesDashboard = () => {
+const EmptySitesCTAs = () => {
 	const { __ } = useI18n();
 
 	return (
@@ -39,31 +39,33 @@ export const EmptySitesDashboard = () => {
 				css={ {
 					width: '85%',
 					display: 'flex',
+					gap: '48px',
 					flexDirection: 'column',
 					[ MEDIA_QUERIES.small ]: {
 						width: '100%',
+						gap: '32px',
 					},
 				} }
 			>
 				<CreateSiteCTA />
-				<div
-					css={ {
-						margin: '32px 0',
-						[ MEDIA_QUERIES.small ]: {
-							margin: '24px 0',
-						},
-
-						'&:before': {
-							content: '""',
-							display: 'block',
-							height: '1px',
-							opacity: 0.64,
-							background: '#DCDCDE',
-						},
-					} }
-				/>
 				<MigrateSiteCTA />
 			</div>
 		</EmptyContent>
+	);
+};
+
+export const EmptySitesDashboard = () => {
+	return (
+		<div
+			css={ {
+				paddingTop: '20vh',
+				zIndex: 9999,
+				position: 'relative',
+				display: 'flex',
+				justifyContent: 'center',
+			} }
+		>
+			<EmptySitesCTAs />
+		</div>
 	);
 };

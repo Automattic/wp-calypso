@@ -13,7 +13,7 @@ interface LoadingLogoProps {
 interface SitesTableRowLoadingProps {
 	columns?: number;
 	logoProps?: LoadingLogoProps;
-	delayMS?: number;
+	delayMS?: number | null;
 }
 
 const Row = styled.tr`

@@ -142,6 +142,16 @@ const ScrollButton = styled( Button, { shouldForwardProp: ( prop ) => prop !== '
 	}
 `;
 
+const DisabledGradient = styled.div( {
+	position: 'absolute',
+	top: 0,
+	right: 0,
+	bottom: 0,
+	left: 0,
+	background:
+		'linear-gradient(to bottom, rgba(var(--color-surface-backdrop-rgb), 0.4), rgba(var(--color-surface-backdrop-rgb), 1))',
+} );
+
 const SitesDashboardSitesList = createSitesListComponent();
 
 export function SitesDashboard( {
@@ -213,24 +223,24 @@ export function SitesDashboard( {
 				</HeaderControls>
 			</PageHeader>
 			<PageBodyWrapper>
-				{ hasSites ? (
-					<>
-						<SitesDashboardOptInBanner sites={ allSites } />
-						<SitesDashboardSitesList
-							sites={ allSites }
-							filtering={ { search } }
-							sorting={ sitesSorting }
-							grouping={ { status, showHidden: true } }
-						>
-							{ ( { sites, statuses } ) => {
-								const paginatedSites = sites.slice( ( page - 1 ) * perPage, page * perPage );
+				<SitesDashboardOptInBanner sites={ allSites } />
+				<SitesDashboardSitesList
+					sites={ allSites }
+					filtering={ { search } }
+					sorting={ sitesSorting }
+					grouping={ { status, showHidden: true } }
+				>
+					{ ( { sites, statuses } ) => {
+						const paginatedSites = sites.slice( ( page - 1 ) * perPage, page * perPage );
 
-								const selectedStatus =
-									statuses.find( ( { name } ) => name === status ) || statuses[ 0 ];
+						const selectedStatus =
+							statuses.find( ( { name } ) => name === status ) || statuses[ 0 ];
 
-								return (
-									<>
-										{ ( allSites.length > 0 || isLoading ) && (
+						if ( ! hasSites ) {
+							return (
+								<>
+									<div css={ { opacity: 0.2, position: 'relative' } }>
+										<div css={ { width: '100%', position: 'absolute' } }>
 											<SitesContentControls
 												initialSearch={ search }
 												statuses={ statuses }
@@ -241,78 +251,96 @@ export function SitesDashboard( {
 												onSitesSortingChange={ onSitesSortingChange }
 												hasSitesSortingPreferenceLoaded={ hasSitesSortingPreferenceLoaded }
 											/>
-										) }
-										{ userPreferencesLoaded && (
+											<SitesTable isLoading sites={ [] } delayAnimation={ false } hideLinkInBio />
+											<DisabledGradient />
+										</div>
+									</div>
+									<EmptySitesDashboard />
+								</>
+							);
+						}
+
+						return (
+							<>
+								{ ( allSites.length > 0 || isLoading ) && (
+									<SitesContentControls
+										initialSearch={ search }
+										statuses={ statuses }
+										selectedStatus={ selectedStatus }
+										displayMode={ displayMode }
+										onDisplayModeChange={ setDisplayMode }
+										sitesSorting={ sitesSorting }
+										onSitesSortingChange={ onSitesSortingChange }
+										hasSitesSortingPreferenceLoaded={ hasSitesSortingPreferenceLoaded }
+									/>
+								) }
+								{ userPreferencesLoaded && (
+									<>
+										{ paginatedSites.length > 0 || isLoading ? (
 											<>
-												{ paginatedSites.length > 0 || isLoading ? (
-													<>
-														{ displayMode === 'list' && (
-															<SitesTable
-																isLoading={ isLoading }
-																sites={ paginatedSites }
-																className={ sitesMargin }
-															/>
-														) }
-														{ displayMode === 'tile' && (
-															<SitesGrid
-																isLoading={ isLoading }
-																sites={ paginatedSites }
-																className={ sitesMargin }
-															/>
-														) }
-														{ ( selectedStatus.hiddenCount > 0 || sites.length > perPage ) && (
-															<PageBodyBottomContainer>
-																<Pagination
-																	page={ page }
-																	perPage={ perPage }
-																	total={ sites.length }
-																	pageClick={ ( newPage: number ) => {
-																		handleQueryParamChange( { page: newPage } );
-																	} }
-																/>
-																{ selectedStatus.hiddenCount > 0 && (
-																	<HiddenSitesMessageContainer>
-																		<HiddenSitesMessage>
-																			{ sprintf(
-																				/* translators: the `hiddenSitesCount` field will be a number greater than 0 */
-																				_n(
-																					'%(hiddenSitesCount)d site is hidden from the list. Use search to access it.',
-																					'%(hiddenSitesCount)d sites are hidden from the list. Use search to access them.',
-																					selectedStatus.hiddenCount
-																				),
-																				{
-																					hiddenSitesCount: selectedStatus.hiddenCount,
-																				}
-																			) }
-																		</HiddenSitesMessage>
-																		<Button
-																			href={ addQueryArgs( window.location.href, {
-																				'show-hidden': 'true',
-																			} ) }
-																		>
-																			{ __( 'Show all' ) }
-																		</Button>
-																	</HiddenSitesMessageContainer>
-																) }
-															</PageBodyBottomContainer>
-														) }
-													</>
-												) : (
-													<NoSitesMessage
-														status={ selectedStatus.name }
-														statusSiteCount={ selectedStatus.count }
+												{ displayMode === 'list' && (
+													<SitesTable
+														isLoading={ isLoading }
+														sites={ paginatedSites }
+														className={ sitesMargin }
 													/>
 												) }
+												{ displayMode === 'tile' && (
+													<SitesGrid
+														isLoading={ isLoading }
+														sites={ paginatedSites }
+														className={ sitesMargin }
+													/>
+												) }
+												{ ( selectedStatus.hiddenCount > 0 || sites.length > perPage ) && (
+													<PageBodyBottomContainer>
+														<Pagination
+															page={ page }
+															perPage={ perPage }
+															total={ sites.length }
+															pageClick={ ( newPage: number ) => {
+																handleQueryParamChange( { page: newPage } );
+															} }
+														/>
+														{ selectedStatus.hiddenCount > 0 && (
+															<HiddenSitesMessageContainer>
+																<HiddenSitesMessage>
+																	{ sprintf(
+																		/* translators: the `hiddenSitesCount` field will be a number greater than 0 */
+																		_n(
+																			'%(hiddenSitesCount)d site is hidden from the list. Use search to access it.',
+																			'%(hiddenSitesCount)d sites are hidden from the list. Use search to access them.',
+																			selectedStatus.hiddenCount
+																		),
+																		{
+																			hiddenSitesCount: selectedStatus.hiddenCount,
+																		}
+																	) }
+																</HiddenSitesMessage>
+																<Button
+																	href={ addQueryArgs( window.location.href, {
+																		'show-hidden': 'true',
+																	} ) }
+																>
+																	{ __( 'Show all' ) }
+																</Button>
+															</HiddenSitesMessageContainer>
+														) }
+													</PageBodyBottomContainer>
+												) }
 											</>
+										) : (
+											<NoSitesMessage
+												status={ selectedStatus.name }
+												statusSiteCount={ selectedStatus.count }
+											/>
 										) }
 									</>
-								);
-							} }
-						</SitesDashboardSitesList>
-					</>
-				) : (
-					<EmptySitesDashboard />
-				) }
+								) }
+							</>
+						);
+					} }
+				</SitesDashboardSitesList>
 			</PageBodyWrapper>
 			<ScrollButton
 				onClick={ scrollToTop }
