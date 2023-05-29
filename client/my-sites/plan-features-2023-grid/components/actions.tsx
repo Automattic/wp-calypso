@@ -2,7 +2,6 @@ import {
 	getPlanClass,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	PLAN_P2_FREE,
-	is2023PricingGridEnabled,
 	TERM_BIENNIALLY,
 	TERM_TRIENNIALLY,
 	planMatches,
@@ -268,7 +267,7 @@ const LoggedInPlansFeatureActionButton = ( {
 		);
 	}
 
-	const is2023PricingGridVisible = is2023PricingGridEnabled();
+	const is2023PricingGridVisible = true;
 	if ( ! availableForPurchase ) {
 		if ( is2023PricingGridVisible ) {
 			return (

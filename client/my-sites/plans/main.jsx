@@ -12,7 +12,6 @@ import {
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
 } from '@automattic/calypso-products';
-import { is2023PricingGridEnabled } from '@automattic/calypso-products/src/plans-utilities';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { useDispatch } from '@wordpress/data';
@@ -476,7 +475,7 @@ const ConnectedPlans = connect( ( state, props ) => {
 		isWPForTeamsSite: isSiteWPForTeams( state, selectedSiteId ),
 		isSiteEligibleForMonthlyPlan: isEligibleForWpComMonthlyPlan( state, selectedSiteId ),
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
-		is2023PricingGridVisible: props.is2023PricingGridVisible ?? is2023PricingGridEnabled(),
+		is2023PricingGridVisible: props.is2023PricingGridVisible ?? true,
 		isDomainAndPlanPackageFlow: !! getCurrentQueryArguments( state )?.domainAndPlanPackage,
 		isJetpackNotAtomic: isJetpackSite( state, selectedSiteId, { treatAtomicAsJetpackSite: false } ),
 		isDomainUpsell:
