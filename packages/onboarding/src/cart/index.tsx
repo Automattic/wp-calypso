@@ -2,12 +2,11 @@ import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { NewSiteSuccessResponse, Site } from '@automattic/data-stores';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
-import { isMigrationFlow } from '@automattic/onboarding';
 import debugFactory from 'debug';
 import { getLocaleSlug } from 'i18n-calypso';
 import { startsWith, isEmpty } from 'lodash';
 import wpcomRequest from 'wpcom-proxy-request';
-import { setupSiteAfterCreation, isTailoredSignupFlow } from '../';
+import { setupSiteAfterCreation, isTailoredSignupFlow, isMigrationFlow } from '../';
 import cartManagerClient from './create-cart-manager-client';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
