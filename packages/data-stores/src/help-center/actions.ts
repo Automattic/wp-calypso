@@ -172,6 +172,4 @@ export type HelpCenterAction =
 			| typeof setIsMinimized
 			| typeof setInitialRoute
 	  >
-	| GeneratorReturnType<
-			typeof setShowHelpCenter | typeof setHasSeenWhatsNewModal | typeof setShowMessagingChat
-	  >;
+	| GeneratorReturnType< typeof setShowHelpCenter | typeof setHasSeenWhatsNewModal >;
