@@ -107,7 +107,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 					handleShowCancel,
 					handleShowTopBar,
 					localeSlug,
-					config.isEnabled( 'promote-post/redesign-i2' )
+					isV2Widget
 				);
 				setIsLoading( false );
 			} )();
@@ -140,7 +140,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 				<BlankCanvas
 					className={ classNames( 'blazepress-widget', {
 						'hidden-header': hiddenHeader,
-						'blazepress-widget-v2': config.isEnabled( 'promote-post/redesign-i2' ),
+						'blazepress-widget-v2': isV2Widget,
 					} ) }
 				>
 					<div className="blazepress-widget__header-bar">
