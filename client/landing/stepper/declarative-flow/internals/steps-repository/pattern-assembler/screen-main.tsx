@@ -11,7 +11,6 @@ import { header, footer, layout, color, typography } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useRef } from 'react';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
-import { NAVIGATOR_PATHS } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import { NavigationButtonAsItem } from './navigator-buttons';
 import NavigatorHeader from './navigator-header';
@@ -31,7 +30,7 @@ const ScreenMain = ( { isNewSite, onSelect, onContinueClick, recordTracksEvent }
 	const [ disabled, setDisabled ] = useState( true );
 	const [ isNoticeDismissed, setIsNoticeDismissed ] = useState( isNewSite );
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
-	const { location, goTo } = useNavigator();
+	const { location } = useNavigator();
 	const isInitialLocation = location.isInitial && ! location.isBack;
 	const selectedDesign = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
@@ -52,8 +51,7 @@ const ScreenMain = ( { isNewSite, onSelect, onContinueClick, recordTracksEvent }
 
 	const handleClick = () => {
 		if ( ! disabled ) {
-			const callback = ! isNewSite ? () => goTo( NAVIGATOR_PATHS.ACTIVATION ) : undefined;
-			onContinueClick( callback );
+			onContinueClick();
 		}
 	};
 
