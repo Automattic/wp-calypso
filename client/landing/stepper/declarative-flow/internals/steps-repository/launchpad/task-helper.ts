@@ -192,9 +192,12 @@ export function getEnhancedTasks(
 							false,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
-							! isDesignFirstFlow( flow || null )
-								? window.location.assign( `/post/${ siteSlug }` )
-								: window.location.assign( `https://${ siteSlug }/wp-admin/post-new.php` );
+							const newPostUrl = ! isDesignFirstFlow( flow || null )
+								? `/post/${ siteSlug }`
+								: addQueryArgs( `https://${ siteSlug }/wp-admin/post-new.php`, {
+										origin: window.location.origin,
+								  } );
+							window.location.assign( newPostUrl );
 						},
 					};
 					break;
