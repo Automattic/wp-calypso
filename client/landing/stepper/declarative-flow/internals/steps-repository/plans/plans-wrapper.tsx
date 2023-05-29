@@ -2,7 +2,6 @@
 import {
 	getPlan,
 	PLAN_FREE,
-	is2023PricingGridEnabled,
 	TYPE_FREE,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
@@ -49,7 +48,6 @@ interface Props {
 	flowName: string | null;
 	onSubmit: ( pickedPlan: MinimalRequestCartProduct | null ) => void;
 	plansLoaded: boolean;
-	is2023PricingGridVisible: boolean;
 	hostingFlow: boolean;
 }
 
@@ -179,7 +177,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 					shouldShowPlansFeatureComparison={ isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
 					isReskinned={ isReskinned }
-					is2023PricingGridVisible={ props.is2023PricingGridVisible }
 					hidePlansFeatureComparison={ hidePlansFeatureComparison }
 				/>
 			</div>
@@ -232,7 +229,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 
 		return;
 	};
-	const is2023PricingGridVisible = true;
 
 	const plansFeaturesSelection = () => {
 		const { flowName } = props;
@@ -250,8 +246,8 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					shouldHideNavButtons={ true }
 					fallbackHeaderText={ fallbackHeaderText }
 					fallbackSubHeaderText={ fallbackSubHeaderText }
-					isWideLayout={ ! is2023PricingGridVisible }
-					isExtraWideLayout={ is2023PricingGridVisible }
+					isWideLayout={ false }
+					isExtraWideLayout={ true }
 					stepContent={ plansFeaturesList() }
 					allowBackFirstStep={ false }
 				/>
@@ -262,8 +258,8 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const classes = classNames( 'plans-step', {
 		'in-vertically-scrolled-plans-experiment': isInVerticalScrollingPlansExperiment,
 		'has-no-sidebar': true,
-		'is-wide-layout': ! is2023PricingGridVisible,
-		'is-extra-wide-layout': is2023PricingGridVisible,
+		'is-wide-layout': false,
+		'is-extra-wide-layout': true,
 	} );
 
 	return (

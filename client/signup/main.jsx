@@ -3,7 +3,6 @@ import {
 	isDomainRegistration,
 	isDomainTransfer,
 	isDomainMapping,
-	is2023PricingGridEnabled,
 } from '@automattic/calypso-products';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { camelToSnakeCase } from '@automattic/js-utils';
@@ -752,7 +751,6 @@ class Signup extends Component {
 	}
 
 	renderCurrentStep( isReskinned ) {
-		const domainItem = get( this.props, 'signupDependencies.domainItem', false );
 		const currentStepProgress = find( this.props.progress, { stepName: this.props.stepName } );
 		const CurrentComponent = this.props.stepComponent;
 		const propsFromConfig = {
@@ -761,23 +759,7 @@ class Signup extends Component {
 		};
 		const stepKey = this.state.shouldShowLoadingScreen ? 'processing' : this.props.stepName;
 		const flow = flows.getFlow( this.props.flowName, this.props.isLoggedIn );
-		const planWithDomain =
-			this.props.domainsWithPlansOnly &&
-			domainItem &&
-			( isDomainRegistration( domainItem ) ||
-				isDomainTransfer( domainItem ) ||
-				isDomainMapping( domainItem ) );
 
-		// Hide the free option in the signup flow
-		const selectedHideFreePlan = get( this.props, 'signupDependencies.shouldHideFreePlan', false );
-
-		// For the onboarding/2023-pricing-grid hiding the free plan is not yet supported and breaks the plans comparison grid
-		// If there is any condition upon which the free plan should be hidden these issues need to be resolved.
-		// For now we always show the free plan for the 2023-pricing-grid
-		// More Context : Automattic/martech#1464
-		const hideFreePlan = is2023PricingGridEnabled()
-			? false
-			: planWithDomain || this.props.isDomainOnlySite || selectedHideFreePlan;
 		const shouldRenderLocaleSuggestions = 0 === this.getPositionInFlow() && ! this.props.isLoggedIn;
 
 		let propsForCurrentStep = propsFromConfig;
@@ -818,7 +800,7 @@ class Signup extends Component {
 							signupDependencies={ this.props.signupDependencies }
 							stepSectionName={ this.props.stepSectionName }
 							positionInFlow={ this.getPositionInFlow() }
-							hideFreePlan={ hideFreePlan }
+							hideFreePlan={ false }
 							isReskinned={ isReskinned }
 							queryParams={ this.getCurrentFlowSupportedQueryParams() }
 							{ ...propsForCurrentStep }
