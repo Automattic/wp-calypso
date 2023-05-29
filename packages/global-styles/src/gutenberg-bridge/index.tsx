@@ -6,7 +6,8 @@
 import { privateApis as blockEditorPrivateApis } from '@wordpress/block-editor';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
-import mergeWith from 'lodash/mergeWith';
+import deepmerge from 'deepmerge';
+import { isPlainObject } from 'is-plain-object';
 import type { GlobalStylesObject } from '../types';
 
 const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
@@ -24,16 +25,7 @@ const {
 } = unlock( blockEditorPrivateApis );
 
 const mergeBaseAndUserConfigs = ( base: GlobalStylesObject, user: GlobalStylesObject ) => {
-	const mergeTreesCustomizer = ( _: unknown, srcValue: unknown ) => {
-		// We only pass as arrays the presets,
-		// in which case we want the new array of values
-		// to override the old array (no merging).
-		if ( Array.isArray( srcValue ) ) {
-			return srcValue;
-		}
-	};
-
-	return mergeWith( {}, base, user, mergeTreesCustomizer );
+	return deepmerge( base, user, { isMergeableObject: isPlainObject } );
 };
 
 const withExperimentalBlockEditorProvider = createHigherOrderComponent(
