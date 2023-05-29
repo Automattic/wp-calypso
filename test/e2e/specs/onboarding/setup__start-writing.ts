@@ -9,6 +9,7 @@ import {
 	RestAPIClient,
 	DomainSearchComponent,
 	EditorPage,
+	CartCheckoutPage,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { apiCloseAccount } from '../shared';
@@ -22,6 +23,7 @@ describe( DataHelper.createSuiteTitle( 'Start Writing Tailored Onboarding' ), ()
 	let page: Page;
 	let domainSearchComponent: DomainSearchComponent;
 	let newUserDetails: NewUserResponse;
+	let cartCheckoutPage: CartCheckoutPage;
 
 	beforeAll( async () => {
 		page = await browser.newPage();
@@ -94,18 +96,38 @@ describe( DataHelper.createSuiteTitle( 'Start Writing Tailored Onboarding' ), ()
 			await page.click( '.launchpad__task:nth-child(4) .button' );
 		} );
 
-		it( 'Select WordPress.com Free plan', async function () {
+		it( 'Select WordPress.com Personal plan', async function () {
 			await page.waitForLoadState( 'networkidle' );
-			await page.click( 'text="Start with Free"' );
+			await page.click( 'text="Get Personal"' );
 		} );
 
 		it( 'Launch site', async function () {
 			await page.waitForURL( /.*start-writing\/launchpad.*/ );
 			await page.click( '.launchpad__task:nth-child(5) .button' );
+		} );
+
+		it( 'Land in checkout cart', async function () {
+			cartCheckoutPage = new CartCheckoutPage( page );
+			const totalAmount = await cartCheckoutPage.getCheckoutTotalAmount();
+			expect( totalAmount ).toBeGreaterThan( 0 );
+		} );
+
+		it( 'Enter billing and payment details', async function () {
+			const paymentDetails = DataHelper.getTestPaymentDetails();
+			await cartCheckoutPage.enterBillingDetails( paymentDetails );
+			await cartCheckoutPage.enterPaymentDetails( paymentDetails );
+		} );
+
+		it( 'Make purchase', async function () {
+			await cartCheckoutPage.purchase( { timeout: 90 * 1000 } );
+		} );
+
+		it( "Ensure we're redirected to celebration screen", async function () {
 			await page.waitForURL( /.*start-writing\/celebration-step.*/ );
 		} );
 
 		it( 'Navigate to connect to social', async function () {
+			await page.waitForURL( /.*start-writing\/celebration-step.*/ );
 			await page.click( '.celebration-step__top-content-cta-social' );
 			await page.waitForURL( /.*marketing\/connections.*/ );
 		} );
