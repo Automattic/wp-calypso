@@ -75,6 +75,8 @@ const newsletter: Flow = {
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const query = useQuery();
 		const isComingFromMarketingPage = query.get( 'ref' ) === 'newsletter-lp';
+		const isLoadingIntroScreen =
+			! isComingFromMarketingPage && ( 'intro' === _currentStep || undefined === _currentStep );
 
 		const flowProgress = useFlowProgress( {
 			stepName: _currentStep,
@@ -82,11 +84,17 @@ const newsletter: Flow = {
 		} );
 		setStepProgress( flowProgress );
 		const locale = useLocale();
+
 		const getStartUrl = () => {
 			return locale && locale !== 'en'
 				? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Newsletter&redirect_to=/setup/${ flowName }/newsletterSetup`
 				: `/start/account/user?variationName=${ flowName }&pageTitle=Newsletter&redirect_to=/setup/${ flowName }/newsletterSetup`;
 		};
+
+		// Unless showing intro step, send non-logged-in users to account screen.
+		if ( ! isLoadingIntroScreen && ! userIsLoggedIn ) {
+			window.location.assign( getStartUrl() );
+		}
 
 		// trigger guides on step movement, we don't care about failures or response
 		wpcom.req.post(
@@ -102,18 +110,19 @@ const newsletter: Flow = {
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStep );
-			const logInUrl = getStartUrl();
-
-			if ( ! userIsLoggedIn ) {
-				clearSignupDestinationCookie();
-				return window.location.assign( logInUrl );
-			}
 
 			switch ( _currentStep ) {
 				case 'intro':
+					clearSignupDestinationCookie();
+					// This redirect for non-logged in users nearly duplicates one above,
+					// but is needed to avoid a short flash of the newsletterSetup screen.
+					if ( ! userIsLoggedIn ) {
+						return window.location.assign( getStartUrl() );
+					}
 					return navigate( 'newsletterSetup' );
 
 				case 'newsletterSetup':
+					clearSignupDestinationCookie();
 					return navigate( 'domains' );
 
 				case 'domains':
