@@ -138,7 +138,9 @@ const FontPairingVariationPreview = ( { title }: Props ) => {
 										textAlign: 'center',
 									} }
 								>
-									{ translate( 'Default' ) }
+									{ translate( 'Default', {
+										comment: 'The default value of the font pairing',
+									} ) }
 								</div>
 							</HStack>
 						) }
