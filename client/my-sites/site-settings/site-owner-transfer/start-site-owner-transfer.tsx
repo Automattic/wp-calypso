@@ -1,14 +1,11 @@
-import { Button, Gridicon } from '@automattic/components';
-import { useLocalizeUrl } from '@automattic/i18n-utils';
+import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
 import { ToggleControl, TextControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { useState, FormEvent } from 'react';
 import { connect } from 'react-redux';
 import ActionPanelBody from 'calypso/components/action-panel/body';
-import ActionPanelFooter from 'calypso/components/action-panel/footer';
 import Notice from 'calypso/components/notice';
-import { TRANSFER_SITE } from 'calypso/lib/url/support';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import {
 	getSelectedSiteId,
@@ -40,7 +37,6 @@ const StartSiteOwnerTransfer = ( {
 	selectedSiteTitle,
 	translate,
 }: Props ) => {
-	const localizeUrl = useLocalizeUrl();
 	const [ confirmFirstToggle, setConfirmFirstToggle ] = useState( false );
 	const [ confirmSecondToggle, setConfirmSecondToggle ] = useState( false );
 	const [ newOwnerUsername, setNewOwnerUsername ] = useState( '' );
@@ -186,21 +182,6 @@ const StartSiteOwnerTransfer = ( {
 				) }
 				{ ! startSiteTransferSuccess && startSiteTransferForm }
 			</SiteOwnerTransferActionPanelBody>
-			<ActionPanelFooter>
-				<Button
-					className="action-panel__support-button is-external" // eslint-disable-line wpcalypso/jsx-classname-namespace
-					href={ localizeUrl( TRANSFER_SITE ) }
-				>
-					{ translate( 'Follow the steps' ) }
-					<Gridicon icon="external" size={ 48 } />
-				</Button>
-				<Button
-					className="action-panel__support-button" // eslint-disable-line wpcalypso/jsx-classname-namespace
-					href="/help/contact"
-				>
-					{ translate( 'Contact support' ) }
-				</Button>
-			</ActionPanelFooter>
 		</>
 	);
 };
