@@ -78,7 +78,7 @@ class AutoLoadingHomepageModal extends Component {
 	static getDerivedStateFromProps( nextProps, prevState ) {
 		// This component doesn't unmount when the dialog closes, so the state
 		// needs to be reset back to defaults each time it opens.
-		// Reseting `homepageAction` ensures the default option will be selected.
+		// Resetting `homepageAction` ensures the default option will be selected.
 		if ( nextProps.isVisible && ! prevState.wasVisible ) {
 			return { homepageAction: DEFAULT_HOMEPAGE_ACTION, wasVisible: true };
 		} else if ( ! nextProps.isVisible && prevState.wasVisible ) {
