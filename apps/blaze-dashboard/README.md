@@ -58,4 +58,3 @@ BLAZE_DASHBOARD_PACKAGE_PATH=/path/to/jetpack/projects/packages/blaze yarn dev
 ## Uploading to CDN
 
 The path is `widgets.wp.com/blaze-dashboard`.
-

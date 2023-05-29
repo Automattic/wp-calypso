@@ -1,19 +1,16 @@
-import config from '@automattic/calypso-config';
 import { safeImageUrl } from '@automattic/calypso-url';
 import { CompactCard, Gridicon } from '@automattic/components';
 import './style.scss';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import page from 'page';
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { recordDSPEntryPoint } from 'calypso/lib/promote-post';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
 import { useRouteModal } from 'calypso/lib/route-modal';
 import PostRelativeTimeStatus from 'calypso/my-sites/post-relative-time-status';
 import PostActionCounts from 'calypso/my-sites/post-type-list/post-action-counts';
-import { getAdvertisingDashboardPath, getPostType } from 'calypso/my-sites/promote-post/utils';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getPostType } from 'calypso/my-sites/promote-post/utils';
 
 export type Post = {
 	ID: number;
@@ -40,15 +37,9 @@ export default function PostItem( { post }: Props ) {
 	const dispatch = useDispatch();
 	const keyValue = 'post-' + post.ID;
 	const { openModal } = useRouteModal( 'blazepress-widget', keyValue );
-	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 
 	const onClickPromote = async () => {
-		if ( config.isEnabled( 'is_running_in_jetpack_site' ) ) {
-			page( getAdvertisingDashboardPath( `/${ selectedSiteSlug }/posts/promote/${ keyValue }` ) );
-		} else {
-			openModal();
-		}
-
+		openModal();
 		dispatch( recordDSPEntryPoint( 'promoted_posts-post_item' ) );
 	};
 
