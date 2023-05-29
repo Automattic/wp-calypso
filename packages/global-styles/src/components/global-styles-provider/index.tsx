@@ -35,7 +35,7 @@ const useGlobalStylesUserConfig = (): [ boolean, GlobalStylesObject, SetConfig ]
 		},
 		[ setUserConfig ]
 	);
-	return [ !! true, userConfig, setConfig ];
+	return [ true, userConfig, setConfig ];
 };
 
 const useGlobalStylesBaseConfig = (
