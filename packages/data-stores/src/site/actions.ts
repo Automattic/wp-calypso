@@ -544,7 +544,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			footerHtml,
 			globalStyles,
 			shouldResetContent,
-			setSiteSetupOption,
+			siteSetupOption,
 		}: AssembleSiteOptions = {}
 	) {
 		const templates: RequestTemplate[] = [
@@ -578,7 +578,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 				templates,
 				global_styles: globalStyles,
 				should_reset_content: shouldResetContent,
-				set_site_setup_option: setSiteSetupOption,
+				set_site_setup_option: siteSetupOption,
 			},
 			method: 'POST',
 		} );
