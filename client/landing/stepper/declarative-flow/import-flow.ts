@@ -7,6 +7,8 @@ import useAddTempSiteToSourceOptionMutation from 'calypso/data/site-migration/us
 import { useSourceMigrationStatusQuery } from 'calypso/data/site-migration/use-source-migration-status-query';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { SITE_PICKER_FILTER_CONFIG } from 'calypso/landing/stepper/constants';
+import MigrationError from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/migration-error';
+import { ProcessingResult } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/processing-step/constants';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
@@ -54,6 +56,7 @@ const importFlow: Flow = {
 			{ slug: 'siteCreationStep', component: SiteCreationStep },
 			{ slug: 'migrationHandler', component: MigrationHandler },
 			{ slug: 'sitePicker', component: SitePickerStep },
+			{ slug: 'error', component: MigrationError },
 		];
 	},
 
@@ -112,7 +115,7 @@ const importFlow: Flow = {
 			);
 		};
 
-		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
+		const submit = ( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) => {
 			switch ( _currentStep ) {
 				case 'importReady': {
 					const depUrl = ( providedDependencies?.url as string ) || '';
@@ -160,6 +163,11 @@ const importFlow: Flow = {
 					return navigate( 'processing' );
 
 				case 'processing': {
+					const processingResult = params[ 0 ] as ProcessingResult;
+					if ( processingResult === ProcessingResult.FAILURE ) {
+						return navigate( 'error' );
+					}
+
 					if ( providedDependencies?.siteSlug ) {
 						if ( isEnabled( 'onboarding/import-redesign' ) && fromParam ) {
 							const slectedSiteSlug = providedDependencies?.siteSlug as string;
@@ -183,9 +191,13 @@ const importFlow: Flow = {
 
 					return exitFlow( `/home/${ siteSlugParam }` );
 				}
+
 				case 'migrationHandler': {
 					return handleMigrationRedirects( providedDependencies );
 				}
+
+				case 'error':
+					return navigate( providedDependencies?.url as string );
 
 				case 'sitePicker': {
 					switch ( providedDependencies?.action ) {
