@@ -359,7 +359,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 							Button: (
 								<Button
 									variant="link"
-									target="__blank"
+									target="_blank"
 									href={ localizeUrl(
 										'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/'
 									) }
@@ -382,7 +382,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 			Button: (
 				<Button
 					variant="link"
-					target="__blank"
+					target="_blank"
 					rel="noreferrer"
 					href={ localizeUrl(
 						'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/'
