@@ -4,7 +4,15 @@ import { Component } from 'react';
 
 import './style.scss';
 
-export default class extends Component {
+interface NoticeActionProps {
+	'aria-label'?: string;
+	href?: string | null;
+	onClick?: () => void;
+	external?: boolean;
+	icon?: string;
+}
+
+export default class NoticeAction extends Component< NoticeActionProps > {
 	static displayName = 'NoticeAction';
 
 	static propTypes = {
@@ -20,10 +28,16 @@ export default class extends Component {
 	};
 
 	render() {
-		const attributes = {
+		const attributes: NoticeActionProps & {
+			className?: string;
+			target?: string;
+			rel?: string;
+			tabIndex?: number;
+			href?: string;
+		} = {
 			'aria-label': this.props[ 'aria-label' ],
 			className: 'notice__action',
-			href: this.props.href,
+			href: this.props.href ?? undefined,
 			onClick: this.props.onClick,
 			tabIndex: 0,
 		};
