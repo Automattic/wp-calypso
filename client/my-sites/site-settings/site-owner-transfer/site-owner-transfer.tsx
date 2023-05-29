@@ -6,12 +6,9 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-<<<<<<< HEAD
-import { TRANSFER_SITE } from 'calypso/lib/url/support';
-=======
 import { ResponseDomain } from 'calypso/lib/domains/types';
+import { TRANSFER_SITE } from 'calypso/lib/url/support';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
->>>>>>> bafb0cc3d3 (Site Transfers: Handle pending domains)
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import PendingDomainTransfer from './pending-domain-transfer';
 import StartSiteOwnerTransfer from './start-site-owner-transfer';
@@ -26,7 +23,7 @@ const SiteOwnerTransfer = () => {
 	)?.filter( ( domain ) => ! domain.isWPCOMDomain );
 
 	const pendingDomain = nonWPCOMDomains?.find(
-		( wpcomDomain: ResponseDomain ) => ! wpcomDomain.pendingTransfer
+		( wpcomDomain: ResponseDomain ) => wpcomDomain.pendingTransfer
 	);
 
 	if ( ! selectedSiteId || ! selectedSiteSlug ) {
