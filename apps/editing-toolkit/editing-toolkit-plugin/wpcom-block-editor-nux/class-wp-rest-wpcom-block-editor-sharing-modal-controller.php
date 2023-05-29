@@ -68,12 +68,6 @@ class WP_REST_WPCOM_Block_Editor_Sharing_Modal_Controller extends \WP_REST_Contr
 	 * @return boolean
 	 */
 	public function get_sharing_modal_dismissed() {
-		// It appears that we are unable to set the `sharing_modal_dismissed` option on atomic sites
-		// Therefore, hide the modal by default.
-		// See D69932-code and apps/editing-toolkit/editing-toolkit-plugin/wpcom-block-editor-nux/class-wp-rest-wpcom-block-editor-first-post-published-modal-controller.php.
-		if ( defined( 'IS_ATOMIC' ) && IS_ATOMIC ) {
-			return true;
-		}
 		return (bool) get_option( 'sharing_modal_dismissed', false );
 	}
 
