@@ -40,7 +40,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	const [ isLoading, setIsLoading ] = useState( true );
 	const [ showCancelDialog, setShowCancelDialog ] = useState( false );
 	const [ showCancelButton, setShowCancelButton ] = useState( true );
-	const [ hiddenHeader, setHiddenHeader ] = useState( isV2Widget ? false : true );
+	const [ hiddenHeader, setHiddenHeader ] = useState( true );
 	const widgetContainer = useRef< HTMLDivElement >( null );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const translate = useTranslate() as BlazePressTranslatable;
