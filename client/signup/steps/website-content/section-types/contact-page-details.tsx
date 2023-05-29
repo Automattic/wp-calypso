@@ -126,9 +126,15 @@ export function ContactPageDetails( {
 			/>
 
 			<LabelBlock>
-				{ translate( 'Upload up to %(noOfImages)d images to be used on your %(pageTitle)s page.', {
-					args: { pageTitle, noOfImages: page.media.length },
-				} ) }
+				{ translate(
+					'Upload up to %(noOfImages)d images. You can find stock images {{a}}here{{/a}}, or we’ll select some during the build.',
+					{
+						args: { pageTitle, noOfImages: page.media.length },
+						components: {
+							a: <a href="https://www.pexels.com/" target="_blank" rel="noreferrer" />,
+						},
+					}
+				) }
 			</LabelBlock>
 			<HorizontalGrid>
 				{ page.media.map( ( media, i ) => (
