@@ -302,8 +302,6 @@ import ExternalLinkWithTracking from 'calypso/components/external-link/with-trac
 import MaterialIcon from 'calypso/components/material-icon';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from 'calypso/lib/url/support';
 
-const is2023OnboardingPricingGrid = true;
-
 export type FeatureObject = {
 	getSlug: () => string;
 	getTitle: ( domainName?: string ) => TranslateResult;
@@ -648,30 +646,12 @@ export const FEATURES_LIST: FeatureList = {
 					args: domainName,
 				} );
 			}
-			if ( is2023OnboardingPricingGrid ) {
-				return i18n.translate(
-					'Get a custom domain – like {{i}}yourgroovydomain.com{{/i}} – free for the first year.',
-					{
-						components: {
-							i: <i />,
-						},
-					}
-				);
-			}
+
 			return i18n.translate(
-				'All paid WordPress.com plans purchased for an annual term include one year of free domain registration. ' +
-					'Domains registered through this promotion will renew at our {{a}}standard rate{{/a}}, plus applicable taxes, after the first year.{{br /}}{{br /}}' +
-					'This offer is redeemable one time only, and does not apply to plan upgrades, renewals, or premium domains.',
+				'Get a custom domain – like {{i}}yourgroovydomain.com{{/i}} – free for the first year.',
 				{
 					components: {
-						a: (
-							<a
-								href={ localizeUrl( DOMAIN_PRICING_AND_AVAILABLE_TLDS ) }
-								target="_blank"
-								rel="noopener noreferrer"
-							/>
-						),
-						br: <br />,
+						i: <i />,
 					},
 				}
 			);
@@ -958,9 +938,7 @@ export const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_PREMIUM_SUPPORT,
 		getTitle: () => i18n.translate( 'Priority Support' ),
 		getDescription: () =>
-			is2023OnboardingPricingGrid
-				? i18n.translate( 'Realtime help and guidance from professional WordPress experts.' )
-				: i18n.translate( 'Live chat support to help you get started with Jetpack.' ),
+			i18n.translate( 'Realtime help and guidance from professional WordPress experts.' ),
 	},
 
 	[ FEATURE_STANDARD_SECURITY_TOOLS ]: {

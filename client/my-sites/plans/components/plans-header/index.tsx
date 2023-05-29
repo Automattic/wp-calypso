@@ -11,11 +11,10 @@ import './style.scss';
 const DomainUpsellHeader: React.FunctionComponent = () => {
 	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
 	const translate = useTranslate();
-	const is2023OnboardingPricingGrid = true;
 	const plansDescription = translate(
 		'See and compare the features available on each WordPress.com plan.'
 	);
-	const withSkipButton = ! is2023OnboardingPricingGrid;
+	const withSkipButton = false;
 	const classes = classNames(
 		'plans__formatted-header',
 		'plans__section-header',
