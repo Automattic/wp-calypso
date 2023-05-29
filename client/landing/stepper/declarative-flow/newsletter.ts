@@ -63,6 +63,7 @@ const newsletter: Flow = {
 		const { setHidePlansFeatureComparison } = useDispatch( ONBOARD_STORE );
 		useEffect( () => {
 			setHidePlansFeatureComparison( true );
+			clearSignupDestinationCookie();
 		}, [] );
 	},
 	useStepNavigation( _currentStep, navigate ) {
@@ -114,14 +115,12 @@ const newsletter: Flow = {
 
 			switch ( _currentStep ) {
 				case 'intro':
-					clearSignupDestinationCookie();
 					if ( userIsLoggedIn ) {
 						return navigate( 'newsletterSetup' );
 					}
 					return window.location.assign( logInUrl );
 
 				case 'newsletterSetup':
-					clearSignupDestinationCookie();
 					return navigate( 'domains' );
 
 				case 'domains':
