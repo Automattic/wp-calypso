@@ -44,7 +44,7 @@ const SiteOwnerTransfer = () => {
 			/>
 			<PageViewTracker
 				path="/settings/start-site-transfer/:site"
-				title={ translate( 'Settings > Start Site Transfer' ) }
+				title="Settings > Start Site Transfer"
 			/>
 			<HeaderCake backHref={ '/settings/general/' + selectedSite.slug } isCompact={ true }>
 				<h1>{ translate( 'Site Transfer' ) }</h1>
