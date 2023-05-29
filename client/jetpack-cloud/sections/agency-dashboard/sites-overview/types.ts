@@ -312,5 +312,5 @@ export interface InitialMonitorSettings {
 	enableEmailNotification: boolean;
 	enableMobileNotification: boolean;
 	selectedDuration: MonitorDuration | undefined;
-	emailContacts: MonitorSettingsEmail[] | [];
+	emailContacts?: MonitorSettingsEmail[] | [];
 }

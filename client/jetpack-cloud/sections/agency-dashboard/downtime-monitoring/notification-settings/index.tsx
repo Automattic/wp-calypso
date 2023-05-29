@@ -87,10 +87,11 @@ export default function NotificationSettings( {
 			enableMobileNotification !== initialSettings.enableMobileNotification ||
 			enableEmailNotification !== initialSettings.enableEmailNotification ||
 			selectedDuration?.time !== initialSettings.selectedDuration?.time ||
-			JSON.stringify( allEmailItems.map( ( { name, email } ) => ( { name, email } ) ) ) !==
-				JSON.stringify(
-					initialSettings.emailContacts.map( ( { name, email } ) => ( { name, email } ) )
-				);
+			( isMultipleEmailEnabled &&
+				JSON.stringify( allEmailItems.map( ( { name, email } ) => ( { name, email } ) ) ) !==
+					JSON.stringify(
+						initialSettings?.emailContacts?.map( ( { name, email } ) => ( { name, email } ) )
+					) );
 
 		if ( hasUnsavedChanges || ! unsavedChangesExist ) {
 			return onClose();
@@ -102,6 +103,7 @@ export default function NotificationSettings( {
 		enableMobileNotification,
 		hasUnsavedChanges,
 		initialSettings,
+		isMultipleEmailEnabled,
 		onClose,
 		selectedDuration?.time,
 	] );
@@ -226,10 +228,10 @@ export default function NotificationSettings( {
 				enableEmailNotification: isEmailEnabled,
 				enableMobileNotification: isMobileEnabled,
 				selectedDuration: foundDuration,
-				emailContacts: getAllEmailItems( settings ),
+				...( isMultipleEmailEnabled && { emailContacts: getAllEmailItems( settings ) } ),
 			} );
 		},
-		[ defaultDuration, getAllEmailItems, handleSetEmailItems ]
+		[ defaultDuration, getAllEmailItems, handleSetEmailItems, isMultipleEmailEnabled ]
 	);
 
 	useEffect( () => {
