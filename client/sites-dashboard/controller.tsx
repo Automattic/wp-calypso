@@ -6,9 +6,7 @@ import { Global, css } from '@emotion/react';
 import { removeQueryArgs } from '@wordpress/url';
 import AsyncLoad from 'calypso/components/async-load';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { removeNotice } from 'calypso/state/notices/actions';
-import { EmptySitesDashboard } from './components/empty-sites-dashboard';
 import { SitesDashboard } from './components/sites-dashboard';
 import { MEDIA_QUERIES } from './utils';
 import type { Context as PageJSContext } from 'page';
@@ -45,53 +43,7 @@ export function sanitizeQueryParameters( context: PageJSContext, next: () => voi
 	next();
 }
 
-export function maybeSitesDashboard( context: PageJSContext, next: () => void ) {
-	const siteCount = getCurrentUser( context.store.getState() )?.site_count;
-
-	if ( ! context.query[ 'new-site' ] && siteCount === 0 ) {
-		return emptySites( context, next );
-	}
-
-	return sitesDashboard( context, next );
-}
-
-function emptySites( context: PageJSContext, next: () => void ) {
-	const emptySitesDashboardGlobalStyles = css`
-		body.is-group-sites-dashboard {
-			background: #fff;
-
-			.layout__primary {
-				margin: 100px 24px;
-			}
-
-			.layout__content {
-				padding: 0 !important; /* this is overriden by other styles being injected on the page */
-				min-height: auto; /* browsing a different page might inject this style on the page */
-			}
-
-			${ MEDIA_QUERIES.mediumOrLarger } {
-				height: 100vh;
-
-				.wpcom-site {
-					display: flex;
-					align-items: center;
-					justify-content: center;
-				}
-			}
-		}
-	`;
-
-	context.primary = (
-		<>
-			<Global styles={ emptySitesDashboardGlobalStyles } />
-			<EmptySitesDashboard />
-		</>
-	);
-
-	return next();
-}
-
-function sitesDashboard( context: PageJSContext, next: () => void ) {
+export function sitesDashboard( context: PageJSContext, next: () => void ) {
 	const sitesDashboardGlobalStyles = css`
 		body.is-group-sites-dashboard {
 			background: #fdfdfd;
