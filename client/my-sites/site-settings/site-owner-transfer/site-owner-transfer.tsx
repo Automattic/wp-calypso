@@ -10,6 +10,8 @@ import { ResponseDomain } from 'calypso/lib/domains/types';
 import { TRANSFER_SITE } from 'calypso/lib/url/support';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { ResponseDomain } from 'calypso/lib/domains/types';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import PendingDomainTransfer from './pending-domain-transfer';
 import StartSiteOwnerTransfer from './start-site-owner-transfer';
 
