@@ -14,6 +14,8 @@ const selectors = {
 	// The "content only" "continue" button of '/start/from/importing/wordpress'
 	wpContentOnlyContinueButton:
 		'.content-chooser .import-layout__column:nth-child(2) > div > div:last-child button:text("Continue")',
+	wpPlansContentOnlyOptionButton:
+		'.import__import-everything--redesign > .import__footer-button-container:last-child button:text("Use the content-only import option")',
 
 	// ImporterDrag page
 	importerDrag: ( text: string ) => `div.importer-wrapper__${ text }`,
@@ -115,6 +117,13 @@ export class StartImportFlow {
 	}
 
 	/**
+	 * Validates that we've landed on the WordPress plans page.
+	 */
+	async validateWordPressPlansPage(): Promise< void > {
+		await this.page.waitForSelector( selectors.wpPlansContentOnlyOptionButton );
+	}
+
+	/**
 	 * Validates that we've landed on the importer drag page.
 	 */
 	async validateImporterDragPage( importer: string ): Promise< void > {
@@ -126,6 +135,13 @@ export class StartImportFlow {
 	 */
 	async contentOnlyWordPressPage(): Promise< void > {
 		await this.page.click( selectors.wpContentOnlyContinueButton );
+	}
+
+	/**
+	 * Continue 'content only' WordPress migration on plans page.
+	 */
+	async contentOnlyWordPressPlansPage(): Promise< void > {
+		await this.page.click( selectors.wpPlansContentOnlyOptionButton );
 	}
 
 	/**
