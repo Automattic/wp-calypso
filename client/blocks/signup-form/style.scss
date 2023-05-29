@@ -122,7 +122,7 @@
 	// The SelectCardCheckbox label is flex by default, which is good for badges, but makes
 	// the <strong> section of the label it's own block and not wrap nicely with the rest
 	// of the label.
-	.select-card-checkbox__label {
+	&.select-card-checkbox__container .select-card-checkbox__label {
 		display: inline;
 	}
 }
