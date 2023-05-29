@@ -101,7 +101,9 @@ const ColorPaletteVariationPreview = ( { title }: Props ) => {
 									textAlign: 'center',
 								} }
 							>
-								{ translate( 'Default' ) }
+								{ translate( 'Default', {
+									comment: 'The default value of the color palette',
+								} ) }
 							</div>
 						</VStack>
 					) }
