@@ -77,7 +77,7 @@ export default function SubscribersChartSection( {
 		siteId,
 		period,
 		quantity,
-		queryDate.toISOString()
+		queryDate
 	) as UseQueryResult< SubscribersDataResult >;
 
 	const handleDateChange = useCallback(
