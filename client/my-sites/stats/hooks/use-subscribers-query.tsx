@@ -5,7 +5,7 @@ export function querySubscribers(
 	siteId: number | null,
 	period: string,
 	quantity: number,
-	date?: Date
+	date?: string
 ): Promise< any > {
 	// Create a date object from the passed date string or create a new date object if no date is provided.
 	const periodStart = date ? new Date( date ) : new Date();
@@ -62,10 +62,12 @@ export default function useSubscribersQuery(
 	quantity: number,
 	date?: Date
 ) {
+	const queryDate = date.toISOString();
+
 	// TODO: Account for other query parameters before release.
 	return useQuery( {
-		queryKey: [ 'stats', 'subscribers', siteId, period, quantity, date ],
-		queryFn: () => querySubscribers( siteId, period, quantity, date ),
+		queryKey: [ 'stats', 'subscribers', siteId, period, quantity, queryDate ],
+		queryFn: () => querySubscribers( siteId, period, quantity, queryDate ),
 		select: selectSubscribers,
 		staleTime: 1000 * 60 * 5, // 5 minutes
 	} );
