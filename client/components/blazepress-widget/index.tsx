@@ -34,12 +34,13 @@ export function goToOriginalEndpoint() {
 }
 
 const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
+	const isV2Widget = config.isEnabled( 'promote-post/redesign-i2' );
 	// eslint-disable-next-line @typescript-eslint/no-empty-function
 	const { isVisible = false, keyValue, siteId } = props;
 	const [ isLoading, setIsLoading ] = useState( true );
 	const [ showCancelDialog, setShowCancelDialog ] = useState( false );
 	const [ showCancelButton, setShowCancelButton ] = useState( true );
-	const [ hiddenHeader, setHiddenHeader ] = useState( true );
+	const [ hiddenHeader, setHiddenHeader ] = useState( isV2Widget ? false : true );
 	const widgetContainer = useRef< HTMLDivElement >( null );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const translate = useTranslate() as BlazePressTranslatable;
@@ -139,6 +140,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 				<BlankCanvas
 					className={ classNames( 'blazepress-widget', {
 						'hidden-header': hiddenHeader,
+						'blazepress-widget-v2': config.isEnabled( 'promote-post/redesign-i2' ),
 					} ) }
 				>
 					<div className="blazepress-widget__header-bar">

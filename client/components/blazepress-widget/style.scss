@@ -8,6 +8,9 @@ $headerHeight: 72px;
 	flex-direction: column;
 	z-index: 1001;
 	height: 100vh;
+	&.blazepress-widget-v2 {
+		height: reset; // v2 allows horizontal scroll, so let's not restrict the height here to avoid double scrollbar
+	}
 
 	.blazepress-widget__header-bar {
 		align-items: center;
