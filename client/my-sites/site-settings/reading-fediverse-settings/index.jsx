@@ -10,8 +10,6 @@ import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useActivityPubStatus } from './hooks';
 
-const ACTIVITYPUB_CATCHALL_PREFIX = 'feed';
-
 const CopyButton = ( { alias } ) => {
 	const translate = useTranslate();
 	const [ isCopied, setIsCopied ] = useState( false );
@@ -33,7 +31,7 @@ const FediverseInnerSettingsSection = ( { error } ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
 	const username = useSelector( getCurrentUserName );
-	const catchallAlias = `${ ACTIVITYPUB_CATCHALL_PREFIX }@${ domain }`;
+	const catchallAlias = `${ domain }@${ domain }`;
 	const userAlias = `${ username }@${ domain }`;
 
 	// todo: only show the user alias when the blog has > 1 user
@@ -59,7 +57,7 @@ const FediverseInnerSettingsSection = ( { error } ) => {
 			<p>
 				<CopyButton alias={ catchallAlias } />
 			</p>
-			<p>{ translate( 'They can also follow just you:' ) }</p>
+			<p>Upgraded sites will receive an option for user-based aliases</p>
 			<p>
 				<CopyButton alias={ userAlias } />
 			</p>
