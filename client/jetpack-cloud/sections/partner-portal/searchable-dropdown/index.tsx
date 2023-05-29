@@ -16,13 +16,15 @@ export default function SearchableDropdown( props: Props ) {
 				'is-disabled': disabled,
 			} ) }
 		>
-			{ ! disabled && <ComboboxControl { ...props } /> }
-
-			{ disabled && (
-				<Disabled>
-					<ComboboxControl { ...props } />
-				</Disabled>
-			) }
+			<Disabled
+				// TODO: The type definition for Disabled is incorrect, isDisabled actually exists. Upgrading the @wordpress/components
+				// which the latest version now ships with its own type definitions which fixes the issue.
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-ignore
+				isDisabled={ disabled }
+			>
+				<ComboboxControl { ...props } />
+			</Disabled>
 		</div>
 	);
 }
