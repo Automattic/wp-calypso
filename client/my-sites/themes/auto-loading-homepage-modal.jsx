@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Dialog, Gridicon, Spinner } from '@automattic/components';
+import { Dialog, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { translate } from 'i18n-calypso';
@@ -30,6 +30,8 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './auto-loading-homepage-modal.scss';
 
+const DEFAULT_HOMEPAGE_ACTION = 'use_new_homepage';
+
 class AutoLoadingHomepageModal extends Component {
 	static propTypes = {
 		source: PropTypes.oneOf( [ 'details', 'list', 'upload' ] ).isRequired,
@@ -51,7 +53,7 @@ class AutoLoadingHomepageModal extends Component {
 	constructor( props ) {
 		super( props );
 		this.state = {
-			homepageAction: 'keep_current_homepage',
+			homepageAction: DEFAULT_HOMEPAGE_ACTION,
 			// Used to reset state when dialog re-opens, see `getDerivedStateFromProps`
 			wasVisible: props.isVisible,
 			// Don't render the iframe on mobile; Doing it here prevents unnecessary data fetching vs. CSS.
@@ -78,7 +80,7 @@ class AutoLoadingHomepageModal extends Component {
 		// needs to be reset back to defaults each time it opens.
 		// Reseting `homepageAction` ensures the default option will be selected.
 		if ( nextProps.isVisible && ! prevState.wasVisible ) {
-			return { homepageAction: 'keep_current_homepage', wasVisible: true };
+			return { homepageAction: DEFAULT_HOMEPAGE_ACTION, wasVisible: true };
 		} else if ( ! nextProps.isVisible && prevState.wasVisible ) {
 			return { wasVisible: false };
 		}
@@ -131,8 +133,6 @@ class AutoLoadingHomepageModal extends Component {
 			isCurrentTheme,
 			isVisible = false,
 		} = this.props;
-		const { isNarrow } = this.state;
-
 		// Nothing to do when it's the current theme.
 		if ( isCurrentTheme ) {
 			return null;
@@ -152,16 +152,7 @@ class AutoLoadingHomepageModal extends Component {
 			return null;
 		}
 
-		const {
-			name: themeName,
-			id: themeId,
-			stylesheet,
-			screenshot: themeScreenshot,
-		} = this.props.theme;
-
-		const iframeSrcKeepHomepage = `//${ this.props.siteDomain }?theme=${ encodeURIComponent(
-			stylesheet
-		) }&hide_banners=true&preview_overlay=true`;
+		const { name: themeName, id: themeId, screenshot: themeScreenshot } = this.props.theme;
 
 		return (
 			<Dialog
@@ -199,29 +190,6 @@ class AutoLoadingHomepageModal extends Component {
 						} ) }
 					</h1>
 					<div className="themes__theme-preview-items">
-						<div className="themes__theme-preview-item themes__theme-preview-item-iframe-container">
-							<FormLabel>
-								<div className="themes__iframe-wrapper">
-									<Spinner />
-									{ ! isNarrow && (
-										<iframe
-											scrolling="no"
-											loading="lazy"
-											title={ translate( 'Preview of current homepage with new theme applied' ) }
-											src={ iframeSrcKeepHomepage }
-										/>
-									) }
-								</div>
-								<FormRadio
-									value="keep_current_homepage"
-									checked={ 'keep_current_homepage' === this.state.homepageAction }
-									onChange={ this.handleHomepageAction }
-									label={ preventWidows(
-										translate( 'Switch theme, preserving my homepage content.' )
-									) }
-								/>
-							</FormLabel>
-						</div>
 						<div className="themes__theme-preview-item">
 							<FormLabel>
 								<div className="themes__theme-preview-image-wrapper">
@@ -244,22 +212,6 @@ class AutoLoadingHomepageModal extends Component {
 						</div>
 					</div>
 					<div className="themes__autoloading-homepage-option-description">
-						{ this.state.homepageAction === 'keep_current_homepage' && (
-							<p>
-								{ preventWidows(
-									translate(
-										'Your new theme design will be applied without changing your homepage content.'
-									)
-								) }{ ' ' }
-								<ExternalLink
-									href={ localizeUrl( 'https://wordpress.com/support/changing-themes/' ) }
-									icon
-									target="__blank"
-								>
-									{ translate( 'Learn more.' ) }
-								</ExternalLink>
-							</p>
-						) }
 						{ this.state.homepageAction === 'use_new_homepage' && (
 							<p>
 								<span
