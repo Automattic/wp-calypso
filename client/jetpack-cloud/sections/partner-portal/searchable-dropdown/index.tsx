@@ -16,13 +16,9 @@ export default function SearchableDropdown( props: Props ) {
 				'is-disabled': disabled,
 			} ) }
 		>
-			{ ! disabled && <ComboboxControl { ...props } /> }
-
-			{ disabled && (
-				<Disabled>
-					<ComboboxControl { ...props } />
-				</Disabled>
-			) }
+			<Disabled isDisabled={ disabled }>
+				<ComboboxControl { ...props } />
+			</Disabled>
 		</div>
 	);
 }

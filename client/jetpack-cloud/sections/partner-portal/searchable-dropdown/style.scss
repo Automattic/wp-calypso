@@ -38,8 +38,6 @@
 }
 
 .searchable-dropdown.is-disabled {
-	pointer-events: none;
-
 	.components-base-control__field.components-base-control__field {
 		background: var(--color-neutral-0);
 	}
