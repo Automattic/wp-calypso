@@ -7,6 +7,7 @@ import {
 	WRITE_FLOW,
 	BUILD_FLOW,
 	START_WRITING_FLOW,
+	DESIGN_FIRST_FLOW,
 } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
 import { TranslatedLaunchpadStrings } from './types';
@@ -45,6 +46,7 @@ export function getLaunchpadTranslations( flow: string | null ): TranslatedLaunc
 			translatedStrings.launchTitle = translate( 'Your site is almost ready!' );
 			break;
 		case START_WRITING_FLOW:
+		case DESIGN_FIRST_FLOW:
 			translatedStrings.flowName = translate( 'Blog' );
 			translatedStrings.title = translate( "Your blog's almost ready!" );
 			translatedStrings.launchTitle = translate( "Your blog's almost ready!" );

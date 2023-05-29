@@ -181,6 +181,7 @@
 		"signup/woo-verify-email": false,
 		"site-indicator": true,
 		"ssr/prefetch-timebox": false,
+		"stats/highlights-settings": false,
 		"stats/new-video-summary": true,
 		"stats/subscribers-section": false,
 		"stepper-woocommerce-poc": true,
@@ -207,6 +208,7 @@
 		"user-management-revamp": true,
 		"woop": false,
 		"wordpress-action-search": false,
-		"wpcom-user-bootstrap": false
+		"wpcom-user-bootstrap": false,
+		"yolo/site-transfers-i1": true
 	}
 }

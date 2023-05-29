@@ -356,7 +356,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 						{
 							Button: createElement( Button, {
 								isLink: true,
-								target: '__blank',
+								target: '_blank',
 								href: localizeUrl(
 									'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/'
 								),
@@ -377,7 +377,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 			uploadBtn: formFileUploadElement,
 			Button: createElement( Button, {
 				isLink: true,
-				target: '__blank',
+				target: '_blank',
 				rel: 'noreferrer',
 				href: localizeUrl(
 					'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/'

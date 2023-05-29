@@ -9,6 +9,7 @@ import {
 	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_T0_YEARLY,
 	PRODUCT_JETPACK_BACKUP_T0_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY,
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 	PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_T2_YEARLY,
@@ -369,6 +370,10 @@ export const getJetpackProductsTaglines = (): Record<
 			owned: backupOwnedTagline,
 		},
 		[ PRODUCT_JETPACK_BACKUP_T0_MONTHLY ]: {
+			default: backupRealtimeTagline,
+			owned: backupOwnedTagline,
+		},
+		[ PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY ]: {
 			default: backupRealtimeTagline,
 			owned: backupOwnedTagline,
 		},

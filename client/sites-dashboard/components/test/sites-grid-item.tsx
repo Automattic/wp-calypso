@@ -5,6 +5,7 @@ import React from 'react';
 import renderer from 'react-test-renderer';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { SitesGridItem } from 'calypso/sites-dashboard/components/sites-grid-item';
+import { useCheckSiteTransferStatus } from '../../hooks/use-check-site-transfer-status';
 
 function makeTestSite( { title = 'test', is_coming_soon = false, lang = 'en' } = {} ) {
 	return {
@@ -20,7 +21,17 @@ function makeTestSite( { title = 'test', is_coming_soon = false, lang = 'en' } =
 	};
 }
 
+jest.mock( 'calypso/sites-dashboard/hooks/use-check-site-transfer-status.tsx', () => ( {
+	__esModule: true,
+	useCheckSiteTransferStatus: jest.fn(),
+} ) );
+
 describe( '<SitesGridItem>', () => {
+	beforeEach( () => {
+		( useCheckSiteTransferStatus as jest.Mock ).mockReturnValue( {
+			isTransferInProgress: false,
+		} );
+	} );
 	test( 'Default render', () => {
 		const tree = renderer
 			.create(

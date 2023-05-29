@@ -50,8 +50,8 @@ const startWriting: Flow = {
 				asyncComponent: () => import( './internals/steps-repository/launchpad' ),
 			},
 			{
-				slug: 'start-writing-done',
-				asyncComponent: () => import( './internals/steps-repository/start-writing-done' ),
+				slug: 'celebration-step',
+				asyncComponent: () => import( './internals/steps-repository/celebration-step' ),
 			},
 		];
 	},
@@ -76,7 +76,7 @@ const startWriting: Flow = {
 
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', flowName, currentStep );
-			const returnUrl = `/setup/start-writing/start-writing-done?siteSlug=${ siteSlug }`;
+			const returnUrl = `/setup/start-writing/celebration-step?siteSlug=${ siteSlug }`;
 
 			switch ( currentStep ) {
 				case 'site-creation-step':
@@ -85,10 +85,12 @@ const startWriting: Flow = {
 					// If we just created a new site.
 					if ( ! providedDependencies?.blogLaunched && providedDependencies?.siteSlug ) {
 						setSelectedSite( providedDependencies?.siteId );
-						setIntentOnSite( providedDependencies?.siteSlug, START_WRITING_FLOW );
-						saveSiteSettings( providedDependencies?.siteId, {
-							launchpad_screen: 'full',
-						} );
+						await Promise.all( [
+							setIntentOnSite( providedDependencies?.siteSlug, START_WRITING_FLOW ),
+							saveSiteSettings( providedDependencies?.siteId, {
+								launchpad_screen: 'full',
+							} ),
+						] );
 
 						const siteOrigin = window.location.origin;
 
@@ -100,7 +102,7 @@ const startWriting: Flow = {
 					// If the user's site has just been launched.
 					if ( providedDependencies?.blogLaunched && providedDependencies?.siteSlug ) {
 						// Remove the site_intent.
-						setIntentOnSite( providedDependencies?.siteSlug, '' );
+						await setIntentOnSite( providedDependencies?.siteSlug, '' );
 
 						// If the user launched their site with a plan or domain in their cart, redirect them to
 						// checkout before sending them home.

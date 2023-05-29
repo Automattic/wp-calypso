@@ -32,6 +32,18 @@ export const getPostImage = ( post ) => {
 	return imageUrl ? `${ imageUrl }?s=${ PREVIEW_IMAGE_WIDTH }` : null;
 };
 
+export const getPostAutoSharingOptions = ( post ) => {
+	return post?.metadata?.find( ( meta ) => meta.key === '_wpas_options' )?.value;
+};
+
+export const getPostCustomImage = ( post ) => {
+	return getPostAutoSharingOptions( post )?.attached_media?.[ 0 ]?.url;
+};
+
+export const isSocialPost = ( post ) => {
+	return !! getPostAutoSharingOptions( post )?.should_upload_attached_media;
+};
+
 export const getExcerptForPost = ( post ) => {
 	if ( ! post ) {
 		return null;

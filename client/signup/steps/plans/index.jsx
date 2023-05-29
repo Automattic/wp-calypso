@@ -24,7 +24,6 @@ import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import { ExperimentalIntervalTypeToggle } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getPlanSlug } from 'calypso/state/plans/selectors';
 import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
@@ -102,7 +101,6 @@ export class PlansStep extends Component {
 			selectedSite,
 			planTypes,
 			flowName,
-			showTreatmentPlansReorderTest,
 			isInVerticalScrollingPlansExperiment,
 			isReskinned,
 			eligibleForProPlan,
@@ -176,7 +174,6 @@ export class PlansStep extends Component {
 								plansWithScroll={ this.state.isDesktop }
 								planTypes={ planTypes }
 								flowName={ flowName }
-								showTreatmentPlansReorderTest={ showTreatmentPlansReorderTest }
 								isAllPaidPlansShown={ true }
 								isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 								shouldShowPlansFeatureComparison={ this.state.isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
@@ -386,7 +383,6 @@ PlansStep.propTypes = {
 	translate: PropTypes.func.isRequired,
 	planTypes: PropTypes.array,
 	flowName: PropTypes.string,
-	isTreatmentPlansReorderTest: PropTypes.bool,
 };
 
 /**
@@ -406,10 +402,7 @@ export const isDotBlogDomainRegistration = ( domainItem ) => {
 };
 
 export default connect(
-	(
-		state,
-		{ path, signupDependencies: { siteSlug, domainItem, plans_reorder_abtest_variation } }
-	) => ( {
+	( state, { path, signupDependencies: { siteSlug, domainItem } } ) => ( {
 		// Blogger plan is only available if user chose either a free domain or a .blog domain registration
 		disableBloggerPlanWithNonBlogDomain:
 			domainItem && ! isSubdomain( domainItem.meta ) && ! isDotBlogDomainRegistration( domainItem ),
@@ -419,8 +412,6 @@ export default connect(
 		selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null,
 		customerType: parseQs( path.split( '?' ).pop() ).customerType,
 		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
-		showTreatmentPlansReorderTest:
-			'treatment' === plans_reorder_abtest_variation || isTreatmentPlansReorderTest( state ),
 		isLoadingExperiment: false,
 		// IMPORTANT NOTE: The following is always set to true. It's a hack to resolve the bug reported
 		// in https://github.com/Automattic/wp-calypso/issues/50896, till a proper cleanup and deploy of

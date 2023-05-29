@@ -1,0 +1,37 @@
+@import "../../variables";
+
+.mastodon-preview__post-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: start;
+
+	margin-bottom: 0.625rem;
+
+	/* stylelint-disable-next-line scales/font-sizes */
+	font-size: 0.9375rem;
+	line-height: 1.47;
+}
+
+.mastodon-preview__post-avatar {
+	width: 46px;
+	height: 46px;
+
+	border-radius: 4px;
+}
+
+.mastodon-preview__post-header-user {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+}
+
+.mastodon-preview__post-header-displayname {
+	color: #000;
+	font-weight: 700;
+}
+
+.mastodon-preview__post-header-audience {
+	display: flex;
+	align-items: center;
+	gap: 0.25rem;
+}

@@ -29,9 +29,10 @@ let addedListener = false;
 // Replicates basic '$( el ).on( selector, cb )'.
 function addEditorListener( selector, cb ) {
 	clickOverrides[ selector ] = cb;
-
 	if ( ! addedListener ) {
-		document.querySelector( '#editor' )?.addEventListener( 'click', triggerOverrideHandler );
+		document
+			.querySelector( 'body.is-iframed' )
+			?.addEventListener( 'click', triggerOverrideHandler );
 		addedListener = true;
 	}
 }

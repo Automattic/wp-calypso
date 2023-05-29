@@ -30,7 +30,7 @@ import getAdminHelpResults from 'calypso/state/inline-help/selectors/get-admin-h
 import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
 import { useSiteOption } from 'calypso/state/sites/hooks';
 import { getSectionName } from 'calypso/state/ui/selectors';
-import { useHelpSearchQuery } from '../hooks/use-help-search-query';
+import { useHelpSearchQuery } from '../hooks';
 import PlaceholderLines from './placeholder-lines';
 import type { SearchResult } from '../types';
 

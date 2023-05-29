@@ -6,6 +6,7 @@ import {
 	BUILD_FLOW,
 	WRITE_FLOW,
 	START_WRITING_FLOW,
+	DESIGN_FIRST_FLOW,
 } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -77,14 +78,11 @@ const LaunchpadSitePreview = ( {
 	function getSitePreviewDefaultDevice( flow: string | null ) {
 		switch ( flow ) {
 			case NEWSLETTER_FLOW:
-				return DEVICE_TYPES.COMPUTER;
 			case FREE_FLOW:
-				return DEVICE_TYPES.COMPUTER;
 			case BUILD_FLOW:
-				return DEVICE_TYPES.COMPUTER;
 			case WRITE_FLOW:
-				return DEVICE_TYPES.COMPUTER;
 			case START_WRITING_FLOW:
+			case DESIGN_FIRST_FLOW:
 				return DEVICE_TYPES.COMPUTER;
 			default:
 				return DEVICE_TYPES.PHONE;
