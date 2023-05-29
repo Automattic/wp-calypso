@@ -64,8 +64,8 @@ describe( DataHelper.createSuiteTitle( 'Start Writing Tailored Onboarding' ), ()
 		} );
 
 		it( 'Add blog name and description', async function () {
-			await page.click( '.launchpad__task:nth-child(2) .button' );
-			await page.waitForLoadState( 'networkidle' );
+			await page.click( 'text=Name your blog' );
+			await page.waitForSelector( 'form.setup-form__form' );
 			await page.fill(
 				'input[name="setup-form-input-name"]',
 				`Start writing site ${ testUser.username }`
@@ -79,7 +79,7 @@ describe( DataHelper.createSuiteTitle( 'Start Writing Tailored Onboarding' ), ()
 
 		it( 'Navigate choose a domain', async function () {
 			await page.waitForURL( /.*start-writing\/launchpad.*/ );
-			await page.click( '.launchpad__task:nth-child(3) .button' );
+			await page.click( 'text=Choose a domain' );
 		} );
 
 		it( 'Search for a domain', async function () {
@@ -93,7 +93,7 @@ describe( DataHelper.createSuiteTitle( 'Start Writing Tailored Onboarding' ), ()
 
 		it( 'Navigate choose a plan', async function () {
 			await page.waitForURL( /.*start-writing\/launchpad.*/ );
-			await page.click( '.launchpad__task:nth-child(4) .button' );
+			await page.click( 'text=Choose a plan' );
 		} );
 
 		it( 'Select WordPress.com Personal plan', async function () {
@@ -103,7 +103,7 @@ describe( DataHelper.createSuiteTitle( 'Start Writing Tailored Onboarding' ), ()
 
 		it( 'Launch site', async function () {
 			await page.waitForURL( /.*start-writing\/launchpad.*/ );
-			await page.click( '.launchpad__task:nth-child(5) .button' );
+			await page.click( 'text=Launch your blog' );
 		} );
 
 		it( 'Land in checkout cart', async function () {
