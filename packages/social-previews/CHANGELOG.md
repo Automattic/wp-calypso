@@ -4,6 +4,7 @@
 
 - Added Mastodon and Instagram previews
 - Fixed hyperlinks for Facebook
+- Fixed multiple empty lines issue in preview text
 
 ## v2.0.0 (2023-05-24)
 
