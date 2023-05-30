@@ -387,6 +387,7 @@ import {
 	FEATURE_PAYMENT_TRANSACTION_FEES_10,
 	FEATURE_PAYMENT_TRANSACTION_FEES_8,
 	FEATURE_PAYMENT_TRANSACTION_FEES_4,
+	FEATURE_PAYMENT_TRANSACTION_FEES_2,
 	TYPE_WOOEXPRESS_SMALL,
 	TYPE_WOOEXPRESS_MEDIUM,
 	FEATURE_PREMIUM_STORE_THEMES,
@@ -405,6 +406,7 @@ import {
 	FEATURE_STREAMLINED_CHECKOUT,
 	FEATURE_SELL_60_COUNTRIES,
 	FEATURE_SHIPPING_INTEGRATIONS,
+	FEATURE_THE_READER,
 } from './constants';
 import { is2023PricingGridEnabled } from './plans-utilities';
 import type {
@@ -492,6 +494,8 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		i18n.translate(
 			'Get started for free with unlimited links and keep track of how many visits you get.'
 		),
+	getBlogOnboardingTagLine: () =>
+		i18n.translate( 'Not a trial – blog free for as long as you like.' ),
 	getDescription: () =>
 		i18n.translate(
 			'Get a free website and be on your way to publishing your ' +
@@ -583,6 +587,24 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_ALWAYS_ONLINE,
 		FEATURE_CONTACT_FORM_JP,
 		FEATURE_LTD_SOCIAL_MEDIA_JP,
+	],
+	getBlogOnboardingSignupFeatures: () => [
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_BEAUTIFUL_THEMES,
+		FEATURE_PAGES,
+		FEATURE_USERS,
+		FEATURE_POST_EDITS_HISTORY,
+		FEATURE_SECURITY_BRUTE_FORCE,
+		FEATURE_ALWAYS_ONLINE,
+		FEATURE_THE_READER,
+	],
+	getBlogOnboardingSignupJetpackFeatures: () => [
+		FEATURE_NEWSLETTER_IMPORT_SUBSCRIBERS_FREE,
+		FEATURE_UNLIMITED_EMAILS,
+		FEATURE_NEWSLETTERS_RSS,
+		FEATURE_STATS_JP,
+		FEATURE_LTD_SOCIAL_MEDIA_JP,
+		FEATURE_SPAM_JP,
 	],
 	getIncludedFeatures: () => [],
 	getInferiorFeatures: () => [],
@@ -712,6 +734,10 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		i18n.translate(
 			'Take Link In Bio to the next level with gated content, paid subscribers, and an ad-free site.'
 		),
+	getBlogOnboardingTagLine: () =>
+		i18n.translate(
+			'Take the next step with gated content, paid subscribers, and an ad-free site.'
+		),
 	getDescription: () =>
 		i18n.translate(
 			'{{strong}}Best for personal use:{{/strong}} Boost your' +
@@ -802,6 +828,19 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SUPPORT_EMAIL,
 	],
 	getLinkInBioHighlightedFeatures: () => [ FEATURE_CUSTOM_DOMAIN ],
+	getBlogOnboardingSignupFeatures: () => [
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_AD_FREE_EXPERIENCE,
+		FEATURE_FAST_DNS,
+		FEATURE_SUPPORT_EMAIL,
+		FEATURE_PAYMENT_TRANSACTION_FEES_8,
+	],
+	getBlogOnboardingHighlightedFeatures: () => [ FEATURE_CUSTOM_DOMAIN ],
+	getBlogOnboardingSignupJetpackFeatures: () => [
+		FEATURE_UNLIMITED_SUBSCRIBERS,
+		FEATURE_PREMIUM_CONTENT_JP,
+		FEATURE_PAID_SUBSCRIBERS_JP,
+	],
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [ FEATURE_AUDIO_UPLOADS ],
 	getInferiorFeatures: () => [],
@@ -1184,6 +1223,10 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		i18n.translate( 'Make it even more memorable with premium designs and style customization.' ),
 	getLinkInBioTagLine: () =>
 		i18n.translate( 'Make a great first impression with premium designs and style customization.' ),
+	getBlogOnboardingTagLine: () =>
+		i18n.translate(
+			'Make it even more memorable with premium designs, 4K video, and style customization.'
+		),
 	getDescription: () =>
 		i18n.translate(
 			'{{strong}}Best for freelancers:{{/strong}} Build a unique website with advanced design tools, CSS editing, lots of space for audio and video,' +
@@ -1263,6 +1306,20 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_WORDADS,
 	],
 	getLinkInBioHighlightedFeatures: () => [ FEATURE_CUSTOM_DOMAIN ],
+	getBlogOnboardingSignupFeatures: () => [
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_PREMIUM_THEMES_V2,
+		FEATURE_STYLE_CUSTOMIZATION,
+		FEATURE_LIVE_CHAT_SUPPORT,
+		FEATURE_WORDADS,
+		FEATURE_PAYMENT_TRANSACTION_FEES_4,
+	],
+	getBlogOnboardingHighlightedFeatures: () => [ FEATURE_CUSTOM_DOMAIN ],
+	getBlogOnboardingSignupJetpackFeatures: () => [
+		FEATURE_VIDEOPRESS_JP,
+		FEATURE_UNLTD_SOCIAL_MEDIA_JP,
+		FEATURE_SITE_ACTIVITY_LOG_JP,
+	],
 	getBlogSignupFeatures: () =>
 		[
 			FEATURE_MONETISE,
@@ -1357,6 +1414,8 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	getStoreAudience: () => i18n.translate( 'The plan for small businesses' ),
 	getPlanTagline: () =>
 		i18n.translate( 'Unlock the power of WordPress with plugins and cloud tools.' ),
+	getBlogOnboardingTagLine: () =>
+		i18n.translate( 'Expand your blog with plugins and powerful tools to help you scale.' ),
 	getDescription: () =>
 		i18n.translate(
 			'{{strong}}Best for small businesses:{{/strong}} Power your' +
@@ -1501,6 +1560,20 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_WP_UPDATES,
 			FEATURE_MULTI_SITE,
 		] ),
+	getBlogOnboardingSignupFeatures: () => [
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_PLUGINS_THEMES,
+		FEATURE_SECURITY_MALWARE,
+		FEATURE_WP_UPDATES,
+		FEATURE_PAYMENT_TRANSACTION_FEES_2,
+	],
+	getBlogOnboardingSignupJetpackFeatures: () => [
+		FEATURE_SEO_JP,
+		FEATURE_PLUGIN_AUTOUPDATE_JP,
+		FEATURE_REALTIME_BACKUPS_JP,
+		FEATURE_ONE_CLICK_RESTORE_V2,
+		FEATURE_ES_SEARCH_JP,
+	],
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [
 		FEATURE_AUDIO_UPLOADS,

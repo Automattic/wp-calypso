@@ -71,7 +71,7 @@ const hosting: Flow = {
 
 				case 'processing': {
 					const destination = addQueryArgs( '/sites', {
-						'new-site': providedDependencies.siteSlug,
+						'new-site': providedDependencies?.siteId,
 					} );
 					persistSignupDestination( destination );
 					setSignupCompleteSlug( providedDependencies?.siteSlug );

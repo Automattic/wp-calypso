@@ -68,6 +68,10 @@ const SetupBlog: Step = ( { navigation, flow } ) => {
 		}
 	};
 
+	if ( ! site ) {
+		return null;
+	}
+
 	return (
 		<StepContainer
 			stepName="setup-blog"
