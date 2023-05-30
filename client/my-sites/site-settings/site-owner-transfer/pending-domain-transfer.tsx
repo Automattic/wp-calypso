@@ -16,7 +16,7 @@ const PendingDomainTransfer = ( { domain }: { domain: ResponseDomain } ) => {
 						sprintf(
 							// translators: %s is the domain name
 							translate(
-								'There are pending domain transfers for <strong>%s</strong>. Please, complete them before transferring the site.'
+								'There are pending domain transfers for <strong>%s</strong>. Please complete them before transferring the site.'
 							),
 							domain.name
 						),

@@ -9,24 +9,23 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import { TRANSFER_SITE } from 'calypso/lib/url/support';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PendingDomainTransfer from './pending-domain-transfer';
 import StartSiteOwnerTransfer from './start-site-owner-transfer';
 
 const SiteOwnerTransfer = () => {
-	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
-	const selectedSiteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
+	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
 
 	const translate = useTranslate();
-	const nonWPCOMDomains = useSelector( ( state ) =>
-		getDomainsBySiteId( state, selectedSiteId as unknown as number )
+	const nonWpcomDomains = useSelector( ( state ) =>
+		getDomainsBySiteId( state, selectedSite?.ID )
 	)?.filter( ( domain ) => ! domain.isWPCOMDomain );
 
-	const pendingDomain = nonWPCOMDomains?.find(
+	const pendingDomain = nonWpcomDomains?.find(
 		( wpcomDomain: ResponseDomain ) => wpcomDomain.pendingTransfer
 	);
 
-	if ( ! selectedSiteId || ! selectedSiteSlug ) {
+	if ( ! selectedSite?.ID || ! selectedSite?.slug ) {
 		return null;
 	}
 	return (
@@ -47,7 +46,7 @@ const SiteOwnerTransfer = () => {
 				path="/settings/start-site-transfer/:site"
 				title="Settings > Start Site Transfer"
 			/>
-			<HeaderCake backHref={ '/settings/general/' + selectedSiteSlug } isCompact={ true }>
+			<HeaderCake backHref={ '/settings/general/' + selectedSite.slug } isCompact={ true }>
 				<h1>{ translate( 'Site Transfer' ) }</h1>
 			</HeaderCake>
 			<ActionPanel>
