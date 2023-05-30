@@ -1,9 +1,16 @@
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 
+const isIdnDomain = ( domainName ) =>
+	/^(?!-)(?:[\p{L}0-9-]{0,61}[\p{L}0-9]\.)+[\p{L}]{2,}$/u.test( domainName );
+
 export function getDomainNameValidationErrorMessage( domainName ) {
 	if ( ! domainName ) {
 		return __( 'Please enter your domain before continuing.' );
+	}
+
+	if ( isIdnDomain( domainName ) ) {
+		return __( 'Internationalized Domain Names (IDNs) are currently not supported.' );
 	}
 
 	if (
