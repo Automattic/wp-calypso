@@ -479,29 +479,15 @@ export const HelpCenterContactForm = () => {
 	}
 
 	const {
-		isFetching: isFetchingGPTUrls,
-		isError: isGPTLinksError,
-		data: links,
-	} = useJetpackSearchAIQuery( {
-		siteId: '9619154',
-		query: jpSearchAiQueryText,
-		stopAt: 'urls',
-		enabled: enableGPTResponse,
-	} );
-
-	const {
-		isFetching: isFetchingGPTAnswer,
-		isError: isGPTResponseError,
+		isFetching: isFetchingGPTResponse,
+		isError: isGPTError,
 		data: gptResponse,
 	} = useJetpackSearchAIQuery( {
 		siteId: '9619154',
 		query: jpSearchAiQueryText,
 		stopAt: 'response',
-		enabled: !! links?.urls,
+		enabled: enableGPTResponse,
 	} );
-
-	const isFetchingGPTResponse = isFetchingGPTUrls || isFetchingGPTAnswer;
-	const isGPTError = isGPTLinksError || isGPTResponseError;
 
 	const getCTALabel = () => {
 		const showingHelpOrGPTResults = showingSearchResults || showingGPTResponse;

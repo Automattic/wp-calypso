@@ -69,25 +69,15 @@ export function HelpCenterGPT() {
 
 	const query = message ?? '';
 
-	// First fetch the links
-	const { data: links, isError: isLinksError } = useJetpackSearchAIQuery( {
-		siteId: '9619154',
-		query: query,
-		stopAt: 'urls',
-		enabled: true,
-	} );
-
 	// Then fetch the response
-	const { data, isError: isResponseError } = useJetpackSearchAIQuery( {
+	const { data, isError: isGPTError } = useJetpackSearchAIQuery( {
 		siteId: '9619154',
 		query: query,
 		stopAt: 'response',
-		enabled: !! links?.urls,
+		enabled: true,
 	} );
 
 	const allowedTags = [ 'a', 'p', 'ol', 'ul', 'li', 'br', 'b', 'strong', 'i', 'em' ];
-
-	const isGPTError = isLinksError || isResponseError;
 
 	useEffect( () => {
 		if ( data?.response ) {
