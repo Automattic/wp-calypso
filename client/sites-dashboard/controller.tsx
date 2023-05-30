@@ -125,7 +125,7 @@ function sitesDashboard( context: PageJSContext, next: () => void ) {
 						: undefined,
 					search: context.query.search,
 					status: context.query.status,
-					newSiteSlug: context.query[ 'new-site' ] || undefined,
+					newSiteID: parseInt( context.query[ 'new-site' ] ) || undefined,
 				} }
 			/>
 		</>
