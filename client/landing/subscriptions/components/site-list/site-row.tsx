@@ -75,8 +75,8 @@ export default function SiteRow( {
 	const locale = useLocale();
 
 	const individualPagePath = useMemo( () => {
-		return `/subscriptions/site/${ blog_ID }` + ( locale !== 'en' ? '/' + locale : '' );
-	}, [ blog_ID, locale ] );
+		return `/subscriptions/site/${ blog_ID }`;
+	}, [ blog_ID ] );
 
 	const navigateToIndividualSubscriptionPage = ( event: React.MouseEvent ) => {
 		event.preventDefault();
