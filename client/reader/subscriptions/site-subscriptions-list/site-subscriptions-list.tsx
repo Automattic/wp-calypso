@@ -1,6 +1,8 @@
 import { Spinner } from '@automattic/components';
 import { SubscriptionManager } from '@automattic/data-stores';
+import SearchInput from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
+import { SearchIcon } from 'calypso/landing/subscriptions/components/icons';
 import { Notice, NoticeType } from 'calypso/landing/subscriptions/components/notice';
 import { SiteList } from 'calypso/landing/subscriptions/components/site-list';
 import './styles.scss';
@@ -31,7 +33,18 @@ const SiteSubscriptionsList = () => {
 		);
 	}
 
-	return <SiteList sites={ subscriptions } />;
+	return (
+		<div>
+			<div className="subscriptions-manager__list-actions-bar">
+				<SearchInput
+					placeholder={ translate( 'Search by site name or address…' ) }
+					searchIcon={ <SearchIcon size={ 18 } /> }
+					onSearch={ () => undefined }
+				/>
+			</div>
+			<SiteList sites={ subscriptions } />
+		</div>
+	);
 };
 
 export default SiteSubscriptionsList;

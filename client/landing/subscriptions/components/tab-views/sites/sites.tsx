@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { SubscriptionManager, Reader } from '@automattic/data-stores';
 import SearchInput from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
@@ -33,7 +32,6 @@ const Sites = () => {
 	const sortOptions = useSortOptions( translate );
 	// todo: translate when we have agreed on the error message
 	const errorMessage = error ? 'An error occurred while fetching your subscriptions.' : '';
-	const isListControlsEnabled = config.isEnabled( 'subscription-management/sites-list-controls' );
 
 	if ( ! isLoading && ! totalCount ) {
 		return (
@@ -45,16 +43,14 @@ const Sites = () => {
 
 	return (
 		<TabView errorMessage={ errorMessage } isLoading={ isLoading }>
-			{ isListControlsEnabled && (
-				<div className="subscriptions-manager__list-actions-bar">
-					<SearchInput
-						placeholder={ translate( 'Search by site name or address…' ) }
-						searchIcon={ <SearchIcon size={ 18 } /> }
-						onSearch={ handleSearch }
-					/>
-					<SortControls options={ sortOptions } value={ sortTerm } onChange={ setSortTerm } />
-				</div>
-			) }
+			<div className="subscriptions-manager__list-actions-bar">
+				<SearchInput
+					placeholder={ translate( 'Search by site name or address…' ) }
+					searchIcon={ <SearchIcon size={ 18 } /> }
+					onSearch={ handleSearch }
+				/>
+				<SortControls options={ sortOptions } value={ sortTerm } onChange={ setSortTerm } />
+			</div>
 
 			<SiteList sites={ subscriptions } />
 

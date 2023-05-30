@@ -1,11 +1,13 @@
 @import "@automattic/typography/styles/variables";
 @import "@automattic/color-studio/dist/color-variables";
+@import "client/landing/subscriptions/styles/search-component";
 
 .reader-subscription-manager.main {
 	max-width: 1168px;
 	margin: 0;
 	padding-left: 32px;
 
+	@extend %search-component-subscriptions-style;
 
 	& .formatted-header {
 		&__title {
