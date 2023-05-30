@@ -2,7 +2,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useSelector } from 'react-redux';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { useSitesDashboardCreateSiteUrl } from '../hooks/use-sites-dashboard-create-site-url';
-import { getMigrateSiteUrl } from '../utils';
+import { useSitesDashboardImportSiteUrl } from '../hooks/use-sites-dashboard-import-site-url';
 import { EmptyStateCTA } from './empty-state-cta';
 
 export const CreateSiteCTA = () => {
@@ -27,12 +27,13 @@ export const CreateSiteCTA = () => {
 
 export const MigrateSiteCTA = () => {
 	const { __ } = useI18n();
+	const importSiteUrl = useSitesDashboardImportSiteUrl();
 
 	return (
 		<EmptyStateCTA
 			description={ __( 'Bring a site to WordPress.com' ) }
 			label={ __( 'Migrate a site' ) }
-			target={ getMigrateSiteUrl() }
+			target={ importSiteUrl }
 		/>
 	);
 };

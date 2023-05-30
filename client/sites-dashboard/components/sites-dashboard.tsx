@@ -18,7 +18,8 @@ import { withoutHttp } from 'calypso/lib/url';
 import { successNotice } from 'calypso/state/notices/actions';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 import { useSitesDashboardCreateSiteUrl } from '../hooks/use-sites-dashboard-create-site-url';
-import { getMigrateSiteUrl, MEDIA_QUERIES, TRACK_SOURCE_NAME } from '../utils';
+import { useSitesDashboardImportSiteUrl } from '../hooks/use-sites-dashboard-import-site-url';
+import { MEDIA_QUERIES, TRACK_SOURCE_NAME } from '../utils';
 import { NoSitesMessage } from './no-sites-message';
 import {
 	SitesDashboardQueryParams,
@@ -145,6 +146,7 @@ export function SitesDashboard( {
 	queryParams: { page = 1, perPage = 96, search, status = 'all', newSiteID },
 }: SitesDashboardProps ) {
 	const createSiteUrl = useSitesDashboardCreateSiteUrl();
+	const importSiteUrl = useSitesDashboardImportSiteUrl();
 	const { __, _n } = useI18n();
 	const { data: allSites = [], isLoading } = useSiteExcerptsQuery();
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
@@ -197,7 +199,7 @@ export function SitesDashboard( {
 							onClick={ () => {
 								recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_import' );
 							} }
-							href={ getMigrateSiteUrl() }
+							href={ importSiteUrl }
 							icon="arrow-down"
 						>
 							<span>{ __( 'Import an existing site' ) }</span>
