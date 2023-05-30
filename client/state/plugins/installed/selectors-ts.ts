@@ -11,9 +11,11 @@ import type {
 	InstalledPluginData,
 	Plugin,
 	PluginFilter,
+	PluginSite,
 	PluginSites,
 	PluginStatus,
 } from './types';
+import type { SiteDetails } from '@automattic/data-stores';
 import type { AppState } from 'calypso/types';
 
 import 'calypso/state/plugins/init';
@@ -34,7 +36,7 @@ export function isEqualSlugOrId( pluginSlug: string, plugin: Plugin ) {
 	return plugin.slug === pluginSlug || plugin?.id?.split( '/' ).shift() === pluginSlug;
 }
 
-export function isRequesting( state: AppState, siteId: number ) {
+export function isRequesting( state: AppState, siteId: number ): boolean {
 	if ( typeof state.plugins.installed.isRequesting[ siteId ] === 'undefined' ) {
 		return false;
 	}
@@ -46,7 +48,7 @@ export function isRequestingForSites( state: AppState, sites: number[] ) {
 	return sites.some( ( siteId ) => isRequesting( state, siteId ) );
 }
 
-export function isRequestingForAllSites( state: AppState ) {
+export function isRequestingForAllSites( state: AppState ): boolean {
 	return state.plugins.installed.isRequestingAll;
 }
 
@@ -59,7 +61,7 @@ const getSiteIdsThatHavePlugins = createSelector(
 		return Object.keys( state.plugins.installed.plugins ).map( ( siteId ) => Number( siteId ) );
 	},
 	( state: AppState ) => [ state.plugins.installed.plugins ]
-);
+) as ( state: AppState ) => number[];
 
 /**
  * The server returns plugins store at state.plugins.installed.plugins are indexed by site, which means
@@ -226,7 +228,7 @@ export const getFilteredAndSortedPlugins = createSelector(
 	( state: AppState, siteIds: number[], pluginFilter?: PluginFilter ) => {
 		return [ siteIds, pluginFilter ].flat().join( '-' );
 	}
-);
+) as ( state: AppState, siteIds: number[], pluginFilter?: PluginFilter ) => Plugin[];
 
 export function getPluginsWithUpdates( state: AppState, siteIds: number[] ) {
 	return getFilteredAndSortedPlugins( state, siteIds, 'updates' ).map( ( plugin ) => ( {
@@ -264,11 +266,11 @@ export const getPluginOnSite = createSelector(
 	( state: AppState, siteId: number, pluginSlug: string ) => {
 		const plugin = getAllPluginsIndexedByPluginSlug( state )[ pluginSlug ];
 
-		const { sites, ...pluginWithoutSites } = plugin;
-
 		if ( ! plugin || ! plugin.sites[ siteId ] ) {
 			return undefined;
 		}
+
+		const { sites, ...pluginWithoutSites } = plugin;
 
 		// To keep compatibility with some behavior that existed before the refactor
 		// in #73296 the returned object has the site specific data lifted onto it, and
@@ -280,7 +282,7 @@ export const getPluginOnSite = createSelector(
 		};
 	},
 	( state: AppState ) => [ getAllPluginsIndexedByPluginSlug( state ) ]
-);
+) as ( state: AppState, siteId: number, pluginSlug: string ) => Plugin & PluginSite;
 
 export const getPluginsOnSite = createSelector(
 	( state: AppState, siteId: number, pluginSlugs: string[] ) => {
@@ -290,7 +292,7 @@ export const getPluginsOnSite = createSelector(
 		...pluginSlugs.map( ( pluginSlug ) => getPluginOnSite( state, siteId, pluginSlug ) ),
 	],
 	( state: AppState, siteId: number, pluginSlugs: string[] ) => [ siteId, ...pluginSlugs ].join()
-);
+) as ( state: AppState, siteId: number, pluginSlugs: string[] ) => ( Plugin & PluginSite )[];
 
 export const getSitesWithPlugin = createSelector(
 	( state: AppState, siteIds: number[], pluginSlug: string ) => {
@@ -311,7 +313,7 @@ export const getSitesWithPlugin = createSelector(
 	},
 	( state: AppState ) => [ getAllPluginsIndexedByPluginSlug( state ), getSitesItems( state ) ],
 	( state: AppState, siteIds: number[], pluginSlug: string ) => [ pluginSlug, ...siteIds ].join()
-);
+) as ( state: AppState, siteIds: number[], pluginSlug: string ) => number[];
 
 export const getSiteObjectsWithPlugin = createSelector(
 	( state: AppState, siteIds: number[], pluginSlug: string ) => {
@@ -320,7 +322,7 @@ export const getSiteObjectsWithPlugin = createSelector(
 	},
 	( state: AppState ) => [ getAllPluginsIndexedByPluginSlug( state ), getSitesItems( state ) ],
 	( state: AppState, siteIds: number[], pluginSlug: string ) => [ pluginSlug, ...siteIds ].join()
-);
+) as ( state: AppState, siteIds: number[], pluginSlug: string ) => SiteDetails[];
 
 export const getSitesWithoutPlugin = createSelector(
 	( state: AppState, siteIds: number[], pluginSlug: string ) => {
@@ -342,7 +344,7 @@ export const getSitesWithoutPlugin = createSelector(
 	},
 	( state: AppState ) => [ getAllPluginsIndexedByPluginSlug( state ), getSitesItems( state ) ],
 	( state: AppState, siteIds: number[], pluginSlug: string ) => [ pluginSlug, ...siteIds ].join()
-);
+) as ( state: AppState, siteIds: number[], pluginSlug: string ) => number[];
 
 export const getSiteObjectsWithoutPlugin = createSelector(
 	( state: AppState, siteIds: number[], pluginSlug: string ) => {
@@ -351,9 +353,13 @@ export const getSiteObjectsWithoutPlugin = createSelector(
 	},
 	( state: AppState ) => [ getAllPluginsIndexedByPluginSlug( state ), getSitesItems( state ) ],
 	( state: AppState, siteIds: number[], pluginSlug: string ) => [ pluginSlug, ...siteIds ].join()
-);
+) as ( state: AppState, siteIds: number[], pluginSlug: string ) => SiteDetails[];
 
-export function getStatusForPlugin( state: AppState, siteId: number, pluginId: string ) {
+export function getStatusForPlugin(
+	state: AppState,
+	siteId: number,
+	pluginId: string
+): { [ key: string ]: string } | undefined {
 	if ( typeof state.plugins.installed.status[ siteId ]?.[ pluginId ] === 'undefined' ) {
 		return undefined;
 	}
@@ -389,7 +395,7 @@ export function isPluginActionStatus(
 	}
 
 	const actions = Array.isArray( action ) ? action : [ action ];
-	return actions.includes( pluginStatus.action ) && status === pluginStatus.status;
+	return actions.includes( pluginStatus?.action ) && status === pluginStatus.status;
 }
 
 /**

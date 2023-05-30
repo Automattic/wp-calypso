@@ -36,13 +36,15 @@ export type Plugin = {
 	wporg?: boolean;
 };
 
+export type PluginSite = {
+	active: boolean;
+	autoupdate: boolean;
+	update?: PluginUpdate;
+	version: string;
+};
+
 export type PluginSites = {
-	[ siteId: string ]: {
-		active: boolean;
-		autoupdate: boolean;
-		update?: PluginUpdate;
-		version: string;
-	};
+	[ siteId: string ]: PluginSite;
 };
 
 export type PluginUpdate = {
