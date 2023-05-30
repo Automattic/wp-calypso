@@ -3,10 +3,11 @@ import Checklist from './checklist';
 
 export interface LaunchpadProps {
 	siteSlug: string;
+	checklistSlug?: string | 0 | null | undefined;
 }
 
-const Launchpad = ( { siteSlug }: LaunchpadProps ) => {
-	const { isFetchedAfterMount, data } = useLaunchpad( siteSlug || '' );
+const Launchpad = ( { siteSlug, checklistSlug }: LaunchpadProps ) => {
+	const { isFetchedAfterMount, data } = useLaunchpad( siteSlug || '', checklistSlug );
 
 	const tasks = data.checklist || [];
 
