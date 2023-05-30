@@ -518,4 +518,5 @@ export interface AssembleSiteOptions {
 	footerHtml?: string;
 	globalStyles?: GlobalStyles;
 	shouldResetContent?: boolean;
+	siteSetupOption?: string;
 }

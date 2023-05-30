@@ -5,7 +5,11 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
 import clockIcon from 'calypso/assets/images/jetpack/clock-icon.svg';
 import SelectDropdown from 'calypso/components/select-dropdown';
-import { useUpdateMonitorSettings, useJetpackAgencyDashboardRecordTrackEvent } from '../../hooks';
+import {
+	useUpdateMonitorSettings,
+	useJetpackAgencyDashboardRecordTrackEvent,
+	useShowVerifiedBadge,
+} from '../../hooks';
 import {
 	availableNotificationDurations as durations,
 	getSiteCountText,
@@ -45,6 +49,7 @@ export default function NotificationSettings( {
 	const translate = useTranslate();
 	const { updateMonitorSettings, isLoading, isComplete } = useUpdateMonitorSettings( sites );
 	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( sites, isLargeScreen );
+	const { verifiedItem, handleSetVerifiedItem } = useShowVerifiedBadge();
 
 	const defaultDuration = durations.find( ( duration ) => duration.time === 5 );
 
@@ -186,6 +191,7 @@ export default function NotificationSettings( {
 				allEmailItems={ allEmailItems }
 				setAllEmailItems={ setAllEmailItems }
 				recordEvent={ recordEvent }
+				setVerifiedEmail={ ( item ) => handleSetVerifiedItem( 'email', item ) }
 			/>
 		);
 	}
@@ -276,7 +282,14 @@ export default function NotificationSettings( {
 							/>
 						</div>
 						<div className="notification-settings__toggle-content">
-							<div className="notification-settings__content-heading">{ translate( 'Email' ) }</div>
+							<div className="notification-settings__content-heading-with-beta">
+								<div className="notification-settings__content-heading">
+									{ translate( 'Email' ) }
+								</div>
+								{ isMultipleEmailEnabled && (
+									<div className="notification-settings__beta-tag">{ translate( 'BETA' ) }</div>
+								) }
+							</div>
 							{ isMultipleEmailEnabled ? (
 								<>
 									<div className="notification-settings__content-sub-heading">
@@ -298,6 +311,7 @@ export default function NotificationSettings( {
 							toggleModal={ toggleAddEmailModal }
 							allEmailItems={ allEmailItems }
 							recordEvent={ recordEvent }
+							verifiedEmail={ verifiedItem?.email }
 						/>
 					) }
 				</div>

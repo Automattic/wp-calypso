@@ -34,7 +34,12 @@ import {
 	VIPLogo,
 	WooLogo,
 } from '@automattic/components';
-import { isHostingFlow, isLinkInBioFlow, isNewsletterFlow } from '@automattic/onboarding';
+import {
+	isHostingFlow,
+	isLinkInBioFlow,
+	isNewsletterFlow,
+	isBlogOnboardingFlow,
+} from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
@@ -497,7 +502,14 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderPlanPrice( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { isReskinned, isLargeCurrency, translate, isPlanUpgradeCreditEligible } = this.props;
+		const {
+			isReskinned,
+			isLargeCurrency,
+			translate,
+			isPlanUpgradeCreditEligible,
+			currentSitePlanSlug,
+			siteId,
+		} = this.props;
 
 		return planPropertiesObj
 			.filter( ( { isVisible } ) => isVisible )
@@ -522,6 +534,8 @@ export class PlanFeatures2023Grid extends Component<
 								planProperties={ properties }
 								is2023OnboardingPricingGrid={ true }
 								isLargeCurrency={ isLargeCurrency }
+								currentSitePlanSlug={ currentSitePlanSlug }
+								siteId={ siteId }
 							/>
 						) }
 						{ isWooExpressPlus && (
@@ -535,6 +549,7 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderBillingTimeframe( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
+		const { currentSitePlanSlug, siteId } = this.props;
 		return planPropertiesObj
 			.filter( ( { isVisible } ) => isVisible )
 			.map( ( properties ) => {
@@ -552,6 +567,8 @@ export class PlanFeatures2023Grid extends Component<
 							planName={ planName }
 							billingTimeframe={ planConstantObj.getBillingTimeFrame() }
 							billingPeriod={ billingPeriod }
+							currentSitePlanSlug={ currentSitePlanSlug }
+							siteId={ siteId }
 						/>
 					</Container>
 				);
@@ -940,6 +957,15 @@ const ConnectedPlanFeatures2023Grid = connect(
 					planConstantObj?.getLinkInBioSignupFeatures?.() ?? []
 				);
 				tagline = planConstantObj.getLinkInBioTagLine?.() ?? '';
+			} else if ( isBlogOnboardingFlow( flowName ) ) {
+				planFeatures = getPlanFeaturesObject(
+					planConstantObj?.getBlogOnboardingSignupFeatures?.() ?? []
+				);
+
+				jetpackFeatures = getPlanFeaturesObject(
+					planConstantObj.getBlogOnboardingSignupJetpackFeatures?.() ?? []
+				);
+				tagline = planConstantObj.getBlogOnboardingTagLine?.() ?? '';
 			} else {
 				planFeatures = getPlanFeaturesObject(
 					planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ?? []

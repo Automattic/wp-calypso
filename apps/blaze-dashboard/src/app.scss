@@ -1,0 +1,24 @@
+@import "./styles/theme.scss";
+@import "./styles/layout.scss";
+@import "./styles/wp-admin.scss";
+@import "./styles/promote-widget.scss";
+
+.jp-blaze-dashboard {
+	.promote-post-i2 .jetpack-header {
+		padding: 0;
+
+		// Align with navigation.
+		@media (max-width: 660px) {
+			padding-left: 16px;
+		}
+	}
+
+	.promote-post-i2 .section-nav {
+		overflow: hidden;
+	}
+
+	.promote-post-i2__top-bar-buttons button {
+		padding: 8px 14px;
+		line-height: 22px;
+	}
+}

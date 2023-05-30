@@ -559,20 +559,20 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			);
 		}
 
-		if (
-			shouldLimitGlobalStyles &&
-			selectedStyleVariation &&
-			selectedStyleVariation.slug !== DEFAULT_VARIATION_SLUG
-		) {
-			return (
-				<Button primary borderless={ false } onClick={ () => unlockPremiumGlobalStyles() }>
-					{ translate( 'Unlock this style' ) }
-				</Button>
-			);
-		}
+		const selectStyle = () => {
+			if (
+				shouldLimitGlobalStyles &&
+				selectedStyleVariation &&
+				selectedStyleVariation.slug !== DEFAULT_VARIATION_SLUG
+			) {
+				unlockPremiumGlobalStyles();
+			} else {
+				pickDesign();
+			}
+		};
 
 		return (
-			<Button primary borderless={ false } onClick={ () => pickDesign() }>
+			<Button primary borderless={ false } onClick={ selectStyle }>
 				{ translate( 'Continue' ) }
 			</Button>
 		);

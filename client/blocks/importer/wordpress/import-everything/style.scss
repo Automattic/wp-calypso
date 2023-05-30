@@ -197,6 +197,37 @@
 				margin: 0 8px;
 			}
 		}
+
+		.action-buttons__install-jetpack-manually {
+			text-decoration: underline;
+		}
+	}
+	.select-items-wrapper {
+		display: flex;
+		justify-content: center;
+
+		.select-items {
+			border: solid 1px var(--studio-gray-5);
+			border-radius: 4px;
+			margin: 12px 0 24px;
+			padding-left: 50px;
+			max-width: 525px;
+			box-sizing: border-box;
+
+			.select-items__item {
+				padding: 1rem 0;
+				width: 100%;
+			}
+
+			.select-items__item-icon {
+				top: 20px;
+				left: -38px;
+			}
+
+			.select-items__item-button {
+				margin-right: 1rem;
+			}
+		}
 	}
 }
 

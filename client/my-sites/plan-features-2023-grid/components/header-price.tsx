@@ -3,8 +3,8 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import PlanPrice from 'calypso/my-sites/plan-price';
-import usePlanPrices from 'calypso/my-sites/plans/hooks/use-plan-prices';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import { usePlanPricesDisplay } from '../hooks/use-plan-prices-display';
 import type { PlanProperties } from '../types';
 
 interface PlanFeatures2023GridHeaderPriceProps {
@@ -12,6 +12,8 @@ interface PlanFeatures2023GridHeaderPriceProps {
 	is2023OnboardingPricingGrid: boolean;
 	isLargeCurrency: boolean;
 	isPlanUpgradeCreditEligible: boolean;
+	currentSitePlanSlug?: string;
+	siteId?: number | null;
 }
 
 const PricesGroup = styled.div< { isLargeCurrency: boolean } >`
@@ -127,17 +129,19 @@ const PlanFeatures2023GridHeaderPrice = ( {
 	is2023OnboardingPricingGrid,
 	isLargeCurrency,
 	isPlanUpgradeCreditEligible,
+	currentSitePlanSlug,
+	siteId,
 }: PlanFeatures2023GridHeaderPriceProps ) => {
 	const translate = useTranslate();
 	const { planName, showMonthlyPrice } = planProperties;
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
-	const planPrices = usePlanPrices( {
+	const planPrices = usePlanPricesDisplay( {
 		planSlug: planName as PlanSlug,
 		returnMonthly: showMonthlyPrice,
+		currentSitePlanSlug,
+		siteId,
 	} );
-	const shouldShowDiscountedPrice = Boolean(
-		planPrices.planDiscountedRawPrice || planPrices.discountedRawPrice
-	);
+	const shouldShowDiscountedPrice = Boolean( planPrices.discountedPrice );
 
 	if ( isWpcomEnterpriseGridPlan( planName ) ) {
 		return null;
@@ -155,7 +159,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 					<PricesGroup isLargeCurrency={ isLargeCurrency }>
 						<PlanPrice
 							currencyCode={ currencyCode }
-							rawPrice={ planPrices.rawPrice }
+							rawPrice={ planPrices.originalPrice }
 							displayPerMonthNotation={ false }
 							is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
 							isLargeCurrency={ isLargeCurrency }
@@ -163,7 +167,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 						/>
 						<PlanPrice
 							currencyCode={ currencyCode }
-							rawPrice={ planPrices.planDiscountedRawPrice || planPrices.discountedRawPrice }
+							rawPrice={ planPrices.discountedPrice }
 							displayPerMonthNotation={ false }
 							is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
 							isLargeCurrency={ isLargeCurrency }
@@ -175,7 +179,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 			{ ! shouldShowDiscountedPrice && (
 				<PlanPrice
 					currencyCode={ currencyCode }
-					rawPrice={ planPrices.rawPrice }
+					rawPrice={ planPrices.originalPrice }
 					displayPerMonthNotation={ false }
 					is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
 					isLargeCurrency={ isLargeCurrency }

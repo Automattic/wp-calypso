@@ -18,8 +18,6 @@ export class MastodonSharePreview extends PureComponent {
 			message,
 		} = this.props;
 
-		const userName = externalDisplay?.replace( '@mastodon.social', '' );
-
 		return (
 			<MastodonPreviews
 				siteName={ siteName }
@@ -32,8 +30,8 @@ export class MastodonSharePreview extends PureComponent {
 				isSocialPost={ isSocialPost }
 				user={ {
 					displayName: externalName,
-					userName,
 					avatarUrl: externalProfilePicture,
+					address: externalDisplay,
 				} }
 			/>
 		);

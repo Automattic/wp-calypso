@@ -169,6 +169,7 @@ import {
 	FEATURE_COLLECT_PAYMENTS_LINK_IN_BIO,
 	FEATURE_UNLIMITED_TRAFFIC,
 	FEATURE_MANAGED_HOSTING,
+	FEATURE_THE_READER,
 	WPCOM_FEATURES_NO_ADVERTS,
 	FEATURE_BEAUTIFUL_THEMES,
 	FEATURE_PAGES,
@@ -1756,6 +1757,14 @@ export const FEATURES_LIST: FeatureList = {
 				'All plans include world-class managed hosting, including automatic updates, security, backups, and more.'
 			),
 	},
+	[ FEATURE_THE_READER ]: {
+		getSlug: () => FEATURE_THE_READER,
+		getTitle: () => i18n.translate( 'The Reader' ),
+		getDescription: () =>
+			i18n.translate(
+				'Discover new reads and catch up on posts, comments, and replies from the sites you subscribe to.'
+			),
+	},
 
 	/* START: 2023 Pricing Grid Features */
 	[ FEATURE_BEAUTIFUL_THEMES ]: {
@@ -2168,7 +2177,7 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_PREMIUM_CONTENT_JP ]: {
 		getSlug: () => FEATURE_PREMIUM_CONTENT_JP,
-		getTitle: () => i18n.translate( 'Premium content gating' ),
+		getTitle: () => i18n.translate( 'Add paid subscriptions and gated content' ),
 		getDescription: () => i18n.translate( 'Sell access to premium content, right from your site.' ),
 	},
 	[ FEATURE_VIDEOPRESS_JP ]: {

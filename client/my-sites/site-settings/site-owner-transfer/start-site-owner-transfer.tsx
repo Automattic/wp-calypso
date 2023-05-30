@@ -1,18 +1,11 @@
-import { Button, Gridicon } from '@automattic/components';
-import { useLocalizeUrl } from '@automattic/i18n-utils';
+import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
 import { ToggleControl, TextControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { useState, FormEvent } from 'react';
 import { connect } from 'react-redux';
-import ActionPanel from 'calypso/components/action-panel';
 import ActionPanelBody from 'calypso/components/action-panel/body';
-import ActionPanelFooter from 'calypso/components/action-panel/footer';
-import ActionPanelTitle from 'calypso/components/action-panel/title';
-import HeaderCake from 'calypso/components/header-cake';
 import Notice from 'calypso/components/notice';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { TRANSFER_SITE } from 'calypso/lib/url/support';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import {
 	getSelectedSiteId,
@@ -44,7 +37,6 @@ const StartSiteOwnerTransfer = ( {
 	selectedSiteTitle,
 	translate,
 }: Props ) => {
-	const localizeUrl = useLocalizeUrl();
 	const [ confirmFirstToggle, setConfirmFirstToggle ] = useState( false );
 	const [ confirmSecondToggle, setConfirmSecondToggle ] = useState( false );
 	const [ newOwnerUsername, setNewOwnerUsername ] = useState( '' );
@@ -132,93 +124,65 @@ const StartSiteOwnerTransfer = ( {
 	);
 
 	return (
-		<div
-			className="main main-column" // eslint-disable-line wpcalypso/jsx-classname-namespace
-			role="main"
-		>
-			<PageViewTracker
-				path="/settings/start-site Transfer/:site"
-				title="Settings > Start Site Transfer"
-			/>
-			<HeaderCake backHref={ '/settings/general/' + selectedSiteSlug }>
-				<h1>{ translate( 'Start Site Transfer' ) }</h1>
-			</HeaderCake>
-			<ActionPanel>
-				<SiteOwnerTransferActionPanelBody>
-					<ActionPanelTitle>{ translate( 'Start Site Transfer' ) }</ActionPanelTitle>
-					<p>
-						{ translate(
-							'Transferring a site cannot be undone. Please read the following actions that will take place when you transfer this site:'
-						) }
-					</p>
-					<ul>
-						<li>
-							{ translate( 'You will be removed as owner of %(selectedSiteSlug)s', {
-								args: { selectedSiteSlug },
-							} ) }
-						</li>
-						<li>
-							{ translate(
-								'You will not be able to access %(selectedSiteSlug)s unless allowed by the new owner',
-								{
-									args: { selectedSiteSlug },
-								}
-							) }
-						</li>
-						<li>
-							{ translate(
-								'Your posts on %(selectedSiteSlug)s will be transferred to the new owner and will no longer be authored by your account.',
-								{
-									args: { selectedSiteSlug },
-								}
-							) }
-						</li>
-						<li>
-							{ translate(
-								'Your paid upgrades on %(selectedSiteSlug)s will be transferred to the new owner, and will remain with the blog',
-								{
-									args: { selectedSiteSlug },
-								}
-							) }
-						</li>
-						<li>
-							{ translate(
-								'You must authorize the transfer via a confirmation email sent to %(currentUserEmail)s. The transfer will not proceed unless you authorize it.',
-								{
-									args: { currentUserEmail },
-								}
-							) }
-						</li>
-					</ul>
-					{ startSiteTransferSuccess && (
-						<Notice status="is-success" showDismiss={ false }>
-							{ translate(
-								'You have been sent a transfer confirmation email to %(currentUserEmail)s. Please check your inbox and spam folder. The transfer will not proceed unless you authorize it using the link in the email.',
-								{
-									args: { currentUserEmail },
-								}
-							) }
-						</Notice>
+		<>
+			<SiteOwnerTransferActionPanelBody>
+				<p>
+					{ translate(
+						'Transferring a site cannot be undone. Please read the following actions that will take place when you transfer this site:'
 					) }
-					{ ! startSiteTransferSuccess && startSiteTransferForm }
-				</SiteOwnerTransferActionPanelBody>
-				<ActionPanelFooter>
-					<Button
-						className="action-panel__support-button is-external" // eslint-disable-line wpcalypso/jsx-classname-namespace
-						href={ localizeUrl( TRANSFER_SITE ) }
-					>
-						{ translate( 'Follow the steps' ) }
-						<Gridicon icon="external" size={ 48 } />
-					</Button>
-					<Button
-						className="action-panel__support-button" // eslint-disable-line wpcalypso/jsx-classname-namespace
-						href="/help/contact"
-					>
-						{ translate( 'Contact support' ) }
-					</Button>
-				</ActionPanelFooter>
-			</ActionPanel>
-		</div>
+				</p>
+				<ul>
+					<li>
+						{ translate( 'You will be removed as owner of %(selectedSiteSlug)s', {
+							args: { selectedSiteSlug },
+						} ) }
+					</li>
+					<li>
+						{ translate(
+							'You will not be able to access %(selectedSiteSlug)s unless allowed by the new owner',
+							{
+								args: { selectedSiteSlug },
+							}
+						) }
+					</li>
+					<li>
+						{ translate(
+							'Your posts on %(selectedSiteSlug)s will be transferred to the new owner and will no longer be authored by your account.',
+							{
+								args: { selectedSiteSlug },
+							}
+						) }
+					</li>
+					<li>
+						{ translate(
+							'Your paid upgrades on %(selectedSiteSlug)s will be transferred to the new owner, and will remain with the blog',
+							{
+								args: { selectedSiteSlug },
+							}
+						) }
+					</li>
+					<li>
+						{ translate(
+							'You must authorize the transfer via a confirmation email sent to %(currentUserEmail)s. The transfer will not proceed unless you authorize it.',
+							{
+								args: { currentUserEmail },
+							}
+						) }
+					</li>
+				</ul>
+				{ startSiteTransferSuccess && (
+					<Notice status="is-success" showDismiss={ false }>
+						{ translate(
+							'You have been sent a transfer confirmation email to %(currentUserEmail)s. Please check your inbox and spam folder. The transfer will not proceed unless you authorize it using the link in the email.',
+							{
+								args: { currentUserEmail },
+							}
+						) }
+					</Notice>
+				) }
+				{ ! startSiteTransferSuccess && startSiteTransferForm }
+			</SiteOwnerTransferActionPanelBody>
+		</>
 	);
 };
 
