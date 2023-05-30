@@ -112,12 +112,13 @@ export default function EmailAddressEditor( {
 		}
 	}, [ requestVerificationCode.isError, translate ] );
 
-	// Call handleSetEmailItems when email verification is successful
+	// Add email item to the list once the email is verified
 	useEffect( () => {
 		if ( verifyEmail.isSuccess ) {
 			handleSetEmailItems();
+			setVerifiedEmail( emailItem.email );
 		}
-	}, [ handleSetEmailItems, verifyEmail.isSuccess ] );
+	}, [ emailItem.email, handleSetEmailItems, setVerifiedEmail, verifyEmail.isSuccess ] );
 
 	// Show error message when email verification fails
 	useEffect( () => {
