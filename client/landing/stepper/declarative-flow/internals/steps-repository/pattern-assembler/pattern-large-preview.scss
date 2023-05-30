@@ -11,11 +11,6 @@
 	z-index: 1;
 	transition: margin-inline-start 0.1s ease-out;
 
-	&.device-switcher__container--frame-bordered .device-switcher__frame {
-		box-shadow: none;
-		position: relative;
-	}
-
 	.pattern-assembler__pattern-panel-list--is-open & {
 		margin-inline-start: 365px;
 	}
