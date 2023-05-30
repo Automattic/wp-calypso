@@ -698,7 +698,8 @@
 	.reader-tag-sidebar-tags-page {
 		display: block;
 		font-size: $font-body-small;
-		font-weight: 600;
+		text-decoration: underline;
+		font-weight: 500;
 		margin-bottom: 32px;
 		color: var(--color-neutral-100);
 	}
