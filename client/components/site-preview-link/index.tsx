@@ -5,6 +5,7 @@ import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { trailingslashit } from 'calypso/lib/route';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import ClipboardButtonInput from '../clipboard-button-input';
@@ -106,17 +107,24 @@ export default function SitePreviewLink( {
 	}
 	return (
 		<div>
+			<p>
+				{ translate(
+					"Sites in 'Coming Soon' mode are visible only to you and to the logged-in users you invite. Toggle 'Share site' to allow collaborators without an account to see your site. {{inlineSupportLink}}Learn more.{{/inlineSupportLink}}",
+					{
+						components: {
+							inlineSupportLink: (
+								<InlineSupportLink supportContext="privacy-preview-link" showIcon={ false } />
+							),
+						},
+					}
+				) }
+			</p>
 			<ToggleControl
-				label={ translate( 'Enable site preview link.' ) }
+				label={ translate( 'Share site' ) }
 				checked={ checkedAndEnabled }
 				onChange={ onChange }
 				{ ...{ disabled: disabled || isBusy } } // disabled is not included on ToggleControl props type
 			/>
-			<HelpText>
-				{ translate(
-					'When enabled, anyone with the site preview link can view your Coming Soon site.'
-				) }
-			</HelpText>
 			{ ! forceOff &&
 				previewLinks?.map( ( { code, isCreating = false, isRemoving = false } ) => {
 					let linkValue = `${ trailingslashit( siteUrl ) }?share=${ code }`;
@@ -133,6 +141,9 @@ export default function SitePreviewLink( {
 						/>
 					);
 				} ) }
+			{ checkedAndEnabled && (
+				<HelpText>{ translate( 'Anyone with the link can view your site.' ) }</HelpText>
+			) }
 		</div>
 	);
 }

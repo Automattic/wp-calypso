@@ -135,7 +135,6 @@ const ManagePluginsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 };
 
 const ModalContent = styled.div( {
-	padding: 16,
 	width: '80vw',
 	maxWidth: '480px',
 	minHeight: '100px',
