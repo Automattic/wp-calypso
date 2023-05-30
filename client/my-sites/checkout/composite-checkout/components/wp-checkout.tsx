@@ -402,6 +402,7 @@ export default function WPCheckout( {
 							// When the contact details change, update the VAT details on the server.
 							try {
 								if (
+									! isLoggedOutCart &&
 									vatDetailsInForm.id &&
 									! areVatDetailsSame( vatDetailsInForm, vatDetailsFromServer )
 								) {

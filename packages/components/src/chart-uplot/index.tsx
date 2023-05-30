@@ -4,7 +4,9 @@ import uPlot from 'uplot';
 import UplotReact from 'uplot-react';
 import useResize from './hooks/use-resize';
 import useScaleGradient from './hooks/use-scale-gradient';
+import getDateFormat from './lib/get-date-format';
 import getGradientFill from './lib/get-gradient-fill';
+import getPeriodDateFormat from './lib/get-period-date-format';
 
 import './style.scss';
 
@@ -23,6 +25,7 @@ interface UplotChartProps {
 	options?: Partial< uPlot.Options >;
 	legendContainer?: React.RefObject< HTMLDivElement >;
 	solidFill?: boolean;
+	period?: string;
 }
 
 export default function UplotChart( {
@@ -31,6 +34,7 @@ export default function UplotChart( {
 	legendContainer,
 	options: propOptions,
 	solidFill = false,
+	period,
 }: UplotChartProps ) {
 	const translate = useTranslate();
 	const uplot = useRef< uPlot | null >( null );
@@ -38,6 +42,7 @@ export default function UplotChart( {
 	const { spline } = uPlot.paths;
 
 	const scaleGradient = useScaleGradient( fillColor );
+
 	const [ options ] = useState< uPlot.Options >(
 		useMemo( () => {
 			const defaultOptions: uPlot.Options = {
@@ -45,6 +50,13 @@ export default function UplotChart( {
 				...DEFAULT_DIMENSIONS,
 				// Set incoming dates as UTC.
 				tzDate: ( ts ) => uPlot.tzDate( new Date( ts * 1e3 ), 'Etc/UTC' ),
+				fmtDate: ( chartDateStringTemplate: string ) => {
+					// first it cycles through all possible templates in case they are substitues
+
+					// the date for a specific point
+					return ( date ) =>
+						getDateFormat( chartDateStringTemplate, date, getLocaleSlug() || 'en' );
+				},
 				axes: [
 					{
 						// x-axis
@@ -91,14 +103,16 @@ export default function UplotChart( {
 					{
 						label: translate( 'Date' ),
 						value: ( self: uPlot, rawValue: number ) => {
+							// outputs legend content - value available when mouse is hovering the chart
 							if ( ! rawValue ) {
 								return '-';
 							}
 
-							return new Date( rawValue * 1000 ).toLocaleDateString( getLocaleSlug() ?? 'en', {
-								month: 'long',
-								year: 'numeric',
-							} );
+							return getPeriodDateFormat(
+								period,
+								new Date( rawValue * 1000 ),
+								getLocaleSlug() || 'en'
+							);
 						},
 					},
 					{

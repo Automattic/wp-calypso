@@ -6,6 +6,7 @@ import CreditBalance from 'calypso/my-sites/promote-post/components/credit-balan
 import { TabType } from 'calypso/my-sites/promote-post/main';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getAdvertisingDashboardPath } from '../../utils';
 
 type Props = {
 	tabs: { id: TabType; name: string }[];
@@ -26,7 +27,7 @@ export default function PromotePostTabBar( { tabs, selectedTab }: Props ) {
 					return (
 						<NavItem
 							key={ id }
-							path={ `/advertising/${ selectedSiteSlug }/${ id }` }
+							path={ getAdvertisingDashboardPath( `/${ selectedSiteSlug }/${ id }` ) }
 							selected={ selectedTab === id }
 							children={ name }
 						/>

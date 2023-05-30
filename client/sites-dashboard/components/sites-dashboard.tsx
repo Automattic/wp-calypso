@@ -143,7 +143,7 @@ const ScrollButton = styled( Button, { shouldForwardProp: ( prop ) => prop !== '
 const SitesDashboardSitesList = createSitesListComponent();
 
 export function SitesDashboard( {
-	queryParams: { page = 1, perPage = 96, search, status = 'all', newSiteSlug },
+	queryParams: { page = 1, perPage = 96, search, status = 'all', newSiteID },
 }: SitesDashboardProps ) {
 	const { __, _n } = useI18n();
 	const { data: allSites = [], isLoading } = useSiteExcerptsQuery();
@@ -164,7 +164,7 @@ export function SitesDashboard( {
 		smoothScrolling: true,
 	} );
 
-	useShowSiteCreationNotice( allSites, newSiteSlug );
+	useShowSiteCreationNotice( allSites, newSiteID );
 
 	return (
 		<main>
@@ -315,17 +315,17 @@ export function SitesDashboard( {
 	);
 }
 
-function useShowSiteCreationNotice( allSites: SiteExcerptData[], newSiteSlug: string | undefined ) {
+function useShowSiteCreationNotice( allSites: SiteExcerptData[], newSiteID: number | undefined ) {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const shownSiteCreationNotice = useRef( false );
 
 	useEffect( () => {
-		if ( shownSiteCreationNotice.current || ! newSiteSlug ) {
+		if ( shownSiteCreationNotice.current || ! newSiteID ) {
 			return;
 		}
 
-		const site = allSites.find( ( { slug } ) => slug === newSiteSlug );
+		const site = allSites.find( ( { ID } ) => ID === newSiteID );
 		if ( ! site ) {
 			return;
 		}
@@ -349,5 +349,5 @@ function useShowSiteCreationNotice( allSites: SiteExcerptData[], newSiteSlug: st
 		const newUrl = new URL( window.location.href );
 		newUrl.searchParams.delete( 'new-site' );
 		window.history.replaceState( null, '', newUrl.toString() );
-	}, [ __, allSites, dispatch, newSiteSlug ] );
+	}, [ __, allSites, dispatch, newSiteID ] );
 }

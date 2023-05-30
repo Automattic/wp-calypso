@@ -32,7 +32,9 @@ $happy_blocks_tabs = array(
 		'title' => __( 'Forums', 'happy-blocks' ),
 		'url'   => localized_wpcom_url( 'https://wordpress.com/forums/' ),
 	),
-)
+);
+
+$happy_blocks_is_english = ( 0 === stripos( get_locale(), 'en' ) );
 ?>
 <?php if ( ! is_user_logged_in() ) : ?>
 	<div id="lpc-header-nav" class="lpc lpc-header-nav">
@@ -102,7 +104,6 @@ $happy_blocks_tabs = array(
 					</div>
 				</div>
 				<!-- Nav bar ends here. -->
-
 				<!-- Desktop dropdowns start here. -->
 				<div class="x-dropdown">
 					<div class="x-dropdown-top">
@@ -226,6 +227,13 @@ $happy_blocks_tabs = array(
 									<?php esc_html_e( 'Logo Maker', 'happy-blocks' ); ?>
 								</a>
 							</li>
+							<?php if ( $happy_blocks_is_english ) : ?>
+								<li>
+									<a role="menuitem" class="x-dropdown-link x-link" href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/tags/' ) ); ?>" title="<?php esc_attr_e( 'Popular Tags', 'happy-blocks' ); ?>" tabindex="-1">
+										<?php esc_html_e( 'Popular Tags', 'happy-blocks' ); ?>
+									</a>
+								</li>
+							<?php endif; ?>
 							<?php if ( time() >= strtotime( '2021-02-17' ) ) : ?>
 								<li>
 									<a role="menuitem" class="x-dropdown-link x-link" href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/webinars/' ) ); ?>" title="<?php esc_attr_e( 'Daily Webinars', 'happy-blocks' ); ?>" tabindex="-1">
@@ -242,7 +250,6 @@ $happy_blocks_tabs = array(
 					</div>
 				</div>
 				<!-- Desktop dropdowns end here. -->
-
 				<!-- Mobile menu starts here. -->
 				<div class="x-menu" role="menu" aria-label="<?php esc_attr_e( 'WordPress.com Navigation Menu', 'happy-blocks' ); ?>" aria-hidden="true">
 					<div class="x-menu-overlay"></div>
@@ -382,6 +389,13 @@ $happy_blocks_tabs = array(
 										<?php esc_html_e( 'Logo Maker', 'happy-blocks' ); ?>
 									</a>
 								</li>
+								<?php if ( $happy_blocks_is_english ) : ?>
+									<li class="x-menu-grid-item">
+										<a role="menuitem" class="x-menu-link x-link" href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/tags/' ) ); ?>" title="<?php esc_attr_e( 'Popular Tags', 'happy-blocks' ); ?>" tabindex="-1">
+											<?php esc_html_e( 'Popular Tags', 'happy-blocks' ); ?>
+										</a>
+									</li>
+								<?php endif; ?>
 								<?php if ( time() >= strtotime( '2021-02-17' ) ) : ?>
 									<li class="x-menu-grid-item">
 										<a role="menuitem" class="x-menu-link x-link" href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/webinars/' ) ); ?>" title="<?php esc_attr_e( 'Daily Webinars', 'happy-blocks' ); ?>" tabindex="-1">
@@ -399,7 +413,6 @@ $happy_blocks_tabs = array(
 					</div>
 				</div>
 				<!-- Mobile menu ends here. -->
-
 			</div>
 		</div>
 	</div>

@@ -145,18 +145,19 @@ export class ImportEverything extends SectionMigrate {
 			onContentOnlySelection,
 		} = this.props;
 
+		if ( isEnabled( 'onboarding/import-redesign' ) ) {
+			return (
+				<PreMigrationScreen
+					startImport={ this.startMigration }
+					isTargetSitePlanCompatible={ isTargetSitePlanCompatible }
+					targetSite={ targetSite }
+					onContentOnlyClick={ onContentOnlySelection }
+					isMigrateFromWp={ isMigrateFromWp }
+				/>
+			);
+		}
+
 		if ( sourceSite ) {
-			if ( isEnabled( 'onboarding/import-redesign' ) ) {
-				return (
-					<PreMigrationScreen
-						startImport={ this.startMigration }
-						isTargetSitePlanCompatible={ isTargetSitePlanCompatible }
-						targetSite={ targetSite }
-						sourceSite={ sourceSite }
-						onContentOnlyClick={ onContentOnlySelection }
-					/>
-				);
-			}
 			return (
 				<Confirm
 					startImport={ this.startMigration }

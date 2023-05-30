@@ -1,7 +1,7 @@
 import { ProgressBar } from '@automattic/components';
 import {
 	CONNECT_DOMAIN_FLOW,
-	isHostingSiteCreationFlow,
+	isNewHostedSiteCreationFlow,
 	SITE_SETUP_FLOW,
 } from '@automattic/onboarding';
 import classnames from 'classnames';
@@ -32,7 +32,7 @@ const StepRoute = ( {
 		// See https://github.com/Automattic/wp-calypso/pull/73653
 		if (
 			[ SITE_SETUP_FLOW, CONNECT_DOMAIN_FLOW ].includes( flow.name ) ||
-			isHostingSiteCreationFlow( flow.name )
+			isNewHostedSiteCreationFlow( flow.name )
 		) {
 			return null;
 		}

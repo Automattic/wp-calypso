@@ -97,7 +97,7 @@ export default function PlanNotice( {
 							a: (
 								<a
 									href={ localizeUrl(
-										'https://wordpress.com/support/manage-purchases/#pro-rated-credits'
+										'https://wordpress.com/support/manage-purchases/#upgrade-credit'
 									) }
 									className="get-apps__desktop-link"
 								/>

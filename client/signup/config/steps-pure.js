@@ -131,14 +131,8 @@ export function generateSteps( {
 			stepName: 'user',
 			apiRequestFunction: createAccount,
 			providesToken: true,
-			providesDependencies: [
-				'bearer_token',
-				'username',
-				'marketing_price_group',
-				'plans_reorder_abtest_variation',
-				'redirect',
-			],
-			optionalDependencies: [ 'plans_reorder_abtest_variation', 'redirect' ],
+			providesDependencies: [ 'bearer_token', 'username', 'marketing_price_group', 'redirect' ],
+			optionalDependencies: [ 'redirect' ],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 			},
@@ -148,14 +142,8 @@ export function generateSteps( {
 			stepName: 'user-hosting',
 			apiRequestFunction: createAccount,
 			providesToken: true,
-			providesDependencies: [
-				'bearer_token',
-				'username',
-				'marketing_price_group',
-				'plans_reorder_abtest_variation',
-				'redirect',
-			],
-			optionalDependencies: [ 'plans_reorder_abtest_variation', 'redirect' ],
+			providesDependencies: [ 'bearer_token', 'username', 'marketing_price_group', 'redirect' ],
+			optionalDependencies: [ 'redirect' ],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 				isPasswordless: true,
@@ -173,14 +161,12 @@ export function generateSteps( {
 				'bearer_token',
 				'username',
 				'marketing_price_group',
-				'plans_reorder_abtest_variation',
 				'allowUnauthenticated',
 			],
 			optionalDependencies: [
 				'bearer_token',
 				'username',
 				'marketing_price_group',
-				'plans_reorder_abtest_variation',
 				'allowUnauthenticated',
 			],
 			props: {
@@ -489,9 +475,7 @@ export function generateSteps( {
 				'oauth2_client_id',
 				'oauth2_redirect',
 				'marketing_price_group',
-				'plans_reorder_abtest_variation',
 			],
-			optionalDependencies: [ 'plans_reorder_abtest_variation' ],
 		},
 
 		'oauth2-name': {
@@ -504,9 +488,7 @@ export function generateSteps( {
 				'oauth2_client_id',
 				'oauth2_redirect',
 				'marketing_price_group',
-				'plans_reorder_abtest_variation',
 			],
-			optionalDependencies: [ 'plans_reorder_abtest_variation' ],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 				oauth2Signup: true,

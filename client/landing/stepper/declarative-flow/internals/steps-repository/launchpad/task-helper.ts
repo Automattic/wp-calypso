@@ -48,14 +48,6 @@ export function getEnhancedTasks(
 		return [];
 	}
 
-	/**
-	 * Remove the first_post_published task from the task list if the flow is design-first.
-	 * This is temporary until we proper implement the editor flow.
-	 */
-	if ( isDesignFirstFlow( flow ) ) {
-		tasks = tasks.filter( ( task ) => task.id !== 'first_post_published' );
-	}
-
 	const enhancedTaskList: Task[] = [];
 
 	const productSlug =
@@ -193,10 +185,19 @@ export function getEnhancedTasks(
 					break;
 				case 'first_post_published':
 					taskData = {
-						disabled: mustVerifyEmailBeforePosting || isStartWritingFlow( flow || null ) || false,
+						disabled:
+							mustVerifyEmailBeforePosting ||
+							isStartWritingFlow( flow || null ) ||
+							( task.completed && isDesignFirstFlow( flow || null ) ) ||
+							false,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
-							window.location.assign( `/post/${ siteSlug }` );
+							const newPostUrl = ! isDesignFirstFlow( flow || null )
+								? `/post/${ siteSlug }`
+								: addQueryArgs( `https://${ siteSlug }/wp-admin/post-new.php`, {
+										origin: window.location.origin,
+								  } );
+							window.location.assign( newPostUrl );
 						},
 					};
 					break;

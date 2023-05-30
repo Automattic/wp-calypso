@@ -2,8 +2,13 @@ import type { SocialPreviewBaseProps } from '../types';
 
 export type MastodonUser = {
 	displayName: string;
-	userName: string;
 	avatarUrl: string;
+	address: string;
+};
+
+export type MastodonAddressDetails = {
+	username: string;
+	instance: string;
 };
 
 export type MastodonPreviewProps = SocialPreviewBaseProps & {

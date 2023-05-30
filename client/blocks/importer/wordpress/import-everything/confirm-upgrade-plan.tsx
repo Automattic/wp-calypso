@@ -17,7 +17,7 @@ import type { SiteDetails } from '@automattic/data-stores';
 import type { FunctionComponent } from 'react';
 
 interface Props {
-	sourceSite: SiteDetails | null;
+	sourceSiteSlug: string;
 	targetSite: SiteDetails | null;
 }
 
@@ -25,7 +25,7 @@ export const ConfirmUpgradePlan: FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
 	const initialFeaturesNumber = 6;
 
-	const { sourceSite, targetSite } = props;
+	const { sourceSiteSlug, targetSite } = props;
 	const targetSiteEligibleForProPlan = useSelector( ( state ) =>
 		isEligibleForProPlan( state, targetSite?.ID )
 	);
@@ -77,7 +77,7 @@ export const ConfirmUpgradePlan: FunctionComponent< Props > = ( props ) => {
 						__(
 							'To import your themes, plugins, users, and settings from %(website)s we need to upgrade your WordPress.com site. Select a plan below:'
 						),
-						{ website: sourceSite?.slug }
+						{ website: sourceSiteSlug }
 					) }
 				</p>
 			) }

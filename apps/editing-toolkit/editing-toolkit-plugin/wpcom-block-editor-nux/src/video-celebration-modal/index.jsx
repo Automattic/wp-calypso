@@ -88,7 +88,7 @@ const VideoCelebrationModalInner = () => {
 					<Button
 						isPrimary
 						href={ `https://wordpress.com/setup/videopress/launchpad?siteSlug=${ window.location.hostname }` }
-						target="__blank"
+						target="_blank"
 						rel="noopener noreferrer"
 					>
 						{ __( 'Continue and launch', 'full-site-editing' ) }

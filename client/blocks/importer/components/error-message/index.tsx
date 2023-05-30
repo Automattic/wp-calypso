@@ -1,19 +1,20 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { BackButton, NextButton, SubTitle, Title } from '@automattic/onboarding';
-import { createElement, createInterpolateElement } from '@wordpress/element';
-import { useI18n } from '@wordpress/react-i18n';
+import { NextButton, SubTitle, Title } from '@automattic/onboarding';
+import { useTranslate } from 'i18n-calypso';
 import React, { useEffect } from 'react';
+import './style.scss';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 interface Props {
 	onBackToStart?: () => void;
 	onStartBuilding?: () => void;
+	onBackToStartText?: string;
 }
 
 const ErrorMessage: React.FunctionComponent< Props > = ( props ) => {
-	const { __ } = useI18n();
-	const { onBackToStart, onStartBuilding } = props;
+	const translate = useTranslate();
+	const { onBackToStart, onStartBuilding, onBackToStartText } = props;
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_site_importer_start_import_failure' );
@@ -22,21 +23,33 @@ const ErrorMessage: React.FunctionComponent< Props > = ( props ) => {
 	return (
 		<div className="import-layout__center">
 			<div className="import__header">
-				<div className="import__heading import__heading-center">
-					<Title>
-						{ createInterpolateElement( __( 'Oops, <br />something went wrong.' ), {
-							br: createElement( 'br' ),
+				<div className="import__heading-center">
+					<Title>{ translate( 'Oops, something went wrong' ) }</Title>
+					<SubTitle>
+						{ translate( 'Please try again soon or {{a}}contact support{{/a}} for help.', {
+							components: {
+								a: (
+									<a
+										href="https://wordpress.com/help/contact"
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+							},
 						} ) }
-					</Title>
-					<SubTitle>{ __( 'Please try again soon or contact support for help.' ) }</SubTitle>
+					</SubTitle>
 
 					<div className="import__buttons-group">
 						{ onStartBuilding && (
-							<NextButton onClick={ onStartBuilding }>{ __( 'Start building' ) }</NextButton>
+							<NextButton type="button" onClick={ onStartBuilding }>
+								{ translate( 'Start building' ) }
+							</NextButton>
 						) }
 						{ onBackToStart && (
 							<div>
-								<BackButton onClick={ onBackToStart }>{ __( 'Back to start' ) }</BackButton>
+								<NextButton className="" type="submit" onClick={ onBackToStart }>
+									{ onBackToStartText ?? translate( 'Back to start' ) }
+								</NextButton>
 							</div>
 						) }
 					</div>

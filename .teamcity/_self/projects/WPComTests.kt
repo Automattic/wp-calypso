@@ -197,25 +197,14 @@ fun jetpackPlaywrightBuildType( targetDevice: String, buildUuid: String, jetpack
 
 				// Trigger only when changes are made to the Jetpack staging directories in our WPCOM connection
 				triggerRules = """
-					+:root=wpcom:%WPCOM_JETPACK_MU_WPCOM_PLUGIN_PATH%/staging/**
-					+:root=wpcom:%WPCOM_JETPACK_PLUGIN_PATH%/staging/**
-				""".trimIndent()
-			}
-		} else if (jetpackTarget == "wpcom-production") {
-			vcs {
-				// Trigger only when the "trunk" branch is modified, i.e. back-end merges
-				branchFilter = """
-					+:trunk
-				""".trimIndent()
-
-				// Trigger only when changes are made to the Jetpack prod directories in our WPCOM connection
-				triggerRules = """
-					+:root=wpcom:%WPCOM_JETPACK_MU_WPCOM_PLUGIN_PATH%/production/**
-					+:root=wpcom:%WPCOM_JETPACK_PLUGIN_PATH%/production/**
+					+:root=wpcom:%WPCOM_JETPACK_MU_WPCOM_PLUGIN_PATH%/sun/**
+					+:root=wpcom:%WPCOM_JETPACK_MU_WPCOM_PLUGIN_PATH%/moon/**
+					+:root=wpcom:%WPCOM_JETPACK_PLUGIN_PATH%/sun/**
+					+:root=wpcom:%WPCOM_JETPACK_PLUGIN_PATH%/moon/**
 				""".trimIndent()
 			}
 		} else {
-			// For remote-site tests, we are just running daily for now. They aren't related to Jetpack releases on DotCom.
+			// For remote-site tests and production, we are just running daily for now.
 			schedule {
 				schedulingPolicy = daily {
 					hour = 5

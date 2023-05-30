@@ -10,9 +10,7 @@ import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import './style.scss';
 
 export interface PremiumGlobalStylesUpgradeModalProps {
-	title?: string;
-	customizeDescription?: ( description: React.ReactChild ) => JSX.Element;
-	tryItOutText?: string;
+	description?: string | React.ReactNode;
 	checkout: () => void;
 	closeModal: () => void;
 	isOpen: boolean;
@@ -20,9 +18,7 @@ export interface PremiumGlobalStylesUpgradeModalProps {
 }
 
 export default function PremiumGlobalStylesUpgradeModal( {
-	title,
-	tryItOutText,
-	customizeDescription = ( description ) => <p>{ description }</p>,
+	description,
 	checkout,
 	closeModal,
 	isOpen,
@@ -53,25 +49,24 @@ export default function PremiumGlobalStylesUpgradeModal( {
 				{ ! isLoading && (
 					<>
 						<div className="upgrade-modal__col">
-							<h1 className="upgrade-modal__heading">
-								{ title ?? translate( 'Unlock this style' ) }
-							</h1>
-							{ customizeDescription(
-								translate(
-									'Get access to all theme styles, fonts, colors, and tons of other features by upgrading to {{strong}}%s{{/strong}}.',
-									{
-										components: {
-											strong: <strong />,
-										},
-										args: premiumPlanProduct?.product_name,
-										comment:
-											'The variable is the plan name: "...by upgrading to WordPress.com Premium."',
-									}
-								)
+							<h1 className="upgrade-modal__heading">{ translate( 'Unlock custom styles' ) }</h1>
+							{ description ?? (
+								<>
+									<p>
+										{ translate(
+											"You've selected a custom style that will only be visible to visitors after upgrading to the Premium plan or higher."
+										) }
+									</p>
+									<p>
+										{ translate(
+											'Upgrade now to unlock your custom style and get access to tons of other features. Or you can decide later and try it out first.'
+										) }
+									</p>
+								</>
 							) }
 							<div className="upgrade-modal__actions bundle">
 								<Button className="upgrade-modal__cancel" onClick={ () => tryStyle() }>
-									{ tryItOutText ?? translate( 'Try it out first' ) }
+									{ translate( 'Decide later' ) }
 								</Button>
 								<Button
 									className="upgrade-modal__upgrade-plan"
