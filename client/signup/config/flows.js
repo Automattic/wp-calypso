@@ -188,8 +188,14 @@ function getDIFMSiteContentCollectionDestination( { siteSlug } ) {
 	return `/home/${ siteSlug }`;
 }
 
-function getSitesDestination( { siteId } ) {
-	return addQueryArgs( { 'new-site': siteId }, '/sites' );
+function getHostingFlowDestination( { siteId } ) {
+	return addQueryArgs(
+		{
+			'new-site': siteId,
+			'hosting-flow': isEnabled( 'hosting-onboarding-i2' ) ? true : null,
+		},
+		'/sites'
+	);
 }
 
 const flows = generateFlows( {
@@ -205,7 +211,7 @@ const flows = generateFlows( {
 	getDestinationFromIntent,
 	getDIFMSignupDestination,
 	getDIFMSiteContentCollectionDestination,
-	getSitesDestination,
+	getHostingFlowDestination,
 } );
 
 function removeUserStepFromFlow( flow ) {

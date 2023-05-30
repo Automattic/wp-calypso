@@ -9,6 +9,7 @@ import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
+import { useQuery } from '../hooks/use-query';
 import { ONBOARD_STORE } from '../stores';
 import { isInHostingFlow } from '../utils/is-in-hosting-flow';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
@@ -31,7 +32,7 @@ const otherSteps = [
 const hosting: Flow = {
 	name: NEW_HOSTED_SITE_FLOW,
 	useSteps() {
-		const hostingFlow = useSelector( isInHostingFlow );
+		const hostingFlow = useQuery().get( 'hosting-flow' ) === 'true';
 
 		if ( hostingFlow ) {
 			return [
