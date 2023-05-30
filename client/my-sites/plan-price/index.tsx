@@ -21,6 +21,7 @@ export class PlanPrice extends Component< PlanPriceProps > {
 			isOnSale,
 			taxText,
 			omitHeading,
+			priceDisplayWrapperClassName,
 			isLargeCurrency,
 		} = this.props;
 
@@ -80,6 +81,7 @@ export class PlanPrice extends Component< PlanPriceProps > {
 				taxText={ taxText }
 				displayPerMonthNotation={ displayPerMonthNotation }
 				isOnSale={ isOnSale }
+				priceDisplayWrapperClassName={ priceDisplayWrapperClassName }
 				isSmallestUnit={ isSmallestUnit }
 			/>
 		);
@@ -185,6 +187,16 @@ export interface PlanPriceProps {
 	displayFlatPrice?: boolean;
 
 	/**
+	 * If set, this renders each price inside a `div` with the class passed,
+	 * but is otherwise identical to the output normally used by `rawPrice`.
+	 *
+	 * Ignored if `displayFlatPrice` is set.
+	 *
+	 * Ignored if `productDisplayPrice` is set and `rawPrice` is not an array.
+	 */
+	priceDisplayWrapperClassName?: string;
+
+	/**
 	 * If true, this renders the price with a smaller font size by adding the `is-large-currency` class.
 	 */
 	isLargeCurrency?: boolean;
@@ -275,6 +287,7 @@ function MultiPriceDisplay( {
 	taxText,
 	displayPerMonthNotation,
 	isOnSale,
+	priceDisplayWrapperClassName,
 	isSmallestUnit,
 }: {
 	tagName: 'h4' | 'span';
@@ -285,6 +298,7 @@ function MultiPriceDisplay( {
 	taxText?: string;
 	displayPerMonthNotation?: boolean;
 	isOnSale?: boolean;
+	priceDisplayWrapperClassName?: string;
 	isSmallestUnit?: boolean;
 } ) {
 	const { symbol: currencySymbol, symbolPosition } = getCurrencyObject(
@@ -305,6 +319,7 @@ function MultiPriceDisplay( {
 				<HtmlPriceDisplay
 					price={ smallerPrice }
 					currencyCode={ currencyCode }
+					priceDisplayWrapperClassName={ priceDisplayWrapperClassName }
 					isSmallestUnit={ isSmallestUnit }
 				/>
 			) }
@@ -315,6 +330,7 @@ function MultiPriceDisplay( {
 							<HtmlPriceDisplay
 								price={ smallerPrice }
 								currencyCode={ currencyCode }
+								priceDisplayWrapperClassName={ priceDisplayWrapperClassName }
 								isSmallestUnit={ isSmallestUnit }
 							/>
 						),
@@ -322,6 +338,7 @@ function MultiPriceDisplay( {
 							<HtmlPriceDisplay
 								price={ higherPrice }
 								currencyCode={ currencyCode }
+								priceDisplayWrapperClassName={ priceDisplayWrapperClassName }
 								isSmallestUnit={ isSmallestUnit }
 							/>
 						),
@@ -361,20 +378,33 @@ function MultiPriceDisplay( {
 function HtmlPriceDisplay( {
 	price,
 	currencyCode,
+	priceDisplayWrapperClassName,
 	isSmallestUnit,
 }: {
 	price: number;
 	currencyCode: string;
+	priceDisplayWrapperClassName?: string;
 	isSmallestUnit?: boolean;
 } ) {
 	const priceObj = getCurrencyObject( price, currencyCode, { isSmallestUnit } );
 
+	if ( priceDisplayWrapperClassName ) {
+		return (
+			<div className={ priceDisplayWrapperClassName }>
+				<span className="plan-price__integer">
+					{ priceObj.integer }
+					{ priceObj.hasNonZeroFraction && priceObj.fraction }
+				</span>
+			</div>
+		);
+	}
+
 	return (
-		<div className="plan-price__integer-fraction">
-			<span className="plan-price__integer">
-				{ priceObj.integer }
+		<>
+			<span className="plan-price__integer">{ priceObj.integer }</span>
+			<sup className="plan-price__fraction">
 				{ priceObj.hasNonZeroFraction && priceObj.fraction }
-			</span>
-		</div>
+			</sup>
+		</>
 	);
 }

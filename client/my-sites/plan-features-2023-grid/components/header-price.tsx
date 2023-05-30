@@ -103,7 +103,7 @@ const HeaderPriceContainer = styled.div`
 	.plan-price.is-discounted {
 		color: var( --color-neutral-70 );
 
-		.plan-price__integer-fraction {
+		.plans-grid-2023__html-price-display-wrapper {
 			color: inherit;
 		}
 	}
@@ -160,6 +160,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 							rawPrice={ planPrices.originalPrice }
 							displayPerMonthNotation={ false }
 							isLargeCurrency={ isLargeCurrency }
+							priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
 							original
 						/>
 						<PlanPrice
@@ -167,6 +168,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 							rawPrice={ planPrices.discountedPrice }
 							displayPerMonthNotation={ false }
 							isLargeCurrency={ isLargeCurrency }
+							priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
 							discounted
 						/>
 					</PricesGroup>
@@ -178,6 +180,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 					rawPrice={ planPrices.originalPrice }
 					displayPerMonthNotation={ false }
 					isLargeCurrency={ isLargeCurrency }
+					priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
 				/>
 			) }
 		</HeaderPriceContainer>
