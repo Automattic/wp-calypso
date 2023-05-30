@@ -1,4 +1,5 @@
 @use "sass:math";
+@import "@wordpress/base-styles/colors";
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/typography/styles/variables";
 @import "@automattic/components/src/styles/typography";
@@ -81,6 +82,15 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 		width: 24px;
 		height: 24px;
 		cursor: pointer;
+
+		&:focus {
+			outline: 2px solid #3057dc;
+			border-radius: 2px;
+		}
+
+		svg {
+			fill: $gray-900;
+		}
 	}
 
 	small {
@@ -96,7 +106,7 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 	}
 
 	svg {
-		fill: var(--studio-gray-50);
+		fill: var(--studio-gray-30);
 	}
 }
 

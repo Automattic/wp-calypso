@@ -10,7 +10,7 @@ import {
 } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { eye } from '../icons';
 import Popover from '../popover';
 import { comparingInfoBarsChart, comparingInfoRangeChart } from './charts';
@@ -64,9 +64,11 @@ export default function WeeklyHighlightCards( {
 	const [ isTooltipVisible, setTooltipVisible ] = useState( false );
 	const [ isPopoverVisible, setPopoverVisible ] = useState( false );
 
-	const togglePopoverMenu = () => {
-		setPopoverVisible( ! isPopoverVisible );
-	};
+	const togglePopoverMenu = useCallback( () => {
+		setPopoverVisible( ( isVisible ) => {
+			return ! isVisible;
+		} );
+	}, [] );
 
 	const isHighlightsSettingsEnabled = config.isEnabled( 'stats/highlights-settings' );
 
@@ -146,6 +148,7 @@ export default function WeeklyHighlightCards( {
 							isVisible={ isPopoverVisible }
 							position="bottom left"
 							context={ settingsActionRef.current }
+							focusOnShow={ false }
 						>
 							<button
 								onClick={ () => {
