@@ -17,8 +17,17 @@ describe( 'CreditBalance component', () => {
 		expect( screen.queryByText( /Credits: \$.+/ ) ).toBeNull();
 	} );
 
+	test( 'displays null when balance is 0.00', () => {
+		const mockBalance = '0.00';
+		useCreditBalanceQuery.mockReturnValue( { data: mockBalance } );
+
+		render( <CreditBalance /> );
+
+		expect( screen.queryByText( /Credits: \$.+/ ) ).toBeNull();
+	} );
+
 	test( 'displays "Credits: $10" when balance is set to 10', () => {
-		const mockBalance = 10;
+		const mockBalance = '10.00';
 		useCreditBalanceQuery.mockReturnValue( { data: mockBalance } );
 
 		render( <CreditBalance /> );
