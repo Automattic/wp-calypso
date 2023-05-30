@@ -3,7 +3,7 @@
  */
 
 jest.mock( 'calypso/components/marketing-message', () => () => null );
-jest.mock( 'calypso/my-sites/plan-features', () => ( { visiblePlans, popularPlanSpec } ) => (
+jest.mock( 'calypso/components/async-load', () => ( { visiblePlans, popularPlanSpec } ) => (
 	<div data-testid="plan-features">
 		<div data-testid="visible-plans">{ JSON.stringify( visiblePlans ) }</div>
 		<div data-testid="popular-plan-spec">{ JSON.stringify( popularPlanSpec ) }</div>
@@ -34,6 +34,7 @@ import {
 	TYPE_FREE,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
+	PLAN_ENTERPRISE_GRID_WPCOM,
 } from '@automattic/calypso-products';
 import { screen } from '@testing-library/react';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -116,7 +117,14 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures()', () => {
 		renderWithProvider( <PlansFeaturesMain { ...props } planTypeSelector={ null } /> );
 
 		expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
-			JSON.stringify( [ PLAN_FREE, PLAN_PREMIUM, PLAN_BUSINESS, PLAN_ECOMMERCE ] )
+			JSON.stringify( [
+				PLAN_FREE,
+				PLAN_PERSONAL,
+				PLAN_PREMIUM,
+				PLAN_BUSINESS,
+				PLAN_ECOMMERCE,
+				PLAN_ENTERPRISE_GRID_WPCOM,
+			] )
 		);
 	} );
 
@@ -133,7 +141,13 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures()', () => {
 		renderWithProvider( <PlansFeaturesMain { ...props } hideFreePlan /> );
 
 		expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
-			JSON.stringify( [ PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS, PLAN_ECOMMERCE ] )
+			JSON.stringify( [
+				PLAN_PERSONAL,
+				PLAN_PREMIUM,
+				PLAN_BUSINESS,
+				PLAN_ECOMMERCE,
+				PLAN_ENTERPRISE_GRID_WPCOM,
+			] )
 		);
 	} );
 
@@ -142,10 +156,12 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures()', () => {
 
 		expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
 			JSON.stringify( [
+				PLAN_FREE,
 				PLAN_PERSONAL_MONTHLY,
 				PLAN_PREMIUM_MONTHLY,
 				PLAN_BUSINESS_MONTHLY,
 				PLAN_ECOMMERCE_MONTHLY,
+				PLAN_ENTERPRISE_GRID_WPCOM,
 			] )
 		);
 	} );
@@ -161,10 +177,12 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures()', () => {
 
 		expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
 			JSON.stringify( [
+				PLAN_FREE,
 				PLAN_PERSONAL_2_YEARS,
 				PLAN_PREMIUM_2_YEARS,
 				PLAN_BUSINESS_2_YEARS,
 				PLAN_ECOMMERCE_2_YEARS,
+				PLAN_ENTERPRISE_GRID_WPCOM,
 			] )
 		);
 	} );
@@ -174,10 +192,12 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures()', () => {
 
 		expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
 			JSON.stringify( [
+				PLAN_FREE,
 				PLAN_PERSONAL_2_YEARS,
 				PLAN_PREMIUM_2_YEARS,
 				PLAN_BUSINESS_2_YEARS,
 				PLAN_ECOMMERCE_2_YEARS,
+				PLAN_ENTERPRISE_GRID_WPCOM,
 			] )
 		);
 	} );
@@ -206,7 +226,13 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures() with tabs', () => {
 		renderWithProvider( <PlansFeaturesMain { ...myProps } customerType="personal" /> );
 
 		expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
-			JSON.stringify( [ PLAN_PERSONAL, PLAN_PREMIUM ] )
+			JSON.stringify( [
+				PLAN_PERSONAL,
+				PLAN_PREMIUM,
+				PLAN_BUSINESS,
+				PLAN_ECOMMERCE,
+				PLAN_ENTERPRISE_GRID_WPCOM,
+			] )
 		);
 	} );
 
@@ -216,7 +242,13 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures() with tabs', () => {
 		);
 
 		expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
-			JSON.stringify( [ PLAN_PERSONAL_2_YEARS, PLAN_PREMIUM_2_YEARS ] )
+			JSON.stringify( [
+				PLAN_PERSONAL_2_YEARS,
+				PLAN_PREMIUM_2_YEARS,
+				PLAN_BUSINESS_2_YEARS,
+				PLAN_ECOMMERCE_2_YEARS,
+				PLAN_ENTERPRISE_GRID_WPCOM,
+			] )
 		);
 	} );
 
@@ -255,10 +287,12 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures() with tabs', () => {
 } );
 
 describe( 'PlansFeaturesMain.getPlansFromProps', () => {
-	test( 'Should return an empty array if planTypes are not specified', () => {
+	test( 'Should return PLAN_FREE if planTypes are not specified', () => {
 		renderWithProvider( <PlansFeaturesMain { ...props } planTypes={ [ TYPE_FREE ] } /> );
 
-		expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent( JSON.stringify( [] ) );
+		expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
+			JSON.stringify( [ PLAN_FREE ] )
+		);
 	} );
 
 	test( 'Should filter out invalid plan types and print a warning in the console', () => {
