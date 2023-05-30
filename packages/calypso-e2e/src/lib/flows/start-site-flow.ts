@@ -21,8 +21,10 @@ const selectors = {
 	individualThemeContainer: ( name: string ) => `.design-button-container:has-text("${ name }")`,
 
 	// Goals
-	goalButton: ( goal: string ) => `.select-card__container:has-text("${ goal.toLowerCase() }")`,
-	selectedGoalButton: ( goal: string ) => `.select-card__container.selected:has-text("${ goal }")`,
+	goalButton: ( goal: string ) =>
+		`.select-card-checkbox__container:has-text("${ goal.toLowerCase() }")`,
+	selectedGoalButton: ( goal: string ) =>
+		`.select-card-checkbox__container.is-checked:has-text("${ goal }")`,
 
 	// Step containers
 	contentAgnosticContainer: '.step-container',

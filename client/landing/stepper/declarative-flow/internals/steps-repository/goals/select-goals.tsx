@@ -80,7 +80,7 @@ export const SelectGoals = ( { onChange, onSubmit, selectedGoals }: SelectGoalsP
 				{ hasBuiltByExpressGoal && isBuiltByExpressExperimentLoading
 					? goalOptions.map( ( { key } ) => (
 							<div
-								className="select-card__container"
+								className="select-card-checkbox__container"
 								role="progressbar"
 								key={ `goal-${ key }-placeholder` }
 								style={ { cursor: 'default' } }
