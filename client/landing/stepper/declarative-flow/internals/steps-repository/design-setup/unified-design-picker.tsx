@@ -129,7 +129,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			allDesigns.designs = allDesigns.designs.filter( ( design ) => design.is_premium === false );
 
 			allDesigns.designs = allDesigns.designs.map( ( design ) => {
-				design.style_variations = design.style_variations.filter(
+				design.style_variations = design.style_variations?.filter(
 					( variation ) => variation.slug === 'default'
 				);
 				return design;
@@ -186,7 +186,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	} );
 
 	if ( isDesignFirstFlow && selectedDesignDetails?.style_variations ) {
-		selectedDesignDetails.style_variations = selectedDesignDetails?.style_variations[ 0 ];
+		selectedDesignDetails.style_variations = [];
 	}
 
 	const selectedStyleVariation = useSelect(
