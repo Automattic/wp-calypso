@@ -31,12 +31,15 @@ const SiteSubscriptionsManager = () => {
 	} );
 	const { subscriptions, totalCount } = data ?? {};
 	const sortOptions = useSortOptions( translate );
-	const errorMessage = error
-		? translate( "Oops! The subscription couldn't be found or doesn't exist." )
-		: '';
 
-	if ( errorMessage ) {
-		return <Notice type={ NoticeType.Error }>{ errorMessage }</Notice>;
+	if ( error ) {
+		return (
+			<Notice type={ NoticeType.Error }>
+				{ translate(
+					'Oops! We had a small hiccup with your subscriptions. Could you please try reloading? Thank you!'
+				) }
+			</Notice>
+		);
 	}
 
 	if ( isLoading ) {
