@@ -10,7 +10,7 @@ const CreditBalance = () => {
 	const creditBalance = useCreditBalanceQuery();
 	const { data: balance } = creditBalance;
 
-	if ( ! balance ) {
+	if ( ! balance || balance === '0.00' ) {
 		return null;
 	}
 
