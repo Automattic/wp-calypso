@@ -64,8 +64,8 @@ describe( DataHelper.createSuiteTitle( 'Start Writing Tailored Onboarding' ), ()
 		} );
 
 		it( 'Add blog name and description', async function () {
-			await page.click( 'text=Name your blog' );
-			await page.waitForSelector( 'form.setup-form__form' );
+			await page.getByRole( 'button', { name: 'Name your blog' } ).click();
+			await page.getByPlaceholder( 'A catchy name to make your blog memorable' );
 			await page.fill(
 				'input[name="setup-form-input-name"]',
 				`Start writing site ${ testUser.username }`
@@ -79,7 +79,7 @@ describe( DataHelper.createSuiteTitle( 'Start Writing Tailored Onboarding' ), ()
 
 		it( 'Navigate choose a domain', async function () {
 			await page.waitForURL( /.*start-writing\/launchpad.*/ );
-			await page.click( 'text=Choose a domain' );
+			await page.getByRole( 'button', { name: 'Choose a domain' } ).click();
 		} );
 
 		it( 'Search for a domain', async function () {
@@ -93,17 +93,16 @@ describe( DataHelper.createSuiteTitle( 'Start Writing Tailored Onboarding' ), ()
 
 		it( 'Navigate choose a plan', async function () {
 			await page.waitForURL( /.*start-writing\/launchpad.*/ );
-			await page.click( 'text=Choose a plan' );
+			await page.getByRole( 'button', { name: 'Choose a plan' } ).click();
 		} );
 
 		it( 'Select WordPress.com Personal plan', async function () {
-			await page.waitForLoadState( 'networkidle' );
-			await page.click( 'text="Get Personal"' );
+			await page.getByRole( 'button', { name: 'Get Personal' } ).click();
 		} );
 
 		it( 'Launch site', async function () {
 			await page.waitForURL( /.*start-writing\/launchpad.*/ );
-			await page.click( 'text=Launch your blog' );
+			await page.getByRole( 'button', { name: 'Launch your blog' } ).click();
 		} );
 
 		it( 'Land in checkout cart', async function () {
@@ -128,7 +127,7 @@ describe( DataHelper.createSuiteTitle( 'Start Writing Tailored Onboarding' ), ()
 
 		it( 'Navigate to connect to social', async function () {
 			await page.waitForURL( /.*start-writing\/celebration-step.*/ );
-			await page.click( '.celebration-step__top-content-cta-social' );
+			await page.getByRole( 'link', { name: 'Connect to social' } ).click();
 			await page.waitForURL( /.*marketing\/connections.*/ );
 		} );
 	} );
