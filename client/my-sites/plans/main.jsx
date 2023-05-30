@@ -261,6 +261,7 @@ class Plans extends Component {
 		}
 
 		const hideFreePlan = ! is2023PricingGridVisible || this.props.isDomainAndPlanPackageFlow;
+		// The Jetpack mobile app only wants to display two plans -- personal and premium
 		const planTypes = this.props.jetpackAppPlans ? [ TYPE_PERSONAL, TYPE_PREMIUM ] : null;
 
 		const hidePlanTypeSelector =
