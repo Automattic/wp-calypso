@@ -64,6 +64,7 @@ export default function WeeklyHighlightCards( {
 	const [ isTooltipVisible, setTooltipVisible ] = useState( false );
 	const [ isPopoverVisible, setPopoverVisible ] = useState( false );
 
+	// @TODO: Set the popover to disappear when the user clicks outside of the popover.
 	const togglePopoverMenu = useCallback( () => {
 		setPopoverVisible( ( isVisible ) => {
 			return ! isVisible;
