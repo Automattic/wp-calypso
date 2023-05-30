@@ -39,15 +39,26 @@ const EmptySitesCTAs = () => {
 				css={ {
 					width: '85%',
 					display: 'flex',
-					gap: '48px',
+					gap: '32px',
 					flexDirection: 'column',
 					[ MEDIA_QUERIES.small ]: {
 						width: '100%',
-						gap: '32px',
+						gap: '24px',
 					},
 				} }
 			>
 				<CreateSiteCTA />
+				<div
+					css={ {
+						'&:before': {
+							content: '""',
+							display: 'block',
+							height: '1px',
+							opacity: 0.64,
+							background: '#DCDCDE',
+						},
+					} }
+				/>
 				<MigrateSiteCTA />
 			</div>
 		</EmptyContent>
@@ -59,6 +70,9 @@ export const EmptySitesDashboard = () => {
 		<div
 			css={ {
 				paddingTop: '20vh',
+				[ MEDIA_QUERIES.small ]: {
+					paddingTop: '60px',
+				},
 				zIndex: 9999,
 				position: 'relative',
 				display: 'flex',
