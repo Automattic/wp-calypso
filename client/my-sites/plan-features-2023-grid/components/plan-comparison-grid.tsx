@@ -775,9 +775,9 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 		smallBreakpoint = 880;
 	} else {
 		// Breakpoints with admin sidebar
-		largeBreakpoint = 1772; // 1500px + 272px (sidebar)
-		mediumBreakpoint = 1612; // 1340px + 272px (sidebar)
-		smallBreakpoint = 1340; // keeping original breakpoint to match Plan Grid
+		largeBreakpoint = 1553; // 1500px + 272px (sidebar)
+		mediumBreakpoint = 1296; // 1340px + 272px (sidebar)
+		smallBreakpoint = 1152; // keeping original breakpoint to match Plan Grid
 	}
 
 	const isLargeBreakpoint = usePricingBreakpoint( largeBreakpoint );
@@ -809,9 +809,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 
 		visibleLength = isLargeBreakpoint ? 4 : visibleLength;
 		visibleLength = isMediumBreakpoint ? 3 : visibleLength;
-		if ( isInSignup ) {
-			visibleLength = isSmallBreakpoint ? 2 : visibleLength;
-		}
+		visibleLength = isSmallBreakpoint ? 2 : visibleLength;
 
 		if ( newVisiblePlans.length !== visibleLength ) {
 			newVisiblePlans = newVisiblePlans.slice( 0, visibleLength );
