@@ -1,4 +1,10 @@
-.subscription-manager__site-list {
-	margin: 0;
-	padding: 0;
+.site-subscriptions-list {
+	&__list-actions-bar {
+		margin: 0 0 32px;
+	}
+
+	.subscription-manager__site-list {
+		margin: 0;
+		padding: 0;
+	}
 }

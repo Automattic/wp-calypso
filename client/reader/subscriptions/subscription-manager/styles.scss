@@ -5,11 +5,16 @@
 .reader-subscription-manager.main {
 	max-width: 1168px;
 	margin: 0;
-	padding-left: 32px;
+	padding: 0 32px;
 
 	@extend %search-component-subscriptions-style;
 
 	& .formatted-header {
+		&.is-left-align,
+		&.is-right-align {
+			margin: 0 0 26px;
+		}
+
 		&__title {
 			font-size: $font-title-medium;
 			line-height: $font-title-large;
