@@ -16,14 +16,14 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { updateCredentials } from 'calypso/state/jetpack/credentials/actions';
 import getJetpackCredentialsUpdateError from 'calypso/state/selectors/get-jetpack-credentials-update-error';
 import getJetpackCredentialsUpdateStatus from 'calypso/state/selectors/get-jetpack-credentials-update-status';
-import { StartImportTrackingProps } from './types';
+import type { CredentialsProtocol, CredentialsStatus, StartImportTrackingProps } from './types';
 
 interface Props {
 	sourceSite: SiteDetails;
 	targetSite: SiteDetails;
 	startImport: ( props?: StartImportTrackingProps ) => void;
 	selectedHost: string;
-	onChangeProtocol: ( protocol: 'ftp' | 'ssh' ) => void;
+	onChangeProtocol: ( protocol: CredentialsProtocol ) => void;
 }
 
 export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( props ) => {
@@ -36,13 +36,9 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 	const [ formMode, setFormMode ] = useState( FormMode.Password );
 	const [ hasMissingFields, setHasMissingFields ] = useState( false );
 
-	const formSubmissionStatus = useSelector(
+	const formSubmissionStatus: CredentialsStatus = useSelector(
 		( state ) =>
-			getJetpackCredentialsUpdateStatus( state, sourceSite.ID ) as
-				| 'unsubmitted'
-				| 'pending'
-				| 'success'
-				| 'failed'
+			getJetpackCredentialsUpdateStatus( state, sourceSite.ID )
 	);
 
 	const isFormSubmissionPending = formSubmissionStatus === 'pending';
@@ -78,7 +74,7 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 	}, [ formState, formMode ] );
 
 	useEffect( () => {
-		props.onChangeProtocol( formState.protocol as 'ftp' | 'ssh' );
+		props.onChangeProtocol( formState.protocol as CredentialsProtocol );
 	}, [ formState.protocol ] );
 
 	useEffect( () => {
