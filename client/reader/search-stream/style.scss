@@ -320,7 +320,7 @@
 
 .search-stream__results.is-two-columns .search-stream__post-results {
 	max-width: 660px;
-	width: calc(100% - 300px);
+	width: calc(100% - 304px);
 
 	.reader-post-card__post {
 		@include breakpoint-deprecated( "<960px" ) {
