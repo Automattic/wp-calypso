@@ -10,6 +10,7 @@ import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/ac
 import { togglePluginAutoUpdate } from 'calypso/state/plugins/installed/actions';
 import { isPluginActionInProgress } from 'calypso/state/plugins/installed/selectors';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { AUTOMOMANAGED_PLUGINS, PREINSTALLED_PLUGINS } from '../constants';
 
 const autoUpdateActions = [ ENABLE_AUTOUPDATE_PLUGIN, DISABLE_AUTOUPDATE_PLUGIN ];
@@ -59,10 +60,10 @@ export class PluginAutoUpdateToggle extends Component {
 	};
 
 	isAutoManaged = () =>
-		( this.props.isMarketplaceProduct && this.props.productPurchase ) ||
-		( this.props.site?.is_wpcom_atomic &&
-			PREINSTALLED_PLUGINS.includes( this.props.plugin.slug ) ) ||
-		AUTOMOMANAGED_PLUGINS.includes( this.props.plugin.slug );
+		this.props.siteAutomatedTransfer &&
+		( ( this.props.isMarketplaceProduct && this.props.productPurchase ) ||
+			PREINSTALLED_PLUGINS.includes( this.props.plugin.slug ) ||
+			AUTOMOMANAGED_PLUGINS.includes( this.props.plugin.slug ) );
 
 	getDisabledInfo() {
 		const { site, wporg, translate } = this.props;
@@ -193,6 +194,7 @@ PluginAutoUpdateToggle.defaultProps = {
 export default connect(
 	( state, { site, plugin } ) => ( {
 		inProgress: plugin && isPluginActionInProgress( state, site.ID, plugin.id, autoUpdateActions ),
+		siteAutomatedTransfer: isSiteAutomatedTransfer( state, site.ID ),
 	} ),
 	{
 		recordGoogleEvent,
