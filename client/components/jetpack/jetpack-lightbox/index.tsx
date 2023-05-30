@@ -2,7 +2,7 @@ import { Button } from '@automattic/components';
 import { Icon, close } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent, ReactNode } from 'react';
+import { FunctionComponent, ReactNode, forwardRef } from 'react';
 import Modal from 'react-modal';
 
 import './style.scss';
@@ -14,21 +14,35 @@ type ContainerProps = {
 type JetpackLightboxProps = ContainerProps & {
 	className?: string;
 	isOpen: boolean;
+	onAfterOpen?: () => void;
 	onClose: () => void;
 };
 
-export const JetpackLightboxMain: FunctionComponent< ContainerProps > = ( { children } ) => {
-	return <div className="jetpack-lightbox__content-main">{ children }</div>;
-};
+export const JetpackLightboxMain = forwardRef< HTMLDivElement, ContainerProps >(
+	( { children }, ref ) => {
+		return (
+			<div className="jetpack-lightbox__content-main" ref={ ref }>
+				{ children }
+			</div>
+		);
+	}
+);
 
-export const JetpackLightboxAside: FunctionComponent< ContainerProps > = ( { children } ) => {
-	return <div className="jetpack-lightbox__content-aside">{ children }</div>;
-};
+export const JetpackLightboxAside = forwardRef< HTMLDivElement, ContainerProps >(
+	( { children }, ref ) => {
+		return (
+			<div className="jetpack-lightbox__content-aside" ref={ ref }>
+				{ children }
+			</div>
+		);
+	}
+);
 
 const JetpackLightbox: FunctionComponent< JetpackLightboxProps > = ( {
 	children,
 	className,
 	isOpen,
+	onAfterOpen,
 	onClose,
 } ) => {
 	const translate = useTranslate();
@@ -39,6 +53,7 @@ const JetpackLightbox: FunctionComponent< JetpackLightboxProps > = ( {
 			overlayClassName="jetpack-lightbox__modal-overlay"
 			isOpen={ isOpen }
 			onRequestClose={ onClose }
+			onAfterOpen={ onAfterOpen }
 			htmlOpenClassName="jetpack-lightbox__html--is-open lightbox-mode"
 		>
 			<div className="jetpack-lightbox__content-wrapper">

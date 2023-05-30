@@ -5,6 +5,7 @@ import JetpackLightbox, {
 	JetpackLightboxAside,
 	JetpackLightboxMain,
 } from 'calypso/components/jetpack/jetpack-lightbox';
+import useMobileSidebar from 'calypso/components/jetpack/jetpack-lightbox/hooks/use-mobile-sidebar';
 import JetpackProductInfo from 'calypso/components/jetpack/jetpack-product-info';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { useLicenseLightboxData } from './hooks/use-license-lightbox-data';
@@ -37,15 +38,22 @@ const LicenseLightbox: FunctionComponent< LicenseLightBoxProps > = ( {
 		onClose();
 	}, [ product, onActivate, onClose ] );
 
+	const { sidebarRef, mainRef, initMobileSidebar } = useMobileSidebar();
+
 	return (
-		<JetpackLightbox className="license-lightbox" isOpen={ true } onClose={ onClose }>
-			<JetpackLightboxMain>
+		<JetpackLightbox
+			className="license-lightbox"
+			isOpen={ true }
+			onClose={ onClose }
+			onAfterOpen={ initMobileSidebar }
+		>
+			<JetpackLightboxMain ref={ mainRef }>
 				{ productInfo && (
 					<JetpackProductInfo title={ title } product={ productInfo } full={ isLargeScreen } />
 				) }
 			</JetpackLightboxMain>
 
-			<JetpackLightboxAside>
+			<JetpackLightboxAside ref={ sidebarRef }>
 				<LicenseLightboxPaymentPlan product={ product } />
 
 				<Button
