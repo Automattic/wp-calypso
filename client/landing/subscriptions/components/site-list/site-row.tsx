@@ -1,6 +1,5 @@
 import { Gridicon } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
-import { useLocale } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -72,7 +71,6 @@ export default function SiteRow( {
 		SubscriptionManager.useSiteUnsubscribeMutation();
 
 	const navigate = useNavigate();
-	const locale = useLocale();
 
 	const individualPagePath = useMemo( () => {
 		return `/subscriptions/site/${ blog_ID }`;
