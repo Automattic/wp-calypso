@@ -2,9 +2,12 @@ import { Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from '../../../../state/partner-portal/types';
 import { useProductDescription } from '../hooks';
+import LicenseLightbox from '../license-lightbox';
 import LicenseLightboxLink from '../license-lightbox-link';
 import { getProductTitle } from '../utils';
 
@@ -31,7 +34,9 @@ export default function LicenseProductCard( props: Props ) {
 		isMultiSelect,
 	} = props;
 	const productTitle = getProductTitle( product.name );
+	const [ showLightbox, setShowLightbox ] = useState( false );
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const onSelect = useCallback( () => {
 		if ( isDisabled ) {
@@ -64,6 +69,25 @@ export default function LicenseProductCard( props: Props ) {
 
 	const { description: productDescription } = useProductDescription( product.slug );
 
+	const onShowLightbox = useCallback(
+		( e: React.MouseEvent< HTMLElement > ) => {
+			e.stopPropagation();
+
+			dispatch(
+				recordTracksEvent( 'calypso_partner_portal_issue_license_product_view', {
+					product: product.slug,
+				} )
+			);
+
+			setShowLightbox( true );
+		},
+		[ dispatch, product ]
+	);
+
+	const onHideLightbox = useCallback( () => {
+		setShowLightbox( false );
+	}, [] );
+
 	return (
 		<>
 			<div
@@ -87,7 +111,7 @@ export default function LicenseProductCard( props: Props ) {
 
 								<div className="license-product-card__description">{ productDescription }</div>
 
-								<LicenseLightboxLink product={ product } />
+								<LicenseLightboxLink productName={ productTitle } onClick={ onShowLightbox } />
 							</div>
 
 							<div
@@ -111,6 +135,17 @@ export default function LicenseProductCard( props: Props ) {
 					</div>
 				</div>
 			</div>
+
+			{ showLightbox && (
+				<LicenseLightbox
+					product={ product }
+					ctaLabel={ isSelected ? translate( 'Unselect License' ) : translate( 'Select License' ) }
+					isCTAPrimary={ ! isSelected }
+					isDisabled={ isDisabled }
+					onActivate={ onSelectProduct }
+					onClose={ onHideLightbox }
+				/>
+			) }
 		</>
 	);
 }

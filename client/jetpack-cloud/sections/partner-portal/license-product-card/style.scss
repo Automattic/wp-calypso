@@ -30,6 +30,7 @@
 	border: 1px solid var(--studio-gray-10);
 	border-radius: 4px;
 	user-select: none;
+	cursor: pointer;
 
 	@include break-xlarge {
 		margin: 0.5rem;
@@ -171,7 +172,6 @@
 	border: 2px solid var(--studio-black);
 	border-radius: 12px; /* stylelint-disable-line scales/radii */
 	text-align: center;
-	cursor: pointer;
 
 	@include license-product-card-block__select-button;
 
