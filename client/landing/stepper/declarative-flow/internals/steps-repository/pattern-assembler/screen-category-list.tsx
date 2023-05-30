@@ -29,7 +29,7 @@ interface Props {
 	replacePatternMode: boolean;
 	selectedPattern: Pattern | null;
 	recordTracksEvent: ( name: string, eventProperties: any ) => void;
-	onTogglePatternPanelList?: ( isOpen: boolean ) => void;
+	onTogglePatternPanelList: ( isOpen: boolean ) => void;
 }
 
 const ScreenCategoryList = ( {
