@@ -2,6 +2,7 @@
 @import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 @import "client/assets/stylesheets/p2-vars";
+@import "landing/subscriptions/styles/row-title-label";
 
 .subscription-manager__site-list {
 
@@ -67,6 +68,14 @@
 
 					&:hover {
 						text-decoration: underline;
+					}
+
+					.p2-label {
+						@extend %p2-label;
+					}
+
+					.paid-label {
+						@extend %paid-label;
 					}
 				}
 
