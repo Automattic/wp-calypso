@@ -1,0 +1,39 @@
+
+%row-title-label {
+	display: inline-block;
+	text-align: center;
+	height: 20px;
+	color: $studio-green-0;
+	font-size: $font-body-extra-small;
+	border-radius: 4px;
+	margin-left: 8px;
+	line-height: 20px;
+
+	&__p2 {
+		background: var(--p2-color-link);
+		width: 36px;
+	}
+
+	&__paid {
+		background: $studio-green-50;
+		padding-left: 5px;
+		padding-right: 5px;
+		min-width: 35px;
+	}
+}
+
+%p2-label {
+	@extend %row-title-label;
+
+	background: var(--p2-color-link);
+	width: 36px;
+}
+
+%paid-label {
+	@extend %row-title-label;
+
+	background: $studio-green-50;
+	padding-left: 5px;
+	padding-right: 5px;
+	min-width: 35px;
+}

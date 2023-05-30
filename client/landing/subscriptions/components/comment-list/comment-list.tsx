@@ -1,8 +1,8 @@
 import { useTranslate } from 'i18n-calypso';
 import { VirtualizedList } from '../virtualized-list';
 import CommentRow from './comment-row';
-import './styles.scss';
 import type { PostSubscription } from '@automattic/data-stores/src/reader/types';
+import './styles.scss';
 
 type CommentListProps = {
 	posts?: PostSubscription[];
