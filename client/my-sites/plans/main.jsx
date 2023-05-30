@@ -150,7 +150,7 @@ class Plans extends Component {
 	static propTypes = {
 		context: PropTypes.object.isRequired,
 		redirectToAddDomainFlow: PropTypes.bool,
-		domainAndPlanPackage: PropTypes.string,
+		domainAndPlanPackage: PropTypes.bool,
 		intervalType: PropTypes.string,
 		customerType: PropTypes.string,
 		selectedFeature: PropTypes.string,
