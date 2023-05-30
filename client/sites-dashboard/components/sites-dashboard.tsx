@@ -18,7 +18,7 @@ import { withoutHttp } from 'calypso/lib/url';
 import { successNotice } from 'calypso/state/notices/actions';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 import { useSitesDashboardCreateSiteUrl } from '../hooks/use-sites-dashboard-create-site-url';
-import { MEDIA_QUERIES, TRACK_SOURCE_NAME } from '../utils';
+import { getMigrateSiteUrl, MEDIA_QUERIES, TRACK_SOURCE_NAME } from '../utils';
 import { NoSitesMessage } from './no-sites-message';
 import {
 	SitesDashboardQueryParams,
@@ -197,9 +197,7 @@ export function SitesDashboard( {
 							onClick={ () => {
 								recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_import' );
 							} }
-							href={ addQueryArgs( '/start/import', {
-								source: TRACK_SOURCE_NAME,
-							} ) }
+							href={ getMigrateSiteUrl() }
 							icon="arrow-down"
 						>
 							<span>{ __( 'Import an existing site' ) }</span>
