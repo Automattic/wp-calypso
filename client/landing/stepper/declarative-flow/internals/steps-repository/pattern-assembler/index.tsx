@@ -422,6 +422,14 @@ const PatternAssembler = ( {
 		submit?.();
 	};
 
+	const handleContinue = () => {
+		if ( isNewSite ) {
+			onSubmit();
+		} else {
+			navigator.goTo( NAVIGATOR_PATHS.ACTIVATION );
+		}
+	};
+
 	const {
 		shouldUnlockGlobalStyles,
 		openModal: openGlobalStylesUpgradeModal,
@@ -432,7 +440,7 @@ const PatternAssembler = ( {
 		hasSelectedColorVariation: !! colorVariation,
 		hasSelectedFontVariation: !! fontVariation,
 		onCheckout: snapshotRecipe,
-		onUpgradeLater: onSubmit,
+		onUpgradeLater: handleContinue,
 		recordTracksEvent,
 	} );
 
@@ -460,11 +468,7 @@ const PatternAssembler = ( {
 			return;
 		}
 
-		if ( isNewSite ) {
-			onSubmit();
-		} else {
-			navigator.goTo( NAVIGATOR_PATHS.ACTIVATION );
-		}
+		handleContinue();
 	};
 
 	const onActivate = () => {
