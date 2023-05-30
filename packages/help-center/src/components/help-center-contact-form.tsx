@@ -186,8 +186,8 @@ export const HelpCenterContactForm = () => {
 		supportSite = currentSite as HelpCenterSite;
 	}
 
-	const [ debouncedMessage ] = useDebounce( message || '', 500 );
-	const [ debouncedSubject ] = useDebounce( subject || '', 500 );
+	const [ debouncedMessage ] = useDebounce( message || '', 1000 );
+	const [ debouncedSubject ] = useDebounce( subject || '', 1000 );
 
 	const enableGPTResponse =
 		config.isEnabled( 'help/gpt-response' ) && ! ( params.get( 'disable-gpt' ) === 'true' );
