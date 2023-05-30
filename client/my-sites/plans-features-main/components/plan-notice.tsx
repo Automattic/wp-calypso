@@ -11,7 +11,8 @@ import { ActiveDiscount } from 'calypso/lib/discounts/active-discounts';
 import { useCalculateMaxPlanUpgradeCredit } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-calculate-max-plan-upgrade-credit';
 import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-is-plan-upgrade-credit-visible';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
+import { getByPurchaseId } from 'calypso/state/purchases/selectors';
+import { getCurrentPlan, isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
 import { getSitePlan, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 
 export type PlanNoticeProps = {
@@ -27,7 +28,7 @@ const NO_NOTICE = 'no-notice';
 const USER_CANNOT_PURCHASE_NOTICE = 'user-cannot-purchase-notice';
 const ACTIVE_DISCOUNT_NOTICE = 'active-discount-notice';
 const PLAN_UPGRADE_CREDIT_NOTICE = 'plan-upgrade-credit-notice';
-const MARKETING_NOTICE = 'plan-upgrade-credit-notice';
+const MARKETING_NOTICE = 'marketing-notice';
 const PLAN_RETIREMENT_NOTICE = 'plan-retirement-notice';
 const CURRENT_PLAN_IN_APP_PURCHASE_NOTICE = 'current-plan-in-app-purchase-notice';
 
@@ -58,6 +59,10 @@ function useResolveNoticeType(
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
 	const sitePlanSlug = sitePlan?.product_slug ?? '';
 	const isCurrentPlanRetired = isProPlan( sitePlanSlug ) || isStarterPlan( sitePlanSlug );
+	const currentPlan = useSelector( ( state ) => getCurrentPlan( state, siteId ) );
+	const currentPurchase = useSelector( ( state ) =>
+		getByPurchaseId( state, currentPlan?.id ?? 0 )
+	);
 
 	if ( isNoticeDismissed || isInSignup ) {
 		return NO_NOTICE;
@@ -65,6 +70,8 @@ function useResolveNoticeType(
 		return USER_CANNOT_PURCHASE_NOTICE;
 	} else if ( isCurrentPlanRetired ) {
 		return PLAN_RETIREMENT_NOTICE;
+	} else if ( currentPurchase?.isInAppPurchase ) {
+		return CURRENT_PLAN_IN_APP_PURCHASE_NOTICE;
 	} else if ( activeDiscount ) {
 		return ACTIVE_DISCOUNT_NOTICE;
 	} else if ( isPlanUpgradeCreditEligible ) {
@@ -156,11 +163,38 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 					) }
 				</Notice>
 			);
-		case MARKETING_NOTICE:
-			return <MarketingMessage siteId={ siteId } />;
 		case PLAN_RETIREMENT_NOTICE:
+			return (
+				<Notice
+					className="plan-features-main__notice"
+					showDismiss={ false }
+					isReskinned={ true }
+					icon="info-outline"
+					status="is-error"
+					text={ translate(
+						'Your current plan is no longer available for new subscriptions. ' +
+							'You’re all set to continue with the plan for as long as you like. ' +
+							'Alternatively, you can switch to any of our current plans by selecting it below. ' +
+							'Please keep in mind that switching plans will be irreversible.'
+					) }
+				/>
+			);
 		case CURRENT_PLAN_IN_APP_PURCHASE_NOTICE:
+			return (
+				<Notice
+					className="plan-features-main__notice"
+					showDismiss={ false }
+					isReskinned={ true }
+					icon="info-outline"
+					status="is-error"
+					text={ translate(
+						'Your current plan is an in-app purchase. You can upgrade to a different plan from within the WordPress app.'
+					) }
+				></Notice>
+			);
+
+		case MARKETING_NOTICE:
 		default:
-			return 'Implementation in progress';
+			return <MarketingMessage siteId={ siteId } />;
 	}
 }
