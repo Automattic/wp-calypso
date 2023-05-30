@@ -1,6 +1,7 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { BackButton, NextButton, SubTitle, Title } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
@@ -12,6 +13,10 @@ interface Props {
 const NotAuthorized: React.FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
 	const { onBackToStart, onStartBuilding } = props;
+
+	useEffect( () => {
+		recordTracksEvent( 'calypso_site_importer_unauthorized' );
+	}, [] );
 
 	return (
 		<div className="import-layout__center">
