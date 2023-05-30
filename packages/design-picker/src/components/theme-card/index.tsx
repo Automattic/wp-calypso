@@ -28,11 +28,11 @@ interface ThemeCardProps {
 	onImageClick?: () => void;
 	onStyleVariationClick?: ( styleVariation: StyleVariation ) => void;
 	onStyleVariationMoreClick?: () => void;
-	id: string;
-	type: string;
-	isPurchased: boolean;
-	canUseTheme: boolean;
-	subscriptionPrices: { year?: string; month?: string };
+	id?: string;
+	type?: string;
+	isPurchased?: boolean;
+	canUseTheme?: boolean;
+	subscriptionPrices?: { year?: string; month?: string };
 	siteSlug?: string;
 }
 
