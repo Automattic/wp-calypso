@@ -554,7 +554,6 @@ const PatternAssembler = ( {
 			<div className="pattern-assembler__sidebar">
 				<NavigatorScreen path={ NAVIGATOR_PATHS.MAIN }>
 					<ScreenMain
-						isNewSite={ isNewSite }
 						onSelect={ onMainItemSelect }
 						onContinueClick={ onContinueClick }
 						recordTracksEvent={ recordTracksEvent }
