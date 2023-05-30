@@ -50,9 +50,10 @@ interface Props {
 	onSubmit: ( pickedPlan: MinimalRequestCartProduct | null ) => void;
 	plansLoaded: boolean;
 	is2023PricingGridVisible: boolean;
+	hostingFlow: boolean;
 }
 
-function getPlanTypes( flowName: string | null, hideFreePlan: boolean ) {
+function getPlanTypes( flowName: string | null, hideFreePlan: boolean, hostingFlow: boolean ) {
 	switch ( flowName ) {
 		case START_WRITING_FLOW:
 		case DESIGN_FIRST_FLOW:
@@ -64,7 +65,7 @@ function getPlanTypes( flowName: string | null, hideFreePlan: boolean ) {
 		case LINK_IN_BIO_FLOW:
 			return [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM ];
 		case NEW_HOSTED_SITE_FLOW:
-			return isInHostingFlow()
+			return hostingFlow
 				? [ TYPE_BUSINESS, TYPE_ECOMMERCE ]
 				: [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
 		default:
@@ -97,7 +98,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const isReskinned = true;
 	const customerType = 'personal';
 	const isInVerticalScrollingPlansExperiment = true;
-	const planTypes = getPlanTypes( props?.flowName, reduxHideFreePlan );
+	const planTypes = getPlanTypes( props?.flowName, reduxHideFreePlan, props.hostingFlow );
 	const headerText = __( 'Choose a plan' );
 	const isInSignup = props?.flowName === DOMAIN_UPSELL_FLOW ? false : true;
 
@@ -276,5 +277,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 export default connect( ( state ) => {
 	return {
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
+		hostingFlow: isInHostingFlow( state ),
 	};
 } )( localize( PlansWrapper ) );

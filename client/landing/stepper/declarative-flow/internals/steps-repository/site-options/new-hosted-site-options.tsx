@@ -6,6 +6,7 @@ import { Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
+import { useSelector } from 'react-redux';
 import siteOptionsUrl from 'calypso/assets/images/onboarding/site-options.svg';
 import DataCenterPicker from 'calypso/blocks/data-center-picker';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -49,7 +50,7 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 		} ),
 		[]
 	);
-
+	const hostingFlow = useSelector( isInHostingFlow );
 	const { goBack, submit } = navigation;
 	const [ siteTitle, setSiteTitle ] = React.useState( currentSiteTitle ?? '' );
 	const [ siteGeoAffinity, setSiteGeoAffinity ] = React.useState( currentSiteGeoAffinity ?? '' );
@@ -133,7 +134,7 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 				stepName="site-options"
 				shouldHideNavButtons
 				backLabelText={ __( 'Back' ) }
-				hideBack={ isInHostingFlow() }
+				hideBack={ hostingFlow }
 				goBack={ goBack }
 				headerImageUrl={ siteOptionsUrl }
 				hideSkip={ true }

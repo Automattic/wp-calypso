@@ -3,6 +3,7 @@ import { NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import {
 	setSignupCompleteSlug,
 	persistSignupDestination,
@@ -30,7 +31,9 @@ const otherSteps = [
 const hosting: Flow = {
 	name: NEW_HOSTED_SITE_FLOW,
 	useSteps() {
-		if ( isInHostingFlow() ) {
+		const hostingFlow = useSelector( isInHostingFlow );
+
+		if ( hostingFlow ) {
 			return [
 				{
 					slug: 'options',
@@ -51,6 +54,7 @@ const hosting: Flow = {
 		];
 	},
 	useStepNavigation( _currentStepSlug, navigate ) {
+		const hostingFlow = useSelector( isInHostingFlow );
 		const { setSiteTitle, setPlanCartItem, setSiteGeoAffinity } = useDispatch( ONBOARD_STORE );
 		const { siteGeoAffinity, planCartItem } = useSelect(
 			( select ) => ( {
@@ -88,7 +92,7 @@ const hosting: Flow = {
 			return providedDependencies;
 		};
 
-		if ( isInHostingFlow() ) {
+		if ( hostingFlow ) {
 			const goBack = () => {
 				if ( _currentStepSlug === 'plans' ) {
 					navigate( 'options' );
