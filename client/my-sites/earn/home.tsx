@@ -3,6 +3,7 @@ import {
 	FEATURE_WORDADS_INSTANT,
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_PREMIUM,
+	getPlanCommissionFee,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { addQueryArgs } from '@wordpress/url';
@@ -48,6 +49,7 @@ interface ConnectedProps {
 	trackLearnLink: ( feature: string ) => void;
 	trackCtaButton: ( feature: string ) => void;
 	isUserAdmin?: boolean;
+	planCommissionFee: number;
 }
 
 const Home: FunctionComponent< ConnectedProps > = ( {
@@ -64,6 +66,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	trackLearnLink,
 	trackCtaButton,
 	hasWordAdsFeature,
+	planCommissionFee,
 } ) => {
 	const translate = useTranslate();
 	const [ peerReferralLink, setPeerReferralLink ] = useState( '' );
@@ -458,19 +461,46 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			path: earnSectionImage,
 			align: 'right' as Image[ 'align' ],
 		},
-		body: translate(
-			'Accept credit card payments today for just about anything – physical and digital goods, services, donations and tips, or access to your exclusive content. {{a}}Watch our tutorial videos to get started{{/a}}.',
-			{
-				components: {
-					a: (
-						<a
-							href="https://wordpress.com/support/video-tutorials-add-payments-features-to-your-site-with-our-guides/"
-							target="_blank"
-							rel="noopener noreferrer"
-						/>
-					),
-				},
-			}
+		body: (
+			<>
+				<p>
+					{ translate(
+						'Accept credit card payments today for just about anything – physical and digital goods, services, donations and tips, or access to your exclusive content. {{a}}Watch our tutorial videos to get started{{/a}}.',
+						{
+							components: {
+								a: (
+									<a
+										href="https://wordpress.com/support/video-tutorials-add-payments-features-to-your-site-with-our-guides/"
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+							},
+						}
+					) }
+				</p>
+				<p>
+					{ translate(
+						'With your current plan, the transaction fee for payments is %(planCommissionFee)d% (+ Stripe fees). {{a}}Upgrade to lower it.{{/a}}.',
+						{
+							args: {
+								planCommissionFee,
+							},
+							components: {
+								a: (
+									<a
+										href={ addQueryArgs( `/plans/${ selectedSiteSlug }`, {
+											// TODO: switch to highlight transaction fee once it's in the plans grid!
+											// feature: FEATURE_SIMPLE_PAYMENTS,
+											plan: isNonAtomicJetpack ? PLAN_JETPACK_SECURITY_DAILY : PLAN_PREMIUM,
+										} ) }
+									/>
+								),
+							},
+						}
+					) }
+				</p>
+			</>
 		),
 	} );
 
@@ -542,6 +572,7 @@ export default connect(
 			hasSetupAds: Boolean(
 				site?.options?.wordads || isRequestingWordAdsApprovalForSite( state, site )
 			),
+			planCommissionFee: getPlanCommissionFee( sitePlanSlug ),
 		};
 	},
 	( dispatch ) => ( {
