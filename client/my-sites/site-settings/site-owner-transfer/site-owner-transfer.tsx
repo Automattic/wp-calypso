@@ -32,7 +32,7 @@ const SiteOwnerTransfer = () => {
 			<FormattedHeader
 				headerText={ translate( 'Site Transfer' ) }
 				subHeaderText={ translate(
-					'Transfer your site to another WordPress.com user. {{a}}Learn More.{{/a}}',
+					'Transfer your site to another WordPress.com user. {{a}}Learn more.{{/a}}',
 					{
 						components: {
 							a: <InlineSupportLink supportContext="site-transfer" showIcon={ false } />,
