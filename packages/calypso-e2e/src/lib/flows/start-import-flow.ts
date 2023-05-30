@@ -116,13 +116,6 @@ export class StartImportFlow {
 	}
 
 	/**
-	 * Validates that we've landed on the WordPress pre-migration page.
-	 */
-	async validateWordPressPreMigrationPage(): Promise< void > {
-		await this.page.waitForSelector( selectors.wpPreMigrationContentOnlyOptionButton );
-	}
-
-	/**
 	 * Validates that we've landed on the importer drag page.
 	 */
 	async validateImporterDragPage( importer: string ): Promise< void > {
@@ -139,8 +132,8 @@ export class StartImportFlow {
 	/**
 	 * Continue 'content only' WordPress migration on pre-migration page.
 	 */
-	async contentOnlyWordPressPreMigrationPage(): Promise< void > {
-		await this.page.click( selectors.wpPreMigrationContentOnlyOptionButton );
+	async clickPremigrationOptionButton(): Promise< void > {
+		await this.page.locator( selectors.wpPreMigrationContentOnlyOptionButton ).click();
 	}
 
 	/**
