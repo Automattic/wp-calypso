@@ -43,6 +43,7 @@ interface Props {
 	onChangeIsImportValid?: ( isValid: boolean ) => void;
 	titleText?: string;
 	subtitleText?: string;
+	showSkipLink?: boolean;
 }
 
 export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
@@ -96,7 +97,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	const [ isDirtyEmails, setIsDirtyEmails ] = useState< boolean[] >( [] );
 	const [ emailFormControls, setEmailFormControls ] = useState( emailControlPlaceholder );
 	const [ submitAttemptCount, setSubmitAttemptCount ] = useState( 0 );
-	const [ submitBtnReady, setIsSubmitBtnReady ] = useState( isSubmitButtonReady() );
+
 	const importSelector = useSelect(
 		( select ) => select( Subscriber.store ).getImportSubscribersSelector(),
 		[]
@@ -112,6 +113,12 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	const getValidEmails = useCallback( () => {
 		return isValidEmails.map( ( x, i ) => x && emails[ i ] ).filter( ( x ) => !! x ) as string[];
 	}, [ isValidEmails, emails ] );
+
+	// This useState call has been moved below getValidEmails() to resolve
+	// an error with calling getValidEmails() before it is initialized.
+	// The next line calls isSubmitButtonReady() which invokes getValidEmails()
+	// if submitBtnAlwaysEnable and allowEmptyFormSubmit are both false.
+	const [ submitBtnReady, setIsSubmitBtnReady ] = useState( isSubmitButtonReady() );
 
 	/**
 	 * ↓ Effects
@@ -503,6 +510,13 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 					>
 						{ submitBtnName }
 					</NextButton>
+					{ props.showSkipLink && (
+						<div className="add-subscriber__form-skip-link-wrapper">
+							<button className="add-subscriber__form-skip-link" onClick={ props.onSkipBtnClick }>
+								{ translate( 'Skip for now' ) }
+							</button>
+						</div>
+					) }
 					{ showCsvUpload && ! includesHandledError() && renderImportCsvDisclaimerMsg() }
 				</form>
 			</div>

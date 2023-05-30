@@ -55,6 +55,17 @@
 	.components-notice.is-info {
 		background: var(--studio-gray-0);
 	}
+
+	.add-subscriber__form-skip-link-wrapper {
+		display: flex;
+		justify-content: flex-start;
+		padding: 16px 0;
+		.add-subscriber__form-skip-link {
+			color: var(--color-primary);
+			font-weight: 500;
+			cursor: pointer;
+		}
+	}
 }
 
 .add-subscriber .add-subscriber__title-container {
