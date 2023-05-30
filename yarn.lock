@@ -1005,6 +1005,36 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@automattic/launchpad@workspace:^, @automattic/launchpad@workspace:packages/launchpad":
+  version: 0.0.0-use.local
+  resolution: "@automattic/launchpad@workspace:packages/launchpad"
+  dependencies:
+    "@automattic/calypso-build": "workspace:^"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/i18n-utils": "workspace:^"
+    classnames: ^2.3.1
+    postcss: ^8.4.5
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    react-query: ^3.32.1
+    redux: ^4.1.2
+    tslib: ^2.3.0
+    typescript: ^4.7.4
+    utility-types: ^3.10.0
+    webpack: ^5.68.0
+    wpcom-proxy-request: "workspace:^"
+  peerDependencies:
+    "@wordpress/data": ^7.6.0
+    "@wordpress/element": ^4.20.0
+    "@wordpress/i18n": ^4.22.0
+    debug: ^4.3.3
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    reakit-utils: ^0.15.1
+    redux: ^4.1.2
+  languageName: unknown
+  linkType: soft
+
 "@automattic/load-script@workspace:^, @automattic/load-script@workspace:packages/load-script":
   version: 0.0.0-use.local
   resolution: "@automattic/load-script@workspace:packages/load-script"
@@ -33888,6 +33918,7 @@ fsevents@^1.2.7:
     "@automattic/help-center": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/languages": "workspace:^"
+    "@automattic/launchpad": "workspace:^"
     "@automattic/privacy-toolset": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@automattic/viewport": "workspace:^"
