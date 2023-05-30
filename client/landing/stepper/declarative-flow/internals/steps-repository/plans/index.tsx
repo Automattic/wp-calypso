@@ -5,6 +5,7 @@ import {
 	isHostingSiteCreationFlow,
 	StepContainer,
 } from '@automattic/onboarding';
+import { isInHostingFlow } from 'calypso/landing/stepper/utils/is-in-hosting-flow';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import PlansWrapper from './plans-wrapper';
 import type { ProvidedDependencies, Step } from '../../types';
@@ -26,7 +27,8 @@ const plans: Step = function Plans( { navigation, flow } ) {
 	};
 	const is2023PricingGridVisible = is2023PricingGridActivePage( window );
 
-	const isAllowedToGoBack = isDomainUpsellFlow( flow ) || isHostingSiteCreationFlow( flow );
+	const isAllowedToGoBack =
+		isDomainUpsellFlow( flow ) || ( isHostingSiteCreationFlow( flow ) && isInHostingFlow() );
 
 	return (
 		<StepContainer
