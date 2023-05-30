@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.0.1 (2023-05-30)
+
+- Added Mastodon and Instagram previews
+- Fixed hyperlinks for Facebook
+
 ## v2.0.0 (2023-05-24)
 
 - Converted the package to TypeScript.
