@@ -4,7 +4,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { useActivityPubStatus } from './hooks';
@@ -69,7 +68,6 @@ export const WpcomFediverseSettingsSection = ( { siteId } ) => {
 	const disabled = isLoading || isError;
 	return (
 		<>
-			<SettingsSectionHeader title={ translate( 'Fediverse settings' ) } />
 			<Card className="site-settings__card">
 				<p>
 					{ translate(

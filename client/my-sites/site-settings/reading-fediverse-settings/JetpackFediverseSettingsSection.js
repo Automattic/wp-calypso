@@ -3,7 +3,6 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useSelector } from 'react-redux';
 import QueryPlugins from 'calypso/components/data/query-plugins';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 
@@ -16,7 +15,6 @@ export const JetpackFediverseSettingsSection = ( { siteId } ) => {
 	return (
 		<>
 			<QueryPlugins siteId={ siteId } />
-			<SettingsSectionHeader title={ translate( 'Fediverse settings' ) } />
 			<Card className="site-settings__card">
 				<p>
 					{ translate(
