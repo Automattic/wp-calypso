@@ -15,20 +15,19 @@ interface MutationError {
 	message: string;
 }
 
-export const useStartSiteOwnerTransfer = (
+export const useCheckSiteTransferEligibility = (
 	siteId: number | null,
 	options: UseMutationOptions< MutationResponse, MutationError, MutationVariables > = {}
 ) => {
 	const mutation = useMutation(
-		async ( { newSiteOwner }: MutationVariables ) => {
-			return wp.req.post(
+		async ( { newSiteOwner }: MutationVariables ) =>
+			wp.req.post(
 				{
-					path: `/sites/${ siteId }/site-owner-transfer`,
+					path: `/sites/${ siteId }/site-owner-transfer/check-site-transfer-eligibility`,
 					apiNamespace: 'wpcom/v2',
 				},
 				{ new_site_owner: newSiteOwner }
-			);
-		},
+			),
 		{
 			...options,
 		}
@@ -36,10 +35,10 @@ export const useStartSiteOwnerTransfer = (
 
 	const { mutate, isLoading } = mutation;
 
-	const startSiteOwnerTransfer = useCallback(
+	const checkSiteTransferEligibility = useCallback(
 		( args: MutationVariables ) => mutate( args ),
 		[ mutate ]
 	);
 
-	return { startSiteOwnerTransfer, isLoading };
+	return { checkSiteTransferEligibility, isLoading };
 };
