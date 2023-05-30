@@ -9,11 +9,13 @@ import { header, footer, layout, color, typography } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useRef } from 'react';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { NAVIGATOR_PATHS } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import { NavigationButtonAsItem } from './navigator-buttons';
 import NavigatorHeader from './navigator-header';
 import { NavigatorItemGroup } from './navigator-item-group';
 import Survey from './survey';
+import type { Pattern } from './types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { MouseEvent } from 'react';
 
@@ -23,6 +25,7 @@ interface Props {
 	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
 	surveyDismissed: boolean;
 	setSurveyDismissed: ( dismissed: boolean ) => void;
+	patterns: Pattern[];
 }
 
 const ScreenMain = ( {
@@ -31,6 +34,7 @@ const ScreenMain = ( {
 	recordTracksEvent,
 	surveyDismissed,
 	setSurveyDismissed,
+	patterns,
 }: Props ) => {
 	const translate = useTranslate();
 	const [ disabled, setDisabled ] = useState( true );
@@ -97,7 +101,7 @@ const ScreenMain = ( {
 				<HStack direction="column" alignment="top" spacing="4">
 					<NavigatorItemGroup title={ translate( 'Layout' ) }>
 						<NavigationButtonAsItem
-							path="/header"
+							path={ NAVIGATOR_PATHS.HEADER }
 							icon={ header }
 							aria-label={ translate( 'Header' ) }
 							onClick={ () => onSelect( 'header' ) }
@@ -105,7 +109,7 @@ const ScreenMain = ( {
 							<span className="pattern-layout__list-item-text">{ translate( 'Header' ) }</span>
 						</NavigationButtonAsItem>
 						<NavigationButtonAsItem
-							path="/section"
+							path={ patterns.length ? NAVIGATOR_PATHS.SECTION : NAVIGATOR_PATHS.SECTION_PATTERNS }
 							icon={ layout }
 							aria-label={ translate( 'Homepage' ) }
 							onClick={ () => onSelect( 'section' ) }
@@ -113,7 +117,7 @@ const ScreenMain = ( {
 							<span className="pattern-layout__list-item-text">{ translate( 'Homepage' ) }</span>
 						</NavigationButtonAsItem>
 						<NavigationButtonAsItem
-							path="/footer"
+							path={ NAVIGATOR_PATHS.FOOTER }
 							icon={ footer }
 							aria-label={ translate( 'Footer' ) }
 							onClick={ () => onSelect( 'footer' ) }
@@ -124,7 +128,7 @@ const ScreenMain = ( {
 					<NavigatorItemGroup title={ translate( 'Style' ) }>
 						<>
 							<NavigationButtonAsItem
-								path="/color-palettes"
+								path={ NAVIGATOR_PATHS.COLOR_PALETTES }
 								icon={ color }
 								aria-label={ translate( 'Colors' ) }
 								onClick={ () => onSelect( 'color-palettes' ) }
@@ -132,7 +136,7 @@ const ScreenMain = ( {
 								<span className="pattern-layout__list-item-text">{ translate( 'Colors' ) }</span>
 							</NavigationButtonAsItem>
 							<NavigationButtonAsItem
-								path="/font-pairings"
+								path={ NAVIGATOR_PATHS.FONT_PAIRINGS }
 								icon={ typography }
 								aria-label={ translate( 'Fonts' ) }
 								onClick={ () => onSelect( 'font-pairings' ) }
