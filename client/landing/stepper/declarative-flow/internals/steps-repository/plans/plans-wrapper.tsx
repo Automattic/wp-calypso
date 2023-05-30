@@ -35,6 +35,7 @@ import { connect } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { isInHostingFlow } from 'calypso/landing/stepper/utils/is-in-hosting-flow';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -63,7 +64,9 @@ function getPlanTypes( flowName: string | null, hideFreePlan: boolean ) {
 		case LINK_IN_BIO_FLOW:
 			return [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM ];
 		case HOSTING_SITE_CREATION_FLOW:
-			return [ TYPE_BUSINESS, TYPE_ECOMMERCE ];
+			return isInHostingFlow()
+				? [ TYPE_BUSINESS, TYPE_ECOMMERCE ]
+				: [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
 		default:
 			return undefined;
 	}
