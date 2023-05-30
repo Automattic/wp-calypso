@@ -1,11 +1,11 @@
 import { useLaunchpad } from '@automattic/data-stores';
 import Checklist from './checklist';
 
-export interface ChecklistWrapperProps {
+export interface LaunchpadProps {
 	siteSlug: string;
 }
 
-const ChecklistWrapper = ( { siteSlug }: ChecklistWrapperProps ) => {
+const Launchpad = ( { siteSlug }: LaunchpadProps ) => {
 	const { isFetchedAfterMount, data } = useLaunchpad( siteSlug || '' );
 
 	const tasks = data.checklist || [];
@@ -17,4 +17,4 @@ const ChecklistWrapper = ( { siteSlug }: ChecklistWrapperProps ) => {
 	);
 };
 
-export default ChecklistWrapper;
+export default Launchpad;
