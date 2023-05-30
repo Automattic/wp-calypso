@@ -1,5 +1,4 @@
-import { getThemeType } from 'calypso/state/themes/selectors/get-theme-type';
-import { isThemePremium } from 'calypso/state/themes/selectors/is-theme-premium';
+import { getThemeType, isThemePremium } from 'calypso/state/themes/selectors';
 
 import 'calypso/state/themes/init';
 
