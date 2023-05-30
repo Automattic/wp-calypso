@@ -18,7 +18,7 @@ export interface SitesDashboardQueryParams {
 	search?: string;
 	showHidden?: boolean;
 	status?: GroupableSiteLaunchStatuses;
-	newSiteSlug?: string;
+	newSiteID?: number;
 }
 
 const FilterBar = styled.div( {
