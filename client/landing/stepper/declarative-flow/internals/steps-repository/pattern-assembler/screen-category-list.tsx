@@ -8,7 +8,7 @@ import {
 import { Icon, chevronRight } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import useCategoriesOrder from './hooks/use-categories-order';
 import NavigatorHeader from './navigator-header';
@@ -44,7 +44,9 @@ const ScreenCategoryList = ( {
 }: Props ) => {
 	const translate = useTranslate();
 	const firstCategory = categories[ 0 ];
-	const [ selectedCategory, setSelectedCategory ] = useState< string | null >( null );
+	const [ selectedCategory, setSelectedCategory ] = useState< string | null >(
+		firstCategory?.name ?? null
+	);
 	const categoriesInOrder = useCategoriesOrder( categories );
 	const composite = useCompositeState( { orientation: 'vertical' } );
 
@@ -53,17 +55,6 @@ const ScreenCategoryList = ( {
 			pattern_category: replaceCategoryAllName( name ),
 		} );
 	};
-
-	useEffect( () => {
-		// Open first category with a delay to avoid the top position flickering
-		setTimeout( () => setSelectedCategory( firstCategory?.name ?? null ), 200 );
-
-		// Notify the pattern panel list is open and closed
-		onTogglePatternPanelList?.( true );
-		return () => {
-			onTogglePatternPanelList?.( false );
-		};
-	}, [] );
 
 	return (
 		<div className="screen-container">
