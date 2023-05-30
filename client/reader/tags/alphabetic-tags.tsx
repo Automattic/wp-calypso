@@ -78,7 +78,8 @@ const scrollToLetter = ( letter: string ) => {
 	if ( element ) {
 		scrollIntoViewport( element, {
 			behavior: 'smooth',
-			scrollMode: 'if-needed',
+			block: 'center',
+			scrollMode: 'always',
 		} );
 		// setTimeout so that the focus is set after the scrollIntoViewport has completed.
 		setTimeout( () => {
