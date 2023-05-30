@@ -1,5 +1,5 @@
 import { isBusinessPlan, isEcommercePlan } from '@automattic/calypso-products';
-import { HOSTING_SITE_CREATION_FLOW } from '@automattic/onboarding';
+import { NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
@@ -14,7 +14,7 @@ import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import type { Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import './internals/hosting-site-creation-flow.scss';
+import './internals/new-hosted-site-flow.scss';
 
 const otherSteps = [
 	{
@@ -28,7 +28,7 @@ const otherSteps = [
 ];
 
 const hosting: Flow = {
-	name: HOSTING_SITE_CREATION_FLOW,
+	name: NEW_HOSTED_SITE_FLOW,
 	useSteps() {
 		if ( isInHostingFlow() ) {
 			return [

@@ -18,8 +18,8 @@ import {
 	isNewsletterFlow,
 	NEWSLETTER_FLOW,
 	LINK_IN_BIO_FLOW,
-	HOSTING_SITE_CREATION_FLOW,
-	isHostingSiteCreationFlow,
+	NEW_HOSTED_SITE_FLOW,
+	isNewHostedSiteCreationFlow,
 	isDomainUpsellFlow,
 	DESIGN_FIRST_FLOW,
 	isBlogOnboardingFlow,
@@ -63,7 +63,7 @@ function getPlanTypes( flowName: string | null, hideFreePlan: boolean ) {
 			return [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM ];
 		case LINK_IN_BIO_FLOW:
 			return [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM ];
-		case HOSTING_SITE_CREATION_FLOW:
+		case NEW_HOSTED_SITE_FLOW:
 			return isInHostingFlow()
 				? [ TYPE_BUSINESS, TYPE_ECOMMERCE ]
 				: [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
@@ -187,7 +187,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 
 	const getHeaderText = () => {
 		const { flowName } = props;
-		if ( flowName === DOMAIN_UPSELL_FLOW || isHostingSiteCreationFlow( flowName ) ) {
+		if ( flowName === DOMAIN_UPSELL_FLOW || isNewHostedSiteCreationFlow( flowName ) ) {
 			return __( 'Choose your flavor of WordPress' );
 		}
 

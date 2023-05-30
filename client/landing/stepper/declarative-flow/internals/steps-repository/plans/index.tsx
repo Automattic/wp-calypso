@@ -2,7 +2,7 @@ import { is2023PricingGridActivePage } from '@automattic/calypso-products';
 import {
 	isBlogOnboardingFlow,
 	isDomainUpsellFlow,
-	isHostingSiteCreationFlow,
+	isNewHostedSiteCreationFlow,
 	StepContainer,
 } from '@automattic/onboarding';
 import { isInHostingFlow } from 'calypso/landing/stepper/utils/is-in-hosting-flow';
@@ -28,7 +28,7 @@ const plans: Step = function Plans( { navigation, flow } ) {
 	const is2023PricingGridVisible = is2023PricingGridActivePage( window );
 
 	const isAllowedToGoBack =
-		isDomainUpsellFlow( flow ) || ( isHostingSiteCreationFlow( flow ) && isInHostingFlow() );
+		isDomainUpsellFlow( flow ) || ( isNewHostedSiteCreationFlow( flow ) && isInHostingFlow() );
 
 	return (
 		<StepContainer
