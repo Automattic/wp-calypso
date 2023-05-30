@@ -105,7 +105,7 @@
 		"reader": true,
 		"reader/list-management": true,
 		"reader/public-tag-pages": true,
-		"reader/subscription-management": false,
+		"reader/subscription-management": true,
 		"redirect-fallback-browsers": true,
 		"safari-idb-mitigation": true,
 		"security/security-checkup": true,

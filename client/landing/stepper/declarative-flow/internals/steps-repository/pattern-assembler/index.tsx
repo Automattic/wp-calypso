@@ -5,8 +5,10 @@ import { StepContainer, isSiteAssemblerFlow, isSiteSetupFlow } from '@automattic
 import {
 	__experimentalNavigatorProvider as NavigatorProvider,
 	__experimentalNavigatorScreen as NavigatorScreen,
+	__experimentalUseNavigator as useNavigator,
 	withNotices,
 } from '@wordpress/components';
+import { compose } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import classnames from 'classnames';
 import { useState, useRef, useMemo } from 'react';
@@ -31,10 +33,10 @@ import usePatternCategories from './hooks/use-pattern-categories';
 import usePatternsMapByCategory from './hooks/use-patterns-map-by-category';
 import { usePrefetchImages } from './hooks/use-prefetch-images';
 import useRecipe from './hooks/use-recipe';
-import NavigatorListener from './navigator-listener';
 import Notices, { getNoticeContent } from './notices/notices';
 import PatternAssemblerContainer from './pattern-assembler-container';
 import PatternLargePreview from './pattern-large-preview';
+import ScreenActivation from './screen-activation';
 import ScreenCategoryList from './screen-category-list';
 import ScreenColorPalettes from './screen-color-palettes';
 import ScreenFontPairings from './screen-font-pairings';
@@ -50,6 +52,7 @@ import type { OnboardSelect } from '@automattic/data-stores';
 import type { DesignRecipe, Design } from '@automattic/design-picker/src/types';
 import type { GlobalStylesObject } from '@automattic/global-styles';
 import type { ActiveTheme } from 'calypso/data/themes/use-active-theme-query';
+import type { FC } from 'react';
 import './style.scss';
 
 const PatternAssembler = ( {
@@ -59,7 +62,7 @@ const PatternAssembler = ( {
 	noticeList,
 	noticeOperations,
 }: StepProps & withNotices.Props ) => {
-	const [ navigatorPath, setNavigatorPath ] = useState( NAVIGATOR_PATHS.MAIN );
+	const navigator = useNavigator();
 	const [ sectionPosition, setSectionPosition ] = useState< number | null >( null );
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
 	const [ activePosition, setActivePosition ] = useState( -1 );
@@ -363,6 +366,11 @@ const PatternAssembler = ( {
 	};
 
 	const onBack = () => {
+		if ( navigator.location.path === NAVIGATOR_PATHS.ACTIVATION ) {
+			navigator.goBack();
+			return;
+		}
+
 		const patterns = getPatterns();
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.BACK_CLICK, {
 			has_selected_patterns: patterns.length > 0,
@@ -414,6 +422,14 @@ const PatternAssembler = ( {
 		submit?.();
 	};
 
+	const handleContinue = () => {
+		if ( isNewSite ) {
+			onSubmit();
+		} else {
+			navigator.goTo( NAVIGATOR_PATHS.ACTIVATION );
+		}
+	};
+
 	const {
 		shouldUnlockGlobalStyles,
 		openModal: openGlobalStylesUpgradeModal,
@@ -424,7 +440,7 @@ const PatternAssembler = ( {
 		hasSelectedColorVariation: !! colorVariation,
 		hasSelectedFontVariation: !! fontVariation,
 		onCheckout: snapshotRecipe,
-		onUpgradeLater: onSubmit,
+		onUpgradeLater: handleContinue,
 		recordTracksEvent,
 	} );
 
@@ -452,6 +468,11 @@ const PatternAssembler = ( {
 			return;
 		}
 
+		handleContinue();
+	};
+
+	const onActivate = () => {
+		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_ACTIVATION_ACTIVATE_CLICK );
 		onSubmit();
 	};
 
@@ -526,8 +547,7 @@ const PatternAssembler = ( {
 	}
 
 	const stepContent = (
-		<NavigatorProvider
-			initialPath={ NAVIGATOR_PATHS.MAIN }
+		<div
 			className={ classnames( 'pattern-assembler__wrapper', {
 				'pattern-assembler__pattern-panel-list--is-open': isPatternPanelListOpen,
 			} ) }
@@ -612,11 +632,9 @@ const PatternAssembler = ( {
 					/>
 				</NavigatorScreen>
 
-				<NavigatorListener
-					onLocationChange={ ( navigatorLocation ) => {
-						setNavigatorPath( navigatorLocation.path );
-					} }
-				/>
+				<NavigatorScreen path={ NAVIGATOR_PATHS.ACTIVATION } className="screen-activation">
+					<ScreenActivation onActivate={ onActivate } />
+				</NavigatorScreen>
 			</div>
 			<PatternLargePreview
 				header={ header }
@@ -631,14 +649,17 @@ const PatternAssembler = ( {
 				recordTracksEvent={ recordTracksEvent }
 			/>
 			<PremiumGlobalStylesUpgradeModal { ...globalStylesUpgradeModalProps } />
-		</NavigatorProvider>
+		</div>
 	);
 
 	return (
 		<StepContainer
 			className="pattern-assembler__sidebar-revamp"
 			stepName="pattern-assembler"
-			hideBack={ navigatorPath !== NAVIGATOR_PATHS.MAIN || isSiteAssemblerFlow( flow ) }
+			hideBack={
+				navigator.location.path !== NAVIGATOR_PATHS.ACTIVATION &&
+				( navigator.location.path !== NAVIGATOR_PATHS.MAIN || isSiteAssemblerFlow( flow ) )
+			}
 			goBack={ onBack }
 			goNext={ goNext }
 			isHorizontalLayout={ false }
@@ -660,4 +681,13 @@ const PatternAssembler = ( {
 	);
 };
 
-export default withGlobalStylesProvider( withNotices( PatternAssembler ) );
+const PatternAssemblerStep = ( props: StepProps & withNotices.Props ) => (
+	<NavigatorProvider initialPath={ NAVIGATOR_PATHS.MAIN } tabIndex={ -1 }>
+		<PatternAssembler { ...props } />
+	</NavigatorProvider>
+);
+
+export default compose(
+	withGlobalStylesProvider,
+	withNotices
+)( PatternAssemblerStep ) as FC< StepProps >;

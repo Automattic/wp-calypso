@@ -6,7 +6,6 @@ import { useSelector } from 'react-redux';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import wpcom from 'calypso/lib/wp';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
@@ -170,11 +169,6 @@ export enum PromoteWidgetStatus {
 	DISABLED = 'disabled',
 }
 
-export enum BlazeCreditStatus {
-	ENABLED = 'enabled',
-	DISABLED = 'disabled',
-}
-
 /**
  * Hook to verify if we should enable the promote widget.
  *
@@ -193,16 +187,4 @@ export const usePromoteWidget = (): PromoteWidgetStatus => {
 		default:
 			return PromoteWidgetStatus.FETCHING;
 	}
-};
-
-/**
- * Hook to verify if we should enable blaze credits
- *
- * @returns bool
- */
-export const useBlazeCredits = (): BlazeCreditStatus => {
-	return useSelector( ( state ) => {
-		const userData = getCurrentUser( state );
-		return userData?.blaze_credits_enabled ? BlazeCreditStatus.ENABLED : BlazeCreditStatus.DISABLED;
-	} );
 };

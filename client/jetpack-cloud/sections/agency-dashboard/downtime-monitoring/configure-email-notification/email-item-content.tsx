@@ -15,6 +15,7 @@ interface Props {
 	toggleModal?: ( item?: StateMonitorSettingsEmail, action?: AllowedMonitorContactActions ) => void;
 	isRemoveAction?: boolean;
 	recordEvent?: ( action: string, params?: object ) => void;
+	showVerifiedBadge?: boolean;
 }
 
 const EVENT_NAMES = {
@@ -28,6 +29,7 @@ export default function EmailItemContent( {
 	toggleModal,
 	isRemoveAction = false,
 	recordEvent,
+	showVerifiedBadge,
 }: Props ) {
 	const translate = useTranslate();
 
@@ -42,8 +44,6 @@ export default function EmailItemContent( {
 	const closeDropdown = () => {
 		setIsOpen( false );
 	};
-
-	const showVerified = true; // FIXME: This should be dynamic.
 
 	const handleToggleModal = ( action: AllowedMonitorContactActions ) => {
 		toggleModal?.( item, action );
@@ -76,7 +76,7 @@ export default function EmailItemContent( {
 								<Badge type="warning">{ translate( 'Pending' ) }</Badge>
 							</span>
 						) }
-						{ showVerified && item.verified && (
+						{ showVerifiedBadge && item.verified && (
 							<span className="configure-email-address__verification-status">
 								<Badge type="success">{ translate( 'Verified' ) }</Badge>
 							</span>

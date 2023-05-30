@@ -103,8 +103,15 @@ const designFirst: Flow = {
 
 					// If the user's site has just been launched.
 					if ( providedDependencies?.blogLaunched && siteSlug ) {
-						// Remove the site_intent.
-						setIntentOnSite( siteSlug, '' );
+						await Promise.all( [
+							// We set launchpad_screen to off because users can choose to
+							// complete the first_post_published checklist task or not.
+							saveSiteSettings( providedDependencies?.siteSlug, {
+								launchpad_screen: 'off',
+							} ),
+							// Remove the site_intent.
+							setIntentOnSite( providedDependencies?.siteSlug, '' ),
+						] );
 
 						// If the user launched their site with a plan or domain in their cart, redirect them to
 						// checkout before sending them home.

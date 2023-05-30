@@ -11,35 +11,48 @@ import {
 import { formatCurrency } from '@automattic/format-currency';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
-import i18n, { localize, TranslateResult, useTranslate } from 'i18n-calypso';
+import i18n, { TranslateResult, useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useSelector } from 'react-redux';
-import usePlanPrices from 'calypso/my-sites/plans/hooks/use-plan-prices';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import { usePlanPricesDisplay } from '../hooks/use-plan-prices-display';
 
 interface Props {
 	planName: string;
 	billingTimeframe: TranslateResult;
 	billingPeriod: number | null | undefined;
 	isMonthlyPlan: boolean;
+	currentSitePlanSlug?: string;
+	siteId?: number | null;
 }
 
 function usePerMonthDescription( {
 	isMonthlyPlan,
 	planName,
 	billingPeriod,
+	currentSitePlanSlug,
+	siteId,
 }: Omit< Props, 'billingTimeframe' > ) {
 	const translate = useTranslate();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const isEnglishLocale = useIsEnglishLocale();
-	const planPrices = usePlanPrices( {
+	const planPrices = usePlanPricesDisplay( {
 		planSlug: planName as PlanSlug,
 		returnMonthly: isMonthlyPlan,
+		currentSitePlanSlug,
+		siteId,
 	} );
-	const planYearlyVariantPricesPerMonth = usePlanPrices( {
+
+	// We want `planYearlyVariantPricesPerMonth` to be the raw price the user
+	// would pay if they choose an annual plan instead of the monthly one. So pro-rated
+	// (or site-plan specific) credits should not be taken into account.
+	const planYearlyVariantPricesPerMonth = usePlanPricesDisplay( {
 		planSlug:
 			getPlanSlugForTermVariant( planName as PlanSlug, TERM_ANNUALLY ) ?? ( '' as PlanSlug ),
 		returnMonthly: true,
+		currentSitePlanSlug,
+		siteId,
+		withoutProRatedCredits: true,
 	} );
 
 	if ( isWpComFreePlan( planName ) || isWpcomEnterpriseGridPlan( planName ) ) {
@@ -47,19 +60,16 @@ function usePerMonthDescription( {
 	}
 
 	if ( isMonthlyPlan ) {
-		// We want `yearlyVariantMaybeDiscountedPricePerMonth` to be the raw price the user
-		// would pay if they choose an annual plan instead of the monthly one. So pro-rated
-		// (or site-plan specific) credits should not be taken into account.
 		const yearlyVariantMaybeDiscountedPricePerMonth =
-			planYearlyVariantPricesPerMonth.discountedRawPrice ||
-			planYearlyVariantPricesPerMonth.rawPrice;
+			planYearlyVariantPricesPerMonth.discountedPrice ||
+			planYearlyVariantPricesPerMonth.originalPrice;
 
-		if ( yearlyVariantMaybeDiscountedPricePerMonth < planPrices.rawPrice ) {
+		if ( yearlyVariantMaybeDiscountedPricePerMonth < planPrices.originalPrice ) {
 			return translate( `Save %(discountRate)s%% by paying annually`, {
 				args: {
 					discountRate: Math.floor(
-						( 100 * ( planPrices.rawPrice - yearlyVariantMaybeDiscountedPricePerMonth ) ) /
-							planPrices.rawPrice
+						( 100 * ( planPrices.originalPrice - yearlyVariantMaybeDiscountedPricePerMonth ) ) /
+							planPrices.originalPrice
 					),
 				},
 			} );
@@ -67,14 +77,14 @@ function usePerMonthDescription( {
 	}
 
 	if ( ! isMonthlyPlan ) {
-		const discountedPrice = planPrices.planDiscountedRawPrice || planPrices.discountedRawPrice;
+		const discountedPrice = planPrices.discountedPrice;
 		const fullTermDiscountedPriceText =
 			currencyCode && discountedPrice
 				? formatCurrency( discountedPrice, currencyCode, { stripZeros: true } )
 				: null;
 		const rawPrice =
-			currencyCode && planPrices.rawPrice
-				? formatCurrency( planPrices.rawPrice, currencyCode, { stripZeros: true } )
+			currencyCode && planPrices.originalPrice
+				? formatCurrency( planPrices.originalPrice, currencyCode, { stripZeros: true } )
 				: null;
 
 		// TODO: Remove check once text is translated
@@ -185,4 +195,4 @@ const PlanFeatures2023GridBillingTimeframe: FunctionComponent< Props > = ( props
 	return <div>{ description }</div>;
 };
 
-export default localize( PlanFeatures2023GridBillingTimeframe );
+export default PlanFeatures2023GridBillingTimeframe;

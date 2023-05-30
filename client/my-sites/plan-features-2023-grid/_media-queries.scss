@@ -25,6 +25,15 @@ $planComparisonMinWidthToGridWidthMap: (
 	1281px: "1238px",
 );
 
+// TODO: Replace with use of $plan-features-sidebar-width
+$planComparisonMinWidthToGridWidthWithSidebarMap: (
+	1052px: "686px",
+	1152px: "870px",
+	1296px: "1024px",
+	1553px: "1238px",
+);
+
+
 @mixin pricing-grid-breakpoints {
 	width: 100%;
 
@@ -51,6 +60,16 @@ $planComparisonMinWidthToGridWidthMap: (
  */
 @mixin pricing-grid-breakpoints-with-sidebar {
 	width: 100%;
+}
+
+@mixin plan-comparison-grid-breakpoints-with-sidebar {
+	width: 100%;
+
+	@each $screenMinWidth, $gridWidth in $planComparisonMinWidthToGridWidthWithSidebarMap {
+		@media ( min-width: #{$screenMinWidth} ) {
+			width: #{$gridWidth};
+		}
+	}
 }
 
 /**

@@ -1,10 +1,8 @@
-/**
- * @jest-environment jsdom
- */
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import ChecklistItem from '../checklist-item';
 import { buildTask } from './lib/fixtures';
+import '@testing-library/jest-dom';
 
 describe( 'ChecklistItem', () => {
 	describe( 'when the task requires a badge', () => {
