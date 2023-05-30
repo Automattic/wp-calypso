@@ -1,7 +1,8 @@
 import { StepContainer, Title } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import NotAuthorized from 'calypso/blocks/importer/components/not-authorized';
 import DocumentHead from 'calypso/components/data/document-head';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useSourceMigrationStatusQuery } from 'calypso/data/site-migration/use-source-migration-status-query';
@@ -20,14 +21,14 @@ const MigrationHandler: Step = function MigrationHandler( { navigation } ) {
 		[]
 	);
 	const { setIsMigrateFromWp } = useDispatch( ONBOARD_STORE );
+	const [ isUnAuthorized, setIsUnAuthorized ] = useState( false );
 	const urlQueryParams = useQuery();
 	const sourceSiteSlug = urlQueryParams.get( 'from' ) || '';
-	const { data: sourceSiteMigrationStatus, isError: isErrorSourceSiteMigrationStatus } =
-		useSourceMigrationStatusQuery( sourceSiteSlug );
-	const errorDependency = {
-		isFromMigrationPlugin: true,
-		hasError: true,
+	const onSourceMigrationStatusError = () => {
+		setIsUnAuthorized( true );
 	};
+	const { data: sourceSiteMigrationStatus, isError: isErrorSourceSiteMigrationStatus } =
+		useSourceMigrationStatusQuery( sourceSiteSlug, onSourceMigrationStatusError );
 
 	useEffect( () => {
 		setIsMigrateFromWp( true );
@@ -37,7 +38,7 @@ const MigrationHandler: Step = function MigrationHandler( { navigation } ) {
 	useEffect( () => {
 		if ( submit ) {
 			if ( isErrorSourceSiteMigrationStatus ) {
-				return submit( errorDependency );
+				return;
 			}
 			if ( sourceSiteMigrationStatus ) {
 				submit( {
@@ -57,23 +58,33 @@ const MigrationHandler: Step = function MigrationHandler( { navigation } ) {
 		return __( 'Scanning your site' );
 	};
 
+	const renderContent = () => {
+		if ( isUnAuthorized ) {
+			return <NotAuthorized />;
+		}
+		return (
+			<div className="import-layout__center">
+				<div className="import__header import__loading">
+					<Title>{ getCurrentMessage() }</Title>
+					<LoadingEllipsis />
+				</div>
+			</div>
+		);
+	};
+
 	return (
 		<>
 			<DocumentHead title={ getCurrentMessage() } />
 			<StepContainer
 				shouldHideNavButtons={ true }
 				hideFormattedHeader={ true }
+				isWideLayout={ true }
 				stepName="migration-handler"
-				isHorizontalLayout={ true }
 				recordTracksEvent={ recordTracksEvent }
-				stepContent={
-					<>
-						<Title>{ getCurrentMessage() }</Title>
-						<LoadingEllipsis />
-					</>
-				}
+				stepContent={ renderContent() }
 				stepProgress={ stepProgress }
 				showFooterWooCommercePowered={ false }
+				className="import__onboarding-page"
 			/>
 		</>
 	);
