@@ -1,23 +1,23 @@
 import { SitesTransferNotice } from './sites-transfer-notice';
 
 type TransferNoticeWrapperProps = {
-	isTransfering: boolean;
-	hasError: boolean;
+	isTransferring: boolean;
+	isErrored: boolean;
 	isTransferCompleted: boolean;
 	className?: string;
 };
 
 const TransferNoticeWrapper = ( {
-	isTransfering,
-	hasError,
+	isTransferring,
+	isErrored,
 	isTransferCompleted,
 	className,
 }: TransferNoticeWrapperProps ) => {
 	return (
 		<div className={ className }>
-			{ isTransfering && <SitesTransferNotice isTransfering={ true } /> }
-			{ ! isTransfering && ( hasError || isTransferCompleted ) && (
-				<SitesTransferNotice isTransfering={ false } hasError={ hasError } />
+			{ isTransferring && <SitesTransferNotice isTransferring={ true } /> }
+			{ ! isTransferring && ( isErrored || isTransferCompleted ) && (
+				<SitesTransferNotice isTransferring={ false } hasError={ isErrored } />
 			) }
 		</div>
 	);

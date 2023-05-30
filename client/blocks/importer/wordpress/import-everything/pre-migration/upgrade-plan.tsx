@@ -7,20 +7,23 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { convertToFriendlyWebsiteName } from 'calypso/blocks/import/util';
+import { URL } from 'calypso/types';
 import ConfirmUpgradePlan from './../confirm-upgrade-plan';
 
 interface Props {
-	sourceSite: SiteDetails;
+	sourceSiteSlug: string;
+	sourceSiteUrl: URL;
 	targetSite: SiteDetails;
-
 	startImport: () => void;
 	onContentOnlyClick: () => void;
+	isBusy: boolean;
 }
 
 export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props: Props ) => {
 	const translate = useTranslate();
 	const plan = getPlan( PLAN_BUSINESS );
-	const { sourceSite, targetSite, startImport, onContentOnlyClick } = props;
+	const { sourceSiteSlug, sourceSiteUrl, targetSite, startImport, onContentOnlyClick, isBusy } =
+		props;
 
 	return (
 		<>
@@ -47,15 +50,15 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 						'Your entire site %(from)s will be migrated to %(to)s, overriding the content in your destination site',
 						{
 							args: {
-								from: convertToFriendlyWebsiteName( sourceSite.URL ),
+								from: convertToFriendlyWebsiteName( sourceSiteUrl ),
 								to: convertToFriendlyWebsiteName( targetSite.URL ),
 							},
 						}
 					) }
 				</p>
-				<ConfirmUpgradePlan sourceSite={ sourceSite } targetSite={ targetSite } />
+				<ConfirmUpgradePlan sourceSiteSlug={ sourceSiteSlug } targetSite={ targetSite } />
 				<div className="import__footer-button-container">
-					<NextButton onClick={ () => startImport() }>
+					<NextButton isBusy={ isBusy } onClick={ () => startImport() }>
 						{ translate( 'Upgrade and migrate' ) }
 					</NextButton>
 					<Button

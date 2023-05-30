@@ -1,7 +1,7 @@
 export const NEWSLETTER_FLOW = 'newsletter';
 export const NEWSLETTER_POST_SETUP_FLOW = 'newsletter-post-setup';
 export const HOSTING_LP_FLOW = 'hosting';
-export const HOSTING_SITE_CREATION_FLOW = 'new-hosted-site';
+export const NEW_HOSTED_SITE_FLOW = 'new-hosted-site';
 export const LINK_IN_BIO_FLOW = 'link-in-bio';
 export const LINK_IN_BIO_DOMAIN_FLOW = 'link-in-bio-domain';
 export const LINK_IN_BIO_TLD_FLOW = 'link-in-bio-tld';
@@ -19,6 +19,7 @@ export const COPY_SITE_FLOW = 'copy-site';
 export const BUILD_FLOW = 'build';
 export const WRITE_FLOW = 'write';
 export const START_WRITING_FLOW = 'start-writing';
+export const DESIGN_FIRST_FLOW = 'design-first';
 export const SITE_SETUP_FLOW = 'site-setup';
 export const WITH_THEME_FLOW = 'with-theme';
 export const WITH_THEME_ASSEMBLER_FLOW = 'with-theme-assembler';
@@ -69,8 +70,8 @@ export const isHostingFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && HOSTING_LP_FLOW === flowName );
 };
 
-export const isHostingSiteCreationFlow = ( flowName: string | null ) => {
-	return Boolean( flowName && HOSTING_SITE_CREATION_FLOW === flowName );
+export const isNewHostedSiteCreationFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && NEW_HOSTED_SITE_FLOW === flowName );
 };
 
 export const isMigrationFlow = ( flowName: string | null ) => {
@@ -96,8 +97,21 @@ export const isWriteFlow = ( flowName: string | null ) => {
 export const isUpdateDesignFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ UPDATE_DESIGN_FLOW ].includes( flowName ) );
 };
+
 export const isStartWritingFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ START_WRITING_FLOW ].includes( flowName ) );
+};
+
+export const isDesignFirstFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ DESIGN_FIRST_FLOW ].includes( flowName ) );
+};
+
+export const isBlogOnboardingFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ START_WRITING_FLOW, DESIGN_FIRST_FLOW ].includes( flowName ) );
+};
+
+export const isDomainUpsellFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ DOMAIN_UPSELL_FLOW ].includes( flowName ) );
 };
 
 export const isSiteAssemblerFlow = ( flowName: string | null ) => {

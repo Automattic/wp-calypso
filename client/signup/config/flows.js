@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { BLANK_CANVAS_DESIGN } from '@automattic/design-picker';
 import { isSiteAssemblerFlow } from '@automattic/onboarding';
 import { isDesktop } from '@automattic/viewport';
@@ -188,8 +189,14 @@ function getDIFMSiteContentCollectionDestination( { siteSlug } ) {
 	return `/home/${ siteSlug }`;
 }
 
-function getSitesDestination( { siteSlug } ) {
-	return addQueryArgs( { 'new-site': siteSlug }, '/sites' );
+function getHostingFlowDestination( { siteId } ) {
+	return addQueryArgs(
+		{
+			'new-site': siteId,
+			'hosting-flow': isEnabled( 'hosting-onboarding-i2' ) ? true : null,
+		},
+		'/sites'
+	);
 }
 
 const flows = generateFlows( {
@@ -205,7 +212,7 @@ const flows = generateFlows( {
 	getDestinationFromIntent,
 	getDIFMSignupDestination,
 	getDIFMSiteContentCollectionDestination,
-	getSitesDestination,
+	getHostingFlowDestination,
 } );
 
 function removeUserStepFromFlow( flow ) {

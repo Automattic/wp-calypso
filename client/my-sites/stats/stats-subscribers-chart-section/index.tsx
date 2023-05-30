@@ -143,7 +143,7 @@ export default function SubscribersChartSection( {
 			) }
 			{ errorMessage && <div>Error: { errorMessage }</div> }
 			{ ! isLoading && chartData.length !== 0 && (
-				<UplotChart data={ chartData } legendContainer={ legendRef } />
+				<UplotChart data={ chartData } legendContainer={ legendRef } period={ period } />
 			) }
 		</div>
 	);

@@ -13,6 +13,7 @@ export const NAVIGATOR_PATHS = {
 	FOOTER: '/footer',
 	COLOR_PALETTES: '/color-palettes',
 	FONT_PAIRINGS: '/font-pairings',
+	ACTIVATION: '/activation',
 };
 
 export const STYLES_PATHS = [ NAVIGATOR_PATHS.COLOR_PALETTES, NAVIGATOR_PATHS.FONT_PAIRINGS ];

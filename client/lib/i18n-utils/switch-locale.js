@@ -271,6 +271,7 @@ function getInstalledChunks() {
  * @param  {string} chunkId
  * @param  {string} localeSlug
  */
+// eslint-disable-next-line no-unused-vars
 function captureGetTranslationChunkFileException( error, chunkId, localeSlug ) {
 	captureException( error, {
 		tags: {
@@ -314,7 +315,8 @@ function addRequireChunkTranslationsHandler( localeSlug = i18n.getLocaleSlug(), 
 					`Encountered an error loading translation chunk in require chunk translations handler.`,
 					{ cause }
 				);
-				captureGetTranslationChunkFileException( error, chunkId, localeSlug );
+				// @todo: Enable again when figure out how to prevent the spam caused by these errors.
+				// captureGetTranslationChunkFileException( error, chunkId, localeSlug );
 				debug( error );
 			} );
 
@@ -378,6 +380,7 @@ export default async function switchLocale( localeSlug ) {
 
 			i18n.setLocale( locale );
 			setLocaleInDOM();
+			removeRequireChunkTranslationsHandler();
 			addRequireChunkTranslationsHandler( localeSlug, { translatedChunks } );
 
 			const translatedInstalledChunks = getInstalledChunks().filter( ( chunkId ) =>
@@ -406,7 +409,8 @@ export default async function switchLocale( localeSlug ) {
 							`Encountered an error loading translation chunk while switching the locale.`,
 							{ cause }
 						);
-						captureGetTranslationChunkFileException( error, chunkId, localeSlug );
+						// @todo: Enable again when figure out how to prevent the spam caused by these errors.
+						// captureGetTranslationChunkFileException( error, chunkId, localeSlug );
 						debug( error );
 					} )
 			);

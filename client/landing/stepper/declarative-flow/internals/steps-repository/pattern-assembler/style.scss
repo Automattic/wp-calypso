@@ -30,10 +30,6 @@ $font-family: "SF Pro Text", $sans;
 		display: flex;
 		flex-direction: row;
 		flex: 1;
-		outline: none;
-		position: relative;
-		height: 100vh;
-		margin-top: -60px;
 	}
 
 	.pattern-assembler__sidebar {
@@ -47,6 +43,10 @@ $font-family: "SF Pro Text", $sans;
 		position: relative;
 		z-index: 2;
 		overflow-x: visible;
+	}
+
+	p {
+		margin: 0;
 	}
 
 	/**
@@ -293,6 +293,25 @@ $font-family: "SF Pro Text", $sans;
 		color: var(--color-neutral-60);
 	}
 
+	.screen-container__notice {
+		padding: 11px 14px;
+		margin: 0;
+		border: none;
+		background-color: var(--studio-blue-0);
+
+		.components-notice__dismiss {
+			align-self: center;
+			min-width: 24px;
+			height: 24px;
+			padding: 0;
+
+			svg {
+				width: 20px;
+				height: 20px;
+			}
+		}
+	}
+
 	/**
 	 * The header of the stepper framework
 	 */
@@ -305,6 +324,12 @@ $font-family: "SF Pro Text", $sans;
 	 */
 	.components-divider {
 		border-color: rgba(0, 0, 0, 0.1);
+	}
+
+	.components-navigator-provider {
+		flex-grow: 1;
+		height: 100vh;
+		margin-top: -60px;
 	}
 
 	.components-navigator-screen {
