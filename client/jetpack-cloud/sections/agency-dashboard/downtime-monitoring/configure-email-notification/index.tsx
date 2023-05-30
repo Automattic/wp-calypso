@@ -13,7 +13,7 @@ interface Props {
 	toggleModal: ( item?: StateMonitorSettingsEmail, action?: AllowedMonitorContactActions ) => void;
 	allEmailItems: Array< StateMonitorSettingsEmail >;
 	recordEvent: ( action: string, params?: object ) => void;
-	verifiedEmail: string | undefined;
+	verifiedEmail?: string;
 }
 
 export default function ConfigureEmailNotification( {
