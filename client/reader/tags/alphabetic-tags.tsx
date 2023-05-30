@@ -1,5 +1,6 @@
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { debounce } from 'lodash';
 import { createRef } from 'react';
 import titlecase from 'to-title-case';
 import StickyPanel from 'calypso/components/sticky-panel';
@@ -81,10 +82,12 @@ const scrollToLetter = ( letter: string ) => {
 			block: 'center',
 			scrollMode: 'always',
 		} );
-		// setTimeout so that the focus is set after the scrollIntoViewport has completed.
-		setTimeout( () => {
+		// set focus after scrollIntoViewport has completed.
+		const focusElement = debounce( () => {
 			element.focus();
-		}, 1500 );
+			window.removeEventListener( 'scroll', focusElement );
+		}, 50 );
+		window.addEventListener( 'scroll', focusElement );
 	}
 };
 
