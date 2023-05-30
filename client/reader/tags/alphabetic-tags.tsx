@@ -83,7 +83,7 @@ const scrollToLetter = ( letter: string ) => {
 		// setTimeout so that the focus is set after the scrollIntoViewport has completed.
 		setTimeout( () => {
 			element.focus();
-		}, 500 );
+		}, 1500 );
 	}
 };
 
