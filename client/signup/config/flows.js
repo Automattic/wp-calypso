@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { BLANK_CANVAS_DESIGN } from '@automattic/design-picker';
 import { isSiteAssemblerFlow } from '@automattic/onboarding';
 import { isDesktop } from '@automattic/viewport';
