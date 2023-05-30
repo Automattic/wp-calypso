@@ -12,10 +12,12 @@ import {
 	validate,
 } from 'calypso/components/advanced-credentials/form';
 import { useMigrateProvisionMutation } from 'calypso/data/site-migration/migrate-provision-mutation';
+import useMigrationConfirmation from 'calypso/landing/stepper/hooks/use-migration-confirmation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { updateCredentials } from 'calypso/state/jetpack/credentials/actions';
 import getJetpackCredentialsUpdateError from 'calypso/state/selectors/get-jetpack-credentials-update-error';
 import getJetpackCredentialsUpdateStatus from 'calypso/state/selectors/get-jetpack-credentials-update-status';
+import ConfirmModal from './confirm-modal';
 import type { CredentialsProtocol, CredentialsStatus, StartImportTrackingProps } from './types';
 
 interface Props {
@@ -35,10 +37,12 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 	const [ formErrors, setFormErrors ] = useState( INITIAL_FORM_ERRORS );
 	const [ formMode, setFormMode ] = useState( FormMode.Password );
 	const [ hasMissingFields, setHasMissingFields ] = useState( false );
+	const [ showConfirmModal, setShowConfirmModal ] = useState( false );
+	const [ confirmCallback, setConfirmCallback ] = useState< () => void >();
+	const [ migrationConfirmed, setMigrationConfirmed ] = useMigrationConfirmation();
 
-	const formSubmissionStatus: CredentialsStatus = useSelector(
-		( state ) =>
-			getJetpackCredentialsUpdateStatus( state, sourceSite.ID )
+	const formSubmissionStatus: CredentialsStatus = useSelector( ( state ) =>
+		getJetpackCredentialsUpdateStatus( state, sourceSite.ID )
 	);
 
 	const isFormSubmissionPending = formSubmissionStatus === 'pending';
@@ -77,11 +81,24 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 		props.onChangeProtocol( formState.protocol as CredentialsProtocol );
 	}, [ formState.protocol ] );
 
+	const startImportCallback = useCallback(
+		( args ) => {
+			startImport( args );
+			setShowConfirmModal( false );
+			// reset migration confirmation to initial state
+			setMigrationConfirmed( false );
+		},
+		[ startImport ]
+	);
+
 	useEffect( () => {
 		if ( formSubmissionStatus === 'success' ) {
-			startImport( {
-				type: 'with-credentials',
-			} );
+			if ( ! migrationConfirmed ) {
+				setShowConfirmModal( true );
+				setConfirmCallback( () => startImportCallback.bind( null, { type: 'with-credentials' } ) );
+			} else {
+				startImportCallback( { type: 'with-credentials' } );
+			}
 		}
 	}, [ formSubmissionStatus ] );
 
@@ -132,6 +149,17 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 
 	return (
 		<>
+			{ showConfirmModal && (
+				<ConfirmModal
+					sourceSiteSlug={ sourceSite.slug }
+					targetSiteSlug={ targetSite.slug }
+					onClose={ () => {
+						setShowConfirmModal( false );
+						setConfirmCallback( undefined );
+					} }
+					onConfirm={ () => confirmCallback?.() }
+				/>
+			) }
 			<form onSubmit={ submitCredentials }>
 				<CredentialsForm
 					disabled={ isFormSubmissionPending || isLoading }
@@ -174,11 +202,18 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 					<Button
 						borderless={ true }
 						className="action-buttons__content-only"
-						onClick={ () =>
-							startImport( {
-								type: 'skip-credentials',
-							} )
-						}
+						onClick={ ( e: React.MouseEvent< HTMLButtonElement > ) => {
+							e.preventDefault();
+
+							if ( ! migrationConfirmed ) {
+								setShowConfirmModal( true );
+								setConfirmCallback( () =>
+									startImportCallback.bind( null, { type: 'skip-credentials' } )
+								);
+							} else {
+								startImportCallback( { type: 'skip-credentials' } );
+							}
+						} }
 					>
 						{ translate( 'Skip credentials (slower setup)' ) }
 					</Button>
