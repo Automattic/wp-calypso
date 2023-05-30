@@ -49,11 +49,16 @@
 		justify-items: center;
 
 		.twitter-preview__profile-image {
+			display: flex;
+			align-items: center;
+			max-width: 30px;
+			max-height: 30px;
+			border-radius: 15px; /* stylelint-disable-line scales/radii */
+			overflow: hidden;
+
 			img {
-				height: 30px;
-				width: 30px;
-				border-radius: 15px; /* stylelint-disable-line scales/radii */
 				object-fit: cover;
+				width: 100%;
 			}
 		}
 
