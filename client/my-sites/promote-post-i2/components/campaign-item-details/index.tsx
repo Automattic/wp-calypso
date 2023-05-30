@@ -9,6 +9,7 @@ import { useMemo } from 'react';
 import Badge from 'calypso/components/badge';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
+import useCampaignsQuery from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import AdPreview from 'calypso/my-sites/promote-post/components/ad-preview';
 import {
@@ -30,8 +31,15 @@ import campaignData from './mockData.json';
 // 	campaign: Campaign;
 // }
 
-export default function CampaignItemDetails() {
-	// const { campaign } = props;
+interface Props {
+	campaignId: number;
+}
+
+export default function CampaignItemDetails( props: Props ) {
+	const { campaignId } = props;
+
+	const campaigns = useCampaignsQueryNew( campaignId );
+
 	//
 	const {
 		// 	campaign_id,

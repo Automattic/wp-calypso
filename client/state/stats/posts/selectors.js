@@ -27,6 +27,7 @@ export function isRequestingPostStats( state, siteId, postId, fields = [] ) {
  * @returns {*}              Stat value
  */
 export function getPostStat( state, siteId, postId, stat ) {
+	debugger;
 	return get( state.stats.posts.items, [ siteId, postId, stat ], null );
 }
 

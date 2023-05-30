@@ -19,9 +19,9 @@ export const promotedPosts = ( context, next ) => {
 };
 
 export const campaignDetails = ( context, next ) => {
-	// const { campaignId } = context.params;
-
-	context.primary = <CampaignItemDetails />;
+	const { campaignId } = context.params;
+	debugger;
+	context.primary = <CampaignItemDetails campaignId={ context.params } />;
 	next();
 };
 
