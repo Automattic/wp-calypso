@@ -11,11 +11,11 @@ import {
 } from '../../constants';
 
 interface Props {
-	id: string;
-	type: string;
-	isPurchased: boolean;
-	canUseTheme: boolean;
-	subscriptionPrices: { year?: string; month?: string };
+	id?: string;
+	type?: string;
+	isPurchased?: boolean;
+	canUseTheme?: boolean;
+	subscriptionPrices?: { year?: string; month?: string };
 	siteSlug?: string;
 }
 
