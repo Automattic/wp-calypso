@@ -5,6 +5,7 @@ export { default as BadgeContainer } from './components/badge-container';
 export { default as StyleVariationBadges } from './components/style-variation-badges';
 export { default as ThemeCard } from './components/theme-card';
 export { default as ThemePreview } from './components/theme-preview';
+export { default as ThemeTypeBadge } from './components/theme-type-badge';
 export {
 	default as UnifiedDesignPicker,
 	DesignPreviewImage,
