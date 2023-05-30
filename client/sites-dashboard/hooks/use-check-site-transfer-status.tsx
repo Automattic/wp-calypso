@@ -68,15 +68,13 @@ export const useCheckSiteTransferStatus = ( {
 	useEffect( () => {
 		if ( ! isTransferring && wasTransferring && isTransferCompleted ) {
 			const dismissTransferNoticeTimeout = setTimeout( () => {
+				dispatch( requestSite( siteId ) );
 				setWasTransferring( false );
 			}, 3000 );
 
 			return () => {
 				clearTimeout( dismissTransferNoticeTimeout );
 			};
-			// eslint-disable-next-line no-else-return
-		} else if ( wasTransferring && isTransferCompleted ) {
-			dispatch( requestSite( siteId ) );
 		}
 	}, [ isTransferring, wasTransferring, isTransferCompleted ] );
 
