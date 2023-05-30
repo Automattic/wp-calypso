@@ -12,7 +12,7 @@ import {
 	isMigrationFlow,
 	isStartWritingFlow,
 	isWooExpressFlow,
-	isHostingSiteCreationFlow,
+	isNewHostedSiteCreationFlow,
 	isBlogOnboardingFlow,
 } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -105,7 +105,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 		isLinkInBioFlow( flow ) ||
 		isMigrationFlow( flow ) ||
 		isBlogOnboardingFlow( flow ) ||
-		isHostingSiteCreationFlow( flow ) ||
+		isNewHostedSiteCreationFlow( flow ) ||
 		wooFlows.includes( flow || '' )
 	) {
 		siteVisibility = Site.Visibility.PublicNotIndexed;
