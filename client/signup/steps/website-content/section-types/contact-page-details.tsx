@@ -35,7 +35,6 @@ export function ContactPageDetails( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const site = useSelector( getSelectedSite );
-	const pageTitle = page.title;
 	const pageID = page.id;
 	const description = useTranslatedPageDescriptions( pageID, context );
 
@@ -129,7 +128,7 @@ export function ContactPageDetails( {
 				{ translate(
 					'Upload up to %(noOfImages)d images. You can find stock images {{a}}here{{/a}}, or we’ll select some during the build.',
 					{
-						args: { pageTitle, noOfImages: page.media.length },
+						args: { noOfImages: page.media.length },
 						components: {
 							a: <a href="https://www.pexels.com/" target="_blank" rel="noreferrer" />,
 						},

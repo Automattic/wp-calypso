@@ -122,7 +122,7 @@ export function DefaultPageDetails( {
 	const imageCaption = translate(
 		'Upload up to %(noOfImages)d images. You can find stock images {{a}}here{{/a}}, or we’ll select some during the build.',
 		{
-			args: { pageTitle, noOfImages: page.media.length },
+			args: { noOfImages: page.media.length },
 			components: {
 				a: <a href="https://www.pexels.com/" target="_blank" rel="noreferrer" />,
 			},
