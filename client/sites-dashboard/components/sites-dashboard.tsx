@@ -8,13 +8,14 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useCallback, useEffect, useRef } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import Pagination from 'calypso/components/pagination';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SplitButton from 'calypso/components/split-button';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { withoutHttp } from 'calypso/lib/url';
+import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 import { MEDIA_QUERIES } from '../utils';
@@ -32,7 +33,6 @@ import { SitesTable } from './sites-table';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
 interface SitesDashboardProps {
-	hasSites: boolean;
 	queryParams: SitesDashboardQueryParams;
 }
 
@@ -156,7 +156,6 @@ const SitesDashboardSitesList = createSitesListComponent();
 
 export function SitesDashboard( {
 	queryParams: { page = 1, perPage = 96, search, status = 'all', newSiteSlug },
-	hasSites,
 }: SitesDashboardProps ) {
 	const { __, _n } = useI18n();
 	const { data: allSites = [], isLoading } = useSiteExcerptsQuery();
@@ -164,6 +163,7 @@ export function SitesDashboard( {
 	const [ displayMode, setDisplayMode ] = useSitesDisplayMode();
 	const userPreferencesLoaded = hasSitesSortingPreferenceLoaded && 'none' !== displayMode;
 	const elementRef = useRef( window );
+	const hasSites = useSelector( ( state ) => ( getCurrentUserSiteCount( state ) ?? 0 ) > 0 );
 
 	const isBelowThreshold = useCallback( ( containerNode: Window ) => {
 		const SCROLL_THRESHOLD = containerNode.innerHeight;
