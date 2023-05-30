@@ -2,7 +2,6 @@ import { CountComparisonCard } from '@automattic/components';
 import { UseQueryResult, useQueries } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
 import React from 'react';
-import card from 'calypso/../packages/components/src/card';
 import {
 	querySubscribers,
 	selectSubscribers,
