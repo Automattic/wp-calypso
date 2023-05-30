@@ -66,7 +66,7 @@ export function useValidateVerificationCode(): {
 	} );
 	let errorMessage;
 	if ( data.isError ) {
-		errorMessage = translate( 'Something went wrong. Please try again.' );
+		errorMessage = translate( 'Something went wrong.' );
 		const reasonCode = data?.error?.code;
 		if ( reasonCode ) {
 			errorMessage = verificationErrorMessages?.[ reasonCode ] || errorMessage;
