@@ -1,6 +1,5 @@
 import { isEcommerce, isFreePlanProduct } from '@automattic/calypso-products/src';
 import { Button } from '@automattic/components';
-import { Launchpad } from '@automattic/launchpad';
 import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -149,7 +148,6 @@ const Home = ( {
 			) : (
 				<>
 					<Primary cards={ layout.primary } />
-					<Launchpad siteSlug={ site?.slug }></Launchpad>
 					<PluginsAnnouncementModal />
 					<div className="customer-home__layout">
 						<div className="customer-home__layout-col customer-home__layout-col-left">
