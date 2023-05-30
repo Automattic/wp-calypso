@@ -56,6 +56,19 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 	display: flex;
 	align-items: center;
 
+	.highlight-cards-heading__description {
+		display: flex;
+		align-items: flex-end;
+		height: 31px;
+		margin-left: 12px;
+		font-family: $font-sf-pro-text;
+		font-weight: 400;
+		font-size: $font-body-small;
+		color: var(--studio-gray-60);
+		line-height: 20px;
+		letter-spacing: -0.15px;
+	}
+
 	.highlight-cards-heading__tooltip {
 		margin-left: 6px;
 	}

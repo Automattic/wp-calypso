@@ -78,48 +78,60 @@ export default function WeeklyHighlightCards( {
 						? translate( '30-day highlights' )
 						: translate( '7-day highlights' ) }
 				</span>
-				<div className="highlight-cards-heading__tooltip">
-					<span
-						className="highlight-cards-heading-icon"
-						ref={ textRef }
-						onMouseEnter={ () => setTooltipVisible( true ) }
-						onMouseLeave={ () => setTooltipVisible( false ) }
-					>
-						<Icon className="gridicon" icon={ info } />
-					</span>
-					<Popover
-						className="tooltip tooltip--darker highlight-card-tooltip"
-						isVisible={ isTooltipVisible }
-						position="bottom right"
-						context={ textRef.current }
-					>
-						<div className="highlight-card-tooltip-content comparing-info">
-							<p>
-								{ translate( 'Highlights displayed are for the last 7 days, excluding today.' ) }
-							</p>
-							<p>
-								{ translate(
-									'Trends shown are in comparison to the previous 7 days before that.'
-								) }
-							</p>
-							<div className="comparing-info-chart">
-								<small>
-									{ translate( '%(fourteen)d days {{vs/}} %(seven)d days', {
-										components: {
-											vs: <span>vs</span>,
-										},
-										args: {
-											fourteen: 14,
-											seven: 7,
-										},
-									} ) }
-								</small>
-								{ comparingInfoRangeChart }
-								{ comparingInfoBarsChart }
+
+				{ isHighlightsSettingsEnabled && (
+					<small className="highlight-cards-heading__description">
+						{ currentPeriod === PAST_THIRTY_DAYS
+							? translate( 'Compared to previous 30 days' )
+							: translate( 'Compared to previous 7 days' ) }
+					</small>
+				) }
+
+				{ ! isHighlightsSettingsEnabled && (
+					<div className="highlight-cards-heading__tooltip">
+						<span
+							className="highlight-cards-heading-icon"
+							ref={ textRef }
+							onMouseEnter={ () => setTooltipVisible( true ) }
+							onMouseLeave={ () => setTooltipVisible( false ) }
+						>
+							<Icon className="gridicon" icon={ info } />
+						</span>
+						<Popover
+							className="tooltip tooltip--darker highlight-card-tooltip"
+							isVisible={ isTooltipVisible }
+							position="bottom right"
+							context={ textRef.current }
+						>
+							<div className="highlight-card-tooltip-content comparing-info">
+								<p>
+									{ translate( 'Highlights displayed are for the last 7 days, excluding today.' ) }
+								</p>
+								<p>
+									{ translate(
+										'Trends shown are in comparison to the previous 7 days before that.'
+									) }
+								</p>
+								<div className="comparing-info-chart">
+									<small>
+										{ translate( '%(fourteen)d days {{vs/}} %(seven)d days', {
+											components: {
+												vs: <span>vs</span>,
+											},
+											args: {
+												fourteen: 14,
+												seven: 7,
+											},
+										} ) }
+									</small>
+									{ comparingInfoRangeChart }
+									{ comparingInfoBarsChart }
+								</div>
 							</div>
-						</div>
-					</Popover>
-				</div>
+						</Popover>
+					</div>
+				) }
+
 				{ isHighlightsSettingsEnabled && (
 					<div className="highlight-cards-heading__settings">
 						<button
