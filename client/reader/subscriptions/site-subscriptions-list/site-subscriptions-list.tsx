@@ -11,7 +11,6 @@ const SiteSubscriptionsList = () => {
 	const { subscriptions, totalCount } = data ?? {};
 
 	if ( error ) {
-		// todo: translate when we have agreed on the error message
 		return (
 			<Notice type={ NoticeType.Error }>
 				{ translate( "Oops! The subscription couldn't be found or doesn't exist." ) }

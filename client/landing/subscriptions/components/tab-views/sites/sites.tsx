@@ -31,8 +31,9 @@ const Sites = () => {
 	} );
 	const { subscriptions, totalCount } = data ?? {};
 	const sortOptions = useSortOptions( translate );
-	// todo: translate when we have agreed on the error message
-	const errorMessage = error ? 'An error occurred while fetching your subscriptions.' : '';
+	const errorMessage = error
+		? translate( "Oops! The subscription couldn't be found or doesn't exist." )
+		: '';
 	const isListControlsEnabled = config.isEnabled( 'subscription-management/sites-list-controls' );
 
 	if ( ! isLoading && ! totalCount ) {
