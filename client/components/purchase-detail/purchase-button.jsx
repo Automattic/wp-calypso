@@ -2,6 +2,7 @@ import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
+import { isOutsideCalypso } from 'calypso/lib/url';
 
 const PurchaseButton = ( {
 	className,
@@ -11,7 +12,6 @@ const PurchaseButton = ( {
 	target,
 	rel,
 	text,
-	icon,
 	primary = true,
 } ) => {
 	return (
@@ -24,7 +24,7 @@ const PurchaseButton = ( {
 			rel={ rel }
 			primary={ primary }
 		>
-			{ text } { icon && <Gridicon icon={ icon } /> }
+			{ text } { isOutsideCalypso( href ) && <Gridicon icon="external" /> }
 		</Button>
 	);
 };
