@@ -32,7 +32,7 @@ const PatternListPanel = ( {
 	return (
 		<div key="pattern-list-panel" className="pattern-list-panel__wrapper">
 			<div className="pattern-list-panel__title">{ category?.label }</div>
-			<p className="pattern-list-panel__description">{ category?.description }</p>
+			<div className="pattern-list-panel__description">{ category?.description }</div>
 			<PatternSelector
 				patterns={ categoryPatterns }
 				onSelect={ onSelect }

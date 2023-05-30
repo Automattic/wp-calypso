@@ -10,7 +10,6 @@ import {
 } from '@wordpress/components';
 import { compose } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
-import classnames from 'classnames';
 import { useState, useRef, useMemo } from 'react';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
 import { createRecordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -66,7 +65,6 @@ const PatternAssembler = ( {
 	const [ sectionPosition, setSectionPosition ] = useState< number | null >( null );
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
 	const [ activePosition, setActivePosition ] = useState( -1 );
-	const [ isPatternPanelListOpen, setIsPatternPanelListOpen ] = useState( false );
 	const [ surveyDismissed, setSurveyDismissed ] = useState( false );
 	const { goBack, goNext, submit } = navigation;
 	const { applyThemeWithPatterns, assembleSite } = useDispatch( SITE_STORE );
@@ -548,13 +546,7 @@ const PatternAssembler = ( {
 	}
 
 	const stepContent = (
-		<div
-			className={ classnames( 'pattern-assembler__wrapper', {
-				'pattern-assembler__pattern-panel-list--is-open': isPatternPanelListOpen,
-			} ) }
-			ref={ wrapperRef }
-			tabIndex={ -1 }
-		>
+		<div className="pattern-assembler__wrapper" ref={ wrapperRef } tabIndex={ -1 }>
 			<Notices noticeList={ noticeList } noticeOperations={ noticeOperations } />
 			<div className="pattern-assembler__sidebar">
 				<NavigatorScreen path={ NAVIGATOR_PATHS.MAIN }>
@@ -607,8 +599,6 @@ const PatternAssembler = ( {
 						replacePatternMode={ sectionPosition !== null }
 						selectedPattern={ sectionPosition !== null ? sections[ sectionPosition ] : null }
 						onSelect={ onSelect }
-						wrapperRef={ wrapperRef }
-						onTogglePatternPanelList={ setIsPatternPanelListOpen }
 						recordTracksEvent={ recordTracksEvent }
 					/>
 				</NavigatorScreen>

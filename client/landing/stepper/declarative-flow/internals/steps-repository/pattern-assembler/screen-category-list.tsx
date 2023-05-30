@@ -8,7 +8,7 @@ import {
 import { Icon, chevronRight } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import useCategoriesOrder from './hooks/use-categories-order';
 import NavigatorHeader from './navigator-header';
@@ -28,8 +28,6 @@ interface Props {
 	) => void;
 	replacePatternMode: boolean;
 	selectedPattern: Pattern | null;
-	wrapperRef: React.RefObject< HTMLDivElement > | null;
-	onTogglePatternPanelList?: ( isOpen: boolean ) => void;
 	recordTracksEvent: ( name: string, eventProperties: any ) => void;
 }
 
@@ -40,47 +38,21 @@ const ScreenCategoryList = ( {
 	replacePatternMode,
 	onSelect,
 	selectedPattern,
-	wrapperRef,
-	onTogglePatternPanelList,
 	recordTracksEvent,
 }: Props ) => {
 	const translate = useTranslate();
-	const [ selectedCategory, setSelectedCategory ] = useState< string | null >( null );
+	const firstCategory = categories[ 0 ];
+	const [ selectedCategory, setSelectedCategory ] = useState< string | null >(
+		firstCategory?.name ?? null
+	);
 	const categoriesInOrder = useCategoriesOrder( categories );
 	const composite = useCompositeState( { orientation: 'vertical' } );
-
-	const handleFocusOutside = ( event: Event ) => {
-		// Click outside the sidebar or action bar to close Pattern List
-		const target = event.target as HTMLElement;
-		if (
-			! (
-				target.closest( '.pattern-action-bar' ) || target.closest( '.pattern-assembler__sidebar' )
-			)
-		) {
-			setSelectedCategory( null );
-			onTogglePatternPanelList?.( false );
-		}
-	};
 
 	const trackEventCategoryClick = ( name: string ) => {
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_CATEGORY_LIST_CATEGORY_CLICK, {
 			pattern_category: replaceCategoryAllName( name ),
 		} );
 	};
-
-	useEffect( () => {
-		wrapperRef?.current?.addEventListener( 'click', handleFocusOutside );
-		return () => {
-			wrapperRef?.current?.removeEventListener( 'click', handleFocusOutside );
-		};
-	}, [] );
-
-	useEffect( () => {
-		// Notify the pattern panel list is going to close when umount
-		return () => {
-			onTogglePatternPanelList?.( false );
-		};
-	}, [] );
 
 	return (
 		<div className="screen-container">
@@ -125,12 +97,8 @@ const ScreenCategoryList = ( {
 							aria-describedby={ description }
 							aria-current={ isOpen }
 							onClick={ () => {
-								if ( isOpen ) {
-									setSelectedCategory( null );
-									onTogglePatternPanelList?.( false );
-								} else {
+								if ( ! isOpen ) {
 									setSelectedCategory( name );
-									onTogglePatternPanelList?.( true );
 									trackEventCategoryClick( name );
 								}
 							} }
