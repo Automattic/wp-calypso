@@ -1,4 +1,11 @@
+import {
+	FEATURE_SIMPLE_PAYMENTS,
+	FEATURE_WORDADS_INSTANT,
+	PLAN_JETPACK_SECURITY_DAILY,
+	PLAN_PREMIUM,
+} from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { compact } from 'lodash';
 import page from 'page';
@@ -11,9 +18,12 @@ import EmptyContent from 'calypso/components/empty-content';
 import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
 import { CtaButton } from 'calypso/components/promo-section/promo-card/cta';
 import wp from 'calypso/lib/wp';
+import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import siteHasWordAds from 'calypso/state/selectors/site-has-wordads';
 import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import getSiteBySlug from 'calypso/state/sites/selectors/get-site-by-slug';
@@ -28,9 +38,11 @@ interface ConnectedProps {
 	selectedSiteSlug: SiteSlug | null;
 	isNonAtomicJetpack: boolean;
 	isLoading: boolean;
+	hasSimplePayments: boolean;
 	hasWordAdsFeature: boolean;
 	hasConnectedAccount: boolean | null;
 	hasSetupAds: boolean;
+	eligibleForProPlan?: boolean;
 	trackUpgrade: ( plan: string, feature: string ) => void;
 	trackLearnLink: ( feature: string ) => void;
 	trackCtaButton: ( feature: string ) => void;
@@ -43,10 +55,14 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	isNonAtomicJetpack,
 	isUserAdmin,
 	isLoading,
+	hasSimplePayments,
 	hasConnectedAccount,
 	hasSetupAds,
+	eligibleForProPlan,
+	trackUpgrade,
 	trackLearnLink,
 	trackCtaButton,
+	hasWordAdsFeature,
 } ) => {
 	const translate = useTranslate();
 	const [ peerReferralLink, setPeerReferralLink ] = useState( '' );
@@ -73,29 +89,63 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		);
 	};
 
+	const getAnyPlanNames = () => {
+		const jetpackText = translate( 'Available with Jetpack Security and Jetpack Complete.' );
+
+		// Space isn't included in the translatable string to prevent it being easily missed.
+		return isNonAtomicJetpack
+			? ' ' + jetpackText
+			: ' ' + translate( 'Available with any paid plan — no plugin required.' );
+	};
+
+	const getPremiumPlanNames = () => {
+		const nonAtomicJetpackText = eligibleForProPlan
+			? translate( 'Available only with a Pro plan.' )
+			: translate( 'Available only with a Premium, Business, or eCommerce plan.' );
+
+		// Space isn't included in the translatable string to prevent it being easily missed.
+		return isNonAtomicJetpack ? getAnyPlanNames() : ' ' + nonAtomicJetpackText;
+	};
+
 	/**
 	 * Return the content to display in the Simple Payments card based on the current plan.
 	 *
 	 * @returns {Object} Object with props to render a PromoCard.
 	 */
 	const getSimplePaymentsCard = () => {
-		const supportLink = isNonAtomicJetpack
-			? localizeUrl( 'https://jetpack.com/support/pay-with-paypal/' )
-			: localizeUrl( 'https://wordpress.com/support/wordpress-editor/blocks/pay-with-paypal/' );
-		const cta = {
-			text: translate( 'Learn how to get started' ),
-			action: () => {
-				trackCtaButton( 'simple-payments' );
-				page( supportLink );
-			},
-		};
-
+		const supportLink = localizeUrl(
+			'https://wordpress.com/support/wordpress-editor/blocks/pay-with-paypal/'
+		);
+		const cta = hasSimplePayments
+			? {
+					text: translate( 'Learn how to get started' ),
+					action: () => {
+						trackCtaButton( 'simple-payments' );
+						page( supportLink );
+					},
+			  }
+			: {
+					text: translate( 'Unlock this feature' ),
+					action: () => {
+						trackUpgrade( 'plans', 'simple-payments' );
+						page(
+							addQueryArgs( `/plans/${ selectedSiteSlug }`, {
+								feature: FEATURE_SIMPLE_PAYMENTS,
+								plan: isNonAtomicJetpack ? PLAN_JETPACK_SECURITY_DAILY : PLAN_PREMIUM,
+							} )
+						);
+					},
+			  };
+		const learnMoreLink = hasSimplePayments
+			? null
+			: { url: supportLink, onClick: () => trackLearnLink( 'simple-payments' ) };
 		const title = translate( 'Collect PayPal payments' );
 		const body = (
 			<>
 				{ translate(
 					'Accept credit card payments via PayPal for physical products, services, donations, or support of your creative work.'
 				) }
+				{ ! hasSimplePayments && <em>{ getPremiumPlanNames() }</em> }
 			</>
 		);
 
@@ -105,6 +155,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			icon: 'credit-card',
 			actions: {
 				cta,
+				learnMoreLink,
 			},
 		};
 	};
@@ -344,14 +395,32 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 *
 	 * @returns {Object} Object with props to render a PromoCard.
 	 */
+	/**
+	 * Return the content to display in the Ads card based on the current plan.
+	 *
+	 * @returns {Object} Object with props to render a PromoCard.
+	 */
 	const getAdsCard = () => {
-		const cta = {
-			text: hasSetupAds ? translate( 'View ad dashboard' ) : translate( 'Earn ad revenue' ),
-			action: () => {
-				trackCtaButton( 'ads' );
-				page( `/earn/${ hasSetupAds ? 'ads-earnings' : 'ads-settings' }/${ selectedSiteSlug }` );
-			},
-		};
+		const cta =
+			hasWordAdsFeature || hasSetupAds
+				? {
+						text: hasSetupAds ? translate( 'View ad dashboard' ) : translate( 'Earn ad revenue' ),
+						action: () => {
+							trackCtaButton( 'ads' );
+							page(
+								`/earn/${ hasSetupAds ? 'ads-earnings' : 'ads-settings' }/${ selectedSiteSlug }`
+							);
+						},
+				  }
+				: {
+						text: translate( 'Unlock this feature' ),
+						action: () => {
+							trackUpgrade( 'plans', 'ads' );
+							page(
+								`/plans/${ selectedSiteSlug }?feature=${ FEATURE_WORDADS_INSTANT }&plan=${ PLAN_PREMIUM }`
+							);
+						},
+				  };
 
 		const title = hasSetupAds ? translate( 'View ad dashboard' ) : translate( 'Earn ad revenue' );
 
@@ -364,15 +433,20 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 				{ translate(
 					'Make money each time someone visits your site by displaying advertisements on all your posts and pages.'
 				) }
+				{ ! hasWordAdsFeature && <em>{ getPremiumPlanNames() }</em> }
 			</>
 		);
 
+		const learnMoreLink = ! ( hasWordAdsFeature || hasSetupAds )
+			? { url: 'https://wordads.co/', onClick: () => trackLearnLink( 'ads' ) }
+			: null;
 		return {
 			title,
 			body,
 			icon: 'speaker',
 			actions: {
 				cta,
+				learnMoreLink,
 			},
 		};
 	};
@@ -451,6 +525,7 @@ export default connect(
 		const hasConnectedAccount =
 			state?.memberships?.settings?.[ siteId ]?.connectedAccountId ?? null;
 		const sitePlanSlug = getSitePlanSlug( state, siteId );
+		const hasWordAdsFeature = siteHasWordAds( state, siteId );
 		const isLoading = hasConnectedAccount === null || sitePlanSlug === null;
 		const isJetpack = isJetpackSite( state, siteId );
 		return {
@@ -458,7 +533,10 @@ export default connect(
 			selectedSiteSlug,
 			isNonAtomicJetpack: Boolean( isJetpack && ! isSiteAutomatedTransfer( state, siteId ) ),
 			isUserAdmin: canCurrentUser( state, siteId, 'manage_options' ),
+			hasWordAdsFeature,
+			hasSimplePayments: siteHasFeature( state, siteId, FEATURE_SIMPLE_PAYMENTS ),
 			hasConnectedAccount,
+			eligibleForProPlan: isEligibleForProPlan( state, siteId ),
 			isLoading,
 			hasSetupAds: Boolean(
 				site?.options?.wordads || isRequestingWordAdsApprovalForSite( state, site )

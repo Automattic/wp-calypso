@@ -21,12 +21,11 @@ export default function useVisitsQuery(
 	date: string,
 	fields = [ 'views', 'visitors' ]
 ) {
-	return useQuery(
-		[ 'stats-widget', 'visits', siteId, unit, quantity, date, fields ],
-		() => queryStatsVisits( siteId, { unit, quantity, date, stat_fields: fields.join( ',' ) } ),
-		{
-			select: parseChartData,
-			staleTime: 5 * 60 * 1000,
-		}
-	);
+	return useQuery( {
+		queryKey: [ 'stats-widget', 'visits', siteId, unit, quantity, date, fields ],
+		queryFn: () =>
+			queryStatsVisits( siteId, { unit, quantity, date, stat_fields: fields.join( ',' ) } ),
+		select: parseChartData,
+		staleTime: 5 * 60 * 1000,
+	} );
 }

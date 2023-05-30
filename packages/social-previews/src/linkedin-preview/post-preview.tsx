@@ -1,4 +1,4 @@
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { baseDomain, preparePreviewText } from '../helpers';
 import { FEED_TEXT_MAX_LENGTH, FEED_TEXT_MAX_LINES } from './constants';
 import { LinkedInPreviewProps } from './types';
@@ -6,6 +6,7 @@ import { LinkedInPreviewProps } from './types';
 import './style.scss';
 
 export function LinkedInPostPreview( {
+	articleReadTime = 5,
 	image,
 	jobTitle,
 	name,
@@ -55,18 +56,13 @@ export function LinkedInPostPreview( {
 				</div>
 				<div className="linkedin-preview__content">
 					{ description ? (
-						<div
-							className="linkedin-preview__caption"
-							// TODO: Replace `dangerouslySetInnerHTML` with `createInterpolateElement` inside `preparePreviewText`
-							// eslint-disable-next-line react/no-danger
-							dangerouslySetInnerHTML={ {
-								__html: preparePreviewText( description, {
-									platform: 'linkedin',
-									maxChars: FEED_TEXT_MAX_LENGTH,
-									maxLines: FEED_TEXT_MAX_LINES,
-								} ),
-							} }
-						/>
+						<div className="linkedin-preview__caption">
+							{ preparePreviewText( description, {
+								platform: 'linkedin',
+								maxChars: FEED_TEXT_MAX_LENGTH,
+								maxLines: FEED_TEXT_MAX_LINES,
+							} ) }
+						</div>
 					) : null }
 					{ hasMedia ? (
 						<div className="linkedin-preview__media">
@@ -98,10 +94,11 @@ export function LinkedInPostPreview( {
 										</span>
 										<span>•</span>
 										<span>
-											{
-												// translators: x is the number of minutes it takes to read the article
-												__( 'x min read', 'social-previews' )
-											}
+											{ sprintf(
+												// translators: %d is the number of minutes it takes to read the article
+												__( '%d min read', 'social-previews' ),
+												articleReadTime
+											) }
 										</span>
 									</div>
 								</div>

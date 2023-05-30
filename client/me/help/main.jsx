@@ -128,7 +128,7 @@ class Help extends PureComponent {
 				<CompactCard
 					className="help__support-link"
 					href={ localizeUrl( 'https://wordpress.com/support/video-tutorials/' ) }
-					target="__blank"
+					target="_blank"
 				>
 					<Gridicon icon="video" size={ 36 } />
 					<div className="help__support-link-section">
@@ -145,7 +145,7 @@ class Help extends PureComponent {
 				<CompactCard
 					className="help__support-link"
 					href="https://wpcourses.com/?ref=wpcom-help-more-resources"
-					target="__blank"
+					target="_blank"
 				>
 					<Gridicon icon="mail" size={ 36 } />
 					<div className="help__support-link-section">
@@ -160,7 +160,7 @@ class Help extends PureComponent {
 				<CompactCard
 					className="help__support-link"
 					href="https://learn.wordpress.com"
-					target="__blank"
+					target="_blank"
 				>
 					<Gridicon icon="list-ordered" size={ 36 } />
 					<div className="help__support-link-section">
@@ -182,7 +182,7 @@ class Help extends PureComponent {
 				className="help__support-link"
 				href={ localizeUrl( 'https://wordpress.com/webinars/' ) }
 				onClick={ this.trackCoursesButtonClick }
-				target="__blank"
+				target="_blank"
 			>
 				<Gridicon icon="chat" size={ 36 } />
 				<div className="help__support-link-section">

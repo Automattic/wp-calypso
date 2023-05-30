@@ -54,7 +54,8 @@ export default class HelpResult extends Component {
 			<a
 				className="help-result"
 				href={ localizeUrl( helpLink.link ) }
-				target="__blank"
+				target="_blank"
+				rel="noreferrer noopener"
 				onClick={ this.onClick }
 			>
 				<CompactCard className="help-result__wrapper">

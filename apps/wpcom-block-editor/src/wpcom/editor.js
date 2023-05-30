@@ -10,6 +10,7 @@ import { RedirectOnboardingUserAfterPublishingPost } from './features/redirect-o
 import InserterMenuTrackingEvent from './features/tracking/wpcom-inserter-menu-search-term';
 import './features/site-editor-env-consistency';
 import './editor.scss';
+import './features/tracking/site-editor-load';
 
 registerPlugin( 'track-inserter-menu-events', {
 	render() {

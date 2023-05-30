@@ -8,6 +8,7 @@ import Buttons from '@automattic/components/src/button/docs/example';
 import Cards from '@automattic/components/src/card/docs/example';
 import Gridicon from '@automattic/components/src/gridicon/docs/example';
 import ListTile from '@automattic/components/src/list-tile/docs/example';
+import ProductLogoExample from '@automattic/components/src/logos/docs/example';
 import ProductIcon from '@automattic/components/src/product-icon/docs/example';
 import ProgressBar from '@automattic/components/src/progress-bar/docs/example';
 import Ribbon from '@automattic/components/src/ribbon/docs/example';
@@ -124,6 +125,7 @@ import WpcomColophon from 'calypso/components/wpcom-colophon/docs/example';
 import Collection from 'calypso/devdocs/design/search-collection';
 import { slugToCamelCase } from 'calypso/devdocs/docs-example/util';
 import SitesGridItemExample from 'calypso/sites-dashboard/components/sites-grid-item/docs/example';
+import SitesGridItemSelectExample from 'calypso/sites-dashboard/components/sites-grid-item-select/docs/example';
 import SitesTableRowExample from 'calypso/sites-dashboard/components/sites-table-row/docs/example';
 
 export default class DesignAssets extends Component {
@@ -240,6 +242,7 @@ export default class DesignAssets extends Component {
 					<LinkCard readmeFilePath="link-card" />
 					<ListEnd readmeFilePath="list-end" />
 					<ListTile readmeFilePath="/packages/components/src/list-tile" />
+					<ProductLogoExample />
 					<MarkedLinesExample readmeFilePath="marked-lines" />
 					<MultipleChoiceQuestionExample readmeFilePath="multiple-choice-question" />
 					<Notices readmeFilePath="notice" />
@@ -273,6 +276,7 @@ export default class DesignAssets extends Component {
 					<Spotlight />
 					<SiteThumbnail readmeFilePath="/packages/components/src/site-thumbnail" />
 					<SitesGridItemExample readmeFilePath="/client/sites-dashboard/components/sites-grid-item" />
+					<SitesGridItemSelectExample readmeFilePath="/client/sites-dashboard/components/sites-grid-item-select" />
 					<SitesTableRowExample readmeFilePath="/client/sites-dashboard/components/sites-table-row" />
 					<StepProgress readmeFilePath="step-progress" />
 					<Suggestions readmeFilePath="/packages/components/src/suggestions" />

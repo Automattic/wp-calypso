@@ -13,6 +13,7 @@ const {
 } = require( '@automattic/calypso-build/webpack/util' );
 const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
 const InlineConstantExportsPlugin = require( '@automattic/webpack-inline-constant-exports-plugin' );
+const ReactRefreshWebpackPlugin = require( '@pmmmwh/react-refresh-webpack-plugin' );
 const SentryCliPlugin = require( '@sentry/webpack-plugin' );
 const autoprefixerPlugin = require( 'autoprefixer' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
@@ -226,6 +227,7 @@ const webpackConfig = {
 				cacheIdentifier,
 				cacheCompression: false,
 				exclude: /node_modules\//,
+				plugins: isDevelopment ? [ require.resolve( 'react-refresh/babel' ) ] : [],
 			} ),
 			TranspileConfig.loader( {
 				workerCount,
@@ -402,6 +404,12 @@ const webpackConfig = {
 					// Sentry should _never_ fail the webpack build, so only emit warnings here:
 					compilation.warnings.push( 'Sentry CLI Plugin: ' + err.message );
 				},
+			} ),
+		isDevelopment && new webpack.HotModuleReplacementPlugin(),
+		isDevelopment &&
+			new ReactRefreshWebpackPlugin( {
+				overlay: false,
+				exclude: [ /node_modules/, /devdocs/ ],
 			} ),
 	].filter( Boolean ),
 	externals: [ 'keytar' ],

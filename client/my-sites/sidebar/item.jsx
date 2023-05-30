@@ -25,6 +25,7 @@ export const MySitesSidebarUnifiedItem = ( {
 	url,
 	shouldOpenExternalLinksInCurrentTab,
 	canNavigate,
+	trackClickEvent,
 } ) => {
 	const reduxDispatch = useDispatch();
 
@@ -32,6 +33,9 @@ export const MySitesSidebarUnifiedItem = ( {
 		if ( ! canNavigate( url ) ) {
 			event?.preventDefault();
 			return;
+		}
+		if ( typeof trackClickEvent === 'function' ) {
+			trackClickEvent( url );
 		}
 
 		reduxDispatch( collapseAllMySitesSidebarSections() );
@@ -65,6 +69,7 @@ MySitesSidebarUnifiedItem.propTypes = {
 	url: PropTypes.string,
 	shouldOpenExternalLinksInCurrentTab: PropTypes.bool.isRequired,
 	canNavigate: PropTypes.func.isRequired,
+	trackClickEvent: PropTypes.func,
 };
 
 export default memo( MySitesSidebarUnifiedItem );

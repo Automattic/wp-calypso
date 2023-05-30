@@ -314,6 +314,13 @@ $masterbar-color-secondary: #101517;
 			display: block;
 		}
 	}
+
+	&:disabled {
+		&:hover {
+			background: initial;
+			color: initial;
+		}
+	}
 }
 
 .masterbar__item-logo {

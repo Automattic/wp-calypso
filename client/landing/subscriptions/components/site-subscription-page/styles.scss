@@ -51,6 +51,10 @@
 		}
 	}
 
+	.powered-by-wp-footer {
+		position: relative;
+	}
+
 	.site-subscription-settings {
 		width: 100%;
 		@extend .settings;
@@ -83,8 +87,53 @@
 		}
 	}
 
+	.site-subscription-info {
+		width: 100%;
+		@extend .settings;
+
+		&__heading {
+			margin: 40px 0 24px;
+			color: $studio-gray-100;
+			font-family: "SF Pro Text", $sans;
+			font-size: $font-body;
+			line-height: rem(22px);
+			font-weight: 600;
+		}
+
+		&__list {
+			margin: 0;
+
+			dt,
+			dd {
+				font-family: "SF Pro Text", $sans;
+				font-size: rem(14px);
+				line-height: rem(20px);
+				letter-spacing: -0.15px;
+				color: $studio-gray-100;
+			}
+
+			dt {
+				font-weight: 500;
+				margin-bottom: 8px;
+			}
+
+			dd {
+				font-weight: 400;
+				margin: 0;
+
+				+ dt {
+					margin-top: 24px;
+				}
+			}
+		}
+	}
+
 	&__unsubscribe-button.components-button {
 		margin: 40px 0;
+	}
+
+	&__fetch-details-error {
+		margin: 64px 0 32px;
 	}
 }
 

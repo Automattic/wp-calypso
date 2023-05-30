@@ -3,50 +3,41 @@ import './style.scss';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { recordDSPEntryPoint } from 'calypso/lib/promote-post';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
-import { useRouteModal } from 'calypso/lib/route-modal';
 import PostRelativeTimeStatus from 'calypso/my-sites/post-relative-time-status';
 import { getPostType } from 'calypso/my-sites/promote-post/utils';
+import useOpenPromoteWidget from '../../hooks/use-open-promote-widget';
 
-type Discussion = {
-	comment_count: number;
-};
-
-export type Post = {
+export type BlazablePost = {
 	ID: number;
-	global_ID: string;
-	featured_image: string;
-	title: string;
+	author: string;
 	date: string;
+	date_gtm: string;
 	modified: string;
-	excerpt: string;
-	content: string;
-	site_ID: number;
-	slug: string;
+	modified_gmt: string;
 	status: string;
-	type: string; // post, page
-	URL: string;
+	guid: string;
+	title: string;
+	type: string;
+	comment_count: number;
 	like_count: number;
-	discussion: Discussion;
-	views: number;
+	view_count: number;
+	URL: string; // todo
+	featured_image: string;
+	post_thumbnail: string;
 };
 
 type Props = {
-	post: Post;
+	post: BlazablePost;
 };
 
 export default function PostItem( { post }: Props ) {
 	const [ loading ] = useState( false );
-	const dispatch = useDispatch();
-	const keyValue = 'post-' + post.ID;
-	const { openModal } = useRouteModal( 'blazepress-widget', keyValue );
 
-	const onClickPromote = async () => {
-		openModal();
-		dispatch( recordDSPEntryPoint( 'promoted_posts-post_item' ) );
-	};
+	const onClickPromote = useOpenPromoteWidget( {
+		keyValue: 'post-' + post.ID,
+		entrypoint: 'promoted_posts-post_item',
+	} );
 
 	const safeUrl = safeImageUrl( post.featured_image );
 	const featuredImage = safeUrl && resizeImageUrl( safeUrl, { h: 80 }, 0 );
@@ -97,9 +88,9 @@ export default function PostItem( { post }: Props ) {
 			</td>
 
 			{ /* TODO: put the number of visitors and likes */ }
-			<td className="post-item__post-views">{ post?.views ?? 0 }</td>
+			<td className="post-item__post-views">{ post?.view_count ?? 0 }</td>
 			<td className="post-item__post-likes">{ post?.like_count }</td>
-			<td className="post-item__post-comments">{ post.discussion.comment_count }</td>
+			<td className="post-item__post-comments">{ post.comment_count }</td>
 			<td className="post-item__post-link">
 				<a href={ post.URL } className="post-item__title-view">
 					{ __( 'View' ) }

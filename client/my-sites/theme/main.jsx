@@ -954,7 +954,7 @@ class ThemeSheet extends Component {
 				disabled={ this.isLoading() }
 				onClick={ this.onUnlockStyleButtonClick }
 			>
-				{ this.props.translate( 'Unlock this style' ) }
+				{ this.getDefaultOptionLabel() }
 			</Button>
 		);
 	};

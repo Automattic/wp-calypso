@@ -65,7 +65,6 @@ import {
 import { JPC_PATH_PLANS, JPC_PATH_PLANS_COMPLETE, REMOTE_PATH_AUTH } from './constants';
 import Disclaimer from './disclaimer';
 import { OFFER_RESET_FLOW_TYPES } from './flow-types';
-import JetpackConnectHappychatButton from './happychat-button';
 import HelpButton from './help-button';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import MainWrapper from './main-wrapper';
@@ -658,6 +657,14 @@ export class JetpackAuthorize extends Component {
 		const { authorizeError, authorizeSuccess, isAuthorizing } = this.props.authorizationData;
 		const { alreadyAuthorized } = this.props.authQuery;
 
+		if ( this.isFromMigrationPlugin() ) {
+			if ( this.props.isFetchingAuthorizationSite ) {
+				return translate( 'Preparing authorization' );
+			}
+
+			return translate( 'Continue' );
+		}
+
 		if ( ! this.props.isAlreadyOnSitesList && ! this.props.isFetchingSites && alreadyAuthorized ) {
 			return translate( 'Go back to your site' );
 		}
@@ -697,6 +704,18 @@ export class JetpackAuthorize extends Component {
 	getUserText() {
 		const { translate } = this.props;
 		const { authorizeSuccess } = this.props.authorizationData;
+		const isWpcomMigration = this.isFromMigrationPlugin();
+
+		if ( isWpcomMigration ) {
+			const { display_name, email } = this.props.user;
+			return (
+				<>
+					<strong>{ display_name }</strong>
+					<br />
+					<small>{ email }</small>
+				</>
+			);
+		}
 
 		// Accounts created through the new Magic Link-based signup flow (enabled with the
 		// 'jetpack/magic-link-signup' feature flag) are created with a username based on the user's
@@ -821,11 +840,7 @@ export class JetpackAuthorize extends Component {
 						{ translate( 'Create a new account' ) }
 					</LoggedOutFormLinkItem>
 				) }
-				{ ! isJetpackMagicLinkSignUpFlow && (
-					<JetpackConnectHappychatButton eventName="calypso_jpc_authorize_chat_initiated">
-						<HelpButton />
-					</JetpackConnectHappychatButton>
-				) }
+				{ ! isJetpackMagicLinkSignUpFlow && <HelpButton /> }
 			</LoggedOutFormLinks>
 		);
 	}
@@ -848,12 +863,7 @@ export class JetpackAuthorize extends Component {
 				<LoggedOutFormLinkItem onClick={ this.handleSignOut }>
 					{ translate( 'Create a new account or connect as a different user' ) }
 				</LoggedOutFormLinkItem>
-				<JetpackConnectHappychatButton
-					eventName="calypso_jpc_authorize_chat_initiated"
-					label={ helpButtonLabel }
-				>
-					<HelpButton label={ helpButtonLabel } url={ wooDna.getServiceHelpUrl() } />
-				</JetpackConnectHappychatButton>
+				<HelpButton label={ helpButtonLabel } url={ wooDna.getServiceHelpUrl() } />
 				{ this.renderBackToWpAdminLink() }
 			</LoggedOutFormLinks>
 		);
@@ -920,10 +930,12 @@ export class JetpackAuthorize extends Component {
 		const { translate } = this.props;
 		const wooDna = this.getWooDnaConfig();
 		const authSiteId = this.props.authQuery.clientId;
+		const gravatarSize = this.isFromMigrationPlugin() ? 94 : 64;
 
 		return (
 			<MainWrapper
 				isWoo={ this.isWooOnboarding() }
+				isWpcomMigration={ this.isFromMigrationPlugin() }
 				wooDnaConfig={ wooDna }
 				pageTitle={
 					wooDna.isWooDnaFlow() ? wooDna.getServiceName() + ' — ' + translate( 'Connect' ) : ''
@@ -940,10 +952,11 @@ export class JetpackAuthorize extends Component {
 						<AuthFormHeader
 							authQuery={ this.props.authQuery }
 							isWoo={ this.isWooOnboarding() }
+							isWpcomMigration={ this.isFromMigrationPlugin() }
 							wooDnaConfig={ wooDna }
 						/>
 						<Card className="jetpack-connect__logged-in-card">
-							<Gravatar user={ this.props.user } size={ 64 } />
+							<Gravatar user={ this.props.user } size={ gravatarSize } />
 							<p className="jetpack-connect__logged-in-form-user-text">{ this.getUserText() }</p>
 							{ this.renderNotices() }
 							{ this.renderStateAction() }

@@ -14,14 +14,12 @@ type Theme = {
 };
 
 export function useThemeDetails( slug = '' ): UseQueryResult< Theme > {
-	return useQuery< Theme >(
-		[ 'theme-details', slug ],
-		() => wpcom.req.get( `/themes/${ slug }`, { apiVersion: '1.2' } ),
-		{
-			staleTime: 60 * 5 * 1000, // 5 minutes
-			refetchOnWindowFocus: false,
-			refetchOnReconnect: false,
-			enabled: !! slug,
-		}
-	);
+	return useQuery< Theme >( {
+		queryKey: [ 'theme-details', slug ],
+		queryFn: () => wpcom.req.get( `/themes/${ slug }`, { apiVersion: '1.2' } ),
+		staleTime: 60 * 5 * 1000,
+		refetchOnWindowFocus: false,
+		refetchOnReconnect: false,
+		enabled: !! slug,
+	} );
 }

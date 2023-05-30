@@ -9,6 +9,7 @@ import {
 	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_T0_YEARLY,
 	PRODUCT_JETPACK_BACKUP_T0_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY,
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 	PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_T2_YEARLY,
@@ -372,6 +373,10 @@ export const getJetpackProductsTaglines = (): Record<
 			default: backupRealtimeTagline,
 			owned: backupOwnedTagline,
 		},
+		[ PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY ]: {
+			default: backupRealtimeTagline,
+			owned: backupOwnedTagline,
+		},
 		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: {
 			default: backupRealtimeTagline,
 			owned: backupOwnedTagline,
@@ -470,7 +475,7 @@ export const getJetpackProductDisclaimers = (
 	};
 
 	const backupDisclaimer = doesProductHaveCompatibleSlug( backupDisclaimerFeatureSlugs ) ? (
-		translate( '* Subject to your usage and storage limit. {{link}}Learn more{{/link}}.', {
+		translate( 'Subject to your usage and storage limit. {{link}}Learn more{{/link}}.', {
 			components: {
 				link: getLink(),
 			},
@@ -568,7 +573,13 @@ export const getJetpackProductsShortDescriptions = (): Record< string, Translate
 	const backupRealtimeShortDescription = translate(
 		'Real-time cloud backups with one-click restores.'
 	);
-	const backupShortDescription = translate( 'Real-time cloud backups with one-click restores.' );
+	const backupShortDescription = translate(
+		'Real-time cloud backups with one-click restores. Starts with %(amount)s.',
+		{
+			args: { amount: '10GB' },
+			comment: '%s is a storage amount like 1TB or 10GB',
+		}
+	);
 	const boostShortDescription = translate(
 		'Speed up your site and improve SEO - no developer required.'
 	);
@@ -750,7 +761,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		}
 	);
 
-	const backupIncludesInfoT1Log = translate( '30-day activity log archive*' );
+	const backupIncludesInfoT1Log = translate( '30-day activity log archive' );
 	const backupIncludesInfoT2Log = translate( '{{strong}}1 year{{/strong}} activity log archive', {
 		components: {
 			strong: <strong />,
@@ -806,7 +817,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Flexible API that works with any type of site' ),
 	];
 	const scanIncludesInfo = [
-		translate( 'Website firewall (WAF beta)' ),
+		translate( 'Website firewall (WAF)' ),
 		translate( 'Automated daily scanning' ),
 		translate( 'One-click fixes for most issues' ),
 		translate( 'Instant email threat notifications' ),
@@ -847,9 +858,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Share to Facebook, LinkedIn, and Tumblr' ),
 		translate( 'Engagement Optimizer' ),
 		translate( 'Recycle content' ),
-		translate( 'Coming soon: Image generator' ),
-		translate( 'Coming soon: Multi-image sharing' ),
-		translate( 'Coming soon: Video sharing' ),
+		translate( 'Image generator' ),
 	];
 
 	return {
@@ -877,6 +886,22 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: boostIncludesInfo,
 		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: socialBasicIncludesInfo,
 		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialBasicIncludesInfo,
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedIncludesInfo,
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedIncludesInfo,
+	};
+};
+
+export const getJetpackProductsWhatIsIncludedComingSoon = (): Record<
+	string,
+	Array< TranslateResult >
+> => {
+	const socialAdvancedIncludesInfo = [
+		translate( 'Auto-sharing to Instagram & Mastodon' ),
+		translate( 'Multi-image sharing' ),
+		translate( 'Video sharing' ),
+	];
+
+	return {
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedIncludesInfo,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedIncludesInfo,
 	};
@@ -937,7 +962,6 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		translate( 'Repurpose, reuse or republish already published content' ),
 	];
 
-	//TODO: fill in the actual values.
 	const socialAdvancedBenefits = [
 		translate( 'Save time by sharing your posts automatically' ),
 		translate( 'Unlock your growth potential by building a following on social media' ),
@@ -945,11 +969,6 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		translate( 'No developer required' ),
 		translate( 'Enhance social media engagement with personalized posts' ),
 		translate( 'Repurpose, reuse or republish already published content' ),
-		translate(
-			'Coming soon: Automatically create custom images, saving you hours of tedious work'
-		),
-		translate( 'Coming soon: Share multiple images at once on social media platforms' ),
-		translate( 'Coming soon: Upload and share videos to your social platforms' ),
 	];
 
 	return {
@@ -982,6 +1001,22 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 	};
 };
 
+export const getJetpackProductsBenefitsComingSoon = (): Record<
+	string,
+	Array< TranslateResult >
+> => {
+	const socialAdvancedBenefits = [
+		translate( 'Share multiple images to social media' ),
+		translate( 'Upload & automatically share videos to social media' ),
+		translate( 'Automatically create custom images, saving you hours of tedious work' ),
+	];
+
+	return {
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedBenefits,
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedBenefits,
+	};
+};
+
 export const getJetpackProductsFAQs = (
 	getHelpLink: ( context: unknown ) => JSX.Element,
 	getSupportLink: ( context: unknown ) => JSX.Element
@@ -1001,7 +1036,7 @@ export const getJetpackProductsFAQs = (
 	const backupFAQs: Array< FAQ > = [
 		{
 			id: 'backup-storage-limits',
-			question: translate( '*How do backup storage limits work?' ),
+			question: translate( 'How do backup storage limits work?' ),
 			answer: translate(
 				'If your backup storage limit is reached, older backups will be deleted and, depending on your site’s size, the backup retention period (archive) might be reduced to %(monthlyDays)d days. This will affect how far back you can see backups in your activity log. Existing backups can still be restored, but new updates won’t be backed up until you upgrade or free up storage.',
 				{

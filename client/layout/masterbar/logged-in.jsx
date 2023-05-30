@@ -224,11 +224,18 @@ class MasterbarLoggedIn extends Component {
 			: getStatsPathForTab( 'day', siteSlug );
 
 		let mySitesUrl = domainOnlySite ? domainManagementList( siteSlug ) : homeUrl;
+
+		const icon =
+			this.state.isMobile && this.props.isInEditor ? 'chevron-left' : this.wordpressIcon();
+
 		if ( 'sites' === section && isResponsiveMenu ) {
 			mySitesUrl = '';
 		}
-		const icon =
-			this.state.isMobile && this.props.isInEditor ? 'chevron-left' : this.wordpressIcon();
+		if ( ! siteSlug && section === 'sites-dashboard' ) {
+			// we are the /sites page but there is no site. Disable the home link
+			return <Item icon={ icon } disabled />;
+		}
+
 		return (
 			<Item
 				url={ mySitesUrl }
@@ -236,7 +243,7 @@ class MasterbarLoggedIn extends Component {
 				icon={ icon }
 				onClick={ this.clickMySites }
 				isActive={ this.isActive( 'sites' ) && ! isMenuOpen }
-				tooltip={ translate( 'View a list of your sites and access their dashboards' ) }
+				tooltip={ translate( 'Manage your sites' ) }
 				preloadSection={ this.preloadMySites }
 			>
 				{ hasMoreThanOneSite

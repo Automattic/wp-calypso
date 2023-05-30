@@ -1,4 +1,5 @@
 import './style.scss';
+import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import closeIcon from './images/close.svg';
 import errorIcon from './images/error.svg';
@@ -13,11 +14,14 @@ export enum NoticeType {
 
 export type NoticeState = {
 	type: NoticeType;
-	message: string;
+	message: string | React.ReactNode;
+	onClose?: () => void;
+	action?: React.ReactNode;
 };
 
 type NoticeProps = {
 	children: React.ReactNode;
+	className?: string;
 	action?: React.ReactNode;
 	type?: NoticeType;
 	onClose?: () => void;
@@ -26,13 +30,20 @@ type NoticeProps = {
 
 const Notice = ( {
 	children,
+	className,
 	action,
 	type = NoticeType.Success,
 	onClose,
 	visible = true,
 }: NoticeProps ) => {
 	return visible ? (
-		<div className={ `subscription-management__notice subscription-management__notice--${ type }` }>
+		<div
+			className={ classNames(
+				'subscription-management__notice',
+				`subscription-management__notice--${ type }`,
+				className
+			) }
+		>
 			{ onClose && (
 				<a
 					className="subscription-management__notice-close"

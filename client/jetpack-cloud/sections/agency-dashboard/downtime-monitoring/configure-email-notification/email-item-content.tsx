@@ -1,5 +1,5 @@
 import { Card, Button } from '@automattic/components';
-import { Icon, pencil, moreHorizontal } from '@wordpress/icons';
+import { Icon, moreHorizontal } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef } from 'react';
 import Badge from 'calypso/components/badge';
@@ -12,10 +12,25 @@ import type {
 
 interface Props {
 	item: StateMonitorSettingsEmail;
-	toggleModal: ( item?: StateMonitorSettingsEmail, action?: AllowedMonitorContactActions ) => void;
+	toggleModal?: ( item?: StateMonitorSettingsEmail, action?: AllowedMonitorContactActions ) => void;
+	isRemoveAction?: boolean;
+	recordEvent?: ( action: string, params?: object ) => void;
+	showVerifiedBadge?: boolean;
 }
 
-export default function EmailItemContent( { item, toggleModal }: Props ) {
+const EVENT_NAMES = {
+	edit: 'downtime_monitoring_email_address_edit_click',
+	remove: 'downtime_monitoring_email_address_remove_click',
+	verify: 'downtime_monitoring_email_address_verify_click',
+};
+
+export default function EmailItemContent( {
+	item,
+	toggleModal,
+	isRemoveAction = false,
+	recordEvent,
+	showVerifiedBadge,
+}: Props ) {
 	const translate = useTranslate();
 
 	const [ isOpen, setIsOpen ] = useState( false );
@@ -30,10 +45,12 @@ export default function EmailItemContent( { item, toggleModal }: Props ) {
 		setIsOpen( false );
 	};
 
-	const showVerified = true; // FIXME: This should be dynamic.
-
 	const handleToggleModal = ( action: AllowedMonitorContactActions ) => {
-		toggleModal( item, action );
+		toggleModal?.( item, action );
+		if ( recordEvent ) {
+			const eventName = EVENT_NAMES?.[ action as keyof typeof EVENT_NAMES ];
+			recordEvent( eventName );
+		}
 	};
 
 	return (
@@ -43,7 +60,10 @@ export default function EmailItemContent( { item, toggleModal }: Props ) {
 					<div className="configure-email-address__card-heading">{ item.email }</div>
 					<div className="configure-email-address__card-sub-heading">{ item.name }</div>
 				</span>
-				{ ! item.isDefault && (
+				{
+					// Show the status and actions only if the action is not remove.
+				 }
+				{ ! item.isDefault && ! isRemoveAction && (
 					<>
 						{ ! item.verified && (
 							<span
@@ -56,49 +76,42 @@ export default function EmailItemContent( { item, toggleModal }: Props ) {
 								<Badge type="warning">{ translate( 'Pending' ) }</Badge>
 							</span>
 						) }
-						{ showVerified && item.verified && (
+						{ showVerifiedBadge && item.verified && (
 							<span className="configure-email-address__verification-status">
 								<Badge type="success">{ translate( 'Verified' ) }</Badge>
 							</span>
 						) }
-						{ item.verified ? (
+						<>
 							<Button
 								compact
 								borderless
-								className="configure-email-address__edit-icon"
-								onClick={ () => handleToggleModal( 'edit' ) }
-								aria-label={ translate( 'Edit email address' ) }
+								className="configure-email-address__action-icon"
+								onClick={ showActions }
+								aria-label={ translate( 'More actions' ) }
+								ref={ buttonActionRef }
 							>
-								<Icon size={ 18 } icon={ pencil } />
+								<Icon size={ 18 } icon={ moreHorizontal } />
 							</Button>
-						) : (
-							<>
-								<Button
-									compact
-									borderless
-									className="configure-email-address__edit-icon"
-									onClick={ showActions }
-									aria-label={ translate( 'More actions' ) }
-									ref={ buttonActionRef }
-								>
-									<Icon size={ 18 } icon={ moreHorizontal } />
-								</Button>
-								<PopoverMenu
-									className="configure-email-address__popover-menu"
-									context={ buttonActionRef.current }
-									isVisible={ isOpen }
-									onClose={ closeDropdown }
-									position="bottom left"
-								>
+							<PopoverMenu
+								className="configure-email-address__popover-menu"
+								context={ buttonActionRef.current }
+								isVisible={ isOpen }
+								onClose={ closeDropdown }
+								position="bottom left"
+							>
+								{ ! item.verified && (
 									<PopoverMenuItem onClick={ () => handleToggleModal( 'verify' ) }>
 										{ translate( 'Verify' ) }
 									</PopoverMenuItem>
-									<PopoverMenuItem onClick={ () => handleToggleModal( 'edit' ) }>
-										{ translate( 'Edit' ) }
-									</PopoverMenuItem>
-								</PopoverMenu>
-							</>
-						) }
+								) }
+								<PopoverMenuItem onClick={ () => handleToggleModal( 'edit' ) }>
+									{ translate( 'Edit' ) }
+								</PopoverMenuItem>
+								<PopoverMenuItem onClick={ () => handleToggleModal( 'remove' ) }>
+									{ translate( 'Remove' ) }
+								</PopoverMenuItem>
+							</PopoverMenu>
+						</>
 					</>
 				) }
 			</div>

@@ -54,6 +54,19 @@ body {
 			.subscription-manager__sort-controls {
 				margin-left: auto;
 			}
+
+			.subscriptions-manager__filter-control {
+				flex-grow: 1;
+
+				&.select-dropdown,
+				.select-dropdown__header {
+					height: 48px;
+				}
+
+				.select-dropdown__item.is-selected {
+					background-color: var(--color-primary);
+				}
+			}
 		}
 
 		@media (max-width: $break-small) {
@@ -99,5 +112,29 @@ body {
 		padding: 0;
 		border: none;
 		border-top: 1px solid $studio-gray-5;
+	}
+
+	.p2-label,
+	.paid-label {
+		display: inline-block;
+		text-align: center;
+		height: 20px;
+		color: $studio-green-0;
+		font-size: $font-body-extra-small;
+		border-radius: 4px;
+		margin-left: 8px;
+		line-height: 20px;
+	}
+
+	.p2-label {
+		background: var(--p2-color-link);
+		width: 36px;
+	}
+
+	.paid-label {
+		background: $studio-green-50;
+		padding-left: 5px;
+		padding-right: 5px;
+		min-width: 35px;
 	}
 }

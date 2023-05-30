@@ -33,7 +33,9 @@ export const updateLaunchpadSettings = (
 
 export const useLaunchpad = ( siteSlug: string | null ) => {
 	const key = [ 'launchpad', siteSlug ];
-	return useQuery( key, () => fetchLaunchpad( siteSlug ), {
+	return useQuery( {
+		queryKey: key,
+		queryFn: () => fetchLaunchpad( siteSlug ),
 		refetchOnMount: true,
 		staleTime: 0,
 		retry: 3,

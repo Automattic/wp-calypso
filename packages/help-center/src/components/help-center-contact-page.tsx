@@ -5,9 +5,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { Spinner, GMClosureNotice } from '@automattic/components';
-import { useSupportAvailability, useHasActiveSupport } from '@automattic/data-stores';
+import { useSupportAvailability, useSupportActivity } from '@automattic/data-stores';
 import { isDefaultLocale, getLanguage, useLocale } from '@automattic/i18n-utils';
-import { Notice } from '@wordpress/components';
 import { useEffect, useMemo } from '@wordpress/element';
 import { hasTranslation, sprintf } from '@wordpress/i18n';
 import { comment, Icon } from '@wordpress/icons';
@@ -16,15 +15,17 @@ import classnames from 'classnames';
 import { FC } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, LinkProps } from 'react-router-dom';
-import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { getSectionName } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
  */
 import { BackButton } from '..';
-import { useShouldRenderChatOption } from '../hooks/use-should-render-chat-option';
-import { useShouldRenderEmailOption } from '../hooks/use-should-render-email-option';
-import { useStillNeedHelpURL } from '../hooks/use-still-need-help-url';
+import {
+	useShouldRenderChatOption,
+	useMessagingAuth,
+	useShouldRenderEmailOption,
+	useStillNeedHelpURL,
+} from '../hooks';
 import { Mail, Forum } from '../icons';
 import { HelpCenterActiveTicketNotice } from './help-center-notice';
 
@@ -41,13 +42,25 @@ export const HelpCenterContactPage: FC = () => {
 
 	const renderEmail = useShouldRenderEmailOption();
 	const renderChat = useShouldRenderChatOption();
-	const email = useSelector( getCurrentUserEmail );
-	const { data: hasActiveTickets, isLoading: isLoadingTickets } = useHasActiveSupport(
-		'ticket',
-		email
-	);
+	const { data: supportActivity, isLoading: isLoadingSupportActivity } = useSupportActivity();
 	const { data: supportAvailability } = useSupportAvailability( 'CHAT' );
-	const isLoading = renderChat.isLoading || renderEmail.isLoading || isLoadingTickets;
+	const isLoading = renderChat.isLoading || renderEmail.isLoading || isLoadingSupportActivity;
+
+	const zendeskKey: string = config( 'zendesk_support_chat_key' );
+	const { data: messagingAuth } = useMessagingAuth(
+		zendeskKey,
+		Boolean( supportAvailability?.is_user_eligible )
+	);
+	useEffect( () => {
+		const jwt = messagingAuth?.user.jwt;
+		if ( typeof window.zE !== 'function' || ! jwt ) {
+			return;
+		}
+
+		window.zE( 'messenger', 'loginUser', function ( callback ) {
+			callback( jwt );
+		} );
+	}, [ messagingAuth ] );
 
 	useEffect( () => {
 		if ( isLoading ) {
@@ -121,7 +134,7 @@ export const HelpCenterContactPage: FC = () => {
 			<BackButton />
 			<div className="help-center-contact-page__content">
 				<h3>{ __( 'Contact our WordPress.com experts', __i18n_text_domain__ ) }</h3>
-				{ hasActiveTickets && <HelpCenterActiveTicketNotice tickets={ [ hasActiveTickets ] } /> }
+				{ supportActivity && <HelpCenterActiveTicketNotice tickets={ supportActivity } /> }
 				{ /* Easter */ }
 				<GMClosureNotice
 					displayAt="2023-04-03 00:00Z"
@@ -129,16 +142,6 @@ export const HelpCenterContactPage: FC = () => {
 					reopensAt="2023-04-10 07:00Z"
 					enabled={ hasAccessToLivechat }
 				/>
-				{ renderChat.env === 'staging' && (
-					<Notice
-						status="warning"
-						actions={ [ { label: 'Learn more', url: 'https://wp.me/PCYsg-Q7X' } ] }
-						className="help-center-contact-page__staging-notice"
-						isDismissible={ false }
-					>
-						Targeting HappyChat staging
-					</Notice>
-				) }
 
 				<div className={ classnames( 'help-center-contact-page__boxes' ) }>
 					<Link to="/contact-form?mode=FORUM">
@@ -159,10 +162,7 @@ export const HelpCenterContactPage: FC = () => {
 
 					{ renderChat.render && (
 						<div className={ classnames( { disabled: renderChat.state !== 'AVAILABLE' } ) }>
-							<ConditionalLink
-								active={ renderChat.state === 'AVAILABLE' }
-								to="/contact-form?mode=CHAT"
-							>
+							<ConditionalLink active={ renderChat.state === 'AVAILABLE' } to={ renderChat.to }>
 								<div
 									className={ classnames( 'help-center-contact-page__box', 'chat', {
 										'is-disabled': renderChat.state !== 'AVAILABLE',

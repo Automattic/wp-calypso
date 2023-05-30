@@ -1,8 +1,8 @@
 import { is2023PricingGridActivePage } from '@automattic/calypso-products';
 import {
-	DOMAIN_UPSELL_FLOW,
+	isBlogOnboardingFlow,
+	isDomainUpsellFlow,
 	isHostingSiteCreationFlow,
-	START_WRITING_FLOW,
 	StepContainer,
 } from '@automattic/onboarding';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -11,14 +11,14 @@ import type { ProvidedDependencies, Step } from '../../types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 const plans: Step = function Plans( { navigation, flow } ) {
-	const { submit } = navigation;
+	const { goBack, submit } = navigation;
 
 	const handleSubmit = ( plan: MinimalRequestCartProduct | null ) => {
 		const providedDependencies: ProvidedDependencies = {
 			plan,
 		};
 
-		if ( flow === DOMAIN_UPSELL_FLOW || flow === START_WRITING_FLOW ) {
+		if ( isDomainUpsellFlow( flow ) || isBlogOnboardingFlow( flow ) ) {
 			providedDependencies.goToCheckout = true;
 		}
 
@@ -26,12 +26,12 @@ const plans: Step = function Plans( { navigation, flow } ) {
 	};
 	const is2023PricingGridVisible = is2023PricingGridActivePage( window );
 
-	const isAllowedToGoBack = flow === DOMAIN_UPSELL_FLOW || isHostingSiteCreationFlow( flow );
+	const isAllowedToGoBack = isDomainUpsellFlow( flow ) || isHostingSiteCreationFlow( flow );
 
 	return (
 		<StepContainer
 			stepName="plans"
-			goBack={ () => submit?.( { goBack: true } ) }
+			goBack={ goBack }
 			isHorizontalLayout={ false }
 			isWideLayout={ ! is2023PricingGridVisible }
 			isFullLayout={ is2023PricingGridVisible }

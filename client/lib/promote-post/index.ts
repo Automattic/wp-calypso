@@ -1,9 +1,10 @@
 import config from '@automattic/calypso-config';
 import { loadScript } from '@automattic/load-script';
 import { __ } from '@wordpress/i18n';
+import { translate } from 'i18n-calypso/types';
 import { useSelector } from 'react-redux';
-import request, { requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
+import wpcom from 'calypso/lib/wp';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getSiteOption } from 'calypso/state/sites/selectors';
@@ -14,6 +15,7 @@ declare global {
 		BlazePress?: {
 			render: ( params: {
 				siteSlug: string | null;
+				siteId?: number | string;
 				domNode?: HTMLElement | null;
 				domNodeId?: string;
 				stripeKey: string;
@@ -24,7 +26,7 @@ declare global {
 				urn: string;
 				onLoaded?: () => void;
 				onClose?: () => void;
-				translateFn?: ( value: string, options?: any ) => string;
+				translateFn?: typeof translate;
 				localizeUrlFn?: ( fullUrl: string ) => string;
 				locale?: string;
 				showDialog?: boolean;
@@ -34,6 +36,12 @@ declare global {
 				showGetStartedMessage?: boolean;
 				onGetStartedMessageClose?: ( dontShowAgain: boolean ) => void;
 				source?: string;
+				isRunningInJetpack?: boolean;
+				jetpackXhrParams?: {
+					apiRoot: string;
+					headerNonce: string;
+				};
+				isV2?: boolean;
 			} ) => void;
 			strings: any;
 		};
@@ -60,18 +68,22 @@ export async function showDSP(
 	postId: number | string,
 	onClose: () => void,
 	source: string,
-	translateFn: ( value: string, options?: any ) => string,
+	translateFn: typeof translate,
 	localizeUrlFn: ( fullUrl: string ) => string,
 	domNodeOrId?: HTMLElement | string | null,
 	setShowCancelButton?: ( show: boolean ) => void,
 	setShowTopBar?: ( show: boolean ) => void,
-	locale?: string
+	locale?: string,
+	isV2?: boolean
 ) {
 	await loadDSPWidgetJS();
 	return new Promise( ( resolve, reject ) => {
 		if ( window.BlazePress ) {
+			const isRunningInJetpack = config.isEnabled( 'is_running_in_jetpack_site' );
+
 			window.BlazePress.render( {
 				siteSlug: siteSlug,
+				siteId: siteId,
 				domNode: typeof domNodeOrId !== 'string' ? domNodeOrId : undefined,
 				domNodeId: typeof domNodeOrId === 'string' ? domNodeOrId : undefined,
 				stripeKey: config( 'dsp_stripe_pub_key' ),
@@ -85,12 +97,20 @@ export async function showDSP(
 				translateFn: translateFn,
 				localizeUrlFn: localizeUrlFn,
 				locale,
-				urn: `urn:wpcom:post:${ siteId }:${ postId || 0 }`,
+				urn: postId && postId !== '0' ? `urn:wpcom:post:${ siteId }:${ postId || 0 }` : '',
 				setShowCancelButton: setShowCancelButton,
 				setShowTopBar: setShowTopBar,
 				uploadImageLabel: isWpMobileApp() ? __( 'Tap to add image' ) : undefined,
 				showGetStartedMessage: ! isWpMobileApp(), // Don't show the GetStartedMessage in the mobile app.
 				source: source,
+				isRunningInJetpack,
+				jetpackXhrParams: isRunningInJetpack
+					? {
+							apiRoot: config( 'api_root' ),
+							headerNonce: config( 'nonce' ),
+					  }
+					: undefined,
+				isV2,
 			} );
 		} else {
 			reject( false );
@@ -122,13 +142,26 @@ export const requestDSP = async < T >(
 ): Promise< T > => {
 	const URL_BASE = `/sites/${ siteId }/wordads/dsp/api/v1`;
 	const path = `${ URL_BASE }${ apiUri }`;
-	await requestAllBlogsAccess();
-	return await request< T >( {
+
+	const params = {
 		path,
 		method,
+		apiNamespace: config.isEnabled( 'is_running_in_jetpack_site' )
+			? 'jetpack/v4/blaze-app'
+			: 'wpcom/v2',
 		body,
-		apiNamespace: 'wpcom/v2',
-	} );
+	};
+
+	switch ( method ) {
+		case 'POST':
+			return await wpcom.req.post( params );
+		case 'PUT':
+			return await wpcom.req.put( params );
+		case 'DELETE':
+			return await wpcom.req.del( params );
+		default:
+			return await wpcom.req.get( params );
+	}
 };
 
 export enum PromoteWidgetStatus {

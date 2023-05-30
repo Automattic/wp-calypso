@@ -1,6 +1,7 @@
 import { SubscriptionManager } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import Nav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
@@ -13,60 +14,84 @@ import {
 } from 'calypso/landing/subscriptions/components/tab-views';
 import './styles.scss';
 
-const TabsSwitcher = () => {
-	const translate = useTranslate();
+type SubscriptionManagerTab = {
+	id: string;
+	label: string;
+	count?: number;
+	onClick: () => void;
+	selected: boolean;
+	hide?: boolean;
+};
+
+const getPath = ( subpath: string ) => `/subscriptions/${ subpath }`;
+
+const getPathWithLocale = ( subpath: string, locale: string ) =>
+	getPath( subpath ) + ( locale !== 'en' ? '/' + locale : '' );
+
+const useTabs = (): SubscriptionManagerTab[] => {
 	const navigate = useNavigate();
 	const { pathname } = useLocation();
-	const { data: counts } = SubscriptionManager.useSubscriptionsCountQuery();
+	const translate = useTranslate();
 	const locale = useLocale();
+	const { data: counts } = SubscriptionManager.useSubscriptionsCountQuery();
 
-	const getFullPath = ( subpath: string ) =>
-		`/subscriptions/${ subpath }${ locale !== 'en' ? '/' + locale : '' }`;
-	const [ sitesPath, commentsPath, pendingPath, settingsPath ] = [
-		'sites',
-		'comments',
-		'pending',
-		'settings',
-	].map( getFullPath );
+	return useMemo( () => {
+		return [
+			{
+				id: 'sites',
+				label: translate( 'Sites' ),
+				count: counts?.blogs || undefined,
+				onClick: () => navigate( getPathWithLocale( 'sites', locale ) ),
+				selected: pathname.startsWith( getPath( 'sites' ) ),
+			},
+			{
+				id: 'comments',
+				label: translate( 'Comments' ),
+				count: undefined, // temporarily disable inaccurate comments count
+				onClick: () => navigate( getPathWithLocale( 'comments', locale ) ),
+				selected: pathname.startsWith( getPath( 'comments' ) ),
+			},
+			{
+				id: 'pending',
+				label: translate( 'Pending' ),
+				count: counts?.pending || undefined,
+				onClick: () => navigate( getPathWithLocale( 'pending', locale ) ),
+				selected: pathname.startsWith( getPath( 'pending' ) ),
+				hide: ! counts?.pending && ! pathname.includes( 'pending' ),
+			},
+			{
+				id: 'settings',
+				label: translate( 'Settings' ),
+				onClick: () => navigate( getPathWithLocale( 'settings', locale ) ),
+				selected: pathname.startsWith( getPath( 'settings' ) ),
+			},
+		];
+	}, [ counts?.blogs, counts?.pending, locale, navigate, pathname, translate ] );
+};
 
+const TabsSwitcher = () => {
+	const tabs = useTabs();
+	const { label: selectedText, count: selectedCount } = tabs.find( ( tab ) => tab.selected ) ?? {};
 	return (
 		<>
-			<Nav className="subscription-manager-tab-switcher">
+			<Nav
+				className="subscription-manager-tab-switcher"
+				selectedText={ selectedText }
+				selectedCount={ selectedCount }
+			>
 				<NavTabs>
-					<NavItem
-						onClick={ () => navigate( sitesPath ) }
-						count={ counts?.blogs || undefined }
-						selected={ pathname.startsWith( sitesPath ) }
-					>
-						{ translate( 'Sites' ) }
-					</NavItem>
-
-					<NavItem
-						onClick={ () => navigate( commentsPath ) }
-						count={ undefined /* temporarily disable inaccurate comments count */ }
-						selected={ pathname.startsWith( commentsPath ) }
-					>
-						{ translate( 'Comments' ) }
-					</NavItem>
-
-					{ counts?.pending || pathname.includes( 'pending' ) ? (
-						<NavItem
-							onClick={ () => navigate( pendingPath ) }
-							count={ counts?.pending || undefined }
-							selected={ pathname.startsWith( pendingPath ) }
-						>
-							{ translate( 'Pending' ) }
-						</NavItem>
-					) : (
-						''
+					{ tabs.map( ( tab ) =>
+						tab.hide ? null : (
+							<NavItem
+								key={ tab.id }
+								onClick={ tab.onClick }
+								count={ tab.count }
+								selected={ tab.selected }
+							>
+								{ tab.label }
+							</NavItem>
+						)
 					) }
-
-					<NavItem
-						onClick={ () => navigate( settingsPath ) }
-						selected={ pathname.startsWith( settingsPath ) }
-					>
-						{ translate( 'Settings' ) }
-					</NavItem>
 				</NavTabs>
 			</Nav>
 

@@ -42,6 +42,12 @@ const hosting: Flow = {
 
 		const flowName = this.name;
 
+		const goBack = () => {
+			if ( _currentStepSlug === 'plans' ) {
+				navigate( 'options' );
+			}
+		};
+
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug );
 
@@ -52,10 +58,6 @@ const hosting: Flow = {
 					return navigate( 'plans' );
 				}
 				case 'plans':
-					if ( providedDependencies?.goBack ) {
-						return navigate( 'options' );
-					}
-
 					setPlanCartItem( {
 						product_slug: ( providedDependencies?.plan as MinimalRequestCartProduct | null )
 							?.product_slug,
@@ -69,7 +71,7 @@ const hosting: Flow = {
 
 				case 'processing': {
 					const destination = addQueryArgs( '/sites', {
-						'new-site': providedDependencies.siteSlug,
+						'new-site': providedDependencies?.siteId,
 					} );
 					persistSignupDestination( destination );
 					setSignupCompleteSlug( providedDependencies?.siteSlug );
@@ -88,7 +90,7 @@ const hosting: Flow = {
 			return providedDependencies;
 		};
 
-		return { submit };
+		return { goBack, submit };
 	},
 	useSideEffect( currentStepSlug ) {
 		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );

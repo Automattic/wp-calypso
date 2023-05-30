@@ -76,7 +76,9 @@ const DataFetchingComponent = < T, >( {
 	queryFn,
 	persistencePredicate,
 }: DataFetchingComponentProps< T > ) => {
-	const { status } = useQuery( [ queryKey ], queryFn, {
+	const { status } = useQuery( {
+		queryKey: [ queryKey ],
+		queryFn,
 		retry: false,
 		meta: {
 			persist: persistencePredicate != null ? persistencePredicate : undefined,

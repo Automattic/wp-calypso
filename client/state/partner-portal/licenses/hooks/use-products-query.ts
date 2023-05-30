@@ -49,7 +49,9 @@ export default function useProductsQuery(): UseQueryResult< APIProductFamilyProd
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	return useQuery( [ 'partner-portal', 'licenses', 'products' ], queryProducts, {
+	return useQuery( {
+		queryKey: [ 'partner-portal', 'licenses', 'products' ],
+		queryFn: queryProducts,
 		select: selectAlphabeticallySortedProductOptions,
 		onError: () => {
 			dispatch(

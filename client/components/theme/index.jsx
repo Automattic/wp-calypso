@@ -1,6 +1,11 @@
 import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { Card, Button, Gridicon } from '@automattic/components';
-import { PremiumBadge, ThemeCard, WooCommerceBundledBadge } from '@automattic/design-picker';
+import {
+	DesignPreviewImage,
+	PremiumBadge,
+	ThemeCard,
+	WooCommerceBundledBadge,
+} from '@automattic/design-picker';
 import { Button as LinkButton } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -95,6 +100,7 @@ export class Theme extends Component {
 		isUpdated: PropTypes.bool,
 		errorOnUpdate: PropTypes.bool,
 		softLaunched: PropTypes.bool,
+		selectedStyleVariation: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -154,8 +160,9 @@ export class Theme extends Component {
 	}
 
 	renderScreenshot() {
-		const { index, theme } = this.props;
+		const { isExternallyManagedTheme, selectedStyleVariation, theme } = this.props;
 		const { description, screenshot } = theme;
+
 		if ( ! screenshot ) {
 			return (
 				<div className="theme__no-screenshot">
@@ -164,12 +171,25 @@ export class Theme extends Component {
 			);
 		}
 
+		// mShots don't work well with SSR, since it shows a placeholder image by default
+		// the snapshot request is completed.
+		//
+		// With that in mind, we only use mShots for non-default style variations to ensure
+		// that there is no flash of image transition from static image to mShots on page load.
+		if ( !! selectedStyleVariation && ! isExternallyManagedTheme ) {
+			const { id: themeId, stylesheet } = theme;
+
+			return (
+				<DesignPreviewImage
+					design={ { slug: themeId, recipe: { stylesheet } } }
+					styleVariation={ selectedStyleVariation }
+				/>
+			);
+		}
+
 		const fit = '479,360';
 		const themeImgSrc = photon( screenshot, { fit } ) || screenshot;
 		const themeImgSrcDoubleDpi = photon( screenshot, { fit, zoom: 2 } ) || screenshot;
-
-		// for performance testing
-		const screenshotID = index === 0 ? 'theme__firstscreenshot' : null;
 
 		return (
 			<img
@@ -177,7 +197,6 @@ export class Theme extends Component {
 				className="theme__img"
 				src={ themeImgSrc }
 				srcSet={ `${ themeImgSrcDoubleDpi } 2x` }
-				id={ screenshotID }
 			/>
 		);
 	}
@@ -366,6 +385,15 @@ export class Theme extends Component {
 					},
 				}
 			);
+		} else if ( isWporgOnlyTheme ) {
+			return createInterpolateElement(
+				translate(
+					'This community theme can only be installed if you have the <Link>Business plan</Link> or higher on your site.'
+				),
+				{
+					Link: <LinkButton isLink onClick={ () => this.goToCheckout( 'business' ) } />,
+				}
+			);
 		} else if ( isUsablePremiumTheme ) {
 			return translate( 'This premium theme is included in your plan.' );
 		} else if ( isUsableBundledTheme ) {
@@ -373,15 +401,6 @@ export class Theme extends Component {
 		} else if ( doesThemeBundleSoftwareSet ) {
 			return createInterpolateElement(
 				translate( 'This WooCommerce theme is included in the <Link>Business plan</Link>.' ),
-				{
-					Link: <LinkButton isLink onClick={ () => this.goToCheckout( 'business' ) } />,
-				}
-			);
-		} else if ( isWporgOnlyTheme ) {
-			return createInterpolateElement(
-				translate(
-					'This community theme can only be installed if you have the <Link>Business plan</Link> or higher on your site.'
-				),
 				{
 					Link: <LinkButton isLink onClick={ () => this.goToCheckout( 'business' ) } />,
 				}
@@ -519,8 +538,7 @@ export class Theme extends Component {
 	};
 
 	renderMoreButton = () => {
-		const { active, buttonContents, index, theme, onMoreButtonClick, onMoreButtonItemClick } =
-			this.props;
+		const { active, buttonContents, index, theme } = this.props;
 		if ( isEmpty( buttonContents ) ) {
 			return null;
 		}
@@ -531,15 +549,15 @@ export class Theme extends Component {
 				themeId={ theme.id }
 				themeName={ theme.name }
 				active={ active }
-				onMoreButtonClick={ onMoreButtonClick }
-				onMoreButtonItemClick={ onMoreButtonItemClick }
+				onMoreButtonClick={ this.props.onMoreButtonClick }
+				onMoreButtonItemClick={ this.props.onMoreButtonItemClick }
 				options={ buttonContents }
 			/>
 		);
 	};
 
 	render() {
-		const { theme } = this.props;
+		const { selectedStyleVariation, theme } = this.props;
 		const { name, description, style_variations = [] } = theme;
 		const themeDescription = decodeEntities( description );
 
@@ -558,6 +576,7 @@ export class Theme extends Component {
 				banner={ this.renderUpdateAlert() }
 				badge={ this.renderPricingBadge() }
 				styleVariations={ style_variations }
+				selectedStyleVariation={ selectedStyleVariation }
 				optionsMenu={ this.renderMoreButton() }
 				isActive={ this.props.active }
 				isInstalling={ this.props.installing }

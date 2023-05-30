@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import {
 	__experimentalHStack as HStack,
@@ -18,24 +17,12 @@ import type { OnboardSelect } from '@automattic/data-stores';
 import type { MouseEvent } from 'react';
 
 interface Props {
-	shouldUnlockGlobalStyles: boolean;
-	isDismissedGlobalStylesUpgradeModal?: boolean;
-	hasSelectedColorVariation?: boolean;
-	hasSelectedFontVariation?: boolean;
 	onSelect: ( name: string ) => void;
 	onContinueClick: () => void;
 	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
 }
 
-const ScreenMain = ( {
-	shouldUnlockGlobalStyles,
-	isDismissedGlobalStylesUpgradeModal,
-	hasSelectedColorVariation,
-	hasSelectedFontVariation,
-	onSelect,
-	onContinueClick,
-	recordTracksEvent,
-}: Props ) => {
+const ScreenMain = ( { onSelect, onContinueClick, recordTracksEvent }: Props ) => {
 	const translate = useTranslate();
 	const [ disabled, setDisabled ] = useState( true );
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
@@ -49,38 +36,6 @@ const ScreenMain = ( {
 	const headerDescription = selectedDesign?.is_virtual
 		? translate( 'Customize your homepage with our library of styles and patterns.' )
 		: translate( 'Use our library of styles and patterns to build a homepage.' );
-
-	const getDescription = () => {
-		if ( ! shouldUnlockGlobalStyles ) {
-			return translate( 'Ready? Go to the Site Editor to continue editing.' );
-		}
-
-		if ( isDismissedGlobalStylesUpgradeModal ) {
-			return translate(
-				'Ready to continue? Keep your selected styles and upgrade to the Premium plan later.'
-			);
-		}
-
-		if ( hasSelectedColorVariation && hasSelectedFontVariation ) {
-			return translate(
-				'Your font and color choices are exclusive to the Premium plan and above.'
-			);
-		} else if ( hasSelectedColorVariation ) {
-			return translate( 'Your color choices are exclusive to the Premium plan and above.' );
-		} else if ( hasSelectedFontVariation ) {
-			return translate( 'Your font choices are exclusive to the Premium plan and above.' );
-		}
-	};
-
-	const getContinueText = () => {
-		if ( isDismissedGlobalStylesUpgradeModal ) {
-			return translate( 'Continue to the editor' );
-		}
-
-		return shouldUnlockGlobalStyles && ! isDismissedGlobalStylesUpgradeModal
-			? translate( 'Unlock this style' )
-			: translate( 'Continue' );
-	};
 
 	// Use the mousedown event to prevent either the button focusing or text selection
 	const handleMouseDown = ( event: MouseEvent< HTMLButtonElement > ) => {
@@ -157,32 +112,32 @@ const ScreenMain = ( {
 							<span className="pattern-layout__list-item-text">{ translate( 'Footer' ) }</span>
 						</NavigationButtonAsItem>
 					</NavigatorItemGroup>
-					{ isEnabled( 'pattern-assembler/color-and-fonts' ) && (
-						<NavigatorItemGroup title={ translate( 'Style' ) }>
-							<>
-								<NavigationButtonAsItem
-									path="/color-palettes"
-									icon={ color }
-									aria-label={ translate( 'Colors' ) }
-									onClick={ () => onSelect( 'color-palettes' ) }
-								>
-									<span className="pattern-layout__list-item-text">{ translate( 'Colors' ) }</span>
-								</NavigationButtonAsItem>
-								<NavigationButtonAsItem
-									path="/font-pairings"
-									icon={ typography }
-									aria-label={ translate( 'Fonts' ) }
-									onClick={ () => onSelect( 'font-pairings' ) }
-								>
-									<span className="pattern-layout__list-item-text">{ translate( 'Fonts' ) }</span>
-								</NavigationButtonAsItem>
-							</>
-						</NavigatorItemGroup>
-					) }
+					<NavigatorItemGroup title={ translate( 'Style' ) }>
+						<>
+							<NavigationButtonAsItem
+								path="/color-palettes"
+								icon={ color }
+								aria-label={ translate( 'Colors' ) }
+								onClick={ () => onSelect( 'color-palettes' ) }
+							>
+								<span className="pattern-layout__list-item-text">{ translate( 'Colors' ) }</span>
+							</NavigationButtonAsItem>
+							<NavigationButtonAsItem
+								path="/font-pairings"
+								icon={ typography }
+								aria-label={ translate( 'Fonts' ) }
+								onClick={ () => onSelect( 'font-pairings' ) }
+							>
+								<span className="pattern-layout__list-item-text">{ translate( 'Fonts' ) }</span>
+							</NavigationButtonAsItem>
+						</>
+					</NavigatorItemGroup>
 				</HStack>
 			</div>
 			<div className="screen-container__footer">
-				<span className="screen-container__description">{ getDescription() }</span>
+				<span className="screen-container__description">
+					{ translate( 'Ready? Go to the Site Editor to continue editing.' ) }
+				</span>
 				<Button
 					className="pattern-assembler__button"
 					primary
@@ -190,7 +145,7 @@ const ScreenMain = ( {
 					onMouseDown={ handleMouseDown }
 					onClick={ handleClick }
 				>
-					{ getContinueText() }
+					{ translate( 'Continue' ) }
 				</Button>
 			</div>
 		</>

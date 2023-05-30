@@ -41,13 +41,14 @@ export class WhatsAppButtonFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution
 	 */
 	async configure( context: EditorContext ): Promise< void > {
-		const editorParent = await context.editorPage.getEditorParent();
+		const editorCanvas = await context.editorPage.getEditorCanvas();
 
 		if ( this.configurationData.buttonText ) {
-			const buttonLabelLocator = editorParent.locator( selectors.buttonLabel );
+			const buttonLabelLocator = editorCanvas.locator( selectors.buttonLabel );
 			await buttonLabelLocator.fill( this.configurationData.buttonText );
 		}
 
+		const editorParent = await context.editorPage.getEditorParent();
 		const settingsLocator = editorParent.locator( selectors.settings );
 		await settingsLocator.click();
 

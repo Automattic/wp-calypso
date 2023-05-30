@@ -13,6 +13,25 @@ const showHelpCenter: Reducer< boolean | undefined, HelpCenterAction > = ( state
 	return state;
 };
 
+const showMessagingLauncher: Reducer< boolean | undefined, HelpCenterAction > = (
+	state,
+	action
+) => {
+	switch ( action.type ) {
+		case 'HELP_CENTER_SET_SHOW_MESSAGING_LAUNCHER':
+			return action.show;
+	}
+	return state;
+};
+
+const showMessagingWidget: Reducer< boolean | undefined, HelpCenterAction > = ( state, action ) => {
+	switch ( action.type ) {
+		case 'HELP_CENTER_SET_SHOW_MESSAGING_WIDGET':
+			return action.show;
+	}
+	return state;
+};
+
 const hasSeenWhatsNewModal: Reducer< boolean | undefined, HelpCenterAction > = (
 	state,
 	action
@@ -119,6 +138,8 @@ const initialRoute: Reducer< InitialEntry | undefined, HelpCenterAction > = ( st
 
 const reducer = combineReducers( {
 	showHelpCenter,
+	showMessagingLauncher,
+	showMessagingWidget,
 	site,
 	subject,
 	message,

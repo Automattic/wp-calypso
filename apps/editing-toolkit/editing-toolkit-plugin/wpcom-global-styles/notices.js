@@ -2,10 +2,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { ExternalLink, Notice } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { createInterpolateElement, render, useEffect, useCallback } from '@wordpress/element';
+import { createInterpolateElement, render, useCallback, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useCanvas } from './use-canvas';
 import { useGlobalStylesConfig } from './use-global-styles-config';
+import { usePreview } from './use-preview';
 import './notice.scss';
 
 const trackEvent = ( eventName, isSiteEditor = true ) =>
@@ -82,6 +83,7 @@ function GlobalStylesEditNotice() {
 		} ),
 		[ canvas ]
 	);
+	const { previewPostWithoutCustomStyles, canPreviewPost } = usePreview();
 
 	const { createWarningNotice, removeNotice } = useDispatch( 'core/notices' );
 	const { editEntityRecord } = useDispatch( 'core' );
@@ -90,6 +92,11 @@ function GlobalStylesEditNotice() {
 		window.open( wpcomGlobalStyles.upgradeUrl, '_blank' ).focus();
 		trackEvent( 'calypso_global_styles_gating_notice_upgrade_click', isSiteEditor );
 	}, [ isSiteEditor ] );
+
+	const previewPost = useCallback( () => {
+		previewPostWithoutCustomStyles();
+		trackEvent( 'calypso_global_styles_gating_notice_preview_click', isSiteEditor );
+	}, [ isSiteEditor, previewPostWithoutCustomStyles ] );
 
 	const resetGlobalStyles = useCallback( () => {
 		if ( ! globalStylesId ) {
@@ -104,6 +111,11 @@ function GlobalStylesEditNotice() {
 		trackEvent( 'calypso_global_styles_gating_notice_reset_click', isSiteEditor );
 	}, [ editEntityRecord, globalStylesId, isSiteEditor ] );
 
+	const openResetGlobalStylesSupport = useCallback( () => {
+		window.open( 'https://wordpress.com/support/using-styles/#reset-all-styles', '_blank' ).focus();
+		trackEvent( 'calypso_global_styles_gating_notice_reset_support_click', isSiteEditor );
+	}, [ isSiteEditor ] );
+
 	const showNotice = useCallback( () => {
 		const actions = [
 			{
@@ -111,17 +123,29 @@ function GlobalStylesEditNotice() {
 				onClick: upgradePlan,
 				variant: 'primary',
 				noDefaultClasses: true,
+				className: 'wpcom-global-styles-action-has-icon wpcom-global-styles-action-is-external',
 			},
 		];
 
-		if ( isSiteEditor ) {
+		if ( isPostEditor && canPreviewPost ) {
 			actions.push( {
-				label: __( 'Remove custom styles', 'full-site-editing' ),
-				onClick: resetGlobalStyles,
+				label: __( 'Preview without custom styles', 'full-site-editing' ),
+				onClick: previewPost,
 				variant: 'secondary',
 				noDefaultClasses: true,
+				className: 'wpcom-global-styles-action-has-icon wpcom-global-styles-action-is-external',
 			} );
 		}
+
+		actions.push( {
+			label: __( 'Remove custom styles', 'full-site-editing' ),
+			onClick: isSiteEditor ? resetGlobalStyles : openResetGlobalStylesSupport,
+			variant: isSiteEditor ? 'secondary' : 'link',
+			noDefaultClasses: true,
+			className: isSiteEditor
+				? ''
+				: 'wpcom-global-styles-action-has-icon wpcom-global-styles-action-is-external wpcom-global-styles-action-is-support',
+		} );
 
 		createWarningNotice(
 			__(
@@ -135,7 +159,16 @@ function GlobalStylesEditNotice() {
 		);
 
 		trackEvent( 'calypso_global_styles_gating_notice_show', isSiteEditor );
-	}, [ createWarningNotice, isSiteEditor, resetGlobalStyles, upgradePlan ] );
+	}, [
+		canPreviewPost,
+		createWarningNotice,
+		isPostEditor,
+		isSiteEditor,
+		openResetGlobalStylesSupport,
+		previewPost,
+		resetGlobalStyles,
+		upgradePlan,
+	] );
 
 	useEffect( () => {
 		if ( ! isSiteEditor && ! isPostEditor ) {

@@ -1,3 +1,4 @@
+import { FEATURE_SOCIAL_MASTODON_CONNECTION } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { get, find, map } from 'lodash';
 import PropTypes from 'prop-types';
@@ -7,6 +8,7 @@ import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import FacebookSharePreview from 'calypso/components/share/facebook-share-preview';
 import LinkedinSharePreview from 'calypso/components/share/linkedin-share-preview';
+import MastodonSharePreview from 'calypso/components/share/mastodon-share-preview';
 import TumblrSharePreview from 'calypso/components/share/tumblr-share-preview';
 import TwitterSharePreview from 'calypso/components/share/twitter-share-preview';
 import VerticalMenu from 'calypso/components/vertical-menu';
@@ -15,9 +17,16 @@ import { decodeEntities } from 'calypso/lib/formatting';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getSitePost } from 'calypso/state/posts/selectors';
 import getSiteIconUrl from 'calypso/state/selectors/get-site-icon-url';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteUserConnections } from 'calypso/state/sharing/publicize/selectors';
 import { getSeoTitle, getSite, getSiteSlug } from 'calypso/state/sites/selectors';
-import { getPostImage, getExcerptForPost, getSummaryForPost } from './utils';
+import {
+	getPostImage,
+	getExcerptForPost,
+	getSummaryForPost,
+	getPostCustomImage,
+	isSocialPost,
+} from './utils';
 
 import './style.scss';
 
@@ -26,6 +35,7 @@ const serviceNames = {
 	twitter: 'Twitter',
 	linkedin: 'LinkedIn',
 	tumblr: 'Tumblr',
+	mastodon: 'Mastodon',
 };
 
 class SharingPreviewPane extends PureComponent {
@@ -48,6 +58,11 @@ class SharingPreviewPane extends PureComponent {
 	constructor( props ) {
 		super( props );
 
+		if ( ! props.isMastodonEligible ) {
+			const { mastodon, ...rest } = props.services;
+			props.services = rest;
+		}
+
 		const connectedServices = map( props.connections, 'service' );
 		const firstConnectedService = find( props.services, ( service ) => {
 			return find( connectedServices, ( connectedService ) => service === connectedService );
@@ -61,7 +76,7 @@ class SharingPreviewPane extends PureComponent {
 	};
 
 	renderPreview() {
-		const { post, site, message, connections, translate, seoTitle, siteSlug, siteIcon } =
+		const { post, site, message, connections, translate, seoTitle, siteSlug, siteIcon, siteName } =
 			this.props;
 		const { selectedService } = this.state;
 
@@ -93,6 +108,7 @@ class SharingPreviewPane extends PureComponent {
 		const articleSummary = getSummaryForPost( post, translate );
 		const siteDomain = get( site, 'domain', '' );
 		const imageUrl = getPostImage( post );
+		const customImage = getPostCustomImage( post );
 		const {
 			external_name: externalName,
 			external_profile_url: externalProfileURL,
@@ -114,6 +130,7 @@ class SharingPreviewPane extends PureComponent {
 			seoTitle,
 			siteDomain,
 			siteIcon,
+			siteName,
 		};
 
 		switch ( selectedService ) {
@@ -123,10 +140,7 @@ class SharingPreviewPane extends PureComponent {
 						{ ...previewProps }
 						articleExcerpt={ post.excerpt }
 						articleContent={ post.content }
-						customImage={
-							post.metadata?.find( ( meta ) => meta.key === '_wpas_options' )?.value
-								?.attached_media?.[ 0 ]?.url
-						}
+						customImage={ customImage }
 					/>
 				);
 			case 'tumblr':
@@ -141,6 +155,16 @@ class SharingPreviewPane extends PureComponent {
 				return <LinkedinSharePreview { ...previewProps } />;
 			case 'twitter':
 				return <TwitterSharePreview { ...previewProps } externalDisplay={ externalDisplay } />;
+			case 'mastodon':
+				return (
+					<MastodonSharePreview
+						{ ...previewProps }
+						articleExcerpt={ post.excerpt }
+						articleContent={ post.content }
+						customImage={ customImage }
+						isSocialPost={ isSocialPost( post ) }
+					/>
+				);
 			default:
 				return null;
 		}
@@ -157,9 +181,7 @@ class SharingPreviewPane extends PureComponent {
 						<h1 className="sharing-preview-pane__title">{ translate( 'Social Previews' ) }</h1>
 						<p className="sharing-preview-pane__description">
 							{ translate(
-								'This is how your post will appear ' +
-									'when people view or share it on any of ' +
-									'the networks below'
+								'This is how your post will appear when people view or share it on any of the networks below'
 							) }
 						</p>
 					</div>
@@ -194,6 +216,8 @@ const mapStateToProps = ( state, ownProps ) => {
 		connections,
 		siteSlug,
 		siteIcon,
+		siteName: site.name,
+		isMastodonEligible: siteHasFeature( state, siteId, FEATURE_SOCIAL_MASTODON_CONNECTION ),
 	};
 };
 

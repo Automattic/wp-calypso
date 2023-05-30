@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { times } from 'lodash';
 import PropTypes from 'prop-types';
@@ -27,7 +26,7 @@ import './services-group.scss';
 /**
  * Module constants
  */
-const NUMBER_OF_PLACEHOLDERS = config.isEnabled( 'mastodon' ) ? 5 : 4;
+const NUMBER_OF_PLACEHOLDERS = 4;
 
 const serviceWarningLevelToNoticeStatus = ( level ) => {
 	switch ( level ) {

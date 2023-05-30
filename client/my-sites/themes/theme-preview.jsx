@@ -207,9 +207,14 @@ class ThemePreview extends Component {
 	};
 
 	renderUnlockStyleButton = () => {
+		const primaryOption = this.getPrimaryOption();
+		if ( ! primaryOption ) {
+			return;
+		}
+
 		return (
 			<Button primary onClick={ this.onUnlockStyleButtonClick }>
-				{ this.props.translate( 'Unlock this style' ) }
+				{ primaryOption.label }
 			</Button>
 		);
 	};

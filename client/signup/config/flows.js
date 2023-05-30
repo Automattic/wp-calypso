@@ -118,6 +118,7 @@ function getChecklistThemeDestination( { flowName, siteSlug, themeParameter } ) 
 				{
 					theme: themeParameter,
 					siteSlug: siteSlug,
+					isNewSite: true,
 				},
 				`/setup/with-theme-assembler`
 			);
@@ -187,8 +188,8 @@ function getDIFMSiteContentCollectionDestination( { siteSlug } ) {
 	return `/home/${ siteSlug }`;
 }
 
-function getSitesDestination( { siteSlug } ) {
-	return addQueryArgs( { 'new-site': siteSlug }, '/sites' );
+function getSitesDestination( { siteId } ) {
+	return addQueryArgs( { 'new-site': siteId }, '/sites' );
 }
 
 const flows = generateFlows( {
