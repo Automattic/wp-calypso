@@ -245,7 +245,7 @@ export function SitesDashboard( {
 												initialSearch={ search }
 												statuses={ statuses }
 												selectedStatus={ selectedStatus }
-												displayMode={ displayMode }
+												displayMode="list" // We're always showing <SitesTable> when there are no sites
 												onDisplayModeChange={ setDisplayMode }
 												sitesSorting={ sitesSorting }
 												onSitesSortingChange={ onSitesSortingChange }
