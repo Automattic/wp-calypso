@@ -15,6 +15,7 @@ interface ThemeCardProps {
 	image: React.ReactNode;
 	imageClickUrl?: string;
 	imageActionLabel?: string;
+	badge?: React.ReactNode;
 	banner?: React.ReactNode;
 	styleVariations: StyleVariation[];
 	selectedStyleVariation?: StyleVariation;
@@ -45,6 +46,7 @@ const ThemeCard = forwardRef(
 			imageClickUrl,
 			imageActionLabel,
 			banner,
+			badge,
 			styleVariations = [],
 			selectedStyleVariation,
 			optionsMenu,
@@ -151,7 +153,8 @@ const ThemeCard = forwardRef(
 								/>
 							</div>
 						) }
-						{ ! isActive && (
+						{ ! isActive && badge && <div className="theme-card__info-pricing">{ badge }</div> }
+						{ ! isActive && ! badge && (
 							<ThemeTypeBadge
 								id={ id }
 								type={ type }
