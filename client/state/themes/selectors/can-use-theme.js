@@ -12,7 +12,7 @@ import {
 	MARKETPLACE_THEME,
 } from '@automattic/design-picker';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { getThemeType } from 'calypso/state/themes/selectors/get-theme-type';
+import { getThemeType } from 'calypso/state/themes/selectors';
 
 import 'calypso/state/themes/init';
 
