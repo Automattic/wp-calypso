@@ -2,7 +2,7 @@ import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
-import { SiteSubscriptionsList } from '../site-subscriptions-list';
+import { SiteSubscriptionsManager } from 'calypso/landing/subscriptions/components/site-subscriptions-manager';
 import './styles.scss';
 
 const SubscriptionManager = () => {
@@ -16,7 +16,7 @@ const SubscriptionManager = () => {
 				subHeaderText={ translate( 'Manage your newsletter and blog subscriptions.' ) }
 				align="left"
 			/>
-			<SiteSubscriptionsList />
+			<SiteSubscriptionsManager />
 		</Main>
 	);
 };

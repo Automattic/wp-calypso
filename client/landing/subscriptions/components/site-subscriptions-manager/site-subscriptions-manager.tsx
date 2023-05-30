@@ -1,13 +1,14 @@
 import { SubscriptionManager, Reader } from '@automattic/data-stores';
 import SearchInput from '@automattic/search';
+import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import { SearchIcon } from 'calypso/landing/subscriptions/components/icons';
 import { Notice, NoticeType } from 'calypso/landing/subscriptions/components/notice';
-import { SiteList } from 'calypso/landing/subscriptions/components/site-list';
 import { SortControls, Option } from 'calypso/landing/subscriptions/components/sort-controls';
 import { useSearch } from 'calypso/landing/subscriptions/hooks';
-import TabView from '../tab-view';
+import SiteSubscriptionsList from './site-subscriptions-list';
+import './styles.scss';
 
 const SortBy = Reader.SiteSubscriptionsSortBy;
 
@@ -20,7 +21,7 @@ const getSortOptions = ( translate: ReturnType< typeof useTranslate > ): Option[
 const useSortOptions = ( translate: ReturnType< typeof useTranslate > ): Option[] =>
 	useMemo( () => getSortOptions( translate ), [ translate ] );
 
-const Sites = () => {
+const SiteSubscriptionsManager = () => {
 	const translate = useTranslate();
 	const { searchTerm, handleSearch } = useSearch();
 	const [ sortTerm, setSortTerm ] = useState( SortBy.DateSubscribed );
@@ -34,6 +35,18 @@ const Sites = () => {
 		? translate( "Oops! The subscription couldn't be found or doesn't exist." )
 		: '';
 
+	if ( errorMessage ) {
+		return <Notice type={ NoticeType.Error }>{ errorMessage }</Notice>;
+	}
+
+	if ( isLoading ) {
+		return (
+			<div className="loading-container">
+				<Spinner />
+			</div>
+		);
+	}
+
 	if ( ! isLoading && ! totalCount ) {
 		return (
 			<Notice type={ NoticeType.Warning }>
@@ -43,8 +56,8 @@ const Sites = () => {
 	}
 
 	return (
-		<TabView errorMessage={ errorMessage } isLoading={ isLoading }>
-			<div className="subscriptions-manager__list-actions-bar">
+		<div className="site-subscriptions-manager">
+			<div className="list-actions-bar">
 				<SearchInput
 					placeholder={ translate( 'Search by site name or address…' ) }
 					searchIcon={ <SearchIcon size={ 18 } /> }
@@ -53,7 +66,7 @@ const Sites = () => {
 				<SortControls options={ sortOptions } value={ sortTerm } onChange={ setSortTerm } />
 			</div>
 
-			<SiteList sites={ subscriptions } />
+			<SiteSubscriptionsList sites={ subscriptions } />
 
 			{ totalCount > 0 && subscriptions.length === 0 && (
 				<Notice type={ NoticeType.Warning }>
@@ -63,8 +76,8 @@ const Sites = () => {
 					} ) }
 				</Notice>
 			) }
-		</TabView>
+		</div>
 	);
 };
 
-export default Sites;
+export default SiteSubscriptionsManager;

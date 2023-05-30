@@ -1,21 +1,19 @@
-import { SubscriptionManager } from '@automattic/data-stores';
+import { SubscriptionManager, Reader } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import SiteRow from './site-row';
-import './styles.scss';
-import type { SiteSubscription } from '@automattic/data-stores/src/reader/types';
 
 type SiteListProps = {
-	sites?: SiteSubscription[];
+	sites?: Reader.SiteSubscription[];
 };
 
-const defaultSites: SiteSubscription[] = [];
+const defaultSites: Reader.SiteSubscription[] = [];
 
-export default function SiteList( { sites = defaultSites }: SiteListProps ) {
+export default function SiteSubscriptionsList( { sites = defaultSites }: SiteListProps ) {
 	const translate = useTranslate();
 	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
 
 	return (
-		<ul className="subscription-manager__site-list" role="table">
+		<ul className="site-subscriptions-list" role="table">
 			<li className="row header" role="row">
 				<span className="title-box" role="columnheader">
 					{ translate( 'Subscribed site' ) }

@@ -9,6 +9,7 @@ import { Notice, NoticeType } from 'calypso/landing/subscriptions/components/not
 import { SortControls, Option } from 'calypso/landing/subscriptions/components/sort-controls';
 import { useSearch } from 'calypso/landing/subscriptions/hooks';
 import TabView from '../tab-view';
+import './styles.scss';
 
 const { PostSubscriptionsSortBy: SortBy, SiteSubscriptionsFilterBy: FilterBy } = Reader;
 
@@ -66,7 +67,7 @@ const Comments = () => {
 
 	return (
 		<TabView errorMessage={ errorMessage } isLoading={ isLoading }>
-			<div className="subscriptions-manager__list-actions-bar">
+			<div className="list-actions-bar">
 				<SearchInput
 					placeholder={ translate( 'Search by post, site title, or address…' ) }
 					searchIcon={ <SearchIcon size={ 18 } /> }

@@ -6,12 +6,8 @@ import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-
 import Nav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import {
-	Comments,
-	Settings,
-	Sites,
-	Pending,
-} from 'calypso/landing/subscriptions/components/tab-views';
+import { SiteSubscriptionsManager } from 'calypso/landing/subscriptions/components/site-subscriptions-manager';
+import { Comments, Settings, Pending } from 'calypso/landing/subscriptions/components/tab-views';
 import './styles.scss';
 
 type SubscriptionManagerTab = {
@@ -97,7 +93,7 @@ const TabsSwitcher = () => {
 
 			<Routes>
 				<Route index element={ <Navigate to="sites" /> } />
-				<Route path="sites/*" element={ <Sites /> } />
+				<Route path="sites/*" element={ <SiteSubscriptionsManager /> } />
 				<Route path="comments/*" element={ <Comments /> } />
 				<Route path="pending/*" element={ <Pending /> } />
 				<Route path="settings/*" element={ <Settings /> } />
