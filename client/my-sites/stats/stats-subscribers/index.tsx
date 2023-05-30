@@ -66,7 +66,7 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 					/>
 				) }
 				<SubscribersChartSection siteId={ siteId } slug={ siteSlug } period={ period } />
-				<SubscribersOverview />
+				<SubscribersOverview siteId={ siteId } />
 				<div className={ statsModuleListClass }>
 					<Followers path="followers" />
 					<Reach />

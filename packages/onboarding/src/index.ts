@@ -26,6 +26,7 @@ export { default as StepContainer } from './step-container';
 export { default as StepNavigationLink } from './step-navigation-link';
 export { default as MShotsImage } from './mshots-image';
 export { default as Notice } from './notice';
+export { default as SelectCardCheckbox } from './select-card-checkbox';
 export * from './utils';
 export type { SelectItem } from './select-items';
 export type { SelectItemAlt } from './select-items-alt';
