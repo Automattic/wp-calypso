@@ -6,9 +6,9 @@ import { READER_SUGGESTED_FOLLOWS_DIALOG } from 'calypso/reader/follow-sources';
 
 import './style.scss';
 
-const ReaderSuggestedFollowsDialog = ( { onClose, siteId, isVisible } ) => {
+const ReaderSuggestedFollowsDialog = ( { onClose, siteId, postId, isVisible } ) => {
 	const translate = useTranslate();
-	const { data, isLoading } = useRelatedSites( siteId );
+	const { data, isLoading } = useRelatedSites( siteId, postId );
 	return (
 		<Dialog
 			additionalClassNames="reader-recommended-follows-dialog"
@@ -17,6 +17,7 @@ const ReaderSuggestedFollowsDialog = ( { onClose, siteId, isVisible } ) => {
 			onClose={ onClose }
 			showCloseIcon={ true }
 			label={ translate( 'Suggested follows' ) }
+			shouldCloseOnEsc={ true }
 		>
 			<div className="reader-recommended-follows-dialog__content">
 				<div className="reader-recommended-follows-dialog__header">
