@@ -59,7 +59,7 @@ export const useRelatedSites = (
 		path += '&post_id=' + postId;
 	}
 	return useQuery(
-		[ 'related-sites-' + site_recs, siteId ],
+		[ 'related-sites-' + site_recs, siteId, postId ],
 		() => wpcom.req.get( { path: path, apiNamespace: 'rest/v1.2' } ),
 		{
 			enabled: !! siteId,
