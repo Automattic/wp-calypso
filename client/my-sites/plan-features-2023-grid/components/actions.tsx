@@ -14,6 +14,7 @@ import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
 import classNames from 'classnames';
 import i18n, { localize, TranslateResult, useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -70,7 +71,18 @@ const SignupFlowPlanFeatureActionButton = ( {
 	classes: string;
 	handleUpgradeButtonClick: () => void;
 } ) => {
+	const [ busy, setBusy ] = useState( false );
 	const translate = useTranslate();
+
+	const handleClick = () => {
+		if ( handleUpgradeButtonClick ) {
+			handleUpgradeButtonClick();
+			// sets the button to busy state so that the user knows their request is being processed
+			// the upgrade button usually takes user to the next step so we don't set it back to false
+			setBusy( true );
+		}
+	};
+
 	let btnText;
 
 	if ( freePlan ) {
@@ -84,7 +96,7 @@ const SignupFlowPlanFeatureActionButton = ( {
 	}
 
 	return (
-		<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
+		<Button className={ classes } onClick={ handleClick } disabled={ isPlaceholder } busy={ busy }>
 			{ btnText }
 		</Button>
 	);
