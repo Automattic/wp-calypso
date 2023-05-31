@@ -1,4 +1,3 @@
-import { isMobile } from '@automattic/viewport';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
@@ -16,10 +15,8 @@ type Props = {
 export default function PromotePostTabBar( { tabs, selectedTab }: Props ) {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 
-	const sectionNavProps = isMobile() ? { allowDropdown: false, className: 'is-open' } : {};
-
 	return (
-		<SectionNav { ...sectionNavProps }>
+		<SectionNav>
 			<NavTabs>
 				{ tabs.map( ( { id, name, itemCount } ) => {
 					return (

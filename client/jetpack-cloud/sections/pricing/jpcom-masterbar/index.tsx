@@ -24,7 +24,7 @@ import useUserMenu from './use-user-menu';
 
 import './style.scss';
 
-export const MAIN_CONTENT_ID = 'content';
+export const MAIN_CONTENT_ID = 'pricing-content';
 
 const JETPACK_COM_BASE_URL = 'https://jetpack.com';
 

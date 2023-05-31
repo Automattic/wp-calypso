@@ -141,13 +141,13 @@ export default function useRemoveEmailForwardMutation(
 		dispatch( errorMessage );
 	};
 
-	return useMutation< any, unknown, EmailAccountEmail, Context >(
-		( { mailbox } ) =>
+	return useMutation< any, unknown, EmailAccountEmail, Context >( {
+		mutationFn: ( { mailbox } ) =>
 			wp.req.post(
 				`/domains/${ encodeURIComponent( domainName ) }/email/${ encodeURIComponent(
 					mailbox
 				) }/delete`
 			),
-		mutationOptions
-	);
+		...mutationOptions,
+	} );
 }

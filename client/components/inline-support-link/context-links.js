@@ -191,6 +191,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/settings/privacy-settings/',
 		post_id: 1507,
 	},
+	'privacy-preview-link': {
+		link: 'https://wordpress.com/support/settings/privacy-settings/#preview-link',
+		post_id: 1507,
+	},
 	publicize: {
 		link: 'https://wordpress.com/support/post-automatically-to-social-media/',
 		post_id: 216472,
@@ -210,6 +214,10 @@ const contextLinks = {
 	'site-speed': {
 		link: 'https://wordpress.com/support/site-speed/',
 		post_id: 150474,
+	},
+	'site-transfer': {
+		link: 'https://wordpress.com/support/transferring-a-site-to-another-wordpress-com-account/',
+		post_id: 102743,
 	},
 	'site-verification': {
 		link: 'https://wordpress.com/support/site-verification-services/',

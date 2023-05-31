@@ -281,7 +281,7 @@ export const redirectSiteEditor = async ( context ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteEditorUrl = getSiteEditorUrl( state, siteId );
 	// Calling replace to avoid adding an entry to the browser history upon redirect.
-	return location.replace( siteEditorUrl );
+	return window.location.replace( addQueryArgs( context.query, siteEditorUrl ) );
 };
 /**
  * Redirect the logged user to the permalink of the post, page, custom post type if the post is published.

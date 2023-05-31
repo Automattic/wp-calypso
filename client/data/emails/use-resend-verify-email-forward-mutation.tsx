@@ -70,13 +70,13 @@ export default function useResendVerifyEmailForwardMutation(
 		dispatch( errorNotice( failureMessage ) );
 	};
 
-	return useMutation< any, unknown, EmailAccountEmail >(
-		( { mailbox } ) =>
+	return useMutation< any, unknown, EmailAccountEmail >( {
+		mutationFn: ( { mailbox } ) =>
 			wp.req.post(
 				`/domains/${ encodeURIComponent( domainName ) }/email/${ encodeURIComponent(
 					mailbox
 				) }/resend-verification`
 			),
-		mutationOptions
-	);
+		...mutationOptions,
+	} );
 }

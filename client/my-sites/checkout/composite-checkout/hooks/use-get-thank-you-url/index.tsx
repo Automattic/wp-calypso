@@ -2,8 +2,6 @@ import debugFactory from 'debug';
 import { useCallback } from 'react';
 import getThankYouPageUrl from 'calypso/my-sites/checkout/get-thank-you-page-url';
 import { useSelector } from 'calypso/state';
-import { isMonthlyToAnnualPostPurchaseExperimentUser } from 'calypso/state/selectors/is-monthly-to-annual-post-purchase-experiment-user';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
@@ -41,10 +39,6 @@ export default function useGetThankYouUrl( {
 }: GetThankYouUrlProps ): GetThankYouUrl {
 	const selectedSiteData = useSelector( ( state ) => getSelectedSite( state ) );
 
-	const monthlyToAnnualPostPurchaseExperimentUser = useSelector( ( state ) =>
-		isMonthlyToAnnualPostPurchaseExperimentUser( state )
-	);
-
 	const adminUrl = selectedSiteData?.options?.admin_url;
 
 	const getThankYouUrl = useCallback( () => {
@@ -61,7 +55,6 @@ export default function useGetThankYouUrl( {
 			hideNudge,
 			isInModal,
 			domains,
-			monthlyToAnnualPostPurchaseExperimentUser,
 		};
 
 		debug( 'getThankYouUrl called with', getThankYouPageUrlArguments );
@@ -82,7 +75,6 @@ export default function useGetThankYouUrl( {
 		hideNudge,
 		sitelessCheckoutType,
 		domains,
-		monthlyToAnnualPostPurchaseExperimentUser,
 	] );
 	return getThankYouUrl;
 }
