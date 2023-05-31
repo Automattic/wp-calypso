@@ -4,7 +4,7 @@ import {
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
 import { useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import {
 	getProductBySlug,
 	getProductSaleCouponDiscount,

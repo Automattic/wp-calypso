@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import ActionPanelBody from 'calypso/components/action-panel/body';
 import Notice from 'calypso/components/notice';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
+import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { useStartSiteOwnerTransfer } from './use-start-site-owner-transfer';
 
@@ -171,7 +172,7 @@ const StartSiteOwnerTransfer = ( {
 	);
 };
 
-export default connect( ( state ) => ( {
+export default connect( ( state: IAppState ) => ( {
 	currentUserEmail: getCurrentUserEmail( state ),
 	selectedSiteId: getSelectedSiteId( state ),
 	selectedSiteSlug: getSelectedSiteSlug( state ),

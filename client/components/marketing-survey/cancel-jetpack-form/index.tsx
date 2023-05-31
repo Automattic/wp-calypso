@@ -5,7 +5,6 @@ import { useTranslate, TranslateResult } from 'i18n-calypso';
 import page from 'page';
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import * as React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import QueryPurchaseCancellationOffers from 'calypso/components/data/query-purchase-cancellation-offers';
 import JetpackBenefitsStep from 'calypso/components/marketing-survey/cancel-jetpack-form/jetpack-benefits-step';
 import JetpackCancellationOfferStep from 'calypso/components/marketing-survey/cancel-jetpack-form/jetpack-cancellation-offer';
@@ -21,6 +20,7 @@ import {
 } from 'calypso/lib/purchases';
 import { submitSurvey } from 'calypso/lib/purchases/actions';
 import { isOutsideCalypso } from 'calypso/lib/url';
+import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCancellationOfferApplySuccess from 'calypso/state/cancellation-offers/selectors/get-cancellation-offer-apply-success';
 import getCancellationOffers from 'calypso/state/cancellation-offers/selectors/get-cancellation-offers';

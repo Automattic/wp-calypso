@@ -6,6 +6,14 @@ import settings from './settings/reducer';
 import subscribers from './subscribers/reducer';
 import subscriptions from './subscriptions/reducer';
 
+export interface IMembershipsState {
+	subscriptions: any;
+	earnings: any;
+	subscribers: any;
+	settings: any;
+	productList: any;
+}
+
 const reducers = {
 	subscriptions,
 	earnings,

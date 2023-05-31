@@ -1,8 +1,8 @@
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import commentIcon from 'calypso/assets/images/jetpack/block-post-comments.svg';
 import Banner from 'calypso/components/banner';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	JETPACK_DASHBOARD_SURVEY_BANNER_PREFERENCE as preferenceName,

@@ -1,6 +1,6 @@
 import debugFactory from 'debug';
 import { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'calypso/state';
 import { fetchPaymentCountries } from 'calypso/state/countries/actions';
 import getCountries from 'calypso/state/selectors/get-countries';
 import type { CountryListItem, CountryListItemWithVat } from '@automattic/wpcom-checkout';

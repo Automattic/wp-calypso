@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import { recordAddEvent } from 'calypso/lib/analytics/cart';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { logStashEvent } from '../lib/analytics';
 import type { ResponseCart, RequestCartProduct } from '@automattic/shopping-cart';

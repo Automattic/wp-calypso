@@ -6,7 +6,7 @@ import {
 	BETWEEN_PAST_THIRTY_ONE_AND_SIXTY_DAYS,
 } from '@automattic/components';
 import { useEffect, useMemo, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'calypso/state';
 import { requestHighlights } from 'calypso/state/stats/highlights/actions';
 import { getHighlights } from 'calypso/state/stats/highlights/selectors';
 

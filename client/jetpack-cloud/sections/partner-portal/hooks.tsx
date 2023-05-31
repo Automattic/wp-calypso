@@ -4,7 +4,6 @@ import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { isEqual } from 'lodash';
 import page from 'page';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import {
 	ensurePartnerPortalReturnUrl,
 	getProductTitle,
@@ -12,6 +11,7 @@ import {
 import { partnerPortalBasePath } from 'calypso/lib/jetpack/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setPurchasedLicense, resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';

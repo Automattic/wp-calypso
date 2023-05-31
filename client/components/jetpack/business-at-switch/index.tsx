@@ -1,11 +1,11 @@
 import { WPCOM_FEATURES_ATOMIC } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
 import { ComponentType } from 'react';
-import { useSelector } from 'react-redux';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import FormattedHeader from 'calypso/components/formatted-header';
 import WPCOMBusinessAT from 'calypso/components/jetpack/wpcom-business-at';
 import Main from 'calypso/components/main';
+import { useSelector } from 'calypso/state';
 import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import isRequestingSiteFeatures from 'calypso/state/selectors/is-requesting-site-features';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';

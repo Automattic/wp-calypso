@@ -6,9 +6,9 @@ import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { getPluginPurchased } from 'calypso/lib/plugins/utils';
+import { useSelector } from 'calypso/state';
 import {
 	getSitePurchases,
 	hasLoadedSitePurchasesFromServer,

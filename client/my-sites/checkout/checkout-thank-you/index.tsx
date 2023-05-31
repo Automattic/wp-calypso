@@ -73,6 +73,7 @@ import { getPlansBySite } from 'calypso/state/sites/plans/selectors';
 import { getSiteHomeUrl, getSiteSlug, getSite } from 'calypso/state/sites/selectors';
 import { requestThenActivate } from 'calypso/state/themes/actions';
 import { getActiveTheme } from 'calypso/state/themes/selectors';
+import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import AtomicStoreThankYouCard from './atomic-store-thank-you-card';
 import BloggerPlanDetails from './blogger-plan-details';
@@ -827,7 +828,7 @@ function isWooCommercePluginInstalled( sitePlugins: { slug: string }[] ) {
 }
 
 export default connect(
-	( state, props: CheckoutThankYouProps ) => {
+	( state: IAppState, props: CheckoutThankYouProps ) => {
 		const siteId = getSelectedSiteId( state );
 		const activeTheme = getActiveTheme( state, siteId ?? 0 );
 		const sitePlugins = getInstalledPlugins( state, [ siteId ] );

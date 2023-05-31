@@ -9,7 +9,7 @@ import { Button } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { localize, useTranslate } from 'i18n-calypso';
 import { Component } from 'react';
-import { connect, useDispatch } from 'react-redux';
+import { connect } from 'react-redux';
 import SectionHeader from 'calypso/components/section-header';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import {
@@ -24,6 +24,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isRequestingPlans } from 'calypso/state/plans/selectors';
 import { getPlanPrice } from 'calypso/state/products-list/selectors';
 import { isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
+import { CalypsoDispatch } from 'calypso/state/types';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { SiteDetails } from '@automattic/data-stores';
 import type {
@@ -229,7 +230,7 @@ const mapStateToProps = ( state: AppState, { cart }: CartFreeUserPlanUpsellProps
 	};
 };
 
-const mapDispatchToProps = ( dispatch: ReturnType< typeof useDispatch > ) => {
+const mapDispatchToProps = ( dispatch: CalypsoDispatch ) => {
 	return {
 		clickUpsellAddToCart: () =>
 			dispatch( recordTracksEvent( 'calypso_non_dwpo_checkout_plan_upsell_add_to_cart', {} ) ),

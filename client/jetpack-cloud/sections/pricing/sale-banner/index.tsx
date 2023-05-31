@@ -2,8 +2,8 @@ import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import * as React from 'react';
-import { useDispatch } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import type { JetpackSaleCoupon } from 'calypso/state/marketing/selectors';
 
