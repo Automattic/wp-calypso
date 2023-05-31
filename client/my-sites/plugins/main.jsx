@@ -30,7 +30,7 @@ import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/ac
 import { appendBreadcrumb, updateBreadcrumbs } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
 import {
-	getPlugins,
+	getFilteredAndSortedPlugins,
 	isRequestingForSites,
 	isRequestingForAllSites,
 	requestPluginsError,
@@ -560,8 +560,8 @@ export default flow(
 			const selectedSiteId = getSelectedSiteId( state );
 			const visibleSiteIds = siteObjectsToSiteIds( getVisibleSites( sites ) ) ?? [];
 			const siteIds = siteObjectsToSiteIds( sites ) ?? [];
-			const pluginsWithUpdates = getPlugins( state, siteIds, 'updates' );
-			const allPlugins = getPlugins( state, siteIds, 'all' );
+			const pluginsWithUpdates = getFilteredAndSortedPlugins( state, siteIds, 'updates' );
+			const allPlugins = getFilteredAndSortedPlugins( state, siteIds, 'all' );
 			const jetpackNonAtomic =
 				isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId );
 			const hasManagePlugins =
@@ -586,8 +586,8 @@ export default flow(
 					selectedSite && canJetpackSiteUpdateFiles( state, selectedSiteId ),
 				wporgPlugins: getAllWporgPlugins( state ),
 				isRequestingSites: isRequestingSites( state ),
-				currentPlugins: getPlugins( state, siteIds, filter ),
-				currentPluginsOnVisibleSites: getPlugins( state, visibleSiteIds, filter ),
+				currentPlugins: getFilteredAndSortedPlugins( state, siteIds, filter ),
+				currentPluginsOnVisibleSites: getFilteredAndSortedPlugins( state, visibleSiteIds, filter ),
 				pluginUpdateCount: pluginsWithUpdates && pluginsWithUpdates.length,
 				pluginsWithUpdates,
 				allPluginsCount: allPlugins && allPlugins.length,

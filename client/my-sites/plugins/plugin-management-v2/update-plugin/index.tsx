@@ -5,8 +5,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { UPDATE_PLUGIN } from 'calypso/lib/plugins/constants';
-import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
-import { getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
 import PluginActionStatus from '../plugin-action-status';
 import { getAllowedPluginActions } from '../utils/get-allowed-plugin-actions';
@@ -28,37 +26,17 @@ export default function UpdatePlugin( { plugin, selectedSite, className, updateP
 	const allSites = useSelector( getSites );
 	const state = useSelector( ( state ) => state );
 
-	const getPluginSites = ( plugin: PluginComponentProps ) => {
-		return Object.keys( plugin.sites ).map( ( siteId ) => {
-			const site = allSites.find( ( s ) => s?.ID === parseInt( siteId ) );
-			return {
-				...site,
-				...plugin.sites[ siteId ],
-			} as any; // This must be cast as any until this file is updated to work with the selectors in state/plugins/installed/selectors
-		} );
-	};
-
-	const sites = getPluginSites( plugin );
-	const siteIds = siteObjectsToSiteIds( sites );
-	const pluginsOnSites: any = getPluginOnSites( state, siteIds, plugin?.slug );
-
-	const currentVersions = sites
-		.map( ( site ) => {
-			const siteId = selectedSite ? selectedSite.ID : site.ID;
-			const sitePlugin = pluginsOnSites?.sites[ siteId ];
-			return sitePlugin?.version;
-		} )
-		.filter( ( version ) => version );
-
-	const updatedVersions = sites
-		.map( ( site ) => {
-			const siteId = selectedSite ? selectedSite.ID : site.ID;
-			const sitePlugin = pluginsOnSites?.sites[ siteId ];
-			return sitePlugin?.update?.new_version;
-		} )
-		.filter( ( version ) => version );
+	const updatedVersions = selectedSite
+		? [ plugin.sites[ selectedSite.ID ].update?.new_version ]
+		: Object.values( plugin.sites )
+				.map( ( site ) => site.update?.new_version )
+				.filter( Boolean );
 
 	const currentVersionsRange = useMemo( () => {
+		const currentVersions = selectedSite
+			? [ plugin.sites[ selectedSite.ID ]?.version ]
+			: Object.values( plugin.sites ).map( ( site ) => site.version );
+
 		const versions = [
 			// We want to remove the duplicated versions in the array, because if multiple sites have
 			// the same plugin version, we don't want to display the range.
@@ -78,13 +56,16 @@ export default function UpdatePlugin( { plugin, selectedSite, className, updateP
 			min: versions[ 0 ],
 			max: versions.length > 1 ? versions[ versions.length - 1 ] : null,
 		};
-	}, [ currentVersions ] );
+	}, [ plugin, selectedSite ] );
 
-	const hasUpdate = sites.some( ( site ) => {
-		const siteId = selectedSite ? selectedSite.ID : site.ID;
-		const sitePlugin = pluginsOnSites?.sites[ siteId ];
-		return sitePlugin?.update?.new_version && site.canUpdateFiles;
-	} );
+	const hasUpdate = selectedSite
+		? plugin.sites[ selectedSite.ID ]?.update?.new_version &&
+		  allSites.find( ( site ) => site && site.ID === selectedSite.ID )?.canUpdateFiles
+		: Object.entries( plugin.sites ).some(
+				( [ siteId, site ] ) =>
+					site?.update?.new_version &&
+					allSites.find( ( site ) => site && site.ID === Number( siteId ) )?.canUpdateFiles
+		  );
 
 	const allowedActions = getAllowedPluginActions( plugin, state, selectedSite );
 
@@ -97,7 +78,7 @@ export default function UpdatePlugin( { plugin, selectedSite, className, updateP
 			status.pluginId === plugin.id &&
 			status.action === UPDATE_PLUGIN &&
 			// Filter out status based on selected site if any
-			( selectedSite ? parseInt( status.siteId ) === selectedSite.ID : true )
+			( selectedSite ? Number( status.siteId ) === selectedSite.ID : true )
 	);
 
 	if ( ! allowedActions?.autoupdate ) {
