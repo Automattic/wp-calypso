@@ -9,16 +9,8 @@ import { connect } from 'react-redux';
 import ThemeTypeBadge from 'calypso/components/theme-type-badge';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { updateThemes } from 'calypso/state/themes/actions/theme-update';
-import {
-	getMarketplaceThemeSubscriptionPrices,
-	isExternallyManagedTheme as getIsExternallyManagedTheme,
-	isMarketplaceThemeSubscribed,
-	isThemePurchased,
-	getThemeType,
-	canUseTheme,
-} from 'calypso/state/themes/selectors';
+import { isExternallyManagedTheme as getIsExternallyManagedTheme } from 'calypso/state/themes/selectors';
 import { setThemesBookmark } from 'calypso/state/themes/themes-ui/actions';
 import ThemeMoreButton from './more-button';
 
@@ -262,42 +254,6 @@ export class Theme extends Component {
 		);
 	};
 
-	goToCheckout = ( plan = 'premium' ) => {
-		const { siteSlug } = this.props;
-
-		this.props.recordTracksEvent( 'calypso_theme_tooltip_upgrade_nudge_click', { plan } );
-
-		if ( siteSlug ) {
-			const params = new URLSearchParams();
-			params.append( 'redirect_to', window.location.href.replace( window.location.origin, '' ) );
-
-			window.location.href = `/checkout/${ encodeURIComponent(
-				siteSlug
-			) }/${ plan }?${ params.toString() }`;
-		}
-	};
-
-	parseThemePrice = ( price ) => {
-		/*
-		theme.price on "Recommended" themes tab
-		Premium theme: "$50"
-		Free theme:    undefined
-
-		theme.price on Trending themes tab
-		Premium theme: { value: 50, currency: "USD", display: "<abbr title=\"United States Dollars\">US$</abbr>50" }
-		Free theme:    { value: 0, currency: "USD", display: "Free" }
-
-		Try to correctly parse the price for both cases.
-		*/
-		if ( typeof price === 'object' && 'display' in price ) {
-			let parsedThemePrice = price.display;
-			// Remove all html tags from the price string
-			parsedThemePrice = parsedThemePrice.replace( /(<([^>]+)>)/gi, '' );
-			return parsedThemePrice;
-		}
-		return price;
-	};
-
 	renderMoreButton = () => {
 		const { active, buttonContents, index, theme } = this.props;
 		if ( isEmpty( buttonContents ) ) {
@@ -351,42 +307,24 @@ export class Theme extends Component {
 				onImageClick={ this.onScreenshotClick }
 				onStyleVariationClick={ this.onStyleVariationClick }
 				onStyleVariationMoreClick={ this.onStyleVariationClick }
-				id={ theme.id }
-				type={ this.props.type }
-				isPurchased={ this.props.didPurchaseTheme || this.props.hasMarketplaceThemeSubscription }
-				canUseTheme={ this.props.canUseTheme }
-				subscriptionPrices={ this.props.themeSubscriptionPrices }
-				siteSlug={ this.props.siteSlug }
 			/>
 		);
 	}
 }
 
 export default connect(
-	( state, { theme, siteId } ) => {
+	( state, { theme } ) => {
 		const {
 			themes: { themesUpdate },
 		} = state;
 		const { themesUpdateFailed, themesUpdating, themesUpdated } = themesUpdate;
 		const isExternallyManagedTheme = getIsExternallyManagedTheme( state, theme.id );
-		const themeSubscriptionPrices = isExternallyManagedTheme
-			? getMarketplaceThemeSubscriptionPrices( state, theme?.id )
-			: {};
-		const hasMarketplaceThemeSubscription = isExternallyManagedTheme
-			? isMarketplaceThemeSubscribed( state, theme?.id, siteId )
-			: false;
 
 		return {
 			errorOnUpdate: themesUpdateFailed && themesUpdateFailed.indexOf( theme.id ) > -1,
 			isUpdating: themesUpdating && themesUpdating.indexOf( theme.id ) > -1,
 			isUpdated: themesUpdated && themesUpdated.indexOf( theme.id ) > -1,
-			siteSlug: getSiteSlug( state, siteId ),
-			didPurchaseTheme: isThemePurchased( state, theme.id, siteId ),
-			hasMarketplaceThemeSubscription,
 			isExternallyManagedTheme,
-			themeSubscriptionPrices,
-			type: getThemeType( state, theme.id ),
-			canUseTheme: canUseTheme( state, siteId, theme.id ),
 		};
 	},
 	{ recordTracksEvent, setThemesBookmark, updateThemes }

@@ -5,48 +5,45 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
-import { Theme } from '../';
+import ThemeTypeBadge from '../../theme-type-badge';
 
-jest.mock( 'calypso/components/popover-menu', () => 'components--popover--menu' );
-jest.mock( 'calypso/components/popover-menu/item', () => 'components--popover--menu-item' );
-
-jest.mock( '@automattic/calypso-config', () => {
-	const mock = () => 'development';
-	mock.isEnabled = jest.fn( () => {
-		return true;
-	} );
-	return mock;
-} );
-
-describe( 'Theme', () => {
-	const props = {
-		theme: {
-			id: 'twentyseventeen',
-			name: 'Twenty Seventeen',
-			screenshot:
-				'https://i0.wp.com/s0.wp.com/wp-content/themes/pub/twentyseventeen/screenshot.png?ssl=1',
-			price: 'U$50',
-		},
-		price: 'U$50',
-		upsellUrl: 'premium/plan',
-		buttonContents: { dummyAction: { label: 'Dummy action', action: jest.fn() } }, // TODO: test if called when clicked
-		translate: ( string ) => string,
-		setThemesBookmark: () => {},
-		onScreenshotClick: () => {},
-		type: 'premium',
-	};
-
-	function renderWithState( content ) {
-		const initialState = {};
+describe( 'ThemeTypeBadge', () => {
+	function renderWithState( content, { hasPremiumPlan = false, hasPurchasedTheme = false } = {} ) {
+		const state = {
+			themes: {
+				queries: {
+					wpcom: {
+						getItem: () => ( {
+							stylesheet: 'premium/test',
+						} ),
+					},
+				},
+			},
+			sites: {
+				features: {
+					123: {
+						data: {
+							active: hasPremiumPlan ? [ 'premium-themes' ] : [],
+						},
+					},
+				},
+			},
+			ui: { selectedSiteId: 123 },
+			purchases: {
+				data: hasPurchasedTheme
+					? [ { blog_id: 123, product_type: 'theme', meta: 'premium/test' } ]
+					: [],
+			},
+		};
 		const mockStore = configureStore();
-		const store = mockStore( initialState );
+		const store = mockStore( state );
 
 		return render( <Provider store={ store }>{ content }</Provider> );
 	}
 
 	describe( 'Premium theme popover', () => {
 		test( 'Free site', async () => {
-			const { container } = renderWithState( <Theme { ...props } /> );
+			const { container } = renderWithState( <ThemeTypeBadge themeId="premium/test" /> );
 			const popoverTrigger = container.getElementsByClassName( 'theme-type-badge__content' )[ 0 ];
 			await userEvent.hover( popoverTrigger );
 
@@ -58,7 +55,9 @@ describe( 'Theme', () => {
 		} );
 
 		test( 'Premium site', async () => {
-			const { container } = renderWithState( <Theme { ...props } canUseTheme={ true } /> );
+			const { container } = renderWithState( <ThemeTypeBadge themeId="premium/test" />, {
+				hasPremiumPlan: true,
+			} );
 			const popoverTrigger = container.getElementsByClassName( 'theme-type-badge__content' )[ 0 ];
 			await userEvent.hover( popoverTrigger );
 
@@ -70,7 +69,9 @@ describe( 'Theme', () => {
 		} );
 
 		test( 'Purchased a premium theme', async () => {
-			const { container } = renderWithState( <Theme { ...props } didPurchaseTheme={ true } /> );
+			const { container } = renderWithState( <ThemeTypeBadge themeId="premium/test" />, {
+				hasPurchasedTheme: true,
+			} );
 			const popoverTrigger = container.getElementsByClassName( 'theme-type-badge__content' )[ 0 ];
 			await userEvent.hover( popoverTrigger );
 
