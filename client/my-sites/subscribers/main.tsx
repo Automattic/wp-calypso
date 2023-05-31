@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
+import { translate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 
 export const Subscribers = () => {
@@ -12,14 +12,8 @@ export const Subscribers = () => {
 
 	return (
 		<Main className="subscribers">
-			<DocumentHead title="Subscribers" />
-			<FormattedHeader
-				brandFont
-				className="subscribers__page-heading"
-				headerText="Subscribers page"
-				subHeaderText="Test"
-				align="left"
-			/>
+			<DocumentHead title={ translate( 'Subscribers' ) } />
+			Subscribers
 		</Main>
 	);
 };
