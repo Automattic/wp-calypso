@@ -48,7 +48,7 @@ async function AppBoot() {
 	setupContextMiddleware( store, queryClient );
 
 	if ( window.location?.hash ) {
-		// The URL could already gets broken by page.js by the appended `?page=jetpack-blaze`.
+		// The URL could already gets broken by page.js by the appended `?page=advertising`.
 		window.location.hash = fixPath( window.location.hash );
 	}
 

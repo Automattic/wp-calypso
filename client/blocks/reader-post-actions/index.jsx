@@ -6,6 +6,7 @@ import { shouldShowComments } from 'calypso/blocks/comments/helper';
 import PostEditButton from 'calypso/blocks/post-edit-button';
 import ShareButton from 'calypso/blocks/reader-share';
 import { shouldShowShare } from 'calypso/blocks/reader-share/helper';
+import ReaderViews from 'calypso/blocks/reader-views';
 import ReaderVisitLink from 'calypso/blocks/reader-visit-link';
 import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
 import ReaderFollowButton from 'calypso/reader/follow-button';
@@ -22,6 +23,7 @@ const ReaderPostActions = ( props ) => {
 		site,
 		onCommentClick,
 		showEdit,
+		showViews,
 		showVisit,
 		iconSize,
 		className,
@@ -40,7 +42,10 @@ const ReaderPostActions = ( props ) => {
 		stats.recordPermalinkClick( 'card', post );
 	}
 
-	const listClassnames = classnames( 'reader-post-actions', className );
+	const listClassnames = classnames( className, {
+		'reader-post-actions': true,
+		'has-views': showViews,
+	} );
 
 	/* eslint-disable react/jsx-no-target-blank, wpcalypso/jsx-classname-namespace */
 	return (
@@ -54,6 +59,11 @@ const ReaderPostActions = ( props ) => {
 					>
 						{ translate( 'Visit' ) }
 					</ReaderVisitLink>
+				</li>
+			) }
+			{ showViews && (
+				<li className="reader-post-actions__item reader-post-actions__views">
+					<ReaderViews viewCount={ post.views } />
 				</li>
 			) }
 			{ showEdit && site && userCan( 'edit_post', post ) && (
@@ -114,6 +124,7 @@ ReaderPostActions.propTypes = {
 	site: PropTypes.object,
 	onCommentClick: PropTypes.func,
 	showEdit: PropTypes.bool,
+	showViews: PropTypes.bool,
 	iconSize: PropTypes.number,
 	visitUrl: PropTypes.string,
 	fullPost: PropTypes.bool,
@@ -121,6 +132,7 @@ ReaderPostActions.propTypes = {
 
 ReaderPostActions.defaultProps = {
 	showEdit: true,
+	showViews: false,
 	showVisit: false,
 	iconSize: 20,
 };

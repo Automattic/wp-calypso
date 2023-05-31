@@ -25,6 +25,7 @@ import {
 	mockLogStashEndpoint,
 	mockGetSupportedCountriesEndpoint,
 	mockGetPaymentMethodsEndpoint,
+	mockUserSignupValidationEndpoint,
 } from './util';
 import { MockCheckout } from './util/mock-checkout';
 import type { CartKey } from '@automattic/shopping-cart';
@@ -216,26 +217,29 @@ describe( 'Checkout contact step', () => {
 				}
 			);
 
-			nock( 'https://public-api.wordpress.com' )
-				.post( '/rest/v1.1/signups/validation/user/', ( body ) => {
-					return (
-						body.locale === 'en' &&
-						body.is_from_registrationless_checkout === true &&
-						body.email === validContactDetails.email
-					);
-				} )
-				.reply( 200, () => {
-					if ( logged === 'out' && email === 'fails' ) {
-						return {
+			mockUserSignupValidationEndpoint( () => {
+				if ( logged === 'out' && email === 'fails' ) {
+					return [
+						200,
+						{
 							success: false,
 							messages: { email: { taken: 'An account with this email already exists.' } },
-						};
-					}
-
-					return {
+						},
+					];
+				}
+				return [
+					200,
+					{
 						success: email === 'passes',
-					};
-				} );
+					},
+				];
+			} ).mockImplementation( ( body ) => {
+				return (
+					body.locale === 'en' &&
+					body.is_from_registrationless_checkout === true &&
+					body.email === validContactDetails.email
+				);
+			} );
 
 			render(
 				<MockCheckout
