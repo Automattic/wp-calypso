@@ -56,7 +56,9 @@ const CommentRow = ( {
 								{ site_title }
 								{ !! is_wpforteams_site && <span className="p2-label">P2</span> }
 								{ !! is_paid_subscription && (
-									<span className="paid-label">{ translate( 'Paid' ) }</span>
+									<span className="paid-label">
+										{ translate( 'Paid', { context: 'Label for a paid subscription plan' } ) }
+									</span>
 								) }
 							</span>
 							<span className="url">{ hostname }</span>
