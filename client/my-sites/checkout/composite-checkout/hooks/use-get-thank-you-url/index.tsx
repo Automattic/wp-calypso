@@ -2,11 +2,11 @@ import debugFactory from 'debug';
 import { useCallback } from 'react';
 import getThankYouPageUrl from 'calypso/my-sites/checkout/get-thank-you-page-url';
 import { useSelector } from 'calypso/state';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { PostCheckoutUrlArguments } from 'calypso/my-sites/checkout/get-thank-you-page-url';
-
 const debug = debugFactory( 'calypso:composite-checkout:use-get-thank-you-url' );
 
 export type GetThankYouUrl = () => string;
