@@ -1,13 +1,12 @@
-import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import ActionPanel from 'calypso/components/action-panel';
 import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { ResponseDomain } from 'calypso/lib/domains/types';
-import { TRANSFER_SITE } from 'calypso/lib/url/support';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PendingDomainTransfer from './pending-domain-transfer';
@@ -33,10 +32,10 @@ const SiteOwnerTransfer = () => {
 			<FormattedHeader
 				headerText={ translate( 'Site Transfer' ) }
 				subHeaderText={ translate(
-					'Transfer your site to another WordPress.com user. {{a}}Learn More.{{/a}}',
+					'Transfer your site to another WordPress.com user. {{a}}Learn more.{{/a}}',
 					{
 						components: {
-							a: <a target="blank" href={ localizeUrl( TRANSFER_SITE ) } />,
+							a: <InlineSupportLink supportContext="site-transfer" showIcon={ false } />,
 						},
 					}
 				) }

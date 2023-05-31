@@ -7,10 +7,8 @@ import {
 	selectSubscribers,
 } from 'calypso/my-sites/stats/hooks/use-subscribers-query';
 
-const indexFirstCard = 0; // 0 for today
-const indexSecondCard = 30; // 30 days out
-const indexThirdCard = 60; // 60 days out
-const indexFourthCard = 90; // 90 days out
+// array of indices to use to calculate the dates to query for
+const cardIndices = [ 0, 30, 60, 90 ];
 
 interface SubscribersData {
 	period: string;
@@ -27,12 +25,6 @@ interface SubscribersDataResult {
 interface SubscribersOverviewProps {
 	siteId: number | null;
 }
-
-// calculate the dates to query for
-const dateToday = calculateQueryDate( indexFirstCard );
-const date30DaysAgo = calculateQueryDate( indexSecondCard );
-const date60DaysAgo = calculateQueryDate( indexThirdCard );
-const date90DaysAgo = calculateQueryDate( indexFourthCard );
 
 // calculate the date to query for based on the number of days to subtract
 function calculateQueryDate( daysToSubtract: number ) {
@@ -73,7 +65,7 @@ function SubscribersOverviewCardStats( subscribersData: SubscribersData[][] ) {
 const SubscribersOverview: React.FC< SubscribersOverviewProps > = ( { siteId } ) => {
 	const period = 'day';
 	const quantity = 1;
-	const dates: string[] = [ dateToday, date30DaysAgo, date60DaysAgo, date90DaysAgo ];
+	const dates = cardIndices.map( calculateQueryDate );
 	const subscribersQueries = useQueries( {
 		queries: dates.map( ( date ) => ( {
 			queryKey: [ 'stats', 'subscribers', siteId, period, quantity, date ],

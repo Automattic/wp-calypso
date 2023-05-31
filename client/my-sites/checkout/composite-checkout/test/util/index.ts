@@ -1485,6 +1485,18 @@ export function mockSetVatInfoEndpoint() {
 	return endpoint;
 }
 
+export function mockUserSignupValidationEndpoint( endpointResponse ) {
+	const endpoint = jest.fn();
+	endpoint.mockReturnValue( true );
+
+	nock( 'https://public-api.wordpress.com' )
+		.post( '/rest/v1.1/signups/validation/user/', ( body ) => {
+			return endpoint( body );
+		} )
+		.reply( endpointResponse );
+	return endpoint;
+}
+
 export function mockPayPalEndpoint( endpointResponse ) {
 	const endpoint = jest.fn();
 	endpoint.mockReturnValue( true );
@@ -1650,8 +1662,6 @@ export function mockContactDetailsValidationEndpoint(
 				return '/rest/v1.1/me/google-apps/validate';
 		}
 	} )();
-	const endpoint = jest.fn();
-	endpoint.mockReturnValue( true );
 	const mockResponse = () => [ 200, responseData ];
 	nock( 'https://public-api.wordpress.com' )
 		.post( endpointPath, conditionCallback )
