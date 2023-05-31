@@ -1,5 +1,4 @@
 import { SubscriptionManager, Reader } from '@automattic/data-stores';
-import { SiteSubscriptionsFilterBy } from '@automattic/data-stores/src/reader/queries';
 import SearchInput from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
