@@ -1,10 +1,6 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/breakpoints";
 
-:root {
-	--alert-yellow: #f0b849;
-	--alert-yellow-light: #fef8ee;
-}
 @keyframes components-modal__appear-animation {
 	from {
 		transform: translateY(32px);
@@ -26,14 +22,6 @@
 	inset-block-start: 50px;
 }
 
-.notification-settings__bulk-edit-warning {
-	border-left: 4px solid var(--alert-yellow);
-	padding: 12px;
-	background-color: var(--alert-yellow-light);
-	font-weight: 400;
-	font-size: 0.75rem;
-
-}
 .notification-settings__content {
 	margin-block-start: -16px;
 }

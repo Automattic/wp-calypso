@@ -5,6 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
 import clockIcon from 'calypso/assets/images/jetpack/clock-icon.svg';
 import SelectDropdown from 'calypso/components/select-dropdown';
+import AlertBanner from '../../components/alert-banner';
 import {
 	useUpdateMonitorSettings,
 	useJetpackAgencyDashboardRecordTrackEvent,
@@ -206,9 +207,9 @@ export default function NotificationSettings( {
 			<div className="notification-settings__sub-title">{ getSiteCountText( sites ) }</div>
 
 			{ isBulkUpdate ? (
-				<div className="notification-settings__bulk-edit-warning">
+				<AlertBanner type="warning">
 					{ translate( 'Settings for selected sites will be overwritten.' ) }
-				</div>
+				</AlertBanner>
 			) : null }
 
 			<form onSubmit={ onSave }>
