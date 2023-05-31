@@ -1,13 +1,14 @@
 import { SubscriptionManager, Reader } from '@automattic/data-stores';
 import SearchInput from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import { CommentList } from 'calypso/landing/subscriptions/components/comment-list';
 import { SearchIcon } from 'calypso/landing/subscriptions/components/icons';
 import { Notice, NoticeType } from 'calypso/landing/subscriptions/components/notice';
 import { SortControls, Option } from 'calypso/landing/subscriptions/components/sort-controls';
-import { useSearch } from 'calypso/landing/subscriptions/hooks';
+import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';
+import { useSearch, useSiteSubscriptionsFilterOptions } from 'calypso/landing/subscriptions/hooks';
 import TabView from '../tab-view';
 import './styles.scss';
 
@@ -22,30 +23,12 @@ const useSortOptions = (): Option[] => {
 	];
 };
 
-const useFilterOptions = () => {
-	const translate = useTranslate();
-
-	return useMemo(
-		() => [
-			{ value: FilterBy.All, label: translate( 'All' ) },
-			// { value: SiteSubscriptionsFilterBy.Paid, label: translate( 'Paid' ) },		// todo: add back when we have paid subscriptions support
-			{ value: FilterBy.P2, label: translate( 'P2' ) },
-		],
-		[ translate ]
-	);
-};
-
-const getFilterLabel = (
-	availableFilterOptions: Option[],
-	filterValue: Reader.SiteSubscriptionsFilterBy
-) => availableFilterOptions.find( ( option ) => option.value === filterValue )?.label;
-
 const Comments = () => {
 	const translate = useTranslate();
 	const [ sortTerm, setSortTerm ] = useState( SortBy.RecentlySubscribed );
 	const { searchTerm, handleSearch } = useSearch();
 	const sortOptions = useSortOptions();
-	const availableFilterOptions = useFilterOptions();
+	const availableFilterOptions = useSiteSubscriptionsFilterOptions();
 	const [ filterOption, setFilterOption ] = useState( FilterBy.All );
 
 	const {
@@ -81,7 +64,7 @@ const Comments = () => {
 						setFilterOption( selectedOption.value as Reader.SiteSubscriptionsFilterBy )
 					}
 					selectedText={
-						translate( 'View: ' ) + getFilterLabel( availableFilterOptions, filterOption )
+						translate( 'View: ' ) + getOptionLabel( availableFilterOptions, filterOption )
 					}
 				/>
 
@@ -94,7 +77,7 @@ const Comments = () => {
 				<Notice type={ NoticeType.Warning }>
 					{ translate( 'Sorry, no posts match {{italic}}%s.{{/italic}}', {
 						components: { italic: <i /> },
-						args: searchTerm || getFilterLabel( availableFilterOptions, filterOption ),
+						args: searchTerm || getOptionLabel( availableFilterOptions, filterOption ),
 					} ) }
 				</Notice>
 			) }

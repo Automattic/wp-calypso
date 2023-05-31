@@ -3,14 +3,17 @@ import SearchInput from '@automattic/search';
 import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
+import SelectDropdown from 'calypso/components/select-dropdown';
 import { SearchIcon } from 'calypso/landing/subscriptions/components/icons';
 import { Notice, NoticeType } from 'calypso/landing/subscriptions/components/notice';
 import { SortControls, Option } from 'calypso/landing/subscriptions/components/sort-controls';
+import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';
 import { useSearch } from 'calypso/landing/subscriptions/hooks';
+import { useSiteSubscriptionsFilterOptions } from 'calypso/landing/subscriptions/hooks/';
 import SiteSubscriptionsList from './site-subscriptions-list';
 import './styles.scss';
 
-const SortBy = Reader.SiteSubscriptionsSortBy;
+const { SiteSubscriptionsFilterBy: FilterBy, SiteSubscriptionsSortBy: SortBy } = Reader;
 
 const getSortOptions = ( translate: ReturnType< typeof useTranslate > ): Option[] => [
 	{ value: SortBy.LastUpdated, label: translate( 'Recently updated' ) },
@@ -25,9 +28,12 @@ const SiteSubscriptionsManager = () => {
 	const translate = useTranslate();
 	const { searchTerm, handleSearch } = useSearch();
 	const [ sortTerm, setSortTerm ] = useState( SortBy.DateSubscribed );
+	const availableFilterOptions = useSiteSubscriptionsFilterOptions();
+	const [ filterOption, setFilterOption ] = useState( FilterBy.All );
 	const { data, isLoading, error } = SubscriptionManager.useSiteSubscriptionsQuery( {
 		searchTerm,
 		sortTerm,
+		filterOption,
 	} );
 	const { subscriptions, totalCount } = data ?? {};
 	const sortOptions = useSortOptions( translate );
@@ -66,6 +72,18 @@ const SiteSubscriptionsManager = () => {
 					searchIcon={ <SearchIcon size={ 18 } /> }
 					onSearch={ handleSearch }
 				/>
+
+				<SelectDropdown
+					className="subscriptions-manager__filter-control"
+					options={ availableFilterOptions }
+					onSelect={ ( selectedOption: Option ) =>
+						setFilterOption( selectedOption.value as Reader.SiteSubscriptionsFilterBy )
+					}
+					selectedText={ translate( 'View: %s', {
+						args: getOptionLabel( availableFilterOptions, filterOption ) || '',
+					} ) }
+				/>
+
 				<SortControls options={ sortOptions } value={ sortTerm } onChange={ setSortTerm } />
 			</div>
 
@@ -75,7 +93,7 @@ const SiteSubscriptionsManager = () => {
 				<Notice type={ NoticeType.Warning }>
 					{ translate( 'Sorry, no sites match {{italic}}%s.{{/italic}}', {
 						components: { italic: <i /> },
-						args: searchTerm,
+						args: searchTerm || filterOption,
 					} ) }
 				</Notice>
 			) }
