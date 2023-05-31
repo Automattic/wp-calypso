@@ -1,5 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
+import { useState } from 'react';
 import useRequestContactVerificationCode from 'calypso/state/jetpack-agency-dashboard/hooks/use-request-contact-verification-code';
 import useValidateVerificationCodeMutation from 'calypso/state/jetpack-agency-dashboard/hooks/use-validate-contact-verification-code';
 import {
@@ -29,8 +30,11 @@ export function useValidateVerificationCode(): {
 	isSuccess: boolean;
 	isError: boolean;
 	errorMessage?: string;
+	isVerified: boolean;
 } {
 	const queryClient = useQueryClient();
+
+	const [ isAlreadyVerifed, setIsAlreadyVerifed ] = useState( false );
 
 	const handleSetMonitoringContacts = async (
 		data: { verified: boolean },
@@ -70,6 +74,13 @@ export function useValidateVerificationCode(): {
 		onSuccess: async ( data, params ) => {
 			await handleSetMonitoringContacts( data, params );
 		},
+		onError: async ( error, params ) => {
+			if ( error?.code === 'jetpack_agency_non_existent_contact' ) {
+				// Add the contact to the list of contacts if already verified
+				setIsAlreadyVerifed( true );
+				await handleSetMonitoringContacts( { verified: true }, params );
+			}
+		},
 	} );
 
 	let errorMessage;
@@ -80,5 +91,5 @@ export function useValidateVerificationCode(): {
 			errorMessage = verificationErrorMessages?.[ reasonCode ] || errorMessage;
 		}
 	}
-	return { ...data, errorMessage };
+	return { ...data, errorMessage, isVerified: data.isSuccess || isAlreadyVerifed };
 }
