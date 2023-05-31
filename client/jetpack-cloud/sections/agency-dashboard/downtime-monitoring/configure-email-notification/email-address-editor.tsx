@@ -139,6 +139,13 @@ export default function EmailAddressEditor( {
 		}
 	}, [ selectedEmail ] );
 
+	// Refetch verified contacts if failed
+	useEffect( () => {
+		verifiedContacts.refetchIfFailed();
+		// Disable linting because we only want to refetch once
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
+
 	// Remove email item when user confirms to remove the email address
 	const handleRemove = () => {
 		recordEvent( 'downtime_monitoring_remove_email' );

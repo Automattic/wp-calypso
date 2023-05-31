@@ -197,7 +197,7 @@ export interface SitesOverviewContextInterface extends DashboardOverviewContextI
 }
 
 export interface DashboardDataContextInterface {
-	verifiedContacts: { emails: Array< string > };
+	verifiedContacts: { emails: Array< string >; refetchIfFailed: () => void };
 }
 
 export type AgencyDashboardFilterOption =
