@@ -271,6 +271,37 @@ $theme-card-info-margin-top: 16px;
 	width: 0;
 }
 
+.theme-card__info-pricing {
+	display: flex;
+	flex-basis: 100%;
+	font-size: 0;
+	gap: 10px;
+	line-height: 20px;
+	padding: 0;
+
+	> span {
+		color: var(--color-neutral-60);
+		font-size: $font-body-small;
+		line-height: 20px;
+	}
+
+	.premium-badge,
+	.woocommerce-bundled-badge {
+		margin: 0;
+		vertical-align: middle;
+
+		svg {
+			padding: 0;
+			transform: none;
+			width: auto;
+		}
+	}
+
+	.premium-badge svg {
+		height: auto;
+	}
+}
+
 .theme-card__info-style-variations {
 	align-items: center;
 	display: flex;
