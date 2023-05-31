@@ -136,19 +136,6 @@ export const getCampaignOverallSpending = (
 			: spent_budget_cents;
 
 	const totalBudgetUsed = ( spentBudgetCents / 100 ).toFixed( 2 );
-	// TODO removed old code - delete the comments if not needed
-	// let daysRun = moment().diff( moment( start_date ), 'days' );
-	// daysRun = daysRun > campaignDays ? campaignDays : daysRun;
-
-	// const daysText = daysRun === 1 ? 'day' : 'days';
-
-	// if ( daysRun > 0 ) {
-	// // 	/* translators: %1$s: Amount, %2$s: Days. Singular or plural: Day(s) eg: $3 over 2 days */
-	// 	return sprintf( __( '$%1$s over %2$s %3$s' ), totalBudgetUsed, daysRun, daysText );
-	// }
-
-	/* translators: %1$s: Amount, eg: $3 today */
-	//return sprintf( __( '$%1$s today' ), totalBudgetUsed );
 	return sprintf( '$%1$s', totalBudgetUsed );
 };
 

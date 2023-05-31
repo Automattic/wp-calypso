@@ -1,119 +1,82 @@
-// import { Campaign } from "calypso/data/promote-post/use-promote-post-campaigns-query";
 import './style.scss';
 import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
-import { useTranslate } from 'i18n-calypso';
-import moment from 'moment/moment';
-import { useMemo } from 'react';
+import { __, sprintf } from '@wordpress/i18n';
 import Badge from 'calypso/components/badge';
+import Breadcrumb from 'calypso/components/breadcrumb';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
-import useCampaignsQuery from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
-import AdPreview from 'calypso/my-sites/promote-post/components/ad-preview';
-import {
-	formatNumber,
-	formatCents,
-	getCampaignBudgetData,
-	getCampaignDurationFormatted,
-	getCampaignOverallSpending,
-	getCampaignStatus,
-	getCampaignStatusBadgeColor,
-	normalizeCampaignStatus,
-	getCampaignClickthroughRate,
-	getCampaignDurationDays,
-	getCampaignEstimatedImpressions,
-} from '../../utils';
-// TODO remove this file and use the api to fetch the data
-import campaignData from './mockData.json';
-// interface Props {
-// 	campaign: Campaign;
-// }
+import AdPreview from 'calypso/my-sites/promote-post-i2/components/ad-preview';
+import { getCampaignStatus, getCampaignStatusBadgeColor } from '../../utils';
 
 interface Props {
-	campaignId: number;
+	campaignId?: number;
+	campaignTitleFormatted?: string;
+	campaignCreatedFormatted?: string;
+	displayName?: string;
+	impressionsTotal?: string;
+	clicksTotal?: string;
+	ctrFormatted?: string;
+	durationFormatted?: string;
+	durationDays?: number;
+	totalBudgetLeft?: number;
+	totalBudgetLeftFormatted?: string;
+	overallSpendingFormatted?: string;
+	deliveryEstimateFormatted?: string;
+	deliveryPercent?: number;
+	visitsAdRate?: number;
+	visitsOrganicRate?: number;
+	visitsOrganic?: string;
+	devicesListFormatted?: string;
+	countriesListFormatted?: string;
+	osListFormatted?: string;
+	topicsListFormatted?: string;
+	clickUrl?: string;
+	width?: number;
+	height?: number;
+	creativeHtml?: string;
+	isLoading?: true;
 }
 
+const FlexibleSkeleton = () => {
+	return <div className="campaign-item-details__flexible-skeleton" />;
+};
+
 export default function CampaignItemDetails( props: Props ) {
-	const { campaignId } = props;
-
-	const campaigns = useCampaignsQueryNew( campaignId );
-
-	//
 	const {
-		// 	campaign_id,
-		// 	name,
-		content_config,
-		// 	display_name,
-		// 	status,
-		end_date,
-		budget_cents,
-		impressions_total,
-		clicks_total,
-		clicks_organic,
-		spent_budget_cents,
-		start_date,
-		display_name,
-		creative_html,
+		isLoading,
+		campaignId,
+		campaignTitleFormatted,
+		campaignCreatedFormatted,
+		displayName,
+		impressionsTotal,
+		clicksTotal,
+		ctrFormatted,
+		durationFormatted,
+		durationDays,
+		totalBudgetLeft,
+		totalBudgetLeftFormatted,
+		overallSpendingFormatted,
+		deliveryEstimateFormatted,
+		deliveryPercent,
+		visitsAdRate,
+		visitsOrganicRate,
+		visitsOrganic,
+		devicesListFormatted,
+		countriesListFormatted,
+		osListFormatted,
+		topicsListFormatted,
+		clickUrl,
 		width,
 		height,
-		display_delivery_estimate,
-		audience_list,
-	} = campaignData;
-	// const { totalBudget, totalBudgetLeft, campaignDays } = useMemo(
-	// 	() => getCampaignBudgetData( budget_cents, start_date, end_date, spent_budget_cents ),
-	// 	[ budget_cents, end_date, spent_budget_cents, start_date ]
-	// );
+		creativeHtml,
+	} = props;
 
-	const translate = useTranslate();
-
-	const campaignStatus = useMemo( () => normalizeCampaignStatus( campaignData ), [ campaignData ] );
-
-	const clickthroughRate = useMemo(
-		() => getCampaignClickthroughRate( clicks_total || 0, impressions_total || 0 ),
-		[ clicks_total, impressions_total ]
-	);
-
-	const durationFormatted = useMemo(
-		() => getCampaignDurationFormatted( start_date, end_date ),
-		[ start_date, end_date ]
-	);
-
-	const durationDaysFormatted = useMemo(
-		() => getCampaignDurationDays( start_date, end_date ),
-		[ start_date, end_date ]
-	);
-
-	const { totalBudget, totalBudgetLeft, campaignDays } = useMemo(
-		() => getCampaignBudgetData( budget_cents, start_date, end_date, spent_budget_cents ),
-		[ budget_cents, end_date, spent_budget_cents, start_date ]
-	);
-
-	const totalBudgetLeftString = `$${ formatCents( totalBudgetLeft || 0 ) } ${ __( 'left' ) }`;
-
-	const budgetString = campaignDays ? `$${ totalBudget }` : '-';
-
-	const overallSpending = useMemo(
-		() => getCampaignOverallSpending( spent_budget_cents, budget_cents, start_date, end_date ),
-		[ spent_budget_cents, budget_cents, start_date, end_date ]
-	);
-
-	const estimatedImpressions = useMemo(
-		() => getCampaignEstimatedImpressions( display_delivery_estimate ),
-		[ display_delivery_estimate ]
-	);
-
-	const totalClicks = clicks_total + clicks_organic;
-
-	const organicClicksPercentage = ( ( clicks_organic * 100 ) / totalClicks ).toFixed( 2 );
-	const adClicksPercentage = ( ( clicks_total * 100 ) / totalClicks ).toFixed( 2 );
-
-	const audienceList = audience_list;
-	const devicesList = audienceList[ 'devices' ] || '';
-	const countriesList = audienceList[ 'countries' ] || '';
-	const topicsList = audienceList[ 'topics' ] || '';
-	const OSsList = audienceList[ 'OSs' ] || '';
+	const navigationItems = [
+		{ label: __( 'Advertising' ), href: `/advertising` },
+		{ label: campaignTitleFormatted || '', href: `/campaigns/${ campaignId }` },
+	];
 
 	const icon = (
 		<svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -129,21 +92,25 @@ export default function CampaignItemDetails( props: Props ) {
 	return (
 		<div className="campaign-item__container">
 			<header className="main is-wide-layout campaign-item-header">
-				<div className="campaign-item-details__header-title">
-					{ content_config.title || __( 'Untitled' ) }
-				</div>
+				{ ! isLoading ? <Breadcrumb items={ navigationItems } /> : <FlexibleSkeleton /> }
+
+				<div className="campaign-item-details__header-title">{ campaignTitleFormatted }</div>
 
 				<div className="campaign-item__header-status">
-					<Badge type={ getCampaignStatusBadgeColor( campaignStatus ) }>
-						{ getCampaignStatus( campaignStatus ) }
-					</Badge>
+					{ ! isLoading ? (
+						<Badge type={ getCampaignStatusBadgeColor( status ) }>
+							{ getCampaignStatus( status ) }
+						</Badge>
+					) : (
+						<FlexibleSkeleton />
+					) }
 					<span>&bull;</span>
 					<div className="campaign-item__header-status-date">
-						{ __( 'Created:' ) } { moment.utc( start_date ).format( 'MMMM DD, YYYY' ) }
+						{ __( 'Created:' ) } { campaignCreatedFormatted }
 					</div>
 					<span>&bull;</span>
 					<div className="campaign-item__header-status-date">
-						{ __( 'Author:' ) } { display_name }
+						{ __( 'Author:' ) } { displayName }
 					</div>
 				</div>
 			</header>
@@ -157,13 +124,13 @@ export default function CampaignItemDetails( props: Props ) {
 									<div>
 										<span className="campaign-item-details__label">{ __( 'Impressions' ) }</span>
 										<span className="campaign-item-details__text wp-brand-font">
-											{ formatNumber( impressions_total ) }
+											{ ! isLoading ? impressionsTotal : <FlexibleSkeleton /> }
 										</span>
 									</div>
 									<div>
 										<span className="campaign-item-details__label">{ __( 'Clicks' ) }</span>
 										<span className="campaign-item-details__text wp-brand-font">
-											{ formatNumber( clicks_total ) }
+											{ ! isLoading ? clicksTotal : <FlexibleSkeleton /> }
 										</span>
 									</div>
 									<div>
@@ -171,7 +138,7 @@ export default function CampaignItemDetails( props: Props ) {
 											{ __( 'Click-through rate' ) }
 										</span>
 										<span className="campaign-item-details__text wp-brand-font">
-											{ clickthroughRate }%
+											{ ! isLoading ? ctrFormatted : <FlexibleSkeleton /> }
 										</span>
 									</div>
 								</div>
@@ -179,19 +146,19 @@ export default function CampaignItemDetails( props: Props ) {
 									<div>
 										<span className="campaign-item-details__label">{ __( 'Duration' ) }</span>
 										<span className="campaign-item-details__text wp-brand-font">
-											{ durationFormatted }
+											{ ! isLoading ? durationFormatted : <FlexibleSkeleton /> }
 										</span>
 										<span className="campaign-item-details__details">
-											{ `${ durationDaysFormatted } ${ __( 'days' ) }` }
+											{ ! isLoading ? `${ durationDays } ${ __( 'days' ) }` : <FlexibleSkeleton /> }
 										</span>
 									</div>
 									<div>
 										<span className="campaign-item-details__label">{ __( 'Budget' ) }</span>
 										<span className="campaign-item-details__text wp-brand-font">
-											{ budgetString }
+											{ ! isLoading ? totalBudgetLeft : <FlexibleSkeleton /> }
 										</span>
 										<span className="campaign-item-details__details">
-											{ totalBudgetLeftString }
+											{ ! isLoading ? totalBudgetLeftFormatted : <FlexibleSkeleton /> }
 										</span>
 									</div>
 									<div>
@@ -199,7 +166,7 @@ export default function CampaignItemDetails( props: Props ) {
 											{ __( 'Overall spending ' ) }
 										</span>
 										<span className="campaign-item-details__text wp-brand-font">
-											{ overallSpending }
+											{ ! isLoading ? overallSpendingFormatted : <FlexibleSkeleton /> }
 										</span>
 									</div>
 								</div>
@@ -213,12 +180,17 @@ export default function CampaignItemDetails( props: Props ) {
 											{ __( 'Estimated impressions' ) }
 										</span>
 										<span className="campaign-item-details__text wp-brand-font">
-											{ estimatedImpressions }
+											{ ! isLoading ? deliveryEstimateFormatted : <FlexibleSkeleton /> }
 										</span>
-										<span className="campaign-item-details__details">
-											{ /* // TODO hardcoded value */ }
-											{ __( 'Delivered 192% more than estimated' ) }
-										</span>
+										{ ! isLoading && deliveryPercent && deliveryPercent > 100 && (
+											<span className="campaign-item-details__details">
+												{ sprintf(
+													/* translators: %s: percentage of delivery (i.e. 30%) */
+													__( 'Delivered %s more than estimated' ),
+													deliveryPercent
+												) }
+											</span>
+										) }
 									</div>
 									<div>
 										<div className="campaign-item-details__trafic-container-header">
@@ -229,33 +201,40 @@ export default function CampaignItemDetails( props: Props ) {
 										</div>
 										<div className="campaign-item-details__traffic-container-body">
 											<ul className="horizontal-bar-list">
-												<li
-													className="horizontal-bar-list-item"
-													style={ { '--horizontal-bar-list-fill': `${ adClicksPercentage }%` } }
-												>
-													<div className="horizontal-bar-list-item-bar">
-														<span className="horizontal-bar-list-label">{ __( 'Ad' ) }</span>
-													</div>
-													<div className="horizontal-bar-list-value">
-														{ formatNumber( clicks_total ) }
-													</div>
-												</li>
-												<li
-													className="horizontal-bar-list-item"
-													style={ {
-														'--horizontal-bar-list-fill': `${ organicClicksPercentage }%`,
-													} }
-												>
-													<div className="horizontal-bar-list-item-bar">
-														<span className="horizontal-bar-list-label">{ __( 'Organic' ) }</span>
-													</div>
-													<div className="horizontal-bar-list-value">
-														{ formatNumber( clicks_organic ) }
-													</div>
-												</li>
+												{ ! isLoading ? (
+													<>
+														<li
+															className="horizontal-bar-list-item"
+															style={ { '--horizontal-bar-list-fill': `${ visitsAdRate * 100 }%` } }
+														>
+															<div className="horizontal-bar-list-item-bar">
+																<span className="horizontal-bar-list-label">{ __( 'Ad' ) }</span>
+															</div>
+															<div className="horizontal-bar-list-value">{ clicksTotal }</div>
+														</li>
+														<li
+															className="horizontal-bar-list-item"
+															style={ {
+																'--horizontal-bar-list-fill': `${ +visitsOrganicRate * 100 }%`,
+																// '--horizontal-bar-list-fill': '100',
+															} }
+														>
+															<div className="horizontal-bar-list-item-bar organic-bar">
+																<span className="horizontal-bar-list-label">
+																	{ __( 'Organic' ) }
+																</span>
+															</div>
+															<div className="horizontal-bar-list-value">
+																{ ! isLoading ? visitsOrganic : <FlexibleSkeleton /> }
+															</div>
+														</li>
+													</>
+												) : (
+													<FlexibleSkeleton />
+												) }
 											</ul>
 											<div className="campaign-item-details__details no-bottom-margin">
-												{ __( 'Compares traffic during the campaign' ) }
+												{ __( 'Compares traffic when campaign was active' ) }
 											</div>
 										</div>
 									</div>
@@ -265,23 +244,23 @@ export default function CampaignItemDetails( props: Props ) {
 									<div>
 										<span className="campaign-item-details__label">{ __( 'Devices' ) }</span>
 										<span className="campaign-item-details__details">
-											{ devicesList ? `${ devicesList }` : '-' }
+											{ ! isLoading ? devicesListFormatted : <FlexibleSkeleton /> }
 										</span>
 										<span className="campaign-item-details__label">{ __( 'Location' ) }</span>
 										<span className="campaign-item-details__details">
-											{ countriesList ? `${ countriesList }` : '-' }
+											{ ! isLoading ? countriesListFormatted : <FlexibleSkeleton /> }
 										</span>
 										<span className="campaign-item-details__label">
 											{ __( 'Operating systems' ) }
 										</span>
 										<span className="campaign-item-details__details">
-											{ OSsList ? `${ OSsList }` : translate( 'All' ) }
+											{ ! isLoading ? osListFormatted : <FlexibleSkeleton /> }
 										</span>
 									</div>
 									<div>
 										<span className="campaign-item-details__label">{ __( 'Interests' ) }</span>
 										<span className="campaign-item-details__details">
-											{ topicsList ? `${ topicsList }` : '-' }
+											{ ! isLoading ? topicsListFormatted : <FlexibleSkeleton /> }
 										</span>
 									</div>
 								</div>
@@ -289,14 +268,18 @@ export default function CampaignItemDetails( props: Props ) {
 									<div className="campaign-item-details__ad-destination">
 										<span className="campaign-item-details__label">{ __( 'Ad destination' ) }</span>
 										<div className="campaign-item-details__ad-destination-url-container">
-											<Button
-												className="campaign-item-details__ad-destination-url-link"
-												href={ content_config.clickUrl }
-												target="_blank"
-											>
-												{ content_config.clickUrl }
-												<Gridicon icon="external" size={ 16 } />
-											</Button>
+											{ ! isLoading ? (
+												<Button
+													className="campaign-item-details__ad-destination-url-link"
+													href={ clickUrl }
+													target="_blank"
+												>
+													{ clickUrl }
+													<Gridicon icon="external" size={ 16 } />
+												</Button>
+											) : (
+												<FlexibleSkeleton />
+											) }
 										</div>
 									</div>
 								</div>
@@ -310,16 +293,22 @@ export default function CampaignItemDetails( props: Props ) {
 									{ __( 'Ad preview' ) }
 								</div>
 								<div className="campaign-item-details__preview-header-dimensions">
-									<span>{ `${ width }x${ height }` }</span>
-									<Gridicon
-										className="campaign-item-details__notice-icon"
-										size={ 16 }
-										icon="info-outline"
-									/>
+									{ ! isLoading ? (
+										<>
+											<span>{ `${ width }x${ height }` }</span>
+											<Gridicon
+												className="campaign-item-details__notice-icon"
+												size={ 16 }
+												icon="info-outline"
+											/>
+										</>
+									) : (
+										<FlexibleSkeleton />
+									) }
 								</div>
 							</div>
 							<div className="campaign-item-details__preview-content">
-								<AdPreview htmlCode={ creative_html } />
+								<AdPreview isLoading={ isLoading } htmlCode={ creativeHtml || '' } />
 							</div>
 						</div>
 

@@ -3,7 +3,7 @@ import page from 'page';
 import { getSiteFragment } from 'calypso/lib/route';
 import { siteSelection } from 'calypso/my-sites/controller';
 import PromotedPosts from 'calypso/my-sites/promote-post/main';
-import CampaignItemDetails from 'calypso/my-sites/promote-post-i2/components/campaign-item-details';
+import CampaignItemPage from 'calypso/my-sites/promote-post-i2/components/campaign-item-page';
 import PromotedPostsRedesignI2 from 'calypso/my-sites/promote-post-i2/main';
 import getPrimarySiteSlug from 'calypso/state/selectors/get-primary-site-slug';
 
@@ -20,8 +20,7 @@ export const promotedPosts = ( context, next ) => {
 
 export const campaignDetails = ( context, next ) => {
 	const { campaignId } = context.params;
-	debugger;
-	context.primary = <CampaignItemDetails campaignId={ context.params } />;
+	context.primary = <CampaignItemPage campaignId={ campaignId } />;
 	next();
 };
 

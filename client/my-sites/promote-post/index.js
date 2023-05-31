@@ -21,8 +21,8 @@ export default () => {
 		'/advertising/:site?/campaigns/:campaignId',
 		redirectToPrimarySite,
 		siteSelection,
-		campaignDetails,
 		navigation,
+		campaignDetails,
 		makeLayout,
 		clientRender
 	);

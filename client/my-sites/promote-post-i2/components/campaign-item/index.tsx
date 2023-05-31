@@ -87,7 +87,11 @@ export default function CampaignItem( props: Props ) {
 			<td>{ budgetString }</td>
 			<td>{ formatNumber( impressions_total ) }</td>
 			<td>{ formatNumber( clicks_total ) }</td>
-			<td>{ campaignContainsData && <Button icon={ chevronRight } /> }</td>
+			<td>
+				{ campaignContainsData && (
+					<Button href={ `campaigns/${ campaign.campaign_id }` } isLink icon={ chevronRight } />
+				) }
+			</td>
 		</tr>
 	);
 }
