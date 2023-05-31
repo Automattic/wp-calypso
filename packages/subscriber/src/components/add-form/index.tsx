@@ -69,6 +69,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		onChangeIsImportValid,
 		titleText,
 		subtitleText,
+		showSkipLink,
 	} = props;
 
 	const {
@@ -510,7 +511,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 					>
 						{ submitBtnName }
 					</NextButton>
-					{ props.showSkipLink && (
+					{ showSkipLink && (
 						<div className="add-subscriber__form-skip-link-wrapper">
 							<button className="add-subscriber__form-skip-link" onClick={ props.onSkipBtnClick }>
 								{ translate( 'Skip for now' ) }
