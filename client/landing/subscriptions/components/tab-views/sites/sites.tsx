@@ -68,9 +68,9 @@ const Sites = () => {
 						onSelect={ ( selectedOption: Option ) =>
 							setFilterOption( selectedOption.value as SiteSubscriptionsFilterBy )
 						}
-						selectedText={
-							translate( 'View: ' ) + getFilterLabel( availableFilterOptions, filterOption )
-						}
+						selectedText={ translate( 'View: %s', {
+							args: getFilterLabel( availableFilterOptions, filterOption ) || '',
+						} ) }
 					/>
 
 					<SortControls options={ sortOptions } value={ sortTerm } onChange={ setSortTerm } />
