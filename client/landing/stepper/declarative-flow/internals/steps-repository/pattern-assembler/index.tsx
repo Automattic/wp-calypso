@@ -564,7 +564,7 @@ const PatternAssembler = ( {
 						recordTracksEvent={ recordTracksEvent }
 						surveyDismissed={ surveyDismissed }
 						setSurveyDismissed={ setSurveyDismissed }
-						hasSections={ sections.length }
+						hasSections={ !! sections.length }
 					/>
 				</NavigatorScreen>
 
