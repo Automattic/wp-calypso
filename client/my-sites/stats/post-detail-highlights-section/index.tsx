@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Card, PostStatsCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -67,7 +66,7 @@ export default function PostDetailHighlightsSection( {
 
 	// postId > 0: Show the tabs for posts except for the Home Page (postId = 0).
 	// isWPcomSite: The Newsletter Stats is only covering `WPCOM sites` for now.
-	const isEmailTabsAvailable = config.isEnabled( 'newsletter/stats' ) && postId > 0 && isWPcomSite;
+	const isEmailTabsAvailable = postId > 0 && isWPcomSite;
 
 	return (
 		<div className="stats__post-detail-highlights-section">
