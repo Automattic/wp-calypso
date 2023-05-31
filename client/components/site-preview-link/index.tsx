@@ -105,20 +105,33 @@ export default function SitePreviewLink( {
 	if ( isFirstLoading ) {
 		return <Spinner />;
 	}
+
+	let description = translate(
+		'"Coming soon" sites are only visible to you and invited users. Enable "Share site" to let collaborators without an account view your site. {{inlineSupportLink}}Learn more.{{/inlineSupportLink}}',
+		{
+			components: {
+				inlineSupportLink: (
+					<InlineSupportLink supportContext="privacy-preview-link" showIcon={ false } />
+				),
+			},
+		}
+	);
+	if ( 'privacy-settings' === source ) {
+		description = translate(
+			'Enable "Share site" to let collaborators without an account view your site. {{inlineSupportLink}}Learn more.{{/inlineSupportLink}}',
+			{
+				components: {
+					inlineSupportLink: (
+						<InlineSupportLink supportContext="privacy-preview-link" showIcon={ false } />
+					),
+				},
+			}
+		);
+	}
+
 	return (
 		<div>
-			<p>
-				{ translate(
-					"Sites in 'Coming Soon' mode are visible only to you and to the logged-in users you invite. Toggle 'Share site' to allow collaborators without an account to see your site. {{inlineSupportLink}}Learn more.{{/inlineSupportLink}}",
-					{
-						components: {
-							inlineSupportLink: (
-								<InlineSupportLink supportContext="privacy-preview-link" showIcon={ false } />
-							),
-						},
-					}
-				) }
-			</p>
+			<p>{ description }</p>
 			<ToggleControl
 				label={ translate( 'Share site' ) }
 				checked={ checkedAndEnabled }
