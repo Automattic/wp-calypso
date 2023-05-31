@@ -1,6 +1,10 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/breakpoints";
 
+:root {
+	--alert-yellow: #f0b849;
+	--alert-yellow-light: #fef8ee;
+}
 @keyframes components-modal__appear-animation {
 	from {
 		transform: translateY(32px);
@@ -9,10 +13,6 @@
 	to {
 		transform: translateY(0);
 	}
-}
-:root {
-	--alert-yellow: #f0b849;
-	--alert-yellow-light: #fef8ee;
 }
 .notification-settings-title-light {
 	font-size: 0.75rem;
