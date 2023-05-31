@@ -50,7 +50,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 
 	const [ showCredentials, setShowCredentials ] = useState( false );
 	const [ showConfirmModal, setShowConfirmModal ] = useState( false );
-	const [ migrationConfirmed ] = useMigrationConfirmation();
+	const [ migrationConfirmed, setMigrationConfirmed ] = useMigrationConfirmation();
 	const [ selectedHost, setSelectedHost ] = useState( 'generic' );
 	const [ selectedProtocol, setSelectedProtocol ] = useState< 'ftp' | 'ssh' >( 'ftp' );
 	const [ hasLoaded, setHasLoaded ] = useState( false );
@@ -185,7 +185,11 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 						sourceSiteSlug={ sourceSiteSlug }
 						targetSiteSlug={ targetSite.slug }
 						onClose={ () => setShowConfirmModal( false ) }
-						onConfirm={ () => startImport( { type: 'without-credentials' } ) }
+						onConfirm={ () => {
+							// reset migration confirmation to initial state
+							setMigrationConfirmed( false );
+							startImport( { type: 'without-credentials' } );
+						} }
 					/>
 				) }
 				<div
