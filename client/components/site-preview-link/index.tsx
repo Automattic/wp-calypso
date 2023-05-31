@@ -5,7 +5,6 @@ import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import InlineSupportLink from 'calypso/components/inline-support-link';
 import { trailingslashit } from 'calypso/lib/route';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import ClipboardButtonInput from '../clipboard-button-input';
@@ -110,25 +109,11 @@ export default function SitePreviewLink( {
 	const isBusy = isFirstLoading || isCreating || isDeleting;
 
 	let description = translate(
-		'"Coming soon" sites are only visible to you and invited users. Enable "Share site" to let collaborators without an account view your site. {{inlineSupportLink}}Learn more.{{/inlineSupportLink}}',
-		{
-			components: {
-				inlineSupportLink: (
-					<InlineSupportLink supportContext="privacy-preview-link" showIcon={ false } />
-				),
-			},
-		}
+		'"Coming soon" sites are only visible to you and invited users. Enable "Share site" to let collaborators without an account view your site.'
 	);
 	if ( 'privacy-settings' === source ) {
 		description = translate(
-			'Enable "Share site" to let collaborators without an account view your site. {{inlineSupportLink}}Learn more.{{/inlineSupportLink}}',
-			{
-				components: {
-					inlineSupportLink: (
-						<InlineSupportLink supportContext="privacy-preview-link" showIcon={ false } />
-					),
-				},
-			}
+			'Enable "Share site" to let collaborators without an account view your site.'
 		);
 	}
 
