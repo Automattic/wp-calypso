@@ -61,6 +61,7 @@ const Sites = () => {
 						searchIcon={ <SearchIcon size={ 18 } /> }
 						onSearch={ handleSearch }
 					/>
+
 					<SelectDropdown
 						className="subscriptions-manager__filter-control subscriptions-manager__list-actions-bar-spacer"
 						options={ availableFilterOptions }
@@ -71,7 +72,7 @@ const Sites = () => {
 							args: getFilterLabel( availableFilterOptions, filterOption ) || '',
 						} ) }
 					/>
-					<div className="subscriptions-manager__list-actions-bar-spacer"></div>
+
 					<SortControls options={ sortOptions } value={ sortTerm } onChange={ setSortTerm } />
 				</div>
 			) }
