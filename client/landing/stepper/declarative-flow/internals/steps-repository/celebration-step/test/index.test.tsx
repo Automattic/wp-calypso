@@ -37,7 +37,7 @@ jest.mock( 'calypso/landing/stepper/hooks/use-site', () => ( {
 
 let mockIsFirstPostPublished = false;
 
-jest.mock( 'calypso/data/sites/use-launchpad', () => ( {
+jest.mock( '@automattic/data-stores', () => ( {
 	useLaunchpad: () => {
 		return {
 			data: {
