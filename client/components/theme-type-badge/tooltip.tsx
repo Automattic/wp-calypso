@@ -1,33 +1,62 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Button as LinkButton } from '@wordpress/components';
-import { createInterpolateElement } from '@wordpress/element';
-import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
 import {
 	DOT_ORG_THEME,
 	MARKETPLACE_THEME,
 	PREMIUM_THEME,
 	WOOCOMMERCE_THEME,
-} from '../../constants';
+} from '@automattic/design-picker';
+import { Button as LinkButton } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
+import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import {
+	canUseTheme,
+	getThemeType,
+	isThemePurchased,
+	isMarketplaceThemeSubscribed,
+	getMarketplaceThemeSubscriptionPrices,
+} from 'calypso/state/themes/selectors';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
 
 interface Props {
-	id?: string;
-	type?: string;
-	isPurchased?: boolean;
-	canUseTheme?: boolean;
-	subscriptionPrices?: { year?: string; month?: string };
-	siteSlug?: string;
+	themeId: string;
 }
 
-const Tooltip = ( { id, type, isPurchased, canUseTheme, subscriptionPrices, siteSlug }: Props ) => {
+const ThemeTypeBadgeTooltip = ( { themeId }: Props ) => {
 	const translate = useTranslate();
+	const siteId = useSelector( getSelectedSiteId );
+	const siteSlug = useSelector( getSelectedSiteSlug );
+	const type = useSelector( ( state ) => getThemeType( state, themeId ) );
+	const isIncludedCurrentPlan = useSelector(
+		( state ) => siteId && canUseTheme( state, siteId, themeId )
+	);
+	const isPurchased = useSelector( ( state ) => {
+		if ( ! siteId ) {
+			return false;
+		}
+
+		if ( isThemePurchased( state, themeId, siteId ) ) {
+			return true;
+		}
+
+		if ( type === MARKETPLACE_THEME ) {
+			return isMarketplaceThemeSubscribed( state, themeId, siteId );
+		}
+
+		return false;
+	} );
+	const subscriptionPrices = useSelector( ( state ) =>
+		type === MARKETPLACE_THEME ? getMarketplaceThemeSubscriptionPrices( state, themeId ) : {}
+	);
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_upgrade_nudge_impression', {
 			cta_name: 'theme-upsell-popup',
-			theme: id,
+			theme: themeId,
 		} );
-	}, [ id ] );
+	}, [ themeId ] );
 
 	const goToCheckout = ( plan: string ) => {
 		recordTracksEvent( 'calypso_theme_tooltip_upgrade_nudge_click', { plan } );
@@ -60,7 +89,7 @@ const Tooltip = ( { id, type, isPurchased, canUseTheme, subscriptionPrices, site
 	if ( type === PREMIUM_THEME ) {
 		if ( isPurchased ) {
 			message = translate( 'You have purchased this theme.' );
-		} else if ( canUseTheme ) {
+		} else if ( isIncludedCurrentPlan ) {
 			message = translate( 'This premium theme is included in your plan.' );
 		} else {
 			message = createInterpolateElement(
@@ -72,7 +101,7 @@ const Tooltip = ( { id, type, isPurchased, canUseTheme, subscriptionPrices, site
 			);
 		}
 	} else if ( type === DOT_ORG_THEME ) {
-		message = canUseTheme
+		message = isIncludedCurrentPlan
 			? translate( 'This community theme is included in your plan.' )
 			: createInterpolateElement(
 					translate(
@@ -83,7 +112,7 @@ const Tooltip = ( { id, type, isPurchased, canUseTheme, subscriptionPrices, site
 					}
 			  );
 	} else if ( type === WOOCOMMERCE_THEME ) {
-		message = canUseTheme
+		message = isIncludedCurrentPlan
 			? translate( 'This WooCommerce theme is included in your plan.' )
 			: createInterpolateElement(
 					translate( 'This WooCommerce theme is included in the <Link>Business plan</Link>.' ),
@@ -92,11 +121,11 @@ const Tooltip = ( { id, type, isPurchased, canUseTheme, subscriptionPrices, site
 					}
 			  );
 	} else if ( type === MARKETPLACE_THEME ) {
-		if ( isPurchased && canUseTheme ) {
+		if ( isPurchased && isIncludedCurrentPlan ) {
 			message = translate(
 				'You have a subscription for this theme, and it will be usable as long as you keep a Business plan or higher on your site.'
 			);
-		} else if ( isPurchased && ! canUseTheme ) {
+		} else if ( isPurchased && ! isIncludedCurrentPlan ) {
 			message = createInterpolateElement(
 				translate(
 					'You have a subscription for this theme, but it will only be usable if you have the <link>Business plan</link> on your site.'
@@ -105,7 +134,7 @@ const Tooltip = ( { id, type, isPurchased, canUseTheme, subscriptionPrices, site
 					link: <LinkButton isLink onClick={ () => goToCheckout( 'business' ) } />,
 				}
 			);
-		} else if ( ! isPurchased && canUseTheme ) {
+		} else if ( ! isPurchased && isIncludedCurrentPlan ) {
 			// This is a third-party theme and the user has an eligible plan.
 			/* translators: annualPrice and monthlyPrice are prices for the theme, examples: US$50, US$7; */
 			message = translate(
@@ -117,7 +146,7 @@ const Tooltip = ( { id, type, isPurchased, canUseTheme, subscriptionPrices, site
 					},
 				}
 			);
-		} else if ( ! isPurchased && ! canUseTheme ) {
+		} else if ( ! isPurchased && ! isIncludedCurrentPlan ) {
 			// This is a third-party theme but the user doesn't have an eligible plan.
 			message = createInterpolateElement(
 				/* translators: annualPrice and monthlyPrice are prices for the theme, examples: US$50, US$7; */
@@ -147,4 +176,4 @@ const Tooltip = ( { id, type, isPurchased, canUseTheme, subscriptionPrices, site
 	);
 };
 
-export default Tooltip;
+export default ThemeTypeBadgeTooltip;

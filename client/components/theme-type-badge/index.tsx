@@ -1,40 +1,35 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import classNames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
 import {
 	FREE_THEME,
 	DOT_ORG_THEME,
 	MARKETPLACE_THEME,
 	WOOCOMMERCE_THEME,
 	PREMIUM_THEME,
-} from '../../constants';
-import PremiumBadge from '../premium-badge';
-import WooCommerceBundledBadge from '../woocommerce-bundled-badge';
-import ToolTip from './tooltip';
+	PremiumBadge,
+	WooCommerceBundledBadge,
+} from '@automattic/design-picker';
+import classNames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { getThemeType } from 'calypso/state/themes/selectors';
+import ThemeTypeBadgeTooltip from './tooltip';
 
 import './style.scss';
 
 interface Props {
-	id?: string;
-	type?: string;
+	themeId: string;
 	isPurchased?: boolean;
 	canUseTheme?: boolean;
 	subscriptionPrices?: { year?: string; month?: string };
 	siteSlug?: string;
 }
 
-const ThemeTypeBadge = ( {
-	id,
-	type,
-	isPurchased,
-	canUseTheme,
-	subscriptionPrices,
-	siteSlug,
-}: Props ) => {
+const ThemeTypeBadge = ( { themeId }: Props ) => {
 	const translate = useTranslate();
+	const type = useSelector( ( state ) => getThemeType( state, themeId ) );
 
 	useEffect( () => {
 		if ( type === FREE_THEME ) {
@@ -42,23 +37,14 @@ const ThemeTypeBadge = ( {
 		}
 		recordTracksEvent( 'calypso_upgrade_nudge_impression', {
 			cta_name: 'theme-upsell',
-			theme: id,
+			theme: themeId,
 		} );
-	}, [ type, id ] );
+	}, [ type, themeId ] );
 
 	const badgeContentProps = {
 		className: 'theme-type-badge__content',
 		tooltipClassName: 'theme-type-badge-tooltip',
-		tooltipContent: (
-			<ToolTip
-				id={ id }
-				type={ type }
-				isPurchased={ isPurchased }
-				canUseTheme={ canUseTheme }
-				subscriptionPrices={ subscriptionPrices }
-				siteSlug={ siteSlug }
-			/>
-		),
+		tooltipContent: <ThemeTypeBadgeTooltip themeId={ themeId } />,
 		tooltipPosition: 'top',
 	};
 
