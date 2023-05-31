@@ -25,10 +25,7 @@ export default function useZendeskMessaging(
 ) {
 	const [ isMessagingScriptLoaded, setMessagingScriptLoaded ] = useState( false );
 	const zendeskKey: string = config( keyConfigName );
-	const { data: authData } = useMessagingAuth(
-		zendeskKey,
-		isMessagingScriptLoaded && tryAuthenticating
-	);
+	const { data: authData } = useMessagingAuth( isMessagingScriptLoaded && tryAuthenticating );
 
 	useEffect( () => {
 		if ( ! enabled ) {

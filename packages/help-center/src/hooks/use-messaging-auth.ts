@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, QueryFunctionContext } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import { addQueryArgs } from '@wordpress/url';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
@@ -12,9 +12,9 @@ interface APIFetchOptions {
 
 let isLoggedIn = false;
 
-function requestMessagingAuth() {
-	const currentEnvironment = config( 'env_id' );
-	const params = { type: 'zendesk', test_mode: String( currentEnvironment === 'development' ) };
+function requestMessagingAuth( { queryKey }: QueryFunctionContext ) {
+	const [ , isTestMode ] = queryKey;
+	const params = { type: 'zendesk', test_mode: String( isTestMode ) };
 	const wpcomParams = new URLSearchParams( params );
 	return canAccessWpcomApis()
 		? wpcomRequest< MessagingAuth >( {
@@ -31,9 +31,11 @@ function requestMessagingAuth() {
 		  } as APIFetchOptions );
 }
 
-export default function useMessagingAuth( zendeskKey: string | false, enabled: boolean ) {
+export default function useMessagingAuth( enabled: boolean ) {
+	const currentEnvironment = config( 'env_id' );
+	const isTestMode = currentEnvironment === 'development';
 	return useQuery( {
-		queryKey: [ 'getMessagingAuth', zendeskKey ],
+		queryKey: [ 'getMessagingAuth', isTestMode ],
 		queryFn: requestMessagingAuth,
 		staleTime: 7 * 24 * 60 * 60 * 1000, // 1 week (JWT is actually 2 weeks, but lets be on the safe side)
 		enabled,
