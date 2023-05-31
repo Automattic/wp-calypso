@@ -30,6 +30,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
+import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import MaterialIcon from 'calypso/components/material-icon';
 import {
 	hasGoogleApps,
@@ -46,7 +47,6 @@ import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/composite-checkou
 import { leaveCheckout } from 'calypso/my-sites/checkout/composite-checkout/lib/leave-checkout';
 import { prepareDomainContactValidationRequest } from 'calypso/my-sites/checkout/composite-checkout/types/wpcom-store-state';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { saveContactDetailsCache } from 'calypso/state/domains/management/actions';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
@@ -60,6 +60,7 @@ import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import badge14Src from './assets/icons/badge-14.svg';
 import badge7Src from './assets/icons/badge-7.svg';
 import badgeGenericSrc from './assets/icons/badge-generic.svg';
+import badgeSecurity from './assets/icons/security.svg';
 import { CheckoutCompleteRedirecting } from './checkout-complete-redirecting';
 import CheckoutHelpLink from './checkout-help-link';
 import CheckoutNextSteps from './checkout-next-steps';
@@ -353,6 +354,7 @@ export default function WPCheckout( {
 								addItemToCart={ addItemToCart }
 								isCartPendingUpdate={ isCartPendingUpdate }
 							/>
+							<JetpackCheckoutSeals />
 							<CheckoutHelpLink />
 							<CheckoutNextSteps responseCart={ responseCart } />
 						</CheckoutSummaryBody>
@@ -503,7 +505,6 @@ export default function WPCheckout( {
 			<CheckoutFormSubmit
 				validateForm={ validateForm }
 				submitButtonHeader={ <SubmitButtonHeader /> }
-				submitButtonFooter={ <SubmitButtonFooter /> }
 			/>
 		</CheckoutStepGroup>
 	);
@@ -623,7 +624,7 @@ function SubmitButtonHeader() {
 	);
 }
 
-const SubmitButtonFooter = () => {
+const JetpackCheckoutSeals = () => {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const translate = useTranslate();
@@ -640,7 +641,7 @@ const SubmitButtonFooter = () => {
 	const show14DayGuarantee = responseCart?.products?.every(
 		( product ) => isYearly( product ) || isBiennially( product ) || isTriennially( product )
 	);
-	const content =
+	const moneybackGuaranteeHeader =
 		show7DayGuarantee || show14DayGuarantee ? (
 			translate( '%(dayCount)s day money back guarantee', {
 				args: {
@@ -654,40 +655,91 @@ const SubmitButtonFooter = () => {
 				{ translate( '7 day money back guarantee on monthly subscriptions' ) }
 			</>
 		);
-	let imgSrc = badgeGenericSrc;
+	const moneybackGuaranteeBody =
+		show7DayGuarantee || show14DayGuarantee
+			? translate( 'Try Jetpack risk free with our %(dayCount)s-day money-back guarantee.', {
+					args: {
+						dayCount: show7DayGuarantee ? 7 : 14,
+					},
+			  } )
+			: translate( 'Try Jetpack risk free with our money-back guarantee.' );
+	let moneybackGuaranteeIcon = badgeGenericSrc;
 
 	if ( show7DayGuarantee ) {
-		imgSrc = badge7Src;
+		moneybackGuaranteeIcon = badge7Src;
 	} else if ( show14DayGuarantee ) {
-		imgSrc = badge14Src;
+		moneybackGuaranteeIcon = badge14Src;
 	}
 
 	return (
-		<SubmitButtonFooterWrapper>
-			<img src={ imgSrc } alt="" />
-			<span>{ content }</span>
-		</SubmitButtonFooterWrapper>
+		<JetpackCheckoutSealsWrapper>
+			<JetpackCheckoutSealsSection>
+				<img src={ moneybackGuaranteeIcon } alt="" />
+
+				<JetpackSealContent>
+					<span>{ moneybackGuaranteeHeader }</span>
+
+					<p>{ moneybackGuaranteeBody }</p>
+				</JetpackSealContent>
+			</JetpackCheckoutSealsSection>
+
+			<JetpackCheckoutSealsSection>
+				<img src={ badgeSecurity } alt="" />
+
+				<JetpackSealContent>
+					<span>{ translate( 'SSL Secure checkout' ) }</span>
+
+					<p>{ translate( 'Your information is protected by 256-bit SSL encryption.' ) }</p>
+				</JetpackSealContent>
+			</JetpackCheckoutSealsSection>
+		</JetpackCheckoutSealsWrapper>
 	);
 };
 
-const SubmitButtonFooterWrapper = styled.div< React.HTMLAttributes< HTMLDivElement > >`
-	display: flex;
-	justify-content: center;
-	align-items: flex-start;
-
-	margin-top: 1.25rem;
-
-	color: ${ ( props ) => props.theme.colors.textColor };
-
-	font-weight: 500;
+const JetpackCheckoutSealsWrapper = styled.div< React.HTMLAttributes< HTMLDivElement > >`
+	padding: 0 1.5rem;
+	background: ${ ( props ) => props.theme.colors.surface };
 
 	img {
-		margin-right: 0.5rem;
+		margin-right: 0.75rem;
 	}
 
 	span {
-		padding-top: 3px;
+		font-weight: 700;
+
+		line-height: 1.12;
 	}
+
+	p {
+		font-size: 0.875rem;
+		font-weight: 500;
+
+		line-height: 1.29;
+		margin-top: 0.35rem;
+	}
+
+	@media ( min-width: 660px ) {
+		padding-top: 2rem;
+		border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+		border-bottom: none;
+	}
+
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
+		padding-left: 0;
+		background: none;
+		border: none;
+	}
+`;
+
+const JetpackCheckoutSealsSection = styled.div< React.HTMLAttributes< HTMLDivElement > >`
+	display: flex;
+	align-items: flex-start;
+
+	color: ${ ( props ) => props.theme.colors.textColor };
+`;
+
+const JetpackSealContent = styled.div`
+	padding: 0.1875rem 0 0 0;
 `;
 
 const SubmitButtonHeaderWrapper = styled.div`
