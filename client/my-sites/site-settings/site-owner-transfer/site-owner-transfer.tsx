@@ -1,3 +1,4 @@
+import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -13,6 +14,10 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PendingDomainTransfer from './pending-domain-transfer';
 import SiteOwnerTransferEligibility from './site-owner-user-search';
 import StartSiteOwnerTransfer from './start-site-owner-transfer';
+
+const SiteOwnerTransferContainer = styled.div( {
+	fontSize: '14px',
+} );
 
 const SiteOwnerTransfer = () => {
 	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
@@ -52,16 +57,20 @@ const SiteOwnerTransfer = () => {
 				<h1>{ translate( 'Site Transfer' ) }</h1>
 			</HeaderCake>
 			<ActionPanel>
-				{ pendingDomain && <PendingDomainTransfer domain={ pendingDomain } /> }
-				{ ! pendingDomain && ! newSiteOwner && (
-					<SiteOwnerTransferEligibility
-						selectedSiteId={ selectedSite.ID }
-						selectedSiteSlug={ selectedSite.slug }
-						siteOwner={ newSiteOwner }
-						onNewUserOwnerSubmit={ ( newOwner ) => setNewSiteOwner( newOwner ) }
-					/>
-				) }
-				{ ! pendingDomain && newSiteOwner && <StartSiteOwnerTransfer siteOwner={ newSiteOwner } /> }
+				<SiteOwnerTransferContainer>
+					{ pendingDomain && <PendingDomainTransfer domain={ pendingDomain } /> }
+					{ ! pendingDomain && ! newSiteOwner && (
+						<SiteOwnerTransferEligibility
+							siteId={ selectedSite.ID }
+							siteSlug={ selectedSite.slug }
+							siteOwner={ newSiteOwner }
+							onNewUserOwnerSubmit={ ( newOwner ) => setNewSiteOwner( newOwner ) }
+						/>
+					) }
+					{ ! pendingDomain && newSiteOwner && (
+						<StartSiteOwnerTransfer siteOwner={ newSiteOwner } />
+					) }
+				</SiteOwnerTransferContainer>
 			</ActionPanel>
 		</Main>
 	);

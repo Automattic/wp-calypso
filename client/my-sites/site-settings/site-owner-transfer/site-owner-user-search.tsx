@@ -7,12 +7,9 @@ import { useCheckSiteTransferEligibility } from './use-check-site-transfer-eligi
 
 const TextControlContainer = styled.div( {
 	marginBottom: '2em',
-	'&': {
-		fontSize: '14px',
-	},
 	label: {
 		textTransform: 'none',
-		fontSize: '14px',
+		fontSize: '100%',
 		color: 'black',
 	},
 } );
@@ -30,13 +27,13 @@ const ErrorText = styled.p( {
 } );
 
 const SiteOwnerTransferEligibility = ( {
-	selectedSiteId,
-	selectedSiteSlug,
+	siteId,
+	siteSlug,
 	siteOwner,
 	onNewUserOwnerSubmit,
 }: {
-	selectedSiteId: number;
-	selectedSiteSlug: string;
+	siteId: number;
+	siteSlug: string;
 	siteOwner: string;
 	onNewUserOwnerSubmit: ( user: string ) => void;
 } ) => {
@@ -45,7 +42,7 @@ const SiteOwnerTransferEligibility = ( {
 	const [ siteTransferEligibilityError, setSiteTransferEligibilityError ] = useState( '' );
 
 	const { checkSiteTransferEligibility, isLoading: isCheckingSiteTransferEligibility } =
-		useCheckSiteTransferEligibility( selectedSiteId, {
+		useCheckSiteTransferEligibility( siteId, {
 			onMutate: () => {
 				setSiteTransferEligibilityError( '' );
 			},
@@ -75,7 +72,7 @@ const SiteOwnerTransferEligibility = ( {
 				{ translate(
 					'Please enter the username or email address of the registered WordPress.com user that you want to transfer ownership of {{strong}}%(siteSlug)s{{/strong}} to:',
 					{
-						args: { siteSlug: selectedSiteSlug },
+						args: { siteSlug },
 						components: { strong: <strong /> },
 					}
 				) }
