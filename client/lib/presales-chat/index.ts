@@ -52,6 +52,7 @@ export function usePresalesChat( keyType: KeyType, enabled = true ) {
 	);
 
 	return {
+		isChatActive: isPresalesChatAvailable && isEligibleForPresalesChat,
 		isLoading: isLoadingAvailability,
 		isPresalesChatAvailable,
 	};

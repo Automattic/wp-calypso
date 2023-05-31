@@ -4,8 +4,9 @@ import { SUPPORT_FORUM } from '@automattic/help-center';
 import { ResponseCartMessage, useShoppingCart } from '@automattic/shopping-cart';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
+import { useSelect, useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import QuerySupportTypes from 'calypso/blocks/inline-help/inline-help-query-support-types';
 import HappychatButtonUnstyled from 'calypso/components/happychat/button';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
@@ -19,6 +20,7 @@ import getSupportVariation from 'calypso/state/selectors/get-inline-help-support
 import isSupportVariationDetermined from 'calypso/state/selectors/is-support-variation-determined';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import type { Theme } from '@automattic/composite-checkout';
+import type { HelpCenterSelect } from '@automattic/data-stores';
 import type { KeyType } from 'calypso/lib/presales-chat';
 
 const HELP_CENTER_STORE = HelpCenter.register();
@@ -151,7 +153,7 @@ function getKeyTypeForPresalesChat(): KeyType {
 export default function CheckoutHelpLink() {
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
-	const { setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { setShowHelpCenter, setShowMessagingLauncher } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
@@ -179,10 +181,28 @@ export default function CheckoutHelpLink() {
 		);
 	};
 
-	const { isLoading: isLoadingChat, isPresalesChatAvailable } = usePresalesChat(
+	const { isChatActive, isLoading: isLoadingChat } = usePresalesChat(
 		getKeyTypeForPresalesChat(),
 		! purchasesAreBlocked
 	);
+
+	const { isMessagingWidgetShown } = useSelect( ( select ) => {
+		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
+		return {
+			isMessagingWidgetShown: helpCenterSelect.isMessagingWidgetShown(),
+		};
+	}, [] );
+
+	useEffect( () => {
+		if ( isChatActive ) {
+			setShowMessagingLauncher( true );
+		}
+		return () => {
+			if ( ! isMessagingWidgetShown && isChatActive ) {
+				setShowMessagingLauncher( false );
+			}
+		};
+	}, [ isChatActive, setShowMessagingLauncher, isMessagingWidgetShown ] );
 
 	const shouldShowLoadingButton = ! supportVariationDetermined || isLoadingChat;
 
@@ -192,7 +212,7 @@ export default function CheckoutHelpLink() {
 		<CheckoutHelpLinkWrapper>
 			<QuerySupportTypes />
 			{ shouldShowLoadingButton && <LoadingButton /> }
-			{ ! shouldShowLoadingButton && ! isPresalesChatAvailable && (
+			{ ! shouldShowLoadingButton && ! isChatActive && (
 				<CheckoutSummaryHelpButton onClick={ handleHelpButtonClicked }>
 					{ hasDirectSupport
 						? translate( 'Questions? {{underline}}Ask a Happiness Engineer{{/underline}}', {
