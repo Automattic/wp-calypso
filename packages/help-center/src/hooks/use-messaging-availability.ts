@@ -10,7 +10,7 @@ interface APIFetchOptions {
 	path: string;
 }
 
-export type MessagingGroup = 'wpcom_messaging' | 'wpcom_presales';
+export type MessagingGroup = 'jp_presales' | 'wpcom_messaging' | 'wpcom_presales';
 
 function requestMessagingAvailability( { queryKey }: QueryFunctionContext ) {
 	const currentEnvironment = config( 'env_id' );

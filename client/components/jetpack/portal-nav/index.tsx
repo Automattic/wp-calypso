@@ -6,6 +6,7 @@ import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { dashboardPath } from 'calypso/lib/jetpack/paths';
+import { usePresalesChat } from 'calypso/lib/presales-chat';
 import { isSectionNameEnabled } from 'calypso/sections-filter';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -18,7 +19,6 @@ import { isPartnerPortal } from 'calypso/state/partner-portal/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPrimarySiteIsJetpack from 'calypso/state/selectors/get-primary-site-is-jetpack';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { ZendeskJetpackChat } from '../jetpack-presales-chat-widget';
 
 import './style.scss';
 
@@ -53,6 +53,12 @@ export default function PortalNav( { className = '' }: Props ) {
 	const isPartnerPortalRoute = useSelector( isPartnerPortal );
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const manageSiteLink = useManageSiteLink();
+
+	usePresalesChat(
+		'jpAgency',
+		hasJetpackPartnerAccess && isSectionNameEnabled( 'jetpack-cloud-partner-portal' )
+	);
+
 	// Route belongs dashboard when it starts with /dashboard or /plugins and no site is selected(multi-site view).
 	const isDashboardRoute =
 		currentRoute.startsWith( '/dashboard' ) ||
@@ -114,7 +120,6 @@ export default function PortalNav( { className = '' }: Props ) {
 							{ translate( 'Licensing' ) }
 						</NavItem>
 					</NavTabs>
-					<ZendeskJetpackChat keyType="jpAgency" />
 				</SectionNav>
 			) }
 		</>

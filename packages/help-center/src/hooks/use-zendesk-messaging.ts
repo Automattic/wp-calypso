@@ -9,11 +9,12 @@ import { useEffect, useState } from '@wordpress/element';
  */
 import { useMessagingAuth } from './';
 
-type ZendeskConfigName =
+export type ZendeskConfigName =
 	| 'zendesk_support_chat_key'
 	| 'zendesk_presales_chat_key'
 	| 'zendesk_presales_chat_key_akismet'
-	| 'zendesk_presales_chat_key_jp_checkout';
+	| 'zendesk_presales_chat_key_jp_checkout'
+	| 'zendesk_presales_chat_key_jp_agency_dashboard';
 
 const ZENDESK_SCRIPT_ID = 'ze-snippet';
 
