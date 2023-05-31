@@ -15,9 +15,12 @@ import PendingDomainTransfer from './pending-domain-transfer';
 import SiteOwnerTransferEligibility from './site-owner-user-search';
 import StartSiteOwnerTransfer from './start-site-owner-transfer';
 
-const SiteOwnerTransferContainer = styled.div( {
-	fontSize: '14px',
-} );
+const ActionPanelStyled = styled( ActionPanel )`
+	font-size: 14px;
+	.action-panel__body {
+		color: var( --studio-gray-70 );
+	}
+`;
 
 const SiteOwnerTransfer = () => {
 	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
@@ -56,22 +59,18 @@ const SiteOwnerTransfer = () => {
 			<HeaderCake backHref={ '/settings/general/' + selectedSite.slug } isCompact={ true }>
 				<h1>{ translate( 'Site Transfer' ) }</h1>
 			</HeaderCake>
-			<ActionPanel>
-				<SiteOwnerTransferContainer>
-					{ pendingDomain && <PendingDomainTransfer domain={ pendingDomain } /> }
-					{ ! pendingDomain && ! newSiteOwner && (
-						<SiteOwnerTransferEligibility
-							siteId={ selectedSite.ID }
-							siteSlug={ selectedSite.slug }
-							siteOwner={ newSiteOwner }
-							onNewUserOwnerSubmit={ ( newOwner ) => setNewSiteOwner( newOwner ) }
-						/>
-					) }
-					{ ! pendingDomain && newSiteOwner && (
-						<StartSiteOwnerTransfer siteOwner={ newSiteOwner } />
-					) }
-				</SiteOwnerTransferContainer>
-			</ActionPanel>
+			<ActionPanelStyled>
+				{ pendingDomain && <PendingDomainTransfer domain={ pendingDomain } /> }
+				{ ! pendingDomain && ! newSiteOwner && (
+					<SiteOwnerTransferEligibility
+						siteId={ selectedSite.ID }
+						siteSlug={ selectedSite.slug }
+						siteOwner={ newSiteOwner }
+						onNewUserOwnerSubmit={ ( newOwner ) => setNewSiteOwner( newOwner ) }
+					/>
+				) }
+				{ ! pendingDomain && newSiteOwner && <StartSiteOwnerTransfer siteOwner={ newSiteOwner } /> }
+			</ActionPanelStyled>
 		</Main>
 	);
 };

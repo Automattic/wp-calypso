@@ -25,6 +25,7 @@ const CommentRow = ( {
 	forwardedRef,
 	style,
 	is_wpforteams_site,
+	is_paid_subscription,
 }: CommentRowProps ) => {
 	const translate = useTranslate();
 	const hostname = useMemo( () => new URL( site_url ).hostname, [ site_url ] );
@@ -54,6 +55,11 @@ const CommentRow = ( {
 							<span className="name">
 								{ site_title }
 								{ !! is_wpforteams_site && <span className="p2-label">P2</span> }
+								{ !! is_paid_subscription && (
+									<span className="paid-label">
+										{ translate( 'Paid', { context: 'Label for a paid subscription plan' } ) }
+									</span>
+								) }
 							</span>
 							<span className="url">{ hostname }</span>
 						</span>
