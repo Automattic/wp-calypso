@@ -93,7 +93,7 @@ body.archive {
 	// This applies to all search bars
 	.happy-blocks-search__inside-wrapper {
 		// width is 1/3 of the grid width minus 30px * 2 / 3 for the grid gap (gap is 30px, we need 2/3 of it)
-		width: calc(var(--wp--style--global--wide-size, 1224px) / 3 - 30px * 2 / 3);
+		width: 300px;
 		max-width: 100%;
 		position: relative;
 		border-radius: 4px;
@@ -126,6 +126,9 @@ body.archive {
 
 			font-size: 1rem;
 			color: var(--color-neutral-50);
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			overflow: hidden;
 		}
 
 		&::before {
