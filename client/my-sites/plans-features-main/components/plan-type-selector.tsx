@@ -180,6 +180,8 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 		'domainAndPlanPackage'
 	);
 
+	const isJetpackAppFlow = new URLSearchParams( window.location.search ).get( 'jetpackAppPlans' );
+
 	const intervalTabs = showBiannualToggle ? [ 'yearly', '2yearly' ] : [ 'monthly', 'yearly' ];
 
 	return (
@@ -196,6 +198,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 							intervalType: interval,
 							domain: isDomainUpsellFlow,
 							domainAndPlanPackage: isDomainAndPlanPackageFlow,
+							jetpackAppPlans: isJetpackAppFlow,
 							...additionalPathProps,
 						} ) }
 						isPlansInsideStepper={ props.isPlansInsideStepper }
