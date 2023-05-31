@@ -1,3 +1,4 @@
+import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import ActionPanel from 'calypso/components/action-panel';
@@ -11,6 +12,12 @@ import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PendingDomainTransfer from './pending-domain-transfer';
 import StartSiteOwnerTransfer from './start-site-owner-transfer';
+
+const ActionPanelStyled = styled( ActionPanel )`
+	.action-panel__body {
+		color: var( --studio-gray-70 );
+	}
+`;
 
 const SiteOwnerTransfer = () => {
 	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
@@ -48,10 +55,10 @@ const SiteOwnerTransfer = () => {
 			<HeaderCake backHref={ '/settings/general/' + selectedSite.slug } isCompact={ true }>
 				<h1>{ translate( 'Site Transfer' ) }</h1>
 			</HeaderCake>
-			<ActionPanel>
+			<ActionPanelStyled>
 				{ pendingDomain && <PendingDomainTransfer domain={ pendingDomain } /> }
 				{ ! pendingDomain && <StartSiteOwnerTransfer /> }
-			</ActionPanel>
+			</ActionPanelStyled>
 		</Main>
 	);
 };
