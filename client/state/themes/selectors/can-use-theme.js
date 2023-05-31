@@ -17,12 +17,12 @@ import { getThemeType } from 'calypso/state/themes/selectors';
 import 'calypso/state/themes/init';
 
 /**
- * Get the theme type.
+ * Checks whether the given theme is included in the current plan of the site.
  *
  * @param  {Object}  state   Global state tree
  * @param  {number}  siteId  Site ID
  * @param  {string}  themeId Theme ID
- * @returns {boolean}         theme type
+ * @returns {boolean}         Whether the theme is included in the site plan.
  */
 export function canUseTheme( state, siteId, themeId ) {
 	const type = getThemeType( state, themeId );
