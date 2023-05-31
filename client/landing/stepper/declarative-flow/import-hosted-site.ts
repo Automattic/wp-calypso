@@ -238,6 +238,18 @@ const importHostedSiteFlow: Flow = {
 
 		const goBack = () => {
 			switch ( _currentStep ) {
+				case 'importList':
+					// eslint-disable-next-line no-case-declarations
+					const backToStep = urlQueryParams.get( 'backToStep' );
+
+					if ( backToStep ) {
+						const path = `${ backToStep }?siteSlug=${ siteSlugParam }`;
+
+						return navigate( path );
+					}
+
+					return navigate( 'import' );
+
 				case 'importReady':
 				case 'importReadyNot':
 				case 'importReadyWpcom':
