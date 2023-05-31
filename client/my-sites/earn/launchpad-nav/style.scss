@@ -1,7 +1,7 @@
 .earn .promo-card.earn__launchpad-nav {
 	padding-left: 40px;
 	padding-right: 40px;
-	padding-top: 18px;
+	padding-top: 14px;
 	padding-bottom: 14px;
 	.action-panel__body {
 		flex-direction: row;
@@ -12,8 +12,12 @@
 	}
 	.action-panel__title {
 		align-items: center;
+		margin-bottom: 0;
 	}
 	.action-panel__cta {
 		padding-top: 0;
+		button {
+			margin: 0;
+		}
 	}
 }
