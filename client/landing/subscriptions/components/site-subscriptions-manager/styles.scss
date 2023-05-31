@@ -38,6 +38,10 @@
 				flex: 1.83;
 				min-width: 0;
 
+				> a {
+					flex: 0;
+				}
+
 				.icon {
 					fill: var(--color-text-subtle);
 					width: 40px;
