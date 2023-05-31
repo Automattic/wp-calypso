@@ -108,7 +108,11 @@ const ScreenCategoryList = ( {
 							aria-describedby={ description }
 							aria-current={ isOpen }
 							onClick={ () => {
-								if ( ! isOpen ) {
+								if ( isOpen ) {
+									onTogglePatternPanelList?.( false );
+									setSelectedCategory( null );
+								} else {
+									onTogglePatternPanelList?.( true );
 									setSelectedCategory( name );
 									trackEventCategoryClick( name );
 								}
