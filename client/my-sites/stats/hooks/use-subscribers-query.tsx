@@ -1,6 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
+interface SubscriberPayload {
+	date: string;
+	unit: string;
+	data: any[]; // TODO: add type
+	fields: string[];
+}
+
 export function querySubscribers(
 	siteId: number | null,
 	period: string,
@@ -30,13 +37,7 @@ export function querySubscribers(
 	);
 }
 
-export function selectSubscribers( payload: {
-	date: string;
-	unit: string;
-	// todo: add type
-	data: any[];
-	fields: string[];
-} ) {
+export function selectSubscribers( payload: SubscriberPayload ) {
 	if ( ! payload || ! payload.data ) {
 		return [];
 	}
@@ -46,7 +47,6 @@ export function selectSubscribers( payload: {
 		unit: payload.unit,
 		data: payload.data.map( ( dataSet ) => {
 			return {
-				// For `week` period replace `W` separator to match the format.
 				[ payload.fields[ 0 ] ]:
 					payload.unit !== 'week' ? dataSet[ 0 ] : dataSet[ 0 ].replaceAll( 'W', '-' ),
 				[ payload.fields[ 1 ] ]: dataSet[ 1 ],
@@ -62,7 +62,7 @@ export default function useSubscribersQuery(
 	quantity: number,
 	date?: Date
 ) {
-	const queryDate = date ? date.toISOString() : new Date().toISOString();
+	const queryDate = date.toISOString();
 
 	// TODO: Account for other query parameters before release.
 	return useQuery( {
