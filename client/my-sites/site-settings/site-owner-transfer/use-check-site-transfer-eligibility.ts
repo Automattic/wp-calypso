@@ -23,7 +23,7 @@ export const useCheckSiteTransferEligibility = (
 		async ( { newSiteOwner }: MutationVariables ) =>
 			wp.req.post(
 				{
-					path: `/sites/${ siteId }/site-owner-transfer/transfer-eligibility`,
+					path: `/sites/${ siteId }/site-owner-transfer/eligibility`,
 					apiNamespace: 'wpcom/v2',
 				},
 				{ new_site_owner: newSiteOwner }
