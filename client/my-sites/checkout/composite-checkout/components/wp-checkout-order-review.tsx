@@ -179,13 +179,15 @@ export default function WPCheckoutOrderReview( {
 				/>
 			</WPOrderReviewSection>
 
-			<CouponFieldArea
-				isCouponFieldVisible={ isCouponFieldVisible }
-				setCouponFieldVisible={ setCouponFieldVisible }
-				isPurchaseFree={ isPurchaseFree }
-				couponStatus={ couponStatus }
-				couponFieldStateProps={ couponFieldStateProps }
-			/>
+			{ ! isAkismetCheckout() && (
+				<CouponFieldArea
+					isCouponFieldVisible={ isCouponFieldVisible }
+					setCouponFieldVisible={ setCouponFieldVisible }
+					isPurchaseFree={ isPurchaseFree }
+					couponStatus={ couponStatus }
+					couponFieldStateProps={ couponFieldStateProps }
+				/>
+			) }
 		</div>
 	);
 }
@@ -227,10 +229,6 @@ function CouponFieldArea( {
 				couponFieldStateProps={ couponFieldStateProps }
 			/>
 		);
-	}
-
-	if ( isAkismetCheckout() ) {
-		return null;
 	}
 
 	return (
