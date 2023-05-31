@@ -341,6 +341,10 @@ $mobile-card-max-width: 440px;
 		&.has-3-cols {
 			max-width: $table-cell-max-width * 3;
 		}
+
+		&.has-4-cols {
+			max-width: $table-cell-max-width * 4;
+		}
 	}
 
 	.plan-features-2023-grid__table-bottom .plan-features-2023-grid__table {
