@@ -11,7 +11,7 @@ export const Subscribers = () => {
 	}
 
 	return (
-		<Main className="subscribers">
+		<Main>
 			<DocumentHead title={ translate( 'Subscribers' ) } />
 			Subscribers
 		</Main>
