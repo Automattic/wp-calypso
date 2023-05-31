@@ -8,7 +8,7 @@ const useSiteIntent = () => {
 	const [ siteIntentFetched, setSiteIntentFetched ] = useState( false );
 
 	const fetchSiteIntent = useCallback( () => {
-		apiFetch( { path: '/wpcom/v2/site-intent' } )
+		apiFetch( { path: '/wpcom/v2/launchpad' } )
 			.then( ( result ) => {
 				setSiteIntent( result.site_intent );
 				setSiteIntentFetched( true );
