@@ -547,10 +547,11 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			siteSetupOption,
 		}: AssembleSiteOptions = {}
 	) {
-		const templates: RequestTemplate[] = [
+		const templates = [
 			{
 				type: 'wp_template' as const,
 				slug: 'home',
+				title: __( 'Home' ),
 				content: createCustomHomeTemplateContent(
 					stylesheet,
 					!! headerHtml,
@@ -559,17 +560,19 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 					homeHtml
 				),
 			},
-			{
+			headerHtml && {
 				type: 'wp_template_part' as const,
 				slug: 'header',
+				title: __( 'Header' ),
 				content: headerHtml,
 			},
-			{
+			footerHtml && {
 				type: 'wp_template_part' as const,
 				slug: 'footer',
+				title: __( 'Footer' ),
 				content: footerHtml,
 			},
-		].filter( ( template: RequestTemplate ) => !! template.content );
+		].filter( Boolean ) as RequestTemplate[];
 
 		yield wpcomRequest( {
 			path: `/sites/${ encodeURIComponent( siteSlug ) }/site-assembler`,
