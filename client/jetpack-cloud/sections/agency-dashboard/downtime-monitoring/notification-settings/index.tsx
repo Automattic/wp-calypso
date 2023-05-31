@@ -205,6 +205,16 @@ export default function NotificationSettings( {
 		>
 			<div className="notification-settings__sub-title">{ getSiteCountText( sites ) }</div>
 
+			{ isBulkUpdate ? (
+				<div className="notification-settings__bulk-edit-warning">
+					<div className="notification-settings__bulk-edit-warning-block">
+						<div className="notification-settings__bulk-edit-warning-content">
+							{ translate( 'Settings for selected sites will be overwritten.' ) }
+						</div>
+					</div>
+				</div>
+			) : null }
+
 			<form onSubmit={ onSave }>
 				<div className="notification-settings__content">
 					<div className="notification-settings__content-block">

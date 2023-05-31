@@ -10,7 +10,10 @@
 		transform: translateY(0);
 	}
 }
-
+:root {
+	--alert-yellow: #f0b849;
+	--alert-yellow-light: #fef8ee;
+}
 .notification-settings-title-light {
 	font-size: 0.75rem;
 	line-height: 14px;
@@ -21,6 +24,21 @@
 	@extend .notification-settings-title-light;
 	position: absolute;
 	inset-block-start: 50px;
+}
+
+.notification-settings__bulk-edit-warning {
+	border-left: 4px solid var(--alert-yellow);
+	padding: 12px;
+	padding-left: 0;
+	background-color: var(--alert-yellow-light);
+	.notification-settings__bulk-edit-warning-block {
+		.notification-settings__bulk-edit-warning-content {
+			padding-left: 12px;
+			font-weight: 400;
+			font-size: 0.75rem;
+			line-height: 24px;
+		}
+	}
 }
 
 .notification-settings__content {
