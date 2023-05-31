@@ -5,6 +5,5 @@ import { subscribers } from './controller';
 
 export default function () {
 	page( '/subscribers', siteSelection, sites, navigation, makeLayout, clientRender );
-
 	page( '/subscribers/:domain', siteSelection, navigation, subscribers, makeLayout, clientRender );
 }
