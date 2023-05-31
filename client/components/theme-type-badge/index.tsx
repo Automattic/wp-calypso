@@ -21,10 +21,6 @@ import './style.scss';
 
 interface Props {
 	themeId: string;
-	isPurchased?: boolean;
-	canUseTheme?: boolean;
-	subscriptionPrices?: { year?: string; month?: string };
-	siteSlug?: string;
 }
 
 const ThemeTypeBadge = ( { themeId }: Props ) => {
