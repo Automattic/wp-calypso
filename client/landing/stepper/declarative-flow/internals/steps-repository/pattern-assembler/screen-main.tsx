@@ -15,7 +15,6 @@ import { NavigationButtonAsItem } from './navigator-buttons';
 import NavigatorHeader from './navigator-header';
 import { NavigatorItemGroup } from './navigator-item-group';
 import Survey from './survey';
-import type { Pattern } from './types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { MouseEvent } from 'react';
 
@@ -25,7 +24,7 @@ interface Props {
 	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
 	surveyDismissed: boolean;
 	setSurveyDismissed: ( dismissed: boolean ) => void;
-	patterns: Pattern[];
+	hasSections: boolean;
 }
 
 const ScreenMain = ( {
@@ -34,7 +33,7 @@ const ScreenMain = ( {
 	recordTracksEvent,
 	surveyDismissed,
 	setSurveyDismissed,
-	patterns,
+	hasSections,
 }: Props ) => {
 	const translate = useTranslate();
 	const [ disabled, setDisabled ] = useState( true );
@@ -109,7 +108,7 @@ const ScreenMain = ( {
 							<span className="pattern-layout__list-item-text">{ translate( 'Header' ) }</span>
 						</NavigationButtonAsItem>
 						<NavigationButtonAsItem
-							path={ patterns.length ? NAVIGATOR_PATHS.SECTION : NAVIGATOR_PATHS.SECTION_PATTERNS }
+							path={ hasSections ? NAVIGATOR_PATHS.SECTION : NAVIGATOR_PATHS.SECTION_PATTERNS }
 							icon={ layout }
 							aria-label={ translate( 'Homepage' ) }
 							onClick={ () => onSelect( 'section' ) }
