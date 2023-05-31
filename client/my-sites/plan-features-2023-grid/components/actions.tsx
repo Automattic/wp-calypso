@@ -43,6 +43,7 @@ type PlanFeaturesActionsButtonProps = {
 	isWooExpressPlusPlan?: boolean;
 	selectedSiteSlug: string | null;
 	planActionOverrides?: PlanActionOverrides;
+	selectedPlan?: string;
 };
 
 const DummyDisabledButton = styled.div`
@@ -61,14 +62,18 @@ const SignupFlowPlanFeatureActionButton = ( {
 	freePlan,
 	isPlaceholder,
 	planName,
+	planType,
 	classes,
 	handleUpgradeButtonClick,
+	selectedPlan,
 }: {
 	freePlan: boolean;
 	isPlaceholder: boolean;
 	planName: TranslateResult;
+	planType: string;
 	classes: string;
 	handleUpgradeButtonClick: () => void;
+	selectedPlan?: string;
 } ) => {
 	const translate = useTranslate();
 	let btnText;
@@ -83,8 +88,16 @@ const SignupFlowPlanFeatureActionButton = ( {
 		} );
 	}
 
+	const isDisabled = selectedPlan ? isPlaceholder || selectedPlan !== planType : isPlaceholder;
+	const isBusy = selectedPlan === planType;
+
 	return (
-		<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
+		<Button
+			className={ classes }
+			onClick={ handleUpgradeButtonClick }
+			disabled={ isDisabled }
+			busy={ isBusy }
+		>
 			{ btnText }
 		</Button>
 	);
@@ -316,6 +329,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	isWooExpressPlusPlan = false,
 	selectedSiteSlug,
 	planActionOverrides,
+	selectedPlan,
 } ) => {
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
@@ -396,8 +410,10 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 				freePlan={ freePlan }
 				isPlaceholder={ isPlaceholder }
 				planName={ planName }
+				planType={ planType }
 				classes={ classes }
 				handleUpgradeButtonClick={ handleUpgradeButtonClick }
+				selectedPlan={ selectedPlan }
 			/>
 		);
 	}
