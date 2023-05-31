@@ -69,7 +69,6 @@ export function HelpCenterGPT() {
 
 	const query = message ?? '';
 
-	// Then fetch the response
 	const { data, isError: isGPTError } = useJetpackSearchAIQuery( {
 		siteId: '9619154',
 		query: query,
