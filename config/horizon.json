@@ -13,7 +13,6 @@
 	"features": {
 		"ad-tracking": false,
 		"akismet/siteless-checkout": true,
-		"anchor/sunset-integration": true,
 		"calypso/help-center": true,
 		"calypsoify/plugins": true,
 		"cancellation-offers": true,
