@@ -32,7 +32,10 @@ type MutationContext = {
 export function useRemoveTitanMailboxMutation(
 	domainName: string,
 	mailboxName: string,
-	mutationOptions: UseMutationOptions< unknown, unknown, void, MutationContext > = {}
+	mutationOptions: Omit<
+		UseMutationOptions< unknown, unknown, void, MutationContext >,
+		'mutationFn'
+	> = {}
 ): UseMutationResult< unknown, unknown, void, unknown > {
 	const queryClient = useQueryClient();
 
