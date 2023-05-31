@@ -73,8 +73,8 @@ export function useRemoveTitanMailboxMutation(
 		} );
 	};
 
-	return useMutation(
-		() =>
+	return useMutation( {
+		mutationFn: () =>
 			wp.req.get( {
 				path: `/emails/titan/${ encodeURIComponent( domainName ) }/mailbox/${ encodeURIComponent(
 					mailboxName
@@ -82,6 +82,6 @@ export function useRemoveTitanMailboxMutation(
 				method: 'DELETE',
 				apiNamespace: 'wpcom/v2',
 			} ),
-		mutationOptions
-	);
+		...mutationOptions,
+	} );
 }

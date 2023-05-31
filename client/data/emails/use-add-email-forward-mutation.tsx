@@ -177,12 +177,12 @@ export default function useAddEmailForwardMutation(
 		dispatch( errorNotice( errorMessage ) );
 	};
 
-	return useMutation< any, unknown, AddMailboxFormData, Context >(
-		( { mailbox, destination } ) =>
+	return useMutation< any, unknown, AddMailboxFormData, Context >( {
+		mutationFn: ( { mailbox, destination } ) =>
 			wp.req.post( `/domains/${ encodeURIComponent( domainName ) }/email/new`, {
 				mailbox,
 				destination,
 			} ),
-		mutationOptions
-	);
+		...mutationOptions,
+	} );
 }
