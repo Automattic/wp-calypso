@@ -29,6 +29,8 @@ interface Props {
 
 // The pattern renderer element has 1px min height before the pattern is loaded
 const PATTERN_RENDERER_MIN_HEIGHT = 1;
+// Desktop viewport width in pixels
+const DEVICE_COMPUTER_VIEWPORT_WIDTH = 1280;
 
 const PatternLargePreview = ( {
 	header,
@@ -50,7 +52,7 @@ const PatternLargePreview = ( {
 	const frameRef = useRef< HTMLDivElement | null >( null );
 	const listRef = useRef< HTMLUListElement | null >( null );
 	const [ viewportHeight, setViewportHeight ] = useState< number | undefined >( 0 );
-	const [ device, setDevice ] = useState< string >( 'desktop' );
+	const [ device, setDevice ] = useState< string >( 'computer' );
 	const [ blockGap ] = useStyle( 'spacing.blockGap' );
 	const [ backgroundColor ] = useStyle( 'color.background' );
 	const [ patternLargePreviewStyle, setPatternLargePreviewStyle ] = useState( {
@@ -135,10 +137,61 @@ const PatternLargePreview = ( {
 		);
 	};
 
-	const updateViewportHeight = () => {
-		setViewportHeight( frameRef.current?.clientHeight );
+	const deviceComputerViewportScale = () =>
+		frameRef.current!.clientWidth / DEVICE_COMPUTER_VIEWPORT_WIDTH;
+
+	const setLargePreviewStyleForViewport = () => {
+		if ( NAVIGATOR_PATHS.SECTION_PATTERNS === navigator.location.path ) {
+			// Extend state with viewport styles
+			setPatternLargePreviewStyle(
+				( state ) =>
+					( {
+						...state,
+						'--pattern-large-preview-device-computer-width': DEVICE_COMPUTER_VIEWPORT_WIDTH,
+						'--pattern-large-preview-device-computer-scale': deviceComputerViewportScale(),
+					} as CSSProperties )
+			);
+		}
 	};
 
+	const updateViewportHeight = () => {
+		let height = frameRef.current?.clientHeight as number;
+		if ( 'computer' === device ) {
+			// Scale up for patterns with 100vh
+			height = height / deviceComputerViewportScale();
+		}
+		setViewportHeight( height );
+	};
+
+	// Scale down the computer device viewport
+	useEffect( () => {
+		if ( NAVIGATOR_PATHS.SECTION_PATTERNS === navigator.location.path ) {
+			setTimeout(
+				() => {
+					updateViewportHeight();
+					setLargePreviewStyleForViewport();
+				},
+				// Wait for .pattern-large-preview transition
+				205
+			);
+		}
+	}, [ navigator.location ] );
+
+	// Update viewport height on device switch
+	useEffect( () => {
+		setTimeout(
+			updateViewportHeight,
+			// Wait for device switch transition
+			205
+		);
+	}, [ device ] );
+
+	// Update viewport styles after window resize
+	useEffect( () => {
+		setLargePreviewStyleForViewport();
+	}, [ viewportHeight ] );
+
+	// Scroll to newly added patterns
 	useEffect( () => {
 		let timerId: number;
 		const scrollIntoView = () => {
@@ -169,12 +222,13 @@ const PatternLargePreview = ( {
 		};
 	}, [ activePosition, header, sections, footer ] );
 
+	// Update viewport height on window resize
 	useEffect( () => {
 		const handleResize = () => updateViewportHeight();
-		window.addEventListener( 'resize', handleResize );
+		window.addEventListener( 'resize', handleResize, true );
 
 		return () => window.removeEventListener( 'resize', handleResize );
-	} );
+	}, [] );
 
 	// Delay updating the styles to make the transition smooth
 	// See https://github.com/Automattic/wp-calypso/pull/74033#issuecomment-1453056703
@@ -193,11 +247,7 @@ const PatternLargePreview = ( {
 			frameRef={ frameRef }
 			onDeviceChange={ ( device ) => {
 				recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PREVIEW_DEVICE_CLICK, { device } );
-				// Wait for the animation to end in 200ms
-				window.setTimeout( () => {
-					setDevice( device );
-					updateViewportHeight();
-				}, 205 );
+				setDevice( device );
 			} }
 		>
 			{ hasSelectedPattern ? (
