@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import ActionPanel from 'calypso/components/action-panel';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -11,9 +12,11 @@ import { ResponseDomain } from 'calypso/lib/domains/types';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PendingDomainTransfer from './pending-domain-transfer';
+import SiteOwnerTransferEligibility from './site-owner-user-search';
 import StartSiteOwnerTransfer from './start-site-owner-transfer';
 
 const ActionPanelStyled = styled( ActionPanel )`
+	font-size: 14px;
 	.action-panel__body {
 		color: var( --studio-gray-70 );
 	}
@@ -21,6 +24,7 @@ const ActionPanelStyled = styled( ActionPanel )`
 
 const SiteOwnerTransfer = () => {
 	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
+	const [ newSiteOwner, setNewSiteOwner ] = useState( '' );
 
 	const translate = useTranslate();
 	const nonWpcomDomains = useSelector( ( state ) =>
@@ -57,7 +61,15 @@ const SiteOwnerTransfer = () => {
 			</HeaderCake>
 			<ActionPanelStyled>
 				{ pendingDomain && <PendingDomainTransfer domain={ pendingDomain } /> }
-				{ ! pendingDomain && <StartSiteOwnerTransfer /> }
+				{ ! pendingDomain && ! newSiteOwner && (
+					<SiteOwnerTransferEligibility
+						siteId={ selectedSite.ID }
+						siteSlug={ selectedSite.slug }
+						siteOwner={ newSiteOwner }
+						onNewUserOwnerSubmit={ ( newOwner ) => setNewSiteOwner( newOwner ) }
+					/>
+				) }
+				{ ! pendingDomain && newSiteOwner && <StartSiteOwnerTransfer siteOwner={ newSiteOwner } /> }
 			</ActionPanelStyled>
 		</Main>
 	);
