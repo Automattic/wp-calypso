@@ -20,7 +20,7 @@ import 'calypso/state/themes/init';
  * Get the theme type.
  *
  * @param  {Object}  state   Global state tree
- * @param  {string}  siteId  Site ID
+ * @param  {number}  siteId  Site ID
  * @param  {string}  themeId Theme ID
  * @returns {boolean}         theme type
  */
