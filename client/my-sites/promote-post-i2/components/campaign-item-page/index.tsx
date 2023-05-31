@@ -17,9 +17,8 @@ interface Props {
 	campaignId: number;
 }
 
-export default function CampaignItemPage() {
-	// const { campaignId } = props;
-	const campaignId = 5901;
+export default function CampaignItemPage( props: Props ) {
+	const { campaignId } = props;
 
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
