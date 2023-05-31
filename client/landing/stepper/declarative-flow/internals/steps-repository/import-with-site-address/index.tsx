@@ -7,7 +7,7 @@ import { ImportWrapper } from '../import';
 import { generateStepPath } from '../import/helper';
 import type { Step } from '../../types';
 
-import '../import/style.scss';
+import './style.scss';
 
 const isEnabledImportLight = isEnabled( 'onboarding/import-light-url-screen' );
 
