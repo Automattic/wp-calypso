@@ -9,7 +9,7 @@ import {
 	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_ECOMMERCE_3_YEARS,
 	PLAN_ECOMMERCE_MONTHLY,
-	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	// PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	PLAN_FREE,
 	PLAN_JETPACK_BUSINESS,
@@ -17,7 +17,7 @@ import {
 	PLAN_JETPACK_COMPLETE,
 	PLAN_JETPACK_COMPLETE_MONTHLY,
 	PLAN_JETPACK_FREE,
-	// PLAN_JETPACK_GOLDEN_TOKEN,
+	PLAN_JETPACK_GOLDEN_TOKEN,
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_JETPACK_PREMIUM,
@@ -31,8 +31,8 @@ import {
 	PLAN_JETPACK_SECURITY_T1_BI_YEARLY,
 	PLAN_JETPACK_SECURITY_T2_MONTHLY,
 	PLAN_JETPACK_SECURITY_T2_YEARLY,
-	// PLAN_JETPACK_STARTER_MONTHLY,
-	// PLAN_JETPACK_STARTER_YEARLY,
+	PLAN_JETPACK_STARTER_MONTHLY,
+	PLAN_JETPACK_STARTER_YEARLY,
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
 	PLAN_PERSONAL_3_YEARS,
@@ -41,13 +41,12 @@ import {
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PREMIUM_3_YEARS,
 	PLAN_PREMIUM_MONTHLY,
-	PLAN_WPCOM_FLEXIBLE,
+	// PLAN_WPCOM_FLEXIBLE,
 	PLAN_WPCOM_STARTER,
 	PLAN_WPCOM_PRO,
 	PLAN_WPCOM_PRO_MONTHLY,
 	PLAN_WPCOM_PRO_2_YEARS,
 } from './constants';
-import { PLANS_LIST } from './plans-list';
 import type { PlanSlug } from './types';
 
 /**
@@ -66,17 +65,18 @@ export function getPlanCommissionFee( slug: PlanSlug | string | null ): number {
 		return defaultCommissionForAllSites * 100;
 	}
 
-	const plan = PLANS_LIST[ slug ];
-	console.log( 'getPlanCommissionFee:', slug, plan ); //eslint-disable-line no-console
+	interface commissionMap {
+		[ PlanSlug: string ]: number;
+	}
 
-	const commissionMap = {
+	const commissionMap: commissionMap = {
 		// Jetpack plans
 		[ PLAN_JETPACK_BUSINESS ]: 0.02,
 		[ PLAN_JETPACK_BUSINESS_MONTHLY ]: 0.02,
 		[ PLAN_JETPACK_COMPLETE ]: 0.02,
 		[ PLAN_JETPACK_COMPLETE_MONTHLY ]: 0.02,
 		[ PLAN_JETPACK_FREE ]: 0.1,
-		// [ PLAN_JETPACK_GOLDEN_TOKEN ]: 0,
+		[ PLAN_JETPACK_GOLDEN_TOKEN ]: 0,
 		[ PLAN_JETPACK_PERSONAL ]: 0.08,
 		[ PLAN_JETPACK_PERSONAL_MONTHLY ]: 0.08,
 		[ PLAN_JETPACK_PREMIUM ]: 0.04,
@@ -90,8 +90,8 @@ export function getPlanCommissionFee( slug: PlanSlug | string | null ): number {
 		[ PLAN_JETPACK_SECURITY_T1_BI_YEARLY ]: 0.02,
 		[ PLAN_JETPACK_SECURITY_T2_MONTHLY ]: 0.02,
 		[ PLAN_JETPACK_SECURITY_T2_YEARLY ]: 0.02,
-		// [ PLAN_JETPACK_STARTER_MONTHLY ]: 0,
-		// [ PLAN_JETPACK_STARTER_YEARLY ]: 0,
+		[ PLAN_JETPACK_STARTER_MONTHLY ]: 0.08,
+		[ PLAN_JETPACK_STARTER_YEARLY ]: 0.08,
 
 		// WordPress.com plans
 		[ PLAN_BLOGGER ]: 0.1,
@@ -104,7 +104,7 @@ export function getPlanCommissionFee( slug: PlanSlug | string | null ): number {
 		[ PLAN_ECOMMERCE_2_YEARS ]: 0,
 		[ PLAN_ECOMMERCE_3_YEARS ]: 0,
 		[ PLAN_ECOMMERCE_MONTHLY ]: 0,
-		[ PLAN_ECOMMERCE_TRIAL_MONTHLY ]: 0,
+		// [ PLAN_ECOMMERCE_TRIAL_MONTHLY ]: , Not in backend yet see D112347-code
 		[ PLAN_ENTERPRISE_GRID_WPCOM ]: 0,
 		[ PLAN_FREE ]: 0.1,
 		[ PLAN_PERSONAL ]: 0.08,
@@ -115,18 +115,13 @@ export function getPlanCommissionFee( slug: PlanSlug | string | null ): number {
 		[ PLAN_PREMIUM_2_YEARS ]: 0.04,
 		[ PLAN_PREMIUM_3_YEARS ]: 0.04,
 		[ PLAN_PREMIUM_MONTHLY ]: 0.04,
-		[ PLAN_WPCOM_FLEXIBLE ]: 0.03,
+		// [ PLAN_WPCOM_FLEXIBLE ]: , // Not in backend yet see D112347-code
 		[ PLAN_WPCOM_STARTER ]: 0.03,
 		[ PLAN_WPCOM_PRO ]: 0.02,
 		[ PLAN_WPCOM_PRO_MONTHLY ]: 0.02,
 		[ PLAN_WPCOM_PRO_2_YEARS ]: 0.02,
 		[ PLAN_ENTERPRISE_GRID_WPCOM ]: 0,
 	};
-	console.log( 'commissionMap:', commissionMap ); //eslint-disable-line no-console
 
-	if ( plan ) {
-		return 0.02 * 100;
-	}
-
-	return defaultCommissionForAllSites * 100;
+	return slug in commissionMap ? commissionMap[ slug ] * 100 : defaultCommissionForAllSites * 100;
 }
