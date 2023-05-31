@@ -1216,6 +1216,7 @@ class SignupForm extends Component {
 							socialServiceResponse={ this.props.socialServiceResponse }
 							isReskinned={ this.props.isReskinned }
 							redirectToAfterLoginUrl={ this.props.redirectToAfterLoginUrl }
+							isDevAccount={ this.state.isDevAccount }
 						/>
 					) }
 					{ this.props.footerLink || this.footerLink() }
@@ -1259,6 +1260,7 @@ class SignupForm extends Component {
 							compact={ this.props.isWoo || isGravatarOAuth2Client( this.props.oauth2Client ) }
 							redirectToAfterLoginUrl={ this.props.redirectToAfterLoginUrl }
 							loginUrl={ this.props.loginUrl }
+							isDevAccount={ this.state.isDevAccount }
 						/>
 					</Fragment>
 				) }
