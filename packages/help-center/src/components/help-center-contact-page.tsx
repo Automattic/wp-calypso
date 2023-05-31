@@ -5,9 +5,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { Spinner, GMClosureNotice } from '@automattic/components';
-import { useSupportAvailability, useSupportActivity } from '@automattic/data-stores';
 import { isDefaultLocale, getLanguage, useLocale } from '@automattic/i18n-utils';
-import { useDispatch } from '@wordpress/data';
 import { useEffect, useMemo } from '@wordpress/element';
 import { hasTranslation, sprintf } from '@wordpress/i18n';
 import { comment, Icon } from '@wordpress/icons';
@@ -22,12 +20,13 @@ import { getSectionName } from 'calypso/state/ui/selectors';
  */
 import { BackButton } from '..';
 import {
+	useChatStatus,
 	useShouldRenderChatOption,
 	useShouldRenderEmailOption,
 	useStillNeedHelpURL,
+	useZendeskMessaging,
 } from '../hooks';
 import { Mail, Forum } from '../icons';
-import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterActiveTicketNotice } from './help-center-notice';
 
 const ConditionalLink: FC< { active: boolean } & LinkProps > = ( { active, ...props } ) => {
@@ -42,11 +41,24 @@ export const HelpCenterContactPage: FC = () => {
 	const locale = useLocale();
 
 	const renderEmail = useShouldRenderEmailOption();
-	const renderChat = useShouldRenderChatOption();
-	const { data: supportActivity, isLoading: isLoadingSupportActivity } = useSupportActivity();
-	const { data: supportAvailability } = useSupportAvailability( 'CHAT' );
-	const isLoading = renderChat.isLoading || renderEmail.isLoading || isLoadingSupportActivity;
-	const { setShowMessagingChat } = useDispatch( HELP_CENTER_STORE );
+	const {
+		hasActiveChats,
+		isChatAvailable,
+		isEligibleForChat,
+		isLoading: isLoadingChatStatus,
+		supportActivity,
+		supportLevel,
+	} = useChatStatus();
+	useZendeskMessaging(
+		'zendesk_support_chat_key',
+		isEligibleForChat || hasActiveChats,
+		isEligibleForChat || hasActiveChats
+	);
+	const renderChat = useShouldRenderChatOption(
+		isChatAvailable || hasActiveChats,
+		isEligibleForChat
+	);
+	const isLoading = renderEmail.isLoading || isLoadingChatStatus;
 
 	useEffect( () => {
 		if ( isLoading ) {
@@ -59,12 +71,6 @@ export const HelpCenterContactPage: FC = () => {
 			email_available: renderEmail.render,
 		} );
 	}, [ isLoading, renderChat.state, renderEmail.render ] );
-
-	const openChatIfOngoing = () => {
-		if ( renderChat.state === 'AVAILABLE' && renderChat.hasActiveChats ) {
-			setShowMessagingChat();
-		}
-	};
 
 	const liveChatHeaderText = useMemo( () => {
 		if ( isDefaultLocale( locale ) || ! hasTranslation( 'Live chat (English)' ) ) {
@@ -117,9 +123,7 @@ export const HelpCenterContactPage: FC = () => {
 		);
 	}
 
-	const hasAccessToLivechat = ! [ 'free', 'personal', 'starter' ].includes(
-		supportAvailability?.supportLevel || ''
-	);
+	const hasAccessToLivechat = ! [ 'free', 'personal', 'starter' ].includes( supportLevel || '' );
 
 	return (
 		<div className="help-center-contact-page">
@@ -156,7 +160,6 @@ export const HelpCenterContactPage: FC = () => {
 						<div className={ classnames( { disabled: renderChat.state !== 'AVAILABLE' } ) }>
 							<ConditionalLink
 								active={ renderChat.state === 'AVAILABLE' }
-								onClick={ openChatIfOngoing }
 								to="/contact-form?mode=CHAT"
 							>
 								<div
@@ -186,9 +189,7 @@ export const HelpCenterContactPage: FC = () => {
 						<Link
 							// set overflow flag when chat is not available nor closed, and the user is eligible to chat, but still sends a support ticket
 							to={ `/contact-form?mode=EMAIL&overflow=${ (
-								renderChat.eligible &&
-								renderChat.state !== 'CLOSED' &&
-								renderChat.state !== 'AVAILABLE'
+								renderChat.eligible && renderChat.state !== 'AVAILABLE'
 							).toString() }` }
 						>
 							<div

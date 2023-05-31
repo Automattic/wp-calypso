@@ -2,8 +2,6 @@
 /**
  * External Dependencies
  */
-import config from '@automattic/calypso-config';
-import { loadScript } from '@automattic/load-script';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { createPortal, useEffect, useRef } from '@wordpress/element';
 import { useSelector } from 'react-redux';
@@ -12,77 +10,42 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
  */
-import { useChat, useStillNeedHelpURL } from '../hooks';
+import { useChatStatus, useZendeskMessaging, useStillNeedHelpURL } from '../hooks';
 import { HELP_CENTER_STORE, USER_STORE, SITE_STORE } from '../stores';
 import { Container } from '../types';
 import HelpCenterContainer from './help-center-container';
 import type { SiteSelect, UserSelect, HelpCenterSelect } from '@automattic/data-stores';
 import '../styles.scss';
 
-const ZENDESK_SCRIPT_ID = 'ze-snippet';
+function useMessagingBindings( hasActiveChats: boolean, isMessagingScriptLoaded: boolean ) {
+	const { setShowMessagingLauncher, setShowMessagingWidget } = useDispatch( HELP_CENTER_STORE );
+	const { showMessagingLauncher, showMessagingWidget } = useSelect( ( select ) => {
+		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
+		return {
+			showMessagingLauncher: helpCenterSelect.isMessagingLauncherShown(),
+			showMessagingWidget: helpCenterSelect.isMessagingWidgetShown(),
+		};
+	}, [] );
 
-function useMessagingWidget( hasActiveChats: boolean, isEligibleForChat: boolean ) {
-	const { setMessagingScriptLoaded, setShowMessagingLauncher, setShowMessagingWidget } =
-		useDispatch( HELP_CENTER_STORE );
-	const { isMessagingScriptLoaded, showMessagingLauncher, showMessagingWidget } = useSelect(
-		( select ) => {
-			const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
-			return {
-				isMessagingScriptLoaded: helpCenterSelect.isMessagingScriptLoaded(),
-				showMessagingLauncher: helpCenterSelect.isMessagingLauncherShown(),
-				showMessagingWidget: helpCenterSelect.isMessagingWidgetShown(),
-			};
-		},
-		[]
-	);
-
-	const zendeskKey: string = config( 'zendesk_support_chat_key' );
 	useEffect( () => {
-		if ( ! isEligibleForChat ) {
+		if ( typeof window.zE !== 'function' || ! isMessagingScriptLoaded ) {
 			return;
 		}
 
-		if ( document.getElementById( ZENDESK_SCRIPT_ID ) ) {
-			return;
-		}
+		window.zE( 'messenger', 'hide' );
 
-		function setUpMessagingEventHandlers( retryCount = 0 ) {
-			if ( typeof window.zE !== 'function' ) {
-				if ( retryCount < 5 ) {
-					setTimeout( setUpMessagingEventHandlers, 250, ++retryCount );
-				}
-				return;
+		window.zE( 'messenger:on', 'open', function () {
+			setShowMessagingWidget( true );
+		} );
+		window.zE( 'messenger:on', 'close', function () {
+			setShowMessagingWidget( false );
+		} );
+		window.zE( 'messenger:on', 'unreadMessages', function ( count ) {
+			if ( Number( count ) > 0 ) {
+				setShowMessagingLauncher( true );
 			}
-
-			setMessagingScriptLoaded( true );
-
-			window.zE( 'messenger', 'hide' );
-
-			window.zE( 'messenger:on', 'open', function () {
-				setShowMessagingWidget( true );
-			} );
-			window.zE( 'messenger:on', 'close', function () {
-				setShowMessagingWidget( false );
-			} );
-			window.zE( 'messenger:on', 'unreadMessages', function ( count ) {
-				if ( Number( count ) > 0 ) {
-					setShowMessagingLauncher( true );
-				}
-			} );
-		}
-
-		loadScript(
-			'https://static.zdassets.com/ekr/snippet.js?key=' + encodeURIComponent( zendeskKey ),
-			setUpMessagingEventHandlers,
-			{ id: ZENDESK_SCRIPT_ID }
-		);
-	}, [
-		setMessagingScriptLoaded,
-		setShowMessagingLauncher,
-		setShowMessagingWidget,
-		isEligibleForChat,
-		zendeskKey,
-	] );
+		} );
+	}, [ isMessagingScriptLoaded, setShowMessagingLauncher, setShowMessagingWidget ] );
 
 	useEffect( () => {
 		if ( typeof window.zE !== 'function' || ! isMessagingScriptLoaded ) {
@@ -125,8 +88,14 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 	setSite( currentSite ? currentSite : site );
 
 	useStillNeedHelpURL();
-	const { hasActiveChats, isEligibleForChat } = useChat( false, true );
-	useMessagingWidget( hasActiveChats, isEligibleForChat );
+
+	const { hasActiveChats, isEligibleForChat } = useChatStatus( 'wpcom_messaging', false );
+	const { isMessagingScriptLoaded } = useZendeskMessaging(
+		'zendesk_support_chat_key',
+		isEligibleForChat || hasActiveChats,
+		isEligibleForChat && hasActiveChats
+	);
+	useMessagingBindings( hasActiveChats, isMessagingScriptLoaded );
 
 	useEffect( () => {
 		const classes = [ 'help-center' ];

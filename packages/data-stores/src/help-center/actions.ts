@@ -99,12 +99,6 @@ export const setMessage = ( message: string ) =>
 		message,
 	} as const );
 
-export const setMessagingScriptLoaded = ( isLoaded: boolean ) =>
-	( {
-		type: 'HELP_CENTER_SET_MESSAGING_SCRIPT_LOADED',
-		isLoaded,
-	} as const );
-
 export const setChatTag = ( chatTag: string ) =>
 	( {
 		type: 'HELP_CENTER_SET_CHAT_TAG',
@@ -162,7 +156,6 @@ export type HelpCenterAction =
 			| typeof resetStore
 			| typeof receiveHasSeenWhatsNewModal
 			| typeof setMessage
-			| typeof setMessagingScriptLoaded
 			| typeof setChatTag
 			| typeof setUserDeclaredSite
 			| typeof setUserDeclaredSiteUrl

@@ -5,7 +5,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { getPlan, getPlanTermLabel, isFreePlanProduct } from '@automattic/calypso-products';
-import { FormInputValidation, Popover } from '@automattic/components';
+import { FormInputValidation, Popover, Spinner } from '@automattic/components';
 import {
 	useSubmitTicketMutation,
 	useSubmitForumsMutation,
@@ -15,7 +15,6 @@ import {
 	SiteDetails,
 	HelpCenterSite,
 	useJetpackSearchAIQuery,
-	useSupportAvailability,
 } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { useQueryClient } from '@tanstack/react-query';
@@ -35,7 +34,7 @@ import { getSectionName } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
  */
-import { useZendeskConfig, useContactFormTitle, useChatWidget } from '../hooks';
+import { useChatStatus, useContactFormTitle, useChatWidget, useZendeskMessaging } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 import { getSupportVariationFromMode } from '../support-variations';
 import { BackButton } from './back-button';
@@ -116,11 +115,20 @@ export const HelpCenterContactForm = () => {
 		};
 	}, [] );
 
-	const { setSite, resetStore, setUserDeclaredSite, setSubject, setMessage } =
+	const { setSite, resetStore, setUserDeclaredSite, setShowMessagingChat, setSubject, setMessage } =
 		useDispatch( HELP_CENTER_STORE );
 
-	const { data: chatStatus } = useSupportAvailability( 'CHAT' );
-	const { status: zendeskStatus } = useZendeskConfig( Boolean( chatStatus?.is_user_eligible ) );
+	const {
+		canConnectToZendesk,
+		hasActiveChats,
+		isEligibleForChat,
+		isLoading: isLoadingChatStatus,
+	} = useChatStatus();
+	useZendeskMessaging(
+		'zendesk_support_chat_key',
+		isEligibleForChat || hasActiveChats,
+		isEligibleForChat || hasActiveChats
+	);
 
 	useEffect( () => {
 		const supportVariation = getSupportVariationFromMode( mode );
@@ -491,7 +499,19 @@ export const HelpCenterContactForm = () => {
 		return isSubmitting ? formTitles.buttonSubmittingLabel : formTitles.buttonLabel;
 	};
 
-	if ( mode === 'CHAT' && zendeskStatus === 'error' ) {
+	if ( hasActiveChats ) {
+		setShowMessagingChat( true );
+	}
+
+	if ( isLoadingChatStatus ) {
+		return (
+			<div className="help-center-contact-form__loading">
+				<Spinner baseClassName="" />
+			</div>
+		);
+	}
+
+	if ( mode === 'CHAT' && ! canConnectToZendesk ) {
 		return <ThirdPartyCookiesNotice />;
 	}
 
