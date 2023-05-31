@@ -41,8 +41,8 @@ const SiteOwnerTransferEligibility = ( {
 			onMutate: () => {
 				setSiteTransferEligibilityError( '' );
 			},
-			onError: () => {
-				setSiteTransferEligibilityError( translate( 'User not found' ) );
+			onError: ( e ) => {
+				setSiteTransferEligibilityError( e.message );
 			},
 			onSuccess: () => {
 				onNewUserOwnerSubmit?.( tempSiteOwner || '' );
@@ -65,7 +65,7 @@ const SiteOwnerTransferEligibility = ( {
 		<form onSubmit={ handleFormSubmit }>
 			<p>
 				{ translate(
-					'Please, enter the username or email address of the registered WordPress.com user that you want to transfer ownership of %(siteSlug)s to:',
+					'Please enter the username or email address of the registered WordPress.com user that you want to transfer ownership of %(siteSlug)s to:',
 					{
 						args: { siteSlug: selectedSiteSlug },
 					}
@@ -88,13 +88,10 @@ const SiteOwnerTransferEligibility = ( {
 			<Button
 				busy={ isCheckingSiteTransferEligibility }
 				primary
-				onClick={ () => {
-					false;
-				} }
 				disabled={ ! tempSiteOwner || isCheckingSiteTransferEligibility }
 				type="submit"
 			>
-				{ translate( 'Switch user and continue' ) }
+				{ translate( 'Search user and continue' ) }
 			</Button>
 		</form>
 	);
