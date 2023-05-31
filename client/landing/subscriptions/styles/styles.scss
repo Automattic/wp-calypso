@@ -53,7 +53,7 @@ body {
 			flex-wrap: wrap;
 
 			.search-component {
-				min-width: 300px;
+				min-width: min(400px, 100%);
 				flex: 1;
 			}
 
