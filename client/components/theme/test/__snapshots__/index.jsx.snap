@@ -39,12 +39,8 @@ exports[`Theme rendering with default display buttonContents should match snapsh
         </span>
       </h2>
       <div
-        class="theme-card__info-pricing"
-      >
-        <span>
-          Free
-        </span>
-      </div>
+        class="theme-type-badge"
+      />
       <div
         class="theme-card__info-options"
       >
