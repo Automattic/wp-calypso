@@ -41,9 +41,13 @@ exports[`Theme rendering with default display buttonContents should match snapsh
       <div
         class="theme-card__info-pricing"
       >
-        <span>
-          Free
-        </span>
+        <a
+          href="/pricing"
+        >
+          <span>
+            Free
+          </span>
+        </a>
       </div>
       <div
         class="theme-card__info-options"
