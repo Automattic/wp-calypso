@@ -36,7 +36,6 @@ import './style.scss';
 interface ConnectedProps {
 	siteId: number;
 	selectedSiteSlug: SiteSlug | null;
-	siteIntent: string;
 	isNonAtomicJetpack: boolean;
 	isLoading: boolean;
 	hasSimplePayments: boolean;
@@ -522,7 +521,6 @@ export default connect(
 		const siteId = getSelectedSiteId( state ) ?? 0;
 		const selectedSiteSlug = getSelectedSiteSlug( state );
 		const site = getSiteBySlug( state, selectedSiteSlug );
-		const siteIntent = site?.options?.site_intent ?? '';
 
 		const hasConnectedAccount =
 			state?.memberships?.settings?.[ siteId ]?.connectedAccountId ?? null;
@@ -533,7 +531,6 @@ export default connect(
 		return {
 			siteId,
 			selectedSiteSlug,
-			siteIntent,
 			isNonAtomicJetpack: Boolean( isJetpack && ! isSiteAutomatedTransfer( state, siteId ) ),
 			isUserAdmin: canCurrentUser( state, siteId, 'manage_options' ),
 			hasWordAdsFeature,

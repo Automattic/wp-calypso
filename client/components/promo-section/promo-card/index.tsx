@@ -31,7 +31,6 @@ export interface Props {
 	titleComponent?: ReactElement;
 	titleComponentLocation?: TitleLocation;
 	isPrimary?: boolean;
-	isLaunchpad?: boolean;
 	badge?: string | ReactElement;
 	className?: string;
 }
