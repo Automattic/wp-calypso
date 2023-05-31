@@ -3,11 +3,11 @@ import { useCallback } from 'react';
 import wp from 'calypso/lib/wp';
 
 export const useUpdateMediaMutation = ( queryOptions = {} ) => {
-	const mutation = useMutation(
-		( { siteId, mediaId, updates } ) =>
+	const mutation = useMutation( {
+		mutationFn: ( { siteId, mediaId, updates } ) =>
 			wp.req.post( `/sites/${ siteId }/media/${ mediaId }`, updates ),
-		queryOptions
-	);
+		...queryOptions,
+	} );
 
 	const { mutate } = mutation;
 
