@@ -6,6 +6,7 @@ import photon from 'photon';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
+import ThemeTypeBadge from 'calypso/components/theme-type-badge';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -316,6 +317,10 @@ export class Theme extends Component {
 		);
 	};
 
+	renderBadge = () => {
+		return <ThemeTypeBadge themeId={ this.props.theme.id } />;
+	};
+
 	render() {
 		const { selectedStyleVariation, theme } = this.props;
 		const { name, description, style_variations = [] } = theme;
@@ -334,6 +339,7 @@ export class Theme extends Component {
 				imageClickUrl={ this.props.screenshotClickUrl }
 				imageActionLabel={ this.props.actionLabel }
 				banner={ this.renderUpdateAlert() }
+				badge={ this.renderBadge() }
 				styleVariations={ style_variations }
 				selectedStyleVariation={ selectedStyleVariation }
 				optionsMenu={ this.renderMoreButton() }

@@ -3,7 +3,6 @@ import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { forwardRef, useMemo, useRef, useState } from 'react';
 import StyleVariationBadges from '../style-variation-badges';
-import ThemeTypeBadge from '../theme-type-badge';
 import type { StyleVariation } from '../../types';
 import type { Ref } from 'react';
 import './style.scss';
@@ -15,8 +14,8 @@ interface ThemeCardProps {
 	image: React.ReactNode;
 	imageClickUrl?: string;
 	imageActionLabel?: string;
-	badge?: React.ReactNode;
 	banner?: React.ReactNode;
+	badge: React.ReactNode;
 	styleVariations: StyleVariation[];
 	selectedStyleVariation?: StyleVariation;
 	optionsMenu?: React.ReactNode;
@@ -28,12 +27,6 @@ interface ThemeCardProps {
 	onImageClick?: () => void;
 	onStyleVariationClick?: ( styleVariation: StyleVariation ) => void;
 	onStyleVariationMoreClick?: () => void;
-	id?: string;
-	type?: string;
-	isPurchased?: boolean;
-	canUseTheme?: boolean;
-	subscriptionPrices?: { year?: string; month?: string };
-	siteSlug?: string;
 }
 
 const ThemeCard = forwardRef(
@@ -58,12 +51,6 @@ const ThemeCard = forwardRef(
 			onImageClick,
 			onStyleVariationClick,
 			onStyleVariationMoreClick,
-			id,
-			type,
-			isPurchased,
-			canUseTheme,
-			subscriptionPrices,
-			siteSlug,
 		}: ThemeCardProps,
 		forwardedRef: Ref< any > // eslint-disable-line @typescript-eslint/no-explicit-any
 	) => {
@@ -153,17 +140,7 @@ const ThemeCard = forwardRef(
 								/>
 							</div>
 						) }
-						{ ! isActive && badge && <div className="theme-card__info-pricing">{ badge }</div> }
-						{ ! isActive && ! badge && (
-							<ThemeTypeBadge
-								id={ id }
-								type={ type }
-								isPurchased={ isPurchased }
-								canUseTheme={ canUseTheme }
-								subscriptionPrices={ subscriptionPrices }
-								siteSlug={ siteSlug }
-							/>
-						) }
+						{ ! isActive && <>{ badge }</> }
 						{ optionsMenu && <div className="theme-card__info-options">{ optionsMenu }</div> }
 					</div>
 				</div>
