@@ -12,7 +12,6 @@ export interface PromoSectionCardProps extends PromoCardProps {
 
 export interface Props {
 	header?: PromoSectionCardProps;
-	launchpad?: PromoSectionCardProps | null;
 	promos: PromoSectionCardProps[];
 }
 
