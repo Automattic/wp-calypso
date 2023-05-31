@@ -62,7 +62,7 @@ export default function useSubscribersQuery(
 	quantity: number,
 	date?: Date
 ) {
-	const queryDate = date.toISOString();
+	const queryDate = date ? date.toISOString() : new Date().toISOString();
 
 	// TODO: Account for other query parameters before release.
 	return useQuery( {
