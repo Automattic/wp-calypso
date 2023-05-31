@@ -1,4 +1,5 @@
 @use "sass:math";
+@import "@wordpress/base-styles/colors";
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/typography/styles/variables";
 @import "@automattic/components/src/styles/typography";
@@ -56,6 +57,19 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 	display: flex;
 	align-items: center;
 
+	.highlight-cards-heading__description {
+		display: flex;
+		align-items: flex-end;
+		height: 31px;
+		margin-left: 12px;
+		font-family: $font-sf-pro-text;
+		font-weight: 400;
+		font-size: $font-body-small;
+		color: var(--studio-gray-60);
+		line-height: 20px;
+		letter-spacing: -0.15px;
+	}
+
 	.highlight-cards-heading__tooltip {
 		margin-left: 6px;
 	}
@@ -68,6 +82,15 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 		width: 24px;
 		height: 24px;
 		cursor: pointer;
+
+		&:focus {
+			outline: 2px solid #3057dc;
+			border-radius: 2px;
+		}
+
+		svg {
+			fill: $gray-900;
+		}
 	}
 
 	small {
@@ -83,7 +106,7 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 	}
 
 	svg {
-		fill: var(--studio-gray-50);
+		fill: var(--studio-gray-30);
 	}
 }
 
