@@ -183,9 +183,7 @@ const GlobalStylesVariations = ( {
 					<div className="global-styles-variations__type">
 						<div className="global-styles-variations__header">
 							<h2> { translate( 'Premium styles' ) } </h2>
-							<div>
-								<p>{ premiumStylesDescription }</p>
-							</div>
+							<p>{ premiumStylesDescription }</p>
 						</div>
 						<div className="global-styles-variations">{ premiumStyles }</div>
 					</div>
