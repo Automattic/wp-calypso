@@ -61,7 +61,6 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 		display: flex;
 		align-items: flex-end;
 		height: 31px;
-		margin-left: 12px;
 		font-family: $font-sf-pro-text;
 		font-weight: 400;
 		font-size: $font-body-small;
@@ -99,6 +98,7 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 		line-height: 1.5;
 		color: var(--studio-gray-50);
 		font-weight: 400;
+		margin-left: 12px;
 
 		@media ( max-width: $break-mobile ) {
 			display: block;
