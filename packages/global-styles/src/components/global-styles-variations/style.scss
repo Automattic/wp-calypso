@@ -4,7 +4,7 @@
 .global-styles-variations__container {
 	display: flex;
 	gap: 12px;
-	flex-direction: column;
+	flex-direction: row;
 	@include break-xlarge {
 		flex-direction: column;
 	}
@@ -43,6 +43,7 @@
 	margin-left: 3px;
 	color: var(--studio-gray-50);
 
+
 	.global-styles-variations__free-badge {
 		display: none;
 	}
@@ -71,6 +72,11 @@
 	padding: 6px 0 6px 0;
 	line-height: 20px;
 	margin: 0;
+
+	display: none;
+	@include break-xlarge {
+		display: block;
+	}
 }
 
 .global-styles-variations__free-badge {

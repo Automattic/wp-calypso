@@ -144,7 +144,11 @@ const GlobalStylesVariations = ( {
 	return (
 		<GlobalStylesContext.Provider value={ { base: baseGlobalStyles } }>
 			<div className="global-styles-variations__container">
-				<div className="global-styles-variations__type">
+				<div
+					className={ classnames( 'global-styles-variations__type', {
+						'combined-variations': ! splitPremiumVariations,
+					} ) }
+				>
 					<div className="global-styles-variations__header">
 						<h2>
 							{ headerText }
