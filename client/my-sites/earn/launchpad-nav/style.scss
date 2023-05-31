@@ -1,0 +1,19 @@
+.promo-card.earn__launchpad-nav {
+	padding-left: 40px;
+	padding-right: 40px;
+	padding-top: 18px;
+	padding-bottom: 14px;
+	.action-panel__body {
+		flex-direction: row;
+		justify-content: space-between;
+	}
+	p {
+		display: none;
+	}
+	.action-panel__title {
+		align-items: center;
+	}
+	.action-panel__cta {
+		padding-top: 0;
+	}
+}

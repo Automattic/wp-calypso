@@ -5,7 +5,7 @@ import type { Props as PromoCardCtaProps } from './promo-card/cta';
 import type { TranslateResult } from 'i18n-calypso';
 import type { FunctionComponent } from 'react';
 
-interface PromoSectionCardProps extends PromoCardProps {
+export interface PromoSectionCardProps extends PromoCardProps {
 	body: string | TranslateResult;
 	actions?: PromoCardCtaProps;
 }
@@ -18,15 +18,15 @@ export interface Props {
 
 import './style.scss';
 
-const PromoSectionCard: FunctionComponent< PromoSectionCardProps > = ( {
+export const PromoSectionCard: FunctionComponent< PromoSectionCardProps > = ( {
 	isPrimary,
-	isLaunchpad,
 	title,
 	image,
 	icon,
 	body,
 	badge,
 	actions,
+	className = '',
 } ) => {
 	const cta = actions?.cta;
 	const learnMoreLink = actions?.learnMoreLink;
@@ -43,11 +43,11 @@ const PromoSectionCard: FunctionComponent< PromoSectionCardProps > = ( {
 	return (
 		<PromoCard
 			isPrimary={ !! isPrimary }
-			isLaunchpad={ !! isLaunchpad }
 			title={ title }
 			image={ image }
 			badge={ badge }
 			icon={ icon }
+			className={ className }
 		>
 			<p>{ body }</p>
 			{ ctaComponent }
@@ -55,10 +55,9 @@ const PromoSectionCard: FunctionComponent< PromoSectionCardProps > = ( {
 	);
 };
 
-const PromoSection: FunctionComponent< Props > = ( { header, launchpad, promos } ) => {
+const PromoSection: FunctionComponent< Props > = ( { header, promos } ) => {
 	return (
 		<div className="promo-section">
-			{ launchpad && <PromoSectionCard isPrimary={ true } isLaunchpad={ true } { ...launchpad } /> }
 			{ header && <PromoSectionCard isPrimary={ true } { ...header } /> }
 			<div className="promo-section__promos">
 				{ promos.map( ( promo, i ) => (

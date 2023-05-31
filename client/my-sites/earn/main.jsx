@@ -24,6 +24,7 @@ import {
 } from 'calypso/state/ui/selectors';
 import AdsWrapper from './ads/wrapper';
 import Home from './home';
+import LaunchpadNav from './launchpad-nav';
 import MembershipsSection from './memberships';
 import MembershipsProductsSection from './memberships/products';
 import ReferAFriendSection from './refer-a-friend';
@@ -34,6 +35,13 @@ class EarningsMain extends Component {
 		site: PropTypes.object,
 		query: PropTypes.object,
 	};
+
+	showLaunchpadNav() {
+		const isLaunchpadEnabled = this.props.site.options.launchpad_screen;
+		const isNewsletter = this.props.site.options.site_intent === 'newsletter';
+
+		return isLaunchpadEnabled && isNewsletter;
+	}
 
 	getSelectedText() {
 		const selected = find( this.getFilters(), { path: this.props.path } );
@@ -186,7 +194,7 @@ class EarningsMain extends Component {
 	};
 
 	render() {
-		const { adsProgramName, section, translate } = this.props;
+		const { adsProgramName, section, translate, siteSlug, site } = this.props;
 		const component = this.getComponent( this.props.section );
 
 		const layoutTitles = {
@@ -219,6 +227,9 @@ class EarningsMain extends Component {
 					align="left"
 				/>
 				{ this.getHeaderCake() }
+				{ this.showLaunchpadNav() && (
+					<LaunchpadNav siteSlug={ siteSlug } siteIntent={ site.options.site_intent } />
+				) }
 				{ section && this.getSectionNav( section ) }
 				{ component }
 			</Main>

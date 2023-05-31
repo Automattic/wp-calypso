@@ -45,16 +45,14 @@ const PromoCard: FunctionComponent< Props > = ( {
 	icon,
 	image,
 	isPrimary,
-	isLaunchpad,
 	children,
 	badge,
-	className,
+	className = '',
 } ) => {
 	const classes = classNames(
 		{
 			'promo-card': true,
 			'is-primary': isPrimary,
-			'is-launchpad': isLaunchpad,
 		},
 		className
 	);
