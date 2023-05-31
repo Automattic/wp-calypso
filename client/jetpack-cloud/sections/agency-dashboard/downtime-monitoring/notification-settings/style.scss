@@ -29,18 +29,11 @@
 .notification-settings__bulk-edit-warning {
 	border-left: 4px solid var(--alert-yellow);
 	padding: 12px;
-	padding-left: 0;
 	background-color: var(--alert-yellow-light);
-	.notification-settings__bulk-edit-warning-block {
-		.notification-settings__bulk-edit-warning-content {
-			padding-left: 12px;
-			font-weight: 400;
-			font-size: 0.75rem;
-			line-height: 24px;
-		}
-	}
-}
+	font-weight: 400;
+	font-size: 0.75rem;
 
+}
 .notification-settings__content {
 	margin-block-start: -16px;
 }

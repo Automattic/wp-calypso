@@ -207,11 +207,7 @@ export default function NotificationSettings( {
 
 			{ isBulkUpdate ? (
 				<div className="notification-settings__bulk-edit-warning">
-					<div className="notification-settings__bulk-edit-warning-block">
-						<div className="notification-settings__bulk-edit-warning-content">
-							{ translate( 'Settings for selected sites will be overwritten.' ) }
-						</div>
-					</div>
+					{ translate( 'Settings for selected sites will be overwritten.' ) }
 				</div>
 			) : null }
 
