@@ -33,7 +33,7 @@ describe( 'Theme', () => {
 		translate: ( string ) => string,
 		setThemesBookmark: () => {},
 		onScreenshotClick: () => {},
-		isPremiumTheme: true,
+		type: 'premium',
 	};
 
 	function renderWithState( content ) {
@@ -47,7 +47,7 @@ describe( 'Theme', () => {
 	describe( 'Premium theme popover', () => {
 		test( 'Free site', async () => {
 			const { container } = renderWithState( <Theme { ...props } /> );
-			const popoverTrigger = container.getElementsByClassName( 'theme__upsell-popover' )[ 0 ];
+			const popoverTrigger = container.getElementsByClassName( 'theme-type-badge__content' )[ 0 ];
 			await userEvent.hover( popoverTrigger );
 
 			expect( screen.queryByTestId( 'upsell-header' ) ).toBeDefined();
@@ -58,10 +58,8 @@ describe( 'Theme', () => {
 		} );
 
 		test( 'Premium site', async () => {
-			const { container } = renderWithState(
-				<Theme { ...props } hasPremiumThemesFeature={ () => true } />
-			);
-			const popoverTrigger = container.getElementsByClassName( 'theme__upsell-popover' )[ 0 ];
+			const { container } = renderWithState( <Theme { ...props } canUseTheme={ true } /> );
+			const popoverTrigger = container.getElementsByClassName( 'theme-type-badge__content' )[ 0 ];
 			await userEvent.hover( popoverTrigger );
 
 			expect( screen.queryByTestId( 'upsell-header' ) ).toBeDefined();
@@ -73,7 +71,7 @@ describe( 'Theme', () => {
 
 		test( 'Purchased a premium theme', async () => {
 			const { container } = renderWithState( <Theme { ...props } didPurchaseTheme={ true } /> );
-			const popoverTrigger = container.getElementsByClassName( 'theme__upsell-popover' )[ 0 ];
+			const popoverTrigger = container.getElementsByClassName( 'theme-type-badge__content' )[ 0 ];
 			await userEvent.hover( popoverTrigger );
 
 			expect( screen.queryByTestId( 'upsell-header' ) ).toBeDefined();
