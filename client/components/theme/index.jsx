@@ -1,4 +1,8 @@
-import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
+import {
+	PLAN_BUSINESS,
+	PLAN_ECOMMERCE,
+	WPCOM_FEATURES_PREMIUM_THEMES,
+} from '@automattic/calypso-products';
 import { Card, Button, Gridicon } from '@automattic/components';
 import {
 	DesignPreviewImage,
@@ -293,6 +297,19 @@ export class Theme extends Component {
 		}
 	};
 
+	getThemePriceUrl = ( plan = '' ) => {
+		const { siteSlug } = this.props;
+		const base = siteSlug ? `/plans/${ encodeURIComponent( siteSlug ) }` : '/pricing';
+
+		const params = new URLSearchParams();
+		if ( siteSlug && plan.length > 0 ) {
+			params.append( 'plan', plan );
+		}
+
+		const paramsString = params.toString().length ? `?${ params.toString() }` : '';
+		return `${ base }${ paramsString }`;
+	};
+
 	parseThemePrice = ( price ) => {
 		/*
 		theme.price on "Recommended" themes tab
@@ -510,7 +527,8 @@ export class Theme extends Component {
 	};
 
 	renderUpsell = () => {
-		const { theme } = this.props;
+		const { doesThemeBundleSoftwareSet, theme } = this.props;
+		const themePlan = doesThemeBundleSoftwareSet ? PLAN_ECOMMERCE : PLAN_BUSINESS;
 
 		return (
 			<>
@@ -518,7 +536,7 @@ export class Theme extends Component {
 					eventName="calypso_upgrade_nudge_impression"
 					eventProperties={ { cta_name: 'theme-upsell', theme: theme.id } }
 				/>
-				{ this.getPremiumThemeBadge() }
+				<a href={ this.getThemePriceUrl( themePlan ) }>{ this.getPremiumThemeBadge() }</a>
 			</>
 		);
 	};
@@ -534,7 +552,11 @@ export class Theme extends Component {
 			return this.renderUpsell();
 		}
 
-		return <span>{ translate( 'Free' ) }</span>;
+		return (
+			<a href={ this.getThemePriceUrl() }>
+				<span>{ translate( 'Free' ) }</span>
+			</a>
+		);
 	};
 
 	renderMoreButton = () => {

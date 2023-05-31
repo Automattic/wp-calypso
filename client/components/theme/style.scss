@@ -55,6 +55,10 @@ $theme-info-height: 54px;
 
 	&.premium-badge.theme__marketplace-theme {
 		background: var(--color-primary);
+
+		svg:hover {
+			background: var(--color-primary);
+		}
 	}
 
 	&.popover.info-popover__tooltip {
