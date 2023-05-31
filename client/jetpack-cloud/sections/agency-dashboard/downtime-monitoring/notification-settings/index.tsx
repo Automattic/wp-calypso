@@ -282,7 +282,14 @@ export default function NotificationSettings( {
 							/>
 						</div>
 						<div className="notification-settings__toggle-content">
-							<div className="notification-settings__content-heading">{ translate( 'Email' ) }</div>
+							<div className="notification-settings__content-heading-with-beta">
+								<div className="notification-settings__content-heading">
+									{ translate( 'Email' ) }
+								</div>
+								{ isMultipleEmailEnabled && (
+									<div className="notification-settings__beta-tag">{ translate( 'BETA' ) }</div>
+								) }
+							</div>
 							{ isMultipleEmailEnabled ? (
 								<>
 									<div className="notification-settings__content-sub-heading">

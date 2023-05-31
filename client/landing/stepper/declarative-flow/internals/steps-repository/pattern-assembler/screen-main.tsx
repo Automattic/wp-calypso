@@ -18,7 +18,7 @@ import type { MouseEvent } from 'react';
 
 interface Props {
 	onSelect: ( name: string ) => void;
-	onContinueClick: () => void;
+	onContinueClick: ( callback?: () => void ) => void;
 	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
 }
 

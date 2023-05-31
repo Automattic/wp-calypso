@@ -830,7 +830,7 @@ function wpcomPages( app ) {
 	} );
 
 	app.get( [ '/subscriptions', '/subscriptions/*' ], function ( req, res, next ) {
-		if ( req.cookies.subkey || req.context.isLoggedIn ) {
+		if ( req.cookies.subkey || req.context.isLoggedIn || calypsoEnv !== 'production' ) {
 			// If the user is logged in, or has a subkey cookie, they are authorized to view the page
 			return next();
 		}

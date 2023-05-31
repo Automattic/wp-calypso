@@ -95,10 +95,6 @@ const importFlow: Flow = {
 		const handleMigrationRedirects = ( providedDependencies: ProvidedDependencies = {} ) => {
 			const userHasSite = sites && sites.length > 0;
 
-			// If there's any errors, we redirect them to the select/create a new site for a clean start
-			if ( providedDependencies?.hasError ) {
-				return userHasSite ? navigate( 'sitePicker' ) : navigate( 'siteCreationStep' );
-			}
 			if ( providedDependencies?.status === 'inactive' ) {
 				// This means they haven't kick off the migration before, so we send them to select/create a new site
 				if ( ! providedDependencies?.targetBlogId ) {

@@ -1,6 +1,7 @@
 @import "@automattic/color-studio/dist/color-variables";
 @import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
+@import "client/landing/subscriptions/styles/row-title-label";
 
 %ellipsis {
 	white-space: nowrap;
@@ -107,6 +108,14 @@
 
 					&:hover {
 						text-decoration: underline;
+					}
+
+					.p2-label {
+						@extend %p2-label;
+					}
+
+					.paid-label {
+						@extend %paid-label;
 					}
 				}
 

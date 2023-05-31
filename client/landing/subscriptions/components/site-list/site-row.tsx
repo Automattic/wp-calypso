@@ -2,6 +2,7 @@ import { Gridicon } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import TimeSince from 'calypso/components/time-since';
 import { SiteSettingsPopover } from '../settings';
 import { SiteIcon } from '../site-icon';
@@ -82,17 +83,26 @@ export default function SiteRow( {
 		SubscriptionManager.useSiteEmailMeNewCommentsMutation();
 	const { mutate: unsubscribe, isLoading: unsubscribing } =
 		SubscriptionManager.useSiteUnsubscribeMutation();
+
+	const navigate = useNavigate();
+
+	const individualPagePath = useMemo( () => {
+		return `/subscriptions/site/${ blog_ID }`;
+	}, [ blog_ID ] );
+
+	const navigateToIndividualSubscriptionPage = ( event: React.MouseEvent ) => {
+		event.preventDefault();
+		navigate( individualPagePath );
+	};
+
 	return (
 		<li className="row" role="row">
-			<a
-				{ ...( url && { href: url } ) }
-				rel="noreferrer noopener"
-				className="title-box"
-				target="_blank"
-			>
-				<span className="title-box" role="cell">
+			<span className="title-box" role="cell">
+				<a href={ individualPagePath } onClick={ navigateToIndividualSubscriptionPage }>
 					<SiteIcon iconUrl={ site_icon } size={ 48 } siteName={ name } />
-					<span className="title-column">
+				</a>
+				<span className="title-column">
+					<a href={ individualPagePath } onClick={ navigateToIndividualSubscriptionPage }>
 						<span className="name">
 							{ name }
 							{ !! is_wpforteams_site && <span className="p2-label">P2</span> }
@@ -102,10 +112,12 @@ export default function SiteRow( {
 								</span>
 							) }
 						</span>
+					</a>
+					<a { ...( url && { href: url } ) } rel="noreferrer noopener" target="_blank">
 						<span className="url">{ hostname }</span>
-					</span>
+					</a>
 				</span>
-			</a>
+			</span>
 			<span className="date" role="cell">
 				<TimeSince
 					date={
