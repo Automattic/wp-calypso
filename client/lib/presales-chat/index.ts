@@ -1,5 +1,7 @@
 import { useMessagingAvailability, useZendeskMessaging } from '@automattic/help-center/src/hooks';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
+import { useSelector } from 'react-redux';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import type { ZendeskConfigName } from '@automattic/help-center/src/hooks/use-zendesk-messaging';
 
 export type KeyType = 'akismet' | 'jpAgency' | 'jpCheckout' | 'jpGeneral' | 'wpcom';
@@ -41,8 +43,13 @@ export function usePresalesChat( keyType: KeyType, enabled = true ) {
 		useMessagingAvailability( group, isEligibleForPresalesChat );
 	const isPresalesChatAvailable = Boolean( chatAvailability?.is_available );
 
+	const isLoggedIn = useSelector( isUserLoggedIn );
 	const zendeskKeyName = getConfigName( keyType );
-	useZendeskMessaging( zendeskKeyName, isEligibleForPresalesChat && isPresalesChatAvailable );
+	useZendeskMessaging(
+		zendeskKeyName,
+		isEligibleForPresalesChat && isPresalesChatAvailable,
+		isLoggedIn
+	);
 
 	return {
 		isLoading: isLoadingAvailability,
