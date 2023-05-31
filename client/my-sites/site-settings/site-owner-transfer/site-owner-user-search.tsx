@@ -7,6 +7,14 @@ import { useCheckSiteTransferEligibility } from './use-check-site-transfer-eligi
 
 const TextControlContainer = styled.div( {
 	marginBottom: '2em',
+	'&': {
+		fontSize: '14px',
+	},
+	label: {
+		textTransform: 'none',
+		fontSize: '14px',
+		color: 'black',
+	},
 } );
 
 const Error = styled.div( {
@@ -18,7 +26,7 @@ const Error = styled.div( {
 const ErrorText = styled.p( {
 	margin: 0,
 	marginLeft: '0.4em',
-	fontSize: '14px',
+	fontSize: '100%',
 } );
 
 const SiteOwnerTransferEligibility = ( {
@@ -65,9 +73,10 @@ const SiteOwnerTransferEligibility = ( {
 		<form onSubmit={ handleFormSubmit }>
 			<p>
 				{ translate(
-					'Please enter the username or email address of the registered WordPress.com user that you want to transfer ownership of %(siteSlug)s to:',
+					'Please enter the username or email address of the registered WordPress.com user that you want to transfer ownership of {{strong}}%(siteSlug)s{{/strong}} to:',
 					{
 						args: { siteSlug: selectedSiteSlug },
+						components: { strong: <strong /> },
 					}
 				) }
 			</p>
