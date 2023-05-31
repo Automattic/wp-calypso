@@ -18,7 +18,7 @@ import './style.scss';
 
 const ImportReadyPreview: Step = function ImportStep( props ) {
 	const { navigation } = props;
-	const siteSlug = useSiteSlugParam();
+	const initialSlug = useSiteSlugParam();
 	const site = useSite();
 	const { createSite } = useDispatch( SITE_STORE );
 	const { getNewSite } = useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
@@ -46,8 +46,8 @@ const ImportReadyPreview: Step = function ImportStep( props ) {
 	 ↓ Methods
 	 */
 	async function goToImporterPage() {
-		let slug = site?.slug ?? siteSlug;
-		if ( ! slug ) {
+		let siteSlug = site?.slug ?? initialSlug;
+		if ( ! siteSlug ) {
 			let blogName = urlData.meta.title;
 
 			if ( ! blogName ) {
@@ -70,12 +70,18 @@ const ImportReadyPreview: Step = function ImportStep( props ) {
 				throw new Error( 'failed to create site. huh?' );
 			}
 
-			slug = newSite.site_slug;
+			siteSlug = newSite.site_slug;
 		}
 
-		const url = getFinalImporterUrl( slug, urlData.url, urlData.platform, isAtomicSite, 'stepper' );
+		const url = getFinalImporterUrl(
+			siteSlug,
+			urlData.url,
+			urlData.platform,
+			isAtomicSite,
+			'stepper'
+		);
 
-		navigation.submit?.( { url } );
+		navigation.submit?.( { url }, siteSlug );
 	}
 
 	function goToHomeStep() {
@@ -93,7 +99,7 @@ const ImportReadyPreview: Step = function ImportStep( props ) {
 		<ImportWrapper { ...props }>
 			<ReadyPreviewStep
 				urlData={ urlData }
-				siteSlug={ siteSlug as string }
+				siteSlug={ initialSlug as string }
 				goToImporterPage={ goToImporterPage }
 				recordTracksEvent={ recordTracksEvent }
 			/>
