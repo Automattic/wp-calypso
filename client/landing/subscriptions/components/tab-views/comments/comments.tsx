@@ -62,9 +62,9 @@ const Comments = () => {
 					onSelect={ ( selectedOption: Option ) =>
 						setFilterOption( selectedOption.value as Reader.SiteSubscriptionsFilterBy )
 					}
-					selectedText={
-						translate( 'View: ' ) + getFilterLabel( availableFilterOptions, filterOption )
-					}
+					selectedText={ translate( 'View: %s', {
+						args: getFilterLabel( availableFilterOptions, filterOption ) || '',
+					} ) }
 				/>
 
 				<SortControls options={ sortOptions } value={ sortTerm } onChange={ setSortTerm } />
