@@ -1,4 +1,3 @@
-import { isBusinessPlan, isEcommercePlan } from '@automattic/calypso-products';
 import { NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
@@ -159,32 +158,27 @@ const hosting: Flow = {
 
 					// User picked the Free plan
 					if ( ! productSlug ) {
-						return navigate( 'siteCreationStep' );
+						return navigate( 'options' );
 					}
 
 					setPlanCartItem( {
 						product_slug: productSlug,
-						extra: { geo_affinity: siteGeoAffinity },
 					} );
 
-					const mustPickDataCenter =
-						isBusinessPlan( productSlug ) || isEcommercePlan( productSlug );
-
-					if ( mustPickDataCenter ) {
-						return navigate( 'options' );
-					}
-
-					return navigate( 'siteCreationStep' );
+					return navigate( 'options' );
 				}
 
 				case 'options': {
 					setSiteTitle( providedDependencies.siteTitle );
-					setSiteGeoAffinity( providedDependencies.siteGeoAffinity );
 
-					setPlanCartItem( {
-						product_slug: planCartItem?.product_slug,
-						extra: { geo_affinity: providedDependencies.siteGeoAffinity },
-					} );
+					if ( providedDependencies.siteGeoAffinity ) {
+						setPlanCartItem( {
+							product_slug: planCartItem?.product_slug,
+							extra: { geo_affinity: providedDependencies.siteGeoAffinity },
+						} );
+
+						setSiteGeoAffinity( providedDependencies.siteGeoAffinity );
+					}
 
 					return navigate( 'siteCreationStep' );
 				}
