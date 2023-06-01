@@ -406,7 +406,10 @@ export default function NotificationSettings( {
 							{ translate( 'Cancel' ) }
 						</Button>
 						<Button
-							disabled={ !! validationError || isLoading || ! unsavedChangesExist }
+							disabled={
+								// Disable save button if there is no change and not bulk update
+								!! validationError || isLoading || ( ! isBulkUpdate && ! unsavedChangesExist )
+							}
 							type="submit"
 							primary
 							aria-label={ translate( 'Save notification settings' ) }
