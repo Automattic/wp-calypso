@@ -1,9 +1,11 @@
+import { isBusinessPlan, isEcommercePlan } from '@automattic/calypso-products';
 import { Button, FormInputValidation } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
 import { useQuery } from '@tanstack/react-query';
 import { useSelect } from '@wordpress/data';
 import { Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useSelector } from 'react-redux';
@@ -41,12 +43,13 @@ const getSiteSuggestions = (): Promise< SuggestionsResponse > =>
 
 export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigation' > ) => {
 	const { __ } = useI18n();
-	const { currentSiteTitle, currentSiteGeoAffinity } = useSelect(
+	const { currentSiteTitle, currentSiteGeoAffinity, planCartItem } = useSelect(
 		( select ) => ( {
 			currentSiteTitle: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
 			currentSiteGeoAffinity: (
 				select( ONBOARD_STORE ) as OnboardSelect
 			 ).getSelectedSiteGeoAffinity(),
+			planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
 		} ),
 		[]
 	);
@@ -56,6 +59,12 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 	const [ siteGeoAffinity, setSiteGeoAffinity ] = React.useState( currentSiteGeoAffinity ?? '' );
 	const [ formTouched, setFormTouched ] = React.useState( false );
 	const translate = useTranslate();
+
+	const pickedPlanSlug = planCartItem?.product_slug;
+
+	const shouldShowGeoAffinityPicker = pickedPlanSlug
+		? isBusinessPlan( pickedPlanSlug ) || isEcommercePlan( pickedPlanSlug )
+		: hostingFlow;
 
 	useQuery( {
 		queryKey: [ 'site-suggestions' ],
@@ -99,7 +108,11 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 
 	const stepContent = (
 		<form className="site-options__form" onSubmit={ handleSubmit }>
-			<FormFieldset className="site-options__form-fieldset">
+			<FormFieldset
+				className={ classNames( 'site-options__form-fieldset', {
+					'no-site-picker': ! shouldShowGeoAffinityPicker,
+				} ) }
+			>
 				<FormLabel htmlFor="siteTitle">{ translate( 'Site title' ) }</FormLabel>
 				<FormInput
 					name="siteTitle"
@@ -118,7 +131,9 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 					</FormSettingExplanation>
 				) }
 			</FormFieldset>
-			<DataCenterPicker onChange={ setSiteGeoAffinity } value={ siteGeoAffinity } compact />
+			{ shouldShowGeoAffinityPicker && (
+				<DataCenterPicker onChange={ setSiteGeoAffinity } value={ siteGeoAffinity } compact />
+			) }
 			<Button className="site-options__submit-button" type="submit" primary>
 				{ translate( 'Continue' ) }
 			</Button>

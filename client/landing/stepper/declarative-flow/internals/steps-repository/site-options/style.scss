@@ -168,6 +168,12 @@ body:has(.new-hosted-site.options) {
 		}
 	}
 
+	.site-options__form-fieldset {
+		&.no-site-picker {
+			margin-bottom: 0;
+		}
+	}
+
 	.data-center-picker {
 		color: var(--studio-gray-60);
 	}
