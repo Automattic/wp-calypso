@@ -25,8 +25,20 @@ type Props = {
 	translate: ( text: string, args?: Record< string, unknown > ) => string;
 };
 
+const FormToggleControl = styled( ToggleControl )( {
+	fontSize: '14px',
+} );
+
 const FormWrapper = styled.div( {
 	marginBottom: '1.5em',
+} );
+
+const ButtonContainer = styled.div( {
+	marginTop: '1.5em',
+} );
+
+const Strong = styled( 'strong' )( {
+	fontWeight: 500,
 } );
 
 const SiteOwnerTransferActionPanelBody = styled( ActionPanelBody )( {
@@ -75,7 +87,7 @@ const DomainsCard = ( {
 								),
 								{ siteSlug, siteOwner }
 							),
-							{ strong: <strong /> }
+							{ strong: <Strong /> }
 						) }
 					</ListItem>
 				</List>
@@ -86,11 +98,11 @@ const DomainsCard = ( {
 							sprintf(
 								// translators: siteOwner is the user that the site is going to transfer to
 								translate(
-									'The following domain names will be transferred to <strong>%(siteOwner)s</strong> and will remain working on the site:'
+									'The following domains will be transferred to <strong>%(siteOwner)s</strong> and will remain working on the site:'
 								),
 								{ siteOwner }
 							),
-							{ strong: <strong /> }
+							{ strong: <Strong /> }
 						) }
 					</Text>
 					<List>
@@ -131,7 +143,7 @@ const UpgradesCard = ( {
 							),
 							{ siteSlug, siteOwner }
 						),
-						{ strong: <strong /> }
+						{ strong: <Strong /> }
 					) }
 				</ListItem>
 			</List>
@@ -161,7 +173,7 @@ const ContentAndOwnershipCard = ( {
 							),
 							{ siteSlug, siteOwner }
 						),
-						{ strong: <strong /> }
+						{ strong: <Strong /> }
 					) }
 				</ListItem>
 				<ListItem>
@@ -174,7 +186,7 @@ const ContentAndOwnershipCard = ( {
 							),
 							{ siteSlug, siteOwner }
 						),
-						{ strong: <strong /> }
+						{ strong: <Strong /> }
 					) }
 				</ListItem>
 				<ListItem>
@@ -187,7 +199,7 @@ const ContentAndOwnershipCard = ( {
 							),
 							{ siteSlug, siteOwner }
 						),
-						{ strong: <strong /> }
+						{ strong: <Strong /> }
 					) }
 				</ListItem>
 			</List>
@@ -240,8 +252,12 @@ const StartSiteOwnerTransfer = ( {
 
 	const startSiteTransferForm = (
 		<FormWrapper>
-			<p>{ translate( 'To transfer your site, review and accept the following statements:' ) }</p>
-			<ToggleControl
+			<p>
+				<Strong>
+					{ translate( 'To transfer your site, review and accept the following statements:' ) }
+				</Strong>
+			</p>
+			<FormToggleControl
 				disabled={ false }
 				label={ translate(
 					'I understand the changes that will be made once I authorize this transfer.'
@@ -249,7 +265,7 @@ const StartSiteOwnerTransfer = ( {
 				checked={ confirmFirstToggle }
 				onChange={ () => setConfirmFirstToggle( ! confirmFirstToggle ) }
 			/>
-			<ToggleControl
+			<FormToggleControl
 				disabled={ false }
 				label={
 					purchases.length === 0
@@ -259,7 +275,7 @@ const StartSiteOwnerTransfer = ( {
 				checked={ confirmSecondToggle }
 				onChange={ () => setConfirmSecondToggle( ! confirmSecondToggle ) }
 			/>
-			<ToggleControl
+			<FormToggleControl
 				disabled={ false }
 				label={ translate( 'I understand that transferring a site cannot be undone.' ) }
 				checked={ confirmThirdToggle }
@@ -271,18 +287,20 @@ const StartSiteOwnerTransfer = ( {
 						{ startSiteTransferError }
 					</Notice>
 				) }
-				<Button
-					busy={ isStartingSiteTransfer }
-					primary
-					disabled={
-						! siteOwner ||
-						isStartingSiteTransfer ||
-						! ( confirmFirstToggle && confirmSecondToggle && confirmThirdToggle )
-					}
-					type="submit"
-				>
-					{ translate( 'Start transfer' ) }
-				</Button>
+				<ButtonContainer>
+					<Button
+						busy={ isStartingSiteTransfer }
+						primary
+						disabled={
+							! siteOwner ||
+							isStartingSiteTransfer ||
+							! ( confirmFirstToggle && confirmSecondToggle && confirmThirdToggle )
+						}
+						type="submit"
+					>
+						{ translate( 'Start transfer' ) }
+					</Button>
+				</ButtonContainer>
 			</form>
 		</FormWrapper>
 	);

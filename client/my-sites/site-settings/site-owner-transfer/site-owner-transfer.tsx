@@ -17,6 +17,10 @@ import PendingDomainTransfer from './pending-domain-transfer';
 import SiteOwnerTransferEligibility from './site-owner-user-search';
 import StartSiteOwnerTransfer from './start-site-owner-transfer';
 
+const Strong = styled( 'strong' )( {
+	fontWeight: 500,
+} );
+
 const SiteTransferComplete = () => {
 	const translate = useTranslate();
 	const userEmail = useSelector( getCurrentUserEmail );
@@ -31,7 +35,7 @@ const SiteTransferComplete = () => {
 				'You have been sent a transfer confirmation email to {{strong}}%(email)s{{/strong}}. Please check your inbox and spam folder. The transfer will not proceed unless you authorize it using the link in the email.',
 				{
 					args: { email: userEmail },
-					components: { strong: <strong /> },
+					components: { strong: <Strong /> },
 				}
 			) }
 		</p>
@@ -40,6 +44,7 @@ const SiteTransferComplete = () => {
 
 const ActionPanelStyled = styled( ActionPanel )`
 	font-size: 14px;
+	font-weight: 400;
 	.action-panel__body {
 		color: var( --studio-gray-70 );
 	}

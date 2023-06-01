@@ -5,6 +5,10 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, FormEvent, useEffect } from 'react';
 import { useCheckSiteTransferEligibility } from './use-check-site-transfer-eligibility';
 
+const Strong = styled( 'strong' )( {
+	fontWeight: 500,
+} );
+
 const TextControlContainer = styled.div( {
 	marginBottom: '2em',
 	label: {
@@ -73,7 +77,7 @@ const SiteOwnerTransferEligibility = ( {
 					'Please enter the username or email address of the registered WordPress.com user that you want to transfer ownership of {{strong}}%(siteSlug)s{{/strong}} to:',
 					{
 						args: { siteSlug },
-						components: { strong: <strong /> },
+						components: { strong: <Strong /> },
 					}
 				) }
 			</p>
