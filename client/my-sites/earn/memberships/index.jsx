@@ -698,6 +698,7 @@ class MembershipsSection extends Component {
 
 		return (
 			<div>
+				<QueryMembershipsEarnings siteId={ this.props.siteId } />
 				<QueryMembershipsSettings siteId={ this.props.siteId } source={ this.props.source } />
 				{ this.props.connectedAccountId && this.renderStripeConnected() }
 				{ this.props.connectUrl && ! this.props.connectedAccountId && this.renderConnectStripe() }
