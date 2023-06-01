@@ -50,7 +50,6 @@ export default function EmailAddressEditor( {
 	} >( {
 		name: '',
 		email: '',
-		code: undefined,
 		id: '',
 	} );
 
@@ -251,7 +250,6 @@ export default function EmailAddressEditor( {
 					className="configure-email-notification__resend-code-button"
 					borderless
 					onClick={ handleResendCode }
-					aria-label={ translate( 'Resend Code' ) }
 				/>
 			),
 		},
