@@ -20,4 +20,3 @@ const AlertBanner: React.FC< AlertBannerProps > = ( { type, children } ) => {
 };
 
 export default AlertBanner;
-
