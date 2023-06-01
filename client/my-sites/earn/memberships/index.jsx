@@ -50,6 +50,7 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
+import CommissionFees from '../components/commission-fees';
 import { ADD_NEWSLETTER_PAYMENT_PLAN_HASH } from './constants';
 
 import './style.scss';
@@ -109,28 +110,10 @@ class MembershipsSection extends Component {
 							</li>
 						</ul>
 					</div>
-					<div className="memberships__earnings-breakdown-notes">
-						{ commission !== null &&
-							translate(
-								'On your current plan, WordPress.com charges {{em}}%(commission)s{{/em}}.{{br/}} Additionally, Stripe charges are typically %(stripe)s. {{a}}Learn more{{/a}}',
-								{
-									args: {
-										commission: '' + parseFloat( commission ) * 100 + '%',
-										stripe: '2.9%+30c',
-									},
-									components: {
-										em: <em />,
-										br: <br />,
-										a: (
-											<ExternalLink
-												href="https://wordpress.com/support/wordpress-editor/blocks/payments/#related-fees"
-												icon={ true }
-											/>
-										),
-									},
-								}
-							) }
-					</div>
+					<CommissionFees
+						commission={ commission }
+						className="memberships__earnings-breakdown-notes"
+					/>
 				</Card>
 			</div>
 		);
@@ -587,6 +570,11 @@ class MembershipsSection extends Component {
 										'All credit and debit card payments made through these blocks are securely and seamlessly processed by Stripe.'
 									)
 								) }
+							</em>
+						</p>
+						<p className="memberships__onboarding-paragraph memberships__onboarding-paragraph-disclaimer">
+							<em>
+								<CommissionFees commission={ commission } />
 							</em>
 						</p>
 					</div>

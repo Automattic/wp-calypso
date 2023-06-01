@@ -9,13 +9,13 @@ import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { compact } from 'lodash';
 import page from 'page';
-import { FunctionComponent, Fragment, useState, useEffect } from 'react';
+import { FunctionComponent, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import earnSectionImage from 'calypso/assets/images/earn/earn-section.svg';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
+import QueryMembershipsEarnings from 'calypso/components/data/query-memberships-earnings';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import EmptyContent from 'calypso/components/empty-content';
-import ExternalLink from 'calypso/components/external-link';
 import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
 import { CtaButton } from 'calypso/components/promo-section/promo-card/cta';
 import wp from 'calypso/lib/wp';
@@ -32,6 +32,7 @@ import getSiteBySlug from 'calypso/state/sites/selectors/get-site-by-slug';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isRequestingWordAdsApprovalForSite } from 'calypso/state/wordads/approve/selectors';
+import CommissionFees from './components/commission-fees';
 import type { Image } from 'calypso/components/promo-section/promo-card/index';
 import type { SiteSlug } from 'calypso/types';
 import './style.scss';
@@ -480,29 +481,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 						}
 					) }
 				</p>
-				{ commission !== null && (
-					<div className="earn__notes">
-						{ translate(
-							'On your current plan, WordPress.com charges {{em}}%(commission)s{{/em}}.{{br/}} Additionally, Stripe charges are typically %(stripe)s. {{a}}Learn more{{/a}}',
-							{
-								args: {
-									commission: `${ parseFloat( commission ) * 100 }%`,
-									stripe: '2.9%+30c',
-								},
-								components: {
-									em: <em />,
-									br: <br />,
-									a: (
-										<ExternalLink
-											href="https://wordpress.com/support/wordpress-editor/blocks/payments/#related-fees"
-											icon={ true }
-										/>
-									),
-								},
-							}
-						) }
-					</div>
-				) }
+				<CommissionFees commission={ commission } className="earn__notes" />
 			</>
 		),
 	} );
@@ -534,7 +513,8 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	}
 
 	return (
-		<Fragment>
+		<>
+			<QueryMembershipsEarnings siteId={ siteId } />
 			<QueryMembershipsSettings siteId={ siteId } />
 			{ isLoading && (
 				<div className="earn__placeholder-promo-card">
@@ -545,7 +525,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 				</div>
 			) }
 			{ ! isLoading && <PromoSection { ...promos } /> }
-		</Fragment>
+		</>
 	);
 };
 
