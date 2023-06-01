@@ -6,7 +6,6 @@ import { useBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
 import i18n, { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan-caps.svg';
 import Badge from 'calypso/components/badge';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -23,6 +22,7 @@ import {
 	FIELD_PASSWORD_RESET_EMAIL,
 } from 'calypso/my-sites/email/form/mailboxes/constants';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getProductCost } from 'calypso/state/products-list/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';

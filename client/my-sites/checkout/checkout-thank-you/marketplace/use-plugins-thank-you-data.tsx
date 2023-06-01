@@ -1,10 +1,10 @@
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useMemo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import { ThankYouData, ThankYouSectionProps } from 'calypso/components/thank-you/types';
 import { useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
+import { useSelector, useDispatch } from 'calypso/state';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { pluginInstallationStateChange } from 'calypso/state/marketplace/purchase-flow/actions';

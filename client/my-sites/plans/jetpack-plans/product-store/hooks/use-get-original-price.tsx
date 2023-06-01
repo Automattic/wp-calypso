@@ -1,6 +1,6 @@
 import { TERM_MONTHLY, JETPACK_CRM_PRODUCTS } from '@automattic/calypso-products';
 import { useCallback } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import { getProductCost } from 'calypso/state/products-list/selectors';
 import { getSiteAvailableProductCost } from 'calypso/state/sites/products/selectors';
 import { SelectorProduct } from '../../types';

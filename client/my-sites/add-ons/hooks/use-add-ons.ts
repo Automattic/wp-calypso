@@ -4,7 +4,7 @@ import {
 	PRODUCT_1GB_SPACE,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import {
 	getProductBySlug,
 	getProductDescription,

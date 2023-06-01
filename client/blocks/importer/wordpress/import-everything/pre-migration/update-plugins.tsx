@@ -14,19 +14,19 @@ interface Props {
 	sourceSiteUrl: URL;
 }
 
-export const UpgradePluginInfo: React.FunctionComponent< Props > = ( props: Props ) => {
+export const UpdatePluginInfo: React.FunctionComponent< Props > = ( props: Props ) => {
 	const translate = useTranslate();
 	const { isMigrateFromWp, sourceSiteUrl } = props;
 
 	useEffect( () => {
-		recordTracksEvent( 'calypso_site_importer_show_upgrade_info', {
+		recordTracksEvent( 'calypso_site_importer_show_update_info', {
 			plugins_info: isMigrateFromWp ? 'wpcom_migration_plugin' : 'jetpack',
 		} );
 	}, [] );
 
 	function renderTitle() {
 		return isMigrateFromWp
-			? translate( `Upgrade ‘Move to WordPress.com’` )
+			? translate( `Update ‘Move to WordPress.com’` )
 			: translate( `Install Jetpack` );
 	}
 
@@ -62,7 +62,7 @@ export const UpgradePluginInfo: React.FunctionComponent< Props > = ( props: Prop
 				</p>
 			),
 			icon: <Gridicon icon="plugins" />,
-			actionText: translate( 'Upgrade plugin' ),
+			actionText: translate( 'Update plugin' ),
 			value: '',
 		};
 		return isMigrateFromWp ? wpcomMigrationContentObj : jetpackContentObj;
@@ -74,13 +74,13 @@ export const UpgradePluginInfo: React.FunctionComponent< Props > = ( props: Prop
 		window.open( `/jetpack/connect/?url=${ sourceSiteUrl }&source=${ source }`, '_blank' );
 	}
 
-	function onMigrationPluginUpgrade() {
-		recordTracksEvent( 'calypso_site_importer_upgrade_wp_migration_plugin' );
+	function onMigrationPluginUpdate() {
+		recordTracksEvent( 'calypso_site_importer_update_wp_migration_plugin' );
 		window.open( `${ sourceSiteUrl }/wp-admin/plugins.php`, '_blank' );
 	}
 
 	function onActionClick() {
-		return isMigrateFromWp ? onMigrationPluginUpgrade() : installJetpack();
+		return isMigrateFromWp ? onMigrationPluginUpdate() : installJetpack();
 	}
 
 	function onIntallJetpackManuallyClick() {

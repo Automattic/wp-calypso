@@ -1,10 +1,10 @@
 import { useTranslate } from 'i18n-calypso';
 import { get, isEmpty, map } from 'lodash';
 import { useReducer } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { SiteLogsTab } from 'calypso/data/hosting/use-site-logs-query';
 import wpcom from 'calypso/lib/wp';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';

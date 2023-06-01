@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { useDispatch } from 'react-redux';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 
 export const useTrackUpsellView = ( siteId: number | null ) => {

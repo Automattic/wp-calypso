@@ -1,11 +1,18 @@
 {
 	"extends": "@automattic/calypso-typescript-config/ts-package.json",
 	"compilerOptions": {
+		"allowJs": true,
+		"checkJs": false,
 		"declarationDir": "dist/types",
 		"outDir": "dist/esm",
 		"rootDir": "src"
 	},
 	"include": [ "src" ],
 	"exclude": [ "**/test/*" ],
-	"references": [ { "path": "../viewport" }, { "path": "../site-picker" } ]
+	"references": [
+		{ "path": "../site-picker" },
+		{ "path": "../state-utils" },
+		{ "path": "../viewport" },
+		{ "path": "../wpcom-checkout" }
+	]
 }

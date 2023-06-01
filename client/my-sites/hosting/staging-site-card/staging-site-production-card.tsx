@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { localize } from 'i18n-calypso';
 import { useState } from 'react';
-import { connect, useDispatch } from 'react-redux';
+import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Notice from 'calypso/components/notice';
@@ -13,8 +13,10 @@ import {
 	useProductionSiteDetail,
 	ProductionSite,
 } from 'calypso/my-sites/hosting/staging-site-card/use-production-site-detail';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { IAppState } from 'calypso/state/types';
 
 const ActionButtons = styled.div( {
 	display: 'flex',
@@ -102,7 +104,7 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 	);
 }
 
-export default connect( ( state ) => {
+export default connect( ( state: IAppState ) => {
 	const currentUserId = getCurrentUserId( state );
 
 	return {

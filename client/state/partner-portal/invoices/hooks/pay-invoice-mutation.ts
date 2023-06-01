@@ -5,8 +5,8 @@ import {
 	useQueryClient,
 } from '@tanstack/react-query';
 import { sprintf, __ } from '@wordpress/i18n';
-import { useDispatch, useSelector } from 'react-redux';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
+import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getActivePartnerKeyId } from 'calypso/state/partner-portal/partner/selectors';
 import type { APIInvoice, APIInvoices } from 'calypso/state/partner-portal/types';

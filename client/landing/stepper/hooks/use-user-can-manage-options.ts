@@ -1,5 +1,5 @@
 import { useSelect } from '@wordpress/data';
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isRequestingSites from 'calypso/state/sites/selectors/is-requesting-sites';
 import { SITE_STORE } from '../stores';

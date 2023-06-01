@@ -14,7 +14,6 @@ import { getQueryArg } from '@wordpress/url';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useCallback, useMemo, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
@@ -31,6 +30,7 @@ import { useCreateStoredCreditCardMethod } from 'calypso/jetpack-cloud/sections/
 import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
 import { partnerPortalBasePath } from 'calypso/lib/jetpack/paths';
 import { addQueryArgs } from 'calypso/lib/url';
+import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
