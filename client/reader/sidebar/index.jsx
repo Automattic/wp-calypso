@@ -146,6 +146,8 @@ export class ReaderSidebar extends Component {
 				<QueryReaderTeams />
 				<QueryReaderOrganizations />
 
+				<SidebarSeparator />
+
 				<SidebarItem
 					label={ translate( 'Search' ) }
 					onNavigate={ this.handleReaderSidebarSearchClicked }
