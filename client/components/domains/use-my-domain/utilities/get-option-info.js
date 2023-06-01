@@ -172,6 +172,28 @@ export function getOptionInfo( {
 			onSelect: onConnect,
 			pricing: mappingPricing,
 		};
+
+		// We currently aren't handling ownership verification for mapped domains during sign-up
+		// See https://github.com/Automattic/nomado-issues/issues/136 for more context
+		if ( availability.ownership_verification_type !== 'no_verification_needed' && isSignupStep ) {
+			connectContent = {
+				...connectContent,
+				benefits: [],
+				topText: createInterpolateElement(
+					sprintf(
+						/* translators: %s - the domain the user wanted to connect */
+						__(
+							"We need to verify you are the owner of <strong>%s</strong> before connecting it, but we're not able to do that during sign-up.<br /><br />Please go back and either choose another domain to connect, or purchase a plan for your site and connect this domain later."
+						),
+						domain
+					),
+					{ br: createElement( 'br' ), strong: createElement( 'strong' ) }
+				),
+				pricing: null,
+				learnMoreLink: null,
+				onSelect: null,
+			};
+		}
 	} else {
 		switch ( availability.status ) {
 			case domainAvailability.MAPPED_SAME_SITE_TRANSFERRABLE:
