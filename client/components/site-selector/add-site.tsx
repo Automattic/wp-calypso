@@ -21,7 +21,7 @@ const SiteSelectorAddSite: FunctionComponent = () => {
 	}, [ dispatch ] );
 
 	const addNewSiteUrl = useAddNewSiteUrl( {
-		ref: 'calypso-selector',
+		ref: isJetpackCloud() ? 'jetpack-cloud-selector' : 'calypso-selector',
 		source: 'my-home',
 		siteSlug,
 	} );

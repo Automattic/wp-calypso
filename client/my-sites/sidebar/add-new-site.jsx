@@ -11,7 +11,7 @@ export const AddNewSite = ( { title } ) => {
 
 	const addNewSiteUrl = useAddNewSiteUrl( {
 		ref: 'calypso-sidebar',
-		source: 'my-home',
+		source: 'calypso-static',
 	} );
 
 	const visibleSiteCount = useSelector( getCurrentUser ).visible_site_count;
