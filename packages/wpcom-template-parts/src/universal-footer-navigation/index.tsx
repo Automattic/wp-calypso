@@ -137,7 +137,7 @@ export const PureUniversalNavbarFooter = ( {
 										title="WordPress Website Building Service"
 										target="_self"
 									>
-										{ __( 'Built by WordPress.com', __i18n_text_domain__ ) }
+										{ __( 'Website Design Services', __i18n_text_domain__ ) }
 									</a>
 								</li>
 							</ul>
