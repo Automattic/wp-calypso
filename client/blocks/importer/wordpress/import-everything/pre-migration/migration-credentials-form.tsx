@@ -48,12 +48,8 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 	const isFormSubmissionPending = formSubmissionStatus === 'pending';
 	const formHasErrors = formErrors && Object.keys( formErrors ).length > 0;
 
-	useEffect( () => {
-		// Clear the hasMissingFields flag when there are no more errors.
-		if ( ! formHasErrors ) {
-			setHasMissingFields( false );
-		}
-	}, [ formErrors ] );
+	// Clear the hasMissingFields flag when there are no more errors.
+	useEffect( () => setHasMissingFields( formHasErrors ), [ formErrors ] );
 
 	// validate changes to the credentials form
 	useEffect( () => {
@@ -155,9 +151,8 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 	);
 
 	useEffect( () => {
-		if ( updateError ) {
+		updateError &&
 			dispatch( recordTracksEvent( 'calypso_site_migration_credentials_update_error' ) );
-		}
 	}, [ updateError ] );
 
 	return (
