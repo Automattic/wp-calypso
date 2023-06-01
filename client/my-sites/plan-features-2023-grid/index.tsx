@@ -148,7 +148,7 @@ type PlanFeatures2023GridType = PlanFeatures2023GridProps &
 
 type PlanFeatures2023GridState = {
 	showPlansComparisonGrid: boolean;
-	isSelectedPlan?: string;
+	selectedPlan?: string;
 };
 
 const PlanLogo: React.FunctionComponent< {
@@ -253,7 +253,7 @@ export class PlanFeatures2023Grid extends Component<
 > {
 	state = {
 		showPlansComparisonGrid: false,
-		isSelectedPlan: '',
+		selectedPlan: '',
 	};
 
 	plansComparisonGridContainerRef = createRef< HTMLDivElement >();
@@ -270,7 +270,7 @@ export class PlanFeatures2023Grid extends Component<
 	};
 
 	setSelectedPlan = ( planName: string ) => {
-		this.setState( { isSelectedPlan: planName } );
+		this.setState( { selectedPlan: planName } );
 	};
 
 	componentDidUpdate(
@@ -712,7 +712,7 @@ export class PlanFeatures2023Grid extends Component<
 							isWpcomEnterpriseGridPlan={ isWpcomEnterpriseGridPlan( planName ) }
 							isWooExpressPlusPlan={ isWooExpressPlusPlan( planName ) }
 							isPlaceholder={ isPlaceholder ?? false }
-							selectedPlan={ this.state.isSelectedPlan }
+							selectedPlan={ this.state.selectedPlan }
 							isInSignup={ isInSignup }
 							isLaunchPage={ isLaunchPage }
 							onUpgradeClick={ () => this.handleUpgradeClick( properties ) }
