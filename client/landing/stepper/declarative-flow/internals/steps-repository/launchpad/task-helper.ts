@@ -110,7 +110,7 @@ export function getEnhancedTasks(
 								} )
 							);
 						},
-						disabled: task.completed,
+						disabled: task.completed && ! isStartWritingFlow( flow ),
 					};
 					break;
 				case 'setup_newsletter':
@@ -170,7 +170,7 @@ export function getEnhancedTasks(
 							window.location.assign( plansUrl );
 						},
 						badge_text: ! task.completed ? null : translatedPlanName,
-						disabled: task.completed || ! domainUpsellCompleted,
+						disabled: ( task.completed || ! domainUpsellCompleted ) && ! isStartWritingFlow( flow ),
 					};
 					break;
 				case 'subscribers_added':
