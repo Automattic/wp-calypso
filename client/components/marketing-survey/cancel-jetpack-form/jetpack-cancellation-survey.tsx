@@ -46,6 +46,10 @@ export default function JetpackCancellationSurvey( {
 			answerText: translate( 'I no longer need a website.' ),
 		},
 		{
+			id: 'could-not-get-support',
+			answerText: translate( 'I couldn’t get the support I needed.' ),
+		},
+		{
 			id: 'another-reason',
 			answerText: translate( 'Other' ),
 		},
