@@ -35,7 +35,7 @@ import { localize, useTranslate } from 'i18n-calypso';
 import { get } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, useEffect, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import QueryPlans from 'calypso/components/data/query-plans';
@@ -94,6 +94,16 @@ const OnboardingPricingGrid2023 = ( props ) => {
 		siteSlug,
 		intent,
 	} = props;
+
+	// const [ hidePlansFeatureComparison, setHidePlansFeatureComparison ] = useState(
+	// 	props.hidePlansFeatureComparison
+	// );
+
+	// useEffect( () => {
+	// 	if ( ! hidePlansFeatureComparison ) {
+	// 		setHidePlansFeatureComparison( 'newsletter' === intent );
+	// 	}
+	// }, [ hidePlansFeatureComparison, intent ] );
 
 	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
 	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
