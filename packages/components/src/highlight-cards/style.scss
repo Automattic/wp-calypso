@@ -294,6 +294,7 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 	font-weight: 500;
 	line-height: 20px;
 	font-family: $highlight-card-tooltip-font;
+	letter-spacing: -0.24px;
 
 	&.comparing-info {
 		display: block;
@@ -332,6 +333,29 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 		fill: var(--studio-white);
 		display: flex;
 		padding-right: 8px;
+	}
+}
+
+.highlight-card__settings-tooltip {
+	.highlight-card-tooltip-content {
+		flex-direction: column;
+		align-items: flex-end;
+
+		p {
+			margin-bottom: 24px;
+		}
+
+		button {
+			font-family: $font-sf-pro-text;
+			font-weight: 600;
+			font-size: $font-body-extra-small;
+			line-height: 20px;
+			color: var(--studio-black);
+			padding: 4px 8px;
+			background-color: var(--studio-white);
+			border-radius: 4px;
+			cursor: pointer;
+		}
 	}
 }
 

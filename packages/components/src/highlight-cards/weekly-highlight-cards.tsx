@@ -61,7 +61,8 @@ export default function WeeklyHighlightCards( {
 
 	const textRef = useRef( null );
 	const settingsActionRef = useRef( null );
-	const [ isTooltipVisible, setTooltipVisible ] = useState( false );
+	const [ isTooltipVisible, setTooltipVisible ] = useState( true );
+	const [ isSettingsTooltipVisible, setSettingsTooltipVisible ] = useState( true );
 	const [ isPopoverVisible, setPopoverVisible ] = useState( false );
 
 	// @TODO: Set the popover to disappear when the user clicks outside of the popover.
@@ -144,6 +145,23 @@ export default function WeeklyHighlightCards( {
 						>
 							<Icon className="gridicon" icon={ moreVertical } />
 						</button>
+						<Popover
+							className="tooltip tooltip--darker highlight-card-tooltip highlight-card__settings-tooltip"
+							isVisible={ isSettingsTooltipVisible }
+							position="bottom left"
+							context={ settingsActionRef.current }
+						>
+							<div className="highlight-card-tooltip-content">
+								<p>
+									{ translate(
+										'You can now tailor your site highlights by adjusting the time range.'
+									) }
+								</p>
+								<button onClick={ () => setSettingsTooltipVisible( false ) }>
+									{ translate( 'Got it' ) }
+								</button>
+							</div>
+						</Popover>
 						<Popover
 							className="tooltip highlight-card-popover"
 							isVisible={ isPopoverVisible }
