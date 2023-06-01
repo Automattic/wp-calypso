@@ -206,14 +206,19 @@ export default function NotificationSettings( {
 		>
 			<div className="notification-settings__sub-title">{ getSiteCountText( sites ) }</div>
 
-			{ isBulkUpdate ? (
-				<AlertBanner type="warning">
-					{ translate( 'Settings for selected sites will be overwritten.' ) }
-				</AlertBanner>
-			) : null }
-
 			<form onSubmit={ onSave }>
-				<div className="notification-settings__content">
+				{ isBulkUpdate && (
+					<AlertBanner type="warning">
+						{ translate( 'Settings for selected sites will be overwritten.' ) }
+					</AlertBanner>
+				) }
+				<div
+					className={
+						isBulkUpdate
+							? 'notification-settings__content-with-alert'
+							: 'notification-settings__content'
+					}
+				>
 					<div className="notification-settings__content-block">
 						<div className="notification-settings__content-heading">
 							{ translate( 'Notify me about downtime:' ) }
