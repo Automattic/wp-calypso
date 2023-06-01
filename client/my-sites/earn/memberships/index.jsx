@@ -706,8 +706,6 @@ const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const earnings = getEarningsWithDefaultsForSiteId( state, siteId );
 
-	console.log( 'memberships:', earnings ); // eslint-disable-line no-console
-
 	return {
 		site,
 		siteId,

@@ -532,8 +532,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 export default connect(
 	( state: IAppState ) => {
 		// Default value of 0 to appease TypeScript for selectors that don't allow a null site ID value.
-		//const siteId = getSelectedSiteId( state ) ?? 0;
-		const siteId = getSelectedSiteId( state );
+		const siteId = getSelectedSiteId( state ) ?? 0;
 		const selectedSiteSlug = getSelectedSiteSlug( state );
 		const site = getSiteBySlug( state, selectedSiteSlug );
 		const earnings = getEarningsWithDefaultsForSiteId( state, siteId );
@@ -544,8 +543,6 @@ export default connect(
 		const hasWordAdsFeature = siteHasWordAds( state, siteId );
 		const isLoading = hasConnectedAccount === null || sitePlanSlug === null;
 		const isJetpack = isJetpackSite( state, siteId );
-
-		console.log( 'home:', earnings ); // eslint-disable-line no-console
 
 		return {
 			commission: earnings.commission,
