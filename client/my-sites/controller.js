@@ -654,6 +654,18 @@ export function redirectToPrimary( context, primarySiteSlug ) {
 }
 
 export function navigation( context, next ) {
+	// Hide the dashboard navigation during onboarding for Newsletters.
+	// This code is still experimental to spark conversation.
+	const store = context.store;
+	const selectedSite = getSelectedSite( store.getState() );
+	if (
+		selectedSite?.options?.launchpad_screen === 'full' &&
+		selectedSite?.options?.site_intent === 'newsletter' &&
+		context?.page.current.includes( '/earn/' )
+	) {
+		context.hideLeftNavigation = true;
+	}
+
 	// Render the My Sites navigation in #secondary
 	if ( ! context.hideLeftNavigation ) {
 		context.secondary = createNavigation( context );

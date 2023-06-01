@@ -153,7 +153,17 @@ class EarningsMain extends Component {
 	 *
 	 * @returns {string} Path to Earn home. Has site slug append if it exists.
 	 */
-	goBack = () => ( this.props.siteSlug ? '/earn/' + this.props.siteSlug : '' );
+	goBack = () => {
+		const isLaunchpadEnabled = this.props.site.options.launchpad_screen === 'full';
+		const siteIntent = this.props.site.options.site_intent;
+		const isNewsletter = siteIntent === 'newsletter';
+
+		if ( isLaunchpadEnabled && isNewsletter && this.props.siteSlug ) {
+			return `/setup/${ siteIntent }/launchpad?siteSlug=${ this.props.siteSlug }`;
+		}
+
+		return this.props.siteSlug ? '/earn/' + this.props.siteSlug : '';
+	};
 
 	getHeaderCake = () => {
 		const headerText = this.getHeaderText();
