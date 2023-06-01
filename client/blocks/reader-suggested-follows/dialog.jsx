@@ -13,7 +13,7 @@ const ReaderSuggestedFollowsDialog = ( { onClose, siteId, postId, isVisible } ) 
 		<Dialog
 			additionalClassNames="reader-recommended-follows-dialog"
 			isBackdropVisible={ true }
-			isVisible={ isVisible }
+			isVisible={ isVisible && ( isLoading || ( ! isLoading && data ) ) }
 			onClose={ onClose }
 			showCloseIcon={ true }
 			label={ translate( 'Suggested follows' ) }
