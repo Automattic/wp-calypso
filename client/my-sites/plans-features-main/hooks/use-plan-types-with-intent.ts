@@ -9,6 +9,9 @@ import {
 	getPlan,
 	isBloggerPlan,
 } from '@automattic/calypso-products';
+import { useSiteIntent } from '@automattic/data-stores';
+import { useSelector } from 'react-redux';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export type Intent =
 	| 'blog-onboarding'
@@ -36,6 +39,13 @@ interface PlanTypesWithIntent {
 }
 
 const useIntentFromSiteMeta = (): Intent | null => {
+	const selectedSiteId = useSelector( getSelectedSiteId ) ?? undefined;
+	const intent = useSiteIntent( selectedSiteId );
+
+	if ( 'newsletter' === ( intent.data?.site_intent as string ) ) {
+		return 'newsletter';
+	}
+
 	return null;
 };
 

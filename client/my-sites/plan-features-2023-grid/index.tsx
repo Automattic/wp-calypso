@@ -34,12 +34,7 @@ import {
 	VIPLogo,
 	WooLogo,
 } from '@automattic/components';
-import {
-	isAnyHostingFlow,
-	isLinkInBioFlow,
-	isNewsletterFlow,
-	isBlogOnboardingFlow,
-} from '@automattic/onboarding';
+import { isAnyHostingFlow } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
@@ -917,9 +912,9 @@ const ConnectedPlanFeatures2023Grid = connect(
 			visiblePlans,
 			isInSignup,
 			siteId,
-			flowName,
 			currentSitePlanSlug,
 			selectedFeature,
+			intent,
 		} = ownProps;
 		const canUserPurchasePlan =
 			! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId );
@@ -948,17 +943,17 @@ const ConnectedPlanFeatures2023Grid = connect(
 			let jetpackFeatures: FeatureObject[] = [];
 			let tagline = '';
 
-			if ( isNewsletterFlow( flowName ) ) {
+			if ( 'newsletter' === intent ) {
 				planFeatures = getPlanFeaturesObject(
 					planConstantObj?.getNewsletterSignupFeatures?.() ?? []
 				);
 				tagline = planConstantObj.getNewsletterTagLine?.() ?? '';
-			} else if ( isLinkInBioFlow( flowName ) ) {
+			} else if ( 'link-in-bio' === intent ) {
 				planFeatures = getPlanFeaturesObject(
 					planConstantObj?.getLinkInBioSignupFeatures?.() ?? []
 				);
 				tagline = planConstantObj.getLinkInBioTagLine?.() ?? '';
-			} else if ( isBlogOnboardingFlow( flowName ) ) {
+			} else if ( 'blog-onboarding' === intent ) {
 				planFeatures = getPlanFeaturesObject(
 					planConstantObj?.getBlogOnboardingSignupFeatures?.() ?? []
 				);

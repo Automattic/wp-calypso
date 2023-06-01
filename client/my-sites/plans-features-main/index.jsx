@@ -345,7 +345,12 @@ const PricingView = ( props ) => {
 					plans={ visiblePlans }
 				/>
 			) }
-			<OnboardingPricingGrid2023 { ...props } plans={ plans } visiblePlans={ visiblePlans } />
+			<OnboardingPricingGrid2023
+				{ ...props }
+				plans={ plans }
+				visiblePlans={ visiblePlans }
+				intent={ visiblePlanTypes.intent }
+			/>
 		</>
 	);
 };
