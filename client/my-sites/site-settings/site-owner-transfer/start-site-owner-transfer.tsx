@@ -34,7 +34,7 @@ const SiteOwnerTransferActionPanelBody = styled( ActionPanelBody )( {
 } );
 
 const Title = styled.h2( {
-	fontWeight: 'bold',
+	fontWeight: 500,
 	marginBottom: '1em',
 } );
 
@@ -281,7 +281,7 @@ const StartSiteOwnerTransfer = ( {
 					}
 					type="submit"
 				>
-					{ translate( 'Start site transfer' ) }
+					{ translate( 'Start transfer' ) }
 				</Button>
 			</form>
 		</FormWrapper>
