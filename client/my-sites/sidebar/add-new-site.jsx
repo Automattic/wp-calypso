@@ -1,13 +1,18 @@
 import { Button } from '@automattic/components';
 import { useSelector, useDispatch } from 'react-redux';
 import TranslatableString from 'calypso/components/translatable/proptype';
-import { onboardingUrl } from 'calypso/lib/paths';
+import { useSitesDashboardCreateSiteUrl } from 'calypso/sites-dashboard/hooks/use-sites-dashboard-create-site-url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 
 export const AddNewSite = ( { title } ) => {
 	const reduxDispatch = useDispatch();
+
+	const addNewSiteUrl = useSitesDashboardCreateSiteUrl( {
+		ref: 'calypso-sidebar',
+		source: 'my-home',
+	} );
 
 	const visibleSiteCount = useSelector( getCurrentUser ).visible_site_count;
 	if ( visibleSiteCount > 1 ) {
@@ -21,7 +26,7 @@ export const AddNewSite = ( { title } ) => {
 
 	return (
 		<li className="sidebar__actions">
-			<Button transparent href={ `${ onboardingUrl() }?ref=calypso-sidebar` } onClick={ onClick }>
+			<Button transparent href={ addNewSiteUrl } onClick={ onClick }>
 				<span className="sidebar__action--collapsed dashicons dashicons-plus-alt"></span>
 				<span>{ title }</span>
 			</Button>
