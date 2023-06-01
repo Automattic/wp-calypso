@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import { useSelector, useDispatch } from 'react-redux';
 import TranslatableString from 'calypso/components/translatable/proptype';
-import { useSitesDashboardCreateSiteUrl } from 'calypso/sites-dashboard/hooks/use-sites-dashboard-create-site-url';
+import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
@@ -9,7 +9,7 @@ import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 export const AddNewSite = ( { title } ) => {
 	const reduxDispatch = useDispatch();
 
-	const addNewSiteUrl = useSitesDashboardCreateSiteUrl( {
+	const addNewSiteUrl = useAddNewSiteUrl( {
 		ref: 'calypso-sidebar',
 		source: 'my-home',
 	} );
