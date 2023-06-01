@@ -1251,11 +1251,11 @@ export function getBusinessPlanForInterval( type: string ) {
 export function getVariantItemTextForInterval( type: string ) {
 	switch ( type ) {
 		case 'monthly':
-			return /One month/;
+			return /One-month plan/;
 		case 'yearly':
-			return /One year/;
+			return /One-year plan/;
 		case 'two-year':
-			return /Two years/;
+			return /Two-year plan/;
 		default:
 			throw new Error( `Unknown plan type '${ type }'` );
 	}
