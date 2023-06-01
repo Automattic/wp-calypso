@@ -166,7 +166,7 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 		</>
 	);
 	const videoPress = translate( 'VideoPress' );
-	const jetpackAI = translate( 'Jetpack AI Assistant' );
+	const aiAssistant = translate( 'AI Assistant' );
 	const antiSpam = translate( 'Akismet {{s}}Anti-spam{{/s}}', {
 		components: {
 			s: <span style={ { whiteSpace: 'nowrap' } } />,
@@ -227,7 +227,7 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 	} );
 
 	return {
-		[ PRODUCT_JETPACK_AI_MONTHLY ]: jetpackAI,
+		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistant,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDaily,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupRealtime,
@@ -294,11 +294,11 @@ export const getJetpackProductsCallToAction = (): Record< string, TranslateResul
 		},
 	} );
 	const boost = translate( 'Get Boost' );
-	const jetpackAI = translate( 'Get Jetpack AI Assistant' );
+	const aiAssistant = translate( 'Get AI Assistant' );
 	const social = translate( 'Get Social' );
 
 	return {
-		[ PRODUCT_JETPACK_AI_MONTHLY ]: jetpackAI,
+		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistant,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDaily,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupRealtime,
@@ -336,10 +336,10 @@ export const getJetpackProductsTaglines = (): Record<
 	const boostTagLine = translate( "Improve your site's performance" );
 	const boostOwnedTagLine = translate( 'Your site is optimized with Boost' );
 	// TODO: may need copy update
-	const jetpackAITagLine = translate(
+	const aiAssistantTagLine = translate(
 		'Experience the ease of crafting content with our intuitive and powerful AI Assistant.'
 	);
-	const jetpackAIOwnedTagLine = translate(
+	const aiAssistantOwnedTagLine = translate(
 		'Your site is equipped with our intuitive and powerful AI Assistant.'
 	);
 	const searchTagline = translate( 'Recommended for sites with lots of products or content' );
@@ -362,8 +362,8 @@ export const getJetpackProductsTaglines = (): Record<
 	);
 	return {
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: {
-			default: jetpackAITagLine,
-			owned: jetpackAIOwnedTagLine,
+			default: aiAssistantTagLine,
+			owned: aiAssistantOwnedTagLine,
 		},
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: {
 			default: backupDailyTagline,
@@ -526,7 +526,7 @@ export const getJetpackProductsDescriptions = (): Record< string, TranslateResul
 		'Save every change with real-time backups and get back online quickly with one-click restores.'
 	);
 	// TODO: may need copy update
-	const jetpackAIDescription = translate(
+	const aiAssistantDescription = translate(
 		'Experience the ease of crafting content with our intuitive and powerful AI Assistant.'
 	);
 	const boostDescription = translate(
@@ -558,7 +558,7 @@ export const getJetpackProductsDescriptions = (): Record< string, TranslateResul
 	);
 
 	return {
-		[ PRODUCT_JETPACK_AI_MONTHLY ]: jetpackAIDescription,
+		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantDescription,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyDescription,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDailyDescription,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupRealtimeDescription,
@@ -602,7 +602,7 @@ export const getJetpackProductsShortDescriptions = (): Record< string, Translate
 			comment: '%s is a storage amount like 1TB or 10GB',
 		}
 	);
-	const jetpackAIShortDescription = translate(
+	const aiAssistantShortDescription = translate(
 		'Experience the ease of crafting content with our intuitive and powerful AI Assistant.'
 	);
 	const boostShortDescription = translate(
@@ -621,7 +621,7 @@ export const getJetpackProductsShortDescriptions = (): Record< string, Translate
 	const socialAdvancedShortDescription = translate( 'Write once, post everywhere.' );
 
 	return {
-		[ PRODUCT_JETPACK_AI_MONTHLY ]: jetpackAIShortDescription,
+		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantShortDescription,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyShortDescription,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDailyShortDescription,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupRealtimeShortDescription,
@@ -671,7 +671,7 @@ export const getJetpackProductsFeaturedDescription = (): Record< string, Transla
 		'Instant search helps your visitors actually find what they need and improves conversion.'
 	);
 	// TODO: may need alternate copy here
-	const jetpackAIFeaturedText = translate(
+	const aiAssistantFeaturedText = translate(
 		'Utilizing the potential of artificial intelligence, AI Assistant brings a supportive layer to your content creation process.'
 	);
 	const boostFeaturedText = translate(
@@ -686,7 +686,7 @@ export const getJetpackProductsFeaturedDescription = (): Record< string, Transla
 	);
 
 	return {
-		[ PRODUCT_JETPACK_AI_MONTHLY ]: jetpackAIFeaturedText,
+		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantFeaturedText,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyFeaturedText,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDailyFeaturedText,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupFeaturedText,
@@ -734,7 +734,7 @@ export const getJetpackProductsLightboxDescription = (): Record< string, Transla
 	const searchLightboxDescription = translate(
 		'Incredibly powerful and customizable, Jetpack Search helps your visitors instantly find the right content - right when they need it.'
 	);
-	const jetpackAILightboxDescription = translate(
+	const aiAssistantLightboxDescription = translate(
 		'Utilizing the potential of artificial intelligence, AI Assistant brings a supportive layer to your content creation process.'
 	);
 	const boostLightboxDescription = translate(
@@ -748,7 +748,7 @@ export const getJetpackProductsLightboxDescription = (): Record< string, Transla
 	);
 
 	return {
-		[ PRODUCT_JETPACK_AI_MONTHLY ]: jetpackAILightboxDescription,
+		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantLightboxDescription,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyLightboxDescription,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDailyLightboxDescription,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupLightboxDescription,
@@ -895,7 +895,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Recycle content' ),
 		translate( 'Image generator' ),
 	];
-	const jetpackAIIncludesInfo = [
+	const aiAssistantIncludesInfo = [
 		translate( 'Prompt based content generation' ),
 		translate( 'Generate text, tables, and lists' ),
 		translate( 'Adaptive Tone Adjustment' ),
@@ -904,7 +904,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 	];
 
 	return {
-		[ PRODUCT_JETPACK_AI_MONTHLY ]: jetpackAIIncludesInfo,
+		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantIncludesInfo,
 		[ PRODUCT_JETPACK_BACKUP_T0_YEARLY ]: backupIncludesInfoT0,
 		[ PRODUCT_JETPACK_BACKUP_T0_MONTHLY ]: backupIncludesInfoT0,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupIncludesInfoT1,
@@ -1014,7 +1014,7 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		translate( 'Repurpose, reuse or republish already published content' ),
 	];
 
-	const jetpackAIBenefits = [
+	const aiAssistantBenefits = [
 		translate( 'Harness AI Power Directly from Your Editor' ),
 		translate( 'Unlock High‑Quality, Tailored Content at Your Command' ),
 		translate( 'Maintain Professional Standards with Ease' ),
@@ -1022,7 +1022,7 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 	];
 
 	return {
-		[ PRODUCT_JETPACK_AI_MONTHLY ]: jetpackAIBenefits,
+		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantBenefits,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupBenefits,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupBenefits,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupBenefits,
