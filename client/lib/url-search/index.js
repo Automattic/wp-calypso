@@ -65,10 +65,10 @@ const UrlSearch = ( Component ) =>
 			debug( 'search for: %s', query );
 			if ( this.props.search && query ) {
 				debug( 'replacing URL: %s', searchURL );
-				page.replace( searchURL, null, false );
+				page.replace( searchURL );
 			} else {
 				debug( 'setting URL: %s', searchURL );
-				page( searchURL, null, false );
+				page( searchURL );
 			}
 		};
 
