@@ -1,14 +1,12 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { IMPORT_HOSTED_SITE_FLOW } from '@automattic/onboarding';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { useDispatch } from '@wordpress/data';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
 import MigrationError from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/migration-error';
 import { ProcessingResult } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/processing-step/constants';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
-import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
 import ImportReady from './internals/steps-repository/import-ready';
 import ImportReadyNot from './internals/steps-repository/import-ready-not';
 import ImportReadyPreview from './internals/steps-repository/import-ready-preview';
@@ -17,7 +15,6 @@ import ImportWithSiteAddressStep from './internals/steps-repository/import-with-
 import ImporterWordpress from './internals/steps-repository/importer-wordpress';
 import ProcessingStep from './internals/steps-repository/processing-step';
 import { Flow, ProvidedDependencies } from './internals/types';
-import type { OnboardSelect } from '@automattic/data-stores';
 
 const importHostedSiteFlow: Flow = {
 	name: IMPORT_HOSTED_SITE_FLOW,
@@ -36,19 +33,10 @@ const importHostedSiteFlow: Flow = {
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
-		const { setStepProgress, setPendingAction } = useDispatch( ONBOARD_STORE );
+		const { setPendingAction } = useDispatch( ONBOARD_STORE );
 		const urlQueryParams = useQuery();
 		const fromParam = urlQueryParams.get( 'from' );
 		const siteSlugParam = useSiteSlugParam();
-		const selectedDesign = useSelect(
-			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
-			[]
-		);
-		const flowProgress = useSiteSetupFlowProgress( _currentStep, 'import' );
-
-		if ( flowProgress ) {
-			setStepProgress( flowProgress );
-		}
 
 		const exitFlow = ( to: string ) => {
 			setPendingAction( () => {
@@ -113,10 +101,6 @@ const importHostedSiteFlow: Flow = {
 							: navigate(
 									`import?siteSlug=${ providedDependencies?.siteSlug }&from=${ fromParam }`
 							  );
-					}
-					// End of Pattern Assembler flow
-					if ( isBlankCanvasDesign( selectedDesign ) ) {
-						return exitFlow( `/site-editor/${ siteSlugParam }` );
 					}
 
 					return exitFlow( `/home/${ siteSlugParam }` );
