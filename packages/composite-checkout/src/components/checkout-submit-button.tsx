@@ -9,6 +9,12 @@ import CheckoutErrorBoundary from './checkout-error-boundary';
 import type { PaymentMethod, PaymentProcessorSubmitData, ProcessPayment } from '../types';
 
 const CheckoutSubmitButtonWrapper = styled.div`
+	.checkout-button {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
 	&.checkout-submit-button--inactive {
 		display: none;
 	}
