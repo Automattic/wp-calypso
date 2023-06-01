@@ -2,7 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { Modal, ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import clockIcon from 'calypso/assets/images/jetpack/clock-icon.svg';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import {
@@ -10,6 +10,7 @@ import {
 	useJetpackAgencyDashboardRecordTrackEvent,
 	useShowVerifiedBadge,
 } from '../../hooks';
+import DashboardDataContext from '../../sites-overview/dashboard-data-context';
 import {
 	availableNotificationDurations as durations,
 	getSiteCountText,
@@ -47,6 +48,8 @@ export default function NotificationSettings( {
 }: Props ) {
 	const isBulkUpdate = !! bulkUpdateSettings;
 	const translate = useTranslate();
+
+	const { verifiedContacts } = useContext( DashboardDataContext );
 
 	const { updateMonitorSettings, isLoading, isComplete } = useUpdateMonitorSettings( sites );
 	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( sites, isLargeScreen );
@@ -139,13 +142,13 @@ export default function NotificationSettings( {
 					siteEmailItems = settings.monitor_notify_additional_user_emails.map( ( item ) => ( {
 						email: item.email_address,
 						name: item.name,
-						verified: item.verified,
+						verified: verifiedContacts.emails.includes( item.email_address ) || item.verified,
 					} ) );
 				}
 				setAllEmailItems( [ ...userEmailItems, ...siteEmailItems ] );
 			}
 		},
-		[ isBulkUpdate, isMultipleEmailEnabled, translate ]
+		[ isBulkUpdate, isMultipleEmailEnabled, translate, verifiedContacts.emails ]
 	);
 
 	useEffect( () => {
