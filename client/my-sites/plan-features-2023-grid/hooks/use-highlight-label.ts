@@ -32,13 +32,25 @@ const useHighlightLabel = ( { planName, currentSitePlanSlug, selectedPlan }: Pro
 		if ( isPersonalPlan( planName ) ) {
 			return translate( 'Best for Newsletter' );
 		}
+
+		if ( isCurrentPlan ) {
+			return translate( 'Your plan' );
+		}
 	} else if ( 'link-in-bio' === intent ) {
 		if ( isPremiumPlan( planName ) ) {
 			return translate( 'Best for Link in Bio' );
 		}
+
+		if ( isCurrentPlan ) {
+			return translate( 'Your plan' );
+		}
 	} else if ( 'blog-onboarding' === intent ) {
 		if ( isPremiumPlan( planName ) ) {
 			return translate( 'Best for Blog' );
+		}
+
+		if ( isCurrentPlan ) {
+			return translate( 'Your plan' );
 		}
 	} else if ( isCurrentPlan ) {
 		return translate( 'Your plan' );
