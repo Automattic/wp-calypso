@@ -42,7 +42,7 @@ const SiteSubscriptionsManager = () => {
 		return (
 			<Notice type={ NoticeType.Error }>
 				{ translate(
-					'Oops! We had a small hiccup with your subscriptions. Could you please try reloading? Thank you!'
+					'We had a small hiccup loading your subscriptions. Please try refreshing the page.'
 				) }
 			</Notice>
 		);
