@@ -9,6 +9,7 @@ import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
+import getSites from 'calypso/state/selectors/get-sites';
 import { useQuery } from '../hooks/use-query';
 import { ONBOARD_STORE } from '../stores';
 import { isInHostingFlow } from '../utils/is-in-hosting-flow';
@@ -55,6 +56,7 @@ const hosting: Flow = {
 		];
 	},
 	useStepNavigation( _currentStepSlug, navigate ) {
+		const siteCount = useSelector( getSites ).length;
 		const hostingFlow = useSelector( isInHostingFlow );
 		const { setSiteTitle, setPlanCartItem, setSiteGeoAffinity } = useDispatch( ONBOARD_STORE );
 		const { siteGeoAffinity, planCartItem } = useSelect(
@@ -73,9 +75,13 @@ const hosting: Flow = {
 			}
 
 			if ( _currentStepSlug === 'processing' ) {
-				const destination = addQueryArgs( '/sites', {
-					'new-site': providedDependencies.siteId,
-				} );
+				const destination =
+					siteCount === 0
+						? addQueryArgs( '/sites', {
+								'new-site': providedDependencies.siteId as number,
+						  } )
+						: `/home/${ providedDependencies.siteSlug }`;
+
 				persistSignupDestination( destination );
 				setSignupCompleteSlug( providedDependencies?.siteSlug );
 				setSignupCompleteFlowName( flowName );
