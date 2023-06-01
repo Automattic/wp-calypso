@@ -38,24 +38,35 @@ export const isValidSorting = ( input: {
 export interface SitesSortOptions {
 	sortKey?: SitesSortKey;
 	sortOrder?: SitesSortOrder;
+	newSiteID?: number;
 }
 
 export function useSitesListSorting< T extends SiteDetailsForSorting >(
 	allSites: T[],
-	{ sortKey, sortOrder = 'asc' }: SitesSortOptions
+	{ sortKey, sortOrder = 'asc', newSiteID }: SitesSortOptions
 ) {
-	return useMemo( () => {
+	const newSite = allSites.find( ( site ) => site.ID === newSiteID );
+
+	const allSitesExceptNew = allSites.filter( ( site ) => site !== newSite );
+
+	const sortedSites = useMemo( () => {
 		switch ( sortKey ) {
 			case 'lastInteractedWith':
-				return sortSitesByStaging( sortSitesByLastInteractedWith( allSites, sortOrder ) );
+				return sortSitesByStaging( sortSitesByLastInteractedWith( allSitesExceptNew, sortOrder ) );
 			case 'alphabetically':
-				return sortSitesAlphabetically( allSites, sortOrder );
+				return sortSitesAlphabetically( allSitesExceptNew, sortOrder );
 			case 'updatedAt':
-				return sortSitesByLastPublish( allSites, sortOrder );
+				return sortSitesByLastPublish( allSitesExceptNew, sortOrder );
 			default:
-				return allSites;
+				return allSitesExceptNew;
 		}
-	}, [ allSites, sortKey, sortOrder ] );
+	}, [ allSitesExceptNew, sortKey, sortOrder ] );
+
+	if ( newSite ) {
+		return [ newSite, ...sortedSites ];
+	}
+
+	return sortedSites;
 }
 
 const subtractDays = ( date: string, days: number ) => {

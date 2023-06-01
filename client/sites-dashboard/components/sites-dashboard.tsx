@@ -212,7 +212,7 @@ export function SitesDashboard( {
 				<SitesDashboardSitesList
 					sites={ allSites }
 					filtering={ { search } }
-					sorting={ sitesSorting }
+					sorting={ { ...sitesSorting, newSiteID } }
 					grouping={ { status, showHidden: true } }
 				>
 					{ ( { sites, statuses } ) => {

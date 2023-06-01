@@ -29,7 +29,9 @@ export const parseSitesSorting = ( serializedSorting: SitesSorting | 'none' ) =>
 	return sorting;
 };
 
-export const stringifySitesSorting = ( sorting: Required< SitesSortOptions > ): SitesSorting => {
+export const stringifySitesSorting = (
+	sorting: Required< Pick< SitesSortOptions, 'sortKey' | 'sortOrder' > >
+): SitesSorting => {
 	return `${ sorting.sortKey }${ SEPARATOR }${ sorting.sortOrder }`;
 };
 
