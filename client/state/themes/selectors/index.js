@@ -40,6 +40,7 @@ export { getThemeShowcaseTitle } from 'calypso/state/themes/selectors/get-theme-
 export { getThemeSignupUrl } from 'calypso/state/themes/selectors/get-theme-signup-url';
 export { getThemesLastPageForQuery } from 'calypso/state/themes/selectors/get-themes-last-page-for-query';
 export { getThemeSupportUrl } from 'calypso/state/themes/selectors/get-theme-support-url';
+export { getThemeType } from 'calypso/state/themes/selectors/get-theme-type';
 export { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
 export { getWpcomParentThemeId } from 'calypso/state/themes/selectors/get-wpcom-parent-theme-id';
 export { hasActivatedTheme } from 'calypso/state/themes/selectors/has-activated-theme';
