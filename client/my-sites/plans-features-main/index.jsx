@@ -4,7 +4,6 @@ import {
 	getPlan,
 	getPopularPlanSpec,
 	isFreePlan,
-	isBloggerPlan,
 	isPersonalPlan,
 	isPremiumPlan,
 	isBusinessPlan,
@@ -13,7 +12,6 @@ import {
 	isStarterPlan,
 	planMatches,
 	TYPE_FREE,
-	TYPE_BLOGGER,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
 	TYPE_BUSINESS,
@@ -33,7 +31,7 @@ import { useDispatch } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
 import warn from '@wordpress/warning';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
+import { localize, useTranslate } from 'i18n-calypso';
 import { get } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -63,6 +61,7 @@ import {
 } from 'calypso/state/sites/selectors';
 import { FreePlanPaidDomainDialog } from './components/free-plan-paid-domain-dialog';
 import './style.scss';
+import usePlanTypesWithIntent from './hooks/use-plan-types-with-intent';
 
 const OnboardingPricingGrid2023 = ( props ) => {
 	const {
@@ -93,6 +92,7 @@ const OnboardingPricingGrid2023 = ( props ) => {
 		sitePlanSlug,
 		translate,
 		siteSlug,
+		intent,
 	} = props;
 
 	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
@@ -148,6 +148,7 @@ const OnboardingPricingGrid2023 = ( props ) => {
 		replacePaidDomainWithFreeDomain,
 		currentSitePlanSlug: sitePlanSlug,
 		planActionOverrides,
+		intent,
 	};
 
 	const asyncPlanFeatures2023Grid = (
@@ -173,6 +174,179 @@ const OnboardingPricingGrid2023 = ( props ) => {
 		>
 			{ asyncPlanFeatures2023Grid }
 		</div>
+	);
+};
+
+const SecondaryFormattedHeader = ( { siteSlug } ) => {
+	const translate = useTranslate();
+	const headerText = translate( 'Upgrade your plan to access this feature and more' );
+	const subHeaderText = (
+		<Button className="plans-features-main__view-all-plans is-link" href={ `/plans/${ siteSlug }` }>
+			{ translate( 'View all plans' ) }
+		</Button>
+	);
+
+	return (
+		<FormattedHeader
+			headerText={ headerText }
+			subHeaderText={ subHeaderText }
+			compactOnMobile
+			isSecondary
+		/>
+	);
+};
+
+// plans, isDisplayingPlansNeededForFeature, onUpgradeClick
+const PricingView = ( props ) => {
+	const {
+		isDisplayingPlansNeededForFeature,
+		planTypeSelector,
+		planTypeSelectorProps,
+		hidePlanSelector,
+		siteId,
+		siteSlug,
+		isInSignup,
+		withDiscount,
+		discountEndDate,
+		selectedPlan,
+		hideFreePlan,
+		hidePersonalPlan,
+		hidePremiumPlan,
+		hideBusinessPlan,
+		hideEcommercePlan,
+		sitePlanSlug,
+		hideEnterprisePlan,
+		intent,
+		currentSitePlanSlug,
+	} = props;
+	const getPlanBillingPeriod = ( intervalType, defaultValue = null ) => {
+		const plans = {
+			monthly: TERM_MONTHLY,
+			yearly: TERM_ANNUALLY,
+			'2yearly': TERM_BIENNIALLY,
+			'3yearly': TERM_TRIENNIALLY,
+		};
+
+		return plans[ intervalType ] || defaultValue || TERM_ANNUALLY;
+	};
+	const getPlansFromTypes = ( planTypes, group, term ) => {
+		const plans = planTypes.reduce( ( accum, type ) => {
+			// the Free plan and the Enterprise plan don't have a term.
+			// We may consider to move this logic into the underlying `planMatches` function, but that would have wider implication so it's TBD
+			const planQuery =
+				type === TYPE_FREE || type === TYPE_ENTERPRISE_GRID_WPCOM
+					? { group, type }
+					: { group, type, term };
+			const plan = findPlansKeys( planQuery )[ 0 ];
+
+			if ( ! plan ) {
+				warn(
+					`Invalid plan type, \`${ type }\`, provided to \`PlansFeaturesMain\` component. See plans constants for valid plan types.`
+				);
+			}
+
+			return plan ? [ ...accum, plan ] : accum;
+		}, [] );
+
+		return plans;
+	};
+	const getVisiblePlansForPlanFeatures = ( availablePlans ) => {
+		const isPlanOneOfType = ( plan, types ) =>
+			types.filter( ( type ) => planMatches( plan, { type } ) ).length > 0;
+
+		let plans = isDisplayingPlansNeededForFeature
+			? availablePlans.filter( ( plan ) => {
+					if ( isEcommercePlan( selectedPlan ) ) {
+						return isEcommercePlan( plan );
+					}
+					if ( isBusinessPlan( selectedPlan ) ) {
+						return isBusinessPlan( plan ) || isEcommercePlan( plan );
+					}
+					if ( isPremiumPlan( selectedPlan ) ) {
+						return isPremiumPlan( plan ) || isBusinessPlan( plan ) || isEcommercePlan( plan );
+					}
+			  } )
+			: availablePlans;
+
+		if ( hideFreePlan ) {
+			plans = plans.filter( ( planSlug ) => ! isFreePlan( planSlug ) );
+		}
+
+		if ( hidePersonalPlan ) {
+			plans = plans.filter( ( planSlug ) => ! isPersonalPlan( planSlug ) );
+		}
+
+		if ( hidePremiumPlan ) {
+			plans = plans.filter( ( planSlug ) => ! isPremiumPlan( planSlug ) );
+		}
+
+		if ( hideBusinessPlan ) {
+			plans = plans.filter( ( planSlug ) => ! isBusinessPlan( planSlug ) );
+		}
+
+		if ( hideEcommercePlan ) {
+			plans = plans.filter( ( planSlug ) => ! isEcommercePlan( planSlug ) );
+		}
+
+		plans = plans.filter( ( plan ) =>
+			isPlanOneOfType( plan, [
+				TYPE_FREE,
+				TYPE_PERSONAL,
+				TYPE_PREMIUM,
+				TYPE_BUSINESS,
+				TYPE_ECOMMERCE,
+				TYPE_ENTERPRISE_GRID_WPCOM,
+			] )
+		);
+
+		return plans;
+	};
+
+	const term = getPlanBillingPeriod( props.intervalType, getPlan( selectedPlan )?.term );
+	const defaultPlanTypes = usePlanTypesWithIntent( {
+		intent: 'default',
+		selectedPlan,
+		sitePlanSlug,
+		hideEnterprisePlan,
+		currentSitePlanSlug,
+	} );
+	const visiblePlanTypes = usePlanTypesWithIntent( {
+		intent,
+		selectedPlan,
+		sitePlanSlug,
+		hideEnterprisePlan,
+		currentSitePlanSlug,
+	} );
+	const plans = defaultPlanTypes?.planTypes
+		? getPlansFromTypes( defaultPlanTypes.planTypes, GROUP_WPCOM, term )
+		: null;
+	const visiblePlans = visiblePlanTypes?.planTypes
+		? getVisiblePlansForPlanFeatures(
+				getPlansFromTypes( visiblePlanTypes.planTypes, GROUP_WPCOM, term )
+		  )
+		: null;
+
+	return (
+		<>
+			<PlanNotice
+				visiblePlans={ visiblePlans }
+				siteId={ siteId }
+				isInSignup={ isInSignup }
+				discountInformation={ {
+					withDiscount,
+					discountEndDate,
+				} }
+			/>
+			{ isDisplayingPlansNeededForFeature && <SecondaryFormattedHeader siteSlug={ siteSlug } /> }
+			{ ! hidePlanSelector && (
+				<PlanTypeSelector
+					{ ...planTypeSelectorProps }
+					kind={ planTypeSelector }
+					plans={ visiblePlans }
+				/>
+			) }
+			<OnboardingPricingGrid2023 { ...props } plans={ plans } visiblePlans={ visiblePlans } />
+		</>
 	);
 };
 
@@ -240,173 +414,13 @@ export class PlansFeaturesMain extends Component {
 		);
 	};
 
-	getPlanBillingPeriod( intervalType, defaultValue = null ) {
-		const plans = {
-			monthly: TERM_MONTHLY,
-			yearly: TERM_ANNUALLY,
-			'2yearly': TERM_BIENNIALLY,
-			'3yearly': TERM_TRIENNIALLY,
-		};
-
-		return plans[ intervalType ] || defaultValue || TERM_ANNUALLY;
-	}
-
-	getDefaultPlanTypes() {
-		const { selectedPlan, sitePlanSlug, hideEnterprisePlan } = this.props;
-		const isBloggerAvailable = isBloggerPlan( selectedPlan ) || isBloggerPlan( sitePlanSlug );
-		// TODO:
-		// this should fall into the processing function for the visible plans
-		// however, the Enterprise plan isn't a real plan and lack of some required support
-		// from the utility functions right now.
-		const isEnterpriseAvailable = ! hideEnterprisePlan;
-
-		return [
-			TYPE_FREE,
-			isBloggerAvailable && TYPE_BLOGGER,
-			TYPE_PERSONAL,
-			TYPE_PREMIUM,
-			TYPE_BUSINESS,
-			TYPE_ECOMMERCE,
-			isEnterpriseAvailable && TYPE_ENTERPRISE_GRID_WPCOM,
-		].filter( ( el ) => el );
-	}
-
-	getPlansFromTypes( planTypes, group, term ) {
-		const plans = planTypes.reduce( ( accum, type ) => {
-			// the Free plan and the Enterprise plan don't have a term.
-			// We may consider to move this logic into the underlying `planMatches` function, but that would have wider implication so it's TBD
-			const planQuery =
-				type === TYPE_FREE || type === TYPE_ENTERPRISE_GRID_WPCOM
-					? { group, type }
-					: { group, type, term };
-			const plan = findPlansKeys( planQuery )[ 0 ];
-
-			if ( ! plan ) {
-				warn(
-					`Invalid plan type, \`${ type }\`, provided to \`PlansFeaturesMain\` component. See plans constants for valid plan types.`
-				);
-			}
-
-			return plan ? [ ...accum, plan ] : accum;
-		}, [] );
-
-		return plans;
-	}
-
 	isPersonalCustomerTypePlanVisible() {
 		const { hidePersonalPlan } = this.props;
 		return ! hidePersonalPlan;
 	}
 
-	getVisiblePlansForPlanFeatures( availablePlans ) {
-		const {
-			selectedPlan,
-			hideFreePlan,
-			hidePersonalPlan,
-			hidePremiumPlan,
-			hideBusinessPlan,
-			hideEcommercePlan,
-		} = this.props;
-
-		const isPlanOneOfType = ( plan, types ) =>
-			types.filter( ( type ) => planMatches( plan, { type } ) ).length > 0;
-
-		let plans = this.isDisplayingPlansNeededForFeature()
-			? availablePlans.filter( ( plan ) => {
-					if ( isEcommercePlan( selectedPlan ) ) {
-						return isEcommercePlan( plan );
-					}
-					if ( isBusinessPlan( selectedPlan ) ) {
-						return isBusinessPlan( plan ) || isEcommercePlan( plan );
-					}
-					if ( isPremiumPlan( selectedPlan ) ) {
-						return isPremiumPlan( plan ) || isBusinessPlan( plan ) || isEcommercePlan( plan );
-					}
-			  } )
-			: availablePlans;
-
-		if ( hideFreePlan ) {
-			plans = plans.filter( ( planSlug ) => ! isFreePlan( planSlug ) );
-		}
-
-		if ( hidePersonalPlan ) {
-			plans = plans.filter( ( planSlug ) => ! isPersonalPlan( planSlug ) );
-		}
-
-		if ( hidePremiumPlan ) {
-			plans = plans.filter( ( planSlug ) => ! isPremiumPlan( planSlug ) );
-		}
-
-		if ( hideBusinessPlan ) {
-			plans = plans.filter( ( planSlug ) => ! isBusinessPlan( planSlug ) );
-		}
-
-		if ( hideEcommercePlan ) {
-			plans = plans.filter( ( planSlug ) => ! isEcommercePlan( planSlug ) );
-		}
-
-		plans = plans.filter( ( plan ) =>
-			isPlanOneOfType( plan, [
-				TYPE_FREE,
-				TYPE_PERSONAL,
-				TYPE_PREMIUM,
-				TYPE_BUSINESS,
-				TYPE_ECOMMERCE,
-				TYPE_ENTERPRISE_GRID_WPCOM,
-			] )
-		);
-
-		return plans;
-	}
-
-	renderSecondaryFormattedHeader() {
-		const { siteSlug, translate } = this.props;
-		let headerText;
-		let subHeaderText;
-
-		if ( this.isDisplayingPlansNeededForFeature() ) {
-			headerText = translate( 'Upgrade your plan to access this feature and more' );
-			subHeaderText = (
-				<Button
-					className="plans-features-main__view-all-plans is-link"
-					href={ `/plans/${ siteSlug }` }
-				>
-					{ translate( 'View all plans' ) }
-				</Button>
-			);
-		}
-		if ( ! headerText ) {
-			return null;
-		}
-
-		return (
-			<FormattedHeader
-				headerText={ headerText }
-				subHeaderText={ subHeaderText }
-				compactOnMobile
-				isSecondary
-			/>
-		);
-	}
-
 	render() {
-		const {
-			siteId,
-			redirectToAddDomainFlow,
-			hidePlanTypeSelector,
-			planTypeSelectorProps,
-			intervalType,
-			selectedPlan,
-			planTypeSelector,
-			planTypes,
-		} = this.props;
-		const term = this.getPlanBillingPeriod( intervalType, getPlan( selectedPlan )?.term );
-		const defaultPlanTypes = this.getDefaultPlanTypes();
-		// We need all the plans in order to show the correct features in the plan comparison table
-		const plans = this.getPlansFromTypes( defaultPlanTypes, GROUP_WPCOM, term );
-		const visiblePlans = this.getVisiblePlansForPlanFeatures(
-			this.getPlansFromTypes( planTypes || defaultPlanTypes, GROUP_WPCOM, term )
-		);
+		const { siteId, redirectToAddDomainFlow, hidePlanTypeSelector, planTypeSelector } = this.props;
 
 		// If advertising plans for a certain feature, ensure user has pressed "View all plans" before they can see others
 		let hidePlanSelector =
@@ -428,30 +442,13 @@ export class PlansFeaturesMain extends Component {
 				<QueryPlans />
 				<QuerySites siteId={ siteId } />
 				<QuerySitePlans siteId={ siteId } />
-				<PlanNotice
-					visiblePlans={ visiblePlans }
-					siteId={ siteId }
-					isInSignup={ this.props.isInSignup }
-					discountInformation={ {
-						withDiscount: this.props.withDiscount,
-						discountEndDate: this.props.discountEndDate,
-					} }
-				/>
-				{ this.renderSecondaryFormattedHeader() }
-				{ ! hidePlanSelector && (
-					<PlanTypeSelector
-						{ ...planTypeSelectorProps }
-						kind={ planTypeSelector }
-						plans={ visiblePlans }
-					/>
-				) }
-				{ this.state.isFreePlanPaidDomainDialogOpen && this.renderFreePlanPaidDomainModal() }
-				<OnboardingPricingGrid2023
+				<PricingView
 					{ ...this.props }
-					plans={ plans }
-					visiblePlans={ visiblePlans }
+					isDisplayingPlansNeededForFeature={ this.isDisplayingPlansNeededForFeature() }
 					onUpgradeClick={ this.onUpgradeClick }
+					hidePlanSelector={ hidePlanSelector }
 				/>
+				{ this.state.isFreePlanPaidDomainDialogOpen && this.renderFreePlanPaidDomainModal() }
 			</div>
 		);
 	}
@@ -485,6 +482,18 @@ PlansFeaturesMain.propTypes = {
 	isPlansInsideStepper: PropTypes.bool,
 	planTypeSelector: PropTypes.string,
 	busyOnUpgradeClick: PropTypes.bool,
+	intent: PropTypes.oneOf( [
+		'blog-onboarding',
+		'newsletter',
+		'link-in-bio',
+		'new-hosted-site',
+		'new-hosted-site-hosting-flow',
+		'plugins',
+		'jetpack-app',
+		'plans-import',
+		'plans-ecommerce',
+		'default',
+	] ),
 };
 
 PlansFeaturesMain.defaultProps = {
@@ -512,6 +521,7 @@ export default connect( ( state, props ) => {
 	const sitePlanSlug = sitePlan?.product_slug;
 	const eligibleForWpcomMonthlyPlans = isEligibleForWpComMonthlyPlan( state, siteId );
 	const siteSlug = getSiteSlug( state, get( props.site, [ 'ID' ] ) );
+	const intent = props.intent || 'default';
 
 	let customerType = chooseDefaultCustomerType( {
 		currentCustomerType: props.customerType,
@@ -554,5 +564,6 @@ export default connect( ( state, props ) => {
 		sitePlanSlug,
 		eligibleForWpcomMonthlyPlans,
 		planTypeSelectorProps,
+		intent,
 	};
 } )( localize( PlansFeaturesMain ) );

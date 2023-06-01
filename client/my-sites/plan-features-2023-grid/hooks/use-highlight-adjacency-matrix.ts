@@ -4,7 +4,7 @@ import {
 	isPremiumPlan,
 	planLevelsMatch,
 } from '@automattic/calypso-products';
-import { isNewsletterFlow, isLinkInBioFlow } from '@automattic/onboarding';
+import { usePlansGridContext } from '../grid-context';
 import type { PlanProperties } from '../types';
 
 interface HighlightAdjacencyMatrix {
@@ -17,26 +17,22 @@ interface HighlightAdjacencyMatrix {
 
 interface Props {
 	visiblePlans: PlanProperties[];
-	flowName: string;
 	currentSitePlanSlug?: string;
 	selectedPlan?: string;
 }
 
-const useHighlightIndices = ( {
-	visiblePlans,
-	flowName,
-	currentSitePlanSlug,
-	selectedPlan,
-}: Props ) => {
+const useHighlightIndices = ( { visiblePlans, currentSitePlanSlug, selectedPlan }: Props ) => {
+	const { intent } = usePlansGridContext();
+
 	return visiblePlans.reduce< number[] >( ( acc, { planName }, index ) => {
 		let isHighlight = false;
 
 		const isCurrentPlan = currentSitePlanSlug === planName;
 		const isSuggestedPlan = !! ( selectedPlan && planLevelsMatch( planName, selectedPlan ) );
 
-		if ( flowName && isNewsletterFlow( flowName ) ) {
+		if ( 'newsletter' === intent ) {
 			isHighlight = isPersonalPlan( planName ) || isCurrentPlan;
-		} else if ( flowName && isLinkInBioFlow( flowName ) ) {
+		} else if ( 'link-in-bio' === intent ) {
 			isHighlight = isPremiumPlan( planName ) || isCurrentPlan;
 		} else {
 			isHighlight =
@@ -56,13 +52,11 @@ const useHighlightIndices = ( {
 
 const useHighlightAdjacencyMatrix = ( {
 	visiblePlans,
-	flowName,
 	currentSitePlanSlug,
 	selectedPlan,
 }: Props ) => {
 	const highlightIndices = useHighlightIndices( {
 		visiblePlans,
-		flowName,
 		currentSitePlanSlug,
 		selectedPlan,
 	} );

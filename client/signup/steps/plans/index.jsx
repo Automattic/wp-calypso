@@ -99,7 +99,7 @@ export class PlansStep extends Component {
 			hideFreePlan,
 			isLaunchPage,
 			selectedSite,
-			planTypes,
+			intent,
 			flowName,
 			isInVerticalScrollingPlansExperiment,
 			isReskinned,
@@ -162,7 +162,7 @@ export class PlansStep extends Component {
 					customerType={ this.getCustomerType() }
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
 					plansWithScroll={ this.state.isDesktop }
-					planTypes={ planTypes }
+					intent={ intent }
 					flowName={ flowName }
 					isAllPaidPlansShown={ true }
 					isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
@@ -333,8 +333,19 @@ PlansStep.propTypes = {
 	stepSectionName: PropTypes.string,
 	customerType: PropTypes.string,
 	translate: PropTypes.func.isRequired,
-	planTypes: PropTypes.array,
 	flowName: PropTypes.string,
+	intent: PropTypes.oneOf( [
+		'blog-onboarding',
+		'newsletter',
+		'link-in-bio',
+		'new-hosted-site',
+		'new-hosted-site-hosting-flow',
+		'plugins',
+		'jetpack-app',
+		'plans-import',
+		'plans-ecommerce',
+		'default',
+	] ),
 };
 
 /**

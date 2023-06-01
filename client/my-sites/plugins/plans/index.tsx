@@ -1,9 +1,4 @@
-import {
-	getPlan,
-	PLAN_BUSINESS,
-	TYPE_BUSINESS,
-	TYPE_ECOMMERCE,
-} from '@automattic/calypso-products';
+import { PLAN_BUSINESS } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import ActionCard from 'calypso/components/action-card';
@@ -29,14 +24,7 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 	const translate = useTranslate();
 	const breadcrumbs = useSelector( getBreadcrumbs );
 	const selectedSite = useSelector( getSelectedSite );
-
 	const dispatch = useDispatch();
-
-	const currentPlanSlug = selectedSite?.plan?.product_slug;
-	let currentPlanType = null;
-	if ( currentPlanSlug ) {
-		currentPlanType = getPlan( currentPlanSlug )?.type;
-	}
 
 	useEffect( () => {
 		if ( breadcrumbs.length === 0 ) {
@@ -110,7 +98,7 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 					site={ selectedSite }
 					intervalType={ intervalType }
 					selectedPlan={ PLAN_BUSINESS }
-					planTypes={ [ currentPlanType, TYPE_BUSINESS, TYPE_ECOMMERCE ] }
+					intent="plugins"
 					isInMarketplace
 					shouldShowPlansFeatureComparison
 					isReskinned

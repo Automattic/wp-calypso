@@ -4,21 +4,20 @@ import {
 	isPersonalPlan,
 	planLevelsMatch,
 } from '@automattic/calypso-products';
-import { isLinkInBioFlow, isNewsletterFlow, isBlogOnboardingFlow } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
 import isPlanAvailableForPurchase from 'calypso/state/sites/plans/selectors/is-plan-available-for-purchase';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { usePlansGridContext } from '../grid-context';
 import { isPopularPlan } from '../lib/is-popular-plan';
 
 interface Props {
 	planName: string;
-	flowName?: string | null;
 	currentSitePlanSlug?: string;
 	selectedPlan?: string;
 }
 
-const useHighlightLabel = ( { planName, flowName, currentSitePlanSlug, selectedPlan }: Props ) => {
+const useHighlightLabel = ( { planName, currentSitePlanSlug, selectedPlan }: Props ) => {
 	const translate = useTranslate();
 	const isCurrentPlan = currentSitePlanSlug === planName;
 	const selectedSiteId = useSelector( getSelectedSiteId );
@@ -27,16 +26,17 @@ const useHighlightLabel = ( { planName, flowName, currentSitePlanSlug, selectedP
 	);
 	const isSuggestedPlan =
 		selectedPlan && planLevelsMatch( planName, selectedPlan ) && isAvailableForPurchase;
+	const { intent } = usePlansGridContext();
 
-	if ( flowName && isNewsletterFlow( flowName ) ) {
+	if ( 'newsletter' === intent ) {
 		if ( isPersonalPlan( planName ) ) {
 			return translate( 'Best for Newsletter' );
 		}
-	} else if ( flowName && isLinkInBioFlow( flowName ) ) {
+	} else if ( 'link-in-bio' === intent ) {
 		if ( isPremiumPlan( planName ) ) {
 			return translate( 'Best for Link in Bio' );
 		}
-	} else if ( flowName && isBlogOnboardingFlow( flowName ) ) {
+	} else if ( 'blog-onboarding' === intent ) {
 		if ( isPremiumPlan( planName ) ) {
 			return translate( 'Best for Blog' );
 		}
