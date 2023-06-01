@@ -6,6 +6,7 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { Fragment } from 'react';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import lockedIcon from '../components/assets/icons/locked.svg';
 import WordPressLogo from '../components/wordpress-logo';
 import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
@@ -78,8 +79,15 @@ function ButtonContents( {
 				responseCart.currency,
 				{ isSmallestUnit: true, stripZeros: true }
 			);
-			/* translators: %s is the total to be paid in localized currency */
-			return <>{ sprintf( __( 'Pay %s with credits' ), total ) }</>;
+			return (
+				<>
+					<img src={ lockedIcon } alt="" />
+					{
+						/* translators: %s is the total to be paid in localized currency */
+						sprintf( __( 'Pay %s with credits' ), total )
+					}
+				</>
+			);
 		}
 		return <>{ __( 'Complete Checkout' ) }</>;
 	}

@@ -6,6 +6,7 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import { validatePaymentDetails } from 'calypso/lib/checkout/validation';
+import lockedIcon from '../../components/assets/icons/locked.svg';
 import { actions, selectors } from './store';
 import type { WpcomCreditCardSelectors } from './store';
 import type { CardFieldState, CardStoreType } from './types';
@@ -128,8 +129,17 @@ function ButtonContents( {
 		return <>{ __( 'Processing…' ) }</>;
 	}
 	if ( formStatus === FormStatus.READY ) {
-		/* translators: %s is the total to be paid in localized currency */
-		return <>{ activeButtonText || sprintf( __( 'Pay %s' ), total.amount.displayValue ) }</>;
+		return (
+			<>
+				<img src={ lockedIcon } alt="" />
+				{ activeButtonText ||
+					sprintf(
+						/* translators: %s is the total to be paid in localized currency */
+						__( 'Pay %s' ),
+						total.amount.displayValue
+					) }
+			</>
+		);
 	}
 	return <>{ __( 'Please wait…' ) }</>;
 }
