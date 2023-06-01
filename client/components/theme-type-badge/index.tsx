@@ -13,7 +13,7 @@ import {
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import { getThemeType } from 'calypso/state/themes/selectors';
 import ThemeTypeBadgeTooltip from './tooltip';
 

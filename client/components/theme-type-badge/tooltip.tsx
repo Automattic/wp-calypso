@@ -9,7 +9,7 @@ import { Button as LinkButton } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import {
 	canUseTheme,
 	getThemeType,
