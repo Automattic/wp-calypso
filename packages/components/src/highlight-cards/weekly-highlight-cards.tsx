@@ -59,17 +59,27 @@ export default function WeeklyHighlightCards( {
 }: WeeklyHighlightCardsProps ) {
 	const translate = useTranslate();
 
+	// @TODO: Fetch the state from API to determine whether showing the settings tooltip.
+	const showSettingsTooltip =
+		sessionStorage.getItem( 'jp-stats-settings-tooltip' ) === '1' ? false : true;
+
 	const textRef = useRef( null );
 	const settingsActionRef = useRef( null );
 	const [ isTooltipVisible, setTooltipVisible ] = useState( true );
-	const [ isSettingsTooltipVisible, setSettingsTooltipVisible ] = useState( true );
+	const [ isSettingsTooltipVisible, setSettingsTooltipVisible ] = useState( showSettingsTooltip );
 	const [ isPopoverVisible, setPopoverVisible ] = useState( false );
 
-	// @TODO: Set the popover to disappear when the user clicks outside of the popover.
+	// @TODO: Set the popover to disappear when the users click outside of the popover.
 	const togglePopoverMenu = useCallback( () => {
 		setPopoverVisible( ( isVisible ) => {
 			return ! isVisible;
 		} );
+	}, [] );
+
+	// @TODO: Update the state when users dismiss the settings tooltip.
+	const dismissSettingsTooltip = useCallback( () => {
+		sessionStorage.setItem( 'jp-stats-settings-tooltip', '1' );
+		setSettingsTooltipVisible( false );
 	}, [] );
 
 	const isHighlightsSettingsEnabled = config.isEnabled( 'stats/highlights-settings' );
@@ -157,7 +167,11 @@ export default function WeeklyHighlightCards( {
 										'You can now tailor your site highlights by adjusting the time range.'
 									) }
 								</p>
-								<button onClick={ () => setSettingsTooltipVisible( false ) }>
+								<button
+									onClick={ () => {
+										dismissSettingsTooltip();
+									} }
+								>
 									{ translate( 'Got it' ) }
 								</button>
 							</div>
