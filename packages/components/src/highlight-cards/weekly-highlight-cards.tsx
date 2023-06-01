@@ -40,32 +40,27 @@ type WeeklyHighlightCardsProps = {
 	currentPeriod: string;
 };
 
+type HighlightCardsSettingsProps = {
+	onTogglePeriod: ( period: string ) => void;
+	currentPeriod: string;
+};
+
 export const PAST_SEVEN_DAYS = 'past_seven_days';
 export const PAST_THIRTY_DAYS = 'past_thirty_days';
 export const BETWEEN_PAST_EIGHT_AND_FIFTEEN_DAYS = 'between_past_eight_and_fifteen_days';
 export const BETWEEN_PAST_THIRTY_ONE_AND_SIXTY_DAYS = 'between_past_thirty_one_and_sixty_days';
 
-export default function WeeklyHighlightCards( {
-	className,
-	counts,
-	onClickComments,
-	onClickLikes,
-	onClickViews,
-	onClickVisitors,
-	onTogglePeriod,
-	previousCounts,
-	showValueTooltip,
+const HighlightCardsSettings = function ( {
 	currentPeriod,
-}: WeeklyHighlightCardsProps ) {
+	onTogglePeriod,
+}: HighlightCardsSettingsProps ) {
 	const translate = useTranslate();
 
 	// @TODO: Fetch the state from API to determine whether showing the settings tooltip.
 	const showSettingsTooltip =
 		sessionStorage.getItem( 'jp-stats-settings-tooltip' ) === '1' ? false : true;
 
-	const textRef = useRef( null );
 	const settingsActionRef = useRef( null );
-	const [ isTooltipVisible, setTooltipVisible ] = useState( true );
 	const [ isSettingsTooltipVisible, setSettingsTooltipVisible ] = useState( showSettingsTooltip );
 	const [ isPopoverVisible, setPopoverVisible ] = useState( false );
 
@@ -82,6 +77,79 @@ export default function WeeklyHighlightCards( {
 			return ! isVisible;
 		} );
 	}, [ dismissSettingsTooltip ] );
+
+	return (
+		<div className="highlight-cards-heading__settings">
+			<button
+				className="highlight-cards-heading__settings-action"
+				ref={ settingsActionRef }
+				onClick={ togglePopoverMenu }
+			>
+				<Icon className="gridicon" icon={ moreVertical } />
+			</button>
+			<Popover
+				className="tooltip tooltip--darker highlight-card-tooltip highlight-card__settings-tooltip"
+				isVisible={ isSettingsTooltipVisible }
+				position="bottom left"
+				context={ settingsActionRef.current }
+			>
+				<div className="highlight-card-tooltip-content">
+					<p>
+						{ translate( 'You can now tailor your site highlights by adjusting the time range.' ) }
+					</p>
+					<button
+						onClick={ () => {
+							dismissSettingsTooltip();
+						} }
+					>
+						{ translate( 'Got it' ) }
+					</button>
+				</div>
+			</Popover>
+			<Popover
+				className="tooltip highlight-card-popover"
+				isVisible={ isPopoverVisible }
+				position="bottom left"
+				context={ settingsActionRef.current }
+				focusOnShow={ false }
+			>
+				<button
+					onClick={ () => {
+						onTogglePeriod( PAST_SEVEN_DAYS );
+					} }
+				>
+					{ translate( '7-day highlights' ) }
+					{ currentPeriod === PAST_SEVEN_DAYS && <Icon className="gridicon" icon={ check } /> }
+				</button>
+				<button
+					onClick={ () => {
+						onTogglePeriod( PAST_THIRTY_DAYS );
+					} }
+				>
+					{ translate( '30-day highlights' ) }
+					{ currentPeriod === PAST_THIRTY_DAYS && <Icon className="gridicon" icon={ check } /> }
+				</button>
+			</Popover>
+		</div>
+	);
+};
+
+export default function WeeklyHighlightCards( {
+	className,
+	counts,
+	onClickComments,
+	onClickLikes,
+	onClickViews,
+	onClickVisitors,
+	onTogglePeriod,
+	previousCounts,
+	showValueTooltip,
+	currentPeriod,
+}: WeeklyHighlightCardsProps ) {
+	const translate = useTranslate();
+
+	const textRef = useRef( null );
+	const [ isTooltipVisible, setTooltipVisible ] = useState( true );
 
 	const isHighlightsSettingsEnabled = config.isEnabled( 'stats/highlights-settings' );
 
@@ -148,64 +216,10 @@ export default function WeeklyHighlightCards( {
 				) }
 
 				{ isHighlightsSettingsEnabled && (
-					<div className="highlight-cards-heading__settings">
-						<button
-							className="highlight-cards-heading__settings-action"
-							ref={ settingsActionRef }
-							onClick={ togglePopoverMenu }
-						>
-							<Icon className="gridicon" icon={ moreVertical } />
-						</button>
-						<Popover
-							className="tooltip tooltip--darker highlight-card-tooltip highlight-card__settings-tooltip"
-							isVisible={ isSettingsTooltipVisible }
-							position="bottom left"
-							context={ settingsActionRef.current }
-						>
-							<div className="highlight-card-tooltip-content">
-								<p>
-									{ translate(
-										'You can now tailor your site highlights by adjusting the time range.'
-									) }
-								</p>
-								<button
-									onClick={ () => {
-										dismissSettingsTooltip();
-									} }
-								>
-									{ translate( 'Got it' ) }
-								</button>
-							</div>
-						</Popover>
-						<Popover
-							className="tooltip highlight-card-popover"
-							isVisible={ isPopoverVisible }
-							position="bottom left"
-							context={ settingsActionRef.current }
-							focusOnShow={ false }
-						>
-							<button
-								onClick={ () => {
-									onTogglePeriod( PAST_SEVEN_DAYS );
-								} }
-							>
-								{ translate( '7-day highlights' ) }
-								{ currentPeriod === PAST_SEVEN_DAYS && (
-									<Icon className="gridicon" icon={ check } />
-								) }
-							</button>
-							<button
-								onClick={ () => {
-									onTogglePeriod( PAST_THIRTY_DAYS );
-								} }
-							>
-								{ translate( '30-day highlights' ) }
-								{ currentPeriod === PAST_THIRTY_DAYS && (
-									<Icon className="gridicon" icon={ check } />
-								) }
-							</button>
-						</Popover>
-					</div>
+					<HighlightCardsSettings
+						currentPeriod={ currentPeriod }
+						onTogglePeriod={ onTogglePeriod }
+					/>
 				) }
 			</h3>
 
