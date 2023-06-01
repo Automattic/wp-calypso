@@ -8,7 +8,6 @@ export function getEarningsForSiteId( state, siteId ) {
 
 export function getEarningsWithDefaultsForSiteId( state, siteId ) {
 	const earnings = getEarningsForSiteId( state, siteId ) ?? {};
-	console.log( 'getEarningsWithDefaultsForSiteId', earnings, siteId ); // eslint-disable-line no-console
 	return {
 		...earnings,
 		total: earnings.total ?? 0,
