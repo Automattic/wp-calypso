@@ -136,7 +136,12 @@ interface DesignCardProps {
 	shouldLimitGlobalStyles?: boolean;
 	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
-	getBadge: ( themeId: string, forcePremium: boolean, tooltipMessage: string ) => React.ReactNode;
+	getBadge: (
+		themeId: string,
+		forcePremium: boolean,
+		tooltipHeader: string,
+		tooltipMessage: string
+	) => React.ReactNode;
 }
 
 const DesignCard: React.FC< DesignCardProps > = ( {
@@ -158,6 +163,7 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 
 	const isPremiumStyleVariation =
 		( ! design.is_premium && shouldLimitGlobalStyles && ! isDefaultVariation ) ?? false;
+	const badgeTooltipHeader = isPremiumStyleVariation ? __( 'Premium style' ) : '';
 	const badgeTooltipMessage = isPremiumStyleVariation
 		? __( 'Unlock this style, and tons of other features, by upgrading to a Premium plan.' )
 		: '';
@@ -176,7 +182,12 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 					styleVariation={ selectedStyleVariation }
 				/>
 			}
-			badge={ getBadge( design.slug, isPremiumStyleVariation, badgeTooltipMessage ) }
+			badge={ getBadge(
+				design.slug,
+				isPremiumStyleVariation,
+				badgeTooltipHeader,
+				badgeTooltipMessage
+			) }
 			styleVariations={ style_variations }
 			selectedStyleVariation={ selectedStyleVariation }
 			onImageClick={ () => onPreview( design, selectedStyleVariation ) }
@@ -198,7 +209,12 @@ interface DesignPickerProps {
 	categorization?: Categorization;
 	isPremiumThemeAvailable?: boolean;
 	shouldLimitGlobalStyles?: boolean;
-	getBadge: ( themeId: string, forcePremium: boolean, tooltipMessage: string ) => React.ReactNode;
+	getBadge: (
+		themeId: string,
+		forcePremium: boolean,
+		tooltipHeader: string,
+		tooltipMessage: string
+	) => React.ReactNode;
 }
 
 const DesignPicker: React.FC< DesignPickerProps > = ( {
@@ -273,7 +289,12 @@ export interface UnifiedDesignPickerProps {
 	heading?: React.ReactNode;
 	isPremiumThemeAvailable?: boolean;
 	shouldLimitGlobalStyles?: boolean;
-	getBadge: ( themeId: string, forcePremium: boolean, tooltipMessage: string ) => React.ReactNode;
+	getBadge: (
+		themeId: string,
+		forcePremium: boolean,
+		tooltipHeader: string,
+		tooltipMessage: string
+	) => React.ReactNode;
 }
 
 const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {

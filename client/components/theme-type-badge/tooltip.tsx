@@ -19,11 +19,12 @@ import {
 } from 'calypso/state/themes/selectors';
 
 interface Props {
-	canGoToCheckout: boolean;
+	canGoToCheckout?: boolean;
 	forcePremium?: boolean;
 	siteId: number | null;
 	siteSlug: string | null;
 	themeId: string;
+	tooltipHeader?: string;
 	tooltipMessage?: string;
 }
 
@@ -33,6 +34,7 @@ const ThemeTypeBadgeTooltip = ( {
 	siteId,
 	siteSlug,
 	themeId,
+	tooltipHeader,
 	tooltipMessage,
 }: Props ) => {
 	const translate = useTranslate();
@@ -68,6 +70,10 @@ const ThemeTypeBadgeTooltip = ( {
 	}, [ themeId ] );
 
 	const getHeader = (): string | null => {
+		if ( tooltipHeader ) {
+			return tooltipHeader;
+		}
+
 		const headers = {
 			[ PREMIUM_THEME ]: translate( 'Premium theme' ),
 			[ DOT_ORG_THEME ]: translate( 'Community theme', {

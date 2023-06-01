@@ -329,13 +329,19 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		[ site ]
 	);
 
-	const getBadge = ( themeId: string, forcePremium: boolean, tooltipMessage: string ) => (
+	const getBadge = (
+		themeId: string,
+		forcePremium: boolean,
+		tooltipHeader: string,
+		tooltipMessage: string
+	) => (
 		<ThemeTypeBadge
 			canGoToCheckout={ false }
 			forcePremium={ forcePremium }
 			siteId={ site?.ID ?? null }
 			siteSlug={ siteSlug }
 			themeId={ themeId }
+			tooltipHeader={ tooltipHeader }
 			tooltipMessage={ tooltipMessage }
 		/>
 	);
