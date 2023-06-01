@@ -147,10 +147,10 @@ export function SitesDashboard( {
 }: SitesDashboardProps ) {
 	const createSiteUrl = useAddNewSiteUrl( {
 		source: TRACK_SOURCE_NAME,
-		ref: 'topbar-cta',
+		ref: 'topbar',
 	} );
 	const importSiteUrl = useSitesDashboardImportSiteUrl( {
-		ref: 'topbar-cta',
+		ref: 'topbar',
 	} );
 	const { __, _n } = useI18n();
 	const { data: allSites = [], isLoading } = useSiteExcerptsQuery();
