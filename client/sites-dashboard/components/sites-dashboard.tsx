@@ -363,13 +363,13 @@ function useShowSiteTransferredNotice() {
 			return;
 		}
 		const url = new URL( window.location.href );
-		if ( url.searchParams.get( 'transfer_complete' ) === 'true' ) {
+		if ( url.searchParams.get( 'site-transfer-confirm' ) === 'true' ) {
 			shownSiteTransferredNotice.current = true;
 
 			dispatch( successNotice( __( 'Your blog transfer succeeded!' ), { duration: 8000 } ) );
 
 			// Remove query param without triggering a re-render
-			url.searchParams.delete( 'transfer_complete' );
+			url.searchParams.delete( 'site-transfer-confirm' );
 			window.history.replaceState( null, '', url.toString() );
 		}
 	}, [ __, dispatch ] );
