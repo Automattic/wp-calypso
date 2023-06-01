@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { FEATURE_WOOP } from '@automattic/calypso-products';
 import { MShotsImage } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
@@ -15,9 +14,7 @@ import {
 } from '../utils';
 import { UnifiedDesignPickerCategoryFilter } from './design-picker-category-filter/unified-design-picker-category-filter';
 import PatternAssemblerCta from './pattern-assembler-cta';
-import PremiumBadge from './premium-badge';
 import ThemeCard from './theme-card';
-import WooCommerceBundledBadge from './woocommerce-bundled-badge';
 import type { Categorization } from '../hooks/use-categorization';
 import type { Design, StyleVariation } from '../types';
 import type { RefCallback } from 'react';
@@ -135,24 +132,22 @@ interface DesignCardProps {
 	design: Design;
 	locale: string;
 	category?: string | null;
-	currentPlanFeatures?: string[];
-	hasPurchasedTheme?: boolean;
 	isPremiumThemeAvailable?: boolean;
 	shouldLimitGlobalStyles?: boolean;
 	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
+	getBadge: ( themeId: string, forcePremium: boolean, tooltipMessage: string ) => React.ReactNode;
 }
 
 const DesignCard: React.FC< DesignCardProps > = ( {
 	design,
 	locale,
 	category,
-	currentPlanFeatures,
-	hasPurchasedTheme = false,
 	isPremiumThemeAvailable,
 	shouldLimitGlobalStyles,
 	onChangeVariation,
 	onPreview,
+	getBadge,
 } ) => {
 	const { __ } = useI18n();
 	const [ selectedStyleVariation, setSelectedStyleVariation ] = useState< StyleVariation >();
@@ -161,53 +156,11 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 	const trackingDivRef = useTrackDesignView( { category, design, isPremiumThemeAvailable } );
 	const isDefaultVariation = ! selectedStyleVariation || selectedStyleVariation.slug === 'default';
 
-	const currentSiteCanInstallWoo = currentPlanFeatures?.includes( FEATURE_WOOP ) ?? false;
-	const designIsBundledWithWoo = design.is_bundled_with_woo_commerce;
-	const isPremium = design.is_premium || ( shouldLimitGlobalStyles && ! isDefaultVariation );
-	const shouldUpgrade = isPremium && ! isPremiumThemeAvailable && ! hasPurchasedTheme;
-
-	function getPricingDescription() {
-		let text: React.ReactNode = null;
-
-		if ( designIsBundledWithWoo ) {
-			text = currentSiteCanInstallWoo
-				? __( 'Included in your plan' )
-				: __( 'Available with WordPress.com Business' );
-		} else if ( isPremium && shouldUpgrade ) {
-			text = __( 'Included in WordPress.com Premium' );
-		} else if ( isPremium && ! shouldUpgrade && hasPurchasedTheme ) {
-			text = __( 'Purchased on an annual subscription' );
-		} else if ( isPremium && ! shouldUpgrade && ! hasPurchasedTheme ) {
-			text = __( 'Included in your plan' );
-		} else if ( ! isPremium ) {
-			text = __( 'Free' );
-		}
-
-		let badge: React.ReactNode = null;
-		if ( designIsBundledWithWoo ) {
-			badge = <WooCommerceBundledBadge />;
-		} else if ( isPremium ) {
-			const showStyleVariationTooltip =
-				! isDefaultVariation && shouldUpgrade && ! design.is_premium;
-			const tooltipText = showStyleVariationTooltip
-				? __( 'Unlock this style, and tons of other features, by upgrading to a Premium plan.' )
-				: undefined;
-			badge = (
-				<PremiumBadge
-					tooltipPosition="bottom right"
-					isPremiumThemeAvailable={ isPremiumThemeAvailable }
-					tooltipContent={ tooltipText }
-				/>
-			);
-		}
-
-		return (
-			<div className="theme-card__info-pricing">
-				{ badge }
-				<span>{ text }</span>
-			</div>
-		);
-	}
+	const isPremiumStyleVariation =
+		( ! design.is_premium && shouldLimitGlobalStyles && ! isDefaultVariation ) ?? false;
+	const badgeTooltipMessage = isPremiumStyleVariation
+		? __( 'Unlock this style, and tons of other features, by upgrading to a Premium plan.' )
+		: '';
 
 	return (
 		<ThemeCard
@@ -223,7 +176,7 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 					styleVariation={ selectedStyleVariation }
 				/>
 			}
-			badge={ getPricingDescription() }
+			badge={ getBadge( design.slug, isPremiumStyleVariation, badgeTooltipMessage ) }
 			styleVariations={ style_variations }
 			selectedStyleVariation={ selectedStyleVariation }
 			onImageClick={ () => onPreview( design, selectedStyleVariation ) }
@@ -236,11 +189,6 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 	);
 };
 
-const wasThemePurchased = ( purchasedThemes: string[] | undefined, design: Design ) =>
-	purchasedThemes
-		? purchasedThemes.some( ( themeId ) => design?.recipe?.stylesheet?.endsWith( '/' + themeId ) )
-		: false;
-
 interface DesignPickerProps {
 	locale: string;
 	onSelectBlankCanvas: ( design: Design, shouldGoToAssemblerStep: boolean ) => void;
@@ -249,9 +197,8 @@ interface DesignPickerProps {
 	designs: Design[];
 	categorization?: Categorization;
 	isPremiumThemeAvailable?: boolean;
-	purchasedThemes?: string[];
-	currentPlanFeatures?: string[];
 	shouldLimitGlobalStyles?: boolean;
+	getBadge: ( themeId: string, forcePremium: boolean, tooltipMessage: string ) => React.ReactNode;
 }
 
 const DesignPicker: React.FC< DesignPickerProps > = ( {
@@ -262,9 +209,8 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	designs,
 	categorization,
 	isPremiumThemeAvailable,
-	purchasedThemes,
-	currentPlanFeatures,
 	shouldLimitGlobalStyles,
+	getBadge,
 } ) => {
 	const hasCategories = !! Object.keys( categorization?.categories || {} ).length;
 	const filteredDesigns = useMemo( () => {
@@ -303,12 +249,11 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 							category={ categorization?.selection }
 							design={ design }
 							locale={ locale }
-							currentPlanFeatures={ currentPlanFeatures }
-							hasPurchasedTheme={ wasThemePurchased( purchasedThemes, design ) }
 							isPremiumThemeAvailable={ isPremiumThemeAvailable }
 							shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
 							onChangeVariation={ onChangeVariation }
 							onPreview={ onPreview }
+							getBadge={ getBadge }
 						/>
 					);
 				} ) }
@@ -327,9 +272,8 @@ export interface UnifiedDesignPickerProps {
 	categorization?: Categorization;
 	heading?: React.ReactNode;
 	isPremiumThemeAvailable?: boolean;
-	purchasedThemes?: string[];
-	currentPlanFeatures?: string[];
 	shouldLimitGlobalStyles?: boolean;
+	getBadge: ( themeId: string, forcePremium: boolean, tooltipMessage: string ) => React.ReactNode;
 }
 
 const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
@@ -342,9 +286,8 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	heading,
 	categorization,
 	isPremiumThemeAvailable,
-	purchasedThemes,
-	currentPlanFeatures,
 	shouldLimitGlobalStyles,
+	getBadge,
 } ) => {
 	const hasCategories = !! Object.keys( categorization?.categories || {} ).length;
 
@@ -379,9 +322,8 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					designs={ designs }
 					categorization={ categorization }
 					isPremiumThemeAvailable={ isPremiumThemeAvailable }
-					purchasedThemes={ purchasedThemes }
-					currentPlanFeatures={ currentPlanFeatures }
 					shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
+					getBadge={ getBadge }
 				/>
 				{ bottomAnchorContent }
 			</div>

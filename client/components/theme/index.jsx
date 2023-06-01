@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import ThemeTypeBadge from 'calypso/components/theme-type-badge';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { updateThemes } from 'calypso/state/themes/actions/theme-update';
 import { isExternallyManagedTheme as getIsExternallyManagedTheme } from 'calypso/state/themes/selectors';
 import { setThemesBookmark } from 'calypso/state/themes/themes-ui/actions';
@@ -274,7 +275,13 @@ export class Theme extends Component {
 	};
 
 	renderBadge = () => {
-		return <ThemeTypeBadge themeId={ this.props.theme.id } />;
+		return (
+			<ThemeTypeBadge
+				siteId={ this.props.siteId }
+				siteSlug={ this.props.siteSlug }
+				themeId={ this.props.theme.id }
+			/>
+		);
 	};
 
 	render() {
@@ -313,7 +320,7 @@ export class Theme extends Component {
 }
 
 export default connect(
-	( state, { theme } ) => {
+	( state, { theme, siteId } ) => {
 		const {
 			themes: { themesUpdate },
 		} = state;
@@ -325,6 +332,7 @@ export default connect(
 			isUpdating: themesUpdating && themesUpdating.indexOf( theme.id ) > -1,
 			isUpdated: themesUpdated && themesUpdated.indexOf( theme.id ) > -1,
 			isExternallyManagedTheme,
+			siteSlug: getSiteSlug( state, siteId ),
 		};
 	},
 	{ recordTracksEvent, setThemesBookmark, updateThemes }
