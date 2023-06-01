@@ -28,11 +28,15 @@ body.is-section-promote-post-i2 {
 			&.is-wide-layout {
 				max-width: 100%; // 1040px
 
-				.section-nav-tabs__list {
-					display: flex;
-					margin: 0 64px;
-					max-width: 1040px;
+				.section-nav-tabs {
 					width: 100%;
+
+					.section-nav-tabs__list {
+						display: flex;
+						margin: 0 64px;
+						max-width: 1040px;
+						width: 100%;
+					}
 				}
 
 				.promote-post-i2__header-subtitle_mobile,
