@@ -89,6 +89,13 @@ export function useStepNavigator(
 		} );
 	}
 
+	function goToSitesPage() {
+		navigation.submit?.( {
+			type: 'redirect',
+			url: `/sites?siteSlug=${ siteSlug }`,
+		} );
+	}
+
 	return {
 		supportLinkModal: false,
 		goToIntentPage,
@@ -98,6 +105,7 @@ export function useStepNavigator(
 		goToWpAdminImportPage,
 		goToWpAdminWordPressPluginPage,
 		goToAddDomainPage,
+		goToSitesPage,
 		navigate: ( path ) => navigator( path ),
 	};
 }
