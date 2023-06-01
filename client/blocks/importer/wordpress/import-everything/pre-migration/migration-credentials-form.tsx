@@ -47,35 +47,9 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 
 	const isFormSubmissionPending = formSubmissionStatus === 'pending';
 	const formHasErrors = formErrors && Object.keys( formErrors ).length > 0;
-
-	// Clear the hasMissingFields flag when there are no more errors.
-	useEffect( () => setHasMissingFields( formHasErrors ), [ formErrors ] );
-
-	// validate changes to the credentials form
-	useEffect( () => {
-		const errors = validate( formState, formMode );
-
-		// Shorten the root user error message as the original message used in the form is too long.
-		if ( formState.user === 'root' ) {
-			errors.user = {
-				message: translate( "We can't accept credentials for the root user." ),
-				waitForInteraction: true,
-			};
-		}
-
-		if ( typeof formState.port === 'string' ) {
-			errors.port = {
-				message: translate( 'Invalid port.' ),
-				waitForInteraction: true,
-			};
-		}
-
-		setFormErrors( errors );
-	}, [ formState, formMode ] );
-
-	useEffect( () => {
-		props.onChangeProtocol( formState.protocol as CredentialsProtocol );
-	}, [ formState.protocol ] );
+	const updateError = useSelector( ( state ) =>
+		getJetpackCredentialsUpdateError( state, sourceSite.ID )
+	);
 
 	const startImportCallback = useCallback(
 		( args ) => {
@@ -86,14 +60,6 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 		},
 		[ startImport ]
 	);
-
-	useEffect( () => {
-		switch ( formSubmissionStatus ) {
-			case 'success':
-				startImportCallback( { type: 'with-credentials' } );
-				break;
-		}
-	}, [ formSubmissionStatus, startImportCallback ] );
 
 	const handleUpdateCredentials = () => {
 		if ( formHasErrors ) {
@@ -146,9 +112,44 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 		]
 	);
 
-	const updateError = useSelector( ( state ) =>
-		getJetpackCredentialsUpdateError( state, sourceSite.ID )
-	);
+	// Clear the hasMissingFields flag when there are no more errors.
+	useEffect( () => {
+		! formHasErrors && setHasMissingFields( false );
+	}, [ formErrors ] );
+
+	// validate changes to the credentials form
+	useEffect( () => {
+		const errors = validate( formState, formMode );
+
+		// Shorten the root user error message as the original message used in the form is too long.
+		if ( formState.user === 'root' ) {
+			errors.user = {
+				message: translate( "We can't accept credentials for the root user." ),
+				waitForInteraction: true,
+			};
+		}
+
+		if ( typeof formState.port === 'string' ) {
+			errors.port = {
+				message: translate( 'Invalid port.' ),
+				waitForInteraction: true,
+			};
+		}
+
+		setFormErrors( errors );
+	}, [ formState, formMode ] );
+
+	useEffect( () => {
+		props.onChangeProtocol( formState.protocol as CredentialsProtocol );
+	}, [ formState.protocol ] );
+
+	useEffect( () => {
+		switch ( formSubmissionStatus ) {
+			case 'success':
+				startImportCallback( { type: 'with-credentials' } );
+				break;
+		}
+	}, [ formSubmissionStatus, startImportCallback ] );
 
 	useEffect( () => {
 		updateError &&
