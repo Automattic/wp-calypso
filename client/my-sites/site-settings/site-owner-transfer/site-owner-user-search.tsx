@@ -9,6 +9,10 @@ const Strong = styled( 'strong' )( {
 	fontWeight: 500,
 } );
 
+const FormText = styled( 'p' )( {
+	fontSize: '14px',
+} );
+
 const TextControlContainer = styled.div( {
 	marginBottom: '2em',
 	label: {
@@ -72,7 +76,7 @@ const SiteOwnerTransferEligibility = ( {
 
 	return (
 		<form onSubmit={ handleFormSubmit }>
-			<p>
+			<FormText>
 				{ translate(
 					'Please enter the username or email address of the registered WordPress.com user that you want to transfer ownership of {{strong}}%(siteSlug)s{{/strong}} to:',
 					{
@@ -80,7 +84,7 @@ const SiteOwnerTransferEligibility = ( {
 						components: { strong: <Strong /> },
 					}
 				) }
-			</p>
+			</FormText>
 			<TextControlContainer>
 				<TextControl
 					autoComplete="off"
