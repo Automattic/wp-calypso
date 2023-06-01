@@ -1,5 +1,3 @@
-/* eslint-disable wpcalypso/jsx-classname-namespace */
-
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import {
 	FREE_THEME,
