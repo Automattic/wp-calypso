@@ -212,13 +212,7 @@ export default function NotificationSettings( {
 						{ translate( 'Settings for selected sites will be overwritten.' ) }
 					</AlertBanner>
 				) }
-				<div
-					className={
-						isBulkUpdate
-							? 'notification-settings__content-with-alert'
-							: 'notification-settings__content'
-					}
-				>
+<div className={ classNames( { 'notification-settings__content': ! isBulkUpdate } ) }>
 					<div className="notification-settings__content-block">
 						<div className="notification-settings__content-heading">
 							{ translate( 'Notify me about downtime:' ) }

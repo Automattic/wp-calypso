@@ -1,4 +1,6 @@
+import classNames from 'classnames';
 import React, { ReactNode } from 'react';
+
 import './style.scss';
 
 type AlertBannerProps = {
@@ -7,7 +9,15 @@ type AlertBannerProps = {
 };
 
 const AlertBanner: React.FC< AlertBannerProps > = ( { type, children } ) => {
-	return <div className={ `alert-banner alert-banner--${ type }` }>{ children }</div>;
+	const alertBannerClasses = classNames( 'alert-banner', {
+		'alert-banner__warning': type === 'warning',
+		'alert-banner__error': type === 'error',
+		'alert-banner__success': type === 'success',
+		'alert-banner__info': type === 'info',
+	} );
+
+	return <div className={ alertBannerClasses }>{ children }</div>;
 };
 
 export default AlertBanner;
+
