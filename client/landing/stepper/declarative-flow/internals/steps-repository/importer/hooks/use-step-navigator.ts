@@ -92,7 +92,7 @@ export function useStepNavigator(
 	function goToSitesPage() {
 		navigation.submit?.( {
 			type: 'redirect',
-			url: `/sites?siteSlug=${ siteSlug }`,
+			url: '/sites',
 		} );
 	}
 
