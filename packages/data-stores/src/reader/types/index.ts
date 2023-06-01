@@ -144,6 +144,20 @@ export type SiteSubscriptionDetails = {
 	date_subscribed: Date;
 	subscriber_count: number;
 	delivery_methods: SiteSubscriptionDeliveryMethods;
+	payment_details: SiteSubscriptionPaymentDetails;
+};
+
+export type SiteSubscriptionPaymentDetails = {
+	ID: string;
+	site_id: string;
+	status: string;
+	start_date: string;
+	end_date: string;
+	renew_interval: string;
+	renewal_price: string;
+	currency: string;
+	product_id: string;
+	title: string;
 };
 
 export type ErrorResponse< Errors = unknown, ErrorData = unknown > = {
