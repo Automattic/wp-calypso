@@ -143,16 +143,16 @@ function sortVariant( a: ResponseCartProductVariant, b: ResponseCartProductVaria
 function getTermText( term: string, translate: ReturnType< typeof useTranslate > ): string {
 	switch ( term ) {
 		case TERM_BIENNIALLY:
-			return String( translate( 'Two years' ) );
+			return String( translate( 'Two-year plan' ) );
 
 		case TERM_TRIENNIALLY:
-			return String( translate( 'Three years' ) );
+			return String( translate( 'Three-year plan' ) );
 
 		case TERM_ANNUALLY:
-			return String( translate( 'One year' ) );
+			return String( translate( 'One-year plan' ) );
 
 		case TERM_MONTHLY:
-			return String( translate( 'One month' ) );
+			return String( translate( 'One-month plan' ) );
 		default:
 			return '';
 	}
