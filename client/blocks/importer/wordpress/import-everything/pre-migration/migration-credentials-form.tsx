@@ -92,15 +92,12 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 	);
 
 	useEffect( () => {
-		if ( formSubmissionStatus === 'success' ) {
-			if ( ! migrationConfirmed ) {
-				setShowConfirmModal( true );
-				setConfirmCallback( () => startImportCallback.bind( null, { type: 'with-credentials' } ) );
-			} else {
+		switch ( formSubmissionStatus ) {
+			case 'success':
 				startImportCallback( { type: 'with-credentials' } );
-			}
+				break;
 		}
-	}, [ formSubmissionStatus ] );
+	}, [ formSubmissionStatus, startImportCallback ] );
 
 	const handleUpdateCredentials = () => {
 		if ( formHasErrors ) {
@@ -124,17 +121,33 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 
 	const submitCredentials = useCallback(
 		( e ) => {
-			e.preventDefault();
-			setHasMissingFields( false );
-			// If the form is submitted with errors, prevent the submission and show the errors.
-			if ( formHasErrors ) {
-				setHasMissingFields( true );
-				return;
-			}
+			const _confirmCallback = () => {
+				setShowConfirmModal( false );
+				setMigrationConfirmed( true );
+				setHasMissingFields( false );
+				// If the form is submitted with errors, prevent the submission and show the errors.
+				if ( formHasErrors ) {
+					setHasMissingFields( true );
+					return;
+				}
 
-			migrateProvision( targetSite.ID, sourceSite.ID, true );
+				migrateProvision( targetSite.ID, sourceSite.ID, true );
+			};
+
+			e.preventDefault();
+			setConfirmCallback( () => _confirmCallback );
+			migrationConfirmed ? _confirmCallback?.() : setShowConfirmModal( true );
 		},
-		[ formHasErrors, dispatch, sourceSite.ID, formState, formMode ]
+		[
+			formHasErrors,
+			migrationConfirmed,
+			migrateProvision,
+			targetSite,
+			sourceSite,
+			setShowConfirmModal,
+			setMigrationConfirmed,
+			setHasMissingFields,
+		]
 	);
 
 	const updateError = useSelector( ( state ) =>
