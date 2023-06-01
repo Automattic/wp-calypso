@@ -57,7 +57,7 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 					subHeaderText={ translate( "View your site's performance and learn from trends." ) }
 				/>
 				<StatsNavigation selectedItem="subscribers" siteId={ siteId } slug={ siteSlug } />
-				<SubscribersHighlightSection />
+				<SubscribersHighlightSection siteId={ siteId } />
 				{ siteId && (
 					<DomainTip
 						siteId={ siteId }
