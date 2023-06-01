@@ -18,7 +18,10 @@ import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { freeSiteAddressType } from 'calypso/lib/domains/constants';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import { requestSiteAddressChange } from 'calypso/state/site-address-change/actions';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import type { AppState } from 'calypso/types';
 
 const designFirst: Flow = {
 	name: DESIGN_FIRST_FLOW,
@@ -214,6 +217,11 @@ const designFirst: Flow = {
 			currentPath.includes( 'setup/design-first/site-creation-step' );
 		const userAlreadyHasSites = currentUserSiteCount && currentUserSiteCount > 0;
 
+		const primaryDomain = useSelector( ( state: AppState ) => {
+			const primarySiteId = getPrimarySiteId( state );
+			return getSiteSlug( state, primarySiteId );
+		} );
+
 		const logInUrl =
 			locale && locale !== 'en'
 				? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Pick%20a%20design&redirect_to=/setup/${ flowName }`
@@ -230,7 +238,8 @@ const designFirst: Flow = {
 		} else if ( userAlreadyHasSites && isSiteCreationStep ) {
 			// Redirect users with existing sites out of the flow as we create a new site as the first step in this flow.
 			// This prevents a bunch of sites being created accidentally.
-			redirect( `/post?${ DESIGN_FIRST_FLOW }=true` );
+			redirect( `/themes/${ primaryDomain }` );
+
 			result = {
 				state: AssertConditionState.CHECKING,
 				message: `${ flowName } requires no preexisting sites`,
