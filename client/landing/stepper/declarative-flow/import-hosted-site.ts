@@ -9,7 +9,6 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
-import ImportList from './internals/steps-repository/import-list';
 import ImportReady from './internals/steps-repository/import-ready';
 import ImportReadyNot from './internals/steps-repository/import-ready-not';
 import ImportReadyPreview from './internals/steps-repository/import-ready-preview';
@@ -26,7 +25,6 @@ const importHostedSiteFlow: Flow = {
 	useSteps() {
 		return [
 			{ slug: 'import', component: ImportWithSiteAddressStep },
-			{ slug: 'importList', component: ImportList },
 			{ slug: 'importReady', component: ImportReady },
 			{ slug: 'importReadyNot', component: ImportReadyNot },
 			{ slug: 'importReadyWpcom', component: ImportReadyWpcom },
@@ -131,18 +129,6 @@ const importHostedSiteFlow: Flow = {
 
 		const goBack = () => {
 			switch ( _currentStep ) {
-				case 'importList':
-					// eslint-disable-next-line no-case-declarations
-					const backToStep = urlQueryParams.get( 'backToStep' );
-
-					if ( backToStep ) {
-						const path = `${ backToStep }?siteSlug=${ siteSlugParam }`;
-
-						return navigate( path );
-					}
-
-					return navigate( 'import' );
-
 				case 'importReady':
 				case 'importReadyNot':
 				case 'importReadyWpcom':
