@@ -167,7 +167,7 @@ export default function NotificationSettings( {
 				} ) ) ?? [];
 			let siteEmailItems: Array< MonitorSettingsEmail > = [];
 
-			// If it is not bulk update, we should not show the site email addresses.
+			// If it is bulk update, we should not show the site email addresses.
 			if ( ! isBulkUpdate && settings.monitor_notify_additional_user_emails ) {
 				siteEmailItems = settings.monitor_notify_additional_user_emails.map( ( item ) => ( {
 					email: item.email_address,
@@ -231,11 +231,27 @@ export default function NotificationSettings( {
 		}
 	}, [ setInitialMonitorSettings, settings ] );
 
+	const setBulkUpdateSettings = useCallback(
+		( settings: MonitorSettings ) => {
+			// Set all email items
+			handleSetEmailItems( settings );
+
+			// Set initial settings
+			setInitialSettings( {
+				enableEmailNotification: false,
+				enableMobileNotification: false,
+				selectedDuration: defaultDuration,
+				...( isMultipleEmailEnabled && { emailContacts: getAllEmailItems( settings ) } ),
+			} );
+		},
+		[ defaultDuration, getAllEmailItems, handleSetEmailItems, isMultipleEmailEnabled ]
+	);
+
 	useEffect( () => {
 		if ( bulkUpdateSettings ) {
-			handleSetEmailItems( bulkUpdateSettings );
+			setBulkUpdateSettings( bulkUpdateSettings );
 		}
-	}, [ handleSetEmailItems, bulkUpdateSettings ] );
+	}, [ bulkUpdateSettings, setBulkUpdateSettings ] );
 
 	useEffect( () => {
 		if ( enableMobileNotification || enableEmailNotification ) {
