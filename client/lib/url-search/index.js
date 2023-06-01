@@ -31,7 +31,8 @@ export const buildSearchUrl = ( { uri, search, queryKey = 's' } ) => {
 		parsedUrl.searchParams.delete( queryKey );
 	}
 
-	return parsedUrl.toString();
+	// Remove the origin from the url, get only pathName with query params
+	return parsedUrl.toString().replace( parsedUrl.origin, '' );
 };
 
 const UrlSearch = ( Component ) =>
@@ -64,10 +65,10 @@ const UrlSearch = ( Component ) =>
 			debug( 'search for: %s', query );
 			if ( this.props.search && query ) {
 				debug( 'replacing URL: %s', searchURL );
-				page.replace( searchURL );
+				page.replace( searchURL, null, false );
 			} else {
 				debug( 'setting URL: %s', searchURL );
-				page( searchURL );
+				page( searchURL, null, false );
 			}
 		};
 
