@@ -23,7 +23,7 @@ export class InstagramBusiness extends SharingService {
 		if ( this.state.isAwaitingConnections && ! availableExternalAccounts.length ) {
 			this.props.errorNotice(
 				this.props.translate(
-					'Instagram business account could not be connected because we could not find any Instagram business account linked to a Facebook page.'
+					'No Instagram business accounts linked to your Facebook pages found.'
 				),
 				{ id: 'publicize' }
 			);
