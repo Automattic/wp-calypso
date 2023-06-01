@@ -7,6 +7,7 @@ import { ProcessingResult } from 'calypso/landing/stepper/declarative-flow/inter
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
 import ImportReady from './internals/steps-repository/import-ready';
 import ImportReadyNot from './internals/steps-repository/import-ready-not';
 import ImportReadyPreview from './internals/steps-repository/import-ready-preview';
@@ -33,10 +34,16 @@ const importHostedSiteFlow: Flow = {
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
-		const { setPendingAction } = useDispatch( ONBOARD_STORE );
+		const { setStepProgress, setPendingAction } = useDispatch( ONBOARD_STORE );
 		const urlQueryParams = useQuery();
 		const fromParam = urlQueryParams.get( 'from' );
 		const siteSlugParam = useSiteSlugParam();
+
+		const flowProgress = useSiteSetupFlowProgress( _currentStep, 'import' );
+
+		if ( flowProgress ) {
+			setStepProgress( flowProgress );
+		}
 
 		const exitFlow = ( to: string ) => {
 			setPendingAction( () => {
