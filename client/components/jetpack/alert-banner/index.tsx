@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import './alert-banner.scss';
+import './style.scss';
 
 type AlertBannerProps = {
 	type: 'warning' | 'error' | 'success' | 'info';

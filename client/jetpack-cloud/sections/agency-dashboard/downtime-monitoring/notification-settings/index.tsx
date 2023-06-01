@@ -4,8 +4,8 @@ import { Modal, ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
 import clockIcon from 'calypso/assets/images/jetpack/clock-icon.svg';
+import AlertBanner from 'calypso/components/jetpack/alert-banner';
 import SelectDropdown from 'calypso/components/select-dropdown';
-import AlertBanner from '../../components/alert-banner';
 import {
 	useUpdateMonitorSettings,
 	useJetpackAgencyDashboardRecordTrackEvent,
