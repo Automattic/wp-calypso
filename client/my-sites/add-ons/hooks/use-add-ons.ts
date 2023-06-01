@@ -5,12 +5,15 @@ import {
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import useMediaStorageQuery from 'calypso/data/media-storage/use-media-storage-query';
+import { filterTransactions } from 'calypso/me/purchases/billing-history/filter-transactions';
 import { useSelector } from 'calypso/state';
 import {
 	getProductBySlug,
 	getProductDescription,
 	getProductName,
 } from 'calypso/state/products-list/selectors';
+import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-transaction-filters';
+import getPastBillingTransactions from 'calypso/state/selectors/get-past-billing-transactions';
 import { STORAGE_LIMIT } from '../constants';
 import customDesignIcon from '../icons/custom-design';
 import spaceUpgradeIcon from '../icons/space-upgrade';
@@ -28,6 +31,7 @@ export interface AddOnMeta {
 	quantity?: number;
 	description: string | React.ReactChild | null;
 	displayCost: string | React.ReactChild | null;
+	purchased?: boolean;
 }
 
 // some memoization. executes far too many times
@@ -61,6 +65,7 @@ const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 				'Make more space for high-quality photos, videos, and other media. '
 			),
 			featured: false,
+			purchased: false,
 		},
 		{
 			productSlug: PRODUCT_1GB_SPACE,
@@ -72,37 +77,64 @@ const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 				'Take your site to the next level. Store all your media in one place without worrying about running out of space.'
 			),
 			featured: false,
+			purchased: false,
 		},
 	];
 
-	// try to build storage add ons
+	// if upgrade is bought - show as manage
+	// if upgrade is not bought - only show it if available storage and if it's larger than previously bought upgrade
 	const { data: mediaStorage } = useMediaStorageQuery( siteId );
 
-	const filteredAddOns = addOnsActive.filter( ( addOn ) => {
-		// if it's a storage add on
-		if ( addOn.productSlug === PRODUCT_1GB_SPACE ) {
-			// if storage add ons are not enabled in the config, remove them
-			if ( ! isStorageAddonEnabled() ) {
-				return false;
-			}
+	return useSelector( ( state ): ( AddOnMeta | null )[] => {
+		const transactions = getPastBillingTransactions( state );
+		const filter = getBillingTransactionFilters( state, 'past' );
+		const filteredTransactions = transactions && filterTransactions( transactions, filter, siteId );
 
-			const currentMaxStorage = mediaStorage?.max_storage_bytes / Math.pow( 1024, 3 );
-			const availableStorageUpgrade = STORAGE_LIMIT - currentMaxStorage;
+		const spaceUpgradesPurchased = [];
 
-			// if the current storage add on option is greater than the available upgrade, remove it
-			if ( ( addOn.quantity as number ) > availableStorageUpgrade ) {
-				return false;
+		if ( filteredTransactions?.length ) {
+			for ( const transaction of filteredTransactions ) {
+				transaction.items?.length &&
+					spaceUpgradesPurchased.push(
+						...transaction.items.filter( ( item ) => item.wpcom_product_slug === PRODUCT_1GB_SPACE )
+					);
 			}
 		}
 
-		return true;
-	} );
-
-	return useSelector( ( state ): ( AddOnMeta | null )[] => {
-		return filteredAddOns.map( ( addOn ) => {
+		return addOnsActive.map( ( addOn ) => {
 			const product = getProductBySlug( state, addOn.productSlug );
 			const name = addOn.name ? addOn.name : getProductName( state, addOn.productSlug );
 			const description = addOn.description ?? getProductDescription( state, addOn.productSlug );
+
+			// if it's a storage add on
+			if ( addOn.productSlug === PRODUCT_1GB_SPACE ) {
+				// if storage add ons are not enabled in the config, remove them
+				if ( ! isStorageAddonEnabled() ) {
+					return null;
+				}
+
+				// if storage add on is already purchased
+				if (
+					spaceUpgradesPurchased.findIndex(
+						( item ) => parseInt( item.licensed_quantity ) === addOn.quantity
+					) >= 0
+				) {
+					return {
+						...addOn,
+						name,
+						description,
+						purchased: true,
+					};
+				}
+
+				const currentMaxStorage = mediaStorage?.max_storage_bytes / Math.pow( 1024, 3 );
+				const availableStorageUpgrade = STORAGE_LIMIT - currentMaxStorage;
+
+				// if the current storage add on option is greater than the available upgrade, remove it
+				if ( ( addOn.quantity as number ) > availableStorageUpgrade ) {
+					return null;
+				}
+			}
 
 			if ( ! product ) {
 				// will not render anything if product not fetched from API
