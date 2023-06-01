@@ -170,7 +170,7 @@ export function getEnhancedTasks(
 							window.location.assign( plansUrl );
 						},
 						badge_text: ! task.completed ? null : translatedPlanName,
-						disabled: ( task.completed || ! domainUpsellCompleted ) && ! isStartWritingFlow( flow ),
+						disabled: ( task.completed || ! domainUpsellCompleted ) && ! isBlogOnboardingFlow( flow ),
 					};
 					break;
 				case 'subscribers_added':
