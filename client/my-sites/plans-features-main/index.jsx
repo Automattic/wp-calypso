@@ -87,7 +87,7 @@ const OnboardingPricingGrid2023 = ( props ) => {
 		isPlansInsideStepper,
 		intervalType,
 		planTypeSelectorProps,
-		hidePlansFeatureComparison,
+		hidePlansFeatureComparison, // TODO clk
 		replacePaidDomainWithFreeDomain,
 		sitePlanSlug,
 		translate,
