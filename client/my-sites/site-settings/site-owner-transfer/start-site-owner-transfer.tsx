@@ -10,6 +10,7 @@ import ActionPanelBody from 'calypso/components/action-panel/body';
 import Notice from 'calypso/components/notice';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { useStartSiteOwnerTransfer } from './use-start-site-owner-transfer';
 import type { Purchase } from 'calypso/lib/purchases/types';
@@ -311,7 +312,7 @@ const StartSiteOwnerTransfer = ( {
 	);
 };
 
-export default connect( ( state ) => ( {
+export default connect( ( state: IAppState ) => ( {
 	selectedSiteId: getSelectedSiteId( state ),
 	selectedSiteSlug: getSelectedSiteSlug( state ),
 } ) )( localize( StartSiteOwnerTransfer ) );

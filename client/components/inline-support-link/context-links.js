@@ -191,6 +191,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/settings/privacy-settings/',
 		post_id: 1507,
 	},
+	'privacy-preview-link': {
+		link: 'https://wordpress.com/support/settings/privacy-settings/#preview-link',
+		post_id: 1507,
+	},
 	publicize: {
 		link: 'https://wordpress.com/support/post-automatically-to-social-media/',
 		post_id: 216472,

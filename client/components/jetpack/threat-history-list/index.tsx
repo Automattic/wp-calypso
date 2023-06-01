@@ -3,11 +3,11 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useCallback, useMemo, useState } from 'react';
 import * as React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import QueryJetpackScanHistory from 'calypso/components/data/query-jetpack-scan-history';
 import QueryJetpackScanThreatCounts from 'calypso/components/data/query-jetpack-scan-threat-counts';
 import ThreatListHeader from 'calypso/components/jetpack/threat-list-header';
 import Pagination from 'calypso/components/pagination';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getSiteScanHistory from 'calypso/state/selectors/get-site-scan-history';
 import getSiteScanThreatCounts, {

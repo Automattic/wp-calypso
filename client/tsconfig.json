@@ -4,6 +4,7 @@
 		"rootDir": ".",
 		"noEmit": true,
 		"types": [ "node", "@types/gtag.js" ],
+		"jsxImportSource": "@emotion/react",
 		"paths": {
 			"calypso/*": [ "./*" ],
 

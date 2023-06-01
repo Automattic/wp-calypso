@@ -1,7 +1,7 @@
 import { removeQueryArgs } from '@wordpress/url';
 import page from 'page';
-import { useSelector } from 'react-redux';
 import { addQueryArgs } from 'calypso/lib/url';
+import { useSelector } from 'calypso/state';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 

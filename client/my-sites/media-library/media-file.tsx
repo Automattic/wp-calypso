@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { mediaURLToProxyConfig } from 'calypso/lib/media/utils';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { IAppState } from 'calypso/state/types';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
 import ProxiedImage, { ProxiedImageProps, RenderedComponent } from './proxied-image';
@@ -56,7 +57,7 @@ MediaFile.defaultProps = {
 	component: 'img',
 };
 
-export default connect( ( state, { src }: Pick< MediaFileProps, 'src' > ) => {
+export default connect( ( state: IAppState, { src }: Pick< MediaFileProps, 'src' > ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSelectedSiteSlug( state ) as string;
 	const isAtomic = !! isSiteAutomatedTransfer( state, siteId as number );

@@ -3,7 +3,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { compose } from '@wordpress/compose';
 import i18n, { localize, translate, withRtl } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import QRCode from 'qrcode.react';
+import { QRCodeSVG } from 'qrcode.react';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import AppImage from 'calypso/assets/images/jetpack/jetpack-app-graphic.png';
@@ -186,7 +186,7 @@ class MobileDownloadCard extends Component {
 	getQrCode() {
 		return (
 			<div className="get-apps__qr-code-subpanel">
-				<QRCode
+				<QRCodeSVG
 					value={ localizeUrl( 'https://apps.wordpress.com/get?campaign=calypso-qrcode-apps' ) }
 					size={ 150 }
 				/>

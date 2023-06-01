@@ -1,4 +1,4 @@
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import PluginRemoveButton from '../../plugin-remove-button';
 import type { PluginComponentProps } from '../types';

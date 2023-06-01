@@ -1,5 +1,5 @@
-import { useSelector } from 'react-redux';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { useSelector } from 'calypso/state';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import { isConnectionFlow } from '../../product-grid/utils';
 

@@ -1,7 +1,7 @@
 import debugFactory from 'debug';
 import { useRef } from 'react';
-import { useDispatch } from 'react-redux';
 import { hasRenewalItem } from 'calypso/lib/cart-values/cart-items';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
