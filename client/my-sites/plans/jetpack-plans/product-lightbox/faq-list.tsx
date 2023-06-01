@@ -1,7 +1,7 @@
 import { FAQ } from '@automattic/calypso-products';
 import { useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import FoldableFAQ from 'calypso/components/foldable-faq';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 

@@ -1,5 +1,5 @@
-import { DefaultRootState } from 'react-redux';
 import getRawSite from 'calypso/state/selectors/get-raw-site';
+import { IAppState } from 'calypso/state/types';
 
 export interface SiteProduct {
 	productId: number;
@@ -34,7 +34,7 @@ function isSiteWithProducts( site: unknown ): site is SiteWithProducts {
  * @param siteId The site ID.
  */
 export default function getSiteProducts(
-	state: DefaultRootState,
+	state: IAppState,
 	siteId: number | null
 ): null | SiteProduct[] {
 	if ( ! siteId ) {

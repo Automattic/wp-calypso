@@ -32,6 +32,7 @@ object WPComPlugins : Project({
 	buildType(WpcomBlockEditor)
 	buildType(Notifications)
 	buildType(OdysseyStats)
+	buildType(BlazeDashboard)
 	buildType(O2Blocks)
 	buildType(HappyBlocks)
 	buildType(Happychat)
@@ -49,6 +50,7 @@ object WPComPlugins : Project({
 				withTags = anyOf(
 					"notifications-release-build",
 					"odyssey-stats-release-build",
+					"blaze-dashboard-release-build",
 					"etk-release-build",
 					"wpcom-block-editor-release-build",
 					"o2-blocks-release-build",
@@ -258,7 +260,28 @@ private object OdysseyStats : WPComPluginBuild(
 				yarn test:size
 			"""
 		}
-		
+
+	}
+)
+
+private object BlazeDashboard : WPComPluginBuild(
+	buildId = "WPComPlugins_BlazeDashboard",
+	buildName = "Blaze Dashboard",
+	pluginSlug = "blaze-dashboard",
+	archiveDir = "./dist/",
+	withPRNotify = "false",
+	// TODO: Update doc link when the doc is released
+	docsLink = "TODO",
+	buildSteps = {
+		bashNodeScript {
+			name = "Translate Blaze Dashboard"
+			scriptContent = """
+				cd apps/blaze-dashboard
+
+				# generate language files
+				yarn translate
+			"""
+		}
 	}
 )
 

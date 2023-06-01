@@ -7,7 +7,7 @@ import styled from '@emotion/styled';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import usePlanPrices from '../../plans/hooks/use-plan-prices';
 import { LoadingPlaceHolder } from './loading-placeholder';

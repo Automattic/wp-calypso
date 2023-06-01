@@ -3,11 +3,11 @@ import { PostStatsCard, ComponentSwapper } from '@automattic/components';
 import { createSelector } from '@automattic/state-utils';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
-import { useSelector } from 'react-redux';
 import QueryPosts from 'calypso/components/data/query-posts';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import DotPager from 'calypso/components/dot-pager';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import {
 	getSitePost,

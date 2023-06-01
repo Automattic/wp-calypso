@@ -1,5 +1,5 @@
 import { SitesSortOptions, SitesSortKey, SitesSortOrder, isValidSorting } from '@automattic/sites';
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { useAsyncPreference } from 'calypso/state/preferences/use-async-preference';
 

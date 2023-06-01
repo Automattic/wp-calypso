@@ -2,7 +2,6 @@ import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import QuerySiteInvites from 'calypso/components/data/query-site-invites';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -14,6 +13,7 @@ import useViewerQuery from 'calypso/data/viewers/use-viewer-query';
 import accept from 'calypso/lib/accept';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PeopleListItem from 'calypso/my-sites/people/people-list-item';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { deleteInvite } from 'calypso/state/invites/actions';
 import { getAcceptedInvitesForSite } from 'calypso/state/invites/selectors';
@@ -25,7 +25,7 @@ interface Props {
 	userId: string;
 }
 export default function ViewerDetails( props: Props ) {
-	const __ = useTranslate();
+	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const dispatch = useDispatch();
 
@@ -83,8 +83,12 @@ export default function ViewerDetails( props: Props ) {
 	function showConfirmDialog() {
 		accept(
 			<div>
-				<p>{ __( 'If you remove this viewer, he or she will not be able to visit this site.' ) }</p>
-				<p>{ __( 'Would you still like to remove this viewer?' ) }</p>
+				<p>
+					{ translate(
+						'If you remove this viewer, he or she will not be able to visit this site.'
+					) }
+				</p>
+				<p>{ translate( 'Would you still like to remove this viewer?' ) }</p>
 			</div>,
 			( accepted: boolean ) => {
 				if ( accepted ) {
@@ -98,7 +102,7 @@ export default function ViewerDetails( props: Props ) {
 					);
 				}
 			},
-			__( 'Remove', { context: 'Confirm Remove viewer button text.' } )
+			translate( 'Remove', { context: 'Confirm Remove viewer button text.' } )
 		);
 	}
 
@@ -118,14 +122,14 @@ export default function ViewerDetails( props: Props ) {
 			<FormattedHeader
 				brandFont
 				className="people__page-heading"
-				headerText={ __( 'Users' ) }
-				subHeaderText={ __( 'People who have subscribed to your site and team members.' ) }
+				headerText={ translate( 'Users' ) }
+				subHeaderText={ translate( 'People who have subscribed to your site and team members.' ) }
 				align="left"
 				hasScreenOptions
 			/>
 
 			<HeaderCake isCompact onClick={ onBackClick }>
-				{ __( 'User Details' ) }
+				{ translate( 'User Details' ) }
 			</HeaderCake>
 
 			{ templateState === 'loading' && (
@@ -135,7 +139,7 @@ export default function ViewerDetails( props: Props ) {
 			) }
 
 			{ templateState === 'not-found' && (
-				<EmptyContent title={ __( 'The requested subscriber does not exist.' ) } />
+				<EmptyContent title={ translate( 'The requested subscriber does not exist.' ) } />
 			) }
 
 			{ templateState === 'default' && (
@@ -152,10 +156,10 @@ export default function ViewerDetails( props: Props ) {
 						<div className="people-member-details__meta">
 							{ invite?.acceptedDate && (
 								<div className="people-member-details__meta-item">
-									<strong>{ __( 'Status' ) }</strong>
+									<strong>{ translate( 'Status' ) }</strong>
 									<div>
 										<span className="people-member-details__meta-status-active">
-											{ __( 'Active' ) }
+											{ translate( 'Active' ) }
 										</span>
 									</div>
 								</div>
@@ -163,7 +167,7 @@ export default function ViewerDetails( props: Props ) {
 
 							{ invite?.invitedBy && (
 								<div className="people-invite-details__meta-item">
-									<strong>{ __( 'Added By' ) }</strong>
+									<strong>{ translate( 'Added By' ) }</strong>
 									<div>
 										<span>
 											{ invite.invitedBy.name !== invite.invitedBy.login && (
@@ -178,7 +182,7 @@ export default function ViewerDetails( props: Props ) {
 
 							{ invite?.acceptedDate && (
 								<div className="people-member-details__meta-item">
-									<strong>{ __( 'Viewer since' ) }</strong>
+									<strong>{ translate( 'Viewer since' ) }</strong>
 									<div>
 										<span>{ moment( invite?.acceptedDate ).format( 'LLL' ) }</span>
 									</div>

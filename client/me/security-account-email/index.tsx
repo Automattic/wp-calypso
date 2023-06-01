@@ -1,7 +1,6 @@
 import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
@@ -11,6 +10,7 @@ import { useProtectForm } from 'calypso/lib/protect-form';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import AccountEmailField from 'calypso/me/account/account-email-field';
 import ReauthRequired from 'calypso/me/reauth-required';
+import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';

@@ -5,7 +5,6 @@ import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import NotAuthorized from 'calypso/blocks/importer/components/not-authorized';
 import NotFound from 'calypso/blocks/importer/components/not-found';
 import { getImporterTypeForEngine } from 'calypso/blocks/importer/util';
@@ -18,7 +17,12 @@ import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-pa
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
-import { fetchImporterState, resetImport } from 'calypso/state/imports/actions';
+import { useDispatch, useSelector } from 'calypso/state';
+import {
+	fetchImporterState,
+	resetImport,
+	resetImportReceived,
+} from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import {
 	getImporterStatusForSiteId,
@@ -53,7 +57,6 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		const site = useSite();
 		const siteSlug = useSiteSlugParam();
 		const [ siteId, setSiteId ] = useState( site?.ID );
-		! siteId && site?.ID && setSiteId( site?.ID );
 		const runImportInitially = useInitialQueryRun( siteId );
 		const canImport = useSelector( ( state ) => canCurrentUser( state, siteId, 'manage_options' ) );
 		const siteItem = useSelector( ( state ) => getSite( state, siteId ) );
@@ -64,7 +67,6 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIsMigrateFromWp(),
 			[]
 		);
-
 		const fromSite = currentSearchParams.get( 'from' ) || '';
 		const fromSiteData = useSelector( getUrlData );
 		const stepNavigator = useStepNavigator( flow, navigation, siteId, siteSlug, fromSite );
@@ -75,6 +77,12 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		useAtomicTransferQueryParamUpdate( siteId );
 		useEffect( fetchImporters, [ siteId ] );
 		useEffect( checkFromSiteData, [ fromSiteData?.url ] );
+		useEffect( () => {
+			if ( ! siteId && site?.ID ) {
+				setSiteId( site?.ID );
+			}
+		}, [ siteId, site ] );
+
 		if ( ! importer ) {
 			stepNavigator.goToImportCapturePage?.();
 			return null;
@@ -97,6 +105,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		}
 
 		function resetImportJob( job: ImportJob | undefined ): void {
+			dispatch( resetImportReceived() );
 			if ( ! job ) {
 				return;
 			}

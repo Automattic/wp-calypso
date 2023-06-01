@@ -1,13 +1,13 @@
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetpack-partner-portal-partner';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { dashboardPath } from 'calypso/lib/jetpack/paths';
 import { isSectionNameEnabled } from 'calypso/sections-filter';
+import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import {

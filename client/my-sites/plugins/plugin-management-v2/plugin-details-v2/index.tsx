@@ -1,6 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import QueryAllJetpackSitesPlugins from 'calypso/components/data/query-all-jetpack-sites-plugins';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
@@ -12,6 +11,7 @@ import PluginDetailsHeader from 'calypso/my-sites/plugins/plugin-details-header'
 import PluginAvailableOnSitesList from 'calypso/my-sites/plugins/plugin-management-v2/plugin-details-v2/plugin-available-on-sites-list';
 import SitesWithInstalledPluginsList from 'calypso/my-sites/plugins/plugin-management-v2/plugin-details-v2/sites-with-installed-plugin-list';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
+import { useSelector, useDispatch } from 'calypso/state';
 import {
 	getSiteObjectsWithPlugin,
 	getSiteObjectsWithoutPlugin,

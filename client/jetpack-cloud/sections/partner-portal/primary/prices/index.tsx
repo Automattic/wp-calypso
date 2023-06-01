@@ -1,7 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -9,6 +8,7 @@ import Main from 'calypso/components/main';
 import LicenseBundleCardDescription from 'calypso/jetpack-cloud/sections/partner-portal/license-bundle-card-description';
 import SelectPartnerKeyDropdown from 'calypso/jetpack-cloud/sections/partner-portal/select-partner-key-dropdown';
 import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
+import { useSelector } from 'calypso/state';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 

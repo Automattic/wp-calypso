@@ -33,14 +33,14 @@ const startEditMediaItem = ( siteId, item ) => ( dispatch, getState ) => {
 export function useEditMediaMutation( queryOptions ) {
 	const dispatch = useDispatch();
 
-	const mutation = useMutation(
-		( { siteId, mediaId, payload } ) =>
+	const mutation = useMutation( {
+		...queryOptions,
+		mutationFn: ( { siteId, mediaId, payload } ) =>
 			wp.req.post( {
 				path: `/sites/${ siteId }/media/${ mediaId }/edit`,
 				formData: Object.entries( payload ),
 			} ),
-		queryOptions
-	);
+	} );
 
 	const { mutate } = mutation;
 

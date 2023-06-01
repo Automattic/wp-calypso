@@ -8,7 +8,6 @@ import {
 } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import {
 	hasPaymentMethod,
@@ -18,6 +17,7 @@ import {
 	isExpired,
 } from 'calypso/lib/purchases';
 import { isAkismetTemporarySitePurchase } from 'calypso/me/purchases/utils';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import AutoRenewToggle from './auto-renew-toggle';
 import type { SiteDetails } from '@automattic/data-stores';

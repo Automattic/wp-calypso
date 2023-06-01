@@ -1,8 +1,8 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { MouseEvent } from 'react';
-import { useSelector } from 'react-redux';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 
 import './style.scss';

@@ -1,9 +1,9 @@
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
-import { useSelector } from 'react-redux';
 import ElementChart from 'calypso/components/chart';
 import useFetchMonitorData from 'calypso/data/agency-dashboard/use-fetch-monitor-data';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
+import { useSelector } from 'calypso/state';
 import { getSiteMonitorStatuses } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { useToggleActivateMonitor } from '../../hooks';
 import { getMonitorDowntimeText } from '../utils';

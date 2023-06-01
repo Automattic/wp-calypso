@@ -1,24 +1,21 @@
 import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
-import { ToggleControl, TextControl } from '@wordpress/components';
+import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { useState, FormEvent } from 'react';
 import { connect } from 'react-redux';
 import ActionPanelBody from 'calypso/components/action-panel/body';
 import Notice from 'calypso/components/notice';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
-import {
-	getSelectedSiteId,
-	getSelectedSite,
-	getSelectedSiteSlug,
-} from 'calypso/state/ui/selectors';
+import { IAppState } from 'calypso/state/types';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { useStartSiteOwnerTransfer } from './use-start-site-owner-transfer';
 
 type Props = {
 	currentUserEmail: string | null;
 	selectedSiteId: number | null;
 	selectedSiteSlug: string | null;
-	selectedSiteTitle: string | undefined;
+	siteOwner?: string;
 	translate: ( text: string, args?: Record< string, unknown > ) => string;
 };
 
@@ -34,12 +31,11 @@ const StartSiteOwnerTransfer = ( {
 	currentUserEmail,
 	selectedSiteId,
 	selectedSiteSlug,
-	selectedSiteTitle,
+	siteOwner,
 	translate,
 }: Props ) => {
 	const [ confirmFirstToggle, setConfirmFirstToggle ] = useState( false );
 	const [ confirmSecondToggle, setConfirmSecondToggle ] = useState( false );
-	const [ newOwnerUsername, setNewOwnerUsername ] = useState( '' );
 	const [ startSiteTransferError, setStartSiteTransferError ] = useState( '' );
 	const [ startSiteTransferSuccess, setStartSiteTransferSuccess ] = useState( false );
 
@@ -61,7 +57,10 @@ const StartSiteOwnerTransfer = ( {
 
 	const handleFormSubmit = ( event: FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
-		startSiteOwnerTransfer( { newSiteOwner: newOwnerUsername } );
+		if ( ! siteOwner ) {
+			return;
+		}
+		startSiteOwnerTransfer( { newSiteOwner: siteOwner } );
 	};
 
 	const startSiteTransferForm = (
@@ -94,26 +93,13 @@ const StartSiteOwnerTransfer = ( {
 							{ startSiteTransferError }
 						</Notice>
 					) }
-					<p>
-						{ translate(
-							'Enter the username or email address of the registered WordPress.com user that you want to transfer ownership of %(selectedSiteTitle)s (%(selectedSiteSlug)s) to:',
-							{
-								args: { selectedSiteTitle, selectedSiteSlug },
-							}
-						) }
-					</p>
-					<TextControl
-						autoComplete="off"
-						label={ translate( 'Username or email address of user to receive the blog' ) }
-						value={ newOwnerUsername }
-						onChange={ ( value ) => setNewOwnerUsername( value ) }
-					/>
 					<Button
+						busy={ isStartingSiteTransfer }
 						primary
 						onClick={ () => {
 							false;
 						} }
-						disabled={ ! newOwnerUsername || isStartingSiteTransfer }
+						disabled={ ! siteOwner || isStartingSiteTransfer }
 						type="submit"
 					>
 						{ translate( 'Start site transfer' ) }
@@ -186,9 +172,8 @@ const StartSiteOwnerTransfer = ( {
 	);
 };
 
-export default connect( ( state ) => ( {
+export default connect( ( state: IAppState ) => ( {
 	currentUserEmail: getCurrentUserEmail( state ),
 	selectedSiteId: getSelectedSiteId( state ),
 	selectedSiteSlug: getSelectedSiteSlug( state ),
-	selectedSiteTitle: getSelectedSite( state )?.title,
 } ) )( localize( StartSiteOwnerTransfer ) );

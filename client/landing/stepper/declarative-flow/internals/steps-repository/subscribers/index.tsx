@@ -32,7 +32,7 @@ const Subscribers: Step = function ( { navigation } ) {
 
 	const submitButtonText = isImportValid
 		? translate( 'Add and continue' )
-		: translate( 'Skip for now' );
+		: translate( 'Add subscribers' );
 
 	return (
 		<StepContainer
@@ -51,14 +51,17 @@ const Subscribers: Step = function ( { navigation } ) {
 							flowName="onboarding_subscribers"
 							submitBtnName={ submitButtonText }
 							onImportFinished={ handleSubmit }
+							onSkipBtnClick={ handleSubmit }
 							onChangeIsImportValid={ ( isValid ) => setIsImportValid( isValid ) }
-							allowEmptyFormSubmit={ true }
+							allowEmptyFormSubmit={ false }
 							manualListEmailInviting={ ! isUserEligibleForSubscriberImporter }
 							showCsvUpload={ isEnabled( 'subscriber-csv-upload' ) }
 							recordTracksEvent={ recordTracksEvent }
 							titleText={ translate( 'Ready to add your first subscribers?' ) }
 							subtitleText={ subtitleText }
 							showSubtitle={ true }
+							showSkipLink={ true }
+							submitBtnAlwaysEnable={ false }
 						/>
 					) }
 				</div>

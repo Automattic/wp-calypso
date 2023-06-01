@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useSelector } from 'react-redux';
 import wp from 'calypso/lib/wp';
+import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getCacheKey } from './use-get-email-accounts-query';
 import type {
@@ -32,7 +32,10 @@ type MutationContext = {
 export function useRemoveTitanMailboxMutation(
 	domainName: string,
 	mailboxName: string,
-	mutationOptions: UseMutationOptions< unknown, unknown, void, MutationContext > = {}
+	mutationOptions: Omit<
+		UseMutationOptions< unknown, unknown, void, MutationContext >,
+		'mutationFn'
+	> = {}
 ): UseMutationResult< unknown, unknown, void, unknown > {
 	const queryClient = useQueryClient();
 
@@ -73,8 +76,8 @@ export function useRemoveTitanMailboxMutation(
 		} );
 	};
 
-	return useMutation(
-		() =>
+	return useMutation( {
+		mutationFn: () =>
 			wp.req.get( {
 				path: `/emails/titan/${ encodeURIComponent( domainName ) }/mailbox/${ encodeURIComponent(
 					mailboxName
@@ -82,6 +85,6 @@ export function useRemoveTitanMailboxMutation(
 				method: 'DELETE',
 				apiNamespace: 'wpcom/v2',
 			} ),
-		mutationOptions
-	);
+		...mutationOptions,
+	} );
 }

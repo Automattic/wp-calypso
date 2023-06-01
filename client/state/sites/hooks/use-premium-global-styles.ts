@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {

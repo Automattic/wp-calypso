@@ -4,7 +4,6 @@ import {
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import JetpackScanSVG from 'calypso/assets/images/illustrations/jetpack-scan.svg';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -15,6 +14,7 @@ import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
+import { useSelector } from 'calypso/state';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 

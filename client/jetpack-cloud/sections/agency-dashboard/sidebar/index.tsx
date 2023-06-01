@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Icon, plugins } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch } from 'react-redux';
 import JetpackIcons from 'calypso/components/jetpack/sidebar/menu-items/jetpack-icons';
 import SiteSelector from 'calypso/components/site-selector';
 import Sidebar from 'calypso/layout/sidebar';
@@ -10,9 +9,9 @@ import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
 import SidebarRegion from 'calypso/layout/sidebar/region';
 import CurrentSite from 'calypso/my-sites/current-site';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import 'calypso/components/jetpack/sidebar/style.scss';
-import type { CalypsoDispatch } from 'calypso/state/types';
 import type { FunctionComponent } from 'react';
 
 interface Props {
@@ -20,7 +19,7 @@ interface Props {
 }
 const DashboardSidebar: FunctionComponent< Props > = ( { path } ) => {
 	const translate = useTranslate();
-	const reduxDispatch = useDispatch< CalypsoDispatch >();
+	const reduxDispatch = useDispatch();
 
 	const onNavigate = ( menuItem: string ) => () => {
 		reduxDispatch(

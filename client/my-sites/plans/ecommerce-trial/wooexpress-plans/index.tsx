@@ -14,10 +14,10 @@ import { hasTranslation } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useCallback, useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import { getECommerceTrialCheckoutUrl } from 'calypso/lib/ecommerce-trial/get-ecommerce-trial-checkout-url';
 import PlanIntervalSelector from 'calypso/my-sites/plans-features-main/components/plan-interval-selector';
+import { useSelector } from 'calypso/state';
 import { getPlanRawPrice } from 'calypso/state/plans/selectors';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 

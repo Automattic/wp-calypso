@@ -7,7 +7,6 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { BlankCanvas } from 'calypso/components/blank-canvas';
 import BlazeLogo from 'calypso/components/blaze-logo';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
@@ -15,6 +14,7 @@ import { showDSP, usePromoteWidget, PromoteWidgetStatus } from 'calypso/lib/prom
 import './style.scss';
 import { useRouteModal } from 'calypso/lib/route-modal';
 import { getAdvertisingDashboardPath } from 'calypso/my-sites/promote-post/utils';
+import { useSelector } from 'calypso/state';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
