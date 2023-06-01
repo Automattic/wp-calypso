@@ -77,36 +77,27 @@ export default function NotificationSettings( {
 	} );
 	const [ hasUnsavedChanges, setHasUnsavedChanges ] = useState< boolean >( false );
 
-	const isMultipleEmailEnabled = isEnabled(
+	const isMultipleEmailEnabled: boolean = isEnabled(
 		'jetpack/pro-dashboard-monitor-multiple-email-recipients'
 	);
 
+	const unsavedChangesExist =
+		enableMobileNotification !== initialSettings.enableMobileNotification ||
+		enableEmailNotification !== initialSettings.enableEmailNotification ||
+		selectedDuration?.time !== initialSettings.selectedDuration?.time ||
+		( isMultipleEmailEnabled &&
+			JSON.stringify( allEmailItems.map( ( { name, email } ) => ( { name, email } ) ) ) !==
+				JSON.stringify(
+					initialSettings?.emailContacts?.map( ( { name, email } ) => ( { name, email } ) )
+				) );
+
 	// Check if any unsaved changes are present and prompt user to confirm before closing the modal.
 	const handleOnClose = useCallback( () => {
-		const unsavedChangesExist =
-			enableMobileNotification !== initialSettings.enableMobileNotification ||
-			enableEmailNotification !== initialSettings.enableEmailNotification ||
-			selectedDuration?.time !== initialSettings.selectedDuration?.time ||
-			( isMultipleEmailEnabled &&
-				JSON.stringify( allEmailItems.map( ( { name, email } ) => ( { name, email } ) ) ) !==
-					JSON.stringify(
-						initialSettings?.emailContacts?.map( ( { name, email } ) => ( { name, email } ) )
-					) );
-
 		if ( hasUnsavedChanges || ! unsavedChangesExist ) {
 			return onClose();
 		}
 		return setHasUnsavedChanges( true );
-	}, [
-		allEmailItems,
-		enableEmailNotification,
-		enableMobileNotification,
-		hasUnsavedChanges,
-		initialSettings,
-		isMultipleEmailEnabled,
-		onClose,
-		selectedDuration?.time,
-	] );
+	}, [ hasUnsavedChanges, onClose, unsavedChangesExist ] );
 
 	const toggleAddEmailModal = (
 		item?: StateMonitorSettingsEmail,
@@ -415,7 +406,7 @@ export default function NotificationSettings( {
 							{ translate( 'Cancel' ) }
 						</Button>
 						<Button
-							disabled={ !! validationError || isLoading }
+							disabled={ !! validationError || isLoading || ! unsavedChangesExist }
 							type="submit"
 							primary
 							aria-label={ translate( 'Save notification settings' ) }
