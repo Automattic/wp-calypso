@@ -69,18 +69,19 @@ export default function WeeklyHighlightCards( {
 	const [ isSettingsTooltipVisible, setSettingsTooltipVisible ] = useState( showSettingsTooltip );
 	const [ isPopoverVisible, setPopoverVisible ] = useState( false );
 
-	// @TODO: Set the popover to disappear when the users click outside of the popover.
-	const togglePopoverMenu = useCallback( () => {
-		setPopoverVisible( ( isVisible ) => {
-			return ! isVisible;
-		} );
-	}, [] );
-
 	// @TODO: Update the state when users dismiss the settings tooltip.
 	const dismissSettingsTooltip = useCallback( () => {
 		sessionStorage.setItem( 'jp-stats-settings-tooltip', '1' );
 		setSettingsTooltipVisible( false );
 	}, [] );
+
+	// @TODO: Set the popover to disappear when the users click outside of the popover.
+	const togglePopoverMenu = useCallback( () => {
+		dismissSettingsTooltip();
+		setPopoverVisible( ( isVisible ) => {
+			return ! isVisible;
+		} );
+	}, [ dismissSettingsTooltip ] );
 
 	const isHighlightsSettingsEnabled = config.isEnabled( 'stats/highlights-settings' );
 
