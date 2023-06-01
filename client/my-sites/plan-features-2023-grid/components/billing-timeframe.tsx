@@ -13,7 +13,7 @@ import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import i18n, { TranslateResult, useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { usePlanPricesDisplay } from '../hooks/use-plan-prices-display';
 

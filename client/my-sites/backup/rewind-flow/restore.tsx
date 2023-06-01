@@ -1,13 +1,13 @@
 import { Button, Card, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
 import QueryJetpackCredentialsStatus from 'calypso/components/data/query-jetpack-credentials-status';
 import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
 import QueryRewindRestoreStatus from 'calypso/components/data/query-rewind-restore-status';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
+import { useDispatch, useSelector } from 'calypso/state';
 import { rewindRestore } from 'calypso/state/activity-log/actions';
 import { areJetpackCredentialsInvalid } from 'calypso/state/jetpack/credentials/selectors';
 import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions';

@@ -18,7 +18,13 @@ export const useMigrationEnabledInfoQuery = (
 	onErrorCallback?: () => void
 ) => {
 	const queryClient = useQueryClient();
-	const queryKey = [ 'migration-enabled', sourcSite ];
+	const queryKey = [
+		'migration-enabled',
+		{
+			sourcSite,
+			targetSiteId,
+		},
+	];
 
 	return useQuery(
 		queryKey,

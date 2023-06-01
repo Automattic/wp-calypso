@@ -193,7 +193,7 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures() with tabs', () => {
 	};
 
 	beforeEach( () => {
-		global.document = { location: { search: '' } };
+		global.document.location.search = '';
 	} );
 
 	test( 'Should render <PlanFeatures /> with tab picker when requested', () => {

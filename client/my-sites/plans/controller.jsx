@@ -38,7 +38,8 @@ export function plans( context, next ) {
 					? context.query.addDomainFlow === 'true'
 					: undefined
 			}
-			domainAndPlanPackage={ context.query.domainAndPlanPackage }
+			domainAndPlanPackage={ context.query.domainAndPlanPackage === 'true' }
+			jetpackAppPlans={ context.query.jetpackAppPlans === 'true' }
 			is2023PricingGridVisible={ is2023PricingGridActivePage( null, context.pathname ) }
 		/>
 	);

@@ -88,13 +88,8 @@ export default function () {
 	page( '/stats/ads/(.*)', redirectToDefaultWordAdsPeriod );
 
 	// Email stats Pages
-	if ( config.isEnabled( 'newsletter/stats' ) ) {
-		statsPage(
-			`/stats/email/:statType/:period(${ validEmailPeriods })/:email_id/:site`,
-			emailStats
-		);
-		statsPage( `/stats/day/emails/:site`, emailSummary );
-	}
+	statsPage( `/stats/email/:statType/:period(${ validEmailPeriods })/:email_id/:site`, emailStats );
+	statsPage( `/stats/day/emails/:site`, emailSummary );
 
 	// Anything else should redirect to default stats page
 	page( '/stats/(.*)', redirectToDefaultSitePage );

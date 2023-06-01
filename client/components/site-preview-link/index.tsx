@@ -1,17 +1,24 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Spinner } from '@automattic/components';
+import { LoadingPlaceholder } from '@automattic/components';
 import styled from '@emotion/styled';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { trailingslashit } from 'calypso/lib/route';
+import { useDispatch } from 'calypso/state';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import ClipboardButtonInput from '../clipboard-button-input';
 import { useCreateSitePreviewLink } from './use-create-site-preview-link';
 import { useDeleteSitePreviewLink } from './use-delete-site-preview-link';
 import { useSitePreviewLinks } from './use-site-preview-links';
 import type { SiteId } from 'calypso/types';
+
+const InputPlaceholder = styled( LoadingPlaceholder )( {
+	maxWidth: '100%',
+	width: 120,
+	height: 22,
+	marginBottom: 12,
+} );
 
 interface SitePreviewLinkProps {
 	siteId: SiteId;
@@ -101,38 +108,48 @@ export default function SitePreviewLink( {
 	const checkedAndEnabled = checked && ! forceOff;
 	const isBusy = isFirstLoading || isCreating || isDeleting;
 
-	if ( isFirstLoading ) {
-		return <Spinner />;
+	let description = translate(
+		'"Coming soon" sites are only visible to you and invited users. Enable "Share site" to let collaborators without an account view your site.'
+	);
+	if ( 'privacy-settings' === source ) {
+		description = translate(
+			'Enable "Share site" to let collaborators without an account view your site.'
+		);
 	}
+
 	return (
 		<div>
-			<ToggleControl
-				label={ translate( 'Enable site preview link.' ) }
-				checked={ checkedAndEnabled }
-				onChange={ onChange }
-				{ ...{ disabled: disabled || isBusy } } // disabled is not included on ToggleControl props type
-			/>
-			<HelpText>
-				{ translate(
-					'When enabled, anyone with the site preview link can view your Coming Soon site.'
-				) }
-			</HelpText>
-			{ ! forceOff &&
-				previewLinks?.map( ( { code, isCreating = false, isRemoving = false } ) => {
-					let linkValue = `${ trailingslashit( siteUrl ) }?share=${ code }`;
-					if ( isCreating ) {
-						linkValue = translate( 'Loading…' );
-					} else if ( isRemoving ) {
-						linkValue = translate( 'Disabling…' );
-					}
-					return (
-						<ClipboardButtonInput
-							key={ code }
-							value={ linkValue }
-							disabled={ isBusy || disabled }
-						/>
-					);
-				} ) }
+			<p>{ description }</p>
+			{ isFirstLoading && <InputPlaceholder /> }
+			{ ! isFirstLoading && (
+				<>
+					<ToggleControl
+						label={ translate( 'Share site' ) }
+						checked={ checkedAndEnabled }
+						onChange={ onChange }
+						{ ...{ disabled: disabled || isBusy } } // disabled is not included on ToggleControl props type
+					/>
+					{ ! forceOff &&
+						previewLinks?.map( ( { code, isCreating = false, isRemoving = false } ) => {
+							let linkValue = `${ trailingslashit( siteUrl ) }?share=${ code }`;
+							if ( isCreating ) {
+								linkValue = translate( 'Loading…' );
+							} else if ( isRemoving ) {
+								linkValue = translate( 'Disabling…' );
+							}
+							return (
+								<ClipboardButtonInput
+									key={ code }
+									value={ linkValue }
+									disabled={ isBusy || disabled }
+								/>
+							);
+						} ) }
+					{ checkedAndEnabled && (
+						<HelpText>{ translate( 'Anyone with the link can view your site.' ) }</HelpText>
+					) }
+				</>
+			) }
 		</div>
 	);
 }

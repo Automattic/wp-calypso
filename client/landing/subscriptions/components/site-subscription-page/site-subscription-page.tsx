@@ -47,6 +47,7 @@ const SiteSubscriptionPage = () => {
 							siteIcon={ data.site_icon }
 							deliveryMethods={ data.delivery_methods }
 							url={ data.URL }
+							paymentDetails={ data.payment_details }
 						/>
 					) }
 				</div>

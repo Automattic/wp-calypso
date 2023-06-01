@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import wp from 'calypso/lib/wp';
+import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { GITHUB_INTEGRATION_QUERY_KEY } from '../constants';
 

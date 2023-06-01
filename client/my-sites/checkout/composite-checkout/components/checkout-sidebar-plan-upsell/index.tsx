@@ -6,10 +6,10 @@ import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { useDispatch } from 'react-redux';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useGetProductVariants } from '../../hooks/product-variants';
 import {

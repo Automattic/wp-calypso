@@ -1,11 +1,13 @@
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
+import { useState } from 'react';
 import CommentButton from 'calypso/blocks/comment-button';
 import { shouldShowComments } from 'calypso/blocks/comments/helper';
 import PostEditButton from 'calypso/blocks/post-edit-button';
 import ShareButton from 'calypso/blocks/reader-share';
 import { shouldShowShare } from 'calypso/blocks/reader-share/helper';
+import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
 import ReaderViews from 'calypso/blocks/reader-views';
 import ReaderVisitLink from 'calypso/blocks/reader-visit-link';
 import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
@@ -25,12 +27,23 @@ const ReaderPostActions = ( props ) => {
 		showEdit,
 		showViews,
 		showVisit,
+		showSuggestedFollows,
 		iconSize,
 		className,
 		visitUrl,
 		fullPost,
 		translate,
 	} = props;
+
+	const [ isSuggestedFollowsModalOpen, setIsSuggestedFollowsModalOpen ] = useState( false );
+
+	const openSuggestedFollowsModal = ( followClicked ) => {
+		setIsSuggestedFollowsModalOpen( followClicked );
+	};
+
+	const onCloseSuggestedFollowModal = () => {
+		setIsSuggestedFollowsModalOpen( false );
+	};
 
 	const onEditClick = () => {
 		stats.recordAction( 'edit_post' );
@@ -76,9 +89,21 @@ const ReaderPostActions = ( props ) => {
 					/>
 				</li>
 			) }
+			{ showSuggestedFollows && post.site_ID && (
+				<ReaderSuggestedFollowsDialog
+					onClose={ onCloseSuggestedFollowModal }
+					siteId={ post.site_ID }
+					postId={ post.ID }
+					isVisible={ isSuggestedFollowsModalOpen }
+				/>
+			) }
 			{ shouldShowLikes( post ) && (
 				<li className="reader-post-actions__item">
-					<ReaderFollowButton siteUrl={ post.feed_URL || post.site_URL } iconSize={ iconSize } />
+					<ReaderFollowButton
+						siteUrl={ post.feed_URL || post.site_URL }
+						iconSize={ iconSize }
+						onFollowToggle={ openSuggestedFollowsModal }
+					/>
 				</li>
 			) }
 			{ shouldShowShare( post ) && (
@@ -125,6 +150,7 @@ ReaderPostActions.propTypes = {
 	onCommentClick: PropTypes.func,
 	showEdit: PropTypes.bool,
 	showViews: PropTypes.bool,
+	showSuggestedFollows: PropTypes.bool,
 	iconSize: PropTypes.number,
 	visitUrl: PropTypes.string,
 	fullPost: PropTypes.bool,
@@ -134,6 +160,7 @@ ReaderPostActions.defaultProps = {
 	showEdit: true,
 	showViews: false,
 	showVisit: false,
+	showSuggestedFollows: false,
 	iconSize: 20,
 };
 

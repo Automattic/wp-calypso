@@ -285,7 +285,7 @@ class StatsSite extends Component {
 							statType="statsVideoPlays"
 							showSummaryLink
 						/>
-						{ config.isEnabled( 'newsletter/stats' ) && ! isOdysseyStats && (
+						{ ! isOdysseyStats && (
 							<StatsModuleEmails period={ this.props.period } query={ query } />
 						) }
 						{

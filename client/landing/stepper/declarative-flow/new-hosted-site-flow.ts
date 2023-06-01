@@ -80,14 +80,18 @@ const hosting: Flow = {
 				setSignupCompleteSlug( providedDependencies?.siteSlug );
 				setSignupCompleteFlowName( flowName );
 
-				return window.location.assign(
-					addQueryArgs(
-						`/checkout/${ encodeURIComponent(
-							( providedDependencies?.siteSlug as string ) ?? ''
-						) }`,
-						{ redirect_to: destination }
-					)
-				);
+				if ( providedDependencies.goToCheckout ) {
+					return window.location.assign(
+						addQueryArgs(
+							`/checkout/${ encodeURIComponent(
+								( providedDependencies?.siteSlug as string ) ?? ''
+							) }`,
+							{ redirect_to: destination }
+						)
+					);
+				}
+
+				return window.location.assign( destination );
 			}
 
 			return providedDependencies;
@@ -152,6 +156,11 @@ const hosting: Flow = {
 				case 'plans': {
 					const productSlug =
 						( providedDependencies?.plan as MinimalRequestCartProduct | null )?.product_slug ?? '';
+
+					// User picked the Free plan
+					if ( ! productSlug ) {
+						return navigate( 'siteCreationStep' );
+					}
 
 					setPlanCartItem( {
 						product_slug: productSlug,

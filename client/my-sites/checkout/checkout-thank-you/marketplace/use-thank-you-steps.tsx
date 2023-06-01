@@ -1,8 +1,8 @@
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import { ThankYouSteps } from 'calypso/components/thank-you/types';
 import useMarketplaceAdditionalSteps from 'calypso/my-sites/marketplace/pages/marketplace-product-install/use-marketplace-additional-steps';
+import { useSelector } from 'calypso/state';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { hasMultipleProductTypes } from './utils';

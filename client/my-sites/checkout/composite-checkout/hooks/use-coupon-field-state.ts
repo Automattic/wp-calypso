@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import type { ApplyCouponToCart } from '@automattic/shopping-cart';
 

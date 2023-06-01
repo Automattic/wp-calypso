@@ -1,6 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
+interface SubscriberPayload {
+	date: string;
+	unit: string;
+	data: any[]; // TODO: add type
+	fields: string[];
+}
+
 export function querySubscribers(
 	siteId: number | null,
 	period: string,
@@ -30,13 +37,7 @@ export function querySubscribers(
 	);
 }
 
-export function selectSubscribers( payload: {
-	date: string;
-	unit: string;
-	// todo: add type
-	data: any[];
-	fields: string[];
-} ) {
+export function selectSubscribers( payload: SubscriberPayload ) {
 	if ( ! payload || ! payload.data ) {
 		return [];
 	}

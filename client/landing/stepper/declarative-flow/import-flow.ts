@@ -72,6 +72,10 @@ const importFlow: Flow = {
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
 			[]
 		);
+		const isMigrateFromWp = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIsMigrateFromWp(),
+			[]
+		);
 		const flowProgress = useSiteSetupFlowProgress( _currentStep, 'import' );
 
 		if ( flowProgress ) {
@@ -260,6 +264,9 @@ const importFlow: Flow = {
 				case 'importerSquarespace':
 				case 'importerWordpress':
 				case 'designSetup':
+					if ( isMigrateFromWp && fromParam ) {
+						return navigate( `sitePicker?from=${ fromParam }` );
+					}
 					return navigate( `import?siteSlug=${ siteSlugParam }` );
 			}
 		};

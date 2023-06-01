@@ -177,7 +177,7 @@ export async function assignNewCardProcessor(
 		if ( purchase ) {
 			const result = await updateCreditCard( {
 				purchase,
-				token,
+				token: String( token ),
 				stripeConfiguration,
 				useForAllSubscriptions: Boolean( useForAllSubscriptions ),
 				eventSource,
@@ -193,7 +193,7 @@ export async function assignNewCardProcessor(
 		}
 
 		const result = await saveCreditCard( {
-			token,
+			token: String( token ),
 			stripeConfiguration,
 			useForAllSubscriptions: Boolean( useForAllSubscriptions ),
 			eventSource,

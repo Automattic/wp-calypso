@@ -10,6 +10,7 @@ import { createNotice } from 'calypso/state/notices/actions';
 import { fetchUserPurchases } from 'calypso/state/purchases/actions';
 import { isFetchingUserPurchases } from 'calypso/state/purchases/selectors';
 import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
+import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { isExpired, isOneTimePurchase, isRechargeable } from '../../../../lib/purchases';
 import { getChangePaymentMethodPath } from '../../utils';
@@ -306,7 +307,7 @@ class AutoRenewToggle extends Component<
 }
 
 export default connect(
-	( state, { purchase, siteSlug }: AutoRenewToggleProps ) => ( {
+	( state: IAppState, { purchase, siteSlug }: AutoRenewToggleProps ) => ( {
 		fetchingUserPurchases: isFetchingUserPurchases( state ),
 		isEnabled: purchase.isAutoRenewEnabled,
 		currentUserId: getCurrentUserId( state ),
