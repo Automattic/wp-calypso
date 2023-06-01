@@ -100,6 +100,11 @@ class ReaderPostCard extends Component {
 			return;
 		}
 
+		// ignore clicks to close a dialog backdrop
+		if ( closest( event.target, '.dialog__backdrop', rootNode ) ) {
+			return;
+		}
+
 		// ignore clicks when highlighting text
 		if ( selection && selection.toString() ) {
 			return;
@@ -146,6 +151,7 @@ class ReaderPostCard extends Component {
 		const isDiscover = post.is_discover;
 		const title = truncate( post.title, { length: 140, separator: /,? +/ } );
 		const isReaderTagPage = currentRoute.startsWith( '/tag/' );
+		const isReaderSearchPage = currentRoute.startsWith( '/read/search' );
 		const classes = classnames( 'reader-post-card', {
 			'has-thumbnail': !! post.canonical_media,
 			'is-photo': isPhotoPost,
@@ -180,6 +186,8 @@ class ReaderPostCard extends Component {
 				fullPost={ false }
 				onCommentClick={ onCommentClick }
 				showEdit={ false }
+				showViews={ !! post.views }
+				showSuggestedFollows={ isReaderSearchPage }
 				className="ignore-click"
 				iconSize={ 20 }
 			/>

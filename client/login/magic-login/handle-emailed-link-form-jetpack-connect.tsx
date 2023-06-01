@@ -1,10 +1,10 @@
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { FC, useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { login } from 'calypso/lib/paths';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { rebootAfterLogin } from 'calypso/state/login/actions';
 import {

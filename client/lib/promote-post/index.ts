@@ -1,11 +1,11 @@
 import config from '@automattic/calypso-config';
 import { loadScript } from '@automattic/load-script';
 import { __ } from '@wordpress/i18n';
-import { useSelector } from 'react-redux';
+import { translate } from 'i18n-calypso/types';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import wpcom from 'calypso/lib/wp';
+import { useSelector } from 'calypso/state';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
@@ -25,7 +25,7 @@ declare global {
 				urn: string;
 				onLoaded?: () => void;
 				onClose?: () => void;
-				translateFn?: ( value: string, options?: any ) => string;
+				translateFn?: typeof translate;
 				localizeUrlFn?: ( fullUrl: string ) => string;
 				locale?: string;
 				showDialog?: boolean;
@@ -67,7 +67,7 @@ export async function showDSP(
 	postId: number | string,
 	onClose: () => void,
 	source: string,
-	translateFn: ( value: string, options?: any ) => string,
+	translateFn: typeof translate,
 	localizeUrlFn: ( fullUrl: string ) => string,
 	domNodeOrId?: HTMLElement | string | null,
 	setShowCancelButton?: ( show: boolean ) => void,
@@ -169,11 +169,6 @@ export enum PromoteWidgetStatus {
 	DISABLED = 'disabled',
 }
 
-export enum BlazeCreditStatus {
-	ENABLED = 'enabled',
-	DISABLED = 'disabled',
-}
-
 /**
  * Hook to verify if we should enable the promote widget.
  *
@@ -192,16 +187,4 @@ export const usePromoteWidget = (): PromoteWidgetStatus => {
 		default:
 			return PromoteWidgetStatus.FETCHING;
 	}
-};
-
-/**
- * Hook to verify if we should enable blaze credits
- *
- * @returns bool
- */
-export const useBlazeCredits = (): BlazeCreditStatus => {
-	return useSelector( ( state ) => {
-		const userData = getCurrentUser( state );
-		return userData?.blaze_credits_enabled ? BlazeCreditStatus.ENABLED : BlazeCreditStatus.DISABLED;
-	} );
 };

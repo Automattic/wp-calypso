@@ -4,7 +4,6 @@ import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useState, ChangeEvent, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import errorIllustration from 'calypso/assets/images/customer-home/disconnected.svg';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import AccordionForm from 'calypso/signup/accordion-form/accordion-form';
@@ -14,6 +13,7 @@ import {
 	useTranslatedPageTitles,
 } from 'calypso/signup/difm/translation-hooks';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { useSelector, useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { saveSignupStep } from 'calypso/state/signup/progress/actions';
 import {

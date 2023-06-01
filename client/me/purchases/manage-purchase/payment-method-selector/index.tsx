@@ -12,7 +12,6 @@ import { useElements, CardNumberElement } from '@stripe/react-stripe-js';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import QueryPaymentCountries from 'calypso/components/data/query-countries/payments';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';
@@ -20,6 +19,7 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { creditCardHasAlreadyExpired } from 'calypso/lib/purchases';
 import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-stored-payment-methods';
+import { useDispatch } from 'calypso/state';
 import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
 import {
 	assignPayPalProcessor,

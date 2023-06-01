@@ -1,9 +1,8 @@
-import { START_WRITING_FLOW } from '@automattic/onboarding';
+import { START_WRITING_FLOW, DESIGN_FIRST_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __experimentalMainDashboardButton as MainDashboardButton } from '@wordpress/edit-post';
 import { useEffect, createPortal, useState } from '@wordpress/element';
 import { registerPlugin as originalRegisterPlugin, PluginSettings } from '@wordpress/plugins';
-import { getQueryArg } from '@wordpress/url';
 import useSiteIntent from '../../dotcom-fse/lib/site-intent/use-site-intent';
 import WpcomBlockEditorNavSidebar from './components/nav-sidebar';
 import ToggleSidebarButton from './components/toggle-sidebar-button';
@@ -36,11 +35,9 @@ if ( typeof MainDashboardButton !== 'undefined' ) {
 				// eslint-disable-next-line react-hooks/exhaustive-deps
 			}, [] );
 
-			const { siteIntent: intent } = useSiteIntent();
+			const { siteIntent: intent, siteIntentFetched } = useSiteIntent();
 			// We check the URL param along with site intent because the param loads faster and prevents element flashing.
-			const isStartWritingFlow =
-				intent === START_WRITING_FLOW ||
-				getQueryArg( window.location.search, START_WRITING_FLOW ) === 'true';
+			const isBlogOnboardingFlow = intent === START_WRITING_FLOW || intent === DESIGN_FIRST_FLOW;
 
 			const [ clickGuardRoot ] = useState( () => document.createElement( 'div' ) );
 			useEffect( () => {
@@ -62,7 +59,7 @@ if ( typeof MainDashboardButton !== 'undefined' ) {
 				[]
 			);
 
-			if ( isStartWritingFlow ) {
+			if ( ! siteIntentFetched || isBlogOnboardingFlow ) {
 				return <MainDashboardButton></MainDashboardButton>;
 			}
 

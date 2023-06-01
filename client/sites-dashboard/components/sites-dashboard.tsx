@@ -8,16 +8,18 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useCallback, useEffect, useRef } from 'react';
-import { useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import Pagination from 'calypso/components/pagination';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SplitButton from 'calypso/components/split-button';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { withoutHttp } from 'calypso/lib/url';
+import { useDispatch } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
-import { MEDIA_QUERIES } from '../utils';
+import { useSitesDashboardCreateSiteUrl } from '../hooks/use-sites-dashboard-create-site-url';
+import { useSitesDashboardImportSiteUrl } from '../hooks/use-sites-dashboard-import-site-url';
+import { MEDIA_QUERIES, TRACK_SOURCE_NAME } from '../utils';
 import { NoSitesMessage } from './no-sites-message';
 import {
 	SitesDashboardQueryParams,
@@ -33,8 +35,6 @@ import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 interface SitesDashboardProps {
 	queryParams: SitesDashboardQueryParams;
 }
-
-const TRACK_SOURCE_NAME = 'sites-dashboard';
 
 const MAX_PAGE_WIDTH = '1280px';
 
@@ -143,8 +143,10 @@ const ScrollButton = styled( Button, { shouldForwardProp: ( prop ) => prop !== '
 const SitesDashboardSitesList = createSitesListComponent();
 
 export function SitesDashboard( {
-	queryParams: { page = 1, perPage = 96, search, status = 'all', newSiteSlug },
+	queryParams: { page = 1, perPage = 96, search, status = 'all', newSiteID },
 }: SitesDashboardProps ) {
+	const createSiteUrl = useSitesDashboardCreateSiteUrl();
+	const importSiteUrl = useSitesDashboardImportSiteUrl();
 	const { __, _n } = useI18n();
 	const { data: allSites = [], isLoading } = useSiteExcerptsQuery();
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
@@ -164,7 +166,7 @@ export function SitesDashboard( {
 		smoothScrolling: true,
 	} );
 
-	useShowSiteCreationNotice( allSites, newSiteSlug );
+	useShowSiteCreationNotice( allSites, newSiteID );
 
 	return (
 		<main>
@@ -179,9 +181,7 @@ export function SitesDashboard( {
 						onClick={ () => {
 							recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_add' );
 						} }
-						href={ addQueryArgs( '/start', {
-							ref: TRACK_SOURCE_NAME,
-						} ) }
+						href={ createSiteUrl }
 					>
 						<PopoverMenuItem
 							onClick={ () => {
@@ -199,7 +199,7 @@ export function SitesDashboard( {
 							onClick={ () => {
 								recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_import' );
 							} }
-							href={ addQueryArgs( '/start/import' ) }
+							href={ importSiteUrl }
 							icon="arrow-down"
 						>
 							<span>{ __( 'Import an existing site' ) }</span>
@@ -315,17 +315,17 @@ export function SitesDashboard( {
 	);
 }
 
-function useShowSiteCreationNotice( allSites: SiteExcerptData[], newSiteSlug: string | undefined ) {
+function useShowSiteCreationNotice( allSites: SiteExcerptData[], newSiteID: number | undefined ) {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const shownSiteCreationNotice = useRef( false );
 
 	useEffect( () => {
-		if ( shownSiteCreationNotice.current || ! newSiteSlug ) {
+		if ( shownSiteCreationNotice.current || ! newSiteID ) {
 			return;
 		}
 
-		const site = allSites.find( ( { slug } ) => slug === newSiteSlug );
+		const site = allSites.find( ( { ID } ) => ID === newSiteID );
 		if ( ! site ) {
 			return;
 		}
@@ -349,5 +349,5 @@ function useShowSiteCreationNotice( allSites: SiteExcerptData[], newSiteSlug: st
 		const newUrl = new URL( window.location.href );
 		newUrl.searchParams.delete( 'new-site' );
 		window.history.replaceState( null, '', newUrl.toString() );
-	}, [ __, allSites, dispatch, newSiteSlug ] );
+	}, [ __, allSites, dispatch, newSiteID ] );
 }

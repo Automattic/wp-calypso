@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { Button, FormInputValidation } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { CheckboxControl } from '@wordpress/components';
+import { SelectCardCheckbox } from '@automattic/onboarding';
 import classNames from 'classnames';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
@@ -938,14 +938,12 @@ class SignupForm extends Component {
 
 		const { translate } = this.props;
 		return (
-			<CheckboxControl
-				className={ classNames(
-					'signup-form__is-dev-account-checkbox',
-					'signup-form__span-columns',
-					{ 'is-checked': this.state.isDevAccount }
-				) }
-				__nextHasNoMarginBottom
-				label={ preventWidows(
+			<SelectCardCheckbox
+				className="signup-form__is-dev-account-checkbox signup-form__span-columns"
+				checked={ this.state.isDevAccount }
+				onChange={ ( isDevAccount ) => this.setState( { isDevAccount } ) }
+			>
+				{ preventWidows(
 					translate(
 						"{{strong}}I'm a developer.{{/strong}} Boost my WordPress.com experience and give me early access to developer features",
 						{
@@ -955,9 +953,7 @@ class SignupForm extends Component {
 						}
 					)
 				) }
-				checked={ this.state.isDevAccount }
-				onChange={ ( isDevAccount ) => this.setState( { isDevAccount } ) }
-			/>
+			</SelectCardCheckbox>
 		);
 	}
 

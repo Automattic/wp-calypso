@@ -9,6 +9,8 @@ import {
 	PLAN_WOOEXPRESS_SMALL_MONTHLY,
 	PLAN_WOOEXPRESS_MEDIUM,
 	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
+	TYPE_PERSONAL,
+	TYPE_PREMIUM,
 } from '@automattic/calypso-products';
 import { is2023PricingGridActivePage } from '@automattic/calypso-products/src/plans-utilities';
 import { WpcomPlansUI } from '@automattic/data-stores';
@@ -147,7 +149,7 @@ class Plans extends Component {
 	static propTypes = {
 		context: PropTypes.object.isRequired,
 		redirectToAddDomainFlow: PropTypes.bool,
-		domainAndPlanPackage: PropTypes.string,
+		domainAndPlanPackage: PropTypes.bool,
 		intervalType: PropTypes.string,
 		customerType: PropTypes.string,
 		selectedFeature: PropTypes.string,
@@ -258,6 +260,8 @@ class Plans extends Component {
 		}
 
 		const hideFreePlan = ! is2023PricingGridVisible || this.props.isDomainAndPlanPackageFlow;
+		// The Jetpack mobile app only wants to display two plans -- personal and premium
+		const planTypes = this.props.jetpackAppPlans ? [ TYPE_PERSONAL, TYPE_PREMIUM ] : null;
 
 		const hidePlanTypeSelector =
 			this.props.domainAndPlanPackage &&
@@ -279,6 +283,7 @@ class Plans extends Component {
 				plansWithScroll={ false }
 				hidePlansFeatureComparison={ this.props.isDomainAndPlanPackageFlow }
 				is2023PricingGridVisible={ is2023PricingGridVisible }
+				planTypes={ planTypes }
 			/>
 		);
 	}
@@ -349,6 +354,7 @@ class Plans extends Component {
 			isFreePlan,
 			currentPlanIntervalType,
 			domainFromHomeUpsellFlow,
+			jetpackAppPlans,
 		} = this.props;
 
 		if ( ! selectedSite || this.isInvalidPlanInterval() || ! currentPlan ) {
@@ -412,7 +418,9 @@ class Plans extends Component {
 						{ isDomainAndPlanPackageFlow && (
 							<>
 								<div className="plans__header">
-									<DomainAndPlanPackageNavigation goBackLink={ goBackLink } step={ 2 } />
+									{ ! jetpackAppPlans && (
+										<DomainAndPlanPackageNavigation goBackLink={ goBackLink } step={ 2 } />
+									) }
 
 									<FormattedHeader brandFont headerText={ headline } align="center" />
 

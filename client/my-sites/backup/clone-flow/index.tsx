@@ -1,7 +1,6 @@
 import { Button, Card, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import ActivityCardList from 'calypso/components/activity-card-list';
 import AdvancedCredentials from 'calypso/components/advanced-credentials';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -19,6 +18,7 @@ import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
+import { useDispatch, useSelector } from 'calypso/state';
 import { rewindClone, rewindStagingClone } from 'calypso/state/activity-log/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions';

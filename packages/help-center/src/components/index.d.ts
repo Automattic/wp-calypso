@@ -58,6 +58,11 @@ declare module 'calypso/data/help/use-active-support-tickets-query' {
 	) => { isLoading: boolean; data?: SupportTicket[] };
 }
 
+declare module 'calypso/state/data-layer/wpcom-api-middleware' {
+	const WpcomApiMiddleware = ( Function ) => Function;
+	export const WpcomApiMiddleware;
+}
+
 declare module 'calypso/state/reader/posts/selectors' {
 	export const getPostByKey;
 }
@@ -140,10 +145,6 @@ declare module 'calypso/state/analytics/actions' {
 			}[];
 		};
 	};
-}
-
-declare module '@automattic/state-utils' {
-	export const createSelector = unknown;
 }
 
 declare module 'calypso/lib/mobile-app';

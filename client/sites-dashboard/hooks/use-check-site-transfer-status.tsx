@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'calypso/state';
 import { requestLatestAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
 import { transferStates } from 'calypso/state/atomic/transfers/constants';
 import { getLatestAtomicTransfer } from 'calypso/state/atomic/transfers/selectors';
+import { requestSite } from 'calypso/state/sites/actions';
 
 interface SiteTransferStatusProps {
 	siteId: number;
@@ -67,6 +68,7 @@ export const useCheckSiteTransferStatus = ( {
 	useEffect( () => {
 		if ( ! isTransferring && wasTransferring && isTransferCompleted ) {
 			const dismissTransferNoticeTimeout = setTimeout( () => {
+				dispatch( requestSite( siteId ) );
 				setWasTransferring( false );
 			}, 3000 );
 

@@ -1,5 +1,5 @@
 import { FunctionComponent, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import * as HostInfo from '../host-info';
 

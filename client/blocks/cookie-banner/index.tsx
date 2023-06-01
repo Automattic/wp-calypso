@@ -1,13 +1,13 @@
 import { CookieBanner } from '@automattic/privacy-toolset';
 import cookie from 'cookie';
 import { useCallback, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import {
 	refreshCountryCodeCookieGdpr,
 	setTrackingPrefs,
 	shouldSeeCookieBanner,
 	getTrackingPrefs,
 } from 'calypso/lib/analytics/utils';
+import { useDispatch } from 'calypso/state';
 import { bumpStat } from 'calypso/state/analytics/actions';
 import { useCookieBannerContent } from './use-cookie-banner-content';
 import type { CookieBannerProps } from '@automattic/privacy-toolset';

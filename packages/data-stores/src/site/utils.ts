@@ -27,5 +27,11 @@ export const createCustomHomeTemplateContent = (
 		);
 	}
 
-	return content.join( '\n' );
+	if ( content.length ) {
+		return content.join( '\n' );
+	}
+
+	// If no layout is selected, return the paragraph block to start with blank content to avoid the StartModal showing.
+	// See https://github.com/WordPress/gutenberg/blob/343fd27a51ae549c013bc30f51f13aad235d0d4a/packages/edit-site/src/components/start-template-options/index.js#L162
+	return '<!-- wp:paragraph --><p></p><!-- /wp:paragraph -->';
 };

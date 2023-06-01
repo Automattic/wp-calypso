@@ -6,6 +6,7 @@ import {
 	domainManagementTransferToOtherSite,
 } from 'calypso/my-sites/domains/paths';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { IAppState } from 'calypso/state/types';
 import type { DomainOnlyConnectCardProps } from './types';
 
 import './style.scss';
@@ -38,6 +39,6 @@ const DomainOnlyConnectCard = ( props: DomainOnlyConnectCardProps ) => {
 	);
 };
 
-export default connect( ( state ) => ( {
+export default connect( ( state: IAppState ) => ( {
 	currentRoute: getCurrentRoute( state ),
 } ) )( DomainOnlyConnectCard );

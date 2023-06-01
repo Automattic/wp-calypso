@@ -4,9 +4,9 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { useSelector } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { PLAN_RENEW_NAG_EVENT_NAMES } from '../utils';
 

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch } from 'calypso/state';
 import { fetchAllPlugins } from 'calypso/state/plugins/installed/actions';
 import { isRequestingForAllSites } from 'calypso/state/plugins/installed/selectors';
 import type { CalypsoDispatch } from 'calypso/state/types';

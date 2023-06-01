@@ -114,28 +114,8 @@
 
 		.progress-bar {
 			max-width: 385px;
-			margin-bottom: rem(14px);
-		}
-
-		.progress-status {
-			display: inline-block;
-			font-size: rem(14px);
-			font-weight: 500;
-			color: var(--studio-gray-60);
-			border: solid 1px var(--studio-gray-10);
-			border-radius: 4px;
 			margin-bottom: rem(24px);
-			padding: rem(10px) rem(24px);
-		}
-
-		.support-block {
-			font-size: rem(14px);
-			color: var(--studio-gray-50);
-
-			a {
-				color: var(--studio-gray-50);
-				text-decoration: underline;
-			}
+			height: 4px;
 		}
 	}
 }

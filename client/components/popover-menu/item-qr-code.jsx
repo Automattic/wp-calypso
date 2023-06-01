@@ -1,7 +1,7 @@
 import { Dialog } from '@automattic/components';
 import { Icon } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import QRCode from 'qrcode.react';
+import { QRCodeCanvas } from 'qrcode.react';
 import { useCallback, useState, useEffect } from 'react';
 import PopoverMenuItem from './item';
 
@@ -32,7 +32,7 @@ function QRCodeDialog( { url, showQRCode } ) {
 
 	return (
 		<Dialog isVisible={ showQRCodeDialog } buttons={ buttons } onClose={ onCloseDialog }>
-			<QRCode value={ url } size={ 200 } renderAs="canvas" level="H" />
+			<QRCodeCanvas value={ url } size={ 200 } level="H" />
 		</Dialog>
 	);
 }

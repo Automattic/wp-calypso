@@ -1,9 +1,9 @@
 import { Button, Card, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import QueryPreferences from 'calypso/components/data/query-preferences';
 import { preventWidows } from 'calypso/lib/formatting';
+import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { dismiss } from 'calypso/state/jetpack-review-prompt/actions';
 import { getIsDismissed, getValidFromDate } from 'calypso/state/jetpack-review-prompt/selectors';

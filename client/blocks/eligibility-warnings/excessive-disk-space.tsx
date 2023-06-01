@@ -1,7 +1,7 @@
 import { isBusinessPlan, isEcommercePlan } from '@automattic/calypso-products';
 import { localize, LocalizeProps } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import PlanStorage from 'calypso/blocks/plan-storage';
+import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSiteSlug, getSitePlanSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';

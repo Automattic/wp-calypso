@@ -1,6 +1,9 @@
 import { SubscriptionManager, Reader } from '@automattic/data-stores';
+import { getCurrencyObject } from '@automattic/format-currency';
+import { useLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useTranslate, numberFormat } from 'i18n-calypso';
+import moment from 'moment';
 import { useEffect, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import TimeSince from 'calypso/components/time-since';
@@ -17,7 +20,42 @@ type SiteSubscriptionDetailsProps = {
 	blogId: string;
 	deliveryMethods: Reader.SiteSubscriptionDeliveryMethods;
 	url: string;
+	paymentDetails: Reader.SiteSubscriptionPaymentDetails[];
 };
+
+type PaymentPlan = {
+	id: string;
+	renewalPrice: string;
+	renewalDate: string;
+};
+
+const getPaymentInterval = ( renew_interval: string ) => {
+	if ( renew_interval === null ) {
+		return 'one time';
+	} else if ( renew_interval === '1 month' ) {
+		return 'per month';
+	} else if ( renew_interval === '1 year' ) {
+		return 'per year';
+	}
+};
+
+function formatRenewalPrice( renewalPrice: string, currency: string ) {
+	if ( ! renewalPrice ) {
+		return '';
+	}
+
+	const money = getCurrencyObject( parseFloat( renewalPrice ), currency );
+	return money.integer !== '0' ? `${ money.symbol }${ money.integer } /` : '';
+}
+
+function formatRenewalDate( renewalDate: string, localeSlug: string ) {
+	if ( ! renewalDate ) {
+		return '';
+	}
+
+	const date = moment( renewalDate );
+	return date.locale( localeSlug ).format( 'LL' );
+}
 
 const SiteSubscriptionDetails = ( {
 	subscriberCount,
@@ -27,8 +65,10 @@ const SiteSubscriptionDetails = ( {
 	blogId,
 	deliveryMethods,
 	url,
+	paymentDetails,
 }: SiteSubscriptionDetailsProps ) => {
 	const translate = useTranslate();
+	const localeSlug = useLocale();
 	const [ notice, setNotice ] = useState< NoticeState | null >( null );
 
 	const {
@@ -44,17 +84,41 @@ const SiteSubscriptionDetails = ( {
 		error: unsubscribeError,
 	} = SubscriptionManager.useSiteUnsubscribeMutation( blogId );
 
+	const [ paymentPlans, setPaymentPlans ] = useState< PaymentPlan[] >( [] );
+
 	const [ siteSubscribed, setSiteSubscribed ] = useState( true );
 	useEffect( () => {
 		if ( subscribed ) {
 			setSiteSubscribed( true );
 		}
 	}, [ subscribed ] );
+
 	useEffect( () => {
 		if ( unsubscribed ) {
 			setSiteSubscribed( false );
 		}
 	}, [ unsubscribed ] );
+
+	useEffect( () => {
+		if ( paymentDetails ) {
+			const newPaymentPlans: PaymentPlan[] = [];
+
+			paymentDetails.forEach( ( paymentDetail: Reader.SiteSubscriptionPaymentDetails ) => {
+				const { ID, currency, renewal_price, renew_interval } = paymentDetail;
+				const renewalPrice = formatRenewalPrice( renewal_price, currency );
+				const when = getPaymentInterval( renew_interval );
+				const renewalDate = formatRenewalDate( paymentDetail.end_date, localeSlug );
+
+				newPaymentPlans.push( {
+					id: ID,
+					renewalPrice: `${ renewalPrice }${ when }`,
+					renewalDate,
+				} );
+			} );
+
+			setPaymentPlans( newPaymentPlans );
+		}
+	}, [ paymentDetails ] );
 
 	const subHeaderText = subscriberCount
 		? translate( '%s subscriber', '%s subscribers', {
@@ -171,6 +235,19 @@ const SiteSubscriptionDetails = ( {
 								/>
 							</dd>
 						</dl>
+						{ paymentPlans &&
+							paymentPlans.map( ( { id, renewalPrice, renewalDate } ) => (
+								<dl className="site-subscription-info__list" key={ id }>
+									<dt>{ translate( 'Plan' ) }</dt>
+									<dd>{ renewalPrice }</dd>
+									{ renewalDate && (
+										<>
+											<dt>{ translate( 'Billing period' ) }</dt>
+											<dd>{ translate( 'Renews on %s', { args: [ renewalDate ] } ) }</dd>
+										</>
+									) }
+								</dl>
+							) ) }
 					</div>
 
 					<Button

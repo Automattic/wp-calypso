@@ -37,7 +37,13 @@ export {
 	percentCalculator,
 } from './highlight-cards/count-comparison-card';
 export { default as AnnualHighlightCards } from './highlight-cards/annual-highlight-cards';
-export { default as WeeklyHighlightCards } from './highlight-cards/weekly-highlight-cards';
+export {
+	default as WeeklyHighlightCards,
+	PAST_SEVEN_DAYS,
+	PAST_THIRTY_DAYS,
+	BETWEEN_PAST_EIGHT_AND_FIFTEEN_DAYS,
+	BETWEEN_PAST_THIRTY_ONE_AND_SIXTY_DAYS,
+} from './highlight-cards/weekly-highlight-cards';
 export { default as AppPromoCard } from './app-promo-card';
 export { default as ShortenedNumber } from './number-formatters';
 export { default as formattedNumber } from './number-formatters/formatted-number';
