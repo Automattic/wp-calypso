@@ -9,7 +9,7 @@ import ThemeTypeBadge from '../';
 
 describe( 'ThemeTypeBadge', () => {
 	function renderWithState( content, { hasPremiumPlan = false, hasPurchasedTheme = false } = {} ) {
-		const state = {
+		const initialState = {
 			themes: {
 				queries: {
 					wpcom: {
@@ -36,7 +36,7 @@ describe( 'ThemeTypeBadge', () => {
 			},
 		};
 		const mockStore = configureStore();
-		const store = mockStore( state );
+		const store = mockStore( initialState );
 
 		return render( <Provider store={ store }>{ content }</Provider> );
 	}
