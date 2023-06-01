@@ -30,6 +30,7 @@
 	},
 	"dependencies": {
 		"@automattic/components": "workspace:^",
+		"@automattic/onboarding": "workspace:^",
 		"@automattic/viewport": "workspace:^",
 		"@automattic/viewport-react": "workspace:^",
 		"@popperjs/core": "^2.10.2",
