@@ -75,7 +75,7 @@ try {
 	const tscTasks = ( async () => {
 		// This task is a prerequisite for the other tsc tasks, so it must run separately.
 		await runTask( tscPackages );
-		await Promise.all( tscCommands.map( runTask ) );
+		await Promise.allSettled( tscCommands.map( runTask ) );
 	} )();
 
 	// Run these smaller tasks in serial to keep a healthy amount of CPU available for the other tasks.
@@ -86,7 +86,7 @@ try {
 		await runTask( testWorkspaces );
 	} )();
 
-	await Promise.all( [ testClientTask, tscTasks, otherTestTasks ] );
+	await Promise.allSettled( [ testClientTask, tscTasks, otherTestTasks ] );
 } catch ( exitCode ) {
 	console.log( `A task failed with exit code ${ exitCode }` );
 	process.exit( exitCode );

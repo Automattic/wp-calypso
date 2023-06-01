@@ -27,10 +27,11 @@ import siteHasWordAds from 'calypso/state/selectors/site-has-wordads';
 import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import getSiteBySlug from 'calypso/state/sites/selectors/get-site-by-slug';
+import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isRequestingWordAdsApprovalForSite } from 'calypso/state/wordads/approve/selectors';
 import type { Image } from 'calypso/components/promo-section/promo-card/index';
-import type { AppState, SiteSlug } from 'calypso/types';
+import type { SiteSlug } from 'calypso/types';
 import './style.scss';
 
 interface ConnectedProps {
@@ -516,7 +517,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 };
 
 export default connect(
-	( state: AppState ) => {
+	( state: IAppState ) => {
 		// Default value of 0 to appease TypeScript for selectors that don't allow a null site ID value.
 		const siteId = getSelectedSiteId( state ) ?? 0;
 		const selectedSiteSlug = getSelectedSiteSlug( state );

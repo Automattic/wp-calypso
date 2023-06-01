@@ -2,9 +2,9 @@ import { Button } from '@automattic/components';
 import { Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import FilePicker from 'calypso/components/file-picker';
 import wpcom from 'calypso/lib/wp';
+import { useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import type { WhoisData } from '../types';
 

@@ -9,16 +9,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useSiteMigrateInfo } from 'calypso/blocks/importer/hooks/use-site-can-migrate';
 import { formatSlugToURL } from 'calypso/blocks/importer/util';
 import MigrationCredentialsForm from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/migration-credentials-form';
+import { UpdatePluginInfo } from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/update-plugins';
 import { PreMigrationUpgradePlan } from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/upgrade-plan';
-import { UpgradePluginInfo } from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/upgrade-plugins';
 import { FormState } from 'calypso/components/advanced-credentials/form';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import useMigrationConfirmation from 'calypso/landing/stepper/hooks/use-migration-confirmation';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCredentials } from 'calypso/state/jetpack/credentials/actions';
 import getJetpackCredentials from 'calypso/state/selectors/get-jetpack-credentials';
 import isRequestingSiteCredentials from 'calypso/state/selectors/is-requesting-site-credentials';
+import ConfirmModal from './confirm-modal';
 import { CredentialsHelper } from './credentials-helper';
 import { StartImportTrackingProps } from './types';
 
@@ -47,10 +49,12 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 	const dispatch = useDispatch();
 
 	const [ showCredentials, setShowCredentials ] = useState( false );
+	const [ showConfirmModal, setShowConfirmModal ] = useState( false );
+	const [ migrationConfirmed, setMigrationConfirmed ] = useMigrationConfirmation();
 	const [ selectedHost, setSelectedHost ] = useState( 'generic' );
 	const [ selectedProtocol, setSelectedProtocol ] = useState< 'ftp' | 'ssh' >( 'ftp' );
 	const [ hasLoaded, setHasLoaded ] = useState( false );
-	const [ showUpgradePluginInfo, setShowUpgradePluginInfo ] = useState( false );
+	const [ showUpdatePluginInfo, setShowUpdatePluginInfo ] = useState( false );
 	const fetchMigrationEnabledOnMount = isTargetSitePlanCompatible ? true : false;
 	const [ continueImport, setContinueImport ] = useState( false );
 	const urlQueryParams = useQuery();
@@ -64,9 +68,9 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 
 	const onfetchCallback = ( siteCanMigrate: boolean ) => {
 		if ( ! siteCanMigrate ) {
-			setShowUpgradePluginInfo( true );
+			setShowUpdatePluginInfo( true );
 		} else {
-			setShowUpgradePluginInfo( false );
+			setShowUpdatePluginInfo( false );
 		}
 	};
 
@@ -111,13 +115,13 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 
 	useEffect( () => {
 		// If we are blocked by plugin upgrade check or has continueImport set to false, we do not start the migration
-		if ( showUpgradePluginInfo || ! continueImport ) {
+		if ( showUpdatePluginInfo || ! continueImport ) {
 			return;
 		}
 		if ( sourceSite ) {
 			startImport();
 		}
-	}, [ continueImport, sourceSite, startImport, showUpgradePluginInfo ] );
+	}, [ continueImport, sourceSite, startImport, showUpdatePluginInfo ] );
 
 	function renderCredentialsFormSection() {
 		// We do not show the credentials form if we already have credentials
@@ -175,37 +179,51 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		}
 
 		return (
-			<div
-				className={ classnames( 'import__pre-migration import__import-everything', {
-					'import__import-everything--redesign': isEnabled( 'onboarding/import-redesign' ),
-				} ) }
-			>
-				<div className="import__heading-title">
-					<Title>{ translate( 'You are ready to migrate' ) }</Title>
-				</div>
-				{ renderCredentialsFormSection() }
-				{ ! showCredentials && (
-					<div className="import__footer-button-container pre-migration__proceed">
-						<NextButton
-							type="button"
-							onClick={ () =>
-								startImport( {
-									type: 'without-credentials',
-								} )
-							}
-						>
-							{ translate( 'Start migration' ) }
-						</NextButton>
-					</div>
+			<>
+				{ showConfirmModal && (
+					<ConfirmModal
+						sourceSiteSlug={ sourceSiteSlug }
+						targetSiteSlug={ targetSite.slug }
+						onClose={ () => setShowConfirmModal( false ) }
+						onConfirm={ () => {
+							// reset migration confirmation to initial state
+							setMigrationConfirmed( false );
+							startImport( { type: 'without-credentials' } );
+						} }
+					/>
 				) }
-			</div>
+				<div
+					className={ classnames( 'import__pre-migration import__import-everything', {
+						'import__import-everything--redesign': isEnabled( 'onboarding/import-redesign' ),
+					} ) }
+				>
+					<div className="import__heading-title">
+						<Title>{ translate( 'You are ready to migrate' ) }</Title>
+					</div>
+					{ renderCredentialsFormSection() }
+					{ ! showCredentials && (
+						<div className="import__footer-button-container pre-migration__proceed">
+							<NextButton
+								type="button"
+								onClick={ () => {
+									migrationConfirmed
+										? startImport( { type: 'without-credentials' } )
+										: setShowConfirmModal( true );
+								} }
+							>
+								{ translate( 'Start migration' ) }
+							</NextButton>
+						</div>
+					) }
+				</div>
+			</>
 		);
 	}
 
-	function renderUpgradePluginInfo() {
+	function renderUpdatePluginInfo() {
 		return (
 			<>
-				<UpgradePluginInfo isMigrateFromWp={ isMigrateFromWp } sourceSiteUrl={ sourceSiteUrl } />
+				<UpdatePluginInfo isMigrateFromWp={ isMigrateFromWp } sourceSiteUrl={ sourceSiteUrl } />
 				<Interval onTick={ fetchMigrationEnabledStatus } period={ EVERY_FIVE_SECONDS } />
 			</>
 		);
@@ -213,8 +231,8 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 
 	function render() {
 		// If the source site is not capable of being migrated, we show the update info screen
-		if ( showUpgradePluginInfo ) {
-			return renderUpgradePluginInfo();
+		if ( showUpdatePluginInfo ) {
+			return renderUpdatePluginInfo();
 		}
 
 		// If the target site is plan compatible, we show the pre-migration screen

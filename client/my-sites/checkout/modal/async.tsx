@@ -1,5 +1,5 @@
-import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
+import { useSelector } from 'calypso/state';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { KEY_PRODUCTS } from './constants';
 import type { Props } from '.';

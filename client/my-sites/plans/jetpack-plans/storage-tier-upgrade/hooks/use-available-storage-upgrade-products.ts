@@ -1,9 +1,9 @@
 import { TERM_ANNUALLY, TERM_MONTHLY } from '@automattic/calypso-products';
 import { useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import { getSlugInTerm } from 'calypso/my-sites/plans/jetpack-plans/convert-slug-terms';
 import getPurchasedStorageSubscriptions from 'calypso/my-sites/plans/jetpack-plans/get-purchased-storage-subscriptions';
 import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
+import { useSelector } from 'calypso/state';
 import useGetStorageUpgradeProducts from './use-get-storage-upgrade-products';
 
 const useAvailableStorageUpgradeProducts = ( siteId: number ): SelectorProduct[] => {

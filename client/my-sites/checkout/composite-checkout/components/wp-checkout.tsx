@@ -30,7 +30,6 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
-import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import MaterialIcon from 'calypso/components/material-icon';
 import {
 	hasGoogleApps,
@@ -47,6 +46,7 @@ import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/composite-checkou
 import { leaveCheckout } from 'calypso/my-sites/checkout/composite-checkout/lib/leave-checkout';
 import { prepareDomainContactValidationRequest } from 'calypso/my-sites/checkout/composite-checkout/types/wpcom-store-state';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { saveContactDetailsCache } from 'calypso/state/domains/management/actions';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
@@ -402,6 +402,7 @@ export default function WPCheckout( {
 							// When the contact details change, update the VAT details on the server.
 							try {
 								if (
+									! isLoggedOutCart &&
 									vatDetailsInForm.id &&
 									! areVatDetailsSame( vatDetailsInForm, vatDetailsFromServer )
 								) {

@@ -1,4 +1,11 @@
 import { Button } from '@automattic/components';
+import {
+	FREE_THEME,
+	PREMIUM_THEME,
+	DOT_ORG_THEME,
+	WOOCOMMERCE_THEME,
+	MARKETPLACE_THEME,
+} from '@automattic/design-picker';
 import { isDesktop } from '@automattic/viewport';
 import { localize, translate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -24,9 +31,9 @@ function getHidePlanPropsBasedOnSignupDependencies(
 	 * Marketplace themes: Display only Business and eCommerce plans.
 	 */
 	if (
-		signupDependencies.themeType === 'dot-org' ||
-		signupDependencies.themeType === 'managed-externally' ||
-		signupDependencies.themeType === 'woocommerce'
+		signupDependencies.themeType === DOT_ORG_THEME ||
+		signupDependencies.themeType === MARKETPLACE_THEME ||
+		signupDependencies.themeType === WOOCOMMERCE_THEME
 	) {
 		return { hidePremiumPlan: true, hidePersonalPlan: true };
 	}
@@ -34,7 +41,7 @@ function getHidePlanPropsBasedOnSignupDependencies(
 	/**
 	 * Premium themes: Display Premium, Business and eCommerce
 	 */
-	if ( signupDependencies.themeType === 'premium' ) {
+	if ( signupDependencies.themeType === PREMIUM_THEME ) {
 		return { hidePersonalPlan: true };
 	}
 
@@ -66,7 +73,9 @@ function PlansThemePreselectedStep( props: object & { signupDependencies: Signup
 	 * Keep the default subheader text for free themes.
 	 */
 	const fallbackSubheaderTextProps =
-		'free' === props.signupDependencies.themeType ? {} : { fallbackSubHeaderText: subHeaderText };
+		FREE_THEME === props.signupDependencies.themeType
+			? {}
+			: { fallbackSubHeaderText: subHeaderText };
 
 	return <PlansStep { ...props } { ...hidePlanProps } { ...fallbackSubheaderTextProps } />;
 }

@@ -1,6 +1,4 @@
-import url from 'url';
 import debugFactory from 'debug';
-import { pick } from 'lodash';
 import page from 'page';
 import * as React from 'react';
 
@@ -22,15 +20,18 @@ const debug = debugFactory( 'calypso:url-search' );
  * @returns {string} The built search url
  */
 export const buildSearchUrl = ( { uri, search, queryKey = 's' } ) => {
-	const parsedUrl = pick( url.parse( uri, true ), 'pathname', 'hash', 'query' );
-
+	if ( ! uri.startsWith( 'http' ) ) {
+		uri = 'https://' + uri;
+	}
+	const parsedUrl = new URL( uri );
 	if ( search ) {
-		parsedUrl.query[ queryKey ] = search;
+		// Note: spaces in the search term are automatically converted to +
+		parsedUrl.searchParams.set( queryKey, search );
 	} else {
-		delete parsedUrl.query[ queryKey ];
+		parsedUrl.searchParams.delete( queryKey );
 	}
 
-	return url.format( parsedUrl ).replace( /%20/g, '+' );
+	return parsedUrl.toString();
 };
 
 const UrlSearch = ( Component ) =>

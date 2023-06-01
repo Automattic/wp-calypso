@@ -2,13 +2,13 @@ import config from '@automattic/calypso-config';
 import { loadScript } from '@automattic/load-script';
 import { getLocaleSlug } from 'i18n-calypso';
 import { useMemo, useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import useMessagingAuth from 'calypso/../packages/help-center/src/hooks/use-messaging-auth';
 import ZendeskChat from 'calypso/components/presales-zendesk-chat';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { useJpPresalesAvailabilityQuery } from 'calypso/lib/jetpack/use-jp-presales-availability-query';
+import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import type { ConfigData } from '@automattic/create-calypso-config';
 

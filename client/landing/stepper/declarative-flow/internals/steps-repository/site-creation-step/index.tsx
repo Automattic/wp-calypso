@@ -12,13 +12,12 @@ import {
 	isMigrationFlow,
 	isStartWritingFlow,
 	isWooExpressFlow,
-	isHostingSiteCreationFlow,
+	isNewHostedSiteCreationFlow,
 	isBlogOnboardingFlow,
 } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
@@ -33,6 +32,7 @@ import {
 	wasSignupCheckoutPageUnloaded,
 	getSignupCompleteSlug,
 } from 'calypso/signup/storageUtils';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import type { Step } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
@@ -105,7 +105,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 		isLinkInBioFlow( flow ) ||
 		isMigrationFlow( flow ) ||
 		isBlogOnboardingFlow( flow ) ||
-		isHostingSiteCreationFlow( flow ) ||
+		isNewHostedSiteCreationFlow( flow ) ||
 		wooFlows.includes( flow || '' )
 	) {
 		siteVisibility = Site.Visibility.PublicNotIndexed;
