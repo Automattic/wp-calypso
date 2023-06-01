@@ -59,11 +59,18 @@ export class PluginAutoUpdateToggle extends Component {
 		}
 	};
 
-	isAutoManaged = () =>
-		this.props.siteAutomatedTransfer &&
-		( ( this.props.isMarketplaceProduct && this.props.productPurchase ) ||
-			PREINSTALLED_PLUGINS.includes( this.props.plugin.slug ) ||
-			AUTOMOMANAGED_PLUGINS.includes( this.props.plugin.slug ) );
+	isAutoManaged = () => {
+		const isPurchasedMarketplaceProduct =
+			this.props.isMarketplaceProduct && this.props.productPurchase;
+		const isPreinstalledPlugin = PREINSTALLED_PLUGINS.includes( this.props.plugin.slug );
+		const isAutomanagedPlugin = AUTOMOMANAGED_PLUGINS.includes( this.props.plugin.slug );
+
+		// Auto-managed are only applicable to sites that are part of an automated transfer.
+		return (
+			this.props.siteAutomatedTransfer &&
+			( isPurchasedMarketplaceProduct || isPreinstalledPlugin || isAutomanagedPlugin )
+		);
+	};
 
 	getDisabledInfo() {
 		const { site, wporg, translate } = this.props;
