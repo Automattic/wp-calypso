@@ -180,6 +180,12 @@ const sections = [
 		group: 'sites',
 	},
 	{
+		name: 'subscribers',
+		paths: [ '/subscribers' ],
+		module: 'calypso/my-sites/subscribers',
+		group: 'sites',
+	},
+	{
 		name: 'jetpack-connect',
 		paths: [ '/jetpack' ],
 		module: 'calypso/jetpack-connect',
