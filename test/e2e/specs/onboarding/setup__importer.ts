@@ -10,6 +10,8 @@ declare const browser: Browser;
 describe( DataHelper.createSuiteTitle( 'Site Import' ), () => {
 	const credentials = SecretsManager.secrets.testAccounts.defaultUser;
 
+	// TODO: remove redesignImporterFeature once project: pcmemI-1YX-p2 goes live.
+	let redesignImporterFeature = false;
 	let page: Page;
 	let startImportFlow: StartImportFlow;
 
@@ -19,6 +21,11 @@ describe( DataHelper.createSuiteTitle( 'Site Import' ), () => {
 
 		const testAccount = new TestAccount( 'defaultUser' );
 		await testAccount.authenticate( page );
+
+		// TODO: remove redesignImporterFeature once project: pcmemI-1YX-p2 goes live.
+		redesignImporterFeature = await page.evaluate(
+			`configData.features['onboarding/import-redesign']`
+		);
 	} );
 
 	/**
@@ -41,8 +48,14 @@ describe( DataHelper.createSuiteTitle( 'Site Import' ), () => {
 			await startImportFlow.enterURL( 'make.wordpress.org' );
 			await startImportFlow.validateImportPage();
 			await startImportFlow.clickButton( 'Import your content' );
-			await startImportFlow.validateWordPressPage();
-			await startImportFlow.contentOnlyWordPressPage();
+			// TODO: remove redesignImporterFeature once project: pcmemI-1YX-p2 goes live.
+			if ( redesignImporterFeature ) {
+				await startImportFlow.clickPremigrationOptionButton();
+			} else {
+				await startImportFlow.validateWordPressPage();
+				await startImportFlow.contentOnlyWordPressPage();
+			}
+
 			await startImportFlow.validateImporterDragPage( 'wordpress' );
 		} );
 	} );
