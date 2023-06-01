@@ -39,16 +39,12 @@ class SocialSignupForm extends Component {
 			return;
 		}
 
-		const extraUserData = response.user && {
-			user_name: response.user.name,
-			user_email: response.user.email,
 		const extraUserData = {
 			is_dev_account: this.props.isDevAccount,
-			...(response.user && {
+			...( response.user && {
 				user_name: response.user.name,
-				user_email: response.user.email
-			} )
-		}
+				user_email: response.user.email,
+			} ),
 		};
 
 		this.props.handleResponse( 'apple', null, response.id_token, extraUserData );
