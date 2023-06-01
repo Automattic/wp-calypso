@@ -13,11 +13,11 @@ import Pagination from 'calypso/components/pagination';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SplitButton from 'calypso/components/split-button';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
-import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
 import { withoutHttp } from 'calypso/lib/url';
 import { useDispatch } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
+import { useSitesDashboardCreateSiteUrl } from '../hooks/use-sites-dashboard-create-site-url';
 import { useSitesDashboardImportSiteUrl } from '../hooks/use-sites-dashboard-import-site-url';
 import { MEDIA_QUERIES, TRACK_SOURCE_NAME } from '../utils';
 import { NoSitesMessage } from './no-sites-message';
@@ -145,13 +145,8 @@ const SitesDashboardSitesList = createSitesListComponent();
 export function SitesDashboard( {
 	queryParams: { page = 1, perPage = 96, search, status = 'all', newSiteID },
 }: SitesDashboardProps ) {
-	const createSiteUrl = useAddNewSiteUrl( {
-		source: TRACK_SOURCE_NAME,
-		ref: 'topbar',
-	} );
-	const importSiteUrl = useSitesDashboardImportSiteUrl( {
-		ref: 'topbar',
-	} );
+	const createSiteUrl = useSitesDashboardCreateSiteUrl();
+	const importSiteUrl = useSitesDashboardImportSiteUrl();
 	const { __, _n } = useI18n();
 	const { data: allSites = [], isLoading } = useSiteExcerptsQuery();
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
