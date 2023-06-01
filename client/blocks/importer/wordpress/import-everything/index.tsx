@@ -211,41 +211,17 @@ export class ImportEverything extends SectionMigrate {
 
 	renderMigrationProgressSimple() {
 		const { translate } = this.props;
-		const statusSteps: string[] = [
-			translate( 'Preparing your files' ),
-			translate( 'Gathering your data' ),
-			translate( 'Preparing your files' ),
-		];
-		const statusStep =
-			statusSteps[ Math.floor( this.state.percent / ( 100 / statusSteps.length ) ) ];
 
 		return (
 			<Progress className="onboarding-progress-simple">
 				<Interval onTick={ this.updateFromAPI } period={ EVERY_TEN_SECONDS } />
-				<Title>{ translate( 'We’re safely gathering all your data.' ) }</Title>
-				<SubTitle tagName="h2">
-					{ translate( 'This can take from a few minutes to a few hours.' ) }
-				</SubTitle>
+				<Title>{ translate( 'We’re safely migrating all your data' ) }</Title>
 				<ProgressBar compact={ false } value={ this.state.percent ? this.state.percent : 0 } />
 				<SubTitle tagName="h3">
-					{ statusStep ? statusStep : statusSteps[ statusSteps.length - 1 ] }...
+					{ translate(
+						'Feel free to close this window. We’ll email you when your new site is ready.'
+					) }
 				</SubTitle>
-
-				<div className="progress-status">{ translate( 'Site migration in progress' ) }...</div>
-
-				<p className="support-block">
-					{ translate( 'Do you need help? {{a}}Contact us{{/a}}.', {
-						components: {
-							a: (
-								<a
-									href="https://wordpress.com/help/contact"
-									target="_blank"
-									rel="noopener noreferrer"
-								/>
-							),
-						},
-					} ) }
-				</p>
 			</Progress>
 		);
 	}
@@ -339,8 +315,6 @@ export class ImportEverything extends SectionMigrate {
 	}
 
 	render() {
-		const { isMigrateFromWp } = this.props;
-
 		switch ( this.state.migrationStatus ) {
 			case MigrationStatus.UNKNOWN:
 				return this.renderLoading();
@@ -351,9 +325,7 @@ export class ImportEverything extends SectionMigrate {
 			case MigrationStatus.NEW:
 			case MigrationStatus.BACKING_UP:
 			case MigrationStatus.RESTORING:
-				return isMigrateFromWp
-					? this.renderMigrationProgressSimple()
-					: this.renderMigrationProgress();
+				return this.renderMigrationProgressSimple();
 
 			case MigrationStatus.DONE:
 				return this.renderMigrationComplete();

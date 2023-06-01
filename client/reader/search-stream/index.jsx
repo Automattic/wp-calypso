@@ -97,6 +97,11 @@ class SearchStream extends React.Component {
 		updateQueryArg( { sort } );
 	};
 
+	trackTagsPageLinkClick = () => {
+		recordAction( 'clicked_reader_search_tags_page_link' );
+		this.props.recordReaderTracksEvent( 'calypso_reader_search_tags_page_link_clicked' );
+	};
+
 	handleFixedAreaMounted = ( ref ) => ( this.fixedAreaRef = ref );
 
 	handleSearchTypeSelection = ( searchType ) => updateQueryArg( { show: searchType } );
@@ -189,7 +194,12 @@ class SearchStream extends React.Component {
 							wideDisplay={ wideDisplay }
 						/>
 					) }
-					{ ! query && <BlankSuggestions suggestions={ suggestionList } /> }
+					{ ! query && (
+						<BlankSuggestions
+							suggestions={ suggestionList }
+							trackTagsPageLinkClick={ this.trackTagsPageLinkClick }
+						/>
+					) }
 				</div>
 				<SpacerDiv domTarget={ this.fixedAreaRef } />
 				{ ! hidePostsAndSites && wideDisplay && (

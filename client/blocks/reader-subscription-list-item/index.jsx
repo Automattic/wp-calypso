@@ -1,10 +1,12 @@
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose, isEmpty, get } from 'lodash';
+import { useState } from 'react';
 import { connect } from 'react-redux';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import ReaderSiteNotificationSettings from 'calypso/blocks/reader-site-notification-settings';
 import ReaderSubscriptionListItemPlaceholder from 'calypso/blocks/reader-subscription-list-item/placeholder';
+import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
 import ExternalLink from 'calypso/components/external-link';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import FollowButton from 'calypso/reader/follow-button';
@@ -49,10 +51,19 @@ function ReaderSubscriptionListItem( {
 	const siteUrl = getSiteUrl( { feed, site } );
 	const isMultiAuthor = get( site, 'is_multi_author', false );
 	const preferGravatar = ! isMultiAuthor;
+	const [ isSuggestedFollowsModalOpen, setIsSuggestedFollowsModalOpen ] = useState( false );
 
 	if ( ! site && ! feed ) {
 		return <ReaderSubscriptionListItemPlaceholder />;
 	}
+
+	const openSuggestedFollowsModal = ( followClicked ) => {
+		setIsSuggestedFollowsModalOpen( followClicked );
+	};
+
+	const onCloseSuggestedFollowModal = () => {
+		setIsSuggestedFollowsModalOpen( false );
+	};
 
 	function recordEvent( name ) {
 		const props = {
@@ -162,11 +173,19 @@ function ReaderSubscriptionListItem( {
 					feedId={ feedId }
 					siteId={ siteId }
 					railcar={ railcar }
+					onFollowToggle={ openSuggestedFollowsModal }
 				/>
 				{ isFollowing && showNotificationSettings && (
 					<ReaderSiteNotificationSettings siteId={ siteId } />
 				) }
 			</div>
+			{ siteId && (
+				<ReaderSuggestedFollowsDialog
+					onClose={ onCloseSuggestedFollowModal }
+					siteId={ siteId }
+					isVisible={ isSuggestedFollowsModalOpen }
+				/>
+			) }
 		</div>
 	);
 }

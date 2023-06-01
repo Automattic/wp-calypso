@@ -15,6 +15,7 @@ import EmptyContent from 'calypso/components/empty-content';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import memoizeLast from 'calypso/lib/memoize-last';
 import StatsEmailModule from 'calypso/my-sites/stats/stats-email-module';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
@@ -126,6 +127,24 @@ class StatsEmailDetail extends Component {
 
 	getTitle = ( statType ) => pageTitles[ statType ];
 
+	getNavigationTitle = () => {
+		const { isPostHomepage, post, postFallback } = this.props;
+
+		if ( isPostHomepage ) {
+			return translate( 'Home page / Archives' );
+		}
+
+		if ( typeof post?.title === 'string' && post.title.length ) {
+			return decodeEntities( stripHTML( post.title ) );
+		}
+
+		if ( typeof postFallback?.post_title === 'string' && postFallback.post_title.length ) {
+			return decodeEntities( stripHTML( postFallback.post_title ) );
+		}
+
+		return null;
+	};
+
 	onChangeLegend = ( activeLegend ) => this.setState( { activeLegend } );
 
 	onChangeMaxBars = ( maxBars ) => this.setState( { maxBars } );
@@ -193,7 +212,7 @@ class StatsEmailDetail extends Component {
 					/>
 
 					<FixedNavigationHeader
-						navigationItems={ this.getNavigationItemsWithTitle( this.getTitle( statType ) ) }
+						navigationItems={ this.getNavigationItemsWithTitle( this.getNavigationTitle() ) }
 					></FixedNavigationHeader>
 
 					{ ! isRequestingStats && ! countViews && post && (

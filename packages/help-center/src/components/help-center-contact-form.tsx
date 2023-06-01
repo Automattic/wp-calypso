@@ -186,8 +186,8 @@ export const HelpCenterContactForm = () => {
 		supportSite = currentSite as HelpCenterSite;
 	}
 
-	const [ debouncedMessage ] = useDebounce( message || '', 500 );
-	const [ debouncedSubject ] = useDebounce( subject || '', 500 );
+	const [ debouncedMessage ] = useDebounce( message || '', 1000 );
+	const [ debouncedSubject ] = useDebounce( subject || '', 1000 );
 
 	const enableGPTResponse =
 		config.isEnabled( 'help/gpt-response' ) && ! ( params.get( 'disable-gpt' ) === 'true' );
@@ -479,29 +479,15 @@ export const HelpCenterContactForm = () => {
 	}
 
 	const {
-		isFetching: isFetchingGPTUrls,
-		isError: isGPTLinksError,
-		data: links,
-	} = useJetpackSearchAIQuery( {
-		siteId: '9619154',
-		query: jpSearchAiQueryText,
-		stopAt: 'urls',
-		enabled: enableGPTResponse,
-	} );
-
-	const {
-		isFetching: isFetchingGPTAnswer,
-		isError: isGPTResponseError,
+		isFetching: isFetchingGPTResponse,
+		isError: isGPTError,
 		data: gptResponse,
 	} = useJetpackSearchAIQuery( {
 		siteId: '9619154',
 		query: jpSearchAiQueryText,
 		stopAt: 'response',
-		enabled: !! links?.urls,
+		enabled: enableGPTResponse,
 	} );
-
-	const isFetchingGPTResponse = isFetchingGPTUrls || isFetchingGPTAnswer;
-	const isGPTError = isGPTLinksError || isGPTResponseError;
 
 	const getCTALabel = () => {
 		const showingHelpOrGPTResults = showingSearchResults || showingGPTResponse;
