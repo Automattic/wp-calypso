@@ -119,6 +119,7 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 	);
 
 	const plansTableProps = {
+		// TODO clk
 		plans: [ smallPlan, mediumPlan, PLAN_WOOEXPRESS_PLUS ],
 		hidePlansFeatureComparison: false,
 		hideUnavailableFeatures: true,
