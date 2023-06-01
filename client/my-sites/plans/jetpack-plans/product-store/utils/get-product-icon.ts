@@ -1,4 +1,5 @@
 import {
+	JETPACK_AI_PRODUCTS,
 	JETPACK_ANTI_SPAM_PRODUCTS,
 	JETPACK_BACKUP_PRODUCTS,
 	JETPACK_BOOST_PRODUCTS,
@@ -44,6 +45,10 @@ const PRODUCT_ICON_MAP: Record< string, IconResource > = {
 	...setProductsIcon( JETPACK_BACKUP_PRODUCTS, {
 		regular: JetpackProductIconBackup,
 		light: JetpackProductIconBackupLight,
+	} ),
+	...setProductsIcon( JETPACK_AI_PRODUCTS, {
+		regular: JetpackProductIconBoost,
+		light: JetpackProductIconBoostLight,
 	} ),
 	...setProductsIcon( JETPACK_ANTI_SPAM_PRODUCTS, {
 		regular: JetpackProductIconAntiSpam,
