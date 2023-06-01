@@ -17,7 +17,9 @@ import { withoutHttp } from 'calypso/lib/url';
 import { useDispatch } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
-import { MEDIA_QUERIES } from '../utils';
+import { useSitesDashboardCreateSiteUrl } from '../hooks/use-sites-dashboard-create-site-url';
+import { useSitesDashboardImportSiteUrl } from '../hooks/use-sites-dashboard-import-site-url';
+import { MEDIA_QUERIES, TRACK_SOURCE_NAME } from '../utils';
 import { NoSitesMessage } from './no-sites-message';
 import {
 	SitesDashboardQueryParams,
@@ -33,8 +35,6 @@ import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 interface SitesDashboardProps {
 	queryParams: SitesDashboardQueryParams;
 }
-
-const TRACK_SOURCE_NAME = 'sites-dashboard';
 
 const MAX_PAGE_WIDTH = '1280px';
 
@@ -145,6 +145,8 @@ const SitesDashboardSitesList = createSitesListComponent();
 export function SitesDashboard( {
 	queryParams: { page = 1, perPage = 96, search, status = 'all', newSiteID },
 }: SitesDashboardProps ) {
+	const createSiteUrl = useSitesDashboardCreateSiteUrl();
+	const importSiteUrl = useSitesDashboardImportSiteUrl();
 	const { __, _n } = useI18n();
 	const { data: allSites = [], isLoading } = useSiteExcerptsQuery();
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
@@ -179,9 +181,7 @@ export function SitesDashboard( {
 						onClick={ () => {
 							recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_add' );
 						} }
-						href={ addQueryArgs( '/start', {
-							ref: TRACK_SOURCE_NAME,
-						} ) }
+						href={ createSiteUrl }
 					>
 						<PopoverMenuItem
 							onClick={ () => {
@@ -199,7 +199,7 @@ export function SitesDashboard( {
 							onClick={ () => {
 								recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_import' );
 							} }
-							href={ addQueryArgs( '/start/import' ) }
+							href={ importSiteUrl }
 							icon="arrow-down"
 						>
 							<span>{ __( 'Import an existing site' ) }</span>
