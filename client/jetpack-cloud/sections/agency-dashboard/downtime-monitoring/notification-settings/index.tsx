@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { Modal, ToggleControl } from '@wordpress/components';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
 import clockIcon from 'calypso/assets/images/jetpack/clock-icon.svg';
@@ -212,7 +213,7 @@ export default function NotificationSettings( {
 						{ translate( 'Settings for selected sites will be overwritten.' ) }
 					</AlertBanner>
 				) }
-<div className={ classNames( { 'notification-settings__content': ! isBulkUpdate } ) }>
+				<div className={ classNames( { 'notification-settings__content': ! isBulkUpdate } ) }>
 					<div className="notification-settings__content-block">
 						<div className="notification-settings__content-heading">
 							{ translate( 'Notify me about downtime:' ) }
