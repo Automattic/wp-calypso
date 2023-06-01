@@ -110,7 +110,7 @@ export function getEnhancedTasks(
 								} )
 							);
 						},
-						disabled: task.completed && ! isStartWritingFlow( flow ),
+						disabled: task.completed && ! isBlogOnboardingFlow( flow ),
 					};
 					break;
 				case 'setup_newsletter':
