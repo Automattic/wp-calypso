@@ -135,27 +135,25 @@ const ThemeTypeBadgeTooltip = ( { themeId }: Props ) => {
 				}
 			);
 		} else if ( ! isPurchased && isIncludedCurrentPlan ) {
-			// This is a third-party theme and the user has an eligible plan.
 			/* translators: annualPrice and monthlyPrice are prices for the theme, examples: US$50, US$7; */
 			message = translate(
 				'This premium theme is only available while your current plan is active and costs %(annualPrice)s per year or %(monthlyPrice)s per month.',
 				{
 					args: {
-						annualPrice: subscriptionPrices?.year ?? '',
-						monthlyPrice: subscriptionPrices?.month ?? '',
+						annualPrice: subscriptionPrices.year ?? '',
+						monthlyPrice: subscriptionPrices.month ?? '',
 					},
 				}
 			);
 		} else if ( ! isPurchased && ! isIncludedCurrentPlan ) {
-			// This is a third-party theme but the user doesn't have an eligible plan.
 			message = createInterpolateElement(
 				/* translators: annualPrice and monthlyPrice are prices for the theme, examples: US$50, US$7; */
 				translate(
 					'This premium theme costs %(annualPrice)s per year or %(monthlyPrice)s per month, and can only be purchased if you have the <Link>Business plan</Link> on your site.',
 					{
 						args: {
-							annualPrice: subscriptionPrices?.year ?? '',
-							monthlyPrice: subscriptionPrices?.month ?? '',
+							annualPrice: subscriptionPrices.year ?? '',
+							monthlyPrice: subscriptionPrices.month ?? '',
 						},
 					}
 				) as string,
