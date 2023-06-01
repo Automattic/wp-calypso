@@ -38,3 +38,15 @@ See https://dequeuniversity.com/rules/axe/4.6/link-in-text-block?application=Axe
 .earn .formatted-header__subtitle a {
 	text-decoration: underline;
 }
+
+.earn__notes {
+	clear: both;
+	padding-bottom: 12px;
+	padding-top: 24px;
+	font-size: $font-body-small;
+	line-height: 1.6;
+	font-style: italic;
+}
+.earn__notes em {
+	font-weight: 600;
+}

@@ -548,7 +548,7 @@ class MembershipsSection extends Component {
 	}
 
 	renderOnboarding( cta, intro ) {
-		const { translate } = this.props;
+		const { commission, translate } = this.props;
 
 		return (
 			<Card>
@@ -614,6 +614,26 @@ class MembershipsSection extends Component {
 					<div>
 						<h3>{ translate( 'No membership fees' ) }</h3>
 						{ preventWidows( translate( 'No monthly or annual fees charged.' ) ) }
+						{ commission !== null &&
+							translate(
+								'On your current plan, WordPress.com charges {{em}}%(commission)s{{/em}}.{{br/}} Additionally, Stripe charges are typically %(stripe)s. {{a}}Learn more{{/a}}',
+								{
+									args: {
+										commission: '' + parseFloat( commission ) * 100 + '%',
+										stripe: '2.9%+30c',
+									},
+									components: {
+										em: <em />,
+										br: <br />,
+										a: (
+											<ExternalLink
+												href="https://wordpress.com/support/wordpress-editor/blocks/payments/#related-fees"
+												icon={ true }
+											/>
+										),
+									},
+								}
+							) }
 					</div>
 					<div>
 						<h3>{ translate( 'Join thousands of others' ) }</h3>
@@ -696,6 +716,8 @@ const mapStateToProps = ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
 	const earnings = getEarningsWithDefaultsForSiteId( state, siteId );
+
+	console.log( 'memberships:', earnings ); // eslint-disable-line no-console
 
 	return {
 		site,

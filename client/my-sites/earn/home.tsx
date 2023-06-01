@@ -3,7 +3,6 @@ import {
 	FEATURE_WORDADS_INSTANT,
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_PREMIUM,
-	getPlanCommissionFee,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { addQueryArgs } from '@wordpress/url';
@@ -16,11 +15,13 @@ import earnSectionImage from 'calypso/assets/images/earn/earn-section.svg';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import EmptyContent from 'calypso/components/empty-content';
+import ExternalLink from 'calypso/components/external-link';
 import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
 import { CtaButton } from 'calypso/components/promo-section/promo-card/cta';
 import wp from 'calypso/lib/wp';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getEarningsWithDefaultsForSiteId } from 'calypso/state/memberships/earnings/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -49,10 +50,11 @@ interface ConnectedProps {
 	trackLearnLink: ( feature: string ) => void;
 	trackCtaButton: ( feature: string ) => void;
 	isUserAdmin?: boolean;
-	planCommissionFee: number;
+	commission: number | null;
 }
 
 const Home: FunctionComponent< ConnectedProps > = ( {
+	commission,
 	siteId,
 	selectedSiteSlug,
 	isNonAtomicJetpack,
@@ -66,7 +68,6 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	trackLearnLink,
 	trackCtaButton,
 	hasWordAdsFeature,
-	planCommissionFee,
 } ) => {
 	const translate = useTranslate();
 	const [ peerReferralLink, setPeerReferralLink ] = useState( '' );
@@ -479,27 +480,29 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 						}
 					) }
 				</p>
-				<p>
-					{ translate(
-						'With your current plan, the transaction fee for payments is %(planCommissionFee)d% (+ Stripe fees). {{a}}Upgrade to lower it.{{/a}}.',
-						{
-							args: {
-								planCommissionFee,
-							},
-							components: {
-								a: (
-									<a
-										href={ addQueryArgs( `/plans/${ selectedSiteSlug }`, {
-											// TODO: switch to highlight transaction fee once it's in the plans grid!
-											// feature: FEATURE_SIMPLE_PAYMENTS,
-											plan: isNonAtomicJetpack ? PLAN_JETPACK_SECURITY_DAILY : PLAN_PREMIUM,
-										} ) }
-									/>
-								),
-							},
-						}
-					) }
-				</p>
+				{ commission !== null && (
+					<div className="earn__notes">
+						{ translate(
+							'On your current plan, WordPress.com charges {{em}}%(commission)s{{/em}}.{{br/}} Additionally, Stripe charges are typically %(stripe)s. {{a}}Learn more{{/a}}',
+							{
+								args: {
+									commission: `${ parseFloat( commission ) * 100 }%`,
+									stripe: '2.9%+30c',
+								},
+								components: {
+									em: <em />,
+									br: <br />,
+									a: (
+										<ExternalLink
+											href="https://wordpress.com/support/wordpress-editor/blocks/payments/#related-fees"
+											icon={ true }
+										/>
+									),
+								},
+							}
+						) }
+					</div>
+				) }
 			</>
 		),
 	} );
@@ -549,9 +552,11 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 export default connect(
 	( state: IAppState ) => {
 		// Default value of 0 to appease TypeScript for selectors that don't allow a null site ID value.
-		const siteId = getSelectedSiteId( state ) ?? 0;
+		//const siteId = getSelectedSiteId( state ) ?? 0;
+		const siteId = getSelectedSiteId( state );
 		const selectedSiteSlug = getSelectedSiteSlug( state );
 		const site = getSiteBySlug( state, selectedSiteSlug );
+		const earnings = getEarningsWithDefaultsForSiteId( state, siteId );
 
 		const hasConnectedAccount =
 			state?.memberships?.settings?.[ siteId ]?.connectedAccountId ?? null;
@@ -559,7 +564,11 @@ export default connect(
 		const hasWordAdsFeature = siteHasWordAds( state, siteId );
 		const isLoading = hasConnectedAccount === null || sitePlanSlug === null;
 		const isJetpack = isJetpackSite( state, siteId );
+
+		console.log( 'home:', earnings ); // eslint-disable-line no-console
+
 		return {
+			commission: earnings.commission,
 			siteId,
 			selectedSiteSlug,
 			isNonAtomicJetpack: Boolean( isJetpack && ! isSiteAutomatedTransfer( state, siteId ) ),
@@ -572,7 +581,6 @@ export default connect(
 			hasSetupAds: Boolean(
 				site?.options?.wordads || isRequestingWordAdsApprovalForSite( state, site )
 			),
-			planCommissionFee: getPlanCommissionFee( sitePlanSlug ),
 		};
 	},
 	( dispatch ) => ( {
