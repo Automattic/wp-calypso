@@ -26,7 +26,7 @@ class WP_REST_WPCOM_Block_Editor_Sharing_Modal_Controller extends \WP_REST_Contr
 	 */
 	public function enqueue_script() {
 		$modal_options = array(
-			'isDismissed' => $this->get_sharing_modal_dismissed(),
+			'isDismissed' => $this->get_wpcom_sharing_modal_dismissed(),
 		);
 
 		wp_add_inline_script(
@@ -46,7 +46,7 @@ class WP_REST_WPCOM_Block_Editor_Sharing_Modal_Controller extends \WP_REST_Contr
 			array(
 				array(
 					'methods'             => \WP_REST_Server::EDITABLE,
-					'callback'            => array( $this, 'set_sharing_modal_dismissed' ),
+					'callback'            => array( $this, 'set_wpcom_sharing_modal_dismissed' ),
 					'permission_callback' => array( $this, 'permission_callback' ),
 				),
 			)
@@ -67,14 +67,12 @@ class WP_REST_WPCOM_Block_Editor_Sharing_Modal_Controller extends \WP_REST_Contr
 	 *
 	 * @return boolean
 	 */
-	public function get_sharing_modal_dismissed() {
-		// It appears that we are unable to set the `sharing_modal_dismissed` option on atomic sites
-		// Therefore, hide the modal by default.
-		// See D69932-code and apps/editing-toolkit/editing-toolkit-plugin/wpcom-block-editor-nux/class-wp-rest-wpcom-block-editor-first-post-published-modal-controller.php.
-		if ( defined( 'IS_ATOMIC' ) && IS_ATOMIC ) {
+	public function get_wpcom_sharing_modal_dismissed() {
+		$old_sharing_modal_dismissed = (bool) get_option( 'sharing_modal_dismissed', false );
+		if ( $old_sharing_modal_dismissed ) {
 			return true;
 		}
-		return (bool) get_option( 'sharing_modal_dismissed', false );
+		return (bool) get_option( 'wpcom_sharing_modal_dismissed', false );
 	}
 
 	/**
@@ -83,9 +81,9 @@ class WP_REST_WPCOM_Block_Editor_Sharing_Modal_Controller extends \WP_REST_Contr
 	 * @param WP_REST_Request $request Request object.
 	 * @return WP_REST_Response
 	 */
-	public function set_sharing_modal_dismissed( $request ) {
+	public function set_wpcom_sharing_modal_dismissed( $request ) {
 		$params = $request->get_json_params();
-		update_option( 'sharing_modal_dismissed', $params['sharing_modal_dismissed'] );
-		return rest_ensure_response( array( 'sharing_modal_dismissed' => $this->get_sharing_modal_dismissed() ) );
+		update_option( 'wpcom_sharing_modal_dismissed', $params['wpcom_sharing_modal_dismissed'] );
+		return rest_ensure_response( array( 'wpcom_sharing_modal_dismissed' => $this->get_wpcom_sharing_modal_dismissed() ) );
 	}
 }
