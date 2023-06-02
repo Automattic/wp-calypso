@@ -98,13 +98,13 @@ export const QuickLinks = ( {
 						materialIcon="key"
 					/>
 					<ActionBox
-						href={ `/hosting-config${ siteSlug }/#staging-site` }
+						href={ `/hosting-config/${ siteSlug }#staging-site` }
 						hideLinkIndicator
 						label={ translate( 'Create staging site' ) }
 						gridicon="science"
 					/>
 					<ActionBox
-						href={ `/setup/copy-site/domains?sourceSlug?${ siteSlug }` }
+						href={ `/setup/copy-site/domains?sourceSlug=${ siteSlug }` }
 						hideLinkIndicator
 						label={ translate( 'Copy site' ) }
 						materialIcon="sync_alt"
