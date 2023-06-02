@@ -7,6 +7,7 @@ import { useTranslate } from 'i18n-calypso';
 import useMediaStorageQuery from 'calypso/data/media-storage/use-media-storage-query';
 import { filterTransactions } from 'calypso/me/purchases/billing-history/filter-transactions';
 import { useSelector } from 'calypso/state';
+import { BillingTransactionItem } from 'calypso/state/billing-transactions/types';
 import {
 	getProductBySlug,
 	getProductDescription,
@@ -90,7 +91,7 @@ const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 		const filter = getBillingTransactionFilters( state, 'past' );
 		const filteredTransactions = transactions && filterTransactions( transactions, filter, siteId );
 
-		const spaceUpgradesPurchased = [];
+		const spaceUpgradesPurchased: BillingTransactionItem[] = [];
 
 		if ( filteredTransactions?.length ) {
 			for ( const transaction of filteredTransactions ) {
@@ -116,7 +117,7 @@ const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 				// if storage add on is already purchased
 				if (
 					spaceUpgradesPurchased.findIndex(
-						( item ) => parseInt( item.licensed_quantity ) === addOn.quantity
+						( item ) => Number( item.licensed_quantity ) === addOn.quantity
 					) >= 0
 				) {
 					return {
@@ -131,7 +132,7 @@ const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 				const availableStorageUpgrade = STORAGE_LIMIT - currentMaxStorage;
 
 				// if the current storage add on option is greater than the available upgrade, remove it
-				if ( ( addOn.quantity as number ) > availableStorageUpgrade ) {
+				if ( ( addOn.quantity ?? 0 ) > availableStorageUpgrade ) {
 					return null;
 				}
 			}
