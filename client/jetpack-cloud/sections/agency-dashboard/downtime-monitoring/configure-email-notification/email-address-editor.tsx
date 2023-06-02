@@ -288,7 +288,7 @@ export default function EmailAddressEditor( {
 							/>
 							{ ! isVerifyAction && (
 								<div className="configure-email-notification__help-text" id="name-help-text">
-									{ translate( 'Give this email a nickname for your personal reference' ) }
+									{ translate( 'Give this email a nickname for your personal reference.' ) }
 								</div>
 							) }
 						</FormFieldset>
@@ -349,7 +349,7 @@ export default function EmailAddressEditor( {
 				<div className="notification-settings__footer">
 					<div className="notification-settings__footer-buttons">
 						<Button onClick={ showCodeVerification ? onSaveLater : toggleModal }>
-							{ showCodeVerification ? translate( 'Later' ) : translate( 'Cancel' ) }
+							{ showCodeVerification ? translate( 'Later' ) : translate( 'Back' ) }
 						</Button>
 						<Button
 							disabled={
