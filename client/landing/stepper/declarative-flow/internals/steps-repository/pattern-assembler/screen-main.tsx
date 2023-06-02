@@ -13,6 +13,7 @@ import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import { NavigationButtonAsItem } from './navigator-buttons';
 import NavigatorHeader from './navigator-header';
 import { NavigatorItemGroup } from './navigator-item-group';
+import Survey from './survey/survey';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { MouseEvent } from 'react';
 
@@ -133,6 +134,7 @@ const ScreenMain = ( { onSelect, onContinueClick, recordTracksEvent }: Props ) =
 						</>
 					</NavigatorItemGroup>
 				</HStack>
+				<Survey />
 			</div>
 			<div className="screen-container__footer">
 				<span className="screen-container__description">
