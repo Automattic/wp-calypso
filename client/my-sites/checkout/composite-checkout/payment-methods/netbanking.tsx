@@ -293,10 +293,8 @@ function ButtonContents( { formStatus, total }: { formStatus: FormStatus; total:
 		return <>{ __( 'Processing…' ) }</>;
 	}
 	if ( formStatus === FormStatus.READY ) {
-		return (
-			/* translators: %s is the total to be paid in localized currency */
-			<>{ sprintf( __( 'Pay %s' ), total.amount.displayValue ) }</>
-		);
+		/* translators: %s is the total to be paid in localized currency */
+		return <>{ sprintf( __( 'Pay %s' ), total.amount.displayValue ) }</>;
 	}
 	return <>{ __( 'Please wait…' ) }</>;
 }
