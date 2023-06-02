@@ -31,10 +31,6 @@ export function recordSubmitStep(
 				propValue = ( propValue as { product_slug: string } ).product_slug;
 			}
 
-			if ( propName === 'plan' ) {
-				propValue = ( propValue as { product_slug: string } ).product_slug;
-			}
-
 			return {
 				...props,
 				[ propName ]: propValue,
