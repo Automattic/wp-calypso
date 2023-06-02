@@ -71,6 +71,7 @@ const SiteOwnerTransfer = () => {
 	return (
 		<Main>
 			<FormattedHeader
+				brandFont
 				headerText={ translate( 'Site Transfer' ) }
 				subHeaderText={ translate(
 					'Transfer your site to another WordPress.com user. {{a}}Learn more.{{/a}}',
