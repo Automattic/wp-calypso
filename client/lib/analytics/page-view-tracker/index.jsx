@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import debugFactory from 'debug';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
@@ -102,6 +103,8 @@ const mapStateToProps = ( state ) => {
 		typeof window === 'undefined' ? '' : getSiteFragment( get( window, 'location.pathname', '' ) );
 
 	const hasSelectedSiteLoaded =
+		// Skip this check for Odyssey Stats.
+		config.isEnabled( 'is_running_in_jetpack_site' ) ||
 		! currentSlug ||
 		( typeof currentSlug === 'number' && currentSlug === selectedSiteId ) ||
 		currentSlug === selectedSiteSlug;
