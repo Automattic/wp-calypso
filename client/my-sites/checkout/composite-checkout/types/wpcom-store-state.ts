@@ -339,6 +339,26 @@ export function prepareDomainContactDetails(
 	};
 }
 
+export function convertDomainContactDetailsToManagedContactDetails(
+	details: DomainContactDetails
+): ManagedContactDetails {
+	return {
+		firstName: getInitialManagedValue( { value: details.firstName ?? '' } ),
+		lastName: getInitialManagedValue( { value: details.lastName ?? '' } ),
+		organization: getInitialManagedValue( { value: details.organization ?? '' } ),
+		email: getInitialManagedValue( { value: details.email ?? '' } ),
+		phone: getInitialManagedValue( { value: details.phone ?? '' } ),
+		address1: getInitialManagedValue( { value: details.address1 ?? '' } ),
+		address2: getInitialManagedValue( { value: details.address2 ?? '' } ),
+		city: getInitialManagedValue( { value: details.city ?? '' } ),
+		state: getInitialManagedValue( { value: details.state ?? '' } ),
+		postalCode: getInitialManagedValue( { value: details.postalCode ?? '' } ),
+		countryCode: getInitialManagedValue( { value: details.countryCode ?? '' } ),
+		fax: getInitialManagedValue( { value: details.fax ?? '' } ),
+		// TODO: handle extra
+	};
+}
+
 export function prepareDomainContactDetailsForTransaction(
 	details: ManagedContactDetails
 ): DomainContactDetails {
