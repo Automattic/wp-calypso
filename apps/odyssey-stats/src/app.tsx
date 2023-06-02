@@ -11,6 +11,7 @@ import { createStore, applyMiddleware, compose, Store, Middleware } from 'redux'
 import thunkMiddleware from 'redux-thunk';
 import { getPathWithUpdatedQueryString } from 'calypso/my-sites/stats/utils';
 import { WithAddReducer } from 'calypso/state/add-reducer';
+import analyticsMiddleware from 'calypso/state/analytics/middleware';
 import currentUser from 'calypso/state/current-user/reducer';
 import wpcomApiMiddleware from 'calypso/state/data-layer/wpcom-api-middleware';
 import { setStore } from 'calypso/state/redux-store';
@@ -51,7 +52,7 @@ async function AppBoot() {
 		initialState,
 		compose(
 			addReducerEnhancer,
-			applyMiddleware( thunkMiddleware, wpcomApiMiddleware as Middleware )
+			applyMiddleware( thunkMiddleware, analyticsMiddleware, wpcomApiMiddleware as Middleware )
 		)
 	);
 
