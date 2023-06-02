@@ -9,10 +9,11 @@ import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { compact } from 'lodash';
 import page from 'page';
-import { FunctionComponent, Fragment, useState, useEffect } from 'react';
+import { FunctionComponent, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import earnSectionImage from 'calypso/assets/images/earn/earn-section.svg';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
+import QueryMembershipsEarnings from 'calypso/components/data/query-memberships-earnings';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import EmptyContent from 'calypso/components/empty-content';
 import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
@@ -20,6 +21,7 @@ import { CtaButton } from 'calypso/components/promo-section/promo-card/cta';
 import wp from 'calypso/lib/wp';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getEarningsWithDefaultsForSiteId } from 'calypso/state/memberships/earnings/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -30,6 +32,7 @@ import getSiteBySlug from 'calypso/state/sites/selectors/get-site-by-slug';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isRequestingWordAdsApprovalForSite } from 'calypso/state/wordads/approve/selectors';
+import CommissionFees from './components/commission-fees';
 import type { Image } from 'calypso/components/promo-section/promo-card/index';
 import type { SiteSlug } from 'calypso/types';
 import './style.scss';
@@ -48,9 +51,11 @@ interface ConnectedProps {
 	trackLearnLink: ( feature: string ) => void;
 	trackCtaButton: ( feature: string ) => void;
 	isUserAdmin?: boolean;
+	commission: number | null;
 }
 
 const Home: FunctionComponent< ConnectedProps > = ( {
+	commission,
 	siteId,
 	selectedSiteSlug,
 	isNonAtomicJetpack,
@@ -458,19 +463,26 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			path: earnSectionImage,
 			align: 'right' as Image[ 'align' ],
 		},
-		body: translate(
-			'Accept credit card payments today for just about anything – physical and digital goods, services, donations and tips, or access to your exclusive content. {{a}}Watch our tutorial videos to get started{{/a}}.',
-			{
-				components: {
-					a: (
-						<a
-							href="https://wordpress.com/support/video-tutorials-add-payments-features-to-your-site-with-our-guides/"
-							target="_blank"
-							rel="noopener noreferrer"
-						/>
-					),
-				},
-			}
+		body: (
+			<>
+				{ translate(
+					'Accept credit card payments today for just about anything – physical and digital goods, services, donations and tips, or access to your exclusive content. {{a}}Watch our tutorial videos to get started{{/a}}.',
+					{
+						components: {
+							a: (
+								<a
+									href="https://wordpress.com/support/video-tutorials-add-payments-features-to-your-site-with-our-guides/"
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
+						},
+					}
+				) }
+				<br />
+				<br />
+				<CommissionFees commission={ commission } iconSize={ 14 } className="earn__notes" />
+			</>
 		),
 	} );
 
@@ -501,7 +513,8 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	}
 
 	return (
-		<Fragment>
+		<>
+			<QueryMembershipsEarnings siteId={ siteId } />
 			<QueryMembershipsSettings siteId={ siteId } />
 			{ isLoading && (
 				<div className="earn__placeholder-promo-card">
@@ -512,7 +525,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 				</div>
 			) }
 			{ ! isLoading && <PromoSection { ...promos } /> }
-		</Fragment>
+		</>
 	);
 };
 
@@ -522,6 +535,7 @@ export default connect(
 		const siteId = getSelectedSiteId( state ) ?? 0;
 		const selectedSiteSlug = getSelectedSiteSlug( state );
 		const site = getSiteBySlug( state, selectedSiteSlug );
+		const earnings = getEarningsWithDefaultsForSiteId( state, siteId );
 
 		const hasConnectedAccount =
 			state?.memberships?.settings?.[ siteId ]?.connectedAccountId ?? null;
@@ -529,7 +543,9 @@ export default connect(
 		const hasWordAdsFeature = siteHasWordAds( state, siteId );
 		const isLoading = hasConnectedAccount === null || sitePlanSlug === null;
 		const isJetpack = isJetpackSite( state, siteId );
+
 		return {
+			commission: earnings.commission,
 			siteId,
 			selectedSiteSlug,
 			isNonAtomicJetpack: Boolean( isJetpack && ! isSiteAutomatedTransfer( state, siteId ) ),
