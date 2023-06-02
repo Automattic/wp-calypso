@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { getSiteFragment } from 'calypso/lib/route';
 import {
 	recordPageViewWithClientId as recordPageView,
+	enhanceWithOdysseyFlag,
 	enhanceWithSiteMainProduct,
 	enhanceWithSiteType,
 } from 'calypso/state/analytics/actions';
@@ -125,7 +126,11 @@ const mapStateToProps = ( state ) => {
 };
 
 const mapDispatchToProps = {
-	recorder: withEnhancers( recordPageView, [ enhanceWithSiteType, enhanceWithSiteMainProduct ] ),
+	recorder: withEnhancers( recordPageView, [
+		enhanceWithOdysseyFlag,
+		enhanceWithSiteType,
+		enhanceWithSiteMainProduct,
+	] ),
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( PageViewTracker );
