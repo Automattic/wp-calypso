@@ -643,6 +643,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 						require="@automattic/design-preview"
 						placeholder={ null }
 						previewUrl={ previewUrl }
+						splitPremiumVariations={
+							! selectedDesign.is_premium &&
+							! isBundledWithWooCommerce &&
+							! isPremiumThemeAvailable &&
+							! didPurchaseSelectedTheme &&
+							! isPluginBundleEligible
+						}
 						title={ headerDesignTitle }
 						description={ selectedDesign.description }
 						variations={ selectedDesignDetails?.style_variations }
@@ -650,7 +657,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 						onSelectVariation={ previewDesignVariation }
 						actionButtons={ actionButtons }
 						recordDeviceClick={ recordDeviceClick }
-						showGlobalStylesPremiumBadge={ shouldLimitGlobalStyles }
 					/>
 				) : (
 					<WebPreview

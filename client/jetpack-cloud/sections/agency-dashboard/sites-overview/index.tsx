@@ -73,7 +73,11 @@ export default function SitesOverview() {
 		sort
 	);
 
-	const { data: verifiedContacts } = useFetchMonitorVerfiedContacts( isPartnerOAuthTokenLoaded );
+	const {
+		data: verifiedContacts,
+		refetch: refetchContacts,
+		isError: fetchContactFailed,
+	} = useFetchMonitorVerfiedContacts( isPartnerOAuthTokenLoaded );
 
 	const selectedSiteIds = selectedSites.map( ( site ) => site.blog_id );
 
@@ -280,6 +284,12 @@ export default function SitesOverview() {
 								value={ {
 									verifiedContacts: {
 										emails: verifiedContacts?.emails ?? [],
+										refetchIfFailed: () => {
+											if ( fetchContactFailed ) {
+												refetchContacts();
+											}
+											return;
+										},
 									},
 								} }
 							>

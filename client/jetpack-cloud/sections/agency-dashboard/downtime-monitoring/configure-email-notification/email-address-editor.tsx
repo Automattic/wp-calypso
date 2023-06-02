@@ -113,11 +113,11 @@ export default function EmailAddressEditor( {
 
 	// Add email item to the list once the email is verified
 	useEffect( () => {
-		if ( verifyEmail.isSuccess ) {
+		if ( verifyEmail.isVerified ) {
 			handleSetEmailItems();
 			setVerifiedEmail( emailItem.email );
 		}
-	}, [ emailItem.email, handleSetEmailItems, setVerifiedEmail, verifyEmail.isSuccess ] );
+	}, [ emailItem.email, handleSetEmailItems, setVerifiedEmail, verifyEmail.isVerified ] );
 
 	// Show error message when email verification fails
 	useEffect( () => {
@@ -138,6 +138,13 @@ export default function EmailAddressEditor( {
 			} );
 		}
 	}, [ selectedEmail ] );
+
+	// Refetch verified contacts if failed
+	useEffect( () => {
+		verifiedContacts.refetchIfFailed();
+		// Disable linting because we only want to refetch once
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
 
 	// Remove email item when user confirms to remove the email address
 	const handleRemove = () => {
@@ -281,7 +288,7 @@ export default function EmailAddressEditor( {
 							/>
 							{ ! isVerifyAction && (
 								<div className="configure-email-notification__help-text" id="name-help-text">
-									{ translate( 'Give this email a nickname for your personal reference' ) }
+									{ translate( 'Give this email a nickname for your personal reference.' ) }
 								</div>
 							) }
 						</FormFieldset>
@@ -342,7 +349,7 @@ export default function EmailAddressEditor( {
 				<div className="notification-settings__footer">
 					<div className="notification-settings__footer-buttons">
 						<Button onClick={ showCodeVerification ? onSaveLater : toggleModal }>
-							{ showCodeVerification ? translate( 'Later' ) : translate( 'Cancel' ) }
+							{ showCodeVerification ? translate( 'Later' ) : translate( 'Back' ) }
 						</Button>
 						<Button
 							disabled={

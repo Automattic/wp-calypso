@@ -197,7 +197,7 @@ export interface SitesOverviewContextInterface extends DashboardOverviewContextI
 }
 
 export interface DashboardDataContextInterface {
-	verifiedContacts: { emails: Array< string > };
+	verifiedContacts: { emails: Array< string >; refetchIfFailed: () => void };
 }
 
 export type AgencyDashboardFilterOption =
@@ -304,4 +304,13 @@ export interface ValidateVerificationCodeParams {
 
 export interface MonitorContactsResponse {
 	emails: [ { verified: boolean; email_address: string } ];
+}
+
+export type MonitorDuration = { label: string; time: number };
+
+export interface InitialMonitorSettings {
+	enableEmailNotification: boolean;
+	enableMobileNotification: boolean;
+	selectedDuration: MonitorDuration | undefined;
+	emailContacts?: MonitorSettingsEmail[] | [];
 }

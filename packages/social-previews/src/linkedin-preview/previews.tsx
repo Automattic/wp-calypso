@@ -1,7 +1,6 @@
 import { ExternalLink } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import SectionHeading from '../shared/section-heading';
-import { DEFAULT_PROPS } from './constants';
 import { LinkedInLinkPreview } from './link-preview';
 import { LinkedInPostPreview } from './post-preview';
 import type { LinkedInPreviewsProps } from './types';
@@ -46,7 +45,7 @@ export const LinkedInPreviews: React.FC< LinkedInPreviewsProps > = ( {
 							{ __( 'Learn more about links', 'social-previews' ) }
 						</ExternalLink>
 					</p>
-					<LinkedInLinkPreview { ...props } { ...DEFAULT_PROPS } />
+					<LinkedInLinkPreview { ...props } name="" profileImage="" />
 				</section>
 			) }
 		</div>
