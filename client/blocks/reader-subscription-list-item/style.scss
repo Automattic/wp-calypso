@@ -88,6 +88,12 @@
 }
 
 .reader-subscription-list-item__site-title {
+	display: -webkit-box;
+	line-height: 18px;
+	overflow: hidden;
+	width: auto;
+	-webkit-line-clamp: 1;
+	-webkit-box-orient: vertical;
 	color: var(--color-neutral-100);
 	font-weight: 600;
 	font-size: $font-body-small;
