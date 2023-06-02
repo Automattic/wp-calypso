@@ -597,11 +597,11 @@ class MembershipsSection extends Component {
 						) }
 					</div>
 					<div>
-						<h3>{ translate( 'No membership fees' ) }</h3>
-						<p>{ preventWidows( translate( 'No monthly or annual fees charged.' ) ) }</p>
+						<h3>{ translate( 'Simple fees structure' ) }</h3>
 						<p>
 							<CommissionFees commission={ commission } siteSlug={ siteSlug } />
 						</p>
+						<p>{ preventWidows( translate( 'No fixed monthly or annual fees charged.' ) ) }</p>
 					</div>
 					<div>
 						<h3>{ translate( 'Join thousands of others' ) }</h3>
