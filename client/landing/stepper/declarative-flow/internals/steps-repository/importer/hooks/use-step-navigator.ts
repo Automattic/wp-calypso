@@ -89,13 +89,6 @@ export function useStepNavigator(
 		} );
 	}
 
-	function goToSitesPage() {
-		navigation.submit?.( {
-			type: 'redirect',
-			url: '/sites',
-		} );
-	}
-
 	return {
 		supportLinkModal: false,
 		goToIntentPage,
@@ -105,7 +98,6 @@ export function useStepNavigator(
 		goToWpAdminImportPage,
 		goToWpAdminWordPressPluginPage,
 		goToAddDomainPage,
-		goToSitesPage,
 		navigate: ( path ) => navigator( path ),
 	};
 }

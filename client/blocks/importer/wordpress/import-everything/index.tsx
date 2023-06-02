@@ -262,36 +262,20 @@ export class ImportEverything extends SectionMigrate {
 
 	renderDefaultHoorayScreen() {
 		const { translate, stepNavigator } = this.props;
-		let button = (
-			<DoneButton
-				label={ translate( 'View site' ) }
-				onSiteViewClick={ () => {
-					this.props.recordTracksEvent( 'calypso_site_importer_view_site' );
-					stepNavigator?.goToSiteViewPage?.();
-				} }
-			/>
-		);
 
-		//todo use something more robust and less likely to change like flow name/ID
-		if ( window.location.pathname.toLowerCase().includes( 'setup/import-hosted-site' ) ) {
-			button = (
-				<DoneButton
-					label={ translate( 'My Sites' ) }
-					onSiteViewClick={ () => {
-						// TODO do we need to record tracks here?
-						//this.props.recordTracksEvent( 'calypso_site_importer_view_site' );
-						stepNavigator?.goToSitesPage();
-					} }
-				/>
-			);
-		}
 		return (
 			<>
 				<Title>{ translate( 'Hooray!' ) }</Title>
 				<SubTitle>
 					{ translate( 'Congratulations. Your content was successfully imported.' ) }
 				</SubTitle>
-				{ button }
+				<DoneButton
+					label={ translate( 'View site' ) }
+					onSiteViewClick={ () => {
+						this.props.recordTracksEvent( 'calypso_site_importer_view_site' );
+						stepNavigator?.goToSiteViewPage?.();
+					} }
+				/>
 			</>
 		);
 	}
