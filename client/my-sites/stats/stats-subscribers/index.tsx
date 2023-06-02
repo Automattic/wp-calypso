@@ -50,7 +50,11 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 	return (
 		<Main fullWidthLayout>
 			<DocumentHead title={ translate( 'Jetpack Stats' ) } />
-			<PageViewTracker path="/stats/subscribers/:site" title="Stats > Subscribers" />
+			<PageViewTracker
+				path="/stats/subscribers/:site"
+				properties={ { is_odyssey: config.isEnabled( 'is_running_in_jetpack_site' ) } }
+				title="Stats > Subscribers"
+			/>
 			<div className="stats">
 				<StatsPageHeader
 					page="subscribers"

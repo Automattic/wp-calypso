@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
@@ -172,6 +173,7 @@ class StatsPostDetail extends Component {
 			<Main fullWidthLayout>
 				<PageViewTracker
 					path={ `/stats/${ postType }/:post_id/:site` }
+					properties={ { is_odyssey: config.isEnabled( 'is_running_in_jetpack_site' ) } }
 					title={ `Stats > Single ${ titlecase( postType ) }` }
 				/>
 				{ siteId && ! isPostHomepage && <QueryPosts siteId={ siteId } postId={ postId } /> }

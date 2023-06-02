@@ -51,6 +51,7 @@ const StatsInsights = ( props ) => {
 			<div className="stats">
 				<StatsPageHeader
 					page="insights"
+					properties={ { is_odyssey: config.isEnabled( 'is_running_in_jetpack_site' ) } }
 					subHeaderText={ translate( "View your site's performance and learn from trends." ) }
 				/>
 				<StatsNavigation selectedItem="insights" siteId={ siteId } slug={ siteSlug } />

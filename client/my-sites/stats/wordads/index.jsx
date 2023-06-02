@@ -168,6 +168,7 @@ class WordAds extends Component {
 				<DocumentHead title={ translate( 'WordAds Stats' ) } />
 				<PageViewTracker
 					path={ `/stats/ads/${ period }/:site` }
+					properties={ { is_odyssey: config.isEnabled( 'is_running_in_jetpack_site' ) } }
 					title={ `WordAds > ${ titlecase( period ) }` }
 				/>
 

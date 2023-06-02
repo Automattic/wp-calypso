@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
@@ -40,6 +41,7 @@ const StatsEmailSummary = ( { translate, period, siteSlug } ) => {
 		<Main className="has-fixed-nav" wideLayout>
 			<PageViewTracker
 				path={ `/stats/${ module }/:site` }
+				properties={ { is_odyssey: config.isEnabled( 'is_running_in_jetpack_site' ) } }
 				title={ `Stats > ${ titlecase( module ) }` }
 			/>
 			<FixedNavigationHeader navigationItems={ navigationItems } />

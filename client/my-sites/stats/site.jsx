@@ -358,6 +358,7 @@ class StatsSite extends Component {
 				<DocumentHead title={ translate( 'Jetpack Stats' ) } />
 				<PageViewTracker
 					path={ `/stats/${ period }/:site` }
+					properties={ { is_odyssey: isOdysseyStats } }
 					title={ `Stats > ${ titlecase( period ) }` }
 				/>
 				{ showEnableStatsModule ? this.renderEnableStatsModule() : this.renderStats() }

@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Spinner } from '@automattic/components';
 import { localize, translate } from 'i18n-calypso';
 import { find, flowRight } from 'lodash';
@@ -208,6 +209,7 @@ class StatsEmailDetail extends Component {
 
 					<PageViewTracker
 						path="/stats/email/:statType/:site/:period/:email_id"
+						properties={ { is_odyssey: config.isEnabled( 'is_running_in_jetpack_site' ) } }
 						title="Stats > Single Email"
 					/>
 
