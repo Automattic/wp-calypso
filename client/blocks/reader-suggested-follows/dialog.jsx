@@ -9,7 +9,7 @@ import './style.scss';
 const ReaderSuggestedFollowsDialog = ( { onClose, siteId, postId, isVisible } ) => {
 	const translate = useTranslate();
 	const { data, isLoading } = useRelatedSites( siteId, postId );
-	// If we are no longer loading and still have no data, don't show the dialog
+	// If we are no longer loading and no data available, don't show the dialog
 	if ( ! isLoading && ! data ) {
 		return null;
 	}
