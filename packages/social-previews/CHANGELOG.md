@@ -1,6 +1,6 @@
 # Changelog
 
-## beta
+## v2.0.1-beta
 
 - Added Mastodon and Instagram previews
 - Fixed hyperlinks for Facebook
