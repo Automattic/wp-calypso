@@ -58,6 +58,24 @@ const ThemeTypeBadgeTooltip = ( { themeId }: Props ) => {
 		} );
 	}, [ themeId ] );
 
+	const getHeader = (): string | null => {
+		const headers = {
+			[ PREMIUM_THEME ]: translate( 'Premium theme' ),
+			[ DOT_ORG_THEME ]: translate( 'Community theme', {
+				context: 'This theme is developed and supported by a community',
+				textOnly: true,
+			} ),
+			[ WOOCOMMERCE_THEME ]: translate( 'WooCommerce theme' ),
+			[ MARKETPLACE_THEME ]: translate( 'Paid theme' ),
+		} as { [ key: string ]: string };
+
+		if ( ! ( type in headers ) ) {
+			return null;
+		}
+
+		return headers[ type ];
+	};
+
 	const goToCheckout = ( plan: string ) => {
 		recordTracksEvent( 'calypso_theme_tooltip_upgrade_nudge_click', { plan } );
 
@@ -70,20 +88,6 @@ const ThemeTypeBadgeTooltip = ( { themeId }: Props ) => {
 			) }/${ plan }?${ params.toString() }`;
 		}
 	};
-
-	let header;
-	if ( type === DOT_ORG_THEME ) {
-		header = translate( 'Community theme', {
-			context: 'This theme is developed and supported by a community',
-			textOnly: true,
-		} );
-	} else if ( type === MARKETPLACE_THEME ) {
-		header = translate( 'Paid theme' );
-	} else if ( type === WOOCOMMERCE_THEME ) {
-		header = translate( 'WooCommerce theme' );
-	} else {
-		header = translate( 'Premium theme' );
-	}
 
 	let message;
 	if ( type === PREMIUM_THEME ) {
@@ -167,7 +171,7 @@ const ThemeTypeBadgeTooltip = ( { themeId }: Props ) => {
 	return (
 		<>
 			<div data-testid="upsell-header" className="theme-type-badge-tooltip__header">
-				{ header }
+				{ getHeader() }
 			</div>
 			<div data-testid="upsell-message">{ message }</div>
 		</>
