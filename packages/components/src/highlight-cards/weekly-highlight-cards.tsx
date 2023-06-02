@@ -64,7 +64,7 @@ const HighlightCardsSettings = function ( {
 	const [ isSettingsTooltipVisible, setSettingsTooltipVisible ] = useState( showSettingsTooltip );
 	const [ isPopoverVisible, setPopoverVisible ] = useState( false );
 
-	// @TODO: Update the state when users dismiss the settings tooltip.
+	// @TODO: Update the state to the API endpoint when users dismiss the settings tooltip.
 	const dismissSettingsTooltip = useCallback( () => {
 		sessionStorage.setItem( 'jp-stats-settings-tooltip', '1' );
 		setSettingsTooltipVisible( false );
