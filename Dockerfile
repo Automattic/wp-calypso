@@ -64,6 +64,8 @@ RUN bash /tmp/env-config.sh
 # Calypso development.
 COPY . /calypso/
 RUN yarn install && yarn explain peer-requirements p031cd
+RUN cat packages/domain-picker/package.json
+RUN git log
 
 # Build the final layer
 #
