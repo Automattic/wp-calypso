@@ -8,6 +8,7 @@ import {
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
+import { useState } from 'react';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
@@ -35,6 +36,9 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 		} ),
 		[]
 	);
+	const [ isCartPendingUpdate, setIsCartPendingUpdate ] = useState( false );
+	const [ isCartPendingUpdateDomain, setIsCartPendingUpdateDomain ] =
+		useState< DomainSuggestion >();
 	const siteSlug = getQueryArg( window.location.search, 'siteSlug' );
 
 	const getDefaultStepContent = () => <h1>Choose a domain step</h1>;
@@ -77,6 +81,9 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 	};
 
 	const submitWithDomain = async ( suggestion: DomainSuggestion | undefined ) => {
+		setIsCartPendingUpdate( true );
+		setIsCartPendingUpdateDomain( suggestion );
+
 		setDomain( suggestion );
 
 		if ( suggestion?.is_free ) {
@@ -114,6 +121,8 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 						flowName: flow || undefined,
 					} ) }
 					handleClickUseYourDomain={ onClickUseYourDomain }
+					isCartPendingUpdate={ isCartPendingUpdate }
+					isCartPendingUpdateDomain={ isCartPendingUpdateDomain }
 				/>
 			</CalypsoShoppingCartProvider>
 		);
