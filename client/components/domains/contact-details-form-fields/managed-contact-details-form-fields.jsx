@@ -425,7 +425,8 @@ export class ManagedContactDetailsFormFields extends Component {
 		// ManagedContactDetails, originally changed by
 		// `prepareDomainContactDetails()` back up in ContactDetailsContainer.
 		const managedContactInfo = convertDomainContactDetailsToManagedContactDetails(
-			this.props.contactDetails
+			this.props.contactDetails,
+			this.props.contactDetailsErrors
 		);
 
 		// Convert the ManagedContactDetails back to DomainContactDetails for the update.

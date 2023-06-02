@@ -322,6 +322,12 @@ function setManagedContactDetailsErrors(
 export function prepareDomainContactDetails(
 	details: ManagedContactDetails
 ): DomainContactDetails {
+	return convertManagedContactDetailsToDomainContactDetails( details );
+}
+
+export function convertManagedContactDetailsToDomainContactDetails(
+	details: ManagedContactDetails
+): DomainContactDetails {
 	return {
 		firstName: details.firstName?.value,
 		lastName: details.lastName?.value,
@@ -340,21 +346,70 @@ export function prepareDomainContactDetails(
 }
 
 export function convertDomainContactDetailsToManagedContactDetails(
-	details: DomainContactDetails
+	details: DomainContactDetails,
+	errors: DomainContactDetailsErrors
 ): ManagedContactDetails {
 	return {
-		firstName: getInitialManagedValue( { value: details.firstName ?? '' } ),
-		lastName: getInitialManagedValue( { value: details.lastName ?? '' } ),
-		organization: getInitialManagedValue( { value: details.organization ?? '' } ),
-		email: getInitialManagedValue( { value: details.email ?? '' } ),
-		phone: getInitialManagedValue( { value: details.phone ?? '' } ),
-		address1: getInitialManagedValue( { value: details.address1 ?? '' } ),
-		address2: getInitialManagedValue( { value: details.address2 ?? '' } ),
-		city: getInitialManagedValue( { value: details.city ?? '' } ),
-		state: getInitialManagedValue( { value: details.state ?? '' } ),
-		postalCode: getInitialManagedValue( { value: details.postalCode ?? '' } ),
-		countryCode: getInitialManagedValue( { value: details.countryCode ?? '' } ),
-		fax: getInitialManagedValue( { value: details.fax ?? '' } ),
+		firstName: getInitialManagedValue( {
+			value: details.firstName ?? '',
+			errors: [ String( errors.firstName ) ],
+			isTouched: Boolean( errors.firstName ),
+		} ),
+		lastName: getInitialManagedValue( {
+			value: details.lastName ?? '',
+			errors: [ String( errors.lastName ) ],
+			isTouched: Boolean( errors.lastName ),
+		} ),
+		organization: getInitialManagedValue( {
+			value: details.organization ?? '',
+			errors: [ String( errors.organization ) ],
+			isTouched: Boolean( errors.organization ),
+		} ),
+		email: getInitialManagedValue( {
+			value: details.email ?? '',
+			errors: [ String( errors.email ) ],
+			isTouched: Boolean( errors.email ),
+		} ),
+		phone: getInitialManagedValue( {
+			value: details.phone ?? '',
+			errors: [ String( errors.phone ) ],
+			isTouched: Boolean( errors.phone ),
+		} ),
+		address1: getInitialManagedValue( {
+			value: details.address1 ?? '',
+			errors: [ String( errors.address1 ) ],
+			isTouched: Boolean( errors.address1 ),
+		} ),
+		address2: getInitialManagedValue( {
+			value: details.address2 ?? '',
+			errors: [ String( errors.address2 ) ],
+			isTouched: Boolean( errors.address2 ),
+		} ),
+		city: getInitialManagedValue( {
+			value: details.city ?? '',
+			errors: [ String( errors.city ) ],
+			isTouched: Boolean( errors.city ),
+		} ),
+		state: getInitialManagedValue( {
+			value: details.state ?? '',
+			errors: [ String( errors.state ) ],
+			isTouched: Boolean( errors.state ),
+		} ),
+		postalCode: getInitialManagedValue( {
+			value: details.postalCode ?? '',
+			errors: [ String( errors.postalCode ) ],
+			isTouched: Boolean( errors.postalCode ),
+		} ),
+		countryCode: getInitialManagedValue( {
+			value: details.countryCode ?? '',
+			errors: [ String( errors.countryCode ) ],
+			isTouched: Boolean( errors.countryCode ),
+		} ),
+		fax: getInitialManagedValue( {
+			value: details.fax ?? '',
+			errors: [ String( errors.fax ) ],
+			isTouched: Boolean( errors.fax ),
+		} ),
 		// TODO: handle extra
 	};
 }
