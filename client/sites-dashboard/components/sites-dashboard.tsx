@@ -361,16 +361,9 @@ function useShowSiteCreationNotice( allSites: SiteExcerptData[], newSiteID: numb
 function useShowSiteTransferredNotice() {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
-	const shownSiteTransferredNotice = useRef( false );
-
 	useEffect( () => {
-		if ( shownSiteTransferredNotice.current ) {
-			return;
-		}
 		const url = new URL( window.location.href );
 		if ( url.searchParams.get( 'site-transfer-confirm' ) === 'true' ) {
-			shownSiteTransferredNotice.current = true;
-
 			dispatch( successNotice( __( 'Your blog transfer succeeded!' ), { duration: 8000 } ) );
 
 			// Remove query param without triggering a re-render
