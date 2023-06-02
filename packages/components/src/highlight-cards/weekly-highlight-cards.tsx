@@ -58,7 +58,7 @@ const HighlightCardsSettings = function ( {
 
 	// @TODO: Fetch the state from API to determine whether showing the settings tooltip.
 	const showSettingsTooltip =
-		sessionStorage.getItem( 'jp-stats-settings-tooltip' ) === '1' ? false : true;
+		sessionStorage.getItem( 'jp-stats-hide-traffic-highlights-tooltip' ) === '1' ? false : true;
 
 	const settingsActionRef = useRef( null );
 	const [ isSettingsTooltipVisible, setSettingsTooltipVisible ] = useState( showSettingsTooltip );
@@ -66,7 +66,7 @@ const HighlightCardsSettings = function ( {
 
 	// @TODO: Update the state to the API endpoint when users dismiss the settings tooltip.
 	const dismissSettingsTooltip = useCallback( () => {
-		sessionStorage.setItem( 'jp-stats-settings-tooltip', '1' );
+		sessionStorage.setItem( 'jp-stats-hide-traffic-highlights-tooltip', '1' );
 		setSettingsTooltipVisible( false );
 	}, [] );
 
