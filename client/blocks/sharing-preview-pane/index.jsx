@@ -58,17 +58,20 @@ class SharingPreviewPane extends PureComponent {
 	constructor( props ) {
 		super( props );
 
-		if ( ! props.isMastodonEligible ) {
-			const { mastodon, ...rest } = props.services;
-			props.services = rest;
-		}
-
 		const connectedServices = map( props.connections, 'service' );
-		const firstConnectedService = find( props.services, ( service ) => {
+		const firstConnectedService = find( this.getAvailableServices(), ( service ) => {
 			return find( connectedServices, ( connectedService ) => service === connectedService );
 		} );
 		const selectedService = props.selectedService || firstConnectedService;
 		this.state = { selectedService };
+	}
+
+	getAvailableServices() {
+		const { isMastodonEligible, services } = this.props;
+		if ( ! isMastodonEligible ) {
+			return services.filter( ( service ) => service !== 'mastodon' );
+		}
+		return services;
 	}
 
 	selectPreview = ( selectedService ) => {
@@ -171,7 +174,8 @@ class SharingPreviewPane extends PureComponent {
 	}
 
 	render() {
-		const { translate, services } = this.props;
+		const { translate } = this.props;
+		const services = this.getAvailableServices();
 		const initialMenuItemIndex = services.indexOf( this.state.selectedService );
 
 		return (
