@@ -2,30 +2,38 @@ import { CountComparisonCard, Popover } from '@automattic/components';
 import { Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
+import useSubscribersTotalsQueries from '../hooks/use-subscribers-totals-query';
 import './subscribers-highlight-section.scss';
 
-function useSubscriberHighlights() {
+interface SubscribersTotalsData {
+	total_email: number;
+	total_wpcom: number;
+	total_email_free: number;
+	total_email_paid: number;
+}
+
+function useSubscriberHighlights( subscribersTotals: SubscribersTotalsData ) {
 	const translate = useTranslate();
 	const highlights = [
 		{
 			heading: translate( 'Total email subscribers' ),
-			count: 1410,
-			previousCount: 1080,
+			count: subscribersTotals?.total_email || 0,
+			// previousCount: 0, // TODO: get previous data
 		},
 		{
 			heading: translate( 'Free email subscribers' ),
-			count: 1340,
-			previousCount: 1034,
+			count: subscribersTotals?.total_email_free || 0,
+			// previousCount: 0, // TODO: get previous data
 		},
 		{
 			heading: translate( 'Paid email subscribers' ),
-			count: 70,
-			previousCount: 46,
+			count: subscribersTotals?.total_email_paid || 0,
+			// previousCount: 0, // TODO: get previous data
 		},
 		{
 			heading: translate( 'WordPress.com subscribers' ),
-			count: 322,
-			previousCount: 326,
+			count: subscribersTotals?.total_wpcom || 0,
+			// previousCount: 0, // TODO: get previous data
 		},
 	];
 	return highlights;
@@ -63,8 +71,12 @@ function SubscriberHighlightsHeader() {
 	);
 }
 
-function SubscriberHighlightsListing() {
-	const highlights = useSubscriberHighlights();
+function SubscriberHighlightsListing( {
+	subscribersTotals,
+}: {
+	subscribersTotals: SubscribersTotalsData;
+} ) {
+	const highlights = useSubscriberHighlights( subscribersTotals );
 
 	return (
 		<div className="highlight-cards-list">
@@ -73,7 +85,7 @@ function SubscriberHighlightsListing() {
 					key={ highlight.heading }
 					heading={ highlight.heading }
 					count={ highlight.count }
-					previousCount={ highlight.previousCount }
+					//previousCount={ highlight.previousCount }
 					showValueTooltip
 				/>
 			) ) }
@@ -81,11 +93,13 @@ function SubscriberHighlightsListing() {
 	);
 }
 
-export default function SubscribersHighlightSection() {
+export default function SubscribersHighlightSection( { siteId }: { siteId: number | null } ) {
+	const { data } = useSubscribersTotalsQueries( siteId ); // TODO: isLoading, isError can be used to handle loading and an error state
+
 	return (
 		<div className="highlight-cards subscribers-page has-odyssey-stats-bg-color">
 			<SubscriberHighlightsHeader />
-			<SubscriberHighlightsListing />
+			<SubscriberHighlightsListing subscribersTotals={ data } />
 		</div>
 	);
 }
