@@ -21,6 +21,7 @@ const ReaderAvatar = ( {
 	preferBlavatar = false,
 	showPlaceholder = false,
 	onClick,
+	iconSize = null,
 } ) => {
 	let fakeSite;
 
@@ -77,6 +78,11 @@ const ReaderAvatar = ( {
 		gravatarSize = hasBothIcons ? 32 : 96;
 	}
 
+	if ( iconSize > 0 ) {
+		siteIconSize = iconSize;
+		gravatarSize = iconSize;
+	}
+
 	const classes = classnames( 'reader-avatar', {
 		'is-compact': isCompact,
 		'has-site-and-author-icon': hasBothIcons,
@@ -111,6 +117,7 @@ ReaderAvatar.propTypes = {
 	showPlaceholder: PropTypes.bool,
 	isCompact: PropTypes.bool,
 	onClick: PropTypes.func,
+	iconSize: PropTypes.number,
 };
 
 ReaderAvatar.defaultProps = {

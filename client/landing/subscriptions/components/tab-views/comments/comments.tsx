@@ -57,14 +57,14 @@ const Comments = () => {
 				/>
 
 				<SelectDropdown
-					className="subscriptions-manager__filter-control"
+					className="subscriptions-manager__filter-control subscriptions-manager__list-actions-bar-spacer"
 					options={ availableFilterOptions }
 					onSelect={ ( selectedOption: Option ) =>
 						setFilterOption( selectedOption.value as Reader.SiteSubscriptionsFilterBy )
 					}
-					selectedText={
-						translate( 'View: ' ) + getFilterLabel( availableFilterOptions, filterOption )
-					}
+					selectedText={ translate( 'View: %s', {
+						args: getFilterLabel( availableFilterOptions, filterOption ) || '',
+					} ) }
 				/>
 
 				<SortControls options={ sortOptions } value={ sortTerm } onChange={ setSortTerm } />

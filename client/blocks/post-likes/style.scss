@@ -19,7 +19,9 @@
 		overflow-y: auto;
 
 		.post-likes__item {
-			display: block;
+			display: flex;
+			align-items: center;
+			justify-content: start;
 			position: relative;
 			padding: 4px 8px;
 			border-bottom: 1px solid var(--color-neutral-0);
@@ -27,16 +29,12 @@
 			&:last-child {
 				border-bottom-width: 0;
 			}
-
-			.gravatar {
-				position: absolute;
-			}
 		}
 
 		.post-likes__display-name {
 			display: block;
 			line-height: 24px;
-			padding-left: 32px;
+			padding-left: 4px;
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;

@@ -72,9 +72,23 @@ const hosting: Flow = {
 			}
 
 			if ( _currentStepSlug === 'processing' ) {
-				const destination = addQueryArgs( '/sites', {
-					'new-site': providedDependencies.siteId,
-				} );
+				// Purchasing these plans will trigger an atomic transfer, so go to stepper flow where we wait for it to complete.
+				const goingAtomic =
+					providedDependencies.goToCheckout &&
+					planCartItem?.product_slug &&
+					[
+						'business-bundle',
+						'business-bundle-monthly',
+						'ecommerce-bundle',
+						'ecommerce-bundle-monthly',
+					].includes( planCartItem.product_slug );
+
+				const destination = goingAtomic
+					? addQueryArgs( '/setup/transferring-hosted-site', {
+							siteId: providedDependencies.siteId,
+					  } )
+					: '/home/' + providedDependencies.siteSlug;
+
 				persistSignupDestination( destination );
 				setSignupCompleteSlug( providedDependencies?.siteSlug );
 				setSignupCompleteFlowName( flowName );

@@ -136,6 +136,11 @@
 	&__fetch-details-error {
 		margin: 64px 0 32px;
 	}
+
+	.site-subscription-page__unsubscribe-button {
+		border: 1px solid $studio-gray-20;
+		margin-left: 10px;
+	}
 }
 
 // Mobile screens
