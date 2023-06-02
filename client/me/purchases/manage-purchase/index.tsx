@@ -118,6 +118,7 @@ import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSitePlanRawPrice } from 'calypso/state/sites/plans/selectors';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import { getCanonicalTheme } from 'calypso/state/themes/selectors';
+import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isRequestingWordAdsApprovalForSite } from 'calypso/state/wordads/approve/selectors';
 import { cancelPurchase, managePurchase, purchasesRoot } from '../paths';
@@ -1427,7 +1428,7 @@ function PurchasesQueryComponent( {
 }
 
 export default connect(
-	( state, props: ManagePurchaseProps ) => {
+	( state: IAppState, props: ManagePurchaseProps ) => {
 		const purchase = getByPurchaseId( state, props.purchaseId );
 
 		const purchaseAttachedTo =

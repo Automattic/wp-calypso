@@ -1,20 +1,9 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo } from 'react';
+import { PostSubscriptionsSortBy, SiteSubscriptionsFilterBy } from '../constants';
 import { callApi } from '../helpers';
 import { useCacheKey, useIsLoggedIn, useIsQueryEnabled } from '../hooks';
 import type { PostSubscription } from '../types';
-
-export enum PostSubscriptionsSortBy {
-	PostName = 'post_name',
-	RecentlyCommented = 'recently_commented',
-	RecentlySubscribed = 'recently_subscribed',
-}
-
-export enum SiteSubscriptionsFilterBy {
-	All = 'all',
-	Paid = 'paid',
-	P2 = 'p2',
-}
 
 type SubscriptionManagerPostSubscriptions = {
 	comment_subscriptions: PostSubscription[];
@@ -58,19 +47,21 @@ const usePostSubscriptionsQuery = ( {
 		useInfiniteQuery< SubscriptionManagerPostSubscriptions >(
 			cacheKey,
 			async ( { pageParam = 1 } ) => {
-				return await callApi< SubscriptionManagerPostSubscriptions >( {
+				const result = await callApi< SubscriptionManagerPostSubscriptions >( {
 					path: `/post-comment-subscriptions?per_page=${ number }&page=${ pageParam }`,
 					isLoggedIn,
 					apiVersion: '2',
 					apiNamespace: 'wpcom/v2',
 				} );
+
+				return result;
 			},
 			{
 				enabled,
-				getNextPageParam: ( lastPage, pages ) => {
-					const total = pages.reduce( ( sum, page ) => sum + page.comment_subscriptions.length, 0 );
-					return total < lastPage.total_comment_subscriptions_count ? pages.length + 1 : undefined;
-				},
+				getNextPageParam: ( lastPage, pages ) =>
+					pages.length * number >= lastPage.total_comment_subscriptions_count
+						? undefined
+						: pages.length + 1,
 				refetchOnWindowFocus: false,
 			}
 		);

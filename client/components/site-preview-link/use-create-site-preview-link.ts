@@ -17,41 +17,39 @@ export const useCreateSitePreviewLink = ( options: UseCreateSitePreviewLinkOptio
 	const { siteId, onSuccess, onError } = options;
 	const queryKey = [ SITE_PREVIEW_LINKS_QUERY_KEY, siteId ];
 	const queryClient = useQueryClient();
-	const createLinkMutation = useMutation(
-		() =>
+	const createLinkMutation = useMutation( {
+		mutationFn: () =>
 			wpcom.req.post( {
 				path: `/sites/${ siteId }/preview-links`,
 				apiNamespace: 'wpcom/v2',
 			} ),
-		{
-			onSuccess: () => {
-				onSuccess?.();
-			},
-			onError: ( err, code, context ) => {
-				queryClient.setQueryData( queryKey, context );
-				onError?.();
-			},
-			onMutate: async () => {
-				await queryClient.cancelQueries( queryKey );
-				const cachedData = queryClient.getQueryData( queryKey );
-				queryClient.setQueryData< PreviewLinksResponse >( queryKey, ( old ) => [
-					...( old ?? [] ),
-					{
-						code: '',
-						created_at: '',
-						isCreating: true,
-					},
-				] );
-				return cachedData;
-			},
-			onSettled: ( data: PreviewLink | undefined ) => {
-				if ( data?.code ) {
-					queryClient.setQueryData( queryKey, () => [ data ] );
-				}
-				queryClient.invalidateQueries( queryKey );
-			},
-		}
-	);
+		onSuccess: () => {
+			onSuccess?.();
+		},
+		onError: ( err, code, context ) => {
+			queryClient.setQueryData( queryKey, context );
+			onError?.();
+		},
+		onMutate: async () => {
+			await queryClient.cancelQueries( queryKey );
+			const cachedData = queryClient.getQueryData( queryKey );
+			queryClient.setQueryData< PreviewLinksResponse >( queryKey, ( old ) => [
+				...( old ?? [] ),
+				{
+					code: '',
+					created_at: '',
+					isCreating: true,
+				},
+			] );
+			return cachedData;
+		},
+		onSettled: ( data: PreviewLink | undefined ) => {
+			if ( data?.code ) {
+				queryClient.setQueryData( queryKey, () => [ data ] );
+			}
+			queryClient.invalidateQueries( queryKey );
+		},
+	} );
 
 	const { mutate: createLink, ...restMutation } = createLinkMutation;
 

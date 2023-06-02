@@ -1,8 +1,8 @@
 import { ResponseCartProduct, useShoppingCart } from '@automattic/shopping-cart';
 import { useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 

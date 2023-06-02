@@ -12,7 +12,9 @@ const useHomeLayoutQuery = (
 ): UseQueryResult => {
 	const query = useHomeLayoutQueryParams();
 
-	return useQuery( getCacheKey( siteId ), () => fetchHomeLayout( siteId, query ), {
+	return useQuery( {
+		queryKey: getCacheKey( siteId ),
+		queryFn: () => fetchHomeLayout( siteId, query ),
 		enabled: !! siteId && enabled,
 
 		// The `/layout` endpoint can return a random view. Disable implicit refetches

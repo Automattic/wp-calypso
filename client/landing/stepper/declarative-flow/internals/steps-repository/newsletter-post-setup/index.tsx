@@ -104,7 +104,7 @@ const NewsletterPostSetup: Step = ( { navigation } ) => {
 			formattedHeader={
 				<FormattedHeader
 					id="newsletter-setup-header"
-					headerText={ createInterpolateElement( translate( 'Personalize your<br />Newsletter' ), {
+					headerText={ createInterpolateElement( translate( 'Personalize your<br />newsletter' ), {
 						br: <br />,
 					} ) }
 					align="center"

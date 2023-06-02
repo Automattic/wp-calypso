@@ -5,7 +5,10 @@ export { default as BadgeContainer } from './components/badge-container';
 export { default as StyleVariationBadges } from './components/style-variation-badges';
 export { default as ThemeCard } from './components/theme-card';
 export { default as ThemePreview } from './components/theme-preview';
-export { default as UnifiedDesignPicker } from './components/unified-design-picker';
+export {
+	default as UnifiedDesignPicker,
+	DesignPreviewImage,
+} from './components/unified-design-picker';
 export { default as WooCommerceBundledBadge } from './components/woocommerce-bundled-badge';
 export { default as PatternAssemblerCta } from './components/pattern-assembler-cta';
 export {
@@ -25,6 +28,11 @@ export {
 	MOBILE_VIEWPORT_WIDTH,
 	STICKY_OFFSET_TOP,
 	BLANK_CANVAS_DESIGN,
+	FREE_THEME,
+	PREMIUM_THEME,
+	DOT_ORG_THEME,
+	WOOCOMMERCE_THEME,
+	MARKETPLACE_THEME,
 } from './constants';
 export type {
 	FontPair,

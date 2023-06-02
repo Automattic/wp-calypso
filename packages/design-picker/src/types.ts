@@ -94,7 +94,6 @@ export interface Design {
 	title: string;
 	description?: string;
 	recipe?: DesignRecipe;
-	verticalizable?: boolean;
 	is_premium: boolean;
 	categories: Category[];
 	features: DesignFeatures[];
@@ -127,7 +126,6 @@ export interface Design {
 
 export interface DesignOptions {
 	styleVariation?: StyleVariation;
-	verticalId?: string;
 	pageTemplate?: string;
 	trimContent?: boolean;
 	posts_source_site_id?: number;

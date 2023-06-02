@@ -1,4 +1,5 @@
-const FORMATTER = new Intl.NumberFormat();
+import formatNumber, { DEFAULT_LOCALE } from './lib/format-number';
+
 export default function formattedNumber( number: number | null ) {
-	return Number.isFinite( number ) ? FORMATTER.format( number as number ) : '-';
+	return formatNumber( number, DEFAULT_LOCALE, {} );
 }

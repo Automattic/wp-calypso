@@ -1,17 +1,17 @@
-import { SubscriptionManager } from '@automattic/data-stores';
-import { SiteSubscriptionsFilterBy } from '@automattic/data-stores/src/reader/queries/use-post-subscriptions-query';
+import { SubscriptionManager, Reader } from '@automattic/data-stores';
 import SearchInput from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import { CommentList } from 'calypso/landing/subscriptions/components/comment-list';
 import { SearchIcon } from 'calypso/landing/subscriptions/components/icons';
 import { Notice, NoticeType } from 'calypso/landing/subscriptions/components/notice';
 import { SortControls, Option } from 'calypso/landing/subscriptions/components/sort-controls';
 import { useSearch } from 'calypso/landing/subscriptions/hooks';
+import { getFilterLabel, useFilterOptions } from '../tab-filters/tab-filters';
 import TabView from '../tab-view';
 
-const SortBy = SubscriptionManager.PostSubscriptionsSortBy;
+const { PostSubscriptionsSortBy: SortBy, SiteSubscriptionsFilterBy: FilterBy } = Reader;
 
 const useSortOptions = (): Option[] => {
 	const translate = useTranslate();
@@ -22,33 +22,13 @@ const useSortOptions = (): Option[] => {
 	];
 };
 
-const useFilterOptions = () => {
-	const translate = useTranslate();
-
-	return useMemo(
-		() => [
-			{ value: SiteSubscriptionsFilterBy.All, label: translate( 'All' ) },
-			// { value: SiteSubscriptionsFilterBy.Paid, label: translate( 'Paid' ) },		// todo: add back when we have paid subscriptions support
-			{ value: SiteSubscriptionsFilterBy.P2, label: translate( 'P2' ) },
-		],
-		[ translate ]
-	);
-};
-
-const getFilterLabel = (
-	availableFilterOptions: Option[],
-	filterValue: SiteSubscriptionsFilterBy
-) => availableFilterOptions.find( ( option ) => option.value === filterValue )?.label;
-
 const Comments = () => {
 	const translate = useTranslate();
 	const [ sortTerm, setSortTerm ] = useState( SortBy.RecentlySubscribed );
 	const { searchTerm, handleSearch } = useSearch();
 	const sortOptions = useSortOptions();
 	const availableFilterOptions = useFilterOptions();
-	const [ filterOption, setFilterOption ] = useState< SiteSubscriptionsFilterBy >(
-		SiteSubscriptionsFilterBy.All
-	);
+	const [ filterOption, setFilterOption ] = useState( FilterBy.All );
 
 	const {
 		data: { posts, totalCount },
@@ -77,14 +57,14 @@ const Comments = () => {
 				/>
 
 				<SelectDropdown
-					className="subscriptions-manager__filter-control"
+					className="subscriptions-manager__filter-control subscriptions-manager__list-actions-bar-spacer"
 					options={ availableFilterOptions }
 					onSelect={ ( selectedOption: Option ) =>
-						setFilterOption( selectedOption.value as SiteSubscriptionsFilterBy )
+						setFilterOption( selectedOption.value as Reader.SiteSubscriptionsFilterBy )
 					}
-					selectedText={
-						translate( 'View: ' ) + getFilterLabel( availableFilterOptions, filterOption )
-					}
+					selectedText={ translate( 'View: %s', {
+						args: getFilterLabel( availableFilterOptions, filterOption ) || '',
+					} ) }
 				/>
 
 				<SortControls options={ sortOptions } value={ sortTerm } onChange={ setSortTerm } />

@@ -1,10 +1,17 @@
 # Changelog
 
-## v2.0.0-beta.0 (2023-05-04)
+## v2.0.1-beta
+
+- Added Mastodon and Instagram previews
+- Fixed hyperlinks for Facebook
+- Fixed multiple empty lines issue in preview text
+
+## v2.0.0 (2023-05-24)
 
 - Converted the package to TypeScript.
 - Added LinkedIn and Tumblr previews.
 - Updated Google Search, Facebook and Twitter previews to match their latest designs.
+- Created separate components for each of the Social Media previews e.g. `TumblrLinkPreview`, `TumblrPostPreview` and `TumblrPreviews`.
 
 ## v1.1.5 (2022-08-24)
 

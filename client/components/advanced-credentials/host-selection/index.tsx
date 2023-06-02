@@ -3,10 +3,10 @@ import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import { settingsPath } from 'calypso/lib/jetpack/paths';
 import wpcom from 'calypso/lib/wp';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getProviderNameFromId, topHosts, otherHosts } from '../host-info';
@@ -18,19 +18,17 @@ interface Guess {
 }
 
 function useHostingProviderGuessQuery( siteId: SiteId ) {
-	return useQuery(
-		[ 'site-hosting-provider-guess', siteId ],
-		(): Promise< Guess > =>
+	return useQuery( {
+		queryKey: [ 'site-hosting-provider-guess', siteId ],
+		queryFn: (): Promise< Guess > =>
 			wpcom.req.get( {
 				path: `/sites/${ siteId }/hosting-provider`,
 				apiNamespace: 'wpcom/v2',
 			} ),
-		{
-			enabled: !! siteId,
-			meta: { persist: false },
-			select: ( data ) => data.guess,
-		}
-	);
+		enabled: !! siteId,
+		meta: { persist: false },
+		select: ( data ) => data.guess,
+	} );
 }
 
 const HostSelection: FunctionComponent = () => {

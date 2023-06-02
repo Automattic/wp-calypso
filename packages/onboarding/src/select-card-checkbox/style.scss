@@ -1,0 +1,30 @@
+.select-card-checkbox__container {
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	padding: 17px 25px;
+	font-size: 0.875rem;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+
+	.select-card-checkbox__label {
+		pointer-events: none;
+		user-select: none;
+		display: flex;
+		align-items: center;
+	}
+
+	&.is-checked {
+		border: 2px solid #0675c4;
+		background: #f9fbfd;
+		padding: 16px 24px;
+	}
+
+	.components-base-control__field {
+		margin-bottom: 0;
+	}
+
+	.components-checkbox-control__input[type="checkbox"] {
+		border-color: #a7aaad;
+	}
+}

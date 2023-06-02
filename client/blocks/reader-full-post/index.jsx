@@ -16,6 +16,7 @@ import { isDailyPostChallengeOrPrompt } from 'calypso/blocks/daily-post-button/h
 import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
 import WPiFrameResize from 'calypso/blocks/reader-full-post/wp-iframe-resize';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
+import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
 import AutoDirection from 'calypso/components/auto-direction';
 import BackButton from 'calypso/components/back-button';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -37,7 +38,6 @@ import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { isDiscoverPost, isDiscoverSitePick } from 'calypso/reader/discover/helper';
 import DiscoverSiteAttribution from 'calypso/reader/discover/site-attribution';
-import { READER_FULL_POST } from 'calypso/reader/follow-sources';
 import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import LikeButton from 'calypso/reader/like-button';
@@ -100,6 +100,17 @@ export class FullPostView extends Component {
 	commentsWrapper = createRef();
 	postContentWrapper = createRef();
 
+	state = {
+		isSuggestedFollowsModalOpen: false,
+	};
+
+	openSuggestedFollowsModal = ( followClicked ) => {
+		this.setState( { isSuggestedFollowsModalOpen: followClicked } );
+	};
+	onCloseSuggestedFollowModal = () => {
+		this.setState( { isSuggestedFollowsModalOpen: false } );
+	};
+
 	componentDidMount() {
 		// Send page view
 		this.hasSentPageView = false;
@@ -120,7 +131,6 @@ export class FullPostView extends Component {
 
 		document.addEventListener( 'keydown', this.handleKeydown, true );
 	}
-
 	componentDidUpdate( prevProps ) {
 		// Send page view if applicable
 		if (
@@ -514,6 +524,7 @@ export class FullPostView extends Component {
 								siteUrl={ post.site_URL }
 								feedUrl={ get( post, 'feed_URL' ) }
 								followCount={ site && site.subscribers_count }
+								onFollowToggle={ this.openSuggestedFollowsModal }
 								feedId={ +post.feed_ID }
 								siteId={ +post.site_ID }
 								post={ post }
@@ -626,7 +637,6 @@ export class FullPostView extends Component {
 									maxDepth={ 1 }
 									commentsFilterDisplay={ COMMENTS_FILTER_ALL }
 									showConversationFollowButton={ true }
-									followSource={ READER_FULL_POST }
 									shouldPollForNewComments={ config.isEnabled( 'reader/comment-polling' ) }
 									shouldHighlightNew={ true }
 								/>
@@ -646,6 +656,14 @@ export class FullPostView extends Component {
 						) }
 					</article>
 				</div>
+				{ post.site_ID && (
+					<ReaderSuggestedFollowsDialog
+						onClose={ this.onCloseSuggestedFollowModal }
+						siteId={ +post.site_ID }
+						postId={ +post.ID }
+						isVisible={ this.state.isSuggestedFollowsModalOpen }
+					/>
+				) }
 			</ReaderMain>
 		);
 	}

@@ -1,8 +1,8 @@
 import { PLAN_JETPACK_COMPLETE } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import Button from 'calypso/components/forms/form-button';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getJetpackRecommendationsUrl from 'calypso/state/selectors/get-jetpack-recommendations-url';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';

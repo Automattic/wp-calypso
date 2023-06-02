@@ -8,19 +8,10 @@ module.exports = function storybookDefaultConfig( {
 	babelCacheDirectory = path.join( __dirname, '../../../.cache/babel-storybook' ),
 } = {} ) {
 	return {
-		core: {
-			builder: 'webpack5',
+		framework: {
+			name: '@storybook/react-webpack5',
+			options: { fastRefresh: true, builder: { lazyCompilation: true } },
 		},
-		features: {
-			/**
-			 * Can probably be removed after the next major storybook release with emotion 11 support.
-			 *
-			 * @see https://github.com/storybookjs/storybook/blob/next/MIGRATION.md#emotion11-quasi-compatibility
-			 */
-			emotionAlias: false,
-			babelModeV7: true,
-		},
-
 		babel: async ( storybookConfig ) => {
 			const baseConfig = calypsoBabelConfig();
 			return {

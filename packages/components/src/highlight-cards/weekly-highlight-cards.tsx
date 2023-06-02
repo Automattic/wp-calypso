@@ -1,7 +1,16 @@
-import { commentContent, Icon, people, starEmpty, info } from '@wordpress/icons';
+import config from '@automattic/calypso-config';
+import {
+	commentContent,
+	Icon,
+	people,
+	starEmpty,
+	info,
+	moreVertical,
+	check,
+} from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { eye } from '../icons';
 import Popover from '../popover';
 import { comparingInfoBarsChart, comparingInfoRangeChart } from './charts';
@@ -27,7 +36,14 @@ type WeeklyHighlightCardsProps = {
 	onClickLikes: ( event: MouseEvent ) => void;
 	onClickViews: ( event: MouseEvent ) => void;
 	onClickVisitors: ( event: MouseEvent ) => void;
+	onTogglePeriod: ( period: string ) => void;
+	currentPeriod: string;
 };
+
+export const PAST_SEVEN_DAYS = 'past_seven_days';
+export const PAST_THIRTY_DAYS = 'past_thirty_days';
+export const BETWEEN_PAST_EIGHT_AND_FIFTEEN_DAYS = 'between_past_eight_and_fifteen_days';
+export const BETWEEN_PAST_THIRTY_ONE_AND_SIXTY_DAYS = 'between_past_thirty_one_and_sixty_days';
 
 export default function WeeklyHighlightCards( {
 	className,
@@ -36,54 +52,128 @@ export default function WeeklyHighlightCards( {
 	onClickLikes,
 	onClickViews,
 	onClickVisitors,
+	onTogglePeriod,
 	previousCounts,
 	showValueTooltip,
+	currentPeriod,
 }: WeeklyHighlightCardsProps ) {
 	const translate = useTranslate();
 
 	const textRef = useRef( null );
+	const settingsActionRef = useRef( null );
 	const [ isTooltipVisible, setTooltipVisible ] = useState( false );
+	const [ isPopoverVisible, setPopoverVisible ] = useState( false );
+
+	// @TODO: Set the popover to disappear when the user clicks outside of the popover.
+	const togglePopoverMenu = useCallback( () => {
+		setPopoverVisible( ( isVisible ) => {
+			return ! isVisible;
+		} );
+	}, [] );
+
+	const isHighlightsSettingsEnabled = config.isEnabled( 'stats/highlights-settings' );
 
 	return (
 		<div className={ classNames( 'highlight-cards', className ?? null ) }>
 			<h3 className="highlight-cards-heading">
-				{ translate( '7-day highlights' ) }{ ' ' }
-				<span
-					className="highlight-cards-heading-icon"
-					ref={ textRef }
-					onMouseEnter={ () => setTooltipVisible( true ) }
-					onMouseLeave={ () => setTooltipVisible( false ) }
-				>
-					<Icon className="gridicon" icon={ info } />
+				<span>
+					{ currentPeriod === PAST_THIRTY_DAYS
+						? translate( '30-day highlights' )
+						: translate( '7-day highlights' ) }
 				</span>
-				<Popover
-					className="tooltip tooltip--darker highlight-card-tooltip"
-					isVisible={ isTooltipVisible }
-					position="bottom right"
-					context={ textRef.current }
-				>
-					<div className="highlight-card-tooltip-content comparing-info">
-						<p>{ translate( 'Highlights displayed are for the last 7 days, excluding today.' ) }</p>
-						<p>
-							{ translate( 'Trends shown are in comparison to the previous 7 days before that.' ) }
-						</p>
-						<div className="comparing-info-chart">
-							<small>
-								{ translate( '%(fourteen)d days {{vs/}} %(seven)d days', {
-									components: {
-										vs: <span>vs</span>,
-									},
-									args: {
-										fourteen: 14,
-										seven: 7,
-									},
-								} ) }
-							</small>
-							{ comparingInfoRangeChart }
-							{ comparingInfoBarsChart }
-						</div>
+
+				{ isHighlightsSettingsEnabled && (
+					<small className="highlight-cards-heading__description">
+						{ currentPeriod === PAST_THIRTY_DAYS
+							? translate( 'Compared to previous 30 days' )
+							: translate( 'Compared to previous 7 days' ) }
+					</small>
+				) }
+
+				{ ! isHighlightsSettingsEnabled && (
+					<div className="highlight-cards-heading__tooltip">
+						<span
+							className="highlight-cards-heading-icon"
+							ref={ textRef }
+							onMouseEnter={ () => setTooltipVisible( true ) }
+							onMouseLeave={ () => setTooltipVisible( false ) }
+						>
+							<Icon className="gridicon" icon={ info } />
+						</span>
+						<Popover
+							className="tooltip tooltip--darker highlight-card-tooltip"
+							isVisible={ isTooltipVisible }
+							position="bottom right"
+							context={ textRef.current }
+						>
+							<div className="highlight-card-tooltip-content comparing-info">
+								<p>
+									{ translate( 'Highlights displayed are for the last 7 days, excluding today.' ) }
+								</p>
+								<p>
+									{ translate(
+										'Trends shown are in comparison to the previous 7 days before that.'
+									) }
+								</p>
+								<div className="comparing-info-chart">
+									<small>
+										{ translate( '%(fourteen)d days {{vs/}} %(seven)d days', {
+											components: {
+												vs: <span>vs</span>,
+											},
+											args: {
+												fourteen: 14,
+												seven: 7,
+											},
+										} ) }
+									</small>
+									{ comparingInfoRangeChart }
+									{ comparingInfoBarsChart }
+								</div>
+							</div>
+						</Popover>
 					</div>
-				</Popover>
+				) }
+
+				{ isHighlightsSettingsEnabled && (
+					<div className="highlight-cards-heading__settings">
+						<button
+							className="highlight-cards-heading__settings-action"
+							ref={ settingsActionRef }
+							onClick={ togglePopoverMenu }
+						>
+							<Icon className="gridicon" icon={ moreVertical } />
+						</button>
+						<Popover
+							className="tooltip highlight-card-popover"
+							isVisible={ isPopoverVisible }
+							position="bottom left"
+							context={ settingsActionRef.current }
+							focusOnShow={ false }
+						>
+							<button
+								onClick={ () => {
+									onTogglePeriod( PAST_SEVEN_DAYS );
+								} }
+							>
+								{ translate( '7-day highlights' ) }
+								{ currentPeriod === PAST_SEVEN_DAYS && (
+									<Icon className="gridicon" icon={ check } />
+								) }
+							</button>
+							<button
+								onClick={ () => {
+									onTogglePeriod( PAST_THIRTY_DAYS );
+								} }
+							>
+								{ translate( '30-day highlights' ) }
+								{ currentPeriod === PAST_THIRTY_DAYS && (
+									<Icon className="gridicon" icon={ check } />
+								) }
+							</button>
+						</Popover>
+					</div>
+				) }
 			</h3>
 
 			<div className="highlight-cards-list">

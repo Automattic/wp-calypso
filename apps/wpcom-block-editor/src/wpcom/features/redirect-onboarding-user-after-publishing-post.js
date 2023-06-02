@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import useSiteIntent from './use-site-intent';
 
 const START_WRITING_FLOW = 'start-writing';
+const DESIGN_FIRST_FLOW = 'design-first';
 
 export function RedirectOnboardingUserAfterPublishingPost() {
 	const { siteIntent: intent } = useSiteIntent();
@@ -13,13 +14,17 @@ export function RedirectOnboardingUserAfterPublishingPost() {
 		const hasStartWritingFlowQueryArg =
 			getQueryArg( window.location.search, START_WRITING_FLOW ) === 'true';
 
-		if ( intent === START_WRITING_FLOW || hasStartWritingFlowQueryArg ) {
+		if (
+			intent === START_WRITING_FLOW ||
+			intent === DESIGN_FIRST_FLOW ||
+			hasStartWritingFlowQueryArg
+		) {
 			dispatch( 'core/edit-post' ).closeGeneralSidebar();
-			document.documentElement.classList.add( 'start-writing-hide' );
+			document.documentElement.classList.add( 'blog-onboarding-hide' );
 		}
 	}, [ intent ] );
 
-	if ( intent !== START_WRITING_FLOW ) {
+	if ( intent !== START_WRITING_FLOW && intent !== DESIGN_FIRST_FLOW ) {
 		return false;
 	}
 
@@ -41,12 +46,13 @@ export function RedirectOnboardingUserAfterPublishingPost() {
 		if (
 			! isSavingPost &&
 			( isCurrentPostPublished || isCurrentPostScheduled ) &&
-			getCurrentPostRevisionsCount === 1
+			getCurrentPostRevisionsCount >= 1
 		) {
 			unsubscribe();
 
 			dispatch( 'core/edit-post' ).closePublishSidebar();
-			window.location.href = `${ siteOrigin }/setup/start-writing/launchpad?siteSlug=${ siteSlug }&${ START_WRITING_FLOW }=true`;
+
+			window.location.href = `${ siteOrigin }/setup/${ intent }/launchpad?siteSlug=${ siteSlug }`;
 		}
 	} );
 }

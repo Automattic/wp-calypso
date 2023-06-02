@@ -1,28 +1,31 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
-import wpcom from 'calypso/lib/wp';
+import { MonitorContactsResponse } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
+import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
 
-const isAPIAvailable = false; // FIXME: Remove this line when API is available
+const isMultipleEmailEnabled = isEnabled(
+	'jetpack/pro-dashboard-monitor-multiple-email-recipients'
+);
 
-const useFetchMonitorVerfiedContacts = () => {
+const useFetchMonitorVerfiedContacts = ( isPartnerOAuthTokenLoaded: boolean ) => {
 	return useQuery(
 		[ 'monitor_notification_contacts' ],
 		() =>
-			isAPIAvailable
-				? wpcom.req.get( {
-						path: '/jetpack-agency/contacts',
-						apiNamespace: 'wpcom/v2',
-				  } )
-				: {
-						emails: [],
-				  }, // FIXME: Remove this line and enable API call when API is available
+			wpcomJpl.req.get( {
+				path: '/jetpack-agency/contacts',
+				apiNamespace: 'wpcom/v2',
+			} ),
 		{
-			select: ( contacts: { emails: [ { verified: boolean; value: string } ] } ) => {
+			select: ( contacts: MonitorContactsResponse ) => {
 				return {
 					emails: contacts?.emails
 						.filter( ( email ) => email.verified )
-						.map( ( email ) => email.value ),
+						.map( ( email ) => email.email_address ),
 				};
 			},
+			enabled: isPartnerOAuthTokenLoaded && isMultipleEmailEnabled,
+			refetchOnWindowFocus: false,
+			staleTime: 1000 * 60 * 5,
 		}
 	);
 };

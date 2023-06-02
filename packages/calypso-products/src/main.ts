@@ -620,6 +620,7 @@ export type FilteredPlan = Plan &
 		| 'getPlanTagline'
 		| 'getNewsletterTagLine'
 		| 'getLinkInBioTagLine'
+		| 'getBlogOnboardingTagLine'
 	>;
 
 export function applyTestFiltersToPlansList(

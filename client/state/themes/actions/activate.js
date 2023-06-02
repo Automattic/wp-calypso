@@ -88,23 +88,23 @@ export function activate(
 		const isExternallyManaged = isExternallyManagedTheme( getState(), themeId );
 		const isWooTheme = doesThemeBundleSoftwareSet( getState(), themeId );
 		const isDotComTheme = !! getTheme( getState(), 'wpcom', themeId );
+		const siteSlug = getSiteSlug( getState(), siteId );
+		const dispatchActivateAction = activateOrInstallThenActivate(
+			themeId,
+			siteId,
+			source,
+			purchased,
+			keepCurrentHomepage
+		);
+
 		if (
 			isEnabled( 'themes/display-thank-you-page' ) &&
 			isDotComTheme &&
 			! isWooTheme &&
 			! isExternallyManaged
 		) {
-			dispatchActivateAction(
-				dispatch,
-				getState,
-				siteId,
-				themeId,
-				source,
-				purchased,
-				keepCurrentHomepage
-			);
+			dispatchActivateAction( dispatch, getState );
 
-			const siteSlug = getSiteSlug( getState(), siteId );
 			return page( `/marketplace/thank-you/${ siteSlug }?themes=${ themeId }` );
 		}
 
@@ -113,41 +113,42 @@ export function activate(
 		 */
 		const isDotOrgTheme = !! getTheme( getState(), 'wporg', themeId );
 		if ( isDotOrgTheme && ! isDotComTheme ) {
-			const siteSlug = getSiteSlug( getState(), siteId );
-
 			dispatch( productToBeInstalled( themeId, siteSlug ) );
 			return page( `/marketplace/theme/${ themeId }/install/${ siteSlug }` );
 		}
 
-		return dispatchActivateAction(
-			dispatch,
-			getState,
-			siteId,
-			themeId,
-			source,
-			purchased,
-			keepCurrentHomepage
-		);
+		return dispatchActivateAction( dispatch, getState );
 	};
 }
 
-function dispatchActivateAction(
-	dispatch,
-	getState,
-	siteId,
+/**
+ * If it's a Jetpack site, installs the theme prior to activation if it isn't already.
+ * Otherwise, activate the theme directly
+ *
+ * @param  {string}   themeId   Theme ID
+ * @param  {number}   siteId    Site ID
+ * @param  {string}   source    The source that is requesting theme activation, e.g. 'showcase'
+ * @param  {boolean}  purchased Whether the theme has been purchased prior to activation
+ * @param  {boolean}  keepCurrentHomepage Prevent theme from switching homepage content if this is what it'd normally do when activated
+ * @returns {Function}          Action thunk
+ */
+export function activateOrInstallThenActivate(
 	themeId,
-	source,
-	purchased,
-	keepCurrentHomepage
+	siteId,
+	source = 'unknown',
+	purchased = false,
+	keepCurrentHomepage = false
 ) {
-	if ( isJetpackSite( getState(), siteId ) && ! getTheme( getState(), siteId, themeId ) ) {
-		const installId = suffixThemeIdForInstall( getState(), siteId, themeId );
-		// If theme is already installed, installation will silently fail,
-		// and it will just be activated.
-		return dispatch(
-			installAndActivateTheme( installId, siteId, source, purchased, keepCurrentHomepage )
-		);
-	}
+	return ( dispatch, getState ) => {
+		if ( isJetpackSite( getState(), siteId ) && ! getTheme( getState(), siteId, themeId ) ) {
+			const installId = suffixThemeIdForInstall( getState(), siteId, themeId );
+			// If theme is already installed, installation will silently fail,
+			// and it will just be activated.
+			return dispatch(
+				installAndActivateTheme( installId, siteId, source, purchased, keepCurrentHomepage )
+			);
+		}
 
-	return dispatch( activateTheme( themeId, siteId, source, purchased, keepCurrentHomepage ) );
+		return dispatch( activateTheme( themeId, siteId, source, purchased, keepCurrentHomepage ) );
+	};
 }

@@ -5,16 +5,14 @@ import { requestDSP } from 'calypso/lib/promote-post';
 
 export const useCancelCampaignMutation = ( onError: () => void ) => {
 	const queryClient = useQueryClient();
-	const mutation = useMutation(
-		async ( { siteId, campaignId }: { siteId: number; campaignId: number } ) =>
+	const mutation = useMutation( {
+		mutationFn: async ( { siteId, campaignId }: { siteId: number; campaignId: number } ) =>
 			await requestDSP< { results: Campaign[] } >( siteId, `/campaigns/${ campaignId }/stop` ),
-		{
-			onSuccess( data, { siteId } ) {
-				queryClient.invalidateQueries( [ 'promote-post-campaigns', siteId ] );
-			},
-			onError,
-		}
-	);
+		onSuccess( data, { siteId } ) {
+			queryClient.invalidateQueries( [ 'promote-post-campaigns', siteId ] );
+		},
+		onError,
+	} );
 
 	const { mutate } = mutation;
 	const cancelCampaign = useCallback(

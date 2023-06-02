@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
+import { GlobalStylesVariations, GlobalStylesObject } from '@automattic/global-styles';
 import { useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import StyleVariationPreviews from './style-variation';
 import type { Category, StyleVariation } from '@automattic/design-picker/src/types';
 
 interface CategoryBadgeProps {
@@ -34,9 +34,9 @@ interface SidebarProps {
 	variations: StyleVariation[];
 	selectedVariation?: StyleVariation;
 	onSelectVariation: ( variation: StyleVariation ) => void;
+	splitPremiumVariations: boolean;
 	onClickCategory?: ( category: Category ) => void;
 	actionButtons: React.ReactNode;
-	showGlobalStylesPremiumBadge: boolean;
 }
 
 const Sidebar: React.FC< SidebarProps > = ( {
@@ -49,9 +49,9 @@ const Sidebar: React.FC< SidebarProps > = ( {
 	variations = [],
 	selectedVariation,
 	onSelectVariation,
+	splitPremiumVariations,
 	onClickCategory,
 	actionButtons,
-	showGlobalStylesPremiumBadge,
 } ) => {
 	const translate = useTranslate();
 	const [ isShowFullDescription, setIsShowFullDescription ] = useState( false );
@@ -101,14 +101,16 @@ const Sidebar: React.FC< SidebarProps > = ( {
 				) }
 				{ variations.length > 0 && (
 					<div className="design-preview__sidebar-variations">
-						<h2>{ translate( 'Choose your style' ) }</h2>
-						<p>{ translate( 'You can change your style at any time.' ) }</p>
 						<div className="design-preview__sidebar-variations-grid">
-							<StyleVariationPreviews
-								variations={ variations }
-								selectedVariation={ selectedVariation }
-								onClick={ onSelectVariation }
-								showGlobalStylesPremiumBadge={ showGlobalStylesPremiumBadge }
+							<GlobalStylesVariations
+								globalStylesVariations={ variations as GlobalStylesObject[] }
+								selectedGlobalStylesVariation={ selectedVariation as GlobalStylesObject }
+								splitPremiumVariations={ splitPremiumVariations }
+								displayFreeLabel={ splitPremiumVariations }
+								showOnlyHoverViewDefaultVariation={ false }
+								onSelect={ ( globalStyleVariation: GlobalStylesObject ) =>
+									onSelectVariation( globalStyleVariation as StyleVariation )
+								}
 							/>
 						</div>
 					</div>

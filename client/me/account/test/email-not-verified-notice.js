@@ -3,8 +3,8 @@
  */
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import * as redux from 'react-redux';
 import { Provider as ReduxProvider } from 'react-redux';
+import * as calypsoState from 'calypso/state';
 import { createReduxStore } from 'calypso/state';
 import * as sendEmail from '../../../landing/stepper/hooks/use-send-email-verification';
 import EmailNotVerifiedNotice from '../email-not-verified-notice';
@@ -31,7 +31,7 @@ describe( 'EmailNotVerifiedNotice', () => {
 	it( 'fires success notice action when resend is successful', async () => {
 		const dispatch = jest.fn();
 
-		jest.spyOn( redux, 'useDispatch' ).mockReturnValue( dispatch );
+		jest.spyOn( calypsoState, 'useDispatch' ).mockReturnValue( dispatch );
 
 		const useSendEmailVerification = jest.spyOn( sendEmail, 'useSendEmailVerification' );
 		useSendEmailVerification.mockImplementation( () => () => {
@@ -62,7 +62,7 @@ describe( 'EmailNotVerifiedNotice', () => {
 	it( 'fires error notice action when resend is unsuccessful', async () => {
 		const dispatch = jest.fn();
 
-		jest.spyOn( redux, 'useDispatch' ).mockReturnValue( dispatch );
+		jest.spyOn( calypsoState, 'useDispatch' ).mockReturnValue( dispatch );
 
 		const useSendEmailVerification = jest.spyOn( sendEmail, 'useSendEmailVerification' );
 		useSendEmailVerification.mockImplementation( () => () => {

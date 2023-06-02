@@ -6,9 +6,9 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
 import { memo, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { useSelector } from 'react-redux';
 import StatsSparkline from 'calypso/blocks/stats-sparkline';
 import TimeSince from 'calypso/components/time-since';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { hasSiteStatsQueryFailed } from 'calypso/state/stats/lists/selectors';
 import { displaySiteUrl, getDashboardUrl, isStagingSite, MEDIA_QUERIES } from '../utils';
@@ -20,7 +20,9 @@ import { SiteName } from './sites-site-name';
 import { SitePlan } from './sites-site-plan';
 import { SiteUrl, Truncated } from './sites-site-url';
 import SitesStagingBadge from './sites-staging-badge';
+import TransferNoticeWrapper from './sites-transfer-notice-wrapper';
 import { ThumbnailLink } from './thumbnail-link';
+import { WithAtomicTransfer } from './with-atomic-transfer';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
 interface SiteTableRowProps {
@@ -189,8 +191,18 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 				<SitePlan site={ site } userId={ userId } />
 			</Column>
 			<Column mobileHidden>
-				{ translatedStatus }
-				<SiteLaunchNag site={ site } />
+				<WithAtomicTransfer site={ site }>
+					{ ( result ) =>
+						result.wasTransferring ? (
+							<TransferNoticeWrapper { ...result } />
+						) : (
+							<>
+								{ translatedStatus }
+								<SiteLaunchNag site={ site } />
+							</>
+						)
+					}
+				</WithAtomicTransfer>
 			</Column>
 			<Column mobileHidden>
 				{ site.options?.updated_at ? <TimeSince date={ site.options.updated_at } /> : '' }

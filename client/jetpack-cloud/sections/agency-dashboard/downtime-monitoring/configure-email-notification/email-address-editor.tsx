@@ -7,10 +7,12 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import DashboardDataContext from '../../sites-overview/dashboard-data-context';
+import { useRequestVerificationCode, useValidateVerificationCode } from '../hooks';
 import EmailItemContent from './email-item-content';
 import type {
 	AllowedMonitorContactActions,
 	StateMonitorSettingsEmail,
+	Site,
 } from '../../sites-overview/types';
 
 interface Props {
@@ -20,6 +22,8 @@ interface Props {
 	allEmailItems: Array< StateMonitorSettingsEmail >;
 	setAllEmailItems: ( emailAddresses: Array< StateMonitorSettingsEmail > ) => void;
 	recordEvent: ( action: string, params?: object ) => void;
+	setVerifiedEmail: ( item: string ) => void;
+	sites: Array< Site >;
 }
 
 export default function EmailAddressEditor( {
@@ -29,6 +33,8 @@ export default function EmailAddressEditor( {
 	allEmailItems,
 	setAllEmailItems,
 	recordEvent,
+	setVerifiedEmail,
+	sites,
 }: Props ) {
 	const translate = useTranslate();
 
@@ -39,12 +45,11 @@ export default function EmailAddressEditor( {
 	const [ emailItem, setEmailItem ] = useState< {
 		name: string;
 		email: string;
-		code?: string;
+		code?: number;
 		id: string;
 	} >( {
 		name: '',
 		email: '',
-		code: '',
 		id: '',
 	} );
 
@@ -53,6 +58,16 @@ export default function EmailAddressEditor( {
 	const isVerifyAction = selectedAction === 'verify';
 	const isEditAction = selectedAction === 'edit';
 	const isRemoveAction = selectedAction === 'remove';
+
+	const requestVerificationCode = useRequestVerificationCode();
+	const verifyEmail = useValidateVerificationCode();
+
+	// Function to handle resending verification code
+	const handleResendCode = useCallback( () => {
+		setValidationError( undefined );
+		recordEvent( 'downtime_monitoring_resend_email_verification_code' );
+		// TODO: implement resending verification code
+	}, [ recordEvent ] );
 
 	const handleSetEmailItems = useCallback(
 		( isVerified = true ) => {
@@ -72,12 +87,48 @@ export default function EmailAddressEditor( {
 		[ allEmailItems, emailItem, setAllEmailItems, toggleModal ]
 	);
 
+	// Trigger resend code when user chooses to verify email action
 	useEffect( () => {
 		if ( isVerifyAction ) {
 			setShowCodeVerification( true );
+			handleResendCode();
 		}
-	}, [ isVerifyAction ] );
+	}, [ handleResendCode, isVerifyAction ] );
 
+	// Show code input when verification code request is successful
+	useEffect( () => {
+		if ( requestVerificationCode.isSuccess ) {
+			setShowCodeVerification( true );
+		}
+	}, [ requestVerificationCode.isSuccess ] );
+
+	// Show error message when verification code request fails
+	useEffect( () => {
+		if ( requestVerificationCode.isError ) {
+			setValidationError( {
+				email: translate( 'Something went wrong. Please try again.' ),
+			} );
+		}
+	}, [ requestVerificationCode.isError, translate ] );
+
+	// Add email item to the list once the email is verified
+	useEffect( () => {
+		if ( verifyEmail.isVerified ) {
+			handleSetEmailItems();
+			setVerifiedEmail( emailItem.email );
+		}
+	}, [ emailItem.email, handleSetEmailItems, setVerifiedEmail, verifyEmail.isVerified ] );
+
+	// Show error message when email verification fails
+	useEffect( () => {
+		if ( verifyEmail.errorMessage ) {
+			setValidationError( {
+				code: verifyEmail.errorMessage,
+			} );
+		}
+	}, [ translate, verifyEmail.errorMessage ] );
+
+	// Set email item when selectedEmail changes
 	useEffect( () => {
 		if ( selectedEmail ) {
 			setEmailItem( {
@@ -88,6 +139,14 @@ export default function EmailAddressEditor( {
 		}
 	}, [ selectedEmail ] );
 
+	// Refetch verified contacts if failed
+	useEffect( () => {
+		verifiedContacts.refetchIfFailed();
+		// Disable linting because we only want to refetch once
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
+
+	// Remove email item when user confirms to remove the email address
 	const handleRemove = () => {
 		recordEvent( 'downtime_monitoring_remove_email' );
 		const emailItems = [ ...allEmailItems ];
@@ -99,20 +158,33 @@ export default function EmailAddressEditor( {
 		toggleModal();
 	};
 
+	// Send verification code when user clicks on Verify button
 	const handleSendVerificationCode = () => {
 		recordEvent( 'downtime_monitoring_request_email_verification_code' );
-		setShowCodeVerification( true );
-		// TODO: implement sending verification code
+		requestVerificationCode.mutate( {
+			type: 'email',
+			value: emailItem.email,
+			site_ids: sites?.map( ( site ) => site.blog_id ) ?? [],
+		} );
 	};
 
+	// Verify email when user clicks on Verify button
 	const handleVerifyEmail = () => {
 		recordEvent( 'downtime_monitoring_verify_email' );
-		// TODO: verify email address with code
+		if ( emailItem?.code ) {
+			verifyEmail.mutate( {
+				type: 'email',
+				value: emailItem.email,
+				verification_code: Number( emailItem.code ),
+			} );
+		}
 	};
 
+	// Add email item to the list if the email is already verified
 	const handleAddVerifiedEmail = () => {
 		recordEvent( 'downtime_monitoring_email_already_verified' );
 		handleSetEmailItems();
+		setVerifiedEmail( emailItem.email );
 	};
 
 	const onSave = ( event: React.FormEvent< HTMLFormElement > ) => {
@@ -143,6 +215,7 @@ export default function EmailAddressEditor( {
 		handleSendVerificationCode();
 	};
 
+	// Save unverified email item to the list when user clicks on Later button
 	function onSaveLater() {
 		recordEvent( 'downtime_monitoring_verify_email_later' );
 		handleSetEmailItems( false );
@@ -166,17 +239,28 @@ export default function EmailAddressEditor( {
 		subTitle = translate( 'Are you sure you want to remove this email address?' );
 	}
 
-	const handleResendCode = () => {
-		recordEvent( 'downtime_monitoring_resend_email_verification_code' );
-		// TODO: implement resending verification code
-	};
-
 	const handleChange = useCallback(
 		( key ) => ( event: React.ChangeEvent< HTMLInputElement > ) => {
 			setEmailItem( ( prevState ) => ( { ...prevState, [ key ]: event.target.value } ) );
 		},
 		[]
 	);
+
+	const verificationButtonTitle = verifyEmail.isLoading
+		? translate( 'Verifying…' )
+		: translate( 'Verify' );
+
+	const translationArgs = {
+		components: {
+			button: (
+				<Button
+					className="configure-email-notification__resend-code-button"
+					borderless
+					onClick={ handleResendCode }
+				/>
+			),
+		},
+	};
 
 	return (
 		<Modal
@@ -200,10 +284,11 @@ export default function EmailAddressEditor( {
 								value={ emailItem.name }
 								disabled={ showCodeVerification }
 								onChange={ handleChange( 'name' ) }
+								aria-describedby={ ! isVerifyAction ? 'name-help-text' : undefined }
 							/>
 							{ ! isVerifyAction && (
-								<div className="configure-email-notification__help-text">
-									{ translate( 'Give this email a nickname for your personal reference' ) }
+								<div className="configure-email-notification__help-text" id="name-help-text">
+									{ translate( 'Give this email a nickname for your personal reference.' ) }
 								</div>
 							) }
 						</FormFieldset>
@@ -216,14 +301,15 @@ export default function EmailAddressEditor( {
 								value={ emailItem.email }
 								disabled={ showCodeVerification }
 								onChange={ handleChange( 'email' ) }
+								aria-describedby={ ! isVerifyAction ? 'email-help-text' : undefined }
 							/>
 							{ validationError?.email && (
-								<div className="notification-settings__footer-validation-error">
+								<div className="notification-settings__footer-validation-error" role="alert">
 									{ validationError.email }
 								</div>
 							) }
 							{ ! isVerifyAction && (
-								<div className="configure-email-notification__help-text">
+								<div className="configure-email-notification__help-text" id="email-help-text">
 									{ translate( 'We’ll send a code to verify your email address.' ) }
 								</div>
 							) }
@@ -241,26 +327,20 @@ export default function EmailAddressEditor( {
 									onChange={ handleChange( 'code' ) }
 								/>
 								{ validationError?.code && (
-									<div className="notification-settings__footer-validation-error">
+									<div className="notification-settings__footer-validation-error" role="alert">
 										{ validationError.code }
 									</div>
 								) }
-								<div className="configure-email-notification__help-text">
-									{ translate(
-										'Please wait for a minute. If you didn’t receive it, we can {{button}}resend{{/button}} it.',
-										{
-											components: {
-												button: (
-													<Button
-														className="configure-email-notification__resend-code-button"
-														borderless
-														onClick={ handleResendCode }
-														aria-label={ translate( 'Resend Code' ) }
-													/>
-												),
-											},
-										}
-									) }
+								<div className="configure-email-notification__help-text" id="code-help-text">
+									{ verifyEmail.isError
+										? translate(
+												'Please try again or we can {{button}}resend a new code{{/button}}',
+												translationArgs
+										  )
+										: translate(
+												'Please wait for a minute. If you didn’t receive it, we can {{button}}resend{{/button}} it.',
+												translationArgs
+										  ) }
 								</div>
 							</FormFieldset>
 						) }
@@ -269,18 +349,20 @@ export default function EmailAddressEditor( {
 				<div className="notification-settings__footer">
 					<div className="notification-settings__footer-buttons">
 						<Button onClick={ showCodeVerification ? onSaveLater : toggleModal }>
-							{ showCodeVerification ? translate( 'Later' ) : translate( 'Cancel' ) }
+							{ showCodeVerification ? translate( 'Later' ) : translate( 'Back' ) }
 						</Button>
 						<Button
 							disabled={
 								! emailItem.name ||
 								! emailItem.email ||
-								( showCodeVerification && ! emailItem.code )
+								( showCodeVerification && ! emailItem.code ) ||
+								verifyEmail.isLoading ||
+								requestVerificationCode.isLoading
 							}
 							type="submit"
 							primary
 						>
-							{ isRemoveAction ? translate( 'Remove' ) : translate( 'Verify' ) }
+							{ isRemoveAction ? translate( 'Remove' ) : verificationButtonTitle }
 						</Button>
 					</div>
 				</div>

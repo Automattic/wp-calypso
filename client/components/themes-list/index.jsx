@@ -60,8 +60,8 @@ export const ThemesList = ( props ) => {
 	}, [ updateShowSecondUpsellNudge ] );
 
 	const selectedSite = useSelector( getSelectedSite );
-
 	const isLoggedIn = useSelector( isUserLoggedIn );
+	const siteEditorUrl = useSelector( ( state ) => getSiteEditorUrl( state, selectedSite?.ID ) );
 
 	const isPatternAssemblerCTAEnabled =
 		! isLoggedIn || isEnabled( 'pattern-assembler/logged-in-showcase' );
@@ -78,17 +78,27 @@ export const ThemesList = ( props ) => {
 			goes_to_assembler_step: shouldGoToAssemblerStep,
 		} );
 
-		const basePathname = isLoggedIn ? '/setup' : '/start';
-		const params = new URLSearchParams( {
-			ref: 'calypshowcase',
-			theme: BLANK_CANVAS_DESIGN.slug,
-		} );
+		let destinationUrl;
 
-		if ( selectedSite?.slug ) {
-			params.set( 'siteSlug', selectedSite.slug );
+		// We have to redirect the user to the site editor directly if the user has logged in but
+		// they're on the small screen because the Assembler doesn't support the small screen yet.
+		if ( ! isLoggedIn || shouldGoToAssemblerStep ) {
+			const basePathname = isLoggedIn ? '/setup' : '/start';
+			const params = new URLSearchParams( {
+				ref: 'calypshowcase',
+				theme: BLANK_CANVAS_DESIGN.slug,
+			} );
+
+			if ( selectedSite?.slug ) {
+				params.set( 'siteSlug', selectedSite.slug );
+			}
+
+			destinationUrl = `${ basePathname }/${ WITH_THEME_ASSEMBLER_FLOW }?${ params }`;
+		} else {
+			destinationUrl = siteEditorUrl;
 		}
 
-		window.location.assign( `${ basePathname }/${ WITH_THEME_ASSEMBLER_FLOW }?${ params }` );
+		window.location.assign( destinationUrl );
 	};
 
 	const matchingWpOrgThemes = useMemo( () => {
@@ -192,9 +202,12 @@ ThemesList.defaultProps = {
 
 function ThemeBlock( props ) {
 	const { theme, index } = props;
+	const [ selectedStyleVariation, setSelectedStyleVariation ] = useState( null );
+
 	if ( isEmpty( theme ) ) {
 		return null;
 	}
+
 	// Decide if we should pass ref for bookmark.
 	const { themesBookmark, siteId } = props;
 	const bookmarkRef = themesBookmark === theme.id ? props.bookmarkRef : null;
@@ -202,10 +215,13 @@ function ThemeBlock( props ) {
 	return (
 		<Theme
 			key={ 'theme-' + theme.id }
-			buttonContents={ props.getButtonOptions( theme.id ) }
-			screenshotClickUrl={ props.getScreenshotUrl && props.getScreenshotUrl( theme.id ) }
+			buttonContents={ props.getButtonOptions( theme.id, selectedStyleVariation ) }
+			screenshotClickUrl={ props.getScreenshotUrl?.( theme.id, selectedStyleVariation ) }
 			onScreenshotClick={ props.onScreenshotClick }
-			onStyleVariationClick={ props.onStyleVariationClick }
+			onStyleVariationClick={ ( themeId, themeIndex, variation ) => {
+				setSelectedStyleVariation( variation );
+				props.onStyleVariationClick?.( themeId, themeIndex, variation );
+			} }
 			onMoreButtonClick={ props.onMoreButtonClick }
 			onMoreButtonItemClick={ props.onMoreButtonItemClick }
 			actionLabel={ props.getActionLabel( theme.id ) }
@@ -218,6 +234,7 @@ function ThemeBlock( props ) {
 			bookmarkRef={ bookmarkRef }
 			siteId={ siteId }
 			softLaunched={ theme.soft_launched }
+			selectedStyleVariation={ selectedStyleVariation }
 		/>
 	);
 }

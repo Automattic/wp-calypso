@@ -26,6 +26,7 @@ import {
 	mockGetPaymentMethodsEndpoint,
 	mockLogStashEndpoint,
 	mockGetSupportedCountriesEndpoint,
+	mockUserSignupValidationEndpoint,
 } from './util';
 import { MockCheckout } from './util/mock-checkout';
 import type { CartKey } from '@automattic/shopping-cart';
@@ -279,6 +280,65 @@ describe( 'Checkout contact step VAT form', () => {
 			country: countryCode,
 			address: vatAddress,
 		} );
+	} );
+
+	it( 'continues to the next step if valid VAT info is entered and we are logged-in', async () => {
+		const vatId = '12345';
+		const vatName = 'Test company';
+		const vatAddress = '123 Main Street';
+		const countryCode = 'GB';
+		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
+		mockSetVatInfoEndpoint();
+		const user = userEvent.setup();
+		const cartChanges = { products: [ planWithoutDomain ] };
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
+
+		// Wait for the cart to load
+		await screen.findByLabelText( 'Continue with the entered contact details' );
+
+		await user.selectOptions( await screen.findByLabelText( 'Country' ), countryCode );
+		await user.click( await screen.findByLabelText( 'Add VAT details' ) );
+		await user.type( await screen.findByLabelText( 'VAT ID' ), vatId );
+		await user.type( await screen.findByLabelText( 'Organization for VAT' ), vatName );
+		await user.type( await screen.findByLabelText( 'Address for VAT' ), vatAddress );
+		await user.click( screen.getByText( 'Continue' ) );
+		expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
+	} );
+
+	it( 'continues to the next step if valid VAT info is entered and we are logged-out', async () => {
+		const vatId = '12345';
+		const vatName = 'Test company';
+		const vatAddress = '123 Main Street';
+		const countryCode = 'GB';
+		mockUserSignupValidationEndpoint( () => {
+			return [
+				200,
+				{
+					success: true,
+				},
+			];
+		} );
+		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
+		const user = userEvent.setup();
+		const cartChanges = { products: [ planWithoutDomain ] };
+		render(
+			<MockCheckout
+				{ ...defaultPropsForMockCheckout }
+				cartChanges={ cartChanges }
+				additionalProps={ { isLoggedOutCart: true } }
+			/>
+		);
+
+		// Wait for the cart to load
+		await screen.findByLabelText( 'Continue with the entered contact details' );
+
+		await user.selectOptions( await screen.findByLabelText( 'Country' ), countryCode );
+		await user.click( await screen.findByLabelText( 'Add VAT details' ) );
+		await user.type( await screen.findByLabelText( 'VAT ID' ), vatId );
+		await user.type( await screen.findByLabelText( 'Organization for VAT' ), vatName );
+		await user.type( await screen.findByLabelText( 'Address for VAT' ), vatAddress );
+		await user.click( screen.getByText( 'Continue' ) );
+		expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
 	} );
 
 	it( 'sends ID to the VAT endpoint without prefixed country code when completing the step', async () => {

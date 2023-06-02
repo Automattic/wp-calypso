@@ -15,28 +15,26 @@ export const useGithubDisconnectRepoMutation = (
 	options: UseMutationOptions< unknown, MutationError, unknown > = {}
 ) => {
 	const queryClient = useQueryClient();
-	const mutation = useMutation(
-		async () =>
+	const mutation = useMutation( {
+		mutationFn: async () =>
 			wp.req.post( {
 				method: 'DELETE',
 				path: `/sites/${ siteId }/hosting/github/connection`,
 				apiNamespace: 'wpcom/v2',
 			} ),
-		{
-			...options,
-			onSuccess: async ( ...args ) => {
-				await Promise.all( [
-					queryClient.invalidateQueries( [ GITHUB_INTEGRATION_QUERY_KEY, siteId, connectionId ] ),
-					queryClient.invalidateQueries( [
-						GITHUB_INTEGRATION_QUERY_KEY,
-						siteId,
-						GITHUB_CONNECTION_QUERY_KEY,
-					] ),
-				] );
-				options.onSuccess?.( ...args );
-			},
-		}
-	);
+		...options,
+		onSuccess: async ( ...args ) => {
+			await Promise.all( [
+				queryClient.invalidateQueries( [ GITHUB_INTEGRATION_QUERY_KEY, siteId, connectionId ] ),
+				queryClient.invalidateQueries( [
+					GITHUB_INTEGRATION_QUERY_KEY,
+					siteId,
+					GITHUB_CONNECTION_QUERY_KEY,
+				] ),
+			] );
+			options.onSuccess?.( ...args );
+		},
+	} );
 
 	const { mutate, isLoading } = mutation;
 

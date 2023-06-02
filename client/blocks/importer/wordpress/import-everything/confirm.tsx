@@ -46,6 +46,7 @@ export const Confirm: React.FunctionComponent< Props > = ( props ) => {
 	} = props;
 	const [ isModalDetailsOpen, setIsModalDetailsOpen ] = useState( false );
 	const [ showUpgradePlanScreen, setShowUpgradePlanScreen ] = useState( false );
+	const sourceSiteSlug = sourceSite?.slug ?? '';
 
 	/**
 	 ↓ Effects
@@ -165,7 +166,7 @@ export const Confirm: React.FunctionComponent< Props > = ( props ) => {
 
 				{ showUpgradePlanScreen && (
 					<>
-						<ConfirmUpgradePlan sourceSite={ sourceSite } targetSite={ targetSite } />
+						<ConfirmUpgradePlan sourceSiteSlug={ sourceSiteSlug } targetSite={ targetSite } />
 						<NextButton onClick={ () => showConfirmDialogOrStartImport() }>
 							{ __( 'Upgrade and import' ) }
 						</NextButton>

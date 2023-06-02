@@ -4,7 +4,6 @@ import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import page from 'page';
 import { useState, useCallback, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import JetpackBackupSVG from 'calypso/assets/images/illustrations/jetpack-backup.svg';
 import {
 	hasBlockingHold as hasBlockingHoldFunc,
@@ -24,6 +23,7 @@ import PromoCard from 'calypso/components/promo-section/promo-card';
 import SpinnerButton from 'calypso/components/spinner-button';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
+import { useDispatch, useSelector } from 'calypso/state';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import {
@@ -145,7 +145,7 @@ export default function WPCOMBusinessAT() {
 	const dispatch = useDispatch();
 	const initiateAT = useCallback( () => {
 		setShowDialog( false );
-		dispatch( initiateThemeTransfer( siteId, null, '' ) );
+		dispatch( initiateThemeTransfer( siteId, null, '', '', 'jetpack_product_activation' ) );
 	}, [ dispatch, siteId ] );
 	const trackInitiateAT = useTrackCallback( initiateAT, 'calypso_jetpack_backup_business_at' );
 

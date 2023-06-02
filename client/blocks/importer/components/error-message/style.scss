@@ -1,0 +1,15 @@
+@import "~calypso/blocks/import/style/base";
+
+.import__error-message {
+	.onboarding-title,
+	.onboarding-subtitle {
+		max-width: 100%;
+		margin-bottom: rem(40px);
+	}
+
+	.onboarding-subtitle a {
+		font-weight: 500;
+		text-decoration: underline;
+		color: var(--studio-gray-100);
+	}
+}

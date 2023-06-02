@@ -1,0 +1,38 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.components-modal__frame.components-modal-new__frame.import__confirm-modal.compact {
+	@include break-medium {
+		width: 420px;
+	}
+
+	.components-modal__content {
+		padding: rem(24px) rem(24px) rem(16px);
+	}
+
+	.components-modal__header-heading {
+		font-size: rem(20px);
+		font-weight: 500;
+		line-height: rem(26px);
+	}
+
+	.components-modal__divider {
+		margin-bottom: rem(16px);
+		margin-left: rem(-24px);
+		margin-right: rem(-24px);
+		border-top: solid 1px var(--studio-gray-5);
+	}
+
+	.components-modal__button-actions button {
+		min-width: 100px;
+	}
+
+	.components-modal__header button svg {
+		width: 24px;
+		height: 24px;
+	}
+
+	.action-buttons__next {
+		min-width: auto;
+	}
+}
