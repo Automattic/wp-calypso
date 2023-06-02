@@ -25,8 +25,11 @@ export const useGetSiteSuggestionsQuery = ( {
 	onSuccess?: ( response: SuggestionsResponse ) => void;
 } ) =>
 	useQuery( {
-		queryKey: [ 'site-suggestions' ],
+		cacheTime: 0,
 		queryFn: getSiteSuggestions,
 		enabled,
 		onSuccess,
+		meta: {
+			persist: false,
+		},
 	} );
