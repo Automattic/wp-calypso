@@ -15,7 +15,7 @@ import { apiCloseAccount } from '../shared';
 
 declare const browser: Browser;
 
-describe( DataHelper.createSuiteTitle( 'Start Writing Tailored Onboarding' ), () => {
+describe( 'Start Writing Tailored Onboarding', () => {
 	const testUser = DataHelper.getNewTestUser( {
 		usernamePrefix: 'start_writing',
 	} );
@@ -64,15 +64,15 @@ describe( DataHelper.createSuiteTitle( 'Start Writing Tailored Onboarding' ), ()
 		it( 'Add blog name and description', async function () {
 			await page.getByRole( 'button', { name: 'Name your blog' } ).click();
 			await page.getByPlaceholder( 'A catchy name to make your blog memorable' );
-			await page.fill(
-				'input[name="setup-form-input-name"]',
-				`Start writing site ${ testUser.username }`
-			);
-			await page.fill(
-				'textarea[name="setup-form-input-description"]',
-				`The place of ${ testUser.username }`
-			);
-			await page.click( 'button.setup-form__submit' );
+
+			await page
+				.locator( 'input[name="setup-form-input-name"]' )
+				.fill( `Start writing site ${ testUser.username }` );
+			await page
+				.locator( 'textarea[name="setup-form-input-description"]' )
+				.fill( `The place of ${ testUser.username }` );
+
+			await page.locator( 'button.setup-form__submit' ).click();
 		} );
 
 		it( 'Navigate choose a domain', async function () {
@@ -86,7 +86,10 @@ describe( DataHelper.createSuiteTitle( 'Start Writing Tailored Onboarding' ), ()
 		} );
 
 		it( 'Skip selecting a domain', async function () {
-			await Promise.all( [ page.waitForNavigation(), page.click( 'text=Decide later' ) ] );
+			await Promise.all( [
+				page.waitForURL( /.*start-writing\/domains.*/ ),
+				page.click( 'text=Decide later' ),
+			] );
 		} );
 
 		it( 'Navigate choose a plan', async function () {
