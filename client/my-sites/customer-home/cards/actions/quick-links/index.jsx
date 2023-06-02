@@ -19,6 +19,7 @@ import { getPreference } from 'calypso/state/preferences/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
+import getUserSetting from 'calypso/state/selectors/get-user-setting';
 import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
@@ -64,6 +65,7 @@ export const QuickLinks = ( {
 	editHomePageUrl,
 	siteSlug,
 	isFSEActive,
+	isDevAccount,
 	siteEditorUrl,
 } ) => {
 	const translate = useTranslate();
@@ -87,6 +89,34 @@ export const QuickLinks = ( {
 
 	const quickLinks = (
 		<div className="quick-links__boxes">
+			{ isDevAccount && isSiteAtomic && (
+				<>
+					<ActionBox
+						href={ `/hosting-config/${ siteSlug }#sftp-credentials` }
+						hideLinkIndicator
+						label={ translate( 'Setup SSH' ) }
+						materialIcon="key"
+					/>
+					<ActionBox
+						href={ `/hosting-config${ siteSlug }/#staging-site` }
+						hideLinkIndicator
+						label={ translate( 'Create staging site' ) }
+						gridicon="science"
+					/>
+					<ActionBox
+						href={ `/setup/copy-site/domains?sourceSlug?${ siteSlug }` }
+						hideLinkIndicator
+						label={ translate( 'Copy site' ) }
+						materialIcon="sync_alt"
+					/>
+					<ActionBox
+						href={ `/site-logs/${ siteSlug }` }
+						hideLinkIndicator
+						label={ translate( 'Site logs' ) }
+						materialIcon="settings"
+					/>
+				</>
+			) }
 			{ isFSEActive && canManageSite ? (
 				<ActionBox
 					href={ siteEditorUrl }
@@ -400,6 +430,7 @@ const mapStateToProps = ( state ) => {
 		customizeUrl: getCustomizerUrl( state, siteId ),
 		menusUrl: getCustomizerUrl( state, siteId, 'menus' ),
 		isNewlyCreatedSite: isNewSite( state, siteId ),
+		isDevAccount: getUserSetting( state, 'is_dev_account' ),
 		canAddEmail,
 		siteSlug,
 		isStaticHomePage,
