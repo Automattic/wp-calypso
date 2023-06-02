@@ -60,7 +60,7 @@ const Comments = () => {
 				<SelectDropdown
 					className="subscriptions-manager__filter-control"
 					options={ availableFilterOptions }
-					onSelect={ ( selectedOption: Option ) =>
+					onSelect={ ( selectedOption: Option< Reader.SiteSubscriptionsFilterBy > ) =>
 						setFilterOption( selectedOption.value as Reader.SiteSubscriptionsFilterBy )
 					}
 					selectedText={
