@@ -1,4 +1,3 @@
-import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import ExternalLink from 'calypso/components/external-link';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -12,34 +11,45 @@ type CommissionFeesProps = {
 const CommissionFees = ( { className, commission, iconSize = 16 }: CommissionFeesProps ) => {
 	const translate = useTranslate();
 
-	return commission !== null ? (
-		<span className={ className }>
-			{ preventWidows(
-				translate(
-					'On your current plan, WordPress.com charges {{em}}%(commission)s{{/em}}.{{br/}} Additionally, Stripe charges are typically %(stripe)s. {{a}}Learn more{{/a}}',
-					{
-						args: {
-							commission: '' + parseFloat( String( commission ) ) * 100 + '%',
-							stripe: '2.9%+30c',
-						},
-						components: {
-							em: <em />,
-							br: <br />,
-							a: (
-								<ExternalLink
-									href={ localizeUrl(
-										'https://wordpress.com/support/wordpress-editor/blocks/payments/#related-fees'
-									) }
-									icon={ true }
-									iconSize={ iconSize }
-								/>
-							),
-						},
-					}
-				)
-			) }
-		</span>
-	) : null;
+	if ( commission === null ) {
+		return null;
+	}
+
+	const commissionFee = commission * 100;
+	const StripeFeesLink = (
+		<ExternalLink href="https://stripe.com/pricing" icon={ true } iconSize={ iconSize } />
+	);
+	const plansLink = '/plans';
+	let commissionFeesText;
+
+	if ( commission === 0 ) {
+		commissionFeesText = translate(
+			'With your current plan, the transaction fee for payments is %(commissionFee)d% (+ <StripeFeesLink>Stripe fees</StripeFeesLink>).',
+			{
+				args: {
+					commissionFee,
+				},
+				components: {
+					StripeFeesLink,
+				},
+			}
+		);
+	} else {
+		commissionFeesText = translate(
+			'With your current plan, the transaction fee for payments is %(commissionFee)d% (+ <StripeFeesLink>Stripe fees</StripeFeesLink>). <UpgradeLink>Upgrade to lower it.</UpgradeLink>',
+			{
+				args: {
+					commissionFee,
+				},
+				components: {
+					StripeFeesLink,
+					UpgradeLink: <a href={ plansLink } />,
+				},
+			}
+		);
+	}
+
+	return <span className={ className }>{ preventWidows( commissionFeesText ) }</span>;
 };
 
 export default CommissionFees;
