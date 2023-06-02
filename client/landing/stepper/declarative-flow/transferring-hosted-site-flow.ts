@@ -1,6 +1,5 @@
 import { TRANSFERRING_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
-import { addQueryArgs } from '@wordpress/url';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
 import { ONBOARD_STORE } from '../stores';
@@ -48,17 +47,11 @@ const transferringHostedSite: Flow = {
 						return navigate( 'error' );
 					}
 
-					return exitFlow(
-						addQueryArgs( '/sites', {
-							'new-site': siteId,
-						} )
-					);
+					return exitFlow( '/home/' + siteId );
 				}
 
 				case 'waitForAtomic': {
-					return navigate( 'processing', {
-						currentStep,
-					} );
+					return navigate( 'processing' );
 				}
 			}
 		}

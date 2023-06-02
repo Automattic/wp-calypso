@@ -87,9 +87,7 @@ const hosting: Flow = {
 					? addQueryArgs( '/setup/transferring-hosted-site', {
 							siteId: providedDependencies.siteId,
 					  } )
-					: addQueryArgs( '/sites', {
-							'new-site': providedDependencies.siteId,
-					  } );
+					: '/home/' + providedDependencies.siteSlug;
 
 				persistSignupDestination( destination );
 				setSignupCompleteSlug( providedDependencies?.siteSlug );
