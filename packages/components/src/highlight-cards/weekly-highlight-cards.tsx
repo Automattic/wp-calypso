@@ -149,7 +149,7 @@ export default function WeeklyHighlightCards( {
 	const translate = useTranslate();
 
 	const textRef = useRef( null );
-	const [ isTooltipVisible, setTooltipVisible ] = useState( true );
+	const [ isTooltipVisible, setTooltipVisible ] = useState( false );
 
 	const isHighlightsSettingsEnabled = config.isEnabled( 'stats/highlights-settings' );
 
