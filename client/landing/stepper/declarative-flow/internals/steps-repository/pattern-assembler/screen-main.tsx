@@ -21,9 +21,10 @@ interface Props {
 	onSelect: ( name: string ) => void;
 	onContinueClick: ( callback?: () => void ) => void;
 	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
+	userHasEngaged: boolean;
 }
 
-const ScreenMain = ( { onSelect, onContinueClick, recordTracksEvent }: Props ) => {
+const ScreenMain = ( { onSelect, onContinueClick, recordTracksEvent, userHasEngaged }: Props ) => {
 	const translate = useTranslate();
 	const [ disabled, setDisabled ] = useState( true );
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
@@ -134,7 +135,7 @@ const ScreenMain = ( { onSelect, onContinueClick, recordTracksEvent }: Props ) =
 						</>
 					</NavigatorItemGroup>
 				</HStack>
-				<Survey />
+				<Survey userHasEngaged={ userHasEngaged } />
 			</div>
 			<div className="screen-container__footer">
 				<span className="screen-container__description">

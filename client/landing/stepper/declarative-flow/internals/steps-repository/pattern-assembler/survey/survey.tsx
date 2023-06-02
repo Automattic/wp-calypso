@@ -3,18 +3,17 @@ import { useState } from 'react';
 import Banner from 'calypso/components/banner';
 import './survey.scss';
 
-const Survey = () => {
+const Survey = ( { userHasEngaged }: { userHasEngaged: boolean } ) => {
 	const locale = useLocale();
 	const [ dismissed, setDismissed ] = useState( false );
 
-	if ( 'en' !== locale || dismissed ) {
+	if ( 'en' !== locale || dismissed || ! userHasEngaged ) {
 		return null;
 	}
 
 	return (
 		<Banner
 			className="pattern-assembler__survey"
-			// href="https://lucasmdo.survey.fm/assembler-survey-modal"
 			title={
 				<>
 					<a href="https://lucasmdo.survey.fm/assembler-survey-modal" target="blank">
