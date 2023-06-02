@@ -4,6 +4,7 @@ import { useDispatch } from '@wordpress/data';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
 import MigrationError from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/migration-error';
 import { ProcessingResult } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/processing-step/constants';
+import SiteCreationStep from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/site-creation-step';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
@@ -27,6 +28,7 @@ const importHostedSiteFlow: Flow = {
 			{ slug: 'importReadyNot', component: ImportReadyNot },
 			{ slug: 'importReadyWpcom', component: ImportReadyWpcom },
 			{ slug: 'importReadyPreview', component: ImportReadyPreview },
+			{ slug: 'siteCreationStep', component: SiteCreationStep },
 			{ slug: 'importerWordpress', component: ImporterWordpress },
 			{ slug: 'processing', component: ProcessingStep },
 			{ slug: 'error', component: MigrationError },
@@ -72,10 +74,17 @@ const importHostedSiteFlow: Flow = {
 					) {
 						return exitFlow( providedDependencies?.url as string );
 					}
-
 					return navigate( providedDependencies?.url as string );
 				}
 				case 'importReadyPreview': {
+					const params = new URLSearchParams( providedDependencies?.url as string );
+					const from = params.get( 'from' );
+					if ( ! siteSlugParam ) {
+						if ( from ) {
+							return navigate( `siteCreationStep?from=${ encodeURIComponent( from ) }` );
+						}
+						return navigate( 'error' );
+					}
 					return navigate( providedDependencies?.url as string );
 				}
 
@@ -112,6 +121,9 @@ const importHostedSiteFlow: Flow = {
 
 					return exitFlow( `/home/${ siteSlugParam }` );
 				}
+
+				case 'siteCreationStep':
+					return navigate( 'processing' );
 
 				case 'error':
 					return navigate( providedDependencies?.url as string );

@@ -1,27 +1,24 @@
-import { OnboardSelect, SiteSelect, Visibility } from '@automattic/data-stores';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
 import React, { useEffect } from 'react';
 import { ReadyPreviewStep } from 'calypso/blocks/import/ready';
 import { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
-import { getSiteSuggestions } from 'calypso/landing/stepper/hooks/use-get-site-suggestions-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
-import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { ImportWrapper } from '../import';
 import { BASE_ROUTE } from '../import/config';
 import { getFinalImporterUrl } from '../import/helper';
+import type { OnboardSelect } from '@automattic/data-stores';
 
 import './style.scss';
 
 const ImportReadyPreview: Step = function ImportStep( props ) {
 	const { navigation } = props;
-	const initialSlug = useSiteSlugParam();
+	const siteSlug = useSiteSlugParam();
 	const site = useSite();
-	const { createSite } = useDispatch( SITE_STORE );
-	const { getNewSite } = useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
 	const isAtomicSite = !! site?.options?.is_automated_transfer;
 	const urlData = useSelector( getUrlData );
 	const isMigrateFromWp = useSelect(
@@ -45,43 +42,16 @@ const ImportReadyPreview: Step = function ImportStep( props ) {
 	/**
 	 ↓ Methods
 	 */
-	async function goToImporterPage() {
-		let siteSlug = site?.slug ?? initialSlug;
-		if ( ! siteSlug ) {
-			let blogName = urlData.meta.title;
-
-			if ( ! blogName ) {
-				const response = await getSiteSuggestions();
-
-				if ( response.success ) {
-					blogName = response.suggestions[ 0 ].title;
-				}
-			}
-
-			await createSite( {
-				blog_name: blogName,
-				authToken: undefined,
-				visibility: Visibility.Private,
-			} );
-
-			const newSite = getNewSite();
-
-			if ( ! newSite?.site_slug ) {
-				throw new Error( 'failed to create site. huh?' );
-			}
-
-			siteSlug = newSite.site_slug;
-		}
-
+	function goToImporterPage() {
 		const url = getFinalImporterUrl(
-			siteSlug,
+			siteSlug as string,
 			urlData.url,
 			urlData.platform,
 			isAtomicSite,
 			'stepper'
 		);
 
-		navigation.submit?.( { url }, siteSlug );
+		navigation.submit?.( { url } );
 	}
 
 	function goToHomeStep() {
@@ -99,7 +69,7 @@ const ImportReadyPreview: Step = function ImportStep( props ) {
 		<ImportWrapper { ...props }>
 			<ReadyPreviewStep
 				urlData={ urlData }
-				siteSlug={ initialSlug as string }
+				siteSlug={ siteSlug as string }
 				goToImporterPage={ goToImporterPage }
 				recordTracksEvent={ recordTracksEvent }
 			/>
