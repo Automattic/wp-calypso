@@ -10,6 +10,7 @@ import '../styles.scss';
 
 interface Props {
 	config: Config;
+	children?: React.ReactNode;
 	__temp__className?: string;
 }
 

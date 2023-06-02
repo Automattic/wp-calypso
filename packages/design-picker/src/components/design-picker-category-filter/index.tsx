@@ -48,7 +48,12 @@ export function DesignPickerCategoryFilter( {
 			{ /* Shown on larger displays */ }
 			<NavigableMenu
 				aria-labelledby={ `design-picker__category-heading-${ instanceId }` }
-				onNavigate={ ( _index, child ) => onSelect( child.dataset.slug ?? null ) }
+				onNavigate={ (
+					_index: number,
+					child: {
+						dataset: { slug?: string };
+					}
+				) => onSelect( child.dataset.slug ?? null ) }
 				orientation="vertical"
 				className="design-picker-category-filter__sidebar"
 			>

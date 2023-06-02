@@ -477,6 +477,7 @@ module.exports = {
 					'__experimentalNavigatorProvider',
 					'__experimentalNavigatorScreen',
 					'__experimentalUseNavigator',
+					'__experimentalVStack',
 					'__unstableComposite',
 					'__unstableCompositeItem',
 					'__unstableUseCompositeState',

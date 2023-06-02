@@ -1,5 +1,5 @@
 import { useBreakpoint } from '@automattic/viewport-react';
-import React, { ReactChild, useEffect } from 'react';
+import { ReactNode, useEffect } from 'react';
 
 const ComponentSwapper = ( {
 	className,
@@ -9,10 +9,10 @@ const ComponentSwapper = ( {
 	onSwap,
 	children,
 }: {
-	children?: ReactChild[];
+	children?: ReactNode;
 	breakpoint: string;
-	breakpointActiveComponent: React.Component | React.ReactElement;
-	breakpointInactiveComponent: React.Component | React.ReactElement;
+	breakpointActiveComponent: ReactNode;
+	breakpointInactiveComponent: ReactNode;
 	onSwap?: () => void;
 	className?: string;
 } ) => {

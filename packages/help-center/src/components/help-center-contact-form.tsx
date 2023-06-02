@@ -39,6 +39,7 @@ import { getSectionName } from 'calypso/state/ui/selectors';
 import { useZendeskConfig, useContactFormTitle } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 import { getSupportVariationFromMode } from '../support-variations';
+import { SearchResult } from '../types';
 import { BackButton } from './back-button';
 import { HelpCenterGPT } from './help-center-gpt';
 import HelpCenterSearchResults from './help-center-search-results';
@@ -196,7 +197,7 @@ export const HelpCenterContactForm = () => {
 	const showingGPTResponse = enableGPTResponse && params.get( 'show-gpt' ) === 'true';
 
 	const redirectToArticle = useCallback(
-		( event, result ) => {
+		( event: React.MouseEvent< HTMLAnchorElement, MouseEvent >, result: SearchResult ) => {
 			event.preventDefault();
 
 			// if result.post_id isn't set then open in a new window
@@ -214,23 +215,18 @@ export const HelpCenterContactForm = () => {
 				return;
 			}
 
-			const searchResult = {
-				...result,
-				title: preventWidows( decodeEntities( result.title ) ),
-				query: debouncedMessage,
-			};
 			const params = new URLSearchParams( {
 				link: result.link,
-				postId: result.post_id,
+				postId: result.post_id.toString(),
 				query: debouncedMessage || '',
 				title: preventWidows( decodeEntities( result.title ) ),
 			} );
 
 			if ( result.blog_id ) {
-				params.set( 'blogId', result.blog_id );
+				params.set( 'blogId', result.blog_id.toString() );
 			}
 
-			navigate( `/post/?${ params }`, searchResult );
+			navigate( `/post/?${ params }` );
 		},
 		[ navigate, debouncedMessage ]
 	);
@@ -529,23 +525,18 @@ export const HelpCenterContactForm = () => {
 						isBusy={ isFetchingGPTResponse }
 						disabled={ isFetchingGPTResponse }
 						onClick={ handleCTA }
-						isPrimary={ ! showingGPTResponse || isGPTError }
-						isSecondary={ showingGPTResponse && ! isGPTError }
+						variant={ showingGPTResponse && ! isGPTError ? 'secondary' : 'primary' }
 						className="help-center-contact-form__site-picker-cta"
 					>
 						{ getCTALabel() }
 					</Button>
 					{ ! isFetchingGPTResponse && showingGPTResponse && ! hasSubmittingError && (
-						<Button
-							isPrimary={ ! isGPTError }
-							isSecondary={ isGPTError }
-							onClick={ handleGPTClose }
-						>
+						<Button variant={ isGPTError ? 'secondary' : 'primary' } onClick={ handleGPTClose }>
 							{ __( 'Close', __i18n_text_domain__ ) }
 						</Button>
 					) }
 					{ isFetchingGPTResponse && ! isGPTError && (
-						<Button isSecondary onClick={ handleGPTCancel }>
+						<Button variant="secondary" onClick={ handleGPTCancel }>
 							{ __( 'Cancel', __i18n_text_domain__ ) }
 						</Button>
 					) }
@@ -575,7 +566,7 @@ export const HelpCenterContactForm = () => {
 				<Button
 					disabled={ isCTADisabled() }
 					onClick={ handleCTA }
-					isPrimary
+					variant="primary"
 					className="help-center-contact-form__site-picker-cta"
 				>
 					{ getCTALabel() }
@@ -657,7 +648,7 @@ export const HelpCenterContactForm = () => {
 				<Button
 					disabled={ isCTADisabled() }
 					onClick={ handleCTA }
-					isPrimary
+					variant="primary"
 					className="help-center-contact-form__site-picker-cta"
 				>
 					{ getCTALabel() }

@@ -21,6 +21,7 @@ import type { HelpCenterSelect } from '@automattic/data-stores';
 
 interface OptionalDraggableProps extends Partial< DraggableProps > {
 	draggable: boolean;
+	children?: React.ReactNode;
 }
 
 const OptionalDraggable: FC< OptionalDraggableProps > = ( { draggable, ...props } ) => {

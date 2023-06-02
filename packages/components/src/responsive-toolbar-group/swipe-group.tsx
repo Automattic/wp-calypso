@@ -1,12 +1,12 @@
-import { ToolbarGroup, ToolbarButton as BaseToolbarButton } from '@wordpress/components';
+import { ToolbarGroup, ToolbarButton as BaseToolbarButton, Button } from '@wordpress/components';
 import classnames from 'classnames';
-import { ReactChild, useState, useRef, useEffect } from 'react';
-import type { Button } from '@wordpress/components';
+import { ReactChild, useState, useRef, useEffect, ComponentProps } from 'react';
 
 import './style.scss';
 
 const ToolbarButton = BaseToolbarButton as React.ComponentType<
-	( BaseToolbarButton.Props & { href?: string } ) | Button.Props
+	| ( ComponentProps< typeof BaseToolbarButton > & { href?: string } )
+	| ComponentProps< typeof Button >
 >;
 
 export default function SwipeGroup( {

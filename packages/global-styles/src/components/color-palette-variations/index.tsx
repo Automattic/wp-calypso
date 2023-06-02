@@ -3,11 +3,14 @@ import {
 	__unstableUseCompositeState as useCompositeState,
 	__unstableCompositeItem as CompositeItem,
 } from '@wordpress/components';
-import { GlobalStylesContext } from '@wordpress/edit-site/build-module/components/global-styles/context';
-import { mergeBaseAndUserConfigs } from '@wordpress/edit-site/build-module/components/global-styles/global-styles-provider';
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { useMemo, useContext } from 'react';
+import {
+	GlobalStylesContext,
+	mergeBaseAndUserConfigs,
+	withExperimentalBlockEditorProvider,
+} from '../../gutenberg-bridge';
 import { useColorPaletteVariations } from '../../hooks';
 import ColorPaletteVariationPreview from './preview';
 import type { GlobalStylesObject } from '../../types';
@@ -41,7 +44,6 @@ const ColorPaletteVariation = ( {
 			merged: mergeBaseAndUserConfigs( base, colorPaletteVariation ),
 		};
 	}, [ colorPaletteVariation, base ] );
-
 	return (
 		<CompositeItem
 			role="option"
@@ -77,7 +79,6 @@ const ColorPaletteVariations = ( {
 	const { base } = useContext( GlobalStylesContext );
 	const colorPaletteVariations = useColorPaletteVariations( siteId, stylesheet ) ?? [];
 	const composite = useCompositeState();
-
 	return (
 		<Composite
 			{ ...composite }
@@ -105,4 +106,4 @@ const ColorPaletteVariations = ( {
 	);
 };
 
-export default ColorPaletteVariations;
+export default withExperimentalBlockEditorProvider( ColorPaletteVariations );

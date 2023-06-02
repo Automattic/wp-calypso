@@ -131,6 +131,13 @@ object BuildDockerImage : BuildType({
 			--build-arg generate_cache_image=%UPDATE_BASE_IMAGE_CACHE%
 		""".trimIndent().replace("\n"," ")
 
+		bashNodeScript {
+			name = "TEST: Check files."
+			scriptContent = """
+				cat packages/data-stores/package.json
+				yarn explain peer-requirements p031cd
+			"""
+		}
 		dockerCommand {
 			name = "Build docker image"
 			commandType = build {
@@ -142,7 +149,9 @@ object BuildDockerImage : BuildType({
 					registry.a8c.com/calypso/app:commit-${Settings.WpCalypso.paramRefs.buildVcsNumber}
 					registry.a8c.com/calypso/app:latest
 				""".trimIndent()
-				commandArgs = "--pull --label com.a8c.target=calypso-live $commonArgs"
+				// Note: --no-cache tells Docker to avoid the layer cache, but doesn't
+				// impact if the Calypso cache image is used.
+				commandArgs = "--pull --no-cache=true --label com.a8c.target=calypso-live $commonArgs"
 			}
 			param("dockerImage.platform", "linux")
 		}

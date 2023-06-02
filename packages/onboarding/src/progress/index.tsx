@@ -6,6 +6,7 @@ import './style.scss';
 interface Props {
 	align?: 'center' | 'left' | 'right';
 	className?: string;
+	children?: React.ReactNode;
 }
 
 const Progress: React.FunctionComponent< Props > = ( {

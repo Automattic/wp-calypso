@@ -20,7 +20,7 @@ const WpcomTourKitStepCardOverlayControls: React.FunctionComponent< Props > = ( 
 			<Flex>
 				<Button
 					label={ __( 'Minimize Tour', __i18n_text_domain__ ) }
-					isPrimary
+					variant="primary"
 					className="wpcom-tour-kit-step-card-overlay-controls__minimize-icon"
 					icon={ minimize }
 					iconSize={ 24 }
@@ -28,7 +28,7 @@ const WpcomTourKitStepCardOverlayControls: React.FunctionComponent< Props > = ( 
 				></Button>
 				<Button
 					label={ __( 'Close Tour', __i18n_text_domain__ ) }
-					isPrimary
+					variant="primary"
 					icon={ close }
 					iconSize={ 24 }
 					onClick={ onDismiss( 'close-btn' ) }

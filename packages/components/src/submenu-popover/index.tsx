@@ -1,9 +1,16 @@
 import { Popover } from '@wordpress/components';
-import { LegacyRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+	LegacyRef,
+	useCallback,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+	ComponentProps,
+} from 'react';
 
-interface SubmenuPopoverProps extends Popover.Props {
+interface SubmenuPopoverProps extends ComponentProps< typeof Popover > {
 	isVisible?: boolean;
-	offset?: number | { mainAxis?: number; crossAxis?: number; alignmentAxis?: number | null };
 	placement?:
 		| 'top'
 		| 'top-start'
@@ -87,7 +94,7 @@ export function useSubmenuPopoverProps< T extends HTMLElement >(
 		isVisible,
 		placement: hasRightSpace ? 'right-start' : 'left-start',
 		anchorRect: anchor?.current?.getBoundingClientRect(),
-		offset: { crossAxis: offsetTop },
+		offset: offsetTop,
 		__unstableForcePosition: true,
 	};
 

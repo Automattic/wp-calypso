@@ -1,32 +1,14 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import Search from '@automattic/search';
-import {
-	Button,
-	CustomSelectControl,
-	Flex as WpFlex,
-	FlexBlock,
-	FlexItem,
-} from '@wordpress/components';
+import { Button, CustomSelectControl, Flex, FlexBlock, FlexItem } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useState } from 'react';
 import { getSearchedLanguages, LocalizedLanguageNames } from './search';
 import type { Language, LanguageGroup } from './Language';
-import type { ReactNode, ComponentType } from 'react';
+import type { ReactNode } from 'react';
 
 import './style.scss';
-
-// TODO: Definitely typed is out of date with the latest wp components, so we need
-// to override the props for the Flex component to get everything working for now.
-// Remove once definitely typed is updated, or if we can consume types directly
-// from wp components.
-const Flex = WpFlex as ComponentType< {
-	className?: string;
-	align?: string;
-	direction?: string;
-	expanded?: boolean;
-	justify?: string;
-} >;
 
 type Props< TLanguage extends Language > = {
 	onSelectLanguage: ( language: TLanguage ) => void;
@@ -165,7 +147,11 @@ function LanguagePicker< TLanguage extends Language >( {
 					hideLabelFromVision
 					value={ selectControlOptions.find( ( option ) => option.key === filter ) }
 					options={ selectControlOptions }
-					onChange={ ( { selectedItem } ) => selectedItem && setFilter( selectedItem.key ) }
+					onChange={ ( {
+						selectedItem,
+					}: {
+						selectedItem?: ( typeof selectControlOptions )[ number ];
+					} ) => selectedItem && setFilter( selectedItem.key ) }
 				/>
 				<div className="language-picker-component__search-mobile">
 					<Search
@@ -207,7 +193,7 @@ function LanguagePicker< TLanguage extends Language >( {
 				<div className="language-picker-component__language-buttons">
 					{ languagesToRender.map( ( language ) => (
 						<Button
-							isPrimary={ selectedLanguage && language.langSlug === selectedLanguage.langSlug }
+							variant={ selectedLanguage?.langSlug === language.langSlug ? 'primary' : 'secondary' }
 							className="language-picker-component__language-button"
 							key={ language.langSlug }
 							onClick={ () => onSelectLanguage( language ) }

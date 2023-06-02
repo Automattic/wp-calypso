@@ -1,29 +1,30 @@
-import { GlobalStylesContext } from '@wordpress/edit-site/build-module/components/global-styles/context';
-import { mergeBaseAndUserConfigs } from '@wordpress/edit-site/build-module/components/global-styles/global-styles-provider';
-import { isEmpty, mapValues } from 'lodash';
 import { useState, useMemo, useCallback } from 'react';
+import { GlobalStylesContext, mergeBaseAndUserConfigs } from '../../gutenberg-bridge';
 import { useGetGlobalStylesBaseConfig } from '../../hooks';
 import type { GlobalStylesObject } from '../../types';
 
-const cleanEmptyObject = ( object: any ) => {
+// Recursively removes all key/value pairs where value is undefined.
+function cleanEmptyObject< T >( object: T ): T {
 	if ( object === null || typeof object !== 'object' || Array.isArray( object ) ) {
 		return object;
 	}
-	const cleanedNestedObjects: any = Object.fromEntries(
-		Object.entries( mapValues( object, cleanEmptyObject ) ).filter( ( [ , value ] ) =>
-			Boolean( value )
-		)
+	const cleanedNestedObjects = Object.fromEntries(
+		Object.entries( object )
+			.map( ( [ key, value ] ) => [ key, cleanEmptyObject( value ) ] )
+			.filter( ( [ , value ] ) => value !== undefined )
 	);
-	return isEmpty( cleanedNestedObjects ) ? undefined : cleanedNestedObjects;
-};
 
-const useGlobalStylesUserConfig = () => {
+	return Object.keys( cleanedNestedObjects ).length > 0 ? cleanedNestedObjects : undefined;
+}
+
+type SetConfig = ( callback: ( config: GlobalStylesObject ) => GlobalStylesObject ) => void;
+
+const useGlobalStylesUserConfig = (): [ boolean, GlobalStylesObject, SetConfig ] => {
 	const [ userConfig, setUserConfig ] = useState< GlobalStylesObject >( {
 		settings: {},
 		styles: {},
 	} );
-
-	const setConfig = useCallback(
+	const setConfig: SetConfig = useCallback(
 		( callback ) => {
 			setUserConfig( ( currentConfig ) => {
 				const updatedConfig = callback( currentConfig );
@@ -35,28 +36,26 @@ const useGlobalStylesUserConfig = () => {
 		},
 		[ setUserConfig ]
 	);
-
-	return [ !! true, userConfig, setConfig ];
+	return [ true, userConfig, setConfig ];
 };
 
-const useGlobalStylesBaseConfig = ( siteId: number | string, stylesheet: string ) => {
+const useGlobalStylesBaseConfig = (
+	siteId: number | string,
+	stylesheet: string
+): [ boolean, GlobalStylesObject | undefined ] => {
 	const { data } = useGetGlobalStylesBaseConfig( siteId, stylesheet );
-
 	return [ !! data, data ];
 };
 
 const useGlobalStylesContext = ( siteId: number | string, stylesheet: string ) => {
 	const [ isUserConfigReady, userConfig, setUserConfig ] = useGlobalStylesUserConfig();
-
 	const [ isBaseConfigReady, baseConfig ] = useGlobalStylesBaseConfig( siteId, stylesheet );
-
 	const mergedConfig = useMemo( () => {
 		if ( ! baseConfig || ! userConfig ) {
 			return {};
 		}
 		return mergeBaseAndUserConfigs( baseConfig, userConfig );
 	}, [ userConfig, baseConfig ] );
-
 	const context = useMemo( () => {
 		return {
 			isReady: isUserConfigReady && isBaseConfigReady,
@@ -73,7 +72,6 @@ const useGlobalStylesContext = ( siteId: number | string, stylesheet: string ) =
 		isUserConfigReady,
 		isBaseConfigReady,
 	] );
-
 	return context;
 };
 
@@ -86,11 +84,9 @@ interface Props {
 
 const GlobalStylesProvider = ( { siteId, stylesheet, children, placeholder = null }: Props ) => {
 	const context = useGlobalStylesContext( siteId, stylesheet );
-
 	if ( ! context.isReady ) {
 		return placeholder;
 	}
-
 	return (
 		<GlobalStylesContext.Provider value={ context }>{ children }</GlobalStylesContext.Provider>
 	);

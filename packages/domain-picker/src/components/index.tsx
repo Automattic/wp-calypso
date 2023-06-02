@@ -37,6 +37,7 @@ type DomainGroup = 'sub-domain' | 'professional';
 
 export const ItemGrouper: FunctionComponent< {
 	groupItems: boolean;
+	children: React.ReactNode;
 } > = function ItemGrouper( { groupItems, children } ) {
 	if ( groupItems ) {
 		return <div className="domain-picker__suggestion-item-group">{ children }</div>;
@@ -44,7 +45,11 @@ export const ItemGrouper: FunctionComponent< {
 	return <>{ children }</>;
 };
 
-export const ItemGroupLabel: FunctionComponent = function ItemGroupLabel( { children } ) {
+export const ItemGroupLabel = function ItemGroupLabel( {
+	children,
+}: {
+	children: React.ReactNode;
+} ) {
 	return <p className="domain-picker__suggestion-group-label">{ children }</p>;
 };
 
@@ -312,7 +317,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 							) }
 					</p>
 					<Button
-						isPrimary
+						variant="primary"
 						className="domain-picker__error-retry-btn"
 						onClick={ retryDomainSuggestionRequest }
 					>
@@ -434,7 +439,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 							allDomainSuggestions?.length &&
 							allDomainSuggestions?.length > quantity && (
 								<div className="domain-picker__show-more">
-									<Button onClick={ () => setIsExpanded( true ) } isLink>
+									<Button onClick={ () => setIsExpanded( true ) } variant="link">
 										{ __( 'View more results', __i18n_text_domain__ ) }
 									</Button>
 								</div>

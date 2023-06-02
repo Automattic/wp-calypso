@@ -103,7 +103,7 @@ export function preparePreviewText( text: string, options: PreviewTextOptions ):
 		}
 	}
 
-	const componentMap: Record< string, React.ReactNode > = {};
+	const componentMap: Record< string, React.ReactElement > = {};
 
 	if ( hyperlinkUrls ) {
 		// Convert URLs to hyperlinks.

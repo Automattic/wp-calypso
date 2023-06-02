@@ -63,7 +63,8 @@ RUN bash /tmp/env-config.sh
 # This layer is populated with up-to-date files from
 # Calypso development.
 COPY . /calypso/
-RUN yarn install --immutable --check-cache
+RUN cat /calypso/packages/data-stores/package.json && yarn install
+RUN cat packages/data-stores/package.json && yarn explain peer-requirements p031cd && yarn install && yarn explain peer-requirements p031cd && cat packages/data-stores/package.json
 
 # Build the final layer
 #

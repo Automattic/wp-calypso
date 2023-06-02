@@ -359,7 +359,7 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 						</p>
 						<div className="page-pattern-modal__button-container">
 							<Button
-								isSecondary
+								variant="secondary"
 								onClick={ () => this.setPattern( 'blank' ) }
 								className="page-pattern-modal__blank-button"
 							>
@@ -384,9 +384,14 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 							className="page-pattern-modal__category-list"
 							orientation="vertical"
 							aria-labelledby={ `page-pattern-modal__list-heading-${ instanceId }` }
-							onNavigate={ ( _index, child ) =>
-								this.handleCategorySelection( child.dataset.slug ?? null )
-							}
+							onNavigate={ (
+								_index: number,
+								child: {
+									dataset: {
+										slug?: string;
+									};
+								}
+							) => this.handleCategorySelection( child.dataset.slug ?? null ) }
 						>
 							{ this.getPatternCategories()?.map( ( { slug, name } ) => (
 								<MenuItem

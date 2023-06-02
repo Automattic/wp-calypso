@@ -4,6 +4,7 @@ import { FunctionComponent } from 'react';
 interface Props {
 	href: string;
 	onClick?: () => void;
+	children?: React.ReactNode;
 }
 
 const BillingButton: FunctionComponent< Props > = ( { href, children, onClick = () => null } ) => {
@@ -13,7 +14,7 @@ const BillingButton: FunctionComponent< Props > = ( { href, children, onClick = 
 			className="hb-pricing-plans-embed__detail-cta"
 			href={ href }
 			target="_blank"
-			isPrimary
+			variant="primary"
 		>
 			{ children }
 		</Button>

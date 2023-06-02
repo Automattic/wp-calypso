@@ -13,7 +13,7 @@ const useFocusTrap = ( ref: React.MutableRefObject< null | HTMLElement > ): void
 	const [ lastFocusableElement, setLastFocusableElement ] = useState< HTMLElement | undefined >();
 
 	const handleTrapFocus = useCallback(
-		( event ) => {
+		( event: KeyboardEvent ) => {
 			let handled = false;
 
 			if ( event.key === 'Tab' ) {

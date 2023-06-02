@@ -9,6 +9,7 @@ import type { ReactNode } from 'react';
 
 type Props = {
 	ownershipResult: AnalysisReport | null;
+	children?: ReactNode;
 };
 
 function getResponses( siteName?: string ) {
@@ -38,10 +39,16 @@ function getResponses( siteName?: string ) {
 					),
 					{
 						hosted_on_our_services: (
-							<ExternalLink href={ localizeUrl( 'https://wordpress.com/support/com-vs-org/' ) } />
+							<ExternalLink
+								href={ localizeUrl( 'https://wordpress.com/support/com-vs-org/' ) }
+								children={ null }
+							/>
 						),
 						wordpress_org_community_forums: (
-							<ExternalLink href={ localizeUrl( 'https://wordpress.org/support/forums/' ) } />
+							<ExternalLink
+								href={ localizeUrl( 'https://wordpress.org/support/forums/' ) }
+								children={ null }
+							/>
 						),
 					}
 				) }

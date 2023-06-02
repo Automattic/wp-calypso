@@ -90,11 +90,11 @@ const FirstPostPublishedModal: React.FC = () => {
 			imageSrc={ postPublishedImage }
 			actionButtons={
 				<>
-					<Button isPrimary onClick={ handleViewPostClick }>
+					<Button variant="primary" onClick={ handleViewPostClick }>
 						{ __( 'View Post', 'full-site-editing' ) }
 					</Button>
 					{ launchpadScreenOption === 'full' && siteIntentOption === 'write' && (
-						<Button isSecondary onClick={ handleNextStepsClick }>
+						<Button variant="secondary" onClick={ handleNextStepsClick }>
 							{ __( 'Next Steps', 'full-site-editing' ) }
 						</Button>
 					) }

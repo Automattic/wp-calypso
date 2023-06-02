@@ -111,7 +111,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 		if ( design.is_premium && shouldUpgrade ) {
 			text = (
 				<Button
-					isLink={ true }
+					variant="link"
 					className="design-picker__button-link"
 					onClick={ ( e: any ) => {
 						e.stopPropagation();
@@ -215,7 +215,7 @@ const DesignButtonCover: React.FC< DesignButtonCoverProps > = ( {
 			<div className="design-button-cover__button-groups">
 				<Button
 					className="design-button-cover__button"
-					isPrimary
+					variant="primary"
 					onClick={ () => ( shouldUpgrade ? onUpgrade?.( design ) : onSelect( design ) ) }
 				>
 					{ shouldUpgrade
