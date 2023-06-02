@@ -364,7 +364,7 @@ function useShowSiteTransferredNotice() {
 	useEffect( () => {
 		const url = new URL( window.location.href );
 		if ( url.searchParams.get( 'site-transfer-confirm' ) === 'true' ) {
-			dispatch( successNotice( __( 'Your blog transfer succeeded!' ), { duration: 8000 } ) );
+			dispatch( successNotice( __( 'Your site transfer succeeded!' ), { duration: 8000 } ) );
 
 			// Remove query param without triggering a re-render
 			url.searchParams.delete( 'site-transfer-confirm' );
