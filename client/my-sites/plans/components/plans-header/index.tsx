@@ -72,7 +72,6 @@ const PlansHeader: React.FunctionComponent< {
 	return (
 		<FormattedHeader
 			className="plans__formatted-header plans__section-header modernized-header"
-			brandFont
 			headerText={ translate( 'Plans' ) }
 			subHeaderText={ plansDescription }
 			align="left"

@@ -172,6 +172,7 @@ export function SitesDashboard( {
 	} );
 
 	useShowSiteCreationNotice( allSites, newSiteID );
+	useShowSiteTransferredNotice();
 
 	return (
 		<main>
@@ -355,4 +356,19 @@ function useShowSiteCreationNotice( allSites: SiteExcerptData[], newSiteID: numb
 		newUrl.searchParams.delete( 'new-site' );
 		window.history.replaceState( null, '', newUrl.toString() );
 	}, [ __, allSites, dispatch, newSiteID ] );
+}
+
+function useShowSiteTransferredNotice() {
+	const { __ } = useI18n();
+	const dispatch = useDispatch();
+	useEffect( () => {
+		const url = new URL( window.location.href );
+		if ( url.searchParams.get( 'site-transfer-confirm' ) === 'true' ) {
+			dispatch( successNotice( __( 'Your site transfer succeeded!' ), { duration: 8000 } ) );
+
+			// Remove query param without triggering a re-render
+			url.searchParams.delete( 'site-transfer-confirm' );
+			window.history.replaceState( null, '', url.toString() );
+		}
+	}, [ __, dispatch ] );
 }
