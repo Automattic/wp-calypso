@@ -113,11 +113,11 @@ export default function EmailAddressEditor( {
 
 	// Add email item to the list once the email is verified
 	useEffect( () => {
-		if ( verifyEmail.isSuccess ) {
+		if ( verifyEmail.isVerified ) {
 			handleSetEmailItems();
 			setVerifiedEmail( emailItem.email );
 		}
-	}, [ emailItem.email, handleSetEmailItems, setVerifiedEmail, verifyEmail.isSuccess ] );
+	}, [ emailItem.email, handleSetEmailItems, setVerifiedEmail, verifyEmail.isVerified ] );
 
 	// Show error message when email verification fails
 	useEffect( () => {
@@ -138,6 +138,13 @@ export default function EmailAddressEditor( {
 			} );
 		}
 	}, [ selectedEmail ] );
+
+	// Refetch verified contacts if failed
+	useEffect( () => {
+		verifiedContacts.refetchIfFailed();
+		// Disable linting because we only want to refetch once
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
 
 	// Remove email item when user confirms to remove the email address
 	const handleRemove = () => {
