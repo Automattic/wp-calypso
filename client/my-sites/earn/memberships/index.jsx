@@ -111,6 +111,7 @@ class MembershipsSection extends Component {
 					</div>
 					<CommissionFees
 						commission={ commission }
+						iconSize={ 12 }
 						className="memberships__earnings-breakdown-notes"
 					/>
 				</Card>

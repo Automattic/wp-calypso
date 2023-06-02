@@ -6,9 +6,10 @@ import { preventWidows } from 'calypso/lib/formatting';
 type CommissionFeesProps = {
 	className?: string;
 	commission: number | null;
+	iconSize?: number;
 };
 
-const CommissionFees = ( { commission, className }: CommissionFeesProps ) => {
+const CommissionFees = ( { className, commission, iconSize = 16 }: CommissionFeesProps ) => {
 	const translate = useTranslate();
 
 	return commission !== null ? (
@@ -30,6 +31,7 @@ const CommissionFees = ( { commission, className }: CommissionFeesProps ) => {
 										'https://wordpress.com/support/wordpress-editor/blocks/payments/#related-fees'
 									) }
 									icon={ true }
+									iconSize={ iconSize }
 								/>
 							),
 						},
