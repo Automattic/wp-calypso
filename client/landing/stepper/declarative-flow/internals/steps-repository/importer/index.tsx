@@ -18,12 +18,12 @@ import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
 import { useDispatch, useSelector } from 'calypso/state';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import {
 	fetchImporterState,
 	resetImport,
 	resetImportReceived,
 } from 'calypso/state/imports/actions';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { appStates } from 'calypso/state/imports/constants';
 import {
 	getImporterStatusForSiteId,
