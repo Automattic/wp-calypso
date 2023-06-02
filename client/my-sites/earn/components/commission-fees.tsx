@@ -6,9 +6,15 @@ type CommissionFeesProps = {
 	className?: string;
 	commission: number | null;
 	iconSize?: number;
+	siteSlug?: string | null;
 };
 
-const CommissionFees = ( { className, commission, iconSize = 16 }: CommissionFeesProps ) => {
+const CommissionFees = ( {
+	className,
+	commission,
+	iconSize = 16,
+	siteSlug,
+}: CommissionFeesProps ) => {
 	const translate = useTranslate();
 
 	if ( commission === null ) {
@@ -19,10 +25,10 @@ const CommissionFees = ( { className, commission, iconSize = 16 }: CommissionFee
 	const StripeFeesLink = (
 		<ExternalLink href="https://stripe.com/pricing" icon={ true } iconSize={ iconSize } />
 	);
-	const plansLink = '/plans';
+	const plansLink = `/plans/${ siteSlug }`;
 	let commissionFeesText;
 
-	if ( commission === 0 ) {
+	if ( commission === 0 || ! siteSlug ) {
 		commissionFeesText = translate(
 			'With your current plan, the transaction fee for payments is %(commissionFee)d% (+ <StripeFeesLink>Stripe fees</StripeFeesLink>).',
 			{

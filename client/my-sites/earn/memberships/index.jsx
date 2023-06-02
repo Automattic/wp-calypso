@@ -73,7 +73,8 @@ class MembershipsSection extends Component {
 		}
 	}
 	renderEarnings() {
-		const { commission, currency, forecast, lastMonth, siteId, total, translate } = this.props;
+		const { commission, currency, forecast, lastMonth, siteId, siteSlug, total, translate } =
+			this.props;
 		return (
 			<div>
 				<SectionHeader label={ translate( 'Earnings' ) } />
@@ -112,6 +113,7 @@ class MembershipsSection extends Component {
 					<CommissionFees
 						commission={ commission }
 						iconSize={ 12 }
+						siteSlug={ siteSlug }
 						className="memberships__earnings-breakdown-notes"
 					/>
 				</Card>
@@ -531,7 +533,7 @@ class MembershipsSection extends Component {
 	}
 
 	renderOnboarding( cta, intro ) {
-		const { commission, translate } = this.props;
+		const { commission, translate, siteSlug } = this.props;
 
 		return (
 			<Card>
@@ -598,7 +600,7 @@ class MembershipsSection extends Component {
 						<h3>{ translate( 'No membership fees' ) }</h3>
 						<p>{ preventWidows( translate( 'No monthly or annual fees charged.' ) ) }</p>
 						<p>
-							<CommissionFees commission={ commission } />
+							<CommissionFees commission={ commission } siteSlug={ siteSlug } />
 						</p>
 					</div>
 					<div>
