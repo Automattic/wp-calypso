@@ -541,26 +541,29 @@ export function prepareDomainContactValidationRequest(
 	}
 
 	return {
-		contact_information: {
-			first_name: details.firstName?.value,
-			last_name: details.lastName?.value,
-			organization: details.organization?.value,
-			email: details.email?.value,
-			phone: details.phone?.value,
-			phone_number_country: details.phoneNumberCountry?.value,
-			address_1: details.address1?.value,
-			address_2: details.address2?.value,
-			city: details.city?.value,
-			state: details.state?.value,
-			postal_code: tryToGuessPostalCodeFormat(
-				details.postalCode?.value ?? '',
-				details.countryCode?.value
-			),
-			country_code: details.countryCode?.value,
-			fax: details.fax?.value,
-			vat_id: details.vatId?.value,
-			extra,
-		},
+		contact_information: { ...prepareValidationRequestContactSection( details ), extra },
+	};
+}
+
+function prepareValidationRequestContactSection( details: ManagedContactDetails ) {
+	return {
+		address_1: details.address1?.value,
+		address_2: details.address2?.value,
+		city: details.city?.value,
+		country_code: details.countryCode?.value ?? '',
+		email: details.email?.value ?? '',
+		fax: details.fax?.value,
+		first_name: details.firstName?.value ?? '',
+		last_name: details.lastName?.value ?? '',
+		organization: details.organization?.value,
+		phone: details.phone?.value,
+		phone_number_country: details.phoneNumberCountry?.value,
+		postal_code: tryToGuessPostalCodeFormat(
+			details.postalCode?.value ?? '',
+			details.countryCode?.value
+		),
+		state: details.state?.value,
+		vat_id: details.vatId?.value,
 	};
 }
 
@@ -568,16 +571,7 @@ export function prepareGSuiteContactValidationRequest(
 	details: ManagedContactDetails
 ): GSuiteContactValidationRequest {
 	return {
-		contact_information: {
-			first_name: details.firstName?.value ?? '',
-			last_name: details.lastName?.value ?? '',
-			email: details.email?.value ?? '',
-			postal_code: tryToGuessPostalCodeFormat(
-				details.postalCode?.value ?? '',
-				details.countryCode?.value
-			),
-			country_code: details.countryCode?.value ?? '',
-		},
+		contact_information: prepareValidationRequestContactSection( details ),
 	};
 }
 
