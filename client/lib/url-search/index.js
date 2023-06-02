@@ -30,7 +30,6 @@ export const buildSearchUrl = ( { uri, search, queryKey = 's' } ) => {
 	} else {
 		parsedUrl.searchParams.delete( queryKey );
 	}
-
 	return parsedUrl;
 };
 
@@ -60,14 +59,15 @@ const UrlSearch = ( Component ) =>
 				search: query,
 				queryKey: this.props.queryKey,
 			} );
+			const pathSearch = searchURL.pathname + searchURL.search;
 
 			debug( 'search for: %s', query );
 			if ( this.props.search && query ) {
-				debug( 'replacing URL: %s', searchURL );
-				page.replace( searchURL.pathname + searchURL.search );
+				debug( 'replacing URL: %s', pathSearch );
+				page.replace( pathSearch );
 			} else {
-				debug( 'setting URL: %s', searchURL );
-				page( searchURL );
+				debug( 'setting URL: %s', pathSearch );
+				page( pathSearch );
 			}
 		};
 
