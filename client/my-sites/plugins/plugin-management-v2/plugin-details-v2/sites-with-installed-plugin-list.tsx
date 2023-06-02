@@ -1,8 +1,8 @@
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { getSitesWithSecondarySites } from 'calypso/my-sites/plugins/plugin-management-v2/utils/get-sites-with-secondary-sites';
+import { useSelector } from 'calypso/state';
 import PluginManageConnection from '../plugin-manage-connection';
 import PluginManageSubcription from '../plugin-manage-subscription';
 import RemovePlugin from '../remove-plugin';

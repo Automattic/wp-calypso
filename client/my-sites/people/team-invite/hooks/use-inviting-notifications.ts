@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'calypso/state';
 import { getSendInviteState } from 'calypso/state/invites/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 

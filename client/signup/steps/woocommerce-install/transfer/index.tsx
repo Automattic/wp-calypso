@@ -1,8 +1,8 @@
 import config from '@automattic/calypso-config';
 import { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import { logToLogstash } from 'calypso/lib/logstash';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSiteDomain } from 'calypso/state/sites/selectors';

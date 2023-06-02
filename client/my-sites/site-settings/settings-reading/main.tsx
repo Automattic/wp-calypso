@@ -7,6 +7,7 @@ import Main from 'calypso/components/main';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSiteUrl, isJetpackSite } from 'calypso/state/sites/selectors';
+import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ReaderSettingsSection from '../reader-settings';
 import { NewsletterSettingsSection } from '../reading-newsletter-settings';
@@ -81,7 +82,7 @@ const getFormSettings = ( settings: unknown & Fields ) => {
 	};
 };
 
-const connectComponent = connect( ( state ) => {
+const connectComponent = connect( ( state: IAppState ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteUrl = siteId && getSiteUrl( state, siteId );
 	const siteIsJetpack = isJetpackSite( state, siteId );

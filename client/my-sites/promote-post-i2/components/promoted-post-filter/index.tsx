@@ -1,9 +1,9 @@
-import { useSelector } from 'react-redux';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { TabType } from 'calypso/my-sites/promote-post/main';
 import { TabOption } from 'calypso/my-sites/promote-post-i2/main';
+import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getAdvertisingDashboardPath } from '../../utils';
 

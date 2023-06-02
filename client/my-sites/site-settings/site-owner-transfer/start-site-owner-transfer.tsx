@@ -1,47 +1,228 @@
 import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
-import { ToggleControl, TextControl } from '@wordpress/components';
-import { localize } from 'i18n-calypso';
+import { ToggleControl } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
+import { sprintf } from '@wordpress/i18n';
+import { localize, useTranslate } from 'i18n-calypso';
 import { useState, FormEvent } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import ActionPanelBody from 'calypso/components/action-panel/body';
 import Notice from 'calypso/components/notice';
-import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
-import {
-	getSelectedSiteId,
-	getSelectedSite,
-	getSelectedSiteSlug,
-} from 'calypso/state/ui/selectors';
+import { ResponseDomain } from 'calypso/lib/domains/types';
+import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import { IAppState } from 'calypso/state/types';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { useStartSiteOwnerTransfer } from './use-start-site-owner-transfer';
+import type { Purchase } from 'calypso/lib/purchases/types';
 
 type Props = {
-	currentUserEmail: string | null;
 	selectedSiteId: number | null;
 	selectedSiteSlug: string | null;
-	selectedSiteTitle: string | undefined;
+	siteOwner?: string;
+	customDomains: ResponseDomain[];
+	onSiteTransferSuccess: () => void;
+	onSiteTransferError: () => void;
 	translate: ( text: string, args?: Record< string, unknown > ) => string;
 };
 
+const FormToggleControl = styled( ToggleControl )( {
+	fontSize: '14px',
+} );
+
 const FormWrapper = styled.div( {
 	marginBottom: '1.5em',
+} );
+
+const ButtonContainer = styled.div( {
+	marginTop: '1.5em',
+} );
+
+const Strong = styled( 'strong' )( {
+	fontWeight: 500,
 } );
 
 const SiteOwnerTransferActionPanelBody = styled( ActionPanelBody )( {
 	overflow: 'visible !important',
 } );
 
+const Title = styled.h2( {
+	fontWeight: 500,
+	marginBottom: '1em',
+} );
+
+const Text = styled.p( {
+	marginBottom: '0.5em !important',
+} );
+
+const List = styled.ul( {
+	marginLeft: '2em',
+} );
+
+const ListItem = styled.li( {
+	marginBottom: '0.25em',
+} );
+
+const DomainsCard = ( {
+	domains,
+	siteSlug,
+	siteOwner,
+}: {
+	domains: ResponseDomain[];
+	siteSlug: string | null;
+	siteOwner?: string;
+} ) => {
+	const translate = useTranslate();
+	return (
+		<>
+			<Title>{ translate( 'Domains' ) }</Title>
+			{ domains.length === 0 ? (
+				<List>
+					<ListItem>
+						{ createInterpolateElement(
+							sprintf(
+								// translators: siteSlug is the current site slug, siteOwner is the user that the site is going to
+								// transer to
+								translate(
+									'The domain name <strong>%(siteSlug)s</strong> will be transferred to <strong>%(siteOwner)s</strong> and will remain working on the site.'
+								),
+								{ siteSlug, siteOwner }
+							),
+							{ strong: <Strong /> }
+						) }
+					</ListItem>
+				</List>
+			) : (
+				<>
+					<Text>
+						{ createInterpolateElement(
+							sprintf(
+								// translators: siteOwner is the user that the site is going to transfer to
+								translate(
+									'The following domains will be transferred to <strong>%(siteOwner)s</strong> and will remain working on the site:'
+								),
+								{ siteOwner }
+							),
+							{ strong: <Strong /> }
+						) }
+					</Text>
+					<List>
+						{ domains.map( ( domain ) => (
+							<ListItem key={ domain.name }>{ domain.name }</ListItem>
+						) ) }
+					</List>
+				</>
+			) }
+		</>
+	);
+};
+
+const UpgradesCard = ( {
+	purchases,
+	siteSlug,
+	siteOwner,
+}: {
+	purchases: Purchase[];
+	siteSlug: string | null;
+	siteOwner?: string;
+} ) => {
+	const translate = useTranslate();
+	if ( purchases.length === 0 ) {
+		return null;
+	}
+	return (
+		<>
+			<Title>{ translate( 'Upgrades' ) }</Title>
+			<List>
+				<ListItem>
+					{ createInterpolateElement(
+						sprintf(
+							// translators: siteSlug is the current site slug, siteOwner is the user that the site is going to
+							// transer to
+							translate(
+								'Your paid upgrades on <strong>%(siteSlug)s</strong> will be transferred to <strong>%(siteOwner)s</strong> and will remain with the site.'
+							),
+							{ siteSlug, siteOwner }
+						),
+						{ strong: <Strong /> }
+					) }
+				</ListItem>
+			</List>
+		</>
+	);
+};
+
+const ContentAndOwnershipCard = ( {
+	siteSlug,
+	siteOwner,
+}: {
+	siteSlug: string | null;
+	siteOwner?: string;
+} ) => {
+	const translate = useTranslate();
+	return (
+		<>
+			<Title>{ translate( 'Content and ownership' ) }</Title>
+			<List>
+				<ListItem>
+					{ createInterpolateElement(
+						sprintf(
+							// translators: siteSlug is the current site slug, siteOwner is the user that the site is going to
+							// transer to
+							translate(
+								'You’ll be removed as owner of <strong>%(siteSlug)s</strong> and <strong>%(siteOwner)s</strong> will be the new owner from now on.'
+							),
+							{ siteSlug, siteOwner }
+						),
+						{ strong: <Strong /> }
+					) }
+				</ListItem>
+				<ListItem>
+					{ createInterpolateElement(
+						sprintf(
+							// translators: siteSlug is the current site slug, siteOwner is the user that the site is going to
+							// transer to
+							translate(
+								'You will not be able to access <strong>%(siteSlug)s</strong> unless allowed by <strong>%(siteOwner)s</strong>.'
+							),
+							{ siteSlug, siteOwner }
+						),
+						{ strong: <Strong /> }
+					) }
+				</ListItem>
+				<ListItem>
+					{ createInterpolateElement(
+						sprintf(
+							// translators: siteSlug is the current site slug, siteOwner is the user that the site is going to
+							// transer to
+							translate(
+								'Your posts on <strong>%(siteSlug)s</strong> will be transferred to <strong>%(siteOwner)s</strong> and will no longer be authored by your account.'
+							),
+							{ siteSlug, siteOwner }
+						),
+						{ strong: <Strong /> }
+					) }
+				</ListItem>
+			</List>
+		</>
+	);
+};
+
 const StartSiteOwnerTransfer = ( {
-	currentUserEmail,
 	selectedSiteId,
 	selectedSiteSlug,
-	selectedSiteTitle,
+	siteOwner,
+	customDomains,
+	onSiteTransferSuccess,
+	onSiteTransferError,
 	translate,
 }: Props ) => {
 	const [ confirmFirstToggle, setConfirmFirstToggle ] = useState( false );
 	const [ confirmSecondToggle, setConfirmSecondToggle ] = useState( false );
-	const [ newOwnerUsername, setNewOwnerUsername ] = useState( '' );
+	const [ confirmThirdToggle, setConfirmThirdToggle ] = useState( false );
 	const [ startSiteTransferError, setStartSiteTransferError ] = useState( '' );
 	const [ startSiteTransferSuccess, setStartSiteTransferSuccess ] = useState( false );
+
+	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSiteId ) );
 
 	const { startSiteOwnerTransfer, isLoading: isStartingSiteTransfer } = useStartSiteOwnerTransfer(
 		selectedSiteId,
@@ -52,143 +233,104 @@ const StartSiteOwnerTransfer = ( {
 			},
 			onError: ( error ) => {
 				setStartSiteTransferError( error.message );
+				onSiteTransferError?.();
 			},
 			onSuccess: () => {
 				setStartSiteTransferSuccess( true );
+				onSiteTransferSuccess?.();
 			},
 		}
 	);
 
 	const handleFormSubmit = ( event: FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
-		startSiteOwnerTransfer( { newSiteOwner: newOwnerUsername } );
+		if ( ! siteOwner ) {
+			return;
+		}
+		startSiteOwnerTransfer( { newSiteOwner: siteOwner } );
 	};
 
 	const startSiteTransferForm = (
 		<FormWrapper>
 			<p>
-				{ translate(
-					'Please make sure you understand the changes that will be made and that these changes cannot be undone before you continue:'
-				) }
+				<Strong>
+					{ translate( 'To transfer your site, review and accept the following statements:' ) }
+				</Strong>
 			</p>
-			<ToggleControl
+			<FormToggleControl
 				disabled={ false }
 				label={ translate(
-					'I understand the changes that will be made once I authorize this transfer'
+					'I understand the changes that will be made once I authorize this transfer.'
 				) }
 				checked={ confirmFirstToggle }
 				onChange={ () => setConfirmFirstToggle( ! confirmFirstToggle ) }
 			/>
-			<ToggleControl
+			<FormToggleControl
 				disabled={ false }
-				label={ translate(
-					'I want to transfer ownership of the site and all my related upgrades'
-				) }
+				label={
+					purchases.length === 0
+						? translate( 'I want to transfer the ownership of the site' )
+						: translate( 'I want to transfer ownership of the site and all my related upgrades.' )
+				}
 				checked={ confirmSecondToggle }
 				onChange={ () => setConfirmSecondToggle( ! confirmSecondToggle ) }
 			/>
-			{ confirmFirstToggle && confirmSecondToggle && (
-				<form onSubmit={ handleFormSubmit }>
-					{ startSiteTransferError && (
-						<Notice status="is-error" showDismiss={ false }>
-							{ startSiteTransferError }
-						</Notice>
-					) }
-					<p>
-						{ translate(
-							'Enter the username or email address of the registered WordPress.com user that you want to transfer ownership of %(selectedSiteTitle)s (%(selectedSiteSlug)s) to:',
-							{
-								args: { selectedSiteTitle, selectedSiteSlug },
-							}
-						) }
-					</p>
-					<TextControl
-						autoComplete="off"
-						label={ translate( 'Username or email address of user to receive the blog' ) }
-						value={ newOwnerUsername }
-						onChange={ ( value ) => setNewOwnerUsername( value ) }
-					/>
+			<FormToggleControl
+				disabled={ false }
+				label={ translate( 'I understand that transferring a site cannot be undone.' ) }
+				checked={ confirmThirdToggle }
+				onChange={ () => setConfirmThirdToggle( ! confirmThirdToggle ) }
+			/>
+			<form onSubmit={ handleFormSubmit }>
+				{ startSiteTransferError && (
+					<Notice status="is-error" showDismiss={ false }>
+						{ startSiteTransferError }
+					</Notice>
+				) }
+				<ButtonContainer>
 					<Button
+						busy={ isStartingSiteTransfer }
 						primary
-						onClick={ () => {
-							false;
-						} }
-						disabled={ ! newOwnerUsername || isStartingSiteTransfer }
+						disabled={
+							! siteOwner ||
+							isStartingSiteTransfer ||
+							! ( confirmFirstToggle && confirmSecondToggle && confirmThirdToggle )
+						}
 						type="submit"
 					>
-						{ translate( 'Start site transfer' ) }
+						{ translate( 'Start transfer' ) }
 					</Button>
-				</form>
-			) }
+				</ButtonContainer>
+			</form>
 		</FormWrapper>
 	);
 
 	return (
 		<>
 			<SiteOwnerTransferActionPanelBody>
-				<p>
+				<Notice status="is-info" showDismiss={ false }>
 					{ translate(
-						'Transferring a site cannot be undone. Please read the following actions that will take place when you transfer this site:'
+						'Please read the following actions that will take place when you transfer this site'
 					) }
-				</p>
-				<ul>
-					<li>
-						{ translate( 'You will be removed as owner of %(selectedSiteSlug)s', {
-							args: { selectedSiteSlug },
-						} ) }
-					</li>
-					<li>
-						{ translate(
-							'You will not be able to access %(selectedSiteSlug)s unless allowed by the new owner',
-							{
-								args: { selectedSiteSlug },
-							}
-						) }
-					</li>
-					<li>
-						{ translate(
-							'Your posts on %(selectedSiteSlug)s will be transferred to the new owner and will no longer be authored by your account.',
-							{
-								args: { selectedSiteSlug },
-							}
-						) }
-					</li>
-					<li>
-						{ translate(
-							'Your paid upgrades on %(selectedSiteSlug)s will be transferred to the new owner, and will remain with the blog',
-							{
-								args: { selectedSiteSlug },
-							}
-						) }
-					</li>
-					<li>
-						{ translate(
-							'You must authorize the transfer via a confirmation email sent to %(currentUserEmail)s. The transfer will not proceed unless you authorize it.',
-							{
-								args: { currentUserEmail },
-							}
-						) }
-					</li>
-				</ul>
-				{ startSiteTransferSuccess && (
-					<Notice status="is-success" showDismiss={ false }>
-						{ translate(
-							'You have been sent a transfer confirmation email to %(currentUserEmail)s. Please check your inbox and spam folder. The transfer will not proceed unless you authorize it using the link in the email.',
-							{
-								args: { currentUserEmail },
-							}
-						) }
-					</Notice>
-				) }
+				</Notice>
+				<ContentAndOwnershipCard siteSlug={ selectedSiteSlug } siteOwner={ siteOwner } />
+				<UpgradesCard
+					purchases={ purchases }
+					siteSlug={ selectedSiteSlug }
+					siteOwner={ siteOwner }
+				/>
+				<DomainsCard
+					domains={ customDomains }
+					siteOwner={ siteOwner }
+					siteSlug={ selectedSiteSlug }
+				/>
 				{ ! startSiteTransferSuccess && startSiteTransferForm }
 			</SiteOwnerTransferActionPanelBody>
 		</>
 	);
 };
 
-export default connect( ( state ) => ( {
-	currentUserEmail: getCurrentUserEmail( state ),
+export default connect( ( state: IAppState ) => ( {
 	selectedSiteId: getSelectedSiteId( state ),
 	selectedSiteSlug: getSelectedSiteSlug( state ),
-	selectedSiteTitle: getSelectedSite( state )?.title,
 } ) )( localize( StartSiteOwnerTransfer ) );

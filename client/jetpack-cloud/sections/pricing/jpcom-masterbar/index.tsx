@@ -4,7 +4,6 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
 import * as React from 'react';
-import { useSelector } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import Gravatar from 'calypso/components/gravatar';
 import JetpackLogo from 'calypso/components/jetpack-logo';
@@ -14,6 +13,7 @@ import useDetectWindowBoundary from 'calypso/lib/detect-window-boundary';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { trailingslashit } from 'calypso/lib/route';
 import { isConnectStore } from 'calypso/my-sites/plans/jetpack-plans/product-grid/utils';
+import { useSelector } from 'calypso/state';
 import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getJetpackSaleCoupon } from 'calypso/state/marketing/selectors';
 import { isJetpackCloudCartEnabled } from 'calypso/state/sites/selectors';
@@ -24,7 +24,7 @@ import useUserMenu from './use-user-menu';
 
 import './style.scss';
 
-export const MAIN_CONTENT_ID = 'content';
+export const MAIN_CONTENT_ID = 'pricing-content';
 
 const JETPACK_COM_BASE_URL = 'https://jetpack.com';
 

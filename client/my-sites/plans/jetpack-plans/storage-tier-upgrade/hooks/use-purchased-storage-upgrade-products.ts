@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import getPurchasedStorageSubscriptions from 'calypso/my-sites/plans/jetpack-plans/get-purchased-storage-subscriptions';
 import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
+import { useSelector } from 'calypso/state';
 import useGetProductCardData from './use-get-product-card-data';
 
 const usePurchasedStorageUpgradeProducts = ( siteId: number ): SelectorProduct[] => {

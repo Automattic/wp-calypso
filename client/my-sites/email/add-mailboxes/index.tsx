@@ -3,7 +3,6 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { MouseEvent, PropsWithChildren, useState } from 'react';
-import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
@@ -45,6 +44,7 @@ import {
 	emailManagementInbox,
 	emailManagementTitanSetUpMailbox,
 } from 'calypso/my-sites/email/paths';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';

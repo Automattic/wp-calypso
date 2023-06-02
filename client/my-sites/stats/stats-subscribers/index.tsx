@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import DomainTip from 'calypso/blocks/domain-tip';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -9,6 +8,7 @@ import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
+import { useSelector } from 'calypso/state';
 import { isJetpackSite, getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Followers from '../stats-followers';
@@ -57,7 +57,7 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 					subHeaderText={ translate( "View your site's performance and learn from trends." ) }
 				/>
 				<StatsNavigation selectedItem="subscribers" siteId={ siteId } slug={ siteSlug } />
-				<SubscribersHighlightSection />
+				<SubscribersHighlightSection siteId={ siteId } />
 				{ siteId && (
 					<DomainTip
 						siteId={ siteId }

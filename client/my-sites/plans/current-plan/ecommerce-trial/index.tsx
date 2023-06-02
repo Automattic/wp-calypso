@@ -5,7 +5,6 @@ import { useMediaQuery } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
 import bestInClassHosting from 'calypso/assets/images/plans/wpcom/ecommerce-trial/best-in-class-hosting.svg';
 import connect from 'calypso/assets/images/plans/wpcom/ecommerce-trial/connect.png';
 import launch from 'calypso/assets/images/plans/wpcom/ecommerce-trial/launch.png';
@@ -20,6 +19,7 @@ import simpleCustomization from 'calypso/assets/images/plans/wpcom/ecommerce-tri
 import unlimitedProducts from 'calypso/assets/images/plans/wpcom/ecommerce-trial/unlimited-products.svg';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getECommerceTrialCheckoutUrl } from 'calypso/lib/ecommerce-trial/get-ecommerce-trial-checkout-url';
+import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ECommerceTrialBanner from '../../ecommerce-trial/ecommerce-trial-banner';
 import FeatureIncludedCard from '../feature-included-card';

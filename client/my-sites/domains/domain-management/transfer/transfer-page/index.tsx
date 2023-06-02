@@ -7,7 +7,7 @@ import { Icon, lock } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import moment from 'moment';
 import { useState } from 'react';
-import { connect, useDispatch } from 'react-redux';
+import { connect } from 'react-redux';
 import ActionCard from 'calypso/components/action-card';
 import CardHeading from 'calypso/components/card-heading';
 import QueryDomainInfo from 'calypso/components/data/query-domain-info';
@@ -31,6 +31,7 @@ import {
 	domainManagementTransferToAnotherUser,
 	domainManagementTransferToOtherSite,
 } from 'calypso/my-sites/domains/paths';
+import { useDispatch } from 'calypso/state';
 import {
 	getDomainLockError,
 	getDomainTransferCodeError,

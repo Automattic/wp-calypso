@@ -1,9 +1,9 @@
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { useQueryThemes } from 'calypso/components/data/query-theme';
 import { ThankYouData, ThankYouSectionProps } from 'calypso/components/thank-you/types';
+import { useDispatch, useSelector } from 'calypso/state';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { clearActivated } from 'calypso/state/themes/actions';
 import { getThemes } from 'calypso/state/themes/selectors';

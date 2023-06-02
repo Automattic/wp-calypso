@@ -5,7 +5,6 @@ import { Button, Notice } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import FoldableCard from 'calypso/components/foldable-card';
 import { Campaign } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
@@ -24,6 +23,7 @@ import {
 	getPostType,
 	normalizeCampaignStatus,
 } from 'calypso/my-sites/promote-post/utils';
+import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import AdPreview from '../ad-preview';
 import AudienceBlock from '../audience-block';

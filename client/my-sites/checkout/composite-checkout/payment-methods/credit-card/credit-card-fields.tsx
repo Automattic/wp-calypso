@@ -4,12 +4,12 @@ import styled from '@emotion/styled';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { Fragment, useState, useEffect } from 'react';
-import { useDispatch as useReduxDispatch } from 'react-redux';
 import {
 	LeftColumn,
 	RightColumn,
 } from 'calypso/my-sites/checkout/composite-checkout/components/ie-fallback';
 import Spinner from 'calypso/my-sites/checkout/composite-checkout/components/spinner';
+import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import AssignToAllPaymentMethods from './assign-to-all-payment-methods';
 import ContactFields from './contact-fields';

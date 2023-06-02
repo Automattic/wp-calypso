@@ -102,6 +102,7 @@
 
 		&__list {
 			margin: 0;
+			padding: 10px 0;
 
 			dt,
 			dd {
@@ -122,7 +123,7 @@
 				margin: 0;
 
 				+ dt {
-					margin-top: 24px;
+					margin-top: 8px;
 				}
 			}
 		}
@@ -134,6 +135,11 @@
 
 	&__fetch-details-error {
 		margin: 64px 0 32px;
+	}
+
+	.site-subscription-page__unsubscribe-button {
+		border: 1px solid $studio-gray-20;
+		margin-left: 10px;
 	}
 }
 

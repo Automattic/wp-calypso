@@ -1,8 +1,8 @@
 import { Button, CompactCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import SectionHeader from 'calypso/components/section-header';
 import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/paths';
+import { useSelector } from 'calypso/state';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { ResponseDomain } from 'calypso/lib/domains/types';

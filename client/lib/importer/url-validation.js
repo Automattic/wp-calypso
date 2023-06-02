@@ -1,14 +1,11 @@
-import url from 'url';
-import { isURL } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { trim } from 'lodash';
 
 const parseUrl = function ( value = '' ) {
 	const rawUrl = trim( value );
-	const parsedUrl = url.parse( rawUrl, false, true );
+	const hasProtocol = value.startsWith( 'https://' ) || value.startsWith( 'http://' );
 
-	// `url.parse` will only parse the host/hostname if protocol is included.
-	return parsedUrl.protocol ? parsedUrl : url.parse( 'https://' + rawUrl );
+	return new URL( hasProtocol ? rawUrl : 'https://' + rawUrl );
 };
 
 const hasTld = function ( hostname ) {
@@ -19,20 +16,18 @@ const hasTld = function ( hostname ) {
 
 export function validateImportUrl( value ) {
 	let parsedUrl;
-	let formattedUrl;
 	try {
 		parsedUrl = parseUrl( value );
-		formattedUrl = url.format( parsedUrl );
 	} catch ( error ) {
 		return translate( 'Please enter a valid URL.' );
 	}
 
-	const { hostname, pathname } = parsedUrl;
-
 	// `isURL` considers `http://a` valid, so check for a top level domain name as well.
-	if ( ! formattedUrl || ! isURL( formattedUrl ) || ! hasTld( hostname ) ) {
+	if ( ! parsedUrl || ! hasTld( parsedUrl.hostname ) ) {
 		return translate( 'Please enter a valid URL.' );
 	}
+
+	const { hostname, pathname } = parsedUrl;
 
 	if ( hostname === 'editor.wix.com' || hostname === 'www.wix.com' ) {
 		return translate(

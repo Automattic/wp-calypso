@@ -1,22 +1,24 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { createStore, applyMiddleware, compose } from 'redux';
+import {
+	useSelector as reduxUseSelector,
+	useDispatch as reduxUseDispatch,
+	useStore as reduxUseStore,
+} from 'react-redux';
+import { AnyAction, createStore, applyMiddleware, compose, Store, StoreEnhancer } from 'redux';
 import dynamicMiddlewares from 'redux-dynamic-middlewares';
 import thunkMiddleware from 'redux-thunk';
+import { WithAddReducer } from 'calypso/state/add-reducer';
 import wpcomApiMiddleware from 'calypso/state/data-layer/wpcom-api-middleware';
 import { addReducerEnhancer } from 'calypso/state/utils/add-reducer-enhancer';
 import actionLogger from './action-log';
 import consoleDispatcher from './console-dispatch';
 import initialReducer from './reducer';
+import { IAppState, CalypsoDispatch } from './types';
 
-/**
- * @typedef {Object} ReduxStore
- * @property {!Function} dispatch dispatches actions
- * @property {!Function} getState returns the current state tree
- * @property {Function} replaceReducers replaces the state reducers
- * @property {Function} subscribe attaches an event listener to state changes
- */
-
-export function createReduxStore( initialState, reducer = initialReducer ) {
+export function createReduxStore(
+	initialState: Record< string, unknown >,
+	reducer = initialReducer
+): Store & WithAddReducer {
 	const isBrowser = typeof window === 'object';
 	const isDesktop = isEnabled( 'desktop' );
 	const isAudioSupported = typeof window === 'object' && typeof window.Audio === 'function';
@@ -51,5 +53,21 @@ export function createReduxStore( initialState, reducer = initialReducer ) {
 		isBrowser && window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
 	].filter( Boolean );
 
-	return createStore( reducer, initialState, compose( ...enhancers ) );
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+	// @ts-ignore The store enhancer types don't line up exactly and it's not worth fixing immediately.
+	return createStore( reducer, initialState, compose< StoreEnhancer >( ...enhancers ) );
+}
+
+export const useDispatch: () => CalypsoDispatch = reduxUseDispatch;
+
+// Basically the same types as TypedUseSelectorHook but with IAppState as the default state type.
+export function useSelector< State = IAppState, Selected = unknown >(
+	selector: ( state: State ) => Selected,
+	equalityFn?: ( a: Selected, b: Selected ) => boolean
+): Selected {
+	return reduxUseSelector( selector, equalityFn );
+}
+
+export function useStore(): Store< IAppState, AnyAction > {
+	return reduxUseStore();
 }

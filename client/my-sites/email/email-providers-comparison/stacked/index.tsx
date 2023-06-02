@@ -9,7 +9,6 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { stringify } from 'qs';
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
@@ -33,6 +32,7 @@ import EmailUpsellNavigation from 'calypso/my-sites/email/email-providers-compar
 import GoogleWorkspaceCard from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/google-workspace-card';
 import ProfessionalEmailCard from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/professional-email-card';
 import { emailManagement, emailManagementInDepthComparison } from 'calypso/my-sites/email/paths';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';

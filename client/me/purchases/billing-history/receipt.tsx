@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { Component, useState, useCallback } from 'react';
-import { connect, useDispatch } from 'react-redux';
+import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryBillingTransaction from 'calypso/components/data/query-billing-transaction';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -19,6 +19,7 @@ import { PARTNER_PAYPAL_EXPRESS } from 'calypso/lib/checkout/payment-methods';
 import { billingHistory, vatDetails as vatDetailsPath } from 'calypso/me/purchases/paths';
 import titles from 'calypso/me/purchases/titles';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
+import { useDispatch } from 'calypso/state';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { sendBillingReceiptEmail } from 'calypso/state/billing-transactions/actions';
 import {

@@ -25,6 +25,7 @@ import getSites from 'calypso/state/selectors/get-sites';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import { requestSites } from 'calypso/state/sites/actions';
 import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
+import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import TransferUnavailableNotice from '../transfer-unavailable-notice';
 import TransferConfirmationDialog from './confirmation-dialog';
@@ -240,7 +241,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 }
 
 export default connect(
-	( state, ownProps: TransferDomainToOtherSitePassedProps ) => {
+	( state: IAppState, ownProps: TransferDomainToOtherSitePassedProps ) => {
 		let domain;
 		if ( ! ownProps.isRequestingSiteDomains ) {
 			domain = getSelectedDomain( ownProps );

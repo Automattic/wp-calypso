@@ -1,6 +1,6 @@
 import { useEffect, useRef } from '@wordpress/element';
-import { useSelector } from 'react-redux';
 import StoreFooter from 'calypso/jetpack-connect/store-footer';
+import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ZendeskJetpackChat } from '../../../../components/jetpack/jetpack-presales-chat-widget';
 import OpenSourceSection from '../open-source';

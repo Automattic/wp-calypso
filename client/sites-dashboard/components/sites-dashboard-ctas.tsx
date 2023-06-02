@@ -1,40 +1,45 @@
 import { useI18n } from '@wordpress/react-i18n';
 import { useSelector } from 'react-redux';
-import { addQueryArgs } from 'calypso/lib/url';
+import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
-import getUserSetting from 'calypso/state/selectors/get-user-setting';
+import { AppState } from 'calypso/types';
+import { useSitesDashboardImportSiteUrl } from '../hooks/use-sites-dashboard-import-site-url';
+import { TRACK_SOURCE_NAME } from '../utils';
 import { EmptyStateCTA } from './empty-state-cta';
 
 export const CreateSiteCTA = () => {
 	const { __ } = useI18n();
-	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
+
 	const isHostingFlow = useSelector(
-		( state ) => getCurrentQueryArguments( state )?.[ 'hosting-flow' ] === 'true'
+		( state: AppState ) => getCurrentQueryArguments( state )?.[ 'hosting-flow' ] === 'true'
 	);
 
-	const newHostedSiteURL = isHostingFlow
-		? addQueryArgs( { 'hosting-flow': true }, '/setup/new-hosted-site' )
-		: '/setup/new-hosted-site';
-
-	const newSiteURL = isDevAccount ? newHostedSiteURL : '/start';
+	const createSiteUrl = useAddNewSiteUrl( {
+		source: TRACK_SOURCE_NAME,
+		ref: 'calypso-nosites',
+		'hosting-flow': isHostingFlow ? true : null,
+	} );
 
 	return (
 		<EmptyStateCTA
 			description={ __( 'Build a new site from scratch' ) }
 			label={ __( 'Create a site' ) }
-			target={ addQueryArgs( { source: 'sites-dashboard', ref: 'calypso-nosites' }, newSiteURL ) }
+			target={ createSiteUrl }
 		/>
 	);
 };
 
 export const MigrateSiteCTA = () => {
 	const { __ } = useI18n();
+	const importSiteUrl = useSitesDashboardImportSiteUrl( {
+		ref: 'calypso-nosites',
+	} );
 
 	return (
 		<EmptyStateCTA
 			description={ __( 'Bring a site to WordPress.com' ) }
 			label={ __( 'Migrate a site' ) }
-			target="/start/import"
+			target={ importSiteUrl }
 		/>
 	);
 };

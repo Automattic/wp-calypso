@@ -12,13 +12,13 @@ import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
-import { useDispatch as useReduxDispatch } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
 import {
 	domainRegistration,
 	domainMapping,
 	domainTransfer,
 } from 'calypso/lib/cart-values/cart-items';
+import { useDispatch as useReduxDispatch } from 'calypso/state';
 import {
 	composeAnalytics,
 	recordGoogleEvent,

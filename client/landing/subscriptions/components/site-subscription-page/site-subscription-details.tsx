@@ -1,4 +1,5 @@
 import { SubscriptionManager, Reader } from '@automattic/data-stores';
+import { useLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useTranslate, numberFormat } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -6,18 +7,15 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import TimeSince from 'calypso/components/time-since';
 import { Notice, NoticeState, NoticeType } from 'calypso/landing/subscriptions/components/notice';
 import { SiteIcon } from 'calypso/landing/subscriptions/components/site-icon';
+import {
+	PaymentPlan,
+	SiteSubscriptionDetailsProps,
+	formatRenewalDate,
+	formatRenewalPrice,
+	getPaymentInterval,
+} from './site-subscription-helpers';
 import SiteSubscriptionSettings from './site-subscription-settings';
 import './styles.scss';
-
-type SiteSubscriptionDetailsProps = {
-	subscriberCount: number;
-	dateSubscribed: Date;
-	siteIcon: string;
-	name: string;
-	blogId: string;
-	deliveryMethods: Reader.SiteSubscriptionDeliveryMethods;
-	url: string;
-};
 
 const SiteSubscriptionDetails = ( {
 	subscriberCount,
@@ -27,8 +25,10 @@ const SiteSubscriptionDetails = ( {
 	blogId,
 	deliveryMethods,
 	url,
+	paymentDetails,
 }: SiteSubscriptionDetailsProps ) => {
 	const translate = useTranslate();
+	const localeSlug = useLocale();
 	const [ notice, setNotice ] = useState< NoticeState | null >( null );
 
 	const {
@@ -44,17 +44,51 @@ const SiteSubscriptionDetails = ( {
 		error: unsubscribeError,
 	} = SubscriptionManager.useSiteUnsubscribeMutation( blogId );
 
+	const confirmUnsubscribe = ( { blogId, url }: { blogId: string; url: string } ) => {
+		if (
+			confirm(
+				'You currently have paid subscriptions with this site. Paid subscriptions must be cancelled separately by clicking the Manage Subscriptions button or going to https://wordpress.com/me/purchases.\n\nPress OK to proceed with unsubscribing from the site.\nPress Cancel to go back.'
+			)
+		) {
+			unsubscribe( { blog_id: blogId, url } );
+		}
+	};
+
+	const [ paymentPlans, setPaymentPlans ] = useState< PaymentPlan[] >( [] );
+
 	const [ siteSubscribed, setSiteSubscribed ] = useState( true );
 	useEffect( () => {
 		if ( subscribed ) {
 			setSiteSubscribed( true );
 		}
 	}, [ subscribed ] );
+
 	useEffect( () => {
 		if ( unsubscribed ) {
 			setSiteSubscribed( false );
 		}
 	}, [ unsubscribed ] );
+
+	useEffect( () => {
+		if ( paymentDetails ) {
+			const newPaymentPlans: PaymentPlan[] = [];
+
+			paymentDetails.forEach( ( paymentDetail: Reader.SiteSubscriptionPaymentDetails ) => {
+				const { ID, currency, renewal_price, renew_interval } = paymentDetail;
+				const renewalPrice = formatRenewalPrice( renewal_price, currency );
+				const when = getPaymentInterval( renew_interval );
+				const renewalDate = formatRenewalDate( paymentDetail.end_date, localeSlug );
+
+				newPaymentPlans.push( {
+					id: ID,
+					renewalPrice: `${ renewalPrice }${ when }`,
+					renewalDate,
+				} );
+			} );
+
+			setPaymentPlans( newPaymentPlans );
+		}
+	}, [ paymentDetails ] );
 
 	const subHeaderText = subscriberCount
 		? translate( '%s subscriber', '%s subscribers', {
@@ -171,16 +205,38 @@ const SiteSubscriptionDetails = ( {
 								/>
 							</dd>
 						</dl>
+						{ paymentPlans &&
+							paymentPlans.map( ( { id, renewalPrice, renewalDate } ) => (
+								<dl className="site-subscription-info__list" key={ id }>
+									<dt>{ translate( 'Plan' ) }</dt>
+									<dd>{ renewalPrice }</dd>
+									{ renewalDate && (
+										<>
+											<dt>{ translate( 'Billing period' ) }</dt>
+											<dd>{ translate( 'Renews on %s', { args: [ renewalDate ] } ) }</dd>
+										</>
+									) }
+								</dl>
+							) ) }
 					</div>
 
-					<Button
-						className="site-subscription-page__unsubscribe-button"
-						isSecondary
-						onClick={ () => unsubscribe( { blog_id: blogId, url } ) }
-						disabled={ unsubscribing }
-					>
-						{ translate( 'Cancel subscription' ) }
-					</Button>
+					<div className="site-subscription-page__button-container">
+						<Button
+							className="site-subscription-page__manage-button"
+							isPrimary
+							href="/me/purchases"
+							disabled={ unsubscribing }
+						>
+							{ translate( 'Manage purchases' ) }
+						</Button>
+						<Button
+							className="site-subscription-page__unsubscribe-button"
+							onClick={ () => confirmUnsubscribe( { blogId, url } ) }
+							disabled={ unsubscribing }
+						>
+							{ translate( 'Cancel subscription' ) }
+						</Button>
+					</div>
 				</>
 			) }
 		</>

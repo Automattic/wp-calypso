@@ -1,5 +1,7 @@
-import ChecklistItem from './checklist-item';
-import { Task } from './types';
+import ChecklistItem from '../checklist-item';
+import { Task } from '../types';
+
+import './style.scss';
 
 interface ChecklistProps {
 	tasks: Task[] | null;
@@ -7,7 +9,7 @@ interface ChecklistProps {
 
 const Checklist = ( { tasks }: ChecklistProps ) => {
 	return (
-		<ul className="launchpad__checklist" aria-label="Launchpad Checklist">
+		<ul className="checklist__tasks" aria-label="Launchpad Checklist">
 			{ tasks &&
 				tasks.map( ( task: Task, index: number ) => (
 					<ChecklistItem
@@ -22,7 +24,7 @@ const Checklist = ( { tasks }: ChecklistProps ) => {
 
 Checklist.Placeholder = () => {
 	return (
-		<ul className="launchpad__checklist" aria-label="Launchpad Checklist">
+		<ul className="checklist__tasks" aria-label="Launchpad Checklist">
 			<ChecklistItem.Placeholder />
 			<ChecklistItem.Placeholder />
 			<ChecklistItem.Placeholder />

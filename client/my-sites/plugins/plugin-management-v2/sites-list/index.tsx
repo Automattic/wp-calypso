@@ -1,4 +1,4 @@
-import { useDispatch } from 'react-redux';
+import { useDispatch } from 'calypso/state';
 import { updatePlugin } from 'calypso/state/plugins/installed/actions';
 import PluginCommonList from '../plugin-common/plugin-common-list';
 import PluginRowFormatter from '../plugin-row-formatter';
