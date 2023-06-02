@@ -132,6 +132,9 @@ const importHostedSiteFlow: Flow = {
 
 		const goBack = () => {
 			switch ( _currentStep ) {
+				case 'import':
+					return window.location.assign( '/sites' );
+
 				case 'importReady':
 				case 'importReadyNot':
 				case 'importReadyWpcom':
