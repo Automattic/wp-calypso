@@ -63,13 +63,8 @@ export const useRelatedSites = (
 	if ( postId && postId > 0 ) {
 		path += `&post_id=${ postId }`;
 	}
-	const queryKeyParts: ( string | number | undefined )[] = [
-		`related-sites-${ SITE_RECOMMENDATIONS_COUNT }`,
-		siteId,
-		postId,
-	].filter( Boolean );
 	return useQuery(
-		queryKeyParts,
+		[ `related-sites-${ SITE_RECOMMENDATIONS_COUNT }`, siteId ],
 		() => wpcom.req.get( { path: path, apiNamespace: 'rest/v1.2' } ),
 		{
 			enabled: !! siteId,
