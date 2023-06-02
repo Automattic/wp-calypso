@@ -29,7 +29,7 @@ import formatCurrency from '@automattic/format-currency';
 import styled from '@emotion/styled';
 import { useViewportMatch } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
-import { useState, PropsWithChildren } from 'react';
+import { useState, PropsWithChildren, ReactChild } from 'react';
 import { getLabel, getSublabel } from './checkout-labels';
 import { getItemIntroductoryOfferDisplay } from './introductory-offer';
 import { isWpComProductRenewal } from './is-wpcom-product-renewal';
@@ -776,19 +776,17 @@ function isCouponApplied( { coupon_savings_integer = 0 }: ResponseCartProduct ) 
 	return coupon_savings_integer > 0;
 }
 
-function FirstTermDiscountCallout( { product }: { product: ResponseCartProduct } ) {
+function PlanUpgradeCreditInformation( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
-	const planSlug = product.product_slug;
 	const origCost = product.item_original_subtotal_integer;
 	const finalCost = product.item_subtotal_integer;
+	const discount = origCost - finalCost;
+	const planSlug = product.product_slug;
 	const isRenewal = product.is_renewal;
 
-	// Do not display discount reason if there is an introductory offer.
-	if ( product.introductory_offer_terms?.enabled ) {
-		return null;
-	}
-
 	if (
+		// Do not display discount reason if there is an introductory offer.
+		product.introductory_offer_terms?.enabled ||
 		// Do not display discount reason for non-wpcom, non-jetpack products.
 		( ! isWpComPlan( planSlug ) && ! isJetpackProductSlug( planSlug ) ) ||
 		// Do not display discount reason if there is no discount.
@@ -798,22 +796,42 @@ function FirstTermDiscountCallout( { product }: { product: ResponseCartProduct }
 		// Do not display discount reason if a coupon is applied.
 		isCouponApplied( product )
 	) {
-		return null;
+		return <></>;
 	}
-
+	let oneTimeExplanation: ReactChild = '';
 	if ( isMonthlyProduct( product ) ) {
-		return <DiscountCallout>{ translate( 'Discount for first month' ) }</DiscountCallout>;
+		oneTimeExplanation = translate( 'Discount: %(discount)s Applied in first month only', {
+			args: {
+				discount: formatCurrency( discount, product.currency, {
+					isSmallestUnit: true,
+					stripZeros: true,
+				} ),
+			},
+		} );
 	}
 
 	if ( isYearly( product ) ) {
-		return <DiscountCallout>{ translate( 'Discount for first year' ) }</DiscountCallout>;
+		oneTimeExplanation = translate( 'Discount: %(discount)s Applied in first year only', {
+			args: {
+				discount: formatCurrency( discount, product.currency, {
+					isSmallestUnit: true,
+					stripZeros: true,
+				} ),
+			},
+		} );
 	}
 
 	if ( isBiennially( product ) || isTriennially( product ) ) {
-		return <DiscountCallout>{ translate( 'Discount for first term' ) }</DiscountCallout>;
+		oneTimeExplanation = translate( 'Discount: %(discount)s Applied in first term only', {
+			args: {
+				discount: formatCurrency( discount, product.currency, {
+					isSmallestUnit: true,
+					stripZeros: true,
+				} ),
+			},
+		} );
 	}
-
-	return null;
+	return <LineItemMeta>{ oneTimeExplanation }</LineItemMeta>;
 }
 
 function IntroductoryOfferCallout( { product }: { product: ResponseCartProduct } ) {
@@ -997,13 +1015,15 @@ function WPLineItem( {
 			</span>
 
 			{ product && ! containsPartnerCoupon && (
-				<LineItemMeta>
-					<LineItemSublabelAndPrice product={ product } />
-					<DomainDiscountCallout product={ product } />
-					<FirstTermDiscountCallout product={ product } />
-					<CouponDiscountCallout product={ product } />
-					<IntroductoryOfferCallout product={ product } />
-				</LineItemMeta>
+				<>
+					<PlanUpgradeCreditInformation product={ product } />
+					<LineItemMeta>
+						<LineItemSublabelAndPrice product={ product } />
+						<DomainDiscountCallout product={ product } />
+						<CouponDiscountCallout product={ product } />
+						<IntroductoryOfferCallout product={ product } />
+					</LineItemMeta>
+				</>
 			) }
 
 			{ product && containsPartnerCoupon && (
