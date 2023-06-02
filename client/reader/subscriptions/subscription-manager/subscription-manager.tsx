@@ -4,6 +4,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import { SiteSubscriptionsManager } from 'calypso/landing/subscriptions/components/site-subscriptions-manager';
 import './styles.scss';
+import { SiteSubscriptionsManagerProvider } from 'calypso/landing/subscriptions/components/site-subscriptions-manager/site-subscriptions-manager-context';
 
 const SubscriptionManager = () => {
 	const translate = useTranslate();
@@ -16,7 +17,12 @@ const SubscriptionManager = () => {
 				subHeaderText={ translate( 'Manage your newsletter and blog subscriptions.' ) }
 				align="left"
 			/>
-			<SiteSubscriptionsManager />
+			<SiteSubscriptionsManagerProvider>
+				<SiteSubscriptionsManager>
+					<SiteSubscriptionsManager.ListActionsBar />
+					<SiteSubscriptionsManager.List onSiteTitleClick={ () => undefined } />
+				</SiteSubscriptionsManager>
+			</SiteSubscriptionsManagerProvider>
 		</Main>
 	);
 };

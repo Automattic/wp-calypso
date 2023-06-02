@@ -14,7 +14,7 @@ import './styles.scss';
 
 const { PostSubscriptionsSortBy: SortBy, SiteSubscriptionsFilterBy: FilterBy } = Reader;
 
-const useSortOptions = (): Option[] => {
+const useSortOptions = () => {
 	const translate = useTranslate();
 
 	return [

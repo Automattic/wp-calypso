@@ -1,1 +1,2 @@
-export { default as SiteSubscriptionsManager } from './site-subscriptions-manager';
+export { SiteSubscriptionsManagerProvider } from './site-subscriptions-manager-context';
+export { default, SiteSubscriptionsManager } from './site-subscriptions-manager';

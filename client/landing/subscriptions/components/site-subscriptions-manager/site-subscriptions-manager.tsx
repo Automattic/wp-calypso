@@ -1,42 +1,23 @@
-import { SubscriptionManager, Reader } from '@automattic/data-stores';
-import SearchInput from '@automattic/search';
 import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useState } from 'react';
-import SelectDropdown from 'calypso/components/select-dropdown';
-import { SearchIcon } from 'calypso/landing/subscriptions/components/icons';
+import React from 'react';
+import { useNavigate } from 'react-router';
 import { Notice, NoticeType } from 'calypso/landing/subscriptions/components/notice';
-import { SortControls, Option } from 'calypso/landing/subscriptions/components/sort-controls';
-import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';
-import { useSearch } from 'calypso/landing/subscriptions/hooks';
-import { useSiteSubscriptionsFilterOptions } from 'calypso/landing/subscriptions/hooks/';
 import SiteSubscriptionsList from './site-subscriptions-list';
+import ListActionsBar from './site-subscriptions-list-actions-bar';
+import {
+	SiteSubscriptionsManagerProvider,
+	useSiteSubscriptionsManager,
+} from './site-subscriptions-manager-context';
 import './styles.scss';
 
-const { SiteSubscriptionsFilterBy: FilterBy, SiteSubscriptionsSortBy: SortBy } = Reader;
+type SiteSubscriptionsManagerProps = { children: React.ReactNode };
 
-const getSortOptions = ( translate: ReturnType< typeof useTranslate > ): Option[] => [
-	{ value: SortBy.LastUpdated, label: translate( 'Recently updated' ) },
-	{ value: SortBy.DateSubscribed, label: translate( 'Recently subscribed' ) },
-	{ value: SortBy.SiteName, label: translate( 'Site name' ) },
-];
-
-const useSortOptions = ( translate: ReturnType< typeof useTranslate > ): Option[] =>
-	useMemo( () => getSortOptions( translate ), [ translate ] );
-
-const SiteSubscriptionsManager = () => {
+export const SiteSubscriptionsManager = ( { children }: SiteSubscriptionsManagerProps ) => {
 	const translate = useTranslate();
-	const { searchTerm, handleSearch } = useSearch();
-	const [ sortTerm, setSortTerm ] = useState( SortBy.DateSubscribed );
-	const availableFilterOptions = useSiteSubscriptionsFilterOptions();
-	const [ filterOption, setFilterOption ] = useState( FilterBy.All );
-	const { data, isLoading, error } = SubscriptionManager.useSiteSubscriptionsQuery( {
-		searchTerm,
-		sortTerm,
-		filterOption,
-	} );
-	const { subscriptions, totalCount } = data ?? {};
-	const sortOptions = useSortOptions( translate );
+	const { siteSubscriptionsQueryResult } = useSiteSubscriptionsManager();
+	const { data, isLoading, error } = siteSubscriptionsQueryResult;
+	const { totalCount } = data ?? {};
 
 	if ( error ) {
 		return (
@@ -64,41 +45,22 @@ const SiteSubscriptionsManager = () => {
 		);
 	}
 
-	return (
-		<div className="site-subscriptions-manager">
-			<div className="list-actions-bar">
-				<SearchInput
-					placeholder={ translate( 'Search by site name or address…' ) }
-					searchIcon={ <SearchIcon size={ 18 } /> }
-					onSearch={ handleSearch }
-				/>
-
-				<SelectDropdown
-					className="subscriptions-manager__filter-control"
-					options={ availableFilterOptions }
-					onSelect={ ( selectedOption: Option ) =>
-						setFilterOption( selectedOption.value as Reader.SiteSubscriptionsFilterBy )
-					}
-					selectedText={ translate( 'View: %s', {
-						args: getOptionLabel( availableFilterOptions, filterOption ) || '',
-					} ) }
-				/>
-
-				<SortControls options={ sortOptions } value={ sortTerm } onChange={ setSortTerm } />
-			</div>
-
-			<SiteSubscriptionsList sites={ subscriptions } />
-
-			{ totalCount > 0 && subscriptions.length === 0 && (
-				<Notice type={ NoticeType.Warning }>
-					{ translate( 'Sorry, no sites match {{italic}}%s.{{/italic}}', {
-						components: { italic: <i /> },
-						args: searchTerm || filterOption,
-					} ) }
-				</Notice>
-			) }
-		</div>
-	);
+	return <div className="site-subscriptions-manager">{ children }</div>;
 };
 
-export default SiteSubscriptionsManager;
+SiteSubscriptionsManager.ListActionsBar = ListActionsBar;
+SiteSubscriptionsManager.List = SiteSubscriptionsList;
+
+export default () => {
+	const navigate = useNavigate();
+	return (
+		<SiteSubscriptionsManagerProvider>
+			<SiteSubscriptionsManager>
+				<SiteSubscriptionsManager.ListActionsBar />
+				<SiteSubscriptionsManager.List
+					onSiteTitleClick={ ( blogId ) => navigate( `/subscriptions/site/${ blogId }` ) }
+				/>
+			</SiteSubscriptionsManager>
+		</SiteSubscriptionsManagerProvider>
+	);
+};
