@@ -63,7 +63,7 @@ const Sites = () => {
 					/>
 
 					<SelectDropdown
-						className="subscriptions-manager__filter-control"
+						className="subscriptions-manager__filter-control subscriptions-manager__list-actions-bar-spacer"
 						options={ availableFilterOptions }
 						onSelect={ ( selectedOption: Option ) =>
 							setFilterOption( selectedOption.value as SiteSubscriptionsFilterBy )

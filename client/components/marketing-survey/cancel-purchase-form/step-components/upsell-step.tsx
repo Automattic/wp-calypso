@@ -114,7 +114,7 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 	const numberOfPluginsThemes = numberFormat( 50000, 0 );
 	const discountRate = 25;
 	const couponCode = 'BIZWPC25';
-	const builtByURL = 'https://wordpress.com/built-by/?ref=wpcom-cancel-flow';
+	const builtByURL = 'https://wordpress.com/website-design-service/?ref=wpcom-cancel-flow';
 	const { refundAmount } = props;
 
 	switch ( upsell ) {

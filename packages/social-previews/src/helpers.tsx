@@ -86,6 +86,11 @@ export function preparePreviewText( text: string, options: PreviewTextOptions ):
 
 	let result = stripHtmlTags( text );
 
+	// Replace multiple new lines (2+) with 2 new lines
+	// There can be any whitespace characters in empty lines
+	// That is why "\s*"
+	result = result.replaceAll( /(?:\s*[\n\r]){2,}/g, '\n\n' );
+
 	if ( maxChars && result.length > maxChars ) {
 		result = result.substring( 0, maxChars );
 	}

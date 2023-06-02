@@ -24,7 +24,7 @@ $image_dir = 'https://wordpress.com/wp-content/a8c-plugins/happy-blocks/block-li
 				<?php esc_html_e( 'Our professional website-building service can create the site of your dreams, no matter the scope of your project - from small websites and personal blogs to large-scale custom development and migrations.', 'happy-blocks' ); ?>
 			</p>
 			<div class="resource-link">
-				<a href="<?php echo esc_url( 'https://wordpress.com/built-by/?ref=banner-learn' ); ?>">
+				<a href="<?php echo esc_url( 'https://wordpress.com/website-design-service/?ref=banner-learn' ); ?>">
 					<?php esc_html_e( 'Get Started', 'happy-blocks' ); ?>
 				</a>
 			</div>

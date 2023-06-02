@@ -115,7 +115,7 @@ const UniversalNavbarHeader = ( {
 																titleValue={ __( 'Website Design Services', __i18n_text_domain__ ) }
 																content={ __( 'Website Design Services', __i18n_text_domain__ ) }
 																urlValue={ localizeUrl(
-																	'//wordpress.com/built-by/?ref=main-menu'
+																	'//wordpress.com/website-design-service/?ref=main-menu'
 																) }
 																type="dropdown"
 																target="_self"
@@ -454,7 +454,9 @@ const UniversalNavbarHeader = ( {
 												<ClickableItem
 													titleValue={ __( 'Website Design Services', __i18n_text_domain__ ) }
 													content={ __( 'Website Design Services', __i18n_text_domain__ ) }
-													urlValue={ localizeUrl( '//wordpress.com/built-by/?ref=main-menu' ) }
+													urlValue={ localizeUrl(
+														'//wordpress.com/website-design-service/?ref=main-menu'
+													) }
 													type="menu"
 													target="_self"
 												/>
