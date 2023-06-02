@@ -49,6 +49,8 @@ jest.mock( 'calypso/lib/navigate' );
 // we are increasing this to 12 seconds.
 jest.setTimeout( 12000 );
 
+type TestProductType = 'google workspace' | 'plan' | 'plan with domain';
+
 describe( 'Checkout contact step extra tax fields', () => {
 	const mainCartKey: CartKey = 'foo.com' as CartKey;
 	const initialCart = getBasicCart();
@@ -170,14 +172,14 @@ describe( 'Checkout contact step extra tax fields', () => {
 			labels?: Record< string, string >;
 			product: string;
 		} ) => {
-			const getPostalCodeLabel = ( productType: string ): string => {
-				if ( productType === 'plan' ) {
+			const getPostalCodeLabel = ( productType: TestProductType ): string => {
+				if ( productType === 'plan' || productType === 'google workspace' ) {
 					return 'Postal code';
 				}
 				return 'Postal Code';
 			};
 			const getContactValidationEndpointType = (
-				productType: string
+				productType: TestProductType
 			): Exclude< ContactDetailsType, 'none' > => {
 				if ( productType === 'plan' ) {
 					return 'tax';
@@ -190,7 +192,7 @@ describe( 'Checkout contact step extra tax fields', () => {
 				}
 				throw new Error( `Unknown product type '${ productType }'` );
 			};
-			const getCartProducts = ( productType: string ): ResponseCartProduct[] => {
+			const getCartProducts = ( productType: TestProductType ): ResponseCartProduct[] => {
 				if ( productType === 'plan' ) {
 					return [ planWithoutDomain ];
 				}
@@ -208,16 +210,19 @@ describe( 'Checkout contact step extra tax fields', () => {
 				city: 'City',
 				subdivision_code: 'State',
 				organization: 'Organization',
-				postal_code: getPostalCodeLabel( product ),
+				postal_code: getPostalCodeLabel( product as TestProductType ),
 				country_code: 'Country',
 				address: 'Address',
 				...labels,
 			};
-			mockContactDetailsValidationEndpoint( getContactValidationEndpointType( product ), {
-				success: true,
-			} );
+			mockContactDetailsValidationEndpoint(
+				getContactValidationEndpointType( product as TestProductType ),
+				{
+					success: true,
+				}
+			);
 			const user = userEvent.setup();
-			const cartChanges = { products: getCartProducts( product ) };
+			const cartChanges = { products: getCartProducts( product as TestProductType ) };
 
 			const setCart = jest.fn().mockImplementation( mockSetCartEndpoint );
 
