@@ -114,7 +114,7 @@ export function CheckoutSidebarPlanUpsell() {
 					<>
 						<div className="checkout-sidebar-plan-upsell__plan-grid-cell"></div>
 						<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-							<strong>{ __( '2 Year Cost' ) }</strong>
+							<strong>{ __( 'Two-year cost' ) }</strong>
 						</div>
 					</>
 				) }
@@ -154,7 +154,7 @@ export function CheckoutSidebarPlanUpsell() {
 				cta={ {
 					disabled: isFormLoading,
 					busy: isFormLoading,
-					text: __( 'Switch to a two year plan' ),
+					text: __( 'Switch to a two-year plan' ),
 					action: onUpgradeClick,
 				} }
 			/>
