@@ -129,12 +129,15 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 	useSelect( ( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(), [] );
 
 	const currentSite = window?.helpCenterData?.currentSite;
+
 	const site = useSelect(
 		( select ) => ( select( SITE_STORE ) as SiteSelect ).getSite( siteId || primarySiteId ),
 		[ siteId || primarySiteId ]
 	);
 
-	setSite( currentSite ? currentSite : site );
+	useEffect( () => {
+		setSite( currentSite ? currentSite : site );
+	}, [ currentSite, site, setSite ] );
 
 	useStillNeedHelpURL();
 
