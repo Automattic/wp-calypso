@@ -78,10 +78,8 @@ function ButtonContents( {
 				responseCart.currency,
 				{ isSmallestUnit: true, stripZeros: true }
 			);
-			return (
-				/* translators: %s is the total to be paid in localized currency */
-				<>{ sprintf( __( 'Pay %s with credits' ), total ) }</>
-			);
+			/* translators: %s is the total to be paid in localized currency */
+			return <>{ sprintf( __( 'Pay %s with credits' ), total ) }</>;
 		}
 		return <>{ __( 'Complete Checkout' ) }</>;
 	}
