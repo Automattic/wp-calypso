@@ -1,6 +1,7 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
+import useLicenseDownloadUrlQuery from 'calypso/components/data/query-jetpack-partner-portal-licenses/use-license-download-url-query';
 import RevokeLicenseDialog from 'calypso/jetpack-cloud/sections/partner-portal/revoke-license-dialog';
 import { LicenseState, LicenseType } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import UnassignLicenseDialog from 'calypso/jetpack-cloud/sections/partner-portal/unassign-license-dialog';
@@ -28,6 +29,7 @@ export default function LicenseDetailsActions( {
 	const [ revokeDialog, setRevokeDialog ] = useState( false );
 	const [ unassignDialog, setUnassignDialog ] = useState( false );
 	const debugUrl = siteUrl ? `https://jptools.wordpress.com/debug/?url=${ siteUrl }` : null;
+	const downloadUrl = useLicenseDownloadUrlQuery( licenseKey );
 
 	const openRevokeDialog = useCallback( () => {
 		setRevokeDialog( true );
@@ -51,6 +53,18 @@ export default function LicenseDetailsActions( {
 
 	return (
 		<div className="license-details__actions">
+			{ licenseState !== LicenseState.Revoked && licenseType === LicenseType.Partner && (
+				<Button
+					compact
+					{ ...( downloadUrl.isLoading ? { busy: true } : {} ) }
+					href={ downloadUrl.isSuccess ? downloadUrl.data.downloadUrl : '' }
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					{ translate( 'Download' ) }
+				</Button>
+			) }
+
 			{ licenseState === LicenseState.Attached && siteUrl && (
 				<Button compact href={ siteUrl } target="_blank" rel="noopener noreferrer">
 					{ translate( 'View site' ) }
