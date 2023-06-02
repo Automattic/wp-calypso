@@ -89,7 +89,7 @@ export function preparePreviewText( text: string, options: PreviewTextOptions ):
 	// Replace multiple new lines (2+) with 2 new lines
 	// There can be any whitespace characters in empty lines
 	// That is why "\s*"
-	result = result.replaceAll( /[\n\r]\s*[\n\r]+/g, '\n\n' );
+	result = result.replaceAll( /(?:\s*[\n\r]){2,}/g, '\n\n' );
 
 	if ( maxChars && result.length > maxChars ) {
 		result = result.substring( 0, maxChars );
