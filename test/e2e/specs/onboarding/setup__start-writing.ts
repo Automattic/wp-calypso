@@ -9,7 +9,6 @@ import {
 	RestAPIClient,
 	DomainSearchComponent,
 	EditorPage,
-	CartCheckoutPage,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { apiCloseAccount } from '../shared';
@@ -23,7 +22,6 @@ describe( DataHelper.createSuiteTitle( 'Start Writing Tailored Onboarding' ), ()
 	let page: Page;
 	let domainSearchComponent: DomainSearchComponent;
 	let newUserDetails: NewUserResponse;
-	let cartCheckoutPage: CartCheckoutPage;
 
 	beforeAll( async () => {
 		page = await browser.newPage();
@@ -96,29 +94,13 @@ describe( DataHelper.createSuiteTitle( 'Start Writing Tailored Onboarding' ), ()
 			await page.getByRole( 'button', { name: 'Choose a plan' } ).click();
 		} );
 
-		it( 'Select WordPress.com Personal plan', async function () {
-			await page.getByRole( 'button', { name: 'Get Personal' } ).click();
+		it( 'Select WordPress.com Free plan', async function () {
+			await page.getByRole( 'button', { name: 'Start with Free' } ).click();
 		} );
 
 		it( 'Launch site', async function () {
 			await page.waitForURL( /.*start-writing\/launchpad.*/ );
 			await page.getByRole( 'button', { name: 'Launch your blog' } ).click();
-		} );
-
-		it( 'Land in checkout cart', async function () {
-			cartCheckoutPage = new CartCheckoutPage( page );
-			const totalAmount = await cartCheckoutPage.getCheckoutTotalAmount();
-			expect( totalAmount ).toBeGreaterThan( 0 );
-		} );
-
-		it( 'Enter billing and payment details', async function () {
-			const paymentDetails = DataHelper.getTestPaymentDetails();
-			await cartCheckoutPage.enterBillingDetails( paymentDetails );
-			await cartCheckoutPage.enterPaymentDetails( paymentDetails );
-		} );
-
-		it( 'Make purchase', async function () {
-			await cartCheckoutPage.purchase( { timeout: 90 * 1000 } );
 		} );
 
 		it( "Ensure we're redirected to celebration screen", async function () {
