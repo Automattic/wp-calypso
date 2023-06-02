@@ -25,10 +25,10 @@ const CommissionFees = ( {
 	const StripeFeesLink = (
 		<ExternalLink href="https://stripe.com/pricing" icon={ true } iconSize={ iconSize } />
 	);
-	const plansLink = `/plans/${ siteSlug }`;
+	const plansLink = siteSlug ? `/plans/${ siteSlug }` : '/plans';
 	let commissionFeesText;
 
-	if ( commission === 0 || ! siteSlug ) {
+	if ( commission === 0 ) {
 		commissionFeesText = translate(
 			'With your current plan, the transaction fee for payments is %(commissionFee)d% (+ <StripeFeesLink>Stripe fees</StripeFeesLink>).',
 			{
