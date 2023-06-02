@@ -134,7 +134,7 @@ export const getJetpackProductsShortNames = (): Record< string, TranslateResult 
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: translate( 'Social', {
 			context: 'Jetpack product name',
 		} ),
-		[ PRODUCT_JETPACK_AI_MONTHLY ]: translate( 'AI Assistant' ),
+		[ PRODUCT_JETPACK_AI_MONTHLY ]: translate( 'AI' ),
 	};
 };
 
@@ -166,7 +166,7 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 		</>
 	);
 	const videoPress = translate( 'VideoPress' );
-	const aiAssistant = translate( 'AI Assistant' );
+	const aiAssistant = translate( 'AI' );
 	const antiSpam = translate( 'Akismet {{s}}Anti-spam{{/s}}', {
 		components: {
 			s: <span style={ { whiteSpace: 'nowrap' } } />,
@@ -294,7 +294,7 @@ export const getJetpackProductsCallToAction = (): Record< string, TranslateResul
 		},
 	} );
 	const boost = translate( 'Get Boost' );
-	const aiAssistant = translate( 'Get AI Assistant' );
+	const aiAssistant = translate( 'Get AI' );
 	const social = translate( 'Get Social' );
 
 	return {
@@ -337,10 +337,10 @@ export const getJetpackProductsTaglines = (): Record<
 	const boostOwnedTagLine = translate( 'Your site is optimized with Boost' );
 	// TODO: may need copy update
 	const aiAssistantTagLine = translate(
-		'Experience the ease of crafting content with our intuitive and powerful AI Assistant.'
+		'Experience the ease of crafting content with intuitive and powerful AI.'
 	);
 	const aiAssistantOwnedTagLine = translate(
-		'Your site is equipped with our intuitive and powerful AI Assistant.'
+		'Your site is equipped with our intuitive and powerful AI.'
 	);
 	const searchTagline = translate( 'Recommended for sites with lots of products or content' );
 	const scanTagline = translate( 'Protect your site' );
@@ -527,7 +527,7 @@ export const getJetpackProductsDescriptions = (): Record< string, TranslateResul
 	);
 	// TODO: may need copy update
 	const aiAssistantDescription = translate(
-		'Experience the ease of crafting content with our intuitive and powerful AI Assistant.'
+		'Experience the ease of crafting content with intuitive and powerful AI.'
 	);
 	const boostDescription = translate(
 		"One-click optimizations that supercharge your WordPress site's performance and improve web vitals scores for better SEO."
@@ -603,7 +603,7 @@ export const getJetpackProductsShortDescriptions = (): Record< string, Translate
 		}
 	);
 	const aiAssistantShortDescription = translate(
-		'Experience the ease of crafting content with our intuitive and powerful AI Assistant.'
+		'Experience the ease of crafting content with intuitive and powerful AI.'
 	);
 	const boostShortDescription = translate(
 		'Speed up your site and improve SEO - no developer required.'
@@ -672,7 +672,7 @@ export const getJetpackProductsFeaturedDescription = (): Record< string, Transla
 	);
 	// TODO: may need alternate copy here
 	const aiAssistantFeaturedText = translate(
-		'Utilizing the potential of artificial intelligence, AI Assistant brings a supportive layer to your content creation process.'
+		'Utilizing the potential of artificial intelligence, Jetpack AI brings a supportive layer to your content creation process.'
 	);
 	const boostFeaturedText = translate(
 		'Instant speed and SEO boost. Get the same advantages as the top sites, no developer required.'
@@ -735,7 +735,7 @@ export const getJetpackProductsLightboxDescription = (): Record< string, Transla
 		'Incredibly powerful and customizable, Jetpack Search helps your visitors instantly find the right content - right when they need it.'
 	);
 	const aiAssistantLightboxDescription = translate(
-		'Utilizing the potential of artificial intelligence, AI Assistant brings a supportive layer to your content creation process.'
+		'Utilizing the potential of artificial intelligence, Jetpack AI brings a supportive layer to your content creation process.'
 	);
 	const boostLightboxDescription = translate(
 		'Jetpack Boost gives your site the same performance advantages as the world’s leading websites, no developer required.'
