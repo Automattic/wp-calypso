@@ -89,7 +89,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		useEffect( checkFromSiteData, [ fromSiteData?.url ] );
 		useEffect( () => onComponentUnmount, [] );
 
-		if ( ! importer ) {
+		if ( ! importer || ! fromSiteData ) {
 			stepNavigator.goToImportCapturePage?.();
 			return null;
 		}
@@ -161,7 +161,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		/**
 	 	↓ Renders
 		 */
-		function renderStepContent() {
+		const renderStepContent = () => {
 			if ( isLoading() ) {
 				return <LoadingEllipsis />;
 			} else if ( ! siteSlug || ! site || ! siteId ) {
@@ -188,7 +188,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 					showConfirmDialog={ ! isMigrateFromWp }
 				/>
 			);
-		}
+		};
 
 		return (
 			<>
