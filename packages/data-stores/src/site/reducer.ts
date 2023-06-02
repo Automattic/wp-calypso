@@ -101,15 +101,6 @@ export const sites: Reducer< { [ key: number | string ]: SiteDetails | undefined
 ) => {
 	if ( action.type === 'RECEIVE_SITE' ) {
 		if ( action.response ) {
-			// Sometimes, the siteId in the request is not the same as the ID in the response in Jetpack sites.
-			// Save both ids in the look up table so the site is accessible by both ids.
-			if ( action.siteId !== action.response.ID ) {
-				return {
-					...state,
-					[ action.response.ID ]: action.response,
-					[ action.siteId ]: action.response,
-				};
-			}
 			return { ...state, [ action.response.ID ]: action.response };
 		}
 		return state;
