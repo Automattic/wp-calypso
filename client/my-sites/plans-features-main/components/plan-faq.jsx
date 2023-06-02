@@ -188,7 +188,7 @@ const PlanFAQ = ( { titanMonthlyRenewalCost } ) => {
 							ExternalLinkWithTracking: (
 								<ExternalLinkWithTracking
 									icon={ true }
-									href="https://wordpress.com/built-by/"
+									href="https://wordpress.com/website-design-service/"
 									tracksEventName="calypso_signup_step_plans_faq_difm_lp"
 								/>
 							),
