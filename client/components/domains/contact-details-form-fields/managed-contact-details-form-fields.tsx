@@ -2,11 +2,11 @@ import {
 	tryToGuessPostalCodeFormat,
 	getCountryPostalCodeSupport,
 	getCountryTaxRequirements,
+	CountryListItem,
 } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
-import { localize } from 'i18n-calypso';
+import { localize, LocalizeProps } from 'i18n-calypso';
 import { camelCase, deburr } from 'lodash';
-import PropTypes from 'prop-types';
 import { Component, createElement } from 'react';
 import { connect } from 'react-redux';
 import QueryDomainCountries from 'calypso/components/data/query-countries/domains';
@@ -28,53 +28,60 @@ import {
 } from './custom-form-fieldsets/constants';
 import RegionAddressFieldsets from './custom-form-fieldsets/region-address-fieldsets';
 import { GSuiteFields } from './g-suite-fields';
+import type { DomainContactDetails as DomainContactDetailsData } from '@automattic/shopping-cart';
+import type { DomainContactDetailsErrors } from '@automattic/wpcom-checkout';
+import type { IAppState } from 'calypso/state/types';
+import type { ComponentType, FunctionComponent } from 'react';
 
 import './style.scss';
 
 const debug = debugFactory( 'calypso:managed-contact-details-form-fields' );
 
-/* eslint-disable wpcalypso/jsx-classname-namespace */
+export interface ManagedContactDetailsFormFieldsProps {
+	eventFormName: string;
+	contactDetails: DomainContactDetailsData;
+	contactDetailsErrors: DomainContactDetailsErrors;
+	onContactDetailsChange: ( details: DomainContactDetailsData ) => void;
+	getIsFieldDisabled: ( field: string ) => boolean;
+	userCountryCode?: string;
+	needsOnlyGoogleAppsDetails?: boolean;
+	needsAlternateEmailForGSuite?: boolean;
+	emailOnly?: boolean;
+	isLoggedOutCart?: boolean;
+}
 
-export class ManagedContactDetailsFormFields extends Component {
-	static propTypes = {
-		eventFormName: PropTypes.string,
-		contactDetails: PropTypes.shape(
-			Object.fromEntries(
-				CONTACT_DETAILS_FORM_FIELDS.map( ( field ) => [ field, PropTypes.string ] )
-			)
-		).isRequired,
-		contactDetailsErrors: PropTypes.shape(
-			Object.fromEntries(
-				CONTACT_DETAILS_FORM_FIELDS.map( ( field ) => [ field, PropTypes.node ] )
-			)
-		),
-		countriesList: PropTypes.array.isRequired,
-		onContactDetailsChange: PropTypes.func.isRequired,
-		getIsFieldDisabled: PropTypes.func,
-		userCountryCode: PropTypes.string,
-		needsOnlyGoogleAppsDetails: PropTypes.bool,
-		needsAlternateEmailForGSuite: PropTypes.bool,
-		hasCountryStates: PropTypes.bool,
-		translate: PropTypes.func,
-		emailOnly: PropTypes.bool,
-	};
+export interface ManagedContactDetailsFormFieldsConnectedProps {
+	countryCode: string | undefined;
+	hasCountryStates: boolean;
+	countriesList: CountryListItem[] | null;
+}
 
+interface ManagedContactDetailsFormFieldsState {
+	phoneCountryCode: string | undefined;
+}
+
+export class ManagedContactDetailsFormFields extends Component<
+	ManagedContactDetailsFormFieldsProps &
+		ManagedContactDetailsFormFieldsConnectedProps &
+		LocalizeProps,
+	ManagedContactDetailsFormFieldsState
+> {
 	static defaultProps = {
 		eventFormName: 'Domain contact details form',
 		contactDetails: Object.fromEntries(
 			CONTACT_DETAILS_FORM_FIELDS.map( ( field ) => [ field, '' ] )
 		),
-		getIsFieldDisabled: () => {},
-		onContactDetailsChange: () => {},
-		needsOnlyGoogleAppsDetails: false,
-		needsAlternateEmailForGSuite: false,
+		getIsFieldDisabled: ( field: string ) => false,
+		onContactDetailsChange: () => undefined,
 		hasCountryStates: false,
-		translate: ( x ) => x,
 		userCountryCode: 'US',
-		emailOnly: false,
 	};
 
-	constructor( props ) {
+	constructor(
+		props: ManagedContactDetailsFormFieldsProps &
+			ManagedContactDetailsFormFieldsConnectedProps &
+			LocalizeProps
+	) {
 		super( props );
 		this.state = {
 			phoneCountryCode: this.props.countryCode || this.props.userCountryCode,
@@ -93,12 +100,12 @@ export class ManagedContactDetailsFormFields extends Component {
 		);
 	};
 
-	handleFieldChangeEvent = ( event ) => {
+	handleFieldChangeEvent = ( event: { target: { name: string; value: string } } ): void => {
 		const { name, value } = event.target;
 		this.handleFieldChange( name, value );
 	};
 
-	handleFieldChange = ( name, value ) => {
+	handleFieldChange = ( name: string, value: string ): void => {
 		let form = getFormFromContactDetails(
 			this.props.contactDetails,
 			this.props.contactDetailsErrors
@@ -115,7 +122,13 @@ export class ManagedContactDetailsFormFields extends Component {
 		this.updateParentState( form, phoneCountryCode );
 	};
 
-	handlePhoneChange = ( { phoneNumber, countryCode } ) => {
+	handlePhoneChange = ( {
+		phoneNumber,
+		countryCode,
+	}: {
+		phoneNumber: string;
+		countryCode: string;
+	} ): void => {
 		let form = getFormFromContactDetails(
 			this.props.contactDetails,
 			this.props.contactDetailsErrors
@@ -129,10 +142,9 @@ export class ManagedContactDetailsFormFields extends Component {
 
 		form = updateFormWithContactChange( form, 'phone', phoneNumber );
 		this.updateParentState( form, phoneCountryCode );
-		return;
 	};
 
-	getFieldProps = ( name, { customErrorMessage = null } ) => {
+	getFieldProps = ( name: string, { customErrorMessage = null } ) => {
 		const { eventFormName, getIsFieldDisabled } = this.props;
 		const form = getFormFromContactDetails(
 			this.props.contactDetails,
@@ -160,14 +172,21 @@ export class ManagedContactDetailsFormFields extends Component {
 		};
 	};
 
-	createField = ( name, componentClass, additionalProps, fieldPropOptions = {} ) => {
+	// We must use this trick (the extra comma) to convince the TS compiler that this is a generic.
+	createField = < P, >(
+		name: string,
+		componentClass: ComponentType | FunctionComponent< P >,
+		// TODO: get a better type for this
+		additionalProps: any,
+		fieldPropOptions = {}
+	) => {
 		return createElement( componentClass, {
 			...this.getFieldProps( name, fieldPropOptions ),
 			...additionalProps,
 		} );
 	};
 
-	handleBlur = ( name ) => () => {
+	handleBlur = ( name: string ) => () => {
 		const form = getFormFromContactDetails(
 			this.props.contactDetails,
 			this.props.contactDetailsErrors
@@ -189,7 +208,7 @@ export class ManagedContactDetailsFormFields extends Component {
 		this.handleFieldChange( name, sanitizedValue );
 	};
 
-	createEmailField( description ) {
+	createEmailField( description?: string ) {
 		const { translate } = this.props;
 
 		return this.createField(
@@ -457,7 +476,7 @@ export class ManagedContactDetailsFormFields extends Component {
 	}
 }
 
-export default connect( ( state, props ) => {
+export default connect( ( state: IAppState, props: ManagedContactDetailsFormFieldsProps ) => {
 	const contactDetails = props.contactDetails;
 	const countryCode = contactDetails.countryCode;
 
