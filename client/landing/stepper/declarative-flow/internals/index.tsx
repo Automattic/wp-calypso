@@ -152,7 +152,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 				return <StepperLoader />;
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
 			case AssertConditionState.FAILURE:
-				throw new Error( assertCondition.message ?? 'An error has occurred.' );
+				return <></>;
 		}
 
 		const StepComponent = 'asyncComponent' in step ? lazy( step.asyncComponent ) : step.component;

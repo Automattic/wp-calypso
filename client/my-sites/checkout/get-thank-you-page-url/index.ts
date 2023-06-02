@@ -554,7 +554,10 @@ function getFallbackDestination( {
 	if ( marketplaceProducts.length > 0 ) {
 		debug( 'site with marketplace products' );
 		return addQueryArgs(
-			{ plugins: marketplacePluginSlugs.join( ',' ), themes: marketplaceThemeSlugs.join( ',' ) },
+			{
+				...( marketplacePluginSlugs.length ? { plugins: marketplacePluginSlugs.join( ',' ) } : {} ),
+				...( marketplaceThemeSlugs.length ? { themes: marketplaceThemeSlugs.join( ',' ) } : {} ),
+			},
 			`/marketplace/thank-you/${ siteSlug }`
 		);
 	}

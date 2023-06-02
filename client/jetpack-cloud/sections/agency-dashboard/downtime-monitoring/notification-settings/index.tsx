@@ -1,9 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { Modal, ToggleControl } from '@wordpress/components';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
 import clockIcon from 'calypso/assets/images/jetpack/clock-icon.svg';
+import AlertBanner from 'calypso/components/jetpack/alert-banner';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import {
 	useUpdateMonitorSettings,
@@ -47,6 +49,7 @@ export default function NotificationSettings( {
 }: Props ) {
 	const isBulkUpdate = !! bulkUpdateSettings;
 	const translate = useTranslate();
+
 	const { updateMonitorSettings, isLoading, isComplete } = useUpdateMonitorSettings( sites );
 	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( sites, isLargeScreen );
 	const { verifiedItem, handleSetVerifiedItem } = useShowVerifiedBadge();
@@ -192,6 +195,7 @@ export default function NotificationSettings( {
 				setAllEmailItems={ setAllEmailItems }
 				recordEvent={ recordEvent }
 				setVerifiedEmail={ ( item ) => handleSetVerifiedItem( 'email', item ) }
+				sites={ sites }
 			/>
 		);
 	}
@@ -206,7 +210,12 @@ export default function NotificationSettings( {
 			<div className="notification-settings__sub-title">{ getSiteCountText( sites ) }</div>
 
 			<form onSubmit={ onSave }>
-				<div className="notification-settings__content">
+				{ isBulkUpdate && (
+					<AlertBanner type="warning">
+						{ translate( 'Settings for selected sites will be overwritten.' ) }
+					</AlertBanner>
+				) }
+				<div className={ classNames( { 'notification-settings__content': ! isBulkUpdate } ) }>
 					<div className="notification-settings__content-block">
 						<div className="notification-settings__content-heading">
 							{ translate( 'Notify me about downtime:' ) }

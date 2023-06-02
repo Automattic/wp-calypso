@@ -12,18 +12,20 @@ import {
 	validate,
 } from 'calypso/components/advanced-credentials/form';
 import { useMigrateProvisionMutation } from 'calypso/data/site-migration/migrate-provision-mutation';
+import useMigrationConfirmation from 'calypso/landing/stepper/hooks/use-migration-confirmation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { updateCredentials } from 'calypso/state/jetpack/credentials/actions';
 import getJetpackCredentialsUpdateError from 'calypso/state/selectors/get-jetpack-credentials-update-error';
 import getJetpackCredentialsUpdateStatus from 'calypso/state/selectors/get-jetpack-credentials-update-status';
-import { StartImportTrackingProps } from './types';
+import ConfirmModal from './confirm-modal';
+import type { CredentialsProtocol, CredentialsStatus, StartImportTrackingProps } from './types';
 
 interface Props {
 	sourceSite: SiteDetails;
 	targetSite: SiteDetails;
 	startImport: ( props?: StartImportTrackingProps ) => void;
 	selectedHost: string;
-	onChangeProtocol: ( protocol: 'ftp' | 'ssh' ) => void;
+	onChangeProtocol: ( protocol: CredentialsProtocol ) => void;
 }
 
 export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( props ) => {
@@ -35,24 +37,84 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 	const [ formErrors, setFormErrors ] = useState( INITIAL_FORM_ERRORS );
 	const [ formMode, setFormMode ] = useState( FormMode.Password );
 	const [ hasMissingFields, setHasMissingFields ] = useState( false );
+	const [ showConfirmModal, setShowConfirmModal ] = useState( false );
+	const [ confirmCallback, setConfirmCallback ] = useState< () => void >();
+	const [ migrationConfirmed, setMigrationConfirmed ] = useMigrationConfirmation();
 
-	const formSubmissionStatus = useSelector(
-		( state ) =>
-			getJetpackCredentialsUpdateStatus( state, sourceSite.ID ) as
-				| 'unsubmitted'
-				| 'pending'
-				| 'success'
-				| 'failed'
+	const formSubmissionStatus: CredentialsStatus = useSelector( ( state ) =>
+		getJetpackCredentialsUpdateStatus( state, sourceSite.ID )
 	);
 
 	const isFormSubmissionPending = formSubmissionStatus === 'pending';
 	const formHasErrors = formErrors && Object.keys( formErrors ).length > 0;
+	const updateError = useSelector( ( state ) =>
+		getJetpackCredentialsUpdateError( state, sourceSite.ID )
+	);
 
-	useEffect( () => {
-		// Clear the hasMissingFields flag when there are no more errors.
-		if ( ! formHasErrors ) {
-			setHasMissingFields( false );
+	const startImportCallback = useCallback(
+		( args ) => {
+			// reset migration confirmation to initial state
+			setMigrationConfirmed( false );
+			setShowConfirmModal( false );
+			startImport( args );
+		},
+		[ startImport ]
+	);
+
+	const handleUpdateCredentials = () => {
+		if ( formHasErrors ) {
+			return;
 		}
+
+		const credentials = { ...formState };
+
+		if ( formMode === FormMode.Password ) {
+			credentials.kpri = '';
+		} else if ( formMode === FormMode.PrivateKey ) {
+			credentials.pass = '';
+		}
+
+		dispatch( recordTracksEvent( 'calypso_site_migration_credentials_update' ) );
+		dispatch( updateCredentials( sourceSite.ID, credentials, true, false ) );
+	};
+
+	const { migrateProvision, isLoading, isError, error } =
+		useMigrateProvisionMutation( handleUpdateCredentials );
+
+	const submitCredentials = useCallback(
+		( e ) => {
+			const _confirmCallback = () => {
+				setShowConfirmModal( false );
+				setMigrationConfirmed( true );
+				setHasMissingFields( false );
+				// If the form is submitted with errors, prevent the submission and show the errors.
+				if ( formHasErrors ) {
+					setHasMissingFields( true );
+					return;
+				}
+
+				migrateProvision( targetSite.ID, sourceSite.ID, true );
+			};
+
+			e.preventDefault();
+			setConfirmCallback( () => _confirmCallback );
+			migrationConfirmed ? _confirmCallback?.() : setShowConfirmModal( true );
+		},
+		[
+			formHasErrors,
+			migrationConfirmed,
+			migrateProvision,
+			targetSite,
+			sourceSite,
+			setShowConfirmModal,
+			setMigrationConfirmed,
+			setHasMissingFields,
+		]
+	);
+
+	// Clear the hasMissingFields flag when there are no more errors.
+	useEffect( () => {
+		! formHasErrors && setHasMissingFields( false );
 	}, [ formErrors ] );
 
 	// validate changes to the credentials form
@@ -78,64 +140,35 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 	}, [ formState, formMode ] );
 
 	useEffect( () => {
-		props.onChangeProtocol( formState.protocol as 'ftp' | 'ssh' );
+		props.onChangeProtocol( formState.protocol as CredentialsProtocol );
 	}, [ formState.protocol ] );
 
 	useEffect( () => {
-		if ( formSubmissionStatus === 'success' ) {
-			startImport( {
-				type: 'with-credentials',
-			} );
+		switch ( formSubmissionStatus ) {
+			case 'success':
+				startImportCallback( { type: 'with-credentials' } );
+				break;
 		}
-	}, [ formSubmissionStatus ] );
-
-	const handleUpdateCredentials = () => {
-		if ( formHasErrors ) {
-			return;
-		}
-
-		const credentials = { ...formState };
-
-		if ( formMode === FormMode.Password ) {
-			credentials.kpri = '';
-		} else if ( formMode === FormMode.PrivateKey ) {
-			credentials.pass = '';
-		}
-
-		dispatch( recordTracksEvent( 'calypso_site_migration_credentials_update' ) );
-		dispatch( updateCredentials( sourceSite.ID, credentials, true, false ) );
-	};
-
-	const { migrateProvision, isLoading, isError, error } =
-		useMigrateProvisionMutation( handleUpdateCredentials );
-
-	const submitCredentials = useCallback(
-		( e ) => {
-			e.preventDefault();
-			setHasMissingFields( false );
-			// If the form is submitted with errors, prevent the submission and show the errors.
-			if ( formHasErrors ) {
-				setHasMissingFields( true );
-				return;
-			}
-
-			migrateProvision( targetSite.ID, sourceSite.ID, true );
-		},
-		[ formHasErrors, dispatch, sourceSite.ID, formState, formMode ]
-	);
-
-	const updateError = useSelector( ( state ) =>
-		getJetpackCredentialsUpdateError( state, sourceSite.ID )
-	);
+	}, [ formSubmissionStatus, startImportCallback ] );
 
 	useEffect( () => {
-		if ( updateError ) {
+		updateError &&
 			dispatch( recordTracksEvent( 'calypso_site_migration_credentials_update_error' ) );
-		}
 	}, [ updateError ] );
 
 	return (
 		<>
+			{ showConfirmModal && (
+				<ConfirmModal
+					sourceSiteSlug={ sourceSite.slug }
+					targetSiteSlug={ targetSite.slug }
+					onClose={ () => {
+						setShowConfirmModal( false );
+						setConfirmCallback( undefined );
+					} }
+					onConfirm={ () => confirmCallback?.() }
+				/>
+			) }
 			<form onSubmit={ submitCredentials }>
 				<CredentialsForm
 					disabled={ isFormSubmissionPending || isLoading }
@@ -178,11 +211,18 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 					<Button
 						borderless={ true }
 						className="action-buttons__content-only"
-						onClick={ () =>
-							startImport( {
-								type: 'skip-credentials',
-							} )
-						}
+						onClick={ ( e: React.MouseEvent< HTMLButtonElement > ) => {
+							e.preventDefault();
+
+							if ( ! migrationConfirmed ) {
+								setShowConfirmModal( true );
+								setConfirmCallback( () =>
+									startImportCallback.bind( null, { type: 'skip-credentials' } )
+								);
+							} else {
+								startImportCallback( { type: 'skip-credentials' } );
+							}
+						} }
 					>
 						{ translate( 'Skip credentials (slower setup)' ) }
 					</Button>

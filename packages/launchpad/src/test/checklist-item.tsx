@@ -90,7 +90,7 @@ describe( 'ChecklistItem', () => {
 				<ChecklistItem task={ buildTask( { completed: false } ) } isPrimaryAction={ true } />
 			);
 			const taskButton = screen.queryByRole( 'button' );
-			expect( taskButton?.className ).toContain( 'launchpad__checklist-primary-button' );
+			expect( taskButton?.className ).toContain( 'checklist-item__checklist-primary-button' );
 		} );
 	} );
 } );
