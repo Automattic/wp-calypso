@@ -141,7 +141,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 			isPaidDomainItem,
 			theme,
 			siteVisibility,
-			urlData.meta.title ?? selectedSiteTitle,
+			urlData?.meta?.title ?? selectedSiteTitle,
 			siteAccentColor,
 			useThemeHeadstart,
 			username,
