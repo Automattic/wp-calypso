@@ -14,6 +14,10 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormPhoneMediaInput from 'calypso/components/forms/form-phone-media-input';
 import { countries } from 'calypso/components/phone-input/data';
 import { toIcannFormat } from 'calypso/components/phone-input/phone-number';
+import {
+	prepareDomainContactDetails,
+	convertDomainContactDetailsToManagedContactDetails,
+} from 'calypso/my-sites/checkout/composite-checkout/types/wpcom-store-state';
 import { CountrySelect, Input, HiddenInput } from 'calypso/my-sites/domains/components/form';
 import { getCountryStates } from 'calypso/state/country-states/selectors';
 import getCountries from 'calypso/state/selectors/get-countries';
@@ -23,7 +27,7 @@ import {
 	CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES,
 } from './custom-form-fieldsets/constants';
 import RegionAddressFieldsets from './custom-form-fieldsets/region-address-fieldsets';
-import { getPostCodeLabelText } from './custom-form-fieldsets/utils';
+import { GSuiteFields } from './g-suite-fields';
 
 import './style.scss';
 
@@ -405,17 +409,9 @@ export class ManagedContactDetailsFormFields extends Component {
 				</div>
 				{ this.props.needsAlternateEmailForGSuite && this.renderAlternateEmailFieldForGSuite() }
 
-				{ this.props.needsOnlyGoogleAppsDetails ? (
-					<GSuiteFields
-						countryCode={ form.countryCode?.value ?? '' }
-						countriesList={ this.props.countriesList }
-						contactDetailsErrors={ this.props.contactDetailsErrors }
-						getFieldProps={ this.getFieldProps }
-						translate={ this.props.translate }
-					/>
-				) : (
-					this.renderContactDetailsFields()
-				) }
+				{ this.props.needsOnlyGoogleAppsDetails
+					? this.renderGoogleAppsDetails()
+					: this.renderContactDetailsFields() }
 
 				{ this.props.children && (
 					<div className="contact-details-form-fields__extra-fields">{ this.props.children }</div>
@@ -423,6 +419,29 @@ export class ManagedContactDetailsFormFields extends Component {
 			</>
 		);
 	}
+
+	renderGoogleAppsDetails = () => {
+		// Convert this.props.contactDetails (DomainContactDetails) back into
+		// ManagedContactDetails, originally changed by
+		// `prepareDomainContactDetails()` back up in ContactDetailsContainer.
+		const managedContactInfo = convertDomainContactDetailsToManagedContactDetails(
+			this.props.contactDetails
+		);
+
+		// Convert the ManagedContactDetails back to DomainContactDetails for the update.
+		const onChange = ( updatedManagedContactInfo ) => {
+			this.props.onContactDetailsChange( prepareDomainContactDetails( updatedManagedContactInfo ) );
+		};
+
+		return (
+			<GSuiteFields
+				taxInfo={ managedContactInfo }
+				countriesList={ this.props.countriesList }
+				onChange={ onChange }
+				isDisabled={ this.props.getIsFieldDisabled( 'country-code' ) }
+			/>
+		);
+	};
 
 	render() {
 		const { emailOnly } = this.props;
@@ -502,33 +521,6 @@ function getMainFieldValues( form, countryCode, phoneCountryCode, hasCountryStat
 			? toIcannFormat( mainFieldValues.phone, countries[ phoneCountryCode ] )
 			: '',
 	};
-}
-
-function GSuiteFields( {
-	countryCode,
-	countriesList,
-	contactDetailsErrors,
-	getFieldProps,
-	translate,
-} ) {
-	return (
-		<div className="contact-details-form-fields__row g-apps-fieldset">
-			<CountrySelect
-				label={ translate( 'Country' ) }
-				countriesList={ countriesList }
-				{ ...getFieldProps( 'country-code', {
-					customErrorMessage: contactDetailsErrors?.countryCode,
-				} ) }
-			/>
-
-			<Input
-				label={ getPostCodeLabelText( countryCode ) }
-				{ ...getFieldProps( 'postal-code', {
-					customErrorMessage: contactDetailsErrors?.postalCode,
-				} ) }
-			/>
-		</div>
-	);
 }
 
 function getFirstError( formData ) {
