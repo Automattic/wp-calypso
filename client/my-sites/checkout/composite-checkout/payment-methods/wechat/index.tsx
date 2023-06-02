@@ -20,7 +20,6 @@ import {
 	SummaryDetails,
 } from 'calypso/my-sites/checkout/composite-checkout/components/summary-details';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import lockedIcon from '../../components/assets/icons/locked.svg';
 import WeChatPaymentQRcodeUnstyled from './wechat-payment-qrcode';
 import type {
 	LineItem,
@@ -257,14 +256,8 @@ function ButtonContents( {
 	}
 	if ( formStatus === FormStatus.READY ) {
 		return (
-			<>
-				<img src={ lockedIcon } alt="" />
-				{ sprintf(
-					/* translators: %s is the total to be paid in localized currency */
-					__( 'Pay %s' ),
-					total.amount.displayValue
-				) }
-			</>
+			/* translators: %s is the total to be paid in localized currency */
+			<>{ sprintf( __( 'Pay %s' ), total.amount.displayValue ) }</>
 		);
 	}
 	return <>{ __( 'Please wait…' ) }</>;
