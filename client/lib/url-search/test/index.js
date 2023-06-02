@@ -25,6 +25,16 @@ describe( '#buildSearchUrl', () => {
 		expect( url.searchParams.get( 'q' ) ).toEqual( 'reader is super awesome' );
 	} );
 
+	test( 'should stringify to convert spaces to +', () => {
+		const params = {
+			uri: 'wordpress.com/read/search?q=reader+is+awesome',
+			search: 'hello there',
+			queryKey: 'q',
+		};
+		const url = buildSearchUrl( params );
+		expect( url.search ).toEqual( '?q=hello+there' );
+	} );
+
 	test( 'should remove the query if search is empty', () => {
 		const params = {
 			uri: 'wordpress.com/read/search?q=reader+is+awesome',
