@@ -5,41 +5,39 @@ import { preventWidows } from 'calypso/lib/formatting';
 
 type CommissionFeesProps = {
 	className?: string;
-	commission: number;
+	commission: number | null;
 };
 
 const CommissionFees = ( { commission, className }: CommissionFeesProps ) => {
 	const translate = useTranslate();
 
-	return (
-		commission !== null && (
-			<div className={ className }>
-				{ preventWidows(
-					translate(
-						'On your current plan, WordPress.com charges {{em}}%(commission)s{{/em}}.{{br/}} Additionally, Stripe charges are typically %(stripe)s. {{a}}Learn more{{/a}}',
-						{
-							args: {
-								commission: '' + parseFloat( commission ) * 100 + '%',
-								stripe: '2.9%+30c',
-							},
-							components: {
-								em: <em />,
-								br: <br />,
-								a: (
-									<ExternalLink
-										href={ localizeUrl(
-											'https://wordpress.com/support/wordpress-editor/blocks/payments/#related-fees'
-										) }
-										icon={ true }
-									/>
-								),
-							},
-						}
-					)
-				) }
-			</div>
-		)
-	);
+	return commission !== null ? (
+		<span className={ className }>
+			{ preventWidows(
+				translate(
+					'On your current plan, WordPress.com charges {{em}}%(commission)s{{/em}}.{{br/}} Additionally, Stripe charges are typically %(stripe)s. {{a}}Learn more{{/a}}',
+					{
+						args: {
+							commission: '' + parseFloat( commission ) * 100 + '%',
+							stripe: '2.9%+30c',
+						},
+						components: {
+							em: <em />,
+							br: <br />,
+							a: (
+								<ExternalLink
+									href={ localizeUrl(
+										'https://wordpress.com/support/wordpress-editor/blocks/payments/#related-fees'
+									) }
+									icon={ true }
+								/>
+							),
+						},
+					}
+				)
+			) }
+		</span>
+	) : null;
 };
 
 export default CommissionFees;
