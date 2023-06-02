@@ -92,8 +92,8 @@ const ReaderPostActions = ( props ) => {
 			{ showSuggestedFollows && post.site_ID && (
 				<ReaderSuggestedFollowsDialog
 					onClose={ onCloseSuggestedFollowModal }
-					siteId={ post.site_ID }
-					postId={ post.ID }
+					siteId={ +post.site_ID }
+					postId={ +post.ID }
 					isVisible={ isSuggestedFollowsModalOpen }
 				/>
 			) }

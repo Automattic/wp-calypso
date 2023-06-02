@@ -177,7 +177,7 @@ export function RelatedPostCard( {
 			{ post.site_ID && (
 				<ReaderSuggestedFollowsDialog
 					onClose={ onCloseSuggestedFollowModal }
-					siteId={ post.site_ID }
+					siteId={ +post.site_ID }
 					isVisible={ isSuggestedFollowsModalOpen }
 				/>
 			) }

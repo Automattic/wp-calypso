@@ -183,7 +183,7 @@ function ReaderSubscriptionListItem( {
 			{ siteId && (
 				<ReaderSuggestedFollowsDialog
 					onClose={ onCloseSuggestedFollowModal }
-					siteId={ siteId }
+					siteId={ +siteId }
 					isVisible={ isSuggestedFollowsModalOpen }
 				/>
 			) }
