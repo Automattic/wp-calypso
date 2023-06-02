@@ -22,7 +22,6 @@ import {
 } from 'calypso/my-sites/checkout/composite-checkout/components/summary-details';
 import { useDispatch } from 'calypso/state';
 import { errorNotice } from 'calypso/state/notices/actions';
-import lockedIcon from '../../components/assets/icons/locked.svg';
 import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
 
 const debug = debugFactory( 'calypso:existing-card-payment-method' );
@@ -250,15 +249,8 @@ function ButtonContents( {
 	}
 	if ( formStatus === FormStatus.READY ) {
 		return (
-			<>
-				<img src={ lockedIcon } alt="" />
-				{ activeButtonText ||
-					sprintf(
-						/* translators: %s is the total to be paid in localized currency */
-						__( 'Pay %s' ),
-						total.amount.displayValue
-					) }
-			</>
+			/* translators: %s is the total to be paid in localized currency */
+			<>{ activeButtonText || sprintf( __( 'Pay %s' ), total.amount.displayValue ) }</>
 		);
 	}
 	return <>{ __( 'Please wait…' ) }</>;

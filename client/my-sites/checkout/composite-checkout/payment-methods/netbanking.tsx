@@ -17,7 +17,6 @@ import {
 import useCountryList from 'calypso/my-sites/checkout/composite-checkout/hooks/use-country-list';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { errorNotice } from 'calypso/state/notices/actions';
-import lockedIcon from '../components/assets/icons/locked.svg';
 import { CountrySpecificPaymentFields } from '../components/country-specific-payment-fields';
 import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
 import type {
@@ -295,14 +294,8 @@ function ButtonContents( { formStatus, total }: { formStatus: FormStatus; total:
 	}
 	if ( formStatus === FormStatus.READY ) {
 		return (
-			<>
-				<img src={ lockedIcon } alt="" />
-				{ sprintf(
-					/* translators: %s is the total to be paid in localized currency */
-					__( 'Pay %s' ),
-					total.amount.displayValue
-				) }
-			</>
+			/* translators: %s is the total to be paid in localized currency */
+			<>{ sprintf( __( 'Pay %s' ), total.amount.displayValue ) }</>
 		);
 	}
 	return <>{ __( 'Please wait…' ) }</>;
