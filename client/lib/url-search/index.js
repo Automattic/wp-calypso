@@ -17,7 +17,7 @@ const debug = debugFactory( 'calypso:url-search' );
  * @param {string} options.uri the base uri to modify and add a query to
  * @param {string} options.search the search term
  * @param {string} [options.queryKey = s] the key to place in the url.  defaults to s
- * @returns {string} The built search url
+ * @returns {URL} The built search url
  */
 export const buildSearchUrl = ( { uri, search, queryKey = 's' } ) => {
 	if ( ! uri.startsWith( 'http' ) ) {
@@ -31,8 +31,7 @@ export const buildSearchUrl = ( { uri, search, queryKey = 's' } ) => {
 		parsedUrl.searchParams.delete( queryKey );
 	}
 
-	// Remove the protocol from the URL so that page doesn't redirect.
-	return parsedUrl.toString().replace( parsedUrl.protocol + '//', '' );
+	return parsedUrl;
 };
 
 const UrlSearch = ( Component ) =>
@@ -65,7 +64,7 @@ const UrlSearch = ( Component ) =>
 			debug( 'search for: %s', query );
 			if ( this.props.search && query ) {
 				debug( 'replacing URL: %s', searchURL );
-				page.replace( searchURL );
+				page.replace( searchURL.pathname + searchURL.search );
 			} else {
 				debug( 'setting URL: %s', searchURL );
 				page( searchURL );
