@@ -9,7 +9,7 @@ export function useWpcomSite( siteId: number | string | undefined, enabled = tru
 			wpcomRequest< SiteDetails >( {
 				path: '/sites/' + encodeURIComponent( siteId as string ),
 				apiVersion: '1.1',
-				query: '?force=wpcom',
+				query: 'force=wpcom',
 			} ),
 		refetchOnWindowFocus: false,
 		staleTime: Infinity,
