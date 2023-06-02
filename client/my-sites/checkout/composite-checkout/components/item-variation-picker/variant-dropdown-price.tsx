@@ -134,7 +134,6 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 	);
 	const productBillingTermInMonths = variant.productBillingTermInMonths;
 	const isIntroductoryOffer = introCount > 0;
-	const shouldRenderJetpackDiscount = isJetpack && introCount > 1;
 	const translate = useTranslate();
 	const billingTermInYears = () => {
 		if ( productBillingTermInMonths > 12 ) {
@@ -236,21 +235,24 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 		}
 	};
 
+	const hasDiscount = discountPercentage > 0;
+	// Display the discount percentage if it's not an introductory offer
+	// or if it's a Jetpack 2 or 3-year plan
+	const canDisplayDiscountPercentage = ! isIntroductoryOffer || ( isJetpack && introCount > 1 );
+
 	return (
 		<Variant>
 			<Label>
 				{ variant.variantLabel }
-				{ discountPercentage > 0 && ! isJetpack && isMobile && (
+				{ hasDiscount && ! isJetpack && isMobile && (
 					<DiscountPercentage percent={ discountPercentage } />
 				) }
 			</Label>
 			<PriceTextContainer>
-				{ discountPercentage > 0 &&
-					! isMobile &&
-					( ! isIntroductoryOffer || shouldRenderJetpackDiscount ) && (
-						<DiscountPercentage percent={ discountPercentage } />
-					) }
-				{ discountPercentage > 0 && ( ! isIntroductoryOffer || shouldRenderJetpackDiscount ) && (
+				{ hasDiscount && ! isMobile && canDisplayDiscountPercentage && (
+					<DiscountPercentage percent={ discountPercentage } />
+				) }
+				{ hasDiscount && ! isIntroductoryOffer && ! isJetpack && (
 					<DoNotPayThis>{ formattedCompareToPriceForVariantTerm }</DoNotPayThis>
 				) }
 				<Price aria-hidden={ isIntroductoryOffer }>{ formattedCurrentPrice }</Price>
