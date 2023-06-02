@@ -29,37 +29,47 @@ interface Site {
 	feed_ID: number;
 }
 
-const selectRelatedSites = ( response: { sites: Site[] } ): RelatedSite[] | null => {
+const selectRelatedSites = ( response: { sites?: Site[] } ): RelatedSite[] | null => {
 	if ( ! response?.sites ) {
 		return null;
 	}
-	const relatedSites: RelatedSite[] = response?.sites.map( ( site: Site ) => ( {
-		global_ID: site.global_ID,
-		site_ID: site.site_ID,
-		name: decodeEntities( site.site_name ),
-		URL: site.site_URL,
-		last_updated: 0,
-		unseen_count: 0,
-		site_icon: site.site_icon?.img || site.site_icon?.ico || null,
-		post_author: site.author,
-		feed_ID: site.feed_ID,
-		description: decodeEntities( site.description ),
-	} ) );
-	return relatedSites.length > 0 ? relatedSites : null;
+	const relatedSites: RelatedSite[] = response.sites.map( ( site: Site ) => {
+		return {
+			global_ID: site.global_ID,
+			site_ID: site.site_ID,
+			name: decodeEntities( site.site_name ),
+			URL: site.site_URL,
+			last_updated: 0,
+			unseen_count: 0,
+			site_icon: site.site_icon?.img || site.site_icon?.ico || null,
+			post_author: site.author,
+			feed_ID: site.feed_ID,
+			description: decodeEntities( site.description ),
+		};
+	} );
+
+	// Filter out any undefined values that may have been created by the map function.
+	const validRelatedSites = relatedSites.filter( Boolean );
+
+	return validRelatedSites.length > 0 ? validRelatedSites : null;
 };
 
 export const useRelatedSites = (
 	siteId: number,
 	postId?: number
 ): UseQueryResult< RelatedSite[] | null > => {
-	const site_recs = 5;
-	let path =
-		'/read/site/' + siteId + '/sites/related?size_global=' + site_recs + '&http_envelope=1';
+	const SITE_RECOMMENDATIONS_COUNT = 5;
+	let path = `/read/site/${ siteId }/sites/related?size_global=${ SITE_RECOMMENDATIONS_COUNT }&http_envelope=1`;
 	if ( postId && postId > 0 ) {
-		path += '&post_id=' + postId;
+		path += `&post_id=${ postId }`;
 	}
+	const queryKeyParts: ( string | number | undefined )[] = [
+		`related-sites-${ SITE_RECOMMENDATIONS_COUNT }`,
+		siteId,
+		postId,
+	].filter( Boolean );
 	return useQuery(
-		[ 'related-sites-' + site_recs, siteId, postId ],
+		queryKeyParts,
 		() => wpcom.req.get( { path: path, apiNamespace: 'rest/v1.2' } ),
 		{
 			enabled: !! siteId,
