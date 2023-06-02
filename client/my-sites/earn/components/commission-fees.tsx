@@ -31,7 +31,6 @@ const CommissionFees = ( { commission, className }: CommissionFeesProps ) => {
 											'https://wordpress.com/support/wordpress-editor/blocks/payments/#related-fees'
 										) }
 										icon={ true }
-										iconSize={ 16 }
 									/>
 								),
 							},
