@@ -176,6 +176,6 @@ export function backupContents( context, next ) {
 		return page.redirect( backupMainPath( siteSlug ) );
 	}
 
-	context.primary = <BackupContentsPage rewindId={ context.params.rewindId } />;
+	context.primary = <BackupContentsPage siteId={ siteId } rewindId={ context.params.rewindId } />;
 	next();
 }

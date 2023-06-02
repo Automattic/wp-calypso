@@ -5,17 +5,22 @@ import ActionButtons from 'calypso/components/jetpack/daily-backup-status/action
 import cloudIcon from 'calypso/components/jetpack/daily-backup-status/status-card/icons/cloud-success.svg';
 import useGetDisplayDate from 'calypso/components/jetpack/daily-backup-status/use-get-display-date';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { useSelector } from 'calypso/state';
+import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
 import './style.scss';
 
 interface OwnProps {
 	rewindId: number;
+	siteId: number;
 }
 
-const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId } ) => {
+const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId } ) => {
 	const translate = useTranslate();
 	const getDisplayDate = useGetDisplayDate();
 	const moment = useLocalizedMoment();
 	const displayDate = getDisplayDate( moment.unix( rewindId ), false );
+
+	const isMultiSite = useSelector( ( state ) => isJetpackSiteMultiSite( state, siteId ) );
 
 	return (
 		<>
@@ -30,9 +35,8 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId } ) => {
 						</div>
 						<div className="status-card__title">{ displayDate }</div>
 						<ActionButtons
-							disabled={ false }
 							hasWarnings={ false }
-							isMultiSite={ false }
+							isMultiSite={ isMultiSite }
 							rewindId={ rewindId.toString() }
 							onClickClone={ null }
 						/>
