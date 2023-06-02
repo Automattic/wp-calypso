@@ -13,7 +13,7 @@ export function GSuiteFields( {
 	isDisabled?: boolean;
 } ) {
 	return (
-		<div className="contact-details-form-fields__row g-apps-fieldset">
+		<div className="g-apps-fieldset">
 			<TaxFields
 				section="gsuite-contact-step"
 				taxInfo={ taxInfo }
