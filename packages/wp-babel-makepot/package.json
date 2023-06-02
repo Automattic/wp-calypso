@@ -1,0 +1,48 @@
+{
+	"name": "@automattic/wp-babel-makepot",
+	"version": "1.0.2",
+	"description": "A utility for extracting translatable strings from JavaScript source.",
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"main": "index.js",
+	"author": "Automattic Inc.",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/wp-babel-makepot"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"keywords": [
+		"makepot",
+		"calypso"
+	],
+	"license": "GPL-2.0-or-later",
+	"bin": "./cli.js",
+	"scripts": {
+		"start": "./cli.js",
+		"test": "rm -rf test/output && jest"
+	},
+	"dependencies": {
+		"@automattic/babel-plugin-i18n-calypso": "workspace:^",
+		"@babel/cli": "^7.17.6",
+		"@babel/core": "^7.17.5",
+		"@babel/plugin-proposal-class-properties": "^7.16.7",
+		"@babel/preset-env": "^7.16.11",
+		"@babel/preset-react": "^7.16.7",
+		"@babel/preset-typescript": "^7.16.7",
+		"commander": "^5.1.0",
+		"gettext-parser": "^4.0.3",
+		"glob": "^7.1.6",
+		"lodash.mergewith": "^4.6.2"
+	},
+	"devDependencies": {
+		"@automattic/calypso-eslint-overrides": "workspace:^",
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"i18n-calypso": "workspace:^",
+		"jest": "^27.3.1",
+		"react": "^18.2.0",
+		"rimraf": "^3.0.2"
+	}
+}

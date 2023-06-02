@@ -1,0 +1,17 @@
+.application-password-item {
+	overflow: auto;
+}
+
+.application-password-item__details {
+	float: left;
+}
+
+.application-password-item__generated {
+	color: var(--color-neutral-40);
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+	font-size: 0.9em;
+}
+
+.application-password-item__revoke {
+	float: right;
+}

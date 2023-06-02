@@ -1,0 +1,14 @@
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/mixins";
+@import "../nav-sidebar/style.scss";
+
+.wpcom-block-editor-nav-sidebar-toggle-sidebar-button__button {
+	// Match this animation with the nav-sidebar, so that the button is not hidden
+	// before the sidebar menu finishes sliding out.
+	transition: visibility $sidebar-transition-period linear;
+	@include reduce-motion( "transition" );
+
+	&.is-hidden {
+		visibility: hidden;
+	}
+}

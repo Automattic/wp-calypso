@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`parseAuthorizationQuery should return transformed data on valid input 1`] = `
+Object {
+  "allowSiteConnection": "1",
+  "alreadyAuthorized": false,
+  "authApproved": false,
+  "blogname": "Just Another WordPress.com Site",
+  "clientId": 12345,
+  "closeWindowAfterAuthorize": false,
+  "closeWindowAfterLogin": false,
+  "from": "[unknown]",
+  "homeUrl": "https://yourjetpack.blog",
+  "isPopup": false,
+  "jpVersion": null,
+  "nonce": "foobar",
+  "redirectAfterAuth": null,
+  "redirectUri": "https://yourjetpack.blog/wp-admin/admin.php",
+  "scope": "administrator:34579bf2a3185a47d1b31aab30125d",
+  "secret": "640fdbd69f96a8ca9e61",
+  "site": "https://yourjetpack.blog",
+  "siteIcon": null,
+  "siteUrl": "https://yourjetpack.blog",
+  "state": "1",
+  "userEmail": null,
+  "woodna_help_url": null,
+  "woodna_service_name": null,
+}
+`;

@@ -1,0 +1,94 @@
+// static empty array to ensure that empty return values from selectors are
+// identical to each other ( rv1 === rv2 )
+const EMPTY_SITE_DOMAINS = Object.freeze( [] );
+
+/**
+ * Returns the list of site domains for the specified site identifier.
+ *
+ * @param {Object} state - global state tree
+ * @param {number|undefined} siteId - identifier of the site
+ * @returns {import('./types').ResponseDomain[]} the list of domains
+ */
+export const getDomainsBySiteId = ( state, siteId ) => {
+	if ( ! siteId ) {
+		return EMPTY_SITE_DOMAINS;
+	}
+
+	return state.sites.domains.items[ siteId ] || EMPTY_SITE_DOMAINS;
+};
+
+/**
+ * Returns the  wpcom domain for the provided site id.
+ *
+ * @param {Object} state - global state tree
+ * @param {number | undefined} siteId - identifier of the site
+ * @returns {null|import('./types').ResponseDomain} the wpcom domain
+ */
+export const getWpComDomainBySiteId = ( state, siteId ) => {
+	const domains = getDomainsBySiteId( state, siteId );
+	if ( ! Array.isArray( domains ) ) {
+		return null;
+	}
+
+	const WPComDomain = domains.find(
+		( { isWPCOMDomain, isWpcomStagingDomain } ) => isWPCOMDomain || isWpcomStagingDomain
+	);
+
+	return WPComDomain || null;
+};
+
+export const getAllDomains = ( state ) => {
+	return state.sites.domains.items;
+};
+
+export const getFlatDomainsList = ( state ) => {
+	return state.allDomains.domains ?? [];
+};
+
+/**
+ * Returns the list of site domains for the specified site.
+ *
+ * @param {Object} state - global state tree
+ * @param {Object} site - site object
+ * @returns {Array} the list of domains
+ */
+export const getDomainsBySite = ( state, site ) => {
+	if ( ! site ) {
+		return EMPTY_SITE_DOMAINS;
+	}
+
+	return getDomainsBySiteId( state, site.ID );
+};
+
+/**
+ * Determines whether the list of domains for the specified site has loaded.
+ *
+ * @param {Object} state - global state tree
+ * @param {?number} siteId - identifier of the site
+ * @returns {boolean} true if the list of domains has loaded, false otherwise
+ */
+export const hasLoadedSiteDomains = ( state, siteId ) => {
+	if ( ! siteId ) {
+		return false;
+	}
+	return Boolean( state?.sites?.domains?.items?.[ siteId ] );
+};
+
+/**
+ * Determines whether the list of domains is being requested via the API.
+ *
+ * @param {Object} state - global state tree
+ * @param {number} siteId - identifier of the site
+ * @returns {boolean} true if the list of domains is being requested, false otherwise
+ */
+export const isRequestingSiteDomains = ( state, siteId ) => {
+	return state.sites.domains.requesting[ siteId ] || false;
+};
+
+export const getAllRequestingSiteDomains = ( state ) => {
+	return state.sites.domains.requesting;
+};
+
+export const isUpdatingDomainPrivacy = ( state, siteId, domain ) => {
+	return state?.sites?.domains?.updatingPrivacy?.[ siteId ]?.[ domain ];
+};

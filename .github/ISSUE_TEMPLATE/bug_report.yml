@@ -1,0 +1,103 @@
+name: Bug Report
+description: Helps us improve our product!
+labels: "Needs triage, [Type] Bug, User Report"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Thanks for contributing!
+
+        Please write a clear title, then fill in the fields below and submit.
+
+        Please **do not** link to image hosting services such as Cloudup, Droplr, Imgur, etc…
+        Instead, directly embed screenshot(s) or recording(s) in any of the text areas below: click, then drag and drop.
+
+        If you have any questions, please ask in: `#dotcom-triage-alerts`.
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        ## Core Information
+  - type: textarea
+    id: summary
+    attributes:
+        label: Quick summary
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Start at `site-domain.com/blog`.
+        2. Click on any blog post.
+        3. Click on the 'Like' button.
+        4. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected to happen
+      placeholder: |
+        e.g. The post should be liked.
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What actually happened
+      placeholder: |
+        e.g. Clicking the button does nothing visibly.
+    validations:
+      required: true
+  - type: dropdown
+    id: users-affected
+    attributes:
+      label: Impact
+      description: Approximately how many users are impacted?
+      options:
+        - One
+        - Some (< 50%)
+        - Most (> 50%)
+        - All
+    validations:
+      required: true
+  - type: dropdown
+    id: workarounds
+    attributes:
+      label: Available workarounds?
+      options:
+        - No and the platform is unusable
+        - No but the platform is still usable
+        - Yes, difficult to implement
+        - Yes, easy to implement
+        - There is no user impact
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        <br>
+
+        ## Optional Information
+
+        The following section is optional.
+  - type: dropdown
+    id: site-type
+    attributes:
+      label: Platform (Simple and/or Atomic)
+      description: (You may select more than one)
+      options:
+        - Simple
+        - Atomic
+        - Self-hosted
+      multiple: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or notes
+      placeholder: |
+        Add any information that may be relevant, such as:
+          - Browser/Platform
+          - Theme
+          - Logs/Errors

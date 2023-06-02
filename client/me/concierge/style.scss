@@ -1,0 +1,152 @@
+.book__skeleton-site-block .site__content,
+.book__info-step-site-block .site__content,
+.shared__site-block .site__content {
+	// Override the site block's padding to use the containing card's padding instead
+	padding: 0;
+}
+
+.shared__available-time-card {
+	&.is-expanded {
+		background: var(--color-neutral-0);
+	}
+
+	& .shared__time-group {
+		margin-right: 10px;
+		font-weight: normal;
+
+		&.is-selected {
+			border-color: var(--studio-blue-60);
+			border-width: 2px;
+		}
+	}
+}
+
+.shared__available-time-card-header {
+	display: flex;
+	align-items: center;
+}
+
+.shared__available-time-card-header-icon {
+	color: var(--color-neutral-light);
+	border: 1px solid var(--color-neutral-10);
+	border-radius: 100%;
+	padding: 6px;
+	margin-right: 12px;
+}
+
+.shared__info-illustration {
+	display: block;
+	margin: 0 auto 20px;
+	max-width: 300px;
+}
+
+.shared__time-group-filter {
+	display: flex;
+	align-items: center;
+
+	img {
+		width: 16px;
+		height: 16px;
+		margin-right: 5px;
+	}
+}
+
+.shared__info-link {
+	display: block;
+	margin: 0 auto;
+	width: auto;
+	text-align: center;
+}
+
+.shared__confirmation {
+	text-align: center;
+}
+
+.shared__confirmation-illustration {
+	display: block;
+	margin: 50px auto 20px;
+	max-width: 182px;
+}
+
+.shared__no-available-times-heading {
+	font-weight: 600;
+	margin-bottom: 1em;
+}
+
+.cancel__reschedule-button {
+	margin-right: 10px;
+}
+
+.cancel__placeholders {
+	.is-placeholder {
+		animation: pulse-light 800ms ease-in-out infinite;
+		background: var(--color-neutral-10);
+	}
+
+	.cancel__placeholder-button-container {
+		display: flex;
+		justify-content: center;
+	}
+
+	.cancel__placeholder-button {
+		height: 50px;
+		width: 100%;
+		margin-right: 10px;
+
+		@include breakpoint-deprecated( ">480px" ) {
+			width: 80px;
+			height: 40px;
+		}
+	}
+
+}
+
+.book__info-step-phone-input {
+	display: block;
+
+	@include breakpoint-deprecated( ">480px" ) {
+		display: flex;
+	}
+
+	& fieldset {
+		flex: 1;
+		margin-bottom: 0;
+	}
+
+	.form-phone-input__phone-number {
+		margin-top: 20px;
+
+		@include breakpoint-deprecated( ">480px" ) {
+			margin-top: 0;
+			margin-left: 12px;
+		}
+	}
+}
+
+.shared__appointment-info-start-session {
+	display: flex;
+
+	& input {
+		flex: 1;
+	}
+}
+
+.book__schedule-button,
+.cancel__schedule-button,
+.reschedule__schedule-button,
+.cancel__confirmation-button {
+	margin-bottom: 40px;
+}
+
+.segmented-control {
+	display: inline-flex;
+}
+
+.calendar-step__explanation {
+	color: var(--color-text-subtle);
+	font-size: 0.875rem;
+}
+
+.calendar-step__webinars {
+	margin-top: 10px;
+}

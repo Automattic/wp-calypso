@@ -1,0 +1,117 @@
+.people-profile {
+	position: relative;
+	@include clear-fix;
+
+	&.is-placeholder {
+		.people-profile__username,
+		.people-profile__login > span,
+		.people-profile__role-badge,
+		.gravatar.is-placeholder {
+			color: transparent;
+			background-color: var(--color-neutral-0);
+			animation: loading-fade 1.6s ease-in-out infinite;
+		}
+
+		.people-profile__role-badge {
+			border: none;
+		}
+
+		.people-profile__username {
+			width: 36%;
+		}
+	}
+}
+
+.people-profile__gravatar {
+	float: left;
+}
+
+.people-profile__gravatar .gravatar {
+	width: 56px !important;
+	height: 56px !important;
+
+	@include breakpoint-deprecated( ">480px" ) {
+		width: 72px !important;
+		height: 72px !important;
+	}
+}
+
+.people-profile__detail {
+	margin-left: 80px;
+
+	@include breakpoint-deprecated( ">480px" ) {
+		margin-left: 96px;
+	}
+}
+
+.people-profile__username {
+	color: var(--color-neutral-70);
+	font-size: $font-body;
+	font-weight: 600;
+	white-space: pre;
+	text-overflow: clip;
+	overflow: hidden;
+
+	@include breakpoint-deprecated( ">480px" ) {
+		font-size: $font-title-small;
+	}
+
+	&::before {
+		@include long-content-fade();
+	}
+}
+
+.people-profile__login {
+	color: var(--color-text-subtle);
+	font-size: $font-body-small;
+
+	@include breakpoint-deprecated( ">480px" ) {
+		font-size: $font-body;
+		margin-top: -3px;
+	}
+}
+
+.people-profile__badges {
+	@include clear-fix;
+	margin-top: 8px;
+}
+
+.people-profile__subscribed {
+	color: var(--color-text-subtle);
+	font-size: $font-body-extra-small;
+	margin-top: 4px;
+}
+
+.people-profile__role-badge {
+	float: left;
+	background: var(--color-surface);
+	border: 1px solid var(--color-neutral-light);
+	border-radius: 2px;
+	color: var(--color-text-subtle);
+	font-size: $font-body-extra-small;
+	margin-left: 8px;
+	padding: 2px 6px;
+	white-space: pre;
+
+	&:first-child {
+		margin-left: 0;
+	}
+
+	&.role-super-admin {
+		background: var(--color-error);
+		border: none;
+		color: var(--color-text-inverted);
+	}
+
+	&.role-administrator,
+	&.role-admin-owner {
+		background: var(--color-neutral-70);
+		border: none;
+		color: var(--color-text-inverted);
+	}
+}
+
+.people-profile__role-badge-info {
+	float: left;
+	margin-left: 4px;
+}

@@ -1,0 +1,24 @@
+/*rtl:ignore*/
+
+.social-buttons__button {
+	width: 100%;
+
+	svg {
+		margin-top: -2px;
+
+		&.disabled {
+			display: none;
+		}
+	}
+}
+
+.social-buttons__service-name {
+	margin-left: 9px;
+}
+
+.social-buttons__error {
+	.popover__inner {
+		padding: 10px;
+		max-width: 200px;
+	}
+}

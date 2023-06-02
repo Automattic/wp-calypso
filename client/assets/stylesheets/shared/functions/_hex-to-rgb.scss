@@ -1,0 +1,11 @@
+
+// ==========================================================================
+// Returns the individual RGB values of a given hexadecimal color value
+//
+// Values are rounded in order to make it compatible with the output of other
+// color functions like e.g. lighten()/darken().
+// ==========================================================================
+
+@function hex-to-rgb( $color ) {
+	@return round( red( $color ) ), round( green( $color ) ), round( blue( $color ) );
+}

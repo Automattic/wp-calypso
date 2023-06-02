@@ -1,0 +1,13 @@
+.price-with-interval__price-discounted {
+	text-decoration: line-through;
+}
+
+.promo-card {
+	.promo-card__price {
+		.price__cost {
+			span.price-with-interval__sale-price {
+				color: var(--studio-green-50);
+			}
+		}
+	}
+}

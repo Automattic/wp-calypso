@@ -1,0 +1,9 @@
+{
+	"build": "release",
+	"updater": {
+		"downloadUrl": "https://apps.wordpress.com/desktop/",
+		"apiUrl": "https://api.github.com/repos/Automattic/wp-desktop/releases",
+		"delay": 2000,
+		"interval": 43200000
+	}
+}

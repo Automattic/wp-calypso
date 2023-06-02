@@ -1,0 +1,195 @@
+.plugin-item.card {
+	padding: 0;
+	margin: 0;
+	box-shadow: none;
+
+	.is-bulk-editing & {
+		padding-left: 16px;
+	}
+
+	& ~ .notice.is-error {
+		margin-bottom: 0;
+	}
+
+	input {
+		margin-right: 8px;
+	}
+
+	@include breakpoint-deprecated( ">660px" ) {
+		padding: 0;
+	}
+
+	.plugins-list &.is-compact:last-child {
+		margin-bottom: 0;
+	}
+}
+
+.plugin-item {
+	position: relative;
+	display: flex;
+	overflow: hidden; // lazy clearfix
+	box-sizing: border-box;
+	border: 0 solid var(--color-neutral-0);
+
+	&.disabled {
+		opacity: 0.5;
+		background: var(--color-neutral-0);
+	}
+}
+
+.plugin-item__link {
+	display: flex;
+	flex-grow: 1;
+	padding: 16px;
+	overflow: hidden; // lazy clearfix
+	cursor: pointer;
+
+	.is-bulk-editing & {
+		padding-left: 32px;
+	}
+}
+
+// Checkbox for multiselect purposes
+.plugin-item__checkbox[type="checkbox"] {
+	position: absolute;
+	top: 50%;
+	margin-top: -8px;
+
+	&::after {
+		// Making tap area larger
+		content: "";
+		position: absolute;
+		top: -20px;
+		left: -19px;
+		width: 56px;
+		height: 55px;
+	}
+}
+
+.plugin-item__label {
+	display: block;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: z-index("root", ".plugin-item__label");
+	cursor: pointer;
+}
+
+// Wraps plugin title and secondary info
+.plugin-item__info {
+	flex: auto;
+	min-width: 0;
+}
+
+// Plugin title
+.plugin-item__title {
+	color: var(--color-neutral-70);
+	display: block;
+	font-size: $font-body;
+	font-weight: 600;
+	margin-top: 3px;
+	overflow: hidden;
+	text-align: left;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+
+	&.is-placeholder {
+		@include placeholder();
+	}
+}
+
+// Plugin actions and Count
+.plugin-item__count,
+.plugin-item__actions {
+	padding: 16px;
+	flex: none;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+
+	.is-bulk-editing & {
+		padding-left: 32px;
+	}
+}
+
+.plugin-item__count {
+	font-size: $font-body-extra-small;
+	line-height: 18px;
+	color: var(--color-text-subtle);
+}
+
+.plugin-item__count .count {
+	margin-left: 8px;
+	float: right;
+}
+
+.plugin-item .plugin-item__count,
+.plugin-item .plugin-item__actions {
+	display: none;
+
+	@include breakpoint-deprecated( ">480px" ) {
+		align-self: center;
+		display: flex;
+		flex-direction: column;
+		text-align: right;
+	}
+}
+
+.plugin-item .plugin-item__count {
+	flex-direction: row;
+}
+
+.plugin-item__last-updated {
+	color: var(--color-text-subtle);
+	font-size: $font-body-small;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.plugin-item .plugin-icon {
+	flex: none;
+	margin-right: 12px;
+	width: 48px;
+	height: 48px;
+}
+
+.plugin-item .plugin-action {
+	@include breakpoint-deprecated( ">1040px" ) {
+		margin-top: 6px;
+	}
+
+	&:first-child {
+		@include breakpoint-deprecated( "<1040px" ) {
+			margin-top: 0;
+		}
+	}
+}
+
+.plugin-item .plugin-action__label {
+	@include breakpoint-deprecated( ">1040px" ) {
+		flex-direction: row;
+		margin-right: 0;
+		margin-left: 8px;
+	}
+}
+
+.plugin-item .plugin-activate-toggle__disabled {
+	@include breakpoint-deprecated( ">1040px" ) {
+		flex-direction: row;
+	}
+}
+
+.plugin-item .plugin-activate-toggle__link {
+	@include breakpoint-deprecated( ">1040px" ) {
+		flex-direction: row-reverse;
+	}
+}
+
+.plugin-item .plugin-activate-toggle__label {
+	@include breakpoint-deprecated( ">1040px" ) {
+		margin-right: 8px;
+	}
+}

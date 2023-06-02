@@ -1,0 +1,20 @@
+.reader-export-button {
+	cursor: pointer;
+
+	&.button[disabled] {
+		cursor: not-allowed;
+	}
+}
+
+.reader-export-button__icon {
+	vertical-align: middle;
+}
+.reader-export-button .gridicon.reader-export-button__icon {
+	top: 0;
+	margin-top: 0;
+}
+
+.reader-export-button__label {
+	font-size: $font-body-small;
+	padding-left: 4px;
+}

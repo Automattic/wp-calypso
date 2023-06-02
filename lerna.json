@@ -1,0 +1,7 @@
+{
+	"packages": [ "client", "packages/*", "apps/*" ],
+	"version": "independent",
+	"npmClient": "yarn",
+	"useWorkspaces": true,
+	"ignoreChanges": [ "**/*.md", "**/.eslintrc.{js,json,yaml,yml}" ]
+}

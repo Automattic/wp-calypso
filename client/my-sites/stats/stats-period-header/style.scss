@@ -1,0 +1,37 @@
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "../modernized-mixins";
+
+.stats__period-header {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
+	margin: 16px 0;
+
+	.period {
+		font-family: $brand-serif;
+	}
+
+	.stats-period-navigation {
+		@include section-header-with-siblings;
+	}
+
+	@include navigation-segment-control-buttons;
+
+	// Make the content break line earlier than 660px
+	@media ( max-width: $break-large ) {
+		.stats-period-navigation {
+			margin: 0 0 24px 0;
+			padding: 0;
+		}
+	}
+
+	@media ( max-width: $break-medium ) {
+		padding: 0 16px;
+	}
+
+	@media ( max-width: $break-mobile ) {
+		margin-top: 0;
+	}
+}

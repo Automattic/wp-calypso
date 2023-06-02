@@ -1,0 +1,52 @@
+.jetpack-plugins-setup {
+	margin: 0 auto;
+	max-width: 700px;
+
+	h1.is-placeholder,
+	p.is-placeholder {
+		width: inherit;
+		background-color: var(--color-neutral-0);
+		color: var(--color-neutral-0);
+		animation: loading-fade 1.6s ease-in-out infinite;
+
+		&::before {
+			content: " ";
+		}
+	}
+
+	.plugin-item__link {
+		cursor: default;
+	}
+}
+
+.jetpack-plugins-setup__header {
+	@include heading;
+	margin-bottom: 0.75em;
+	text-align: center;
+	color: var(--color-neutral-70);
+}
+
+.jetpack-plugins-setup__description {
+	margin-bottom: 3em;
+	color: var(--color-neutral-50);
+	text-align: center;
+}
+
+.jetpack-plugins-setup .plugin-item {
+	width: 100%;
+
+	&:nth-last-child(n + 2) {
+		border-bottom-width: 1px;
+	}
+}
+
+.jetpack-plugins-setup .plugin-item__finished {
+	color: var(--color-neutral-light);
+	font-size: $font-body-extra-small;
+	line-height: 1;
+	padding: 6px 0;
+}
+
+.jetpack-plugins-setup .plugin-item.card .notice.is-info .notice__icon {
+	display: block;
+}

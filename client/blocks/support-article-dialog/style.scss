@@ -1,0 +1,124 @@
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/placeholder";
+@import "@automattic/typography/styles/fonts";
+
+.support-article-dialog__base.dialog__backdrop {
+	// Display above the guided tour.
+	z-index: z-index("root", ".support-article-dialog__base.dialog__backdrop");
+}
+
+.support-article-dialog.dialog.card {
+	margin: 0 auto;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	width: 100%;
+	height: 100%;
+	max-width: 100%;
+	max-height: 100%;
+
+	@include breakpoint-deprecated( ">660px" ) {
+		top: 5%;
+		bottom: 5%;
+		width: 90%;
+		height: 90%;
+		max-width: 860px;
+	}
+}
+
+.support-article-dialog__story {
+	padding: 0 20px 20px;
+
+	.support-article-dialog__header-title {
+		margin: 12px 0 0;
+	}
+
+	@include breakpoint-deprecated( "<480px" ) {
+		font-size: $font-body;
+		line-height: 24px;
+	}
+
+	@include breakpoint-deprecated( "<660px" ) {
+		width: auto;
+	}
+}
+
+.support-article-dialog__header-title a {
+	text-decoration: none;
+	clear: none;
+	color: var(--color-neutral-70);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	font-size: $font-title-medium;
+	font-weight: 600;
+	line-height: 32px;
+	margin: 56px 0 0;
+	max-width: 750px;
+
+	@include breakpoint-deprecated( ">960px" ) {
+		font-size: $font-headline-small;
+	}
+
+	@include breakpoint-deprecated( "480px-960px" ) {
+		font-size: $font-title-large;
+	}
+
+	@include breakpoint-deprecated( "<660px" ) {
+		margin-top: 8px;
+	}
+
+	.support-article-dialog__header-title-link {
+		display: block;
+	}
+
+	.support-article-dialog__header-title-link,
+	.support-article-dialog__header-title-link:hover {
+		text-decoration: underline;
+		color: var(--color-neutral-70);
+	}
+}
+
+.support-article-dialog__header {
+	margin-bottom: 23px;
+}
+
+.support-article-dialog__story-content {
+	.toc-jump {
+		display: none;
+	}
+}
+
+.support-article-dialog .embed-youtube,
+.support-article-dialog .embed-vimeo {
+	display: block;
+	margin-bottom: 25px;
+	position: relative;
+	padding: 25px 0 56.25%;
+	// We currently have to use !important here to override the inline style on the Youtube embed
+	// - see https://github.com/Automattic/wp-calypso/issues/9615
+	text-align: initial !important;
+
+	iframe {
+		height: 100%;
+		position: absolute;
+		top: 0;
+		width: 100%;
+	}
+}
+
+.support-article-dialog .embed-vimeo {
+	margin-bottom: 0;
+}
+
+// Placeholders
+.support-article-dialog__header-title {
+	&.is-placeholder {
+		@include placeholder();
+	}
+}
+
+.support-article-dialog__placeholder-text {
+	@include placeholder();
+	margin-bottom: 16px;
+	min-height: 200px;
+}

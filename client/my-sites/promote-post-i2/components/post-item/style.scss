@@ -1,0 +1,226 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "../../style.scss";
+
+$post-item-background-color: var(--color-surface);
+body.is-section-promote-post-i2 {
+	background-color: $post-item-background-color;
+}
+
+@mixin post-data-small-font-mobile() {
+	color: var(--studio-gray-40);
+	font-size: 0.75rem;
+	font-weight: 400;
+	line-height: 1.125;
+}
+
+.promote-post-i2 {
+	@include promote-post-i2-font;
+
+	.posts-list__table {
+		@media screen and (max-width: $break-mobile) {
+			& {
+				width: calc(100% - 32px);
+			}
+		}
+	}
+
+	.posts-list__header-column {
+		font-weight: normal;
+		padding-bottom: 8px;
+	}
+
+	.post-item__row {
+		width: 100%;
+	}
+
+	.post-item__post {
+		// Do not show the rest of columns on mobiles
+		&-type,
+		&-publish-date,
+		&-views,
+		&-likes,
+		&-comments,
+		&-view,
+		&-promote {
+			@media screen and ( max-width: $break-mobile ) {
+				& {
+					display: none;
+				}
+			}
+		}
+
+		&-data,
+		&-type,
+		&-publish-date,
+		&-views,
+		&-likes,
+		&-comments,
+		&-view,
+		&-promote {
+			vertical-align: middle;
+		}
+
+		&-data {
+			flex-direction: column;
+
+			.post-item__post {
+				&-data-row {
+					align-items: center;
+					display: flex;
+					width: 100%;
+
+					&-mobile {
+						display: none;
+						margin-top: 20px;
+
+						@media screen and (max-width: $break-mobile) {
+							& {
+								display: flex;
+								justify-content: space-between;
+							}
+						}
+
+						.post-item__stats-mobile {
+							@include post-data-small-font-mobile;
+						}
+					}
+
+					.post-item__post-title {
+						display: flex;
+						flex-direction: column;
+						justify-content: flex-start;
+
+						.post-item__post-subheading-mobile {
+							display: none;
+						}
+
+						@media screen and (max-width: $break-mobile) {
+							.post-item__post-subheading-mobile {
+								@include post-data-small-font-mobile;
+
+								display: block;
+							}
+
+							.post-item__post-title-content {
+								font-size: 0.875rem;
+								font-weight: 600;
+								line-height: 1.47;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		&-type {
+			font-size: 0.875rem;
+			width: 7.4%;
+		}
+
+		&-publish-date {
+			width: 12.8%;
+		}
+
+		&-visitors {
+			width: 9.2%;
+		}
+
+		&-likes {
+			width: 9.2%;
+		}
+
+		&-comments {
+			width: 9.2%;
+		}
+
+		&-view {
+			width: 7%;
+		}
+
+		&-promote {
+			color: $studio-simplenote-blue-50;
+			text-decoration-line: underline;
+			width: 5.4%;
+		}
+	}
+
+	// View link
+	.post-item__post-view a.post-item__view-link,
+	.post-item__post-view a.post-item__view-link:visited,
+	.post-item__post-data .post-item__post-data-row-mobile .post-item__actions-mobile a.post-item__view-link,
+	.post-item__post-data .post-item__post-data-row-mobile .post-item__actions-mobile a.post-item__view-link:visited {
+		color: var(--studio-gray-60);
+		text-decoration-line: underline;
+
+		&:hover {
+			color: var(--studio-gray-60);
+		}
+
+		@media screen and (max-width: $break-mobile) {
+			& {
+				@include post-data-small-font-mobile;
+				margin-right: 4px;
+			}
+		}
+	}
+
+	// Promote link
+	.post-item__post-data .post-item__post-data-row-mobile .post-item__actions-mobile button.post-item__post-promote-button {
+		@media screen and (max-width: $break-mobile) {
+			& {
+				@include post-data-small-font-mobile;
+				color: #3858ea;
+				height: 16px;
+				padding: 0 12px;
+			}
+		}
+	}
+
+	.post-item {
+		&__row .post-item__post-data {
+			align-items: center;
+			display: flex;
+			font-weight: 500;
+		}
+
+		&__post-promote-button {
+			color: var(--studio-simplenote-blue-50);
+			text-decoration: none;
+
+			&:hover:not(:disabled) {
+				color: var(--studio-simplenote-blue-50);
+			}
+		}
+	}
+
+	.post-item__post-title {
+		color: $studio-gray-100;
+		margin-left: 16px;
+	}
+
+	.post-item__post-thumbnail-wrapper {
+		display: block;
+		position: relative;
+		height: 78px;
+		width: 108px;
+		align-self: stretch;
+		border: 1px solid #eee;
+		border-radius: 4px;
+		overflow: hidden;
+		background-size: cover;
+		background-repeat: no-repeat;
+
+		&_no-image {
+			align-items: center;
+			background: $studio-gray-0;
+			border-radius: 4px;
+			display: flex;
+			justify-content: center;
+		}
+	}
+}
+
+.post-item__mid-dot {
+	padding: 0 6px;
+}

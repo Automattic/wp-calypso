@@ -1,0 +1,59 @@
+.card.action-card {
+	display: block;
+
+	@include breakpoint-deprecated( ">960px" ) {
+		display: flex;
+	}
+}
+
+.action-card__main {
+	flex: 2 1;
+}
+
+.action-card__illustration {
+	max-width: 200px;
+
+	@include breakpoint-deprecated( "<960px" ) {
+		display: none;
+	}
+
+	@include breakpoint-deprecated( ">960px" ) {
+		width: 200px;
+	}
+}
+
+.action-card__button-container {
+	align-self: center;
+	flex: 1;
+	margin-bottom: 16px;
+	text-align: left;
+
+	.button {
+		white-space: nowrap;
+	}
+
+	@include breakpoint-deprecated( ">960px" ) {
+		margin-bottom: 0;
+		text-align: right;
+
+		.button {
+			margin-left: 8px;
+		}
+	}
+
+	@include breakpoint-deprecated( "<480px" ) {
+		.button {
+			text-align: center;
+			width: 100%;
+		}
+	}
+}
+
+.action-card__heading {
+	font-size: $font-title-small;
+	margin: 5px 0;
+
+	@include breakpoint-deprecated( ">960px" ) {
+		margin: 10px 0;
+	}
+}

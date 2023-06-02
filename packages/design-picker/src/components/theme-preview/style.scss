@@ -1,0 +1,62 @@
+@import "@automattic/onboarding/styles/mixins";
+
+.theme-preview__frame-wrapper {
+	flex-grow: 1;
+	position: relative;
+
+	.theme-preview__frame-message {
+		bottom: 0;
+		color: var(--color-text-subtle);
+		display: none;
+		font-size: $font-body;
+		left: 0;
+		position: absolute;
+		right: 0;
+		top: 0;
+		z-index: 1;
+
+		strong {
+			color: var(--color-text-subtle);
+			display: block;
+			font-size: $font-title-medium;
+			margin-bottom: 5px;
+		}
+	}
+
+	.theme-preview__frame {
+		border: none;
+		height: 100%;
+		transform-origin: 0 0;
+		transition: opacity 0.2s ease-in-out, max-width 0.2s ease-out;
+		width: 100%;
+	}
+}
+
+.theme-preview__container {
+	bottom: 0;
+	display: flex;
+	flex-direction: column;
+	left: 0;
+	overflow: hidden;
+	position: absolute;
+	right: 0;
+	top: 0;
+
+	&--loading {
+		.theme-preview__frame-wrapper {
+			@include onboarding-placeholder;
+
+			.theme-preview__frame-message {
+				align-items: center;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+
+				svg {
+					height: 20px;
+					width: 20px;
+				}
+			}
+		}
+	}
+}

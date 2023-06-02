@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`installJetpackPlugin should return an http request 1`] = `
+Object {
+  "body": undefined,
+  "formData": undefined,
+  "method": "POST",
+  "onFailure": Object {
+    "password": "hGhrskf145kst",
+    "url": "https://yourgroovydomain.com",
+    "user": "blah123",
+  },
+  "onProgress": Object {
+    "password": "hGhrskf145kst",
+    "url": "https://yourgroovydomain.com",
+    "user": "blah123",
+  },
+  "onStreamRecord": Object {
+    "password": "hGhrskf145kst",
+    "url": "https://yourgroovydomain.com",
+    "user": "blah123",
+  },
+  "onSuccess": Object {
+    "password": "hGhrskf145kst",
+    "url": "https://yourgroovydomain.com",
+    "user": "blah123",
+  },
+  "options": Object {},
+  "path": "/jetpack-install/https%3A%2F%2Fyourgroovydomain.com",
+  "query": Object {
+    "apiVersion": undefined,
+    "password": "hGhrskf145kst",
+    "user": "blah123",
+  },
+  "type": "WPCOM_HTTP_REQUEST",
+}
+`;

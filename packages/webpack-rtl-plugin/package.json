@@ -1,0 +1,38 @@
+{
+	"name": "@automattic/webpack-rtl-plugin",
+	"version": "6.0.0",
+	"description": "Webpack plugin to produce a rtl css bundle.",
+	"main": "src/index.js",
+	"author": "Automattic Inc.",
+	"publishConfig": {
+		"access": "public"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/webpack-rtl-plugin"
+	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"keywords": [
+		"webpack",
+		"css",
+		"rtl"
+	],
+	"files": [
+		"src"
+	],
+	"license": "GPL-2.0-or-later",
+	"devDependencies": {
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"css-loader": "^6.5.1",
+		"mini-css-extract-plugin": "^1.6.2",
+		"webpack": "^5.68.0"
+	},
+	"peerDependencies": {
+		"webpack": "^5.68.0"
+	},
+	"dependencies": {
+		"rtlcss": "^3.1.2"
+	}
+}

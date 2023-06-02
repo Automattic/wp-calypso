@@ -1,0 +1,17 @@
+{
+	"type": "object",
+	"properties": {
+		"begin_timestamp": { "type": "number" },
+		"end_timestamp": { "type": "number" },
+		"id": { "type": "number" },
+		"meta": {
+			"type": "object",
+			"properties": {
+				"google_calendar_event_id": { "type": "string" },
+				"message": { "type": "string" },
+				"timezone": { "type": "string" }
+			}
+		},
+		"schedule_id": { "type": "number" }
+	}
+}

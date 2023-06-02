@@ -1,0 +1,12 @@
+.jetpack-search-upsell__content {
+	.jetpack-product-card__description {
+		@include breakpoint-deprecated( ">660px" ) {
+			min-height: 55px;
+		}
+	}
+
+	.jetpack-product-card__features-list {
+		margin-block-end: 1rem;
+	}
+}
+

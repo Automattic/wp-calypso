@@ -1,0 +1,20 @@
+.validation-fieldset {
+	margin-bottom: 0;
+	position: relative;
+}
+
+.validation-fieldset__validation-message {
+	min-height: 38px;
+
+	p {
+		margin: 0;
+	}
+}
+
+.validation-fieldset + .logged-out-form__footer {
+	margin-top: 0;
+
+	@include breakpoint-deprecated( ">480px" ) {
+		margin-top: 20px;
+	}
+}

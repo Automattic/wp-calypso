@@ -1,0 +1,11 @@
+.importer__file-importer-card {
+	padding-top: 1em;
+
+	&.card {
+		padding-bottom: 0;
+	}
+
+	&.is-disabled {
+		opacity: 0.2;
+	}
+}

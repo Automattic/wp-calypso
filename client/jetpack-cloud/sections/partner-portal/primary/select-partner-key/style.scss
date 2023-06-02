@@ -1,0 +1,10 @@
+.select-partner-key {
+	&__card {
+		display: flex;
+		align-items: center;
+	}
+
+	&__key-name {
+		flex-grow: 1;
+	}
+}

@@ -1,0 +1,26 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.is-group-jetpack-cloud.is-section-jetpack-cloud-features-comparison {
+
+	.header__main-title
+	.formatted-header__title {
+		max-width: 280px;
+		margin: 1.5rem auto 1rem;
+
+		font-size: 1.5rem;
+		font-weight: 700;
+		letter-spacing: -1px;
+
+		@include break-small {
+			max-width: none;
+			font-weight: 600;
+			font-size: 2rem;
+		}
+	}
+	.formatted-header__subtitle {
+		font-size: 1rem;
+		margin: 0;
+	}
+}
+

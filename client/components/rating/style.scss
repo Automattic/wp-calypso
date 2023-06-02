@@ -1,0 +1,19 @@
+.rating {
+	position: relative;
+
+	.rating__overlay,
+	.rating__star-outline {
+		display: flex;
+		left: 0;
+		position: absolute;
+		top: 0;
+
+		.gridicon {
+			fill: var(--color-primary);
+		}
+
+		.is-empty {
+			fill: var(--color-neutral-10);
+		}
+	}
+}

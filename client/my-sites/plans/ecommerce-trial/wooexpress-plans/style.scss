@@ -1,0 +1,34 @@
+@import "@wordpress/base-styles/breakpoints";
+
+.wooexpress-plans__interval-toggle-wrapper {
+	display: flex;
+	justify-content: center;
+	margin: 48px 0 32px 0;
+	padding: 0 20px;
+
+	.wooexpress-plans__interval-toggle {
+		font-weight: 500;
+		max-width: -moz-fit-content;
+		max-width: fit-content;
+		width: auto;
+
+		@media (max-width: $break-mobile) {
+			max-width: 100%;
+			width: 100%;
+
+			.wooexpress-plans__interval-savings {
+				display: none;
+			}
+		}
+	}
+}
+
+.wooexpress-plans__grid.is-2023-pricing-grid {
+	.plan-features-2023-grid__header-title {
+		font-family: $sans;
+	}
+
+	.plan-features-2023-grid__content .plan-features-2023-grid__table-item .plan-price {
+		font-family: $sans;
+	}
+}

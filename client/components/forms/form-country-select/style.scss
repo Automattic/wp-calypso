@@ -1,0 +1,9 @@
+.form-country-select {
+	margin-bottom: 1em;
+}
+
+// According to CSS tricks, browser support is IE9+
+.form-country-select:only-of-type,
+.form-country-select:last-of-type {
+	margin-bottom: 0;
+}

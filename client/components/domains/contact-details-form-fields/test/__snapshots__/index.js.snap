@@ -1,0 +1,196 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ContactDetailsFormFields default fields should render 1`] = `
+<fieldset
+  class="contact-details-form-fields form-fieldset"
+  role="group"
+>
+  <div
+    class="contact-details-form-fields__row"
+  >
+    <div
+      class="contact-details-form-fields__field first-name contact-details-form-fields__label"
+    >
+      <label
+        class="form-label"
+        for="first-name"
+      >
+        First name
+      </label>
+      <input
+        aria-describedby="validation-field-first-name"
+        aria-invalid="false"
+        autocomplete="on"
+        class="form-text-input"
+        id="first-name"
+        name="first-name"
+        placeholder="First name"
+        type="text"
+        value="Osso"
+      />
+      
+    </div>
+    <div
+      class="contact-details-form-fields__field last-name contact-details-form-fields__label"
+    >
+      <label
+        class="form-label"
+        for="last-name"
+      >
+        Last name
+      </label>
+      <input
+        aria-describedby="validation-field-last-name"
+        aria-invalid="false"
+        autocomplete="on"
+        class="form-text-input"
+        id="last-name"
+        name="last-name"
+        placeholder="Last name"
+        type="text"
+        value="Buco"
+      />
+      
+    </div>
+  </div>
+  <div
+    class="contact-details-form-fields__contact-details"
+  >
+    <div
+      class="contact-details-form-fields__row"
+    >
+      <div
+        class="contact-details-form-fields__field organization contact-details-form-fields__label"
+      >
+        <label
+          class="form-label"
+          for="organization"
+        >
+          Organization
+        </label>
+        <input
+          aria-describedby="validation-field-organization"
+          aria-invalid="false"
+          autocomplete="on"
+          class="form-text-input"
+          id="organization"
+          name="organization"
+          placeholder="Organization"
+          type="text"
+          value="Il pagliaccio del comune"
+        />
+        
+      </div>
+    </div>
+    <div
+      class="contact-details-form-fields__row"
+    >
+      <div
+        class="contact-details-form-fields__field email-text-input-with-checkbox"
+      >
+        <div
+          class="email contact-details-form-fields__label"
+        >
+          <label
+            class="form-label"
+            for="email"
+          >
+            Email
+          </label>
+          <input
+            aria-describedby="validation-field-email"
+            aria-invalid="false"
+            autocomplete="on"
+            class="form-text-input"
+            id="email"
+            name="email"
+            placeholder="Email"
+            type="text"
+            value="osso@buco.com"
+          />
+          
+        </div>
+        <label
+          class="email-text-input-with-checkbox__checkbox-label form-label"
+        >
+          <input
+            class="form-checkbox"
+            name="update-wpcom-email"
+            type="checkbox"
+          />
+          <span>
+            Apply contact update to My Account email.
+          </span>
+        </label>
+      </div>
+      <div
+        data-testid="form-phone-media-input"
+      />
+    </div>
+    <div
+      class="contact-details-form-fields__row"
+    />
+    <div
+      class="contact-details-form-fields__row"
+    >
+      <div
+        class="contact-details-form-fields__field country"
+      >
+        <div>
+          <label
+            class="form-label"
+            for="country-code"
+          >
+            Country
+          </label>
+          <select
+            aria-describedby="validation-field-country-code"
+            aria-invalid="false"
+            class="form-select"
+            id="country-code"
+            name="country-code"
+          >
+            <option
+              value=""
+            >
+              Select Country
+            </option>
+            <option
+              disabled=""
+              value="-"
+            />
+            <option
+              value="AU"
+            >
+              Australia
+            </option>
+            <option
+              value="BR"
+            >
+              Brazil
+            </option>
+            <option
+              value="IT"
+            >
+              Italy
+            </option>
+          </select>
+        </div>
+        
+      </div>
+    </div>
+    <div
+      data-testid="region-address-fieldsets"
+    />
+  </div>
+  <div>
+    <button
+      class="button contact-details-form-fields__submit-button form-button is-primary"
+      locale="en"
+      type="submit"
+    >
+      Submit
+    </button>
+  </div>
+</fieldset>
+`;

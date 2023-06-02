@@ -1,0 +1,63 @@
+// site redirect step
+
+.site-redirect-step {
+	padding: 0;
+
+	.form-fieldset {
+		clear: left;
+		margin-bottom: 0;
+	}
+
+	form.map-domain-step__form {
+		padding: 20px;
+		margin-bottom: 9px;
+	}
+
+	p {
+		color: var(--color-neutral-70);
+		font-size: $font-body-small;
+		font-weight: 600;
+		margin-bottom: 0;
+		opacity: 0.7;
+	}
+
+	.domain-product-price {
+		float: left;
+		margin-bottom: 20px;
+		min-width: 0;
+
+		@include breakpoint-deprecated( ">960px" ) {
+			float: right;
+			margin-top: -5px;
+			margin-bottom: 0;
+		}
+	}
+}
+
+.site-redirect-step__domain-description {
+	word-break: break-word;
+
+	@include breakpoint-deprecated( ">960px" ) {
+		max-width: 75%;
+		float: left;
+		margin-bottom: 20px;
+	}
+}
+
+input[type="text"].form-text-input.site-redirect-step__external-domain {
+	@include breakpoint-deprecated( ">660px" ) {
+		float: left;
+		width: calc(100% - 90px);
+	}
+}
+
+.site-redirect-step__go {
+	margin: 10px 0 0;
+	width: 100%;
+
+	@include breakpoint-deprecated( ">660px" ) {
+		float: right;
+		margin: 0;
+		width: 80px;
+	}
+}

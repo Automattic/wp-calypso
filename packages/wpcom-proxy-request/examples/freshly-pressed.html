@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>WordPress.com REST API Proxy "Freshly Pressed" Test Page</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+  <body>
+    <script src="./dist/wpcom-proxy-request.js"></script>
+    <script>
+
+      // the WordPress.com API send back HTML entities in the `title`
+      // field, so decode that first for the `console.log()` call below
+      function decode (str) {
+        var div = document.createElement('div');
+        div.innerHTML = str;
+        return div.firstChild.nodeValue;
+      }
+
+      // initiate an API request for the "Freshly Pressed" blog posts
+      WPCOMProxyRequest('/freshly-pressed', function(err, data){
+        if (err) throw err;
+        console.log('Freshly Pressed Posts:');
+        data.posts.forEach(function (post) {
+          console.log('  %s - %s', decode(post.title), post.short_URL);
+        });
+      });
+    </script>
+  </body>
+</html>

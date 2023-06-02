@@ -1,0 +1,59 @@
+@import "calypso/my-sites/stats/modernized-layout-styles.scss";
+
+.stats__metrics {
+	.pie-chart__chart-drawing,
+	.pie-chart__placeholder-drawing {
+		max-width: 30%;
+	}
+}
+
+.stats__metric {
+	display: inline-block;
+	margin-top: 1px; // Fixes shadow truncated at the top of the second column
+	width: 100%;
+
+	.stats .card-heading {
+		margin-left: 0;
+	}
+}
+
+.gmb-stats__chart {
+	margin-top: 20px;
+	position: relative; // Used to position error and empty data notices
+
+	.pie-chart__legend {
+		margin-top: 20px;
+	}
+
+	.pie-chart__placeholder-legend {
+		margin-top: 20px;
+	}
+}
+
+.gmb-stats__pie-chart {
+	position: relative; // Used to position error and empty data notices
+
+	.chart__empty-notice {
+		margin-top: -35px;
+	}
+}
+
+.gmb-stats__line-chart {
+	.chart__empty-notice {
+		margin-top: 16px;
+	}
+}
+
+.gmb-stats__chart-interval {
+	margin-top: 10px;
+
+	@include breakpoint-deprecated( "<480px" ) {
+		width: 100%;
+	}
+}
+
+.stats__gmb-location-wrapper {
+	.gmb-location {
+		margin-bottom: 0;
+	}
+}

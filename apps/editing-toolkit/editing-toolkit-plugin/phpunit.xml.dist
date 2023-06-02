@@ -1,0 +1,29 @@
+<phpunit
+	bootstrap="phpunit/bootstrap.php"
+	backupGlobals="false"
+	colors="true"
+	convertErrorsToExceptions="true"
+	convertNoticesToExceptions="true"
+	convertWarningsToExceptions="true"
+	>
+    <php>
+        <const name="WP_TESTS_MULTISITE" value="1" />
+    </php>
+	<testsuites>
+		<testsuite name="default">
+			<directory suffix="-test.php">./phpunit/</directory>
+		</testsuite>
+		<testsuite name="block-patterns">
+			<directory suffix="-test.php">./block-patterns/test/</directory>
+		</testsuite>
+		<testsuite name="help-center">
+			<directory suffix="-test.php">./help-center/test/</directory>
+		</testsuite>
+		<testsuite name="tutorials">
+			<directory suffix="-test.php">./tutorials/test/</directory>
+		</testsuite>
+		<testsuite name="wpcom-global-styles">
+			<directory suffix="-test.php">./wpcom-global-styles/test/</directory>
+		</testsuite>
+	</testsuites>
+</phpunit>

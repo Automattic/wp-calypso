@@ -1,0 +1,22 @@
+.jetpack-product-store__recommendations {
+	padding: 4em 0;
+}
+
+.jetpack-product-store__recommendations--title {
+	margin-bottom: 1.5em;
+
+	font-size: 1.25rem;
+	font-weight: 400;
+	line-height: 1.2;
+	text-align: center;
+}
+
+.jetpack-product-store__recommendations--logos {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-wrap: wrap;
+	list-style-type: none;
+	margin: 0 auto;
+	gap: 1.5em;
+}

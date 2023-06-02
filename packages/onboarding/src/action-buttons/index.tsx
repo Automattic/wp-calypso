@@ -1,0 +1,117 @@
+import { Button } from '@wordpress/components';
+import { Icon, chevronRight, chevronLeft } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
+import classnames from 'classnames';
+import * as React from 'react';
+
+import './style.scss';
+
+interface ActionButtonsProps {
+	className?: string;
+	sticky?: boolean | null;
+	children?: React.ReactNode;
+}
+
+const ActionButtons: React.FunctionComponent< ActionButtonsProps > = ( {
+	className,
+	children,
+	sticky = null,
+} ) => {
+	// if null, auto-stick (stick when small).
+	// if true, always stick.
+	// if false, never stick.
+	let stickyClass = '';
+	if ( sticky === true ) {
+		stickyClass = 'is-sticky';
+	}
+	if ( sticky === false ) {
+		stickyClass = 'no-sticky';
+	}
+
+	return (
+		<div className={ classnames( 'action-buttons', className, stickyClass ) }>{ children }</div>
+	);
+};
+
+export default ActionButtons;
+
+export const BackButton: React.FunctionComponent< React.ComponentProps< typeof Button > > = ( {
+	className,
+	children,
+	...buttonProps
+} ) => {
+	const { __ } = useI18n();
+
+	return (
+		<Button
+			className={ classnames( 'action_buttons__button action-buttons__back', className ) }
+			variant="link"
+			{ ...buttonProps }
+		>
+			{ children ||
+				/* translators: Button label for going to previous step in onboarding */
+				__( 'Go back', __i18n_text_domain__ ) }
+		</Button>
+	);
+};
+
+export const NextButton: React.FunctionComponent< React.ComponentProps< typeof Button > > = ( {
+	className,
+	children,
+	...buttonProps
+} ) => {
+	const { __ } = useI18n();
+
+	return (
+		<Button
+			className={ classnames( 'button action_buttons__button action-buttons__next', className ) }
+			variant="primary"
+			{ ...buttonProps }
+		>
+			{ children ||
+				/* translators: Button label for advancing to next step in onboarding */
+				__( 'Continue', __i18n_text_domain__ ) }
+		</Button>
+	);
+};
+
+export const SkipButton: React.FunctionComponent< React.ComponentProps< typeof Button > > = ( {
+	className,
+	children,
+	...buttonProps
+} ) => {
+	const { __ } = useI18n();
+
+	return (
+		<Button
+			className={ classnames( 'action_buttons__button action-buttons__skip', className ) }
+			{ ...buttonProps }
+		>
+			{ children ||
+				/* translators: Button label for skipping a step in onboarding */
+				__( 'Skip for now', __i18n_text_domain__ ) }
+		</Button>
+	);
+};
+
+interface ArrowButtonProps {
+	arrow: 'left' | 'right';
+}
+
+export const ArrowButton: React.FunctionComponent<
+	React.ComponentProps< typeof Button > & ArrowButtonProps
+> = ( { className, children, arrow = 'right', ...buttonProps } ) => {
+	return (
+		<Button
+			className={ classnames(
+				`action_buttons__button action-buttons__arrow action-buttons__arrow--${ arrow }`,
+				className
+			) }
+			{ ...buttonProps }
+		>
+			{ arrow === 'left' && <Icon icon={ chevronLeft } /> }
+			{ children }
+			{ arrow === 'right' && <Icon icon={ chevronRight } /> }
+		</Button>
+	);
+};

@@ -1,0 +1,17 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.wpcom-block-editor-draft-post-modal {
+	.components-modal__content {
+		@include break-small {
+			padding: 48px 128px;
+		}
+	}
+
+	.wpcom-block-editor-nux-modal__image-container {
+		img {
+			width: 209px;
+			height: 95px;
+		}
+	}
+}

@@ -1,0 +1,95 @@
+{
+	"id": "https://public-api.wordpress.com/rest/v1/domains/validation-schema/uk",
+	"errorCode": "dotukValidation",
+	"$comment": "See http://domains.opensrs.guide/docs/tld#section-uk",
+	"type": "object",
+	"properties": {
+		"extra": {
+			"type": "object",
+			"properties": {
+				"uk": {
+					"type": "object",
+					"allOf": [
+						{
+							"errorCode": "dotukRegistrantTypeRequiresRegistrationNumber",
+							"errorField": "extra.registrationNumber",
+							"anyOf": [
+								{
+									"properties": {
+										"registrationNumber": {
+											"minLength": 1
+										}
+									},
+									"required": [ "registrationNumber" ]
+								},
+								{
+									"not": {
+										"properties": {
+											"registrantType": {
+												"enum": [ "IP", "LLP", "LTD", "PLC", "RCHAR", "SCH" ]
+											}
+										}
+									}
+								}
+							]
+						},
+						{
+							"errorCode": "dotukRegistrantTypeRequiresTradingName",
+							"errorField": "extra.tradingName",
+							"anyOf": [
+								{
+									"properties": {
+										"tradingName": {
+											"minLength": 1
+										}
+									},
+									"required": [ "tradingName" ]
+								},
+								{
+									"not": {
+										"properties": {
+											"registrantType": {
+												"enum": [
+													"LTD",
+													"PLC",
+													"LLP",
+													"IP",
+													"RCHAR",
+													"FCORP",
+													"OTHER",
+													"FOTHER",
+													"STRA"
+												]
+											}
+										}
+									}
+								}
+							]
+						},
+						{
+							"properties": {
+								"registrationNumber": {
+									"errorCode": "dotukRegistrationNumberFormat",
+									"pattern": "^[a-zA-Z0-9]{2}[0-9]{6}$"
+								}
+							}
+						}
+					],
+					"required": [ "registrantType" ]
+				}
+			}
+		},
+		"organization": {
+			"minimumLength": 4
+		}
+	},
+	"patternProperties": {
+		"^address": {
+			"errorCode": "dotukNoPoBox",
+			"not": {
+				"pattern": "\\b[Pp](?:[Oo][Ss][Tt])?\\.? ?[Oo](?:[Ff][Ff][Ii][Cc][Ee])?\\.? ?[Bb](?:[Oo][Xx])? ?#?[0-9]{1,5}"
+			}
+		}
+	},
+	"required": [ "extra" ]
+}

@@ -1,0 +1,43 @@
+{
+	"name": "@automattic/calypso-storybook",
+	"version": "1.0.0",
+	"description": "Shared Storybook config used in Calypso projects.",
+	"keywords": [
+		"storybook",
+		"calypso"
+	],
+	"author": "Automattic Inc.",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"main": "./src/index.js",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/calypso-storybook"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"devDependencies": {
+		"@automattic/calypso-eslint-overrides": "workspace:^",
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"@storybook/addon-viewport": "^7.0.18"
+	},
+	"dependencies": {
+		"@automattic/calypso-babel-config": "workspace:^",
+		"@storybook/addon-actions": "^7.0.18",
+		"@storybook/addon-controls": "^7.0.18",
+		"@storybook/preset-scss": "^1.0.3",
+		"@storybook/react-webpack5": "^7.0.18",
+		"css-loader": "^6.5.1",
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0",
+		"sass-loader": "^12.1.0",
+		"style-loader": "^1.2.1",
+		"webpack": "^5.68.0"
+	},
+	"peerDependencies": {
+		"@storybook/react": "^7.0.12"
+	}
+}

@@ -1,0 +1,47 @@
+
+.marked-lines {
+	padding: 0;
+	background-color: var(--color-neutral-0);
+	font-family: $monospace;
+	display: flex;
+	flex-direction: row;
+	overflow-x: scroll;
+}
+
+.marked-lines__marked-line {
+	background-color: rgba(var(--color-error-rgb), 0.2);
+}
+
+.marked-lines__line-numbers {
+	display: flex;
+	flex-direction: column;
+	text-align: right;
+}
+
+.marked-lines__line-number {
+	padding: 0 4px;
+	background-color: var(--color-neutral-10);
+	color: var(--color-text-subtle);
+
+	&.marked-lines__marked-line {
+		background-color: rgba(var(--color-error-rgb), 0.15);
+	}
+}
+
+.marked-lines__lines {
+	display: flex;
+	flex-direction: column;
+	white-space: pre;
+	overflow-x: visible;
+}
+
+.marked-lines__line {
+	padding-left: 8px;
+}
+
+.marked-lines__mark {
+	background-color: var(--color-error);
+	color: var(--color-text-inverted);
+	border-radius: 2px;
+	padding: 2px 4px;
+}

@@ -1,0 +1,22 @@
+.security-2fa-code-prompt {
+
+	.form-fieldset {
+		margin-bottom: 12px;
+	}
+	.button {
+		margin-top: 8px;
+	}
+}
+
+.security-2fa-code-prompt .security-2fa-code-prompt__send-code {
+	float: left;
+	margin-left: 0;
+}
+
+.security-2fa-code-prompt__code-just-sent-message {
+	font-style: italic;
+}
+
+.security-2fa-code-prompt .notice {
+	margin: 5px 0 0;
+}

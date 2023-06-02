@@ -1,0 +1,35 @@
+.rewind-form-creds__card {
+	margin-top: 16px;
+	padding: 0;
+
+	.rewind-form-creds__legend {
+		margin: 0 0 24px;
+		width: 100%;
+		text-align: left;
+	}
+
+	img {
+		max-width: 200px;
+		display: block;
+		margin: rem(20px) auto;
+	}
+
+	.rewind-credentials-form {
+		padding: 0 24px;
+
+		.rewind-credentials-form__user-pass {
+			display: block;
+		}
+	}
+
+	.button.is-primary {
+		float: right;
+		padding-left: 32px;
+		padding-right: 32px;
+	}
+
+	.credentials-setup-flow__footer {
+		width: 100%;
+		text-align: left;
+	}
+}

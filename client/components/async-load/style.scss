@@ -1,0 +1,10 @@
+.async-load__placeholder {
+	background: var(--color-neutral-10);
+	border-radius: 20px; /* stylelint-disable-line scales/radii */
+	content: "";
+	display: block;
+	height: 8px;
+	width: 80px;
+	margin: 0 16px;
+	animation: pulse-light 0.8s ease-in-out infinite;
+}

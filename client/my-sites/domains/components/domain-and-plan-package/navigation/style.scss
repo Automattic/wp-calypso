@@ -1,0 +1,96 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.domain-and-plan-package-navigation {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: 24px 0 48px;
+	color: var(--studio-gray-40);
+
+	&__back {
+		height: 24px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background-image: url(calypso/assets/images/icons/wordpress-logo.svg);
+		background-size: 24px;
+		background-repeat: no-repeat;
+		margin: 0;
+		padding: 0 0 0 48px;
+		position: absolute;
+		left: 24px;
+
+		.gridicons-chevron-left {
+			float: left;
+			top: 2px !important;
+		}
+
+		button {
+			margin: 0;
+			padding: 0;
+			color: #101517;
+		}
+	}
+
+	&__steps {
+		display: none;
+	}
+
+	&__step-indication {
+		position: absolute;
+		right: 24px;
+	}
+
+	@include break-xlarge {
+		&__step-indication {
+			display: none;
+		}
+
+		&__steps {
+			display: block;
+			counter-reset: step-counter;
+			margin: 0;
+			padding: 0;
+
+			.gridicons-chevron-right {
+				float: right;
+				margin: 0 30px;
+			}
+		}
+
+		&__steps > li {
+			display: inline-block;
+			counter-increment: step-counter;
+			padding: 0 0 0 30px;
+			position: relative;
+
+			.gridicons-checkmark {
+				float: left;
+				margin-right: 12px;
+			}
+		}
+
+		&__steps li:is(:first-child)::before,
+		&__steps li::before {
+			display: inline-block;
+			text-align: center;
+			position: absolute;
+			left: 10px;
+		}
+
+		&__steps &__active:is(:first-child)::before,
+		&__steps li::before {
+			content: counter(step-counter) ".";
+		}
+
+		&__steps li:is(:first-child)::before {
+			content: "";
+			padding: 0;
+		}
+
+		ol &__active {
+			color: var(--studio-pink-50);
+		}
+	}
+}

@@ -1,0 +1,60 @@
+.reader-avatar {
+	margin: 0 auto;
+	max-height: 105px;
+
+	&.has-site-and-author-icon {
+		.site-icon {
+			height: 96px;
+			width: 96px;
+
+			.gridicon {
+				height: 96px;
+				width: 96px;
+			}
+		}
+
+		.gravatar {
+			border: 2px solid var(--color-border-inverted);
+			height: 80px;
+			position: relative;
+			left: 30px;
+			top: -75px;
+			width: 80px;
+			background-color: var(--color-surface);
+		}
+	}
+
+	&.is-compact {
+		max-height: 34px;
+		&.has-gravatar {
+			min-width: 32px;
+			min-height: 32px;
+		}
+
+		&.has-gravatar.has-site-icon {
+			max-height: 40px;
+			max-width: 40px;
+			min-height: 40px;
+			min-width: 40px;
+		}
+
+		&.has-site-and-author-icon {
+			.site-icon {
+				height: 32px;
+				width: 32px;
+
+				.gridicon {
+					height: 32px;
+					width: 32px;
+				}
+			}
+
+			.gravatar {
+				height: 24px;
+				left: 12px;
+				top: -22px;
+				width: 24px;
+			}
+		}
+	}
+}

@@ -1,0 +1,39 @@
+.security-2fa-enable__code-block {
+	margin-bottom: 16px;
+}
+
+.security-2fa-enable__qr-code {
+	height: 150px;
+	width: 150px;
+	margin: 0 auto;
+
+	&.is-placeholder {
+		@include placeholder( --color-neutral-10 );
+	}
+}
+
+.security-2fa-enable__app-options {
+	font-size: $font-body-small;
+	font-style: italic;
+	margin-top: 10px;
+}
+
+.security-2fa-enable__time-code {
+	font-weight: 600;
+	font-size: $font-body;
+}
+
+.security-2fa-enable__toggle {
+	cursor: pointer;
+	display: block;
+	color: var(--color-link);
+	font-size: 1rem;
+}
+
+.security-2fa-enable .notice {
+	margin: 5px 0 0;
+}
+
+.security-2fa-enable__buttons-bar {
+	margin-top: 16px;
+}

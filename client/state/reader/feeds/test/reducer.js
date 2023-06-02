@@ -1,0 +1,241 @@
+import deepFreeze from 'deep-freeze';
+import {
+	READER_FEED_REQUEST,
+	READER_FEED_REQUEST_SUCCESS,
+	READER_FEED_REQUEST_FAILURE,
+} from 'calypso/state/reader/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
+import { captureConsole } from 'calypso/test-helpers/console';
+import { items, queuedRequests, lastFetched } from '../reducer';
+
+describe( 'reducer', () => {
+	describe( 'items', () => {
+		test( 'should return an empty map by default', () => {
+			expect( items( undefined, {} ) ).toEqual( {} );
+		} );
+
+		test( 'should update the state when receiving a feed', () => {
+			expect(
+				items(
+					{},
+					{
+						type: READER_FEED_REQUEST_SUCCESS,
+						payload: {
+							feed_ID: 1,
+							blog_ID: 2,
+							feed_URL: 'http://example.com',
+							is_following: true,
+						},
+					}
+				)[ 1 ]
+			).toEqual( {
+				feed_ID: 1,
+				blog_ID: 2,
+				feed_URL: 'http://example.com',
+				URL: undefined,
+				is_following: true,
+				name: undefined,
+				subscribers_count: undefined,
+				description: undefined,
+				last_update: undefined,
+				image: undefined,
+				organization_id: undefined,
+				unseen_count: undefined,
+			} );
+		} );
+
+		test( 'should decode entities in the name and description', () => {
+			expect(
+				items(
+					{},
+					{
+						type: READER_FEED_REQUEST_SUCCESS,
+						payload: {
+							feed_ID: 1,
+							blog_ID: 2,
+							name: 'ben &amp; jerries',
+							description: 'peaches &amp; cream',
+						},
+					}
+				)[ 1 ]
+			).toEqual( {
+				feed_ID: 1,
+				blog_ID: 2,
+				name: 'ben & jerries',
+				description: 'peaches & cream',
+				URL: undefined,
+				feed_URL: undefined,
+				is_following: undefined,
+				subscribers_count: undefined,
+				last_update: undefined,
+				image: undefined,
+				organization_id: undefined,
+				unseen_count: undefined,
+			} );
+		} );
+
+		test( 'should reject unsafe links', () => {
+			expect(
+				items(
+					{},
+					{
+						type: READER_FEED_REQUEST_SUCCESS,
+						payload: {
+							feed_ID: 1,
+							blog_ID: 2,
+							name: 'ben &amp; jerries',
+							URL: 'javascript:foo',
+							description: 'peaches &amp; cream',
+						},
+					}
+				)[ 1 ]
+			).toEqual( {
+				feed_ID: 1,
+				blog_ID: 2,
+				name: 'ben & jerries',
+				description: 'peaches & cream',
+				URL: undefined,
+				feed_URL: undefined,
+				is_following: undefined,
+				subscribers_count: undefined,
+				last_update: undefined,
+				image: undefined,
+				organization_id: undefined,
+				unseen_count: undefined,
+			} );
+		} );
+
+		test( 'should serialize feed entries', () => {
+			const unvalidatedObject = deepFreeze( { hi: 'there' } );
+			expect( serialize( items, unvalidatedObject ) ).toEqual( unvalidatedObject );
+		} );
+
+		test( 'should not serialize errors', () => {
+			const stateWithErrors = deepFreeze( {
+				12: { feed_ID: 12 },
+				666: {
+					feed_ID: 666,
+					is_error: true,
+				},
+			} );
+			expect( serialize( items, stateWithErrors ) ).toEqual( {
+				12: { feed_ID: 12 },
+			} );
+		} );
+
+		test(
+			'should reject deserializing entries it cannot validate',
+			captureConsole( () => {
+				const unvalidatedObject = deepFreeze( { hi: 'there' } );
+				expect( deserialize( items, unvalidatedObject ) ).toEqual( {} );
+			} )
+		);
+
+		test( 'should deserialize good things', () => {
+			const validState = deepFreeze( {
+				1234: {
+					feed_ID: 1234,
+					blog_ID: 4567,
+					name: 'Example Dot Com',
+					URL: 'http://example.com',
+					feed_URL: 'http://example.com/feed',
+					subscribers_count: 10,
+					is_following: false,
+					last_update: undefined,
+					image: 'http://example.com/favicon',
+				},
+			} );
+			expect( deserialize( items, validState ) ).toEqual( validState );
+		} );
+
+		test( 'should stash an error object in the map if the request fails', () => {
+			expect(
+				items(
+					{},
+					{
+						type: READER_FEED_REQUEST_FAILURE,
+						error: new Error( 'request failed' ),
+						payload: { feed_ID: 666 },
+					}
+				)
+			).toEqual( { 666: { feed_ID: 666, is_error: true } } );
+		} );
+
+		test( 'should overwrite an existing entry on receiving a new feed', () => {
+			const startingState = deepFreeze( { 666: { feed_ID: 666, blog_ID: 777, name: 'valid' } } );
+			expect(
+				items( startingState, {
+					type: READER_FEED_REQUEST_SUCCESS,
+					payload: {
+						feed_ID: 666,
+						blog_ID: 888,
+						name: 'new',
+						subscribers_count: 10,
+						image: 'http://example.com/image',
+					},
+				} )
+			).toEqual( {
+				666: {
+					feed_ID: 666,
+					blog_ID: 888,
+					name: 'new',
+					subscribers_count: 10,
+					feed_URL: undefined,
+					URL: undefined,
+					is_following: undefined,
+					description: undefined,
+					last_update: undefined,
+					image: 'http://example.com/image',
+					organization_id: undefined,
+					unseen_count: undefined,
+				},
+			} );
+		} );
+
+		test( 'should leave an existing entry alone if an error is received', () => {
+			const startingState = deepFreeze( { 666: { feed_ID: 666, blog_ID: 777, name: 'valid' } } );
+			expect(
+				items( startingState, {
+					type: READER_FEED_REQUEST_FAILURE,
+					error: new Error( 'request failed' ),
+					payload: { feed_ID: 666 },
+				} )
+			).toEqual( startingState );
+		} );
+	} );
+
+	describe( 'isRequestingFeed', () => {
+		test( 'should add to the set of feeds inflight', () => {
+			expect(
+				queuedRequests(
+					{},
+					{
+						type: READER_FEED_REQUEST,
+						payload: { feed_ID: 1 },
+					}
+				)
+			).toEqual( { 1: true } );
+		} );
+
+		test( 'should remove the feed from the set inflight', () => {
+			expect(
+				queuedRequests( deepFreeze( { 1: true } ), {
+					type: READER_FEED_REQUEST_SUCCESS,
+					payload: { feed_ID: 1 },
+				} )
+			).toEqual( {} );
+		} );
+	} );
+
+	describe( 'lastFetched', () => {
+		test( 'should update the last fetched time on request success', () => {
+			const original = deepFreeze( {} );
+			const action = {
+				type: READER_FEED_REQUEST_SUCCESS,
+				payload: { feed_ID: 1 },
+			};
+			expect( lastFetched( original, action ) ).toHaveProperty( '1' );
+			expect( lastFetched( original, action )[ 1 ] ).toEqual( expect.any( Number ) );
+		} );
+	} );
+} );

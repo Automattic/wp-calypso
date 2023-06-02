@@ -1,0 +1,27 @@
+.plan-details {
+	.form-setting-explanation .button {
+		margin-left: 12px;
+		vertical-align: middle;
+	}
+}
+
+.plan-details__wrapper.is-placeholder {
+	.section-header__label-text,
+	.plan-details__plugin-key {
+		@include placeholder( --color-neutral-10 );
+
+		display: block;
+	}
+
+	.section-header__label-text {
+		width: 30%;
+	}
+
+	.plan-details__plugin-key {
+		height: 40px;
+
+		& + .plan-details__plugin-key {
+			margin-top: 20px;
+		}
+	}
+}

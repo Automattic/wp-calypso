@@ -1,0 +1,44 @@
+.webpack-build-monitor {
+	position: fixed;
+	bottom: 50px;
+	right: 83px;
+	z-index: z-index("root", ".webpack-build-monitor");
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+	font-size: 9px;
+	padding: 4px 6px;
+	background: var(--color-success);
+	color: var(--color-text-inverted);
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	border-radius: 2px;
+	display: flex;
+	align-items: center;
+	line-height: 11px;
+
+	&.is-warning {
+		background: var(--color-warning-20);
+		color: var(--color-warning-80);
+	}
+
+	&.is-error {
+		background: var(--color-error);
+	}
+
+	.spinner__outer {
+		border-top-color: currentColor;
+	}
+
+	.spinner__inner {
+		border-top-color: currentColor;
+		border-right-color: currentColor;
+	}
+}
+
+.webpack-build-monitor__spinner {
+	margin-right: 6px;
+}
+
+.webpack-build-monitor__text {
+	margin-left: 6px;
+	display: block;
+}

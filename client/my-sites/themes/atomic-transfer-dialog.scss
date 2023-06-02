@@ -1,0 +1,16 @@
+.themes__atomic-transfer-dialog-notice {
+	.gridicons-sync > use:first-child,
+	.gridicons-sync > g:first-child {
+		animation: spinning-sync-icon linear 2s infinite;
+		transform-origin: center;
+	}
+}
+
+@keyframes spinning-sync-icon {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
+}

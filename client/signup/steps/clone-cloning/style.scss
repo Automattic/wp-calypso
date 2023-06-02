@@ -1,0 +1,55 @@
+.clone-cloning {
+	margin: 0 auto;
+	word-break: break-word;
+}
+
+.clone-cloning__card {
+	max-width: 500px;
+	text-align: center;
+}
+
+.clone-cloning__image {
+	max-width: 293px;
+	display: block;
+	margin: 8px auto 32px;
+}
+
+.clone-cloning__description {
+	color: var(--color-text-subtle);
+	font-size: $font-body-small;
+}
+.clone-cloning__button {
+	margin-top: 24px;
+	width: 100%;
+}
+
+.clone-cloning__dot {
+	$animation-time: 1.6s;
+	animation: cloneDot $animation-time infinite;
+
+	&:nth-child(2) {
+		animation-delay: $animation-time * 0.1;
+	}
+
+	&:nth-child(3) {
+		animation-delay: $animation-time * 0.1 * 2;
+	}
+}
+
+@keyframes cloneDot {
+	0% {
+		fill: var(--color-primary);
+	}
+	5% {
+		fill: var(--color-primary);
+	}
+	20% {
+		fill: var(--color-primary-light);
+	}
+	50% {
+		fill: var(--color-text-inverted);
+	}
+	100% {
+		fill: var(--color-text-inverted);
+	}
+}

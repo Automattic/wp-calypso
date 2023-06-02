@@ -1,0 +1,41 @@
+import isRequestingSiteConnectionStatus from 'calypso/state/selectors/is-requesting-site-connection-status';
+
+describe( 'isRequestingSiteConnectionStatus()', () => {
+	const siteId = 2916284;
+
+	test( 'should return true if connection status is currently being requested for that site', () => {
+		const state = {
+			siteConnection: {
+				requesting: {
+					[ siteId ]: true,
+				},
+			},
+		};
+		const output = isRequestingSiteConnectionStatus( state, siteId );
+		expect( output ).toBe( true );
+	} );
+
+	test( 'should return false if connection status is currently not being requested for that site', () => {
+		const state = {
+			siteConnection: {
+				requesting: {
+					[ siteId ]: false,
+				},
+			},
+		};
+		const output = isRequestingSiteConnectionStatus( state, siteId );
+		expect( output ).toBe( false );
+	} );
+
+	test( 'should return false if connection status has never been requested for that site', () => {
+		const state = {
+			siteConnection: {
+				requesting: {
+					77203074: true,
+				},
+			},
+		};
+		const output = isRequestingSiteConnectionStatus( state, siteId );
+		expect( output ).toBe( false );
+	} );
+} );

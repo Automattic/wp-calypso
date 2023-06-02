@@ -1,0 +1,24 @@
+.media-library__upload-button {
+	position: relative;
+	display: inline-block;
+}
+
+.media-library__upload-button-input {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	opacity: 0;
+	cursor: pointer;
+
+	&::-webkit-file-upload-button {
+		cursor: pointer; /* webkit needs this to change cursor for file type input. */
+	}
+}
+
+@include breakpoint-deprecated( "<480px" ) {
+	.media-library__upload-button {
+		margin-left: 0;
+	}
+}

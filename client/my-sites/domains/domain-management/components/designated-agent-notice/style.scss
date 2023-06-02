@@ -1,0 +1,16 @@
+.designated-agent-notice {
+	color: var(--color-neutral-40);
+	margin: 16px 0;
+	padding: 0;
+	text-align: left;
+
+	.gridicon {
+		float: left;
+	}
+}
+
+.designated-agent-notice__copy {
+	font-size: $font-body-small;
+	font-weight: 400;
+	margin-left: 24px;
+}

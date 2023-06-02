@@ -1,0 +1,86 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Card should be linkable 1`] = `
+<a
+  class="card is-card-link"
+  href="/test"
+>
+  <svg
+    class="gridicon gridicons-chevron-right card__link-indicator"
+    height="24"
+    viewBox="0 0 24 24"
+    width="24"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <use
+      xlink:href="gridicons.svg#gridicons-chevron-right"
+    />
+  </svg>
+  This is a linked card
+</a>
+`;
+
+exports[`Card should have custom class of \`test__ace\` 1`] = `
+<div
+  class="card test__ace"
+/>
+`;
+
+exports[`Card should render as a clickable button which looks like a link 1`] = `
+<button
+  class="card is-card-link is-clickable"
+>
+  <svg
+    class="gridicon gridicons-chevron-right card__link-indicator"
+    height="24"
+    viewBox="0 0 24 24"
+    width="24"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <use
+      xlink:href="gridicons.svg#gridicons-chevron-right"
+    />
+  </svg>
+  This is a button which looks like a link
+</button>
+`;
+
+exports[`Card should render children 1`] = `
+<div
+  class="card"
+>
+  This is a card
+</div>
+`;
+
+exports[`Card should render properly and match snapshot 1`] = `
+<div
+  class="card"
+/>
+`;
+
+exports[`CompactCard should have \`compact\` prop 1`] = `
+<div
+  class="card is-compact"
+/>
+`;
+
+exports[`CompactCard should have custom class of \`test__ace\` 1`] = `
+<div
+  class="card test__ace is-compact"
+/>
+`;
+
+exports[`CompactCard should render children 1`] = `
+<div
+  class="card is-compact"
+>
+  This is a compact card
+</div>
+`;
+
+exports[`CompactCard should use the card component 1`] = `
+<div
+  class="card is-compact"
+/>
+`;

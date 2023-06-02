@@ -1,0 +1,27 @@
+.transfer-out__section-header {
+	flex-wrap: wrap;
+	button {
+		margin-left: 10px;
+		&:first-of-type {
+			margin-left: 0;
+		}
+	}
+}
+
+.transfer-out__action-button {
+	margin-right: 10px;
+}
+
+.transfer-out__card {
+	p {
+		color: var(--color-neutral-50);
+	}
+}
+
+.transfer-out__content {
+	margin-bottom: 1.5rem;
+}
+
+.dialog.card.transfer-out__select-ips-tag-dialog {
+	max-width: 700px;
+}

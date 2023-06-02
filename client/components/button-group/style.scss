@@ -1,0 +1,60 @@
+.button-group {
+	.button {
+		border-left-width: 0;
+		border-radius: 0;
+
+		&:focus {
+			// fixes focus styles in stacking context
+			position: relative;
+			z-index: z-index("button-group-parent", ".button-group .button:focus");
+		}
+	}
+
+	.button:first-child {
+		border-left-width: 1px;
+		border-top-left-radius: 2px;
+		border-bottom-left-radius: 2px;
+		&:active {
+			border-right-width: 0;
+		}
+	}
+
+	.button:last-child {
+		border-top-right-radius: 2px;
+		border-bottom-right-radius: 2px;
+		&:active {
+			border-left-width: 0;
+		}
+	}
+
+	.section-header & .button {
+		margin-right: 0;
+	}
+
+	&.is-primary {
+		&.is-busy {
+			background-size: 120px 100%;
+			background-image: linear-gradient(-45deg, var(--color-accent) 28%, var(--color-accent-60) 28%, var(--color-accent-60) 72%, var(--color-accent) 72%);
+		}
+	}
+
+	&.is-busy {
+		pointer-events: none;
+		animation: button__busy-animation 3000ms infinite linear;
+		background-size: 120px 100%;
+		background-image: linear-gradient(-45deg, var(--color-neutral-0) 28%, var(--color-surface) 28%, var(--color-surface) 72%, var(--color-neutral-0) 72%);
+		display: inline-block;
+		border-radius: 2px;
+
+		.button {
+			background-color: transparent;
+		}
+	}
+
+}
+
+@keyframes button__busy-animation {
+	0% {
+		background-position: 240px 0;
+	}
+}

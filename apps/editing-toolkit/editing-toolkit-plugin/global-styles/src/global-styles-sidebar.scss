@@ -1,0 +1,23 @@
+.global-styles-sidebar {
+	// Make the font dropdown a bit more spacy.
+	.components-select-control__input {
+		line-height: 1;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+		font-size: 18px;
+		height: 36px;
+	}
+
+	h3 {
+		margin: 0 0 1em;
+	}
+}
+
+.global-styles-sidebar__panel-action-buttons {
+	display: flex;
+	justify-content: flex-end;
+	margin-bottom: 96px;
+}
+
+.global-styles-sidebar__publish-button {
+	margin-left: 1em;
+}

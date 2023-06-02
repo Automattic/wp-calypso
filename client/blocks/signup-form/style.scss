@@ -1,0 +1,154 @@
+@import "calypso/components/text-control/style.scss";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.signup-form .signup-form__input.form-text-input {
+	margin-bottom: 20px;
+	transition: none;
+
+	&.is-error,
+	&[type="password"],
+	&[name="password"] {
+		margin-bottom: 0;
+		text-align: left;
+		/*!rtl:ignore*/
+		direction: ltr;
+	}
+
+	&[name="username"] {
+		text-align: left;
+		/*!rtl:ignore*/
+		direction: ltr;
+	}
+}
+
+.signup-form__terms-of-service-link {
+	font-size: $font-body-extra-small;
+	margin: 0 0 20px;
+	text-align: center;
+
+	a {
+		@include breakpoint-deprecated( ">480px" ) {
+			white-space: pre;
+		}
+	}
+}
+
+.signup-form__social {
+	max-width: 400px;
+	margin: 0 auto;
+	padding: 16px;
+	box-sizing: border-box;
+
+	p {
+		font-size: $font-body-small;
+		color: var(--color-text-inverted);
+		margin: 0 0 12px;
+		text-align: center;
+
+		&:last-child {
+			margin: 10px 0 0;
+		}
+	}
+}
+
+.signup-form__social-buttons {
+	a.social-buttons__button,
+	button {
+		display: block;
+		margin: 0 auto 15px;
+		box-shadow:
+			0 1px 1px 0 rgba(0, 0, 0, 0.14),
+			0 2px 1px -1px rgba(0, 0, 0, 0.12),
+			0 1px 3px 0 rgba(0, 0, 0, 0.2);
+	}
+}
+
+.signup-form__social-buttons-tos a {
+	text-decoration: underline;
+}
+
+.signup-form__passwordless-form-wrapper {
+	.signup-form__terms-of-service-link {
+		margin: 4px 0;
+	}
+
+	.logged-out-form__footer {
+		margin-top: 0;
+	}
+
+	.validation-fieldset__validation-message {
+		min-height: auto;
+	}
+}
+
+.signup-form__recaptcha-tos {
+	display: none;
+	padding: 20px 10px 10px;
+	font-size: $font-body-small;
+	color: var(--studio-blue-5);
+	text-align: center;
+
+	p {
+		margin: 0;
+		padding-top: 9px;
+	}
+
+	a {
+		color: var(--studio-blue-5);
+		text-decoration: underline;
+	}
+}
+
+// Uses the width of the columns to calculate how wide an element that spans all columns needs to be
+// The width variable is set in signup/style.scss and changes according to break points
+.signup-form__span-columns {
+	box-sizing: border-box;
+	margin-left: 16px;
+	margin-right: 16px;
+
+	// 32px is the column margins
+	width: calc(var(--signup-form-column-max-width) - 32px);
+
+	@include break-medium {
+		// 2 columns + the 60px wide "or" element
+		width: calc(var(--signup-form-column-max-width) * 2 + 60px - 32px);
+	}
+}
+
+.signup-form__is-dev-account-checkbox {
+	margin-bottom: 48px;
+
+	// The SelectCardCheckbox label is flex by default, which is good for badges, but makes
+	// the <strong> section of the label it's own block and not wrap nicely with the rest
+	// of the label.
+	&.select-card-checkbox__container .select-card-checkbox__label {
+		display: inline;
+	}
+}
+
+.signup-form__is-dev-account-strong {
+	font-weight: 500;
+}
+
+// Replace recaptcha badge with ToS text and space
+// everything out a little more.
+@media ( max-width: 660px ) {
+	.signup-form__recaptcha-tos {
+		display: block;
+	}
+
+	.grecaptcha-badge {
+		visibility: hidden;
+	}
+
+	.signup-form.is-showing-recaptcha-tos {
+		.signup-form__social {
+			padding-bottom: 28px;
+		}
+
+		.logged-out-form__links::before {
+			margin-bottom: 16px;
+		}
+	}
+}

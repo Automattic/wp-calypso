@@ -1,0 +1,47 @@
+.diff-viewer__filename {
+	padding: 2px 4px;
+	background-color: var(--color-neutral-10);
+	font-weight: 600;
+}
+
+.diff-viewer__file {
+	background-color: var(--color-neutral-0);
+	display: flex;
+	font-family: $monospace;
+	flex-direction: row;
+	overflow-x: scroll;
+	white-space: pre;
+}
+
+.diff-viewer__line-numbers {
+	padding: 0 8px;
+	display: flex;
+	flex-direction: column;
+	text-align: right;
+	background-color: var(--color-neutral-10);
+	color: var(--color-text-subtle);
+}
+
+.diff-viewer__lines {
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+	overflow-x: visible;
+
+	& div,
+	& del,
+	& ins {
+		padding: 0 8px;
+	}
+
+	& del {
+		background-color: var(--color-error-10);
+		color: var(--color-error-80);
+		text-decoration: none;
+	}
+
+	& ins {
+		background-color: var(--color-success-10);
+		color: var(--color-success-80);
+	}
+}

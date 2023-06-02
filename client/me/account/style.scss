@@ -1,0 +1,54 @@
+.account .notice {
+	margin: 5px 0 0;
+}
+
+.account__username-form-toggle-enter {
+	opacity: 0.01;
+	transition: opacity 0.5s ease-in;
+}
+
+.account__username-form-toggle-enter-active {
+	opacity: 1;
+}
+
+.account__username-form-toggle-exit {
+	opacity: 1;
+	transition: opacity 0.01s ease-in;
+}
+
+.account__username-form-toggle-exit-active {
+	opacity: 0.01;
+}
+
+.account__settings-form select {
+	width: 100%;
+}
+
+fieldset.account__settings-admin-home {
+	margin: 30px 0 20px 0;
+}
+
+.account__link-destination {
+	.components-base-control__field {
+		align-items: flex-start;
+		margin-top: 0.5em;
+	}
+
+	.components-toggle-control__label {
+		color: var(--color-text-subtle);
+
+		strong {
+			display: block;
+		}
+	}
+
+	.account__link-destination-label-extra {
+		font-style: italic;
+		margin-top: 0.1em;
+	}
+
+	.inline-support-link {
+		margin-left: 4px;
+	}
+}
+

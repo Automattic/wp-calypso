@@ -1,0 +1,11 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "happy-blocks/pricing-plans",
+	"category": "embed",
+	"textdomain": "happy-blocks",
+	"title": "Pricing Plan",
+	"viewScript": "file:../view.js",
+	"editorScript": "file:../index.js",
+	"style": "file:../view.rtl.css"
+}

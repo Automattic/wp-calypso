@@ -1,0 +1,112 @@
+.email-verification {
+	.button {
+		margin-bottom: 15px;
+	}
+}
+
+.email-verification__explanation {
+	margin-bottom: 15px;
+}
+
+.email-verification__status {
+	font-size: $font-body;
+	font-weight: 600;
+	line-height: 21px;
+	padding-left: 50px;
+	position: relative;
+	word-wrap: break-word;
+
+	.gridicon {
+		display: block;
+		margin: auto;
+		position: absolute;
+		top: 0;
+		left: 0;
+		bottom: 0;
+	}
+}
+
+.email-verification__sent-to {
+	color: var(--color-neutral-50);
+	font-size: $font-body-small;
+}
+
+.email-verification__heading {
+	font-size: $font-title-small;
+	font-weight: 600;
+	line-height: 26px;
+	margin: 0 0 10px;
+}
+
+.email-verification__status-container {
+	border-top: 1px solid var(--color-neutral-10);
+	margin: 25px -24px -16px -21px;
+	padding: 24px 24px 24px 21px;
+	position: relative;
+	overflow: hidden;
+	transition: all 0.3s ease-out;
+
+	.button {
+		margin: 5px 10px 0 0;
+
+		&:last-child {
+			margin-right: 0;
+		}
+		&.is-busy:disabled {
+			color: var(--color-neutral-50);
+		}
+	}
+
+	&.waiting .gridicon {
+		color: var(--color-warning);
+	}
+
+	&.sent .gridicon {
+		color: var(--color-success);
+	}
+}
+
+.email-verification__actions {
+	display: flex;
+	align-items: center;
+
+	a {
+		margin-left: 16px;
+	}
+}
+
+.sent .email-verification__status {
+	position: relative;
+	animation: fadeIn 0.3s ease-out;
+}
+
+.waiting .email-verification__status {
+	position: relative;
+	animation: fadeOut 0.3s ease-out;
+}
+
+.domain-details-card .email-verification__card {
+	margin-bottom: 16px;
+}
+
+@keyframes fadeIn {
+	0% {
+		opacity: 0;
+		bottom: -50px;
+	}
+	100% {
+		opacity: 1;
+		bottom: 0;
+	}
+}
+
+@keyframes fadeOut {
+	0% {
+		opacity: 0;
+		top: -20px;
+	}
+	100% {
+		opacity: 1;
+		top: 0;
+	}
+}

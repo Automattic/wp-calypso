@@ -1,0 +1,22 @@
+/*
+ * CSS values in this file are specific and
+ * designed to match the CSS on external sites,
+ * such as Google and Facebook. Therefore there
+ * will be exceptions to our CSS guidelines here
+ * but please do not "update" this file to
+ * conform.
+ *
+ * @blame: dmsnell
+*/
+
+.meta-title-editor .segmented-control__link {
+	font-size: $font-body-extra-small;
+	line-height: 16px;
+	padding: 4px 2px;
+
+	@include breakpoint-deprecated( ">660px" ) {
+		font-size: $font-body-small;
+		line-height: 18px;
+		padding: 8px 12px;
+	}
+}

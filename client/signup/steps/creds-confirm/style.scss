@@ -1,0 +1,31 @@
+.creds-confirm__card {
+	text-align: center;
+	max-width: 640px;
+	padding: rem(40px);
+	margin-top: 1px;
+	padding-bottom: rem(30px);
+}
+
+.creds-confirm__title {
+	display: inline-block;
+	font-size: rem(25px);
+	letter-spacing: rem(1.5px);
+	color: var(--color-text);
+}
+
+.creds-confirm__description {
+	color: var(--color-text-subtle);
+	font-size: rem(13.5px);
+	font-weight: 100; /* stylelint-disable-line scales/font-weights */
+	line-height: rem(25px);
+}
+
+.creds-confirm__image {
+	max-width: 200px;
+	display: block;
+	margin: 2rem auto;
+}
+
+.creds-confirm .button.is-primary {
+	margin-left: rem(10px);
+}

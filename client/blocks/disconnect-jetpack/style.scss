@@ -1,0 +1,92 @@
+.disconnect-jetpack__block {
+	text-align: center;
+	max-width: 400px;
+	color: var(--color-neutral-50);
+
+	.disconnect-jetpack__header {
+		color: var(--color-neutral-70);
+		font-size: $font-title-medium;
+		height: 2em;
+		line-height: 32px;
+		margin-top: 0.5em;
+		margin-bottom: 0.5em;
+	}
+}
+
+.disconnect-jetpack__highlight {
+	color: var(--color-text-subtle);
+	margin-bottom: 1.5em;
+	font-size: $font-body;
+}
+
+.disconnect-jetpack__feature {
+	padding: 14px 24px 14px 44px;
+	text-align: left;
+	font-size: $font-body-small;
+	border-bottom: 1px solid var(--color-neutral-5);
+
+	&:first-of-type {
+		border-top: 1px solid var(--color-neutral-5);
+	}
+
+	.gridicon {
+		float: left;
+		width: 18px;
+		height: 18px;
+		margin-left: -28px;
+	}
+}
+
+.disconnect-jetpack__button-wrap {
+	margin-top: 32px;
+	margin-bottom: 16px;
+
+	.button {
+		margin: 0 4px;
+	}
+}
+
+.disconnect-jetpack__try-rewind-button-wrap {
+	.button {
+		margin: 0 4px;
+	}
+
+	.gridicon {
+		margin-right: 5px;
+	}
+}
+
+.disconnect-jetpack__more-info-link {
+	font-size: $font-body-small;
+}
+
+// Dialog
+
+.disconnect-jetpack-dialog .dialog__content {
+	padding: 0;
+}
+
+.disconnect-jetpack-dialog {
+	.disconnect-jetpack__block {
+		margin-bottom: 0;
+	}
+}
+
+.disconnect-jetpack-dialog__dialog__action-buttons {
+	overflow: hidden;
+	border-top: 1px solid var(--color-neutral-0);
+	padding: 16px;
+	margin: 0 -24px -24px;
+	text-align: right;
+
+	.button {
+		margin-left: 10px;
+		min-width: 80px;
+
+		.is-left-aligned {
+			float: left;
+			margin-left: 0;
+			margin-right: 10px;
+		}
+	}
+}

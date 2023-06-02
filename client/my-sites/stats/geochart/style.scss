@@ -1,0 +1,18 @@
+// Stats Geochart
+// What're you doing? Zebras can't drive, only penguins and people can drive!
+
+.stats-geochart {
+	@extend %mobile-interface-element;
+	margin: 0 24px;
+
+	&.is-loading,
+	&.has-no-data {
+		display: none;
+	}
+}
+
+.stats-geochart,
+.stats-geochart.stats-module__placeholder {
+	height: 100%;
+	min-height: 300px;
+}

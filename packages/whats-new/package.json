@@ -1,0 +1,62 @@
+{
+	"name": "@automattic/whats-new",
+	"version": "1.0.0",
+	"description": "A WordPress Guide component that highlights recently-added WordPress.com features.",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.tsx",
+	"types": "./types.d.ts",
+	"sideEffects": [
+		"*.css",
+		"*.scss"
+	],
+	"keywords": [
+		"wordpress"
+	],
+	"author": "Automattic Inc.",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/whats-new"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"files": [
+		"dist",
+		"src"
+	],
+	"scripts": {
+		"clean": "rm -rf dist",
+		"build": "transpile && copy-assets",
+		"prepack": "yarn run clean && yarn run build"
+	},
+	"dependencies": {
+		"@automattic/calypso-analytics": "workspace:^",
+		"@automattic/calypso-color-schemes": "workspace:^",
+		"@automattic/components": "workspace:^",
+		"@automattic/i18n-utils": "workspace:^",
+		"@automattic/typography": "workspace:^",
+		"@tanstack/react-query": "^4.29.1",
+		"@wordpress/components": "^23.0.0",
+		"@wordpress/element": "^5.0.0",
+		"@wordpress/i18n": "^4.23.0",
+		"@wordpress/keycodes": "^3.23.0",
+		"@wordpress/react-i18n": "^3.21.0",
+		"classnames": "^2.3.1",
+		"wpcom": "workspace:^",
+		"wpcom-proxy-request": "workspace:^"
+	},
+	"peerDependencies": {
+		"@wordpress/data": "^8.0.0",
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0",
+		"redux": "^4.1.2"
+	},
+	"devDependencies": {
+		"@automattic/calypso-typescript-config": "workspace:^"
+	}
+}

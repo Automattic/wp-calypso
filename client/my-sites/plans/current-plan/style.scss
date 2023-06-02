@@ -1,0 +1,154 @@
+.current-plan main {
+	padding-top: 17px;
+}
+
+.current-plan__dialog.dialog__backdrop {
+	background-color: rgba(var(--color-neutral-dark-rgb), 0.85);
+	box-shadow: none;
+	margin: 0;
+
+	.dialog__backdrop__content {
+		background-color: var(--color-surface);
+	}
+}
+
+.current-plan__header {
+	display: flex;
+	flex-flow: row wrap;
+	margin-bottom: 12px;
+}
+
+.current-plan__header-content {
+	width: 100%;
+	padding: 14px 32px;
+	background-color: var(--color-surface);
+	box-shadow:
+		0 0 0 1px rgba(var(--color-neutral-10-rgb), 0.5),
+		0 1px 2px var(--color-neutral-0);
+
+	&-main {
+		display: flex;
+	}
+
+	.is-jetpack-free & {
+		@include breakpoint-deprecated( ">800px" ) {
+			display: flex;
+			align-items: center;
+			text-align: left;
+		}
+	}
+}
+
+.current-plan__header-icon {
+	display: none;
+
+	@include breakpoint-deprecated( ">480px" ) {
+		display: flex;
+		flex-shrink: 0;
+		width: 100px;
+		height: 100px;
+		margin: auto 40px auto 20px;
+	}
+}
+
+.current-plan__header-copy {
+	width: 100%;
+	margin: auto;
+	text-align: left;
+
+	.current-plan__header & {
+		margin-bottom: 30px;
+	}
+}
+
+.current-plan__header-heading,
+.current-plan__header-text {
+	clear: none;
+}
+
+.current-plan__header-heading {
+	font-size: $font-title-medium;
+	font-weight: 400;
+	margin: 24px 0 8px;
+}
+
+.current-plan__header-text {
+	font-size: $font-title-small;
+}
+
+.current-plan__header.is-placeholder {
+	.current-plan__header-icon {
+		display: none;
+	}
+
+	.current-plan__header-heading,
+	.current-plan__header-text {
+		@include placeholder( --color-neutral-10 );
+
+		display: block;
+
+		@include breakpoint-deprecated( "<660px" ) {
+			margin: 0 auto;
+		}
+	}
+
+	.current-plan__header-heading {
+		width: 50%;
+	}
+
+	.current-plan__header-text {
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+		line-height: 2em;
+		margin-bottom: 8px;
+		margin-top: 15px;
+		width: 90%;
+
+		@include breakpoint-deprecated( ">660px" ) {
+			margin-bottom: 18px;
+			margin-top: 18px;
+		}
+	}
+}
+
+.current-plan__header-purchase-info-wrapper.card.is-compact {
+	margin: 24px -32px -14px;
+	display: flex;
+	flex-direction: column;
+}
+
+.current-plan__header-purchase-info {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
+	&.is-expiring {
+		.current-plan__expires-in {
+			color: var(--color-error);
+		}
+	}
+
+	.button.is-compact {
+		flex-shrink: 0;
+	}
+}
+
+.current-plan__header-expires-in {
+	color: var(--color-text-subtle);
+}
+
+.current-plan__compare-plans {
+	display: flex;
+	justify-content: center;
+	margin-left: 16px;
+	min-width: 140px;
+
+	@include breakpoint-deprecated( ">660px" ) {
+		justify-content: flex-end;
+	}
+}
+
+.current-plan__text {
+	margin-top: 10px;
+	margin-bottom: 10px;
+	text-align: center;
+}

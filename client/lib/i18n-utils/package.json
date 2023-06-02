@@ -1,0 +1,7 @@
+{
+	"name": "i18n-utils",
+	"version": "0.0.0",
+	"private": true,
+	"main": "node.js",
+	"browser": "browser.js"
+}

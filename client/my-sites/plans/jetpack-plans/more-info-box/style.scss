@@ -1,0 +1,32 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.more-info-box__more-button.button {
+	display: inline-flex;
+	align-items: center;
+
+	padding-left: 1rem;
+	padding-right: 0.875rem;
+
+	border: solid 2px currentColor;
+	border-radius: 4px;
+
+	font-size: 1rem;
+	font-weight: 700;
+}
+
+.more-info-box__icon.gridicon {
+	top: 2px;
+
+	margin-left: 0.625rem;
+}
+
+.is-section-jetpack-cloud-pricing {
+	.more-info-box__more-container {
+		background-color: rgba(var(--studio-jetpack-green-10-rgb), 0.1);
+	}
+
+	.more-info-box__more-button.button {
+		color: var(--studio-jetpack-green-40);
+	}
+}

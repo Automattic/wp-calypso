@@ -1,0 +1,146 @@
+import { AspectRatios } from '../constants';
+import {
+	getImageEditorTransform,
+	getImageEditorFileInfo,
+	imageEditorHasChanges,
+	getImageEditorCropBounds,
+	getImageEditorCrop,
+	getImageEditorAspectRatio,
+	isImageEditorImageLoaded,
+} from '../selectors';
+
+describe( 'selectors', () => {
+	describe( '#getImageEditorTransform()', () => {
+		test( 'should return the current image editor transform', () => {
+			const transform = getImageEditorTransform( {
+				editor: {
+					imageEditor: {
+						transform: {
+							degrees: 180,
+							scaleX: -1,
+							scaleY: 2,
+						},
+					},
+				},
+			} );
+
+			expect( transform ).toEqual( {
+				degrees: 180,
+				scaleX: -1,
+				scaleY: 2,
+			} );
+		} );
+	} );
+
+	describe( '#getImageEditorFileInfo()', () => {
+		test( 'should return the information about the current image', () => {
+			const fileInfo = getImageEditorFileInfo( {
+				editor: {
+					imageEditor: {
+						fileInfo: {
+							src: 'testSrc',
+							fileName: 'testFileName',
+						},
+					},
+				},
+			} );
+
+			expect( fileInfo ).toEqual( {
+				src: 'testSrc',
+				fileName: 'testFileName',
+			} );
+		} );
+	} );
+
+	describe( '#imageEditorHasChanges()', () => {
+		test( 'should return the editor changed state', () => {
+			const hasChanges = imageEditorHasChanges( {
+				editor: {
+					imageEditor: {
+						hasChanges: true,
+					},
+				},
+			} );
+
+			expect( hasChanges ).toBe( true );
+		} );
+	} );
+
+	describe( '#getImageEditorCropBounds()', () => {
+		test( 'should return the crop bounds', () => {
+			const bounds = getImageEditorCropBounds( {
+				editor: {
+					imageEditor: {
+						cropBounds: {
+							topBound: 100,
+							leftBound: 200,
+							bottomBound: 300,
+							rightBound: 400,
+						},
+					},
+				},
+			} );
+
+			expect( bounds ).toEqual( {
+				topBound: 100,
+				leftBound: 200,
+				bottomBound: 300,
+				rightBound: 400,
+			} );
+		} );
+	} );
+
+	describe( '#getImageEditorCrop()', () => {
+		test( 'should return crop ratios', () => {
+			const hasChanges = getImageEditorCrop( {
+				editor: {
+					imageEditor: {
+						crop: {
+							topRatio: 0.2,
+							leftRatio: 0.3,
+							widthRatio: 0.4,
+							heightRatio: 0.5,
+						},
+					},
+				},
+			} );
+
+			expect( hasChanges ).toEqual( {
+				topRatio: 0.2,
+				leftRatio: 0.3,
+				widthRatio: 0.4,
+				heightRatio: 0.5,
+			} );
+		} );
+	} );
+
+	describe( '#getImageEditorAspectRatio()', () => {
+		test( 'should return the aspect ratio', () => {
+			const hasChanges = getImageEditorAspectRatio( {
+				editor: {
+					imageEditor: {
+						aspectRatio: AspectRatios.FREE,
+					},
+				},
+			} );
+
+			expect( hasChanges ).toEqual( AspectRatios.FREE );
+		} );
+	} );
+
+	describe( '#isImageEditorImageLoaded()', () => {
+		test( 'should return whether the image is loaded or not', () => {
+			const imageIsLoading = true;
+
+			const isImageLoaded = isImageEditorImageLoaded( {
+				editor: {
+					imageEditor: {
+						imageIsLoading: imageIsLoading,
+					},
+				},
+			} );
+
+			expect( isImageLoaded ).toEqual( ! imageIsLoading );
+		} );
+	} );
+} );

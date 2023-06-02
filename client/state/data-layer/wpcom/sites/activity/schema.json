@@ -1,0 +1,105 @@
+{
+	"type": "object",
+	"required": [ "itemsPerPage", "page", "totalItems", "totalPages" ],
+	"properties": {
+		"@context": { "type": "string" },
+		"first": { "type": "string" },
+		"id": { "type": "string" },
+		"itemsPerPage": { "type": "integer" },
+		"last": { "type": "string" },
+		"page": { "type": "integer" },
+		"nextAfter": { "type": "array" },
+		"prevBefore": { "type": "array" },
+		"summary": { "type": "string" },
+		"totalItems": { "type": "integer" },
+		"totalPages": { "type": "integer" },
+		"type": { "type": "string" },
+		"current": {
+			"type": "object",
+			"required": [ "totalItems" ],
+			"properties": {
+				"id": { "type": "string" },
+				"next": { "type": "string" },
+				"prev": { "type": "string" },
+				"orderedItems": {
+					"type": "array",
+					"items": { "$ref": "#/definitions/activity" }
+				},
+				"totalItems": { "type": "integer" },
+				"type": { "type": "string" }
+			}
+		}
+	},
+	"definitions": {
+		"activity": {
+			"type": "object",
+			"required": [ "activity_id", "is_rewindable", "name", "summary" ],
+			"properties": {
+				"activity_id": { "type": "string" },
+				"actor": {
+					"type": "object",
+					"required": [ "type", "name" ],
+					"properties": {
+						"external_user_id": { "type": "integer" },
+						"icon": {
+							"type": "object",
+							"required": [ "url" ],
+							"properties": {
+								"url": { "type": "string" },
+								"width": { "type": "integer" },
+								"height": { "type": "integer" }
+							}
+						},
+						"name": { "type": "string" },
+						"role": { "type": "string" },
+						"type": { "type": "string" },
+						"wpcom_user_id": { "type": "integer" }
+					}
+				},
+				"content": { "type": "object" },
+				"first_published": { "type": "string" },
+				"formatted_content": {
+					"name": { "type": "string" },
+					"content": { "type": "object" }
+				},
+				"generator": { "type": "object" },
+				"gridicon": { "type": "string" },
+				"is_aggregate": { "type": "boolean" },
+				"is_rewindable": { "type": "boolean" },
+				"is_discarded": { "type": "boolean" },
+				"streams_have_same_actor": { "type": "boolean" },
+				"last_published": { "type": "string" },
+				"rewind_id": { "type": [ "null", "string" ] },
+				"items": {
+					"type": "array",
+					"items": { "type": "object" }
+				},
+				"name": { "type": "string" },
+				"object": { "type": "object" },
+				"published": { "type": "string" },
+				"status": {
+					"oneOf": [
+						{ "type": "null" },
+						{
+							"type": "string",
+							"enum": [ "error", "info", "success", "warning" ]
+						}
+					]
+				},
+				"stream_count": { "type": "integer" },
+				"streams": { "type": "array" },
+				"summary": { "type": [ "object", "string" ] },
+				"target": { "type": "object" },
+				"target_ts": { "type": "number" },
+				"totalItems": {
+					"min": 0,
+					"type": "integer"
+				},
+				"type": { "type": "string" }
+			}
+		},
+		"singleActivityRequest": {
+			"$ref": "#/definitions/activity"
+		}
+	}
+}

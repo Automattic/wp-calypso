@@ -1,0 +1,55 @@
+@import "@wordpress/base-styles/breakpoints";
+
+.promote-post-i2__search-bar-wrapper {
+	margin-bottom: 20px;
+	flex-wrap: wrap;
+	display: grid;
+	grid-template-columns: 1fr 300px;
+
+	@media screen and (max-width: $break-mobile) {
+		display: flex;
+		position: relative;
+	}
+
+	.promote-post-i2__search-bar-dropdown {
+		@media screen and (max-width: $break-mobile) {
+			& {
+				z-index: 100; // For mobile version, Search dropdown should be above the post list.
+			}
+		}
+
+		&.select-dropdown {
+			height: 50px;
+		}
+
+		.select-dropdown__container {
+			width: 100%;
+		}
+
+		.select-dropdown__header {
+			height: 50px;
+
+			&-text {
+				@media screen and (max-width: $break-mobile) {
+					& {
+						margin-right: 12px;
+					}
+				}
+			}
+
+			@media screen and (max-width: $break-mobile) {
+				& {
+					background: transparent;
+				}
+			}
+		}
+
+		@media screen and (max-width: $break-mobile) {
+			& {
+				position: absolute;
+				right: 0;
+				top: 3.55rem;
+			}
+		}
+	}
+}

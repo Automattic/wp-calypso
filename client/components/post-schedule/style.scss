@@ -1,0 +1,147 @@
+.post-schedule {
+	position: relative;
+
+	&.is-future-date {
+		.DayPicker-Day.DayPicker-Day--is-selected > .date-picker__day {
+			background-color: var(--color-primary);
+		}
+	}
+}
+
+.post-schedule__header {
+	height: 26px;
+	text-align: center;
+	position: absolute;
+	z-index: z-index(".popover", ".post-schedule__header");
+	top: 11px;
+	font-size: $font-body;
+	font-weight: 600;
+	width: 47%;
+	margin: 0 27%;
+
+	&::first-letter {
+		text-transform: uppercase;
+	}
+
+	&.is-input-chrono-displayed {
+		top: 47px;
+	}
+}
+
+.post-schedule .input-chrono {
+	margin: 0 -16px;
+
+	.input-chrono__input {
+		padding-left: 16px;
+		padding-right: 16px;
+		border: 0;
+		color: var(--color-neutral-70);
+	}
+
+	::placeholder {
+		color: var(--color-neutral-70);
+	}
+
+	::-moz-placeholder {
+		color: var(--color-neutral-70);
+		opacity: 1;
+	}
+}
+
+.post-schedule__header-month {
+	cursor: pointer;
+}
+
+.post-schedule__header-year {
+	display: inline-block;
+	position: relative;
+	text-align: center;
+	height: 20px;
+	line-height: 20px;
+	padding: 0 5px;
+	margin-left: 5px;
+	cursor: pointer;
+}
+
+.post-schedule__year-control-up,
+.post-schedule__year-control-down {
+	position: absolute;
+	width: 100%;
+	left: 0;
+	height: 16px;
+	cursor: pointer;
+	color: var(--color-neutral-20);
+
+	&:hover {
+		color: var(--color-neutral-light);
+	}
+}
+
+.post-schedule__year-control-up {
+	top: -12px;
+}
+
+.post-schedule__year-control-down {
+	bottom: -12px;
+}
+
+.post-schedule__clock {
+	text-align: center;
+	margin: 15px auto 10px;
+	font-size: $font-body-extra-small;
+}
+
+hr.post-schedule__hr {
+	height: 1px;
+	background: var(--color-neutral-0);
+	margin: 0 -16px;
+}
+
+input[type="text"].form-text-input.post-schedule__clock-time {
+	height: 28px;
+	display: inline-block;
+	border: 1px solid var(--color-neutral-0);
+	width: 42px;
+	text-align: center;
+	padding: 0;
+	font-size: $font-body-small;
+}
+
+.post-schedule__clock-divisor {
+	margin: 0 6px;
+}
+
+.post-schedule__clock .segmented-control {
+	display: inline-flex;
+	margin: 0 6px;
+	vertical-align: bottom;
+	line-height: 0;
+}
+
+.info-popover__tooltip.post-schedule__timezone-info,
+.post-schedule__clock-timezone {
+	line-height: 20px;
+}
+
+.post-schedule__clock-timezone {
+	text-align: left;
+	margin-top: 10px;
+	padding: 10px 0 0;
+	border-top: 1px solid var(--color-neutral-5);
+}
+
+.post-schedule__timezone-info {
+	display: inline-block;
+	vertical-align: middle;
+	line-height: 10px;
+	margin-left: 5px;
+}
+
+.info-popover__tooltip.post-schedule__timezone-info {
+	margin-left: 0;
+
+	.popover__inner {
+		font-size: $font-body-extra-small;
+		max-width: 250px;
+	}
+}

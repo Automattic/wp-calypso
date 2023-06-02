@@ -1,0 +1,68 @@
+// Actions for Individual Comments
+.comments__comment-actions {
+	align-items: center;
+	color: var(--color-text-subtle);
+	display: flex;
+	font-size: $font-body-small;
+	gap: 22px;
+	justify-content: flex-start;
+	list-style: none;
+
+	.components-button {
+		align-items: center;
+		color: var(--color-text-subtle);
+		display: flex;
+		height: auto;
+		cursor: pointer;
+		font-size: $font-body-small;
+		font-weight: 400;
+		gap: 4px;
+		justify-content: center;
+		padding: 0;
+
+		svg {
+			position: relative;
+			top: 1px;
+		}
+
+		svg.reader-star path {
+			fill: none;
+		}
+
+		&:hover,
+		button.is-active,
+		&.like-button.is-liked {
+			color: var(--color-link);
+
+			svg.reader-star path {
+				stroke: var(--color-link);
+			}
+		}
+
+		&.like-button.is-liked {
+			svg.reader-star path {
+				fill: var(--color-link);
+			}
+		}
+
+		&.comments__comment-actions-cancel-reply {
+			padding-right: 0;
+		}
+
+		&.comments__comment-actions-read-more {
+			color: var(--color-link);
+			margin: 0 10px 0 -3px;
+			padding-left: 0;
+
+			.comments__comment-actions-read-more-icon {
+				fill: var(--color-link);
+				vertical-align: bottom;
+			}
+		}
+
+		&.like-button {
+			position: relative;
+			top: 1px;
+		}
+	}
+}

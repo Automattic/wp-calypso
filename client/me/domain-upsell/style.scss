@@ -1,0 +1,84 @@
+@import "@automattic/typography/styles/fonts";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.profile-domain-upsell__card {
+	h3 {
+		font-size: rem(16px);
+		font-family: $sans;
+		font-style: normal;
+		font-weight: bold;
+		line-height: 24px;
+		color: var(--studio-gray-100);
+		@include break-small {
+			line-height: 40px;
+		}
+	}
+
+	p {
+		margin-top: 8px;
+	}
+
+	.card {
+		background-color: #f6f7f7;
+	}
+
+	&-dismiss {
+		position: absolute;
+		width: 18px;
+		height: 18px;
+		top: 16px;
+		right: 16px;
+		color: var(--color-text-subtle);
+		button {
+			cursor: pointer;
+			height: 18px;
+		}
+
+	}
+
+	.suggested-domain-name {
+		span {
+			font-size: rem(14px);
+			color: var(--studio-gray-80);
+			line-height: 20px;
+			word-break: break-all;
+			flex-direction: column;
+			display: flex;
+			flex: 1;
+		}
+
+		.badge {
+			border-radius: 4px;
+			font-size: rem(12px);
+			color: var(--studio-gray-80);
+			font-weight: 500;
+			flex-direction: column;
+			display: flex;
+		}
+
+		.card {
+			margin-bottom: 5px;
+			box-shadow: none;
+			padding: 8px 16px;
+			min-height: 40px;
+			overflow-x: auto;
+			flex-direction: row;
+			display: flex;
+			align-items: center;
+		}
+
+		.badge--success {
+			background-color: var(--studio-green-5);
+		}
+	}
+
+	.domain-upsell-actions {
+		display: flex;
+		flex-direction: row;
+		justify-content: right;
+		padding: 28px 0 0;
+		gap: 16px;
+	}
+
+}

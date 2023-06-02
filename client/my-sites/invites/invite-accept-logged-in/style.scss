@@ -1,0 +1,39 @@
+.invite-accept-logged-in__join-as {
+	color: var(--color-neutral-60);
+	font-size: $font-title-small;
+	line-height: 24px;
+	margin-bottom: 16px;
+	text-align: center;
+}
+
+.invite-accept-logged-in .card {
+	margin-bottom: 0;
+}
+
+.invite-accept-logged-in__join-as-username {
+	font-weight: 600;
+}
+
+.invite-accept-logged-in__join-as .gravatar {
+	display: block;
+	margin: 0 auto 8px;
+}
+
+.invite-accept-logged-in__button-bar {
+	display: flex;
+}
+
+.invite-accept-logged-in__button-bar .button {
+	flex-basis: 0;
+	flex-grow: 1;
+	margin: 0 4px;
+	text-align: center;
+
+	&:first-child {
+		margin-left: 0;
+	}
+
+	&:last-child {
+		margin-right: 0;
+	}
+}

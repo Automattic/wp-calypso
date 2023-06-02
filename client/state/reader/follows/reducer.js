@@ -1,0 +1,331 @@
+import { find, forEach, get, isEqual, merge, omitBy, pickBy, reduce } from 'lodash';
+import {
+	READER_FOLLOW,
+	READER_UNFOLLOW,
+	READER_FOLLOW_ERROR,
+	READER_FOLLOWS_SYNC_START,
+	READER_FOLLOWS_SYNC_COMPLETE,
+	READER_FOLLOWS_RECEIVE,
+	READER_SITE_REQUEST_SUCCESS,
+	READER_SUBSCRIBE_TO_NEW_POST_EMAIL,
+	READER_SUBSCRIBE_TO_NEW_COMMENT_EMAIL,
+	READER_UPDATE_NEW_POST_EMAIL_SUBSCRIPTION,
+	READER_UNSUBSCRIBE_TO_NEW_POST_EMAIL,
+	READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL,
+	READER_SUBSCRIBE_TO_NEW_POST_NOTIFICATIONS,
+	READER_UNSUBSCRIBE_TO_NEW_POST_NOTIFICATIONS,
+	READER_SEEN_MARK_AS_SEEN_RECEIVE,
+	READER_SEEN_MARK_AS_UNSEEN_RECEIVE,
+	READER_SEEN_MARK_ALL_AS_SEEN_RECEIVE,
+} from 'calypso/state/reader/action-types';
+import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
+import { items as itemsSchema } from './schema';
+import { prepareComparableUrl } from './utils';
+
+function updateEmailSubscription( state, { payload, type } ) {
+	const follow = find( state, { blog_ID: +payload.blogId } );
+	if ( ! follow ) {
+		return state;
+	}
+
+	const currentFollowState = get( follow, [ 'delivery_methods', 'email' ], {} );
+
+	const newProps = {};
+	switch ( type ) {
+		case READER_SUBSCRIBE_TO_NEW_POST_EMAIL:
+		case READER_UNSUBSCRIBE_TO_NEW_POST_EMAIL:
+			newProps.send_posts = ! ( type === READER_UNSUBSCRIBE_TO_NEW_POST_EMAIL );
+			break;
+		case READER_SUBSCRIBE_TO_NEW_COMMENT_EMAIL:
+		case READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL:
+			newProps.send_comments = ! ( type === READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL );
+			break;
+	}
+
+	if ( payload.deliveryFrequency ) {
+		newProps.post_delivery_frequency = payload.deliveryFrequency;
+	}
+
+	const newFollowState = {
+		...currentFollowState,
+		...newProps,
+	};
+
+	if ( isEqual( currentFollowState, newFollowState ) ) {
+		return state;
+	}
+
+	return {
+		...state,
+		[ prepareComparableUrl( follow.URL ) ]: {
+			...follow,
+			delivery_methods: {
+				email: newFollowState,
+				notification: get( follow, [ 'delivery_methods', 'notification' ], {} ),
+			},
+		},
+	};
+}
+
+function updateNotificationSubscription( state, { payload, type } ) {
+	const follow = find( state, { blog_ID: +payload.blogId } );
+	if ( ! follow ) {
+		return state;
+	}
+
+	const currentFollowState = get(
+		follow,
+		[ 'delivery_methods', 'notification', 'send_posts' ],
+		false
+	);
+
+	const newFollowState = ! ( type === READER_UNSUBSCRIBE_TO_NEW_POST_NOTIFICATIONS );
+
+	if ( currentFollowState === newFollowState ) {
+		return state;
+	}
+
+	return {
+		...state,
+		[ prepareComparableUrl( follow.URL ) ]: {
+			...follow,
+			delivery_methods: {
+				email: get( follow, [ 'delivery_methods', 'email' ], {} ),
+				notification: {
+					send_posts: newFollowState,
+				},
+			},
+		},
+	};
+}
+
+const itemsReducer = ( state = {}, action ) => {
+	switch ( action.type ) {
+		case READER_FOLLOW_ERROR: {
+			const urlKey = prepareComparableUrl( action.payload.feedUrl );
+			return {
+				...state,
+				[ urlKey ]: merge( {}, state[ urlKey ], { error: action.payload.error } ),
+			};
+		}
+		case READER_FOLLOW: {
+			let urlKey = prepareComparableUrl( action.payload.feedUrl );
+			const newValues = { is_following: true };
+
+			const actualFeedUrl = get( action.payload, [ 'follow', 'feed_URL' ], action.payload.feedUrl );
+
+			const newState = { ...state };
+			// for the case where a user entered an exact url to follow something, sometimes the
+			// correct feed_URL is slightly different from what they typed in.
+			// e.g. example.com --> example.com/rss.
+			// Since we are keying this reducer by url,
+			// we need delete the old key and move it to the new one.
+			// also keep what was typed in as an alias.  pretty edge casey but ideally we should retain aliases to
+			// display correct followByUrl follow button status
+			if ( actualFeedUrl !== action.payload.feedUrl ) {
+				newValues.alias_feed_URLs = [
+					...( state[ urlKey ].alias_feed_URLs || [] ),
+					prepareComparableUrl( action.payload.feedUrl ),
+				];
+				delete newState[ urlKey ];
+				urlKey = prepareComparableUrl( actualFeedUrl );
+			} else if ( state[ urlKey ] && state[ urlKey ].error ) {
+				// Reset follow error state
+				newValues.error = null;
+			}
+
+			// Respect the existing state of the new post notification toggle.
+			// User may have toggled it on immediately after subscribing and
+			// action.payload.follow may overwrite it with the old value
+			const existingNotificationState = get( state[ urlKey ], [
+				'delivery_methods',
+				'notification',
+			] );
+			if ( existingNotificationState ) {
+				newValues.delivery_methods = {
+					notification: existingNotificationState,
+				};
+			}
+
+			return Object.assign( newState, {
+				[ urlKey ]: merge(
+					{
+						feed_URL: actualFeedUrl,
+					},
+					state[ urlKey ],
+					action.payload.follow,
+					newValues
+				),
+			} );
+		}
+		case READER_UNFOLLOW: {
+			const urlKey = prepareComparableUrl( action.payload.feedUrl );
+			let currentFollow = state[ urlKey ];
+			// Some posts do not have feed_URL's available, in this case the `READER_FOLLOW` action will be called
+			// with the response from the `/following/mine/new` API call, which contains a full `feed_URL`.
+			// Since we don't get the correct feed_URL from the post object, we must make a guess that
+			// it will follow the `${site_URL}/feed` pattern
+			if ( currentFollow === undefined ) {
+				currentFollow = state[ urlKey + '/feed' ];
+			}
+			if ( ! ( currentFollow && currentFollow.is_following ) ) {
+				return state;
+			}
+
+			return {
+				...state,
+				[ urlKey ]: merge( {}, currentFollow, {
+					is_following: false,
+					delivery_methods: {
+						notification: { send_posts: false },
+					},
+				} ),
+			};
+		}
+		case READER_FOLLOWS_RECEIVE: {
+			const follows = action.payload.follows;
+			const keyedNewFollows = reduce(
+				follows,
+				( hash, follow ) => {
+					const urlKey = prepareComparableUrl( follow.URL );
+					const newFollow = {
+						...follow,
+						is_following: true,
+					};
+					hash[ urlKey ] = newFollow;
+					return hash;
+				},
+				{}
+			);
+			return merge( {}, state, keyedNewFollows );
+		}
+		case READER_SITE_REQUEST_SUCCESS: {
+			const incomingSite = action.payload;
+			if ( ! incomingSite || ! incomingSite.feed_URL || ! incomingSite.is_following ) {
+				return state;
+			}
+			const urlKey = prepareComparableUrl( incomingSite.feed_URL );
+			const currentFollow = state[ urlKey ];
+			const newFollow = {
+				delivery_methods: get( incomingSite, 'subscription.delivery_methods' ),
+				is_following: true,
+				URL: incomingSite.URL,
+				feed_URL: incomingSite.feed_URL,
+				blog_ID: incomingSite.ID,
+			};
+			return {
+				...state,
+				[ urlKey ]: merge( {}, currentFollow, newFollow ),
+			};
+		}
+		case READER_SUBSCRIBE_TO_NEW_POST_EMAIL:
+			return updateEmailSubscription( state, action );
+		case READER_UPDATE_NEW_POST_EMAIL_SUBSCRIPTION:
+			return updateEmailSubscription( state, action );
+		case READER_UNSUBSCRIBE_TO_NEW_POST_EMAIL:
+			return updateEmailSubscription( state, action );
+		case READER_SUBSCRIBE_TO_NEW_COMMENT_EMAIL:
+			return updateEmailSubscription( state, action );
+		case READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL:
+			return updateEmailSubscription( state, action );
+		case READER_SUBSCRIBE_TO_NEW_POST_NOTIFICATIONS:
+			return updateNotificationSubscription( state, action );
+		case READER_UNSUBSCRIBE_TO_NEW_POST_NOTIFICATIONS:
+			return updateNotificationSubscription( state, action );
+		case READER_FOLLOWS_SYNC_COMPLETE: {
+			const seenSubscriptions = new Set( action.payload );
+
+			// diff what we saw vs. what's in state and remove anything extra
+			// extra would be active subscriptions that were not seen in the sync
+			//
+			// Only check items with an ID (the subscription ID) because those are what
+			// we show on the manage listing. Items without an ID are either inflight follows
+			// or follows that we picked up from a feed, site, or post object.
+			return omitBy( state, ( follow ) => follow.ID && ! seenSubscriptions.has( follow.feed_URL ) );
+		}
+
+		case READER_SEEN_MARK_AS_SEEN_RECEIVE: {
+			const urlKey = prepareComparableUrl( action.feedUrl );
+			const existingEntry = state[ urlKey ];
+			if ( ! existingEntry ) {
+				return state;
+			}
+			return {
+				...state,
+				[ urlKey ]: merge( {}, existingEntry, {
+					unseen_count: existingEntry.unseen_count - action.globalIds.length,
+				} ),
+			};
+		}
+
+		case READER_SEEN_MARK_AS_UNSEEN_RECEIVE: {
+			const urlKey = prepareComparableUrl( action.feedUrl );
+			const existingEntry = state[ urlKey ];
+			if ( ! existingEntry ) {
+				return state;
+			}
+
+			return {
+				...state,
+				[ urlKey ]: merge( {}, existingEntry, {
+					unseen_count: existingEntry.unseen_count + action.globalIds.length,
+				} ),
+			};
+		}
+
+		case READER_SEEN_MARK_ALL_AS_SEEN_RECEIVE: {
+			forEach( action.feedUrls, ( feedUrl ) => {
+				const urlKey = prepareComparableUrl( feedUrl );
+				state[ urlKey ] = { ...state[ urlKey ], unseen_count: 0 };
+			} );
+			return { ...state };
+		}
+	}
+
+	return state;
+};
+
+export const items = withSchemaValidation(
+	itemsSchema,
+	withPersistence( itemsReducer, {
+		serialize: ( state ) => pickBy( state, ( item ) => item.ID && item.is_following ),
+	} )
+);
+
+export const itemsCount = ( state = 0, action ) => {
+	switch ( action.type ) {
+		case READER_FOLLOWS_RECEIVE: {
+			return action.payload.totalCount ? action.payload.totalCount : state;
+		}
+	}
+
+	return state;
+};
+
+export const lastSyncTime = ( state = null, action ) => {
+	switch ( action.type ) {
+		case READER_FOLLOWS_SYNC_START: {
+			return Date.now();
+		}
+	}
+
+	return state;
+};
+
+export const loading = ( state = null, action ) => {
+	switch ( action.type ) {
+		case READER_FOLLOWS_SYNC_START:
+			return true;
+		case READER_FOLLOWS_SYNC_COMPLETE:
+			return false;
+	}
+
+	return state;
+};
+
+export default combineReducers( {
+	items,
+	itemsCount,
+	lastSyncTime,
+	loading,
+} );

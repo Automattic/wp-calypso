@@ -1,0 +1,52 @@
+import { POST_UNLIKE } from 'calypso/state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { bypassDataLayer } from 'calypso/state/data-layer/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { like, removeLiker } from 'calypso/state/posts/likes/actions';
+
+export function fromApi( response ) {
+	if ( ! response.success ) {
+		throw new Error( 'Unsuccessful unlike API request' );
+	}
+	return {
+		likeCount: +response.like_count,
+		liker: response.liker,
+	};
+}
+
+export const fetch = ( action ) => {
+	const query = {};
+	if ( action.source ) {
+		query.source = action.source;
+	}
+
+	return http(
+		{
+			method: 'POST',
+			path: `/sites/${ action.siteId }/posts/${ action.postId }/likes/mine/delete`,
+			apiVersion: '1.1',
+			body: {},
+			query,
+		},
+		action
+	);
+};
+
+export const onSuccess = ( { siteId, postId }, { likeCount, liker } ) =>
+	removeLiker( siteId, postId, likeCount, liker );
+
+export const onError = ( { siteId, postId } ) => bypassDataLayer( like( siteId, postId ) );
+
+registerHandlers( 'state/data-layer/wpcom/sites/posts/likes/mine/delete/index.js', {
+	[ POST_UNLIKE ]: [
+		dispatchRequest( {
+			fetch,
+			onSuccess,
+			onError,
+			fromApi,
+		} ),
+	],
+} );
+
+export default {};

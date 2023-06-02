@@ -1,0 +1,18 @@
+.main {
+	margin: auto;
+	max-width: 720px;
+	z-index: z-index("root", ".main");
+
+	&.is-full-width-layout {
+		max-width: 100%;
+	}
+
+	&.is-wide-layout {
+		max-width: 1040px;
+	}
+}
+
+// Used on views (ex posts & pages ) where the empty-content is already inside a padded div
+.main .empty-content {
+	margin-top: 0;
+}

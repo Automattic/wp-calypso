@@ -1,0 +1,25 @@
+.help-search {
+	margin-bottom: 24px;
+
+	&.is-placeholder {
+		@include placeholder();
+		height: 50px;
+		margin-bottom: 15px;
+	}
+}
+
+.help-search .card.search-card {
+	margin-bottom: 24px;
+}
+
+.help-results__placeholder {
+	.section-header__label,
+	.help-result__icon,
+	.help-result__title,
+	.help-result__description {
+		@include placeholder();
+	}
+	.help-results__footer {
+		display: none;
+	}
+}

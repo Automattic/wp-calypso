@@ -1,0 +1,67 @@
+.preferences-helper__current-preferences {
+	display: none;
+}
+
+.preferences-helper__list {
+	margin: 5px 0 8px 20px;
+
+	li {
+		font-weight: normal;
+		text-transform: initial;
+		margin-right: 5px;
+	}
+}
+
+.preferences-helper__unset {
+	color: var(--color-accent);
+	cursor: pointer;
+}
+
+.preferences-helper__preference-header {
+	text-transform: initial;
+	margin-top: 5px;
+	font-weight: 600;
+	white-space: nowrap;
+	overflow: hidden;
+
+	button {
+		display: inline;
+		margin-right: 5px;
+	}
+}
+
+.preferences-helper__save-pref-button {
+	color: var(--color-accent);
+	cursor: pointer;
+	&:disabled {
+		color: var(--color-neutral);
+	}
+}
+
+.preferences-helper__reset-pref-button {
+	color: var(--color-warning);
+	cursor: pointer;
+	&:disabled {
+		color: var(--color-neutral);
+	}
+}
+
+.boolean-preference {
+	input {
+		appearance: checkbox;
+	}
+}
+
+.environment.is-prefs:hover .preferences-helper__current-preferences {
+	display: block;
+	background: var(--color-surface);
+	box-shadow: 0 0 0 1px var(--color-border-subtle);
+	padding: 16px;
+	max-height: 80vh;
+	overflow-y: scroll;
+	position: absolute;
+	bottom: 100%;
+	right: 0;
+	margin: 0;
+	font-size: $font-body-extra-small;
+}

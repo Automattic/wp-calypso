@@ -1,0 +1,116 @@
+.cancel-purchase__card {
+	h2 {
+		color: var(--color-neutral-70);
+		font-size: $font-title-small;
+		font-weight: 400;
+		margin-bottom: 20px;
+	}
+
+	p {
+		color: var(--color-neutral-40);
+		font-size: $font-body-small;
+	}
+
+	hr {
+		background: var(--color-neutral-0);
+	}
+}
+
+.cancel-purchase__content {
+	margin: 0;
+	padding: 0 0 10px;
+
+	@include breakpoint-deprecated( ">660px" ) {
+		width: 55%;
+	}
+
+	p {
+		color: var(--color-neutral-light);
+		display: block;
+		font-size: $font-body-small;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+		line-height: 150%;
+		margin-top: 5px;
+	}
+
+	hr {
+		margin: 18px 0;
+	}
+}
+
+.cancel-purchase__product-information .product-link {
+	font-size: $font-body-small;
+}
+
+.cancel-purchase__purchase-name {
+	font-size: $font-body;
+	font-weight: 600;
+}
+
+.cancel-purchase__refund-information,
+.cancel-purchase__plan-description,
+.cancel-purchase__support-information {
+	font-size: $font-body-small;
+}
+
+.cancel-purchase__site-title {
+	font-size: $font-body-extra-small;
+	text-transform: uppercase;
+}
+
+.cancel-purchase__section {
+	color: var(--color-neutral-50);
+	margin: 0;
+}
+
+.cancel-purchase__section-header {
+	display: block;
+	font-size: $font-body;
+	font-weight: 400;
+}
+
+.cancel-purchase__footer {
+	align-items: baseline;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+
+	&::after {
+		display: none;
+	}
+}
+
+.cancel-purchase__refund-amount {
+	color: var(--color-success);
+	font-size: $font-body-small;
+	margin: 0;
+	padding: 0 10px 5px 0;
+}
+
+.cancel-purchase__button {
+	@include breakpoint-deprecated( "<660px" ) {
+		width: 100%;
+	}
+}
+
+.cancel-purchase-loading-placeholder__cancel-button {
+	width: 30%;
+}
+
+.cancel-purchase-loading-placeholder__header {
+	height: 36px;
+	margin-bottom: 15px;
+	width: 70%;
+}
+
+.cancel-purchase-loading-placeholder__reason {
+	height: 12px;
+	margin-bottom: 5px;
+	width: 60%;
+}
+
+.cancel-purchase-loading-placeholder__subheader {
+	height: 24px;
+	margin-bottom: 10px;
+	width: 50%;
+}

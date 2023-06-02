@@ -1,0 +1,31 @@
+{
+	"type": "object",
+	"required": [ "groups" ],
+	"properties": {
+		"groups": {
+			"type": "object",
+			"properties": {
+				"post": { "$ref": "#/definitions/item" },
+				"setting": { "$ref": "#/definitions/item" },
+				"user": { "$ref": "#/definitions/item" },
+				"attachment": { "$ref": "#/definitions/item" },
+				"comment": { "$ref": "#/definitions/item" },
+				"widget": { "$ref": "#/definitions/item" },
+				"theme": { "$ref": "#/definitions/item" },
+				"feedback": { "$ref": "#/definitions/item" },
+				"option": { "$ref": "#/definitions/item" },
+				"other": { "$ref": "#/definitions/item" }
+			}
+		}
+	},
+	"definitions": {
+		"group": {
+			"type": "object",
+			"required": [ "name", "count" ],
+			"properties": {
+				"name": { "type": "string" },
+				"count": { "type": "integer" }
+			}
+		}
+	}
+}

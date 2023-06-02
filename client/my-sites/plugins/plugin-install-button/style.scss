@@ -1,0 +1,56 @@
+.plugin-install-button__install {
+	position: absolute;
+	top: 0;
+	right: 0;
+	display: flex;
+	align-items: center;
+
+	&.embed {
+		color: var(--color-neutral-light);
+		height: 100%;
+		position: initial;
+		margin: 18px 16px 0 0;
+	}
+
+	@include breakpoint-deprecated( "<480px" ) {
+		margin: 0;
+		position: relative;
+
+		&.embed {
+			position: absolute;
+		}
+		.button {
+			width: 100%;
+			text-align: center;
+		}
+	}
+
+	.plugin-install-button__installing {
+		font-size: $font-body-extra-small;
+		color: var(--color-neutral-60);
+		text-transform: uppercase;
+		display: block;
+	}
+
+	&.has-warning {
+		display: flex;
+		align-content: space-between;
+
+		a {
+			font-size: $font-body-extra-small;
+			text-transform: uppercase;
+		}
+	}
+	.gridicon.gridicons-external {
+		margin-left: 5px;
+		top: 3px;
+	}
+}
+
+.plugin-install-button__warning {
+	margin-right: 8px;
+	font-size: $font-body-extra-small;
+	color: var(--color-neutral-60);
+	text-transform: uppercase;
+	white-space: nowrap;
+}

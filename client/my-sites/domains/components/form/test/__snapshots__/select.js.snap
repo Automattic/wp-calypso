@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Select /> should render expected output 1`] = `
+<div>
+  <div
+    class="mega-selectzilla select"
+  >
+    <label
+      class="form-label"
+      for="select"
+    >
+      Select label
+    </label>
+    <select
+      aria-describedby="validation-field-select"
+      class="form-select"
+      id="select"
+      name="select"
+    >
+      <option
+        value="1"
+      >
+        uno
+      </option>
+      <option
+        value="2"
+      >
+        due
+      </option>
+    </select>
+  </div>
+</div>
+`;

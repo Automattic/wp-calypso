@@ -1,0 +1,63 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DateRange should render 1`] = `
+<div
+  class="date-range"
+>
+  <span
+    class="button-group date-range__trigger"
+    role="group"
+  >
+    <button
+      aria-haspopup="true"
+      aria-label="Select date range"
+      class="button date-range__trigger-btn"
+      type="button"
+    >
+      <svg
+        aria-hidden="true"
+        class="gridicon gridicons-calendar date-range__trigger-btn-icon"
+        height="24"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <use
+          xlink:href="gridicons.svg#gridicons-calendar"
+        />
+      </svg>
+      <span
+        aria-label="Date range"
+        class="date-range__trigger-btn-text"
+      >
+        MM/DD/YYYY - MM/DD/YYYY
+      </span>
+    </button>
+    <button
+      aria-label="Clear date selection"
+      class="button date-range__clear-btn"
+      disabled=""
+      title="Clear date selection"
+      type="button"
+    >
+      <span
+        class="screen-reader-text"
+      >
+        Clear date selection
+      </span>
+      <svg
+        aria-hidden="true"
+        class="gridicon gridicons-cross"
+        height="24"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <use
+          xlink:href="gridicons.svg#gridicons-cross"
+        />
+      </svg>
+    </button>
+  </span>
+</div>
+`;

@@ -1,0 +1,35 @@
+.editor-media-modal__fieldset {
+	margin-bottom: 16px;
+}
+
+.editor-media-modal__fieldset,
+.editor-media-modal__fieldset .form-text-input,
+.editor-media-modal__fieldset textarea {
+	font-size: $font-body-small;
+}
+
+.editor-media-modal__fieldset textarea {
+	min-height: 76px;
+}
+
+.editor-media-modal__fieldset-legend {
+	display: block;
+	font-weight: 600;
+	line-height: 1;
+	margin-bottom: 6px;
+}
+
+.editor-media-modal__fieldset .select-dropdown.is-compact {
+	.select-dropdown__header {
+		padding: 6px 44px 6px 16px;
+	}
+
+	.select-dropdown__header::after {
+		top: 7px;
+	}
+
+	.select-dropdown__item,
+	.select-dropdown__item-text {
+		padding: 8px 44px 8px 16px;
+	}
+}

@@ -1,0 +1,35 @@
+.delete-user__author-selector {
+	display: inline-block;
+	margin: 0.5em 0 0.5em 16px;
+}
+
+.delete-user__select-placeholder {
+	font-weight: 400;
+
+	& .user {
+		display: inline-block;
+	}
+}
+
+.delete-user__explanation {
+	color: var(--color-neutral-light);
+}
+
+.delete-user__single-site .author-selector__author-toggle .gravatar {
+	margin-left: 6px;
+	vertical-align: middle;
+}
+
+.delete-user__reassign-user-name {
+	font-weight: 400;
+	margin: 0 3px 0 8px;
+	vertical-align: middle;
+}
+
+.delete-user__remove-user.button.is-borderless {
+	.gridicon {
+		top: 0;
+		margin: -2px 4px 0 0;
+		vertical-align: middle;
+	}
+}

@@ -1,0 +1,59 @@
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
+.card-heading {
+	font-weight: 400;
+	margin-bottom: 5px;
+	margin-top: 5px;
+
+	@include breakpoint-deprecated( ">960px" ) {
+		margin-bottom: 10px;
+		margin-top: 10px;
+	}
+}
+
+.card-heading-54 {
+	font-size: $font-headline-large;
+}
+
+/* 47px is deprecated, use .card-heading-48 */
+.card-heading-47,
+.card-heading-48 {
+	font-size: $font-headline-medium;
+}
+
+.card-heading-36 {
+	font-size: $font-headline-small;
+}
+
+.card-heading-32 {
+	font-size: $font-title-large;
+}
+
+.card-heading-24 {
+	font-size: $font-title-medium;
+}
+
+/* 21px is deprecated, use .card-heading-20 */
+.card-heading-21,
+.card-heading-20 {
+	font-size: $font-title-small;
+}
+
+.card-heading-16 {
+	font-size: $font-body;
+}
+
+.card-heading-14 {
+	font-size: $font-body-small;
+}
+
+/* 11px is deprecated, use .card-heading-12 */
+.card-heading-11,
+.card-heading-12 {
+	font-size: $font-body-extra-small;
+}
+
+.card-heading__bold {
+	font-weight: 600;
+}

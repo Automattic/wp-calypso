@@ -1,0 +1,91 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"properties": {
+		"data": {
+			"items": {
+				"properties": {
+					"CTA": {
+						"properties": {
+							"hook": {
+								"type": [ "string", "null" ]
+							},
+							"message": {
+								"type": "string"
+							},
+							"primary": {
+								"type": "boolean"
+							},
+							"newWindow": {
+								"type": "boolean"
+							}
+						},
+						"type": "object"
+					},
+					"content": {
+						"properties": {
+							"classes": {
+								"type": "string"
+							},
+							"description": {
+								"type": "string"
+							},
+							"icon": {
+								"type": [ "string", "null" ]
+							},
+							"message": {
+								"type": "string"
+							},
+							"list": {
+								"items": {
+									"properties": {
+										"item": {
+											"type": "string"
+										},
+										"url": {
+											"type": [ "string", "null" ]
+										}
+									}
+								},
+								"type": "array"
+							}
+						},
+						"type": "object"
+					},
+					"expires": {
+						"type": "integer"
+					},
+					"feature_class": {
+						"type": "string"
+					},
+					"id": {
+						"type": "string"
+					},
+					"jitm_stats_url": {
+						"type": "string"
+					},
+					"template": {
+						"type": "string"
+					},
+					"ttl": {
+						"type": "integer"
+					},
+					"url": {
+						"type": "string"
+					},
+					"tracks": {
+						"type": "object"
+					},
+					"action": {
+						"type": "object"
+					},
+					"is_dismissible": {
+						"type": "boolean"
+					}
+				},
+				"type": "object"
+			},
+			"type": "array"
+		}
+	},
+	"type": "object"
+}

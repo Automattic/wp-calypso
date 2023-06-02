@@ -1,0 +1,31 @@
+.member-details {
+	.people-list-item.card.is-compact {
+		padding: 0;
+	}
+
+	.people-member-details__meta {
+		padding-top: 24px;
+		margin-top: 24px;
+	}
+
+	.people-member-details__meta-item {
+		margin-bottom: 1rem;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+
+		strong {
+			color: var(--studio-gray-70);
+		}
+
+		.people-member-details__meta-status {
+			&-pending {
+				color: var(--color-warning);
+			}
+
+			&-active {
+				color: var(--color-success);
+			}
+		}
+	}
+}

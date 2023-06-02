@@ -1,0 +1,135 @@
+# THIS IS A GENERATED FILE. DO NOT EDIT DIRECTLY.
+
+msgid ""
+msgstr ""
+"Project-Id-Version: _s i18nTest\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-08-06T09:37:04.593Z\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2014-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#: test/cli/examples/i18n-test-examples.jsx:76
+#: test/cli/examples/i18n-test-examples.jsx:6
+#. Second ocurrence
+msgid "My hat has three corners."
+msgstr ""
+
+#: test/cli/examples/i18n-test-examples.jsx:73
+msgctxt "context with a literal string key"
+msgid "The string key text"
+msgstr ""
+
+#: test/cli/examples/i18n-test-examples.jsx:68
+msgid ""
+"This is a multi-line translation with \"mixed quotes\" and mixed 'single "
+"quotes'"
+msgstr ""
+
+#: test/cli/examples/i18n-test-examples.jsx:65
+msgid "single test2"
+msgid_plural "plural test2"
+msgstr[0] ""
+msgstr[1] ""
+
+#: test/cli/examples/i18n-test-examples.jsx:61
+msgid "single test"
+msgid_plural "plural test"
+msgstr[0] ""
+msgstr[1] ""
+
+#: test/cli/examples/i18n-test-examples.jsx:52
+msgid "Your city is %(city)s and your zip is %(zip)s."
+msgstr ""
+
+#: test/cli/examples/i18n-test-examples.jsx:40
+#. draft saved date format, see http://php.net/date
+msgid "g:i:s a"
+msgstr ""
+
+#: test/cli/examples/i18n-test-examples.jsx:37
+msgctxt "verb2"
+msgid "post2"
+msgstr ""
+
+#: test/cli/examples/i18n-test-examples.jsx:31
+msgctxt "verb"
+msgid "post"
+msgstr ""
+
+#: test/cli/examples/i18n-test-examples.jsx:26
+msgid "My hat\nhas seventeen\ncorners."
+msgstr ""
+
+#: test/cli/examples/i18n-test-examples.jsx:25
+msgid "My hat has six corners."
+msgstr ""
+
+#: test/cli/examples/i18n-test-examples.jsx:22
+#: test/cli/examples/i18n-test-examples.jsx:13
+msgid "My hat has four corners."
+msgid_plural "My hats have five corners."
+msgstr[0] ""
+msgstr[1] ""
+
+#: test/cli/examples/i18n-test-examples.jsx:9
+msgid "My hat has three corners too."
+msgstr ""
+
+#: test/cli/examples/i18n-test-example-second-file.jsx:6
+msgid "My test has two files."
+msgstr ""
+
+#: extras/date.js:19
+msgid "number_format_decimal_point"
+msgstr ""
+
+#: extras/date.js:17
+msgid "number_format_thousands_sep"
+msgstr ""
+
+#: extras/date.js:13
+msgid "%d years"
+msgstr ""
+
+#: extras/date.js:12
+msgid "a year"
+msgstr ""
+
+#: extras/date.js:11
+msgid "%d months"
+msgstr ""
+
+#: extras/date.js:10
+msgid "a month"
+msgstr ""
+
+#: extras/date.js:9
+msgid "%d days"
+msgstr ""
+
+#: extras/date.js:8
+msgid "%d hours"
+msgstr ""
+
+#: extras/date.js:7
+msgid "%d minutes"
+msgstr ""
+
+#: extras/date.js:6
+msgid "a minute"
+msgstr ""
+
+#: extras/date.js:5
+msgid "a few seconds"
+msgstr ""
+
+#: extras/date.js:4
+msgctxt "future time"
+msgid "in %s"
+msgstr ""
+
+# THIS IS THE END OF THE GENERATED FILE.

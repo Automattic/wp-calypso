@@ -1,0 +1,24 @@
+.stats-period-navigation {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin: 1.5em 0;
+	padding: 0 20px;
+
+	.stats-period-navigation__children {
+		flex-grow: 1;
+	}
+
+	.stats-section-title {
+		margin: 0;
+		font-size: $font-title-large;
+		line-height: 40px;
+		color: var(--studio-gray-100);
+		text-align: left;
+	}
+
+	.stats-date-picker__refresh-status {
+		font-size: $font-body-small;
+		line-height: 16px;
+	}
+}

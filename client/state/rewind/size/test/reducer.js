@@ -1,0 +1,83 @@
+import { JETPACK_BACKUP_RETENTION_SET, REWIND_SIZE_SET } from 'calypso/state/action-types';
+import sizeReducer from '../reducer';
+
+// @TODO: Add tests for the other reducers
+describe( 'rewind.size reducers', () => {
+	describe( 'lastBackupSize', () => {
+		it.each( [
+			{
+				state: undefined,
+				action: { type: REWIND_SIZE_SET, size: { lastBackupSize: 100 } },
+				expected: 100,
+			},
+			{
+				state: { lastBackupSize: 100 },
+				action: { type: REWIND_SIZE_SET, size: { lastBackupSize: 200 } },
+				expected: 200,
+			},
+		] )(
+			'should return a value different than null only when the state has a value or the action is REWIND_SIZE_SET',
+			( { state, action, expected } ) => {
+				expect( sizeReducer( state, action ).lastBackupSize ).toEqual( expected );
+			}
+		);
+	} );
+
+	describe( 'retentionDays', () => {
+		it.each( [
+			{
+				state: undefined,
+				action: { type: REWIND_SIZE_SET, size: { retentionDays: 7 } },
+				expected: 7,
+			},
+			{
+				state: { retentionDays: 30 },
+				action: { type: REWIND_SIZE_SET, size: { retentionDays: 7 } },
+				expected: 7,
+			},
+		] )(
+			'should return a value different than null only when the state has a value or the action is REWIND_SIZE_SET',
+			( { state, action, expected } ) => {
+				expect( sizeReducer( state, action ).retentionDays ).toEqual( expected );
+			}
+		);
+
+		it( 'should return the new retentionDays value if we set it using the action JETPACK_BACKUP_RETENTION_SET and state is undefined', () => {
+			expect(
+				sizeReducer( undefined, { type: JETPACK_BACKUP_RETENTION_SET, retentionDays: 30 } )
+					.retentionDays
+			).toEqual( 30 );
+		} );
+
+		it( 'should return the new retentionDays value if we set it using the action JETPACK_BACKUP_RETENTION_SET and state has a value', () => {
+			expect(
+				sizeReducer(
+					{ retentionDays: 30 },
+					{ type: JETPACK_BACKUP_RETENTION_SET, retentionDays: 7 }
+				).retentionDays
+			).toEqual( 7 );
+		} );
+	} );
+
+	describe( 'backupsStopped', () => {
+		it( 'should return the value when the action is REWIND_SIZE_SET', () => {
+			expect(
+				sizeReducer( undefined, { type: REWIND_SIZE_SET, size: { backupsStopped: true } } )
+					.backupsStopped
+			).toEqual( true );
+		} );
+		it( 'should return new the value when it is updated and the action is REWIND_SIZE_SET', () => {
+			expect(
+				sizeReducer(
+					{ backupsStopped: true },
+					{ type: REWIND_SIZE_SET, size: { backupsStopped: false } }
+				).backupsStopped
+			).toEqual( false );
+		} );
+		it( 'should return null when the action is not REWIND_SIZE_SET and the state is undefined', () => {
+			expect(
+				sizeReducer( undefined, { type: JETPACK_BACKUP_RETENTION_SET } ).backupsStopped
+			).toEqual( null );
+		} );
+	} );
+} );

@@ -1,0 +1,62 @@
+import { Gridicon } from '@automattic/components';
+import { omitBy } from 'lodash';
+import PropTypes from 'prop-types';
+import { createElement } from 'react';
+import { connect } from 'react-redux';
+import { getPostTotalCommentsCount } from 'calypso/state/comments/selectors';
+
+import './style.scss';
+
+const noop = () => {};
+
+function CommentButton( props ) {
+	const { commentCount, href, onClick, tagName, target, icon } = props;
+
+	return createElement(
+		tagName,
+		omitBy(
+			{
+				className: 'comment-button',
+				href: 'a' === tagName ? href : null,
+				onClick,
+				target: 'a' === tagName ? target : null,
+			},
+			( prop ) => prop === null
+		),
+		icon || <Gridicon icon="comment" size={ props.size } className="comment-button__icon" />,
+		<span className="comment-button__label">
+			{ commentCount > 0 && <span className="comment-button__label-count">{ commentCount }</span> }
+		</span>
+	);
+}
+
+CommentButton.propTypes = {
+	commentCount: PropTypes.number,
+	href: PropTypes.string,
+	onClick: PropTypes.func,
+	showLabel: PropTypes.bool,
+	tagName: PropTypes.string,
+	target: PropTypes.string,
+	icon: PropTypes.object,
+};
+
+CommentButton.defaultProps = {
+	commentCount: 0,
+	href: null,
+	onClick: noop,
+	showLabel: true,
+	size: 24,
+	tagName: 'li',
+	target: null,
+	icon: null,
+};
+
+const mapStateToProps = ( state, ownProps ) => {
+	const { post: { site_ID: siteId, ID: postId } = {}, commentCount } = ownProps;
+
+	return {
+		commentCount: getPostTotalCommentsCount( state, siteId, postId ) || commentCount,
+	};
+};
+
+export default connect( mapStateToProps )( CommentButton );

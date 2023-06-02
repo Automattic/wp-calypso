@@ -1,0 +1,63 @@
+{
+	"extends": [ "@wordpress/stylelint-config/scss" ],
+	"plugins": [ "@signal-noise/stylelint-scales" ],
+	"reportInvalidScopeDisables": true,
+	"reportNeedlessDisables": true,
+	"rules": {
+		"at-rule-empty-line-before": null,
+		"at-rule-no-unknown": null,
+		"comment-empty-line-before": null,
+		"font-weight-notation": null,
+		"max-line-length": null,
+		"no-descending-specificity": null,
+		"rule-empty-line-before": null,
+		"selector-class-pattern": null,
+		"value-keyword-case": null,
+		"scss/operator-no-unspaced": null,
+		"scss/selector-no-redundant-nesting-selector": null,
+		"scss/at-import-partial-extension": null,
+		"scss/no-global-function-names": null,
+		"scss/comment-no-empty": null,
+		"scss/at-extend-no-missing-placeholder": null,
+		"scss/operator-no-newline-after": null,
+		"scss/at-if-closing-brace-newline-after": null,
+		"scss/at-else-empty-line-before": null,
+		"scss/at-if-closing-brace-space-after": null,
+		"no-invalid-position-at-import-rule": null,
+		"declaration-property-unit-allowed-list": [
+			{
+				"/^font-size$|^font$/": [ "rem" ],
+				"line-height": [ "px" ],
+				"/radius$/": [ "px", "%" ]
+			},
+			{ "ignore": [ "inside-function" ] }
+		],
+		"scales/font-weights": [ 400, 500, 600, 700 ],
+		"scales/font-sizes": [
+			{
+				"scale": [ 0.75, 0.875, 1, 1.25, 1.5, 1.75, 2, 2.25, 2.75, 3, 3.375 ],
+				"units": [ "rem" ]
+			}
+		],
+		"scales/radii": [
+			{
+				"scale": [ 2, 4 ],
+				"units": [ "px" ]
+			}
+		],
+		"unit-allowed-list": [
+			"%",
+			"deg",
+			"em",
+			"fr",
+			"ms",
+			"px",
+			"rem",
+			"s",
+			"vh",
+			"vw",
+			"svh",
+			"dvh"
+		]
+	}
+}

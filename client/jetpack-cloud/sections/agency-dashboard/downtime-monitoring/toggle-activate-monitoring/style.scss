@@ -1,0 +1,51 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.components-form-toggle.is-checked .components-form-toggle__track {
+	background-color: var(--studio-jetpack-green-50);
+}
+
+.inline-flex-align-centre {
+	display: inline-flex;
+	align-items: center;
+}
+
+.toggle-activate-monitoring__toggle-button {
+	@extend .inline-flex-align-centre;
+	width: max-content;
+
+	.components-toggle-control {
+		margin-bottom: 0;
+
+		.components-base-control__field {
+			margin-bottom: 0;
+
+			.components-flex {
+				gap: unset;
+			}
+		}
+	}
+
+	&.sites-overview__disabled {
+		.components-form-toggle__input {
+			cursor: not-allowed;
+		}
+	}
+}
+
+.toggle-activate-monitoring__duration {
+	button {
+		@extend .inline-flex-align-centre;
+		margin-inline-start: 4px;
+	}
+
+	img {
+		width: 24px;
+	}
+
+	span {
+		margin-inline-start: 1px;
+		font-size: 0.75rem;
+		font-weight: 500;
+	}
+}

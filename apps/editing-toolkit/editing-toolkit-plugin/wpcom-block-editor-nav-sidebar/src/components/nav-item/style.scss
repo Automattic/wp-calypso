@@ -1,0 +1,63 @@
+@import "@wordpress/base-styles/colors";
+@import "@wordpress/base-styles/variables";
+
+// TODO: These colors used to be in @wordpress/base-styles.
+// Replace them with colors from the updated standard palette.
+$nav-item-selected-background-color: #40464d; // former $dark-gray-600
+$nav-item-label-background-color: #555d66; // former $dark-gray-500
+$nav-item-untitled-text-color: #b5bcc2; // former $light-gray-800
+
+.wpcom-block-editor-nav-item {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	width: 100%;
+	height: auto;
+	margin: 0;
+	padding: ( $grid-unit-20 * 0.5 ) $grid-unit-20;
+	text-align: initial;
+	color: $white;
+
+	&:hover,
+	&:not([aria-disabled="true"]):active {
+		color: $white !important;
+	}
+
+	&:focus {
+		color: $white;
+		border: 1px solid $white;
+		box-shadow: none !important;
+		outline: none !important;
+		border-radius: 0;
+		padding: ( ( $grid-unit-20 * 0.5 ) - 1 ) ( $grid-unit-20 - 1 );
+	}
+
+	&.is-selected {
+		background: $nav-item-selected-background-color;
+
+		.wpcom-block-editor-nav-item__label {
+			background: $nav-item-label-background-color;
+		}
+	}
+}
+
+.wpcom-block-editor-nav-item__title {
+	flex: 1;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+
+	&.is-untitled {
+		font-style: italic;
+		color: $nav-item-untitled-text-color;
+	}
+}
+
+.wpcom-block-editor-nav-item__label {
+	display: inline-block;
+	padding: 4px;
+	border-radius: $radius-block-ui;
+	background: $nav-item-label-background-color;
+	font-weight: 600;
+	margin-left: 4px;
+}

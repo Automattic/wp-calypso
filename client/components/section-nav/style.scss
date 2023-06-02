@@ -1,0 +1,204 @@
+.section-nav {
+	position: relative;
+	width: 100%;
+	padding: 0;
+	margin: 0 0 17px;
+	background: var(--color-surface);
+	box-sizing: border-box;
+	box-shadow:
+		0 0 0 1px rgba(var(--color-neutral-10-rgb), 0.5),
+		0 1px 2px var(--color-neutral-0);
+
+	&.is-empty .section-nav__panel {
+		visibility: hidden;
+	}
+
+	@include breakpoint-deprecated( "<480px" ) {
+		&.is-open {
+			box-shadow: 0 0 0 1px var(--color-neutral-light), 0 2px 4px var(--color-neutral-10);
+		}
+	}
+
+	@include breakpoint-deprecated( ">480px" ) {
+		&.has-pinned-items {
+			padding-right: 60px;
+		}
+	}
+
+	@include breakpoint-deprecated( "480px-660px" ) {
+		&.has-pinned-items {
+			padding-right: 50px;
+		}
+	}
+}
+
+.section-nav__mobile-header {
+	display: flex;
+	width: 100%;
+	padding: 15px;
+	font-size: $font-body-small;
+	line-height: 16px;
+	height: 46px;
+	box-sizing: border-box;
+	color: var(--color-neutral-70);
+	font-weight: 600;
+	cursor: pointer;
+
+	.gridicons-chevron-down {
+		fill: var(--color-neutral-50);
+		flex: none;
+		transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+	}
+
+	.section-nav.is-open & {
+		.gridicons-chevron-down {
+			transform: rotate(-180deg);
+		}
+	}
+
+	.section-nav.has-pinned-items & {
+		padding-right: 85px;
+
+		&::after {
+			margin-left: 8px;
+		}
+	}
+
+	@include breakpoint-deprecated( ">480px" ) {
+		display: none;
+	}
+}
+
+.section-nav__mobile-header-text {
+	margin-right: 8px;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	text-align: left;
+
+	small {
+		margin-left: 5px;
+		font-size: $font-body-extra-small;
+		color: var(--color-neutral-light);
+		font-weight: 600;
+		text-transform: uppercase;
+	}
+}
+
+.section-nav__panel {
+	box-sizing: border-box;
+	width: 100%;
+
+	@include breakpoint-deprecated( "<480px" ) {
+		.section-nav.is-open & {
+			padding-bottom: 15px;
+			border-top: solid 1px var(--color-neutral-10);
+			background: linear-gradient(to bottom, var(--color-neutral-0) 0%, var(--color-surface) 4px);
+		}
+	}
+
+	@include breakpoint-deprecated( ">480px" ) {
+		display: flex;
+		align-items: center;
+
+		&:first-child {
+			width: 0;
+			flex: 1 0 auto;
+		}
+	}
+}
+
+.section-nav-group {
+	position: relative;
+	margin-top: 16px;
+	padding-top: 16px;
+	border-top: solid 1px var(--color-neutral-10);
+
+	&:first-child {
+		padding-top: 0;
+		border-top: none;
+	}
+
+	@include breakpoint-deprecated( "<480px" ) {
+		display: none;
+
+		.section-nav.is-open & {
+			display: block;
+		}
+	}
+
+	@include breakpoint-deprecated( ">480px" ) {
+		margin-top: 0;
+		padding-top: 0;
+		border-top: none;
+
+		&:first-child {
+			display: flex;
+			width: 0;
+			flex: 1 0 auto;
+		}
+	}
+}
+
+.section-nav__button {
+	width: 100%;
+	margin-top: 24px;
+}
+
+.section-nav__hr {
+	background: var(--color-neutral-0);
+}
+
+// -------- Labels --------
+// used above nav group < 480px with sibling control groups
+.section-nav-group__label {
+	display: none;
+	margin-bottom: 8px;
+	padding: 0 15px;
+	font-size: $font-body-extra-small;
+	color: var(--color-neutral-light);
+	font-weight: 600;
+	text-transform: uppercase;
+	line-height: 12px;
+
+	@include breakpoint-deprecated( "<480px" ) {
+		.has-siblings & {
+			display: block;
+		}
+	}
+}
+
+.section-nav-group__label-text {
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+
+// -------- Nav Tabs - dropdowns --------
+.section-nav-tabs__dropdown {
+	position: relative;
+	z-index: z-index("section-nav-tabs__dropdown-parent", ".section-nav-tabs__dropdown");
+	width: 100%;
+
+	&.is-open {
+		z-index: z-index("section-nav-tabs__dropdown-parent", ".section-nav-tabs__dropdown.is-open");
+	}
+
+	.select-dropdown__container {
+		max-width: 200px;
+		position: static;
+	}
+}
+
+// -------- Search --------
+.section-nav .search {
+	overflow: hidden;
+
+	&.is-expanded-to-container {
+		height: 45px;
+
+		@include breakpoint-deprecated( ">480px" ) {
+			height: 100%;
+		}
+	}
+}

@@ -1,0 +1,45 @@
+import { translate } from 'i18n-calypso';
+import { COMMENTS_LIKE, COMMENTS_UNLIKE } from 'calypso/state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { bypassDataLayer } from 'calypso/state/data-layer/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { errorNotice } from 'calypso/state/notices/actions';
+
+export const likeComment = ( action ) =>
+	http(
+		{
+			method: 'POST',
+			apiVersion: '1.1',
+			path: `/sites/${ action.siteId }/comments/${ action.commentId }/likes/new`,
+		},
+		action
+	);
+
+export const updateCommentLikes = ( { siteId, postId, commentId }, { like_count } ) =>
+	bypassDataLayer( {
+		type: COMMENTS_LIKE,
+		siteId,
+		postId,
+		commentId,
+		like_count,
+	} );
+
+export const handleLikeFailure = ( { siteId, postId, commentId } ) => [
+	// revert optimistic updated on error
+	bypassDataLayer( { type: COMMENTS_UNLIKE, siteId, postId, commentId } ),
+	// dispatch a error notice
+	errorNotice( translate( 'Could not like this comment' ) ),
+];
+
+registerHandlers( 'state/data-layer/wpcom/sites/comments/likes/new/index.js', {
+	[ COMMENTS_LIKE ]: [
+		dispatchRequest( {
+			fetch: likeComment,
+			onSuccess: updateCommentLikes,
+			onError: handleLikeFailure,
+		} ),
+	],
+} );
+
+export default {};

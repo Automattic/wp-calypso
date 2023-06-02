@@ -1,0 +1,27 @@
+.counted-textarea {
+	border: 1px solid var(--color-neutral-10);
+	border-radius: 2px;
+	background-color: var(--color-neutral-0);
+
+	&.is-exceeding-acceptable-length {
+		background: var(--color-error);
+
+		.counted-textarea__count-panel,
+		.gridicons-info-outline {
+			color: var(--color-text-inverted);
+		}
+	}
+}
+
+.counted-textarea__input {
+	display: block;
+	resize: vertical;
+	border: none;
+	padding: 8px;
+}
+
+.counted-textarea__count-panel {
+	padding: 8px;
+	font-size: $font-body-extra-small;
+	color: var(--color-neutral-50);
+}

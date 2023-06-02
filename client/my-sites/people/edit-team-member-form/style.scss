@@ -1,0 +1,18 @@
+.edit-team-member-form__form {
+	padding-top: 24px;
+	margin-top: 24px;
+
+	.form-select {
+		width: 100%;
+	}
+}
+
+.edit-team-member-form__user-profile {
+	.form-fieldset:last-child {
+		margin-bottom: 0;
+	}
+}
+
+.edit-team-member-form__explanation {
+	color: var(--color-neutral-light);
+}

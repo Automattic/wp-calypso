@@ -1,0 +1,36 @@
+.clone-start {
+	margin: 0 auto;
+	word-break: break-word;
+}
+
+.clone-start__card {
+	max-width: 500px;
+	text-align: center;
+}
+
+.clone-start__image {
+	max-width: 293px;
+	display: block;
+	margin: 8px auto 32px;
+
+	.clone-start__destination {
+		& [fill="#00BE28"],
+		& [fill="#004F84"] {
+			fill: var(--color-neutral-10);
+		}
+		& [fill="#00A6DB"],
+		& [fill="#74DCFC"] {
+			fill: var(--color-neutral-0);
+		}
+	}
+}
+
+.clone-start__description {
+	color: var(--color-text-subtle);
+	font-size: $font-body-small;
+}
+
+.clone-start__button {
+	margin-top: 24px;
+	width: 100%;
+}

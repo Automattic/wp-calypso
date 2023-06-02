@@ -1,0 +1,129 @@
+.image-editor {
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+
+.image-editor .notice.image-editor__notice {
+	margin-top: 0;
+}
+
+.image-editor__content {
+	display: flex;
+	flex-direction: column;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: var(--color-neutral-90);
+}
+
+.image-editor__toolbar {
+	flex: 1;
+	display: flex;
+	justify-content: center;
+	min-height: 60px;
+	position: relative;
+	bottom: 0;
+	width: 100%;
+	text-align: center;
+}
+
+.image-editor__toolbar-button {
+	background: rgba(var(--color-surface-rgb), 0);
+	border: none;
+	color: var(--color-text-inverted);
+	margin: 0 10px;
+	cursor: pointer;
+	&.is-disabled {
+		opacity: 0.3;
+	}
+}
+
+.image-editor__toolbar-button .gridicon {
+	display: block;
+	margin: 0 auto;
+}
+
+.image-editor__toolbar-button:hover {
+	color: var(--color-neutral-light);
+}
+
+.image-editor__canvas-container {
+	flex: 10;
+	position: relative;
+	width: 100%;
+	height: 80%;
+	overflow: hidden;
+}
+
+.image-editor__canvas {
+	position: absolute;
+	top: 50%;
+	/*!rtl:ignore*/
+	left: 50%;
+	&.is-placeholder {
+		@include placeholder( --color-neutral-70 );
+	}
+}
+
+.image-editor__crop {
+	position: absolute;
+	border: 1px solid var(--color-border-inverted);
+	cursor: move;
+	box-sizing: border-box;
+}
+
+.image-editor__crop-background-container {
+	/*!rtl:ignore*/
+	direction: ltr;
+}
+
+.image-editor__crop-background {
+	position: absolute;
+	background: var(--color-neutral-90);
+	opacity: 0.5;
+}
+
+.image-editor__crop-handle {
+	position: absolute;
+	width: 8px;
+	height: 8px;
+	margin-top: -4px;
+	/*!rtl:ignore*/
+	margin-left: -4px;
+	border-radius: 50%;
+	border: 2px solid var(--color-border-inverted);
+	background: var(--color-neutral-90);
+
+	&::before {
+		border-radius: 100%;
+		content: " ";
+		display: block;
+		height: 24px;
+		margin: -8px auto auto -8px;
+		width: 24px;
+	}
+}
+
+.image-editor__crop-handle-nesw {
+	/*!rtl:ignore*/
+	cursor: nesw-resize;
+}
+
+.image-editor__crop-handle-nwse {
+	/*!rtl:ignore*/
+	cursor: nwse-resize;
+}
+
+.image-editor__buttons {
+	border-top: 1px solid var(--color-neutral-70);
+	padding: 16px;
+	text-align: right;
+}
+
+.image-editor__buttons-button.button {
+	/*!rtl:ignore*/
+	margin-left: 10px;
+}

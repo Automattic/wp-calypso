@@ -1,0 +1,24 @@
+.input-chrono {
+	position: relative;
+	margin: 6px auto;
+}
+
+.input-chrono__text,
+.input-chrono__input {
+	width: 100%;
+	height: 36px;
+	line-height: 36px;
+	padding: 0 10px;
+	border: 1px solid var(--color-neutral-0);
+	box-sizing: border-box;
+	background-color: rgba(var(--color-surface-rgb), 0);
+	color: var(--color-text-subtle);
+	font-size: $font-body-extra-small;
+	text-align: left;
+	position: relative;
+	z-index: z-index(".popover", ".input-chrono__input");
+}
+
+.input-chrono__text {
+	border: 0;
+}

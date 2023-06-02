@@ -1,0 +1,95 @@
+/* 1. For some images, `background-image` is set inline by the component logic */
+
+.payment-logo {
+	background-position: 0 center; /* 1 */
+	background-repeat: no-repeat; /* 1 */
+	background-size: 35px auto; /* 1 */
+	display: inline-block;
+	height: 20px;
+	vertical-align: middle;
+	width: 35px;
+
+	$payment-types: "alipay", "apple-pay", "bancontact", "giropay", "eps", "ideal", "netbanking",
+		"paypal", "p24", "wechat", "sofort";
+
+	@each $type in $payment-types {
+		&.is-#{$type} {
+			background-image: url("/calypso/images/upgrades/#{$type}.svg");
+		}
+	}
+
+	&.is-amex,
+	&.is-diners,
+	&.is-discover,
+	&.is-jcb,
+	&.is-mastercard,
+	&.is-unionpay,
+	&.is-visa {
+		background-size: 30px 19px;
+		width: 30px;
+	}
+
+	&.is-paypal {
+		background-size: 70px;
+		width: 70px;
+
+		&.is-compact {
+			width: 16px;
+		}
+	}
+
+	&.is-ideal {
+		height: 30px;
+	}
+
+	&.is-giropay {
+		background-size: 60px auto;
+		width: 60px;
+		height: 20px;
+	}
+
+	&.is-bancontact {
+		height: 20px;
+		background-size: 100px auto;
+		width: 100px;
+	}
+
+	&.is-netbanking {
+		width: 90px;
+		background-size: 84px auto;
+		margin-top: 2px;
+	}
+
+	&.is-p24 {
+		height: 20px;
+		background-size: 70px auto;
+		width: 70px;
+	}
+
+	&.is-alipay {
+		height: 20px;
+		background-size: 70px auto;
+		width: 70px;
+	}
+
+	&.is-apple-pay {
+		height: 27px;
+		background-size: 42px auto;
+		width: 42px;
+		margin-top: 3px;
+	}
+
+	&.is-sofort {
+		background-size: 60px auto;
+		width: 80px;
+		height: 20px;
+
+		&.is-compact {
+			width: 16px;
+		}
+	}
+
+	&.disabled {
+		filter: grayscale(100%);
+	}
+}

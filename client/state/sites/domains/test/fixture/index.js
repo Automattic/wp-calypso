@@ -1,0 +1,432 @@
+import {
+	SITE_DOMAINS_RECEIVE,
+	SITE_DOMAINS_REQUEST,
+	SITE_DOMAINS_REQUEST_SUCCESS,
+	SITE_DOMAINS_REQUEST_FAILURE,
+} from 'calypso/state/action-types';
+import { createSiteDomainObject } from 'calypso/state/sites/domains/assembler';
+
+// first testing-site ID
+export const SITE_ID_FIRST = 2916284;
+export const SUBSCRIPTION_ID_FIRST = '1111';
+
+// second testing-site ID
+export const SITE_ID_SECOND = 77203074;
+export const SUBSCRIPTION_ID_SECOND = null;
+
+export const DOMAIN_EXPIRED_ERROR_CODE = 'domain-expired';
+export const DOMAIN_EXPIRED_ERROR_MESSAGE = 'Domain expired message';
+
+// testing primary-domain
+export const DOMAIN_PRIMARY = {
+	aftermarketAuction: false,
+	aftermarketAuctionEnd: '',
+	aftermarketAuctionStart: '',
+	aRecordsRequiredForMapping: undefined,
+	autoRenewalDate: '2017-02-07T00:00:00+00:00',
+	autoRenewing: true,
+	adminEmail: null,
+	beginTransferUntilDate: typeof undefined,
+	blogId: SITE_ID_FIRST,
+	bundledPlanSubscriptionId: null,
+	canSetAsPrimary: true,
+	canUpdateContactInfo: true,
+	canManageDnsRecords: true,
+	canManageNameServers: true,
+	cannotManageDnsRecordsReason: null,
+	cannotManageNameServersReason: null,
+	cannotUpdateContactInfoReason: null,
+	connectionMode: typeof undefined,
+	contactInfoDisclosed: false,
+	contactInfoDisclosureAvailable: false,
+	currentUserCanAddEmail: true,
+	currentUserCanCreateSiteFromDomainOnly: false,
+	currentUserCanManage: true,
+	currentUserCannotAddEmailReason: null,
+	currentUserIsOwner: true,
+	domain: 'retronevergiveup.me',
+	domainLockingAvailable: true,
+	domainRegistrationAgreementUrl: null,
+	pointsToWpcom: true,
+	emailForwardsCount: 0,
+	expired: false,
+	expiry: '2017-03-09T00:00:00+00:00',
+	expirySoon: false,
+	gdprConsentStatus: null,
+	googleAppsSubscription: {
+		status: 'no_subscription',
+	},
+	titanMailSubscription: {
+		status: 'no_subscription',
+	},
+	privacyAvailable: false,
+	hasRegistration: false,
+	hasWpcomNameservers: true,
+	hasZone: true,
+	isEligibleForInboundTransfer: true,
+	isAutoRenewing: true,
+	isPendingIcannVerification: false,
+	isIcannVerificationSuspended: null,
+	isPendingRenewal: false,
+	isPendingWhoisUpdate: false,
+	isSubdomain: false,
+	isWpcomStagingDomain: false,
+	isLocked: false,
+	isPremium: false,
+	manualTransferRequired: false,
+	mustRemovePrivacyBeforeContactUpdate: false,
+	name: 'retronevergiveup.me',
+	nominetDomainSuspended: false,
+	nominetPendingContactVerificationRequest: false,
+	owner: 'John Doe',
+	partnerDomain: false,
+	pendingRegistration: false,
+	pendingRegistrationTime: '',
+	pendingTransfer: false,
+	privateDomain: false,
+	redeemableUntil: '',
+	isPrimary: true,
+	isRedeemable: false,
+	isRenewable: false,
+	registrar: '',
+	registrationDate: '2016-03-09T00:00:00+00:00',
+	renewableUntil: '',
+	registryExpiryDate: '',
+	sslStatus: null,
+	subdomainPart: typeof undefined,
+	subscriptionId: SUBSCRIPTION_ID_FIRST,
+	supportsDomainConnect: false,
+	supportsGdprConsentManagement: true,
+	supportsTransferApproval: true,
+	tldMaintenanceEndTime: 0,
+	type: 'MAPPED',
+	transferAwayEligibleAt: null,
+	transferStatus: null,
+	transferStartDate: null,
+	transferEndDate: null,
+	transferLockOnWhoisUpdateOptional: true,
+	whoisUpdateUnmodifiableFields: [],
+	isWPCOMDomain: false,
+};
+
+// testing not-primary-domain
+export const DOMAIN_NOT_PRIMARY = {
+	aftermarketAuction: false,
+	aftermarketAuctionEnd: '',
+	aftermarketAuctionStart: '',
+	aRecordsRequiredForMapping: undefined,
+	autoRenewalDate: '',
+	autoRenewing: false,
+	adminEmail: null,
+	beginTransferUntilDate: typeof undefined,
+	blogId: SITE_ID_SECOND,
+	bundledPlanSubscriptionId: null,
+	canSetAsPrimary: true,
+	canUpdateContactInfo: true,
+	canManageDnsRecords: true,
+	canManageNameServers: true,
+	cannotManageDnsRecordsReason: null,
+	cannotUpdateContactInfoReason: null,
+	cannotManageNameServersReason: null,
+	connectionMode: typeof undefined,
+	contactInfoDisclosed: false,
+	contactInfoDisclosureAvailable: false,
+	currentUserCanAddEmail: false,
+	currentUserCanCreateSiteFromDomainOnly: false,
+	currentUserCanManage: true,
+	currentUserCannotAddEmailReason: {
+		code: DOMAIN_EXPIRED_ERROR_CODE,
+		message: DOMAIN_EXPIRED_ERROR_MESSAGE,
+	},
+	currentUserIsOwner: true,
+	domain: 'retronevergiveup.wordpress.me',
+	domainLockingAvailable: true,
+	domainRegistrationAgreementUrl: null,
+	pointsToWpcom: true,
+	emailForwardsCount: 0,
+	expired: false,
+	expiry: null,
+	expirySoon: false,
+	gdprConsentStatus: null,
+	googleAppsSubscription: {
+		status: 'no_subscription',
+	},
+	titanMailSubscription: {
+		status: 'no_subscription',
+	},
+	privacyAvailable: false,
+	hasRegistration: false,
+	hasWpcomNameservers: true,
+	hasZone: false,
+	isEligibleForInboundTransfer: false,
+	isAutoRenewing: false,
+	isPendingIcannVerification: false,
+	isIcannVerificationSuspended: null,
+	isPendingRenewal: false,
+	isPendingWhoisUpdate: false,
+	isSubdomain: true,
+	isWpcomStagingDomain: false,
+	isLocked: false,
+	isPremium: false,
+	manualTransferRequired: false,
+	mustRemovePrivacyBeforeContactUpdate: false,
+	name: 'retronevergiveup.wordpress.me',
+	nominetDomainSuspended: false,
+	nominetPendingContactVerificationRequest: false,
+	owner: typeof undefined,
+	partnerDomain: false,
+	pendingRegistration: false,
+	pendingRegistrationTime: '',
+	pendingTransfer: false,
+	privateDomain: false,
+	isPrimary: false,
+	isRedeemable: false,
+	isRenewable: false,
+	redeemableUntil: '',
+	renewableUntil: '',
+	registrar: '',
+	registrationDate: '',
+	registryExpiryDate: '',
+	sslStatus: null,
+	subdomainPart: typeof undefined,
+	subscriptionId: SUBSCRIPTION_ID_SECOND,
+	supportsDomainConnect: false,
+	supportsGdprConsentManagement: true,
+	supportsTransferApproval: true,
+	tldMaintenanceEndTime: 0,
+	type: 'WPCOM',
+	transferAwayEligibleAt: null,
+	transferStatus: null,
+	transferStartDate: null,
+	transferEndDate: null,
+	transferLockOnWhoisUpdateOptional: false,
+	whoisUpdateUnmodifiableFields: [ 'first_name', 'last_name' ],
+	isWPCOMDomain: true,
+};
+
+// WP REST-API error response
+export const ERROR_MESSAGE_RESPONSE =
+	'There was a problem fetching site domains. Please try again later or contact support.';
+
+export const REST_API_SITE_DOMAIN_FIRST = {
+	aftermarket_auction: false,
+	aftermarket_auction_start: null,
+	aftermarket_auction_end: null,
+	auto_renewal_date: '2017-02-07T00:00:00+00:00',
+	auto_renewing: 1,
+	admin_email: null,
+	blog_id: SITE_ID_FIRST,
+	bundled_plan_subscription_id: null,
+	can_set_as_primary: true,
+	can_update_contact_info: true,
+	can_manage_dns_records: true,
+	can_manage_name_servers: true,
+	cannot_manage_dns_records_reason: null,
+	cannot_manage_name_servers_reason: null,
+	cannot_update_contact_info_reason: null,
+	current_user_can_add_email: true,
+	current_user_cannot_add_email_reason: null,
+	current_user_is_owner: true,
+	domain: 'retronevergiveup.me',
+	domain_locking_available: true,
+	domainRegistrationAgreementUrl: null,
+	points_to_wpcom: true,
+	email_forwards_count: 0,
+	expired: false,
+	expiry: '2017-03-09T00:00:00+00:00',
+	expiry_soon: false,
+	gdprConsentStatus: null,
+	google_apps_subscription: {
+		status: 'no_subscription',
+	},
+	titan_mail_subscription: {
+		status: 'no_subscription',
+	},
+	has_private_registration: false,
+	privacyAvailable: false,
+	has_registration: false,
+	has_wpcom_nameservers: true,
+	has_zone: true,
+	current_user_can_manage: true,
+	is_redeemable: false,
+	is_renewable: false,
+	is_locked: false,
+	is_premium: false,
+	redeemable_until: '',
+	renewable_until: '',
+	is_eligible_for_inbound_transfer: true,
+	is_pending_icann_verification: false,
+	is_subdomain: false,
+	is_wpcom_staging_domain: false,
+	manual_transfer_required: false,
+	manual_whois: false,
+	owner: 'John Doe',
+	partner_domain: false,
+	pending_registration: false,
+	pending_registration_time: '',
+	pending_renewal: false,
+	pending_transfer: false,
+	pending_whois_update: false,
+	primary_domain: true,
+	private_domain: false,
+	registrar: '',
+	registration_date: '2016-03-09T00:00:00+00:00',
+	subscription_id: SUBSCRIPTION_ID_FIRST,
+	supports_domain_connect: false,
+	supports_gdpr_consent_management: true,
+	supports_transfer_approval: true,
+	tld_maintenance_end_time: 0,
+	type: 'mapping',
+	transfer_lock_on_whois_update_optional: true,
+	whois_update_unmodifiable_fields: [],
+	wpcom_domain: false,
+};
+
+export const REST_API_SITE_DOMAIN_SECOND = {
+	aftermarket_auction: false,
+	aftermarket_auction_start: null,
+	aftermarket_auction_end: null,
+	auto_renewal_date: '',
+	auto_renewing: false,
+	admin_email: null,
+	blog_id: SITE_ID_SECOND,
+	bundled_plan_subscription_id: null,
+	can_set_as_primary: true,
+	can_update_contact_info: true,
+	can_manage_dns_records: true,
+	can_manage_name_servers: true,
+	cannot_manage_dns_records_reason: null,
+	cannot_manage_name_servers_reason: null,
+	cannot_update_contact_info_reason: null,
+	current_user_can_add_email: false,
+	current_user_cannot_add_email_reason: {
+		errors: {
+			[ DOMAIN_EXPIRED_ERROR_CODE ]: [
+				DOMAIN_EXPIRED_ERROR_MESSAGE,
+				'Extraneous ignorable error message',
+			],
+		},
+	},
+	current_user_is_owner: true,
+	domain: 'retronevergiveup.wordpress.me',
+	domain_locking_available: true,
+	domainRegistrationAgreementUrl: null,
+	points_to_wpcom: true,
+	email_forwards_count: 0,
+	expired: false,
+	expiry: false,
+	expiry_soon: false,
+	gdprConsentStatus: null,
+	google_apps_subscription: {
+		status: 'no_subscription',
+	},
+	titan_mail_subscription: {
+		status: 'no_subscription',
+	},
+	has_private_registration: false,
+	privacyAvailable: false,
+	has_registration: false,
+	has_wpcom_nameservers: true,
+	has_zone: false,
+	current_user_can_manage: true,
+	is_locked: false,
+	is_premium: false,
+	is_redeemable: false,
+	is_renewable: false,
+	redeemable_until: '',
+	renewable_until: '',
+	is_eligible_for_inbound_transfer: false,
+	is_pending_icann_verification: false,
+	is_subdomain: true,
+	is_wpcom_staging_domain: false,
+	manual_transfer_required: false,
+	manual_whois: false,
+	partner_domain: false,
+	pending_registration: false,
+	pending_registration_time: '',
+	pending_renewal: false,
+	pending_transfer: false,
+	pending_whois_update: false,
+	primary_domain: false,
+	private_domain: false,
+	registrar: '',
+	registration_date: '',
+	subscription_id: SUBSCRIPTION_ID_SECOND,
+	supports_domain_connect: false,
+	supports_gdpr_consent_management: true,
+	supports_transfer_approval: true,
+	tld_maintenance_end_time: 0,
+	type: 'wpcom',
+	whois_update_unmodifiable_fields: [ 'first_name', 'last_name' ],
+	wpcom_domain: true,
+};
+
+// WP RESP-API response
+export const REST_API_RESPONSE = {
+	headers: {
+		'Content-Type': 'application/json',
+		Date: new Date().toGMTString(),
+	},
+	domains: [ REST_API_SITE_DOMAIN_FIRST ],
+};
+
+// WP RESP-API response
+export const REST_API_ERROR_RESPONSE = {
+	error: 'authorization_required',
+	message: 'User or Token does not have access to specified site.',
+};
+
+// first testing-site domains
+export const SITE_FIRST_DOMAINS = [ createSiteDomainObject( REST_API_SITE_DOMAIN_FIRST ) ];
+
+// second testing-site domains
+export const SITE_SECOND_DOMAINS = [ createSiteDomainObject( REST_API_SITE_DOMAIN_SECOND ) ];
+
+// actions
+export const ACTION_SITE_DOMAIN_RECEIVE = {
+	type: SITE_DOMAINS_RECEIVE,
+	siteId: SITE_ID_FIRST,
+	domains: SITE_FIRST_DOMAINS,
+};
+
+export const ACTION_SITE_DOMAIN_REQUEST = {
+	type: SITE_DOMAINS_REQUEST,
+	siteId: SITE_ID_FIRST,
+};
+
+export const ACTION_SITE_DOMAIN_REQUEST_SUCCESS = {
+	type: SITE_DOMAINS_REQUEST_SUCCESS,
+	siteId: SITE_ID_FIRST,
+};
+
+export const ACTION_SITE_DOMAIN_REQUEST_FAILURE = {
+	type: SITE_DOMAINS_REQUEST_FAILURE,
+	siteId: SITE_ID_FIRST,
+	error: ERROR_MESSAGE_RESPONSE,
+};
+
+/**
+ * Return a whole state with domains data structure
+ *
+ * @returns {Object} an state instance
+ *
+ * - first site-domians is not requesting
+ * - second site-domians is requesting
+ */
+export const getStateInstance = () => {
+	return {
+		sites: {
+			domains: {
+				items: {
+					[ SITE_ID_FIRST ]: SITE_FIRST_DOMAINS,
+					[ SITE_ID_SECOND ]: SITE_SECOND_DOMAINS,
+				},
+
+				requesting: {
+					[ SITE_ID_FIRST ]: false,
+					[ SITE_ID_SECOND ]: true,
+				},
+			},
+		},
+	};
+};

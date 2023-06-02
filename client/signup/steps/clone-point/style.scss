@@ -1,0 +1,43 @@
+.clone-point__card {
+	background: var(--color-surface-backdrop);
+}
+
+.clone-point__wrapper {
+	position: relative;
+
+	&::before,
+	&::after {
+		content: "";
+		position: absolute;
+		left: 33px;
+		width: 2px;
+
+		@include breakpoint-deprecated( "<480px" ) {
+			left: 25px;
+		}
+	}
+
+	&::before {
+		top: 0;
+		height: 100%;
+		z-index: -2;
+		background: var(--color-neutral-10);
+	}
+
+	&::after {
+		bottom: 0;
+		height: 16px;
+		z-index: -1;
+		background: linear-gradient(rgba(var(--color-neutral-0-rgb), 1), var(--color-neutral-0));
+	}
+}
+
+.clone-point__current .tile-grid__image img {
+	width: 65%;
+	margin: 15% auto;
+}
+
+.clone-point__previous .tile-grid__image img {
+	width: 56%;
+	margin: 12% auto;
+}

@@ -1,0 +1,12 @@
+{
+	"extends": "@automattic/calypso-typescript-config/ts-package.json",
+	"compilerOptions": {
+		"declarationDir": "dist/types",
+		"outDir": "dist/esm",
+		"rootDir": "src",
+		"jsx": "react-jsx"
+	},
+	"include": [ "src" ],
+	"exclude": [ "**/test/*" ],
+	"references": [ { "path": "../onboarding" } ]
+}

@@ -1,0 +1,78 @@
+.plan-compare-card {
+	width: 270px;
+	//ribbon
+	position: relative;
+}
+
+.plan-compare-card__header,
+.plan-compare-card__features,
+.plan-compare-card__actions {
+	margin-bottom: 0;
+}
+
+.plan-compare-card__features {
+	padding: 16px 24px;
+	font-size: $font-body-small;
+	color: var(--color-text-subtle);
+}
+
+.plan-compare-card__header {
+	text-align: center;
+}
+
+.plan-compare-card__title {
+	font-size: $font-body;
+	font-weight: 600;
+	color: var(--color-neutral-60);
+}
+
+.plan-compare-card__line {
+	font-size: $font-body-extra-small;
+	font-weight: 400;
+	color: var(--color-text-subtle);
+	font-style: italic;
+}
+
+.plan-compare-card__features-list {
+	margin: 0;
+}
+
+//needs .button to override button specificity
+.plan-compare-card__button.is-current {
+	width: 100%;
+	border-width: 1px;
+	border-color: var(--color-accent);
+	color: var(--color-accent);
+	font-weight: 400;
+}
+
+.plan-compare-card__button.is-current:active {
+	border-bottom-width: 1px;
+}
+
+.plan-compare-card__button.is-primary {
+	width: 100%;
+}
+
+.plan-compare-card-item {
+	list-style-type: none;
+}
+
+.plan-compare-card-item.is-highlight {
+	color: var(--color-success);
+	margin-left: 0;
+}
+
+.plan-compare-card-item.is-unavailable {
+	text-decoration: line-through;
+	margin-left: 24px;
+}
+
+.plan-compare-card__item-checkmark {
+	margin-right: 6px;
+	vertical-align: text-bottom;
+}
+
+.plan-compare-card__button-checkmark {
+	margin-right: 6px;
+}

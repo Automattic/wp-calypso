@@ -1,0 +1,84 @@
+.plugin-sections__content {
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		font-weight: 600;
+		margin: 32px 0;
+		font-size: $font-body-large;
+	}
+	h1 {
+		font-size: $font-title-large;
+	}
+	h2 {
+		font-size: $font-title-medium;
+	}
+	h3 {
+		font-size: $font-title-small;
+	}
+	li {
+		margin-bottom: 8px;
+	}
+	a {
+		word-break: normal;
+	}
+	blockquote {
+		padding: 10px;
+		margin-bottom: 16px;
+
+		p:last-child {
+			margin-bottom: 0;
+		}
+	}
+	code {
+		font-size: $font-body;
+		padding: 1px 4px;
+		border-radius: 2px;
+		background: var(--color-neutral-0);
+	}
+	> code {
+		display: block;
+		margin-bottom: 16px;
+		padding: 8px;
+		border-radius: 0;
+	}
+	div {
+		margin-bottom: 20px;
+	}
+
+	img {
+		margin: 32px 0;
+		display: block;
+	}
+
+	position: relative;
+	font-family: $sans;
+	font-size: $font-body;
+	font-weight: 400;
+	line-height: 21px;
+	word-wrap: break-word;
+	hyphens: auto;
+	margin: 32px 0;
+}
+
+.plugin-sections__support {
+	margin-bottom: 16px;
+	padding-bottom: 16px;
+	border-bottom: 1px solid var(--color-border-subtle);
+	font-size: $font-body-small;
+
+	h3 {
+		font-weight: bold;
+		margin-bottom: 16px;
+	}
+}
+
+.plugin-sections__header > div {
+	margin-bottom: 0;
+}
+
+.plugin-sections__banner {
+	margin-bottom: 0;
+}

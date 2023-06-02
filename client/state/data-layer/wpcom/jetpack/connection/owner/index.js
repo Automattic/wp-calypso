@@ -1,0 +1,50 @@
+import { translate } from 'i18n-calypso';
+import { JETPACK_USER_CONNECTION_CHANGE_OWNER } from 'calypso/state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { requestJetpackUserConnectionData } from 'calypso/state/jetpack/connection/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+
+const changeConnectionOwner = ( action ) =>
+	http(
+		{
+			apiVersion: '1.1',
+			method: 'POST',
+			path: '/jetpack-blogs/' + action.siteId + '/rest-api/',
+			body: {
+				path: '/jetpack/v4/connection/owner/',
+				body: JSON.stringify( { owner: action.newOwnerWporgId } ),
+				json: true,
+			},
+		},
+		action
+	);
+
+const handleSuccess = ( { newOwnerWpcomDisplayName, siteId } ) => [
+	successNotice(
+		translate( 'Site owner changed to %(user)s.', {
+			args: { user: newOwnerWpcomDisplayName },
+		} )
+	),
+	requestJetpackUserConnectionData( siteId ),
+];
+
+const handleError = ( { newOwnerWpcomDisplayName } ) =>
+	errorNotice(
+		translate( 'Site owner could not be changed to %(user)s. Please contact support.', {
+			args: { user: newOwnerWpcomDisplayName },
+		} )
+	);
+
+registerHandlers( 'state/data-layer/wpcom/jetpack/connection/owner/index.js', {
+	[ JETPACK_USER_CONNECTION_CHANGE_OWNER ]: [
+		dispatchRequest( {
+			fetch: changeConnectionOwner,
+			onSuccess: handleSuccess,
+			onError: handleError,
+		} ),
+	],
+} );
+
+export default {};

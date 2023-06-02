@@ -1,0 +1,23 @@
+.clone-ready {
+	margin: 0 auto;
+}
+
+.clone-ready__card {
+	max-width: 500px;
+	text-align: center;
+}
+
+.clone-ready__image {
+	max-width: 293px;
+	display: block;
+	margin: 8px auto 32px;
+}
+
+.clone-ready__description {
+	color: var(--color-text-subtle);
+	font-size: $font-body-small;
+}
+.clone-ready__button {
+	margin-top: 24px;
+	width: 100%;
+}

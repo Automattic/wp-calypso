@@ -1,0 +1,530 @@
+version: 2.1
+
+orbs:
+  win: circleci/windows@5.0.0
+
+references:
+  defaults: &defaults
+    working_directory: ~/wp-calypso
+    docker:
+      - image: cimg/node:18.13.0
+    environment:
+      CIRCLE_ARTIFACTS: /tmp/artifacts
+      CIRCLE_TEST_REPORTS: /tmp/test_results
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 'true'
+      SKIP_TSC: 'true'
+      NODE_OPTIONS: --max-old-space-size=3072
+      npm_config_cache: /home/circleci/.cache/yarn
+  desktop_defaults: &desktop_defaults
+    working_directory: ~/wp-calypso
+
+  setup-results-and-artifacts: &setup-results-and-artifacts
+    name: Create Directories for Results and Artifacts
+    command: |
+      mkdir -p                                  \
+        "$CIRCLE_ARTIFACTS/notifications-panel" \
+        "$CIRCLE_ARTIFACTS/screenshots"         \
+        "$CIRCLE_ARTIFACTS/wpcom-block-editor"  \
+        "$CIRCLE_TEST_REPORTS/client"           \
+        "$CIRCLE_TEST_REPORTS/eslint"           \
+        "$CIRCLE_TEST_REPORTS/integration"      \
+        "$CIRCLE_TEST_REPORTS/packages"         \
+        "$CIRCLE_TEST_REPORTS/server"           \
+        "$CIRCLE_TEST_REPORTS/e2ereports"       \
+        "$HOME/jest-cache"
+
+  # Git cache
+  #
+  # Calypso is a big repository with a lot of history. It can take a long time to do a full checkout.
+  # By including the `.git` directory in the cache, we can speed things up by only needing to update
+  # the local repository.
+  #
+  # We cache on the branch and revision, falling back to origin/HEAD, or any recent cache.
+  #
+  # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
+  restore-git-cache: &restore-git-cache
+    name: Restore git cache
+    keys:
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-git-{{ .Branch }}-{{ .Revision }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-git-{{ .Branch }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-git-trunk
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-git
+  update-git: &update-git
+    name: Update all branches
+    command: git fetch --force origin
+  save-git-cache: &save-git-cache
+    name: Save git cache
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-git-{{ .Branch }}-{{ .Revision }}
+    paths:
+      - '.git'
+
+  # yarn cache
+  #
+  # yarn caches the modules it installs in ~/.cache/yarn.
+  # We cache that cache to save time pulling modules from the network.
+  #
+  #
+  # Some prior art:
+  #   - https://github.com/Automattic/wp-calypso/pull/25431
+  #   - https://github.com/Automattic/wp-calypso/pull/25487
+  #   - https://github.com/Automattic/wp-calypso/pull/27180
+  #
+  # More about the CircleCI cache: https://circleci.com/docs/2.0/caching and https://circleci.com/docs/2.0/yarn/
+  restore-yarn-cache: &restore-yarn-cache
+    name: 'Restore yarn cache'
+    keys:
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v3-yarn-cache-{{ arch }}-{{ checksum ".yarnrc.yml" }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v3-yarn-cache-{{ arch }}
+
+  yarn-install: &yarn-install
+    name: Install dependencies
+    command: |
+      source "$HOME/.nvm/nvm.sh"
+      nvm use
+      npm install -g yarn
+      yarn install --immutable --inline-builds
+
+  update-node: &update-node
+    name: Update node
+    command: |
+      set +e
+      set +x
+      export NVM_DIR="$HOME/.nvm" && (
+        git clone https://github.com/nvm-sh/nvm.git "$NVM_DIR"
+        cd "$NVM_DIR"
+        git checkout v0.35.3
+      ) && \. "$NVM_DIR/nvm.sh" --no-use
+      nvm install
+      nvm use
+
+  save-yarn-cache: &save-yarn-cache
+    name: 'Save yarn cache'
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v3-yarn-cache-{{ arch }}-{{ checksum ".yarnrc.yml" }}
+    paths:
+      # This is the default path when using enableGlobalCache:true
+      - ~/.yarn/berry/cache
+
+  desktop-cache-paths: &desktop-cache-paths
+    - desktop/resource/certificates/win.p12
+    - desktop/resource/certificates/mac.p12
+  desktop-decrypt-certs: &desktop-decrypt-certs
+    name: Decrypt desktop code signing certificates
+    command: |
+      openssl aes-256-cbc -md md5 -d -in desktop/resource/certificates/mac.p12.enc -out desktop/resource/certificates/mac.p12 -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
+      openssl aes-256-cbc -md md5 -d -in desktop/resource/certificates/win.p12.enc -out desktop/resource/certificates/win.p12 -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}" -nopad
+  desktop-notify-github-success: &desktop-notify-github-success
+    name: Notify Github Success
+    when: on_success
+    command: cd desktop && yarn ci:github:dismiss-review
+  desktop-notify-github-failure: &desktop-notify-github-failure
+    name: Notify Github Failure
+    when: on_fail
+    command: cd desktop && yarn ci:github:add-review
+
+commands:
+  store-artifacts-and-test-results:
+    description: Stores artifacts and test results
+    steps:
+      - store_test_results:
+          path: /tmp/test_results
+      - store_artifacts:
+          path: /tmp/test_results
+      - store_artifacts:
+          path: /tmp/artifacts
+
+jobs:
+  wp-desktop-assets:
+    docker:
+      - image: cimg/node:18.13.0-browsers
+    <<: *desktop_defaults
+    environment:
+      VERSION: << pipeline.git.tag >>
+    working_directory: ~/wp-calypso
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/wp-calypso
+      - when:
+          condition: << pipeline.git.tag >>
+          steps:
+            - run:
+                name: Ensure package.json Version And Tag Match
+                command: cd desktop/bin && node validate_tag.js $VERSION
+      - run: *desktop-decrypt-certs
+      - persist_to_workspace:
+          root: ~/wp-calypso
+          paths: *desktop-cache-paths
+      - run: *desktop-notify-github-failure
+
+  wp-desktop-mac:
+    macos:
+      xcode: '12.3.0'
+    shell: /bin/bash --login
+    working_directory: /Users/distiller/wp-calypso
+    environment:
+      CONFIG_ENV: release
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /Users/distiller/wp-calypso
+      - run: *update-node
+      - restore_cache: *restore-yarn-cache
+      - run: *yarn-install
+      - save_cache: *save-yarn-cache
+      - run:
+          name: Build Desktop Mac
+          no_output_timeout: 45m
+          environment:
+            CSC_LINK: resource/certificates/mac.p12
+            CSC_FOR_PULL_REQUEST: true
+            USE_HARD_LINKS: 'false'
+          command: |
+            set +e
+            source $HOME/.nvm/nvm.sh
+            nvm use
+
+            # Build all artifacts only when project config changes.
+            # Otherwise only build application executable required for end-to-end testing.
+            ! git diff --name-only origin/trunk...HEAD | grep -E -q 'desktop/package.json|yarn.lock' && ELECTRON_BUILDER_ARGS='-c.mac.target=dir'
+
+            # Override SDKROOT and MACOSX_DEPLOYMENT_TARGET to ensure correct SDK configuration:
+            # https://github.com/Homebrew/homebrew-core/pull/19296#issuecomment-352867571
+            export SDKROOT='/Library/Developer/CommandLineTools/SDKs/MacOSX11.1.sdk'
+            export MACOSX_DEPLOYMENT_TARGET=11.1
+
+            cd desktop && ELECTRON_BUILDER_ARGS=$ELECTRON_BUILDER_ARGS yarn run ci:build-mac
+      - run:
+          name: e2e Tests
+          command: |
+            source $HOME/.nvm/nvm.sh
+            nvm use
+            npm install -g yarn
+
+            cd desktop && yarn run test:e2e
+      - run:
+          when: always
+          name: Persist Mac Executable
+          command: |
+            # If this isn't a full artifact build, ensure to persist the built application for inspection
+            if ! ls desktop/release/*.zip &>/dev/null
+            then
+              ditto -ck --rsrc --sequesterRsrc desktop/release/mac desktop/release/mac.app.zip
+            fi
+      - run:
+          when: always
+          name: Clean Up
+          command: |
+            rm -rf desktop/release/mac
+            rm -rf desktop/release/mac-arm64
+            rm desktop/release/builder-debug.yml
+      - store_artifacts:
+          when: always
+          path: desktop/release
+      - store_artifacts:
+          when: always
+          path: desktop/test/e2e/results/
+      - persist_to_workspace:
+          root: ~/wp-calypso
+          paths:
+            - desktop/release
+      - run: *desktop-notify-github-success
+      - run: *desktop-notify-github-failure
+
+  wp-desktop-linux:
+    docker:
+    # Important: the build fails on 18.13.0, so we pin it to a slightly older
+    # version to keep this one working for now.
+      - image: cimg/node:18.10.0-browsers
+    <<: *desktop_defaults
+    shell: /bin/bash --login
+    environment:
+      CONFIG_ENV: release
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/wp-calypso
+      - run:
+          name: Install Linux deps
+          command: |
+            sudo apt update
+            sudo apt-get install -y libsecret-1-dev
+      - restore_cache: *restore-yarn-cache
+      # Since Node and Yarn are both bundled in the image, no need to add nvm and
+      # yarn ourselves. So we run the command directly here.
+      - run:
+          name: Yarn Install
+          command: yarn install --immutable --inline-builds
+      - save_cache: *save-yarn-cache
+      - run:
+          name: Build Desktop Linux
+          environment:
+            CSC_LINK: resource/certificates/win.p12
+            USE_HARD_LINKS: 'false'
+          command: |
+            set +e
+
+            # Build all artifacts only when project config changes.
+            # Otherwise only build application executable required for end-to-end testing.
+            ! git diff --name-only origin/trunk...HEAD | grep -E -q 'desktop/package.json|desktop/yarn.lock' && ELECTRON_BUILDER_ARGS='-c.linux.target=dir'
+
+            cd desktop
+            ELECTRON_BUILDER_ARGS=$ELECTRON_BUILDER_ARGS yarn run build
+      - run:
+          name: e2e Tests
+          command: |
+            node --version
+            yarn --version
+            cd desktop && yarn run test:e2e
+      - run:
+          when: always
+          name: Persist Linux Executable
+          command: |
+            # If this isn't a full artifact build, ensure to persist the built application for inspection
+            test -f desktop/release/*.tar.gz || tar -zcf desktop/release/linux-unpacked.tar.gz desktop/release/linux-unpacked
+      - run:
+          when: always
+          name: Clean Up
+          command: |
+            set +e
+            rm -rf desktop/release/github
+            rm -rf desktop/release/linux-unpacked
+            rm -rf desktop/release/.icon-set
+            rm desktop/release/builder-debug.yml
+      - store_artifacts:
+          when: always
+          path: desktop/release
+      - store_artifacts:
+          when: always
+          path: desktop/test/e2e/results/
+      - persist_to_workspace:
+          root: ~/wp-calypso
+          paths:
+            - desktop/release
+
+  wp-desktop-windows:
+    executor:
+      name: win/default
+    working_directory: C:\Users\circleci\wp-calypso
+    environment:
+      CONFIG_ENV: release
+    steps:
+      - checkout
+      - attach_workspace:
+          at: C:\Users\circleci\wp-calypso
+      - run:
+          name: Install NVM
+          command: choco install -y nvm
+      - run:
+          name: Install Node environment
+          command: |
+            $NODE_VERSION = Get-Content .nvmrc
+            nvm install $NODE_VERSION
+            nvm use $NODE_VERSION
+      - run:
+          name: Install Yarn
+          command: npm install -g yarn
+      - run:
+          name: Verify versions
+          shell: bash.exe
+          command: |
+            node --version
+            nvm --version
+            yarn --version
+      - run:
+          name: Install Make
+          command: cinst make
+      - run:
+          name: Install Desktop Dependencies
+          command: yarn
+      - when:
+          condition: << pipeline.git.tag >>
+          steps:
+            - run:
+                name: Build Appx
+                command: |
+                  # Use make (not yarn/npm directly) for bash-like environment variable substitution
+                  make -f desktop/Makefile build-main WINDOWS_STORE=1
+                  # Note: Windows Store build should be unsigned
+                  make -f desktop/Makefile package ELECTRON_BUILDER_ARGS='--config="electron-builder-appx.json"'
+            - run:
+                name: Clean Up Appx
+                command: |
+                  set +e
+                  rm -rf desktop/config
+                  rm desktop/release/*.yml
+                  rm -rf desktop/release/win-unpacked
+                  rm -rf desktop/release/win-ia32-unpacked
+                  rm desktop/release/builder-debug.yml || true
+                shell: bash.exe
+      - when:
+          condition: << pipeline.git.tag >>
+          steps:
+            - run:
+                name: Import Codesigning Certificate
+                command: |
+                  # Workaround for Sign Tool "private key filter" bug in Circle's Windows image.
+                  # Ref: https://travis-ci.community/t/codesigning-on-windows/
+                  #
+                  # Fix: Import .p12 into the local certificate store. Sign Tool will use
+                  # package.json's `certificateSubjectName` to find the imported cert.
+                  $env:CSC_LINK='C:\Users\circleci\wp-calypso\desktop\resource\certificates\win.p12'
+                  Import-PfxCertificate -FilePath $env:CSC_LINK -CertStoreLocation Cert:\LocalMachine\Root -Password (ConvertTo-SecureString -String $env:WIN_CSC_KEY_PASSWORD -AsPlainText -Force)
+      - run:
+          name: Build NSIS
+          command: |
+            # Use make (not yarn/npm directly) for bash-like environment variable substitution
+            make -f desktop/Makefile build-main
+
+            # Codesign release (tagged) builds only
+            If ( $env:CIRCLE_TAG ) { $env:ARG1='-c.win.certificateSubjectName="Automattic"' }
+
+            # Build all artifacts only when project config changes.
+            # Otherwise only build application executable required for end-to-end testing.
+            If ( -Not $(git diff --name-only origin/trunk...HEAD | Select-String -Pattern desktop/package.json,desktop/yarn.lock) ) { $env:ARG2='-c.win.target=dir' }
+            make -f desktop/Makefile package ELECTRON_BUILDER_ARGS=$($env:ARG1,$env:ARG2 -join " ")
+      - run:
+          name: Archive Unpacked Directories
+          command: |
+            tar -zcf desktop/release/win-unpacked-x64.tar.gz desktop/release/win-unpacked
+
+            # Check if win-ia32 build is present before archiving. If this is a full
+            # artifact build, the win-ia32-unpacked executable will be generated and we can archive it.
+            If ( $(Test-Path -Path desktop\release\win-ia32-unpacked) ) {
+              tar -zcf desktop/release/win-unpacked-ia32.tar.gz desktop/release/win-ia32-unpacked
+            } else {
+              echo "Skipping tar archive for 'desktop\release\win-ia32-unpacked' (not built)"
+            }
+      - run:
+          when: always
+          name: Clean Up NSIS
+          command: |
+            set +e
+            rm -rf desktop/release/github
+            rm -rf desktop/release/win-unpacked
+            rm -rf desktop/release/win-ia32-unpacked
+            rm desktop/release/builder-debug.yml || true
+          shell: bash.exe
+      - store_artifacts:
+          when: always
+          path: desktop\release
+      - persist_to_workspace:
+          root: C:\Users\circleci\wp-calypso
+          paths:
+            - desktop\release
+
+  # Publish all the artifacts generated by the previous wp-desktop- jobs to a
+  # GitHub release and generate the release notes using the Git commits history
+  wp-desktop-publish:
+    docker:
+      - image: circleci/golang:1.12-node
+    working_directory: /home/circleci/wp-calypso
+    environment:
+      VERSION: << pipeline.git.tag >>
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /home/circleci/wp-calypso
+      - run:
+          name: Install Dependencies
+          command: go get github.com/tcnksm/ghr
+      - run:
+          name: Update wp-desktop repo README
+          command: |
+            node desktop/bin/github/update-desktop-repo-readme.js
+      - run:
+          name: Publish Github Release
+          command: |
+            SHORT_VERSION="${VERSION#desktop-}"
+            echo "Publishing draft release for wp-desktop $SHORT_VERSION..."
+            NAME="WP-Desktop ${SHORT_VERSION#?}"
+
+            chmod +x desktop/bin/make-changelog.sh
+            ./desktop/bin/make-changelog.sh > desktop/CHANGELOG.md
+
+            ghr \
+              --token "${WP_DESKTOP_SECRET}" \
+              --username "${CIRCLE_PROJECT_USERNAME}" \
+              --repository "wp-desktop" \
+              --commitish "trunk" \
+              --name "${NAME}" \
+              --body "$(cat desktop/CHANGELOG.md)" \
+              --delete \
+              --draft \
+              "${SHORT_VERSION}" desktop/release/
+
+            echo "Publish complete"
+
+workflows:
+  version: 2
+  wp-desktop:
+    jobs:
+      - wp-desktop-assets:
+          filters:
+            branches:
+              only:
+                - trunk
+                - /circleci.*/
+                - /release\/.*/
+                - /desktop\/.*/
+#     - wp-desktop-mac:
+#         requires:
+#           - wp-desktop-assets
+#         filters:
+#           branches:
+#             only:
+#               - trunk
+#               - /release\/.*/
+#               - /desktop\/.*/
+      - wp-desktop-linux:
+          requires:
+            - wp-desktop-assets
+          filters:
+            branches:
+              only:
+                - trunk
+                - /circleci.*/
+                - /release\/.*/
+                - /desktop\/.*/
+      - wp-desktop-windows:
+          requires:
+            - wp-desktop-assets
+          filters:
+            branches:
+              only:
+                - trunk
+                - /circleci.*/
+                - /release\/.*/
+                - /desktop\/.*/
+  wp-desktop-release:
+    when: << pipeline.git.tag >>
+    jobs:
+      - wp-desktop-assets:
+          filters:
+            tags:
+              only: /desktop-v.*/
+      - wp-desktop-mac:
+          requires:
+            - wp-desktop-assets
+          filters:
+            tags:
+              only: /desktop-v.*/
+      - wp-desktop-linux:
+          requires:
+            - wp-desktop-assets
+          filters:
+            tags:
+              only: /desktop-v.*/
+      - wp-desktop-windows:
+          requires:
+            - wp-desktop-assets
+          filters:
+            tags:
+              only: /desktop-v.*/
+      - wp-desktop-publish:
+          requires:
+            - wp-desktop-mac
+            - wp-desktop-linux
+            - wp-desktop-windows
+          filters:
+            tags:
+              only: /desktop-v.*/

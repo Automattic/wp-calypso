@@ -1,0 +1,486 @@
+@import "@wordpress/base-styles/breakpoints";
+
+$bar-chart-border-radius: 2px;
+$year-bar-chart-border-radius: 4px;
+
+// Chart
+// Life is a statistical anomaly
+
+.chart {
+	position: relative;
+	box-sizing: border-box;
+	padding: 0 0 0 20px;
+}
+
+// Y-axis
+// Y-axis markers (lines)
+
+.chart .chart__y-axis-markers {
+	position: absolute;
+	left: 0;
+	right: 0;
+	height: 200px;
+}
+
+.chart .chart__y-axis-marker {
+	position: absolute;
+	top: 0;
+	width: 100%;
+	height: 1px;
+	border-top: 1px solid var(--color-neutral-0);
+}
+
+// Y-axis marker lines inside each chart__bar
+// (This is needed so that bars overlap correctly)
+.chart__bar-marker {
+	z-index: z-index("root", ".chart__bar-marker");
+	position: absolute;
+	top: 0;
+	width: 100%;
+	height: 1px;
+	border-top: 1px solid rgba(var(--color-neutral-0-rgb), 0.1);
+}
+
+.chart__bar-marker,
+.chart__y-axis-label,
+.chart .chart__y-axis-marker {
+	&.is-fifty {
+		top: 50%;
+	}
+
+	&.is-zero {
+		top: 100%;
+	}
+}
+
+// Y-axis labels
+// 1: matches Y-axis padding
+
+$y-axis-padding: 0 20px;
+
+.chart__y-axis {
+	position: relative;
+	float: right;
+	height: 200px;
+	padding: $y-axis-padding;
+	font-size: $font-body-extra-small;
+	color: var(--color-neutral-40);
+	margin-bottom: 30px;
+}
+
+.chart__y-axis-label {
+	position: absolute;
+	top: 0;
+	right: 20px; // 1
+	text-align: right;
+}
+
+// For forcing the width of y-axis to the width of the label
+.chart__y-axis-width-fix {
+	color: rgba(var(--color-surface-rgb), 0);
+}
+
+// X-axis
+// 1: hides spaces between elements
+
+.chart__x-axis {
+	position: relative;
+	font-size: 0; // 1
+	padding: 5px 0;
+	min-height: 18px;
+	color: var(--color-neutral-60);
+}
+
+.chart__x-axis-label {
+	position: absolute;
+	display: inline-block;
+	vertical-align: top;
+	font-size: $font-body-extra-small;
+	text-align: center;
+
+	font-weight: 400;
+	line-height: 24px;
+	color: var(--color-neutral-40);
+}
+
+// X-axis label indicator
+// (vertical thin grey bar)
+
+.chart__x-axis-label::before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: -4px;
+	left: 50%;
+	margin-left: -0.5px;
+	width: 1px;
+	height: 5px;
+	background: var(--color-neutral-60);
+}
+
+.chart__x-axis-width-spacer {
+	color: rgba(var(--color-surface-rgb), 0);
+	padding: $y-axis-padding;
+	right: 0;
+
+	&::before {
+		display: none;
+	}
+}
+
+// Bar wrapper
+// 1: hides spaces between elements
+
+.chart__bars {
+	position: relative;
+	font-size: 0; // 1
+	height: 200px;
+	text-align: center;
+	overflow: hidden;
+	display: flex;
+}
+
+// Individual bar
+// 1: Needs to be relative so that the contained graphic bar has boundaries
+// 2: Animate the bar on mounting to make it consistent with the transitions later when values change
+
+.chart__bar {
+	text-align: center;
+	display: inline-block;
+	position: relative; // 1
+	height: 200px;
+	-ms-flex-grow: 1;
+	flex-grow: 1;
+	-ms-flex-shrink: 1;
+	flex-shrink: 1;
+	transform: scaleY(0);
+	transform-origin: 0% 100%;
+	animation: growUpOnMounting 0.2s ease-in forwards; // 2
+
+	@keyframes growUpOnMounting {
+		100% {
+			transform: scaleY(1);
+		}
+	}
+
+	&:hover {
+		cursor: pointer;
+		background-color: rgba(var(--color-neutral-rgb), 0.1);
+	}
+
+	&.is-selected {
+		cursor: default;
+		background-color: rgba(var(--color-primary-rgb), 0.1);
+	}
+}
+
+// Individual bar wrapper & misc
+// 1: Positions the bar in the space as defined by .bar
+// 2: use `transform` (as opposed to top or height) for better transition performance
+// 3: add a transition to make switching between periods nicer
+// 4: set `transform-origin` to the bottom so scalling takes the bar up ↑
+
+// Wider bars for period `Year`
+.is-period-year {
+	.chart__bar-section {
+		border-top-left-radius: $year-bar-chart-border-radius;
+		border-top-right-radius: $year-bar-chart-border-radius;
+	}
+
+	.chart__bar-section-inner {
+		border-top-left-radius: $year-bar-chart-border-radius;
+		border-top-right-radius: $year-bar-chart-border-radius;
+	}
+}
+
+.chart__bar-section {
+	display: inline-block;
+	background-color: var(--color-primary);
+	position: absolute;
+	right: 16%; // 1
+	bottom: 0; // 1
+	left: 16%; // 1
+	height: 100%;
+	transform: scaleY(0); // 2
+	transition: transform 0.3s ease-in-out; // 3
+	transform-origin: 0% 100%; // 4
+	z-index: z-index("root", ".chart__bar-section");
+	border-top-left-radius: $bar-chart-border-radius;
+	border-top-right-radius: $bar-chart-border-radius;
+}
+
+.chart__bar-section-inner {
+	background-color: var(--color-primary-dark);
+	position: absolute;
+	right: 23.33%;
+	bottom: 0;
+	left: 23.33%;
+	border-top-left-radius: $bar-chart-border-radius;
+	border-top-right-radius: $bar-chart-border-radius;
+}
+
+// Chart legend (wrapper)
+// 1: L/R matches padding of y-axis labels in chart
+
+.chart__legend {
+	margin-bottom: 16px;
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+
+	@media ( max-width: $break-medium ) {
+		padding: 0 16px;
+	}
+}
+
+// Chart legend options (list)
+
+.chart__legend-options {
+	color: var(--color-neutral);
+	list-style-type: none;
+	margin: 0;
+	font-size: $font-body-extra-small;
+
+	@media ( max-width: $break-mobile ) {
+		display: none;
+	}
+}
+
+// Chart legend option (list item)
+
+.chart__legend-option {
+	display: inline;
+	text-align: left;
+
+	// Expand labels to create bigger touch targets
+	@media ( max-width: $break-mobile ) {
+		width: 50%;
+		display: inline-block;
+
+		&:first-child {
+			.chart__legend-color {
+				margin-left: 2px; // 2
+			}
+		}
+	}
+
+	&:not(:first-child) {
+		margin-left: 24px;
+	}
+
+	// Chart legend color
+	// 1: Needed to overvwrite form styles in main stylesheets
+	// 2: Make leftmost legend fit snugly up against the leftmost bars
+
+	.chart__legend-color {
+		width: 20px;
+		height: 20px;
+		background: var(--color-primary);
+		display: inline-block;
+		border-radius: 4px;
+		vertical-align: top;
+		margin: 0 8px 0 0;
+
+		&.is-dark-blue {
+			background: var(--color-primary-dark);
+		}
+	}
+
+	// Chart legend checkbox
+
+	.chart__legend-checkbox {
+		margin: 0;
+		float: none;
+		vertical-align: top;
+
+		width: 20px;
+		height: 20px;
+		background-color: var(--color-surface);
+		border: 1px solid var(--color-neutral-10);
+		border-radius: 2px;
+		margin-right: 8px;
+
+		&:checked::before {
+			margin: 3px auto;
+		}
+	}
+}
+
+// Chart legend label
+// 1: 19/10px instead of 20/12px because it aligns better optically
+
+.chart__legend-label {
+	display: inline-block;
+	padding: 0;
+
+	color: var(--studio-black);
+	font-size: $font-body-small;
+	font-weight: 400;
+	line-height: 18px;
+
+
+	&.form-label {
+		display: inline-block;
+		margin-bottom: 0;
+		font-weight: 400;
+	}
+
+	&.is-selectable {
+		cursor: pointer;
+
+		&:focus,
+		&:hover {
+			color: var(--studio-black);
+		}
+	}
+
+	@media ( max-width: $break-mobile ) {
+		display: block;
+	}
+}
+
+// Chart empty (message)
+// A message displayed when there's absolutely no data to chart
+
+.chart__empty {
+	align-items: center;
+	display: flex;
+	justify-content: center;
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: z-index("root", ".chart__empty");
+	padding: 0 50px;
+}
+
+// Chart tooltip
+
+.chart__tooltip {
+	.popover__inner {
+		width: 230px;
+		text-align: left;
+
+		ul {
+			@include clear-fix;
+			list-style: none;
+			margin: 0;
+			padding: 0;
+
+			li {
+				font-size: $font-body-extra-small;
+				text-transform: uppercase;
+				font-weight: 400;
+				height: 24px;
+				letter-spacing: 0.1em;
+				border: 0;
+
+				.wrapper {
+					display: block;
+					line-height: 24px;
+					clear: both;
+				}
+
+				.value {
+					text-align: right;
+					float: right;
+					min-width: 22px;
+					color: var(--color-neutral-10);
+				}
+
+				.label {
+					display: block;
+					overflow: hidden;
+					word-break: break-all;
+					vertical-align: baseline;
+				}
+
+				.gridicon {
+					vertical-align: middle;
+					margin-right: 6px;
+					margin-top: -3px;
+				}
+			}
+		}
+	}
+
+	// @TODO Integrate styles with Stats
+	&.is-streak {
+		.popover__inner {
+			width: 160px;
+			li {
+				height: 14px;
+
+				.label {
+					width: 100%;
+					float: left;
+					text-align: center;
+
+					.rtl & {
+						font-size: $font-body-extra-small;
+					}
+
+					.post-count {
+						font-weight: 600;
+					}
+				}
+				.value {
+					float: none;
+				}
+			}
+		}
+	}
+}
+
+.chart__tooltip .module-content-list-item {
+	// @TODO Integrate styles with Stats
+	&.is-date-label {
+		font-size: $font-body-extra-small;
+		margin-bottom: 2px;
+		text-transform: uppercase;
+		font-weight: 600;
+		border-bottom: 1px solid var(--color-neutral-60);
+		padding-bottom: 2px;
+	}
+
+	// @TODO Integrate styles with Stats
+	&.is-published-item {
+		height: 19px;
+
+		.label {
+			text-transform: none;
+			color: var(--color-neutral-10);
+			overflow: hidden;
+			letter-spacing: 0;
+			height: 19px;
+		}
+
+		.value {
+			width: 0;
+			min-width: 0;
+
+			&::before {
+				@include long-content-fade( $color: var( --color-neutral-60-rgb ) );
+				position: relative;
+				left: -30px;
+				width: 30px;
+				height: 24px;
+			}
+		}
+	}
+}
+
+.chart.is-placeholder {
+	padding: 8px 20px;
+
+	.chart__bar,
+	.chart__bar:hover {
+		cursor: default;
+		background-color: transparent;
+
+		.chart__bar-section {
+			background-color: rgba(var(--color-neutral-0-rgb), 0.5);
+		}
+	}
+}

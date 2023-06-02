@@ -1,0 +1,128 @@
+.conversation-follow-button,
+button.conversation-follow-button {
+	border: 0;
+	padding: 0;
+
+	.reader-follow-conversation {
+		fill: var(--color-primary);
+		pointer-events: auto;
+	}
+
+	.conversation-follow-button__label {
+		color: var(--color-primary);
+		position: relative;
+	}
+
+	&:hover,
+	&:focus {
+		color: var(--color-primary);
+
+		.reader-follow-conversation {
+			fill: var(--color-primary);
+		}
+	}
+
+	&.popover__menu-item {
+		&:hover,
+		&:focus {
+			.conversation-follow-button__label {
+				color: var(--color-text-inverted);
+			}
+
+			.gridicon,
+			.reader-follow-conversation,
+			.reader-following-conversation {
+				fill: var(--color-text-inverted);
+				g {
+					fill: var(--studio-white);
+					stroke: var(--color-success);
+				}
+			}
+		}
+	}
+
+	&:focus {
+		box-shadow: none;
+	}
+
+	// Hides Following icon by default
+	.reader-following-conversation {
+		display: none;
+		pointer-events: none;
+	}
+
+	&.is-following {
+		.reader-following-conversation {
+			display: inline-block;
+			pointer-events: auto;
+			fill: var(--color-success);
+			g {
+				fill: var(--studio-white);
+				stroke: var(--color-success);
+			}
+		}
+
+		.conversation-follow-button__label {
+			color: var(--color-success);
+		}
+
+		// Hides Follow icon if already following
+		.reader-follow-conversation {
+			display: none;
+			pointer-events: none;
+		}
+
+		&:hover,
+		&:focus {
+			color: var(--color-success);
+
+			.reader-following-conversation {
+				fill: var(--color-success);
+				g {
+					fill: var(--studio-white);
+					stroke: var(--color-success);
+				}
+			}
+		}
+
+		&.popover__menu-item {
+			&:hover,
+			&:focus {
+				color: var(--color-text-inverted);
+
+				.gridicon,
+				.reader-follow-conversation,
+				.reader-following-conversation {
+					color: var(--color-text-inverted);
+				}
+
+				svg.reader-external path {
+					fill: var(--color-text-inverted);
+				}
+
+				svg.reader-follow-conversation path,
+				svg.reader-following-conversation path {
+					fill: none;
+					stroke: var(--color-text-inverted);
+
+					&.status {
+						fill: var(--color-primary);
+						stroke: none;
+					}
+				}
+			}
+		}
+	}
+
+	.gridicon {
+		height: 18px;
+		top: 5px;
+		width: 18px;
+	}
+}
+
+.conversation-follow-button__label {
+	@include breakpoint-deprecated( "<660px" ) {
+		display: none;
+	}
+}

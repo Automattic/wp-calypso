@@ -1,0 +1,27 @@
+@import "../../style.scss";
+
+.main.promote-post-i2 .search {
+	height: 42px;
+}
+
+.promote-post-i2 {
+	@include promote-post-i2-font;
+
+	.campaigns-list__loading-container {
+		display: flex;
+		justify-content: center;
+	}
+
+	&__search-bar-wrapper &__search-bar-dropdown .select-dropdown__header {
+		height: 44px;
+	}
+
+	&__search-bar-wrapper &__search-bar-dropdown.select-dropdown {
+		height: 44px;
+		margin-left: 16px;
+
+		.select-dropdown__header-text {
+			@include promote-post-i2-font;
+		}
+	}
+}

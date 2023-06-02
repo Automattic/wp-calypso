@@ -1,0 +1,47 @@
+.application-passwords__list {
+	list-style-type: none;
+	margin: 0;
+}
+
+.application-passwords__add-new {
+	margin-bottom: 1em;
+}
+
+.application-passwords__add-new-card {
+	display: none;
+	&.is-visible {
+		display: block;
+	}
+}
+
+.application-passwords__new-password {
+	margin-bottom: 1em;
+}
+
+.application-passwords__new-password-display {
+	background: var(--color-neutral-0);
+	border: 1px solid var(--color-border-subtle);
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+	font-size: 200%;
+	font-weight: 600;
+	width: 70%;
+	display: block;
+	text-align: center;
+	margin: 10px auto;
+	padding: 5px;
+	letter-spacing: 2px;
+}
+
+.application-passwords__new-password-message {
+	color: var(--color-neutral-40);
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+	font-size: 0.9em;
+}
+
+.application-passwords__new-password-help {
+	text-align: center;
+}
+
+.application-passwords__nobot {
+	margin-bottom: 0;
+}

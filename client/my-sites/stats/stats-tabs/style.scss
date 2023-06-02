@@ -1,0 +1,279 @@
+// Module Tabs
+// (currently only used for the bar chart module at the top)
+
+$stats-tab-outer-padding: 10px;
+
+.stats-tabs {
+	@include clear-fix;
+	background: var(--color-surface);
+	border-top: 1px solid var(--color-border-subtle);
+	list-style: none;
+	margin: 0;
+
+	&.is-borderless {
+		border-top: 0;
+	}
+
+	.stats-tab {
+		background: var(--color-surface);
+		border-top: 1px solid var(--color-border-subtle);
+		box-sizing: border-box;
+		clear: none;
+		float: none;
+		font-size: $font-body;
+		margin: 0;
+		text-align: left;
+
+		&:first-child {
+			border-top: none;
+		}
+
+		&.is-compact {
+			border-top: 1px solid var(--color-border-subtle);
+			border-left: none;
+			float: none;
+			width: 100%;
+			text-align: left;
+			font-size: $font-body-small;
+
+			&:first-child {
+				border-top: none;
+			}
+
+			&.no-icon {
+				padding-left: 24px;
+			}
+
+			a,
+			.no-link {
+				padding-bottom: 0; // needed to avoid double bottom spacing (because of min-height)
+			}
+
+			.label {
+				float: left;
+				text-transform: none;
+				letter-spacing: 0;
+				font-size: $font-body-small;
+			}
+
+			.gridicon {
+				float: left;
+				margin: 2px 20px 0;
+			}
+
+			.value {
+				color: var(--color-primary);
+				display: block;
+				line-height: 24px;
+				text-align: center;
+				transition: font-size 0.3s 0 ease-out;
+
+				clear: none;
+				float: right;
+				padding: 0 20px 0 10px;
+			}
+		}
+
+		@include breakpoint-deprecated( ">480px" ) {
+			border-top: none;
+			border-left: 1px solid var(--color-border-subtle);
+			float: left;
+			width: 25%;
+			text-align: center;
+
+			&:first-child {
+				border-left: none;
+			}
+		}
+
+		a {
+			color: var(--color-neutral-70);
+		}
+
+		a,
+		.no-link {
+			display: block;
+			min-height: 35px;
+			padding-top: $stats-tab-outer-padding;
+
+			@include breakpoint-deprecated( ">480px" ) {
+				@include mobile-link-element;
+				@include clear-fix;
+				padding-bottom: $stats-tab-outer-padding;
+				-webkit-touch-callout: none;
+			}
+		}
+
+		.label {
+			float: left;
+			text-transform: uppercase;
+			letter-spacing: 0.1em;
+
+			@include breakpoint-deprecated( ">480px" ) {
+				font-size: $font-body-extra-small;
+				line-height: inherit;
+				float: none;
+			}
+		}
+
+		.gridicon {
+			float: left;
+			margin: 3px 8px 0 20px;
+
+			@include breakpoint-deprecated( ">480px" ) {
+				float: none;
+				vertical-align: middle;
+				margin: -2px 4px 0 0;
+			}
+		}
+
+		.value {
+			clear: both;
+			color: var(--color-primary);
+			display: block;
+			float: none;
+			line-height: 24px;
+			text-align: center;
+			transition: font-size 0.3s 0 ease-out;
+
+			@include breakpoint-deprecated( "<480px" ) {
+				clear: none;
+				float: right;
+				font-size: $font-body;
+				padding: 0 20px 0 10px;
+			}
+		}
+
+		@include breakpoint-deprecated( ">480px" ) {
+			// Hover state
+			a:hover,
+			a:hover .value,
+			&.is-low a:hover,
+			&.is-low a:hover .value {
+				color: var(--color-link-dark);
+			}
+
+			a:hover {
+				background: var(--color-surface);
+				cursor: pointer;
+			}
+		}
+
+		// Focus state
+		a:focus,
+		a:focus .value,
+		.stats-module &.is-selected a:focus,
+		.stats-module &.is-selected a:focus .value,
+		&.is-low a:focus,
+		&.is-low a:focus .value {
+			color: var(--color-link-dark);
+		}
+
+		a:focus {
+			background: rgba(255, 255, 255, 0.5);
+		}
+
+		// Selected state
+		.stats-module &.is-selected a {
+			background: var(--color-surface);
+			border-top: 1px solid var(--color-border-inverted);
+			margin-top: -1px;
+			cursor: default;
+		}
+
+		&.is-selected a,
+		&.is-selected.is-low a {
+			color: var(--color-neutral-70);
+		}
+
+		&.is-selected a .value,
+		&.is-selected.is-low a .value,
+		&.is-selected a:hover .value {
+			color: var(--color-primary);
+		}
+
+		// Low state ('disabled')
+		.is-low,
+		&.is-low a .value {
+			color: var(--color-text-subtle);
+		}
+
+		// Individual tab loading state
+		&.is-loading a,
+		&.is-loading a:hover {
+			cursor: default;
+		}
+
+		.no-link .value {
+			color: var(--color-neutral-70);
+
+			&.is-low {
+				color: var(--color-neutral-light);
+			}
+		}
+
+		&.is-loading a .value,
+		&.is-loading a:hover .value,
+		&.is-loading .no-link .value {
+			animation: loading-fade 1.6s ease-in-out infinite;
+			cursor: default;
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			font-size: 110%;
+			color: var(--color-neutral-light);
+		}
+
+		&.is-loading.is-selected a .value,
+		&.is-loading.is-selected a:hover .value {
+			color: var(--color-neutral-light);
+		}
+	}
+
+	// If there's only one tab (used on the Post/Video Details page)
+	// forced "mobile view" that takes the whole width (e.g. visible for stats for a specific blog page)
+	li:only-child {
+		width: auto;
+		float: none;
+		text-align: left;
+
+		a {
+			line-height: 24px;
+			padding-top: $stats-tab-outer-padding;
+		}
+
+		.no-link {
+			padding-bottom: 0; // reset bottom padding until min-width is removed
+		}
+
+		.label {
+			font-size: $font-body-small;
+			line-height: 24px;
+			float: left;
+		}
+
+		.gridicon {
+			width: 24px;
+			height: 24px;
+			margin: 0 8px 0 24px;
+			float: left;
+		}
+
+		.value {
+			clear: none;
+			float: right;
+			margin-right: 24px;
+		}
+	}
+
+	&.is-enabled {
+		background: var(--color-neutral-0);
+
+		&,
+		li {
+			border-color: var(--color-border-subtle);
+		}
+
+		a {
+			background: var(--color-neutral-0);
+		}
+	}
+}

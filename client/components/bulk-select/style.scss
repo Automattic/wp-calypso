@@ -1,0 +1,34 @@
+.bulk-select {
+	display: inline-block;
+}
+
+.bulk-select__container.form-label {
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	position: relative;
+	margin-bottom: 0;
+
+	.gridicon {
+		color: var(--color-primary);
+		height: 16px;
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 16px;
+	}
+
+	> .count {
+		margin-left: 8px;
+		font-weight: 600;
+	}
+}
+
+input[type="checkbox"].bulk-select__box {
+	appearance: none;
+	height: 16px;
+	margin: 0;
+	min-width: 16px;
+	padding: 0;
+	width: 16px;
+}

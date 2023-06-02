@@ -1,0 +1,114 @@
+@import "@automattic/typography/styles/fonts";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.wpcom-global-styles-modal {
+	.components-modal__content {
+		padding: 0;
+		margin-top: 0;
+	}
+
+	.components-modal__header {
+		height: auto;
+		position: absolute;
+		border-bottom-width: 0;
+
+		.components-button {
+			top: 16px;
+		}
+	}
+
+	.wpcom-global-styles-modal__content {
+		display: flex;
+		flex-direction: column-reverse;
+		justify-content: flex-end;
+		align-items: flex-start;
+
+		@include break-small {
+			flex-direction: row;
+			justify-content: flex-start;
+
+			@media (min-height: #{ ($break-small) }) {
+				align-items: stretch;
+			}
+		}
+	}
+
+	.wpcom-global-styles-modal__text,
+	.wpcom-global-styles-modal__image {
+		width: 100%;
+
+		@include break-small {
+			width: auto;
+			max-width: 380px;
+		}
+	}
+
+	.wpcom-global-styles-modal__text {
+		padding: 32px;
+		display: flex;
+		flex-direction: column;
+
+		@include break-small {
+			@media (min-height: #{ ($break-small) }) {
+				padding: 64px 48px;
+			}
+		}
+	}
+
+	.wpcom-global-styles-modal__heading {
+		margin-top: 0;
+		font-family: $brand-serif;
+		font-weight: 400;
+		font-size: 1.75rem;
+		line-height: 32px;
+		margin-bottom: 16px;
+
+		@include break-small {
+			@media (min-height: #{ ($break-small) }) {
+				font-size: 2rem;
+				line-height: 40px;
+			}
+		}
+	}
+
+	.wpcom-global-styles-modal__description {
+		font-size: 1rem;
+		line-height: 24px;
+		margin-top: 0;
+		margin-bottom: 32px;
+	}
+
+	.wpcom-global-styles-modal__actions {
+		display: flex;
+		justify-content: center;
+		gap: 16px;
+		margin-top: auto;
+
+		.components-button {
+			flex-grow: 1;
+			justify-content: center;
+		}
+	}
+
+	.wpcom-global-styles-modal__image {
+		background-color: #d0cce3;
+		padding: 32px 0 32px 32px;
+		display: flex;
+		justify-content: flex-end;
+		max-height: 50vh;
+
+		@include break-small {
+			max-height: 70vh;
+
+			@media (min-height: #{ ($break-small) }) {
+				max-height: none;
+				padding: 64px 0 64px 64px;
+			}
+		}
+
+		img {
+			width: 100%;
+		}
+	}
+}

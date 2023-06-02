@@ -1,0 +1,107 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+
+.license-details {
+	margin: 0;
+
+	&__list {
+		display: grid;
+		grid-template-columns: 1fr;
+		grid-column-gap: 16px;
+		grid-row-gap: 16px;
+		padding: 0;
+		margin: 0;
+		list-style-type: none;
+
+		@include break-xlarge() {
+			grid-template-columns: 3fr 1fr 1fr;
+			grid-column-gap: 32px;
+			grid-row-gap: 32px;
+		}
+	}
+
+	&__list-item,
+	&__list-item-small {
+		font-size: 1rem;
+
+		&--wide {
+			@include break-xlarge() {
+				grid-column-start: span 2;
+			}
+		}
+	}
+
+	&__list-item-small {
+		@include break-xlarge() {
+			display: none;
+		}
+	}
+
+	&__license-key-row {
+		display: flex;
+	}
+
+	&__license-key {
+		flex: 0 1 auto;
+		padding: 6px;
+		font-size: 0.875rem;
+		background: var(--studio-gray-0);
+		color: var(--studio-gray-70);
+		overflow: hidden;
+		word-break: break-all;
+	}
+
+	&__clipboard-button {
+		flex: 0 0 auto;
+		position: relative;
+		top: -1px;
+		margin-left: 8px;
+
+		// Overpower specificity of the button component styles.
+		&.button.button {
+			color: var(--studio-gray-70);
+		}
+	}
+
+	&__label {
+		margin-bottom: 8px;
+		font-size: 1rem;
+		font-weight: bold;
+	}
+
+	&__actions {
+		margin-top: 1rem;
+		display: flex;
+		flex-wrap: wrap;
+
+		@include break-xlarge {
+			flex-wrap: nowrap;
+		}
+
+		.button {
+			flex: 0 0 100%;
+		}
+
+		.button:not(:last-child) {
+			margin-bottom: 0.5rem;
+		}
+
+		@include break-large {
+			.button {
+				flex: 0 0 auto;
+			}
+
+			.button:not(:last-child) {
+				margin-right: 1rem;
+				margin-bottom: 0;
+			}
+		}
+	}
+
+	&__assign-button {
+		@include break-large {
+			display: none;
+		}
+	}
+}

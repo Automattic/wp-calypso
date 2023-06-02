@@ -1,0 +1,249 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+$icon-size: 80px;
+$icon-border-radius: 50%;
+
+.site-icon-with-picker__background {
+	min-width: calc(100vw - 16px);
+	min-height: 85vh;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	padding: 16px;
+
+	background: var(--color-surface);
+	box-shadow: 0 0 0 1px var(--color-border-subtle);
+
+	@supports ( height: 85svh ) {
+		height: 85svh;
+	}
+
+	@media screen and (orientation: landscape) and ( max-height: 720px ) {
+		min-width: 80vw;
+		min-height: 80vh;
+
+		@supports ( height: 80svh ) {
+			height: 80svh;
+		}
+	}
+
+	@include break-medium {
+		min-width: 50vw;
+		min-height: 60vh;
+
+		@supports ( height: 60svh ) {
+			height: 60svh;
+		}
+	}
+}
+
+.site-icon-with-picker__image-editor {
+	height: calc(100% - 80px);
+	z-index: 2;
+
+	.image-editor__content,
+	.image-editor__crop-background {
+		background-color: #fff;
+	}
+
+	.image-editor__buttons {
+		position: absolute;
+		top: 100%;
+		right: 6px;
+		display: flex;
+		padding: 0;
+		margin-top: 20px;
+		border: none;
+
+		@include break-medium {
+			right: 10px;
+		}
+
+		&.image-editor__buttons-button {
+			width: 78px;
+			margin-left: 8px;
+			padding: 8px 12px;
+
+			@include break-medium {
+				margin-left: 10px;
+				padding: 8px 14px;
+			}
+		}
+
+		button {
+			border-radius: 4px;
+			@include break-medium {
+				width: 85px;
+			}
+		}
+
+		button:nth-child(1) {
+			order: 1;
+		}
+
+		button:nth-child(2) {
+			order: 0;
+		}
+
+		button:nth-child(3) {
+			order: 2;
+		}
+
+		button:enabled {
+			font-weight: 500;
+			background-color: #fff;
+			border: 1px solid #c3c4c7;
+			color: #101517;
+		}
+	}
+
+	.image-editor__toolbar {
+		position: absolute;
+		top: 100%;
+		text-align: left;
+		display: unset;
+		left: 0;
+		margin-top: 20px;
+
+		.image-editor__toolbar-button {
+			margin: 0 6px;
+
+			@include break-medium {
+				margin: 0 10px;
+			}
+
+			svg {
+				display: none;
+			}
+		}
+		button:nth-child(1) {
+			background-image: url(./images/rotate-right.svg);
+			width: 24px;
+			height: 24px;
+		}
+		button:nth-child(2) {
+			background-image: url(./images/flip-horizontal.svg);
+			width: 24px;
+			height: 24px;
+		}
+	}
+}
+
+.site-icon-with-picker__site-icon {
+	text-align: center;
+}
+
+button.components-button.site-icon-with-picker__upload-button {
+	cursor: pointer;
+	display: inline-block;
+	height: $icon-size;
+	width: $icon-size;
+	padding: 0;
+	border-radius: $icon-border-radius;
+	position: relative;
+	border: 1px dashed var(--studio-gray-60);
+	background-size: contain;
+	margin-bottom: 30px;
+
+	&.has-icon-or-image {
+		border: none;
+
+		span {
+			text-decoration: underline;
+			text-underline-position: under;
+		}
+
+		&:hover {
+			background-color: transparent;
+		}
+	}
+
+	img {
+		height: $icon-size;
+		width: $icon-size;
+		border-radius: $icon-border-radius;
+		position: absolute;
+		top: 0;
+		left: 0;
+	}
+	svg {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+	}
+
+	span.replace,
+	span.add {
+		position: absolute;
+		width: 200px;
+		display: block;
+		text-align: center;
+		margin-top: 50px;
+		margin-left: -75%;
+	}
+
+}
+
+.site-icon-with-picker__dropzone {
+	margin: 0;
+	border: none;
+	background-color: unset;
+
+	.drop-zone__content {
+		position: static;
+	}
+
+	&.drop-zone.is-active {
+		opacity: 0;
+		visibility: hidden;
+
+		&.is-dragging-over-document {
+			opacity: 0;
+			visibility: hidden;
+			background-color: unset;
+		}
+
+		&.is-dragging-over-element {
+			opacity: 1;
+			visibility: visible;
+			background-color: unset;
+
+			.drop-zone__content {
+				transform: none;
+
+				.drop-zone__content-icon {
+					transform: translateX(-50%) scale(1.05);
+
+					svg {
+						transform: translate(-50%, -50%) scale(1.3);
+					}
+				}
+			}
+		}
+	}
+
+	.drop-zone__content-icon {
+		position: absolute;
+		top: 0;
+		left: 50%;
+		transform: translateX(-50%);
+		background-color: rgba(var(--color-primary-rgb));
+		border: 1px solid var(--studio-gray-10);
+		border-radius: $icon-border-radius;
+		transition: ease 1s;
+		width: $icon-size;
+		height: $icon-size;
+
+		svg {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			fill: #fff;
+			transition: ease 1s;
+		}
+	}
+}

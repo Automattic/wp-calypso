@@ -1,0 +1,52 @@
+{
+	"name": "@automattic/global-styles",
+	"version": "1.0.0",
+	"description": "Wrap global-styles related components from Gutenberg",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"author": "Automattic Inc.",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.tsx",
+	"sideEffects": [
+		"*.css",
+		"*.scss"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/global-styles"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"types": "dist/types",
+	"scripts": {
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
+		"prepack": "yarn run clean && yarn run build",
+		"watch": "tsc --build ./tsconfig.json --watch"
+	},
+	"dependencies": {
+		"@tanstack/react-query": "^4.29.1",
+		"@wordpress/block-editor": "^11.0.0",
+		"@wordpress/components": "^23.0.0",
+		"@wordpress/compose": "^6.0.0",
+		"@wordpress/keycodes": "^3.23.0",
+		"@wordpress/private-apis": "^0.15.0",
+		"classnames": "^2.3.1",
+		"deepmerge": "^4.3.0",
+		"i18n-calypso": "workspace:^",
+		"is-plain-object": "^5.0.0",
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0",
+		"tslib": "^2.3.0",
+		"wpcom-proxy-request": "workspace:^"
+	},
+	"devDependencies": {
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"typescript": "^4.7.4"
+	},
+	"private": true
+}

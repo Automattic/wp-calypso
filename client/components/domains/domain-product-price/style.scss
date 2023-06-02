@@ -1,0 +1,142 @@
+.domain-product-price {
+	color: var(--color-text);
+	font-weight: 400;
+	font-size: $font-body-small;
+	line-height: 1;
+	display: flex;
+	flex-direction: column;
+	text-align: right;
+
+	@include breakpoint-deprecated( ">660px" ) {
+		align-items: flex-end;
+		font-size: $font-body;
+
+		.is-white-signup & {
+			align-items: flex-end;
+			min-width: 220px;
+		}
+	}
+
+	@include breakpoint-deprecated( "<660px" ) {
+		display: inline-block;
+		font-size: $font-body-small;
+		text-align: left;
+
+		.is-white-signup &.domain-product-price__domain-step-signup-flow {
+			display: flex;
+			flex-direction: column-reverse;
+			margin-top: 4px;
+		}
+	}
+
+	.is-section-signup &:not(.domain-product-price__domain-step-signup-flow) {
+		@include breakpoint-deprecated( ">660px" ) {
+			padding-right: 1em;
+		}
+	}
+
+	.is-section-domains & {
+		@include breakpoint-deprecated( ">800px" ) {
+			padding-left: 1em;
+			padding-right: 1em;
+		}
+	}
+
+	small {
+		color: var(--color-text-subtle);
+	}
+
+	.domain-product-price__premium-text {
+		cursor: pointer;
+	}
+
+	.domain-product-price__free-text,
+	.domain-product-price__sale-price {
+		color: var(--color-neutral-60);
+		display: block;
+	}
+
+	.domain-product-price__sale-price {
+		color: var(--studio-orange-50);
+		font-weight: 600;
+		small {
+			color: var(--studio-orange-50);
+			font-size: $font-body-small;
+		}
+	}
+
+	&.no-price .domain-product-price__free-text,
+	&.no-price .domain-product-price__sale-price {
+		@include breakpoint-deprecated( ">660px" ) {
+			margin-left: 0;
+		}
+	}
+
+	.domain-product-price__free-price {
+		color: var(--studio-green-60);
+		font-weight: 500;
+		font-size: $font-body-small;
+	}
+
+	.domain-product-price__price {
+		font-weight: 400;
+
+		small {
+			font-size: $font-body-small;
+		}
+	}
+
+	.domain-product-price__price,
+	.domain-product-price__renewal-price {
+		margin: auto 0;
+	}
+
+	&.is-free-domain,
+	&.is-sale-domain {
+		line-height: 1.7;
+		margin-top: 2px;
+
+		.domain-product-price__price,
+		.domain-product-price__renewal-price {
+			font-size: $font-body-small;
+			color: var(--color-text-subtle);
+		}
+
+		.domain-product-price__renewal-price {
+			text-decoration: line-through;
+
+			small {
+				font-size: $font-body-small;
+			}
+		}
+
+		@include breakpoint-deprecated( ">660px" ) {
+			line-height: 1.5;
+			margin-top: 0;
+		}
+	}
+
+	.is-placeholder & {
+		@include breakpoint-deprecated( ">660px" ) {
+			display: none;
+		}
+
+		@include breakpoint-deprecated( "<660px" ) {
+			animation: loading-fade 1.6s ease-in-out infinite;
+			background-color: var(--color-neutral-0);
+			color: transparent;
+		}
+	}
+}
+
+.featured-domain-suggestions {
+	.domain-product-price {
+		.is-section-domains & {
+			padding-left: 0;
+		}
+
+		&.is-free-domain {
+			padding-left: 0;
+		}
+	}
+}

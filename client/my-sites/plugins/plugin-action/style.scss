@@ -1,0 +1,114 @@
+// ==========================================================================
+// PluginActions
+// ==========================================================================
+
+.plugin-action {
+	clear: both;
+	line-height: 0;
+	margin-top: 16px;
+
+	&:first-child {
+		margin-top: 0;
+	}
+
+	&.is-warning {
+		.plugin-action__label {
+			color: var(--color-error);
+		}
+	}
+
+	.plugin-action__label {
+		display: flex;
+		align-items: center;
+		@include breakpoint-deprecated( "<480px" ) {
+			color: var(--color-neutral-70);
+		}
+	}
+
+	.components-toggle-control {
+		.components-base-control__field {
+			display: inline-block;
+			margin-bottom: 5px;
+
+			.components-form-toggle {
+				margin-right: 0;
+			}
+		}
+
+		.components-toggle-control__label {
+			float: left;
+			font-size: $font-body-small;
+			margin-right: 8px;
+		}
+	}
+}
+
+.plugin-action__label {
+	flex-direction: row-reverse;
+	align-items: center;
+	font-size: $font-body-small;
+	line-height: 16px;
+	margin-right: 8px;
+	cursor: pointer;
+
+	&.hide {
+		visibility: hidden;
+
+		.plugin-action__label-text {
+			display: none;
+		}
+	}
+
+	.is-disabled & {
+		color: var(--color-neutral-20);
+		cursor: default;
+	}
+
+	.has-disabled-info & {
+		cursor: default;
+		flex-direction: row;
+	}
+}
+
+.plugin-action__label-disabled-info {
+	display: flex;
+}
+
+.plugin-action__disabled-info.info-popover {
+	visibility: visible;
+	flex: none;
+	margin: 0 4px -1px;
+
+	.gridicon {
+		display: block;
+	}
+
+	.gridicons-info-outline > use:first-child,
+	.gridicons-info-outline > g:first-child {
+		// revert the translate(1px,1px) done by needs-offset
+		transform: none;
+	}
+
+}
+
+.plugin-action__disabled-info.info-popover__tooltip {
+	z-index: z-index("root", ".popover.info-popover__tooltip.plugin-action__disabled-info");
+}
+
+.plugin-action__disabled-info-list {
+	margin-left: 16px;
+}
+
+.plugin-activate-toggle,
+.plugin-autoupdate-toggle {
+	.components-toggle-control {
+		display: flex;
+		.components-base-control__field {
+			display: flex;
+
+			.components-form-toggle {
+				margin-right: 8px;
+			}
+		}
+	}
+}

@@ -1,0 +1,118 @@
+{
+	"id": "https://public-api.wordpress.com/rest/v1/domains/validation-schemas/uk",
+	"errorCode": "dotukValidation",
+	"$comment": "See http://domains.opensrs.guide/docs/tld#section-uk",
+	"type": "object",
+	"properties": {
+		"extra": {
+			"type": "object",
+			"properties": {
+				"uk": {
+					"type": "object",
+					"allOf": [
+						{
+							"errorMessage": "A registration number is required for this registrant type.",
+							"errorCode": "dotukRegistrantTypeRequiresRegistrationNumber",
+							"errorField": "extra.uk.registrationNumber",
+							"anyOf": [
+								{
+									"properties": {
+										"registrationNumber": {
+											"minLength": 1
+										}
+									},
+									"required": [ "registrationNumber" ]
+								},
+								{
+									"not": {
+										"properties": {
+											"registrantType": {
+												"enum": [ "IP", "LLP", "LTD", "PLC", "RCHAR", "SCH" ]
+											}
+										}
+									}
+								}
+							]
+						},
+						{
+							"errorMessage": "A trading name is required for this registrant type.",
+							"errorCode": "dotukRegistrantTypeRequiresTradingName",
+							"errorField": "extra.uk.tradingName",
+							"anyOf": [
+								{
+									"properties": {
+										"tradingName": {
+											"minLength": 1
+										}
+									},
+									"required": [ "tradingName" ]
+								},
+								{
+									"not": {
+										"properties": {
+											"registrantType": {
+												"enum": [
+													"LTD",
+													"PLC",
+													"LLP",
+													"IP",
+													"RCHAR",
+													"FCORP",
+													"OTHER",
+													"FOTHER",
+													"STRA"
+												]
+											}
+										}
+									}
+								}
+							]
+						},
+						{
+							"properties": {
+								"registrationNumber": {
+									"errorMessage": "A Company Registration Number is 8 numerals, or 2 letters followed by 6 numerals (e.g. AB123456 or 12345678).",
+									"errorCode": "dotukRegistrationNumberFormat",
+									"pattern": "^[a-zA-Z0-9]{2}[0-9]{6}$"
+								}
+							}
+						}
+					],
+					"required": [ "registrantType" ]
+				}
+			},
+			"required": [ "uk" ]
+		},
+		"organization": {
+			"type": "string",
+			"errorMessage": "Organization name must have at least 4 characters.",
+			"errorCode": "dotukOrganizationLength",
+			"anyOf": [
+				{
+					"minLength": 4
+				},
+				{
+					"maxLength": 0
+				}
+			]
+		},
+		"address1": {
+			"type": "string",
+			"errorMessage": "First address field requires at least 1 non-numeric character.",
+			"errorCode": "dotukAddress1NonNumeric",
+			"not": {
+				"pattern": "^[0-9]*$"
+			}
+		}
+	},
+	"patternProperties": {
+		"^address": {
+			"errorMessage": "Nominet does not permit PO Boxes for .uk domains.",
+			"errorCode": "dotukNoPoBox",
+			"not": {
+				"pattern": "\\b[Pp](?:[Oo][Ss][Tt])?\\.? ?[Oo](?:[Ff][Ff][Ii][Cc][Ee])?\\.? ?[Bb](?:[Oo][Xx])? ?#?[0-9]{1,5}"
+			}
+		}
+	},
+	"required": [ "extra" ]
+}

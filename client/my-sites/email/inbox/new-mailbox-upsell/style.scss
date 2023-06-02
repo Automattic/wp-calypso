@@ -1,0 +1,72 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.new-mailbox-upsell__container {
+	@include break-mobile {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.new-mailbox-upsell {
+		align-items: center;
+		background: #f9f9f9;
+		box-sizing: border-box;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		margin: 48px auto 0;
+		padding: 16px 40px;
+		position: relative;
+
+		@include break-medium {
+			flex-direction: unset;
+		}
+
+		@include break-large {
+			width: 660px;
+		}
+
+		& > * {
+			max-width: none;
+			align-self: normal;
+
+			@include break-medium {
+				max-width: 50%;
+				align-self: unset;
+			}
+		}
+
+		.new-mailbox-upsell__messages {
+			font-size: $font-body-small;
+			line-height: 28px;
+
+			h2 {
+				font-size: $font-body;
+				font-weight: bold;
+				line-height: 30px;
+				margin-bottom: 0;
+
+				@include break-medium {
+					line-height: 34px;
+				}
+			}
+
+			div {
+				padding-right: 10px;
+			}
+		}
+
+		.new-mailbox-upsell__cta {
+			margin-top: 20px;
+
+			@include break-medium {
+				margin-top: 0;
+			}
+
+			.button {
+				font-weight: bold;
+			}
+		}
+	}
+}

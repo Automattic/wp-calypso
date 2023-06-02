@@ -1,0 +1,20 @@
+import { localizeUrl } from '@automattic/i18n-utils';
+import { useTranslate } from 'i18n-calypso';
+import type { LearnMoreLinkProps } from 'calypso/my-sites/email/email-providers-comparison/in-depth/types';
+
+const LearnMoreLink = ( { url }: LearnMoreLinkProps ) => {
+	const translate = useTranslate();
+
+	return (
+		<>
+			{ translate( '{{a}}Learn more{{/a}}', {
+				comment: 'Link to support page either for Google Workspace or Professional Email',
+				components: {
+					a: <a href={ localizeUrl( url ) } target="_blank" rel="noopener noreferrer" />,
+				},
+			} ) }
+		</>
+	);
+};
+
+export default LearnMoreLink;

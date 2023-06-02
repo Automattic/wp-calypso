@@ -1,0 +1,307 @@
+@import "@automattic/typography/styles/variables";
+
+/**
+ * Select Dropdown
+ */
+$header-height: 43;
+$option-height: 40;
+$side-margin: 16;
+
+$compact-header-height: 35;
+
+.select-dropdown {
+	height: #{$header-height}px;
+	overflow: hidden;
+
+	&.is-open {
+		overflow: visible;
+	}
+
+	&.is-compact {
+		height: #{$compact-header-height}px;
+	}
+}
+
+.select-dropdown__container {
+	position: relative;
+	display: inline-block;
+	max-width: 100%;
+
+	.select-dropdown.is-open & {
+		z-index: z-index("root", ".select-dropdown.is-open .select-dropdown__container");
+	}
+
+	.accessible-focus &:focus,
+	.accessible-focus .select-dropdown.is-open & {
+		z-index: z-index("root", ".accessible-focus .select-dropdown.is-open .select-dropdown__container");
+		.select-dropdown__header {
+			border-color: var(--color-primary);
+		}
+	}
+
+	.accessible-focus & {
+		border-radius: 2px;
+	}
+
+	.accessible-focus &:focus {
+		border-color: #00aadc;
+		outline: 0;
+	}
+
+	.accessible-focus .select-dropdown.is-open & {
+		box-shadow: 0 0 0 2px var(--color-primary-light);
+	}
+}
+
+.select-dropdown__header {
+	height: #{$header-height}px;
+	line-height: #{$header-height - 3}px;
+	padding: 0 #{$side-margin}px 0 #{$side-margin}px;
+	box-sizing: border-box;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
+	border-style: solid;
+	border-color: var(--color-neutral-10);
+	border-width: 1px;
+	border-radius: 2px;
+	background-color: var(--color-surface);
+
+	font-size: $font-body-small;
+	font-weight: 600;
+	color: var(--color-neutral-70);
+	transition: background-color 0.2s ease;
+	cursor: pointer;
+
+	.gridicons-chevron-down {
+		fill: var(--color-neutral-50);
+		margin: 0;
+		flex-shrink: 0;
+		transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+		.is-disabled & {
+			fill: var(--color-neutral-0);
+		}
+	}
+
+	.is-compact & {
+		height: #{$compact-header-height}px;
+		line-height: #{$compact-header-height - 3}px;
+		padding-right: #{$side-margin * 0.5}px;
+		font-size: $font-body-extra-small;
+
+		.count {
+			border-width: 0;
+			right: 25px;
+			top: #{( $compact-header-height - 18 ) * 0.5}px;
+		}
+	}
+
+	.is-disabled & {
+		color: var(--color-neutral-0);
+		background: var(--color-surface);
+		border-color: var(--color-neutral-0);
+		cursor: default;
+
+		&:active,
+		&.is-active {
+			border-width: 1px;
+		}
+	}
+
+	.is-loading & .count,
+	.is-loading & .select-dropdown__header-text {
+		animation: loading-fade 1.6s ease-in-out infinite;
+		color: var(--color-neutral-50);
+	}
+
+	.select-dropdown.is-open & {
+		border-radius: 2px 2px 0 0;
+		box-shadow: none;
+		background-color: var(--color-neutral-0);
+
+		.gridicons-chevron-down {
+			transform: rotate(-180deg);
+		}
+	}
+
+	.accessible-focus .select-dropdown:not(.is-open) .select-dropdown__container:focus & {
+		box-shadow: 0 0 0 2px var(--color-primary-light);
+	}
+
+	.count {
+		position: absolute;
+		right: 40px;
+		top: #{( $header-height - 18 - 2 ) * 0.5}px;
+	}
+}
+
+.select-dropdown__header-text {
+	display: block;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+
+	.has-count & {
+		padding-right: 40px;
+	}
+
+	.gridicon,
+	.material-icon {
+		margin-right: #{( $side-margin * 0.5 )}px;
+		margin-bottom: -4px;
+		vertical-align: text-bottom;
+
+		.is-compact & {
+			position: relative;
+			top: 2px;
+			margin-bottom: 0;
+		}
+	}
+}
+
+.select-dropdown__options {
+	box-sizing: border-box;
+	padding: 0;
+	list-style: none;
+	margin: -1px 0 0;
+	background-color: var(--color-surface);
+	border: 1px solid var(--color-neutral-10);
+	border-top: 0;
+	border-radius: 0 0 2px 2px;
+	visibility: hidden;
+
+	.accessible-focus & {
+		border: solid 1px var(--color-primary);
+		border-top-color: var(--color-neutral-10);
+	}
+
+	.select-dropdown.is-open & {
+		visibility: visible;
+	}
+}
+
+.select-dropdown__option {
+	height: #{$option-height}px;
+
+	&:last-child .select-dropdown__item {
+		border-radius: 0 0 2px 2px;
+	}
+
+	&:hover {
+		background-color: var(--color-neutral-5);
+	}
+}
+
+.select-dropdown__item {
+	display: block;
+	position: relative;
+	height: #{$option-height}px;
+	line-height: #{$option-height}px;
+	padding: 0 #{$side-margin + 46}px 0 #{$side-margin}px;
+
+	color: var(--color-neutral-70);
+	font-size: $font-body-small;
+	font-weight: 400;
+	white-space: nowrap;
+	overflow: hidden;
+	cursor: pointer;
+
+	// hack to set text width in bold weight
+	&::before {
+		content: attr(data-bold-text);
+		font-weight: 600;
+		white-space: nowrap;
+		opacity: 0;
+	}
+
+	&:visited {
+		color: var(--color-neutral-70);
+	}
+
+	&.is-selected {
+		background-color: var(--color-accent);
+		color: var(--color-text-inverted);
+
+		.count {
+			border-color: var(--color-border-inverted);
+			color: var(--color-text-inverted);
+		}
+	}
+
+	&.is-disabled {
+		background-color: var(--color-surface);
+		color: var(--color-neutral-light);
+		cursor: default;
+		opacity: 0.5;
+	}
+
+	.notouch & {
+		// Make sure :visited links stay blue
+		&:hover {
+			color: var(--color-accent);
+		}
+
+		&.is-selected:hover {
+			color: var(--color-text-inverted);
+		}
+	}
+
+	.extra-gridicon {
+		fill: var(--color-neutral);
+		position: absolute;
+		top: #{( $option-height - 18 ) * 0.5}px;
+		right: #{$side-margin - 8 }px;
+	}
+
+	.gridicon {
+		margin-right: #{( $side-margin * 0.5 )}px;
+		vertical-align: text-bottom;
+	}
+}
+
+.select-dropdown__item-count {
+	&::before {
+		content: attr(data-text);
+		opacity: 0;
+	}
+
+	.count {
+		position: absolute;
+		top: #{( $option-height - 18 ) * 0.5}px;
+		right: #{$side-margin}px;
+	}
+}
+
+.select-dropdown__item-text {
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	color: inherit;
+	display: inline-block;
+	max-width: 100%;
+	position: absolute;
+	left: #{$side-margin}px;
+	right: #{$side-margin}px;
+}
+
+.select-dropdown__separator {
+	border-top: 1px solid var(--color-neutral-10);
+	display: block;
+	margin: 8px 0;
+}
+
+.select-dropdown__label {
+	display: block;
+	color: var(--color-text-subtle);
+	line-height: 20px;
+
+	.form-label {
+		font-size: $font-body-extra-small;
+		font-weight: 400;
+		padding: 0 #{$side-margin}px;
+		margin-bottom: 0;
+		display: inline;
+	}
+}

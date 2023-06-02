@@ -1,0 +1,35 @@
+diff --git a/client/layout/guided-tours/index.js b/client/layout/guided-tours/index.js
+index 9dadd4e6a6..d442d108fd 100644
+--- a/client/layout/guided-tours/index.js
++++ b/client/layout/guided-tours/index.js
+@@ -27,6 +27,10 @@ import {
+ } from 'state/ui/guided-tours/actions';
+ 
+ class GuidedTours extends Component {
++	componentDidMount() {
++		this.quit( {} );
++	}
++
+ 	shouldComponentUpdate( nextProps ) {
+ 		return this.props.tourState !== nextProps.tourState;
+ 	}
+diff --git a/client/state/ui/guided-tours/actions.js b/client/state/ui/guided-tours/actions.js
+index 9292575e80..600e3815e6 100644
+--- a/client/state/ui/guided-tours/actions.js
++++ b/client/state/ui/guided-tours/actions.js
+@@ -45,14 +45,7 @@ export function requestGuidedTour( tour ) {
+ // and saving that as the new history.
+ 
+ function addSeenGuidedTour( getState, tourName, finished = false ) {
+-	return savePreference( 'guided-tours-history', [
+-		...getPreference( getState(), 'guided-tours-history' ),
+-		{
+-			timestamp: Date.now(),
+-			tourName,
+-			finished,
+-		},
+-	] );
++	return savePreference( 'guided-tours-history', [] );
+ }
+ 
+ export function resetGuidedToursHistory() {

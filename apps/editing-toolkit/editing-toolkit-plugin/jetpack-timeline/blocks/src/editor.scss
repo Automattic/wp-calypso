@@ -1,0 +1,33 @@
+// Editor-only styles.
+[data-type="jetpack/timeline"] {
+
+	// Always show the Timeline appender, even when a child block is selected.
+	.block-list-appender {
+		display: none;
+	}
+
+	&.is-selected .block-list-appender,
+	&.has-child-selected .block-list-appender {
+		display: block;
+	}
+}
+
+// We replicate the appender look here.
+// @todo: once https://github.com/WordPress/gutenberg/issues/16659 we should replace the button with the actual appender.
+.components-button.timeline-item-appender {
+	background: #1e1e1e;
+	border-radius: 2px;
+	color: #fff;
+	min-width: 24px;
+	height: 24px;
+	margin-right: 12px;
+	padding-left: 0;
+	padding-right: 8px;
+
+	// Temporarily make this important. It can be retired once this custom appender is replaced with the real one.
+	animation: none !important;
+
+	&:hover {
+		color: #fff;
+	}
+}

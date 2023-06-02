@@ -1,0 +1,523 @@
+$devdocs-max-width: 720px;
+
+// Sidebar Title
+.devdocs__title {
+	color: var(--color-sidebar-text-alternative);
+	font-size: $font-title-medium;
+	padding: 24px;
+}
+
+.sidebar__separator {
+	margin: 20px 0;
+}
+
+// Search
+.devdocs__result {
+	.devdocs__result-title {
+		font-weight: 600;
+		font-size: $font-title-small;
+
+		.devdocs__result-link {
+			text-decoration: underline;
+
+			&:hover {
+				color: var(--color-primary);
+			}
+		}
+	}
+
+	.devdocs__result-path {
+		font-size: $font-body-small;
+		font-family: $code;
+		color: var(--color-text-subtle);
+	}
+
+	.devdocs__result-snippet {
+		font-size: $font-body;
+		color: var(--color-text);
+		margin-top: 4px;
+
+		mark {
+			background: rgba(var(--color-primary-light-rgb), 0.4);
+			padding: 2px;
+			border-radius: 2px;
+		}
+
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
+	}
+}
+
+// Block and Component examples
+.main.devdocs.devdocs__blocks,
+.main.devdocs.devdocs__components {
+	// Make way for showing big components and multiple columns
+	max-width: 100%;
+}
+
+.design__collection {
+	// Use multiple columns when listing components
+	.main.devdocs.is-list & {
+		column-gap: 24px;
+
+		// Show 2 columns for big screens
+		@include breakpoint-deprecated( ">1280px" ) {
+			column-count: 2;
+		}
+
+		@media ( min-width: 2000px ) {
+			column-count: 3;
+		}
+	}
+}
+
+// We show a list of links for results above
+// the actual examples.
+.design__instance-links {
+	margin-bottom: 24px;
+}
+
+.design__instance-links-label {
+	display: block;
+	font-size: $font-body-small;
+	font-weight: 600;
+	margin: 8px;
+	color: var(--color-text-subtle);
+}
+
+.design__instance-link {
+	display: inline-block;
+	background: var(--color-surface);
+	text-decoration: underline;
+	border-radius: 2px;
+	padding: 3px 6px;
+	margin: 0 6px 4px 0;
+	font-family: $code;
+	box-shadow: 0 1px 2px rgba(var(--color-neutral-70-rgb), 0.05);
+}
+
+.design__illustrations-illustrations {
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	grid-gap: 24px;
+
+	.design__illustrations-illustration {
+		background: var(--studio-white);
+		border: 1px solid var(--color-border-subtle);
+		padding: 24px;
+
+		img {
+			width: 100%;
+			height: auto;
+		}
+	}
+}
+
+// The wrapper containing the actual examples
+.docs-example__wrapper {
+	box-sizing: border-box;
+	background: var(--color-surface);
+	box-shadow: 0 1px 2px var(--color-neutral-0);
+	border: 1px solid rgba(var(--color-neutral-10-rgb), 0.65);
+	margin: 0 auto 24px;
+	position: relative;
+
+	.docs-example__wrapper-header-title {
+		font-family: $code;
+		font-size: $font-title-small;
+		letter-spacing: 1px;
+		border-bottom: 1px solid rgba(var(--color-neutral-10-rgb), 0.65);
+
+		a,
+		a:visited {
+			text-decoration: underline;
+
+			&:hover {
+				color: var(--color-primary);
+			}
+		}
+	}
+
+	.docs-example__wrapper-content {
+		background: var(--color-surface-backdrop);
+		padding: 16px;
+		--docs-example-grid: var(--color-neutral-70-rgb);
+		box-shadow: inset 0 2px 1px rgba(var(--docs-example-grid), 0.075);
+
+		// Grid background
+		background-image:
+			linear-gradient(rgba(var(--docs-example-grid), 0.05) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(var(--docs-example-grid), 0.05) 1px, transparent 1px),
+			linear-gradient(rgba(var(--docs-example-grid), 0.025) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(var(--docs-example-grid), 0.025) 1px, transparent 1px);
+		background-size: 32px 32px, 32px 32px, 8px 8px, 8px 8px;
+		background-position: -1px -1px, -1px -1px, -1px -1px, -1px -1px;
+
+		// A wrapper inside a wrapper to help reliably center
+		// component and block examples.
+		.docs-example__wrapper-content-centering {
+			margin: auto;
+			min-width: ( $devdocs-max-width * 0.5 );
+			width: 100%;
+		}
+
+		// Some components use a card and the extra margin
+		// looks strange.
+		.card:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	// Styles specific to the single component view
+	.main.devdocs.is-single & {
+		.docs-example__wrapper-header-title {
+			padding: 16px 24px;
+		}
+	}
+
+	// How examples look in the lists of components view
+	.main.devdocs.is-list & {
+		break-inside: avoid;
+
+		.docs-example__wrapper-header-title a {
+			padding: 16px 24px;
+			display: block;
+		}
+
+		.docs-example__wrapper-content {
+			padding: 32px;
+			overflow: hidden;
+		}
+
+		// When we only have room for one column we
+		// set the max-width to line up with search
+		@include breakpoint-deprecated( "<1280px" ) {
+			max-width: $devdocs-max-width;
+		}
+
+		@media ( min-width: 2000px ) {
+			padding-top: 60px;
+
+			.docs-example__wrapper-header-title a {
+				position: absolute;
+				top: 0;
+				right: 0;
+				bottom: 0;
+				left: 0;
+			}
+
+			.docs-example__wrapper-content {
+				height: 140px;
+				overflow: hidden;
+				pointer-events: none;
+			}
+
+			&:hover {
+				border-color: var(--color-primary-light);
+
+				.docs-example__wrapper-content {
+					opacity: 0.7;
+				}
+			}
+		}
+	}
+}
+
+// Some components/blocks use a button to toggle variants
+.docs__design-toggle {
+	top: 10px;
+	right: 24px;
+	z-index: 1;
+	position: absolute;
+}
+
+// Some components/blocks need some space to look right
+.docs__design-button-row,
+.design__button-row {
+	margin-bottom: 20px;
+}
+
+// !important's :(
+.docs__design-button-row .button,
+.design__button-row .button {
+	margin-right: 16px !important;
+}
+
+.docs__design-button-row .button-group .button,
+.docs__design-button-row .split-button__main {
+	margin-right: 0 !important;
+}
+
+.docs__design-button-group-row {
+	margin-bottom: 20px;
+}
+
+// State Selectors
+.docs-selectors__results {
+	list-style: none;
+	margin: 0;
+
+	li {
+		display: block;
+	}
+}
+
+.docs-selectors__result {
+	max-width: $devdocs-max-width;
+	margin: auto;
+
+	.docs-selectors__result-name {
+		font-family: $code;
+		text-decoration: underline;
+		font-weight: 600;
+		font-size: $font-body;
+	}
+
+	.docs-selectors__result-description {
+		margin: 0;
+	}
+
+	.docs-selectors__result-io {
+		display: none;
+		font-size: $font-body;
+
+		.docs-selectors__result-arguments {
+			flex: 3;
+			margin-right: 8px;
+		}
+
+		.docs-selectors__result-return {
+			flex: 2;
+			margin-left: 8px;
+		}
+
+		.docs-selectors__result-arguments,
+		.docs-selectors__result-return {
+			color: var(--color-neutral-70);
+			background: var(--color-neutral-0);
+			border-radius: 2px;
+			padding: 16px 24px;
+		}
+
+		.docs-selectors__result-label {
+			display: block;
+			margin-bottom: 32px;
+			font-weight: 600;
+		}
+
+		.docs-selectors__result-arguments-content {
+			display: flex;
+			padding-top: 16px;
+			margin-bottom: 24px;
+			border-top: 1px solid var(--color-neutral-10);
+
+			.docs-selectors__result-arguments-name {
+				width: 30%;
+				margin-right: 24px;
+				text-align: right;
+			}
+		}
+
+		.docs-selectors__result-arguments-name,
+		.docs-selectors__result-arguments-name strong,
+		.docs-selectors__param-type {
+			font-family: $code;
+			color: var(--color-neutral-70);
+		}
+
+		.docs-selectors__result-arguments-name strong {
+			color: var(--color-neutral-70);
+			background: var(--color-surface);
+			border-radius: 2px;
+			display: inline-block;
+			padding: 2px 8px;
+			margin-left: -8px;
+			margin-bottom: 12px;
+		}
+
+		.docs-selectors__param-type {
+			font-size: $font-body-small;
+		}
+
+		p {
+			margin: 0;
+			padding-top: 4px;
+			font-size: $font-body;
+		}
+	}
+
+	&.is-expanded {
+		.docs-selectors__result-io {
+			display: flex;
+			margin: 24px 0 8px;
+		}
+	}
+}
+
+// Documentation — Copy-heavy things like Contributing and Typography
+.devdocs__doc-content {
+	max-width: $devdocs-max-width;
+	margin: 32px 20px;
+	font-size: $font-body;
+	font-family: $serif;
+
+	@include breakpoint-deprecated( ">660px" ) {
+		margin: 32px auto;
+	}
+
+	a {
+		text-decoration: underline;
+	}
+
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		font-weight: 600;
+		line-height: 1.2;
+		margin: 32px 0 16px;
+		font-size: $font-title-small;
+		color: var(--color-neutral-60);
+	}
+
+	h1 {
+		color: var(--color-neutral-70);
+		font-size: $font-headline-large;
+		line-height: 1.4;
+		margin-top: 0;
+	}
+
+	h2 {
+		font-size: $font-title-large;
+		color: var(--color-neutral-70);
+	}
+
+	h3 {
+		font-size: $font-title-medium;
+	}
+
+	p,
+	li {
+		line-height: 1.6;
+	}
+
+	ul,
+	ol {
+		margin: 0 0 32px 48px;
+	}
+
+	li {
+		margin-bottom: 8px;
+	}
+
+	pre {
+		padding: 8px;
+		background: var(--color-surface);
+		background-color: var(--color-surface);
+		color: var(--color-primary-dark);
+	}
+
+	code {
+		background-color: var(--color-surface);
+		border-radius: 2px;
+		color: var(--color-primary-dark);
+		font-size: $font-body;
+		padding: 2px 6px;
+		max-width: 100px;
+	}
+
+	pre > code {
+		background-color: rgba(var(--color-surface-rgb), 0);
+		padding: 2px 0;
+	}
+
+	.emoji {
+		height: 18px;
+	}
+
+	.label {
+		font-weight: 600;
+		font-size: $font-body;
+		padding: 1px 5px 2px;
+		border-radius: 2px;
+
+		&.status-needs-author-reply {
+			background: #ea652d;
+		}
+
+		&.status-needs-review {
+			background: #fbc92f;
+		}
+
+		&.status-ready-to-merge {
+			background: #d6fa82;
+		}
+
+		&.status-in-progress {
+			background: #2880e2;
+			color: var(--color-text-inverted);
+		}
+	}
+
+	video {
+		max-width: 100%;
+		margin-bottom: 24px;
+	}
+}
+
+.design__typography-interface-example {
+	font-family: $sans;
+
+	h2 {
+		margin-top: 16px;
+	}
+}
+
+.design__typography-content-example {
+	font-family: $serif;
+
+	h2 {
+		margin-top: 16px;
+	}
+}
+
+.design__typography-brand-example {
+	@extend .wp-brand-font;
+
+	h2 {
+		margin-top: 16px;
+	}
+}
+
+.design__typography-code-example {
+	font-family: $code;
+	font-size: $font-body;
+}
+
+
+.design__typography-modular-scale {
+	max-width: 400px;
+
+	th {
+		padding: 5px 0;
+	}
+
+	td {
+		border-top: 1px solid var(--color-neutral-10);
+		padding: 5px 0;
+	}
+}
+
+// At the top of documentation and readme's
+a.devdocs__doc-edit-link {
+	text-align: center;
+	text-decoration: underline;
+	float: right;
+
+	@include breakpoint-deprecated( "<660px" ) {
+		margin-right: 12px;
+	}
+}

@@ -1,0 +1,46 @@
+.pattern-assembler {
+	.pattern-action-bar {
+		display: flex;
+		opacity: 0;
+		align-items: center;
+		position: absolute;
+		height: 27px;
+		right: 0;
+
+		.pattern-action-bar__block {
+			flex-direction: column;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.pattern-action-bar__action {
+			&.has-icon {
+				min-width: 30px;
+				max-width: 30px;
+				padding: 0;
+			}
+
+			svg {
+				fill: var(--studio-gray-80);
+
+				&:hover {
+					transform: scale(1.05);
+					transition: transform 0.1s ease-in;
+					transform-origin: center;
+				}
+			}
+
+			&:not(:disabled):hover svg {
+				fill: var(--studio-blue-50);
+			}
+
+			&--move-up,
+			&--move-down {
+				height: 13px;
+				display: flex;
+				align-items: center;
+			}
+		}
+	}
+}

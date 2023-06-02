@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`reducer should export expected reducer keys 1`] = `
+Object {
+  "jetpackAuthAttempts": Object {},
+  "jetpackConnectAuthorize": Object {},
+  "jetpackConnectSite": Object {},
+  "jetpackSSO": Object {},
+}
+`;

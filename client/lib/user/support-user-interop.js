@@ -1,0 +1,121 @@
+import debugModule from 'debug';
+import { bypassPersistentStorage } from 'calypso/lib/browser-storage';
+import localStorageBypass from 'calypso/lib/local-storage-bypass';
+import wpcom from 'calypso/lib/wp';
+
+/**
+ * Connects the Redux store and the low-level support user functions
+ * of the wpcom library. When the support user token is changed in the
+ * Redux store, the token is sent to the wpcom library. If a token
+ * error occurs in a wpcom API call, the error is forwarded to the
+ * Redux store via an action. This also forces any data refreshes
+ * that are required due to the change of user.
+ */
+
+const debug = debugModule( 'calypso:support-user' );
+const STORAGE_KEY = 'boot_support_user';
+const noop = () => {};
+
+let _setReduxStore = noop;
+const reduxStoreReady = new Promise( ( resolve ) => {
+	_setReduxStore = ( reduxStore ) => resolve( reduxStore );
+} );
+export const setSupportSessionReduxStore = _setReduxStore;
+
+const getStorageItem = () => {
+	try {
+		return JSON.parse( window.sessionStorage.getItem( STORAGE_KEY ) );
+	} catch ( error ) {
+		return {};
+	}
+};
+
+// Evaluate isSupportUserSession at module startup time, then freeze it
+// for the remainder of the session. This is needed because the User
+// module clears the store on change; it could return false if called
+// after boot.
+const _isSupportUserSession = ( () => {
+	const supportUser = getStorageItem();
+
+	return supportUser && supportUser.user && supportUser.token;
+} )();
+
+export const isSupportUserSession = () => _isSupportUserSession;
+
+// Detect the next-style support session
+export const isSupportNextSession = () => {
+	return !! ( typeof window !== 'undefined' && window.isSupportSession );
+};
+
+// Detect a support session, no matter the implementation
+export const isSupportSession = () => isSupportUserSession() || isSupportNextSession();
+
+let onBeforeUnload;
+
+const storeUserAndToken = ( user, token ) => () => {
+	if ( user && token ) {
+		window.sessionStorage.setItem( STORAGE_KEY, JSON.stringify( { user, token } ) );
+	}
+};
+
+/**
+ * Reboot normally as the main user
+ */
+export const rebootNormally = () => {
+	debug( 'Rebooting Calypso normally' );
+
+	window.sessionStorage.removeItem( STORAGE_KEY );
+	window.removeEventListener( 'beforeunload', onBeforeUnload );
+	window.location.search = '';
+};
+
+// Called when an API call fails due to a token error
+const onTokenError = ( error ) => {
+	debug( 'Deactivating support user and rebooting due to token error', error.message );
+	rebootNormally();
+};
+
+/**
+ * Inject the support user token into all following API calls
+ */
+export async function supportUserBoot() {
+	const { user, token } = getStorageItem();
+	debug( 'Booting Calypso with support user', user );
+
+	window.sessionStorage.removeItem( STORAGE_KEY );
+
+	onBeforeUnload = storeUserAndToken( user, token );
+	window.addEventListener( 'beforeunload', onBeforeUnload );
+
+	bypassPersistentStorage( true );
+
+	// The following keys will not be bypassed as
+	// they are safe to share across user sessions.
+	const allowedKeys = [ STORAGE_KEY, 'debug' ];
+	localStorageBypass( { allowedKeys } );
+
+	wpcom.setSupportUserToken( user, token, onTokenError );
+
+	// This needs to be a dynamic import in order to avoid boot race conditions.
+	const { supportSessionActivate } = await import( 'calypso/state/support/actions' );
+
+	// the boot is performed before the Redux store is created, so we need to wait for a promise
+	const reduxStore = await reduxStoreReady;
+	reduxStore.dispatch( supportSessionActivate() );
+}
+
+export async function supportNextBoot() {
+	bypassPersistentStorage( true );
+
+	// The following keys will not be bypassed as
+	// they are safe to share across user sessions.
+	const allowedKeys = [ 'debug' ];
+	localStorageBypass( { allowedKeys } );
+
+	// This needs to be a dynamic import in order to avoid boot race conditions.
+	const { supportSessionActivate } = await import( 'calypso/state/support/actions' );
+
+	// the boot is performed before the Redux store is created, so we need to wait for a promise
+	const reduxStore = await reduxStoreReady;
+	reduxStore.dispatch( supportSessionActivate() );
+}

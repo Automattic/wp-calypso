@@ -1,0 +1,187 @@
+@import "@wordpress/base-styles/colors";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/z-index";
+
+$sidebar-width: 272px;
+$sidebar-transition-period: 100ms;
+$sidebar-background-color: #23282e; // WP-admin gray to match the close button background color
+$sidebar-nav-header-background-color: #32373d; // WP-admin gray to match the close button background hover color
+$sidebar-untitled-text-color: #b5bcc2; // former $light-gray-800
+$sidebar-button-text-color: #a2aab2; // former $light-gray-900
+
+.wpcom-block-editor-nav-sidebar-nav-sidebar__click-guard {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	// Use the same z-index as the edit-post-layout header
+	z-index: z-index(".interface-interface-skeleton__header");
+	animation:
+		wpcom-block-editor-nav-sidebar-nav-sidebar__fade $sidebar-transition-period ease-out
+		forwards;
+	@include reduce-motion( "animation" );
+
+	&.is-fading-out {
+		animation:
+			wpcom-block-editor-nav-sidebar-nav-sidebar__fade $sidebar-transition-period ease-in
+			reverse;
+		@include reduce-motion( "animation" );
+	}
+}
+
+@keyframes wpcom-block-editor-nav-sidebar-nav-sidebar__fade {
+	0% {
+		background-color: rgba($black, 0);
+	}
+	100% {
+		background-color: rgba($black, 0.7);
+	}
+}
+
+.wpcom-block-editor-nav-sidebar-nav-sidebar__container {
+	box-sizing: border-box;
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	width: $sidebar-width;
+	background: $sidebar-background-color;
+	display: flex;
+	flex-direction: column;
+	box-shadow: -5px 0 20px $black;
+	animation: wpcom-block-editor-nav-sidebar-nav-sidebar__slide $sidebar-transition-period ease-out;
+	@include reduce-motion( "animation" );
+
+	&.is-sliding-left {
+		animation:
+			wpcom-block-editor-nav-sidebar-nav-sidebar__slide $sidebar-transition-period ease-in
+			reverse;
+		@include reduce-motion( "animation" );
+	}
+}
+
+@keyframes wpcom-block-editor-nav-sidebar-nav-sidebar__slide {
+	0% {
+		left: -$sidebar-width;
+	}
+	100% {
+		left: 0;
+	}
+}
+
+.wpcom-block-editor-nav-sidebar-nav-sidebar__header {
+	box-sizing: content-box;
+	background-color: $sidebar-nav-header-background-color;
+	display: flex;
+}
+
+.wpcom-block-editor-nav-sidebar-nav-sidebar__site-title {
+	margin-left: $grid-unit-10;
+	align-items: center;
+	display: flex;
+	min-height: 60px;
+
+	h2 {
+		color: $white;
+		margin: 0;
+		font-size: $text-editor-font-size;
+		line-height: $default-line-height;
+		word-wrap: break-word;
+		font-weight: normal;
+		display: flex;
+		align-items: center;
+		padding: 10px 10px 10px 0;
+	}
+
+	a,
+	a.is-untitled {
+		color: $sidebar-untitled-text-color;
+
+		&:active,
+		&:focus,
+		&:hover {
+			color: $white;
+		}
+	}
+}
+
+.wpcom-block-editor-nav-sidebar-nav-sidebar__dismiss-sidebar-button {
+	height: $header-height !important;
+	background-color: $sidebar-nav-header-background-color !important;
+	// Prevents the icon button from shrinking when the site title goes on 2+ lines
+	flex-shrink: 0;
+}
+
+.wpcom-block-editor-nav-sidebar-nav-sidebar__home-button {
+	width: 100%;
+	border: none !important;
+	box-shadow: none !important;
+	color: $white !important;
+	flex-shrink: 0;
+	padding: 8px 11px !important;
+	margin: 12px 0;
+
+	&:hover,
+	&:not([aria-disabled="true"]):active {
+		color: $white;
+	}
+
+	&:focus {
+		color: $white;
+		border: 1px solid $white !important;
+		box-shadow: none !important;
+		outline: none !important;
+		border-radius: 0;
+		padding: 7px 10px !important;
+	}
+}
+
+.wpcom-block-editor-nav-sidebar-nav-sidebar__list-heading,
+.wpcom-block-editor-nav-sidebar-nav-sidebar__list-subheading {
+	padding: $grid-unit-05 $grid-unit-20;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+	font-size: 18px;
+	color: $white;
+	margin: 0 0 8px;
+}
+
+.wpcom-block-editor-nav-sidebar-nav-sidebar__list-subheading {
+	font-size: $default-font-size;
+	font-weight: normal;
+}
+
+.wpcom-block-editor-nav-sidebar-nav-sidebar__page-list {
+	padding: 0;
+	margin: 0 0 20px;
+
+	li {
+		margin-bottom: 2px;
+	}
+
+	a {
+		color: $sidebar-button-text-color;
+	}
+
+	.is-selected {
+		color: $white !important;
+	}
+	/*
+	@TODO Work out how we're going to handle overflow
+	overflow-y: auto;
+	*/
+}
+
+.wpcom-block-editor-nav-sidebar-nav-sidebar__post-scroll-area {
+	overflow-y: auto;
+	margin-bottom: 50px;
+}
+
+.wpcom-block-editor-nav-sidebar-nav-sidebar__bottom-buttons {
+	border-top: 1px solid $sidebar-button-text-color;
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	overflow: hidden;
+	background: $sidebar-background-color;
+}

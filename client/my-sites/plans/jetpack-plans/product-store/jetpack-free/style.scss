@@ -1,0 +1,17 @@
+.jetpack-product-store__jetpack-free {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin: 4em 0;
+}
+
+.jetpack-product-store__jetpack-free--headline {
+	font-size: $font-title-large;
+	line-height: 1;
+	margin-bottom: 1em;
+}
+
+.jetpack-product-store__jetpack-free--info {
+	font-size: $font-body-small;
+	text-align: center;
+}

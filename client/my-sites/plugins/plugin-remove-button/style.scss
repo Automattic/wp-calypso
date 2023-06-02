@@ -1,0 +1,35 @@
+.plugin-remove-button__remove {
+	color: var(--color-neutral-light);
+	font-size: $font-body-extra-small;
+	line-height: 16px;
+	margin-right: 10px;
+	vertical-align: top;
+	display: block;
+}
+
+.plugin-meta__actions .plugin-remove-button__remove-link {
+	margin-left: 0;
+}
+
+.plugin-remove-button__remove-link .plugin-action__children {
+	display: inline-flex;
+}
+
+.plugin-site__actions .plugin-remove-button__remove {
+	margin-top: 0;
+	padding: 16px;
+}
+
+.plugin-remove-button__remove-button {
+	color: var(--studio-gray-80);
+	font-size: $font-body-small;
+}
+
+.plugin-remove-button__remove-icon {
+	margin-right: 3px;
+}
+
+.plugin-remove-button__remove-link.is-disabled .plugin-remove-button__remove-icon .gridicons-trash {
+	color: var(--color-neutral-0);
+	cursor: default;
+}
