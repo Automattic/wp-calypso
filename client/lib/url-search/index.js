@@ -31,8 +31,8 @@ export const buildSearchUrl = ( { uri, search, queryKey = 's' } ) => {
 		parsedUrl.searchParams.delete( queryKey );
 	}
 
-	// Remove the origin from the url, get only pathName with query params
-	return parsedUrl.toString().replace( parsedUrl.origin, '' );
+	// Remove the protocol from the URL so that page doesn't redirect.
+	return parsedUrl.toString().replace( parsedUrl.protocol + '//', '' );
 };
 
 const UrlSearch = ( Component ) =>
