@@ -47,13 +47,11 @@ async function AppBoot() {
 
 	const queryClient = new QueryClient();
 
+	const middlewares = [ thunkMiddleware, analyticsMiddleware, wpcomApiMiddleware as Middleware ];
 	const store = createStore(
 		rootReducer,
 		initialState,
-		compose(
-			addReducerEnhancer,
-			applyMiddleware( thunkMiddleware, analyticsMiddleware, wpcomApiMiddleware as Middleware )
-		)
+		compose( addReducerEnhancer, applyMiddleware( ...middlewares ) )
 	);
 
 	setStore( store as Store & WithAddReducer );
