@@ -95,6 +95,7 @@ function ReaderSubscriptionListItem( {
 					siteUrl={ streamUrl }
 					isCompact={ true }
 					onClick={ recordAvatarClick }
+					iconSize={ 32 }
 				/>
 			</div>
 			<div className="reader-subscription-list-item__byline">
