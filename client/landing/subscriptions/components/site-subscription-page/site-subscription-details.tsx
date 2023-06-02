@@ -47,9 +47,7 @@ const SiteSubscriptionDetails = ( {
 	const confirmUnsubscribe = ( { blogId, url }: { blogId: string; url: string } ) => {
 		if (
 			confirm(
-				translate(
-					'You currently have paid subscriptions with this site. Paid subscriptions must be cancelled separately by clicking the Manage Subscriptions button or going to https://wordpress.com/me/purchases. Press OK to proceed with unsubscribing from the site. Press Cancel to go back.'
-				)
+				'You currently have paid subscriptions with this site. Paid subscriptions must be cancelled separately by clicking the Manage Subscriptions button or going to https://wordpress.com/me/purchases.\n\nPress OK to proceed with unsubscribing from the site.\nPress Cancel to go back.'
 			)
 		) {
 			unsubscribe( { blog_id: blogId, url } );
