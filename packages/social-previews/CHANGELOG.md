@@ -1,6 +1,6 @@
 # Changelog
 
-## v2.0.1 (2023-05-30)
+## v2.0.1-beta.4 (2023-05-30)
 
 - Added Mastodon and Instagram previews
 - Fixed hyperlinks for Facebook
