@@ -7,6 +7,7 @@ import {
 	backupDownload,
 	backupRestore,
 	backupClone,
+	backupContents,
 	backups,
 	showJetpackIsDisconnected,
 	showNotAuthorizedForNonAdmins,
@@ -23,7 +24,13 @@ import {
 } from 'calypso/my-sites/controller';
 import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { backupMainPath, backupRestorePath, backupDownloadPath, backupClonePath } from './paths';
+import {
+	backupMainPath,
+	backupRestorePath,
+	backupDownloadPath,
+	backupClonePath,
+	backupContentsPath,
+} from './paths';
 
 const notFoundIfNotEnabled = ( context, next ) => {
 	const state = context.store.getState();
@@ -110,6 +117,25 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+
+	/* handles /backup/:site/contents/:rewindId, see `backupContentsPath` */
+	page(
+		backupContentsPath( ':site', ':rewindId' ),
+		siteSelection,
+		stagingSiteNotSupportedRedirect,
+		navigation,
+		backupContents,
+		wrapInSiteOffsetProvider,
+		wpcomAtomicTransfer( WPCOMUpsellPage ),
+		showUnavailableForVaultPressSites,
+		showJetpackIsDisconnected,
+		showUnavailableForMultisites,
+		showNotAuthorizedForNonAdmins,
+		notFoundIfNotEnabled,
+		makeLayout,
+		clientRender
+	);
+
 	/* handles /backups, see `backupMainPath` */
 	page( backupMainPath(), siteSelection, sites, makeLayout, clientRender );
 }
