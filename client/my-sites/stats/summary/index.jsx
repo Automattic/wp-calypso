@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { FEATURE_GOOGLE_ANALYTICS, PLAN_PREMIUM } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { merge } from 'lodash';
@@ -339,7 +338,6 @@ class StatsSummary extends Component {
 			<Main className="has-fixed-nav" wideLayout>
 				<PageViewTracker
 					path={ `/stats/${ period }/${ module }/:site` }
-					properties={ { is_odyssey: config.isEnabled( 'is_running_in_jetpack_site' ) } }
 					title={ `Stats > ${ titlecase( period ) } > ${ titlecase( module ) }` }
 				/>
 				<FixedNavigationHeader navigationItems={ navigationItems } />

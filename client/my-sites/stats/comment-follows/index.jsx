@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import page from 'page';
@@ -46,7 +45,6 @@ class StatsCommentFollows extends Component {
 			<Main wideLayout>
 				<PageViewTracker
 					path="/stats/follows/comment/:site_id"
-					properties={ { is_odyssey: config.isEnabled( 'is_running_in_jetpack_site' ) } }
 					title="Stats > Followers > Comment"
 				/>
 

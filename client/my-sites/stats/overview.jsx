@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
@@ -88,7 +87,6 @@ class StatsOverview extends Component {
 				<DocumentHead title={ translate( 'Stats' ) } />
 				<PageViewTracker
 					path={ `/stats/${ period }` }
-					properties={ { is_odyssey: config.isEnabled( 'is_running_in_jetpack_site' ) } }
 					title={ `Stats > ${ titlecase( period ) }` }
 				/>
 				<StatsNavigation selectedItem="traffic" interval={ period } isLegacy />
