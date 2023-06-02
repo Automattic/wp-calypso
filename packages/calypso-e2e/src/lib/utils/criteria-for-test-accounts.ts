@@ -99,6 +99,12 @@ const defaultCriteria: FeatureCriteria[] = [
 		jetpackTarget: 'remote-site',
 		accountName: 'jetpackRemoteSiteUser',
 	},
+	// Atomic GB nightly tests
+	{
+		siteType: 'atomic',
+		gutenberg: 'nightly',
+		accountName: 'gutenbergAtomicSiteEdgeNightliesUser',
+	},
 
 	// They aren't run in atomic.
 ];
