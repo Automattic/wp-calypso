@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import page from 'page';
+import page, { Callback, Context } from 'page';
 import { promoteWidget, promotedPosts } from 'calypso/my-sites/promote-post-i2/controller';
 import { getAdvertisingDashboardPath } from 'calypso/my-sites/promote-post-i2/utils';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
@@ -9,12 +9,12 @@ import 'calypso/my-sites/promote-post-i2/style.scss';
 // Needed because the placeholder component that we use doesn't import the css, webpack excludes it from the final build
 import 'calypso/blocks/site/style.scss';
 
-const siteSelection = ( context, next ) => {
+const siteSelection = ( context: Context, next: () => void ) => {
 	context.store.dispatch( setSelectedSiteId( config( 'blog_id' ) ) );
-	next( context, next );
+	next();
 };
 
-const blazePage = ( url, controller ) => {
+const blazePage = ( url: string, controller: Callback ) => {
 	page( url, controller, siteSelection, makeLayout, clientRender );
 };
 

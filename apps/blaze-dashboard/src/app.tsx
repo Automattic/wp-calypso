@@ -6,10 +6,11 @@ import config from '@automattic/calypso-config';
 import { QueryClient } from '@tanstack/react-query';
 import page from 'page';
 import '@automattic/calypso-polyfills';
-import { createStore, applyMiddleware, compose } from 'redux';
+import { createStore, applyMiddleware, compose, Store, Middleware } from 'redux';
 import thunkMiddleware from 'redux-thunk';
-import consoleDispatcher from 'calypso/state/console-dispatch';
+import { WithAddReducer } from 'calypso/state/add-reducer';
 import currentUser from 'calypso/state/current-user/reducer';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import wpcomApiMiddleware from 'calypso/state/data-layer/wpcom-api-middleware';
 import { setStore } from 'calypso/state/redux-store';
 import sites from 'calypso/state/sites/reducer';
@@ -22,15 +23,16 @@ import registerBlazeDashboardPages from './routes';
 import 'calypso/assets/stylesheets/style.scss';
 import './app.scss';
 
-async function AppBoot() {
+export async function AppBoot() {
 	const rootReducer = combineReducers( {
 		currentUser,
 		sites,
 	} );
 
-	const initialState = config( 'intial_state' );
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const initialState = config( 'intial_state' ) as any;
 
-	const localeSlug = initialState.currentUser.user.localeSlug;
+	const localeSlug = getCurrentUserLocale( initialState );
 
 	const queryClient = new QueryClient();
 
@@ -38,13 +40,12 @@ async function AppBoot() {
 		rootReducer,
 		initialState,
 		compose(
-			consoleDispatcher,
 			addReducerEnhancer,
-			applyMiddleware( thunkMiddleware, wpcomApiMiddleware )
+			applyMiddleware( thunkMiddleware, wpcomApiMiddleware as Middleware )
 		)
 	);
 
-	setStore( store );
+	setStore( store as Store & WithAddReducer );
 	setupContextMiddleware( store, queryClient );
 
 	if ( window.location?.hash ) {
@@ -63,7 +64,9 @@ async function AppBoot() {
 
 	// Disable conflicting Jetpack stylesheets
 	document.querySelectorAll( 'link#forms-css' ).forEach( ( item ) => {
-		item.disabled = true;
+		if ( 'disabled' in item ) {
+			item.disabled = true;
+		}
 	} );
 }
 
