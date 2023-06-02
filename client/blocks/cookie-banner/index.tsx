@@ -1,7 +1,7 @@
 import { CookieBanner } from '@automattic/privacy-toolset';
 import cookie from 'cookie';
 import { useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import {
 	refreshCountryCodeCookieGdpr,
 	setTrackingPrefs,
