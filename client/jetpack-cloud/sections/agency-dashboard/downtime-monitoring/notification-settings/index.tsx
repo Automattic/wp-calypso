@@ -49,6 +49,7 @@ export default function NotificationSettings( {
 }: Props ) {
 	const isBulkUpdate = !! bulkUpdateSettings;
 	const translate = useTranslate();
+
 	const { updateMonitorSettings, isLoading, isComplete } = useUpdateMonitorSettings( sites );
 	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( sites, isLargeScreen );
 	const { verifiedItem, handleSetVerifiedItem } = useShowVerifiedBadge();
@@ -194,6 +195,7 @@ export default function NotificationSettings( {
 				setAllEmailItems={ setAllEmailItems }
 				recordEvent={ recordEvent }
 				setVerifiedEmail={ ( item ) => handleSetVerifiedItem( 'email', item ) }
+				sites={ sites }
 			/>
 		);
 	}
