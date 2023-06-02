@@ -1,5 +1,4 @@
 import { createElement } from 'react';
-import { useSelector } from 'react-redux';
 import BloggingPrompt from 'calypso/components/blogging-prompt-card';
 import {
 	FEATURE_DOMAIN_UPSELL,
@@ -11,7 +10,6 @@ import {
 import DomainUpsell from 'calypso/my-sites/customer-home/cards/features/domain-upsell';
 import HelpSearch from 'calypso/my-sites/customer-home/cards/features/help-search';
 import Stats from 'calypso/my-sites/customer-home/cards/features/stats';
-import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import LearnGrow from './learn-grow';
 
 const cardComponents = {
@@ -23,14 +21,8 @@ const cardComponents = {
 };
 
 const Secondary = ( { cards, siteId } ) => {
-	const isDevAccount = useSelector( ( state ) => getUserSettings( state, 'is_dev_account' ) );
-
 	if ( ! cards || ! cards.length ) {
 		return null;
-	}
-
-	if ( isDevAccount ) {
-		delete cardComponents[ SECTION_LEARN_GROW ];
 	}
 
 	return (
