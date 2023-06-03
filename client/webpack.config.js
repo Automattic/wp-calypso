@@ -296,6 +296,9 @@ const webpackConfig = {
 			'react/jsx-runtime': 'react/jsx-runtime.js',
 			'react/jsx-dev-runtime': 'react/jsx-dev-runtime.js',
 		} ),
+		fallback: {
+			stream: require.resolve( 'stream-browserify' ),
+		},
 	},
 	node: false,
 	plugins: [

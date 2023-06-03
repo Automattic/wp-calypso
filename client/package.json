@@ -230,6 +230,7 @@
 		"pkg-dir": "^5.0.0",
 		"react-router": "^6.10.0",
 		"react-test-renderer": "^18.2.0",
-		"redux-mock-store": "^1.5.4"
+		"redux-mock-store": "^1.5.4",
+		"stream-browserify": "^3.0.0"
 	}
 }
