@@ -293,8 +293,6 @@ const webpackConfig = {
 			calypso: __dirname,
 
 			util: findPackage( 'util/' ), //Trailing `/` stops node from resolving it to the built-in module
-			'react/jsx-runtime': 'react/jsx-runtime.js',
-			'react/jsx-dev-runtime': 'react/jsx-dev-runtime.js',
 		} ),
 		fallback: {
 			stream: require.resolve( 'stream-browserify' ),
