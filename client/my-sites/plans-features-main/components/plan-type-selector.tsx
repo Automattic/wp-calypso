@@ -326,23 +326,22 @@ function useMaxDiscount( plans: string[] ): number {
 export default PlanTypeSelector;
 
 const IntervalTypeToggleWrapper = styled.div< { showingMonthly: boolean; isInSignup: boolean } >`
-	display: ${ ( { isInSignup } ) => ( isInSignup ? 'flex' : 'block' ) };
+	display: 'flex';
 	align-content: space-between;
 	justify-content: center;
 	margin: 0 20px 24px;
 
-	> .segmented-control.is-compact:not( .is-signup ) {
+	> .segmented-control.is-compact {
 		margin: 8px auto 16px;
 		max-width: 480px;
 
 		.segmented-control__link {
-			padding: 8px 12px;
+			padding: 6px 11px;
 		}
 	}
 
-	> .segmented-control.is-signup {
+	> .segmented-control {
 		margin: 0 auto;
-		border: solid 1px var( --color-neutral-10 );
 
 		@media screen and ( max-width: 960px ) {
 			margin-bottom: ${ ( { showingMonthly } ) => ( showingMonthly ? '65px' : 0 ) };
@@ -355,10 +354,11 @@ const IntervalTypeToggleWrapper = styled.div< { showingMonthly: boolean; isInSig
 			--color-primary-dark: var( --color-neutral-80 );
 			--item-padding: 3px;
 
-			padding: var( --item-padding ) 0;
-
+			padding: var( --item-padding );
+			border: 5px;
 			&:first-of-type {
 				padding-left: var( --item-padding );
+				margin-right: 3px;
 
 				.rtl & {
 					padding-right: var( --item-padding );
@@ -386,10 +386,21 @@ const IntervalTypeToggleWrapper = styled.div< { showingMonthly: boolean; isInSig
 		}
 
 		.segmented-control__item:not( .is-selected ) {
-			.segmented-control__link:hover {
-				background-color: var( --color-neutral-5 );
+			a.segmented-control__link {
+				border: solid 1px #f2f2f2;
+				border-radius: 5px;
+
+				&:hover {
+					background-color: var( --color-neutral-5 );
+					border: 1px solid var( --studio-gray-10 );
+					border-radius: 5px;
+				}
 			}
 		}
+	}
+
+	.segmented-control__text {
+		color: var( --studio-gray-90 );
 	}
 `;
 
