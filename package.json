@@ -197,7 +197,6 @@
 		"react-modal": "^3.16.1",
 		"redux": "^4.2.1",
 		"request": "^2.88.2",
-		"stream": "^0.0.2",
 		"wpcom": "workspace:^"
 	},
 	"optionalDependencies": {
