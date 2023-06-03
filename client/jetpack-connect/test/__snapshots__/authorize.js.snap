@@ -59,7 +59,6 @@ exports[`JetpackAuthorize renders as expected 1`] = `
               >
                 Create an account to set up Jetpack
                  
-                
               </h1>
               <p
                 class="formatted-header__subtitle"
