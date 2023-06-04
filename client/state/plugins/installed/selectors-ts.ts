@@ -358,7 +358,7 @@ export function getStatusForPlugin(
 	state: AppState,
 	siteId: number,
 	pluginId: string
-): { [ key: string ]: string } | undefined {
+): PluginStatus | undefined {
 	if ( typeof state.plugins.installed.status[ siteId ]?.[ pluginId ] === 'undefined' ) {
 		return undefined;
 	}

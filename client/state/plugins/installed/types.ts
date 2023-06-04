@@ -60,4 +60,5 @@ export type PluginStatus = {
 	pluginId: string;
 	siteId: number;
 	status: string;
+	error: string;
 };
