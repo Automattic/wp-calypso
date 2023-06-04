@@ -85,6 +85,8 @@ class StatsNavigation extends Component {
 			'stats-navigation--modernized': ! isLegacy,
 		} );
 
+		const isHighlightsSettingsEnabled = config.isEnabled( 'stats/highlights-settings' );
+
 		return (
 			<div className={ wrapperClass }>
 				<SectionNav selectedText={ label }>
@@ -116,50 +118,60 @@ class StatsNavigation extends Component {
 				{ isLegacy && showIntervals && (
 					<Intervals selected={ interval } pathTemplate={ pathTemplate } standalone />
 				) }
-				<div className="page-modules-settings">
-					<button
-						className="page-modules-settings-action"
-						ref={ this.settingsActionRef }
-						onClick={ () => {
-							this.togglePopoverMenu( ! isPopoverVisible );
-						} }
-					>
-						<Icon className="gridicon" icon={ cog } />
-					</button>
-					<Popover
-						className="tooltip highlight-card-popover page-modules-settings-popover"
-						isVisible={ isPopoverVisible }
-						position="bottom left"
-						context={ this.settingsActionRef.current }
-						focusOnShow={ false }
-					>
-						<div>{ translate( 'Modules visibility' ) }</div>
-						<div className="page-modules-settings-toggle-wrapper">
-							<div className="page-modules-settings-toggle">
-								<Icon className="gridicon" icon={ commentAuthorAvatar } />
-								<span>{ translate( 'Authors' ) }</span>
-								<FormToggle
-									className="page-modules-settings-toggle-control"
-									checked={ this.state.modules[ this.props.selectedItem ].authors }
-									onChange={ ( event ) => {
-										this.onToggleModule( this.props.selectedItem, 'authors', event.target.checked );
-									} }
-								/>
+				{ isHighlightsSettingsEnabled && (
+					<div className="page-modules-settings">
+						<button
+							className="page-modules-settings-action"
+							ref={ this.settingsActionRef }
+							onClick={ () => {
+								this.togglePopoverMenu( ! isPopoverVisible );
+							} }
+						>
+							<Icon className="gridicon" icon={ cog } />
+						</button>
+						<Popover
+							className="tooltip highlight-card-popover page-modules-settings-popover"
+							isVisible={ isPopoverVisible }
+							position="bottom left"
+							context={ this.settingsActionRef.current }
+							focusOnShow={ false }
+						>
+							<div>{ translate( 'Modules visibility' ) }</div>
+							<div className="page-modules-settings-toggle-wrapper">
+								<div className="page-modules-settings-toggle">
+									<Icon className="gridicon" icon={ commentAuthorAvatar } />
+									<span>{ translate( 'Authors' ) }</span>
+									<FormToggle
+										className="page-modules-settings-toggle-control"
+										checked={ this.state.modules[ this.props.selectedItem ].authors }
+										onChange={ ( event ) => {
+											this.onToggleModule(
+												this.props.selectedItem,
+												'authors',
+												event.target.checked
+											);
+										} }
+									/>
+								</div>
+								<div className="page-modules-settings-toggle">
+									<Icon className="gridicon" icon={ video } />
+									<span>{ translate( 'Videos' ) }</span>
+									<FormToggle
+										className="page-modules-settings-toggle-control"
+										checked={ this.state.modules[ this.props.selectedItem ].videos }
+										onChange={ ( event ) => {
+											this.onToggleModule(
+												this.props.selectedItem,
+												'videos',
+												event.target.checked
+											);
+										} }
+									/>
+								</div>
 							</div>
-							<div className="page-modules-settings-toggle">
-								<Icon className="gridicon" icon={ video } />
-								<span>{ translate( 'Videos' ) }</span>
-								<FormToggle
-									className="page-modules-settings-toggle-control"
-									checked={ this.state.modules[ this.props.selectedItem ].videos }
-									onChange={ ( event ) => {
-										this.onToggleModule( this.props.selectedItem, 'videos', event.target.checked );
-									} }
-								/>
-							</div>
-						</div>
-					</Popover>
-				</div>
+						</Popover>
+					</div>
+				) }
 			</div>
 		);
 	}
