@@ -1,8 +1,11 @@
 import config from '@automattic/calypso-config';
+import { Popover } from '@automattic/components';
+import { FormToggle } from '@wordpress/components';
+import { Icon, cog, commentAuthorAvatar, video } from '@wordpress/icons';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
+import { localize, translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import SubscribersCount from 'calypso/blocks/subscribers-count';
 import SectionNav from 'calypso/components/section-nav';
@@ -29,6 +32,26 @@ class StatsNavigation extends Component {
 		isLegacy: PropTypes.bool,
 	};
 
+	state = {
+		isPopoverVisible: false,
+		modules: {
+			traffic: { authors: true, videos: true },
+		},
+	};
+
+	settingsActionRef = createRef();
+
+	togglePopoverMenu = ( isPopoverVisible ) => {
+		this.setState( { isPopoverVisible } );
+	};
+
+	onToggleModule = ( page, module, value ) => {
+		const seletedPageModules = this.state.modules[ page ] || {};
+		seletedPageModules[ module ] = value;
+
+		this.setState( seletedPageModules );
+	};
+
 	isValidItem = ( item ) => {
 		const { isGoogleMyBusinessLocationConnected, isStore, isWordAds, siteId } = this.props;
 
@@ -53,6 +76,7 @@ class StatsNavigation extends Component {
 
 	render() {
 		const { slug, selectedItem, interval, isLegacy } = this.props;
+		const { isPopoverVisible } = this.state;
 		const { label, showIntervals, path } = navItems[ selectedItem ];
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ path }/{{ interval }}${ slugPath }`;
@@ -92,6 +116,50 @@ class StatsNavigation extends Component {
 				{ isLegacy && showIntervals && (
 					<Intervals selected={ interval } pathTemplate={ pathTemplate } standalone />
 				) }
+				<div className="page-modules-settings">
+					<button
+						className="page-modules-settings-action"
+						ref={ this.settingsActionRef }
+						onClick={ () => {
+							this.togglePopoverMenu( ! isPopoverVisible );
+						} }
+					>
+						<Icon className="gridicon" icon={ cog } />
+					</button>
+					<Popover
+						className="tooltip highlight-card-popover page-modules-settings-popover"
+						isVisible={ isPopoverVisible }
+						position="bottom left"
+						context={ this.settingsActionRef.current }
+						focusOnShow={ false }
+					>
+						<div>{ translate( 'Modules visibility' ) }</div>
+						<div className="page-modules-settings-toggle-wrapper">
+							<div className="page-modules-settings-toggle">
+								<Icon className="gridicon" icon={ commentAuthorAvatar } />
+								<span>{ translate( 'Authors' ) }</span>
+								<FormToggle
+									className="page-modules-settings-toggle-control"
+									checked={ this.state.modules[ this.props.selectedItem ].authors }
+									onChange={ ( event ) => {
+										this.onToggleModule( this.props.selectedItem, 'authors', event.target.checked );
+									} }
+								/>
+							</div>
+							<div className="page-modules-settings-toggle">
+								<Icon className="gridicon" icon={ video } />
+								<span>{ translate( 'Videos' ) }</span>
+								<FormToggle
+									className="page-modules-settings-toggle-control"
+									checked={ this.state.modules[ this.props.selectedItem ].videos }
+									onChange={ ( event ) => {
+										this.onToggleModule( this.props.selectedItem, 'videos', event.target.checked );
+									} }
+								/>
+							</div>
+						</div>
+					</Popover>
+				</div>
 			</div>
 		);
 	}
