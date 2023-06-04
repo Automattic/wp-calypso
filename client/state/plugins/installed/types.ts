@@ -6,10 +6,8 @@ export type InstalledPlugins = {
 };
 
 export type InstalledPluginData = {
-	active: boolean;
 	author: string;
 	author_url: string;
-	autoupdate: boolean;
 	description: string;
 	id: string;
 	name: string;
@@ -17,9 +15,7 @@ export type InstalledPluginData = {
 	plugin_url: string;
 	slug: string;
 	uninstallable: boolean;
-	update?: PluginUpdate;
-	version: string;
-};
+} & PluginSite;
 
 // This is the plugin as it is exposed by the selectors
 export type Plugin = {
