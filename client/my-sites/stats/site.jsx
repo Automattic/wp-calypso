@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { PAST_SEVEN_DAYS, PAST_THIRTY_DAYS } from '@automattic/components';
 import { eye } from '@automattic/components/src/icons';
 import { Icon, people, starEmpty, commentContent } from '@wordpress/icons';
 import classNames from 'classnames';
@@ -33,6 +34,8 @@ import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-ro
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { requestModulesSettings } from 'calypso/state/stats/modules-settings/actions';
+import { getModulesSettings } from 'calypso/state/stats/modules-settings/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import HighlightsSection from './highlights-section';
 import MiniCarousel from './mini-carousel';
@@ -140,8 +143,29 @@ class StatsSite extends Component {
 		}
 	};
 
+	componentDidMount() {
+		this.props.requestModulesSettings( this.props.siteId );
+	}
+
 	renderStats() {
-		const { date, siteId, slug, isJetpack, isSitePrivate, isOdysseyStats, context } = this.props;
+		const {
+			date,
+			siteId,
+			slug,
+			isJetpack,
+			isSitePrivate,
+			isOdysseyStats,
+			context,
+			modulesSettings,
+		} = this.props;
+
+		let defaultPeriod = PAST_SEVEN_DAYS;
+
+		// Set the current period based on the modules settings.
+		// @TODO: Introduce the loading state to avoid flickering due to slow modules settings request.
+		if ( modulesSettings?.highlights?.period_in_days === 30 ) {
+			defaultPeriod = PAST_THIRTY_DAYS;
+		}
 
 		const queryDate = date.format( 'YYYY-MM-DD' );
 		const { period, endOf } = this.props.period;
@@ -188,7 +212,7 @@ class StatsSite extends Component {
 					slug={ slug }
 				/>
 				{ isOdysseyStats && <StatsNotices siteId={ siteId } /> }
-				<HighlightsSection siteId={ siteId } />
+				<HighlightsSection siteId={ siteId } currentPeriod={ defaultPeriod } />
 				<div id="my-stats-content" className={ wrapperClass }>
 					<>
 						<StatsPeriodHeader>
@@ -395,7 +419,8 @@ export default connect(
 			showEnableStatsModule,
 			path: getCurrentRouteParameterized( state, siteId ),
 			isOdysseyStats,
+			modulesSettings: getModulesSettings( state, siteId, 'traffic' ),
 		};
 	},
-	{ recordGoogleEvent, enableJetpackStatsModule, recordTracksEvent }
+	{ recordGoogleEvent, enableJetpackStatsModule, recordTracksEvent, requestModulesSettings }
 )( localize( StatsSite ) );
