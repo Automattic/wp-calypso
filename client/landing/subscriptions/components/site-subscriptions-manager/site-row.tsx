@@ -1,12 +1,11 @@
 import { Gridicon } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 import TimeSince from 'calypso/components/time-since';
 import { SiteSettingsPopover } from '../settings';
 import { SiteIcon } from '../site-icon';
-import type { SiteSubscription } from '@automattic/data-stores/src/reader/types';
 
 const useDeliveryFrequencyLabel = ( deliveryFrequencyValue?: Reader.EmailDeliveryFrequency ) => {
 	const translate = useTranslate();
@@ -51,6 +50,10 @@ const SelectedNewPostDeliveryMethods = ( {
 	return <>{ selectedNewPostDeliveryMethods }</>;
 };
 
+type SiteRowProps = Reader.SiteSubscription & {
+	onSiteTitleClick: () => void;
+};
+
 export default function SiteRow( {
 	blog_ID,
 	name,
@@ -60,7 +63,8 @@ export default function SiteRow( {
 	delivery_methods,
 	is_wpforteams_site,
 	is_paid_subscription,
-}: SiteSubscription ) {
+	onSiteTitleClick,
+}: SiteRowProps ) {
 	const translate = useTranslate();
 	const hostname = useMemo( () => {
 		try {
@@ -84,41 +88,37 @@ export default function SiteRow( {
 	const { mutate: unsubscribe, isLoading: unsubscribing } =
 		SubscriptionManager.useSiteUnsubscribeMutation();
 
-	const navigate = useNavigate();
-
-	const individualPagePath = useMemo( () => {
-		return `/subscriptions/site/${ blog_ID }`;
-	}, [ blog_ID ] );
-
-	const navigateToIndividualSubscriptionPage = ( event: React.MouseEvent ) => {
-		event.preventDefault();
-		navigate( individualPagePath );
-	};
-
 	return (
 		<li className="row" role="row">
-			<span className="title-box" role="cell">
-				<a href={ individualPagePath } onClick={ navigateToIndividualSubscriptionPage }>
-					<SiteIcon iconUrl={ site_icon } size={ 48 } siteName={ name } />
-				</a>
-				<span className="title-column">
-					<a href={ individualPagePath } onClick={ navigateToIndividualSubscriptionPage }>
-						<span className="name">
+			<div className="title-cell" role="cell">
+				<Button
+					icon={ <SiteIcon iconUrl={ site_icon } siteName={ name } /> }
+					iconSize={ 40 }
+					onClick={ onSiteTitleClick }
+				/>
+				<div className="vertical-stack">
+					<div className="horizontal-stack">
+						<Button className="name" onClick={ onSiteTitleClick }>
 							{ name }
-							{ !! is_wpforteams_site && <span className="p2-label">P2</span> }
-							{ !! is_paid_subscription && (
-								<span className="paid-label">
-									{ translate( 'Paid', { context: 'Label for a paid subscription plan' } ) }
-								</span>
-							) }
-						</span>
+						</Button>
+						{ !! is_wpforteams_site && <span className="p2-label">P2</span> }
+						{ !! is_paid_subscription && (
+							<span className="paid-label">
+								{ translate( 'Paid', { context: 'Label for a paid subscription plan' } ) }
+							</span>
+						) }
+					</div>
+					<a
+						className="url"
+						{ ...( url && { href: url } ) }
+						rel="noreferrer noopener"
+						target="_blank"
+					>
+						{ hostname }
 					</a>
-					<a { ...( url && { href: url } ) } rel="noreferrer noopener" target="_blank">
-						<span className="url">{ hostname }</span>
-					</a>
-				</span>
-			</span>
-			<span className="date" role="cell">
+				</div>
+			</div>
+			<span className="date-cell" role="cell">
 				<TimeSince
 					date={
 						( date_subscribed.valueOf() ? date_subscribed : new Date( 0 ) ).toISOString?.() ??
@@ -127,7 +127,7 @@ export default function SiteRow( {
 				/>
 			</span>
 			{ isLoggedIn && (
-				<span className="new-posts" role="cell">
+				<span className="new-posts-cell" role="cell">
 					<SelectedNewPostDeliveryMethods
 						isEmailMeNewPostsSelected={ !! delivery_methods.email?.send_posts }
 						isNotifyMeOfNewPostsSelected={ !! delivery_methods.notification?.send_posts }
@@ -135,14 +135,14 @@ export default function SiteRow( {
 				</span>
 			) }
 			{ isLoggedIn && (
-				<span className="new-comments" role="cell">
+				<span className="new-comments-cell" role="cell">
 					{ delivery_methods.email?.send_comments ? <GreenCheck /> : <RedCross /> }
 				</span>
 			) }
-			<span className="email-frequency" role="cell">
+			<span className="email-frequency-cell" role="cell">
 				{ deliveryFrequencyLabel }
 			</span>
-			<span className="actions" role="cell">
+			<span className="actions-cell" role="cell">
 				<SiteSettingsPopover
 					// NotifyMeOfNewPosts
 					notifyMeOfNewPosts={ !! delivery_methods.notification?.send_posts }
