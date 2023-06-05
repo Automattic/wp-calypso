@@ -5,9 +5,9 @@ import {
 } from '@automattic/calypso-products';
 import { Card, Button, Dialog, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { englishLocales, localizeUrl } from '@automattic/i18n-utils';
 import { saveAs } from 'browser-filesaver';
-import { localize } from 'i18n-calypso';
+import { hasTranslation, localize, getLocaleSlug } from 'i18n-calypso';
 import { orderBy } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -597,11 +597,23 @@ class MembershipsSection extends Component {
 						) }
 					</div>
 					<div>
-						<h3>{ translate( 'Simple fees structure' ) }</h3>
+						<h3>
+							{ englishLocales.includes( getLocaleSlug() ) ||
+							hasTranslation( 'Simple fees structure' )
+								? translate( 'Simple fees structure' )
+								: translate( 'No membership fees' ) }
+						</h3>
 						<p>
 							<CommissionFees commission={ commission } siteSlug={ siteSlug } />
 						</p>
-						<p>{ preventWidows( translate( 'No fixed monthly or annual fees charged.' ) ) }</p>
+						<p>
+							{ preventWidows(
+								englishLocales.includes( getLocaleSlug() ) ||
+									hasTranslation( 'No fixed monthly or annual fees charged.' )
+									? translate( 'No fixed monthly or annual fees charged.' )
+									: translate( 'No monthly or annual fees charged.' )
+							) }
+						</p>
 					</div>
 					<div>
 						<h3>{ translate( 'Join thousands of others' ) }</h3>
