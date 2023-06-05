@@ -142,7 +142,7 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 			formattedHeader={
 				status === Status.Initial && (
 					<FormattedHeader
-						headerText={ __( 'Choose Monthly or Annually' ) }
+						headerText={ __( "There's a plan for you." ) }
 						subHeaderText={ __(
 							'Sensei + WooCommerce + Jetpack + WordPress.com in the ultimate Course Bundle'
 						) }
