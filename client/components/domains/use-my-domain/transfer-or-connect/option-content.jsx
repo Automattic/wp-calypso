@@ -104,7 +104,7 @@ OptionContent.propTypes = {
 	benefits: PropTypes.array,
 	disabled: PropTypes.bool,
 	illustration: PropTypes.string.isRequired,
-	learnMoreLink: PropTypes.string.isRequired,
+	learnMoreLink: PropTypes.string,
 	onSelect: PropTypes.func,
 	pricing: PropTypes.object,
 	primary: PropTypes.bool,

@@ -48,6 +48,7 @@ export function getOptionInfo( {
 	domain,
 	isSignupStep,
 	onConnect,
+	onSkip,
 	onTransfer,
 	primaryWithPlansOnly,
 	productsList,
@@ -183,15 +184,19 @@ export function getOptionInfo( {
 					sprintf(
 						/* translators: %s - the domain the user wanted to connect */
 						__(
-							"We need to verify you are the owner of <strong>%s</strong> before connecting it, but we're not able to do that during sign-up.<br /><br />Please go back and either choose another domain to connect, or purchase a plan for your site and connect this domain later."
+							"We need to verify you are the owner of <strong>%s</strong> before connecting it, but we're not able to do that during sign-up.<br /><br />Please <a>complete your plan purchase</a> first in order to connect your domain."
 						),
 						domain
 					),
-					{ br: createElement( 'br' ), strong: createElement( 'strong' ) }
+					{
+						strong: createElement( 'strong' ),
+						br: createElement( 'br' ),
+						a: createElement( 'a', { onClick: () => onSkip() } ),
+					}
 				),
 				pricing: null,
 				learnMoreLink: null,
-				onSelect: null,
+				onSelect: () => onSkip(),
 			};
 		}
 	} else {
