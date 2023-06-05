@@ -2,6 +2,9 @@
 @import "@wordpress/base-styles/mixins";
 
 .wpcom-block-editor-post-published-sharing-modal {
+	@media only screen and (max-width: 600px) {
+		border-radius: 0;
+	}
 	.components-modal__content {
 		margin-top: 0;
 		padding-bottom: 0;
