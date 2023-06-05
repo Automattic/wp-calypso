@@ -24,13 +24,15 @@ export default function canCurrentUserStartSiteOwnerTransfer(
 		return false;
 	}
 
+	const isNonAtomicJetpackSite =
+		isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId );
+
 	// These sites can't be transferred.
 	if (
-		isJetpackSite( state, siteId ) ||
+		isNonAtomicJetpackSite ||
 		isSiteP2Hub( state, siteId ) ||
 		isSiteWPForTeams( state, siteId ) ||
-		isVipSite( state, siteId ) ||
-		isSiteAutomatedTransfer( state, siteId )
+		isVipSite( state, siteId )
 	) {
 		return false;
 	}

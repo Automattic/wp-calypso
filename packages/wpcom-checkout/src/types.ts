@@ -428,21 +428,21 @@ export type SignupValidationResponse = {
  * @see WPCOM_JSON_API_Domains_Validate_Contact_Information_Endpoint
  */
 export type ContactValidationRequestContactInformation = {
-	first_name?: string;
-	last_name?: string;
-	organization?: string;
-	email?: string;
-	phone?: string;
-	phone_number_country?: string;
 	address_1?: string;
 	address_2?: string;
 	city?: string;
-	state?: string;
-	postal_code?: string;
 	country_code?: string;
-	fax?: string;
-	vat_id?: string;
+	email?: string;
 	extra?: DomainContactValidationRequestExtraFields;
+	fax?: string;
+	first_name?: string;
+	last_name?: string;
+	organization?: string;
+	phone?: string;
+	phone_number_country?: string;
+	postal_code?: string;
+	state?: string;
+	vat_id?: string;
 };
 
 export type DomainContactValidationRequest = {
@@ -451,11 +451,20 @@ export type DomainContactValidationRequest = {
 
 export type GSuiteContactValidationRequest = {
 	contact_information: {
+		country_code: string;
+		email: string;
 		first_name: string;
 		last_name: string;
-		email: string;
 		postal_code: string;
-		country_code: string;
+		address_1?: string;
+		address_2?: string;
+		city?: string;
+		fax?: string;
+		organization?: string;
+		phone?: string;
+		phone_number_country?: string;
+		state?: string;
+		vat_id?: string;
 	};
 };
 
