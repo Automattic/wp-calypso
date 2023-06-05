@@ -17,7 +17,7 @@ import {
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import type { ProductDescription } from '../../types';
+import { ProductDescription } from '../types';
 
 const setProductDescription = (
 	slugs: ReadonlyArray< string >,

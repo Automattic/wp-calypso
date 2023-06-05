@@ -1,7 +1,7 @@
 import { JetpackTag } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
-import { Tags } from 'calypso/my-sites/plans/jetpack-plans/product-lightbox/icons/tags';
+import { Tags } from './icons/tags';
 
 type Props = { tags: JetpackTag[] };
 

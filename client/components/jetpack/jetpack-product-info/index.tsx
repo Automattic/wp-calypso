@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, ReactChild } from 'react';
-import { useIncludedProductDescriptionMap } from 'calypso/my-sites/plans/jetpack-plans/product-store/hooks/use-included-product-description-map';
+import { useIncludedProductDescriptionMap } from 'calypso/components/jetpack/jetpack-product-info/hooks/use-included-product-description-map';
 import { PricingBreakdown } from 'calypso/my-sites/plans/jetpack-plans/product-store/pricing-breakdown';
 import getProductIcon from 'calypso/my-sites/plans/jetpack-plans/product-store/utils/get-product-icon';
 import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
