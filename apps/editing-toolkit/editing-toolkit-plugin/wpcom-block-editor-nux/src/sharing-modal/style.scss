@@ -2,11 +2,6 @@
 @import "@wordpress/base-styles/mixins";
 
 .wpcom-block-editor-post-published-sharing-modal {
-	border-radius: 4px;
-	@media only screen and (max-width: 600px) {
-		border-radius: 0;
-	}
-
 	.components-modal__content {
 		margin-top: 0;
 		padding-bottom: 0;
@@ -131,7 +126,7 @@
 	margin: 8px 8px 0 0;
 	border-radius: 50%;
 	color: var(--color-neutral-80);
-	background: #fff;
+	background: var(--studio-white);
 	padding: 7px;
 
 	&:hover {
