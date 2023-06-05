@@ -7,6 +7,7 @@ import { useQueryUserPurchases } from 'calypso/components/data/query-user-purcha
 import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { LoadingBar } from 'calypso/components/loading-bar';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { ResponseDomain } from 'calypso/lib/domains/types';
@@ -68,6 +69,21 @@ const SiteOwnerTransfer = () => {
 	if ( ! selectedSite?.ID || ! selectedSite?.slug ) {
 		return null;
 	}
+
+	const newUrl = new URL( window.location.href );
+	const hash = newUrl.searchParams.get( 'site-transfer-confirm' );
+
+	if ( hash?.length ) {
+		// call the API to confirm here, display message when done, also handle errors.
+		const progress = 0.3;
+		return (
+			<>
+				<LoadingBar key="transfer-site-loading-bar" progress={ progress } />
+				<p>{ translate( 'We are transferring your site.' ) }</p>
+			</>
+		);
+	}
+
 	return (
 		<Main>
 			<FormattedHeader
