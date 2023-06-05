@@ -176,7 +176,7 @@ export function getOptionInfo( {
 
 		// We currently aren't handling ownership verification for mapped domains during sign-up
 		// See https://github.com/Automattic/nomado-issues/issues/136 for more context
-		if ( availability.ownership_verification_type !== 'no_verification_needed' && isSignupStep ) {
+		if ( availability.ownership_verification_type !== 'no_verification_required' && isSignupStep ) {
 			connectContent = {
 				...connectContent,
 				benefits: [],
