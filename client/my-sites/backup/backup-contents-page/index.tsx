@@ -31,7 +31,7 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 			<Main className="backup-contents-page">
 				<DocumentHead title={ translate( 'Backup contents' ) } />
 				{ isJetpackCloud() && <SidebarNavigation /> }
-				<Card className="backup-contents-page__content">
+				<Card>
 					<div className="backup-contents-page__header daily-backup-status status-card">
 						<div className="status-card__message-head">
 							<img src={ cloudIcon } alt="" role="presentation" />
