@@ -149,7 +149,7 @@
 		"ssr/prefetch-timebox": true,
 		"ssr/sample-log-cache-misses": true,
 		"stats/highlights-settings": false,
-		"stats/modules-settings": false,
+		"stats/module-settings": false,
 		"stats/new-video-summary": false,
 		"stats/subscribers-section": false,
 		"stepper-woocommerce-poc": true,

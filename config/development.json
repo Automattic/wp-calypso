@@ -183,7 +183,7 @@
 		"site-indicator": true,
 		"ssr/prefetch-timebox": false,
 		"stats/highlights-settings": true,
-		"stats/modules-settings": true,
+		"stats/module-settings": true,
 		"stats/new-video-summary": true,
 		"stats/subscribers-section": false,
 		"stepper-woocommerce-poc": true,

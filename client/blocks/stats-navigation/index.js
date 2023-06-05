@@ -85,7 +85,7 @@ class StatsNavigation extends Component {
 			'stats-navigation--modernized': ! isLegacy,
 		} );
 
-		const isHighlightsSettingsEnabled = config.isEnabled( 'stats/modules-settings' );
+		const isHighlightsSettingsEnabled = config.isEnabled( 'stats/module-settings' );
 
 		return (
 			<div className={ wrapperClass }>
