@@ -67,27 +67,31 @@ export default function CampaignItem( props: Props ) {
 
 	return (
 		<tr>
-			<td>
+			<td className="campaign-item__data">
 				<div className="promote-post-i2__campaign-item-wrapper">
 					{ adCreativeUrl && (
 						<div className="campaign-item__header-image">
 							<img src={ adCreativeUrl } alt="" />
 						</div>
 					) }
-					{ name }
+					<div className="campaign-item__title">{ name }</div>
 				</div>
 			</td>
-			<td>{ display_name }</td>
-			<td>
+			<td className="campaign-item__user">{ display_name }</td>
+			<td className="campaign-item__status">
 				<Badge type={ getCampaignStatusBadgeColor( status ) }>
 					{ getCampaignStatus( status ) }
 				</Badge>
 			</td>
-			<td>{ getCampaignEndText( moment, campaign.status, campaign.end_date ) }</td>
-			<td>{ budgetString }</td>
-			<td>{ formatNumber( impressions_total ) }</td>
-			<td>{ formatNumber( clicks_total ) }</td>
-			<td>{ campaignContainsData && <Button icon={ chevronRight } /> }</td>
+			<td className="campaign-item__ends">
+				{ getCampaignEndText( moment, campaign.status, campaign.end_date ) }
+			</td>
+			<td className="campaign-item__budget">{ budgetString }</td>
+			<td className="campaign-item__impressions">{ formatNumber( impressions_total ) }</td>
+			<td className="campaign-item__clicks">{ formatNumber( clicks_total ) }</td>
+			<td className="campaign-item__action">
+				{ campaignContainsData && <Button icon={ chevronRight } /> }
+			</td>
 		</tr>
 	);
 }
