@@ -51,6 +51,19 @@ body.is-section-promote-post-i2 {
 					max-width: 1040px;
 					width: calc(100% - 128px);
 				}
+
+				// Centered for widescreens
+				@media (min-width: $break-huge) {
+					.promote-post-i2__top-bar,
+					.section-nav-tabs .section-nav-tabs__list,
+					.promote-post-i2__search-bar-wrapper,
+					.promote-post-i2__table,
+					.posts-list-banner__container .posts-list-banner__content {
+						max-width: 1040px;
+						margin-left: auto;
+						margin-right: auto;
+					}
+				}
 			}
 
 			.advertising__page-header {
@@ -289,6 +302,11 @@ body.is-section-promote-post-i2 {
 					margin: 0 16px !important;
 					width: calc(100% - 32px);
 				}
+
+				.promote-post-i2__top-bar {
+					margin: 16px;
+				}
+
 			}
 
 			.advertising__page-header {
@@ -303,8 +321,6 @@ body.is-section-promote-post-i2 {
 
 	.promote-post-i2 {
 		&__top-bar {
-			margin: 16px;
-
 			.posts-list-banner__learn-more {
 				display: none;
 			}

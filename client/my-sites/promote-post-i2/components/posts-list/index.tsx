@@ -1,7 +1,6 @@
 import { translate, useTranslate } from 'i18n-calypso';
 import BlazePressWidget from 'calypso/components/blazepress-widget';
 import EmptyContent from 'calypso/components/empty-content';
-import ListEnd from 'calypso/components/list-end';
 import Notice from 'calypso/components/notice';
 import { useInfiniteScroll } from 'calypso/data/promote-post/use-infinite-scroll';
 import usePromoteParams from 'calypso/data/promote-post/use-promote-params';
@@ -66,8 +65,6 @@ export default function PostsList( props: Props ) {
 		},
 	} );
 
-	const isEmpty = posts?.length === 0;
-
 	if ( isError && hasLocalUser ) {
 		return (
 			<Notice className="promote-post-i2__aux-wrapper" status="is-error" icon="mention">
@@ -105,11 +102,6 @@ export default function PostsList( props: Props ) {
 							/>
 						) }
 					</div>
-					{ ! isEmpty && ! isError && (
-						<div className="promote-post-i2__aux-wrapper">
-							<ListEnd />
-						</div>
-					) }
 				</>
 			) }
 
