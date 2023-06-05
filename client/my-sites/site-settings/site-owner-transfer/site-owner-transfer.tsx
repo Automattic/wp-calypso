@@ -24,13 +24,13 @@ const Strong = styled( 'strong' )( {
 	fontWeight: 500,
 } );
 
-const ActionPanelStyled = styled( ActionPanel )`
-	font-size: 14px;
-	font-weight: 400;
-	.action-panel__body {
-		color: var( --studio-gray-70 );
-	}
-`;
+const ActionPanelStyled = styled( ActionPanel )( {
+	fontSize: '14px',
+	fontWeight: 400,
+	'.action-panel__body': {
+		color: 'var(--studio-gray-70)',
+	},
+} );
 
 const useTransferEmailSentNotice = () => {
 	const { __ } = useI18n();
