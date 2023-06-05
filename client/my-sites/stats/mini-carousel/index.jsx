@@ -204,7 +204,12 @@ const MiniCarousel = ( { slug, isSitePrivate } ) => {
 	}
 
 	return (
-		<DotPager className="mini-carousel" hasDynamicHeight onPageSelected={ pagerDidSelectPage }>
+		<DotPager
+			className="mini-carousel"
+			hasDynamicHeight
+			onPageSelected={ pagerDidSelectPage }
+			rotateTime={ 5000 }
+		>
 			{ blocks }
 		</DotPager>
 	);
