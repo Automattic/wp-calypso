@@ -2,10 +2,11 @@ import { Card } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
-import { getSiteDomain } from 'calypso/state/sites/selectors';
+import { successNotice } from 'calypso/state/notices/actions';
+import { getSiteDomain, getSiteTitle } from 'calypso/state/sites/selectors';
 import { useActivityPubStatus } from './hooks';
 
 const CopyButton = ( { alias } ) => {
@@ -62,10 +63,32 @@ const EnabledSettingsSection = ( { error, siteId } ) => {
 	);
 };
 
+function useDispatchSuccessNotice() {
+	const dispatch = useDispatch();
+	return ( message ) => dispatch( successNotice( message ) );
+}
+
 export const WpcomFediverseSettingsSection = ( { siteId } ) => {
 	const translate = useTranslate();
 	const { isEnabled, setEnabled, isLoading, isError } = useActivityPubStatus( siteId );
 	const disabled = isLoading || isError;
+	const dispatchSuccessNotice = useDispatchSuccessNotice();
+	const siteTitle = useSelector( ( state ) => getSiteTitle( state, siteId ) );
+	const noticeArgs = {
+		args: {
+			site_title: siteTitle,
+		},
+	};
+
+	const onChange = async () => {
+		// Setting the message before the update so the message seems counterintuitive.
+		const message = ! isEnabled
+			? translate( '%(site_title)s has entered the fediverse!', noticeArgs )
+			: translate( '%(site_title)s has exited the fediverse.', noticeArgs );
+
+		await setEnabled( ! isEnabled );
+		dispatchSuccessNotice( message, { duration: 3333 } );
+	};
 	return (
 		<>
 			<Card className="site-settings__card">
@@ -83,7 +106,7 @@ export const WpcomFediverseSettingsSection = ( { siteId } ) => {
 					label={ translate( 'Enter the fediverse' ) }
 					disabled={ disabled }
 					checked={ isEnabled }
-					onChange={ () => setEnabled( ! isEnabled ) }
+					onChange={ onChange }
 				/>
 			</Card>
 			{ ( isEnabled /* get rid of isError once the endpoint lands */ || isError ) && (
