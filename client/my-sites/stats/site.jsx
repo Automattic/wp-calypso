@@ -34,8 +34,8 @@ import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-ro
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { requestModulesSettings } from 'calypso/state/stats/modules-settings/actions';
-import { getModulesSettings } from 'calypso/state/stats/modules-settings/selectors';
+import { requestModuleSettings } from 'calypso/state/stats/module-settings/actions';
+import { getModuleSettings } from 'calypso/state/stats/module-settings/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import HighlightsSection from './highlights-section';
 import MiniCarousel from './mini-carousel';
@@ -144,7 +144,7 @@ class StatsSite extends Component {
 	};
 
 	componentDidMount() {
-		this.props.requestModulesSettings( this.props.siteId );
+		this.props.requestModuleSettings( this.props.siteId );
 	}
 
 	renderStats() {
@@ -156,14 +156,14 @@ class StatsSite extends Component {
 			isSitePrivate,
 			isOdysseyStats,
 			context,
-			modulesSettings,
+			moduleSettings,
 		} = this.props;
 
 		let defaultPeriod = PAST_SEVEN_DAYS;
 
-		// Set the current period based on the modules settings.
-		// @TODO: Introduce the loading state to avoid flickering due to slow modules settings request.
-		if ( modulesSettings?.highlights?.period_in_days === 30 ) {
+		// Set the current period based on the module settings.
+		// @TODO: Introduce the loading state to avoid flickering due to slow module settings request.
+		if ( moduleSettings?.highlights?.period_in_days === 30 ) {
 			defaultPeriod = PAST_THIRTY_DAYS;
 		}
 
@@ -419,8 +419,8 @@ export default connect(
 			showEnableStatsModule,
 			path: getCurrentRouteParameterized( state, siteId ),
 			isOdysseyStats,
-			modulesSettings: getModulesSettings( state, siteId, 'traffic' ),
+			moduleSettings: getModuleSettings( state, siteId, 'traffic' ),
 		};
 	},
-	{ recordGoogleEvent, enableJetpackStatsModule, recordTracksEvent, requestModulesSettings }
+	{ recordGoogleEvent, enableJetpackStatsModule, recordTracksEvent, requestModuleSettings }
 )( localize( StatsSite ) );

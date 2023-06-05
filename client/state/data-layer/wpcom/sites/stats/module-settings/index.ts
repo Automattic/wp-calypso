@@ -1,14 +1,14 @@
 import {
-	STATS_MODULES_SETTINGS_REQUEST,
-	STATS_MODULES_SETTINGS_UPDATE,
+	STATS_MODULE_SETTINGS_REQUEST,
+	STATS_MODULE_SETTINGS_UPDATE,
 } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { receiveModulesSettings } from 'calypso/state/stats/modules-settings/actions';
+import { receiveModuleSettings } from 'calypso/state/stats/module-settings/actions';
 import type { AnyAction } from 'redux';
 
-export const doUpdateModulesSettings = ( action: AnyAction ) => {
+export const doUpdateModuleSettings = ( action: AnyAction ) => {
 	const { siteId } = action;
 
 	return [
@@ -16,7 +16,7 @@ export const doUpdateModulesSettings = ( action: AnyAction ) => {
 			{
 				method: 'POST',
 				apiNamespace: 'wpcom/v2',
-				path: `/sites/${ siteId }/jetpack-stats-dashboard/modules-settings`,
+				path: `/sites/${ siteId }/jetpack-stats-dashboard/module-settings`,
 				body: action.payload,
 			},
 			action
@@ -32,7 +32,7 @@ export const fetch = ( action: AnyAction ) => {
 			{
 				method: 'GET',
 				apiNamespace: 'wpcom/v2',
-				path: `/sites/${ siteId }/jetpack-stats-dashboard/modules-settings`,
+				path: `/sites/${ siteId }/jetpack-stats-dashboard/module-settings`,
 				body: {
 					dismissed: true,
 				},
@@ -43,10 +43,10 @@ export const fetch = ( action: AnyAction ) => {
 };
 
 export const onSuccess = ( { siteId }: AnyAction, data: object ) =>
-	receiveModulesSettings( siteId, data );
+	receiveModuleSettings( siteId, data );
 
-registerHandlers( 'state/data-layer/wpcom/sites/stats/modules-settings/index.js', {
-	[ STATS_MODULES_SETTINGS_REQUEST ]: [
+registerHandlers( 'state/data-layer/wpcom/sites/stats/module-settings/index.js', {
+	[ STATS_MODULE_SETTINGS_REQUEST ]: [
 		dispatchRequest( {
 			fetch,
 			onSuccess,
@@ -54,9 +54,9 @@ registerHandlers( 'state/data-layer/wpcom/sites/stats/modules-settings/index.js'
 			// fromApi,
 		} ),
 	],
-	[ STATS_MODULES_SETTINGS_UPDATE ]: [
+	[ STATS_MODULE_SETTINGS_UPDATE ]: [
 		dispatchRequest( {
-			fetch: doUpdateModulesSettings,
+			fetch: doUpdateModuleSettings,
 			onSuccess: () => null,
 			onError: () => null,
 			// fromApi,

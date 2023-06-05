@@ -8,7 +8,7 @@ import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { requestHighlights } from 'calypso/state/stats/highlights/actions';
 import { getHighlights } from 'calypso/state/stats/highlights/selectors';
-import { updateModulesSettings } from 'calypso/state/stats/modules-settings/actions';
+import { updateModuleSettings } from 'calypso/state/stats/module-settings/actions';
 
 export default function HighlightsSection( {
 	siteId,
@@ -26,7 +26,7 @@ export default function HighlightsSection( {
 
 	const onUpdatePeriod = ( period: string ) => {
 		dispatch(
-			updateModulesSettings( siteId, {
+			updateModuleSettings( siteId, {
 				traffic: { highlights: { period_in_days: period === PAST_THIRTY_DAYS ? 30 : 7 } },
 			} )
 		);

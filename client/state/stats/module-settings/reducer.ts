@@ -1,7 +1,7 @@
 import {
-	STATS_MODULES_SETTINGS_REQUEST,
-	STATS_MODULES_SETTINGS_RECEIVE,
-	STATS_MODULES_SETTINGS_UPDATE,
+	STATS_MODULE_SETTINGS_REQUEST,
+	STATS_MODULE_SETTINGS_RECEIVE,
+	STATS_MODULE_SETTINGS_UPDATE,
 } from 'calypso/state/action-types';
 import {
 	combineReducers,
@@ -13,7 +13,7 @@ import { schema } from './schema';
 import type { Reducer, AnyAction } from 'redux';
 
 /**
- * Returns the updated modules settings state after an action has been dispatched.
+ * Returns the updated module settings state after an action has been dispatched.
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
@@ -21,11 +21,11 @@ import type { Reducer, AnyAction } from 'redux';
  */
 const dataReducer = ( state = {}, action: AnyAction ) => {
 	switch ( action.type ) {
-		case STATS_MODULES_SETTINGS_RECEIVE: {
+		case STATS_MODULE_SETTINGS_RECEIVE: {
 			return action.data;
 		}
 
-		case STATS_MODULES_SETTINGS_UPDATE: {
+		case STATS_MODULE_SETTINGS_UPDATE: {
 			return action.payload;
 		}
 	}
@@ -46,10 +46,10 @@ export const data = withSchemaValidation(
  */
 const isLoadingReducer = ( state = {}, action: AnyAction ) => {
 	switch ( action.type ) {
-		case STATS_MODULES_SETTINGS_REQUEST: {
+		case STATS_MODULE_SETTINGS_REQUEST: {
 			return true;
 		}
-		case STATS_MODULES_SETTINGS_RECEIVE: {
+		case STATS_MODULE_SETTINGS_RECEIVE: {
 			return false;
 		}
 	}
