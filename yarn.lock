@@ -3633,21 +3633,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-<<<<<<< HEAD
-=======
-"@emotion/cache@npm:^10.0.27":
-  version: 10.0.27
-  resolution: "@emotion/cache@npm:10.0.27"
-  dependencies:
-    "@emotion/sheet": 0.9.4
-    "@emotion/stylis": 0.8.5
-    "@emotion/utils": 0.11.3
-    "@emotion/weak-memoize": 0.2.5
-  checksum: 026c20afc8193c5f3f8d50dfc4be89995b17034d59461071c72c9b228ec8a28014c82330611de0070e4d36b5cd46daf3dfc0414fe2981cafa76c52d038139ef9
-  languageName: node
-  linkType: hard
-
->>>>>>> f400d6d433 (Remove custom searchable dropdown component.)
 "@emotion/cache@npm:^11.10.0, @emotion/cache@npm:^11.7.1":
   version: 11.10.1
   resolution: "@emotion/cache@npm:11.10.1"
@@ -3779,22 +3764,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-<<<<<<< HEAD
-=======
-"@emotion/serialize@npm:^0.11.15":
-  version: 0.11.15
-  resolution: "@emotion/serialize@npm:0.11.15"
-  dependencies:
-    "@emotion/hash": 0.7.4
-    "@emotion/memoize": 0.7.4
-    "@emotion/unitless": 0.7.5
-    "@emotion/utils": 0.11.3
-    csstype: ^2.5.7
-  checksum: 44949745f6ca0258bd30e9ef1ff37de619364f805d96c49c205306eaf3d14be41af8bb4487a62bf8c57f1d5bcd63499c99b0397dadbd77b6396fd03a87526175
-  languageName: node
-  linkType: hard
-
->>>>>>> f400d6d433 (Remove custom searchable dropdown component.)
 "@emotion/serialize@npm:^1.0.2, @emotion/serialize@npm:^1.0.3, @emotion/serialize@npm:^1.1.0":
   version: 1.1.0
   resolution: "@emotion/serialize@npm:1.1.0"
@@ -3867,11 +3836,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-<<<<<<< HEAD
 "@emotion/weak-memoize@npm:^0.2.5":
-=======
-"@emotion/weak-memoize@npm:0.2.5, @emotion/weak-memoize@npm:^0.2.5":
->>>>>>> f400d6d433 (Remove custom searchable dropdown component.)
   version: 0.2.5
   resolution: "@emotion/weak-memoize@npm:0.2.5"
   checksum: cabfaaecabbb407d323098afc0bb2dd2ec9aaea0672f8f2c54b84b99d5f8cc680356cf166583fd5593330ceef29f2c26554c2c65dff06c0a8f5f8c7da69d89f1
