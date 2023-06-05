@@ -140,7 +140,7 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 		[ siteId || primarySiteId ]
 	);
 
-	const usedSite = site || backendProvidedSite;
+	const usedSite = backendProvidedSite || site;
 
 	useEffect( () => {
 		setSite( usedSite );
