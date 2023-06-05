@@ -37,22 +37,18 @@ const MigrationHandler: Step = function MigrationHandler( { navigation } ) {
 	}, [] );
 
 	useEffect( () => {
-		if ( submit ) {
-			if ( isErrorSourceSiteMigrationStatus ) {
-				return;
-			}
-			if ( sourceSiteMigrationStatus ) {
-				submit( {
-					isFromMigrationPlugin: true,
-					status: sourceSiteMigrationStatus?.status,
-					targetBlogId: sourceSiteMigrationStatus?.target_blog_id,
-					isAdminOnTarget: sourceSiteMigrationStatus?.is_target_blog_admin,
-					isTargetBlogUpgraded: sourceSiteMigrationStatus?.is_target_blog_upgraded,
-					targetBlogSlug: sourceSiteMigrationStatus?.target_blog_slug,
-				} );
-			}
+		if ( ! submit || ! sourceSiteMigrationStatus || isErrorSourceSiteMigrationStatus ) {
+			return;
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+
+		submit( {
+			isFromMigrationPlugin: true,
+			status: sourceSiteMigrationStatus?.status,
+			targetBlogId: sourceSiteMigrationStatus?.target_blog_id,
+			isAdminOnTarget: sourceSiteMigrationStatus?.is_target_blog_admin,
+			isTargetBlogUpgraded: sourceSiteMigrationStatus?.is_target_blog_upgraded,
+			targetBlogSlug: sourceSiteMigrationStatus?.target_blog_slug,
+		} );
 	}, [ isErrorSourceSiteMigrationStatus, sourceSiteMigrationStatus ] );
 
 	const getCurrentMessage = () => {
