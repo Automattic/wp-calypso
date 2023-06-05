@@ -48,6 +48,10 @@
 	}
 }
 
+.layout.has-header-section .search-stream__fixed-area {
+	position: static;
+}
+
 .search-stream__fixed-area .section-nav-tabs.is-dropdown {
 	margin: 0;
 }
