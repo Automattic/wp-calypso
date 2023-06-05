@@ -28,11 +28,11 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 
 	return (
 		<>
-			<Main className="main backup-contents-page">
+			<Main className="backup-contents-page">
 				<DocumentHead title={ translate( 'Backup contents' ) } />
 				{ isJetpackCloud() && <SidebarNavigation /> }
-				<Card className="daily-backup-status contents-page">
-					<div className="contents-page__header">
+				<Card className="backup-contents-page__content">
+					<div className="backup-contents-page__header daily-backup-status status-card">
 						<div className="status-card__message-head">
 							<img src={ cloudIcon } alt="" role="presentation" />
 							<div className="status-card__title">{ translate( 'Backup contents from:' ) }</div>
@@ -40,7 +40,7 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 						<div className="status-card__title">{ displayDate }</div>
 						<ActionButtons isMultiSite={ isMultiSite } rewindId={ rewindId.toString() } />
 					</div>
-					<div className="contents-page__body"></div>
+					<div className="backup-contents-page__body"></div>
 				</Card>
 			</Main>
 		</>
