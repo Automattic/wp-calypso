@@ -131,6 +131,7 @@
 }
 
 .jetpack-product-info__regular-list,
+.jetpack-product-info__coming-soon-list,
 .jetpack-product-info__faq-list {
 	list-style: none;
 	margin: 0;
@@ -147,6 +148,11 @@
 		background-size: 14px;
 		background-position-y: 5px;
 	}
+}
+
+.jetpack-product-info__coming-soon-list li {
+	background: url(../../../assets/images/jetpack/jetpack-icon-tool.svg) no-repeat 1px 7px !important;
+	background-size: 12px;
 }
 
 .jetpack-product-info__faq-list {

@@ -4,6 +4,7 @@ import { useIncludedProductDescriptionMap } from 'calypso/my-sites/plans/jetpack
 import { PricingBreakdown } from 'calypso/my-sites/plans/jetpack-plans/product-store/pricing-breakdown';
 import getProductIcon from 'calypso/my-sites/plans/jetpack-plans/product-store/utils/get-product-icon';
 import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
+import JetpackProductInfoComingSoonList from './coming-soon-list';
 import JetpackProductInfoFAQList from './faq-list';
 import JetpackProductInfoProductList from './product-list';
 import JetpackProductInfoRecommendationTags from './recommendation-tags';
@@ -27,8 +28,17 @@ const JetpackProductInfo: FunctionComponent< JetpackProductInfoProps > = ( {
 	siteId = null,
 	title,
 } ) => {
-	const { description, recommendedFor, whatIsIncluded, alsoIncluded, benefits, faqs, productSlug } =
-		product;
+	const {
+		alsoIncluded,
+		benefits,
+		benefitsComingSoon,
+		description,
+		faqs,
+		productSlug,
+		recommendedFor,
+		whatIsIncluded,
+		whatIsIncludedComingSoon,
+	} = product;
 
 	const translate = useTranslate();
 	const icon = getProductIcon( { productSlug } );
@@ -73,12 +83,18 @@ const JetpackProductInfo: FunctionComponent< JetpackProductInfoProps > = ( {
 				<>
 					{ whatIsIncluded?.length && (
 						<JetpackProductInfoSection title={ translate( 'Includes' ) }>
+							{ !! whatIsIncludedComingSoon?.length && (
+								<JetpackProductInfoComingSoonList items={ whatIsIncludedComingSoon } />
+							) }
 							<JetpackProductInfoRegularList items={ whatIsIncluded } />
 						</JetpackProductInfoSection>
 					) }
 
 					{ benefits?.length && (
 						<JetpackProductInfoSection title={ translate( 'Benefits' ) }>
+							{ !! benefitsComingSoon?.length && (
+								<JetpackProductInfoComingSoonList items={ benefitsComingSoon } />
+							) }
 							<JetpackProductInfoRegularList items={ benefits } />
 						</JetpackProductInfoSection>
 					) }
