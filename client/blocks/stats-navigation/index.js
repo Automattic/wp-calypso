@@ -33,7 +33,7 @@ class StatsNavigation extends Component {
 	};
 
 	state = {
-		isPopoverVisible: false,
+		isPageSettingsPopoverVisible: false,
 		modules: {
 			traffic: { authors: true, videos: true },
 		},
@@ -41,8 +41,8 @@ class StatsNavigation extends Component {
 
 	settingsActionRef = createRef();
 
-	togglePopoverMenu = ( isPopoverVisible ) => {
-		this.setState( { isPopoverVisible } );
+	togglePopoverMenu = ( isPageSettingsPopoverVisible ) => {
+		this.setState( { isPageSettingsPopoverVisible } );
 	};
 
 	onToggleModule = ( page, module, value ) => {
@@ -76,7 +76,7 @@ class StatsNavigation extends Component {
 
 	render() {
 		const { slug, selectedItem, interval, isLegacy } = this.props;
-		const { isPopoverVisible } = this.state;
+		const { isPageSettingsPopoverVisible } = this.state;
 		const { label, showIntervals, path } = navItems[ selectedItem ];
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ path }/{{ interval }}${ slugPath }`;
@@ -124,14 +124,14 @@ class StatsNavigation extends Component {
 							className="page-modules-settings-action"
 							ref={ this.settingsActionRef }
 							onClick={ () => {
-								this.togglePopoverMenu( ! isPopoverVisible );
+								this.togglePopoverMenu( ! isPageSettingsPopoverVisible );
 							} }
 						>
 							<Icon className="gridicon" icon={ cog } />
 						</button>
 						<Popover
 							className="tooltip highlight-card-popover page-modules-settings-popover"
-							isVisible={ isPopoverVisible }
+							isVisible={ isPageSettingsPopoverVisible }
 							position="bottom left"
 							context={ this.settingsActionRef.current }
 							focusOnShow={ false }
