@@ -29,7 +29,7 @@ import formatCurrency from '@automattic/format-currency';
 import styled from '@emotion/styled';
 import { useViewportMatch } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
-import { useState, PropsWithChildren, ReactChild } from 'react';
+import { useState, PropsWithChildren } from 'react';
 import { getLabel, getSublabel } from './checkout-labels';
 import { getItemIntroductoryOfferDisplay } from './introductory-offer';
 import { isWpComProductRenewal } from './is-wpcom-product-renewal';
@@ -776,11 +776,16 @@ function isCouponApplied( { coupon_savings_integer = 0 }: ResponseCartProduct ) 
 	return coupon_savings_integer > 0;
 }
 
-function PlanUpgradeCreditInformation( { product }: { product: ResponseCartProduct } ) {
-	const translate = useTranslate();
+function planUpgradeCreditInformation( {
+	product,
+	translate,
+}: {
+	product: ResponseCartProduct;
+	translate: ReturnType< typeof useTranslate >;
+} ) {
 	const origCost = product.item_original_subtotal_integer;
 	const finalCost = product.item_subtotal_integer;
-	const discount = origCost - finalCost;
+	const upgradeCredit = origCost - finalCost;
 	const planSlug = product.product_slug;
 	const isRenewal = product.is_renewal;
 
@@ -796,13 +801,15 @@ function PlanUpgradeCreditInformation( { product }: { product: ResponseCartProdu
 		// Do not display discount reason if a coupon is applied.
 		isCouponApplied( product )
 	) {
-		return <></>;
+		return null;
 	}
-	let oneTimeExplanation: ReactChild = '';
 	if ( isMonthlyProduct( product ) ) {
-		oneTimeExplanation = translate( 'Discount: %(discount)s Applied in first month only', {
+		return translate( 'Upgrade Credit: %(upgradeCredit)s applied in first month only', {
+			comment:
+				'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
+				'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
 			args: {
-				discount: formatCurrency( discount, product.currency, {
+				upgradeCredit: formatCurrency( upgradeCredit, product.currency, {
 					isSmallestUnit: true,
 					stripZeros: true,
 				} ),
@@ -811,9 +818,12 @@ function PlanUpgradeCreditInformation( { product }: { product: ResponseCartProdu
 	}
 
 	if ( isYearly( product ) ) {
-		oneTimeExplanation = translate( 'Discount: %(discount)s Applied in first year only', {
+		return translate( 'Upgrade Credit: %(upgradeCredit)s applied in first year only', {
+			comment:
+				'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
+				'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
 			args: {
-				discount: formatCurrency( discount, product.currency, {
+				discount: formatCurrency( upgradeCredit, product.currency, {
 					isSmallestUnit: true,
 					stripZeros: true,
 				} ),
@@ -822,16 +832,19 @@ function PlanUpgradeCreditInformation( { product }: { product: ResponseCartProdu
 	}
 
 	if ( isBiennially( product ) || isTriennially( product ) ) {
-		oneTimeExplanation = translate( 'Discount: %(discount)s Applied in first term only', {
+		return translate( 'Upgrade Credit: %(discount)s applied in first term only', {
+			comment:
+				'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
+				'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
 			args: {
-				discount: formatCurrency( discount, product.currency, {
+				discount: formatCurrency( upgradeCredit, product.currency, {
 					isSmallestUnit: true,
 					stripZeros: true,
 				} ),
 			},
 		} );
 	}
-	return <LineItemMeta>{ oneTimeExplanation }</LineItemMeta>;
+	return null;
 }
 
 function IntroductoryOfferCallout( { product }: { product: ResponseCartProduct } ) {
@@ -878,7 +891,7 @@ function DomainDiscountCallout( { product }: { product: ResponseCartProduct } ) 
 		return <DiscountCallout>{ translate( 'Free with your plan' ) }</DiscountCallout>;
 	}
 
-	return null;
+	return <></>;
 }
 
 function CouponDiscountCallout( { product }: { product: ResponseCartProduct } ) {
@@ -901,7 +914,7 @@ function GSuiteDiscountCallout( { product }: { product: ResponseCartProduct } ) 
 	) {
 		return <DiscountCallout>{ translate( 'Discount for first year' ) }</DiscountCallout>;
 	}
-	return null;
+	return <></>;
 }
 
 function WPLineItem( {
@@ -1016,7 +1029,7 @@ function WPLineItem( {
 
 			{ product && ! containsPartnerCoupon && (
 				<>
-					<PlanUpgradeCreditInformation product={ product } />
+					<LineItemMeta>{ planUpgradeCreditInformation( { product, translate } ) }</LineItemMeta>
 					<LineItemMeta>
 						<LineItemSublabelAndPrice product={ product } />
 						<DomainDiscountCallout product={ product } />
