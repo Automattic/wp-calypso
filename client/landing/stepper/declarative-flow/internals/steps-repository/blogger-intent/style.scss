@@ -1,0 +1,11 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
+
+.blog.blogger-intent {
+	.flow-progress {
+		display: none;
+	}
+	.step-container.intent {
+		display: block;
+	}
+}
