@@ -22,9 +22,9 @@ const TextControlContainer = styled.div( {
 	},
 } );
 
-const ButtonStyled = styled( Button )`
-	margin-bottom: 1em;
-`;
+const ButtonStyled = styled( Button )( {
+	marginBottom: '1em',
+} );
 
 const Error = styled.div( {
 	display: 'flex',
