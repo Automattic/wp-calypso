@@ -37,7 +37,7 @@
 	}
 }
 
-.premium-badge__popover {
+.premium-badge__popover.popover {
 	max-width: 300px;
 	outline: none;
 	.popover__inner {
@@ -62,7 +62,7 @@
 			}
 		}
 	}
-	.popover__arrow {
-		border: 10px dashed transparent;
-	}
+}
+.premium-badge__popover .popover__arrow {
+	border: 10px dashed transparent;
 }
