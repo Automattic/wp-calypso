@@ -3,10 +3,6 @@
 @import "@automattic/onboarding/styles/mixins";
 @import "jetpack-connect/colors.scss";
 
-body.is-section-stepper.theme-default.color-scheme {
-	--color-surface-backdrop: var(--studio-white);
-}
-
 .blog.blogger-intent {
 	.flow-progress {
 		display: none;
@@ -20,6 +16,15 @@ body.is-section-stepper.theme-default.color-scheme {
 		min-height: 80vh;
 	}
 
+	.blogger-intent__heading {
+		@include onboarding-font-recoleta;
+		text-align: left;
+		font-size: 2rem;
+		max-width: 377px;
+		line-height: 40px;
+		color: var(--color-neutral-100);
+	}
+
 	.blogger-intent__content {
 		display: flex;
 		flex-direction: column;
@@ -28,18 +33,9 @@ body.is-section-stepper.theme-default.color-scheme {
 		margin: 20px;
 		min-width: 20vw;
 
-		.blogger-intent__heading {
-			@include onboarding-font-recoleta;
-			text-align: left;
-			font-size: 2rem;
-			max-width: 377px;
-			line-height: 40px;
-			color: var(--color-neutral-100);
-		}
-
 		hr {
-			border: none;
-			color: var(--color-neutral-50);
+			color: var(--color-neutral-10);
+			width: 100%;
 		}
 	}
 
@@ -65,6 +61,8 @@ body.is-section-stepper.theme-default.color-scheme {
 		.blogger-intent__button {
 			padding: 10px 20px;
 			margin-left: auto;
+			background-color: var(--studio-blue-50);
+			border-color: var(--studio-blue-50);
 		}
 	}
 }
