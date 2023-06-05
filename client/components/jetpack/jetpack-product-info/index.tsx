@@ -1,6 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent } from 'react';
+import { FunctionComponent, ReactChild } from 'react';
 import { useIncludedProductDescriptionMap } from 'calypso/my-sites/plans/jetpack-plans/product-store/hooks/use-included-product-description-map';
+import { PricingBreakdown } from 'calypso/my-sites/plans/jetpack-plans/product-store/pricing-breakdown';
 import getProductIcon from 'calypso/my-sites/plans/jetpack-plans/product-store/utils/get-product-icon';
 import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 import JetpackProductInfoFAQList from './faq-list';
@@ -12,15 +13,19 @@ import JetpackProductInfoSection from './section';
 import './style.scss';
 
 type JetpackProductInfoProps = {
-	title: string;
-	product: SelectorProduct;
 	full?: boolean;
+	product: SelectorProduct;
+	showPricingBreakdown?: boolean;
+	siteId?: number;
+	title: string | ReactChild;
 };
 
 const JetpackProductInfo: FunctionComponent< JetpackProductInfoProps > = ( {
-	title,
-	product,
 	full,
+	product,
+	showPricingBreakdown,
+	siteId = null,
+	title,
 } ) => {
 	const { description, recommendedFor, whatIsIncluded, alsoIncluded, benefits, faqs, productSlug } =
 		product;
@@ -39,6 +44,15 @@ const JetpackProductInfo: FunctionComponent< JetpackProductInfoProps > = ( {
 				<h2>{ title }</h2>
 			</div>
 			<div className="jetpack-product-info__description">{ description }</div>
+
+			{ showPricingBreakdown && product.productsIncluded && (
+				<PricingBreakdown
+					includedProductSlugs={ product.productsIncluded }
+					product={ product }
+					showBreakdownHeading
+					siteId={ siteId }
+				/>
+			) }
 
 			{ full && recommendedFor && <JetpackProductInfoRecommendationTags tags={ recommendedFor } /> }
 
