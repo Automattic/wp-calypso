@@ -24,6 +24,7 @@ export type JetpackSearchAIResult = {
 	step: string;
 	urls: AIResponseURL[];
 	terms: string[];
+	source: null | string;
 };
 
 export function useJetpackSearchAIQuery( config: JetpackSearchAIConfig ) {
