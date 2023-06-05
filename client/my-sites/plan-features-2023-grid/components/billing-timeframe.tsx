@@ -118,7 +118,7 @@ function usePerMonthDescription( {
 			if ( PLAN_BIENNIAL_PERIOD === billingPeriod ) {
 				return displayNewPriceText
 					? translate(
-							'per month, %(fullTermDiscountedPriceText)s for the first year, Excl. Taxes',
+							'per month, %(fullTermDiscountedPriceText)s for the first two years, Excl. Taxes',
 							{
 								args: { fullTermDiscountedPriceText, rawPrice },
 								comment: 'Excl. Taxes is short for excluding taxes',
