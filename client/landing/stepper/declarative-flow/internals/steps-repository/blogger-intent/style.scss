@@ -1,11 +1,70 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/breakpoints";
+@import "@automattic/onboarding/styles/mixins";
+@import "jetpack-connect/colors.scss";
+
+body.is-section-stepper.theme-default.color-scheme {
+	--color-surface-backdrop: var(--studio-white);
+}
 
 .blog.blogger-intent {
 	.flow-progress {
 		display: none;
 	}
-	.step-container.intent {
-		display: block;
+
+	.blogger-intent__container {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		min-height: 80vh;
+	}
+
+	.blogger-intent__content {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		justify-content: center;
+		margin: 20px;
+		min-width: 20vw;
+
+		.blogger-intent__heading {
+			@include onboarding-font-recoleta;
+			text-align: left;
+			font-size: 2rem;
+			max-width: 377px;
+			line-height: 40px;
+			color: var(--color-neutral-100);
+		}
+
+		hr {
+			border: none;
+			color: var(--color-neutral-50);
+		}
+	}
+
+	.blogger-intent__row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-bottom: 20px;
+		width: 100%;
+
+		.blogger-intent__row-text {
+			display: flex;
+			align-items: center;
+			color: var(--color-neutral-100);
+
+			.gridicon {
+				margin-right: 10px;
+
+				fill: var(--color-neutral-30);
+			}
+		}
+
+		.blogger-intent__button {
+			padding: 10px 20px;
+			margin-left: auto;
+		}
 	}
 }
