@@ -38,12 +38,7 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 							<div className="status-card__title">{ translate( 'Backup contents from:' ) }</div>
 						</div>
 						<div className="status-card__title">{ displayDate }</div>
-						<ActionButtons
-							hasWarnings={ false }
-							isMultiSite={ isMultiSite }
-							rewindId={ rewindId.toString() }
-							onClickClone={ null }
-						/>
+						<ActionButtons isMultiSite={ isMultiSite } rewindId={ rewindId.toString() } />
 					</div>
 					<div className="contents-page__body"></div>
 				</Card>
