@@ -7,7 +7,7 @@ import { Card, Button, Dialog, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { englishLocales, localizeUrl } from '@automattic/i18n-utils';
 import { saveAs } from 'browser-filesaver';
-import { hasTranslation, localize, getLocaleSlug } from 'i18n-calypso';
+import i18n, { localize, getLocaleSlug } from 'i18n-calypso';
 import { orderBy } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -599,7 +599,7 @@ class MembershipsSection extends Component {
 					<div>
 						<h3>
 							{ englishLocales.includes( getLocaleSlug() ) ||
-							hasTranslation( 'Simple fees structure' )
+							i18n.hasTranslation( 'Simple fees structure' )
 								? translate( 'Simple fees structure' )
 								: translate( 'No membership fees' ) }
 						</h3>
@@ -609,7 +609,7 @@ class MembershipsSection extends Component {
 						<p>
 							{ preventWidows(
 								englishLocales.includes( getLocaleSlug() ) ||
-									hasTranslation( 'No fixed monthly or annual fees charged.' )
+									i18n.hasTranslation( 'No fixed monthly or annual fees charged.' )
 									? translate( 'No fixed monthly or annual fees charged.' )
 									: translate( 'No monthly or annual fees charged.' )
 							) }
