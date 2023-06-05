@@ -1,8 +1,9 @@
 /* eslint-disable no-unused-vars */
-import { translate } from 'i18n-calypso';
 
 // This is a temporary file that introduces strings that need to be translated.
 // It will be removed once the page is complete and the strings are translated.
+
+import { translate } from 'i18n-calypso';
 
 // username is needed for some of the strings below
 const username = 'username_placeholder';
