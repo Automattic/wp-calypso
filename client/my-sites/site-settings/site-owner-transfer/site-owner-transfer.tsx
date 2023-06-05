@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
+import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import ActionPanel from 'calypso/components/action-panel';
 import { useQueryUserPurchases } from 'calypso/components/data/query-user-purchases';
@@ -10,7 +11,9 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { ResponseDomain } from 'calypso/lib/domains/types';
+import { useDispatch } from 'calypso/state';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
+import { successNotice } from 'calypso/state/notices/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PendingDomainTransfer from './pending-domain-transfer';
@@ -21,9 +24,27 @@ const Strong = styled( 'strong' )( {
 	fontWeight: 500,
 } );
 
+const ActionPanelStyled = styled( ActionPanel )`
+	font-size: 14px;
+	font-weight: 400;
+	.action-panel__body {
+		color: var( --studio-gray-70 );
+	}
+`;
+
+const useTransferEmailSentNotice = () => {
+	const { __ } = useI18n();
+	const dispatch = useDispatch();
+
+	useEffect( () => {
+		dispatch( successNotice( __( 'Email sent successfully' ), { duration: 8000 } ) );
+	}, [ __, dispatch ] );
+};
+
 const SiteTransferComplete = () => {
 	const translate = useTranslate();
 	const userEmail = useSelector( getCurrentUserEmail );
+	useTransferEmailSentNotice();
 	if ( ! userEmail ) {
 		return null;
 	}
@@ -41,14 +62,6 @@ const SiteTransferComplete = () => {
 		</p>
 	);
 };
-
-const ActionPanelStyled = styled( ActionPanel )`
-	font-size: 14px;
-	font-weight: 400;
-	.action-panel__body {
-		color: var( --studio-gray-70 );
-	}
-`;
 
 const SiteOwnerTransfer = () => {
 	useQueryUserPurchases();
