@@ -15,6 +15,10 @@ function serviceToIconName( service ) {
 	}
 }
 
+function hasRoundIcon( service ) {
+	return [ 'facebook' ].includes( service );
+}
+
 const PostShareConnection = ( { connection, isActive, onToggle } ) => {
 	const { external_display, external_profile_picture, keyring_connection_ID, service, status } =
 		connection;
@@ -43,7 +47,11 @@ const PostShareConnection = ( { connection, isActive, onToggle } ) => {
 				&nbsp;
 			</div>
 
-			<div className="post-share__service-account-social-logo">
+			<div
+				className={ classNames( 'post-share__service-account-social-logo', {
+					'is-round': hasRoundIcon( service ),
+				} ) }
+			>
 				<SocialLogo icon={ serviceToIconName( service ) } />
 			</div>
 
