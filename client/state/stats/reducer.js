@@ -4,12 +4,14 @@ import chartTabs from './chart-tabs/reducer';
 import emails from './emails/reducer';
 import highlights from './highlights/reducer';
 import lists from './lists/reducer';
+import modulesSettings from './modules-settings/reducer';
 import posts from './posts/reducer';
 import recentPostViews from './recent-post-views/reducer';
 
 const combinedReducer = combineReducers( {
 	chartTabs,
 	highlights,
+	modulesSettings,
 	lists,
 	posts,
 	emails,
