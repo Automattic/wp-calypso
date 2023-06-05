@@ -59,7 +59,9 @@ const ScaledBlockRendererContainer = ( {
 	const styleAssets = useParsedAssets( assets?.styles ) as HTMLLinkElement[];
 
 	const editorStyles = useMemo( () => {
-		const mergedStyles = [ ...( styles || [] ), ...( customStyles || [] ) ];
+		const mergedStyles = [ ...( styles || [] ), ...( customStyles || [] ) ]
+			// Ingore svgs since the current version of EditorStyles doesn't support it
+			.filter( ( style: RenderedStyle ) => style.__unstableType !== 'svgs' );
 
 		if ( ! inlineCss ) {
 			return mergedStyles;
