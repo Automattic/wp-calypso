@@ -6,7 +6,7 @@ import { Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import React, { useRef } from 'react';
 import { useSelector } from 'react-redux';
 import siteOptionsUrl from 'calypso/assets/images/onboarding/site-options.svg';
 import DataCenterPicker from 'calypso/blocks/data-center-picker';
@@ -60,6 +60,7 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 
 	const isSiteTitleEmpty = ! siteTitle || siteTitle.trim().length === 0;
 	const isFormSubmitDisabled = isSiteTitleEmpty;
+	const hasChangedInput = useRef( { geoAffinity: false, title: false } );
 
 	const handleSubmit = async ( event: React.FormEvent ) => {
 		event.preventDefault();
@@ -71,7 +72,9 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 		}
 
 		recordTracksEvent( 'calypso_signup_site_options_submit', {
-			has_site_title: !! siteTitle,
+			has_site_title: true,
+			has_changed_title: hasChangedInput.current.title,
+			has_changed_geo_affinity: hasChangedInput.current.geoAffinity,
 		} );
 
 		submit?.( { siteTitle, siteGeoAffinity } );
@@ -81,6 +84,7 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 		setFormTouched( true );
 
 		if ( event.currentTarget.name === 'siteTitle' ) {
+			hasChangedInput.current.title = true;
 			return setSiteTitle( event.currentTarget.value );
 		}
 	};
@@ -113,7 +117,14 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 				) }
 			</FormFieldset>
 			{ shouldShowGeoAffinityPicker && (
-				<DataCenterPicker onChange={ setSiteGeoAffinity } value={ siteGeoAffinity } compact />
+				<DataCenterPicker
+					onChange={ ( value ) => {
+						hasChangedInput.current.geoAffinity = true;
+						setSiteGeoAffinity( value );
+					} }
+					value={ siteGeoAffinity }
+					compact
+				/>
 			) }
 			<Button className="site-options__submit-button" type="submit" primary>
 				{ translate( 'Continue' ) }
