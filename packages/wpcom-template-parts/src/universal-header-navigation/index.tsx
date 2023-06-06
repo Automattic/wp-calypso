@@ -104,6 +104,17 @@ const UniversalNavbarHeader = ( {
 															target="_self"
 														/>
 														<ClickableItem
+															titleValue={ __( 'Newsletter', __i18n_text_domain__ ) }
+															content={ __( 'Newsletter', __i18n_text_domain__ ) }
+															urlValue={ localizeUrl(
+																'//wordpress.com/setup/newsletter/intro',
+																locale,
+																isLoggedIn
+															) }
+															type="dropdown"
+															target="_self"
+														/>
+														<ClickableItem
 															titleValue={ __( 'Professional Email', __i18n_text_domain__ ) }
 															content={ __( 'Professional Email', __i18n_text_domain__ ) }
 															urlValue={ localizeUrl( '//wordpress.com/professional-email/' ) }
@@ -129,20 +140,9 @@ const UniversalNavbarHeader = ( {
 															target="_self"
 														/>
 														<ClickableItem
-															titleValue={ __( 'Course', __i18n_text_domain__ ) }
-															content={ __( 'Course', __i18n_text_domain__ ) }
+															titleValue={ __( 'Course Maker', __i18n_text_domain__ ) }
+															content={ __( 'Course Maker', __i18n_text_domain__ ) }
 															urlValue={ localizeUrl( '//wordpress.com/create-a-course/' ) }
-															type="dropdown"
-															target="_self"
-														/>
-														<ClickableItem
-															titleValue={ __( 'Newsletter', __i18n_text_domain__ ) }
-															content={ __( 'Newsletter', __i18n_text_domain__ ) }
-															urlValue={ localizeUrl(
-																'//wordpress.com/setup/newsletter/intro',
-																locale,
-																isLoggedIn
-															) }
 															type="dropdown"
 															target="_self"
 														/>
@@ -430,6 +430,16 @@ const UniversalNavbarHeader = ( {
 												type="menu"
 											/>
 											<ClickableItem
+												titleValue={ __( 'Newsletter', __i18n_text_domain__ ) }
+												content={ __( 'Newsletter', __i18n_text_domain__ ) }
+												urlValue={ localizeUrl(
+													'//wordpress.com/setup/newsletter/intro',
+													locale,
+													isLoggedIn
+												) }
+												type="menu"
+											/>
+											<ClickableItem
 												titleValue={ __( 'Professional Email', __i18n_text_domain__ ) }
 												content={ __( 'Professional Email', __i18n_text_domain__ ) }
 												urlValue={ localizeUrl( '//wordpress.com/professional-email/' ) }
@@ -451,19 +461,9 @@ const UniversalNavbarHeader = ( {
 												type="menu"
 											/>
 											<ClickableItem
-												titleValue={ __( 'Course', __i18n_text_domain__ ) }
-												content={ __( 'Course', __i18n_text_domain__ ) }
+												titleValue={ __( 'Course Maker', __i18n_text_domain__ ) }
+												content={ __( 'Course Maker', __i18n_text_domain__ ) }
 												urlValue={ localizeUrl( '//wordpress.com/create-a-course/' ) }
-												type="menu"
-											/>
-											<ClickableItem
-												titleValue={ __( 'Newsletter', __i18n_text_domain__ ) }
-												content={ __( 'Newsletter', __i18n_text_domain__ ) }
-												urlValue={ localizeUrl(
-													'//wordpress.com/setup/newsletter/intro',
-													locale,
-													isLoggedIn
-												) }
 												type="menu"
 											/>
 											<ClickableItem
