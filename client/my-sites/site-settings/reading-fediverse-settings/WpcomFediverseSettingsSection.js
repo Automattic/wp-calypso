@@ -25,7 +25,7 @@ const CopyButton = ( { alias } ) => {
 	);
 };
 
-const EnabledSettingsSection = ( { error, siteId } ) => {
+const EnabledSettingsSection = ( { siteId } ) => {
 	const translate = useTranslate();
 	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
 	const username = useSelector( getCurrentUserName );
@@ -36,15 +36,6 @@ const EnabledSettingsSection = ( { error, siteId } ) => {
 	// todo: warnings for non-custom domains
 	return (
 		<Card className="site-settings__card">
-			{ error && (
-				<p>
-					<strong>
-						{ translate(
-							'This section will only appear once the toggle is enabled (not yet working)'
-						) }
-					</strong>
-				</p>
-			) }
 			<p>
 				{ translate(
 					'Lots of cool customizations and bonus features coming soon with WordPress.com Premium and up!'
@@ -109,9 +100,7 @@ export const WpcomFediverseSettingsSection = ( { siteId } ) => {
 					onChange={ onChange }
 				/>
 			</Card>
-			{ ( isEnabled /* get rid of isError once the endpoint lands */ || isError ) && (
-				<EnabledSettingsSection error={ isError } siteId={ siteId } />
-			) }
+			{ isEnabled && <EnabledSettingsSection siteId={ siteId } /> }
 		</>
 	);
 };
