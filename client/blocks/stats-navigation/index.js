@@ -20,6 +20,18 @@ import Intervals from './intervals';
 
 import './style.scss';
 
+const AVAILABLE_PAGE_MODULES = {
+	traffic: [
+		{
+			key: 'authors',
+			label: translate( 'Authors' ),
+			icon: commentAuthorAvatar,
+			defaultValue: true,
+		},
+		{ key: 'videos', label: translate( 'Videos' ), icon: video, defaultValue: true },
+	],
+};
+
 class StatsNavigation extends Component {
 	static propTypes = {
 		interval: PropTypes.oneOf( intervalConstants.map( ( i ) => i.value ) ),
@@ -35,7 +47,14 @@ class StatsNavigation extends Component {
 	state = {
 		isPageSettingsPopoverVisible: false,
 		modules: {
-			traffic: { authors: true, videos: true },
+			// Only traffic page modules are supported for now.
+			traffic: Object.assign(
+				...AVAILABLE_PAGE_MODULES.traffic.map( ( module ) => {
+					return {
+						[ module.key ]: module.defaultValue,
+					};
+				} )
+			),
 		},
 	};
 
@@ -110,15 +129,19 @@ class StatsNavigation extends Component {
 								);
 							} ) }
 					</NavTabs>
+
 					{ isLegacy && showIntervals && (
 						<Intervals selected={ interval } pathTemplate={ pathTemplate } />
 					) }
+
 					{ ! config.isEnabled( 'stats/subscribers-section' ) && <SubscribersCount /> }
 				</SectionNav>
+
 				{ isLegacy && showIntervals && (
 					<Intervals selected={ interval } pathTemplate={ pathTemplate } standalone />
 				) }
-				{ isHighlightsSettingsEnabled && (
+
+				{ isHighlightsSettingsEnabled && AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] && (
 					<div className="page-modules-settings">
 						<button
 							className="page-modules-settings-action"
@@ -138,36 +161,25 @@ class StatsNavigation extends Component {
 						>
 							<div>{ translate( 'Modules visibility' ) }</div>
 							<div className="page-modules-settings-toggle-wrapper">
-								<div className="page-modules-settings-toggle">
-									<Icon className="gridicon" icon={ commentAuthorAvatar } />
-									<span>{ translate( 'Authors' ) }</span>
-									<FormToggle
-										className="page-modules-settings-toggle-control"
-										checked={ this.state.modules[ this.props.selectedItem ].authors }
-										onChange={ ( event ) => {
-											this.onToggleModule(
-												this.props.selectedItem,
-												'authors',
-												event.target.checked
-											);
-										} }
-									/>
-								</div>
-								<div className="page-modules-settings-toggle">
-									<Icon className="gridicon" icon={ video } />
-									<span>{ translate( 'Videos' ) }</span>
-									<FormToggle
-										className="page-modules-settings-toggle-control"
-										checked={ this.state.modules[ this.props.selectedItem ].videos }
-										onChange={ ( event ) => {
-											this.onToggleModule(
-												this.props.selectedItem,
-												'videos',
-												event.target.checked
-											);
-										} }
-									/>
-								</div>
+								{ AVAILABLE_PAGE_MODULES[ this.props.selectedItem ].map( ( toggleItem ) => {
+									return (
+										<div key={ toggleItem.key } className="page-modules-settings-toggle">
+											<Icon className="gridicon" icon={ commentAuthorAvatar } />
+											<span>{ toggleItem.label }</span>
+											<FormToggle
+												className="page-modules-settings-toggle-control"
+												checked={ this.state.modules[ this.props.selectedItem ][ toggleItem.key ] }
+												onChange={ ( event ) => {
+													this.onToggleModule(
+														this.props.selectedItem,
+														toggleItem.key,
+														event.target.checked
+													);
+												} }
+											/>
+										</div>
+									);
+								} ) }
 							</div>
 						</Popover>
 					</div>
