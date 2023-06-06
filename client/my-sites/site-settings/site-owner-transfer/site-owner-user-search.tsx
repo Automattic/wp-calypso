@@ -22,6 +22,20 @@ const TextControlContainer = styled.div( {
 	},
 } );
 
+const TextControlStyled = styled( TextControl )( {
+	'.components-text-control__input, .components-text-control__input[type=text]': {
+		borderColor: '#C3C4C7',
+		lineHeight: '26px',
+	},
+} );
+
+const TextControlStyledError = styled( TextControl )( {
+	'.components-text-control__input, .components-text-control__input[type=text]': {
+		borderColor: '#D63638',
+		lineHeight: '26px',
+	},
+} );
+
 const Error = styled.div( {
 	display: 'flex',
 	alignItems: 'center',
@@ -86,12 +100,21 @@ const SiteOwnerTransferEligibility = ( {
 				) }
 			</FormText>
 			<TextControlContainer>
-				<TextControl
-					autoComplete="off"
-					label={ translate( 'Username or email address' ) }
-					value={ tempSiteOwner }
-					onChange={ ( value ) => setTempSiteOwner( value ) }
-				/>
+				{ siteTransferEligibilityError ? (
+					<TextControlStyledError
+						autoComplete="off"
+						label={ translate( 'Username or email address' ) }
+						value={ tempSiteOwner }
+						onChange={ ( value ) => setTempSiteOwner( value ) }
+					/>
+				) : (
+					<TextControlStyled
+						autoComplete="off"
+						label={ translate( 'Username or email address' ) }
+						value={ tempSiteOwner }
+						onChange={ ( value ) => setTempSiteOwner( value ) }
+					/>
+				) }
 				{ siteTransferEligibilityError && (
 					<Error>
 						<Gridicon icon="notice-outline" size={ 16 } />
