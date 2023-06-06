@@ -1,12 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Button } from '@automattic/components';
-import { Modal, ToggleControl } from '@wordpress/components';
+import { Modal } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState, useContext } from 'react';
-import clockIcon from 'calypso/assets/images/jetpack/clock-icon.svg';
 import AlertBanner from 'calypso/components/jetpack/alert-banner';
-import SelectDropdown from 'calypso/components/select-dropdown';
 import {
 	useUpdateMonitorSettings,
 	useJetpackAgencyDashboardRecordTrackEvent,
@@ -16,10 +13,12 @@ import DashboardDataContext from '../../sites-overview/dashboard-data-context';
 import {
 	availableNotificationDurations as durations,
 	getSiteCountText,
-	mobileAppLink,
 } from '../../sites-overview/utils';
-import ConfigureEmailNotification from '../configure-email-notification';
 import EmailAddressEditor from '../configure-email-notification/email-address-editor';
+import EmailNotification from './form-content/email-notification';
+import NotificationSettingsFormFooter from './form-content/footer';
+import MobilePushNotification from './form-content/mobile-push-notification';
+import NotificationDuration from './form-content/notification-duration';
 import type {
 	MonitorSettings,
 	Site,
@@ -295,7 +294,6 @@ export default function NotificationSettings( {
 			className="notification-settings__modal"
 		>
 			<div className="notification-settings__sub-title">{ getSiteCountText( sites ) }</div>
-
 			<form onSubmit={ onSave }>
 				{ isBulkUpdate && (
 					<AlertBanner type="warning">
@@ -303,143 +301,34 @@ export default function NotificationSettings( {
 					</AlertBanner>
 				) }
 				<div className={ classNames( { 'notification-settings__content': ! isBulkUpdate } ) }>
-					<div className="notification-settings__content-block">
-						<div className="notification-settings__content-heading">
-							{ translate( 'Notify me about downtime:' ) }
-						</div>
-						<SelectDropdown
-							onToggle={ ( { open: isOpen }: { open: boolean } ) => {
-								if ( isOpen ) {
-									recordEvent( 'notification_duration_toggle' );
-								}
-							} }
-							selectedIcon={
-								<img
-									className="notification-settings__duration-icon"
-									src={ clockIcon }
-									alt={ translate( 'Schedules' ) }
-								/>
-							}
-							selectedText={ selectedDuration?.label }
-						>
-							{ durations.map( ( duration ) => (
-								<SelectDropdown.Item
-									key={ duration.time }
-									selected={ duration.time === selectedDuration?.time }
-									onClick={ () => selectDuration( duration ) }
-								>
-									{ duration.label }
-								</SelectDropdown.Item>
-							) ) }
-						</SelectDropdown>
-					</div>
-					<div className="notification-settings__toggle-container">
-						<div className="notification-settings__toggle">
-							<ToggleControl
-								onChange={ ( isEnabled ) => {
-									recordEvent(
-										isEnabled ? 'mobile_notification_enable' : 'mobile_notification_disable'
-									);
-									setEnableMobileNotification( isEnabled );
-								} }
-								checked={ enableMobileNotification }
-							/>
-						</div>
-						<div className="notification-settings__toggle-content">
-							<div className="notification-settings__content-heading">
-								{ translate( 'Mobile' ) }
-							</div>
-							<div className="notification-settings__content-sub-heading">
-								{ translate( 'Receive notifications via the {{a}}Jetpack App{{/a}}.', {
-									components: {
-										a: (
-											<a
-												className="notification-settings__link"
-												target="_blank"
-												rel="noreferrer"
-												href={ mobileAppLink }
-											/>
-										),
-									},
-								} ) }
-							</div>
-						</div>
-					</div>
-					<div className="notification-settings__toggle-container">
-						<div className="notification-settings__toggle">
-							<ToggleControl
-								onChange={ ( isEnabled ) => {
-									recordEvent(
-										isEnabled ? 'email_notification_enable' : 'email_notification_disable'
-									);
-									setEnableEmailNotification( isEnabled );
-								} }
-								checked={ enableEmailNotification }
-							/>
-						</div>
-						<div className="notification-settings__toggle-content">
-							<div className="notification-settings__content-heading-with-beta">
-								<div className="notification-settings__content-heading">
-									{ translate( 'Email' ) }
-								</div>
-								{ isMultipleEmailEnabled && (
-									<div className="notification-settings__beta-tag">{ translate( 'BETA' ) }</div>
-								) }
-							</div>
-							{ isMultipleEmailEnabled ? (
-								<>
-									<div className="notification-settings__content-sub-heading">
-										{ translate( 'Receive email notifications with one or more recipients.' ) }
-									</div>
-								</>
-							) : (
-								<div className="notification-settings__content-sub-heading">
-									{ translate( 'Receive email notifications with your account email address %s.', {
-										args: defaultUserEmailAddresses,
-									} ) }
-								</div>
-							) }
-						</div>
-					</div>
-
-					{ enableEmailNotification && isMultipleEmailEnabled && (
-						<ConfigureEmailNotification
-							toggleModal={ toggleAddEmailModal }
-							allEmailItems={ allEmailItems }
-							recordEvent={ recordEvent }
-							verifiedEmail={ verifiedItem?.email }
-						/>
-					) }
+					<NotificationDuration
+						recordEvent={ recordEvent }
+						selectedDuration={ selectedDuration }
+						selectDuration={ selectDuration }
+					/>
+					<MobilePushNotification
+						recordEvent={ recordEvent }
+						enableMobileNotification={ enableMobileNotification }
+						setEnableMobileNotification={ setEnableMobileNotification }
+					/>
+					<EmailNotification
+						recordEvent={ recordEvent }
+						verifiedItem={ verifiedItem }
+						enableEmailNotification={ enableEmailNotification }
+						setEnableEmailNotification={ setEnableEmailNotification }
+						defaultUserEmailAddresses={ defaultUserEmailAddresses }
+						toggleAddEmailModal={ toggleAddEmailModal }
+						allEmailItems={ allEmailItems }
+					/>
 				</div>
-
-				<div className="notification-settings__footer">
-					{ ( validationError || hasUnsavedChanges ) && (
-						<div className="notification-settings__footer-validation-error" role="alert">
-							{ hasUnsavedChanges
-								? translate( 'You have unsaved changes. Are you sure you want to close?' )
-								: validationError }
-						</div>
-					) }
-					<div className="notification-settings__footer-buttons">
-						<Button
-							onClick={ handleOnClose }
-							aria-label={ translate( 'Cancel and close notification settings popup' ) }
-						>
-							{ translate( 'Cancel' ) }
-						</Button>
-						<Button
-							disabled={
-								// Disable save button if there is no change and not bulk update
-								!! validationError || isLoading || ( ! isBulkUpdate && ! unsavedChangesExist )
-							}
-							type="submit"
-							primary
-							aria-label={ translate( 'Save notification settings' ) }
-						>
-							{ isLoading ? translate( 'Saving Changes' ) : translate( 'Save' ) }
-						</Button>
-					</div>
-				</div>
+				<NotificationSettingsFormFooter
+					isLoading={ isLoading }
+					validationError={ validationError }
+					isBulkUpdate={ isBulkUpdate }
+					handleOnClose={ handleOnClose }
+					hasUnsavedChanges={ hasUnsavedChanges }
+					unsavedChangesExist={ unsavedChangesExist }
+				/>
 			</form>
 		</Modal>
 	);
