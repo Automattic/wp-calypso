@@ -32,7 +32,7 @@ class ImportingPane extends ImportingPaneBase {
 		// Add the site favicon as author's icon
 		if ( importerStatus?.customData?.sourceAuthors ) {
 			for ( const author of importerStatus.customData.sourceAuthors ) {
-				author.icon = ( urlData as UrlData )?.meta?.favicon;
+				author.icon = ( urlData as UrlData | undefined )?.meta?.favicon;
 			}
 		}
 

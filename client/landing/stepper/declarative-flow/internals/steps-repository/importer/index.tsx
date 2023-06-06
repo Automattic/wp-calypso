@@ -89,7 +89,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		useEffect( checkFromSiteData, [ fromSiteData?.url ] );
 		useEffect( () => onComponentUnmount, [] );
 
-		if ( ! importer || ! fromSiteData ) {
+		if ( ! importer ) {
 			stepNavigator.goToImportCapturePage?.();
 			return null;
 		}
@@ -183,7 +183,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 					site={ site }
 					siteSlug={ siteSlug }
 					fromSite={ fromSite }
-					urlData={ fromSiteData }
+					urlData={ fromSiteData ?? undefined }
 					stepNavigator={ stepNavigator }
 					showConfirmDialog={ ! isMigrateFromWp }
 				/>
