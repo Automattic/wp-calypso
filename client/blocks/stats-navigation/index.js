@@ -15,6 +15,11 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isGoogleMyBusinessLocationConnectedSelector from 'calypso/state/selectors/is-google-my-business-location-connected';
 import isSiteStore from 'calypso/state/selectors/is-site-store';
 import { getSiteOption } from 'calypso/state/sites/selectors';
+import {
+	updateModuleToggles,
+	requestModuleToggles,
+} from 'calypso/state/stats/module-toggles/actions';
+import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
 import { navItems, intervals as intervalConstants } from './constants';
 import Intervals from './intervals';
 
@@ -46,7 +51,7 @@ class StatsNavigation extends Component {
 
 	state = {
 		isPageSettingsPopoverVisible: false,
-		modules: {
+		pageModules: {
 			// Only traffic page modules are supported for now.
 			traffic: Object.assign(
 				...AVAILABLE_PAGE_MODULES.traffic.map( ( module ) => {
@@ -58,17 +63,29 @@ class StatsNavigation extends Component {
 		},
 	};
 
+	static getDerivedStateFromProps( nextProps, prevState ) {
+		if ( prevState.pageModules !== nextProps.moduleToggles ) {
+			return { pageModules: nextProps.moduleToggles };
+		}
+
+		return null;
+	}
+
 	settingsActionRef = createRef();
 
 	togglePopoverMenu = ( isPageSettingsPopoverVisible ) => {
 		this.setState( { isPageSettingsPopoverVisible } );
 	};
 
-	onToggleModule = ( page, module, value ) => {
-		const seletedPageModules = this.state.modules[ page ] || {};
-		seletedPageModules[ module ] = value;
+	onToggleModule = ( page, module, isShow ) => {
+		const seletedPageModules = Object.assign( {}, this.state.pageModules );
+		seletedPageModules[ module ] = isShow;
 
-		this.setState( seletedPageModules );
+		this.setState( { pageModules: seletedPageModules } );
+
+		this.props.updateModuleToggles( this.props.siteId, {
+			[ page ]: seletedPageModules,
+		} );
 	};
 
 	isValidItem = ( item ) => {
@@ -93,9 +110,13 @@ class StatsNavigation extends Component {
 		}
 	};
 
+	componentDidMount() {
+		this.props.requestModuleToggles( this.props.siteId );
+	}
+
 	render() {
 		const { slug, selectedItem, interval, isLegacy } = this.props;
-		const { isPageSettingsPopoverVisible } = this.state;
+		const { pageModules, isPageSettingsPopoverVisible } = this.state;
 		const { label, showIntervals, path } = navItems[ selectedItem ];
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ path }/{{ interval }}${ slugPath }`;
@@ -105,6 +126,8 @@ class StatsNavigation extends Component {
 		} );
 
 		const isHighlightsSettingsEnabled = config.isEnabled( 'stats/module-settings' );
+
+		// @TODO: Add loading status of modules settings to avoid toggling modules before they are loaded.
 
 		return (
 			<div className={ wrapperClass }>
@@ -168,7 +191,7 @@ class StatsNavigation extends Component {
 											<span>{ toggleItem.label }</span>
 											<FormToggle
 												className="page-modules-settings-toggle-control"
-												checked={ this.state.modules[ this.props.selectedItem ][ toggleItem.key ] }
+												checked={ pageModules[ toggleItem.key ] !== false }
 												onChange={ ( event ) => {
 													this.onToggleModule(
 														this.props.selectedItem,
@@ -189,16 +212,20 @@ class StatsNavigation extends Component {
 	}
 }
 
-export default connect( ( state, { siteId } ) => {
-	return {
-		isGoogleMyBusinessLocationConnected: isGoogleMyBusinessLocationConnectedSelector(
-			state,
-			siteId
-		),
-		isStore: isSiteStore( state, siteId ),
-		isWordAds:
-			getSiteOption( state, siteId, 'wordads' ) &&
-			canCurrentUser( state, siteId, 'manage_options' ),
-		siteId,
-	};
-} )( localize( StatsNavigation ) );
+export default connect(
+	( state, { siteId, selectedItem } ) => {
+		return {
+			isGoogleMyBusinessLocationConnected: isGoogleMyBusinessLocationConnectedSelector(
+				state,
+				siteId
+			),
+			isStore: isSiteStore( state, siteId ),
+			isWordAds:
+				getSiteOption( state, siteId, 'wordads' ) &&
+				canCurrentUser( state, siteId, 'manage_options' ),
+			siteId,
+			moduleToggles: getModuleToggles( state, siteId, [ selectedItem ] ),
+		};
+	},
+	{ requestModuleToggles, updateModuleToggles }
+)( localize( StatsNavigation ) );
