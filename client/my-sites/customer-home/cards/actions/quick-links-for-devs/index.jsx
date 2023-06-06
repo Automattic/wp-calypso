@@ -39,7 +39,7 @@ export const QuickLinks = ( {
 			<ActionBox
 				href={ `/hosting-config/${ siteSlug }#sftp-credentials` }
 				hideLinkIndicator
-				label={ translate( 'Setup SSH' ) }
+				label={ translate( 'Set up SSH' ) }
 				materialIcon="key"
 			/>
 			<ActionBox
@@ -67,7 +67,7 @@ export const QuickLinks = ( {
 			<ActionBox
 				href={ `/themes/${ siteSlug }` }
 				hideLinkIndicator
-				label={ translate( 'Explores themes' ) }
+				label={ translate( 'Explore themes' ) }
 				materialIcon="view_quilt"
 			/>
 			{ siteAdminUrl && (
