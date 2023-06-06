@@ -108,6 +108,10 @@
 		height: 8px;
 		top: 0;
 		position: absolute;
+
+		.progress-bar__progress {
+			border-radius: 0;
+		}
 	}
 
 	// masterbar styles
