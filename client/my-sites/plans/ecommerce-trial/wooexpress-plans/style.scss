@@ -47,7 +47,7 @@
 	gap: 1em;
 	justify-content: space-between;
 	margin: 0.5em auto 2em;
-	max-width: 720px;
+	max-width: calc(800px - 3em);
 	padding: 1em 1.5em 1.5em;
 
 	.enterprise-ecommerce__title {
@@ -61,7 +61,11 @@
 	}
 
 	.enterprise-ecommerce__cta {
-		min-width: 120px;
+		margin-top: 2em;
 		text-align: right;
+
+		.button {
+			width: 240px;
+		}
 	}
 }
