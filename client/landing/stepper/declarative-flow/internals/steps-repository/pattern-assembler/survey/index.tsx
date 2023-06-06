@@ -1,13 +1,15 @@
 import { useLocale } from '@automattic/i18n-utils';
-import { useState } from 'react';
 import Banner from 'calypso/components/banner';
 import './survey.scss';
 
-const Survey = ( { userHasEngaged }: { userHasEngaged: boolean } ) => {
-	const locale = useLocale();
-	const [ dismissed, setDismissed ] = useState( false );
+interface Props {
+	setSurveyDismissed: ( dismissed: boolean ) => void;
+}
 
-	if ( 'en' !== locale || dismissed || ! userHasEngaged ) {
+const Survey = ( { setSurveyDismissed }: Props ) => {
+	const locale = useLocale();
+
+	if ( 'en' !== locale ) {
 		return null;
 	}
 
@@ -25,7 +27,7 @@ const Survey = ( { userHasEngaged }: { userHasEngaged: boolean } ) => {
 			event="assembler-june-2023"
 			onDismiss={ ( e: Event ) => {
 				e.stopPropagation();
-				setDismissed( true );
+				setSurveyDismissed( true );
 			} }
 			dismissTemporary
 			showIcon={ false }

@@ -13,7 +13,7 @@ import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import { NavigationButtonAsItem } from './navigator-buttons';
 import NavigatorHeader from './navigator-header';
 import { NavigatorItemGroup } from './navigator-item-group';
-import Survey from './survey/survey';
+import Survey from './survey';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { MouseEvent } from 'react';
 
@@ -21,10 +21,17 @@ interface Props {
 	onSelect: ( name: string ) => void;
 	onContinueClick: ( callback?: () => void ) => void;
 	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
-	userHasEngaged: boolean;
+	surveyDismissed: boolean;
+	setSurveyDismissed: ( dismissed: boolean ) => void;
 }
 
-const ScreenMain = ( { onSelect, onContinueClick, recordTracksEvent, userHasEngaged }: Props ) => {
+const ScreenMain = ( {
+	onSelect,
+	onContinueClick,
+	recordTracksEvent,
+	surveyDismissed,
+	setSurveyDismissed,
+}: Props ) => {
 	const translate = useTranslate();
 	const [ disabled, setDisabled ] = useState( true );
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
@@ -135,7 +142,7 @@ const ScreenMain = ( { onSelect, onContinueClick, recordTracksEvent, userHasEnga
 						</>
 					</NavigatorItemGroup>
 				</HStack>
-				<Survey userHasEngaged={ userHasEngaged } />
+				{ ! surveyDismissed && <Survey setSurveyDismissed={ setSurveyDismissed } /> }
 			</div>
 			<div className="screen-container__footer">
 				<span className="screen-container__description">

@@ -67,7 +67,7 @@ const PatternAssembler = ( {
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
 	const [ activePosition, setActivePosition ] = useState( -1 );
 	const [ isPatternPanelListOpen, setIsPatternPanelListOpen ] = useState( false );
-	const [ userHasEngaged, setUserHasEngaged ] = useState( false );
+	const [ surveyDismissed, setSurveyDismissed ] = useState( false );
 	const { goBack, goNext, submit } = navigation;
 	const { applyThemeWithPatterns, assembleSite } = useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
@@ -478,8 +478,6 @@ const PatternAssembler = ( {
 	};
 
 	const onMainItemSelect = ( name: string ) => {
-		setUserHasEngaged( true );
-
 		if ( PATTERN_TYPES.includes( name ) ) {
 			trackEventPatternAdd( name );
 		}
@@ -564,7 +562,8 @@ const PatternAssembler = ( {
 						onSelect={ onMainItemSelect }
 						onContinueClick={ onContinueClick }
 						recordTracksEvent={ recordTracksEvent }
-						userHasEngaged={ userHasEngaged }
+						surveyDismissed={ surveyDismissed }
+						setSurveyDismissed={ setSurveyDismissed }
 					/>
 				</NavigatorScreen>
 
