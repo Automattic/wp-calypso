@@ -43,13 +43,9 @@ function querySubscribers(
 }
 
 function selectSubscribers( payload: SubscriberPayload ): SubscribersData {
-	if ( ! payload || ! payload.data ) {
-		// return default SubscribersData object if no payload data
-		return {
-			date: '',
-			unit: '',
-			data: [],
-		};
+	if ( ! payload?.data ) {
+		// return an empty SubscribersData object if no payload data
+		return {};
 	}
 
 	return {
@@ -97,5 +93,3 @@ export function useSubscribersQueries(
 
 	return useQueries( { queries: queryConfigs } ) as UseQueryResult< SubscriberPayload, unknown >[];
 }
-
-export type { SubscribersData };
