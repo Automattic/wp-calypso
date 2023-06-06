@@ -19,9 +19,6 @@
 	.blogger-intent__heading {
 		@include onboarding-font-recoleta;
 		text-align: left;
-		font-size: 2rem;
-		max-width: 377px;
-		line-height: 40px;
 		color: var(--color-neutral-100);
 	}
 
@@ -45,21 +42,21 @@
 		justify-content: space-between;
 		margin-bottom: 20px;
 		width: 100%;
+		flex-wrap: wrap;
 
 		.blogger-intent__row-text {
 			display: flex;
 			align-items: center;
 			color: var(--color-neutral-100);
 
-			.gridicon {
-				margin-right: 10px;
-
-				fill: var(--color-neutral-30);
+			.blogger-intent__icon {
+				margin-right: 26px; // mobile 22
 			}
 		}
 
 		.blogger-intent__button {
-			margin-left: 10px;
+			margin-top: 24px; // mobile
+			margin-left: 64px; // mobile, desktop = 100+
 			background-color: var(--studio-blue-50);
 			border-color: var(--studio-blue-50);
 		}

@@ -1,10 +1,11 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import { USER_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { DesignIcon, FeatherIcon } from './icons';
 import type { Step } from '../../types';
 import type { UserSelect } from '@automattic/data-stores';
 
@@ -37,7 +38,7 @@ const BlogIntent: Step = function BlogIntent() {
 						<div className="blogger-intent__content">
 							<div className="blogger-intent__row">
 								<div className="blogger-intent__row-text">
-									<Gridicon icon="pencil" />
+									<FeatherIcon />
 									{ translate( 'Write your first post' ) }
 								</div>
 								<Button primary href="/setup/start-writing">
@@ -47,7 +48,7 @@ const BlogIntent: Step = function BlogIntent() {
 							<hr />
 							<div className="blogger-intent__row">
 								<div className="blogger-intent__row-text">
-									<Gridicon icon="layout" />
+									<DesignIcon />
 									{ translate( 'Pick a design first' ) }
 								</div>
 								<Button primary href="/setup/design-first">
