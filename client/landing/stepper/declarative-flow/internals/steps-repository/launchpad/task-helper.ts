@@ -2,9 +2,14 @@ import {
 	FEATURE_VIDEO_UPLOADS,
 	planHasFeature,
 	PLAN_PREMIUM,
-	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
+	FEATURE_STYLE_CUSTOMIZATION,
 } from '@automattic/calypso-products';
-import { isNewsletterFlow, isStartWritingFlow, START_WRITING_FLOW } from '@automattic/onboarding';
+import {
+	isBlogOnboardingFlow,
+	isDesignFirstFlow,
+	isNewsletterFlow,
+	isStartWritingFlow,
+} from '@automattic/onboarding';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
@@ -17,6 +22,7 @@ import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { launchpadFlowTasks } from './tasks';
 import { LaunchpadChecklist, LaunchpadStatuses, Task } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
+
 /**
  * Some attributes of these enhanced tasks will soon be fetched through a WordPress REST
  * API, making said enhancements here unnecessary ( Ex. title, subtitle, completed,
@@ -45,25 +51,19 @@ export function getEnhancedTasks(
 	const enhancedTaskList: Task[] = [];
 
 	const productSlug =
-		( isStartWritingFlow( flow ) ? planCartProductSlug : null ) ?? site?.plan?.product_slug;
+		( isBlogOnboardingFlow( flow ) ? planCartProductSlug : null ) ?? site?.plan?.product_slug;
 
 	const translatedPlanName = productSlug ? PLANS_LIST[ productSlug ].getTitle() : '';
 
-	// Todo: setupBlogCompleted should be updated to use a new checklistStatus instead of site_edited.
-	//  Explorers will update Jetpack definitions to make this possible, meanwhile we are using site_edited.
-	const setupBlogCompleted = checklistStatuses?.site_edited || false;
-
-	const firstPostPublishedCompleted =
-		site?.options?.launchpad_checklist_tasks_statuses?.first_post_published || false;
+	const setupBlogCompleted =
+		Boolean( tasks?.find( ( task ) => task.id === 'setup_blog' )?.completed ) ||
+		! isStartWritingFlow( flow );
 
 	const domainUpsellCompleted = isDomainUpsellCompleted( site, checklistStatuses );
-	const siteLaunchCompleted = Boolean(
-		tasks?.find( ( task ) => task.id === 'site_launched' )?.completed
-	);
 
 	const planCompleted =
-		Boolean( tasks?.find( ( task ) => task.id === 'site_launched' )?.completed ) ||
-		! isStartWritingFlow( flow );
+		Boolean( tasks?.find( ( task ) => task.id === 'plan_completed' )?.completed ) ||
+		! isBlogOnboardingFlow( flow );
 
 	const videoPressUploadCompleted = Boolean(
 		tasks?.find( ( task ) => task.id === 'video_uploaded' )?.completed
@@ -102,17 +102,15 @@ export function getEnhancedTasks(
 					break;
 				case 'setup_blog':
 					taskData = {
-						title: translate( 'Set up your blog' ),
 						actionDispatch: () => {
-							recordTaskClickTracksEvent( flow, setupBlogCompleted, task.id );
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
-								addQueryArgs( `/setup/${ START_WRITING_FLOW }/setup-blog`, {
-									...{ siteSlug: siteSlug, 'start-writing': true },
+								addQueryArgs( `/setup/${ flow }/setup-blog`, {
+									...{ siteSlug: siteSlug },
 								} )
 							);
 						},
-						completed: setupBlogCompleted,
-						disabled: setupBlogCompleted,
+						disabled: task.completed && ! isBlogOnboardingFlow( flow ),
 					};
 					break;
 				case 'setup_newsletter':
@@ -141,7 +139,6 @@ export function getEnhancedTasks(
 					break;
 				case 'plan_selected':
 					taskData = {
-						title: isStartWritingFlow( flow ) ? translate( 'Choose a plan' ) : task.title,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							if ( displayGlobalStylesWarning ) {
@@ -149,30 +146,32 @@ export function getEnhancedTasks(
 									'calypso_launchpad_global_styles_gating_plan_selected_task_clicked'
 								);
 							}
-							let plansUrl = addQueryArgs( `/plans/${ siteSlug }`, {
+							const plansUrl = addQueryArgs( `/plans/${ siteSlug }`, {
 								...( shouldDisplayWarning && {
 									plan: PLAN_PREMIUM,
 									feature: isVideoPressFlowWithUnsupportedPlan
 										? FEATURE_VIDEO_UPLOADS
-										: FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
+										: FEATURE_STYLE_CUSTOMIZATION,
 								} ),
 							} );
-							if ( isStartWritingFlow( flow ) && site?.plan?.is_free ) {
-								plansUrl = addQueryArgs( `/setup/${ START_WRITING_FLOW }/plans`, {
-									...{ siteSlug: siteSlug, 'start-writing': true },
-								} );
-							}
+							window.location.assign( plansUrl );
+						},
+						completed: task.completed && ! isVideoPressFlowWithUnsupportedPlan,
+					};
+					break;
+				case 'plan_completed':
+					taskData = {
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							const plansUrl = addQueryArgs( `/setup/${ flow }/plans`, {
+								...{ siteSlug: siteSlug },
+							} );
 
 							window.location.assign( plansUrl );
 						},
-						badge_text:
-							isVideoPressFlowWithUnsupportedPlan ||
-							( isStartWritingFlow( flow ) && ! planCompleted )
-								? null
-								: translatedPlanName,
-						completed: ( planCompleted ?? task.completed ) && ! shouldDisplayWarning,
-						disabled: isStartWritingFlow( flow ) && ( planCompleted || ! domainUpsellCompleted ),
-						warning: shouldDisplayWarning,
+						badge_text: ! task.completed ? null : translatedPlanName,
+						disabled:
+							( task.completed || ! domainUpsellCompleted ) && ! isBlogOnboardingFlow( flow ),
 					};
 					break;
 				case 'subscribers_added':
@@ -187,12 +186,19 @@ export function getEnhancedTasks(
 					break;
 				case 'first_post_published':
 					taskData = {
-						title: isStartWritingFlow( flow ) ? translate( 'Write your first post' ) : task.title,
-						completed: isStartWritingFlow( flow ) ? firstPostPublishedCompleted : task.completed,
-						disabled: mustVerifyEmailBeforePosting || isStartWritingFlow( flow || null ) || false,
+						disabled:
+							mustVerifyEmailBeforePosting ||
+							isStartWritingFlow( flow || null ) ||
+							( task.completed && isDesignFirstFlow( flow || null ) ) ||
+							false,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
-							window.location.assign( `/post/${ siteSlug }` );
+							const newPostUrl = ! isDesignFirstFlow( flow || null )
+								? `/post/${ siteSlug }`
+								: addQueryArgs( `https://${ siteSlug }/wp-admin/post-new.php`, {
+										origin: window.location.origin,
+								  } );
+							window.location.assign( newPostUrl );
 						},
 					};
 					break;
@@ -277,7 +283,7 @@ export function getEnhancedTasks(
 
 									// Waits for half a second so that the loading screen doesn't flash away too quickly
 									await new Promise( ( res ) => setTimeout( res, 500 ) );
-									recordTaskClickTracksEvent( flow, siteLaunchCompleted, task.id );
+									recordTaskClickTracksEvent( flow, task.completed, task.id );
 									return { goToHome: true, siteSlug };
 								} );
 
@@ -288,10 +294,9 @@ export function getEnhancedTasks(
 					break;
 				case 'blog_launched':
 					taskData = {
-						title: translate( 'Launch your blog' ),
-						completed: siteLaunchCompleted,
-						disabled: isStartWritingFlow( flow ) && ! planCompleted,
-						isLaunchTask: true,
+						disabled:
+							isBlogOnboardingFlow( flow ) &&
+							( ! planCompleted || ! domainUpsellCompleted || ! setupBlogCompleted ),
 						actionDispatch: () => {
 							if ( site?.ID ) {
 								const { setPendingAction, setProgressTitle } = dispatch( ONBOARD_STORE );
@@ -349,19 +354,17 @@ export function getEnhancedTasks(
 					break;
 				case 'domain_upsell':
 					taskData = {
-						title: isStartWritingFlow( flow ) ? translate( 'Choose a domain' ) : task.title,
 						completed: domainUpsellCompleted,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, domainUpsellCompleted, task.id );
 
-							if ( isStartWritingFlow( flow || null ) ) {
+							if ( isBlogOnboardingFlow( flow ) ) {
 								window.location.assign(
-									addQueryArgs( `/setup/${ START_WRITING_FLOW }/domains`, {
+									addQueryArgs( `/setup/${ flow }/domains`, {
 										siteSlug,
 										flowToReturnTo: flow,
 										new: site?.name,
 										domainAndPlanPackage: true,
-										[ START_WRITING_FLOW ]: true,
 									} )
 								);
 
@@ -378,7 +381,7 @@ export function getEnhancedTasks(
 							window.location.assign( destinationUrl );
 						},
 						badge_text:
-							domainUpsellCompleted || isStartWritingFlow( flow || null )
+							domainUpsellCompleted || isBlogOnboardingFlow( flow )
 								? ''
 								: translate( 'Upgrade plan' ),
 					};

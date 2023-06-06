@@ -1,8 +1,8 @@
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useState, useContext, useEffect, RefObject } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useCallback, useState, useContext, useEffect, RefObject, useRef } from 'react';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	selectLicense,
@@ -226,6 +226,7 @@ export function useUpdateMonitorSettings( sites: Array< { blog_id: number; url: 
 									monitor_deferment_time: data.settings.jetmon_defer_status_down_minutes,
 									monitor_user_email_notifications: data.settings.email_notifications,
 									monitor_user_wp_note_notifications: data.settings.wp_note_notifications,
+									monitor_notify_additional_user_emails: data.settings.contacts?.emails ?? [],
 								},
 							};
 						}
@@ -428,4 +429,27 @@ export const useDashboardAddRemoveLicense = ( siteId: number, type: AllowedTypes
 	};
 
 	return { isLicenseSelected, handleAddLicenseAction };
+};
+
+const TIMEOUT_DURATION = 10000;
+
+export const useShowVerifiedBadge = () => {
+	const [ verifiedItem, setVerifiedItem ] = useState< { [ key: string ]: string } | undefined >();
+
+	const timeoutIdRef = useRef< ReturnType< typeof setTimeout > | undefined >();
+
+	const handleSetVerifiedItem = useCallback(
+		( type: string, item: string ) => {
+			if ( verifiedItem ) {
+				clearTimeout( timeoutIdRef.current );
+			}
+			setVerifiedItem( { [ type ]: item } );
+			timeoutIdRef.current = setTimeout( () => {
+				setVerifiedItem( undefined );
+			}, TIMEOUT_DURATION );
+		},
+		[ verifiedItem ]
+	);
+
+	return { verifiedItem, handleSetVerifiedItem };
 };

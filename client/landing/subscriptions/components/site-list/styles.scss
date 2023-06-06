@@ -1,11 +1,10 @@
 @import "@automattic/color-studio/dist/color-variables";
 @import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
-
-$max-list-width: 1300px;
+@import "client/assets/stylesheets/p2-vars";
+@import "client/landing/subscriptions/styles/row-title-label";
 
 .subscription-manager__site-list {
-	max-width: $max-list-width;
 
 	.row {
 		border-block-end: 1px solid rgb(238, 238, 238);
@@ -33,6 +32,10 @@ $max-list-width: 1300px;
 			align-items: center;
 			flex: 1.83;
 			min-width: 0;
+
+			> a {
+				flex: 0;
+			}
 
 			.icon {
 				fill: var(--color-text-subtle);
@@ -69,6 +72,14 @@ $max-list-width: 1300px;
 
 					&:hover {
 						text-decoration: underline;
+					}
+
+					.p2-label {
+						@extend %p2-label;
+					}
+
+					.paid-label {
+						@extend %paid-label;
 					}
 				}
 

@@ -1,8 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import CloudCart from 'calypso/jetpack-cloud/sections/pricing/jpcom-masterbar/cloud-cart';
 import useDetectWindowBoundary from 'calypso/lib/detect-window-boundary';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -12,6 +12,7 @@ import {
 	INTRO_PRICING_DISCOUNT_PERCENTAGE,
 } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { isConnectStore } from 'calypso/my-sites/plans/jetpack-plans/product-grid/utils';
+import { useSelector } from 'calypso/state';
 import './style.scss';
 import { isJetpackCloudCartEnabled } from 'calypso/state/sites/selectors';
 import guaranteeBadge from './14-day-badge.svg';
@@ -99,7 +100,7 @@ const IntroPricingBanner: React.FC = () => {
 							onClick={ () =>
 								recordTracksEvent( 'calypso_jpcom_agencies_page_intro_banner_link_click' )
 							}
-							href="https://jetpack.com/for/agencies/"
+							href={ localizeUrl( 'https://jetpack.com/for/agencies/' ) }
 							target="_blank"
 							rel="noreferrer"
 						>

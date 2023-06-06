@@ -7,6 +7,12 @@
  * @package happy-blocks
  */
 
+/**
+ * Load functions from the h4 theme, we're using localized_tailored_flow_url here.
+ */
+require_once WP_CONTENT_DIR . '/themes/h4/landing/marketing/pages/_common/lib/functions.php';
+use function \WPCOM\Themes\H4\Landing\Marketing\localized_tailored_flow_url;
+
 if ( ! isset( $args ) ) {
 	$args = array();
 }
@@ -26,7 +32,9 @@ $happy_blocks_tabs = array(
 		'title' => __( 'Forums', 'happy-blocks' ),
 		'url'   => localized_wpcom_url( 'https://wordpress.com/forums/' ),
 	),
-)
+);
+
+$happy_blocks_is_english = ( 0 === stripos( get_locale(), 'en' ) );
 ?>
 <?php if ( ! is_user_logged_in() ) : ?>
 	<div id="lpc-header-nav" class="lpc lpc-header-nav">
@@ -96,7 +104,6 @@ $happy_blocks_tabs = array(
 					</div>
 				</div>
 				<!-- Nav bar ends here. -->
-
 				<!-- Desktop dropdowns start here. -->
 				<div class="x-dropdown">
 					<div class="x-dropdown-top">
@@ -131,6 +138,26 @@ $happy_blocks_tabs = array(
 							<li>
 								<a role="menuitem" class="x-dropdown-link x-link" href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/professional-email/' ) ); ?>" title="<?php echo esc_attr( fixme__( 'Professional Email', __( 'Email', 'happy-blocks' ) ) ); ?>" tabindex="-1">
 									<?php echo esc_html( fixme__( 'Professional Email', __( 'Email', 'happy-blocks' ) ) ); ?>
+								</a>
+							</li>
+							<li>
+								<a role="menuitem" class="x-dropdown-link x-link" href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/website-design-service/' ) ); ?>" title="<?php echo esc_attr( __( 'Website Design Services', 'happy-blocks' ) ); ?>" tabindex="-1">
+									<?php echo esc_html( __( 'Website Design Services', 'happy-blocks' ) ); ?>
+								</a>
+							</li>
+							<li>
+								<a role="menuitem" class="x-dropdown-link x-link" href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/ecommerce/' ) ); ?>" title="<?php echo esc_attr( __( 'Store', 'happy-blocks' ) ); ?>" tabindex="-1">
+									<?php echo esc_html( __( 'Store', 'happy-blocks' ) ); ?>
+								</a>
+							</li>
+							<li>
+								<a role="menuitem" class="x-dropdown-link x-link" href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/create-a-course/' ) ); ?>" title="<?php echo esc_attr( __( 'Course', 'happy-blocks' ) ); ?>" tabindex="-1">
+									<?php echo esc_html( __( 'Course', 'happy-blocks' ) ); ?>
+								</a>
+							</li>
+							<li>
+								<a role="menuitem" class="x-dropdown-link x-link" href="<?php echo esc_url( localized_tailored_flow_url( '//wordpress.com/setup/newsletter' ) ); ?>" title="<?php echo esc_attr( __( 'Newsletter', 'happy-blocks' ) ); ?>" tabindex="-1">
+									<?php echo esc_html( __( 'Newsletter', 'happy-blocks' ) ); ?>
 								</a>
 							</li>
 						</ul>
@@ -200,6 +227,13 @@ $happy_blocks_tabs = array(
 									<?php esc_html_e( 'Logo Maker', 'happy-blocks' ); ?>
 								</a>
 							</li>
+							<?php if ( $happy_blocks_is_english ) : ?>
+								<li>
+									<a role="menuitem" class="x-dropdown-link x-link" href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/tags/' ) ); ?>" title="<?php esc_attr_e( 'Popular Tags', 'happy-blocks' ); ?>" tabindex="-1">
+										<?php esc_html_e( 'Popular Tags', 'happy-blocks' ); ?>
+									</a>
+								</li>
+							<?php endif; ?>
 							<?php if ( time() >= strtotime( '2021-02-17' ) ) : ?>
 								<li>
 									<a role="menuitem" class="x-dropdown-link x-link" href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/webinars/' ) ); ?>" title="<?php esc_attr_e( 'Daily Webinars', 'happy-blocks' ); ?>" tabindex="-1">
@@ -216,7 +250,6 @@ $happy_blocks_tabs = array(
 					</div>
 				</div>
 				<!-- Desktop dropdowns end here. -->
-
 				<!-- Mobile menu starts here. -->
 				<div class="x-menu" role="menu" aria-label="<?php esc_attr_e( 'WordPress.com Navigation Menu', 'happy-blocks' ); ?>" aria-hidden="true">
 					<div class="x-menu-overlay"></div>
@@ -288,6 +321,26 @@ $happy_blocks_tabs = array(
 									</a>
 								</li>
 								<li class="x-menu-grid-item">
+									<a role="menuitem" class="x-menu-link x-link" href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/website-design-service/' ) ); ?>" title="<?php echo esc_attr( __( 'Website Design Services', 'happy-blocks' ) ); ?>" tabindex="-1">
+										<?php echo esc_html( __( 'Website Design Services', 'happy-blocks' ) ); ?>
+									</a>
+								</li>
+								<li class="x-menu-grid-item">
+									<a role="menuitem" class="x-menu-link x-link" href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/ecommerce/' ) ); ?>" title="<?php echo esc_attr( __( 'Store', 'happy-blocks' ) ); ?>" tabindex="-1">
+										<?php echo esc_html( __( 'Store', 'happy-blocks' ) ); ?>
+									</a>
+								</li>
+								<li class="x-menu-grid-item">
+									<a role="menuitem" class="x-menu-link x-link" href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/create-a-course/' ) ); ?>" title="<?php echo esc_attr( __( 'Course', 'happy-blocks' ) ); ?>" tabindex="-1">
+										<?php echo esc_html( __( 'Course', 'happy-blocks' ) ); ?>
+									</a>
+								</li>
+								<li class="x-menu-grid-item">
+									<a role="menuitem" class="x-menu-link x-link" href="<?php echo esc_url( localized_tailored_flow_url( '//wordpress.com/setup/newsletter' ) ); ?>" title="<?php echo esc_attr( __( 'Newsletter', 'happy-blocks' ) ); ?>" tabindex="-1">
+										<?php echo esc_html( __( 'Newsletter', 'happy-blocks' ) ); ?>
+									</a>
+								</li>
+								<li class="x-menu-grid-item">
 									<a role="menuitem" class="x-menu-link x-link" href="<?php echo esc_url( 'https://wpvip.com/?utm_source=WordPresscom&utm_medium=automattic_referral&utm_campaign=top_nav' ); ?>" title="<?php esc_attr_e( 'Enterprise', 'happy-blocks' ); ?>" tabindex="-1">
 										<?php esc_html_e( 'Enterprise', 'happy-blocks' ); ?>
 										<svg width="9" height="9" xmlns="http://www.w3.org/2000/svg" class="x-icon x-icon--external" role="img" aria-hidden="true" focusable="false">
@@ -356,6 +409,13 @@ $happy_blocks_tabs = array(
 										<?php esc_html_e( 'Logo Maker', 'happy-blocks' ); ?>
 									</a>
 								</li>
+								<?php if ( $happy_blocks_is_english ) : ?>
+									<li class="x-menu-grid-item">
+										<a role="menuitem" class="x-menu-link x-link" href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/tags/' ) ); ?>" title="<?php esc_attr_e( 'Popular Tags', 'happy-blocks' ); ?>" tabindex="-1">
+											<?php esc_html_e( 'Popular Tags', 'happy-blocks' ); ?>
+										</a>
+									</li>
+								<?php endif; ?>
 								<?php if ( time() >= strtotime( '2021-02-17' ) ) : ?>
 									<li class="x-menu-grid-item">
 										<a role="menuitem" class="x-menu-link x-link" href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/webinars/' ) ); ?>" title="<?php esc_attr_e( 'Daily Webinars', 'happy-blocks' ); ?>" tabindex="-1">
@@ -373,7 +433,6 @@ $happy_blocks_tabs = array(
 					</div>
 				</div>
 				<!-- Mobile menu ends here. -->
-
 			</div>
 		</div>
 	</div>

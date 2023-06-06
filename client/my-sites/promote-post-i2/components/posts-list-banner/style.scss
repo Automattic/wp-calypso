@@ -1,35 +1,7 @@
 @import "@automattic/components/src/styles/typography";
+@import "@wordpress/base-styles/breakpoints";
 
 .promote-post-i2 {
-	&__top-bar {
-		align-items: center;
-		display: flex;
-		font-family: $font-sf-pro-text;
-		justify-content: space-between;
-		margin: 0 64px 16px 64px;
-
-		@media (min-width: 661px) {
-			.formatted-header.is-left-align,
-			.formatted-header.is-right-align,
-			.formatted-header__title {
-				margin: 0;
-			}
-		}
-
-		.posts-list-banner__learn-more {
-			border: 1px solid var(--studio-gray-10);
-			padding: 13px 16px;
-
-			.inline-support-link__nowrap {
-				color: var(--studio-gray-80);
-			}
-		}
-	}
-
-	.posts-list-banner__learn-more {
-		margin-top: 0;
-	}
-
 	.posts-list-banner__container {
 		align-items: center;
 		border: none;
@@ -88,6 +60,7 @@
 				border-radius: 4px;
 				bottom: 46px;
 				color: var(--studio-gray-40);
+				display: none; // TODO: consider this change with connection to main section width
 				font-size: 0.75rem;
 				height: calc(268px - 24px);
 				padding: 12px;
@@ -115,6 +88,7 @@
 				background: #000;
 				bottom: 0;
 				color: rgba(255, 255, 255, 0.75);
+				display: none;
 				font-size: 0.75rem;
 				height: 234px;
 				line-height: 1.4;
@@ -157,5 +131,63 @@
 	#primary .promote-post-i2 .posts-list-banner__container {
 		border: none !important;
 		background-color: #ecf3f9 !important;
+	}
+}
+
+@mixin blazepress-banner-mobile {
+	.promote-post-i2 {
+		.posts-list-banner__container {
+			display: none;
+		}
+	}
+
+}
+
+// Show Mobile view for screens if window width <= 782px
+@media screen and (max-width: $break-medium) {
+	@include blazepress-banner-mobile;
+}
+
+// Show Mobile view if sidebar is collapsed and main content width <= 782px
+$break-medium-collapsed-menu: $break-medium + 36px;
+@media screen and (max-width: $break-medium-collapsed-menu) {
+	body.is-section-promote-post-i2.is-sidebar-collapsed {
+		@include blazepress-banner-mobile;
+	}
+}
+
+// Show Mobile view if sidebar is expanded and main content width <= 782px
+$break-medium-expanded-menu: $break-medium + 272px;
+@media screen and (max-width: $break-medium-expanded-menu) {
+	body.is-section-promote-post-i2:not(.is-sidebar-collapsed) {
+		@include blazepress-banner-mobile;
+	}
+}
+
+@mixin blazepress-banner-desktop {
+	.promote-post-i2 {
+		.posts-list-banner__container {
+			.posts-list-banner__img-section {
+				.posts-list-banner__wrapper,
+				.posts-list-banner__article {
+					display: block;
+				}
+			}
+		}
+	}
+}
+
+// Show Blaze Banner (sidebar is collapsed)
+@media screen and (min-width: 1044px) {
+	// 1044px = 1280 ($break-wide) - 272 (expanded sidebar) + 36 (collapsed sidebar)
+	body.is-section-promote-post-i2.is-sidebar-collapsed {
+		@include blazepress-banner-desktop;
+	}
+}
+
+// Show Blaze Banner (sidebar is expanded)
+@media screen and (min-width: $break-wide) {
+	body.is-section-promote-post-i2:not(.is-sidebar-collapsed) {
+		@include blazepress-banner-desktop;
 	}
 }

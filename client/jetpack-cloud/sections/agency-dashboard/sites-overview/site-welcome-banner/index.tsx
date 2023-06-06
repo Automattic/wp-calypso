@@ -1,9 +1,9 @@
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import tipIcon from 'calypso/assets/images/jetpack/tip-icon.svg';
 import Banner from 'calypso/components/banner';
 import { dashboardPath } from 'calypso/lib/jetpack/paths';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	JETPACK_DASHBOARD_WELCOME_BANNER_PREFERENCE,

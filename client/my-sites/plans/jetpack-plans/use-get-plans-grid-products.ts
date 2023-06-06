@@ -12,6 +12,7 @@ import {
 	PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY,
 	PRODUCT_JETPACK_SCAN,
 	PRODUCT_JETPACK_SCAN_MONTHLY,
+	JETPACK_AI_PRODUCTS,
 	JETPACK_BOOST_PRODUCTS,
 	JETPACK_SCAN_PRODUCTS,
 	JETPACK_SEARCH_PRODUCTS,
@@ -19,7 +20,7 @@ import {
 	JETPACK_VIDEOPRESS_PRODUCTS,
 	getPlan,
 } from '@automattic/calypso-products';
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
 import slugToSelectorProduct from './slug-to-selector-product';
@@ -140,6 +141,15 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 	}
 
 	availableProducts = [ ...availableProducts, ...socialProductsToShow ];
+
+	// If the user does not own the AI product, include it in available products
+	if (
+		! ownedProducts.some( ( ownedProduct ) =>
+			( JETPACK_AI_PRODUCTS as ReadonlyArray< string > ).includes( ownedProduct )
+		)
+	) {
+		availableProducts = [ ...availableProducts, ...JETPACK_AI_PRODUCTS ];
+	}
 
 	return {
 		availableProducts: availableProducts.map( slugToSelectorProduct ) as SelectorProduct[],

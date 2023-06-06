@@ -38,6 +38,9 @@ import {
 import { screen } from '@testing-library/react';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { PlansFeaturesMain } from '../index';
+jest.mock( 'calypso/state/purchases/selectors', () => ( {
+	getByPurchaseId: jest.fn(),
+} ) );
 
 const props = {
 	selectedPlan: PLAN_FREE,
@@ -193,7 +196,7 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures() with tabs', () => {
 	};
 
 	beforeEach( () => {
-		global.document = { location: { search: '' } };
+		global.document.location.search = '';
 	} );
 
 	test( 'Should render <PlanFeatures /> with tab picker when requested', () => {

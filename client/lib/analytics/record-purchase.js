@@ -1,5 +1,4 @@
 import { recordOrder } from 'calypso/lib/analytics/ad-tracking';
-import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
 import { costToUSD } from 'calypso/lib/analytics/utils';
 import { gaRecordEvent } from './ga';
 
@@ -17,17 +16,5 @@ export function recordPurchase( { cart, orderId, sitePlanSlug } ) {
 
 		// Marketing
 		recordOrder( cart, orderId, sitePlanSlug );
-
-		// FullStory
-		if ( ! cart.is_signup ) {
-			recordFullStoryEvent( 'calypso_checkout_payment_success', {
-				order_id: orderId,
-				usd_value: usdValue,
-				value: cart.total_cost,
-				currency: cart.currency,
-				product_slugs: cart.products.map( ( product ) => product.product_slug ).join( ',' ),
-				product_names: cart.products.map( ( product ) => product.product_name ).join( ',' ),
-			} );
-		}
 	}
 }

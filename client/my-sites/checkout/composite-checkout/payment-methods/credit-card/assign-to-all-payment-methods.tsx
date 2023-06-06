@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 import { CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch } from 'react-redux';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 const CheckboxWrapper = styled.div`

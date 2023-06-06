@@ -5,10 +5,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook } from '@testing-library/react-hooks';
 import React from 'react';
 import '@testing-library/jest-dom/extend-expect';
+import { SiteSubscriptionsSortBy } from '../../constants';
 import { callApi, getSubkey } from '../../helpers';
-import useSiteSubscriptionsQuery, {
-	SiteSubscriptionsSortBy,
-} from '../../queries/use-site-subscriptions-query';
+import useSiteSubscriptionsQuery from '../../queries/use-site-subscriptions-query';
 
 jest.mock( '../../helpers', () => ( {
 	callApi: jest.fn(),

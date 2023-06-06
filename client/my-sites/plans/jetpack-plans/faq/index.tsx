@@ -1,12 +1,13 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import FoldableFAQ from 'calypso/components/foldable-faq';
 import {
 	getAgenciesLink,
 	getHelpLink,
 	getSupportLink,
 } from 'calypso/my-sites/plans-features-main/components/jetpack-faq';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import type { FC } from 'react';
@@ -29,7 +30,7 @@ const jetpackGettingStartedLink = () => {
 const jetpackGDPRLink = () => {
 	return (
 		<a
-			href="https://jetpack.com/gdpr/"
+			href={ localizeUrl( 'https://jetpack.com/gdpr/' ) }
 			target="_blank"
 			rel="noopener noreferrer"
 			onClick={ () => {

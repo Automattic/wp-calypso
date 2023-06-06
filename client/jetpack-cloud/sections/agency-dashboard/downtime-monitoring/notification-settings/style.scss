@@ -5,6 +5,7 @@
 	from {
 		transform: translateY(32px);
 	}
+
 	to {
 		transform: translateY(0);
 	}
@@ -20,11 +21,29 @@
 	@extend .notification-settings-title-light;
 	position: absolute;
 	inset-block-start: 50px;
-
 }
 
 .notification-settings__content {
 	margin-block-start: -16px;
+}
+
+.notification-settings__content-heading-with-beta {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.notification-settings__beta-tag {
+	background: var(--studio-gray-30);
+	border-radius: 4px;
+	font-style: normal;
+	font-weight: 700;
+	font-size: 0.75rem;
+	line-height: 17px;
+	display: flex;
+	color: var(--studio-white);
+	padding: 0 5px;
+	margin-block-end: 8px;
 }
 
 .notification-settings__content-heading {
@@ -90,7 +109,6 @@
 			}
 		}
 	}
-
 }
 
 .select-dropdown .select-dropdown__container {
@@ -104,7 +122,6 @@
 	width: 20px;
 }
 
-
 .notification-settings__toggle {
 	width: 15%;
 	display: inline-flex;
@@ -112,10 +129,6 @@
 
 	.components-form-toggle {
 		margin-right: 0 !important;
-	}
-
-	@include break-mobile {
-		justify-content: unset;
 	}
 }
 
@@ -130,11 +143,6 @@
 	width: 480px;
 	animation: components-modal__appear-animation 0.1s ease-out;
 	animation-fill-mode: forwards;
-
-	@include break-mobile {
-		width: 450px;
-		margin: auto;
-	}
 }
 
 .notification-settings__email-container {
@@ -152,10 +160,6 @@
 	.token-field__input-container {
 		cursor: default;
 	}
-
-	@include break-mobile {
-		margin-block-start: 4px;
-	}
 }
 
 .notification-settings__email-condition {
@@ -168,23 +172,19 @@
 	display: inline-flex;
 	flex-direction: row-reverse;
 	width: 100%;
+}
 
-	@include break-mobile {
-		display: block;
-	}
+.notification-settings__toggle-container .components-base-control__field .components-flex {
+	display: inline-flex;
+	flex-direction: row-reverse;
 }
 
 .notification-settings__large-screen {
 	display: none;
-	@include break-mobile {
-		display: inherit;
-	}
 }
 
 .notification-settings__small-screen {
-	@include break-mobile {
-		display: none;
-	}
+	display: inherit;
 }
 
 .notification-settings__footer-validation-error {

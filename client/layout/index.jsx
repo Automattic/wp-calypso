@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { HelpCenter } from '@automattic/data-stores';
-import { shouldShowHelpCenterToUser, shouldLoadInlineHelp } from '@automattic/help-center';
+import { shouldLoadInlineHelp } from '@automattic/help-center';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useDispatch } from '@wordpress/data';
@@ -29,7 +29,6 @@ import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
 import { isOffline } from 'calypso/state/application/selectors';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
 import isHappychatOpen from 'calypso/state/happychat/selectors/is-happychat-open';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
@@ -142,7 +141,6 @@ class Layout extends Component {
 		primary: PropTypes.element,
 		secondary: PropTypes.element,
 		focus: PropTypes.object,
-		headerSection: PropTypes.element,
 		// connected props
 		masterbarIsHidden: PropTypes.bool,
 		isSupportSession: PropTypes.bool,
@@ -251,7 +249,6 @@ class Layout extends Component {
 			'is-support-session': this.props.isSupportSession,
 			'has-no-sidebar': this.props.sidebarIsHidden,
 			'has-docked-chat': this.props.chatIsOpen && this.props.chatIsDocked,
-			'has-header-section': this.props.headerSection,
 			'has-no-masterbar': this.props.masterbarIsHidden,
 			'is-jetpack-login': this.props.isJetpackLogin,
 			'is-jetpack-site': this.props.isJetpack,
@@ -283,7 +280,6 @@ class Layout extends Component {
 			config.isEnabled( 'inline-help' ) &&
 			shouldLoadInlineHelp( this.props.sectionName, this.props.currentRoute ) &&
 			! loadHelpCenter;
-
 		return (
 			<div className={ sectionClass }>
 				<HelpCenterLoader
@@ -311,14 +307,7 @@ class Layout extends Component {
 				{ config.isEnabled( 'layout/guided-tours' ) && (
 					<AsyncLoad require="calypso/layout/guided-tours" placeholder={ null } />
 				) }
-				<div className="layout__header-section">
-					{ this.renderMasterbar( loadHelpCenter ) }
-					{ this.props.headerSection && (
-						<div className="layout__header-section-content logged-in">
-							{ this.props.headerSection }
-						</div>
-					) }
-				</div>
+				<div className="layout__header-section">{ this.renderMasterbar( loadHelpCenter ) }</div>
 				<LayoutLoader />
 				{ isJetpackCloud() && (
 					<AsyncLoad require="calypso/jetpack-cloud/style" placeholder={ null } />
@@ -424,9 +413,7 @@ export default withCurrentRoute(
 		const sidebarIsHidden = ! secondary || isWcMobileApp() || isDomainAndPlanPackageFlow;
 		const chatIsDocked = ! [ 'reader', 'theme' ].includes( sectionName ) && ! sidebarIsHidden;
 
-		const userAllowedToHelpCenter =
-			config.isEnabled( 'calypso/help-center' ) &&
-			shouldShowHelpCenterToUser( getCurrentUserId( state ) );
+		const userAllowedToHelpCenter = config.isEnabled( 'calypso/help-center' );
 
 		return {
 			masterbarIsHidden,

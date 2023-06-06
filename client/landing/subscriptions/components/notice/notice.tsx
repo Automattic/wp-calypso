@@ -1,21 +1,49 @@
 import './style.scss';
+import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import closeIcon from './images/close.svg';
 import errorIcon from './images/error.svg';
 import successIcon from './images/success.svg';
 import warningIcon from './images/warning.svg';
 
+export enum NoticeType {
+	Success = 'success',
+	Warning = 'warning',
+	Error = 'error',
+}
+
+export type NoticeState = {
+	type: NoticeType;
+	message: string | React.ReactNode;
+	onClose?: () => void;
+	action?: React.ReactNode;
+};
+
 type NoticeProps = {
 	children: React.ReactNode;
+	className?: string;
 	action?: React.ReactNode;
-	type?: 'success' | 'warning' | 'error';
+	type?: NoticeType;
 	onClose?: () => void;
 	visible?: boolean;
 };
 
-const Notice = ( { children, action, type = 'success', onClose, visible = true }: NoticeProps ) => {
+const Notice = ( {
+	children,
+	className,
+	action,
+	type = NoticeType.Success,
+	onClose,
+	visible = true,
+}: NoticeProps ) => {
 	return visible ? (
-		<div className={ `subscription-management__notice subscription-management__notice--${ type }` }>
+		<div
+			className={ classNames(
+				'subscription-management__notice',
+				`subscription-management__notice--${ type }`,
+				className
+			) }
+		>
 			{ onClose && (
 				<a
 					className="subscription-management__notice-close"

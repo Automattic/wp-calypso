@@ -16,16 +16,18 @@ export function generateFlows( {
 	getDestinationFromIntent = noop,
 	getDIFMSignupDestination = noop,
 	getDIFMSiteContentCollectionDestination = noop,
-	getSitesDestination = noop,
+	getHostingFlowDestination = noop,
 } = {} ) {
 	const flows = [
 		{
 			name: HOSTING_LP_FLOW,
-			steps: [ 'plans-hosting', 'user-hosting', 'domains' ],
-			destination: getSitesDestination,
+			steps: isEnabled( 'hosting-onboarding-i2' )
+				? [ 'user-hosting' ]
+				: [ 'plans-hosting', 'user-hosting', 'domains' ],
+			destination: getHostingFlowDestination,
 			description:
 				'Create an account and a blog and give the user the option of adding a domain and plan to the cart.',
-			lastModified: '2023-02-09',
+			lastModified: '2023-05-19',
 			showRecaptcha: true,
 		},
 		{
@@ -104,20 +106,6 @@ export function generateFlows( {
 			description: 'Preselect a theme to activate/buy from an external source with the assembler.',
 			lastModified: '2023-02-06',
 			showRecaptcha: true,
-		},
-		{
-			name: 'design-first',
-			steps: [
-				'template-first-themes',
-				'user',
-				'site-type-with-theme',
-				'site-title',
-				'domains',
-				'plans',
-			],
-			destination: getChecklistThemeDestination,
-			description: 'Start with one of our template-first (Gutenberg) themes.',
-			lastModified: '2019-10-16',
 		},
 		{
 			name: 'onboarding',
@@ -255,20 +243,6 @@ export function generateFlows( {
 			description: 'Signup flow for creating an online store with an Atomic site',
 			lastModified: '2020-08-11',
 			showRecaptcha: true,
-		},
-		{
-			name: 'ecommerce-design-first',
-			steps: [
-				'template-first-themes',
-				'user',
-				'site-type-with-theme',
-				'domains',
-				'plans-ecommerce',
-			],
-			destination: getSignupDestination,
-			description:
-				'Signup flow for creating an online store with an Atomic site, forked from the design-first flow',
-			lastModified: '2019-11-27',
 		},
 		{
 			name: 'ecommerce-monthly',

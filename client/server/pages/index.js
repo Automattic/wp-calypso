@@ -830,7 +830,7 @@ function wpcomPages( app ) {
 	} );
 
 	app.get( [ '/subscriptions', '/subscriptions/*' ], function ( req, res, next ) {
-		if ( req.cookies.subkey || req.context.isLoggedIn ) {
+		if ( req.cookies.subkey || req.context.isLoggedIn || calypsoEnv !== 'production' ) {
 			// If the user is logged in, or has a subkey cookie, they are authorized to view the page
 			return next();
 		}
@@ -914,10 +914,7 @@ export default function pages() {
 	loginRouter( serverRouter( app, setUpRoute, null ) );
 
 	handleSectionPath( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper' );
-
-	if ( config.isEnabled( 'subscription-management' ) ) {
-		handleSectionPath( SUBSCRIPTIONS_SECTION_DEFINITION, '/subscriptions', 'entry-subscriptions' );
-	}
+	handleSectionPath( SUBSCRIPTIONS_SECTION_DEFINITION, '/subscriptions', 'entry-subscriptions' );
 
 	// Redirect legacy `/new` routes to the corresponding `/start`
 	app.get( [ '/new', '/new/*' ], ( req, res ) => {

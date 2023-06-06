@@ -17,6 +17,7 @@ body.is-section-posts .domain-upsell-callout {
 	align-items: center;
 	left: 50%;
 	transform: translateX(-50%);
+	height: 46px;
 
 	@media ( max-width: $break-xlarge ) {
 		display: none;

@@ -8,8 +8,8 @@ import {
 	PRODUCT_JETPACK_VIDEOPRESS,
 } from '@automattic/calypso-products';
 import { JetpackUpsellCard } from '@automattic/components';
-import { useSelector } from 'react-redux';
 import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
+import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import usePurchasedProducts from './use-purchased-products';
 

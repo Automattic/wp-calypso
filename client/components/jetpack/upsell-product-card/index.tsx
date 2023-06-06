@@ -7,7 +7,6 @@ import {
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import BackupImage from 'calypso/assets/images/jetpack/rna-image-backup.png';
 import DefaultImage from 'calypso/assets/images/jetpack/rna-image-default.png';
 import ScanImage from 'calypso/assets/images/jetpack/rna-image-scan.png';
@@ -18,6 +17,7 @@ import productAboveButtonText from 'calypso/my-sites/plans/jetpack-plans/product
 import productTooltip from 'calypso/my-sites/plans/jetpack-plans/product-card/product-tooltip';
 import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
 import useItemPrice from 'calypso/my-sites/plans/jetpack-plans/use-item-price';
+import { useSelector } from 'calypso/state';
 import { getSiteAvailableProduct } from 'calypso/state/sites/products/selectors';
 import type {
 	Duration,

@@ -1,0 +1,5 @@
+@import "client/landing/subscriptions/styles/list-actions-bar";
+
+.tab-view {
+	@extend %list-actions-bar;
+}

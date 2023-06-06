@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import { useDispatch } from 'react-redux';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import type { GetActionUrlProps } from '../confirmation-tasks';
 import type { TranslateResult } from 'i18n-calypso';

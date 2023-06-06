@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import QRCode from 'qrcode.react';
+import { QRCodeSVG } from 'qrcode.react';
 import { Component } from 'react';
 import FormButton from 'calypso/components/forms/form-button';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -199,7 +199,7 @@ class Security2faEnable extends Component {
 					) }
 				</p>
 				<div className={ qrClasses }>
-					{ this.state.otpAuthUri && <QRCode value={ this.state.otpAuthUri } size={ 150 } /> }
+					{ this.state.otpAuthUri && <QRCodeSVG value={ this.state.otpAuthUri } size={ 150 } /> }
 				</div>
 			</div>
 		);

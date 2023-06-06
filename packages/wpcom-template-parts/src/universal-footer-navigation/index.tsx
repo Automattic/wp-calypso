@@ -131,11 +131,13 @@ export const PureUniversalNavbarFooter = ( {
 								</li>
 								<li>
 									<a
-										href={ localizeUrl( 'https://wordpress.com/built-by/?ref=footer_pricing' ) }
+										href={ localizeUrl(
+											'https://wordpress.com/website-design-service/?ref=footer_pricing'
+										) }
 										title="WordPress Website Building Service"
 										target="_self"
 									>
-										{ __( 'Built by WordPress.com', __i18n_text_domain__ ) }
+										{ __( 'Website Design Services', __i18n_text_domain__ ) }
 									</a>
 								</li>
 							</ul>
@@ -210,6 +212,13 @@ export const PureUniversalNavbarFooter = ( {
 									<a href={ localizeUrl( 'https://wordpress.com/logo-maker/' ) } target="_self">
 										{ __( 'Logo Maker', __i18n_text_domain__ ) }
 									</a>
+								</li>
+								<li>
+									{ isEnglishLocale && (
+										<a href={ localizeUrl( 'https://wordpress.com/tags/' ) } target="_self">
+											{ __( 'Popular Tags', __i18n_text_domain__ ) }
+										</a>
+									) }
 								</li>
 								<li>
 									<a href={ localizeUrl( 'https://wordpress.com/webinars/' ) } target="_self">

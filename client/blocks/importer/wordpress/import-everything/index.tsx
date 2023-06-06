@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { ProgressBar } from '@automattic/components';
 import { Hooray, Progress, SubTitle, Title, NextButton } from '@automattic/onboarding';
 import { createElement, createInterpolateElement } from '@wordpress/element';
@@ -6,6 +7,7 @@ import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import { connect } from 'react-redux';
+import PreMigrationScreen from 'calypso/blocks/importer/wordpress/import-everything/pre-migration';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { EVERY_TEN_SECONDS, Interval } from 'calypso/lib/interval';
 import { SectionMigrate } from 'calypso/my-sites/migrate/section-migrate';
@@ -15,6 +17,7 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { receiveSite, requestSite, updateSiteMigrationMeta } from 'calypso/state/sites/actions';
 import { getSite, getSiteAdminUrl, isJetpackSite } from 'calypso/state/sites/selectors';
+import { IAppState } from 'calypso/state/types';
 import DomainInfo from '../../components/domain-info';
 import DoneButton from '../../components/done-button';
 import GettingStartedVideo from '../../components/getting-started-video';
@@ -139,7 +142,20 @@ export class ImportEverything extends SectionMigrate {
 			stepNavigator,
 			showConfirmDialog = true,
 			isMigrateFromWp,
+			onContentOnlySelection,
 		} = this.props;
+
+		if ( isEnabled( 'onboarding/import-redesign' ) ) {
+			return (
+				<PreMigrationScreen
+					startImport={ this.startMigration }
+					isTargetSitePlanCompatible={ isTargetSitePlanCompatible }
+					targetSite={ targetSite }
+					onContentOnlyClick={ onContentOnlySelection }
+					isMigrateFromWp={ isMigrateFromWp }
+				/>
+			);
+		}
 
 		if ( sourceSite ) {
 			return (
@@ -193,6 +209,23 @@ export class ImportEverything extends SectionMigrate {
 		);
 	}
 
+	renderMigrationProgressSimple() {
+		const { translate } = this.props;
+
+		return (
+			<Progress className="onboarding-progress-simple">
+				<Interval onTick={ this.updateFromAPI } period={ EVERY_TEN_SECONDS } />
+				<Title>{ translate( 'We’re safely migrating all your data' ) }</Title>
+				<ProgressBar compact={ true } value={ this.state.percent ? this.state.percent : 0 } />
+				<SubTitle tagName="h3">
+					{ translate(
+						'Feel free to close this window. We’ll email you when your new site is ready.'
+					) }
+				</SubTitle>
+			</Progress>
+		);
+	}
+
 	renderMigrationComplete() {
 		const { isMigrateFromWp } = this.props;
 		return (
@@ -229,6 +262,7 @@ export class ImportEverything extends SectionMigrate {
 
 	renderDefaultHoorayScreen() {
 		const { translate, stepNavigator } = this.props;
+
 		return (
 			<>
 				<Title>{ translate( 'Hooray!' ) }</Title>
@@ -292,7 +326,7 @@ export class ImportEverything extends SectionMigrate {
 			case MigrationStatus.NEW:
 			case MigrationStatus.BACKING_UP:
 			case MigrationStatus.RESTORING:
-				return this.renderMigrationProgress();
+				return this.renderMigrationProgressSimple();
 
 			case MigrationStatus.DONE:
 				return this.renderMigrationComplete();
@@ -307,7 +341,7 @@ export class ImportEverything extends SectionMigrate {
 }
 
 export const connector = connect(
-	( state, ownProps: Partial< Props > ) => {
+	( state: IAppState, ownProps: Partial< Props > ) => {
 		return {
 			isTargetSiteAtomic: !! isSiteAutomatedTransfer( state, ownProps.targetSiteId as number ),
 			isTargetSiteJetpack: !! isJetpackSite( state, ownProps.targetSiteId as number ),

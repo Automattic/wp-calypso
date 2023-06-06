@@ -22,6 +22,7 @@ import type {
 import type {
 	CountryListItem,
 	PossiblyCompleteDomainContactDetails,
+	ContactDetailsType,
 } from '@automattic/wpcom-checkout';
 
 export const normalAllowedPaymentMethods = [
@@ -83,6 +84,7 @@ export const countryList: CountryListItem[] = [
 		name: 'Australia',
 		has_postal_codes: true,
 		vat_supported: false,
+		tax_name: 'GST',
 	},
 	{
 		code: 'ES',
@@ -90,6 +92,7 @@ export const countryList: CountryListItem[] = [
 		has_postal_codes: true,
 		vat_supported: true,
 		tax_country_codes: [ 'ES' ],
+		tax_name: 'VAT',
 	},
 	{
 		code: 'CA',
@@ -99,6 +102,7 @@ export const countryList: CountryListItem[] = [
 		tax_needs_subdivision: true,
 		vat_supported: true,
 		tax_country_codes: [ 'CA' ],
+		tax_name: 'VAT',
 	},
 	{
 		code: 'CH',
@@ -107,6 +111,7 @@ export const countryList: CountryListItem[] = [
 		tax_needs_address: true,
 		vat_supported: true,
 		tax_country_codes: [ 'CH' ],
+		tax_name: 'GST',
 	},
 	{
 		code: 'GB',
@@ -115,6 +120,7 @@ export const countryList: CountryListItem[] = [
 		tax_needs_organization: true, // added for testing, not present in API data
 		vat_supported: true,
 		tax_country_codes: [ 'GB', 'XI' ],
+		tax_name: 'VAT',
 	},
 	{
 		code: 'IN',
@@ -129,6 +135,7 @@ export const countryList: CountryListItem[] = [
 		has_postal_codes: true,
 		tax_needs_organization: true,
 		vat_supported: false,
+		tax_name: 'CT',
 	},
 	{
 		code: 'NO',
@@ -460,6 +467,15 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				bill_period: 'yearly',
 				currency: 'USD',
 			};
+		case 'jetpack_backup_t1_bi_yearly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2123,
+				product_name: 'Jetpack VaultPress Backup (10GB)',
+				product_slug: productSlug,
+				bill_period: 'bi-yearly',
+				currency: 'USD',
+			};
 		case 'jetpack_backup_t2_monthly':
 			return {
 				...getEmptyResponseCartProduct(),
@@ -557,6 +573,15 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_name: 'Jetpack Security T1',
 				product_slug: productSlug,
 				bill_period: 'monthly',
+				currency: 'USD',
+			};
+		case 'jetpack_security_t1_bi_yearly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2034,
+				product_name: 'Jetpack Security T1',
+				product_slug: productSlug,
+				bill_period: 'bi-yearly',
 				currency: 'USD',
 			};
 		case 'jetpack_security_t1_yearly':
@@ -1461,6 +1486,18 @@ export function mockSetVatInfoEndpoint() {
 	return endpoint;
 }
 
+export function mockUserSignupValidationEndpoint( endpointResponse ) {
+	const endpoint = jest.fn();
+	endpoint.mockReturnValue( true );
+
+	nock( 'https://public-api.wordpress.com' )
+		.post( '/rest/v1.1/signups/validation/user/', ( body ) => {
+			return endpoint( body );
+		} )
+		.reply( endpointResponse );
+	return endpoint;
+}
+
 export function mockPayPalEndpoint( endpointResponse ) {
 	const endpoint = jest.fn();
 	endpoint.mockReturnValue( true );
@@ -1612,7 +1649,7 @@ export function mockCachedContactDetailsEndpoint( responseData ): void {
 }
 
 export function mockContactDetailsValidationEndpoint(
-	type: 'domain' | 'gsuite' | 'tax',
+	type: Exclude< ContactDetailsType, 'none' >,
 	responseData,
 	conditionCallback?: ( body ) => boolean
 ): void {
@@ -1626,8 +1663,6 @@ export function mockContactDetailsValidationEndpoint(
 				return '/rest/v1.1/me/google-apps/validate';
 		}
 	} )();
-	const endpoint = jest.fn();
-	endpoint.mockReturnValue( true );
 	const mockResponse = () => [ 200, responseData ];
 	nock( 'https://public-api.wordpress.com' )
 		.post( endpointPath, conditionCallback )
@@ -1836,6 +1871,7 @@ export function mockStripeElements() {
 		mount: jest.fn(),
 		destroy: jest.fn(),
 		on: jest.fn(),
+		off: jest.fn(),
 		update: jest.fn(),
 	} );
 

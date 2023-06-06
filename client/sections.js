@@ -180,6 +180,12 @@ const sections = [
 		group: 'sites',
 	},
 	{
+		name: 'subscribers',
+		paths: [ '/subscribers' ],
+		module: 'calypso/my-sites/subscribers',
+		group: 'sites',
+	},
+	{
 		name: 'jetpack-connect',
 		paths: [ '/jetpack' ],
 		module: 'calypso/jetpack-connect',
@@ -588,7 +594,7 @@ const sections = [
 	},
 	{
 		name: 'promote-post',
-		paths: [ '/advertising', '/advertising/[^\\/]+(/[^\\/])?' ],
+		paths: [ '/advertising', '/advertising/[^\\/]+', '/advertising/[^\\/]+/[^\\/]+/promote' ],
 		module: 'calypso/my-sites/promote-post',
 		group: 'sites',
 	},

@@ -1,7 +1,6 @@
 import { PatternRenderer } from '@automattic/block-renderer';
-import { DeviceSwitcher } from '@automattic/components';
+import { Button, DeviceSwitcher } from '@automattic/components';
 import { useStyle } from '@automattic/global-styles';
-import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { __experimentalUseNavigator as useNavigator } from '@wordpress/components';
 import { Icon, layout } from '@wordpress/icons';
 import classnames from 'classnames';
@@ -44,7 +43,6 @@ const PatternLargePreview = ( {
 	recordTracksEvent,
 }: Props ) => {
 	const translate = useTranslate();
-	const hasEnTranslation = useHasEnTranslation();
 	const navigator = useNavigator();
 	const hasSelectedPattern = header || sections.length || footer;
 	const shouldShowSelectPatternHint =
@@ -70,31 +68,28 @@ const PatternLargePreview = ( {
 		goToSelectHeaderPattern();
 	};
 
+	const getTitle = () => {
+		if ( ! shouldShowSelectPatternHint ) {
+			return translate( 'Welcome to your blank canvas.' );
+		}
+
+		return translate( 'Ready to start designing?' );
+	};
+
 	const getDescription = () => {
 		if ( ! shouldShowSelectPatternHint ) {
 			return translate( "It's time to get creative. Add your first pattern to get started." );
 		}
 
-		const options = {
-			components: {
-				link: (
-					// eslint-disable-next-line jsx-a11y/anchor-is-valid
-					<a href="#" target="_blank" rel="noopener noreferrer" onClick={ handleAddHeaderClick } />
-				),
-			},
-		};
+		return translate( 'You can view your color and font selections after you select a pattern.' );
+	};
 
-		return hasEnTranslation(
-			'You can view your color and font selections after you select a pattern. Get started by {{link}}adding a header pattern{{/link}}'
-		)
-			? translate(
-					'You can view your color and font selections after you select a pattern. Get started by {{link}}adding a header pattern{{/link}}',
-					options
-			  )
-			: translate(
-					'You can view your color and font selections after you select a pattern, get started by {{link}}adding a header pattern{{/link}}',
-					options
-			  );
+	const getAction = () => {
+		if ( ! shouldShowSelectPatternHint ) {
+			return null;
+		}
+
+		return <Button onClick={ handleAddHeaderClick }>{ translate( 'Add header' ) }</Button>;
 	};
 
 	const renderPattern = ( type: string, pattern: Pattern, position = -1 ) => {
@@ -217,9 +212,10 @@ const PatternLargePreview = ( {
 				</ul>
 			) : (
 				<div className="pattern-large-preview__placeholder">
-					<Icon className="pattern-large-preview__placeholder-icon" icon={ layout } size={ 72 } />
-					<h2>{ translate( 'Welcome to your blank canvas' ) }</h2>
+					<Icon className="pattern-large-preview__placeholder-icon" icon={ layout } size={ 56 } />
+					<h2>{ getTitle() }</h2>
 					<span>{ getDescription() }</span>
+					{ getAction() }
 				</div>
 			) }
 		</DeviceSwitcher>

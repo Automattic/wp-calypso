@@ -1,7 +1,6 @@
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
-import { useSelector } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackPartnerPortalStoredCards from 'calypso/components/data/query-jetpack-partner-portal-stored-cards';
@@ -13,6 +12,7 @@ import { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/pay
 import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
 import StoredCreditCard from 'calypso/jetpack-cloud/sections/partner-portal/stored-credit-card';
 import StoredCreditCardLoading from 'calypso/jetpack-cloud/sections/partner-portal/stored-credit-card/stored-credit-card-loading';
+import { useSelector } from 'calypso/state';
 import {
 	getAllStoredCards,
 	getStoredCardsPerPage,

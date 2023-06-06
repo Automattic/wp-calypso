@@ -9,12 +9,12 @@ import {
 	QueryFunction,
 	useQuery,
 } from '@tanstack/react-query';
-import { useSelector } from 'react-redux';
 import { decodeEntities } from 'calypso/lib/formatting';
 import {
 	extractSearchInformation,
 	getPreinstalledPremiumPluginsVariations,
 } from 'calypso/lib/plugins/utils';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { DEFAULT_PAGE_SIZE } from './constants';
 import { search, searchBySlug } from './search-api';

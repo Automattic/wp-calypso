@@ -2,8 +2,7 @@ import { OnboardSelect, updateLaunchpadSettings } from '@automattic/data-stores'
 import { useLocale } from '@automattic/i18n-utils';
 import { START_WRITING_FLOW, replaceProductsInCart } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import { useSelect, useDispatch } from '@wordpress/data';
-import { useSelector } from 'react-redux';
+import { useSelect, useDispatch, dispatch } from '@wordpress/data';
 import { recordSubmitStep } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-submit-step';
 import { redirect } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/util';
 import {
@@ -12,9 +11,13 @@ import {
 	Flow,
 	ProvidedDependencies,
 } from 'calypso/landing/stepper/declarative-flow/internals/types';
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { freeSiteAddressType } from 'calypso/lib/domains/constants';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { requestSiteAddressChange } from 'calypso/state/site-address-change/actions';
 
 const startWriting: Flow = {
 	name: START_WRITING_FLOW,
@@ -47,8 +50,8 @@ const startWriting: Flow = {
 				asyncComponent: () => import( './internals/steps-repository/launchpad' ),
 			},
 			{
-				slug: 'start-writing-done',
-				asyncComponent: () => import( './internals/steps-repository/start-writing-done' ),
+				slug: 'celebration-step',
+				asyncComponent: () => import( './internals/steps-repository/celebration-step' ),
 			},
 		];
 	},
@@ -65,10 +68,15 @@ const startWriting: Flow = {
 		);
 		const { saveSiteSettings, setIntentOnSite } = useDispatch( SITE_STORE );
 		const { setSelectedSite } = useDispatch( ONBOARD_STORE );
+		const state = useSelect(
+			( select ) => select( ONBOARD_STORE ) as OnboardSelect,
+			[]
+		).getState();
+		const site = useSite();
 
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', flowName, currentStep );
-			const returnUrl = `/setup/start-writing/start-writing-done?siteSlug=${ siteSlug }`;
+			const returnUrl = `/setup/start-writing/celebration-step?siteSlug=${ siteSlug }`;
 
 			switch ( currentStep ) {
 				case 'site-creation-step':
@@ -76,15 +84,13 @@ const startWriting: Flow = {
 				case 'processing': {
 					// If we just created a new site.
 					if ( ! providedDependencies?.blogLaunched && providedDependencies?.siteSlug ) {
-						await updateLaunchpadSettings( String( providedDependencies?.siteSlug ), {
-							checklist_statuses: { first_post_published: true },
-						} );
-
 						setSelectedSite( providedDependencies?.siteId );
-						setIntentOnSite( providedDependencies?.siteSlug, START_WRITING_FLOW );
-						saveSiteSettings( providedDependencies?.siteId, {
-							launchpad_screen: 'full',
-						} );
+						await Promise.all( [
+							setIntentOnSite( providedDependencies?.siteSlug, START_WRITING_FLOW ),
+							saveSiteSettings( providedDependencies?.siteId, {
+								launchpad_screen: 'full',
+							} ),
+						] );
 
 						const siteOrigin = window.location.origin;
 
@@ -95,6 +101,9 @@ const startWriting: Flow = {
 
 					// If the user's site has just been launched.
 					if ( providedDependencies?.blogLaunched && providedDependencies?.siteSlug ) {
+						// Remove the site_intent.
+						await setIntentOnSite( providedDependencies?.siteSlug, '' );
+
 						// If the user launched their site with a plan or domain in their cart, redirect them to
 						// checkout before sending them home.
 						if ( getPlanCartItem() || getDomainCartItem() ) {
@@ -118,11 +127,34 @@ const startWriting: Flow = {
 					}
 
 					if ( providedDependencies?.freeDomain ) {
+						const freeDomainSuffix = '.wordpress.com';
+						const newDomainName = String( providedDependencies?.domainName ).replace(
+							freeDomainSuffix,
+							''
+						);
+
+						if ( providedDependencies?.domainName ) {
+							await requestSiteAddressChange(
+								site?.ID,
+								newDomainName,
+								'wordpress.com',
+								siteSlug,
+								freeSiteAddressType.BLOG,
+								true,
+								false
+							)( dispatch, state );
+						}
+
+						const currentSiteSlug = String( providedDependencies?.domainName ?? siteSlug );
+
 						await replaceProductsInCart(
-							siteSlug as string,
+							currentSiteSlug as string,
 							[ getPlanCartItem() ].filter( Boolean ) as MinimalRequestCartProduct[]
 						);
-						return navigate( 'launchpad' );
+
+						return window.location.assign(
+							`/setup/start-writing/launchpad?siteSlug=${ currentSiteSlug }`
+						);
 					}
 
 					return navigate( 'plans' );
@@ -151,7 +183,7 @@ const startWriting: Flow = {
 				case 'setup-blog':
 					if ( siteSlug ) {
 						await updateLaunchpadSettings( siteSlug, {
-							checklist_statuses: { site_edited: true },
+							checklist_statuses: { setup_blog: true },
 						} );
 					}
 					return navigate( 'launchpad' );

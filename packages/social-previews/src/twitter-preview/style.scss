@@ -17,13 +17,12 @@
 .twitter-preview__wrapper {
 	padding: 20px;
 	background-color: #fff;
-	max-width: clamp(450px, 100%, 635px);
+	max-width: clamp(200px, 100%, 635px);
 	margin-inline: auto;
 }
 
-.twitter-preview__section {
-	width: clamp(450px, 100%, 635px);
-	margin-inline: auto;
+.twitter-preview__section.social-preview__section {
+	width: clamp(200px, 100%, 635px);
 
 	// To compensate for the padding for profile picture in twitter threads
 	.social-preview__section-heading,
@@ -50,11 +49,16 @@
 		justify-items: center;
 
 		.twitter-preview__profile-image {
+			display: flex;
+			align-items: center;
+			max-width: 30px;
+			max-height: 30px;
+			border-radius: 50%;
+			overflow: hidden;
+
 			img {
-				height: 30px;
-				width: 30px;
-				border-radius: 15px; /* stylelint-disable-line scales/radii */
 				object-fit: cover;
+				width: 100%;
 			}
 		}
 

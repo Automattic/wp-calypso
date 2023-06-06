@@ -3,7 +3,6 @@ import { Button } from '@automattic/components';
 import { useTranslate, getLocaleSlug } from 'i18n-calypso';
 import page from 'page';
 import { Fragment, FunctionComponent } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
 import rocket from 'calypso/assets/images/customer-home/illustration--rocket.svg';
 import earnIllustration from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
@@ -16,6 +15,7 @@ import verblioLogo from 'calypso/assets/images/illustrations/verblio-logo.png';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { marketingConnections, pluginsPath } from 'calypso/my-sites/marketing/paths';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -103,10 +103,11 @@ export const MarketingTools: FunctionComponent = () => {
 						"Hire our dedicated experts to build a handcrafted, personalized website. Share some details about what you're looking for, and we'll make it happen."
 					) }
 					imagePath={ builtByWp }
+					imageAlt={ translate( 'Built by WordPress.com logo' ) }
 				>
 					<Button
 						onClick={ handleBuiltByWpClick }
-						href="https://wordpress.com/built-by/?ref=tools-banner"
+						href="https://wordpress.com/website-design-service/?ref=tools-banner"
 						target="_blank"
 					>
 						{ translate( 'Get started' ) }
@@ -118,6 +119,7 @@ export const MarketingTools: FunctionComponent = () => {
 						'A custom logo helps your brand pop and makes your site memorable. Make a professional logo in a few clicks with our partner today.'
 					) }
 					imagePath={ fiverrLogo }
+					imageAlt={ translate( 'Fiverr logo' ) }
 				>
 					<Button
 						onClick={ handleCreateALogoClick }
@@ -134,6 +136,7 @@ export const MarketingTools: FunctionComponent = () => {
 						"Everyone can create professional designs with Canva. It's a free and drag-and-drop tool for creating images, cover images, and more."
 					) }
 					imagePath={ canvaLogo }
+					imageAlt={ translate( 'Canva logo' ) }
 				>
 					<Button onClick={ handleCanvaClick } href="https://wp.me/design-tool" target="_blank">
 						{ translate( 'Create custom images with Canva' ) }
@@ -152,6 +155,7 @@ export const MarketingTools: FunctionComponent = () => {
 							}
 						) }
 						imagePath={ facebookLogo }
+						imageAlt={ translate( 'Facebook logo' ) }
 					>
 						<Button
 							onClick={ handleFacebookClick }
@@ -168,6 +172,7 @@ export const MarketingTools: FunctionComponent = () => {
 						'Accept payments or donations with our native payment blocks, limit content to paid subscribers only, opt into our ad network to earn revenue, and refer friends to WordPress.com for credits.'
 					) }
 					imagePath={ earnIllustration }
+					imageAlt={ translate( 'A stack of coins' ) }
 				>
 					<Button onClick={ handleEarnClick }>{ translate( 'Start earning' ) }</Button>
 				</MarketingToolsFeature>
@@ -178,6 +183,7 @@ export const MarketingTools: FunctionComponent = () => {
 						"Use your site's Jetpack Social tools to connect your site and your social media accounts, and share your new posts automatically. Connect to Facebook, LinkedIn, and more."
 					) }
 					imagePath="/calypso/images/marketing/social-media-logos.svg"
+					imageAlt={ translate( 'Logos for Facebook, Twitter, LinkedIn, and Tumblr' ) }
 				>
 					<Button onClick={ handleStartSharingClick }>{ translate( 'Start sharing' ) }</Button>
 				</MarketingToolsFeature>
@@ -188,6 +194,7 @@ export const MarketingTools: FunctionComponent = () => {
 						'SimpleTexting makes it easy, fast and affordable to send SMS marketing campaigns or engage in 1-on-1 conversations with your customers.'
 					) }
 					imagePath={ simpletextLogo }
+					imageAlt={ translate( 'SimpleTexting logo' ) }
 				>
 					<Button
 						onClick={ handleSimpleTextingClick }
@@ -204,6 +211,7 @@ export const MarketingTools: FunctionComponent = () => {
 						'Sendinblue is an all-in-one marketing and CRM platform to help you grow your business through building stronger customer relationships.'
 					) }
 					imagePath={ sendinblueLogo }
+					imageAlt={ translate( 'Sendinblue logo' ) }
 				>
 					<Button
 						onClick={ handleSendinblueClick }
@@ -220,6 +228,7 @@ export const MarketingTools: FunctionComponent = () => {
 						'Verblio makes blog and content creation happen. Its writers can help create high-powered content for your website that drives SEO. Get 35% off your first month today.'
 					) }
 					imagePath={ verblioLogo }
+					imageAlt={ translate( 'Verblio logo' ) }
 				>
 					<Button
 						onClick={ handleVerblioClick }
@@ -237,6 +246,7 @@ export const MarketingTools: FunctionComponent = () => {
 							'Take our free introductory course about search engine optimization (SEO) and learn how to improve your site or blog for both search engines and humans.'
 						) }
 						imagePath={ rocket }
+						imageAlt={ translate( 'A rocketship' ) }
 					>
 						<Button
 							onClick={ handleSEOCourseClick }

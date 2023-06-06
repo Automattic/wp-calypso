@@ -1,7 +1,7 @@
 import { CompactCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import { PromoteWidgetStatus, usePromoteWidget } from 'calypso/lib/promote-post';
+import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 export default function AccountLevelAdvertisingLinks() {

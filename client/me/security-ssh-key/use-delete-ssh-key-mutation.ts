@@ -20,21 +20,19 @@ export const useDeleteSSHKeyMutation = (
 	options: UseMutationOptions< MutationResponse, MutationError, MutationVariables > = {}
 ) => {
 	const queryClient = useQueryClient();
-	const mutation = useMutation(
-		async ( { sshKeyName }: MutationVariables ) =>
+	const mutation = useMutation( {
+		mutationFn: async ( { sshKeyName }: MutationVariables ) =>
 			wp.req.get( {
 				path: `/me/ssh-keys/${ sshKeyName }`,
 				apiNamespace: 'wpcom/v2',
 				method: 'DELETE',
 			} ),
-		{
-			...options,
-			onSuccess: async ( ...args ) => {
-				await queryClient.invalidateQueries( SSH_KEY_QUERY_KEY );
-				options.onSuccess?.( ...args );
-			},
-		}
-	);
+		...options,
+		onSuccess: async ( ...args ) => {
+			await queryClient.invalidateQueries( SSH_KEY_QUERY_KEY );
+			options.onSuccess?.( ...args );
+		},
+	} );
 
 	const { mutate } = mutation;
 

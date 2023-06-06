@@ -1,7 +1,7 @@
 import { Dialog } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import QRCode from 'qrcode.react';
+import { QRCodeCanvas } from 'qrcode.react';
 import { useCallback, useState, useEffect } from 'react';
 
 PostActionsQRCode.propTypes = {
@@ -26,7 +26,7 @@ function PostActionsQRCode( { siteUrl, showQRCode } ) {
 
 	return (
 		<Dialog isVisible={ showQRCodeDialog } buttons={ buttons } onClose={ onCloseDialog }>
-			<QRCode value={ siteUrl } size={ 200 } renderAs="canvas" level="H" />
+			<QRCodeCanvas value={ siteUrl } size={ 200 } level="H" />
 		</Dialog>
 	);
 }

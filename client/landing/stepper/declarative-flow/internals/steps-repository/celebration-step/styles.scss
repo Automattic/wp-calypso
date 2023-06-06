@@ -1,0 +1,109 @@
+@import "../style";
+
+.celebration-step {
+	.step-container {
+		background: #fdfdfd;
+		padding: 0;
+		margin: 0;
+		max-width: none;
+		min-height: 100vh;
+
+		.web-preview__inner {
+			width: 100%;
+			height: 680px;
+
+			@include break-small {
+				width: 90%;
+				max-width: 1080px;
+				margin: 0 auto;
+			}
+		}
+	}
+
+	.step-container__header .formatted-header {
+		margin: 16px;
+
+		.formatted-header__title {
+			text-align: left;
+
+			@include break-small {
+				text-align: center;
+			}
+		}
+
+		.formatted-header__subtitle {
+			text-align: left;
+			margin-top: 5px;
+
+			@include break-small {
+				text-align: center;
+			}
+		}
+	}
+
+	&__top-content {
+		display: flex;
+		flex-direction: column;
+		margin: 0 16px;
+
+		@include break-small {
+			margin: 0 auto;
+			flex-direction: row;
+			align-items: center;
+			justify-content: space-between;
+			width: calc(90% - 64px);
+			max-width: calc(1080px - 64px);
+			margin-bottom: 16px;
+		}
+
+		&-main {
+			display: flex;
+			flex-direction: column;
+		}
+
+		&-title {
+			font-weight: 500;
+			font-family: Inter, $sans;
+		}
+
+		&-cta {
+			display: flex;
+			flex-direction: column;
+			margin-top: 24px;
+
+			@include break-small {
+				flex-direction: row-reverse;
+				margin-top: 0;
+			}
+
+			.button {
+				border-radius: 4px;
+				font-weight: 500;
+			}
+		}
+
+		&-cta-social {
+			@include break-small {
+				margin-left: 16px;
+			}
+		}
+
+		&-cta-blog {
+			margin-top: 16px;
+			margin-bottom: 80px;
+			@include break-small {
+				margin: 0;
+			}
+		}
+	}
+
+	&__footer {
+		text-align: center;
+
+		a.celebration-step__footer-link {
+			color: #101517;
+			text-decoration: underline;
+			font-weight: 500;
+		}
+	}
+}

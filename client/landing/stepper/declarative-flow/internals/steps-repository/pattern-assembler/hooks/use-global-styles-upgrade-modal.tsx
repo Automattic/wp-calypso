@@ -14,6 +14,7 @@ interface Props {
 	hasSelectedColorVariation?: boolean;
 	hasSelectedFontVariation?: boolean;
 	onCheckout?: () => void;
+	onUpgradeLater?: () => void;
 	recordTracksEvent: ( eventName: string, eventProps?: { [ key: string ]: unknown } ) => void;
 }
 
@@ -23,10 +24,10 @@ const useGlobalStylesUpgradeModal = ( {
 	hasSelectedColorVariation = false,
 	hasSelectedFontVariation = false,
 	onCheckout,
+	onUpgradeLater,
 	recordTracksEvent,
 }: Props ) => {
 	const [ isOpen, setIsOpen ] = useState( false );
-	const [ isDismissed, setIsDismissed ] = useState( false );
 	const site = useSite();
 	const siteSlug = useSiteSlugParam();
 	const siteUrl = siteSlug || urlToSlug( site?.URL || '' ) || '';
@@ -34,22 +35,32 @@ const useGlobalStylesUpgradeModal = ( {
 	const translate = useTranslate();
 	const { goToCheckout } = useCheckout();
 
-	const customizeDescription = ( description: JSX.Element ) => {
-		return (
-			<>
-				<p>
-					{ translate( "You've selected a premium color or font for your site." ) }
-					&nbsp;
-					{ description }
-				</p>
-				<p>
-					{ translate(
-						'You can also continue with your selected color or font and upgrade later.'
-					) }
-				</p>
-			</>
+	let description;
+
+	if ( hasSelectedColorVariation && hasSelectedFontVariation ) {
+		description = translate(
+			'Your font and color choices will be only visible to visitors after upgrading to the Premium plan or higher.'
 		);
-	};
+	} else if ( hasSelectedColorVariation ) {
+		description = translate(
+			'Your color choices will be only visible to visitors after upgrading to the Premium plan or higher.'
+		);
+	} else if ( hasSelectedFontVariation ) {
+		description = translate(
+			'Your font choices will be only visible to visitors after upgrading to the Premium plan or higher.'
+		);
+	}
+
+	description = (
+		<>
+			<p>{ description }</p>
+			<p>
+				{ translate(
+					'Upgrade now to unlock your current choices and get access to tons of other features. Or you can decide later and try them out first in the editor.'
+				) }
+			</p>
+		</>
+	);
 
 	const openModal = () => {
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.GLOBAL_STYLES_GATING_MODAL_SHOW );
@@ -83,18 +94,16 @@ const useGlobalStylesUpgradeModal = ( {
 		recordTracksEvent(
 			PATTERN_ASSEMBLER_EVENTS.GLOBAL_STYLES_GATING_MODAL_UPGRADE_LATER_BUTTON_CLICK
 		);
-		setIsDismissed( true );
+		onUpgradeLater?.();
 		setIsOpen( false );
 	};
 
 	return {
-		isDismissed,
 		shouldUnlockGlobalStyles:
 			( hasSelectedColorVariation || hasSelectedFontVariation ) && shouldLimitGlobalStyles,
 		globalStylesUpgradeModalProps: {
 			isOpen,
-			tryItOutText: translate( 'Upgrade later' ),
-			customizeDescription,
+			description,
 			closeModal,
 			checkout,
 			tryStyle: upgradeLater,

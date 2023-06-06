@@ -18,12 +18,12 @@ import { DropdownMenu, MenuGroup, MenuItem as CoreMenuItem, Modal } from '@wordp
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { ComponentType, useEffect, useMemo, useState } from 'react';
-import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import { useQueryReaderTeams } from 'calypso/components/data/query-reader-teams';
 import SitePreviewLink from 'calypso/components/site-preview-link';
 import { useSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
+import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -135,7 +135,6 @@ const ManagePluginsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 };
 
 const ModalContent = styled.div( {
-	padding: 16,
 	width: '80vw',
 	maxWidth: '480px',
 	minHeight: '100px',
@@ -413,7 +412,7 @@ export const SitesEllipsisMenu = ( {
 					{ ! isWpcomStagingSite && ! isLaunched && <LaunchItem { ...props } /> }
 					<SettingsItem { ...props } />
 					{ hasHostingFeatures && <HostingConfigurationSubmenu { ...props } /> }
-					{ hasHostingFeatures && <SiteLogsItem { ...props } /> }
+					{ site.is_wpcom_atomic && <SiteLogsItem { ...props } /> }
 					{ ! isP2Site( site ) && <ManagePluginsItem { ...props } /> }
 					{ site.is_coming_soon && <PreviewSiteModalItem { ...props } /> }
 					{ ! isWpcomStagingSite && shouldShowSiteCopyItem && (

@@ -10,6 +10,7 @@ export interface HappyChatAvailability {
 		| 'free'
 		| 'personal'
 		| 'personal-with-legacy-chat'
+		| 'starter'
 		| 'premium'
 		| 'pro'
 		| 'business'
@@ -17,7 +18,6 @@ export interface HappyChatAvailability {
 		| 'jetpack-paid'
 		| 'p2-plus';
 	nickname: string;
-	is_chat_closed: boolean;
 	availability: Availability;
 }
 
@@ -27,13 +27,10 @@ export interface OtherSupportAvailability {
 	is_user_eligible_for_chat: boolean;
 }
 
-export interface SupportSession {
-	id?: number;
+export interface SupportActivity {
+	id: number;
 	status: string;
 	subject: string;
-	time: Date;
 	timestamp: number;
-	type: string;
-	url: string;
-	when: string;
+	channel: string;
 }

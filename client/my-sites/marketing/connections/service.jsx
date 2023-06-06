@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { FEATURE_SOCIAL_MASTODON_CONNECTION } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import requestExternalAccess from '@automattic/request-external-access';
 import classnames from 'classnames';
@@ -7,6 +8,7 @@ import { isEqual, find, some, get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, cloneElement } from 'react';
 import { connect } from 'react-redux';
+import Badge from 'calypso/components/badge';
 import ExternalLink from 'calypso/components/external-link';
 import FoldableCard from 'calypso/components/foldable-card';
 import Notice from 'calypso/components/notice';
@@ -83,6 +85,7 @@ export class SharingService extends Component {
 		isP2HubSite: PropTypes.bool,
 		isJetpack: PropTypes.bool,
 		hasMultiConnections: PropTypes.bool,
+		isNew: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -105,13 +108,17 @@ export class SharingService extends Component {
 		isP2HubSite: false,
 		isJetpack: false,
 		hasMultiConnections: false,
+		isNew: false,
 	};
 
 	/**
 	 * Triggers an action based on the current connection status.
 	 */
 	performAction = () => {
-		const connectionStatus = this.getConnectionStatus( this.props.service.ID );
+		const connectionStatus = this.getConnectionStatus(
+			this.props.service.ID,
+			this.props.service.status ?? 'ok'
+		);
 		const { path } = this.props;
 
 		// Depending on current status, perform an action when user clicks the
@@ -410,7 +417,7 @@ export class SharingService extends Component {
 	 * @param {string} service The name of the service to check
 	 * @returns {string} Connection status.
 	 */
-	getConnectionStatus( service ) {
+	getConnectionStatus( service, serviceStatus = 'ok' ) {
 		let status;
 
 		if ( this.props.isFetching ) {
@@ -433,6 +440,7 @@ export class SharingService extends Component {
 			status = 'connected';
 		}
 
+		status = 'ok' !== serviceStatus && 'not-connected' !== status ? 'must-disconnect' : status;
 		return status;
 	}
 
@@ -518,13 +526,6 @@ export class SharingService extends Component {
 		return get( this, 'props.service.ID' ) === 'mailchimp';
 	};
 
-	isMastodonService = () => {
-		if ( ! config.isEnabled( 'mastodon' ) ) {
-			return false;
-		}
-		return get( this, 'props.service.ID' ) === 'mastodon';
-	};
-
 	isPicasaMigration( status ) {
 		if ( status === 'must-disconnect' && get( this, 'props.service.ID' ) === 'google_photos' ) {
 			return true;
@@ -533,9 +534,16 @@ export class SharingService extends Component {
 		return false;
 	}
 
+	renderBadges() {
+		return this.props.isNew ? (
+			<Badge className="service__new-badge">{ this.props.translate( 'New' ) }</Badge>
+		) : null;
+	}
+
 	render() {
 		const connections = this.getConnections();
-		const connectionStatus = this.getConnectionStatus( this.props.service.ID );
+		const serviceStatus = this.props.service.status ?? 'ok';
+		const connectionStatus = this.getConnectionStatus( this.props.service.ID, serviceStatus );
 		const earliestExpiry = this.getConnectionExpiry();
 		const classNames = classnames( 'sharing-service', this.props.service.ID, connectionStatus, {
 			'is-open': this.state.isOpen,
@@ -543,7 +551,6 @@ export class SharingService extends Component {
 		const accounts = this.state.isSelectingAccount ? this.props.availableExternalAccounts : [];
 		const showLinkedInNotice =
 			'linkedin' === this.props.service.ID && some( connections, { status: 'must_reauth' } );
-		const serviceStatus = this.props.service.status ?? 'ok';
 
 		const header = (
 			<div>
@@ -551,7 +558,9 @@ export class SharingService extends Component {
 				{ this.isMailchimpService( connectionStatus ) && renderMailchimpLogo() }
 
 				<div className="sharing-service__name">
-					<h2>{ this.props.service.label }</h2>
+					<h2>
+						{ this.props.service.label } { this.renderBadges() }
+					</h2>
 					<ServiceDescription
 						service={ this.props.service }
 						status={ connectionStatus }
@@ -570,10 +579,33 @@ export class SharingService extends Component {
 			</div>
 		);
 
+		const action = (
+			<ServiceAction
+				status={ 'ok' !== serviceStatus ? 'must-disconnect' : connectionStatus }
+				service={ this.props.service }
+				onAction={ this.performAction }
+				isConnecting={ this.state.isConnecting }
+				isRefreshing={ this.state.isRefreshing }
+				isDisconnecting={ this.state.isDisconnecting }
+			/>
+		);
+
 		if ( 'ok' !== serviceStatus ) {
 			return (
 				<li>
-					<FoldableCard disabled header={ header } compact className={ classNames } />
+					<FoldableCard
+						disabled={ 'must-disconnect' !== connectionStatus }
+						compact
+						header={ header }
+						className={ classNames }
+						summary={
+							[ 'connected', 'reconnect', 'refresh-falied', 'must-disconnect' ].includes(
+								connectionStatus
+							)
+								? action
+								: undefined
+						}
+					/>
 					<Notice isCompact status="is-error" className="sharing-service__unsupported">
 						{ this.props.translate(
 							'Twitter is no longer supported. {{a}}Learn more about this{{/a}}',
@@ -599,17 +631,6 @@ export class SharingService extends Component {
 			);
 		}
 
-		const action = (
-			<ServiceAction
-				status={ connectionStatus }
-				service={ this.props.service }
-				onAction={ this.performAction }
-				isConnecting={ this.state.isConnecting }
-				isRefreshing={ this.state.isRefreshing }
-				isDisconnecting={ this.state.isDisconnecting }
-			/>
-		);
-
 		return (
 			<li>
 				<AccountDialog
@@ -628,7 +649,9 @@ export class SharingService extends Component {
 					compact
 					summary={ action }
 					expandedSummary={
-						this.isMastodonService() ? cloneElement( action, { isExpanded: true } ) : action
+						this.props.isMastodonEligible && this.props.service.ID === 'mastodon'
+							? cloneElement( action, { isExpanded: true } )
+							: action
 					}
 				>
 					<div
@@ -716,6 +739,7 @@ export function connectFor( sharingService, mapStateToProps, mapDispatchToProps 
 				isP2HubSite: isSiteP2Hub( state, siteId ),
 				isJetpack: isJetpackSite( state, siteId ),
 				hasMultiConnections: siteHasFeature( state, siteId, 'social-multi-connections' ),
+				isMastodonEligible: siteHasFeature( state, siteId, FEATURE_SOCIAL_MASTODON_CONNECTION ),
 			};
 			return typeof mapStateToProps === 'function' ? mapStateToProps( state, props ) : props;
 		},
