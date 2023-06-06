@@ -56,7 +56,7 @@ export default function EmailItemContent( {
 		}
 	};
 
-	const isVerified = verifiedContacts.emails.includes( item.email ) || item.verified;
+	const isVerified = item.verified || verifiedContacts.emails.includes( item.email );
 
 	return (
 		<Card className="configure-email-address__card" key={ item.email } compact>

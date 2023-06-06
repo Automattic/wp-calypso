@@ -142,7 +142,7 @@ export default function NotificationSettings( {
 			const extraEmails = allEmailItems.filter( ( item ) => ! item.isDefault );
 			params.contacts = {
 				emails: extraEmails.map( ( item ) => {
-					const isVerified = verifiedContacts.emails.includes( item.email ) || item.verified;
+					const isVerified = item.verified || verifiedContacts.emails.includes( item.email );
 					return {
 						name: item.name,
 						email_address: item.email,

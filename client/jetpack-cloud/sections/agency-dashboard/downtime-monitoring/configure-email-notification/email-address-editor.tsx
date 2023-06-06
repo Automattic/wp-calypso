@@ -86,7 +86,8 @@ export default function EmailAddressEditor( {
 		setResendCodeClicked( true );
 		recordEvent( 'downtime_monitoring_resend_email_verification_code' );
 		handleResendCode();
-	}, [ handleResendCode, recordEvent ] );
+		setEmailItem( { ...emailItem, code: undefined } );
+	}, [ emailItem, handleResendCode, recordEvent ] );
 
 	const translationArgs = useMemo(
 		() => ( {
@@ -387,7 +388,7 @@ export default function EmailAddressEditor( {
 								<FormTextInput
 									id="code"
 									name="code"
-									value={ emailItem.code }
+									value={ emailItem.code || '' }
 									onChange={ handleChange( 'code' ) }
 								/>
 								{ validationError?.code && (
@@ -397,10 +398,12 @@ export default function EmailAddressEditor( {
 								) }
 								<div className="configure-email-notification__help-text" id="code-help-text">
 									{ helpText ??
-										translate(
-											'Please wait for a minute. If you didn’t receive it, we can {{button}}resend{{/button}} it.',
-											translationArgs
-										) }
+										( resendCodeClicked && resendCode.isLoading
+											? translate( 'Sending code' )
+											: translate(
+													'Please wait for a minute. If you didn’t receive it, we can {{button}}resend{{/button}} it.',
+													translationArgs
+											  ) ) }
 								</div>
 							</FormFieldset>
 						) }
