@@ -87,6 +87,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		useAtomicTransferQueryParamUpdate( siteId );
 		useEffect( fetchImporters, [ siteId ] );
 		useEffect( checkFromSiteData, [ fromSiteData?.url ] );
+		useEffect( () => onComponentUnmount, [] );
 
 		if ( ! importer ) {
 			stepNavigator.goToImportCapturePage?.();
@@ -99,6 +100,10 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		function onGoBack() {
 			resetImportJob( getImportJob( importer ) );
 			navigation.goBack?.();
+		}
+
+		function onComponentUnmount() {
+			dispatch( resetImportReceived() );
 		}
 
 		function fetchImporters() {
