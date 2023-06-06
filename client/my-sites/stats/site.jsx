@@ -201,6 +201,17 @@ class StatsSite extends Component {
 			'is-period-year': period === 'year',
 		} );
 
+		const moduleListClasses = classNames(
+			'is-events',
+			'stats__module-list',
+			'stats__module-list--traffic',
+			'stats__module--unified',
+			{
+				'stats__module-list--traffic-no-authors': this.isModuleHidden( 'authors' ),
+				'stats__module-list--traffic-no-videos': this.isModuleHidden( 'videos' ),
+			}
+		);
+
 		return (
 			<div className="stats">
 				{ ! isOdysseyStats && (
@@ -264,7 +275,7 @@ class StatsSite extends Component {
 
 					{ ! isOdysseyStats && <MiniCarousel slug={ slug } isSitePrivate={ isSitePrivate } /> }
 
-					<div className="stats__module-list stats__module-list--traffic is-events stats__module--unified">
+					<div className={ moduleListClasses }>
 						<StatsModule
 							path="posts"
 							moduleStrings={ moduleStrings.posts }

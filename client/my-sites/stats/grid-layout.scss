@@ -193,6 +193,105 @@ $grid-vertical-gutters: 32px;
 		10
 	);
 
+	// Hide the Authors module.
+	&.stats__module-list--traffic-no-authors {
+		@include stats-desktop-grid(
+			"posts posts posts posts posts posts posts referrers referrers referrers referrers referrers"
+			"country country country country country country country country country country country country"
+			"search search search search clicks clicks clicks clicks videos videos videos videos"
+			"emails emails emails emails emails emails downloads downloads downloads downloads downloads downloads",
+			4
+		);
+
+		// Keep Emails occupying the whole row.
+		@include stats-tablet-grid(
+			"posts posts posts posts referrers referrers referrers referrers"
+			"country country country country country country country country"
+			"search search search search clicks clicks clicks clicks"
+			"videos videos videos videos videos videos videos videos"
+			"emails emails emails emails emails emails emails emails"
+			"downloads downloads downloads downloads downloads downloads downloads downloads",
+			6
+		);
+
+		@include stats-mobile-grid(
+			"posts posts posts posts"
+			"referrers referrers referrers referrers"
+			"country country country country"
+			"search search search search"
+			"clicks clicks clicks clicks"
+			"videos videos videos videos"
+			"emails emails emails emails"
+			"downloads downloads downloads downloads",
+			8
+		);
+	}
+
+	// Hide the Videos module.
+	&.stats__module-list--traffic-no-videos {
+		@include stats-desktop-grid(
+			"posts posts posts posts posts posts posts referrers referrers referrers referrers referrers"
+			"country country country country country country country country country country country country"
+			"authors authors authors authors search search search search clicks clicks clicks clicks"
+			"emails emails emails emails emails emails downloads downloads downloads downloads downloads downloads",
+			4
+		);
+
+		// Keep Emails occupying the whole row.
+		@include stats-tablet-grid(
+			"posts posts posts posts referrers referrers referrers referrers"
+			"country country country country country country country country"
+			"authors authors authors authors search search search search"
+			"clicks clicks clicks clicks clicks clicks clicks clicks"
+			"emails emails emails emails emails emails emails emails"
+			"downloads downloads downloads downloads downloads downloads downloads downloads",
+			6
+		);
+
+		@include stats-mobile-grid(
+			"posts posts posts posts"
+			"referrers referrers referrers referrers"
+			"country country country country"
+			"authors authors authors authors"
+			"search search search search"
+			"clicks clicks clicks clicks"
+			"emails emails emails emails"
+			"downloads downloads downloads downloads",
+			8
+		);
+	}
+
+	// Hide Authors and Videos modules.
+	&.stats__module-list--traffic-no-authors.stats__module-list--traffic-no-videos {
+		@include stats-desktop-grid(
+			"posts posts posts posts posts posts posts referrers referrers referrers referrers referrers"
+			"country country country country country country country country country country country country"
+			"search search search search search search clicks clicks clicks clicks clicks clicks"
+			"emails emails emails emails emails emails downloads downloads downloads downloads downloads downloads",
+			4
+		);
+
+		@include stats-tablet-grid(
+			"posts posts posts posts referrers referrers referrers referrers"
+			"country country country country country country country country"
+			"search search search search clicks clicks clicks clicks"
+			"emails emails emails emails emails emails emails emails"
+			"downloads downloads downloads downloads downloads downloads downloads downloads",
+			5
+		);
+
+		@include stats-mobile-grid(
+			"posts posts posts posts"
+			"referrers referrers referrers referrers"
+			"country country country country"
+			"search search search search"
+			"clicks clicks clicks clicks"
+			"emails emails emails emails"
+			"downloads downloads downloads downloads",
+			7
+		);
+	}
+
 	.card.stats-module {
 		margin-bottom: 0;
 	}
