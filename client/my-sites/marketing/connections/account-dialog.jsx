@@ -5,10 +5,7 @@ import { filter, find, isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import Notice from 'calypso/components/notice';
 import { warningNotice } from 'calypso/state/notices/actions';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import AccountDialogAccount from './account-dialog-account';
 import './account-dialog.scss';
 
@@ -21,7 +18,6 @@ class AccountDialog extends Component {
 		service: PropTypes.object,
 		translate: PropTypes.func,
 		warningNotice: PropTypes.func,
-		hasMultiConnections: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -30,7 +26,6 @@ class AccountDialog extends Component {
 		onAccountSelected: () => {},
 		service: Object.freeze( {} ),
 		warningNotice: () => {},
-		hasMultiConnections: false,
 	};
 
 	state = {
@@ -91,31 +86,6 @@ class AccountDialog extends Component {
 		}
 	}
 
-	areAccountsConflicting( account, otherAccount ) {
-		// If we support multiple connections, accounts should never conflict.
-		if ( this.props.hasMultiConnections ) {
-			return false;
-		}
-
-		return (
-			account.keyringConnectionId === otherAccount.keyringConnectionId &&
-			account.ID !== otherAccount.ID
-		);
-	}
-
-	isSelectedAccountConflicting() {
-		const selectedAccount = this.getSelectedAccount();
-
-		return (
-			selectedAccount &&
-			this.props.accounts.some(
-				( maybeConnectedAccount ) =>
-					maybeConnectedAccount.isConnected &&
-					this.areAccountsConflicting( maybeConnectedAccount, selectedAccount )
-			)
-		);
-	}
-
 	getAccountElements( accounts ) {
 		const selectedAccount = this.getSelectedAccount();
 		const defaultAccountIcon =
@@ -126,11 +96,6 @@ class AccountDialog extends Component {
 				key={ [ account.keyringConnectionId, account.ID ].join() }
 				account={ account }
 				selected={ isEqual( selectedAccount, account ) }
-				conflicting={
-					account.isConnected &&
-					selectedAccount &&
-					this.areAccountsConflicting( account, selectedAccount )
-				}
 				onChange={ this.onSelectedAccountChanged.bind( null, account ) }
 				defaultIcon={ defaultAccountIcon }
 			/>
@@ -141,8 +106,6 @@ class AccountDialog extends Component {
 		const connectedAccounts = this.getAccountsByConnectedStatus( true );
 
 		if ( connectedAccounts.length ) {
-			const hasConflictingAccounts = this.isSelectedAccountConflicting();
-
 			/*eslint-disable wpcalypso/jsx-classname-namespace */
 			return (
 				<div className="account-dialog__connected-accounts">
@@ -152,16 +115,6 @@ class AccountDialog extends Component {
 					<ul className="account-dialog__accounts">
 						{ this.getAccountElements( connectedAccounts ) }
 					</ul>
-					{ hasConflictingAccounts && (
-						<Notice
-							status="is-warning"
-							icon="notice"
-							text={ this.props.translate(
-								'The marked connection will be replaced with your selection.'
-							) }
-							isCompact
-						/>
-					) }
 				</div>
 			);
 			/*eslint-enable wpcalypso/jsx-classname-namespace */
@@ -229,11 +182,4 @@ class AccountDialog extends Component {
 	}
 }
 
-const mapStateToProps = ( state ) => ( {
-	hasMultiConnections: siteHasFeature(
-		state,
-		getSelectedSiteId( state ),
-		'social-multi-connections'
-	),
-} );
-export default connect( mapStateToProps, { warningNotice } )( localize( AccountDialog ) );
+export default connect( null, { warningNotice } )( localize( AccountDialog ) );

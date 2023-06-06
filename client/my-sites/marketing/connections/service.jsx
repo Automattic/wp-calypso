@@ -84,7 +84,6 @@ export class SharingService extends Component {
 		warningNotice: PropTypes.func,
 		isP2HubSite: PropTypes.bool,
 		isJetpack: PropTypes.bool,
-		hasMultiConnections: PropTypes.bool,
 		isNew: PropTypes.bool,
 	};
 
@@ -107,7 +106,6 @@ export class SharingService extends Component {
 		warningNotice: () => {},
 		isP2HubSite: false,
 		isJetpack: false,
-		hasMultiConnections: false,
 		isNew: false,
 	};
 
@@ -234,26 +232,12 @@ export class SharingService extends Component {
 	 * @param {number} externalUserId      Optional. User ID for the service. Default: 0.
 	 */
 	createOrUpdateConnection = ( keyringConnectionId, externalUserId = 0 ) => {
-		if ( this.props.hasMultiConnections ) {
-			return this.props.createSiteConnection(
-				this.props.siteId,
-				keyringConnectionId,
-				externalUserId
-			);
-		}
-
-		const existingConnection = find( this.props.siteUserConnections, {
-			keyring_connection_ID: keyringConnectionId,
-		} );
-
-		if ( this.props.siteId && existingConnection ) {
-			// If a Keyring connection is already in use by another connection,
-			// we should trigger an update. There should only be one connection,
-			// so we're correct in using the connection ID from the first
-			this.props.updateSiteConnection( existingConnection, { external_user_ID: externalUserId } );
-		} else {
-			this.props.createSiteConnection( this.props.siteId, keyringConnectionId, externalUserId );
-		}
+		// We now always create a new connection
+		return this.props.createSiteConnection(
+			this.props.siteId,
+			keyringConnectionId,
+			externalUserId
+		);
 	};
 
 	connectAnother = () => {
@@ -676,7 +660,7 @@ export class SharingService extends Component {
 							>
 								{ connections.map( ( connection ) => (
 									<Connection
-										key={ connection.keyring_connection_ID }
+										key={ connection.ID }
 										connection={ connection }
 										isDisconnecting={ this.state.isDisconnecting }
 										isRefreshing={ this.state.isRefreshing }
@@ -738,7 +722,6 @@ export function connectFor( sharingService, mapStateToProps, mapDispatchToProps 
 				isExpanded: isServiceExpanded( state, service ),
 				isP2HubSite: isSiteP2Hub( state, siteId ),
 				isJetpack: isJetpackSite( state, siteId ),
-				hasMultiConnections: siteHasFeature( state, siteId, 'social-multi-connections' ),
 				isMastodonEligible: siteHasFeature( state, siteId, FEATURE_SOCIAL_MASTODON_CONNECTION ),
 			};
 			return typeof mapStateToProps === 'function' ? mapStateToProps( state, props ) : props;
