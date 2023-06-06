@@ -9,9 +9,9 @@ export interface SubscriberPayload {
 }
 
 export interface SubscribersData {
-	date: string;
-	unit: string;
-	data: {
+	date?: string;
+	unit?: string;
+	data?: {
 		[ key: string ]: string | number;
 	}[];
 }
