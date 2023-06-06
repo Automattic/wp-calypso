@@ -9,7 +9,7 @@ interface Props {
 const Survey = ( { setSurveyDismissed }: Props ) => {
 	const locale = useLocale();
 
-	if ( 'en' !== locale ) {
+	if ( ! locale.includes( 'en' ) ) {
 		return null;
 	}
 
