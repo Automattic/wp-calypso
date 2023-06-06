@@ -77,7 +77,7 @@ const SubscribersOverview: React.FC< SubscribersOverviewProps > = ( { siteId } )
 
 	const isLoading = subscribersQueries.some( ( result ) => result.isLoading );
 	const isError = subscribersQueries.some( ( result ) => result.isError );
-	const SubscribersData = subscribersQueries.map( ( result ) => result.data?.data || [] );
+	const subscribersData = subscribersQueries.map( ( result ) => result.data?.data || [] );
 
 	const overviewCardStats = SubscribersOverviewCardStats( SubscribersData );
 
