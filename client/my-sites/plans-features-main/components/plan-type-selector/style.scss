@@ -1,6 +1,7 @@
 
-.notouch body.is-section-signup.is-white-signup .signup__step .segmented-control.price-toggle,
-.notouch body.is-section-plans.is-section-plans .plans .segmented-control.price-toggle {
+body.is-section-signup.is-white-signup .signup__step .segmented-control.price-toggle,
+body.is-section-plans.is-section-plans .plans .segmented-control.price-toggle,
+body.is-group-stepper .plans .segmented-control.price-toggle {
 	background-color: #f2f2f2;
 	border-radius: 6px; /* stylelint-disable-line scales/radii */
 	margin-top: 16px;
