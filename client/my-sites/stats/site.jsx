@@ -36,6 +36,7 @@ import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { requestModuleSettings } from 'calypso/state/stats/module-settings/actions';
 import { getModuleSettings } from 'calypso/state/stats/module-settings/selectors';
+import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import HighlightsSection from './highlights-section';
 import MiniCarousel from './mini-carousel';
@@ -51,6 +52,8 @@ import StatsPeriodHeader from './stats-period-header';
 import StatsPeriodNavigation from './stats-period-navigation';
 import statsStrings from './stats-strings';
 import { getPathWithUpdatedQueryString } from './utils';
+
+const HIDDABLE_MODULES = [ 'authors', 'videos' ];
 
 const memoizedQuery = memoizeLast( ( period, endOf ) => ( {
 	period,
@@ -143,8 +146,16 @@ class StatsSite extends Component {
 		}
 	};
 
-	componentDidMount() {
-		this.props.requestModuleSettings( this.props.siteId );
+	isModuleHidden( moduleName ) {
+		// Determine which modules are hidden.
+		// @TODO: This could be extracted to share between pages.
+		// @TODO: Rearrange the layout of modules to be more flexible with hidden blocks.
+		if (
+			HIDDABLE_MODULES.includes( moduleName ) &&
+			this.props.moduleToggles[ moduleName ] === false
+		) {
+			return true;
+		}
 	}
 
 	renderStats() {
@@ -275,15 +286,18 @@ class StatsSite extends Component {
 							summary={ false }
 						/>
 
-						<StatsModule
-							path="authors"
-							moduleStrings={ moduleStrings.authors }
-							period={ this.props.period }
-							query={ query }
-							statType="statsTopAuthors"
-							className="stats__author-views"
-							showSummaryLink
-						/>
+						{ ! this.isModuleHidden( 'authors' ) && (
+							<StatsModule
+								path="authors"
+								moduleStrings={ moduleStrings.authors }
+								period={ this.props.period }
+								query={ query }
+								statType="statsTopAuthors"
+								className="stats__author-views"
+								showSummaryLink
+							/>
+						) }
+
 						<StatsModule
 							path="searchterms"
 							moduleStrings={ moduleStrings.search }
@@ -301,14 +315,16 @@ class StatsSite extends Component {
 							statType="statsClicks"
 							showSummaryLink
 						/>
-						<StatsModule
-							path="videoplays"
-							moduleStrings={ moduleStrings.videoplays }
-							period={ this.props.period }
-							query={ query }
-							statType="statsVideoPlays"
-							showSummaryLink
-						/>
+						{ ! this.isModuleHidden( 'videos' ) && (
+							<StatsModule
+								path="videoplays"
+								moduleStrings={ moduleStrings.videoplays }
+								period={ this.props.period }
+								query={ query }
+								statType="statsVideoPlays"
+								showSummaryLink
+							/>
+						) }
 						{ ! isOdysseyStats && (
 							<StatsModuleEmails period={ this.props.period } query={ query } />
 						) }
@@ -358,6 +374,10 @@ class StatsSite extends Component {
 				actionCallback={ this.enableStatsModule }
 			/>
 		);
+	}
+
+	componentDidMount() {
+		this.props.requestModuleSettings( this.props.siteId );
 	}
 
 	render() {
@@ -411,6 +431,7 @@ export default connect(
 			siteId &&
 			isJetpack &&
 			isJetpackModuleActive( state, siteId, 'stats' ) === false;
+
 		return {
 			isJetpack,
 			isSitePrivate: isPrivateSite( state, siteId ),
@@ -420,6 +441,7 @@ export default connect(
 			path: getCurrentRouteParameterized( state, siteId ),
 			isOdysseyStats,
 			moduleSettings: getModuleSettings( state, siteId, 'traffic' ),
+			moduleToggles: getModuleToggles( state, siteId, 'traffic' ),
 		};
 	},
 	{ recordGoogleEvent, enableJetpackStatsModule, recordTracksEvent, requestModuleSettings }
