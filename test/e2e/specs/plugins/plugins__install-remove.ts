@@ -40,7 +40,7 @@ describe( DataHelper.createSuiteTitle( 'Jetpack: Plugin' ), function () {
 
 		page = await browser.newPage();
 
-		const testAccount = new TestAccount( 'jetpackRemoteSiteUser' );
+		const testAccount = new TestAccount( 'atomicUser' );
 		await testAccount.authenticate( page );
 		siteURL = SecretsManager.secrets.testAccounts.jetpackRemoteSiteUser.testSites?.primary
 			.url as string;
