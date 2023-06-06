@@ -30,18 +30,18 @@ const BlogIntent: Step = function BlogIntent() {
 				showJetpackPowered={ true }
 				stepContent={
 					<div className="blogger-intent__container">
-						<h1 className="blogger-intent__heading">
+						<h2 className="blogger-intent__heading">
 							{ translate( "Let's start your blog, %(username)s!", {
 								args: { username: currentUser?.display_name || currentUser?.username },
 							} ) }
-						</h1>
+						</h2>
 						<div className="blogger-intent__content">
 							<div className="blogger-intent__row">
 								<div className="blogger-intent__row-text">
 									<FeatherIcon />
 									{ translate( 'Write your first post' ) }
 								</div>
-								<Button primary href="/setup/start-writing">
+								<Button className="blogger-intent__button" primary href="/setup/start-writing">
 									{ translate( 'Start Writing' ) }
 								</Button>
 							</div>
@@ -51,7 +51,7 @@ const BlogIntent: Step = function BlogIntent() {
 									<DesignIcon />
 									{ translate( 'Pick a design first' ) }
 								</div>
-								<Button primary href="/setup/design-first">
+								<Button className="blogger-intent__button" primary href="/setup/design-first">
 									{ translate( 'View designs' ) }
 								</Button>
 							</div>

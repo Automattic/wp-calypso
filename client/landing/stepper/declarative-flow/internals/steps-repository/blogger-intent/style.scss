@@ -1,9 +1,17 @@
-@import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 @import "@automattic/onboarding/styles/mixins";
 @import "jetpack-connect/colors.scss";
 
 .blog.blogger-intent {
+	.wordpress-logo {
+		position: absolute;
+		inset-block-start: 20px;
+		inset-inline-start: 24px;
+		fill: var(--color-text);
+		transform-origin: 0 0;
+	}
+
 	.flow-progress {
 		display: none;
 	}
@@ -14,10 +22,14 @@
 		align-items: center;
 		justify-content: center;
 		min-height: 80vh;
+		margin-left: 20px;
+		margin-right: 20px;
+		margin-top: 104px;
 	}
 
 	.blogger-intent__heading {
 		@include onboarding-font-recoleta;
+		font-size: $font-title-large;
 		text-align: left;
 		color: var(--color-neutral-100);
 	}
@@ -27,12 +39,13 @@
 		flex-direction: column;
 		align-items: flex-start;
 		justify-content: center;
-		margin: 20px;
+		margin: 32px 0 0 0;
 		min-width: 20vw;
 
 		hr {
 			color: var(--color-neutral-10);
 			width: 100%;
+			margin-bottom: 6px; // 32 - 26
 		}
 	}
 
@@ -48,14 +61,18 @@
 			display: flex;
 			align-items: center;
 			color: var(--color-neutral-100);
+			margin-top: 24px; // mobile gap
 
 			.blogger-intent__icon {
-				margin-right: 26px; // mobile 22
+				margin-right: 26px;
+				@include break-mobile {
+					margin-right: 22px;
+				}
 			}
 		}
 
 		.blogger-intent__button {
-			margin-top: 24px; // mobile
+			margin-top: 24px; // mobile gap
 			margin-left: 64px; // mobile, desktop = 100+
 			background-color: var(--studio-blue-50);
 			border-color: var(--studio-blue-50);
