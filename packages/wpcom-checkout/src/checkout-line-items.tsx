@@ -898,7 +898,7 @@ function DomainDiscountCallout( { product }: { product: ResponseCartProduct } ) 
 		return <DiscountCallout>{ translate( 'Free with your plan' ) }</DiscountCallout>;
 	}
 
-	return <></>;
+	return null;
 }
 
 function CouponDiscountCallout( { product }: { product: ResponseCartProduct } ) {
@@ -921,7 +921,7 @@ function GSuiteDiscountCallout( { product }: { product: ResponseCartProduct } ) 
 	) {
 		return <DiscountCallout>{ translate( 'Discount for first year' ) }</DiscountCallout>;
 	}
-	return <></>;
+	return null;
 }
 
 function WPLineItem( {
