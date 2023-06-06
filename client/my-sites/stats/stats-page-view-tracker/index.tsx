@@ -1,6 +1,7 @@
 import debugFactory from 'debug';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { isRequestingSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useTracks from './use-tracks';
@@ -15,6 +16,8 @@ export interface StatsPageViewTrackerProps {
 	options?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
+// This component will pass through all properties to PageViewTracker from the analytics library.
+// In addition, this component will fire a page view event unique to the stats pages.
 export default function StatsPageViewTracker( props: StatsPageViewTrackerProps ) {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const isLoadingSite = useSelector(
@@ -41,5 +44,5 @@ export default function StatsPageViewTracker( props: StatsPageViewTrackerProps )
 		queuePageView();
 	}, [ selectedSiteId, queuePageView ] );
 
-	return null;
+	return <PageViewTracker { ...props } />;
 }
