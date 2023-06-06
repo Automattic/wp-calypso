@@ -776,13 +776,8 @@ function isCouponApplied( { coupon_savings_integer = 0 }: ResponseCartProduct ) 
 	return coupon_savings_integer > 0;
 }
 
-function planUpgradeCreditInformation( {
-	product,
-	translate,
-}: {
-	product: ResponseCartProduct;
-	translate: ReturnType< typeof useTranslate >;
-} ) {
+function UpgradeCreditInformation( { product }: { product: ResponseCartProduct } ) {
+	const translate = useTranslate();
 	const origCost = product.item_original_subtotal_integer;
 	const finalCost = product.item_subtotal_integer;
 	const upgradeCredit = origCost - finalCost;
@@ -804,45 +799,57 @@ function planUpgradeCreditInformation( {
 		return null;
 	}
 	if ( isMonthlyProduct( product ) ) {
-		return translate( 'Upgrade Credit: %(upgradeCredit)s applied in first month only', {
-			comment:
-				'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
-				'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
-			args: {
-				upgradeCredit: formatCurrency( upgradeCredit, product.currency, {
-					isSmallestUnit: true,
-					stripZeros: true,
-				} ),
-			},
-		} );
+		return (
+			<>
+				{ translate( 'Upgrade Credit: %(upgradeCredit)s applied in first month only', {
+					comment:
+						'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
+						'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
+					args: {
+						upgradeCredit: formatCurrency( upgradeCredit, product.currency, {
+							isSmallestUnit: true,
+							stripZeros: true,
+						} ),
+					},
+				} ) }
+			</>
+		);
 	}
 
 	if ( isYearly( product ) ) {
-		return translate( 'Upgrade Credit: %(upgradeCredit)s applied in first year only', {
-			comment:
-				'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
-				'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
-			args: {
-				discount: formatCurrency( upgradeCredit, product.currency, {
-					isSmallestUnit: true,
-					stripZeros: true,
-				} ),
-			},
-		} );
+		return (
+			<>
+				{ translate( 'Upgrade Credit: %(upgradeCredit)s applied in first year only', {
+					comment:
+						'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
+						'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
+					args: {
+						discount: formatCurrency( upgradeCredit, product.currency, {
+							isSmallestUnit: true,
+							stripZeros: true,
+						} ),
+					},
+				} ) }
+			</>
+		);
 	}
 
 	if ( isBiennially( product ) || isTriennially( product ) ) {
-		return translate( 'Upgrade Credit: %(discount)s applied in first term only', {
-			comment:
-				'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
-				'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
-			args: {
-				discount: formatCurrency( upgradeCredit, product.currency, {
-					isSmallestUnit: true,
-					stripZeros: true,
-				} ),
-			},
-		} );
+		return (
+			<>
+				{ translate( 'Upgrade Credit: %(discount)s applied in first term only', {
+					comment:
+						'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
+						'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
+					args: {
+						discount: formatCurrency( upgradeCredit, product.currency, {
+							isSmallestUnit: true,
+							stripZeros: true,
+						} ),
+					},
+				} ) }
+			</>
+		);
 	}
 	return null;
 }
@@ -1029,7 +1036,9 @@ function WPLineItem( {
 
 			{ product && ! containsPartnerCoupon && (
 				<>
-					<LineItemMeta>{ planUpgradeCreditInformation( { product, translate } ) }</LineItemMeta>
+					<LineItemMeta>
+						<UpgradeCreditInformation product={ product } />
+					</LineItemMeta>
 					<LineItemMeta>
 						<LineItemSublabelAndPrice product={ product } />
 						<DomainDiscountCallout product={ product } />
