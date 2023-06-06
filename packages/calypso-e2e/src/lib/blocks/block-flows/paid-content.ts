@@ -1,3 +1,4 @@
+import { envVariables } from '../../..';
 import { BlockFlow, EditorContext, PublishedPostContext } from '.';
 
 interface ConfigurationData {
@@ -5,7 +6,7 @@ interface ConfigurationData {
 	subscriberText: string;
 }
 
-const blockParentSelector = '[aria-label="Block: Premium Content"]';
+const blockParentSelector = '[aria-label="Block: Paid Content"]';
 const selectors = {
 	subscriberViewButton: 'button:has-text("Subscriber View")',
 	subscriberHeader: '[aria-label="Block: Subscriber View"] [aria-label="Block: Heading"]',
@@ -13,9 +14,9 @@ const selectors = {
 };
 
 /**
- * Class representing the flow of using a Premium Content block in the editor.
+ * Class representing the flow of using a Paid Content block in the editor.
  */
-export class PremiumContentBlockFlow implements BlockFlow {
+export class PaidContentBlockFlow implements BlockFlow {
 	private configurationData: ConfigurationData;
 
 	/**
@@ -27,7 +28,7 @@ export class PremiumContentBlockFlow implements BlockFlow {
 		this.configurationData = configurationData;
 	}
 
-	blockSidebarName = 'Premium Content';
+	blockSidebarName = 'Paid Content';
 	blockEditorSelector = blockParentSelector;
 
 	/**
@@ -37,6 +38,12 @@ export class PremiumContentBlockFlow implements BlockFlow {
 	 */
 	async configure( context: EditorContext ): Promise< void > {
 		const editorParent = await context.editorPage.getEditorParent();
+
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			// Mobile viewport hides the Subscriber/Guest view
+			// into a pseudo-dropdown.
+			await editorParent.getByRole( 'button', { name: 'Change view' } ).click();
+		}
 
 		const subscriberViewButtonLocator = editorParent.locator( selectors.subscriberViewButton );
 		await subscriberViewButtonLocator.click();
