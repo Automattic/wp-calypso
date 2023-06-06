@@ -33,16 +33,21 @@ export function ConfirmationTransfer( {
 	useEffect( () => {
 		confirmTransfer( confirmationHash );
 	}, [ confirmTransfer, confirmationHash ] );
-	return error ? (
-		<Notice status="is-error" showDismiss={ false }>
-			<div data-testid="error">
-				<p>
-					{ translate( 'There was an error confirming the site transfer.' ) }
-					{ error.message && ` ${ error.message }` }
-				</p>
-			</div>
-		</Notice>
-	) : (
+
+	if ( error ) {
+		return (
+			<Notice status="is-error" showDismiss={ false }>
+				<div data-testid="error">
+					<p>
+						{ translate( 'There was an error confirming the site transfer.' ) }
+						{ error.message && ` ${ error.message }` }
+					</p>
+				</div>
+			</Notice>
+		);
+	}
+
+	return (
 		<>
 			<p>
 				<LoadingBar key="transfer-site-loading-bar" progress={ progress } />
