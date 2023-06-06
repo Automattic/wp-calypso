@@ -90,7 +90,7 @@ class WPCOM_Domain_Upsell_Callout {
 	 * Check for site-intent and not launched site on launchpad.
 	 */
 	private function has_unlaunched_launchpad() {
-		$site_intent      = defined( 'IS_WPCOM' ) && IS_WPCOM ? get_option( 'site_intent' ) : \Jetpack_Options::get_option( 'site_intent' );
+		$site_intent      = get_option( 'site_intent' );
 		$task_statuses    = get_option( 'launchpad_checklist_tasks_statuses', array() );
 		$site_is_launched = ! isset( $task_statuses['site_launched'] ) || ! $task_statuses['site_launched'];
 
