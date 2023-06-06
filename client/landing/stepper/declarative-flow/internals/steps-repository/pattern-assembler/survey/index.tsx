@@ -31,6 +31,7 @@ const Survey = ( { setSurveyDismissed }: Props ) => {
 			} }
 			dismissTemporary
 			showIcon={ false }
+			showLinkIcon={ false }
 			dismissWithoutSavingPreference
 			tracksImpressionName="calypso_onboarding_survey_impression"
 			tracksClickName="calypso_onboarding_survey_click"
