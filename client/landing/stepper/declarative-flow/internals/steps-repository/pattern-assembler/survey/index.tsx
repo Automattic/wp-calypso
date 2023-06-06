@@ -9,6 +9,7 @@ interface Props {
 const Survey = ( { setSurveyDismissed }: Props ) => {
 	const locale = useLocale();
 
+	// We only target English locale variations
 	if ( ! locale.includes( 'en' ) ) {
 		return null;
 	}
@@ -16,6 +17,7 @@ const Survey = ( { setSurveyDismissed }: Props ) => {
 	return (
 		<Banner
 			className="pattern-assembler__survey"
+			// Translation to other locales is not required
 			title={
 				<>
 					<a href="https://lucasmdo.survey.fm/assembler-survey-modal" target="blank">
