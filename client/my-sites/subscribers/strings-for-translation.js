@@ -8,11 +8,15 @@ import { translate } from 'i18n-calypso';
 // username is needed for some of the strings below
 const username = 'username_placeholder';
 
+const importSubscribers = translate( 'Import subscribers' );
+const allSubscribers = translate( 'All subscribers' );
+
 const subscribers = translate( 'Subscribers' );
 const downloadCSV = translate( 'Download CSV' );
 const addSubscribers = translate( 'Add Subscribers' );
 
 const search = translate( 'Search by name, username or email…' );
+const bulkActions = translate( 'Bulk actions' );
 
 const name = translate( 'Name' );
 const status = translate( 'Status' );
