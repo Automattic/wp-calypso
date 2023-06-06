@@ -104,7 +104,7 @@ const useCampaignsQueryPaged = (
 		async ( { pageParam = 1 } ) => {
 			const resultQuery = await requestDSP< CampaignQueryResult >(
 				siteId,
-				`/search/campaigns?order=asc&order_by=post_date&page=${ pageParam }&site_id=${ siteId }&${ searchQueryParams }`
+				`/search/campaigns/site/${ siteId }?order=asc&order_by=post_date&page=${ pageParam }&${ searchQueryParams }`
 			);
 
 			const { campaigns, page, total_items, total_pages } = resultQuery;
