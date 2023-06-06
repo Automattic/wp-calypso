@@ -19,8 +19,9 @@ import Notice from 'calypso/components/notice';
 import { CampaignResponse } from 'calypso/data/promote-post/use-promote-post-campaigns-query-new';
 import useCancelCampaignMutation from 'calypso/data/promote-post/use-promote-post-cancel-campaign-mutation';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
-import { canCancelCampaign } from 'calypso/my-sites/promote-post/utils';
 import AdPreview from 'calypso/my-sites/promote-post-i2/components/ad-preview';
+import useOpenPromoteWidget from 'calypso/my-sites/promote-post-i2/hooks/use-open-promote-widget';
+import { canCancelCampaign } from 'calypso/my-sites/promote-post-i2/utils';
 import {
 	formatCents,
 	formatNumber,
@@ -40,15 +41,24 @@ const FlexibleSkeleton = () => {
 	return <div className="campaign-item-details__flexible-skeleton" />;
 };
 
+const getPostIdFromURN = ( targetUrn: string ) => {
+	if ( ! targetUrn.includes( ':' ) ) {
+		return;
+	}
+
+	const splitted = targetUrn.split( ':' );
+	if ( splitted.length >= 4 ) {
+		return splitted[ 4 ];
+	}
+};
+
 export default function CampaignItemDetails( props: Props ) {
 	const translate = useTranslate();
 	const [ showDeleteDialog, setShowDeleteDialog ] = useState( false );
 	const [ showErrorDialog, setShowErrorDialog ] = useState( false );
 	const { cancelCampaign } = useCancelCampaignMutation( () => setShowErrorDialog( true ) );
 	const isSmallScreen = useBreakpoint( '<660px' );
-
 	const { campaign, isLoading, siteId } = props;
-
 	const campaignId = campaign?.campaign_id;
 
 	const {
@@ -64,6 +74,7 @@ export default function CampaignItemDetails( props: Props ) {
 		campaign_stats,
 		billing_data,
 		display_delivery_estimate = '',
+		target_urn,
 	} = campaign || {};
 
 	const {
@@ -80,8 +91,12 @@ export default function CampaignItemDetails( props: Props ) {
 	} = campaign_stats || {};
 
 	const { card_name, payment_method, subtotal, credits, total } = billing_data || {};
-
 	const { title, clickUrl } = content_config || {};
+
+	const onClickPromote = useOpenPromoteWidget( {
+		keyValue: `post-${ getPostIdFromURN( target_urn || '' ) }`, // + campaignId,
+		entrypoint: 'promoted_posts-post_item',
+	} );
 
 	// Target block
 	const devicesList = audience_list ? audience_list[ 'devices' ] : '';
@@ -265,7 +280,11 @@ export default function CampaignItemDetails( props: Props ) {
 
 				<div>
 					{ ! isLoading && status === 'finished' && (
-						<Button className="campaign-item-promote-again-button" primary onClick={ () => {} }>
+						<Button
+							className="campaign-item-promote-again-button"
+							primary
+							onClick={ onClickPromote }
+						>
 							{ translate( 'Promote again' ) }
 						</Button>
 					) }

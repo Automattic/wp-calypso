@@ -1,10 +1,7 @@
 import config from '@automattic/calypso-config';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import moment from 'moment';
-import {
-	Campaign,
-	CampaignStats,
-} from 'calypso/data/promote-post/use-promote-post-campaigns-query';
+import { Campaign } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 import {
 	PagedBlazeContentData,
 	PagedBlazeSearchResponse,
@@ -102,51 +99,11 @@ export const getCampaignStatus = ( status: string ) => {
 	}
 };
 
-export const normalizeCampaignStatus = ( campaign: Campaign ): string => {
-	// This is a transactional status, so we just alter this in calypso
-	if (
-		campaign.status === campaignStatus.ACTIVE &&
-		moment().isBefore( campaign.start_date, 'day' )
-	) {
-		return campaignStatus.SCHEDULED;
-	}
-
-	return campaign.status;
-};
-
 export const getCampaignDurationDays = ( start_date: string, end_date: string ) => {
 	const dateStart = new Date( start_date );
 	const dateEnd = new Date( end_date );
 	const diffTime = Math.abs( dateEnd.getTime() - dateStart.getTime() );
 	return Math.round( diffTime / ( 1000 * 60 * 60 * 24 ) );
-};
-
-export const getCampaignOverallSpending = (
-	spent_budget_cents: number,
-	budget_cents: number,
-	start_date: string,
-	end_date: string
-) => {
-	if ( ! spent_budget_cents ) {
-		return '-';
-	}
-	const campaignDays = getCampaignDurationDays( start_date, end_date );
-	const spentBudgetCents =
-		spent_budget_cents > budget_cents * campaignDays
-			? budget_cents * campaignDays
-			: spent_budget_cents;
-
-	const totalBudgetUsed = ( spentBudgetCents / 100 ).toFixed( 2 );
-	return sprintf( '$%1$s', totalBudgetUsed );
-};
-
-export const getCampaignClickthroughRate = ( clicks_total: number, impressions_total: number ) => {
-	const clickthroughRate = ( clicks_total * 100 ) / impressions_total || 0;
-	return clickthroughRate.toLocaleString( undefined, {
-		useGrouping: true,
-		minimumFractionDigits: 0,
-		maximumFractionDigits: 2,
-	} );
 };
 
 export const getCampaignDurationFormatted = ( start_date?: string, end_date?: string ) => {
@@ -219,19 +176,6 @@ export const canCancelCampaign = ( status: string ) => {
 	return [ campaignStatus.SCHEDULED, campaignStatus.CREATED, campaignStatus.ACTIVE ].includes(
 		status
 	);
-};
-
-export const unifyCampaigns = ( campaigns: Campaign[], campaignsStats: CampaignStats[] ) => {
-	return campaigns.map( ( campaign ) => {
-		const campaignStats = campaignsStats.find(
-			( cs: CampaignStats ) => cs.campaign_id === campaign.campaign_id
-		);
-		return {
-			...campaign,
-			campaign_stats_loading: ! campaignsStats.length,
-			...( campaignStats ? campaignStats : {} ),
-		};
-	} );
 };
 
 export const getPagedBlazeSearchData = (

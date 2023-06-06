@@ -21,6 +21,7 @@ export type CampaignResponse = {
 	width: number;
 	height: number;
 	status: string;
+	target_urn: string;
 	campaign_stats: {
 		impressions_total: number;
 		clicks_total: number;
