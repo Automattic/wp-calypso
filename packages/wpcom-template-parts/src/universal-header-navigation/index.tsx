@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-imports */
 import { WordPressWordmark } from '@automattic/components';
 import { useLocalizeUrl, useIsEnglishLocale, useLocale } from '@automattic/i18n-utils';
-import { __ } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
 import { HeaderProps } from '../types';
@@ -17,6 +17,7 @@ const UniversalNavbarHeader = ( {
 }: HeaderProps ) => {
 	const locale = useLocale();
 	const localizeUrl = useLocalizeUrl();
+	const { __, hasTranslation } = useI18n();
 	const [ isMobileMenuOpen, setMobileMenuOpen ] = useState( false );
 	const isEnglishLocale = useIsEnglishLocale();
 
@@ -140,8 +141,16 @@ const UniversalNavbarHeader = ( {
 															target="_self"
 														/>
 														<ClickableItem
-															titleValue={ __( 'Course Maker', __i18n_text_domain__ ) }
-															content={ __( 'Course Maker', __i18n_text_domain__ ) }
+															titleValue={
+																locale === 'en' || hasTranslation?.( 'Course Maker' )
+																	? __( 'Course Maker', __i18n_text_domain__ )
+																	: __( 'Course', __i18n_text_domain__ )
+															}
+															content={
+																locale === 'en' || hasTranslation?.( 'Course Maker' )
+																	? __( 'Course Maker', __i18n_text_domain__ )
+																	: __( 'Course', __i18n_text_domain__ )
+															}
 															urlValue={ localizeUrl( '//wordpress.com/create-a-course/' ) }
 															type="dropdown"
 															target="_self"
@@ -461,8 +470,16 @@ const UniversalNavbarHeader = ( {
 												type="menu"
 											/>
 											<ClickableItem
-												titleValue={ __( 'Course Maker', __i18n_text_domain__ ) }
-												content={ __( 'Course Maker', __i18n_text_domain__ ) }
+												titleValue={
+													locale === 'en' || hasTranslation?.( 'Course Maker' )
+														? __( 'Course Maker', __i18n_text_domain__ )
+														: __( 'Course', __i18n_text_domain__ )
+												}
+												content={
+													locale === 'en' || hasTranslation?.( 'Course Maker' )
+														? __( 'Course Maker', __i18n_text_domain__ )
+														: __( 'Course', __i18n_text_domain__ )
+												}
 												urlValue={ localizeUrl( '//wordpress.com/create-a-course/' ) }
 												type="menu"
 											/>
