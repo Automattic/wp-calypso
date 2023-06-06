@@ -37,7 +37,7 @@ function calculateQueryDate( daysToSubtract: number ) {
 // calculate the stats to display in the cards
 function SubscribersOverviewCardStats( subscribersDataArrays: SubscribersData[][] ) {
 	const getCount = ( index: number ) => {
-		return SubscribersDataArrays[ index ]?.[ 0 ]?.subscribers || 0;
+		return subscribersDataArrays[ index ]?.[ 0 ]?.subscribers || 0;
 	};
 
 	const overviewCardStats = [
