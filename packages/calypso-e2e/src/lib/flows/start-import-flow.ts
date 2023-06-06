@@ -18,6 +18,10 @@ const selectors = {
 	// ImporterDrag page
 	importerDrag: ( text: string ) => `div.importer-wrapper__${ text }`,
 
+	// Site picker page
+	sitePickerPage: ( url: string ) => `a.components-external-link[href="https://${ url }"]`,
+	sitePickerNoSiteFound: 'h2:has-text("No sites match your search.")',
+
 	// Errors
 	analyzeError: ( text: string ) => `:text("${ text }")`,
 
@@ -45,7 +49,7 @@ export class StartImportFlow {
 	 * @param {Page} page The underlying page.
 	 * @param framework
 	 */
-	constructor( private page: Page, private framework: 'signup' | 'stepper' ) {}
+	constructor( private page: Page, private framework: 'signup' | 'stepper' | 'migration' ) {}
 
 	/**
 	 * Given text, click on the button's first instance with the text.
@@ -63,9 +67,9 @@ export class StartImportFlow {
 	 * Validates that we've landed on the setup page.
 	 */
 	async validateSetupPage(): Promise< void > {
-		await this.page.locator(
-			`${ selectors.startImportButton }, ${ selectors.startImportGoalButton }`
-		);
+		await this.page
+			.locator( `${ selectors.startImportButton }, ${ selectors.startImportGoalButton }` )
+			.waitFor();
 	}
 
 	/**
@@ -73,6 +77,13 @@ export class StartImportFlow {
 	 */
 	async validateURLCapturePage(): Promise< void > {
 		await this.page.waitForURL( /.*setup\/site-setup\/import.*/ );
+	}
+
+	/**
+	 * Validates that we've landed on the 'Pick your destination' page.
+	 */
+	async validateSitePickerPage(): Promise< void > {
+		await this.page.waitForURL( /.*setup\/import-focused\/sitePicker.+/ );
 	}
 
 	/**
@@ -145,6 +156,22 @@ export class StartImportFlow {
 	}
 
 	/**
+	 * Validates that the site picker page has the site with the given slug.
+	 *
+	 * @param {string} siteSlug The site slug to validate.
+	 */
+	async validateSitePickerHasSite( siteSlug: string ): Promise< void > {
+		await this.page.waitForSelector( selectors.sitePickerPage( siteSlug ) );
+	}
+
+	/**
+	 * Validates that the site picker page has no sites.
+	 */
+	async validateSitePickerHasNoSites(): Promise< void > {
+		await this.page.waitForSelector( selectors.sitePickerNoSiteFound );
+	}
+
+	/**
 	 * Enter the URL to import from on the "Enter your site address" input form.
 	 *
 	 * @param {string} url The source URL.
@@ -198,6 +225,24 @@ export class StartImportFlow {
 		await this.page.goto( DataHelper.getCalypsoURL( route, { siteSlug } ) );
 		await this.validateSetupPage();
 		await this.page.click( selectors.startImportButton );
+	}
+
+	/**
+	 * Go to first setup page.
+	 *
+	 * @param {Object} queryStrings Key/value pair of additional query to build into into the Calypso URL.
+	 */
+	async startMigrate( queryStrings: { [ key: string ]: string } = {} ): Promise< void > {
+		if ( this.framework !== 'migration' ) {
+			return;
+		}
+
+		const route = 'setup/import-focused/sitePicker';
+		console.log( queryStrings, DataHelper.getCalypsoURL( route, queryStrings ) );
+
+		await this.page.goto( DataHelper.getCalypsoURL( route, queryStrings ) );
+		await this.validateSitePickerPage();
+		// await this.page.click( selectors.startImportButton );
 	}
 
 	/**
