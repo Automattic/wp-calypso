@@ -34,9 +34,9 @@ import {
 } from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
+import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import type { Step } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
-
 import './styles.scss';
 
 const DEFAULT_WP_SITE_THEME = 'pub/zoologist';
@@ -60,14 +60,16 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 		[]
 	);
 
-	const { domainCartItem, planCartItem, siteAccentColor, getSelectedSiteTitle, productCartItems } =
+	const urlData = useSelector( getUrlData );
+
+	const { domainCartItem, planCartItem, siteAccentColor, selectedSiteTitle, productCartItems } =
 		useSelect(
 			( select ) => ( {
 				domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
 				siteAccentColor: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteAccentColor(),
 				planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
 				productCartItems: ( select( ONBOARD_STORE ) as OnboardSelect ).getProductCartItems(),
-				getSelectedSiteTitle: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
+				selectedSiteTitle: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
 			} ),
 			[]
 		);
@@ -118,7 +120,6 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 	const isManageSiteFlow = Boolean(
 		wasSignupCheckoutPageUnloaded() && signupDestinationCookieExists && isReEnteringFlow
 	);
-	const blogTitle = isFreeFlow( 'free' ) ? getSelectedSiteTitle : '';
 	const { addTempSiteToSourceOption } = useAddTempSiteToSourceOptionMutation();
 	const urlQueryParams = useQuery();
 	const sourceSiteSlug = urlQueryParams.get( 'from' ) || '';
@@ -140,7 +141,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 			isPaidDomainItem,
 			theme,
 			siteVisibility,
-			blogTitle,
+			urlData?.meta.title ?? selectedSiteTitle,
 			siteAccentColor,
 			useThemeHeadstart,
 			username,

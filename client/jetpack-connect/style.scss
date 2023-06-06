@@ -2,8 +2,7 @@
 
 $colophon-height: 50px; // wpcomColophon element at the bottom
 
-.jetpack-connect__main:not(.is-woocommerce),
-.jetpack-connect__main:not(.is-wpcom-migration),
+.jetpack-connect__main:not(.is-woocommerce):not(.is-wpcom-migration),
 .layout.is-section-jetpack-connect:not(.is-jetpack-mobile-flow):not(.is-jetpack-woocommerce-flow):not(.is-jetpack-woo-dna-flow):not(.is-wpcom-migration) {
 	@include jetpack-connect-colors();
 }

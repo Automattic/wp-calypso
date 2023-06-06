@@ -216,7 +216,7 @@ export class ImportEverything extends SectionMigrate {
 			<Progress className="onboarding-progress-simple">
 				<Interval onTick={ this.updateFromAPI } period={ EVERY_TEN_SECONDS } />
 				<Title>{ translate( 'We’re safely migrating all your data' ) }</Title>
-				<ProgressBar compact={ false } value={ this.state.percent ? this.state.percent : 0 } />
+				<ProgressBar compact={ true } value={ this.state.percent ? this.state.percent : 0 } />
 				<SubTitle tagName="h3">
 					{ translate(
 						'Feel free to close this window. We’ll email you when your new site is ready.'
@@ -262,6 +262,7 @@ export class ImportEverything extends SectionMigrate {
 
 	renderDefaultHoorayScreen() {
 		const { translate, stepNavigator } = this.props;
+
 		return (
 			<>
 				<Title>{ translate( 'Hooray!' ) }</Title>

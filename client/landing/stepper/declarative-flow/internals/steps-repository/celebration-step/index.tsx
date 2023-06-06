@@ -1,10 +1,10 @@
 import { Button, ConfettiAnimation } from '@automattic/components';
+import { useLaunchpad } from '@automattic/data-stores';
 import { StepContainer, isStartWritingFlow } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { OnboardSelect } from 'calypso/../packages/data-stores/src';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { useLaunchpad } from 'calypso/data/sites/use-launchpad';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
@@ -32,7 +32,7 @@ const CelebrationStep: Step = ( { flow } ) => {
 		return null;
 	}
 
-	const isFirstPostPublished = checklistStatuses.first_post_published;
+	const isFirstPostPublished = checklistStatuses?.first_post_published;
 
 	const MainCta = () => {
 		const mainCtaText =

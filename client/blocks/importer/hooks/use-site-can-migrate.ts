@@ -30,9 +30,10 @@ export function useSiteMigrateInfo(
 		}
 		const { jetpack_activated, jetpack_compatible, migration_activated, migration_compatible } =
 			data as MigrationEnabledResponse;
-		return isMigrateFromWp
-			? migration_activated && migration_compatible
-			: jetpack_activated && jetpack_compatible;
+
+		return (
+			( migration_activated && migration_compatible ) || ( jetpack_activated && jetpack_compatible )
+		);
 	};
 
 	const onMigrationEnabledSuccess = ( data: MigrationEnabledResponse ) => {

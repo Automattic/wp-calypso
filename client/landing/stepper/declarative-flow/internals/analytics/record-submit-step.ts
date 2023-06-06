@@ -32,7 +32,8 @@ export function recordSubmitStep(
 			}
 
 			if ( propName === 'plan' ) {
-				propValue = ( propValue as { product_slug: string } ).product_slug;
+				// propValue is null when user selects a free plan
+				propValue = ( propValue as { product_slug: string } | null )?.product_slug;
 			}
 
 			return {

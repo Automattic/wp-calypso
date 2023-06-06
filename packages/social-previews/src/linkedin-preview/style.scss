@@ -38,13 +38,18 @@
 		margin-bottom: 0.8rem;
 
 		&--avatar {
+			width: 48px;
+			height: 48px;
+			border-radius: 50%;
+			overflow: hidden;
+			display: flex;
+			align-items: center;
 			flex-shrink: 0;
 		}
 
 		&--avatar img {
-			width: 48px;
-			height: 48px;
-			border-radius: 50%;
+			width: 100%;
+			object-fit: contain;
 		}
 
 		&--profile {

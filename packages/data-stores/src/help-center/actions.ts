@@ -128,17 +128,24 @@ export const setUserDeclaredSite = ( site: SiteDetails | undefined ) =>
 		site,
 	} as const );
 
+export const resetStore = () =>
+	( {
+		type: 'HELP_CENTER_RESET_STORE',
+	} as const );
+
 export const startHelpCenterChat = function* ( site: HelpCenterSite, message: string ) {
-	yield setInitialRoute( '/inline-chat' );
+	yield setInitialRoute( '/contact-form?mode=CHAT' );
 	yield setSite( site );
 	yield setMessage( message );
 	yield setShowHelpCenter( true );
 };
 
-export const resetStore = () =>
-	( {
-		type: 'HELP_CENTER_RESET_STORE',
-	} as const );
+export const setShowMessagingChat = function* () {
+	yield setShowHelpCenter( false );
+	yield setShowMessagingLauncher( true );
+	yield setShowMessagingWidget( true );
+	yield resetStore();
+};
 
 export type HelpCenterAction =
 	| ReturnType<

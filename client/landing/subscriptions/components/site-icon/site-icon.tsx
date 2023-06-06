@@ -9,10 +9,12 @@ type SiteIconProps = {
 
 const SiteIcon = ( { iconUrl, size = 48, siteName }: SiteIconProps ) => {
 	if ( ! iconUrl ) {
-		return <Gridicon className="icon" icon="globe" size={ size } />;
+		return <Gridicon className="site-icon" icon="globe" size={ size } />;
 	}
 
-	return <img className="icon" src={ iconUrl } height={ size } width={ size } alt={ siteName } />;
+	return (
+		<img className="site-icon" src={ iconUrl } height={ size } width={ size } alt={ siteName } />
+	);
 };
 
 export default SiteIcon;
