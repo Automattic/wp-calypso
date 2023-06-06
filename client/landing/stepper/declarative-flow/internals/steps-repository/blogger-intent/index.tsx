@@ -30,7 +30,7 @@ const BlogIntent: Step = function BlogIntent() {
 				stepContent={
 					<div className="blogger-intent__container">
 						<h1 className="blogger-intent__heading">
-							{ translate( "Let's start your blog, %(username)s", {
+							{ translate( "Let's start your blog, %(username)s!", {
 								args: { username: currentUser?.display_name || currentUser?.username },
 							} ) }
 						</h1>
