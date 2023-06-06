@@ -4,7 +4,7 @@ import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const LaunchpadKeepBuilding = ( { siteSlug } ) => {
-	return <Launchpad siteSlug={ siteSlug } />;
+	return <Launchpad siteSlug={ siteSlug } checklistSlug="keep-building" />;
 };
 
 const ConnectedLaunchpadKeepBuilding = connect( ( state ) => {
