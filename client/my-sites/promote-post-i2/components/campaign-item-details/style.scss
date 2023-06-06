@@ -29,6 +29,10 @@
 		display: flex;
 		justify-content: space-between;
 
+		> div {
+			width: 100%;
+		}
+
 		@media (max-width: $break-medium) {
 			padding-bottom: 24px;
 			margin-left: 16px;

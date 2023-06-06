@@ -244,7 +244,9 @@ export default function CampaignItemDetails( props: Props ) {
 						) }
 					</div>
 
-					<div className="campaign-item-details__header-title">{ campaignTitleFormatted }</div>
+					<div className="campaign-item-details__header-title">
+						{ isLoading ? <FlexibleSkeleton /> : campaignTitleFormatted }
+					</div>
 
 					<div className="campaign-item__header-status">
 						{ ! isLoading && status ? (
