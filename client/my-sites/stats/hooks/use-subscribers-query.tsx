@@ -49,6 +49,7 @@ function selectSubscribers( payload: SubscriberPayload ): SubscribersData {
 	}
 
 	return {
+		// For `week` period replace `W` separator to match the format.
 		date: payload.date,
 		unit: payload.unit,
 		data: payload.data.map( ( dataSet ) => {
