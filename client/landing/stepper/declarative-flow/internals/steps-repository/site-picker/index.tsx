@@ -5,9 +5,11 @@ import {
 } from '@automattic/sites';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { useState } from 'react';
+import { defer } from 'lodash';
+import React, { useState, useEffect } from 'react';
 import ConfirmModal from 'calypso/blocks/importer/components/confirm-modal';
 import DocumentHead from 'calypso/components/data/document-head';
+import useMigrationConfirmation from 'calypso/landing/stepper/hooks/use-migration-confirmation';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { SitesDashboardQueryParams } from 'calypso/sites-dashboard/components/sites-content-controls';
@@ -28,6 +30,9 @@ const SitePickerStep: Step = function SitePickerStep( { navigation } ) {
 	const sourceSiteSlug = urlQueryParams.get( 'from' ) || '';
 	const [ destinationSite, setDestinationSite ] = useState< SiteExcerptData >();
 	const [ showConfirmModal, setShowConfirmModal ] = useState( false );
+	const [ , setMigrationConfirmed ] = useMigrationConfirmation();
+
+	useEffect( () => setMigrationConfirmed( false ), [] );
 
 	const onQueryParamChange = ( params: Partial< SitesDashboardQueryParams > ) => {
 		recordTracksEvent( 'calypso_import_site_picker_query_param_change', params );
@@ -60,7 +65,8 @@ const SitePickerStep: Step = function SitePickerStep( { navigation } ) {
 				setShowConfirmModal( false );
 			} }
 			onConfirm={ () => {
-				destinationSite && selectSite( destinationSite );
+				setMigrationConfirmed( true );
+				defer( () => destinationSite && selectSite( destinationSite ) );
 			} }
 		>
 			<p>

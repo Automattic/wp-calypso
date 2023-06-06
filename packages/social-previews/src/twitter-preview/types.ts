@@ -14,9 +14,9 @@ export type SidebarProps = {
 };
 
 export type HeaderProps = {
-	name: string;
-	date: Date | number;
-	screenName: string;
+	name?: string;
+	date?: Date | number;
+	screenName?: string;
 };
 
 export type MediaProps = {

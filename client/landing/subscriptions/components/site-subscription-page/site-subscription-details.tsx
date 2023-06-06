@@ -1,61 +1,21 @@
 import { SubscriptionManager, Reader } from '@automattic/data-stores';
-import { getCurrencyObject } from '@automattic/format-currency';
 import { useLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useTranslate, numberFormat } from 'i18n-calypso';
-import moment from 'moment';
 import { useEffect, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import TimeSince from 'calypso/components/time-since';
 import { Notice, NoticeState, NoticeType } from 'calypso/landing/subscriptions/components/notice';
 import { SiteIcon } from 'calypso/landing/subscriptions/components/site-icon';
+import {
+	PaymentPlan,
+	SiteSubscriptionDetailsProps,
+	formatRenewalDate,
+	formatRenewalPrice,
+	getPaymentInterval,
+} from './site-subscription-helpers';
 import SiteSubscriptionSettings from './site-subscription-settings';
 import './styles.scss';
-
-type SiteSubscriptionDetailsProps = {
-	subscriberCount: number;
-	dateSubscribed: Date;
-	siteIcon: string;
-	name: string;
-	blogId: string;
-	deliveryMethods: Reader.SiteSubscriptionDeliveryMethods;
-	url: string;
-	paymentDetails: Reader.SiteSubscriptionPaymentDetails[];
-};
-
-type PaymentPlan = {
-	id: string;
-	renewalPrice: string;
-	renewalDate: string;
-};
-
-const getPaymentInterval = ( renew_interval: string ) => {
-	if ( renew_interval === null ) {
-		return 'one time';
-	} else if ( renew_interval === '1 month' ) {
-		return 'per month';
-	} else if ( renew_interval === '1 year' ) {
-		return 'per year';
-	}
-};
-
-function formatRenewalPrice( renewalPrice: string, currency: string ) {
-	if ( ! renewalPrice ) {
-		return '';
-	}
-
-	const money = getCurrencyObject( parseFloat( renewalPrice ), currency );
-	return money.integer !== '0' ? `${ money.symbol }${ money.integer } /` : '';
-}
-
-function formatRenewalDate( renewalDate: string, localeSlug: string ) {
-	if ( ! renewalDate ) {
-		return '';
-	}
-
-	const date = moment( renewalDate );
-	return date.locale( localeSlug ).format( 'LL' );
-}
 
 const SiteSubscriptionDetails = ( {
 	subscriberCount,
@@ -83,6 +43,16 @@ const SiteSubscriptionDetails = ( {
 		isSuccess: unsubscribed,
 		error: unsubscribeError,
 	} = SubscriptionManager.useSiteUnsubscribeMutation( blogId );
+
+	const confirmUnsubscribe = ( { blogId, url }: { blogId: string; url: string } ) => {
+		if (
+			confirm(
+				'You currently have paid subscriptions with this site. Paid subscriptions must be cancelled separately by clicking the Manage Subscriptions button or going to https://wordpress.com/me/purchases.\n\nPress OK to proceed with unsubscribing from the site.\nPress Cancel to go back.'
+			)
+		) {
+			unsubscribe( { blog_id: blogId, url } );
+		}
+	};
 
 	const [ paymentPlans, setPaymentPlans ] = useState< PaymentPlan[] >( [] );
 
@@ -250,14 +220,23 @@ const SiteSubscriptionDetails = ( {
 							) ) }
 					</div>
 
-					<Button
-						className="site-subscription-page__unsubscribe-button"
-						isSecondary
-						onClick={ () => unsubscribe( { blog_id: blogId, url } ) }
-						disabled={ unsubscribing }
-					>
-						{ translate( 'Cancel subscription' ) }
-					</Button>
+					<div className="site-subscription-page__button-container">
+						<Button
+							className="site-subscription-page__manage-button"
+							isPrimary
+							href="/me/purchases"
+							disabled={ unsubscribing }
+						>
+							{ translate( 'Manage purchases' ) }
+						</Button>
+						<Button
+							className="site-subscription-page__unsubscribe-button"
+							onClick={ () => confirmUnsubscribe( { blogId, url } ) }
+							disabled={ unsubscribing }
+						>
+							{ translate( 'Cancel subscription' ) }
+						</Button>
+					</div>
 				</>
 			) }
 		</>

@@ -6,6 +6,8 @@ import NotAuthorized from 'calypso/blocks/importer/components/not-authorized';
 import DocumentHead from 'calypso/components/data/document-head';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useSourceMigrationStatusQuery } from 'calypso/data/site-migration/use-source-migration-status-query';
+import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
+import { SITE_PICKER_FILTER_CONFIG } from 'calypso/landing/stepper/constants';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -28,6 +30,7 @@ const MigrationHandler: Step = function MigrationHandler( { navigation } ) {
 	const onSourceMigrationStatusError = () => {
 		setIsUnAuthorized( true );
 	};
+	const { data: sites } = useSiteExcerptsQuery( SITE_PICKER_FILTER_CONFIG );
 	const { data: sourceSiteMigrationStatus, isError: isErrorSourceSiteMigrationStatus } =
 		useSourceMigrationStatusQuery( sourceSiteSlug, onSourceMigrationStatusError );
 
@@ -37,23 +40,20 @@ const MigrationHandler: Step = function MigrationHandler( { navigation } ) {
 	}, [] );
 
 	useEffect( () => {
-		if ( submit ) {
-			if ( isErrorSourceSiteMigrationStatus ) {
-				return;
-			}
-			if ( sourceSiteMigrationStatus ) {
-				submit( {
-					isFromMigrationPlugin: true,
-					status: sourceSiteMigrationStatus?.status,
-					targetBlogId: sourceSiteMigrationStatus?.target_blog_id,
-					isAdminOnTarget: sourceSiteMigrationStatus?.is_target_blog_admin,
-					isTargetBlogUpgraded: sourceSiteMigrationStatus?.is_target_blog_upgraded,
-					targetBlogSlug: sourceSiteMigrationStatus?.target_blog_slug,
-				} );
-			}
+		if ( ! submit || ! sourceSiteMigrationStatus || isErrorSourceSiteMigrationStatus || ! sites ) {
+			return;
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ isErrorSourceSiteMigrationStatus, sourceSiteMigrationStatus ] );
+
+		submit( {
+			isFromMigrationPlugin: true,
+			status: sourceSiteMigrationStatus?.status,
+			targetBlogId: sourceSiteMigrationStatus?.target_blog_id,
+			isAdminOnTarget: sourceSiteMigrationStatus?.is_target_blog_admin,
+			isTargetBlogUpgraded: sourceSiteMigrationStatus?.is_target_blog_upgraded,
+			targetBlogSlug: sourceSiteMigrationStatus?.target_blog_slug,
+			userHasSite: sites && sites.length > 0,
+		} );
+	}, [ isErrorSourceSiteMigrationStatus, sourceSiteMigrationStatus, sites ] );
 
 	const getCurrentMessage = () => {
 		return __( 'Scanning your site' );
