@@ -8,31 +8,28 @@ import { initGTMContainer, loadGTMContainer } from '../gtm-container';
  * @param {string} stepName
  * @returns {void}
  */
-export default async function recordGTMDatalayerEvent( stepName = '' ) {
-	if ( stepName ) {
-		loadGTMContainer( TRACKING_IDS.wooGoogleTagManagerId )
-			.then( () => initGTMContainer() )
-			.then( () => {
-				debug(
-					`recordGTMDatalayerEvent: Initialized GTM container ${ TRACKING_IDS.wooGoogleTagManagerId }`
-				);
-
-				// We ensure that we can track with GTM
-				if ( ! mayWeTrackByTracker( 'googleTagManager' ) ) {
-					return;
-				}
-
-				const trackEventMeta = {
-					event: 'visitor interaction',
-					interaction_name: stepName,
-				};
-
-				window.dataLayer.push( trackEventMeta );
-
-				debug( `recordGTMDatalayerEvent: Record Woo Express Stepper Event`, trackEventMeta );
-			} )
-			.catch( ( error ) => {
-				debug( 'recordGTMDatalayerEvent: Error loading GTM container', error );
-			} );
+export default function recordGTMDatalayerEvent( stepName = '' ) {
+	// We ensure that we can track with GTM
+	if ( ! mayWeTrackByTracker( 'googleTagManager' ) ) {
+		return;
 	}
+	loadGTMContainer( TRACKING_IDS.wooGoogleTagManagerId )
+		.then( () => initGTMContainer() )
+		.then( () => {
+			debug(
+				`recordGTMDatalayerEvent: Initialized GTM container ${ TRACKING_IDS.wooGoogleTagManagerId }`
+			);
+
+			const trackEventMeta = {
+				event: 'visitor interaction',
+				interaction_name: stepName,
+			};
+
+			window.dataLayer.push( trackEventMeta );
+
+			debug( `recordGTMDatalayerEvent: Record Woo Express Stepper Event`, trackEventMeta );
+		} )
+		.catch( ( error ) => {
+			debug( 'recordGTMDatalayerEvent: Error loading GTM container', error );
+		} );
 }
