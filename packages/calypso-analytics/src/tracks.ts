@@ -34,6 +34,8 @@ const EVENT_NAME_EXCEPTIONS = [
 	'calypso_checkout_composite_p24_submit_clicked',
 	// Launch Bar
 	'wpcom_launchbar_button_click',
+	// Odyssey Stats
+	'odyssey_stats_page_view',
 ];
 let _superProps: any; // Added to all Tracks events.
 let _loadTracksResult = Promise.resolve(); // default value for non-BOM environments.
