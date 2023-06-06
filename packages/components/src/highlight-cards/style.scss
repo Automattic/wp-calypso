@@ -221,6 +221,13 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 		}
 	}
 
+	// Modules settings popover
+	&.page-modules-settings-popover {
+		.popover__inner {
+			padding: 14px 16px;
+		}
+	}
+
 	// @TODO: Introduce the support for the border of white background arrows in the popover component.
 	// Set the border of the white background bottom arrows.
 	&.highlight-card-popover {
@@ -258,9 +265,41 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 
 		.popover__inner {
 			background-color: var(--studio-white);
+			color: var(--studio-gray-50);
 			border: 1px solid var(--studio-gray-5);
 			box-shadow: 0 12px 20px rgba(0, 0, 0, 0.08);
+			font-family: $font-sf-pro-text;
+			font-weight: 500;
+			font-size: $font-body-small;
+			line-height: 24px;
+			letter-spacing: -0.02em;
 
+			// Modules settings controls
+			.page-modules-settings-toggle-wrapper {
+				color: var(--studio-gray-80);
+				margin-top: 10px;
+
+				.page-modules-settings-toggle {
+					display: flex;
+					align-items: center;
+					justify-content: flex-start;
+
+					&:not(:first-child) {
+						margin-top: 12px;
+					}
+
+					svg {
+						margin-right: 14px;
+					}
+				}
+
+				.page-modules-settings-toggle-control {
+					line-height: 18px;
+					margin-left: auto;
+				}
+			}
+
+			// Highlights settings controls
 			& > button {
 				width: 100%;
 				display: flex;
