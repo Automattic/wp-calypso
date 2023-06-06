@@ -6,12 +6,11 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Followers from '../stats-comment-followers-page';
-import StatsPageViewTracker from '../stats-page-view-tracker';
+import PageViewTracker from '../stats-page-view-tracker';
 
 class StatsCommentFollows extends Component {
 	static propTypes = {
@@ -45,10 +44,6 @@ class StatsCommentFollows extends Component {
 		return (
 			<Main wideLayout>
 				<PageViewTracker
-					path="/stats/follows/comment/:site_id"
-					title="Stats > Followers > Comment"
-				/>
-				<StatsPageViewTracker
 					path="/stats/follows/comment/:site_id"
 					title="Stats > Followers > Comment"
 				/>

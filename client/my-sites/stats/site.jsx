@@ -21,7 +21,6 @@ import EmptyContent from 'calypso/components/empty-content';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import memoizeLast from 'calypso/lib/memoize-last';
 import {
 	recordGoogleEvent,
@@ -44,7 +43,7 @@ import StatsModule from './stats-module';
 import StatsModuleEmails from './stats-module-emails';
 import StatsNotices from './stats-notices';
 import StatsPageHeader from './stats-page-header';
-import StatsPageViewTracker from './stats-page-view-tracker';
+import PageViewTracker from './stats-page-view-tracker';
 import StatsPeriodHeader from './stats-period-header';
 import StatsPeriodNavigation from './stats-period-navigation';
 import statsStrings from './stats-strings';
@@ -358,10 +357,6 @@ class StatsSite extends Component {
 				{ ! isOdysseyStats && isJetpack && <QueryJetpackModules siteId={ siteId } /> }
 				<DocumentHead title={ translate( 'Jetpack Stats' ) } />
 				<PageViewTracker
-					path={ `/stats/${ period }/:site` }
-					title={ `Stats > ${ titlecase( period ) }` }
-				/>
-				<StatsPageViewTracker
 					path={ `/stats/${ period }/:site` }
 					title={ `Stats > ${ titlecase( period ) }` }
 				/>

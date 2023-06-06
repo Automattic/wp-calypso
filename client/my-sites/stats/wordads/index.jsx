@@ -18,7 +18,6 @@ import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { canAccessWordAds } from 'calypso/state/sites/selectors';
@@ -30,7 +29,7 @@ import {
 import PromoCards from '../promo-cards';
 import DatePicker from '../stats-date-picker';
 import StatsPageHeader from '../stats-page-header';
-import StatsPageViewTracker from '../stats-page-view-tracker';
+import PageViewTracker from '../stats-page-view-tracker';
 import StatsPeriodHeader from '../stats-period-header';
 import StatsPeriodNavigation from '../stats-period-navigation';
 import WordAdsChartTabs from '../wordads-chart-tabs';
@@ -168,10 +167,6 @@ class WordAds extends Component {
 			<Main fullWidthLayout>
 				<DocumentHead title={ translate( 'WordAds Stats' ) } />
 				<PageViewTracker
-					path={ `/stats/ads/${ period }/:site` }
-					title={ `WordAds > ${ titlecase( period ) }` }
-				/>
-				<StatsPageViewTracker
 					path={ `/stats/ads/${ period }/:site` }
 					title={ `WordAds > ${ titlecase( period ) }` }
 				/>

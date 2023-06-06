@@ -4,10 +4,9 @@ import titlecase from 'to-title-case';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
-import { PageViewTracker } from 'calypso/lib/analytics/page-view-tracker';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import StatsModule from '../stats-module';
-import StatsPageViewTracker from '../stats-page-view-tracker';
+import PageViewTracker from '../stats-page-view-tracker';
 import statsStringsFactory from '../stats-strings';
 
 const StatsStrings = statsStringsFactory();
@@ -40,10 +39,6 @@ const StatsEmailSummary = ( { translate, period, siteSlug } ) => {
 	return (
 		<Main className="has-fixed-nav" wideLayout>
 			<PageViewTracker
-				path={ `/stats/${ module }/:site` }
-				title={ `Stats > ${ titlecase( module ) }` }
-			/>
-			<StatsPageViewTracker
 				path={ `/stats/${ module }/:site` }
 				title={ `Stats > ${ titlecase( module ) }` }
 			/>

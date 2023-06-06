@@ -9,7 +9,6 @@ import QueryMedia from 'calypso/components/data/query-media';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import AnnualSiteStats from 'calypso/my-sites/stats/annual-site-stats';
 import getMediaItem from 'calypso/state/selectors/get-media-item';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -17,7 +16,7 @@ import Countries from '../stats-countries';
 import DownloadCsv from '../stats-download-csv';
 import StatsModule from '../stats-module';
 import AllTimeNav from '../stats-module/all-time-nav';
-import StatsPageViewTracker from '../stats-page-view-tracker';
+import PageViewTracker from '../stats-page-view-tracker';
 import statsStringsFactory from '../stats-strings';
 import VideoPlayDetails from '../stats-video-details';
 import StatsVideoSummary from '../stats-video-summary';
@@ -338,10 +337,6 @@ class StatsSummary extends Component {
 		return (
 			<Main className="has-fixed-nav" wideLayout>
 				<PageViewTracker
-					path={ `/stats/${ period }/${ module }/:site` }
-					title={ `Stats > ${ titlecase( period ) } > ${ titlecase( module ) }` }
-				/>
-				<StatsPageViewTracker
 					path={ `/stats/${ period }/${ module }/:site` }
 					title={ `Stats > ${ titlecase( period ) } > ${ titlecase( module ) }` }
 				/>

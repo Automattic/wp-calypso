@@ -9,7 +9,6 @@ import StatsNavigation from 'calypso/blocks/stats-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -21,7 +20,7 @@ import Comments from '../stats-comments';
 import Followers from '../stats-followers';
 import StatsModule from '../stats-module';
 import StatsPageHeader from '../stats-page-header';
-import StatsPageViewTracker from '../stats-page-view-tracker';
+import PageViewTracker from '../stats-page-view-tracker';
 import Reach from '../stats-reach';
 import StatShares from '../stats-shares';
 import statsStrings from '../stats-strings';
@@ -49,7 +48,6 @@ const StatsInsights = ( props ) => {
 		<Main fullWidthLayout>
 			<DocumentHead title={ translate( 'Jetpack Stats' ) } />
 			<PageViewTracker path="/stats/insights/:site" title="Stats > Insights" />
-			<StatsPageViewTracker path="/stats/insights/:site" title="Stats > Insights" />
 			<div className="stats">
 				<StatsPageHeader
 					page="insights"
