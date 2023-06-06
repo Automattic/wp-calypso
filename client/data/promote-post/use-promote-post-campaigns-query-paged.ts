@@ -3,10 +3,10 @@ import { requestDSP } from 'calypso/lib/promote-post';
 import { SearchOptions } from 'calypso/my-sites/promote-post-i2/components/search-bar';
 
 export enum CampaignStatus {
-	ALL = -1,
-	TODO0 = 0,
-	TODO1 = 1,
-	TODO2 = 2,
+	'created',
+	'active',
+	'canceled',
+	'finished',
 }
 
 export const AudienceListKeys = {
