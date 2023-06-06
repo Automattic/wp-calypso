@@ -2,7 +2,7 @@ import { translate } from 'i18n-calypso';
 import React from 'react';
 
 const renderHeaderSection = () => (
-	<div className="tag-stream__page-header">
+	<div className="logged-out-reader-header">
 		<h2>
 			{
 				// translators: The title of the reader tag page
