@@ -140,7 +140,6 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 						isSavingSettings={ isSavingSettings }
 						updateFields={ updateFields }
 					/>
-					{ config.isEnabled( 'fediverse/allow-opt-in' ) && <FediverseSettingsSection /> }
 					<NewsletterSettingsSection
 						fields={ fields }
 						handleToggle={ handleToggle }
@@ -158,6 +157,7 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 						isAtomic={ isAtomic }
 						siteIsJetpack={ siteIsJetpack }
 					/>
+					{ config.isEnabled( 'fediverse/allow-opt-in' ) && <FediverseSettingsSection /> }
 					<RssFeedSettingsSection
 						fields={ fields }
 						onChangeField={ onChangeField }
