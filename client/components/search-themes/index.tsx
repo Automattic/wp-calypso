@@ -3,9 +3,9 @@ import { __experimentalUseFocusOutside as useFocusOutside } from '@wordpress/com
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import KeyedSuggestions from 'calypso/components/keyed-suggestions';
 import Search, { SEARCH_MODE_ON_ENTER } from 'calypso/components/search';
+import { useSelector } from 'calypso/state';
 import { getThemeFilters } from 'calypso/state/themes/selectors';
 import { allowSomeThemeFilters, computeEditedSearchElement, insertSuggestion } from './utils';
 import type { ThemeFilters } from './types';

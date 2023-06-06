@@ -107,7 +107,6 @@ export class FullPostView extends Component {
 	openSuggestedFollowsModal = ( followClicked ) => {
 		this.setState( { isSuggestedFollowsModalOpen: followClicked } );
 	};
-
 	onCloseSuggestedFollowModal = () => {
 		this.setState( { isSuggestedFollowsModalOpen: false } );
 	};
@@ -132,7 +131,6 @@ export class FullPostView extends Component {
 
 		document.addEventListener( 'keydown', this.handleKeydown, true );
 	}
-
 	componentDidUpdate( prevProps ) {
 		// Send page view if applicable
 		if (
@@ -662,6 +660,7 @@ export class FullPostView extends Component {
 					<ReaderSuggestedFollowsDialog
 						onClose={ this.onCloseSuggestedFollowModal }
 						siteId={ +post.site_ID }
+						postId={ +post.ID }
 						isVisible={ this.state.isSuggestedFollowsModalOpen }
 					/>
 				) }

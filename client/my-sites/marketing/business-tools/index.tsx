@@ -11,6 +11,7 @@ import streakLogo from 'calypso/assets/images/illustrations/streak-logo.png';
 import todoistLogo from 'calypso/assets/images/illustrations/todoist-logo.svg';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
+import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import * as T from 'calypso/types';
 import MarketingBusinessToolsFeature from './feature';
@@ -204,7 +205,7 @@ export const MarketingBusinessTools: FunctionComponent< Props > = ( { recordTrac
 };
 
 export default connect(
-	( state ) => ( {
+	( state: IAppState ) => ( {
 		selectedSiteSlug: getSelectedSiteSlug( state ),
 	} ),
 	{

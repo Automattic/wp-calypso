@@ -5,18 +5,16 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { getPlan, getPlanTermLabel, isFreePlanProduct } from '@automattic/calypso-products';
-import { FormInputValidation, Popover } from '@automattic/components';
+import { FormInputValidation, Popover, Spinner } from '@automattic/components';
 import {
 	useSubmitTicketMutation,
 	useSubmitForumsMutation,
-	useUpdateZendeskUserFieldsMutation,
 	useSiteAnalysis,
 	useUserSites,
 	AnalysisReport,
 	SiteDetails,
 	HelpCenterSite,
 	useJetpackSearchAIQuery,
-	useSupportAvailability,
 } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { useQueryClient } from '@tanstack/react-query';
@@ -36,7 +34,7 @@ import { getSectionName } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
  */
-import { useZendeskConfig, useContactFormTitle } from '../hooks';
+import { useChatStatus, useContactFormTitle, useChatWidget, useZendeskMessaging } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 import { getSupportVariationFromMode } from '../support-variations';
 import { BackButton } from './back-button';
@@ -98,8 +96,7 @@ export const HelpCenterContactForm = () => {
 	const locale = useLocale();
 	const { isLoading: submittingTicket, mutateAsync: submitTicket } = useSubmitTicketMutation();
 	const { isLoading: submittingTopic, mutateAsync: submitTopic } = useSubmitForumsMutation();
-	const { isLoading: submittingZendeskUserFields, mutateAsync: submitZendeskUserFields } =
-		useUpdateZendeskUserFieldsMutation();
+	const { isOpeningChatWidget, openChatWidget } = useChatWidget();
 	const userId = useSelector( getCurrentUserId );
 	const { data: userSites } = useUserSites( userId );
 	const userWithNoSites = userSites?.sites.length === 0;
@@ -118,19 +115,20 @@ export const HelpCenterContactForm = () => {
 		};
 	}, [] );
 
-	const {
-		setSite,
-		resetStore,
-		setUserDeclaredSite,
-		setSubject,
-		setMessage,
-		setShowHelpCenter,
-		setShowMessagingLauncher,
-		setShowMessagingWidget,
-	} = useDispatch( HELP_CENTER_STORE );
+	const { setSite, resetStore, setUserDeclaredSite, setShowMessagingChat, setSubject, setMessage } =
+		useDispatch( HELP_CENTER_STORE );
 
-	const { data: chatStatus } = useSupportAvailability( 'CHAT' );
-	const { status: zendeskStatus } = useZendeskConfig( Boolean( chatStatus?.is_user_eligible ) );
+	const {
+		canConnectToZendesk,
+		hasActiveChats,
+		isEligibleForChat,
+		isLoading: isLoadingChatStatus,
+	} = useChatStatus();
+	useZendeskMessaging(
+		'zendesk_support_chat_key',
+		isEligibleForChat || hasActiveChats,
+		isEligibleForChat || hasActiveChats
+	);
 
 	useEffect( () => {
 		const supportVariation = getSupportVariationFromMode( mode );
@@ -158,7 +156,7 @@ export const HelpCenterContactForm = () => {
 	);
 
 	const ownershipStatusLoading = ownershipResult?.result === 'LOADING';
-	const isSubmitting = submittingTicket || submittingTopic || submittingZendeskUserFields;
+	const isSubmitting = submittingTicket || submittingTopic || isOpeningChatWidget;
 
 	// if the user picked a site from the picker, we don't need to analyze the ownership
 	if ( currentSite && sitePickerChoice === 'CURRENT_SITE' ) {
@@ -186,8 +184,8 @@ export const HelpCenterContactForm = () => {
 		supportSite = currentSite as HelpCenterSite;
 	}
 
-	const [ debouncedMessage ] = useDebounce( message || '', 500 );
-	const [ debouncedSubject ] = useDebounce( subject || '', 500 );
+	const [ debouncedMessage ] = useDebounce( message || '', 1000 );
+	const [ debouncedSubject ] = useDebounce( subject || '', 1000 );
 
 	const enableGPTResponse =
 		config.isEnabled( 'help/gpt-response' ) && ! ( params.get( 'disable-gpt' ) === 'true' );
@@ -311,21 +309,7 @@ export const HelpCenterContactForm = () => {
 						section: sectionName,
 					} );
 
-					submitZendeskUserFields( {
-						messaging_source: sectionName,
-						messaging_initial_message: message,
-						messaging_plan: '', // Will be filled out by backend
-						messaging_url: supportSite?.URL,
-					} )
-						.then( () => {
-							setShowHelpCenter( false );
-							setShowMessagingLauncher( true );
-							setShowMessagingWidget( true );
-							resetStore();
-						} )
-						.catch( () => {
-							setHasSubmittingError( true );
-						} );
+					openChatWidget( supportSite, message, () => setHasSubmittingError( true ) );
 					break;
 				}
 				break;
@@ -405,7 +389,7 @@ export const HelpCenterContactForm = () => {
 	}
 
 	const InfoTip = () => {
-		const ref = useRef< any >();
+		const ref = useRef< HTMLButtonElement >( null );
 		const [ isOpen, setOpen ] = useState( false );
 
 		return (
@@ -479,29 +463,15 @@ export const HelpCenterContactForm = () => {
 	}
 
 	const {
-		isFetching: isFetchingGPTUrls,
-		isError: isGPTLinksError,
-		data: links,
-	} = useJetpackSearchAIQuery( {
-		siteId: '9619154',
-		query: jpSearchAiQueryText,
-		stopAt: 'urls',
-		enabled: enableGPTResponse,
-	} );
-
-	const {
-		isFetching: isFetchingGPTAnswer,
-		isError: isGPTResponseError,
+		isFetching: isFetchingGPTResponse,
+		isError: isGPTError,
 		data: gptResponse,
 	} = useJetpackSearchAIQuery( {
 		siteId: '9619154',
 		query: jpSearchAiQueryText,
 		stopAt: 'response',
-		enabled: !! links?.urls,
+		enabled: enableGPTResponse,
 	} );
-
-	const isFetchingGPTResponse = isFetchingGPTUrls || isFetchingGPTAnswer;
-	const isGPTError = isGPTLinksError || isGPTResponseError;
 
 	const getCTALabel = () => {
 		const showingHelpOrGPTResults = showingSearchResults || showingGPTResponse;
@@ -529,7 +499,19 @@ export const HelpCenterContactForm = () => {
 		return isSubmitting ? formTitles.buttonSubmittingLabel : formTitles.buttonLabel;
 	};
 
-	if ( mode === 'CHAT' && zendeskStatus === 'error' ) {
+	if ( hasActiveChats ) {
+		setShowMessagingChat( true );
+	}
+
+	if ( isLoadingChatStatus ) {
+		return (
+			<div className="help-center-contact-form__loading">
+				<Spinner baseClassName="" />
+			</div>
+		);
+	}
+
+	if ( mode === 'CHAT' && ! canConnectToZendesk ) {
 		return <ThirdPartyCookiesNotice />;
 	}
 

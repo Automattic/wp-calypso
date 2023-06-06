@@ -11,7 +11,6 @@ import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment } from 'react';
-import { useDispatch } from 'react-redux';
 import {
 	TaxInfoArea,
 	usePaymentMethodTaxInfo,
@@ -21,6 +20,7 @@ import {
 	SummaryLine,
 	SummaryDetails,
 } from 'calypso/my-sites/checkout/composite-checkout/components/summary-details';
+import { useDispatch } from 'calypso/state';
 import { errorNotice } from 'calypso/state/notices/actions';
 import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
 

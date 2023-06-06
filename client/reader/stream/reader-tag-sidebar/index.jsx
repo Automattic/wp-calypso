@@ -28,6 +28,11 @@ const ReaderTagSidebar = ( { tag } ) => {
 		);
 	};
 
+	const trackTagsPageLinkClick = () => {
+		recordAction( 'clicked_reader_sidebar_tags_page_link' );
+		dispatch( recordReaderTracksEvent( 'calypso_reader_sidebar_tags_page_link_clicked' ) );
+	};
+
 	const tagLinks = relatedMetaByTag.data?.related_tags?.map( ( relatedTag ) => (
 		<TagLink tag={ relatedTag } key={ relatedTag.slug } onClick={ handleTagSidebarClick } />
 	) );
@@ -59,6 +64,9 @@ const ReaderTagSidebar = ( { tag } ) => {
 					<div className="reader-post-card__tags">{ tagLinks }</div>
 				</div>
 			) }
+			<a className="reader-tag-sidebar-tags-page" href="/tags" onClick={ trackTagsPageLinkClick }>
+				{ translate( 'See all tags' ) }
+			</a>
 			{ relatedSitesLinks && (
 				<div className="reader-tag-sidebar-related-sites">
 					<h2>{ translate( 'Related Sites' ) }</h2>

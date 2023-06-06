@@ -3,10 +3,10 @@ import { TermsOfServiceRecord, useShoppingCart } from '@automattic/shopping-cart
 import debugFactory from 'debug';
 import i18n, { useTranslate, TranslateResult } from 'i18n-calypso';
 import moment from 'moment';
-import { useSelector } from 'react-redux';
 import { EDIT_PAYMENT_DETAILS } from 'calypso/lib/url/support';
 import CheckoutTermsItem from 'calypso/my-sites/checkout/composite-checkout/components/checkout-terms-item';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const debug = debugFactory( 'calypso:composite-checkout:additional-terms-of-service' );

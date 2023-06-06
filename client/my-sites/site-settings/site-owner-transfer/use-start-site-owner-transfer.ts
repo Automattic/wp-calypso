@@ -20,14 +20,15 @@ export const useStartSiteOwnerTransfer = (
 	options: UseMutationOptions< MutationResponse, MutationError, MutationVariables > = {}
 ) => {
 	const mutation = useMutation(
-		async ( { newSiteOwner }: MutationVariables ) =>
-			wp.req.post(
+		async ( { newSiteOwner }: MutationVariables ) => {
+			return wp.req.post(
 				{
 					path: `/sites/${ siteId }/site-owner-transfer`,
 					apiNamespace: 'wpcom/v2',
 				},
 				{ new_site_owner: newSiteOwner }
-			),
+			);
+		},
 		{
 			...options,
 		}

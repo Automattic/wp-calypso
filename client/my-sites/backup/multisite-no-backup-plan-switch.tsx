@@ -1,8 +1,8 @@
 import { WPCOM_FEATURES_BACKUPS } from '@automattic/calypso-products';
 import { FunctionComponent, ReactNode, useCallback } from 'react';
-import { useSelector } from 'react-redux';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import RenderSwitch from 'calypso/components/jetpack/render-switch';
+import { useSelector } from 'calypso/state';
 import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import isRequestingSiteFeatures from 'calypso/state/selectors/is-requesting-site-features';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';

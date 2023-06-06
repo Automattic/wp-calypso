@@ -14,8 +14,7 @@ const selectors = {
 	// The "content only" "continue" button of '/start/from/importing/wordpress'
 	wpContentOnlyContinueButton:
 		'.content-chooser .import-layout__column:nth-child(2) > div > div:last-child button:text("Continue")',
-	wpPreMigrationContentOnlyOptionButton: 'role=button[name="Use the content-only import option"]',
-
+	wpPreMigrationContentOnlyOptionButton: 'button:has-text("Use the content-only import option")',
 	// ImporterDrag page
 	importerDrag: ( text: string ) => `div.importer-wrapper__${ text }`,
 

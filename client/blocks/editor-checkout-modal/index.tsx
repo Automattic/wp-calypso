@@ -4,10 +4,10 @@ import { Icon, wordpress } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import * as React from 'react';
-import { useSelector } from 'react-redux';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import CheckoutMain from 'calypso/my-sites/checkout/composite-checkout/components/checkout-main';
+import { useSelector } from 'calypso/state';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { RequestCart } from '@automattic/shopping-cart';
 

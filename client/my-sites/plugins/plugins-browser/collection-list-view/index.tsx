@@ -1,11 +1,11 @@
 import { shuffle } from '@automattic/js-utils';
 import { ReactElement, useEffect, useRef } from 'react';
-import { useSelector } from 'react-redux';
 import { Plugin } from 'calypso/my-sites/plugins/categories';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
 import { useGetCategoryUrl } from 'calypso/my-sites/plugins/categories/use-get-category-url';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
+import { useSelector } from 'calypso/state';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';

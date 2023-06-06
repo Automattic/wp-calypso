@@ -89,6 +89,10 @@ $break-large-stats-countries: 1280px;
 		.stats-card--header-and-body {
 			grid-area: list;
 		}
+		.stats-card--body {
+			max-height: 400px;
+			overflow: auto;
+		}
 		.stats-card--footer {
 			grid-area: more;
 		}

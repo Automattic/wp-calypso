@@ -1,6 +1,6 @@
 import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import { getProductCurrencyCode, getProductBySlug } from 'calypso/state/products-list/selectors';
 
 const useAddOnDisplayCost = ( productSlug: string, quantity?: number ) => {

@@ -14,6 +14,7 @@ export const TwitterPreviews: React.FC< TwitterPreviewsProps > = ( {
 	if ( ! tweets?.length ) {
 		return null;
 	}
+
 	return (
 		<div className="social-preview twitter-preview">
 			{ ! hidePostPreview && (
@@ -57,7 +58,7 @@ export const TwitterPreviews: React.FC< TwitterPreviewsProps > = ( {
 							{ __( 'Learn more about links', 'social-previews' ) }
 						</ExternalLink>
 					</p>
-					<TwitterLinkPreview { ...tweets[ 0 ] } />
+					<TwitterLinkPreview { ...tweets[ 0 ] } name="" profileImage="" screenName="" />
 				</section>
 			) }
 		</div>

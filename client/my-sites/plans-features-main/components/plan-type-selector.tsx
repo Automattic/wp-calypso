@@ -13,13 +13,13 @@ import { useTranslate } from 'i18n-calypso';
 import { omit } from 'lodash';
 import { useEffect, useState } from 'react';
 import * as React from 'react';
-import { useSelector } from 'react-redux';
 import CSSTransition from 'react-transition-group/CSSTransition';
 import { Primitive } from 'utility-types';
 import SegmentedControl from 'calypso/components/segmented-control';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ProvideExperimentData } from 'calypso/lib/explat';
 import { addQueryArgs } from 'calypso/lib/url';
+import { useSelector } from 'calypso/state';
 import {
 	getPlanBySlug,
 	getPlanRawPrice,
@@ -180,6 +180,8 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 		'domainAndPlanPackage'
 	);
 
+	const isJetpackAppFlow = new URLSearchParams( window.location.search ).get( 'jetpackAppPlans' );
+
 	const intervalTabs = showBiannualToggle ? [ 'yearly', '2yearly' ] : [ 'monthly', 'yearly' ];
 
 	return (
@@ -196,6 +198,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 							intervalType: interval,
 							domain: isDomainUpsellFlow,
 							domainAndPlanPackage: isDomainAndPlanPackageFlow,
+							jetpackAppPlans: isJetpackAppFlow,
 							...additionalPathProps,
 						} ) }
 						isPlansInsideStepper={ props.isPlansInsideStepper }

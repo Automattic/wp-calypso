@@ -341,6 +341,10 @@ $mobile-card-max-width: 440px;
 		&.has-3-cols {
 			max-width: $table-cell-max-width * 3;
 		}
+
+		&.has-4-cols {
+			max-width: $table-cell-max-width * 4;
+		}
 	}
 
 	.plan-features-2023-grid__table-bottom .plan-features-2023-grid__table {
@@ -1098,6 +1102,11 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 }
 
 .is-section-signup .plan-features-2023-grid__plan-comparison-grid-container {
+	margin: auto;
+	@include plan-comparison-grid-breakpoints;
+}
+
+.is-section-stepper .plan-features-2023-grid__plan-comparison-grid-container {
 	margin: auto;
 	@include plan-comparison-grid-breakpoints;
 }

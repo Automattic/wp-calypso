@@ -22,8 +22,6 @@ function renderWithStore( element: ReactChild, initialState: Record< string, unk
 	};
 }
 
-global.document = {};
-
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};
 

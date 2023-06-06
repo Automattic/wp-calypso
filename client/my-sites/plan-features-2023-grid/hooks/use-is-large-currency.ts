@@ -1,4 +1,4 @@
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import { getPlanPrices } from 'calypso/state/plans/selectors';
 import { IAppState } from 'calypso/state/types';
 import type { PlanSlug } from '@automattic/calypso-products';

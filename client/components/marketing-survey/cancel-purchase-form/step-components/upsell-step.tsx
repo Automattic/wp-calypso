@@ -5,7 +5,6 @@ import { Button } from '@wordpress/components';
 import { useTranslate, numberFormat } from 'i18n-calypso';
 import page from 'page';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
 import imgBuiltBy from 'calypso/assets/images/cancellation/built-by.png';
 import imgBusinessPlan from 'calypso/assets/images/cancellation/business-plan.png';
 import imgFreeMonth from 'calypso/assets/images/cancellation/free-month.png';
@@ -13,6 +12,7 @@ import imgLiveChat from 'calypso/assets/images/cancellation/live-chat.png';
 import imgMonthlyPayments from 'calypso/assets/images/cancellation/monthly-payments.png';
 import imgSwitchPlan from 'calypso/assets/images/cancellation/switch-plan.png';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import useHappyChat from '../use-happychat';
 import type { UpsellType } from '../get-upsell-type';
@@ -114,7 +114,7 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 	const numberOfPluginsThemes = numberFormat( 50000, 0 );
 	const discountRate = 25;
 	const couponCode = 'BIZWPC25';
-	const builtByURL = 'https://wordpress.com/built-by/?ref=wpcom-cancel-flow';
+	const builtByURL = 'https://wordpress.com/website-design-service/?ref=wpcom-cancel-flow';
 	const { refundAmount } = props;
 
 	switch ( upsell ) {

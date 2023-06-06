@@ -1,7 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useCallback, useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import titleCase from 'to-title-case';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
@@ -22,6 +21,7 @@ import {
 	emailManagement,
 } from 'calypso/my-sites/email/paths';
 import TitanSetUpMailboxForm from 'calypso/my-sites/email/titan-set-up-mailbox/titan-set-up-mailbox-form';
+import { useSelector } from 'calypso/state';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { createSiteDomainObject } from 'calypso/state/sites/domains/assembler';

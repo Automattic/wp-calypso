@@ -6,6 +6,7 @@ import {
 	IMPORTS_IMPORT_CANCEL,
 	IMPORTS_IMPORT_LOCK,
 	IMPORTS_IMPORT_RECEIVE,
+	IMPORTS_IMPORT_RECEIVED_RESET,
 	IMPORTS_IMPORT_RESET,
 	IMPORTS_IMPORT_START,
 	IMPORTS_IMPORT_UNLOCK,
@@ -27,6 +28,8 @@ function isImporterStatusHydrated( state = false, action ) {
 	switch ( action.type ) {
 		case IMPORTS_IMPORT_RECEIVE:
 			return true;
+		case IMPORTS_IMPORT_RECEIVED_RESET:
+			return false;
 	}
 
 	return state;

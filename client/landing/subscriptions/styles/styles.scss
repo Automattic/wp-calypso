@@ -7,11 +7,12 @@
 @import "@automattic/color-studio/dist/color-variables";
 @import "@wordpress/base-styles/breakpoints";
 @import "calypso/assets/stylesheets/shared/loading";
+@import "./search-component.scss";
 
 body {
 	background-color: $studio-white;
 	font-family: $sans;
-	text-rendering: optimizelegibility;
+	text-rendering: optimizeLegibility;
 	-moz-osx-font-smoothing: grayscale;
 	-webkit-font-smoothing: antialiased;
 
@@ -43,67 +44,7 @@ body {
 		padding: 0;
 	}
 
-	.subscriptions-manager {
-		&__list-actions-bar {
-			margin-bottom: 57px;
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			gap: 8px;
-
-			.subscription-manager__sort-controls {
-				margin-left: auto;
-			}
-
-			.subscriptions-manager__filter-control {
-				flex-grow: 1;
-
-				&.select-dropdown,
-				.select-dropdown__header {
-					height: 48px;
-				}
-
-				.select-dropdown__item.is-selected {
-					background-color: var(--color-primary);
-				}
-			}
-		}
-
-		@media (max-width: $break-small) {
-			&__list-actions-bar {
-				margin-bottom: 38.5px;
-				flex-direction: column;
-				align-items: stretch;
-				gap: 0;
-
-				.subscription-manager-sort-controls {
-					margin-top: 30.5px;
-
-					&__button {
-						padding: 0;
-					}
-				}
-			}
-		}
-	}
-
-	.search-component {
-		max-width: 500px;
-		height: 48px;
-		box-sizing: border-box;
-
-		border: 1px solid $studio-gray-10;
-		border-radius: 2px;
-
-		.subscriptions-manager__search-icon {
-			margin-left: 18.5px;
-			margin-right: 14px;
-		}
-
-		input.search-component__input[type="search"]::placeholder {
-			color: $studio-gray-50;
-		}
-	}
+	@extend %search-component-subscriptions-style;
 
 	hr.subscriptions__separator {
 		width: 100%;

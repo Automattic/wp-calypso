@@ -1,4 +1,3 @@
-import { isBusinessPlan, isEcommercePlan } from '@automattic/calypso-products';
 import { NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
@@ -73,21 +72,39 @@ const hosting: Flow = {
 			}
 
 			if ( _currentStepSlug === 'processing' ) {
-				const destination = addQueryArgs( '/sites', {
-					'new-site': providedDependencies.siteId,
-				} );
+				// Purchasing these plans will trigger an atomic transfer, so go to stepper flow where we wait for it to complete.
+				const goingAtomic =
+					providedDependencies.goToCheckout &&
+					planCartItem?.product_slug &&
+					[
+						'business-bundle',
+						'business-bundle-monthly',
+						'ecommerce-bundle',
+						'ecommerce-bundle-monthly',
+					].includes( planCartItem.product_slug );
+
+				const destination = goingAtomic
+					? addQueryArgs( '/setup/transferring-hosted-site', {
+							siteId: providedDependencies.siteId,
+					  } )
+					: '/home/' + providedDependencies.siteSlug;
+
 				persistSignupDestination( destination );
 				setSignupCompleteSlug( providedDependencies?.siteSlug );
 				setSignupCompleteFlowName( flowName );
 
-				return window.location.assign(
-					addQueryArgs(
-						`/checkout/${ encodeURIComponent(
-							( providedDependencies?.siteSlug as string ) ?? ''
-						) }`,
-						{ redirect_to: destination }
-					)
-				);
+				if ( providedDependencies.goToCheckout ) {
+					return window.location.assign(
+						addQueryArgs(
+							`/checkout/${ encodeURIComponent(
+								( providedDependencies?.siteSlug as string ) ?? ''
+							) }`,
+							{ redirect_to: destination }
+						)
+					);
+				}
+
+				return window.location.assign( destination );
 			}
 
 			return providedDependencies;
@@ -153,29 +170,29 @@ const hosting: Flow = {
 					const productSlug =
 						( providedDependencies?.plan as MinimalRequestCartProduct | null )?.product_slug ?? '';
 
-					setPlanCartItem( {
-						product_slug: productSlug,
-						extra: { geo_affinity: siteGeoAffinity },
-					} );
-
-					const mustPickDataCenter =
-						isBusinessPlan( productSlug ) || isEcommercePlan( productSlug );
-
-					if ( mustPickDataCenter ) {
+					// User picked the Free plan
+					if ( ! productSlug ) {
 						return navigate( 'options' );
 					}
 
-					return navigate( 'siteCreationStep' );
+					setPlanCartItem( {
+						product_slug: productSlug,
+					} );
+
+					return navigate( 'options' );
 				}
 
 				case 'options': {
 					setSiteTitle( providedDependencies.siteTitle );
-					setSiteGeoAffinity( providedDependencies.siteGeoAffinity );
 
-					setPlanCartItem( {
-						product_slug: planCartItem?.product_slug,
-						extra: { geo_affinity: providedDependencies.siteGeoAffinity },
-					} );
+					if ( providedDependencies.siteGeoAffinity ) {
+						setPlanCartItem( {
+							product_slug: planCartItem?.product_slug,
+							extra: { geo_affinity: providedDependencies.siteGeoAffinity },
+						} );
+
+						setSiteGeoAffinity( providedDependencies.siteGeoAffinity );
+					}
 
 					return navigate( 'siteCreationStep' );
 				}

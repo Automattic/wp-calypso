@@ -1,30 +1,27 @@
-import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { HelpCenter } from '@automattic/data-stores';
 import { SUPPORT_FORUM } from '@automattic/help-center';
-import { useMessagingAvailability } from '@automattic/help-center/src/hooks';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { ResponseCartMessage, useShoppingCart } from '@automattic/shopping-cart';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
+import { useSelect, useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector, useDispatch } from 'react-redux';
+import { useEffect } from 'react';
 import QuerySupportTypes from 'calypso/blocks/inline-help/inline-help-query-support-types';
-import AsyncLoad from 'calypso/components/async-load';
 import HappychatButtonUnstyled from 'calypso/components/happychat/button';
-import { ZendeskJetpackChat } from 'calypso/components/jetpack/jetpack-presales-chat-widget';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
-import { useJpPresalesAvailabilityQuery } from 'calypso/lib/jetpack/use-jp-presales-availability-query';
+import { usePresalesChat } from 'calypso/lib/presales-chat';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getSupportLevel from 'calypso/state/happychat/selectors/get-support-level';
-import { showInlineHelpPopover } from 'calypso/state/inline-help/actions';
 import getSupportVariation from 'calypso/state/selectors/get-inline-help-support-variation';
 import isSupportVariationDetermined from 'calypso/state/selectors/is-support-variation-determined';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import type { Theme } from '@automattic/composite-checkout';
+import type { HelpCenterSelect } from '@automattic/data-stores';
+import type { KeyType } from 'calypso/lib/presales-chat';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
@@ -141,11 +138,22 @@ const LoadingButton = styled.p< StyledProps >`
 	position: relative;
 `;
 
+function getKeyTypeForPresalesChat(): KeyType {
+	if ( isAkismetCheckout() ) {
+		return 'akismet';
+	}
+
+	if ( isJetpackCheckout() ) {
+		return 'jpCheckout';
+	}
+
+	return 'wpcom';
+}
+
 export default function CheckoutHelpLink() {
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
-	const { setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
-	const isEnglishLocale = useIsEnglishLocale();
+	const { setShowHelpCenter, setShowMessagingLauncher } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
@@ -155,11 +163,6 @@ export default function CheckoutHelpLink() {
 		( error: ResponseCartMessage ) => error.code === 'blocked'
 	);
 
-	const { data: messagingPresalesAvailability } = useMessagingAvailability(
-		'wpcom_presales',
-		! purchasesAreBlocked
-	);
-	const presalesZendeskChatAvailable = messagingPresalesAvailability?.is_available;
 	const { section, supportVariationDetermined, supportVariation } = useSelector( ( state ) => {
 		return {
 			section: getSectionName( state ),
@@ -167,85 +170,66 @@ export default function CheckoutHelpLink() {
 			supportVariation: getSupportVariation( state ),
 		};
 	} );
-	const isSitelessCheckout = isAkismetCheckout() || isJetpackCheckout();
-	const { data: isJpPresalesStaffed } = useJpPresalesAvailabilityQuery(
-		presalesZendeskChatAvailable && isSitelessCheckout
-	);
-
-	const userAllowedToHelpCenter = config.isEnabled( 'calypso/help-center' );
 
 	const handleHelpButtonClicked = () => {
-		reduxDispatch( userAllowedToHelpCenter ? setShowHelpCenter( true ) : showInlineHelpPopover() );
+		reduxDispatch( setShowHelpCenter( true ) );
 		reduxDispatch(
 			recordTracksEvent( 'calypso_checkout_composite_summary_help_click', {
-				location: userAllowedToHelpCenter ? 'help-center' : 'inline-help-popover',
+				location: 'help-center',
 				section,
 			} )
 		);
 	};
 
-	const zendeskPresalesChatKey: string | false = config( 'zendesk_presales_chat_key' );
-	const isPresalesZendeskChatEligible =
-		presalesZendeskChatAvailable &&
-		isEnglishLocale &&
-		zendeskPresalesChatKey &&
-		! purchasesAreBlocked;
+	const { isChatActive, isLoading: isLoadingChat } = usePresalesChat(
+		getKeyTypeForPresalesChat(),
+		! purchasesAreBlocked
+	);
 
-	// Show loading button if we haven't determined whether or not to show the Zendesk chat button yet.
-	const shouldShowLoadingButton =
-		! supportVariationDetermined && ! isJpPresalesStaffed && ! isPresalesZendeskChatEligible;
-	const shouldShowZendeskChatWidget =
-		( isPresalesZendeskChatEligible && ! isSitelessCheckout ) ||
-		( isSitelessCheckout && isJpPresalesStaffed );
+	const { isMessagingWidgetShown } = useSelect( ( select ) => {
+		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
+		return {
+			isMessagingWidgetShown: helpCenterSelect.isMessagingWidgetShown(),
+		};
+	}, [] );
+
+	useEffect( () => {
+		if ( isChatActive ) {
+			setShowMessagingLauncher( true );
+		}
+		return () => {
+			if ( ! isMessagingWidgetShown && isChatActive ) {
+				setShowMessagingLauncher( false );
+			}
+		};
+	}, [ isChatActive, setShowMessagingLauncher, isMessagingWidgetShown ] );
+
+	const shouldShowLoadingButton = ! supportVariationDetermined || isLoadingChat;
 
 	const hasDirectSupport = supportVariation !== SUPPORT_FORUM;
 
-	// For the siteless checkouts, we do not need to specifically check if isJpPresalesStaffed is true
-	// because if this function is being called during a siteless checkout session, shouldShowZendeskChatWidget
-	// already ensures that isJpPresalesStaffed is true.
-	const getZendeskChatWidget = () => {
-		if ( isAkismetCheckout() ) {
-			return <ZendeskJetpackChat keyType="akismet" />;
-		}
-
-		if ( isJetpackCheckout() ) {
-			return <ZendeskJetpackChat keyType="jpCheckout" />;
-		}
-
-		// If we're not in a siteless checkout, we can use the regular wordpress themed Zendesk chat widget.
-		return (
-			<AsyncLoad
-				require="calypso/components/presales-zendesk-chat"
-				chatKey={ zendeskPresalesChatKey }
-			/>
-		);
-	};
-
-	// If pre-sales chat isn't available, use the inline help button instead.
 	return (
 		<CheckoutHelpLinkWrapper>
 			<QuerySupportTypes />
 			{ shouldShowLoadingButton && <LoadingButton /> }
-			{ shouldShowZendeskChatWidget
-				? getZendeskChatWidget()
-				: supportVariationDetermined && (
-						<CheckoutSummaryHelpButton onClick={ handleHelpButtonClicked }>
-							{ hasDirectSupport
-								? translate( 'Questions? {{underline}}Ask a Happiness Engineer{{/underline}}', {
-										components: {
-											underline: <span />,
-										},
-								  } )
-								: translate(
-										'Questions? {{underline}}Read more about plans and purchases{{/underline}}',
-										{
-											components: {
-												underline: <span />,
-											},
-										}
-								  ) }
-						</CheckoutSummaryHelpButton>
-				  ) }
+			{ ! shouldShowLoadingButton && ! isChatActive && (
+				<CheckoutSummaryHelpButton onClick={ handleHelpButtonClicked }>
+					{ hasDirectSupport
+						? translate( 'Questions? {{underline}}Ask a Happiness Engineer{{/underline}}', {
+								components: {
+									underline: <span />,
+								},
+						  } )
+						: translate(
+								'Questions? {{underline}}Read more about plans and purchases{{/underline}}',
+								{
+									components: {
+										underline: <span />,
+									},
+								}
+						  ) }
+				</CheckoutSummaryHelpButton>
+			) }
 		</CheckoutHelpLinkWrapper>
 	);
 }

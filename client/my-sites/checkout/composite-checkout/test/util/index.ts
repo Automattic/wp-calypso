@@ -22,6 +22,7 @@ import type {
 import type {
 	CountryListItem,
 	PossiblyCompleteDomainContactDetails,
+	ContactDetailsType,
 } from '@automattic/wpcom-checkout';
 
 export const normalAllowedPaymentMethods = [
@@ -1648,7 +1649,7 @@ export function mockCachedContactDetailsEndpoint( responseData ): void {
 }
 
 export function mockContactDetailsValidationEndpoint(
-	type: 'domain' | 'gsuite' | 'tax',
+	type: Exclude< ContactDetailsType, 'none' >,
 	responseData,
 	conditionCallback?: ( body ) => boolean
 ): void {
@@ -1870,6 +1871,7 @@ export function mockStripeElements() {
 		mount: jest.fn(),
 		destroy: jest.fn(),
 		on: jest.fn(),
+		off: jest.fn(),
 		update: jest.fn(),
 	} );
 

@@ -6,10 +6,10 @@ import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { useDispatch } from 'react-redux';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useGetProductVariants } from '../../hooks/product-variants';
 import {
@@ -114,7 +114,7 @@ export function CheckoutSidebarPlanUpsell() {
 					<>
 						<div className="checkout-sidebar-plan-upsell__plan-grid-cell"></div>
 						<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-							<strong>{ __( '2 Year Cost' ) }</strong>
+							<strong>{ __( 'Two-year cost' ) }</strong>
 						</div>
 					</>
 				) }
@@ -154,7 +154,7 @@ export function CheckoutSidebarPlanUpsell() {
 				cta={ {
 					disabled: isFormLoading,
 					busy: isFormLoading,
-					text: __( 'Switch to a two year plan' ),
+					text: __( 'Switch to a two-year plan' ),
 					action: onUpgradeClick,
 				} }
 			/>
