@@ -197,6 +197,7 @@ export function getOptionInfo( {
 				pricing: null,
 				learnMoreLink: null,
 				onSelect: () => onSkip(),
+				onSelectText: __( 'Purchase a plan' ),
 			};
 		}
 	} else {

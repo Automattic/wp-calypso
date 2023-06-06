@@ -13,6 +13,7 @@ export default function OptionContent( {
 	illustration,
 	learnMoreLink,
 	onSelect,
+	onSelectText,
 	isPlaceholder,
 	pricing,
 	primary,
@@ -92,7 +93,7 @@ export default function OptionContent( {
 			<div className="option-content__action">
 				{ onSelect && (
 					<Button primary={ primary } disabled={ disabled } onClick={ onSelect } busy={ disabled }>
-						{ __( 'Select' ) }
+						{ onSelectText ?? __( 'Select' ) }
 					</Button>
 				) }
 			</div>
@@ -106,6 +107,7 @@ OptionContent.propTypes = {
 	illustration: PropTypes.string.isRequired,
 	learnMoreLink: PropTypes.string,
 	onSelect: PropTypes.func,
+	onSelectText: PropTypes.string,
 	pricing: PropTypes.object,
 	primary: PropTypes.bool,
 	recommended: PropTypes.bool,
