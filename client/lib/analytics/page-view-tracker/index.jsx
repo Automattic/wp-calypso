@@ -67,21 +67,13 @@ export class PageViewTracker extends Component {
 			title,
 		} = this.props;
 
+		debug( `Queuing Page View: "${ title }" at "${ path }" with ${ delay }ms delay` );
+
 		// When the user is not authenticated, their site data isn't requested and we still want
 		// to record the page view.
-		if ( ! hasSelectedSiteLoaded && isUserAuthenticated ) {
-			debug( `Page view not queued: "${ title }" at "${ path }" with ${ delay }ms delay.` );
-			! hasSelectedSiteLoaded && debug( `Selected site has not been loaded.` );
-			! isUserAuthenticated && debug( `User has not authenticated.` );
+		if ( ( ! hasSelectedSiteLoaded && isUserAuthenticated ) || this.state.timer ) {
 			return;
 		}
-
-		if ( this.state.timer ) {
-			debug( 'Page view has already been queued.' );
-			return;
-		}
-
-		debug( `Page view queued: "${ title }" at "${ path }" with ${ delay }ms delay` );
 
 		if ( ! delay ) {
 			return this.recordViewWithProperties();
