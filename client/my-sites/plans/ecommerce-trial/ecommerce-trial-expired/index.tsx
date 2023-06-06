@@ -101,7 +101,7 @@ const ECommerceTrialExpired = (): JSX.Element => {
 						<h3 className="enterprise-ecommerce__title">{ translate( 'Enterprise ecommerce' ) }</h3>
 						<div className="enterprise-ecommerce__subtitle">
 							{ translate(
-								'Learn how Woo can support the unique needs of businesses using WooCommerce at scale.'
+								'Learn how Woo can support the unique needs of high-volume stores throught dedicated support, discounts, and more.'
 							) }
 						</div>
 					</div>
