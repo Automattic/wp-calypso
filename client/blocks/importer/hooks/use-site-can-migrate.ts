@@ -10,7 +10,6 @@ export function useSiteMigrateInfo(
 	targetSiteId: SiteId,
 	sourceSiteSlug: string,
 	fetchMigrationEnabledOnMount: boolean,
-	isMigrateFromWp: boolean,
 	onfetchCallback?: ( checkCanSiteMigrate: boolean ) => void
 ) {
 	const [ sourceSiteId, setSourceSiteId ] = useState( 0 );
@@ -24,7 +23,7 @@ export function useSiteMigrateInfo(
 		setSourceSiteId( 0 );
 	};
 
-	const checkCanSiteMigrate = ( isMigrateFromWp: boolean, data: MigrationEnabledResponse ) => {
+	const checkCanSiteMigrate = ( data: MigrationEnabledResponse ) => {
 		if ( ! data ) {
 			return false;
 		}
@@ -37,7 +36,7 @@ export function useSiteMigrateInfo(
 	};
 
 	const onMigrationEnabledSuccess = ( data: MigrationEnabledResponse ) => {
-		if ( checkCanSiteMigrate( isMigrateFromWp, data ) ) {
+		if ( checkCanSiteMigrate( data ) ) {
 			setSiteCanMigrate( true );
 			setSourceSiteId( data.source_blog_id );
 		} else {
@@ -60,6 +59,7 @@ export function useSiteMigrateInfo(
 		onMigrationEnabledSuccess,
 		onMigrationEnabledError
 	);
+
 	useEffect( () => {
 		// After the data is fetched or error, we call the callback if it is provided
 		if ( isFetched || isError ) {
