@@ -6,23 +6,48 @@
 	max-width: 1040px;
 	width: calc(100% - 128px);
 
+	@media (max-width: $break-medium) {
+		margin: 0;
+		width: 100%;
+	}
+
+
+	.campaign-item-breadcrumb {
+		@media (max-width: $break-medium) {
+			margin-top: 16px;
+			margin-bottom: 16px;
+		}
+	}
+
+	.campaign-item-promote-again-button {
+		margin-top: 24px;
+	}
+
 	.campaign-item-header {
-		padding-bottom: 25px;
+		padding-bottom: 24px;
 		min-height: 85px;
+		display: flex;
+		justify-content: space-between;
 
 		@media (max-width: $break-medium) {
-			margin: 16px;
-			padding-bottom: 0;
+			padding-bottom: 24px;
+			margin-left: 16px;
+			margin-right: 16px;
+			flex-direction: column;
 		}
 	}
 
 	.campaign-item-details-header-line {
 		margin: 0 -64px 64px;
 		padding: 0;
-
 		@media (max-width: 660px) {
 			margin: 0;
 		}
+	}
+
+	.campaign-item-ad-header-line {
+		margin: 0 0 32px;
+		padding: 0;
 	}
 
 
@@ -107,6 +132,7 @@
 
 			.horizontal-bar-list-item {
 				padding: 0;
+				margin-bottom: 8px;
 
 				&:last-child {
 					.horizontal-bar-list-item-bar {
@@ -153,6 +179,8 @@
 		}
 
 		.campaign-item-details__payment-row {
+			width: 100%;
+
 			> div {
 				flex-direction: row;
 			}
@@ -304,7 +332,8 @@
 		padding: 24px;
 
 		@media (min-width: $break-wide) {
-			margin-bottom: 64px;
+			margin-bottom: 32px;
+			padding-bottom: 32px;
 		}
 	}
 
@@ -330,6 +359,11 @@
 
 		display: flex;
 		flex-direction: column;
+
+		@media (max-width: $break-medium) {
+			margin-left: 16px;
+			margin-right: 16px;
+		}
 
 		.campaign-item-details__support-buttons {
 			button:not(:first-child),
@@ -364,7 +398,7 @@
 				padding: 0;
 				color: var(--color-link);
 				font-weight: 400;
-				font-size: 1rem;
+				font-size: 0.875rem;
 				line-height: 1.65;
 				text-decoration: none;
 				&:focus {
@@ -381,7 +415,7 @@
 
 			.campaign-item-details__support-effective-ad-doc {
 				text-align: left;
-				font-size: 1rem;
+				font-size: 0.875rem;
 
 				svg {
 					vertical-align: top;

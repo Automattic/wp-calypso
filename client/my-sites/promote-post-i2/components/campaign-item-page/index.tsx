@@ -50,7 +50,7 @@ export default function CampaignItemPage( props: Props ) {
 			start_date: '2023-05-26T00:00:00.000Z',
 			end_date: '2023-06-01T23:59:59.000Z',
 			status_smart: 0,
-			status: 'active',
+			status: 'finished',
 			subscription_id: 3676,
 			display_name: 'Javier Olmo',
 			avatar_url: 'https://0.gravatar.com/avatar/9f20b48584142081af80be29ffc6dddc?s=96&d=identicon',

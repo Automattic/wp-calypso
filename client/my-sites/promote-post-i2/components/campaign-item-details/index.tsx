@@ -6,12 +6,13 @@ import {
 	HorizontalBarList,
 	HorizontalBarListItem,
 } from '@automattic/components';
+import { useBreakpoint } from '@automattic/viewport-react';
 import { __, sprintf } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment/moment';
 import { useState } from 'react';
 import Badge from 'calypso/components/badge';
-import Breadcrumb from 'calypso/components/breadcrumb';
+import Breadcrumb, { Item } from 'calypso/components/breadcrumb';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
@@ -44,6 +45,7 @@ export default function CampaignItemDetails( props: Props ) {
 	const [ showDeleteDialog, setShowDeleteDialog ] = useState( false );
 	const [ showErrorDialog, setShowErrorDialog ] = useState( false );
 	const { cancelCampaign } = useCancelCampaignMutation( () => setShowErrorDialog( true ) );
+	const isSmallScreen = useBreakpoint( '<660px' );
 
 	const { campaign, isLoading, siteId } = props;
 
@@ -105,10 +107,22 @@ export default function CampaignItemDetails( props: Props ) {
 	const creditsFormatted = `$${ formatCents( credits || 0 ) }`;
 	const totalFormatted = `$${ formatCents( total || 0 ) }`;
 
-	const navigationItems = [
-		{ label: translate( 'Advertising' ), href: `/advertising` },
-		{ label: campaignTitleFormatted || '', href: `/campaigns/${ campaignId }` },
-	];
+	const navigationItems = isSmallScreen
+		? [
+				{
+					label: (
+						<>
+							<Gridicon icon="chevron-left" size={ 18 } />
+							{ translate( 'Back' ) }
+						</>
+					),
+					href: `/advertising`,
+				},
+		  ]
+		: [
+				{ label: translate( 'Advertising' ), href: `/advertising` },
+				{ label: campaignTitleFormatted || '', href: `/campaigns/${ campaignId }` },
+		  ];
 
 	const icon = (
 		<span className="campaign-item-details__support-buttons-icon">
@@ -205,39 +219,55 @@ export default function CampaignItemDetails( props: Props ) {
 				<p>{ __( 'Please try again later or contact support if the problem persists.' ) }</p>
 			</Dialog>
 
-			<header className="main is-wide-layout campaign-item-header">
-				{ ! isLoading ? <Breadcrumb items={ navigationItems } /> : <FlexibleSkeleton /> }
-
-				<div className="campaign-item-details__header-title">{ campaignTitleFormatted }</div>
-
-				<div className="campaign-item__header-status">
-					{ ! isLoading && status ? (
-						<Badge type={ getCampaignStatusBadgeColor( status ) }>
-							{ getCampaignStatus( status ) }
-						</Badge>
-					) : (
-						<div
-							style={ {
-								height: '20px',
-							} }
-						>
+			<header className="campaign-item-header">
+				<div>
+					<div className="campaign-item-breadcrumb">
+						{ ! isLoading ? (
+							<Breadcrumb items={ navigationItems as Item[] } />
+						) : (
 							<FlexibleSkeleton />
-						</div>
-					) }
+						) }
+					</div>
 
-					{ ! isLoading ? (
-						<>
-							<span>&bull;</span>
-							<div className="campaign-item__header-status-date">
-								{ translate( 'Created:' ) } { campaignCreatedFormatted }
+					<div className="campaign-item-details__header-title">{ campaignTitleFormatted }</div>
+
+					<div className="campaign-item__header-status">
+						{ ! isLoading && status ? (
+							<Badge type={ getCampaignStatusBadgeColor( status ) }>
+								{ getCampaignStatus( status ) }
+							</Badge>
+						) : (
+							<div
+								style={ {
+									height: '20px',
+								} }
+							>
+								<FlexibleSkeleton />
 							</div>
-							<span>&bull;</span>
-							<div className="campaign-item__header-status-date">
-								{ translate( 'Author:' ) } { display_name }
-							</div>
-						</>
-					) : (
-						<FlexibleSkeleton />
+						) }
+
+						{ ! isLoading ? (
+							<>
+								<span>&bull;</span>
+								<div className="campaign-item__header-status-date">
+									{ translate( 'Created:' ) } { campaignCreatedFormatted }
+								</div>
+								<span>&bull;</span>
+								<div className="campaign-item__header-status-date">
+									{ translate( 'Author:' ) } { display_name }
+								</div>
+							</>
+						) : (
+							<FlexibleSkeleton />
+						) }
+					</div>
+				</div>
+
+				<div>
+					{ ! isLoading && status === 'finished' && (
+						<Button className="campaign-item-promote-again-button" primary onClick={ () => {} }>
+							{ translate( 'Promote again' ) }
+						</Button>
 					) }
 				</div>
 			</header>
@@ -401,7 +431,9 @@ export default function CampaignItemDetails( props: Props ) {
 
 								<div className="campaign-item-details__secondary-stats-row">
 									<div>
-										<span className="campaign-item-details__label">{ translate( 'Devices' ) }</span>
+										<span className="campaign-item-details__label">
+											{ translate( 'Audience' ) }
+										</span>
 										<span className="campaign-item-details__details">
 											{ ! isLoading ? devicesListFormatted : <FlexibleSkeleton /> }
 										</span>
@@ -451,7 +483,7 @@ export default function CampaignItemDetails( props: Props ) {
 							</div>
 						</div>
 
-						{ status === 'active' && (
+						{ status === 'completed' && (
 							<div className="campaign-item-details__payment-container">
 								<div className="campaign-item-details__payment">
 									<div className="campaign-item-details__payment-row">
@@ -520,6 +552,7 @@ export default function CampaignItemDetails( props: Props ) {
 									) }
 								</div>
 							</div>
+							{ isSmallScreen && <hr className="campaign-item-ad-header-line" /> }
 							<div className="campaign-item-details__preview-content">
 								<AdPreview isLoading={ isLoading } htmlCode={ creative_html || '' } />
 							</div>
