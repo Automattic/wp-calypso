@@ -115,7 +115,6 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		}
 
 		function resetImportJob( job: ImportJob | undefined ): void {
-			dispatch( resetImportReceived() );
 			if ( ! job ) {
 				return;
 			}
