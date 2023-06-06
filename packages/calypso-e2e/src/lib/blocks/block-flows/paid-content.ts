@@ -1,3 +1,4 @@
+import { envVariables } from '../../..';
 import { BlockFlow, EditorContext, PublishedPostContext } from '.';
 
 interface ConfigurationData {
@@ -37,6 +38,12 @@ export class PaidContentBlockFlow implements BlockFlow {
 	 */
 	async configure( context: EditorContext ): Promise< void > {
 		const editorParent = await context.editorPage.getEditorParent();
+
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			// Mobile viewport hides the Subscriber/Guest view
+			// into a pseudo-dropdown.
+			await editorParent.getByRole( 'button', { name: 'Change view' } ).click();
+		}
 
 		const subscriberViewButtonLocator = editorParent.locator( selectors.subscriberViewButton );
 		await subscriberViewButtonLocator.click();
