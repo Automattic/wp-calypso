@@ -32,6 +32,7 @@ const Survey = ( { setSurveyDismissed }: Props ) => {
 				setSurveyDismissed( true );
 			} }
 			dismissTemporary
+			disableHref
 			showIcon={ false }
 			showLinkIcon={ false }
 			dismissWithoutSavingPreference
