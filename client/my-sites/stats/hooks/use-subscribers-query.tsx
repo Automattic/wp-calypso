@@ -8,7 +8,7 @@ export interface SubscriberPayload {
 	fields: string[];
 }
 
-interface SubscribersData {
+export interface SubscribersData {
 	date: string;
 	unit: string;
 	data: {
