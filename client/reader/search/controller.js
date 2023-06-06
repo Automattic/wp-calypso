@@ -80,6 +80,7 @@ const exported = {
 				onQueryChange={ reportQueryChange }
 				onSortChange={ reportSortChange }
 				searchType={ show }
+				trendingTags={ context.params.trendingTags }
 			/>
 		);
 		next();
