@@ -31,6 +31,7 @@ import StatsDetailsNavigation from '../stats-details-navigation';
 import ChartTabs from '../stats-email-chart-tabs';
 import StatsEmailTopRow from '../stats-email-top-row';
 import { StatsNoContentBanner } from '../stats-no-content-banner';
+import StatsPageViewTracker from '../stats-page-view-tracker';
 import StatsPeriodHeader from '../stats-period-header';
 import StatsPeriodNavigation from '../stats-period-navigation';
 import { getPathWithUpdatedQueryString } from '../utils';
@@ -207,6 +208,10 @@ class StatsEmailDetail extends Component {
 					<DocumentHead title={ translate( 'Jetpack Stats' ) } />
 
 					<PageViewTracker
+						path="/stats/email/:statType/:site/:period/:email_id"
+						title="Stats > Single Email"
+					/>
+					<StatsPageViewTracker
 						path="/stats/email/:statType/:site/:period/:email_id"
 						title="Stats > Single Email"
 					/>

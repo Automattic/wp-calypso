@@ -14,6 +14,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Followers from '../stats-followers';
 import StatsModuleEmails from '../stats-module-emails';
 import StatsPageHeader from '../stats-page-header';
+import StatsPageViewTracker from '../stats-page-view-tracker';
 import Reach from '../stats-reach';
 import SubscribersChartSection, { PeriodType } from '../stats-subscribers-chart-section';
 import SubscribersOverview from '../stats-subscribers-overview';
@@ -51,6 +52,7 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 		<Main fullWidthLayout>
 			<DocumentHead title={ translate( 'Jetpack Stats' ) } />
 			<PageViewTracker path="/stats/subscribers/:site" title="Stats > Subscribers" />
+			<StatsPageViewTracker path="/stats/subscribers/:site" title="Stats > Subscribers" />
 			<div className="stats">
 				<StatsPageHeader
 					page="subscribers"

@@ -22,6 +22,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PostDetailHighlightsSection from '../post-detail-highlights-section';
 import PostDetailTableSection from '../post-detail-table-section';
 import StatsPlaceholder from '../stats-module/placeholder';
+import StatsPageViewTracker from '../stats-page-view-tracker';
 import PostSummary from '../stats-post-summary';
 
 class StatsPostDetail extends Component {
@@ -171,6 +172,10 @@ class StatsPostDetail extends Component {
 		return (
 			<Main fullWidthLayout>
 				<PageViewTracker
+					path={ `/stats/${ postType }/:post_id/:site` }
+					title={ `Stats > Single ${ titlecase( postType ) }` }
+				/>
+				<StatsPageViewTracker
 					path={ `/stats/${ postType }/:post_id/:site` }
 					title={ `Stats > Single ${ titlecase( postType ) }` }
 				/>

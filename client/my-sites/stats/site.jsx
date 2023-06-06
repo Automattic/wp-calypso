@@ -44,6 +44,7 @@ import StatsModule from './stats-module';
 import StatsModuleEmails from './stats-module-emails';
 import StatsNotices from './stats-notices';
 import StatsPageHeader from './stats-page-header';
+import StatsPageViewTracker from './stats-page-view-tracker';
 import StatsPeriodHeader from './stats-period-header';
 import StatsPeriodNavigation from './stats-period-navigation';
 import statsStrings from './stats-strings';
@@ -357,6 +358,10 @@ class StatsSite extends Component {
 				{ ! isOdysseyStats && isJetpack && <QueryJetpackModules siteId={ siteId } /> }
 				<DocumentHead title={ translate( 'Jetpack Stats' ) } />
 				<PageViewTracker
+					path={ `/stats/${ period }/:site` }
+					title={ `Stats > ${ titlecase( period ) }` }
+				/>
+				<StatsPageViewTracker
 					path={ `/stats/${ period }/:site` }
 					title={ `Stats > ${ titlecase( period ) }` }
 				/>

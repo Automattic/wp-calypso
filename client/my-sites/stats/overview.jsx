@@ -14,6 +14,7 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getVisibleSites from 'calypso/state/selectors/get-visible-sites';
 import DatePicker from './stats-date-picker';
 import SiteOverviewPlaceholder from './stats-overview-placeholder';
+import StatsPageViewTracker from './stats-page-view-tracker';
 import SiteOverview from './stats-site-overview';
 
 class StatsOverview extends Component {
@@ -86,6 +87,10 @@ class StatsOverview extends Component {
 			<Main wideLayout>
 				<DocumentHead title={ translate( 'Stats' ) } />
 				<PageViewTracker
+					path={ `/stats/${ period }` }
+					title={ `Stats > ${ titlecase( period ) }` }
+				/>
+				<StatsPageViewTracker
 					path={ `/stats/${ period }` }
 					title={ `Stats > ${ titlecase( period ) }` }
 				/>

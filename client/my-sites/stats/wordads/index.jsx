@@ -30,6 +30,7 @@ import {
 import PromoCards from '../promo-cards';
 import DatePicker from '../stats-date-picker';
 import StatsPageHeader from '../stats-page-header';
+import StatsPageViewTracker from '../stats-page-view-tracker';
 import StatsPeriodHeader from '../stats-period-header';
 import StatsPeriodNavigation from '../stats-period-navigation';
 import WordAdsChartTabs from '../wordads-chart-tabs';
@@ -167,6 +168,10 @@ class WordAds extends Component {
 			<Main fullWidthLayout>
 				<DocumentHead title={ translate( 'WordAds Stats' ) } />
 				<PageViewTracker
+					path={ `/stats/ads/${ period }/:site` }
+					title={ `WordAds > ${ titlecase( period ) }` }
+				/>
+				<StatsPageViewTracker
 					path={ `/stats/ads/${ period }/:site` }
 					title={ `WordAds > ${ titlecase( period ) }` }
 				/>

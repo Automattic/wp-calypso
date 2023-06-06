@@ -17,6 +17,7 @@ import Countries from '../stats-countries';
 import DownloadCsv from '../stats-download-csv';
 import StatsModule from '../stats-module';
 import AllTimeNav from '../stats-module/all-time-nav';
+import StatsPageViewTracker from '../stats-page-view-tracker';
 import statsStringsFactory from '../stats-strings';
 import VideoPlayDetails from '../stats-video-details';
 import StatsVideoSummary from '../stats-video-summary';
@@ -337,6 +338,10 @@ class StatsSummary extends Component {
 		return (
 			<Main className="has-fixed-nav" wideLayout>
 				<PageViewTracker
+					path={ `/stats/${ period }/${ module }/:site` }
+					title={ `Stats > ${ titlecase( period ) } > ${ titlecase( module ) }` }
+				/>
+				<StatsPageViewTracker
 					path={ `/stats/${ period }/${ module }/:site` }
 					title={ `Stats > ${ titlecase( period ) } > ${ titlecase( module ) }` }
 				/>

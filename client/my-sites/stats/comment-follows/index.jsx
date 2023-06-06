@@ -11,6 +11,7 @@ import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Followers from '../stats-comment-followers-page';
+import StatsPageViewTracker from '../stats-page-view-tracker';
 
 class StatsCommentFollows extends Component {
 	static propTypes = {
@@ -44,6 +45,10 @@ class StatsCommentFollows extends Component {
 		return (
 			<Main wideLayout>
 				<PageViewTracker
+					path="/stats/follows/comment/:site_id"
+					title="Stats > Followers > Comment"
+				/>
+				<StatsPageViewTracker
 					path="/stats/follows/comment/:site_id"
 					title="Stats > Followers > Comment"
 				/>
