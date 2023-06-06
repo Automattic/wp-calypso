@@ -1,5 +1,6 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
+import recordGTMDatalayerEvent from 'calypso/lib/analytics/ad-tracking/woo/record-gtm-datalayer-event';
 import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
@@ -110,6 +111,7 @@ const wooexpress: Flow = {
 
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
 			recordSubmitStep( providedDependencies, intent, flowName, currentStep );
+			recordGTMDatalayerEvent( currentStep );
 			const siteSlug = ( providedDependencies?.siteSlug as string ) || siteSlugParam || '';
 			const siteId = getSiteIdBySlug( siteSlug );
 			const adminUrl = siteId && getSiteOption( siteId, 'admin_url' );
