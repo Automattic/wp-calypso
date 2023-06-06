@@ -32,19 +32,18 @@ function querySubscribers(
 		date: formattedDate,
 	};
 
-	return wpcom.req
-		.get(
-			{
-				method: 'GET',
-				apiNamespace: 'rest/v1.1',
-				path: `/sites/${ siteId }/stats/subscribers`,
-			},
-			query
-		)
-		.then( ( response ) => {
-			const selectedData = selectSubscribers( response );
-			return selectedData;
-		} );
+	return wpcom.req.get(
+		{
+			method: 'GET',
+			apiNamespace: 'rest/v1.1',
+			path: `/sites/${ siteId }/stats/subscribers`,
+		},
+		query
+	);
+	// .then( ( response ) => {
+	// 	const selectedData = selectSubscribers( response );
+	// 	return selectedData;
+	// } );
 }
 
 function selectSubscribers( payload: SubscriberPayload ): SubscribersData {
