@@ -10,14 +10,14 @@ import {
 // array of indices to use to calculate the dates to query for
 const cardIndices = [ 0, 30, 60, 90 ];
 
-interface subscribersDataArrays {
+interface SubscribersData {
 	period: string;
 	subscribers: number;
 	subscribers_change: number;
 }
 
-interface subscribersDataArraysResult {
-	data: subscribersDataArrays[];
+interface SubscribersDataResult {
+	data: SubscribersData[];
 	unit: string;
 	date: string;
 }
@@ -35,9 +35,9 @@ function calculateQueryDate( daysToSubtract: number ) {
 }
 
 // calculate the stats to display in the cards
-function SubscribersOverviewCardStats( subscribersDataArrays: subscribersDataArrays[][] ) {
+function SubscribersOverviewCardStats( SubscribersDataArrays: SubscribersData[][] ) {
 	const getCount = ( index: number ) => {
-		return subscribersDataArrays[ index ]?.[ 0 ]?.subscribers || 0;
+		return SubscribersDataArrays[ index ]?.[ 0 ]?.subscribers || 0;
 	};
 
 	const overviewCardStats = [
@@ -73,13 +73,13 @@ const SubscribersOverview: React.FC< SubscribersOverviewProps > = ( { siteId } )
 			select: selectSubscribers,
 			staleTime: 1000 * 60 * 5, // 5 minutes
 		} ) ),
-	} ) as UseQueryResult< subscribersDataArraysResult >[];
+	} ) as UseQueryResult< SubscribersDataResult >[];
 
 	const isLoading = subscribersQueries.some( ( result ) => result.isLoading );
 	const isError = subscribersQueries.some( ( result ) => result.isError );
-	const subscribersDataArrays = subscribersQueries.map( ( result ) => result.data?.data || [] );
+	const SubscribersData = subscribersQueries.map( ( result ) => result.data?.data || [] );
 
-	const overviewCardStats = SubscribersOverviewCardStats( subscribersDataArrays );
+	const overviewCardStats = SubscribersOverviewCardStats( SubscribersData );
 
 	return (
 		<div className="subscribers-overview highlight-cards">
