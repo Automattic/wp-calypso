@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
@@ -24,14 +24,12 @@ export function usePremiumGlobalStyles(
 		return site?.ID ?? null;
 	} );
 
-	const { data } = useQuery(
-		[ 'globalStylesInfo', siteId ],
-		() => getGlobalStylesInfoForSite( siteId ),
-		{
-			placeholderData: DEFAULT_GLOBAL_STYLES_INFO,
-			refetchOnWindowFocus: false,
-		}
-	);
+	const { data } = useQuery( {
+		queryKey: [ 'globalStylesInfo', siteId ],
+		queryFn: () => getGlobalStylesInfoForSite( siteId ),
+		placeholderData: DEFAULT_GLOBAL_STYLES_INFO,
+		refetchOnWindowFocus: false,
+	} );
 
 	return data ?? DEFAULT_GLOBAL_STYLES_INFO;
 }

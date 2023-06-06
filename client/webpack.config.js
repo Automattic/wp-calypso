@@ -293,6 +293,8 @@ const webpackConfig = {
 			calypso: __dirname,
 
 			util: findPackage( 'util/' ), //Trailing `/` stops node from resolving it to the built-in module
+			'react/jsx-runtime': 'react/jsx-runtime.js',
+			'react/jsx-dev-runtime': 'react/jsx-dev-runtime.js',
 		} ),
 	},
 	node: false,
@@ -406,7 +408,11 @@ const webpackConfig = {
 				},
 			} ),
 		isDevelopment && new webpack.HotModuleReplacementPlugin(),
-		isDevelopment && new ReactRefreshWebpackPlugin( { overlay: false } ),
+		isDevelopment &&
+			new ReactRefreshWebpackPlugin( {
+				overlay: false,
+				exclude: [ /node_modules/, /devdocs/ ],
+			} ),
 	].filter( Boolean ),
 	externals: [ 'keytar' ],
 

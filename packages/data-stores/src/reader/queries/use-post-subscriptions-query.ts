@@ -1,23 +1,18 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
+import { PostSubscriptionsSortBy, SiteSubscriptionsFilterBy } from '../constants';
 import { callApi } from '../helpers';
 import { useCacheKey, useIsLoggedIn, useIsQueryEnabled } from '../hooks';
 import type { PostSubscription } from '../types';
 
-export enum PostSubscriptionsSortBy {
-	PostName = 'post_name',
-	RecentlyCommented = 'recently_commented',
-	RecentlySubscribed = 'recently_subscribed',
-}
-
-type PostSubscriptions = {
+type SubscriptionManagerPostSubscriptions = {
 	comment_subscriptions: PostSubscription[];
 	total_comment_subscriptions_count: number;
 };
 
 type PostSubscriptionsQueryProps = {
 	searchTerm?: string;
-	filter?: ( item?: PostSubscription ) => boolean;
+	filterOption?: SiteSubscriptionsFilterBy;
 	sortTerm?: PostSubscriptionsSortBy;
 	number?: number;
 };
@@ -38,11 +33,9 @@ const getSortFunction = ( sortTerm: PostSubscriptionsSortBy ) => {
 	}
 };
 
-const defaultFilter = () => true;
-
 const usePostSubscriptionsQuery = ( {
 	searchTerm = '',
-	filter = defaultFilter,
+	filterOption = SiteSubscriptionsFilterBy.All,
 	sortTerm = PostSubscriptionsSortBy.RecentlySubscribed,
 	number = 500,
 }: PostSubscriptionsQueryProps = {} ) => {
@@ -51,22 +44,24 @@ const usePostSubscriptionsQuery = ( {
 	const cacheKey = useCacheKey( [ 'read', 'post-subscriptions' ] );
 
 	const { data, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage, ...rest } =
-		useInfiniteQuery< PostSubscriptions >(
+		useInfiniteQuery< SubscriptionManagerPostSubscriptions >(
 			cacheKey,
 			async ( { pageParam = 1 } ) => {
-				return await callApi< PostSubscriptions >( {
+				const result = await callApi< SubscriptionManagerPostSubscriptions >( {
 					path: `/post-comment-subscriptions?per_page=${ number }&page=${ pageParam }`,
 					isLoggedIn,
 					apiVersion: '2',
 					apiNamespace: 'wpcom/v2',
 				} );
+
+				return result;
 			},
 			{
 				enabled,
-				getNextPageParam: ( lastPage, pages ) => {
-					const total = pages.reduce( ( sum, page ) => sum + page.comment_subscriptions.length, 0 );
-					return total < lastPage.total_comment_subscriptions_count ? pages.length + 1 : undefined;
-				},
+				getNextPageParam: ( lastPage, pages ) =>
+					pages.length * number >= lastPage.total_comment_subscriptions_count
+						? undefined
+						: pages.length + 1,
 				refetchOnWindowFocus: false,
 			}
 		);
@@ -76,6 +71,21 @@ const usePostSubscriptionsQuery = ( {
 			fetchNextPage();
 		}
 	}, [ hasNextPage, isFetchingNextPage, isFetching, fetchNextPage ] );
+
+	const filterFunction = useCallback(
+		( item: PostSubscription ) => {
+			switch ( filterOption ) {
+				case SiteSubscriptionsFilterBy.Paid:
+					return item.is_paid_subscription;
+				case SiteSubscriptionsFilterBy.P2:
+					return item.is_wpforteams_site;
+				case SiteSubscriptionsFilterBy.All:
+				default:
+					return true;
+			}
+		},
+		[ filterOption ]
+	);
 
 	const outputData = useMemo( () => {
 		// Flatten all the pages into a single array containing all subscriptions
@@ -105,11 +115,11 @@ const usePostSubscriptionsQuery = ( {
 
 		return {
 			posts: transformedData
-				?.filter( ( item ) => item && filter( item ) && searchFilter( item ) )
+				?.filter( ( item ) => item && filterFunction( item ) && searchFilter( item ) )
 				.sort( sort ),
 			totalCount: data?.pages?.[ 0 ]?.total_comment_subscriptions_count ?? 0,
 		};
-	}, [ data?.pages, filter, searchTerm, sortTerm ] );
+	}, [ data?.pages, filterFunction, searchTerm, sortTerm ] );
 
 	return {
 		data: outputData,

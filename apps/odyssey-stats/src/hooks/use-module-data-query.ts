@@ -38,15 +38,13 @@ function queryModuleData( module: Module ): Promise< ModuleData > {
 }
 
 export default function useModuleDataQuery( module: Module ) {
-	return useQuery< ModuleData, Error >(
-		[ 'stats-widget', 'module-data', module ],
-		() => queryModuleData( module ),
-		{
-			staleTime: 5 * 60 * 1000,
-			// If the module is not active, we don't want to retry the query.
-			retry: false,
-			retryOnMount: false,
-			refetchOnWindowFocus: false,
-		}
-	);
+	return useQuery< ModuleData, Error >( {
+		queryKey: [ 'stats-widget', 'module-data', module ],
+		queryFn: () => queryModuleData( module ),
+		staleTime: 5 * 60 * 1000,
+		// If the module is not active, we don't want to retry the query.
+		retry: false,
+		retryOnMount: false,
+		refetchOnWindowFocus: false,
+	} );
 }

@@ -1,10 +1,11 @@
 import { Card, Button } from '@automattic/components';
 import { Icon, moreHorizontal } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useRef } from 'react';
+import { useState, useRef, useContext } from 'react';
 import Badge from 'calypso/components/badge';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import DashboardDataContext from '../../sites-overview/dashboard-data-context';
 import type {
 	StateMonitorSettingsEmail,
 	AllowedMonitorContactActions,
@@ -14,14 +15,30 @@ interface Props {
 	item: StateMonitorSettingsEmail;
 	toggleModal?: ( item?: StateMonitorSettingsEmail, action?: AllowedMonitorContactActions ) => void;
 	isRemoveAction?: boolean;
+	recordEvent?: ( action: string, params?: object ) => void;
+	showVerifiedBadge?: boolean;
 }
 
-export default function EmailItemContent( { item, toggleModal, isRemoveAction = false }: Props ) {
+const EVENT_NAMES = {
+	edit: 'downtime_monitoring_email_address_edit_click',
+	remove: 'downtime_monitoring_email_address_remove_click',
+	verify: 'downtime_monitoring_email_address_verify_click',
+};
+
+export default function EmailItemContent( {
+	item,
+	toggleModal,
+	isRemoveAction = false,
+	recordEvent,
+	showVerifiedBadge,
+}: Props ) {
 	const translate = useTranslate();
 
 	const [ isOpen, setIsOpen ] = useState( false );
 
 	const buttonActionRef = useRef< HTMLButtonElement | null >( null );
+
+	const { verifiedContacts } = useContext( DashboardDataContext );
 
 	const showActions = () => {
 		setIsOpen( true );
@@ -31,11 +48,15 @@ export default function EmailItemContent( { item, toggleModal, isRemoveAction = 
 		setIsOpen( false );
 	};
 
-	const showVerified = true; // FIXME: This should be dynamic.
-
 	const handleToggleModal = ( action: AllowedMonitorContactActions ) => {
 		toggleModal?.( item, action );
+		if ( recordEvent ) {
+			const eventName = EVENT_NAMES?.[ action as keyof typeof EVENT_NAMES ];
+			recordEvent( eventName );
+		}
 	};
+
+	const isVerified = item.verified || verifiedContacts.emails.includes( item.email );
 
 	return (
 		<Card className="configure-email-address__card" key={ item.email } compact>
@@ -49,7 +70,7 @@ export default function EmailItemContent( { item, toggleModal, isRemoveAction = 
 				 }
 				{ ! item.isDefault && ! isRemoveAction && (
 					<>
-						{ ! item.verified && (
+						{ ! isVerified && (
 							<span
 								role="button"
 								tabIndex={ 0 }
@@ -60,7 +81,7 @@ export default function EmailItemContent( { item, toggleModal, isRemoveAction = 
 								<Badge type="warning">{ translate( 'Pending' ) }</Badge>
 							</span>
 						) }
-						{ showVerified && item.verified && (
+						{ showVerifiedBadge && isVerified && (
 							<span className="configure-email-address__verification-status">
 								<Badge type="success">{ translate( 'Verified' ) }</Badge>
 							</span>

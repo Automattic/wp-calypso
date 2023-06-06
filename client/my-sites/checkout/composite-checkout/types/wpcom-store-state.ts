@@ -322,6 +322,12 @@ function setManagedContactDetailsErrors(
 export function prepareDomainContactDetails(
 	details: ManagedContactDetails
 ): DomainContactDetails {
+	return convertManagedContactDetailsToDomainContactDetails( details );
+}
+
+export function convertManagedContactDetailsToDomainContactDetails(
+	details: ManagedContactDetails
+): DomainContactDetails {
 	return {
 		firstName: details.firstName?.value,
 		lastName: details.lastName?.value,
@@ -336,6 +342,75 @@ export function prepareDomainContactDetails(
 		countryCode: details.countryCode?.value,
 		fax: details.fax?.value,
 		extra: prepareTldExtraContactDetails( details ),
+	};
+}
+
+export function convertDomainContactDetailsToManagedContactDetails(
+	details: DomainContactDetails,
+	errors: DomainContactDetailsErrors
+): ManagedContactDetails {
+	return {
+		firstName: getInitialManagedValue( {
+			value: details.firstName ?? '',
+			errors: [ String( errors.firstName ) ],
+			isTouched: Boolean( errors.firstName ),
+		} ),
+		lastName: getInitialManagedValue( {
+			value: details.lastName ?? '',
+			errors: [ String( errors.lastName ) ],
+			isTouched: Boolean( errors.lastName ),
+		} ),
+		organization: getInitialManagedValue( {
+			value: details.organization ?? '',
+			errors: [ String( errors.organization ) ],
+			isTouched: Boolean( errors.organization ),
+		} ),
+		email: getInitialManagedValue( {
+			value: details.email ?? '',
+			errors: [ String( errors.email ) ],
+			isTouched: Boolean( errors.email ),
+		} ),
+		phone: getInitialManagedValue( {
+			value: details.phone ?? '',
+			errors: [ String( errors.phone ) ],
+			isTouched: Boolean( errors.phone ),
+		} ),
+		address1: getInitialManagedValue( {
+			value: details.address1 ?? '',
+			errors: [ String( errors.address1 ) ],
+			isTouched: Boolean( errors.address1 ),
+		} ),
+		address2: getInitialManagedValue( {
+			value: details.address2 ?? '',
+			errors: [ String( errors.address2 ) ],
+			isTouched: Boolean( errors.address2 ),
+		} ),
+		city: getInitialManagedValue( {
+			value: details.city ?? '',
+			errors: [ String( errors.city ) ],
+			isTouched: Boolean( errors.city ),
+		} ),
+		state: getInitialManagedValue( {
+			value: details.state ?? '',
+			errors: [ String( errors.state ) ],
+			isTouched: Boolean( errors.state ),
+		} ),
+		postalCode: getInitialManagedValue( {
+			value: details.postalCode ?? '',
+			errors: [ String( errors.postalCode ) ],
+			isTouched: Boolean( errors.postalCode ),
+		} ),
+		countryCode: getInitialManagedValue( {
+			value: details.countryCode ?? '',
+			errors: [ String( errors.countryCode ) ],
+			isTouched: Boolean( errors.countryCode ),
+		} ),
+		fax: getInitialManagedValue( {
+			value: details.fax ?? '',
+			errors: [ String( errors.fax ) ],
+			isTouched: Boolean( errors.fax ),
+		} ),
+		// TODO: handle extra
 	};
 }
 
@@ -521,26 +596,29 @@ export function prepareDomainContactValidationRequest(
 	}
 
 	return {
-		contact_information: {
-			first_name: details.firstName?.value,
-			last_name: details.lastName?.value,
-			organization: details.organization?.value,
-			email: details.email?.value,
-			phone: details.phone?.value,
-			phone_number_country: details.phoneNumberCountry?.value,
-			address_1: details.address1?.value,
-			address_2: details.address2?.value,
-			city: details.city?.value,
-			state: details.state?.value,
-			postal_code: tryToGuessPostalCodeFormat(
-				details.postalCode?.value ?? '',
-				details.countryCode?.value
-			),
-			country_code: details.countryCode?.value,
-			fax: details.fax?.value,
-			vat_id: details.vatId?.value,
-			extra,
-		},
+		contact_information: { ...prepareValidationRequestContactSection( details ), extra },
+	};
+}
+
+function prepareValidationRequestContactSection( details: ManagedContactDetails ) {
+	return {
+		address_1: details.address1?.value,
+		address_2: details.address2?.value,
+		city: details.city?.value,
+		country_code: details.countryCode?.value ?? '',
+		email: details.email?.value ?? '',
+		fax: details.fax?.value,
+		first_name: details.firstName?.value ?? '',
+		last_name: details.lastName?.value ?? '',
+		organization: details.organization?.value,
+		phone: details.phone?.value,
+		phone_number_country: details.phoneNumberCountry?.value,
+		postal_code: tryToGuessPostalCodeFormat(
+			details.postalCode?.value ?? '',
+			details.countryCode?.value
+		),
+		state: details.state?.value,
+		vat_id: details.vatId?.value,
 	};
 }
 
@@ -548,16 +626,7 @@ export function prepareGSuiteContactValidationRequest(
 	details: ManagedContactDetails
 ): GSuiteContactValidationRequest {
 	return {
-		contact_information: {
-			first_name: details.firstName?.value ?? '',
-			last_name: details.lastName?.value ?? '',
-			email: details.email?.value ?? '',
-			postal_code: tryToGuessPostalCodeFormat(
-				details.postalCode?.value ?? '',
-				details.countryCode?.value
-			),
-			country_code: details.countryCode?.value ?? '',
-		},
+		contact_information: prepareValidationRequestContactSection( details ),
 	};
 }
 

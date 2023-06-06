@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
+import { useSelector, useDispatch } from 'calypso/state';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import {

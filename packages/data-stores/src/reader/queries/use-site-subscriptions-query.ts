@@ -1,14 +1,9 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { useMemo, useEffect } from 'react';
+import { useMemo, useEffect, useCallback } from 'react';
+import { SiteSubscriptionsFilterBy, SiteSubscriptionsSortBy } from '../constants';
 import { callApi } from '../helpers';
 import { useCacheKey, useIsLoggedIn, useIsQueryEnabled } from '../hooks';
 import type { SiteSubscription } from '../types';
-
-export enum SiteSubscriptionsSortBy {
-	SiteName = 'site_name',
-	LastUpdated = 'last_updated',
-	DateSubscribed = 'date_subscribed',
-}
 
 type SubscriptionManagerSiteSubscriptions = {
 	subscriptions: SiteSubscription[];
@@ -18,7 +13,7 @@ type SubscriptionManagerSiteSubscriptions = {
 
 type SubscriptionManagerSiteSubscriptionsQueryProps = {
 	searchTerm?: string;
-	filter?: ( item?: SiteSubscription ) => boolean;
+	filterOption?: SiteSubscriptionsFilterBy;
 	sortTerm?: SiteSubscriptionsSortBy;
 	number?: number;
 };
@@ -49,11 +44,9 @@ const getSortFunction = ( sortTerm: SiteSubscriptionsSortBy ) => {
 	}
 };
 
-const defaultFilter = () => true;
-
 const useSiteSubscriptionsQuery = ( {
 	searchTerm = '',
-	filter = defaultFilter,
+	filterOption = SiteSubscriptionsFilterBy.All,
 	sortTerm = SiteSubscriptionsSortBy.LastUpdated,
 	number = 100,
 }: SubscriptionManagerSiteSubscriptionsQueryProps = {} ) => {
@@ -101,6 +94,21 @@ const useSiteSubscriptionsQuery = ( {
 		}
 	}, [ nextPage, fetchNextPage ] );
 
+	const filterFunction = useCallback(
+		( item: SiteSubscription ) => {
+			switch ( filterOption ) {
+				case SiteSubscriptionsFilterBy.Paid:
+					return item.is_paid_subscription;
+				case SiteSubscriptionsFilterBy.P2:
+					return item.is_wpforteams_site;
+				case SiteSubscriptionsFilterBy.All:
+				default:
+					return true;
+			}
+		},
+		[ filterOption ]
+	);
+
 	const resultData = useMemo( () => {
 		// Flatten all the pages into a single array containing all subscriptions
 		const flattenedData = data?.pages?.map( ( page ) => page.subscriptions ).flat();
@@ -121,12 +129,12 @@ const useSiteSubscriptionsQuery = ( {
 		return {
 			subscriptions:
 				flattenedData
-					?.filter( ( item ) => item !== null && filter( item ) && searchFilter( item ) )
+					?.filter( ( item ) => item !== null && filterFunction( item ) && searchFilter( item ) )
 					.sort( sort ) ?? [],
 			totalCount: data?.pages?.[ 0 ]?.total_subscriptions ?? 0,
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ data?.pages, filter, searchTerm, sortTerm ] );
+	}, [ data?.pages, filterOption, searchTerm, sortTerm ] );
 
 	return {
 		data: resultData,

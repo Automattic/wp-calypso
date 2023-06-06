@@ -1,4 +1,11 @@
-import { BLANK_CANVAS_DESIGN } from '@automattic/design-picker';
+import { isEnabled } from '@automattic/calypso-config';
+import {
+	BLANK_CANVAS_DESIGN,
+	PREMIUM_THEME,
+	DOT_ORG_THEME,
+	WOOCOMMERCE_THEME,
+	MARKETPLACE_THEME,
+} from '@automattic/design-picker';
 import { isSiteAssemblerFlow } from '@automattic/onboarding';
 import { isDesktop } from '@automattic/viewport';
 import { get, includes, reject } from 'lodash';
@@ -118,6 +125,7 @@ function getChecklistThemeDestination( { flowName, siteSlug, themeParameter } ) 
 				{
 					theme: themeParameter,
 					siteSlug: siteSlug,
+					isNewSite: true,
 				},
 				`/setup/with-theme-assembler`
 			);
@@ -137,12 +145,12 @@ function getWithThemeDestination( {
 } ) {
 	if (
 		! cartItem &&
-		[ 'dot-org', 'premium', 'externally-managed', 'woocommerce' ].includes( themeType )
+		[ DOT_ORG_THEME, PREMIUM_THEME, MARKETPLACE_THEME, WOOCOMMERCE_THEME ].includes( themeType )
 	) {
 		return `/setup/site-setup/designSetup?siteSlug=${ siteSlug }`;
 	}
 
-	if ( 'dot-org' === themeType ) {
+	if ( DOT_ORG_THEME === themeType ) {
 		return `/marketplace/theme/${ themeParameter }/install/${ siteSlug }`;
 	}
 
@@ -187,8 +195,14 @@ function getDIFMSiteContentCollectionDestination( { siteSlug } ) {
 	return `/home/${ siteSlug }`;
 }
 
-function getSitesDestination( { siteSlug } ) {
-	return addQueryArgs( { 'new-site': siteSlug }, '/sites' );
+function getHostingFlowDestination( { siteId } ) {
+	return addQueryArgs(
+		{
+			'new-site': siteId,
+			'hosting-flow': isEnabled( 'hosting-onboarding-i2' ) ? true : null,
+		},
+		'/sites'
+	);
 }
 
 const flows = generateFlows( {
@@ -204,7 +218,7 @@ const flows = generateFlows( {
 	getDestinationFromIntent,
 	getDIFMSignupDestination,
 	getDIFMSiteContentCollectionDestination,
-	getSitesDestination,
+	getHostingFlowDestination,
 } );
 
 function removeUserStepFromFlow( flow ) {

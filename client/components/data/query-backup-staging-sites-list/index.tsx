@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'calypso/state';
 import isFetchingStagingSitesList from 'calypso/state/rewind/selectors/is-fetching-staging-sites-list';
 import { requestBackupStagingSitesList } from 'calypso/state/rewind/staging/actions';
 import type { AppState } from 'calypso/types';

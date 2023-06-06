@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useLocale } from '@automattic/i18n-utils';
 import { Modal, Button, ExternalLink } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useRef, useState, createInterpolateElement } from '@wordpress/element';
@@ -32,8 +31,6 @@ const SharingModal: React.FC = () => {
 	const { launchpadScreenOption } = window?.launchpadOptions || {};
 	const { isDismissed, updateIsDismissed } = useSharingModalDismissed( isDismissedDefault );
 	const { __ } = useI18n();
-	const localeSlug = useLocale();
-	const isEnglish = localeSlug?.startsWith( 'en' );
 	const isPrivateBlog = window?.wpcomGutenberg?.blogPublic === '-1';
 
 	const { link, title } = useSelect(
@@ -89,7 +86,7 @@ const SharingModal: React.FC = () => {
 		launchpadScreenOption,
 	] );
 
-	if ( ! isOpen || isDismissedDefault || isPrivateBlog || ! isEnglish ) {
+	if ( ! isOpen || isDismissedDefault || isPrivateBlog ) {
 		return null;
 	}
 
@@ -194,7 +191,11 @@ const SharingModal: React.FC = () => {
 						) }
 					</p>
 					<div className="wpcom-block-editor-post-published-buttons">
-						<a href={ link } className="link-button" rel="external">
+						<a
+							href={ link }
+							className="link-button wpcom-block-editor-post-published-sharing-modal__view-post-link"
+							rel="external"
+						>
 							{ ' ' }
 							<Icon icon={ globe } /> { __( 'View Post', 'full-site-editing' ) }
 						</a>

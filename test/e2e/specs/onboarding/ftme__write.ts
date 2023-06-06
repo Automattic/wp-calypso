@@ -74,11 +74,6 @@ describe( DataHelper.createSuiteTitle( 'FTME: Write' ), function () {
 			await startSiteFlow.clickButton( 'Continue' );
 		} );
 
-		it( 'Select "Travel Agencies & Services" category', async function () {
-			await startSiteFlow.enterVertical( 'Travel Agencies & Services' );
-			await startSiteFlow.clickButton( 'Continue' );
-		} );
-
 		it( 'Enter blog name', async function () {
 			await startSiteFlow.enterBlogName( blogName );
 		} );

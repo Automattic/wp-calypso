@@ -11,7 +11,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState } from 'react';
 import stripTags from 'striptags';
 import './help-center-article-content.scss';
-import useTyper from '../hooks/use-typer';
+import { useTyper } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 
 const GPTResponsePlaceholder = styled( LoadingPlaceholder )< { width?: string } >`
@@ -69,25 +69,14 @@ export function HelpCenterGPT() {
 
 	const query = message ?? '';
 
-	// First fetch the links
-	const { data: links, isError: isLinksError } = useJetpackSearchAIQuery( {
-		siteId: '9619154',
-		query: query,
-		stopAt: 'urls',
-		enabled: true,
-	} );
-
-	// Then fetch the response
-	const { data, isError: isResponseError } = useJetpackSearchAIQuery( {
+	const { data, isError: isGPTError } = useJetpackSearchAIQuery( {
 		siteId: '9619154',
 		query: query,
 		stopAt: 'response',
-		enabled: !! links?.urls,
+		enabled: true,
 	} );
 
 	const allowedTags = [ 'a', 'p', 'ol', 'ul', 'li', 'br', 'b', 'strong', 'i', 'em' ];
-
-	const isGPTError = isLinksError || isResponseError;
 
 	useEffect( () => {
 		if ( data?.response ) {

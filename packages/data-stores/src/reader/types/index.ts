@@ -34,14 +34,14 @@ type SiteSubscriptionMeta = {
 	};
 };
 
-type SiteSubscriptionDeliveryMethods = {
-	email: {
+export type SiteSubscriptionDeliveryMethods = {
+	email?: {
 		send_posts: boolean;
-		send_comments: boolean;
+		send_comments?: boolean;
 		post_delivery_frequency: EmailDeliveryFrequency;
-		date_subscribed: Date;
+		date_subscribed?: Date;
 	};
-	notification: {
+	notification?: {
 		send_posts: boolean;
 	};
 };
@@ -68,6 +68,7 @@ export type SiteSubscription = {
 	is_owner: boolean;
 	meta: SiteSubscriptionMeta;
 	is_wpforteams_site: boolean;
+	is_paid_subscription: boolean;
 };
 
 export type SiteSubscriptionPage = {
@@ -89,12 +90,13 @@ export type PostSubscription = {
 	site_icon: string;
 	site_url: string;
 	domain: string;
+	is_wpforteams_site: boolean;
+	is_paid_subscription: boolean;
 	organization_id: number;
 	post_id: number;
 	post_title: string;
 	post_excerpt: string;
 	post_url: string;
-	is_wpforteams_site: boolean;
 };
 
 export type PendingSiteSubscription = {
@@ -142,15 +144,42 @@ export type SiteSubscriptionDetails = {
 	date_subscribed: Date;
 	subscriber_count: number;
 	delivery_methods: SiteSubscriptionDeliveryMethods;
+	payment_details: SiteSubscriptionPaymentDetails;
 };
 
-export type SiteSubscriptionDetailsAPIResponse = {
+export type SiteSubscriptionPaymentDetails = {
 	ID: string;
-	blog_ID: string;
-	name: string;
-	URL: string;
-	site_icon: string;
-	date_subscribed: Date;
-	subscriber_count: number;
-	delivery_methods: SiteSubscriptionDeliveryMethods;
+	site_id: string;
+	status: string;
+	start_date: string;
+	end_date: string;
+	renew_interval: string;
+	renewal_price: string;
+	currency: string;
+	product_id: string;
+	title: string;
 };
+
+export type ErrorResponse< Errors = unknown, ErrorData = unknown > = {
+	errors: Errors;
+	error_data: ErrorData;
+};
+
+export type SiteSubscriptionDetailsErrorResponse = ErrorResponse<
+	{
+		invalid_blog?: string[];
+		invalid_user?: string[];
+		subscription_not_found?: string[];
+		unauthorized?: string[];
+	},
+	{
+		invalid_blog?: { status: 404 };
+		invalid_user?: { status: 403 };
+		subscription_not_found?: { status: 404 };
+		unauthorized?: { status: 401 };
+	}
+>;
+
+export type SiteSubscriptionDetailsResponse =
+	| SiteSubscriptionDetails
+	| SiteSubscriptionDetailsErrorResponse;

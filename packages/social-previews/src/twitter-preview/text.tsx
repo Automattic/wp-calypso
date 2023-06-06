@@ -11,15 +11,9 @@ export const Text: React.FC< TextProps > = ( { text, url, retainUrl } ) => {
 			? text.substring( 0, text.lastIndexOf( url ) )
 			: text;
 
-	const __html = preparePreviewText( tweetText, { platform: 'twitter' } );
-
 	return (
-		<div
-			className="twitter-preview__text"
-			// We can enable dangerouslySetInnerHTML here, since the text we're using is stripped
-			// of all HTML tags, then only has safe tags added in createTweetMarkup().
-			// eslint-disable-next-line react/no-danger
-			dangerouslySetInnerHTML={ { __html } }
-		/>
+		<div className="twitter-preview__text">
+			{ preparePreviewText( tweetText, { platform: 'twitter' } ) }
+		</div>
 	);
 };

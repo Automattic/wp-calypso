@@ -23,10 +23,7 @@ export { HappinessEngineersTray } from './happiness-engineers-tray';
 export { Spinner } from './spinner';
 export { SpinnerExample } from './spinner/example';
 export { GMClosureNotice } from './gm-closure-notice/gm-closure-notice';
-export { default as WordPressLogo } from './wordpress-logo';
 export { default as WordPressWordmark } from './wordpress-wordmark';
-export { default as JetpackLogo } from './jetpack-logo';
-export { default as WooCommerceWooLogo } from './woocommerce-woo-logo';
 export { ListTile } from './list-tile';
 export { LoadingPlaceholder } from './loading-placeholder';
 export {
@@ -40,7 +37,13 @@ export {
 	percentCalculator,
 } from './highlight-cards/count-comparison-card';
 export { default as AnnualHighlightCards } from './highlight-cards/annual-highlight-cards';
-export { default as WeeklyHighlightCards } from './highlight-cards/weekly-highlight-cards';
+export {
+	default as WeeklyHighlightCards,
+	PAST_SEVEN_DAYS,
+	PAST_THIRTY_DAYS,
+	BETWEEN_PAST_EIGHT_AND_FIFTEEN_DAYS,
+	BETWEEN_PAST_THIRTY_ONE_AND_SIXTY_DAYS,
+} from './highlight-cards/weekly-highlight-cards';
 export { default as AppPromoCard } from './app-promo-card';
 export { default as ShortenedNumber } from './number-formatters';
 export { default as formattedNumber } from './number-formatters/formatted-number';
@@ -50,3 +53,19 @@ export { default as ComponentSwapper } from './component-swapper';
 export { default as SubmenuPopover, useSubmenuPopoverProps } from './submenu-popover';
 export { default as JetpackUpsellCard } from './jetpack-upsell-card';
 export { UpsellMenuGroup } from './upsell-menu-group';
+
+// Logos
+export { default as JetpackLogo } from './logos/jetpack-logo';
+export { default as BloombergLogo } from './logos/bloomberg-logo';
+export { default as CloudLogo } from './logos/cloud-logo';
+export { default as CNNLogo } from './logos/cnn-logo';
+export { default as CondenastLogo } from './logos/condenast-logo';
+export { default as DisneyLogo } from './logos/disney-logo';
+export { default as FacebookLogo } from './logos/facebook-logo';
+export { default as SalesforceLogo } from './logos/salesforce-logo';
+export { default as SlackLogo } from './logos/slack-logo';
+export { default as TimeLogo } from './logos/time-logo';
+export { default as VIPLogo } from './logos/vip-logo';
+export { default as WooLogo } from './logos/woo-logo';
+export { default as WordPressLogo } from './wordpress-logo';
+export { default as WooCommerceWooLogo } from './logos/woocommerce-woo-logo';

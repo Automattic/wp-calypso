@@ -1,5 +1,5 @@
-import { useSelector } from 'react-redux';
 import QueryBackupStagingSite from 'calypso/components/data/query-backup-staging-site';
+import { useSelector } from 'calypso/state';
 import getBackupStagingSiteInfo from 'calypso/state/rewind/selectors/get-backup-staging-site-info';
 
 import './style.scss';

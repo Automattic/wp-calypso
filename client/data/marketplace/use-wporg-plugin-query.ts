@@ -8,13 +8,13 @@ import {
 	QueryKey,
 	QueryFunction,
 } from '@tanstack/react-query';
-import { useSelector } from 'react-redux';
 import {
 	extractSearchInformation,
 	normalizePluginsList,
 	normalizePluginData,
 } from 'calypso/lib/plugins/utils';
 import { fetchPluginsList } from 'calypso/lib/wporg';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { BASE_STALE_TIME } from 'calypso/state/initial-state';
 import { WPORG_CACHE_KEY } from './constants';

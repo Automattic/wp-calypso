@@ -28,6 +28,29 @@ export type WPCOMTransactionEndpointResponse =
 	| WPCOMTransactionEndpointResponseSuccess
 	| WPCOMTransactionEndpointResponseRedirect;
 
+export interface TaxVendorInfo {
+	/**
+	 * The country code for this info.
+	 */
+	country_code: string;
+
+	/**
+	 * The localized name of the tax (eg: "VAT", "GST", etc.).
+	 */
+	tax_name: string;
+
+	/**
+	 * The mailing address to display on receipts as a list of strings (each
+	 * string should be on its own line).
+	 */
+	address: string[];
+
+	/**
+	 * The vendor's VAT id.
+	 */
+	vat_id: string;
+}
+
 export interface Purchase {
 	delayed_provisioning?: boolean;
 	expiry?: string;
@@ -46,6 +69,7 @@ export interface Purchase {
 	user_email: string;
 	saas_redirect_url?: string;
 	will_auto_renew?: boolean;
+	tax_vendor_info?: TaxVendorInfo;
 }
 
 export interface TransactionRequest {
@@ -404,21 +428,21 @@ export type SignupValidationResponse = {
  * @see WPCOM_JSON_API_Domains_Validate_Contact_Information_Endpoint
  */
 export type ContactValidationRequestContactInformation = {
-	first_name?: string;
-	last_name?: string;
-	organization?: string;
-	email?: string;
-	phone?: string;
-	phone_number_country?: string;
 	address_1?: string;
 	address_2?: string;
 	city?: string;
-	state?: string;
-	postal_code?: string;
 	country_code?: string;
-	fax?: string;
-	vat_id?: string;
+	email?: string;
 	extra?: DomainContactValidationRequestExtraFields;
+	fax?: string;
+	first_name?: string;
+	last_name?: string;
+	organization?: string;
+	phone?: string;
+	phone_number_country?: string;
+	postal_code?: string;
+	state?: string;
+	vat_id?: string;
 };
 
 export type DomainContactValidationRequest = {
@@ -427,11 +451,20 @@ export type DomainContactValidationRequest = {
 
 export type GSuiteContactValidationRequest = {
 	contact_information: {
+		country_code: string;
+		email: string;
 		first_name: string;
 		last_name: string;
-		email: string;
 		postal_code: string;
-		country_code: string;
+		address_1?: string;
+		address_2?: string;
+		city?: string;
+		fax?: string;
+		organization?: string;
+		phone?: string;
+		phone_number_country?: string;
+		state?: string;
+		vat_id?: string;
 	};
 };
 
@@ -519,6 +552,11 @@ export interface CountryListItemBase {
 	tax_needs_subdivision?: boolean;
 	tax_needs_organization?: boolean;
 	tax_needs_address?: boolean;
+
+	/**
+	 * The localized name of the tax (eg: "VAT", "GST", etc.).
+	 */
+	tax_name?: string;
 }
 export interface CountryListItemWithoutVat extends CountryListItemBase {
 	vat_supported: false;

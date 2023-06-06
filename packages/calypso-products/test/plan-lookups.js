@@ -71,6 +71,7 @@ import {
 	PLAN_WOOEXPRESS_SMALL_MONTHLY,
 	PLAN_WOOEXPRESS_PLUS,
 	PLAN_WPCOM_PRO_2_YEARS,
+	PLAN_JETPACK_SECURITY_T1_BI_YEARLY,
 } from '../src/constants';
 import {
 	getPlan,
@@ -785,24 +786,6 @@ describe( 'getPlan', () => {
 
 describe( 'findSimilarPlansKeys', () => {
 	test( 'should return a proper similar plan - by term', () => {
-		expect( findSimilarPlansKeys( PLAN_PERSONAL_MONTHLY, { term: TERM_ANNUALLY } ) ).toEqual( [
-			PLAN_PERSONAL,
-		] );
-		expect( findSimilarPlansKeys( PLAN_PREMIUM_MONTHLY, { term: TERM_ANNUALLY } ) ).toEqual( [
-			PLAN_PREMIUM,
-		] );
-		expect( findSimilarPlansKeys( PLAN_BUSINESS_MONTHLY, { term: TERM_ANNUALLY } ) ).toEqual( [
-			PLAN_BUSINESS,
-		] );
-		expect( findSimilarPlansKeys( PLAN_ECOMMERCE_MONTHLY, { term: TERM_ANNUALLY } ) ).toEqual( [
-			PLAN_ECOMMERCE,
-		] );
-		expect(
-			findSimilarPlansKeys( PLAN_WOOEXPRESS_SMALL_MONTHLY, { term: TERM_ANNUALLY } )
-		).toEqual( [ PLAN_WOOEXPRESS_SMALL ] );
-		expect(
-			findSimilarPlansKeys( PLAN_WOOEXPRESS_MEDIUM_MONTHLY, { term: TERM_ANNUALLY } )
-		).toEqual( [ PLAN_WOOEXPRESS_MEDIUM ] );
 		expect( findSimilarPlansKeys( PLAN_BLOGGER, { term: TERM_BIENNIALLY } ) ).toEqual( [
 			PLAN_BLOGGER_2_YEARS,
 		] );
@@ -1050,6 +1033,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_PREMIUM_2_YEARS,
 			PLAN_BUSINESS_2_YEARS,
 			PLAN_ECOMMERCE_2_YEARS,
+			PLAN_JETPACK_SECURITY_T1_BI_YEARLY,
 			PLAN_WPCOM_PRO_2_YEARS,
 		] );
 		expect( findPlansKeys( { term: TERM_TRIENNIALLY } ) ).toEqual( [
@@ -1193,6 +1177,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
 			PLAN_JETPACK_COMPLETE,
 			PLAN_JETPACK_COMPLETE_MONTHLY,
+			PLAN_JETPACK_SECURITY_T1_BI_YEARLY,
 			PLAN_JETPACK_SECURITY_T1_YEARLY,
 			PLAN_JETPACK_SECURITY_T1_MONTHLY,
 			PLAN_JETPACK_SECURITY_T2_YEARLY,

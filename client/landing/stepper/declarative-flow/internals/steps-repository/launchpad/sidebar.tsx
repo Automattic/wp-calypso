@@ -1,11 +1,11 @@
 import { Gridicon, CircularProgressBar } from '@automattic/components';
 import { OnboardSelect, useLaunchpad } from '@automattic/data-stores';
-import { isStartWritingFlow } from '@automattic/onboarding';
+import { Checklist } from '@automattic/launchpad';
+import { isBlogOnboardingFlow } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useRef, useState } from '@wordpress/element';
 import { Icon, copy } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import { StepNavigationLink } from 'calypso/../packages/onboarding/src';
 import Badge from 'calypso/components/badge';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
@@ -15,9 +15,9 @@ import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ResponseDomain } from 'calypso/lib/domains/types';
+import { useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
-import Checklist from './checklist';
 import { getEnhancedTasks } from './task-helper';
 import { getLaunchpadTranslations } from './translations';
 import { Task } from './types';
@@ -66,7 +66,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 	);
 
 	const showDomain =
-		! isStartWritingFlow( flow ) ||
+		! isBlogOnboardingFlow( flow ) ||
 		( checklistStatuses?.domain_upsell_deferred === true && selectedDomain );
 
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );

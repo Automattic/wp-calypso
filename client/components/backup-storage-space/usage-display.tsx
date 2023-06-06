@@ -2,8 +2,8 @@ import { Gridicon, ProgressBar } from '@automattic/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import {
 	getActivityLogVisibleDays,

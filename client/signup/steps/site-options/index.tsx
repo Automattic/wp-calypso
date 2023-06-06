@@ -1,10 +1,10 @@
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import siteOptionsImage from 'calypso/assets/images/onboarding/site-options.svg';
 import storeImageUrl from 'calypso/assets/images/onboarding/store-onboarding.svg';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { useDispatch } from 'calypso/state';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import SiteOptions from './site-options';
 import type { SiteOptionsFormValues } from './types';

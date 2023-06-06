@@ -27,6 +27,15 @@ body.is-focus-sites {
 	transition: transform 0.15s ease-in-out, opacity 0.15s ease-out;
 }
 
+.layout__header-section-content {
+	box-sizing: border-box;
+	padding: 79px 32px 32px 32px;
+
+	@include breakpoint-deprecated( "<960px" ) {
+		padding: 71px 24px 24px 24px;
+	}
+}
+
 // Setup the content element to adapt to the sidebar,
 // lack of sidebar, or the WebPreview component.
 .layout__content {

@@ -1,7 +1,7 @@
 import { Dialog } from '@automattic/components';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import PluginIcon from '../plugin-icon/plugin-icon';
 import './style.scss';

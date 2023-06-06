@@ -65,7 +65,6 @@ import {
 import { JPC_PATH_PLANS, JPC_PATH_PLANS_COMPLETE, REMOTE_PATH_AUTH } from './constants';
 import Disclaimer from './disclaimer';
 import { OFFER_RESET_FLOW_TYPES } from './flow-types';
-import JetpackConnectHappychatButton from './happychat-button';
 import HelpButton from './help-button';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import MainWrapper from './main-wrapper';
@@ -278,7 +277,8 @@ export class JetpackAuthorize extends Component {
 			this.isFromJetpackSocialPlugin() ||
 			this.isFromMyJetpack() ||
 			this.isFromJetpackSearchPlugin() ||
-			this.isFromJetpackVideoPressPlugin()
+			this.isFromJetpackVideoPressPlugin() ||
+			( this.isFromJetpackBackupPlugin() && siteHasBackups )
 		) {
 			debug(
 				'Going back to WP Admin.',
@@ -841,11 +841,7 @@ export class JetpackAuthorize extends Component {
 						{ translate( 'Create a new account' ) }
 					</LoggedOutFormLinkItem>
 				) }
-				{ ! isJetpackMagicLinkSignUpFlow && (
-					<JetpackConnectHappychatButton eventName="calypso_jpc_authorize_chat_initiated">
-						<HelpButton />
-					</JetpackConnectHappychatButton>
-				) }
+				{ ! isJetpackMagicLinkSignUpFlow && <HelpButton /> }
 			</LoggedOutFormLinks>
 		);
 	}
@@ -868,12 +864,7 @@ export class JetpackAuthorize extends Component {
 				<LoggedOutFormLinkItem onClick={ this.handleSignOut }>
 					{ translate( 'Create a new account or connect as a different user' ) }
 				</LoggedOutFormLinkItem>
-				<JetpackConnectHappychatButton
-					eventName="calypso_jpc_authorize_chat_initiated"
-					label={ helpButtonLabel }
-				>
-					<HelpButton label={ helpButtonLabel } url={ wooDna.getServiceHelpUrl() } />
-				</JetpackConnectHappychatButton>
+				<HelpButton label={ helpButtonLabel } url={ wooDna.getServiceHelpUrl() } />
 				{ this.renderBackToWpAdminLink() }
 			</LoggedOutFormLinks>
 		);

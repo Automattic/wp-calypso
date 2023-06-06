@@ -1,6 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import {
 	TextAreaField,
 	HorizontalGrid,
@@ -12,6 +11,7 @@ import {
 	MediaUploadData,
 	WordpressMediaUpload,
 } from 'calypso/signup/steps/website-content/wordpress-media-upload';
+import { useSelector, useDispatch } from 'calypso/state';
 import {
 	websiteContentFieldChanged,
 	mediaUploaded,

@@ -1,5 +1,4 @@
 import { RelatedPostCard } from 'calypso/blocks/reader-related-card';
-import { EMPTY_SEARCH_RECOMMENDATIONS } from 'calypso/reader/follow-sources';
 import { recordTrackForPost, recordAction } from 'calypso/reader/stats';
 
 export default function EmptySearchRecommendedSite( { post } ) {
@@ -27,7 +26,6 @@ export default function EmptySearchRecommendedSite( { post } ) {
 				site={ site }
 				onSiteClick={ handleSiteClick }
 				onPostClick={ handlePostClick }
-				followSource={ EMPTY_SEARCH_RECOMMENDATIONS }
 			/>
 		</div>
 	);
