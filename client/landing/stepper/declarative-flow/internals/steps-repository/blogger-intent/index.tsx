@@ -1,14 +1,22 @@
 import { Button, Gridicon } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
+import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
+import { USER_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../../types';
+import type { UserSelect } from '@automattic/data-stores';
 
 import './style.scss';
 
 const BlogIntent: Step = function BlogIntent() {
 	const translate = useTranslate();
+
+	const currentUser = useSelect(
+		( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(),
+		[]
+	);
 
 	return (
 		<>
@@ -21,14 +29,18 @@ const BlogIntent: Step = function BlogIntent() {
 				showJetpackPowered={ true }
 				stepContent={
 					<div className="blogger-intent__container">
-						<h1 className="blogger-intent__heading">{ translate( "Let's start your blog!" ) }</h1>
+						<h1 className="blogger-intent__heading">
+							{ translate( "Let's start your blog, %(username)s", {
+								args: { username: currentUser?.display_name || currentUser?.username },
+							} ) }
+						</h1>
 						<div className="blogger-intent__content">
 							<div className="blogger-intent__row">
 								<div className="blogger-intent__row-text">
 									<Gridicon icon="pencil" />
 									{ translate( 'Write your first post' ) }
 								</div>
-								<Button primary className="blogger-intent__button" href="/setup/start-writing">
+								<Button primary href="/setup/start-writing">
 									{ translate( 'Start Writing' ) }
 								</Button>
 							</div>
@@ -38,7 +50,7 @@ const BlogIntent: Step = function BlogIntent() {
 									<Gridicon icon="layout" />
 									{ translate( 'Pick a design first' ) }
 								</div>
-								<Button primary className="blogger-intent__button" href="/setup/design-first">
+								<Button primary href="/setup/design-first">
 									{ translate( 'View designs' ) }
 								</Button>
 							</div>
