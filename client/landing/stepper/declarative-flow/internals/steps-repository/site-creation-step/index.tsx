@@ -162,6 +162,20 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 			addTempSiteToSourceOption( site.siteId, sourceMigrationStatus?.source_blog_id );
 		}
 
+		// if ( isBlogOnboardingFlow( flow ) && site?.siteId && site?.siteSlug ) {
+		// 	setSelectedSite( site?.siteId );
+		// 	await Promise.all( [
+		// 		setIntentOnSite( site?.siteSlug, START_WRITING_FLOW ),
+		// 		saveSiteSettings( site?.siteId, {
+		// 			launchpad_screen: 'full',
+		// 		} ),
+		// 	] );
+
+		// 	redirect(
+		// 		`https://${ site?.siteSlug }/wp-admin/post-new.php?${ START_WRITING_FLOW }=true&origin=${ window.location.origin }`
+		// 	);
+		// }
+
 		return {
 			siteId: site?.siteId,
 			siteSlug: site?.siteSlug,
@@ -170,7 +184,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 	}
 
 	useEffect( () => {
-		if ( ! isFreeFlow( flow ) ) {
+		if ( ! isFreeFlow( flow ) && ! isBlogOnboardingFlow( flow ) ) {
 			setProgress( 0.1 );
 		}
 		if ( submit ) {

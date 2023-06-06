@@ -106,11 +106,12 @@ export function getEnhancedTasks(
 					taskData = {
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
-							window.location.assign(
-								addQueryArgs( `/setup/${ flow }/setup-blog`, {
-									...{ siteSlug: siteSlug },
-								} )
-							);
+							submit?.( { step: 'setup-blog' } );
+							// window.location.assign(
+							// 	addQueryArgs( `/setup/${ flow }/setup-blog`, {
+							// 		...{ siteSlug: siteSlug },
+							// 	} )
+							// );
 						},
 						disabled: task.completed && ! isBlogOnboardingFlow( flow ),
 					};

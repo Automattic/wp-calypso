@@ -74,7 +74,7 @@ const startWriting: Flow = {
 		).getState();
 		const site = useSite();
 
-		async function submit( providedDependencies: ProvidedDependencies = {} ) {
+		async function submit( providedDependencies: ProvidedDependencies = {}, nextStep?: string ) {
 			recordSubmitStep( providedDependencies, '', flowName, currentStep );
 			const returnUrl = `/setup/start-writing/celebration-step?siteSlug=${ siteSlug }`;
 
@@ -188,6 +188,9 @@ const startWriting: Flow = {
 					}
 					return navigate( 'launchpad' );
 				case 'launchpad':
+					if ( providedDependencies?.step ) {
+						return navigate( providedDependencies?.step as string );
+					}
 					return navigate( 'processing' );
 			}
 		}
