@@ -115,42 +115,16 @@ const UniversalNavbarHeader = ( {
 																titleValue={ __( 'Website Design Services', __i18n_text_domain__ ) }
 																content={ __( 'Website Design Services', __i18n_text_domain__ ) }
 																urlValue={ localizeUrl(
-																	'//wordpress.com/website-design-service/?ref=main-menu'
+																	'//wordpress.com/website-design-service/'
 																) }
 																type="dropdown"
 																target="_self"
 															/>
 														) }
 														<ClickableItem
-															titleValue={ __( 'Link in Bio', __i18n_text_domain__ ) }
-															content={ __( 'Link in Bio', __i18n_text_domain__ ) }
-															urlValue={ localizeUrl(
-																'//wordpress.com/setup/link-in-bio/intro?ref=main-menu',
-																locale,
-																isLoggedIn
-															) }
-															type="dropdown"
-															target="_self"
-														/>
-														<ClickableItem
-															titleValue={ __( 'Newsletter', __i18n_text_domain__ ) }
-															content={ __( 'Newsletter', __i18n_text_domain__ ) }
-															urlValue={ localizeUrl(
-																'//wordpress.com/setup/newsletter/intro?ref=main-menu',
-																locale,
-																isLoggedIn
-															) }
-															type="dropdown"
-															target="_self"
-														/>
-														<ClickableItem
-															titleValue={ __( 'Video', __i18n_text_domain__ ) }
-															content={ __( 'Video', __i18n_text_domain__ ) }
-															urlValue={ localizeUrl(
-																'//wordpress.com/setup/videopress/intro?ref=main-menu',
-																locale,
-																isLoggedIn
-															) }
+															titleValue={ __( 'Store', __i18n_text_domain__ ) }
+															content={ __( 'Store', __i18n_text_domain__ ) }
+															urlValue={ localizeUrl( '//wordpress.com/ecommerce/' ) }
 															type="dropdown"
 															target="_self"
 														/>
@@ -158,6 +132,17 @@ const UniversalNavbarHeader = ( {
 															titleValue={ __( 'Course', __i18n_text_domain__ ) }
 															content={ __( 'Course', __i18n_text_domain__ ) }
 															urlValue={ localizeUrl( '//wordpress.com/create-a-course/' ) }
+															type="dropdown"
+															target="_self"
+														/>
+														<ClickableItem
+															titleValue={ __( 'Newsletter', __i18n_text_domain__ ) }
+															content={ __( 'Newsletter', __i18n_text_domain__ ) }
+															urlValue={ localizeUrl(
+																'//wordpress.com/setup/newsletter/intro',
+																locale,
+																isLoggedIn
+															) }
 															type="dropdown"
 															target="_self"
 														/>
@@ -454,47 +439,31 @@ const UniversalNavbarHeader = ( {
 												<ClickableItem
 													titleValue={ __( 'Website Design Services', __i18n_text_domain__ ) }
 													content={ __( 'Website Design Services', __i18n_text_domain__ ) }
-													urlValue={ localizeUrl(
-														'//wordpress.com/website-design-service/?ref=main-menu'
-													) }
+													urlValue={ localizeUrl( '//wordpress.com/website-design-service/' ) }
 													type="menu"
 													target="_self"
 												/>
 											) }
 											<ClickableItem
-												titleValue={ __( 'Link in Bio', __i18n_text_domain__ ) }
-												content={ __( 'Link in Bio', __i18n_text_domain__ ) }
-												urlValue={ localizeUrl(
-													'//wordpress.com/setup/link-in-bio/intro?ref=main-menu',
-													locale,
-													isLoggedIn
-												) }
-												type="menu"
-											/>
-											<ClickableItem
-												titleValue={ __( 'Newsletter', __i18n_text_domain__ ) }
-												content={ __( 'Newsletter', __i18n_text_domain__ ) }
-												urlValue={ localizeUrl(
-													'//wordpress.com/setup/newsletter/intro?ref=main-menu',
-													locale,
-													isLoggedIn
-												) }
-												type="menu"
-											/>
-											<ClickableItem
-												titleValue={ __( 'Video', __i18n_text_domain__ ) }
-												content={ __( 'Video', __i18n_text_domain__ ) }
-												urlValue={ localizeUrl(
-													'//wordpress.com/setup/videopress/intro?ref=main-menu',
-													locale,
-													isLoggedIn
-												) }
+												titleValue={ __( 'Store', __i18n_text_domain__ ) }
+												content={ __( 'Store', __i18n_text_domain__ ) }
+												urlValue={ localizeUrl( '//wordpress.com/ecommerce/' ) }
 												type="menu"
 											/>
 											<ClickableItem
 												titleValue={ __( 'Course', __i18n_text_domain__ ) }
 												content={ __( 'Course', __i18n_text_domain__ ) }
 												urlValue={ localizeUrl( '//wordpress.com/create-a-course/' ) }
+												type="menu"
+											/>
+											<ClickableItem
+												titleValue={ __( 'Newsletter', __i18n_text_domain__ ) }
+												content={ __( 'Newsletter', __i18n_text_domain__ ) }
+												urlValue={ localizeUrl(
+													'//wordpress.com/setup/newsletter/intro',
+													locale,
+													isLoggedIn
+												) }
 												type="menu"
 											/>
 											<ClickableItem
