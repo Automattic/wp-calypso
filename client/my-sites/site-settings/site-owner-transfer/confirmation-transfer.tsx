@@ -44,7 +44,9 @@ export function ConfirmationTransfer( {
 		</Notice>
 	) : (
 		<>
-			<LoadingBar key="transfer-site-loading-bar" progress={ progress } />
+			<p>
+				<LoadingBar key="transfer-site-loading-bar" progress={ progress } />
+			</p>
 			<p>{ translate( 'We are transferring your site.' ) }</p>
 		</>
 	);
