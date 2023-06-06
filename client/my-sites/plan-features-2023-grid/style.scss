@@ -15,7 +15,7 @@ $mobile-card-max-width: 440px;
 			font-weight: 500;
 			line-height: 20px;
 			border-radius: 4px;
-			padding: 10px 14px;
+			padding: 10px 12px;
 			border: unset;
 
 			&:hover {
@@ -179,6 +179,14 @@ $mobile-card-max-width: 440px;
 
 	@include plans-2023-break-small {
 		padding-top: 35px; // enough to cover `plan-features-2023-grid__popular-badge` repositioning (top: -35px)
+		margin: 0;
+	}
+
+	@include plans-2023-break-medium {
+		margin: 0 20px;
+	}
+
+	@include plans-section-break-medium {
 		margin: 0;
 	}
 
@@ -502,7 +510,6 @@ $mobile-card-max-width: 440px;
 
 .plan-features-2023-grid__content {
 	.plans-features-main__group.is-scrollable & {
-		margin: -16px 0 0;
 		padding-top: $plan-features-header-banner-height;
 	}
 
@@ -1007,6 +1014,7 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 	}
 
 	.plan-comparison-grid__billing-info {
+		flex-basis: 50px;
 		color: var(--studio-gray-50);
 		font-weight: 400;
 		font-size: $font-body-extra-small;
@@ -1085,6 +1093,13 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
  */
 .is-section-plans .plan-features-2023-grid__plan-comparison-grid-container {
 	scroll-margin-top: $plan-features-header-banner-height + 24px;
+	margin: auto;
+	@include plan-comparison-grid-breakpoints-with-sidebar;
+}
+
+.is-section-signup .plan-features-2023-grid__plan-comparison-grid-container {
+	margin: auto;
+	@include plan-comparison-grid-breakpoints;
 }
 
 .formatted-header {

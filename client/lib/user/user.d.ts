@@ -2,7 +2,6 @@ import { URL } from '../../types';
 
 export type UserMetaData = {
 	links: Record< 'self' | 'help' | 'site' | 'flags', URL >;
-	plans_reorder_abtest_variation?: string;
 	data?: {
 		flags: {
 			active_flags: string[];
@@ -44,5 +43,4 @@ export type OptionalUserData = {
 	username: string;
 	visible_site_count: number;
 	jetpack_visible_site_count?: number;
-	calypso_postpurchase_upsell_monthly_to_annual_plan?: boolean;
 };

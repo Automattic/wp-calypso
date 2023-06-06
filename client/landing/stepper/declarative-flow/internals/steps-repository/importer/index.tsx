@@ -8,7 +8,6 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import NotAuthorized from 'calypso/blocks/importer/components/not-authorized';
 import NotFound from 'calypso/blocks/importer/components/not-found';
-import { Importer, ImportJob } from 'calypso/blocks/importer/types';
 import { getImporterTypeForEngine } from 'calypso/blocks/importer/util';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySites from 'calypso/components/data/query-sites';
@@ -35,6 +34,7 @@ import { useInitialQueryRun } from './hooks/use-initial-query-run';
 import { useStepNavigator } from './hooks/use-step-navigator';
 import type { ImporterCompType } from './types';
 import type { OnboardSelect } from '@automattic/data-stores';
+import type { Importer, ImportJob } from 'calypso/blocks/importer/types';
 
 interface Props {
 	importer: Importer;

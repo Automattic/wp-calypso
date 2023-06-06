@@ -5,6 +5,7 @@
 	from {
 		transform: translateY(32px);
 	}
+
 	to {
 		transform: translateY(0);
 	}
@@ -24,6 +25,25 @@
 
 .notification-settings__content {
 	margin-block-start: -16px;
+}
+
+.notification-settings__content-heading-with-beta {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.notification-settings__beta-tag {
+	background: var(--studio-gray-30);
+	border-radius: 4px;
+	font-style: normal;
+	font-weight: 700;
+	font-size: 0.75rem;
+	line-height: 17px;
+	display: flex;
+	color: var(--studio-white);
+	padding: 0 5px;
+	margin-block-end: 8px;
 }
 
 .notification-settings__content-heading {
@@ -89,7 +109,6 @@
 			}
 		}
 	}
-
 }
 
 .select-dropdown .select-dropdown__container {

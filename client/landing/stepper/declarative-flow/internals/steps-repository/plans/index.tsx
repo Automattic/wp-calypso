@@ -1,16 +1,19 @@
 import { is2023PricingGridActivePage } from '@automattic/calypso-products';
 import {
-	DOMAIN_UPSELL_FLOW,
-	isHostingSiteCreationFlow,
-	START_WRITING_FLOW,
+	isBlogOnboardingFlow,
+	isDomainUpsellFlow,
+	isNewHostedSiteCreationFlow,
 	StepContainer,
 } from '@automattic/onboarding';
+import { useSelector } from 'react-redux';
+import { isInHostingFlow } from 'calypso/landing/stepper/utils/is-in-hosting-flow';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import PlansWrapper from './plans-wrapper';
 import type { ProvidedDependencies, Step } from '../../types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 const plans: Step = function Plans( { navigation, flow } ) {
+	const hostingFlow = useSelector( isInHostingFlow );
 	const { goBack, submit } = navigation;
 
 	const handleSubmit = ( plan: MinimalRequestCartProduct | null ) => {
@@ -18,7 +21,7 @@ const plans: Step = function Plans( { navigation, flow } ) {
 			plan,
 		};
 
-		if ( flow === DOMAIN_UPSELL_FLOW || flow === START_WRITING_FLOW ) {
+		if ( isDomainUpsellFlow( flow ) || isBlogOnboardingFlow( flow ) ) {
 			providedDependencies.goToCheckout = true;
 		}
 
@@ -26,7 +29,8 @@ const plans: Step = function Plans( { navigation, flow } ) {
 	};
 	const is2023PricingGridVisible = is2023PricingGridActivePage( window );
 
-	const isAllowedToGoBack = flow === DOMAIN_UPSELL_FLOW || isHostingSiteCreationFlow( flow );
+	const isAllowedToGoBack =
+		isDomainUpsellFlow( flow ) || ( isNewHostedSiteCreationFlow( flow ) && hostingFlow );
 
 	return (
 		<StepContainer

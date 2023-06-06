@@ -538,12 +538,20 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 	function* assembleSite(
 		siteSlug: string,
 		stylesheet = '',
-		{ homeHtml, headerHtml, footerHtml, globalStyles, shouldResetContent }: AssembleSiteOptions = {}
+		{
+			homeHtml,
+			headerHtml,
+			footerHtml,
+			globalStyles,
+			shouldResetContent,
+			siteSetupOption,
+		}: AssembleSiteOptions = {}
 	) {
-		const templates: RequestTemplate[] = [
+		const templates = [
 			{
 				type: 'wp_template' as const,
 				slug: 'home',
+				title: __( 'Home' ),
 				content: createCustomHomeTemplateContent(
 					stylesheet,
 					!! headerHtml,
@@ -552,17 +560,19 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 					homeHtml
 				),
 			},
-			{
+			headerHtml && {
 				type: 'wp_template_part' as const,
 				slug: 'header',
+				title: __( 'Header' ),
 				content: headerHtml,
 			},
-			{
+			footerHtml && {
 				type: 'wp_template_part' as const,
 				slug: 'footer',
+				title: __( 'Footer' ),
 				content: footerHtml,
 			},
-		].filter( ( template: RequestTemplate ) => !! template.content );
+		].filter( Boolean ) as RequestTemplate[];
 
 		yield wpcomRequest( {
 			path: `/sites/${ encodeURIComponent( siteSlug ) }/site-assembler`,
@@ -571,6 +581,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 				templates,
 				global_styles: globalStyles,
 				should_reset_content: shouldResetContent,
+				site_setup_option: siteSetupOption,
 			},
 			method: 'POST',
 		} );

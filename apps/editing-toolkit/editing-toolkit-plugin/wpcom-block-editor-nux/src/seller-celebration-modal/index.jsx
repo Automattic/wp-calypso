@@ -115,7 +115,7 @@ const SellerCelebrationModalInner = () => {
 			actionButtons={
 				<>
 					<Button onClick={ closeModal }>{ __( 'Continue editing', 'full-site-editing' ) }</Button>
-					<Button isPrimary href={ linkUrl } target="__blank" rel="noopener noreferrer">
+					<Button isPrimary href={ linkUrl } target="_blank" rel="noopener noreferrer">
 						{ __( 'View your product', 'full-site-editing' ) }
 					</Button>
 				</>

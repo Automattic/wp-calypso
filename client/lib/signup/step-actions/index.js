@@ -831,8 +831,6 @@ export function createAccount(
 
 		const marketing_price_group = response?.marketing_price_group ?? '';
 
-		const plans_reorder_abtest_variation = response?.plans_reorder_abtest_variation ?? '';
-
 		// Fire tracking events, but only after a _new_ user registers.
 		if ( newAccountCreated ) {
 			recordRegistration( {
@@ -845,7 +843,6 @@ export function createAccount(
 		const providedDependencies = {
 			username,
 			marketing_price_group,
-			plans_reorder_abtest_variation,
 			...bearerToken,
 		};
 

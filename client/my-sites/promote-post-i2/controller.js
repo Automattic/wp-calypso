@@ -1,20 +1,12 @@
-import config from '@automattic/calypso-config';
-import page from 'page';
-import { getSiteFragment } from 'calypso/lib/route';
-import { siteSelection } from 'calypso/my-sites/controller';
-import PromotedPosts from 'calypso/my-sites/promote-post/main';
+import BlazePressWidget from 'calypso/components/blazepress-widget';
 import CampaignItemPage from 'calypso/my-sites/promote-post-i2/components/campaign-item-page';
 import PromotedPostsRedesignI2 from 'calypso/my-sites/promote-post-i2/main';
-import getPrimarySiteSlug from 'calypso/state/selectors/get-primary-site-slug';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export const promotedPosts = ( context, next ) => {
 	const { tab } = context.params;
-	// PromotedPostsRedesignI2
-	context.primary = config.isEnabled( 'promote-post/redesign-i2' ) ? (
-		<PromotedPostsRedesignI2 tab={ tab } />
-	) : (
-		<PromotedPosts tab={ tab } />
-	);
+	context.primary = <PromotedPostsRedesignI2 tab={ tab } />;
 	next();
 };
 
@@ -24,19 +16,26 @@ export const campaignDetails = ( context, next ) => {
 	next();
 };
 
-export const redirectToPrimarySite = ( context, next ) => {
-	const siteFragment = context.params.site || getSiteFragment( context.path );
-
-	if ( siteFragment ) {
-		return next();
-	}
+export const promoteWidget = ( context, next ) => {
+	const { item } = context.params;
 
 	const state = context.store.getState();
-	const primarySiteSlug = getPrimarySiteSlug( state );
-	if ( primarySiteSlug !== null ) {
-		page( `/advertising/${ primarySiteSlug }` );
-	} else {
-		siteSelection( context, next );
-		page( `/advertising` );
-	}
+	const siteId = getSelectedSiteId( state );
+
+	const postId = item?.split( '-' )[ 1 ];
+
+	const currentQuery = getCurrentQueryArguments( state );
+	const source = currentQuery?.source?.toString();
+
+	context.primary = (
+		<BlazePressWidget
+			isVisible={ true }
+			siteId={ siteId }
+			postId={ postId }
+			keyValue={ item }
+			source={ source }
+		/>
+	);
+
+	next();
 };

@@ -43,6 +43,7 @@ export interface WPComPlan extends Plan {
 	getPlanTagline?: () => string;
 	getNewsletterTagLine?: () => string;
 	getLinkInBioTagLine?: () => string;
+	getBlogOnboardingTagLine?: () => string;
 	getSubTitle?: () => TranslateResult;
 	getPlanCompareFeatures?: (
 		experiment?: string,
@@ -57,6 +58,9 @@ export interface WPComPlan extends Plan {
 	getLinkInBioDescription?: () => string;
 	getLinkInBioSignupFeatures?: () => Feature[];
 	getLinkInBioHighlightedFeatures?: () => Feature[];
+	getBlogOnboardingSignupFeatures?: () => Feature[];
+	getBlogOnboardingHighlightedFeatures?: () => Feature[];
+	getBlogOnboardingSignupJetpackFeatures?: () => Feature[];
 	getPromotedFeatures?: () => Feature[];
 	getPathSlug: () => string;
 	getAnnualPlansOnlyFeatures?: () => string[];
@@ -259,6 +263,9 @@ export type Plan = BillingTerm & {
 	getInferiorFeatures?: () => Feature[];
 	getNewsletterSignupFeatures?: () => Feature[];
 	getLinkInBioSignupFeatures?: () => Feature[];
+	getBlogOnboardingSignupFeatures?: () => Feature[];
+	getBlogOnboardingHighlightedFeatures?: () => Feature[];
+	getBlogOnboardingSignupJetpackFeatures?: () => Feature[];
 };
 
 export type WithSnakeCaseSlug = { product_slug: string };

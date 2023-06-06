@@ -37,6 +37,7 @@ const StatsListCard = ( {
 	isLinkUnderlined,
 	listItemClassName,
 } ) => {
+	debugger;
 	const moduleNameTitle = titlecase( moduleType );
 	const debug = debugFactory( `calypso:stats:list:${ moduleType }` );
 	const [ visibleRightItemKey, setVisibleRightItemKey ] = useState( undefined );

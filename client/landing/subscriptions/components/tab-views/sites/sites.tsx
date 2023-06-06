@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { SubscriptionManager } from '@automattic/data-stores';
+import { SubscriptionManager, Reader } from '@automattic/data-stores';
 import SearchInput from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
@@ -10,7 +10,7 @@ import { SortControls, Option } from 'calypso/landing/subscriptions/components/s
 import { useSearch } from 'calypso/landing/subscriptions/hooks';
 import TabView from '../tab-view';
 
-const SortBy = SubscriptionManager.SiteSubscriptionsSortBy;
+const SortBy = Reader.SiteSubscriptionsSortBy;
 
 const getSortOptions = ( translate: ReturnType< typeof useTranslate > ): Option[] => [
 	{ value: SortBy.LastUpdated, label: translate( 'Recently updated' ) },
@@ -31,8 +31,9 @@ const Sites = () => {
 	} );
 	const { subscriptions, totalCount } = data ?? {};
 	const sortOptions = useSortOptions( translate );
-	// todo: translate when we have agreed on the error message
-	const errorMessage = error ? 'An error occurred while fetching your subscriptions.' : '';
+	const errorMessage = error
+		? translate( "Oops! The subscription couldn't be found or doesn't exist." )
+		: '';
 	const isListControlsEnabled = config.isEnabled( 'subscription-management/sites-list-controls' );
 
 	if ( ! isLoading && ! totalCount ) {

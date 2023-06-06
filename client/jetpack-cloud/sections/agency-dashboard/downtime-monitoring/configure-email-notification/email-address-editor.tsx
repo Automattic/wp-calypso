@@ -20,6 +20,7 @@ interface Props {
 	allEmailItems: Array< StateMonitorSettingsEmail >;
 	setAllEmailItems: ( emailAddresses: Array< StateMonitorSettingsEmail > ) => void;
 	recordEvent: ( action: string, params?: object ) => void;
+	setVerifiedEmail: ( item: string ) => void;
 }
 
 export default function EmailAddressEditor( {
@@ -29,6 +30,7 @@ export default function EmailAddressEditor( {
 	allEmailItems,
 	setAllEmailItems,
 	recordEvent,
+	setVerifiedEmail,
 }: Props ) {
 	const translate = useTranslate();
 
@@ -113,6 +115,7 @@ export default function EmailAddressEditor( {
 	const handleAddVerifiedEmail = () => {
 		recordEvent( 'downtime_monitoring_email_already_verified' );
 		handleSetEmailItems();
+		setVerifiedEmail( emailItem.email );
 	};
 
 	const onSave = ( event: React.FormEvent< HTMLFormElement > ) => {
