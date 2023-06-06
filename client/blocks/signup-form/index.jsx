@@ -533,6 +533,7 @@ class SignupForm extends Component {
 		const userData = {
 			password: formState.getFieldValue( this.state.form, 'password' ),
 			email: formState.getFieldValue( this.state.form, 'email' ),
+			is_dev_account: this.state.isDevAccount,
 		};
 
 		if ( this.props.displayNameInput ) {

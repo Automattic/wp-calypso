@@ -107,14 +107,19 @@ export function saveSignupStep( step ) {
 	};
 }
 
-export function submitSignupStep( step, providedDependencies ) {
+export function submitSignupStep( step, providedDependencies, optionalProps ) {
 	assertValidDependencies( step.stepName, providedDependencies );
 	return ( dispatch, getState ) => {
 		const lastKnownFlow = getCurrentFlowName( getState() );
 		const lastUpdated = Date.now();
 		const { intent } = getSignupDependencyStore( getState() );
 
-		dispatch( recordSubmitStep( lastKnownFlow, step.stepName, providedDependencies, { intent } ) );
+		dispatch(
+			recordSubmitStep( lastKnownFlow, step.stepName, providedDependencies, {
+				intent,
+				...optionalProps,
+			} )
+		);
 
 		dispatch( {
 			type: SIGNUP_PROGRESS_SUBMIT_STEP,
