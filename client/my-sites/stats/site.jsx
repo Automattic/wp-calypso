@@ -12,6 +12,7 @@ import titlecase from 'to-title-case';
 import illustration404 from 'calypso/assets/images/illustrations/illustration-404.svg';
 import JetpackBackupCredsBanner from 'calypso/blocks/jetpack-backup-creds-banner';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
+import { AVAILABLE_PAGE_MODULES } from 'calypso/blocks/stats-navigation/constants';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -53,7 +54,10 @@ import StatsPeriodNavigation from './stats-period-navigation';
 import statsStrings from './stats-strings';
 import { getPathWithUpdatedQueryString } from './utils';
 
-const HIDDABLE_MODULES = [ 'authors', 'videos' ];
+// Sync hidable modules with StatsNavigation.
+const HIDDABLE_MODULES = AVAILABLE_PAGE_MODULES.traffic.map( ( module ) => {
+	return module.key;
+} );
 
 const memoizedQuery = memoizeLast( ( period, endOf ) => ( {
 	period,
@@ -148,7 +152,6 @@ class StatsSite extends Component {
 
 	isModuleHidden( moduleName ) {
 		// Determine which modules are hidden.
-		// @TODO: This could be extracted to share between pages.
 		// @TODO: Rearrange the layout of modules to be more flexible with hidden blocks.
 		if (
 			HIDDABLE_MODULES.includes( moduleName ) &&

@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { Popover } from '@automattic/components';
 import { FormToggle } from '@wordpress/components';
-import { Icon, cog, commentAuthorAvatar, video } from '@wordpress/icons';
+import { Icon, cog } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -20,22 +20,10 @@ import {
 	requestModuleToggles,
 } from 'calypso/state/stats/module-toggles/actions';
 import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
-import { navItems, intervals as intervalConstants } from './constants';
+import { AVAILABLE_PAGE_MODULES, navItems, intervals as intervalConstants } from './constants';
 import Intervals from './intervals';
 
 import './style.scss';
-
-const AVAILABLE_PAGE_MODULES = {
-	traffic: [
-		{
-			key: 'authors',
-			label: translate( 'Authors' ),
-			icon: commentAuthorAvatar,
-			defaultValue: true,
-		},
-		{ key: 'videos', label: translate( 'Videos' ), icon: video, defaultValue: true },
-	],
-};
 
 class StatsNavigation extends Component {
 	static propTypes = {
@@ -187,7 +175,7 @@ class StatsNavigation extends Component {
 								{ AVAILABLE_PAGE_MODULES[ this.props.selectedItem ].map( ( toggleItem ) => {
 									return (
 										<div key={ toggleItem.key } className="page-modules-settings-toggle">
-											<Icon className="gridicon" icon={ commentAuthorAvatar } />
+											<Icon className="gridicon" icon={ toggleItem.icon } />
 											<span>{ toggleItem.label }</span>
 											<FormToggle
 												className="page-modules-settings-toggle-control"
