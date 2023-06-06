@@ -40,10 +40,6 @@ function querySubscribers(
 		},
 		query
 	);
-	// .then( ( response ) => {
-	// 	const selectedData = selectSubscribers( response );
-	// 	return selectedData;
-	// } );
 }
 
 function selectSubscribers( payload: SubscriberPayload ): SubscribersData {
