@@ -4,7 +4,9 @@ import {
 	BETWEEN_PAST_EIGHT_AND_FIFTEEN_DAYS,
 	BETWEEN_PAST_THIRTY_ONE_AND_SIXTY_DAYS,
 } from '@automattic/components';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import wpcom from 'calypso/lib/wp';
+import useNoticeVisibilityQuery from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import { useDispatch, useSelector } from 'calypso/state';
 import { requestHighlights } from 'calypso/state/stats/highlights/actions';
 import { getHighlights } from 'calypso/state/stats/highlights/selectors';
@@ -55,6 +57,26 @@ export default function HighlightsSection( {
 		};
 	}, [ highlights, currentPeriod ] );
 
+	const { data: showSettingsTooltip, refetch: refetchNotices } = useNoticeVisibilityQuery(
+		siteId,
+		'traffic_page_settings'
+	);
+	const [ settingsTooltipDismissed, setSettingsTooltipDismissed ] = useState( false );
+
+	const dismissSettingsTooltip = () => {
+		setSettingsTooltipDismissed( true );
+		return wpcom.req
+			.post( {
+				apiNamespace: 'wpcom/v2',
+				path: `/sites/${ siteId }/jetpack-stats-dashboard/notices`,
+				body: {
+					id: 'traffic_page_settings',
+					status: 'dismissed',
+				},
+			} )
+			.finally( refetchNotices );
+	};
+
 	return (
 		<WeeklyHighlightCards
 			className="has-odyssey-stats-bg-color"
@@ -67,6 +89,8 @@ export default function HighlightsSection( {
 			onClickVisitors={ () => null }
 			onTogglePeriod={ onUpdatePeriod }
 			currentPeriod={ currentPeriod }
+			showSettingsTooltip={ !! showSettingsTooltip && ! settingsTooltipDismissed }
+			onSettingsTooltipDismiss={ dismissSettingsTooltip }
 		/>
 	);
 }
