@@ -262,6 +262,7 @@ export class ImportEverything extends SectionMigrate {
 
 	renderDefaultHoorayScreen() {
 		const { translate, stepNavigator } = this.props;
+
 		return (
 			<>
 				<Title>{ translate( 'Hooray!' ) }</Title>

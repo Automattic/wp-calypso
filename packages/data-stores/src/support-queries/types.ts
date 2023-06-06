@@ -10,6 +10,7 @@ export interface HappyChatAvailability {
 		| 'free'
 		| 'personal'
 		| 'personal-with-legacy-chat'
+		| 'starter'
 		| 'premium'
 		| 'pro'
 		| 'business'
@@ -17,7 +18,6 @@ export interface HappyChatAvailability {
 		| 'jetpack-paid'
 		| 'p2-plus';
 	nickname: string;
-	is_chat_closed: boolean;
 	availability: Availability;
 }
 

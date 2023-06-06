@@ -67,6 +67,10 @@ function happyblocks_normalize_translations_relative_path( $relative, $src ) {
 	if ( preg_match( '#/wp-content/a8c-plugins/happy-blocks/(.*\.js)#', $src, $m ) ) {
 		// Fix the path to support `yarn dev --sync`.
 		$relative = str_replace( 'build/', '', $m[1] );
+
+		// Remove rtl segment from the relative path to prevent encoding incorrect $md5_filename for the script translations.
+		$relative = str_replace( '/rtl/../', '/', $m[1] );
+
 		return $relative;
 	}
 	return $relative;

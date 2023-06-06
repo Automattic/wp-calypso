@@ -5,8 +5,6 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
 import useAddTempSiteToSourceOptionMutation from 'calypso/data/site-migration/use-add-temp-site-mutation';
 import { useSourceMigrationStatusQuery } from 'calypso/data/site-migration/use-source-migration-status-query';
-import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
-import { SITE_PICKER_FILTER_CONFIG } from 'calypso/landing/stepper/constants';
 import MigrationError from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/migration-error';
 import { ProcessingResult } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/processing-step/constants';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -62,7 +60,6 @@ const importFlow: Flow = {
 
 	useStepNavigation( _currentStep, navigate ) {
 		const { setStepProgress, setPendingAction } = useDispatch( ONBOARD_STORE );
-		const { data: sites } = useSiteExcerptsQuery( SITE_PICKER_FILTER_CONFIG );
 		const { addTempSiteToSourceOption } = useAddTempSiteToSourceOptionMutation();
 		const urlQueryParams = useQuery();
 		const fromParam = urlQueryParams.get( 'from' );
@@ -97,7 +94,7 @@ const importFlow: Flow = {
 		};
 
 		const handleMigrationRedirects = ( providedDependencies: ProvidedDependencies = {} ) => {
-			const userHasSite = sites && sites.length > 0;
+			const { userHasSite } = providedDependencies;
 
 			if ( providedDependencies?.status === 'inactive' ) {
 				// This means they haven't kick off the migration before, so we send them to select/create a new site

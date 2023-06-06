@@ -21,7 +21,7 @@ const TabView = ( { children, errorMessage, isLoading = false }: TabViewProps ) 
 		);
 	}
 
-	return <>{ children }</>;
+	return <div className="tab-view">{ children }</div>;
 };
 
 export default TabView;
