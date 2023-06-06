@@ -60,7 +60,7 @@ const ScaledBlockRendererContainer = ( {
 
 	const editorStyles = useMemo( () => {
 		const mergedStyles = [ ...( styles || [] ), ...( customStyles || [] ) ]
-			// Ingore svgs since the current version of EditorStyles doesn't support it
+			// Ignore svgs since the current version of EditorStyles doesn't support it
 			.filter( ( style: RenderedStyle ) => style.__unstableType !== 'svgs' );
 
 		if ( ! inlineCss ) {
