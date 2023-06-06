@@ -1,5 +1,5 @@
-import { isPremiumPlan } from '@automattic/calypso-products';
+import { isPremiumPlan, isWooExpressMediumPlan } from '@automattic/calypso-products';
 
 export function isPopularPlan( planSlug: string ): boolean {
-	return isPremiumPlan( planSlug );
+	return isPremiumPlan( planSlug ) || isWooExpressMediumPlan( planSlug );
 }
