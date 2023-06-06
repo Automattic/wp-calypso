@@ -12,7 +12,6 @@ export {
 } from './record';
 export { recordTracksEventWithClientId, recordPageViewWithClientId } from './record-with-client-id';
 export { withAnalytics } from './with-analytics';
-export { enhanceWithOdysseyFlag } from './enhance-with-odyssey-flag';
 export { enhanceWithSiteMainProduct } from './enhance-with-site-main-product';
 export { enhanceWithSiteType } from './enhance-with-site-type';
 export { composeAnalytics } from './compose-analytics';
