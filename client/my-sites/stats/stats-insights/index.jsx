@@ -12,7 +12,7 @@ import Main from 'calypso/components/main';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import AllTimelHighlightsSection from '../all-time-highlights-section';
+import AllTimeHighlightsSection from '../all-time-highlights-section';
 import AllTimeViewsSection from '../all-time-views-section';
 import AnnualHighlightsSection from '../annual-highlights-section';
 import PostingActivity from '../post-trends';
@@ -55,7 +55,7 @@ const StatsInsights = ( props ) => {
 				/>
 				<StatsNavigation selectedItem="insights" siteId={ siteId } slug={ siteSlug } />
 				<AnnualHighlightsSection siteId={ siteId } />
-				<AllTimelHighlightsSection siteId={ siteId } siteSlug={ siteSlug } />
+				<AllTimeHighlightsSection siteId={ siteId } siteSlug={ siteSlug } />
 				<PostingActivity siteId={ siteId } />
 				<AllTimeViewsSection siteId={ siteId } slug={ siteSlug } />
 				{ siteId && (
