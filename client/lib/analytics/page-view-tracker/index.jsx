@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import debugFactory from 'debug';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
@@ -7,7 +6,6 @@ import { connect } from 'react-redux';
 import { getSiteFragment } from 'calypso/lib/route';
 import {
 	recordPageViewWithClientId as recordPageView,
-	enhanceWithOdysseyFlag,
 	enhanceWithSiteMainProduct,
 	enhanceWithSiteType,
 } from 'calypso/state/analytics/actions';
@@ -112,8 +110,6 @@ const mapStateToProps = ( state ) => {
 		typeof window === 'undefined' ? '' : getSiteFragment( get( window, 'location.pathname', '' ) );
 
 	const hasSelectedSiteLoaded =
-		// Skip this check for Odyssey Stats.
-		config.isEnabled( 'is_running_in_jetpack_site' ) ||
 		! currentSlug ||
 		( typeof currentSlug === 'number' && currentSlug === selectedSiteId ) ||
 		currentSlug === selectedSiteSlug;
@@ -126,11 +122,7 @@ const mapStateToProps = ( state ) => {
 };
 
 const mapDispatchToProps = {
-	recorder: withEnhancers( recordPageView, [
-		enhanceWithOdysseyFlag,
-		enhanceWithSiteType,
-		enhanceWithSiteMainProduct,
-	] ),
+	recorder: withEnhancers( recordPageView, [ enhanceWithSiteType, enhanceWithSiteMainProduct ] ),
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( PageViewTracker );
