@@ -1,45 +1,60 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueries, UseQueryResult } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
-interface SubscriberPayload {
+export interface SubscriberPayload {
 	date: string;
 	unit: string;
 	data: any[]; // TODO: add type
 	fields: string[];
 }
 
-export function querySubscribers(
+interface SubscribersData {
+	date: string;
+	unit: string;
+	data: {
+		[ key: string ]: string | number;
+	}[];
+}
+
+function querySubscribers(
 	siteId: number | null,
 	period: string,
 	quantity: number,
 	date?: string
-): Promise< any > {
-	// Create a date object from the passed date string or create a new date object if no date is provided.
+): Promise< SubscriberPayload > {
 	const periodStart = date ? new Date( date ) : new Date();
-
-	// Formatted date
 	const formattedDate = periodStart.toISOString().slice( 0, 10 );
 
-	const query: { unit: string; quantity: number; http_envelope: number; date: string } = {
+	const query = {
 		unit: period,
 		quantity,
 		http_envelope: 1,
 		date: formattedDate,
 	};
 
-	return wpcom.req.get(
-		{
-			method: 'GET',
-			apiNamespace: 'rest/v1.1',
-			path: `/sites/${ siteId }/stats/subscribers`,
-		},
-		query
-	);
+	return wpcom.req
+		.get(
+			{
+				method: 'GET',
+				apiNamespace: 'rest/v1.1',
+				path: `/sites/${ siteId }/stats/subscribers`,
+			},
+			query
+		)
+		.then( ( response ) => {
+			const selectedData = selectSubscribers( response );
+			return selectedData;
+		} );
 }
 
-export function selectSubscribers( payload: SubscriberPayload ) {
+function selectSubscribers( payload: SubscriberPayload ): SubscribersData {
 	if ( ! payload || ! payload.data ) {
-		return [];
+		// return default SubscribersData object if no payload data
+		return {
+			date: '',
+			unit: '',
+			data: [],
+		};
 	}
 
 	return {
@@ -47,7 +62,6 @@ export function selectSubscribers( payload: SubscriberPayload ) {
 		unit: payload.unit,
 		data: payload.data.map( ( dataSet ) => {
 			return {
-				// For `week` period replace `W` separator to match the format.
 				[ payload.fields[ 0 ] ]:
 					payload.unit !== 'week' ? dataSet[ 0 ] : dataSet[ 0 ].replaceAll( 'W', '-' ),
 				[ payload.fields[ 1 ] ]: dataSet[ 1 ],
@@ -62,10 +76,9 @@ export default function useSubscribersQuery(
 	period: string,
 	quantity: number,
 	date?: Date
-) {
+): UseQueryResult< SubscribersData, unknown > {
 	const queryDate = date ? date.toISOString() : new Date().toISOString();
 
-	// TODO: Account for other query parameters before release.
 	return useQuery( {
 		queryKey: [ 'stats', 'subscribers', siteId, period, quantity, queryDate ],
 		queryFn: () => querySubscribers( siteId, period, quantity, queryDate ),
@@ -73,3 +86,21 @@ export default function useSubscribersQuery(
 		staleTime: 1000 * 60 * 5, // 5 minutes
 	} );
 }
+
+export function useSubscribersQueries(
+	siteId: number | null,
+	period: string,
+	quantity: number,
+	dates: string[]
+): UseQueryResult< SubscribersData, unknown >[] {
+	const queryConfigs = dates.map( ( date ) => ( {
+		queryKey: [ 'stats', 'subscribers', siteId, period, quantity, date ],
+		queryFn: () => querySubscribers( siteId, period, quantity, date ),
+		select: selectSubscribers,
+		staleTime: 1000 * 60 * 5, // 5 minutes
+	} ) );
+
+	return useQueries( { queries: queryConfigs } ) as UseQueryResult< SubscriberPayload, unknown >[];
+}
+
+export type { SubscribersData };
