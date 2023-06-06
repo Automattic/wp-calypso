@@ -29,8 +29,6 @@ interface Props {
 
 // The pattern renderer element has 1px min height before the pattern is loaded
 const PATTERN_RENDERER_MIN_HEIGHT = 1;
-// Desktop viewport width in pixels
-const DEVICE_COMPUTER_VIEWPORT_WIDTH = 1280;
 
 const PatternLargePreview = ( {
 	header,
@@ -137,61 +135,10 @@ const PatternLargePreview = ( {
 		);
 	};
 
-	const deviceComputerViewportScale = () =>
-		frameRef.current!.clientWidth / DEVICE_COMPUTER_VIEWPORT_WIDTH;
-
-	const setLargePreviewStyleForViewport = () => {
-		if ( NAVIGATOR_PATHS.SECTION_PATTERNS === navigator.location.path ) {
-			// Extend state with viewport styles
-			setPatternLargePreviewStyle(
-				( state ) =>
-					( {
-						...state,
-						'--pattern-large-preview-device-computer-width': DEVICE_COMPUTER_VIEWPORT_WIDTH,
-						'--pattern-large-preview-device-computer-scale': deviceComputerViewportScale(),
-					} as CSSProperties )
-			);
-		}
-	};
-
 	const updateViewportHeight = () => {
-		let height = frameRef.current?.clientHeight as number;
-		if ( 'computer' === device ) {
-			// Scale up for patterns with 100vh
-			height = height / deviceComputerViewportScale();
-		}
-		setViewportHeight( height );
+		setViewportHeight( frameRef.current?.clientHeight );
 	};
 
-	// Scale down the computer device viewport
-	useEffect( () => {
-		if ( NAVIGATOR_PATHS.SECTION_PATTERNS === navigator.location.path ) {
-			setTimeout(
-				() => {
-					updateViewportHeight();
-					setLargePreviewStyleForViewport();
-				},
-				// Wait for .pattern-large-preview transition
-				205
-			);
-		}
-	}, [ navigator.location ] );
-
-	// Update viewport height on device switch
-	useEffect( () => {
-		setTimeout(
-			updateViewportHeight,
-			// Wait for device switch transition
-			205
-		);
-	}, [ device ] );
-
-	// Update viewport styles after window resize
-	useEffect( () => {
-		setLargePreviewStyleForViewport();
-	}, [ viewportHeight ] );
-
-	// Scroll to newly added patterns
 	useEffect( () => {
 		let timerId: number;
 		const scrollIntoView = () => {
@@ -248,6 +195,11 @@ const PatternLargePreview = ( {
 			onDeviceChange={ ( device ) => {
 				recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PREVIEW_DEVICE_CLICK, { device } );
 				setDevice( device );
+				// Wait for the animation to end in 200ms
+				// The animation is triggered by the setDevice above
+				window.setTimeout( () => {
+					updateViewportHeight();
+				}, 205 );
 			} }
 		>
 			{ hasSelectedPattern ? (
