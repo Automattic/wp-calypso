@@ -1,20 +1,29 @@
-import { Icon } from '@wordpress/components';
+import { Card, CardBody, Icon } from '@wordpress/components';
 import { chartBar, chevronRight, people, trendingUp } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import './styles.scss';
 
 type EmptyListCTALinkProps = {
-	href: string;
 	icon: JSX.Element;
 	text: string;
+	url: string;
 };
 
-const EmptyListCTALink = ( { href, icon, text }: EmptyListCTALinkProps ) => (
-	<a className="empty-list-view__cta-link" href={ href } target="_blank" rel="noreferrer">
-		<span className="empty-list-view__cta-link-icon">{ icon }</span>
-		<span className="empty-list-view__cta-link-text">{ text }</span>
-		<Icon icon={ chevronRight } size={ 20 } />
-	</a>
+const EmptyListCTALink = ( { icon, text, url }: EmptyListCTALinkProps ) => (
+	<Card
+		className="empty-list-view__cta-link"
+		size="small"
+		as="a"
+		href={ url }
+		rel="noreferrer"
+		target="_blank"
+	>
+		<CardBody className="empty-list-view__card-body">
+			<Icon className="empty-list-view__cta-link-icon" icon={ icon } size={ 20 } />
+			<span className="empty-list-view__cta-link-text">{ text }</span>
+			<Icon className="empty-list-view__cta-link-icon" icon={ chevronRight } size={ 20 } />
+		</CardBody>
+	</Card>
 );
 
 const EmptyListView = () => {
@@ -29,19 +38,19 @@ const EmptyListView = () => {
 				) }
 			</p>
 			<EmptyListCTALink
-				href="https://wordpress.com/support/wordpress-editor/blocks/subscribe-block/"
-				icon={ <Icon icon={ chartBar } size={ 20 } /> }
+				icon={ chartBar }
 				text={ translate( 'Turn your visitors into subscribers' ) }
+				url="https://wordpress.com/support/wordpress-editor/blocks/subscribe-block/"
 			/>
 			<EmptyListCTALink
-				href="https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/"
-				icon={ <Icon icon={ people } size={ 20 } /> }
+				icon={ people }
 				text={ translate( 'Import existing subscribers' ) }
+				url="https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/"
 			/>
 			<EmptyListCTALink
-				href="https://wordpress.com/support/category/grow-your-audience/"
-				icon={ <Icon icon={ trendingUp } size={ 20 } /> }
+				icon={ trendingUp }
 				text={ translate( 'Grow your audience' ) }
+				url="https://wordpress.com/support/category/grow-your-audience/"
 			/>
 		</div>
 	);
