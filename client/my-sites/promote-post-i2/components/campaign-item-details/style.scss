@@ -275,7 +275,7 @@
 			padding: 8px;
 			width: 100%;
 			word-break: break-word;
-
+			text-align: left;
 			svg {
 				min-width: 20px;
 			}
@@ -317,16 +317,7 @@
 
 	.campaign-item-details__preview {
 		display: flex;
-		flex-direction: row;
-
-		@media (max-width: $break-medium) {
-			flex-direction: column;
-			margin-top: 24px;
-		}
-
-		@media (min-width: $break-wide) {
-			flex-direction: column;
-		}
+		flex-direction: column;
 	}
 
 	.campaign-item-details__preview-container {

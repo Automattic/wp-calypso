@@ -2,7 +2,7 @@
 import {
 	getPlan,
 	PLAN_FREE,
-	is2023PricingGridActivePage,
+	is2023PricingGridEnabled,
 	TYPE_FREE,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
@@ -232,7 +232,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 
 		return;
 	};
-	const is2023PricingGridVisible = is2023PricingGridActivePage( window );
+	const is2023PricingGridVisible = is2023PricingGridEnabled();
 
 	const plansFeaturesSelection = () => {
 		const { flowName } = props;

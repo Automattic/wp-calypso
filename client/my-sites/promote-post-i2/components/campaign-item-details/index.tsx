@@ -113,10 +113,10 @@ export default function CampaignItemDetails( props: Props ) {
 	const deliveryEstimateFormatted = getCampaignEstimatedImpressions( display_delivery_estimate );
 	const campaignTitleFormatted = title || __( 'Untitled' );
 	const campaignCreatedFormatted = moment.utc( start_date ).format( 'MMMM DD, YYYY' );
-	const devicesListFormatted = devicesList ? `${ devicesList }` : '-';
-	const countriesListFormatted = countriesList ? `${ countriesList }` : '-';
+	const devicesListFormatted = devicesList ? `${ devicesList }` : __( 'All' );
+	const countriesListFormatted = countriesList ? `${ countriesList }` : __( 'All' );
 	const osListFormatted = OSsList ? `${ OSsList }` : translate( 'All' );
-	const topicsListFormatted = topicsList ? `${ topicsList }` : '-';
+	const topicsListFormatted = topicsList ? `${ topicsList }` : __( 'All' );
 	const impressionsTotal = formatNumber( impressions_total );
 	const subtotalFormatted = `$${ formatCents( subtotal || 0 ) }`;
 	const creditsFormatted = `$${ formatCents( credits || 0 ) }`;

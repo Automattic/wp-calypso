@@ -62,7 +62,7 @@ export interface ImporterBaseProps {
 	site: SiteDetails;
 	siteSlug: string;
 	fromSite: string;
-	urlData: UrlData;
+	urlData?: UrlData;
 	importSite: ( params: ImportJobParams ) => void;
 	startImport: ( siteId: number, type: string ) => void;
 	resetImport: ( siteId: number, importerId: string ) => void;

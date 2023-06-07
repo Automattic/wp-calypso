@@ -1,4 +1,4 @@
-import { is2023PricingGridActivePage } from '@automattic/calypso-products';
+import { is2023PricingGridEnabled } from '@automattic/calypso-products';
 import {
 	isBlogOnboardingFlow,
 	isDomainUpsellFlow,
@@ -27,7 +27,7 @@ const plans: Step = function Plans( { navigation, flow } ) {
 
 		submit?.( providedDependencies );
 	};
-	const is2023PricingGridVisible = is2023PricingGridActivePage( window );
+	const is2023PricingGridVisible = is2023PricingGridEnabled();
 
 	const isAllowedToGoBack =
 		isDomainUpsellFlow( flow ) || ( isNewHostedSiteCreationFlow( flow ) && hostingFlow );

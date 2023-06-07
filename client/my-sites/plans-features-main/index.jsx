@@ -28,13 +28,12 @@ import {
 	PLAN_PERSONAL,
 	TITAN_MAIL_MONTHLY_SLUG,
 	PLAN_FREE,
-	is2023PricingGridActivePage,
+	is2023PricingGridEnabled,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { useDispatch } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
-import { hasTranslation } from '@wordpress/i18n';
 import warn from '@wordpress/warning';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -49,7 +48,6 @@ import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySites from 'calypso/components/data/query-sites';
 import FormattedHeader from 'calypso/components/formatted-header';
 import HappychatConnection from 'calypso/components/happychat/connection-connected';
-import Notice from 'calypso/components/notice';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
 import { getTld } from 'calypso/lib/domains';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
@@ -271,7 +269,6 @@ export class PlansFeaturesMain extends Component {
 		const {
 			basePlansPath,
 			busyOnUpgradeClick,
-			currentPurchaseIsInAppPurchase,
 			customerType,
 			disableBloggerPlanWithNonBlogDomain,
 			domainName,
@@ -279,7 +276,6 @@ export class PlansFeaturesMain extends Component {
 			isJetpack,
 			isLandingPage,
 			isLaunchPage,
-			isCurrentPlanRetired,
 			isFAQCondensedExperiment,
 			isReskinned,
 			onUpgradeClick,
@@ -294,27 +290,9 @@ export class PlansFeaturesMain extends Component {
 			isInVerticalScrollingPlansExperiment,
 			redirectToAddDomainFlow,
 			hidePlanTypeSelector,
-			translate,
-			locale,
 			flowName,
 			isPlansInsideStepper,
 		} = this.props;
-
-		const legacyText =
-			locale === 'en' ||
-			hasTranslation(
-				'Your current plan is no longer available for new subscriptions. ' +
-					'You’re all set to continue with the plan for as long as you like. ' +
-					'Alternatively, you can switch to any of our current plans by selecting it below. ' +
-					'Please keep in mind that switching plans will be irreversible.'
-			)
-				? translate(
-						'Your current plan is no longer available for new subscriptions. ' +
-							'You’re all set to continue with the plan for as long as you like. ' +
-							'Alternatively, you can switch to any of our current plans by selecting it below. ' +
-							'Please keep in mind that switching plans will be irreversible.'
-				  )
-				: null;
 
 		if ( shouldShowPlansFeatureComparison ) {
 			return (
@@ -373,18 +351,6 @@ export class PlansFeaturesMain extends Component {
 				) }
 				data-e2e-plans="wpcom"
 			>
-				{ isCurrentPlanRetired && legacyText && (
-					<Notice showDismiss={ false } status="is-info" text={ legacyText } />
-				) }
-				{ ! isCurrentPlanRetired && currentPurchaseIsInAppPurchase && (
-					<Notice
-						showDismiss={ false }
-						status="is-info"
-						text={ translate(
-							'Your current plan is an in-app purchase. You can upgrade to a different plan from within the WordPress app.'
-						) }
-					></Notice>
-				) }
 				<PlanFeatures
 					redirectToAddDomainFlow={ redirectToAddDomainFlow }
 					hidePlanTypeSelector={ hidePlanTypeSelector }
@@ -819,8 +785,7 @@ export default connect(
 		) {
 			customerType = 'business';
 		}
-		const is2023PricingGridVisible =
-			props.is2023PricingGridVisible ?? is2023PricingGridActivePage( window );
+		const is2023PricingGridVisible = props.is2023PricingGridVisible ?? is2023PricingGridEnabled();
 		const planTypeSelectorProps = {
 			basePlansPath: props.basePlansPath,
 			isStepperUpgradeFlow: props.isStepperUpgradeFlow,
