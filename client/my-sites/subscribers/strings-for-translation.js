@@ -15,6 +15,21 @@ const subscribers = translate( 'Subscribers' );
 const downloadCSV = translate( 'Download CSV' );
 const addSubscribers = translate( 'Add Subscribers' );
 
+const tooltip = translate(
+	'Add subscribers to your site and send them a free or paid {{a}}newsletter{{/a}}.',
+	{
+		components: {
+			a: (
+				<a
+					href="https://wordpress.com/support/launch-a-newsletter/#about-your-subscribers"
+					target="_blank"
+					rel="noopener noreferrer"
+				/>
+			),
+		},
+	}
+);
+
 const search = translate( 'Search by name, username or email…' );
 const bulkActions = translate( 'Bulk actions' );
 
