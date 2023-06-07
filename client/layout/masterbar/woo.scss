@@ -762,8 +762,14 @@
 			margin: 0 auto;
 		}
 
-		.login__form-header {
+		.login__form-header h3,
+		.formatted-header .formatted-header__title {
 			margin-bottom: 12px;
+			font-size: $woo-font-title-large;
+
+			@media screen and ( max-width: 660px ) {
+				font-size: rem(28px);
+			}
 		}
 
 		.login__form-header-wrapper h3 {
