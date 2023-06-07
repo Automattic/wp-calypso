@@ -79,4 +79,19 @@
 				0 2px 3px rgb(0 0 0 / 1%);
 		}
 	}
+
+	.device-switcher__viewport {
+		--viewport-height: calc(100% / var(--viewport-scale));
+		display: flex;
+		position: absolute;
+		left: 0;
+		top: 0;
+		transform: scale(var(--viewport-scale));
+		transform-origin: left top;
+		width: calc(var(--viewport-width) * 1px);
+		min-height: var(--viewport-height);
+		max-height: var(--viewport-height);
+		transition-property: width, min-height, transform;
+		transition-duration: 0.1s;
+	}
 }
