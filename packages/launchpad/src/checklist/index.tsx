@@ -5,9 +5,10 @@ import './style.scss';
 
 interface ChecklistProps {
 	tasks: Task[] | null;
+	makeLastTaskPrimaryAction?: boolean;
 }
 
-const Checklist = ( { tasks }: ChecklistProps ) => {
+const Checklist = ( { tasks, makeLastTaskPrimaryAction }: ChecklistProps ) => {
 	return (
 		<ul className="checklist__tasks" aria-label="Launchpad Checklist">
 			{ tasks &&
@@ -15,7 +16,7 @@ const Checklist = ( { tasks }: ChecklistProps ) => {
 					<ChecklistItem
 						key={ task.id }
 						task={ task }
-						isPrimaryAction={ tasks.length - 1 === index }
+						isPrimaryAction={ makeLastTaskPrimaryAction && index === tasks.length - 1 }
 					/>
 				) ) }
 		</ul>
