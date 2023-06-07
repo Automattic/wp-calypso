@@ -8,7 +8,7 @@ const useSharingModalDismissed = ( initial: boolean ) => {
 		apiFetch( {
 			method: 'PUT',
 			path: '/wpcom/v2/block-editor/sharing-modal-dismissed',
-			data: { sharing_modal_dismissed: value },
+			data: { wpcom_sharing_modal_dismissed: value },
 		} ).finally( () => {
 			setSharingModalDismissed( value );
 		} );

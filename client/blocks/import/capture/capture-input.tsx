@@ -92,13 +92,16 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 					) }
 					onChange={ onChange }
 				/>
-				<Button
-					borderless={ true }
-					className="action-buttons__importer-list"
-					onClick={ onDontHaveSiteAddressClick }
-				>
-					{ translate( "Don't have a site address?" ) }
-				</Button>
+				{ onDontHaveSiteAddressClick && (
+					<Button
+						borderless={ true }
+						className="action-buttons__importer-list"
+						onClick={ onDontHaveSiteAddressClick }
+					>
+						{ translate( "Don't have a site address?" ) }
+					</Button>
+				) }
+
 				<FormSettingExplanation>
 					<span className={ classnames( { 'is-error': showValidationMsg } ) }>
 						{ ! showValidationMsg && (

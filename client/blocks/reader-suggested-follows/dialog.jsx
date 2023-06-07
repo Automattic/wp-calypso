@@ -9,11 +9,15 @@ import './style.scss';
 const ReaderSuggestedFollowsDialog = ( { onClose, siteId, postId, isVisible } ) => {
 	const translate = useTranslate();
 	const { data, isLoading } = useRelatedSites( siteId, postId );
+	// If we are no longer loading and no data available, don't show the dialog
+	if ( ! isLoading && ! data ) {
+		return null;
+	}
 	return (
 		<Dialog
 			additionalClassNames="reader-recommended-follows-dialog"
 			isBackdropVisible={ true }
-			isVisible={ isVisible && ( isLoading || ( ! isLoading && data ) ) }
+			isVisible={ isVisible }
 			onClose={ onClose }
 			showCloseIcon={ true }
 			label={ translate( 'Suggested follows' ) }

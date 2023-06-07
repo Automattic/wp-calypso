@@ -1,4 +1,3 @@
-import { is2023PricingGridEnabled } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { useDispatch } from '@wordpress/data';
@@ -12,11 +11,10 @@ import './style.scss';
 const DomainUpsellHeader: React.FunctionComponent = () => {
 	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
 	const translate = useTranslate();
-	const is2023OnboardingPricingGrid = is2023PricingGridEnabled();
 	const plansDescription = translate(
 		'See and compare the features available on each WordPress.com plan.'
 	);
-	const withSkipButton = ! is2023OnboardingPricingGrid;
+	const withSkipButton = false;
 	const classes = classNames(
 		'plans__formatted-header',
 		'plans__section-header',
@@ -72,7 +70,6 @@ const PlansHeader: React.FunctionComponent< {
 	return (
 		<FormattedHeader
 			className="plans__formatted-header plans__section-header modernized-header"
-			brandFont
 			headerText={ translate( 'Plans' ) }
 			subHeaderText={ plansDescription }
 			align="left"

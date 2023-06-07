@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import ActionPanel from 'calypso/components/action-panel';
 import { useQueryUserPurchases } from 'calypso/components/data/query-user-purchases';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -11,6 +11,7 @@ import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
+import { successNotice } from 'calypso/state/notices/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PendingDomainTransfer from './pending-domain-transfer';
@@ -19,6 +20,14 @@ import StartSiteOwnerTransfer from './start-site-owner-transfer';
 
 const Strong = styled( 'strong' )( {
 	fontWeight: 500,
+} );
+
+const ActionPanelStyled = styled( ActionPanel )( {
+	fontSize: '14px',
+	fontWeight: 400,
+	'.action-panel__body': {
+		color: 'var(--studio-gray-70)',
+	},
 } );
 
 const SiteTransferComplete = () => {
@@ -42,14 +51,6 @@ const SiteTransferComplete = () => {
 	);
 };
 
-const ActionPanelStyled = styled( ActionPanel )`
-	font-size: 14px;
-	font-weight: 400;
-	.action-panel__body {
-		color: var( --studio-gray-70 );
-	}
-`;
-
 const SiteOwnerTransfer = () => {
 	useQueryUserPurchases();
 	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
@@ -57,6 +58,7 @@ const SiteOwnerTransfer = () => {
 	const [ transferSiteSuccess, setSiteTransferSuccess ] = useState( false );
 
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const nonWpcomDomains = useSelector( ( state ) =>
 		getDomainsBySiteId( state, selectedSite?.ID )
 	)?.filter( ( domain ) => ! domain.isWPCOMDomain );
@@ -71,6 +73,7 @@ const SiteOwnerTransfer = () => {
 	return (
 		<Main>
 			<FormattedHeader
+				brandFont
 				headerText={ translate( 'Site Transfer' ) }
 				subHeaderText={ translate(
 					'Transfer your site to another WordPress.com user. {{a}}Learn more.{{/a}}',
@@ -103,6 +106,9 @@ const SiteOwnerTransfer = () => {
 					<StartSiteOwnerTransfer
 						onSiteTransferSuccess={ () => {
 							setSiteTransferSuccess( true );
+							dispatch(
+								successNotice( translate( 'Email sent successfully' ), { duration: 8000 } )
+							);
 						} }
 						onSiteTransferError={ () => {
 							setSiteTransferSuccess( false );

@@ -532,7 +532,6 @@ export class PlanFeatures2023Grid extends Component<
 							<PlanFeatures2023GridHeaderPrice
 								isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
 								planProperties={ properties }
-								is2023OnboardingPricingGrid={ true }
 								isLargeCurrency={ isLargeCurrency }
 								currentSitePlanSlug={ currentSitePlanSlug }
 								siteId={ siteId }
