@@ -1,6 +1,6 @@
 import { safeImageUrl } from '@automattic/calypso-url';
 import { Button } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { chevronRight } from '@wordpress/icons';
 import React, { useMemo } from 'react';
 import Badge from 'calypso/components/badge';
@@ -16,6 +16,7 @@ import {
 	getCampaignStatusBadgeColor,
 	isCampaignFinished,
 } from '../../utils';
+import './style.scss';
 
 interface Props {
 	campaign: Campaign;
@@ -44,11 +45,12 @@ export default function CampaignItem( props: Props ) {
 		status,
 		end_date,
 		budget_cents,
-		impressions_total,
-		clicks_total,
 		spent_budget_cents,
 		start_date,
+		campaign_stats,
 	} = campaign;
+
+	const { impressions_total, clicks_total } = campaign_stats;
 
 	const moment = useLocalizedMoment();
 
@@ -62,27 +64,79 @@ export default function CampaignItem( props: Props ) {
 
 	const totalBudgetLeftString = `($${ formatCents( totalBudgetLeft || 0 ) } ${ __( 'left' ) })`;
 	const budgetString = campaignDays ? `$${ totalBudget } ${ totalBudgetLeftString }` : '-';
+	const budgetStringMobile = campaignDays ? `$${ totalBudget } budget` : null;
 
 	const campaignContainsData = isCampaignFinished( status );
+	const statusBadge = (
+		<Badge type={ getCampaignStatusBadgeColor( status ) }>{ getCampaignStatus( status ) }</Badge>
+	);
+	const openCampaignLink = 'javascript:void(0);'; // TODO: Provide a valid link for opening campaign details
+
+	function getMobileStats() {
+		const statElements = [];
+		if ( impressions_total > 0 ) {
+			statElements[ statElements.length ] = sprintf(
+				// translators: %s is formatted number of views
+				_n( '%s impressions', '%s impression', impressions_total ),
+				formatNumber( impressions_total )
+			);
+		}
+
+		if ( clicks_total > 0 ) {
+			statElements[ statElements.length ] = sprintf(
+				// translators: %s is formatted number of clicks
+				_n( '%s clicks', '%s click', clicks_total ),
+				formatNumber( clicks_total )
+			);
+		}
+
+		if ( budgetStringMobile ) {
+			statElements[ statElements.length ] = budgetStringMobile;
+		}
+
+		return statElements.map( ( value, index ) => {
+			if ( index < statElements.length - 1 ) {
+				return (
+					<>
+						<span key={ index }>{ value }</span>
+						<span key={ `${ index }-dot` } className="blazepress-mobile-stats-mid-dot">
+							&#183;
+						</span>
+					</>
+				);
+			}
+
+			return <span key={ index }>{ value }</span>;
+		} );
+	}
 
 	return (
 		<tr>
 			<td className="campaign-item__data">
-				<div className="promote-post-i2__campaign-item-wrapper">
-					{ adCreativeUrl && (
-						<div className="campaign-item__header-image">
-							<img src={ adCreativeUrl } alt="" />
+				<div className="campaign-item__data-row">
+					<div className="promote-post-i2__campaign-item-wrapper">
+						{ adCreativeUrl && (
+							<div className="campaign-item__header-image">
+								<img src={ adCreativeUrl } alt="" />
+							</div>
+						) }
+						<div className="campaign-item__title-row">
+							<div className="campaign-item__title">{ name }</div>
+							<div className="campaign-item__status-mobile">{ statusBadge }</div>
 						</div>
-					) }
-					<div className="campaign-item__title">{ name }</div>
+					</div>
+				</div>
+				<div className="campaign-item__data-row campaign-item__data-row-mobile">
+					<div className="campaign-item__stats-mobile">{ getMobileStats() }</div>
+					<div className="campaign-item__actions-mobile">
+						<a href={ openCampaignLink } className="campaign-item__view-link">
+							{ __( 'Open details' ) }
+						</a>
+					</div>
 				</div>
 			</td>
 			<td className="campaign-item__user">{ display_name }</td>
-			<td className="campaign-item__status">
-				<Badge type={ getCampaignStatusBadgeColor( status ) }>
-					{ getCampaignStatus( status ) }
-				</Badge>
-			</td>
+			<td className="campaign-item__status">{ statusBadge }</td>
 			<td className="campaign-item__ends">
 				{ getCampaignEndText( moment, campaign.status, campaign.end_date ) }
 			</td>
@@ -90,6 +144,7 @@ export default function CampaignItem( props: Props ) {
 			<td className="campaign-item__impressions">{ formatNumber( impressions_total ) }</td>
 			<td className="campaign-item__clicks">{ formatNumber( clicks_total ) }</td>
 			<td className="campaign-item__action">
+				{ /* TODO: Add an action for the open campaign details button */ }
 				{ campaignContainsData && <Button icon={ chevronRight } /> }
 			</td>
 		</tr>

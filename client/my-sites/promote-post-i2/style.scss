@@ -12,6 +12,31 @@
 	line-height: 1.43;
 }
 
+@mixin blazepress-data-row-font-mobile {
+	color: var(--studio-gray-40);
+	font-size: 0.75rem;
+	font-weight: 400;
+	line-height: 1.125;
+}
+
+@mixin blazepress-data-row {
+	&data-row {
+		align-items: center;
+		display: flex;
+		width: 100%;
+
+		&-mobile {
+			display: none;
+			margin-top: 20px;
+
+			.post-item__stats-mobile,
+			.campaign-item__stats-mobile {
+				@include blazepress-data-row-font-mobile;
+			}
+		}
+	}
+}
+
 .notouch .promote-post-i2 .section-nav-tab__link:hover {
 	background-color: transparent;
 }

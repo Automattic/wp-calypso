@@ -7,13 +7,6 @@ body.is-section-promote-post-i2 {
 	background-color: $post-item-background-color;
 }
 
-@mixin post-data-small-font-mobile() {
-	color: var(--studio-gray-40);
-	font-size: 0.75rem;
-	font-weight: 400;
-	line-height: 1.125;
-}
-
 .promote-post-i2 {
 	@include promote-post-i2-font;
 
@@ -42,20 +35,11 @@ body.is-section-promote-post-i2 {
 			flex-direction: column;
 
 			.post-item__post {
+				&- {
+					@include blazepress-data-row;
+				}
+
 				&-data-row {
-					align-items: center;
-					display: flex;
-					width: 100%;
-
-					&-mobile {
-						display: none;
-						margin-top: 20px;
-
-						.post-item__stats-mobile {
-							@include post-data-small-font-mobile;
-						}
-					}
-
 					.post-item__post-title {
 						display: flex;
 						flex-direction: column;
@@ -158,7 +142,7 @@ body.is-section-promote-post-i2 {
 	}
 }
 
-.post-item__mid-dot {
+.blazepress-mobile-stats-mid-dot {
 	padding: 0 6px;
 }
 
@@ -190,7 +174,7 @@ body.is-section-promote-post-i2 {
 
 						.post-item__post-title {
 							.post-item__post-subheading-mobile {
-								@include post-data-small-font-mobile;
+								@include blazepress-data-row-font-mobile;
 
 								display: block;
 							}
@@ -211,14 +195,14 @@ body.is-section-promote-post-i2 {
 		.post-item__post-view a.post-item__view-link:visited,
 		.post-item__post-data .post-item__post-data-row-mobile .post-item__actions-mobile a.post-item__view-link,
 		.post-item__post-data .post-item__post-data-row-mobile .post-item__actions-mobile a.post-item__view-link:visited {
-			@include post-data-small-font-mobile;
+			@include blazepress-data-row-font-mobile;
 
 			margin-right: 4px;
 		}
 
 		// Promote link
 		.post-item__post-data .post-item__post-data-row-mobile .post-item__actions-mobile button.post-item__post-promote-button {
-			@include post-data-small-font-mobile;
+			@include blazepress-data-row-font-mobile;
 
 			color: #3858ea;
 			height: 16px;

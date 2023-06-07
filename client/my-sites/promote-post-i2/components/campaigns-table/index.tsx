@@ -32,13 +32,13 @@ export const CampaignItemLoading = ( { totalRows = 7 }: { totalRows?: number } )
 export default function CampaignsTable( props: Props ) {
 	const { campaigns, isLoading, isFetchingPageResults } = props;
 
-	type CampaignItem = {
+	type CampaignColumn = {
 		key: string;
 		title: string;
 	};
-	const columns: CampaignItem[] = [
+	const columns: CampaignColumn[] = [
 		{
-			key: 'title',
+			key: 'data',
 			title: translate( 'Campaign' ),
 		},
 		{
