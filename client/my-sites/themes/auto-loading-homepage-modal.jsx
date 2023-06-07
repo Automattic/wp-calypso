@@ -30,7 +30,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './auto-loading-homepage-modal.scss';
 
-class AutoLoadingHomepageModal extends Component {
+export class AutoLoadingHomepageModal extends Component {
 	static propTypes = {
 		source: PropTypes.oneOf( [ 'details', 'list', 'upload' ] ).isRequired,
 		theme: PropTypes.shape( {
