@@ -39,6 +39,28 @@ export const getFeedUrl = ( { feed, site, post } = {} ) => {
 };
 
 /**
+ * getSiteDomain function extracts the domain of a website from the provided `site` and `feed` objects.
+ * It returns the domain of the site if available, otherwise, it extracts the domain from the site URL.
+ *
+ * @param {Object} param0 - An object containing `feed` and `site` objects.
+ * @param {Object|undefined} param0.feed - An object representing the feed data.
+ * @param {Object} param0.site - An object representing the site data. If it has a `domain` property and it is a string, that will be returned directly.
+ * @returns {string} - The domain of the site. If the `site` object has a `domain` property that is a string,
+ *                      it returns that. Otherwise, it gets the URL of the site from the `feed` and `site` objects,
+ *                      extracts the hostname from the URL, and returns it. If the hostname is an empty string,
+ *                      it returns the site URL. If the hostname starts with "www.", it removes the "www." and returns the rest.
+ */
+export const getSiteDomain = ( { feed, site } = {} ) => {
+	if ( typeof site?.domain === 'string' ) {
+		return site.domain;
+	}
+
+	const siteUrl = getSiteUrl( { feed, site } );
+	const hostname = getUrlParts( siteUrl ).hostname;
+	return hostname === '' ? siteUrl : hostname.replace( /^www\./, '' );
+};
+
+/**
  * Given a feed, site, or post: output the best title to use for the owning site.
  *
  * @param {*} options - an object containing a feed, site, and post. all optional
