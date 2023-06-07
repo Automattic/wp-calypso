@@ -47,6 +47,10 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 
 		&__data {
 			width: calc(32% - 5px);
+
+			.campaign-item__status-mobile {
+				display: none;
+			}
 		}
 
 		&__user {
@@ -76,10 +80,27 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 		&__action {
 			width: 2%;
 		}
+
+		&__header-image-skeleton {
+			margin-right: 16px;
+		}
+
+		font-family: $font-sf-pro-text;
+		font-style: normal;
+		font-weight: 400;
+		font-size: 0.875rem;
+		line-height: 20px;
+		letter-spacing: -0.15px;
+		color: #50575e;
+		padding-bottom: 8px;
 	}
 
 	tr {
 		font-size: 1rem;
+
+		&:not(:last-child) td {
+			border-bottom: 1px solid #d8d8d8;
+		}
 	}
 
 	td {
@@ -120,6 +141,7 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 	.campaign-item__header-image {
 		height: 78px;
 		margin-right: 16px;
+		min-width: 108px;
 		width: 108px; // TODO: adjust height and width for mobile devices as well.
 
 		img,
@@ -129,6 +151,7 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 			border-radius: 4px;
 			display: block;
 			height: 78px;
+			min-width: 108px;
 			width: 108px; // TODO: adjust height and width for mobile devices as well.
 		}
 	}
@@ -181,6 +204,27 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 		td {
 			padding-bottom: 14px;
 			padding-right: 0;
+		}
+
+		.campaign-item {
+			&__user,
+			&__status,
+			&__ends,
+			&__budget,
+			&__impressions,
+			&__clicks,
+			&__action {
+				display: none;
+			}
+
+			&__status-mobile {
+				display: block;
+				margin-top: 8px;
+			}
+		}
+
+		th.campaign-item__data {
+			display: none; // Hide the column name according to the design
 		}
 	}
 }
