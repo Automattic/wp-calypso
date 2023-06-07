@@ -1,6 +1,6 @@
-import { Gridicon } from '@automattic/components';
+import { Icon } from '@wordpress/components';
+import { chartBar, chevronRight, people, trendingUp } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { GrowAudienceIcon, ImportSubscribersIcon, TurnIntoSubscribersIcon } from './icons';
 import './styles.scss';
 
 type EmptyListCTALinkProps = {
@@ -13,7 +13,7 @@ const EmptyListCTALink = ( { href, icon, text }: EmptyListCTALinkProps ) => (
 	<a className="empty-list-view__cta-link" href={ href } target="_blank" rel="noreferrer">
 		<span className="empty-list-view__cta-link-icon">{ icon }</span>
 		<span className="empty-list-view__cta-link-text">{ text }</span>
-		<Gridicon icon="chevron-right" size={ 18 } />
+		<Icon icon={ chevronRight } size={ 20 } />
 	</a>
 );
 
@@ -30,17 +30,17 @@ const EmptyListView = () => {
 			</p>
 			<EmptyListCTALink
 				href="https://wordpress.com/support/wordpress-editor/blocks/subscribe-block/"
-				icon={ <TurnIntoSubscribersIcon /> }
+				icon={ <Icon icon={ chartBar } size={ 20 } /> }
 				text={ translate( 'Turn your visitors into subscribers' ) }
 			/>
 			<EmptyListCTALink
 				href="https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/"
-				icon={ <ImportSubscribersIcon /> }
+				icon={ <Icon icon={ people } size={ 20 } /> }
 				text={ translate( 'Import existing subscribers' ) }
 			/>
 			<EmptyListCTALink
 				href="https://wordpress.com/support/category/grow-your-audience/"
-				icon={ <GrowAudienceIcon /> }
+				icon={ <Icon icon={ trendingUp } size={ 20 } /> }
 				text={ translate( 'Grow your audience' ) }
 			/>
 		</div>
