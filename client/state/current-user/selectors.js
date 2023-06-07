@@ -90,6 +90,21 @@ export function getCurrentUserVisibleSiteCount( state ) {
 }
 
 /**
+ * Returns the number of visible Jetpack sites for the current user.
+ *
+ * @param  {Object}  state  Global state tree
+ * @returns {?number}        Current user visible Jetpack site count
+ */
+export function getCurrentUserJetpackVisibleSiteCount( state ) {
+	const user = getCurrentUser( state );
+	if ( ! user ) {
+		return null;
+	}
+
+	return user.jetpack_visible_site_count || 0;
+}
+
+/**
  * Returns the date (of registration) for the current user.
  *
  * @param  {Object}  state  Global state tree
