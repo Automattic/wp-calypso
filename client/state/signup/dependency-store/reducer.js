@@ -16,7 +16,7 @@ function reducer( state = EMPTY, action ) {
 			return { ...state, ...action.dependencies };
 
 		case SIGNUP_DEPENDENCY_STORE_REMOVE_SITE_SLUG: {
-			const { siteId, siteSlug, ...dependenciesWithoutSiteIdentifiers } = state;
+			const { siteId, siteSlug, siteTitle, ...dependenciesWithoutSiteIdentifiers } = state;
 			return dependenciesWithoutSiteIdentifiers;
 		}
 
