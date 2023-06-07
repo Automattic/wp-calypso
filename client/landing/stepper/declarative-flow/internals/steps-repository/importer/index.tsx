@@ -161,7 +161,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		/**
 	 	↓ Renders
 		 */
-		function renderStepContent() {
+		const renderStepContent = () => {
 			if ( isLoading() ) {
 				return <LoadingEllipsis />;
 			} else if ( ! siteSlug || ! site || ! siteId ) {
@@ -183,12 +183,12 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 					site={ site }
 					siteSlug={ siteSlug }
 					fromSite={ fromSite }
-					urlData={ fromSiteData }
+					urlData={ fromSiteData ?? undefined }
 					stepNavigator={ stepNavigator }
 					showConfirmDialog={ ! isMigrateFromWp }
 				/>
 			);
-		}
+		};
 
 		return (
 			<>
