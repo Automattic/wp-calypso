@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { Popover } from '@automattic/components';
 import { FormToggle } from '@wordpress/components';
-import { Icon, cog, commentAuthorAvatar, video } from '@wordpress/icons';
+import { Icon, cog } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -15,22 +15,15 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isGoogleMyBusinessLocationConnectedSelector from 'calypso/state/selectors/is-google-my-business-location-connected';
 import isSiteStore from 'calypso/state/selectors/is-site-store';
 import { getSiteOption } from 'calypso/state/sites/selectors';
-import { navItems, intervals as intervalConstants } from './constants';
+import {
+	updateModuleToggles,
+	requestModuleToggles,
+} from 'calypso/state/stats/module-toggles/actions';
+import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
+import { AVAILABLE_PAGE_MODULES, navItems, intervals as intervalConstants } from './constants';
 import Intervals from './intervals';
 
 import './style.scss';
-
-const AVAILABLE_PAGE_MODULES = {
-	traffic: [
-		{
-			key: 'authors',
-			label: translate( 'Authors' ),
-			icon: commentAuthorAvatar,
-			defaultValue: true,
-		},
-		{ key: 'videos', label: translate( 'Videos' ), icon: video, defaultValue: true },
-	],
-};
 
 class StatsNavigation extends Component {
 	static propTypes = {
@@ -46,17 +39,23 @@ class StatsNavigation extends Component {
 
 	state = {
 		isPageSettingsPopoverVisible: false,
-		modules: {
-			// Only traffic page modules are supported for now.
-			traffic: Object.assign(
-				...AVAILABLE_PAGE_MODULES.traffic.map( ( module ) => {
-					return {
-						[ module.key ]: module.defaultValue,
-					};
-				} )
-			),
-		},
+		// Only traffic page modules are supported for now.
+		pageModules: Object.assign(
+			...AVAILABLE_PAGE_MODULES.traffic.map( ( module ) => {
+				return {
+					[ module.key ]: module.defaultValue,
+				};
+			} )
+		),
 	};
+
+	static getDerivedStateFromProps( nextProps, prevState ) {
+		if ( prevState.pageModules !== nextProps.pageModuleToggles ) {
+			return { pageModules: nextProps.pageModuleToggles };
+		}
+
+		return null;
+	}
 
 	settingsActionRef = createRef();
 
@@ -64,11 +63,15 @@ class StatsNavigation extends Component {
 		this.setState( { isPageSettingsPopoverVisible } );
 	};
 
-	onToggleModule = ( page, module, value ) => {
-		const seletedPageModules = this.state.modules[ page ] || {};
-		seletedPageModules[ module ] = value;
+	onToggleModule = ( page, module, isShow ) => {
+		const seletedPageModules = Object.assign( {}, this.state.pageModules );
+		seletedPageModules[ module ] = isShow;
 
-		this.setState( seletedPageModules );
+		this.setState( { pageModules: seletedPageModules } );
+
+		this.props.updateModuleToggles( this.props.siteId, {
+			[ page ]: seletedPageModules,
+		} );
 	};
 
 	isValidItem = ( item ) => {
@@ -93,9 +96,13 @@ class StatsNavigation extends Component {
 		}
 	};
 
+	componentDidMount() {
+		this.props.requestModuleToggles( this.props.siteId );
+	}
+
 	render() {
 		const { slug, selectedItem, interval, isLegacy } = this.props;
-		const { isPageSettingsPopoverVisible } = this.state;
+		const { pageModules, isPageSettingsPopoverVisible } = this.state;
 		const { label, showIntervals, path } = navItems[ selectedItem ];
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ path }/{{ interval }}${ slugPath }`;
@@ -105,6 +112,8 @@ class StatsNavigation extends Component {
 		} );
 
 		const isHighlightsSettingsEnabled = config.isEnabled( 'stats/module-settings' );
+
+		// @TODO: Add loading status of modules settings to avoid toggling modules before they are loaded.
 
 		return (
 			<div className={ wrapperClass }>
@@ -164,11 +173,11 @@ class StatsNavigation extends Component {
 								{ AVAILABLE_PAGE_MODULES[ this.props.selectedItem ].map( ( toggleItem ) => {
 									return (
 										<div key={ toggleItem.key } className="page-modules-settings-toggle">
-											<Icon className="gridicon" icon={ commentAuthorAvatar } />
+											<Icon className="gridicon" icon={ toggleItem.icon } />
 											<span>{ toggleItem.label }</span>
 											<FormToggle
 												className="page-modules-settings-toggle-control"
-												checked={ this.state.modules[ this.props.selectedItem ][ toggleItem.key ] }
+												checked={ pageModules[ toggleItem.key ] !== false }
 												onChange={ ( event ) => {
 													this.onToggleModule(
 														this.props.selectedItem,
@@ -189,16 +198,20 @@ class StatsNavigation extends Component {
 	}
 }
 
-export default connect( ( state, { siteId } ) => {
-	return {
-		isGoogleMyBusinessLocationConnected: isGoogleMyBusinessLocationConnectedSelector(
-			state,
-			siteId
-		),
-		isStore: isSiteStore( state, siteId ),
-		isWordAds:
-			getSiteOption( state, siteId, 'wordads' ) &&
-			canCurrentUser( state, siteId, 'manage_options' ),
-		siteId,
-	};
-} )( localize( StatsNavigation ) );
+export default connect(
+	( state, { siteId, selectedItem } ) => {
+		return {
+			isGoogleMyBusinessLocationConnected: isGoogleMyBusinessLocationConnectedSelector(
+				state,
+				siteId
+			),
+			isStore: isSiteStore( state, siteId ),
+			isWordAds:
+				getSiteOption( state, siteId, 'wordads' ) &&
+				canCurrentUser( state, siteId, 'manage_options' ),
+			siteId,
+			pageModuleToggles: getModuleToggles( state, siteId, [ selectedItem ] ),
+		};
+	},
+	{ requestModuleToggles, updateModuleToggles }
+)( localize( StatsNavigation ) );
