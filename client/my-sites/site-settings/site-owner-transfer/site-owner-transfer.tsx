@@ -1,8 +1,7 @@
 import styled from '@emotion/styled';
-import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import ActionPanel from 'calypso/components/action-panel';
 import { useQueryUserPurchases } from 'calypso/components/data/query-user-purchases';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -11,7 +10,6 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { ResponseDomain } from 'calypso/lib/domains/types';
-import { useDispatch } from 'calypso/state';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
@@ -32,19 +30,9 @@ const ActionPanelStyled = styled( ActionPanel )( {
 	},
 } );
 
-const useTransferEmailSentNotice = () => {
-	const { __ } = useI18n();
-	const dispatch = useDispatch();
-
-	useEffect( () => {
-		dispatch( successNotice( __( 'Email sent successfully' ), { duration: 8000 } ) );
-	}, [ __, dispatch ] );
-};
-
 const SiteTransferComplete = () => {
 	const translate = useTranslate();
 	const userEmail = useSelector( getCurrentUserEmail );
-	useTransferEmailSentNotice();
 	if ( ! userEmail ) {
 		return null;
 	}
@@ -70,6 +58,7 @@ const SiteOwnerTransfer = () => {
 	const [ transferSiteSuccess, setSiteTransferSuccess ] = useState( false );
 
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const nonWpcomDomains = useSelector( ( state ) =>
 		getDomainsBySiteId( state, selectedSite?.ID )
 	)?.filter( ( domain ) => ! domain.isWPCOMDomain );
@@ -117,6 +106,9 @@ const SiteOwnerTransfer = () => {
 					<StartSiteOwnerTransfer
 						onSiteTransferSuccess={ () => {
 							setSiteTransferSuccess( true );
+							dispatch(
+								successNotice( translate( 'Email sent successfully' ), { duration: 8000 } )
+							);
 						} }
 						onSiteTransferError={ () => {
 							setSiteTransferSuccess( false );
