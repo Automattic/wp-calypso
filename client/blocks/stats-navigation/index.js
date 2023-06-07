@@ -39,6 +39,7 @@ class StatsNavigation extends Component {
 
 	state = {
 		isPageSettingsPopoverVisible: false,
+		isPageSettingsTooltipVisible: true,
 		// Only traffic page modules are supported for now.
 		pageModules: Object.assign(
 			...AVAILABLE_PAGE_MODULES.traffic.map( ( module ) => {
@@ -60,6 +61,7 @@ class StatsNavigation extends Component {
 	settingsActionRef = createRef();
 
 	togglePopoverMenu = ( isPageSettingsPopoverVisible ) => {
+		this.onTooltipDismiss();
 		this.setState( { isPageSettingsPopoverVisible } );
 	};
 
@@ -72,6 +74,10 @@ class StatsNavigation extends Component {
 		this.props.updateModuleToggles( this.props.siteId, {
 			[ page ]: seletedPageModules,
 		} );
+	};
+
+	onTooltipDismiss = () => {
+		this.setState( { isPageSettingsTooltipVisible: false } );
 	};
 
 	isValidItem = ( item ) => {
@@ -102,7 +108,7 @@ class StatsNavigation extends Component {
 
 	render() {
 		const { slug, selectedItem, interval, isLegacy } = this.props;
-		const { pageModules, isPageSettingsPopoverVisible } = this.state;
+		const { pageModules, isPageSettingsPopoverVisible, isPageSettingsTooltipVisible } = this.state;
 		const { label, showIntervals, path } = navItems[ selectedItem ];
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ path }/{{ interval }}${ slugPath }`;
@@ -161,6 +167,21 @@ class StatsNavigation extends Component {
 						>
 							<Icon className="gridicon" icon={ cog } />
 						</button>
+						<Popover
+							className="tooltip tooltip--darker highlight-card-tooltip highlight-card__settings-tooltip"
+							isVisible={ isPageSettingsTooltipVisible }
+							position="bottom left"
+							context={ this.settingsActionRef.current }
+						>
+							<div className="highlight-card-tooltip-content">
+								<p>
+									{ translate(
+										'You can now tailor your site highlights by adjusting the time range.'
+									) }
+								</p>
+								<button onClick={ this.onTooltipDismiss }>{ translate( 'Got it' ) }</button>
+							</div>
+						</Popover>
 						<Popover
 							className="tooltip highlight-card-popover page-modules-settings-popover"
 							isVisible={ isPageSettingsPopoverVisible }
