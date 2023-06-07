@@ -31,7 +31,9 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	// Run-time configuration.
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-	const showEmailSection = config.isEnabled( 'newsletter/stats' ) && ! isOdysseyStats;
+	const isChartVisible = config.isEnabled( 'stats/subscribers-chart-section' );
+
+	const today = new Date().toISOString().slice( 0, 10 );
 
 	const statsModuleListClass = classNames(
 		'stats__module-list stats__module--unified',
@@ -46,7 +48,6 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 	// Necessary to properly configure the fixed navigation headers.
 	// sessionStorage.setItem( 'jp-stats-last-tab', 'subscribers' );
 
-	// TODO: should be refactored into separate components
 	return (
 		<Main fullWidthLayout>
 			<DocumentHead title={ translate( 'Jetpack Stats' ) } />
@@ -65,12 +66,18 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 						vendor={ getSuggestionsVendor() }
 					/>
 				) }
-				<SubscribersChartSection siteId={ siteId } slug={ siteSlug } period={ period } />
-				<SubscribersOverview siteId={ siteId } />
+				{ isChartVisible && (
+					<>
+						<SubscribersChartSection siteId={ siteId } slug={ siteSlug } period={ period } />
+						<SubscribersOverview siteId={ siteId } />
+					</>
+				) }
 				<div className={ statsModuleListClass }>
 					<Followers path="followers" />
 					<Reach />
-					{ showEmailSection && <StatsModuleEmails /> }
+					{ ! isOdysseyStats && period && (
+						<StatsModuleEmails period={ period } query={ { period, date: today } } />
+					) }
 				</div>
 				<JetpackColophon />
 			</div>

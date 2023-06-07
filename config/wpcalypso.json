@@ -155,6 +155,7 @@
 		"stats/highlights-settings": false,
 		"stats/module-settings": false,
 		"stats/new-video-summary": false,
+		"stats/subscribers-chart-section": false,
 		"stats/subscribers-section": false,
 		"stepper-woocommerce-poc": true,
 		"storage-addon": false,
