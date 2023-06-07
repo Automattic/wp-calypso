@@ -7,6 +7,7 @@ import WooLogo from 'calypso/assets/images/icons/woocommerce-logo.svg';
 import SVGIcon from 'calypso/components/svg-icon';
 import './typekit';
 import './woo.scss';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import { getRedirectToOriginal } from 'calypso/state/login/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -45,10 +46,16 @@ const WooCoreProfilerMasterbar = ( { translate }: { translate: ( text: string ) 
 						</li>
 						<li className="masterbar__woo-nav-item">
 							{ typeof redirectTo === 'string' && redirectTo.length && (
-								<Button href={ redirectTo } className="masterbar__no-thanks-button">
-									{ translate( 'No, Thanks' ) }
-								</Button>
-							) }
+								<Button
+								onClick={ () => {
+									recordTracksEvent( 'calypso_wc_coreprofiler_jpc_skip' );
+									window.location.href = redirectTo;
+								} }
+								className="masterbar__no-thanks-button"
+							>
+								{ translate( 'No, Thanks' ) }
+							</Button>
+							)}
 						</li>
 					</ul>
 				</nav>
