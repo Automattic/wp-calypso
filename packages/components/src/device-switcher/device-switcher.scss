@@ -26,6 +26,10 @@
 	// See https://github.com/Automattic/wp-calypso/issues/71440
 	isolation: isolate;
 
+	.device-switcher__container--frame-fixed-viewport & {
+		position: relative;
+	}
+
 	.device-switcher__container--frame-bordered & {
 		--device-switcher-border-width: 10px;
 		border-radius: var(--device-switcher-border-radius);
@@ -34,19 +38,25 @@
 			--device-switcher-border-radius: 40px; /* stylelint-disable-line scales/radii */
 			border: var(--device-switcher-border-width) solid var(--color-print);
 			box-sizing: border-box;
-			box-shadow:
-				0 5px 15px rgb(0 0 0 / 7%),
-				0 3px 10px rgb(0 0 0 / 4%);
+
+			.device-switcher__container--frame-shadow & {
+				box-shadow:
+					0 5px 15px rgb(0 0 0 / 7%),
+					0 3px 10px rgb(0 0 0 / 4%);
+			}
 		}
 
 		@include break-large {
 			--device-switcher-border-radius: 20px; /* stylelint-disable-line scales/radii */
 			border: var(--device-switcher-border-width) solid var(--color-print);
-			box-shadow:
-				0 15px 20px rgb(0 0 0 / 4%),
-				0 13px 10px rgb(0 0 0 / 3%),
-				0 6px 6px rgb(0 0 0 / 2%);
 			margin-top: 0;
+
+			.device-switcher__container--frame-shadow & {
+				box-shadow:
+					0 15px 20px rgb(0 0 0 / 4%),
+					0 13px 10px rgb(0 0 0 / 3%),
+					0 6px 6px rgb(0 0 0 / 2%);
+			}
 		}
 	}
 
@@ -58,12 +68,15 @@
 		--device-switcher-border-radius: 40px; /* stylelint-disable-line scales/radii */
 		max-width: 340px;
 		max-height: 680px;
-		box-shadow:
-			0 76px 65px rgb(0 0 0 / 4%),
-			0 50px 40px rgb(0 0 0 / 3%),
-			0 30px 20px rgb(0 0 0 / 3%),
-			0 15px 13px rgb(0 0 0 / 2%),
-			0 6px 5px rgb(0 0 0 / 2%),
-			0 2px 3px rgb(0 0 0 / 1%);
+
+		.device-switcher__container--frame-shadow & {
+			box-shadow:
+				0 76px 65px rgb(0 0 0 / 4%),
+				0 50px 40px rgb(0 0 0 / 3%),
+				0 30px 20px rgb(0 0 0 / 3%),
+				0 15px 13px rgb(0 0 0 / 2%),
+				0 6px 5px rgb(0 0 0 / 2%),
+				0 2px 3px rgb(0 0 0 / 1%);
+		}
 	}
 }

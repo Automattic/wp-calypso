@@ -13,6 +13,18 @@
 
 	.pattern-assembler__pattern-panel-list--is-open & {
 		margin-inline-start: 365px;
+
+		&.device-switcher__container--is-computer .pattern-large-preview__patterns {
+			--pattern-large-preview-device-computer-scale: 0.52;
+			--pattern-large-preview-device-computer-width: 1024;
+			position: absolute;
+			left: 0;
+			top: 0;
+			transform: scale(var(--pattern-large-preview-device-computer-scale));
+			transform-origin: left top;
+			width: calc(var(--pattern-large-preview-device-computer-width) * 1px);
+			max-height: calc(100% / var(--pattern-large-preview-device-computer-scale));
+		}
 	}
 }
 
