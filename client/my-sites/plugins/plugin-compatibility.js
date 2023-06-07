@@ -10,18 +10,18 @@
 
 const incompatiblePlugins = new Set( [
 	// "reset" - break/interfere with provided functionality
-	'advanced-database-clean
+	'advanced-database-cleaner',
 	'advanced-reset-wp',
 	'advanced-wp-reset',
 	'backup',
 	'better-wp-security',
-	'cf7-pipedrive-integrati
+	'cf7-pipedrive-integration',
 	'database-browser',
 	'duplicator',
 	'extended-wp-reset',
 	'file-manager-advanced',
 	'file-manager',
-	'plugins-garbage-collect
+	'plugins-garbage-collector',
 	'post-type-switcher',
 	'reset-wp',
 	'secure-file-manager',
@@ -29,29 +29,29 @@ const incompatiblePlugins = new Set( [
 	'ultimate-wp-reset',
 	'username-changer',
 	'username-updater',
-	'vamtam-offline-jetpack'
+	'vamtam-offline-jetpack',
 	'wd-youtube',
-	'wordpress-database-rese
+	'wordpress-database-reset',
 	'wordpress-reset',
 	'wp-automatic',
-	'wp-clone-by-wp-academy'
+	'wp-clone-by-wp-academy',
 	'wp-config-file-editor',
 	'wp-dbmanager',
 	'wp-file-manager',
-	'wp-phpmyadmin-extension
+	'wp-phpmyadmin-extension',
 	'wp-prefix-changer',
 	'wp-reset',
-	'wp-uninstaller-by-azed'
+	'wp-uninstaller-by-azed',
 	'wpmu-database-reset',
 	'wps-hide-login',
 	'z-inventory-manager',
 
 	// backup
-	'backup-wd'.
-	'backupwordpress'.
-	'backwpup'.
-	'jetpack-backup'.
-	'wp-db-backup'.
+	'backup-wd',
+	'backupwordpress',
+	'backwpup',
+	'jetpack-backup',
+	'wp-db-backup',
 
 	// caching
 	'cache-enabler',
@@ -109,7 +109,7 @@ const incompatiblePlugins = new Set( [
 	'wordfence',
 	'wp-hide-security-enhancer',
 	'wp-security-hardening',
-	'wp-simple-firewall',
+	'wp-simple-firewall',	
 
 	// spam
 	'e-mail-broadcasting',
@@ -124,7 +124,7 @@ const incompatiblePlugins = new Set( [
 	'adult-mass-photos-downloader',
 	'adult-mass-videos-embedder',
 	'ari-adminer',
-	'automatic-video-posts'
+	'automatic-video-posts',
 	'blogmatic-poster',
 	'blogmatic',
 	'bwp-minify',
@@ -156,7 +156,7 @@ const incompatiblePlugins = new Set( [
 	'wpematico',
 	'wpstagecoach',
 	'yuzo-related-post',
-	'zapp-proxy-server',
+	'zapp-proxy-server',														
 	
 	// crm
 	'civicrm',	
