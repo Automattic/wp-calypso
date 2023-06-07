@@ -1,0 +1,36 @@
+.pattern-assembler__survey {
+	min-height: 76px;
+	border-radius: 4px;
+	background: #f0f7fc;
+	margin: 16px 0;
+
+	&.banner.card {
+		cursor: default;
+		border: 0;
+		box-shadow: none;
+		padding-right: 52px;
+	}
+
+	.banner__info .banner__title {
+		font-weight: 400;
+		line-height: 20px;
+		color: var(--studio-gray-70);
+		font-size: $font-body-extra-small;
+		font-family: "SF Pro Text", $sans;
+
+		a,
+		a:visited {
+			font-weight: 600;
+			color: var(--studio-gray-90);
+			text-decoration: underline;
+		}
+	}
+
+	.banner__close-icon {
+		fill: var(--studio-gray-60);
+		top: auto;
+		right: 18px;
+		height: 15.4px;
+		width: 15.4px;
+	}
+}

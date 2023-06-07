@@ -74,14 +74,13 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		/**
 	 	↓ Effects
 		 */
+		useEffect( () => {
+			! siteId && site?.ID && setSiteId( site.ID );
+		}, [ siteId, site ] );
 		useAtomicTransferQueryParamUpdate( siteId );
 		useEffect( fetchImporters, [ siteId ] );
 		useEffect( checkFromSiteData, [ fromSiteData?.url ] );
-		useEffect( () => {
-			if ( ! siteId && site?.ID ) {
-				setSiteId( site?.ID );
-			}
-		}, [ siteId, site ] );
+		useEffect( () => onComponentUnmount, [] );
 
 		if ( ! importer ) {
 			stepNavigator.goToImportCapturePage?.();
@@ -96,6 +95,10 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 			navigation.goBack?.();
 		}
 
+		function onComponentUnmount() {
+			dispatch( resetImportReceived() );
+		}
+
 		function fetchImporters() {
 			siteId && dispatch( fetchImporterState( siteId ) );
 		}
@@ -105,7 +108,6 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		}
 
 		function resetImportJob( job: ImportJob | undefined ): void {
-			dispatch( resetImportReceived() );
 			if ( ! job ) {
 				return;
 			}
@@ -147,7 +149,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		/**
 	 	↓ Renders
 		 */
-		function renderStepContent() {
+		const renderStepContent = () => {
 			if ( isLoading() ) {
 				return <LoadingEllipsis />;
 			} else if ( ! siteSlug || ! site || ! siteId ) {
@@ -169,12 +171,12 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 					site={ site }
 					siteSlug={ siteSlug }
 					fromSite={ fromSite }
-					urlData={ fromSiteData }
+					urlData={ fromSiteData ?? undefined }
 					stepNavigator={ stepNavigator }
 					showConfirmDialog={ ! isMigrateFromWp }
 				/>
 			);
-		}
+		};
 
 		return (
 			<>

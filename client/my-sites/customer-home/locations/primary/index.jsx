@@ -31,7 +31,9 @@ import {
 	TASK_REACTIVATE_RESTORE_BACKUP,
 	TASK_FIVERR,
 	TASK_DOMAIN_UPSELL,
+	LAUNCHPAD_KEEP_BUILDING,
 } from 'calypso/my-sites/customer-home/cards/constants';
+import LaunchpadKeepBuilding from 'calypso/my-sites/customer-home/cards/launchpad/keep-building';
 import CelebrateSiteCopy from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-copy';
 import CelebrateSiteCreation from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-creation';
 import CelebrateSiteLaunch from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-launch';
@@ -78,6 +80,7 @@ const cardComponents = {
 	[ TASK_REACTIVATE_RESTORE_BACKUP ]: ReviveAutoRevertedAtomic,
 	[ TASK_SITE_RESUME_COPY ]: SiteResumeCopy,
 	[ TASK_SITE_SETUP_CHECKLIST ]: SiteSetupList,
+	[ LAUNCHPAD_KEEP_BUILDING ]: LaunchpadKeepBuilding,
 	[ TASK_UPSELL_TITAN ]: TitanBanner,
 	[ TASK_WEBINARS ]: Webinars,
 	[ TASK_WP_COURSES ]: WPCourses,

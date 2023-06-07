@@ -223,7 +223,7 @@ class ThemesSelection extends Component {
 	};
 
 	render() {
-		const { source, query, upsellUrl, upsellBanner, siteId } = this.props;
+		const { source, query, upsellUrl, upsellBanner, siteId, tabFilter } = this.props;
 
 		const themes = this.props.customizedThemesList || this.props.themes;
 
@@ -256,6 +256,7 @@ class ThemesSelection extends Component {
 					bookmarkRef={ this.props.bookmarkRef }
 					siteId={ siteId }
 					searchTerm={ query.search }
+					tabFilter={ tabFilter }
 				/>
 				<SearchThemesTracks
 					query={ query }

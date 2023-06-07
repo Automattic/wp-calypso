@@ -39,6 +39,10 @@ const TextControlStyledError = styled( TextControl )( {
 	},
 } );
 
+const ButtonStyled = styled( Button )( {
+	marginBottom: '1em',
+} );
+
 const Error = styled.div( {
 	display: 'flex',
 	alignItems: 'center',
@@ -125,14 +129,14 @@ const SiteOwnerTransferEligibility = ( {
 					/>
 				) }
 			</TextControlContainer>
-			<Button
+			<ButtonStyled
 				busy={ isCheckingSiteTransferEligibility }
 				primary
 				disabled={ ! tempSiteOwner || isCheckingSiteTransferEligibility }
 				type="submit"
 			>
 				{ translate( 'Search user and continue' ) }
-			</Button>
+			</ButtonStyled>
 		</form>
 	);
 };

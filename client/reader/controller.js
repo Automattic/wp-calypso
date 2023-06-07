@@ -352,7 +352,7 @@ export async function blogDiscoveryByFeedId( context, next ) {
 
 export async function sitesSubscriptionManager( context, next ) {
 	if ( config.isEnabled( 'reader/subscription-management' ) ) {
-		context.primary = <AsyncLoad require="calypso/reader/subscriptions" />;
+		context.primary = <AsyncLoad require="calypso/reader/site-subscriptions-manager" />;
 		return next();
 	}
 
