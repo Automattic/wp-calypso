@@ -15,7 +15,7 @@ const useCreditBalanceQuery = ( queryOptions = {} ) => {
 					wpcomUserId,
 					`/credits/balance`
 				);
-				return balance;
+				return balance ? parseInt( balance ) : undefined;
 			}
 			throw new Error( 'wpcomUserId is undefined' );
 		},
