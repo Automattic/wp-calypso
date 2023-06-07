@@ -54,11 +54,12 @@ const SubscribersOverview: React.FC< SubscribersOverviewProps > = ( { siteId } )
 	const quantity = 1;
 	const dates = cardIndices.map( calculateQueryDate );
 
-	const subscribersQueries = useSubscribersQueries( siteId, period, quantity, dates );
-
-	const isLoading = subscribersQueries.some( ( result ) => result.isLoading );
-	const isError = subscribersQueries.some( ( result ) => result.isError );
-	const subscribersData = subscribersQueries.map( ( result ) => result?.data );
+	const { isLoading, isError, subscribersData } = useSubscribersQueries(
+		siteId,
+		period,
+		quantity,
+		dates
+	);
 
 	const overviewCardStats = SubscribersOverviewCardStats( subscribersData );
 

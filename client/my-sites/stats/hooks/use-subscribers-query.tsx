@@ -84,7 +84,7 @@ export function useSubscribersQueries(
 	period: string,
 	quantity: number,
 	dates: string[]
-): UseQueryResult< SubscribersData, unknown >[] {
+): { isLoading: boolean; isError: boolean; subscribersData: SubscribersData[] } {
 	const queryConfigs = dates.map( ( date ) => ( {
 		queryKey: [ 'stats', 'subscribers', siteId, period, quantity, date ],
 		queryFn: () => querySubscribers( siteId, period, quantity, date ),
@@ -92,5 +92,14 @@ export function useSubscribersQueries(
 		staleTime: 1000 * 60 * 5, // 5 minutes
 	} ) );
 
-	return useQueries( { queries: queryConfigs } ) as UseQueryResult< SubscriberPayload, unknown >[];
+	const results = useQueries( { queries: queryConfigs } ) as UseQueryResult<
+		SubscriberPayload,
+		unknown
+	>[];
+
+	const isLoading = results.some( ( result ) => result.isLoading );
+	const isError = results.some( ( result ) => result.isError );
+	const subscribersData = results.map( ( result ) => result.data );
+
+	return { isLoading, isError, subscribersData };
 }
