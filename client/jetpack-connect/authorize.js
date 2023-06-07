@@ -445,7 +445,7 @@ export class JetpackAuthorize extends Component {
 		if ( 'woocommerce-onboarding' === from ) {
 			recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { different_account: true } );
 		} else if ( from === 'woocommerce-core-profiler' ) {
-			recordTracksEvent( 'wcadmin_coreprofiler_connect_store', { different_account: true } );
+			recordTracksEvent( 'calypso_jpc_different_user_click' );
 		}
 	};
 
@@ -510,8 +510,6 @@ export class JetpackAuthorize extends Component {
 
 		if ( 'woocommerce-onboarding' === from ) {
 			recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { use_account: true } );
-		} else if ( from === 'woocommerce-core-profiler' ) {
-			recordTracksEvent( 'wcadmin_coreprofiler_connect_store', { use_account: true } );
 		}
 
 		return this.authorize();
