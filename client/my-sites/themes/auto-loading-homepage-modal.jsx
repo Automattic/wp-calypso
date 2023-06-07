@@ -1,17 +1,12 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Dialog, Gridicon, Spinner, Button } from '@automattic/components';
+import { Dialog, Gridicon, Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { CheckboxControl } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import ExternalLink from 'calypso/components/external-link';
-import FormLabel from 'calypso/components/forms/form-label';
-import FormRadio from 'calypso/components/forms/form-radio';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { preventWidows } from 'calypso/lib/formatting';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import {
 	acceptAutoLoadingHomepageWarning,
@@ -55,25 +50,8 @@ export class AutoLoadingHomepageModal extends Component {
 			homepageAction: 'keep_current_homepage',
 			// Used to reset state when dialog re-opens, see `getDerivedStateFromProps`
 			wasVisible: props.isVisible,
-			// Don't render the iframe on mobile; Doing it here prevents unnecessary data fetching vs. CSS.
-			isNarrow: isWithinBreakpoint( '<782px' ),
 		};
 	}
-
-	componentDidMount() {
-		// Change the isNarrow state when the size of the browser changes.
-		// (Putting this on an attribute instead of state because of react/no-did-mount-set-state)
-		this.unsubscribe = subscribeIsWithinBreakpoint( '<782px', ( isNarrow ) =>
-			this.setState( { isNarrow } )
-		);
-	}
-
-	componentWillUnmount() {
-		if ( typeof this.unsubscribe === 'function' ) {
-			this.unsubscribe();
-		}
-	}
-
 	static getDerivedStateFromProps( nextProps, prevState ) {
 		// This component doesn't unmount when the dialog closes, so the state
 		// needs to be reset back to defaults each time it opens.
@@ -132,8 +110,6 @@ export class AutoLoadingHomepageModal extends Component {
 			isCurrentTheme,
 			isVisible = false,
 		} = this.props;
-		const { isNarrow } = this.state;
-
 		// Nothing to do when it's the current theme.
 		if ( isCurrentTheme ) {
 			return null;
@@ -154,34 +130,15 @@ export class AutoLoadingHomepageModal extends Component {
 		}
 
 		const {
-			name: themeName,
+			// TODO: Show theme name in the modal
+			// name: themeName,
 			id: themeId,
-			stylesheet,
-			screenshot: themeScreenshot,
 		} = this.props.theme;
-
-		const iframeSrcKeepHomepage = `//${ this.props.siteDomain }?theme=${ encodeURIComponent(
-			stylesheet
-		) }&hide_banners=true&preview_overlay=true`;
 
 		return (
 			<Dialog
 				className="themes__auto-loading-homepage-modal"
 				isVisible={ isVisible }
-				buttons={ [
-					{
-						action: 'keepCurrentTheme',
-						label: translate( 'Keep my current theme' ),
-						isPrimary: false,
-						onClick: this.closeModalHandler( 'keepCurrentTheme' ),
-					},
-					{
-						action: 'activeTheme',
-						label: translate( 'Activate %(themeName)s', { args: { themeName } } ),
-						isPrimary: true,
-						onClick: this.closeModalHandler( 'activeTheme' ),
-					},
-				] }
 				onClose={ this.closeModalHandler( 'dismiss' ) }
 			>
 				<Gridicon
@@ -223,96 +180,6 @@ export class AutoLoadingHomepageModal extends Component {
 						<Button primary onClick={ this.closeModalHandler( 'activeTheme' ) }>
 							{ translate( 'Activate this theme' ) }
 						</Button>
-					</div>
-
-					<h1>
-						{ translate( 'How would you like to use %(themeName)s?', {
-							args: { themeName },
-						} ) }
-					</h1>
-					<div className="themes__theme-preview-items">
-						<div className="themes__theme-preview-item themes__theme-preview-item-iframe-container">
-							<FormLabel>
-								<div className="themes__iframe-wrapper">
-									<Spinner />
-									{ ! isNarrow && (
-										<iframe
-											scrolling="no"
-											loading="lazy"
-											title={ translate( 'Preview of current homepage with new theme applied' ) }
-											src={ iframeSrcKeepHomepage }
-										/>
-									) }
-								</div>
-								<FormRadio
-									value="keep_current_homepage"
-									checked={ 'keep_current_homepage' === this.state.homepageAction }
-									onChange={ this.handleHomepageAction }
-									label={ preventWidows(
-										translate( 'Switch theme, preserving my homepage content.' )
-									) }
-								/>
-							</FormLabel>
-						</div>
-						<div className="themes__theme-preview-item">
-							<FormLabel>
-								<div className="themes__theme-preview-image-wrapper">
-									<img
-										src={ themeScreenshot }
-										alt={ translate( "Preview of new theme's default homepage" ) }
-									/>
-								</div>
-								<FormRadio
-									value="use_new_homepage"
-									checked={ 'use_new_homepage' === this.state.homepageAction }
-									onChange={ this.handleHomepageAction }
-									label={ preventWidows(
-										translate( 'Replace my homepage content with the %(themeName)s homepage.', {
-											args: { themeName },
-										} )
-									) }
-								/>
-							</FormLabel>
-						</div>
-					</div>
-					<div className="themes__autoloading-homepage-option-description">
-						{ this.state.homepageAction === 'keep_current_homepage' && (
-							<p>
-								{ preventWidows(
-									translate(
-										'Your new theme design will be applied without changing your homepage content.'
-									)
-								) }{ ' ' }
-								<ExternalLink
-									href={ localizeUrl( 'https://wordpress.com/support/changing-themes/' ) }
-									icon
-									target="_blank"
-								>
-									{ translate( 'Learn more.' ) }
-								</ExternalLink>
-							</p>
-						) }
-						{ this.state.homepageAction === 'use_new_homepage' && (
-							<p>
-								<span
-									// eslint-disable-next-line react/no-danger
-									dangerouslySetInnerHTML={ {
-										__html: preventWidows(
-											translate(
-												'After activation, you can still access your old homepage content under Pages &rarr; Drafts.'
-											)
-										),
-									} }
-								/>{ ' ' }
-								<ExternalLink
-									href={ localizeUrl( 'https://wordpress.com/support/changing-themes/' ) }
-									icon
-									target="_blank"
-								>
-									{ translate( 'Learn more.' ) }
-								</ExternalLink>
-							</p>
-						) }
 					</div>
 				</div>
 			</Dialog>
