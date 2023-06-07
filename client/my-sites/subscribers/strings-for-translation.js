@@ -31,7 +31,6 @@ const all = translate( 'All' );
 const subscriptionDate = translate( 'Subscription date' );
 const since = translate( 'Since' );
 const view = translate( 'View' );
-const passwordReset = translate( 'Send password reset' );
 const remove = translate( 'Remove' );
 const manage = translate( 'Manage' );
 
