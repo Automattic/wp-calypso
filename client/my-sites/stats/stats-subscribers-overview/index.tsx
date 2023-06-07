@@ -24,16 +24,10 @@ function calculateQueryDate( daysToSubtract: number ) {
 }
 
 // calculate the stats to display in the cards
-<<<<<<< HEAD
-function SubscribersOverviewCardStats( subscribersData: SubscribersData[] ) {
-	const getCount = ( index: number ) => {
-		return subscribersData[ index ]?.data?.[ 0 ]?.subscribers || 0;
-=======
-function SubscribersOverviewCardStats( subscribersData: SubscribersData, index: number ) {
-	const getCount = () => {
-		return subscribersData?.data[ 0 ]?.subscribers || 0;
->>>>>>> fde9323cdb (use a switch for headings)
-	};
+	function SubscribersOverviewCardStats( subscribersData: SubscribersData, index: number ) {
+		const getCount = () => {
+			return subscribersData?.data?.[ 0 ]?.subscribers || 0;
+		};
 
 	let heading;
 	switch ( index ) {
@@ -58,7 +52,7 @@ function SubscribersOverviewCardStats( subscribersData: SubscribersData, index: 
 		count: getCount(),
 	};
 
-	return overviewCardStats;
+	return overviewCardStat;
 }
 
 const SubscribersOverview: React.FC< SubscribersOverviewProps > = ( { siteId } ) => {
@@ -66,36 +60,16 @@ const SubscribersOverview: React.FC< SubscribersOverviewProps > = ( { siteId } )
 	const quantity = 1;
 	const dates = cardIndices.map( calculateQueryDate );
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 	const { isLoading, isError, subscribersData } = useSubscribersQueries(
 		siteId,
 		period,
 		quantity,
 		dates
 	);
-=======
-<<<<<<< HEAD
-	const isLoading = subscribersQueries.some( ( result ) => result.isLoading );
-	const isError = subscribersQueries.some( ( result ) => result.isError );
-	const subscribersData = subscribersQueries.map( ( result ) => result.data?.data || [] );
->>>>>>> d97a8b8aa8 (handle errors and loading status separately)
 
-	const overviewCardStats = SubscribersOverviewCardStats( subscribersData );
-=======
-=======
->>>>>>> fde9323cdb (use a switch for headings)
 	const subscribersQueries = useSubscribersQueries( siteId, period, quantity, dates );
 
 	return (
-<<<<<<< HEAD
-		<div className="stats-subscribers-overview highlight-cards">
-			{ isLoading && <div>Loading...</div> }
-			{ isError && <div>Error: Failed to load data.</div> }
-			{ ! isLoading && ! isError && (
-				<div className="highlight-cards-list">
-					{ overviewCardStats.map( ( overviewCardStat ) => (
-=======
 		<div className="subscribers-overview highlight-cards">
 			<div className="highlight-cards-list">
 				{ subscribersQueries.map( ( result, index ) => {
@@ -108,10 +82,9 @@ const SubscribersOverview: React.FC< SubscribersOverviewProps > = ( { siteId } )
 					}
 
 					const subscribersData = result.data;
-					const overviewCardStat = SubscribersOverviewCardStats( [ subscribersData ] )[ 0 ];
+					const overviewCardStat = getCountComparisonCardProps( result.data, index );
 
 					return (
->>>>>>> d97a8b8aa8 (handle errors and loading status separately)
 						<CountComparisonCard
 							key={ overviewCardStat.count }
 							heading={ overviewCardStat.heading }
