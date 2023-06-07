@@ -16,7 +16,8 @@ import { authQueryPropTypes } from './utils';
 export class AuthFormHeader extends Component {
 	static propTypes = {
 		authQuery: authQueryPropTypes.isRequired,
-		isWoo: PropTypes.bool,
+		isWooOnboarding: PropTypes.bool,
+		isWooCoreProfiler: PropTypes.bool,
 		isWpcomMigration: PropTypes.bool,
 		wooDnaConfig: PropTypes.object,
 
@@ -48,7 +49,14 @@ export class AuthFormHeader extends Component {
 	}
 
 	getHeaderText() {
-		const { translate, partnerSlug, isWoo, wooDnaConfig, isWpcomMigration } = this.props;
+		const {
+			translate,
+			partnerSlug,
+			isWooOnboarding,
+			isWooCoreProfiler,
+			wooDnaConfig,
+			isWpcomMigration,
+		} = this.props;
 
 		if ( wooDnaConfig && wooDnaConfig.isWooDnaFlow() ) {
 			return wooDnaConfig.getServiceName();
@@ -82,13 +90,17 @@ export class AuthFormHeader extends Component {
 
 		const currentState = this.getState();
 
-		if ( isWoo ) {
+		if ( isWooOnboarding ) {
 			switch ( currentState ) {
 				case 'logged-out':
 					return translate( 'Create a Jetpack account' );
 				default:
 					return translate( 'Connecting your store' );
 			}
+		}
+
+		if ( isWooCoreProfiler ) {
+			return translate( 'One last step!' );
 		}
 
 		if ( isWpcomMigration ) {
@@ -110,10 +122,11 @@ export class AuthFormHeader extends Component {
 	}
 
 	getSubHeaderText() {
-		const { translate, isWoo, wooDnaConfig, isWpcomMigration } = this.props;
+		const { translate, isWooOnboarding, isWooCoreProfiler, wooDnaConfig, isWpcomMigration } =
+			this.props;
 		const currentState = this.getState();
 
-		if ( isWoo ) {
+		if ( isWooOnboarding ) {
 			switch ( currentState ) {
 				case 'logged-out':
 					return translate(
@@ -122,6 +135,12 @@ export class AuthFormHeader extends Component {
 				default:
 					return translate( "Once connected we'll continue setting up your store" );
 			}
+		}
+
+		if ( isWooCoreProfiler ) {
+			return translate(
+				"We'll make it quick – promise. In order to take advantage of the benefits offered by Jetpack, you'll need to connect your store to your WordPress.com account."
+			);
 		}
 
 		if ( wooDnaConfig && wooDnaConfig.isWooDnaFlow() ) {

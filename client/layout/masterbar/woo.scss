@@ -232,12 +232,14 @@
 	}
 
 
+	.jetpack-connect__logged-in-form .formatted-header,
 	.login__form-header-wrapper,
 	.signup-form__woo-wrapper {
 		text-align: center;
 		margin: 0 auto;
 		line-height: 28px;
 
+		h1,
 		h3 {
 			font-weight: 600;
 			font-size: 2.75rem;
@@ -340,7 +342,8 @@
 
 	.wp-login__container,
 	.magic-login,
-	.step-wrapper {
+	.step-wrapper,
+	.jetpack-connect__main-logo {
 		box-sizing: border-box;
 		padding: 60px 0 0;
 		width: 100%;
@@ -717,6 +720,8 @@
 	}
 
 	&.is-woocommerce-core-profiler-flow {
+		background: #fff;
+
 		* {
 			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 		}
@@ -733,6 +738,10 @@
 				outline: none;
 				box-shadow: none;
 			}
+		}
+
+		.masterbar {
+			display: flex;
 		}
 
 		.masterbar__woo-nav-item:first-child {
@@ -776,8 +785,13 @@
 			font-weight: 500;
 		}
 
-		.login__header-subtitle {
+		.login__header-subtitle,
+		.formatted-header__subtitle {
 			color: $gray-700;
+
+			@media screen and ( max-width: 660px ) {
+				width: auto;
+			}
 		}
 
 		.login__form-userdata label.form-label {
@@ -786,6 +800,7 @@
 			font-size: rem(11px);
 		}
 
+		.jetpack-connect__action-disclaimer .button.is-primary,
 		.form-button.is-primary {
 			border-radius: 2px;
 			height: 48px;
@@ -808,6 +823,19 @@
 
 			a {
 				line-height: 16px;
+			}
+		}
+
+		.jetpack-connect__logged-in-content {
+			@media screen and ( max-width: 660px ) {
+				padding-left: $woo-form-whitespace-660;
+				padding-right: $woo-form-whitespace-660;
+			}
+		}
+
+		.jetpack-connect__features_wrapper {
+			@media screen and ( max-width: 660px ) {
+				display: none !important;
 			}
 		}
 	}

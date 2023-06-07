@@ -447,10 +447,10 @@ export class JetpackSignup extends Component {
 		}
 		const { isCreatingAccount } = this.state;
 		return (
-			<MainWrapper isWoo={ this.isWoo() }>
+			<MainWrapper isWooOnboarding={ this.isWoo() }>
 				<div className="jetpack-connect__authorize-form">
 					{ this.renderLocaleSuggestions() }
-					<AuthFormHeader authQuery={ this.props.authQuery } isWoo={ this.isWoo() } />
+					<AuthFormHeader authQuery={ this.props.authQuery } isWooOnboarding={ this.isWoo() } />
 					<SignupForm
 						disabled={ isCreatingAccount }
 						email={ this.props.authQuery.userEmail }
