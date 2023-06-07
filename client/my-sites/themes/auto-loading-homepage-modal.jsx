@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Dialog, Gridicon, Button } from '@automattic/components';
+import { Dialog, Gridicon, Button, ScreenReaderText } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { CheckboxControl } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
@@ -141,15 +141,18 @@ export class AutoLoadingHomepageModal extends Component {
 				isVisible={ isVisible }
 				onClose={ this.closeModalHandler( 'dismiss' ) }
 			>
-				<Gridicon
-					icon="cross"
-					className="themes__auto-loading-homepage-modal-close-icon"
-					onClick={ this.closeModalHandler( 'dismiss' ) }
-				/>
 				<TrackComponentView
 					eventName="calypso_theme_autoloading_homepage_modal_view"
 					eventProperties={ { theme: themeId } }
 				/>
+				<Button
+					className="themes__auto-loading-homepage-modal-close-icon"
+					borderless
+					onClick={ this.closeModalHandler( 'dismiss' ) }
+				>
+					<Gridicon icon="cross" size={ 12 } />
+					<ScreenReaderText>{ translate( 'Close modal' ) }</ScreenReaderText>
+				</Button>
 				<div className="themes__theme-preview-wrapper">
 					<h1>{ translate( 'Activate this theme' ) }</h1>
 					<p>
