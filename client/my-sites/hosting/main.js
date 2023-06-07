@@ -3,6 +3,7 @@ import {
 	FEATURE_SFTP,
 	FEATURE_SFTP_DATABASE,
 	FEATURE_SITE_STAGING_SITES,
+	WPCOM_FEATURES_ATOMIC,
 } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
@@ -52,6 +53,116 @@ import WebServerSettingsCard from './web-server-settings-card';
 import './style.scss';
 
 const HEADING_OFFSET = 30;
+
+const ShowEnabledFeatureCards = ( { availableTypes, cards } ) => {
+	const enabledCards = cards.filter(
+		( card ) => ! card.type || availableTypes.includes( card.type )
+	);
+	const disabledCards = cards.filter(
+		( card ) => card.type && ! availableTypes.includes( card.type )
+	);
+
+	return (
+		<>
+			{ enabledCards.map( ( card ) => {
+				return <Fragment key={ card.feature }>{ card.content }</Fragment>;
+			} ) }
+			{ disabledCards.length > 0 && (
+				<FeatureExample>
+					{ disabledCards.map( ( card ) => {
+						return <Fragment key={ card.feature }>{ card.content }</Fragment>;
+					} ) }
+				</FeatureExample>
+			) }
+		</>
+	);
+};
+
+const MainCards = ( {
+	hasStagingSitesFeature,
+	isAdvancedHostingDisabled,
+	isBasicHostingDisabled,
+	isGithubIntegrationEnabled,
+	isWpcomStagingSite,
+	siteId,
+} ) => {
+	const mainCards = [
+		{
+			feature: 'sftp',
+			content: <SFTPCard disabled={ isAdvancedHostingDisabled } />,
+			type: 'advanced',
+		},
+		{
+			feature: 'phpmyadmin',
+			content: <PhpMyAdminCard disabled={ isAdvancedHostingDisabled } />,
+			type: 'advanced',
+		},
+		! isWpcomStagingSite && hasStagingSitesFeature
+			? {
+					feature: 'staging-site',
+					content: <StagingSiteCard disabled={ isAdvancedHostingDisabled } />,
+					type: 'advanced',
+			  }
+			: null,
+		isWpcomStagingSite && siteId
+			? {
+					feature: 'staging-production-site',
+					content: (
+						<StagingSiteProductionCard siteId={ siteId } disabled={ isAdvancedHostingDisabled } />
+					),
+					type: 'advanced',
+			  }
+			: null,
+		isGithubIntegrationEnabled
+			? {
+					feature: 'github',
+					content: <GitHubCard />,
+					type: 'advanced',
+			  }
+			: null,
+		{
+			feature: 'web-server-settings',
+			content: <WebServerSettingsCard disabled={ isAdvancedHostingDisabled } />,
+			type: 'advanced',
+		},
+		{
+			feature: 'restore-plan-software',
+			content: <RestorePlanSoftwareCard disabled={ isBasicHostingDisabled } />,
+			type: 'basic',
+		},
+		{
+			feature: 'cache',
+			content: <CacheCard disabled={ isBasicHostingDisabled } />,
+			type: 'basic',
+		},
+	].filter( ( card ) => card !== null );
+
+	const availableTypes = [
+		! isAdvancedHostingDisabled ? 'advanced' : null,
+		! isBasicHostingDisabled ? 'basic' : null,
+	].filter( ( type ) => type !== null );
+
+	return <ShowEnabledFeatureCards cards={ mainCards } availableTypes={ availableTypes } />;
+};
+
+const SidebarCards = ( { isBasicHostingDisabled } ) => {
+	const sidebarCards = [
+		{
+			feature: 'site-backup',
+			content: <SiteBackupCard disabled={ isBasicHostingDisabled } />,
+			type: 'basic',
+		},
+		{
+			feature: 'support',
+			content: <SupportCard />,
+		},
+	];
+
+	const availableTypes = isBasicHostingDisabled ? [] : [ 'basic' ];
+
+	return <ShowEnabledFeatureCards cards={ sidebarCards } availableTypes={ availableTypes } />;
+};
+
 class Hosting extends Component {
 	state = {
 		clickOutside: false,
@@ -81,17 +192,19 @@ class Hosting extends Component {
 		const {
 			teams,
 			clickActivate,
-			hasSftpFeature,
-			isDisabled,
+			isAdvancedHostingDisabled,
+			isBasicHostingDisabled,
 			isECommerceTrial,
-			isWpcomStagingSite,
+			isSiteAtomic,
 			isTransferring,
+			isWpcomStagingSite,
 			requestSiteById,
 			siteId,
 			siteSlug,
 			translate,
 			transferState,
 			isLoadingSftpData,
+			hasAtomicFeature,
 			hasStagingSitesFeature,
 		} = this.props;
 
@@ -109,14 +222,13 @@ class Hosting extends Component {
 			return <HostingUpsellNudge siteId={ siteId } targetPlan={ targetPlan } />;
 		};
 
-		const getAtomicActivationNotice = () => {
-			const { COMPLETE, FAILURE } = transferStates;
+		const { COMPLETE, FAILURE } = transferStates;
 
+		const isTransferInProgress = () => isTransferring && COMPLETE !== transferState;
+
+		const getAtomicActivationNotice = () => {
 			// Transfer in progress
-			if (
-				( isTransferring && COMPLETE !== transferState ) ||
-				( isDisabled && COMPLETE === transferState )
-			) {
+			if ( isTransferInProgress() || ( isBasicHostingDisabled && COMPLETE === transferState ) ) {
 				if ( COMPLETE === transferState ) {
 					requestSiteById( siteId );
 				}
@@ -139,16 +251,16 @@ class Hosting extends Component {
 				);
 			}
 
-			const failureNotice = FAILURE === transferState && (
-				<Notice
-					status="is-error"
-					showDismiss={ false }
-					text={ translate( 'There was an error activating hosting features.' ) }
-					icon="bug"
-				/>
-			);
+			if ( hasAtomicFeature && ! isSiteAtomic && ! isTransferring ) {
+				const failureNotice = FAILURE === transferState && (
+					<Notice
+						status="is-error"
+						showDismiss={ false }
+						text={ translate( 'There was an error activating hosting features.' ) }
+						icon="bug"
+					/>
+				);
 
-			if ( isDisabled && ! isTransferring ) {
 				return (
 					<>
 						{ failureNotice }
@@ -171,12 +283,13 @@ class Hosting extends Component {
 					</>
 				);
 			}
+
+			return null;
 		};
 
 		const getContent = () => {
 			const isGithubIntegrationEnabled =
 				isEnabled( 'github-integration-i1' ) && isAutomatticTeamMember( teams );
-			const WrapperComponent = isDisabled || isTransferring ? FeatureExample : Fragment;
 
 			return (
 				<>
@@ -186,31 +299,37 @@ class Hosting extends Component {
 							<QueryKeyringConnections />
 						</>
 					) }
-					<WrapperComponent>
-						<Layout className="hosting__layout">
-							<Column type="main" className="hosting__main-layout-col">
-								<SFTPCard disabled={ isDisabled } />
-								<PhpMyAdminCard disabled={ isDisabled } />
-								{ ! isWpcomStagingSite && hasStagingSitesFeature && (
-									<StagingSiteCard disabled={ isDisabled } />
-								) }
-								{ isWpcomStagingSite && siteId && (
-									<StagingSiteProductionCard siteId={ siteId } disabled={ isDisabled } />
-								) }
-								{ isGithubIntegrationEnabled && <GitHubCard /> }
-								<WebServerSettingsCard disabled={ isDisabled } />
-								<RestorePlanSoftwareCard disabled={ isDisabled } />
-								<CacheCard disabled={ isDisabled } />
-							</Column>
-							<Column type="sidebar">
-								<SiteBackupCard disabled={ isDisabled } />
-								<SupportCard />
-							</Column>
-						</Layout>
-					</WrapperComponent>
+					<Layout className="hosting__layout">
+						<Column type="main" className="hosting__main-layout-col">
+							<MainCards
+								hasStagingSitesFeature={ hasStagingSitesFeature }
+								isAdvancedHostingDisabled={ isAdvancedHostingDisabled }
+								isBasicHostingDisabled={ isBasicHostingDisabled }
+								isGithubIntegrationEnabled={ isGithubIntegrationEnabled }
+								isWpcomStagingSite={ isWpcomStagingSite }
+								siteId={ siteId }
+							/>
+						</Column>
+						<Column type="sidebar">
+							<SidebarCards isBasicHostingDisabled={ isBasicHostingDisabled } />
+						</Column>
+					</Layout>
 				</>
 			);
 		};
+
+		/* We want to show the upsell banner for the following cases:
+		 *  1. The site does not have the Atomic feature.
+		 *  2. The site is Atomic, is not transferring, and doesn't have advanced hosting features.
+		 * Otherwise, we show the activation notice, which may be empty.
+		 */
+		const shouldShowUpgradeBanner =
+			! hasAtomicFeature ||
+			( isSiteAtomic &&
+				! isTransferInProgress() &&
+				isAdvancedHostingDisabled &&
+				! isWpcomStagingSite );
+		const banner = shouldShowUpgradeBanner ? getUpgradeBanner() : getAtomicActivationNotice();
 
 		return (
 			<Main wideLayout className="hosting">
@@ -225,7 +344,7 @@ class Hosting extends Component {
 					) }
 					align="left"
 				/>
-				{ hasSftpFeature ? getAtomicActivationNotice() : getUpgradeBanner() }
+				{ banner }
 				{ getContent() }
 				<QueryReaderTeams />
 			</Main>
@@ -239,17 +358,21 @@ export const clickActivate = () =>
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
+		const hasAtomicFeature = siteHasFeature( state, siteId, WPCOM_FEATURES_ATOMIC );
 		const hasSftpFeature = siteHasFeature( state, siteId, FEATURE_SFTP );
 		const hasStagingSitesFeature = siteHasFeature( state, siteId, FEATURE_SITE_STAGING_SITES );
+		const isSiteAtomic = isSiteAutomatedTransfer( state, siteId );
 
 		return {
 			teams: getReaderTeams( state ),
 			isECommerceTrial: isSiteOnECommerceTrial( state, siteId ),
 			transferState: getAutomatedTransferStatus( state, siteId ),
 			isTransferring: isAutomatedTransferActive( state, siteId ),
-			isDisabled: ! hasSftpFeature || ! isSiteAutomatedTransfer( state, siteId ),
+			isAdvancedHostingDisabled: ! hasSftpFeature || ! isSiteAtomic,
+			isBasicHostingDisabled: ! hasAtomicFeature || ! isSiteAtomic,
 			isLoadingSftpData: getAtomicHostingIsLoadingSftpData( state, siteId ),
-			hasSftpFeature,
+			isSiteAtomic,
+			hasAtomicFeature,
 			siteSlug: getSelectedSiteSlug( state ),
 			siteId,
 			isWpcomStagingSite: isSiteWpcomStaging( state, siteId ),

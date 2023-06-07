@@ -16,7 +16,7 @@ const useFollowerQuery = ( siteId, subscriberId, type ) => {
 	}
 
 	return useQuery( {
-		queryKey: [ 'subscriber', subscriberId, type ],
+		queryKey: [ 'subscriber', siteId, subscriberId, type ],
 		queryFn: () =>
 			wpcom.req.get( {
 				path: `/sites/${ siteId }/followers/${ subscriberId }?type=${ type }&http_envelope=1`,

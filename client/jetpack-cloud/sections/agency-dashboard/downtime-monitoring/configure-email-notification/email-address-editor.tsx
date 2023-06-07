@@ -1,13 +1,18 @@
 import { Button } from '@automattic/components';
 import { Modal } from '@wordpress/components';
+import classNames from 'classnames';
 import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { ReactChild, useCallback, useContext, useEffect, useState, useMemo } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import DashboardDataContext from '../../sites-overview/dashboard-data-context';
-import { useRequestVerificationCode, useValidateVerificationCode } from '../hooks';
+import {
+	useRequestVerificationCode,
+	useValidateVerificationCode,
+	useResendVerificationCode,
+} from '../hooks';
 import EmailItemContent from './email-item-content';
 import type {
 	AllowedMonitorContactActions,
@@ -52,6 +57,8 @@ export default function EmailAddressEditor( {
 		email: '',
 		id: '',
 	} );
+	const [ resendCodeClicked, setResendCodeClicked ] = useState< boolean >( false );
+	const [ helpText, setHelpText ] = useState< ReactChild | undefined >( undefined );
 
 	const { verifiedContacts } = useContext( DashboardDataContext );
 
@@ -61,13 +68,44 @@ export default function EmailAddressEditor( {
 
 	const requestVerificationCode = useRequestVerificationCode();
 	const verifyEmail = useValidateVerificationCode();
+	const resendCode = useResendVerificationCode();
 
 	// Function to handle resending verification code
 	const handleResendCode = useCallback( () => {
-		setValidationError( undefined );
+		if ( emailItem.email ) {
+			setValidationError( undefined );
+			resendCode.mutate( { type: 'email', value: emailItem.email } );
+		}
+		// Disabled because we don't want to re-run this effect when resendCode changes
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ emailItem.email ] );
+
+	// Function to handle resend code button click
+	const handleResendCodeClick = useCallback( () => {
+		setHelpText( undefined );
+		setResendCodeClicked( true );
 		recordEvent( 'downtime_monitoring_resend_email_verification_code' );
-		// TODO: implement resending verification code
-	}, [ recordEvent ] );
+		handleResendCode();
+		setEmailItem( { ...emailItem, code: undefined } );
+	}, [ emailItem, handleResendCode, recordEvent ] );
+
+	const translationArgs = useMemo(
+		() => ( {
+			components: {
+				button: (
+					<Button
+						className={ classNames( 'configure-email-notification__resend-code-button', {
+							'is-loading': resendCode.isLoading,
+						} ) }
+						borderless
+						onClick={ handleResendCodeClick }
+						disabled={ resendCode.isLoading }
+					/>
+				),
+			},
+		} ),
+		[ handleResendCodeClick, resendCode.isLoading ]
+	);
 
 	const handleSetEmailItems = useCallback(
 		( isVerified = true ) => {
@@ -128,6 +166,44 @@ export default function EmailAddressEditor( {
 		}
 	}, [ translate, verifyEmail.errorMessage ] );
 
+	// Set help text when email verification fails
+	useEffect( () => {
+		if ( verifyEmail.isError ) {
+			setHelpText(
+				translate(
+					'Please try again or we can {{button}}resend a new code{{/button}}.',
+					translationArgs
+				)
+			);
+		}
+	}, [ translate, translationArgs, verifyEmail.isError ] );
+
+	// Set help text when resend code is successful and resend button is clicked
+	useEffect( () => {
+		if ( resendCodeClicked && resendCode.isSuccess ) {
+			setHelpText(
+				<>
+					<div>{ translate( 'We just sent you a new code. Please wait for a minute.' ) }</div>
+					<div>
+						{ translate(
+							'Click to {{button}}resend{{/button}} if you didn’t receive it. If you still experience issues, please reach out to our support.',
+							translationArgs
+						) }
+					</div>
+				</>
+			);
+		}
+	}, [ resendCodeClicked, resendCode.isSuccess, translate, translationArgs ] );
+
+	// Show error message when resend code fails
+	useEffect( () => {
+		if ( resendCode.isError ) {
+			setValidationError( {
+				code: translate( 'Something went wrong. Please try again by clicking the resend button.' ),
+			} );
+		}
+	}, [ resendCode.isError, translate ] );
+
 	// Set email item when selectedEmail changes
 	useEffect( () => {
 		if ( selectedEmail ) {
@@ -170,6 +246,7 @@ export default function EmailAddressEditor( {
 
 	// Verify email when user clicks on Verify button
 	const handleVerifyEmail = () => {
+		setHelpText( undefined );
 		recordEvent( 'downtime_monitoring_verify_email' );
 		if ( emailItem?.code ) {
 			verifyEmail.mutate( {
@@ -250,18 +327,6 @@ export default function EmailAddressEditor( {
 		? translate( 'Verifying…' )
 		: translate( 'Verify' );
 
-	const translationArgs = {
-		components: {
-			button: (
-				<Button
-					className="configure-email-notification__resend-code-button"
-					borderless
-					onClick={ handleResendCode }
-				/>
-			),
-		},
-	};
-
 	return (
 		<Modal
 			open={ true }
@@ -323,7 +388,7 @@ export default function EmailAddressEditor( {
 								<FormTextInput
 									id="code"
 									name="code"
-									value={ emailItem.code }
+									value={ emailItem.code || '' }
 									onChange={ handleChange( 'code' ) }
 								/>
 								{ validationError?.code && (
@@ -332,15 +397,13 @@ export default function EmailAddressEditor( {
 									</div>
 								) }
 								<div className="configure-email-notification__help-text" id="code-help-text">
-									{ verifyEmail.isError
-										? translate(
-												'Please try again or we can {{button}}resend a new code{{/button}}',
-												translationArgs
-										  )
-										: translate(
-												'Please wait for a minute. If you didn’t receive it, we can {{button}}resend{{/button}} it.',
-												translationArgs
-										  ) }
+									{ helpText ??
+										( resendCodeClicked && resendCode.isLoading
+											? translate( 'Sending code' )
+											: translate(
+													'Please wait for a minute. If you didn’t receive it, we can {{button}}resend{{/button}} it.',
+													translationArgs
+											  ) ) }
 								</div>
 							</FormFieldset>
 						) }

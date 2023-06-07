@@ -1,10 +1,11 @@
 import { Card, Button } from '@automattic/components';
 import { Icon, moreHorizontal } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useRef } from 'react';
+import { useState, useRef, useContext } from 'react';
 import Badge from 'calypso/components/badge';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import DashboardDataContext from '../../sites-overview/dashboard-data-context';
 import type {
 	StateMonitorSettingsEmail,
 	AllowedMonitorContactActions,
@@ -37,6 +38,8 @@ export default function EmailItemContent( {
 
 	const buttonActionRef = useRef< HTMLButtonElement | null >( null );
 
+	const { verifiedContacts } = useContext( DashboardDataContext );
+
 	const showActions = () => {
 		setIsOpen( true );
 	};
@@ -53,6 +56,8 @@ export default function EmailItemContent( {
 		}
 	};
 
+	const isVerified = item.verified || verifiedContacts.emails.includes( item.email );
+
 	return (
 		<Card className="configure-email-address__card" key={ item.email } compact>
 			<div className="configure-email-address__card-content-container">
@@ -65,7 +70,7 @@ export default function EmailItemContent( {
 				 }
 				{ ! item.isDefault && ! isRemoveAction && (
 					<>
-						{ ! item.verified && (
+						{ ! isVerified && (
 							<span
 								role="button"
 								tabIndex={ 0 }
@@ -76,7 +81,7 @@ export default function EmailItemContent( {
 								<Badge type="warning">{ translate( 'Pending' ) }</Badge>
 							</span>
 						) }
-						{ showVerifiedBadge && item.verified && (
+						{ showVerifiedBadge && isVerified && (
 							<span className="configure-email-address__verification-status">
 								<Badge type="success">{ translate( 'Verified' ) }</Badge>
 							</span>

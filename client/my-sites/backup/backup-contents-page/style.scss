@@ -1,0 +1,15 @@
+@import "@automattic/onboarding/styles/mixins";
+
+.backup-contents-page {
+	&__header {
+		padding-bottom: 30px;
+
+		&.daily-backup-status {
+			box-shadow: none;
+		}
+	}
+
+	&__body {
+		border-top: 1px solid var(--studio-gray-5);
+	}
+}

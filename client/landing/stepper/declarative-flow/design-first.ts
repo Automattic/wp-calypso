@@ -230,7 +230,8 @@ const designFirst: Flow = {
 		} else if ( userAlreadyHasSites && isSiteCreationStep ) {
 			// Redirect users with existing sites out of the flow as we create a new site as the first step in this flow.
 			// This prevents a bunch of sites being created accidentally.
-			redirect( `/post?${ DESIGN_FIRST_FLOW }=true` );
+			redirect( `/themes` );
+
 			result = {
 				state: AssertConditionState.CHECKING,
 				message: `${ flowName } requires no preexisting sites`,

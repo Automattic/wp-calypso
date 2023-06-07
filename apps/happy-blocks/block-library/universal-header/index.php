@@ -136,28 +136,28 @@ $happy_blocks_is_english = ( 0 === stripos( get_locale(), 'en' ) );
 								</a>
 							</li>
 							<li>
+								<a role="menuitem" class="x-dropdown-link x-link" href="<?php echo esc_url( localized_tailored_flow_url( '//wordpress.com/setup/newsletter' ) ); ?>" title="<?php echo esc_attr( __( 'Newsletter', 'happy-blocks' ) ); ?>" tabindex="-1">
+									<?php echo esc_html( __( 'Newsletter', 'happy-blocks' ) ); ?>
+								</a>
+							</li>
+							<li>
 								<a role="menuitem" class="x-dropdown-link x-link" href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/professional-email/' ) ); ?>" title="<?php echo esc_attr( fixme__( 'Professional Email', __( 'Email', 'happy-blocks' ) ) ); ?>" tabindex="-1">
 									<?php echo esc_html( fixme__( 'Professional Email', __( 'Email', 'happy-blocks' ) ) ); ?>
 								</a>
 							</li>
 							<li>
-								<a role="menuitem" class="x-dropdown-link x-link" href="<?php echo esc_url( localized_tailored_flow_url( '//wordpress.com/setup/link-in-bio/intro?ref=main-menu' ) ); ?>" title="<?php echo esc_attr( fixme__( 'Link in Bio', 'happy-blocks' ) ); ?>" tabindex="-1">
-									<?php echo esc_html( fixme__( 'Link in Bio', 'happy-blocks' ) ); ?>
+								<a role="menuitem" class="x-dropdown-link x-link" href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/website-design-service/' ) ); ?>" title="<?php echo esc_attr( __( 'Website Design Services', 'happy-blocks' ) ); ?>" tabindex="-1">
+									<?php echo esc_html( __( 'Website Design Services', 'happy-blocks' ) ); ?>
 								</a>
 							</li>
 							<li>
-								<a role="menuitem" class="x-dropdown-link x-link" href="<?php echo esc_url( localized_tailored_flow_url( '//wordpress.com/setup/newsletter/intro?ref=main-menu' ) ); ?>" title="<?php echo esc_attr( fixme__( 'Newsletter', 'happy-blocks' ) ); ?>" tabindex="-1">
-									<?php echo esc_html( fixme__( 'Newsletter', 'happy-blocks' ) ); ?>
+								<a role="menuitem" class="x-dropdown-link x-link" href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/ecommerce/' ) ); ?>" title="<?php echo esc_attr( __( 'Store', 'happy-blocks' ) ); ?>" tabindex="-1">
+									<?php echo esc_html( __( 'Store', 'happy-blocks' ) ); ?>
 								</a>
 							</li>
 							<li>
-								<a role="menuitem" class="x-dropdown-link x-link" href="<?php echo esc_url( localized_tailored_flow_url( '//wordpress.com/setup/videopress/intro?ref=main-menu' ) ); ?>" title="<?php echo esc_attr( fixme__( 'Video', 'happy-blocks' ) ); ?>" tabindex="-1">
-									<?php echo esc_html( fixme__( 'Video', 'happy-blocks' ) ); ?>
-								</a>
-							</li>
-							<li>
-								<a role="menuitem" class="x-dropdown-link x-link" href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/create-a-course' ) ); ?>" title="<?php echo esc_attr( fixme__( 'Course', 'happy-blocks' ) ); ?>" tabindex="-1">
-									<?php echo esc_html( fixme__( 'Course', 'happy-blocks' ) ); ?>
+								<a role="menuitem" class="x-dropdown-link x-link" href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/create-a-course/' ) ); ?>" title="<?php echo esc_attr( fixme__( 'Course Maker', __( 'Course', 'happy-blocks' ) ) ); ?>" tabindex="-1">
+									<?php echo esc_html( fixme__( 'Course Maker', __( 'Course', 'happy-blocks' ) ) ); ?>
 								</a>
 							</li>
 						</ul>
@@ -316,8 +316,28 @@ $happy_blocks_is_english = ( 0 === stripos( get_locale(), 'en' ) );
 									</a>
 								</li>
 								<li class="x-menu-grid-item">
+									<a role="menuitem" class="x-menu-link x-link" href="<?php echo esc_url( localized_tailored_flow_url( '//wordpress.com/setup/newsletter' ) ); ?>" title="<?php echo esc_attr( __( 'Newsletter', 'happy-blocks' ) ); ?>" tabindex="-1">
+										<?php echo esc_html( __( 'Newsletter', 'happy-blocks' ) ); ?>
+									</a>
+								</li>
+								<li class="x-menu-grid-item">
 									<a role="menuitem" class="x-menu-link x-link" href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/professional-email/' ) ); ?>" title="<?php echo esc_attr( fixme__( 'Professional Email', __( 'Email', 'happy-blocks' ) ) ); ?>" tabindex="-1">
 										<?php echo esc_html( fixme__( 'Professional Email', __( 'Email', 'happy-blocks' ) ) ); ?>
+									</a>
+								</li>
+								<li class="x-menu-grid-item">
+									<a role="menuitem" class="x-menu-link x-link" href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/website-design-service/' ) ); ?>" title="<?php echo esc_attr( __( 'Website Design Services', 'happy-blocks' ) ); ?>" tabindex="-1">
+										<?php echo esc_html( __( 'Website Design Services', 'happy-blocks' ) ); ?>
+									</a>
+								</li>
+								<li class="x-menu-grid-item">
+									<a role="menuitem" class="x-menu-link x-link" href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/ecommerce/' ) ); ?>" title="<?php echo esc_attr( __( 'Store', 'happy-blocks' ) ); ?>" tabindex="-1">
+										<?php echo esc_html( __( 'Store', 'happy-blocks' ) ); ?>
+									</a>
+								</li>
+								<li class="x-menu-grid-item">
+									<a role="menuitem" class="x-menu-link x-link" href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/create-a-course/' ) ); ?>" title="<?php echo esc_attr( fixme__( 'Course Maker', __( 'Course', 'happy-blocks' ) ) ); ?>" tabindex="-1">
+										<?php echo esc_html( fixme__( 'Course Maker', __( 'Course', 'happy-blocks' ) ) ); ?>
 									</a>
 								</li>
 								<li class="x-menu-grid-item">

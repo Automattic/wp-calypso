@@ -4,13 +4,13 @@ import { useTranslate } from 'i18n-calypso';
 import { ReactElement, useMemo } from 'react';
 import './styles.scss';
 
-export type Option = {
+export type Option< T > = {
 	label: string;
-	value: string;
+	value: T;
 };
 
 type SortControlsProps< T > = {
-	options: Option[];
+	options: Option< T >[];
 	value: T;
 	onChange: ( sortOrder: T ) => void;
 };

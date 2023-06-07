@@ -9,7 +9,6 @@ import type { PlanProperties } from '../types';
 
 interface PlanFeatures2023GridHeaderPriceProps {
 	planProperties: PlanProperties;
-	is2023OnboardingPricingGrid: boolean;
 	isLargeCurrency: boolean;
 	isPlanUpgradeCreditEligible: boolean;
 	currentSitePlanSlug?: string;
@@ -104,7 +103,7 @@ const HeaderPriceContainer = styled.div`
 	.plan-price.is-discounted {
 		color: var( --color-neutral-70 );
 
-		.plan-price__integer-fraction {
+		.plans-grid-2023__html-price-display-wrapper {
 			color: inherit;
 		}
 	}
@@ -126,7 +125,6 @@ const HeaderPriceContainer = styled.div`
 
 const PlanFeatures2023GridHeaderPrice = ( {
 	planProperties,
-	is2023OnboardingPricingGrid,
 	isLargeCurrency,
 	isPlanUpgradeCreditEligible,
 	currentSitePlanSlug,
@@ -161,16 +159,16 @@ const PlanFeatures2023GridHeaderPrice = ( {
 							currencyCode={ currencyCode }
 							rawPrice={ planPrices.originalPrice }
 							displayPerMonthNotation={ false }
-							is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
 							isLargeCurrency={ isLargeCurrency }
+							priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
 							original
 						/>
 						<PlanPrice
 							currencyCode={ currencyCode }
 							rawPrice={ planPrices.discountedPrice }
 							displayPerMonthNotation={ false }
-							is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
 							isLargeCurrency={ isLargeCurrency }
+							priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
 							discounted
 						/>
 					</PricesGroup>
@@ -181,8 +179,8 @@ const PlanFeatures2023GridHeaderPrice = ( {
 					currencyCode={ currencyCode }
 					rawPrice={ planPrices.originalPrice }
 					displayPerMonthNotation={ false }
-					is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
 					isLargeCurrency={ isLargeCurrency }
+					priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
 				/>
 			) }
 		</HeaderPriceContainer>

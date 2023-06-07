@@ -9,7 +9,7 @@ export * from './contact-form';
 export * from './blog-posts';
 export * from './post-carousel';
 export * from './timeline';
-export * from './premium-content';
+export * from './paid-content';
 export * from './subscribe';
 export * from './payments';
 export * from './contact-info';

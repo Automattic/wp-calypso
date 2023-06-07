@@ -408,7 +408,6 @@ import {
 	FEATURE_SHIPPING_INTEGRATIONS,
 	FEATURE_THE_READER,
 } from './constants';
-import { is2023PricingGridEnabled } from './plans-utilities';
 import type {
 	BillingTerm,
 	Plan,
@@ -872,14 +871,11 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	} ),
 } );
 
-const is2023OnboardingPricingGrid = is2023PricingGridEnabled();
-
 const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
 	group: GROUP_WPCOM,
 	type: TYPE_ECOMMERCE,
-	getTitle: () =>
-		is2023OnboardingPricingGrid ? i18n.translate( 'Commerce' ) : i18n.translate( 'eCommerce' ),
+	getTitle: () => i18n.translate( 'Commerce' ),
 	getAudience: () => i18n.translate( 'Best for online stores' ),
 	getBlogAudience: () => i18n.translate( 'Best for online stores' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for online stores' ),

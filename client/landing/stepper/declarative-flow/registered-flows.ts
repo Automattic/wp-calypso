@@ -4,6 +4,8 @@ import {
 	CONNECT_DOMAIN_FLOW,
 	NEW_HOSTED_SITE_FLOW,
 	DESIGN_FIRST_FLOW,
+	TRANSFERRING_HOSTED_SITE_FLOW,
+	IMPORT_HOSTED_SITE_FLOW,
 } from '@automattic/onboarding';
 import type { Flow } from '../declarative-flow/internals/types';
 
@@ -78,6 +80,8 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	sensei: () => import( /* webpackChunkName: "sensei-flow" */ '../declarative-flow/sensei' ),
 
+	blog: () => import( /* webpackChunkName: "blog" */ '../declarative-flow/blog' ),
+
 	[ START_WRITING_FLOW ]: () =>
 		import( /* webpackChunkName: "start-writing-flow" */ './start-writing' ),
 
@@ -89,6 +93,13 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	[ NEW_HOSTED_SITE_FLOW ]: () =>
 		import( /* webpackChunkName: "new-hosted-site-flow" */ './new-hosted-site-flow' ),
+
+	[ TRANSFERRING_HOSTED_SITE_FLOW ]: () =>
+		import(
+			/* webpackChunkName: "transferring-hosted-site-flow" */ './transferring-hosted-site-flow'
+		),
+	[ IMPORT_HOSTED_SITE_FLOW ]: () =>
+		import( /* webpackChunkName: "import-hosted-site-flow" */ './import-hosted-site' ),
 };
 
 availableFlows[ 'plugin-bundle' ] = () =>

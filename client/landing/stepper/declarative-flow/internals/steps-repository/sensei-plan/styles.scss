@@ -3,16 +3,37 @@
 
 .step-container.senseiPlan {
 
-	.plan-item:not(.is-open) .plan-item__summary .plan-item__price {
-		margin: 0;
+	.formatted-header {
+		margin-top: 40px;
+	}
+
+	.footer {
+		margin: 87px 20px 20px;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+		font-size: 13px;
+		text-align: center;
+
+		a {
+			color: inherit;
+			text-decoration: underline;
+		}
+	}
+
+	.plan-item-wrapper {
+		margin-top: 40px;
+		padding: 36px 20px 32px;
+		border: 1px solid #e0e0e0;
+		border-radius: 4px;
 	}
 	.plan-item:not(.is-open) .plan-item__name {
-		font-weight: 700;
+		@include onboarding-font-recoleta;
 		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		font-size: 18px;
+		font-size: 32px;
 	}
-	.plan-item:not(.is-open) .plan-item__price-amount {
-		font-weight: 600;
+	.plan-item:not(.is-open) .plan-item__price {
+		margin-left: 0;
+		margin-bottom: 2px;
+		@include onboarding-font-recoleta;
 		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 32px;
 	}
@@ -20,37 +41,49 @@
 	.plan-item {
 		margin-top: 0;
 
+		&__heading {
+			margin-bottom: 20px;
+		}
+
 		&__viewport {
 			border: none;
-			padding: 24px 0;
+			padding: 0;
 		}
 
-		&__heading,
 		&__price {
-			display: flex;
-			justify-content: center;
-		}
-		&__price-amount,
-		&__price-note,
-		&__price-discount,
-		&__actions {
-			text-align: center;
-		}
+			height: 40px;
 
-		&__price-discount {
-			margin-bottom: 0;
-			color: $sensei-green-60;
-		}
+			.plan-price,
+			.plan-price__currency-symbol {
+				color: $black;
+			}
 
-		&__price-amount {
-			margin-top: 20px;
-			color: $black;
+			.plan-price {
+				display: flex;
+				line-height: 1;
+
+				&__currency-symbol {
+					margin-top: 5px;
+					/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+					font-size: 14px;
+				}
+
+				&__integer {
+					/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+					font-size: 44px;
+				}
+			}
 		}
 
 		&__select-button {
 			width: 100%;
 			margin: 0;
 			@include sensei-button;
+		}
+
+		&__price-note {
+			margin-top: 0;
+			margin-bottom: 16px;
 		}
 
 		&__summary,
@@ -63,14 +96,11 @@
 			display: flex;
 			flex-direction: column;
 			justify-content: flex-end;
-			align-items: center;
-			margin-top: 40px;
 			flex: 0;
 
 			.plan-item {
 				&__summary,
-				&__price-note,
-				&__price-discount {
+				&__price-note {
 					display: block;
 					text-transform: unset;
 				}
@@ -79,7 +109,7 @@
 
 		&--is-loading {
 			.plan-item {
-				&__price-amount {
+				&__price {
 					@include onboarding-placeholder();
 					width: 30%;
 				}
@@ -87,15 +117,13 @@
 					@include onboarding-placeholder();
 					width: 80%;
 				}
-				&__price-discount {
-					@include onboarding-placeholder();
-					width: 90%;
-				}
 			}
 		}
 	}
 
 	.plans-feature-list {
+		margin-top: 36px;
+
 		&__item {
 			margin: 12px 0;
 		}
@@ -104,26 +132,19 @@
 		}
 		&__item-annual-nudge {
 			display: none;
+			padding-left: 0;
 		}
-		&__item-bullet-icon path {
-			fill: #008a20;
-			stroke: #008a20;
+		&__item-bullet-icon {
+			display: none;
+		}
+		&__item-description {
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			font-size: 12px;
 		}
 		&__item--requires-annual-enabled,
 		&__item--requires-annual-disabled {
 			.plans-feature-list__item-description {
 				font-weight: 700;
-			}
-		}
-		&__item--requires-annual-disabled {
-			.plans-feature-list {
-				&__item-annual-nudge {
-					display: block;
-				}
-				&__item-bullet-icon path {
-					fill: var(--studio-orange-40);
-					stroke: var(--studio-orange-40);
-				}
 			}
 		}
 
@@ -136,10 +157,17 @@
 		}
 	}
 
-	.plans-interval-toggle__popover:not(.plans-interval-toggle__popover--mobile) {
-		display: none;
-		@media ( min-width: 782px ) {
-			display: block;
+	.plans-interval-toggle__popover {
+		&.plans-interval-toggle__popover--mobile {
+			margin-top: 10px;
+		}
+
+		&:not(.plans-interval-toggle__popover--mobile) {
+			display: none;
+			@media ( min-width: 782px ) {
+				display: block;
+				margin-left: 15px;
+			}
 		}
 	}
 
@@ -147,6 +175,15 @@
 		margin-bottom: 32px;
 		@media (min-width: 782px) {
 			margin-bottom: 0;
+		}
+	}
+
+	.components-popover {
+		&__arrow::before {
+			background-color: $sensei-gray-100;
+		}
+		&__triangle-bg {
+			fill: $sensei-gray-100;
 		}
 	}
 }

@@ -17,7 +17,7 @@ const TextControlContainer = styled.div( {
 	marginBottom: '2em',
 	label: {
 		textTransform: 'none',
-		fontSize: '100%',
+		fontSize: '14px',
 		color: 'black',
 	},
 } );

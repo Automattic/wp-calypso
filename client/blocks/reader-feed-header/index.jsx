@@ -208,7 +208,7 @@ class FeedHeader extends Component {
 				{ siteId && (
 					<ReaderSuggestedFollowsDialog
 						onClose={ this.onCloseSuggestedFollowModal }
-						siteId={ siteId }
+						siteId={ +siteId }
 						isVisible={ this.state.isSuggestedFollowsModalOpen }
 					/>
 				) }
