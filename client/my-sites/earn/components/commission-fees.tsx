@@ -38,9 +38,8 @@ const CommissionFees = ( {
 				<>
 					{ ' ' }
 					<a href={ siteSlug ? `/plans/${ siteSlug }` : '/plans' }>
-						{ translate( 'Upgrade to lower it.', {
-							context: 'Upgrade to a paid plan to lower transaction fee % for payment features.',
-						} ) }
+						{ /* translators: 'Upgrade to a paid plan to lower transaction fee % for payment features. */ }
+						{ translate( 'Upgrade to lower it.' ) }
 					</a>
 				</>
 			);
