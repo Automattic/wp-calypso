@@ -434,14 +434,14 @@ export class PlansFeaturesMain extends Component {
 			intervalType,
 			selectedPlan,
 			planTypeSelector,
-			planTypes = this.getDefaultPlanTypes(),
+			planTypes,
 		} = this.props;
 		const term = this.getPlanBillingPeriod( intervalType, getPlan( selectedPlan )?.term );
 		const defaultPlanTypes = this.getDefaultPlanTypes();
 		// We need all the plans in order to show the correct features in the plan comparison table
 		const plans = this.getPlansFromTypes( defaultPlanTypes, GROUP_WPCOM, term );
 		const visiblePlans = this.getVisiblePlansForPlanFeatures(
-			this.getPlansFromTypes( planTypes, GROUP_WPCOM, term )
+			this.getPlansFromTypes( planTypes || defaultPlanTypes, GROUP_WPCOM, term )
 		);
 
 		// If advertising plans for a certain feature, ensure user has pressed "View all plans" before they can see others
