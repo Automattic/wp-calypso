@@ -223,6 +223,8 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 
 	// Modules settings popover
 	&.page-modules-settings-popover {
+		// Make the popover be under `#header.masterbar`.
+		z-index: 1;
 		.popover__inner {
 			padding: 14px 16px;
 		}
